@@ -5,7 +5,7 @@ export default {
     };
   },
   methods: {
-    bulk_renderActionsNormal() {
+    bulk_renderActionsNormalDefault() {
       const children = [];
       let domOrder;
       if (this.order_renderAction) {
@@ -23,6 +23,9 @@ export default {
       children.push(domOrderPopover);
       children.push(domFilter);
       return children;
+    },
+    bulk_renderActionsNormal() {
+      return this.bulk_renderActionsNormalDefault();
     },
     bulk_renderActionsNormalPopover() {
       return null;

@@ -12,14 +12,7 @@ module.exports = app => {
     },
     layouts: {
       base: {
-        blocks: {
-          title: {
-            component: {
-              module: 'a-app',
-              name: 'appMenuLayoutBlockListTitle',
-            },
-          },
-        },
+        blocks: {},
       },
       list: {
         providerOptions: {
@@ -40,7 +33,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMenuBase',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),
