@@ -225,14 +225,15 @@ export default {
       if (!this.layout.instance || !this.bottombar.enable) return null;
       return <f7-toolbar position="bottom">{this.layout_renderBlock({ blockName: 'bottombar' })}</f7-toolbar>;
     },
-    layout_renderCaptionInit() {
-      if (this.base.ready) return null;
-      return (
-        <f7-nav-title>
-          <div>{this.page_title}</div>
-        </f7-nav-title>
-      );
-    },
+    // deprecated: maybe cause blink
+    // layout_renderCaptionInit() {
+    //   if (this.base.ready) return null;
+    //   return (
+    //     <f7-nav-title>
+    //       <div>{this.page_title}</div>
+    //     </f7-nav-title>
+    //   );
+    // },
     layout_extend_onTableColumns({ columns }) {
       const instanceExtend = this.layout.instanceExtend;
       if (instanceExtend && instanceExtend.onTableColumns) {
@@ -258,7 +259,6 @@ export default {
           onInfinite={this.page_onInfinite}
         >
           <eb-navbar eb-back-link="Back">
-            {this.layout_renderCaptionInit()}
             {this.layout_renderBlock({ blockName: 'caption' })}
             {this.layout_renderBlock({ blockName: 'title' })}
             {this.layout_renderSubnavbar()}
