@@ -14,20 +14,9 @@ function installFactory(_Vue) {
     },
     created() {},
     methods: {
-      onPerform() {
+      onPerformClick() {
         this.$meta.vueLayout.openHome();
       },
-    },
-    render() {
-      return (
-        <eb-link
-          class={this.buttonClass}
-          iconMaterial={this.buttonIcon && this.buttonIcon.material}
-          iconF7={this.buttonIcon && this.buttonIcon.f7}
-          tooltip={this.buttonTooltip}
-          propsOnPerform={this.onPerform}
-        ></eb-link>
-      );
     },
   };
 }
