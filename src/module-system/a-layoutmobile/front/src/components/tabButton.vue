@@ -7,6 +7,7 @@ export default {
         button: this, // for more extensible
       };
       return c(this.buttonFullName, {
+        ref: 'button',
         staticClass: `tab-button ${this.showing ? '' : 'display-none'}`,
         props,
         on: {
@@ -70,6 +71,9 @@ export default {
     this.$emit('button:destroy');
   },
   methods: {
+    getButtonInstance() {
+      return this.$refs.button;
+    },
     async __init() {
       if (!this.options.resourceConfig) {
         // maybe disabled

@@ -31,9 +31,6 @@ function installFactory(_Vue) {
     beforeDestroy() {
       this.$meta.eventHub.$off('appHome:open', this.onAppHomeOpen);
     },
-    mounted() {
-      this.openAppHome();
-    },
     methods: {
       onAppHomeOpen() {
         this.onPerformClick();
@@ -42,6 +39,9 @@ function installFactory(_Vue) {
         const view = this.getView();
         await this.$meta.vueLayout.app_openAppHome({ view, force: true });
         this.appHomeInited = true;
+      },
+      onViewInit() {
+        this.openAppHome();
       },
     },
   };

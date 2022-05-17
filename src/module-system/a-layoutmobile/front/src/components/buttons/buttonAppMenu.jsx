@@ -18,9 +18,6 @@ function installFactory(_Vue) {
     beforeDestroy() {
       this.$meta.eventHub.$off('appMenu:open', this.onAppMenuOpen);
     },
-    mounted() {
-      this.openAppMenu();
-    },
     methods: {
       onAppMenuOpen() {
         this.onPerformClick();
@@ -28,6 +25,9 @@ function installFactory(_Vue) {
       openAppMenu() {
         const view = this.getView();
         this.$meta.vueLayout.app_openHome({ view });
+      },
+      onViewInit() {
+        this.openAppMenu();
       },
     },
   };

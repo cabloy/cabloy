@@ -17,6 +17,7 @@ export default {
       toolbarLinks.push(
         c('eb-tab-button', {
           key: fullName,
+          ref: fullName,
           props: {
             layout: this.layout,
             group: this,
@@ -116,19 +117,33 @@ export default {
       const target = el ? this.$$(el) : this.$$('.view.eb-layout-tab.tab-active');
       if (target.hasClass('eb-layout-tab')) {
         const path = target[0].f7View.router.currentRoute.path;
+        const fullName = target[0].f7View.name;
+        // check if firse show
         if (!path || path === '/') {
           const url = target.data('url');
           if (url) {
             target[0].f7View.router.navigate(url);
+          } else {
+            this._raiseViewInit(fullName);
           }
         }
-        const fullName = target[0].f7View.name;
+        // active
         if (this.buttonActiveFullName !== fullName) {
           // eslint-disable-next-line
           this.toolbarConfig.buttonActive = fullName;
           this.layout.__saveLayoutConfig();
         }
       }
+    },
+    _raiseViewInit(fullName) {
+      const buttonInstance = this.$refs[fullName] && this.$refs[fullName].getButtonInstance();
+      if (!buttonInstance) {
+        window.setTimeout(() => {
+          this._raiseViewInit(fullName);
+        }, 50);
+        return;
+      }
+      buttonInstance.onViewInit();
     },
     _getButtonIndex(button) {
       return this.buttons.findIndex(item => this.layout._buttonFullName(item) === this.layout._buttonFullName(button));
