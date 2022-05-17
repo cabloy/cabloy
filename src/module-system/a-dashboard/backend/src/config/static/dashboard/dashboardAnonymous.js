@@ -11,8 +11,8 @@ module.exports = app => {
     },
   };
   const dashboard = {
-    atomName: 'Default',
-    atomStaticKey: 'dashboardDefault',
+    atomName: 'Anonymous',
+    atomStaticKey: 'dashboardAnonymous',
     atomRevision: 0,
     description: '',
     content: JSON.stringify(content),

@@ -1,7 +1,7 @@
-const dashboardDefault = require('./dashboard/dashboardDefault.js');
+const dashboardAnonymous = require('./dashboard/dashboardAnonymous.js');
 const dashboardHome = require('./dashboard/dashboardHome.js');
 
 module.exports = app => {
-  const dashboards = [dashboardDefault(app), dashboardHome(app)];
+  const dashboards = [dashboardAnonymous(app), dashboardHome(app)];
   return dashboards;
 };

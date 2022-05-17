@@ -10,7 +10,7 @@ module.exports = app => {
           },
           home: {
             mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardHome',
+            dashboard: 'a-dashboard:dashboardAnonymous',
             page: null,
           },
           mine: {
@@ -24,7 +24,7 @@ module.exports = app => {
           },
           home: {
             mode: 'dashboard', // dashboard,page
-            dashboard: 'a-dashboard:dashboardHome',
+            dashboard: 'a-dashboard:dashboardAnonymous',
             page: null,
           },
           mine: {
@@ -67,7 +67,7 @@ module.exports = app => {
   const _app = {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
-    atomRevision: 0,
+    atomRevision: 1,
     atomCategoryId: 0,
     description: '',
     appIcon: ':outline:apps-outline',
