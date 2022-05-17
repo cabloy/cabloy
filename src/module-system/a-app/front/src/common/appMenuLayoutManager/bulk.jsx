@@ -30,10 +30,10 @@ export default {
     bulk_renderActionsNormal() {
       const children = [];
       // home
-      children.push(this._renderHome());
+      children.push(this.bulk_renderHome());
       // dashboard
       //   always show, even if no app home config
-      children.push(this._renderDashboard());
+      children.push(this.bulk_renderDashboard());
       // ok
       return children;
     },
