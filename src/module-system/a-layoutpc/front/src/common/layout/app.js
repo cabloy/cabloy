@@ -101,8 +101,7 @@ export default {
       let badge;
       if (appHomeInfo.appItem.appLanguage) {
         const lang = current.appLanguage.split('-')[0];
-        const text = lang.replace(lang[0], lang[0].toUpperCase());
-        badge = { text };
+        badge = { text: lang };
       }
       // navigate
       const navigateOptions = {

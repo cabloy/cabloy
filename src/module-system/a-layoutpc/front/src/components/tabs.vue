@@ -25,7 +25,6 @@ export default {
       });
       const groupIcon = this._getGroupIcon(group);
       const groupBadge = this._getGroupBadge(group);
-      console.log(groupBadge);
       children.push(
         c(
           'eb-link',
