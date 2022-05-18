@@ -60,7 +60,15 @@ export default {
     },
     bulk_renderLanguage() {
       if (!this.base.appItem.appLanguage) return null;
-      return <eb-link key="language" iconF7="::language" propsOnPerform={this.bulk_onPerformLanguage}></eb-link>;
+      // get current
+      const current = this.$store.getters['a/app/current'];
+      const lang = current.appLanguage.split('-')[0];
+      const title = lang.replace(lang[0], lang[0].toUpperCase());
+      return (
+        <eb-link key="language" propsOnPerform={this.bulk_onPerformLanguage}>
+          {title}
+        </eb-link>
+      );
     },
     bulk_renderActionsNormal() {
       const children = [];
