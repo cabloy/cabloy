@@ -14,6 +14,7 @@ module.exports = app => {
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,
+    appLanguage: true,
     content: JSON.stringify(content),
     resourceRoles: 'root',
     appSorting: 0,
