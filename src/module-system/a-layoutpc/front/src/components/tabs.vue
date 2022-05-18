@@ -12,7 +12,6 @@ export default {
   render(c) {
     const children = [];
     for (const group of this.layout.groups) {
-      const text = c('span', { domProps: { innerText: group.title } });
       const close = c('f7-icon', {
         staticClass: 'close',
         props: { f7: '::close', size: '16' },
@@ -24,6 +23,9 @@ export default {
           },
         },
       });
+      const groupIcon = this._getGroupIcon(group);
+      const groupBadge = this._getGroupBadge(group);
+      console.log(groupBadge);
       children.push(
         c(
           'eb-link',
@@ -33,7 +35,10 @@ export default {
             attrs: {
               tabLink: `#${group.id}`,
               iconSize: 16,
-              iconF7: this._getGroupIcon(group),
+              iconF7: groupIcon && groupIcon.f7,
+              iconBadge: groupIcon && groupIcon.badge,
+              badge: groupBadge && groupBadge.text,
+              text: group.title,
             },
             props: {
               onPerform: event => {
@@ -58,7 +63,7 @@ export default {
               },
             },
           },
-          [text, close]
+          [close]
         )
       );
     }
@@ -90,7 +95,10 @@ export default {
       return this.$$(this.$refs[groupId].$el).hasClass('tab-link-active');
     },
     _getGroupIcon(group) {
-      return this.$meta.util.getProperty(group, 'sceneOptions.resourceConfig.icon.f7');
+      return this.$meta.util.getProperty(group, 'sceneOptions.resourceConfig.icon');
+    },
+    _getGroupBadge(group) {
+      return this.$meta.util.getProperty(group, 'sceneOptions.resourceConfig.badge');
     },
     async _onContextMenuItemClick_refresh(groupId) {
       await this.groups.refreshGroup(groupId);

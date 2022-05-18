@@ -95,14 +95,23 @@ export default {
       // app home Info
       const appHomeInfo = await this.$store.dispatch('a/app/getAppHomeInfo', { appKey, force });
       if (!appHomeInfo) return;
+      // icon
+      const icon = { f7: appHomeInfo.appItem.appIcon };
+      // badge
+      let badge;
+      if (appHomeInfo.appItem.appLanguage) {
+        const lang = current.appLanguage.split('-')[0];
+        const text = lang.replace(lang[0], lang[0].toUpperCase());
+        badge = { text };
+      }
       // navigate
-      const appIcon = appHomeInfo.appItem.appIcon;
       const navigateOptions = {
         sceneOptions: {
           appHome: true,
           appKey,
           resourceConfig: {
-            icon: { f7: appIcon },
+            icon,
+            badge,
           },
         },
       };
