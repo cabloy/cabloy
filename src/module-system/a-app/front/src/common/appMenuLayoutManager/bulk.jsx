@@ -36,12 +36,17 @@ export default {
       if (this.$meta.vueApp.layout !== 'mobile') return null;
       return <eb-link key="search" iconF7="::search" propsOnPerform={this.bulk_onPerformSearch}></eb-link>;
     },
+    bulk_renderLanguage() {
+      console.log(this.base.appItem);
+    },
     bulk_renderActionsNormal() {
       const children = [];
       // appDefault
       children.push(this.bulk_renderAppDefault());
       // search
       children.push(this.bulk_renderSearch());
+      // language
+      children.push(this.bulk_renderLanguage());
       // ok
       return children;
     },

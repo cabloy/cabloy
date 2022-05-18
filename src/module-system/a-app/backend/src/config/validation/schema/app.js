@@ -47,6 +47,16 @@ module.exports = app => {
         ebTitle: 'Icon',
         notEmpty: true,
       },
+      appIsolate: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'AppIsolateTitle',
+      },
+      appLanguage: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'AppLanguageTitle',
+      },
       // Extra
       __groupExtra: {
         ebType: 'group-flatten',
