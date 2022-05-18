@@ -29,31 +29,13 @@ export default {
     },
     async app_openAppHome({ view, current, force = false }) {
       if (!current) current = this.$store.getters['a/app/current'];
-      let appKey = current.appKey;
+      const appKey = current.appKey;
       if (!appKey) return;
-      // configHome
-      let configHome;
-      const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
-      configHome = presetConfigCurrent.home;
-      if (!configHome.mode && force) {
-        appKey = this.app.keyDefault;
-        const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
-        configHome = presetConfigDefault.home;
-      }
-      if (!configHome.mode) return;
+      // app home Info
+      const appHomeInfo = await this.$store.dispatch('a/app/getAppHomeInfo', { appKey, force });
+      if (!appHomeInfo) return;
       // navigate
-      let url;
-      if (configHome.mode === 'dashboard') {
-        url = `/a/dashboard/dashboard?key=${configHome.dashboard}`;
-      } else {
-        url = configHome.page;
-      }
-      // for unique
-      url = this.$meta.util.combineQueries(url, {
-        appKey,
-        // appLanguage: current.appLanguage, // not set appLanguage
-      });
-      view.navigate(url, {
+      view.navigate(appHomeInfo.url, {
         target: '_self',
         reloadAll: true,
       });
