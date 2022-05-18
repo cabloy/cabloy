@@ -11,7 +11,10 @@ export default {
           name: 'selectLocale',
           targetEl: action.targetEl,
         };
-        const locale = await ctx.$meta.util.performAction({ ctx, action: _action, item: null });
+        const localeCurrent = {
+          value: ctx.$meta.util.getLocale(),
+        };
+        const locale = await ctx.$meta.util.performAction({ ctx, action: _action, item: { current: localeCurrent } });
         if (locale && locale.value !== ctx.$store.state.auth.user.agent.locale) {
           // save
           await ctx.$api.post('/a/user/user/saveLocale', {
