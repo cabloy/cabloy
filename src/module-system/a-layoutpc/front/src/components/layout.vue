@@ -211,6 +211,7 @@ export default {
       const query = this.$utils.parseUrlQuery();
       const path = query && query.__to;
       if (!path) return false;
+      // if (path === 'mine') return true;
       return false;
     },
     openMine() {

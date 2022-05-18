@@ -48,9 +48,6 @@ function installFactory(_Vue) {
       onPerform() {
         this.$meta.vueLayout.openMine();
       },
-      onMineOpen() {
-        this.onPerformClick();
-      },
       _checkSpecialPath() {
         const query = this.$utils.parseUrlQuery();
         const path = query && query.__to;
