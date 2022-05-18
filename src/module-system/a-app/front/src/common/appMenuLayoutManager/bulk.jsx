@@ -16,6 +16,8 @@ export default {
       });
     },
     bulk_renderAppDefault() {
+      // layout
+      if (this.$meta.vueApp.layout !== 'mobile') return null;
       // backLink
       const backLink = this.$meta.vueLayout.backLink(this.$view);
       if (backLink) return null;
@@ -30,6 +32,8 @@ export default {
       );
     },
     bulk_renderSearch() {
+      // layout
+      if (this.$meta.vueApp.layout !== 'mobile') return null;
       return <eb-link key="search" iconF7="::search" propsOnPerform={this.bulk_onPerformSearch}></eb-link>;
     },
     bulk_renderActionsNormal() {
