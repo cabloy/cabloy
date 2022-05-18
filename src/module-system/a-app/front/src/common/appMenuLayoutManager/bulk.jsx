@@ -15,28 +15,26 @@ export default {
         target: '_self',
       });
     },
-    async bulk_onPerformLanguage() {
-      // icon
-      const iconDone = await this.$meta.util.combineIcon({ f7: '::done' });
-      // buttons
-      const buttons = [];
-      for (const appInfo of this.base.appInfos) {
-        const icon = this.base_app_isCurrentSame(appInfo, appInfoCurrent) ? iconDone : '<i class="icon"></i>';
-        buttons.push({
-          icon,
-          text: appInfo.appItem.atomNameLocale,
-          data: appInfo,
-        });
-      }
-      // choose
-      const params = {
-        forceToPopover: true,
-        targetEl: event.targetEl,
-        buttons,
+    async bulk_onPerformLanguage(event) {
+      // get current
+      const current = this.$store.getters['a/app/current'];
+      const _action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'selectLocale',
+        targetEl: event.currentTarget,
       };
-      const button = await this.$view.actions.choose(params);
-      if (!this.base_app_isCurrentSame(button.data, appInfoCurrent)) {
-        await this.base_app_switch({ appKey: button.data.appKey });
+      const localeCurrent = {
+        value: current.appLanguage,
+      };
+      const locale = await this.$meta.util.performAction({
+        ctx: this,
+        action: _action,
+        item: { current: localeCurrent },
+      });
+      // set current
+      if (locale) {
+        this.$meta.store.commit('a/app/setCurrent', { appLanguage: locale.value });
       }
     },
     bulk_renderAppDefault() {
