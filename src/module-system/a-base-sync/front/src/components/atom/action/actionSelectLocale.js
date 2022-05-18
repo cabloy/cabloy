@@ -15,6 +15,10 @@ export default {
       if (locales.length === 1) {
         return locales[0];
       }
+      // current
+      const current = (item && item.current) || {};
+      // icon
+      const iconDone = await this.$meta.util.combineIcon({ f7: '::done' });
       // buttons
       const buttons = [
         {
@@ -23,7 +27,9 @@ export default {
         },
       ];
       for (const locale of locales) {
+        const icon = locale.value === current.value ? iconDone : '<i class="icon"></i>';
         buttons.push({
+          icon,
           text: locale.title,
           data: locale,
         });
