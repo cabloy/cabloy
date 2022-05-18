@@ -30,14 +30,10 @@ export default function (Vue) {
         const appKey = state.currentInner.appKey;
         // appLanguage
         const appLanguage = state.currentInner.appLanguage;
-        // userStatus/layout
-        const { userStatus, layout } = __getUserStatusAndLayout({ Vue });
         // ok
         return {
           appKey,
           appLanguage,
-          userStatus,
-          layout,
         };
       },
       appItemCurrent(state, getters) {
@@ -47,7 +43,7 @@ export default function (Vue) {
         const appItem = getters.appItemCurrent;
         if (!appItem) return null;
         // preset config
-        return __getPresetConfig({ appItem, current: getters.current });
+        return __getPresetConfig({ Vue, appItem, current: getters.current });
       },
     },
     mutations: {
@@ -142,7 +138,7 @@ export default function (Vue) {
         // force appItem exists
         const appItem = await dispatch('getAppItem', { appKey });
         if (!appItem) return null; // maybe no access right
-        return __getPresetConfig({ appItem, current: getters.current });
+        return __getPresetConfig({ Vue, appItem, current: getters.current });
       },
       async getAppItemCurrent({ state, getters, dispatch }) {
         return await dispatch('getAppItem', { appKey: getters.current.appKey });
@@ -199,8 +195,9 @@ function __getLayoutConfigKey({ Vue }) {
   return `apps.current.${userStatus}.${layout}`;
 }
 
-function __getPresetConfig({ appItem, current }) {
-  const presetConfig = appItem.content.presets[current.userStatus][current.layout];
+function __getPresetConfig({ Vue, appItem, current }) {
+  const { userStatus, layout } = __getUserStatusAndLayout({ Vue });
+  const presetConfig = appItem.content.presets[userStatus][layout];
   return presetConfig[current.appLanguage] || presetConfig;
 }
 
