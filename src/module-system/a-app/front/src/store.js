@@ -177,6 +177,40 @@ export default function (Vue) {
         commit('setAppItemsAll', { appItems });
         return appItems;
       },
+      async getAppHomeInfo({ state, getters, dispatch }, { appKey, force }) {
+        let appItem = await dispatch('getAppItem', { appKey });
+        // configHome
+        let configHome;
+        const presetConfig = await dispatch('getPresetConfig', { appKey });
+        configHome = presetConfig.home;
+        if (!configHome.mode && force) {
+          appKey = __appKeyDefault;
+          const presetConfigDefault = await dispatch('getPresetConfigDefault');
+          configHome = presetConfigDefault.home;
+          appItem = await dispatch('getAppItemDefault');
+        }
+        if (!configHome.mode) return null;
+        // url
+        let url;
+        if (configHome.mode === 'dashboard') {
+          url = `/a/dashboard/dashboard?key=${configHome.dashboard}`;
+        } else {
+          url = configHome.page;
+        }
+        // for unique
+        const queries = { appKey };
+        if (appItem.appLanguage) {
+          queries.appLanguage = getters.current.appLanguage;
+        }
+        url = Vue.prototype.$meta.util.combineQueries(url, queries);
+        // ok
+        return {
+          appKey,
+          appItem,
+          configHome,
+          url,
+        };
+      },
     },
   };
 }

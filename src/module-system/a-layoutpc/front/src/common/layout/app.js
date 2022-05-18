@@ -28,9 +28,9 @@ export default {
       // open menu
       await this.app_openAppMenu({ current, appItemCurrent });
       // open home
-      await this.app_openAppHome({ current, appItemCurrent, force });
+      await this.app_openAppHome({ current, force });
       // open mine
-      await this.app_openAppMine({ current, appItemCurrent, force });
+      await this.app_openAppMine({ current, force });
     },
     async app_openAppMenu({ current, appItemCurrent }) {
       const appKey = current.appKey;
@@ -89,33 +89,14 @@ export default {
       // checked
       this.app.appMenuDefaultChecked = true;
     },
-    async app_openAppHome({ current, appItemCurrent, force }) {
-      // configHome
-      let configHome;
-      let appKey = current.appKey;
-      let appIcon = appItemCurrent.appIcon;
-      const presetConfigCurrent = await this.$store.dispatch('a/app/getPresetConfigCurrent');
-      configHome = presetConfigCurrent.home;
-      if (!configHome.mode && force) {
-        appKey = this.app.keyDefault;
-        const presetConfigDefault = await this.$store.dispatch('a/app/getPresetConfigDefault');
-        configHome = presetConfigDefault.home;
-        const appItemDefault = await this.$store.dispatch('a/app/getAppItemDefault');
-        appIcon = appItemDefault.appIcon;
-      }
-      if (!configHome.mode) return;
+    async app_openAppHome({ current, force }) {
+      if (!current) current = this.$store.getters['a/app/current'];
+      const appKey = current.appKey;
+      // app home Info
+      const appHomeInfo = await this.$store.dispatch('a/app/getAppHomeInfo', { appKey, force });
+      if (!appHomeInfo) return;
       // navigate
-      let url;
-      if (configHome.mode === 'dashboard') {
-        url = `/a/dashboard/dashboard?key=${configHome.dashboard}`;
-      } else {
-        url = configHome.page;
-      }
-      // for unique
-      url = this.$meta.util.combineQueries(url, {
-        appKey,
-        // appLanguage: current.appLanguage, // not set appLanguage
-      });
+      const appIcon = appHomeInfo.appItem.appIcon;
       const navigateOptions = {
         sceneOptions: {
           appHome: true,
@@ -125,7 +106,7 @@ export default {
           },
         },
       };
-      this.navigate(url, navigateOptions);
+      this.navigate(appHomeInfo.url, navigateOptions);
     },
     async app_openAppMine({ current, force }) {
       if (!current) current = this.$store.getters['a/app/current'];
