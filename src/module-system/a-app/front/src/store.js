@@ -49,10 +49,12 @@ export default function (Vue) {
     mutations: {
       clearUserInfo(state) {
         // clear
-        // maybe fallback to appDefault from appSystem
-        if (state.currentInner.appKey === __appKeyDefault) {
-          state.currentInner.appKey = null;
-        }
+        // // maybe fallback to appDefault from appSystem
+        // if (state.currentInner.appKey === __appKeyDefault) {
+        //   state.currentInner.appKey = null;
+        // }
+        // for more general scenes
+        state.currentInner.appKey = null;
         state.appItemsAll = null;
         //
         state.layoutConfig = null;
