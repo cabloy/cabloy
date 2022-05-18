@@ -20,8 +20,10 @@ function installFactory(_Vue) {
       },
     },
     watch: {
-      base_appCurrent() {
+      base_appCurrent(current) {
         if (!this.appHomeInited) return;
+        if (!current.appKey) return;
+        if (!this.$meta.vueLayout.started) return;
         this.openAppHome();
       },
     },
@@ -29,6 +31,7 @@ function installFactory(_Vue) {
       this.$meta.eventHub.$on('appHome:open', this.onAppHomeOpen);
     },
     beforeDestroy() {
+      this.appHomeInited = false;
       this.$meta.eventHub.$off('appHome:open', this.onAppHomeOpen);
     },
     methods: {

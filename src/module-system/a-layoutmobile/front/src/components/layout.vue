@@ -60,6 +60,7 @@ export default {
     }, 1000);
   },
   beforeDestroy() {
+    this.started = false;
     this.$meta.vueApp.clearLayoutInstance(this);
   },
   mounted() {
@@ -138,6 +139,11 @@ export default {
     // options:
     //  target: _self/_view/_group
     navigate(url, options) {
+      const vueApp = this.$meta.vueApp;
+      if (vueApp.getLayoutInstance() !== this) {
+        // do nothing
+        return;
+      }
       if (!url) return;
       // check if http
       if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {

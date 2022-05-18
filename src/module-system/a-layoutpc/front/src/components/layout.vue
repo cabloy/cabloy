@@ -103,6 +103,7 @@ export default {
     }, 1000);
   },
   beforeDestroy() {
+    this.started = false;
     this.$meta.vueApp.clearLayoutInstance(this);
     // click
     this.$f7.off('click', this._handleClicks);
@@ -221,6 +222,11 @@ export default {
     // options:
     //  target: _self/_view/_group
     navigate(url, options) {
+      const vueApp = this.$meta.vueApp;
+      if (vueApp.getLayoutInstance() !== this) {
+        // do nothing
+        return;
+      }
       // options
       options = options || {};
       const ctx = options.ctx;

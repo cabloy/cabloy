@@ -34,8 +34,13 @@ export default {
   watch: {
     base_appCurrent(current) {
       if (!this.base.appMineInited) return;
+      if (!current.appKey) return;
+      if (!this.$meta.vueLayout.started) return;
       this.base_app_switch({ appKey: current.appKey });
     },
+  },
+  beforeDestroy() {
+    this.base.appMineInited = false;
   },
   methods: {
     async base_onInit() {
