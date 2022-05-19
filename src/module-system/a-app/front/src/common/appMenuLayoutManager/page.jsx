@@ -14,7 +14,7 @@ export default {
       const inPanel = this.$view.inPanel();
       const titleDefault = inPanel ? this.$text('Apps') : this.$text('WorkplaceTitle');
       // app title
-      return this.base_isChildMode() ? this.base.appItem.atomNameLocale : titleDefault;
+      return this.base_isChildMode() ? this.base.appInfoCurrent.appItem.atomNameLocale : titleDefault;
     },
     page_onGetTitleSub() {
       return '';

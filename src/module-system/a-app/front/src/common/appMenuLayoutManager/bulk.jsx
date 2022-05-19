@@ -67,7 +67,8 @@ export default {
       );
     },
     bulk_renderLanguage() {
-      if (!this.base.appItem.appLanguage) return null;
+      const appItem = this.base.appInfoCurrent.appItem;
+      if (!appItem || !appItem.appLanguage) return null;
       // get current
       const current = this.$store.getters['a/app/current'];
       const lang = current.appLanguage.split('-')[0];
