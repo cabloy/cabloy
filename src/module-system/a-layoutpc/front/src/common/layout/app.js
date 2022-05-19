@@ -120,7 +120,7 @@ export default {
       if (!current) current = this.$store.getters['a/app/current'];
       // appInfo
       const appKey = current.appKey;
-      const appInfo = await this.$store.dispatch('a/user/getAppInfo', { appKey, force });
+      const appInfo = await this.$store.dispatch('a/app/getAppMineInfo', { appKey, force });
       if (!appInfo) return;
       // open
       this.navigate('/a/user/user/mine', {

@@ -58,7 +58,7 @@ export default {
       await this.layout_prepareConfigLayout(this.layout.current);
     },
     async base_app_prepareAppCurrent({ appKey, force }) {
-      const appInfo = await this.$store.dispatch('a/user/getAppInfo', { appKey, force });
+      const appInfo = await this.$store.dispatch('a/app/getAppMineInfo', { appKey, force });
       if (!appInfo) return false;
       if (this.base_app_isCurrentSameFull(this.base.appInfoCurrent, appInfo)) return false;
       // current
@@ -92,7 +92,7 @@ export default {
       if (this.base.appMineDefaultChecked) return;
       // app default
       if (!this.base_isAppDefault(appInfo.appKey) && !appInfo.appItem.isolate) {
-        const appDefault = await this.$store.dispatch('a/user/getAppInfo', {
+        const appDefault = await this.$store.dispatch('a/app/getAppMineInfo', {
           appKey: this.base.appKeyDefault,
           force: false,
         });

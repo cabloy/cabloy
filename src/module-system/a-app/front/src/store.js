@@ -224,6 +224,27 @@ export default function (Vue) {
           url,
         };
       },
+      async getAppMineInfo({ state, dispatch }, { appKey, force }) {
+        let appItem = await dispatch('getAppItem', { appKey });
+        // current
+        let configMine;
+        const presetConfig = await dispatch('getPresetConfig', { appKey });
+        configMine = presetConfig.mine;
+        if (!configMine.layout && force) {
+          appKey = __appKeyDefault;
+          const presetConfigDefault = await dispatch('getPresetConfigDefault');
+          configMine = presetConfigDefault.mine;
+          appItem = await dispatch('a/app/getAppItemDefault');
+        }
+        if (!configMine.layout) return null;
+        // ok
+        return {
+          appKey,
+          appItem,
+          configMine,
+          appMineLayout: configMine.layout,
+        };
+      },
     },
   };
 }
