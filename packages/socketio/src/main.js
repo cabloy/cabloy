@@ -230,7 +230,12 @@ export default adapter => {
           } else {
             const providerCurrent = user.provider;
             const providerMessage = data.provider;
-            if (providerCurrent.scene === providerMessage.scene && providerCurrent.id === providerMessage.id) {
+            if (
+              providerCurrent &&
+              providerMessage &&
+              providerCurrent.scene === providerMessage.scene &&
+              providerCurrent.id === providerMessage.id
+            ) {
               this._logout();
             }
           }
