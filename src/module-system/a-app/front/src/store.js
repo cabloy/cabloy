@@ -182,7 +182,6 @@ export default function (Vue) {
         // configMenu
         const presetConfig = await dispatch('getPresetConfig', { appKey });
         const configMenu = presetConfig.menu;
-        if (!configMenu.layout) return null;
         // ok
         return {
           appKey,
