@@ -32,9 +32,12 @@ export default {
         action: _action,
         item: { current: localeCurrent },
       });
+      if (!locale) return;
       // set current
-      if (locale) {
-        this.$meta.store.commit('a/app/setCurrent', { appLanguage: locale.value });
+      this.$meta.store.commit('a/app/setCurrent', { appLanguage: locale.value });
+      // open app home for layoutpc
+      if (this.$meta.vueApp.layout === 'pc') {
+        await this.$meta.vueLayout.app_openAppHome({ force: false });
       }
     },
     bulk_renderAppDefault() {
