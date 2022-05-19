@@ -3,9 +3,9 @@ module.exports = app => {
   const resources = [
     // tabbar buttons
     {
-      atomName: 'Menu',
+      atomName: 'WorkplaceTitle',
       atomStaticKey: 'buttonAppMenu',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
