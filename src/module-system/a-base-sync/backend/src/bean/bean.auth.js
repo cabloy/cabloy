@@ -127,6 +127,7 @@ module.exports = ctx => {
     }
 
     _getAuthRedisKey({ user }) {
+      if (!user.provider) return null;
       const userAgent = user.agent || user.op;
       return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
     }
@@ -201,7 +202,9 @@ module.exports = ctx => {
       if (!user || user.agent.anonymous) return;
       // redis auth
       const key = this._getAuthRedisKey({ user });
-      await this.redisAuth.del(key);
+      if (key) {
+        await this.redisAuth.del(key);
+      }
     }
 
     async _clearRedisAuthAll({ user }) {
