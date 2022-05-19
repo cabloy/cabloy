@@ -234,7 +234,7 @@ export default function (Vue) {
           appKey = __appKeyDefault;
           const presetConfigDefault = await dispatch('getPresetConfigDefault');
           configMine = presetConfigDefault.mine;
-          appItem = await dispatch('a/app/getAppItemDefault');
+          appItem = await dispatch('getAppItemDefault');
         }
         if (!configMine.layout) return null;
         // ok
