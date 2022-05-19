@@ -49,6 +49,7 @@ export default {
         <eb-link
           key="appDefault"
           iconF7=":outline:apps-outline"
+          tooltip={this.$text('WorkplaceTitle')}
           propsOnPerform={this.bulk_onPerformAppDefault}
         ></eb-link>
       );
@@ -56,7 +57,14 @@ export default {
     bulk_renderSearch() {
       // layout
       if (this.$meta.vueApp.layout !== 'mobile') return null;
-      return <eb-link key="search" iconF7="::search" propsOnPerform={this.bulk_onPerformSearch}></eb-link>;
+      return (
+        <eb-link
+          key="search"
+          iconF7="::search"
+          tooltip={this.$text('Search')}
+          propsOnPerform={this.bulk_onPerformSearch}
+        ></eb-link>
+      );
     },
     bulk_renderLanguage() {
       if (!this.base.appItem.appLanguage) return null;
@@ -65,7 +73,7 @@ export default {
       const lang = current.appLanguage.split('-')[0];
       const title = lang.replace(lang[0], lang[0].toUpperCase());
       return (
-        <eb-link key="language" propsOnPerform={this.bulk_onPerformLanguage}>
+        <eb-link key="language" tooltip={this.$text('Language')} propsOnPerform={this.bulk_onPerformLanguage}>
           {title}
         </eb-link>
       );

@@ -21,6 +21,7 @@ module.exports = {
   OpenAuthScope: 'Open Auth Scope',
   BasicProfile: 'Basic Profile',
   BasicAdmin: 'Basic Admin',
+  WorkplaceTitle: 'Workplace',
   'Only Valid for Formal Atom': 'Only Valid for Formal Data',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',

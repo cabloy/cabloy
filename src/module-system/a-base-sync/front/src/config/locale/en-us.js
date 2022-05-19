@@ -29,6 +29,7 @@ export default {
   LayoutMobile: 'Mobile Layout',
   LayoutPC: 'PC Layout',
   RoleParent: 'Parent Role',
+  WorkplaceTitle: 'Workplace',
   DataChangedReloadConfirm: 'Data changed, do you want to reload it?',
   AtomActionSubmitConfirm: 'Are you sure to submit this draft?',
   'Atom Flag': 'Data Flag',

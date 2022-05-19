@@ -1,3 +1,1 @@
-module.exports = {
-  WorkplaceTitle: 'Workplace',
-};
+module.exports = {};
