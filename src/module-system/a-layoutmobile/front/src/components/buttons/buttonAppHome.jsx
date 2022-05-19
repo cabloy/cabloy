@@ -11,6 +11,7 @@ function installFactory(_Vue) {
     mixins: [ebLayoutButtonBase],
     data() {
       return {
+        appInfoCurrent: {},
         appHomeInited: false,
       };
     },
@@ -24,7 +25,7 @@ function installFactory(_Vue) {
         if (!this.appHomeInited) return;
         if (!current.appKey) return;
         if (!this.$meta.vueLayout.started) return;
-        this.openAppHome();
+        this.app_switch({ current, force: false });
       },
     },
     created() {
@@ -35,16 +36,35 @@ function installFactory(_Vue) {
       this.$meta.eventHub.$off('appHome:open', this.onAppHomeOpen);
     },
     methods: {
+      // eventHub
       onAppHomeOpen() {
         this.onPerformClick();
       },
-      async openAppHome() {
-        const view = this.getView();
-        await this.$meta.vueLayout.app_openAppHome({ view, force: true });
+      // viewInit
+      async onViewInit() {
+        await this.app_switch({ force: true });
         this.appHomeInited = true;
       },
-      onViewInit() {
-        this.openAppHome();
+      // app_switch
+      async app_switch({ current, force }) {
+        if (!current) current = this.base_appCurrent;
+        const appKey = current.appKey;
+        if (!appKey) return;
+        // app home Info
+        const appInfo = await this.$store.dispatch('a/app/getAppHomeInfo', { appKey, force });
+        if (!appInfo) return false;
+        if (this.app_isCurrentSameFull(this.appInfoCurrent, appInfo)) return false;
+        // current
+        this.appInfoCurrent = appInfo;
+        // open appHome
+        const view = this.getView();
+        await this.$meta.vueLayout.app_openAppHome({ view, current, force });
+        // ok
+        return true;
+      },
+      app_isCurrentSameFull(a, b) {
+        // not check appLanguage
+        return a.appKey === b.appKey && a.url === b.url;
       },
     },
   };
