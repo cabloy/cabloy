@@ -178,6 +178,7 @@ export default {
     },
   },
   render() {
+    console.log(this.blockConfig.component.name);
     return this.renderItems();
   },
 };

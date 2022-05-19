@@ -12,7 +12,7 @@ export default {
     page_onGetTitle() {
       // default title
       const inPanel = this.$view.inPanel();
-      const titleDefault = inPanel ? this.$text('Apps') : this.$text('Home');
+      const titleDefault = inPanel ? this.$text('Apps') : this.$text('WorkplaceTitle');
       // app title
       return this.base_isChildMode() ? this.base.appItem.atomNameLocale : titleDefault;
     },

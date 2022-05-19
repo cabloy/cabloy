@@ -177,6 +177,20 @@ export default function (Vue) {
         commit('setAppItemsAll', { appItems });
         return appItems;
       },
+      async getAppMenuInfo({ state, dispatch }, { appKey }) {
+        const appItem = await dispatch('getAppItem', { appKey });
+        // configMenu
+        const presetConfig = await dispatch('getPresetConfig', { appKey });
+        const configMenu = presetConfig.menu;
+        if (!configMenu.layout) return null;
+        // ok
+        return {
+          appKey,
+          appItem,
+          configMenu,
+          appMenuLayout: configMenu.layout,
+        };
+      },
       async getAppHomeInfo({ state, getters, dispatch }, { appKey, force }) {
         let appItem = await dispatch('getAppItem', { appKey });
         // configHome

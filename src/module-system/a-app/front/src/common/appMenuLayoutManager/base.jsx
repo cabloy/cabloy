@@ -7,6 +7,7 @@ export default {
         //
         appItem: null,
         appPresetConfig: null,
+        //
       },
     };
   },
@@ -16,6 +17,20 @@ export default {
         module: 'a-app',
         atomClassName: 'app',
       };
+    },
+    base_appCurrent() {
+      return this.$store.getters['a/app/current'];
+    },
+    base_appLanguageCurrent() {
+      return this.base_appCurrent.appLanguage;
+    },
+  },
+  watch: {
+    base_appCurrent(current) {
+      if (!this.base.appMineInited) return;
+      if (!current.appKey) return;
+      if (!this.$meta.vueLayout.started) return;
+      this.base_app_switch({ appKey: current.appKey });
     },
   },
   methods: {
