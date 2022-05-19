@@ -167,7 +167,11 @@ module.exports = app => {
     }
 
     getFrontScene() {
-      return this.ctx.request.query['x-scene'] || this.ctx.headers['x-scene'] || this.ctx.session['x-scene'];
+      return (
+        (this.ctx.request.query && this.ctx.request.query['x-scene']) ||
+        (this.ctx.headers && this.ctx.headers['x-scene']) ||
+        (this.ctx.session && this.ctx.session['x-scene'])
+      );
     }
 
     evaluateExpression({ expression, globals, wrapper }) {
