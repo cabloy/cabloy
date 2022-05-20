@@ -11,18 +11,16 @@ export default {
   methods: {
     // apps
     async data_provider_onLoadItemsAll() {
-      const current = this.base_appCurrent;
       const resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', {
         resourceType: 'a-base:mine',
-        appKey: current.appKey,
+        appKey: this.base.appInfoCurrent.appKey,
       });
       return { list: resourcesArrayAll };
     },
     // tools
     data_tools_prepareCategoriesTop() {
-      const current = this.base_appCurrent;
       const __categoriesTop = this.$config.appMine.categoriesTop;
-      const appKey = current.appKey;
+      const appKey = this.base.appInfoCurrent.appKey;
       return __categoriesTop[appKey];
     },
   },
