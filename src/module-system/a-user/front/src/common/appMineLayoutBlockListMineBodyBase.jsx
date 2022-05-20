@@ -33,6 +33,16 @@ export default {
       });
       return groups;
     },
+    base_appInfoCurrent() {
+      return this.layoutManager.base.appInfoCurrent;
+    },
+  },
+  watch: {
+    base_appInfoCurrent() {
+      if (!this.ready) return;
+      if (!this.$meta.vueLayout.started) return;
+      this.init_fetchDataAll();
+    },
   },
   created() {
     this.init();
@@ -43,6 +53,7 @@ export default {
     async init() {
       this.init_layoutConfig();
       await this.init_categoriesAll();
+      await this.init_fetchDataAll();
       if (this.onInit) {
         await this.onInit();
       }
@@ -50,8 +61,10 @@ export default {
     },
     init_layoutConfig() {},
     async init_categoriesAll() {
-      await this.layoutManager.page_onRefresh();
       this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:mine' });
+    },
+    async init_fetchDataAll() {
+      await this.layoutManager.page_onRefresh();
     },
     onItemClick(event, item) {
       if (item.onPerform) {
