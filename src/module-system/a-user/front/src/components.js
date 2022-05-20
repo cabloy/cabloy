@@ -1,13 +1,13 @@
 import action from './components/action.js';
-// appMineLayoutDefault
-import appMineLayoutBlockDefaultMain from './components/appMineLayoutDefault/appMineLayoutBlockDefaultMain.jsx';
-import appMineLayoutBlockDefaultMineHeader from './components/appMineLayoutDefault/appMineLayoutBlockDefaultMineHeader.jsx';
-import appMineLayoutBlockDefaultMineBody from './components/appMineLayoutDefault/appMineLayoutBlockDefaultMineBody.jsx';
+// appMineLayoutList
+import appMineLayoutBlockListItems from './components/appMineLayoutList/appMineLayoutBlockListItems.jsx';
+import appMineLayoutBlockListMineHeader from './components/appMineLayoutList/appMineLayoutBlockListMineHeader.jsx';
+import appMineLayoutBlockListMineBody from './components/appMineLayoutList/appMineLayoutBlockListMineBody.jsx';
 
 export default {
   action,
-  // appMineLayoutDefault
-  appMineLayoutBlockDefaultMain,
-  appMineLayoutBlockDefaultMineHeader,
-  appMineLayoutBlockDefaultMineBody,
+  // appMineLayoutList
+  appMineLayoutBlockListItems,
+  appMineLayoutBlockListMineHeader,
+  appMineLayoutBlockListMineBody,
 };

@@ -1,10 +1,6 @@
 export default {
   data() {
-    return {
-      actions: {
-        list: null,
-      },
-    };
+    return {};
   },
   methods: {
     actions_render() {

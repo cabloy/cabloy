@@ -6,7 +6,7 @@ export default {
   },
   methods: {
     layout_onGetLayoutConfigKeyCurrent() {
-      return `appMine.base.render.item.layout.current.${this.container.mode}.${this.$view.size}`;
+      return `appMine.base.render.item.layout.current.${this.$view.size}`;
     },
     async layout_onPrepareConfigFull() {
       // configAppMineBase

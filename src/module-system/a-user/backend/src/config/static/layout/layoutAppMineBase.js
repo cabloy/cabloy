@@ -4,43 +4,46 @@ module.exports = app => {
     info: {
       layout: {
         viewSize: {
-          view: {
-            small: 'default',
-            medium: 'default',
-            large: 'default',
-          },
-          edit: {
-            small: 'default',
-            medium: 'default',
-            large: 'default',
-          },
+          small: 'list',
+          medium: 'list',
+          large: 'list',
         },
       },
     },
     layouts: {
       base: {
         blocks: {
-          main: {
+          title: {
             component: {
-              module: 'a-user',
-              name: 'appMineLayoutBlockDefaultMain',
+              module: 'a-baselayout',
+              name: 'baseLayoutBlockListTitle',
             },
           },
         },
       },
-      default: {
+      list: {
+        providerOptions: {
+          providerName: 'all',
+          autoInit: true,
+        },
         subnavbar: false,
         blocks: {
+          items: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListItems',
+            },
+          },
           mineHeader: {
             component: {
               module: 'a-user',
-              name: 'appMineLayoutBlockDefaultMineHeader',
+              name: 'appMineLayoutBlockListMineHeader',
             },
           },
           mineBody: {
             component: {
               module: 'a-user',
-              name: 'appMineLayoutBlockDefaultMineBody',
+              name: 'appMineLayoutBlockListMineBody',
             },
           },
         },
