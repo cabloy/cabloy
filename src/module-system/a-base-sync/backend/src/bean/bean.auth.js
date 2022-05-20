@@ -127,8 +127,8 @@ module.exports = ctx => {
     }
 
     _getAuthRedisKey({ user }) {
-      if (!user.provider) return null;
       const userAgent = user.agent || user.op;
+      if (!ctx.instance || !user.provider || !userAgent) return null;
       return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
     }
 
