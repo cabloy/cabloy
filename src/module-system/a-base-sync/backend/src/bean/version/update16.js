@@ -12,7 +12,7 @@ module.exports = function (ctx) {
       sql = `
       CREATE VIEW aResourceView as
         select a.*,b.id as appAtomId,b.atomName as appName from aResource a
-          left join aAtom b on a.appKey=b.atomStaticKey and b.atomStage=1
+          left join aAtom b on a.iid=b.iid and b.deleted=0 and a.appKey=b.atomStaticKey and b.atomStage=1
     `;
       await ctx.model.query(sql);
     }
