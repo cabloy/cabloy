@@ -7,7 +7,7 @@ module.exports = appInfo => {
   config.queues = {
     contacts: {
       bean: 'contacts',
-      transaction: true,
+      transaction: false,
     },
   };
 
