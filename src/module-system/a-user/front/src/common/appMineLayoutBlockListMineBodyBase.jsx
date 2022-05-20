@@ -48,7 +48,9 @@ export default {
     this.init();
   },
   mounted() {},
-  beforeDestroy() {},
+  beforeDestroy() {
+    this.ready = false;
+  },
   methods: {
     async init() {
       this.init_layoutConfig();
