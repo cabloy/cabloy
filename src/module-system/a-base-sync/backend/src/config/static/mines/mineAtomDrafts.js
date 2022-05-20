@@ -6,7 +6,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Drafts',
     atomStaticKey: 'mineAtomDrafts',
-    atomRevision: 1,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -19,6 +19,8 @@ module.exports = app => {
         color: 'orange',
       },
     }),
+    resourceIcon: ':outline:draft-outline',
+    appKey: 'a-appbooster:appDefault',
     resourceRoles: 'root',
     resourceSorting: 1,
   };
