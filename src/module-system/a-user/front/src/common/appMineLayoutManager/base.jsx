@@ -63,8 +63,6 @@ export default {
       if (this.base_app_isCurrentSameFull(this.base.appInfoCurrent, appInfo)) return false;
       // current
       this.base.appInfoCurrent = appInfo;
-      // fetch data
-      await this.page_onRefresh();
       // configAppMine
       const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
         layoutKey: appInfo.appMineLayout,

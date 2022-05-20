@@ -50,6 +50,7 @@ export default {
     },
     init_layoutConfig() {},
     async init_categoriesAll() {
+      await this.layoutManager.page_onRefresh();
       this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:mine' });
     },
     onItemClick(event, item) {
