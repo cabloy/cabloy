@@ -474,40 +474,46 @@ module.exports = ctx => {
     }
 
     async _prepareAvatar({ authItem, profile }) {
-      // avatar
-      let avatarOld;
-      let _avatarOld;
-      if (authItem) {
-        const _profile = JSON.parse(authItem.profile);
-        avatarOld = _profile.avatar;
-        _avatarOld = _profile._avatar;
+      // maybe failed for image format invalid
+      try {
+        // avatar
+        let avatarOld;
+        let _avatarOld;
+        if (authItem) {
+          const _profile = JSON.parse(authItem.profile);
+          avatarOld = _profile.avatar;
+          _avatarOld = _profile._avatar;
+        }
+        if (!profile.avatar || profile.avatar === avatarOld) {
+          profile._avatar2 = _avatarOld;
+          return;
+        }
+        // download image
+        const res = await this._downloadAvatar({ avatar: profile.avatar });
+        // meta
+        const mime = res.headers['content-type'] || '';
+        const ext = mime.split('/')[1] || '';
+        const meta = {
+          filename: `user-avatar.${ext}`,
+          encoding: '7bit',
+          mime,
+          fields: {
+            mode: 1,
+            flag: `user-avatar:${profile.avatar}`,
+          },
+        };
+        // upload
+        const res2 = await ctx.bean.file._upload({
+          fileContent: res.data,
+          meta,
+          user: null,
+        });
+        // hold
+        profile._avatar = res2.downloadUrl;
+      } catch (err) {
+        // not throw err
+        console.log(err);
       }
-      if (!profile.avatar || profile.avatar === avatarOld) {
-        profile._avatar2 = _avatarOld;
-        return;
-      }
-      // download image
-      const res = await this._downloadAvatar({ avatar: profile.avatar });
-      // meta
-      const mime = res.headers['content-type'] || '';
-      const ext = mime.split('/')[1] || '';
-      const meta = {
-        filename: `user-avatar.${ext}`,
-        encoding: '7bit',
-        mime,
-        fields: {
-          mode: 1,
-          flag: `user-avatar:${profile.avatar}`,
-        },
-      };
-      // upload
-      const res2 = await ctx.bean.file._upload({
-        fileContent: res.data,
-        meta,
-        user: null,
-      });
-      // hold
-      profile._avatar = res2.downloadUrl;
     }
 
     async _addUserInfo(profile, columns, autoActivate) {
