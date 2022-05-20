@@ -503,13 +503,19 @@ module.exports = ctx => {
           },
         };
         // upload
-        const res2 = await ctx.bean.file._upload({
-          fileContent: res.data,
-          meta,
-          user: null,
-        });
-        // hold
-        profile._avatar = res2.downloadUrl;
+        try {
+          const res2 = await ctx.bean.file._upload({
+            fileContent: res.data,
+            meta,
+            user: null,
+          });
+          // hold
+          profile._avatar = res2.downloadUrl;
+        } catch (err) {
+          console.log('-------- avatar:', profile.avatar);
+          console.log(res);
+          console.log(err);
+        }
       } catch (err) {
         // not throw err
         console.log(err);
