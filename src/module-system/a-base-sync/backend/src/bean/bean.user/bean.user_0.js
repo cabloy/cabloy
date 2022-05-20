@@ -513,8 +513,8 @@ module.exports = ctx => {
           profile._avatar = res2.downloadUrl;
         } catch (err) {
           console.log('-------- avatar:', profile.avatar);
-          console.log(res);
-          console.log(err);
+          // console.log(res);
+          // console.log(err);
         }
       } catch (err) {
         // not throw err
