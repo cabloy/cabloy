@@ -16,13 +16,13 @@ export default {
     },
     page_onRefresh(done) {
       done && done();
-      this.data_onPageRefresh(true);
+      return this.data_onPageRefresh(true);
     },
     page_onInfinite() {
-      this.data_onPageInfinite();
+      return this.data_onPageInfinite();
     },
     page_onClear() {
-      this.data_onPageClear();
+      return this.data_onPageClear();
     },
     page_getTitle() {
       //

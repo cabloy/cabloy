@@ -35,7 +35,7 @@ export default {
     },
     onPageRefresh(/* force*/) {
       this.onPageClear();
-      this.loadItemsAll();
+      return this.loadItemsAll();
     },
     onPageInfinite() {
       // do nothing
