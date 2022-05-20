@@ -416,10 +416,12 @@ module.exports = ctx => {
 
       // restore maxAge
       //   maxAge: 0,null/undefined,>0
-      if (profileUser.maxAge === 0) {
-        ctx.session.maxAge = this.config.auth.maxAge.default;
-      } else {
-        ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
+      if (ctx.session) {
+        if (profileUser.maxAge === 0) {
+          ctx.session.maxAge = this.config.auth.maxAge.default;
+        } else {
+          ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
+        }
       }
 
       // ok
