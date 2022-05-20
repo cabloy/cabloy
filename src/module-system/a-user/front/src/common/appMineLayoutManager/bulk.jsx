@@ -3,7 +3,7 @@ export default {
     return {};
   },
   methods: {
-    actions_render() {
+    bulk_renderActionsNormal() {
       if (!this.base_ready) return null;
       if (this.base_user.anonymous) return null;
       const children = [];
