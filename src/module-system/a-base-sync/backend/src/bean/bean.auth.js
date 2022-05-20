@@ -182,6 +182,7 @@ module.exports = ctx => {
       if (!user.token) return null;
       // check token
       const key = this._getAuthRedisKey({ user });
+      if (!key) return null;
       const token = await this.redisAuth.get(key);
       if (token !== user.token) return null;
       // ready
