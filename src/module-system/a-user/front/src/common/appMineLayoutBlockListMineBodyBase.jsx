@@ -99,6 +99,15 @@ export default {
       if (index === -1) return group.categorySorting;
       return index - categoriesTop.length;
     },
+    _renderStats(item) {
+      const resourceConfig = JSON.parse(item.resourceConfig);
+      const stats = resourceConfig.stats;
+      if (!stats) return;
+      if (stats.color === 'auto') {
+        return <eb-stats-color stats_params={stats.params}></eb-stats-color>;
+      }
+      return <eb-stats stats_params={stats.params} stats_color={stats.color}></eb-stats>;
+    },
     _renderGroup(group) {
       const children = [];
       for (const item of group.items) {
@@ -111,6 +120,7 @@ export default {
             propsOnPerform={event => this.onItemClick(event, item)}
           >
             <f7-icon slot="media" f7={item.resourceIcon}></f7-icon>
+            <div slot="after">{this._renderStats(item)}</div>
           </eb-list-item>
         );
         children.push(domItem);
