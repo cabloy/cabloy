@@ -1,22 +1,18 @@
+// export
 export default {
-  meta: {
-    global: false,
-  },
-  props: {
-    layoutManager: {
-      type: Object,
-    },
-    layout: {
-      type: Object,
-    },
-    blockConfig: {
-      type: Object,
-    },
-  },
-  data() {
-    return {};
-  },
-  render() {
-    return <div></div>;
-  },
+  installFactory,
 };
+
+// installFactory
+function installFactory(_Vue) {
+  const Vue = _Vue;
+  const ebAppMineLayoutBlockListMineBodyBase =
+    Vue.prototype.$meta.module.get('a-user').options.mixins.ebAppMineLayoutBlockListMineBodyBase;
+  return {
+    mixins: [ebAppMineLayoutBlockListMineBodyBase],
+    data() {
+      return {};
+    },
+    methods: {},
+  };
+}

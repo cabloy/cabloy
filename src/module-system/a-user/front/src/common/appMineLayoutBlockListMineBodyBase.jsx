@@ -13,8 +13,8 @@ export default {
   data() {
     return {
       resourceType: 'a-base:mine',
-      treeData: null,
-      resourcesArrayAll: null,
+      categoryTree: null,
+      supportSingle: false,
       ready: false,
     };
   },
@@ -48,30 +48,15 @@ export default {
       }
       this.ready = true;
     },
-    init_layoutConfig() {
-      // accordionItemOpened
-      const appKey = this.layoutManager.container.appKey;
-      const layoutCurrent = this.layoutManager.layout.current;
-      this.layoutConfigKeyOpened = `appMenu.${appKey}.render.list.layouts.${layoutCurrent}.opened`;
-      this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
-    },
+    init_layoutConfig() {},
     async init_categoriesAll() {
-      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
+      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:mine' });
     },
     onItemClick(event, item) {
       if (item.onPerform) {
         return item.onPerform(event, item);
       }
       return this.layoutManager.base_onPerformResource(event, item);
-    },
-    onAccordionOpen(event, group) {
-      this.accordionItemOpened = group.id;
-      // save
-      this.$store.commit('a/base/setLayoutConfigKey', {
-        module: 'a-basefront',
-        key: this.layoutConfigKeyOpened,
-        value: group.id,
-      });
     },
     _groupItems({ categories, items, categoriesTop }) {
       if (!categories || !items) return null;
@@ -132,7 +117,7 @@ export default {
       }
       return <eb-list inset>{children}</eb-list>;
     },
-    _renderAccordion(group, index) {
+    _renderAccordion(group /* , index*/) {
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
@@ -142,16 +127,10 @@ export default {
       // domAccordionContent
       const domGroup = this._renderGroup(group);
       const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
-      const accordionItemOpened =
-        this.accordionItemOpened === group.id || (this.accordionItemOpened === 0 && index === 0);
+      const accordionItemOpened = true;
       // ok
       return (
-        <eb-list-item
-          key={group.id}
-          accordion-item
-          accordion-item-opened={accordionItemOpened}
-          onAccordionOpen={event => this.onAccordionOpen(event, group)}
-        >
+        <eb-list-item key={group.id} accordion-item accordion-item-opened={accordionItemOpened}>
           {domTitle}
           {domAccordionContent}
         </eb-list-item>
@@ -173,6 +152,7 @@ export default {
     },
     renderItems() {
       if (!this.ready) return null;
+      if (this.layoutManager.base_user.anonymous) return null;
       return <div>{this._renderAccordions()}</div>;
     },
   },

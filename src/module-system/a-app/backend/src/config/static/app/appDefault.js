@@ -14,7 +14,7 @@ module.exports = app => {
             page: null,
           },
           mine: {
-            layout: 'a-app:layoutAppMineDefault',
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
         pc: {
@@ -28,7 +28,7 @@ module.exports = app => {
             page: null,
           },
           mine: {
-            layout: 'a-app:layoutAppMineDefault',
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
       },
@@ -44,7 +44,7 @@ module.exports = app => {
             page: null,
           },
           mine: {
-            layout: 'a-app:layoutAppMineDefault',
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
         pc: {
@@ -58,7 +58,7 @@ module.exports = app => {
             page: null,
           },
           mine: {
-            layout: 'a-app:layoutAppMineDefault',
+            layout: 'a-user:layoutAppMineDefault',
           },
         },
       },

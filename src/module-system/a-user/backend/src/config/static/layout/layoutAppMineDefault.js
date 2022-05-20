@@ -2,16 +2,7 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const content = {
     layouts: {
-      default: {
-        blocks: {
-          mineBody: {
-            component: {
-              module: 'a-app',
-              name: 'appMineLayoutBlockDefaultMineBody',
-            },
-          },
-        },
-      },
+      list: {},
     },
   };
   const layout = {
