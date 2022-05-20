@@ -6,7 +6,7 @@ module.exports = app => {
   const resource = {
     atomName: 'StarsLabels',
     atomStaticKey: 'mineAtomStars',
-    atomRevision: 7,
+    atomRevision: 9,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -19,8 +19,8 @@ module.exports = app => {
         color: 'auto',
       },
     }),
-    resourceIcon: '::star',
-    appKey: 'a-appbooster:appDefault',
+    resourceIcon: ':outline:star-outline',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 2,
   };

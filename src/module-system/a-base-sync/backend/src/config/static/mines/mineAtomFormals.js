@@ -9,14 +9,14 @@ module.exports = app => {
   const resource = {
     atomName: 'Formals',
     atomStaticKey: 'mineAtomFormals',
-    atomRevision: 1,
+    atomRevision: 3,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
     }),
-    resourceIcon: '::archive',
-    appKey: 'a-appbooster:appDefault',
+    resourceIcon: ':outline:archive-outline',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 3,
   };

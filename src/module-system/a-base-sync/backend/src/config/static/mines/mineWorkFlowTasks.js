@@ -5,7 +5,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Tasks',
     atomStaticKey: 'mineWorkFlowTasks',
-    atomRevision: 1,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.WorkFlow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -19,7 +19,7 @@ module.exports = app => {
       },
     }),
     resourceIcon: ':flow:activity-user-task',
-    appKey: 'a-appbooster:appDefault',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 1,
   };
