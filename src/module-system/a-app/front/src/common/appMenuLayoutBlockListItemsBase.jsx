@@ -59,6 +59,9 @@ export default {
     async init_categoriesAll() {
       this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
     },
+    onGetGroups() {
+      return this.groups;
+    },
     onItemClick(event, item) {
       if (item.onPerform) {
         return item.onPerform(event, item);
@@ -159,7 +162,7 @@ export default {
       );
     },
     _renderAccordions() {
-      const groups = this.groups;
+      const groups = this.onGetGroups();
       if (!groups) return null;
       const children = [];
       // single
