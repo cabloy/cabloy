@@ -62,6 +62,9 @@ export default {
     onGetGroups() {
       return this.groups;
     },
+    onRenderGroup(group) {
+      return this._renderGroup(group);
+    },
     onItemClick(event, item) {
       if (item.onPerform) {
         return item.onPerform(event, item);
@@ -121,17 +124,22 @@ export default {
     _renderGroup(group) {
       const children = [];
       for (const item of group.items) {
-        const domItem = (
-          <eb-list-item
-            class="item"
-            key={item.atomId}
-            link="#"
-            title={item.atomNameLocale}
-            propsOnPerform={event => this.onItemClick(event, item)}
-          >
-            <f7-icon slot="media" f7={item.resourceIcon}></f7-icon>
-          </eb-list-item>
-        );
+        let domItem;
+        if (!item) {
+          domItem = <f7-list-item divider></f7-list-item>;
+        } else {
+          domItem = (
+            <eb-list-item
+              class="item"
+              key={item.atomId}
+              link="#"
+              title={item.atomNameLocale}
+              propsOnPerform={event => this.onItemClick(event, item)}
+            >
+              <f7-icon slot="media" f7={item.resourceIcon}></f7-icon>
+            </eb-list-item>
+          );
+        }
         children.push(domItem);
       }
       return <eb-list inset>{children}</eb-list>;
@@ -144,7 +152,7 @@ export default {
         </div>
       );
       // domAccordionContent
-      const domGroup = this._renderGroup(group);
+      const domGroup = this.onRenderGroup(group);
       const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
       const accordionItemOpened =
         this.accordionItemOpened === group.id || (this.accordionItemOpened === 0 && index === 0);
@@ -167,7 +175,7 @@ export default {
       const children = [];
       // single
       if (this.supportSingle && groups.length === 1) {
-        return this._renderGroup(groups[0]);
+        return this.onRenderGroup(groups[0]);
       }
       // more
       for (let index = 0; index < groups.length; index++) {
