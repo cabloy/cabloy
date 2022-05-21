@@ -40,10 +40,22 @@ module.exports = app => {
               name: 'appMineLayoutBlockListMineHeader',
             },
           },
+          mineSubHeader: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListMineSubHeader',
+            },
+          },
           mineBody: {
             component: {
               module: 'a-user',
               name: 'appMineLayoutBlockListMineBody',
+            },
+          },
+          mineFooter: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListMineFooter',
             },
           },
         },
@@ -53,7 +65,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMineBase',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 14,
     content: JSON.stringify(content),

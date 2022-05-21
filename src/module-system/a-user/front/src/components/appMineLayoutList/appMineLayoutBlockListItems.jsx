@@ -20,13 +20,21 @@ export default {
     const domMineHeader = this.layoutManager.layout_renderBlock({
       blockName: 'mineHeader',
     });
+    const domMineSubHeader = this.layoutManager.layout_renderBlock({
+      blockName: 'mineSubHeader',
+    });
     const domMineBody = this.layoutManager.layout_renderBlock({
       blockName: 'mineBody',
+    });
+    const domMineFooter = this.layoutManager.layout_renderBlock({
+      blockName: 'mineFooter',
     });
     return (
       <div>
         {domMineHeader}
+        {domMineSubHeader}
         {domMineBody}
+        {domMineFooter}
       </div>
     );
   },
