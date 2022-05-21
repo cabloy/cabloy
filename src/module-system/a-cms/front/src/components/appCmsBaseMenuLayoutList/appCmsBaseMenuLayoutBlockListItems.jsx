@@ -47,6 +47,9 @@ function installFactory(_Vue) {
         });
         return groups;
       },
+      onNodeSelect(node) {
+        console.log(node);
+      },
       _renderCategoryTree() {
         const options = {
           props: {
@@ -62,7 +65,7 @@ function installFactory(_Vue) {
             checkbox: false,
           },
           on: {
-            // nodeChange: this.onNodeChange,
+            nodeSelect: this.onNodeSelect,
           },
         };
         return (
