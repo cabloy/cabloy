@@ -17,6 +17,6 @@ export default {
     return {};
   },
   render() {
-    return null;
+    return <div class="eb-mine-footer">{this.$text('CopyrightTip')}</div>;
   },
 };
