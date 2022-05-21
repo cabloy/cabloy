@@ -8,22 +8,13 @@ function installFactory(_Vue) {
   const Vue = _Vue;
   const ebAppMenuLayoutBlockListItemsBase =
     Vue.prototype.$meta.module.get('a-app').options.mixins.ebAppMenuLayoutBlockListItemsBase;
-  const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
   return {
-    mixins: [ebAppMenuLayoutBlockListItemsBase, ebModules],
+    mixins: [ebAppMenuLayoutBlockListItemsBase],
     data() {
-      return {
-        settingsInstance: null,
-      };
+      return {};
     },
     methods: {
-      async onInit() {
-        // modules
-        await this.$store.dispatch('a/base/getModules');
-        // settings
-        const res = await this.$api.post('/a/settings/settings/instance/list');
-        this.settingsInstance = res.list;
-      },
+      async onInit() {},
       onPerformSettingItem(event, item) {
         let action;
         if (item.validator) {
@@ -56,6 +47,36 @@ function installFactory(_Vue) {
         });
         return groups;
       },
+      _renderCategoryTree() {
+        const options = {
+          props: {
+            atomClass: {
+              module: 'a-cms',
+              atomClassName: 'article',
+            },
+            language: this.layoutManager.base_appLanguageCurrent,
+            categoryIdStart: 0,
+            multiple: false,
+            catalogOnly: false,
+            leafOnly: true,
+            checkbox: false,
+          },
+          on: {
+            // nodeChange: this.onNodeChange,
+          },
+        };
+        return (
+          <eb-component
+            ref="categorySelect"
+            module="a-basefront"
+            name="categorySelect"
+            options={options}
+          ></eb-component>
+        );
+      },
+    },
+    render() {
+      return this._renderCategoryTree();
     },
   };
 }

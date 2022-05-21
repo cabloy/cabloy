@@ -9,6 +9,9 @@ export default {
     disabledCategoryIds: {},
     selectedCategoryIds: {},
     // setLocale: {},
+    checkbox: {
+      default: true,
+    },
   },
   data() {
     return {};
@@ -35,7 +38,7 @@ export default {
           itemToggle: false,
           selectable: false,
           multiple: this.multiple,
-          checkbox: true,
+          checkbox: this.checkbox,
           checkOnLabel: true,
         },
       };
@@ -67,6 +70,7 @@ export default {
     },
     _createNodeRoot(children) {
       const checkbox = !this.leafOnly;
+      const checkboxShow = this.checkbox && checkbox;
       const disabled = this.disabledCategoryIds && this.disabledCategoryIds.indexOf(0) > -1;
       return [
         {
@@ -75,7 +79,7 @@ export default {
             // label: this.$text('Root'),
             toggle: true,
             loadChildren: true,
-            checkbox,
+            checkbox: checkboxShow,
             checkOnLabel: checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,
@@ -93,6 +97,7 @@ export default {
       if (!children) return [];
       let nodes = children.map(item => {
         const checkbox = !this.leafOnly || item.categoryCatalog === 0;
+        const checkboxShow = this.checkbox && checkbox;
         const folder = !checkbox && item.categoryCatalog === 1;
         const disabled = this.disabledCategoryIds && this.disabledCategoryIds.indexOf(item.id) > -1;
         const node = {
@@ -101,7 +106,7 @@ export default {
             // label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
             toggle: item.categoryCatalog === 1,
             loadChildren: item.categoryCatalog === 1,
-            checkbox,
+            checkbox: checkboxShow,
             checkOnLabel: checkbox,
             selectable: checkbox,
             itemToggle: !checkbox,
