@@ -57,6 +57,11 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'AppLanguageTitle',
       },
+      appCms: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'AppCmsTitle',
+      },
       // Extra
       __groupExtra: {
         ebType: 'group-flatten',

@@ -16,6 +16,7 @@ module.exports = app => {
             appIcon varchar(255) DEFAULT NULL,
             appIsolate int(11) DEFAULT '0',
             appLanguage int(11) DEFAULT '0',
+            appCms int(11) DEFAULT '0',
             PRIMARY KEY (id)
           )
         `;
