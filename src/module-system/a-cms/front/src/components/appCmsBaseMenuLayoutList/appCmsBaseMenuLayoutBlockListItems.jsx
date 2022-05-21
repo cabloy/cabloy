@@ -63,6 +63,7 @@ function installFactory(_Vue) {
             catalogOnly: false,
             leafOnly: true,
             checkbox: false,
+            categoryHidden: 0,
           },
           on: {
             nodeSelect: this.onNodeSelect,

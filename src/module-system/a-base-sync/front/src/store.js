@@ -136,22 +136,22 @@ export default function (Vue) {
           [key]: resourcesArray,
         };
       },
-      setCategoryTree(state, { atomClass, language, tree }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+      setCategoryTree(state, { atomClass, language, categoryHidden, tree }) {
+        const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
         state.categoryTrees = {
           ...state.categoryTrees,
           [key]: tree,
         };
       },
-      setCategories(state, { atomClass, language, categories }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+      setCategories(state, { atomClass, language, categoryHidden, categories }) {
+        const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
         state.categories = {
           ...state.categories,
           [key]: categories,
         };
       },
       setTags(state, { atomClass, language, tags }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+        const key = __getTagStoreKey({ atomClass, language });
         state.tags = {
           ...state.tags,
           [key]: tags,
@@ -317,18 +317,19 @@ export default function (Vue) {
       getResourcesArray({ state, commit }, { resourceType, appKey }) {
         return __getResources({ state, commit }, { resourceType, appKey, useArray: true });
       },
-      getCategoryTree({ state, commit }, { atomClass, language }) {
+      getCategoryTree({ state, commit }, { atomClass, language, categoryHidden }) {
         return new Promise((resolve, reject) => {
-          const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+          const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
           if (state.categoryTrees[key]) return resolve(state.categoryTrees[key]);
           Vue.prototype.$meta.api
             .post('/a/base/category/tree', {
               atomClass,
               language: language || undefined,
+              categoryHidden,
             })
             .then(data => {
               const tree = data.list;
-              commit('setCategoryTree', { atomClass, language, tree });
+              commit('setCategoryTree', { atomClass, language, categoryHidden, tree });
               resolve(tree);
             })
             .catch(err => {
@@ -336,9 +337,9 @@ export default function (Vue) {
             });
         });
       },
-      getCategories({ state, commit }, { atomClass, language }) {
+      getCategories({ state, commit }, { atomClass, language, categoryHidden }) {
         return new Promise((resolve, reject) => {
-          const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+          const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
           if (state.categories[key]) return resolve(state.categories[key]);
           Vue.prototype.$meta.api
             .post('/a/base/category/children', {
@@ -347,7 +348,7 @@ export default function (Vue) {
             })
             .then(data => {
               const categories = data.list;
-              commit('setCategories', { atomClass, language, categories });
+              commit('setCategories', { atomClass, language, categoryHidden, categories });
               resolve(categories);
             })
             .catch(err => {
@@ -357,7 +358,7 @@ export default function (Vue) {
       },
       getTags({ state, commit }, { atomClass, language }) {
         return new Promise((resolve, reject) => {
-          const key = `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
+          const key = __getTagStoreKey({ atomClass, language });
           if (state.tags[key]) return resolve(state.tags[key]);
           const options = {
             where: {},
@@ -421,5 +422,12 @@ export default function (Vue) {
     }
     commit('setResources', { resourceType, appKey, resources, resourcesArray });
     return useArray ? resourcesArray : resources;
+  }
+
+  function __getCategoryStoreKey({ atomClass, language, categoryHidden }) {
+    return `${atomClass.module}:${atomClass.atomClassName}:${language || ''}:${categoryHidden}`;
+  }
+  function __getTagStoreKey({ atomClass, language }) {
+    return `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
   }
 }

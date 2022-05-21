@@ -12,6 +12,9 @@ export default {
     checkbox: {
       default: true,
     },
+    categoryHidden: {
+      default: undefined,
+    },
   },
   data() {
     return {};
@@ -127,6 +130,7 @@ export default {
         const treeChildren = await this.$store.dispatch('a/base/getCategoryTree', {
           atomClass: this.atomClass,
           language: this.language,
+          categoryHidden: this.categoryHidden,
         });
         // append root node
         if (this.categoryIdStart === undefined) {
