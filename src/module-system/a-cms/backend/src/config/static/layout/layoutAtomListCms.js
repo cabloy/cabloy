@@ -63,7 +63,7 @@ module.exports = app => {
     },
   };
   const layout = {
-    atomName: 'Cms',
+    atomName: 'CMS',
     atomStaticKey: 'layoutAtomListCms',
     atomRevision: 0,
     description: '',

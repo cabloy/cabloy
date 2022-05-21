@@ -16,6 +16,7 @@ module.exports = {
   Tag: '标签',
   Tags: '标签',
   Url: '链接',
+  'CMS(Base)': 'CMS(基本)',
   'Are You Sure?': '您确认吗？',
   'Article List': '文章清单',
   'Article List(by Category)': '文章清单(按目录)',
