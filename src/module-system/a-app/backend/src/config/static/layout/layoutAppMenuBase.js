@@ -26,6 +26,7 @@ module.exports = app => {
           providerName: 'all',
           autoInit: true,
         },
+        subnavbar: false,
         blocks: {
           items: {
             component: {
