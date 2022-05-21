@@ -3,6 +3,8 @@ import action from './components/action.js';
 import itemLayoutBlockMobileMain from './components/atom/itemLayoutMobile/itemLayoutBlockMobileMain.jsx';
 // itemLayoutExtend
 import itemLayoutExtend from './components/atom/itemLayoutMobile/itemLayoutExtend.jsx';
+// appCmsBaseMenuLayoutList
+import appCmsBaseMenuLayoutBlockListItems from './components/appCmsBaseMenuLayoutList/appCmsBaseMenuLayoutBlockListItems.jsx';
 
 export default {
   action,
@@ -10,4 +12,6 @@ export default {
   itemLayoutBlockMobileMain,
   // itemLayoutExtend
   itemLayoutExtend,
+  // appCmsBaseMenuLayoutList
+  appCmsBaseMenuLayoutBlockListItems,
 };
