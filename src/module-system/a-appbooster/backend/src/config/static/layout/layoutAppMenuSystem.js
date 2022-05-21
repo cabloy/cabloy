@@ -7,7 +7,7 @@ module.exports = app => {
           items: {
             component: {
               module: moduleInfo.relativeName,
-              name: 'appSystemLayoutBlockListItems',
+              name: 'appSystemMenuLayoutBlockListItems',
             },
           },
         },
@@ -17,7 +17,7 @@ module.exports = app => {
   const layout = {
     atomName: 'System',
     atomStaticKey: 'layoutAppMenuSystem',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),

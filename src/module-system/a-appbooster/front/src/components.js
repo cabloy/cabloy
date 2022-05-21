@@ -1,7 +1,7 @@
-// appSystemLayoutList
-import appSystemLayoutBlockListItems from './components/appSystemLayoutList/appSystemLayoutBlockListItems.jsx';
+// appSystemMenuLayoutList
+import appSystemMenuLayoutBlockListItems from './components/appSystemMenuLayoutList/appSystemMenuLayoutBlockListItems.jsx';
 
 export default {
-  // appSystemLayoutList
-  appSystemLayoutBlockListItems,
+  // appSystemMenuLayoutList
+  appSystemMenuLayoutBlockListItems,
 };

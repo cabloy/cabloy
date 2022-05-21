@@ -7,7 +7,7 @@ module.exports = app => {
           items: {
             component: {
               module: 'a-cms',
-              name: 'appMenuLayoutBlockListItems',
+              name: 'appCmsBaseMenuLayoutBlockListItems',
             },
           },
         },
@@ -17,7 +17,7 @@ module.exports = app => {
   const layout = {
     atomName: 'CMS(Base)',
     atomStaticKey: 'layoutAppMenuCmsBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),
