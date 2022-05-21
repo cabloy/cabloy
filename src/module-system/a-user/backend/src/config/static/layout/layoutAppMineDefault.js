@@ -8,7 +8,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Default',
     atomStaticKey: 'layoutAppMineDefault',
-    atomRevision: 0,
+    atomRevision: -1,
     description: '',
     layoutTypeCode: 14,
     content: JSON.stringify(content),

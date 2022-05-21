@@ -64,10 +64,16 @@ export default {
       // current
       this.base.appInfoCurrent = appInfo;
       // configAppMine
-      const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: appInfo.appMineLayout,
-      });
-      this.base.configAppMine = layoutItem.content;
+      if (typeof appInfo.appMineLayout === 'string') {
+        // mine.layout=layoutKey
+        const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+          layoutKey: appInfo.appMineLayout,
+        });
+        this.base.configAppMine = layoutItem.content;
+      } else {
+        // mine.layout=true
+        this.base.configAppMine = null;
+      }
       // add
       await this.base_app_add(appInfo);
       // ok
