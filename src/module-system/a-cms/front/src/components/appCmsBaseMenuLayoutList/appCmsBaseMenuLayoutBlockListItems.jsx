@@ -64,6 +64,17 @@ function installFactory(_Vue) {
       },
       onNodeSelect(node) {
         console.log(node);
+        const options = {
+          category: node.id,
+        };
+        const queries = {
+          module: this.atomClass.module,
+          atomClassName: this.atomClass.atomClassName,
+          language: this.language,
+          options: JSON.stringify(options),
+        };
+        const url = this.$meta.util.combineQueries('/a/basefront/atom/list', queries);
+        this.$view.navigate(url);
       },
       onRenderGroup(group) {
         if (group.categoryName === 'Categories') {
