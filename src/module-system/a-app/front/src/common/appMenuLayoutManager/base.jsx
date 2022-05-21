@@ -3,6 +3,7 @@ export default {
     return {
       base: {
         configAppMenuBase: null,
+        configAppMenuCmsBase: null,
         configAppMenu: null,
         //
         appInfoCurrent: {},

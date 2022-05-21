@@ -11,10 +11,12 @@ export default {
     },
     async layout_onPrepareConfigFull() {
       // configAppMenuBase
-      const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: 'a-app:layoutAppMenuBase',
-      });
-      this.base.configAppMenuBase = layoutItem.content;
+      if (!this.base.configAppMenuBase) {
+        const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
+          layoutKey: 'a-app:layoutAppMenuBase',
+        });
+        this.base.configAppMenuBase = layoutItem.content;
+      }
       // combine
       return this.$meta.util.extend({}, this.base.configAppMenuBase, this.base.configAppMenu);
     },
