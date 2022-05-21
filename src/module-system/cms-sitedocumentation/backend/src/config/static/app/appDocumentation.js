@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const info = {
     home: {
       mode: 'page',
@@ -7,6 +7,12 @@ module.exports = app => {
     },
   };
   const content = {
+    info: {
+      atomClass: {
+        module: moduleInfo.relativeName,
+        atomClassName: 'document',
+      },
+    },
     presets: {
       anonymous: {
         mobile: info,
@@ -21,7 +27,7 @@ module.exports = app => {
   const _app = {
     atomName: 'Documentation',
     atomStaticKey: 'appDocumentation',
-    atomRevision: 2,
+    atomRevision: 3,
     atomCategoryId: 'General',
     description: '',
     appIcon: ':outline:article-outline',
