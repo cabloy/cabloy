@@ -59,18 +59,29 @@ function installFactory(_Vue) {
     methods: {
       async onInit() {},
       onGetGroups() {
-        console.log(this.groups2);
         return this.groups2;
       },
       onNodeSelect(node) {
-        console.log(node);
         const options = {
+          language: this.language,
           category: node.id,
         };
+        this._openURL({ options });
+      },
+      onTagChange() {
+        const tagSelect = this.$refs.tagSelect.getComponentInstance();
+        const checked = tagSelect.checked();
+        // options
+        const options = {
+          language: this.language,
+          tag: checked,
+        };
+        this._openURL({ options });
+      },
+      _openURL({ options }) {
         const queries = {
           module: this.atomClass.module,
           atomClassName: this.atomClass.atomClassName,
-          language: this.language,
           options: JSON.stringify(options),
         };
         const url = this.$meta.util.combineQueries('/a/basefront/atom/list', queries);
@@ -117,7 +128,7 @@ function installFactory(_Vue) {
             multiple: false,
           },
           on: {
-            change: this.onChange,
+            change: this.onTagChange,
           },
         };
         return <eb-component ref="tagSelect" module="a-basefront" name="tagSelect" options={options}></eb-component>;
