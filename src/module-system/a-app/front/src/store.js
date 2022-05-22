@@ -167,6 +167,9 @@ export default function (Vue) {
         const res = await Vue.prototype.$meta.api.post('/a/base/resource/select', {
           atomClass: __atomClassApp,
           options: {
+            where: {
+              'f.appIsolate': 0,
+            },
             orders: [
               ['f.appSorting', 'asc'],
               ['f.createdAt', 'asc'],
