@@ -97,7 +97,7 @@ export default {
     async base_checkAppMineDefault({ appInfo }) {
       if (this.base.appMineDefaultChecked) return;
       // app default
-      if (!this.base_isAppDefault(appInfo.appKey) && !appInfo.appItem.isolate) {
+      if (!this.base_isAppDefault(appInfo.appKey) && !appInfo.appItem.appIsolate) {
         const appDefault = await this.$store.dispatch('a/app/getAppMineInfo', {
           appKey: this.base.appKeyDefault,
           force: false,

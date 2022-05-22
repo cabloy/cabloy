@@ -12,7 +12,7 @@ export default {
       // current
       const current = this.$store.getters['a/app/current'];
       const appItemCurrent = await this.$store.dispatch('a/app/getAppItem', { appKey: current.appKey });
-      if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
+      if (!this.app_isDefault(current.appKey) && !appItemCurrent.appIsolate) {
         this.$meta.store.commit('a/app/setCurrent', { appKey: this.app.keyDefault });
       }
       // open
@@ -77,7 +77,7 @@ export default {
     async app_checkAppMenuDefault({ current, appItemCurrent }) {
       if (this.app.appMenuDefaultChecked) return;
       // app default
-      if (!this.app_isDefault(current.appKey) && !appItemCurrent.isolate) {
+      if (!this.app_isDefault(current.appKey) && !appItemCurrent.appIsolate) {
         const appItemDefault = await this.$store.dispatch('a/app/getAppItemDefault');
         this.navigate(`/a/app/appMenu?appKey=${this.app.keyDefault}`, {
           scene: 'sidebar',

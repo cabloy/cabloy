@@ -110,7 +110,7 @@ export default {
       const __appKeyDefault = this.$config.appKey.default;
       if (this.container.appKey === __appKeyDefault) return false;
       if (!this.base.appInfoCurrent.appItem) return false;
-      if (this.base.appInfoCurrent.appItem.isolate) return false;
+      if (this.base.appInfoCurrent.appItem.appIsolate) return false;
       return true;
     },
   },
