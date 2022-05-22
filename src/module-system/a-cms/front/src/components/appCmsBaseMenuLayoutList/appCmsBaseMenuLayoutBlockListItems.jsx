@@ -21,8 +21,10 @@ function installFactory(_Vue) {
       language() {
         return this.layoutManager.base_appLanguageCurrent;
       },
-      groups2() {
-        const groups = this.groups || [];
+    },
+    methods: {
+      async onInit() {},
+      onGroupItems({ groups }) {
         // categoryName: general
         let groupGeneral = groups.find(item => item.categoryName === 'General');
         if (groupGeneral) {
@@ -54,12 +56,6 @@ function installFactory(_Vue) {
         });
         // ok
         return groups;
-      },
-    },
-    methods: {
-      async onInit() {},
-      onGetGroups() {
-        return this.groups2;
       },
       onNodeSelect(node) {
         const options = {

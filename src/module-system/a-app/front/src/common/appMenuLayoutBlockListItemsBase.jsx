@@ -59,7 +59,7 @@ export default {
     async init_categoriesAll() {
       this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
     },
-    onGetGroups() {
+    getGroups() {
       return this.groups;
     },
     onRenderGroup(group) {
@@ -111,7 +111,7 @@ export default {
         return sortingA - sortingB;
       });
       // filter
-      groups = groups.filter(item => item.items.length > 0);
+      groups = groups.filter(item => !item.items || item.items.length > 0);
       // ok
       return groups;
     },
@@ -170,7 +170,7 @@ export default {
       );
     },
     _renderAccordions() {
-      const groups = this.onGetGroups();
+      const groups = this.getGroups();
       if (!groups) return null;
       const children = [];
       // single
