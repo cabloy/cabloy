@@ -71,6 +71,7 @@ function installFactory(_Vue) {
       onTagChange() {
         const tagSelect = this.$refs.tagSelect.getComponentInstance();
         const checked = tagSelect.checked();
+        if (!checked) return;
         // options
         const options = {
           language: this.language,
