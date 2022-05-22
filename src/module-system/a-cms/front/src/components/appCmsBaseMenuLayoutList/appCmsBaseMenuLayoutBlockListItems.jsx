@@ -25,21 +25,21 @@ function installFactory(_Vue) {
     methods: {
       async onInit() {},
       onGroupItems({ groups }) {
-        // categoryName: general
-        let groupGeneral = groups.find(item => item.categoryName === 'General');
-        if (groupGeneral) {
-          // todo: add divider
-          // groupGeneral.items.push(null);
-        } else {
-          groupGeneral = {
-            id: -1,
-            categoryName: 'General',
-            categoryNameLocale: this.$text('General'),
-            categorySorting: 0,
-            items: [],
-          };
-        }
-        // todo: recent/hot/comments
+        // // categoryName: general
+        // let groupGeneral = groups.find(item => item.categoryName === 'General');
+        // if (groupGeneral) {
+        //   groupGeneral.items.push(null);
+        // } else {
+        //   groupGeneral = {
+        //     id: -1,
+        //     categoryName: 'General',
+        //     categoryNameLocale: this.$text('General'),
+        //     categorySorting: 0,
+        //     items: [],
+        //   };
+        //   groups.push(groupGeneral);
+        // }
+        // // todo: recent/hot/comments
         // categories
         groups.push({
           id: -2,
