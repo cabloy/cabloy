@@ -38,13 +38,6 @@ import listLayoutBlockTreeTitle from './components/atom/listLayoutTree/listLayou
 import listLayoutBlockTreeItems from './components/atom/listLayoutTree/listLayoutBlockTreeItems.jsx';
 // itemLayoutDefault
 import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
-// resourceTreeLayoutAccordion
-import resourceTreeLayoutAccordion from './components/resource/treeLayoutAccordion/treeLayoutAccordion.jsx';
-import resourceTreeLayoutBlockAccordionTitle from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionTitle.jsx';
-import resourceTreeLayoutBlockAccordionItems from './components/resource/treeLayoutAccordion/treeLayoutBlockAccordionItems.jsx';
-// resourceTreeLayoutTree
-import resourceTreeLayoutTree from './components/resource/treeLayoutTree/treeLayoutTree.jsx';
-import resourceTreeLayoutBlockTreeItems from './components/resource/treeLayoutTree/treeLayoutBlockTreeItems.jsx';
 
 export default {
   // baseLayoutDefault
@@ -87,11 +80,4 @@ export default {
   listLayoutBlockTreeItems,
   // itemLayoutDefault
   itemLayoutBlockDefaultCaption,
-  // resourceTreeLayoutAccordion
-  resourceTreeLayoutAccordion,
-  resourceTreeLayoutBlockAccordionTitle,
-  resourceTreeLayoutBlockAccordionItems,
-  // resourceTreeLayoutTree
-  resourceTreeLayoutTree,
-  resourceTreeLayoutBlockTreeItems,
 };
