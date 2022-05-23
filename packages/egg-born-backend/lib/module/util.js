@@ -7,6 +7,9 @@ const isSafeDomainUtil = require('egg-security').utils.isSafeDomain;
 
 module.exports = app => {
   return {
+    instanceStarted(subdomain) {
+      return app.meta.appReadyInstances[subdomain];
+    },
     lookupPackage(dir) {
       let _dir = dir;
       // eslint-disable-next-line

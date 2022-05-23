@@ -47,6 +47,9 @@ module.exports = function (app) {
 
     async _performTask({ broadcast, context, locale, subdomain }) {
       const bean = broadcast.bean;
+      // ignore when instance not started
+      const instanceStarted = app.meta.util.instanceStarted(subdomain);
+      if (!instanceStarted) return;
       // execute
       return await app.meta.util.executeBean({
         locale,
