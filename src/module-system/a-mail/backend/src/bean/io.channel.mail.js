@@ -19,8 +19,8 @@ module.exports = ctx => {
       if (content.scene && typeof content.scene === 'object') {
         scene = content.scene;
       } else {
-        // 2. from config
-        scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene || 'system'];
+        // 2. from config cache
+        scene = ctx.bean.mailSceneCache.getMailSceneConfigCache(content.scene || 'system');
       }
       // 3. test
       if (!this._sceneValid(scene) && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
