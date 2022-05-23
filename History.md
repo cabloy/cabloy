@@ -1,5 +1,14 @@
 # History
 
+## 2022-05-23, Version 4.19.0
+
+- **Feat**
+  - App 机制
+    - 一个 App 是一套界面布局的组合，包括三大部件：
+      - Menu 页面
+      - Home 页面
+      - Mine 页面
+
 ## 2022-04-29, Version 4.18.0
 
 - **Feat**
