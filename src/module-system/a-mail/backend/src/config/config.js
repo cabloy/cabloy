@@ -2,12 +2,25 @@
 module.exports = appInfo => {
   const config = {};
 
-  // middlewares
-  config.middlewares = {};
+  // startups
+  config.startups = {
+    cacheMailScenes: {
+      bean: 'cacheMailScenes',
+      instance: true,
+    },
+  };
+
+  // broadcasts
+  config.broadcasts = {
+    mailSceneChanged: {
+      bean: 'mailSceneChanged',
+    },
+  };
 
   // scenes
   config.scenes = {
     system: {
+      title: 'System',
       transport: {
         host: '',
         port: 0,
