@@ -3,9 +3,17 @@ module.exports = app => {
   // socketio
   const socketioMessageMail = require('./config/socketio/messageMail.js')(app);
   const socketioChannelMail = require('./config/socketio/channelMail.js')(app);
+  // static
+  const staticResources = require('./config/static/resources.js')(app);
+  // meta
   const meta = {
     base: {
       atoms: {},
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
     },
     validation: {
       validators: {},
