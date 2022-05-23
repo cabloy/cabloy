@@ -21,6 +21,17 @@ module.exports = ctx => {
       return __mailScenesConfigCache[ctx.subdomain][sceneName];
     }
 
+    getMailScenesConfigForAdmin() {
+      let scenes = this.getMailScenesConfigCache();
+      scenes = extend(true, {}, scenes);
+      for (const sceneName in scenes) {
+        const scene = scenes[sceneName];
+        scene.titleLocale = ctx.text(scene.title);
+      }
+      console.log(scenes);
+      return scenes;
+    }
+
     async mailSceneChanged() {
       // change self
       await this._cacheMailScenesConfig();

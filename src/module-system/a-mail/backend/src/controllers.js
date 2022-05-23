@@ -1,4 +1,6 @@
+const scene = require('./controller/scene.js');
+
 module.exports = app => {
-  const controllers = {};
+  const controllers = { scene };
   return controllers;
 };

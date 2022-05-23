@@ -1,8 +1,6 @@
-const mail = require('./service/mail.js');
+const scene = require('./service/scene.js');
 
 module.exports = app => {
-  const services = {
-    mail,
-  };
+  const services = { scene };
   return services;
 };

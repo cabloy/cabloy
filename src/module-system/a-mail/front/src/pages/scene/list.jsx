@@ -17,54 +17,51 @@ export default {
       try {
         // fetch
         this.items = await this.$api.post('scene/list');
+        console.log(this.items);
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
     },
-    onPerformItem(event, item) {
-      if (!this.getItemLink(item)) return;
-      this._editSceneConfig(item, 'default');
+    onPerformItem(event, item, sceneName) {
+      this._editSceneConfig(item, sceneName);
     },
-    _renderItem(item) {
-      const fullName = this.getItemFullName(item);
-      const meta = item.meta;
+    _editSceneConfig(item, sceneName) {
+      this.$view.navigate(`/a/mail/scene/config?sceneName=${sceneName}`, {
+        context: {
+          params: {
+            item,
+            title: this._editSceneConfig_getTitle(item, sceneName),
+            onSaveScene: async data => {
+              await this._editSceneConfig_save(item, sceneName, data);
+            },
+          },
+        },
+      });
+    },
+    _editSceneConfig_getTitle(item, sceneName) {
+      const title = this.$text('Config');
+      return `${title}: ${sceneName}`;
+    },
+    _renderItem(item, sceneName) {
       const domActions = [];
-      if (item.providerItem.disabled) {
-        domActions.push(
-          <div key="enable" color="orange" propsOnPerform={event => this.onPerformItemEnable(event, item)}>
-            <f7-icon slot="media" f7="::play-arrow"></f7-icon>
-            <div slot="title">{this.$text('Enable')}</div>
-          </div>
-        );
-      } else {
-        domActions.push(
-          <div key="disable" color="red" propsOnPerform={event => this.onPerformItemDisable(event, item)}>
-            <f7-icon slot="media" f7="::stop"></f7-icon>
-            <div slot="title">{this.$text('Disable')}</div>
-          </div>
-        );
-      }
-      if (meta.scene) {
-        domActions.push(
-          <div key="create" color="blue" propsOnPerform={event => this.onPerformItemSceneAdd(event, item)}>
-            <f7-icon slot="media" f7="::add"></f7-icon>
-            <div slot="title">{this.$text('Create')}</div>
-          </div>
-        );
-      }
-      let domIcon;
-      if (meta.icon) {
-        domIcon = <f7-icon f7={meta.icon.f7} material={meta.icon.material}></f7-icon>;
-      }
+      domActions.push(
+        <div
+          key="actionDelete"
+          color="red"
+          propsOnPerform={event => this.onPerformItemSceneDelete(event, item, sceneName)}
+        >
+          <f7-icon slot="media" f7="::delete"></f7-icon>
+          <div slot="title">{this.$text('Delete')}</div>
+        </div>
+      );
       return (
         <eb-list-item
-          key={fullName}
-          link={this.getItemLink(item)}
-          propsOnPerform={event => this.onPerformItem(event, item)}
+          key={sceneName}
+          link="#"
+          propsOnPerform={event => this.onPerformItem(event, item, sceneName)}
           swipeout
         >
-          <div slot="title">{item.meta.titleLocale}</div>
-          <div slot="media">{domIcon}</div>
+          <div slot="title">{item.titleLocale}</div>
           <eb-context-menu>
             <div slot="right">{domActions}</div>
           </eb-context-menu>
@@ -75,14 +72,11 @@ export default {
     _renderList() {
       if (!this.ready) return;
       const children = [];
-      for (const item of this.items) {
-        children.push(this._renderItem(item));
+      for (const sceneName in this.items) {
+        const item = this.items[sceneName];
+        children.push(this._renderItem(item, sceneName));
       }
-      return (
-        <f7-list form inline-labels no-hairlines-md>
-          {children}
-        </f7-list>
-      );
+      return <f7-list>{children}</f7-list>;
     },
   },
   render() {

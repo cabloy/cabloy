@@ -8,4 +8,5 @@ function loadjsx(name) {
 export default [
   //
   { path: 'scene/list', component: loadjsx('scene/list') },
+  { path: 'scene/config', component: loadjsx('scene/config') },
 ];
