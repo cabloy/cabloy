@@ -49,6 +49,7 @@ export default {
     },
     async onPerformValidate() {
       const res = {
+        title: this.data.transport.title,
         transport: {
           ...this.data.transport,
           auth: this.data.auth,
@@ -57,6 +58,7 @@ export default {
         },
         defaults: this.data.defaults,
       };
+      delete res.transport.title;
       await this.onSaveScene(res);
       this.page_setDirty(false);
       this.contextCallback(200, null);
@@ -74,12 +76,15 @@ export default {
     },
     _prepareData() {
       this.data = {
-        transport: this.item.transport,
+        transport: {
+          ...this.item.transport,
+          title: this.item.title,
+        },
         auth: this.item.transport.auth,
         defaults: this.item.defaults,
         extra: {
-          logger: this.item.logger,
-          debug: this.item.debug,
+          logger: this.item.transport.logger,
+          debug: this.item.transport.debug,
         },
       };
     },

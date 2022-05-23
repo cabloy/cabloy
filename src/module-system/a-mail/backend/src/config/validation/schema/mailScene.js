@@ -7,6 +7,12 @@ module.exports = app => {
         ebType: 'group',
         ebTitle: 'MailTransportInfo',
         properties: {
+          title: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Title',
+            notEmpty: true,
+          },
           host: {
             type: 'string',
             ebType: 'text',
