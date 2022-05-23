@@ -42,7 +42,7 @@ module.exports = ctx => {
       // configDefault
       const configDefault = this.configModule.scenes;
       // configScenes
-      let configScenes = await this.get('mailScenes');
+      let configScenes = await this.statusModule.get('mailScenes');
       configScenes = extend(true, {}, configDefault, configScenes);
       // cache
       __mailScenesConfigCache[ctx.subdomain] = configScenes;
