@@ -43,7 +43,7 @@ module.exports = ctx => {
         subdomain,
       });
     },
-    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction }) {
+    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, instance }) {
       return await ctx.app.meta.util.executeBean({
         locale: locale === undefined ? ctx.locale : locale,
         subdomain: subdomain === undefined ? ctx.subdomain : subdomain,
@@ -53,9 +53,20 @@ module.exports = ctx => {
         transaction,
         fn,
         ctxCaller: ctx,
+        instance,
       });
     },
-    async executeBeanIsolate({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, ctxParent }) {
+    async executeBeanIsolate({
+      locale,
+      subdomain,
+      beanModule,
+      beanFullName,
+      context,
+      fn,
+      transaction,
+      ctxParent,
+      instance,
+    }) {
       if (ctxParent) {
         if (ctxParent.dbLevel === undefined) {
           ctxParent = {
@@ -75,6 +86,7 @@ module.exports = ctx => {
         transaction,
         fn,
         ctxParent,
+        instance,
       });
     },
     /**
