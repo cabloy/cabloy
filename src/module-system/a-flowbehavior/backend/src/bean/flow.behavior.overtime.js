@@ -61,6 +61,7 @@ module.exports = ctx => {
     async _deleteJob({ flowId, flowNodeId, behaviorDefId }) {
       const jobId = this._getJobName({ flowId, flowNodeId, behaviorDefId });
       const queue = ctx.app.meta.queue._getQueue({
+        subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'overtime',
       });

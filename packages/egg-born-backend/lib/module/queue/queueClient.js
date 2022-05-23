@@ -221,9 +221,6 @@ module.exports = function (app) {
 
     _combineQueueKey({ subdomain, module = '', queueName = '' }) {
       subdomain = app.meta.util.subdomainDesp(subdomain);
-      if (subdomain === '~') {
-        console.log(module, queueName);
-      }
       return `${subdomain}||${module}||${queueName}`;
     }
 
