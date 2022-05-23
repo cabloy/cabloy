@@ -62,7 +62,7 @@ module.exports = function (app) {
           // redlock
           const _lockResource = `queue:${queueKey}${job.data.queueNameSub ? '#' + job.data.queueNameSub : ''}`;
           return await app.meta.util.lock({
-            subdomain: job.data.subdomain,
+            // subdomain: job.data.subdomain, // need not
             resource: _lockResource,
             options: _redlockOptions,
             redlock: _worker.redlock,
@@ -219,8 +219,12 @@ module.exports = function (app) {
       });
     }
 
-    _combineQueueKey({ module = '', queueName = '' }) {
-      return `${module}||${queueName}`;
+    _combineQueueKey({ subdomain, module = '', queueName = '' }) {
+      subdomain = app.meta.util.subdomainDesp(subdomain);
+      if (subdomain === '~') {
+        console.log(module, queueName);
+      }
+      return `${subdomain}||${module}||${queueName}`;
     }
 
     async _performTask(job) {
