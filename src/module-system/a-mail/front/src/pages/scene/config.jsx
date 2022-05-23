@@ -48,7 +48,16 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      await this.onSaveScene(this.data);
+      const res = {
+        transport: {
+          ...this.data.transport,
+          auth: this.data.auth,
+          logger: this.data.extra.logger,
+          debug: this.data.extra.debug,
+        },
+        defaults: this.data.defaults,
+      };
+      await this.onSaveScene(res);
       this.page_setDirty(false);
       this.contextCallback(200, null);
       this.$f7router.back();
@@ -64,7 +73,15 @@ export default {
       this.schema = schema;
     },
     _prepareData() {
-      this.data = this.item;
+      this.data = {
+        transport: this.item.transport,
+        auth: this.item.transport.auth,
+        defaults: this.item.defaults,
+        extra: {
+          logger: this.item.logger,
+          debug: this.item.debug,
+        },
+      };
     },
     _renderValidate() {
       if (!this.ready) return;

@@ -42,6 +42,23 @@ export default {
       const title = this.$text('Config');
       return `${title}: ${sceneName}`;
     },
+    async _editSceneConfig_save(item, sceneName, data) {
+      // save
+      await this.$api.post('scene/save', {
+        sceneName,
+        data,
+      });
+      // change
+      const sceneOld = this.items[sceneName];
+      const sceneNew = data;
+      this.items[sceneName] = {
+        ...sceneOld,
+        ...sceneNew,
+      };
+      if (sceneOld.title !== sceneNew.title) {
+        this.items[sceneName].titleLocale = sceneNew.title;
+      }
+    },
     _renderItem(item, sceneName) {
       const domActions = [];
       domActions.push(
