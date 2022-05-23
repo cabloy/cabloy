@@ -6,7 +6,7 @@ const boxen = require3('boxen');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // check if content.message
