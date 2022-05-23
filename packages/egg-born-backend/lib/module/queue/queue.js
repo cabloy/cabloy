@@ -43,10 +43,11 @@ module.exports = function (loader, modules) {
     }
   }
 
-  loader.app.meta._loadQueueWorkers = () => {
+  loader.app.meta._loadQueueWorkers = ({ subdomain }) => {
     for (const fullKey in ebQueues) {
       const queue = ebQueues[fullKey];
       const info = {
+        subdomain,
         module: queue.module,
         queueName: queue.name,
       };

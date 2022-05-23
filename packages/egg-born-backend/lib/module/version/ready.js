@@ -24,11 +24,6 @@ module.exports = async function (app) {
     }
   }
 
-  // queue workers
-  if (!app.meta.isTest) {
-    app.meta._loadQueueWorkers();
-  }
-
   // appReady
   app.meta.appReady = true;
   app.meta.appReadyInstances = {};

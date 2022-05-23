@@ -92,6 +92,10 @@ module.exports = function (loader) {
         });
       }
     }
+    // load queue workers
+    if (!loader.app.meta.isTest) {
+      loader.app.meta._loadQueueWorkers({ subdomain });
+    }
   };
 
   async function _runStartupLock({ ctx, startup, instanceStartup }) {
