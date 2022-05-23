@@ -17,7 +17,6 @@ export default {
       try {
         // fetch
         this.items = await this.$api.post('scene/list');
-        console.log(this.items);
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
