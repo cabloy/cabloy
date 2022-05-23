@@ -177,7 +177,7 @@ module.exports = app => {
         }
       };
     },
-    async createAnonymousContext({ locale, subdomain, module }) {
+    async createAnonymousContext({ locale, subdomain, module, instance }) {
       // url
       const url = this.combineFetchPath(module, '');
       // ctx
@@ -201,13 +201,28 @@ module.exports = app => {
       // instance
       if (subdomain !== undefined && subdomain !== null) {
         ctx.instance = await ctx.bean.instance.get({ subdomain });
+        // start instance
+        if (instance) {
+          await ctx.bean.instance.checkAppReadyInstance();
+        }
       }
       // ok
       return ctx;
     },
-    async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, ctxCaller, ctxParent }) {
+    async executeBean({
+      locale,
+      subdomain,
+      beanModule,
+      beanFullName,
+      context,
+      fn,
+      transaction,
+      ctxCaller,
+      ctxParent,
+      instance,
+    }) {
       // ctx
-      const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule });
+      const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule, instance });
       // innerAccess
       ctx.innerAccess = true;
       // ctxCaller

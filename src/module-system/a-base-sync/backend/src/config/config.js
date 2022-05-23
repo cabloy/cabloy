@@ -54,6 +54,7 @@ module.exports = appInfo => {
       bean: 'loadSchedules',
       // instance: true,
       debounce: true,
+      after: true,
     },
     loadAtomStatics: {
       bean: 'loadAtomStatics',

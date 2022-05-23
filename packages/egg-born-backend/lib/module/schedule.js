@@ -91,6 +91,7 @@ module.exports = function (loader /* , modules*/) {
       beanFullName: `${bean.module}.schedule.${bean.name}`,
       transaction: schedule.config.transaction,
       context,
+      instance: true,
     });
   };
 
