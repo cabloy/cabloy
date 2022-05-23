@@ -74,18 +74,26 @@ module.exports = ctx => {
 
     async getDict({ dictKey, locale }) {
       locale = locale || ctx.locale;
-      if (!__dicts[dictKey]) {
-        __dicts[dictKey] = {};
+      const dicts = this._getDictsBySubdomain();
+      if (!dicts[dictKey]) {
+        dicts[dictKey] = {};
       }
-      if (!__dicts[dictKey][locale]) {
+      if (!dicts[dictKey][locale]) {
         const res = await this._prepareDict({ dictKey, locale });
         // maybe cleared by broadcast
-        if (!__dicts[dictKey]) {
-          __dicts[dictKey] = {};
+        if (!dicts[dictKey]) {
+          dicts[dictKey] = {};
         }
-        __dicts[dictKey][locale] = res;
+        dicts[dictKey][locale] = res;
       }
-      return __dicts[dictKey][locale];
+      return dicts[dictKey][locale];
+    }
+
+    _getDictsBySubdomain() {
+      if (!__dicts[ctx.subdomain]) {
+        __dicts[ctx.subdomain] = {};
+      }
+      return __dicts[ctx.subdomain];
     }
 
     async _prepareDict({ dictKey, locale }) {
@@ -169,7 +177,8 @@ module.exports = ctx => {
     }
 
     _broadcastDictCacheRemove({ dictKey }) {
-      delete __dicts[dictKey];
+      const dicts = this._getDictsBySubdomain();
+      delete dicts[dictKey];
     }
 
     _checkIfEmptyForSelect(value) {
