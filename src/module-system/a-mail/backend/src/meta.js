@@ -1,5 +1,6 @@
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  // schemas
+  const schemas = require('./config/validation/schemas.js')(app);
   // socketio
   const socketioMessageMail = require('./config/socketio/messageMail.js')(app);
   const socketioChannelMail = require('./config/socketio/channelMail.js')(app);
@@ -16,9 +17,13 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {},
+      validators: {
+        mailScene: {
+          schemas: 'mailScene',
+        },
+      },
       keywords: {},
-      schemas: {},
+      schemas,
     },
     socketio: {
       messages: {

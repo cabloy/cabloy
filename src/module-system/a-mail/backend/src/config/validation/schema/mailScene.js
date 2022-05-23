@@ -1,0 +1,75 @@
+module.exports = app => {
+  const schemas = {};
+  schemas.mailScene = {
+    type: 'object',
+    properties: {
+      transport: {
+        ebType: 'group',
+        ebTitle: 'MailTransportInfo',
+        properties: {
+          host: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'host',
+            notEmpty: true,
+          },
+          port: {
+            type: 'number',
+            ebType: 'text',
+            ebTitle: 'Port',
+            notEmpty: true,
+          },
+          secure: {
+            type: 'boolean',
+            ebType: 'toggle',
+            ebTitle: 'Secure',
+          },
+        },
+      },
+      auth: {
+        ebType: 'group',
+        ebTitle: 'Auth Info',
+        properties: {
+          user: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'MailAuthUser',
+            notEmpty: true,
+          },
+          pass: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'MailAuthPassword',
+            notEmpty: true,
+          },
+        },
+      },
+      __groupDefaultsInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Defaults Info',
+      },
+      defaults: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Defaults',
+      },
+      extra: {
+        ebType: 'group',
+        ebTitle: 'Extra Info',
+        properties: {
+          logger: {
+            type: 'boolean',
+            ebType: 'toggle',
+            ebTitle: 'logger',
+          },
+          debug: {
+            type: 'boolean',
+            ebType: 'toggle',
+            ebTitle: 'debug',
+          },
+        },
+      },
+    },
+  };
+  return schemas;
+};
