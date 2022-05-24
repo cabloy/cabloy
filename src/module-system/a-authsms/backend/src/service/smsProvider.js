@@ -21,6 +21,15 @@ module.exports = app => {
       // changed
       await this.ctx.bean.smsProviderCache.smsProviderChanged();
     }
+
+    async save({ providerName, data }) {
+      const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
+      providers[providerName] = data ? this.ctx.bean.smsProviderCache.purgeProvider(data) : data;
+      // update
+      await this.statusModule.set('smsProviders', providers);
+      // changed
+      await this.ctx.bean.smsProviderCache.smsProviderChanged();
+    }
   }
 
   return SmsProvider;

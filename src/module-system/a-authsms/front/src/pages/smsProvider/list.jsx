@@ -54,12 +54,12 @@ export default {
     },
     async _editItemConfig_save(item, providerName, data) {
       // save
-      const data2 = await this.$api.post('scene/save', {
-        sceneName,
+      const data2 = await this.$api.post('smsProvider/save', {
+        providerName,
         data,
       });
       // change
-      this.items[sceneName] = data2;
+      this.items[providerName] = data2;
     },
     _renderItem(item, providerName) {
       // actions
