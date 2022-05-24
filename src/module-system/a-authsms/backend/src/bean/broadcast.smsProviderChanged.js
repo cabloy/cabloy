@@ -3,7 +3,7 @@ module.exports = app => {
     async execute(context) {
       const sameAsCaller = context.sameAsCaller;
       if (!sameAsCaller) {
-        await this.ctx.bean.mailSceneCache._cacheMailScenesConfig();
+        await this.ctx.bean.smsProviderCache._cacheSmsProvidersConfig();
       }
     }
   }

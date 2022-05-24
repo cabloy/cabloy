@@ -1,8 +1,8 @@
 module.exports = app => {
   class Startup extends app.meta.BeanBase {
     async execute(/* context*/) {
-      // cache all mailScenes
-      await this.ctx.bean.mailSceneCache._cacheMailScenesConfig();
+      // cache all smsProviders
+      await this.ctx.bean.smsProviderCache._cacheSmsProvidersConfig();
     }
   }
 

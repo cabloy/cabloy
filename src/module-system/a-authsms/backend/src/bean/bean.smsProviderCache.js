@@ -1,7 +1,7 @@
 const require3 = require('require3');
 const extend = require3('extend2');
 
-const __mailScenesConfigCache = {};
+const __smsProvidersConfigCache = {};
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -13,49 +13,49 @@ module.exports = ctx => {
       return ctx.bean.status.module(moduleInfo.relativeName);
     }
 
-    getMailScenesConfigCache() {
-      return __mailScenesConfigCache[ctx.subdomain];
+    getSmsProvidersConfigCache() {
+      return __smsProvidersConfigCache[ctx.subdomain];
     }
 
-    getMailSceneConfigCache(sceneName) {
-      return __mailScenesConfigCache[ctx.subdomain][sceneName];
+    getSmsProviderConfigCache(providerName) {
+      return __smsProvidersConfigCache[ctx.subdomain][providerName];
     }
 
-    getMailScenesConfigForAdmin() {
-      let scenes = this.getMailScenesConfigCache();
-      scenes = extend(true, {}, scenes);
-      for (const sceneName in scenes) {
-        const scene = scenes[sceneName];
-        scene.titleLocale = ctx.text(scene.title);
+    getSmsProvidersConfigForAdmin() {
+      let providers = this.getSmsProvidersConfigCache();
+      providers = extend(true, {}, providers);
+      for (const providerName in providers) {
+        const provider = providers[providerName];
+        provider.titleLocale = ctx.text(provider.title);
       }
-      return scenes;
+      return providers;
     }
 
-    async mailSceneChanged() {
+    async smsProviderChanged() {
       // change self
-      await this._cacheMailScenesConfig();
+      await this._cacheSmsProvidersConfig();
       // broadcast
       ctx.meta.util.broadcastEmit({
         module: 'a-mail',
-        broadcastName: 'mailSceneChanged',
+        broadcastName: 'smsProviderChanged',
         data: null,
       });
     }
 
-    purgeScene(scene) {
-      const res = extend(true, {}, scene);
+    purgeProvider(provider) {
+      const res = extend(true, {}, provider);
       delete res.titleLocale;
       return res;
     }
 
-    async _cacheMailScenesConfig() {
+    async _cacheSmsProvidersConfig() {
       // configDefault
-      const configDefault = this.configModule.scenes;
-      // configScenes
-      let configScenes = await this.statusModule.get('mailScenes');
-      configScenes = extend(true, {}, configDefault, configScenes);
+      const configDefault = this.configModule.sms.providers;
+      // configProviders
+      let configProviders = await this.statusModule.get('smsProviders');
+      configProviders = extend(true, {}, configDefault, configProviders);
       // cache
-      __mailScenesConfigCache[ctx.subdomain] = configScenes;
+      __smsProvidersConfigCache[ctx.subdomain] = configProviders;
     }
   }
   return SmsProviderCache;
