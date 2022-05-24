@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SmsProvider extends app.Service {
@@ -23,6 +26,13 @@ module.exports = app => {
     }
 
     async save({ providerName, data }) {
+      const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
+      const providerOld = providers[providerName];
+      data = extend(true, {}, providerOld, data);
+      await this._save({ providerName, data });
+    }
+
+    async _save({ providerName, data }) {
       const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
       providers[providerName] = data ? this.ctx.bean.smsProviderCache.purgeProvider(data) : data;
       // update

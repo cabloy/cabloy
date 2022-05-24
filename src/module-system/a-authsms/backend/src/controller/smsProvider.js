@@ -37,8 +37,8 @@ module.exports = app => {
         data,
       });
       // ok
-      data.titleLocale = this.ctx.text(data.title);
-      this.ctx.success(data);
+      const res = this.ctx.bean.smsProviderCache.getSmsProvidersConfigForAdmin()[providerName];
+      this.ctx.success(res);
     }
   }
 
