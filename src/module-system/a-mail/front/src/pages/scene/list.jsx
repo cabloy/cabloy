@@ -27,11 +27,11 @@ export default {
     async onPerformItemSceneDelete(event, item, sceneName) {
       await this.$view.dialog.confirm();
       // delete
-      await this.$api.post('scene/delete', {
+      const res = await this.$api.post('scene/delete', {
         sceneName,
       });
       // reload
-      await this.load();
+      this.items = res.list;
       // ok
       return true;
     },
@@ -41,14 +41,14 @@ export default {
       if (!sceneName || this.items[sceneName]) return;
       // add
       const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
-      await this.$api.post('scene/add', {
+      const res = await this.$api.post('scene/add', {
         sceneName,
         data: {
           title,
         },
       });
       // reload
-      await this.load();
+      this.items = res.list;
     },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(`/a/mail/scene/config?sceneName=${sceneName}`, {

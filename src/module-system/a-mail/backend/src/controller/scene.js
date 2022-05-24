@@ -37,20 +37,22 @@ module.exports = app => {
     async delete() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.scene.delete({
+      await this.service.scene.delete({
         sceneName: this.ctx.request.body.sceneName,
       });
-      this.ctx.success(res);
+      const list = await this.ctx.service.scene.list();
+      this.ctx.success({ list });
     }
 
     async add() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.scene.add({
+      await this.service.scene.add({
         sceneName: this.ctx.request.body.sceneName,
         data: this.ctx.request.body.data,
       });
-      this.ctx.success(res);
+      const list = await this.ctx.service.scene.list();
+      this.ctx.success({ list });
     }
   }
 
