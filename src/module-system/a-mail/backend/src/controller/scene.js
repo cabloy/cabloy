@@ -12,7 +12,7 @@ module.exports = app => {
       this.ctx.bean.util.checkDemo();
       const res = await this.service.scene.save({
         sceneName: this.ctx.request.body.sceneName,
-        config: this.ctx.request.body.data,
+        data: this.ctx.request.body.data,
       });
       this.ctx.success(res);
     }
@@ -31,7 +31,7 @@ module.exports = app => {
       this.ctx.bean.util.checkDemo();
       const res = await this.service.scene.add({
         sceneName: this.ctx.request.body.sceneName,
-        config: this.ctx.request.body.data,
+        data: this.ctx.request.body.data,
       });
       this.ctx.success(res);
     }
