@@ -11,6 +11,7 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       // adjust
+      const sceneName = this.ctx.request.body.sceneName;
       const data = this.ctx.request.body.data;
       const data2 = {
         title: data.transport.title,
@@ -25,12 +26,12 @@ module.exports = app => {
       delete data2.transport.title;
       // save
       await this.service.scene.save({
-        sceneName: this.ctx.request.body.sceneName,
+        sceneName,
         data: data2,
       });
       // ok
-      data2.titleLocale = this.ctx.text(data2.title);
-      this.ctx.success(data2);
+      const res = this.ctx.bean.mailSceneCache.getMailScenesConfigForAdmin()[sceneName];
+      this.ctx.success(res);
     }
 
     async delete() {
