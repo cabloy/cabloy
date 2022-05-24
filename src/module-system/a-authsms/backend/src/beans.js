@@ -3,6 +3,9 @@ const smsProviderTest = require('./bean/sms.provider.test.js');
 const smsProviderAliyun = require('./bean/sms.provider.aliyun.js');
 const captchaProvider = require('./bean/captcha.provider.captcha.js');
 const authProviderSms = require('./bean/auth.provider.sms.js');
+const broadcastSmsProviderChanged = require('./bean/broadcast.smsProviderChanged.js');
+const startupCacheSmsProviders = require('./bean/startup.cacheSmsProviders.js');
+const beanSmsProviderCache = require('./bean/bean.smsProviderCache.js');
 
 module.exports = app => {
   const beans = {
@@ -29,6 +32,22 @@ module.exports = app => {
     'auth.provider.sms': {
       mode: 'ctx',
       bean: authProviderSms,
+    },
+    // broadcast
+    'broadcast.smsProviderChanged': {
+      mode: 'app',
+      bean: broadcastSmsProviderChanged,
+    },
+    // startup
+    'startup.cacheSmsProviders': {
+      mode: 'app',
+      bean: startupCacheSmsProviders,
+    },
+    // global
+    smsProviderCache: {
+      mode: 'ctx',
+      bean: beanSmsProviderCache,
+      global: true,
     },
   };
   return beans;
