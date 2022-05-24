@@ -44,6 +44,12 @@ module.exports = app => {
       controller: 'smsProvider',
       meta: { right: { type: 'resource', name: 'smsManagement' } },
     },
+    {
+      method: 'post',
+      path: 'smsProvider/setCurrent',
+      controller: 'smsProvider',
+      meta: { right: { type: 'resource', name: 'smsManagement' } },
+    },
   ];
   return routes;
 };

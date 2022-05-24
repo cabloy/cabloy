@@ -25,11 +25,10 @@ export default {
       if (providerName === 'test') return;
       this._editSceneConfig(item, providerName);
     },
-    async onPerformItemSceneDelete(event, item, sceneName) {
-      await this.$view.dialog.confirm();
+    async onPerformItemSetCurrent(event, item, providerName) {
       // delete
-      await this.$api.post('scene/delete', {
-        sceneName,
+      await this.$api.post('smsProvider/setCurrent', {
+        providerName,
       });
       // reload
       await this.load();
