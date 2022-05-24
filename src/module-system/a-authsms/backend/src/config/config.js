@@ -2,6 +2,21 @@
 module.exports = appInfo => {
   const config = {};
 
+  // startups
+  config.startups = {
+    cacheSmsProviders: {
+      bean: 'cacheSmsProviders',
+      instance: true,
+    },
+  };
+
+  // broadcasts
+  config.broadcasts = {
+    smsProviderChanged: {
+      bean: 'smsProviderChanged',
+    },
+  };
+
   // account
   config.account = {
     url: {
