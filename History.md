@@ -1,5 +1,11 @@
 # History
 
+## 2022-05-24, Version 4.20.0
+
+- **Refactor**
+  - 重构 Mail 系统配置
+  - 重构 SMS 系统配置
+
 ## 2022-05-23, Version 4.19.0
 
 - **Feat**
