@@ -48,6 +48,16 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
+      // validate
+      await this.$api.post('/a/validation/validation/validate', {
+        params: {
+          module: 'a-mail',
+          validator: 'mailScene',
+          schema: null,
+        },
+        data: this.data,
+      });
+      // adjust
       const res = {
         title: this.data.transport.title,
         transport: {
