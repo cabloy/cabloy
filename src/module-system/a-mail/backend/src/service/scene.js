@@ -14,6 +14,13 @@ module.exports = app => {
 
     async save({ sceneName, data }) {
       const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
+      const sceneOld = scenes[sceneName];
+      data = extend(true, {}, sceneOld, data);
+      await this._save({ sceneName, data });
+    }
+
+    async _save({ sceneName, data }) {
+      const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
       scenes[sceneName] = data ? this.ctx.bean.mailSceneCache.purgeScene(data) : data;
       // update
       await this.statusModule.set('mailScenes', scenes);
@@ -22,12 +29,12 @@ module.exports = app => {
     }
 
     async delete({ sceneName }) {
-      await this.save({ sceneName, data: undefined });
+      await this._save({ sceneName, data: undefined });
     }
 
     async add({ sceneName, data }) {
       data = extend(true, {}, this.ctx.config.scene.default, data);
-      await this.save({ sceneName, data });
+      await this._save({ sceneName, data });
     }
   }
 
