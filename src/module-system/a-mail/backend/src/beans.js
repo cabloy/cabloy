@@ -27,6 +27,7 @@ module.exports = app => {
       mode: 'app',
       bean: broadcastMailSceneChanged,
     },
+    // startup
     'startup.cacheMailScenes': {
       mode: 'app',
       bean: startupCacheMailScenes,
