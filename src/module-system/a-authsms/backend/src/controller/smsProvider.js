@@ -11,10 +11,11 @@ module.exports = app => {
     async setCurrent() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.ctx.service.smsProvider.setCurrent({
+      await this.ctx.service.smsProvider.setCurrent({
         providerName: this.ctx.request.body.providerName,
       });
-      this.ctx.success(res);
+      const list = await this.ctx.service.smsProvider.list();
+      this.ctx.success({ list });
     }
 
     async save() {
@@ -37,7 +38,8 @@ module.exports = app => {
         data,
       });
       // ok
-      const res = this.ctx.bean.smsProviderCache.getSmsProvidersConfigForAdmin()[providerName];
+      const list = await this.ctx.service.smsProvider.list();
+      const res = list[providerName];
       this.ctx.success(res);
     }
   }

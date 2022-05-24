@@ -27,11 +27,11 @@ export default {
     },
     async onPerformItemSetCurrent(event, item, providerName) {
       // delete
-      await this.$api.post('smsProvider/setCurrent', {
+      const res = await this.$api.post('smsProvider/setCurrent', {
         providerName,
       });
       // reload
-      await this.load();
+      this.items = res.list;
       // ok
       return true;
     },
