@@ -17,10 +17,10 @@ module.exports = appInfo => {
     },
   };
 
-  // scenes
-  config.scenes = {
-    system: {
-      title: 'System',
+  // default
+  config.scene = {
+    default: {
+      // title: undefined,
       transport: {
         host: '',
         port: 0,
@@ -35,6 +35,13 @@ module.exports = appInfo => {
       defaults: {
         from: '',
       },
+    },
+  };
+  // scenes
+  config.scenes = {
+    system: {
+      title: 'System',
+      ...config.scene.default,
     },
   };
 

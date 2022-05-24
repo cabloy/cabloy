@@ -28,7 +28,6 @@ module.exports = ctx => {
         const scene = scenes[sceneName];
         scene.titleLocale = ctx.text(scene.title);
       }
-      console.log(scenes);
       return scenes;
     }
 

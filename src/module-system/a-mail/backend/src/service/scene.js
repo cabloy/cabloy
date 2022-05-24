@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Scene extends app.Service {
@@ -11,7 +14,7 @@ module.exports = app => {
 
     async save({ sceneName, config }) {
       const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
-      scenes[sceneName] = config;
+      scenes[sceneName] = config ? this.ctx.bean.mailSceneCache.purgeScene(config) : config;
       // update
       await this.statusModule.set('mailScenes', scenes);
       // changed
@@ -20,6 +23,11 @@ module.exports = app => {
 
     async delete({ sceneName }) {
       await this.save({ sceneName, config: undefined });
+    }
+
+    async add({ sceneName, config }) {
+      config = extend(true, {}, this.ctx.config.scene.default, config);
+      await this.save({ sceneName, config });
     }
   }
 

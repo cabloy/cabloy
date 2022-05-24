@@ -35,6 +35,21 @@ export default {
       // ok
       return true;
     },
+    async onPerformItemSceneAdd() {
+      // sceneName
+      const sceneName = await this.$view.dialog.prompt(this.$text('Please specify the scene name'));
+      if (!sceneName || this.items[sceneName]) return;
+      // add
+      const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
+      await this.$api.post('scene/add', {
+        sceneName,
+        data: {
+          title,
+        },
+      });
+      // reload
+      await this.load();
+    },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(`/a/mail/scene/config?sceneName=${sceneName}`, {
         context: {
@@ -109,7 +124,16 @@ export default {
   render() {
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('Mail Management')} eb-back-link="Back"></eb-navbar>
+        <eb-navbar large largeTransparent title={this.$text('Mail Management')} eb-back-link="Back">
+          <f7-nav-right>
+            <eb-link
+              ref="buttonAdd"
+              iconF7="::add"
+              tooltip={this.$text('ActionAddMailScene')}
+              propsOnPerform={this.onPerformItemSceneAdd}
+            ></eb-link>
+          </f7-nav-right>
+        </eb-navbar>
         {this._renderList()}
       </eb-page>
     );

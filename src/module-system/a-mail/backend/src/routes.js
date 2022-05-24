@@ -19,6 +19,12 @@ module.exports = app => {
       controller: 'scene',
       meta: { right: { type: 'resource', name: 'mailManagement' } },
     },
+    {
+      method: 'post',
+      path: 'scene/add',
+      controller: 'scene',
+      meta: { right: { type: 'resource', name: 'mailManagement' } },
+    },
   ];
   return routes;
 };
