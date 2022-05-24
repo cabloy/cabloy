@@ -16,19 +16,19 @@ module.exports = app => {
           host: {
             type: 'string',
             ebType: 'text',
-            ebTitle: 'host',
+            ebTitle: 'MailHost',
             notEmpty: true,
           },
           port: {
             type: 'number',
             ebType: 'text',
-            ebTitle: 'Port',
+            ebTitle: 'MailPort',
             notEmpty: true,
           },
           secure: {
             type: 'boolean',
             ebType: 'toggle',
-            ebTitle: 'Secure',
+            ebTitle: 'MailSecure',
           },
         },
       },
