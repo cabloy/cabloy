@@ -30,7 +30,8 @@ module.exports = app => {
         data: data2,
       });
       // ok
-      const res = this.ctx.bean.mailSceneCache.getMailScenesConfigForAdmin()[sceneName];
+      const list = await this.ctx.service.scene.list();
+      const res = list[sceneName];
       this.ctx.success(res);
     }
 
