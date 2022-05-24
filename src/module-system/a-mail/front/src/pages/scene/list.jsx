@@ -24,6 +24,17 @@ export default {
     onPerformItem(event, item, sceneName) {
       this._editSceneConfig(item, sceneName);
     },
+    async onPerformItemSceneDelete(event, item, sceneName) {
+      await this.$view.dialog.confirm();
+      // delete
+      await this.$api.post('scene/delete', {
+        sceneName,
+      });
+      // reload
+      await this.load();
+      // ok
+      return true;
+    },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(`/a/mail/scene/config?sceneName=${sceneName}`, {
         context: {

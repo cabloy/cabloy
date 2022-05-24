@@ -17,6 +17,10 @@ module.exports = app => {
       // changed
       await this.ctx.bean.mailSceneCache.mailSceneChanged();
     }
+
+    async delete({ sceneName }) {
+      await this.save({ sceneName, config: undefined });
+    }
   }
 
   return Scene;
