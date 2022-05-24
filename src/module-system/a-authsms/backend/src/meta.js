@@ -5,7 +5,17 @@ module.exports = app => {
   const keywords = require('./config/validation/keywords.js')(app);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // static
+  const staticResources = require('./config/static/resources.js')(app);
+  // meta
   return {
+    base: {
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
+    },
     auth,
     validation: {
       validators: {

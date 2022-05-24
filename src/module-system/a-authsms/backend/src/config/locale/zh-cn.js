@@ -10,4 +10,5 @@ module.exports = {
   'SMS Verification': '短信认证',
   'Authentication Failed': '认证失败',
   'User is Disabled': '用户被禁用',
+  'SMS Management': 'SMS管理',
 };
