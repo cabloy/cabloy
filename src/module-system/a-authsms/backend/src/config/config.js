@@ -32,7 +32,7 @@ module.exports = appInfo => {
     providers: {
       aliyun: {
         title: 'AliYun',
-        current: true,
+        current: false,
         accessKeyId: '',
         secretAccessKey: '',
         endpoint: 'https://dysmsapi.aliyuncs.com',
@@ -43,6 +43,10 @@ module.exports = appInfo => {
           signup: '',
           signin: '',
         },
+      },
+      test: {
+        title: 'Test',
+        current: true,
       },
     },
   };
