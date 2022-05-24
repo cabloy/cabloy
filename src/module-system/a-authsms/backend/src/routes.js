@@ -37,6 +37,13 @@ module.exports = app => {
         captchaVerify: { scene: { name: 'mobileVerify' } },
       },
     },
+    // smsProvider
+    {
+      method: 'post',
+      path: 'smsProvider/list',
+      controller: 'smsProvider',
+      meta: { right: { type: 'resource', name: 'smsManagement' } },
+    },
   ];
   return routes;
 };
