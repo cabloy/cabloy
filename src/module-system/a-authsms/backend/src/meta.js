@@ -28,15 +28,14 @@ module.exports = app => {
         mobileVerify: {
           schemas: 'mobileVerify',
         },
+        aliyun: {
+          schemas: 'aliyun',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
       },
-      schemas: {
-        signup: schemas.signup,
-        signin: schemas.signin,
-        mobileVerify: schemas.mobileVerify,
-      },
+      schemas,
     },
     event: {
       implementations: {
