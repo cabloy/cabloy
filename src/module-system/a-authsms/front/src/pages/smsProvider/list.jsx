@@ -41,7 +41,7 @@ export default {
           params: {
             item,
             title: this._editItemConfig_getTitle(item, providerName),
-            onSaveScene: async data => {
+            onSaveProvider: async data => {
               await this._editItemConfig_save(item, providerName, data);
             },
           },

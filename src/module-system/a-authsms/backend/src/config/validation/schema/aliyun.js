@@ -1,6 +1,6 @@
 module.exports = app => {
   const schemas = {};
-  schemas.mailScene = {
+  schemas.aliyun = {
     type: 'object',
     properties: {
       // Basic Info

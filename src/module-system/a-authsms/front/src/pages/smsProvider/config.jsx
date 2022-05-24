@@ -23,8 +23,8 @@ export default {
     title() {
       return this.contextParams.title;
     },
-    onSaveScene() {
-      return this.contextParams.onSaveScene;
+    onSaveProvider() {
+      return this.contextParams.onSaveProvider;
     },
     page_title() {
       return this.page_getDirtyTitle(this.title);
@@ -48,7 +48,7 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      await this.onSaveScene(this.data);
+      await this.onSaveProvider(this.data);
       this.page_setDirty(false);
       this.contextCallback(200, null);
       this.$f7router.back();
@@ -57,25 +57,14 @@ export default {
     async _prepareScheme() {
       // schema
       const schema = await this.$api.post('/a/validation/validation/schema', {
-        module: 'a-mail',
-        validator: 'mailScene',
+        module: 'a-authsms',
+        validator: this.providerName,
         schema: null,
       });
       this.schema = schema;
     },
     _prepareData() {
-      this.data = {
-        transport: {
-          ...this.item.transport,
-          title: this.item.title,
-        },
-        auth: this.item.transport.auth,
-        defaults: this.item.defaults,
-        extra: {
-          logger: this.item.transport.logger,
-          debug: this.item.transport.debug,
-        },
-      };
+      this.data = this.item;
     },
     _renderValidate() {
       if (!this.ready) return;
