@@ -16,11 +16,13 @@ module.exports = ctx => {
     }
 
     __createSMSProvider(options) {
-      const configModule = ctx.config.module(moduleInfo.relativeName);
+      const providers = ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
       // provider name
       let providerName = options && options.providerName;
       if (!providerName) {
-        providerName = configModule.sms.provider.default;
+        // current
+        providerName = Object.keys(providers).find(providerName => providers[providerName].current);
+        // test
         if (!providerName && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
           providerName = 'test';
         }
@@ -33,7 +35,7 @@ module.exports = ctx => {
       }
       // provider
       const provider = ctx.bean._getBean(moduleInfo.relativeName, `sms.provider.${providerName}`);
-      const config = configModule.sms.providers[providerName];
+      const config = providers[providerName];
       return { provider, config };
     }
   }

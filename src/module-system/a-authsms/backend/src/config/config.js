@@ -29,12 +29,10 @@ module.exports = appInfo => {
 
   // sms provider
   config.sms = {
-    provider: {
-      default: '',
-    },
     providers: {
       aliyun: {
         title: 'AliYun',
+        current: true,
         accessKeyId: '',
         secretAccessKey: '',
         endpoint: 'https://dysmsapi.aliyuncs.com',
