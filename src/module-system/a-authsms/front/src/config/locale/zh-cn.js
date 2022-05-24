@@ -12,4 +12,5 @@ export default {
   'Verify Now': '现在认证',
   'Associate Account': '关联账户',
   'Associate Now': '现在关联',
+  'SMS Management': 'SMS管理',
 };

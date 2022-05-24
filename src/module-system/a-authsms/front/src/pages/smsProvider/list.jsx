@@ -16,7 +16,7 @@ export default {
     async load() {
       try {
         // fetch
-        this.items = await this.$api.post('scene/list');
+        this.items = await this.$api.post('smsProvider/list');
       } catch (err) {
         this.$view.toast.show({ text: err.message });
       }
@@ -34,21 +34,6 @@ export default {
       await this.load();
       // ok
       return true;
-    },
-    async onPerformItemSceneAdd() {
-      // sceneName
-      const sceneName = await this.$view.dialog.prompt(this.$text('Please specify the scene name'));
-      if (!sceneName || this.items[sceneName]) return;
-      // add
-      const title = sceneName.replace(sceneName[0], sceneName[0].toUpperCase());
-      await this.$api.post('scene/add', {
-        sceneName,
-        data: {
-          title,
-        },
-      });
-      // reload
-      await this.load();
     },
     _editSceneConfig(item, sceneName) {
       this.$view.navigate(`/a/mail/scene/config?sceneName=${sceneName}`, {
@@ -116,16 +101,7 @@ export default {
   render() {
     return (
       <eb-page>
-        <eb-navbar large largeTransparent title={this.$text('Mail Management')} eb-back-link="Back">
-          <f7-nav-right>
-            <eb-link
-              ref="buttonAdd"
-              iconF7="::add"
-              tooltip={this.$text('ActionAddMailScene')}
-              propsOnPerform={this.onPerformItemSceneAdd}
-            ></eb-link>
-          </f7-nav-right>
-        </eb-navbar>
+        <eb-navbar large largeTransparent title={this.$text('SMS Management')} eb-back-link="Back"></eb-navbar>
         {this._renderList()}
       </eb-page>
     );
