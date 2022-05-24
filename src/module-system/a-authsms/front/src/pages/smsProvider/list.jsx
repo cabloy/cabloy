@@ -21,8 +21,9 @@ export default {
         this.$view.toast.show({ text: err.message });
       }
     },
-    onPerformItem(event, item, sceneName) {
-      this._editSceneConfig(item, sceneName);
+    onPerformItem(event, item, providerName) {
+      if (providerName === 'test') return;
+      this._editSceneConfig(item, providerName);
     },
     async onPerformItemSceneDelete(event, item, sceneName) {
       await this.$view.dialog.confirm();
@@ -61,29 +62,46 @@ export default {
       // change
       this.items[sceneName] = data2;
     },
-    _renderItem(item, sceneName) {
+    _renderItem(item, providerName) {
+      // actions
       const domActions = [];
-      domActions.push(
-        <div
-          key="actionDelete"
-          color="red"
-          propsOnPerform={event => this.onPerformItemSceneDelete(event, item, sceneName)}
-        >
-          <f7-icon slot="media" f7="::delete"></f7-icon>
-          <div slot="title">{this.$text('Delete')}</div>
-        </div>
-      );
-      return (
-        <eb-list-item
-          key={sceneName}
-          link="#"
-          propsOnPerform={event => this.onPerformItem(event, item, sceneName)}
-          swipeout
-        >
-          <div slot="title">{item.titleLocale}</div>
+      if (!item.current) {
+        domActions.push(
+          <div
+            key="actionSetCurrent"
+            color="orange"
+            propsOnPerform={event => this.onPerformItemSetCurrent(event, item, providerName)}
+          >
+            <f7-icon slot="media" f7="::done"></f7-icon>
+            <div slot="title">{this.$text('SetCurrent')}</div>
+          </div>
+        );
+      }
+      let domContextMenu;
+      if (domActions.length > 0) {
+        domContextMenu = (
           <eb-context-menu>
             <div slot="right">{domActions}</div>
           </eb-context-menu>
+        );
+      }
+      // icon
+      let domIcon;
+      if (item.current) {
+        domIcon = <f7-icon slot="media" f7="::done"></f7-icon>;
+      } else {
+        domIcon = <div slot="media"></div>;
+      }
+      return (
+        <eb-list-item
+          key={providerName}
+          link={providerName === 'test' ? false : '#'}
+          propsOnPerform={event => this.onPerformItem(event, item, providerName)}
+          swipeout
+        >
+          <div slot="title">{item.titleLocale}</div>
+          {domIcon}
+          {domContextMenu}
         </eb-list-item>
       );
     },
@@ -91,9 +109,9 @@ export default {
     _renderList() {
       if (!this.ready) return;
       const children = [];
-      for (const sceneName in this.items) {
-        const item = this.items[sceneName];
-        children.push(this._renderItem(item, sceneName));
+      for (const providerName in this.items) {
+        const item = this.items[providerName];
+        children.push(this._renderItem(item, providerName));
       }
       return <f7-list>{children}</f7-list>;
     },

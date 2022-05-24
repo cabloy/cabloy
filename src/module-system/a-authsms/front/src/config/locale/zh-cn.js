@@ -13,4 +13,5 @@ export default {
   'Associate Account': '关联账户',
   'Associate Now': '现在关联',
   'SMS Management': 'SMS管理',
+  SetCurrent: '设为当前',
 };
