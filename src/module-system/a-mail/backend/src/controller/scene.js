@@ -10,11 +10,27 @@ module.exports = app => {
     async save() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.scene.save({
+      // adjust
+      const data = this.ctx.request.body.data;
+      const data2 = {
+        title: data.transport.title,
+        transport: {
+          ...data.transport,
+          auth: data.auth,
+          logger: data.extra.logger,
+          debug: data.extra.debug,
+        },
+        defaults: data.defaults,
+      };
+      delete data2.transport.title;
+      // save
+      await this.service.scene.save({
         sceneName: this.ctx.request.body.sceneName,
-        data: this.ctx.request.body.data,
+        data: data2,
       });
-      this.ctx.success(res);
+      // ok
+      data2.titleLocale = this.ctx.text(data2.title);
+      this.ctx.success(data2);
     }
 
     async delete() {

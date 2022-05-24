@@ -69,20 +69,12 @@ export default {
     },
     async _editSceneConfig_save(item, sceneName, data) {
       // save
-      await this.$api.post('scene/save', {
+      const data2 = await this.$api.post('scene/save', {
         sceneName,
         data,
       });
       // change
-      const sceneOld = this.items[sceneName];
-      const sceneNew = data;
-      this.items[sceneName] = {
-        ...sceneOld,
-        ...sceneNew,
-      };
-      if (sceneOld.title !== sceneNew.title) {
-        this.items[sceneName].titleLocale = sceneNew.title;
-      }
+      this.items[sceneName] = data2;
     },
     _renderItem(item, sceneName) {
       const domActions = [];

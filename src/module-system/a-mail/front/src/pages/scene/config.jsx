@@ -57,19 +57,7 @@ export default {
         },
         data: this.data,
       });
-      // adjust
-      const res = {
-        title: this.data.transport.title,
-        transport: {
-          ...this.data.transport,
-          auth: this.data.auth,
-          logger: this.data.extra.logger,
-          debug: this.data.extra.debug,
-        },
-        defaults: this.data.defaults,
-      };
-      delete res.transport.title;
-      await this.onSaveScene(res);
+      await this.onSaveScene(this.data);
       this.page_setDirty(false);
       this.contextCallback(200, null);
       this.$f7router.back();
