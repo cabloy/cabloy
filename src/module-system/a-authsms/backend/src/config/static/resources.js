@@ -5,11 +5,11 @@ module.exports = app => {
     {
       atomName: 'SMS Management',
       atomStaticKey: 'smsManagement',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:menu.BasicAdmin',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
-        actionPath: '/a/authsms/provider/list',
+        actionPath: '/a/authsms/smsProvider/list',
       }),
       resourceIcon: ':auth:sms',
       appKey: 'a-appbooster:appSystem',
