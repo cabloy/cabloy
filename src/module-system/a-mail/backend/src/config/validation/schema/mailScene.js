@@ -4,6 +4,7 @@ module.exports = app => {
     type: 'object',
     properties: {
       transport: {
+        type: 'object',
         ebType: 'group',
         ebTitle: 'MailTransportInfo',
         properties: {
@@ -33,6 +34,7 @@ module.exports = app => {
         },
       },
       auth: {
+        type: 'object',
         ebType: 'group',
         ebTitle: 'Auth Info',
         properties: {
@@ -60,6 +62,7 @@ module.exports = app => {
         ebTitle: 'Defaults',
       },
       extra: {
+        type: 'object',
         ebType: 'group',
         ebTitle: 'Extra Info',
         properties: {

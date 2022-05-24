@@ -23,7 +23,7 @@ export default {
     },
     onPerformItem(event, item, providerName) {
       if (providerName === 'test') return;
-      this._editSceneConfig(item, providerName);
+      this._editItemConfig(item, providerName);
     },
     async onPerformItemSetCurrent(event, item, providerName) {
       // delete
@@ -35,24 +35,24 @@ export default {
       // ok
       return true;
     },
-    _editSceneConfig(item, sceneName) {
-      this.$view.navigate(`/a/mail/scene/config?sceneName=${sceneName}`, {
+    _editItemConfig(item, providerName) {
+      this.$view.navigate(`/a/authsms/smsProvider/config?providerName=${providerName}`, {
         context: {
           params: {
             item,
-            title: this._editSceneConfig_getTitle(item, sceneName),
+            title: this._editItemConfig_getTitle(item, providerName),
             onSaveScene: async data => {
-              await this._editSceneConfig_save(item, sceneName, data);
+              await this._editItemConfig_save(item, providerName, data);
             },
           },
         },
       });
     },
-    _editSceneConfig_getTitle(item, sceneName) {
+    _editItemConfig_getTitle(item, providerName) {
       const title = this.$text('Config');
-      return `${title}: ${sceneName}`;
+      return `${title}: ${providerName}`;
     },
-    async _editSceneConfig_save(item, sceneName, data) {
+    async _editItemConfig_save(item, providerName, data) {
       // save
       const data2 = await this.$api.post('scene/save', {
         sceneName,

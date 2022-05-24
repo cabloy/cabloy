@@ -11,6 +11,7 @@ module.exports = app => {
       method: 'post',
       path: 'scene/save',
       controller: 'scene',
+      middlewares: 'validate',
       meta: {
         right: { type: 'resource', name: 'mailManagement' }, //
         validate: { validator: 'mailScene' },

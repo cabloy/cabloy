@@ -48,15 +48,6 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      // validate
-      await this.$api.post('/a/validation/validation/validate', {
-        params: {
-          module: 'a-mail',
-          validator: 'mailScene',
-          schema: null,
-        },
-        data: this.data,
-      });
       await this.onSaveScene(this.data);
       this.page_setDirty(false);
       this.contextCallback(200, null);
