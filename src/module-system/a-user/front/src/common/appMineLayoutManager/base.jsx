@@ -119,12 +119,7 @@ export default {
       return a.appKey === b.appKey && a.appMineLayout === b.appMineLayout;
     },
     base_onPerformResource(event, resource) {
-      const resourceConfig = JSON.parse(resource.resourceConfig);
-      const action = this.$utils.extend({}, resourceConfig, {
-        targetEl: event.currentTarget,
-        navigateOptions: { target: '_self' },
-      });
-      return this.$meta.util.performAction({ ctx: this, action, item: null });
+      return this.base_performActionResource(event, resource, { target: '_self' });
     },
   },
 };

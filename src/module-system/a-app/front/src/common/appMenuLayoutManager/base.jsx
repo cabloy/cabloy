@@ -76,35 +76,7 @@ export default {
       return a.appKey === b.appKey && a.appMenuLayout === b.appMenuLayout;
     },
     base_onPerformResource(event, resource) {
-      const resourceConfig = JSON.parse(resource.resourceConfig);
-      // special for action
-      let action;
-      let item;
-      if (resourceConfig.atomAction === 'create') {
-        //
-        action = this.getAction({
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-          name: resourceConfig.atomAction,
-        });
-        item = {
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-        };
-      } else if (resourceConfig.atomAction === 'read') {
-        if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
-          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
-        }
-        action = resourceConfig;
-        item = {
-          module: resourceConfig.module,
-          atomClassName: resourceConfig.atomClassName,
-        };
-      } else {
-        action = resourceConfig;
-      }
-      action = this.$utils.extend({}, action, { targetEl: event.currentTarget });
-      return this.$meta.util.performAction({ ctx: this, action, item });
+      return this.base_performActionResource(event, resource);
     },
     base_isChildMode() {
       const __appKeyDefault = this.$config.appKey.default;
