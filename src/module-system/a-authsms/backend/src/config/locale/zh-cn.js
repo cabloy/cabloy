@@ -3,6 +3,7 @@ module.exports = {
   smsProviderNonePrompt: '请指定SMS Provider',
   SMSCodeInvalid: '认证码已失效，请重新获取',
   SMSCodeMismatch: '认证码不匹配',
+  AliYun: '阿里云',
   'Auth-SMS': '认证-短信',
   'Element Exists': '元素已存在',
   'Cannot Contain __': '不能包含__',

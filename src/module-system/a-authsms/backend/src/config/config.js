@@ -34,6 +34,7 @@ module.exports = appInfo => {
     },
     providers: {
       aliyun: {
+        title: 'AliYun',
         accessKeyId: '',
         secretAccessKey: '',
         endpoint: 'https://dysmsapi.aliyuncs.com',
