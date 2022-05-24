@@ -56,7 +56,7 @@ describe('test/controller/test.test.js', () => {
     console.log('time used: ', result.body.data.time);
   });
 
-  it('action:render article', async () => {
+  it('action:render article(a-cms)', async () => {
     app.mockSession({});
 
     // login as root
