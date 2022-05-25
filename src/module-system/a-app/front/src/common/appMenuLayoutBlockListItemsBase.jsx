@@ -12,6 +12,7 @@ export default {
   },
   data() {
     return {
+      expandAll: true,
       accordionItemOpened: 0,
       layoutConfigKeyOpened: null,
       categoryTree: null,
@@ -72,6 +73,7 @@ export default {
       return this.layoutManager.base_onPerformResource(event, item);
     },
     onAccordionOpen(event, group) {
+      if (this.expandAll) return;
       this.accordionItemOpened = group.id;
       // save
       this.$store.commit('a/base/setLayoutConfigKey', {
@@ -154,8 +156,12 @@ export default {
       // domAccordionContent
       const domGroup = this.onRenderGroup(group);
       const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
-      const accordionItemOpened =
-        this.accordionItemOpened === group.id || (this.accordionItemOpened === 0 && index === 0);
+      let accordionItemOpened;
+      if (this.expandAll) {
+        accordionItemOpened = true;
+      } else {
+        accordionItemOpened = this.accordionItemOpened === group.id || (this.accordionItemOpened === 0 && index === 0);
+      }
       // ok
       return (
         <eb-list-item
