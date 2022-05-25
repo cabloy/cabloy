@@ -75,8 +75,8 @@ export default {
       // not check appLanguage
       return a.appKey === b.appKey && a.appMenuLayout === b.appMenuLayout;
     },
-    base_onPerformResource(event, resource) {
-      return this.base_performActionResource(event, resource);
+    async base_onPerformResource(event, resource) {
+      return await this.base_performActionResource(event, resource);
     },
     base_isChildMode() {
       const __appKeyDefault = this.$config.appKey.default;

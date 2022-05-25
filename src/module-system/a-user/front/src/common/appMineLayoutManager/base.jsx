@@ -118,8 +118,9 @@ export default {
       // not check appLanguage
       return a.appKey === b.appKey && a.appMineLayout === b.appMineLayout;
     },
-    base_onPerformResource(event, resource) {
-      return this.base_performActionResource(event, resource, { target: '_self' });
+    async base_onPerformResource(event, resource) {
+      const options = { navigateOptions: { target: '_self' } };
+      return await this.base_performActionResource(event, resource, options);
     },
   },
 };

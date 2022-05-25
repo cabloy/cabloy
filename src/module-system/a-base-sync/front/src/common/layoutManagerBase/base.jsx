@@ -21,7 +21,7 @@ export default {
         await this.base_onInit();
       }
     },
-    base_performActionResource(event, resource, navigateOptions) {
+    async base_performActionResource(event, resource, options) {
       const resourceConfig = JSON.parse(resource.resourceConfig);
       // special for action
       let action;
@@ -49,8 +49,8 @@ export default {
       } else {
         action = resourceConfig;
       }
-      action = this.$utils.extend({}, action, { targetEl: event.currentTarget, navigateOptions });
-      return this.$meta.util.performAction({ ctx: this, action, item });
+      action = this.$utils.extend({}, action, { targetEl: event.currentTarget }, options);
+      return await this.$meta.util.performAction({ ctx: this, action, item });
     },
   },
 };
