@@ -3,6 +3,7 @@ export default {
   Description: '描述',
   Scope: '范围',
   NeverExpire: '永不过期',
+  AuthorizationScopeTitle: '授权范围',
   'Auth Info': '认证信息',
   'Expiration Time': '过期时间',
 };

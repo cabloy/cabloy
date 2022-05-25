@@ -28,7 +28,7 @@ module.exports = app => {
       scopeRoleId: {
         type: 'number',
         ebType: 'role',
-        ebTitle: 'Scope',
+        ebTitle: 'AuthorizationScopeTitle',
         ebParams: {
           titleAlias: 'Scope',
           roleIdStart: null,
