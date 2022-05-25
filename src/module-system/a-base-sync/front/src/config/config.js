@@ -80,6 +80,7 @@ export default {
                 module: 'a-baselayout',
                 name: 'baseLayoutBlockCaption',
               },
+              renderImmediate: true,
             },
             title: {
               component: {

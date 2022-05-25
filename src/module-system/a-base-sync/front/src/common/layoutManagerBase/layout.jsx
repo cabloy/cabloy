@@ -184,8 +184,8 @@ export default {
       };
     },
     layout_renderBlock({ blockName, key, info, listItem }) {
-      if (!this.base.ready) return null;
-      if (!this.layout.instance) return null;
+      if (!this.layout.config) return null;
+      // block config
       const blockConfig = this.layout.config.blocks[blockName];
       if (!blockConfig) {
         const errorMessage = `${this.$text('Block Not Found')}: ${blockName}`;
@@ -195,6 +195,12 @@ export default {
         const errorMessage = `${this.$text('Block Component Not Found')}: ${blockName}`;
         return <div>{errorMessage}</div>;
       }
+      // check if ready
+      if (!blockConfig.renderImmediate) {
+        if (!this.base.ready) return null;
+        if (!this.layout.instance) return null;
+      }
+      // render
       const blockOptions = this.layout_getBlockComponentOptions({ blockConfig, info });
       if (listItem) {
         return (
