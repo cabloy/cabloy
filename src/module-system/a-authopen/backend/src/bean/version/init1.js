@@ -4,10 +4,6 @@ const initData = require('./initData1.js');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const __atomClassRole = {
-    module: 'a-base',
-    atomClassName: 'role',
-  };
   class VersionInit {
     get modelAuthOpen() {
       return ctx.model.module(moduleInfo.relativeName).authOpen;
@@ -43,37 +39,8 @@ module.exports = function (ctx) {
     }
 
     async _init_roleScopes() {
-      //
-      for (const roleScope of initData.roleScopes) {
-        // item
-        const item = { ...roleScope };
-        // roleIdParent
-        if (roleScope.roleIdParent === 0) {
-          item.roleIdParent = 0;
-        } else {
-          const role = await ctx.bean.role.parseRoleName({ roleName: roleScope.roleIdParent });
-          item.roleIdParent = role.id;
-        }
-        // loadAtomStatic
-        const atomKey = await ctx.bean.atomStatic.loadAtomStatic({
-          moduleName: moduleInfo.relativeName,
-          atomClass: __atomClassRole,
-          item,
-        });
-        if (atomKey && roleScope._roleRightsRead) {
-          // role rights read
-          const roleName = roleScope._roleRightsRead;
-          const scopeNames = [atomKey.itemId];
-          const roleRights = [{ roleName, action: 'read', scopeNames }];
-          await ctx.bean.role.addRoleRightBatch({
-            module: 'a-base',
-            atomClassName: 'role',
-            roleRights,
-          });
-        }
-      }
-      // setDirty
-      await ctx.bean.role.setDirty(true);
+      // createRoleScopes
+      await ctx.bean.authOpen.createRoleScopes({ roleScopes: initData.roleScopes, setDirty: true });
       // add role rights
       const roleRights = [
         // template

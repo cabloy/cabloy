@@ -3,6 +3,10 @@ const randomize = require3('randomatic');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: 'a-base',
+    atomClassName: 'role',
+  };
   const __atomClassAuthOpen = {
     module: moduleInfo.relativeName,
     atomClassName: 'authOpen',
@@ -172,6 +176,42 @@ module.exports = ctx => {
       });
       // ok
       return authOpenKey;
+    }
+
+    async createRoleScopes({ roleScopes, setDirty = true }) {
+      //
+      for (const roleScope of roleScopes) {
+        // item
+        const item = { ...roleScope };
+        // roleIdParent
+        if (roleScope.roleIdParent === 0) {
+          item.roleIdParent = 0;
+        } else {
+          const role = await ctx.bean.role.parseRoleName({ roleName: roleScope.roleIdParent });
+          item.roleIdParent = role.id;
+        }
+        // loadAtomStatic
+        const atomKey = await ctx.bean.atomStatic.loadAtomStatic({
+          moduleName: moduleInfo.relativeName,
+          atomClass: __atomClassRole,
+          item,
+        });
+        if (atomKey && roleScope._roleRightsRead) {
+          // role rights read
+          const roleName = roleScope._roleRightsRead;
+          const scopeNames = [atomKey.itemId];
+          const roleRights = [{ roleName, action: 'read', scopeNames }];
+          await ctx.bean.role.addRoleRightBatch({
+            module: 'a-base',
+            atomClassName: 'role',
+            roleRights,
+          });
+        }
+      }
+      // setDirty
+      if (setDirty) {
+        await ctx.bean.role.setDirty(true);
+      }
     }
   }
   return AuthOpen;
