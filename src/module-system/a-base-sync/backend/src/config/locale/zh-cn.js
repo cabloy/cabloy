@@ -141,7 +141,7 @@ module.exports = {
   BasicAdmin: '基础管理',
   Authenticated: '已验证',
   Anonymous: '匿名',
-  WorkplaceTitle: '工作区',
+  WorkplaceTitle: '工作台',
   // role name
   root: '根',
   anonymous: '匿名',

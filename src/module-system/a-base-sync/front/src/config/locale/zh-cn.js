@@ -182,7 +182,7 @@ export default {
   DataChangedReloadConfirm: '数据已变更，您想要重新加载吗？',
   AtomActionSubmitConfirm: '您确认要提交此草稿吗？',
   Icon: '图标',
-  WorkplaceTitle: '工作区',
+  WorkplaceTitle: '工作台',
   'Role Name': '角色名称',
   'Role Type': '角色类型',
   'New Category': '新目录',
