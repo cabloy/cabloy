@@ -3,6 +3,10 @@ const randomize = require3('randomatic');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassAuthOpen = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'authOpen',
+  };
   class AuthOpen {
     get modelAuthOpen() {
       return ctx.model.module(moduleInfo.relativeName).authOpen;
@@ -139,6 +143,35 @@ module.exports = ctx => {
         return await this.modelAuthOpen.get({ atomId });
       }
       return await this.modelAuthOpen.get({ id: itemId });
+    }
+
+    // create aAuthOpen record for user
+    async createAuthOpen({ item: { atomName, scopeRoleName, neverExpire = 1, expireTime = null }, user }) {
+      const authOpenKey = await ctx.bean.atom.create({
+        atomClass: __atomClassAuthOpen,
+        user,
+      });
+      // write
+      const scopeRole = await ctx.bean.role.parseRoleName({ roleName: scopeRoleName });
+      const item = {
+        atomName,
+        scopeRoleId: scopeRole.id,
+        neverExpire,
+        expireTime,
+      };
+      await ctx.bean.atom.write({
+        key: authOpenKey,
+        item,
+        user,
+      });
+      // submit
+      await ctx.bean.atom.submit({
+        key: authOpenKey,
+        options: { ignoreFlow: true },
+        user,
+      });
+      // ok
+      return authOpenKey;
     }
   }
   return AuthOpen;
