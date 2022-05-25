@@ -275,6 +275,7 @@ module.exports = app => {
     event: {
       declarations: {
         loginInfo: 'Login Info',
+        userAdd: 'User Add',
         userVerify: 'User Verify',
         accountMigration: 'Account Migration',
       },

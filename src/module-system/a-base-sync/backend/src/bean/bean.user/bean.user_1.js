@@ -69,6 +69,15 @@ module.exports = ctx => {
         options: { ignoreFlow: true },
         user,
       });
+      // user verify event
+      item.id = userKey.itemId;
+      item.disabled = disabled;
+      item.anonymous = anonymous;
+      await ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'userAdd',
+        data: { user: item },
+      });
       // ok
       return returnKey ? userKey : userKey.itemId;
     }
