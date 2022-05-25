@@ -160,6 +160,7 @@ module.exports = ctx => {
 
     // options: { where, orders, page, removePrivacy, ... }
     async _list({ options, user, pageForce = true, count = 0 }) {
+      if (!options) options = {};
       // select
       const items = await ctx.bean.atom.select({ atomClass: __atomClassUser, options, user, pageForce, count });
       // count
