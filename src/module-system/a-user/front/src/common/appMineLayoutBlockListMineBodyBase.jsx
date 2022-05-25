@@ -174,7 +174,11 @@ export default {
       for (let index = 0; index < groups.length; index++) {
         children.push(this._renderAccordion(groups[index], index));
       }
-      return <eb-list accordion-list>{children}</eb-list>;
+      return (
+        <eb-list accordion-list class="eb-accordion-list">
+          {children}
+        </eb-list>
+      );
     },
     renderItems() {
       if (!this.ready) return null;
