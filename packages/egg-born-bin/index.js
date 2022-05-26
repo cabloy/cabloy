@@ -4,7 +4,6 @@ const chalk = require('chalk');
 const Command = require('@zhennann/egg-bin').Command;
 const eggBornUtils = require('egg-born-utils');
 const utils = require('./lib/utils.js');
-const OpenAuth = require('./lib/openAuth.js');
 const CliCommand = require('./lib/cmd/cli.js');
 const DISPATCH = Symbol.for('eb:Command#dispatch');
 const PARSE = Symbol.for('eb:Command#parse');
@@ -50,10 +49,10 @@ class EggBornBinCommand extends Command {
       console.log(chalk.red(`Open auth token not found: ${tokenName}\n`));
       return;
     }
-    // OpenAuth
-    const openAuth = new OpenAuth({ host: token.host });
+    // OpenAuthClient
+    const openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
     // signin
-    const res = yield openAuth.post({
+    const res = yield openAuthClient.post({
       path: '/a/authopen/auth/signin',
       body: {
         data: {
@@ -68,7 +67,7 @@ class EggBornBinCommand extends Command {
       locale = eggBornUtils.tools.preferredLocale({ locale: null, locales: res.locales });
     }
     // cli meta
-    const meta = yield openAuth.post({
+    const meta = yield openAuthClient.post({
       path: `/a/cli/cli/meta?locale=${locale}`,
       body: {
         context: {
@@ -79,10 +78,10 @@ class EggBornBinCommand extends Command {
     // cli run
     const rawArgv = this.rawArgv.slice();
     rawArgv.splice(rawArgv.indexOf('cli'), 2);
-    const command = new CliCommand(rawArgv, { meta, argv, openAuth, locale });
+    const command = new CliCommand(rawArgv, { meta, argv, openAuthClient, locale });
     yield command[DISPATCH]();
     // logout
-    yield openAuth.post({
+    yield openAuthClient.post({
       path: '/a/base/auth/logout',
     });
   }

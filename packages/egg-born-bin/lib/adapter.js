@@ -1,7 +1,7 @@
 const ioc = require('socket.io-client');
 
 module.exports = options => {
-  const { openAuth } = options;
+  const { openAuthClient } = options;
   return {
     _io: null,
     initialize(io) {
@@ -10,7 +10,7 @@ module.exports = options => {
       this._io.reset();
     },
     subscribe({ subscribes, socketId }) {
-      return openAuth.post({
+      return openAuthClient.post({
         path: '/a/socketio/subscribe',
         body: {
           subscribes,
@@ -19,7 +19,7 @@ module.exports = options => {
       });
     },
     unsubscribe({ subscribes }) {
-      return openAuth.post({
+      return openAuthClient.post({
         path: '/a/socketio/unsubscribe',
         body: {
           subscribes,
@@ -28,7 +28,7 @@ module.exports = options => {
     },
     socket() {
       // url
-      const url = openAuth.host;
+      const url = openAuthClient.host;
       // opts
       const opts = {
         autoConnect: false,
@@ -38,7 +38,7 @@ module.exports = options => {
       // scene
       opts.query = {};
       // jwt
-      opts.query['eb-jwt'] = openAuth.jwt.accessToken;
+      opts.query['eb-jwt'] = openAuthClient.jwt.accessToken;
       return ioc(url, opts);
     },
     user() {

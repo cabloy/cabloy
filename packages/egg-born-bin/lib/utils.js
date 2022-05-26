@@ -7,7 +7,6 @@ const boxen = require('boxen');
 const globby = require('globby');
 const extend = require('extend2');
 const eggBornUtils = require('egg-born-utils');
-const OpenAuth = require('./openAuth.js');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
@@ -20,11 +19,11 @@ const utils = {
     // token
     const token = await eggBornUtils.openAuthConfig.prepareToken(projectPath, null);
     if (!token) return false;
-    // OpenAuth
-    const openAuth = new OpenAuth({ host: token.host });
+    // OpenAuthClient
+    const openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
     // echo
     try {
-      await openAuth.post({
+      await openAuthClient.post({
         path: '/a/base/auth/echo',
       });
       if (warnWhenRunning) {

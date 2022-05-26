@@ -11,14 +11,14 @@ const __debounceTimeout = 500;
 const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG', 'npm_config_registry'];
 
 class CliCommand extends BaseCommand {
-  constructor(rawArgv, { meta, argv, openAuth, locale }) {
+  constructor(rawArgv, { meta, argv, openAuthClient, locale }) {
     super(rawArgv);
     this.usage = meta.info.usage;
     this.version = meta.info.version;
     this.options = meta.options;
     this.__groups = meta.groups;
     this.__argv = argv;
-    this.__openAuth = openAuth;
+    this.__openAuthClient = openAuthClient;
     this.__locale = locale;
   }
 
@@ -176,7 +176,7 @@ class CliCommand extends BaseCommand {
           // execute
           if (!executing) {
             executing = true;
-            return await self.__openAuth.post({
+            return await self.__openAuthClient.post({
               path: '/a/cli/cli/execute',
               body: {
                 progressId,
@@ -185,7 +185,7 @@ class CliCommand extends BaseCommand {
             });
           }
           // check
-          const item = await self.__openAuth.post({
+          const item = await self.__openAuthClient.post({
             path: '/a/progress/progress/check',
             body: {
               progressId,
@@ -288,7 +288,7 @@ class CliCommand extends BaseCommand {
           subscribeId = null;
         }
         // delete progress
-        await self.__openAuth.post({
+        await self.__openAuthClient.post({
           path: '/a/progress/progress/delete',
           body: {
             progressId,
@@ -301,7 +301,7 @@ class CliCommand extends BaseCommand {
   }
 
   _getIOInstance() {
-    return IOFn(AdapterFn({ openAuth: this.__openAuth }));
+    return IOFn(AdapterFn({ openAuthClient: this.__openAuthClient }));
   }
 }
 
