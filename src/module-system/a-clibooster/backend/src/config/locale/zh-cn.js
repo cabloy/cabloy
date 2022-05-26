@@ -1,5 +1,6 @@
 module.exports = {
-  CliAuthOpenTokenInfoStoreSync: '用于商店同步的开发认证Token',
+  CliAuthOpenTokenInfoStoreSync: '用于Cabloy商店同步的开放认证Token',
+  CliAuthOpenTokenInfoStorePublish: '用于Cabloy商店发布的开放认证Token',
   'Cli Demo': 'Cli演示',
   'Your username': '您的名称',
   'Your role': '您的角色',
