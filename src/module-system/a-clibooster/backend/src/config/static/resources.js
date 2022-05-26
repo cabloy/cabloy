@@ -47,6 +47,15 @@ module.exports = app => {
       resourceConfig: null,
       resourceRoles: 'template.system,RoleScopeCliDevelopment',
     },
+    {
+      atomName: 'Cli Store',
+      atomStaticKey: 'cliStore',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:function.Cli',
+      resourceType: 'a-base:function',
+      resourceConfig: null,
+      resourceRoles: 'template.system,RoleScopeCliDevelopment',
+    },
   ];
   // ok
   return resources;

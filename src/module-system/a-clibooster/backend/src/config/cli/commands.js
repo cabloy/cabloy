@@ -9,6 +9,8 @@ const createSuite = require('./command/create.suite.js');
 const createModule = require('./command/create.module.js');
 const createAtom = require('./command/create.atom.js');
 const createController = require('./command/create.controller.js');
+const storeSync = require('./command/store.sync.js');
+const storePublish = require('./command/store.publish.js');
 
 module.exports = app => {
   const commands = {
@@ -30,6 +32,10 @@ module.exports = app => {
       module: createModule(app),
       atom: createAtom(app),
       controller: createController(app),
+    },
+    store: {
+      sync: storeSync(app),
+      publish: storePublish(app),
     },
   };
   return commands;
