@@ -16,6 +16,7 @@ module.exports = ctx => {
       // entityNames
       const entityNames = argv._;
       const total = entityNames.length;
+      const results = [];
       for (let index = 0; index < total; index++) {
         const entityName = entityNames[index];
         // log
@@ -26,8 +27,26 @@ module.exports = ctx => {
           text: entityName,
         });
         // publish entity
-        await this._publishEntity({ entityName });
+        const result = await this._publishEntity({ entityName });
+        // result
+        if (result.message) {
+          await this.console.log({ text: result.message });
+        }
+        results.push(result);
       }
+      // log results
+      await this._logResults({ results });
+    }
+
+    async _logResults({ results }) {
+      const table = this.helper.newTable({
+        head: ['Entity Name', 'Message'],
+        colWidths: [30, 50],
+      });
+      for (const result of results) {
+        table.push([result.entityName, result.message]);
+      }
+      await this.console.log({ text: table.toString() });
     }
 
     async _publishEntity({ entityName }) {
@@ -38,14 +57,19 @@ module.exports = ctx => {
         ctx.bean.util.setProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`, entityConfig);
         await this.saveCabloyConfig();
       }
-      // fetch entity
+      // fetch entity status
       const entityStatus = await this.openAuthClient.post({
         path: '/cabloy/store/store/publish/entityStatus',
         body: {
           entityName,
         },
       });
-      console.log(entityStatus);
+      if (!entityStatus) {
+        return {
+          entityName,
+          message: ctx.text('Not Found'),
+        };
+      }
     }
   }
 
