@@ -30,7 +30,15 @@ module.exports = ctx => {
       }
     }
 
-    async _publishEntity({ entityName }) {}
+    async _publishEntity({ entityName }) {
+      // save to config
+      let entityConfig = ctx.bean.util.getProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`);
+      if (!entityConfig) {
+        entityConfig = {};
+        ctx.bean.util.setProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`, entityConfig);
+        await this.saveCabloyConfig();
+      }
+    }
   }
 
   return Cli;

@@ -1,4 +1,7 @@
-const eggBornUtils = require('egg-born-utils');
+const path = require('path');
+const require3 = require('require3');
+const fse = require3('fs-extra');
+const eggBornUtils = require3('egg-born-utils');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -6,6 +9,7 @@ module.exports = ctx => {
     constructor(options, tokenName) {
       super(options);
       this.tokenName = tokenName;
+      this.cabloyConfig = null;
     }
 
     get localToken() {
@@ -29,10 +33,17 @@ module.exports = ctx => {
     }
 
     async execute({ user }) {
-      const { argv } = this.context;
       // super
       await super.execute({ user });
       // token
+      await this.addToken();
+      // cabloy config
+      await this.loadCabloyConfig();
+      // executeStoreCommand
+      await this.executeStoreCommand();
+    }
+    async addToken() {
+      const { argv } = this.context;
       const { clientID, clientSecret } = argv;
       if (clientID && clientSecret) {
         await this.localToken.add({
@@ -42,8 +53,36 @@ module.exports = ctx => {
           clientSecret,
         });
       }
-      // executeStoreCommand
-      await this.executeStoreCommand();
+    }
+    async saveCabloyConfig() {
+      const { argv } = this.context;
+      const fileName = path.join(argv.projectPath, 'cabloy.json');
+      await fse.outputFile(fileName, JSON.stringify(this.cabloyConfig, null, 2));
+    }
+    async loadCabloyConfig() {
+      const { argv } = this.context;
+      const fileName = path.join(argv.projectPath, 'cabloy.json');
+      const exists = await fse.pathExists(fileName);
+      let config;
+      if (exists) {
+        const content = await fse.readFile(fileName);
+        config = JSON.parse(content);
+      } else {
+        config = {
+          store: {
+            commands: {
+              sync: {
+                entities: {},
+              },
+              publish: {
+                entities: {},
+              },
+            },
+          },
+        };
+        await fse.outputFile(fileName, JSON.stringify(config, null, 2));
+      }
+      this.cabloyConfig = config;
     }
     async executeStoreCommand() {
       // token
