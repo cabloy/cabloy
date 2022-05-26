@@ -10,6 +10,7 @@ module.exports = ctx => {
       super(options);
       this.tokenName = tokenName;
       this.cabloyConfig = null;
+      this.openAuthClient = null;
     }
 
     get localToken() {
@@ -88,9 +89,9 @@ module.exports = ctx => {
       // token
       const token = await this.localToken.get({ name: this.tokenName });
       // OpenAuthClient
-      const openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
+      this.openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
       // signin
-      await openAuthClient.post({
+      await this.openAuthClient.post({
         path: '/a/authopen/auth/signin',
         body: {
           data: {
@@ -104,9 +105,10 @@ module.exports = ctx => {
         await this.onExecuteStoreCommand();
       } catch (err) {
         //  logout
-        await openAuthClient.post({
+        await this.openAuthClient.post({
           path: '/a/base/auth/logout',
         });
+        this.openAuthClient = null;
         throw err;
       }
     }

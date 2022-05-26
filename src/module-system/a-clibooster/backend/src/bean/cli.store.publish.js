@@ -38,6 +38,14 @@ module.exports = ctx => {
         ctx.bean.util.setProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`, entityConfig);
         await this.saveCabloyConfig();
       }
+      // fetch entity
+      const entityStatus = await this.openAuthClient.post({
+        path: '/cabloy/store/store/publish/entityStatus',
+        body: {
+          entityName,
+        },
+      });
+      console.log(entityStatus);
     }
   }
 
