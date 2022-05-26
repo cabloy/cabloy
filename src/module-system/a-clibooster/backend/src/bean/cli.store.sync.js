@@ -3,9 +3,14 @@ const require3 = require('require3');
 const fse = require3('fs-extra');
 const glob = require3('glob');
 const bb = require3('bluebird');
+const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
-  class Cli extends ctx.app.meta.CliBase(ctx) {
+  class Cli extends CliStoreBase(ctx) {
+    constructor(options) {
+      super(options, 'store.sync');
+    }
+
     async execute({ user }) {
       const { argv } = this.context;
       // super
@@ -21,10 +26,12 @@ module.exports = ctx => {
           progress: index,
           text: moduleName,
         });
-        // generate
-        await this._generateIcons({ moduleName });
+        // sync module
+        await this._syncModule({ moduleName });
       }
     }
+
+    async _syncModule({ moduleName }) {}
   }
 
   return Cli;

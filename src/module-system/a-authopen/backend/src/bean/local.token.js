@@ -44,6 +44,12 @@ module.exports = ctx => {
       return { fileName, config };
     }
 
+    async get({ name }) {
+      // init file
+      const { config } = await eggBornUtils.openAuthConfig.load();
+      return config.tokens && config.tokens[name];
+    }
+
     async list({ log }) {
       // init file
       const { fileName, config } = await eggBornUtils.openAuthConfig.load();
