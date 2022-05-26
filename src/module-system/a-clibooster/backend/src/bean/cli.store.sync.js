@@ -11,10 +11,9 @@ module.exports = ctx => {
       super(options, 'store.sync');
     }
 
-    async execute({ user }) {
+    async onExecuteStoreCommand() {
       const { argv } = this.context;
-      // super
-      await super.execute({ user });
+      // entityNames
       const entityNames = argv._;
       const total = entityNames.length;
       for (let index = 0; index < total; index++) {
@@ -31,9 +30,7 @@ module.exports = ctx => {
       }
     }
 
-    async _syncEntity({ entityName }) {
-      //
-    }
+    async _syncEntity({ entityName }) {}
   }
 
   return Cli;
