@@ -23,6 +23,7 @@
     "url": "https://github.com/zhennann/cabloy-lerna/issues"
   },
   "dependencies": {
-    "vm2": "^3.9.3"
+    "vm2": "^3.9.3",
+    "urllib": "^2.34.2"
   }
 }

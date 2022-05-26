@@ -15,23 +15,25 @@ module.exports = ctx => {
       const { argv } = this.context;
       // super
       await super.execute({ user });
-      const moduleNames = argv._;
-      const total = moduleNames.length;
+      const entityNames = argv._;
+      const total = entityNames.length;
       for (let index = 0; index < total; index++) {
-        const moduleName = moduleNames[index];
+        const entityName = entityNames[index];
         // log
         await this.console.log({
           progressNo: 0,
           total,
           progress: index,
-          text: moduleName,
+          text: entityName,
         });
-        // sync module
-        await this._syncModule({ moduleName });
+        // sync entity
+        await this._syncEntity({ entityName });
       }
     }
 
-    async _syncModule({ moduleName }) {}
+    async _syncEntity({ entityName }) {
+      //
+    }
   }
 
   return Cli;

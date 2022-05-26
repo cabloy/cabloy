@@ -1,6 +1,6 @@
 const urllib = require('urllib');
 
-module.exports = class OpenAuth {
+module.exports = class OpenAuthClient {
   constructor({ host }) {
     this.host = host;
     this.jwt = null;

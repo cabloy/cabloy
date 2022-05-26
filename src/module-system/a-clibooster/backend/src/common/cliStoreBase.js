@@ -38,6 +38,11 @@ module.exports = ctx => {
         clientID,
         clientSecret,
       });
+      // onExecuteStoreCommand
+    }
+    async executeStoreCommand() {
+      try {
+      } catch (err) {}
     }
   }
   return CliStoreBase;
