@@ -70,6 +70,7 @@ module.exports = ctx => {
           message: ctx.text('Not Found'),
         };
       }
+      await this.console.log({ text: entityStatus });
     }
   }
 
