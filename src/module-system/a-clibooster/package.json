@@ -29,6 +29,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "egg-born-mock": "^2.1.4",
+    "egg-born-utils": "^1.0.4",
     "require3": "^2.1.5",
     "extend2": "^1.0.1",
     "uglify-js": "^3.7.7",
