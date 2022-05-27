@@ -22,6 +22,7 @@ module.exports = appInfo => {
           '!icons',
         ],
         official: ['**', '!node_modules', '!miniprogram_npm', '!.git', '!.DS_Store'],
+        suite: ['**', '!node_modules', '!miniprogram_npm', '!.git', '!.DS_Store', '!modules'],
       },
     },
   };

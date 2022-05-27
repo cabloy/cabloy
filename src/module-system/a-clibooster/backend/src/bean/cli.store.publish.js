@@ -25,23 +25,27 @@ module.exports = ctx => {
         throw new Error(ctx.text('Not Found'));
       }
       // entityHash
-      const entityHash = entityStatus.entityHash ? JSON.parse(entityStatus.entityHash) : {};
+      const entityHash = entityStatus.entity.entityHash ? JSON.parse(entityStatus.entity.entityHash) : {};
+      // need official/trial
+      const needOfficial = entityStatus.entity.moduleLicenseFull !== 0;
+      const needTrial = entityStatus.entity.moduleLicenseTrial !== 0;
       // suite/module
       if (entityStatus.entity.entityTypeCode === 1) {
-        return await this._publishSuite({ suiteName: entityName, entityHash });
+        return await this._publishSuite({ suiteName: entityName, entityHash, needOfficial, needTrial });
       }
-      return await this._publishModule({ moduleName: entityName, entityHash });
+      return await this._publishModule({ moduleName: entityName, entityHash, needOfficial, needTrial });
     }
 
-    async _publishSuite({ suiteName, entityHash }) {
+    async _publishSuite({ suiteName, entityHash, needOfficial, needTrial }) {
       // check if exists
       const suite = this.helper.findSuite(suiteName);
       if (!suite) {
         throw new Error(ctx.text('Not Found'));
       }
-      // modules
+      // zip modules
       const pathSuite = suite.root;
       const filePkgs = await globby(`${pathSuite}/modules/*/package.json`);
+      const modulesMeta = [];
       for (const filePkg of filePkgs) {
         // name
         const name = filePkg.split('/').slice(-2)[0];
@@ -54,13 +58,51 @@ module.exports = ctx => {
           pkg: filePkg,
           package: _package,
         };
+        modulesMeta.push(moduleMeta);
         if (moduleMeta.name === 'test-party') {
-          await this._publishSuiteModule({ moduleMeta, entityHash });
+          await this._zipSuiteModule({ moduleMeta, entityHash, needOfficial, needTrial });
         }
       }
+      // zip suite
+      const filePkg = path.join(pathSuite, 'package.json');
+      const _package = require(filePkg);
+      const suiteMeta = {
+        name: suiteName,
+        root: pathSuite,
+        pkg: filePkg,
+        package: _package,
+      };
+      await this._zipSuite({ modulesMeta, suiteMeta, entityHash });
     }
 
-    async _publishSuiteModule({ moduleMeta, entityHash }) {
+    async _zipSuite({ modulesMeta, suiteMeta, entityHash }) {
+      let zipSuite;
+      // check modulesMeta
+      let changed = modulesMeta.some(moduleMeta => moduleMeta.changed);
+      if (!changed) {
+        // check suite
+        zipSuite = await this._zipAndHash({
+          patterns: this.configModule.store.publish.patterns.suite,
+          pathRoot: suiteMeta.root,
+        });
+        changed = zipSuite.hash !== entityHash.default;
+      }
+      if (changed) {
+        suiteMeta.changed = true;
+        // bump
+        suiteMeta.package.version = semver.inc(suiteMeta.package.version, 'patch');
+        await fse.outputFile(suiteMeta.pkg, JSON.stringify(suiteMeta.package, null, 2) + '\n');
+        // zip suite
+        zipSuite = await this._zipAndHash({
+          patterns: this.configModule.store.publish.patterns.suite,
+          pathRoot: suiteMeta.root,
+        });
+      }
+      // ok
+      suiteMeta.zipSuite = zipSuite;
+    }
+
+    async _zipSuiteModule({ moduleMeta, entityHash, needOfficial, needTrial }) {
       // build:all
       await this.console.log(`===> build module: ${moduleMeta.name}`);
       // // spawn
@@ -83,19 +125,23 @@ module.exports = ctx => {
         moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
         await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
         // zip official
-        zipOfficial = await this._zipAndHash({
-          patterns: this.configModule.store.publish.patterns.official,
+        if (needOfficial) {
+          zipOfficial = await this._zipAndHash({
+            patterns: this.configModule.store.publish.patterns.official,
+            pathRoot: moduleMeta.root,
+          });
+        }
+      }
+      if (needOfficial) {
+        moduleMeta.zipOfficial = zipOfficial;
+      }
+      // zip trial
+      if (needTrial) {
+        moduleMeta.zipTrial = await this._zipAndHash({
+          patterns: this.configModule.store.publish.patterns.trial,
           pathRoot: moduleMeta.root,
         });
       }
-      // zip trial
-      const zipTrial = await this._zipAndHash({
-        patterns: this.configModule.store.publish.patterns.trial,
-        pathRoot: moduleMeta.root,
-      });
-      // ok
-      moduleMeta.zipOfficial = zipOfficial;
-      moduleMeta.zipTrial = zipTrial;
     }
 
     async _zipAndHash({ patterns, pathRoot }) {
