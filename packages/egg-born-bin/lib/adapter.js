@@ -28,7 +28,7 @@ module.exports = options => {
     },
     socket() {
       // url
-      const url = openAuthClient.host;
+      const url = openAuthClient.token.host;
       // opts
       const opts = {
         autoConnect: false,
