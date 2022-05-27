@@ -8,7 +8,7 @@ const CliStoreBase = require('../common/cliStoreBase.js');
 module.exports = ctx => {
   class Cli extends CliStoreBase(ctx) {
     constructor(options) {
-      super(options, 'store.sync');
+      super(options, 'sync');
     }
 
     async onExecuteStoreCommand() {

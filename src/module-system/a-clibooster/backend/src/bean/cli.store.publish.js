@@ -8,88 +8,25 @@ const CliStoreBase = require('../common/cliStoreBase.js');
 module.exports = ctx => {
   class Cli extends CliStoreBase(ctx) {
     constructor(options) {
-      super(options, 'store.publish');
+      super(options, 'publish');
     }
 
-    async onExecuteStoreCommand() {
-      const { argv } = this.context;
-      // entityNames
-      const entityNames = argv._;
-      const total = entityNames.length;
-      const results = [];
-      for (let index = 0; index < total; index++) {
-        const entityName = entityNames[index];
-        // log
-        await this.console.log({
-          progressNo: 0,
-          total,
-          progress: index,
-          text: entityName,
-        });
-        // publish entity
-        const result = await this._publishEntity({ entityName });
-        // result
-        if (result.message) {
-          await this.console.log({ text: result.message });
-        }
-        results.push(result);
-      }
-      // log results
-      await this._logResults({ results });
-    }
-
-    async _logResults({ results }) {
-      const table = this.helper.newTable({
-        head: ['Entity Name', 'Message'],
-        colWidths: [30, 50],
-      });
-      for (const result of results) {
-        table.push([result.entityName, result.message]);
-      }
-      await this.console.log({ text: table.toString() });
-    }
-
-    async _publishEntity({ entityName }) {
-      try {
-        // save to config
-        let entityConfig = ctx.bean.util.getProperty(
-          this.cabloyConfig,
-          `store.commands.publish.entities.${entityName}`
-        );
-        if (!entityConfig) {
-          entityConfig = {};
-          ctx.bean.util.setProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`, entityConfig);
-          await this.saveCabloyConfig();
-        }
-        // fetch entity status
-        const entityStatus = await this.openAuthClient.post({
-          path: '/cabloy/store/store/publish/entityStatus',
-          body: {
-            entityName,
-          },
-        });
-        if (!entityStatus) {
-          throw new Error(ctx.text('Not Found'));
-        }
-        // suite/module
-        let res;
-        if (entityStatus.entity.entityTypeCode === 1) {
-          res = await this._publishSuite({ suiteName: entityName, entityStatus });
-        } else {
-          res = await this._publishModule({ moduleName: entityName, entityStatus });
-        }
-        if (!res) {
-          res = { message: 'Done' };
-        } else if (typeof res === 'string') {
-          res = { message: res };
-        }
-        return Object.assign(res, { entityName });
-      } catch (err) {
-        return {
+    async onExecuteStoreCommandEntity({ entityName }) {
+      // fetch entity status
+      const entityStatus = await this.openAuthClient.post({
+        path: '/cabloy/store/store/publish/entityStatus',
+        body: {
           entityName,
-          message: err.message,
-        };
+        },
+      });
+      if (!entityStatus) {
+        throw new Error(ctx.text('Not Found'));
       }
+      // suite/module
+      if (entityStatus.entity.entityTypeCode === 1) {
+        return await this._publishSuite({ suiteName: entityName, entityStatus });
+      }
+      return await this._publishModule({ moduleName: entityName, entityStatus });
     }
 
     async _publishSuite({ suiteName, entityStatus }) {
