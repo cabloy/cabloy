@@ -6,7 +6,8 @@
       },
       "publish": {
         "entities": {
-          "test-party": {}
+          "test-party": {},
+          "test-party1": {}
         }
       }
     }

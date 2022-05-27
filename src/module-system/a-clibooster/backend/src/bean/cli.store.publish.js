@@ -50,27 +50,54 @@ module.exports = ctx => {
     }
 
     async _publishEntity({ entityName }) {
-      // save to config
-      let entityConfig = ctx.bean.util.getProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`);
-      if (!entityConfig) {
-        entityConfig = {};
-        ctx.bean.util.setProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`, entityConfig);
-        await this.saveCabloyConfig();
-      }
-      // fetch entity status
-      const entityStatus = await this.openAuthClient.post({
-        path: '/cabloy/store/store/publish/entityStatus',
-        body: {
-          entityName,
-        },
-      });
-      if (!entityStatus) {
+      try {
+        // save to config
+        let entityConfig = ctx.bean.util.getProperty(
+          this.cabloyConfig,
+          `store.commands.publish.entities.${entityName}`
+        );
+        if (!entityConfig) {
+          entityConfig = {};
+          ctx.bean.util.setProperty(this.cabloyConfig, `store.commands.publish.entities.${entityName}`, entityConfig);
+          await this.saveCabloyConfig();
+        }
+        // fetch entity status
+        const entityStatus = await this.openAuthClient.post({
+          path: '/cabloy/store/store/publish/entityStatus',
+          body: {
+            entityName,
+          },
+        });
+        if (!entityStatus) {
+          throw new Error(ctx.text('Not Found'));
+        }
+        // suite/module
+        let res;
+        if (entityStatus.entity.entityTypeCode === 1) {
+          res = await this._publishSuite({ suiteName: entityName, entityStatus });
+        } else {
+          res = await this._publishModule({ moduleName: entityName, entityStatus });
+        }
+        if (!res) {
+          res = { message: 'Done' };
+        } else if (typeof res === 'string') {
+          res = { message: res };
+        }
+        return Object.assign(res, { entityName });
+      } catch (err) {
         return {
           entityName,
-          message: ctx.text('Not Found'),
+          message: err.message,
         };
       }
-      await this.console.log({ text: entityStatus });
+    }
+
+    async _publishSuite({ suiteName, entityStatus }) {
+      // check if exists
+      const _suite = this.helper.findSuite(suiteName);
+      if (!_suite) {
+        throw new Error(ctx.text('Not Found'));
+      }
     }
   }
 
