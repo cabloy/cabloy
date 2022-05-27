@@ -2,7 +2,7 @@ const path = require('path');
 const require3 = require('require3');
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
-const glob = require3('glob');
+const globby = require3('globby');
 
 module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -170,7 +170,7 @@ module.exports = function (app) {
     // invoked in agent
     _collectDevelopmentWatchDirs() {
       const pathSrc = path.resolve(app.config.baseDir, '..');
-      let watchDirs = glob.sync(`${pathSrc}/**/backend/src`);
+      let watchDirs = globby.sync(`${pathSrc}/**/backend/src`);
       watchDirs = [path.join(pathSrc, 'backend/config')].concat(watchDirs);
       return watchDirs;
     }

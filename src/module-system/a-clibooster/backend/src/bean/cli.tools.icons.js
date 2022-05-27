@@ -1,7 +1,7 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const glob = require3('glob');
+const globby = require3('globby');
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
 
@@ -63,9 +63,7 @@ module.exports = ctx => {
 
     async _generateIconsGroup({ modulePath, iconsSrc, group }) {
       // icons
-      const files = await bb.fromCallback(cb => {
-        glob(`${iconsSrc}/${group.name}/*.svg`, cb);
-      });
+      const files = await globby(`${iconsSrc}/${group.name}/*.svg`);
       const iconNames = files.map(item => path.basename(item, '.svg'));
       // symbols
       const symbols = [];
@@ -105,9 +103,7 @@ ${symbols.join('\n')}
     }
 
     async _resolveGroups({ iconsSrc }) {
-      const groupPaths = await bb.fromCallback(cb => {
-        glob(`${iconsSrc}/*`, cb);
-      });
+      const groupPaths = await globby(`${iconsSrc}/*`);
       return groupPaths.map(item => {
         return {
           name: path.basename(item),

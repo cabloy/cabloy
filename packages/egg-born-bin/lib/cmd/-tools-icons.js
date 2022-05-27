@@ -1,6 +1,6 @@
 const path = require('path');
 const chalk = require('chalk');
-const glob = require('glob');
+const globby = require('globby');
 const bb = require('bluebird');
 const fse = require('fs-extra');
 const xml2js = require('xml2js');
@@ -57,9 +57,7 @@ class ToolsIconsCommand extends Command {
 
   async _generateIconsGroup({ modulePath, iconsSrc, group }) {
     // icons
-    const files = await bb.fromCallback(cb => {
-      glob(`${iconsSrc}/${group.name}/*.svg`, cb);
-    });
+    const files = await globby(`${iconsSrc}/${group.name}/*.svg`);
     const iconNames = files.map(item => path.basename(item, '.svg'));
     // symbols
     const symbols = [];
@@ -99,17 +97,13 @@ ${symbols.join('\n')}
   }
 
   async _resolveModulePath({ cwd, moduleName }) {
-    const files = await bb.fromCallback(cb => {
-      glob(`${cwd}/src/**/${moduleName}/`, cb);
-    });
+    const files = await globby(`${cwd}/src/**/${moduleName}/`);
     if (files.length === 0) throw new Error('module not found: ', moduleName);
     return files[0];
   }
 
   async _resolveGroups({ iconsSrc }) {
-    const groupPaths = await bb.fromCallback(cb => {
-      glob(`${iconsSrc}/*`, cb);
-    });
+    const groupPaths = await globby(`${iconsSrc}/*`);
     return groupPaths.map(item => {
       return {
         name: path.basename(item),

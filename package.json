@@ -70,7 +70,7 @@
     "extend2": "^1.0.1",
     "fs-extra": "^8.1.0",
     "function-bind": "^1.1.1",
-    "glob": "^7.1.6",
+    "globby": "^11.0.0",
     "http-proxy-middleware": "^1.0.6",
     "is-type-of": "^1.2.0",
     "js-cookie": "^2.2.1",

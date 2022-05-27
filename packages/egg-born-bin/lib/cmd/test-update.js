@@ -1,5 +1,5 @@
 const path = require('path');
-const glob = require('glob');
+const globby = require('globby');
 const urllib = require('urllib');
 const os = require('os');
 const assert = require('assert');
@@ -45,7 +45,7 @@ class TestUpdateCommand extends Command {
     yield this.__forceMoveCabloyModulesToVendor({ projectPath });
     // update
     const prefix = `${projectPath}/src/module-vendor/`;
-    const files = glob.sync(`${prefix}test-*`);
+    const files = globby.sync(`${prefix}test-*`);
     for (const file of files) {
       const moduleName = file.substr(prefix.length);
       yield this.__updateCabloyModule({ projectPath, moduleName });
