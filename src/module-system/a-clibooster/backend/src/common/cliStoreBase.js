@@ -89,25 +89,15 @@ module.exports = ctx => {
       // token
       const token = await this.localToken.get({ name: this.tokenName });
       // OpenAuthClient
-      this.openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
+      this.openAuthClient = new eggBornUtils.OpenAuthClient({ token });
       // signin
-      await this.openAuthClient.post({
-        path: '/a/authopen/auth/signin',
-        body: {
-          data: {
-            clientID: token.clientID,
-            clientSecret: token.clientSecret,
-          },
-        },
-      });
+      await this.openAuthClient.signin();
       // execute command
       try {
         await this.onExecuteStoreCommand();
       } catch (err) {
         //  logout
-        await this.openAuthClient.post({
-          path: '/a/base/auth/logout',
-        });
+        await this.openAuthClient.logout();
         this.openAuthClient = null;
         throw err;
       }

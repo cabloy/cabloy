@@ -20,7 +20,7 @@ const utils = {
     const token = await eggBornUtils.openAuthConfig.prepareToken(projectPath, null);
     if (!token) return false;
     // OpenAuthClient
-    const openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
+    const openAuthClient = new eggBornUtils.OpenAuthClient({ token });
     // echo
     try {
       await openAuthClient.post({
