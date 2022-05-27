@@ -50,25 +50,12 @@ class EggBornBinCommand extends Command {
       return;
     }
     // OpenAuthClient
-    const openAuthClient = new eggBornUtils.OpenAuthClient({ host: token.host });
+    const openAuthClient = new eggBornUtils.OpenAuthClient({ token });
     // signin
-    const res = yield openAuthClient.post({
-      path: '/a/authopen/auth/signin',
-      body: {
-        data: {
-          clientID: token.clientID,
-          clientSecret: token.clientSecret,
-        },
-      },
-    });
-    // locale
-    let locale = res.user.agent.locale;
-    if (!locale) {
-      locale = eggBornUtils.tools.preferredLocale({ locale: null, locales: res.locales });
-    }
+    yield openAuthClient.signin();
     // cli meta
     const meta = yield openAuthClient.post({
-      path: `/a/cli/cli/meta?locale=${locale}`,
+      path: '/a/cli/cli/meta',
       body: {
         context: {
           argv,
@@ -78,12 +65,10 @@ class EggBornBinCommand extends Command {
     // cli run
     const rawArgv = this.rawArgv.slice();
     rawArgv.splice(rawArgv.indexOf('cli'), 2);
-    const command = new CliCommand(rawArgv, { meta, argv, openAuthClient, locale });
+    const command = new CliCommand(rawArgv, { meta, argv, openAuthClient });
     yield command[DISPATCH]();
     // logout
-    yield openAuthClient.post({
-      path: '/a/base/auth/logout',
-    });
+    yield openAuthClient.logout();
   }
 
   _prepareCliFullName(cliName) {

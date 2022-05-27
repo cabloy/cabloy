@@ -11,7 +11,7 @@ const __debounceTimeout = 500;
 const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG', 'npm_config_registry'];
 
 class CliCommand extends BaseCommand {
-  constructor(rawArgv, { meta, argv, openAuthClient, locale }) {
+  constructor(rawArgv, { meta, argv, openAuthClient }) {
     super(rawArgv);
     this.usage = meta.info.usage;
     this.version = meta.info.version;
@@ -19,7 +19,6 @@ class CliCommand extends BaseCommand {
     this.__groups = meta.groups;
     this.__argv = argv;
     this.__openAuthClient = openAuthClient;
-    this.__locale = locale;
   }
 
   *run({ argv, cwd, env, rawArgv }) {
