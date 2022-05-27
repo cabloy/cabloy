@@ -7,7 +7,7 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Store: Sync',
-      usage: 'npm run cli :store:sync [module1] [module2]',
+      usage: 'npm run cli :store:sync [entity1] [entity2]',
     },
     // options: null,
     groups: {

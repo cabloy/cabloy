@@ -7,7 +7,7 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Store: Publish',
-      usage: 'npm run cli :store:publish [module1] [module2]',
+      usage: 'npm run cli :store:publish [entity1] [entity2]',
     },
     // options: null,
     groups: {
