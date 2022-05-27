@@ -99,13 +99,14 @@ module.exports = (options, app) => {
   const _koajwt = koajwt(options);
   async function _handleNext(ctx, next) {
     // cookies
-    let cookiesJwt;
+    let cookiesRequest;
     let isRefreshToken;
     const useJwt = __checkIfJWT(ctx);
     // set cookie
     if (useJwt) {
-      // clear cookie forcely
-      ctx.request.headers.cookie = '';
+      // clear cookie CABLOY_SESS forcely
+      cookiesRequest = __parseCookiesRequest(ctx.request.headers.cookie);
+      delete cookiesRequest.CABLOY_SESS;
       if (ctx.state.jwt) {
         // check exp
         const isValid = !ctx.state.jwt.exp || ctx.state.jwt.exp > Date.now();
@@ -114,25 +115,26 @@ module.exports = (options, app) => {
           // token
           const token = ctx.state.jwt.token;
           const res = ctx.cookies.keys.decrypt(utility.base64decode(token, true, 'buffer'));
-          cookiesJwt = res ? res.value.toString() : undefined;
+          let cookiesJwt = res ? res.value.toString() : undefined;
           if (cookiesJwt) {
-            // set cookie
-            ctx.request.headers.cookie = cookiesJwt;
+            cookiesJwt = __parseCookiesRequest(cookiesJwt);
+            cookiesRequest = Object.assign({}, cookiesJwt, cookiesRequest);
           }
         }
       }
+      // set cookie
+      ctx.request.headers.cookie = __combineCookies(cookiesRequest);
     }
     // next
     await next();
     // check cookie
     if (useJwt && ctx.response.type === 'application/json' && (isRefreshToken || ctx.response.get('set-cookie'))) {
       // parse
-      const cookies = cookiesJwt ? __parseCookiesRequest(cookiesJwt) : {};
       const cookiesNew = __parseCookiesResponse(ctx.response.get('set-cookie'));
       // assign
-      Object.assign(cookies, cookiesNew);
+      Object.assign(cookiesRequest, cookiesNew);
       // combine
-      const cookiesRes = __combineCookies(cookies);
+      const cookiesRes = __combineCookies(cookiesRequest);
       // jwt
       const token = utility.base64encode(ctx.cookies.keys.encrypt(cookiesRes), true);
       const oauth = __combineJwtTokens(app, options, token);
