@@ -37,7 +37,7 @@ module.exports = ctx => {
       }
       // modules
       const pathSuite = suite.root;
-      const filePkgs = globby.sync(`${pathSuite}/modules/*/package.json`);
+      const filePkgs = await globby(`${pathSuite}/modules/*/package.json`);
       for (const filePkg of filePkgs) {
         // name
         const name = filePkg.split('/').slice(-2)[0];
