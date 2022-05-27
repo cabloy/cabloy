@@ -1,6 +1,10 @@
 const path = require('path');
 const require3 = require('require3');
 const globby = require3('globby');
+const AdmZip = require3('adm-zip');
+const shajs = require3('sha.js');
+const semver = require3('semver');
+const fse = require3('fs-extra');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
@@ -50,7 +54,9 @@ module.exports = ctx => {
           pkg: filePkg,
           package: _package,
         };
-        await this._publishSuiteModule({ moduleMeta, entityHash });
+        if (moduleMeta.name === 'test-party') {
+          await this._publishSuiteModule({ moduleMeta, entityHash });
+        }
       }
     }
 
@@ -65,18 +71,48 @@ module.exports = ctx => {
       //     cwd: moduleMeta.root,
       //   },
       // });
-      // zip full
-      if (moduleMeta.name === 'test-party') {
-        const files = await globby(this.configModule.store.publish.patterns.trial, {
-          cwd: moduleMeta.root,
-        });
-        await this.console.log({ text: files });
-      }
-
-      // zip trial
+      // zip official
+      let zipOfficial = await this._zipAndHash({
+        patterns: this.configModule.store.publish.patterns.official,
+        pathRoot: moduleMeta.root,
+      });
       // check hash
-      // full version
-      // trial version
+      if (zipOfficial.hash !== entityHash[moduleMeta.name]) {
+        moduleMeta.changed = true;
+        // bump
+        moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
+        await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
+        // zip official
+        zipOfficial = await this._zipAndHash({
+          patterns: this.configModule.store.publish.patterns.official,
+          pathRoot: moduleMeta.root,
+        });
+      }
+      // zip trial
+      const zipTrial = await this._zipAndHash({
+        patterns: this.configModule.store.publish.patterns.trial,
+        pathRoot: moduleMeta.root,
+      });
+      // ok
+      moduleMeta.zipOfficial = zipOfficial;
+      moduleMeta.zipTrial = zipTrial;
+    }
+
+    async _zipAndHash({ patterns, pathRoot }) {
+      // globby
+      const files = await globby(patterns, { cwd: pathRoot });
+      // zip
+      const zip = new AdmZip();
+      for (const file of files) {
+        const dirName = path.dirname(file);
+        const fileName = path.basename(file);
+        zip.addLocalFile(path.join(pathRoot, file), dirName, fileName);
+      }
+      const buffer = await zip.toBufferPromise();
+      // hash
+      const hash = shajs('sha256').update(buffer).digest('hex');
+      // ok
+      return { buffer, hash };
     }
   }
 
