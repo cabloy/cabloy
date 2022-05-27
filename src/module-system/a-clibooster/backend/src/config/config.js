@@ -7,6 +7,23 @@ module.exports = appInfo => {
     token: {
       host: 'https://admin.cabloy.com',
     },
+    publish: {
+      patterns: {
+        trial: [
+          '**',
+          '!node_modules',
+          '!miniprogram_npm',
+          '!.git',
+          '!.DS_Store',
+          '!backend/src',
+          '!backend/static',
+          '!backend/test',
+          '!front/src',
+          '!icons',
+        ],
+        official: ['**', '!node_modules', '!miniprogram_npm', '!.git', '!.DS_Store'],
+      },
+    },
   };
 
   return config;

@@ -66,6 +66,13 @@ module.exports = ctx => {
       //   },
       // });
       // zip full
+      if (moduleMeta.name === 'test-party') {
+        const files = await globby(this.configModule.store.publish.patterns.trial, {
+          cwd: moduleMeta.root,
+        });
+        await this.console.log({ text: files });
+      }
+
       // zip trial
       // check hash
       // full version
