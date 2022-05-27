@@ -22,19 +22,47 @@ module.exports = ctx => {
       if (!entityStatus) {
         throw new Error(ctx.text('Not Found'));
       }
+      // entityHash
+      const entityHash = entityStatus.entityHash ? JSON.parse(entityStatus.entityHash) : {};
       // suite/module
       if (entityStatus.entity.entityTypeCode === 1) {
-        return await this._publishSuite({ suiteName: entityName, entityStatus });
+        return await this._publishSuite({ suiteName: entityName, entityHash });
       }
-      return await this._publishModule({ moduleName: entityName, entityStatus });
+      return await this._publishModule({ moduleName: entityName, entityHash });
     }
 
-    async _publishSuite({ suiteName, entityStatus }) {
+    async _publishSuite({ suiteName, entityHash }) {
       // check if exists
-      const _suite = this.helper.findSuite(suiteName);
-      if (!_suite) {
+      const suite = this.helper.findSuite(suiteName);
+      if (!suite) {
         throw new Error(ctx.text('Not Found'));
       }
+      // modules
+      const pathSuite = suite.root;
+      const filePkgs = glob.sync(`${pathSuite}/modules/*/package.json`);
+      for (const filePkg of filePkgs) {
+        // name
+        const name = filePkg.split('/').slice(-2)[0];
+        // meta
+        const _package = require(filePkg);
+        const root = path.dirname(filePkg);
+        const moduleMeta = {
+          name,
+          root,
+          pkg: filePkg,
+          package: _package,
+        };
+        await this._publishSuiteModule({ moduleMeta, entityHash });
+      }
+    }
+
+    async _publishSuiteModule({ moduleMeta, entityHash }) {
+      // build:all
+      // zip full
+      // zip trial
+      // check hash
+      // full version
+      // trial version
     }
   }
 
