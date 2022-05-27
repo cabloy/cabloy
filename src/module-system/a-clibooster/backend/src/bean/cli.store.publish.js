@@ -59,9 +59,7 @@ module.exports = ctx => {
           package: _package,
         };
         modulesMeta.push(moduleMeta);
-        if (moduleMeta.name === 'test-party') {
-          await this._zipSuiteModule({ moduleMeta, entityHash, needOfficial, needTrial });
-        }
+        await this._zipSuiteModule({ moduleMeta, entityHash, needOfficial, needTrial });
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
@@ -73,6 +71,51 @@ module.exports = ctx => {
         package: _package,
       };
       await this._zipSuite({ modulesMeta, suiteMeta, entityHash });
+      // zip all
+      const zipSuiteAll = await this._zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial });
+      // upload all
+      await this._uploadSuiteAll({ zipSuiteAll, needOfficial, needTrial });
+    }
+
+    async _uploadSuiteAll({ zipSuiteAll, needOfficial, needTrial }) {
+      console.log(zipSuiteAll);
+      // upload official
+      // upload trial
+    }
+
+    async _zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial }) {
+      const zipSuiteAll = {};
+      // hash
+      zipSuiteAll.entityHash = this._zipSuiteAll_hash({ suiteMeta, modulesMeta });
+      // zip official
+      if (needOfficial) {
+        zipSuiteAll.zipOfficial = await this._zipSuiteAll_zip({ suiteMeta, modulesMeta, type: 'official' });
+      }
+      // zip trial
+      if (needTrial) {
+        zipSuiteAll.zipTrial = await this._zipSuiteAll_zip({ suiteMeta, modulesMeta, type: 'trial' });
+      }
+      return zipSuiteAll;
+    }
+
+    _zipSuiteAll_hash({ suiteMeta, modulesMeta }) {
+      const entityHash = {};
+      entityHash.default = suiteMeta.zipSuite.hash;
+      for (const moduleMeta of modulesMeta) {
+        entityHash[moduleMeta.name] = moduleMeta.zipOfficial.hash;
+      }
+      return entityHash;
+    }
+
+    async _zipSuiteAll_zip({ suiteMeta, modulesMeta, type }) {
+      const zip = new AdmZip();
+      zip.addFile('default', suiteMeta.zipSuite.buffer);
+      for (const moduleMeta of modulesMeta) {
+        const buffer = type === 'official' ? moduleMeta.zipOfficial.buffer : moduleMeta.zipTrial.buffer;
+        zip.addFile(moduleMeta.name, buffer);
+      }
+      const buffer = await zip.toBufferPromise();
+      return { buffer };
     }
 
     async _zipSuite({ modulesMeta, suiteMeta, entityHash }) {
@@ -102,7 +145,7 @@ module.exports = ctx => {
       suiteMeta.zipSuite = zipSuite;
     }
 
-    async _zipSuiteModule({ moduleMeta, entityHash, needOfficial, needTrial }) {
+    async _zipSuiteModule({ moduleMeta, entityHash, needTrial }) {
       // build:all
       await this.console.log(`===> build module: ${moduleMeta.name}`);
       // // spawn
@@ -125,16 +168,12 @@ module.exports = ctx => {
         moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
         await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
         // zip official
-        if (needOfficial) {
-          zipOfficial = await this._zipAndHash({
-            patterns: this.configModule.store.publish.patterns.official,
-            pathRoot: moduleMeta.root,
-          });
-        }
+        zipOfficial = await this._zipAndHash({
+          patterns: this.configModule.store.publish.patterns.official,
+          pathRoot: moduleMeta.root,
+        });
       }
-      if (needOfficial) {
-        moduleMeta.zipOfficial = zipOfficial;
-      }
+      moduleMeta.zipOfficial = zipOfficial;
       // zip trial
       if (needTrial) {
         moduleMeta.zipTrial = await this._zipAndHash({
