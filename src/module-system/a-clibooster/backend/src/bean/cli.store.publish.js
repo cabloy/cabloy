@@ -1,8 +1,6 @@
 const path = require('path');
 const require3 = require('require3');
-const fse = require3('fs-extra');
-const glob = require3('glob');
-const bb = require3('bluebird');
+const globby = require3('globby');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
@@ -39,7 +37,7 @@ module.exports = ctx => {
       }
       // modules
       const pathSuite = suite.root;
-      const filePkgs = glob.sync(`${pathSuite}/modules/*/package.json`);
+      const filePkgs = globby.sync(`${pathSuite}/modules/*/package.json`);
       for (const filePkg of filePkgs) {
         // name
         const name = filePkg.split('/').slice(-2)[0];
@@ -58,15 +56,15 @@ module.exports = ctx => {
 
     async _publishSuiteModule({ moduleMeta, entityHash }) {
       // build:all
-      await this.console.log('===> build module');
-      // spawn
-      await this.helper.spawn({
-        cmd: 'npm',
-        args: ['run', 'build:all'],
-        options: {
-          cwd: moduleMeta.root,
-        },
-      });
+      await this.console.log(`===> build module: ${moduleMeta.name}`);
+      // // spawn
+      // await this.helper.spawn({
+      //   cmd: 'npm',
+      //   args: ['run', 'build:all'],
+      //   options: {
+      //     cwd: moduleMeta.root,
+      //   },
+      // });
       // zip full
       // zip trial
       // check hash
