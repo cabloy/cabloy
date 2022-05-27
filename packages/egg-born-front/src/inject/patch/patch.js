@@ -15,7 +15,7 @@ export default function (ctx, router) {
     }
     // use module
     ctx.$meta.module.use(moduleInfo, () => {
-      route = router.findMatchingRoute(url);
+      route = router.routes && router.findMatchingRoute(url);
       if (!route) {
         // should not throw error
         console.log('page path not found: ', url);
