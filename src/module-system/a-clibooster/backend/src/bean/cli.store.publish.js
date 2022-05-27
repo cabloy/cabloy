@@ -58,6 +58,15 @@ module.exports = ctx => {
 
     async _publishSuiteModule({ moduleMeta, entityHash }) {
       // build:all
+      await this.console.log('===> build module');
+      // spawn
+      await this.helper.spawn({
+        cmd: 'npm',
+        args: ['run', 'build:all'],
+        options: {
+          cwd: moduleMeta.root,
+        },
+      });
       // zip full
       // zip trial
       // check hash
