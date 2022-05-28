@@ -39,6 +39,8 @@ class CliCommand extends BaseCommand {
     yield this._progressbar({ progressId, context });
     // done
     console.log(chalk.cyan('\n  cli successfully!\n'));
+    // force exit
+    process.exit(0);
   }
 
   _adjustEnv({ env }) {
