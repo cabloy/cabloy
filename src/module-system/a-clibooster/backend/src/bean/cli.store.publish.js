@@ -91,7 +91,7 @@ module.exports = ctx => {
           data: {
             entityName: suiteMeta.name,
             entityVersion: suiteMeta.package.version,
-            entityHash: zipSuiteAll.entityHash,
+            entityHash: JSON.stringify(zipSuiteAll.entityHash, null, 2),
             zipOfficial: needOfficial ? utility.base64encode(zipSuiteAll.zipOfficial.buffer, false) : undefined,
             zipTrial: needTrial ? utility.base64encode(zipSuiteAll.zipTrial.buffer, false) : undefined,
           },
