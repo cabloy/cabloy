@@ -738,7 +738,7 @@ module.exports = ctx => {
         !_atomDraft.atomClosed &&
         _atomDraft.userIdUpdated === user.id
       ) {
-        return await this._checkRightAction({ atom: _atomDraft, action, stage, user, checkFlow });
+        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow });
       }
       // check enableOnOpened
       if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
