@@ -23,7 +23,8 @@ module.exports = ctx => {
         },
       });
       if (!entityStatus) {
-        throw new Error(ctx.text('Not Found'));
+        // not found
+        return { code: 1001 };
       }
       // entityHash
       const entityHash = entityStatus.entity.entityHash ? JSON.parse(entityStatus.entity.entityHash) : {};
