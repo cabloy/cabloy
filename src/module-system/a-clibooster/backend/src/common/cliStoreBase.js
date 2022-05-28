@@ -108,7 +108,16 @@ module.exports = ctx => {
     async _executeStoreCommand() {
       const { argv } = this.context;
       // entityNames
-      const entityNames = argv._;
+      let entityNames = argv._;
+      if (entityNames.length === 0) {
+        // load all entities
+        const entitiesConfig = ctx.bean.util.getProperty(
+          this.cabloyConfig,
+          `store.commands.${this.commandName}.entities`
+        );
+        entityNames = Object.keys(entitiesConfig);
+      }
+      // loop
       const total = entityNames.length;
       const results = [];
       for (let index = 0; index < total; index++) {
