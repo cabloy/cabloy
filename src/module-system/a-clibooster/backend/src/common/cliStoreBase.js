@@ -124,7 +124,7 @@ module.exports = ctx => {
         const result = await this._executeStoreCommandEntity({ entityName });
         result.entityName = entityName;
         // result
-        if (result.code) {
+        if (result.code && !result.message) {
           result.message = ctx.parseSuccess.module(moduleInfo.relativeName, result.code).message;
         }
         if (result.message) {
@@ -156,6 +156,7 @@ module.exports = ctx => {
         return await this.onExecuteStoreCommandEntity({ entityName });
       } catch (err) {
         return {
+          code: err.code,
           message: err.message,
         };
       }

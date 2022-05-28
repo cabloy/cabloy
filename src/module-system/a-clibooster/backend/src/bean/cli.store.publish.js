@@ -42,7 +42,8 @@ module.exports = ctx => {
       // check if exists
       const suite = this.helper.findSuite(suiteName);
       if (!suite) {
-        throw new Error(ctx.text('Not Found'));
+        // not found
+        return { code: 1001 };
       }
       // zip modules
       const pathSuite = suite.root;
@@ -74,12 +75,15 @@ module.exports = ctx => {
       };
       await this._zipSuite({ modulesMeta, suiteMeta, entityHash });
       if (!suiteMeta.changed) {
-        return 'not changed';
+        // No Changes Found
+        return { code: 2001 };
       }
       // zip all
       const zipSuiteAll = await this._zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial });
       // upload all
       await this._uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial });
+      // submitted
+      return { code: 2000 };
     }
 
     async _uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial }) {

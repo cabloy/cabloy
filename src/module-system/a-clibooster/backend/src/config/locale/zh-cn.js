@@ -12,4 +12,5 @@ module.exports = {
   'The student info': '学生信息',
   'Specify the module template': '指定模块模版',
   'Not Found': '未发现',
+  'No Changes Found': '没有变更',
 };
