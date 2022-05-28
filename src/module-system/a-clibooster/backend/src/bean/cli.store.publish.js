@@ -5,6 +5,7 @@ const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
 const fse = require3('fs-extra');
+const utility = require3('utility');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
@@ -31,12 +32,12 @@ module.exports = ctx => {
       const needTrial = entityStatus.entity.moduleLicenseTrial !== 0;
       // suite/module
       if (entityStatus.entity.entityTypeCode === 1) {
-        return await this._publishSuite({ suiteName: entityName, entityHash, needOfficial, needTrial });
+        return await this._publishSuite({ suiteName: entityName, entityStatus, entityHash, needOfficial, needTrial });
       }
-      return await this._publishModule({ moduleName: entityName, entityHash, needOfficial, needTrial });
+      return await this._publishModule({ moduleName: entityName, entityStatus, entityHash, needOfficial, needTrial });
     }
 
-    async _publishSuite({ suiteName, entityHash, needOfficial, needTrial }) {
+    async _publishSuite({ suiteName, entityHash, entityStatus, needOfficial, needTrial }) {
       // check if exists
       const suite = this.helper.findSuite(suiteName);
       if (!suite) {
@@ -74,13 +75,21 @@ module.exports = ctx => {
       // zip all
       const zipSuiteAll = await this._zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial });
       // upload all
-      await this._uploadSuiteAll({ zipSuiteAll, needOfficial, needTrial });
+      await this._uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial });
     }
 
-    async _uploadSuiteAll({ zipSuiteAll, needOfficial, needTrial }) {
-      console.log(zipSuiteAll);
-      // upload official
-      // upload trial
+    async _uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial }) {
+      await this.openAuthClient.post({
+        path: '/cabloy/store/store/publish/entityPublish',
+        body: {
+          data: {
+            atomId: entityStatus.entity.atomId,
+            version: suiteMeta.package.version,
+            zipOfficial: needOfficial ? utility.base64encode(zipSuiteAll.zipOfficial) : undefined,
+            zipTrial: needTrial ? utility.base64encode(zipSuiteAll.zipTrial) : undefined,
+          },
+        },
+      });
     }
 
     async _zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial }) {
