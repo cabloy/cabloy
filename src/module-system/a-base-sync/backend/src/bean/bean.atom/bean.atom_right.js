@@ -75,7 +75,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightAction({ atom: { id }, action, stage, user, checkFlow }) {
+    async checkRightAction({ atom: { id }, action, stage, user, checkFlow, disableAuthOpenCheck }) {
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // atomClass
@@ -85,8 +85,10 @@ module.exports = ctx => {
       const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
       // auth open check
-      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
-      if (!resAuthOpenCheck) return null;
+      if (!disableAuthOpenCheck) {
+        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
+        if (!resAuthOpenCheck) return null;
+      }
       // ok
       return res;
     }
