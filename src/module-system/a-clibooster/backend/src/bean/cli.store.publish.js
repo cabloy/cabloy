@@ -72,6 +72,9 @@ module.exports = ctx => {
         package: _package,
       };
       await this._zipSuite({ modulesMeta, suiteMeta, entityHash });
+      if (!suiteMeta.changed) {
+        return 'not changed';
+      }
       // zip all
       const zipSuiteAll = await this._zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial });
       // upload all
