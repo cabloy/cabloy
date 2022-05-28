@@ -85,11 +85,14 @@ module.exports = ctx => {
       await this.openAuthClient.post({
         path: '/cabloy/store/store/publish/entityPublish',
         body: {
-          data: {
+          key: {
             atomId: entityStatus.entity.atomId,
-            version: suiteMeta.package.version,
-            zipOfficial: needOfficial ? utility.base64encode(zipSuiteAll.zipOfficial) : undefined,
-            zipTrial: needTrial ? utility.base64encode(zipSuiteAll.zipTrial) : undefined,
+          },
+          data: {
+            entityName: suiteMeta.name,
+            entityVersion: suiteMeta.package.version,
+            zipOfficial: needOfficial ? utility.base64encode(zipSuiteAll.zipOfficial, false) : undefined,
+            zipTrial: needTrial ? utility.base64encode(zipSuiteAll.zipTrial, false) : undefined,
           },
         },
       });
