@@ -7,7 +7,8 @@
       "publish": {
         "entities": {
           "test-party": {},
-          "test-party1": {}
+          "test-party1": {},
+          "test-note": {}
         }
       }
     }

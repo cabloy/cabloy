@@ -35,7 +35,39 @@ module.exports = ctx => {
       if (entityStatus.entity.entityTypeCode === 1) {
         return await this._publishSuite({ suiteName: entityName, entityStatus, entityHash, needOfficial, needTrial });
       }
-      return await this._publishModule({ moduleName: entityName, entityStatus, entityHash, needOfficial, needTrial });
+      return await this._publishModuleIsolate({
+        moduleName: entityName,
+        entityStatus,
+        entityHash,
+        needOfficial,
+        needTrial,
+      });
+    }
+
+    async _publishModuleIsolate({ moduleName, entityHash, entityStatus, needOfficial, needTrial }) {
+      // check if exists
+      const module = this.helper.findModule(moduleName);
+      if (!module) {
+        // not found
+        return { code: 1001 };
+      }
+      // zip module
+      const moduleMeta = {
+        name: moduleName,
+        root: module.root,
+        pkg: module.pkg,
+        package: module.package,
+      };
+      const moduleHash = entityHash.default;
+      await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
+      if (!moduleMeta.changed) {
+        // No Changes Found
+        return { code: 2001 };
+      }
+      // upload module isolate
+      await this._uploadModuleIsolate({ moduleMeta, entityStatus, needOfficial, needTrial });
+      // submitted
+      return { code: 2000, args: [moduleMeta.package.version] };
     }
 
     async _publishSuite({ suiteName, entityHash, entityStatus, needOfficial, needTrial }) {
@@ -62,7 +94,8 @@ module.exports = ctx => {
           package: _package,
         };
         modulesMeta.push(moduleMeta);
-        await this._zipSuiteModule({ moduleMeta, entityHash, needOfficial, needTrial });
+        const moduleHash = entityHash[moduleMeta.name];
+        await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
@@ -84,6 +117,24 @@ module.exports = ctx => {
       await this._uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial });
       // submitted
       return { code: 2000, args: [suiteMeta.package.version] };
+    }
+
+    async _uploadModuleIsolate({ moduleMeta, entityStatus, needOfficial, needTrial }) {
+      await this.openAuthClient.post({
+        path: '/cabloy/store/store/publish/entityPublish',
+        body: {
+          key: {
+            atomId: entityStatus.entity.atomId,
+          },
+          data: {
+            entityName: moduleMeta.name,
+            entityVersion: moduleMeta.package.version,
+            entityHash: JSON.stringify({ default: moduleMeta.zipOfficial.hash }, null, 2),
+            zipOfficial: needOfficial ? utility.base64encode(moduleMeta.zipOfficial.buffer, false) : undefined,
+            zipTrial: needTrial ? utility.base64encode(moduleMeta.zipTrial.buffer, false) : undefined,
+          },
+        },
+      });
     }
 
     async _uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial }) {
@@ -166,7 +217,7 @@ module.exports = ctx => {
       suiteMeta.zipSuite = zipSuite;
     }
 
-    async _zipSuiteModule({ moduleMeta, entityHash, needTrial }) {
+    async _zipSuiteModule({ moduleMeta, moduleHash, needTrial }) {
       // build:all
       await this.console.log(`===> build module: ${moduleMeta.name}`);
       // // spawn
@@ -183,7 +234,7 @@ module.exports = ctx => {
         pathRoot: moduleMeta.root,
       });
       // check hash
-      if (zipOfficial.hash !== entityHash[moduleMeta.name]) {
+      if (zipOfficial.hash !== moduleHash) {
         moduleMeta.changed = true;
         // bump
         moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
