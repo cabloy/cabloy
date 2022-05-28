@@ -234,6 +234,9 @@ module.exports = ctx => {
         pathRoot: moduleMeta.root,
       });
       // check hash
+      console.log('---: ', zipOfficial.hash);
+      console.log('---: ', moduleHash);
+      throw new Error('sss');
       if (zipOfficial.hash !== moduleHash) {
         moduleMeta.changed = true;
         // bump

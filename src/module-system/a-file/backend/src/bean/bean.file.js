@@ -485,6 +485,7 @@ module.exports = ctx => {
         stage: 'draft',
         user,
         checkFlow: true,
+        disableAuthOpenCheck: true,
       });
       if (res && res.atomClosed === 0) return;
       ctx.throw(403);
