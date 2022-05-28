@@ -97,13 +97,13 @@ ${symbols.join('\n')}
   }
 
   async _resolveModulePath({ cwd, moduleName }) {
-    const files = await globby(`${cwd}/src/**/${moduleName}/`);
+    const files = await globby(`${cwd}/src/**/${moduleName}`, { onlyDirectories: true });
     if (files.length === 0) throw new Error('module not found: ', moduleName);
     return files[0];
   }
 
   async _resolveGroups({ iconsSrc }) {
-    const groupPaths = await globby(`${iconsSrc}/*`);
+    const groupPaths = await globby(`${iconsSrc}/*`, { onlyDirectories: true });
     return groupPaths.map(item => {
       return {
         name: path.basename(item),
