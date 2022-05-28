@@ -1,4 +1,5 @@
 module.exports = {
+  Submitted: '已提交',
   CliAuthOpenTokenInfoStoreSync: '用于Cabloy商店同步的开放认证Token',
   CliAuthOpenTokenInfoStorePublish: '用于Cabloy商店发布的开放认证Token',
   'Cli Demo': 'Cli演示',
@@ -10,4 +11,5 @@ module.exports = {
   'The teacher info': '教师信息',
   'The student info': '学生信息',
   'Specify the module template': '指定模块模版',
+  'Not Found': '未发现',
 };

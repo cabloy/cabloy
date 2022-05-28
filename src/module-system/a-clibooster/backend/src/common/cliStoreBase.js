@@ -122,7 +122,11 @@ module.exports = ctx => {
         });
         // command entity
         const result = await this._executeStoreCommandEntity({ entityName });
+        result.entityName = entityName;
         // result
+        if (result.code) {
+          result.message = ctx.parseSuccess(result.code).message;
+        }
         if (result.message) {
           await this.console.log({ text: result.message });
         }
@@ -149,22 +153,18 @@ module.exports = ctx => {
           await this.saveCabloyConfig();
         }
         // onExecuteStoreCommandEntity
-        let res = await this.onExecuteStoreCommandEntity({ entityName });
-        if (!res) {
-          res = { message: 'Done' };
-        } else if (typeof res === 'string') {
-          res = { message: res };
-        }
-        return Object.assign(res, { entityName });
+        return await this.onExecuteStoreCommandEntity({ entityName });
       } catch (err) {
         return {
-          entityName,
           message: err.message,
         };
       }
     }
 
     async _logResults({ results }) {
+      // sort
+      results.sort((a, b) => a.code - b.code);
+      // table
       const table = this.helper.newTable({
         head: ['Entity Name', 'Message'],
         colWidths: [30, 50],
