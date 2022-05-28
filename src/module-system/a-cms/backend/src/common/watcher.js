@@ -170,7 +170,7 @@ module.exports = function (app) {
     // invoked in agent
     _collectDevelopmentWatchDirs() {
       const pathSrc = path.resolve(app.config.baseDir, '..');
-      let watchDirs = globby.sync(`${pathSrc}/**/backend/src`);
+      let watchDirs = globby.sync(`${pathSrc}/**/backend/src`, { onlyDirectories: true });
       watchDirs = [path.join(pathSrc, 'backend/config')].concat(watchDirs);
       return watchDirs;
     }
