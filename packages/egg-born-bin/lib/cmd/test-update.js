@@ -45,7 +45,7 @@ class TestUpdateCommand extends Command {
     yield this.__forceMoveCabloyModulesToVendor({ projectPath });
     // update
     const prefix = `${projectPath}/src/module-vendor/`;
-    const files = globby.sync(`${prefix}test-*`);
+    const files = globby.sync(`${prefix}test-*`, { onlyDirectories: true });
     for (const file of files) {
       const moduleName = file.substr(prefix.length);
       yield this.__updateCabloyModule({ projectPath, moduleName });

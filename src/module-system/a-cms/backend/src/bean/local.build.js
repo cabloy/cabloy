@@ -416,7 +416,7 @@ module.exports = app => {
     async _renderIndex({ site }) {
       // index
       const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
-      const indexFiles = await globby(`${pathIntermediate}/main/index/\*\*/\*.ejs`);
+      const indexFiles = await globby(`${pathIntermediate}/main/index/**/*.ejs`);
       for (const item of indexFiles) {
         // data
         const data = await this.getData({ site });
@@ -494,7 +494,7 @@ module.exports = app => {
     async _renderStatic({ site }) {
       // static
       const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
-      const staticFiles = await globby(`${pathIntermediate}/static/\*\*/\*.ejs`);
+      const staticFiles = await globby(`${pathIntermediate}/static/**/*.ejs`);
       for (const item of staticFiles) {
         // data
         const data = await this.getData({ site });
@@ -947,7 +947,7 @@ var env=${JSON.stringify(env, null, 2)};
         //   await fse.remove(path.join(pathDist, item));
         // }
         //   solution: 2
-        const distFiles = await globby(`${pathDist}/\*`);
+        const distFiles = await globby(`${pathDist}/*`, { onlyFiles: false });
         const languages = site.language ? site.language.items.split(',') : null;
         for (const item of distFiles) {
           if (!site.language || languages.indexOf(path.basename(item)) === -1) {
@@ -964,7 +964,7 @@ var env=${JSON.stringify(env, null, 2)};
           const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
           if (plugin) {
             const pluginPath = path.join(module.root, 'backend/cms/plugin');
-            const pluginFiles = await globby(`${pluginPath}/\*`);
+            const pluginFiles = await globby(`${pluginPath}/*`, { onlyFiles: false });
             for (const item of pluginFiles) {
               await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
             }
@@ -979,13 +979,13 @@ var env=${JSON.stringify(env, null, 2)};
 
         // custom
         const customPath = await this.getPathCustom(language);
-        const customFiles = await globby(`${customPath}/\*`);
+        const customFiles = await globby(`${customPath}/*`, { onlyFiles: false });
         for (const item of customFiles) {
           await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
         }
 
         // intermediate dist
-        const intermediateDistFiles = await globby(`${pathIntermediate}/dist/\*`);
+        const intermediateDistFiles = await globby(`${pathIntermediate}/dist/*`, { onlyFiles: false });
         for (const item of intermediateDistFiles) {
           await fse.copy(item, path.join(pathDist, path.basename(item)));
         }
@@ -1002,7 +1002,7 @@ var env=${JSON.stringify(env, null, 2)};
             }
           } else {
             // plugins
-            const pluginsFiles = await globby(`${pathIntermediate}/plugins/\*`);
+            const pluginsFiles = await globby(`${pathIntermediate}/plugins/*`, { onlyDirectories: true });
             for (const item of pluginsFiles) {
               const _filename = `${item}/assets`;
               const exists = await fse.pathExists(_filename);
@@ -1012,7 +1012,7 @@ var env=${JSON.stringify(env, null, 2)};
             }
           }
           // delete ejs files
-          const ejsFiles = await globby(`${pathDist}/${dir}/\*\*/\*.ejs`);
+          const ejsFiles = await globby(`${pathDist}/${dir}/**/*.ejs`);
           for (const item of ejsFiles) {
             await fse.remove(item);
           }
@@ -1184,7 +1184,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
       // current
       const themePath = path.join(module.root, 'backend/cms/theme');
-      const themeFiles = await globby(`${themePath}/\*`);
+      const themeFiles = await globby(`${themePath}/*`, { onlyFiles: false });
       for (const item of themeFiles) {
         await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
       }

@@ -103,7 +103,7 @@ ${symbols.join('\n')}
     }
 
     async _resolveGroups({ iconsSrc }) {
-      const groupPaths = await globby(`${iconsSrc}/*`);
+      const groupPaths = await globby(`${iconsSrc}/*`, { onlyDirectories: true });
       return groupPaths.map(item => {
         return {
           name: path.basename(item),
