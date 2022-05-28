@@ -83,7 +83,7 @@ module.exports = ctx => {
       // upload all
       await this._uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial });
       // submitted
-      return { code: 2000 };
+      return { code: 2000, args: [suiteMeta.package.version] };
     }
 
     async _uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial }) {

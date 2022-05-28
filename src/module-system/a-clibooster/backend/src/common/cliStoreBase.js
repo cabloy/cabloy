@@ -125,7 +125,8 @@ module.exports = ctx => {
         result.entityName = entityName;
         // result
         if (result.code && !result.message) {
-          result.message = ctx.parseSuccess.module(moduleInfo.relativeName, result.code).message;
+          const args = result.args || [];
+          result.message = ctx.parseSuccess.module(moduleInfo.relativeName, result.code, ...args).message;
         }
         if (result.message) {
           await this.console.log({ text: result.message });
