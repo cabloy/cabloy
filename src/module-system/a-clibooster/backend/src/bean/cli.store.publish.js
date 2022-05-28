@@ -220,14 +220,14 @@ module.exports = ctx => {
     async _zipSuiteModule({ moduleMeta, moduleHash, needTrial }) {
       // build:all
       await this.console.log(`===> build module: ${moduleMeta.name}`);
-      // // spawn
-      // await this.helper.spawn({
-      //   cmd: 'npm',
-      //   args: ['run', 'build:all'],
-      //   options: {
-      //     cwd: moduleMeta.root,
-      //   },
-      // });
+      // spawn
+      await this.helper.spawn({
+        cmd: 'npm',
+        args: ['run', 'build:all'],
+        options: {
+          cwd: moduleMeta.root,
+        },
+      });
       // zip official
       let zipOfficial = await this._zipAndHash({
         patterns: this.configModule.store.publish.patterns.official,
