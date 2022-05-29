@@ -22,7 +22,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightRead({ atom: { id }, user, checkFlow }) {
+    async checkRightRead({ atom: { id }, user, checkFlow, disableAuthOpenCheck }) {
       const _atom = await this.modelAtom.get({ id });
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // atomClass
@@ -32,8 +32,10 @@ module.exports = ctx => {
       const res = await this._checkRightRead_normal({ _atom, atomClass, user, checkFlow });
       if (!res) return res;
       // auth open check
-      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'read' });
-      if (!resAuthOpenCheck) return null;
+      if (!disableAuthOpenCheck) {
+        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'read' });
+        if (!resAuthOpenCheck) return null;
+      }
       // ok
       return res;
     }

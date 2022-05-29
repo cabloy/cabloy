@@ -423,6 +423,7 @@ module.exports = ctx => {
               atom: { id: file.atomId },
               user,
               checkFlow: true,
+              disableAuthOpenCheck: true,
             });
             context.result = !!res;
           } else {
