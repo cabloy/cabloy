@@ -232,7 +232,7 @@ module.exports = ctx => {
       await this.console.log(`===> build module: ${moduleMeta.name}`);
       // zip officialTemp
       const patternsTemp = this.configModule.store.publish.patterns.official.concat(['!dist']);
-      const zipOfficialTemp = await this._zipAndHash({
+      let zipOfficialTemp = await this._zipAndHash({
         patterns: patternsTemp,
         pathRoot: moduleMeta.root,
         needHash: true,
@@ -252,15 +252,23 @@ module.exports = ctx => {
         if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
           moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
           await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
+          zipOfficialTemp = await this._zipAndHash({
+            patterns: patternsTemp,
+            pathRoot: moduleMeta.root,
+            needHash: true,
+          });
         }
       }
       // zip official
       const zipOfficial = await this._zipAndHash({
         patterns: this.configModule.store.publish.patterns.official,
         pathRoot: moduleMeta.root,
-        needHash: true,
+        needHash: false,
       });
-      zipOfficial.hash.version = moduleMeta.package.version;
+      zipOfficial.hash = {
+        hash: zipOfficialTemp.hash.hash,
+        version: moduleMeta.package.version,
+      };
       moduleMeta.zipOfficial = zipOfficial;
       // zip trial
       if (needTrial) {
