@@ -120,13 +120,10 @@ module.exports = ctx => {
       return { code: 2000, args: [suiteMeta.package.version] };
     }
 
-    async _uploadModuleIsolate({ moduleMeta, entityStatus, needOfficial, needTrial }) {
+    async _uploadModuleIsolate({ moduleMeta, needOfficial, needTrial }) {
       await this.openAuthClient.post({
         path: '/cabloy/store/store/publish/entityPublish',
         body: {
-          key: {
-            atomId: entityStatus.entity.atomId,
-          },
           data: {
             entityName: moduleMeta.name,
             entityVersion: moduleMeta.package.version,
@@ -138,13 +135,10 @@ module.exports = ctx => {
       });
     }
 
-    async _uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial }) {
+    async _uploadSuiteAll({ suiteMeta, zipSuiteAll, needOfficial, needTrial }) {
       await this.openAuthClient.post({
         path: '/cabloy/store/store/publish/entityPublish',
         body: {
-          key: {
-            atomId: entityStatus.entity.atomId,
-          },
           data: {
             entityName: suiteMeta.name,
             entityVersion: suiteMeta.package.version,
