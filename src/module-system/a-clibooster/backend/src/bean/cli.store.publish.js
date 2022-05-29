@@ -258,6 +258,7 @@ module.exports = ctx => {
     async _zipAndHash({ patterns, pathRoot }) {
       // globby
       const files = await globby(patterns, { cwd: pathRoot });
+      files.sort();
       // zip
       const zip = new AdmZip();
       for (const file of files) {
