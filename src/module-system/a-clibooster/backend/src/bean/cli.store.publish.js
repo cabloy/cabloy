@@ -228,8 +228,8 @@ module.exports = ctx => {
     }
 
     async _zipSuiteModule({ moduleMeta, moduleHash, needTrial }) {
-      // build:all
-      await this.console.log(`===> build module: ${moduleMeta.name}`);
+      // log
+      await this.console.log(`===> module: ${moduleMeta.name}`);
       // zip officialTemp
       const patternsTemp = this.configModule.store.publish.patterns.official.concat(['!dist']);
       let zipOfficialTemp = await this._zipAndHash({
