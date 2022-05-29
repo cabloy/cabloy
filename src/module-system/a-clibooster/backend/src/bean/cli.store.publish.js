@@ -200,6 +200,7 @@ module.exports = ctx => {
         zipSuite = await this._zipAndHash({
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
+          needHash: true,
         });
         changed = zipSuite.hash !== suiteHash;
       }
@@ -212,6 +213,7 @@ module.exports = ctx => {
         zipSuite = await this._zipAndHash({
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
+          needHash: true,
         });
       }
       // ok
@@ -233,6 +235,7 @@ module.exports = ctx => {
       let zipOfficial = await this._zipAndHash({
         patterns: this.configModule.store.publish.patterns.official,
         pathRoot: moduleMeta.root,
+        needHash: true,
       });
       // check hash
       if (zipOfficial.hash !== moduleHash) {
@@ -244,6 +247,7 @@ module.exports = ctx => {
         zipOfficial = await this._zipAndHash({
           patterns: this.configModule.store.publish.patterns.official,
           pathRoot: moduleMeta.root,
+          needHash: true,
         });
       }
       moduleMeta.zipOfficial = zipOfficial;
@@ -252,11 +256,12 @@ module.exports = ctx => {
         moduleMeta.zipTrial = await this._zipAndHash({
           patterns: this.configModule.store.publish.patterns.trial,
           pathRoot: moduleMeta.root,
+          needHash: false,
         });
       }
     }
 
-    async _zipAndHash({ patterns, pathRoot }) {
+    async _zipAndHash({ patterns, pathRoot, needHash }) {
       // globby
       const files = await globby(patterns, { cwd: pathRoot });
       files.sort();
@@ -269,7 +274,7 @@ module.exports = ctx => {
       }
       const buffer = await zip.toBufferPromise();
       // hash
-      const hash = shajs('sha256').update(buffer).digest('hex');
+      const hash = needHash ? shajs('sha256').update(buffer).digest('hex') : undefined;
       // ok
       return { buffer, hash };
     }
