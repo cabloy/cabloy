@@ -106,7 +106,8 @@ module.exports = ctx => {
         pkg: filePkg,
         package: _package,
       };
-      await this._zipSuite({ modulesMeta, suiteMeta, entityHash });
+      const suiteHash = entityHash.default;
+      await this._zipSuite({ modulesMeta, suiteMeta, suiteHash });
       if (!suiteMeta.changed) {
         // No Changes Found
         return { code: 2001 };
@@ -190,7 +191,7 @@ module.exports = ctx => {
       return { buffer };
     }
 
-    async _zipSuite({ modulesMeta, suiteMeta, entityHash }) {
+    async _zipSuite({ modulesMeta, suiteMeta, suiteHash }) {
       let zipSuite;
       // check modulesMeta
       let changed = modulesMeta.some(moduleMeta => moduleMeta.changed);
@@ -200,7 +201,7 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
         });
-        changed = zipSuite.hash !== entityHash.default;
+        changed = zipSuite.hash !== suiteHash;
       }
       if (changed) {
         suiteMeta.changed = true;
