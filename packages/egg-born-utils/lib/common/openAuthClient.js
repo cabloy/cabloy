@@ -42,6 +42,30 @@ module.exports = class OpenAuthClient {
     return res.data.data;
   }
 
+  async getRaw({ path }) {
+    const accessToken = (this.jwt && this.jwt.accessToken) || '';
+    const httpClient = urllib.create();
+    const url = path.indexOf('http') === 0 ? path : `${this.token.host}/api${path}`;
+    const options = {
+      method: 'GET',
+      followRedirect: true,
+      maxRedirects: 5,
+      timeout: 20000,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    if (this.locale) {
+      options.headers.Cookie = `locale=${this.locale};`;
+    }
+    const res = await httpClient.request(url, options);
+    if (res.status !== 200) {
+      throw new Error(res.res.statusMessage);
+    }
+    // ok
+    return res.data;
+  }
+
   async signin() {
     // signin
     const res = await this.post({

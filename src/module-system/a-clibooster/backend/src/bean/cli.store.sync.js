@@ -55,11 +55,7 @@ module.exports = ctx => {
         return licenseMeta;
       }
       // download
-      const res = await ctx.curl(licenseMeta.download, { method: 'GET' });
-      if (res.status !== 200) {
-        throw new Error(res.res.statusMessage);
-      }
-      console.log(res.data);
+      const res = await this.openAuthClient.getRaw({ path: licenseMeta.download });
       throw new Error('ssss');
       // unzip
       // copy
