@@ -83,6 +83,12 @@ module.exports = ctx => {
       } else {
         await this._copyToModuleIsolate({ tempPath, moduleName: entityName, entityMeta });
       }
+      // remove temp path
+      await rimraf(tempPath);
+      // lerna bootstrap
+      await this.helper.lernaBootstrap();
+      // reload
+      ctx.app.meta.reload.now();
       // synced
       return { code: 3000, args: [entityVersion] };
     }
@@ -93,7 +99,6 @@ module.exports = ctx => {
       zip.extractAllTo(entityMeta.root, true);
       // others
       const files = await globby(['*', '!default'], { cwd: tempPath });
-      console.log(files);
       for (const file of files) {
         const zip = new AdmZip(path.join(tempPath, file));
         zip.extractAllTo(path.join(entityMeta.root, 'modules', file), true);
