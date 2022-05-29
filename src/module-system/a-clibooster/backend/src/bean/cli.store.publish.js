@@ -230,14 +230,6 @@ module.exports = ctx => {
     async _zipSuiteModule({ moduleMeta, moduleHash, needTrial }) {
       // build:all
       await this.console.log(`===> build module: ${moduleMeta.name}`);
-      // spawn
-      await this.helper.spawn({
-        cmd: 'npm',
-        args: ['run', 'build:all'],
-        options: {
-          cwd: moduleMeta.root,
-        },
-      });
       // zip officialTemp
       const patternsTemp = this.configModule.store.publish.patterns.official.concat(['!dist']);
       const zipOfficialTemp = await this._zipAndHash({
@@ -248,6 +240,14 @@ module.exports = ctx => {
       // check hash
       if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
         moduleMeta.changed = true;
+        // build:all
+        await this.helper.spawn({
+          cmd: 'npm',
+          args: ['run', 'build:all'],
+          options: {
+            cwd: moduleMeta.root,
+          },
+        });
         // bump
         if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
           moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
