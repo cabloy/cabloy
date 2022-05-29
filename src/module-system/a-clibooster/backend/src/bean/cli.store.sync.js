@@ -86,9 +86,7 @@ module.exports = ctx => {
       // remove temp path
       await rimraf(tempPath);
       // lerna bootstrap
-      await this.helper.lernaBootstrap();
-      // reload
-      ctx.app.meta.reload.now();
+      this._needLernaBootstrap = true;
       // synced
       return { code: 3000, args: [entityVersion] };
     }

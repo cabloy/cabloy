@@ -99,7 +99,13 @@ module.exports = ctx => {
       await this.openAuthClient.signin();
       // execute command
       try {
+        this._needLernaBootstrap = false;
         await this._executeStoreCommand();
+        if (this._needLernaBootstrap) {
+          await this.helper.lernaBootstrap();
+          // reload
+          ctx.app.meta.reload.now();
+        }
       } catch (err) {
         //  logout
         await this.openAuthClient.logout();
