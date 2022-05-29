@@ -2,7 +2,10 @@
   "store": {
     "commands": {
       "sync": {
-        "entities": {}
+        "entities": {
+          "test-todo2": {},
+          "test-note": {}
+        }
       },
       "publish": {
         "entities": {

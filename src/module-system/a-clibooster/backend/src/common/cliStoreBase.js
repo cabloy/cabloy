@@ -178,12 +178,18 @@ module.exports = ctx => {
       // table
       const table = this.helper.newTable({
         head: ['Entity Name', 'Message'],
-        colWidths: [30, 50],
+        colWidths: [30, 80],
       });
       for (const result of results) {
         table.push([result.entityName, result.message]);
+        table.push(['', this._getEntityURL(result.entityName)]);
       }
       await this.console.log({ text: table.toString() });
+    }
+
+    _getEntityURL(entityName) {
+      const locale = this.openAuthClient.locale;
+      return `https://store.cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${entityName}.html`;
     }
   }
   return CliStoreBase;

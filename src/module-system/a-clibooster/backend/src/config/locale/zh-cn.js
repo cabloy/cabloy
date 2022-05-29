@@ -14,4 +14,8 @@ module.exports = {
   'Not Found': '未发现',
   'No Changes Found': '没有变更',
   'Submitted, Version: %s': '已提交，版本：%s',
+  'Synced, Version: %s': '已同步，版本：%s',
+  'Not Purchased': '未购买',
+  'Expired, Expired Time: %s': '已过期，过期时间：%s',
+  'Expired Time: %s': '过期时间：%s',
 };
