@@ -15,7 +15,7 @@ module.exports = ctx => {
       if (!options.type) {
         // isAuthOpen
         const isAuthOpen = ctx.bean.authOpen.isAuthOpen();
-        if (isAuthOpen && !options.enableAuthOpen) return ctx.throw(403);
+        if (isAuthOpen && !options.enableAuthOpen && !ctx.innerAccess) return ctx.throw(403);
         // others
         return await next();
       }
