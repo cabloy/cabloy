@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const require3 = require('require3');
+const globby = require3('globby');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
@@ -64,7 +65,7 @@ module.exports = ctx => {
       const tempPath = await this._unzip({ entityName, buffer });
       // copy to: suite/module
       if (entityStatus.entity.entityTypeCode === 1) {
-        await this._copyToSuite({ suiteName: entityName, entityStatus, entityVersion });
+        await this._copyToSuite({ tempPath, suiteName: entityName, entityMeta });
       } else {
         await this._copyToModuleIsolate({ tempPath, moduleName: entityName, entityMeta });
       }
@@ -72,8 +73,21 @@ module.exports = ctx => {
       return { code: 3000, args: [entityVersion] };
     }
 
+    async _copyToSuite({ tempPath, entityMeta }) {
+      // default
+      const zip = new AdmZip(path.join(tempPath, 'default'));
+      zip.extractAllTo(entityMeta.root, true);
+      // others
+      const files = await globby(['*', '!default'], { cwd: tempPath });
+      console.log(files);
+      for (const file of files) {
+        const zip = new AdmZip(path.join(tempPath, file));
+        zip.extractAllTo(path.join(entityMeta.root, 'modules', file), true);
+      }
+    }
+
     async _copyToModuleIsolate({ tempPath, entityMeta }) {
-      await fse.move(tempPath, entityMeta.root);
+      await fse.move(tempPath, entityMeta.root, { overwrite: true });
     }
 
     async _unzip({ entityName, buffer }) {

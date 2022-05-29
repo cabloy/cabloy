@@ -4,7 +4,8 @@
       "sync": {
         "entities": {
           "test-todo2": {},
-          "test-note": {}
+          "test-note": {},
+          "test-party": {}
         }
       },
       "publish": {
