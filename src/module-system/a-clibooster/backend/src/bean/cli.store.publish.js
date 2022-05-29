@@ -58,7 +58,7 @@ module.exports = ctx => {
         pkg: module.pkg,
         package: module.package,
       };
-      const moduleHash = entityHash.default;
+      const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
       if (!moduleMeta.changed) {
         // No Changes Found
@@ -94,7 +94,7 @@ module.exports = ctx => {
           package: _package,
         };
         modulesMeta.push(moduleMeta);
-        const moduleHash = entityHash[moduleMeta.name];
+        const moduleHash = entityHash[moduleMeta.name] || {};
         await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
       }
       // zip suite
@@ -106,7 +106,7 @@ module.exports = ctx => {
         pkg: filePkg,
         package: _package,
       };
-      const suiteHash = entityHash.default;
+      const suiteHash = entityHash.default || {};
       await this._zipSuite({ modulesMeta, suiteMeta, suiteHash });
       if (!suiteMeta.changed) {
         // No Changes Found
@@ -202,13 +202,19 @@ module.exports = ctx => {
           pathRoot: suiteMeta.root,
           needHash: true,
         });
-        changed = zipSuite.hash !== suiteHash;
+        changed = zipSuite.hash.hash !== suiteHash.hash;
       }
       if (changed) {
         suiteMeta.changed = true;
         // bump
-        suiteMeta.package.version = semver.inc(suiteMeta.package.version, 'patch');
-        await fse.outputFile(suiteMeta.pkg, JSON.stringify(suiteMeta.package, null, 2) + '\n');
+        if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
+          suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
+          await fse.outputFile(suiteMeta.pkg, JSON.stringify(suiteMeta.package, null, 2) + '\n');
+          zipSuite = null;
+        }
+      }
+      // force zip
+      if (!zipSuite) {
         // zip suite
         zipSuite = await this._zipAndHash({
           patterns: this.configModule.store.publish.patterns.suite,
@@ -217,6 +223,7 @@ module.exports = ctx => {
         });
       }
       // ok
+      zipSuite.hash.version = suiteMeta.package.version;
       suiteMeta.zipSuite = zipSuite;
     }
 
@@ -231,25 +238,29 @@ module.exports = ctx => {
           cwd: moduleMeta.root,
         },
       });
-      // zip official
-      let zipOfficial = await this._zipAndHash({
-        patterns: this.configModule.store.publish.patterns.official,
+      // zip officialTemp
+      const patternsTemp = this.configModule.store.publish.patterns.official.concat(['!dist']);
+      const zipOfficialTemp = await this._zipAndHash({
+        patterns: patternsTemp,
         pathRoot: moduleMeta.root,
         needHash: true,
       });
       // check hash
-      if (zipOfficial.hash !== moduleHash) {
+      if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
         moduleMeta.changed = true;
         // bump
-        moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
-        await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
-        // zip official
-        zipOfficial = await this._zipAndHash({
-          patterns: this.configModule.store.publish.patterns.official,
-          pathRoot: moduleMeta.root,
-          needHash: true,
-        });
+        if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
+          moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
+          await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
+        }
       }
+      // zip official
+      const zipOfficial = await this._zipAndHash({
+        patterns: this.configModule.store.publish.patterns.official,
+        pathRoot: moduleMeta.root,
+        needHash: true,
+      });
+      zipOfficial.hash.version = moduleMeta.package.version;
       moduleMeta.zipOfficial = zipOfficial;
       // zip trial
       if (needTrial) {
@@ -276,7 +287,7 @@ module.exports = ctx => {
       // hash
       const hash = needHash ? shajs('sha256').update(buffer).digest('hex') : undefined;
       // ok
-      return { buffer, hash };
+      return { buffer, hash: { hash } };
     }
   }
 
