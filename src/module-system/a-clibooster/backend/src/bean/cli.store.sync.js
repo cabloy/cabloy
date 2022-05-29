@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const require3 = require('require3');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
 const fse = require3('fs-extra');
+const rimraf = require3('mz-modules/rimraf');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
@@ -52,26 +54,34 @@ module.exports = ctx => {
       }
       // check if has download
       if (!licenseMeta.download) {
-        return licenseMeta;
+        return null;
       }
       // download
-      const res = await this.openAuthClient.getRaw({
+      const buffer = await this.openAuthClient.getRaw({
         path: licenseMeta.download.replace(/\/a\/file\/file\/download\//, '/cabloy/store/store/sync/download/'),
       });
-      console.log('-----res:', res);
-      throw new Error('ssss');
       // unzip
-      // copy
-      // suite/module
+      const tempPath = await this._unzip({ entityName, buffer });
+      // copy to: suite/module
       if (entityStatus.entity.entityTypeCode === 1) {
-        return await this._syncSuite({ suiteName: entityName, entityStatus, entityVersion });
+        await this._copyToSuite({ suiteName: entityName, entityStatus, entityVersion });
+      } else {
+        await this._copyToModuleIsolate({ tempPath, moduleName: entityName, entityMeta });
       }
-      return await this._syncModuleIsolate({ moduleName: entityName, entityStatus, entityVersion });
+      // synced
+      return { code: 3000, args: [entityVersion] };
     }
 
-    async _syncSuite({ suiteName, entityStatus, entityVersion }) {
-      // Synced
-      return { code: 3000, args: [entityVersion] };
+    async _copyToModuleIsolate({ tempPath, entityMeta }) {
+      await fse.move(tempPath, entityMeta.root);
+    }
+
+    async _unzip({ entityName, buffer }) {
+      const tempPath = path.join(os.tmpdir(), entityName);
+      await rimraf(tempPath);
+      const zip = new AdmZip(buffer);
+      zip.extractAllTo(tempPath, true);
+      return tempPath;
     }
 
     _getEntityType({ entityStatus }) {
