@@ -4,13 +4,13 @@ const os = require('os');
 const require3 = require('require3');
 const globby = require3('globby');
 const AdmZip = require3('adm-zip');
-const shajs = require3('sha.js');
 const semver = require3('semver');
 const fse = require3('fs-extra');
 const rimraf = require3('mz-modules/rimraf');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli extends CliStoreBase(ctx) {
     constructor(options) {
       super(options, 'sync');
@@ -41,6 +41,20 @@ module.exports = ctx => {
       }
       // handle
       const res = await this._onExecuteStoreCommandEntity_handle({ entityName, entityStatus, licenseMeta });
+      if (!res) return licenseMeta;
+      // combine message
+      const args = res.args || [];
+      const message1 = ctx.parseSuccess.module(moduleInfo.relativeName, res.code, ...args).message;
+      let message2 = '';
+      if (licenseMeta.code) {
+        const args = licenseMeta.args || [];
+        message2 = ctx.parseSuccess.module(moduleInfo.relativeName, licenseMeta.code, ...args).message;
+      }
+      // ok
+      return {
+        code: res.code,
+        message: `${message1} ${message2}`,
+      };
     }
 
     async _onExecuteStoreCommandEntity_handle({ entityName, entityStatus, licenseMeta }) {
