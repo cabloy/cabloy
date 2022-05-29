@@ -55,7 +55,10 @@ module.exports = ctx => {
         return licenseMeta;
       }
       // download
-      const res = await this.openAuthClient.getRaw({ path: licenseMeta.download });
+      const res = await this.openAuthClient.getRaw({
+        path: licenseMeta.download.replace(/\/a\/file\/file\/download\//, '/cabloy/store/store/sync/download/'),
+      });
+      console.log('-----res:', res);
       throw new Error('ssss');
       // unzip
       // copy
