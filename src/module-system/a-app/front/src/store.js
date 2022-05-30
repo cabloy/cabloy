@@ -143,6 +143,10 @@ export default function (Vue) {
         if (appKey !== __appKeyBase) {
           const appItemBase = await dispatch('getAppItem', { appKey: __appKeyBase });
           appItem.content = Vue.prototype.$meta.util.extend({}, appItemBase.content, appItem.content);
+          // special for appIsolate
+          if (query.appIsolate === 'true') {
+            appItem.appIsolate = true;
+          }
         }
         commit('setAppItem', { appKey, appItem });
         return appItem;
