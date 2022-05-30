@@ -18,15 +18,10 @@ module.exports = function (ctx) {
 
     // roles
     async _initRoles() {
-      const roleIds = {};
-      roleIds.system = 0;
-      // system roles
-      for (const roleName of ctx.constant.systemRoles) {
-        const role = extend(true, { module: moduleInfo.relativeName }, initData.roles[roleName]);
-        role.roleIdParent = roleIds[role.roleIdParent];
-        roleIds[roleName] = await ctx.bean.role.add(role);
-      }
-      return roleIds;
+      return await ctx.bean.role._initSystemRoles({
+        module: moduleInfo.relativeName,
+        rolesData: initData.roles,
+      });
     }
 
     // role includes

@@ -14,20 +14,10 @@ module.exports = function (ctx) {
 
     // roles
     async _initRoles() {
-      const roleIds = {};
-      // system roles
-      for (const roleName in initData.roles) {
-        let role = initData.roles[roleName];
-        const exists = await ctx.bean.role.getSystemRole({ roleName });
-        if (!exists) {
-          // parent
-          const roleParent = await ctx.bean.role.getSystemRole({ roleName: role.roleIdParent });
-          role = extend(true, { module: moduleInfo.relativeName }, role);
-          role.roleIdParent = roleParent.id;
-          roleIds[roleName] = await ctx.bean.role.add(role);
-        }
-      }
-      return roleIds;
+      return await ctx.bean.role._initSystemRoles({
+        module: moduleInfo.relativeName,
+        rolesData: initData.roles,
+      });
     }
 
     async _changeRoleIdOwner() {
