@@ -16,8 +16,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "assert": "^2.0.0",
-    "egg-born-mock": "^2.1.4",
-    "require3": "^2.1.5"
+    "assert": "^2.0.0"
   }
 }

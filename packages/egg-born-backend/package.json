@@ -35,7 +35,7 @@
     "egg": "^2.33.1",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mglob": "^3.0.0",
-    "egg-born-mock": "^2.1.4",
+    "egg-born-mock": "^2.2.0",
     "egg-born-mparse": "^2.1.2",
     "egg-mysql": "^3.0.0",
     "egg-redis": "^2.4.0",
@@ -50,6 +50,7 @@
     "moment": "^2.24.0",
     "passport-oauth2": "^1.6.1",
     "redlock": "^4.1.0",
+    "require3": "^2.2.0",
     "semver": "^7.3.5",
     "supertest": "^4.0.2",
     "uuid": "^8.3.2"

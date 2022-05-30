@@ -21,9 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-mock": "^2.1.4",
     "extend2": "^1.0.1",
-    "require3": "^2.1.5",
     "@zhennann/ant-design-vue": "^1.7.9"
   }
 }

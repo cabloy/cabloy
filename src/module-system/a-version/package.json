@@ -22,8 +22,6 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^3.0.0",
-    "egg-born-mock": "^2.1.4",
-    "fs-extra": "^8.1.0",
-    "require3": "^2.1.5"
+    "fs-extra": "^8.1.0"
   }
 }

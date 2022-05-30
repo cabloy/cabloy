@@ -20,8 +20,6 @@
   "author": "zhennann",
   "dependencies": {
     "chalk": "^3.0.0",
-    "egg-born-mock": "^2.1.4",
-    "extend2": "^1.0.1",
-    "require3": "^2.1.5"
+    "extend2": "^1.0.1"
   }
 }
