@@ -27,7 +27,7 @@
     "clean-css": "^4.2.3",
     "debounce": "^1.2.0",
     "extend2": "^1.0.1",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^10.1.0",
     "globby": "^11.0.0",
     "less": "^3.13.0",
     "moment": "^2.24.0",
