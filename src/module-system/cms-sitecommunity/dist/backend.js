@@ -30,9 +30,9 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
     }
   }
 
@@ -241,7 +241,7 @@ module.exports = {};
 /***/ ((module) => {
 
 module.exports = {
-  Post2: 'Post',
+  CMSPostTitle: 'Post',
 };
 
 
@@ -252,7 +252,7 @@ module.exports = {
 
 module.exports = {
   'CMS:Community': 'CMS:社区',
-  Post2: '帖子',
+  CMSPostTitle: '帖子',
   'Create Post': '新建帖子',
   'Post List': '帖子列表',
   'Post List(by Category)': '帖子列表(按目录)',
@@ -267,6 +267,71 @@ module.exports = {
 module.exports = {
   'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 481:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const info = {
+    home: {
+      mode: 'page',
+      page: '/a/basefront/atom/list?module=cms-sitecommunity&atomClassName=post',
+    },
+  };
+  const content = {
+    info: {
+      atomClass: {
+        module: moduleInfo.relativeName,
+        atomClassName: 'post',
+      },
+    },
+    presets: {
+      anonymous: {
+        mobile: info,
+        pc: info,
+      },
+      authenticated: {
+        mobile: info,
+        pc: info,
+      },
+    },
+  };
+  const _app = {
+    atomName: 'Community',
+    atomStaticKey: 'appCommunity',
+    atomRevision: 3,
+    atomCategoryId: 'General',
+    description: '',
+    appIcon: ':outline:article-outline',
+    appIsolate: false,
+    appLanguage: true,
+    appCms: true,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+    appSorting: 0,
+  };
+  return _app;
+};
+
+
+/***/ }),
+
+/***/ 241:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const appCommunity = __webpack_require__(481);
+
+module.exports = app => {
+  const apps = [
+    //
+    appCommunity(app),
+  ];
+  return apps;
 };
 
 
@@ -357,6 +422,44 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 16:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      orders: [{ name: 'sticky', title: 'Sticky', by: 'desc', tableAlias: 'p' }],
+    },
+  };
+  const layout = {
+    atomName: 'CMSPostTitle',
+    atomStaticKey: 'layoutAtomListPost',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 3,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutAtomListPost = __webpack_require__(16);
+
+module.exports = app => {
+  const layouts = [layoutAtomListPost(app)];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 429:
 /***/ ((module) => {
 
@@ -367,27 +470,31 @@ module.exports = app => {
     {
       atomName: 'Create Post',
       atomStaticKey: 'createPost',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.General',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'post',
         atomAction: 'create',
       }),
+      resourceIcon: '::add',
+      appKey: 'cms-sitecommunity:appCommunity',
       resourceRoles: 'template.cms-community-writer',
     },
     {
       atomName: 'Post List',
       atomStaticKey: 'listPost',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.General',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'post',
         atomAction: 'read',
       }),
+      resourceIcon: ':outline:data-list-outline',
+      appKey: 'cms-sitecommunity:appCommunity',
       resourceRoles: 'root',
     },
   ];
@@ -530,7 +637,9 @@ module.exports = app => {
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = __webpack_require__(232)(app);
+  const staticApps = __webpack_require__(241)(app);
   const staticFlowDefs = __webpack_require__(772)(app);
+  const staticLayouts = __webpack_require__(512)(app);
   const staticResources = __webpack_require__(429)(app);
   const meta = {
     base: {
@@ -538,7 +647,7 @@ module.exports = app => {
         post: {
           info: {
             bean: 'post',
-            title: 'Post2',
+            title: 'CMSPostTitle',
             tableName: '',
             tableNameModes: {
               default: '',
@@ -549,6 +658,11 @@ module.exports = app => {
             category: true,
             tag: true,
             cms: true,
+            layout: {
+              config: {
+                atomList: 'layoutAtomListPost',
+              },
+            },
           },
           actions: {
             preview: {
@@ -569,8 +683,14 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-app.app': {
+          items: staticApps,
+        },
         'a-flow.flowDef': {
           items: staticFlowDefs,
+        },
+        'a-baselayout.layout': {
+          items: staticLayouts,
         },
         'a-base.resource': {
           items: staticResources,
