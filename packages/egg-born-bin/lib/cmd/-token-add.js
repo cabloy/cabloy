@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const inquirer = require('inquirer');
+const enquirer = require('enquirer');
 const eggBornUtils = require('egg-born-utils');
 const Command = require('@zhennann/egg-bin').Command;
 
@@ -64,7 +64,7 @@ class TokenAddCommand extends Command {
       }
     }
     if (varsWant.length > 0) {
-      const res = yield inquirer.prompt(varsWant);
+      const res = yield enquirer.prompt(varsWant);
       Object.assign(varsReady, res);
     }
 
