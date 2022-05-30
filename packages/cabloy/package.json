@@ -100,8 +100,6 @@
     "egg-born-module-cms-pluginsubmit": "^4.1.7",
     "egg-born-module-cms-plugintrack": "^4.1.8",
     "egg-born-module-cms-pluginuser": "^4.2.10",
-    "egg-born-module-cms-pluginwechatsdk": "^4.2.11",
-    "egg-born-module-cms-pluginwechatshare": "^4.2.11",
     "egg-born-module-cms-themeaws": "^4.2.12",
     "egg-born-module-cms-themeblog": "^4.2.12",
     "egg-born-module-cms-themecommunity": "^4.2.12",
