@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/build",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Cabloy Build System",
   "main": "index.js",
   "publishConfig": {
@@ -34,7 +34,7 @@
     "connect-history-api-fallback": "^1.6.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
-    "egg-born-mglob": "^3.0.1",
+    "egg-born-mglob": "^3.0.2",
     "egg-born-mparse": "^2.1.7",
     "eslint": "^7.21.0",
     "eslint-config-egg-born": "^1.1.2",
