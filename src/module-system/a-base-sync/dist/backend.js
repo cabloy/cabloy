@@ -4984,7 +4984,10 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 1638:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const extend = require3('extend2');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -5334,6 +5337,33 @@ module.exports = ctx => {
       if (role) return role.id;
       // add
       return await this.add({ roleName, roleIdParent });
+    }
+
+    async _initSystemRoles({ module, rolesData }) {
+      const roleIds = {};
+      // system roles
+      for (const roleName in rolesData) {
+        let role = rolesData[roleName];
+        const exists = await this.getSystemRole({ roleName });
+        if (!exists) {
+          // parent
+          let roleIdParent;
+          if (role.roleIdParent === 'system') {
+            roleIdParent = 0;
+          } else {
+            roleIdParent = roleIds[role.roleIdParent];
+            if (!roleIdParent) {
+              // parent
+              const roleParent = await this.getSystemRole({ roleName: role.roleIdParent });
+              roleIdParent = roleParent.id;
+            }
+          }
+          // add
+          role = extend(true, { module }, role, { roleIdParent });
+          roleIds[roleName] = await this.add(role);
+        }
+      }
+      return roleIds;
     }
   }
 
@@ -9682,8 +9712,6 @@ module.exports = function (ctx) {
 /***/ 3166:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(5638);
-const extend = require3('extend2');
 const initData = __webpack_require__(5384);
 
 module.exports = function (ctx) {
@@ -9698,20 +9726,10 @@ module.exports = function (ctx) {
 
     // roles
     async _initRoles() {
-      const roleIds = {};
-      // system roles
-      for (const roleName in initData.roles) {
-        let role = initData.roles[roleName];
-        const exists = await ctx.bean.role.getSystemRole({ roleName });
-        if (!exists) {
-          // parent
-          const roleParent = await ctx.bean.role.getSystemRole({ roleName: role.roleIdParent });
-          role = extend(true, { module: moduleInfo.relativeName }, role);
-          role.roleIdParent = roleParent.id;
-          roleIds[roleName] = await ctx.bean.role.add(role);
-        }
-      }
-      return roleIds;
+      return await ctx.bean.role._initSystemRoles({
+        module: moduleInfo.relativeName,
+        rolesData: initData.roles,
+      });
     }
 
     async _changeRoleIdOwner() {
@@ -9757,15 +9775,10 @@ module.exports = function (ctx) {
 
     // roles
     async _initRoles() {
-      const roleIds = {};
-      roleIds.system = 0;
-      // system roles
-      for (const roleName of ctx.constant.systemRoles) {
-        const role = extend(true, { module: moduleInfo.relativeName }, initData.roles[roleName]);
-        role.roleIdParent = roleIds[role.roleIdParent];
-        roleIds[roleName] = await ctx.bean.role.add(role);
-      }
-      return roleIds;
+      return await ctx.bean.role._initSystemRoles({
+        module: moduleInfo.relativeName,
+        rolesData: initData.roles,
+      });
     }
 
     // role includes
