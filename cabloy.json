@@ -1,13 +1,6 @@
 {
   "store": {
     "commands": {
-      "sync": {
-        "entities": {
-          "test-note": {},
-          "test-party": {},
-          "test-dddd": {}
-        }
-      },
       "publish": {
         "entities": {
           "cms-themeaws": {
@@ -22,9 +15,26 @@
           "cms-themedocs": {
             "scripts": ["npmPublish"]
           },
-          "test-party": {},
-          "test-note": {
+          "a-flownodebooster": {
+            "scripts": ["gitCommit"]
+          },
+          "a-flowtask": {
             "scripts": ["npmPublish", "gitCommit"]
+          },
+          "a-markdown": {
+            "scripts": ["npmPublish", "gitCommit"]
+          },
+          "test-flow": {
+            "scripts": ["gitCommit"]
+          },
+          "test-note": {
+            "scripts": ["gitCommit"]
+          },
+          "a-platformthird": {
+            "scripts": ["gitCommit"]
+          },
+          "test-party": {
+            "scripts": ["gitCommit"]
           }
         }
       }
