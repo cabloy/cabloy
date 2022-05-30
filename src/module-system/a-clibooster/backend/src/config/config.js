@@ -4,6 +4,9 @@ module.exports = appInfo => {
 
   // store
   config.store = {
+    token: {
+      host: 'https://admin.cabloy.com',
+    },
     publish: {
       patterns: {
         trial: [

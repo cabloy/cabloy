@@ -4,7 +4,7 @@ const fse = require3('fs-extra');
 const eggBornUtils = require3('egg-born-utils');
 
 // const __storeTokenHost = 'https://admin.cabloy.com';
-const __storeTokenHost = 'http://localhost:9192';
+// const __storeTokenHost = 'http://localhost:9192';
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -53,7 +53,7 @@ module.exports = ctx => {
       if (clientID && clientSecret) {
         await this.localToken.add({
           name: this.tokenName,
-          host: __storeTokenHost,
+          host: this.configModule.store.token.host,
           clientID,
           clientSecret,
         });
