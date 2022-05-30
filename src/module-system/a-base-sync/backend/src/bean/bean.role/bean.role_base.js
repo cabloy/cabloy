@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const extend = require3('extend2');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const __atomClassRole = {
@@ -346,6 +349,33 @@ module.exports = ctx => {
       if (role) return role.id;
       // add
       return await this.add({ roleName, roleIdParent });
+    }
+
+    async _initSystemRoles({ module, rolesData }) {
+      const roleIds = {};
+      // system roles
+      for (const roleName in rolesData) {
+        let role = rolesData[roleName];
+        const exists = await this.getSystemRole({ roleName });
+        if (!exists) {
+          // parent
+          let roleIdParent;
+          if (role.roleIdParent === 'system') {
+            roleIdParent = 0;
+          } else {
+            roleIdParent = roleIds[role.roleIdParent];
+            if (!roleIdParent) {
+              // parent
+              const roleParent = await this.getSystemRole({ roleName: role.roleIdParent });
+              roleIdParent = roleParent.id;
+            }
+          }
+          // add
+          role = extend(true, { module }, role, { roleIdParent });
+          roleIds[roleName] = await this.add(role);
+        }
+      }
+      return roleIds;
     }
   }
 
