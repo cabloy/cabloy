@@ -1,0 +1,11 @@
+{
+  "store": {
+    "commands": {
+      "sync": {
+        "entities": {
+          "test-party": {}
+        }
+      }
+    }
+  }
+}

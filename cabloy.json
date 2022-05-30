@@ -3,7 +3,6 @@
     "commands": {
       "sync": {
         "entities": {
-          "test-todo2": {},
           "test-note": {},
           "test-party": {}
         }
@@ -11,7 +10,6 @@
       "publish": {
         "entities": {
           "test-party": {},
-          "test-party1": {},
           "test-note": {}
         }
       }
