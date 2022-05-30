@@ -16,6 +16,8 @@
       "ignoreChanges": [
         "src/module/**",
         "src/suite/**",
+        "src/module-vendor/**",
+        "src/suite-vendor/**",
         "src/module-system/a-themebrilliant",
         "src/module-system/a-themehyacinth",
         "src/module-system/cms-sitecommunity",
