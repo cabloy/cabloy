@@ -1,5 +1,12 @@
 # History
 
+## 2022-05-30, Version 4.21.0
+
+- **Feat**
+  - Cabloy 商店命令行工具
+  - npm run cli :store:publish
+  - npm run cli :store:sync
+
 ## 2022-05-24, Version 4.20.0
 
 - **Refactor**
