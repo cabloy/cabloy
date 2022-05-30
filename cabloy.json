@@ -3,6 +3,14 @@
     "commands": {
       "publish": {
         "entities": {
+          "a-themebrilliant": {
+            "scripts": ["npmPublish"]
+          },
+          "a-themehyacinth": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-sitecommunity": {},
+          "cms-sitedocumentation": {},
           "cms-themeaws": {
             "scripts": ["npmPublish"]
           },
