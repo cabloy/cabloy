@@ -234,8 +234,7 @@ module.exports = ctx => {
       // remove this
       this._remove(name);
       // broadcast
-      ctx.app.meta.broadcast.emit({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.broadcastEmit({
         module: 'a-cache',
         broadcastName: 'memRemove',
         data: { moduleName: this.moduleName, name },
@@ -251,8 +250,7 @@ module.exports = ctx => {
       // clear this
       this._clear();
       // broadcast
-      ctx.app.meta.broadcast.emit({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.broadcastEmit({
         module: 'a-cache',
         broadcastName: 'memClear',
         data: { moduleName: this.moduleName },

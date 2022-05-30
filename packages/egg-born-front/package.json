@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "8.5.3",
+  "version": "8.5.4",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -30,7 +30,7 @@
     "async": "^3.2.0",
     "axios": "^0.21.1",
     "egg-born-localeutil": "^2.1.2",
-    "egg-born-mparse": "^2.1.2",
+    "egg-born-mparse": "^2.1.5",
     "js-cookie": "^2.2.1",
     "json5": "^2.1.1",
     "moment": "^2.24.0",

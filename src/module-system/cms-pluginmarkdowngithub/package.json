@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginmarkdowngithub",
-  "version": "4.1.10",
+  "version": "4.1.11",
   "title": "cms:plugin:markdowngithub",
   "eggBornModule": {
     "cms": {

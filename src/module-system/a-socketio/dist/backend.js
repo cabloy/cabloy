@@ -714,8 +714,7 @@ module.exports = ctx => {
 
     _emitSocket({ path, message, socketId }) {
       // broadcast
-      ctx.app.meta.broadcast.emit({
-        subdomain: ctx.subdomain,
+      ctx.meta.util.broadcastEmit({
         module: moduleInfo.relativeName,
         broadcastName: 'socketEmit',
         data: { path, message, socketId },
@@ -2016,8 +2015,24 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // io
-    { method: 'post', path: 'subscribe', controller: 'io', meta: { auth: { user: true } } },
-    { method: 'post', path: 'unsubscribe', controller: 'io', meta: { auth: { user: true } } },
+    {
+      method: 'post',
+      path: 'subscribe',
+      controller: 'io',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
+    {
+      method: 'post',
+      path: 'unsubscribe',
+      controller: 'io',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
     // messageClass
     { method: 'post', path: 'messageClass/messageClass', controller: 'messageClass', meta: { auth: { user: true } } },
     // message

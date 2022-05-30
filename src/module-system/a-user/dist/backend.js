@@ -103,6 +103,105 @@ module.exports = {
 
 /***/ }),
 
+/***/ 276:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          small: 'list',
+          medium: 'list',
+          large: 'list',
+        },
+      },
+    },
+    layouts: {
+      base: {
+        blocks: {
+          title: {
+            component: {
+              module: 'a-baselayout',
+              name: 'baseLayoutBlockListTitle',
+            },
+          },
+        },
+      },
+      list: {
+        providerOptions: {
+          providerName: 'all',
+          autoInit: false,
+        },
+        subnavbar: false,
+        blocks: {
+          items: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListItems',
+            },
+          },
+          mineHeader: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListMineHeader',
+            },
+          },
+          mineSubHeader: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListMineSubHeader',
+            },
+          },
+          mineBody: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListMineBody',
+            },
+          },
+          mineFooter: {
+            component: {
+              module: 'a-user',
+              name: 'appMineLayoutBlockListMineFooter',
+            },
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Base',
+    atomStaticKey: 'layoutAppMineBase',
+    atomRevision: 3,
+    description: '',
+    layoutTypeCode: 14,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutAppMineBase = __webpack_require__(276);
+// const layoutAppMineDefault = require('./layout/layoutAppMineDefault.js');
+
+module.exports = app => {
+  const layouts = [
+    layoutAppMineBase(app),
+    // layoutAppMineDefault(app),
+  ];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 836:
 /***/ ((module) => {
 
@@ -297,11 +396,20 @@ module.exports = app => {
 /***/ }),
 
 /***/ 458:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
+  // static
+  const staticLayouts = __webpack_require__(512)(app);
   // meta
   const meta = {
+    base: {
+      statics: {
+        'a-baselayout.layout': {
+          items: staticLayouts,
+        },
+      },
+    },
     stats: {
       providers: {
         userRed: {
@@ -410,7 +518,10 @@ module.exports = app => {
 /***/ }),
 
 /***/ 323:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const extend = require3('extend2');
 
 module.exports = app => {
   class User extends app.Service {
@@ -466,35 +577,62 @@ module.exports = app => {
 
     async authentications({ user }) {
       // 1. get auth providers list from a-login
-      const listLogin = await this.ctx.meta.util.performAction({
-        method: 'post',
-        url: '/a/login/auth/list',
-      });
+      let listLogin = extend(true, [], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
       if (listLogin.length === 0) return [];
-      const ids = listLogin.map(item => item.id);
-      // 2. list with aAuth
+      // 2. list aAuth
       const sql = `
-        select a.id as providerId,a.module,a.providerName,b.id as authId from aAuthProvider a
-          left join aAuth b on a.id=b.providerId and b.userId=?
-            where a.id in (${ids.join(',')})
+        select a.id,a.providerId,a.providerScene,b.module,b.providerName from aAuth a
+          inner join aAuthProvider b on a.providerId=b.id
+          where a.iid=? and a.userId=?
       `;
-      const list = await this.ctx.model.query(sql, [user.id]);
-      // sort
-      list.sort((a, b) => ids.findIndex(item => item === a.providerId) - ids.findIndex(item => item === b.providerId));
-      // meta
-      const authProviders = this.ctx.bean.base.authProviders();
-      for (const item of list) {
-        const key = `${item.module}:${item.providerName}`;
-        const authProvider = authProviders[key];
-        item.meta = authProvider.meta;
+      const list = await this.ctx.model.query(sql, [this.ctx.instance.id, user.id]);
+      // 3. map
+      for (const auth of list) {
+        const authId = auth.id;
+        const provider = listLogin.find(item => item.module === auth.module && item.providerName === auth.providerName);
+        // maybe disabled
+        if (!provider) continue;
+        // meta
+        if (!provider.meta.scene) {
+          provider.scenes.default.__authId = authId;
+        } else {
+          const scene = provider.scenes[auth.providerScene];
+          // // maybe disabled
+          if (!scene) continue;
+          scene.__authId = authId;
+        }
       }
+      // 4. filter inner || disableAssociate:true and no __authId
+      listLogin = listLogin.filter(item => {
+        for (const sceneName of Object.keys(item.scenes)) {
+          const scene = item.scenes[sceneName];
+          const metaScene = this._getMetaScene(item, sceneName);
+          if (metaScene.inner || (metaScene.disableAssociate && !scene.__authId)) {
+            delete item.scenes[sceneName];
+          }
+        }
+        return Object.keys(item.scenes).length > 0;
+      });
       // ok
-      return list;
+      return listLogin;
+    }
+
+    _getMetaScene(item, sceneName) {
+      const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.metaScenes && item.metaScenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
     }
 
     async authenticationDisable({ authId, user }) {
       // must use userId in where
-      await this.ctx.model.query('delete from aAuth where id=? and userId=?', [authId, user.id]);
+      await this.ctx.model.query('delete from aAuth where iid=? and id=? and userId=?', [
+        this.ctx.instance.id,
+        authId,
+        user.id,
+      ]);
     }
 
     async themeLoad({ user }) {
@@ -528,6 +666,14 @@ module.exports = app => {
   return services;
 };
 
+
+/***/ }),
+
+/***/ 638:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("require3");
 
 /***/ })
 

@@ -143,6 +143,59 @@ module.exports = password;
 
 /***/ }),
 
+/***/ 71:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Strategy = __webpack_require__(966);
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
+    get localSimple() {
+      return ctx.bean.local.module(moduleInfo.relativeName).simple;
+    }
+    async getConfigDefault() {
+      return null;
+    }
+    checkConfigValid(/* config*/) {
+      return true;
+    }
+    getStrategy() {
+      return Strategy;
+    }
+    async onVerify(body) {
+      const { auth, password, rememberMe } = body.data;
+      // validate
+      await ctx.bean.validation.validate({ module: moduleInfo.relativeName, validator: 'signin', data: body.data });
+      // exists
+      const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
+      if (!user) return ctx.throw.module(moduleInfo.relativeName, 1001);
+      // disabled
+      if (user.disabled) return ctx.throw.module(moduleInfo.relativeName, 1002);
+      // verify
+      const authSimple = await this.localSimple.verify({ userId: user.id, password });
+      if (!authSimple) return ctx.throw.module(moduleInfo.relativeName, 1001);
+      return {
+        module: this.providerModule,
+        provider: this.providerName,
+        providerScene: this.providerScene,
+        profileId: authSimple.id,
+        maxAge: rememberMe ? null : 0,
+        authShouldExists: true,
+        profile: {
+          authSimpleId: authSimple.id,
+          rememberMe,
+        },
+      };
+    }
+  }
+
+  return Provider;
+};
+
+
+/***/ }),
+
 /***/ 836:
 /***/ ((module) => {
 
@@ -173,6 +226,52 @@ module.exports = ctx => {
   }
 
   return eventBean;
+};
+
+
+/***/ }),
+
+/***/ 988:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const util = __webpack_require__(837);
+const passwordFn = __webpack_require__(907); // should compile
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Simple {
+    get modelAuthSimple() {
+      return ctx.model.module(moduleInfo.relativeName).authSimple;
+    }
+
+    async verify({ userId, password }) {
+      // check
+      if (!password) return false;
+      // authSimple
+      const authSimple = await this.modelAuthSimple.get({
+        userId,
+      });
+      if (!authSimple) return false;
+      // verify
+      const res = await this.verifyPassword({ password, hash: authSimple.hash });
+      if (!res) return false;
+      // ok
+      return authSimple;
+    }
+
+    async verifyPassword({ password, hash }) {
+      const _password = passwordFn(password.toString());
+      const verifyFn = util.promisify(_password.verifyAgainst);
+      return await verifyFn.call(_password, hash);
+    }
+
+    async calcPassword({ password }) {
+      const _password = passwordFn(password.toString());
+      const hashFn = util.promisify(_password.hash);
+      return await hashFn.call(_password);
+    }
+  }
+  return Simple;
 };
 
 
@@ -227,6 +326,8 @@ module.exports = app => {
 
 const versionManager = __webpack_require__(899);
 const eventAccountMigration = __webpack_require__(836);
+const authProviderSimple = __webpack_require__(71);
+const localSimple = __webpack_require__(988);
 
 module.exports = app => {
   const beans = {
@@ -239,6 +340,16 @@ module.exports = app => {
     'event.accountMigration': {
       mode: 'ctx',
       bean: eventAccountMigration,
+    },
+    // auth.provider
+    'auth.provider.simple': {
+      mode: 'ctx',
+      bean: authProviderSimple,
+    },
+    // local
+    'local.simple': {
+      mode: 'ctx',
+      bean: localSimple,
     },
   };
   return beans;
@@ -438,36 +549,11 @@ module.exports = {
 /***/ }),
 
 /***/ 443:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
-const strategy = __webpack_require__(966);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
-  async function verify(ctx, body) {
-    const { auth, password, rememberMe } = body.data;
-    // validate
-    await ctx.bean.validation.validate({ validator: 'signin', data: body.data });
-    // exists
-    const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
-    if (!user) return ctx.throw(1001);
-    // disabled
-    if (user.disabled) return ctx.throw(1002);
-    // verify
-    const authSimple = await ctx.service.auth.verify({ userId: user.id, password });
-    if (!authSimple) return ctx.throw(1001);
-    return {
-      module: moduleInfo.relativeName,
-      provider,
-      profileId: authSimple.id,
-      maxAge: rememberMe ? null : 0,
-      authShouldExists: true,
-      profile: {
-        authSimpleId: authSimple.id,
-        rememberMe,
-      },
-    };
-  }
   return {
     providers: {
       [provider]: {
@@ -475,22 +561,9 @@ module.exports = app => {
           title: 'User/Password',
           inline: true,
           mode: 'direct',
-          component: 'signin',
-        },
-        config: {},
-        handler: app => {
-          return {
-            strategy,
-            callback: (req, body, done) => {
-              verify(req.ctx, body)
-                .then(user => {
-                  app.passport.doVerify(req, user, done);
-                })
-                .catch(err => {
-                  done(err);
-                });
-            },
-          };
+          bean: 'simple',
+          render: 'blockSignin',
+          icon: { f7: ':auth:password' },
         },
       },
     },
@@ -529,11 +602,12 @@ util.inherits(Strategy, passport.Strategy);
 Strategy.prototype.authenticate = function (req) {
   // self
   const self = this;
+  const ctx = req.ctx;
 
   // check
   if (req.method === 'GET') {
     // not allow
-    return self.error(req.ctx.parseFail(403));
+    return self.error(ctx.parseFail(403));
   }
 
   // verified
@@ -544,7 +618,7 @@ Strategy.prototype.authenticate = function (req) {
     if (!user) {
       return self.fail(info);
     }
-    req.ctx.success(user);
+    ctx.success(user);
     self.success(user, info);
   }
 
@@ -1061,8 +1135,6 @@ module.exports = [
 /***/ 300:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const util = __webpack_require__(837);
-const passwordFn = __webpack_require__(907); // should compile
 const require3 = __webpack_require__(638);
 const uuid = require3('uuid');
 
@@ -1122,18 +1194,24 @@ module.exports = app => {
 
     // data: { auth, password, rememberMe }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.meta.util.performAction({
-        method: 'post',
-        url: `passport/a-authsimple/authsimple?state=${state}`,
+      const res = await this.ctx.bean.authProvider.authenticateDirect({
+        module: moduleInfo.relativeName,
+        providerName: 'authsimple',
+        query: { state },
         body: { data },
       });
+      // const res = await this.ctx.meta.util.performAction({
+      //   method: 'post',
+      //   url: `/a/auth/passport/a-authsimple/authsimple?state=${state}`,
+      //   body: { data },
+      // });
       return res;
     }
 
     async _addAuthSimple({ password }) {
       // hash
       password = password || this.ctx.config.defaultPassword;
-      const hash = await this._calcPassword({ password });
+      const hash = await this.ctx.bean.local.simple.calcPassword({ password });
       // auth simple
       const res = await this.ctx.model.authSimple.insert({
         userId: 0,
@@ -1149,7 +1227,7 @@ module.exports = app => {
       await this.ctx.model.authSimple.update({ id: authSimpleId, userId });
 
       // auth
-      const providerItem = await this.ctx.bean.user.getAuthProvider({
+      const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authsimple',
       });
@@ -1165,24 +1243,9 @@ module.exports = app => {
       });
     }
 
-    async verify({ userId, password }) {
-      // check
-      if (!password) return false;
-      // authSimple
-      const authSimple = await this.ctx.model.authSimple.get({
-        userId,
-      });
-      if (!authSimple) return false;
-      // verify
-      const res = await this._verifyPassword({ password, hash: authSimple.hash });
-      if (!res) return false;
-      // ok
-      return authSimple;
-    }
-
     async passwordChange({ passwordOld, passwordNew, userId }) {
       // verify old
-      const authSimple = await this.verify({ userId, password: passwordOld });
+      const authSimple = await this.ctx.bean.local.simple.verify({ userId, password: passwordOld });
       if (!authSimple) this.ctx.throw(403);
       // save new
       await this._passwordSaveNew({ passwordNew, userId });
@@ -1217,7 +1280,7 @@ module.exports = app => {
       const auth = await this.ctx.model.authSimple.get({
         userId,
       });
-      const hash = await this._calcPassword({ password: passwordNew });
+      const hash = await this.ctx.bean.local.simple.calcPassword({ password: passwordNew });
       await this.ctx.model.authSimple.update({
         id: auth.id,
         hash,
@@ -1344,18 +1407,6 @@ module.exports = app => {
       };
       const url = this.ctx.bean.base.getAlertUrl({ data });
       return this.ctx.redirect(url);
-    }
-
-    async _calcPassword({ password }) {
-      const _password = passwordFn(password.toString());
-      const hashFn = util.promisify(_password.hash);
-      return await hashFn.call(_password);
-    }
-
-    async _verifyPassword({ password, hash }) {
-      const _password = passwordFn(password.toString());
-      const verifyFn = util.promisify(_password.verifyAgainst);
-      return await verifyFn.call(_password, hash);
     }
   }
 

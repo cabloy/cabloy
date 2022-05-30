@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginsubmit",
-  "version": "4.1.7",
+  "version": "4.1.8",
   "title": "cms:plugin:submit",
   "eggBornModule": {
     "cms": {

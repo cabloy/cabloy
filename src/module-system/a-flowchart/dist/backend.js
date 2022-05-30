@@ -88,18 +88,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async roleChildren() {
-      const { host, params } = this.ctx.request.body;
-      const user = this.ctx.state.user.op;
-      const page = params.page;
-      const items = await this.ctx.service.flowDef.roleChildren({
-        host,
-        params,
-        user,
-      });
-      this.ctx.successMore(items, page.index, page.size);
-    }
-
     async userSelect() {
       const { host, params } = this.ctx.request.body;
       const user = this.ctx.state.user.op;
@@ -210,7 +198,6 @@ module.exports = app => {
     { method: 'post', path: 'flow/flowChartProcess', controller: 'flow' },
     // flowDef
     { method: 'post', path: 'flowDef/normalizeAssignees', controller: 'flowDef' },
-    { method: 'post', path: 'flowDef/roleChildren', controller: 'flowDef' },
     { method: 'post', path: 'flowDef/userSelect', controller: 'flowDef' },
   ];
   return routes;
@@ -290,21 +277,12 @@ module.exports = app => {
       return await this.ctx.bean.flow.normalizeAssignees(assignees);
     }
 
-    async roleChildren({ host, params, user }) {
-      // check write right
-      const rightWrite = await this.__checkRightWrite({ host, user });
-      if (!rightWrite) this.ctx.throw(403);
-      // roles
-      const { roleId, page } = params;
-      return await this.ctx.bean.role.children({ roleId, page });
-    }
-
     async userSelect({ host, params, user }) {
       // check write right
       const rightWrite = await this.__checkRightWrite({ host, user });
       if (!rightWrite) this.ctx.throw(403);
       // users
-      return await this.ctx.bean.user.selectGeneral({ params });
+      return await this.ctx.bean.user.selectGeneral({ params, user });
     }
 
     async __checkRightWrite({ host, user }) {

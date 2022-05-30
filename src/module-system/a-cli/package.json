@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-cli",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "title": "a-cli",
   "eggBornModule": {
     "fileVersion": 0,
@@ -20,16 +20,15 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "devDependencies": {},
   "dependencies": {
     "@zhennann/ejs": "^3.0.1",
-    "extend2": "^1.0.1",
     "boxen": "^4.2.0",
     "chalk": "^3.0.0",
     "cli-table3": "^0.6.2",
+    "extend2": "^1.0.1",
     "globby": "^11.0.0",
+    "gogocode": "^1.0.53",
     "istextorbinary": "^3.3.0",
-    "mkdirp": "^1.0.3",
-    "gogocode": "^1.0.53"
+    "mkdirp": "^1.0.3"
   }
 }

@@ -134,9 +134,9 @@ module.exports = app => {
       await this.ctx.model.resource.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete resource
       await this.ctx.model.resource.delete({
         id: key.itemId,
@@ -153,6 +153,10 @@ module.exports = app => {
       const resourceType = resourceTypes[item.resourceType];
       if (resourceType) {
         item.resourceTypeLocale = resourceType.titleLocale;
+      }
+      // locale of appName
+      if (item.appName) {
+        item.appNameLocale = this.ctx.text(item.appName);
       }
       // locale of atomCategoryName
       item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
@@ -173,578 +177,403 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 5528:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const atom_0 = __webpack_require__(7158);
-const atom_1 = __webpack_require__(7669);
-
-module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(atom_0, atom_1, ctx);
-};
-
-
-/***/ }),
-
-/***/ 3127:
+/***/ 2797:
 /***/ ((module) => {
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class AtomAction extends ctx.app.meta.BeanModuleBase {
-    constructor(moduleName) {
-      super(ctx, 'atomAction');
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    get model() {
-      return ctx.model.module(moduleInfo.relativeName).atomAction;
-    }
-
-    async get({ id, atomClassId, code }) {
-      const data = id ? { id } : { atomClassId, code };
-      const res = await this.model.get(data);
-      if (res) return res;
-      // lock
-      return await ctx.meta.util.lock({
-        resource: `${moduleInfo.relativeName}.atomAction.register`,
-        fn: async () => {
-          return await ctx.meta.util.executeBeanIsolate({
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'atomAction',
-            context: { atomClassId, code },
-            fn: '_registerLock',
-          });
-        },
-      });
-    }
-
-    parseActionCode({ action, atomClass }) {
-      // is number
-      if (!isNaN(action)) return parseInt(action);
-      // add role right
-      const actionCode = ctx.constant.module('a-base').atom.action[action];
-      if (actionCode) return actionCode;
-      // atomClass
-      if (!atomClass) throw new Error(`should specify the atomClass of action: ${action}`);
-      const actions = ctx.bean.base.actions();
-      const _action = actions[atomClass.module][atomClass.atomClassName][action];
-      if (!_action) throw new Error(`atom action not found: ${atomClass.module}:${atomClass.atomClassName}.${action}`);
-      return _action.code;
-    }
-
-    async _registerLock({ atomClassId, code }) {
-      return await this._registerLock_inner({ atomClassId, code });
-    }
-
-    async _registerLock_inner({ atomClassId, code }) {
-      // get
-      const res = await this.model.get({ atomClassId, code });
-      if (res) return res;
-      const atomClass = await ctx.bean.atomClass.get({ id: atomClassId });
-      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code });
-      const data = {
-        atomClassId,
-        code,
-        name: action.name,
-        bulk: action.bulk || 0,
-      };
-      // insert
-      const res2 = await this.model.insert(data);
-      data.id = res2.insertId;
-      return data;
-    }
-  }
-
-  return AtomAction;
-};
-
-
-/***/ }),
-
-/***/ 6542:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const atomBase_0 = __webpack_require__(3699);
-const atomBase_1 = __webpack_require__(3535);
-
-module.exports = app => {
-  return app.meta.util.mixinClasses(atomBase_0, atomBase_1, app);
-};
-
-
-/***/ }),
-
-/***/ 3699:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const uuid = require3('uuid');
-const ExcelJS = require3('exceljs');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class AtomBase extends app.meta.BeanBase {
+  class Atom extends app.meta.AtomBase {
+    get beanRole() {
+      return this.ctx.bean.role;
+    }
+
     async create({ atomClass, item, options, user }) {
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      // atomName
-      if (!item.atomName) {
-        // draftId
-        const sequence = this.ctx.bean.sequence.module(moduleInfo.relativeName);
-        const draftId = await sequence.next('draft');
-        item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
-      }
-      // atomStaticKey
-      if (!item.atomStaticKey) {
-        item.atomStaticKey = uuid.v4().replace(/-/g, '');
-      }
-      // atomSimple
-      if (_atomClass.simple) {
-        item.atomSimple = 1;
-        item.atomStage = 1;
-      } else {
-        item.atomSimple = 0;
-        item.atomStage = 0;
-      }
-      // roleIdOwner
-      if (!item.roleIdOwner) {
-        let roleId;
-        if (options.preferredRole) {
-          roleId = await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
-          if (!roleId) this.ctx.throw(403);
-        } else {
-          const roleName = 'superuser';
-          const role = await this.ctx.bean.role.parseRoleName({ roleName });
-          roleId = role.id;
+      // only support atomStage=1
+      if (item.atomStage !== 1) throw new Error('role only support atomStage=1');
+      // fields
+      const catalog = item.catalog || 0;
+      const system = item.system || 0;
+      let roleIdParent = item.roleIdParent || 0;
+      // is 0 when clone
+      if (roleIdParent !== 0) {
+        // roleIdParent maybe string
+        if (typeof roleIdParent === 'string') {
+          const role = await this.beanRole.parseRoleName({ roleName: roleIdParent, force: false });
+          roleIdParent = role.id;
         }
-        item.roleIdOwner = roleId;
+        // check if addChild right of roleIdParent
+        const addChildRight = await this.beanRole._checkRightActionOfRole({
+          roleId: roleIdParent,
+          action: 'addChild',
+          user,
+        });
+        if (!addChildRight) this.ctx.throw(403);
       }
-      // add
-      const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
-      return { atomId };
+      // super
+      const key = await super.create({ atomClass, item, options, user });
+      const atomId = key.atomId;
+      // add role
+      //   item.itemId only be set from inner access
+      let itemId = item.itemId;
+      if (!itemId) {
+        const _atomNew = await this.ctx.bean.atom.modelAtom.get({ id: atomId });
+        const roleName = _atomNew.atomName;
+        const res = await this.ctx.model.role.insert({
+          atomId: key.atomId,
+          catalog,
+          system,
+          roleIdParent,
+          roleName,
+        });
+        itemId = res.insertId;
+      } else {
+        await this.ctx.model.role.update({
+          id: itemId,
+          atomId,
+          catalog,
+          system,
+          roleIdParent,
+        });
+      }
+      // update roleIdOwner
+      await this.ctx.model.atom.update({ id: atomId, roleIdOwner: itemId });
+      // adjust catalog
+      await this.beanRole.adjustCatalog(roleIdParent);
+      // set dirty
+      await this.beanRole.setDirty(true);
+      // ok
+      return { atomId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
-      // get
-      const item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
-      if (!item) return item;
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      // dict translate
-      await this._dictTranslate({ item, _atomClass });
-      // revision
-      this._appendRevisionToHistory({ item });
-      // flow
-      if (item.flowNodeNameCurrent) {
-        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
-      }
-      // atomLanguage
-      if (item.atomLanguage) {
-        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
-      }
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // meta
+      await this._getMeta(options, item, true);
       // ok
       return item;
     }
 
-    async selectBefore(/* { atomClass, options, user }*/) {
-      // donothing
-    }
-
     async select({ atomClass, options, items, user }) {
-      if (items.length === 0) return;
-      // atomClass
-      const _atomClass = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
-      // dict translate
-      if (_atomClass) {
-        for (const item of items) {
-          await this._dictTranslate({ item, _atomClass });
-        }
-      }
-      // revision
-      if (options.stage === 'history') {
-        for (const item of items) {
-          this._appendRevisionToHistory({ item });
-        }
-      }
-      // flow
-      if (options.stage === 'draft') {
-        for (const item of items) {
-          if (item.flowNodeNameCurrent) {
-            item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
-          }
-        }
-      }
-      // atomLanguage
+      // super
+      await super.select({ atomClass, options, items, user });
+      // meta
+      const showSorting = !!(options && options.category);
       for (const item of items) {
-        if (item.atomLanguage) {
-          item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
-        }
+        await this._getMeta(options, item, showSorting);
       }
-    }
-
-    async delete({ atomClass, key, user }) {
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      if (_atomClass.tag) {
-        const _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-        if (_atomOld.atomTags) {
-          // stage
-          const atomStage = _atomOld.atomStage;
-          await this.ctx.bean.tag.deleteTagRefs({ atomId: key.atomId });
-          if (atomStage === 1) {
-            await this.ctx.bean.tag.setTagAtomCount({ tagsNew: null, tagsOld: _atomOld.atomTags });
-          }
-        }
-      }
-      // delete
-      await this.ctx.bean.atom._delete({
-        atomClass,
-        atom: { id: key.atomId },
-        user,
-      });
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      if (!item) return;
-      // force delete atomDisabled
-      delete item.atomDisabled;
-      // simple/stage
-      const atomSimple = item.atomSimple;
-      const atomStage = item.atomStage;
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      let _atomOld;
-      if (_atomClass.tag && item.atomTags !== undefined && atomStage === 1) {
-        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-      }
-      // validate
-      const ignoreValidate = options && options.ignoreValidate;
-      if (
-        ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) &&
-        !target &&
-        !ignoreValidate
-      ) {
-        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
-          atomClass,
-          key,
-          options,
-          user,
-        });
-        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
-        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
-      }
-      // write atom
-      await this._writeAtom({ key, item, user, atomSimple, atomStage });
-      // tag
-      if (_atomClass.tag && item.atomTags !== undefined) {
-        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
-        if (atomStage === 1) {
-          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
-        }
-      }
-      // resource: update locales
-      if (_atomClass.resource && item.atomStage === 1) {
-        await this.ctx.bean.resource.setLocales({
-          atomId: key.atomId,
-          atomName: item.atomName,
-        });
-      }
-      // remove fields.custom
-      const fieldsCustom = _atomClass.fields && _atomClass.fields.custom;
-      if (fieldsCustom) {
-        for (const field of fieldsCustom) {
-          delete item[field];
-        }
-      }
+      delete item.roleIdParent; // roleIdParent maybe string, so cause validate error
+      // super
+      await super.write({ atomClass, target, key, item, options, user });
+      // update role
+      const data = await this.ctx.model.role.prepareData(item);
+      data.id = key.itemId;
+      if (item.atomName) data.roleName = item.atomName;
+      await this.ctx.model.role.update(data);
     }
 
-    async submit({ /* atomClass,*/ key, options, user }) {
-      const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.ctx.bean.atom.read({ key, user });
-      if (_atom.atomStage > 0) this.ctx.throw(403);
-      // check atom flow
-      if (!ignoreFlow) {
-        const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
-        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
-        if (flowInstance) {
-          // set atom flow
-          const atomFlowId = flowInstance.context._flowId;
-          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
-          // ok
-          return { flow: { id: atomFlowId } };
-        }
-      }
-      return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
-    }
+    async delete({ atomClass, key, options, user }) {
+      const roleId = key.itemId;
+      // force
+      const force = options && options.force;
+      // role
+      const role = await this.beanRole.get({ id: roleId });
+      // parent
+      const roleIdParent = role.roleIdParent;
 
-    async enable({ /* atomClass,*/ key /* , user*/ }) {
-      await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId,
-        atomDisabled: 0,
+      // check if system
+      if (role.system) this.ctx.throw(403);
+      // check if children
+      if (role.catalog && !force) {
+        const children = await this.beanRole.children({ roleId });
+        if (children.length > 0) this.ctx.throw.module(moduleInfo.relativeName, 1008);
+      }
+
+      // delete all includes
+      await this.beanRole.modelRoleInc.delete({ roleId });
+      await this.beanRole.modelRoleInc.delete({ roleIdInc: roleId });
+
+      // delete all users
+      await this.beanRole.modelUserRole.delete({ roleId });
+
+      // delete all atom rights
+      await this.beanRole.modelRoleRight.delete({ roleId });
+      await this.beanRole.modelRoleRightRef.delete({ roleId });
+
+      // super
+      await super.delete({ atomClass, key, options, user });
+      // delete role
+      await this.ctx.model.role.delete({
+        id: key.itemId,
       });
+
+      // adjust catalog
+      await this.beanRole.adjustCatalog(roleIdParent);
+
+      // set dirty
+      await this.beanRole.setDirty(true);
     }
 
-    async disable({ /* atomClass,*/ key /* , user*/ }) {
-      await this.ctx.bean.atom.modelAtom.update({
-        id: key.atomId,
-        atomDisabled: 1,
-      });
-    }
-
-    async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
-      // do nothing
-    }
-
-    async exportBulk({ /* atomClass, options,*/ fields, items /* , user*/ }) {
-      // workbook
-      const workbook = new ExcelJS.Workbook();
-      workbook.creator = 'CabloyJS';
-      workbook.created = new Date();
-      // worksheet
-      const worksheet = workbook.addWorksheet('Sheet');
-      // columns
-      const columns = [];
-      for (const field of fields) {
-        columns.push({
-          header: this.ctx.text(field.title),
-          key: field.name,
+    async copy({ atomClass, target, srcKey, srcItem, destKey, destItem, user }) {
+      await super.copy({ atomClass, target, srcKey, srcItem, destKey, destItem, user });
+      if (target === 'clone') {
+        await this.ctx.model.role.update({
+          id: destKey.itemId,
+          catalog: 0, // srcItem.catalog,
+          system: 0, // srcItem.system,
+          roleIdParent: srcItem.roleIdParent,
         });
       }
-      worksheet.columns = columns;
-      // rows
-      const rows = [];
-      for (const item of items) {
-        const row = {};
-        for (const field of fields) {
-          row[field.name] = item[field.name];
-        }
-        rows.push(row);
-      }
-      worksheet.addRows(rows);
-      // write
-      const buffer = await workbook.xlsx.writeBuffer();
-      // meta
-      const meta = {
-        filename: `${this.ctx.bean.util.now()}.xlsx`,
-        encoding: '7bit',
-        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        fields: {
-          mode: 2,
-          flag: 'atom-bulk-export',
-        },
-      };
-      // ok
-      return { type: 'buffer', data: buffer, meta };
     }
 
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
-      return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      // delete/clone/move/addChild/roleUsers/includes/resourceAuthorizations/atomAuthorizations
+      if (![4, 5, 101, 102, 103, 104, 105, 106].includes(action)) return res;
+      // role
+      const role = await this.ctx.model.role.get({ id: atom.itemId });
+      // delete
+      if (action === 4) {
+        if (role.system === 1) return null;
+      }
+      // clone
+      if (action === 5) {
+        if (role.roleIdParent === 0) return null;
+        if (atom.atomName === 'OpenAuthScope' && role.roleTypeCode === 6) return null;
+      }
+      // move
+      if (action === 101) {
+        if (role.system === 1) return null;
+      }
+      // addChild
+      if (action === 102) {
+        if (atom.atomName !== 'OpenAuthScope' && role.roleTypeCode === 6) return null;
+      }
+      // roleUsers
+      if (action === 103) {
+        if (role.catalog === 1) return null;
+        if (role.roleTypeCode === 6) return null;
+      }
+      // includes
+      if (action === 104) {
+        // if (role.roleTypeCode === 6) return null;
+      }
+      // resourceAuthorizations
+      if (action === 105) {
+        if (['OpenAuthScope', 'RoleScopeFull'].includes(atom.atomName) && role.roleTypeCode === 6) return null;
+      }
+      // atomAuthorizations
+      if (action === 106) {
+        if (['OpenAuthScope', 'RoleScopeFull'].includes(atom.atomName) && role.roleTypeCode === 6) return null;
+      }
+      // default
+      return res;
+    }
+
+    async _getMeta(options, item, showSorting) {
+      // meta
+      const meta = this._ensureItemMeta(item);
+      // meta.flags
+      if (showSorting) {
+        meta.flags.push(item.sorting);
+      }
+      // meta.summary
+      meta.summary = item.description;
+      // translate
+      await this._getMetaTranslate({ item });
+      // roleNameParent
+      if (item.roleNameParent) {
+        item.roleNameParentLocale = this.ctx.text(item.roleNameParent);
+      }
+    }
+
+    async _getMetaTranslate({ item }) {
+      const dictKey = 'a-base:dictRoleType';
+      const atomDict = await this.ctx.bean.atom.modelAtom.get({
+        atomStaticKey: dictKey,
+        atomStage: 1,
+      });
+      if (!atomDict) {
+        // do nothing
+        return;
+      }
+      // translate
+      const _item = await this._dictTranslateField({
+        fieldName: 'roleTypeCode',
+        code: item.roleTypeCode,
+        field: {
+          dictKey: 'a-base:dictRoleType',
+        },
+      });
+      Object.assign(item, _item);
     }
   }
-  return AtomBase;
+
+  return Atom;
 };
 
 
 /***/ }),
 
-/***/ 3535:
+/***/ 639:
 /***/ ((module) => {
-
-// maybe modified by user
-const __atomBasicFields = [
-  'atomName', //
-  'atomLanguage',
-  'atomCategoryId',
-  'atomTags',
-  'allowComment',
-  // 'atomStatic',
-  // 'atomStaticKey',
-  // 'atomRevision',
-];
 
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class AtomBase {
-    async _writeAtom({ key, item, user, atomSimple, atomStage }) {
-      // write atom
-      const atom = {};
-      for (const field of __atomBasicFields) {
-        if (item[field] !== undefined) atom[field] = item[field];
-      }
-      if ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) {
-        atom.updatedAt = new Date();
-      }
-      if (atom.atomName) {
-        atom.atomName = atom.atomName.trim();
-      }
-      // update
-      atom.id = key.atomId;
-      await this.ctx.bean.atom._update({ atom, user });
+  class Atom extends app.meta.AtomBase {
+    get beanUser() {
+      return this.ctx.bean.user;
     }
 
-    _ensureItemMeta(item) {
-      if (!item) return null;
-      if (!item._meta) item._meta = {};
-      if (!item._meta.flags) item._meta.flags = [];
-      return item._meta;
-    }
-
-    _appendRevisionToHistory({ item }) {
-      if (!item) return;
-      if (!item.atomRevision || item.atomStage !== 2) return;
-      const meta = this._ensureItemMeta(item);
-      meta.flags.push(`Rev.${item.atomRevision}`);
-    }
-
-    async _dictTranslate({ item, _atomClass }) {
-      const fields = _atomClass.dict && _atomClass.dict.fields;
-      for (const fieldName in fields) {
-        const field = fields[fieldName];
-        if (field.translate === false) continue;
-        //
-        const code = item[fieldName];
-        if (code === undefined) continue;
-        const res = await this.ctx.bean.dict.findItem({
-          dictKey: field.dictKey,
-          code,
-          options: {
-            separator: field.separator,
-          },
+    async create({ atomClass, item, options, user }) {
+      // only support atomStage=1
+      if (item.atomStage !== 1) throw new Error('user only support atomStage=1');
+      // fields
+      const disabled = item.disabled || 0;
+      const anonymous = item.anonymous || 0;
+      // super
+      const key = await super.create({ atomClass, item, options, user });
+      const atomId = key.atomId;
+      // add user
+      //   item.itemId only be set from inner access
+      let itemId = item.itemId;
+      if (!itemId) {
+        const _atomNew = await this.ctx.bean.atom.modelAtom.get({ id: atomId });
+        const userName = _atomNew.atomName;
+        const res = await this.ctx.model.user.insert({
+          atomId: key.atomId,
+          disabled,
+          anonymous,
+          userName,
         });
-        if (res) {
-          item[`_${fieldName}Title`] = res.titleFull;
-          item[`_${fieldName}TitleLocale`] = res.titleLocaleFull;
-        }
+        itemId = res.insertId;
+      } else {
+        await this.ctx.model.user.update({
+          id: itemId,
+          disabled,
+          anonymous,
+          atomId,
+        });
+      }
+      // ok
+      return { atomId, itemId };
+    }
+
+    async read({ atomClass, options, key, user }) {
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // meta
+      await this._getMeta(options, item);
+      // ok
+      return item;
+    }
+
+    async select({ atomClass, options, items, user }) {
+      // super
+      await super.select({ atomClass, options, items, user });
+      // meta
+      for (const item of items) {
+        await this._getMeta(options, item);
       }
     }
-  }
 
-  return AtomBase;
-};
-
-
-/***/ }),
-
-/***/ 9546:
-/***/ ((module) => {
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class AtomClass extends ctx.app.meta.BeanModuleBase {
-    constructor(moduleName) {
-      super(ctx, 'atomClass');
-      this.moduleName = moduleName || ctx.module.info.relativeName;
+    async write({ atomClass, target, key, item, options, user }) {
+      // super
+      await super.write({ atomClass, target, key, item, options, user });
+      // update user
+      const data = await this.ctx.model.user.prepareData(item);
+      data.id = key.itemId;
+      if (item.atomName) data.userName = item.atomName;
+      await this.ctx.model.user.update(data);
     }
 
-    get model() {
-      return ctx.model.module(moduleInfo.relativeName).atomClass;
+    async delete({ atomClass, key, options, user }) {
+      const userId = key.itemId;
+      // super
+      await super.delete({ atomClass, key, options, user });
+
+      await this.ctx.bean.role.deleteAllUserRoles({ userId });
+      await this.ctx.bean.user.modelAuth.delete({ userId });
+
+      // delete user
+      await this.ctx.model.user.delete({ id: userId });
     }
 
-    async atomClass(atomClass) {
-      atomClass = await this.top(atomClass);
-      return ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
-    }
-
-    async top(atomClass) {
-      while (true) {
-        if (!atomClass.atomClassIdParent) break;
-        atomClass = await this.get({ id: atomClass.atomClassIdParent });
-      }
-      return atomClass;
-    }
-
-    async get({ id, module, atomClassName, atomClassIdParent = 0 }) {
-      module = module || this.moduleName;
-      const data = id ? { id } : { module, atomClassName, atomClassIdParent };
-      const res = await this.model.get(data);
-      if (res) return res;
-      if (!module || !atomClassName) ctx.throw.module(moduleInfo.relativeName, 1011);
-      // lock
-      return await ctx.meta.util.lock({
-        resource: `${moduleInfo.relativeName}.atomClass.register`,
-        fn: async () => {
-          return await ctx.meta.util.executeBeanIsolate({
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'atomClass',
-            context: { module, atomClassName, atomClassIdParent },
-            fn: '_registerLock',
-          });
-        },
+    async enable({ atomClass, key, user }) {
+      // super
+      await super.enable({ atomClass, key, user });
+      // enable
+      await this.ctx.model.user.update({
+        id: key.itemId,
+        disabled: 0,
       });
     }
 
-    async _registerLock({ module, atomClassName, atomClassIdParent }) {
-      // atom class
-      const data = await this._registerLock_inner({ module, atomClassName, atomClassIdParent });
-      // atom action: basics
-      for (const code of [1, 2, 3, 4]) {
-        await ctx.bean.atomAction._registerLock_inner({ atomClassId: data.id, code });
-      }
-      // ok
-      return data;
+    async disable({ atomClass, key, user }) {
+      // super
+      await super.disable({ atomClass, key, user });
+      // disable
+      await this.ctx.model.user.update({
+        id: key.itemId,
+        disabled: 1,
+      });
     }
 
-    async _registerLock_inner({ module, atomClassName, atomClassIdParent }) {
-      // get
-      const res = await this.model.get({ module, atomClassName, atomClassIdParent });
-      if (res) return res;
-      // data
-      const atomClass = ctx.bean.base.atomClass({ module, atomClassName });
-      if (!atomClass) throw new Error(`atomClass ${module}:${atomClassName} not found!`);
-      const data = {
-        module,
-        atomClassName,
-        atomClassIdParent,
-        atomClassInner: atomClass.inner ? 1 : 0,
-      };
-      // insert
-      const res2 = await this.model.insert(data);
-      data.id = res2.insertId;
-      return data;
-    }
-
-    async getByAtomId({ atomId }) {
-      const res = await this.model.query(
-        `
-        select a.*,b.id as atomId,b.itemId from aAtomClass a
-          left join aAtom b on a.id=b.atomClassId
-            where b.iid=? and b.id=?
-        `,
-        [ctx.instance.id, atomId]
-      );
-      return res[0];
-    }
-
-    async getTopByAtomId({ atomId }) {
-      const atomClass = await this.getByAtomId({ atomId });
-      return await this.top(atomClass);
-    }
-
-    async validator({ atomClass }) {
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      // super
+      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      if (atom.atomStage !== 1) return res;
+      // write/enable/disable
+      if (![3, 6, 7].includes(action)) return res;
+      // item
+      const item = await this.ctx.model.user.get({ id: atom.itemId });
+      if (item.anonymous) return null;
       // default
-      const _module = ctx.app.meta.modules[atomClass.module];
-      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-      return validator ? { module: atomClass.module, validator } : null;
+      return res;
     }
 
-    async validatorSearch({ atomClass }) {
-      const _module = ctx.app.meta.modules[atomClass.module];
-      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
-      return validator ? { module: atomClass.module, validator } : null;
+    async _getMeta(options, item) {
+      // meta
+      const meta = this._ensureItemMeta(item);
+      // meta.summary
+      meta.summary = item.motto;
     }
   }
 
-  return AtomClass;
+  return Atom;
 };
 
 
 /***/ }),
 
-/***/ 7158:
+/***/ 5528:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const atom_0 = __webpack_require__(7399);
+const atom_1 = __webpack_require__(3765);
+const atom_right = __webpack_require__(6681);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(atom_0, [atom_1, atom_right], ctx);
+};
+
+
+/***/ }),
+
+/***/ 7399:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
+// const debug = require3('debug')('sql');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -790,15 +619,6 @@ module.exports = ctx => {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
 
-    async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
-      const res = await this.atomClass.get({
-        module,
-        atomClassName,
-        atomClassIdParent,
-      });
-      return res.id;
-    }
-
     // atom and item
 
     // create
@@ -834,6 +654,8 @@ module.exports = ctx => {
       const key = { atomId, itemId };
       const returnAtom = options.returnAtom;
       if (!returnAtom) return key;
+      // read
+      item = await this.read({ key, user });
       return { key, atom: item };
     }
 
@@ -917,11 +739,14 @@ module.exports = ctx => {
       }
       // cms
       const cms = _atomClass && _atomClass.cms;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // select
       const items = await this._list({
         tableName,
         options,
         cms,
+        forAtomUser,
         user,
         pageForce,
         count,
@@ -1006,7 +831,7 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key, user }) {
+    async delete({ key, options, user }) {
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       if (!key.itemId) key.itemId = atomClass.itemId;
@@ -1031,7 +856,7 @@ module.exports = ctx => {
           await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
-            context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, user },
+            context: { atomClass, key: { atomId: item.id, itemId: item.itemId }, options, user },
             fn: 'delete',
           });
         }
@@ -1044,7 +869,7 @@ module.exports = ctx => {
           await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
-            context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, user },
+            context: { atomClass, key: { atomId: itemDraft.id, itemId: itemDraft.itemId }, options, user },
             fn: 'delete',
           });
           // notify
@@ -1054,7 +879,7 @@ module.exports = ctx => {
         await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
-          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
+          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, options, user },
           fn: 'delete',
         });
       } else if (_atom.atomStage === 2) {
@@ -1062,7 +887,7 @@ module.exports = ctx => {
         await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
-          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, user },
+          context: { atomClass, key: { atomId: _atom.id, itemId: _atom.itemId }, options, user },
           fn: 'delete',
         });
       }
@@ -1223,10 +1048,7 @@ module.exports = ctx => {
       });
       // ok
       // get atom
-      const atom = await this.modelAtom.get({ id: keyDraft.atomId });
-      atom.atomId = atom.id;
-      atom.module = atomClass.module;
-      atom.atomClassName = atomClass.atomClassName;
+      const atom = await this.read({ key: keyDraft, user });
       // draft/formal
       const res = { key: keyDraft, atom };
       if (atom.atomStage === 0) return { draft: res };
@@ -1444,187 +1266,6 @@ module.exports = ctx => {
       return await this.atomClass.validator({ atomClass });
     }
 
-    // right
-
-    async checkRoleRightRead({ atom: { id }, roleId }) {
-      // not check draft
-      // formal/history
-      const sql = this.sqlProcedure.checkRoleRightRead({
-        iid: ctx.instance.id,
-        roleIdWho: roleId,
-        atomId: id,
-      });
-      return await ctx.model.queryOne(sql);
-    }
-
-    async checkRightRead({ atom: { id }, user, checkFlow }) {
-      // draft: only userIdUpdated
-      const _atom = await this.modelAtom.get({ id });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (_atom.atomStage === 0) {
-        // self
-        const bSelf = _atom.userIdUpdated === user.id;
-        // checkFlow
-        if (_atom.atomFlowId > 0 && checkFlow) {
-          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
-          if (!flow) return null;
-          return _atom;
-        }
-        // 1. closed
-        if (_atom.atomClosed) {
-          if (bSelf) return _atom;
-          return null;
-        }
-        // // 2. flow
-        // if (_atom.atomFlowId > 0) return null;
-        // 3. self
-        if (bSelf) return _atom;
-        // others
-        return null;
-      }
-      // formal/history
-      const sql = this.sqlProcedure.checkRightRead({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomId: id,
-      });
-      return await ctx.model.queryOne(sql);
-    }
-
-    async checkRightAction({ atom: { id }, action, stage, user, checkFlow }) {
-      // atom
-      const _atom = await this.modelAtom.get({ id });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // parse action code
-      action = ctx.bean.atomAction.parseActionCode({
-        action,
-        atomClass,
-      });
-      // check right
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
-        fn: 'checkRightAction',
-      });
-    }
-
-    async checkRightActionBulk({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
-      action,
-      stage,
-      user,
-    }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id, module, atomClassName, atomClassIdParent });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // parse action code
-      action = ctx.bean.atomAction.parseActionCode({
-        action,
-        atomClass,
-      });
-      // check right
-      const sql = this.sqlProcedure.checkRightActionBulk({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomClassId: atomClass.id,
-        action,
-      });
-      const actionRes = await ctx.model.queryOne(sql);
-      return await this.__checkRightActionBulk({ actionRes, stage, user });
-    }
-
-    async checkRightCreate({ atomClass, user }) {
-      return await this.checkRightActionBulk({ atomClass, action: 1, user });
-    }
-
-    async checkRightCreateRole({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, roleIdOwner, user }) {
-      if (!roleIdOwner) return null;
-      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
-      const sql = this.sqlProcedure.checkRightCreateRole({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomClassId: id,
-        roleIdOwner,
-      });
-      return await ctx.model.queryOne(sql);
-    }
-
-    // actions of atom
-    async actions({ key, basic, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // actions
-      const _basic = basic ? 'and a.code in (3,4)' : '';
-      const sql = `
-        select a.*,b.module,b.atomClassName,b.atomClassIdParent from aAtomAction a
-          left join aAtomClass b on a.atomClassId=b.id
-            where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
-              order by a.code asc
-      `;
-      const actions = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
-      // actions res
-      const actionsRes = [];
-      for (const action of actions) {
-        const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
-        if (res) actionsRes.push(action);
-      }
-      return actionsRes;
-    }
-
-    // actionsBulk of atomClass
-    async actionsBulk({ atomClass: { id, module, atomClassName, atomClassIdParent = 0 }, stage, user }) {
-      if (!id) id = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
-      const sql = this.sqlProcedure.checkRightActionBulk({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomClassId: id,
-      });
-      const actionsRes = await ctx.model.query(sql);
-      const res = [];
-      for (const actionRes of actionsRes) {
-        const _res = await this.__checkRightActionBulk({ actionRes, stage, user });
-        if (_res) {
-          res.push(_res);
-        }
-      }
-      return res;
-    }
-
-    // preffered roles
-    async preferredRoles({ atomClass, user }) {
-      // atomClass
-      atomClass = await ctx.bean.atomClass.get(atomClass);
-
-      const roles = await ctx.model.query(
-        `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
-          inner join aUserRole b on a.roleIdWho=b.roleId
-          left join aRole c on a.roleIdWho=c.id
-          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
-          order by a.roleIdWho desc`,
-        [ctx.instance.id, atomClass.id, user.id]
-      );
-      return roles;
-    }
-
-    async preferredRole({ atomClass, user }) {
-      const roles = await this.preferredRoles({ atomClass, user });
-      return roles.length === 0 ? null : roles[0];
-    }
-
-    async preferredRoleId({ atomClass, user }) {
-      const role = await this.preferredRole({ atomClass, user });
-      return role ? role.roleIdWho : 0;
-    }
-
     async getTableName({ atomClass, atomClassBase, options, mode, user, action, key, count }) {
       const tableNameModes = atomClassBase.tableNameModes || {};
       let tableName;
@@ -1654,6 +1295,12 @@ module.exports = ctx => {
       // ok
       return tableName;
     }
+
+    async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
+      ctx.app.meta.util.deprecated('ctx.bean.atom.getAtomClassId', 'ctx.bean.atomClass.get');
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      return atomClass.id;
+    }
   }
 
   return Atom;
@@ -1662,10 +1309,11 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 7669:
+/***/ 3765:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
+const debug = require3('debug')('sql');
 const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
@@ -2148,7 +1796,7 @@ module.exports = ctx => {
     // atom
 
     async _add({
-      atomClass: { id, module, atomClassName, atomClassIdParent = 0 },
+      atomClass,
       atom: {
         atomStage = 0,
         itemId,
@@ -2165,8 +1813,7 @@ module.exports = ctx => {
       },
       user,
     }) {
-      let atomClassId = id;
-      if (!atomClassId) atomClassId = await this.getAtomClassId({ module, atomClassName, atomClassIdParent });
+      const atomClassId = atomClass.id;
       const res = await this.modelAtom.insert({
         atomStage,
         itemId,
@@ -2250,6 +1897,8 @@ module.exports = ctx => {
       });
       // cms
       const cms = _atomClass && _atomClass.cms;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // sql
       const sql = this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
@@ -2260,9 +1909,16 @@ module.exports = ctx => {
         resourceLocale,
         mode,
         cms,
+        forAtomUser,
       });
+      debug('===== getAtom =====\n%s', sql);
       // query
       return await ctx.model.queryOne(sql);
+    }
+
+    // forAtomUser
+    _checkForAtomUser(atomClass) {
+      return atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
     }
 
     async _list({
@@ -2282,9 +1938,11 @@ module.exports = ctx => {
         mine = 0,
         resource = 0,
         resourceLocale,
+        role = 0,
         mode,
       },
       cms,
+      forAtomUser,
       user,
       pageForce = true,
       count = 0,
@@ -2312,7 +1970,10 @@ module.exports = ctx => {
         resourceLocale,
         mode,
         cms,
+        forAtomUser,
+        role,
       });
+      debug('===== selectAtoms =====\n%s', sql);
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
     }
@@ -2391,19 +2052,22 @@ module.exports = ctx => {
         !_atomDraft.atomClosed &&
         _atomDraft.userIdUpdated === user.id
       ) {
-        return await this._checkRightAction({ atom: _atomDraft, action, stage, user, checkFlow });
+        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow });
       }
       // check enableOnOpened
       if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
       if (action === 7 && _atom.atomDisabled === 1) return null;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
       // check formal/history
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId: atom.id,
         action,
+        forAtomUser,
       });
       return await ctx.model.queryOne(sql);
     }
@@ -2467,6 +2131,1156 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 6681:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async checkRoleRightRead({ atom: { id }, roleId }) {
+      // not check draft
+      const atomId = id;
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
+      // formal/history
+      const sql = this.sqlProcedure.checkRoleRightRead({
+        iid: ctx.instance.id,
+        roleIdWho: roleId,
+        atomId,
+        forAtomUser,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    async checkRightRead({ atom: { id }, user, checkFlow, disableAuthOpenCheck }) {
+      const _atom = await this.modelAtom.get({ id });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // normal check
+      const res = await this._checkRightRead_normal({ _atom, atomClass, user, checkFlow });
+      if (!res) return res;
+      // auth open check
+      if (!disableAuthOpenCheck) {
+        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'read' });
+        if (!resAuthOpenCheck) return null;
+      }
+      // ok
+      return res;
+    }
+
+    async _checkRightRead_normal({ _atom, atomClass, user, checkFlow }) {
+      // draft: only userIdUpdated
+      const atomId = _atom.id;
+      // check right
+      if (_atom.atomStage === 0) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
+        // checkFlow
+        if (_atom.atomFlowId > 0 && checkFlow) {
+          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+          if (!flow) return null;
+          return _atom;
+        }
+        // 1. closed
+        if (_atom.atomClosed) {
+          if (bSelf) return _atom;
+          return null;
+        }
+        // // 2. flow
+        // if (_atom.atomFlowId > 0) return null;
+        // 3. self
+        if (bSelf) return _atom;
+        // others
+        return null;
+      }
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
+      // formal/history
+      const sql = this.sqlProcedure.checkRightRead({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId,
+        forAtomUser,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    async checkRightAction({ atom: { id }, action, stage, user, checkFlow, disableAuthOpenCheck }) {
+      const _atom = await this.modelAtom.get({ id });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // normal check
+      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      // auth open check
+      if (!disableAuthOpenCheck) {
+        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
+        if (!resAuthOpenCheck) return null;
+      }
+      // ok
+      return res;
+    }
+
+    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass,
+      });
+      // check right
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
+        fn: 'checkRightAction',
+      });
+    }
+
+    // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
+    async checkRightActionBulk({ atomClass, action, stage, user }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      // normal check
+      const res = await this._checkRightActionBulk_normal({ atomClass, action, stage, user });
+      if (!res) return res;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
+      if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightActionBulk_normal({ atomClass, action, stage, user }) {
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass,
+      });
+      // check right
+      const sql = this.sqlProcedure.checkRightActionBulk({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: atomClass.id,
+        action,
+      });
+      const actionRes = await ctx.model.queryOne(sql);
+      return await this.__checkRightActionBulk({ actionRes, stage, user });
+    }
+
+    async checkRightCreate({ atomClass, user }) {
+      return await this.checkRightActionBulk({ atomClass, action: 1, user });
+    }
+
+    // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
+    async checkRightCreateRole({ atomClass, roleIdOwner, user }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      // normal check
+      const res = await this._checkRightCreateRole_normal({ atomClass, roleIdOwner, user });
+      if (!res) return res;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
+      if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightCreateRole_normal({ atomClass, roleIdOwner, user }) {
+      if (!roleIdOwner) return null;
+      const sql = this.sqlProcedure.checkRightCreateRole({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId: atomClass.id,
+        roleIdOwner,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
+    // actions of atom
+    async actions({ key, basic, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // actions
+      const _basic = basic ? 'and a.code in (3,4)' : '';
+      const sql = `
+        select a.*,b.module,b.atomClassName,b.atomClassIdParent from aAtomAction a
+          left join aAtomClass b on a.atomClassId=b.id
+            where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
+              order by a.code asc
+      `;
+      const actions = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
+      // actions res
+      const actionsRes = [];
+      for (const action of actions) {
+        const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
+        if (res) actionsRes.push(action);
+      }
+      return actionsRes;
+    }
+
+    // actionsBulk of atomClass
+    async actionsBulk({ atomClass, stage, user }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      const atomClassId = atomClass.id;
+      const sql = this.sqlProcedure.checkRightActionBulk({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomClassId,
+      });
+      const actionsRes = await ctx.model.query(sql);
+      const res = [];
+      for (const actionRes of actionsRes) {
+        const _res = await this.__checkRightActionBulk({ actionRes, stage, user });
+        if (_res) {
+          res.push(_res);
+        }
+      }
+      return res;
+    }
+
+    // preffered roles
+    async preferredRoles({ atomClass, user }) {
+      // atomClass
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      // normal check
+      const roles = await this._preferredRoles_normal({ atomClass, user });
+      if (!roles || roles.length === 0) return roles;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
+      if (!resAuthOpenCheck) return [];
+      // ok
+      return roles;
+    }
+
+    // preffered roles
+    async _preferredRoles_normal({ atomClass, user }) {
+      const roles = await ctx.model.query(
+        `select a.*,b.userId,c.roleName as roleNameWho from aViewRoleRightAtomClass a
+          inner join aUserRole b on a.roleIdWho=b.roleId
+          left join aRole c on a.roleIdWho=c.id
+          where a.iid=? and a.atomClassId=? and a.action=1 and b.userId=?
+          order by a.roleIdWho desc`,
+        [ctx.instance.id, atomClass.id, user.id]
+      );
+      return roles;
+    }
+
+    async preferredRole({ atomClass, user }) {
+      const roles = await this.preferredRoles({ atomClass, user });
+      return !roles || roles.length === 0 ? null : roles[0];
+    }
+
+    async preferredRoleId({ atomClass, user }) {
+      const role = await this.preferredRole({ atomClass, user });
+      return role ? role.roleIdWho : 0;
+    }
+  }
+
+  return Atom;
+};
+
+
+/***/ }),
+
+/***/ 3127:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomAction extends ctx.app.meta.BeanModuleBase {
+    constructor(moduleName) {
+      super(ctx, 'atomAction');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).atomAction;
+    }
+
+    async get({ id, atomClassId, code }) {
+      const data = id ? { id } : { atomClassId, code };
+      const res = await this.model.get(data);
+      if (res) return res;
+      // lock
+      return await ctx.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.atomAction.register`,
+        fn: async () => {
+          return await ctx.meta.util.executeBeanIsolate({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomAction',
+            context: { atomClassId, code },
+            fn: '_registerLock',
+          });
+        },
+      });
+    }
+
+    parseActionCode({ action, atomClass }) {
+      // is number
+      if (!isNaN(action)) return parseInt(action);
+      // add role right
+      const actionCode = ctx.constant.module('a-base').atom.action[action];
+      if (actionCode) return actionCode;
+      // atomClass
+      if (!atomClass) throw new Error(`should specify the atomClass of action: ${action}`);
+      const actions = ctx.bean.base.actions();
+      const _action = actions[atomClass.module][atomClass.atomClassName][action];
+      if (!_action) throw new Error(`atom action not found: ${atomClass.module}:${atomClass.atomClassName}.${action}`);
+      return _action.code;
+    }
+
+    async _registerLock({ atomClassId, code }) {
+      return await this._registerLock_inner({ atomClassId, code });
+    }
+
+    async _registerLock_inner({ atomClassId, code }) {
+      // get
+      const res = await this.model.get({ atomClassId, code });
+      if (res) return res;
+      const atomClass = await ctx.bean.atomClass.get({ id: atomClassId });
+      const action = ctx.bean.base.action({ module: atomClass.module, atomClassName: atomClass.atomClassName, code });
+      const data = {
+        atomClassId,
+        code,
+        name: action.name,
+        bulk: action.bulk || 0,
+      };
+      // insert
+      const res2 = await this.model.insert(data);
+      data.id = res2.insertId;
+      return data;
+    }
+  }
+
+  return AtomAction;
+};
+
+
+/***/ }),
+
+/***/ 6542:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const atomBase_0 = __webpack_require__(1149);
+const atomBase_1 = __webpack_require__(9667);
+
+module.exports = app => {
+  return app.meta.util.mixinClasses(atomBase_0, atomBase_1, app);
+};
+
+
+/***/ }),
+
+/***/ 1149:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const uuid = require3('uuid');
+const ExcelJS = require3('exceljs');
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomBase extends app.meta.BeanBase {
+    async create({ atomClass, item, options, user }) {
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // atomName
+      if (!item.atomName) {
+        // draftId
+        const sequence = this.ctx.bean.sequence.module(moduleInfo.relativeName);
+        const draftId = await sequence.next('draft');
+        item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
+      }
+      // atomStaticKey
+      if (!item.atomStaticKey) {
+        item.atomStaticKey = uuid.v4().replace(/-/g, '');
+      }
+      // atomSimple
+      if (_atomClass.simple) {
+        item.atomSimple = 1;
+        item.atomStage = 1;
+      } else {
+        item.atomSimple = 0;
+        item.atomStage = 0;
+      }
+      // roleIdOwner
+      const bAtomClassRole = atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
+      if (!item.roleIdOwner && !bAtomClassRole) {
+        let roleId;
+        if (options.preferredRole) {
+          roleId = await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
+          if (!roleId) this.ctx.throw(403);
+        } else {
+          const roleName = 'authenticated.builtIn';
+          const role = await this.ctx.bean.role.parseRoleName({ roleName });
+          roleId = role.id;
+        }
+        item.roleIdOwner = roleId;
+      }
+      // add
+      const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
+      return { atomId };
+    }
+
+    async read({ atomClass, options, key, user }) {
+      // get
+      const item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
+      if (!item) return item;
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // dict translate
+      await this._dictTranslate({ item, _atomClass });
+      // revision
+      this._appendRevisionToHistory({ item });
+      // flow
+      if (item.flowNodeNameCurrent) {
+        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
+      }
+      // atomLanguage
+      if (item.atomLanguage) {
+        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+      }
+      // ok
+      return item;
+    }
+
+    async selectBefore(/* { atomClass, options, user }*/) {
+      // donothing
+    }
+
+    async select({ atomClass, options, items, user }) {
+      if (items.length === 0) return;
+      // atomClass
+      const _atomClass = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
+      // dict translate
+      if (_atomClass) {
+        for (const item of items) {
+          await this._dictTranslate({ item, _atomClass });
+        }
+      }
+      // revision
+      if (options.stage === 'history') {
+        for (const item of items) {
+          this._appendRevisionToHistory({ item });
+        }
+      }
+      // flow
+      if (options.stage === 'draft') {
+        for (const item of items) {
+          if (item.flowNodeNameCurrent) {
+            item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
+          }
+        }
+      }
+      // atomLanguage
+      for (const item of items) {
+        if (item.atomLanguage) {
+          item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+        }
+      }
+    }
+
+    async delete({ atomClass, key, options, user }) {
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      if (_atomClass.tag) {
+        const _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+        if (_atomOld.atomTags) {
+          // stage
+          const atomStage = _atomOld.atomStage;
+          await this.ctx.bean.tag.deleteTagRefs({ atomId: key.atomId });
+          if (atomStage === 1) {
+            await this.ctx.bean.tag.setTagAtomCount({ tagsNew: null, tagsOld: _atomOld.atomTags });
+          }
+        }
+      }
+      // delete
+      await this.ctx.bean.atom._delete({
+        atomClass,
+        atom: { id: key.atomId },
+        user,
+      });
+    }
+
+    async write({ atomClass, target, key, item, options, user }) {
+      if (!item) return;
+      // force delete atomDisabled
+      delete item.atomDisabled;
+      // simple/stage
+      const atomSimple = item.atomSimple;
+      const atomStage = item.atomStage;
+      // atomClass
+      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      let _atomOld;
+      if (_atomClass.tag && item.atomTags !== undefined && atomStage === 1) {
+        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      }
+      // validate
+      const ignoreValidate = options && options.ignoreValidate;
+      if (
+        ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) &&
+        !target &&
+        !ignoreValidate
+      ) {
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          atomClass,
+          key,
+          options,
+          user,
+        });
+        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
+      }
+      // --- item is filtered by validation
+      // write atom
+      await this._writeAtom({ key, item, user, atomSimple, atomStage });
+      // tag
+      if (_atomClass.tag && item.atomTags !== undefined) {
+        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
+        if (atomStage === 1) {
+          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
+        }
+      }
+      // resource: update locales
+      if (_atomClass.resource && atomStage === 1 && item.atomName) {
+        await this.ctx.bean.resource.setLocales({
+          atomId: key.atomId,
+          atomName: item.atomName,
+        });
+      }
+      // remove fields.custom
+      const fieldsCustom = _atomClass.fields && _atomClass.fields.custom;
+      if (fieldsCustom) {
+        for (const field of fieldsCustom) {
+          delete item[field];
+        }
+      }
+    }
+
+    async submit({ /* atomClass,*/ key, options, user }) {
+      const ignoreFlow = options && options.ignoreFlow;
+      const _atom = await this.ctx.bean.atom.read({ key, user });
+      if (_atom.atomStage > 0) this.ctx.throw(403);
+      // check atom flow
+      if (!ignoreFlow) {
+        const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
+        if (flowInstance) {
+          // set atom flow
+          const atomFlowId = flowInstance.context._flowId;
+          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+          // ok
+          return { flow: { id: atomFlowId } };
+        }
+      }
+      return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
+    }
+
+    async enable({ /* atomClass,*/ key /* , user*/ }) {
+      await this.ctx.bean.atom.modelAtom.update({
+        id: key.atomId,
+        atomDisabled: 0,
+      });
+    }
+
+    async disable({ /* atomClass,*/ key /* , user*/ }) {
+      await this.ctx.bean.atom.modelAtom.update({
+        id: key.atomId,
+        atomDisabled: 1,
+      });
+    }
+
+    async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
+      // do nothing
+    }
+
+    async exportBulk({ /* atomClass, options,*/ fields, items /* , user*/ }) {
+      // workbook
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'CabloyJS';
+      workbook.created = new Date();
+      // worksheet
+      const worksheet = workbook.addWorksheet('Sheet');
+      // columns
+      const columns = [];
+      for (const field of fields) {
+        columns.push({
+          header: this.ctx.text(field.title),
+          key: field.name,
+        });
+      }
+      worksheet.columns = columns;
+      // rows
+      const rows = [];
+      for (const item of items) {
+        const row = {};
+        for (const field of fields) {
+          row[field.name] = item[field.name];
+        }
+        rows.push(row);
+      }
+      worksheet.addRows(rows);
+      // write
+      const buffer = await workbook.xlsx.writeBuffer();
+      // meta
+      const meta = {
+        filename: `${this.ctx.bean.util.now()}.xlsx`,
+        encoding: '7bit',
+        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        fields: {
+          mode: 2,
+          flag: 'atom-bulk-export',
+        },
+      };
+      // ok
+      return { type: 'buffer', data: buffer, meta };
+    }
+
+    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+      return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+    }
+  }
+  return AtomBase;
+};
+
+
+/***/ }),
+
+/***/ 9667:
+/***/ ((module) => {
+
+// maybe modified by user
+const __atomBasicFields = [
+  'atomName', //
+  'atomLanguage',
+  'atomCategoryId',
+  'atomTags',
+  'allowComment',
+  // 'atomStatic',
+  // 'atomStaticKey',
+  // 'atomRevision',
+];
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomBase {
+    async _writeAtom({ key, item, user, atomSimple, atomStage }) {
+      // write atom
+      const atom = {};
+      for (const field of __atomBasicFields) {
+        if (item[field] !== undefined) atom[field] = item[field];
+      }
+      if ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) {
+        atom.updatedAt = new Date();
+      }
+      if (atom.atomName) {
+        atom.atomName = atom.atomName.trim();
+      }
+      // update
+      atom.id = key.atomId;
+      await this.ctx.bean.atom._update({ atom, user });
+    }
+
+    _ensureItemMeta(item) {
+      if (!item) return null;
+      if (!item._meta) item._meta = {};
+      if (!item._meta.flags) item._meta.flags = [];
+      return item._meta;
+    }
+
+    _appendRevisionToHistory({ item }) {
+      if (!item) return;
+      if (!item.atomRevision || item.atomStage !== 2) return;
+      const meta = this._ensureItemMeta(item);
+      meta.flags.push(`Rev.${item.atomRevision}`);
+    }
+
+    async _dictTranslate({ item, _atomClass }) {
+      const fields = _atomClass.dict && _atomClass.dict.fields;
+      for (const fieldName in fields) {
+        const field = fields[fieldName];
+        const code = item[fieldName];
+        const _item = await this._dictTranslateField({ fieldName, code, field });
+        if (_item) {
+          Object.assign(item, _item);
+        }
+      }
+    }
+
+    async _dictTranslateField({ fieldName, code, field }) {
+      if (field.translate === false) return null;
+      if (code === undefined) return null;
+      //
+      const dictItem = await this.ctx.bean.dict.findItem({
+        dictKey: field.dictKey,
+        code,
+        options: {
+          separator: field.separator,
+        },
+      });
+      if (!dictItem) return null;
+      // res
+      const _item = {};
+      _item[`_${fieldName}Title`] = dictItem.titleFull;
+      _item[`_${fieldName}TitleLocale`] = dictItem.titleLocaleFull;
+      if (dictItem.options && dictItem.options.icon) {
+        _item[`_${fieldName}Options`] = {
+          icon: dictItem.options.icon,
+        };
+      }
+      return _item;
+    }
+  }
+
+  return AtomBase;
+};
+
+
+/***/ }),
+
+/***/ 9546:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomClass extends ctx.app.meta.BeanModuleBase {
+    constructor(moduleName) {
+      super(ctx, 'atomClass');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).atomClass;
+    }
+
+    async atomClass(atomClass) {
+      atomClass = await this.top(atomClass);
+      return ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
+    }
+
+    async top(atomClass) {
+      while (true) {
+        if (!atomClass.atomClassIdParent) break;
+        atomClass = await this.get({ id: atomClass.atomClassIdParent });
+      }
+      return atomClass;
+    }
+
+    async get({ id, module, atomClassName, atomClassIdParent = 0 }) {
+      module = module || this.moduleName;
+      const data = id ? { id } : { module, atomClassName, atomClassIdParent };
+      const res = await this.model.get(data);
+      if (res) return res;
+      if (!module || !atomClassName) ctx.throw.module(moduleInfo.relativeName, 1011);
+      // lock
+      return await ctx.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.atomClass.register`,
+        fn: async () => {
+          return await ctx.meta.util.executeBeanIsolate({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomClass',
+            context: { module, atomClassName, atomClassIdParent },
+            fn: '_registerLock',
+          });
+        },
+      });
+    }
+
+    async _registerLock({ module, atomClassName, atomClassIdParent }) {
+      // atom class
+      const data = await this._registerLock_inner({ module, atomClassName, atomClassIdParent });
+      // atom action: basics
+      for (const code of [1, 2, 3, 4]) {
+        await ctx.bean.atomAction._registerLock_inner({ atomClassId: data.id, code });
+      }
+      // ok
+      return data;
+    }
+
+    async _registerLock_inner({ module, atomClassName, atomClassIdParent }) {
+      // get
+      const res = await this.model.get({ module, atomClassName, atomClassIdParent });
+      if (res) return res;
+      // data
+      const atomClass = ctx.bean.base.atomClass({ module, atomClassName });
+      if (!atomClass) throw new Error(`atomClass ${module}:${atomClassName} not found!`);
+      const data = {
+        module,
+        atomClassName,
+        atomClassIdParent,
+        atomClassInner: atomClass.inner ? 1 : 0,
+      };
+      // insert
+      const res2 = await this.model.insert(data);
+      data.id = res2.insertId;
+      return data;
+    }
+
+    async getByAtomId({ atomId }) {
+      const res = await this.model.query(
+        `
+        select a.*,b.id as atomId,b.itemId from aAtomClass a
+          left join aAtom b on a.id=b.atomClassId
+            where b.iid=? and b.id=?
+        `,
+        [ctx.instance.id, atomId]
+      );
+      return res[0];
+    }
+
+    async getTopByAtomId({ atomId }) {
+      const atomClass = await this.getByAtomId({ atomId });
+      return await this.top(atomClass);
+    }
+
+    async validator({ atomClass }) {
+      // default
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
+      return validator ? { module: atomClass.module, validator } : null;
+    }
+
+    async validatorSearch({ atomClass }) {
+      const _module = ctx.app.meta.modules[atomClass.module];
+      const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
+      return validator ? { module: atomClass.module, validator } : null;
+    }
+  }
+
+  return AtomClass;
+};
+
+
+/***/ }),
+
+/***/ 8401:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomStatic extends ctx.app.meta.BeanModuleBase {
+    constructor(moduleName) {
+      super(ctx, 'atomStatic');
+      this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    async loadAllAtomStatics() {
+      for (const module of ctx.app.meta.modulesArray) {
+        const moduleName = module.info.relativeName;
+        const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
+        if (!statics) continue;
+        for (const atomClassKey in statics) {
+          const [atomClassModule, atomClassName] = atomClassKey.split('.');
+          const atomClass = { module: atomClassModule, atomClassName };
+          const items = statics[atomClassKey].items;
+          if (!items) continue;
+          await this.loadAtomStatics({ moduleName, atomClass, items });
+        }
+      }
+    }
+
+    async loadAtomStatics({ moduleName, atomClass, items }) {
+      for (const item of items) {
+        await this.loadAtomStatic({ moduleName, atomClass, item });
+      }
+    }
+
+    async preloadAtomStatic({ atomStaticKey }) {
+      const data = this._findAtomStatic({ atomStaticKey });
+      if (!data) return null;
+      const atomKey = await this.loadAtomStatic(data);
+      return atomKey;
+    }
+
+    async loadAtomStatic({ moduleName, atomClass, item }) {
+      moduleName = moduleName || this.moduleName;
+      // key not empty
+      if (!item.atomStaticKey) {
+        throw new Error(`atomStaticKey cannot be empty for atom: ${moduleName}:${item.atomName}`);
+      }
+      const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
+      const atomRevision = item.atomRevision || 0;
+      // atomClassBase
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // get by key
+      const atom = await ctx.bean.atom.readByStaticKey({
+        atomClass,
+        atomStaticKey,
+        atomStage: 'formal',
+      });
+      // exists
+      if (atom) {
+        if (atomRevision === -1) {
+          // delete
+          await ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
+          return null;
+        }
+        // check revision: not use !==
+        const changed = this._ifChanged({
+          atomClassBase,
+          atomRevisionWill: atomRevision,
+          atomRevisionCurrent: atom.atomRevision,
+        });
+        if (changed) {
+          item = await this._adjustItem({ moduleName, atomClass, item, register: false });
+          await this._updateRevision({
+            atomClassBase,
+            atomClass,
+            atomIdFormal: atom.atomId,
+            atomIdDraft: atom.atomIdDraft,
+            item,
+          });
+          await this._addResourceRoles({ atomId: atom.atomId, roles: item.resourceRoles });
+        }
+        return { atomId: atom.atomId, itemId: atom.itemId };
+      }
+      // not exists
+      if (atomRevision === -1) {
+        // do nothing
+        return null;
+      }
+      // register
+      item = await this._adjustItem({ moduleName, atomClass, item, register: true });
+      const atomKey = await this._register({ atomClass, item });
+      await this._addResourceRoles({ atomId: atomKey.atomId, roles: item.resourceRoles });
+      return atomKey;
+    }
+
+    _ifChanged({ atomClassBase, atomRevisionWill, atomRevisionCurrent }) {
+      let changed;
+      if (atomClassBase.simple) {
+        changed = atomRevisionWill >= atomRevisionCurrent;
+      } else {
+        changed = atomRevisionWill > atomRevisionCurrent;
+      }
+      return changed;
+    }
+
+    async _addResourceRoles({ atomId, roles }) {
+      if (!roles || !roles.length) return;
+      for (const role of roles) {
+        if (!role) continue;
+        await ctx.bean.resource.addResourceRole({
+          atomId,
+          roleId: role.id,
+        });
+      }
+    }
+
+    // ctx.text is not good for resource
+    //   so, support only for atomLanguage
+    _getAtomFieldValueByLocale(item, field) {
+      const value = item[field];
+      if (value && item.atomLanguage) {
+        return ctx.text.locale(item.atomLanguage, value);
+      }
+      return value;
+    }
+
+    async _adjustItem({ moduleName, atomClass, item, register }) {
+      // item
+      item = {
+        ...item,
+        atomStatic: 1,
+        atomStaticKey: `${moduleName}:${item.atomStaticKey}`,
+        atomRevision: item.atomRevision || 0,
+        atomName: this._getAtomFieldValueByLocale(item, 'atomName'),
+      };
+      if (item.description !== undefined) {
+        item.description = this._getAtomFieldValueByLocale(item, 'description');
+      }
+      // atomLanguage,atomCategoryId,atomTags
+      if (typeof item.atomCategoryId === 'string') {
+        const category = await ctx.bean.category.parseCategoryName({
+          atomClass,
+          language: item.atomLanguage,
+          categoryName: item.atomCategoryId,
+          force: true,
+        });
+        item.atomCategoryId = category.id;
+      }
+      if (typeof item.atomTags === 'string') {
+        const tagIds = await ctx.bean.tag.parseTags({
+          atomClass,
+          language: item.atomLanguage,
+          tagName: item.atomTags,
+          force: true,
+        });
+        item.atomTags = JSON.stringify(tagIds);
+      }
+      // only valid for register
+      if (register) {
+        // roleIdOwner
+        const roleName = item.roleIdOwner || 'authenticated.builtIn';
+        const role = await ctx.bean.role.parseRoleName({ roleName });
+        item.roleIdOwner = role.id;
+      }
+      // resourceRoles
+      if (item.resourceRoles) {
+        item.resourceRoles = await ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles, force: true });
+      }
+      // ok
+      return item;
+    }
+
+    _findAtomStatic({ atomStaticKey }) {
+      const [_moduleName, _atomStaticKey] = atomStaticKey.split(':');
+      for (const module of ctx.app.meta.modulesArray) {
+        const moduleName = module.info.relativeName;
+        if (moduleName !== _moduleName) continue;
+        const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
+        if (!statics) continue;
+        for (const atomClassKey in statics) {
+          const [atomClassModule, atomClassName] = atomClassKey.split('.');
+          const atomClass = { module: atomClassModule, atomClassName };
+          const items = statics[atomClassKey].items;
+          if (!items) continue;
+          for (const item of items) {
+            if (item.atomStaticKey === _atomStaticKey) {
+              return { moduleName, atomClass, item };
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    async _updateRevision({ atomClassBase, atomClass, atomIdFormal, atomIdDraft, item }) {
+      return await ctx.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
+        fn: async () => {
+          return await ctx.meta.util.executeBeanIsolate({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomStatic',
+            context: { atomClassBase, atomClass, atomIdFormal, atomIdDraft, item },
+            fn: '_updateRevisionLock',
+          });
+        },
+      });
+    }
+
+    async _updateRevisionLock({ atomClassBase, atomIdFormal, atomIdDraft, item }) {
+      // get atom/atomKey
+      const atomKey = {
+        atomId: atomClassBase.simple ? atomIdFormal : atomIdDraft,
+      };
+      const atom = await ctx.bean.atom.modelAtom.get({ id: atomKey.atomId });
+      atomKey.itemId = atom.itemId;
+      // check changed again
+      const changed = this._ifChanged({
+        atomClassBase,
+        atomRevisionWill: item.atomRevision,
+        atomRevisionCurrent: atom.atomRevision,
+      });
+      if (!changed) return;
+      // simple/normal
+      if (atomClassBase.simple) {
+        // write
+        await ctx.bean.atom.write({
+          key: atomKey,
+          item,
+          user: { id: 0 },
+        });
+        // submit
+        await ctx.bean.atom.submit({
+          key: atomKey,
+          options: { ignoreFlow: true },
+          user: { id: 0 },
+        });
+        // update
+        await ctx.bean.atom.modelAtom.update({
+          id: atomKey.atomId,
+          atomName: item.atomName,
+          atomRevision: item.atomRevision + 1,
+        });
+      } else {
+        // update
+        await ctx.bean.atom.modelAtom.update({
+          id: atomKey.atomId,
+          atomName: item.atomName,
+          atomRevision: item.atomRevision,
+        });
+        // write
+        await ctx.bean.atom.write({
+          key: atomKey,
+          item,
+          user: { id: 0 },
+        });
+        // submit
+        await ctx.bean.atom.submit({
+          key: atomKey,
+          options: { ignoreFlow: true },
+          user: { id: 0 },
+        });
+      }
+    }
+
+    async _register({ atomClass, item }) {
+      return await ctx.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
+        fn: async () => {
+          return await ctx.meta.util.executeBeanIsolate({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomStatic',
+            context: { atomClass, item },
+            fn: '_registerLock',
+          });
+        },
+      });
+    }
+
+    async _registerLock({ atomClass, item }) {
+      // get again
+      const atom = await ctx.bean.atom.readByStaticKey({
+        atomClass,
+        atomStaticKey: item.atomStaticKey,
+        atomStage: 'formal',
+      });
+      if (atom) {
+        return { atomId: atom.atomId, itemId: atom.itemId };
+      }
+      // add atom
+      const atomKey = await ctx.bean.atom.create({
+        atomClass,
+        roleIdOwner: item.roleIdOwner,
+        item,
+        user: { id: 0 },
+      });
+      // write
+      await ctx.bean.atom.write({
+        key: atomKey,
+        item,
+        user: { id: 0 },
+      });
+      // submit
+      const res = await ctx.bean.atom.submit({
+        key: atomKey,
+        options: { ignoreFlow: true },
+        user: { id: 0 },
+      });
+      return res.formal.key;
+    }
+  }
+
+  return AtomStatic;
+};
+
+
+/***/ }),
+
 /***/ 452:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -2499,7 +3313,7 @@ module.exports = ctx => {
         return await this.getLoginInfo({ clientId: true });
       } catch (e) {
         // deleted,disabled
-        return await this.logout();
+        return await this._logout_inner();
       }
     }
 
@@ -2511,6 +3325,10 @@ module.exports = ctx => {
       const user = ctx.state.user;
       await this._sendMessageSystemLogout({ user });
       await this._clearRedisAuth({ user });
+      await this._logout_inner();
+    }
+
+    async _logout_inner() {
       await ctx.logout();
       await ctx.bean.user.loginAsAnonymous();
       return await this.getLoginInfo();
@@ -2518,22 +3336,30 @@ module.exports = ctx => {
 
     async getLoginInfo(options) {
       options = options || {};
-      // config
-      const config = await this._getConfig();
+      const needClientId = options.clientId === true;
+      const isAuthOpen = ctx.bean.authOpen.isAuthOpen();
+      // info
       const info = {
         user: ctx.state.user,
         instance: this._getInstance(),
-        config,
+        locales: ctx.bean.base.locales(),
       };
+      // config
+      if (!isAuthOpen) {
+        info.config = await this._getConfig();
+      }
       // clientId
-      if (options.clientId === true) {
+      if (needClientId) {
         info.clientId = uuid.v4().replace(/-/g, '');
       }
       // login info event
-      await ctx.bean.event.invoke({
-        name: 'loginInfo',
-        data: { info },
-      });
+      if (!isAuthOpen) {
+        await ctx.bean.event.invoke({
+          name: 'loginInfo',
+          data: { info },
+        });
+      }
+      // ok
       return info;
     }
 
@@ -2588,6 +3414,7 @@ module.exports = ctx => {
 
     _getAuthRedisKey({ user }) {
       const userAgent = user.agent || user.op;
+      if (!ctx.instance || !user.provider || !userAgent) return null;
       return `authToken:${ctx.instance.id}:${userAgent.id}:${user.provider.scene || ''}:${user.provider.id}`;
     }
 
@@ -2595,15 +3422,22 @@ module.exports = ctx => {
       return `${keyPrefix}authToken:${ctx.instance.id}:${user.id}:*`;
     }
 
-    async serializeUser({ user }) {
-      // _user
+    _pruneUser({ user }) {
       const _user = {
         op: { id: user.op.id, iid: user.op.iid, anonymous: user.op.anonymous },
-        provider: user.provider,
       };
-      if (user.agent.id !== user.op.id) {
+      if (user.agent && user.agent.id !== user.op.id) {
         _user.agent = { id: user.agent.id, iid: user.agent.iid, anonymous: user.agent.anonymous };
       }
+      if (user.provider) {
+        _user.provider = user.provider;
+      }
+      return _user;
+    }
+
+    async serializeUser({ user }) {
+      // _user
+      const _user = this._pruneUser({ user });
       // anonymous
       if (user.op.anonymous) {
         // not use redis
@@ -2634,6 +3468,7 @@ module.exports = ctx => {
       if (!user.token) return null;
       // check token
       const key = this._getAuthRedisKey({ user });
+      if (!key) return null;
       const token = await this.redisAuth.get(key);
       if (token !== user.token) return null;
       // ready
@@ -2654,7 +3489,9 @@ module.exports = ctx => {
       if (!user || user.agent.anonymous) return;
       // redis auth
       const key = this._getAuthRedisKey({ user });
-      await this.redisAuth.del(key);
+      if (key) {
+        await this.redisAuth.del(key);
+      }
     }
 
     async _clearRedisAuthAll({ user }) {
@@ -2670,177 +3507,6 @@ module.exports = ctx => {
 
   return Auth;
 };
-
-
-/***/ }),
-
-/***/ 5525:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const mparse = require3('egg-born-mparse').default;
-
-module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class AuthProvider {
-    async _installAuthProviders() {
-      // registerAllRouters
-      this._registerAllRouters();
-      // registerAllProviders
-      await this._registerAllProviders();
-    }
-
-    _registerAllRouters() {
-      const authProviders = ctx.bean.base.authProviders();
-      for (const key in authProviders) {
-        const [moduleRelativeName, providerName] = key.split(':');
-        this._registerProviderRouters(moduleRelativeName, providerName);
-      }
-    }
-
-    _registerProviderRouters(moduleRelativeName, providerName) {
-      // config
-      const moduleInfo = mparse.parseInfo(moduleRelativeName);
-      const config = {
-        loginURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}`,
-        callbackURL: `/api/${moduleInfo.url}/passport/${moduleRelativeName}/${providerName}/callback`,
-      };
-      // authenticate
-      const authenticate = _createAuthenticate(moduleRelativeName, providerName, config);
-      // middlewares
-      const middlewaresPost = [];
-      const middlewaresGet = [];
-      if (!ctx.app.meta.isTest) middlewaresPost.push('inner');
-      middlewaresPost.push(authenticate);
-      middlewaresGet.push(authenticate);
-      // mount routes
-      const routes = [
-        {
-          name: `get:${config.loginURL}`,
-          method: 'get',
-          path: '/' + config.loginURL,
-          middlewares: middlewaresGet,
-          meta: { auth: { enable: false } },
-        },
-        {
-          name: `post:${config.loginURL}`,
-          method: 'post',
-          path: '/' + config.loginURL,
-          middlewares: middlewaresPost,
-          meta: { auth: { enable: false } },
-        },
-        {
-          name: `get:${config.callbackURL}`,
-          method: 'get',
-          path: '/' + config.callbackURL,
-          middlewares: middlewaresGet,
-          meta: { auth: { enable: false } },
-        },
-        // { name: `post:${config.callbackURL}`, method: 'post', path: '/' + config.callbackURL, middlewares, meta: { auth: { enable: false } } },
-      ];
-      for (const route of routes) {
-        ctx.app.meta.router.unRegister(route.name);
-        ctx.app.meta.router.register(moduleInfo, route);
-      }
-    }
-
-    async _registerAllProviders() {
-      await this._registerInstanceProviders(ctx.instance.name, ctx.instance.id);
-    }
-
-    async _registerInstanceProviders(subdomain, iid) {
-      const authProviders = ctx.bean.base.authProviders();
-      for (const key in authProviders) {
-        const [moduleRelativeName, providerName] = key.split(':');
-        await this._registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName);
-      }
-    }
-
-    async _registerInstanceProvider(subdomain, iid, moduleRelativeName, providerName) {
-      // provider of db
-      const providerItem = await ctx.bean.user.getAuthProvider({
-        subdomain,
-        iid,
-        module: moduleRelativeName,
-        providerName,
-      });
-      if (!providerItem) return;
-      // strategy
-      const strategyName = `${iid}:${moduleRelativeName}:${providerName}`;
-      // unuse/use
-      if (providerItem.disabled === 0) {
-        // provider
-        const authProviders = ctx.bean.base.authProviders();
-        const provider = authProviders[`${moduleRelativeName}:${providerName}`];
-        if (provider.handler) {
-          // config
-          const config = provider.config;
-          config.passReqToCallback = true;
-          config.failWithError = false;
-          config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
-          // handler
-          const handler = provider.handler(ctx.app);
-          // use strategy
-          ctx.app.passport.unuse(strategyName);
-          ctx.app.passport.use(strategyName, new handler.strategy(config, handler.callback));
-        }
-      } else {
-        // unuse strategy
-        ctx.app.passport.unuse(strategyName);
-      }
-    }
-  }
-  return AuthProvider;
-};
-
-function _createAuthenticate(moduleRelativeName, providerName, _config) {
-  return async function (ctx, next) {
-    // provider of db
-    const providerItem = await ctx.bean.user.getAuthProvider({
-      module: moduleRelativeName,
-      providerName,
-    });
-    if (!providerItem || providerItem.disabled !== 0) ctx.throw(423);
-
-    // returnTo
-    if (ctx.url.indexOf(_config.callbackURL) === -1) {
-      if (ctx.request.query && ctx.request.query.returnTo) {
-        ctx.session.returnTo = ctx.request.query.returnTo;
-        ctx.session['x-scene'] = ctx.request.query['x-scene'];
-      } else {
-        delete ctx.session.returnTo; // force to delete
-        delete ctx.session['x-scene'];
-      }
-    }
-
-    // provider
-    const authProviders = ctx.bean.base.authProviders();
-    const provider = authProviders[`${moduleRelativeName}:${providerName}`];
-
-    // config
-    const config = provider.config;
-    config.passReqToCallback = true;
-    config.failWithError = false;
-    config.loginURL = ctx.bean.base.getAbsoluteUrl(_config.loginURL);
-    config.callbackURL = ctx.bean.base.getAbsoluteUrl(_config.callbackURL);
-    config.state = ctx.request.query.state;
-    config.successRedirect = config.successReturnToOrRedirect = provider.meta.mode === 'redirect' ? '/' : false;
-
-    // config functions
-    if (provider.configFunctions) {
-      for (const key in provider.configFunctions) {
-        config[key] = function (...args) {
-          return provider.configFunctions[key](ctx, ...args);
-        };
-      }
-    }
-
-    // invoke authenticate
-    const strategyName = `${ctx.instance.id}:${moduleRelativeName}:${providerName}`;
-    const authenticate = ctx.app.passport.authenticate(strategyName, config);
-    await authenticate(ctx, next);
-  };
-}
 
 
 /***/ }),
@@ -3000,18 +3666,10 @@ module.exports = ctx => {
     }
 
     authProviders() {
-      const subdomain = ctx.subdomain;
-      if (!_authProvidersLocales[subdomain]) _authProvidersLocales[subdomain] = {};
-      const authProvidersSubdomain = _authProvidersLocales[subdomain];
-      if (!authProvidersSubdomain[ctx.locale]) {
-        authProvidersSubdomain[ctx.locale] = this._prepareAuthProviders();
+      if (!_authProvidersLocales[ctx.locale]) {
+        _authProvidersLocales[ctx.locale] = this._prepareAuthProviders();
       }
-      return authProvidersSubdomain[ctx.locale];
-    }
-
-    authProvidersReset() {
-      const subdomain = ctx.subdomain;
-      _authProvidersLocales[subdomain] = {};
+      return _authProvidersLocales[ctx.locale];
     }
 
     // inner methods
@@ -3026,6 +3684,10 @@ module.exports = ctx => {
           description: ctx.text(module.package.description),
           info: module.info,
         };
+        const icon = module.package.eggBornModule && module.package.eggBornModule.icon;
+        if (icon) {
+          _module.icon = icon;
+        }
         _module.titleLocale = ctx.text(_module.title);
         modules[relativeName] = _module;
       }
@@ -3162,31 +3824,65 @@ module.exports = ctx => {
 
     _prepareAuthProviders() {
       const authProviders = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
+      for (const module of ctx.app.meta.modulesArray) {
+        const relativeName = module.info.relativeName;
         let metaAuth = module.main.meta && module.main.meta.auth;
         if (!metaAuth) continue;
         if (typeof metaAuth === 'function') {
-          metaAuth = metaAuth(ctx);
+          metaAuth = metaAuth(ctx.app);
         }
         if (!metaAuth.providers) continue;
         // loop
         for (const providerName in metaAuth.providers) {
           const _authProvider = metaAuth.providers[providerName];
-          if (!_authProvider) continue;
-          const authProvider = {
-            meta: { ..._authProvider.meta }, // for titleLocale separately
-            config: _authProvider.config,
-            configFunctions: _authProvider.configFunctions,
-            handler: _authProvider.handler,
-          };
-          if (authProvider.meta && authProvider.meta.title) {
-            authProvider.meta.titleLocale = ctx.text(authProvider.meta.title);
+          const providerFullName = `${relativeName}:${providerName}`;
+          if (!_authProvider.meta.title) {
+            throw new Error(`should specify the title of auth provider: ${providerFullName}`);
           }
-          authProviders[`${relativeName}:${providerName}`] = authProvider;
+          const authProvider = extend(true, {}, _authProvider);
+          this._prepareAuthProvider(relativeName, providerName, authProvider);
+          authProviders[providerFullName] = authProvider;
         }
       }
       return authProviders;
+    }
+
+    _prepareAuthProvider(relativeName, providerName, authProvider) {
+      const meta = authProvider.meta;
+      meta.titleLocale = ctx.text(meta.title);
+      // meta
+      this._prepareAuthProvider_meta(relativeName, meta);
+      // scenes
+      const scenes = authProvider.scenes;
+      if (scenes) {
+        for (const sceneName in scenes) {
+          const scene = scenes[sceneName];
+          this._prepareAuthProvider_meta(relativeName, scene.meta);
+          scene.meta = this._prepareAuthProvider_mergeMetaScene(scene.meta, meta);
+        }
+      }
+    }
+
+    _prepareAuthProvider_mergeMetaScene(metaScene, metaConfig) {
+      const _meta = {};
+      for (const key of ['mode', 'inner', 'inline', 'disableAssociate', 'render', 'validator']) {
+        if (metaConfig[key] !== undefined) {
+          _meta[key] = metaConfig[key];
+        }
+      }
+      return extend(true, {}, _meta, metaScene);
+    }
+
+    _prepareAuthProvider_meta(relativeName, meta) {
+      if (typeof meta.bean === 'string') {
+        meta.bean = { module: relativeName, name: meta.bean };
+      }
+      if (typeof meta.render === 'string') {
+        meta.render = { module: relativeName, name: meta.render };
+      }
+      if (typeof meta.validator === 'string') {
+        meta.validator = { module: relativeName, validator: meta.validator };
+      }
     }
   }
 
@@ -3540,6 +4236,7 @@ module.exports = ctx => {
         orders,
         page,
         resourceType,
+        appKey,
         star = 0,
         label = 0,
         stage = 'formal',
@@ -3561,6 +4258,13 @@ module.exports = ctx => {
       if (!where) where = {};
       if (resourceType) {
         where['f.resourceType'] = resourceType;
+      }
+      if (appKey === 'a-appbooster:appUnclassified') {
+        appKey = null;
+      }
+      if (appKey !== undefined) {
+        // appKey maybe null/empty string
+        where['f.appKey'] = appKey ? appKey : null;
       }
       // options
       const options = {
@@ -3680,6 +4384,17 @@ module.exports = ctx => {
     }
 
     async checkRightResource({ resourceAtomId, atomStaticKey, user }) {
+      // normal check
+      const res = await this._checkRightResource_normal({ resourceAtomId, atomStaticKey, user });
+      if (!res) return res;
+      // auth open check
+      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightResource({ resourceAtomId: res.atomId });
+      if (!resAuthOpenCheck) return null;
+      // ok
+      return res;
+    }
+
+    async _checkRightResource_normal({ resourceAtomId, atomStaticKey, user }) {
       if (!resourceAtomId) {
         const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomDisabled: 0, atomStage: 1 });
         if (!atom) return null;
@@ -3694,7 +4409,7 @@ module.exports = ctx => {
     }
 
     async resourceRoles({ key /* , user */ }) {
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
         select a.*,b.roleName from aResourceRole a
           left join aRole b on a.roleId=b.id
@@ -3703,20 +4418,22 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, key.atomId]
       );
-      return list;
+      // locale
+      for (const item of items) {
+        item.roleNameLocale = ctx.text(item.roleName);
+      }
+      // ok
+      return items;
     }
 
     // add resource role
-    async addResourceRole({ atomId, atomStaticKey, roleId }) {
+    async addResourceRole({ roleAtomId, roleId, atomId, atomStaticKey, user }) {
       if (!atomId && !atomStaticKey) return null;
-      if (!atomId) {
-        const atom = await ctx.bean.atom.modelAtom.get({
-          atomStaticKey,
-          atomStage: 1, // formal
-        });
-        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-        atomId = atom.id;
-      }
+      // atomId
+      atomId = await this._forceResourceAtomIdAndCheckRight({ atomId, atomStaticKey, user });
+      // role
+      const _role = await ctx.bean.role._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
       // check if exists
       const item = await this.modelResourceRole.get({
         atomId,
@@ -3731,16 +4448,44 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    // add resource roles
-    async addResourceRoles({ atomIds, roleId }) {
-      for (const atomId of atomIds) {
-        await this.addResourceRole({ atomId, roleId });
+    // delete resource role
+    async deleteResourceRole({ roleAtomId, roleId, atomId, atomStaticKey, user }) {
+      if (!atomId && !atomStaticKey) return null;
+      // atomId
+      atomId = await this._forceResourceAtomIdAndCheckRight({ atomId, atomStaticKey, user });
+      // role
+      const _role = await ctx.bean.role._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // delete
+      await this.modelResourceRole.delete({
+        atomId,
+        roleId,
+      });
+    }
+
+    // const roleResources = [
+    //   { roleName: 'root', atomStaticKey: 'a-base:listComment' },
+    //   { roleName: 'root', name: 'listComment' },
+    // ];
+    async addRoleResourceBatch({ module, roleResources }) {
+      // module
+      module = module || this.moduleName;
+      // roleResources
+      if (!roleResources || !roleResources.length) return;
+      for (const roleResource of roleResources) {
+        // role
+        const role = await ctx.bean.role.parseRoleName({ roleName: roleResource.roleName, force: true });
+        // atomStaticKey
+        const atomStaticKey = roleResource.atomStaticKey || `${module}:${roleResource.name}`;
+        await this.addResourceRole({ atomStaticKey, roleId: role.id });
       }
     }
 
-    // delete resource role
-    async deleteResourceRole({ id }) {
-      await this.modelResourceRole.delete({ id });
+    // add resource roles
+    async addResourceRoles({ roleAtomId, roleId, atomIds, user }) {
+      for (const atomId of atomIds) {
+        await this.addResourceRole({ roleAtomId, roleId, atomId, atomStaticKey: null, user });
+      }
     }
 
     async _getAtomClassesResource() {
@@ -3763,10 +4508,11 @@ module.exports = ctx => {
 
     // admin
 
-    async resourceRights({ roleId, page }) {
+    async resourceRights({ roleAtomId, roleId, page }) {
       // check locale
       const locale = ctx.locale;
       // items
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
@@ -3794,10 +4540,11 @@ module.exports = ctx => {
       return items;
     }
 
-    async resourceSpreads({ roleId, page }) {
+    async resourceSpreads({ roleAtomId, roleId, page }) {
       // check locale
       const locale = ctx.locale;
       // items
+      roleId = await ctx.bean.role._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
@@ -3807,7 +4554,7 @@ module.exports = ctx => {
                f.categoryName as atomCategoryName,
                c.module,c.atomClassName,
                d.atomNameLocale,e.resourceType,
-               h.roleName
+               h.roleName as roleNameBase
           from aResourceRole a
             inner join aAtom b on a.atomId=b.id
             inner join aAtomClass c on b.atomClassId=c.id
@@ -3828,7 +4575,8 @@ module.exports = ctx => {
       return items;
     }
 
-    async resourceRightsOfUser({ userId, page }) {
+    async resourceRightsOfUser({ userAtomId, userId, page }) {
+      userId = await ctx.bean.user._forceUserId({ userAtomId, userId });
       // check locale
       const locale = ctx.locale;
       // items
@@ -3841,7 +4589,7 @@ module.exports = ctx => {
                f.categoryName as atomCategoryName,
                c.module,c.atomClassName,
                d.atomNameLocale,e.resourceType,
-               h.roleName
+               h.roleName as roleNameBase
           from aViewUserRightResource a
             inner join aAtom b on a.resourceAtomId=b.id
             inner join aAtomClass c on b.atomClassId=c.id
@@ -3873,31 +4621,37 @@ module.exports = ctx => {
         }
         // category name
         item.atomCategoryNameLocale = ctx.text(item.atomCategoryName);
+        // roleNameBase
+        if (item.roleNameBase) {
+          item.roleNameBaseLocale = ctx.text(item.roleNameBase);
+        }
       }
     }
 
-    // /* backup */
+    async _forceResourceAtomId({ atomId, atomStaticKey }) {
+      if (!atomId) {
+        const atom = await ctx.bean.atom.modelAtom.get({
+          atomStaticKey,
+          atomStage: 1, // formal
+        });
+        if (!atom) {
+          throw new Error(`resource not found: ${atomStaticKey}`);
+        }
+        atomId = atom.id;
+      }
+      return atomId;
+    }
 
-    // // const roleFunctions = [
-    // //   { roleName: 'root', name: 'listComment' },
-    // // ];
-    // async addRoleFunctionBatch({ module, roleFunctions }) {
-    //   if (!roleFunctions || !roleFunctions.length) return;
-    //   module = module || this.moduleName;
-    //   for (const roleFunction of roleFunctions) {
-    //     // func
-    //     const func = await ctx.bean.function.get({ module, name: roleFunction.name });
-    //     if (roleFunction.roleName) {
-    //       // role
-    //       const role = await this.get({ roleName: roleFunction.roleName });
-    //       // add role function
-    //       await this.addRoleFunction({
-    //         roleId: role.id,
-    //         functionId: func.id,
-    //       });
-    //     }
-    //   }
-    // }
+    async _forceResourceAtomIdAndCheckRight({ atomId, atomStaticKey, user }) {
+      atomId = await this._forceResourceAtomId({ atomId, atomStaticKey });
+      if (!user || user.id === 0) return atomId;
+      // check
+      const res = await this.checkRightResource({ resourceAtomId: atomId, user });
+      if (!res) ctx.throw(403);
+      return atomId;
+    }
+
+    // /* backup */
 
     // // function rights
     // async functionRights({ menu, roleId, page }) {
@@ -3968,10 +4722,277 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 5625:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const role_base = __webpack_require__(1638);
+const role_atomRights = __webpack_require__(9347);
+const role_build = __webpack_require__(1135);
+const role_includes = __webpack_require__(2249);
+const role_others = __webpack_require__(1292);
+const role_resourceRights = __webpack_require__(5465);
+const role_users = __webpack_require__(5393);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(
+    role_base,
+    [
+      role_atomRights, //
+      role_build,
+      role_includes,
+      role_others,
+      role_resourceRights,
+      role_users,
+    ],
+    ctx
+  );
+};
+
+
+/***/ }),
+
+/***/ 9347:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Role {
+    // add role right
+    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // scope
+      if (scope) {
+        if (typeof scope === 'string') {
+          scope = scope.split(',');
+        } else if (!Array.isArray(scope)) {
+          scope = [scope];
+        }
+        // check right
+        for (const roleIdScope of scope) {
+          await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdScope, user });
+        }
+      }
+
+      // force action exists in db
+      await ctx.bean.atomAction.get({ atomClassId, code: action });
+
+      // roleRight
+      const res = await this.modelRoleRight.insert({
+        roleId,
+        atomClassId,
+        action,
+        scope: JSON.stringify(scope),
+      });
+      const roleRightId = res.insertId;
+      // roleRightRef
+      if (scope) {
+        for (const roleIdScope of scope) {
+          await this.modelRoleRightRef.insert({
+            roleRightId,
+            roleId,
+            atomClassId,
+            action,
+            roleIdScope,
+          });
+        }
+      }
+      return roleRightId;
+    }
+
+    // delete role right
+    async deleteRoleRight({ roleAtomId, roleId, roleRightId, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // scope
+      const item = await this.modelRoleRight.get({ id: roleRightId });
+      const scope = JSON.parse(item.scope);
+      if (scope) {
+        // check right
+        for (const roleIdScope of scope) {
+          await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdScope, user });
+        }
+      }
+      // id + roleId for safety
+      await this.modelRoleRight.delete({ id: roleRightId, roleId });
+      await this.modelRoleRightRef.delete({ roleRightId, roleId });
+    }
+
+    // const roleRights = [
+    //   { roleName: 'cms-writer', action: 'create' },
+    //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
+    //   { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
+    //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
+    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
+    // ];
+    async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
+      // module
+      module = module || this.moduleName;
+      // const _module = ctx.app.meta.modules[module];
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      // roleRights
+      if (!roleRights || !roleRights.length) return;
+      for (const roleRight of roleRights) {
+        // role
+        const role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
+        // scope
+        let scope;
+        if (!roleRight.scopeNames) {
+          scope = 0;
+        } else {
+          scope = [];
+          const scopeNames = Array.isArray(roleRight.scopeNames)
+            ? roleRight.scopeNames
+            : roleRight.scopeNames.split(',');
+          for (const scopeName of scopeNames) {
+            let roleScopeId;
+            if (typeof scopeName === 'number') {
+              roleScopeId = scopeName;
+            } else {
+              const roleScope = await this.parseRoleName({ roleName: scopeName, force: false });
+              roleScopeId = roleScope.id;
+            }
+            scope.push(roleScopeId);
+          }
+        }
+        // add role right
+        const actionCode = ctx.bean.atomAction.parseActionCode({
+          action: roleRight.action,
+          atomClass: {
+            module,
+            atomClassName,
+          },
+        });
+        await this.addRoleRight({
+          roleId: role.id,
+          atomClassId: atomClass.id,
+          action: actionCode,
+          scope,
+        });
+      }
+    }
+
+    // role rights
+    async roleRights({ roleAtomId, roleId, page }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const list = await ctx.model.query(
+        `
+        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
+          left join aAtomClass b on a.atomClassId=b.id
+          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+            where a.iid=? and a.roleId=?
+            order by b.module,a.atomClassId,a.action
+            ${_limit}
+        `,
+        [ctx.instance.id, roleId]
+      );
+      // scope
+      for (const item of list) {
+        const scope = JSON.parse(item.scope);
+        item.scopeRoles = await this._scopeRoles({ scope });
+      }
+      return list;
+    }
+
+    // role spreads
+    async roleSpreads({ roleAtomId, roleId, page }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(
+        `
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
+          left join aAtomClass b on a.atomClassId=b.id
+          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          left join aRoleExpand d on a.roleId=d.roleIdBase
+          left join aRole e on d.roleIdBase=e.id
+            where d.iid=? and d.roleId=?
+            order by b.module,a.atomClassId,a.action
+            ${_limit}
+        `,
+        [ctx.instance.id, roleId]
+      );
+      // locale
+      await this._atomRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    // atom rights of user
+    async atomRightsOfUser({ userAtomId, userId, page }) {
+      userId = await ctx.bean.user._forceUserId({ userAtomId, userId });
+      page = ctx.bean.util.page(page, false);
+      const _limit = ctx.model._limit(page.size, page.index);
+      const items = await ctx.model.query(
+        `
+        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aViewUserRightAtomClass a
+          left join aAtomClass b on a.atomClassId=b.id
+          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          left join aRole e on a.roleIdBase=e.id
+            where a.iid=? and a.userIdWho=?
+            order by b.module,a.atomClassId,a.action
+            ${_limit}
+        `,
+        [ctx.instance.id, userId]
+      );
+      // locale
+      await this._atomRightsLocale({ items });
+      // ok
+      return items;
+    }
+
+    async _atomRightsLocale({ items }) {
+      for (const item of items) {
+        // scope
+        const scope = JSON.parse(item.scope);
+        item.scopeRoles = await this._scopeRoles({ scope });
+        // roleNameBase
+        if (item.roleNameBase) {
+          item.roleNameBaseLocale = ctx.text(item.roleNameBase);
+        }
+      }
+    }
+
+    async _scopeRoles({ scope }) {
+      if (!scope || scope.length === 0) return null;
+      const items = await ctx.model.query(
+        `
+            select a.* from aRole a
+              where a.iid=? and a.id in (${scope.join(',')})
+            `,
+        [ctx.instance.id]
+      );
+      return this._translateRoleNamesLocale({ items });
+    }
+
+    _translateRoleNamesLocale({ items }) {
+      for (const item of items) {
+        item.roleNameLocale = ctx.text(item.roleName);
+      }
+      return items;
+    }
+  }
+
+  return Role;
+};
+
+
+/***/ }),
+
+/***/ 1638:
 /***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'role',
+  };
+
   class Role extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'role');
@@ -3998,6 +5019,10 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).roleRightRef;
     }
 
+    get modelAtom() {
+      return ctx.model.module(moduleInfo.relativeName).atom;
+    }
+
     async get(where) {
       return await this.model.get(where);
     }
@@ -4010,34 +5035,60 @@ module.exports = ctx => {
     }
 
     // add role
-    async add({ roleName = '', leader = 0, /* catalog = 0,*/ system = 0, sorting = 0, roleIdParent = 0 }) {
-      const res = await this.model.insert({
-        roleName,
-        leader,
+    //  { module,roleName,...}
+    async add(data, user, returnKey) {
+      if (!user) {
+        user = { id: 0 };
+      }
+      // create
+      const itemCreate = {
         catalog: 0,
-        system,
-        sorting,
-        roleIdParent,
+        system: data.system,
+        roleIdParent: data.roleIdParent,
+      };
+      if (data.module && data.roleName) {
+        itemCreate.atomStaticKey = `${data.module}:role_${data.roleName}`;
+      }
+      const roleKey = await ctx.bean.atom.create({
+        atomClass: __atomClassRole,
+        item: itemCreate,
+        user,
       });
-      const roleId = res.insertId;
-
-      // adjust catalog
-      await this.adjustCatalog(roleIdParent);
-
-      // set dirty
-      await this.setDirty(true);
-
-      return roleId;
+      // write
+      const item = { ...data };
+      if (data.roleName) {
+        item.atomName = data.roleName;
+      }
+      await ctx.bean.atom.write({
+        key: roleKey,
+        item,
+        user,
+      });
+      // submit
+      await ctx.bean.atom.submit({
+        key: roleKey,
+        options: { ignoreFlow: true },
+        user,
+      });
+      // ok
+      return returnKey ? roleKey : roleKey.itemId;
     }
 
-    async move({ roleId, roleIdParent }) {
+    async addChild({ roleAtomId, roleId, user }) {
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      const key = await this.add({ roleIdParent: roleId }, user, true);
+      const atom = await ctx.bean.atom.read({ key, user });
+      return { key, atom };
+    }
+
+    async move({ roleAtomId, roleId, roleIdParent }) {
       // role
-      const role = await this.get({ id: roleId });
+      const role = await this._forceRole({ roleAtomId, roleId });
       // roleIdParentOld
       const roleIdParentOld = role.roleIdParent;
       if (roleIdParentOld === roleIdParent) return;
       // update
-      await this.model.update({ id: roleId, roleIdParent });
+      await this.model.update({ id: role.id, roleIdParent });
 
       // adjust catalog
       await this.adjustCatalog(roleIdParentOld);
@@ -4047,39 +5098,16 @@ module.exports = ctx => {
       await this.setDirty(true);
     }
 
-    async delete({ roleId, force = false }) {
-      // role
-      const role = await this.get({ id: roleId });
-      // parent
-      const roleIdParent = role.roleIdParent;
-
-      // check if system
-      if (role.system) ctx.throw(403);
-      // check if children
-      if (role.catalog && !force) {
-        const children = await this.children({ roleId });
-        if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1008);
-      }
-
-      // delete all includes
-      await this.modelRoleInc.delete({ roleId });
-      await this.modelRoleInc.delete({ roleIdInc: roleId });
-
-      // delete all users
-      await this.modelUserRole.delete({ roleId });
-
-      // delete all atom rights
-      await this.modelRoleRight.delete({ roleId });
-      await this.modelRoleRightRef.delete({ roleId });
-
+    async delete({ roleAtomId, roleId, force = false }) {
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
       // delete this
-      await this.model.delete({ id: roleId });
+      await ctx.bean.atom.delete({ key: { atomId: roleAtomId }, options: { force } });
+    }
 
-      // adjust catalog
-      await this.adjustCatalog(roleIdParent);
-
-      // set dirty
-      await this.setDirty(true);
+    async clone({ roleAtomId, roleId, user }) {
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
+      // clone
+      return await ctx.bean.atom.clone({ key: { atomId: roleAtomId }, user });
     }
 
     // for donothing on roleId === 0
@@ -4135,6 +5163,154 @@ module.exports = ctx => {
       return role;
     }
 
+    async item({ roleAtomId, roleId }) {
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
+      return await ctx.bean.atom.read({ key: { atomId: roleAtomId } });
+    }
+
+    // child
+    async child({ roleId, roleName }) {
+      const list = await this.children({ roleId, roleName, page: false });
+      return list[0];
+    }
+
+    // childrenTop
+    async childrenTop({ roleTypes, page, user }) {
+      if (!user) user = { id: 0 };
+      // page
+      page = ctx.bean.util.page(page, false);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get(__atomClassRole);
+      // roles by auth
+      let roleIds = await this._childrenTop_byAuth({ roleTypes, atomClass, user });
+      if (roleIds.length === 0) return [];
+      // filter
+      roleIds = await this._childrenTop_filter({ roleIds });
+      if (roleIds.length === 0) return [];
+      // select
+      const list = await this._childrenTop_select({ roleIds, atomClass, page, user });
+      return list;
+    }
+
+    async _childrenTop_byAuth({ roleTypes, atomClass, user }) {
+      let roleIds;
+      if (user.id === 0) {
+        const roleRoot = await this.parseRoleName({ roleName: 'root' });
+        roleIds = [roleRoot.id];
+      } else {
+        let sql;
+        if (!roleTypes || roleTypes.length === 0) {
+          sql = `
+            select * from aViewUserRightRefAtomClass a
+              where a.iid=? and a.userIdWho=? and a.atomClassId=? and a.action=2
+          `;
+        } else {
+          sql = `
+            select * from aViewUserRightRefAtomClass a
+              inner join aRole b on a.roleIdWhom=b.id
+              where a.iid=? and a.userIdWho=? and a.atomClassId=? and a.action=2
+                    and b.roleTypeCode in (${roleTypes.join(',')})
+          `;
+        }
+        const roles = await ctx.model.query(sql, [ctx.instance.id, user.id, atomClass.id]);
+        roleIds = roles.map(item => item.roleIdWhom);
+      }
+      return roleIds;
+    }
+
+    async _childrenTop_filter({ roleIds }) {
+      if (roleIds.length <= 1) return roleIds;
+      const items = await ctx.model.query(
+        `
+          select * from aRoleRef a 
+            where a.iid=? and a.roleId in (${roleIds.join(',')})
+        `,
+        [ctx.instance.id]
+      );
+      const res = [];
+      for (const roleId of roleIds) {
+        const exists = items.some(item => {
+          return item.roleId === roleId && item.level > 0 && roleIds.includes(item.roleIdParent);
+        });
+        if (!exists) {
+          res.push(roleId);
+        }
+      }
+      return res;
+    }
+
+    async _childrenTop_select({ roleIds, atomClass, page, user }) {
+      // select
+      return await ctx.bean.atom.select({
+        atomClass,
+        options: {
+          orders: [['a.id', 'asc']],
+          page,
+          stage: 'formal',
+          where: {
+            'f.id': {
+              op: 'in',
+              val: roleIds,
+            },
+          },
+        },
+        user,
+        pageForce: false,
+      });
+    }
+
+    // children
+    async children({ roleTypes, roleId, roleName, page, user }) {
+      if (!user) user = { id: 0 };
+      // page
+      page = ctx.bean.util.page(page, false);
+      // roleId
+      if (!roleId || roleId === 'root') {
+        roleId = 0;
+      }
+      // where
+      const where = { 'f.roleIdParent': roleId };
+      if (roleName !== undefined) {
+        where['f.roleName'] = roleName;
+      }
+      if (roleTypes && roleTypes.length > 0) {
+        where['f.roleTypeCode'] = {
+          op: 'in',
+          val: roleTypes,
+        };
+      }
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassRole,
+        options: {
+          orders: [
+            ['f.sorting', 'asc'],
+            ['f.roleName', 'asc'],
+          ],
+          page,
+          stage: 'formal',
+          where,
+        },
+        user,
+        pageForce: false,
+      });
+      return list;
+    }
+
+    // save
+    async save({ roleId, data: { roleName, leader, sorting, catalog } }) {
+      const role = await this.get({ id: roleId });
+      if (roleName !== undefined) role.roleName = roleName;
+      if (leader !== undefined) role.leader = leader;
+      if (sorting !== undefined) role.sorting = sorting;
+      if (catalog !== undefined) role.catalog = catalog;
+      await this.model.update(role);
+      // atomName
+      if (roleName !== undefined && role.roleName !== roleName) {
+        await this.modelAtom.update({ id: role.atomId, atomName: roleName });
+      }
+    }
+
     async _register({ roleName, roleIdParent }) {
       return await ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.role.register`,
@@ -4159,9 +5335,229 @@ module.exports = ctx => {
       // add
       return await this.add({ roleName, roleIdParent });
     }
+  }
+
+  return Role;
+};
+
+
+/***/ }),
+
+/***/ 1135:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Role {
+    // set dirty
+    async setDirty(dirty) {
+      await ctx.bean.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
+    }
+
+    async getDirty() {
+      return await ctx.bean.status.module(moduleInfo.relativeName).get('roleDirty');
+    }
+
+    // build roles
+    async build(options) {
+      options = options || {};
+      const progressId = options.progressId;
+      // check dirty
+      const dirty = await this.getDirty();
+      if (!dirty) {
+        // done
+        if (progressId) {
+          await ctx.bean.progress.done({ progressId });
+        }
+        return;
+      }
+      // queue
+      await ctx.meta.util.queuePushAsync({
+        module: moduleInfo.relativeName,
+        queueName: 'roleBuild',
+        data: { options },
+      });
+    }
+
+    async _buildQueue(options) {
+      options = options || {};
+      const progressId = options.progressId;
+      // check dirty again
+      const dirty = await this.getDirty();
+      if (!dirty) {
+        // done
+        if (progressId) {
+          await ctx.bean.progress.done({ progressId });
+        }
+        return;
+      }
+      // total
+      let total;
+      if (progressId) {
+        total = await this.model.count();
+      }
+      // progress
+      const progress = { progressId, total, progress: 0 };
+      try {
+        // iid
+        const iid = ctx.instance.id;
+        // remove
+        await this._buildRolesRemove({ iid });
+        // add
+        await this._buildRolesAdd({ iid, roleIdParent: 0 }, progress);
+        // setDirty
+        await this.setDirty(false);
+        // done
+        if (progressId) {
+          await ctx.bean.progress.done({ progressId });
+        }
+      } catch (err) {
+        // error
+        if (progressId) {
+          await ctx.bean.progress.error({ progressId, message: err.message });
+        }
+        throw err;
+      }
+    }
+
+    async _buildRolesRemove({ iid }) {
+      await ctx.model.query(`delete from aRoleRef where aRoleRef.iid=${iid}`);
+      await ctx.model.query(`delete from aRoleIncRef where aRoleIncRef.iid=${iid}`);
+      await ctx.model.query(`delete from aRoleExpand where aRoleExpand.iid=${iid}`);
+    }
+
+    async _buildRolesAdd({ iid, roleIdParent }, progress) {
+      const list = await ctx.model.query(
+        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
+      );
+      for (const item of list) {
+        // info
+        const roleId = item.id;
+        const catalog = item.catalog;
+        // build
+        await this._buildRoleRef({ iid, roleId });
+        await this._buildRoleIncRef({ iid, roleId });
+        await this._buildRoleExpand({ iid, roleId });
+        // catalog
+        if (catalog === 1) {
+          await this._buildRolesAdd({ iid, roleIdParent: roleId }, progress);
+        }
+        // progress
+        if (progress.progressId) {
+          await ctx.bean.progress.update({
+            progressId: progress.progressId,
+            progressNo: 0,
+            total: progress.total,
+            progress: progress.progress++,
+            text: item.roleName,
+          });
+        }
+      }
+    }
+
+    async _buildRoleRef({ iid, roleId }) {
+      let level = 0;
+      let roleIdParent = roleId;
+      // loop
+      while (level !== -1) {
+        await ctx.model.query(
+          `insert into aRoleRef(iid,roleId,roleIdParent,level)
+             values(${iid},${roleId},${roleIdParent},${level})
+          `
+        );
+        const item = await ctx.model.queryOne(
+          `select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`
+        );
+        if (!item || !item.roleIdParent) {
+          level = -1;
+        } else {
+          roleIdParent = item.roleIdParent;
+          level++;
+        }
+      }
+    }
+
+    async _buildRoleIncRef({ iid, roleId }) {
+      await ctx.model.query(
+        `insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
+            select ${iid},${roleId},a.roleIdInc,a.roleId from aRoleInc a
+              where a.iid=${iid} and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=${iid} and b.roleId=${roleId})
+        `
+      );
+    }
+
+    async _buildRoleExpand({ iid, roleId }) {
+      await ctx.model.query(
+        `insert into aRoleExpand(iid,roleId,roleIdBase)
+            select a.iid,a.roleId,a.roleIdParent from aRoleRef a
+              where a.iid=${iid} and a.roleId=${roleId}
+        `
+      );
+      await ctx.model.query(
+        `insert into aRoleExpand(iid,roleId,roleIdBase)
+            select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
+              where a.iid=${iid} and a.roleId=${roleId}
+        `
+      );
+    }
+  }
+
+  return Role;
+};
+
+
+/***/ }),
+
+/***/ 2249:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'role',
+  };
+
+  class Role {
+    // includes
+    async includes({ roleAtomId, roleId, page, user }) {
+      // user, should check user right scope
+      // user = { id: 0 };
+      //
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      page = ctx.bean.util.page(page, false);
+      // where
+      const where = { 'f.roleIdWho': roleId };
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassRole,
+        options: {
+          orders: [['f.roleName', 'asc']],
+          page,
+          stage: 'formal',
+          where,
+          mode: 'includes',
+        },
+        user,
+      });
+      return list;
+    }
 
     // add role include
-    async addRoleInc({ roleId, roleIdInc }) {
+    async addRoleInc({ roleAtomId, roleId, roleIdInc, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // role inc
+      const _roleInc = await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdInc, user });
+      roleIdInc = _roleInc.id;
+      // check if exists
+      const item = await this.modelRoleInc.get({
+        roleId,
+        roleIdInc,
+      });
+      if (item) return item.id;
+      // insert
       const res = await this.modelRoleInc.insert({
         roleId,
         roleIdInc,
@@ -4175,218 +5571,51 @@ module.exports = ctx => {
     }
 
     // remove role include
-    async removeRoleInc({ id }) {
-      await this.modelRoleInc.delete({ id });
+    async removeRoleInc({ roleAtomId, roleId, roleIdInc, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // role inc
+      const _roleInc = await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdInc, user });
+      roleIdInc = _roleInc.id;
+
+      // delete
+      await this.modelRoleInc.delete({ roleId, roleIdInc });
 
       // set dirty
       await this.setDirty(true);
     }
+  }
 
-    // add user role
-    async addUserRole({ userId, roleId }) {
-      const res = await this.modelUserRole.insert({
-        userId,
-        roleId,
-      });
-      return res.insertId;
-    }
+  return Role;
+};
 
-    async deleteUserRole({ id, userId, roleId }) {
-      if (!id) {
-        const item = await this.modelUserRole.get({
-          userId,
-          roleId,
-        });
-        if (!item) return;
-        id = item.id;
-      }
-      await this.modelUserRole.delete({ id });
-    }
+// // includes
+// async includes({ roleAtomId, roleId, page, user }) {
+//   roleId = await this._forceRoleId({ roleAtomId, roleId });
+//   page = ctx.bean.util.page(page, false);
+//   const _limit = ctx.model._limit(page.size, page.index);
+//   const list = await ctx.model.query(
+//     `
+//     select a.*,b.roleName from aRoleInc a
+//       left join aRole b on a.roleIdInc=b.id
+//         where a.iid=? and a.roleId=?
+//         ${_limit}
+//     `,
+//     [ctx.instance.id, roleId]
+//   );
+//   return list;
+// }
 
-    async deleteAllUserRoles({ userId }) {
-      await this.modelUserRole.delete({ userId });
-    }
 
-    // add role right
-    async addRoleRight({ roleId, atomClassId, action, scope }) {
-      if (scope) {
-        if (typeof scope === 'string') {
-          scope = scope.split(',');
-        } else if (!Array.isArray(scope)) {
-          scope = [scope];
-        }
-      }
-      // force action exists in db
-      await ctx.bean.atomAction.get({ atomClassId, code: action });
+/***/ }),
 
-      // roleRight
-      const res = await this.modelRoleRight.insert({
-        roleId,
-        atomClassId,
-        action,
-        scope: JSON.stringify(scope),
-      });
-      const roleRightId = res.insertId;
-      // roleRightRef
-      if (scope) {
-        for (const roleIdScope of scope) {
-          await this.modelRoleRightRef.insert({
-            roleRightId,
-            roleId,
-            atomClassId,
-            action,
-            roleIdScope,
-          });
-        }
-      }
-      return roleRightId;
-    }
+/***/ 1292:
+/***/ ((module) => {
 
-    // delete role right
-    async deleteRoleRight({ id }) {
-      await this.modelRoleRight.delete({ id });
-      await this.modelRoleRightRef.delete({ roleRightId: id });
-    }
-
-    // child
-    async child({ roleId, roleName }) {
-      const list = await this.children({ roleId, roleName, page: false });
-      return list[0];
-    }
-
-    // children
-    async children({ roleId, roleName, page }) {
-      page = ctx.bean.util.page(page, false);
-      // roleId
-      if (!roleId || roleId === 'root') {
-        roleId = 0;
-      }
-      // where
-      const where = { roleIdParent: roleId };
-      if (roleName !== undefined) where.roleName = roleName;
-      // select
-      const options = {
-        where,
-        orders: [
-          ['sorting', 'asc'],
-          ['roleName', 'asc'],
-        ],
-      };
-      if (page.size !== 0) {
-        options.limit = page.size;
-        options.offset = page.index;
-      }
-      return await this.model.select(options);
-    }
-
-    // save
-    async save({ roleId, data: { roleName, leader, sorting, catalog } }) {
-      const role = await this.get({ id: roleId });
-      if (roleName !== undefined) role.roleName = roleName;
-      if (leader !== undefined) role.leader = leader;
-      if (sorting !== undefined) role.sorting = sorting;
-      if (catalog !== undefined) role.catalog = catalog;
-      await this.model.update(role);
-    }
-
-    // includes
-    async includes({ roleId, page }) {
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(
-        `
-        select a.*,b.roleName from aRoleInc a
-          left join aRole b on a.roleIdInc=b.id
-            where a.iid=? and a.roleId=?
-            ${_limit}
-        `,
-        [ctx.instance.id, roleId]
-      );
-    }
-
-    // role rights
-    async roleRights({ roleId, page }) {
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
-        `
-        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-            where a.iid=? and a.roleId=?
-            order by b.module,a.atomClassId,a.action
-            ${_limit}
-        `,
-        [ctx.instance.id, roleId]
-      );
-      // scope
-      for (const item of list) {
-        const scope = JSON.parse(item.scope);
-        item.scopeRoles = await this._scopeRoles({ scope });
-      }
-      return list;
-    }
-
-    // role spreads
-    async roleSpreads({ roleId, page }) {
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
-        `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aRoleRight a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-          left join aRoleExpand d on a.roleId=d.roleIdBase
-          left join aRole e on d.roleIdBase=e.id
-            where d.iid=? and d.roleId=?
-            order by b.module,a.atomClassId,a.action
-            ${_limit}
-        `,
-        [ctx.instance.id, roleId]
-      );
-      // scope
-      for (const item of list) {
-        const scope = JSON.parse(item.scope);
-        item.scopeRoles = await this._scopeRoles({ scope });
-      }
-      return list;
-    }
-
-    // atom rights of user
-    async atomRightsOfUser({ userId, page }) {
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
-        `
-        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName from aViewUserRightAtomClass a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-          left join aRole e on a.roleIdBase=e.id
-            where a.iid=? and a.userIdWho=?
-            order by b.module,a.atomClassId,a.action
-            ${_limit}
-        `,
-        [ctx.instance.id, userId]
-      );
-      // scope
-      for (const item of list) {
-        const scope = JSON.parse(item.scope);
-        item.scopeRoles = await this._scopeRoles({ scope });
-      }
-      return list;
-    }
-
-    async _scopeRoles({ scope }) {
-      if (!scope || scope.length === 0) return null;
-      return await ctx.model.query(
-        `
-            select a.* from aRole a
-              where a.iid=? and a.id in (${scope.join(',')})
-            `,
-        [ctx.instance.id]
-      );
-    }
-
+module.exports = ctx => {
+  //  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Role {
     async getUserRolesDirect({ userId }) {
       const list = await ctx.model.query(
         `
@@ -4543,185 +5772,168 @@ module.exports = ctx => {
       return list;
     }
 
-    // set dirty
-    async setDirty(dirty) {
-      await ctx.bean.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
+    async _forceRoleAtomId({ roleAtomId, roleId }) {
+      if (!roleAtomId) {
+        const item = await this.get({ id: roleId });
+        roleAtomId = item.atomId;
+      }
+      return roleAtomId;
     }
 
-    async getDirty() {
-      return await ctx.bean.status.module(moduleInfo.relativeName).get('roleDirty');
+    async _forceRoleId({ roleAtomId, roleId }) {
+      if (!roleId) {
+        const item = await this.get({ atomId: roleAtomId });
+        roleId = item.id;
+      }
+      return roleId;
     }
 
-    // build roles
-    async build(options) {
-      // queue
-      await ctx.meta.util.queuePushAsync({
-        module: moduleInfo.relativeName,
-        queueName: 'roleBuild',
-        data: { options },
+    async _forceRole({ roleAtomId, roleId }) {
+      if (roleAtomId) {
+        return await this.get({ atomId: roleAtomId });
+      }
+      return await this.get({ id: roleId });
+    }
+
+    async _forceRoleAndCheckRightRead({ roleAtomId, roleId, user }) {
+      const role = await this._forceRole({ roleAtomId, roleId });
+      if (!user || user.id === 0) return role;
+      // check
+      const res = await ctx.bean.atom.checkRightRead({
+        atom: { id: role.atomId },
+        user,
+      });
+      if (!res) ctx.throw(403);
+      return role;
+    }
+
+    async _checkRightActionOfRole({ roleAtomId, roleId, action, user }) {
+      if (!user || user.id === 0) return true;
+      // roleId
+      roleAtomId = await this._forceRoleAtomId({ roleAtomId, roleId });
+      // check
+      const res = await ctx.bean.atom.checkRightAction({
+        atom: { id: roleAtomId },
+        action,
+        user,
+      });
+      return !!res;
+    }
+  }
+
+  return Role;
+};
+
+
+/***/ }),
+
+/***/ 5465:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Role {}
+  return Role;
+};
+
+
+/***/ }),
+
+/***/ 5393:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'role',
+  };
+  const __atomClassUser = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'user',
+  };
+
+  class Role {
+    async roleUsers({ roleAtomId, roleId, page, user }) {
+      // user, should check user right scope
+      // user = { id: 0 };
+      // roleId
+      roleId = await this._forceRoleId({ roleAtomId, roleId });
+      page = ctx.bean.util.page(page, false);
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassUser,
+        options: {
+          orders: [['f.userName', 'asc']],
+          page,
+          stage: 'formal',
+          role: roleId,
+          // where,
+        },
+        user,
+      });
+      return list;
+    }
+
+    async userRoles({ userAtomId, userId, page, user }) {
+      // user, should check user right scope
+      // user = { id: 0 };
+      userId = await ctx.bean.user._forceUserId({ userAtomId, userId });
+      page = ctx.bean.util.page(page, false);
+      // where
+      const where = { 'f.userIdWho': userId };
+      // select
+      const list = await ctx.bean.atom.select({
+        atomClass: __atomClassRole,
+        options: {
+          orders: [['f.roleName', 'asc']],
+          page,
+          stage: 'formal',
+          where,
+          mode: 'userRoles',
+        },
+        user,
+      });
+      return list;
+    }
+
+    // add user role
+    async addUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // user
+      const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      userId = _user.id;
+      // check if exists
+      const item = await this.modelUserRole.get({
+        userId,
+        roleId,
+      });
+      if (item) return item.id;
+      // insert
+      const res = await this.modelUserRole.insert({
+        userId,
+        roleId,
+      });
+      return res.insertId;
+    }
+
+    async deleteUserRole({ roleAtomId, roleId, userAtomId, userId, user }) {
+      // role
+      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      roleId = _role.id;
+      // user
+      const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
+      userId = _user.id;
+      // delete
+      await this.modelUserRole.delete({
+        userId,
+        roleId,
       });
     }
 
-    async _buildQueue(options) {
-      options = options || {};
-      const progressId = options.progressId;
-      // total
-      let total;
-      if (progressId) {
-        total = await this.model.count();
-      }
-      // progress
-      const progress = { progressId, total, progress: 0 };
-      try {
-        // iid
-        const iid = ctx.instance.id;
-        // remove
-        await this._buildRolesRemove({ iid });
-        // add
-        await this._buildRolesAdd({ iid, roleIdParent: 0 }, progress);
-        // setDirty
-        await this.setDirty(false);
-        // done
-        if (progressId) {
-          await ctx.bean.progress.done({ progressId });
-        }
-      } catch (err) {
-        // error
-        if (progressId) {
-          await ctx.bean.progress.error({ progressId, message: err.message });
-        }
-        throw err;
-      }
-    }
-
-    // const roleRights = [
-    //   { roleName: 'cms-writer', action: 'create' },
-    //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
-    //   { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
-    //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
-    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
-    // ];
-    async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
-      // module
-      module = module || this.moduleName;
-      // const _module = ctx.app.meta.modules[module];
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
-      // roleRights
-      if (!roleRights || !roleRights.length) return;
-      for (const roleRight of roleRights) {
-        // role
-        const role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
-        // scope
-        let scope;
-        if (!roleRight.scopeNames) {
-          scope = 0;
-        } else {
-          scope = [];
-          const scopeNames = Array.isArray(roleRight.scopeNames)
-            ? roleRight.scopeNames
-            : roleRight.scopeNames.split(',');
-          for (const scopeName of scopeNames) {
-            const roleScope = await this.get({ roleName: scopeName });
-            scope.push(roleScope.id);
-          }
-        }
-        // add role right
-        const actionCode = ctx.bean.atomAction.parseActionCode({
-          action: roleRight.action,
-          atomClass: {
-            module,
-            atomClassName,
-          },
-        });
-        await this.addRoleRight({
-          roleId: role.id,
-          atomClassId: atomClass.id,
-          action: actionCode,
-          scope,
-        });
-      }
-    }
-
-    async _buildRolesRemove({ iid }) {
-      await ctx.model.query(`delete from aRoleRef where aRoleRef.iid=${iid}`);
-      await ctx.model.query(`delete from aRoleIncRef where aRoleIncRef.iid=${iid}`);
-      await ctx.model.query(`delete from aRoleExpand where aRoleExpand.iid=${iid}`);
-    }
-
-    async _buildRolesAdd({ iid, roleIdParent }, progress) {
-      const list = await ctx.model.query(
-        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
-      );
-      for (const item of list) {
-        // info
-        const roleId = item.id;
-        const catalog = item.catalog;
-        // build
-        await this._buildRoleRef({ iid, roleId });
-        await this._buildRoleIncRef({ iid, roleId });
-        await this._buildRoleExpand({ iid, roleId });
-        // catalog
-        if (catalog === 1) {
-          await this._buildRolesAdd({ iid, roleIdParent: roleId }, progress);
-        }
-        // progress
-        if (progress.progressId) {
-          await ctx.bean.progress.update({
-            progressId: progress.progressId,
-            progressNo: 0,
-            total: progress.total,
-            progress: progress.progress++,
-            text: item.roleName,
-          });
-        }
-      }
-    }
-
-    async _buildRoleRef({ iid, roleId }) {
-      let level = 0;
-      let roleIdParent = roleId;
-      // loop
-      while (level !== -1) {
-        await ctx.model.query(
-          `insert into aRoleRef(iid,roleId,roleIdParent,level)
-             values(${iid},${roleId},${roleIdParent},${level})
-          `
-        );
-        const item = await ctx.model.queryOne(
-          `select a.roleIdParent from aRole a where a.iid=${iid} and a.id=${roleIdParent}`
-        );
-        if (!item || !item.roleIdParent) {
-          level = -1;
-        } else {
-          roleIdParent = item.roleIdParent;
-          level++;
-        }
-      }
-    }
-
-    async _buildRoleIncRef({ iid, roleId }) {
-      await ctx.model.query(
-        `insert into aRoleIncRef(iid,roleId,roleIdInc,roleIdSrc)
-            select ${iid},${roleId},a.roleIdInc,a.roleId from aRoleInc a
-              where a.iid=${iid} and a.roleId in (select b.roleIdParent from aRoleRef b where b.iid=${iid} and b.roleId=${roleId})
-        `
-      );
-    }
-
-    async _buildRoleExpand({ iid, roleId }) {
-      await ctx.model.query(
-        `insert into aRoleExpand(iid,roleId,roleIdBase)
-            select a.iid,a.roleId,a.roleIdParent from aRoleRef a
-              where a.iid=${iid} and a.roleId=${roleId}
-        `
-      );
-      await ctx.model.query(
-        `insert into aRoleExpand(iid,roleId,roleIdBase)
-            select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
-              where a.iid=${iid} and a.roleId=${roleId}
-        `
-      );
+    async deleteAllUserRoles({ userId }) {
+      await this.modelUserRole.delete({ userId });
     }
   }
 
@@ -4934,9 +6146,21 @@ module.exports = ctx => {
 /***/ 5728:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const user_0 = __webpack_require__(4366);
+const user_1 = __webpack_require__(6937);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(user_0, user_1, ctx);
+};
+
+
+/***/ }),
+
+/***/ 4366:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
 const require3 = __webpack_require__(5638);
 const uuid = require3('uuid');
-const extend = require3('extend2');
 
 const _usersAnonymous = {};
 
@@ -4990,7 +6214,7 @@ module.exports = ctx => {
         return _userAnonymous;
       }
       // add user
-      const userId = await this.add({ disabled: 0, anonymous: 1 });
+      const userId = await this.add({ userName: 'anonymous', disabled: 0, anonymous: 1 });
       // addRole
       const role = await ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
       await ctx.bean.role.addUserRole({ userId, roleId: role.id });
@@ -5007,6 +6231,7 @@ module.exports = ctx => {
         agent: userOp,
         provider: null,
       };
+      // login
       await ctx.login(user);
       // maxAge
       const maxAge = this.config.auth.maxAge.anonymous;
@@ -5028,54 +6253,72 @@ module.exports = ctx => {
     async check(options) {
       // options
       const checkUser = options && options.user;
-      // always has anonymous id
-      ctx.bean.user.anonymousId();
-      // check if has ctx.user
-      if (!ctx.isAuthenticated() || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
-        // anonymous
-        await ctx.bean.user.loginAsAnonymous();
+      // check if has ctx.state.user
+      if (ctx.state.user) {
+        // force set ctx.req.user
+        ctx.req.user = ctx.bean.auth._pruneUser({ user: ctx.state.user });
       } else {
-        // state
-        ctx.state.user = {
-          provider: ctx.user.provider,
-        };
-        // check if deleted,disabled,agent
-        const userOp = await this.get({ id: ctx.user.op.id });
-        // deleted
-        if (!userOp) ctx.throw.module(moduleInfo.relativeName, 1004);
-        // disabled
-        if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
-        // hold user
-        ctx.state.user.op = userOp;
-        // agent
-        let userAgent;
-        if (ctx.user.agent && ctx.user.agent.id !== ctx.user.op.id) {
-          userAgent = await this.agent({ userId: ctx.user.op.id });
-          if (!userAgent) ctx.throw.module(moduleInfo.relativeName, 1006);
-          if (userAgent.id !== ctx.user.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
-          if (userAgent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+        // always has anonymous id
+        ctx.bean.user.anonymousId();
+        // check if has ctx.user
+        if (!ctx.user || !ctx.user.op || ctx.user.op.iid !== ctx.instance.id) {
+          // anonymous
+          await ctx.bean.user.loginAsAnonymous();
         } else {
-          userAgent = userOp;
-        }
-        // hold agent
-        ctx.state.user.agent = userAgent;
-        // only check locale for agent
-        // not set locale for test env
-        const checkDemo = ctx.bean.util.checkDemo(false);
-        if (checkDemo && !userAgent.locale && ctx.locale && !ctx.app.meta.isTest) {
-          // set
-          const userData = { id: userAgent.id, locale: ctx.locale };
-          await this.save({ user: userData });
-          userAgent.locale = ctx.locale;
-        } else if (!checkDemo && userAgent.locale) {
-          // clear
-          const userData = { id: userAgent.id, locale: null };
-          await this.save({ user: userData });
-          userAgent.locale = null;
+          ctx.state.user = await this._check_getStateUser({ ctxUser: ctx.user });
         }
       }
       // check user
       if (checkUser && ctx.state.user.op.anonymous) ctx.throw(401);
+    }
+
+    async _check_getStateUser({ ctxUser }) {
+      // state
+      const stateUser = {
+        provider: ctxUser.provider,
+      };
+      // check if deleted,disabled,agent
+      const userOp = await this.get({ id: ctxUser.op.id });
+      // deleted
+      if (!userOp) {
+        // ctx.throw.module(moduleInfo.relativeName, 1004);
+        ctx.throw(401);
+      }
+      // disabled
+      if (userOp.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+      // hold user
+      stateUser.op = userOp;
+      // agent
+      let userAgent;
+      if (ctxUser.agent && ctxUser.agent.id !== ctxUser.op.id) {
+        userAgent = await this.agent({ userId: ctxUser.op.id });
+        if (!userAgent) {
+          // ctx.throw.module(moduleInfo.relativeName, 1006);
+          ctx.throw(401);
+        }
+        if (userAgent.id !== ctxUser.agent.id) ctx.throw.module(moduleInfo.relativeName, 1006);
+        if (userAgent.disabled) ctx.throw.module(moduleInfo.relativeName, 1005);
+      } else {
+        userAgent = userOp;
+      }
+      // hold agent
+      stateUser.agent = userAgent;
+      // only check locale for agent
+      // not set locale for test env
+      const checkDemo = ctx.bean.util.checkDemo(false);
+      if (checkDemo && !userAgent.locale && ctx.locale && !ctx.app.meta.isTest) {
+        // set
+        const userData = { id: userAgent.id, locale: ctx.locale };
+        await this.save({ user: userData });
+        userAgent.locale = ctx.locale;
+      } else if (!checkDemo && userAgent.locale) {
+        // clear
+        const userData = { id: userAgent.id, locale: null };
+        await this.save({ user: userData });
+        userAgent.locale = null;
+      }
+      // ok
+      return stateUser;
     }
 
     async setActivated({ user, autoActivate }) {
@@ -5132,64 +6375,6 @@ module.exports = ctx => {
       });
     }
 
-    async exists({ userName, email, mobile }) {
-      userName = userName || '';
-      email = email || '';
-      mobile = mobile || '';
-      if (this.config.checkUserName === true && userName) {
-        return await this.model.queryOne(
-          `select * from aUser
-             where iid=? and deleted=0 and ((userName=?) or (?<>'' and email=?) or (?<>'' and mobile=?))`,
-          [ctx.instance.id, userName, email, email, mobile, mobile]
-        );
-      }
-      return await this.model.queryOne(
-        `select * from aUser
-             where iid=? and deleted=0 and ((?<>'' and email=?) or (?<>'' and mobile=?))`,
-        [ctx.instance.id, email, email, mobile, mobile]
-      );
-    }
-
-    async add({ disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 }) {
-      // check if incomplete information
-      let needCheck;
-      if (anonymous) {
-        needCheck = false;
-      } else if (this.config.checkUserName === true) {
-        needCheck = userName || email || mobile;
-      } else {
-        needCheck = email || mobile;
-      }
-      // if exists
-      if (needCheck) {
-        const res = await this.exists({ userName, email, mobile });
-        if (res) ctx.throw.module(moduleInfo.relativeName, 1001);
-      }
-      // insert
-      const res = await this.model.insert({
-        disabled,
-        userName,
-        realName,
-        email,
-        mobile,
-        avatar,
-        motto,
-        locale,
-        anonymous,
-      });
-      return res.insertId;
-    }
-
-    async get(where) {
-      return await this.model.get(where);
-    }
-
-    async save({ user }) {
-      if (Object.keys(user).length > 1) {
-        await this.model.update(user);
-      }
-    }
-
     async agent({ userId }) {
       const sql = `
         select a.* from aUser a
@@ -5240,136 +6425,25 @@ module.exports = ctx => {
       return await this.switchAgent({ userIdAgent: ctx.state.user.agent.id });
     }
 
-    async getFields({ removePrivacy }) {
-      let fields = await this.model.columns();
-      if (removePrivacy) {
-        fields = extend(true, {}, fields);
-        const privacyFields = ctx.config.module(moduleInfo.relativeName).user.privacyFields.split(',');
-        for (const privacyField of privacyFields) {
-          delete fields[privacyField];
-        }
-      }
-      return fields;
-    }
-
-    async getFieldsSelect({ removePrivacy, alias }) {
-      const fields = await this.getFields({ removePrivacy });
-      return Object.keys(fields)
-        .map(item => (alias ? `${alias}.${item}` : item))
-        .join(',');
-    }
-
-    async list({ roleId, query, anonymous, page, removePrivacy }) {
-      const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
-      const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
-      const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
-      const queryWhere = query
-        ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )`
-        : '';
-      const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
-      const _limit = ctx.model._limit(page.size, page.index);
-      // fields
-      const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
-      // sql
-      const sql = `
-        select ${fields} from aUser a
-          ${roleJoin}
-            where a.iid=? and a.deleted=0
-                  ${anonymousWhere}
-                  ${roleWhere}
-                  ${queryWhere}
-            order by a.userName asc
-            ${_limit}
-      `;
-      return await ctx.model.query(sql, [ctx.instance.id]);
-    }
-
-    async count({ options }) {
-      return await this.select({ options, count: 1 });
-    }
-
-    async select({ options, pageForce = true, count = 0 }) {
-      return await this._list({ options, pageForce, count });
-    }
-
-    async selectGeneral({ params, pageForce = true, count = 0 }) {
-      const { query, page } = params;
-      const options = {
-        where: {
-          'a.anonymous': 0,
-          'a.disabled': 0,
-        },
-        orders: [['a.userName', 'asc']],
-        page,
-        removePrivacy: true,
-      };
-      if (query) {
-        options.where.__or__ = [
-          { 'a.userName': { op: 'like', val: query } },
-          { 'a.realName': { op: 'like', val: query } },
-          { 'a.mobile': { op: 'like', val: query } },
-        ];
-      }
-      return await this._list({ options, pageForce, count });
-    }
-
-    async _list({ options: { where, orders, page, removePrivacy }, pageForce = true, count = 0 }) {
-      page = ctx.bean.util.page(page, pageForce);
-      // fields
-      const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
-      // sql
-      const sql = this.sqlProcedure.selectUsers({
-        iid: ctx.instance.id,
-        where,
-        orders,
-        page,
-        count,
-        fields,
-      });
-      const res = await ctx.model.query(sql);
-      return count ? res[0]._count : res;
-    }
-
-    async disable({ userId, disabled }) {
-      await this.model.update({ id: userId, disabled });
-    }
-
-    async delete({ userId }) {
-      await ctx.bean.role.deleteAllUserRoles({ userId });
-      await this.modelAuth.delete({ userId });
-      await this.model.delete({ id: userId });
-    }
-
-    // roles
-    async roles({ userId, page }) {
-      page = ctx.bean.util.page(page, false);
-      const _limit = ctx.model._limit(page.size, page.index);
-      return await ctx.model.query(
-        `
-        select a.*,b.roleName from aUserRole a
-          left join aRole b on a.roleId=b.id
-            where a.iid=? and a.userId=?
-            ${_limit}
-        `,
-        [ctx.instance.id, userId]
-      );
-    }
-
     // state: login/associate/migrate
     async verify({ state = 'login', profileUser }) {
       // verifyUser
       const verifyUser = {};
 
       // provider
-      const providerItem = await this.getAuthProvider({
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
         module: profileUser.module,
         providerName: profileUser.provider,
       });
 
       // check if auth exists
+      const providerId = providerItem.id;
+      const providerScene = profileUser.providerScene || null;
+      const profileId = profileUser.profileId;
       const authItem = await this.modelAuth.get({
-        providerId: providerItem.id,
-        profileId: profileUser.profileId,
+        providerId,
+        providerScene,
+        profileId,
       });
       // avatar
       await this._prepareAvatar({ authItem, profile: profileUser.profile });
@@ -5377,31 +6451,42 @@ module.exports = ctx => {
       let authId;
       let authUserId;
       if (authItem) {
-        // update
-        authItem.profile = JSON.stringify(profileUser.profile);
-        await this.modelAuth.update(authItem);
         authId = authItem.id;
         authUserId = authItem.userId;
+        // update profile
+        const _profile = JSON.stringify(profileUser.profile);
+        if (authItem.profile !== _profile) {
+          await this.modelAuth.update({
+            id: authId,
+            profile: _profile,
+          });
+        }
       } else {
         if (state === 'migrate' || profileUser.authShouldExists === true) {
           ctx.throw.module(moduleInfo.relativeName, 1009);
         }
         // add
+        const _profile = JSON.stringify(profileUser.profile);
         const res = await this.modelAuth.insert({
-          providerId: providerItem.id,
-          profileId: profileUser.profileId,
-          profile: JSON.stringify(profileUser.profile),
+          providerId,
+          providerScene,
+          profileId,
+          profile: _profile,
         });
         authId = res.insertId;
       }
+      // provider ready
       verifyUser.provider = {
         id: authId,
-        providerId: providerItem.id,
+        providerId,
         module: profileUser.module,
         providerName: profileUser.provider,
         // profile: profileUser.profile,  // maybe has private info
       };
-      const scene = ctx.headers['x-scene'] || ctx.request.query['x-scene'] || ctx.session['x-scene'];
+      if (providerScene) {
+        verifyUser.provider.providerScene = providerScene;
+      }
+      const scene = ctx.bean.util.getFrontScene();
       if (scene) {
         verifyUser.provider.scene = scene;
       }
@@ -5414,7 +6499,7 @@ module.exports = ctx => {
       if (state === 'migrate') {
         // should check user so as to create ctx.state.user
         await this.check();
-        // check if ctx.user exists
+        // check if ctx.state.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
         userId = ctx.state.user.agent.id;
         // migrate
@@ -5429,7 +6514,7 @@ module.exports = ctx => {
       } else if (state === 'associate') {
         // should check user so as to create ctx.state.user
         await this.check();
-        // check if ctx.user exists
+        // check if ctx.state.user exists
         if (!ctx.state.user || ctx.state.user.agent.anonymous) return false;
         userId = ctx.state.user.agent.id;
         // associated
@@ -5443,7 +6528,8 @@ module.exports = ctx => {
           } else {
             // delete old record
             await this.modelAuth.delete({
-              providerId: providerItem.id,
+              providerId,
+              providerScene,
               userId,
             });
             await this.modelAuth.update({
@@ -5482,20 +6568,22 @@ module.exports = ctx => {
         verifyUser.agent = user;
       }
 
-      // restore maxAge
-      //   maxAge: 0,null/undefined,>0
-      if (profileUser.maxAge === 0) {
-        ctx.session.maxAge = this.config.auth.maxAge.default;
-      } else {
-        ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
-      }
-
       // user verify event
       await ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'userVerify',
         data: { verifyUser, profileUser },
       });
+
+      // restore maxAge
+      //   maxAge: 0,null/undefined,>0
+      if (ctx.session) {
+        if (profileUser.maxAge === 0) {
+          ctx.session.maxAge = this.config.auth.maxAge.default;
+        } else {
+          ctx.session.maxAge = profileUser.maxAge || this.config.auth.maxAge.authenticated;
+        }
+      }
 
       // ok
       return verifyUser;
@@ -5510,14 +6598,13 @@ module.exports = ctx => {
       });
       // aAuth: delete old records
       const list = await ctx.model.query(
-        'select a.providerId from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
+        'select a.id,a.providerId,a.providerScene from aAuth a where a.deleted=0 and a.iid=? and a.userId=?',
         [ctx.instance.id, userIdFrom]
       );
-      if (list.length > 0) {
-        const providerIds = list.map(item => item.providerId).join(',');
+      for (const item of list) {
         await ctx.model.query(
-          `delete from aAuth where deleted=0 and iid=? and userId=? and providerId in (${providerIds})`,
-          [ctx.instance.id, userIdTo, providerIds]
+          'delete from aAuth where deleted=0 and iid=? and userId=? and providerId=? and providerScene=?',
+          [ctx.instance.id, userIdTo, item.providerId, item.providerScene]
         );
       }
       // aAuth: update records
@@ -5533,7 +6620,7 @@ module.exports = ctx => {
         userIdFrom,
       ]);
       // delete user
-      await this.model.delete({ id: userIdFrom });
+      await this.delete({ userId: userIdFrom });
     }
 
     async _downloadAvatar({ avatar }) {
@@ -5548,40 +6635,52 @@ module.exports = ctx => {
     }
 
     async _prepareAvatar({ authItem, profile }) {
-      // avatar
-      let avatarOld;
-      let _avatarOld;
-      if (authItem) {
-        const _profile = JSON.parse(authItem.profile);
-        avatarOld = _profile.avatar;
-        _avatarOld = _profile._avatar;
+      // maybe failed for image format invalid
+      try {
+        // avatar
+        let avatarOld;
+        let _avatarOld;
+        if (authItem) {
+          const _profile = JSON.parse(authItem.profile);
+          avatarOld = _profile.avatar;
+          _avatarOld = _profile._avatar;
+        }
+        if (!profile.avatar || profile.avatar === avatarOld) {
+          profile._avatar2 = _avatarOld;
+          return;
+        }
+        // download image
+        const res = await this._downloadAvatar({ avatar: profile.avatar });
+        // meta
+        const mime = res.headers['content-type'] || '';
+        const ext = mime.split('/')[1] || '';
+        const meta = {
+          filename: `user-avatar.${ext}`,
+          encoding: '7bit',
+          mime,
+          fields: {
+            mode: 1,
+            flag: `user-avatar:${profile.avatar}`,
+          },
+        };
+        // upload
+        try {
+          const res2 = await ctx.bean.file._upload({
+            fileContent: res.data,
+            meta,
+            user: null,
+          });
+          // hold
+          profile._avatar = res2.downloadUrl;
+        } catch (err) {
+          console.log('-------- avatar:', profile.avatar);
+          // console.log(res);
+          // console.log(err);
+        }
+      } catch (err) {
+        // not throw err
+        console.log(err);
       }
-      if (!profile.avatar || profile.avatar === avatarOld) {
-        profile._avatar2 = _avatarOld;
-        return;
-      }
-      // download image
-      const res = await this._downloadAvatar({ avatar: profile.avatar });
-      // meta
-      const mime = res.headers['content-type'] || '';
-      const ext = mime.split('/')[1] || '';
-      const meta = {
-        filename: `user-avatar.${ext}`,
-        encoding: '7bit',
-        mime,
-        fields: {
-          mode: 1,
-          flag: `user-avatar:${profile.avatar}`,
-        },
-      };
-      // upload
-      const res2 = await ctx.bean.file._upload({
-        fileContent: res.data,
-        meta,
-        user: null,
-      });
-      // hold
-      profile._avatar = res2.downloadUrl;
     }
 
     async _addUserInfo(profile, columns, autoActivate) {
@@ -5624,16 +6723,25 @@ module.exports = ctx => {
     }
 
     async _setUserInfoColumn(user, column, profile) {
-      // avatar / if empty
-      if (column === 'avatar' && !user[column] && profile._avatar2) {
-        user[column] = profile._avatar2;
+      // avatar / only if empty
+      if (column === 'avatar') {
+        const value = profile._avatar || profile._avatar2;
+        if (!user[column] && value) {
+          user[column] = value;
+        }
+        delete profile._avatar2;
         return;
       }
-      // avatar / if changed
-      if (column === 'avatar' && profile._avatar) {
-        user[column] = profile._avatar;
-        return;
-      }
+      // // avatar / if empty
+      // if (column === 'avatar' && !user[column] && profile._avatar2) {
+      //   user[column] = profile._avatar2;
+      //   return;
+      // }
+      // // avatar / if changed
+      // if (column === 'avatar' && profile._avatar) {
+      //   user[column] = profile._avatar;
+      //   return;
+      // }
       // value
       let value = profile[column];
       // only set when empty
@@ -5656,52 +6764,306 @@ module.exports = ctx => {
         user[column] = value;
       }
     }
-
-    async getAuthProvider({ subdomain, iid, id, module, providerName }) {
-      // ctx.instance maybe not exists
-      const data = id ? { iid: iid || ctx.instance.id, id } : { iid: iid || ctx.instance.id, module, providerName };
-      const res = await ctx.db.get('aAuthProvider', data);
-      if (res) return res;
-      if (!module || !providerName) throw new Error('Invalid arguments');
-      // lock
-      return await ctx.meta.util.lock({
-        subdomain,
-        resource: `${moduleInfo.relativeName}.authProvider.register`,
-        fn: async () => {
-          return await ctx.meta.util.executeBeanIsolate({
-            subdomain,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'user',
-            context: { module, providerName },
-            fn: '_registerAuthProviderLock',
-          });
-        },
-      });
-    }
-
-    async _registerAuthProviderLock({ module, providerName }) {
-      // get
-      const res = await this.modelAuthProvider.get({ module, providerName });
-      if (res) return res;
-      // data
-      // const _authProviders = ctx.bean.base.authProviders();
-      // const _provider = _authProviders[`${module}:${providerName}`];
-      // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
-      const data = {
-        module,
-        providerName,
-        // config: JSON.stringify(_provider.config),
-        disabled: 0,
-      };
-      // insert
-      const res2 = await this.modelAuthProvider.insert(data);
-      data.id = res2.insertId;
-      return data;
-    }
   }
 
   return User;
 };
+
+
+/***/ }),
+
+/***/ 6937:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const extend = require3('extend2');
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassUser = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'user',
+  };
+
+  class User {
+    async get(where) {
+      return await this.model.get(where);
+    }
+
+    async add(
+      { disabled = 0, userName, realName, email, mobile, avatar, motto, locale, anonymous = 0 },
+      user,
+      returnKey
+    ) {
+      // check if incomplete information
+      let needCheck;
+      if (anonymous) {
+        needCheck = false;
+      } else if (this.config.checkUserName === true) {
+        needCheck = userName || email || mobile;
+      } else {
+        needCheck = email || mobile;
+      }
+      // if exists
+      if (needCheck) {
+        const res = await this.exists({ userName, email, mobile });
+        if (res) ctx.throw.module(moduleInfo.relativeName, 1001);
+      }
+      if (!user) {
+        user = { id: 0 };
+      }
+      // create
+      const itemCreate = {
+        disabled,
+        anonymous,
+      };
+      const userKey = await ctx.bean.atom.create({
+        atomClass: __atomClassUser,
+        item: itemCreate,
+        user,
+      });
+      // write
+      const item = {
+        userName,
+        realName,
+        email,
+        mobile,
+        avatar,
+        motto,
+        locale,
+      };
+      if (userName) {
+        item.atomName = userName;
+      }
+      await ctx.bean.atom.write({
+        key: userKey,
+        item,
+        user,
+      });
+      // submit
+      await ctx.bean.atom.submit({
+        key: userKey,
+        options: { ignoreFlow: true },
+        user,
+      });
+      // user verify event
+      item.id = userKey.itemId;
+      item.disabled = disabled;
+      item.anonymous = anonymous;
+      await ctx.bean.event.invoke({
+        module: moduleInfo.relativeName,
+        name: 'userAdd',
+        data: { user: item },
+      });
+      // ok
+      return returnKey ? userKey : userKey.itemId;
+    }
+
+    async exists({ userName, email, mobile }) {
+      userName = userName || '';
+      email = email || '';
+      mobile = mobile || '';
+      if (this.config.checkUserName !== true) {
+        userName = '';
+      }
+      // where
+      const clause = {};
+      clause.__or__ = [];
+      if (userName) clause.__or__.push({ userName });
+      if (email) clause.__or__.push({ email });
+      if (mobile) clause.__or__.push({ mobile });
+      if (clause.__or__.length === 0) return null;
+      const where = ctx.model._where(clause);
+      return await this.model.queryOne(
+        `select * from aUser
+            ${where} and iid=? and deleted=0`,
+        [ctx.instance.id]
+      );
+    }
+
+    async save({ user }) {
+      // not use atom.write
+      const userId = user.id;
+      if (userId && Object.keys(user).length > 1) {
+        await this.model.update(user);
+      }
+      if (user.userName) {
+        const userAtomId = await this._forceUserAtomId({ userAtomId: null, userId });
+        await ctx.bean.atom.modelAtom.update({
+          id: userAtomId,
+          atomName: user.userName,
+        });
+      }
+    }
+
+    async getFields({ removePrivacy }) {
+      let fields = await this.model.columns();
+      if (removePrivacy) {
+        fields = extend(true, {}, fields);
+        const privacyFields = ctx.config.module(moduleInfo.relativeName).user.privacyFields.split(',');
+        for (const privacyField of privacyFields) {
+          delete fields[privacyField];
+        }
+      }
+      return fields;
+    }
+
+    async getFieldsSelect({ removePrivacy, alias }) {
+      const fields = await this.getFields({ removePrivacy });
+      return Object.keys(fields)
+        .map(item => (alias ? `${alias}.${item}` : item))
+        .join(',');
+    }
+
+    async count({ options, user }) {
+      return await this.select({ options, user, count: 1 });
+    }
+
+    async select({ options, user, pageForce = true, count = 0 }) {
+      return await this._list({ options, user, pageForce, count });
+    }
+
+    async selectGeneral({ params, user, pageForce = true, count = 0 }) {
+      const { query, page } = params;
+      const options = {
+        where: {
+          'f.anonymous': 0,
+          'f.disabled': 0,
+        },
+        orders: [['f.userName', 'asc']],
+        page,
+        removePrivacy: true,
+      };
+      if (query) {
+        options.where.__or__ = [
+          { 'f.userName': { op: 'like', val: query } },
+          { 'f.realName': { op: 'like', val: query } },
+          { 'f.mobile': { op: 'like', val: query } },
+        ];
+      }
+      return await this._list({ options, user, pageForce, count });
+    }
+
+    // options: { where, orders, page, removePrivacy, ... }
+    async _list({ options, user, pageForce = true, count = 0 }) {
+      if (!options) options = {};
+      // select
+      const items = await ctx.bean.atom.select({ atomClass: __atomClassUser, options, user, pageForce, count });
+      // count
+      if (count) return items;
+      // removePrivacy
+      const removePrivacy = options.removePrivacy;
+      if (!removePrivacy) return items;
+      // fields
+      const fields = await this.getFields({ removePrivacy });
+      const fieldNames = Object.keys(fields);
+      const itemsRes = [];
+      for (const item of items) {
+        const itemRes = {};
+        for (const fieldName of fieldNames) {
+          itemRes[fieldName] = item[fieldName];
+        }
+        itemRes.itemId = item.itemId;
+        itemsRes.push(itemRes);
+      }
+      // ok
+      return itemsRes;
+    }
+
+    async disable({ userAtomId, userId, disabled }) {
+      const item = await this._forceUser({ userAtomId, userId });
+      const key = { atomId: item.atomId, itemId: item.id };
+      if (disabled) {
+        await ctx.bean.atom.disable({ key, user: { id: 0 } });
+      } else {
+        await ctx.bean.atom.enable({ key, user: { id: 0 } });
+      }
+    }
+
+    async delete({ userAtomId, userId }) {
+      userAtomId = await this._forceUserAtomId({ userAtomId, userId });
+      // delete this
+      await ctx.bean.atom.delete({ key: { atomId: userAtomId } });
+    }
+
+    async _forceUserAtomId({ userAtomId, userId }) {
+      if (!userAtomId) {
+        const item = await this.get({ id: userId });
+        userAtomId = item.atomId;
+      }
+      return userAtomId;
+    }
+
+    async _forceUserId({ userAtomId, userId }) {
+      if (!userId) {
+        const item = await this.get({ atomId: userAtomId });
+        userId = item.id;
+      }
+      return userId;
+    }
+
+    async _forceUser({ userAtomId, userId }) {
+      if (userAtomId) {
+        return await this.get({ atomId: userAtomId });
+      }
+      return await this.get({ id: userId });
+    }
+
+    async _forceUserAndCheckRightRead({ userAtomId, userId, user }) {
+      const _user = await this._forceUser({ userAtomId, userId });
+      if (!user || user.id === 0) return _user;
+      // check
+      const res = await ctx.bean.atom.checkRightRead({
+        atom: { id: _user.atomId },
+        user,
+      });
+      if (!res) ctx.throw(403);
+      return _user;
+    }
+  }
+  return User;
+};
+
+// async save({ user }) {
+//   // userKey
+//   const userAtomId = await this._forceUserAtomId({ userId: user.id });
+//   const userKey = { atomId: userAtomId };
+//   // item
+//   const item = { ...user };
+//   if (user.userName) {
+//     item.atomName = user.userName;
+//   }
+//   await ctx.bean.atom.write({
+//     key: userKey,
+//     item,
+//     user: { id: 0 },
+//   });
+// }
+
+// async list({ roleId, query, anonymous, page, removePrivacy }) {
+//   const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
+//   const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
+//   const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
+//   const queryWhere = query
+//     ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )`
+//     : '';
+//   const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
+//   const _limit = ctx.model._limit(page.size, page.index);
+//   // fields
+//   const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });
+//   // sql
+//   const sql = `
+//     select ${fields} from aUser a
+//       ${roleJoin}
+//         where a.iid=? and a.deleted=0
+//               ${anonymousWhere}
+//               ${roleWhere}
+//               ${queryWhere}
+//         order by a.userName asc
+//         ${_limit}
+//   `;
+//   return await ctx.model.query(sql, [ctx.instance.id]);
+// }
 
 
 /***/ }),
@@ -5712,7 +7074,7 @@ module.exports = ctx => {
 const require3 = __webpack_require__(5638);
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
-const { NodeVM } = require3('vm2');
+const eggBornUtils = require3('egg-born-utils');
 const utils = __webpack_require__(9294);
 
 module.exports = app => {
@@ -5848,7 +7210,8 @@ module.exports = app => {
     checkDemo(throwError = true) {
       const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
       if (!demo.enable) return true;
-      if (this.ctx.state.user.op.userName === 'root') return true;
+      const user = this.ctx.state.user;
+      if (user && user.op.userName === 'root') return true;
       if (throwError) {
         this.ctx.throw.module(moduleInfo.relativeName, 1014);
       }
@@ -5863,22 +7226,44 @@ module.exports = app => {
       return utils.escapeURL(str);
     }
 
-    evaluateExpression({ expression, globals, wrapper }) {
-      if (!wrapper) {
-        wrapper = 'none';
-      } else if (wrapper === true) {
-        wrapper = 'commonjs';
+    getTitleLocale({ locales, title, locale }) {
+      locale = locale || this.ctx.locale;
+      let titleLocale = this.getProperty(locales, `${locale}.${title}`);
+      if (!titleLocale && locale !== 'en-us') {
+        titleLocale = this.getProperty(locales, `en-us.${title}`);
       }
+      // not use system locale
+      // if (!titleLocale) {
+      //   titleLocale = this.ctx.text(title);
+      // }
+      return titleLocale || title;
+    }
+
+    getFrontScene() {
+      return (
+        (this.ctx.request.query && this.ctx.request.query['x-scene']) ||
+        (this.ctx.headers && this.ctx.headers['x-scene']) ||
+        (this.ctx.session && this.ctx.session['x-scene'])
+      );
+    }
+
+    evaluateExpression({ expression, globals, wrapper }) {
+      return eggBornUtils.tools.evaluateExpression({ expression, scope: globals, wrapper });
       // return vm.runInContext(expression, vm.createContext(globals || {}));
-      const vm = new NodeVM({
-        console: 'inherit',
-        sandbox: globals || {},
-        require: false,
-        nesting: true,
-        wrapper,
-      });
-      const script = wrapper === 'none' ? `return (${expression})` : expression;
-      return vm.run(script);
+    }
+
+    normalizeResourceKey(key, module, sep = ':') {
+      if (!key) return key;
+      let _sep, _parts;
+      for (let index = 0; index < sep.length; index++) {
+        _sep = sep[index];
+        _parts = key.split(_sep);
+        if (_parts.length > 1) break;
+      }
+      if (_parts.length === 1 && module) {
+        _parts.unshift(module);
+      }
+      return _parts.join(_sep);
     }
 
     hostUtil(options) {
@@ -5915,29 +7300,170 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 604:
-/***/ ((module) => {
+/***/ 2716:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = app => {
-  class Broadcast extends app.meta.BeanBase {
-    async execute(context) {
-      const data = context.data;
-      await this.ctx.bean.authProvider._registerInstanceProvider(
-        this.ctx.subdomain,
-        this.ctx.instance.id,
-        data.module,
-        data.providerName
-      );
-    }
-  }
+const procedure_atom = __webpack_require__(8986);
+const procedure_atomRight = __webpack_require__(986);
+const procedure_resource = __webpack_require__(5309);
 
-  return Broadcast;
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(procedure_atom, [procedure_atomRight, procedure_resource], ctx);
 };
+
+// /* backup */
+
+// selectUsers({ iid, where, orders, page, count, fields }) {
+//   // -- tables
+//   // -- a: aUser
+
+//   // for safe
+//   where = where ? ctx.model._where(where) : null;
+//   orders = orders ? ctx.model._orders(orders) : null;
+//   const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+//   // vars
+
+//   //
+//   const _where = where ? `${where} AND` : ' WHERE';
+//   const _orders = orders || '';
+//   const _limit = limit || '';
+
+//   // fields
+//   let _selectFields;
+//   if (count) {
+//     _selectFields = 'count(*) as _count';
+//   } else {
+//     _selectFields = fields;
+//   }
+
+//   // sql
+//   const _sql = `select ${_selectFields} from aUser a
+//       ${_where}
+//        (
+//          a.deleted=0 and a.iid=${iid}
+//        )
+
+//       ${count ? '' : _orders}
+//       ${count ? '' : _limit}
+//     `;
+
+//   // ok
+//   return _sql;
+// }
+
+// function selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
+//   // -- tables
+//   // -- a: aFunction
+//   // -- b: aFunctionLocale
+//   // -- c: aViewUserRightFunction
+//   // -- d: aFunctionStar
+//   // -- e: aAtomClass
+//   // -- f: aFunctionScene
+
+//   // for safe
+//   where = where ? ctx.model._where(where) : null;
+//   orders = orders ? ctx.model._orders(orders) : null;
+//   const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+//   iid = parseInt(iid);
+//   userIdWho = parseInt(userIdWho);
+//   star = parseInt(star);
+
+//   locale = locale ? ctx.model.format('?', locale) : null;
+
+//   // vars
+//   let _starField,
+//     _starJoin,
+//     _starWhere;
+//   let _localeField,
+//     _localeJoin,
+//     _localeWhere;
+
+//   //
+//   const _where = where ? `${where} AND` : ' WHERE';
+//   const _orders = orders || '';
+//   const _limit = limit || '';
+
+//   // star
+//   if (star) {
+//     _starField = '';
+//     _starJoin = ' inner join aFunctionStar d on a.id=d.functionId';
+//     _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
+//   } else {
+//     _starField =
+//         `,(select d.star from aFunctionStar d where d.iid=${iid} and d.functionId=a.id and d.userId=${userIdWho}) as star`;
+//     _starJoin = '';
+//     _starWhere = '';
+//   }
+
+//   // locale
+//   if (locale) {
+//     _localeField = ',b.titleLocale';
+//     _localeJoin = ' inner join aFunctionLocale b on a.id=b.functionId';
+//     _localeWhere = ` and b.iid=${iid} and b.locale=${locale}`;
+//   } else {
+//     _localeField = '';
+//     _localeJoin = '';
+//     _localeWhere = '';
+//   }
+
+//   // sql
+//   const _sql =
+//         `select a.*,
+//                 e.atomClassName,e.atomClassIdParent
+//                 ${_localeField}
+//                 ${_starField}
+//            from aFunction a
+
+//              left join aAtomClass e on a.atomClassId=e.id
+//              left join aFunctionScene f on a.sceneId=f.id
+//              ${_localeJoin}
+//              ${_starJoin}
+
+//              ${_where}
+
+//               (
+//                 a.deleted=0 and a.iid=${iid}
+//                 ${_localeWhere}
+//                 ${_starWhere}
+//                 and (
+//                        a.public=1
+//                        or
+//                        exists(
+//                                select c.functionId from aViewUserRightFunction c where c.iid=${iid} and a.id=c.functionId and c.userIdWho=${userIdWho}
+//                              )
+//                     )
+//               )
+
+//             ${_orders}
+//             ${_limit}
+//        `;
+
+//   // ok
+//   return _sql;
+// }
+
+// function checkRightFunction({ iid, userIdWho, functionId }) {
+//   // for safe
+//   iid = parseInt(iid);
+//   userIdWho = parseInt(userIdWho);
+//   functionId = parseInt(functionId);
+//   // sql
+//   const _sql =
+//         `select a.* from aFunction a
+//             where a.deleted=0 and a.iid=${iid} and a.id=${functionId}
+//               and ( a.public=1 or
+//                     exists(select c.functionId from aViewUserRightFunction c where c.iid=${iid} and c.functionId=${functionId} and c.userIdWho=${userIdWho})
+//                   )
+//         `;
+//   return _sql;
+// }
 
 
 /***/ }),
 
-/***/ 2716:
+/***/ 8986:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -5963,6 +7489,8 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms,
+      forAtomUser,
+      role,
     }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
@@ -5975,6 +7503,7 @@ module.exports = ctx => {
       tag = parseInt(tag);
       mine = parseInt(mine);
       resource = parseInt(resource);
+      role = parseInt(role);
 
       // draft
       if (stage === 0) {
@@ -6017,6 +7546,8 @@ module.exports = ctx => {
           resourceLocale,
           mode,
           cms,
+          forAtomUser,
+          role,
         });
       }
       // formal/history
@@ -6041,6 +7572,8 @@ module.exports = ctx => {
         resourceLocale,
         mode,
         cms,
+        forAtomUser,
+        role,
       });
     }
 
@@ -6091,7 +7624,7 @@ module.exports = ctx => {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtomRole
+      // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -6299,11 +7832,13 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms,
+      forAtomUser,
+      role,
     }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtomRole
+      // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -6335,6 +7870,8 @@ module.exports = ctx => {
       let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
+
+      let _userField, _userJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -6412,8 +7949,21 @@ module.exports = ctx => {
       }
 
       // atomClassInner
-      // eslint-disable-next-line
-      _atomClassWhere = ' and b.atomClassInner=0';
+      // atomClassInner
+      if (tableName) {
+        _atomClassWhere = '';
+      } else {
+        _atomClassWhere = ' and b.atomClassInner=0';
+      }
+
+      // aUser
+      if (forAtomUser) {
+        _userField = '';
+        _userJoin = '';
+      } else {
+        _userField = 'g.userName,g.avatar,';
+        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
+      }
 
       // fields
       let _selectFields;
@@ -6425,15 +7975,30 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
+                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
+      }
+
+      // _rightWhere
+      let _rightWhere;
+      if (forAtomUser && role) {
+        _rightWhere = `
+        exists(
+          select c2.userId from aViewUserRoleRef c2 where c2.iid=${iid} and a.itemId=c2.userId and c2.roleIdParent=${role}
+        )
+      `;
+      }
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
       }
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
+            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
@@ -6454,6 +8019,7 @@ module.exports = ctx => {
              ${_fileWhere}
              ${_resourceWhere}
              ${_cmsWhere}
+             ${_rightWhere}
            )
 
           ${count ? '' : _orders}
@@ -6485,11 +8051,13 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms,
+      forAtomUser,
+      role,
     }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
-      // -- c: aViewUserRightAtomRole
+      // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -6524,6 +8092,8 @@ module.exports = ctx => {
       let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
+
+      let _userField, _userJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -6628,6 +8198,15 @@ module.exports = ctx => {
         _atomClassWhere = ' and b.atomClassInner=0';
       }
 
+      // aUser
+      if (forAtomUser) {
+        _userField = '';
+        _userJoin = '';
+      } else {
+        _userField = 'g.userName,g.avatar,';
+        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
+      }
+
       // fields
       let _selectFields;
       if (count) {
@@ -6638,12 +8217,12 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
+                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
-      // mine
+      // _rightWhere
       let _rightWhere;
       if (resource) {
         _rightWhere = `
@@ -6655,11 +8234,32 @@ module.exports = ctx => {
         const _mine = `
           (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
         `;
-        const _others = `
-          exists(
-            select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-          )
-        `;
+        let _others;
+        if (forAtomUser) {
+          if (role) {
+            _others = `
+              exists(
+                select c.userIdWhom from aViewUserRightAtomClassUser c
+                  inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
+                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
+              )
+            `;
+          } else {
+            _others = `
+              exists(
+                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
+              )
+            `;
+          }
+        } else {
+          _others = `
+            exists(
+              select c.roleIdWhom from aViewUserRightAtomClassRole c 
+                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+            )
+          `;
+        }
+        //
         if (mine) {
           _rightWhere = _mine;
         } else if (star || label) {
@@ -6681,11 +8281,16 @@ module.exports = ctx => {
           `;
         }
       }
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
             inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
+            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
@@ -6710,7 +8315,7 @@ module.exports = ctx => {
              ${_fileWhere}
              ${_resourceWhere}
              ${_cmsWhere}
-             and ( ${_rightWhere} )
+             ${_rightWhere}
            )
 
           ${count ? '' : _orders}
@@ -6721,7 +8326,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms }) {
+    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms, forAtomUser }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass
@@ -6749,6 +8354,8 @@ module.exports = ctx => {
       let _itemField, _itemJoin;
 
       let _resourceField, _resourceJoin, _resourceWhere;
+
+      let _userField, _userJoin;
 
       // star
       if (userIdWho) {
@@ -6793,13 +8400,22 @@ module.exports = ctx => {
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
+      // aUser
+      if (forAtomUser) {
+        _userField = '';
+        _userJoin = '';
+      } else {
+        _userField = 'g.userName,g.avatar,';
+        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
+      }
+
       // sql
       const _sql = `select ${_itemField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
+                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField}
                 ${_labelField}
@@ -6809,7 +8425,7 @@ module.exports = ctx => {
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
+            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
@@ -6827,71 +8443,155 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
+  }
+  return Procedure;
+};
 
-    checkRoleRightRead({ iid, roleIdWho, atomId }) {
+
+/***/ }),
+
+/***/ 986:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    checkRoleRightRead({ iid, roleIdWho, atomId, forAtomUser }) {
       // for safe
       iid = parseInt(iid);
       roleIdWho = parseInt(roleIdWho);
       atomId = parseInt(atomId);
+      // _rightWhere
+      let _rightWhere;
+      if (forAtomUser) {
+        _rightWhere = `
+          exists(
+            select c.userIdWhom from aViewRoleRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWho=${roleIdWho}
+          )
+        `;
+      } else {
+        _rightWhere = `
+            exists(
+              select c.roleIdWhom from aViewRoleRightAtomClassRole c 
+                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.roleIdWho=${roleIdWho}
+            )
+          `;
+      }
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
       // sql
       const _sql = `select a.* from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
             where
             (
                a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-               and a.atomStage>0 and
-                (
-                  exists(
-                          select c.atomId from aViewRoleRightAtom c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.roleIdWho=${roleIdWho}
-                        )
-                )
+               and a.atomStage>0
+               ${_rightWhere}
             )
         `;
       return _sql;
     }
 
     // check for formal/history
-    checkRightRead({ iid, userIdWho, atomId }) {
+    checkRightRead({ iid, userIdWho, atomId, forAtomUser }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
+      // _rightWhere
+      let _rightWhere;
+      const _mine = `
+          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+          `;
+      let _others;
+      if (forAtomUser) {
+        _others = `
+          exists(
+            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
+          )
+        `;
+      } else {
+        _others = `
+            exists(
+              select c.roleIdWhom from aViewUserRightAtomClassRole c 
+                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+            )
+          `;
+      }
+      //
+      _rightWhere = `
+        (
+          ${_mine}
+          or
+          ${_others}
+        )
+      `;
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
       // sql
       const _sql = `select a.* from aAtom a
            left join aAtomClass b on a.atomClassId=b.id
              where
              (
                  a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-                 and a.atomStage>0 and
-                  (
-                    exists(
-                            select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=2 and c.userIdWho=${userIdWho}
-                          )
-                      or
-                   (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-                  )
+                 and a.atomStage>0 
+                 ${_rightWhere}
              )
         `;
       return _sql;
     }
 
-    checkRightAction({ iid, userIdWho, atomId, action }) {
+    checkRightAction({ iid, userIdWho, atomId, action, forAtomUser }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       action = parseInt(action);
-
+      // _rightWhere
+      let _rightWhere;
+      const _mine = `
+        (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
+      `;
+      let _others;
+      if (forAtomUser) {
+        _others = `
+          exists(
+            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=${action} and c.userIdWho=${userIdWho}
+          )
+        `;
+      } else {
+        _others = `
+          exists(
+            select c.roleIdWhom from aViewUserRightAtomClassRole c 
+              where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=${action} and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+          )
+        `;
+      }
+      //
+      _rightWhere = `
+        (
+          ${_mine}
+          or
+          ${_others}
+        )
+      `;
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
       // sql
       const _sql = `select a.* from aAtom a
             where
             (
               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-              and a.atomStage>0 and
-                (
-                  (exists(select c.atomId from aViewUserRightAtomRole c where c.iid=${iid} and a.id=c.atomId and c.action=${action} and c.userIdWho=${userIdWho})) or
-                  (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
-                )
+              and a.atomStage>0
+              ${_rightWhere} 
             )
         `;
       return _sql;
@@ -6936,7 +8636,18 @@ module.exports = ctx => {
         `;
       return _sql;
     }
+  }
+  return Procedure;
+};
 
+
+/***/ }),
+
+/***/ 5309:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
     checkRightResource({ iid, userIdWho, resourceAtomId }) {
       // for safe
       iid = parseInt(iid);
@@ -6967,159 +8678,9 @@ module.exports = ctx => {
         `;
       return _sql;
     }
-
-    selectUsers({ iid, where, orders, page, count, fields }) {
-      // -- tables
-      // -- a: aUser
-
-      // for safe
-      where = where ? ctx.model._where(where) : null;
-      orders = orders ? ctx.model._orders(orders) : null;
-      const limit = page ? ctx.model._limit(page.size, page.index) : null;
-
-      // vars
-
-      //
-      const _where = where ? `${where} AND` : ' WHERE';
-      const _orders = orders || '';
-      const _limit = limit || '';
-
-      // fields
-      let _selectFields;
-      if (count) {
-        _selectFields = 'count(*) as _count';
-      } else {
-        _selectFields = fields;
-      }
-
-      // sql
-      const _sql = `select ${_selectFields} from aUser a
-          ${_where}
-           (
-             a.deleted=0 and a.iid=${iid}
-           )
-
-          ${count ? '' : _orders}
-          ${count ? '' : _limit}
-        `;
-
-      // ok
-      return _sql;
-    }
   }
-
   return Procedure;
 };
-
-// /* backup */
-
-// function selectFunctions({ iid, locale, userIdWho, where, orders, page, star }) {
-//   // -- tables
-//   // -- a: aFunction
-//   // -- b: aFunctionLocale
-//   // -- c: aViewUserRightFunction
-//   // -- d: aFunctionStar
-//   // -- e: aAtomClass
-//   // -- f: aFunctionScene
-
-//   // for safe
-//   where = where ? ctx.model._where(where) : null;
-//   orders = orders ? ctx.model._orders(orders) : null;
-//   const limit = page ? ctx.model._limit(page.size, page.index) : null;
-
-//   iid = parseInt(iid);
-//   userIdWho = parseInt(userIdWho);
-//   star = parseInt(star);
-
-//   locale = locale ? ctx.model.format('?', locale) : null;
-
-//   // vars
-//   let _starField,
-//     _starJoin,
-//     _starWhere;
-//   let _localeField,
-//     _localeJoin,
-//     _localeWhere;
-
-//   //
-//   const _where = where ? `${where} AND` : ' WHERE';
-//   const _orders = orders || '';
-//   const _limit = limit || '';
-
-//   // star
-//   if (star) {
-//     _starField = '';
-//     _starJoin = ' inner join aFunctionStar d on a.id=d.functionId';
-//     _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
-//   } else {
-//     _starField =
-//         `,(select d.star from aFunctionStar d where d.iid=${iid} and d.functionId=a.id and d.userId=${userIdWho}) as star`;
-//     _starJoin = '';
-//     _starWhere = '';
-//   }
-
-//   // locale
-//   if (locale) {
-//     _localeField = ',b.titleLocale';
-//     _localeJoin = ' inner join aFunctionLocale b on a.id=b.functionId';
-//     _localeWhere = ` and b.iid=${iid} and b.locale=${locale}`;
-//   } else {
-//     _localeField = '';
-//     _localeJoin = '';
-//     _localeWhere = '';
-//   }
-
-//   // sql
-//   const _sql =
-//         `select a.*,
-//                 e.atomClassName,e.atomClassIdParent
-//                 ${_localeField}
-//                 ${_starField}
-//            from aFunction a
-
-//              left join aAtomClass e on a.atomClassId=e.id
-//              left join aFunctionScene f on a.sceneId=f.id
-//              ${_localeJoin}
-//              ${_starJoin}
-
-//              ${_where}
-
-//               (
-//                 a.deleted=0 and a.iid=${iid}
-//                 ${_localeWhere}
-//                 ${_starWhere}
-//                 and (
-//                        a.public=1
-//                        or
-//                        exists(
-//                                select c.functionId from aViewUserRightFunction c where c.iid=${iid} and a.id=c.functionId and c.userIdWho=${userIdWho}
-//                              )
-//                     )
-//               )
-
-//             ${_orders}
-//             ${_limit}
-//        `;
-
-//   // ok
-//   return _sql;
-// }
-
-// function checkRightFunction({ iid, userIdWho, functionId }) {
-//   // for safe
-//   iid = parseInt(iid);
-//   userIdWho = parseInt(userIdWho);
-//   functionId = parseInt(functionId);
-//   // sql
-//   const _sql =
-//         `select a.* from aFunction a
-//             where a.deleted=0 and a.iid=${iid} and a.id=${functionId}
-//               and ( a.public=1 or
-//                     exists(select c.functionId from aViewUserRightFunction c where c.iid=${iid} and c.functionId=${functionId} and c.userIdWho=${userIdWho})
-//                   )
-//         `;
-//   return _sql;
-// }
 
 
 /***/ }),
@@ -7337,7 +8898,7 @@ module.exports = ctx => {
 //   atomClass: id,module,atomClassName,atomClassIdParent
 //   item:
 // options
-//   type: atom/function
+//   type: atom/resource/detail
 //   action(atom):
 //   name(function):
 //   module:
@@ -7346,7 +8907,13 @@ module.exports = ctx => {
   class Middleware {
     async execute(options, next) {
       // ignore
-      if (!options.type) return await next();
+      if (!options.type) {
+        // isAuthOpen
+        const isAuthOpen = ctx.bean.authOpen.isAuthOpen();
+        if (isAuthOpen && !options.enableAuthOpen && !ctx.innerAccess) return ctx.throw(403);
+        // others
+        return await next();
+      }
 
       const types = options.type.split(',');
       if (types.length === 1) {
@@ -7388,18 +8955,12 @@ async function checkAtom(moduleInfo, options, ctx) {
   // constant
   const constant = ctx.constant.module(moduleInfo.relativeName);
 
+  const { atomKey, atomClass } = await _checkAtomClassExpect({ options, ctx });
+
   // create
   if (options.action === 'create' || options.action === constant.atom.action.create) {
     // atomClassId
-    let atomClassId = ctx.request.body.atomClass.id;
-    if (!atomClassId) {
-      const res = await ctx.bean.atomClass.get({
-        module: ctx.request.body.atomClass.module,
-        atomClassName: ctx.request.body.atomClass.atomClassName,
-        atomClassIdParent: ctx.request.body.atomClass.atomClassIdParent || 0,
-      });
-      atomClassId = res.id;
-    }
+    const atomClassId = atomClass.id;
     // roleIdOwner
     const roleIdOwner = ctx.request.body.roleIdOwner;
     if (roleIdOwner) {
@@ -7412,7 +8973,6 @@ async function checkAtom(moduleInfo, options, ctx) {
         user: ctx.state.user.op,
       });
       if (!res) ctx.throw(403);
-      ctx.meta._atomClass = res;
     } else {
       // retrieve default one, must exists
       const roleId = await ctx.bean.atom.preferredRoleId({
@@ -7423,7 +8983,6 @@ async function checkAtom(moduleInfo, options, ctx) {
       });
       if (roleId === 0) ctx.throw(403);
       ctx.request.body.roleIdOwner = roleId;
-      ctx.meta._atomClass = { id: atomClassId };
     }
     return;
   }
@@ -7431,40 +8990,36 @@ async function checkAtom(moduleInfo, options, ctx) {
   // read
   if (options.action === 'read' || options.action === constant.atom.action.read) {
     const res = await ctx.bean.atom.checkRightRead({
-      atom: { id: ctx.request.body.key.atomId },
+      atom: { id: atomKey.atomId },
       user: ctx.state.user.op,
       checkFlow: options.checkFlow,
     });
     if (!res) ctx.throw(403);
-    ctx.request.body.key.itemId = res.itemId;
-    ctx.meta._atom = res;
+    atomKey.itemId = res.itemId;
     return;
   }
 
   // other action (including write/delete)
-  if (!ctx.request.body.key && !ctx.request.body.atomClass) ctx.throw.module(moduleInfo.relativeName, 1011);
   const actionOther = options.action;
-  const bulk = !ctx.request.body.key;
+  const bulk = !atomKey;
   if (bulk) {
     const res = await ctx.bean.atom.checkRightActionBulk({
-      atomClass: ctx.request.body.atomClass,
+      atomClass,
       action: actionOther,
       stage: options.stage,
       user: ctx.state.user.op,
     });
     if (!res) ctx.throw(403);
-    ctx.meta._atomAction = res;
   } else {
     const res = await ctx.bean.atom.checkRightAction({
-      atom: { id: ctx.request.body.key.atomId },
+      atom: { id: atomKey.atomId },
       action: actionOther,
       stage: options.stage,
       user: ctx.state.user.op,
       checkFlow: options.checkFlow,
     });
     if (!res) ctx.throw(403);
-    ctx.request.body.key.itemId = res.itemId;
-    ctx.meta._atom = res;
+    atomKey.itemId = res.itemId;
   }
 }
 
@@ -7509,6 +9064,50 @@ async function _checkResource({ resourceAtomId, atomStaticKey, ctx }) {
 
 async function checkDetail(moduleInfo, options, ctx) {
   await ctx.bean.detail._checkRightForMiddleware({ options });
+}
+
+function _parseAtomClass(atomClass) {
+  if (!atomClass) return atomClass;
+  if (typeof atomClass === 'string') {
+    const [module, atomClassName] = atomClass.split(':');
+    return { module, atomClassName };
+  }
+  return atomClass;
+}
+
+function _checkIfSameAtomClass(atomClassA, atomClassB) {
+  return atomClassA.module === atomClassB.module && atomClassA.atomClassName === atomClassB.atomClassName;
+}
+
+async function _checkAtomClassExpect({ options, ctx }) {
+  // atomClassExpect
+  const atomClassExpect = _parseAtomClass(options.atomClass);
+  // atomKey
+  const atomKey = ctx.request.body.key;
+  // key first, then atomClass
+  let atomClass;
+  if (atomKey) {
+    atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atomKey.atomId });
+  } else {
+    const _atomClass = ctx.request.body.atomClass;
+    if (_atomClass) {
+      atomClass = await ctx.bean.atomClass.get(_atomClass);
+    }
+  }
+  if (!atomClass && !atomClassExpect) ctx.throw(403);
+  if (atomClass && atomClassExpect && !_checkIfSameAtomClass(atomClass, atomClassExpect)) {
+    ctx.throw(403);
+  }
+  // neednot check !!atomClassExpect
+  if (!atomClass) {
+    atomClass = await ctx.bean.atomClass.get(atomClassExpect);
+  }
+  ctx.request.body.atomClass = atomClass; // force consistent for safe
+  // ok
+  return {
+    atomKey,
+    atomClass,
+  };
 }
 
 
@@ -7611,239 +9210,14 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 2321:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Startup extends app.meta.BeanBase {
-    async execute(context) {
-      const options = context.options;
-      // reset auth providers
-      if (options.force) {
-        await this.ctx.bean.base.authProvidersReset();
-      }
-      // register all authProviders
-      await this.ctx.bean.authProvider._installAuthProviders();
-    }
-  }
-
-  return Startup;
-};
-
-
-/***/ }),
-
 /***/ 8477:
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
     async execute() {
-      await this._loadAtomStatics();
-    }
-
-    async _loadAtomStatics() {
-      for (const module of this.ctx.app.meta.modulesArray) {
-        const moduleName = module.info.relativeName;
-        const statics = module.main.meta && module.main.meta.base && module.main.meta.base.statics;
-        if (!statics) continue;
-        for (const atomClassKey in statics) {
-          const [atomClassModule, atomClassName] = atomClassKey.split('.');
-          const atomClass = { module: atomClassModule, atomClassName };
-          const items = statics[atomClassKey].items;
-          if (!items) continue;
-          for (const item of items) {
-            await this._loadAtomStatic({ moduleName, atomClass, item });
-          }
-        }
-      }
-    }
-
-    async _loadAtomStatic({ moduleName, atomClass, item }) {
-      // key not empty
-      if (!item.atomStaticKey) throw new Error('atomStaticKey cannot be empty');
-      const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
-      const atomRevision = item.atomRevision || 0;
-      // get by key
-      const atom = await this.ctx.bean.atom.readByStaticKey({
-        atomClass,
-        atomStaticKey,
-        atomStage: 'formal',
-      });
-      if (atom) {
-        if (atomRevision === -1) {
-          // delete
-          await this.ctx.bean.atom.delete({ key: { atomId: atom.atomId } });
-        } else {
-          // check revision: not use !==
-          if (atomRevision > atom.atomRevision) {
-            item = await this._adjustItem({ moduleName, atomClass, item, register: false });
-            await this._updateRevision({ atomClass, atomIdFormal: atom.atomId, atomIdDraft: atom.atomIdDraft, item });
-            await this._addResourceRoles({ atomId: atom.atomId, roles: item.resourceRoles });
-          }
-        }
-      } else {
-        if (atomRevision !== -1) {
-          // register
-          item = await this._adjustItem({ moduleName, atomClass, item, register: true });
-          const atomId = await this._register({ atomClass, item });
-          await this._addResourceRoles({ atomId, roles: item.resourceRoles });
-        }
-      }
-    }
-
-    async _addResourceRoles({ atomId, roles }) {
-      if (!roles || !roles.length) return;
-      for (const role of roles) {
-        if (!role) continue;
-        await this.ctx.bean.resource.addResourceRole({
-          atomId,
-          roleId: role.id,
-        });
-      }
-    }
-
-    // ctx.text is not good for resource
-    //   so, support only for atomLanguage
-    _getAtomFieldValueByLocale(item, field) {
-      const value = item[field];
-      if (value && item.atomLanguage) {
-        return this.ctx.text.locale(item.atomLanguage, value);
-      }
-      return value;
-    }
-
-    async _adjustItem({ moduleName, atomClass, item, register }) {
-      // item
-      item = {
-        ...item,
-        atomStatic: 1,
-        atomStaticKey: `${moduleName}:${item.atomStaticKey}`,
-        atomRevision: item.atomRevision || 0,
-        atomName: this._getAtomFieldValueByLocale(item, 'atomName'),
-      };
-      if (item.description !== undefined) {
-        item.description = this._getAtomFieldValueByLocale(item, 'description');
-      }
-      // atomLanguage,atomCategoryId,atomTags
-      if (typeof item.atomCategoryId === 'string') {
-        const category = await this.ctx.bean.category.parseCategoryName({
-          atomClass,
-          language: item.atomLanguage,
-          categoryName: item.atomCategoryId,
-          force: true,
-        });
-        item.atomCategoryId = category.id;
-      }
-      if (typeof item.atomTags === 'string') {
-        const tagIds = await this.ctx.bean.tag.parseTags({
-          atomClass,
-          language: item.atomLanguage,
-          tagName: item.atomTags,
-          force: true,
-        });
-        item.atomTags = JSON.stringify(tagIds);
-      }
-      // only valid for register
-      if (register) {
-        // roleIdOwner
-        const roleName = item.roleIdOwner || 'superuser';
-        const role = await this.ctx.bean.role.parseRoleName({ roleName });
-        item.roleIdOwner = role.id;
-      }
-      // resourceRoles
-      if (item.resourceRoles) {
-        item.resourceRoles = await this.ctx.bean.role.parseRoleNames({ roleNames: item.resourceRoles, force: true });
-      }
-      // ok
-      return item;
-    }
-
-    async _updateRevision({ atomClass, atomIdFormal, atomIdDraft, item }) {
-      return await this.ctx.meta.util.lock({
-        resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
-        fn: async () => {
-          return await this.ctx.meta.util.executeBeanIsolate({
-            beanModule: moduleInfo.relativeName,
-            beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
-            context: { atomClass, atomIdFormal, atomIdDraft, item },
-            fn: '_updateRevisionLock',
-          });
-        },
-      });
-    }
-
-    async _updateRevisionLock({ atomIdDraft, item }) {
-      // get draft
-      const atom = await this.ctx.bean.atom.modelAtom.get({ id: atomIdDraft });
-      if (item.atomRevision === atom.atomRevision) return;
-      const atomKey = {
-        atomId: atomIdDraft,
-        itemId: atom.itemId,
-      };
-      // update
-      await this.ctx.bean.atom.modelAtom.update({
-        id: atomIdDraft,
-        atomName: item.atomName,
-        atomRevision: item.atomRevision,
-      });
-      // write
-      await this.ctx.bean.atom.write({
-        key: atomKey,
-        item,
-        user: { id: 0 },
-      });
-      // submit
-      await this.ctx.bean.atom.submit({
-        key: atomKey,
-        options: { ignoreFlow: true },
-        user: { id: 0 },
-      });
-    }
-
-    async _register({ atomClass, item }) {
-      return await this.ctx.meta.util.lock({
-        resource: `${moduleInfo.relativeName}.atomStatic.register.${item.atomStaticKey}`,
-        fn: async () => {
-          return await this.ctx.meta.util.executeBeanIsolate({
-            beanModule: moduleInfo.relativeName,
-            beanFullName: `${moduleInfo.relativeName}.startup.loadAtomStatics`,
-            context: { atomClass, item },
-            fn: '_registerLock',
-          });
-        },
-      });
-    }
-
-    async _registerLock({ atomClass, item }) {
-      // get again
-      const atom = await this.ctx.bean.atom.readByStaticKey({
-        atomClass,
-        atomStaticKey: item.atomStaticKey,
-        atomStage: 'formal',
-      });
-      if (atom) return atom.atomId;
-      // add atom
-      const atomKey = await this.ctx.bean.atom.create({
-        atomClass,
-        roleIdOwner: item.roleIdOwner,
-        item,
-        user: { id: 0 },
-      });
-      // write
-      await this.ctx.bean.atom.write({
-        key: atomKey,
-        item,
-        user: { id: 0 },
-      });
-      // submit
-      const res = await this.ctx.bean.atom.submit({
-        key: atomKey,
-        options: { ignoreFlow: true },
-        user: { id: 0 },
-      });
-      return res.formal.key.atomId;
+      await this.ctx.bean.atomStatic.loadAllAtomStatics();
     }
   }
 
@@ -7860,37 +9234,6 @@ module.exports = app => {
   class Startup extends app.meta.BeanBase {
     async execute() {
       await app.meta._loadSchedules({ ctx: this.ctx });
-    }
-  }
-
-  return Startup;
-};
-
-
-/***/ }),
-
-/***/ 2644:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Startup extends app.meta.BeanBase {
-    async execute() {
-      // verify
-      app.passport.verify(async (ctx, profileUser) => {
-        // state: login/associate
-        const state = ctx.request.query.state || 'login';
-        // user verify
-        return await ctx.bean.user.verify({ state, profileUser });
-      });
-      // serializeUser
-      app.passport.serializeUser(async (ctx, user) => {
-        ctx.state.user = user;
-        return await ctx.bean.auth.serializeUser({ user });
-      });
-      // deserializeUser
-      app.passport.deserializeUser(async (ctx, user) => {
-        return await ctx.bean.auth.deserializeUser({ user });
-      });
     }
   }
 
@@ -8079,16 +9422,40 @@ const VersionUpdate9Fn = __webpack_require__(8963);
 const VersionUpdate10Fn = __webpack_require__(1626);
 const VersionUpdate11Fn = __webpack_require__(1910);
 const VersionUpdate12Fn = __webpack_require__(2504);
+const VersionUpdate13Fn = __webpack_require__(1379);
+const VersionUpdate14Fn = __webpack_require__(4519);
+const VersionUpdate16Fn = __webpack_require__(4938);
+const VersionUpdate17Fn = __webpack_require__(1223);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
 const VersionInit7Fn = __webpack_require__(5749);
 const VersionInit8Fn = __webpack_require__(6846);
 const VersionInit9Fn = __webpack_require__(3460);
+const VersionInit14Fn = __webpack_require__(4662);
+const VersionInit15Fn = __webpack_require__(3166);
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 17) {
+        const versionUpdate17 = new (VersionUpdate17Fn(this.ctx))();
+        await versionUpdate17.run();
+      }
+      if (options.version === 16) {
+        const versionUpdate16 = new (VersionUpdate16Fn(this.ctx))();
+        await versionUpdate16.run();
+      }
+      if (options.version === 14) {
+        const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
+        await versionUpdate14.run();
+      }
+
+      if (options.version === 13) {
+        const versionUpdate13 = new (VersionUpdate13Fn(this.ctx))();
+        await versionUpdate13.run();
+      }
+
       if (options.version === 12) {
         const versionUpdate12 = new (VersionUpdate12Fn(this.ctx))();
         await versionUpdate12.run();
@@ -8165,6 +9532,14 @@ module.exports = app => {
         const versionInit9 = new (VersionInit9Fn(this.ctx))();
         await versionInit9.run(options);
       }
+      if (options.version === 14) {
+        const versionInit14 = new (VersionInit14Fn(this.ctx))();
+        await versionInit14.run(options);
+      }
+      if (options.version === 15) {
+        const versionInit15 = new (VersionInit15Fn(this.ctx))();
+        await versionInit15.run(options);
+      }
     }
 
     async update8Atoms(options) {
@@ -8176,9 +9551,184 @@ module.exports = app => {
       const versionUpdate12 = new (VersionUpdate12Fn(this.ctx))();
       await versionUpdate12._updateAtomClassesInstance(options);
     }
+
+    async update14_adjustRoles(options) {
+      const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
+      await versionUpdate14._adjustRolesInstance(options);
+    }
+
+    async update14_adjustUsers(options) {
+      const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
+      await versionUpdate14._adjustUsersInstance(options);
+    }
   }
 
   return Version;
+};
+
+
+/***/ }),
+
+/***/ 4662:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionInit {
+    async run() {
+      await this._changeTemplateRole();
+      await this._addRoleRightsResource();
+      await this._addRoleRightsRole();
+      await this._addRoleRightsUser();
+    }
+
+    async _changeTemplateRole() {
+      const role = await ctx.bean.role.parseRoleName({ roleName: 'template' });
+      await ctx.bean.role.move({ roleId: role.id, roleIdParent: 0 });
+      await ctx.bean.role.setDirty(true);
+    }
+
+    async _addRoleRightsResource() {
+      // add role rights
+      const roleRights = [
+        { roleName: 'system', action: 'create' },
+        { roleName: 'system', action: 'read', scopeNames: 0 },
+        { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'write', scopeNames: 0 },
+        { roleName: 'system', action: 'write', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'delete', scopeNames: 0 },
+        { roleName: 'system', action: 'delete', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'clone', scopeNames: 0 },
+        { roleName: 'system', action: 'clone', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'enable', scopeNames: 0 },
+        { roleName: 'system', action: 'enable', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'disable', scopeNames: 0 },
+        { roleName: 'system', action: 'disable', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'authorize', scopeNames: 0 },
+        { roleName: 'system', action: 'authorize', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'deleteBulk' },
+        { roleName: 'system', action: 'exportBulk' },
+      ];
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'resource', roleRights });
+    }
+
+    async _addRoleRightsRole() {
+      // add role rights
+      const roleRights = [
+        // { roleName: 'system', action: 'create' },
+        // { roleName: 'system', action: 'read', scopeNames: 0 },
+        // { roleName: 'system', action: 'write', scopeNames: 0 },
+        // { roleName: 'system', action: 'delete', scopeNames: 0 },
+        // { roleName: 'system', action: 'clone', scopeNames: 0 },
+        // { roleName: 'system', action: 'enable', scopeNames: 0 },
+        // { roleName: 'system', action: 'enable', scopeNames: 'root' },
+        // { roleName: 'system', action: 'disable', scopeNames: 0 },
+        // { roleName: 'system', action: 'disable', scopeNames: 'root' },
+        // { roleName: 'system', action: 'authorize', scopeNames: 0 },
+        // { roleName: 'system', action: 'authorize', scopeNames: 'root' },
+        // template
+        { roleName: 'system', action: 'read', scopeNames: 'template' },
+        { roleName: 'system', action: 'write', scopeNames: 'template' },
+        { roleName: 'system', action: 'delete', scopeNames: 'template' },
+        { roleName: 'system', action: 'clone', scopeNames: 'template' },
+        { roleName: 'system', action: 'move', scopeNames: 'template' },
+        { roleName: 'system', action: 'addChild', scopeNames: 'template' },
+        // { roleName: 'system', action: 'roleUsers', scopeNames: 'template' },
+        // { roleName: 'system', action: 'includes', scopeNames: 'template' },
+        { roleName: 'system', action: 'resourceAuthorizations', scopeNames: 'template' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'template' },
+        // root
+        { roleName: 'system', action: 'read', scopeNames: 'root' },
+        { roleName: 'system', action: 'write', scopeNames: 'root' },
+        { roleName: 'system', action: 'delete', scopeNames: 'root' },
+        { roleName: 'system', action: 'clone', scopeNames: 'root' },
+        { roleName: 'system', action: 'move', scopeNames: 'root' },
+        { roleName: 'system', action: 'addChild', scopeNames: 'root' },
+        { roleName: 'system', action: 'roleUsers', scopeNames: 'root' },
+        { roleName: 'system', action: 'includes', scopeNames: 'root' },
+        { roleName: 'system', action: 'resourceAuthorizations', scopeNames: 'root' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'root' },
+        { roleName: 'system', action: 'deleteBulk' },
+        { roleName: 'system', action: 'exportBulk' },
+        // { roleName: 'system', action: 'buildBulk' },
+      ];
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'role', roleRights });
+    }
+
+    async _addRoleRightsUser() {
+      // add role rights
+      const roleRights = [
+        { roleName: 'system', action: 'read', scopeNames: 'root' },
+        { roleName: 'system', action: 'write', scopeNames: 'root' },
+        // { roleName: 'system', action: 'delete', scopeNames: 'root' },
+        // { roleName: 'system', action: 'clone', scopeNames: 'root' },
+        { roleName: 'system', action: 'enable', scopeNames: 'root' },
+        { roleName: 'system', action: 'disable', scopeNames: 'root' },
+        { roleName: 'system', action: 'userRoles', scopeNames: 'root' },
+        { roleName: 'system', action: 'resourceAuthorizations', scopeNames: 'root' },
+        { roleName: 'system', action: 'atomAuthorizations', scopeNames: 'root' },
+        // { roleName: 'system', action: 'deleteBulk' },
+        { roleName: 'system', action: 'exportBulk' },
+      ];
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'user', roleRights });
+    }
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+
+/***/ 3166:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const extend = require3('extend2');
+const initData = __webpack_require__(5384);
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionInit {
+    async run() {
+      // roles
+      await this._initRoles();
+      // change roleIdOwner
+      await this._changeRoleIdOwner();
+    }
+
+    // roles
+    async _initRoles() {
+      const roleIds = {};
+      // system roles
+      for (const roleName in initData.roles) {
+        let role = initData.roles[roleName];
+        const exists = await ctx.bean.role.getSystemRole({ roleName });
+        if (!exists) {
+          // parent
+          const roleParent = await ctx.bean.role.getSystemRole({ roleName: role.roleIdParent });
+          role = extend(true, { module: moduleInfo.relativeName }, role);
+          role.roleIdParent = roleParent.id;
+          roleIds[roleName] = await ctx.bean.role.add(role);
+        }
+      }
+      return roleIds;
+    }
+
+    async _changeRoleIdOwner() {
+      // change roleIdOwner from template.system to authenticated.builtIn for atomClass except role
+      const roleSystem = await ctx.bean.role.getSystemRole({ roleName: 'system' });
+      const roleBuiltIn = await ctx.bean.role.getSystemRole({ roleName: 'builtIn' });
+      const atomClassRole = await ctx.bean.atomClass.get({ module: moduleInfo.relativeName, atomClassName: 'role' });
+      await ctx.model.query(
+        `
+          update aAtom set roleIdOwner=? where iid=? and atomClassId<>? and roleIdOwner=?
+      `,
+        [roleBuiltIn.id, ctx.instance.id, atomClassRole.id, roleSystem.id]
+      );
+    }
+  }
+
+  return VersionInit;
 };
 
 
@@ -8192,6 +9742,7 @@ const extend = require3('extend2');
 const initData = __webpack_require__(7714);
 
 module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionInit {
     async run(options) {
       // roles
@@ -8210,7 +9761,7 @@ module.exports = function (ctx) {
       roleIds.system = 0;
       // system roles
       for (const roleName of ctx.constant.systemRoles) {
-        const role = extend(true, {}, initData.roles[roleName]);
+        const role = extend(true, { module: moduleInfo.relativeName }, initData.roles[roleName]);
         role.roleIdParent = roleIds[role.roleIdParent];
         roleIds[roleName] = await ctx.bean.role.add(role);
       }
@@ -8357,31 +9908,53 @@ module.exports = function (ctx) {
 module.exports = function (ctx) {
   class VersionInit {
     async run() {
-      // add role rights
-      const roleRights = [
-        { roleName: 'system', action: 'create' },
-        { roleName: 'system', action: 'read', scopeNames: 0 },
-        { roleName: 'system', action: 'read', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'write', scopeNames: 0 },
-        { roleName: 'system', action: 'write', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'delete', scopeNames: 0 },
-        { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'clone', scopeNames: 0 },
-        { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'enable', scopeNames: 0 },
-        { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'disable', scopeNames: 0 },
-        { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'authorize', scopeNames: 0 },
-        { roleName: 'system', action: 'authorize', scopeNames: 'superuser' },
-        { roleName: 'system', action: 'deleteBulk' },
-        { roleName: 'system', action: 'exportBulk' },
-      ];
-      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'resource', roleRights });
+      // don nothing, see also: init13.js
+      // // add role rights
+      // const roleRights = [
+      //   { roleName: 'system', action: 'create' },
+      //   { roleName: 'system', action: 'read', scopeNames: 0 },
+      //   { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'write', scopeNames: 0 },
+      //   { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'delete', scopeNames: 0 },
+      //   { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'clone', scopeNames: 0 },
+      //   { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'enable', scopeNames: 0 },
+      //   { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'disable', scopeNames: 0 },
+      //   { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'authorize', scopeNames: 0 },
+      //   { roleName: 'system', action: 'authorize', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'deleteBulk' },
+      //   { roleName: 'system', action: 'exportBulk' },
+      // ];
+      // await ctx.bean.role.addRoleRightBatch({ atomClassName: 'resource', roleRights });
     }
   }
 
   return VersionInit;
+};
+
+
+/***/ }),
+
+/***/ 5384:
+/***/ ((module) => {
+
+// roles
+const roles = {
+  builtIn: {
+    roleName: 'builtIn',
+    leader: 0,
+    system: 1,
+    sorting: 4, // force before organization
+    roleIdParent: 'authenticated',
+  },
+};
+
+module.exports = {
+  roles,
 };
 
 
@@ -8448,11 +10021,18 @@ const roles = {
     sorting: 4,
     roleIdParent: 'authenticated',
   },
+  builtIn: {
+    roleName: 'builtIn',
+    leader: 0,
+    system: 1,
+    sorting: 5,
+    roleIdParent: 'authenticated',
+  },
   organization: {
     roleName: 'organization',
     leader: 0,
     system: 1,
-    sorting: 5,
+    sorting: 6,
     roleIdParent: 'authenticated',
   },
   internal: {
@@ -8650,6 +10230,290 @@ module.exports = function (ctx) {
   }
 
   return VersionUpdate12;
+};
+
+
+/***/ }),
+
+/***/ 1379:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionUpdate13 {
+    async run() {
+      let sql;
+      // aRole
+      sql = `
+      ALTER TABLE aRole
+        Add COLUMN description varchar(255) DEFAULT NULL,
+        Add COLUMN atomId int(11) DEFAULT '0',
+        Add COLUMN roleTypeCode INT(11) DEFAULT '0',
+        Add COLUMN roleConfig JSON DEFAULT NULL
+                `;
+      await ctx.model.query(sql);
+      // aUser
+      sql = `
+      ALTER TABLE aUser
+        Add COLUMN atomId int(11) DEFAULT '0'
+                `;
+      await ctx.model.query(sql);
+      // aViewUserRightRefAtomClass
+      sql = `
+      create view aViewUserRightRefAtomClass as
+        select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
+               b.id as roleRightRefId,b.roleRightId,b.atomClassId,b.action,b.roleIdScope as roleIdWhom 
+          from aViewUserRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+        `;
+      await ctx.model.query(sql);
+      // aViewUserRightAtomClassUser
+      await ctx.model.query('drop view aViewUserRightAtomClassUser');
+      sql = `
+      create view aViewUserRightAtomClassUser as
+        select a.iid,a.userId as userIdWho,b.atomClassId,b.action,
+               c.userId as userIdWhom,c.roleId as roleIdWhom,
+               a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+          from aViewUserRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+        `;
+      await ctx.model.query(sql);
+      // aViewRoleRightAtomClassUser
+      await ctx.model.query('drop view aViewRoleRightAtomClassUser');
+      sql = `
+      create view aViewRoleRightAtomClassUser as
+        select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,
+               c.userId as userIdWhom,c.roleId as roleIdWhom,
+               a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+          from aRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+        `;
+      await ctx.model.query(sql);
+      // aViewRoleRightAtomClassRole
+      sql = `
+      create view aViewRoleRightAtomClassRole as
+        select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,
+               c.roleId as roleIdWhom,
+               a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+          from aRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+        `;
+      await ctx.model.query(sql);
+      // aViewRoleRightResource
+      sql = `
+        create view aViewRoleRightResource as
+          select a.iid,a.roleId as roleIdWho,a.roleIdBase,b.id as resourceRoleId,b.atomId from aRoleExpand a
+            inner join aResourceRole b on a.roleIdBase=b.roleId
+          `;
+      await ctx.model.query(sql);
+      // view: aRoleView
+      sql = `
+          CREATE VIEW aRoleView as
+            select a.*,b.roleName as roleNameParent from aRole a
+              left join aRole b on a.roleIdParent=b.id
+        `;
+      await ctx.model.query(sql);
+      // view: aRoleIncludesView
+      sql = `
+          CREATE VIEW aRoleIncludesView as
+            select a.*,b.id as roleIncId,b.roleId as roleIdWho,b.roleIdInc from aRole a
+              inner join aRoleInc b on a.id=b.roleIdInc
+        `;
+      await ctx.model.query(sql);
+      // view: aRoleUsersView
+      sql = `
+          CREATE VIEW aRoleUserRolesView as
+            select a.*,b.id as userRoleId,b.userId as userIdWho from aRole a
+              inner join aUserRole b on a.id=b.roleId
+        `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate13;
+};
+
+
+/***/ }),
+
+/***/ 4519:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassRole = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'role',
+  };
+  const __atomClassUser = {
+    module: moduleInfo.relativeName,
+    atomClassName: 'user',
+  };
+  class VersionUpdate14 {
+    get modelRole() {
+      return ctx.model.module(moduleInfo.relativeName).role;
+    }
+    get modelUser() {
+      return ctx.model.module(moduleInfo.relativeName).user;
+    }
+
+    async run(options) {
+      // adjustRoles
+      await this._adjustRoles(options);
+      // adjustUsers
+      await this._adjustUsers(options);
+    }
+
+    async _adjustRoles(options) {
+      // all instances
+      const instances = await ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await ctx.meta.util.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: 'update14_adjustRoles',
+        });
+      }
+    }
+
+    async _adjustUsers(options) {
+      // all instances
+      const instances = await ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await ctx.meta.util.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: options,
+          fn: 'update14_adjustUsers',
+        });
+      }
+    }
+
+    async _adjustRolesInstance() {
+      // select all roles where atomId=0
+      const roles = await this.modelRole.select({ where: { atomId: 0 } });
+      for (const role of roles) {
+        const roleId = role.id;
+        const roleName = role.roleName;
+        // add atom
+        const atomKey = await ctx.bean.atom.create({
+          atomClass: __atomClassRole,
+          item: {
+            itemId: roleId,
+            atomStaticKey: `${moduleInfo.relativeName}:role_${roleName}`,
+            catalog: role.catalog,
+            system: role.system,
+            roleIdParent: role.roleIdParent,
+          },
+          user: { id: 0 },
+        });
+        await ctx.bean.atom.write({
+          key: atomKey,
+          item: {
+            atomName: roleName,
+          },
+          user: { id: 0 },
+        });
+        // submit
+        await ctx.bean.atom.submit({
+          key: atomKey,
+          options: { ignoreFlow: true },
+          user: { id: 0 },
+        });
+      }
+    }
+
+    async _adjustUsersInstance() {
+      // select all roles where atomId=0
+      const items = await this.modelUser.select({ where: { atomId: 0 } });
+      for (const item of items) {
+        const userId = item.id;
+        let userName = item.userName;
+        if (!userName && item.anonymous) {
+          userName = 'anonymous';
+        }
+        // add atom
+        const atomKey = await ctx.bean.atom.create({
+          atomClass: __atomClassUser,
+          item: {
+            itemId: userId,
+            disabled: item.disabled,
+            anonymous: item.anonymous,
+          },
+          user: { id: 0 },
+        });
+        await ctx.bean.atom.write({
+          key: atomKey,
+          item: {
+            atomName: userName,
+          },
+          user: { id: 0 },
+        });
+        // submit
+        await ctx.bean.atom.submit({
+          key: atomKey,
+          options: { ignoreFlow: true },
+          user: { id: 0 },
+        });
+      }
+    }
+  }
+
+  return VersionUpdate14;
+};
+
+
+/***/ }),
+
+/***/ 4938:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionUpdate16 {
+    async run() {
+      // aResource: add resourceIcon/appKey
+      let sql = `
+        ALTER TABLE aResource
+          Add COLUMN resourceIcon varchar(255) DEFAULT NULL,
+          Add COLUMN appKey varchar(50) DEFAULT NULL
+      `;
+      await ctx.model.query(sql);
+      // create view: aResourceView
+      sql = `
+      CREATE VIEW aResourceView as
+        select a.*,b.id as appAtomId,b.atomName as appName from aResource a
+          left join aAtom b on a.iid=b.iid and b.deleted=0 and a.appKey=b.atomStaticKey and b.atomStage=1
+    `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate16;
+};
+
+
+/***/ }),
+
+/***/ 1223:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionUpdate17 {
+    async run() {
+      // aStatus
+      const sql = `
+        delete from aStatus where name like 'user-layoutConfig:%'
+      `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate17;
 };
 
 
@@ -9566,12 +11430,11 @@ module.exports = function (ctx) {
 
 const versionManager = __webpack_require__(6899);
 const atomResource = __webpack_require__(2709);
+const atomRole = __webpack_require__(2797);
+const atomUser = __webpack_require__(639);
 const localProcedure = __webpack_require__(2716);
-const broadcastAuthProviderChanged = __webpack_require__(604);
 const queueSchedule = __webpack_require__(9632);
 const queueRoleBuild = __webpack_require__(903);
-const startupRegisterPassport = __webpack_require__(2644);
-const startupInstallAuthProviders = __webpack_require__(2321);
 const startupLoadSchedules = __webpack_require__(5226);
 const startupLoadAtomStatics = __webpack_require__(8477);
 const startupCheckResourceLocales = __webpack_require__(6292);
@@ -9589,8 +11452,8 @@ const beanAtomBase = __webpack_require__(6542);
 const beanAtom = __webpack_require__(5528);
 const beanAtomAction = __webpack_require__(3127);
 const beanAtomClass = __webpack_require__(9546);
+const beanAtomStatic = __webpack_require__(8401);
 const beanAuth = __webpack_require__(452);
-const beanAuthProvider = __webpack_require__(5525);
 const beanBase = __webpack_require__(8677);
 const beanResource = __webpack_require__(7969);
 const beanRole = __webpack_require__(5625);
@@ -9616,15 +11479,18 @@ module.exports = app => {
       mode: 'app',
       bean: atomResource,
     },
+    'atom.role': {
+      mode: 'app',
+      bean: atomRole,
+    },
+    'atom.user': {
+      mode: 'app',
+      bean: atomUser,
+    },
     // local
     'local.procedure': {
       mode: 'ctx',
       bean: localProcedure,
-    },
-    // broadcast
-    'broadcast.authProviderChanged': {
-      mode: 'app',
-      bean: broadcastAuthProviderChanged,
     },
     // queue
     'queue.schedule': {
@@ -9636,14 +11502,6 @@ module.exports = app => {
       bean: queueRoleBuild,
     },
     // startup
-    'startup.registerPassport': {
-      mode: 'app',
-      bean: startupRegisterPassport,
-    },
-    'startup.installAuthProviders': {
-      mode: 'app',
-      bean: startupInstallAuthProviders,
-    },
     'startup.loadSchedules': {
       mode: 'app',
       bean: startupLoadSchedules,
@@ -9719,14 +11577,14 @@ module.exports = app => {
       bean: beanAtomClass,
       global: true,
     },
+    atomStatic: {
+      mode: 'ctx',
+      bean: beanAtomStatic,
+      global: true,
+    },
     auth: {
       mode: 'ctx',
       bean: beanAuth,
-      global: true,
-    },
-    authProvider: {
-      mode: 'ctx',
-      bean: beanAuthProvider,
       global: true,
     },
     base: {
@@ -9907,17 +11765,11 @@ module.exports = appInfo => {
 
   // startups
   config.startups = {
-    registerPassport: {
-      bean: 'registerPassport',
-    },
     loadSchedules: {
       bean: 'loadSchedules',
       // instance: true,
       debounce: true,
-    },
-    installAuthProviders: {
-      bean: 'installAuthProviders',
-      instance: true,
+      after: true,
     },
     loadAtomStatics: {
       bean: 'loadAtomStatics',
@@ -9938,13 +11790,6 @@ module.exports = appInfo => {
     },
     roleBuild: {
       bean: 'roleBuild',
-    },
-  };
-
-  // broadcasts
-  config.broadcasts = {
-    authProviderChanged: {
-      bean: 'authProviderChanged',
     },
   };
 
@@ -10053,6 +11898,7 @@ module.exports = app => {
       'registered',
       'activated',
       'superuser',
+      'builtIn',
       'organization',
       'internal',
       'external',
@@ -10264,6 +12110,7 @@ module.exports = {
   1012: 'Cannot delete if has atoms',
   1013: 'Cannot delete if has children',
   1014: 'DisabledOnDemoMode',
+  1015: 'Invalid Configuration',
 };
 
 
@@ -10292,10 +12139,16 @@ module.exports = {
   ViewLayout: 'View',
   WorkFlow: 'Work Flow',
   StarsLabels: 'Stars & Labels',
+  OpenAuthScope: 'Open Auth Scope',
+  BasicProfile: 'Basic Profile',
+  BasicAdmin: 'Basic Admin',
+  WorkplaceTitle: 'Workplace',
   'Only Valid for Formal Atom': 'Only Valid for Formal Data',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Cannot delete if has atoms': 'Cannot delete if has data',
+  'Atom Authorization': 'Data Authorization',
+  'Atom Authorizations': 'Data Authorizations',
 };
 
 
@@ -10315,6 +12168,7 @@ module.exports = {
   'Delete Comment': '删除评论',
   'Element Exists': '元素已存在',
   'Element does not Exist': '元素不存在',
+  'User Exists': '用户已存在',
   'Operation Failed': '操作失败',
   'User does not Exist': '用户不存在',
   'User is Disabled': '用户被禁用',
@@ -10336,9 +12190,17 @@ module.exports = {
   'Cannot delete if has children': '有子元素时不允许删除',
   'Create Resource': '新建资源',
   'Resource List': '资源列表',
+  'Role List': '角色列表',
   'Move Up': '上移',
   'Move Down': '下移',
   'Developer Tool': '开发者工具',
+  'Role Type': '角色类型',
+  'Resource Authorization': '资源授权',
+  'Resource Authorizations': '资源授权',
+  'Atom Authorization': '数据授权',
+  'Atom Authorizations': '数据授权',
+  'Invalid Configuration': '无效的配置',
+  'Not Found': '未发现',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
@@ -10378,7 +12240,7 @@ module.exports = {
   Enabled: '已启用',
   Disable: '禁用',
   Disabled: '已禁用',
-  Default: '缺省',
+  Default: '默认',
   Home: '首页',
   Test: '测试',
   Catalog: '目录',
@@ -10425,6 +12287,34 @@ module.exports = {
   Purple: '紫色',
   Basic: '基本',
   Preview: '预览',
+  User: '用户',
+  Users: '用户',
+  Role: '角色',
+  Roles: '角色',
+  Move: '移动',
+  OpenAuthScope: '开放认证范围',
+  System: '系统',
+  Management: '管理',
+  Demonstration: '演示',
+  About: '关于',
+  BasicProfile: '基础资料',
+  BasicAdmin: '基础管理',
+  Authenticated: '已验证',
+  Anonymous: '匿名',
+  WorkplaceTitle: '工作台',
+  // role name
+  root: '根',
+  anonymous: '匿名',
+  authenticated: '已验证',
+  template: '模版',
+  system: '系统',
+  registered: '已注册',
+  activated: '已激活',
+  superuser: '超级用户',
+  organization: '组织',
+  internal: '内部',
+  external: '外部',
+  builtIn: '内置',
 };
 
 
@@ -10463,6 +12353,103 @@ module.exports = app => {
     },
   };
   return comment;
+};
+
+
+/***/ }),
+
+/***/ 5960:
+/***/ ((module) => {
+
+module.exports = app => {
+  const dictItems = [
+    {
+      code: 0,
+      title: 'Role',
+      options: {
+        icon: { f7: ':role:role' },
+      },
+    },
+    {
+      code: 1,
+      title: 'Organization',
+      options: {
+        icon: { f7: ':role:organization' },
+      },
+    },
+    {
+      code: 2,
+      title: 'Position',
+      options: {
+        icon: { f7: ':role:position' },
+      },
+    },
+    {
+      code: 3,
+      title: 'Level',
+      options: {
+        icon: { f7: ':role:level' },
+      },
+    },
+    {
+      code: 4,
+      title: 'Relation',
+      options: {
+        icon: { f7: ':role:relation' },
+      },
+    },
+    {
+      code: 5,
+      title: 'Role Template',
+      options: {
+        icon: { f7: ':role:template' },
+      },
+    },
+    {
+      code: 6,
+      title: 'OpenAuthScope',
+      options: {
+        icon: { f7: ':role:shield-key' },
+      },
+    },
+  ];
+  const dictLocales = {
+    'en-us': {
+      OpenAuthScope: 'Open Auth Scope',
+    },
+    'zh-cn': {
+      Role: '角色',
+      Organization: '组织',
+      Position: '岗位',
+      Level: '级别',
+      Relation: '关系',
+      OpenAuthScope: '开放认证范围',
+      'Role Template': '角色模版',
+    },
+  };
+  const definition = {
+    atomName: 'Role Type',
+    atomStaticKey: 'dictRoleType',
+    atomRevision: 2,
+    description: '',
+    dictItems: JSON.stringify(dictItems),
+    dictLocales: JSON.stringify(dictLocales),
+    resourceRoles: 'root',
+  };
+  return definition;
+};
+
+
+/***/ }),
+
+/***/ 3715:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const roleType = __webpack_require__(5960);
+
+module.exports = app => {
+  const dicts = [roleType(app)];
+  return dicts;
 };
 
 
@@ -10600,7 +12587,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Drafts',
     atomStaticKey: 'mineAtomDrafts',
-    atomRevision: 1,
+    atomRevision: 3,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -10613,6 +12600,8 @@ module.exports = app => {
         color: 'orange',
       },
     }),
+    resourceIcon: ':outline:draft-outline',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 1,
   };
@@ -10636,12 +12625,14 @@ module.exports = app => {
   const resource = {
     atomName: 'Formals',
     atomStaticKey: 'mineAtomFormals',
-    atomRevision: 0,
+    atomRevision: 3,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
     }),
+    resourceIcon: ':outline:archive-outline',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 3,
   };
@@ -10662,7 +12653,7 @@ module.exports = app => {
   const resource = {
     atomName: 'StarsLabels',
     atomStaticKey: 'mineAtomStars',
-    atomRevision: 6,
+    atomRevision: 9,
     atomCategoryId: 'a-base:mine.Atom',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -10675,6 +12666,8 @@ module.exports = app => {
         color: 'auto',
       },
     }),
+    resourceIcon: ':outline:star-outline',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 2,
   };
@@ -10787,12 +12780,14 @@ module.exports = app => {
   const resource = {
     atomName: 'Attachments',
     atomStaticKey: 'mineMineAttachments',
-    atomRevision: 0,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.Mine',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
     }),
+    resourceIcon: '::attachment-line',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 1,
   };
@@ -10811,12 +12806,14 @@ module.exports = app => {
   const resource = {
     atomName: 'Comments',
     atomStaticKey: 'mineMineComments',
-    atomRevision: 0,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.Mine',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
     }),
+    resourceIcon: '::comment-dots',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 2,
   };
@@ -10835,12 +12832,14 @@ module.exports = app => {
   const resource = {
     atomName: 'Exports',
     atomStaticKey: 'mineMineExports',
-    atomRevision: 0,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.Mine',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
     }),
+    resourceIcon: '::export',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 3,
   };
@@ -10958,7 +12957,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Flows',
     atomStaticKey: 'mineWorkFlowFlows',
-    atomRevision: 0,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.WorkFlow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -10971,6 +12970,8 @@ module.exports = app => {
         color: 'orange',
       },
     }),
+    resourceIcon: '::flow-chart',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 2,
   };
@@ -10990,7 +12991,7 @@ module.exports = app => {
   const resource = {
     atomName: 'Tasks',
     atomStaticKey: 'mineWorkFlowTasks',
-    atomRevision: 0,
+    atomRevision: 2,
     atomCategoryId: 'a-base:mine.WorkFlow',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
@@ -11003,6 +13004,8 @@ module.exports = app => {
         color: 'red',
       },
     }),
+    resourceIcon: ':flow:activity-user-task',
+    appKey: 'a-app:appDefault',
     resourceRoles: 'root',
     resourceSorting: 1,
   };
@@ -11033,44 +13036,50 @@ module.exports = app => {
     {
       atomName: 'Create Resource',
       atomStaticKey: 'createResource',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'resource',
         atomAction: 'create',
       }),
+      resourceIcon: ':outline:software-resource-outline',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     {
       atomName: 'Resource List',
       atomStaticKey: 'listResource',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'resource',
         atomAction: 'read',
       }),
+      resourceIcon: ':outline:software-resource-outline',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     {
       atomName: 'Comment List',
       atomStaticKey: 'listComment',
-      atomRevision: 0,
+      atomRevision: 3,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         actionPath: '/a/basefront/comment/all',
       }),
+      resourceIcon: '::comment-dots',
+      appKey: 'a-appbooster:appGeneral',
       resourceRoles: 'root',
     },
     {
       atomName: 'Developer Tool',
       atomStaticKey: 'developerTool',
-      atomRevision: 2,
+      atomRevision: 4,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -11078,6 +13087,8 @@ module.exports = app => {
         actionComponent: 'developerTool',
         name: 'initialize',
       }),
+      resourceIcon: '::developer-board',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
   ];
@@ -11085,6 +13096,43 @@ module.exports = app => {
   resources = resources.concat(resourceMines);
   // ok
   return resources;
+};
+
+
+/***/ }),
+
+/***/ 5835:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __rolesAll = [
+    { atomName: 'root', roleTypeCode: 0 },
+    { atomName: 'anonymous', roleTypeCode: 0 },
+    { atomName: 'authenticated', roleTypeCode: 0 },
+    { atomName: 'template', roleTypeCode: 5 },
+    { atomName: 'system', roleTypeCode: 5 },
+    { atomName: 'registered', roleTypeCode: 0 },
+    { atomName: 'activated', roleTypeCode: 0 },
+    { atomName: 'superuser', roleTypeCode: 0 },
+    { atomName: 'builtIn', roleTypeCode: 0 },
+    { atomName: 'organization', roleTypeCode: 1 },
+    { atomName: 'internal', roleTypeCode: 1 },
+    { atomName: 'external', roleTypeCode: 1 },
+  ];
+  const roles = [];
+  for (const __role of __rolesAll) {
+    roles.push({
+      atomName: __role.atomName,
+      atomStaticKey: `role_${__role.atomName}`,
+      atomRevision: 1,
+      description: '',
+      roleTypeCode: __role.roleTypeCode,
+      resourceRoles: 'template.system',
+    });
+  }
+  // ok
+  return roles;
 };
 
 
@@ -11103,8 +13151,8 @@ module.exports = app => {
       return async function (data, path, rootData, name) {
         const ctx = this;
         const res = await ctx.bean.user.exists({ [name]: data });
-        if (res && res.id !== ctx.state.user.agent.id) {
-          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('Element Exists') }];
+        if (res && (!ctx.state.user || res.id !== ctx.state.user.agent.id)) {
+          const errors = [{ keyword: 'x-exists', params: [], message: ctx.text('User Exists') }];
           throw new app.meta.ajv.ValidationError(errors);
         }
         if (!res && data.indexOf('__') > -1) {
@@ -11121,61 +13169,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 8232:
+/***/ 5440:
 /***/ ((module) => {
 
 module.exports = app => {
   const schemas = {};
-  // user
-  schemas.user = {
-    type: 'object',
-    properties: {
-      userName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Username',
-        notEmpty: true,
-        'x-exists': true,
-        ebReadOnly: true,
-      },
-      realName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Realname',
-        notEmpty: true,
-      },
-      email: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Email',
-        // notEmpty: true,
-        // format: 'email',
-        'x-exists': true,
-        ebReadOnly: true,
-      },
-      mobile: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Mobile',
-        // notEmpty: true,
-        'x-exists': true,
-        ebReadOnly: true,
-      },
-      motto: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Motto',
-      },
-      locale: {
-        type: 'string',
-        ebType: 'select',
-        ebTitle: 'Locale',
-        ebOptionsUrl: '/a/base/base/locales',
-        ebReadOnly: true,
-      },
-    },
-  };
-
   // category
   schemas.category = {
     type: 'object',
@@ -11223,7 +13221,17 @@ module.exports = app => {
       },
     },
   };
+  return schemas;
+};
 
+
+/***/ }),
+
+/***/ 4029:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
   // resource
   schemas.resource = {
     type: 'object',
@@ -11259,6 +13267,11 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Basic Info',
       },
+      appKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'App Key',
+      },
       resourceType: {
         type: 'string',
         ebType: 'resourceType',
@@ -11285,6 +13298,11 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'Extra',
       },
+      resourceIcon: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Icon',
+      },
       resourceSorting: {
         type: 'number',
         ebType: 'text',
@@ -11299,13 +13317,334 @@ module.exports = app => {
       },
     },
   };
-
   // resource search
   schemas.resourceSearch = {
     type: 'object',
     properties: {},
   };
+  return schemas;
+};
 
+
+/***/ }),
+
+/***/ 6081:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // role
+  schemas.role = {
+    type: 'object',
+    properties: {
+      // title
+      __groupTitle: {
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
+      atomName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Role Name',
+        ebDisplay: {
+          expression: '_meta.host.mode==="edit" && system===0',
+        },
+        notEmpty: true,
+      },
+      atomNameView: {
+        ebType: 'text',
+        ebTitle: 'Role Name',
+        ebDisplay: {
+          expression: '_meta.host.mode==="view" || system===1',
+        },
+        ebComputed: {
+          expression: 'atomNameLocale',
+          dependencies: ['atomName'],
+          immediate: true,
+        },
+        ebReadOnly: true,
+        notEmpty: true,
+      },
+      description: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Description',
+      },
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      roleTypeCode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Role Type',
+        ebOptionsBlankAuto: true,
+        ebParams: {
+          dictKey: 'a-base:dictRoleType',
+          mode: 'tree',
+        },
+        notEmpty: {
+          ignoreZero: true,
+        },
+      },
+      sorting: {
+        type: 'number',
+        ebType: 'text',
+        ebTitle: 'Sorting',
+      },
+      leader: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'Leader',
+      },
+      // config
+      __groupConfig: {
+        ebType: 'group-flatten',
+        ebTitle: 'Config',
+      },
+      roleConfig: {
+        type: ['string', 'null'],
+        ebType: 'json',
+        ebTitle: 'Config',
+      },
+      // Extra
+      __groupExtra: {
+        ebType: 'group-flatten',
+        ebTitle: 'Extra',
+      },
+      // roleIdParent: {
+      //   type: 'number',
+      //   ebType: 'text',
+      //   ebTitle: 'RoleParent',
+      //   ebReadOnly: true,
+      // },
+      roleIdParentView: {
+        ebType: 'text',
+        ebTitle: 'RoleParent',
+        ebDisplay: {
+          expression: 'roleIdParent>0',
+        },
+        ebComputed: {
+          expression: 'roleNameParentLocale',
+          dependencies: ['roleIdParent'],
+          immediate: true,
+        },
+        ebReadOnly: true,
+      },
+      catalog: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'Catalog',
+        ebReadOnly: true,
+      },
+      system: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'System',
+        ebReadOnly: true,
+      },
+    },
+  };
+  // role search
+  schemas.roleSearch = {
+    type: 'object',
+    properties: {
+      roleTypeCode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Role Type',
+        ebParams: {
+          dictKey: 'a-base:dictRoleType',
+          mode: 'tree',
+        },
+        ebOptionsBlankAuto: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 2320:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // user
+  schemas.user = {
+    type: 'object',
+    properties: {
+      // title
+      __groupTitle: {
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+        'x-exists': true,
+        ebReadOnly: true,
+      },
+      realName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Realname',
+        notEmpty: true,
+      },
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        // notEmpty: true,
+        // format: 'email',
+        'x-exists': true,
+        ebReadOnly: true,
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Mobile',
+        // notEmpty: true,
+        'x-exists': true,
+        ebReadOnly: true,
+      },
+      motto: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Motto',
+      },
+      locale: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Locale',
+        ebOptionsUrl: '/a/base/base/locales',
+        ebReadOnly: true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 5058:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  // userAdmin
+  schemas.userAdmin = {
+    type: 'object',
+    properties: {
+      // title
+      __groupTitle: {
+        ebType: 'group-flatten',
+        ebTitle: 'Title',
+      },
+      atomName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        notEmpty: true,
+      },
+      realName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Realname',
+      },
+      avatar: {
+        type: 'string',
+        ebType: 'file',
+        ebTitle: 'Avatar',
+        ebParams: { mode: 1 },
+      },
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        // notEmpty: true,
+        // format: 'email',
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Mobile',
+        // notEmpty: true,
+      },
+      motto: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Motto',
+      },
+      locale: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Locale',
+        ebOptionsUrl: '/a/base/base/locales',
+        ebOptionsBlankAuto: true,
+      },
+    },
+  };
+  // userAdminSearch
+  schemas.userAdminSearch = {
+    type: 'object',
+    properties: {
+      realName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Realname',
+      },
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        // format: 'email',
+      },
+      mobile: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Mobile',
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 8232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const user = __webpack_require__(2320);
+const userAdmin = __webpack_require__(5058);
+const category = __webpack_require__(5440);
+const resource = __webpack_require__(4029);
+const role = __webpack_require__(6081);
+
+module.exports = app => {
+  const schemas = {};
+  Object.assign(schemas, user(app));
+  Object.assign(schemas, userAdmin(app));
+  Object.assign(schemas, category(app));
+  Object.assign(schemas, resource(app));
+  Object.assign(schemas, role(app));
   return schemas;
 };
 
@@ -11342,11 +13681,20 @@ module.exports = app => {
     }
 
     async create() {
+      // options
       const options = this.ctx.request.body.options;
+      // item
+      const item = this.ctx.request.body.item || {};
+      // for safe
+      delete item.atomId;
+      delete item.itemId;
+      delete item.atomStaticKey;
+      delete item.atomRevision;
+      // create
       const res = await this.ctx.service.atom.create({
         atomClass: this.ctx.request.body.atomClass,
         roleIdOwner: this.ctx.request.body.roleIdOwner,
-        item: this.ctx.request.body.item,
+        item,
         options,
         user: this.ctx.state.user.op,
       });
@@ -12045,6 +14393,7 @@ module.exports = app => {
       const options = this.ctx.request.body.options || {};
       options.page = this.ctx.bean.util.page(options.page, false); // false
       const items = await this.ctx.service.resource.select({
+        atomClass: this.ctx.request.body.atomClass,
         options,
         user: this.ctx.state.user.op,
       });
@@ -12259,7 +14608,7 @@ const AtomBaseFn = __webpack_require__(6542);
 
 // eslint-disable-next-line
 module.exports = app => {
-  // atomBase
+  // base
   app.meta.AtomBase = AtomBaseFn(app);
 
   // aops
@@ -12307,7 +14656,9 @@ module.exports = app => {
   // schemas
   const schemas = __webpack_require__(8232)(app);
   // static
+  const staticDicts = __webpack_require__(3715)(app);
   const staticResources = __webpack_require__(5429)(app);
+  const staticRoles = __webpack_require__(5835)(app);
   // socketio
   const socketioComment = __webpack_require__(5210)(app);
   // meta
@@ -12319,10 +14670,18 @@ module.exports = app => {
             bean: 'resource',
             title: 'Resource',
             tableName: 'aResource',
-            tableNameModes: {},
+            tableNameModes: {
+              default: 'aResourceView',
+            },
+            inner: true,
             category: true,
             tag: true,
             resource: true,
+            layout: {
+              config: {
+                atomList: 'a-baseadmin:layoutAtomListResource',
+              },
+            },
           },
           actions: {
             write: {
@@ -12332,6 +14691,161 @@ module.exports = app => {
           validator: 'resource',
           search: {
             validator: 'resourceSearch',
+          },
+        },
+        role: {
+          info: {
+            bean: 'role',
+            title: 'Role',
+            tableName: 'aRole',
+            tableNameModes: {
+              default: 'aRoleView',
+              includes: 'aRoleIncludesView',
+              userRoles: 'aRoleUserRolesView',
+            },
+            resource: true,
+            simple: true,
+            history: false,
+            inner: true,
+            fields: {
+              custom: ['catalog', 'system', 'roleIdParent'],
+            },
+            dict: {
+              fields: {
+                roleTypeCode: {
+                  translate: false,
+                  // dictKey: 'a-base:dictRoleType',
+                },
+              },
+            },
+            layout: {
+              config: {
+                atomList: 'a-baseadmin:layoutAtomListRole',
+                atomItem: 'a-baseadmin:layoutAtomItemRole',
+              },
+            },
+          },
+          actions: {
+            write: {
+              enableOnStatic: true,
+            },
+            delete: {
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+            },
+            clone: {
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+            },
+            move: {
+              code: 101,
+              title: 'Move',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:folder-transfer-outline' },
+            },
+            addChild: {
+              code: 102,
+              title: 'AddChild',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:add-circle-outline' },
+              enableOnStatic: true,
+            },
+            roleUsers: {
+              code: 103,
+              title: 'Users',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:group-outline' },
+              enableOnStatic: true,
+            },
+            includes: {
+              code: 104,
+              title: 'Includes',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':role:role' },
+              enableOnStatic: true,
+            },
+            resourceAuthorizations: {
+              code: 105,
+              title: 'Resource Authorizations',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:archive-lock-outline' },
+              enableOnStatic: true,
+            },
+            atomAuthorizations: {
+              code: 106,
+              title: 'Atom Authorizations',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionRole',
+              icon: { f7: ':outline:database-lock-outline' },
+              enableOnStatic: true,
+            },
+            // buildBulk: {
+            //   code: 201,
+            //   title: 'Build',
+            //   actionModule: 'a-baseadmin',
+            //   actionComponent: 'actionRole',
+            //   icon: { f7: ':outline:build-circle-outline' },
+            //   bulk: true,
+            //   select: false,
+            //   stage: 'formal',
+            // },
+          },
+          validator: 'role',
+          search: {
+            validator: 'roleSearch',
+          },
+        },
+        user: {
+          info: {
+            bean: 'user',
+            title: 'User',
+            tableName: 'aUser',
+            tableNameModes: {},
+            resource: false,
+            simple: true,
+            history: false,
+            inner: true,
+            fields: {
+              custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
+            },
+            layout: {
+              config: {
+                atomList: 'a-baseadmin:layoutAtomListUser',
+                atomItem: 'a-baseadmin:layoutAtomItemUser',
+              },
+            },
+          },
+          actions: {
+            userRoles: {
+              code: 101,
+              title: 'Roles',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionUser',
+              icon: { f7: ':role:role' },
+            },
+            resourceAuthorizations: {
+              code: 102,
+              title: 'Resource Authorizations',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionUser',
+              icon: { f7: ':outline:archive-lock-outline' },
+            },
+            atomAuthorizations: {
+              code: 103,
+              title: 'Atom Authorizations',
+              actionModule: 'a-baseadmin',
+              actionComponent: 'actionUser',
+              icon: { f7: ':outline:database-lock-outline' },
+            },
+          },
+          validator: 'userAdmin',
+          search: {
+            validator: 'userAdminSearch',
           },
         },
       },
@@ -12348,8 +14862,14 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-dict.dict': {
+          items: staticDicts,
+        },
         'a-base.resource': {
           items: staticResources,
+        },
+        'a-base.role': {
+          items: staticRoles,
         },
       },
     },
@@ -12376,6 +14896,12 @@ module.exports = app => {
         user: {
           schemas: 'user',
         },
+        userAdmin: {
+          schemas: 'userAdmin',
+        },
+        userAdminSearch: {
+          schemas: 'userAdminSearch',
+        },
         category: {
           schemas: 'category',
         },
@@ -12385,20 +14911,22 @@ module.exports = app => {
         resourceSearch: {
           schemas: 'resourceSearch',
         },
+        role: {
+          schemas: 'role',
+        },
+        roleSearch: {
+          schemas: 'roleSearch',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
       },
-      schemas: {
-        user: schemas.user,
-        category: schemas.category,
-        resource: schemas.resource,
-        resourceSearch: schemas.resourceSearch,
-      },
+      schemas,
     },
     event: {
       declarations: {
         loginInfo: 'Login Info',
+        userAdd: 'User Add',
         userVerify: 'User Verify',
         accountMigration: 'Account Migration',
       },
@@ -13150,7 +15678,15 @@ module.exports = app => {
     // auth
     { method: 'post', path: 'auth/echo', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: 'auth', meta: { auth: { user: true } } },
-    { method: 'post', path: 'auth/logout', controller: 'auth', meta: { auth: { enable: true } } },
+    {
+      method: 'post',
+      path: 'auth/logout',
+      controller: 'auth',
+      meta: {
+        auth: { enable: true },
+        right: { enableAuthOpen: true },
+      },
+    },
     // cors
     { method: 'options', path: /.*/ },
     // jwt
@@ -13964,8 +16500,8 @@ module.exports = app => {
 
 module.exports = app => {
   class Resource extends app.Service {
-    async select({ options, user }) {
-      return await this.ctx.bean.resource.select({ options, user });
+    async select({ atomClass, options, user }) {
+      return await this.ctx.bean.resource.select({ atomClass, options, user });
     }
 
     async read({ atomStaticKey, options, user }) {
@@ -13980,13 +16516,17 @@ module.exports = app => {
       return await this.ctx.bean.resource.resourceRoles({ key, user });
     }
 
-    async resourceRoleRemove({ /* key,*/ data /* , user*/ }) {
-      return await this.ctx.bean.resource.deleteResourceRole({ id: data.resourceRoleId });
+    async resourceRoleRemove({ key, data, user }) {
+      return await this.ctx.bean.resource.deleteResourceRole({
+        atomId: key.atomId,
+        roleId: data.roleId,
+        user,
+      });
     }
 
-    async resourceRoleAdd({ key, data /* , user*/ }) {
+    async resourceRoleAdd({ key, data, user }) {
       for (const roleId of data.roles) {
-        await this.ctx.bean.resource.addResourceRole({ atomId: key.atomId, roleId });
+        await this.ctx.bean.resource.addResourceRole({ atomId: key.atomId, roleId, user });
       }
     }
   }

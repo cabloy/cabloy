@@ -398,6 +398,99 @@ module.exports = {
 
 /***/ }),
 
+/***/ 935:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          small: 'list',
+          medium: 'list',
+          large: 'list',
+        },
+      },
+    },
+    layouts: {
+      base: {
+        blocks: {},
+      },
+      list: {
+        providerOptions: {
+          providerName: 'all',
+          autoInit: true,
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Base',
+    atomStaticKey: 'layoutMessageGroupBase',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 7,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 900:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          small: 'list',
+          medium: 'list',
+          large: 'list',
+        },
+      },
+    },
+    layouts: {
+      base: {
+        blocks: {},
+      },
+      list: {},
+    },
+  };
+  const layout = {
+    atomName: 'Base',
+    atomStaticKey: 'layoutMessageListBase',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 8,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutMessageGroupBase = __webpack_require__(935);
+const layoutMessageListBase = __webpack_require__(900);
+
+module.exports = app => {
+  const layouts = [layoutMessageGroupBase(app), layoutMessageListBase(app)];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 232:
 /***/ ((module) => {
 
@@ -492,10 +585,15 @@ module.exports = app => {
 
 module.exports = app => {
   const schemas = __webpack_require__(232)(app);
+  const staticLayouts = __webpack_require__(512)(app);
   const meta = {
     base: {
       atoms: {},
-      functions: {},
+      statics: {
+        'a-baselayout.layout': {
+          items: staticLayouts,
+        },
+      },
     },
     validation: {
       validators: {},

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-antdv",
-  "version": "4.1.11",
+  "version": "4.1.12",
   "title": "a-antdv",
   "eggBornModule": {
     "fileVersion": 0,
@@ -21,7 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "extend2": "^1.0.1",
-    "@zhennann/ant-design-vue": "^1.7.9"
+    "@zhennann/ant-design-vue": "^1.7.9",
+    "extend2": "^1.0.1"
   }
 }

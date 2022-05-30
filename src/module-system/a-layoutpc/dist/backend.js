@@ -1,98 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 224:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, options, user }) {
-      // super
-      const key = await super.create({ atomClass, item, options, user });
-      // add layout
-      const res = await this.ctx.model.layout.insert({
-        atomId: key.atomId,
-      });
-      const itemId = res.insertId;
-      // add content
-      const content = {
-        login: '/a/login/login',
-        loginOnStart: true,
-      };
-      await this.ctx.model.layoutContent.insert({
-        atomId: key.atomId,
-        itemId,
-        content: JSON.stringify(content),
-      });
-      return { atomId: key.atomId, itemId };
-    }
-
-    async read({ atomClass, options, key, user }) {
-      // super
-      const item = await super.read({ atomClass, options, key, user });
-      if (!item) return null;
-      // meta
-      this._getMeta(item);
-      // ok
-      return item;
-    }
-
-    async select({ atomClass, options, items, user }) {
-      // super
-      await super.select({ atomClass, options, items, user });
-      // meta
-      for (const item of items) {
-        this._getMeta(item);
-      }
-    }
-
-    async write({ atomClass, target, key, item, options, user }) {
-      // super
-      await super.write({ atomClass, target, key, item, options, user });
-      // update layout
-      const data = await this.ctx.model.layout.prepareData(item);
-      data.id = key.itemId;
-      await this.ctx.model.layout.update(data);
-      // update content
-      await this.ctx.model.layoutContent.update(
-        {
-          content: item.content,
-        },
-        {
-          where: {
-            atomId: key.atomId,
-          },
-        }
-      );
-    }
-
-    async delete({ atomClass, key, user }) {
-      // super
-      await super.delete({ atomClass, key, user });
-      // delete layout
-      await this.ctx.model.layout.delete({
-        id: key.itemId,
-      });
-      // delete content
-      await this.ctx.model.layoutContent.delete({
-        itemId: key.itemId,
-      });
-    }
-
-    _getMeta(item) {
-      const meta = this._ensureItemMeta(item);
-      // meta.flags
-      // meta.summary
-      meta.summary = item.description;
-    }
-  }
-
-  return Atom;
-};
-
-
-/***/ }),
-
 /***/ 899:
 /***/ ((module) => {
 
@@ -100,66 +8,16 @@ module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
       if (options.version === 3) {
-        // create table: aLayout
-        let sql = `
-          CREATE TABLE aLayout (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            description varchar(255) DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-          `;
-        await this.ctx.model.query(sql);
-
-        // create table: aLayoutContent
-        sql = `
-          CREATE TABLE aLayoutContent (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            itemId int(11) DEFAULT '0',
-            content JSON DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-
-        // create view: aLayoutViewFull
-        sql = `
-          CREATE VIEW aLayoutViewFull as
-            select a.*,b.content from aLayout a
-              left join aLayoutContent b on a.id=b.itemId
-        `;
-        await this.ctx.model.query(sql);
+        // ref: a-baselayout
       }
     }
 
     async init(options) {
       if (options.version === 3) {
-        // add role rights
-        const roleRights = [
-          { roleName: 'system', action: 'create' },
-          { roleName: 'system', action: 'read', scopeNames: 0 },
-          { roleName: 'system', action: 'read', scopeNames: 'superuser' },
-          { roleName: 'system', action: 'write', scopeNames: 0 },
-          { roleName: 'system', action: 'write', scopeNames: 'superuser' },
-          { roleName: 'system', action: 'delete', scopeNames: 0 },
-          { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
-          { roleName: 'system', action: 'clone', scopeNames: 0 },
-          { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
-          { roleName: 'system', action: 'authorize', scopeNames: 0 },
-          { roleName: 'system', action: 'authorize', scopeNames: 'superuser' },
-          { roleName: 'system', action: 'deleteBulk' },
-          { roleName: 'system', action: 'exportBulk' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'layout', roleRights });
+        // ref: a-baselayout
+      }
+      if (options.version === 4) {
+        // ref: a-baselayout
       }
     }
   }
@@ -174,7 +32,6 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const versionManager = __webpack_require__(899);
-const atomLayout = __webpack_require__(224);
 
 module.exports = app => {
   const beans = {
@@ -182,11 +39,6 @@ module.exports = app => {
     'version.manager': {
       mode: 'app',
       bean: versionManager,
-    },
-    // atom
-    'atom.layout': {
-      mode: 'app',
-      bean: atomLayout,
     },
   };
   return beans;
@@ -201,7 +53,6 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
-
   return config;
 };
 
@@ -246,11 +97,10 @@ module.exports = {
   Theme: '主题',
   'Sidebar Button': '边栏按钮',
   'Sidebar Panel': '边栏面板',
-  'Create Layout': '新建布局',
-  'Layout List': '布局列表',
   'PC Layout': 'PC布局',
   'PC Layout(Authenticated)': 'PC布局（认证用户）',
   'PC Layout(Anonymous)': 'PC布局（匿名用户）',
+  'App Home': '应用首页',
 };
 
 
@@ -276,18 +126,14 @@ module.exports = app => {
     sidebar: {
       top: {
         buttons: [
-          { module: 'a-layoutpc', name: 'buttonHome' },
-          { module: 'a-layoutpc', name: 'buttonDashboard' },
+          { module: 'a-layoutpc', name: 'buttonAppHome' },
+          { module: 'a-layoutpc', name: 'buttonSearch' },
           { module: 'a-layoutpc', name: 'buttonFullscreen' },
-          { module: 'a-layoutpc', name: 'buttonMine' },
+          { module: 'a-layoutpc', name: 'buttonAppMine' },
         ],
       },
       left: {
-        panels: [
-          { module: 'a-layoutpc', name: 'panelMenu' },
-          { module: 'a-layoutpc', name: 'panelAtom' },
-          { module: 'a-layoutpc', name: 'panelSearch' },
-        ],
+        panels: [],
       },
       right: {
         panels: [],
@@ -306,8 +152,9 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 3,
+    atomRevision: 6,
     description: '',
+    layoutTypeCode: 2,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
@@ -326,17 +173,14 @@ module.exports = app => {
     sidebar: {
       top: {
         buttons: [
-          { module: 'a-layoutpc', name: 'buttonHome' },
+          { module: 'a-layoutpc', name: 'buttonAppHome' },
+          { module: 'a-layoutpc', name: 'buttonSearch' },
           { module: 'a-layoutpc', name: 'buttonFullscreen' },
-          { module: 'a-layoutpc', name: 'buttonMine' },
+          { module: 'a-layoutpc', name: 'buttonAppMine' },
         ],
       },
       left: {
-        panels: [
-          { module: 'a-layoutpc', name: 'panelMenu' },
-          { module: 'a-layoutpc', name: 'panelAtom' },
-          { module: 'a-layoutpc', name: 'panelSearch' },
-        ],
+        panels: [],
       },
       right: {
         panels: [],
@@ -353,8 +197,9 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Anonymous)',
     atomStaticKey: 'layoutPCAnonymous',
-    atomRevision: 1,
+    atomRevision: 4,
     description: '',
+    layoutTypeCode: 2,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
@@ -388,7 +233,7 @@ module.exports = app => {
     {
       atomName: 'Create Layout',
       atomStaticKey: 'createLayout',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.Create',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -401,7 +246,7 @@ module.exports = app => {
     {
       atomName: 'Layout List',
       atomStaticKey: 'listLayout',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.List',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -415,7 +260,7 @@ module.exports = app => {
     {
       atomName: 'Menu',
       atomStaticKey: 'panelMenu',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -426,7 +271,7 @@ module.exports = app => {
     {
       atomName: 'Atom',
       atomStaticKey: 'panelAtom',
-      atomRevision: 1,
+      atomRevision: 10,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -437,7 +282,7 @@ module.exports = app => {
     {
       atomName: 'Search',
       atomStaticKey: 'panelSearch',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -448,7 +293,7 @@ module.exports = app => {
     {
       atomName: 'Mine',
       atomStaticKey: 'panelMine',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:panel.General',
       resourceType: 'a-layoutpc:panel',
       resourceConfig: JSON.stringify({
@@ -459,8 +304,52 @@ module.exports = app => {
     // buttons
     {
       atomName: 'Home',
+      atomStaticKey: 'buttonAppHome',
+      atomRevision: 4,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppHome',
+        icon: { f7: '::home' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Mine',
+      atomStaticKey: 'buttonAppMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppMine',
+        icon: { f7: '::person' },
+        showSeparator: true,
+        fixed: true,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Search',
+      atomStaticKey: 'buttonSearch',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: '::search' },
+        actionPath: '/a/basefront/atom/searchQuick',
+        scene: 'sidebar',
+        sceneOptions: { side: 'right', name: 'search', title: 'Search' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Home',
       atomStaticKey: 'buttonHome',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
@@ -476,7 +365,7 @@ module.exports = app => {
     {
       atomName: 'Dashboard',
       atomStaticKey: 'buttonDashboard',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
@@ -504,7 +393,7 @@ module.exports = app => {
     {
       atomName: 'Mine',
       atomStaticKey: 'buttonMine',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
@@ -598,47 +487,6 @@ module.exports = app => {
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const schemas = {};
-  // layout
-  schemas.layout = {
-    type: 'object',
-    properties: {
-      atomName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Name',
-        notEmpty: true,
-      },
-      atomStaticKey: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'KeyForAtom',
-        ebReadOnly: true,
-        notEmpty: true,
-      },
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
-      },
-      content: {
-        type: 'string',
-        ebType: 'json',
-        ebTitle: 'Content',
-        notEmpty: true,
-      },
-    },
-  };
-  // layout search
-  schemas.layoutSearch = {
-    type: 'object',
-    properties: {
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
-      },
-    },
-  };
   return schemas;
 };
 
@@ -702,28 +550,6 @@ module.exports = app => {
   // meta
   const meta = {
     base: {
-      atoms: {
-        layout: {
-          info: {
-            bean: 'layout',
-            title: 'Layout',
-            tableName: 'aLayout',
-            tableNameModes: {
-              full: 'aLayoutViewFull',
-            },
-            resource: true,
-          },
-          actions: {
-            write: {
-              enableOnStatic: true,
-            },
-          },
-          validator: 'layout',
-          search: {
-            validator: 'layoutSearch',
-          },
-        },
-      },
       resources: {
         button: {
           title: 'Sidebar Button',
@@ -733,7 +559,7 @@ module.exports = app => {
         },
       },
       statics: {
-        'a-layoutpc.layout': {
+        'a-baselayout.layout': {
           items: staticLayouts,
         },
         'a-base.resource': {
@@ -742,19 +568,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        layout: {
-          schemas: 'layout',
-        },
-        layoutSearch: {
-          schemas: 'layoutSearch',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        layout: schemas.layout,
-        layoutSearch: schemas.layoutSearch,
-      },
+      schemas: {},
     },
   };
   return meta;
@@ -763,64 +579,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 687:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Layout extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aLayout', options: { disableDeleted: false } });
-    }
-  }
-  return Layout;
-};
-
-
-/***/ }),
-
-/***/ 535:
-/***/ ((module) => {
-
-module.exports = app => {
-  class LayoutContent extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aLayoutContent', options: { disableDeleted: false } });
-    }
-  }
-  return LayoutContent;
-};
-
-
-/***/ }),
-
-/***/ 0:
-/***/ ((module) => {
-
-module.exports = app => {
-  class LayoutFull extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aLayoutViewFull', options: { disableDeleted: false } });
-    }
-  }
-  return LayoutFull;
-};
-
-
-/***/ }),
-
 /***/ 230:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const layout = __webpack_require__(687);
-const layoutContent = __webpack_require__(535);
-const layoutFull = __webpack_require__(0);
+/***/ ((module) => {
 
 module.exports = app => {
-  const models = {
-    layout,
-    layoutContent,
-    layoutFull,
-  };
+  const models = {};
   return models;
 };
 

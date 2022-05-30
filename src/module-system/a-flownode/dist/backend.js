@@ -261,6 +261,7 @@ module.exports = ctx => {
         this._getJobRepeat(node)
       );
       const queue = ctx.app.meta.queue._getQueue({
+        subdomain: ctx.subdomain,
         module: moduleInfo.relativeName,
         queueName: 'startEventTimer',
       });

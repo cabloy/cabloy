@@ -58,6 +58,144 @@ module.exports = Strategy;
 
 /***/ }),
 
+/***/ 701:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Strategy = __webpack_require__(966);
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
+    // get localSimple() {
+    //   return ctx.bean.local.module(moduleInfo.relativeName).simple;
+    // }
+    async getConfigDefault() {
+      return null;
+    }
+    checkConfigValid(/* config*/) {
+      return true;
+    }
+    getStrategy() {
+      return Strategy;
+    }
+    async onVerify(body) {
+      const { mobile, rememberMe } = body.data;
+      // validate
+      await ctx.bean.validation.validate({ module: moduleInfo.relativeName, validator: 'signin', data: body.data });
+      // exists
+      const user = await ctx.bean.user.exists({ mobile });
+      if (!user) return ctx.throw.module(moduleInfo.relativeName, 1004);
+      // disabled
+      if (user.disabled) return ctx.throw.module(moduleInfo.relativeName, 1005);
+      return {
+        module: this.providerModule,
+        provider: this.providerName,
+        providerScene: this.providerScene,
+        profileId: mobile,
+        maxAge: rememberMe ? null : 0,
+        authShouldExists: true,
+        profile: {
+          mobile,
+          rememberMe,
+        },
+      };
+    }
+  }
+
+  return Provider;
+};
+
+
+/***/ }),
+
+/***/ 676:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const extend = require3('extend2');
+
+const __smsProvidersConfigCache = {};
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class SmsProviderCache {
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+    get statusModule() {
+      return ctx.bean.status.module(moduleInfo.relativeName);
+    }
+
+    getSmsProvidersConfigCache() {
+      return __smsProvidersConfigCache[ctx.subdomain];
+    }
+
+    getSmsProviderConfigCache(providerName) {
+      return __smsProvidersConfigCache[ctx.subdomain][providerName];
+    }
+
+    getSmsProvidersConfigForAdmin() {
+      let providers = this.getSmsProvidersConfigCache();
+      providers = extend(true, {}, providers);
+      for (const providerName in providers) {
+        const provider = providers[providerName];
+        provider.titleLocale = ctx.text(provider.title);
+      }
+      return providers;
+    }
+
+    async smsProviderChanged() {
+      // change self
+      await this._cacheSmsProvidersConfig();
+      // broadcast
+      ctx.meta.util.broadcastEmit({
+        module: 'a-mail',
+        broadcastName: 'smsProviderChanged',
+        data: null,
+      });
+    }
+
+    purgeProvider(provider) {
+      const res = extend(true, {}, provider);
+      delete res.titleLocale;
+      return res;
+    }
+
+    async _cacheSmsProvidersConfig() {
+      // configDefault
+      const configDefault = this.configModule.sms.providers;
+      // configProviders
+      let configProviders = await this.statusModule.get('smsProviders');
+      configProviders = extend(true, {}, configDefault, configProviders);
+      // cache
+      __smsProvidersConfigCache[ctx.subdomain] = configProviders;
+    }
+  }
+  return SmsProviderCache;
+};
+
+
+/***/ }),
+
+/***/ 987:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
+    async execute(context) {
+      const sameAsCaller = context.sameAsCaller;
+      if (!sameAsCaller) {
+        await this.ctx.bean.smsProviderCache._cacheSmsProvidersConfig();
+      }
+    }
+  }
+
+  return Broadcast;
+};
+
+
+/***/ }),
+
 /***/ 952:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -79,11 +217,13 @@ module.exports = ctx => {
     }
 
     __createSMSProvider(options) {
-      const configModule = ctx.config.module(moduleInfo.relativeName);
+      const providers = ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
       // provider name
       let providerName = options && options.providerName;
       if (!providerName) {
-        providerName = configModule.sms.provider.default;
+        // current
+        providerName = Object.keys(providers).find(providerName => providers[providerName].current);
+        // test
         if (!providerName && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
           providerName = 'test';
         }
@@ -96,7 +236,7 @@ module.exports = ctx => {
       }
       // provider
       const provider = ctx.bean._getBean(moduleInfo.relativeName, `sms.provider.${providerName}`);
-      const config = configModule.sms.providers[providerName];
+      const config = providers[providerName];
       return { provider, config };
     }
   }
@@ -115,12 +255,13 @@ module.exports = ctx => {
     async execute(context, next) {
       const data = context.data;
       // provider
-      const providerItem = await ctx.bean.user.getAuthProvider({
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authsms',
       });
       // model auth
       const modelAuth = ctx.model.module('a-base').auth;
+      // need not providerScene
       const authItem = await modelAuth.get({ userId: data.userIdFrom, providerId: providerItem.id });
       if (authItem) {
         const user = { id: data.userIdTo, mobile: authItem.profileId };
@@ -236,6 +377,23 @@ module.exports = function (ctx) {
 
 /***/ }),
 
+/***/ 680:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Startup extends app.meta.BeanBase {
+    async execute(/* context*/) {
+      // cache all smsProviders
+      await this.ctx.bean.smsProviderCache._cacheSmsProvidersConfig();
+    }
+  }
+
+  return Startup;
+};
+
+
+/***/ }),
+
 /***/ 187:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -243,6 +401,10 @@ const eventAccountMigration = __webpack_require__(836);
 const smsProviderTest = __webpack_require__(87);
 const smsProviderAliyun = __webpack_require__(881);
 const captchaProvider = __webpack_require__(952);
+const authProviderSms = __webpack_require__(701);
+const broadcastSmsProviderChanged = __webpack_require__(987);
+const startupCacheSmsProviders = __webpack_require__(680);
+const beanSmsProviderCache = __webpack_require__(676);
 
 module.exports = app => {
   const beans = {
@@ -265,6 +427,27 @@ module.exports = app => {
       mode: 'ctx',
       bean: captchaProvider,
     },
+    // auth.provider
+    'auth.provider.sms': {
+      mode: 'ctx',
+      bean: authProviderSms,
+    },
+    // broadcast
+    'broadcast.smsProviderChanged': {
+      mode: 'app',
+      bean: broadcastSmsProviderChanged,
+    },
+    // startup
+    'startup.cacheSmsProviders': {
+      mode: 'app',
+      bean: startupCacheSmsProviders,
+    },
+    // global
+    smsProviderCache: {
+      mode: 'ctx',
+      bean: beanSmsProviderCache,
+      global: true,
+    },
   };
   return beans;
 };
@@ -278,6 +461,21 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
+
+  // startups
+  config.startups = {
+    cacheSmsProviders: {
+      bean: 'cacheSmsProviders',
+      instance: true,
+    },
+  };
+
+  // broadcasts
+  config.broadcasts = {
+    smsProviderChanged: {
+      bean: 'smsProviderChanged',
+    },
+  };
 
   // account
   config.account = {
@@ -306,11 +504,10 @@ module.exports = appInfo => {
 
   // sms provider
   config.sms = {
-    provider: {
-      default: '',
-    },
     providers: {
       aliyun: {
+        title: 'AliYun',
+        current: false,
         accessKeyId: '',
         secretAccessKey: '',
         endpoint: 'https://dysmsapi.aliyuncs.com',
@@ -321,6 +518,10 @@ module.exports = appInfo => {
           signup: '',
           signin: '',
         },
+      },
+      test: {
+        title: 'Test',
+        current: true,
       },
     },
   };
@@ -366,12 +567,14 @@ module.exports = {
   smsProviderNonePrompt: '请指定SMS Provider',
   SMSCodeInvalid: '认证码已失效，请重新获取',
   SMSCodeMismatch: '认证码不匹配',
+  AliYun: '阿里云',
   'Auth-SMS': '认证-短信',
   'Element Exists': '元素已存在',
   'Cannot Contain __': '不能包含__',
   'SMS Verification': '短信认证',
   'Authentication Failed': '认证失败',
   'User is Disabled': '用户被禁用',
+  'SMS Management': 'SMS管理',
 };
 
 
@@ -389,33 +592,11 @@ module.exports = {
 /***/ }),
 
 /***/ 443:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
-const strategy = __webpack_require__(966);
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const provider = moduleInfo.name;
-  async function verify(ctx, body) {
-    const { mobile, rememberMe } = body.data;
-    // validate
-    await ctx.bean.validation.validate({ validator: 'signin', data: body.data });
-    // exists
-    const user = await ctx.bean.user.exists({ mobile });
-    if (!user) return ctx.throw(1004);
-    // disabled
-    if (user.disabled) return ctx.throw(1005);
-    return {
-      module: moduleInfo.relativeName,
-      provider,
-      profileId: mobile,
-      maxAge: rememberMe ? null : 0,
-      authShouldExists: true,
-      profile: {
-        mobile,
-        rememberMe,
-      },
-    };
-  }
   return {
     providers: {
       [provider]: {
@@ -423,22 +604,9 @@ module.exports = app => {
           title: 'SMS',
           inline: true,
           mode: 'direct',
-          component: 'signin',
-        },
-        config: {},
-        handler: app => {
-          return {
-            strategy,
-            callback: (req, body, done) => {
-              verify(req.ctx, body)
-                .then(user => {
-                  app.passport.doVerify(req, user, done);
-                })
-                .catch(err => {
-                  done(err);
-                });
-            },
-          };
+          bean: 'sms',
+          render: 'blockSignin',
+          icon: { f7: ':auth:sms' },
         },
       },
     },
@@ -477,11 +645,12 @@ util.inherits(Strategy, passport.Strategy);
 Strategy.prototype.authenticate = function (req) {
   // self
   const self = this;
+  const ctx = req.ctx;
 
   // check
   if (req.method === 'GET') {
     // not allow
-    return self.error(req.ctx.parseFail(403));
+    return self.error(ctx.parseFail(403));
   }
 
   // verified
@@ -492,7 +661,7 @@ Strategy.prototype.authenticate = function (req) {
     if (!user) {
       return self.fail(info);
     }
-    req.ctx.success(user);
+    ctx.success(user);
     self.success(user, info);
   }
 
@@ -508,6 +677,34 @@ Strategy.prototype.authenticate = function (req) {
 };
 
 module.exports = Strategy;
+
+
+/***/ }),
+
+/***/ 429:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const resources = [
+    // menu
+    {
+      atomName: 'SMS Management',
+      atomStaticKey: 'smsManagement',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        actionPath: '/a/authsms/smsProvider/list',
+      }),
+      resourceIcon: ':auth:sms',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
+      resourceSorting: 7,
+    },
+  ];
+  return resources;
+};
 
 
 /***/ }),
@@ -543,7 +740,73 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 840:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.aliyun = {
+    type: 'object',
+    properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
+      title: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Title',
+        notEmpty: true,
+      },
+      accessKeyId: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'accessKeyId',
+        notEmpty: true,
+      },
+      secretAccessKey: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'secretAccessKey',
+        notEmpty: true,
+      },
+      endpoint: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'endpoint',
+        notEmpty: true,
+      },
+      apiVersion: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'apiVersion',
+        notEmpty: true,
+      },
+      signName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'signName',
+      },
+      // Templates Info
+      __groupTemplatesInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Templates Info',
+      },
+      templates: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Templates',
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 137:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -623,6 +886,21 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const auth = __webpack_require__(137);
+const aliyun = __webpack_require__(840);
+
+module.exports = app => {
+  const schemas = {};
+  Object.assign(schemas, auth(app), aliyun(app));
+  return schemas;
+};
+
+
+/***/ }),
+
 /***/ 523:
 /***/ ((module) => {
 
@@ -683,17 +961,70 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 35:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class SmsProviderController extends app.Controller {
+    async list() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.ctx.service.smsProvider.list();
+      this.ctx.success(res);
+    }
+
+    async setCurrent() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      await this.ctx.service.smsProvider.setCurrent({
+        providerName: this.ctx.request.body.providerName,
+      });
+      const list = await this.ctx.service.smsProvider.list();
+      this.ctx.success({ list });
+    }
+
+    async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      // params
+      const providerName = this.ctx.request.body.providerName;
+      const data = this.ctx.request.body.data;
+      // validate
+      await this.ctx.bean.validation.validate({
+        module: moduleInfo.relativeName,
+        validator: providerName,
+        schema: null,
+        data,
+        filterOptions: true,
+      });
+      // save
+      await this.service.smsProvider.save({
+        providerName,
+        data,
+      });
+      // ok
+      const list = await this.ctx.service.smsProvider.list();
+      const res = list[providerName];
+      this.ctx.success(res);
+    }
+  }
+
+  return SmsProviderController;
+};
+
+
+/***/ }),
+
 /***/ 95:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const smsProvider = __webpack_require__(35);
 const captcha = __webpack_require__(820);
 const auth = __webpack_require__(523);
 
 module.exports = app => {
-  const controllers = {
-    captcha,
-    auth,
-  };
+  const controllers = { smsProvider, captcha, auth };
   return controllers;
 };
 
@@ -747,7 +1078,17 @@ module.exports = app => {
   const keywords = __webpack_require__(415)(app);
   // schemas
   const schemas = __webpack_require__(232)(app);
+  // static
+  const staticResources = __webpack_require__(429)(app);
+  // meta
   return {
+    base: {
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
+    },
     auth,
     validation: {
       validators: {
@@ -760,15 +1101,14 @@ module.exports = app => {
         mobileVerify: {
           schemas: 'mobileVerify',
         },
+        aliyun: {
+          schemas: 'aliyun',
+        },
       },
       keywords: {
         'x-exists': keywords.exists,
       },
-      schemas: {
-        signup: schemas.signup,
-        signin: schemas.signin,
-        mobileVerify: schemas.mobileVerify,
-      },
+      schemas,
     },
     event: {
       implementations: {
@@ -834,6 +1174,25 @@ module.exports = app => {
         captchaVerify: { scene: { name: 'mobileVerify' } },
       },
     },
+    // smsProvider
+    {
+      method: 'post',
+      path: 'smsProvider/list',
+      controller: 'smsProvider',
+      meta: { right: { type: 'resource', name: 'smsManagement' } },
+    },
+    {
+      method: 'post',
+      path: 'smsProvider/setCurrent',
+      controller: 'smsProvider',
+      meta: { right: { type: 'resource', name: 'smsManagement' } },
+    },
+    {
+      method: 'post',
+      path: 'smsProvider/save',
+      controller: 'smsProvider',
+      meta: { right: { type: 'resource', name: 'smsManagement' } },
+    },
   ];
   return routes;
 };
@@ -895,11 +1254,17 @@ module.exports = app => {
 
     // data: { mobile, rememberMe }
     async signin({ data, state = 'login' }) {
-      const res = await this.ctx.meta.util.performAction({
-        method: 'post',
-        url: `passport/a-authsms/authsms?state=${state}`,
+      const res = await this.ctx.bean.authProvider.authenticateDirect({
+        module: moduleInfo.relativeName,
+        providerName: 'authsms',
+        query: { state },
         body: { data },
       });
+      // const res = await this.ctx.meta.util.performAction({
+      //   method: 'post',
+      //   url: `/a/auth/passport/a-authsms/authsms?state=${state}`,
+      //   body: { data },
+      // });
       return res;
     }
 
@@ -941,17 +1306,68 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 435:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const extend = require3('extend2');
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class SmsProvider extends app.Service {
+    get statusModule() {
+      return this.ctx.bean.status.module(moduleInfo.relativeName);
+    }
+
+    async list() {
+      return this.ctx.bean.smsProviderCache.getSmsProvidersConfigForAdmin();
+    }
+
+    async setCurrent({ providerName }) {
+      const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
+      const providerNameOld = Object.keys(providers).find(providerName => providers[providerName].current);
+      if (providerNameOld) {
+        providers[providerNameOld].current = false;
+      }
+      providers[providerName].current = true;
+      // update
+      await this.statusModule.set('smsProviders', providers);
+      // changed
+      await this.ctx.bean.smsProviderCache.smsProviderChanged();
+    }
+
+    async save({ providerName, data }) {
+      const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
+      const providerOld = providers[providerName];
+      data = extend(true, {}, providerOld, data);
+      await this._save({ providerName, data });
+    }
+
+    async _save({ providerName, data }) {
+      const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
+      providers[providerName] = data ? this.ctx.bean.smsProviderCache.purgeProvider(data) : data;
+      // update
+      await this.statusModule.set('smsProviders', providers);
+      // changed
+      await this.ctx.bean.smsProviderCache.smsProviderChanged();
+    }
+  }
+
+  return SmsProvider;
+};
+
+
+/***/ }),
+
 /***/ 214:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const smsProvider = __webpack_require__(435);
 const captcha = __webpack_require__(68);
 const auth = __webpack_require__(300);
 
 module.exports = app => {
-  const services = {
-    captcha,
-    auth,
-  };
+  const services = { smsProvider, captcha, auth };
   return services;
 };
 

@@ -225,7 +225,7 @@ module.exports = {
         const res = evaluateExpression({ expression, rootData, ctx: this });
         if (!res) return true;
       }
-      if (checkIfEmpty(schemaProperty, data)) {
+      if (checkIfEmpty(schema, schemaProperty, data)) {
         fun.errors = [{ keyword: 'notEmpty', params: [], message: this.text('RequiredField') }];
         return false;
       }
@@ -251,12 +251,15 @@ function evaluateExpression({ expression, rootData, ctx }) {
   }
 }
 
-function checkIfEmpty(schemaProperty, value) {
+function checkIfEmpty(schema, schemaProperty, value) {
   const type = schemaProperty.type;
-  // number
-  if (type === 'number' || type === 'integer') return !value;
-  // except 0
-  return value === '' || value === undefined || value === null;
+  // ignoreZero
+  let ignoreZero = schema.ignoreZero;
+  if (ignoreZero === undefined) {
+    ignoreZero = type !== 'number' && type !== 'integer';
+  }
+  if (schema.ignoreZero && value === 0) return false;
+  return !value;
 }
 
 

@@ -225,8 +225,7 @@ module.exports = ctx => {
             config: JSON.stringify(instance.config),
           });
           // broadcast
-          ctx.app.meta.broadcast.emit({
-            subdomain: ctx.subdomain,
+          ctx.meta.util.broadcastEmit({
             module: 'a-instance',
             broadcastName: 'resetCache',
             data: null,
@@ -242,7 +241,13 @@ module.exports = ctx => {
 };
 
 function ctxHostValid(ctx) {
-  return !ctx.innerAccess && ctx.host && ctx.protocol && ctx.host !== '127.0.0.1' && ctx.host !== 'localhost';
+  return (
+    !ctx.innerAccess &&
+    ctx.host &&
+    ctx.protocol &&
+    !['127.0.0.1', 'localhost'].includes(ctx.host) &&
+    ['http', 'https'].includes(ctx.protocol)
+  );
 }
 
 
@@ -762,8 +767,7 @@ module.exports = app => {
         config: JSON.stringify(this.__configBlackFields(data.config)),
       });
       // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.broadcastEmit({
         module: 'a-instance',
         broadcastName: 'resetCache',
         data: null,
@@ -779,8 +783,7 @@ module.exports = app => {
 
     async reload() {
       // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
+      this.ctx.meta.util.broadcastEmit({
         module: 'a-instance',
         broadcastName: 'reload',
         data: null,

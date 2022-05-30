@@ -741,6 +741,11 @@ module.exports = ctx => {
         // use default detail
         detailClass = await this.getDetailClassDefault({ atomId });
       }
+      // parse action code
+      action = ctx.bean.detailAction.parseActionCode({
+        action,
+        detailClass,
+      });
       // actionBase
       const actionBase = ctx.bean.detailAction.action({
         module: detailClass.module,
@@ -761,6 +766,7 @@ module.exports = ctx => {
 
     // right
     async _checkRightForMiddleware({ options }) {
+      const action = options.action;
       // atomId/detailClass
       let atomId;
       let detailClass;
@@ -787,7 +793,13 @@ module.exports = ctx => {
         if (!atomId) ctx.throw(403);
         // detailClass maybe empty
         detailClass = ctx.request.body.detailClass;
+        if (!detailClass) {
+          // use default detail
+          detailClass = await this.getDetailClassDefault({ atomId });
+        }
       }
+      // _checkdetailClassExpect
+      await _checkDetailClassExpect({ detailClass, options, ctx });
       // flowTaskId
       const flowTaskId = ctx.request.body.flowTaskId;
       // check
@@ -795,7 +807,7 @@ module.exports = ctx => {
         flowTaskId,
         atomId,
         detailClass,
-        action: options.action,
+        action,
         user: ctx.state.user.op,
       });
       if (!res) ctx.throw(403);
@@ -804,6 +816,29 @@ module.exports = ctx => {
 
   return Detail;
 };
+
+function _parseDetailClass(detailClass) {
+  if (!detailClass) return detailClass;
+  if (typeof detailClass === 'string') {
+    const [module, detailClassName] = detailClass.split(':');
+    return { module, detailClassName };
+  }
+  return detailClass;
+}
+
+function _checkIfSameDetailClass(detailClassA, detailClassB) {
+  return detailClassA.module === detailClassB.module && detailClassA.detailClassName === detailClassB.detailClassName;
+}
+
+async function _checkDetailClassExpect({ detailClass, options, ctx }) {
+  // detailClassExpect
+  const detailClassExpect = _parseDetailClass(options.detailClass);
+  //
+  if (!detailClass && !detailClassExpect) ctx.throw(403);
+  if (detailClass && detailClassExpect && !_checkIfSameDetailClass(detailClass, detailClassExpect)) {
+    ctx.throw(403);
+  }
+}
 
 
 /***/ }),
@@ -837,6 +872,22 @@ module.exports = ctx => {
       if (name) return actions[name];
       const key = Object.keys(actions).find(key => actions[key].code === code);
       return actions[key];
+    }
+
+    parseActionCode({ action, detailClass }) {
+      // is number
+      if (!isNaN(action)) return parseInt(action);
+      // add role right
+      const actionCode = ctx.constant.module('a-detail').detail.action[action];
+      if (actionCode) return actionCode;
+      // detailClass
+      if (!detailClass) throw new Error(`should specify the detailClass of action: ${action}`);
+      const actions = this.actions();
+      const _action = actions[detailClass.module][detailClass.detailClassName][action];
+      if (!_action) {
+        throw new Error(`detail action not found: ${detailClass.module}:${detailClass.detailClassName}.${action}`);
+      }
+      return _action.code;
     }
 
     _prepareActions() {
@@ -1518,6 +1569,162 @@ module.exports = {
 
 /***/ }),
 
+/***/ 297:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          view: {
+            small: 'default',
+            medium: 'default',
+            large: 'default',
+          },
+          edit: {
+            small: 'default',
+            medium: 'default',
+            large: 'default',
+          },
+        },
+      },
+    },
+    layouts: {
+      base: {
+        blocks: {},
+      },
+      default: {
+        subnavbar: false,
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Base',
+    atomStaticKey: 'layoutDetailItemBase',
+    atomRevision: 1,
+    description: '',
+    layoutTypeCode: 6,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 251:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          small: 'list',
+          medium: 'table',
+          large: 'table',
+        },
+      },
+    },
+    layouts: {
+      base: {
+        blocks: {
+          title: {
+            component: {
+              module: 'a-detail',
+              name: 'listLayoutBlockListTitle',
+            },
+          },
+        },
+      },
+      list: {
+        title: 'LayoutList',
+        component: {
+          module: 'a-detail',
+          name: 'listLayoutList',
+        },
+        blocks: {
+          items: {
+            component: {
+              module: 'a-detail',
+              name: 'listLayoutBlockListItems',
+            },
+          },
+        },
+      },
+      table: {
+        title: 'LayoutTable',
+        component: {
+          module: 'a-detail',
+          name: 'listLayoutTable',
+        },
+        blocks: {
+          items: {
+            component: {
+              module: 'a-baselayout',
+              name: 'baseLayoutBlockTableItems',
+            },
+            enableTableHeight: false,
+            sorter: false,
+            columns: [
+              {
+                dataIndex: 'detailLineNo',
+                title: '#',
+                align: 'center',
+                width: '50px',
+                component: {
+                  module: 'a-detail',
+                  name: 'listLayoutTableCellDetailLineNo',
+                },
+              },
+              {
+                dataIndex: 'detailName',
+                title: 'Name',
+                align: 'left',
+                component: {
+                  module: 'a-detail',
+                  name: 'listLayoutTableCellDetailName',
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Base',
+    atomStaticKey: 'layoutDetailListBase',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 5,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutDetailItemBase = __webpack_require__(297);
+const layoutDetailListBase = __webpack_require__(251);
+
+module.exports = app => {
+  const layouts = [layoutDetailItemBase(app), layoutDetailListBase(app)];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 232:
 /***/ ((module) => {
 
@@ -1534,6 +1741,11 @@ module.exports = app => {
 
 module.exports = app => {
   class BaseController extends app.Controller {
+    detailClasses() {
+      const res = this.ctx.service.base.detailClasses();
+      this.ctx.success(res);
+    }
+
     actions() {
       const res = this.ctx.service.base.actions();
       this.ctx.success(res);
@@ -1739,10 +1951,15 @@ module.exports = app => {
 
 module.exports = app => {
   const schemas = __webpack_require__(232)(app);
+  const staticLayouts = __webpack_require__(512)(app);
   const meta = {
     base: {
       atoms: {},
-      functions: {},
+      statics: {
+        'a-baselayout.layout': {
+          items: staticLayouts,
+        },
+      },
     },
     sequence: {
       providers: {
@@ -1822,6 +2039,7 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // base
+    { method: 'post', path: 'base/detailClasses', controller: 'base' },
     { method: 'post', path: 'base/actions', controller: 'base' },
     // detail
     {
@@ -1829,45 +2047,50 @@ module.exports = app => {
       path: 'detail/create',
       controller: 'detail',
       middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 1 } },
+      meta: { right: { type: 'detail', action: 'create' } },
     },
-    { method: 'post', path: 'detail/read', controller: 'detail', meta: { right: { type: 'detail', action: 2 } } },
-    { method: 'post', path: 'detail/select', controller: 'detail', meta: { right: { type: 'detail', action: 2 } } },
-    { method: 'post', path: 'detail/count', controller: 'detail', meta: { right: { type: 'detail', action: 2 } } },
+    { method: 'post', path: 'detail/read', controller: 'detail', meta: { right: { type: 'detail', action: 'read' } } },
+    {
+      method: 'post',
+      path: 'detail/select',
+      controller: 'detail',
+      meta: { right: { type: 'detail', action: 'read' } },
+    },
+    { method: 'post', path: 'detail/count', controller: 'detail', meta: { right: { type: 'detail', action: 'read' } } },
     {
       method: 'post',
       path: 'detail/write',
       controller: 'detail',
       middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 3 } },
+      meta: { right: { type: 'detail', action: 'write' } },
     },
     {
       method: 'post',
       path: 'detail/delete',
       controller: 'detail',
       middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 4 } },
+      meta: { right: { type: 'detail', action: 'delete' } },
     },
     {
       method: 'post',
       path: 'detail/clone',
       controller: 'detail',
       middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 5 } },
+      meta: { right: { type: 'detail', action: 'clone' } },
     },
     {
       method: 'post',
       path: 'detail/moveUp',
       controller: 'detail',
       middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 6 } },
+      meta: { right: { type: 'detail', action: 'moveUp' } },
     },
     {
       method: 'post',
       path: 'detail/moveDown',
       controller: 'detail',
       middlewares: 'transaction',
-      meta: { right: { type: 'detail', action: 7 } },
+      meta: { right: { type: 'detail', action: 'moveDown' } },
     },
     { method: 'post', path: 'detail/actions', controller: 'detail' },
     { method: 'post', path: 'detail/actionsBulk', controller: 'detail' },
@@ -1884,6 +2107,10 @@ module.exports = app => {
 
 module.exports = app => {
   class Base extends app.Service {
+    detailClasses() {
+      return this.ctx.bean.detailClass.detailClasses();
+    }
+
     actions() {
       return this.ctx.bean.detailAction.actions();
     }

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-layoutmobile",
-  "version": "4.2.12",
+  "version": "4.2.13",
   "title": "Mobile Layout",
   "eggBornModule": {
     "dependencies": {}
@@ -12,6 +12,5 @@
     "build:all": "npm run build:front && npm run build:backend",
     "preversion": "npm run build:all && git add ."
   },
-  "author": "zhennann",
-  "dependencies": {}
+  "author": "zhennann"
 }

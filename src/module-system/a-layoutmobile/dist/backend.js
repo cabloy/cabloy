@@ -23,6 +23,14 @@ module.exports = {};
 
 /***/ }),
 
+/***/ 327:
+/***/ ((module) => {
+
+module.exports = {};
+
+
+/***/ }),
+
 /***/ 72:
 /***/ ((module) => {
 
@@ -40,6 +48,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
+  'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
 };
 
@@ -54,17 +63,18 @@ module.exports = app => {
   const content = {
     toolbar: {
       buttons: [
-        { module: 'a-layoutmobile', name: 'buttonHome' },
-        { module: 'a-layoutmobile', name: 'buttonAtom' },
-        { module: 'a-layoutmobile', name: 'buttonMine' },
+        { module: 'a-layoutmobile', name: 'buttonAppMenu' },
+        { module: 'a-layoutmobile', name: 'buttonAppHome' },
+        { module: 'a-layoutmobile', name: 'buttonAppMine' },
       ],
     },
   };
   const layout = {
     atomName: 'Mobile Layout(Authenticated)',
     atomStaticKey: 'layoutMobile',
-    atomRevision: 2,
+    atomRevision: 7,
     description: '',
+    layoutTypeCode: 1,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
@@ -82,17 +92,18 @@ module.exports = app => {
   const content = {
     toolbar: {
       buttons: [
-        { module: 'a-layoutmobile', name: 'buttonHome' },
-        { module: 'a-layoutmobile', name: 'buttonAtom' },
-        { module: 'a-layoutmobile', name: 'buttonMine' },
+        { module: 'a-layoutmobile', name: 'buttonAppMenu' },
+        { module: 'a-layoutmobile', name: 'buttonAppHome' },
+        { module: 'a-layoutmobile', name: 'buttonAppMine' },
       ],
     },
   };
   const layout = {
     atomName: 'Mobile Layout(Anonymous)',
     atomStaticKey: 'layoutMobileAnonymous',
-    atomRevision: 1,
+    atomRevision: 6,
     description: '',
+    layoutTypeCode: 1,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
@@ -124,16 +135,43 @@ module.exports = app => {
   const resources = [
     // tabbar buttons
     {
-      atomName: 'Home',
-      atomStaticKey: 'buttonHome',
+      atomName: 'WorkplaceTitle',
+      atomStaticKey: 'buttonAppMenu',
       atomRevision: 1,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
-        component: 'buttonLink',
+        component: 'buttonAppMenu',
+        icon: { f7: ':outline:apps-outline' },
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Home',
+      atomStaticKey: 'buttonAppHome',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppHome',
         icon: { f7: '::home' },
-        url: '/a/basefront/resource/tree',
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Mine',
+      atomStaticKey: 'buttonAppMine',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonAppMine',
+        icon: { f7: '::person' },
+        url: '/a/user/user/mine',
+        fixed: true,
       }),
       resourceRoles: 'root',
     },
@@ -152,9 +190,23 @@ module.exports = app => {
       resourceRoles: 'root',
     },
     {
+      atomName: 'Search',
+      atomStaticKey: 'buttonSearch',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: '::search' },
+        url: '/a/basefront/atom/searchQuick',
+      }),
+      resourceRoles: 'root',
+    },
+    {
       atomName: 'Mine',
       atomStaticKey: 'buttonMine',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
@@ -163,6 +215,20 @@ module.exports = app => {
         icon: { f7: '::person' },
         url: '/a/user/user/mine',
         fixed: true,
+      }),
+      resourceRoles: 'root',
+    },
+    {
+      atomName: 'Home',
+      atomStaticKey: 'buttonHome',
+      atomRevision: -1,
+      atomCategoryId: 'a-layoutmobile:button.General',
+      resourceType: 'a-layoutmobile:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonLink',
+        icon: { f7: '::home' },
+        url: '/a/basefront/resource/tree',
       }),
       resourceRoles: 'root',
     },
@@ -228,7 +294,7 @@ module.exports = app => {
         },
       },
       statics: {
-        'a-layoutpc.layout': {
+        'a-baselayout.layout': {
           items: staticLayouts,
         },
         'a-base.resource': {

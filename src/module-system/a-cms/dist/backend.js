@@ -30,9 +30,9 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
     }
   }
 
@@ -88,8 +88,7 @@ const pMap = require3('p-map');
 const extend = require3('extend2');
 const fse = require3('fs-extra');
 const moment = require3('moment');
-const glob = require3('glob');
-const bb = require3('bluebird');
+const globby = require3('globby');
 const CleanCSS = require3('clean-css');
 const shajs = require3('sha.js');
 const babel = require3('@babel/core');
@@ -500,9 +499,7 @@ module.exports = app => {
     async _renderIndex({ site }) {
       // index
       const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
-      const indexFiles = await bb.fromCallback(cb => {
-        glob(`${pathIntermediate}/main/index/\*\*/\*.ejs`, cb);
-      });
+      const indexFiles = await globby(`${pathIntermediate}/main/index/**/*.ejs`);
       for (const item of indexFiles) {
         // data
         const data = await this.getData({ site });
@@ -580,9 +577,7 @@ module.exports = app => {
     async _renderStatic({ site }) {
       // static
       const pathIntermediate = await this.getPathIntermediate(site.language && site.language.current);
-      const staticFiles = await bb.fromCallback(cb => {
-        glob(`${pathIntermediate}/static/\*\*/\*.ejs`, cb);
-      });
+      const staticFiles = await globby(`${pathIntermediate}/static/**/*.ejs`);
       for (const item of staticFiles) {
         // data
         const data = await this.getData({ site });
@@ -1035,9 +1030,7 @@ var env=${JSON.stringify(env, null, 2)};
         //   await fse.remove(path.join(pathDist, item));
         // }
         //   solution: 2
-        const distFiles = await bb.fromCallback(cb => {
-          glob(`${pathDist}/\*`, cb);
-        });
+        const distFiles = await globby(`${pathDist}/*`, { onlyFiles: false });
         const languages = site.language ? site.language.items.split(',') : null;
         for (const item of distFiles) {
           if (!site.language || languages.indexOf(path.basename(item)) === -1) {
@@ -1054,9 +1047,7 @@ var env=${JSON.stringify(env, null, 2)};
           const plugin = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.plugin');
           if (plugin) {
             const pluginPath = path.join(module.root, 'backend/cms/plugin');
-            const pluginFiles = await bb.fromCallback(cb => {
-              glob(`${pluginPath}/\*`, cb);
-            });
+            const pluginFiles = await globby(`${pluginPath}/*`, { onlyFiles: false });
             for (const item of pluginFiles) {
               await fse.copy(item, path.join(pathIntermediate, 'plugins', relativeName, path.basename(item)));
             }
@@ -1071,17 +1062,13 @@ var env=${JSON.stringify(env, null, 2)};
 
         // custom
         const customPath = await this.getPathCustom(language);
-        const customFiles = await bb.fromCallback(cb => {
-          glob(`${customPath}/\*`, cb);
-        });
+        const customFiles = await globby(`${customPath}/*`, { onlyFiles: false });
         for (const item of customFiles) {
           await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
         }
 
         // intermediate dist
-        const intermediateDistFiles = await bb.fromCallback(cb => {
-          glob(`${pathIntermediate}/dist/\*`, cb);
-        });
+        const intermediateDistFiles = await globby(`${pathIntermediate}/dist/*`, { onlyFiles: false });
         for (const item of intermediateDistFiles) {
           await fse.copy(item, path.join(pathDist, path.basename(item)));
         }
@@ -1098,9 +1085,7 @@ var env=${JSON.stringify(env, null, 2)};
             }
           } else {
             // plugins
-            const pluginsFiles = await bb.fromCallback(cb => {
-              glob(`${pathIntermediate}/plugins/\*`, cb);
-            });
+            const pluginsFiles = await globby(`${pathIntermediate}/plugins/*`, { onlyDirectories: true });
             for (const item of pluginsFiles) {
               const _filename = `${item}/assets`;
               const exists = await fse.pathExists(_filename);
@@ -1110,9 +1095,7 @@ var env=${JSON.stringify(env, null, 2)};
             }
           }
           // delete ejs files
-          const ejsFiles = await bb.fromCallback(cb => {
-            glob(`${pathDist}/${dir}/\*\*/\*.ejs`, cb);
-          });
+          const ejsFiles = await globby(`${pathDist}/${dir}/**/*.ejs`);
           for (const item of ejsFiles) {
             await fse.remove(item);
           }
@@ -1284,9 +1267,7 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
       }
       // current
       const themePath = path.join(module.root, 'backend/cms/theme');
-      const themeFiles = await bb.fromCallback(cb => {
-        glob(`${themePath}/\*`, cb);
-      });
+      const themeFiles = await globby(`${themePath}/*`, { onlyFiles: false });
       for (const item of themeFiles) {
         await fse.copy(item, path.join(pathIntermediate, path.basename(item)));
       }
@@ -1793,6 +1774,10 @@ module.exports = app => {
     async execute() {
       // only in development
       if (!app.meta.isLocal) return;
+      await this._registerCms();
+    }
+
+    async _registerCms() {
       // loop modules
       for (const module of app.meta.modulesArray) {
         // loop atomClasses
@@ -1810,6 +1795,31 @@ module.exports = app => {
           await build.registerWatchers();
         }
       }
+    }
+  }
+
+  return Startup;
+};
+
+
+/***/ }),
+
+/***/ 9494:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Startup extends app.meta.BeanBase {
+    async execute() {
+      // only in development
+      if (!app.meta.isLocal) return;
+      await this._registerDevelopment();
+    }
+
+    async _registerDevelopment() {
+      // info
+      const watcherInfo = { development: true, watchers: null };
+      // register
+      this.app.meta['a-cms:watcher'].register(watcherInfo);
     }
   }
 
@@ -2941,6 +2951,7 @@ const localRender = __webpack_require__(4806);
 const localSite = __webpack_require__(7698);
 const queueRender = __webpack_require__(9083);
 const startupRegisterAllWatchers = __webpack_require__(7421);
+const startupRegisterDevelopment = __webpack_require__(9494);
 const atomArticle = __webpack_require__(4043);
 const beanCms = __webpack_require__(618);
 const ioMessageHotloadFile = __webpack_require__(8762);
@@ -2974,6 +2985,10 @@ module.exports = app => {
     'startup.registerAllWatchers': {
       mode: 'app',
       bean: startupRegisterAllWatchers,
+    },
+    'startup.registerDevelopment': {
+      mode: 'app',
+      bean: startupRegisterDevelopment,
     },
     // atom
     'atom.article': {
@@ -3237,7 +3252,7 @@ module.exports = app => {
       return summary;
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // get atom for safety
       const atomOld = await this.ctx.bean.atom.read({ key, user });
 
@@ -3251,7 +3266,7 @@ module.exports = app => {
       }
 
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
 
       // delete article
       await this.modelArticle.delete({
@@ -3316,15 +3331,25 @@ module.exports = {
 /***/ 5985:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const path = __webpack_require__(1017);
 const require3 = __webpack_require__(5638);
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
+const globby = require3('globby');
 
 module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Watcher {
     constructor() {
       this._watchers = {};
+      this._freezeCounter = 0;
+      this._needReload = false;
+      this._reloadDebounce = debounce(() => {
+        if (this._freezeCounter === 0 && this._needReload) {
+          this._needReload = false;
+          this._reloadByAgent();
+        }
+      }, 1000);
       this._init();
     }
 
@@ -3351,6 +3376,12 @@ module.exports = function (app) {
             this._registerLanguages(info);
           },
         });
+        app.meta.messenger.addProvider({
+          name: 'a-cms:reload',
+          handler: info => {
+            this._reloadByApp(info);
+          },
+        });
       }
     }
 
@@ -3364,20 +3395,26 @@ module.exports = function (app) {
       app.meta.messenger.callAgent({ name: 'a-cms:watcherRegisterLanguages', data: info });
     }
 
-    _getWatcherKey({ subdomain, atomClass }) {
+    // called by app
+    reload({ action }) {
+      app.meta.messenger.callAgent({ name: 'a-cms:reload', data: { action } });
+    }
+
+    _getWatcherKey({ development, subdomain, atomClass }) {
+      if (development) return 'development';
       return `${subdomain}&&${atomClass.module}&&${atomClass.atomClassName}`;
     }
 
-    _getWatcherAtomClass({ subdomain, atomClass }) {
-      const watcherKey = this._getWatcherKey({ subdomain, atomClass });
+    _getWatcherAtomClass({ development, subdomain, atomClass }) {
+      const watcherKey = this._getWatcherKey({ development, subdomain, atomClass });
       if (!this._watchers[watcherKey]) {
         this._watchers[watcherKey] = {};
       }
       return this._watchers[watcherKey];
     }
 
-    _getWatcherAtomClassLanguage({ subdomain, atomClass, language }) {
-      const watchers = this._getWatcherAtomClass({ subdomain, atomClass });
+    _getWatcherAtomClassLanguage({ development, subdomain, atomClass, language }) {
+      const watchers = this._getWatcherAtomClass({ development, subdomain, atomClass });
       if (!watchers[language]) {
         watchers[language] = {};
       }
@@ -3402,10 +3439,14 @@ module.exports = function (app) {
     }
 
     // invoked in agent
-    _register({ subdomain, atomClass, language, watchers }) {
+    _register({ development, subdomain, atomClass, language, watchers }) {
+      // watchers
+      if (development) {
+        watchers = this._collectDevelopmentWatchDirs();
+      }
       // watcherEntry
-      const watcherEntry = this._getWatcherAtomClassLanguage({ subdomain, atomClass, language });
-      watcherEntry.info = { subdomain, atomClass, language, watchers };
+      const watcherEntry = this._getWatcherAtomClassLanguage({ development, subdomain, atomClass, language });
+      watcherEntry.info = { development, subdomain, atomClass, language, watchers };
       // close
       if (watcherEntry.watcher) {
         const _watcher = watcherEntry.watcher;
@@ -3421,11 +3462,15 @@ module.exports = function (app) {
       // watcher
       const _watcher = chokidar.watch(watchers).on(
         'change',
-        debounce(function () {
-          app.meta.messenger.callRandom({
-            name: 'a-cms:watcherChange',
-            data: { subdomain, atomClass, language },
-          });
+        debounce(info => {
+          if (development) {
+            this._developmentChange(info);
+          } else {
+            app.meta.messenger.callRandom({
+              name: 'a-cms:watcherChange',
+              data: { subdomain, atomClass, language },
+            });
+          }
         }, 300)
       );
       // on ready
@@ -3453,6 +3498,46 @@ module.exports = function (app) {
           language,
         },
       });
+    }
+
+    // invoked in agent
+    _collectDevelopmentWatchDirs() {
+      const pathSrc = path.resolve(app.config.baseDir, '..');
+      let watchDirs = globby.sync(`${pathSrc}/**/backend/src`, { onlyDirectories: true });
+      watchDirs = [path.join(pathSrc, 'backend/config')].concat(watchDirs);
+      return watchDirs;
+    }
+
+    // invoked in agent
+    _developmentChange(info) {
+      app.logger.warn(`[agent:development] reload worker because ${info} changed`);
+      this._reloadByApp({ action: 'now' });
+    }
+
+    // invoked in agent
+    _reloadByAgent() {
+      process.send({
+        to: 'master',
+        action: 'reload-worker',
+      });
+    }
+
+    //  invoked in agent
+    _reloadByApp({ action }) {
+      if (action === 'now') {
+        if (this._freezeCounter > 0) {
+          this._needReload = true;
+        } else {
+          this._reloadByAgent();
+        }
+      } else if (action === 'freeze') {
+        this._freezeCounter++;
+      } else if (action === 'unfreeze') {
+        this._freezeCounter--;
+        if (this._freezeCounter === 0 && this._needReload) {
+          this._reloadDebounce();
+        }
+      }
     }
   }
 
@@ -3482,6 +3567,10 @@ module.exports = appInfo => {
     registerAllWatchers: {
       bean: 'registerAllWatchers',
       instance: true,
+      debounce: true,
+    },
+    registerDevelopment: {
+      bean: 'registerDevelopment',
       debounce: true,
     },
   };
@@ -3608,6 +3697,7 @@ module.exports = {
   Tag: '标签',
   Tags: '标签',
   Url: '链接',
+  'CMS(Base)': 'CMS(基本)',
   'Are You Sure?': '您确认吗？',
   'Article List': '文章清单',
   'Article List(by Category)': '文章清单(按目录)',
@@ -3666,6 +3756,73 @@ module.exports = app => {
     },
   };
   return hotloadFile;
+};
+
+
+/***/ }),
+
+/***/ 5815:
+/***/ ((module) => {
+
+module.exports = app => {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const info = {
+    home: {
+      mode: 'page',
+      page: '/a/basefront/atom/list?module=a-cms&atomClassName=article',
+    },
+  };
+  const content = {
+    info: {
+      atomClass: {
+        module: moduleInfo.relativeName,
+        atomClassName: 'article',
+      },
+    },
+    presets: {
+      anonymous: {
+        mobile: info,
+        pc: info,
+      },
+      authenticated: {
+        mobile: info,
+        pc: info,
+      },
+    },
+  };
+  const _app = {
+    atomName: 'CMS',
+    atomStaticKey: 'appCms',
+    atomRevision: 3,
+    atomCategoryId: 'General',
+    description: '',
+    appIcon: ':outline:article-outline',
+    appIsolate: false,
+    appLanguage: true,
+    appCms: true,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+    appSorting: 0,
+  };
+  return _app;
+};
+
+
+/***/ }),
+
+/***/ 8241:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const appCms = __webpack_require__(5815);
+// const appCmsInnerTest = require('./app/appCmsInnerTest.js');
+
+module.exports = app => {
+  const apps = [
+    //
+    appCms(app),
+    // appCmsInnerTest(app),
+  ];
+  return apps;
 };
 
 
@@ -3753,6 +3910,214 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 9020:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    layouts: {
+      list: {
+        blocks: {
+          items: {
+            component: {
+              module: 'a-cms',
+              name: 'appCmsBaseMenuLayoutBlockListItems',
+            },
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'CMS(Base)',
+    atomStaticKey: 'layoutAppMenuCmsBase',
+    atomRevision: 1,
+    description: '',
+    layoutTypeCode: 13,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 3540:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          view: {
+            small: 'content,default',
+            medium: 'content,default',
+            large: 'content,default',
+          },
+          edit: {
+            small: 'default,content',
+            medium: 'default,content',
+            large: 'default,content',
+          },
+        },
+      },
+    },
+    layouts: {
+      base: {
+        extend: {
+          component: {
+            module: 'a-cms',
+            name: 'itemLayoutExtend',
+          },
+        },
+      },
+      default: {
+        title: 'LayoutInfo',
+        blocks: {
+          main: {
+            component: {
+              module: 'a-cms',
+              name: 'itemLayoutBlockMobileMain',
+            },
+            info: true,
+          },
+        },
+      },
+      content: {
+        title: 'LayoutContent',
+        blocks: {
+          main: {
+            component: {
+              module: 'a-cms',
+              name: 'itemLayoutBlockMobileMain',
+            },
+            markdown: true,
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'CMS',
+    atomStaticKey: 'layoutAtomItemCms',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 4,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 7893:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      orders: [
+        { name: 'sticky', title: 'Sticky', by: 'desc', tableAlias: 'p' },
+        { name: 'sorting', title: 'Sorting', by: 'asc', tableAlias: 'p' },
+      ],
+    },
+    layouts: {
+      list: {},
+      table: {
+        blocks: {
+          items: {
+            columns: [
+              {
+                dataIndex: 'atomName',
+                title: 'Atom Name',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellAtomName',
+                },
+              },
+              {
+                dataIndex: 'atomCategoryName',
+                title: 'Category',
+                align: 'left',
+              },
+              {
+                dataIndex: 'userName',
+                title: 'Creator',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellUserName',
+                },
+              },
+              {
+                dataIndex: 'createdAt',
+                title: 'Created Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+              {
+                dataIndex: 'updatedAt',
+                title: 'Modification Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'CMS',
+    atomStaticKey: 'layoutAtomListCms',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 3,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 3512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutAtomItemCms = __webpack_require__(3540);
+const layoutAtomListCms = __webpack_require__(7893);
+const layoutAppMenuCmsBase = __webpack_require__(9020);
+
+module.exports = app => {
+  const layouts = [
+    //
+    layoutAtomItemCms(app),
+    layoutAtomListCms(app),
+    layoutAppMenuCmsBase(app),
+  ];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 5429:
 /***/ ((module) => {
 
@@ -3763,27 +4128,31 @@ module.exports = app => {
     {
       atomName: 'Create Article',
       atomStaticKey: 'createArticle',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.General',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'article',
         atomAction: 'create',
       }),
+      resourceIcon: '::add',
+      appKey: 'a-cms:appCms',
       resourceRoles: 'template.cms-writer',
     },
     {
       atomName: 'Article List',
       atomStaticKey: 'listArticle',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.General',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'article',
         atomAction: 'read',
       }),
+      resourceIcon: ':outline:data-list-outline',
+      appKey: 'a-cms:appCms',
       resourceRoles: 'root',
     },
   ];
@@ -4461,8 +4830,10 @@ module.exports = app => {
   const keywords = __webpack_require__(2415)(app);
   const schemas = __webpack_require__(8232)(app);
   const socketioHotloadFile = __webpack_require__(3685)(app);
+  const staticApps = __webpack_require__(8241)(app);
   const staticFlowDefs = __webpack_require__(1772)(app);
   const staticResources = __webpack_require__(5429)(app);
+  const staticLayouts = __webpack_require__(3512)(app);
   const meta = {
     base: {
       atoms: {
@@ -4505,11 +4876,17 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-app.app': {
+          items: staticApps,
+        },
         'a-flow.flowDef': {
           items: staticFlowDefs,
         },
         'a-base.resource': {
           items: staticResources,
+        },
+        'a-baselayout.layout': {
+          items: staticLayouts,
         },
       },
     },

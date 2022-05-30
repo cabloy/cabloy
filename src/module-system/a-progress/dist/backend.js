@@ -53,9 +53,18 @@ module.exports = ctx => {
       await this.redis.del(key);
     }
 
-    async create() {
+    async create(options) {
       if (!ctx.state.user || !ctx.state.user.op) return ctx.throw(403);
-      const progressId = uuid.v4().replace(/-/g, '');
+      let progressId = options && options.progressId;
+      // create
+      if (!progressId) {
+        progressId = uuid.v4().replace(/-/g, '');
+      } else {
+        // check if exists
+        const item = await this._getRedisValue({ progressId });
+        if (item) return ctx.throw(403);
+      }
+      // redis
       await this._setRedisValue({
         progressId,
         content: {
@@ -71,6 +80,7 @@ module.exports = ctx => {
     }
 
     async update({ progressId, progressNo = 0, total, progress, text }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
@@ -110,6 +120,7 @@ module.exports = ctx => {
     }
 
     async done({ progressId, message }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
@@ -142,6 +153,7 @@ module.exports = ctx => {
     }
 
     async error({ progressId, message }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item) {
         // same as abort
@@ -174,14 +186,16 @@ module.exports = ctx => {
     }
 
     async check({ progressId, counter, user }) {
+      if (!progressId) return null;
       const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id || item.counter <= counter) return null;
       return item;
     }
 
     async abort({ progressId, user }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
-      if (!item || item.userId !== user.id) return null;
+      if (!item || item.userId !== user.id) return;
       await this._setRedisValue({
         progressId,
         content: {
@@ -192,6 +206,7 @@ module.exports = ctx => {
     }
 
     async delete({ progressId, user }) {
+      if (!progressId) return;
       const item = await this._getRedisValue({ progressId });
       if (!item || item.userId !== user.id) return;
       await this._deleteRedisValue({ progressId });
@@ -493,9 +508,33 @@ module.exports = app => {
 module.exports = app => {
   const routes = [
     // progress
-    { method: 'post', path: 'progress/check', controller: 'progress', meta: { auth: { user: true } } },
-    { method: 'post', path: 'progress/abort', controller: 'progress', meta: { auth: { user: true } } },
-    { method: 'post', path: 'progress/delete', controller: 'progress', meta: { auth: { user: true } } },
+    {
+      method: 'post',
+      path: 'progress/check',
+      controller: 'progress',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
+    {
+      method: 'post',
+      path: 'progress/abort',
+      controller: 'progress',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
+    {
+      method: 'post',
+      path: 'progress/delete',
+      controller: 'progress',
+      meta: {
+        auth: { user: true },
+        right: { enableAuthOpen: true },
+      },
+    },
   ];
   return routes;
 };

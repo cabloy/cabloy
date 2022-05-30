@@ -79,6 +79,7 @@ module.exports = {};
 
 module.exports = {
   'Atom Right Management': 'Data Right Management',
+  AddChild: 'Add Child',
 };
 
 
@@ -100,6 +101,9 @@ module.exports = {
   'Category Management': '目录管理',
   'Tag Management': '标签管理',
   'Select Users': '选择用户',
+  Users: '用户',
+  Includes: '聚合',
+  AddChild: '添加子项',
 };
 
 
@@ -116,17 +120,467 @@ module.exports = {
 
 /***/ }),
 
+/***/ 386:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {},
+    },
+    layouts: {
+      base: {
+        blocks: {
+          title: {
+            component: {
+              module: 'a-baseadmin',
+              name: 'roleItemLayoutBlockDefaultTitle',
+            },
+          },
+          subnavbar: {
+            component: {
+              module: 'a-baseadmin',
+              name: 'roleItemLayoutBlockDefaultSubnavbar',
+            },
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Role',
+    atomStaticKey: 'layoutAtomItemRole',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 4,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 213:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {},
+    },
+    layouts: {
+      base: {
+        blocks: {
+          title: {
+            component: {
+              module: 'a-baseadmin',
+              name: 'userItemLayoutBlockDefaultTitle',
+            },
+          },
+          subnavbar: {
+            component: {
+              module: 'a-baseadmin',
+              name: 'userItemLayoutBlockDefaultSubnavbar',
+            },
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'User',
+    atomStaticKey: 'layoutAtomItemUser',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 4,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 338:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      orders: [
+        { name: 'resourceType', title: 'Resource Type', by: 'asc' },
+        { name: 'resourceSorting', title: 'Resource Sorting', by: 'asc' },
+      ],
+    },
+    layouts: {
+      list: {},
+      table: {
+        blocks: {
+          items: {
+            columns: [
+              {
+                dataIndex: 'atomName',
+                title: 'Atom Name',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellAtomName',
+                },
+              },
+              {
+                dataIndex: 'resourceType',
+                title: 'Resource Type',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record.resourceTypeLocale',
+                  },
+                },
+              },
+              {
+                dataIndex: 'atomCategoryNameLocale',
+                title: 'Category',
+                align: 'left',
+              },
+              {
+                dataIndex: 'appKey',
+                title: 'App Key',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record.appNameLocale',
+                  },
+                },
+              },
+              {
+                dataIndex: 'resourceIcon',
+                title: 'Icon',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellIcon',
+                },
+              },
+              {
+                dataIndex: 'userName',
+                title: 'Creator',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellUserName',
+                },
+              },
+              {
+                dataIndex: 'createdAt',
+                title: 'Created Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+              {
+                dataIndex: 'updatedAt',
+                title: 'Modification Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Resource',
+    atomStaticKey: 'layoutAtomListResource',
+    atomRevision: 1,
+    description: '',
+    layoutTypeCode: 3,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 475:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      layout: {
+        viewSize: {
+          small: 'tree',
+          medium: 'treeTable',
+          large: 'treeTable',
+        },
+      },
+      data: {
+        adapter: {
+          providers: {
+            tree: {
+              fields: {
+                sorting: 'sorting',
+              },
+              dataSourceAdapter: {
+                component: {
+                  module: 'a-baseadmin',
+                  name: 'roleListLayoutTreeDataSourceAdapter',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    layouts: {
+      tree: {},
+      treeTable: {
+        blocks: {
+          items: {
+            columns: [
+              {
+                dataIndex: 'atomName',
+                title: 'Role Name',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellAtomName',
+                },
+              },
+              {
+                dataIndex: 'roleTypeCode',
+                title: 'Role Type',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record._roleTypeCodeTitleLocale',
+                  },
+                },
+              },
+              {
+                dataIndex: 'sorting',
+                title: 'Sorting',
+                align: 'left',
+              },
+              {
+                dataIndex: 'createdAt',
+                title: 'Created Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+              {
+                dataIndex: 'updatedAt',
+                title: 'Modification Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Role',
+    atomStaticKey: 'layoutAtomListRole',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 3,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 916:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      ordersBase: [
+        //
+        { name: 'atomCreatedAt', title: 'Join Time', by: 'desc', tableAlias: '', default: true },
+        { name: 'atomName', title: 'Username', tableAlias: 'a' },
+      ],
+    },
+    layouts: {
+      base: {
+        extend: {
+          component: {
+            module: 'a-baseadmin',
+            name: 'userListLayoutExtend',
+          },
+        },
+      },
+      table: {
+        blocks: {
+          items: {
+            columns: [
+              {
+                dataIndex: 'atomName',
+                title: 'Username',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellAtomName',
+                  options: {
+                    props: {
+                      mapper: {
+                        avatar: true,
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                dataIndex: 'realName',
+                title: 'Realname',
+                align: 'left',
+              },
+              {
+                dataIndex: 'email',
+                title: 'Email',
+                align: 'left',
+              },
+              {
+                dataIndex: 'mobile',
+                title: 'Mobile',
+                align: 'left',
+              },
+              {
+                dataIndex: 'locale',
+                title: 'Locale',
+                align: 'left',
+              },
+              {
+                dataIndex: 'atomCreatedAt',
+                title: 'Join Time',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'User',
+    atomStaticKey: 'layoutAtomListUser',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 3,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutAtomItemRole = __webpack_require__(386);
+const layoutAtomListRole = __webpack_require__(475);
+const layoutAtomItemUser = __webpack_require__(213);
+const layoutAtomListUser = __webpack_require__(916);
+const layoutAtomListResource = __webpack_require__(338);
+
+module.exports = app => {
+  const layouts = [
+    layoutAtomItemRole(app), //
+    layoutAtomListRole(app),
+    layoutAtomItemUser(app),
+    layoutAtomListUser(app),
+    layoutAtomListResource(app),
+  ];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 429:
 /***/ ((module) => {
 
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const resources = [
+    // menu
+    {
+      atomName: 'Role Management',
+      atomStaticKey: 'roleManagement',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: 'a-base',
+        atomClassName: 'role',
+        atomAction: 'read',
+      }),
+      resourceIcon: ':role:role',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
+      resourceSorting: 1,
+    },
+    {
+      atomName: 'User Management',
+      atomStaticKey: 'userManagement',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: 'a-base',
+        atomClassName: 'user',
+        atomAction: 'read',
+      }),
+      resourceIcon: '::person',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
+      resourceSorting: 2,
+    },
     // function
+    // deprecated
     {
       atomName: 'User Management',
       atomStaticKey: 'user',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
@@ -134,10 +588,11 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Role Management',
       atomStaticKey: 'role',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
@@ -145,10 +600,11 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Atom Right Management',
       atomStaticKey: 'atomRight',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
@@ -156,10 +612,11 @@ module.exports = app => {
       }),
       resourceRoles: 'template.system',
     },
+    // deprecated
     {
       atomName: 'Resource Right Management',
       atomStaticKey: 'resourceRight',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({
@@ -170,40 +627,50 @@ module.exports = app => {
     {
       atomName: 'Auth Management',
       atomStaticKey: 'auth',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:function.Basic',
-      resourceType: 'a-base:function',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         actionPath: '/a/baseadmin/auth/list',
       }),
+      resourceIcon: ':role:shield-key',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 3,
     },
     {
       atomName: 'Category Management',
       atomStaticKey: 'category',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:function.Basic',
-      resourceType: 'a-base:function',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         actionPath: '/a/baseadmin/category/management',
       }),
+      resourceIcon: '::folder-open',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 4,
     },
     {
       atomName: 'Tag Management',
       atomStaticKey: 'tag',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:function.Basic',
-      resourceType: 'a-base:function',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         actionPath: '/a/baseadmin/tag/management',
       }),
+      resourceIcon: ':outline:label-outline',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 5,
     },
+    // deprecated
     {
       atomName: 'Select Users',
       atomStaticKey: 'selectUsers',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Basic',
       resourceType: 'a-base:function',
       resourceConfig: JSON.stringify({}),
@@ -221,42 +688,42 @@ module.exports = app => {
 
 module.exports = app => {
   const schemas = {};
-  // role
-  schemas.role = {
-    type: 'object',
-    properties: {
-      roleName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Role name',
-        notEmpty: true,
-      },
-      leader: {
-        type: 'number',
-        ebType: 'toggle',
-        ebTitle: 'Leader',
-      },
-      sorting: {
-        type: 'number',
-        ebType: 'text',
-        ebTitle: 'Sorting',
-      },
-    },
-  };
-  // auth
-  schemas.auth = {
-    type: 'object',
-    properties: {
-      clientID: {
-        type: 'string',
-        ebType: 'text',
-      },
-      clientSecret: {
-        type: 'string',
-        ebType: 'text',
-      },
-    },
-  };
+  // // role
+  // schemas.role = {
+  //   type: 'object',
+  //   properties: {
+  //     roleName: {
+  //       type: 'string',
+  //       ebType: 'text',
+  //       ebTitle: 'Role name',
+  //       notEmpty: true,
+  //     },
+  //     leader: {
+  //       type: 'number',
+  //       ebType: 'toggle',
+  //       ebTitle: 'Leader',
+  //     },
+  //     sorting: {
+  //       type: 'number',
+  //       ebType: 'text',
+  //       ebTitle: 'Sorting',
+  //     },
+  //   },
+  // };
+  // // auth
+  // schemas.auth = {
+  //   type: 'object',
+  //   properties: {
+  //     clientID: {
+  //       type: 'string',
+  //       ebType: 'text',
+  //     },
+  //     clientSecret: {
+  //       type: 'string',
+  //       ebType: 'text',
+  //     },
+  //   },
+  // };
   return schemas;
 };
 
@@ -271,8 +738,9 @@ module.exports = app => {
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.atomRight.rights({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -281,11 +749,12 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.add({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         atomClass: this.ctx.request.body.atomClass,
         actionCode: this.ctx.request.body.actionCode,
         scopeSelf: this.ctx.request.body.scopeSelf,
         scope: this.ctx.request.body.scope,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -294,7 +763,9 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.delete({
-        id: this.ctx.request.body.id,
+        roleAtomId: this.ctx.request.body.key.atomId,
+        roleRightId: this.ctx.request.body.roleRightId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -302,8 +773,9 @@ module.exports = app => {
     async spreads() {
       const page = this.ctx.request.body.page;
       const items = await this.service.atomRight.spreads({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -320,6 +792,8 @@ module.exports = app => {
 module.exports = app => {
   class AuthController extends app.Controller {
     async list() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.auth.list();
       this.ctx.success(res);
     }
@@ -330,13 +804,6 @@ module.exports = app => {
       const res = await this.service.auth.disable({
         id: this.ctx.request.body.id,
         disabled: this.ctx.request.body.disabled,
-      });
-      this.ctx.success(res);
-    }
-
-    async item() {
-      const res = await this.service.auth.item({
-        id: this.ctx.request.body.id,
       });
       this.ctx.success(res);
     }
@@ -357,6 +824,61 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 406:
+/***/ ((module) => {
+
+module.exports = app => {
+  class authSceneController extends app.Controller {
+    async disable() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.authScene.disable({
+        id: this.ctx.request.body.id,
+        sceneName: this.ctx.request.body.sceneName,
+        disabled: this.ctx.request.body.disabled,
+      });
+      this.ctx.success(res);
+    }
+
+    async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.authScene.save({
+        id: this.ctx.request.body.id,
+        sceneName: this.ctx.request.body.sceneName,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.authScene.add({
+        id: this.ctx.request.body.id,
+        sceneName: this.ctx.request.body.sceneName,
+        data: this.ctx.request.body.data,
+      });
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.authScene.delete({
+        id: this.ctx.request.body.id,
+        sceneName: this.ctx.request.body.sceneName,
+      });
+      this.ctx.success(res);
+    }
+  }
+
+  return authSceneController;
+};
+
+
+/***/ }),
+
 /***/ 595:
 /***/ ((module) => {
 
@@ -365,8 +887,9 @@ module.exports = app => {
     async rights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.resourceRight.rights({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -375,8 +898,9 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.resourceRight.add({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         atomIds: this.ctx.request.body.atomIds,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -385,7 +909,9 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.resourceRight.delete({
-        id: this.ctx.request.body.id,
+        roleAtomId: this.ctx.request.body.key.atomId,
+        atomId: this.ctx.request.body.atomId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -393,8 +919,9 @@ module.exports = app => {
     async spreads() {
       const page = this.ctx.request.body.page;
       const items = await this.service.resourceRight.spreads({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -410,37 +937,43 @@ module.exports = app => {
 
 module.exports = app => {
   class RoleController extends app.Controller {
-    async children() {
+    async childrenTop() {
       const page = this.ctx.request.body.page;
-      const items = await this.service.role.children({
-        roleId: this.ctx.request.body.roleId,
+      const items = await this.service.role.childrenTop({
+        roleTypes: this.ctx.request.body.roleTypes,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async item() {
-      const res = await this.service.role.item({
+    async children() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.role.children({
+        roleTypes: this.ctx.request.body.roleTypes,
         roleId: this.ctx.request.body.roleId,
+        page,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.delete({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
 
-    async save() {
+    async clone() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      await this.service.role.save({
-        roleId: this.ctx.request.body.roleId,
-        data: this.ctx.request.body.data,
-      });
-      this.ctx.success();
-    }
-
-    async add() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.add({
-        roleIdParent: this.ctx.request.body.roleIdParent,
+      const res = await this.service.role.clone({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -449,36 +982,72 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.role.move({
-        roleId: this.ctx.request.body.roleId,
-        roleIdParent: this.ctx.request.body.roleIdParent,
+        roleAtomId: this.ctx.request.body.key.atomId,
+        roleIdParent: this.ctx.request.body.data.roleIdParent,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
 
-    async delete() {
+    async addChild() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.delete({
-        roleId: this.ctx.request.body.roleId,
+      const res = await this.service.role.addChild({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
+    }
+
+    async roleUsers() {
+      const page = this.ctx.request.body.page;
+      const items = await this.service.role.roleUsers({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        page,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.successMore(items, page.index, page.size);
     }
 
     async includes() {
       const page = this.ctx.request.body.page;
       const items = await this.service.role.includes({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
+    }
+
+    async addUserRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.addUserRole({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        userId: this.ctx.request.body.userId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async deleteUserRole() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.role.deleteUserRole({
+        roleAtomId: this.ctx.request.body.key.atomId,
+        userId: this.ctx.request.body.userId,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
     }
 
     async addRoleInc() {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.role.addRoleInc({
-        roleId: this.ctx.request.body.roleId,
+        roleAtomId: this.ctx.request.body.key.atomId,
         roleIdInc: this.ctx.request.body.roleIdInc,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -487,20 +1056,10 @@ module.exports = app => {
       // check demo
       this.ctx.bean.util.checkDemo();
       const res = await this.service.role.removeRoleInc({
-        id: this.ctx.request.body.id,
+        roleAtomId: this.ctx.request.body.key.atomId,
+        roleIdInc: this.ctx.request.body.roleIdInc,
+        user: this.ctx.state.user.op,
       });
-      this.ctx.success(res);
-    }
-
-    async dirty() {
-      const res = await this.service.role.dirty();
-      this.ctx.success(res);
-    }
-
-    async build() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.role.build();
       this.ctx.success(res);
     }
   }
@@ -520,71 +1079,39 @@ module.exports = app => {
       const items = await this.service.user.select({
         query: this.ctx.request.body.query,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async list() {
-      const page = this.ctx.bean.util.page(this.ctx.request.body.page);
-      const items = await this.service.user.list({
-        roleId: this.ctx.request.body.roleId,
-        query: this.ctx.request.body.query,
-        anonymous: this.ctx.request.body.anonymous,
-        page,
-      });
-      this.ctx.successMore(items, page.index, page.size);
-    }
-
-    async item() {
-      const res = await this.service.user.item({
-        userId: this.ctx.request.body.userId,
-      });
-      this.ctx.success(res);
-    }
-
-    async disable() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.disable({
-        userId: this.ctx.request.body.userId,
-        disabled: this.ctx.request.body.disabled,
-      });
-      this.ctx.success(res);
-    }
-
-    async delete() {
-      // check demo
-      this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.delete({
-        userId: this.ctx.request.body.userId,
-      });
-      this.ctx.success(res);
-    }
-
-    async roles() {
+    async userRoles() {
       const page = this.ctx.request.body.page;
-      const items = await this.service.user.roles({
-        userId: this.ctx.request.body.userId,
+      const items = await this.service.user.userRoles({
+        userAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
 
-    async addRole() {
+    async addUserRole() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.addRole({
-        userId: this.ctx.request.body.userId,
+      const res = await this.service.user.addUserRole({
+        userAtomId: this.ctx.request.body.key.atomId,
         roleId: this.ctx.request.body.roleId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
 
-    async removeRole() {
+    async deleteUserRole() {
       // check demo
       this.ctx.bean.util.checkDemo();
-      const res = await this.service.user.removeRole({
-        id: this.ctx.request.body.id,
+      const res = await this.service.user.deleteUserRole({
+        userAtomId: this.ctx.request.body.key.atomId,
+        roleId: this.ctx.request.body.roleId,
+        user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
     }
@@ -592,8 +1119,9 @@ module.exports = app => {
     async atomRights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.user.atomRights({
-        userId: this.ctx.request.body.userId,
+        userAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -601,8 +1129,9 @@ module.exports = app => {
     async resourceRights() {
       const page = this.ctx.request.body.page;
       const items = await this.service.user.resourceRights({
-        userId: this.ctx.request.body.userId,
+        userAtomId: this.ctx.request.body.key.atomId,
         page,
+        user: this.ctx.state.user.op,
       });
       this.ctx.successMore(items, page.index, page.size);
     }
@@ -621,6 +1150,7 @@ const user = __webpack_require__(37);
 const atomRight = __webpack_require__(457);
 const resourceRight = __webpack_require__(595);
 const auth = __webpack_require__(523);
+const authScene = __webpack_require__(406);
 
 module.exports = app => {
   const controllers = {
@@ -629,6 +1159,7 @@ module.exports = app => {
     atomRight,
     resourceRight,
     auth,
+    authScene,
   };
   return controllers;
 };
@@ -681,35 +1212,24 @@ module.exports = app => {
   // schemas
   const schemas = __webpack_require__(232)(app);
   // static
+  const staticLayouts = __webpack_require__(512)(app);
   const staticResources = __webpack_require__(429)(app);
   // meta
   const meta = {
     base: {
       statics: {
+        'a-baselayout.layout': {
+          items: staticLayouts,
+        },
         'a-base.resource': {
           items: staticResources,
         },
       },
     },
     validation: {
-      validators: {
-        role: {
-          schemas: 'role',
-        },
-        auth: {
-          schemas: 'auth',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        role: schemas.role,
-        auth: schemas.auth,
-      },
-    },
-    settings: {
-      instance: {
-        actionPath: 'settings/list',
-      },
+      schemas: {},
     },
   };
 
@@ -755,156 +1275,209 @@ module.exports = app => {
 
 module.exports = app => {
   const routes = [
-    // role
+    // role/childrenTop
+    {
+      method: 'post',
+      path: 'role/childrenTop',
+      controller: 'role',
+    },
+    // role/children
     {
       method: 'post',
       path: 'role/children',
       controller: 'role',
-      meta: { right: { type: 'resource,atom', name: 'role', action: 25 } },
     },
-    { method: 'post', path: 'role/item', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    {
-      method: 'post',
-      path: 'role/save',
-      controller: 'role',
-      middlewares: 'validate',
-      meta: { validate: { validator: 'role' }, right: { type: 'resource', name: 'role' } },
-    },
-    { method: 'post', path: 'role/add', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/move', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
+    // role/delete
     {
       method: 'post',
       path: 'role/delete',
       controller: 'role',
       middlewares: 'transaction',
-      meta: { right: { type: 'resource', name: 'role' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'delete' } },
     },
-    { method: 'post', path: 'role/includes', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
+    // role/clone
+    {
+      method: 'post',
+      path: 'role/clone',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'clone' } },
+    },
+    // role/move
+    {
+      method: 'post',
+      path: 'role/move',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'move' } },
+    },
+    // role/addChild
+    {
+      method: 'post',
+      path: 'role/addChild',
+      controller: 'role',
+      middlewares: 'transaction',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'addChild' } },
+    },
+    // role/roleUsers
+    {
+      method: 'post',
+      path: 'role/roleUsers',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'roleUsers' } },
+    },
+    // role/addUserRole
+    {
+      method: 'post',
+      path: 'role/addUserRole',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'roleUsers' } },
+    },
+    // role/deleteUserRole
+    {
+      method: 'post',
+      path: 'role/deleteUserRole',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'roleUsers' } },
+    },
+    // role/includes
+    {
+      method: 'post',
+      path: 'role/includes',
+      controller: 'role',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
+    },
+    // role/addRoleInc
     {
       method: 'post',
       path: 'role/addRoleInc',
       controller: 'role',
-      meta: { right: { type: 'resource', name: 'role' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
     },
     {
       method: 'post',
       path: 'role/removeRoleInc',
       controller: 'role',
-      meta: { right: { type: 'resource', name: 'role' } },
-    },
-    { method: 'post', path: 'role/dirty', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    { method: 'post', path: 'role/build', controller: 'role', meta: { right: { type: 'resource', name: 'role' } } },
-    // user
-    {
-      method: 'post',
-      path: 'user/select',
-      controller: 'user',
-      meta: { right: { type: 'resource', name: 'user,selectUsers' } },
-    },
-    { method: 'post', path: 'user/list', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/item', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/disable', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/delete', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/roles', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    { method: 'post', path: 'user/addRole', controller: 'user', meta: { right: { type: 'resource', name: 'user' } } },
-    {
-      method: 'post',
-      path: 'user/removeRole',
-      controller: 'user',
-      meta: { right: { type: 'resource', name: 'user' } },
-    },
-    {
-      method: 'post',
-      path: 'user/atomRights',
-      controller: 'user',
-      meta: { right: { type: 'resource', name: 'user' } },
-    },
-    {
-      method: 'post',
-      path: 'user/resourceRights',
-      controller: 'user',
-      meta: { right: { type: 'resource', name: 'user' } },
-    },
-    // atomRight
-    {
-      method: 'post',
-      path: 'atomRight/rights',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    {
-      method: 'post',
-      path: 'atomRight/add',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    {
-      method: 'post',
-      path: 'atomRight/delete',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
-    },
-    {
-      method: 'post',
-      path: 'atomRight/spreads',
-      controller: 'atomRight',
-      meta: { right: { type: 'resource', name: 'atomRight' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'includes' } },
     },
     // resourceRight
     {
       method: 'post',
       path: 'resourceRight/rights',
       controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'resourceAuthorizations' } },
     },
     {
       method: 'post',
       path: 'resourceRight/add',
       controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'resourceAuthorizations' } },
     },
     {
       method: 'post',
       path: 'resourceRight/delete',
       controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'resourceAuthorizations' } },
     },
     {
       method: 'post',
       path: 'resourceRight/spreads',
       controller: 'resourceRight',
-      meta: { right: { type: 'resource', name: 'resourceRight' } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'resourceAuthorizations' } },
     },
-    // functionRight
+    // atomRight
     {
       method: 'post',
-      path: 'functionRight/rights',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
-    },
-    {
-      method: 'post',
-      path: 'functionRight/add',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
+      path: 'atomRight/rights',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',
-      path: 'functionRight/delete',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
+      path: 'atomRight/add',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',
-      path: 'functionRight/spreads',
-      controller: 'functionRight',
-      meta: { right: { type: 'resource', name: 'functionRight' } },
+      path: 'atomRight/delete',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
+    },
+    {
+      method: 'post',
+      path: 'atomRight/spreads',
+      controller: 'atomRight',
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
+    },
+    // user/select
+    {
+      method: 'post',
+      path: 'user/select',
+      controller: 'user',
+    },
+    // user/userRoles
+    {
+      method: 'post',
+      path: 'user/userRoles',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'userRoles' } },
+    },
+    // user/addUserRole
+    {
+      method: 'post',
+      path: 'user/addUserRole',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'userRoles' } },
+    },
+    // role/deleteUserRole
+    {
+      method: 'post',
+      path: 'user/deleteUserRole',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'userRoles' } },
+    },
+    {
+      method: 'post',
+      path: 'user/atomRights',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'atomAuthorizations' } },
+    },
+    {
+      method: 'post',
+      path: 'user/resourceRights',
+      controller: 'user',
+      meta: { right: { type: 'atom', atomClass: 'a-base:user', action: 'resourceAuthorizations' } },
     },
     // auth
     { method: 'post', path: 'auth/list', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/disable', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
-    { method: 'post', path: 'auth/item', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
     { method: 'post', path: 'auth/save', controller: 'auth', meta: { right: { type: 'resource', name: 'auth' } } },
+    // auth scene
+    {
+      method: 'post',
+      path: 'authScene/disable',
+      controller: 'authScene',
+      meta: { right: { type: 'resource', name: 'auth' } },
+    },
+    {
+      method: 'post',
+      path: 'authScene/save',
+      controller: 'authScene',
+      meta: { right: { type: 'resource', name: 'auth' } },
+    },
+    {
+      method: 'post',
+      path: 'authScene/add',
+      controller: 'authScene',
+      meta: { right: { type: 'resource', name: 'auth' } },
+    },
+    {
+      method: 'post',
+      path: 'authScene/delete',
+      controller: 'authScene',
+      meta: { right: { type: 'resource', name: 'auth' } },
+    },
   ];
   return routes;
 };
@@ -917,29 +1490,30 @@ module.exports = app => {
 
 module.exports = app => {
   class AtomRight extends app.Service {
-    async rights({ roleId, page }) {
-      return await this.ctx.bean.role.roleRights({ roleId, page });
+    async rights({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.roleRights({ roleAtomId, page, user });
     }
 
-    async add({ roleId, atomClass, actionCode, scopeSelf, scope }) {
+    async add({ roleAtomId, atomClass, actionCode, scopeSelf, scope, user }) {
       const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
       if (scopeSelf) {
         scope = 0;
       }
       return await this.ctx.bean.role.addRoleRight({
-        roleId,
+        roleAtomId,
         atomClassId: _atomClass.id,
         action: actionCode,
         scope,
+        user,
       });
     }
 
-    async delete({ id }) {
-      return await this.ctx.bean.role.deleteRoleRight({ id });
+    async delete({ roleAtomId, roleRightId, user }) {
+      return await this.ctx.bean.role.deleteRoleRight({ roleAtomId, roleRightId, user });
     }
 
-    async spreads({ roleId, page }) {
-      return await this.ctx.bean.role.roleSpreads({ roleId, page });
+    async spreads({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.roleSpreads({ roleAtomId, page, user });
     }
   }
 
@@ -950,25 +1524,12 @@ module.exports = app => {
 /***/ }),
 
 /***/ 300:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const mparse = require3('egg-born-mparse').default;
+/***/ ((module) => {
 
 module.exports = app => {
   class Auth extends app.Service {
     async list() {
-      // list
-      const list = await this.ctx.model.authProvider.select();
-      // meta
-      const authProviders = this.ctx.bean.base.authProviders();
-      for (const item of list) {
-        const key = `${item.module}:${item.providerName}`;
-        const authProvider = authProviders[key];
-        item.meta = authProvider ? authProvider.meta : null;
-      }
-      // ok
-      return list;
+      return this.ctx.bean.authProviderCache.getAuthProvidersConfigForAdmin();
     }
 
     async disable({ id, disabled }) {
@@ -976,39 +1537,11 @@ module.exports = app => {
       await this.ctx.model.authProvider.update({ id, disabled });
       // item
       const item = await this.ctx.model.authProvider.get({ id });
-      // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
-        module: 'a-base',
-        broadcastName: 'authProviderChanged',
-        data: {
-          module: item.module,
-          providerName: item.providerName,
-        },
+      // changed
+      await this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
       });
-    }
-
-    async item({ id }) {
-      // item
-      const item = await this.ctx.model.authProvider.get({ id });
-      // meta
-      const authProviders = this.ctx.bean.base.authProviders();
-      const authProvider = authProviders[`${item.module}:${item.providerName}`];
-      if (authProvider.meta.mode === 'redirect') {
-        const moduleInfo = mparse.parseInfo(item.module);
-        const loginURL = this.ctx.bean.base.getAbsoluteUrl(
-          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}`
-        );
-        const callbackURL = this.ctx.bean.base.getAbsoluteUrl(
-          `/api/${moduleInfo.url}/passport/${item.module}/${item.providerName}/callback`
-        );
-        item._meta = {
-          loginURL,
-          callbackURL,
-        };
-      }
-      // ok
-      return item;
     }
 
     async save({ id, config }) {
@@ -1016,15 +1549,10 @@ module.exports = app => {
       await this.ctx.model.authProvider.update({ id, config: JSON.stringify(config) });
       // item
       const item = await this.ctx.model.authProvider.get({ id });
-      // broadcast
-      this.ctx.app.meta.broadcast.emit({
-        subdomain: this.ctx.subdomain,
-        module: 'a-base',
-        broadcastName: 'authProviderChanged',
-        data: {
-          module: item.module,
-          providerName: item.providerName,
-        },
+      // changed
+      await this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
       });
     }
   }
@@ -1035,25 +1563,136 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 936:
+/***/ ((module) => {
+
+module.exports = app => {
+  class authScene extends app.Service {
+    async disable({ id, sceneName, disabled }) {
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // update
+      const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+      if (!scenes[sceneName]) {
+        scenes[sceneName] = {};
+      }
+      scenes[sceneName].disabled = disabled;
+      item.scenes = JSON.stringify(scenes);
+      await this.ctx.model.authProvider.update(item);
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
+      });
+    }
+
+    async save({ id, sceneName, data }) {
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      const authProvider = this.ctx.bean.authProvider.getAuthProviderBase({
+        module: item.module,
+        providerName: item.providerName,
+      });
+      // validate data
+      const meta = authProvider.meta;
+      const metaScene = this._getMetaScene(authProvider, sceneName);
+      if (metaScene.validator.validator !== 'json') {
+        await this.ctx.bean.validation.validate({
+          module: metaScene.validator.module,
+          validator: metaScene.validator.validator,
+          data,
+          filterOptions: true,
+        });
+      }
+      // update
+      if (!meta.scene) {
+        item.config = JSON.stringify(data);
+      } else {
+        const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+        if (!scenes[sceneName]) {
+          scenes[sceneName] = {};
+        }
+        scenes[sceneName] = {
+          ...data,
+          disabled: scenes[sceneName].disabled,
+        };
+        item.scenes = JSON.stringify(scenes);
+      }
+      await this.ctx.model.authProvider.update(item);
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
+      });
+      // ok
+      return { data };
+    }
+
+    async add({ id, sceneName, data }) {
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // update
+      const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+      scenes[sceneName] = data;
+      item.scenes = JSON.stringify(scenes);
+      await this.ctx.model.authProvider.update(item);
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
+      });
+    }
+
+    async delete({ id, sceneName }) {
+      // item
+      const item = await this.ctx.model.authProvider.get({ id });
+      // update
+      const scenes = item.scenes ? JSON.parse(item.scenes) : {};
+      delete scenes[sceneName];
+      item.scenes = JSON.stringify(scenes);
+      await this.ctx.model.authProvider.update(item);
+      // changed
+      this.ctx.bean.authProviderCache.authProviderChanged({
+        module: item.module,
+        providerName: item.providerName,
+      });
+    }
+
+    _getMetaScene(item, sceneName) {
+      const meta = item.meta;
+      if (meta.scene) {
+        const scene = item.scenes && item.scenes[sceneName];
+        return (scene && scene.meta) || meta;
+      }
+      return meta;
+    }
+  }
+
+  return authScene;
+};
+
+
+/***/ }),
+
 /***/ 510:
 /***/ ((module) => {
 
 module.exports = app => {
   class ResourceRight extends app.Service {
-    async rights({ roleId, page }) {
-      return await this.ctx.bean.resource.resourceRights({ roleId, page });
+    async rights({ roleAtomId, page, user }) {
+      return await this.ctx.bean.resource.resourceRights({ roleAtomId, page, user });
     }
 
-    async add({ roleId, atomIds }) {
-      return await this.ctx.bean.resource.addResourceRoles({ roleId, atomIds });
+    async add({ roleAtomId, atomIds, user }) {
+      return await this.ctx.bean.resource.addResourceRoles({ roleAtomId, atomIds, user });
     }
 
-    async delete({ id }) {
-      return await this.ctx.bean.resource.deleteResourceRole({ id });
+    async delete({ roleAtomId, atomId, user }) {
+      return await this.ctx.bean.resource.deleteResourceRole({ roleAtomId, atomId, user });
     }
 
-    async spreads({ roleId, page }) {
-      return await this.ctx.bean.resource.resourceSpreads({ roleId, page });
+    async spreads({ roleAtomId, page, user }) {
+      return await this.ctx.bean.resource.resourceSpreads({ roleAtomId, page, user });
     }
   }
 
@@ -1068,52 +1707,71 @@ module.exports = app => {
 
 module.exports = app => {
   class Role extends app.Service {
-    async children({ roleId, page }) {
-      return await this.ctx.bean.role.children({ roleId, page });
+    async childrenTop({ roleTypes, page, user }) {
+      return await this.ctx.bean.role.childrenTop({ roleTypes, page, user });
     }
 
-    async item({ roleId }) {
-      return await this.ctx.bean.role.get({ id: roleId });
+    async children({ roleTypes, roleId, page, user }) {
+      return await this.ctx.bean.role.children({ roleTypes, roleId, page, user });
     }
 
-    async save({ roleId, data }) {
-      return await this.ctx.bean.role.save({ roleId, data });
+    async delete({ roleAtomId, user }) {
+      await this.ctx.bean.role.delete({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
     }
 
-    async add({ roleIdParent }) {
-      return await this.ctx.bean.role.add({ roleIdParent });
+    async clone({ roleAtomId, user }) {
+      const res = await this.ctx.bean.role.clone({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { ...res, progressId };
     }
 
-    async move({ roleId, roleIdParent }) {
-      return await this.ctx.bean.role.move({ roleId, roleIdParent });
+    async move({ roleAtomId, roleIdParent, user }) {
+      await this.ctx.bean.role.move({ roleAtomId, roleIdParent, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
     }
 
-    async delete({ roleId }) {
-      return await this.ctx.bean.role.delete({ roleId });
+    async addChild({ roleAtomId, user }) {
+      const res = await this.ctx.bean.role.addChild({ roleAtomId, user });
+      const progressId = await this._tailBuild();
+      return { ...res, progressId };
     }
 
-    async includes({ roleId, page }) {
-      return await this.ctx.bean.role.includes({ roleId, page });
+    async roleUsers({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.roleUsers({ roleAtomId, page, user });
     }
 
-    async addRoleInc({ roleId, roleIdInc }) {
-      return await this.ctx.bean.role.addRoleInc({ roleId, roleIdInc });
+    async addUserRole({ roleAtomId, userId, user }) {
+      return await this.ctx.bean.role.addUserRole({ roleAtomId, userId, user });
     }
 
-    async removeRoleInc({ id }) {
-      return await this.ctx.bean.role.removeRoleInc({ id });
+    async deleteUserRole({ roleAtomId, userId, user }) {
+      return await this.ctx.bean.role.deleteUserRole({ roleAtomId, userId, user });
     }
 
-    async dirty() {
-      return await this.ctx.bean.role.getDirty();
+    async includes({ roleAtomId, page, user }) {
+      return await this.ctx.bean.role.includes({ roleAtomId, page, user });
     }
 
-    async build() {
+    async addRoleInc({ roleAtomId, roleIdInc, user }) {
+      const res = await this.ctx.bean.role.addRoleInc({ roleAtomId, roleIdInc, user });
+      const progressId = await this._tailBuild();
+      return { ...res, progressId };
+    }
+
+    async removeRoleInc({ roleAtomId, roleIdInc, user }) {
+      await this.ctx.bean.role.removeRoleInc({ roleAtomId, roleIdInc, user });
+      const progressId = await this._tailBuild();
+      return { progressId };
+    }
+
+    async _tailBuild() {
       const progressId = await this.ctx.bean.progress.create();
       // build, not await
       this.ctx.bean.role.build({ progressId });
-      // ok
-      return { progressId };
+      return progressId;
     }
   }
 
@@ -1128,44 +1786,28 @@ module.exports = app => {
 
 module.exports = app => {
   class User extends app.Service {
-    async select(params) {
-      return await this.ctx.bean.user.selectGeneral({ params });
+    async select({ query, page, user }) {
+      return await this.ctx.bean.user.selectGeneral({ params: { query, page }, user });
     }
 
-    async list({ roleId, query, anonymous, page }) {
-      return await this.ctx.bean.user.list({ roleId, query, anonymous, page });
+    async userRoles({ userAtomId, page, user }) {
+      return await this.ctx.bean.role.userRoles({ userAtomId, page, user });
     }
 
-    async item({ userId }) {
-      return await this.ctx.bean.user.get({ id: userId });
+    async addUserRole({ userAtomId, roleId, user }) {
+      return await this.ctx.bean.role.addUserRole({ userAtomId, roleId, user });
     }
 
-    async disable({ userId, disabled }) {
-      return await this.ctx.bean.user.disable({ userId, disabled });
+    async deleteUserRole({ userAtomId, roleId, user }) {
+      return await this.ctx.bean.role.deleteUserRole({ userAtomId, roleId, user });
     }
 
-    async delete({ userId }) {
-      return await this.ctx.bean.user.delete({ userId });
+    async atomRights({ userAtomId, page, user }) {
+      return await this.ctx.bean.role.atomRightsOfUser({ userAtomId, page, user });
     }
 
-    async roles({ userId, page }) {
-      return await this.ctx.bean.user.roles({ userId, page });
-    }
-
-    async addRole({ userId, roleId }) {
-      return await this.ctx.bean.role.addUserRole({ userId, roleId });
-    }
-
-    async removeRole({ id }) {
-      return await this.ctx.bean.role.deleteUserRole({ id });
-    }
-
-    async atomRights({ userId, page }) {
-      return await this.ctx.bean.role.atomRightsOfUser({ userId, page });
-    }
-
-    async resourceRights({ userId, page }) {
-      return await this.ctx.bean.resource.resourceRightsOfUser({ userId, page });
+    async resourceRights({ userAtomId, page, user }) {
+      return await this.ctx.bean.resource.resourceRightsOfUser({ userAtomId, page, user });
     }
   }
 
@@ -1183,6 +1825,7 @@ const user = __webpack_require__(323);
 const atomRight = __webpack_require__(580);
 const resourceRight = __webpack_require__(510);
 const auth = __webpack_require__(300);
+const authScene = __webpack_require__(936);
 
 module.exports = app => {
   const services = {
@@ -1191,18 +1834,11 @@ module.exports = app => {
     atomRight,
     resourceRight,
     auth,
+    authScene,
   };
   return services;
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

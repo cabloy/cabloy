@@ -265,6 +265,7 @@ module.exports = {
   'Create Layout': '新建布局',
   'Layout List': '布局列表',
   'Layout Type': '布局类型',
+  'Base Layout': '基础布局',
 };
 
 
@@ -290,27 +291,31 @@ module.exports = app => {
     {
       atomName: 'Create Layout',
       atomStaticKey: 'createLayout',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'layout',
         atomAction: 'create',
       }),
+      resourceIcon: ':outline:layout-outline',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     {
       atomName: 'Layout List',
       atomStaticKey: 'listLayout',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'layout',
         atomAction: 'read',
       }),
+      resourceIcon: ':outline:layout-outline',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
   ];
@@ -521,7 +526,9 @@ module.exports = app => {
           dictKey: 'a-dictbooster:dictLayoutType',
           mode: 'select',
         },
-        notEmpty: true,
+        notEmpty: {
+          ignoreZero: true,
+        },
       },
       content: {
         type: 'string',
@@ -641,6 +648,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aLayoutViewFull',
             },
+            inner: true,
             resource: true,
             dict: {
               fields: {

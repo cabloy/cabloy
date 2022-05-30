@@ -83,9 +83,9 @@ module.exports = app => {
       await this.ctx.model.userOnline.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete userOnline
       await this.ctx.model.userOnline.delete({
         id: key.itemId,
@@ -184,9 +184,9 @@ module.exports = app => {
       await this.ctx.model.userOnlineHistory.update(data);
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete userOnlineHistory
       await this.ctx.model.userOnlineHistory.delete({
         id: key.itemId,
@@ -559,6 +559,108 @@ module.exports = {
 
 /***/ }),
 
+/***/ 694:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    info: {
+      ordersBase: [
+        //
+        { name: 'onlineStatus', title: 'Status', by: 'desc', tableAlias: 'f', default: true },
+      ],
+    },
+    layouts: {
+      table: {
+        blocks: {
+          items: {
+            columns: [
+              {
+                dataIndex: 'atomName',
+                title: 'Username',
+                align: 'left',
+                component: {
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellAtomName',
+                  options: {
+                    props: {
+                      mapper: {
+                        avatar: true,
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                dataIndex: 'onlineStatus',
+                title: 'Status',
+                align: 'left',
+                params: {
+                  computed: {
+                    expression: 'record._onlineStatusTitleLocale',
+                  },
+                },
+              },
+              {
+                dataIndex: 'loginCount',
+                title: 'LoginCount',
+                align: 'left',
+              },
+              {
+                dataIndex: 'onlineCount',
+                title: 'OnlineCount',
+                align: 'left',
+              },
+              {
+                dataIndex: 'onlineIPLast',
+                title: 'OnlineIPLast',
+                align: 'left',
+              },
+              {
+                dataIndex: 'onlineTimeLast',
+                title: 'OnlineTimeLast',
+                align: 'center',
+                params: {
+                  dateFormat: {
+                    lines: true,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+  const layout = {
+    atomName: 'Online Users',
+    atomStaticKey: 'layoutAtomListUserOnline',
+    atomRevision: 0,
+    description: '',
+    layoutTypeCode: 3,
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return layout;
+};
+
+
+/***/ }),
+
+/***/ 512:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const layoutAtomListUserOnline = __webpack_require__(694);
+
+module.exports = app => {
+  const layouts = [layoutAtomListUserOnline(app)];
+  return layouts;
+};
+
+
+/***/ }),
+
 /***/ 429:
 /***/ ((module) => {
 
@@ -582,7 +684,7 @@ module.exports = app => {
     {
       atomName: 'Users Status',
       atomStaticKey: 'listUserStatus',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -590,6 +692,8 @@ module.exports = app => {
         atomClassName: 'userOnline',
         atomAction: 'read',
       }),
+      resourceIcon: '::people',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     // {
@@ -834,6 +938,7 @@ module.exports = app => {
   // schemas
   const schemas = __webpack_require__(232)(app);
   // static
+  const staticLayouts = __webpack_require__(512)(app);
   const staticResources = __webpack_require__(429)(app);
   // meta
   const meta = {
@@ -850,6 +955,11 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            layout: {
+              config: {
+                atomList: 'layoutAtomListUserOnline',
+              },
+            },
           },
           actions: {
             kickOut: {
@@ -887,6 +997,9 @@ module.exports = app => {
         },
       },
       statics: {
+        'a-baselayout.layout': {
+          items: staticLayouts,
+        },
         'a-base.resource': {
           items: staticResources,
         },
@@ -979,7 +1092,7 @@ module.exports = app => {
       method: 'post',
       path: 'userOnline/kickOut',
       controller: 'userOnline',
-      meta: { right: { type: 'atom', action: 'kickOut' } },
+      meta: { right: { type: 'atom', atomClass: 'a-useronline:userOnline', action: 'kickOut' } },
     },
   ];
   return routes;

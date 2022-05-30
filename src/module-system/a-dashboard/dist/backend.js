@@ -71,9 +71,9 @@ module.exports = app => {
       );
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete dashboard
       await this.ctx.model.dashboard.delete({
         id: key.itemId,
@@ -194,19 +194,39 @@ module.exports = app => {
       }
 
       if (options.version === 2) {
+        // // add role rights
+        // const roleRights = [
+        //   { roleName: 'system', action: 'create' },
+        //   { roleName: 'system', action: 'read', scopeNames: 0 },
+        //   { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'write', scopeNames: 0 },
+        //   { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'delete', scopeNames: 0 },
+        //   { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'clone', scopeNames: 0 },
+        //   { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'authorize', scopeNames: 0 },
+        //   { roleName: 'system', action: 'authorize', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'deleteBulk' },
+        //   { roleName: 'system', action: 'exportBulk' },
+        // ];
+        // await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'dashboard', roleRights });
+      }
+
+      if (options.version === 3) {
         // add role rights
         const roleRights = [
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 0 },
-          { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'write', scopeNames: 0 },
-          { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'write', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'delete', scopeNames: 0 },
-          { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'delete', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'clone', scopeNames: 0 },
-          { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'clone', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'authorize', scopeNames: 0 },
-          { roleName: 'system', action: 'authorize', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'authorize', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
         ];
@@ -305,36 +325,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 237:
-/***/ ((module) => {
-
-module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const content = {
-    root: {
-      widgets: [
-        {
-          module: 'a-dashboard',
-          name: 'widgetAbout',
-        },
-      ],
-    },
-  };
-  const dashboard = {
-    atomName: 'Default',
-    atomStaticKey: 'dashboardDefault',
-    atomRevision: 0,
-    description: '',
-    content: JSON.stringify(content),
-    resourceRoles: 'root',
-  };
-  return dashboard;
-};
-
-
-/***/ }),
-
-/***/ 224:
+/***/ 117:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -351,9 +342,148 @@ module.exports = app => {
   };
   const dashboard = {
     atomName: 'Home',
+    atomStaticKey: 'dashboardAnonymous',
+    atomRevision: 1,
+    description: 'Home(Anonymous)',
+    content: JSON.stringify(content),
+    resourceRoles: 'root',
+  };
+  return dashboard;
+};
+
+
+/***/ }),
+
+/***/ 224:
+/***/ ((module) => {
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const content = {
+    root: {
+      id: 'e341b99ef3bc495db8a8c09e6ad6203f',
+      widgets: [
+        {
+          atomStaticKey: 'test-note:widgetNote',
+          id: '878d9687921641de880b130fa0ff5fd0',
+          properties: {
+            demoKey: {
+              type: 1,
+              value: 'demo-1',
+            },
+            height: {
+              type: 1,
+              value: 'auto',
+            },
+            title: {
+              type: 1,
+              value: '',
+            },
+            widthLarge: {
+              type: 1,
+              value: 25,
+            },
+            widthMedium: {
+              type: 1,
+              value: 50,
+            },
+            widthSmall: {
+              type: 1,
+              value: 100,
+            },
+          },
+        },
+        {
+          atomStaticKey: 'test-note:widgetNote',
+          id: '688725d1c2a446fea402580a5af072da',
+          properties: {
+            demoKey: {
+              type: 1,
+              value: 'demo-2',
+            },
+            height: {
+              type: 1,
+              value: 'auto',
+            },
+            title: {
+              type: 1,
+              value: '',
+            },
+            widthLarge: {
+              type: 1,
+              value: 25,
+            },
+            widthMedium: {
+              type: 1,
+              value: 50,
+            },
+            widthSmall: {
+              type: 1,
+              value: 100,
+            },
+          },
+        },
+        {
+          atomStaticKey: 'test-party:widgetSimpleChat',
+          id: '650acfa718f645098bf0516628d678f0',
+          properties: {
+            height: {
+              type: 1,
+              value: 'auto',
+            },
+            title: {
+              type: 1,
+              value: '',
+            },
+            widthLarge: {
+              type: 1,
+              value: 25,
+            },
+            widthMedium: {
+              type: 1,
+              value: 50,
+            },
+            widthSmall: {
+              type: 1,
+              value: 100,
+            },
+          },
+        },
+        {
+          id: '8a04bfa743fb42b2a65a104e018ab924',
+          module: 'a-dashboard',
+          name: 'widgetAbout',
+          properties: {
+            height: {
+              type: 1,
+              value: 'auto',
+            },
+            title: {
+              type: 1,
+              value: '',
+            },
+            widthLarge: {
+              type: 1,
+              value: 25,
+            },
+            widthMedium: {
+              type: 1,
+              value: 50,
+            },
+            widthSmall: {
+              type: 1,
+              value: 100,
+            },
+          },
+        },
+      ],
+    },
+  };
+  const dashboard = {
+    atomName: 'Home',
     atomStaticKey: 'dashboardHome',
-    atomRevision: 0,
-    description: '',
+    atomRevision: 2,
+    description: 'Home(Authenticated)',
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
@@ -366,11 +496,11 @@ module.exports = app => {
 /***/ 937:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const dashboardDefault = __webpack_require__(237);
+const dashboardAnonymous = __webpack_require__(117);
 const dashboardHome = __webpack_require__(224);
 
 module.exports = app => {
-  const dashboards = [dashboardDefault(app), dashboardHome(app)];
+  const dashboards = [dashboardAnonymous(app), dashboardHome(app)];
   return dashboards;
 };
 
@@ -387,27 +517,31 @@ module.exports = app => {
     {
       atomName: 'Create Dashboard',
       atomStaticKey: 'createDashboard',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'dashboard',
         atomAction: 'create',
       }),
+      resourceIcon: '::dashboard',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     {
       atomName: 'Dashboard List',
       atomStaticKey: 'listDashboard',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'dashboard',
         atomAction: 'read',
       }),
+      resourceIcon: '::dashboard',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     // dashboard widget
@@ -644,6 +778,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aDashboardViewFull',
             },
+            inner: true,
             resource: true,
           },
           actions: {

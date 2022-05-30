@@ -77,14 +77,14 @@ module.exports = app => {
       }
     }
 
-    async delete({ atomClass, key, user }) {
+    async delete({ atomClass, key, options, user }) {
       // deploy
       const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 1) {
         await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
       }
       // super
-      await super.delete({ atomClass, key, user });
+      await super.delete({ atomClass, key, options, user });
       // delete flowDef
       await this.ctx.model.flowDef.delete({
         id: key.itemId,
@@ -265,10 +265,10 @@ module.exports = ctx => {
       return await ctx.bean.user.select({
         options: {
           where: {
-            'a.disabled': 0,
-            'a.id': userIds,
+            'f.disabled': 0,
+            'f.id': userIds,
           },
-          orders: [['a.userName', 'asc']],
+          orders: [['f.userName', 'asc']],
           removePrivacy: true,
         },
       });
@@ -2345,21 +2345,43 @@ module.exports = app => {
 
     async init(options) {
       if (options.version === 1) {
+        // // add role rights
+        // const roleRights = [
+        //   { roleName: 'system', action: 'create' },
+        //   { roleName: 'system', action: 'read', scopeNames: 0 },
+        //   { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'write', scopeNames: 0 },
+        //   { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'delete', scopeNames: 0 },
+        //   { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'clone', scopeNames: 0 },
+        //   { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'enable', scopeNames: 0 },
+        //   { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'disable', scopeNames: 0 },
+        //   { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
+        //   { roleName: 'system', action: 'deleteBulk' },
+        //   { roleName: 'system', action: 'exportBulk' },
+        // ];
+        // await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
+      }
+
+      if (options.version === 4) {
         // add role rights
         const roleRights = [
           { roleName: 'system', action: 'create' },
           { roleName: 'system', action: 'read', scopeNames: 0 },
-          { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'write', scopeNames: 0 },
-          { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'write', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'delete', scopeNames: 0 },
-          { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'delete', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'clone', scopeNames: 0 },
-          { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'clone', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'enable', scopeNames: 0 },
-          { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'enable', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'disable', scopeNames: 0 },
-          { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
+          { roleName: 'system', action: 'disable', scopeNames: 'authenticated' },
           { roleName: 'system', action: 'deleteBulk' },
           { roleName: 'system', action: 'exportBulk' },
         ];
@@ -2875,27 +2897,31 @@ module.exports = app => {
     {
       atomName: 'Create FlowDefinition',
       atomStaticKey: 'createFlowDef',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
+      atomRevision: -1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'flowDef',
         atomAction: 'create',
       }),
+      resourceIcon: '::flow-chart',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
     {
       atomName: 'FlowDefinition List',
       atomStaticKey: 'listFlowDef',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
+      atomRevision: 1,
+      atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         atomClassName: 'flowDef',
         atomAction: 'read',
       }),
+      resourceIcon: '::flow-chart',
+      appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
     },
   ];
@@ -3145,6 +3171,7 @@ module.exports = app => {
             tableNameModes: {
               full: 'aFlowDefViewFull',
             },
+            inner: true,
             category: true,
             tag: true,
           },

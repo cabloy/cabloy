@@ -47,6 +47,94 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 342:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const extend = require3('extend2');
+
+const __mailScenesConfigCache = {};
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class MailSceneCache {
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+    get statusModule() {
+      return ctx.bean.status.module(moduleInfo.relativeName);
+    }
+
+    getMailScenesConfigCache() {
+      return __mailScenesConfigCache[ctx.subdomain];
+    }
+
+    getMailSceneConfigCache(sceneName) {
+      return __mailScenesConfigCache[ctx.subdomain][sceneName];
+    }
+
+    getMailScenesConfigForAdmin() {
+      let scenes = this.getMailScenesConfigCache();
+      scenes = extend(true, {}, scenes);
+      for (const sceneName in scenes) {
+        const scene = scenes[sceneName];
+        scene.titleLocale = ctx.text(scene.title);
+      }
+      return scenes;
+    }
+
+    async mailSceneChanged() {
+      // change self
+      await this._cacheMailScenesConfig();
+      // broadcast
+      ctx.meta.util.broadcastEmit({
+        module: 'a-mail',
+        broadcastName: 'mailSceneChanged',
+        data: null,
+      });
+    }
+
+    purgeScene(scene) {
+      const res = extend(true, {}, scene);
+      delete res.titleLocale;
+      return res;
+    }
+
+    async _cacheMailScenesConfig() {
+      // configDefault
+      const configDefault = this.configModule.scenes;
+      // configScenes
+      let configScenes = await this.statusModule.get('mailScenes');
+      configScenes = extend(true, {}, configDefault, configScenes);
+      // cache
+      __mailScenesConfigCache[ctx.subdomain] = configScenes;
+    }
+  }
+  return MailSceneCache;
+};
+
+
+/***/ }),
+
+/***/ 986:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Broadcast extends app.meta.BeanBase {
+    async execute(context) {
+      const sameAsCaller = context.sameAsCaller;
+      if (!sameAsCaller) {
+        await this.ctx.bean.mailSceneCache._cacheMailScenesConfig();
+      }
+    }
+  }
+
+  return Broadcast;
+};
+
+
+/***/ }),
+
 /***/ 857:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -58,7 +146,7 @@ const boxen = require3('boxen');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class IOChannel extends ctx.app.meta.IOChannelBase(ctx) {
     async onPush({ content /* options, message, messageSync, messageClass*/ }) {
       // check if content.message
@@ -71,8 +159,8 @@ module.exports = ctx => {
       if (content.scene && typeof content.scene === 'object') {
         scene = content.scene;
       } else {
-        // 2. from config
-        scene = ctx.config.module(moduleInfo.relativeName).scenes[content.scene || 'system'];
+        // 2. from config cache
+        scene = ctx.bean.mailSceneCache.getMailSceneConfigCache(content.scene || 'system');
       }
       // 3. test
       if (!this._sceneValid(scene) && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
@@ -163,6 +251,23 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 948:
+/***/ ((module) => {
+
+module.exports = app => {
+  class Startup extends app.meta.BeanBase {
+    async execute(/* context*/) {
+      // cache all mailScenes
+      await this.ctx.bean.mailSceneCache._cacheMailScenesConfig();
+    }
+  }
+
+  return Startup;
+};
+
+
+/***/ }),
+
 /***/ 899:
 /***/ ((module) => {
 
@@ -211,7 +316,10 @@ module.exports = app => {
 const versionManager = __webpack_require__(899);
 const ioMessageMail = __webpack_require__(265);
 const ioChannelMail = __webpack_require__(857);
+const broadcastMailSceneChanged = __webpack_require__(986);
+const startupCacheMailScenes = __webpack_require__(948);
 const beanMail = __webpack_require__(202);
+const beanMailSceneCache = __webpack_require__(342);
 
 module.exports = app => {
   const beans = {
@@ -229,10 +337,25 @@ module.exports = app => {
       mode: 'ctx',
       bean: ioChannelMail,
     },
+    // broadcast
+    'broadcast.mailSceneChanged': {
+      mode: 'app',
+      bean: broadcastMailSceneChanged,
+    },
+    // startup
+    'startup.cacheMailScenes': {
+      mode: 'app',
+      bean: startupCacheMailScenes,
+    },
     // global
     mail: {
       mode: 'ctx',
       bean: beanMail,
+      global: true,
+    },
+    mailSceneCache: {
+      mode: 'ctx',
+      bean: beanMailSceneCache,
       global: true,
     },
   };
@@ -249,12 +372,25 @@ module.exports = app => {
 module.exports = appInfo => {
   const config = {};
 
-  // middlewares
-  config.middlewares = {};
+  // startups
+  config.startups = {
+    cacheMailScenes: {
+      bean: 'cacheMailScenes',
+      instance: true,
+    },
+  };
 
-  // scenes
-  config.scenes = {
-    system: {
+  // broadcasts
+  config.broadcasts = {
+    mailSceneChanged: {
+      bean: 'mailSceneChanged',
+    },
+  };
+
+  // default
+  config.scene = {
+    default: {
+      // title: undefined,
       transport: {
         host: '',
         port: 0,
@@ -269,6 +405,13 @@ module.exports = appInfo => {
       defaults: {
         from: '',
       },
+    },
+  };
+  // scenes
+  config.scenes = {
+    system: {
+      title: 'System',
+      ...config.scene.default,
     },
   };
 
@@ -301,6 +444,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  'Mail Management': '邮件管理',
   mailhostNotConfigAlert: '请设置模块配置: [a-mail].scenes.system',
 };
 
@@ -354,11 +498,214 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 429:
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {};
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const resources = [
+    // menu
+    {
+      atomName: 'Mail Management',
+      atomStaticKey: 'mailManagement',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.BasicAdmin',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        actionPath: '/a/mail/scene/list',
+      }),
+      resourceIcon: ':outline:mail-outline',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
+      resourceSorting: 6,
+    },
+  ];
+  return resources;
+};
+
+
+/***/ }),
+
+/***/ 665:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.mailScene = {
+    type: 'object',
+    properties: {
+      transport: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'MailTransportInfo',
+        properties: {
+          title: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'Title',
+            notEmpty: true,
+          },
+          host: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'MailHost',
+            notEmpty: true,
+          },
+          port: {
+            type: 'number',
+            ebType: 'text',
+            ebTitle: 'MailPort',
+            notEmpty: true,
+          },
+          secure: {
+            type: 'boolean',
+            ebType: 'toggle',
+            ebTitle: 'MailSecure',
+          },
+        },
+      },
+      auth: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Auth Info',
+        properties: {
+          user: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'MailAuthUser',
+            notEmpty: true,
+          },
+          pass: {
+            type: 'string',
+            ebType: 'text',
+            ebTitle: 'MailAuthPassword',
+            notEmpty: true,
+          },
+        },
+      },
+      __groupDefaultsInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Defaults Info',
+      },
+      defaults: {
+        type: 'object',
+        ebType: 'json',
+        ebTitle: 'Defaults',
+      },
+      extra: {
+        type: 'object',
+        ebType: 'group',
+        ebTitle: 'Extra Info',
+        properties: {
+          logger: {
+            type: 'boolean',
+            ebType: 'toggle',
+            ebTitle: 'logger',
+          },
+          debug: {
+            type: 'boolean',
+            ebType: 'toggle',
+            ebTitle: 'debug',
+          },
+        },
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const mailScene = __webpack_require__(665);
+
+module.exports = app => {
+  const schemas = {};
+  Object.assign(schemas, mailScene(app));
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 36:
+/***/ ((module) => {
+
+module.exports = app => {
+  class SceneController extends app.Controller {
+    async list() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.ctx.service.scene.list();
+      this.ctx.success(res);
+    }
+
+    async save() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      // adjust
+      const sceneName = this.ctx.request.body.sceneName;
+      const data = this.ctx.request.body.data;
+      const data2 = {
+        title: data.transport.title,
+        transport: {
+          ...data.transport,
+          auth: data.auth,
+          logger: data.extra.logger,
+          debug: data.extra.debug,
+        },
+        defaults: data.defaults,
+      };
+      delete data2.transport.title;
+      // save
+      await this.service.scene.save({
+        sceneName,
+        data: data2,
+      });
+      // ok
+      const list = await this.ctx.service.scene.list();
+      const res = list[sceneName];
+      this.ctx.success(res);
+    }
+
+    async delete() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      await this.service.scene.delete({
+        sceneName: this.ctx.request.body.sceneName,
+      });
+      const list = await this.ctx.service.scene.list();
+      this.ctx.success({ list });
+    }
+
+    async add() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      await this.service.scene.add({
+        sceneName: this.ctx.request.body.sceneName,
+        data: this.ctx.request.body.data,
+      });
+      const list = await this.ctx.service.scene.list();
+      this.ctx.success({ list });
+    }
+  }
+
+  return SceneController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const scene = __webpack_require__(36);
+
+module.exports = app => {
+  const controllers = { scene };
   return controllers;
 };
 
@@ -406,18 +753,31 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
-  // const schemas = require('./config/validation/schemas.js')(app);
+  // schemas
+  const schemas = __webpack_require__(232)(app);
   // socketio
   const socketioMessageMail = __webpack_require__(251)(app);
   const socketioChannelMail = __webpack_require__(213)(app);
+  // static
+  const staticResources = __webpack_require__(429)(app);
+  // meta
   const meta = {
     base: {
       atoms: {},
+      statics: {
+        'a-base.resource': {
+          items: staticResources,
+        },
+      },
     },
     validation: {
-      validators: {},
+      validators: {
+        mailScene: {
+          schemas: 'mailScene',
+        },
+      },
       keywords: {},
-      schemas: {},
+      schemas,
     },
     socketio: {
       messages: {
@@ -468,19 +828,87 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [];
+  const routes = [
+    // scene
+    {
+      method: 'post',
+      path: 'scene/list',
+      controller: 'scene',
+      meta: { right: { type: 'resource', name: 'mailManagement' } },
+    },
+    {
+      method: 'post',
+      path: 'scene/save',
+      controller: 'scene',
+      middlewares: 'validate',
+      meta: {
+        right: { type: 'resource', name: 'mailManagement' }, //
+        validate: { validator: 'mailScene' },
+      },
+    },
+    {
+      method: 'post',
+      path: 'scene/delete',
+      controller: 'scene',
+      meta: { right: { type: 'resource', name: 'mailManagement' } },
+    },
+    {
+      method: 'post',
+      path: 'scene/add',
+      controller: 'scene',
+      meta: { right: { type: 'resource', name: 'mailManagement' } },
+    },
+  ];
   return routes;
 };
 
 
 /***/ }),
 
-/***/ 9:
-/***/ ((module) => {
+/***/ 93:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const extend = require3('extend2');
 
 module.exports = app => {
-  class Mail extends app.Service {}
-  return Mail;
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Scene extends app.Service {
+    get statusModule() {
+      return this.ctx.bean.status.module(moduleInfo.relativeName);
+    }
+
+    async list() {
+      return this.ctx.bean.mailSceneCache.getMailScenesConfigForAdmin();
+    }
+
+    async save({ sceneName, data }) {
+      const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
+      const sceneOld = scenes[sceneName];
+      data = extend(true, {}, sceneOld, data);
+      await this._save({ sceneName, data });
+    }
+
+    async _save({ sceneName, data }) {
+      const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
+      scenes[sceneName] = data ? this.ctx.bean.mailSceneCache.purgeScene(data) : data;
+      // update
+      await this.statusModule.set('mailScenes', scenes);
+      // changed
+      await this.ctx.bean.mailSceneCache.mailSceneChanged();
+    }
+
+    async delete({ sceneName }) {
+      await this._save({ sceneName, data: undefined });
+    }
+
+    async add({ sceneName, data }) {
+      data = extend(true, {}, this.ctx.config.scene.default, data);
+      await this._save({ sceneName, data });
+    }
+  }
+
+  return Scene;
 };
 
 
@@ -489,12 +917,10 @@ module.exports = app => {
 /***/ 214:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const mail = __webpack_require__(9);
+const scene = __webpack_require__(93);
 
 module.exports = app => {
-  const services = {
-    mail,
-  };
+  const services = { scene };
   return services;
 };
 
