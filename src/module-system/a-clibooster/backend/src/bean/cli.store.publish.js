@@ -14,7 +14,7 @@ module.exports = ctx => {
       super(options, 'publish');
     }
 
-    async onExecuteStoreCommandEntity({ entityName }) {
+    async onExecuteStoreCommandEntity({ entityName, entityConfig }) {
       // fetch entity status
       const entityStatus = await this.openAuthClient.post({
         path: '/cabloy/store/store/publish/entityStatus',
@@ -31,20 +31,33 @@ module.exports = ctx => {
       // need official/trial
       const needOfficial = entityStatus.entity.moduleLicenseFull !== 0;
       const needTrial = entityStatus.entity.moduleLicenseTrial !== 0;
-      // suite/module
+      // publish: suite/module
+      let res;
       if (entityStatus.entity.entityTypeCode === 1) {
-        return await this._publishSuite({ suiteName: entityName, entityStatus, entityHash, needOfficial, needTrial });
+        // suite
+        res = await this._publishSuite({
+          suiteName: entityName,
+          entityConfig,
+          entityStatus,
+          entityHash,
+          needOfficial,
+          needTrial,
+        });
+      } else {
+        // module
+        res = await this._publishModuleIsolate({
+          moduleName: entityName,
+          entityConfig,
+          entityStatus,
+          entityHash,
+          needOfficial,
+          needTrial,
+        });
       }
-      return await this._publishModuleIsolate({
-        moduleName: entityName,
-        entityStatus,
-        entityHash,
-        needOfficial,
-        needTrial,
-      });
+      return res;
     }
 
-    async _publishModuleIsolate({ moduleName, entityHash, entityStatus, needOfficial, needTrial }) {
+    async _publishModuleIsolate({ moduleName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
       // check if exists
       const module = this.helper.findModule(moduleName);
       if (!module) {
@@ -70,7 +83,7 @@ module.exports = ctx => {
       return { code: 2000, args: [moduleMeta.package.version] };
     }
 
-    async _publishSuite({ suiteName, entityHash, entityStatus, needOfficial, needTrial }) {
+    async _publishSuite({ suiteName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
       // check if exists
       const suite = this.helper.findSuite(suiteName);
       if (!suite) {

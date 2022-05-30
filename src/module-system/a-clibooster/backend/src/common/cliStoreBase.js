@@ -172,7 +172,7 @@ module.exports = ctx => {
           await this.saveCabloyConfig();
         }
         // onExecuteStoreCommandEntity
-        return await this.onExecuteStoreCommandEntity({ entityName });
+        return await this.onExecuteStoreCommandEntity({ entityName, entityConfig });
       } catch (err) {
         return {
           code: err.code,
