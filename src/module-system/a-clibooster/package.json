@@ -28,7 +28,6 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
-    "egg-born-utils": "^1.0.4",
     "extend2": "^1.0.1",
     "uglify-js": "^3.7.7",
     "globby": "^11.0.0",
