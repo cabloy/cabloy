@@ -317,6 +317,8 @@ module.exports = ctx => {
           await this._handleScripts_npmPublish({ entityMeta, entityConfig });
         } else if (script === 'gitCommit') {
           await this._handleScripts_gitCommit({ entityMeta, entityConfig });
+        } else {
+          await this._handleScripts_general({ entityMeta, entityConfig, script });
         }
       }
     }
@@ -364,6 +366,18 @@ module.exports = ctx => {
       await this.helper.spawn({
         cmd: 'git',
         args: ['push'],
+        options: {
+          cwd: entityMeta.root,
+        },
+      });
+    }
+
+    async _handleScripts_general({ entityMeta, script }) {
+      const args = script.split(' ');
+      const cmd = args.shift();
+      await this.helper.spawn({
+        cmd,
+        args,
         options: {
           cwd: entityMeta.root,
         },
