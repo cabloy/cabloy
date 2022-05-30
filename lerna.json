@@ -14,8 +14,8 @@
     },
     "publish": {
       "ignoreChanges": [
-        "src/module/**/*",
-        "src/suite/**/*",
+        "src/module/**",
+        "src/suite/**",
         "src/module-vendor/**",
         "src/suite-vendor/**",
         "src/module-system/a-themebrilliant",
