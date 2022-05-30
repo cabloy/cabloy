@@ -10,6 +10,18 @@
       },
       "publish": {
         "entities": {
+          "cms-themeaws": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-themeblog": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-themecommunity": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-themedocs": {
+            "scripts": ["npmPublish"]
+          },
           "test-party": {},
           "test-note": {
             "scripts": ["npmPublish", "gitCommit"]

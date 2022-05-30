@@ -13,7 +13,14 @@
       "hoist": "**"
     },
     "publish": {
-      "ignoreChanges": ["src/module/**", "src/suite/**"]
+      "ignoreChanges": [
+        "src/module/**",
+        "src/suite/**",
+        "src/module-system/cms-themeaws",
+        "src/module-system/cms-themeblog",
+        "src/module-system/cms-themecommunity",
+        "src/module-system/cms-themedocs"
+      ]
     }
   }
 }
