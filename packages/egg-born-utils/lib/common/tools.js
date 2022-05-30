@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const { NodeVM } = require('vm2');
 
 // tools
@@ -97,6 +99,13 @@ const tools = {
     } catch (err) {
       return false;
     }
+  },
+  _getCabloyPath(projectPath) {
+    let cabloyPath = path.join(projectPath, 'node_modules/cabloy');
+    if (fs.existsSync(cabloyPath)) return cabloyPath;
+    cabloyPath = path.join(projectPath, 'packages/cabloy');
+    if (fs.existsSync(cabloyPath)) return cabloyPath;
+    return null;
   },
 };
 

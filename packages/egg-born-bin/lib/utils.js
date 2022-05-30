@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 const urllib = require('urllib');
 const semver = require('semver');
 const chalk = require('chalk');
@@ -113,12 +112,7 @@ const utils = {
     return path.dirname(moduleFile);
   },
   __getCabloyPath() {
-    const cwd = process.cwd();
-    let cabloyPath = path.join(cwd, 'node_modules/cabloy');
-    if (fs.existsSync(cabloyPath)) return cabloyPath;
-    cabloyPath = path.join(cwd, 'packages/cabloy');
-    if (fs.existsSync(cabloyPath)) return cabloyPath;
-    return null;
+    return eggBornUtils.tools._getCabloyPath(process.cwd());
   },
   getAppPackage() {
     const cwd = process.cwd();

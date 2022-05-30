@@ -6,6 +6,7 @@ const shajs = require3('sha.js');
 const semver = require3('semver');
 const fse = require3('fs-extra');
 const utility = require3('utility');
+const eggBornUtils = require3('egg-born-utils');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
@@ -321,6 +322,7 @@ module.exports = ctx => {
     }
 
     async _handleScripts_npmPublish({ entityMeta }) {
+      const { argv } = this.context;
       // npm publish
       await this.helper.spawn({
         cmd: 'npm',
@@ -329,6 +331,8 @@ module.exports = ctx => {
           cwd: entityMeta.root,
         },
       });
+      // cabloy path
+      const cabloyPath = eggBornUtils.tools._getCabloyPath(argv.projectPath);
     }
 
     async _handleScripts_gitCommit({ entityMeta }) {
