@@ -79,6 +79,8 @@ module.exports = ctx => {
       }
       // upload module isolate
       await this._uploadModuleIsolate({ moduleMeta, entityStatus, needOfficial, needTrial });
+      // handleScripts
+      await this._handleScripts({ entityMeta: moduleMeta, entityConfig });
       // submitted
       return { code: 2000, args: [moduleMeta.package.version] };
     }
@@ -129,6 +131,8 @@ module.exports = ctx => {
       const zipSuiteAll = await this._zipSuiteAll({ suiteMeta, modulesMeta, needOfficial, needTrial });
       // upload all
       await this._uploadSuiteAll({ suiteMeta, zipSuiteAll, entityStatus, needOfficial, needTrial });
+      // handleScripts
+      await this._handleScripts({ entityMeta: suiteMeta, entityConfig });
       // submitted
       return { code: 2000, args: [suiteMeta.package.version] };
     }
@@ -303,6 +307,55 @@ module.exports = ctx => {
       const hash = needHash ? shajs('sha256').update(buffer).digest('hex') : undefined;
       // ok
       return { buffer, hash: { hash } };
+    }
+
+    async _handleScripts({ entityMeta, entityConfig }) {
+      if (!entityConfig.scripts) return;
+      for (const script of entityConfig.scripts) {
+        if (script === 'npmPublish') {
+          await this._handleScripts_npmPublish({ entityMeta, entityConfig });
+        } else if (script === 'gitCommit') {
+          await this._handleScripts_gitCommit({ entityMeta, entityConfig });
+        }
+      }
+    }
+
+    async _handleScripts_npmPublish({ entityMeta }) {
+      // npm publish
+      await this.helper.spawn({
+        cmd: 'npm',
+        args: ['publish'],
+        options: {
+          cwd: entityMeta.root,
+        },
+      });
+    }
+
+    async _handleScripts_gitCommit({ entityMeta }) {
+      // git add .
+      await this.helper.spawn({
+        cmd: 'git',
+        args: ['add', '.'],
+        options: {
+          cwd: entityMeta.root,
+        },
+      });
+      // git commit
+      await this.helper.spawn({
+        cmd: 'git',
+        args: ['commit', '-m', `'chore: version ${entityMeta.package.version}'`],
+        options: {
+          cwd: entityMeta.root,
+        },
+      });
+      // git push
+      await this.helper.spawn({
+        cmd: 'git',
+        args: ['push'],
+        options: {
+          cwd: entityMeta.root,
+        },
+      });
     }
   }
 
