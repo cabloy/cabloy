@@ -133,7 +133,7 @@ module.exports = ctx => {
     _getEntityVersion(entityPath) {
       const filePkg = path.join(entityPath, 'package.json');
       if (!fs.existsSync(filePkg)) return null;
-      const _package = require(filePkg);
+      const _package = require3(filePkg);
       return _package.version;
     }
   }
