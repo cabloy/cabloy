@@ -83,6 +83,9 @@ module.exports = app => {
     }
 
     async create({ atomClass, item, options, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      // user
       const userId = user.id;
       // super
       const key = await super.create({ atomClass, item, options, user });
