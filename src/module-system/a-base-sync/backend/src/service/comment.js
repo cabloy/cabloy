@@ -160,8 +160,8 @@ module.exports = app => {
       // check right
       let canDeleted = key.atomId === item.atomId && item.userId === user.id;
       if (!canDeleted) {
-        canDeleted = await this.ctx.bean.function.checkRightFunction({
-          function: { module: 'a-base', name: 'deleteComment' },
+        canDeleted = await this.ctx.bean.resource.checkRightResource({
+          atomStaticKey: 'a-base:deleteComment',
           user,
         });
       }
