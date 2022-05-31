@@ -5136,6 +5136,21 @@ module.exports = ctx => {
 
     // roleA.roleB
     async parseRoleName({ roleName, roleIdParent, force = false }) {
+      // parse
+      const role = await this._parseRoleName_general({ roleName, roleIdParent, force });
+      // special check 'authenticated.builtIn'
+      if (!role && roleName === 'authenticated.builtIn') {
+        await this._initSystemRoles({
+          module: moduleInfo.relativeName,
+          rolesData: initData15.roles,
+        });
+        return await this._parseRoleName_general({ roleName });
+      }
+      // ok
+      return role;
+    }
+
+    async _parseRoleName_general({ roleName, roleIdParent, force = false }) {
       if (!roleName) throw new Error('roleName should not be empty');
       const roleNames = roleName.split('.');
       let role;
@@ -5163,14 +5178,6 @@ module.exports = ctx => {
         role = await this.get({ id: roleId });
         // next
         roleIdParent = roleId;
-      }
-      // special check 'authenticated.builtIn'
-      if (!role && roleName === 'authenticated.builtIn') {
-        await this._initSystemRoles({
-          module: moduleInfo.relativeName,
-          rolesData: initData15.roles,
-        });
-        return await this.parseRoleName({ roleName });
       }
       // ok
       return role;
