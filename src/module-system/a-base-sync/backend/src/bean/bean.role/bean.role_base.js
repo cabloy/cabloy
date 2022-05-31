@@ -1,5 +1,6 @@
 const require3 = require('require3');
 const extend = require3('extend2');
+const initData15 = require('../version/initData15.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -175,6 +176,15 @@ module.exports = ctx => {
         // next
         roleIdParent = roleId;
       }
+      // special check 'authenticated.builtIn'
+      if (!role && roleName === 'authenticated.builtIn') {
+        await this._initSystemRoles({
+          module: moduleInfo.relativeName,
+          rolesData: initData15.roles,
+        });
+        return await this.parseRoleName({ roleName });
+      }
+      // ok
       return role;
     }
 
