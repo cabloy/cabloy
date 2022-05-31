@@ -70,7 +70,7 @@ module.exports = ctx => {
         name: moduleName,
         root: module.root,
         pkg: module.pkg,
-        package: module.package,
+        package: require3(module.pkg), // module.package,
       };
       const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
@@ -101,7 +101,7 @@ module.exports = ctx => {
         // name
         const name = filePkg.split('/').slice(-2)[0];
         // meta
-        const _package = require(filePkg);
+        const _package = require3(filePkg);
         const root = path.dirname(filePkg);
         const moduleMeta = {
           name,
@@ -115,7 +115,7 @@ module.exports = ctx => {
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
-      const _package = require(filePkg);
+      const _package = require3(filePkg);
       const suiteMeta = {
         name: suiteName,
         root: pathSuite,
