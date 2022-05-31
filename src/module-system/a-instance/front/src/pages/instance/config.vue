@@ -2,7 +2,7 @@
   <eb-page>
     <eb-navbar large largeTransparent :title="page_title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconF7="::save" ref="buttonSubmit" :onPerform="onPerformSave"></eb-link>
+        <eb-link v-if="instance" iconF7="::save" ref="buttonSubmit" :onPerform="onPerformSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <eb-validate
