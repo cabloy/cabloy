@@ -461,7 +461,7 @@ module.exports = ctx => {
         name: moduleName,
         root: module.root,
         pkg: module.pkg,
-        package: module.package,
+        package: require3(module.pkg), // module.package,
       };
       const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
@@ -492,7 +492,7 @@ module.exports = ctx => {
         // name
         const name = filePkg.split('/').slice(-2)[0];
         // meta
-        const _package = __webpack_require__(353)(filePkg);
+        const _package = require3(filePkg);
         const root = path.dirname(filePkg);
         const moduleMeta = {
           name,
@@ -506,7 +506,7 @@ module.exports = ctx => {
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
-      const _package = __webpack_require__(353)(filePkg);
+      const _package = require3(filePkg);
       const suiteMeta = {
         name: suiteName,
         root: pathSuite,
@@ -920,7 +920,7 @@ module.exports = ctx => {
     _getEntityVersion(entityPath) {
       const filePkg = path.join(entityPath, 'package.json');
       if (!fs.existsSync(filePkg)) return null;
-      const _package = __webpack_require__(353)(filePkg);
+      const _package = require3(filePkg);
       return _package.version;
     }
   }
@@ -1326,21 +1326,6 @@ module.exports = app => {
   return beans;
 };
 
-
-/***/ }),
-
-/***/ 353:
-/***/ ((module) => {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = () => ([]);
-webpackEmptyContext.resolve = webpackEmptyContext;
-webpackEmptyContext.id = 353;
-module.exports = webpackEmptyContext;
 
 /***/ }),
 
@@ -2607,12 +2592,6 @@ module.exports = require("path");
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
 /******/ 	
 /************************************************************************/
 /******/ 	
