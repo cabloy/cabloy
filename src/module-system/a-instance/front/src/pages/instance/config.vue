@@ -38,12 +38,18 @@ export default {
     },
   },
   created() {
-    this.$api.post('instance/item').then(data => {
-      data.config = window.JSON5.stringify(JSON.parse(data.config || '{}'), null, 2);
-      this.instance = data;
-    });
+    this.load();
   },
   methods: {
+    async load() {
+      try {
+        const data = await this.$api.post('instance/item');
+        data.config = window.JSON5.stringify(JSON.parse(data.config || '{}'), null, 2);
+        this.instance = data;
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
+      }
+    },
     onValidateItemChange() {
       this.page_setDirty(true);
     },

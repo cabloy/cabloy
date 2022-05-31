@@ -1,6 +1,8 @@
 module.exports = app => {
   class InstanceController extends app.Controller {
     async item() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.instance.item();
       this.ctx.success(res);
     }
@@ -15,6 +17,8 @@ module.exports = app => {
     }
 
     async getConfigsPreview() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.instance.getConfigsPreview();
       this.ctx.success(res);
     }
