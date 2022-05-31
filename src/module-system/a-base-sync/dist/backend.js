@@ -10467,6 +10467,10 @@ module.exports = function (ctx) {
         if (!userName && item.anonymous) {
           userName = 'anonymous';
         }
+        // maybe also empty
+        if (!userName) {
+          userName = '__Unknown User__';
+        }
         // add atom
         const atomKey = await ctx.bean.atom.create({
           atomClass: __atomClassUser,
