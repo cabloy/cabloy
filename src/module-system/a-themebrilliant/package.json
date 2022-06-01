@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-themebrilliant",
-  "version": "4.1.10",
+  "version": "4.1.11",
   "title": "BrilliantThemeTitle",
   "eggBornModule": {
     "fileVersion": 0,
@@ -21,5 +21,7 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "dependencies": {}
+  "dependencies": {
+    "extend2": "^1.0.1"
+  }
 }
