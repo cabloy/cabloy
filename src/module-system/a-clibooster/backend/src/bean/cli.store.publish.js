@@ -252,7 +252,7 @@ module.exports = ctx => {
       if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
         moduleMeta.changed = true;
         // build:all
-        await this.helper.spawn({
+        await this.helper.spawnCmd({
           cmd: 'npm',
           args: ['run', 'build:all'],
           options: {
@@ -325,7 +325,7 @@ module.exports = ctx => {
     async _handleScripts_npmPublish({ entityMeta }) {
       const { argv } = this.context;
       // npm publish
-      await this.helper.spawn({
+      await this.helper.spawnCmd({
         cmd: 'npm',
         args: ['publish'],
         options: {
@@ -346,7 +346,7 @@ module.exports = ctx => {
 
     async _handleScripts_gitCommit({ entityMeta }) {
       // git add .
-      await this.helper.spawn({
+      await this.helper.spawnCmd({
         cmd: 'git',
         args: ['add', '.'],
         options: {
@@ -354,7 +354,7 @@ module.exports = ctx => {
         },
       });
       // git commit
-      await this.helper.spawn({
+      await this.helper.spawnCmd({
         cmd: 'git',
         args: ['commit', '-m', `'chore: version ${entityMeta.package.version}'`],
         options: {
@@ -362,7 +362,7 @@ module.exports = ctx => {
         },
       });
       // git push
-      await this.helper.spawn({
+      await this.helper.spawnCmd({
         cmd: 'git',
         args: ['push'],
         options: {
