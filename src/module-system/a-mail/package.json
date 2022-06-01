@@ -19,7 +19,6 @@
   "author": "zhennann",
   "dependencies": {
     "boxen": "^4.2.0",
-    "extend2": "^1.0.1",
     "nodemailer": "^6.7.2"
   }
 }

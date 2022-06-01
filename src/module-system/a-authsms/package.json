@@ -24,7 +24,6 @@
   "dependencies": {
     "@alicloud/pop-core": "^1.7.9",
     "boxen": "^4.2.0",
-    "chalk": "^3.0.0",
-    "extend2": "^1.0.1"
+    "chalk": "^3.0.0"
   }
 }

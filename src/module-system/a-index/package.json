@@ -19,7 +19,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "chalk": "^3.0.0",
-    "extend2": "^1.0.1"
+    "chalk": "^3.0.0"
   }
 }

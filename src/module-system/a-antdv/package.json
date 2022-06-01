@@ -21,7 +21,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "@zhennann/ant-design-vue": "^1.7.9",
-    "extend2": "^1.0.1"
+    "@zhennann/ant-design-vue": "^1.7.9"
   }
 }

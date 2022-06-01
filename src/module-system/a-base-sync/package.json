@@ -22,7 +22,6 @@
     "@koa/cors": "^3.0.0",
     "@zhennann/trim-html": "^0.1.12",
     "exceljs": "^4.1.1",
-    "extend2": "^1.0.1",
     "moment": "^2.24.0",
     "p-map": "^3.0.0",
     "qr-image": "^3.2.0",

@@ -19,7 +19,5 @@
   },
   "author": "<%=argv.author%>",
   "devDependencies": {},
-  "dependencies": {
-    "extend2": "^1.0.1"
-  }
+  "dependencies": {}
 }

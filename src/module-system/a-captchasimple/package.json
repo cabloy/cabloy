@@ -18,7 +18,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "extend2": "^1.0.1",
     "trek-captcha": "^0.4.0"
   }
 }

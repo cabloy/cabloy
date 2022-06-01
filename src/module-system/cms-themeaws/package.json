@@ -21,7 +21,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "egg-born-module-cms-themeblog": "^4.2.12",
-    "extend2": "^1.0.1"
+    "egg-born-module-cms-themeblog": "^4.2.12"
   }
 }

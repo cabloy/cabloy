@@ -22,7 +22,6 @@
   "author": "zhennann",
   "dependencies": {
     "@zhennann/socketio": "^3.0.2",
-    "extend2": "^1.0.1",
     "socket.io-client": "^2.3.0"
   }
 }
