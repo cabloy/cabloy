@@ -69,6 +69,8 @@ class EggBornBinCommand extends Command {
     yield command[DISPATCH]();
     // logout
     yield openAuthClient.logout();
+    // force exit
+    process.exit(0);
   }
 
   _prepareCliFullName(cliName) {
