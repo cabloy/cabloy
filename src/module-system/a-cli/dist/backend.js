@@ -316,6 +316,7 @@ module.exports = ctx => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const { spawn } = __webpack_require__(81);
+const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
 const Chalk = require3('chalk');
 const TableClass = require3('cli-table3');
@@ -412,14 +413,14 @@ module.exports = ctx => {
       // log
       await this.console.log(`===> lerna bootstrap ${registryOption}`);
       // spawn
-      await this.spawn({
+      await this.spawnCmd({
         cmd: 'lerna',
         args,
       });
     }
     async formatFile({ fileName, logPrefix }) {
       try {
-        await this.spawn({
+        await this.spawnBin({
           cmd: 'prettier',
           args: ['--write', fileName],
           options: {
@@ -433,6 +434,16 @@ module.exports = ctx => {
         }
         throw err;
       }
+    }
+    async spawnBin({ cmd, args, options }) {
+      cmd = path.join(this.context.cwd, 'node_modules/.bin', cmd);
+      return await this.spawnCmd({ cmd, args, options });
+    }
+    async spawnCmd({ cmd, args, options }) {
+      if (/^win/.test(process.platform)) {
+        cmd = `${cmd}.cmd`;
+      }
+      return await this.spawn({ cmd, args, options });
     }
     async spawn({ cmd, args = [], options = {} }) {
       if (!options.cwd) {
