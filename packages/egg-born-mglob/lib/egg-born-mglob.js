@@ -1,8 +1,8 @@
 const path = require('path');
 const fse = require('fs-extra');
-const globby = require('globby');
 const semver = require('semver');
 const chalk = require('chalk');
+const eggBornUtils = require('egg-born-utils');
 const mparse = require('egg-born-mparse').default;
 
 module.exports = {
@@ -196,7 +196,7 @@ function __parseModules(projectPath) {
   const modules = {};
   for (const __path of __pathsModules) {
     const prefix = `${projectPath}/${__path.prefix}`;
-    const filePkgs = globby.sync(`${prefix}*/package.json`);
+    const filePkgs = eggBornUtils.tools.globbySync(`${prefix}*/package.json`);
     for (const filePkg of filePkgs) {
       // name
       const name = filePkg.split('/').slice(-2)[0];
@@ -341,7 +341,7 @@ function __parseSuites(projectPath) {
   const suites = {};
   for (const __path of __pathSuites) {
     const prefix = `${projectPath}/${__path.prefix}`;
-    const filePkgs = globby.sync(`${prefix}*/package.json`);
+    const filePkgs = eggBornUtils.tools.globbySync(`${prefix}*/package.json`);
     for (const filePkg of filePkgs) {
       // name
       const name = filePkg.split('/').slice(-2)[0];

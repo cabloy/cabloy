@@ -3,7 +3,6 @@ const urllib = require('urllib');
 const semver = require('semver');
 const chalk = require('chalk');
 const boxen = require('boxen');
-const globby = require('globby');
 const extend = require('extend2');
 const eggBornUtils = require('egg-born-utils');
 
@@ -146,7 +145,7 @@ const utils = {
     // cli templates
     pattern.push('!src/**/backend/cli/templates/**/*.test.js');
     // expand glob
-    return globby.sync(pattern);
+    return eggBornUtils.tools.globbySync(pattern);
   },
 };
 module.exports = utils;

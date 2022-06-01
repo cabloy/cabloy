@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const globby = require('globby');
+const eggBornUtils = require('egg-born-utils');
 const CovCommand = require('@zhennann/egg-bin').CovCommand;
 const utils = require('../utils.js');
 
@@ -31,14 +31,6 @@ class BackendCovCommand extends CovCommand {
     yield super.run(context);
   }
 
-  /**
-   * format test args then change it to array style
-   * @param {Object} context - { cwd, argv, ...}
-   * @param context.argv
-   * @param context.debugOptions
-   * @return {Array} [ '--require=xxx', 'xx.test.js' ]
-   * @protected
-   */
   *formatTestArgs({ argv, debugOptions }) {
     const testArgv = Object.assign({}, argv);
 
@@ -107,7 +99,7 @@ class BackendCovCommand extends CovCommand {
     // pattern = pattern.concat([ '!test/fixtures', '!test/node_modules' ]);
 
     // expand glob and skip node_modules and fixtures
-    const files = globby.sync(pattern);
+    const files = eggBornUtils.tools.globbySync(pattern);
     files.sort();
 
     if (files.length === 0) {

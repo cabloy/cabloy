@@ -1,5 +1,5 @@
 const path = require('path');
-const globby = require('globby');
+const eggBornUtils = require('egg-born-utils');
 const urllib = require('urllib');
 const os = require('os');
 const assert = require('assert');
@@ -45,7 +45,7 @@ class TestUpdateCommand extends Command {
     yield this.__forceMoveCabloyModulesToVendor({ projectPath });
     // update
     const prefix = `${projectPath}/src/module-vendor/`;
-    const files = globby.sync(`${prefix}test-*`, { onlyDirectories: true });
+    const files = eggBornUtils.tools.globbySync(`${prefix}test-*`, { onlyDirectories: true });
     for (const file of files) {
       const moduleName = file.substr(prefix.length);
       yield this.__updateCabloyModule({ projectPath, moduleName });

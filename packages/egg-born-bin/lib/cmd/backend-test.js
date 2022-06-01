@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const chalk = require('chalk');
-const globby = require('globby');
+const eggBornUtils = require('egg-born-utils');
 const mock = require('egg-mock');
 const TestCommand = require('@zhennann/egg-bin').TestCommand;
 const utils = require('../utils.js');
@@ -123,7 +123,7 @@ class BackendTestCommand extends TestCommand {
     // pattern = pattern.concat([ '!test/fixtures', '!test/node_modules' ]);
 
     // expand glob and skip node_modules and fixtures
-    const files = globby.sync(pattern);
+    const files = eggBornUtils.tools.globbySync(pattern);
     files.sort();
 
     if (files.length === 0) {
