@@ -26,7 +26,6 @@
     "chalk": "^3.0.0",
     "cli-table3": "^0.6.2",
     "extend2": "^1.0.1",
-    "globby": "^11.0.0",
     "gogocode": "^1.0.53",
     "istextorbinary": "^3.3.0",
     "mkdirp": "^1.0.3"
