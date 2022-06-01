@@ -470,7 +470,7 @@ module.exports = ctx => {
 const fs = __webpack_require__(147);
 const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
-const glob = require3('globby');
+const eggBornUtils = require3('egg-born-utils');
 const mkdirp = require3('mkdirp');
 const isTextOrBinary = require3('istextorbinary');
 const ejs = require3('@zhennann/ejs');
@@ -538,7 +538,7 @@ module.exports = ctx => {
     async renderDir({ targetDir, templateDir }) {
       const { argv } = this.context;
       // files
-      const files = glob.sync('**/*', {
+      const files = eggBornUtils.tools.globbySync('**/*', {
         cwd: templateDir,
         dot: true,
         onlyFiles: false,
@@ -628,7 +628,7 @@ module.exports = ctx => {
 
     async applySnippets({ targetDir, snippetsDir }) {
       // snippets
-      let files = glob.sync('*.js', {
+      let files = eggBornUtils.tools.globbySync('*.js', {
         cwd: snippetsDir,
         onlyFiles: true,
       });

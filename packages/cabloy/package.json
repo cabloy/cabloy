@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.21.11",
+  "version": "4.21.12",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "dependencies": {
-    "egg-born-backend": "^6.3.5",
-    "egg-born-bin": "^4.0.5",
+    "egg-born-backend": "^6.3.6",
+    "egg-born-bin": "^4.0.6",
     "egg-born-front": "^8.5.5",
     "egg-born-module-a-antdv": "^4.1.12",
     "egg-born-module-a-antvg6": "^4.1.7",
@@ -43,9 +43,9 @@
     "egg-born-module-a-captcha": "^4.2.10",
     "egg-born-module-a-captchasimple": "^4.1.9",
     "egg-born-module-a-chartjs": "^4.1.7",
-    "egg-born-module-a-cli": "^4.0.1",
-    "egg-born-module-a-clibooster": "^4.0.3",
-    "egg-born-module-a-cms": "^4.3.32",
+    "egg-born-module-a-cli": "^4.0.2",
+    "egg-born-module-a-clibooster": "^4.0.4",
+    "egg-born-module-a-cms": "^4.3.33",
     "egg-born-module-a-codemirror": "^4.1.11",
     "egg-born-module-a-components-sync": "^4.5.3",
     "egg-born-module-a-dashboard": "^4.3.17",
@@ -104,6 +104,6 @@
     "egg-born-module-cms-themeblog": "^4.2.14",
     "egg-born-module-cms-themecommunity": "^4.2.14",
     "egg-born-module-cms-themedocs": "^4.2.15",
-    "egg-born-scripts": "^3.3.25"
+    "egg-born-scripts": "^3.3.26"
   }
 }
