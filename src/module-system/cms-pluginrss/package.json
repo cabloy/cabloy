@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginrss",
-  "version": "4.1.8",
+  "version": "4.1.9",
   "title": "cms:plugin:rss",
   "eggBornModule": {
     "cms": {
@@ -19,6 +19,5 @@
     "build:all": "npm run build:front && npm run build:backend",
     "preversion": "npm run build:all && git add ."
   },
-  "author": "zhennann",
-  "dependencies": {}
+  "author": "zhennann"
 }

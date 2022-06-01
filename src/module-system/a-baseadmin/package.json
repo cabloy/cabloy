@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-baseadmin",
-  "version": "4.2.15",
+  "version": "4.2.16",
   "title": "Basic Admin",
   "eggBornModule": {
     "fileVersion": 3,
@@ -15,6 +15,5 @@
     "build:all": "npm run build:front && npm run build:backend",
     "preversion": "npm run build:all && git add ."
   },
-  "author": "zhennann",
-  "dependencies": {}
+  "author": "zhennann"
 }

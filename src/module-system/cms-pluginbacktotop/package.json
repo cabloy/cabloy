@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginbacktotop",
-  "version": "4.1.9",
+  "version": "4.1.10",
   "title": "cms:plugin:backToTop",
   "eggBornModule": {
     "cms": {
@@ -21,6 +21,5 @@
     "build:all": "npm run build:front && npm run build:backend",
     "preversion": "npm run build:all && git add ."
   },
-  "author": "zhennann",
-  "dependencies": {}
+  "author": "zhennann"
 }

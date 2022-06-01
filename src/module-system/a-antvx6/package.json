@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-antvx6",
-  "version": "4.1.7",
+  "version": "4.1.8",
   "title": "a-antvx6",
   "eggBornModule": {
     "fileVersion": 0,
@@ -20,7 +20,6 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "dependencies": {},
   "devDependencies": {
     "@antv/x6": "^1.28.1"
   }

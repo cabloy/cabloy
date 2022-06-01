@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-antvlayout",
-  "version": "4.1.7",
+  "version": "4.1.8",
   "title": "a-antvlayout",
   "eggBornModule": {
     "fileVersion": 0,
@@ -20,7 +20,6 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "dependencies": {},
   "devDependencies": {
     "@antv/layout": "^0.1.18"
   }

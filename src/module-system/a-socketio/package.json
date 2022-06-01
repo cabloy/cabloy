@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-socketio",
-  "version": "4.2.9",
+  "version": "4.2.10",
   "title": "a-socketio",
   "eggBornModule": {
     "fileVersion": 3,

@@ -5,3 +5,5 @@
  */
 
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
