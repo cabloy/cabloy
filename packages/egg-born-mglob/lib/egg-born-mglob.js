@@ -175,7 +175,8 @@ function __orderDependencies(context, modules, module) {
     const subModule = modules[key];
     if (!subModule) {
       console.warn(chalk.cyan(`module ${key} not exists`));
-      process.exit(0);
+      enabled = false; // process.exit(0);
+      continue;
     }
 
     const subModuleVersion = dependencies[key];
