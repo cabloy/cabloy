@@ -3,7 +3,9 @@ const fs = require('fs');
 
 // egg-born-bin
 const pathEggBornBin = __getPathEggBornBin();
-if (!pathEggBornBin) return;
+if (!pathEggBornBin) {
+  process.exit(0);
+}
 require(pathEggBornBin);
 
 function __getPathEggBornBin() {
