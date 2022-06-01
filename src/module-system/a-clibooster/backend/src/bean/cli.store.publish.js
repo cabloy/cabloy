@@ -1,6 +1,5 @@
 const path = require('path');
 const require3 = require('require3');
-const globby = require3('globby');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
@@ -95,7 +94,7 @@ module.exports = ctx => {
       }
       // zip modules
       const pathSuite = suite.root;
-      const filePkgs = await globby(`${pathSuite}/modules/*/package.json`);
+      const filePkgs = await eggBornUtils.tools.globbyAsync(`${pathSuite}/modules/*/package.json`);
       const modulesMeta = [];
       for (const filePkg of filePkgs) {
         // name
@@ -294,7 +293,7 @@ module.exports = ctx => {
 
     async _zipAndHash({ patterns, pathRoot, needHash }) {
       // globby
-      const files = await globby(patterns, { cwd: pathRoot });
+      const files = await eggBornUtils.tools.globbyAsync(patterns, { cwd: pathRoot });
       files.sort();
       // zip
       const zip = new AdmZip();

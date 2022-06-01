@@ -2,7 +2,7 @@ const path = require('path');
 const require3 = require('require3');
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
-const eggBornUtils = require('egg-born-utils');
+const eggBornUtils = require3('egg-born-utils');
 
 module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);

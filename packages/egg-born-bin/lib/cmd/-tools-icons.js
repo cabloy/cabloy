@@ -1,6 +1,6 @@
 const path = require('path');
 const chalk = require('chalk');
-const globby = require('globby');
+const eggBornUtils = require('egg-born-utils');
 const bb = require('bluebird');
 const fse = require('fs-extra');
 const xml2js = require('xml2js');
@@ -57,7 +57,7 @@ class ToolsIconsCommand extends Command {
 
   async _generateIconsGroup({ modulePath, iconsSrc, group }) {
     // icons
-    const files = await globby(`${iconsSrc}/${group.name}/*.svg`);
+    const files = await eggBornUtils.tools.globbyAsync(`${iconsSrc}/${group.name}/*.svg`);
     const iconNames = files.map(item => path.basename(item, '.svg'));
     // symbols
     const symbols = [];
@@ -97,13 +97,13 @@ ${symbols.join('\n')}
   }
 
   async _resolveModulePath({ cwd, moduleName }) {
-    const files = await globby(`${cwd}/src/**/${moduleName}`, { onlyDirectories: true });
+    const files = await eggBornUtils.tools.globbyAsync(`${cwd}/src/**/${moduleName}`, { onlyDirectories: true });
     if (files.length === 0) throw new Error('module not found: ', moduleName);
     return files[0];
   }
 
   async _resolveGroups({ iconsSrc }) {
-    const groupPaths = await globby(`${iconsSrc}/*`, { onlyDirectories: true });
+    const groupPaths = await eggBornUtils.tools.globbyAsync(`${iconsSrc}/*`, { onlyDirectories: true });
     return groupPaths.map(item => {
       return {
         name: path.basename(item),

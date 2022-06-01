@@ -1,7 +1,7 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const globby = require3('globby');
+const eggBornUtils = require3('egg-born-utils');
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
 
@@ -63,7 +63,7 @@ module.exports = ctx => {
 
     async _generateIconsGroup({ modulePath, iconsSrc, group }) {
       // icons
-      const files = await globby(`${iconsSrc}/${group.name}/*.svg`);
+      const files = await eggBornUtils.tools.globbyAsync(`${iconsSrc}/${group.name}/*.svg`);
       const iconNames = files.map(item => path.basename(item, '.svg'));
       // symbols
       const symbols = [];
@@ -103,7 +103,7 @@ ${symbols.join('\n')}
     }
 
     async _resolveGroups({ iconsSrc }) {
-      const groupPaths = await globby(`${iconsSrc}/*`, { onlyDirectories: true });
+      const groupPaths = await eggBornUtils.tools.globbyAsync(`${iconsSrc}/*`, { onlyDirectories: true });
       return groupPaths.map(item => {
         return {
           name: path.basename(item),

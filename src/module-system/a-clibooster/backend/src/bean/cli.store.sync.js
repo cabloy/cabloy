@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const require3 = require('require3');
-const globby = require3('globby');
+const eggBornUtils = require3('egg-born-utils');
 const AdmZip = require3('adm-zip');
 const semver = require3('semver');
 const fse = require3('fs-extra');
@@ -96,7 +96,7 @@ module.exports = ctx => {
       const zip = new AdmZip(path.join(tempPath, 'default'));
       zip.extractAllTo(entityMeta.root, true);
       // others
-      const files = await globby(['*', '!default'], { cwd: tempPath });
+      const files = await eggBornUtils.tools.globbyAsync(['*', '!default'], { cwd: tempPath });
       for (const file of files) {
         const zip = new AdmZip(path.join(tempPath, file));
         zip.extractAllTo(path.join(entityMeta.root, 'modules', file), true);
