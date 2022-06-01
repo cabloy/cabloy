@@ -391,7 +391,6 @@ module.exports = ctx => {
 
 const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
-const globby = require3('globby');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
@@ -486,7 +485,7 @@ module.exports = ctx => {
       }
       // zip modules
       const pathSuite = suite.root;
-      const filePkgs = await globby(`${pathSuite}/modules/*/package.json`);
+      const filePkgs = await eggBornUtils.tools.globbyAsync(`${pathSuite}/modules/*/package.json`);
       const modulesMeta = [];
       for (const filePkg of filePkgs) {
         // name
@@ -685,7 +684,7 @@ module.exports = ctx => {
 
     async _zipAndHash({ patterns, pathRoot, needHash }) {
       // globby
-      const files = await globby(patterns, { cwd: pathRoot });
+      const files = await eggBornUtils.tools.globbyAsync(patterns, { cwd: pathRoot });
       files.sort();
       // zip
       const zip = new AdmZip();
@@ -789,7 +788,7 @@ const fs = __webpack_require__(147);
 const path = __webpack_require__(17);
 const os = __webpack_require__(37);
 const require3 = __webpack_require__(638);
-const globby = require3('globby');
+const eggBornUtils = require3('egg-born-utils');
 const AdmZip = require3('adm-zip');
 const semver = require3('semver');
 const fse = require3('fs-extra');
@@ -883,7 +882,7 @@ module.exports = ctx => {
       const zip = new AdmZip(path.join(tempPath, 'default'));
       zip.extractAllTo(entityMeta.root, true);
       // others
-      const files = await globby(['*', '!default'], { cwd: tempPath });
+      const files = await eggBornUtils.tools.globbyAsync(['*', '!default'], { cwd: tempPath });
       for (const file of files) {
         const zip = new AdmZip(path.join(tempPath, file));
         zip.extractAllTo(path.join(entityMeta.root, 'modules', file), true);
@@ -1098,7 +1097,7 @@ module.exports = ctx => {
 const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
 const fse = require3('fs-extra');
-const globby = require3('globby');
+const eggBornUtils = require3('egg-born-utils');
 const bb = require3('bluebird');
 const xml2js = require3('xml2js');
 
@@ -1160,7 +1159,7 @@ module.exports = ctx => {
 
     async _generateIconsGroup({ modulePath, iconsSrc, group }) {
       // icons
-      const files = await globby(`${iconsSrc}/${group.name}/*.svg`);
+      const files = await eggBornUtils.tools.globbyAsync(`${iconsSrc}/${group.name}/*.svg`);
       const iconNames = files.map(item => path.basename(item, '.svg'));
       // symbols
       const symbols = [];
@@ -1200,7 +1199,7 @@ ${symbols.join('\n')}
     }
 
     async _resolveGroups({ iconsSrc }) {
-      const groupPaths = await globby(`${iconsSrc}/*`, { onlyDirectories: true });
+      const groupPaths = await eggBornUtils.tools.globbyAsync(`${iconsSrc}/*`, { onlyDirectories: true });
       return groupPaths.map(item => {
         return {
           name: path.basename(item),
