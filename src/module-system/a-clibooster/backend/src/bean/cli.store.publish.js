@@ -346,7 +346,7 @@ module.exports = ctx => {
 
     async _handleScripts_gitCommit({ entityMeta }) {
       // git add .
-      await this.helper.spawnCmd({
+      await this.helper.spawnExe({
         cmd: 'git',
         args: ['add', '.'],
         options: {
@@ -354,7 +354,7 @@ module.exports = ctx => {
         },
       });
       // git commit
-      await this.helper.spawnCmd({
+      await this.helper.spawnExe({
         cmd: 'git',
         args: ['commit', '-m', `'chore: version ${entityMeta.package.version}'`],
         options: {
@@ -362,7 +362,7 @@ module.exports = ctx => {
         },
       });
       // git push
-      await this.helper.spawnCmd({
+      await this.helper.spawnExe({
         cmd: 'git',
         args: ['push'],
         options: {

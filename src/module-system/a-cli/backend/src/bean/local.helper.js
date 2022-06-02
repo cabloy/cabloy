@@ -128,6 +128,12 @@ module.exports = ctx => {
       }
       return await this.spawn({ cmd, args, options });
     }
+    async spawnExe({ cmd, args, options }) {
+      if (/^win/.test(process.platform)) {
+        cmd = `${cmd}.exe`;
+      }
+      return await this.spawn({ cmd, args, options });
+    }
     async spawn({ cmd, args = [], options = {} }) {
       if (!options.cwd) {
         options.cwd = this.context.cwd;
