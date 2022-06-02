@@ -482,7 +482,6 @@ const fs = __webpack_require__(147);
 const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
 const eggBornUtils = require3('egg-born-utils');
-const mkdirp = require3('mkdirp');
 const isTextOrBinary = require3('istextorbinary');
 const ejs = require3('@zhennann/ejs');
 const gogocode = require3('gogocode');
@@ -579,7 +578,7 @@ module.exports = ctx => {
         fs.symlinkSync(target, targetFile);
         await this.console.log(`${targetFile} link to ${target}`);
       } else if (stats.isDirectory()) {
-        mkdirp.sync(targetFile);
+        await this.helper.ensureDir(targetFile);
       } else if (stats.isFile()) {
         let content = fs.readFileSync(templateFile);
         await this.console.log(`write to ${targetFile}`);
