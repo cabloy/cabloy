@@ -77,6 +77,8 @@ module.exports = ctx => {
       });
       // unzip
       const tempPath = await this._unzip({ entityName, buffer });
+      // remove old path/files
+      await rimraf(entityMeta.root);
       // copy to: suite/module
       if (entityStatus.entity.entityTypeCode === 1) {
         await this._copyToSuite({ tempPath, suiteName: entityName, entityMeta });
