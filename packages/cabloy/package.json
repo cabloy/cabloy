@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.21.14",
+  "version": "4.21.15",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "dependencies": {
     "egg-born-backend": "^6.3.7",
-    "egg-born-bin": "^4.0.8",
+    "egg-born-bin": "^4.0.9",
     "egg-born-front": "^8.5.5",
     "egg-born-module-a-antdv": "^4.1.13",
     "egg-born-module-a-antvg6": "^4.1.8",
@@ -35,7 +35,7 @@
     "egg-born-module-a-authopen": "^4.0.3",
     "egg-born-module-a-authsimple": "^4.2.15",
     "egg-born-module-a-authsms": "^4.2.13",
-    "egg-born-module-a-base-sync": "^4.6.14",
+    "egg-born-module-a-base-sync": "^4.6.15",
     "egg-born-module-a-baseadmin": "^4.2.16",
     "egg-born-module-a-basefront": "^4.5.3",
     "egg-born-module-a-baselayout": "^4.2.23",
@@ -45,7 +45,7 @@
     "egg-born-module-a-chartjs": "^4.1.8",
     "egg-born-module-a-cli": "^4.0.4",
     "egg-born-module-a-clibooster": "^4.0.6",
-    "egg-born-module-a-cms": "^4.3.34",
+    "egg-born-module-a-cms": "^4.3.35",
     "egg-born-module-a-codemirror": "^4.1.12",
     "egg-born-module-a-components-sync": "^4.5.3",
     "egg-born-module-a-dashboard": "^4.3.19",
