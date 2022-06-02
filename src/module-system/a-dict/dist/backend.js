@@ -522,6 +522,7 @@ module.exports = {};
 
 module.exports = {
   Dict: '字典',
+  Dicts: '字典',
   'Create Dict': '新建字典',
   'Dict List': '字典列表',
 };
@@ -651,9 +652,9 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
-      atomName: 'Dict List',
+      atomName: 'Dicts',
       atomStaticKey: 'listDict',
-      atomRevision: 2,
+      atomRevision: 3,
       atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

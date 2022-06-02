@@ -12284,6 +12284,7 @@ module.exports = {
   Tags: '标签',
   Url: '链接',
   Resource: '资源',
+  Resources: '资源',
   Function: '功能',
   Menu: '菜单',
   Authorize: '授权',
@@ -13083,9 +13084,9 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
-      atomName: 'Resource List',
+      atomName: 'Resources',
       atomStaticKey: 'listResource',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

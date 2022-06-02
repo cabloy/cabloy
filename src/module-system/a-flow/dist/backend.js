@@ -2807,6 +2807,7 @@ module.exports = {
   FlowTitle: 'Flow',
   WorkFlow: 'Work Flow',
   WorkFlows: 'Work Flows',
+  FlowDefinitions: 'Work Flow Definitions',
   FlowInitiator: 'Flow Initiator',
   'NoMatchedFlowEdge: %s': 'No matched flow edge: %s',
 };
@@ -2822,6 +2823,7 @@ module.exports = {
   FlowDefinition: '流程定义',
   WorkFlow: '工作流',
   WorkFlows: '工作流',
+  FlowDefinitions: '工作流定义',
   End: '结束',
   Current: '当前',
   Drafting: '起草',
@@ -2910,9 +2912,9 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
-      atomName: 'FlowDefinition List',
+      atomName: 'FlowDefinitions',
       atomStaticKey: 'listFlowDef',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

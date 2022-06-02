@@ -262,6 +262,8 @@ module.exports = {};
 /***/ ((module) => {
 
 module.exports = {
+  Layout: '布局',
+  Layouts: '布局',
   'Create Layout': '新建布局',
   'Layout List': '布局列表',
   'Layout Type': '布局类型',
@@ -304,9 +306,9 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
-      atomName: 'Layout List',
+      atomName: 'Layouts',
       atomStaticKey: 'listLayout',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

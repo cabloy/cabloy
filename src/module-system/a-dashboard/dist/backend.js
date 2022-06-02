@@ -305,6 +305,7 @@ module.exports = {
 module.exports = {
   About: '关于',
   Dashboard: '仪表板',
+  Dashboards: '仪表板',
   DashboardProfile: '仪表板配置',
   'Create Dashboard': '新建仪表板',
   'Dashboard List': '仪表板列表',
@@ -530,9 +531,9 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
-      atomName: 'Dashboard List',
+      atomName: 'Dashboards',
       atomStaticKey: 'listDashboard',
-      atomRevision: 1,
+      atomRevision: 2,
       atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

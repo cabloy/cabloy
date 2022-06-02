@@ -1,6 +1,6 @@
 {
   "name": "egg-born-scripts",
-  "version": "3.3.27",
+  "version": "3.3.28",
   "description": "egg-born-scripts",
   "main": "index.js",
   "bin": {
@@ -23,6 +23,6 @@
   "homepage": "https://github.com/zhennann/egg-born-scripts#readme",
   "dependencies": {
     "@zhennann/egg-scripts": "^2.17.0",
-    "egg-born-backend": "^6.3.7"
+    "egg-born-backend": "^6.3.8"
   }
 }
