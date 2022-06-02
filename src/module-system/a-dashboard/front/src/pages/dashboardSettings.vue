@@ -132,7 +132,7 @@ export default {
       const dashboardUserId = item.id;
       if (this.dashboardUserIdCurrent === dashboardUserId) return;
       // save
-      await this.dashboard.__saveDashboardUser();
+      await this.dashboard.__saveDashboardUserNow();
       // change default
       await this.dashboard.__changeProfileUserDefault({ dashboardUserId });
       // switch
@@ -142,7 +142,7 @@ export default {
     async onPerformProfileCreate() {
       await this.$view.dialog.confirm();
       // save
-      await this.dashboard.__saveDashboardUser();
+      await this.dashboard.__saveDashboardUserNow();
       // create dashboardUser
       const dashboardUser = await this.dashboard.__createDashboardUser();
       // switch

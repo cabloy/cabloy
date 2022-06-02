@@ -84,6 +84,11 @@ export default {
   mounted() {
     this.__init();
   },
+  created() {
+    this.__saveDashboardUser = this.$meta.util.debounce(() => {
+      this.__saveDashboardUserNow();
+    }, 3000);
+  },
   beforeDestroy() {
     this.$emit('dashboard:destroy');
   },
@@ -177,17 +182,6 @@ export default {
           ></eb-link>
         );
       }
-      // not check if lock
-      if (this.page_getDirty()) {
-        children.push(
-          <eb-link
-            key="dashboard-action-save"
-            class="dashboard-action-save"
-            iconF7="::save"
-            propsOnPerform={event => this.onPerformSave(event)}
-          ></eb-link>
-        );
-      }
       if (!this.lock) {
         children.push(
           <eb-link
@@ -249,6 +243,9 @@ export default {
       this.page_setDirty(true);
       if (this.scene === 'manager' && !this.readOnly) {
         this.contextCallback(200, { content: JSON.stringify(this.profile) });
+      }
+      if (this.scene !== 'manager') {
+        this.__saveDashboardUser();
       }
     },
     async __changeProfileUserDefault({ dashboardUserId }) {
@@ -365,7 +362,7 @@ export default {
       // ok
       return dashboardUser;
     },
-    async __saveDashboardUser() {
+    async __saveDashboardUserNow() {
       // check if dirty
       if (!this.page_getDirty()) return;
       // save dashboardUser
@@ -374,7 +371,6 @@ export default {
         content: JSON.stringify(this.profile),
       });
       this.page_setDirty(false);
-      return this.$text('Saved');
     },
     __setLock(lock) {
       this.lock = lock;
@@ -414,16 +410,10 @@ export default {
       // this.$view.toast.show({ text: this.$text('DashboardUnlockWarningSave') });
     },
     async onPerformUnlock() {
-      // save
-      const res = await this.onPerformSave();
       // lock
       this.__setLock(true);
-      // ok
-      return res;
-    },
-    async onPerformSave() {
-      // save
-      return await this.__saveDashboardUser();
+      // // toast
+      // return this.$text('Locked');
     },
     async onPerformSaveManager() {
       // for manager
