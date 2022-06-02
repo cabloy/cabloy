@@ -1,6 +1,15 @@
 module.exports = appInfo => {
   const config = {};
 
+  // queue
+  config.queue = {
+    redlock: {
+      options: {
+        lockTTL: 60 * 1000,
+      },
+    },
+  };
+
   // mysql
   config.mysql = {
     clients: {
