@@ -3,6 +3,7 @@ module.exports = {
   FlowDefinition: '流程定义',
   WorkFlow: '工作流',
   WorkFlows: '工作流',
+  FlowDefinitions: '工作流定义',
   End: '结束',
   Current: '当前',
   Drafting: '起草',

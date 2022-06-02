@@ -1,5 +1,6 @@
 module.exports = {
   App: '应用',
+  Apps: '应用',
   'Create App': '新建应用',
   'App List': '应用列表',
   AppMenu: '应用菜单',

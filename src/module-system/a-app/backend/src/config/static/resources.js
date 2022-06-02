@@ -18,9 +18,9 @@ module.exports = app => {
       resourceRoles: 'template.system',
     },
     {
-      atomName: 'App List',
+      atomName: 'Apps',
       atomStaticKey: 'listApp',
-      atomRevision: 2,
+      atomRevision: 3,
       atomCategoryId: 'a-base:menu.BasicProfile',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({

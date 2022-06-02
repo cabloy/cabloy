@@ -91,6 +91,7 @@ module.exports = {
   Tags: '标签',
   Url: '链接',
   Resource: '资源',
+  Resources: '资源',
   Function: '功能',
   Menu: '菜单',
   Authorize: '授权',
