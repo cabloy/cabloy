@@ -1,4 +1,3 @@
-const defaultDemo = require('./command/default.demo.js');
 const defaultList = require('./command/default.list.js');
 const tokenAdd = require('./command/token.add.js');
 const tokenDelete = require('./command/token.delete.js');
@@ -15,7 +14,6 @@ const storePublish = require('./command/store.publish.js');
 module.exports = app => {
   const commands = {
     default: {
-      demo: defaultDemo(app),
       list: defaultList(app),
     },
     token: {

@@ -5,7 +5,7 @@ module.exports = app => {
     {
       atomName: 'Cli Demo',
       atomStaticKey: 'cliDefaultDemo',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Cli',
       resourceType: 'a-base:function',
       resourceConfig: null,
