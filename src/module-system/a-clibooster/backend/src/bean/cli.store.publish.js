@@ -356,7 +356,7 @@ module.exports = ctx => {
       // git commit
       await this.helper.spawnExe({
         cmd: 'git',
-        args: ['commit', '-m', `'chore: version ${entityMeta.package.version}'`],
+        args: ['commit', '-m', `chore: version ${entityMeta.package.version}`],
         options: {
           cwd: entityMeta.root,
         },
