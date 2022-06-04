@@ -19,6 +19,8 @@ class CliCommand extends BaseCommand {
     this.__groups = meta.groups;
     this.__argv = argv;
     this.__openAuthClient = openAuthClient;
+    this.__cabloyConfig = null;
+    this.cabloyConfig = null;
   }
 
   *run({ argv, cwd, env, rawArgv }) {
@@ -31,6 +33,10 @@ class CliCommand extends BaseCommand {
     const context = { argv, cwd, env: this._adjustEnv({ env }), rawArgv };
     // log start
     console.log(`npm run cli ${chalk.cyan(argv.cliFullName)} at %s\n`, cwd);
+    // cabloy config
+    yield this._loadCabloyConfig();
+    // log helper docs
+    this._logHelperDocs();
     // prompt
     yield this._promptGroups({ context, groups: this.__groups });
     // execute
@@ -39,6 +45,21 @@ class CliCommand extends BaseCommand {
     yield this._progressbar({ progressId, context });
     // done
     console.log(chalk.cyan('\n  cli successfully!\n'));
+  }
+
+  *_loadCabloyConfig() {
+    this.__cabloyConfig = eggBornUtils.cabloyConfig;
+    yield this.__cabloyConfig.load({ projectPath: this.__argv.projectPath });
+    this.cabloyConfig = this.__cabloyConfig.get();
+  }
+
+  _logHelperDocs() {
+    if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
+      return;
+    }
+    const locale = this.__openAuthClient.locale;
+    const url = `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
+    console.log(`cli docs: ${chalk.cyan(url)}\n`);
   }
 
   _adjustEnv({ env }) {
