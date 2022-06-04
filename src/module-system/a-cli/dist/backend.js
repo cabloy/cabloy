@@ -165,7 +165,10 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 778:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(638);
+const eggBornUtils = require3('egg-born-utils');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -175,6 +178,7 @@ module.exports = ctx => {
       this.console = ctx.bean._newBean(`${moduleInfo.relativeName}.local.console`, this);
       this.helper = ctx.bean._newBean(`${moduleInfo.relativeName}.local.helper`, this);
       this.template = ctx.bean._newBean(`${moduleInfo.relativeName}.local.template`, this);
+      this.cabloyConfig = null;
     }
 
     get context() {
@@ -182,12 +186,19 @@ module.exports = ctx => {
     }
 
     async meta({ user }) {
+      await this._loadCabloyConfig();
       const metaLocale = this._commandMeta();
       return metaLocale;
     }
 
     async execute(/* { user } */) {
-      // do nothing
+      await this._loadCabloyConfig();
+    }
+
+    async _loadCabloyConfig() {
+      const { argv } = this.context;
+      this.cabloyConfig = eggBornUtils.cabloyConfig;
+      await this.cabloyConfig.load({ projectPath: argv.projectPath });
     }
 
     _commandMeta() {

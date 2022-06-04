@@ -197,96 +197,6 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 561:
-/***/ ((module) => {
-
-module.exports = ctx => {
-  class Cli extends ctx.app.meta.CliBase(ctx) {
-    async meta({ user }) {
-      const meta = await super.meta({ user });
-      return meta;
-    }
-    async execute({ user }) {
-      // super
-      await super.execute({ user });
-      // chalk
-      let text = this.helper.chalk.keyword('orange')('chalk test');
-      await this.console.log({ text });
-      // boxen
-      text = this.helper.boxen({ text: 'boxen test' });
-      await this.console.log({ text });
-      // table
-      const table = this.helper.newTable({
-        head: ['Name', 'Sex'],
-        colWidths: [20, 20],
-      });
-      table.push(['Tom', 'M']);
-      table.push(['Jane', 'F']);
-      await this.console.log({ text: 'table test' });
-      await this.console.log({ text: table.toString() });
-      //  level one
-      await this._levelOne({ progressNo: 0 });
-    }
-
-    async _levelOne({ progressNo }) {
-      const total = 2;
-      let current = 0;
-      for (let i = 0; i < total; i++) {
-        const text = `${ctx.text('Level One')}: ${i + 1}`;
-        await this.console.log({
-          progressNo,
-          total,
-          progress: current++,
-          text,
-        });
-        // sleep
-        await ctx.bean.util.sleep(200);
-        // level two
-        await this._levelTwo({ progressNo: progressNo + 1 });
-      }
-    }
-
-    async _levelTwo({ progressNo }) {
-      const total = 2;
-      let current = 0;
-      for (let i = 0; i < total; i++) {
-        const text = `${ctx.text('Level Two')}: ${i + 1}`;
-        await this.console.log({
-          progressNo,
-          total,
-          progress: current++,
-          text,
-        });
-        // sleep
-        await ctx.bean.util.sleep(200);
-        // level two
-        await this._levelThree({ progressNo: progressNo + 1 });
-      }
-    }
-
-    async _levelThree({ progressNo }) {
-      const total = 3;
-      let current = 0;
-      for (let i = 0; i < total; i++) {
-        const text = `${ctx.text('Level Three')}: ${i + 1}`;
-        await this.console.log({
-          progressNo,
-          total,
-          progress: current++,
-          text,
-        });
-        // sleep
-        await ctx.bean.util.sleep(200);
-      }
-    }
-  }
-
-  return Cli;
-};
-
-
-/***/ }),
-
 /***/ 66:
 /***/ ((module) => {
 
@@ -747,7 +657,7 @@ module.exports = ctx => {
       // git commit
       await this.helper.spawnExe({
         cmd: 'git',
-        args: ['commit', '-m', `'chore: version ${entityMeta.package.version}'`],
+        args: ['commit', '-m', `chore: version ${entityMeta.package.version}`],
         options: {
           cwd: entityMeta.root,
         },
@@ -1249,7 +1159,6 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const versionManager = __webpack_require__(899);
-const cliDefaultDemo = __webpack_require__(561);
 const cliDefaultList = __webpack_require__(66);
 const cliTokenAdd = __webpack_require__(971);
 const cliTokenDelete = __webpack_require__(65);
@@ -1271,10 +1180,6 @@ module.exports = app => {
       bean: versionManager,
     },
     // cli
-    'cli.default.demo': {
-      mode: 'ctx',
-      bean: cliDefaultDemo,
-    },
     'cli.default.list': {
       mode: 'ctx',
       bean: cliDefaultList,
@@ -1333,9 +1238,7 @@ module.exports = app => {
 /***/ 210:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
-const fse = require3('fs-extra');
 const eggBornUtils = require3('egg-born-utils');
 
 // const __storeTokenHost = 'https://admin.cabloy.com';
@@ -1348,7 +1251,6 @@ module.exports = ctx => {
       super(options);
       this.commandName = commandName;
       this.tokenName = `store.${commandName}`;
-      this.cabloyConfig = null;
       this.openAuthClient = null;
     }
 
@@ -1377,11 +1279,10 @@ module.exports = ctx => {
       await super.execute({ user });
       // token
       await this.addToken();
-      // cabloy config
-      await this.loadCabloyConfig();
       // executeStoreCommand
       await this.executeStoreCommand();
     }
+
     async addToken() {
       const { argv } = this.context;
       const { clientID, clientSecret } = argv;
@@ -1393,36 +1294,6 @@ module.exports = ctx => {
           clientSecret,
         });
       }
-    }
-    async saveCabloyConfig() {
-      const { argv } = this.context;
-      const fileName = path.join(argv.projectPath, 'cabloy.json');
-      await fse.outputFile(fileName, JSON.stringify(this.cabloyConfig, null, 2));
-    }
-    async loadCabloyConfig() {
-      const { argv } = this.context;
-      const fileName = path.join(argv.projectPath, 'cabloy.json');
-      const exists = await fse.pathExists(fileName);
-      let config;
-      if (exists) {
-        const content = await fse.readFile(fileName);
-        config = JSON.parse(content);
-      } else {
-        config = {
-          store: {
-            commands: {
-              sync: {
-                entities: {},
-              },
-              publish: {
-                entities: {},
-              },
-            },
-          },
-        };
-        await fse.outputFile(fileName, JSON.stringify(config, null, 2));
-      }
-      this.cabloyConfig = config;
     }
 
     async executeStoreCommand() {
@@ -1456,7 +1327,7 @@ module.exports = ctx => {
       if (entityNames.length === 0) {
         // load all entities
         const entitiesConfig = ctx.bean.util.getProperty(
-          this.cabloyConfig,
+          this.cabloyConfig.get(),
           `store.commands.${this.commandName}.entities`
         );
         entityNames = Object.keys(entitiesConfig);
@@ -1494,17 +1365,17 @@ module.exports = ctx => {
       try {
         // save to config
         let entityConfig = ctx.bean.util.getProperty(
-          this.cabloyConfig,
+          this.cabloyConfig.get(),
           `store.commands.${this.commandName}.entities.${entityName}`
         );
         if (!entityConfig) {
           entityConfig = {};
           ctx.bean.util.setProperty(
-            this.cabloyConfig,
+            this.cabloyConfig.get(),
             `store.commands.${this.commandName}.entities.${entityName}`,
             entityConfig
           );
-          await this.saveCabloyConfig();
+          await this.cabloyConfig.save();
         }
         // onExecuteStoreCommandEntity
         return await this.onExecuteStoreCommandEntity({ entityName, entityConfig });
@@ -1830,90 +1701,6 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 917:
-/***/ ((module) => {
-
-module.exports = app => {
-  return {
-    bean: 'default.demo',
-    resource: {
-      atomStaticKey: 'cliDefaultDemo',
-    },
-    info: {
-      version: '4.0.0',
-      title: 'Cli Demo',
-    },
-    options: {
-      username: {
-        description: 'Your username',
-        alias: 'u',
-        type: 'string',
-      },
-      role: {
-        description: 'Your role',
-        alias: 'r',
-        type: 'string',
-      },
-      course: {
-        description: 'Your course',
-        alias: 'c',
-        type: 'string',
-      },
-      grade: {
-        description: 'Your grade',
-        alias: 'g',
-        type: 'string',
-      },
-    },
-    groups: {
-      default: {
-        description: 'Your basic info',
-        condition: {
-          expression: null,
-        },
-        questions: {
-          username: {
-            type: 'input',
-            message: 'Your username',
-          },
-          role: {
-            type: 'select',
-            message: 'Your role',
-            choices: ['teacher', 'student'],
-          },
-        },
-      },
-      teacher: {
-        description: 'The teacher info',
-        condition: {
-          expression: 'context.argv.role==="teacher"',
-        },
-        questions: {
-          course: {
-            type: 'input',
-            message: 'Your course',
-          },
-        },
-      },
-      student: {
-        description: 'The student info',
-        condition: {
-          expression: 'context.argv.role==="student"',
-        },
-        questions: {
-          grade: {
-            type: 'input',
-            message: 'Your grade',
-          },
-        },
-      },
-    },
-  };
-};
-
-
-/***/ }),
-
 /***/ 666:
 /***/ ((module) => {
 
@@ -2184,7 +1971,6 @@ module.exports = app => {
 /***/ 407:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const defaultDemo = __webpack_require__(917);
 const defaultList = __webpack_require__(666);
 const tokenAdd = __webpack_require__(552);
 const tokenDelete = __webpack_require__(443);
@@ -2201,7 +1987,6 @@ const storePublish = __webpack_require__(730);
 module.exports = app => {
   const commands = {
     default: {
-      demo: defaultDemo(app),
       list: defaultList(app),
     },
     token: {
@@ -2291,8 +2076,10 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  CliAuthOpenTokenInfoStoreSync: 'Open Auth Token for Cabloy Store Sync',
-  CliAuthOpenTokenInfoStorePublish: 'Open Auth Token for Cabloy Store Publish',
+  CliAuthOpenTokenInfoStoreSync:
+    'Open auth token for Cabloy Store sync, more info: https://cabloy.com/articles/cli-store.html',
+  CliAuthOpenTokenInfoStorePublish:
+    'Open auth token for Cabloy Store publish, more info: https://cabloy.com/articles/cli-store.html',
 };
 
 
@@ -2303,16 +2090,10 @@ module.exports = {
 
 module.exports = {
   Submitted: '已提交',
-  CliAuthOpenTokenInfoStoreSync: '用于Cabloy商店同步的开放认证Token',
-  CliAuthOpenTokenInfoStorePublish: '用于Cabloy商店发布的开放认证Token',
-  'Cli Demo': 'Cli演示',
-  'Your username': '您的名称',
-  'Your role': '您的角色',
-  'Your course': '您的课程',
-  'Your grade': '您的年级',
-  'Your basic info': '您的基本信息',
-  'The teacher info': '教师信息',
-  'The student info': '学生信息',
+  CliAuthOpenTokenInfoStoreSync:
+    '用于Cabloy商店同步的开放认证Token，帮助信息：https://cabloy.com/zh-cn/articles/cli-store.html',
+  CliAuthOpenTokenInfoStorePublish:
+    '用于Cabloy商店发布的开放认证Token，帮助信息：https://cabloy.com/zh-cn/articles/cli-store.html',
   'Specify the module template': '指定模块模版',
   'Not Found': '未发现',
   'No Changes Found': '没有变更',
@@ -2347,7 +2128,7 @@ module.exports = app => {
     {
       atomName: 'Cli Demo',
       atomStaticKey: 'cliDefaultDemo',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-base:function.Cli',
       resourceType: 'a-base:function',
       resourceConfig: null,
