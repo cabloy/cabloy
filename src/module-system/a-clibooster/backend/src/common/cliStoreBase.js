@@ -30,6 +30,8 @@ module.exports = ctx => {
       if (item) {
         delete meta.groups;
       }
+      // log helper docs
+      await this._logHelperDocs();
       // ok
       return meta;
     }
@@ -165,6 +167,18 @@ module.exports = ctx => {
     _getEntityURL(entityName) {
       const locale = this.openAuthClient.locale;
       return `https://store.cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${entityName}.html`;
+    }
+
+    async _logHelperDocs() {
+      const cliHelper = ctx.bean.util.getProperty(this.cabloyConfig.get(), 'cli.helper');
+      if (cliHelper === false) {
+        return;
+      }
+      const locale = this.openAuthClient.locale;
+      const url = `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-store.html`;
+      // chalk
+      const text = this.helper.chalk.keyword('cyan')(url);
+      await this.console.log({ text: `cli store docs: ${text}\n` });
     }
   }
   return CliStoreBase;
