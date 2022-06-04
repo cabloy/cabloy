@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const eggBornUtils = require3('egg-born-utils');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class CliBase {
@@ -6,6 +9,7 @@ module.exports = ctx => {
       this.console = ctx.bean._newBean(`${moduleInfo.relativeName}.local.console`, this);
       this.helper = ctx.bean._newBean(`${moduleInfo.relativeName}.local.helper`, this);
       this.template = ctx.bean._newBean(`${moduleInfo.relativeName}.local.template`, this);
+      this.cabloyConfig = null;
     }
 
     get context() {
@@ -19,6 +23,12 @@ module.exports = ctx => {
 
     async execute(/* { user } */) {
       // do nothing
+    }
+
+    async _loadCabloyConfig() {
+      const { argv } = this.context;
+      await eggBornUtils.cabloyConfig.load({ projectPath: argv.projectPath });
+      this.cabloyConfig = eggBornUtils.cabloyConfig;
     }
 
     _commandMeta() {
