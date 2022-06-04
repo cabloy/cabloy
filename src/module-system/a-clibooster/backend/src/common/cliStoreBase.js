@@ -87,7 +87,7 @@ module.exports = ctx => {
       if (entityNames.length === 0) {
         // load all entities
         const entitiesConfig = ctx.bean.util.getProperty(
-          this.cabloyConfig,
+          this.cabloyConfig.get(),
           `store.commands.${this.commandName}.entities`
         );
         entityNames = Object.keys(entitiesConfig);
