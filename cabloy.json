@@ -38,7 +38,13 @@
           "test-note": {
             "scripts": ["gitCommit"]
           },
-          "a-platformthird": {
+          "a-wechat": {
+            "scripts": ["gitCommit"]
+          },
+          "a-wxwork": {
+            "scripts": ["gitCommit"]
+          },
+          "a-dingtalk": {
             "scripts": ["gitCommit"]
           },
           "test-party": {
