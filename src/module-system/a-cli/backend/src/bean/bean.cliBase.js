@@ -17,18 +17,19 @@ module.exports = ctx => {
     }
 
     async meta({ user }) {
+      await this._loadCabloyConfig();
       const metaLocale = this._commandMeta();
       return metaLocale;
     }
 
     async execute(/* { user } */) {
-      // do nothing
+      await this._loadCabloyConfig();
     }
 
     async _loadCabloyConfig() {
       const { argv } = this.context;
-      await eggBornUtils.cabloyConfig.load({ projectPath: argv.projectPath });
       this.cabloyConfig = eggBornUtils.cabloyConfig;
+      await this.cabloyConfig.load({ projectPath: argv.projectPath });
     }
 
     _commandMeta() {

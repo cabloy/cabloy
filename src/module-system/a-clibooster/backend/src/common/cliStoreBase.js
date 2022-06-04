@@ -1,6 +1,4 @@
-const path = require('path');
 const require3 = require('require3');
-const fse = require3('fs-extra');
 const eggBornUtils = require3('egg-born-utils');
 
 // const __storeTokenHost = 'https://admin.cabloy.com';
@@ -13,7 +11,6 @@ module.exports = ctx => {
       super(options);
       this.commandName = commandName;
       this.tokenName = `store.${commandName}`;
-      this.cabloyConfig = null;
       this.openAuthClient = null;
     }
 
@@ -42,11 +39,10 @@ module.exports = ctx => {
       await super.execute({ user });
       // token
       await this.addToken();
-      // cabloy config
-      await this.loadCabloyConfig();
       // executeStoreCommand
       await this.executeStoreCommand();
     }
+
     async addToken() {
       const { argv } = this.context;
       const { clientID, clientSecret } = argv;
@@ -58,36 +54,6 @@ module.exports = ctx => {
           clientSecret,
         });
       }
-    }
-    async saveCabloyConfig() {
-      const { argv } = this.context;
-      const fileName = path.join(argv.projectPath, 'cabloy.json');
-      await fse.outputFile(fileName, JSON.stringify(this.cabloyConfig, null, 2));
-    }
-    async loadCabloyConfig() {
-      const { argv } = this.context;
-      const fileName = path.join(argv.projectPath, 'cabloy.json');
-      const exists = await fse.pathExists(fileName);
-      let config;
-      if (exists) {
-        const content = await fse.readFile(fileName);
-        config = JSON.parse(content);
-      } else {
-        config = {
-          store: {
-            commands: {
-              sync: {
-                entities: {},
-              },
-              publish: {
-                entities: {},
-              },
-            },
-          },
-        };
-        await fse.outputFile(fileName, JSON.stringify(config, null, 2));
-      }
-      this.cabloyConfig = config;
     }
 
     async executeStoreCommand() {
@@ -159,17 +125,17 @@ module.exports = ctx => {
       try {
         // save to config
         let entityConfig = ctx.bean.util.getProperty(
-          this.cabloyConfig,
+          this.cabloyConfig.get(),
           `store.commands.${this.commandName}.entities.${entityName}`
         );
         if (!entityConfig) {
           entityConfig = {};
           ctx.bean.util.setProperty(
-            this.cabloyConfig,
+            this.cabloyConfig.get(),
             `store.commands.${this.commandName}.entities.${entityName}`,
             entityConfig
           );
-          await this.saveCabloyConfig();
+          await this.cabloyConfig.save();
         }
         // onExecuteStoreCommandEntity
         return await this.onExecuteStoreCommandEntity({ entityName, entityConfig });
