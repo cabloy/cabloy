@@ -10,12 +10,17 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'openIsolateApp') {
-        return await this._onActionopenIsolateApp();
+      if (this.action.name === 'openApp') {
+        return await this._onActionopenApp();
       }
     },
-    async _onActionopenIsolateApp() {
-      window.location.assign('?appKey=test-party:appParty&appIsolate=true');
+    async _onActionopenApp() {
+      const { appKey, appLanguage, appIsolate } = this.$props.action;
+      const queries = { appKey };
+      if (appLanguage) queries.appLanguage = appLanguage;
+      if (appIsolate) queries.appIsolate = appIsolate;
+      const url = this.$meta.util.combineQueries('', queries);
+      window.location.assign(url);
     },
   },
 };

@@ -409,7 +409,7 @@ export default function (Vue) {
       }
       if (!str) return url;
       //
-      if (!url) return str;
+      if (!url) return '?' + str;
       //
       const pos = url.indexOf('?');
       if (pos === -1) return `${url}?${str}`;
