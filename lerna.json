@@ -18,14 +18,7 @@
         "src/suite/**",
         "src/module-vendor/**",
         "src/suite-vendor/**",
-        "src/module-system/a-themebrilliant/**",
-        "src/module-system/a-themehyacinth/**",
-        "src/module-system/cms-sitecommunity/**",
-        "src/module-system/cms-sitedocumentation/**",
-        "src/module-system/cms-themeaws/**",
-        "src/module-system/cms-themeblog/**",
-        "src/module-system/cms-themecommunity/**",
-        "src/module-system/cms-themedocs/**"
+        "src/module-system/**"
       ]
     }
   }
