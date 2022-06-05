@@ -71,7 +71,7 @@ module.exports = ctx => {
         package: await eggBornUtils.tools.loadJSON(module.pkg), // module.package,
       };
       const moduleHash = entityHash.default || {};
-      await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
+      await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial, needLicense: true });
       if (!moduleMeta.changed) {
         // No Changes Found
         return { code: 2001 };
@@ -109,7 +109,7 @@ module.exports = ctx => {
         };
         modulesMeta.push(moduleMeta);
         const moduleHash = entityHash[moduleMeta.name] || {};
-        await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
+        await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial, needLicense: false });
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
@@ -121,7 +121,7 @@ module.exports = ctx => {
         package: _package,
       };
       const suiteHash = entityHash.default || {};
-      await this._zipSuite({ modulesMeta, suiteMeta, suiteHash });
+      await this._zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense: true });
       if (!suiteMeta.changed) {
         // No Changes Found
         return { code: 2001 };
@@ -201,7 +201,7 @@ module.exports = ctx => {
       return { buffer };
     }
 
-    async _zipSuite({ modulesMeta, suiteMeta, suiteHash }) {
+    async _zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense }) {
       let zipSuite;
       // check modulesMeta
       let changed = modulesMeta.some(moduleMeta => moduleMeta.changed);
@@ -211,6 +211,7 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
           needHash: true,
+          needLicense,
         });
         changed = zipSuite.hash.hash !== suiteHash.hash;
       }
@@ -230,6 +231,7 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
           needHash: true,
+          needLicense,
         });
       }
       // ok
@@ -237,7 +239,7 @@ module.exports = ctx => {
       suiteMeta.zipSuite = zipSuite;
     }
 
-    async _zipSuiteModule({ moduleMeta, moduleHash, needTrial }) {
+    async _zipSuiteModule({ moduleMeta, moduleHash, needTrial, needLicense }) {
       // log
       await this.console.log(`===> module: ${moduleMeta.name}`);
       // zip officialTemp
@@ -246,6 +248,7 @@ module.exports = ctx => {
         patterns: patternsTemp,
         pathRoot: moduleMeta.root,
         needHash: true,
+        needLicense,
       });
       // check hash
       if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
@@ -266,6 +269,7 @@ module.exports = ctx => {
             patterns: patternsTemp,
             pathRoot: moduleMeta.root,
             needHash: true,
+            needLicense,
           });
         }
       }
@@ -274,6 +278,7 @@ module.exports = ctx => {
         patterns: this.configModule.store.publish.patterns.official,
         pathRoot: moduleMeta.root,
         needHash: false,
+        needLicense,
       });
       zipOfficial.hash = {
         hash: zipOfficialTemp.hash.hash,
@@ -286,11 +291,12 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.trial,
           pathRoot: moduleMeta.root,
           needHash: false,
+          needLicense,
         });
       }
     }
 
-    async _zipAndHash({ patterns, pathRoot, needHash }) {
+    async _zipAndHash({ patterns, pathRoot, needHash, needLicense }) {
       // globby
       const files = await eggBornUtils.tools.globbyAsync(patterns, { cwd: pathRoot });
       files.sort();
