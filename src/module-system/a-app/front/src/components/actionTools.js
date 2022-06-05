@@ -17,14 +17,14 @@ export default {
     async _onActionopenApp() {
       // params
       const { ctx, action } = this.$props;
-      const { appKey, appLanguage, appIsolate, external, target } = action;
+      const { appKey, appLanguage, appIsolate, force, external, target } = action;
       // not external
       if (!external) {
         await ctx.$meta.vueLayout.app_openHome({
           view: ctx.$view,
           appKey,
           appLanguage,
-          force: false,
+          force,
         });
         return;
       }
