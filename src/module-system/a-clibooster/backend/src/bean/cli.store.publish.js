@@ -1,5 +1,6 @@
 const path = require('path');
 const require3 = require('require3');
+const fse = require3('fs-extra');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
@@ -297,15 +298,36 @@ module.exports = ctx => {
     }
 
     async _zipAndHash({ patterns, pathRoot, needHash, needLicense }) {
+      const { argv } = this.context;
       // globby
       const files = await eggBornUtils.tools.globbyAsync(patterns, { cwd: pathRoot });
+      // LICENSE
+      let licenseParent;
+      let licensePathParent;
+      if (needLicense && !files.includes('LICENSE')) {
+        licensePathParent = path.join(argv.projectPath, 'LICENSE');
+        const exists = await fse.pathExists(licensePathParent);
+        if (exists) {
+          files.push('LICENSE');
+          licenseParent = true;
+        }
+      }
       files.sort();
       // zip
       const zip = new AdmZip();
       for (const file of files) {
+        //
         const dirName = path.dirname(file);
         const fileName = path.basename(file);
-        zip.addLocalFile(path.join(pathRoot, file), dirName, fileName);
+        //
+        let fileLocal;
+        if (file === 'LICENSE' && licenseParent) {
+          fileLocal = licensePathParent;
+        } else {
+          fileLocal = path.join(pathRoot, file);
+        }
+        //
+        zip.addLocalFile(fileLocal, dirName, fileName);
       }
       const buffer = await zip.toBufferPromise();
       // hash
