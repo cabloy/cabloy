@@ -69,7 +69,7 @@ module.exports = ctx => {
         name: moduleName,
         root: module.root,
         pkg: module.pkg,
-        package: require3(module.pkg), // module.package,
+        package: await eggBornUtils.tools.loadJSON(module.pkg), // module.package,
       };
       const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
@@ -100,7 +100,7 @@ module.exports = ctx => {
         // name
         const name = filePkg.split('/').slice(-2)[0];
         // meta
-        const _package = require3(filePkg);
+        const _package = await eggBornUtils.tools.loadJSON(filePkg);
         const root = path.dirname(filePkg);
         const moduleMeta = {
           name,
@@ -114,7 +114,7 @@ module.exports = ctx => {
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
-      const _package = require3(filePkg);
+      const _package = await eggBornUtils.tools.loadJSON(filePkg);
       const suiteMeta = {
         name: suiteName,
         root: pathSuite,
@@ -336,10 +336,10 @@ module.exports = ctx => {
       const cabloyPath = eggBornUtils.tools._getCabloyPath(argv.projectPath);
       if (cabloyPath) {
         const pkg = path.join(cabloyPath, 'package.json');
-        const _package = require3(pkg);
+        const _package = await eggBornUtils.tools.loadJSON(pkg);
         if (_package.dependencies[entityMeta.package.name]) {
           _package.dependencies[entityMeta.package.name] = `^${entityMeta.package.version}`;
-          await fse.outputFile(pkg, JSON.stringify(_package, null, 2) + '\n');
+          await eggBornUtils.tools.saveJSON(pkg, _package);
         }
       }
     }

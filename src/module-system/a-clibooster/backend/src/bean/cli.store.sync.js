@@ -61,7 +61,7 @@ module.exports = ctx => {
       // entityVersion
       const entityVersion = entityStatus.entity.moduleVersion;
       // entityMeta
-      const entityMeta = this._getEntityMeta({ entityName, entityStatus });
+      const entityMeta = await this._getEntityMeta({ entityName, entityStatus });
       // check version
       if (entityMeta.version && !semver.lt(entityMeta.version, entityVersion)) {
         // No Changes Found
@@ -121,7 +121,7 @@ module.exports = ctx => {
       return entityStatus.entity.entityTypeCode;
     }
 
-    _getEntityMeta({ entityName, entityStatus }) {
+    async _getEntityMeta({ entityName, entityStatus }) {
       const { argv } = this.context;
       // entityMeta
       const entityType = this._getEntityType({ entityStatus });
@@ -129,13 +129,13 @@ module.exports = ctx => {
         root: path.join(argv.projectPath, entityType === 1 ? 'src/suite-vendor' : 'src/module-vendor', entityName),
       };
       // version
-      entityMeta.version = this._getEntityVersion(entityMeta.root);
+      entityMeta.version = await this._getEntityVersion(entityMeta.root);
       return entityMeta;
     }
-    _getEntityVersion(entityPath) {
+    async _getEntityVersion(entityPath) {
       const filePkg = path.join(entityPath, 'package.json');
-      if (!fs.existsSync(filePkg)) return null;
-      const _package = require3(filePkg);
+      const _package = await eggBornUtils.tools.loadJSON(filePkg);
+      if (!_package) return null;
       return _package.version;
     }
   }
