@@ -3,7 +3,6 @@ const require3 = require('require3');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
-const fse = require3('fs-extra');
 const utility = require3('utility');
 const eggBornUtils = require3('egg-born-utils');
 const CliStoreBase = require('../common/cliStoreBase.js');
@@ -220,7 +219,7 @@ module.exports = ctx => {
         // bump
         if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
           suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
-          await fse.outputFile(suiteMeta.pkg, JSON.stringify(suiteMeta.package, null, 2) + '\n');
+          await eggBornUtils.tools.saveJSON(suiteMeta.pkg, suiteMeta.package);
           zipSuite = null;
         }
       }
@@ -262,7 +261,7 @@ module.exports = ctx => {
         // bump
         if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
           moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
-          await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
+          await eggBornUtils.tools.saveJSON(moduleMeta.pkg, moduleMeta.package);
           zipOfficialTemp = await this._zipAndHash({
             patterns: patternsTemp,
             pathRoot: moduleMeta.root,
