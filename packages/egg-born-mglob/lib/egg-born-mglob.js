@@ -284,7 +284,6 @@ function __logModules(context, log) {
   }
   if (!log) return;
   // log
-  console.log('\n');
   console.log(chalk.yellow('\n=== Local Modules ==='));
   for (const key in context.modulesLocal) {
     console.log(chalk.cyan('> ' + key));
