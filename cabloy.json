@@ -3,14 +3,234 @@
     "commands": {
       "publish": {
         "entities": {
+          "a-antdv": {
+            "scripts": ["npmPublish"]
+          },
+          "a-antvg6": {
+            "scripts": ["npmPublish"]
+          },
+          "a-antvlayout": {
+            "scripts": ["npmPublish"]
+          },
+          "a-antvx6": {
+            "scripts": ["npmPublish"]
+          },
+          "a-app": {
+            "scripts": ["npmPublish"]
+          },
+          "a-appbooster": {
+            "scripts": ["npmPublish"]
+          },
+          "a-auth": {
+            "scripts": ["npmPublish"]
+          },
+          "a-authgithub": {
+            "scripts": ["npmPublish"]
+          },
+          "a-authopen": {
+            "scripts": ["npmPublish"]
+          },
+          "a-authsimple": {
+            "scripts": ["npmPublish"]
+          },
+          "a-authsms": {
+            "scripts": ["npmPublish"]
+          },
+          "a-base-sync": {
+            "scripts": ["npmPublish"]
+          },
+          "a-baseadmin": {
+            "scripts": ["npmPublish"]
+          },
+          "a-basefront": {
+            "scripts": ["npmPublish"]
+          },
+          "a-baselayout": {
+            "scripts": ["npmPublish"]
+          },
+          "a-cache": {
+            "scripts": ["npmPublish"]
+          },
+          "a-captcha": {
+            "scripts": ["npmPublish"]
+          },
+          "a-captchasimple": {
+            "scripts": ["npmPublish"]
+          },
+          "a-chartjs": {
+            "scripts": ["npmPublish"]
+          },
+          "a-cli": {
+            "scripts": ["npmPublish"]
+          },
+          "a-clibooster": {
+            "scripts": ["npmPublish"]
+          },
+          "a-cms": {
+            "scripts": ["npmPublish"]
+          },
+          "a-codemirror": {
+            "scripts": ["npmPublish"]
+          },
+          "a-components-sync": {
+            "scripts": ["npmPublish"]
+          },
+          "a-dashboard": {
+            "scripts": ["npmPublish"]
+          },
+          "a-detail": {
+            "scripts": ["npmPublish"]
+          },
+          "a-dict": {
+            "scripts": ["npmPublish"]
+          },
+          "a-dictbooster": {
+            "scripts": ["npmPublish"]
+          },
+          "a-echarts": {
+            "scripts": ["npmPublish"]
+          },
+          "a-event": {
+            "scripts": ["npmPublish"]
+          },
+          "a-file": {
+            "scripts": ["npmPublish"]
+          },
+          "a-flow": {
+            "scripts": ["npmPublish"]
+          },
+          "a-flowbehavior": {
+            "scripts": ["npmPublish"]
+          },
+          "a-flowchart": {
+            "scripts": ["npmPublish"]
+          },
+          "a-flownode": {
+            "scripts": ["npmPublish"]
+          },
+          "a-host": {
+            "scripts": ["npmPublish"]
+          },
+          "a-icon": {
+            "scripts": ["npmPublish"]
+          },
+          "a-iconbooster": {
+            "scripts": ["npmPublish"]
+          },
+          "a-index": {
+            "scripts": ["npmPublish"]
+          },
+          "a-instance": {
+            "scripts": ["npmPublish"]
+          },
+          "a-jsoneditor": {
+            "scripts": ["npmPublish"]
+          },
+          "a-layoutmobile": {
+            "scripts": ["npmPublish"]
+          },
+          "a-layoutpc": {
+            "scripts": ["npmPublish"]
+          },
+          "a-login": {
+            "scripts": ["npmPublish"]
+          },
+          "a-mail": {
+            "scripts": ["npmPublish"]
+          },
+          "a-markdownblock": {
+            "scripts": ["npmPublish"]
+          },
+          "a-markdownrender": {
+            "scripts": ["npmPublish"]
+          },
+          "a-markdownstyle": {
+            "scripts": ["npmPublish"]
+          },
+          "a-message": {
+            "scripts": ["npmPublish"]
+          },
+          "a-oauth": {
+            "scripts": ["npmPublish"]
+          },
+          "a-progress": {
+            "scripts": ["npmPublish"]
+          },
+          "a-sequence": {
+            "scripts": ["npmPublish"]
+          },
+          "a-settings": {
+            "scripts": ["npmPublish"]
+          },
+          "a-share": {
+            "scripts": ["npmPublish"]
+          },
+          "a-socketio": {
+            "scripts": ["npmPublish"]
+          },
+          "a-stats": {
+            "scripts": ["npmPublish"]
+          },
+          "a-status": {
+            "scripts": ["npmPublish"]
+          },
           "a-themebrilliant": {
             "scripts": ["npmPublish"]
           },
           "a-themehyacinth": {
             "scripts": ["npmPublish"]
           },
-          "cms-sitecommunity": {},
-          "cms-sitedocumentation": {},
+          "a-user": {
+            "scripts": ["npmPublish"]
+          },
+          "a-useronline": {
+            "scripts": ["npmPublish"]
+          },
+          "a-validation": {
+            "scripts": ["npmPublish"]
+          },
+          "a-version": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginarticle": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginbacktotop": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginbase": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-plugincopyright": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginmarkdowngithub": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginrss": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginsidebar": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginsocialshare": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginsubmit": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-plugintrack": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-pluginuser": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-sitecommunity": {
+            "scripts": ["npmPublish"]
+          },
+          "cms-sitedocumentation": {
+            "scripts": ["npmPublish"]
+          },
           "cms-themeaws": {
             "scripts": ["npmPublish"]
           },
