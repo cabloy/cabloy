@@ -304,7 +304,6 @@ const require3 = __webpack_require__(638);
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
-const fse = require3('fs-extra');
 const utility = require3('utility');
 const eggBornUtils = require3('egg-born-utils');
 const CliStoreBase = __webpack_require__(210);
@@ -370,7 +369,7 @@ module.exports = ctx => {
         name: moduleName,
         root: module.root,
         pkg: module.pkg,
-        package: require3(module.pkg), // module.package,
+        package: await eggBornUtils.tools.loadJSON(module.pkg), // module.package,
       };
       const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
@@ -401,7 +400,7 @@ module.exports = ctx => {
         // name
         const name = filePkg.split('/').slice(-2)[0];
         // meta
-        const _package = require3(filePkg);
+        const _package = await eggBornUtils.tools.loadJSON(filePkg);
         const root = path.dirname(filePkg);
         const moduleMeta = {
           name,
@@ -415,7 +414,7 @@ module.exports = ctx => {
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
-      const _package = require3(filePkg);
+      const _package = await eggBornUtils.tools.loadJSON(filePkg);
       const suiteMeta = {
         name: suiteName,
         root: pathSuite,
@@ -521,7 +520,7 @@ module.exports = ctx => {
         // bump
         if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
           suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
-          await fse.outputFile(suiteMeta.pkg, JSON.stringify(suiteMeta.package, null, 2) + '\n');
+          await eggBornUtils.tools.saveJSON(suiteMeta.pkg, suiteMeta.package);
           zipSuite = null;
         }
       }
@@ -563,7 +562,7 @@ module.exports = ctx => {
         // bump
         if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
           moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
-          await fse.outputFile(moduleMeta.pkg, JSON.stringify(moduleMeta.package, null, 2) + '\n');
+          await eggBornUtils.tools.saveJSON(moduleMeta.pkg, moduleMeta.package);
           zipOfficialTemp = await this._zipAndHash({
             patterns: patternsTemp,
             pathRoot: moduleMeta.root,
@@ -637,10 +636,10 @@ module.exports = ctx => {
       const cabloyPath = eggBornUtils.tools._getCabloyPath(argv.projectPath);
       if (cabloyPath) {
         const pkg = path.join(cabloyPath, 'package.json');
-        const _package = require3(pkg);
+        const _package = await eggBornUtils.tools.loadJSON(pkg);
         if (_package.dependencies[entityMeta.package.name]) {
           _package.dependencies[entityMeta.package.name] = `^${entityMeta.package.version}`;
-          await fse.outputFile(pkg, JSON.stringify(_package, null, 2) + '\n');
+          await eggBornUtils.tools.saveJSON(pkg, _package);
         }
       }
     }
@@ -694,7 +693,6 @@ module.exports = ctx => {
 /***/ 937:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const fs = __webpack_require__(147);
 const path = __webpack_require__(17);
 const os = __webpack_require__(37);
 const require3 = __webpack_require__(638);
@@ -757,7 +755,7 @@ module.exports = ctx => {
       // entityVersion
       const entityVersion = entityStatus.entity.moduleVersion;
       // entityMeta
-      const entityMeta = this._getEntityMeta({ entityName, entityStatus });
+      const entityMeta = await this._getEntityMeta({ entityName, entityStatus });
       // check version
       if (entityMeta.version && !semver.lt(entityMeta.version, entityVersion)) {
         // No Changes Found
@@ -817,7 +815,7 @@ module.exports = ctx => {
       return entityStatus.entity.entityTypeCode;
     }
 
-    _getEntityMeta({ entityName, entityStatus }) {
+    async _getEntityMeta({ entityName, entityStatus }) {
       const { argv } = this.context;
       // entityMeta
       const entityType = this._getEntityType({ entityStatus });
@@ -825,13 +823,13 @@ module.exports = ctx => {
         root: path.join(argv.projectPath, entityType === 1 ? 'src/suite-vendor' : 'src/module-vendor', entityName),
       };
       // version
-      entityMeta.version = this._getEntityVersion(entityMeta.root);
+      entityMeta.version = await this._getEntityVersion(entityMeta.root);
       return entityMeta;
     }
-    _getEntityVersion(entityPath) {
+    async _getEntityVersion(entityPath) {
       const filePkg = path.join(entityPath, 'package.json');
-      if (!fs.existsSync(filePkg)) return null;
-      const _package = require3(filePkg);
+      const _package = await eggBornUtils.tools.loadJSON(filePkg);
+      if (!_package) return null;
       return _package.version;
     }
   }
