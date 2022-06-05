@@ -149,7 +149,7 @@ function __pushModule(context, modules, moduleRelativeName) {
   module.__ordering = true;
 
   // dependencies
-  if (!__orderDependencies(context, modules, module)) {
+  if (!__orderDependencies(context, modules, module, moduleRelativeName)) {
     context.disabledModules[moduleRelativeName] = true;
     return false;
   }
@@ -165,7 +165,7 @@ function __pushModule(context, modules, moduleRelativeName) {
   return true;
 }
 
-function __orderDependencies(context, modules, module) {
+function __orderDependencies(context, modules, module, moduleRelativeName) {
   if (!module.package.eggBornModule || !module.package.eggBornModule.dependencies) return true;
 
   let enabled = true;
@@ -174,7 +174,11 @@ function __orderDependencies(context, modules, module) {
   for (const key in dependencies) {
     const subModule = modules[key];
     if (!subModule) {
-      console.warn(chalk.cyan(`module ${key} not exists`));
+      console.warn(
+        chalk.keyword('orange')(`module ${moduleRelativeName} disabled`) +
+          ', because ' +
+          chalk.keyword('cyan')(`module ${key} not exists`)
+      );
       enabled = false; // process.exit(0);
       continue;
     }
