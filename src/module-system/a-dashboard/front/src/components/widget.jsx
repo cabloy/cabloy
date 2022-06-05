@@ -88,13 +88,23 @@ export default {
           })
         );
       } else if (this.errorMessage) {
+        let domErrorMessage2;
+        if (this.errorMessage2) {
+          domErrorMessage2 = (
+            <f7-link external={true} target="_blank" href={this.errorMessage2}>
+              {this.errorMessage2}
+            </f7-link>
+          );
+        }
         children.push(
           <div
             key="errorMessage"
             staticClass="widget-inner widget-inner-error"
-            domPropsInnerText={this.errorMessage}
             style={{ height: this.__getPropertyRealValue('height') }}
-          ></div>
+          >
+            <div>{this.errorMessage}</div>
+            {domErrorMessage2}
+          </div>
         );
       }
     }
@@ -139,6 +149,7 @@ export default {
     return {
       ready: false,
       errorMessage: null,
+      errorMessage2: null,
     };
   },
   created() {
@@ -155,7 +166,7 @@ export default {
       const fullName = this.__getFullName();
       // resource
       if (!this.resource) {
-        this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
+        this.__setErrorMessage(fullName);
         this.ready = false;
         return;
       }
@@ -163,7 +174,7 @@ export default {
       const module = await this.$meta.module.use(this.resource.resourceConfig.module);
       let component = module.options.components[this.resource.resourceConfig.component];
       if (!component) {
-        this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
+        this.__setErrorMessage(fullName);
         this.ready = false;
       } else {
         // uses
@@ -171,9 +182,22 @@ export default {
         // create
         component = this.$meta.util.createComponentOptions(component);
         this.$options.components[fullName] = component;
+        this.__setErrorMessage(null);
         this.ready = true;
-        this.errorMessage = null;
       }
+    },
+    __setErrorMessage(fullName) {
+      if (!fullName) {
+        this.errorMessage = null;
+        this.errorMessage2 = null;
+        return;
+      }
+      // errorMessage
+      this.errorMessage = `${this.$text('Widget Not Found')}: ${fullName}`;
+      // errorMessage2
+      const moduleName = fullName.split(':')[0];
+      const entityName = this.$config.widget.errorMessage.moduleMappings[moduleName];
+      this.errorMessage2 = entityName ? this.$meta.util.combineStoreUrl(entityName) : null;
     },
     __onWidgetRealReady(widgetReal) {
       this.dashboard.__onWidgetRealReady(this.options.id, widgetReal);

@@ -379,6 +379,10 @@ export default function (Vue) {
       }
       return obj;
     },
+    combineStoreUrl(entityName) {
+      const locale = this.getLocale();
+      return `https://store.cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${entityName}.html`;
+    },
     combineImageUrl(url, width, height) {
       if (!url) return url;
       if (url.indexOf('data:image/') === 0) return url;

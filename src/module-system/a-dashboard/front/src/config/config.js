@@ -1,6 +1,14 @@
 // eslint-disable-next-line
 export default function (Vue) {
   return {
+    widget: {
+      errorMessage: {
+        moduleMappings: {
+          'test-note': 'test-note',
+          'test-party': 'test-party',
+        },
+      },
+    },
     profile: {
       meta: {
         widget: {
