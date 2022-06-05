@@ -15,12 +15,25 @@ export default {
       }
     },
     async _onActionopenApp() {
-      const { appKey, appLanguage, appIsolate } = this.$props.action;
+      // params
+      const { ctx, action } = this.$props;
+      const { appKey, appLanguage, appIsolate, external, target } = action;
+      // not external
+      if (!external) {
+        await ctx.$meta.vueLayout.app_openHome({
+          view: ctx.$view,
+          appKey,
+          appLanguage,
+          force: false,
+        });
+        return;
+      }
+      // external
       const queries = { appKey };
       if (appLanguage) queries.appLanguage = appLanguage;
       if (appIsolate) queries.appIsolate = appIsolate;
       const url = this.$meta.util.combineQueries('', queries);
-      window.location.assign(url);
+      window.open(url, target);
     },
   },
 };
