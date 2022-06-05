@@ -16,12 +16,20 @@ module.exports = function (ctx) {
       const { clientID, clientSecret } = body.data;
       // verify
       const authOpen = await ctx.bean.authOpen.verify({ clientID, clientSecret });
+      // maxAge
+      let maxAge;
+      if (authOpen.neverExpire) {
+        // only one day
+        maxAge = 0;
+      } else {
+        maxAge = authOpen.expireTime - Date.now();
+      }
       return {
         module: this.providerModule,
         provider: this.providerName,
         providerScene: this.providerScene,
         profileId: authOpen.id,
-        maxAge: 0,
+        maxAge,
         authShouldExists: true,
         profile: {
           authOpenId: authOpen.id,
