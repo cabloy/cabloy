@@ -219,11 +219,12 @@ module.exports = ctx => {
       if (changed) {
         suiteMeta.changed = true;
         // bump
-        if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
-          suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
-          await eggBornUtils.tools.saveJSON(suiteMeta.pkg, suiteMeta.package);
-          zipSuite = null;
-        }
+        // if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
+        //  suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
+        suiteMeta.package.version = semver.inc(suiteMeta.package.version, 'patch');
+        await eggBornUtils.tools.saveJSON(suiteMeta.pkg, suiteMeta.package);
+        zipSuite = null;
+        // }
       }
       // force zip
       if (!zipSuite) {
@@ -263,16 +264,17 @@ module.exports = ctx => {
           },
         });
         // bump
-        if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
-          moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
-          await eggBornUtils.tools.saveJSON(moduleMeta.pkg, moduleMeta.package);
-          zipOfficialTemp = await this._zipAndHash({
-            patterns: patternsTemp,
-            pathRoot: moduleMeta.root,
-            needHash: true,
-            needLicense,
-          });
-        }
+        // if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
+        // moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
+        moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
+        await eggBornUtils.tools.saveJSON(moduleMeta.pkg, moduleMeta.package);
+        zipOfficialTemp = await this._zipAndHash({
+          patterns: patternsTemp,
+          pathRoot: moduleMeta.root,
+          needHash: true,
+          needLicense,
+        });
+        // }
       }
       // zip official
       const zipOfficial = await this._zipAndHash({
