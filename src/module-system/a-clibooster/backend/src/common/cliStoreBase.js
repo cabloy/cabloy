@@ -65,17 +65,23 @@ module.exports = ctx => {
       await this.openAuthClient.signin();
       // execute command
       try {
+        // execute
         this._needLernaBootstrap = false;
         await this._executeStoreCommand();
+        //  logout
+        await this.openAuthClient.logout();
+        this.openAuthClient = null;
+        // lernaBootstrap/reload
         if (this._needLernaBootstrap) {
           await this.helper.lernaBootstrap();
-          // reload
           ctx.app.meta.reload.now();
         }
       } catch (err) {
         //  logout
-        await this.openAuthClient.logout();
-        this.openAuthClient = null;
+        if (this.openAuthClient) {
+          await this.openAuthClient.logout();
+          this.openAuthClient = null;
+        }
         throw err;
       }
     }
@@ -140,9 +146,13 @@ module.exports = ctx => {
         // onExecuteStoreCommandEntity
         return await this.onExecuteStoreCommandEntity({ entityName, entityConfig });
       } catch (err) {
+        let message = err.message;
+        if (message && typeof message === 'object') {
+          message = JSON.stringify(message, null, 2);
+        }
         return {
           code: err.code,
-          message: err.message,
+          message,
         };
       }
     }

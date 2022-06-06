@@ -301,6 +301,7 @@ module.exports = ctx => {
 
 const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
+const fse = require3('fs-extra');
 const AdmZip = require3('adm-zip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
@@ -372,7 +373,7 @@ module.exports = ctx => {
         package: await eggBornUtils.tools.loadJSON(module.pkg), // module.package,
       };
       const moduleHash = entityHash.default || {};
-      await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
+      await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial, needLicense: true });
       if (!moduleMeta.changed) {
         // No Changes Found
         return { code: 2001 };
@@ -410,7 +411,7 @@ module.exports = ctx => {
         };
         modulesMeta.push(moduleMeta);
         const moduleHash = entityHash[moduleMeta.name] || {};
-        await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial });
+        await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial, needLicense: false });
       }
       // zip suite
       const filePkg = path.join(pathSuite, 'package.json');
@@ -422,7 +423,7 @@ module.exports = ctx => {
         package: _package,
       };
       const suiteHash = entityHash.default || {};
-      await this._zipSuite({ modulesMeta, suiteMeta, suiteHash });
+      await this._zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense: true });
       if (!suiteMeta.changed) {
         // No Changes Found
         return { code: 2001 };
@@ -502,7 +503,7 @@ module.exports = ctx => {
       return { buffer };
     }
 
-    async _zipSuite({ modulesMeta, suiteMeta, suiteHash }) {
+    async _zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense }) {
       let zipSuite;
       // check modulesMeta
       let changed = modulesMeta.some(moduleMeta => moduleMeta.changed);
@@ -512,17 +513,19 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
           needHash: true,
+          needLicense,
         });
         changed = zipSuite.hash.hash !== suiteHash.hash;
       }
       if (changed) {
         suiteMeta.changed = true;
         // bump
-        if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
-          suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
-          await eggBornUtils.tools.saveJSON(suiteMeta.pkg, suiteMeta.package);
-          zipSuite = null;
-        }
+        // if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
+        //  suiteMeta.package.version = semver.inc(suiteHash.version, 'patch');
+        suiteMeta.package.version = semver.inc(suiteMeta.package.version, 'patch');
+        await eggBornUtils.tools.saveJSON(suiteMeta.pkg, suiteMeta.package);
+        zipSuite = null;
+        // }
       }
       // force zip
       if (!zipSuite) {
@@ -531,6 +534,7 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.suite,
           pathRoot: suiteMeta.root,
           needHash: true,
+          needLicense,
         });
       }
       // ok
@@ -538,7 +542,7 @@ module.exports = ctx => {
       suiteMeta.zipSuite = zipSuite;
     }
 
-    async _zipSuiteModule({ moduleMeta, moduleHash, needTrial }) {
+    async _zipSuiteModule({ moduleMeta, moduleHash, needTrial, needLicense }) {
       // log
       await this.console.log(`===> module: ${moduleMeta.name}`);
       // zip officialTemp
@@ -547,6 +551,7 @@ module.exports = ctx => {
         patterns: patternsTemp,
         pathRoot: moduleMeta.root,
         needHash: true,
+        needLicense,
       });
       // check hash
       if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
@@ -560,21 +565,24 @@ module.exports = ctx => {
           },
         });
         // bump
-        if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
-          moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
-          await eggBornUtils.tools.saveJSON(moduleMeta.pkg, moduleMeta.package);
-          zipOfficialTemp = await this._zipAndHash({
-            patterns: patternsTemp,
-            pathRoot: moduleMeta.root,
-            needHash: true,
-          });
-        }
+        // if (moduleHash.version && !semver.gt(moduleMeta.package.version, moduleHash.version)) {
+        // moduleMeta.package.version = semver.inc(moduleHash.version, 'patch');
+        moduleMeta.package.version = semver.inc(moduleMeta.package.version, 'patch');
+        await eggBornUtils.tools.saveJSON(moduleMeta.pkg, moduleMeta.package);
+        zipOfficialTemp = await this._zipAndHash({
+          patterns: patternsTemp,
+          pathRoot: moduleMeta.root,
+          needHash: true,
+          needLicense,
+        });
+        // }
       }
       // zip official
       const zipOfficial = await this._zipAndHash({
         patterns: this.configModule.store.publish.patterns.official,
         pathRoot: moduleMeta.root,
         needHash: false,
+        needLicense,
       });
       zipOfficial.hash = {
         hash: zipOfficialTemp.hash.hash,
@@ -587,20 +595,42 @@ module.exports = ctx => {
           patterns: this.configModule.store.publish.patterns.trial,
           pathRoot: moduleMeta.root,
           needHash: false,
+          needLicense,
         });
       }
     }
 
-    async _zipAndHash({ patterns, pathRoot, needHash }) {
+    async _zipAndHash({ patterns, pathRoot, needHash, needLicense }) {
+      const { argv } = this.context;
       // globby
       const files = await eggBornUtils.tools.globbyAsync(patterns, { cwd: pathRoot });
+      // LICENSE
+      let licenseParent;
+      let licensePathParent;
+      if (needLicense && !files.includes('LICENSE')) {
+        licensePathParent = path.join(argv.projectPath, 'LICENSE');
+        const exists = await fse.pathExists(licensePathParent);
+        if (exists) {
+          files.push('LICENSE');
+          licenseParent = true;
+        }
+      }
       files.sort();
       // zip
       const zip = new AdmZip();
       for (const file of files) {
+        //
         const dirName = path.dirname(file);
         const fileName = path.basename(file);
-        zip.addLocalFile(path.join(pathRoot, file), dirName, fileName);
+        //
+        let fileLocal;
+        if (file === 'LICENSE' && licenseParent) {
+          fileLocal = licensePathParent;
+        } else {
+          fileLocal = path.join(pathRoot, file);
+        }
+        //
+        zip.addLocalFile(fileLocal, dirName, fileName);
       }
       const buffer = await zip.toBufferPromise();
       // hash
@@ -1303,17 +1333,23 @@ module.exports = ctx => {
       await this.openAuthClient.signin();
       // execute command
       try {
+        // execute
         this._needLernaBootstrap = false;
         await this._executeStoreCommand();
+        //  logout
+        await this.openAuthClient.logout();
+        this.openAuthClient = null;
+        // lernaBootstrap/reload
         if (this._needLernaBootstrap) {
           await this.helper.lernaBootstrap();
-          // reload
           ctx.app.meta.reload.now();
         }
       } catch (err) {
         //  logout
-        await this.openAuthClient.logout();
-        this.openAuthClient = null;
+        if (this.openAuthClient) {
+          await this.openAuthClient.logout();
+          this.openAuthClient = null;
+        }
         throw err;
       }
     }
@@ -1378,9 +1414,13 @@ module.exports = ctx => {
         // onExecuteStoreCommandEntity
         return await this.onExecuteStoreCommandEntity({ entityName, entityConfig });
       } catch (err) {
+        let message = err.message;
+        if (message && typeof message === 'object') {
+          message = JSON.stringify(message, null, 2);
+        }
         return {
           code: err.code,
-          message: err.message,
+          message,
         };
       }
     }
