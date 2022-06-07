@@ -36,18 +36,20 @@ class EggBornBinCommand extends Command {
     argv.projectPath = process.cwd();
     // cli
     argv.cliFullName = this._prepareCliFullName(parsed._[1]);
-    // check dev server
-    const devServerRunning = yield utils.checkIfDevServerRunning({
-      projectPath: argv.projectPath,
-      needDevServer: true,
-    });
-    if (!devServerRunning) return;
     // token
     const tokenName = parsed.token || parsed.t;
     const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, tokenName);
     if (!token) {
       console.log(chalk.red(`Open auth token not found: ${tokenName}\n`));
       return;
+    }
+    // check dev server
+    if (token.host.indexOf('http://127.0.0.1') === 0 || token.host.indexOf('http://localhost') === 0) {
+      const devServerRunning = yield utils.checkIfDevServerRunning({
+        projectPath: argv.projectPath,
+        needDevServer: true,
+      });
+      if (!devServerRunning) return;
     }
     // OpenAuthClient
     const openAuthClient = new eggBornUtils.OpenAuthClient({ token });
