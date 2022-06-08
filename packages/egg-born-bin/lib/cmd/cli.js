@@ -16,6 +16,7 @@ class CliCommand extends BaseCommand {
     this.usage = meta.info.usage;
     this.version = meta.info.version;
     this.options = meta.options;
+    this.__meta = meta;
     this.__groups = meta.groups;
     this.__argv = argv;
     this.__openAuthClient = openAuthClient;
@@ -37,6 +38,8 @@ class CliCommand extends BaseCommand {
     yield this._loadCabloyConfig();
     // log helper docs
     this._logHelperDocs();
+    // log meta logs
+    this._logMetaLogs();
     // prompt
     yield this._promptGroups({ context, groups: this.__groups });
     // execute
@@ -60,6 +63,17 @@ class CliCommand extends BaseCommand {
     const locale = this.__openAuthClient.locale;
     const url = `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
     console.log(`cli docs: ${chalk.cyan(url)}\n`);
+  }
+
+  _logMetaLogs() {
+    let logs = this.__meta.logs;
+    if (!logs) return;
+    if (!Array.isArray(logs)) logs = [logs];
+    if (logs.length === 0) return;
+    for (const log of logs) {
+      console.log(log);
+    }
+    console.log('\n');
   }
 
   _adjustEnv({ env }) {

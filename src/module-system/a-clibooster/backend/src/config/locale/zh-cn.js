@@ -1,9 +1,7 @@
 module.exports = {
   Submitted: '已提交',
-  CliAuthOpenTokenInfoStoreSync:
-    '用于Cabloy商店同步的开放认证Token，帮助信息：https://cabloy.com/zh-cn/articles/cli-store.html',
-  CliAuthOpenTokenInfoStorePublish:
-    '用于Cabloy商店发布的开放认证Token，帮助信息：https://cabloy.com/zh-cn/articles/cli-store.html',
+  CliAuthOpenTokenInfoStoreSync: '用于Cabloy商店同步的开放认证Token',
+  CliAuthOpenTokenInfoStorePublish: '用于Cabloy商店发布的开放认证Token',
   'Specify the module template': '指定模块模版',
   'Not Found': '未发现',
   'No Changes Found': '没有变更',

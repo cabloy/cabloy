@@ -30,6 +30,8 @@ module.exports = ctx => {
       if (item) {
         delete meta.groups;
       }
+      // logs
+      meta.logs = this._logHelperDocs({ user });
       // ok
       return meta;
     }
@@ -175,6 +177,20 @@ module.exports = ctx => {
     _getEntityURL(entityName) {
       const locale = this.openAuthClient.locale;
       return `https://store.cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${entityName}.html`;
+    }
+
+    _getCabloyDocsURL({ slug, user }) {
+      const locale = user.locale;
+      return `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${slug}.html`;
+    }
+
+    _logHelperDocs({ user }) {
+      if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
+        return;
+      }
+      const url = this._getCabloyDocsURL({ slug: 'cli-store', user });
+      const text = this.helper.chalk.keyword('cyan')(url);
+      return `cli store docs: ${text}`;
     }
   }
   return CliStoreBase;
