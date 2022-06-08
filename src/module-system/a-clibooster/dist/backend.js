@@ -1298,6 +1298,8 @@ module.exports = ctx => {
       if (item) {
         delete meta.groups;
       }
+      // logs
+      meta.logs = this._logHelperDocs({ user });
       // ok
       return meta;
     }
@@ -1443,6 +1445,20 @@ module.exports = ctx => {
     _getEntityURL(entityName) {
       const locale = this.openAuthClient.locale;
       return `https://store.cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${entityName}.html`;
+    }
+
+    _getCabloyDocsURL({ slug, user }) {
+      const locale = user.locale;
+      return `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${slug}.html`;
+    }
+
+    _logHelperDocs({ user }) {
+      if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
+        return;
+      }
+      const url = this._getCabloyDocsURL({ slug: 'cli-store', user });
+      const text = this.helper.chalk.keyword('cyan')(url);
+      return `cli store docs: ${text}`;
     }
   }
   return CliStoreBase;
@@ -2114,10 +2130,8 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  CliAuthOpenTokenInfoStoreSync:
-    'Open auth token for Cabloy Store sync, more info: https://cabloy.com/articles/cli-store.html',
-  CliAuthOpenTokenInfoStorePublish:
-    'Open auth token for Cabloy Store publish, more info: https://cabloy.com/articles/cli-store.html',
+  CliAuthOpenTokenInfoStoreSync: 'Open auth token for Cabloy Store sync',
+  CliAuthOpenTokenInfoStorePublish: 'Open auth token for Cabloy Store publish',
 };
 
 
@@ -2128,10 +2142,8 @@ module.exports = {
 
 module.exports = {
   Submitted: '已提交',
-  CliAuthOpenTokenInfoStoreSync:
-    '用于Cabloy商店同步的开放认证Token，帮助信息：https://cabloy.com/zh-cn/articles/cli-store.html',
-  CliAuthOpenTokenInfoStorePublish:
-    '用于Cabloy商店发布的开放认证Token，帮助信息：https://cabloy.com/zh-cn/articles/cli-store.html',
+  CliAuthOpenTokenInfoStoreSync: '用于Cabloy商店同步的开放认证Token',
+  CliAuthOpenTokenInfoStorePublish: '用于Cabloy商店发布的开放认证Token',
   'Specify the module template': '指定模块模版',
   'Not Found': '未发现',
   'No Changes Found': '没有变更',
