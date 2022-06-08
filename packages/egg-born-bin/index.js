@@ -35,7 +35,7 @@ class EggBornBinCommand extends Command {
     const argv = {};
     argv.projectPath = process.cwd();
     // cli
-    argv.cliFullName = this._prepareCliFullName(parsed._[1]);
+    Object.assign(argv, this._prepareCliFullName(parsed._[1]));
     // token
     const tokenName = parsed.token || parsed.t;
     const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, tokenName);
@@ -77,16 +77,32 @@ class EggBornBinCommand extends Command {
 
   _prepareCliFullName(cliName) {
     if (!cliName) {
-      return 'a-clibooster:default:list';
+      return { cliFullName: 'a-clibooster:default:list' };
       // throw new Error('Please specify the cli name');
     }
     const parts = cliName.split(':');
-    if (parts.length !== 3) {
-      throw new Error('The cli name is not valid');
+    if (parts.length === 1) {
+      // means show module's commands
+      parts[1] = '';
+    }
+    if (parts.length === 2) {
+      if (parts[1]) {
+        // means show group's commands
+        parts[2] = '';
+      } else {
+        // means show module's commands
+        if (!parts[0]) parts[0] = 'a-clibooster';
+        return { cliFullName: 'a-clibooster:default:list', module: parts[0] };
+      }
     }
     if (!parts[0]) parts[0] = 'a-clibooster';
     if (!parts[1]) parts[1] = 'default';
-    return parts.join(':');
+    if (!parts[2]) {
+      // means show group's commands
+      return { cliFullName: 'a-clibooster:default:list', module: parts[0], group: parts[1] };
+    }
+    // default
+    return { cliFullName: parts.join(':') };
   }
 }
 
