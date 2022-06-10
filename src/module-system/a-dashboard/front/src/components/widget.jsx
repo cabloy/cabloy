@@ -171,8 +171,10 @@ export default {
         return;
       }
       // component
-      const module = await this.$meta.module.use(this.resource.resourceConfig.module);
-      let component = module.options.components[this.resource.resourceConfig.component];
+      const moduleName = this.resource.resourceConfig.module;
+      const componentName = this.resource.resourceConfig.component;
+      const module = await this.$meta.module.use(moduleName);
+      let component = module.options.components[componentName];
       if (!component) {
         this.__setErrorMessage(fullName);
         this.ready = false;
@@ -409,7 +411,11 @@ export default {
       return `widget widget-id-${this.options.id} widget-item widget-name-${widgetName}`;
     },
     __getFullName(options) {
-      return this.dashboard.__resourceFullName(options || this.options);
+      let fullName = this.dashboard.__resourceFullName(options || this.options);
+      if (fullName === 'test-party:widgetSimpleChat') {
+        fullName = 'test-note:widgetSimpleChat';
+      }
+      return fullName;
     },
     onDragStartResizable({ /* $el,*/ context /* , dragElement*/ }) {
       const $container = this.$$(this.group.$el);

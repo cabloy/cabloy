@@ -336,7 +336,11 @@ export default {
     },
     __findResourceStock(resourcesAll, resource) {
       if (!resourcesAll) return null;
-      const _resource = resourcesAll[this.__resourceFullName(resource)];
+      let fullName = this.__resourceFullName(resource);
+      if (fullName === 'test-party:widgetSimpleChat') {
+        fullName = 'test-note:widgetSimpleChat';
+      }
+      const _resource = resourcesAll[fullName];
       if (!_resource) return null;
       return {
         ...resource,
