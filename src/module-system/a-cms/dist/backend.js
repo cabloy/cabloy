@@ -655,15 +655,16 @@ module.exports = app => {
       }
       // socketio publish
       if (hotloadFile) {
-        await this._socketioPublish({ hotloadFile });
+        await this._socketioPublish({ hotloadFile, article: data.article });
       }
     }
 
-    async _socketioPublish({ hotloadFile }) {
+    async _socketioPublish({ hotloadFile, article }) {
       const message = {
         userIdTo: -1,
         content: {
           mtime: new Date(),
+          article,
         },
       };
       await this.ctx.bean.io.publish({
@@ -1698,6 +1699,7 @@ module.exports = ctx => {
     async checkFile({ atomId, file, mtime, user }) {
       // check right
       let mtimeCurrent;
+      let article;
       if (file) {
         if (!ctx.app.meta.isTest && !ctx.app.meta.isLocal) ctx.throw(403);
         // exists
@@ -1710,7 +1712,7 @@ module.exports = ctx => {
         const stat = await fse.stat(file);
         mtimeCurrent = stat.mtime.valueOf();
       } else {
-        const article = await ctx.bean.cms.render.getArticle({ key: { atomId }, inner: true });
+        article = await ctx.bean.cms.render.getArticle({ key: { atomId }, inner: true });
         if (!article) ctx.throw.module('a-base', 1002);
         // only author
         if (article.userIdUpdated !== user.id) ctx.throw(403);
@@ -1719,7 +1721,7 @@ module.exports = ctx => {
 
       if (mtime !== mtimeCurrent) {
         // different
-        return { mtime: mtimeCurrent };
+        return { mtime: mtimeCurrent, article };
       }
       // default
       return null;
