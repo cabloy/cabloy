@@ -572,15 +572,16 @@ module.exports = app => {
       }
       // socketio publish
       if (hotloadFile) {
-        await this._socketioPublish({ hotloadFile });
+        await this._socketioPublish({ hotloadFile, article: data.article });
       }
     }
 
-    async _socketioPublish({ hotloadFile }) {
+    async _socketioPublish({ hotloadFile, article }) {
       const message = {
         userIdTo: -1,
         content: {
           mtime: new Date(),
+          article,
         },
       };
       await this.ctx.bean.io.publish({

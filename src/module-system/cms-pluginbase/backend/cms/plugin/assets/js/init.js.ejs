@@ -40,8 +40,9 @@
       const subscribePath = `/a/cms/hotloadFile/${hotloadFile}`;
       util.io.subscribe(
         subscribePath,
-        () => {
-          location.reload(true);
+        ({ message }) => {
+          const content = JSON.parse(message.content);
+          reloadPage(content.article);
         },
         () => {
           util
@@ -63,7 +64,7 @@
                 }
               } else if (atomId) {
                 if (data && data.mtime > new Date(env.article.renderAt).getTime()) {
-                  location.reload(true);
+                  reloadPage(data.article);
                 }
               } else {
                 if (!__hotloadFileTime) {
@@ -80,6 +81,16 @@
         }
       );
     }, 0);
+
+    function reloadPage(article) {
+      if (!article || !article.slug) {
+        location.reload(true);
+        return;
+      }
+      // should not use location.reload(true) when slug changed
+      const url = location.href.replace(/\/articles\/[^\.]*/, `/articles/${article.slug}`);
+      location.replace(url);
+    }
 
     function getArticleUrl(atomId, cb) {
       util
