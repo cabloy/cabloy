@@ -1,14 +1,11 @@
-const __snippet_declare = `const <%=argv.controllerName%> = require('./controller/<%=argv.controllerName%>.js');`;
-const __snippet_body = `<%=argv.controllerName%>,`;
+const __snippet_body = `Demo: '演示'`;
 
 module.exports = {
-  file: 'backend/src/controllers.js',
+  file: 'front/src/config/locale/zh-cn.js',
   async transform({ cli, ast, argv, ctx }) {
     // code
-    let code = await cli.template.renderContent({ content: __snippet_declare });
-    ast.before(code);
-    code = await cli.template.renderContent({ content: __snippet_body });
-    ast.replace(`const controllers = {$$$0}`, `const controllers = {${code} \n $$$0}`);
+    let code = await cli.template.renderContent({ content: __snippet_body });
+    ast.replace(`export default = {$$$0}`, `export default = {${code} \n $$$0}`);
     // ok
     return ast;
   },

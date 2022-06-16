@@ -1,12 +1,25 @@
-module.exports = app => {
-  class <%=argv.controllerNameCapitalize%>Controller extends app.Controller {
-    async action() {
-      const res = await this.ctx.service.<%=argv.controllerName%>.action({
-        user: this.ctx.state.user.op,
-      });
-      this.ctx.success(res);
-    }
-  }
-
-  return <%=argv.controllerNameCapitalize%>Controller;
+<template>
+  <eb-page>
+    <eb-navbar :title="$text('Demo')" eb-back-link="Back">
+      <f7-nav-right>
+        <eb-link iconF7="::done" ref="buttonDone" :onPerform="onPerformDone"></eb-link>
+      </f7-nav-right>
+    </eb-navbar>
+    <f7-block-title medium></f7-block-title>
+    <f7-block strong></f7-block>
+  </eb-page>
+</template>
+<script>
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    async onPerformDone() {
+      await ctx.$view.dialog.confirm();
+      return true;
+    },
+  },
 };
+</script>
+<style lang="less" scoped></style>
