@@ -1,5 +1,4 @@
-const __snippet = `// <%=argv.controllerName%>
-{ method: 'post', path: '<%=argv.controllerName%>/action', controller: '<%=argv.controllerName%>' },`;
+const __snippet = `{ path: '<%=argv.pageName%>', component: load('<%=argv.pageName%>') },`;
 
 module.exports = {
   file: 'front/src/routes.js',

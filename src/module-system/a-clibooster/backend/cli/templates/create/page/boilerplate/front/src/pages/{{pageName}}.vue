@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     async onPerformDone() {
-      await ctx.$view.dialog.confirm();
+      await this.$view.dialog.confirm();
       return true;
     },
   },
