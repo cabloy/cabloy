@@ -1,5 +1,11 @@
 # History
 
+## 2022-06-16, Version 4.21.28
+
+- **Feat**
+  - npm run cli :create:page
+  - npm run cli :create:pagex
+
 ## 2022-05-30, Version 4.21.0
 
 - **Feat**

@@ -7,7 +7,7 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Create Page JSX Component',
-      usage: 'npm run cli :create:page pageName -- [--module=]',
+      usage: 'npm run cli :create:pagex pageName -- [--module=]',
     },
     options: {
       module: {
