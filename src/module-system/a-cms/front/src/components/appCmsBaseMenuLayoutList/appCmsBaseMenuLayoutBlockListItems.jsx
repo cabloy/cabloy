@@ -57,7 +57,7 @@ function installFactory(_Vue) {
         // ok
         return groups;
       },
-      onNodeSelect(node) {
+      onNodeClick(node) {
         const options = {
           language: this.language,
           category: node.id,
@@ -105,7 +105,7 @@ function installFactory(_Vue) {
             categoryHidden: 0,
           },
           on: {
-            nodeSelect: this.onNodeSelect,
+            nodeClick: this.onNodeClick,
           },
         };
         return (

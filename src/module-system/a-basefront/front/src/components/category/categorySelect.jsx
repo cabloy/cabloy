@@ -156,6 +156,10 @@ export default {
       this.$emit('node:select', node);
       this.$emit('nodeSelect', node);
     },
+    onNodeClick(node, event) {
+      this.$emit('node:click', node, event);
+      this.$emit('nodeClick', node, event);
+    },
   },
   render() {
     return (
@@ -165,6 +169,7 @@ export default {
         propsOnLoadChildren={this.onLoadChildren}
         onNodeChange={this.onNodeChange}
         onNodeSelect={this.onNodeSelect}
+        onNodeClick={this.onNodeClick}
         {...{
           scopedSlots: {
             'label-start': ({ node }) => {
