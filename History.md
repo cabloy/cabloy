@@ -5,6 +5,8 @@
 - **Feat**
   - npm run cli :create:page
   - npm run cli :create:pagex
+- **Enhance**
+  - always open url when click cms app menu
 
 ## 2022-05-30, Version 4.21.0
 
