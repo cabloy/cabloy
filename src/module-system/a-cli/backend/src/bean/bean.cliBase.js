@@ -84,15 +84,35 @@ module.exports = ctx => {
     }
 
     _commandMeta_info({ info, argv }) {
+      // info
       const metaInfo = {
         version: info.version,
         title: ctx.text(info.title),
         usage: ctx.text(info.usage),
       };
+      // usage
       if (!metaInfo.usage) {
         metaInfo.usage = `${ctx.text('Usage')}: npm run cli ${argv.cliFullName} -- [options] [-h] [-v] [-t]`;
       }
+      // welcomes
+      metaInfo.welcomes = this._commandMeta_info_welcomes({ info });
+      // ok
       return metaInfo;
+    }
+
+    _commandMeta_info_welcomes({ info }) {
+      let welcomes = info.welcomes || [];
+      if (!Array.isArray(welcomes)) welcomes = [welcomes];
+      welcomes = welcomes.map(item => ctx.text(item));
+      // helper doc
+      const configHelper = this.cabloyConfig.cli && this.cabloyConfig.cli.helper;
+      if (configHelper !== false) {
+        let url = `https://cabloy.com/${ctx.locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
+        url = this.helper.chalk.keyword('cyan')(url);
+        const text = `cli docs: ${url}`;
+        welcomes.unshift(text);
+      }
+      return welcomes;
     }
   }
   return CliBase;

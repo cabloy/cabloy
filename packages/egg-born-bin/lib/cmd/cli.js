@@ -36,10 +36,8 @@ class CliCommand extends BaseCommand {
     console.log(`npm run cli ${chalk.cyan(argv.cliFullName)} at %s\n`, cwd);
     // cabloy config
     yield this._loadCabloyConfig();
-    // log helper docs
-    this._logHelperDocs();
-    // log meta logs
-    this._logMetaLogs();
+    // log meta welcomes
+    this._logMetaWelcomes();
     // prompt
     yield this._promptGroups({ context, groups: this.__groups });
     // execute
@@ -56,22 +54,13 @@ class CliCommand extends BaseCommand {
     this.cabloyConfig = this.__cabloyConfig.get();
   }
 
-  _logHelperDocs() {
-    if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
-      return;
-    }
-    const locale = this.__openAuthClient.locale;
-    const url = `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
-    console.log(`cli docs: ${chalk.cyan(url)}\n`);
-  }
-
-  _logMetaLogs() {
-    let logs = this.__meta.logs;
-    if (!logs) return;
-    if (!Array.isArray(logs)) logs = [logs];
-    if (logs.length === 0) return;
-    for (const log of logs) {
-      console.log(log);
+  _logMetaWelcomes() {
+    let welcomes = this.__meta.info.welcomes;
+    if (!welcomes) return;
+    if (!Array.isArray(welcomes)) welcomes = [welcomes];
+    if (welcomes.length === 0) return;
+    for (const welcome of welcomes) {
+      console.log(welcome);
     }
     console.log('\n');
   }
