@@ -271,6 +271,16 @@ module.exports = app => {
       const url = this.ctx.bean.base.getAlertUrl({ data });
       return this.ctx.redirect(url);
     }
+
+    async checkStatus({ user }) {
+      // check if exists
+      const auth = await this.ctx.model.authSimple.get({
+        userId: user.id,
+      });
+      return {
+        exists: !!auth,
+      };
+    }
   }
 
   return Auth;

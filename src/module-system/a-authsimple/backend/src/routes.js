@@ -50,4 +50,5 @@ module.exports = [
     meta: { validate: { validator: 'emailConfirm' } },
   },
   { method: 'get', path: 'auth/emailConfirmation', controller: 'auth' },
+  { method: 'post', path: 'auth/checkStatus', controller: 'auth', meta: { auth: { user: true } } },
 ];

@@ -59,6 +59,11 @@ module.exports = app => {
       await this.service.auth.emailConfirmation({ token });
       // this.ctx.success();
     }
+
+    async checkStatus() {
+      const res = await this.service.auth.checkStatus({ user: this.ctx.state.user.agent });
+      this.ctx.success(res);
+    }
   }
   return AuthController;
 };
