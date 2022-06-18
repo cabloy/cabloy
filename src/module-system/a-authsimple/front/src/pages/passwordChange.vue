@@ -26,7 +26,7 @@
             dataPath="captcha/token"
           >
           </eb-list-input>
-          <eb-list-input :input="false">
+          <f7-list-input :input="false">
             <div slot="label"></div>
             <div slot="input">
               <eb-component
@@ -36,7 +36,7 @@
                 :options="captchaContainerOptions"
               ></eb-component>
             </div>
-          </eb-list-input>
+          </f7-list-input>
         </eb-list>
       </eb-validate>
     </f7-block>
