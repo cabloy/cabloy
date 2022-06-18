@@ -30,8 +30,8 @@ module.exports = ctx => {
       if (item) {
         delete meta.groups;
       }
-      // logs
-      meta.logs = this._logHelperDocs({ user });
+      // welcomes
+      this._logHelperDocs({ welcomes: meta.info.welcomes, user });
       // ok
       return meta;
     }
@@ -98,7 +98,7 @@ module.exports = ctx => {
           this.cabloyConfig.get(),
           `store.commands.${this.commandName}.entities`
         );
-        entityNames = Object.keys(entitiesConfig);
+        entityNames = entitiesConfig ? Object.keys(entitiesConfig) : [];
       }
       // loop
       const total = entityNames.length;
@@ -184,13 +184,13 @@ module.exports = ctx => {
       return `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${slug}.html`;
     }
 
-    _logHelperDocs({ user }) {
+    _logHelperDocs({ welcomes, user }) {
       if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
         return;
       }
       const url = this._getCabloyDocsURL({ slug: 'cli-store', user });
       const text = this.helper.chalk.keyword('cyan')(url);
-      return `cli store docs: ${text}`;
+      welcomes.push(`cli store docs: ${text}`);
     }
   }
   return CliStoreBase;
