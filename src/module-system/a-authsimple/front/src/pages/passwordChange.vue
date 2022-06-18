@@ -25,7 +25,10 @@
             v-model="captcha.token"
             dataPath="captcha/token"
           >
-            <div slot="content">
+          </eb-list-input>
+          <eb-list-input :input="false">
+            <div slot="label"></div>
+            <div slot="input">
               <eb-component
                 ref="captchaContainer"
                 module="a-captcha"
