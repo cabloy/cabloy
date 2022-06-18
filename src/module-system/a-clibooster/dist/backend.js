@@ -152,6 +152,82 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 863:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // module name/info
+      const moduleName = argv.module;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!_module) {
+        throw new Error(`module does not exist: ${moduleName}`);
+      }
+      // target dir
+      const targetDir = await this.helper.ensureDir(_module.root);
+      // render
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: 'create/page/snippets',
+        boilerplatePath: 'create/page/boilerplate',
+      });
+      // need not reload
+      // ctx.app.meta.reload.now();
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // module name/info
+      const moduleName = argv.module;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!_module) {
+        throw new Error(`module does not exist: ${moduleName}`);
+      }
+      // target dir
+      const targetDir = await this.helper.ensureDir(_module.root);
+      // render
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: 'create/pagex/snippets',
+        boilerplatePath: 'create/pagex/boilerplate',
+      });
+      // need not reload
+      // ctx.app.meta.reload.now();
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
 /***/ 29:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -1197,6 +1273,8 @@ const cliCreateSuite = __webpack_require__(29);
 const cliCreateModule = __webpack_require__(554);
 const cliCreateAtom = __webpack_require__(511);
 const cliCreateController = __webpack_require__(199);
+const cliCreatePage = __webpack_require__(863);
+const cliCreatePagex = __webpack_require__(232);
 const cliStoreSync = __webpack_require__(937);
 const cliStorePublish = __webpack_require__(467);
 
@@ -1248,6 +1326,14 @@ module.exports = app => {
       mode: 'ctx',
       bean: cliCreateController,
     },
+    'cli.create.page': {
+      mode: 'ctx',
+      bean: cliCreatePage,
+    },
+    'cli.create.pagex': {
+      mode: 'ctx',
+      bean: cliCreatePagex,
+    },
     'cli.store.sync': {
       mode: 'ctx',
       bean: cliStoreSync,
@@ -1298,8 +1384,8 @@ module.exports = ctx => {
       if (item) {
         delete meta.groups;
       }
-      // logs
-      meta.logs = this._logHelperDocs({ user });
+      // welcomes
+      this._logHelperDocs({ welcomes: meta.info.welcomes, user });
       // ok
       return meta;
     }
@@ -1366,7 +1452,7 @@ module.exports = ctx => {
           this.cabloyConfig.get(),
           `store.commands.${this.commandName}.entities`
         );
-        entityNames = Object.keys(entitiesConfig);
+        entityNames = entitiesConfig ? Object.keys(entitiesConfig) : [];
       }
       // loop
       const total = entityNames.length;
@@ -1452,13 +1538,13 @@ module.exports = ctx => {
       return `https://cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${slug}.html`;
     }
 
-    _logHelperDocs({ user }) {
+    _logHelperDocs({ welcomes, user }) {
       if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
         return;
       }
       const url = this._getCabloyDocsURL({ slug: 'cli-store', user });
       const text = this.helper.chalk.keyword('cyan')(url);
-      return `cli store docs: ${text}`;
+      welcomes.push(`cli store docs: ${text}`);
     }
   }
   return CliStoreBase;
@@ -1702,6 +1788,96 @@ module.exports = app => {
                 'context.argv.atomClassName.replace(context.argv.atomClassName[0], context.argv.atomClassName[0].toUpperCase())',
             },
             silent: true,
+          },
+        },
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
+/***/ 111:
+/***/ ((module) => {
+
+module.exports = app => {
+  return {
+    bean: 'create.page',
+    resource: {
+      atomStaticKey: 'cliCreate',
+    },
+    info: {
+      version: '4.0.0',
+      title: 'Cli: Create Page Component',
+      usage: 'npm run cli :create:page pageName -- [--module=]',
+    },
+    options: {
+      module: {
+        description: 'module name',
+        type: 'string',
+      },
+    },
+    groups: {
+      default: {
+        questions: {
+          pageName: {
+            type: 'input',
+            message: 'pageName',
+            initial: {
+              expression: 'context.argv._[0]',
+            },
+            required: true,
+          },
+          module: {
+            type: 'input',
+            message: 'module name',
+            required: true,
+          },
+        },
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
+/***/ 586:
+/***/ ((module) => {
+
+module.exports = app => {
+  return {
+    bean: 'create.pagex',
+    resource: {
+      atomStaticKey: 'cliCreate',
+    },
+    info: {
+      version: '4.0.0',
+      title: 'Cli: Create Page JSX Component',
+      usage: 'npm run cli :create:pagex pageName -- [--module=]',
+    },
+    options: {
+      module: {
+        description: 'module name',
+        type: 'string',
+      },
+    },
+    groups: {
+      default: {
+        questions: {
+          pageName: {
+            type: 'input',
+            message: 'pageName',
+            initial: {
+              expression: 'context.argv._[0]',
+            },
+            required: true,
+          },
+          module: {
+            type: 'input',
+            message: 'module name',
+            required: true,
           },
         },
       },
@@ -2035,6 +2211,8 @@ const createSuite = __webpack_require__(687);
 const createModule = __webpack_require__(793);
 const createAtom = __webpack_require__(184);
 const createController = __webpack_require__(222);
+const createPage = __webpack_require__(111);
+const createPagex = __webpack_require__(586);
 const storeSync = __webpack_require__(609);
 const storePublish = __webpack_require__(730);
 
@@ -2057,6 +2235,8 @@ module.exports = app => {
       module: createModule(app),
       atom: createAtom(app),
       controller: createController(app),
+      page: createPage(app),
+      pagex: createPagex(app),
     },
     store: {
       sync: storeSync(app),
@@ -2237,7 +2417,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 746:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2304,7 +2484,7 @@ module.exports = app => {
 
 module.exports = app => {
   // schemas
-  const schemas = __webpack_require__(232)(app);
+  const schemas = __webpack_require__(746)(app);
   // static
   const staticResources = __webpack_require__(429)(app);
   // cli commands

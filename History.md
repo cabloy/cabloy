@@ -5,6 +5,7 @@
 - **Feat**
   - npm run cli :create:page
   - npm run cli :create:pagex
+  - 增加 cli meta.info.welcomes
 - **Enhance**
   - always open url when click cms app menu
 
