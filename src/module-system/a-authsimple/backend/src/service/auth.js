@@ -104,17 +104,27 @@ module.exports = app => {
           rememberMe: false,
         }),
       });
+      return authSimpleId;
     }
 
     async passwordChange({ passwordOld, passwordNew, userId }) {
-      // verify old
-      const authSimple = await this.ctx.bean.local.simple.verify({ userId, password: passwordOld });
-      if (!authSimple) this.ctx.throw(403);
+      let authSimpleId;
+      // check if exists
+      const authSimple = await this.ctx.model.authSimple.get({ userId });
+      if (!authSimple) {
+        // create a new one
+        authSimpleId = await this.add({ userId, password: passwordNew });
+      } else {
+        // verify old one
+        const authSimple = await this.ctx.bean.local.simple.verify({ userId, password: passwordOld });
+        if (!authSimple) this.ctx.throw(403);
+        authSimpleId = authSimple.id;
+      }
+
       // save new
       await this._passwordSaveNew({ passwordNew, userId });
 
       // profileUser
-      const authSimpleId = authSimple.id;
       const profileUser = {
         module: moduleInfo.relativeName,
         provider: 'authsimple',
