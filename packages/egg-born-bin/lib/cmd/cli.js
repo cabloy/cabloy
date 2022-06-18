@@ -61,8 +61,8 @@ class CliCommand extends BaseCommand {
     if (welcomes.length === 0) return;
     for (const welcome of welcomes) {
       console.log(welcome);
+      console.log('');
     }
-    console.log('\n');
   }
 
   _adjustEnv({ env }) {
