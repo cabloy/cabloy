@@ -193,13 +193,13 @@ module.exports = ctx => {
         message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
         console.log('\n' + boxen(message, boxenOptions));
         // }
-        return ctx.fail(423); // not ctx.throw(423)
+        return ctx.throw(423); // not ctx.fail(423)
       }
       // check if disabled
       if (instance.disabled) {
         // locked
         console.log('instance disabled: ', ctx.subdomain);
-        return ctx.fail(423); // not ctx.throw(423)
+        return ctx.throw(423); // not ctx.fail(423)
       }
 
       // check instance startup ready
