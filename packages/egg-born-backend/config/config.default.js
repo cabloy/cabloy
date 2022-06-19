@@ -222,6 +222,8 @@ module.exports = appInfo => {
     appErrorFilter(err, ctx) {
       // 422
       if (err && err.code === 422 && !ctx.app.meta.isTest) return false;
+      // 423
+      if (err && err.code === 423 && !ctx.app.meta.isTest) return false;
       // 403
       if (err && err.code === 403) {
         const user = ctx && ctx.state && ctx.state.user;
