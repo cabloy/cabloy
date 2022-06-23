@@ -19,7 +19,10 @@ COPY ./README.md /opt/node/app
 
 RUN chmod +x  /opt/node/app/scripts/*.sh
 
+# do not uncomment this line unless run 'lerna bootstrap' manually
 # COPY ./node_modules /opt/node/app/node_modules
+
+# do not uncomment this line unless run 'npm run build:front' manually
 # COPY ./dist /opt/node/app/dist
 
 RUN npm i -g lerna
