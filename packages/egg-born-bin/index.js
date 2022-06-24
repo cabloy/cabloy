@@ -49,7 +49,11 @@ class EggBornBinCommand extends Command {
         projectPath: argv.projectPath,
         needDevServer: true,
       });
-      if (!devServerRunning) return;
+      if (!devServerRunning) {
+        // interrupted
+        console.log(chalk.red('  cli interrupted!\n'));
+        return;
+      }
     }
     // OpenAuthClient
     const openAuthClient = new eggBornUtils.OpenAuthClient({ token });
