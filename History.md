@@ -8,6 +8,7 @@
   - 修改密码：将验证码放入第二行显示，避免页面尺寸过小时，输入框被覆盖
   - markdown：增强 code_block 的解析逻辑
   - treeview：修复 loading 时引发的 title 闪烁问题
+  - jstree：文档目录树，当点击目录标题时，展开文章列表
 
 ## 2022-06-16, Version 4.21.28
 
