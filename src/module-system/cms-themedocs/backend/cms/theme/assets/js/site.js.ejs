@@ -79,7 +79,11 @@
       .on('changed.jstree', function (e, data) {
         const node = data.node;
         if (!node) return e.preventDefault();
-        if (node.type === 'folder') return e.preventDefault();
+        if (node.type === 'folder') {
+          // e.preventDefault();
+          $tree.jstree(true).open_node(node);
+          return;
+        }
         if (node.type === 'file' && node.id === `${articleCategoryId}:${env.article.atomId}`) {
           window.location.href = '#';
           return;
