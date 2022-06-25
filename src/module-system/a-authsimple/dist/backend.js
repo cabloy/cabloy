@@ -687,7 +687,180 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 232:
+/***/ 615:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.emailConfirm = {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Username',
+        ebReadOnly: true,
+      },
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        notEmpty: true,
+        format: 'email',
+        'x-exists': true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 910:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.passwordChange = {
+    type: 'object',
+    properties: {
+      passwordOld: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Old Password',
+        ebParams: {
+          secure: true,
+        },
+        notEmpty: true,
+        minLength: 6,
+      },
+      passwordNew: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'New Password',
+        ebParams: {
+          secure: true,
+        },
+        notEmpty: true,
+        minLength: 6,
+      },
+      passwordNewAgain: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'New Password Again',
+        ebParams: {
+          secure: true,
+        },
+        notEmpty: true,
+        const: { $data: '1/passwordNew' },
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 608:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.passwordForgot = {
+    type: 'object',
+    properties: {
+      email: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Email',
+        notEmpty: true,
+        format: 'email',
+        'x-passwordForgotEmail': true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 490:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.passwordReset = {
+    type: 'object',
+    properties: {
+      passwordNew: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'New Password',
+        ebParams: {
+          secure: true,
+        },
+        notEmpty: true,
+        minLength: 6,
+      },
+      passwordNewAgain: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'New Password Again',
+        ebParams: {
+          secure: true,
+        },
+        notEmpty: true,
+        const: { $data: '1/passwordNew' },
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 13:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.signin = {
+    type: 'object',
+    properties: {
+      auth: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Your Username/Mobile/Email',
+        notEmpty: true,
+      },
+      password: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Your Password',
+        ebParams: {
+          secure: true,
+        },
+        notEmpty: true,
+        minLength: 6,
+      },
+      rememberMe: {
+        type: 'boolean',
+        ebType: 'toggle',
+        ebTitle: 'Remember Me',
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 516:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -745,124 +918,31 @@ module.exports = app => {
       },
     },
   };
-  schemas.signin = {
-    type: 'object',
-    properties: {
-      auth: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Your Username/Mobile/Email',
-        notEmpty: true,
-      },
-      password: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Your Password',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        minLength: 6,
-      },
-      rememberMe: {
-        type: 'boolean',
-        ebType: 'toggle',
-        ebTitle: 'Remember Me',
-      },
-    },
-  };
-  schemas.passwordChange = {
-    type: 'object',
-    properties: {
-      passwordOld: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Old Password',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        minLength: 6,
-      },
-      passwordNew: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'New Password',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        minLength: 6,
-      },
-      passwordNewAgain: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'New Password Again',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        const: { $data: '1/passwordNew' },
-      },
-    },
-  };
-  schemas.emailConfirm = {
-    type: 'object',
-    properties: {
-      userName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Username',
-        ebReadOnly: true,
-      },
-      email: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Email',
-        notEmpty: true,
-        format: 'email',
-        'x-exists': true,
-      },
-    },
-  };
-  schemas.passwordForgot = {
-    type: 'object',
-    properties: {
-      email: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Email',
-        notEmpty: true,
-        format: 'email',
-        'x-passwordForgotEmail': true,
-      },
-    },
-  };
-  schemas.passwordReset = {
-    type: 'object',
-    properties: {
-      passwordNew: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'New Password',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        minLength: 6,
-      },
-      passwordNewAgain: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'New Password Again',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        const: { $data: '1/passwordNew' },
-      },
-    },
-  };
+  return schemas;
+};
+
+
+/***/ }),
+
+/***/ 232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const emailConfirm = __webpack_require__(615);
+const passwordChange = __webpack_require__(910);
+const passwordForgot = __webpack_require__(608);
+const passwordReset = __webpack_require__(490);
+const signin = __webpack_require__(13);
+const signup = __webpack_require__(516);
+
+module.exports = app => {
+  const schemas = {};
+  Object.assign(schemas, emailConfirm(app));
+  Object.assign(schemas, passwordChange(app));
+  Object.assign(schemas, passwordForgot(app));
+  Object.assign(schemas, passwordReset(app));
+  Object.assign(schemas, signin(app));
+  Object.assign(schemas, signup(app));
+  // ok
   return schemas;
 };
 
@@ -932,6 +1012,11 @@ module.exports = app => {
       const token = this.ctx.request.query.token;
       await this.service.auth.emailConfirmation({ token });
       // this.ctx.success();
+    }
+
+    async checkStatus() {
+      const res = await this.service.auth.checkStatus({ user: this.ctx.state.user.agent });
+      this.ctx.success(res);
     }
   }
   return AuthController;
@@ -1127,6 +1212,7 @@ module.exports = [
     meta: { validate: { validator: 'emailConfirm' } },
   },
   { method: 'get', path: 'auth/emailConfirmation', controller: 'auth' },
+  { method: 'post', path: 'auth/checkStatus', controller: 'auth', meta: { auth: { user: true } } },
 ];
 
 
@@ -1241,17 +1327,27 @@ module.exports = app => {
           rememberMe: false,
         }),
       });
+      return authSimpleId;
     }
 
     async passwordChange({ passwordOld, passwordNew, userId }) {
-      // verify old
-      const authSimple = await this.ctx.bean.local.simple.verify({ userId, password: passwordOld });
-      if (!authSimple) this.ctx.throw(403);
+      let authSimpleId;
+      // check if exists
+      const authSimple = await this.ctx.model.authSimple.get({ userId });
+      if (!authSimple) {
+        // create a new one
+        authSimpleId = await this.add({ userId, password: passwordNew });
+      } else {
+        // verify old one
+        const authSimple = await this.ctx.bean.local.simple.verify({ userId, password: passwordOld });
+        if (!authSimple) this.ctx.throw(403);
+        authSimpleId = authSimple.id;
+      }
+
       // save new
       await this._passwordSaveNew({ passwordNew, userId });
 
       // profileUser
-      const authSimpleId = authSimple.id;
       const profileUser = {
         module: moduleInfo.relativeName,
         provider: 'authsimple',
@@ -1407,6 +1503,16 @@ module.exports = app => {
       };
       const url = this.ctx.bean.base.getAlertUrl({ data });
       return this.ctx.redirect(url);
+    }
+
+    async checkStatus({ user }) {
+      // check if exists
+      const auth = await this.ctx.model.authSimple.get({
+        userId: user.id,
+      });
+      return {
+        exists: !!auth,
+      };
     }
   }
 

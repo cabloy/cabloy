@@ -33,7 +33,7 @@
     "egg-born-module-a-auth": "^4.0.4",
     "egg-born-module-a-authgithub": "^4.1.10",
     "egg-born-module-a-authopen": "^4.0.7",
-    "egg-born-module-a-authsimple": "^4.2.17",
+    "egg-born-module-a-authsimple": "^4.2.18",
     "egg-born-module-a-authsms": "^4.2.18",
     "egg-born-module-a-base-sync": "^4.6.18",
     "egg-born-module-a-baseadmin": "^4.2.18",
@@ -64,13 +64,13 @@
     "egg-born-module-a-icon": "^4.0.8",
     "egg-born-module-a-iconbooster": "^4.0.10",
     "egg-born-module-a-index": "^4.2.12",
-    "egg-born-module-a-instance": "^4.2.15",
+    "egg-born-module-a-instance": "^4.2.16",
     "egg-born-module-a-jsoneditor": "^4.1.13",
     "egg-born-module-a-layoutmobile": "^4.2.15",
     "egg-born-module-a-layoutpc": "^4.2.25",
     "egg-born-module-a-login": "^4.1.13",
     "egg-born-module-a-mail": "^4.1.11",
-    "egg-born-module-a-markdown": "^4.1.35",
+    "egg-born-module-a-markdown": "^4.1.36",
     "egg-born-module-a-markdownblock": "^4.1.13",
     "egg-born-module-a-markdownrender": "^4.1.17",
     "egg-born-module-a-markdownstyle": "^4.1.15",
@@ -103,7 +103,7 @@
     "egg-born-module-cms-themeaws": "^4.2.18",
     "egg-born-module-cms-themeblog": "^4.2.16",
     "egg-born-module-cms-themecommunity": "^4.2.16",
-    "egg-born-module-cms-themedocs": "^4.2.17",
+    "egg-born-module-cms-themedocs": "^4.2.18",
     "egg-born-scripts": "^3.3.29"
   }
 }
