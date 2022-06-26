@@ -5,14 +5,14 @@ module.exports = app => {
     {
       atomName: 'InfoBox',
       atomStaticKey: 'widgetInfoBox',
-      atomRevision: 0,
+      atomRevision: 1,
       atomCategoryId: 'a-dashboard:widget.Template',
       resourceType: 'a-dashboard:widget',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,
         component: 'widgetInfoBox',
       }),
-      resourceRoles: 'template.system',
+      resourceRoles: 'root',
     },
   ];
   return resources;
