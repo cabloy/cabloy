@@ -1,5 +1,13 @@
 # History
 
+## 2022-06-26, Version 4.21.30
+
+- **Feat**
+- **Enhance**
+  - 增加 search.exclude 配置：.vscode/settings.json
+- **Refactor**
+  - 压缩 Cabloy 版权信息：让 Cabloy 开发的业务系统更加纯净
+
 ## 2022-06-25, Version 4.21.29
 
 - **Feat**

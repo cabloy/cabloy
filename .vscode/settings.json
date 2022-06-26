@@ -24,5 +24,12 @@
     "*.css.ejs": "css",
     "*.less.ejs": "less",
     "*.code-snippets": "text"
+  },
+  // search
+  "search.exclude": {
+    "/.vscode/**": true,
+    "/coverage/**": true,
+    "/docs/**": true,
+    "**/dist/**": true
   }
 }
