@@ -1,3 +1,14 @@
+const propsSchema = {
+  type: 'object',
+  properties: {
+    backgroundColor: {
+      type: 'string',
+      ebType: 'atom',
+      ebTitle: 'BackgroundColor',
+    },
+  },
+};
+
 // export
 export default {
   installFactory,
@@ -11,22 +22,33 @@ function installFactory(_Vue) {
     meta: {
       widget: {
         schema: {
-          props: null,
+          props: propsSchema,
           attrs: null,
         },
       },
     },
     mixins: [ebDashboardWidgetBase],
+    props: {
+      backgroundColor: {
+        type: String,
+      },
+    },
     data() {
       return {};
     },
     methods: {},
     render() {
       return (
-        <f7-card class="demo-widget-simple-chat">
-          <f7-card-header>{this.$text('Simple Chat')}</f7-card-header>
-          <f7-card-content></f7-card-content>
-        </f7-card>
+        <div class="eb-widget-info-box" style={{ backgroundColor: this.backgroundColor }}>
+          <div class="info-box-body">
+            <div class="title">150</div>
+            <div class="subtitle">New Orders</div>
+          </div>
+          <div class="info-box-icon"></div>
+          <div href="#" class="info-box-footer">
+            <eb-link>More info</eb-link>
+          </div>
+        </div>
       );
     },
   };

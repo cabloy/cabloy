@@ -1,1 +1,3 @@
-export default {};
+export default {
+  BackgroundColor: '背景色',
+};
