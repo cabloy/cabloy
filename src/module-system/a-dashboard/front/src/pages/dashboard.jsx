@@ -340,6 +340,9 @@ export default {
       if (fullName === 'test-party:widgetSimpleChat') {
         fullName = 'test-note:widgetSimpleChat';
       }
+      if (fullName === 'a-dashboard:widgetAbout') {
+        fullName = 'test-note:widgetAbout';
+      }
       const _resource = resourcesAll[fullName];
       if (!_resource) return null;
       return {

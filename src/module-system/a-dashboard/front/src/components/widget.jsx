@@ -415,6 +415,9 @@ export default {
       if (fullName === 'test-party:widgetSimpleChat') {
         fullName = 'test-note:widgetSimpleChat';
       }
+      if (fullName === 'a-dashboard:widgetAbout') {
+        fullName = 'test-note:widgetAbout';
+      }
       return fullName;
     },
     onDragStartResizable({ /* $el,*/ context /* , dragElement*/ }) {
