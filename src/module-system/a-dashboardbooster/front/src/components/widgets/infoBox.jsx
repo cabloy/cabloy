@@ -39,16 +39,19 @@ function installFactory(_Vue) {
     methods: {},
     render() {
       return (
-        <div class="eb-widget-info-box" style={{ backgroundColor: this.backgroundColor }}>
-          <div class="info-box-body">
-            <div class="title">150</div>
-            <div class="subtitle">New Orders</div>
-          </div>
-          <div class="info-box-icon"></div>
-          <div href="#" class="info-box-footer">
-            <eb-link>More info</eb-link>
-          </div>
-        </div>
+        <f7-card class="eb-widget-info-box" style={{ backgroundColor: this.backgroundColor }}>
+          <f7-card-content class="info-box-body">
+            <div class="title">{this.infoTitle}</div>
+            <div class="subtitle">{this.infoSubTitle}</div>
+            <div class="info-box-icon">
+              <f7-icon f7={this.infoIcon}></f7-icon>
+            </div>
+          </f7-card-content>
+          <f7-card-footer class="info-box-footer">
+            <div></div>
+            <eb-link iconF7="::arrow-right">{this.$text('More info')}</eb-link>
+          </f7-card-footer>
+        </f7-card>
       );
     },
   };
