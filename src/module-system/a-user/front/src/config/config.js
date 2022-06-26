@@ -7,4 +7,8 @@ export default {
       'a-app:appDefault': ['Atom', 'WorkFlow', 'Mine'],
     },
   },
+  copyright: {
+    'zh-cn': 'Powered by Cabloy',
+    'en-us': 'Powered by Cabloy',
+  },
 };

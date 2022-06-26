@@ -17,6 +17,8 @@ export default {
     return {};
   },
   render() {
-    return <div class="eb-mine-footer">{this.$text('CopyrightTip')}</div>;
+    let configCopyright = this.$config.copyright[this.$meta.util.getLocale()];
+    if (!configCopyright) configCopyright = this.$config.copyright['en-us'];
+    return <div class="eb-mine-footer">{configCopyright}</div>;
   },
 };
