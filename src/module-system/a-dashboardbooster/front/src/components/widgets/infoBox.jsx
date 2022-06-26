@@ -64,7 +64,12 @@ function installFactory(_Vue) {
     data() {
       return {};
     },
-    methods: {},
+    methods: {
+      onPerformMoreInfo() {
+        const text = this.$text('WidgetTemplateTip');
+        this.$view.toast.show({ text });
+      },
+    },
     render() {
       return (
         <f7-card class="eb-widget-info-box" style={{ backgroundColor: this.backgroundColor }}>
@@ -77,7 +82,9 @@ function installFactory(_Vue) {
           </f7-card-content>
           <f7-card-footer class="info-box-footer">
             <div></div>
-            <eb-link iconF7="::arrow-right">{this.$text('More info')}</eb-link>
+            <eb-link iconF7="::arrow-right" propsOnPerform={this.onPerformMoreInfo}>
+              {this.$text('More info')}
+            </eb-link>
           </f7-card-footer>
         </f7-card>
       );
