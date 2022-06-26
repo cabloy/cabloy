@@ -6,6 +6,21 @@ const propsSchema = {
       ebType: 'colorPicker',
       ebTitle: 'BackgroundColor',
     },
+    infoTitle: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Title',
+    },
+    infoSubTitle: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'InfoSubTitle',
+    },
+    infoIcon: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Icon',
+    },
   },
 };
 
@@ -32,6 +47,15 @@ function installFactory(_Vue) {
       backgroundColor: {
         type: String,
       },
+      infoTitle: {
+        type: String,
+      },
+      infoSubTitle: {
+        type: String,
+      },
+      infoIcon: {
+        type: String,
+      },
     },
     data() {
       return {};
@@ -44,7 +68,7 @@ function installFactory(_Vue) {
             <div class="title">{this.infoTitle}</div>
             <div class="subtitle">{this.infoSubTitle}</div>
             <div class="info-box-icon">
-              <f7-icon f7={this.infoIcon}></f7-icon>
+              <f7-icon f7={this.infoIcon} size="60"></f7-icon>
             </div>
           </f7-card-content>
           <f7-card-footer class="info-box-footer">

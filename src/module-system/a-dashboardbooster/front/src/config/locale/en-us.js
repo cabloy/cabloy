@@ -1,1 +1,3 @@
-export default {};
+export default {
+  InfoSubTitle: 'Sub Title',
+};
