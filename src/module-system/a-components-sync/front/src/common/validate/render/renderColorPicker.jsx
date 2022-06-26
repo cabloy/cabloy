@@ -61,9 +61,13 @@ export default {
         <eb-list-input
           key={key}
           {...{ props }}
-          onColorPickerChange={value => {
+          onColorPickerChange={valueNew => {
             // date or array of date
-            context.setValue(value && value.hex ? value.hex.toUpperCase() : '');
+            const valueNewHex = valueNew && valueNew.hex ? valueNew.hex.toUpperCase() : '';
+            const valueOldHex = value && value.hex ? value.hex.toUpperCase() : '';
+            if (valueNewHex !== valueOldHex) {
+              context.setValue(valueNewHex);
+            }
           }}
         >
           <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>

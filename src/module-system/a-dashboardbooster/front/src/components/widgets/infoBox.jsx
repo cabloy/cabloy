@@ -3,7 +3,7 @@ const propsSchema = {
   properties: {
     backgroundColor: {
       type: 'string',
-      ebType: 'atom',
+      ebType: 'colorPicker',
       ebTitle: 'BackgroundColor',
     },
   },
