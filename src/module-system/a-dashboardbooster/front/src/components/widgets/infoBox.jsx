@@ -46,15 +46,19 @@ function installFactory(_Vue) {
     props: {
       backgroundColor: {
         type: String,
+        default: '#AB47BC',
       },
       infoTitle: {
         type: String,
+        default: 'Title',
       },
       infoSubTitle: {
         type: String,
+        default: 'Sub Title',
       },
       infoIcon: {
         type: String,
+        default: '::radio-button-unchecked',
       },
     },
     data() {
