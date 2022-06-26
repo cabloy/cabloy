@@ -18,17 +18,14 @@ module.exports = app => {
       },
       bottom: {
         panels: [],
-        buttons: [
-          { module: 'a-layoutpc', name: 'buttonClock' },
-          { module: 'a-layoutpc', name: 'buttonCopyright' },
-        ],
+        buttons: [{ module: 'a-layoutpc', name: 'buttonClock' }],
       },
     },
   };
   const layout = {
     atomName: 'PC Layout(Anonymous)',
     atomStaticKey: 'layoutPCAnonymous',
-    atomRevision: 4,
+    atomRevision: 10,
     description: '',
     layoutTypeCode: 2,
     content: JSON.stringify(content),

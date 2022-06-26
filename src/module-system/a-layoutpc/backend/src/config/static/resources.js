@@ -198,7 +198,7 @@ module.exports = app => {
     {
       atomName: 'Copyright',
       atomStaticKey: 'buttonCopyright',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
