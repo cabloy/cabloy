@@ -36,7 +36,7 @@ module.exports = app => {
     {
       atomName: 'About',
       atomStaticKey: 'widgetAbout',
-      atomRevision: 0,
+      atomRevision: -1,
       atomCategoryId: 'a-dashboard:widget.General',
       resourceType: 'a-dashboard:widget',
       resourceConfig: JSON.stringify({

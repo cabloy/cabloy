@@ -91,9 +91,8 @@ module.exports = app => {
           },
         },
         {
+          atomStaticKey: 'test-note:widgetAbout',
           id: '8a04bfa743fb42b2a65a104e018ab924',
-          module: 'a-dashboard',
-          name: 'widgetAbout',
           properties: {
             height: {
               type: 1,
@@ -123,7 +122,7 @@ module.exports = app => {
   const dashboard = {
     atomName: 'Home',
     atomStaticKey: 'dashboardHome',
-    atomRevision: 10,
+    atomRevision: 20,
     description: 'Home(Authenticated)',
     content: JSON.stringify(content),
     resourceRoles: 'root',
