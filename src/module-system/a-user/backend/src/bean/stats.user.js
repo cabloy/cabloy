@@ -17,7 +17,8 @@ module.exports = ctx => {
           res.red += value;
         } else if (dep === 'a-user:userOrange') {
           res.orange += value;
-        } else if (dep === 'a-message:message' || dep === 'a-base:starsLabels') {
+        } else {
+          // e.g. dep === 'a-message:message' || dep === 'a-base:starsLabels'
           if (value.red !== undefined) {
             res.red += value.red;
           }
