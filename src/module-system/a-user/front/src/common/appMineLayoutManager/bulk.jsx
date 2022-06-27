@@ -6,18 +6,23 @@ export default {
     bulk_renderActionsNormal() {
       if (!this.base_ready) return null;
       if (this.base_user.anonymous) return null;
+      //
+      const appInfoCurrent = this.base.appInfoCurrent;
+      //
       const children = [];
       // Todos
-      children.push(
-        <eb-link-color
-          key="userAlert"
-          iconF7="::alert"
-          tooltip={this.$text('Todos')}
-          eb-href="/a/user/user/alert"
-          eb-target="_self"
-          stats_params={{ module: 'a-user', name: 'userAlert' }}
-        ></eb-link-color>
-      );
+      if (!this.base_isAppDefault(appInfoCurrent.appKey)) {
+        children.push(
+          <eb-link-color
+            key="userAlert"
+            iconF7="::alert"
+            tooltip={this.$text('Todos')}
+            eb-href="/a/user/user/alert"
+            eb-target="_self"
+            stats_params={{ module: 'a-user', name: 'userAlert' }}
+          ></eb-link-color>
+        );
+      }
       // message
       children.push(
         <eb-link-color
