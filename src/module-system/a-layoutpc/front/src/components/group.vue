@@ -147,9 +147,12 @@ export default {
         sizeWill = 'medium';
       }
       // adjust
-      if (sizeWill === 'large')
+      if (sizeWill === 'large') {
         return this.layout.enoughLarge ? 'large' : this.layout.enoughMedium ? 'medium' : 'small';
-      if (sizeWill === 'medium') return this.layout.enoughMedium ? 'medium' : 'small';
+      }
+      if (sizeWill === 'medium') {
+        return this.layout.enoughMedium ? 'medium' : 'small';
+      }
       return 'small';
     },
     _reLayout() {
