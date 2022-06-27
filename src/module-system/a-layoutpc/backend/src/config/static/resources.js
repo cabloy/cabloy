@@ -181,6 +181,18 @@ module.exports = app => {
       resourceRoles: 'root',
     },
     {
+      atomName: 'Popup',
+      atomStaticKey: 'buttonPopup',
+      atomRevision: 0,
+      atomCategoryId: 'a-layoutpc:button.General',
+      resourceType: 'a-layoutpc:button',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        component: 'buttonPopup',
+      }),
+      resourceRoles: 'root',
+    },
+    {
       atomName: 'Clock',
       atomStaticKey: 'buttonClock',
       atomRevision: 0,

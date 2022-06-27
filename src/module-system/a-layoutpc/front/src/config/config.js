@@ -4,6 +4,7 @@ export default {
       login: '/a/login/login',
       loginOnStart: true,
       autoHideSidebarOnOpenUrl: true,
+      popup: true,
       sidebar: {
         top: {
           buttons: [],
