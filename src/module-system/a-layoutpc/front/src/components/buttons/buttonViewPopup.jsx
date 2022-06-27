@@ -13,22 +13,22 @@ function installFactory(_Vue) {
       return {};
     },
     computed: {
-      configPopup() {
-        return this.$meta.vueLayout.layoutConfig.popup;
+      configViewPopup() {
+        return this.$meta.vueLayout.layoutConfig.viewPopup;
       },
     },
     methods: {
       onPerform() {
-        this.$meta.vueLayout.setViewPopup(!this.configPopup);
+        this.$meta.vueLayout.setViewPopup(!this.configViewPopup);
       },
     },
     render() {
       return (
         <eb-link
           class={this.buttonClass}
-          iconF7={this.configPopup ? '::popup' : '::layout-columns'}
+          iconF7={this.configViewPopup ? '::popup' : '::layout-columns'}
           iconSize={this.buttonIconSize}
-          tooltip={this.configPopup ? this.$text('ViewPopupEnabled') : this.$text('ViewPopupDisabled')}
+          tooltip={this.configViewPopup ? this.$text('ViewPopupEnabled') : this.$text('ViewPopupDisabled')}
           propsOnPerform={this.onPerform}
         ></eb-link>
       );

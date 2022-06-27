@@ -11,6 +11,7 @@ module.exports = {
   ViewLayout: '视图',
   Appearance: '外观',
   Theme: '主题',
+  ViewPopup: '弹出模式',
   'Sidebar Button': '边栏按钮',
   'Sidebar Panel': '边栏面板',
   'PC Layout': 'PC布局',
