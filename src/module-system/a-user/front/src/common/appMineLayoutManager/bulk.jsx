@@ -10,6 +10,15 @@ export default {
       // message
       children.push(
         <eb-link-color
+          key="userAlert"
+          iconF7="::alert"
+          eb-href="/a/message/group"
+          eb-target="_self"
+          stats_params={{ module: 'a-user', name: 'userAlert' }}
+        ></eb-link-color>
+      );
+      children.push(
+        <eb-link-color
           key="messages"
           iconF7="::message"
           eb-href="/a/message/group"
