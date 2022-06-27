@@ -23,7 +23,8 @@ module.exports = ctx => {
           res.red += value;
         } else if (dep === 'a-user:userOrange') {
           res.orange += value;
-        } else if (dep === 'a-message:message' || dep === 'a-base:starsLabels') {
+        } else {
+          // e.g. dep === 'a-message:message' || dep === 'a-base:starsLabels'
           if (value.red !== undefined) {
             res.red += value.red;
           }
@@ -43,16 +44,59 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 468:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Stats {
+    async execute(context) {
+      const { user } = context;
+      // user stats
+      const statsUser = await ctx.bean.stats._get({
+        module: moduleInfo.relativeName,
+        fullName: 'user',
+        user,
+      });
+      // message stats
+      const statsMessage = await ctx.bean.stats._get({
+        module: 'a-message',
+        fullName: 'message',
+        user,
+      });
+      // minus
+      if (statsMessage.red !== undefined) {
+        statsUser.red -= statsMessage.red;
+      }
+      if (statsMessage.orange !== undefined) {
+        statsUser.orange -= statsMessage.orange;
+      }
+      return statsUser;
+    }
+  }
+
+  return Stats;
+};
+
+
+/***/ }),
+
 /***/ 187:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const statsUser = __webpack_require__(435);
+const statsUserAlert = __webpack_require__(468);
+
 module.exports = app => {
   const beans = {
     // stats
     'stats.user': {
       mode: 'ctx',
       bean: statsUser,
+    },
+    'stats.userAlert': {
+      mode: 'ctx',
+      bean: statsUserAlert,
     },
   };
   return beans;
@@ -440,6 +484,14 @@ module.exports = app => {
           },
           // dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
           dependencies: ['a-user:userRed', 'a-user:userOrange'],
+        },
+        userAlert: {
+          user: true,
+          bean: {
+            module: 'a-user',
+            name: 'userAlert',
+          },
+          dependencies: ['a-user:user'],
         },
       },
     },
