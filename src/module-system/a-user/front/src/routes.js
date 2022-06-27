@@ -13,6 +13,7 @@ export default [
   { path: 'user/authentications', component: loadjsx('user/authentications') },
   { path: 'user/appearance', component: load('user/appearance') },
   { path: 'user/exports', component: load('user/exports') },
+  { path: 'user/alert', component: loadjsx('user/alert') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },
   { path: 'view/pc', component: loadjsx('view/viewpc') },

@@ -13,7 +13,7 @@ export default {
           key="userAlert"
           iconF7="::alert"
           tooltip={this.$text('Todos')}
-          eb-href="/a/message/group"
+          eb-href="/a/user/user/alert"
           eb-target="_self"
           stats_params={{ module: 'a-user', name: 'userAlert' }}
         ></eb-link-color>
