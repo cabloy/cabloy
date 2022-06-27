@@ -1,5 +1,10 @@
 # History
 
+## 2022-06-27, Version 4.21.31
+
+- **Feat**
+  - app mine：如果有用户统计值，那么就显示 alert 按钮
+
 ## 2022-06-27, Version 4.21.30
 
 - **Feat**
