@@ -42,6 +42,8 @@ export default {
   Recent: '最近的',
   Reset: '重置',
   Current: '当前',
+  Todos: '待办',
+  Messages: '消息',
   'Tabbar Buttons': '选项卡按钮',
   'Header Buttons': '头部按钮',
   'Sidebar (Left)': '左边栏',
