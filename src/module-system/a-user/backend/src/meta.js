@@ -41,6 +41,14 @@ module.exports = app => {
           // dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
           dependencies: ['a-user:userRed', 'a-user:userOrange'],
         },
+        userAlert: {
+          user: true,
+          bean: {
+            module: 'a-user',
+            name: 'userAlert',
+          },
+          dependencies: ['a-user:user'],
+        },
       },
     },
   };
