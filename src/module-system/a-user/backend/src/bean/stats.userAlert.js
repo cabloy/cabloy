@@ -15,8 +15,14 @@ module.exports = ctx => {
         fullName: 'message',
         user,
       });
-      const res = { red: 0, orange: 0 };
-      return res;
+      // minus
+      if (statsMessage.red !== undefined) {
+        statsUser.red -= statsMessage.red;
+      }
+      if (statsMessage.orange !== undefined) {
+        statsUser.orange -= statsMessage.orange;
+      }
+      return statsUser;
     }
   }
 
