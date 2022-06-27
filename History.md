@@ -1,8 +1,10 @@
 # History
 
-## 2022-06-26, Version 4.21.30
+## 2022-06-27, Version 4.21.30
 
 - **Feat**
+  - 增加模块 a-dashboardbooster：提供部件模版，可供二次开发参考
+  - 调整首页 dashboard，演示部件模版
 - **Enhance**
   - 增加 search.exclude 配置：.vscode/settings.json
 - **Refactor**
