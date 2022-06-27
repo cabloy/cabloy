@@ -143,7 +143,6 @@ module.exports = app => {
           { module: 'a-layoutpc', name: 'buttonViewLayout' },
           { module: 'a-layoutpc', name: 'buttonTheme' },
           { module: 'a-layoutpc', name: 'buttonClock' },
-          { module: 'a-layoutpc', name: 'buttonCopyright' },
         ],
       },
     },
@@ -151,7 +150,7 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 6,
+    atomRevision: 10,
     description: '',
     layoutTypeCode: 2,
     content: JSON.stringify(content),
@@ -186,17 +185,14 @@ module.exports = app => {
       },
       bottom: {
         panels: [],
-        buttons: [
-          { module: 'a-layoutpc', name: 'buttonClock' },
-          { module: 'a-layoutpc', name: 'buttonCopyright' },
-        ],
+        buttons: [{ module: 'a-layoutpc', name: 'buttonClock' }],
       },
     },
   };
   const layout = {
     atomName: 'PC Layout(Anonymous)',
     atomStaticKey: 'layoutPCAnonymous',
-    atomRevision: 4,
+    atomRevision: 10,
     description: '',
     layoutTypeCode: 2,
     content: JSON.stringify(content),
@@ -425,7 +421,7 @@ module.exports = app => {
     {
       atomName: 'Copyright',
       atomStaticKey: 'buttonCopyright',
-      atomRevision: 1,
+      atomRevision: -1,
       atomCategoryId: 'a-layoutpc:button.General',
       resourceType: 'a-layoutpc:button',
       resourceConfig: JSON.stringify({
