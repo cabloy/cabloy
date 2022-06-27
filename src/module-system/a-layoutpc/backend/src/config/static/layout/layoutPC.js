@@ -19,6 +19,7 @@ module.exports = app => {
       bottom: {
         panels: [],
         buttons: [
+          { module: 'a-layoutpc', name: 'buttonPopup' },
           { module: 'a-layoutpc', name: 'buttonViewLayout' },
           { module: 'a-layoutpc', name: 'buttonTheme' },
           { module: 'a-layoutpc', name: 'buttonClock' },
@@ -29,7 +30,7 @@ module.exports = app => {
   const layout = {
     atomName: 'PC Layout(Authenticated)',
     atomStaticKey: 'layoutPC',
-    atomRevision: 10,
+    atomRevision: 20,
     description: '',
     layoutTypeCode: 2,
     content: JSON.stringify(content),
