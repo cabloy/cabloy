@@ -598,6 +598,10 @@ export default {
     onbeforeunload() {
       return this.$refs.groups.onbeforeunload();
     },
+    setViewPopup(viewPopup) {
+      this.layoutConfig.viewPopup = viewPopup;
+      this.__saveLayoutConfig();
+    },
   },
 };
 </script>

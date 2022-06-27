@@ -19,6 +19,8 @@ export default {
   ViewLayout: '视图',
   Appearance: '外观',
   Fullscreen: '全屏',
+  ViewPopupEnabled: '弹出模式已启用',
+  ViewPopupDisabled: '弹出模式已禁用',
   'Exit Fullscreen': '退出全屏',
   'Not LoggedIn': '未登录',
   'Sign In': '登录',

@@ -7,4 +7,6 @@ export default {
   CloseOtherTabs: 'Close Other Tabs',
   CloseTabsToTheRight: 'Close Tabs to the Right',
   ViewLayout: 'View',
+  ViewPopupEnabled: 'Popup mode enabled',
+  ViewPopupDisabled: 'Popup mode disabled',
 };

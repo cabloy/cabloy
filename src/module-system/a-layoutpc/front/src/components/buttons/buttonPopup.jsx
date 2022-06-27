@@ -12,22 +12,23 @@ function installFactory(_Vue) {
     data() {
       return {};
     },
-    created() {
-      if (!this.$meta.util.screenfull.isEnabled) {
-        this.button.hide();
-      }
+    computed: {
+      configPopup() {
+        return this.$meta.vueLayout.layoutConfig.popup;
+      },
     },
     methods: {
       onPerform() {
-        this.$meta.util.screenfull.toggle();
+        this.$meta.vueLayout.setViewPopup(!this.configPopup);
       },
     },
     render() {
       return (
         <eb-link
           class={this.buttonClass}
-          iconF7={this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
-          tooltip={this.$meta.util.screenfull.isFullscreen ? this.$text('Exit Fullscreen') : this.$text('Fullscreen')}
+          iconF7={this.configPopup ? '::popup' : '::layout-columns'}
+          iconSize={this.buttonIconSize}
+          tooltip={this.configPopup ? this.$text('ViewPopupEnabled') : this.$text('ViewPopupDisabled')}
           propsOnPerform={this.onPerform}
         ></eb-link>
       );
