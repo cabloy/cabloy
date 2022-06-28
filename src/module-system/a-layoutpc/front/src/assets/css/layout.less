@@ -177,7 +177,7 @@
     }
 
     .eb-layout-views {
-      position: relative;
+      position: absolute;
       height: 100%;
 
       .eb-layout-view {
@@ -190,6 +190,13 @@
           transform: translate3d(0, 56px, 0);
           opacity: 0;
         }
+      }
+    }
+
+    .eb-layout-views-popup {
+      .eb-layout-view {
+        border: var(--f7-text-editor-border-color) 3px solid;
+        border-radius: 3px;
       }
     }
   }
