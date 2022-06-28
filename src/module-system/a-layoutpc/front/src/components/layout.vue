@@ -298,7 +298,7 @@ export default {
       const groupForceNew = false;
       if (target === '_group') {
         groupId = null;
-      } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
+      } else if ((target === '_view' || target === '_popup') && $viewEl && $viewEl.hasClass('eb-layout-view')) {
         // open at right even in eb-layout-scene
         groupId = $viewEl.parents('.eb-layout-group').data('groupId');
       } else if (
@@ -308,7 +308,7 @@ export default {
       ) {
         groupId = null;
       } else {
-        // open at right as _view
+        // default: open at right as _view
         groupId = $viewEl.parents('.eb-layout-group').data('groupId');
       }
       // ok
