@@ -98,6 +98,13 @@ export default {
           this._createView_newView({ group, viewPopup: false, url, resolve });
           return;
         }
+        // reload group
+        if (options.reloadGroup) {
+          // todo: remove all popups
+          // todo: remove all next views
+          // todo: reload the first view
+          return;
+        }
         // check if viewPopup
         const viewPopup = options.target === '_popup' || this.layout.layoutConfig.viewPopup;
         if (viewPopup) {
