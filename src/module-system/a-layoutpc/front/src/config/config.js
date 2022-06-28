@@ -42,6 +42,7 @@ export default {
         small: 320,
         top: 60,
         spacing: 8,
+        spacingPopup: 48,
       },
     },
   },

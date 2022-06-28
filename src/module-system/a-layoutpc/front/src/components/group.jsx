@@ -134,12 +134,48 @@ export default {
       return 'small';
     },
     _reLayout() {
+      this._reLayout_tile(this.views);
+      this._reLayout_popup(this.viewsPopup);
+    },
+    _reLayout_popup(views) {
+      const sizeSpacing = this.layout.sizeSpacing;
+      const widthReal = this.size.width - sizeSpacing * 2;
+      const heightReal = this.size.height - this.layout.sizeSpacingPopup * 2;
+      // sidebar
+      const sidebarLeft = this.layout._sidebarWidth('left');
+      // loop
+      for (let i = views.length - 1; i >= 0; i--) {
+        const view = this.$refs[views[i].id];
+        // width
+        const viewSize = this._combineViewSize(views[i], i, true);
+        let width = this.size[viewSize];
+        // space
+        let left = (widthReal - width) / 2 + sizeSpacing;
+        let top = this.layout.sizeSpacingPopup;
+        let height = heightReal;
+        // check
+        if (left <= 0) {
+          left = 0;
+          top = 0;
+          height = heightReal;
+          width = widthReal;
+        }
+        // style
+        const newStyle = {
+          left: `${left + sidebarLeft}px`,
+          top: `${top}px`,
+          height: `${height}px`,
+        };
+        this.$$(view.$el).css(newStyle);
+      }
+    },
+    _reLayout_tile(views) {
       // space
       let space = this.size.width;
       let spacing = 0;
-      for (let i = this.views.length - 1; i >= 0; i--) {
+      for (let i = views.length - 1; i >= 0; i--) {
         // width
-        const viewSize = this._combineViewSize(this.views[i], i);
+        const viewSize = this._combineViewSize(views[i], i, false);
         const width = this.size[viewSize];
         // space
         const space2 = space - width - spacing;
@@ -156,10 +192,10 @@ export default {
       // left
       let left = parseInt(this.size.width - space / 2);
       spacing = 0;
-      for (let i = this.views.length - 1; i >= 0; i--) {
-        const view = this.$refs[this.views[i].id];
+      for (let i = views.length - 1; i >= 0; i--) {
+        const view = this.$refs[views[i].id];
         // width
-        const viewSize = this._combineViewSize(this.views[i], i);
+        const viewSize = this._combineViewSize(views[i], i, false);
         const width = this.size[viewSize];
         // space
         left -= width + spacing;

@@ -63,6 +63,7 @@ export default {
         top: 0,
         main: 0,
         spacing: 0,
+        spacingPopup: 0,
         enoughMedium: false,
         enoughLarge: false,
         verySmall: false,
@@ -83,6 +84,9 @@ export default {
     },
     sizeSpacing() {
       return this.size.verySmall ? 0 : this.size.spacing;
+    },
+    sizeSpacingPopup() {
+      return this.size.verySmall ? 0 : this.size.spacingPopup;
     },
     sidebarCoverLeft() {
       return this.size.verySmall ? true : this.sidebar.left.cover;
@@ -444,6 +448,7 @@ export default {
       this.__initSidebar('bottom');
       // spacing
       this.size.spacing = this.layoutConfig.size.spacing;
+      this.size.spacingPopup = this.layoutConfig.size.spacingPopup;
       // inited
       this.sidebarInited = true;
     },
