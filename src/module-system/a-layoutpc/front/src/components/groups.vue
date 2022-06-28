@@ -10,7 +10,6 @@ export default {
     for (const group of this.groups) {
       const _group = c('eb-group', {
         ref: group.id,
-        staticClass: 'eb-layout-views',
         props: { groupId: group.id, views: group.views, viewsPopup: group.viewsPopup },
       });
       children.push(
@@ -53,11 +52,8 @@ export default {
         this.$refs[group.id].resize();
       }
     },
-    getView(groupId, viewId) {
-      return this.$refs[groupId].getView(viewId);
-    },
-    getViewPopup(groupId, viewId) {
-      return this.$refs[groupId].getViewPopup(viewId);
+    getView(groupId, viewId, viewPopup) {
+      return this.$refs[groupId].getView(viewId, viewPopup);
     },
     onTabShow(el) {
       this.$nextTick(() => {
@@ -136,7 +132,7 @@ export default {
         return;
       }
       // navigate on the last view
-      const view = this.getViewPopup(group.id, group.viewsPopup[group.viewsPopup.length - 1].id);
+      const view = this.getView(group.id, group.viewsPopup[group.viewsPopup.length - 1].id, true);
       resolve({ view, options: null });
     },
     _createView_tile({ group, ctx, url, options, resolve }) {

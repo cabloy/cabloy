@@ -27,9 +27,10 @@ export default {
     },
   },
   methods: {
-    onViewReady(view) {
+    onViewReady(view, viewPopup) {
+      const views = this._getViews(viewPopup);
       // view
-      const _view = this.views.find(item => item.id === view.id);
+      const _view = views.find(item => item.id === view.id);
       // route
       this.$meta.vueLayout._patchRouter.loadRouteComponent(_view.url, routeComponent => {
         if (!routeComponent) throw new Error(`not found route: ${_view.url}`);
@@ -156,16 +157,18 @@ export default {
         }
       }
     },
-    __getViewIndex(viewId) {
-      return this.views.findIndex(item => item.id === viewId);
+    __getViewIndex(viewId, viewPopup) {
+      const views = this._getViews(viewPopup);
+      return views.findIndex(item => item.id === viewId);
     },
-    onViewTitle(viewId, data) {
-      const viewIndex = this.__getViewIndex(viewId);
+    onViewTitle(viewId, data, viewPopup) {
+      if (viewPopup) return;
+      const viewIndex = this.__getViewIndex(viewId, viewPopup);
       if (viewIndex === 0) {
         this.groups.onViewTitle(this.groupId, data.title);
       }
     },
-    getView(viewId) {
+    getView(viewId /* , viewPopup*/) {
       return this.$refs[viewId];
     },
     _getViews(viewPopup) {
@@ -204,10 +207,10 @@ export default {
       // events
       const _viewEvents = {
         'view:ready': view => {
-          this.onViewReady(view);
+          this.onViewReady(view, viewPopup);
         },
         'view:title': data => {
-          this.onViewTitle(view.id, data);
+          this.onViewTitle(view.id, data, viewPopup);
         },
       };
       const _classView = viewPopup ? 'eb-layout-popup-view' : 'eb-layout-group-view';
@@ -237,9 +240,9 @@ export default {
   },
   render() {
     return (
-      <div>
-        {this._renderViews({ viewPopup: false })}
-        {this._renderViews({ viewPopup: true })}
+      <div class="eb-layout-views-container">
+        <div staticClass="eb-layout-views">{this._renderViews({ viewPopup: false })}</div>
+        <div staticClass="eb-layout-views eb-layout-views-popup">{this._renderViews({ viewPopup: true })}</div>
       </div>
     );
   },
