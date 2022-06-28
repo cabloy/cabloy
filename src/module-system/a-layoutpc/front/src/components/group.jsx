@@ -70,7 +70,12 @@ export default {
       if (viewPopup) return this._combineViewSize_popup(views, view, indexCurrent);
       return this._combineViewSize_tile(views, view, indexCurrent);
     },
-    _combineViewSize_tile(views, view, indexCurrent) {
+    _combineViewSize_popup(views, view /* , indexCurrent*/) {
+      const sizeWill = view.sizeWill;
+      // adjust
+      return this._combineViewSize_sizeWill_adjust(sizeWill);
+    },
+    _combineViewSize_tile_sizeWill(views, view, indexCurrent) {
       let sizeWill = view.sizeWill;
       const sizeFixed = view.sizeFixed;
       // check if fixed
@@ -110,6 +115,15 @@ export default {
       ) {
         sizeWill = 'medium';
       }
+      return sizeWill;
+    },
+    _combineViewSize_tile(views, view, indexCurrent) {
+      // sizeWill
+      const sizeWill = this._combineViewSize_tile_sizeWill(views, view, indexCurrent);
+      // adjust
+      return this._combineViewSize_sizeWill_adjust(sizeWill);
+    },
+    _combineViewSize_sizeWill_adjust(sizeWill) {
       // adjust
       if (sizeWill === 'large') {
         return this.layout.enoughLarge ? 'large' : this.layout.enoughMedium ? 'medium' : 'small';
