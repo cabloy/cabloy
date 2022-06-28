@@ -244,7 +244,8 @@ export default {
       if (!url) return;
       // check if http
       if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {
-        return location.assign(url);
+        location.assign(url);
+        return;
       }
 
       // _self
@@ -253,36 +254,9 @@ export default {
         return;
       }
 
-      // view
-      const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
-      // groupId
-      let groupId;
-      let groupForceNew = false;
-      // force new no matter _view/_group
-      groupForceNew = window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1);
-      if (options.groupId) {
-        groupId = options.groupId;
-        groupForceNew = false;
-      } else if (groupForceNew) {
-        groupId = null;
-        groupForceNew = true;
-      } else if (target === '_group') {
-        groupId = null;
-        groupForceNew = false;
-      } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
-        // open at right even in eb-layout-scene
-        groupId = $viewEl.parents('.eb-layout-group').data('groupId');
-      } else if (
-        !$viewEl ||
-        $viewEl.parents('.eb-layout-scene').length > 0 ||
-        ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0
-      ) {
-        groupId = null;
-        groupForceNew = false;
-      } else {
-        // open at right as _view
-        groupId = $viewEl.parents('.eb-layout-group').data('groupId');
-      }
+      // group info
+      const { groupId, groupForceNew } = this._navigate_groupInfo(ctx, options, target);
+
       // get view
       this.$refs.groups
         .createView({
@@ -305,6 +279,40 @@ export default {
             this._autoHideAllSidebars();
           }
         });
+    },
+    _navigate_groupInfo(ctx, options, target) {
+      // view
+      const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
+      // 1. options.groupId
+      if (options.groupId) {
+        return { groupId: options.groupId, groupForceNew: false };
+      }
+      // 2. window.event: force new no matter _view/_group
+      const _groupForceNew =
+        window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1);
+      if (_groupForceNew) {
+        return { groupId: null, groupForceNew: true };
+      }
+      // 3. others
+      let groupId;
+      const groupForceNew = false;
+      if (target === '_group') {
+        groupId = null;
+      } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
+        // open at right even in eb-layout-scene
+        groupId = $viewEl.parents('.eb-layout-group').data('groupId');
+      } else if (
+        !$viewEl ||
+        $viewEl.parents('.eb-layout-scene').length > 0 ||
+        ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0
+      ) {
+        groupId = null;
+      } else {
+        // open at right as _view
+        groupId = $viewEl.parents('.eb-layout-group').data('groupId');
+      }
+      // ok
+      return { groupId, groupForceNew };
     },
     openLogin(routeTo, options) {
       this.$meta.vueApp.openLogin(routeTo, options);
