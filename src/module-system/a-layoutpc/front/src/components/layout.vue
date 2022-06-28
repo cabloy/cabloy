@@ -222,7 +222,7 @@ export default {
     },
     // options:
     //  target: _self/_view/_group/_popup
-    navigate(url, options) {
+    async navigate(url, options) {
       const vueApp = this.$meta.vueApp;
       if (vueApp.getLayoutInstance() !== this) {
         // do nothing
@@ -258,27 +258,24 @@ export default {
       const { groupId, groupForceNew } = this._navigate_groupInfo(ctx, options, target);
 
       // get view
-      this.$refs.groups
-        .createView({
-          ctx,
-          groupId,
-          groupForceNew,
-          url,
-          scene: options.scene,
-          sceneOptions: options.sceneOptions,
-          options,
-        })
-        .then(res => {
-          if (!res) return;
-          // navigate
-          if (res.options) options = this.$utils.extend({}, options, res.options);
-          res.view.f7View.router.navigate(url, options);
-          // autohide
-          const appHome = options.sceneOptions && options.sceneOptions.appHome;
-          if (!appHome) {
-            this._autoHideAllSidebars();
-          }
-        });
+      const res = await this.$refs.groups.createView({
+        ctx,
+        groupId,
+        groupForceNew,
+        url,
+        scene: options.scene,
+        sceneOptions: options.sceneOptions,
+        options,
+      });
+      if (!res) return;
+      // navigate
+      if (res.options) options = this.$utils.extend({}, options, res.options);
+      res.view.f7View.router.navigate(url, options);
+      // autohide
+      const appHome = options.sceneOptions && options.sceneOptions.appHome;
+      if (!appHome) {
+        this._autoHideAllSidebars();
+      }
     },
     _navigate_groupInfo(ctx, options, target) {
       // view
