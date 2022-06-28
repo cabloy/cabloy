@@ -10,6 +10,11 @@ export default {
       type: Array,
     },
   },
+  data() {
+    return {
+      viewPopupIndex: 10000,
+    };
+  },
   computed: {
     groups() {
       return this.$parent.$parent.$parent;
@@ -172,7 +177,7 @@ export default {
         width: this.size[viewSize],
         height: this.size.main,
       };
-      //
+      // attrs
       const _viewAttrs = {
         id: view.id,
         name: view.id,
@@ -184,13 +189,19 @@ export default {
         'data-index': index,
         'data-size': viewSize,
       };
+      // props
       const _viewProps = {
         size: viewSize,
         sizeExtent: viewSizeExtent,
       };
+      // style
       const _viewStyle = {
         width: `${viewSizeExtent.width}px`,
       };
+      if (viewPopup) {
+        _viewStyle.zIndex = this.viewPopupIndex + index + '';
+      }
+      // events
       const _viewEvents = {
         'view:ready': view => {
           this.onViewReady(view);
@@ -199,7 +210,8 @@ export default {
           this.onViewTitle(view.id, data);
         },
       };
-      const staticClass = `eb-layout-group-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`;
+      const _classView = viewPopup ? 'eb-layout-popup-view' : 'eb-layout-group-view';
+      const staticClass = `${_classView} eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`;
       return (
         <eb-view
           ref={view.id}
