@@ -5,13 +5,14 @@ import Sidebar from './sidebar.vue';
 import Groups from './groups.vue';
 import MixinApp from '../common/layout/app.js';
 import MixinPanel from '../common/layout/panel.js';
+import MixinNavbar from '../common/layout/navbar.js';
 const appMethods = Vue.prototype.$meta.module.get('a-components').options.utils.appMethods;
 
 export default {
   meta: {
     global: false,
   },
-  mixins: [MixinApp, MixinPanel],
+  mixins: [MixinApp, MixinPanel, MixinNavbar],
   components: {
     ebHeader: Header,
     ebSidebar: Sidebar,
@@ -327,32 +328,6 @@ export default {
         return this.$refs.sidebarBottom.closeView(view, options);
       }
       this.$refs.groups.closeView(view, options);
-    },
-    backLink(ctx) {
-      let backLink = false;
-      const routeDiff = this.$meta.util.viewRouterDid(ctx.$view) ? 2 : 1;
-      if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - routeDiff])) {
-        backLink = true;
-      } else {
-        const $el = ctx.$$(ctx.$el);
-        const $view = $el.parents('.eb-layout-view');
-        if ($view.is('.eb-layout-group-view') && parseInt($view.data('index')) > 0) {
-          backLink = true;
-        }
-      }
-      return backLink;
-    },
-    closeLink(ctx) {
-      return true;
-    },
-    sizeLink(ctx) {
-      return 'restore';
-    },
-    onCloseClick(ctx) {
-      console.log('onCloseClick');
-    },
-    onSizeClick(ctx) {
-      console.log('onSizeClick');
     },
     _combineViewSizeClass(size) {
       let sizeClass = '';
