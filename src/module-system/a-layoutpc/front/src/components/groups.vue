@@ -86,54 +86,87 @@ export default {
           };
           this._addGroup(group);
         }
-        // view
+        // just switch group
         if (group.url === url && group.views.length > 0 && !options.reloadGroup) {
           // exists
           this.switchGroup(group.id);
           resolve(null);
-        } else {
-          let viewIndex = -1;
-          if (ctx && ctx.$view) {
-            viewIndex = parseInt(this.$$(ctx.$view.$el).data('index'));
-            if (viewIndex >= group.views.length - 1) {
-              viewIndex = -1;
-            }
-          }
-          if (viewIndex === -1 && !options.reloadGroup) {
-            // new view
-            group.views.push({
-              id: this.$meta.util.nextId('layoutgroupview'),
-              url,
-              sizeWill: 'small',
-              sizeFixed: false,
-              callback: ({ view, title }) => {
-                // title
-                if (title) group.title = title;
-                this.$nextTick(() => {
-                  this.switchGroup(group.id);
-                  resolve({ view, options: null });
-                });
-              },
-            });
-          } else {
-            // remove last views
-            const viewIndexNew = viewIndex + 1;
-            this._removeNextViews(group.id, viewIndexNew + 1)
-              .then(() => {
-                // return next view
-                const view = this.getView(group.id, group.views[viewIndexNew].id);
-                const _options = { reloadAll: true };
-                if (options.reloadGroup) {
-                  _options.reloadCurrent = true;
-                }
-                resolve({ view, options: _options });
-              })
-              .catch(() => {
-                // return null
-                resolve(null);
-              });
-          }
+          return;
         }
+        // first view
+        if (group.views.length === 0) {
+          this._createView_newView({ group, viewPopup: false, url, resolve });
+          return;
+        }
+        // check if viewPopup
+        const viewPopup = options.target === '_popup' || this.layout.layoutConfig.viewPopup;
+        if (viewPopup) {
+          this._createView_popup({ group, ctx, url, options, resolve });
+        } else {
+          this._createView_tile({ group, ctx, url, options, resolve });
+        }
+      });
+    },
+    _createView_popup({ group, ctx, url, options, resolve }) {},
+    _createView_tile({ group, ctx, url, options, resolve }) {
+      // next view index
+      let viewIndex = -1;
+      if (ctx && ctx.$view) {
+        viewIndex = parseInt(this.$$(ctx.$view.$el).data('index'));
+        if (viewIndex >= group.views.length - 1) {
+          viewIndex = -1;
+        }
+      }
+      if (viewIndex === -1 && !options.reloadGroup) {
+        // new view
+        group.views.push({
+          id: this.$meta.util.nextId('layoutgroupview'),
+          url,
+          sizeWill: 'small',
+          sizeFixed: false,
+          callback: ({ view, title }) => {
+            // title
+            if (title) group.title = title;
+            this.$nextTick(() => {
+              this.switchGroup(group.id);
+              resolve({ view, options: null });
+            });
+          },
+        });
+      } else {
+        // remove last views
+        const viewIndexNew = viewIndex + 1;
+        this._removeNextViews(group.id, viewIndexNew + 1)
+          .then(() => {
+            // return next view
+            const view = this.getView(group.id, group.views[viewIndexNew].id);
+            const _options = { reloadAll: true };
+            if (options.reloadGroup) {
+              _options.reloadCurrent = true;
+            }
+            resolve({ view, options: _options });
+          })
+          .catch(() => {
+            // return null
+            resolve(null);
+          });
+      }
+    },
+    _createView_newView({ group, viewPopup, url, resolve }) {
+      const views = viewPopup ? group.viewsPopup : group.views;
+      views.push({
+        id: this.$meta.util.nextId('layoutgroupview'),
+        url,
+        sizeWill: 'small',
+        sizeFixed: false,
+        callback: ({ view, title }) => {
+          // title
+          if (title) group.title = title;
+          this.$nextTick(() => {
+            this.switchGroup(group.id);
+            resolve({ view, options: null });
+          });
+        },
       });
     },
     switchGroup(groupId) {
