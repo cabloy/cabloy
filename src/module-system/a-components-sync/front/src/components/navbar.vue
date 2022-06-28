@@ -44,7 +44,7 @@ export default {
     },
 
     onCloseClick(event) {
-      const res = this.$meta.vueLayout.onBackClick && this.$meta.vueLayout.onBackClick(this, event);
+      const res = this.$meta.vueLayout.onCloseClick && this.$meta.vueLayout.onCloseClick(this, event);
       if (!res) {
         this.dispatchEvent('close-click closeClick click:close clickClose', event);
       }

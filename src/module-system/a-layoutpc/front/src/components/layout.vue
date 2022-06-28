@@ -348,6 +348,12 @@ export default {
     sizeLink(ctx) {
       return 'restore';
     },
+    onCloseClick(ctx) {
+      console.log('onCloseClick');
+    },
+    onSizeClick(ctx) {
+      console.log('onSizeClick');
+    },
     _combineViewSizeClass(size) {
       let sizeClass = '';
       switch (size) {
