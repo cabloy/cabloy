@@ -163,6 +163,9 @@ export default {
     getView(viewId) {
       return this.$refs[viewId];
     },
+    _getViews(viewPopup) {
+      return viewPopup ? this.viewsPopup : this.views;
+    },
     _renderView({ index, view, viewPopup }) {
       const viewSize = this._combineViewSize(view, index);
       const viewSizeExtent = {
@@ -210,21 +213,21 @@ export default {
         ></eb-view>
       );
     },
-    _renderViews() {
+    _renderViews({ viewPopup }) {
+      const views = this._getViews(viewPopup);
       const children = [];
-      for (let index = 0; index < this.views.length; index++) {
-        const view = this.views[index];
-        children.push(this._renderView({ index, view, viewPopup: false }));
+      for (let index = 0; index < views.length; index++) {
+        const view = views[index];
+        children.push(this._renderView({ index, view, viewPopup }));
       }
       return children;
     },
-    _renderViewsPopup() {},
   },
   render() {
     return (
       <div>
-        {this._renderViews()}
-        {this._renderViewsPopup()}
+        {this._renderViews({ viewPopup: false })}
+        {this._renderViews({ viewPopup: true })}
       </div>
     );
   },
