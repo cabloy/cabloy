@@ -1,5 +1,5 @@
 <script>
-import Group from './group.vue';
+import Group from './group.jsx';
 
 export default {
   components: {

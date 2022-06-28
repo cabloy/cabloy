@@ -1,54 +1,4 @@
-<script>
 export default {
-  render(c) {
-    const children = [];
-    if (this.views) {
-      for (let index = 0; index < this.views.length; index++) {
-        const view = this.views[index];
-        const viewSize = this._combineViewSize(view, index);
-        const viewSizeExtent = {
-          width: this.size[viewSize],
-          height: this.size.main,
-        };
-        const _viewAttrs = {
-          id: view.id,
-          name: view.id,
-          init: false,
-          pushState: false,
-          stackPages: true,
-          pushStateOnLoad: false,
-          preloadPreviousPage: false,
-          'data-index': index,
-          'data-size': viewSize,
-        };
-        children.push(
-          c('eb-view', {
-            ref: view.id,
-            id: view.id,
-            key: view.id,
-            staticClass: `eb-layout-group-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`,
-            attrs: _viewAttrs,
-            props: {
-              size: viewSize,
-              sizeExtent: viewSizeExtent,
-            },
-            style: {
-              width: `${viewSizeExtent.width}px`,
-            },
-            on: {
-              'view:ready': view => {
-                this.onViewReady(view);
-              },
-              'view:title': data => {
-                this.onViewTitle(view.id, data);
-              },
-            },
-          })
-        );
-      }
-    }
-    return c('div', children);
-  },
   props: {
     groupId: {
       type: String,
@@ -210,7 +160,61 @@ export default {
     getView(viewId) {
       return this.$refs[viewId];
     },
+    _renderViews() {
+      const children = [];
+      if (!this.views) return children;
+      for (let index = 0; index < this.views.length; index++) {
+        const view = this.views[index];
+        const viewSize = this._combineViewSize(view, index);
+        const viewSizeExtent = {
+          width: this.size[viewSize],
+          height: this.size.main,
+        };
+        //
+        const _viewAttrs = {
+          id: view.id,
+          name: view.id,
+          init: false,
+          pushState: false,
+          stackPages: true,
+          pushStateOnLoad: false,
+          preloadPreviousPage: false,
+          'data-index': index,
+          'data-size': viewSize,
+        };
+        const _viewProps = {
+          size: viewSize,
+          sizeExtent: viewSizeExtent,
+        };
+        const _viewStyle = {
+          width: `${viewSizeExtent.width}px`,
+        };
+        const _viewEvents = {
+          'view:ready': view => {
+            this.onViewReady(view);
+          },
+          'view:title': data => {
+            this.onViewTitle(view.id, data);
+          },
+        };
+        const staticClass = `eb-layout-group-view eb-layout-view ${this.layout._combineViewSizeClass(viewSize)}`;
+        children.push(
+          <eb-view
+            ref={view.id}
+            id={view.id}
+            key={view.id}
+            staticClass={staticClass}
+            attrs={_viewAttrs}
+            props={_viewProps}
+            style={_viewStyle}
+            on={_viewEvents}
+          ></eb-view>
+        );
+      }
+      return children;
+    },
+  },
+  render() {
+    return <div>{this._renderViews()}</div>;
   },
 };
-</script>
-<style scoped></style>
