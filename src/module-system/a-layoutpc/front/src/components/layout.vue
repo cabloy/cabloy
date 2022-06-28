@@ -342,6 +342,12 @@ export default {
       }
       return backLink;
     },
+    closeLink(ctx) {
+      return true;
+    },
+    sizeLink(ctx) {
+      return 'restore';
+    },
     _combineViewSizeClass(size) {
       let sizeClass = '';
       switch (size) {
