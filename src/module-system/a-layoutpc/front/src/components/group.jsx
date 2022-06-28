@@ -65,43 +65,48 @@ export default {
         this._reLayout();
       });
     },
-    _combineViewSize(view, indexCurrent) {
+    _combineViewSize(view, indexCurrent, viewPopup) {
+      const views = this._getViews(viewPopup);
+      if (viewPopup) return this._combineViewSize_popup(views, view, indexCurrent);
+      return this._combineViewSize_tile(views, view, indexCurrent);
+    },
+    _combineViewSize_tile(views, view, indexCurrent) {
       let sizeWill = view.sizeWill;
       const sizeFixed = view.sizeFixed;
       // check if fixed
       if (sizeFixed) return sizeWill;
       // try
-      if ((sizeWill === 'small' || sizeWill === 'medium') && this.views.length === 1) {
+      if ((sizeWill === 'small' || sizeWill === 'medium') && views.length === 1) {
         sizeWill = 'large';
       } else if (
         sizeWill === 'small' &&
-        this.views.length === 2 &&
+        views.length === 2 &&
         indexCurrent === 0 &&
-        this.views[indexCurrent + 1].sizeWill === 'small' &&
+        views[indexCurrent + 1].sizeWill === 'small' &&
         this.layout.enoughLarge
       ) {
         sizeWill = 'medium';
       } else if (
         sizeWill === 'small' &&
-        this.views.length >= 2 &&
-        indexCurrent === this.views.length - 1 &&
-        this.views[indexCurrent - 1].sizeWill !== 'small' &&
+        views.length >= 2 &&
+        indexCurrent === views.length - 1 &&
+        views[indexCurrent - 1].sizeWill !== 'small' &&
         !this.layout.enoughLarge &&
         this.layout.enoughMedium
       ) {
         sizeWill = 'medium';
       } else if (
         sizeWill === 'medium' &&
-        this.views.length >= 2 &&
-        indexCurrent === this.views.length - 1 &&
-        this.views[indexCurrent - 1].sizeWill !== 'small' &&
+        views.length >= 2 &&
+        indexCurrent === views.length - 1 &&
+        views[indexCurrent - 1].sizeWill !== 'small' &&
         this.layout.enoughLarge
       ) {
         sizeWill = 'large';
       } else if (
         sizeWill === 'large' &&
-        this.views.length > indexCurrent + 1 &&
-        this.views[indexCurrent + 1].sizeWill === 'small'
+        views.length > indexCurrent + 1 &&
+        views[indexCurrent + 1].sizeWill === 'small'
       ) {
         sizeWill = 'medium';
       }
@@ -175,7 +180,7 @@ export default {
       return viewPopup ? this.viewsPopup : this.views;
     },
     _renderView({ index, view, viewPopup }) {
-      const viewSize = this._combineViewSize(view, index);
+      const viewSize = this._combineViewSize(view, index, viewPopup);
       const viewSizeExtent = {
         width: this.size[viewSize],
         height: this.size.main,
