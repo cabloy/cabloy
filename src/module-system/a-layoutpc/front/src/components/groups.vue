@@ -100,6 +100,7 @@ export default {
         }
         // reload group
         if (options.reloadGroup) {
+          // pageDirty as concerned
           // todo: remove all popups
           // todo: remove all next views
           // todo: reload the first view
