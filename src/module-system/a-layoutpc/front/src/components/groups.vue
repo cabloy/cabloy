@@ -125,40 +125,27 @@ export default {
           viewIndex = -1;
         }
       }
-      if (viewIndex === -1 && !options.reloadGroup) {
+      if (viewIndex === -1) {
         // new view
-        group.views.push({
-          id: this.$meta.util.nextId('layoutgroupview'),
-          url,
-          sizeWill: 'small',
-          sizeFixed: false,
-          callback: ({ view, title }) => {
-            // title
-            if (title) group.title = title;
-            this.$nextTick(() => {
-              this.switchGroup(group.id);
-              resolve({ view, options: null });
-            });
-          },
-        });
-      } else {
-        // remove last views
-        const viewIndexNew = viewIndex + 1;
-        this._removeNextViews(group.id, viewIndexNew + 1)
-          .then(() => {
-            // return next view
-            const view = this.getView(group.id, group.views[viewIndexNew].id);
-            const _options = { reloadAll: true };
-            if (options.reloadGroup) {
-              _options.reloadCurrent = true;
-            }
-            resolve({ view, options: _options });
-          })
-          .catch(() => {
-            // return null
-            resolve(null);
-          });
+        this._createView_newView({ group, viewPopup: false, url, resolve });
+        return;
       }
+      // remove last views
+      const viewIndexNew = viewIndex + 1;
+      this._removeNextViews(group.id, viewIndexNew + 1)
+        .then(() => {
+          // return next view
+          const view = this.getView(group.id, group.views[viewIndexNew].id);
+          const _options = { reloadAll: true };
+          if (options.reloadGroup) {
+            _options.reloadCurrent = true;
+          }
+          resolve({ view, options: _options });
+        })
+        .catch(() => {
+          // return null
+          resolve(null);
+        });
     },
     _createView_newView({ group, viewPopup, url, resolve }) {
       const views = viewPopup ? group.viewsPopup : group.views;
