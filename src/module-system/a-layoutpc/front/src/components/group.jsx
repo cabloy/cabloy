@@ -6,6 +6,9 @@ export default {
     views: {
       type: Array,
     },
+    viewsPopup: {
+      type: Array,
+    },
   },
   computed: {
     groups() {

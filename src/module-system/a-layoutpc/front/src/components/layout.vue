@@ -221,7 +221,7 @@ export default {
       return this.app_openHome({ force: true });
     },
     // options:
-    //  target: _self/_view/_group
+    //  target: _self/_view/_group/_popup
     navigate(url, options) {
       const vueApp = this.$meta.vueApp;
       if (vueApp.getLayoutInstance() !== this) {
@@ -247,63 +247,64 @@ export default {
         return location.assign(url);
       }
 
-      // view
+      // _self
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
-      } else {
-        // view
-        const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
-        // groupId
-        let groupId;
-        let groupForceNew = false;
-        // force new no matter _view/_group
-        groupForceNew = window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1);
-        if (options.groupId) {
-          groupId = options.groupId;
-          groupForceNew = false;
-        } else if (groupForceNew) {
-          groupId = null;
-          groupForceNew = true;
-        } else if (target === '_group') {
-          groupId = null;
-          groupForceNew = false;
-        } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
-          // open at right even in eb-layout-scene
-          groupId = $viewEl.parents('.eb-layout-group').data('groupId');
-        } else if (
-          !$viewEl ||
-          $viewEl.parents('.eb-layout-scene').length > 0 ||
-          ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0
-        ) {
-          groupId = null;
-          groupForceNew = false;
-        } else {
-          // open at right as _view
-          groupId = $viewEl.parents('.eb-layout-group').data('groupId');
-        }
-        // get view
-        this.$refs.groups
-          .createView({
-            ctx,
-            groupId,
-            groupForceNew,
-            url,
-            scene: options.scene,
-            sceneOptions: options.sceneOptions,
-            options,
-          })
-          .then(res => {
-            if (!res) return;
-            // navigate
-            if (res.options) options = this.$utils.extend({}, options, res.options);
-            res.view.f7View.router.navigate(url, options);
-            // autohide
-            const appHome = options.sceneOptions && options.sceneOptions.appHome;
-            if (!appHome) {
-              this._autoHideAllSidebars();
-            }
-          });
+        return;
       }
+
+      // view
+      const $viewEl = ctx && ctx.$view && this.$$(ctx.$view.$el);
+      // groupId
+      let groupId;
+      let groupForceNew = false;
+      // force new no matter _view/_group
+      groupForceNew = window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1);
+      if (options.groupId) {
+        groupId = options.groupId;
+        groupForceNew = false;
+      } else if (groupForceNew) {
+        groupId = null;
+        groupForceNew = true;
+      } else if (target === '_group') {
+        groupId = null;
+        groupForceNew = false;
+      } else if (target === '_view' && $viewEl && $viewEl.hasClass('eb-layout-view')) {
+        // open at right even in eb-layout-scene
+        groupId = $viewEl.parents('.eb-layout-group').data('groupId');
+      } else if (
+        !$viewEl ||
+        $viewEl.parents('.eb-layout-scene').length > 0 ||
+        ctx.$view.f7View.router.url.indexOf('/a/dashboard/dashboard?') === 0
+      ) {
+        groupId = null;
+        groupForceNew = false;
+      } else {
+        // open at right as _view
+        groupId = $viewEl.parents('.eb-layout-group').data('groupId');
+      }
+      // get view
+      this.$refs.groups
+        .createView({
+          ctx,
+          groupId,
+          groupForceNew,
+          url,
+          scene: options.scene,
+          sceneOptions: options.sceneOptions,
+          options,
+        })
+        .then(res => {
+          if (!res) return;
+          // navigate
+          if (res.options) options = this.$utils.extend({}, options, res.options);
+          res.view.f7View.router.navigate(url, options);
+          // autohide
+          const appHome = options.sceneOptions && options.sceneOptions.appHome;
+          if (!appHome) {
+            this._autoHideAllSidebars();
+          }
+        });
     },
     openLogin(routeTo, options) {
       this.$meta.vueApp.openLogin(routeTo, options);

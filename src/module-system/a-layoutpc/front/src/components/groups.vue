@@ -11,7 +11,7 @@ export default {
       const _group = c('eb-group', {
         ref: group.id,
         staticClass: 'eb-layout-views',
-        props: { groupId: group.id, views: group.views },
+        props: { groupId: group.id, views: group.views, viewsPopup: group.viewsPopup },
       });
       children.push(
         c(
@@ -82,6 +82,7 @@ export default {
             scene,
             sceneOptions,
             views: [],
+            viewsPopup: [],
           };
           this._addGroup(group);
         }
