@@ -56,6 +56,9 @@ export default {
     getView(groupId, viewId) {
       return this.$refs[groupId].getView(viewId);
     },
+    getViewPopup(groupId, viewId) {
+      return this.$refs[groupId].getViewPopup(viewId);
+    },
     onTabShow(el) {
       this.$nextTick(() => {
         const groupId = this.$$(el).data('groupId');
@@ -104,6 +107,11 @@ export default {
           // todo: remove all popups
           // todo: remove all next views
           // todo: reload the first view
+          // const _options = { reloadAll: true };
+          // if (options.reloadGroup) {
+          //   _options.reloadCurrent = true;
+          // }
+          // resolve({ view, options: _options });
           return;
         }
         // check if viewPopup
@@ -115,7 +123,22 @@ export default {
         }
       });
     },
-    _createView_popup({ group, ctx, url, options, resolve }) {},
+    _createView_popup({ group, ctx, url, options, resolve }) {
+      // first view
+      if (group.viewsPopup.length === 0) {
+        this._createView_newView({ group, viewPopup: true, url, resolve });
+        return;
+      }
+      // target
+      const target = options.target;
+      if (target === '_view' || target === '_popup') {
+        this._createView_newView({ group, viewPopup: true, url, resolve });
+        return;
+      }
+      // navigate on the last view
+      const view = this.getViewPopup(group.id, group.viewsPopup[group.viewsPopup.length - 1].id);
+      resolve({ view, options: null });
+    },
     _createView_tile({ group, ctx, url, options, resolve }) {
       // next view index
       let viewIndex = -1;

@@ -165,7 +165,6 @@ export default {
     },
     _renderViews() {
       const children = [];
-      if (!this.views) return children;
       for (let index = 0; index < this.views.length; index++) {
         const view = this.views[index];
         const viewSize = this._combineViewSize(view, index);
