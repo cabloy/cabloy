@@ -101,6 +101,9 @@ export default {
     user() {
       return this.$store.state.auth.user;
     },
+    groupsInstance() {
+      return this.$refs.groups;
+    },
   },
   created() {
     this.__saveLayoutConfig = this.$meta.util.debounce(() => {
@@ -131,7 +134,7 @@ export default {
       if (!this.started) return;
       this.__checkSafeSetSize(() => {
         this.setSize();
-        this.$refs.groups.resize();
+        this.groupsInstance.resize();
       });
     },
     setSize() {
@@ -263,7 +266,7 @@ export default {
       const { groupId, groupForceNew } = this._navigate_groupInfo(ctx, options, target);
 
       // get view
-      const res = await this.$refs.groups.createView({
+      const res = await this.groupsInstance.createView({
         ctx,
         groupId,
         groupForceNew,
@@ -327,7 +330,7 @@ export default {
       } else if (view.$el.parents('.eb-layout-sidebar-bottom').length > 0) {
         return this.$refs.sidebarBottom.closeView(view, options);
       }
-      this.$refs.groups.closeView(view, options);
+      this.groupsInstance.closeView(view, options);
     },
     _combineViewSizeClass(size) {
       let sizeClass = '';
@@ -594,7 +597,7 @@ export default {
       }, 50);
     },
     onbeforeunload() {
-      return this.$refs.groups.onbeforeunload();
+      return this.groupsInstance.onbeforeunload();
     },
     setViewPopup(viewPopup) {
       this.layoutConfig.viewPopup = viewPopup;

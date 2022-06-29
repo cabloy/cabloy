@@ -45,15 +45,15 @@ export default {
   },
   methods: {
     reLayout(groupId) {
-      this.$refs[groupId].reLayout();
+      this.getGroupInstance(groupId).reLayout();
     },
     resize() {
       for (const group of this.groups) {
-        this.$refs[group.id].resize();
+        this.getGroupInstance(group.id).resize();
       }
     },
     getView(groupId, viewId, viewPopup) {
-      return this.$refs[groupId].getView(viewId, viewPopup);
+      return this.getGroupInstance(groupId).getView(viewId, viewPopup);
     },
     onTabShow(el) {
       this.$nextTick(() => {
@@ -63,6 +63,9 @@ export default {
           tabLink.$el.scrollIntoView(false);
         }
       });
+    },
+    getGroupInstance(groupId) {
+      return this.$refs[groupId];
     },
     getGroup({ id, url }) {
       if (id) return this.groups.find(group => group.id === id);

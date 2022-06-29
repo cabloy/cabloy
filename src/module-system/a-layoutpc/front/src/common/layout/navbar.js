@@ -26,20 +26,22 @@ export default {
       if (!this.$meta.util.historyUrlEmpty(ctx.$f7router.history[ctx.$f7router.history.length - routeDiff])) {
         backLink = true;
       } else {
-        const $view = this.navbar_findViewDom(ctx);
-        if ($view.is('.eb-layout-group-view') && parseInt($view.data('index')) > 0) {
+        const viewInfo = this.navbar_findViewInfo(ctx);
+        if (viewInfo.viewTile && viewInfo.viewIndex > 0) {
           backLink = true;
         }
       }
       return backLink;
     },
     closeLink(ctx) {
-      const $view = this.navbar_findViewDom(ctx);
-      return $view.is('.eb-layout-popup-view');
+      const viewInfo = this.navbar_findViewInfo(ctx);
+      return viewInfo.viewPopup;
     },
     sizeLink(ctx) {
       const viewInfo = this.navbar_findViewInfo(ctx);
-      console.log(viewInfo);
+      if (!viewInfo.viewPopup) return false;
+      const group = this.groupsInstance.getGroupInstance(viewInfo.groupId);
+
       return 'restore';
     },
     onCloseClick(ctx) {
