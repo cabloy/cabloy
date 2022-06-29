@@ -20,20 +20,44 @@ export default {
       sizeLink: false,
     };
   },
+  computed: {
+    closeLink2() {
+      return this.$meta.vueLayout.closeLink && this.$meta.vueLayout.closeLink(this);
+    },
+    sizeLink2() {
+      return this.$meta.vueLayout.sizeLink && this.$meta.vueLayout.sizeLink(this);
+    },
+  },
   mounted() {
     this.checkBackLink();
     this.checkCloseLink();
     this.checkSizeLink();
+  },
+  beforeDestroy() {
+    if (this._unwatchCloseLink) {
+      this._unwatchCloseLink();
+      this._unwatchCloseLink = null;
+    }
+    if (this._unwatchSizeLink) {
+      this._unwatchSizeLink();
+      this._unwatchSizeLink = null;
+    }
   },
   methods: {
     checkBackLink() {
       this.backLink = this.ebBackLink && this.$meta.vueLayout.backLink(this) ? this.ebBackLink : false;
     },
     checkCloseLink() {
-      this.closeLink = this.$meta.vueLayout.closeLink && this.$meta.vueLayout.closeLink(this);
+      this.closeLink = this.closeLink2;
+      this._unwatchCloseLink = this.$watch('closeLink2', () => {
+        this.closeLink = this.closeLink2;
+      });
     },
     checkSizeLink() {
-      this.sizeLink = this.$meta.vueLayout.sizeLink && this.$meta.vueLayout.sizeLink(this);
+      this.sizeLink = this.sizeLink2;
+      this._unwatchSizeLink = this.$watch('sizeLink2', () => {
+        this.sizeLink = this.sizeLink2;
+      });
     },
 
     onBackClick(event) {

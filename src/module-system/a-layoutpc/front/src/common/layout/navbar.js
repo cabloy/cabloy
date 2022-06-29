@@ -44,7 +44,6 @@ export default {
       const view = groupInstance.getView(viewInfo.viewId, viewInfo.viewPopup);
       // sizeWill
       const sizeWill = view.sizeWill;
-      console.log(sizeWill, this.size.enoughLarge);
       if (sizeWill !== 'large' && this.size.enoughLarge) return 'maximize';
       if (sizeWill === 'large' && this.size.enoughLarge) return 'restore';
       return false;
