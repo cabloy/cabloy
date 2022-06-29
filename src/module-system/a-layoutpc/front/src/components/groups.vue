@@ -58,6 +58,10 @@ export default {
     getViewInstance(groupId, viewId) {
       return this.getGroupInstance(groupId).getViewInstance(viewId);
     },
+    _getViews(groupId, viewPopup) {
+      const group = this.getGroup({ id: groupId });
+      return viewPopup ? group.viewsPopup : group.views;
+    },
     onTabShow(el) {
       this.$nextTick(() => {
         const groupId = this.$$(el).data('groupId');

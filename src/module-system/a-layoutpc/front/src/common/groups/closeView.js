@@ -47,14 +47,14 @@ export default {
         // do nothing
       }
     },
-    async _removeNextViews(groupId, viewIndexStart) {
-      const group = this.getGroup({ id: groupId });
+    async _removeNextViews(groupId, viewIndexStart, viewPopup) {
+      const views = this._getViews(groupId, viewPopup);
       // from right to left
-      for (let i = group.views.length - 1; i >= 0; i--) {
+      for (let i = views.length - 1; i >= 0; i--) {
         if (i >= viewIndexStart) {
-          const view = group.views[i];
-          await this._viewDirtyConfirm(group.id, view.id);
-          group.views.splice(i, 1);
+          const view = views[i];
+          await this._viewDirtyConfirm(groupId, view.id);
+          views.splice(i, 1);
           // for show the viewDirtyConfirm dialog
           this.reLayout(groupId);
         }

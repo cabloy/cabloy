@@ -32,7 +32,11 @@ export default {
     },
     async closeGroup(groupId, onlyRemove) {
       try {
-        await this._removeNextViews(groupId, 0);
+        // popup
+        await this._removeNextViews(groupId, 0, true);
+        // tile
+        await this._removeNextViews(groupId, 0, false);
+        // remove group
         this.removeGroup(groupId, onlyRemove);
       } catch (err) {}
     },
