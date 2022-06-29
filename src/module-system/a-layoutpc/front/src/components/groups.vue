@@ -225,7 +225,7 @@ export default {
     async refreshGroup(groupId) {
       try {
         const group = this.getGroup({ id: groupId });
-        if (!group) return;
+        if (!group || group.views.length === 0) return;
         const view = group.views[0];
         await this._viewDirtyConfirm(group.id, view.id);
         // this.layout.navigate(group.url, {
