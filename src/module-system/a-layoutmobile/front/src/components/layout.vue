@@ -169,6 +169,7 @@ export default {
         // check if target===_view or in views
         if (
           !$viewEl ||
+          target === '_popup' ||
           target === '_view' ||
           target === '_group' ||
           scene === 'sidebar' ||
