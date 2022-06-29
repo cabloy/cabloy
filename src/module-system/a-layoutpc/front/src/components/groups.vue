@@ -226,18 +226,6 @@ export default {
       });
       this.groups.splice(index + 1, 0, group);
     },
-    async refreshGroup(groupId) {
-      try {
-        const group = this.getGroup({ id: groupId });
-        if (!group || group.views.length === 0) return;
-        const view = group.views[0];
-        await this._viewDirtyConfirm(group.id, view.id);
-        // this.layout.navigate(group.url, {
-        //   groupId,
-        //   reloadGroup: true,
-        // });
-      } catch (err) {}
-    },
   },
 };
 </script>

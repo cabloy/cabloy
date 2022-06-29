@@ -40,6 +40,24 @@ export default {
         this.removeGroup(groupId, onlyRemove);
       } catch (err) {}
     },
+    async refreshGroup(groupId) {
+      try {
+        const group = this.getGroup({ id: groupId });
+        if (!group || group.views.length === 0) return;
+        // popup
+        await this._removeNextViews(groupId, 0, true);
+        // tile
+        await this._removeNextViews(groupId, 1, false);
+        // reload the first view
+        const view = group.views[0];
+        await this._viewDirtyConfirm(groupId, view.id);
+        const viewInstance = this.getViewInstance(groupId, view.id);
+        viewInstance.f7View.router.navigate(group.url, {
+          reloadAll: true,
+          reloadCurrent: true,
+        });
+      } catch (err) {}
+    },
     onbeforeunload() {
       const dirty = this._onbeforeunload_stage_one();
       if (!dirty) return dirty;
