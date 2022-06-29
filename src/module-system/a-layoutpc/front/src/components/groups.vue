@@ -154,7 +154,7 @@ export default {
       }
       // remove last views
       const viewIndexNew = viewIndex + 1;
-      this._removeNextViews(group.id, viewIndexNew + 1)
+      this._removeNextViews(group.id, viewIndexNew + 1, false)
         .then(() => {
           // return next view
           const view = this.getViewInstance(group.id, group.views[viewIndexNew].id);
