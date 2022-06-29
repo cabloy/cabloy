@@ -18,7 +18,7 @@ export default {
         $view.addClass('eb-transition-close').animationEnd(() => {
           views.splice(viewIndex, 1);
           if (!viewPopup && views.length === 0) {
-            this.removeGroup(groupId);
+            this.closeGroup(groupId);
           } else {
             this.reLayout(groupId);
           }
