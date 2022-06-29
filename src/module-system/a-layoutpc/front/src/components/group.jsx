@@ -204,7 +204,7 @@ export default {
         let left;
         let top;
         if (maximize) {
-          left = 0;
+          left = sizeSpacing;
           top = 0;
         } else {
           left = (widthReal - viewSizeExtent.width) / 2 + sizeSpacing;
