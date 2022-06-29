@@ -105,15 +105,8 @@ export default {
         }
         // reload group
         if (options.reloadGroup) {
-          // pageDirty as concerned
-          // todo: remove all popups
-          // todo: remove all next views
-          // todo: reload the first view
-          // const _options = { reloadAll: true };
-          // if (options.reloadGroup) {
-          //   _options.reloadCurrent = true;
-          // }
-          // resolve({ view, options: _options });
+          this.refreshGroup(group.id);
+          resolve(null);
           return;
         }
         // check if viewPopup
@@ -235,10 +228,10 @@ export default {
         if (!group) return;
         const view = group.views[0];
         await this._viewDirtyConfirm(group.id, view.id);
-        this.layout.navigate(group.url, {
-          groupId,
-          reloadGroup: true,
-        });
+        // this.layout.navigate(group.url, {
+        //   groupId,
+        //   reloadGroup: true,
+        // });
       } catch (err) {}
     },
   },
