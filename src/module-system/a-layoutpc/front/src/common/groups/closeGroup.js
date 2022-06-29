@@ -48,7 +48,14 @@ export default {
     },
     _getGroupDirty(groupId) {
       const [group] = this._getGroupAndIndex(groupId);
-      for (const view of group.views) {
+      // popup
+      const dirty = this._getGroupDirty_views(groupId, group.viewsPopup);
+      if (dirty) return dirty;
+      // tile
+      return this._getGroupDirty_views(groupId, group.views);
+    },
+    _getGroupDirty_views(groupId, views) {
+      for (const view of views) {
         const viewVue = this.getViewInstance(groupId, view.id);
         const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
         if (dirty) return true;
