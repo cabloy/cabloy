@@ -177,6 +177,7 @@ export default {
         sizeWill: viewPopup ? 'medium' : 'small',
         sizeFixed: false,
         maximize: false,
+        viewPopup,
         callback: ({ view, title }) => {
           // title
           if (title) group.title = title;
@@ -260,6 +261,8 @@ export default {
       options = options || {};
       const disableCheckDirty = options.disableCheckDirty;
       // remove next views
+      const viewInfo = this.layout.navbar_findViewInfo(view);
+      console.log(viewInfo);
       const $view = this.$$(view.$el);
       const viewIndex = parseInt($view.data('index'));
       const groupId = $view.parents('.eb-layout-group').data('groupId');

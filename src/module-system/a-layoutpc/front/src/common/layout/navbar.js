@@ -1,7 +1,8 @@
 export default {
   methods: {
     navbar_findViewDom(ctx) {
-      const $el = ctx.$$(ctx.$el);
+      const $el = this.$$(ctx.$el);
+      if ($el.is('.eb-layout-view')) return $el;
       return $el.parents('.eb-layout-view');
     },
     navbar_findViewInfo(ctx) {
