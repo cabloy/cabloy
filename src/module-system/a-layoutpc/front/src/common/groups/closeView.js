@@ -3,18 +3,22 @@ export default {
     async closeView(view, options) {
       // options
       options = options || {};
-      const disableCheckDirty = options.disableCheckDirty;
       // remove next views
       const viewInfo = this.layout.navbar_findViewInfo(view);
-      console.log(viewInfo);
-      const $view = this.$$(view.$el);
-      const viewIndex = parseInt($view.data('index'));
-      const groupId = $view.parents('.eb-layout-group').data('groupId');
-      const group = this.getGroup({ id: groupId });
+      if (viewInfo.viewPopup) {
+        await this._closeView_popup(viewInfo, options);
+      } else {
+        await this._closeView_tile(viewInfo, options);
+      }
+    },
+    async _closeView_popup(viewInfo, options) {},
+    async _closeView_tile(viewInfo, options) {
+      const disableCheckDirty = options.disableCheckDirty;
+      const { $view, viewId, viewIndex, groupId, group } = viewInfo;
       try {
         await this._removeNextViews(groupId, viewIndex + 1);
         if (!disableCheckDirty) {
-          await this._viewDirtyConfirm(groupId, view.id);
+          await this._viewDirtyConfirm(groupId, viewId);
         }
         $view.addClass('eb-transition-close').animationEnd(() => {
           group.views.splice(viewIndex, 1);
