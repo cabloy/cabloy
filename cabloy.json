@@ -132,9 +132,6 @@
           "a-layoutmobile": {
             "scripts": ["npmPublish"]
           },
-          "a-layoutpc": {
-            "scripts": ["npmPublish"]
-          },
           "a-login": {
             "scripts": ["npmPublish"]
           },
@@ -250,6 +247,9 @@
             "scripts": ["gitCommit"]
           },
           "a-flowtask": {
+            "scripts": ["npmPublish", "gitCommit"]
+          },
+          "a-layoutpc": {
             "scripts": ["npmPublish", "gitCommit"]
           },
           "a-markdown": {
