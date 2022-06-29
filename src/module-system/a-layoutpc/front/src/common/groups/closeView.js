@@ -3,41 +3,21 @@ export default {
     async closeView(view, options) {
       // options
       options = options || {};
+      const disableCheckDirty = options.disableCheckDirty;
       // remove next views
       const viewInfo = this.layout.navbar_findViewInfo(view);
-      if (viewInfo.viewPopup) {
-        await this._closeView_popup(viewInfo, options);
-      } else {
-        await this._closeView_tile(viewInfo, options);
-      }
-    },
-    async _closeView_popup(viewInfo, options) {
-      const disableCheckDirty = options.disableCheckDirty;
-      const { $view, viewId, viewIndex, groupId, group } = viewInfo;
+      const { $view, viewId, viewIndex, viewPopup, groupId } = viewInfo;
+      const views = this._getViews(groupId, viewPopup);
       try {
-        // only close current view
+        // next
+        await this._removeNextViews(groupId, viewIndex + 1, viewPopup);
+        // current
         if (!disableCheckDirty) {
           await this._viewDirtyConfirm(groupId, viewId);
         }
         $view.addClass('eb-transition-close').animationEnd(() => {
-          group.viewsPopup.splice(viewIndex, 1);
-          this.reLayout(groupId);
-        });
-      } catch (err) {
-        // do nothing
-      }
-    },
-    async _closeView_tile(viewInfo, options) {
-      const disableCheckDirty = options.disableCheckDirty;
-      const { $view, viewId, viewIndex, groupId, group } = viewInfo;
-      try {
-        await this._removeNextViews(groupId, viewIndex + 1);
-        if (!disableCheckDirty) {
-          await this._viewDirtyConfirm(groupId, viewId);
-        }
-        $view.addClass('eb-transition-close').animationEnd(() => {
-          group.views.splice(viewIndex, 1);
-          if (group.views.length === 0) {
+          views.splice(viewIndex, 1);
+          if (!viewPopup && views.length === 0) {
             this.removeGroup(groupId);
           } else {
             this.reLayout(groupId);
