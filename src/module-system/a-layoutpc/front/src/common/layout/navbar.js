@@ -12,9 +12,11 @@ export default {
       const viewTile = $view.is('.eb-layout-group-view');
       const viewIndex = parseInt($view.data('index'));
       //
+      let group;
       let groupInstance;
       let view;
       if (groupId) {
+        group = this.groupsInstance && this.groupsInstance.getGroup({ id: groupId });
         groupInstance = this.groupsInstance && this.groupsInstance.getGroupInstance(groupId);
         view = groupInstance && groupInstance.getView(viewId, viewPopup);
       }
@@ -27,6 +29,7 @@ export default {
         viewTile,
         viewIndex,
         groupId,
+        group,
         groupInstance,
       };
     },
