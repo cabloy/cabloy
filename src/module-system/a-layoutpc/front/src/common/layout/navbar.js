@@ -53,7 +53,13 @@ export default {
       console.log('onCloseClick');
     },
     onSizeClick(ctx) {
-      console.log('onSizeClick');
+      const viewInfo = this.navbar_findViewInfo(ctx);
+      if (!viewInfo.viewPopup) return false;
+      //
+      const groupInstance = this.groupsInstance.getGroupInstance(viewInfo.groupId);
+      const view = groupInstance.getView(viewInfo.viewId, viewInfo.viewPopup);
+      view.maximize = !view.maximize;
+      groupInstance.reLayout();
     },
   },
 };
