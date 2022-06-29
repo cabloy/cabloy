@@ -35,7 +35,7 @@ export default {
         if (!routeComponent) throw new Error(`not found route: ${_view.url}`);
         // width
         const meta = routeComponent.meta;
-        const sizeWill = (meta && meta.size) || 'small';
+        const sizeWill = (meta && meta.size) || (viewPopup ? 'medium' : 'small');
         const sizeFixed = (meta && meta.sizeFixed) || false;
         // title
         let title;

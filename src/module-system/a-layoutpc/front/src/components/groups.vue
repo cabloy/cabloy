@@ -174,7 +174,7 @@ export default {
       views.push({
         id: this.$meta.util.nextId('layoutgroupview'),
         url,
-        sizeWill: 'small',
+        sizeWill: viewPopup ? 'medium' : 'small',
         sizeFixed: false,
         maximize: false,
         callback: ({ view, title }) => {
