@@ -87,7 +87,7 @@ export default {
         views.length === 2 &&
         indexCurrent === 0 &&
         views[indexCurrent + 1].sizeWill === 'small' &&
-        this.layout.enoughLarge
+        this.layout.size.enoughLarge
       ) {
         sizeWill = 'medium';
       } else if (
@@ -95,8 +95,8 @@ export default {
         views.length >= 2 &&
         indexCurrent === views.length - 1 &&
         views[indexCurrent - 1].sizeWill !== 'small' &&
-        !this.layout.enoughLarge &&
-        this.layout.enoughMedium
+        !this.layout.size.enoughLarge &&
+        this.layout.size.enoughMedium
       ) {
         sizeWill = 'medium';
       } else if (
@@ -104,7 +104,7 @@ export default {
         views.length >= 2 &&
         indexCurrent === views.length - 1 &&
         views[indexCurrent - 1].sizeWill !== 'small' &&
-        this.layout.enoughLarge
+        this.layout.size.enoughLarge
       ) {
         sizeWill = 'large';
       } else if (
@@ -125,10 +125,10 @@ export default {
     _combineViewSize_sizeWill_adjust(sizeWill) {
       // adjust
       if (sizeWill === 'large') {
-        return this.layout.enoughLarge ? 'large' : this.layout.enoughMedium ? 'medium' : 'small';
+        return this.layout.size.enoughLarge ? 'large' : this.layout.size.enoughMedium ? 'medium' : 'small';
       }
       if (sizeWill === 'medium') {
-        return this.layout.enoughMedium ? 'medium' : 'small';
+        return this.layout.size.enoughMedium ? 'medium' : 'small';
       }
       return 'small';
     },

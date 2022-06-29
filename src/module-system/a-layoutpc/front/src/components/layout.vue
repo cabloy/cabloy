@@ -175,8 +175,8 @@ export default {
       this.size.medium = enoughMedium ? small * 2 + (enoughLarge ? spacing : 0) : small;
       this.size.large = enoughLarge ? small * 3 + spacing * 2 : this.size.medium;
 
-      this.enoughMedium = enoughMedium;
-      this.enoughLarge = enoughLarge;
+      this.size.enoughMedium = enoughMedium;
+      this.size.enoughLarge = enoughLarge;
 
       // height
       let height = layoutHeight;

@@ -40,9 +40,14 @@ export default {
     sizeLink(ctx) {
       const viewInfo = this.navbar_findViewInfo(ctx);
       if (!viewInfo.viewPopup) return false;
-      const group = this.groupsInstance.getGroupInstance(viewInfo.groupId);
-
-      return 'restore';
+      const groupInstance = this.groupsInstance.getGroupInstance(viewInfo.groupId);
+      const view = groupInstance.getView(viewInfo.viewId, viewInfo.viewPopup);
+      // sizeWill
+      const sizeWill = view.sizeWill;
+      console.log(sizeWill, this.size.enoughLarge);
+      if (sizeWill !== 'large' && this.size.enoughLarge) return 'maximize';
+      if (sizeWill === 'large' && this.size.enoughLarge) return 'restore';
+      return false;
     },
     onCloseClick(ctx) {
       console.log('onCloseClick');
