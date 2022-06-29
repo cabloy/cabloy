@@ -66,13 +66,62 @@ export default {
     },
     _combineViewSize(view, indexCurrent, viewPopup) {
       const views = this._getViews(viewPopup);
-      if (viewPopup) return this._combineViewSize_popup(views, view, indexCurrent);
+      if (viewPopup) return this._combineViewSize_popup(view);
       return this._combineViewSize_tile(views, view, indexCurrent);
     },
-    _combineViewSize_popup(views, view /* , indexCurrent*/) {
-      const sizeWill = view.sizeWill;
-      // adjust
-      return this._combineViewSize_sizeWill_adjust(sizeWill);
+    _combineViewSize_popup(view) {
+      // viewInfo
+      const viewInfo = this._combineViewSize_popup_viewInfo(view);
+      // viewSizeExtent
+      const viewSizeExtent = this._combineViewSize_popup_viewSizeExtent(view, viewInfo);
+      // ok
+      return { ...viewInfo, viewSizeExtent };
+    },
+    _combineViewSize_popup_viewSizeExtent(view, viewInfo) {
+      //
+      const sizeSpacing = this.layout.sizeSpacing;
+      const widthReal = this.size.width - sizeSpacing * 2;
+      const heightReal = this.size.main;
+      //
+      const { viewSize, maximize } = viewInfo;
+      //
+      let width;
+      let height;
+      if (maximize) {
+        width = widthReal;
+        height = heightReal;
+      } else {
+        width = this.size[viewSize];
+        height = heightReal - this.layout.sizeSpacingPopup * 2;
+      }
+      return { width, height };
+    },
+    _combineViewSize_popup_viewInfo(view) {
+      // viewSizeWill
+      const viewSizeWill = this._combineViewSize_sizeWill_adjust(view.sizeWill);
+      // viewSize
+      let viewSize;
+      let maximize;
+      let canMaximize;
+      let canRestore;
+      // maximize
+      if (view.maximize) {
+        viewSize = this.size.enoughLarge ? 'large' : this.size.enoughMedium ? 'medium' : 'small';
+        maximize = true;
+        canMaximize = false;
+        canRestore = this.$meta.util.compareViewSize(viewSize, viewSizeWill) > 0;
+      } else {
+        // normal
+        viewSize = viewSizeWill;
+        maximize =
+          viewSize === 'large' ||
+          (viewSize === 'medium' && !this.size.enoughLarge) ||
+          (viewSize === 'small' && !this.size.enoughMedium);
+        canMaximize = !maximize;
+        canRestore =
+          (viewSize === 'medium' && this.size.enoughLarge) || (viewSize === 'small' && this.size.enoughMedium);
+      }
+      return { viewSize, maximize, canMaximize, canRestore };
     },
     _combineViewSize_tile_sizeWill(views, view, indexCurrent) {
       let sizeWill = view.sizeWill;
@@ -120,7 +169,13 @@ export default {
       // sizeWill
       const sizeWill = this._combineViewSize_tile_sizeWill(views, view, indexCurrent);
       // adjust
-      return this._combineViewSize_sizeWill_adjust(sizeWill);
+      const viewSize = this._combineViewSize_sizeWill_adjust(sizeWill);
+      // viewSizeExtent
+      const viewSizeExtent = {
+        width: this.size[viewSize],
+        height: this.size.main,
+      };
+      return { viewSize, viewSizeExtent };
     },
     _combineViewSize_sizeWill_adjust(sizeWill) {
       // adjust
@@ -139,31 +194,26 @@ export default {
     _reLayout_popup(views) {
       const sizeSpacing = this.layout.sizeSpacing;
       const widthReal = this.size.width - sizeSpacing * 2;
-      const heightReal = this.size.height - this.layout.sizeSpacingPopup * 2;
       // sidebar
       const sidebarLeft = this.layout._sidebarWidth('left');
       // loop
       for (let i = views.length - 1; i >= 0; i--) {
         const view = this.$refs[views[i].id];
-        // width
-        const viewSize = this._combineViewSize(views[i], i, true);
-        let width = this.size[viewSize];
-        // space
-        let left = (widthReal - width) / 2 + sizeSpacing;
-        let top = this.layout.sizeSpacingPopup;
-        let height = heightReal;
-        // check
-        if (left <= 0) {
+        // viewSize
+        const { viewSizeExtent, maximize } = this._combineViewSize(views[i], i, true);
+        let left;
+        let top;
+        if (maximize) {
           left = 0;
           top = 0;
-          height = heightReal;
-          width = widthReal;
+        } else {
+          left = (widthReal - viewSizeExtent.width) / 2 + sizeSpacing;
+          top = this.layout.sizeSpacingPopup;
         }
         // style
         const newStyle = {
           left: `${left + sidebarLeft}px`,
           top: `${top}px`,
-          height: `${height}px`,
         };
         this.$$(view.$el).css(newStyle);
       }
@@ -174,8 +224,8 @@ export default {
       let spacing = 0;
       for (let i = views.length - 1; i >= 0; i--) {
         // width
-        const viewSize = this._combineViewSize(views[i], i, false);
-        const width = this.size[viewSize];
+        const { viewSizeExtent } = this._combineViewSize(views[i], i, false);
+        const width = viewSizeExtent.width;
         // space
         const space2 = space - width - spacing;
         if (space2 >= 0) {
@@ -194,8 +244,8 @@ export default {
       for (let i = views.length - 1; i >= 0; i--) {
         const view = this.$refs[views[i].id];
         // width
-        const viewSize = this._combineViewSize(views[i], i, false);
-        const width = this.size[viewSize];
+        const { viewSizeExtent } = this._combineViewSize(views[i], i, false);
+        const width = viewSizeExtent.width;
         // space
         left -= width + spacing;
         spacing = this.layout.sizeSpacing;
@@ -233,11 +283,7 @@ export default {
       return viewPopup ? this.viewsPopup : this.views;
     },
     _renderView({ index, view, viewPopup }) {
-      const viewSize = this._combineViewSize(view, index, viewPopup);
-      const viewSizeExtent = {
-        width: this.size[viewSize],
-        height: this.size.main,
-      };
+      const { viewSize, viewSizeExtent } = this._combineViewSize(view, index, viewPopup);
       // attrs
       const _viewAttrs = {
         id: view.id,
@@ -260,6 +306,7 @@ export default {
         width: `${viewSizeExtent.width}px`,
       };
       if (viewPopup) {
+        _viewStyle.height = `${viewSizeExtent.height}px`;
         _viewStyle.zIndex = this.viewPopupIndex + index + '';
       }
       // events

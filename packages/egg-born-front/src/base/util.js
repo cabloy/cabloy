@@ -13,6 +13,8 @@ import localeZhcn from 'moment/locale/zh-cn.js';
 import _escape from './escape.js';
 import hostUtil from './hostUtil.js';
 
+const __ViewSizes = ['small', 'medium', 'large'];
+
 export default function (Vue) {
   const _ids = {};
 
@@ -680,6 +682,9 @@ export default function (Vue) {
         _parts.unshift(module);
       }
       return _parts.join(_sep);
+    },
+    compareViewSize(sizeA, sizeB) {
+      return __ViewSizes.indexOf(sizeA) - __ViewSizes.indexOf(sizeB);
     },
   };
 

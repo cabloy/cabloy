@@ -176,6 +176,7 @@ export default {
         url,
         sizeWill: 'small',
         sizeFixed: false,
+        maximize: false,
         callback: ({ view, title }) => {
           // title
           if (title) group.title = title;
