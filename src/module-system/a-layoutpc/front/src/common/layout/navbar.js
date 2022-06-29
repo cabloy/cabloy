@@ -11,13 +11,23 @@ export default {
       const viewPopup = $view.is('.eb-layout-popup-view');
       const viewTile = $view.is('.eb-layout-group-view');
       const viewIndex = parseInt($view.data('index'));
+      //
+      let groupInstance;
+      let view;
+      if (groupId) {
+        groupInstance = this.groupsInstance && this.groupsInstance.getGroupInstance(groupId);
+        view = groupInstance && groupInstance.getView(viewId, viewPopup);
+      }
+      //
       return {
         $view,
-        groupId,
+        view,
         viewId,
         viewPopup,
         viewTile,
         viewIndex,
+        groupId,
+        groupInstance,
       };
     },
     backLink(ctx) {
@@ -34,30 +44,27 @@ export default {
       return backLink;
     },
     closeLink(ctx) {
-      const viewInfo = this.navbar_findViewInfo(ctx);
-      return viewInfo.viewPopup;
+      const { viewPopup } = this.navbar_findViewInfo(ctx);
+      return viewPopup;
     },
     sizeLink(ctx) {
-      const viewInfo = this.navbar_findViewInfo(ctx);
-      if (!viewInfo.viewPopup) return false;
-      //
-      const groupInstance = this.groupsInstance.getGroupInstance(viewInfo.groupId);
-      const view = groupInstance.getView(viewInfo.viewId, viewInfo.viewPopup);
+      const { view, viewPopup, viewIndex, groupInstance } = this.navbar_findViewInfo(ctx);
+      if (!viewPopup) return false;
       // viewSize
-      const { canMaximize, canRestore } = groupInstance._combineViewSize(view, viewInfo.viewIndex, true);
+      const { canMaximize, canRestore } = groupInstance._combineViewSize(view, viewIndex, true);
       if (canMaximize) return 'maximize';
       if (canRestore) return 'restore';
       return false;
     },
     onCloseClick(ctx) {
-      console.log('onCloseClick');
+      const { view, viewPopup } = this.navbar_findViewInfo(ctx);
+      if (!viewPopup) return false;
+      this.groupsInstance.closeView(view);
     },
     onSizeClick(ctx) {
-      const viewInfo = this.navbar_findViewInfo(ctx);
-      if (!viewInfo.viewPopup) return false;
+      const { view, viewPopup, groupInstance } = this.navbar_findViewInfo(ctx);
+      if (!viewPopup) return false;
       //
-      const groupInstance = this.groupsInstance.getGroupInstance(viewInfo.groupId);
-      const view = groupInstance.getView(viewInfo.viewId, viewInfo.viewPopup);
       view.maximize = !view.maximize;
       groupInstance.reLayout();
     },
