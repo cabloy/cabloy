@@ -55,8 +55,8 @@ export default {
         this.getGroupInstance(group.id).resize();
       }
     },
-    getViewInstance(groupId, viewId, viewPopup) {
-      return this.getGroupInstance(groupId).getViewInstance(viewId, viewPopup);
+    getViewInstance(groupId, viewId) {
+      return this.getGroupInstance(groupId).getViewInstance(viewId);
     },
     onTabShow(el) {
       this.$nextTick(() => {
@@ -138,7 +138,7 @@ export default {
         return;
       }
       // navigate on the last view
-      const view = this.getViewInstance(group.id, group.viewsPopup[group.viewsPopup.length - 1].id, true);
+      const view = this.getViewInstance(group.id, group.viewsPopup[group.viewsPopup.length - 1].id);
       resolve({ view, options: null });
     },
     _createView_tile({ group, ctx, url, options, resolve }) {

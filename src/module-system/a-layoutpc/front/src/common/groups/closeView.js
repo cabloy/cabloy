@@ -11,7 +11,22 @@ export default {
         await this._closeView_tile(viewInfo, options);
       }
     },
-    async _closeView_popup(viewInfo, options) {},
+    async _closeView_popup(viewInfo, options) {
+      const disableCheckDirty = options.disableCheckDirty;
+      const { $view, viewId, viewIndex, groupId, group } = viewInfo;
+      try {
+        // only close current view
+        if (!disableCheckDirty) {
+          await this._viewDirtyConfirm(groupId, viewId);
+        }
+        $view.addClass('eb-transition-close').animationEnd(() => {
+          group.viewsPopup.splice(viewIndex, 1);
+          this.reLayout(groupId);
+        });
+      } catch (err) {
+        // do nothing
+      }
+    },
     async _closeView_tile(viewInfo, options) {
       const disableCheckDirty = options.disableCheckDirty;
       const { $view, viewId, viewIndex, groupId, group } = viewInfo;
