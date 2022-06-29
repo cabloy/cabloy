@@ -28,9 +28,8 @@ export default {
   },
   methods: {
     onViewReady(view, viewPopup) {
-      const views = this._getViews(viewPopup);
       // view
-      const _view = views.find(item => item.id === view.id);
+      const _view = this.getView(view.id, viewPopup);
       // route
       this.$meta.vueLayout._patchRouter.loadRouteComponent(_view.url, routeComponent => {
         if (!routeComponent) throw new Error(`not found route: ${_view.url}`);
@@ -225,6 +224,10 @@ export default {
     },
     getViewInstance(viewId /* , viewPopup*/) {
       return this.$refs[viewId];
+    },
+    getView(viewId, viewPopup) {
+      const views = this._getViews(viewPopup);
+      return views.find(item => item.id === viewId);
     },
     _getViews(viewPopup) {
       return viewPopup ? this.viewsPopup : this.views;
