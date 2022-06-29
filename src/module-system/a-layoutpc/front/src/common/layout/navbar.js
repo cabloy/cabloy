@@ -2,8 +2,7 @@ export default {
   methods: {
     navbar_findViewDom(ctx) {
       const $el = this.$$(ctx.$el);
-      if ($el.is('.eb-layout-view')) return $el;
-      return $el.parents('.eb-layout-view');
+      return $el.closest('.eb-layout-view');
     },
     navbar_findViewInfo(ctx) {
       const $view = this.navbar_findViewDom(ctx);
@@ -16,15 +15,18 @@ export default {
       let group;
       let groupInstance;
       let view;
+      let viewInstance;
       if (groupId) {
         group = this.groupsInstance && this.groupsInstance.getGroup({ id: groupId });
         groupInstance = this.groupsInstance && this.groupsInstance.getGroupInstance(groupId);
         view = groupInstance && groupInstance.getView(viewId, viewPopup);
+        viewInstance = groupInstance && groupInstance.getViewInstance(viewId);
       }
       //
       return {
         $view,
         view,
+        viewInstance,
         viewId,
         viewPopup,
         viewTile,
@@ -61,9 +63,9 @@ export default {
       return false;
     },
     onCloseClick(ctx) {
-      const { view, viewPopup } = this.navbar_findViewInfo(ctx);
+      const { viewInstance, viewPopup } = this.navbar_findViewInfo(ctx);
       if (!viewPopup) return false;
-      this.groupsInstance.closeView(view);
+      this.groupsInstance.closeView(viewInstance);
     },
     onSizeClick(ctx) {
       const { view, viewPopup, groupInstance } = this.navbar_findViewInfo(ctx);
