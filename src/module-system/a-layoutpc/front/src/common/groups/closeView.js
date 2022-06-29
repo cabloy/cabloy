@@ -10,7 +10,7 @@ export default {
       const views = this._getViews(groupId, viewPopup);
       try {
         // next
-        await this._removeNextViews(groupId, viewIndex + 1, viewPopup);
+        await this._removeNextViews(groupId, viewIndex + 1, viewPopup, options);
         // current
         if (!disableCheckDirty) {
           await this._viewDirtyConfirm(groupId, viewId);
@@ -27,13 +27,19 @@ export default {
         // do nothing
       }
     },
-    async _removeNextViews(groupId, viewIndexStart, viewPopup) {
+    async _removeNextViews(groupId, viewIndexStart, viewPopup, options) {
+      // options
+      options = options || {};
+      const disableCheckDirty = options.disableCheckDirty;
+      // views
       const views = this._getViews(groupId, viewPopup);
       // from right to left
       for (let i = views.length - 1; i >= 0; i--) {
         if (i >= viewIndexStart) {
           const view = views[i];
-          await this._viewDirtyConfirm(groupId, view.id);
+          if (!disableCheckDirty) {
+            await this._viewDirtyConfirm(groupId, view.id);
+          }
           views.splice(i, 1);
           // for show the viewDirtyConfirm dialog
           this.reLayout(groupId);
