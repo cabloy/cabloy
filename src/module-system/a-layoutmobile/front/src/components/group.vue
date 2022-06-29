@@ -114,12 +114,12 @@ export default {
         delete _view.callback;
       });
     },
-    getView(viewId) {
+    getViewInstance(viewId) {
       return this.$refs[viewId];
     },
     _getGroupDirty() {
       for (const view of this.views) {
-        const viewVue = this.getView(view.id);
+        const viewVue = this.getViewInstance(view.id);
         const dirty = viewVue && viewVue.getViewDirty && viewVue.getViewDirty();
         if (dirty) return true;
       }

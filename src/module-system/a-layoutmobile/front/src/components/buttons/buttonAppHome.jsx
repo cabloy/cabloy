@@ -57,7 +57,7 @@ function installFactory(_Vue) {
         // current
         this.appInfoCurrent = appInfo;
         // open appHome
-        const view = this.getView();
+        const view = this.getViewInstance();
         await this.$meta.vueLayout.app_openAppHome({ view, current, force });
         // ok
         return true;

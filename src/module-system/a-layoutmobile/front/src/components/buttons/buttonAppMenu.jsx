@@ -23,7 +23,7 @@ function installFactory(_Vue) {
         this.onPerformClick();
       },
       openAppMenu() {
-        const view = this.getView();
+        const view = this.getViewInstance();
         this.$meta.vueLayout.app_openHome({ view });
       },
       onViewInit() {

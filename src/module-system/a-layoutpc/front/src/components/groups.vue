@@ -52,8 +52,8 @@ export default {
         this.getGroupInstance(group.id).resize();
       }
     },
-    getView(groupId, viewId, viewPopup) {
-      return this.getGroupInstance(groupId).getView(viewId, viewPopup);
+    getViewInstance(groupId, viewId, viewPopup) {
+      return this.getGroupInstance(groupId).getViewInstance(viewId, viewPopup);
     },
     onTabShow(el) {
       this.$nextTick(() => {
@@ -135,7 +135,7 @@ export default {
         return;
       }
       // navigate on the last view
-      const view = this.getView(group.id, group.viewsPopup[group.viewsPopup.length - 1].id, true);
+      const view = this.getViewInstance(group.id, group.viewsPopup[group.viewsPopup.length - 1].id, true);
       resolve({ view, options: null });
     },
     _createView_tile({ group, ctx, url, options, resolve }) {
@@ -157,7 +157,7 @@ export default {
       this._removeNextViews(group.id, viewIndexNew + 1)
         .then(() => {
           // return next view
-          const view = this.getView(group.id, group.views[viewIndexNew].id);
+          const view = this.getViewInstance(group.id, group.views[viewIndexNew].id);
           const _options = { reloadAll: true };
           if (options.reloadGroup) {
             _options.reloadCurrent = true;
@@ -312,7 +312,7 @@ export default {
       }
     },
     async _viewDirtyConfirm(groupId, viewId) {
-      const viewVue = this.getView(groupId, viewId);
+      const viewVue = this.getViewInstance(groupId, viewId);
       const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
       if (dirty) {
         // will throw error if cancelled
@@ -328,7 +328,7 @@ export default {
     _getGroupDirty(groupId) {
       const [group] = this._getGroupAndIndex(groupId);
       for (const view of group.views) {
-        const viewVue = this.getView(groupId, view.id);
+        const viewVue = this.getViewInstance(groupId, view.id);
         const dirty = viewVue.getViewDirty && viewVue.getViewDirty();
         if (dirty) return true;
       }

@@ -45,7 +45,7 @@ export default function (Vue) {
       getDomView() {
         return this.$$(`#eb-layout-tab-${this.button.buttonFullName.replace(':', '_')}`);
       },
-      getView() {
+      getViewInstance() {
         const domView = this.getDomView();
         return domView[0].__vue__;
       },

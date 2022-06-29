@@ -223,7 +223,7 @@ export default {
         this.groups.onViewTitle(this.groupId, data.title);
       }
     },
-    getView(viewId /* , viewPopup*/) {
+    getViewInstance(viewId /* , viewPopup*/) {
       return this.$refs[viewId];
     },
     _getViews(viewPopup) {

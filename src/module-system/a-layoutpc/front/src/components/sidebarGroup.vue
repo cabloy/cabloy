@@ -111,7 +111,7 @@ export default {
         delete _view.callback;
       });
     },
-    getView(viewId) {
+    getViewInstance(viewId) {
       return this.$refs[viewId];
     },
   },
