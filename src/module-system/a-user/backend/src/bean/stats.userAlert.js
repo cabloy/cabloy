@@ -16,12 +16,15 @@ module.exports = ctx => {
         user,
       });
       // minus
-      if (statsMessage.red !== undefined) {
-        statsUser.red -= statsMessage.red;
+      if (statsMessage) {
+        if (statsMessage.red !== undefined) {
+          statsUser.red -= statsMessage.red;
+        }
+        if (statsMessage.orange !== undefined) {
+          statsUser.orange -= statsMessage.orange;
+        }
       }
-      if (statsMessage.orange !== undefined) {
-        statsUser.orange -= statsMessage.orange;
-      }
+      // ok
       return statsUser;
     }
   }
