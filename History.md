@@ -1,6 +1,6 @@
 # History
 
-## 2022-06-29, Version 4.22.0
+## 2022-06-30, Version 4.22.0
 
 - **Feat**
   - （重磅）Popup 弹出模式：pc 场景页面交互增加 Popup 弹出模式
