@@ -89,7 +89,11 @@
       }
       // should not use location.reload(true) when slug changed
       const url = location.href.replace(/\/articles\/[^\.]*/, `/articles/${article.slug}`);
-      location.replace(url);
+      if (url === location.href) {
+        location.reload(true);
+      } else {
+        location.replace(url);
+      }
     }
 
     function getArticleUrl(atomId, cb) {
