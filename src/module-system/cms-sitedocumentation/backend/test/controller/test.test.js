@@ -48,6 +48,12 @@ describe('test/controller/test.test.js', () => {
         },
         options: { ignoreFlow: true },
       });
+    if (result.body.code !== 0) {
+      const sessionNew = JSON.stringify(app.context.session);
+      console.log('sessionOld: ', sessionOld);
+      console.log('sessionNew: ', sessionNew);
+      process.exit(0);
+    }
     assert(result.body.code === 0);
     const keyFormal = result.body.data.formal.key;
 
