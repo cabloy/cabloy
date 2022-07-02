@@ -81,19 +81,8 @@ module.exports = ctx => {
           atomId,
         },
       });
-      let item;
-      if (items.length === 0) {
-        // new
-        await this.modelAtomLabel.insert({
-          userId: user.id,
-          atomId,
-          labels: JSON.stringify(labels),
-        });
-      } else if (items.length === 1) {
-        item = items[0];
-      } else {
-        // >1
-        item = items[0];
+      const item = items[0];
+      if (items.length > 1) {
         // remove others
         for (let index = 1; index < items.length; index++) {
           const _item = items[index];
@@ -104,8 +93,16 @@ module.exports = ctx => {
       }
       // update
       if (item) {
+        // update
         await this.modelAtomLabel.update({
           id: item.id,
+          labels: JSON.stringify(labels),
+        });
+      } else {
+        // create
+        await this.modelAtomLabel.insert({
+          userId: user.id,
+          atomId,
           labels: JSON.stringify(labels),
         });
       }
