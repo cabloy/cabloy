@@ -7,17 +7,29 @@ module.exports = ctx => {
       if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
       // check if exists
       let diff = 0;
-      const _star = await this.modelAtomStar.get({
-        userId: user.id,
-        atomId: key.atomId,
+      const items = await this.modelAtomStar.select({
+        where: {
+          userId: user.id,
+          atomId: key.atomId,
+        },
       });
-      if (_star && !star) {
+      const item = items[0];
+      if (items.length > 1) {
+        // remove others
+        for (let index = 1; index < items.length; index++) {
+          const _item = items[index];
+          await this.modelAtomStar.delete({
+            id: _item.id,
+          });
+        }
+      }
+      if (item && !star) {
         diff = -1;
         // delete
         await this.modelAtomStar.delete({
-          id: _star.id,
+          id: item.id,
         });
-      } else if (!_star && star) {
+      } else if (!item && star) {
         diff = 1;
         // new
         await this.modelAtomStar.insert({
