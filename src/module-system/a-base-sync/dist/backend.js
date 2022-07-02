@@ -561,9 +561,10 @@ module.exports = app => {
 const atom_0 = __webpack_require__(7399);
 const atom_1 = __webpack_require__(3765);
 const atom_right = __webpack_require__(6681);
+const atom_starLabel = __webpack_require__(8388);
 
 module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(atom_0, [atom_1, atom_right], ctx);
+  return ctx.app.meta.util.mixinClasses(atom_0, [atom_1, atom_right, atom_starLabel], ctx);
 };
 
 
@@ -1101,46 +1102,6 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user);
     }
 
-    async star({ key, atom: { star = 1 }, user }) {
-      // get
-      const atom = await this.get({ atomId: key.atomId });
-      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
-      // check if exists
-      let diff = 0;
-      const _star = await this.modelAtomStar.get({
-        userId: user.id,
-        atomId: key.atomId,
-      });
-      if (_star && !star) {
-        diff = -1;
-        // delete
-        await this.modelAtomStar.delete({
-          id: _star.id,
-        });
-      } else if (!_star && star) {
-        diff = 1;
-        // new
-        await this.modelAtomStar.insert({
-          userId: user.id,
-          atomId: key.atomId,
-          star: 1,
-        });
-      }
-      // starCount
-      let starCount = atom.starCount;
-      if (diff !== 0) {
-        starCount += diff;
-        await this.modelAtom.update({
-          id: key.atomId,
-          starCount,
-        });
-      }
-      // notify
-      this._notifyStars();
-      // ok
-      return { star, starCount };
-    }
-
     async readCount({ key, atom: { readCount = 1 }, user }) {
       await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [
         readCount,
@@ -1180,78 +1141,6 @@ module.exports = ctx => {
         }
       }
       return list;
-    }
-
-    async labels({ key, atom: { labels = null }, user }) {
-      // get
-      const atom = await this.get({ atomId: key.atomId });
-      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
-      // force delete
-      await this.modelAtomLabel.delete({
-        userId: user.id,
-        atomId: key.atomId,
-      });
-      await this.modelAtomLabelRef.delete({
-        userId: user.id,
-        atomId: key.atomId,
-      });
-      // new
-      if (labels && labels.length > 0) {
-        await this.modelAtomLabel.insert({
-          userId: user.id,
-          atomId: key.atomId,
-          labels: JSON.stringify(labels),
-        });
-        for (const labelId of labels) {
-          await this.modelAtomLabelRef.insert({
-            userId: user.id,
-            atomId: key.atomId,
-            labelId,
-          });
-        }
-      }
-      // notify
-      this._notifyLabels();
-    }
-
-    async getLabels({ user }) {
-      const data = await this.modelLabel.get({
-        userId: user.id,
-      });
-      let labels = data ? JSON.parse(data.labels) : null;
-      if (!labels || Object.keys(labels).length === 0) {
-        // append default labels
-        labels = {
-          1: {
-            color: 'red',
-            text: ctx.text('Red'),
-          },
-          2: {
-            color: 'orange',
-            text: ctx.text('Orange'),
-          },
-        };
-        await this.setLabels({ labels, user });
-      }
-      return labels;
-    }
-
-    async setLabels({ labels, user }) {
-      const labels2 = JSON.stringify(labels);
-      const res = await this.modelLabel.get({
-        userId: user.id,
-      });
-      if (!res) {
-        await this.modelLabel.insert({
-          userId: user.id,
-          labels: labels2,
-        });
-      } else {
-        await this.modelLabel.update({
-          id: res.id,
-          labels: labels2,
-        });
-      }
     }
 
     async schema({ atomClass, schema }) {
@@ -2389,6 +2278,183 @@ module.exports = ctx => {
     }
   }
 
+  return Atom;
+};
+
+
+/***/ }),
+
+/***/ 8388:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async star({ key, atom: { star = 1 }, user }) {
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
+      // check if exists
+      let diff = 0;
+      const items = await this.modelAtomStar.select({
+        where: {
+          userId: user.id,
+          atomId: key.atomId,
+        },
+      });
+      const item = items[0];
+      if (items.length > 1) {
+        // remove others
+        for (let index = 1; index < items.length; index++) {
+          const _item = items[index];
+          await this.modelAtomStar.delete({
+            id: _item.id,
+          });
+        }
+      }
+      if (item && !star) {
+        diff = -1;
+        // delete
+        await this.modelAtomStar.delete({
+          id: item.id,
+        });
+      } else if (!item && star) {
+        diff = 1;
+        // new
+        await this.modelAtomStar.insert({
+          userId: user.id,
+          atomId: key.atomId,
+          star: 1,
+        });
+      }
+      // starCount
+      let starCount = atom.starCount;
+      if (diff !== 0) {
+        starCount += diff;
+        await this.modelAtom.update({
+          id: key.atomId,
+          starCount,
+        });
+      }
+      // notify
+      this._notifyStars();
+      // ok
+      return { star, starCount };
+    }
+
+    async labels({ key, atom: { labels = null }, user }) {
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
+      // atomLabel
+      await this._labels_atomLabel({ atomId: key.atomId, labels, user });
+      // atomLabelRef
+      await this._labels_atomLabelRef({ atomId: key.atomId, labels, user });
+      // notify
+      this._notifyLabels();
+    }
+
+    async _labels_atomLabel({ atomId, labels, user }) {
+      // delete
+      if (!labels || labels.length === 0) {
+        await this.modelAtomLabel.delete({
+          userId: user.id,
+          atomId,
+        });
+        return;
+      }
+      // insert/update
+      const items = await this.modelAtomLabel.select({
+        where: {
+          userId: user.id,
+          atomId,
+        },
+      });
+      const item = items[0];
+      if (items.length > 1) {
+        // remove others
+        for (let index = 1; index < items.length; index++) {
+          const _item = items[index];
+          await this.modelAtomLabel.delete({
+            id: _item.id,
+          });
+        }
+      }
+      // update
+      if (item) {
+        // update
+        await this.modelAtomLabel.update({
+          id: item.id,
+          labels: JSON.stringify(labels),
+        });
+      } else {
+        // create
+        await this.modelAtomLabel.insert({
+          userId: user.id,
+          atomId,
+          labels: JSON.stringify(labels),
+        });
+      }
+    }
+
+    async _labels_atomLabelRef({ atomId, labels, user }) {
+      // force delete
+      await this.modelAtomLabelRef.delete({
+        userId: user.id,
+        atomId,
+      });
+      // new
+      if (labels && labels.length > 0) {
+        for (const labelId of labels) {
+          await this.modelAtomLabelRef.insert({
+            userId: user.id,
+            atomId,
+            labelId,
+          });
+        }
+      }
+    }
+
+    async getLabels({ user }) {
+      const data = await this.modelLabel.get({
+        userId: user.id,
+      });
+      let labels = data ? JSON.parse(data.labels) : null;
+      if (!labels || Object.keys(labels).length === 0) {
+        // append default labels
+        labels = {
+          1: {
+            color: 'red',
+            text: ctx.text('Red'),
+          },
+          2: {
+            color: 'orange',
+            text: ctx.text('Orange'),
+          },
+        };
+        await this.setLabels({ labels, user });
+      }
+      return labels;
+    }
+
+    async setLabels({ labels, user }) {
+      const labels2 = JSON.stringify(labels);
+      const res = await this.modelLabel.get({
+        userId: user.id,
+      });
+      if (!res) {
+        await this.modelLabel.insert({
+          userId: user.id,
+          labels: labels2,
+        });
+      } else {
+        await this.modelLabel.update({
+          id: res.id,
+          labels: labels2,
+        });
+      }
+    }
+  }
   return Atom;
 };
 
@@ -15390,7 +15456,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 8388:
+/***/ 4271:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -15452,7 +15518,7 @@ const roleIncRef = __webpack_require__(1096);
 const roleRef = __webpack_require__(5978);
 const roleRight = __webpack_require__(5646);
 const roleRightRef = __webpack_require__(6199);
-const user = __webpack_require__(8388);
+const user = __webpack_require__(4271);
 const userAgent = __webpack_require__(8554);
 const userRole = __webpack_require__(7533);
 const label = __webpack_require__(24);
