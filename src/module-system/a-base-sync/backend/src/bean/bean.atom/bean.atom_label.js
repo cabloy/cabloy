@@ -5,42 +5,76 @@ module.exports = ctx => {
       // get
       const atom = await this.get({ atomId: key.atomId });
       if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
-      // labels
-
-      // force delete
-      await this.modelAtomLabel.delete({
-        userId: user.id,
-        atomId: key.atomId,
-      });
-      await this.modelAtomLabelRef.delete({
-        userId: user.id,
-        atomId: key.atomId,
-      });
-      // new
-      if (labels && labels.length > 0) {
-        await this.modelAtomLabel.insert({
-          userId: user.id,
-          atomId: key.atomId,
-          labels: JSON.stringify(labels),
-        });
-        for (const labelId of labels) {
-          await this.modelAtomLabelRef.insert({
-            userId: user.id,
-            atomId: key.atomId,
-            labelId,
-          });
-        }
-      }
+      // atomLabel
+      await this._labels_atomLabel({ atomId: key.atomId, labels, user });
+      // atomLabelRef
+      await this._labels_atomLabelRef({ atomId: key.atomId, labels, user });
       // notify
       this._notifyLabels();
     }
 
     async _labels_atomLabel({ atomId, labels, user }) {
-      //
-      const res = await this.modelAtomLabel.get({
+      // delete
+      if (!labels || labels.length === 0) {
+        await this.modelAtomLabel.delete({
+          userId: user.id,
+          atomId,
+        });
+        return;
+      }
+      // insert/update
+      const items = await this.modelAtomLabel.select({
+        where: {
+          userId: user.id,
+          atomId,
+        },
+      });
+      let item;
+      if (items.length === 0) {
+        // new
+        await this.modelAtomLabel.insert({
+          userId: user.id,
+          atomId,
+          labels: JSON.stringify(labels),
+        });
+      } else if (items.length === 1) {
+        item = items[0];
+      } else {
+        // >1
+        item = items[0];
+        // remove others
+        for (let index = 1; index < items.length; index++) {
+          const _item = items[index];
+          await this.modelAtomLabel.delete({
+            id: _item.id,
+          });
+        }
+      }
+      // update
+      if (item) {
+        await this.modelAtomLabel.update({
+          id: item.id,
+          labels: JSON.stringify(labels),
+        });
+      }
+    }
+
+    async _labels_atomLabelRef({ atomId, labels, user }) {
+      // force delete
+      await this.modelAtomLabelRef.delete({
         userId: user.id,
         atomId,
       });
+      // new
+      if (labels && labels.length > 0) {
+        for (const labelId of labels) {
+          await this.modelAtomLabelRef.insert({
+            userId: user.id,
+            atomId,
+            labelId,
+          });
+        }
+      }
     }
 
     async getLabels({ user }) {
