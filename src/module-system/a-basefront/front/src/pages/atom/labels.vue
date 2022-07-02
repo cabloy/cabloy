@@ -1,9 +1,9 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="$text('UserLabels')" eb-back-link="Back">
+    <eb-navbar large largeTransparent :title="page_title" eb-back-link="Back">
       <f7-nav-right>
-        <eb-link iconF7="::add" @click.prevent="onAddLabel"></eb-link>
-        <!-- <eb-link iconF7="::done" @click.prevent="onDone"></eb-link> -->
+        <eb-link iconF7="::add" :onPerform="onPerformAddLabel"></eb-link>
+        <eb-link v-if="page_dirty" iconF7="::done" :onPerform="onPerformDone"></eb-link>
       </f7-nav-right>
     </eb-navbar>
     <f7-list class="label-edit-list" v-if="labelsAll">
@@ -31,7 +31,7 @@
           <f7-link sheet-close>{{ $text('Close') }}</f7-link>
         </div>
         <div class="right">
-          <eb-link ref="buttonSubmit" :onPerform="onSubmit">{{ $text('Submit') }}</eb-link>
+          <eb-link ref="buttonSubmit" :onPerform="onPerformSubmit">{{ $text('Submit') }}</eb-link>
         </div>
       </f7-toolbar>
       <f7-page-content>
@@ -66,7 +66,10 @@
   </eb-page>
 </template>
 <script>
+import Vue from 'vue';
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
+  mixins: [ebPageDirty],
   data() {
     return {
       atomId: parseInt(this.$f7route.query.atomId),
@@ -87,15 +90,38 @@ export default {
     };
   },
   computed: {
+    page_title() {
+      return this.page_getDirtyTitle(this.$text('UserLabels'));
+    },
     labelsAll() {
       return this.$store.getters['a/base/userLabels'];
     },
   },
+  created() {
+    this.init();
+  },
   methods: {
-    onDone() {
+    async init() {
+      await this.$store.dispatch('a/base/getLabels');
+      this.item = await this.$api.post('/a/base/atom/read', {
+        key: { atomId: this.atomId },
+      });
+      this.labels = JSON.parse(this.item.labels) || [];
+    },
+    async onPerformDone() {
+      // sort
+      this.labels.sort((a, b) => a - b);
+      // post
+      await this.$api.post('/a/base/atom/labels', {
+        key: { atomId: this.atomId },
+        atom: { labels: this.labels },
+      });
+      this.$meta.eventHub.$emit('atom:labels', { key: { atomId: this.atomId }, labels: this.labels });
+      // close
+      this.page_setDirty(false);
       this.$f7router.back();
     },
-    onAddLabel() {
+    onPerformAddLabel() {
       this.labelId = 0;
       this.labelText = '';
       this.labelColor = '';
@@ -110,7 +136,7 @@ export default {
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
-    onSubmit() {
+    async onPerformSubmit() {
       if (!this.labelText || !this.labelColor) return;
       const labels = this.$meta.util.extend({}, this.labelsAll);
       if (this.labelId === 0) {
@@ -118,14 +144,11 @@ export default {
       } else {
         labels[this.labelId] = { text: this.labelText, color: this.labelColor };
       }
-      return this.$api
-        .post('/a/base/user/setLabels', {
-          labels,
-        })
-        .then(() => {
-          this.$store.commit('a/base/setLabels', labels);
-          this.sheetOpened = false;
-        });
+      await this.$api.post('/a/base/user/setLabels', {
+        labels,
+      });
+      this.$store.commit('a/base/setLabels', labels);
+      this.sheetOpened = false;
     },
     onColorSelect(color) {
       this.labelColor = color.value;
@@ -144,32 +167,12 @@ export default {
       const index = this.labels.indexOf(key);
       if (event.currentTarget.checked && index === -1) {
         this.labels.push(key);
+        this.page_setDirty(true);
       } else if (!event.currentTarget.checked && index > -1) {
         this.labels.splice(index, 1);
+        this.page_setDirty(true);
       }
-      // sort
-      this.labels.sort((a, b) => a - b);
-      // post
-      this.$api
-        .post('/a/base/atom/labels', {
-          key: { atomId: this.atomId },
-          atom: { labels: this.labels },
-        })
-        .then(() => {
-          this.$meta.eventHub.$emit('atom:labels', { key: { atomId: this.atomId }, labels: this.labels });
-        });
     },
-  },
-  created() {
-    this.$store.dispatch('a/base/getLabels');
-    this.$api
-      .post('/a/base/atom/read', {
-        key: { atomId: this.atomId },
-      })
-      .then(data => {
-        this.item = data;
-        this.labels = JSON.parse(this.item.labels) || [];
-      });
   },
 };
 </script>
