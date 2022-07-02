@@ -1,6 +1,46 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
+    async star({ key, atom: { star = 1 }, user }) {
+      // get
+      const atom = await this.get({ atomId: key.atomId });
+      if (atom.atomStage !== 1) ctx.throw.module(moduleInfo.relativeName, 1010);
+      // check if exists
+      let diff = 0;
+      const _star = await this.modelAtomStar.get({
+        userId: user.id,
+        atomId: key.atomId,
+      });
+      if (_star && !star) {
+        diff = -1;
+        // delete
+        await this.modelAtomStar.delete({
+          id: _star.id,
+        });
+      } else if (!_star && star) {
+        diff = 1;
+        // new
+        await this.modelAtomStar.insert({
+          userId: user.id,
+          atomId: key.atomId,
+          star: 1,
+        });
+      }
+      // starCount
+      let starCount = atom.starCount;
+      if (diff !== 0) {
+        starCount += diff;
+        await this.modelAtom.update({
+          id: key.atomId,
+          starCount,
+        });
+      }
+      // notify
+      this._notifyStars();
+      // ok
+      return { star, starCount };
+    }
+
     async labels({ key, atom: { labels = null }, user }) {
       // get
       const atom = await this.get({ atomId: key.atomId });
