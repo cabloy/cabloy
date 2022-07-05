@@ -53,10 +53,12 @@ export default {
           }
         } else {
           // just change
-          this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
-            ...item,
-            star: data.star,
-          });
+          if (foundItem) {
+            this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
+              ...item,
+              star: data.star,
+            });
+          }
         }
       });
     },

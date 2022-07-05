@@ -49,10 +49,12 @@ export default {
           }
         } else {
           // just change
-          this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
-            ...item,
-            labels: JSON.stringify(data.labels),
-          });
+          if (foundItem) {
+            this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, {
+              ...item,
+              labels: JSON.stringify(data.labels),
+            });
+          }
         }
       });
     },
