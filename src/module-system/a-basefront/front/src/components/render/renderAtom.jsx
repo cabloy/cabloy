@@ -13,7 +13,7 @@ export default {
   created() {},
   methods: {
     async onChooseAtom() {
-      const { key, property, validate } = this.context;
+      const { key, property } = this.context;
       // target
       let target = property.ebParams.target;
       if (target === undefined) target = '_self';
@@ -22,7 +22,9 @@ export default {
       // selectOptions
       const selectOptions = property.ebParams.selectOptions;
       // atomId: maybe from host
-      let atomId = (validate.host && validate.host.atomId) || property.ebParams.atomId;
+      //         should not from host
+      // let atomId = (validate.host && validate.host.atomId) || property.ebParams.atomId;
+      let atomId = property.ebParams.atomId;
       if (typeof atomId === 'string') {
         atomId = this.context.getValue(atomId);
       } else {
