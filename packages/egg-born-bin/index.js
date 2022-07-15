@@ -38,9 +38,10 @@ class EggBornBinCommand extends Command {
     Object.assign(argv, this._prepareCliFullName(parsed._[1]));
     // token
     const tokenName = parsed.token || parsed.t;
-    const token = yield eggBornUtils.openAuthConfig.prepareToken(argv.projectPath, tokenName);
+    const token = yield utils.prepareToken(argv.projectPath, tokenName, { warnWhenEmpty: true });
     if (!token) {
-      console.log(chalk.red(`Open auth token not found: ${tokenName}\n`));
+      // interrupted
+      console.log(chalk.red('  cli interrupted!\n'));
       return;
     }
     // check dev server

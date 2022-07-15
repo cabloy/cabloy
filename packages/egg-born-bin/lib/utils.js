@@ -9,6 +9,19 @@ const eggBornUtils = require('egg-born-utils');
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 const utils = {
+  async prepareToken(projectPath, tokenName, options) {
+    options = options || {};
+    const warnWhenEmpty = options.warnWhenEmpty;
+    const token = await eggBornUtils.openAuthConfig.prepareToken(projectPath, tokenName);
+    if (!token && warnWhenEmpty) {
+      console.log(chalk.red(`Open auth token not found: ${tokenName}`));
+      if (!tokenName) {
+        const message = `Run ${chalk.keyword('orange')('> npm run test:backend <')} first!`;
+        console.log('\n' + boxen(message, boxenOptions) + '\n');
+      }
+    }
+    return token;
+  },
   async checkIfDevServerRunning(options) {
     options = options || {};
     const projectPath = options.projectPath;
