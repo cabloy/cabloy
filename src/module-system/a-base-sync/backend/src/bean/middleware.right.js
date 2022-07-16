@@ -207,7 +207,10 @@ async function _checkAtomClassExpect({ options, ctx }) {
   if (!atomClass) {
     atomClass = await ctx.bean.atomClass.get(atomClassExpect);
   }
-  ctx.request.body.atomClass = atomClass; // force consistent for safe
+  // force consistent for safe
+  if (options.atomClassForce !== false) {
+    ctx.request.body.atomClass = atomClass;
+  }
   // ok
   return {
     atomKey,
