@@ -97,19 +97,19 @@ export default {
             atomClassName: item.atomClassName,
             name: item.actionName,
           });
+          const _item = {
+            _key,
+            ...item,
+          };
           if (!action) {
-            console.log(
-              `action not exists: ${item.module}:${item.atomClassName}:${item.actionName}:${item.actionCode}`
-            );
+            _item.title = item.actionName;
+            _item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
           } else {
-            // push
-            group.items.push({
-              _key,
-              title: action.title,
-              titleLocale: action.titleLocale,
-              ...item,
-            });
+            _item.title = action.title;
+            _item.titleLocale = action.titleLocale;
           }
+          // push
+          group.items.push(_item);
         }
       }
       return groups;
