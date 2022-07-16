@@ -97,13 +97,19 @@ export default {
             atomClassName: item.atomClassName,
             name: item.actionName,
           });
-          // push
-          group.items.push({
-            _key,
-            title: action.title,
-            titleLocale: action.titleLocale,
-            ...item,
-          });
+          if (!action) {
+            console.log(
+              `action not exists: ${item.module}:${item.atomClassName}:${item.actionName}:${item.actionCode}`
+            );
+          } else {
+            // push
+            group.items.push({
+              _key,
+              title: action.title,
+              titleLocale: action.titleLocale,
+              ...item,
+            });
+          }
         }
       }
       return groups;
