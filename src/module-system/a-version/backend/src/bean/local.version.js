@@ -258,20 +258,16 @@ module.exports = app => {
       // dbs
       const mysql = app.mysql.get('__ebdb');
       let dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
-      console.log('------------');
-      console.log(dbs);
       // map
       dbs = dbs.map(db => {
         const name = db[Object.keys(db)[0]];
         return { name };
       });
       // filter
-      dbs.filter(db => {
-        const _time = db.name.substring(0, dbPrefix.length);
-        // console.log(_time);
-        return false;
+      dbs = dbs.filter(db => {
+        const _time = db.name.substring(dbPrefix.length);
+        return _time.length === 16;
       });
-      // console.log(dbs);
       // ok
       return dbs;
     }
