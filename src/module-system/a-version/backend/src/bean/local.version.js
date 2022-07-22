@@ -248,24 +248,56 @@ module.exports = app => {
       await this.ctx.bean.role.build();
     }
 
-    async __database() {
+    __getDatabasePrefix() {
+      return `egg-born-test-${app.name}`;
+    }
+
+    async __fetchDatabases() {
       // db prefix
-      const dbPrefix = `egg-born-test-${app.name}`;
+      const dbPrefix = this.__getDatabasePrefix();
+      // dbs
+      const mysql = app.mysql.get('__ebdb');
+      let dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+      console.log('------------');
+      console.log(dbs);
+      // map
+      dbs = dbs.map(db => {
+        const name = db[Object.keys(db)[0]];
+        return { name };
+      });
+      // filter
+      dbs.filter(db => {
+        const _time = db.name.substring(0, dbPrefix.length);
+        // console.log(_time);
+        return false;
+      });
+      // console.log(dbs);
+      // ok
+      return dbs;
+    }
+
+    async __createDatabase() {
+      // db prefix
+      const dbPrefix = this.__getDatabasePrefix();
+      // create
+      const mysql = app.mysql.get('__ebdb');
+      const databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
+      await mysql.query(`CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`);
+      return databaseName;
+    }
+
+    async __database() {
       // dev/debug db
       if (app.meta.isLocal) {
         const mysqlConfig = app.config.mysql.clients.__ebdb;
         if ((mysqlConfig.database === 'sys' || mysqlConfig.database === 'mysql') && !app.mysql.__ebdb_test) {
           let databaseName;
-          const mysql = app.mysql.get('__ebdb');
-          const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+          const dbs = await this.__fetchDatabases();
           if (dbs.length === 0) {
-            databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-            await mysql.query(
-              `CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`
-            );
+            databaseName = await this.__createDatabase();
           } else {
             const db = dbs[0];
-            databaseName = db[Object.keys(db)[0]];
+            databaseName = db.name;
           }
           // create test mysql
           mysqlConfig.database = databaseName;
@@ -278,16 +310,13 @@ module.exports = app => {
       if (app.meta.isTest && !app.mysql.__ebdb_test) {
         // drop old databases
         const mysql = app.mysql.get('__ebdb');
-        const dbs = await mysql.query(`show databases like \'${dbPrefix}-%\'`);
+        const dbs = await this.__fetchDatabases();
         for (const db of dbs) {
-          const name = db[Object.keys(db)[0]];
+          const name = db.name;
           await mysql.query(`drop database \`${name}\``);
         }
         // create database
-        const databaseName = `${dbPrefix}-${moment().format('YYYYMMDD-HHmmss')}`;
-        await mysql.query(
-          `CREATE DATABASE \`${databaseName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`
-        );
+        const databaseName = await this.__createDatabase();
         // create test mysql
         const mysqlConfig = app.config.mysql.clients.__ebdb;
         mysqlConfig.database = databaseName;
