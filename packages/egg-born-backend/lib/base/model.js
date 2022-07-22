@@ -288,7 +288,7 @@ function _formatValue(db, value) {
   if (value.op === 'likeLeft') return `'%${val2}'`;
   if (value.op === 'likeRight') return `'${val2}%'`;
   // in
-  if (value.op === 'in') {
+  if (value.op === 'in' || value.op === 'notIn') {
     const arr = typeof value.val === 'string' ? value.val.split(',') : value.val;
     return `(${db.format('?', [arr])})`;
   }
@@ -297,5 +297,6 @@ function _formatValue(db, value) {
 }
 
 function _safeOp(op) {
+  if (op === 'notIn') return 'not in';
   return op.replace(/[\\\.*#%'"`;, ]/g, '');
 }
