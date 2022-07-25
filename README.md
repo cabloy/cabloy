@@ -45,6 +45,10 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 - [官网 && 文档](https://cabloy.com)
 - [在线教程](https://cabloy.com/zh-cn/articles/tutorial-introduce.html)
 
+## 视频课程
+
+- [CabloyJS 全栈框架：从入门到精通](https://course.cabloy.com/zh-cn/articles/A-001.html)
+
 ## 在线演示
 
 请使用 PC 和 Mobile 分别访问演示站点，体验与众不同的`pc=mobile+pad`自适应风格，真正的跨多端架构，一套代码同时适配 PC 端和 Mobile 端
