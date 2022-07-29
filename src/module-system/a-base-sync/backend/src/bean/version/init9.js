@@ -1,7 +1,7 @@
 module.exports = function (ctx) {
   class VersionInit {
     async run() {
-      // don nothing, see also: init13.js
+      // do nothing, see also: init14.js
       // // add role rights
       // const roleRights = [
       //   { roleName: 'system', action: 'create' },
