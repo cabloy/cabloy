@@ -121,7 +121,7 @@ module.exports = app => {
   const _app = {
     atomName: 'General',
     atomStaticKey: 'appGeneral',
-    atomRevision: 1,
+    atomRevision: 5,
     atomCategoryId: 'General',
     description: '',
     appIcon: '::radio-button-unchecked',
