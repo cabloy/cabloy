@@ -4,14 +4,14 @@ module.exports = app => {
   const resource = {
     atomName: 'Attachments',
     atomStaticKey: 'mineMineAttachments',
-    atomRevision: 2,
+    atomRevision: 4,
     atomCategoryId: 'a-base:mine.Mine',
     resourceType: 'a-base:mine',
     resourceConfig: JSON.stringify({
       actionPath,
     }),
     resourceIcon: '::attachment-line',
-    appKey: 'a-app:appDefault',
+    appKey: 'a-appbooster:appGeneral',
     resourceRoles: 'root',
     resourceSorting: 1,
   };
