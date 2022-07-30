@@ -104,16 +104,24 @@ module.exports = {
 
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const info = {
+    mine: {
+      layout: true,
+    },
+  };
   const content = {
     presets: {
       anonymous: {},
-      authenticated: {},
+      authenticated: {
+        mobile: info,
+        pc: info,
+      },
     },
   };
   const _app = {
     atomName: 'General',
     atomStaticKey: 'appGeneral',
-    atomRevision: 0,
+    atomRevision: 1,
     atomCategoryId: 'General',
     description: '',
     appIcon: '::radio-button-unchecked',
