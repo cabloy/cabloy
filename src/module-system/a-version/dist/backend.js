@@ -381,11 +381,11 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
     async execute() {
-      const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
-      return await bean.databaseInitStartup();
+      const beanVersion = this.ctx.bean.local.version;
+      return await beanVersion.databaseInitStartup();
     }
   }
 
@@ -399,11 +399,11 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
     async execute() {
-      const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
-      return await bean.databaseNameStartup();
+      const beanVersion = this.ctx.bean.local.version;
+      return await beanVersion.databaseNameStartup();
     }
   }
 
@@ -417,12 +417,12 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Startup extends app.meta.BeanBase {
     async execute(context) {
       const options = context.options;
-      const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.local.version`);
-      return await bean.instanceInitStartup({ options });
+      const beanVersion = this.ctx.bean.local.version;
+      return await beanVersion.instanceInitStartup({ options });
     }
   }
 
