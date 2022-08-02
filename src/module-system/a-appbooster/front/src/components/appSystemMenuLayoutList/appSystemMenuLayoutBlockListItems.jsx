@@ -21,8 +21,16 @@ function installFactory(_Vue) {
         // modules
         await this.$store.dispatch('a/base/getModules');
         // settings
-        const res = await this.$api.post('/a/settings/settings/instance/list');
-        this.settingsInstance = res.list;
+        await this.__loadSettingsInstance();
+      },
+      async __loadSettingsInstance() {
+        try {
+          const res = await this.$api.post('/a/settings/settings/instance/list');
+          this.settingsInstance = res.list;
+        } catch (err) {
+          // maybe no right
+          this.settingsInstance = [];
+        }
       },
       onPerformSettingItem(event, item) {
         let action;
