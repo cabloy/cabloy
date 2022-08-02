@@ -620,6 +620,7 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
+      let _itemKeyName;
 
       let _atomClassWhere;
 
@@ -718,9 +719,11 @@ module.exports = ctx => {
       if (tableName) {
         _itemField = 'f.*,';
         _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
+        _itemKeyName = 'f.atomId';
       } else {
         _itemField = '';
         _itemJoin = '';
+        _itemKeyName = 'a.id';
       }
 
       // atomClassInner
@@ -759,7 +762,7 @@ module.exports = ctx => {
       if (resource) {
         _rightWhere = `
           exists(
-            select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and a.id=c.resourceAtomId and c.userIdWho=${userIdWho}
+            select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and ${_itemKeyName}=c.resourceAtomId and c.userIdWho=${userIdWho}
           )
         `;
       } else {
