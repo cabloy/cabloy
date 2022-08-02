@@ -51,6 +51,12 @@ export default {
       if (this.inner === undefined) return false;
       return this.inner; // null/true/false
     },
+    user() {
+      return this.contextParams.user;
+    },
+    atomClasses_modeUser() {
+      return this.user;
+    },
     atomClasses() {
       const atomClasses = [];
       if (this.optional) {

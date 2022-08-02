@@ -7,7 +7,11 @@ export default {
    * @property {object} atomClassesAll - get all atomClasses
    */
   computed: {
+    atomClasses_modeUser() {
+      return false;
+    },
     atomClassesAll() {
+      if (this.atomClasses_modeUser) return this.$store.getState('a/base/atomClassesUser');
       return this.$store.getState('a/base/atomClasses');
     },
   },
@@ -15,16 +19,22 @@ export default {
     /**
      * @function getAtomClass
      * @param {object} atomClass
-     * @returns {object}
+     * @return {object}
      */
     getAtomClass(atomClass) {
       if (!this.atomClassesAll || !atomClass) return null;
       return this.atomClassesAll[atomClass.module][atomClass.atomClassName];
     },
+    async atomClasses_loadAtomClasses() {
+      if (this.atomClasses_modeUser) {
+        await this.$store.dispatch('a/base/getAtomClassesUser');
+      } else {
+        await this.$store.dispatch('a/base/getAtomClasses');
+      }
+      this.onAtomClassesReady && this.onAtomClassesReady();
+    },
   },
   created() {
-    this.$store.dispatch('a/base/getAtomClasses').then(() => {
-      this.onAtomClassesReady && this.onAtomClassesReady();
-    });
+    this.atomClasses_loadAtomClasses();
   },
 };
