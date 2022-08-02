@@ -3,7 +3,10 @@ module.exports = ctx => {
   class Role {
     // add role right
     async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
-      // role
+      // check atomClass/action
+      const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
+      if (!_check) ctx.throw(403);
+      // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
       // scope

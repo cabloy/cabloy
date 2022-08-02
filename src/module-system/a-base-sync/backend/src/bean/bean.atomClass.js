@@ -102,6 +102,18 @@ module.exports = ctx => {
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
       return validator ? { module: atomClass.module, validator } : null;
     }
+
+    async checkRightAtomClassAction({ atomClassId, action, user }) {
+      if (!user || user.id === 0) return true;
+      const res = await ctx.model.queryOne(
+        `
+        select * from aViewUserRightAtomClass 
+          where iid=? and atomClassId=? and action=? and userIdWho=?
+      `,
+        [ctx.instance.id, atomClassId, action, user.id]
+      );
+      return !!res;
+    }
   }
 
   return AtomClass;
