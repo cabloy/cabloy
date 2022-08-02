@@ -103,6 +103,19 @@ module.exports = ctx => {
       return validator ? { module: atomClass.module, validator } : null;
     }
 
+    async atomClassesUser({ user }) {
+      // items
+      const items = await ctx.model.query(
+        `
+        select distinct atomClassId from aViewUserRightAtomClass 
+          where iid=? and userIdWho=?
+      `,
+        [ctx.instance.id, user.id]
+      );
+      const atomClasses = this.ctx.bean.base.atomClasses();
+      console.log(atomClasses);
+    }
+
     async checkRightAtomClassAction({ atomClassId, action, user }) {
       if (!user || user.id === 0) return true;
       const res = await ctx.model.queryOne(

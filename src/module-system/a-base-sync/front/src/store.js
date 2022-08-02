@@ -36,6 +36,7 @@ export default function (Vue) {
       categoryTrees: {},
       categories: {},
       tags: {},
+      atomClassesUser: null,
       // global
       locales: null,
       modules: null,
@@ -65,6 +66,7 @@ export default function (Vue) {
         state.categoryTrees = {};
         state.categories = {};
         state.tags = {};
+        state.atomClassesUser = null;
       },
       setLabels(state, labels) {
         state.labels = labels;
@@ -106,6 +108,9 @@ export default function (Vue) {
       },
       setAtomClasses(state, atomClasses) {
         state.atomClasses = atomClasses;
+      },
+      setAtomClassesUser(state, atomClassesUser) {
+        state.atomClassesUser = atomClassesUser;
       },
       setActions(state, actions) {
         state.actions = actions;
@@ -228,6 +233,21 @@ export default function (Vue) {
             .then(data => {
               data = data || {};
               commit('setAtomClasses', data);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        });
+      },
+      getAtomClassesUser({ state, commit }) {
+        return new Promise((resolve, reject) => {
+          if (state.atomClassesUser) return resolve(state.atomClassesUser);
+          Vue.prototype.$meta.api
+            .post('/a/base/atomClass/atomClassesUser')
+            .then(data => {
+              data = data || {};
+              commit('setAtomClassesUser', data);
               resolve(data);
             })
             .catch(err => {

@@ -11,6 +11,10 @@ module.exports = app => {
     async atomClass({ atomClass }) {
       return await this.ctx.bean.atomClass.get(atomClass);
     }
+
+    async atomClassesUser({ user }) {
+      return await this.ctx.bean.atomClass.atomClassesUser({ user });
+    }
   }
 
   return AtomClass;

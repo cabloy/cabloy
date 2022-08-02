@@ -21,6 +21,13 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async atomClassesUser() {
+      const res = await this.ctx.service.atomClass.atomClassesUser({
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
 
   return AtomClassController;
