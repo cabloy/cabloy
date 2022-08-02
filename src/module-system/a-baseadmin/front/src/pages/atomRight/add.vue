@@ -5,7 +5,7 @@
         <eb-link v-if="!!actionCurrent" ref="buttonSubmit" iconF7="::save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
     </eb-navbar>
-    <eb-list v-if="role" form inline-labels no-hairlines-md @submit="onFormSubmit">
+    <eb-list v-if="ready" form inline-labels no-hairlines-md @submit="onFormSubmit">
       <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
         <div slot="after">{{ atomClass && atomClass.title }}</div>
       </f7-list-item>
@@ -15,7 +15,7 @@
         :title="$text('Atom Action')"
         :smartSelectParams="{ openIn: 'page', closeOnSelect: true }"
       >
-        <eb-select name="actionName" v-model="actionName" :options="selectOptions"></eb-select>
+        <eb-select name="actionName" v-model="actionName" :options="actionSelectOptions"></eb-select>
       </f7-list-item>
       <f7-list-item v-if="!isOpenAuthScope && scopeSelfEnable" :title="$text('Scope')">
         <span class="text-color-gray">{{ $text('Self') }}</span>
@@ -37,27 +37,14 @@ export default {
     return {
       atomClass: null,
       actionName: '',
+      actionSelectOptions: null,
       scopeSelf: true,
       scope: null,
     };
   },
   computed: {
-    selectOptions() {
-      const actions = this.getActionsOfAtomClass(this.atomClass);
-      if (!actions) return null;
-      const groupAtom = { title: 'Atom Actions', options: [] };
-      const groupBulk = { title: 'Bulk Actions', options: [] };
-      for (const key in actions) {
-        const action = actions[key];
-        if (action.authorize === false) continue;
-        const option = { title: action.titleLocale, value: key };
-        if (action.code === 1 || !action.bulk) {
-          groupAtom.options.push(option);
-        } else {
-          groupBulk.options.push(option);
-        }
-      }
-      return [groupAtom, groupBulk];
+    ready() {
+      return this.role && this.actionsAll;
     },
     scopeTitle() {
       if (!this.scope) return null;
@@ -88,6 +75,7 @@ export default {
   watch: {
     atomClass() {
       this.actionName = '';
+      this.loadActionSelectOptions();
     },
   },
   methods: {
@@ -141,6 +129,28 @@ export default {
       });
       this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
       this.$f7router.back();
+    },
+    async loadActionSelectOptions() {
+      //
+      const actions = this.getActionsOfAtomClass(this.atomClass);
+      const actionsUser = await this.$api.post('/a/base/atomClass/actionsUser', {
+        atomClass: this.atomClass,
+      });
+      console.log(actionsUser);
+      //
+      const groupAtom = { title: 'Atom Actions', options: [] };
+      const groupBulk = { title: 'Bulk Actions', options: [] };
+      for (const key in actions) {
+        const action = actions[key];
+        if (action.authorize === false) continue;
+        const option = { title: action.titleLocale, value: key };
+        if (action.code === 1 || !action.bulk) {
+          groupAtom.options.push(option);
+        } else {
+          groupBulk.options.push(option);
+        }
+      }
+      return [groupAtom, groupBulk];
     },
   },
 };

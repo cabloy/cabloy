@@ -73,6 +73,12 @@ module.exports = ctx => {
       return data;
     }
 
+    async getAtomClassId(atomClass) {
+      if (atomClass.id) return atomClass.id;
+      const res = await this.get(atomClass);
+      return res.id;
+    }
+
     async getByAtomId({ atomId }) {
       const res = await this.model.query(
         `
@@ -126,8 +132,12 @@ module.exports = ctx => {
         const _atomClassesModule = _atomClasses[_moduleName];
         for (const _atomClassName in _atomClassesModule) {
           const _atomClass = _atomClassesModule[_atomClassName];
-          if (itemsMap[`${_moduleName}:${_atomClassName}`]) {
-            atomClassesModuleNew[_atomClassName] = _atomClass;
+          const _atomClassId = itemsMap[`${_moduleName}:${_atomClassName}`];
+          if (_atomClassId) {
+            atomClassesModuleNew[_atomClassName] = {
+              id: _atomClassId,
+              ..._atomClass,
+            };
           }
         }
         if (Object.keys(atomClassesModuleNew).length > 0) {
@@ -136,6 +146,19 @@ module.exports = ctx => {
       }
       // ok
       return atomClassesNew;
+    }
+
+    async actionsUser({ atomClass, user }) {
+      const atomClassId = await this.getAtomClassId(atomClass);
+      // items
+      const items = await ctx.model.query(
+        `
+      select distinct a.action from aViewUserRightAtomClass a
+          where a.iid=? and a.atomClassId=? and a.userIdWho=?
+    `,
+        [ctx.instance.id, atomClassId, user.id]
+      );
+      return items;
     }
 
     async checkRightAtomClassAction({ atomClassId, action, user }) {
