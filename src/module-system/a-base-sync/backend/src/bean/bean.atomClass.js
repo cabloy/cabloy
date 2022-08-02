@@ -107,13 +107,35 @@ module.exports = ctx => {
       // items
       const items = await ctx.model.query(
         `
-        select distinct atomClassId from aViewUserRightAtomClass 
-          where iid=? and userIdWho=?
+        select distinct a.atomClassId,b.module,b.atomClassName from aViewUserRightAtomClass a
+          inner join aAtomClass b on a.atomClassId=b.id
+            where a.iid=? and a.userIdWho=?
       `,
         [ctx.instance.id, user.id]
       );
-      const atomClasses = this.ctx.bean.base.atomClasses();
-      console.log(atomClasses);
+      const itemsMap = {};
+      for (const item of items) {
+        itemsMap[`${item.module}:${item.atomClassName}`] = item.atomClassId;
+      }
+      // atomClasses
+      const _atomClasses = ctx.bean.base.atomClasses();
+      // atomClassesNew
+      const atomClassesNew = {};
+      for (const _moduleName in _atomClasses) {
+        const atomClassesModuleNew = {};
+        const _atomClassesModule = _atomClasses[_moduleName];
+        for (const _atomClassName in _atomClassesModule) {
+          const _atomClass = _atomClassesModule[_atomClassName];
+          if (itemsMap[`${_moduleName}:${_atomClassName}`]) {
+            atomClassesModuleNew[_atomClassName] = _atomClass;
+          }
+        }
+        if (Object.keys(atomClassesModuleNew).length > 0) {
+          atomClassesNew[_moduleName] = atomClassesModuleNew;
+        }
+      }
+      // ok
+      return atomClassesNew;
     }
 
     async checkRightAtomClassAction({ atomClassId, action, user }) {
