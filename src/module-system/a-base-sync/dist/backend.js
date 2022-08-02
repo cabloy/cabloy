@@ -2995,6 +2995,12 @@ module.exports = ctx => {
       return data;
     }
 
+    async getAtomClassId(atomClass) {
+      if (atomClass.id) return atomClass.id;
+      const res = await this.get(atomClass);
+      return res.id;
+    }
+
     async getByAtomId({ atomId }) {
       const res = await this.model.query(
         `
@@ -3023,6 +3029,70 @@ module.exports = ctx => {
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
       return validator ? { module: atomClass.module, validator } : null;
+    }
+
+    async atomClassesUser({ user }) {
+      // items
+      const items = await ctx.model.query(
+        `
+        select distinct a.atomClassId,b.module,b.atomClassName from aViewUserRightAtomClass a
+          inner join aAtomClass b on a.atomClassId=b.id
+            where a.iid=? and a.userIdWho=?
+      `,
+        [ctx.instance.id, user.id]
+      );
+      const itemsMap = {};
+      for (const item of items) {
+        itemsMap[`${item.module}:${item.atomClassName}`] = item.atomClassId;
+      }
+      // atomClasses
+      const _atomClasses = ctx.bean.base.atomClasses();
+      // atomClassesNew
+      const atomClassesNew = {};
+      for (const _moduleName in _atomClasses) {
+        const atomClassesModuleNew = {};
+        const _atomClassesModule = _atomClasses[_moduleName];
+        for (const _atomClassName in _atomClassesModule) {
+          const _atomClass = _atomClassesModule[_atomClassName];
+          const _atomClassId = itemsMap[`${_moduleName}:${_atomClassName}`];
+          if (_atomClassId) {
+            atomClassesModuleNew[_atomClassName] = {
+              id: _atomClassId,
+              ..._atomClass,
+            };
+          }
+        }
+        if (Object.keys(atomClassesModuleNew).length > 0) {
+          atomClassesNew[_moduleName] = atomClassesModuleNew;
+        }
+      }
+      // ok
+      return atomClassesNew;
+    }
+
+    async actionsUser({ atomClass, user }) {
+      const atomClassId = await this.getAtomClassId(atomClass);
+      // items
+      const items = await ctx.model.query(
+        `
+      select distinct a.action from aViewUserRightAtomClass a
+          where a.iid=? and a.atomClassId=? and a.userIdWho=?
+    `,
+        [ctx.instance.id, atomClassId, user.id]
+      );
+      return items;
+    }
+
+    async checkRightAtomClassAction({ atomClassId, action, user }) {
+      if (!user || user.id === 0) return true;
+      const res = await ctx.model.queryOne(
+        `
+        select * from aViewUserRightAtomClass 
+          where iid=? and atomClassId=? and action=? and userIdWho=?
+      `,
+        [ctx.instance.id, atomClassId, action, user.id]
+      );
+      return !!res;
     }
   }
 
@@ -4824,7 +4894,10 @@ module.exports = ctx => {
   class Role {
     // add role right
     async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
-      // role
+      // check atomClass/action
+      const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
+      if (!_check) ctx.throw(403);
+      // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
       // scope
@@ -14057,6 +14130,21 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async atomClassesUser() {
+      const res = await this.ctx.service.atomClass.atomClassesUser({
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async actionsUser() {
+      const res = await this.ctx.service.atomClass.actionsUser({
+        atomClass: this.ctx.request.body.atomClass,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
   }
 
   return AtomClassController;
@@ -15779,6 +15867,8 @@ module.exports = app => {
     { method: 'post', path: 'atomClass/validatorSearch', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/checkRightCreate', controller: 'atomClass' },
     { method: 'post', path: 'atomClass/atomClass', controller: 'atomClass' },
+    { method: 'post', path: 'atomClass/atomClassesUser', controller: 'atomClass' },
+    { method: 'post', path: 'atomClass/actionsUser', controller: 'atomClass' },
     // auth
     { method: 'post', path: 'auth/echo', controller: 'auth', meta: { auth: { enable: false } } },
     { method: 'post', path: 'auth/check', controller: 'auth', meta: { auth: { user: true } } },
@@ -16022,6 +16112,14 @@ module.exports = app => {
 
     async atomClass({ atomClass }) {
       return await this.ctx.bean.atomClass.get(atomClass);
+    }
+
+    async atomClassesUser({ user }) {
+      return await this.ctx.bean.atomClass.atomClassesUser({ user });
+    }
+
+    async actionsUser({ atomClass, user }) {
+      return await this.ctx.bean.atomClass.actionsUser({ atomClass, user });
     }
   }
 
