@@ -8274,13 +8274,14 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
-      let _itemKeyName;
 
       let _atomClassWhere;
 
       let _resourceField, _resourceJoin, _resourceWhere;
 
       let _userField, _userJoin;
+
+      let _itemKeyName;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -8373,10 +8374,17 @@ module.exports = ctx => {
       if (tableName) {
         _itemField = 'f.*,';
         _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
-        _itemKeyName = 'f.atomId';
       } else {
         _itemField = '';
         _itemJoin = '';
+      }
+
+      // _itemKeyName
+      if (resource && resourceLocale) {
+        _itemKeyName = 'm.atomId';
+      } else if (tableName) {
+        _itemKeyName = 'f.atomId';
+      } else {
         _itemKeyName = 'a.id';
       }
 
