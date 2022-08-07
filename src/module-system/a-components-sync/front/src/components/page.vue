@@ -15,11 +15,18 @@ export default {
     };
   },
   mounted() {
-    const navbar = this.$$(this.$el).find('.navbar');
+    // page
+    const $page = this.$$(this.$el);
+    // navbar
+    const navbar = $page.find('.navbar');
     if (navbar.length > 0) {
       this._watchTitle = navbar[0].__vue__.$watch('title', value => {
         this.setPageTitle(value);
       });
+    }
+    // page route
+    if (this.$meta.config.env === 'development') {
+      $page.attr('data-page-url', this.$pageRoute.url);
     }
   },
   beforeDestroy() {
