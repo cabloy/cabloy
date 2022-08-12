@@ -14,6 +14,7 @@ export default [
   { path: 'user/appearance', component: load('user/appearance') },
   { path: 'user/exports', component: load('user/exports') },
   { path: 'user/alert', component: loadjsx('user/alert') },
+  { path: 'user/changeUserName', component: load('user/changeUserName') },
   { path: 'theme', component: load('theme/theme') },
   { path: 'theme/builtIn', component: load('theme/builtIn') },
   { path: 'view/pc', component: loadjsx('view/viewpc') },

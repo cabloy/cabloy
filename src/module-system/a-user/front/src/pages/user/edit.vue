@@ -14,6 +14,14 @@
       @validateItem:change="onValidateItemChange"
     >
       <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
+        <eb-list-item :title="$text('Username')">
+          <div slot="after">
+            <span>{{ user.userName }}</span>
+            <eb-link v-if="user.allowChangeUserName" eb-href="user/changeUserName" eb-target="_self">
+              {{ $text('Change') }}
+            </eb-link>
+          </div>
+        </eb-list-item>
         <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
         <f7-list-item divider></f7-list-item>
@@ -65,6 +73,7 @@ export default {
     },
   },
   created() {
+    console.log(this.user);
     const configBase = this.$meta.config.modules['a-base'];
     this.configAccount = configBase.account;
   },
