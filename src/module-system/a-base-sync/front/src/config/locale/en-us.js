@@ -32,6 +32,8 @@ export default {
   WorkplaceTitle: 'Workplace',
   DataChangedReloadConfirm: 'Data changed, do you want to reload it?',
   AtomActionSubmitConfirm: 'Are you sure to submit this draft?',
+  UsernameOld: 'Old Username',
+  UsernameNew: 'New Username',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Search Atom': 'Search Data',
