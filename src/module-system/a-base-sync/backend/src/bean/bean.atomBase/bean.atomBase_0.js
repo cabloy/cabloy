@@ -13,7 +13,11 @@ module.exports = app => {
         // draftId
         const sequence = this.ctx.bean.sequence.module(moduleInfo.relativeName);
         const draftId = await sequence.next('draft');
-        item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
+        if (atomClass.module === 'a-base' && atomClass.atomClassName === 'user') {
+          item.atomName = `${this.ctx.text('User')}__${draftId}`;
+        } else {
+          item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
+        }
       }
       // atomStaticKey
       if (!item.atomStaticKey) {
