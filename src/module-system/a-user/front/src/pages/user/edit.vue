@@ -73,7 +73,6 @@ export default {
     },
   },
   created() {
-    console.log(this.user);
     const configBase = this.$meta.config.modules['a-base'];
     this.configAccount = configBase.account;
   },
