@@ -25,6 +25,11 @@ module.exports = app => {
       return await this.ctx.bean.user.save({ user: userData });
     }
 
+    async changeUserName({ data, user }) {
+      const userData = { id: user.id, userName: data.userName };
+      return await this.ctx.bean.user.changeUserName({ user: userData });
+    }
+
     async agent({ userId }) {
       return await this.ctx.bean.user.agent({ userId });
     }

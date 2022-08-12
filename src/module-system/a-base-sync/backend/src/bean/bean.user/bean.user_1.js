@@ -119,6 +119,19 @@ module.exports = ctx => {
       }
     }
 
+    async changeUserName({ user }) {
+      // check allowChangeUserName
+      const item = await this.get({ id: user.id });
+      if (item.allowChangeUserName === 0) ctx.throw(403);
+      // change
+      user = {
+        ...user,
+        allowChangeUserName: 0,
+        lastTimeChangeUserName: new Date(),
+      };
+      await this.save({ user });
+    }
+
     async getFields({ removePrivacy }) {
       let fields = await this.model.columns();
       if (removePrivacy) {

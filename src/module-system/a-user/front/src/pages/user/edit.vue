@@ -22,7 +22,6 @@
             </eb-link>
           </div>
         </eb-list-item>
-        <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
         <eb-list-item-validate dataKey="realName"></eb-list-item-validate>
         <f7-list-item divider></f7-list-item>
         <eb-list-item :title="$text('Email')">

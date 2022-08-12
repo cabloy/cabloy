@@ -45,8 +45,9 @@ export default {
       });
       this.$meta.vueApp.reload({ echo: true, hash: this.returnTo });
     },
-    onPerformOk() {
-      return this.$refs.validate.perform();
+    async onPerformOk() {
+      await this.$view.dialog.confirm();
+      return await this.$refs.validate.perform();
     },
     onSubmit() {
       this.$refs.buttonSubmit.onClick();

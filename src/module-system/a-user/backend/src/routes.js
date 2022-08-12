@@ -21,6 +21,13 @@ module.exports = app => {
     { method: 'post', path: 'user/authenticationDisable', controller: 'user' },
     { method: 'post', path: 'user/themeLoad', controller: 'user' },
     { method: 'post', path: 'user/themeSave', controller: 'user' },
+    {
+      method: 'post',
+      path: 'user/changeUserName',
+      controller: 'user',
+      middlewares: 'validate',
+      meta: { validate: { module: 'a-base', validator: 'userChangeUserName' } },
+    },
     // public
     { method: 'post', path: 'public/profile', controller: 'public' },
   ];
