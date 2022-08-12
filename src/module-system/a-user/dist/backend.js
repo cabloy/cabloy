@@ -298,6 +298,16 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async changeUserName() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
+      const res = await this.service.user.changeUserName({
+        data: this.ctx.request.body.data,
+        user: this.ctx.state.user.agent,
+      });
+      this.ctx.success(res);
+    }
+
     async agent() {
       const res = await this.service.user.agent({ userId: this.ctx.state.user.agent.id });
       this.ctx.success(res);
@@ -542,6 +552,13 @@ module.exports = app => {
     { method: 'post', path: 'user/authenticationDisable', controller: 'user' },
     { method: 'post', path: 'user/themeLoad', controller: 'user' },
     { method: 'post', path: 'user/themeSave', controller: 'user' },
+    {
+      method: 'post',
+      path: 'user/changeUserName',
+      controller: 'user',
+      middlewares: 'validate',
+      meta: { validate: { module: 'a-base', validator: 'userChangeUserName' } },
+    },
     // public
     { method: 'post', path: 'public/profile', controller: 'public' },
   ];
@@ -600,6 +617,11 @@ module.exports = app => {
     async saveLocale({ data, user }) {
       const userData = { id: user.id, locale: data.locale };
       return await this.ctx.bean.user.save({ user: userData });
+    }
+
+    async changeUserName({ data, user }) {
+      const userData = { id: user.id, userName: data.userName };
+      return await this.ctx.bean.user.changeUserName({ user: userData });
     }
 
     async agent({ userId }) {

@@ -2568,7 +2568,11 @@ module.exports = app => {
         // draftId
         const sequence = this.ctx.bean.sequence.module(moduleInfo.relativeName);
         const draftId = await sequence.next('draft');
-        item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
+        if (atomClass.module === 'a-base' && atomClass.atomClassName === 'user') {
+          item.atomName = `${this.ctx.text('User')}__${draftId}`;
+        } else {
+          item.atomName = `${this.ctx.text('Draft')}-${draftId}`;
+        }
       }
       // atomStaticKey
       if (!item.atomStaticKey) {
@@ -7082,6 +7086,19 @@ module.exports = ctx => {
       }
     }
 
+    async changeUserName({ user }) {
+      // check allowChangeUserName
+      const item = await this.get({ id: user.id });
+      if (item.allowChangeUserName === 0) ctx.throw(403);
+      // change
+      user = {
+        ...user,
+        allowChangeUserName: 0,
+        lastTimeChangeUserName: new Date(),
+      };
+      await this.save({ user });
+    }
+
     async getFields({ removePrivacy }) {
       let fields = await this.model.columns();
       if (removePrivacy) {
@@ -9626,6 +9643,7 @@ const VersionUpdate13Fn = __webpack_require__(1379);
 const VersionUpdate14Fn = __webpack_require__(4519);
 const VersionUpdate16Fn = __webpack_require__(4938);
 const VersionUpdate17Fn = __webpack_require__(1223);
+const VersionUpdate18Fn = __webpack_require__(5140);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
@@ -9638,6 +9656,10 @@ const VersionInit15Fn = __webpack_require__(3166);
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 18) {
+        const versionUpdate18 = new (VersionUpdate18Fn(this.ctx))();
+        await versionUpdate18.run();
+      }
       if (options.version === 17) {
         const versionUpdate17 = new (VersionUpdate17Fn(this.ctx))();
         await versionUpdate17.run();
@@ -10701,6 +10723,28 @@ module.exports = function (ctx) {
   }
 
   return VersionUpdate17;
+};
+
+
+/***/ }),
+
+/***/ 5140:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionUpdate13 {
+    async run() {
+      // aUser
+      const sql = `
+      ALTER TABLE aUser
+        Add COLUMN allowChangeUserName int(11) DEFAULT '1',
+        Add COLUMN lastTimeChangeUserName timestamp DEFAULT NULL
+                `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate13;
 };
 
 
@@ -13817,11 +13861,41 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 4430:
+/***/ ((module) => {
+
+module.exports = app => {
+  const schemas = {};
+  schemas.userChangeUserName = {
+    type: 'object',
+    properties: {
+      userNameOld: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'UsernameOld',
+        ebReadOnly: true,
+      },
+      userName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'UsernameNew',
+        notEmpty: true,
+        'x-exists': true,
+      },
+    },
+  };
+  return schemas;
+};
+
+
+/***/ }),
+
 /***/ 8232:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const user = __webpack_require__(2320);
 const userAdmin = __webpack_require__(5058);
+const userChangeUserName = __webpack_require__(4430);
 const category = __webpack_require__(5440);
 const resource = __webpack_require__(4029);
 const role = __webpack_require__(6081);
@@ -13830,6 +13904,7 @@ module.exports = app => {
   const schemas = {};
   Object.assign(schemas, user(app));
   Object.assign(schemas, userAdmin(app));
+  Object.assign(schemas, userChangeUserName(app));
   Object.assign(schemas, category(app));
   Object.assign(schemas, resource(app));
   Object.assign(schemas, role(app));
@@ -15104,6 +15179,9 @@ module.exports = app => {
         },
         userAdminSearch: {
           schemas: 'userAdminSearch',
+        },
+        userChangeUserName: {
+          schemas: 'userChangeUserName',
         },
         category: {
           schemas: 'category',
