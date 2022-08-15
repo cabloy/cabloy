@@ -11,11 +11,11 @@ function install(_Vue) {
       const relativeName =
         Object.getPrototypeOf(this.$options).__ebModuleRelativeName || this.$options.__ebModuleRelativeName;
       if (relativeName) {
-        this.$el.setAttribute('data-component-module-name', relativeName);
+        this.$el.setAttribute('data-dev-component-module', relativeName);
       }
       const fileName = Object.getPrototypeOf(this.$options).__file || this.$options.__file;
       if (fileName) {
-        this.$el.setAttribute('data-component-file-name', fileName);
+        this.$el.setAttribute('data-dev-component-file', fileName);
       }
     },
   });
