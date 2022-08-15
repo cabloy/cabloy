@@ -31,7 +31,7 @@
     "egg-born-module-a-app": "^4.0.6",
     "egg-born-module-a-appbooster": "^4.0.8",
     "egg-born-module-a-auth": "^4.0.4",
-    "egg-born-module-a-authgithub": "^4.1.11",
+    "egg-born-module-a-authgithub": "^4.1.12",
     "egg-born-module-a-authopen": "^4.0.7",
     "egg-born-module-a-authsimple": "^4.2.18",
     "egg-born-module-a-authsms": "^4.2.18",
