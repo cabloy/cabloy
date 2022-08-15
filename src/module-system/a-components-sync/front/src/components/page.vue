@@ -26,7 +26,7 @@ export default {
     }
     // page route
     if (this.$meta.config.env === 'development') {
-      $page.attr('data-page-url', this.$pageRoute.url);
+      $page.attr('data-dev-page-url', this.$pageRoute.url);
     }
   },
   beforeDestroy() {
