@@ -7,7 +7,16 @@ function install(_Vue) {
 
   Vue.mixin({
     mounted() {
-      // console.log(this.$el);
+      if (!this.$el.setAttribute) return;
+      const relativeName =
+        Object.getPrototypeOf(this.$options).__ebModuleRelativeName || this.$options.__ebModuleRelativeName;
+      if (relativeName) {
+        this.$el.setAttribute('data-component-module-name', relativeName);
+      }
+      const fileName = Object.getPrototypeOf(this.$options).__file || this.$options.__file;
+      if (fileName) {
+        this.$el.setAttribute('data-component-file-name', fileName);
+      }
     },
   });
 }
