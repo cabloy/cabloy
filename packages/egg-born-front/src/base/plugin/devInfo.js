@@ -8,6 +8,10 @@ function install(_Vue) {
   Vue.mixin({
     mounted() {
       if (!this.$el.setAttribute) return;
+      const _componentTag = this.$options._componentTag;
+      if (_componentTag) {
+        this.$el.setAttribute('data-dev-component-tag', _componentTag);
+      }
       const relativeName =
         Object.getPrototypeOf(this.$options).__ebModuleRelativeName || this.$options.__ebModuleRelativeName;
       if (relativeName) {
