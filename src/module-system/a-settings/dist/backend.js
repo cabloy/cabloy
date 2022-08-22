@@ -374,11 +374,15 @@ module.exports = app => {
     }
 
     async instanceLoad() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.settings.instanceLoad(this.ctx.request.body);
       this.ctx.success(res);
     }
 
     async instanceSave() {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       const res = await this.service.settings.instanceSave(this.ctx.request.body);
       this.ctx.success(res);
     }
