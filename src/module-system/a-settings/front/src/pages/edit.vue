@@ -48,14 +48,18 @@ export default {
   },
   methods: {
     async _load() {
-      const data = await this.$api.post(`settings/${this.scene}/load`, {
-        module: this.module,
-      });
-      this.data = data.data;
-      this.validateParams = {
-        module: data.module,
-        validator: data.validator,
-      };
+      try {
+        const data = await this.$api.post(`settings/${this.scene}/load`, {
+          module: this.module,
+        });
+        this.data = data.data;
+        this.validateParams = {
+          module: data.module,
+          validator: data.validator,
+        };
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
+      }
     },
     onFormSubmit() {
       this.$refs.buttonSubmit.onClick();
