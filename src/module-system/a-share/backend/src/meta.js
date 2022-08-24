@@ -3,7 +3,6 @@ module.exports = app => {
   const meta = {
     base: {
       atoms: {},
-      functions: {},
     },
     validation: {
       validators: {},
