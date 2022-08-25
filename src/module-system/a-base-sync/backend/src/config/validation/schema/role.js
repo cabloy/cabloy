@@ -49,7 +49,7 @@ module.exports = app => {
         ebOptionsBlankAuto: true,
         ebParams: {
           dictKey: 'a-base:dictRoleType',
-          mode: 'tree',
+          mode: 'select',
         },
         notEmpty: {
           ignoreZero: true,
@@ -123,7 +123,7 @@ module.exports = app => {
         ebTitle: 'Role Type',
         ebParams: {
           dictKey: 'a-base:dictRoleType',
-          mode: 'tree',
+          mode: 'select',
         },
         ebOptionsBlankAuto: true,
       },
