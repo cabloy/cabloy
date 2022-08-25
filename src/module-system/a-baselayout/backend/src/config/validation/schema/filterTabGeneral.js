@@ -4,6 +4,18 @@ module.exports = app => {
   schemas.filterTabGeneral = {
     type: 'object',
     properties: {
+      stage: {
+        type: 'string',
+        ebType: 'select',
+        ebTitle: 'Stage',
+        ebParams: { openIn: 'sheet', closeOnSelect: true },
+        ebDisplay: {
+          expression: '_meta.host.stages.length>1',
+        },
+        ebSearch: {
+          tableAlias: null,
+        },
+      },
       mine: {
         type: 'number',
         ebType: 'toggle',
