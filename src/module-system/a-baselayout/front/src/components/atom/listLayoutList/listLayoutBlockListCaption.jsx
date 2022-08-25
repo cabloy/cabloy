@@ -47,7 +47,7 @@ export default {
       this.$pageContainer.setPageTitle(title);
     },
     onClickStage() {
-      this.layoutManager.filter_openTab('basic');
+      this.layoutManager.filter_openTab('general');
     },
     onClickCategory() {
       this.layoutManager.filter_openTab('category');
