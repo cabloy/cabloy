@@ -27,11 +27,7 @@ export default {
           schema: this.filterContainer.schemaBasic,
           type: 'basic',
         }),
-        properties: {
-          stage: {
-            ebOptions: this.filterContainer.stages,
-          },
-        },
+        properties: {},
       };
       // render
       return (

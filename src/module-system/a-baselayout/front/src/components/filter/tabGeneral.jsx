@@ -27,7 +27,11 @@ export default {
           schema: this.filterContainer.schemaGeneral,
           type: 'general',
         }),
-        properties: {},
+        properties: {
+          stage: {
+            ebOptions: this.filterContainer.stages,
+          },
+        },
       };
       // render
       return (
