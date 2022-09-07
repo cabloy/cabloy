@@ -12,8 +12,8 @@
   "description": "<%=argv.description%>",
   "keywords": ["Cabloy Module"],
   "scripts": {
-    "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
-    "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",
+    "build:front": "node <%=argv.suite?'../../':''%>../../../scripts/egg-born-bin.js front-build-module",
+    "build:backend": "node <%=argv.suite?'../../':''%>../../../scripts/egg-born-bin.js backend-build-module",
     "build:all": "npm run build:front && npm run build:backend",
     "preversion": "npm run build:all && git add ."
   },
