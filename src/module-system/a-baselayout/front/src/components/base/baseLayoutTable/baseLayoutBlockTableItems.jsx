@@ -344,6 +344,7 @@ export default {
       if (this.enableTableHeight) {
         scroll.y = this.tableHeight;
       }
+      const indentSize = this.blockConfig.indentSize || 29;
       return (
         <a-table
           bordered
@@ -354,6 +355,7 @@ export default {
           dataSource={this.dataSource}
           pagination={false}
           scroll={scroll}
+          indentSize={indentSize}
           onChange={this.onTableChange}
           customRow={this._customRow}
           expandIcon={this._expandIcon}
