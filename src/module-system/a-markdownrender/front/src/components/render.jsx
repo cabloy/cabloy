@@ -67,7 +67,7 @@ export default {
       await this.$meta.module.use(this.$meta.config.markdown.style.module);
       await this._setHtml(this.htmlInner);
       // watch atom changed
-      if (this.host.atom) {
+      if (this.host && this.host.atom) {
         this._unwatch = this.$watch('host.atom', () => {
           this.__changeHtml();
         });
