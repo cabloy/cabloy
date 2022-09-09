@@ -1,5 +1,3 @@
-const utils = require('../../common/utils.js');
-
 module.exports = {
   async: true,
   type: 'string',
@@ -19,18 +17,17 @@ module.exports = {
       const atomId = ctx.meta.validateHost.key.atomId;
       const atomClass = ctx.meta.validateHost.atomClass;
       //   read by atomClass, atomLanguage, slug
+      const atomLanguageClause = rootData.atomLanguage ? 'and a.atomLanguage=?' : '';
       const items = await ctx.model.query(
         `
           select a.atomStage,a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${
-                rootData.atomLanguage ? 'and a.atomLanguage=?' : ''
-              }
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${atomLanguageClause}
           `,
         [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
       );
       // check draft/formal
-      const checkExists = await utils.checkAtomIdExists({ ctx, atomId, items });
+      const checkExists = await ctx.bean.util.checkAtomIdExists({ ctx, atomId, items });
       if (checkExists) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
         throw new ctx.app.meta.ajv.ValidationError(errors);
