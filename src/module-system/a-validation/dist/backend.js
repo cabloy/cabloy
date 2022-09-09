@@ -120,9 +120,7 @@ function _filterProperties({ ajv, properties, data, filterOptions }) {
 /***/ }),
 
 /***/ 946:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const utils = __webpack_require__(294);
+/***/ ((module) => {
 
 module.exports = {
   async: true,
@@ -142,17 +140,16 @@ module.exports = {
       const atomId = ctx.meta.validateHost.key.atomId;
       const atomClass = ctx.meta.validateHost.atomClass;
       //   read by atomClass, atomLanguage, atomName
+      const atomLanguageClause = rootData.atomLanguage ? 'and a.atomLanguage=?' : '';
       const items = await ctx.model.query(
         `
           select a.atomStage,a.id from aAtom a
-              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${
-                rootData.atomLanguage ? 'and a.atomLanguage=?' : ''
-              }
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and a.atomName=? ${atomLanguageClause}
           `,
         [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
       );
       // check draft/formal
-      const checkExists = await utils.checkAtomIdExists({ ctx, atomId, items });
+      const checkExists = await ctx.bean.util.checkAtomIdExists({ atomId, items });
       if (checkExists) {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
         const message = `${_title} ${ctx.text('ExistsValidation')}`;
@@ -266,9 +263,7 @@ function checkIfEmpty(schema, schemaProperty, value) {
 /***/ }),
 
 /***/ 10:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const utils = __webpack_require__(294);
+/***/ ((module) => {
 
 module.exports = {
   async: true,
@@ -289,18 +284,17 @@ module.exports = {
       const atomId = ctx.meta.validateHost.key.atomId;
       const atomClass = ctx.meta.validateHost.atomClass;
       //   read by atomClass, atomLanguage, slug
+      const atomLanguageClause = rootData.atomLanguage ? 'and a.atomLanguage=?' : '';
       const items = await ctx.model.query(
         `
           select a.atomStage,a.id from aAtom a
             left join aCmsArticle b on a.id=b.atomId
-              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${
-                rootData.atomLanguage ? 'and a.atomLanguage=?' : ''
-              }
+              where a.atomStage in (0,1) and a.iid=? and a.deleted=0 and a.atomClassId=? and b.slug=? ${atomLanguageClause}
           `,
         [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
       );
       // check draft/formal
-      const checkExists = await utils.checkAtomIdExists({ ctx, atomId, items });
+      const checkExists = await ctx.bean.util.checkAtomIdExists({ atomId, items });
       if (checkExists) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
         throw new ctx.app.meta.ajv.ValidationError(errors);
@@ -541,30 +535,6 @@ module.exports = app => {
     },
   };
   return beans;
-};
-
-
-/***/ }),
-
-/***/ 294:
-/***/ ((module) => {
-
-module.exports = {
-  // check draft/formal
-  async checkAtomIdExists({ ctx, atomId, items }) {
-    if (items.length === 0) return false;
-    const _atomOld = await ctx.bean.atom.modelAtom.get({ id: atomId });
-    const atomIds = new Set([atomId]);
-    if (_atomOld.atomIdDraft) {
-      atomIds.add(_atomOld.atomIdDraft);
-    }
-    if (_atomOld.atomIdFormal) {
-      atomIds.add(_atomOld.atomIdFormal);
-    }
-    return items.some(item => {
-      return !atomIds.has(item.id);
-    });
-  },
 };
 
 
