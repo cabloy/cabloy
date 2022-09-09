@@ -25,7 +25,7 @@ module.exports = {
         [ctx.instance.id, atomClass.id, atomName, rootData.atomLanguage]
       );
       // check draft/formal
-      const checkExists = await ctx.bean.util.checkAtomIdExists({ ctx, atomId, items });
+      const checkExists = await ctx.bean.util.checkAtomIdExists({ atomId, items });
       if (checkExists) {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
         const message = `${_title} ${ctx.text('ExistsValidation')}`;

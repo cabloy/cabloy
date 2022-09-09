@@ -27,7 +27,7 @@ module.exports = {
         [ctx.instance.id, atomClass.id, slug, rootData.atomLanguage]
       );
       // check draft/formal
-      const checkExists = await ctx.bean.util.checkAtomIdExists({ ctx, atomId, items });
+      const checkExists = await ctx.bean.util.checkAtomIdExists({ atomId, items });
       if (checkExists) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
         throw new ctx.app.meta.ajv.ValidationError(errors);
