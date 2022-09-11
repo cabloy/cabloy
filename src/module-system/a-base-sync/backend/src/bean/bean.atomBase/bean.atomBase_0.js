@@ -169,13 +169,8 @@ module.exports = app => {
           await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
         }
       }
-      // resource: update locales
-      if (_atomClass.resource && atomStage === 1 && item.atomName) {
-        await this.ctx.bean.resource.setLocales({
-          atomId: key.atomId,
-          atomName: item.atomName,
-        });
-      }
+      // handle resource
+      await this._writeHandleResource({ _atomClass, key, item });
       // remove fields.custom
       const fieldsCustom = _atomClass.fields && _atomClass.fields.custom;
       if (fieldsCustom) {

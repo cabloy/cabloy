@@ -11,8 +11,12 @@ const __atomBasicFields = [
 ];
 
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase {
+    get modelResourceRole() {
+      return this.ctx.model.module(moduleInfo.relativeName).resourceRole;
+    }
+
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {
       // write atom
       const atom = {};
@@ -78,6 +82,34 @@ module.exports = app => {
         };
       }
       return _item;
+    }
+
+    async _writeHandleResource({ _atomClass, key, item }) {
+      // atomId/stage
+      const atomId = key.atomId;
+      const atomStage = item.atomStage;
+      if (_atomClass.resource && atomStage === 1) {
+        // update locales
+        if (item.atomName) {
+          await this.ctx.bean.resource.setLocales({
+            atomId,
+            atomName: item.atomName,
+          });
+        }
+        // role
+        //   check if any role exists
+        const right = await this.modelResourceRole.get({
+          atomId,
+        });
+        if (!right) {
+          // always add role of template.system when no records
+          const roleSystem = await this.ctx.bean.role.parseRoleName({ roleName: 'template.system' });
+          await this.ctx.bean.resource.addResourceRole({
+            atomId,
+            roleId: roleSystem.id,
+          });
+        }
+      }
     }
   }
 
