@@ -1084,6 +1084,54 @@ module.exports = ctx => {
       return resFile;
     }
 
+    async importBulk({ atomClass, options, file, user }) {
+      // atomClass
+      let _atomClass;
+      if (atomClass) {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      }
+      // options
+      if (!options) {
+        const actionBase = ctx.bean.base.action({
+          module: atomClass.module,
+          atomClassName: atomClass.atomClassName,
+          name: 'importBulk',
+        });
+        // options
+        options = actionBase.params;
+      }
+      // prepare file
+      if (options.file.mode === 'buffer') {
+        const res = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });
+        options.file.buffer = res.buffer;
+      }
+      // import
+      let resImport;
+      if (options.transaction) {
+        resImport = await ctx.transaction.begin(async () => {
+          return await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+        });
+      } else {
+        resImport = await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+      }
+      // delete file
+      await ctx.bean.file.delete({ downloadId: file.downloadId });
+      // ok
+      return resImport;
+    }
+
+    async _importBulk_inner({ atomClass, _atomClass, options, file, user }) {
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, options, file, user },
+        fn: 'importBulk',
+      });
+    }
+
     // atom other functions
 
     async get({ atomId }) {
@@ -2812,6 +2860,10 @@ module.exports = app => {
       };
       // ok
       return { type: 'buffer', data: buffer, meta };
+    }
+
+    async importBulk(/* {  atomClass, options, file , user }*/) {
+      // do nothing
     }
 
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
@@ -12198,7 +12250,7 @@ module.exports = app => {
 
         deleteBulk: 35,
         exportBulk: 36,
-        // importBulk: 37,
+        importBulk: 37,
         // reportBulk: 38,
         layoutBulk: 45,
 
@@ -12303,6 +12355,22 @@ module.exports = app => {
           bulk: true,
           select: null,
           icon: { f7: '::export' },
+        },
+        importBulk: {
+          title: 'Import',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'actionBulk',
+          bulk: true,
+          select: null,
+          icon: { f7: '::import' },
+          params: {
+            file: {
+              mode: 'buffer',
+            },
+            progress: true,
+            transaction: true,
+            accept: '',
+          },
         },
         layoutBulk: {
           title: 'Layout',
@@ -12498,6 +12566,7 @@ module.exports = {
   Clone: '克隆',
   Export: '导出',
   Exports: '导出',
+  Import: '导入',
   Save: '保存',
   Submit: '提交',
   Atom: '数据',
@@ -14131,6 +14200,15 @@ module.exports = app => {
         atomClass: this.ctx.request.body.atomClass,
         options: this.ctx.request.body.options,
         fields: this.ctx.request.body.fields,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async importBulk() {
+      const res = await this.ctx.service.atom.importBulk({
+        atomClass: this.ctx.request.body.atomClass,
+        file: this.ctx.request.body.file,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
@@ -15892,6 +15970,12 @@ module.exports = app => {
     },
     {
       method: 'post',
+      path: 'atom/importBulk',
+      controller: 'atom',
+      meta: { right: { type: 'atom', action: 'importBulk' } },
+    },
+    {
+      method: 'post',
       path: 'atom/star',
       controller: 'atom',
       meta: {
@@ -16172,6 +16256,28 @@ module.exports = app => {
 
     async exportBulk({ atomClass, options, fields, user }) {
       return await this.ctx.bean.atom.exportBulk({ atomClass, options, fields, user });
+    }
+
+    async importBulk({ atomClass, file, user }) {
+      const actionBase = this.ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: 'importBulk',
+      });
+      // options
+      const options = actionBase.params;
+      if (options.progress) {
+        const progressId = await this.ctx.bean.progress.create();
+        options.progressId = progressId;
+        // background
+        this.ctx.runInBackground(async () => {
+          // importBulk
+          await this.ctx.bean.atom.importBulk({ atomClass, options, file, user });
+        });
+        return { progressId };
+      }
+      // importBulk
+      await this.ctx.bean.atom.importBulk({ atomClass, options, file, user });
     }
 
     async star({ key, atom, user }) {
