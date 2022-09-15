@@ -509,7 +509,25 @@ module.exports = ctx => {
       return resFile;
     }
 
-    async importBulk({ atomClass, file, user }) {}
+    async importBulk({ atomClass, file, user }) {
+      // atomClass
+      let _atomClass;
+      if (atomClass) {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      }
+      // export
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const resImport = await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, file, user },
+        fn: 'importBulk',
+      });
+      // ok
+      return resImport;
+    }
 
     // atom other functions
 

@@ -259,6 +259,11 @@ module.exports = app => {
       return { type: 'buffer', data: buffer, meta };
     }
 
+    async importBulk({ /* atomClass, options,*/ file /* , user*/ }) {
+      // read
+      // delete file
+    }
+
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
       return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
     }
