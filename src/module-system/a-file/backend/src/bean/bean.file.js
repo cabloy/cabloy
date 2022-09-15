@@ -100,15 +100,16 @@ module.exports = ctx => {
       return await this.list({ key, options, user });
     }
 
-    async delete({ fileId, user }) {
+    async delete({ downloadId, fileId, user }) {
       // file
-      const file = await this.modelFile.get({ id: fileId });
+      const file = await this.getFile({ downloadId, fileId });
+      if (!file) ctx.throw(404);
       // check right
       if (user && user.id) {
         await this.fileUpdateCheck({ file, user });
       }
       // delete
-      await this.modelFile.delete({ id: fileId });
+      await this.modelFile.delete({ id: file.id });
       // attachmentCount
       if (file.atomId && file.attachment) {
         await ctx.bean.atom.attachment({ key: { atomId: file.atomId }, atom: { attachment: -1 } });
@@ -336,15 +337,21 @@ module.exports = ctx => {
       }
     }
 
-    // inner invoke
-    async fileInfo({ downloadId }) {
-      // downloadId
-      if (!downloadId) ctx.throw(404);
-      const extPos = downloadId.indexOf('.');
-      if (extPos > -1) downloadId = downloadId.substr(0, extPos);
+    async getFile({ downloadId, fileId }) {
+      let file;
+      if (downloadId) {
+        const extPos = downloadId.indexOf('.');
+        if (extPos > -1) downloadId = downloadId.substr(0, extPos);
+        file = await this.modelFile.get({ downloadId });
+      } else if (fileId) {
+        file = await this.modelFile.get({ id: fileId });
+      }
+      return file;
+    }
 
-      // get file
-      const file = await this.modelFile.get({ downloadId });
+    // inner invoke
+    async fileInfo({ downloadId, fileId }) {
+      const file = await this.getFile({ downloadId, fileId });
       if (!file) ctx.throw(404);
 
       // absolutePath
@@ -354,6 +361,15 @@ module.exports = ctx => {
       return {
         file,
         absolutePath,
+      };
+    }
+
+    async loadBuffer({ downloadId }) {
+      const fileInfo = await this.fileInfo({ downloadId });
+      const buffer = await fse.readFile(fileInfo.absolutePath);
+      return {
+        ...fileInfo,
+        buffer,
       };
     }
 

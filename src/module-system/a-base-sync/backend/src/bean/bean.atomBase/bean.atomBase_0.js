@@ -259,9 +259,8 @@ module.exports = app => {
       return { type: 'buffer', data: buffer, meta };
     }
 
-    async importBulk({ /* atomClass, options,*/ file /* , user*/ }) {
-      // read
-      // delete file
+    async importBulk(/* {  atomClass, options, file , user }*/) {
+      // do nothing
     }
 
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {

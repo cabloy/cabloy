@@ -516,17 +516,42 @@ module.exports = ctx => {
         atomClass = await ctx.bean.atomClass.get(atomClass);
         _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       }
-      // export
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      const resImport = await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, file, user },
-        fn: 'importBulk',
+      // action
+      const actionBase = ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: 'importBulk',
       });
+      // options
+      const options = actionBase.params;
+      // prepare file
+      if (options.file.mode === 'buffer') {
+        options.file.buffer = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });
+      }
+      // import
+      let resImport;
+      if (options.transaction) {
+        resImport = await ctx.transaction.begin(async () => {
+          return await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+        });
+      } else {
+        resImport = await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+      }
+      // delete file
+      await ctx.bean.file.delete({ downloadId: file.downloadId });
       // ok
       return resImport;
+    }
+
+    async _importBulk_inner({ atomClass, _atomClass, options, file, user }) {
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, options, file, user },
+        fn: 'importBulk',
+      });
     }
 
     // atom other functions

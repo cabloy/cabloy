@@ -150,6 +150,9 @@ module.exports = app => {
           select: null,
           icon: { f7: '::import' },
           params: {
+            file: {
+              mode: 'buffer',
+            },
             transaction: true,
             accept: '',
           },
