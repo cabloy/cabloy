@@ -526,7 +526,8 @@ module.exports = ctx => {
       const options = actionBase.params;
       // prepare file
       if (options.file.mode === 'buffer') {
-        options.file.buffer = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });
+        const res = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });
+        options.file.buffer = res.buffer;
       }
       // import
       let resImport;
