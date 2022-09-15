@@ -509,21 +509,23 @@ module.exports = ctx => {
       return resFile;
     }
 
-    async importBulk({ atomClass, file, user }) {
+    async importBulk({ atomClass, options, file, user }) {
       // atomClass
       let _atomClass;
       if (atomClass) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
         _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
       }
-      // action
-      const actionBase = ctx.bean.base.action({
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
-        name: 'importBulk',
-      });
       // options
-      const options = actionBase.params;
+      if (!options) {
+        const actionBase = ctx.bean.base.action({
+          module: atomClass.module,
+          atomClassName: atomClass.atomClassName,
+          name: 'importBulk',
+        });
+        // options
+        options = actionBase.params;
+      }
       // prepare file
       if (options.file.mode === 'buffer') {
         const res = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });

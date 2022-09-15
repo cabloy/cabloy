@@ -153,6 +153,7 @@ module.exports = app => {
             file: {
               mode: 'buffer',
             },
+            progress: true,
             transaction: true,
             accept: '',
           },

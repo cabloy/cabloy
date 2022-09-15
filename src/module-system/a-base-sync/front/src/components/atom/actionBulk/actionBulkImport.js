@@ -6,7 +6,6 @@ export default {
       const atomClass = { id: item.atomClassId };
       // 1. upload file
       const file = await this._onActionBulkImport_uploadFile();
-      console.log(file);
       if (!file) return;
       // 2. import file
       const res = await ctx.$api.post('/a/base/atom/importBulk', {

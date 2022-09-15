@@ -65,7 +65,25 @@ module.exports = app => {
     }
 
     async importBulk({ atomClass, file, user }) {
-      return await this.ctx.bean.atom.importBulk({ atomClass, file, user });
+      const actionBase = this.ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: 'importBulk',
+      });
+      // options
+      const options = actionBase.params;
+      if (options.progress) {
+        const progressId = await this.ctx.bean.progress.create();
+        options.progressId = progressId;
+        // background
+        this.ctx.runInBackground(async () => {
+          // importBulk
+          await this.ctx.bean.atom.importBulk({ atomClass, options, file, user });
+        });
+        return { progressId };
+      }
+      // importBulk
+      await this.ctx.bean.atom.importBulk({ atomClass, options, file, user });
     }
 
     async star({ key, atom, user }) {
