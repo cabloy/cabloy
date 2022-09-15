@@ -185,6 +185,8 @@ export default {
   UsernameNew: '新用户名',
   Icon: '图标',
   WorkplaceTitle: '工作台',
+  ImportCompleted: '导入完成',
+  Import: '导入',
   'Role Name': '角色名称',
   'Role Type': '角色类型',
   'New Category': '新目录',

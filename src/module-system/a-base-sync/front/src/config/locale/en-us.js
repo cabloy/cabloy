@@ -34,6 +34,7 @@ export default {
   AtomActionSubmitConfirm: 'Are you sure to submit this draft?',
   UsernameOld: 'Old Username',
   UsernameNew: 'New Username',
+  ImportCompleted: 'Import Completed',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Search Atom': 'Search Data',

@@ -10,7 +10,15 @@ export default {
       if (!file) return;
       // 2. import file
       const res = await ctx.$api.post('/a/base/atom/importBulk', { atomClass });
-      // 3. progress bar
+      // 3. progress
+      const progressId = res && res.progressId;
+      if (progressId) {
+        await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Import') });
+      }
+      // 4. reload
+      ctx.page_onRefresh();
+      // 5. toast
+      ctx.$view.toast.show({ text: this.$text('ImportCompleted') });
     },
     async _onActionBulkImport_uploadFile() {
       const { ctx, action } = this.$props;
