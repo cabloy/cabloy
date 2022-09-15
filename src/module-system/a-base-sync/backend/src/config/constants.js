@@ -36,7 +36,7 @@ module.exports = app => {
 
         deleteBulk: 35,
         exportBulk: 36,
-        // importBulk: 37,
+        importBulk: 37,
         // reportBulk: 38,
         layoutBulk: 45,
 
@@ -141,6 +141,17 @@ module.exports = app => {
           bulk: true,
           select: null,
           icon: { f7: '::export' },
+        },
+        importBulk: {
+          title: 'Import',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'actionBulk',
+          bulk: true,
+          select: null,
+          icon: { f7: '::import' },
+          params: {
+            accept: '',
+          },
         },
         layoutBulk: {
           title: 'Layout',

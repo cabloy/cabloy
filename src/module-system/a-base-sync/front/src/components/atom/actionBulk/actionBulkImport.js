@@ -1,0 +1,38 @@
+export default {
+  methods: {
+    async _onActionBulkImport() {
+      const { ctx, item } = this.$props;
+      // atomClass
+      const atomClass = { id: item.atomClassId };
+      // 1. upload file
+      const file = await this._onActionBulkImport_uploadFile();
+      console.log(file);
+      if (!file) return;
+      // 2. import file
+      const res = await ctx.$api.post('/a/base/atom/importBulk', { atomClass });
+      // 3. progress bar
+    },
+    async _onActionBulkImport_uploadFile() {
+      const { ctx, action } = this.$props;
+      return new Promise((resolve, reject) => {
+        ctx.$view.navigate('/a/file/file/upload', {
+          target: '_popup',
+          context: {
+            params: {
+              mode: 2,
+              accept: action.params.accept,
+            },
+            callback: (code, file) => {
+              if (code === 200) {
+                resolve(file);
+              }
+              if (code === false) {
+                resolve(null);
+              }
+            },
+          },
+        });
+      });
+    },
+  },
+};

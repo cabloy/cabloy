@@ -65,6 +65,7 @@ module.exports = {
   Clone: '克隆',
   Export: '导出',
   Exports: '导出',
+  Import: '导入',
   Save: '保存',
   Submit: '提交',
   Atom: '数据',
