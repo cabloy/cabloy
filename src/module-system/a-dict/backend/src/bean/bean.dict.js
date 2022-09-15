@@ -30,7 +30,7 @@ module.exports = ctx => {
       if (!this._checkIfEmptyForSelect(code)) {
         code = String(code);
         findByCode = true;
-      } else if (!title) {
+      } else if (title) {
         findByCode = false;
       } else {
         return null;
