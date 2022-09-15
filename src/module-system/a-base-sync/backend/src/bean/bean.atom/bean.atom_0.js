@@ -526,24 +526,27 @@ module.exports = ctx => {
         // options
         options = actionBase.params;
       }
-      // prepare file
-      if (options.file.mode === 'buffer') {
-        const res = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });
-        options.file.buffer = res.buffer;
+      try {
+        // prepare file
+        if (options.file.mode === 'buffer') {
+          const res = await ctx.bean.file.loadBuffer({ downloadId: file.downloadId });
+          options.file.buffer = res.buffer;
+        }
+        // import
+        let resImport;
+        if (options.transaction) {
+          resImport = await ctx.transaction.begin(async () => {
+            return await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+          });
+        } else {
+          resImport = await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+        }
+        // ok
+        return resImport;
+      } finally {
+        // delete file
+        await ctx.bean.file.delete({ downloadId: file.downloadId });
       }
-      // import
-      let resImport;
-      if (options.transaction) {
-        resImport = await ctx.transaction.begin(async () => {
-          return await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
-        });
-      } else {
-        resImport = await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
-      }
-      // delete file
-      await ctx.bean.file.delete({ downloadId: file.downloadId });
-      // ok
-      return resImport;
     }
 
     async _importBulk_inner({ atomClass, _atomClass, options, file, user }) {
