@@ -509,6 +509,8 @@ module.exports = ctx => {
       return resFile;
     }
 
+    async importBulk({ atomClass, file, user }) {}
+
     // atom other functions
 
     async get({ atomId }) {

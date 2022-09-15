@@ -150,6 +150,7 @@ module.exports = app => {
           select: null,
           icon: { f7: '::import' },
           params: {
+            transaction: true,
             accept: '',
           },
         },

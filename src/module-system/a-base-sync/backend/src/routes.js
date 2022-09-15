@@ -93,6 +93,12 @@ module.exports = app => {
     },
     {
       method: 'post',
+      path: 'atom/importBulk',
+      controller: 'atom',
+      meta: { right: { type: 'atom', action: 'importBulk' } },
+    },
+    {
+      method: 'post',
       path: 'atom/star',
       controller: 'atom',
       meta: {

@@ -174,6 +174,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async importBulk() {
+      const res = await this.ctx.service.atom.importBulk({
+        atomClass: this.ctx.request.body.atomClass,
+        file: this.ctx.request.body.file,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async star() {
       const res = await this.ctx.service.atom.star({
         key: this.ctx.request.body.key,

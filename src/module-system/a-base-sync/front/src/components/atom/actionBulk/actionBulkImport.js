@@ -9,7 +9,7 @@ export default {
       console.log(file);
       if (!file) return;
       // 2. import file
-      const res = await ctx.$api.post('/a/base/atom/importBulk', { atomClass });
+      const res = await ctx.$api.post('/a/base/atom/importBulk', { atomClass, file });
       // 3. progress
       const progressId = res && res.progressId;
       if (progressId) {
