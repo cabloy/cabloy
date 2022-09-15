@@ -24,9 +24,17 @@ module.exports = ctx => {
     }
 
     // options: separator
-    async findItem({ dictKey, code, options }) {
-      if (this._checkIfEmptyForSelect(code)) return null;
-      code = String(code);
+    //  find by code or title
+    async findItem({ dictKey, code, title, options }) {
+      let findByCode;
+      if (!this._checkIfEmptyForSelect(code)) {
+        code = String(code);
+        findByCode = true;
+      } else if (!title) {
+        findByCode = false;
+      } else {
+        return null;
+      }
       // options
       options = options || { separator: '/' };
       const separator = options.separator;
@@ -34,27 +42,34 @@ module.exports = ctx => {
       const locale = ctx.locale;
       // dict
       const dict = await this.getDict({ dictKey, locale });
-      if (!dict._cache) dict._cache = {};
-      let dictItemRes = dict._cache[code];
+      if (!dict._cacheCode) dict._cacheCode = {};
+      if (!dict._cacheTitle) dict._cacheTitle = {};
+      let dictItemRes = findByCode ? dict._cacheCode[code] : dict._cacheTitle[title];
       if (dictItemRes) return dictItemRes;
       // find
       const dictItemsRes = [];
       const res = this._findItem_loop({
         dictItemsRes,
         dictItemsMap: dict._dictItemsMap,
-        codes: code.split('/'),
+        codes: findByCode ? code.split(separator) : undefined,
+        titles: findByCode ? undefined : title.split(separator),
       });
       if (!res) return null;
+      const codeFull = findByCode ? code : dictItemsRes.map(item => item.code).join(separator);
       const titleFull = dictItemsRes.map(item => item.title).join(separator);
       const titleLocaleFull = dictItemsRes.map(item => item.titleLocale).join(separator);
       dictItemRes = {
         ...dictItemsRes[dictItemsRes.length - 1],
-        codeFull: code,
+        codeFull,
         titleFull,
         titleLocaleFull,
       };
       // cache
-      dict._cache[code] = dictItemRes;
+      if (findByCode) {
+        dict._cacheCode[code] = dictItemRes;
+      } else {
+        dict._cacheTitle[title] = dictItemRes;
+      }
       // ok
       return dictItemRes;
     }
