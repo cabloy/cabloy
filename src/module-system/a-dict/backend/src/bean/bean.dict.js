@@ -50,9 +50,11 @@ module.exports = ctx => {
       const dictItemsRes = [];
       const res = this._findItem_loop({
         dictItemsRes,
+        dictItems: dict._dictItems,
         dictItemsMap: dict._dictItemsMap,
         codes: findByCode ? code.split(separator) : undefined,
         titles: findByCode ? undefined : title.split(separator),
+        findByCode,
       });
       if (!res) return null;
       const codeFull = findByCode ? code : dictItemsRes.map(item => item.code).join(separator);
@@ -74,16 +76,28 @@ module.exports = ctx => {
       return dictItemRes;
     }
 
-    _findItem_loop({ dictItemsRes, dictItemsMap, codes }) {
-      const code = codes.shift();
-      const dictItem = dictItemsMap && dictItemsMap[code];
-      if (!dictItem) return false;
-      dictItemsRes.push(dictItem);
-      if (codes.length === 0) return true;
+    _findItem_loop({ dictItemsRes, dictItems, dictItemsMap, codes, titles, findByCode }) {
+      let dictItem;
+      if (findByCode) {
+        const code = codes.shift();
+        dictItem = dictItemsMap && dictItemsMap[code];
+        if (!dictItem) return false;
+        dictItemsRes.push(dictItem);
+        if (codes.length === 0) return true;
+      } else {
+        const title = titles.shift();
+        dictItem = dictItems && dictItems.find(item => item.title === title || item.titleLocale === title);
+        if (!dictItem) return false;
+        dictItemsRes.push(dictItem);
+        if (titles.length === 0) return true;
+      }
       return this._findItem_loop({
         dictItemsRes,
+        dictItems: dictItem.children,
         dictItemsMap: dictItem._childrenMap,
         codes,
+        titles,
+        findByCode,
       });
     }
 
