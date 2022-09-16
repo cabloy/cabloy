@@ -16269,7 +16269,8 @@ module.exports = app => {
       });
       // options
       const options = actionBase.params;
-      if (options.progress) {
+      // check isTest
+      if (options.progress && !app.meta.isTest) {
         const progressId = await this.ctx.bean.progress.create();
         options.progressId = progressId;
         // background
