@@ -1,26 +1,32 @@
 export default {
   methods: {
-    _renderFileButtonPhotoView(title, value) {
-      const photos = [
-        {
-          url: value,
-          caption: title,
-        },
-      ];
+    _renderFileButtonPhotoView(context, title, value) {
       return (
         <eb-button
           key="button-view"
           propsOnPerform={() => {
-            const params = {
-              photos,
-              type: 'page',
-              exposition: false,
-              view: this.$view.$el.f7View,
+            const { property } = context;
+            // target
+            let target = this.$meta.util.getProperty(property, 'ebParams.target');
+            if (target === undefined) target = '_self';
+            // photos
+            const photos = [
+              {
+                url: value,
+                caption: title,
+              },
+            ];
+            // pageContext
+            const pageContext = {
+              params: {
+                title: this.$text('View'),
+                photos,
+              },
             };
-            const f7PhotoBrowser = this.$f7.photoBrowser.create(params);
-            f7PhotoBrowser.open();
-            f7PhotoBrowser.once('photoBrowserClosed', () => {
-              f7PhotoBrowser.destroy();
+            // navigate
+            this.$view.navigate(`/a/photobrowser/photoBrowser?t=${Date.now()}`, {
+              target,
+              context: pageContext,
             });
           }}
         >
@@ -44,7 +50,7 @@ export default {
           </div>
         );
         if (mode === 1 && value) {
-          const domButton = this._renderFileButtonPhotoView(title, value);
+          const domButton = this._renderFileButtonPhotoView(context, title, value);
           children.push(
             <div key="value" slot="after">
               {domButton}
@@ -92,7 +98,7 @@ export default {
       const buttons = [];
       // view
       if (mode === 1 && value) {
-        buttons.push(this._renderFileButtonPhotoView(title, value));
+        buttons.push(this._renderFileButtonPhotoView(context, title, value));
       }
       buttons.push(
         <eb-button

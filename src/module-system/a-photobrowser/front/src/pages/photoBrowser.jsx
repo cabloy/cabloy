@@ -32,7 +32,7 @@ export default {
       const single = this.photos.length === 1;
       // framework7 UI swiper
       return (
-        <f7-swiper class="dian-store-banners" pagination={!single} navigation={!single} params={params}>
+        <f7-swiper class="eb-photo-browser" pagination={!single} navigation={!single} params={params}>
           {domSlides}
         </f7-swiper>
       );
