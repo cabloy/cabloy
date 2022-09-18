@@ -13,8 +13,19 @@ export default {
     photos() {
       return this.contextParams.photos;
     },
+    activeIndex() {
+      return this.contextParams.activeIndex;
+    },
+  },
+  mounted() {
+    this._initActiveIndex();
   },
   methods: {
+    _initActiveIndex() {
+      if (this.activeIndex === undefined) return;
+      const swiper = this.$f7.swiper.get(this.$refs.swiper.$el);
+      swiper.slideTo(this.activeIndex, 0, false);
+    },
     _renderPhotos() {
       if (!this.photos) return null;
       const domSlides = [];
@@ -32,7 +43,7 @@ export default {
       const single = this.photos.length === 1;
       // framework7 UI swiper
       return (
-        <f7-swiper class="eb-photo-browser" pagination={!single} navigation={!single} params={params}>
+        <f7-swiper ref="swiper" class="eb-photo-browser" pagination={!single} navigation={!single} params={params}>
           {domSlides}
         </f7-swiper>
       );

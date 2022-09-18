@@ -60,6 +60,7 @@ export default {
         if (column.visible === false) continue;
         // extend
         const _column = this.$meta.util.extend({}, column);
+        _column.columnConfig = column;
         // key
         _column.key = _column.key || _column.dataIndex;
         // title

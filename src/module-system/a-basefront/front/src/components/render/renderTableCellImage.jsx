@@ -33,6 +33,7 @@ export default {
   created() {},
   methods: {
     onClickImage() {
+      const { index, column } = this.info;
       // target
       const target = this.target === undefined ? '_popup' : this.target;
       // photos
@@ -40,8 +41,9 @@ export default {
       // pageContext
       const pageContext = {
         params: {
-          title: this.$text(this.info.column.title),
+          title: this.$text(column.columnConfig.title),
           photos,
+          activeIndex: index,
         },
       };
       // navigate
