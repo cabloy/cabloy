@@ -153,6 +153,9 @@
           "a-oauth": {
             "scripts": ["npmPublish"]
           },
+          "a-photobrowser": {
+            "scripts": ["npmPublish"]
+          },
           "a-progress": {
             "scripts": ["npmPublish"]
           },
