@@ -25,24 +25,22 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    dataSource() {
+      return this.layoutManager.data_getItems();
+    },
+  },
   created() {},
   methods: {
     onClickImage() {
       // target
       const target = this.target === undefined ? '_popup' : this.target;
-      // url
-      const url = this._getImageUrl(false);
       // photos
-      const photos = [
-        {
-          url,
-          // caption: title,
-        },
-      ];
+      const photos = this._getPhotos();
       // pageContext
       const pageContext = {
         params: {
-          title: this.$text('View'),
+          title: this.$text(this.info.column.title),
           photos,
         },
       };
@@ -52,8 +50,18 @@ export default {
         context: pageContext,
       });
     },
-    _getImageUrl(fixSize) {
-      let url = this.info.text;
+    _getPhotos() {
+      const photos = [];
+      for (const item of this.dataSource) {
+        photos.push({
+          url: this._getImageUrl(false, item),
+          caption: item.atomNameLocale || item.atomName,
+        });
+      }
+      return photos;
+    },
+    _getImageUrl(fixSize, item) {
+      let url = item ? item[this.info.column.dataIndex] : this.info.text;
       if (!url) return null;
       if (fixSize) {
         const height = this.size && this.size.height;
