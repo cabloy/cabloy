@@ -68,6 +68,11 @@ module.exports = app => {
       if (item.atomLanguage) {
         item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
       }
+      // atomDisabled
+      if (item.atomDisabled) {
+        const meta = this._ensureItemMeta(item);
+        meta.flags.push(this.ctx.text('Disabled'));
+      }
       // ok
       return item;
     }
@@ -100,10 +105,14 @@ module.exports = app => {
           }
         }
       }
-      // atomLanguage
+      // atomLanguage/atomDisabled
       for (const item of items) {
         if (item.atomLanguage) {
           item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+        }
+        if (item.atomDisabled) {
+          const meta = this._ensureItemMeta(item);
+          meta.flags.push(this.ctx.text('Disabled'));
         }
       }
     }

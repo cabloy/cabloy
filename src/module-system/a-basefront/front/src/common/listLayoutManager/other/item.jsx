@@ -65,9 +65,6 @@ export default {
     item_getMetaFlags(item) {
       let flags = (item._meta && item._meta.flags) || [];
       if (!Array.isArray(flags)) flags = flags.split(',');
-      if (item.atomDisabled) {
-        flags = [this.$text('Disabled')].concat(flags);
-      }
       return flags;
     },
     item_getLabel(id) {
