@@ -32,7 +32,9 @@ export default {
       for (const photo of this.photos) {
         domSlides.push(
           <f7-swiper-slide key={photo.url}>
-            <div class="caption">{photo.caption}</div>
+            <div class="caption">
+              <span>{photo.caption}</span>
+            </div>
             <img class="photo" src={photo.url} />
           </f7-swiper-slide>
         );
