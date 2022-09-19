@@ -111,6 +111,18 @@ module.exports = app => {
         }
       }
     }
+
+    _atomDisabledTranslate({ atomClass, item }) {
+      if (!item.atomDisabled) return;
+      const actionBase = this.ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: 'disable',
+      });
+      const title = this.ctx.bean.util.getProperty(actionBase, 'params.atomDisabled.title') || 'Disabled';
+      const meta = this._ensureItemMeta(item);
+      meta.flags.push(this.ctx.text(title));
+    }
   }
 
   return AtomBase;

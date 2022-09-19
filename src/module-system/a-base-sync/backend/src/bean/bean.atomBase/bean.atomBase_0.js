@@ -69,10 +69,7 @@ module.exports = app => {
         item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
       }
       // atomDisabled
-      if (item.atomDisabled) {
-        const meta = this._ensureItemMeta(item);
-        meta.flags.push(this.ctx.text('Disabled'));
-      }
+      this._atomDisabledTranslate({ atomClass, item });
       // ok
       return item;
     }
@@ -110,10 +107,7 @@ module.exports = app => {
         if (item.atomLanguage) {
           item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
         }
-        if (item.atomDisabled) {
-          const meta = this._ensureItemMeta(item);
-          meta.flags.push(this.ctx.text('Disabled'));
-        }
+        this._atomDisabledTranslate({ atomClass, item });
       }
     }
 
