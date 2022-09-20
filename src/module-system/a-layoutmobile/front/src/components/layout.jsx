@@ -1,4 +1,3 @@
-<script>
 import TabViews from './tabViews.vue';
 import Group from './group.vue';
 import MixinApp from '../common/layout/app.js';
@@ -11,29 +10,6 @@ export default {
   components: {
     ebTabViews: TabViews,
     ebGroup: Group,
-  },
-  render(c) {
-    // children
-    const children = [];
-
-    // tab views
-    if (this.tabShowed) {
-      children.push(
-        c('eb-tab-views', {
-          key: 'tabViews',
-          ref: 'tabViews',
-          props: {
-            toolbarConfig: this.layoutConfig.toolbar,
-          },
-        })
-      );
-    }
-
-    // group
-    children.push(c('eb-group', { key: 'group', ref: 'group' }));
-
-    // ready
-    return c('div', { staticClass: 'eb-layout-container eb-layout-container-mobile' }, children);
   },
   data() {
     return {
@@ -390,6 +366,22 @@ export default {
       return false;
     },
   },
+  render() {
+    // tab views
+    let domViews;
+    if (this.tabShowed) {
+      domViews = <eb-tab-views ref="tabViews" toolbarConfig={this.layoutConfig.toolbar}></eb-tab-views>;
+    }
+
+    // group
+    const domGroup = <eb-group ref="group"></eb-group>;
+
+    // ready
+    return (
+      <div class="eb-layout-container eb-layout-container-mobile">
+        {domViews}
+        {domGroup}
+      </div>
+    );
+  },
 };
-</script>
-<style scoped></style>
