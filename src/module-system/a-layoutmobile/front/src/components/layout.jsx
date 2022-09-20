@@ -228,9 +228,10 @@ export default {
         if (!resource.atomStaticKey && !resource.module) {
           resources.splice(index, 1);
         } else {
-          resources[index] = resource.atomStaticKey
-            ? { atomStaticKey: resource.atomStaticKey }
-            : { module: resource.module, name: resource.name };
+          // resources[index] = resource;
+          // resources[index] = resource.atomStaticKey
+          //   ? { atomStaticKey: resource.atomStaticKey }
+          //   : { module: resource.module, name: resource.name };
         }
       }
     },
@@ -288,6 +289,10 @@ export default {
       }
     },
     _prepareButton(button) {
+      // title
+      if (button.title && !button.titleLocale) {
+        button.titleLocale = this.$text(button.title);
+      }
       // stock
       const buttonStock = this._findButtonStock(button);
       // extend
