@@ -59,7 +59,7 @@ export default {
         this.base.module = await this.$meta.module.use(this.base.atomClass.module);
         // validateParams
         const res = await this.$api.post('/a/base/atom/validator', {
-          atomClass: { id: this.base.item.atomClassId },
+          atomClass: this.base.atomClass,
         });
         this.base.validateParams = {
           module: res.module,
