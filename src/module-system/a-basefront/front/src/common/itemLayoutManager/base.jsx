@@ -45,23 +45,18 @@ export default {
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
     },
-    async base_loadAtomClass() {},
-    async base_loadItem() {
+    async base_loadAtomClass() {
       try {
-        // item
-        const options = this.base_prepareReadOptions();
-        this.base.item = await this.$api.post('/a/base/atom/read', {
-          key: { atomId: this.container.atomId },
-          options,
-        });
-        // atomClass
-        this.base.atomClass = {
-          id: this.base.item.atomClassId,
-          module: this.base.item.module,
-          atomClassName: this.base.item.atomClassName,
-        };
+        // check container first
+        if (this.container.atomClass) {
+          this.base.atomClass = this.container.atomClass;
+        } else {
+          this.base.atomClass = await this.$api.post('/a/base/atom/atomClass', {
+            key: { atomId: this.container.atomId },
+          });
+        }
         // module
-        this.base.module = await this.$meta.module.use(this.base.item.module);
+        this.base.module = await this.$meta.module.use(this.base.atomClass.module);
         // validateParams
         const res = await this.$api.post('/a/base/atom/validator', {
           atomClass: { id: this.base.item.atomClassId },
@@ -70,6 +65,23 @@ export default {
           module: res.module,
           validator: res.validator,
         };
+        // not set: found
+        // this.base.notfound = false;
+        // ok
+        return true;
+      } catch (err) {
+        this.base.notfound = true;
+        return false;
+      }
+    },
+    async base_loadItem() {
+      try {
+        // item
+        const options = this.base_prepareReadOptions();
+        this.base.item = await this.$api.post('/a/base/atom/read', {
+          key: { atomId: this.container.atomId },
+          options,
+        });
         // actions
         await this.actions_fetchActions();
         // found

@@ -45,6 +45,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async atomClass() {
+      const res = await this.ctx.service.atom.atomClass({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async read() {
       const res = await this.ctx.service.atom.read({
         key: this.ctx.request.body.key,

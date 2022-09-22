@@ -16,6 +16,14 @@ module.exports = app => {
       return await this.ctx.bean.atom.create({ atomClass, roleIdOwner, item, options, user });
     }
 
+    async atomClass({ key, user }) {
+      const atomClass = await this.ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      return {
+        id: atomClass.id,
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      };
+    }
     async read({ key, options, user }) {
       return await this.ctx.bean.atom.read({ key, options, user });
     }

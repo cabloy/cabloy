@@ -19,6 +19,7 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 'create' } },
     },
+    { method: 'post', path: 'atom/atomClass', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/read', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/select', controller: 'atom' },
     { method: 'post', path: 'atom/count', controller: 'atom' },
