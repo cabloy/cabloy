@@ -10,12 +10,16 @@ export default {
     const atomId = parseInt(query.atomId || 0);
     const itemId = parseInt(query.itemId || 0);
     const layout = query.layout;
+    const module = query && query.module;
+    const atomClassName = query && query.atomClassName;
+    const atomClass = module && atomClassName ? { module, atomClassName } : null;
     return {
       container: {
         mode,
         atomId,
         itemId,
         layout,
+        atomClass,
       },
     };
   },

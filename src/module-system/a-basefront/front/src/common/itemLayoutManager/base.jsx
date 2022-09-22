@@ -45,6 +45,7 @@ export default {
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
     },
+    async base_loadAtomClass() {},
     async base_loadItem() {
       try {
         // item

@@ -17,6 +17,7 @@ const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixin
 //   atomId,
 //   itemId,
 //   layout,
+//   atomClass
 // },
 
 export default {
@@ -43,9 +44,11 @@ export default {
   methods: {
     async index_load() {
       await this.base_init();
-      const res = await this.base_loadItem();
+      let res = await this.base_loadAtomClass();
       if (!res) return;
       await this.layout_prepareConfigLayout();
+      res = await this.base_loadItem();
+      if (!res) return;
       await this.share_updateLink();
       this.base.ready = true;
     },
