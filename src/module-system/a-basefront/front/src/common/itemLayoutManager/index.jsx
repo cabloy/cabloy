@@ -3,6 +3,7 @@ import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Info from './info.jsx';
+import Item from './item.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 import Share from './share.jsx';
@@ -28,6 +29,7 @@ export default {
     Page,
     Layout,
     Info,
+    Item,
     Actions,
     Validate,
     Share,
