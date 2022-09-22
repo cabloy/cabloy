@@ -13,11 +13,20 @@ export default {
       if (changed) {
         ctx.$meta.eventHub.$emit('atom:action', { key: keyWrite, action: { name: 'create' }, atom: atomWrite });
       }
+      // queries
+      const queries = {
+        mode: 'edit',
+        atomId: atomWrite.atomId,
+        itemId: atomWrite.itemId,
+      };
+      const module = atomWrite.module;
+      const atomClassName = atomWrite.atomClassName;
+      if (module && atomClassName) {
+        queries.module = module;
+        queries.atomClassName = atomClassName;
+      }
       // navigate
-      const url = ctx.$meta.util.replaceTemplate(
-        '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
-        atomWrite
-      );
+      const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       ctx.$view.navigate(url, action.navigateOptions);
       // event: neednot check atomStage
       // if (item.atomStage > 0) {
