@@ -14094,6 +14094,14 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async atomClass() {
+      const res = await this.ctx.service.atom.atomClass({
+        key: this.ctx.request.body.key,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async read() {
       const res = await this.ctx.service.atom.read({
         key: this.ctx.request.body.key,
@@ -15914,6 +15922,7 @@ module.exports = app => {
       middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 'create' } },
     },
+    { method: 'post', path: 'atom/atomClass', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/read', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/select', controller: 'atom' },
     { method: 'post', path: 'atom/count', controller: 'atom' },
@@ -16228,6 +16237,14 @@ module.exports = app => {
       return await this.ctx.bean.atom.create({ atomClass, roleIdOwner, item, options, user });
     }
 
+    async atomClass({ key, user }) {
+      const atomClass = await this.ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      return {
+        id: atomClass.id,
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      };
+    }
     async read({ key, options, user }) {
       return await this.ctx.bean.atom.read({ key, options, user });
     }
