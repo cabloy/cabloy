@@ -255,6 +255,7 @@ export default {
       return schema;
     },
     layout_renderPage() {
+      const pageProps = this.page_getProps() || {};
       return (
         <eb-page
           withSubnavbar={this.subnavbar.enable}
@@ -263,6 +264,7 @@ export default {
           infinite={this.page_infinite()}
           infinitePreloader={false}
           onInfinite={this.page_onInfinite}
+          {...{ props: pageProps }}
         >
           <eb-navbar eb-back-link="Back">
             {this.layout_renderBlock({ blockName: 'caption' })}

@@ -38,5 +38,11 @@ export default {
       }
       return '';
     },
+    page_getProps() {
+      if (!this.layout.config) return null;
+      const configPage = this.layout.config.page;
+      if (!configPage) return null;
+      return configPage.props;
+    },
   },
 };
