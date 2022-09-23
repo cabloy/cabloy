@@ -59,7 +59,7 @@ export default {
     },
     bulk_renderSearch() {
       // layout
-      if (this.$meta.vueApp.layout !== 'mobile') return null;
+      if (this.$meta.vueApp.layout !== 'mobile' || this.base.appInfoCurrent.appItem.appIsolate) return null;
       return (
         <eb-link
           key="search"
