@@ -25,9 +25,12 @@ export default {
       return this.data_onPageClear();
     },
     page_getTitle() {
-      //
+      // 1. container
       if (this.container.params && this.container.params.pageTitle) return this.container.params.pageTitle;
-      //
+      // 2. config page title
+      const configPageTitle = this.$meta.util.getProperty(this.layout.config, 'page.title');
+      if (configPageTitle) return this.$text(configPageTitle);
+      // 3. page_onGetTitle
       if (this.page_onGetTitle) {
         return this.page_onGetTitle();
       }
