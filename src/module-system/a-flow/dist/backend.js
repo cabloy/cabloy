@@ -370,11 +370,15 @@ module.exports = ctx => {
     }
 
     async get({ flowId, history, user }) {
+      const where = {};
+      if (history) {
+        where['a.flowId'] = flowId;
+      } else {
+        where['a.id'] = flowId;
+      }
       const flows = await this.select({
         options: {
-          where: {
-            'a.id': flowId,
-          },
+          where,
           mode: history ? 'history' : 'flowing',
         },
         user,
