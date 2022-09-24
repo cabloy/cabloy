@@ -32,6 +32,7 @@ import treeviewItem from './components/treeview/treeviewItem.vue';
 import stats from './components/stats.jsx';
 import statsColor from './components/statsColor.jsx';
 import treeviewData from './components/treeview/treeviewData.js';
+import dividerLine from './components/dividerLine.jsx';
 
 export default {
   ebLoadMore: loadMore,
@@ -68,4 +69,5 @@ export default {
   ebStats: stats,
   ebStatsColor: statsColor,
   ebTreeviewData: treeviewData,
+  ebDividerLine: dividerLine,
 };

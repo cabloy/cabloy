@@ -194,11 +194,7 @@ export default {
       // loginLine
       let domLoginLine;
       if (domLoginTop && domLoginBottom) {
-        domLoginLine = (
-          <div class="line">
-            <div class="text">{this.$text('OR')}</div>
-          </div>
-        );
+        domLoginLine = <eb-divider-line class="divider-line" text={this.$text('OR')}></eb-divider-line>;
       }
       // lineAndBottom
       let domLineAndBottom;
