@@ -1,8 +1,4 @@
-const util = require('./service/util.js');
-
 module.exports = app => {
-  const services = {
-    util,
-  };
+  const services = {};
   return services;
 };

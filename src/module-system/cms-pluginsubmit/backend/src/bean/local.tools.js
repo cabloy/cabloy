@@ -1,18 +1,16 @@
 const url = require('url');
 
-module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Util extends app.Service {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class LocalTools {
     async submit({ links, config }) {
       for (const target in config.submit) {
         const targetConfig = config.submit[target];
-        if (target === 'baidu') {
-          await this._submitBaidu({ target, targetConfig, links });
-        }
+        await this._submit({ target, targetConfig, links });
       }
     }
 
-    async _submitBaidu({ target, targetConfig, links }) {
+    async _submit({ target, targetConfig, links }) {
       if (!targetConfig.token) return;
       if (!links || links.length === 0) return;
       // host
@@ -20,8 +18,8 @@ module.exports = app => {
       const hostname = parts.hostname;
       if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1') return;
       // queue
-      this.ctx.tail(() => {
-        this.ctx.meta.util.queuePush({
+      ctx.tail(() => {
+        ctx.meta.util.queuePush({
           module: moduleInfo.relativeName,
           queueName: 'submit',
           data: {
@@ -34,5 +32,5 @@ module.exports = app => {
       });
     }
   }
-  return Util;
+  return LocalTools;
 };
