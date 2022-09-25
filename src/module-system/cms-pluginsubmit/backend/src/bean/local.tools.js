@@ -16,7 +16,9 @@ module.exports = ctx => {
       // host
       const parts = url.parse(links[0]);
       const hostname = parts.hostname;
-      if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1') return;
+      if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1' || hostname.indexOf('192.168') === 0) {
+        return;
+      }
       // queue
       ctx.tail(() => {
         ctx.meta.util.queuePush({
