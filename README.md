@@ -47,7 +47,9 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 
 ## 视频课程
 
-- [CabloyJS 全栈框架：从入门到精通](https://course.cabloy.com/zh-cn/articles/A-001.html)
+- [CabloyJS 全栈框架：从入门到精通(共 48 集)](https://course.cabloy.com/zh-cn/articles/A-001.html)
+- [CabloyJS 全栈框架：功能特性演示(共 16 集)](https://course.cabloy.com/zh-cn/articles/A-002.html)
+- [微信一起点菜项目进度复盘(持续更新中)](https://course.cabloy.com/zh-cn/articles/B-001.html)
 
 ## 在线演示
 
