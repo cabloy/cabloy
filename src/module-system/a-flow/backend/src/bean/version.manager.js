@@ -236,7 +236,14 @@ module.exports = app => {
       }
     }
 
-    async test() {}
+    async test() {
+      // flowHistory
+      let res = await this.ctx.model.flowHistory.insert({});
+      await this.ctx.model.flowHistory.delete({ id: res.insertId });
+      // flowNodeHistory
+      res = await this.ctx.model.flowNodeHistory.insert({});
+      await this.ctx.model.flowNodeHistory.delete({ id: res.insertId });
+    }
   }
 
   return Version;
