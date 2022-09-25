@@ -103,7 +103,7 @@ module.exports = ctx => {
         atomStaticKey,
         atomStage: 1,
       });
-      if (!atom) return ctx.throw.module('a-base', 1002);
+      if (!atom) return ctx.throw.module('a-base', 1016, atomStaticKey);
       const atomId = atom.id;
       // check resource right
       const res = await this.checkRightResource({ resourceAtomId: atomId, user });

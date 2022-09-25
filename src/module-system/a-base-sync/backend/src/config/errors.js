@@ -15,4 +15,5 @@ module.exports = {
   1013: 'Cannot delete if has children',
   1014: 'DisabledOnDemoMode',
   1015: 'Invalid Configuration',
+  1016: 'Resource does not Exist: %s',
 };
