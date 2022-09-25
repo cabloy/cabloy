@@ -1,6 +1,51 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 887:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const url = __webpack_require__(310);
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class LocalTools {
+    async submit({ links, config }) {
+      for (const target in config.submit) {
+        const targetConfig = config.submit[target];
+        await this._submit({ target, targetConfig, links });
+      }
+    }
+
+    async _submit({ target, targetConfig, links }) {
+      if (!targetConfig.token) return;
+      if (!links || links.length === 0) return;
+      // host
+      const parts = url.parse(links[0]);
+      const hostname = parts.hostname;
+      if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1' || hostname.indexOf('192.168') === 0) {
+        return;
+      }
+      // queue
+      ctx.tail(() => {
+        ctx.meta.util.queuePush({
+          module: moduleInfo.relativeName,
+          queueName: 'submit',
+          data: {
+            target,
+            targetConfig,
+            hostname,
+            links,
+          },
+        });
+      });
+    }
+  }
+  return LocalTools;
+};
+
+
+/***/ }),
+
 /***/ 232:
 /***/ ((module) => {
 
@@ -43,6 +88,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const queueSubmit = __webpack_require__(232);
+const localTools = __webpack_require__(887);
 
 module.exports = app => {
   const beans = {
@@ -50,6 +96,11 @@ module.exports = app => {
     'queue.submit': {
       mode: 'app',
       bean: queueSubmit,
+    },
+    // local
+    'local.tools': {
+      mode: 'ctx',
+      bean: localTools,
     },
   };
   return beans;
@@ -216,60 +267,11 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 102:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const url = __webpack_require__(310);
-
-module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Util extends app.Service {
-    async submit({ links, config }) {
-      for (const target in config.submit) {
-        const targetConfig = config.submit[target];
-        if (target === 'baidu') {
-          await this._submitBaidu({ target, targetConfig, links });
-        }
-      }
-    }
-
-    async _submitBaidu({ target, targetConfig, links }) {
-      if (!targetConfig.token) return;
-      if (!links || links.length === 0) return;
-      // host
-      const parts = url.parse(links[0]);
-      const hostname = parts.hostname;
-      if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1') return;
-      // queue
-      this.ctx.tail(() => {
-        this.ctx.meta.util.queuePush({
-          module: moduleInfo.relativeName,
-          queueName: 'submit',
-          data: {
-            target,
-            targetConfig,
-            hostname,
-            links,
-          },
-        });
-      });
-    }
-  }
-  return Util;
-};
-
-
-/***/ }),
-
 /***/ 214:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const util = __webpack_require__(102);
+/***/ ((module) => {
 
 module.exports = app => {
-  const services = {
-    util,
-  };
+  const services = {};
   return services;
 };
 
