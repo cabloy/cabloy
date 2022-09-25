@@ -4532,7 +4532,7 @@ module.exports = ctx => {
         atomStaticKey,
         atomStage: 1,
       });
-      if (!atom) return ctx.throw.module('a-base', 1002);
+      if (!atom) return ctx.throw.module('a-base', 1016, atomStaticKey);
       const atomId = atom.id;
       // check resource right
       const res = await this.checkRightResource({ resourceAtomId: atomId, user });
@@ -12471,6 +12471,7 @@ module.exports = {
   1013: 'Cannot delete if has children',
   1014: 'DisabledOnDemoMode',
   1015: 'Invalid Configuration',
+  1016: 'Resource does not Exist: %s',
 };
 
 
@@ -12561,6 +12562,7 @@ module.exports = {
   'Atom Authorizations': '数据授权',
   'Invalid Configuration': '无效的配置',
   'Not Found': '未发现',
+  'Resource does not Exist: %s': '资源不存在: %s',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
