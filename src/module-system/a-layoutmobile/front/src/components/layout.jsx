@@ -124,19 +124,25 @@ export default {
         // do nothing
         return;
       }
-      if (!url) return;
-      // check if http
-      if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {
-        location.assign(url);
-        return;
-      }
-      // check login
-      if (!this._checkUrlLogin(url)) return;
       // options
       options = options || {};
       const ctx = options.ctx;
       const target = options.target;
       const scene = options.scene;
+
+      if (!url) return;
+      // check if http
+      if (url.indexOf('https://') === 0 || url.indexOf('http://') === 0) {
+        if (target) {
+          window.open(url, target);
+        } else {
+          location.assign(url);
+        }
+        return;
+      }
+      // check login
+      if (!this._checkUrlLogin(url)) return;
+      // options
       if (target === '_self') {
         ctx.$view.f7View.router.navigate(url, options);
       } else {
