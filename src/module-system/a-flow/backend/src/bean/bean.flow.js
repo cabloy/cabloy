@@ -80,6 +80,9 @@ module.exports = ctx => {
         flow = await this.modelFlow.get({ id: flowId });
       } else {
         flow = await this.modelFlowHistory.get({ flowId });
+        if (flow) {
+          flow.id = flowId;
+        }
       }
       if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
       // flowDef: by key+revision
@@ -111,6 +114,9 @@ module.exports = ctx => {
         flowNode = await this.modelFlowNode.get({ id: flowNodeId });
       } else {
         flowNode = await this.modelFlowNodeHistory.get({ flowNodeId });
+        if (flowNode) {
+          flowNode.id = flowNodeId;
+        }
       }
       if (!flowNode) ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
       // load flow
