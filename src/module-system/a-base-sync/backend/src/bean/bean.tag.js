@@ -39,6 +39,7 @@ module.exports = ctx => {
     }
 
     async list({ atomClass, options }) {
+      options = options || {};
       atomClass = await ctx.bean.atomClass.get(atomClass);
       if (!options.where) options.where = {};
       options.where.atomClassId = atomClass.id;
