@@ -170,7 +170,7 @@ function _createAuthenticate() {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 const __authProvidersConfigCache = {};
 const __authProvidersConfigCache_login = {};
@@ -524,7 +524,7 @@ module.exports = ctx => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 module.exports = ctx => {
   class Passport {

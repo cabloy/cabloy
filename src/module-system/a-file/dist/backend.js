@@ -13,7 +13,7 @@ const gm = require3('gm');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const base64url = require3('base64url');
 
 const REGEXP_DATA_URL = /^data:([^;]+);[^,]*base64,(.*)/;

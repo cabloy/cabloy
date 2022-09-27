@@ -3523,7 +3523,7 @@ module.exports = ctx => {
 
 const require3 = __webpack_require__(5638);
 const uuid = require3('uuid');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -3754,7 +3754,7 @@ module.exports = ctx => {
 const path = __webpack_require__(1017);
 const require3 = __webpack_require__(5638);
 const fse = require3('fs-extra');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 const _modulesLocales = {};
 const _themesLocales = {};
@@ -5227,7 +5227,7 @@ module.exports = ctx => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const initData15 = __webpack_require__(5384);
 
 module.exports = ctx => {
@@ -7064,7 +7064,7 @@ module.exports = ctx => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -9054,7 +9054,7 @@ module.exports = ctx => {
 
 const URL = (__webpack_require__(7310).URL);
 const require3 = __webpack_require__(5638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const koaCors = require3('@koa/cors');
 
 const optionsDefault = {
@@ -10062,7 +10062,7 @@ module.exports = function (ctx) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const initData = __webpack_require__(7714);
 
 module.exports = function (ctx) {
@@ -16947,7 +16947,7 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 module.exports = app => {
   class Settings extends app.Service {

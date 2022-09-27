@@ -847,7 +847,7 @@ async function _checkDetailClassExpect({ detailClass, options, ctx }) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 const _actions = {};
 

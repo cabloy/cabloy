@@ -5,7 +5,7 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const async = require3('async');
 const chalk = require3('chalk');
 const boxen = require3('boxen');
@@ -753,7 +753,7 @@ module.exports = [
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
 

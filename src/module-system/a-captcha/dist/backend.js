@@ -6,7 +6,7 @@
 
 const require3 = __webpack_require__(638);
 const mparse = require3('egg-born-mparse').default;
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const uuid = require3('uuid');
 const utils = __webpack_require__(294);
 
