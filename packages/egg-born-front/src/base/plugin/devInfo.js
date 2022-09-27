@@ -7,7 +7,7 @@ function install(_Vue) {
 
   Vue.mixin({
     mounted() {
-      if (!this.$el.setAttribute) return;
+      if (!this.$el || !this.$el.setAttribute) return;
       const _componentTag = this.$options._componentTag;
       if (_componentTag) {
         this.$el.setAttribute('data-dev-component-tag', _componentTag);
