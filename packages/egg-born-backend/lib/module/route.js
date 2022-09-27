@@ -1,5 +1,5 @@
 const is = require('is-type-of');
-const extend = require('extend2');
+const extend = require('@zhennann/extend');
 const pathMatching = require('egg-path-matching');
 const loadMiddlewares = require('./middleware.js');
 const MWSTATUS = Symbol('Context#__wmstatus');

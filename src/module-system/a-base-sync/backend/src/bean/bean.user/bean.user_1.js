@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

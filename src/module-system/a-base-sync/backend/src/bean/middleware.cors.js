@@ -1,6 +1,6 @@
 const URL = require('url').URL;
 const require3 = require('require3');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const koaCors = require3('@koa/cors');
 
 const optionsDefault = {

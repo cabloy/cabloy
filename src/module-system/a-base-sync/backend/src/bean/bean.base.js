@@ -1,7 +1,7 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 const _modulesLocales = {};
 const _themesLocales = {};

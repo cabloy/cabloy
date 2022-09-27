@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const extend = require('extend2');
+const extend = require('@zhennann/extend');
 const localeutil = require('egg-born-localeutil').default;
 
 module.exports = function (loader, modules) {

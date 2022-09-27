@@ -1,4 +1,4 @@
-const extend = require('extend2');
+const extend = require('@zhennann/extend');
 const assetErrors = require('./asset/errors.js');
 const errorClassFn = require('../base/error.js');
 const ERROR = Symbol('Context#__error');

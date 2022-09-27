@@ -1,6 +1,6 @@
 const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const uuid = require3('uuid');
 const utils = require('../common/utils.js');
 

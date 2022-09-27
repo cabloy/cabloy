@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 const async = require3('async');
 const chalk = require3('chalk');
 const boxen = require3('boxen');

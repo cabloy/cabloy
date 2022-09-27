@@ -1,5 +1,5 @@
 const require3 = require('require3');
-const extend = require3('extend2');
+const extend = require3('@zhennann/extend');
 
 let __commandsMap;
 let __commandsAll;
