@@ -119,7 +119,12 @@ export default {
       return a.appKey === b.appKey && a.appMineLayout === b.appMineLayout;
     },
     async base_onPerformResource(event, resource) {
-      const options = { navigateOptions: { target: '_self' } };
+      const navigateOptions = { target: '_self' };
+      if (resource.resourceConfig) {
+        const resourceConfig = JSON.parse(resource.resourceConfig);
+        this.$meta.util.extend(navigateOptions, resourceConfig.navigateOptions);
+      }
+      const options = { navigateOptions };
       return await this.base_performActionResource(event, resource, options);
     },
   },
