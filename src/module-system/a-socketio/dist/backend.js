@@ -751,6 +751,11 @@ module.exports = app => {
       const data = context.data;
       const socketsOnline = app[SOCKETSONLINE];
       const socket = socketsOnline && socketsOnline[data.socketId];
+      debug(
+        'socketEmit broadcast: workerId:%s, socketIds:%s',
+        app.meta.workerId,
+        socketsOnline && Object.keys(socketsOnline).join(',')
+      );
       debug('socketEmit broadcast: found:%d, workerId:%s, socketId:%s', !!socket, app.meta.workerId, data.socketId);
       if (socket) {
         socket.emit('message', {
