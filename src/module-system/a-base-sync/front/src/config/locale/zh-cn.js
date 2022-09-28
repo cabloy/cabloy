@@ -1,5 +1,6 @@
 export default {
   I: '我',
+  OR: '或者',
   App: '应用',
   Apps: '应用',
   Atom: '数据',
