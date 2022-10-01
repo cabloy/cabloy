@@ -1,9 +1,0 @@
-/*!
- * Socket.IO v2.5.0
- * (c) 2014-2021 Guillermo Rauch
- * Released under the MIT License.
- */
-
-/*! https://mths.be/utf8js v2.1.2 by @mathias */
-
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */

@@ -168,9 +168,6 @@
           "a-share": {
             "scripts": ["npmPublish"]
           },
-          "a-socketio": {
-            "scripts": ["npmPublish"]
-          },
           "a-stats": {
             "scripts": ["npmPublish"]
           },
@@ -256,6 +253,9 @@
             "scripts": ["npmPublish", "gitCommit"]
           },
           "a-markdown": {
+            "scripts": ["npmPublish", "gitCommit"]
+          },
+          "a-socketio": {
             "scripts": ["npmPublish", "gitCommit"]
           },
           "test-flow": {
