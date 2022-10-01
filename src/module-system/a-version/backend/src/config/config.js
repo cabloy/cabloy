@@ -24,7 +24,7 @@ module.exports = appInfo => {
   // worker
   config.worker = {
     alive: {
-      timeout: 6000,
+      timeout: 7000,
     },
   };
 
