@@ -22,7 +22,13 @@ module.exports = {
       if (!info) {
         info = mparse.parseInfo('a-base');
       }
-      this[MODULE] = info ? this.app.meta.modules[info.relativeName] : null;
+      if (info) {
+        const module = this.app.meta.modules[info.relativeName];
+        if (!module) throw new Error(`module not found: ${info.relativeName}`);
+        this[MODULE] = module;
+      } else {
+        this[MODULE] = null;
+      }
     }
     return this[MODULE];
   },
