@@ -263,14 +263,19 @@ export default adapter => {
         }
       }
     },
-    _onConnect() {
-      this.performAction({ url: '/a/socket/' })
+    __test(i) {
+      this.performAction({ url: '/a/socketio/test/echo', body: { echo: i } })
         .then(data => {
           console.log(data);
         })
         .catch(err => {
           console.log(err);
         });
+    },
+    _onConnect() {
+      for (const i of [1, 2]) {
+        this.__test(i);
+      }
       //
       this._subscribesWaiting = {};
       if (Object.keys(this._subscribesPath).length === 0) {
