@@ -17,10 +17,7 @@ const DBLEVEL = Symbol.for('Context#__dblevel');
 module.exports = {
   get module() {
     if (this[MODULE] === undefined) {
-      let url = this.req.mockUrl || this.req.url || '';
-      if (url.indexOf('/api/static') === 0) {
-        url = url.substring('/api/static'.length);
-      }
+      const url = this.req.mockUrl || this.req.url || '';
       let info = mparse.parseInfo(mparse.parseName(url));
       if (!info) {
         info = mparse.parseInfo('a-base');
