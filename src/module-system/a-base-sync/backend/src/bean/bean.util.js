@@ -174,6 +174,15 @@ module.exports = app => {
       );
     }
 
+    getFrontClientId() {
+      return (
+        (this.ctx.request.query && this.ctx.request.query['x-clientid']) ||
+        (this.ctx.headers && this.ctx.headers['x-clientid']) ||
+        (this.ctx.session && this.ctx.session['x-clientid']) ||
+        ''
+      );
+    }
+
     evaluateExpression({ expression, globals, wrapper }) {
       return eggBornUtils.tools.evaluateExpression({ expression, scope: globals, wrapper });
       // return vm.runInContext(expression, vm.createContext(globals || {}));
