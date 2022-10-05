@@ -15,7 +15,7 @@ export default adapter => {
     _unsubscribesWaitingDoing: false,
     _unsubscribesWaiting: {},
     // performAction
-    async performAction({ method, url, query, params, headers, body }) {
+    async performAction({ url, body }) {
       // socket
       const _socket = this._getSocket();
       if (!_socket.connected) {
@@ -23,7 +23,7 @@ export default adapter => {
       }
       // emit message
       return new Promise((resolve, reject) => {
-        _socket.emit('performAction', { method, url, query, params, headers, body }, res => {
+        _socket.emit('performAction', { url, body }, res => {
           if (res.code === 0) {
             resolve(res.data);
           } else {
@@ -264,6 +264,14 @@ export default adapter => {
       }
     },
     _onConnect() {
+      this.performAction({ url: '/a/socket/' })
+        .then(data => {
+          console.log(data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      //
       this._subscribesWaiting = {};
       if (Object.keys(this._subscribesPath).length === 0) {
         this.disconnect();
