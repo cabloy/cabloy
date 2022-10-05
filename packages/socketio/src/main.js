@@ -14,6 +14,27 @@ export default adapter => {
     _unsubscribesWaitingTimeoutId: 0,
     _unsubscribesWaitingDoing: false,
     _unsubscribesWaiting: {},
+    // performAction
+    async performAction({ method, url, query, params, headers, body }) {
+      // socket
+      const _socket = this._getSocket();
+      if (!_socket.connected) {
+        return new Error('socket is disconnected');
+      }
+      // emit message
+      return new Promise((resolve, reject) => {
+        _socket.emit('performAction', { method, url, query, params, headers, body }, res => {
+          if (res.code === 0) {
+            resolve(res.data);
+          } else {
+            const error = new Error();
+            error.code = res.code;
+            error.message = res.message;
+            reject(error);
+          }
+        });
+      });
+    },
     // methods
     subscribe(path, cbMessage, cbSubscribed, options) {
       // options
