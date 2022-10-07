@@ -237,7 +237,20 @@ export default adapter => {
       }
     },
     _onMessagePerformActionCallback(data) {
-      console.log(data);
+      const { id, result } = data;
+      const promise = this._performActionPromises[id];
+      if (!promise) return;
+      delete this._performActionPromises[id];
+      const { resolve, reject } = promise;
+      //
+      if (result.code === 0) {
+        resolve(result.data);
+      } else {
+        const error = new Error();
+        error.code = result.code;
+        error.message = result.message;
+        reject(error);
+      }
     },
     _onMessageSystem_401(data) {
       const type = data.type;
