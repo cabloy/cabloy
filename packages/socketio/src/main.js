@@ -47,6 +47,13 @@ export default adapter => {
         reject(error);
       }
     },
+    _clearPerformActionPromises() {
+      for (const id in this._performActionPromises) {
+        const promise = this._performActionPromises[id];
+        promise.reject(new Error('socket is disconnected'));
+      }
+      this._performActionPromises = {};
+    },
     // methods
     subscribe(path, cbMessage, cbSubscribed, options) {
       // options
@@ -303,6 +310,7 @@ export default adapter => {
       }
     },
     _onDisconnect(reason) {
+      this._clearPerformActionPromises();
       this._subscribesWaiting = {};
       // reconnect
       if (reason === 'io server disconnect' || reason === 'transport close') {
