@@ -1,3 +1,4 @@
+import io_main from './io_main.js';
 import io_performAction from './io_performAction.js';
 
 export default adapter => {
@@ -248,6 +249,8 @@ export default adapter => {
       }
     },
     _onConnect() {
+      this.raiseOnConnect();
+      //
       this._subscribesWaiting = {};
       if (Object.keys(this._subscribesPath).length === 0) {
         this.disconnect();
@@ -318,6 +321,7 @@ export default adapter => {
     }
     Object.assign(io, ioProvider);
   }
+  mixin(io_main);
   mixin(io_performAction);
   for (const _initialize of _initializes) {
     _initialize.call(io);
