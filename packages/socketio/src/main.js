@@ -1,12 +1,10 @@
 import io_main from './io_main.js';
+import io_socket from './io_socket.js';
 import io_performAction from './io_performAction.js';
 import io_test from './io_test.js';
 
 export default adapter => {
   const io = {
-    // socket
-    _socket: null,
-
     // subscribes
     _subscribeCounter: 0,
     _subscribesAll: {},
@@ -190,18 +188,7 @@ export default adapter => {
           }
         });
     },
-    _getSocket() {
-      if (!this._socket) {
-        this._socket = adapter.socket();
-        this.raiseOnSocketCreate(this._socket);
-        //
-        this._socket.on('connect', this._onConnectBind);
-        this._socket.on('disconnect', this._onDisconnectBind);
-        this._socket.on('message', this._onMessageBind);
-        this._socket.on('message-system', this._onMessageSystemBind);
-      }
-      return this._socket;
-    },
+
     _logout() {
       // timeout: not use window.
       setTimeout(() => {
@@ -250,40 +237,6 @@ export default adapter => {
         }
       }
     },
-    _onConnect() {
-      this.raiseOnConnect();
-      //
-      this._subscribesWaiting = {};
-      if (Object.keys(this._subscribesPath).length === 0) {
-        this.disconnect();
-      } else {
-        // -> waitings
-        for (const path in this._subscribesPath) {
-          this._subscribesWaiting[path] = true;
-        }
-        this._doSubscribesWaiting();
-      }
-    },
-    _onDisconnect(reason) {
-      this.raiseOnDisconnect();
-      //
-      this._subscribesWaiting = {};
-      // reconnect
-      if (reason === 'io server disconnect' || reason === 'transport close') {
-        // the disconnection was initiated by the server, you need to reconnect manually
-        this.connect();
-      }
-    },
-    connect() {
-      if (this._socket) {
-        this._socket.connect();
-      }
-    },
-    disconnect() {
-      if (this._socket) {
-        this._socket.disconnect();
-      }
-    },
     reset() {
       this._unsubscribesWaiting = {};
       this._unsubscribesWaitingTimeoutId = 0;
@@ -302,8 +255,6 @@ export default adapter => {
       if (this._socket) {
         this.raiseOnSocketDestroy(this._socket);
         //
-        this._socket.off('connect', this._onConnectBind);
-        this._socket.off('disconnect', this._onDisconnectBind);
         this._socket.off('message', this._onMessageBind);
         this._socket.off('message-system', this._onMessageSystemBind);
         this._socket = null;
@@ -326,14 +277,13 @@ export default adapter => {
     Object.assign(io, ioProvider);
   }
   mixin(io_main);
+  mixin(io_socket);
   mixin(io_performAction);
   mixin(io_test);
   for (const _initialize of _initializes) {
     _initialize.call(io);
   }
   // bind
-  io._onConnectBind = io._onConnect.bind(io);
-  io._onDisconnectBind = io._onDisconnect.bind(io);
   io._onMessageBind = io._onMessage.bind(io);
   io._onMessageSystemBind = io._onMessageSystem.bind(io);
   // initialize
