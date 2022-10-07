@@ -193,11 +193,12 @@ export default adapter => {
     _getSocket() {
       if (!this._socket) {
         this._socket = adapter.socket();
+        this.raiseOnSocketCreate(this._socket);
+        //
         this._socket.on('connect', this._onConnectBind);
         this._socket.on('disconnect', this._onDisconnectBind);
         this._socket.on('message', this._onMessageBind);
         this._socket.on('message-system', this._onMessageSystemBind);
-        this._socket.on('performAction-callback', this._onMessagePerformActionCallbackBind);
       }
       return this._socket;
     },
@@ -299,11 +300,12 @@ export default adapter => {
 
       // should clear socket
       if (this._socket) {
+        this.raiseOnSocketDestroy(this._socket);
+        //
         this._socket.off('connect', this._onConnectBind);
         this._socket.off('disconnect', this._onDisconnectBind);
         this._socket.off('message', this._onMessageBind);
         this._socket.off('message-system', this._onMessageSystemBind);
-        this._socket.off('performAction-callback', this._onMessagePerformActionCallbackBind);
         this._socket = null;
       }
 
@@ -334,7 +336,6 @@ export default adapter => {
   io._onDisconnectBind = io._onDisconnect.bind(io);
   io._onMessageBind = io._onMessage.bind(io);
   io._onMessageSystemBind = io._onMessageSystem.bind(io);
-  io._onMessagePerformActionCallbackBind = io._onMessagePerformActionCallback.bind(io);
   // initialize
   adapter.initialize(io);
   return io;
