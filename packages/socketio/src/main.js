@@ -1,5 +1,6 @@
 import io_main from './io_main.js';
 import io_performAction from './io_performAction.js';
+import io_test from './io_test.js';
 
 export default adapter => {
   const io = {
@@ -323,6 +324,7 @@ export default adapter => {
   }
   mixin(io_main);
   mixin(io_performAction);
+  mixin(io_test);
   for (const _initialize of _initializes) {
     _initialize.call(io);
   }
