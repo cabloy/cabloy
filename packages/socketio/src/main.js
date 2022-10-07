@@ -2,6 +2,9 @@ export default adapter => {
   const io = {
     // socket
     _socket: null,
+    // performAction
+    _performActionCounter: 0,
+    _performActionPromises: {},
     // subscribes
     _subscribeCounter: 0,
     _subscribesAll: {},
@@ -23,16 +26,9 @@ export default adapter => {
       }
       // emit message
       return new Promise((resolve, reject) => {
-        _socket.emit('performAction', { url, body }, res => {
-          if (res.code === 0) {
-            resolve(res.data);
-          } else {
-            const error = new Error();
-            error.code = res.code;
-            error.message = res.message;
-            reject(error);
-          }
-        });
+        const id = ++this._performActionCounter;
+        this._performActionPromises[id] = { resolve, reject };
+        _socket.emit('performAction', { id, url, body });
       });
     },
     // methods
@@ -212,6 +208,7 @@ export default adapter => {
         this._socket.on('disconnect', this._onDisconnectBind);
         this._socket.on('message', this._onMessageBind);
         this._socket.on('message-system', this._onMessageSystemBind);
+        this._socket.on('performAction-callback', this._onMessagePerformActionCallbackBind);
       }
       return this._socket;
     },
@@ -238,6 +235,9 @@ export default adapter => {
       if (data.code === 401) {
         this._onMessageSystem_401(data);
       }
+    },
+    _onMessagePerformActionCallback(data) {
+      console.log(data);
     },
     _onMessageSystem_401(data) {
       const type = data.type;
@@ -327,6 +327,7 @@ export default adapter => {
         this._socket.off('disconnect', this._onDisconnectBind);
         this._socket.off('message', this._onMessageBind);
         this._socket.off('message-system', this._onMessageSystemBind);
+        this._socket.off('performAction-callback', this._onMessagePerformActionCallbackBind);
         this._socket = null;
       }
 
@@ -343,6 +344,7 @@ export default adapter => {
   io._onDisconnectBind = io._onDisconnect.bind(io);
   io._onMessageBind = io._onMessage.bind(io);
   io._onMessageSystemBind = io._onMessageSystem.bind(io);
+  io._onMessagePerformActionCallbackBind = io._onMessagePerformActionCallback.bind(io);
   // initialize
   adapter.initialize(io);
   return io;
