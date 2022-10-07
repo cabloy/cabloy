@@ -40,6 +40,9 @@ export default () => {
       }
       this._performActionPromises = {};
     },
+    _initialize() {
+      console.log('ssss');
+    },
   };
   return io;
 };

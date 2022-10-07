@@ -324,7 +324,18 @@ export default adapter => {
       }
     },
   };
-  Object.assign(io, io_performAction(adapter));
+  const _initializes = [];
+  function mixin(ioProviderFn) {
+    const ioProvider = ioProviderFn(adapter);
+    if (ioProvider._initialize) {
+      _initializes.push(ioProvider._initialize);
+    }
+    Object.assign(io, ioProvider);
+  }
+  mixin(io_performAction);
+  for (const _initialize of _initializes) {
+    _initialize.call(io);
+  }
   // bind
   io._onConnectBind = io._onConnect.bind(io);
   io._onDisconnectBind = io._onDisconnect.bind(io);
