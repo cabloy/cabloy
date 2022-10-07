@@ -2,6 +2,8 @@ export default () => {
   const io = {
     _onConnectCallbacks: [],
     _onDisconnectCallbacks: [],
+    _onSocketCreateCallbacks: [],
+    _onSocketDestroyCallbacks: [],
     registerOnConnect(callback) {
       this._onConnectCallbacks.push(callback);
     },
@@ -16,6 +18,22 @@ export default () => {
     raiseOnDisconnect() {
       for (const callback of this._onDisconnectCallbacks) {
         callback.call(this);
+      }
+    },
+    registerOnSocketCreate(callback) {
+      this._onSocketCreateCallbacks.push(callback);
+    },
+    raiseOnSocketCreate(socket) {
+      for (const callback of this._onSocketCreateCallbacks) {
+        callback.call(this, socket);
+      }
+    },
+    registerOnSocketDestroy(callback) {
+      this._onSocketDestroyCallbacks.push(callback);
+    },
+    raiseOnSocketDestroy(socket) {
+      for (const callback of this._onSocketDestroyCallbacks) {
+        callback.call(this, socket);
       }
     },
   };

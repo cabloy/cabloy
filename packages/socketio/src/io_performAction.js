@@ -44,6 +44,13 @@ export default () => {
       this.registerOnDisconnect(() => {
         this._clearPerformActionPromises();
       });
+      this._onMessagePerformActionCallbackBind = this._onMessagePerformActionCallback.bind(this);
+      this.registerOnSocketCreate(socket => {
+        socket.on('performAction-callback', this._onMessagePerformActionCallbackBind);
+      });
+      this.registerOnSocketDestroy(socket => {
+        socket.off('performAction-callback', this._onMessagePerformActionCallbackBind);
+      });
     },
   };
   return io;
