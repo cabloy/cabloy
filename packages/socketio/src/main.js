@@ -1,10 +1,10 @@
+import io_performAction from './io_performAction.js';
+
 export default adapter => {
   const io = {
     // socket
     _socket: null,
-    // performAction
-    _performActionCounter: 0,
-    _performActionPromises: {},
+
     // subscribes
     _subscribeCounter: 0,
     _subscribesAll: {},
@@ -17,43 +17,7 @@ export default adapter => {
     _unsubscribesWaitingTimeoutId: 0,
     _unsubscribesWaitingDoing: false,
     _unsubscribesWaiting: {},
-    // performAction
-    async performAction({ url, body }) {
-      // socket
-      const _socket = this._getSocket();
-      if (!_socket.connected) {
-        return new Error('socket is disconnected');
-      }
-      // emit message
-      return new Promise((resolve, reject) => {
-        const id = ++this._performActionCounter;
-        this._performActionPromises[id] = { resolve, reject };
-        _socket.emit('performAction', { id, url, body });
-      });
-    },
-    _onMessagePerformActionCallback(data) {
-      const { id, result } = data;
-      const promise = this._performActionPromises[id];
-      if (!promise) return;
-      delete this._performActionPromises[id];
-      const { resolve, reject } = promise;
-      //
-      if (result.code === 0) {
-        resolve(result.data);
-      } else {
-        const error = new Error();
-        error.code = result.code;
-        error.message = result.message;
-        reject(error);
-      }
-    },
-    _clearPerformActionPromises() {
-      for (const id in this._performActionPromises) {
-        const promise = this._performActionPromises[id];
-        promise.reject(new Error('socket is disconnected'));
-      }
-      this._performActionPromises = {};
-    },
+
     // methods
     subscribe(path, cbMessage, cbSubscribed, options) {
       // options
@@ -360,6 +324,7 @@ export default adapter => {
       }
     },
   };
+  Object.assign(io, io_performAction(adapter));
   // bind
   io._onConnectBind = io._onConnect.bind(io);
   io._onDisconnectBind = io._onDisconnect.bind(io);
