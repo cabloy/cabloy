@@ -41,9 +41,6 @@ export default adapter => {
       if (!this._socket) {
         this._socket = adapter.socket();
         this.raiseOnSocketCreate(this._socket);
-        //
-        this._socket.on('message', this._onMessageBind);
-        this._socket.on('message-system', this._onMessageSystemBind);
       }
       return this._socket;
     },

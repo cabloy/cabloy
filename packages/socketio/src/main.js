@@ -188,7 +188,6 @@ export default adapter => {
           }
         });
     },
-
     _logout() {
       // timeout: not use window.
       setTimeout(() => {
@@ -197,45 +196,6 @@ export default adapter => {
           adapter.logout();
         }
       }, 0);
-    },
-    _onMessage(data) {
-      const _itemPath = this._subscribesPath[data.path];
-      if (!_itemPath) return;
-      for (const subscribeId in _itemPath.items) {
-        const _subscribe = this._subscribesAll[subscribeId];
-        if (_subscribe && _subscribe.cbMessage) {
-          _subscribe.cbMessage({ message: data.message });
-        }
-      }
-    },
-    _onMessageSystem(data) {
-      if (data.code === 401) {
-        this._onMessageSystem_401(data);
-      }
-    },
-    _onMessageSystem_401(data) {
-      const type = data.type;
-      if (type === 'self' || type === 'all') {
-        this._logout();
-      } else if (type === 'provider') {
-        const user = adapter.user();
-        if (user) {
-          if (user.op.anonymous) {
-            this._logout();
-          } else {
-            const providerCurrent = user.provider;
-            const providerMessage = data.provider;
-            if (
-              providerCurrent &&
-              providerMessage &&
-              providerCurrent.scene === providerMessage.scene &&
-              providerCurrent.id === providerMessage.id
-            ) {
-              this._logout();
-            }
-          }
-        }
-      }
     },
     reset() {
       this._unsubscribesWaiting = {};
@@ -254,9 +214,6 @@ export default adapter => {
       // should clear socket
       if (this._socket) {
         this.raiseOnSocketDestroy(this._socket);
-        //
-        this._socket.off('message', this._onMessageBind);
-        this._socket.off('message-system', this._onMessageSystemBind);
         this._socket = null;
       }
 
@@ -268,6 +225,7 @@ export default adapter => {
       }
     },
   };
+  // mixins
   const _initializes = [];
   function mixin(ioProviderFn) {
     const ioProvider = ioProviderFn(adapter);
@@ -280,13 +238,11 @@ export default adapter => {
   mixin(io_socket);
   mixin(io_performAction);
   mixin(io_test);
+  // initialize providers
   for (const _initialize of _initializes) {
     _initialize.call(io);
   }
-  // bind
-  io._onMessageBind = io._onMessage.bind(io);
-  io._onMessageSystemBind = io._onMessageSystem.bind(io);
-  // initialize
+  // initialize adapter
   adapter.initialize(io);
   return io;
 };
