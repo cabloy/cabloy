@@ -264,7 +264,8 @@ export default adapter => {
       }
     },
     _onDisconnect(reason) {
-      this._clearPerformActionPromises();
+      this.raiseOnDisconnect();
+      //
       this._subscribesWaiting = {};
       // reconnect
       if (reason === 'io server disconnect' || reason === 'transport close') {

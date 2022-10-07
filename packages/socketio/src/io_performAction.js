@@ -40,7 +40,11 @@ export default () => {
       }
       this._performActionPromises = {};
     },
-    _initialize() {},
+    _initialize() {
+      this.registerOnDisconnect(() => {
+        this._clearPerformActionPromises();
+      });
+    },
   };
   return io;
 };
