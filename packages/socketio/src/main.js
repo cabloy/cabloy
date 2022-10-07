@@ -31,6 +31,22 @@ export default adapter => {
         _socket.emit('performAction', { id, url, body });
       });
     },
+    _onMessagePerformActionCallback(data) {
+      const { id, result } = data;
+      const promise = this._performActionPromises[id];
+      if (!promise) return;
+      delete this._performActionPromises[id];
+      const { resolve, reject } = promise;
+      //
+      if (result.code === 0) {
+        resolve(result.data);
+      } else {
+        const error = new Error();
+        error.code = result.code;
+        error.message = result.message;
+        reject(error);
+      }
+    },
     // methods
     subscribe(path, cbMessage, cbSubscribed, options) {
       // options
@@ -234,22 +250,6 @@ export default adapter => {
     _onMessageSystem(data) {
       if (data.code === 401) {
         this._onMessageSystem_401(data);
-      }
-    },
-    _onMessagePerformActionCallback(data) {
-      const { id, result } = data;
-      const promise = this._performActionPromises[id];
-      if (!promise) return;
-      delete this._performActionPromises[id];
-      const { resolve, reject } = promise;
-      //
-      if (result.code === 0) {
-        resolve(result.data);
-      } else {
-        const error = new Error();
-        error.code = result.code;
-        error.message = result.message;
-        reject(error);
       }
     },
     _onMessageSystem_401(data) {
