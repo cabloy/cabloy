@@ -7,8 +7,6 @@ import io_test from './io_test.js';
 
 export default adapter => {
   const io = {
-    _subscribesAll: {},
-    _subscribesPath: {},
     // subscribes waiting
     _subscribesWaitingTimeoutId: 0,
     _subscribesWaitingDoing: false,
@@ -18,32 +16,6 @@ export default adapter => {
     _unsubscribesWaitingDoing: false,
     _unsubscribesWaiting: {},
 
-    unsubscribe(subscribeId) {
-      const _item = this._subscribesAll[subscribeId];
-      if (!_item) return;
-
-      const _itemPath = this._subscribesPath[_item.path];
-      if (_itemPath) {
-        delete _itemPath.items[subscribeId];
-        if (Object.keys(_itemPath.items).length === 0) {
-          // delete path
-          delete this._subscribesPath[_item.path];
-          // delete waiting
-          delete this._subscribesWaiting[_item.path];
-          // unsubscribe
-          if (_itemPath.socketId) {
-            this._unsubscribesWaiting[_item.path] = { scene: _itemPath.scene, socketId: _itemPath.socketId };
-            this._doUnsubscribesWaiting();
-          }
-        }
-      }
-
-      delete this._subscribesAll[subscribeId];
-
-      if (Object.keys(this._subscribesAll).length === 0) {
-        this.disconnect();
-      }
-    },
     _doSubscribesWaiting() {
       if (this._subscribesWaitingDoing) return;
       if (this._subscribesWaitingTimeoutId !== 0) return;
