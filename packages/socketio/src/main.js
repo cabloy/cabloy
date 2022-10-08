@@ -17,16 +17,7 @@ export default adapter => {
       }, 0);
     },
     reset() {
-      this._subscribesAll = {};
-      this._subscribesPath = {};
-
-      this.disconnect();
-
-      // should clear socket
-      if (this._socket) {
-        this.raiseOnSocketDestroy(this._socket);
-        this._socket = null;
-      }
+      this.raiseOnReset();
 
       const user = adapter.user();
       if (user && !user.op.anonymous) {
