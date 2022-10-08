@@ -1,6 +1,6 @@
 export default () => {
   const io = {
-    __test: true,
+    __test: false, // true,
     __testPerformAction(i) {
       this.performAction({ url: '/a/socketio/test/echo', body: { echo: i } })
         .then(data => {
