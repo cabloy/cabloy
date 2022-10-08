@@ -88,14 +88,49 @@ export default adapter => {
         }
       }
     },
+    _doSubscribePath(path) {
+      // check
+      const _socket = this._getSocket();
+      if (!_socket.connected) return;
+      const _itemPath = this._subscribesPath[path];
+      if (!_itemPath) return;
+      // subscribe
+      this.performAction({
+        url: 'a/socketio/subscribe',
+        body: {
+          path,
+          timestamp: _itemPath.timestamp,
+        },
+      })
+        .then(() => {
+          _itemPath.subscribed = true;
+          for (const subscribeId in _itemPath.items) {
+            const _subscribe = this._subscribesAll[subscribeId];
+            if (_subscribe && _subscribe.cbSubscribed) {
+              _subscribe.cbSubscribed({ subscribeId, path, options: _subscribe.options });
+            }
+          }
+        })
+        .catch(() => {
+          // do nothing
+          // not check 401
+        });
+    },
     _initialize() {
       // OnConnect
       this.registerOnConnect(() => {
-        // todo:
+        // subscribe again
+        for (const path in this._subscribesPath) {
+          this._doSubscribePath(path);
+        }
       });
       // onDisconnect
       this.registerOnDisconnect(() => {
-        // todo:
+        // reset all paths
+        for (const path in this._subscribesPath) {
+          const _itemPath = this._subscribesPath[path];
+          _itemPath.subscribed = false;
+        }
       });
       // message
       this._onMessageBind = this._onMessage.bind(this);
