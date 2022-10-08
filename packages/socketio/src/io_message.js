@@ -1,4 +1,4 @@
-export default adapter => {
+export default () => {
   const io = {
     // subscribes
     _subscribeCounter: 0,
