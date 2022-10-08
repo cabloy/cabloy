@@ -116,6 +116,28 @@ export default adapter => {
           // not check 401
         });
     },
+    _doUnsubscribePath(path) {
+      // check
+      const _socket = this._getSocket();
+      if (!_socket.connected) return;
+      const _itemPath = this._subscribesPath[path];
+      if (!_itemPath) return;
+      // subscribe
+      this.performAction({
+        url: 'a/socketio/unsubscribe',
+        body: {
+          path,
+          timestamp: Date.now(),
+        },
+      })
+        .then(() => {
+          _itemPath.subscribed = false;
+        })
+        .catch(() => {
+          // do nothing
+          // not check 401
+        });
+    },
     _initialize() {
       // OnConnect
       this.registerOnConnect(() => {
