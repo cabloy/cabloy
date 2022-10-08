@@ -23,20 +23,6 @@
       // reset
       self._io.reset();
     },
-    subscribe({ subscribes, socketId }) {
-      return util.performAction({
-        method: 'post',
-        url: '/a/socketio/subscribe',
-        body: { subscribes, socketId },
-      });
-    },
-    unsubscribe({ subscribes }) {
-      return util.performAction({
-        method: 'post',
-        url: '/a/socketio/unsubscribe',
-        body: { subscribes },
-      });
-    },
     socket() {
       // url
       const url = '<%=site.serverUrl%>';
@@ -65,14 +51,6 @@
     get() {
       if (!util.__io) {
         const _io = window.socketio.default(__socketioAdapter);
-        const _subscribe = _io.subscribe;
-        _io.subscribe = function (path, cbMessage, cbSubscribed, options) {
-          options = options || {};
-          if (options.scene === undefined) {
-            options.scene = util.clientId;
-          }
-          return _subscribe.call(_io, path, cbMessage, cbSubscribed, options);
-        };
         util.__io = _io;
       }
       return util.__io;
