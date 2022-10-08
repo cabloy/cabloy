@@ -7,68 +7,6 @@ import io_test from './io_test.js';
 
 export default adapter => {
   const io = {
-    // subscribes waiting
-    _subscribesWaitingTimeoutId: 0,
-    _subscribesWaitingDoing: false,
-    _subscribesWaiting: {},
-    // unsubscribes waiting
-    _unsubscribesWaitingTimeoutId: 0,
-    _unsubscribesWaitingDoing: false,
-    _unsubscribesWaiting: {},
-
-    _doSubscribesWaiting() {
-      if (this._subscribesWaitingDoing) return;
-      if (this._subscribesWaitingTimeoutId !== 0) return;
-      if (Object.keys(this._subscribesWaiting).length === 0) return;
-      if (!this._socket.connected) return;
-      // combine
-      const subscribes = [];
-      for (const path in this._subscribesWaiting) {
-        const _itemPath = this._subscribesPath[path];
-        if (_itemPath) {
-          subscribes.push({ path, scene: _itemPath.scene });
-        }
-      }
-      // subscribe
-      this._subscribesWaitingDoing = true;
-      adapter
-        .subscribe({ subscribes, socketId: this._socket.id })
-        .then(() => {
-          // loop
-          for (const _item of subscribes) {
-            // delete waiting
-            delete this._subscribesWaiting[_item.path];
-            // cbSubscribed
-            const _itemPath = this._subscribesPath[_item.path];
-            if (_itemPath) {
-              _itemPath.socketId = this._socket.id;
-              for (const subscribeId in _itemPath.items) {
-                const _subscribe = this._subscribesAll[subscribeId];
-                if (_subscribe && _subscribe.cbSubscribed) {
-                  _subscribe.cbSubscribed();
-                }
-              }
-            }
-          }
-          // done
-          this._subscribesWaitingDoing = false;
-          // next
-          this._doSubscribesWaiting();
-        })
-        .catch(err => {
-          // done
-          this._subscribesWaitingDoing = false;
-          if (err.code === 401) {
-            this._logout();
-          } else {
-            // timeout: not use window.
-            this._subscribesWaitingTimeoutId = setTimeout(() => {
-              this._subscribesWaitingTimeoutId = 0;
-              this._doSubscribesWaiting();
-            }, 2000);
-          }
-        });
-    },
     _doUnsubscribesWaiting() {
       if (this._unsubscribesWaitingDoing) return;
       if (this._unsubscribesWaitingTimeoutId !== 0) return;

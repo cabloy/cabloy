@@ -15,22 +15,9 @@ export default adapter => {
     },
     _onConnect() {
       this.raiseOnConnect();
-      //
-      this._subscribesWaiting = {};
-      if (Object.keys(this._subscribesPath).length === 0) {
-        this.disconnect();
-      } else {
-        // -> waitings
-        for (const path in this._subscribesPath) {
-          this._subscribesWaiting[path] = true;
-        }
-        this._doSubscribesWaiting();
-      }
     },
     _onDisconnect(reason) {
       this.raiseOnDisconnect();
-      //
-      this._subscribesWaiting = {};
       // reconnect
       if (reason === 'io server disconnect' || reason === 'transport close') {
         // the disconnection was initiated by the server, you need to reconnect manually
