@@ -4,6 +4,7 @@ export default () => {
     _onDisconnectCallbacks: [],
     _onSocketCreateCallbacks: [],
     _onSocketDestroyCallbacks: [],
+    _onResetCallbacks: [],
     registerOnConnect(callback) {
       this._onConnectCallbacks.push(callback);
     },
@@ -34,6 +35,14 @@ export default () => {
     raiseOnSocketDestroy(socket) {
       for (const callback of this._onSocketDestroyCallbacks) {
         callback.call(this, socket);
+      }
+    },
+    registerOnReset(callback) {
+      this._onResetCallbacks.push(callback);
+    },
+    raiseOnReset() {
+      for (const callback of this._onResetCallbacks) {
+        callback.call(this);
       }
     },
   };
