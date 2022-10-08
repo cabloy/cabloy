@@ -7,51 +7,6 @@ import io_test from './io_test.js';
 
 export default adapter => {
   const io = {
-    _doUnsubscribesWaiting() {
-      if (this._unsubscribesWaitingDoing) return;
-      if (this._unsubscribesWaitingTimeoutId !== 0) return;
-      if (Object.keys(this._unsubscribesWaiting).length === 0) return;
-      // combine
-      const subscribes = [];
-      for (const path in this._unsubscribesWaiting) {
-        const _itemPath = this._subscribesPath[path];
-        if (_itemPath) {
-          // delete waiting
-          delete this._unsubscribesWaiting[path];
-        } else {
-          const _item = this._unsubscribesWaiting[path];
-          subscribes.push({ path, scene: _item.scene, socketId: _item.socketId });
-        }
-      }
-      // unsubscribe
-      this._unsubscribesWaitingDoing = true;
-      adapter
-        .unsubscribe({ subscribes })
-        .then(() => {
-          // loop
-          for (const _item of subscribes) {
-            // delete waiting
-            delete this._unsubscribesWaiting[_item.path];
-          }
-          // done
-          this._unsubscribesWaitingDoing = false;
-          // next
-          this._doUnsubscribesWaiting();
-        })
-        .catch(err => {
-          // done
-          this._unsubscribesWaitingDoing = false;
-          if (err.code === 401) {
-            this._logout();
-          } else {
-            // // timeout: not use window.
-            this._unsubscribesWaitingTimeoutId = setTimeout(() => {
-              this._unsubscribesWaitingTimeoutId = 0;
-              this._doUnsubscribesWaiting();
-            }, 2000);
-          }
-        });
-    },
     _logout() {
       // timeout: not use window.
       setTimeout(() => {
