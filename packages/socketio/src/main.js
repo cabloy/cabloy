@@ -1,6 +1,6 @@
 import io_main from './io_main.js';
 import io_socket from './io_socket.js';
-import io_message from './io_message.js';
+import io_messageSystem from './io_messageSystem.js';
 import io_performAction from './io_performAction.js';
 import io_test from './io_test.js';
 
@@ -237,7 +237,7 @@ export default adapter => {
   }
   mixin(io_main);
   mixin(io_socket);
-  mixin(io_message);
+  mixin(io_messageSystem);
   mixin(io_performAction);
   mixin(io_test);
   // initialize providers
