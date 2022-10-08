@@ -7,8 +7,6 @@ import io_test from './io_test.js';
 
 export default adapter => {
   const io = {
-    // subscribes
-    _subscribeCounter: 0,
     _subscribesAll: {},
     _subscribesPath: {},
     // subscribes waiting
@@ -20,52 +18,6 @@ export default adapter => {
     _unsubscribesWaitingDoing: false,
     _unsubscribesWaiting: {},
 
-    // methods
-    subscribe(path, cbMessage, cbSubscribed, options) {
-      // options
-      options = options || {};
-      // socket
-      const _socket = this._getSocket();
-      if (!_socket.connected) {
-        _socket.connect();
-      }
-      // record to All
-      const subscribeId = ++this._subscribeCounter;
-      this._subscribesAll[subscribeId] = {
-        path,
-        cbMessage,
-        cbSubscribed,
-        options,
-      };
-      // record to path
-      let _itemPath = this._subscribesPath[path];
-      let _newPathSubscribe = false;
-      if (!_itemPath) {
-        _itemPath = this._subscribesPath[path] = { scene: options.scene, items: {} };
-        _newPathSubscribe = true;
-        // delete waiting
-        delete this._unsubscribesWaiting[path];
-      }
-      _itemPath.items[subscribeId] = true;
-
-      // check waitings
-      if (_socket.connected) {
-        if (_newPathSubscribe) {
-          this._subscribesWaiting[path] = true;
-          this._doSubscribesWaiting();
-        } else {
-          if (!this._subscribesWaiting[path]) {
-            // invoke cbSubscribed directly
-            if (cbSubscribed) {
-              cbSubscribed();
-            }
-          }
-        }
-      }
-
-      // ok
-      return subscribeId;
-    },
     unsubscribe(subscribeId) {
       const _item = this._subscribesAll[subscribeId];
       if (!_item) return;

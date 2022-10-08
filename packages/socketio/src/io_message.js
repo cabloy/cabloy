@@ -1,5 +1,81 @@
 export default adapter => {
   const io = {
+    // subscribes
+    _subscribeCounter: 0,
+    _subscribesAll: {},
+    _subscribesPath: {},
+    // methods
+    subscribe(path, cbMessage, cbSubscribed, options) {
+      // socket
+      const _socket = this._getSocket();
+      if (!_socket.connected) {
+        _socket.connect();
+      }
+      // record to All
+      const subscribeId = ++this._subscribeCounter;
+      this._subscribesAll[subscribeId] = {
+        path,
+        cbMessage,
+        cbSubscribed,
+        options,
+      };
+      // record to path
+      let _itemPath = this._subscribesPath[path];
+      let _newPathSubscribe = false;
+      if (!_itemPath) {
+        _itemPath = this._subscribesPath[path] = {
+          subscribed: false,
+          timestamp: Date.now(),
+          items: {},
+        };
+        _newPathSubscribe = true;
+      }
+      _itemPath.items[subscribeId] = true;
+      // just return subscribeId when disconnected
+      if (!_socket.connected) return subscribeId;
+      // connected
+      if (_newPathSubscribe) {
+        this._doSubscribePath(path);
+      } else {
+        if (_itemPath.subscribed) {
+          // invoke cbSubscribed directly
+          if (cbSubscribed) {
+            cbSubscribed({ subscribeId, path, options });
+          }
+        }
+      }
+      // ok
+      return subscribeId;
+    },
+    unsubscribe(subscribeId) {
+      const _item = this._subscribesAll[subscribeId];
+      if (!_item) return;
+
+      let _newPathUnsubscribe = false;
+      const _itemPath = this._subscribesPath[_item.path];
+      if (_itemPath) {
+        delete _itemPath.items[subscribeId];
+        if (Object.keys(_itemPath.items).length === 0) {
+          delete this._subscribesPath[_item.path];
+          _newPathUnsubscribe = true;
+        }
+      }
+
+      delete this._subscribesAll[subscribeId];
+      if (Object.keys(this._subscribesAll).length === 0) {
+        this.disconnect();
+        return; // just return because will be disconnected
+      }
+
+      // just return when disconnected
+      const _socket = this._getSocket();
+      if (!_socket.connected) return;
+
+      if (_newPathUnsubscribe) {
+        // force unsubscribe no matter whether _itemPath.subscribed
+        this._doUnsubscribePath(_item.path);
+      }
+    },
     _onMessage(data) {
       const _itemPath = this._subscribesPath[data.path];
       if (!_itemPath) return;
