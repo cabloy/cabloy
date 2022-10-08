@@ -101,7 +101,7 @@ export default () => {
       if (!_itemPath) return;
       // subscribe
       this.performAction({
-        url: 'a/socketio/subscribe',
+        url: '/a/socketio/subscribe',
         body: {
           path,
           timestamp: _itemPath.timestamp,
@@ -129,7 +129,7 @@ export default () => {
       if (!_itemPath) return;
       // subscribe
       this.performAction({
-        url: 'a/socketio/unsubscribe',
+        url: '/a/socketio/unsubscribe',
         body: {
           path,
           timestamp: Date.now(),

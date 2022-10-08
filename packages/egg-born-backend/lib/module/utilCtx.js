@@ -195,7 +195,7 @@ function appCallback() {
     delegateCookies(ctx, ctxCaller);
 
     // should not delegate session, because session._ctx related to ctx
-    for (const property of ['state']) {
+    for (const property of ['state', 'socket']) {
       delegateProperty(ctx, ctxCaller, property);
     }
 
