@@ -1,10 +1,25 @@
-export default () => {
+export default adapter => {
   const io = {
+    //
     _onConnectCallbacks: [],
     _onDisconnectCallbacks: [],
     _onSocketCreateCallbacks: [],
     _onSocketDestroyCallbacks: [],
     _onResetCallbacks: [],
+    //
+    _logout() {
+      // timeout: not use window.
+      setTimeout(() => {
+        this.disconnect();
+        if (adapter.logout) {
+          adapter.logout();
+        }
+      }, 0);
+    },
+    reset() {
+      this.raiseOnReset();
+    },
+    //
     registerOnConnect(callback) {
       this._onConnectCallbacks.push(callback);
     },

@@ -6,21 +6,7 @@ import io_performAction from './io_performAction.js';
 import io_test from './io_test.js';
 
 export default adapter => {
-  const io = {
-    _logout() {
-      // timeout: not use window.
-      setTimeout(() => {
-        this.disconnect();
-        if (adapter.logout) {
-          adapter.logout();
-        }
-      }, 0);
-    },
-    reset() {
-      this.raiseOnReset();
-    },
-  };
-  // mixins
+  const io = {};
   const _initializes = [];
   function mixin(ioProviderFn) {
     const ioProvider = ioProviderFn(adapter);
@@ -29,6 +15,7 @@ export default adapter => {
     }
     Object.assign(io, ioProvider);
   }
+  // mixins
   mixin(io_main);
   mixin(io_socket);
   mixin(io_message);
