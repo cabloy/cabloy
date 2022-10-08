@@ -25,7 +25,15 @@ function install(_Vue) {
 
   Vue.mixin({
     mounted() {
-      setDevInfo(this);
+      this.__devInfo_timeoutId = window.setTimeout(() => {
+        setDevInfo(this);
+      }, 2000);
+    },
+    beforeDestroy() {
+      if (this.__devInfo_timeoutId) {
+        window.clearTimeout(this.__devInfo_timeoutId);
+        this.__devInfo_timeoutId = 0;
+      }
     },
   });
 }
