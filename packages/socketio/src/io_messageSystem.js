@@ -30,12 +30,24 @@ export default adapter => {
       }
     },
     _initialize() {
+      // onMessageSystem
       this._onMessageSystemBind = this._onMessageSystem.bind(this);
       this.registerOnSocketCreate(socket => {
         socket.on('message-system', this._onMessageSystemBind);
       });
       this.registerOnSocketDestroy(socket => {
         socket.off('message-system', this._onMessageSystemBind);
+      });
+      // onReset
+      this.registerOnReset(() => {
+        setTimeout(() => {
+          const user = adapter.user();
+          if (user && !user.op.anonymous) {
+            this.subscribe('/a/socketio/messageSystem', ({ message }) => {
+              this._onMessageSystem(JSON.parse(message.content));
+            });
+          }
+        }, 0);
       });
     },
   };

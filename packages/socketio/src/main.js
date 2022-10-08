@@ -18,13 +18,6 @@ export default adapter => {
     },
     reset() {
       this.raiseOnReset();
-
-      const user = adapter.user();
-      if (user && !user.op.anonymous) {
-        this.subscribe('/a/socketio/messageSystem', ({ message }) => {
-          this._onMessageSystem(JSON.parse(message.content));
-        });
-      }
     },
   };
   // mixins
