@@ -40,7 +40,9 @@ export default adapter => {
         if (_itemPath.subscribed) {
           // invoke cbSubscribed directly
           if (cbSubscribed) {
-            cbSubscribed({ subscribeId, path, options });
+            setTimeout(() => {
+              cbSubscribed({ subscribeId, path, options });
+            }, 0);
           }
         }
       }
@@ -87,6 +89,15 @@ export default adapter => {
       }
     },
     _initialize() {
+      // OnConnect
+      this.registerOnConnect(() => {
+        // todo:
+      });
+      // onDisconnect
+      this.registerOnDisconnect(() => {
+        // todo:
+      });
+      // message
       this._onMessageBind = this._onMessage.bind(this);
       this.registerOnSocketCreate(socket => {
         socket.on('message', this._onMessageBind);
