@@ -84,7 +84,12 @@ export default adapter => {
       for (const subscribeId in _itemPath.items) {
         const _subscribe = this._subscribesAll[subscribeId];
         if (_subscribe && _subscribe.cbMessage) {
-          _subscribe.cbMessage({ message: data.message });
+          _subscribe.cbMessage({
+            message: data.message,
+            subscribeId,
+            path: data.path,
+            options: _subscribe.options,
+          });
         }
       }
     },
