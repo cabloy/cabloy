@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as uuid from 'uuid';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
+import debounce from '@zhennann/debounce';
 import extend from '@zhennann/extend';
 import sandboxFn from './sandbox.js';
 import screenfull from './screenfull.jsx';
@@ -118,16 +119,6 @@ export default function (Vue) {
           reslove();
         }, ms);
       });
-    },
-    debounce(func, wait) {
-      let i = 0;
-      return function (...args) {
-        const ctx = this;
-        if (i !== 0) window.clearTimeout(i);
-        i = window.setTimeout(() => {
-          func.apply(ctx, args);
-        }, wait);
-      };
     },
     nextId(scene) {
       scene = scene || 'default';
@@ -709,6 +700,7 @@ export default function (Vue) {
     uuid,
     queue,
     cookies,
+    debounce,
     extend(...args) {
       return extend(true, ...args);
     },
