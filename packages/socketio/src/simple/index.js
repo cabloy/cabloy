@@ -28,16 +28,22 @@ export default (io, options) => {
     };
 
     this._onMessageOffsetDefault = async function () {
-      return await Vue.prototype.$meta.api.post('/a/socketio/message/offset', {
-        messageClass: this.messageClass,
+      return await io.performAction({
+        url: '/a/socketio/message/offset',
+        body: {
+          messageClass: this.messageClass,
+        },
       });
     };
 
     this._onMessageSelectDefault = async function () {
-      return await Vue.prototype.$meta.api.post('/a/socketio/message/select', {
-        messageClass: this.messageClass,
-        options: {
-          offset: this.messageOffset,
+      return await io.performAction({
+        url: '/a/socketio/message/select',
+        body: {
+          messageClass: this.messageClass,
+          options: {
+            offset: this.messageOffset,
+          },
         },
       });
     };
@@ -166,9 +172,12 @@ export default (io, options) => {
       const messageIds = Object.keys(this.messageIdsToRead);
       this.messageIdsToRead = {};
       try {
-        await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
-          messageClass: this.messageClass,
-          messageIds,
+        await io.performAction({
+          url: '/a/socketio/message/setRead',
+          body: {
+            messageClass: this.messageClass,
+            messageIds,
+          },
         });
       } catch (err) {
         // save back
