@@ -6,10 +6,26 @@ export default (io, options) => {
     this.initialize = function () {
       options = options || {};
       this.delayTimeout = options.delayTimeout || 500;
+      // io simple
+      options.enableMessages = false;
+      options.onMessageOffset = this._onMessageOffsetDefault;
+      options.onMessagePush = this._onMessagePushDefault;
+      this.ioSimple = simpleFn(io, options);
     };
-    this.subscribe = function ({ path, options }) {};
+    this.subscribe = function ({ progressId, options }) {
+      const path = `/a/progress/update/${progressId}`;
+      this.ioSimple.subscribe({ path, options });
+    };
 
-    this.unsubscribe = function () {};
+    this.unsubscribe = function () {
+      this.ioSimple.unsubscribe();
+    };
+
+    this._onMessageOffsetDefault = function () {
+      return { offset: -1 };
+    };
+
+    this._onMessagePushDefault = function () {};
   };
   const progress = new Progress();
   progress.initialize();

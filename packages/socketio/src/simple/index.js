@@ -10,6 +10,7 @@ export default (io, options) => {
       this.onMessageOffset = options.onMessageOffset || this._onMessageOffsetDefault;
       this.onMessageSelect = options.onMessageSelect || this._onMessageSelectDefault;
       this.onMessagePush = options.onMessagePush;
+      this.onSubscribed = options.onSubscribed;
       // enableMessages
       this.enableMessages = options.enableMessages !== false;
     };
@@ -57,7 +58,12 @@ export default (io, options) => {
       this._pushMessage(message);
     };
 
-    this._onSubscribed = async function () {
+    this._onSubscribed = async function (...args) {
+      // custom
+      if (this.onSubscribed) {
+        return await this.onSubscribed(...args);
+      }
+      //
       if (this.messageOfflineFetching) return;
       this.messageOfflineFetching = true;
       // maybe messages are sent out of order, so need re-receive offset again
