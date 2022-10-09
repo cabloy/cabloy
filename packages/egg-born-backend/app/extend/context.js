@@ -18,14 +18,20 @@ module.exports = {
   get module() {
     if (this[MODULE] === undefined) {
       const url = this.req.mockUrl || this.req.url || '';
-      let info = mparse.parseInfo(mparse.parseName(url));
+      let info;
+      if (url.indexOf('/api/static/public/') === 0) {
+        info = null;
+      } else {
+        info = mparse.parseInfo(mparse.parseName(url));
+      }
       if (!info) {
         info = mparse.parseInfo('a-base');
       }
       if (info) {
         const module = this.app.meta.modules[info.relativeName];
-        if (!module) throw new Error(`module not found: ${info.relativeName}`);
-        this[MODULE] = module;
+        // should not throw error, because the url maybe not valid
+        // if (!module) throw new Error(`module not found: ${info.relativeName}`);
+        this[MODULE] = module || null;
       } else {
         this[MODULE] = null;
       }
