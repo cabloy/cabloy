@@ -10,6 +10,8 @@ export default (io, options) => {
       this.onMessageOffset = options.onMessageOffset || this._onMessageOffsetDefault;
       this.onMessageSelect = options.onMessageSelect || this._onMessageSelectDefault;
       this.onMessagePush = options.onMessagePush;
+      // enableMessages
+      this.enableMessages = options.enableMessages !== false;
     };
 
     this.subscribe = function ({ path, options }) {
@@ -136,19 +138,25 @@ export default (io, options) => {
       // read
       this._messageToRead(message);
       // callback
-      this.onMessagePush({ messages: this.messagesData, message });
+      const result = { message };
+      if (this.enableMessages) {
+        result.messages = this.messagesData;
+      }
+      this.onMessagePush(result);
       // ok
       return true;
     };
 
     this._insertMessage = function (message) {
-      if (!message.id) {
+      if (!this.enableMessages) return true;
+      if (!message.id || message.persistence === false) {
         this.messagesData.push(message);
         return true;
       }
       let indexBase = -1;
       for (let index = this.messagesData.length - 1; index >= 0; index--) {
         const _message = this.messagesData[index];
+        if (!_message.id) continue;
         if (_message.id === message.id) {
           return false; // ignore if exists
         }
