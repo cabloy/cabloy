@@ -61,7 +61,8 @@ export default (io, options) => {
     this._onSubscribed = async function (...args) {
       // custom
       if (this.onSubscribed) {
-        return await this.onSubscribed(...args);
+        const res = await this.onSubscribed(...args);
+        if (res) return res;
       }
       //
       if (this.messageOfflineFetching) return;

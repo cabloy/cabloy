@@ -6,9 +6,15 @@ export default (io, options) => {
     this.initialize = function () {
       options = options || {};
       this.delayTimeout = options.delayTimeout || 500;
+      this.onSubscribed = options.onSubscribed;
+      this.onProgress = options.onProgress;
       // io simple
+      this._initializeSimple();
+    };
+    this._initializeSimple = function () {
+      const options = {};
       options.enableMessages = false;
-      options.onMessageOffset = this._onMessageOffsetDefault;
+      options.onSubscribed = this._onSubscribedDefault;
       options.onMessagePush = this._onMessagePushDefault;
       this.ioSimple = simpleFn(io, options);
     };
@@ -21,8 +27,14 @@ export default (io, options) => {
       this.ioSimple.unsubscribe();
     };
 
-    this._onMessageOffsetDefault = function () {
-      return { offset: -1 };
+    this._onSubscribedDefault = async function (...args) {
+      // custom
+      if (this.onSubscribed) {
+        const res = await this.onSubscribed(...args);
+        if (res) return res;
+      }
+      // true
+      return true;
     };
 
     this._onMessagePushDefault = function () {};
