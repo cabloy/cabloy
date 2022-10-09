@@ -104,6 +104,7 @@ export default (io, options) => {
     this._offlineFetchStop = function () {
       this.messageOfflineFetching = false;
       this._setMessageOffset(this.messageOffsetPending);
+      this.messageOffsetPending = -1;
     };
 
     this.setMessageOffset = function (offset) {
