@@ -161,7 +161,7 @@ export default (io, options) => {
     };
 
     this._messageToRead = function (message) {
-      if (!message.id || message.messageRead === 1) return;
+      if (!message.id || message.messageRead === 1 || message.persistence === false) return;
       this.messageIdsToRead[message.id] = true;
       this._performRead();
     };
