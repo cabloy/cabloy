@@ -1,5 +1,5 @@
 import debounce from '@zhennann/debounce';
-import simpleFn from './simple/index.js';
+import simpleFn from '../simple/index.js';
 
 export default (io, options) => {
   const Progress = function () {
