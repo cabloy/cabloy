@@ -58,7 +58,7 @@ export default (io, options) => {
     this._checking = function (item) {
       // data
       const data = item.data ? (typeof item.data === 'string' ? JSON.parse(item.data) : item.data) : {};
-      this.onProgress({ data });
+      this.onProgress({ item, data });
     };
     this._onSubscribedDefault = async function (...args) {
       // custom
