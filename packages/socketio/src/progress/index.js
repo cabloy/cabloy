@@ -14,8 +14,8 @@ export default (io, options) => {
     this._initializeSimple = function () {
       const options = {};
       options.enableMessages = false;
-      options.onSubscribed = this._onSubscribedDefault;
-      options.onMessagePush = this._onMessagePushDefault;
+      options.onSubscribed = this._onSubscribedDefault.bind(this);
+      options.onMessagePush = this._onMessagePushDefault.bind(this);
       this.ioSimple = simpleFn(io, options);
     };
     this.subscribe = function ({ progressId, options }) {
