@@ -3,21 +3,17 @@ export default function ({ ctx, progressId, title, canAbort = true }) {
     const action = {
       actionModule: 'a-socketio',
       actionComponent: 'io',
-      name: 'instance',
+      name: 'helper',
     };
-    ctx.$meta.util.performAction({ ctx, action }).then(io => {
-      _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject });
+    ctx.$meta.util.performAction({ ctx, action }).then(helper => {
+      _progressbar({ helper, ctx, progressId, title, canAbort, resolve, reject });
     });
   });
 }
 
-function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject }) {
-  let dialog;
-  let counter = 0;
+function _progressbar({ helper, ctx, progressId, title, canAbort, resolve, reject }) {
   const app = ctx.$f7;
   const hostEl = ctx.getHostEl && ctx.getHostEl();
-  let subscribeId = null;
-  const subscribePath = `/a/progress/update/${progressId}`;
   // buttons
   const buttons = [];
   if (canAbort) {
@@ -27,6 +23,31 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
       close: false,
     });
   }
+  // dialog
+  const dialog = app.dialog.create({
+    hostEl,
+    title: typeof title === 'undefined' ? app.params.dialog.progressTitle : title,
+    cssClass: 'dialog-progress',
+    content: `
+              <div class="progressbar-container">
+              </div>
+            `,
+    buttons,
+    onClick(dialog, index) {
+      if (index === 0) callbackBreak();
+    },
+    destroyOnClose: false,
+  });
+  // open
+  dialog.open();
+  // io progress
+  //   options
+  const options = {
+    onProgress,
+  };
+  const ioProgress = helper.progress(options);
+  // subscribe
+  ioProgress.subscribe({ progressId });
   //
   function callbackBreak() {
     ctx.dialog
@@ -92,16 +113,8 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
       }
     }
   }
-  //
-  function checking(item) {
-    if (!item) return;
-    if (item.counter <= counter) {
-      // old message
-      return;
-    }
-    counter = item.counter;
-    // data
-    const data = item.data ? (typeof item.data === 'string' ? JSON.parse(item.data) : item.data) : {};
+  // onProgress
+  function onProgress({ item, data }) {
     // handle
     if (item.done === 0) {
       setProgresses(data);
@@ -132,10 +145,7 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
   //
   function onDestroy() {
     // unsubscribe
-    if (subscribeId) {
-      io.unsubscribe(subscribeId);
-      subscribeId = null;
-    }
+    ioProgress.unsubscribe();
     // delete progress
     ctx.$api
       .post('/a/progress/progress/delete', {
@@ -152,42 +162,6 @@ function _progressbar({ io, ctx, progressId, title, canAbort, resolve, reject })
       dialog.destroy();
     }, 0);
   }
-  //
-  function onMessage({ message }) {
-    const item = JSON.parse(message.content);
-    checking(item);
-  }
-  //
-  function onSubscribed() {
-    ctx.$api
-      .post('/a/progress/progress/check', {
-        progressId,
-        counter,
-      })
-      .then(item => {
-        checking(item);
-      })
-      .catch(() => {
-        // donothing
-      });
-  }
-  // socket io
-  subscribeId = io.subscribe(subscribePath, onMessage, onSubscribed);
-  // dialog
-  dialog = app.dialog.create({
-    hostEl,
-    title: typeof title === 'undefined' ? app.params.dialog.progressTitle : title,
-    cssClass: 'dialog-progress',
-    content: `
-              <div class="progressbar-container">
-              </div>
-            `,
-    buttons,
-    onClick(dialog, index) {
-      if (index === 0) callbackBreak();
-    },
-    destroyOnClose: false,
-  });
-  // open
-  return dialog.open();
+  // ok
+  return dialog;
 }
