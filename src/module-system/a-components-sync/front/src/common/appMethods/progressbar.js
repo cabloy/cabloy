@@ -60,7 +60,8 @@ function _progressbar({ helper, ctx, progressId, title, canAbort, resolve, rejec
           .then(() => {});
       })
       .catch(() => {
-        dialog.open();
+        // need not
+        // dialog.open();
       });
   }
   function setProgresses(list) {
