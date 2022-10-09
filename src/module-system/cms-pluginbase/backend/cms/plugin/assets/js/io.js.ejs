@@ -50,8 +50,8 @@
   Object.defineProperty(util, 'io', {
     get() {
       if (!util.__io) {
-        const _io = window.socketio.default(__socketioAdapter);
-        util.__io = _io;
+        const SocketIO = window.socketio.default;
+        util.__io = SocketIO.io(__socketioAdapter);
       }
       return util.__io;
     },
