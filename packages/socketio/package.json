@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/zhennann/socketio/issues"
   },
-  "homepage": "https://github.com/zhennann/socketio#readme"
+  "homepage": "https://github.com/zhennann/socketio#readme",
+  "dependencies":{
+    "@zhennann/debounce":"^1.0.0"
+  }
 }
