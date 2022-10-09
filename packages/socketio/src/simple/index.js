@@ -1,3 +1,5 @@
+import debounce from '@zhennann/debounce';
+
 export default (io, options) => {
   const Simple = function () {
     this.initialize = function (options) {
@@ -164,7 +166,7 @@ export default (io, options) => {
       this._performRead();
     };
 
-    this._performRead = Vue.prototype.$meta.util.debounce(() => {
+    this._performRead = debounce(() => {
       this._performRead2();
     }, 300);
 
