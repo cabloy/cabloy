@@ -1,20 +1,21 @@
 export default (io, options) => {
   const Simple = function () {
     this.initialize = function (options) {
+      options = options || {};
       // messageClass is optional
       this.messageClass = (options && options.messageClass) || null;
+      // callback
+      this.onMessageOffset = options.onMessageOffset || this._onMessageOffsetDefault;
+      this.onMessageSelect = options.onMessageSelect || this._onMessageSelectDefault;
+      this.onMessagePush = options.onMessagePush;
     };
 
-    this.subscribe = function ({ path, options, onMessageOffset, onMessageSelect, onMessagePush }) {
+    this.subscribe = function ({ path, options }) {
       this.messagesData = [];
       this.messageOffset = -1;
       this.messageOffsetPending = -1;
       this.messageOfflineFetching = false;
       this.messageIdsToRead = {};
-
-      this.onMessageOffset = onMessageOffset || this._onMessageOffsetDefault;
-      this.onMessageSelect = onMessageSelect || this._onMessageSelectDefault;
-      this.onMessagePush = onMessagePush;
 
       this.subscribeId = io.subscribe(path, this._onMessage.bind(this), this._onSubscribed.bind(this), options);
     };
