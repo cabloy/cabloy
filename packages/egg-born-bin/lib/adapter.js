@@ -9,23 +9,6 @@ module.exports = options => {
       // reset
       this._io.reset();
     },
-    subscribe({ subscribes, socketId }) {
-      return openAuthClient.post({
-        path: '/a/socketio/subscribe',
-        body: {
-          subscribes,
-          socketId,
-        },
-      });
-    },
-    unsubscribe({ subscribes }) {
-      return openAuthClient.post({
-        path: '/a/socketio/unsubscribe',
-        body: {
-          subscribes,
-        },
-      });
-    },
     socket() {
       // url
       const url = openAuthClient.token.host;
