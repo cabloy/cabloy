@@ -4,10 +4,9 @@ const enquirer = require('enquirer');
 const uuid = require('uuid');
 const eggBornUtils = require('egg-born-utils');
 const BaseCommand = require('@zhennann/common-bin');
-const IOFn = require('@zhennann/socketio').default;
+const SocketIO = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
-const __debounceTimeout = 500;
 const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG', 'npm_config_registry'];
 
 class CliCommand extends BaseCommand {
@@ -324,7 +323,7 @@ class CliCommand extends BaseCommand {
   }
 
   _getIOInstance() {
-    return IOFn(AdapterFn({ openAuthClient: this.__openAuthClient }));
+    return SocketIO.io(AdapterFn({ openAuthClient: this.__openAuthClient }));
   }
 }
 
