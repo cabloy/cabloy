@@ -2,7 +2,7 @@ import debounce from '@zhennann/debounce';
 
 export default (io, options) => {
   const Simple = function () {
-    this.initialize = function (options) {
+    this.initialize = function () {
       options = options || {};
       // messageClass is optional
       this.messageClass = (options && options.messageClass) || null;
@@ -199,6 +199,6 @@ export default (io, options) => {
     };
   };
   const simple = new Simple();
-  simple.initialize(options);
+  simple.initialize();
   return simple;
 };
