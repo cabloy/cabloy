@@ -29,6 +29,9 @@ export default function (Vue, options, cb) {
           moveToRoot: false,
           queueDialogs: false,
         },
+        notification: {
+          closeOthersOnOpen: false,
+        },
         calendar: {
           routableModals: false,
         },
