@@ -112,12 +112,14 @@ export default function (io) {
 
     this._openMessage = async function ({ message, content, options }) {
       // setRead
-      await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
-        messageClass: {
-          id: message.messageClassId,
-        },
-        messageIds: [message.id],
-      });
+      if (message.id && message.messageRead !== 1 && message.persistence !== false) {
+        await Vue.prototype.$meta.api.post('/a/socketio/message/setRead', {
+          messageClass: {
+            id: message.messageClassId,
+          },
+          messageIds: [message.id],
+        });
+      }
       // callbacks
       const res = await this._performCallbacks({ scene: 'click', message, content });
       if (res) return;
