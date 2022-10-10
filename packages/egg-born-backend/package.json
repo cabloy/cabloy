@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "6.3.16",
+  "version": "6.3.17",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -34,7 +34,7 @@
     "debug": "^4.3.3",
     "egg": "^2.36.0",
     "egg-born-localeutil": "^2.1.2",
-    "egg-born-mglob": "^3.0.6",
+    "egg-born-mglob": "^3.0.7",
     "egg-born-mock": "^2.2.0",
     "egg-born-mparse": "^2.1.8",
     "egg-mysql": "^3.0.0",
