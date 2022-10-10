@@ -4,7 +4,7 @@ export default () => {
     __test: true,
     __testPerformAction(i) {
       for (const method of ['get', 'post']) {
-        this.performAction({ method, url: '/a/socketio/test/echo', body: { echo: i } })
+        this.performAction({ method, url: `/a/socketio/test/echo?method=${method}`, body: { echo: i } })
           .then(data => {
             console.log(method, data);
           })
