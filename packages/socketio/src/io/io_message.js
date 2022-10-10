@@ -165,12 +165,6 @@ export default () => {
         this._subscribesPath = {};
 
         this.disconnect();
-
-        // should clear socket
-        if (this._socket) {
-          this.raiseOnSocketDestroy(this._socket);
-          this._socket = null;
-        }
       });
       // message
       this._onMessageBind = this._onMessage.bind(this);

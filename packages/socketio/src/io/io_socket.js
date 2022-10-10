@@ -4,13 +4,24 @@ export default adapter => {
     _socket: null,
     //
     connect() {
-      if (this._socket) {
-        this._socket.connect();
+      const _socket = this._getSocket();
+      if (!_socket.connected) {
+        _socket.connect();
       }
     },
     disconnect() {
+      const _socket = this._socket;
+      if (!_socket) return;
+      if (_socket.connected) {
+        _socket.disconnect();
+      } else {
+        this.destroySocket();
+      }
+    },
+    destroySocket() {
       if (this._socket) {
-        this._socket.disconnect();
+        this.raiseOnSocketDestroy(this._socket);
+        this._socket = null;
       }
     },
     _onConnect() {
@@ -18,6 +29,8 @@ export default adapter => {
     },
     _onDisconnect(reason) {
       this.raiseOnDisconnect();
+      // for create new socket
+      this.destroySocket();
       // reconnect
       if (reason === 'io server disconnect' || reason === 'transport close') {
         // the disconnection was initiated by the server, you need to reconnect manually
