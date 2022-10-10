@@ -4,7 +4,7 @@ export default () => {
     _performActionCounter: 0,
     _performActionPromises: {},
     // performAction
-    async performAction({ url, body }) {
+    async performAction({ method, url, body }) {
       // socket
       const _socket = this._getSocket();
       if (!_socket.connected) {
@@ -14,7 +14,7 @@ export default () => {
       return new Promise((resolve, reject) => {
         const id = ++this._performActionCounter;
         this._performActionPromises[id] = { resolve, reject };
-        _socket.emit('performAction', { id, url, body });
+        _socket.emit('performAction', { id, method, url, body });
       });
     },
     _onMessagePerformActionCallback(data) {
