@@ -27,6 +27,9 @@ export default () => {
       if (result.code === 0) {
         resolve(result.data);
       } else {
+        if (result.code === 401) {
+          this._logout();
+        }
         const error = new Error();
         error.code = result.code;
         error.message = result.message;
