@@ -1,5 +1,12 @@
 # History
 
+## 2022-10-10, Version 4.23.0
+
+- **Refactor**
+  - 重构 Socket IO 引擎
+  - 重构进度条
+  - 重构 Notification 组件
+
 ## 2022-06-30, Version 4.22.0
 
 - **Feat**
