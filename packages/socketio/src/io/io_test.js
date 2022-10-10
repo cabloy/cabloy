@@ -1,14 +1,17 @@
 export default () => {
   const io = {
-    __test: false, // true,
+    // __test: false,
+    __test: true,
     __testPerformAction(i) {
-      this.performAction({ url: '/a/socketio/test/echo', body: { echo: i } })
-        .then(data => {
-          console.log(data);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      for (const method of ['get', 'post']) {
+        this.performAction({ method, url: '/a/socketio/test/echo', body: { echo: i } })
+          .then(data => {
+            console.log(method, data);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     _initialize() {
       this.registerOnConnect(() => {
