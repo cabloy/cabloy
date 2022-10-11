@@ -46,6 +46,7 @@
     "koa-jwt2": "^1.0.3",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
+    "mysql2": "^2.3.3",
     "passport-oauth2": "^1.6.1",
     "redlock": "^4.1.0",
     "require3": "^2.2.0",
