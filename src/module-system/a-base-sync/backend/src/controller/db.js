@@ -64,6 +64,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queryOne() {
+      const { sql, params } = this.ctx.request.body;
+      const res = await this.ctx.service.db.queryOne({
+        sql,
+        params,
+      });
+      this.ctx.success(res);
+    }
+
     async iid() {
       const res = await this.ctx.service.db.iid();
       this.ctx.success(res);

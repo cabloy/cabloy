@@ -28,6 +28,10 @@ module.exports = app => {
       return await this.ctx.db.query(sql, params);
     }
 
+    async queryOne({ sql, params }) {
+      return await this.ctx.db.queryOne(sql, params);
+    }
+
     async iid() {
       return this.ctx.instance.id;
     }
