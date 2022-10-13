@@ -135,7 +135,7 @@ module.exports = ctx => {
         get(target, prop) {
           const value = target[prop];
           if (!is.function(value)) return value;
-          if (value.name !== 'createPromise') return value;
+          // if (value.name !== 'createPromise') return value;
           // check if use transaction
           if (!ctx.dbMeta.transaction.inTransaction) return value;
           return function (...args) {
