@@ -1,6 +1,6 @@
 {
   "name": "egg-born-backend",
-  "version": "6.3.17",
+  "version": "7.0.0",
   "description": "egg-born-backend",
   "scripts": {
     "lint": "eslint ."
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
-    "@zhennann/ali-rds": "^3.3.3",
+    "@zhennann/ali-rds": "^4.0.0",
     "@zhennann/egg-passport": "^2.1.5",
     "@zhennann/egg-socket.io": "^5.0.4",
     "@zhennann/koa-static-cache": "^5.1.8",
@@ -46,7 +46,6 @@
     "koa-jwt2": "^1.0.3",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
-    "mysql2": "^2.3.3",
     "passport-oauth2": "^1.6.1",
     "redlock": "^4.1.0",
     "require3": "^2.2.0",

@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "dependencies": {
-    "egg-born-backend": "^6.3.17",
+    "egg-born-backend": "^7.0.0",
     "egg-born-bin": "^4.1.13",
     "egg-born-front": "^8.5.16",
     "egg-born-module-a-antdv": "^4.1.16",
