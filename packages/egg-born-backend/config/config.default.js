@@ -286,9 +286,9 @@ function getFullPath(ctx, dir, filename, options) {
   return fullPath;
 }
 
-function onQuery(hook, ms, sequence /* , args*/) {
+function onQuery(hook, ms, query /* , args*/) {
   if (!hook.meta.long_query_time || hook.meta.long_query_time < ms) {
-    const message = `threadId: ${sequence._connection.threadId}, ${ms}ms ==> ${sequence.sql}`;
+    const message = `connectionId: ${query._connection.connectionId}, ${ms}ms ==> ${query.sql}`;
     console.log(chalk.keyword(hook.meta.color)(message));
   }
 }
