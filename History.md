@@ -1,5 +1,10 @@
 # History
 
+## 2022-10-14, Version 4.24.0
+
+- **Refactor**
+  - 重构 mysql 驱动
+
 ## 2022-10-10, Version 4.23.0
 
 - **Refactor**
