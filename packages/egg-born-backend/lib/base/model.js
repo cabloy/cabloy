@@ -60,14 +60,13 @@ module.exports = app => {
   }
 
   [
-    'literals',
+    'literals', //
     'escape',
     'escapeId',
     'format',
     'query',
     'queryOne',
     '_query',
-    '_where',
     '_selectColumns',
     '_limit',
   ].forEach(method => {
@@ -204,15 +203,29 @@ module.exports = app => {
     });
   });
 
+  ['_where'].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function () {
+          return _whereClause(this.ctx.db, arguments[0]);
+        };
+      },
+    });
+  });
+
   // replace _where
   RDSClient.prototype._where = function (where) {
-    const wheres = _formatWhere(this, where);
-    if (!wheres) return '';
-    return ` WHERE (${wheres})`;
+    return _whereClause(this, where);
   };
 
   return Model;
 };
+
+function _whereClause(db, where) {
+  const wheres = _formatWhere(db, where);
+  if (!wheres) return '';
+  return ` WHERE (${wheres})`;
+}
 
 function _formatOrAnd(db, ors, orAnd) {
   const wheres = [];
