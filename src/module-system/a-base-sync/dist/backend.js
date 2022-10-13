@@ -14752,6 +14752,15 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async queryOne() {
+      const { sql, params } = this.ctx.request.body;
+      const res = await this.ctx.service.db.queryOne({
+        sql,
+        params,
+      });
+      this.ctx.success(res);
+    }
+
     async iid() {
       const res = await this.ctx.service.db.iid();
       this.ctx.success(res);
@@ -16220,6 +16229,7 @@ module.exports = app => {
     { method: 'post', path: 'db/update', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/delete', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/query', controller: 'db', middlewares: 'test' },
+    { method: 'post', path: 'db/queryOne', controller: 'db', middlewares: 'test' },
     { method: 'post', path: 'db/iid', controller: 'db', middlewares: 'test' },
   ];
   return routes;
@@ -16909,6 +16919,10 @@ module.exports = app => {
 
     async query({ sql, params }) {
       return await this.ctx.db.query(sql, params);
+    }
+
+    async queryOne({ sql, params }) {
+      return await this.ctx.db.queryOne(sql, params);
     }
 
     async iid() {
