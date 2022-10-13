@@ -203,6 +203,12 @@ module.exports = appInfo => {
             onQuery,
           },
         },
+        typeCast(field, next) {
+          if (field.type === 'JSON') {
+            return field.string();
+          }
+          return next();
+        },
       },
     },
   };
