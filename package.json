@@ -50,7 +50,7 @@
     "@zhennann/extend": "^3.0.2",
     "@zhennann/framework7": "^6.1.0",
     "@zhennann/socketio": "^4.0.2",
-    "@zhennann/vue": "^2.7.12",
+    "@zhennann/vue": "^2.7.13",
     "async": "^3.2.0",
     "autoprefixer": "^9.7.4",
     "axios": "^0.21.1",
