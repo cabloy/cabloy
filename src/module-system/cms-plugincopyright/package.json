@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-plugincopyright",
-  "version": "4.1.10",
+  "version": "4.8.0",
   "title": "cms:plugin:copyright",
   "eggBornModule": {
     "cms": {
