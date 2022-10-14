@@ -1,9 +1,6 @@
-const os = require('os');
 const fs = require('fs');
 const program = require('commander');
 const config = require('./config');
-const pkg = require('../package.json');
-const help = require('./help');
 
 let argv = null;
 
@@ -40,45 +37,8 @@ module.exports = cmd => {
     argv.args = ['cache'].concat(cache || []);
   });
 
-  argv.on('version', function () {
-    console.log(
-      'cnpm@%s (%s)%snpm@%s (%s)%snode@%s (%s)%snpminstall@%s (%s)%sprefix=%s %s%s %s %s %sregistry=%s',
-      pkg.version,
-      __filename,
-      os.EOL,
-      require('npm/package.json').version,
-      require.resolve('npm'),
-      os.EOL,
-      process.version.substring(1),
-      process.execPath,
-      os.EOL,
-      require('npminstall/package.json').version,
-      require.resolve('npminstall'),
-      os.EOL,
-      config.prefix,
-      os.EOL,
-      os.platform(),
-      os.arch(),
-      os.release(),
-      os.EOL,
-      config.cnpmRegistry
-    );
-    process.exit(0);
-  });
-
   // custom help message
   // output command help, default options help info will output by default
-  argv.on('--help', function () {
-    if (!argv.registry) {
-      if (argv.ignoreCustomConfig) {
-        argv.userconfig = 'none';
-      } else {
-        argv.userconfig = argv.userconfig || config.userconfig;
-      }
-      argv.registry = getDefaultRegistry(argv.userconfig);
-    }
-    help(argv);
-  });
   argv.parse(process.argv.slice());
 
   if (argv.ignoreCustomConfig) {
@@ -105,10 +65,6 @@ module.exports = cmd => {
   }
   argv.registryweb = argv.registryweb || config.cnpmHost;
   argv.cache = cacheInfo || config.cache;
-
-  if (!argv.args.length) {
-    help(argv);
-  }
 
   // filter rawArgs
   const rawArgs = argv.rawArgs;
