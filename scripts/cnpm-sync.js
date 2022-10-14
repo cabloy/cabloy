@@ -12,10 +12,10 @@ const registrys = [argv.registry];
 const registrywebs = {};
 registrywebs[argv.registry] = argv.registryweb;
 
-const nodeps = !argv.deps;
-const publish = !!argv.syncPublish;
+// const nodeps = !argv.deps;
+// const publish = !!argv.syncPublish;
 
-const names = args.slice(1);
+const names = args.concat();
 let packageName;
 let dependencies = [];
 let isPrivate = false;
@@ -85,8 +85,9 @@ function showlog(registry, syncInfo, done) {
 function sync(registry, name, callback) {
   let url = name + '/sync?';
   url += querystring.stringify({
-    publish,
-    nodeps,
+    // publish,
+    // nodeps,
+    sync_upstream: true,
   });
   console.log('sync %s, PUT %s/%s', name, registry, url);
   request(
