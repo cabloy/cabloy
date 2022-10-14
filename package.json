@@ -50,7 +50,7 @@
     "@zhennann/extend": "^3.0.2",
     "@zhennann/framework7": "^6.1.0",
     "@zhennann/socketio": "^4.0.2",
-    "@zhennann/vue": "^2.6.15",
+    "@zhennann/vue": "^2.7.12",
     "async": "^3.2.0",
     "autoprefixer": "^9.7.4",
     "axios": "^0.21.1",
@@ -87,6 +87,6 @@
     "regenerator-runtime": "^0.13.7",
     "rimraf": "^3.0.2",
     "semver": "^7.3.7",
-    "vue-eslint-parser": "^7.10.0"
+    "vue-eslint-parser": "^9.1.0"
   }
 }
