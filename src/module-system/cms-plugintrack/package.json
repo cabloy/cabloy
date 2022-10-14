@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-plugintrack",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "title": "cms:plugin:track",
   "eggBornModule": {
     "cms": {
