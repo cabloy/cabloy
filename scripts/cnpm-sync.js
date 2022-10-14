@@ -171,7 +171,7 @@ function syncByPackage(packageName) {
     return syncByNames(dependencies);
   }
 
-  if (argv.yes) {
+  if (!argv.onlyPackage) {
     dependencies.unshift(packageName);
     return syncByNames(dependencies);
   }
