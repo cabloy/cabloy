@@ -1,5 +1,10 @@
 # History
 
+## 2022-10-14, Version 4.25.0
+
+- **Refactor**
+  - vue 从 2.6 升级至 2.7
+
 ## 2022-10-14, Version 4.24.0
 
 - **Refactor**
