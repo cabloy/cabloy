@@ -1,5 +1,11 @@
 # History
 
+## 2022-10-15, Version 4.25.2
+
+- **Refactor**
+  - bullmq 从 1.X 升级至 2.X
+    - redis 最低版本: 6.2.0
+
 ## 2022-10-14, Version 4.25.0
 
 - **Refactor**
