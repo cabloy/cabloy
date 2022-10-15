@@ -1,5 +1,11 @@
 # History
 
+## 2022-10-15, Version 4.25.3
+
+- **Feat**
+  - device.host: wechat/wxwork/dingtalk
+  - device.hostEnabled
+
 ## 2022-10-15, Version 4.25.2
 
 - **Refactor**
