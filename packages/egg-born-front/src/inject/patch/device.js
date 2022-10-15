@@ -3,7 +3,7 @@ export default function (Vue) {
   const device = Vue.prototype.$device;
   // host
   device.host = deviceHost();
-  device.embed = Object.keys(device.host).length > 0;
+  device.hostEnabled = Object.keys(device.host).length > 0;
 }
 
 function deviceHost() {
