@@ -174,8 +174,6 @@ module.exports = appInfo => {
     },
     worker: {
       lockDuration: 30 * 1000,
-    },
-    scheduler: {
       maxStalledCount: 1000,
       stalledInterval: 10 * 1000,
     },
