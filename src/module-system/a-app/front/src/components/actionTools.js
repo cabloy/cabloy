@@ -17,7 +17,7 @@ export default {
     async _onActionopenApp() {
       // params
       const { ctx, action } = this.$props;
-      const { appKey, appLanguage, appIsolate, force, external, target } = action;
+      let { appKey, appLanguage, appIsolate, force, external, target } = action;
       // not external
       if (!external) {
         await ctx.$meta.vueLayout.app_openHome({
@@ -29,6 +29,9 @@ export default {
         return;
       }
       // external
+      if (window.event && (window.event.metaKey || window.event.ctrlKey || window.event.button === 1)) {
+        target = '_blank';
+      }
       const queries = { appKey };
       if (appLanguage) queries.appLanguage = appLanguage;
       if (appIsolate) queries.appIsolate = appIsolate;
