@@ -1,6 +1,6 @@
-<script>
 import Vue from 'vue';
 const f7Page = Vue.options.components['f7-page'].extendOptions;
+delete f7Page.props.href;
 const __prefix = '* ';
 export default {
   meta: {
@@ -101,5 +101,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
