@@ -10,12 +10,8 @@ export default {
   name: 'eb-page',
   extends: f7Page,
   props: {
-    ebHideNavbarOnScroll: {
-      type: Boolean,
-    },
-    ebHideToolbarOnScroll: {
-      type: Boolean,
-    },
+    ebHideNavbarOnScroll: {},
+    ebHideToolbarOnScroll: {},
   },
   data() {
     return {
