@@ -1,6 +1,7 @@
 import Vue from 'vue';
 const f7Page = Vue.options.components['f7-page'].extendOptions;
-delete f7Page.props.href;
+delete f7Page.props.hideNavbarOnScroll;
+delete f7Page.props.hideToolbarOnScroll;
 const __prefix = '* ';
 export default {
   meta: {
@@ -8,11 +9,25 @@ export default {
   },
   name: 'eb-page',
   extends: f7Page,
+  props: {
+    ebHideNavbarOnScroll: {
+      type: Boolean,
+    },
+    ebHideToolbarOnScroll: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       pageTitle: null,
       pageDirty: false,
+      hideNavbarOnScroll: false,
+      hideToolbarOnScroll: false,
     };
+  },
+  created() {
+    this.hideNavbarOnScroll = this._getHideNavbarOnScroll();
+    this.hideToolbarOnScroll = this._getHideToolbarOnScroll();
   },
   mounted() {
     // page
@@ -98,6 +113,12 @@ export default {
         pageTitle = `${__prefix}${pageTitle}`;
       }
       return pageTitle;
+    },
+    _getHideNavbarOnScroll() {
+      return this.ebHideNavbarOnScroll === undefined ? this.$device.hostEnabled : this.ebHideNavbarOnScroll;
+    },
+    _getHideToolbarOnScroll() {
+      return this.ebHideToolbarOnScroll === undefined ? this.$device.hostEnabled : this.ebHideToolbarOnScroll;
     },
   },
 };
