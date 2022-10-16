@@ -203,7 +203,7 @@ module.exports = appInfo => {
         },
         typeCast(field, next) {
           if (field.type === 'JSON') {
-            return field.string();
+            return field.stringJSON();
           }
           return next();
         },
