@@ -1,5 +1,15 @@
 # History
 
+## 2022-10-16, Version 4.25.5
+
+- **Feat**
+  - open app: target
+
+## 2022-10-16, Version 4.25.4
+
+- **Feat**
+  - eb-page: ebHideNavbarOnScroll/ebHideToolbarOnScroll
+
 ## 2022-10-15, Version 4.25.3
 
 - **Feat**
