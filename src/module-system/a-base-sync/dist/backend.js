@@ -2675,7 +2675,7 @@ module.exports = app => {
         item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
       }
       // atomDisabled
-      this._atomDisabledTranslate({ atomClass, item });
+      await this._atomDisabledTranslate({ atomClass, item });
       // ok
       return item;
     }
@@ -2713,7 +2713,7 @@ module.exports = app => {
         if (item.atomLanguage) {
           item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
         }
-        this._atomDisabledTranslate({ atomClass, item });
+        await this._atomDisabledTranslate({ atomClass, item });
       }
     }
 
@@ -2999,8 +2999,14 @@ module.exports = app => {
       }
     }
 
-    _atomDisabledTranslate({ atomClass, item }) {
+    async _atomDisabledTranslate({ atomClass, item }) {
+      //
       if (!item.atomDisabled) return;
+      //
+      if (!atomClass) {
+        atomClass = await this.ctx.bean.atomClass.get({ id: item.atomClassId });
+      }
+      //
       const actionBase = this.ctx.bean.base.action({
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
