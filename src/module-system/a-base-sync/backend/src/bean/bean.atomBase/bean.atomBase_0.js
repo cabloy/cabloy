@@ -69,7 +69,7 @@ module.exports = app => {
         item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
       }
       // atomDisabled
-      this._atomDisabledTranslate({ atomClass, item });
+      await this._atomDisabledTranslate({ atomClass, item });
       // ok
       return item;
     }
@@ -107,7 +107,7 @@ module.exports = app => {
         if (item.atomLanguage) {
           item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
         }
-        this._atomDisabledTranslate({ atomClass, item });
+        await this._atomDisabledTranslate({ atomClass, item });
       }
     }
 

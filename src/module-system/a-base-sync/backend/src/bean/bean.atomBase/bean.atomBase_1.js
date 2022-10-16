@@ -112,8 +112,14 @@ module.exports = app => {
       }
     }
 
-    _atomDisabledTranslate({ atomClass, item }) {
+    async _atomDisabledTranslate({ atomClass, item }) {
+      //
       if (!item.atomDisabled) return;
+      //
+      if (!atomClass) {
+        atomClass = await this.ctx.bean.atomClass.get({ id: item.atomClassId });
+      }
+      //
       const actionBase = this.ctx.bean.base.action({
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
