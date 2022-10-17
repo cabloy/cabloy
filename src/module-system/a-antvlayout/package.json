@@ -21,6 +21,6 @@
   },
   "author": "zhennann",
   "devDependencies": {
-    "@antv/layout": "^0.1.18"
+    "@antv/layout": "^0.3.2"
   }
 }

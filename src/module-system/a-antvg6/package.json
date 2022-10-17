@@ -21,6 +21,6 @@
   },
   "author": "zhennann",
   "devDependencies": {
-    "@antv/g6": "^4.3.11"
+    "@antv/g6": "^4.7.8"
   }
 }
