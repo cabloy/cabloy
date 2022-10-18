@@ -264,6 +264,9 @@
           "test-note": {
             "scripts": ["gitCommit"]
           },
+          "a-paypal": {
+            "scripts": ["gitCommit"]
+          },
           "a-wechat": {
             "scripts": ["gitCommit"]
           },
