@@ -1,7 +1,5 @@
 <script>
 import Vue from 'vue';
-import Utils from '@zhennann/framework7/packages/vue/utils/utils.js';
-import Mixins from '@zhennann/framework7/packages/vue/utils/mixins';
 import TreeviewData from './treeviewData.js';
 import TreeviewAdapterFn from './treeviewAdapter.js';
 const f7Treeview = Vue.options.components['f7-treeview'].extendOptions;
@@ -291,7 +289,7 @@ export default {
     const _h = this.$createElement;
     const props = this.props;
     let { className, id, style } = props;
-    const classes = Utils.classNames(className, 'treeview', Mixins.colorClasses(props));
+    const classes = this.$vuef7.utils.classNames(className, 'treeview', this.$vuef7.mixins.colorClasses(props));
 
     if (!id) id = this.treeviewData.treeviewId;
 

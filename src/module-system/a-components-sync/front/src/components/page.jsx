@@ -2,6 +2,7 @@ import Vue from 'vue';
 const f7Page = Vue.options.components['f7-page'].extendOptions;
 delete f7Page.props.hideNavbarOnScroll;
 delete f7Page.props.hideToolbarOnScroll;
+delete f7Page.props.className;
 const __prefix = '* ';
 export default {
   meta: {
@@ -12,6 +13,7 @@ export default {
   props: {
     ebHideNavbarOnScroll: {},
     ebHideToolbarOnScroll: {},
+    ebClassName: {},
   },
   data() {
     return {
@@ -19,6 +21,7 @@ export default {
       pageDirty: false,
       hideNavbarOnScroll: false,
       hideToolbarOnScroll: false,
+      className: '',
     };
   },
   created() {
@@ -39,6 +42,9 @@ export default {
     if (this.$meta.config.env === 'development') {
       $page.attr('data-dev-page-url', this.$pageRoute.url);
     }
+    // page class
+    const pageClassName = 'eb-page' + this.$pageRoute.path.replace(/\//g, '-');
+    this.className = this.$vuef7.utils.classNames(this.ebClassName, pageClassName);
   },
   beforeDestroy() {
     if (this._watchTitle) {
