@@ -116,7 +116,7 @@ export default {
   },
   render() {
     return (
-      <eb-page class="eb-icons-all-page">
+      <eb-page>
         <eb-navbar title={this.pageTitle} eb-back-link="Back">
           <f7-nav-right>
             <f7-link iconF7="::search" onClick={this.onClickEnable}></f7-link>
