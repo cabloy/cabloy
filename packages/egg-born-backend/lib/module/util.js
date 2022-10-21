@@ -97,6 +97,12 @@ module.exports = app => {
         }
         whiteListCors = whiteListCors.concat(_whiteListJsonp);
       }
+      // hostSelf
+      const hostSelf = ctx.bean.base.getAbsoluteUrl();
+      if (hostSelf) {
+        whiteListCors.push(hostSelf);
+      }
+      // ok
       return whiteListCors;
     },
     isSafeDomain(ctx, origin) {
