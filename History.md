@@ -1,5 +1,10 @@
 # History
 
+## 2022-10-21, Version 4.25.9
+
+- **Feat**
+  - add css class to the eb-page dom element
+
 ## 2022-10-16, Version 4.25.5
 
 - **Feat**
