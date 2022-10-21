@@ -500,7 +500,9 @@
       }).then(data => {
         this.user = data.user;
         this.clientId = data.clientId;
-        $(document).trigger('echo-ready', data);
+        window.setTimeout(() => {
+          $(document).trigger('echo-ready', data);
+        }, 0);
       });
     },
     escapeHtml(str) {

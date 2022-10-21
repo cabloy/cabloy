@@ -32,7 +32,9 @@ export default function (Vue) {
         state.loggedIn = loggedIn;
         _setUser(state, user);
         // event
-        Vue.prototype.$meta.eventHub.$emit('auth:login', { user: state.user });
+        Vue.prototype.$nextTick(() => {
+          Vue.prototype.$meta.eventHub.$emit('auth:login', { user: state.user });
+        });
       },
       setUser(state, user) {
         _setUser(state, user);

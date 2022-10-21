@@ -262,17 +262,17 @@ export default {
         // get auth first
         const locale = this.$meta.util.getLocale();
         const data = await this.$api.post(`/a/base/auth/echo?locale=${locale}`);
-        // login
-        this.$store.commit('auth/login', {
-          loggedIn: data.user.agent.anonymous === 0,
-          user: data.user,
-        });
         // instance
         this.$store.commit('auth/setInstance', data.instance);
         // loginInfo
         this.$store.commit('auth/setLoginInfo', data);
         // clientId
         this.$store.commit('auth/setClientId', data.clientId);
+        // login, should after setClientId
+        this.$store.commit('auth/login', {
+          loggedIn: data.user.agent.anonymous === 0,
+          user: data.user,
+        });
         // title
         window.document.title = this.$store.getters['auth/title'];
         // check if need activation
