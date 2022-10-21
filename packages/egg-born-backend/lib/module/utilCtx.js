@@ -31,12 +31,36 @@ module.exports = ctx => {
       const dbLevel = !info.dbLevel ? ctx.dbLevel + 1 : info.dbLevel;
       const locale = info.locale === undefined ? ctx.locale : info.locale;
       const subdomain = info.subdomain === undefined ? ctx.subdomain : info.subdomain;
-      return {
+      // new info
+      info = {
         ...info,
         dbLevel,
         locale,
         subdomain,
       };
+      if (!info.ctxParent) info.ctxParent = {};
+      if (!info.ctxParent.request) info.ctxParent.request = {};
+      if (!info.ctxParent.request.headers) info.ctxParent.request.headers = {};
+      // headers
+      const headers = info.ctxParent.request.headers;
+      for (const key of ['x-clientid', 'x-scene']) {
+        if (!headers[key]) {
+          const value = key === 'x-clientid' ? ctx.bean.util.getFrontClientId() : ctx.bean.util.getFrontScene();
+          if (value) {
+            headers[key] = value;
+          }
+        }
+      }
+      for (const key of ['host', 'origin', 'referer', 'user-agent']) {
+        if (!headers[key]) {
+          const value = ctx.request.headers[key];
+          if (value) {
+            headers[key] = value;
+          }
+        }
+      }
+      // ok
+      return info;
     },
     async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, instance }) {
       return await ctx.app.meta.util.executeBean({
