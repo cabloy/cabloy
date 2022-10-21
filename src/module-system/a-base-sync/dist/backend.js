@@ -7518,7 +7518,8 @@ module.exports = app => {
       const demo = this.ctx.config.module(moduleInfo.relativeName).configFront.demo;
       if (!demo.enable) return true;
       const user = this.ctx.state.user;
-      if (user && user.op.userName === 'root') return true;
+      // !user means system operation
+      if (!user || user.op.userName === 'root') return true;
       if (throwError) {
         this.ctx.throw.module(moduleInfo.relativeName, 1014);
       }
