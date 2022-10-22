@@ -160,7 +160,10 @@ export default {
           // in new view
           this.$refs.group.createView({ ctx, url }).then(res => {
             if (res) {
-              if (res.options) options = this.$utils.extend({}, options, res.options);
+              if (res.options) {
+                // options = this.$utils.extend({}, options, res.options);
+                options = Object.assign({}, options, res.options);
+              }
               res.view.f7View.router.navigate(url, options);
             }
           });
