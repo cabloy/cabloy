@@ -51,7 +51,7 @@ export default function (Vue) {
         return state.labels;
       },
       demoEnable() {
-        return Vue.prototype.$meta.config.modules['a-base'].demo.enable;
+        return !!Vue.prototype.$meta.config.modules['a-base'].demo.enable;
       },
     },
     mutations: {
