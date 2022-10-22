@@ -56,7 +56,8 @@ export default {
       );
     }
     // toolbar
-    const _toolbarAttrs = this.$utils.extend({}, this.toolbarConfig.meta);
+    // const _toolbarAttrs = this.$utils.extend({}, this.toolbarConfig.meta);
+    const _toolbarAttrs = Object.assign({}, this.toolbarConfig.meta);
     const toolbar = c(
       'f7-toolbar',
       {
