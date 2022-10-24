@@ -90,6 +90,8 @@ function sync(registry, name, callback) {
     sync_upstream: true,
   });
   console.log('sync %s, PUT %s/%s', name, registry, url);
+  const realRegistry =
+    registry === 'https://registry.npmmirror.com' ? 'https://registry-direct.npmmirror.com' : registry;
   request(
     {
       method: 'PUT',
@@ -97,7 +99,7 @@ function sync(registry, name, callback) {
       data: {},
     },
     {
-      registry,
+      registry: realRegistry,
       configFile: argv.userconfig,
     },
     function (err, result, data, res) {

@@ -51,8 +51,9 @@ module.exports = cmd => {
     argv.registry = getDefaultRegistry(argv.userconfig);
   }
   if (!argv.disturl) {
-    const isIOJS = process.execPath.indexOf('iojs') >= 0;
-    argv.disturl = isIOJS ? config.iojsDisturl : config.disturl;
+    // const isIOJS = process.execPath.indexOf('iojs') >= 0;
+    // argv.disturl = isIOJS ? config.iojsDisturl : config.disturl;
+    argv.disturl = config.disturl;
   }
   if (!argv.proxy) {
     argv.proxy = config.proxy;
