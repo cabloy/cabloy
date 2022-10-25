@@ -40,6 +40,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    initOnTabShow: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -68,7 +72,7 @@ export default {
     onTabShow(el) {
       this.$emit('tab:show', el);
       this.$emit('tabShow', el);
-      if (!this.inited && this.list) {
+      if (this.initOnTabShow && !this.inited && this.list) {
         this.inited = true;
         this.list.reload(true);
       }
