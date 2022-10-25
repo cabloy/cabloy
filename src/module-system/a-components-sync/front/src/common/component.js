@@ -135,6 +135,8 @@ export default {
           this.$options.components[fullName] = component;
           this.ready = true;
           this.errorMessage = null;
+          // emit
+          this.__emitComponentReady();
         }
         // debounce
         this.debounceStop();
@@ -150,6 +152,18 @@ export default {
     },
     __getFullName() {
       return `${this.module}:${this.name}`;
+    },
+    __emitComponentReady() {
+      this.$nextTick(() => {
+        const componentInstance = this.getComponentInstance();
+        if (!componentInstance) {
+          window.setTimeout(() => {
+            this.__emitComponentReady();
+          }, 50);
+        } else {
+          this.$emit('componentReady', componentInstance);
+        }
+      });
     },
   },
 };
