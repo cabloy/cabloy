@@ -31,7 +31,7 @@
         data-ref="drafts"
         @tab:show="tabName = 'drafts'"
       >
-        <atomTab ref="drafts" slot="list" :container="getContainer('drafts')"></atomTab>
+        <AtomList ref="drafts" slot="list" :container="getContainer('drafts')"></AtomList>
       </eb-tab-page-content>
       <eb-tab-page-content
         :id="tabId.draftsFlowing"
@@ -39,17 +39,17 @@
         data-ref="draftsFlowing"
         @tab:show="tabName = 'draftsFlowing'"
       >
-        <atomTab ref="draftsFlowing" slot="list" :container="getContainer('draftsFlowing')"></atomTab>
+        <AtomList ref="draftsFlowing" slot="list" :container="getContainer('draftsFlowing')"></AtomList>
       </eb-tab-page-content>
     </f7-tabs>
   </eb-page>
 </template>
 <script>
 import Vue from 'vue';
-import atomTab from '../../components/tab/atomTab.jsx';
+import AtomList from '../../components/atom/atomList.jsx';
 export default {
   components: {
-    atomTab,
+    AtomList,
   },
   data() {
     const query = this.$f7route.query;

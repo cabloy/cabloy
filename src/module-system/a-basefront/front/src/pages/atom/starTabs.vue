@@ -35,7 +35,7 @@
         data-ref="stars"
         @tab:show="tabName = 'stars'"
       >
-        <atomTab ref="stars" slot="list" :container="getContainer('stars')"></atomTab>
+        <AtomList ref="stars" slot="list" :container="getContainer('stars')"></AtomList>
       </eb-tab-page-content>
       <template v-if="userLabels">
         <eb-tab-page-content
@@ -46,7 +46,7 @@
           :data-ref="`${tabId.labels}_${key}`"
           @tab:show="tabName = `${tabId.labels}_${key}`"
         >
-          <atomTab :ref="`${tabId.labels}_${key}`" slot="list" :container="getContainer('labels', key)"></atomTab>
+          <AtomList :ref="`${tabId.labels}_${key}`" slot="list" :container="getContainer('labels', key)"></AtomList>
         </eb-tab-page-content>
       </template>
     </f7-tabs>
@@ -54,10 +54,10 @@
 </template>
 <script>
 import Vue from 'vue';
-import atomTab from '../../components/tab/atomTab.jsx';
+import AtomList from '../../components/atom/atomList.jsx';
 export default {
   components: {
-    atomTab,
+    AtomList,
   },
   data() {
     const query = this.$f7route.query;

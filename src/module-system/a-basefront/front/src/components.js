@@ -20,8 +20,8 @@ import renderRole from './components/render/renderRole.jsx';
 import categorySelect from './components/category/categorySelect.jsx';
 // tag
 import tagSelect from './components/tag/tagSelect.jsx';
-// tab
-import atomTab from './components/tab/atomTab.jsx';
+// atom
+import atomList from './components/atom/atomList.jsx';
 // listLayoutData
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
 import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
@@ -54,8 +54,8 @@ export default {
   categorySelect,
   // tag
   tagSelect,
-  // tab
-  atomTab,
+  // atom
+  atomList,
   // layout
   listLayoutDataAdapter,
   listLayoutDataProviderAll,
