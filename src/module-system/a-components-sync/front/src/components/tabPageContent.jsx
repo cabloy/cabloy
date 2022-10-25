@@ -1,20 +1,3 @@
-<template>
-  <f7-page-content
-    :id="id"
-    :tab="tab"
-    :tab-active="tabActive"
-    :ptr="ptr"
-    @ptr:refresh="onRefresh"
-    :infinite="infinite"
-    :infinitePreloader="false"
-    @infinite="onInfinite"
-    @tab:show="onTabShow"
-  >
-    <slot ref="list" name="list"></slot>
-    <slot></slot>
-  </f7-page-content>
-</template>
-<script>
 export default {
   meta: {
     global: true,
@@ -98,5 +81,22 @@ export default {
       this.onTabShow();
     }
   },
+  render() {
+    return (
+      <f7-page-content
+        id={this.id}
+        tab={this.tab}
+        tab-active={this.tabActive}
+        ptr={this.ptr}
+        onPtrRefresh={this.onRefresh}
+        infinite={this.infinite}
+        infinitePreloader={false}
+        onInfinite={this.onInfinite}
+        onTabShow={this.onTabShow}
+      >
+        {!!this.$scopedSlots.list && this.$scopedSlots.list()}
+        {!!this.$scopedSlots.default && this.$scopedSlots.default()}
+      </f7-page-content>
+    );
+  },
 };
-</script>
