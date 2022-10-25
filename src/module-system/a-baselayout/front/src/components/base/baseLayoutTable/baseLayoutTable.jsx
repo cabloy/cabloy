@@ -33,7 +33,6 @@ export default {
       // provider switch
       const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'paged',
-        autoInit: true,
       };
       await this.layoutManager.data_providerSwitch(providerOptions);
       // instance

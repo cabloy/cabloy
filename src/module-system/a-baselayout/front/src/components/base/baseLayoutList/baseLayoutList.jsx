@@ -26,13 +26,8 @@ export default {
         this.layoutManager.subnavbar_policyDefault();
       }
       // provider switch
-      const containerScene = this.layoutManager.container && this.layoutManager.container.scene;
-      const containerAutoInit = this.layoutManager.container && this.layoutManager.container.autoInit;
-      const dataForce = this.layoutManager.data.dataForce;
-      const autoInit = dataForce || containerAutoInit === undefined ? containerScene !== 'search' : containerAutoInit;
       const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'continuous',
-        autoInit,
       };
       await this.layoutManager.data_providerSwitch(providerOptions);
       // instance

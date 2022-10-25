@@ -29,10 +29,24 @@ export default {
       this.data.adapter = this.$meta.util.createComponentInstance(component, options);
     },
     async data_providerSwitch(options) {
+      // autoInit
+      if (options.autoInit === undefined) {
+        const autoInit = this.data_checkAutoInit();
+        options = { ...options, autoInit };
+      }
+      // adapter init
       if (!this.data.adapter) {
         await this.data_adapterInit();
       }
+      // adapter provider switch
       return await this.data.adapter.providerSwitch(options);
+    },
+    data_checkAutoInit() {
+      const containerScene = this.container && this.container.scene;
+      const containerAutoInit = this.container && this.container.autoInit;
+      const dataForce = this.data.dataForce;
+      const autoInit = dataForce || containerAutoInit === undefined ? containerScene !== 'search' : containerAutoInit;
+      return autoInit;
     },
     data_callMethod(methodName, ...args) {
       if (!this.data.adapter) return null;

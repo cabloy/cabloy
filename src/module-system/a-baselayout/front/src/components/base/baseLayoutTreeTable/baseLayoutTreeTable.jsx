@@ -36,7 +36,6 @@ export default {
       // provider switch
       const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'tree',
-        autoInit: true,
       };
       const res = await this.layoutManager.data_providerSwitch(providerOptions);
       this.treeviewData = res.treeviewData;
