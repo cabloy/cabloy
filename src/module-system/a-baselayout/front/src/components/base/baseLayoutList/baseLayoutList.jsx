@@ -28,7 +28,8 @@ export default {
       // provider switch
       const containerScene = this.layoutManager.container && this.layoutManager.container.scene;
       const containerAutoInit = this.layoutManager.container && this.layoutManager.container.autoInit;
-      const autoInit = containerAutoInit === undefined ? containerScene !== 'search' : containerAutoInit;
+      const dataForce = this.layoutManager.data.dataForce;
+      const autoInit = dataForce || containerAutoInit === undefined ? containerScene !== 'search' : containerAutoInit;
       const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'continuous',
         autoInit,

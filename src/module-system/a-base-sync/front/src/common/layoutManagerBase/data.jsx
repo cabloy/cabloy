@@ -3,6 +3,7 @@ export default {
     return {
       data: {
         adapter: null,
+        dataForce: false,
       },
     };
   },
@@ -38,6 +39,10 @@ export default {
       return this.data.adapter[methodName](...args);
     },
     data_onPageRefresh(force) {
+      if (force && !this.data.adapter) {
+        this.data.dataForce = true;
+        return;
+      }
       return this.data_callMethod('onPageRefresh', force);
     },
     data_onPageInfinite() {
