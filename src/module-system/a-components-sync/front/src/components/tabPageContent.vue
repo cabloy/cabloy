@@ -50,7 +50,11 @@ export default {
   computed: {
     list() {
       const list = this.$slots.list;
-      return list ? list[0].componentInstance : null;
+      let listInstance = list ? list[0].componentInstance : null;
+      if (listInstance && listInstance.getComponentInstance) {
+        listInstance = listInstance.getComponentInstance();
+      }
+      return listInstance;
     },
   },
   methods: {
