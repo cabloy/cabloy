@@ -32,36 +32,50 @@ export default {
     return {
       inited: false,
       tabMounted: false,
+      componentInstance: null, // for eb-component
     };
-  },
-  computed: {
-    list() {
-      const list = this.$slots.list;
-      let listInstance = list ? list[0].componentInstance : null;
-      if (listInstance && listInstance.getComponentInstance) {
-        listInstance = listInstance.getComponentInstance();
-      }
-      return listInstance;
-    },
   },
   methods: {
     onRefresh(done) {
       done();
-      this.list && this.list.reload();
+      const listInstance = this._getListInstance();
+      listInstance && listInstance.reload();
     },
     onInfinite() {
-      this.list && this.list.loadMore();
+      const listInstance = this._getListInstance();
+      listInstance && listInstance.loadMore();
     },
     onTabShow(el) {
       this.$emit('tab:show', el);
       this.$emit('tabShow', el);
-      if (this.initOnTabShow && !this.inited && this.list) {
-        this.inited = true;
-        this.list.reload(true);
-      }
+      this._checkInit();
     },
     getPage() {
       return this.$page.$children[0];
+    },
+    _getListInstance() {
+      if (this.componentInstance) return this.componentInstance;
+      const list = this.$slots.list;
+      const listInstance = list ? list[0].componentInstance : null;
+      if (!listInstance || !listInstance.getComponentInstance) return listInstance;
+      // eb-component
+      const listInstance2 = listInstance.getComponentInstance();
+      if (listInstance2) {
+        this.componentInstance = listInstance2;
+        return listInstance2;
+      }
+      listInstance.$once('componentReady', componentInstance => {
+        this.componentInstance = componentInstance;
+        this._checkInit();
+      });
+      return null;
+    },
+    _checkInit() {
+      const listInstance = this._getListInstance();
+      if (this.initOnTabShow && !this.inited && listInstance) {
+        this.inited = true;
+        listInstance.reload(true);
+      }
     },
   },
   beforeDestroy() {
