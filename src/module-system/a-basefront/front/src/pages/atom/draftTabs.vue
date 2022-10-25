@@ -92,6 +92,7 @@ export default {
       return {
         options,
         layout: this.layout,
+        autoInit: false,
       };
     },
     onStatsChange(event, mode) {
