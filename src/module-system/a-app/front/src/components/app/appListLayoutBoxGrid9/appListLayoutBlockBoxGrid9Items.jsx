@@ -24,14 +24,6 @@ function installFactory(_Vue) {
       async onItemClick(event, item) {
         const appKey = item.atomStaticKey;
         const appIsolate = item.appIsolate;
-        if (!appIsolate) {
-          this.layoutManager.$meta.vueLayout.app_openHome({
-            view: this.layoutManager.$view,
-            appKey,
-            force: false,
-          });
-          return;
-        }
         // appIsolate
         const action = {
           actionModule: 'a-app',
@@ -39,7 +31,8 @@ function installFactory(_Vue) {
           name: 'openApp',
           appKey,
           appIsolate,
-          external: true,
+          external: !!appIsolate,
+          force: false,
           target: '_self',
         };
         return await this.layoutManager.$meta.util.performAction({
