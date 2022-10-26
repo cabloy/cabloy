@@ -155,6 +155,23 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        let sql = `
+          ALTER TABLE aApp
+            ADD COLUMN appHidden int(11) DEFAULT '0'
+        `;
+        await this.ctx.model.query(sql);
+
+        // alter view: aAppViewFull
+        await this.ctx.model.query('drop view aAppViewFull');
+        sql = `
+          CREATE VIEW aAppViewFull as
+            select a.*,b.content from aApp a
+              left join aAppContent b on a.id=b.itemId
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {
@@ -344,11 +361,12 @@ module.exports = app => {
   const _app = {
     atomName: 'Base',
     atomStaticKey: 'appBase',
-    atomRevision: 0,
+    atomRevision: 1,
     atomCategoryId: 0,
     description: '',
     appIcon: ':outline:apps-outline',
     appIsolate: true,
+    appHidden: 1,
     content: JSON.stringify(content),
     resourceRoles: 'root',
     appSorting: 0,
@@ -431,11 +449,12 @@ module.exports = app => {
   const _app = {
     atomName: 'Default',
     atomStaticKey: 'appDefault',
-    atomRevision: 2,
+    atomRevision: 3,
     atomCategoryId: 0,
     description: '',
     appIcon: ':outline:apps-outline',
     appIsolate: true,
+    appHidden: 1,
     content: JSON.stringify(content),
     resourceRoles: 'root',
     appSorting: 0,
@@ -753,6 +772,11 @@ module.exports = app => {
         type: 'number',
         ebType: 'toggle',
         ebTitle: 'AppIsolateTitle',
+      },
+      appHidden: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'AppHiddenTitle',
       },
       appLanguage: {
         type: 'number',

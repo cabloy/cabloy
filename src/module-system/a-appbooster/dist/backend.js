@@ -73,7 +73,9 @@ module.exports = {};
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {};
+module.exports = {
+  DemoIsolateApp: 'Demo: Isolate App',
+};
 
 
 /***/ }),
@@ -83,6 +85,7 @@ module.exports = {};
 
 module.exports = {
   Unclassified: '未分类',
+  DemoIsolateApp: '演示: 独立应用',
 };
 
 
