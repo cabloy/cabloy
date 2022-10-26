@@ -157,7 +157,7 @@ export default function (Vue) {
           atomClass: __atomClassApp,
           options: {
             where: {
-              'f.appIsolate': 0,
+              'f.appHidden': 0,
             },
             orders: [
               ['f.appSorting', 'asc'],

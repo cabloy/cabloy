@@ -52,6 +52,11 @@ module.exports = app => {
         ebType: 'toggle',
         ebTitle: 'AppIsolateTitle',
       },
+      appHidden: {
+        type: 'number',
+        ebType: 'toggle',
+        ebTitle: 'AppHiddenTitle',
+      },
       appLanguage: {
         type: 'number',
         ebType: 'toggle',
