@@ -21,12 +21,31 @@ function installFactory(_Vue) {
           atomClass: this.layoutManager.base_atomClassApp,
         });
       },
-      onItemClick(event, item) {
+      async onItemClick(event, item) {
         const appKey = item.atomStaticKey;
-        this.layoutManager.$meta.vueLayout.app_openHome({
-          view: this.layoutManager.$view,
+        const appIsolate = item.appIsolate;
+        if (!appIsolate) {
+          this.layoutManager.$meta.vueLayout.app_openHome({
+            view: this.layoutManager.$view,
+            appKey,
+            force: false,
+          });
+          return;
+        }
+        // appIsolate
+        const action = {
+          actionModule: 'a-app',
+          actionComponent: 'actionTools',
+          name: 'openApp',
           appKey,
-          force: false,
+          appIsolate,
+          external: true,
+          target: '_self',
+        };
+        return await this.layoutManager.$meta.util.performAction({
+          ctx: this.layoutManager,
+          action,
+          item: null,
         });
       },
       _renderGroup(group) {
