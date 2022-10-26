@@ -33,8 +33,8 @@ export default {
         target = '_blank';
       }
       const queries = { appKey };
-      if (appLanguage) queries.appLanguage = appLanguage;
-      if (appIsolate) queries.appIsolate = appIsolate;
+      if (appLanguage) queries.appLanguage = !!appLanguage;
+      if (appIsolate) queries.appIsolate = !!appIsolate;
       const url = this.$meta.util.combineQueries('', queries);
       window.open(url, target);
     },
