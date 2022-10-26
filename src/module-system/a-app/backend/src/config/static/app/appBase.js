@@ -67,11 +67,12 @@ module.exports = app => {
   const _app = {
     atomName: 'Base',
     atomStaticKey: 'appBase',
-    atomRevision: 0,
+    atomRevision: 1,
     atomCategoryId: 0,
     description: '',
     appIcon: ':outline:apps-outline',
     appIsolate: true,
+    appHidden: 1,
     content: JSON.stringify(content),
     resourceRoles: 'root',
     appSorting: 0,
