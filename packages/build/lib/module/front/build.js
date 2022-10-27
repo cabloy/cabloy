@@ -7,6 +7,9 @@ const configFn = require('./config.js');
 const webpackConfigFn = require('./webpack.prod.conf');
 const utilsFn = require('./utils.js');
 
+const moduleAlias = require('module-alias');
+moduleAlias.addAlias('./runtime/PublicPathRuntimeModule', path.join(__dirname, './PublicPathRuntimeModule.js'));
+
 module.exports = ({ modulePath }) => {
   // context
   const context = {
