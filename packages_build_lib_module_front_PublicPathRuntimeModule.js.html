@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>a-base/front/mixins/ebActionBase - CabloyJS API</title>
+    <title>packages/build/lib/module/front/PublicPathRuntimeModule.js - CabloyJS API</title>
     
     
     
@@ -46,304 +46,47 @@
 
 <div id="main">
     
-    <h1 class="page-title">a-base/front/mixins/ebActionBase</h1>
+    <h1 class="page-title">packages/build/lib/module/front/PublicPathRuntimeModule.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-            
-                
-
-    
-
-    <h4 class="name" id="module:a-base/front/mixins/ebActionBase"><span class="type-signature"></span>module:a-base/front/mixins/ebActionBase<span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-    
-    <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>ebActionBase</p></li></ul></dd>
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html">src/module-system/a-base-sync/front/src/common/actionBase.js</a>, <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html#line5">line 5</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-        
-        </div>
-    
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".props"><span class="type-signature">(static) </span>props<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html">src/module-system/a-base-sync/front/src/common/actionBase.js</a>, <a href="src_module-system_a-base-sync_front_src_common_actionBase.js.html#line11">line 11</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>ctx</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Generally speaking, it is the caller component</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>action</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Action info</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>item</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Action Parameters</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+*/
+
+const RuntimeGlobals = require('webpack/lib/RuntimeGlobals.js');
+const RuntimeModule = require('webpack/lib/RuntimeModule');
+
+class PublicPathRuntimeModule extends RuntimeModule {
+  constructor(publicPath) {
+    super('publicPath', RuntimeModule.STAGE_BASIC);
+    this.publicPath = publicPath;
+  }
+
+  /**
+   * @return {string} runtime code
+   */
+  generate() {
+    const { compilation, publicPath } = this;
+
+    return `${RuntimeGlobals.publicPath} = window.__webpack_public_path__ || ${JSON.stringify(
+      compilation.getPath(publicPath || '', {
+        hash: compilation.hash || 'XXXX',
+      })
+    )};`;
+  }
+}
+
+module.exports = PublicPathRuntimeModule;
+</code></pre>
+        </article>
+    </section>
 
 
 
