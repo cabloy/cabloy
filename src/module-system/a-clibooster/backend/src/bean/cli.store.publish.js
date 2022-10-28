@@ -58,7 +58,6 @@ module.exports = ctx => {
     }
 
     async _publishModuleIsolate({ moduleName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
-      const { argv } = this.context;
       // check if exists
       const module = this.helper.findModule(moduleName);
       if (!module) {
@@ -74,7 +73,7 @@ module.exports = ctx => {
       };
       const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial, needLicense: true });
-      if (!argv.force && !moduleMeta.changed) {
+      if (!moduleMeta.changed) {
         // No Changes Found
         return { code: 2001 };
       }
@@ -87,7 +86,6 @@ module.exports = ctx => {
     }
 
     async _publishSuite({ suiteName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
-      const { argv } = this.context;
       // check if exists
       const suite = this.helper.findSuite(suiteName);
       if (!suite) {
@@ -125,7 +123,7 @@ module.exports = ctx => {
       };
       const suiteHash = entityHash.default || {};
       await this._zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense: true });
-      if (!argv.force && !suiteMeta.changed) {
+      if (!suiteMeta.changed) {
         // No Changes Found
         return { code: 2001 };
       }
@@ -205,6 +203,7 @@ module.exports = ctx => {
     }
 
     async _zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense }) {
+      const { argv } = this.context;
       let zipSuite;
       // check modulesMeta
       let changed = modulesMeta.some(moduleMeta => moduleMeta.changed);
@@ -218,7 +217,7 @@ module.exports = ctx => {
         });
         changed = zipSuite.hash.hash !== suiteHash.hash;
       }
-      if (changed) {
+      if (argv.force || changed) {
         suiteMeta.changed = true;
         // bump
         // if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
@@ -244,6 +243,7 @@ module.exports = ctx => {
     }
 
     async _zipSuiteModule({ moduleMeta, moduleHash, needTrial, needLicense }) {
+      const { argv } = this.context;
       // log
       await this.console.log(`===> module: ${moduleMeta.name}`);
       // zip officialTemp
@@ -255,7 +255,7 @@ module.exports = ctx => {
         needLicense,
       });
       // check hash
-      if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
+      if (argv.force || zipOfficialTemp.hash.hash !== moduleHash.hash) {
         moduleMeta.changed = true;
         // build:all
         await this.helper.spawnCmd({
