@@ -1,14 +1,14 @@
 module.exports = () => {
   return {
     prepare({ cdn }) {
-      if (cdn && cdn.cos) {
-        return this._prepare_cos({ options: cdn.cos });
+      if (cdn && cdn.qcloudcos) {
+        return this._prepare_qcloudcos({ options: cdn.qcloudcos });
       }
       if (cdn && cdn.alioss) {
         return this._prepare_alioss({ options: cdn.alioss });
       }
     },
-    _prepare_cos({ options }) {
+    _prepare_qcloudcos({ options }) {
       const COSPlugin = require('webpack5-cos-plugin');
       options = Object.assign(
         {},
