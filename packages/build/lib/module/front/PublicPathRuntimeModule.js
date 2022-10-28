@@ -17,7 +17,8 @@ class PublicPathRuntimeModule extends RuntimeModule {
   generate() {
     const { compilation, publicPath } = this;
 
-    return `${RuntimeGlobals.publicPath} = window.__webpack_public_path__ || ${JSON.stringify(
+    const windowVar = "(typeof window !== 'undefined' && window.__webpack_public_path__)";
+    return `${RuntimeGlobals.publicPath} = ${windowVar} || ${JSON.stringify(
       compilation.getPath(publicPath || '', {
         hash: compilation.hash || 'XXXX',
       })
