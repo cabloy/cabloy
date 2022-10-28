@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-jsoneditor",
-  "version": "4.8.1",
+  "version": "4.8.2",
   "title": "JSON Editor",
   "eggBornModule": {
     "fileVersion": 0,

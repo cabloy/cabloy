@@ -459,7 +459,7 @@ module.exports = ctx => {
       // handleScripts
       await this._handleScripts({ entityMeta: moduleMeta, entityConfig });
       // submitted
-      return { code: 2000, args: [moduleMeta.package.version] };
+      return { code: 2002, args: [moduleMeta.package.version] };
     }
 
     async _publishSuite({ suiteName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
@@ -511,7 +511,7 @@ module.exports = ctx => {
       // handleScripts
       await this._handleScripts({ entityMeta: suiteMeta, entityConfig });
       // submitted
-      return { code: 2000, args: [suiteMeta.package.version] };
+      return { code: 2002, args: [suiteMeta.package.version] };
     }
 
     async _uploadModuleIsolate({ moduleMeta, needOfficial, needTrial }) {
@@ -580,6 +580,7 @@ module.exports = ctx => {
     }
 
     async _zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense }) {
+      const { argv } = this.context;
       let zipSuite;
       // check modulesMeta
       let changed = modulesMeta.some(moduleMeta => moduleMeta.changed);
@@ -593,7 +594,7 @@ module.exports = ctx => {
         });
         changed = zipSuite.hash.hash !== suiteHash.hash;
       }
-      if (changed) {
+      if (argv.force || changed) {
         suiteMeta.changed = true;
         // bump
         // if (suiteHash.version && !semver.gt(suiteMeta.package.version, suiteHash.version)) {
@@ -619,6 +620,7 @@ module.exports = ctx => {
     }
 
     async _zipSuiteModule({ moduleMeta, moduleHash, needTrial, needLicense }) {
+      const { argv } = this.context;
       // log
       await this.console.log(`===> module: ${moduleMeta.name}`);
       // zip officialTemp
@@ -630,7 +632,7 @@ module.exports = ctx => {
         needLicense,
       });
       // check hash
-      if (zipOfficialTemp.hash.hash !== moduleHash.hash) {
+      if (argv.force || zipOfficialTemp.hash.hash !== moduleHash.hash) {
         moduleMeta.changed = true;
         // build:all
         await this.helper.spawnCmd({
@@ -1973,9 +1975,14 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Store: Publish',
-      usage: 'npm run cli :store:publish [entity1] [entity2]',
+      usage: 'npm run cli :store:publish [entity1] [entity2] -- [--force=]',
     },
-    // options: null,
+    options: {
+      force: {
+        description: 'force to publish',
+        type: 'boolean',
+      },
+    },
     groups: {
       default: {
         description: 'CliAuthOpenTokenInfoStorePublish',
@@ -2294,8 +2301,8 @@ module.exports = appInfo => {
 module.exports = {
   1001: 'Not Found',
   // 2000: publish
-  2000: 'Submitted, Version: %s',
   2001: 'No Changes Found',
+  2002: 'Submitted, Version: %s',
   // 3000: sync
   3000: 'Synced, Version: %s',
   3001: 'Not Purchased',

@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-authopen",
-  "version": "4.8.1",
+  "version": "4.8.2",
   "title": "Open Auth",
   "eggBornModule": {
     "fileVersion": 1,
