@@ -8,8 +8,8 @@ const { VueLoaderPlugin } = require('vue-loader');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = context => {
+  // plugins
   const env = context.config.build.env;
-
   let plugins = [
     new webpack.DefinePlugin({
       'process.env': env,

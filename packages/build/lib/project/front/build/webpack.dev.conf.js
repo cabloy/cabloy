@@ -14,6 +14,29 @@ module.exports = context => {
     baseWebpackConfig.entry[name] = [path.join(__dirname, 'dev-client')].concat(baseWebpackConfig.entry[name]);
   });
 
+  // plugins
+  const env = context.config.dev.env;
+  let plugins = [
+    new webpack.DefinePlugin({
+      'process.env': env,
+    }),
+    new VueLoaderPlugin(),
+    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
+    new webpack.HotModuleReplacementPlugin(),
+    // https://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: context.utils.getIndexPath(),
+      inject: true,
+      title: context.config.configProject.base.title,
+    }),
+    // new FriendlyErrorsPlugin(),
+  ];
+
+  if (context.config.dev.plugins) {
+    plugins = plugins.concat(context.config.dev.plugins);
+  }
+
   return merge(baseWebpackConfig, {
     mode: 'development',
     module: {
@@ -22,22 +45,7 @@ module.exports = context => {
       }),
     },
     devtool: 'cheap-module-source-map',
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env': context.config.dev.env,
-      }),
-      new VueLoaderPlugin(),
-      // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
-      new webpack.HotModuleReplacementPlugin(),
-      // https://github.com/ampedandwired/html-webpack-plugin
-      new HtmlWebpackPlugin({
-        filename: 'index.html',
-        template: context.utils.getIndexPath(),
-        inject: true,
-        title: context.config.configProject.base.title,
-      }),
-      // new FriendlyErrorsPlugin(),
-    ],
+    plugins,
     optimization: {
       emitOnErrors: true,
     },
