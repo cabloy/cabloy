@@ -71,7 +71,7 @@ module.exports = context => {
       // runtime path
       const runtimePath = path.join(context.config.frontPath, '__runtime');
       // static path
-      const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
+      // const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
 
       // modules
       const { modules, modulesGlobal } = mglob.glob(
@@ -87,6 +87,7 @@ module.exports = context => {
 
       // global modules
       const __terserPluginExcludes = [];
+      let jsImportStatic = '';
       for (const relativeName in modulesGlobal) {
         const module = modules[relativeName];
         // terser
@@ -101,9 +102,14 @@ module.exports = context => {
         if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
         // copy static
         fileSrc = `${module.root}/dist/static`;
-        if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, staticPath);
         fileDest = path.join(runtimePath, 'modules', relativeName, 'dist/static');
         if (fse.existsSync(fileSrc)) fse.copySync(fileSrc, fileDest);
+        // require context
+        if (fse.existsSync(fileSrc)) {
+          // fse.copySync(fileSrc, staticPath);
+          const fileSrcStatic = fileSrc.replace(/\\/g, '/');
+          jsImportStatic += `\nimportStatic(require.context('${fileSrcStatic}'));\n`;
+        }
       }
       context.config.build.__terserPluginExcludes = __terserPluginExcludes;
 
@@ -124,7 +130,7 @@ module.exports = context => {
 modules['${relativeName}'] = {
    instance: require('${jsFront}'),
    info: ${JSON.stringify(module.info)},
-}
+};
 `;
         } else {
           jsModules += `
@@ -145,6 +151,10 @@ modules['${relativeName}'] = {
 
       // save to modules.js
       const modulesJS = `
+function importStatic(r) {
+  r.keys().forEach(r);
+}      
+${jsImportStatic}      
 const modules = {};
 const modulesSync = {};
 const modulesMonkey = {};
