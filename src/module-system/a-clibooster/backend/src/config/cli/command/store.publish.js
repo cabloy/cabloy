@@ -7,9 +7,14 @@ module.exports = app => {
     info: {
       version: '4.0.0',
       title: 'Cli: Store: Publish',
-      usage: 'npm run cli :store:publish [entity1] [entity2]',
+      usage: 'npm run cli :store:publish [entity1] [entity2] -- [--force=]',
     },
-    // options: null,
+    options: {
+      force: {
+        description: 'force to publish',
+        type: 'boolean',
+      },
+    },
     groups: {
       default: {
         description: 'CliAuthOpenTokenInfoStorePublish',

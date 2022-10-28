@@ -58,6 +58,7 @@ module.exports = ctx => {
     }
 
     async _publishModuleIsolate({ moduleName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
+      const { argv } = this.context;
       // check if exists
       const module = this.helper.findModule(moduleName);
       if (!module) {
@@ -73,7 +74,7 @@ module.exports = ctx => {
       };
       const moduleHash = entityHash.default || {};
       await this._zipSuiteModule({ moduleMeta, moduleHash, needOfficial, needTrial, needLicense: true });
-      if (!moduleMeta.changed) {
+      if (!argv.force && !moduleMeta.changed) {
         // No Changes Found
         return { code: 2001 };
       }
@@ -86,6 +87,7 @@ module.exports = ctx => {
     }
 
     async _publishSuite({ suiteName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
+      const { argv } = this.context;
       // check if exists
       const suite = this.helper.findSuite(suiteName);
       if (!suite) {
@@ -123,7 +125,7 @@ module.exports = ctx => {
       };
       const suiteHash = entityHash.default || {};
       await this._zipSuite({ modulesMeta, suiteMeta, suiteHash, needLicense: true });
-      if (!suiteMeta.changed) {
+      if (!argv.force && !suiteMeta.changed) {
         // No Changes Found
         return { code: 2001 };
       }
