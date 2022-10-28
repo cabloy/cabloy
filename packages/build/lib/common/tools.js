@@ -29,10 +29,14 @@ module.exports = context => {
           loader: 'url-loader',
           options: {
             limit: false,
+            esModule: false,
             name(file) {
               return tools.combineSvgFileName(file);
             },
-            esModule: false,
+            publicPath(url) {
+              // '' means publicPath
+              return '' + url;
+            },
           },
         },
         {
