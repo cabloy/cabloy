@@ -6,6 +6,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const cdnFn = require('./cdn.js');
 
 module.exports = context => {
   // plugins
@@ -46,6 +47,14 @@ module.exports = context => {
 
   if (context.config.build.plugins) {
     plugins = plugins.concat(context.config.build.plugins);
+  }
+
+  // cdn
+  const cdn = cdnFn(context);
+  const cdnResult = cdn.prepare({ cdn: context.config.build.cdn });
+  if (cdnResult) {
+    plugins.push(cdnResult.plugin);
+    context.config.build.assetsPublicPath = cdnResult.assetsPublicPath;
   }
 
   const webpackConfig = merge(baseWebpackConfigFn(context), {
