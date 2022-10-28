@@ -82,7 +82,7 @@ module.exports = ctx => {
       // handleScripts
       await this._handleScripts({ entityMeta: moduleMeta, entityConfig });
       // submitted
-      return { code: 2000, args: [moduleMeta.package.version] };
+      return { code: 2002, args: [moduleMeta.package.version] };
     }
 
     async _publishSuite({ suiteName, entityConfig, entityHash, entityStatus, needOfficial, needTrial }) {
@@ -134,7 +134,7 @@ module.exports = ctx => {
       // handleScripts
       await this._handleScripts({ entityMeta: suiteMeta, entityConfig });
       // submitted
-      return { code: 2000, args: [suiteMeta.package.version] };
+      return { code: 2002, args: [suiteMeta.package.version] };
     }
 
     async _uploadModuleIsolate({ moduleMeta, needOfficial, needTrial }) {
