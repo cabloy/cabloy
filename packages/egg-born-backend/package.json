@@ -23,6 +23,7 @@
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
     "@zhennann/ali-rds": "^4.0.3",
+    "@zhennann/egg": "^2.37.0",
     "@zhennann/egg-passport": "^2.1.5",
     "@zhennann/egg-socket.io": "^5.0.4",
     "@zhennann/koa-static-cache": "^5.1.8",
@@ -31,8 +32,7 @@
     "bottleneck": "^2.19.5",
     "bullmq": "^2.3.1",
     "chalk": "^3.0.0",
-    "debug": "^4.3.3",
-    "egg": "^2.36.0",
+    "debug": "^4.3.4",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mglob": "^3.0.7",
     "egg-born-mock": "^2.2.0",
