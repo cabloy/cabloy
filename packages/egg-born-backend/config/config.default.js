@@ -14,6 +14,11 @@ const {
 module.exports = appInfo => {
   const config = {};
 
+  // headers for proxy
+  config.hostHeaders = 'x-forwarded-host,host';
+  config.protocolHeaders = 'x-forwarded-proto';
+  config.ipHeaders = 'x-forwarded-for';
+
   // cluster
   config.cluster = {
     listen: {
