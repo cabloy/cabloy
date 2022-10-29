@@ -44,16 +44,6 @@ module.exports = function (loader) {
   // reload
   meta.reload = reloadFn(loader.app);
 
-  // patch
-  const createAnonymousContext = loader.app.createAnonymousContext;
-  loader.app.createAnonymousContext = req => {
-    const ctx = createAnonymousContext.call(loader.app, req);
-    if (req.headers) {
-      Object.assign(ctx.req.headers, req.headers);
-    }
-    return ctx;
-  };
-
   // meta
   return meta;
 };
