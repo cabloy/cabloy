@@ -2,6 +2,7 @@ let Vue;
 
 import './assets/css/module.less';
 
+import VueLazyload from 'vue-lazyload';
 import dragdropUtilFn from './common/dragdrop.js';
 import dragdrop from './directives/dragdrop.js';
 import appMethods from './common/appMethods.js';
@@ -15,6 +16,12 @@ function install(_Vue, cb) {
   // dragdrop
   const dragdropUtil = dragdropUtilFn(Vue);
   Vue.directive('eb-dragdrop', dragdrop(dragdropUtil));
+
+  // lazyload
+  //   https://github.com/hilongjw/vue-lazyload
+  Vue.use(VueLazyload, {
+    observer: true,
+  });
 
   // utils
   const utils = {
