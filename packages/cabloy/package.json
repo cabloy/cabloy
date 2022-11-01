@@ -69,6 +69,7 @@
     "egg-born-module-a-jsoneditor": "^4.8.3",
     "egg-born-module-a-layoutmobile": "^4.8.4",
     "egg-born-module-a-layoutpc": "^4.8.5",
+    "egg-born-module-a-lazyload": "^4.0.0",
     "egg-born-module-a-login": "^4.8.3",
     "egg-born-module-a-mail": "^4.8.3",
     "egg-born-module-a-markdown": "^4.8.4",

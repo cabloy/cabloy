@@ -132,6 +132,9 @@
           "a-layoutmobile": {
             "scripts": ["npmPublish"]
           },
+          "a-lazyload": {
+            "scripts": ["npmPublish"]
+          },
           "a-login": {
             "scripts": ["npmPublish"]
           },
