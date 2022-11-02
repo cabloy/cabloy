@@ -16,6 +16,7 @@ import renderTableCellImage from './components/render/renderTableCellImage.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
 import renderUser from './components/render/renderUser.jsx';
 import renderRole from './components/render/renderRole.jsx';
+import renderMarkdown from './components/render/renderMarkdown.jsx';
 // category
 import categorySelect from './components/category/categorySelect.jsx';
 // tag
@@ -50,6 +51,7 @@ export default {
   renderUserLabel,
   renderUser,
   renderRole,
+  renderMarkdown,
   // category
   categorySelect,
   // tag
