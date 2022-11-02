@@ -5,7 +5,9 @@
   "eggBornModule": {
     "fileVersion": 4,
     "icon": "::module",
-    "dependencies": {}
+    "dependencies": {
+      "a-cache": "4.0.0"
+    }
   },
   "description": "",
   "scripts": {

@@ -3,9 +3,7 @@
   "version": "4.8.3",
   "eggBornModule": {
     "fileVersion": 2,
-    "dependencies": {
-      "a-instance": "4.0.0"
-    }
+    "dependencies": {}
   },
   "description": "",
   "scripts": {
