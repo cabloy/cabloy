@@ -117,6 +117,10 @@ module.exports = ctx => {
       return dict[locale];
     }
 
+    dictCacheRemove({ dictKey }) {
+      this.cacheMem.remove(dictKey);
+    }
+
     async _prepareDict({ dictKey, locale }) {
       // load
       const dict = await this._prepareDict_load({ dictKey, user: null, returnDict: true });
@@ -195,11 +199,6 @@ module.exports = ctx => {
         title,
         locale,
       });
-    }
-
-    _broadcastDictCacheRemove({ dictKey }) {
-      const dicts = this._getDictsBySubdomain();
-      delete dicts[dictKey];
     }
 
     _checkIfEmptyForSelect(value) {

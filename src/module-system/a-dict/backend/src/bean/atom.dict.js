@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, options, user }) {
       // super
@@ -60,14 +60,10 @@ module.exports = app => {
           },
         }
       );
-      // broadcast
+      // remove dict cache
       if (atomStage === 1) {
         this.ctx.tail(() => {
-          this.ctx.meta.util.broadcastEmit({
-            module: moduleInfo.relativeName,
-            broadcastName: 'dictCacheRemove',
-            data: { dictKey: atomStaticKey },
-          });
+          this.ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
         });
       }
     }
@@ -86,14 +82,10 @@ module.exports = app => {
       await this.ctx.model.dictContent.delete({
         itemId: key.itemId,
       });
-      // broadcast
+      // remove dict cache
       if (atomStage === 1) {
         this.ctx.tail(() => {
-          this.ctx.meta.util.broadcastEmit({
-            module: moduleInfo.relativeName,
-            broadcastName: 'dictCacheRemove',
-            data: { dictKey: atomStaticKey },
-          });
+          this.ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
         });
       }
     }

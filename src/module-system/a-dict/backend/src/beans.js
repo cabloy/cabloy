@@ -1,6 +1,5 @@
 const versionManager = require('./bean/version.manager.js');
 const atomDict = require('./bean/atom.dict.js');
-const broadcastDictCacheRemove = require('./bean/broadcast.dictCacheRemove.js');
 const beanDict = require('./bean/bean.dict.js');
 
 module.exports = app => {
@@ -14,11 +13,6 @@ module.exports = app => {
     'atom.dict': {
       mode: 'app',
       bean: atomDict,
-    },
-    // broadcast
-    'broadcast.dictCacheRemove': {
-      mode: 'app',
-      bean: broadcastDictCacheRemove,
     },
     // global
     dict: {
