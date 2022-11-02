@@ -16,9 +16,9 @@
       @validateItem:change="onValidateItemChange"
     >
     </eb-validate>
-    <f7-toolbar bottom-md>
+    <!-- <f7-toolbar bottom-md>
       <eb-link :onPerform="onPerformReload">{{ $text('Reload Instance') }}</eb-link>
-    </f7-toolbar>
+    </f7-toolbar> -->
   </eb-page>
 </template>
 <script>
@@ -72,11 +72,11 @@ export default {
     onSubmit() {
       this.$refs.buttonSubmit.onClick();
     },
-    async onPerformReload() {
-      await this.$view.dialog.confirm();
-      await this.$api.post('instance/reload');
-      return true;
-    },
+    // async onPerformReload() {
+    //   await this.$view.dialog.confirm();
+    //   await this.$api.post('instance/reload');
+    //   return true;
+    // },
   },
 };
 </script>

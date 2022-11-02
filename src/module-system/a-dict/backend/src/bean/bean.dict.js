@@ -1,11 +1,13 @@
-const __dicts = {};
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Dict extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'dict');
       this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    get cacheMem() {
+      return ctx.cache.mem.module(moduleInfo.relativeName);
     }
 
     get atomClass() {
@@ -103,26 +105,16 @@ module.exports = ctx => {
 
     async getDict({ dictKey, locale }) {
       locale = locale || ctx.locale;
-      const dicts = this._getDictsBySubdomain();
-      if (!dicts[dictKey]) {
-        dicts[dictKey] = {};
+      let dict = this.cacheMem.get(dictKey);
+      if (dict && dict[locale]) return dict[locale];
+      if (!dict) {
+        dict = {};
       }
-      if (!dicts[dictKey][locale]) {
-        const res = await this._prepareDict({ dictKey, locale });
-        // maybe cleared by broadcast
-        if (!dicts[dictKey]) {
-          dicts[dictKey] = {};
-        }
-        dicts[dictKey][locale] = res;
+      if (!dict[locale]) {
+        dict[locale] = await this._prepareDict({ dictKey, locale });
       }
-      return dicts[dictKey][locale];
-    }
-
-    _getDictsBySubdomain() {
-      if (!__dicts[ctx.subdomain]) {
-        __dicts[ctx.subdomain] = {};
-      }
-      return __dicts[ctx.subdomain];
+      this.cacheMem.set(dictKey, dict);
+      return dict[locale];
     }
 
     async _prepareDict({ dictKey, locale }) {
