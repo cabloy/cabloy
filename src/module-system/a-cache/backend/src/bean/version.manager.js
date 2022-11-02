@@ -36,6 +36,14 @@ module.exports = app => {
         await this.ctx.db.query(sql);
       }
     }
+
+    async init(options) {
+      if (options.version === 1) {
+        // cache reset
+        //   : just clear mem cache
+        await this.ctx.cache.mem._clearAll();
+      }
+    }
   }
 
   return Version;

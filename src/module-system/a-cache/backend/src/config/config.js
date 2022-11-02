@@ -2,14 +2,6 @@
 module.exports = appInfo => {
   const config = {};
 
-  // startups
-  config.startups = {
-    cacheReset: {
-      bean: 'cacheReset',
-      instance: true,
-    },
-  };
-
   // broadcasts
   config.broadcasts = {
     memRemove: {
