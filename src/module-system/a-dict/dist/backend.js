@@ -16,7 +16,7 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, options, user }) {
       // super
@@ -77,14 +77,10 @@ module.exports = app => {
           },
         }
       );
-      // broadcast
+      // remove dict cache
       if (atomStage === 1) {
         this.ctx.tail(() => {
-          this.ctx.meta.util.broadcastEmit({
-            module: moduleInfo.relativeName,
-            broadcastName: 'dictCacheRemove',
-            data: { dictKey: atomStaticKey },
-          });
+          this.ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
         });
       }
     }
@@ -103,14 +99,10 @@ module.exports = app => {
       await this.ctx.model.dictContent.delete({
         itemId: key.itemId,
       });
-      // broadcast
+      // remove dict cache
       if (atomStage === 1) {
         this.ctx.tail(() => {
-          this.ctx.meta.util.broadcastEmit({
-            module: moduleInfo.relativeName,
-            broadcastName: 'dictCacheRemove',
-            data: { dictKey: atomStaticKey },
-          });
+          this.ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
         });
       }
     }
@@ -132,14 +124,16 @@ module.exports = app => {
 /***/ 784:
 /***/ ((module) => {
 
-const __dicts = {};
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Dict extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'dict');
       this.moduleName = moduleName || ctx.module.info.relativeName;
+    }
+
+    get cacheMem() {
+      return ctx.cache.mem.module(moduleInfo.relativeName);
     }
 
     get atomClass() {
@@ -237,26 +231,20 @@ module.exports = ctx => {
 
     async getDict({ dictKey, locale }) {
       locale = locale || ctx.locale;
-      const dicts = this._getDictsBySubdomain();
-      if (!dicts[dictKey]) {
-        dicts[dictKey] = {};
+      let dict = this.cacheMem.get(dictKey);
+      if (dict && dict[locale]) return dict[locale];
+      if (!dict) {
+        dict = {};
       }
-      if (!dicts[dictKey][locale]) {
-        const res = await this._prepareDict({ dictKey, locale });
-        // maybe cleared by broadcast
-        if (!dicts[dictKey]) {
-          dicts[dictKey] = {};
-        }
-        dicts[dictKey][locale] = res;
+      if (!dict[locale]) {
+        dict[locale] = await this._prepareDict({ dictKey, locale });
       }
-      return dicts[dictKey][locale];
+      this.cacheMem.set(dictKey, dict);
+      return dict[locale];
     }
 
-    _getDictsBySubdomain() {
-      if (!__dicts[ctx.subdomain]) {
-        __dicts[ctx.subdomain] = {};
-      }
-      return __dicts[ctx.subdomain];
+    dictCacheRemove({ dictKey }) {
+      this.cacheMem.remove(dictKey);
     }
 
     async _prepareDict({ dictKey, locale }) {
@@ -339,35 +327,12 @@ module.exports = ctx => {
       });
     }
 
-    _broadcastDictCacheRemove({ dictKey }) {
-      const dicts = this._getDictsBySubdomain();
-      delete dicts[dictKey];
-    }
-
     _checkIfEmptyForSelect(value) {
       return value === '' || value === undefined || value === null;
     }
   }
 
   return Dict;
-};
-
-
-/***/ }),
-
-/***/ 114:
-/***/ ((module) => {
-
-module.exports = app => {
-  class Broadcast extends app.meta.BeanBase {
-    async execute(context) {
-      // const sameAsCaller = context.sameAsCaller;
-      const data = context.data;
-      this.ctx.bean.dict._broadcastDictCacheRemove({ dictKey: data.dictKey });
-    }
-  }
-
-  return Broadcast;
 };
 
 
@@ -476,7 +441,6 @@ module.exports = app => {
 
 const versionManager = __webpack_require__(899);
 const atomDict = __webpack_require__(697);
-const broadcastDictCacheRemove = __webpack_require__(114);
 const beanDict = __webpack_require__(784);
 
 module.exports = app => {
@@ -490,11 +454,6 @@ module.exports = app => {
     'atom.dict': {
       mode: 'app',
       bean: atomDict,
-    },
-    // broadcast
-    'broadcast.dictCacheRemove': {
-      mode: 'app',
-      bean: broadcastDictCacheRemove,
     },
     // global
     dict: {
@@ -515,14 +474,6 @@ module.exports = app => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
-
-  // broadcasts
-  config.broadcasts = {
-    dictCacheRemove: {
-      bean: 'dictCacheRemove',
-    },
-  };
-
   return config;
 };
 

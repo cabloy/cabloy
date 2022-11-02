@@ -168,7 +168,7 @@ module.exports = ctx => {
       const encoding = data.encoding || '7bit';
       // content
       const fileContent = base64url.toBuffer(contentBase64);
-      console.log('----fileContent: ', typeof fileContent);
+      // console.log('----fileContent: ', typeof fileContent);
       // meta
       const meta = {
         filename,

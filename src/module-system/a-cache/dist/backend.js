@@ -267,6 +267,13 @@ module.exports = ctx => {
         ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
       }
     }
+
+    _clearAll() {
+      if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain]) {
+        const aInstance = ctx.app[CACHEMEMORY][ctx.subdomain]['a-instance'];
+        ctx.app[CACHEMEMORY][ctx.subdomain] = { 'a-instance': aInstance };
+      }
+    }
   }
 
   return CacheMem;
@@ -379,6 +386,14 @@ module.exports = app => {
             ADD COLUMN expired timestamp DEFAULT NULL
         `;
         await this.ctx.db.query(sql);
+      }
+    }
+
+    async init(options) {
+      if (options.version === 0) {
+        // cache reset
+        //   : just clear mem cache
+        await this.ctx.cache.mem._clearAll();
       }
     }
   }
