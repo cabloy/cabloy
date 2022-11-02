@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import DevInfo from './plugin/devInfo.js';
+import Preload from './plugin/preload.js';
 
 if (process.env.NODE_ENV === 'production') {
   Vue.config.productionTip = false;
@@ -19,5 +20,7 @@ strats.meta = function (parentVal, childVal /* , vm, key */) {
 if (process.env.NODE_ENV === 'development') {
   Vue.use(DevInfo);
 }
+// plugin: Preload
+Vue.use(Preload);
 
 export default Vue;
