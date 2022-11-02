@@ -48,8 +48,8 @@ export default function (Vue) {
       });
     },
     async createComponentOptionsUses(component) {
-      if (!component.uses) return;
-      let uses = component.uses;
+      let uses = component.meta && component.meta.uses;
+      if (!uses) return;
       if (!Array.isArray(uses)) uses = uses.split(',');
       const promises = uses.map(use => Vue.prototype.$meta.module.use(use));
       await Promise.all(promises);
