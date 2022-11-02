@@ -16,12 +16,8 @@ module.exports = app => {
         title: data.title,
         config: JSON.stringify(this.__configBlackFields(data.config)),
       });
-      // broadcast
-      this.ctx.meta.util.broadcastEmit({
-        module: 'a-instance',
-        broadcastName: 'resetCache',
-        data: null,
-      });
+      // changed
+      await this.ctx.bean.instance.instanceChanged();
     }
 
     async getConfigsPreview() {

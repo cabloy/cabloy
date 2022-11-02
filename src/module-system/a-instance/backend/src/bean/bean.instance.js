@@ -81,6 +81,15 @@ module.exports = ctx => {
       return instances.find(item => item.subdomain === subdomain);
     }
 
+    async instanceChanged() {
+      // broadcast
+      ctx.meta.util.broadcastEmit({
+        module: 'a-instance',
+        broadcastName: 'resetCache',
+        data: null,
+      });
+    }
+
     async resetCache({ subdomain }) {
       // cache
       const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
@@ -218,12 +227,8 @@ module.exports = ctx => {
             id: instance.id,
             config: JSON.stringify(instance.config),
           });
-          // broadcast
-          ctx.meta.util.broadcastEmit({
-            module: 'a-instance',
-            broadcastName: 'resetCache',
-            data: null,
-          });
+          // changed
+          await this.instanceChanged();
         }
       }
 
