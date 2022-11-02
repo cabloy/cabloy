@@ -255,7 +255,8 @@ function ctxHostValid(ctx) {
     !ctx.innerAccess &&
     ctx.host &&
     ctx.protocol &&
-    !['127.0.0.1', 'localhost'].includes(ctx.host) &&
+    ctx.host.indexOf('127.0.0.1') === -1 &&
+    ctx.host.indexOf('localhost') === -1 &&
     ['http', 'https'].includes(ctx.protocol)
   );
 }
