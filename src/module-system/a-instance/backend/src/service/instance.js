@@ -28,12 +28,7 @@ module.exports = app => {
     }
 
     async reload() {
-      // broadcast
-      this.ctx.meta.util.broadcastEmit({
-        module: 'a-instance',
-        broadcastName: 'reload',
-        data: null,
-      });
+      await this.ctx.bean.instance.reload();
     }
 
     __configBlackFields(config) {

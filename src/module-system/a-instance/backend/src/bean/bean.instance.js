@@ -81,13 +81,24 @@ module.exports = ctx => {
       return instances.find(item => item.subdomain === subdomain);
     }
 
-    async instanceChanged() {
+    async reload() {
       // broadcast
       ctx.meta.util.broadcastEmit({
         module: 'a-instance',
-        broadcastName: 'resetCache',
+        broadcastName: 'reload',
         data: null,
       });
+    }
+
+    async instanceChanged() {
+      // force to reload instance
+      await this.reload();
+      // // broadcast
+      // ctx.meta.util.broadcastEmit({
+      //   module: 'a-instance',
+      //   broadcastName: 'resetCache',
+      //   data: null,
+      // });
     }
 
     async resetCache({ subdomain }) {
