@@ -131,7 +131,8 @@ module.exports = app => {
           // check if need update
           if (fileVersionOld > fileVersionNew) {
             this.ctx.throw(1001, moduleName);
-          } else if (fileVersionOld < fileVersionNew) {
+          } else {
+            // not check if (fileVersionOld < fileVersionNew)
             await this.__updateModule(options, module, fileVersionOld, fileVersionNew);
           }
         }
@@ -157,11 +158,11 @@ module.exports = app => {
         await this.__updateModule2(options, module, -1);
       } else {
         // versions
-        const versions = [];
+        //   always version:0
+        const versions = [0];
         for (let version = fileVersionOld + 1; version <= fileVersionNew; version++) {
           versions.push(version);
         }
-
         // loop
         for (const version of versions) {
           await this.__updateModule2(options, module, version);
@@ -169,7 +170,9 @@ module.exports = app => {
       }
 
       // log
-      options.result[module.info.relativeName] = { fileVersionOld, fileVersionNew };
+      if (fileVersionOld !== fileVersionNew) {
+        options.result[module.info.relativeName] = { fileVersionOld, fileVersionNew };
+      }
     }
 
     async __updateModule2(options, module, version) {

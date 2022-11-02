@@ -38,7 +38,7 @@ module.exports = app => {
     }
 
     async init(options) {
-      if (options.version === 1) {
+      if (options.version === 0) {
         // cache reset
         //   : just clear mem cache
         await this.ctx.cache.mem._clearAll();
