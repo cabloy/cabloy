@@ -81,6 +81,12 @@ module.exports = ctx => {
         ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
       }
     }
+
+    _clearAll() {
+      if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain]) {
+        ctx.app[CACHEMEMORY][ctx.subdomain] = {};
+      }
+    }
   }
 
   return CacheMem;
