@@ -11,6 +11,10 @@ const __queueInstanceStartup = {};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Instance {
+    get cacheMem() {
+      return ctx.cache.mem.module(moduleInfo.relativeName);
+    }
+
     async list(options) {
       // options
       if (!options) options = { where: null, orders: null, page: null };
@@ -29,8 +33,7 @@ module.exports = ctx => {
 
     async get({ subdomain }) {
       // cache
-      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-      const instance = cacheMem.get('instance');
+      const instance = this.cacheMem.get('instance');
       if (instance) return instance;
       return await this.resetCache({ subdomain });
     }
@@ -103,30 +106,27 @@ module.exports = ctx => {
 
     async resetCache({ subdomain }) {
       // cache
-      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
       const instance = await this._get({ subdomain });
       if (!instance) return null;
       // config
       instance.config = JSON.parse(instance.config) || {};
       // cache configs
       const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
-      cacheMem.set('instanceConfigs', instanceConfigs);
+      this.cacheMem.set('instanceConfigs', instanceConfigs);
       // cache configsFront
       const instanceConfigsFront = this._mergeInstanceConfigFront({ instanceConfigs });
-      cacheMem.set('instanceConfigsFront', instanceConfigsFront);
+      this.cacheMem.set('instanceConfigsFront', instanceConfigsFront);
       // cache instance
-      cacheMem.set('instance', instance);
+      this.cacheMem.set('instance', instance);
       return instance;
     }
 
     getInstanceConfigs() {
-      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-      return cacheMem.get('instanceConfigs');
+      return this.cacheMem.get('instanceConfigs');
     }
 
     getInstanceConfigsFront() {
-      const cacheMem = ctx.cache.mem.module(moduleInfo.relativeName);
-      return cacheMem.get('instanceConfigsFront');
+      return this.cacheMem.get('instanceConfigsFront');
     }
 
     _mergeInstanceConfigFront({ instanceConfigs }) {
