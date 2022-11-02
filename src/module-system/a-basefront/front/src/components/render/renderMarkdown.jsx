@@ -1,4 +1,7 @@
 export default {
+  meta: {
+    preloads: 'a-markdown',
+  },
   props: {
     context: {
       type: Object,
