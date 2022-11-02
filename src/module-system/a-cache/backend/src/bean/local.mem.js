@@ -84,7 +84,8 @@ module.exports = ctx => {
 
     _clearAll() {
       if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain]) {
-        ctx.app[CACHEMEMORY][ctx.subdomain] = {};
+        const aInstance = ctx.app[CACHEMEMORY][ctx.subdomain]['a-instance'];
+        ctx.app[CACHEMEMORY][ctx.subdomain] = { 'a-instance': aInstance };
       }
     }
   }
