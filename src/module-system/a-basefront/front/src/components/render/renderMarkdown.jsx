@@ -1,6 +1,6 @@
 export default {
   meta: {
-    preloads: 'a-markdown',
+    preloads: 'a-markdown,a-markdownstyle,a-codemirror',
   },
   props: {
     context: {
