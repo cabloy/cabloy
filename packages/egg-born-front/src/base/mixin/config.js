@@ -27,6 +27,9 @@ export default function (Vue) {
       baseURL: '',
       debounce: 200,
     },
+    preload: {
+      delay: 500,
+    },
     layout: {
       breakpoint: 600,
       items: {

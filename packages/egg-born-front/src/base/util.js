@@ -48,10 +48,21 @@ export default function (Vue) {
       });
     },
     async createComponentOptionsUses(component) {
-      let uses = component.meta && component.meta.uses;
-      if (!uses) return;
-      if (!Array.isArray(uses)) uses = uses.split(',');
-      const promises = uses.map(use => Vue.prototype.$meta.module.use(use));
+      return await this._moduleUses(component.meta && component.meta.uses);
+    },
+    async modulePreload(modules, options) {
+      options = options || {};
+      const delay = options.delay || Vue.prototype.$meta.config.preload.delay;
+      window.setTimeout(() => {
+        this._moduleUses(modules);
+      }, delay);
+    },
+    async _moduleUses(modules) {
+      if (!modules) return;
+      if (!Array.isArray(modules)) modules = modules.split(',');
+      modules = modules.filter(module => !Vue.prototype.$meta.module.get(module));
+      if (modules.length === 0) return;
+      const promises = modules.map(module => Vue.prototype.$meta.module.use(module));
       await Promise.all(promises);
     },
     createComponentOptions(component) {
