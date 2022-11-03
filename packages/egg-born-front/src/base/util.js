@@ -48,16 +48,16 @@ export default function (Vue) {
       });
     },
     async createComponentOptionsUses(component) {
-      return await this._moduleUses(component.meta && component.meta.uses);
+      return await this.useModules(component.meta && component.meta.uses);
     },
-    async modulePreload(modules, options) {
+    async preloadModules(modules, options) {
       options = options || {};
       const delay = options.delay || Vue.prototype.$meta.config.preload.delay;
       window.setTimeout(() => {
-        this._moduleUses(modules);
+        this.useModules(modules);
       }, delay);
     },
-    async _moduleUses(modules) {
+    async useModules(modules) {
       if (!modules) return;
       if (!Array.isArray(modules)) modules = modules.split(',');
       modules = modules.filter(module => !Vue.prototype.$meta.module.get(module));
