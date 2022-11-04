@@ -237,6 +237,12 @@ export default function (Vue) {
           appMineLayout: configMine.layout,
         };
       },
+      preloadModules(store, { appKey }) {
+        Vue.prototype.$meta.util.preloadModules(appKey.split(':')[0]);
+        if (Vue.prototype.$meta.vueApp.layout === 'pc') {
+          Vue.prototype.$meta.util.preloadModules('a-antdv');
+        }
+      },
     },
   };
 }
