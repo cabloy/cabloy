@@ -238,7 +238,10 @@ export default function (Vue) {
         };
       },
       preloadModules(store, { appKey }) {
-        Vue.prototype.$meta.util.preloadModules(appKey.split(':')[0]);
+        const parts = appKey.split(':');
+        if (parts.length === 2) {
+          Vue.prototype.$meta.util.preloadModules(parts[0]);
+        }
         if (Vue.prototype.$meta.vueApp.layout === 'pc') {
           Vue.prototype.$meta.util.preloadModules('a-antdv');
         }
