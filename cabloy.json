@@ -48,6 +48,9 @@
           "a-baselayout": {
             "scripts": ["npmPublish"]
           },
+          "a-baserender": {
+            "scripts": ["npmPublish"]
+          },
           "a-cache": {
             "scripts": ["npmPublish"]
           },
