@@ -6,7 +6,7 @@ export default {
         property = {
           ...property,
           ebRender: {
-            actionModule: 'a-basefront',
+            actionModule: 'a-baserender',
             actionComponent: 'componentAction',
             name: 'dateRange',
           },

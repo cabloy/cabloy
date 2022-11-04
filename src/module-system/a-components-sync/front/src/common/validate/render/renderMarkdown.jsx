@@ -44,7 +44,7 @@ export default {
     },
     _renderMarkdown_general(context) {
       return this._renderComponent(context, {
-        module: 'a-basefront',
+        module: 'a-baserender',
         name: 'renderMarkdown',
       });
     },

@@ -52,7 +52,7 @@ module.exports = app => {
         ebType: 'component',
         ebTitle: 'Category',
         ebRender: {
-          module: 'a-basefront',
+          module: 'a-baserender',
           name: 'renderCategoryResource',
         },
       },

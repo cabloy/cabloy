@@ -6,7 +6,7 @@ export default {
         property = {
           ...property,
           ebRender: {
-            module: 'a-basefront',
+            module: 'a-baserender',
             name: 'renderLanguage',
           },
         };
