@@ -1,3 +1,23 @@
+const __baseRenders = [
+  'componentAction',
+  'renderAtom',
+  'renderAtomClass',
+  'renderLanguage',
+  'renderCategory',
+  'renderCategoryResource',
+  'renderTags',
+  'renderResourceType',
+  'renderTableCellDefault',
+  'renderTableCellComputed',
+  'renderTableCellDatetime',
+  'renderTableCellLink',
+  'renderTableCellButton',
+  'renderTableCellImage',
+  'renderUserLabel',
+  'renderUser',
+  'renderRole',
+  'renderMarkdown',
+];
 export default {
   props: {
     label: {
@@ -23,8 +43,14 @@ export default {
     };
   },
   computed: {
+    module2() {
+      if (this.module === 'a-basefront' && __baseRenders.includes(this.name)) {
+        return 'a-baserender';
+      }
+      return this.module;
+    },
     labelUnique() {
-      return `${this.label}_${this.module}_${this.name}`;
+      return `${this.label}_${this.module2}_${this.name}`;
     },
   },
   watch: {
@@ -89,7 +115,7 @@ export default {
       });
     },
     checkIfEmpty() {
-      return !this.module || !this.name;
+      return !this.module2 || !this.name;
     },
     clearStatus() {
       this.ready = false;
@@ -119,7 +145,7 @@ export default {
         // debounce
         this.debounceStart();
         // module
-        const moduleInstance = await this.$meta.module.use(this.module);
+        const moduleInstance = await this.$meta.module.use(this.module2);
         this.moduleInstance = moduleInstance;
         // component
         const fullName = this.__getFullName();
@@ -151,7 +177,7 @@ export default {
       return this.$refs.component;
     },
     __getFullName() {
-      return `${this.module}:${this.name}`;
+      return `${this.module2}:${this.name}`;
     },
     __emitComponentReady() {
       this.$nextTick(() => {
