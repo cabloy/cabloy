@@ -59,7 +59,13 @@ export default {
       if (this.onInit) {
         await this.onInit();
       }
+      this.init_preloadModules();
       this.ready = true;
+    },
+    init_preloadModules() {
+      const appInfoCurrent = this.layoutManager.base.appInfoCurrent;
+      const appKey = appInfoCurrent.appKey;
+      this.$store.dispatch('a/app/preloadModules', { appKey });
     },
     init_layoutConfig() {},
     async init_categoriesAll() {
