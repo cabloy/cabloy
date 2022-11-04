@@ -1,5 +1,17 @@
 # History
 
+## 2022-11-04, Version 4.26.4
+
+- **Feat**
+  - 增加模块预加载机制： Vue.prototype.$meta.util.preloadModules
+
+## 2022-10-28, Version 4.26.0
+
+- **Feat**
+  - 增加 CDN 支持
+    - [腾讯云 COS](https://cabloy.com/zh-cn/articles/qcloud-cos.html)
+    - [阿里云 OSS](https://cabloy.com/zh-cn/articles/aliyun-oss.html)
+
 ## 2022-10-21, Version 4.25.9
 
 - **Feat**
