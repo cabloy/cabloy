@@ -215,6 +215,8 @@ export default {
           this.$options.components[layout] = module.options.components[this._getLayoutItem(layout).component];
           // clear router history
           this.$meta.util.clearRouterHistory();
+          // set html css layout
+          this._setHtmlCSSLayout(layout);
           // ready
           this.layout = layout;
         });
@@ -248,6 +250,11 @@ export default {
     },
     _setTheme(theme) {
       return this.$meta.theme.set(theme);
+    },
+    _setHtmlCSSLayout(layout) {
+      const $html = this.$$('html');
+      $html.removeClass(`eb-layout-${layout === 'pc' ? 'mobile' : 'pc'}`);
+      $html.addClass(`eb-layout-${layout}`);
     },
     async _setLocaleModules(localeModules) {
       if (!localeModules || localeModules.length === 0) return;
