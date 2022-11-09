@@ -81,6 +81,8 @@ module.exports = app => {
     }
 
     async enable({ atomClass, key, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // super
       await super.enable({ atomClass, key, user });
       // enable
@@ -91,6 +93,8 @@ module.exports = app => {
     }
 
     async disable({ atomClass, key, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemo();
       // super
       await super.disable({ atomClass, key, user });
       // disable
