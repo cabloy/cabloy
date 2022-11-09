@@ -87,7 +87,10 @@ module.exports = app => {
 
     async enable({ atomClass, key, user }) {
       // check demo
-      this.ctx.bean.util.checkDemo();
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/enable') {
+        this.ctx.bean.util.checkDemo();
+      }
       // super
       await super.enable({ atomClass, key, user });
       // enable
@@ -99,7 +102,10 @@ module.exports = app => {
 
     async disable({ atomClass, key, user }) {
       // check demo
-      this.ctx.bean.util.checkDemo();
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/disable') {
+        this.ctx.bean.util.checkDemo();
+      }
       // super
       await super.disable({ atomClass, key, user });
       // disable
