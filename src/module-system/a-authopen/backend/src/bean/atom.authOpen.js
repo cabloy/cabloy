@@ -10,7 +10,10 @@ module.exports = app => {
 
     async create({ atomClass, item, options, user }) {
       // check demo
-      this.ctx.bean.util.checkDemo();
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/create') {
+        this.ctx.bean.util.checkDemo();
+      }
       // user
       const userId = user.id;
       // super
