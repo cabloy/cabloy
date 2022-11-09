@@ -33,20 +33,31 @@ module.exports = function (ctx) {
 
     // users
     async _initUsers(roleIds, options) {
-      // root user
+      // users
+      const users = [];
+      // user: root
       const userRoot = extend(true, {}, initData.users.root);
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
-      const userId = await ctx.bean.user.add(userRoot.item);
-      // activated
-      await ctx.bean.user.save({
-        user: { id: userId, activated: 1 },
-      });
-      // user->role
-      await ctx.bean.role.addUserRole({
-        userId,
-        roleId: roleIds[userRoot.roleId],
-      });
+      users.push(userRoot);
+      // user: admin
+      const demo = ctx.config.module(moduleInfo.relativeName).configFront.demo;
+      if (demo.enable) {
+        const userAdmin = extend(true, {}, initData.users.admin);
+        users.push(userAdmin);
+      }
+      for (const user of users) {
+        const userId = await ctx.bean.user.add(user.item);
+        // activated
+        await ctx.bean.user.save({
+          user: { id: userId, activated: 1 },
+        });
+        // user->role
+        await ctx.bean.role.addUserRole({
+          userId,
+          roleId: roleIds[user.roleId],
+        });
+      }
     }
   }
 

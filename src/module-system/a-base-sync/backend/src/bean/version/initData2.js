@@ -101,6 +101,18 @@ const users = {
     },
     roleId: 'superuser',
   },
+  admin: {
+    item: {
+      userName: 'admin',
+      realName: 'admin',
+      email: null,
+      mobile: null,
+      avatar: null,
+      motto: null,
+      locale: null,
+    },
+    roleId: 'superuser',
+  },
 };
 
 module.exports = {
