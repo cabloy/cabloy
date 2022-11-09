@@ -192,8 +192,7 @@ module.exports = app => {
     normalizeResourceKey(key, module, sep = ':') {
       if (!key) return key;
       let _sep, _parts;
-      for (let index = 0; index < sep.length; index++) {
-        _sep = sep[index];
+      for (_sep of sep) {
         _parts = key.split(_sep);
         if (_parts.length > 1) break;
       }
