@@ -84,7 +84,13 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      delete item.roleIdParent; // roleIdParent maybe string, so cause validate error
+      // check demo
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/write') {
+        this.ctx.bean.util.checkDemo();
+      }
+      // roleIdParent maybe string, so cause validate error
+      delete item.roleIdParent;
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update role
