@@ -304,11 +304,19 @@ module.exports = app => {
     async init(options) {
       if (options.version === 1) {
         // root
-        const user = await this.ctx.bean.user.get({ userName: 'root' });
+        const userRoot = await this.ctx.bean.user.get({ userName: 'root' });
         await this.ctx.service.auth.add({
-          userId: user.id,
+          userId: userRoot.id,
           password: options.password,
         });
+        // admin
+        const userAdmin = await this.ctx.bean.user.get({ userName: 'admin' });
+        if (userAdmin) {
+          await this.ctx.service.auth.add({
+            userId: userAdmin.id,
+            password: '123456',
+          });
+        }
       }
     }
 

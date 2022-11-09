@@ -266,7 +266,13 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
-      delete item.roleIdParent; // roleIdParent maybe string, so cause validate error
+      // check demo
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/write') {
+        this.ctx.bean.util.checkDemo();
+      }
+      // roleIdParent maybe string, so cause validate error
+      delete item.roleIdParent;
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update role
@@ -486,6 +492,11 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
+      // check demo
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/write') {
+        this.ctx.bean.util.checkDemo();
+      }
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update user
@@ -508,6 +519,11 @@ module.exports = app => {
     }
 
     async enable({ atomClass, key, user }) {
+      // check demo
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/enable') {
+        this.ctx.bean.util.checkDemo();
+      }
       // super
       await super.enable({ atomClass, key, user });
       // enable
@@ -518,6 +534,11 @@ module.exports = app => {
     }
 
     async disable({ atomClass, key, user }) {
+      // check demo
+      const ctxCaller = this.ctx.ctxCaller;
+      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/disable') {
+        this.ctx.bean.util.checkDemo();
+      }
       // super
       await super.disable({ atomClass, key, user });
       // disable
@@ -7572,8 +7593,7 @@ module.exports = app => {
     normalizeResourceKey(key, module, sep = ':') {
       if (!key) return key;
       let _sep, _parts;
-      for (let index = 0; index < sep.length; index++) {
-        _sep = sep[index];
+      for (_sep of sep) {
         _parts = key.split(_sep);
         if (_parts.length > 1) break;
       }
@@ -10112,20 +10132,31 @@ module.exports = function (ctx) {
 
     // users
     async _initUsers(roleIds, options) {
-      // root user
+      // users
+      const users = [];
+      // user: root
       const userRoot = extend(true, {}, initData.users.root);
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
-      const userId = await ctx.bean.user.add(userRoot.item);
-      // activated
-      await ctx.bean.user.save({
-        user: { id: userId, activated: 1 },
-      });
-      // user->role
-      await ctx.bean.role.addUserRole({
-        userId,
-        roleId: roleIds[userRoot.roleId],
-      });
+      users.push(userRoot);
+      // user: admin
+      const demo = ctx.config.module(moduleInfo.relativeName).configFront.demo;
+      if (demo.enable) {
+        const userAdmin = extend(true, {}, initData.users.admin);
+        users.push(userAdmin);
+      }
+      for (const user of users) {
+        const userId = await ctx.bean.user.add(user.item);
+        // activated
+        await ctx.bean.user.save({
+          user: { id: userId, activated: 1 },
+        });
+        // user->role
+        await ctx.bean.role.addUserRole({
+          userId,
+          roleId: roleIds[user.roleId],
+        });
+      }
     }
   }
 
@@ -10393,6 +10424,18 @@ const users = {
     item: {
       userName: 'root',
       realName: 'root',
+      email: null,
+      mobile: null,
+      avatar: null,
+      motto: null,
+      locale: null,
+    },
+    roleId: 'superuser',
+  },
+  admin: {
+    item: {
+      userName: 'admin',
+      realName: 'admin',
       email: null,
       mobile: null,
       avatar: null,
