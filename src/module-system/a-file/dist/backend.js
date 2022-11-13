@@ -9,7 +9,7 @@ const fs = __webpack_require__(147);
 const require3 = __webpack_require__(638);
 const sendToWormhole = require3('stream-wormhole');
 const uuid = require3('uuid');
-const gm = require3('gm');
+const Jimp = require3('jimp');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
@@ -190,6 +190,7 @@ module.exports = ctx => {
       if (fileInfo.name === '_none_') {
         fileInfo.name = '';
       }
+      if (fileInfo.ext) fileInfo.ext = fileInfo.ext.toLowerCase();
       const encoding = meta.encoding;
       const mime = meta.mime;
       const fields = meta.fields;
@@ -212,42 +213,12 @@ module.exports = ctx => {
 
       // write
       if (mode === 1) {
-        if (fileInfo.ext === '.svg' || fileInfo.ext === '.svgz') {
+        if (!this._isSupportedImageTypes(fileInfo.ext)) {
           await this._outputFileContent({ destFile, fileContent });
         } else {
-          // image
-          await bb.fromCallback(cb => {
-            let img = gm(fileContent);
-            // crop
-            if (fields.cropped === 'true') {
-              const cropbox = JSON.parse(fields.cropbox);
-              img = img.crop(
-                parseInt(cropbox.width),
-                parseInt(cropbox.height),
-                parseInt(cropbox.x),
-                parseInt(cropbox.y)
-              );
-            }
-            // fixed
-            if (fields.fixed) {
-              const fixed = JSON.parse(fields.fixed);
-              if (fixed.width && fixed.height) {
-                img = img.resize(fixed.width, fixed.height, '!');
-              } else if (fixed.width) {
-                img = img.resize(fixed.width);
-              } else if (fixed.height) {
-                img = img.resize(null, fixed.height);
-              }
-            }
-            // save
-            img.quality(93).write(destFile, cb);
-          });
-          // size
-          const imgSize = await bb.fromCallback(cb => {
-            gm(destFile).size(cb);
-          });
-          imgWidth = imgSize.width;
-          imgHeight = imgSize.height;
+          const size = await this._outputImageContent({ destFile, fileContent, fields, fileInfo });
+          imgWidth = size.width;
+          imgHeight = size.height;
         }
       } else if (mode === 2 || mode === 3) {
         // check right only for file
@@ -310,7 +281,7 @@ module.exports = ctx => {
       // pre
       let fileName = file.fileName;
       if (file.mode === 1) {
-        if (file.fileExt !== '.svg' && file.fileExt !== '.svgz') {
+        if (this._isSupportedImageTypes(file.fileExt)) {
           // adjust image
           fileName = await this._adjustImage(file, width, height);
         }
@@ -458,6 +429,12 @@ module.exports = ctx => {
       });
     }
 
+    _isSupportedImageTypes(fileExt) {
+      return (
+        !['.svg', '.svgz'].includes(fileExt) && ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'].includes(fileExt)
+      );
+    }
+
     async _adjustImage(file, widthRequire, heightRequire) {
       widthRequire = widthRequire ? parseInt(widthRequire) : 0;
       heightRequire = heightRequire ? parseInt(heightRequire) : 0;
@@ -474,9 +451,11 @@ module.exports = ctx => {
       const height = heightRequire || parseInt((file.height * widthRequire) / file.width);
 
       const srcFile = await ctx.bean.base.getPath(`${file.filePath}/${file.fileName}${file.fileExt}`, false);
-      await bb.fromCallback(cb => {
-        gm(srcFile).resize(width, height, '!').quality(100).write(destFile, cb);
-      });
+
+      // image
+      let img = await Jimp.read(srcFile);
+      img = img.resize(width, height);
+      await img.write(destFile);
 
       return fileName;
     }
@@ -512,6 +491,43 @@ module.exports = ctx => {
       });
       if (res && res.atomClosed === 0) return;
       ctx.throw(403);
+    }
+
+    async _outputImageContent({ destFile, fileContent, fields, fileInfo }) {
+      // prepare image content
+      const tmpFile = destFile + fileInfo.ext;
+      await this._outputFileContent({ destFile: tmpFile, fileContent });
+      // image
+      let img = await Jimp.read(tmpFile);
+      // crop
+      if (fields.cropped === 'true') {
+        const cropbox = JSON.parse(fields.cropbox);
+        img = img.crop(parseInt(cropbox.x), parseInt(cropbox.y), parseInt(cropbox.width), parseInt(cropbox.height));
+      }
+      // fixed
+      if (fields.fixed) {
+        const fixed = JSON.parse(fields.fixed);
+        if (fixed.width && fixed.height) {
+          img = img.resize(fixed.width, fixed.height);
+        } else if (fixed.width) {
+          img = img.resize(fixed.width, Jimp.AUTO);
+        } else if (fixed.height) {
+          img = img.resize(Jimp.AUTO, fixed.height);
+        }
+      }
+      // quality
+      if (['.png', '.jpg', '.jpeg'].includes(fileInfo.ext)) {
+        img = img.quality(93);
+      }
+      // save
+      await img.write(destFile);
+      // size
+      const width = img.bitmap.width;
+      const height = img.bitmap.height;
+      // delete tmp file
+      await fse.remove(tmpFile);
+      // ready
+      return { width, height };
     }
 
     async _outputFileContent({ destFile, fileContent }) {
