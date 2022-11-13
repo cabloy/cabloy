@@ -442,9 +442,11 @@ module.exports = ctx => {
       const height = heightRequire || parseInt((file.height * widthRequire) / file.width);
 
       const srcFile = await ctx.bean.base.getPath(`${file.filePath}/${file.fileName}${file.fileExt}`, false);
-      await bb.fromCallback(cb => {
-        gm(srcFile).resize(width, height, '!').quality(100).write(destFile, cb);
-      });
+
+      // image
+      let img = await Jimp.read(srcFile);
+      img = img.resize(width, height);
+      await img.write(destFile);
 
       return fileName;
     }
