@@ -1,11 +1,5 @@
 FROM node:16
 
-# installing graphicsmagick
-RUN apt update
-RUN apt install -y --no-install-recommends \
-      graphicsmagick \
-      && rm -rf /var/lib/apt/lists/*
-
 RUN mkdir -p /opt/node/app
 WORKDIR /opt/node/app
 
