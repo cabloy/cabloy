@@ -207,10 +207,7 @@ module.exports = ctx => {
 
       // write
       if (mode === 1) {
-        if (
-          ['.svg', '.svgz'].includes(fileInfo.ext) ||
-          !['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'].includes(fileInfo.ext)
-        ) {
+        if (!this._isSupportedImageTypes(fileInfo.ext)) {
           await this._outputFileContent({ destFile, fileContent });
         } else {
           const size = await this._outputImageContent({ destFile, fileContent, fields, fileInfo });
@@ -278,10 +275,7 @@ module.exports = ctx => {
       // pre
       let fileName = file.fileName;
       if (file.mode === 1) {
-        if (
-          !['.svg', '.svgz'].includes(file.fileExt) &&
-          ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'].includes(file.fileExt)
-        ) {
+        if (this._isSupportedImageTypes(file.fileExt)) {
           // adjust image
           fileName = await this._adjustImage(file, width, height);
         }
@@ -427,6 +421,12 @@ module.exports = ctx => {
           await next();
         },
       });
+    }
+
+    _isSupportedImageTypes(fileExt) {
+      return (
+        !['.svg', '.svgz'].includes(fileExt) && ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'].includes(fileExt)
+      );
     }
 
     async _adjustImage(file, widthRequire, heightRequire) {
