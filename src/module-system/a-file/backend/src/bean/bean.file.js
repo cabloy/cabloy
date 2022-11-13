@@ -3,7 +3,7 @@ const fs = require('fs');
 const require3 = require('require3');
 const sendToWormhole = require3('stream-wormhole');
 const uuid = require3('uuid');
-const jimp = require3('jimp');
+const Jimp = require3('jimp');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
@@ -214,38 +214,33 @@ module.exports = ctx => {
           await this._outputFileContent({ destFile, fileContent });
         } else {
           // image
-          await bb.fromCallback(cb => {
-            let img = gm(fileContent);
-            // crop
-            if (fields.cropped === 'true') {
-              const cropbox = JSON.parse(fields.cropbox);
-              img = img.crop(
-                parseInt(cropbox.width),
-                parseInt(cropbox.height),
-                parseInt(cropbox.x),
-                parseInt(cropbox.y)
-              );
+          let img = await Jimp.read(fileContent);
+          // crop
+          if (fields.cropped === 'true') {
+            const cropbox = JSON.parse(fields.cropbox);
+            img = img.crop(parseInt(cropbox.x), parseInt(cropbox.y), parseInt(cropbox.width), parseInt(cropbox.height));
+          }
+          // fixed
+          if (fields.fixed) {
+            const fixed = JSON.parse(fields.fixed);
+            if (fixed.width && fixed.height) {
+              img = img.resize(fixed.width, fixed.height);
+            } else if (fixed.width) {
+              img = img.resize(fixed.width, Jimp.AUTO);
+            } else if (fixed.height) {
+              img = img.resize(Jimp.AUTO, fixed.height);
             }
-            // fixed
-            if (fields.fixed) {
-              const fixed = JSON.parse(fields.fixed);
-              if (fixed.width && fixed.height) {
-                img = img.resize(fixed.width, fixed.height, '!');
-              } else if (fixed.width) {
-                img = img.resize(fixed.width);
-              } else if (fixed.height) {
-                img = img.resize(null, fixed.height);
-              }
-            }
-            // save
-            img.quality(93).write(destFile, cb);
-          });
+          }
+          // quality
+          if (['.png', '.jpg', '.jpeg'].includes(fileInfo.ext)) {
+            img = img.quality(93);
+          }
+          // save
+          await img.write(destFile);
           // size
-          const imgSize = await bb.fromCallback(cb => {
-            gm(destFile).size(cb);
-          });
-          imgWidth = imgSize.width;
-          imgHeight = imgSize.height;
+          img = await Jimp.read(destFile);
+          imgWidth = img.bitmap.width;
+          imgHeight = img.bitmap.height;
         }
       } else if (mode === 2 || mode === 3) {
         // check right only for file
