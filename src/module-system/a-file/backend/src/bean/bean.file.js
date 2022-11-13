@@ -3,7 +3,7 @@ const fs = require('fs');
 const require3 = require('require3');
 const sendToWormhole = require3('stream-wormhole');
 const uuid = require3('uuid');
-const gm = require3('gm');
+const jimp = require3('jimp');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
@@ -184,6 +184,7 @@ module.exports = ctx => {
       if (fileInfo.name === '_none_') {
         fileInfo.name = '';
       }
+      if (fileInfo.ext) fileInfo.ext = fileInfo.ext.toLowerCase();
       const encoding = meta.encoding;
       const mime = meta.mime;
       const fields = meta.fields;
@@ -206,7 +207,10 @@ module.exports = ctx => {
 
       // write
       if (mode === 1) {
-        if (fileInfo.ext === '.svg' || fileInfo.ext === '.svgz') {
+        if (
+          ['.svg', '.svgz'].includes(fileInfo.ext) ||
+          !['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'].includes(fileInfo.ext)
+        ) {
           await this._outputFileContent({ destFile, fileContent });
         } else {
           // image
