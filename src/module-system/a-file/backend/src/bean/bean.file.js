@@ -213,34 +213,9 @@ module.exports = ctx => {
         ) {
           await this._outputFileContent({ destFile, fileContent });
         } else {
-          // image
-          let img = await Jimp.read(fileContent);
-          // crop
-          if (fields.cropped === 'true') {
-            const cropbox = JSON.parse(fields.cropbox);
-            img = img.crop(parseInt(cropbox.x), parseInt(cropbox.y), parseInt(cropbox.width), parseInt(cropbox.height));
-          }
-          // fixed
-          if (fields.fixed) {
-            const fixed = JSON.parse(fields.fixed);
-            if (fixed.width && fixed.height) {
-              img = img.resize(fixed.width, fixed.height);
-            } else if (fixed.width) {
-              img = img.resize(fixed.width, Jimp.AUTO);
-            } else if (fixed.height) {
-              img = img.resize(Jimp.AUTO, fixed.height);
-            }
-          }
-          // quality
-          if (['.png', '.jpg', '.jpeg'].includes(fileInfo.ext)) {
-            img = img.quality(93);
-          }
-          // save
-          await img.write(destFile);
-          // size
-          img = await Jimp.read(destFile);
-          imgWidth = img.bitmap.width;
-          imgHeight = img.bitmap.height;
+          const size = await this._outputImageContent({ destFile, fileContent, fields, fileInfo });
+          imgWidth = size.width;
+          imgHeight = size.height;
         }
       } else if (mode === 2 || mode === 3) {
         // check right only for file
@@ -505,6 +480,43 @@ module.exports = ctx => {
       });
       if (res && res.atomClosed === 0) return;
       ctx.throw(403);
+    }
+
+    async _outputImageContent({ destFile, fileContent, fields, fileInfo }) {
+      // prepare image content
+      const tmpFile = destFile + fileInfo.ext;
+      await this._outputFileContent({ destFile: tmpFile, fileContent });
+      // image
+      let img = await Jimp.read(tmpFile);
+      // crop
+      if (fields.cropped === 'true') {
+        const cropbox = JSON.parse(fields.cropbox);
+        img = img.crop(parseInt(cropbox.x), parseInt(cropbox.y), parseInt(cropbox.width), parseInt(cropbox.height));
+      }
+      // fixed
+      if (fields.fixed) {
+        const fixed = JSON.parse(fields.fixed);
+        if (fixed.width && fixed.height) {
+          img = img.resize(fixed.width, fixed.height);
+        } else if (fixed.width) {
+          img = img.resize(fixed.width, Jimp.AUTO);
+        } else if (fixed.height) {
+          img = img.resize(Jimp.AUTO, fixed.height);
+        }
+      }
+      // quality
+      if (['.png', '.jpg', '.jpeg'].includes(fileInfo.ext)) {
+        img = img.quality(93);
+      }
+      // save
+      await img.write(destFile);
+      // size
+      const width = img.bitmap.width;
+      const height = img.bitmap.height;
+      // delete tmp file
+      await fse.remove(tmpFile);
+      // ready
+      return { width, height };
     }
 
     async _outputFileContent({ destFile, fileContent }) {
