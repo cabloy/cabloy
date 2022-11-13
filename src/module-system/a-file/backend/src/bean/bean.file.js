@@ -278,7 +278,10 @@ module.exports = ctx => {
       // pre
       let fileName = file.fileName;
       if (file.mode === 1) {
-        if (file.fileExt !== '.svg' && file.fileExt !== '.svgz') {
+        if (
+          !['.svg', '.svgz'].includes(file.fileExt) &&
+          ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'].includes(file.fileExt)
+        ) {
           // adjust image
           fileName = await this._adjustImage(file, width, height);
         }
