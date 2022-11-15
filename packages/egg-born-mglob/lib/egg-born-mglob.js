@@ -202,11 +202,16 @@ function __parseModules(projectPath) {
   for (const __path of __pathsModules) {
     const prefix = `${projectPath}/${__path.prefix}`;
     const filePkgs = eggBornUtils.tools.globbySync(`${prefix}*/package.json`);
-    for (const filePkg of filePkgs) {
+    for (let filePkg of filePkgs) {
       // name
-      const name = filePkg.split('/').slice(-2)[0];
+      let name = filePkg.split('/').slice(-2)[0];
       if (!__path.public && name.indexOf('egg-born-module-') > -1) {
-        throw new Error(`Should use relative name for local module: ${name}`);
+        const pathSrc = path.join(prefix, name);
+        name = name.substring('egg-born-module-'.length);
+        filePkg = path.join(prefix, name, 'package.json');
+        const pathDest = path.join(prefix, name);
+        fse.moveSync(pathSrc, pathDest);
+        // throw new Error(`Should use relative name for local module: ${name}`);
       }
       // info
       const info = mparse.parseInfo(name, 'module');
