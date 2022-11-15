@@ -110,10 +110,14 @@ module.exports = ctx => {
     async delete({ categoryId }) {
       // check atoms
       const count = await ctx.bean.atom.modelAtom.count({ atomCategoryId: categoryId });
-      if (count > 0) ctx.throw.module(moduleInfo.relativeName, 1012);
+      if (count > 0) {
+        ctx.throw.module(moduleInfo.relativeName, 1012);
+      }
       // check children
       const children = await this.children({ categoryId });
-      if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1013);
+      if (children.length > 0) {
+        ctx.throw.module(moduleInfo.relativeName, 1013);
+      }
 
       // category
       const category = await this.modelCategory.get({ id: categoryId });

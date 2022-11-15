@@ -1,6 +1,14 @@
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassResource = {
+    module: 'a-base',
+    atomClassName: 'resource',
+  };
   class VersionUpdate19 {
+    get modelAtom() {
+      return ctx.model.module(moduleInfo.relativeName).atom;
+    }
+
     async run() {
       // adjustCategories
       await this._adjustCategories({ resourceType: 'a-base:menu' });
@@ -25,7 +33,61 @@ module.exports = function (ctx) {
 
     async _adjustCategoriesInstance({ resourceType }) {
       // select all resources
-      const roles = await this.modelRole.select({ where: { atomId: 0 } });
+      const list = await ctx.bean.resource.select({
+        options: {
+          where: {
+            resourceType,
+          },
+          orders: [['a.id', 'asc']],
+          page: { index: 0, size: 0 },
+          locale: false,
+        },
+      });
+      // patch
+      for (const item of list) {
+        const appKey = item.appKey || 'a-appbooster:appUnclassified';
+        const categoryNames = [resourceType, appKey, item.atomCategoryName].join('.');
+        const category = await ctx.bean.category.parseCategoryName({
+          atomClass: __atomClassResource,
+          language: item.atomLanguage,
+          categoryName: categoryNames,
+          force: true,
+        });
+        if (category.id !== item.atomCategoryId) {
+          // formal
+          await this.modelAtom.update({
+            id: item.atomId,
+            atomCategoryId: category.id,
+          });
+          // draft/history
+          await this.modelAtom.update(
+            {
+              atomCategoryId: category.id,
+            },
+            {
+              where: {
+                atomIdFormal: item.atomId,
+              },
+            }
+          );
+        }
+      }
+      // delete all old categories
+      const categoryTop = await ctx.bean.category.child({
+        atomClass: __atomClassResource,
+        categoryId: 0,
+        categoryName: resourceType,
+      });
+      const children = await ctx.bean.category.children({
+        atomClass: __atomClassResource,
+        categoryId: categoryTop.id,
+        setLocale: false,
+      });
+      for (const child of children) {
+        if (child.categoryName.indexOf(':') === -1) {
+          await ctx.bean.category.delete({ categoryId: child.id });
+        }
+      }
     }
   }
 
