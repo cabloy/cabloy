@@ -322,13 +322,18 @@ export default function (Vue) {
           categoryId: categoryRoot.id,
           categoryName: appKey,
         });
-        const data = await Vue.prototype.$meta.api.post('/a/base/category/tree', {
-          atomClass: __atomClassResource,
-          categoryId: categoryRoot2.id,
-          categoryHidden: 0,
-          setLocale: true,
-        });
-        const tree = data.list;
+        let tree;
+        if (!categoryRoot2) {
+          tree = [];
+        } else {
+          const data = await Vue.prototype.$meta.api.post('/a/base/category/tree', {
+            atomClass: __atomClassResource,
+            categoryId: categoryRoot2.id,
+            categoryHidden: 0,
+            setLocale: true,
+          });
+          tree = data.list;
+        }
         commit('setCategoryTreeResourceMenu', { resourceType, appKey, tree });
         return tree;
       },

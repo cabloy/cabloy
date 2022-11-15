@@ -64,8 +64,10 @@ export default {
     },
     async init_categoriesAll() {
       const appKey = this.layoutManager.container.appKey;
-      const tree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
-      this.categoryTree = tree[appKey];
+      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResourceMenu', {
+        resourceType: 'a-base:menu',
+        appKey,
+      });
     },
     getGroups() {
       return this.groups;

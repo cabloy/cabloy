@@ -29,7 +29,10 @@ export default {
       this.ready = true;
     },
     async init_categoriesAll() {
-      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:mine' });
+      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResourceMenu', {
+        resourceType: 'a-base:mine',
+        appKey: 'a-app:appDefault',
+      });
     },
     async init_resourcesArrayAll() {
       this.resourcesArrayAll = await this.$store.dispatch('a/base/getResourcesArray', {

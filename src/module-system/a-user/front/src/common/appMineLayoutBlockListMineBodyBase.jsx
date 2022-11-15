@@ -41,7 +41,7 @@ export default {
     base_appInfoCurrent() {
       if (!this.ready) return;
       if (!this.$meta.vueLayout.started) return;
-      this.init_fetchDataAll();
+      this.init_reload();
     },
   },
   created() {
@@ -54,13 +54,16 @@ export default {
   methods: {
     async init() {
       this.init_layoutConfig();
-      await this.init_categoriesAll();
-      await this.init_fetchDataAll();
+      await this.init_reload();
       if (this.onInit) {
         await this.onInit();
       }
-      this.init_preloadModules();
       this.ready = true;
+    },
+    async init_reload() {
+      await this.init_categoriesAll();
+      await this.init_fetchDataAll();
+      this.init_preloadModules();
     },
     init_preloadModules() {
       const appInfoCurrent = this.layoutManager.base.appInfoCurrent;
@@ -69,7 +72,12 @@ export default {
     },
     init_layoutConfig() {},
     async init_categoriesAll() {
-      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:mine' });
+      const appInfoCurrent = this.layoutManager.base.appInfoCurrent;
+      const appKey = appInfoCurrent.appKey;
+      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResourceMenu', {
+        resourceType: 'a-base:mine',
+        appKey,
+      });
     },
     async init_fetchDataAll() {
       await this.layoutManager.page_onRefresh();
