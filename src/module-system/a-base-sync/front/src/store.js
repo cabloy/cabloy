@@ -31,6 +31,7 @@ export default function (Vue) {
       layoutConfig: {},
       userAtomClassRolesPreferred: {},
       categoryTreesResource: {},
+      categoryTreesResourceMenu: {},
       resources: {},
       resourcesArray: {},
       categoryTrees: {},
@@ -61,6 +62,7 @@ export default function (Vue) {
         state.layoutConfig = {};
         state.userAtomClassRolesPreferred = {};
         state.categoryTreesResource = {};
+        state.categoryTreesResourceMenu = {};
         state.resources = {};
         state.resourcesArray = {};
         state.categoryTrees = {};
@@ -128,6 +130,13 @@ export default function (Vue) {
         state.categoryTreesResource = {
           ...state.categoryTreesResource,
           [resourceType]: tree,
+        };
+      },
+      setCategoryTreeResourceMenu(state, { resourceType, appKey, tree }) {
+        const key = `${resourceType}_${appKey}`;
+        state.categoryTreesResourceMenu = {
+          ...state.categoryTreesResourceMenu,
+          [key]: tree,
         };
       },
       setResources(state, { resourceType, appKey, resources, resourcesArray }) {
@@ -300,36 +309,45 @@ export default function (Vue) {
             });
         });
       },
-      getCategoryTreeResource({ state, commit }, { resourceType }) {
-        return new Promise((resolve, reject) => {
-          if (state.categoryTreesResource[resourceType]) return resolve(state.categoryTreesResource[resourceType]);
-          Vue.prototype.$meta.api
-            .post('/a/base/category/child', {
-              atomClass: __atomClassResource,
-              categoryId: 0,
-              categoryName: resourceType,
-            })
-            .then(categoryRoot => {
-              Vue.prototype.$meta.api
-                .post('/a/base/category/tree', {
-                  atomClass: __atomClassResource,
-                  categoryId: categoryRoot.id,
-                  categoryHidden: 0,
-                  setLocale: true,
-                })
-                .then(data => {
-                  const tree = data.list;
-                  commit('setCategoryTreeResource', { resourceType, tree });
-                  resolve(tree);
-                })
-                .catch(err => {
-                  reject(err);
-                });
-            })
-            .catch(err => {
-              reject(err);
-            });
+      async getCategoryTreeResourceMenu({ state, commit }, { resourceType, appKey }) {
+        const key = `${resourceType}_${appKey}`;
+        if (state.categoryTreesResourceMenu[key]) return state.categoryTreesResourceMenu[key];
+        const categoryRoot = await Vue.prototype.$meta.api.post('/a/base/category/child', {
+          atomClass: __atomClassResource,
+          categoryId: 0,
+          categoryName: resourceType,
         });
+        const categoryRoot2 = await Vue.prototype.$meta.api.post('/a/base/category/child', {
+          atomClass: __atomClassResource,
+          categoryId: categoryRoot.id,
+          categoryName: appKey,
+        });
+        const data = await Vue.prototype.$meta.api.post('/a/base/category/tree', {
+          atomClass: __atomClassResource,
+          categoryId: categoryRoot2.id,
+          categoryHidden: 0,
+          setLocale: true,
+        });
+        const tree = data.list;
+        commit('setCategoryTreeResourceMenu', { resourceType, appKey, tree });
+        return tree;
+      },
+      async getCategoryTreeResource({ state, commit }, { resourceType }) {
+        if (state.categoryTreesResource[resourceType]) return state.categoryTreesResource[resourceType];
+        const categoryRoot = await Vue.prototype.$meta.api.post('/a/base/category/child', {
+          atomClass: __atomClassResource,
+          categoryId: 0,
+          categoryName: resourceType,
+        });
+        const data = await Vue.prototype.$meta.api.post('/a/base/category/tree', {
+          atomClass: __atomClassResource,
+          categoryId: categoryRoot.id,
+          categoryHidden: 0,
+          setLocale: true,
+        });
+        const tree = data.list;
+        commit('setCategoryTreeResource', { resourceType, tree });
+        return tree;
       },
       getResources({ state, commit }, { resourceType, appKey }) {
         return __getResources({ state, commit }, { resourceType, appKey, useArray: false });

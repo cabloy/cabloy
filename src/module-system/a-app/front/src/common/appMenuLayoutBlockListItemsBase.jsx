@@ -63,7 +63,9 @@ export default {
       this.accordionItemOpened = this.layoutManager.layout.layoutConfig[this.layoutConfigKeyOpened] || 0;
     },
     async init_categoriesAll() {
-      this.categoryTree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
+      const appKey = this.layoutManager.container.appKey;
+      const tree = await this.$store.dispatch('a/base/getCategoryTreeResource', { resourceType: 'a-base:menu' });
+      this.categoryTree = tree[appKey];
     },
     getGroups() {
       return this.groups;
