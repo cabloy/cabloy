@@ -346,11 +346,16 @@ function __parseSuites(projectPath) {
   for (const __path of __pathSuites) {
     const prefix = `${projectPath}/${__path.prefix}`;
     const filePkgs = eggBornUtils.tools.globbySync(`${prefix}*/package.json`);
-    for (const filePkg of filePkgs) {
+    for (let filePkg of filePkgs) {
       // name
-      const name = filePkg.split('/').slice(-2)[0];
+      let name = filePkg.split('/').slice(-2)[0];
       if (name.indexOf('egg-born-suite-') > -1) {
-        throw new Error(`Should use relative name for local suite: ${name}`);
+        const pathSrc = path.join(prefix, name);
+        name = name.substring('egg-born-suite-'.length);
+        filePkg = path.join(prefix, name, 'package.json');
+        const pathDest = path.join(prefix, name);
+        fse.moveSync(pathSrc, pathDest);
+        // throw new Error(`Should use relative name for local suite: ${name}`);
       }
       // info
       const info = mparse.parseInfo(name, 'suite');
