@@ -349,6 +349,9 @@ function __parseSuites(projectPath) {
     for (const filePkg of filePkgs) {
       // name
       const name = filePkg.split('/').slice(-2)[0];
+      if (name.indexOf('egg-born-suite-') > -1) {
+        throw new Error(`Should use relative name for local suite: ${name}`);
+      }
       // info
       const info = mparse.parseInfo(name, 'suite');
       if (!info) {
