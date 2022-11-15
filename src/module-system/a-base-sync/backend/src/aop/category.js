@@ -19,6 +19,7 @@ module.exports = ctx => {
 
       // locale
       const list = context.result;
+      if (list.length === 0) return;
       // resourceType
       let res = this._checkResourceType({ list, categoryIdParent, atomClass });
       if (res) return;
