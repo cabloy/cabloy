@@ -119,6 +119,21 @@ module.exports = ctx => {
       return value;
     }
 
+    _adjustItem_atomCategoryId({ atomClass, item }) {
+      if (
+        atomClass.module === 'a-base' &&
+        atomClass.atomClassName === 'resource' &&
+        ['a-base:menu', 'a-base:mine'].includes(item.resourceType)
+      ) {
+        const parts = item.atomCategoryId.split('.');
+        if (parts[0] !== item.resourceType) {
+          parts.unshift(item.resourceType);
+        }
+        parts.splice(1, 0, item.appKey || 'a-appbooster:appUnclassified');
+        item.atomCategoryId = parts.join('.');
+      }
+    }
+
     async _adjustItem({ moduleName, atomClass, item, register }) {
       // item
       item = {
@@ -133,6 +148,7 @@ module.exports = ctx => {
       }
       // atomLanguage,atomCategoryId,atomTags
       if (typeof item.atomCategoryId === 'string') {
+        this._adjustItem_atomCategoryId({ atomClass, item });
         const category = await ctx.bean.category.parseCategoryName({
           atomClass,
           language: item.atomLanguage,
