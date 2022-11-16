@@ -11092,8 +11092,17 @@ module.exports = function (ctx) {
       });
       for (const child of children) {
         if (child.categoryName.indexOf(':') === -1) {
-          await ctx.bean.category.delete({ categoryId: child.id });
+          await this._deleteCategory(child);
         }
+      }
+    }
+
+    async _deleteCategory(category) {
+      try {
+        await ctx.bean.category.delete({ categoryId: category.id });
+      } catch (err) {
+        // donot throw error
+        ctx.logger.info(`categoryId: ${category.id}, categoryName: ${category.categoryName}`);
       }
     }
   }
