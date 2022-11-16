@@ -5,33 +5,82 @@
 /***/ ((module) => {
 
 module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassApp = {
+    module: 'a-app',
+    atomClassName: 'app',
+  };
   class localAop {
     async children(context, next) {
       // next
       await next();
       // check atomClass
       const params = context.arguments[0];
+      const categoryIdParent = params.categoryId;
       const atomClass = params.atomClass;
       if (!atomClass) return;
       // check if resource
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       if (!atomClassBase.resource) return;
-      // resourceTypes for a-base:resource
-      const resourceTypes = ctx.bean.base.resourceTypes();
+
       // locale
       const list = context.result;
+      if (list.length === 0) return;
+      // resourceType
+      let res = this._checkResourceType({ list, categoryIdParent, atomClass });
+      if (res) return;
+      // appKey
+      res = await this._checkAppKey({ list, categoryIdParent, atomClass });
+      if (res) return;
+      // general
+      this._checkGeneral({ list });
+    }
+
+    _checkGeneral({ list }) {
       for (const item of list) {
-        if (item.categoryIdParent === 0 && atomClass.module === 'a-base' && atomClass.atomClassName === 'resource') {
-          // resource type
-          const resourceType = resourceTypes[item.categoryName];
-          if (resourceType) {
-            item.categoryNameLocale = resourceType.titleLocale;
-          }
-        } else {
-          // general name
-          item.categoryNameLocale = ctx.text(item.categoryName);
+        item.categoryNameLocale = ctx.text(item.categoryName);
+      }
+      return true;
+    }
+
+    _checkResourceType({ list, categoryIdParent, atomClass }) {
+      if (atomClass.module !== 'a-base' || atomClass.atomClassName !== 'resource') return false;
+      if (categoryIdParent !== 0) return false;
+      // resourceTypes for a-base:resource
+      const resourceTypes = ctx.bean.base.resourceTypes();
+      for (const item of list) {
+        // resource type
+        const resourceType = resourceTypes[item.categoryName];
+        if (resourceType) {
+          item.categoryNameLocale = resourceType.titleLocale;
         }
       }
+      return true;
+    }
+
+    async _checkAppKey({ list, categoryIdParent, atomClass }) {
+      if (atomClass.module !== 'a-base' || atomClass.atomClassName !== 'resource') return false;
+      if (categoryIdParent === 0) return false;
+      // categoryIdParent
+      const categoryParent = await ctx.bean.category.get({ categoryId: categoryIdParent });
+      if (!categoryParent) return false;
+      if (!['a-base:menu', 'a-base:mine'].includes(categoryParent.categoryName)) return false;
+      const appKeys = list.map(item => item.categoryName);
+      const apps = await ctx.bean.resource.select({
+        atomClass: __atomClassApp,
+        options: {
+          where: {
+            atomStaticKey: appKeys,
+          },
+        },
+      });
+      for (const item of list) {
+        const app = apps.find(_item => _item.atomStaticKey === item.categoryName);
+        if (app) {
+          item.categoryNameLocale = `(${ctx.text('App')})${app.atomNameLocale}`;
+        }
+      }
+      return true;
     }
   }
 
@@ -3354,6 +3403,21 @@ module.exports = ctx => {
       return value;
     }
 
+    _adjustItem_atomCategoryId({ atomClass, item }) {
+      if (
+        atomClass.module === 'a-base' &&
+        atomClass.atomClassName === 'resource' &&
+        ['a-base:menu', 'a-base:mine'].includes(item.resourceType)
+      ) {
+        const parts = item.atomCategoryId.split('.');
+        if (parts[0] !== item.resourceType) {
+          parts.unshift(item.resourceType);
+        }
+        parts.splice(1, 0, item.appKey || 'a-appbooster:appUnclassified');
+        item.atomCategoryId = parts.join('.');
+      }
+    }
+
     async _adjustItem({ moduleName, atomClass, item, register }) {
       // item
       item = {
@@ -3368,6 +3432,7 @@ module.exports = ctx => {
       }
       // atomLanguage,atomCategoryId,atomTags
       if (typeof item.atomCategoryId === 'string') {
+        this._adjustItem_atomCategoryId({ atomClass, item });
         const category = await ctx.bean.category.parseCategoryName({
           atomClass,
           language: item.atomLanguage,
@@ -4271,10 +4336,14 @@ module.exports = ctx => {
     async delete({ categoryId }) {
       // check atoms
       const count = await ctx.bean.atom.modelAtom.count({ atomCategoryId: categoryId });
-      if (count > 0) ctx.throw.module(moduleInfo.relativeName, 1012);
+      if (count > 0) {
+        ctx.throw.module(moduleInfo.relativeName, 1012);
+      }
       // check children
       const children = await this.children({ categoryId });
-      if (children.length > 0) ctx.throw.module(moduleInfo.relativeName, 1013);
+      if (children.length > 0) {
+        ctx.throw.module(moduleInfo.relativeName, 1013);
+      }
 
       // category
       const category = await this.modelCategory.get({ id: categoryId });
@@ -9794,6 +9863,7 @@ const VersionUpdate14Fn = __webpack_require__(4519);
 const VersionUpdate16Fn = __webpack_require__(4938);
 const VersionUpdate17Fn = __webpack_require__(1223);
 const VersionUpdate18Fn = __webpack_require__(5140);
+const VersionUpdate19Fn = __webpack_require__(3836);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
@@ -9806,6 +9876,10 @@ const VersionInit15Fn = __webpack_require__(3166);
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 19) {
+        const versionUpdate19 = new (VersionUpdate19Fn(this.ctx))();
+        await versionUpdate19.run();
+      }
       if (options.version === 18) {
         const versionUpdate18 = new (VersionUpdate18Fn(this.ctx))();
         await versionUpdate18.run();
@@ -9932,6 +10006,11 @@ module.exports = app => {
     async update14_adjustUsers(options) {
       const versionUpdate14 = new (VersionUpdate14Fn(this.ctx))();
       await versionUpdate14._adjustUsersInstance(options);
+    }
+
+    async update19_adjustCategories({ resourceType }) {
+      const versionUpdate19 = new (VersionUpdate19Fn(this.ctx))();
+      await versionUpdate19._adjustCategoriesInstance({ resourceType });
     }
   }
 
@@ -10918,6 +10997,108 @@ module.exports = function (ctx) {
   }
 
   return VersionUpdate13;
+};
+
+
+/***/ }),
+
+/***/ 3836:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __atomClassResource = {
+    module: 'a-base',
+    atomClassName: 'resource',
+  };
+  class VersionUpdate19 {
+    get modelAtom() {
+      return ctx.model.module(moduleInfo.relativeName).atom;
+    }
+
+    async run() {
+      // adjustCategories
+      await this._adjustCategories({ resourceType: 'a-base:menu' });
+      await this._adjustCategories({ resourceType: 'a-base:mine' });
+    }
+
+    async _adjustCategories({ resourceType }) {
+      // all instances
+      const instances = await ctx.bean.instance.list({ where: {} });
+      for (const instance of instances) {
+        await ctx.meta.util.executeBean({
+          subdomain: instance.name,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: `${moduleInfo.relativeName}.version.manager`,
+          context: {
+            resourceType,
+          },
+          fn: 'update19_adjustCategories',
+        });
+      }
+    }
+
+    async _adjustCategoriesInstance({ resourceType }) {
+      // select all resources
+      const list = await ctx.bean.resource.select({
+        options: {
+          where: {
+            resourceType,
+          },
+          orders: [['a.id', 'asc']],
+          page: { index: 0, size: 0 },
+          locale: false,
+        },
+      });
+      // patch
+      for (const item of list) {
+        const appKey = item.appKey || 'a-appbooster:appUnclassified';
+        const categoryNames = [resourceType, appKey, item.atomCategoryName].join('.');
+        const category = await ctx.bean.category.parseCategoryName({
+          atomClass: __atomClassResource,
+          language: item.atomLanguage,
+          categoryName: categoryNames,
+          force: true,
+        });
+        if (category.id !== item.atomCategoryId) {
+          // formal
+          await this.modelAtom.update({
+            id: item.atomId,
+            atomCategoryId: category.id,
+          });
+          // draft/history
+          await this.modelAtom.update(
+            {
+              atomCategoryId: category.id,
+            },
+            {
+              where: {
+                atomIdFormal: item.atomId,
+              },
+            }
+          );
+        }
+      }
+      // delete all old categories
+      const categoryTop = await ctx.bean.category.child({
+        atomClass: __atomClassResource,
+        categoryId: 0,
+        categoryName: resourceType,
+      });
+      const children = await ctx.bean.category.children({
+        atomClass: __atomClassResource,
+        categoryId: categoryTop.id,
+        setLocale: false,
+      });
+      for (const child of children) {
+        if (child.categoryName.indexOf(':') === -1) {
+          await ctx.bean.category.delete({ categoryId: child.id });
+        }
+      }
+    }
+  }
+
+  return VersionUpdate19;
 };
 
 
