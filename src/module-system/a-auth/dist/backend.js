@@ -870,6 +870,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
+  Auth: '认证',
   AuthSelfBuiltApp: '自建应用',
   AuthDefault: '默认',
 };
@@ -1012,6 +1013,11 @@ module.exports = app => {
       },
       keywords: {},
       schemas,
+    },
+    settings: {
+      user: {
+        actionPath: '/a/user/user/authentications',
+      },
     },
   };
   return meta;
