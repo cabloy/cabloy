@@ -13,6 +13,11 @@ module.exports = app => {
       keywords: {},
       schemas,
     },
+    settings: {
+      user: {
+        actionPath: '/a/user/user/authentications',
+      },
+    },
   };
   return meta;
 };

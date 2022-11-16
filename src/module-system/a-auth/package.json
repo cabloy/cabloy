@@ -1,7 +1,7 @@
 {
   "name": "egg-born-module-a-auth",
   "version": "4.8.4",
-  "title": "a-auth",
+  "title": "Auth",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {

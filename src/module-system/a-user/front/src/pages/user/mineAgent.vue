@@ -10,12 +10,6 @@
         :eb-href="configAccount.url.passwordChange"
         eb-target="_self"
       ></eb-list-item>
-      <eb-list-item
-        :title="$text('Authentications')"
-        link="#"
-        eb-href="user/authentications"
-        eb-target="_self"
-      ></eb-list-item>
       <f7-list-item divider></f7-list-item>
       <eb-list-item :title="$text('Appearance')" link="#" eb-href="user/appearance" eb-target="_self"></eb-list-item>
       <eb-list-item
