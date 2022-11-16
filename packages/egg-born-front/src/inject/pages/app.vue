@@ -256,6 +256,12 @@ export default {
       $html.removeClass(`eb-layout-${layout === 'pc' ? 'mobile' : 'pc'}`);
       $html.addClass(`eb-layout-${layout}`);
     },
+    _setHtmlCSSAuthStatus() {
+      const loggedIn = this.$store.state.auth.loggedIn;
+      const $html = this.$$('html');
+      $html.removeClass(`eb-user-${loggedIn ? 'anonymous' : 'authenticated'}`);
+      $html.addClass(`eb-user-${loggedIn ? 'authenticated' : 'anonymous'}`);
+    },
     async _setLocaleModules(localeModules) {
       if (!localeModules || localeModules.length === 0) return;
       const promises = [];
@@ -286,6 +292,8 @@ export default {
         this._checkActivation();
         // set locale resource
         this._setLocaleResource();
+        // set auth status
+        this._setHtmlCSSAuthStatus();
         // theme
         await this._setTheme(data.config.theme);
         // localeModules
