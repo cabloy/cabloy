@@ -53,11 +53,17 @@ class CliCommand extends BaseCommand {
     this.cabloyConfig = this.__cabloyConfig.get();
   }
 
-  _logMetaWelcomes() {
+  _getMetaWelcomes() {
     let welcomes = this.__meta.info.welcomes;
-    if (!welcomes) return;
+    if (!welcomes) return null;
     if (!Array.isArray(welcomes)) welcomes = [welcomes];
-    if (welcomes.length === 0) return;
+    if (welcomes.length === 0) return null;
+    return welcomes;
+  }
+
+  _logMetaWelcomes() {
+    const welcomes = this._getMetaWelcomes();
+    if (!welcomes) return;
     for (const welcome of welcomes) {
       console.log(welcome);
       console.log('');
