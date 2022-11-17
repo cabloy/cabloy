@@ -8,6 +8,7 @@ const SocketIO = require('@zhennann/socketio').default;
 const AdapterFn = require('../adapter.js');
 
 const __envFields = ['TERM', 'TERM_PROGRAM', 'TERM_PROGRAM_VERSION', 'SHELL', 'COLOR', 'LANG', 'npm_config_registry'];
+const __comment_seperator = '====================================================================';
 
 class CliCommand extends BaseCommand {
   constructor(rawArgv, { meta, argv, openAuthClient }) {
@@ -43,6 +44,8 @@ class CliCommand extends BaseCommand {
     const progressId = uuid.v4().replace(/-/g, '');
     // progressbar
     yield this._progressbar({ progressId, context });
+    // done: log cli docs
+    this._logCliDocs();
     // done
     console.log(chalk.cyan('\n  cli successfully!\n'));
   }
@@ -64,10 +67,23 @@ class CliCommand extends BaseCommand {
   _logMetaWelcomes() {
     const welcomes = this._getMetaWelcomes();
     if (!welcomes) return;
+    console.log(__comment_seperator);
     for (const welcome of welcomes) {
       console.log(welcome);
-      console.log('');
     }
+    console.log(__comment_seperator);
+    console.log('');
+  }
+
+  _logCliDocs() {
+    const welcomes = this._getMetaWelcomes();
+    if (!welcomes) return;
+    const welcome = welcomes[0];
+    if (!welcome || welcome.indexOf('articles/cli-introduce.html') === -1) return;
+    console.log('');
+    console.log(__comment_seperator);
+    console.log(welcome);
+    console.log(__comment_seperator);
   }
 
   _adjustEnv({ env }) {
