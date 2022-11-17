@@ -278,7 +278,7 @@ module.exports = ctx => {
       if (configHelper !== false) {
         let url = `https://cabloy.com/${ctx.locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
         url = this.helper.chalk.keyword('cyan')(url);
-        const text = `cli docs: ${url}`;
+        const text = `${ctx.text('CliDocs')}: ${url}`;
         welcomes.unshift(text);
       }
       return welcomes;
@@ -857,6 +857,7 @@ module.exports = {};
 /***/ ((module) => {
 
 module.exports = {
+  CliDocs: 'Cli Docs',
   CliDone: 'Done',
 };
 
@@ -868,6 +869,7 @@ module.exports = {
 
 module.exports = {
   Usage: '用法',
+  CliDocs: 'Cli文档',
   CliDone: '已完成',
 };
 
