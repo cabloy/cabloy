@@ -190,7 +190,7 @@ module.exports = ctx => {
       }
       const url = this._getCabloyDocsURL({ slug: 'cli-store', user });
       const text = this.helper.chalk.keyword('cyan')(url);
-      welcomes.push(`cli store docs: ${text}`);
+      welcomes.push(`${ctx.text('CliStoreDocs')}: ${text}`);
     }
   }
   return CliStoreBase;

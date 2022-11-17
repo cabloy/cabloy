@@ -1,5 +1,6 @@
 module.exports = {
   Submitted: '已提交',
+  CliStoreDocs: 'Cli商店文档',
   CliAuthOpenTokenInfoStoreSync: '用于Cabloy商店同步的开放认证Token',
   CliAuthOpenTokenInfoStorePublish: '用于Cabloy商店发布的开放认证Token',
   'Specify the module template': '指定模块模版',
