@@ -107,7 +107,7 @@
     "egg-born-module-cms-themeaws": "^4.8.3",
     "egg-born-module-cms-themeblog": "^4.8.3",
     "egg-born-module-cms-themecommunity": "^4.8.3",
-    "egg-born-module-cms-themedocs": "^4.8.3",
+    "egg-born-module-cms-themedocs": "^4.8.4",
     "egg-born-scripts": "^3.4.7"
   }
 }
