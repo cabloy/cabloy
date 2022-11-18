@@ -6811,6 +6811,10 @@ module.exports = ctx => {
 
     // state: login/associate/migrate
     async verify({ state = 'login', profileUser }) {
+      if (state === 'migrate' || state === 'associate') {
+        ctx.bean.util.checkDemo();
+      }
+
       // verifyUser
       const verifyUser = {};
 
