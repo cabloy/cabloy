@@ -282,6 +282,9 @@
           "a-dingtalk": {
             "scripts": ["gitCommit"]
           },
+          "bz-diancai": {
+            "scripts": ["gitCommit"]
+          },
           "test-party": {
             "scripts": ["gitCommit"]
           }
