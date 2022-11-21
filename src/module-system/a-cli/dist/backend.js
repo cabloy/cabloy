@@ -498,7 +498,7 @@ module.exports = ctx => {
         proc.once('exit', code => {
           if (code !== 0) {
             const err = new Error(`spawn ${cmd} ${args.join(' ')} fail, exit code: ${code}`);
-            err.code = code;
+            err.code = 10000 + code;
             return reject(err);
           }
           resolve();
