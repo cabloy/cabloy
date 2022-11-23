@@ -131,4 +131,4 @@ A Node.js full-stack framework with workflow engine, based on koa + egg + vue + 
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE), Free commercial use
