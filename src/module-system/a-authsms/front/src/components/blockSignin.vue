@@ -7,7 +7,7 @@
             <eb-list-input
               :label="$text('Phone Number')"
               floating-label
-              type="text"
+              type="tel"
               clear-button
               :placeholder="$text('Phone Number')"
               v-model="data.mobile"
