@@ -5,7 +5,7 @@ const roles = {
     leader: 0,
     system: 1,
     sorting: 0,
-    roleIdParent: 'system',
+    roleIdParent: '__system__',
   },
   anonymous: {
     roleName: 'anonymous',

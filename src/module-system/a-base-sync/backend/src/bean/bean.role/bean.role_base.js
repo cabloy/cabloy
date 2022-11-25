@@ -377,7 +377,7 @@ module.exports = ctx => {
         if (!exists) {
           // parent
           let roleIdParent;
-          if (role.roleIdParent === 'system') {
+          if (role.roleIdParent === '__system__') {
             roleIdParent = 0;
           } else {
             roleIdParent = roleIds[role.roleIdParent];
