@@ -39,6 +39,7 @@
     "regenerator-runtime": "^0.13.7",
     "sandbox-webworker": "^1.0.3",
     "screenfull": "^5.0.2",
+    "crypto-js": "4.1.1",
     "vue": "^2.7.13",
     "vuex": "^3.6.2"
   }

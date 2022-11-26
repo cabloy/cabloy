@@ -1,4 +1,5 @@
 import axios from 'axios';
+import cryptojs from 'crypto-js';
 
 export default function (Vue) {
   // axios
@@ -11,6 +12,16 @@ export default function (Vue) {
   // add a response interceptor
   if (!axios.__ebDefaultResponseDisable) {
     // response
+    axios.interceptors.response.use(
+      function (response) {
+        bodyDecrypt(Vue, response);
+        return response;
+      },
+      function (error) {
+        bodyDecrypt(Vue, error.response);
+        return error;
+      }
+    );
     axios.interceptors.response.use(
       function (response) {
         if (response.headers['content-type'].indexOf('application/json') === -1) return response;
@@ -97,6 +108,24 @@ export default function (Vue) {
   };
 
   return { beforeCreate };
+}
+
+function generateKey(Vue) {
+  const key = '_cabloy_' + Vue.prototype.$meta.util.formatDate();
+  return cryptojs.SHA1(key).toString().substring(0, 16);
+}
+
+function bodyDecrypt(Vue, response) {
+  const body = response && response.data;
+  if (!body || typeof body !== 'object' || !body.crypto) return;
+  let key = generateKey(Vue);
+  key = cryptojs.enc.Utf8.parse(key);
+  const bytes = cryptojs.AES.decrypt(body.data, key, {
+    mode: cryptojs.mode.ECB,
+    padding: cryptojs.pad.Pkcs7,
+  });
+  const originalText = bytes.toString(cryptojs.enc.Utf8);
+  response.data = JSON.parse(originalText);
 }
 
 function wrapApi(Vue, obj, objBase, vueComponent) {

@@ -1,4 +1,5 @@
-const cryptojs = require('crypto');
+const require3 = require('require3');
+const cryptojs = require3('crypto-js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -25,22 +26,24 @@ module.exports = ctx => {
       const body = ctx.response && ctx.response.body;
       if (!body || typeof body !== 'object') return;
       // key
-      const key = this.generateKey();
+      let key = this.generateKey();
+      key = cryptojs.enc.Utf8.parse(key);
       // src
-      const cipher = cryptojs.createCipheriv('aes-128-ECB', key, '');
-      let enc = cipher.update(JSON.stringify(body), 'utf8', 'hex');
-      enc += cipher.final('hex');
+      const bodySrc = cryptojs.enc.Utf8.parse(JSON.stringify(body));
+      const encrypted = cryptojs.AES.encrypt(bodySrc, key, {
+        mode: cryptojs.mode.ECB,
+        padding: cryptojs.pad.Pkcs7,
+      }).toString();
+      // ok
       ctx.response.body = {
         crypto: true,
-        data: enc,
+        data: encrypted,
       };
     }
 
     generateKey() {
-      const keySrc = '_cabloy_' + ctx.bean.util.formatDate();
-      const hashsum = cryptojs.createHash('sha1');
-      hashsum.update(keySrc);
-      return hashsum.digest('hex').substring(0, 16);
+      const key = '_cabloy_' + ctx.bean.util.formatDate();
+      return cryptojs.SHA1(key).toString().substring(0, 16);
     }
   }
   return ClassCrypto;
