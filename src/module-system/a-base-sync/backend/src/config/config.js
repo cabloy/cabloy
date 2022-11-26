@@ -160,6 +160,9 @@ module.exports = appInfo => {
     demo: {
       enable: false,
     },
+    body: {
+      crypto: false,
+    },
   };
 
   return config;

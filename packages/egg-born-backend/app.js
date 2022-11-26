@@ -11,4 +11,9 @@ module.exports = app => {
   if (index > -1) {
     app.config.coreMiddleware.splice(index, 1);
   }
+  // crypto
+  index = app.config.coreMiddleware.indexOf('bodyParser');
+  if (index > -1) {
+    app.config.coreMiddleware.splice(index + 1, 0, 'crypto');
+  }
 };
