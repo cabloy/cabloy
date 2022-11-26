@@ -80,10 +80,12 @@ export default {
   methods: {
     getContainer(mode) {
       const options = { stage: 'draft', mine: 1 };
+      const params = {};
       if (mode === 'drafts') {
         options.where = {
           atomFlowId: 0,
         };
+        params.actionOnClick = 'write';
       } else {
         options.where = {
           atomFlowId: { op: '>', val: 0 },
@@ -91,6 +93,7 @@ export default {
       }
       return {
         options,
+        params,
         layout: this.layout,
         autoInit: false,
       };

@@ -7,10 +7,11 @@ export default {
       this.$meta.util.swipeoutClose(event.currentTarget);
     },
     async item_onActionView(event, item) {
+      const actionName = this.$meta.util.getProperty(this.container.params, 'actionOnClick') || 'read';
       return await this.item_onAction(event, item, {
         module: item.module,
         atomClassName: item.atomClassName,
-        name: 'read',
+        name: actionName,
       });
     },
     item_getAtomName(item) {
