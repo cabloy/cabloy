@@ -12,12 +12,16 @@ module.exports = ctx => {
       const body = ctx.request && ctx.request.body;
       if (!body || typeof body !== 'object' || !body.crypto) return;
       // key
-      const key = this.generateKey();
+      let key = this.generateKey();
+      key = cryptojs.enc.Utf8.parse(key);
       // decrypt
-      const decipher = cryptojs.createDecipheriv('aes-128-ECB', key, '');
-      let dec = decipher.update(body.data, 'hex', 'utf8');
-      dec += decipher.final('utf8');
-      ctx.request.body = JSON.parse(dec);
+      const bytes = cryptojs.AES.decrypt(body.data, key, {
+        mode: cryptojs.mode.ECB,
+        padding: cryptojs.pad.Pkcs7,
+      });
+      const originalText = bytes.toString(cryptojs.enc.Utf8);
+      // ok
+      ctx.request.body = JSON.parse(originalText);
     }
 
     async bodyEncrypt() {

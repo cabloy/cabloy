@@ -49,6 +49,11 @@ export default function (Vue) {
     );
 
     // add a request interceptor
+    axios.interceptors.request.use(function (config) {
+      bodyEncrypt(Vue, config);
+      return config;
+    });
+
     axios.interceptors.request.use(
       function (config) {
         // jwt
@@ -115,16 +120,38 @@ function generateKey(Vue) {
   return cryptojs.SHA1(key).toString().substring(0, 16);
 }
 
+function bodyEncrypt(Vue, config) {
+  const body = config.data;
+  if (!body || typeof body !== 'object') return;
+  // key
+  let key = generateKey(Vue);
+  key = cryptojs.enc.Utf8.parse(key);
+  // src
+  const bodySrc = cryptojs.enc.Utf8.parse(JSON.stringify(body));
+  const encrypted = cryptojs.AES.encrypt(bodySrc, key, {
+    mode: cryptojs.mode.ECB,
+    padding: cryptojs.pad.Pkcs7,
+  }).toString();
+  // ok
+  config.data = {
+    crypto: true,
+    data: encrypted,
+  };
+}
+
 function bodyDecrypt(Vue, response) {
   const body = response && response.data;
   if (!body || typeof body !== 'object' || !body.crypto) return;
+  // key
   let key = generateKey(Vue);
   key = cryptojs.enc.Utf8.parse(key);
+  // decrypt
   const bytes = cryptojs.AES.decrypt(body.data, key, {
     mode: cryptojs.mode.ECB,
     padding: cryptojs.pad.Pkcs7,
   });
   const originalText = bytes.toString(cryptojs.enc.Utf8);
+  // ok
   response.data = JSON.parse(originalText);
 }
 
