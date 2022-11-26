@@ -317,6 +317,23 @@ input[type='search']::-webkit-search-decoration {
     color: var(--f7-list-item-after-text-color);
   }
 
+  form.list div.item-input {
+    &.item-input-clear-button {
+      span.input-clear-button {
+        visibility: hidden;
+      }
+    }
+
+    &.item-input-clear-button.item-input-with-value.item-input-focused {
+      input.input-with-value {
+        padding-right: var(--f7-input-clear-button-size);
+      }
+      span.input-clear-button {
+        visibility: visible;
+      }
+    }
+  }
+
   // should not set this styles, for inline-labels: align-self:flex-end
   //.list .item-media {
   //padding-top: 0;
