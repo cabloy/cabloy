@@ -19,7 +19,7 @@ export default function (Vue) {
       },
       function (error) {
         bodyDecrypt(Vue, error.response);
-        return error;
+        throw error;
       }
     );
     axios.interceptors.response.use(
