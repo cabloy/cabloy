@@ -135,4 +135,9 @@ export default {
       },
     },
   },
+  securityLevelProtection: {
+    body: {
+      crypto: false,
+    },
+  },
 };

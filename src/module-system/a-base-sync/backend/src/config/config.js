@@ -152,6 +152,13 @@ module.exports = appInfo => {
     privacyFields: 'createdAt,updatedAt,realName,locale,email,mobile,activated,emailConfirmed,mobileVerified',
   };
 
+  // securityLevelProtection
+  config.securityLevelProtection = {
+    body: {
+      crypto: false,
+    },
+  };
+
   // configFront
   config.configFront = {
     site: {
@@ -159,9 +166,6 @@ module.exports = appInfo => {
     },
     demo: {
       enable: false,
-    },
-    body: {
-      crypto: false,
     },
   };
 
