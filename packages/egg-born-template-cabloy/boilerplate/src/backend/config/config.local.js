@@ -5,7 +5,15 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_{{safeKeys}}';
 
   // modules
-  config.modules = {};
+  config.modules = {
+    'a-captcha': {
+      configFront: {
+        local: {
+          // disabled: true,
+        },
+      },
+    },
+  };
 
   // mysql
   config.mysql = {
