@@ -27,6 +27,7 @@ module.exports = ctx => {
     async bodyEncrypt() {
       const configCrypto = this.configModule.securityLevelProtection.body.crypto;
       if (!configCrypto) return;
+      if (ctx.ctxCaller) return;
       const body = ctx.response && ctx.response.body;
       if (!body || typeof body !== 'object') return;
       // key
