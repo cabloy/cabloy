@@ -41,6 +41,7 @@ export default {
       const ebTextarea = this.$meta.util.getPropertyDeprecate(property, 'ebParams.textarea', 'ebTextarea');
       const ebSecure = this.$meta.util.getPropertyDeprecate(property, 'ebParams.secure', 'ebSecure');
       const ebInputType = this.$meta.util.getPropertyDeprecate(property, 'ebParams.inputType', 'ebInputType');
+      const ebInputMode = this.$meta.util.getPropertyDeprecate(property, 'ebParams.inputMode', 'ebInputMode');
       const ebImmediate = this.$meta.util.getPropertyDeprecate(property, 'ebParams.immediate', 'ebImmediate');
       const immediate = ebImmediate !== false && !ebCurrency;
       // format
@@ -72,6 +73,7 @@ export default {
       const props = {
         floatingLabel: this.$config.form.floatingLabel,
         type,
+        inputmode: ebInputMode,
         placeholder,
         info,
         resizable: ebTextarea,
