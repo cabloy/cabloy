@@ -31,6 +31,7 @@ const beanUser = require('./bean/bean.user.js');
 const beanUtil = require('./bean/bean.util.js');
 const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
+const beanCrypto = require('./bean/bean.crypto.js');
 const statsDrafts = require('./bean/stats.drafts.js');
 const statsDraftsFlowing = require('./bean/stats.draftsFlowing.js');
 const statsStars = require('./bean/stats.stars.js');
@@ -190,6 +191,11 @@ module.exports = app => {
     tag: {
       mode: 'ctx',
       bean: beanTag,
+      global: true,
+    },
+    crypto: {
+      mode: 'ctx',
+      bean: beanCrypto,
       global: true,
     },
     // stats
