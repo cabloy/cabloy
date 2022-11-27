@@ -18,14 +18,20 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+
+    get cacheModule() {
+      return ctx.cache.db.module(moduleInfo.relativeName);
+    }
+
     async getProvider({ module, sceneName }) {
       // default scene
-      const configDefault = ctx.config.module(moduleInfo.relativeName);
-      const sceneDefault = configDefault.captcha.scenes.default;
+      const sceneDefault = this.configModule.captcha.scenes.default;
       // module scene
-      const configModule = ctx.config.module(module);
-      const sceneModule =
-        (configModule.captcha && configModule.captcha.scenes && configModule.captcha.scenes[sceneName]) || null;
+      const configModuleScene = ctx.config.module(module);
+      const sceneModule = ctx.bean.util.getProperty(configModuleScene, `captcha.scenes.${sceneName}`) || null;
       return extend(true, {}, sceneDefault, sceneModule);
     }
 
@@ -37,26 +43,20 @@ module.exports = ctx => {
       const providerInstanceId = uuid.v4().replace(/-/g, '');
       // cache
       const key = utils.getCacheKey({ ctx, providerInstanceId });
-      await ctx.cache.db
-        .module(moduleInfo.relativeName)
-        .set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+      await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
       // ok
       return { providerInstanceId, provider };
     }
 
     // get
     async getProviderInstance({ providerInstanceId }) {
-      // cache
-      const cache = ctx.cache.db.module(moduleInfo.relativeName);
       const key = utils.getCacheKey({ ctx, providerInstanceId });
-      // get
-      return await cache.get(key);
+      return await this.cacheModule.get(key);
     }
 
     // update
     async update({ providerInstanceId, data, context }) {
-      // cache
-      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      // key
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       // get
       const providerInstance = await this.getProviderInstance({ providerInstanceId });
@@ -69,12 +69,11 @@ module.exports = ctx => {
       // update
       providerInstance.data = data;
       providerInstance.context = context;
-      await cache.set(key, providerInstance, provider.timeout);
+      await this.cacheModule.set(key, providerInstance, provider.timeout);
     }
 
     async verify({ module, sceneName, providerInstanceId, dataInput }) {
-      // cache
-      const cache = ctx.cache.db.module(moduleInfo.relativeName);
+      // key
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       // get
       const providerInstance = await this.getProviderInstance({ providerInstanceId });
@@ -104,7 +103,7 @@ module.exports = ctx => {
       // should hold the cache item
       // update
       providerInstance.data = null;
-      await cache.set(key, providerInstance, provider.timeout);
+      await this.cacheModule.set(key, providerInstance, provider.timeout);
     }
   }
   return Captcha;

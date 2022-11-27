@@ -4221,6 +4221,68 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 852:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* module decorator */ module = __webpack_require__.nmd(module);
+const path = __webpack_require__(1017);
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+let __bodyCryptoInstance = null;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class BodyCrypto {
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+
+    async ensureBodyCrypto() {
+      if (!__bodyCryptoInstance) {
+        const configCryptoJS = this.configModule.securityLevelProtection.body.cryptojs;
+        const moduleInfo = mparse.parseInfo(configCryptoJS);
+        if (!moduleInfo) throw new Error(`Invalid BodyCrypto JS: ${configCryptoJS}`);
+        const _module = ctx.app.meta.modules[moduleInfo.relativeName];
+        if (!_module) throw new Error(`Module Not Found: ${module}`);
+        let jsFile = path.join(_module.static.backend, configCryptoJS.substring(moduleInfo.url.length + 2));
+        if (ctx.app.meta.isProd) {
+          jsFile += '.min';
+        }
+        jsFile += '.js';
+        const Loader = require3(jsFile);
+        __bodyCryptoInstance = await Loader.createBodyCrypto();
+      }
+      return __bodyCryptoInstance;
+    }
+
+    async decrypt() {
+      const body = ctx.request && ctx.request.body;
+      if (!body || typeof body !== 'object' || !body.crypto) return;
+      // ensure
+      const bodyCryptoInstance = await this.ensureBodyCrypto();
+      ctx.request.body = bodyCryptoInstance.decrypt(body);
+    }
+
+    async encrypt() {
+      const configCrypto = this.configModule.securityLevelProtection.body.crypto;
+      if (!configCrypto) return;
+      if (ctx.ctxCaller) return;
+      if (ctx.headers['x-open-auth-client']) return;
+      if (ctx.response.headers['content-type'].indexOf('application/json') === -1) return;
+      const body = ctx.response && ctx.response.body;
+      if (!body || typeof body !== 'object') return;
+      // ensure
+      const bodyCryptoInstance = await this.ensureBodyCrypto();
+      ctx.response.body = bodyCryptoInstance.encrypt(body);
+    }
+  }
+  return BodyCrypto;
+};
+
+
+/***/ }),
+
 /***/ 30:
 /***/ ((module) => {
 
@@ -4498,68 +4560,6 @@ module.exports = ctx => {
     }
   }
   return Category;
-};
-
-
-/***/ }),
-
-/***/ 6668:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const cryptojs = require3('crypto-js');
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class ClassCrypto {
-    get configModule() {
-      return ctx.config.module(moduleInfo.relativeName);
-    }
-
-    async bodyDecrypt() {
-      const body = ctx.request && ctx.request.body;
-      if (!body || typeof body !== 'object' || !body.crypto) return;
-      // key
-      let key = this.generateKey();
-      key = cryptojs.enc.Utf8.parse(key);
-      // decrypt
-      const bytes = cryptojs.AES.decrypt(body.data, key, {
-        mode: cryptojs.mode.ECB,
-        padding: cryptojs.pad.Pkcs7,
-      });
-      const originalText = bytes.toString(cryptojs.enc.Utf8);
-      // ok
-      ctx.request.body = JSON.parse(originalText);
-    }
-
-    async bodyEncrypt() {
-      const configCrypto = this.configModule.securityLevelProtection.body.crypto;
-      if (!configCrypto) return;
-      if (ctx.ctxCaller) return;
-      const body = ctx.response && ctx.response.body;
-      if (!body || typeof body !== 'object') return;
-      // key
-      let key = this.generateKey();
-      key = cryptojs.enc.Utf8.parse(key);
-      // src
-      const bodySrc = cryptojs.enc.Utf8.parse(JSON.stringify(body));
-      const encrypted = cryptojs.AES.encrypt(bodySrc, key, {
-        mode: cryptojs.mode.ECB,
-        padding: cryptojs.pad.Pkcs7,
-      }).toString();
-      // ok
-      ctx.response.body = {
-        crypto: true,
-        data: encrypted,
-      };
-    }
-
-    generateKey() {
-      const key = '_cabloy_' + ctx.bean.util.formatDate();
-      return cryptojs.SHA1(key).toString().substring(0, 16);
-    }
-  }
-  return ClassCrypto;
 };
 
 
@@ -12121,7 +12121,7 @@ const beanUser = __webpack_require__(5728);
 const beanUtil = __webpack_require__(4368);
 const beanCategory = __webpack_require__(30);
 const beanTag = __webpack_require__(8636);
-const beanCrypto = __webpack_require__(6668);
+const beanBodyCrypto = __webpack_require__(852);
 const statsDrafts = __webpack_require__(4571);
 const statsDraftsFlowing = __webpack_require__(6431);
 const statsStars = __webpack_require__(8999);
@@ -12283,9 +12283,9 @@ module.exports = app => {
       bean: beanTag,
       global: true,
     },
-    crypto: {
+    bodyCrypto: {
       mode: 'ctx',
-      bean: beanCrypto,
+      bean: beanBodyCrypto,
       global: true,
     },
     // stats
@@ -12537,6 +12537,7 @@ module.exports = appInfo => {
   config.securityLevelProtection = {
     body: {
       crypto: false,
+      cryptojs: '/a/base/js/bodyCrypto',
     },
   };
 
@@ -17534,17 +17535,30 @@ module.exports = require("url");
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
 /******/ 	
 /************************************************************************/
 /******/ 	
