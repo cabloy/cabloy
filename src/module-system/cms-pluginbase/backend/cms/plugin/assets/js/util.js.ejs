@@ -242,6 +242,9 @@
       });
     },
     cors({ method, url, body }) {
+      if (window.bodyCrypto) {
+        body = window.bodyCryptoInstance.bodyEncrypt(body);
+      }
       return this.promise((resolve, reject) => {
         const ajaxMethod = method.toUpperCase();
         $.ajax({
@@ -260,6 +263,9 @@
           },
         })
           .done(function (data) {
+            if (window.bodyCrypto) {
+              data = window.bodyCryptoInstance.bodyDecrypt(data);
+            }
             if (data.code === 0) {
               resolve(data.data);
             } else {
@@ -267,7 +273,9 @@
             }
           })
           .fail(function (xhr, status) {
-            reject((xhr.responseJSON && xhr.responseJSON.message) || status);
+            let data = xhr.responseJSON && xhr.responseJSON;
+            data = window.bodyCryptoInstance.bodyDecrypt(data);
+            reject((data && data.message) || status);
           });
       });
     },

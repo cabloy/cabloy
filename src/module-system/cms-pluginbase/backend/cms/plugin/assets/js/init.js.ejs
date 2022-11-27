@@ -17,13 +17,14 @@ const bodyCrypto=ctx.config.module('a-base').securityLevelProtection.body.crypto
   });
 
   $(document).ready(function () {
-    var bodyCrypto = <%=bodyCrypto%>;
-    var bodyCryptoJS = '<%=site.serverUrl + "/api/static/a/base/js/cryptojs.js"%>';
-    if(!bodyCrypto){
+    window.bodyCrypto = <%=bodyCrypto%>;
+    window.bodyCryptoJS = '<%=site.serverUrl + "/api/static/a/base/js/bodyCrypto.js"%>';
+    if(!window.bodyCrypto){
       _documentReady();
       return;
     }
-    window.requirejs([bodyCryptoJS], CryptoJS => {
+    window.requirejs([window.bodyCryptoJS], bodyCryptoInstance => {
+      window.bodyCryptoInstance=bodyCryptoInstance;
       _documentReady();
     });
   });
