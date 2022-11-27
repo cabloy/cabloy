@@ -156,6 +156,7 @@ module.exports = appInfo => {
   config.securityLevelProtection = {
     body: {
       crypto: false,
+      cryptojs: '/a/base/js/bodyCrypto',
     },
   };
 

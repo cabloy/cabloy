@@ -30,7 +30,6 @@
     "@zhennann/vue": "^2.7.14",
     "async": "^3.2.0",
     "axios": "^0.21.1",
-    "crypto-js": "4.1.1",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mparse": "^2.1.8",
     "js-cookie": "^2.2.1",
