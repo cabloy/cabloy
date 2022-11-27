@@ -25,6 +25,7 @@ export default function (Vue) {
     encrypt(config) {
       const body = config.data;
       if (!body || typeof body !== 'object') return;
+      if (body.constructor.name === 'FormData') return;
       if (!__bodyCryptoInstance) return;
       config.data = __bodyCryptoInstance.encrypt(body);
     },
