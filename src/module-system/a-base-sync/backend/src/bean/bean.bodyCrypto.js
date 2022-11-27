@@ -32,18 +32,9 @@ module.exports = ctx => {
     async decrypt() {
       const body = ctx.request && ctx.request.body;
       if (!body || typeof body !== 'object' || !body.crypto) return;
-
-      // key
-      let key = this.generateKey();
-      key = cryptojs.enc.Utf8.parse(key);
-      // decrypt
-      const bytes = cryptojs.AES.decrypt(body.data, key, {
-        mode: cryptojs.mode.ECB,
-        padding: cryptojs.pad.Pkcs7,
-      });
-      const originalText = bytes.toString(cryptojs.enc.Utf8);
-      // ok
-      ctx.request.body = JSON.parse(originalText);
+      // ensure
+      const bodyCryptoInstance = await this.ensureBodyCrypto();
+      ctx.request.body = bodyCryptoInstance.decrypt();
     }
 
     async encrypt() {
@@ -55,11 +46,6 @@ module.exports = ctx => {
       // ensure
       const bodyCryptoInstance = await this.ensureBodyCrypto();
       ctx.response.body = bodyCryptoInstance.encrypt(body);
-    }
-
-    generateKey() {
-      const key = '_cabloy_' + ctx.bean.util.formatDate();
-      return cryptojs.SHA1(key).toString().substring(0, 16);
     }
   }
   return BodyCrypto;
