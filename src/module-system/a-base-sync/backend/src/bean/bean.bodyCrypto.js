@@ -34,7 +34,7 @@ module.exports = ctx => {
       if (!body || typeof body !== 'object' || !body.crypto) return;
       // ensure
       const bodyCryptoInstance = await this.ensureBodyCrypto();
-      ctx.request.body = bodyCryptoInstance.decrypt();
+      ctx.request.body = bodyCryptoInstance.decrypt(body);
     }
 
     async encrypt() {

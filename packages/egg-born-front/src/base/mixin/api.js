@@ -1,6 +1,10 @@
 import axios from 'axios';
+import bodyCryptoFn from '../bodyCrypto.js';
 
 export default function (Vue) {
+  // bodyCrypto
+  const bodyCrypto = bodyCryptoFn(Vue);
+
   // axios
   Vue.prototype.$meta.axios = axios;
 
@@ -13,11 +17,11 @@ export default function (Vue) {
     // response
     axios.interceptors.response.use(
       function (response) {
-        bodyDecrypt(Vue, response);
+        bodyCrypto.decrypt(response);
         return response;
       },
       function (error) {
-        bodyDecrypt(Vue, error.response);
+        bodyCrypto.decrypt(error.response);
         throw error;
       }
     );
@@ -49,7 +53,7 @@ export default function (Vue) {
 
     // add a request interceptor
     axios.interceptors.request.use(function (config) {
-      bodyEncrypt(Vue, config);
+      bodyCrypto.encrypt(config);
       return config;
     });
 
@@ -112,47 +116,6 @@ export default function (Vue) {
   };
 
   return { beforeCreate };
-}
-
-function generateKey(Vue) {
-  const key = '_cabloy_' + Vue.prototype.$meta.util.formatDate();
-  return cryptojs.SHA1(key).toString().substring(0, 16);
-}
-
-function bodyEncrypt(Vue, config) {
-  const body = config.data;
-  if (!body || typeof body !== 'object') return;
-  // todo: should check front config
-  // key
-  let key = generateKey(Vue);
-  key = cryptojs.enc.Utf8.parse(key);
-  // src
-  const bodySrc = cryptojs.enc.Utf8.parse(JSON.stringify(body));
-  const encrypted = cryptojs.AES.encrypt(bodySrc, key, {
-    mode: cryptojs.mode.ECB,
-    padding: cryptojs.pad.Pkcs7,
-  }).toString();
-  // ok
-  config.data = {
-    crypto: true,
-    data: encrypted,
-  };
-}
-
-function bodyDecrypt(Vue, response) {
-  const body = response && response.data;
-  if (!body || typeof body !== 'object' || !body.crypto) return;
-  // key
-  let key = generateKey(Vue);
-  key = cryptojs.enc.Utf8.parse(key);
-  // decrypt
-  const bytes = cryptojs.AES.decrypt(body.data, key, {
-    mode: cryptojs.mode.ECB,
-    padding: cryptojs.pad.Pkcs7,
-  });
-  const originalText = bytes.toString(cryptojs.enc.Utf8);
-  // ok
-  response.data = JSON.parse(originalText);
 }
 
 function wrapApi(Vue, obj, objBase, vueComponent) {
