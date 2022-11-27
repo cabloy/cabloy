@@ -1,5 +1,6 @@
 <%
-const bodyCrypto=ctx.config.module('a-base').securityLevelProtection.body.crypto;
+const configBodyCrypto=ctx.config.module('a-base').securityLevelProtection.body.crypto;
+const configBodyCryptoJS=ctx.config.module('a-base').securityLevelProtection.body.cryptojs;
 %>
 (function () {
   $(document).ready(function () {
@@ -17,15 +18,17 @@ const bodyCrypto=ctx.config.module('a-base').securityLevelProtection.body.crypto
   });
 
   $(document).ready(function () {
-    window.bodyCrypto = <%=bodyCrypto%>;
-    window.bodyCryptoJS = '<%=site.serverUrl + "/api/static/a/base/js/bodyCrypto.js"%>';
-    if(!window.bodyCrypto){
+    window.configBodyCrypto = <%=configBodyCrypto%>;
+    window.configBodyCryptoJS = '<%=`api/static${configBodyCryptoJS}`%>';
+    if(!window.configBodyCrypto){
       _documentReady();
       return;
     }
-    window.requirejs([window.bodyCryptoJS], bodyCryptoInstance => {
-      window.bodyCryptoInstance=bodyCryptoInstance;
-      _documentReady();
+    window.requirejs([window.configBodyCryptoJS], Loader => {
+      Loader.createBodyCrypto().then(bodyCryptoInstance => {
+        window.bodyCryptoInstance = bodyCryptoInstance;
+        _documentReady();
+      });
     });
   });
 

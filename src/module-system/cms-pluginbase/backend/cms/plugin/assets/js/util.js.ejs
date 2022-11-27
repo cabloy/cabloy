@@ -242,8 +242,8 @@
       });
     },
     cors({ method, url, body }) {
-      if (window.bodyCrypto) {
-        body = window.bodyCryptoInstance.bodyEncrypt(body);
+      if (window.configBodyCrypto) {
+        body = window.bodyCryptoInstance.encrypt(body);
       }
       return this.promise((resolve, reject) => {
         const ajaxMethod = method.toUpperCase();
@@ -263,8 +263,8 @@
           },
         })
           .done(function (data) {
-            if (window.bodyCrypto) {
-              data = window.bodyCryptoInstance.bodyDecrypt(data);
+            if (window.configBodyCrypto) {
+              data = window.bodyCryptoInstance.decrypt(data);
             }
             if (data.code === 0) {
               resolve(data.data);
@@ -274,7 +274,9 @@
           })
           .fail(function (xhr, status) {
             let data = xhr.responseJSON && xhr.responseJSON;
-            data = window.bodyCryptoInstance.bodyDecrypt(data);
+            if (window.configBodyCrypto) {
+              data = window.bodyCryptoInstance.decrypt(data);
+            }
             reject((data && data.message) || status);
           });
       });
