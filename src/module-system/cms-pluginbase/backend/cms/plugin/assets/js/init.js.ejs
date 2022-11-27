@@ -1,5 +1,18 @@
+<%
+const bodyCrypto=ctx.config.module('a-base').securityLevelProtection.body.crypto;
+%>
 (function () {
   $(document).ready(function () {
+    <%=`var bodyCrypto = ${bodyCrypto};`%>
+    <%-`var bodyCryptoJS = '${site.serverUrl + "/api/static/a/base/js/crypto-js"}';`%>
+    if(bodyCryptoJS){
+
+    }else{
+      _documentReady();
+    }
+  });
+
+  function _documentReady(){
     // echo
     util.echo();
     // img delay
@@ -11,7 +24,7 @@
       $item.attr('src', util.combineImageUrl(src, width, height));
       $(item).removeClass('img-delay');
     });
-  });
+  }
 
   $(document).on('echo-ready', function () {
     if (util.user.op.anonymous) return;
