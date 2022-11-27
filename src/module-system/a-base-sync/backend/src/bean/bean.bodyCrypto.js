@@ -42,6 +42,7 @@ module.exports = ctx => {
       if (!configCrypto) return;
       if (ctx.ctxCaller) return;
       if (ctx.headers['x-open-auth-client']) return;
+      if (ctx.response.headers['content-type'].indexOf('application/json') === -1) return;
       const body = ctx.response && ctx.response.body;
       if (!body || typeof body !== 'object') return;
       // ensure
