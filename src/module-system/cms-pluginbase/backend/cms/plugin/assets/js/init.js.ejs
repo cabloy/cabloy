@@ -3,13 +3,29 @@ const bodyCrypto=ctx.config.module('a-base').securityLevelProtection.body.crypto
 %>
 (function () {
   $(document).ready(function () {
-    <%=`var bodyCrypto = ${bodyCrypto};`%>
-    <%-`var bodyCryptoJS = '${site.serverUrl + "/api/static/a/base/js/crypto-js"}';`%>
-    if(bodyCryptoJS){
+    const requirecss_path = 'api/static/a/base/vendor/require-css/css.min';
+    // config
+    const config = {
+      baseUrl: window.util.serverUrl(),
+      map: {
+        '*': {
+          css: requirecss_path,
+        },
+      },
+    };
+    window.requirejs.config(config);
+  });
 
-    }else{
+  $(document).ready(function () {
+    var bodyCrypto = <%=bodyCrypto%>;
+    var bodyCryptoJS = '<%=site.serverUrl + "/api/static/a/base/js/cryptojs.js"%>';
+    if(!bodyCrypto){
       _documentReady();
+      return;
     }
+    window.requirejs([bodyCryptoJS], CryptoJS => {
+      _documentReady();
+    });
   });
 
   function _documentReady(){

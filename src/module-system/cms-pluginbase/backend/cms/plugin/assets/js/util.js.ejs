@@ -553,18 +553,4 @@
         });
     },
   };
-
-  $(document).ready(function () {
-    const requirecss_path = 'api/static/a/base/vendor/require-css/css.min';
-    // config
-    const config = {
-      baseUrl: window.util.serverUrl(),
-      map: {
-        '*': {
-          css: requirecss_path,
-        },
-      },
-    };
-    window.requirejs.config(config);
-  });
 })();
