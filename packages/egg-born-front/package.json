@@ -1,6 +1,6 @@
 {
   "name": "egg-born-front",
-  "version": "8.6.9",
+  "version": "8.6.10",
   "description": "egg-born-front",
   "scripts": {
     "lint": "eslint src",
@@ -30,6 +30,7 @@
     "@zhennann/vue": "^2.7.14",
     "async": "^3.2.0",
     "axios": "^0.21.1",
+    "crypto-js": "4.1.1",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mparse": "^2.1.8",
     "js-cookie": "^2.2.1",
@@ -39,7 +40,6 @@
     "regenerator-runtime": "^0.13.7",
     "sandbox-webworker": "^1.0.3",
     "screenfull": "^5.0.2",
-    "crypto-js": "4.1.1",
     "vue": "^2.7.13",
     "vuex": "^3.6.2"
   }
