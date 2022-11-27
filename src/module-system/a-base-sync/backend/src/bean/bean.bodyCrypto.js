@@ -3,12 +3,12 @@ const cryptojs = require3('crypto-js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class ClassCrypto {
+  class BodyCrypto {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);
     }
 
-    async bodyDecrypt() {
+    async decrypt() {
       const body = ctx.request && ctx.request.body;
       if (!body || typeof body !== 'object' || !body.crypto) return;
       // key
@@ -24,7 +24,7 @@ module.exports = ctx => {
       ctx.request.body = JSON.parse(originalText);
     }
 
-    async bodyEncrypt() {
+    async encrypt() {
       const configCrypto = this.configModule.securityLevelProtection.body.crypto;
       if (!configCrypto) return;
       if (ctx.ctxCaller) return;
@@ -51,5 +51,5 @@ module.exports = ctx => {
       return cryptojs.SHA1(key).toString().substring(0, 16);
     }
   }
-  return ClassCrypto;
+  return BodyCrypto;
 };
