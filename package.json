@@ -61,7 +61,7 @@
     "chalk": "^3.0.0",
     "connect-history-api-fallback": "^1.6.0",
     "copy-webpack-plugin": "^7.0.0",
-    "egg-born-utils": "^1.0.12",
+    "egg-born-utils": "^1.0.13",
     "eslint": "^8.27.0",
     "eslint-config-egg": "^12.1.0",
     "eslint-config-prettier": "^8.5.0",
