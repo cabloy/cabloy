@@ -138,6 +138,7 @@ export default {
   securityLevelProtection: {
     body: {
       crypto: false,
+      cryptojs: '/a/base/js/bodyCrypto',
     },
   },
 };

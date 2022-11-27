@@ -33,7 +33,10 @@ meta.module.install(instanceMain, { relativeName: 'main' }, module => {
   // vue parameters
   require('./inject/framework7.js').default(Vue, module.options, parameters => {
     meta.parameters = parameters;
-    // new vue
-    new Vue(parameters);
+    const bodyCryptoLoader = require('./base/bodyCrypto.js').default(Vue);
+    bodyCryptoLoader.createBodyCrypto().then(() => {
+      // new vue
+      new Vue(parameters);
+    });
   });
 });

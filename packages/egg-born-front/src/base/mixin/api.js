@@ -1,5 +1,4 @@
 import axios from 'axios';
-import cryptojs from 'crypto-js';
 
 export default function (Vue) {
   // axios
@@ -123,6 +122,7 @@ function generateKey(Vue) {
 function bodyEncrypt(Vue, config) {
   const body = config.data;
   if (!body || typeof body !== 'object') return;
+  // todo: should check front config
   // key
   let key = generateKey(Vue);
   key = cryptojs.enc.Utf8.parse(key);
