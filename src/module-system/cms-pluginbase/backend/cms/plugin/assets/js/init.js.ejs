@@ -19,7 +19,7 @@ const configBodyCryptoJS=ctx.config.module('a-base').securityLevelProtection.bod
 
   $(document).ready(function () {
     window.configBodyCrypto = <%=configBodyCrypto%>;
-    window.configBodyCryptoJS = '<%=`api/static${configBodyCryptoJS}`%>';
+    window.configBodyCryptoJS = '<%=`api/static${configBodyCryptoJS}.min`%>';
     if(!window.configBodyCrypto){
       _documentReady();
       return;

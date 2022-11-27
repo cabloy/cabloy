@@ -41,6 +41,7 @@ module.exports = ctx => {
       const configCrypto = this.configModule.securityLevelProtection.body.crypto;
       if (!configCrypto) return;
       if (ctx.ctxCaller) return;
+      if (ctx.headers['x-open-auth-client']) return;
       const body = ctx.response && ctx.response.body;
       if (!body || typeof body !== 'object') return;
       // ensure

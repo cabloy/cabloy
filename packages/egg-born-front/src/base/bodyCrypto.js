@@ -7,7 +7,7 @@ export default function (Vue) {
       const configBase = Vue.prototype.$meta.config.modules['a-base'];
       if (!configBase.securityLevelProtection.body.crypto) return null;
       return new Promise(resolve => {
-        const jsFile = `api/static${configBase.securityLevelProtection.body.cryptojs}`;
+        const jsFile = `api/static${configBase.securityLevelProtection.body.cryptojs}.min`;
         Vue.prototype.$meta.util.requirejs.require([jsFile], function (Loader) {
           Loader.createBodyCrypto().then(bodyCryptoInstance => {
             __bodyCryptoInstance = bodyCryptoInstance;
