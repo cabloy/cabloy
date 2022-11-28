@@ -60,6 +60,12 @@ CabloyJS 提供了大量在线演示:
 
 因此，强烈建议您移步查看：[在线演示](https://cabloy.com/zh-cn/articles/demo-online2.html)
 
+## CabloyJS 官方交流群
+
+请添加个人微信，联系加群，备注：`加群`
+
+![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
+
 ## 引言
 
 > 凡是可以用 JavaScript 来写的应用，最终都会用 JavaScript 来写 | Atwood 定律
@@ -207,67 +213,6 @@ CabloyJS 正是对这一名言的探索之作。欢迎您也加入 CabloyJS 的�
 
 Cabloy 来自蓝精灵的魔法咒语，拼对了 Cabloy 这个单词就会有神奇的效果。同样，CabloyJS 是有关化学的魔法，基于模块的组合与生化反应，您将实现您想要的任何东西
 
-## 部分特性摘要
-
-### >>>>> 第一部分: 基础功能
-
-- [Bean & AOP](https://cabloy.com/zh-cn/articles/bean.html)
-  1. 几乎所有事物都是 Bean
-  2. Bean 支持 AOP
-  3. AOP 也是一种 Bean
-- 基于`Redis`的分布式集群框架
-
-  CabloyJS 通过`Redis`从框架底层就开始原生支持分布式，因此当系统起量后，可以轻松做集群扩展
-
-  - [Broadcast](https://cabloy.com/zh-cn/articles/broadcast.html)
-  - [Queue](https://cabloy.com/zh-cn/articles/queue.html)
-  - [Schedule](https://cabloy.com/zh-cn/articles/schedule.html)
-  - [Startup](https://cabloy.com/zh-cn/articles/startup.html)
-
-- [前后端分离](https://cabloy.com/zh-cn/articles/f66dc04c64ca43fa9e8ea30312ca714f.html)
-- I18N
-  - [后端](https://cabloy.com/zh-cn/articles/f6d5a48f10dc40d3b8aed7862c23570b.html)
-  - [前端](https://cabloy.com/zh-cn/articles/1c7c9cf3861744c2a63ae134076c652f.html)
-- [主题](https://cabloy.com/zh-cn/articles/theme.html)
-- [多租户/多域名/多实例](https://cabloy.com/zh-cn/articles/44e45b3928ca4c6cb63809558145e000.html)
-- [测试驱动开发](https://cabloy.com/zh-cn/articles/990962d4e3604fc099c27806de6d6be8.html)
-
-### >>>>> 第二部分: 业务功能
-
-- [NodeJS 工作流引擎](https://cabloy.com/zh-cn/articles/flow-introduce.html)
-
-  众所周知，NodeJS 作为后端开发语言和运行环境，样样都好，就差一个`NodeJS工作流引擎`。CabloyJS 4.0 重点开发了`NodeJS工作流引擎`，并作为内置的基础核心模块，近一步拓展了 NodeJS 在后端的应用场景，为深入研发各类商业业务逻辑，提供了基础支撑
-
-- [自适应布局: pc = mobile + pad](https://cabloy.com/zh-cn/articles/adaptive-layout.html)
-
-  CabloyJS 首创`pc = mobile + pad`的自适应布局机制：只需要一套代码，`mobile端`达到原生效果，同时将`mobile端`的操控体验和开发模式无缝带入`pc端`
-
-- 拖拽
-  - [移动](https://cabloy.com/zh-cn/articles/dragdrop-move.html)
-  - [调整尺寸](https://cabloy.com/zh-cn/articles/dragdrop-resize.html)
-- [仪表板](https://cabloy.com/zh-cn/articles/5c90f4fd15174772adb34dfbf6d1adfb.html)
-- [PC 布局](https://cabloy.com/zh-cn/articles/28f14f839af5457b9243c9e9210d5324.html)
-- [统一数据管理](https://cabloy.com/zh-cn/articles/atom-basic.html)
-- [统一用户角色权限管理](https://cabloy.com/zh-cn/articles/535f42e8fb8c487fb33b88c9a9e56a7e.html)
-- [明细数据管理](https://cabloy.com/zh-cn/articles/detail-basic.html)
-- Socket IO
-  - 统计值自动更新、自动推送机制
-  - [进度条](https://cabloy.com/zh-cn/articles/10327f8fdae44d87b7604ba3fa9c1a89.html)
-- [内置大量核心模块](https://cabloy.com/zh-cn/articles/e678d328cb5b4efdaf5d60c8df1ca691.html)
-
-### >>>>> 第三部分: 解决方案
-
-出于`开箱即用`的诉求，CabloyJS 提供了以下业务场景的解决方案，并将持续增加：
-
-| 名称                                                                           | 说明                                                                                                                                                           |
-| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Cabloy-CMS](https://cabloy.com/zh-cn/articles/cms-introduce.html)             | `动静结合(即JAMStack模式)`的 CMS，可以快速构建`企业网站`、`博客`、`技术文档`、`社区`、`商城`等 Web 应用                                                        |
-| [Cabloy-Community](https://cabloy.com/zh-cn/articles/community-introduce.html) | 基于 Cabloy-CMS 开发的社区（论坛）Web 应用                                                                                                                     |
-| [Cabloy-微信](https://cabloy.com/zh-cn/articles/wechat-introduce.html)         | `微信接口模块`，当前整合了`微信公众号`、`微信Web登录`和`微信小程序`的接口，达到`开箱即用`的使用效果。在`Cabloy-微信`的基础上，可以很方便的开发各类微信业务系统 |
-| [Cabloy-企业微信](https://cabloy.com/zh-cn/articles/wxwork-introduce.html)     | `企业微信接口模块`，当前整合了`自建应用`和`企业微信小程序`的接口，达到`开箱即用`的使用效果。在`Cabloy-企业微信`的基础上，可以很方便的开发各类企业微信业务系统  |
-| [Cabloy-钉钉](https://cabloy.com/zh-cn/articles/dingtalk-introduce.html)       | `钉钉接口模块`，当前整合了`H5微应用`和`钉钉小程序`的接口，达到`开箱即用`的使用效果。在`Cabloy-钉钉`的基础上，可以很方便的开发各类钉钉业务系统                  |
-| [Cabloy-Uniapp](https://cabloy.com/zh-cn/articles/uniapp-introduce.html)       | `Cabloy-Uniapp`专门为`Uniapp`应用提供了一套量身定制的`前端SDK`，用于便捷的访问 CabloyJS 提供的所有 API 接口，让`Uniapp`前端开发再无`后顾之忧`                  |
-
 ## 资源
 
 ### - 英文版
@@ -289,38 +234,6 @@ Cabloy 来自蓝精灵的魔法咒语，拼对了 Cabloy 这个单词就会有�
 请添加个人微信，联系加群，备注：`加群`
 
 ![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
-
-### - 图片
-
-一图胜千言: [如何学习使用 CabloyJS](https://cabloy.com/zh-cn/articles/how-to-read.html)
-
-![how-to-read](./docs/assets/images/zh-cn/how-to-read.png)
-
-## 预览
-
-- 白色主题
-
-![白色主题](./docs/assets/images/zh-cn/theme/theme-light.png)
-
-- 暗色主题
-
-![暗色主题](./docs/assets/images/zh-cn/theme/theme-dark.png)
-
-- 风信子主题
-
-![风信子主题](./docs/assets/images/zh-cn/theme/theme-hyacinth.png)
-
-- 灿烂主题
-
-![灿烂主题](./docs/assets/images/zh-cn/theme/theme-brilliant.png)
-
-- 显示侧边栏
-
-![显示侧边栏](./docs/assets/images/zh-cn/theme/theme-light-panel.png)
-
-- 移动端风格
-
-![移动端风格](./docs/assets/images/zh-cn/theme/theme-light-mobile-bg.png)
 
 ## License
 
