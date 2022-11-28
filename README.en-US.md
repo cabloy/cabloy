@@ -174,22 +174,13 @@ EggBornJS is only a basic full-stack development framework. Considering business
 
 On the basis of EggBornJS, CabloyJS provided a set of core business modules, so as to realize a series of supporting features, which are organically combined to form a complete and flexible upper ecological architecture, thus supporting the specific business development process
 
-::: alert-warning
-With EggBornJS, not only the components can be reused, but also the business modules do from now
+> With EggBornJS, not only the components can be reused, but also the business modules do from now
 
-:::
-
-::: alert-warning
-With CabloyJS, you can quickly develop all kinds of business applications
-
-:::
+> With CabloyJS, you can quickly develop all kinds of business applications
 
 ## The Faith
 
-::: alert-warning
-Any application that can be written in Javascript, will eventually be written in Javascript | Jeff Atwood (2007)
-
-:::
+> Any application that can be written in Javascript, will eventually be written in Javascript | Jeff Atwood (2007)
 
 It is believed that the deep explorers of Javascript will be inspired by Atwood’s law and work together to build a more prosperous application ecosystem for Javascript
 
