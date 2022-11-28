@@ -49,11 +49,11 @@ Each built-in feature of CabloyJS has been carefully adjusted, which reflects th
 
 CabloyJS provides a large number of online demonstrations:
 
-1. Demonstrate how to develop the backend admin management system and frontend applications just in a set of codes
+1. Demonstrate how to develop the backend admin management system and the frontend applications just in one set of codes
 
-2. Demonstrate how to adapt `PC` and `Mobile` just in a set of codes, and the `mobile` is close to the native experiences
+2. Demonstrate how to adapt `PC` and `Mobile` just in one set of codes, and the `mobile` is close to the native experiences
 
-Therefore, it is strongly recommended that you go to: [Online Demo](https://cabloy.com/articles/demo-online.html)
+Therefore, it is strongly recommended that you go to: [Demo Online](https://cabloy.com/articles/demo-online.html)
 
 ## Communication
 
