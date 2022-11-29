@@ -27,6 +27,7 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
+    "adm-zip": "^0.5.9",
     "jszip": "^3.10.1",
     "bluebird": "^3.7.2",
     "fs-extra": "^10.1.0",
