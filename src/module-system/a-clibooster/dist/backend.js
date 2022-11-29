@@ -378,7 +378,7 @@ module.exports = ctx => {
 const path = __webpack_require__(17);
 const require3 = __webpack_require__(638);
 const fse = require3('fs-extra');
-const AdmZip = require3('adm-zip');
+const JSZip = require3('jszip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
 const utility = require3('utility');
@@ -569,13 +569,13 @@ module.exports = ctx => {
     }
 
     async _zipSuiteAll_zip({ suiteMeta, modulesMeta, type }) {
-      const zip = new AdmZip();
-      zip.addFile('default', suiteMeta.zipSuite.buffer);
+      const zip = new JSZip();
+      zip.file('default', suiteMeta.zipSuite.buffer);
       for (const moduleMeta of modulesMeta) {
         const buffer = type === 'official' ? moduleMeta.zipOfficial.buffer : moduleMeta.zipTrial.buffer;
-        zip.addFile(moduleMeta.name, buffer);
+        zip.file(moduleMeta.name, buffer);
       }
-      const buffer = await zip.toBufferPromise();
+      const buffer = await zip.generateAsync({ type: 'uint8array' });
       return { buffer };
     }
 
@@ -695,11 +695,8 @@ module.exports = ctx => {
       }
       files.sort();
       // zip
-      const zip = new AdmZip();
+      const zip = new JSZip();
       for (const file of files) {
-        //
-        const dirName = path.dirname(file);
-        const fileName = path.basename(file);
         //
         let fileLocal;
         if (file === 'LICENSE' && licenseParent) {
@@ -707,10 +704,22 @@ module.exports = ctx => {
         } else {
           fileLocal = path.join(pathRoot, file);
         }
+        // path
+        const dirName = path.dirname(file);
+        if (dirName) {
+          const parts = dirName.split('/');
+          let dirPath = '';
+          for (let i = 0; i < parts.length; i++) {
+            dirPath = path.join(dirPath, parts[i]);
+            const stats = fse.statSync(path.join(pathRoot, dirPath));
+            zip.file(dirPath, null, { dir: true, date: stats.mtime });
+          }
+        }
         //
-        zip.addLocalFile(fileLocal, dirName, fileName);
+        const stats = fse.statSync(fileLocal);
+        zip.file(file, fse.readFileSync(fileLocal), { date: stats.mtime });
       }
-      const buffer = await zip.toBufferPromise();
+      const buffer = await zip.generateAsync({ type: 'uint8array' });
       // hash
       const hash = needHash ? shajs('sha256').update(buffer).digest('hex') : undefined;
       // ok

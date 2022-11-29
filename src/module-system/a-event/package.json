@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-event",
-  "version": "4.8.3",
+  "version": "4.8.4",
   "eggBornModule": {
     "dependencies": {
       "a-instance": "4.0.0"

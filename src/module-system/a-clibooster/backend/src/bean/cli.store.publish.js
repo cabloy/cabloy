@@ -327,8 +327,20 @@ module.exports = ctx => {
         } else {
           fileLocal = path.join(pathRoot, file);
         }
+        // path
+        const dirName = path.dirname(file);
+        if (dirName) {
+          const parts = dirName.split('/');
+          let dirPath = '';
+          for (let i = 0; i < parts.length; i++) {
+            dirPath = path.join(dirPath, parts[i]);
+            const stats = fse.statSync(path.join(pathRoot, dirPath));
+            zip.file(dirPath, null, { dir: true, date: stats.mtime });
+          }
+        }
         //
-        zip.file(file, fse.readFileSync(fileLocal));
+        const stats = fse.statSync(fileLocal);
+        zip.file(file, fse.readFileSync(fileLocal), { date: stats.mtime });
       }
       const buffer = await zip.generateAsync({ type: 'uint8array' });
       // hash

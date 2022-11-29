@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-lazyload",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "title": "a-lazyload",
   "eggBornModule": {
     "fileVersion": 0,
