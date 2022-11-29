@@ -1,7 +1,7 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const AdmZip = require3('adm-zip');
+const JSZip = require3('jszip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
 const utility = require3('utility');
@@ -192,13 +192,13 @@ module.exports = ctx => {
     }
 
     async _zipSuiteAll_zip({ suiteMeta, modulesMeta, type }) {
-      const zip = new AdmZip();
-      zip.addFile('default', suiteMeta.zipSuite.buffer);
+      const zip = new JSZip();
+      zip.file('default', suiteMeta.zipSuite.buffer);
       for (const moduleMeta of modulesMeta) {
         const buffer = type === 'official' ? moduleMeta.zipOfficial.buffer : moduleMeta.zipTrial.buffer;
-        zip.addFile(moduleMeta.name, buffer);
+        zip.file(moduleMeta.name, buffer);
       }
-      const buffer = await zip.toBufferPromise();
+      const buffer = await zip.generateAsync({ type: 'uint8array' });
       return { buffer };
     }
 
@@ -318,11 +318,8 @@ module.exports = ctx => {
       }
       files.sort();
       // zip
-      const zip = new AdmZip();
+      const zip = new JSZip();
       for (const file of files) {
-        //
-        const dirName = path.dirname(file);
-        const fileName = path.basename(file);
         //
         let fileLocal;
         if (file === 'LICENSE' && licenseParent) {
@@ -331,9 +328,9 @@ module.exports = ctx => {
           fileLocal = path.join(pathRoot, file);
         }
         //
-        zip.addLocalFile(fileLocal, dirName, fileName);
+        zip.file(file, fse.readFileSync(fileLocal));
       }
-      const buffer = await zip.toBufferPromise();
+      const buffer = await zip.generateAsync({ type: 'uint8array' });
       // hash
       const hash = needHash ? shajs('sha256').update(buffer).digest('hex') : undefined;
       // ok
