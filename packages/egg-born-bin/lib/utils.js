@@ -43,7 +43,7 @@ const utils = {
       }
       return true;
     } catch (err) {
-      if (err.status === -1 && err.address === '127.0.0.1') {
+      if (err.status === -1 && (err.address === '::1' || err.address === '127.0.0.1')) {
         if (needDevServer) {
           const message = `Run ${chalk.keyword('orange')('> npm run dev:backend <')} first!`;
           console.log('\n' + boxen(message, boxenOptions) + '\n');
