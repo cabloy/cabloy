@@ -27,7 +27,8 @@ export default function (Vue) {
     );
     axios.interceptors.response.use(
       function (response) {
-        if (response.headers['content-type'].indexOf('application/json') === -1) return response;
+        const contentType = response.headers['content-type'];
+        if (!contentType || contentType.indexOf('application/json') === -1) return response;
         if (response.data.code !== 0) {
           const error = new Error();
           error.code = response.data.code;
