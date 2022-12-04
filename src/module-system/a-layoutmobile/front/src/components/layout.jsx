@@ -270,17 +270,17 @@ export default {
       // layoutConfig
       const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile');
       // init layoutConfig
-      this.__initLayoutConfig(res[`layout:${layoutKey}`]);
+      this.__initLayoutConfig(res[`layout:${layoutKey}`], _layoutItem.atomRevision);
       // init toolbar
       this.__initToolbar();
       // inited
       this.toolbarInited = true;
     },
-    __initLayoutConfig(layoutConfig) {
-      if (layoutConfig) {
+    __initLayoutConfig(layoutConfig, atomRevision) {
+      if (layoutConfig && layoutConfig.atomRevision === atomRevision) {
         this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene, layoutConfig);
       } else {
-        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene);
+        this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene, { atomRevision });
       }
     },
     reset() {
