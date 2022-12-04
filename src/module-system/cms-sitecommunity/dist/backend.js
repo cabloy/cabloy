@@ -304,8 +304,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Community',
     atomStaticKey: 'appCommunity',
-    atomRevision: 3,
-    atomCategoryId: 'General',
+    atomRevision: 4,
+    atomCategoryId: 'AppCategoryFront',
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,

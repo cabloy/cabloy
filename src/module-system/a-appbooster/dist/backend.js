@@ -124,8 +124,8 @@ module.exports = app => {
   const _app = {
     atomName: 'General',
     atomStaticKey: 'appGeneral',
-    atomRevision: 5,
-    atomCategoryId: 'General',
+    atomRevision: 6,
+    atomCategoryId: 'AppCategoryFront',
     description: '',
     appIcon: '::radio-button-unchecked',
     appIsolate: false,
@@ -164,8 +164,8 @@ module.exports = app => {
   const _app = {
     atomName: 'System',
     atomStaticKey: 'appSystem',
-    atomRevision: 0,
-    atomCategoryId: 'System',
+    atomRevision: 1,
+    atomCategoryId: 'AppCategoryManagement',
     description: '',
     appIcon: '::menu',
     appIsolate: false,
@@ -193,8 +193,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Unclassified',
     atomStaticKey: 'appUnclassified',
-    atomRevision: 0,
-    atomCategoryId: 'System',
+    atomRevision: 1,
+    atomCategoryId: 'AppCategoryManagement',
     description: '',
     appIcon: '::info-circle',
     appIsolate: false,
