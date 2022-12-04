@@ -9,8 +9,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Unclassified',
     atomStaticKey: 'appUnclassified',
-    atomRevision: 0,
-    atomCategoryId: 'System',
+    atomRevision: 1,
+    atomCategoryId: 'AppCategoryManagement',
     description: '',
     appIcon: '::info-circle',
     appIsolate: false,
