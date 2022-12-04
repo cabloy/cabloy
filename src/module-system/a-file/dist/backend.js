@@ -455,7 +455,9 @@ module.exports = ctx => {
       // image
       let img = await Jimp.read(srcFile);
       img = img.resize(width, height);
-      await img.write(destFile);
+      await bb.fromCallback(cb => {
+        img.write(destFile, cb);
+      });
 
       return fileName;
     }
@@ -520,7 +522,9 @@ module.exports = ctx => {
         img = img.quality(93);
       }
       // save
-      await img.write(destFile);
+      await bb.fromCallback(cb => {
+        img.write(destFile, cb);
+      });
       // size
       const width = img.bitmap.width;
       const height = img.bitmap.height;
