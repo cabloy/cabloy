@@ -1,5 +1,14 @@
 # History
 
+## 2022-12-04, Version 4.26.25
+
+- **Refactor**
+  - PC 布局：界面优化
+  - App 目录调整：
+    - General -> AppCategoryFront
+    - Management -> AppCategoryBackend
+    - System -> AppCategoryManagement
+
 ## 2022-11-16, Version 4.26.11
 
 - **Feat**
