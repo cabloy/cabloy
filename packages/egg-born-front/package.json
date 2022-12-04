@@ -26,7 +26,7 @@
   "dependencies": {
     "@zhennann/debounce": "^1.0.0",
     "@zhennann/extend": "^3.0.2",
-    "@zhennann/framework7": "^6.1.4",
+    "@zhennann/framework7": "^6.1.5",
     "@zhennann/vue": "^2.7.14",
     "async": "^3.2.0",
     "axios": "^0.21.1",
