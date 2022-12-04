@@ -1,6 +1,6 @@
 ## English
 
-Please use the `_config` directory as blueprint, and copy a new directory `config`, so that you can configure your own parameters
+Please use the `_config` directory as blueprint to copy a new directory `config`, so that you can configure your own parameters
 
 ```bash
 $ cp -r src/front/_config src/front/config
