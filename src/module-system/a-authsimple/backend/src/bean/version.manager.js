@@ -23,14 +23,14 @@ module.exports = app => {
       if (options.version === 1) {
         // root
         const userRoot = await this.ctx.bean.user.get({ userName: 'root' });
-        await this.ctx.service.auth.add({
+        await this.ctx.bean.authSimple.add({
           userId: userRoot.id,
           password: options.password,
         });
         // admin
         const userAdmin = await this.ctx.bean.user.get({ userName: 'admin' });
         if (userAdmin) {
-          await this.ctx.service.auth.add({
+          await this.ctx.bean.authSimple.add({
             userId: userAdmin.id,
             password: '123456',
           });
