@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const uuid = require3('uuid');
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
