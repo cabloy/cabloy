@@ -230,11 +230,12 @@ input[type='search']::-webkit-search-decoration {
     text-align: center;
     margin: 6px;
     padding: 4px;
-    border: 1px solid var(--f7-list-group-title-bg-color);
+    border: 1px solid transparent;
     border-radius: 6px;
     cursor: pointer;
     color: var(--f7-list-item-title-text-color);
     &:hover {
+      border: 1px solid var(--f7-list-group-title-bg-color);
       background: var(--f7-list-group-title-bg-color);
       color: var(--f7-theme-color);
     }
