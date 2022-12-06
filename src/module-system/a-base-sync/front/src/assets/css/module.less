@@ -86,6 +86,28 @@
         }
       }
 
+      .item-inner {
+        .item-title {
+          transition: flex-shrink 500ms;
+          flex-shrink: 0;
+        }
+
+        .item-after {
+          transition: flex-shrink 500ms;
+          flex-shrink: 1;
+        }
+      }
+
+      .item-inner:hover {
+        .item-title {
+          flex-shrink: 1;
+        }
+
+        .item-after {
+          flex-shrink: 0;
+        }
+      }
+
       .after {
         .date {
           font-size: 10px;
