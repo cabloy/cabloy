@@ -55,67 +55,69 @@
     }
   }
 
-  .item {
-    .header {
-      position: relative;
-      box-sizing: border-box;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 2px 8px -8px 18px;
-      font-size: 12px;
-      color: var(--f7-block-header-text-color);
-
-      .mediaLabel {
+  .list {
+    .item {
+      .header {
+        position: relative;
+        box-sizing: border-box;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-      }
+        margin: 2px 8px -8px 18px;
+        font-size: 12px;
+        color: var(--f7-block-header-text-color);
 
-      .date {
-        span {
-          margin-left: 4px;
+        .mediaLabel {
+          display: flex;
+          align-items: center;
+        }
+
+        .date {
+          span {
+            margin-left: 4px;
+          }
         }
       }
-    }
 
-    .title {
-      .date {
-        font-size: 10px;
-        color: var(--f7-text-editor-placeholder-color);
+      .title {
+        .date {
+          font-size: 10px;
+          color: var(--f7-text-editor-placeholder-color);
+        }
       }
-    }
 
-    .after {
-      .date {
-        font-size: 10px;
+      .after {
+        .date {
+          font-size: 10px;
+          color: var(--f7-block-header-text-color);
+        }
+      }
+
+      .summary {
+        position: absolute;
+        left: 72px;
+        right: 3px;
+        bottom: -4px;
+        height: 20px;
         color: var(--f7-block-header-text-color);
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
-    }
 
-    .summary {
-      position: absolute;
-      left: 72px;
-      right: 3px;
-      bottom: -4px;
-      height: 20px;
-      color: var(--f7-block-header-text-color);
-      font-size: 12px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .summary-no-media {
-      position: absolute;
-      left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left));
-      right: 3px;
-      bottom: -4px;
-      height: 20px;
-      color: var(--f7-block-header-text-color);
-      font-size: 12px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      .summary-no-media {
+        position: absolute;
+        left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left));
+        right: 3px;
+        bottom: -4px;
+        height: 20px;
+        color: var(--f7-block-header-text-color);
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 }
