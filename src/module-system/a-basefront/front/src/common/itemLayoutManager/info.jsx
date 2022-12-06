@@ -102,7 +102,7 @@ export default {
             children.push(
               <eb-link
                 key={label}
-                text={_label.text}
+                text={(_label.text || '')[0]}
                 style={{ color: _label.color }}
                 tooltip={this.$text('UserLabel')}
                 propsOnPerform={this.info_onLabel}

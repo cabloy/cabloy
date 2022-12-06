@@ -218,7 +218,7 @@ export default {
           const _label = this.item_getLabel(label);
           domLabels.push(
             <f7-badge key={label} style={{ backgroundColor: _label.color }}>
-              {_label.text}
+              {(_label.text || '')[0]}
             </f7-badge>
           );
         }
