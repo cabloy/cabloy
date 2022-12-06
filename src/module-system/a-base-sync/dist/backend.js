@@ -14016,7 +14016,14 @@ module.exports = app => {
   // resource search
   schemas.resourceSearch = {
     type: 'object',
-    properties: {},
+    properties: {
+      resourceType: {
+        type: 'string',
+        ebType: 'resourceType',
+        ebTitle: 'Resource Type',
+        ebOptionsBlankAuto: true,
+      },
+    },
   };
   return schemas;
 };
