@@ -258,12 +258,18 @@ export default {
       this.layoutAtomStaticKey = appPresetConfig.layout;
       return this.layoutAtomStaticKey;
     },
+    __getLayoutDefault() {
+      // userStatus
+      const userOp = this.user && this.user.op;
+      const userStatus = !userOp || userOp.anonymous ? 'anonymous' : 'authenticated';
+      return this.$config.layout.default[userStatus];
+    },
     async __init() {
       const layoutKey = await this.__initLayoutKey();
       // buttonsAll
       await this.__getResourcesAll();
       // layoutDefault
-      this.layoutDefault = this.$config.layout.default;
+      this.layoutDefault = this.__getLayoutDefault();
       // layoutScene
       const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey });
       this.layoutScene = _layoutItem.content;
