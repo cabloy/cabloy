@@ -28,7 +28,7 @@ const front = {
   dev: {
     // hostname: 'localhost',
     // hostname: 'b.test.com',
-    // hostname: '192.168.0.100',
+    hostname: '192.168.0.100',
     // hostname: '192.168.0.102',
     port: 9192,
     // proxyBaseURL: 'http://localhost:7102',

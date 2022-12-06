@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import perform from '../common/perform.js';
 import link from '../common/link.js';
@@ -28,11 +27,12 @@ export default {
   },
   methods: {
     onContextMenu(event) {
-      const popover = this.$$(this.$el).find('.popover');
-      if (popover.length === 0) return;
-
+      // always stop default behavior
       event.stopPropagation();
       event.preventDefault();
+
+      const popover = this.$$(this.$el).find('.popover');
+      if (popover.length === 0) return;
 
       // finished the event immediately
       this.$nextTick(() => {
@@ -56,5 +56,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
