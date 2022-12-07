@@ -88,6 +88,7 @@ export default {
           <eb-link
             key="actionsLeft:star"
             iconF7={item.star ? '::star' : ':outline:star-outline'}
+            iconColor={item.star ? 'orange' : 'gray'}
             tooltip={this.$text('UserStar')}
             propsOnPerform={this.info_onStarSwitch}
           ></eb-link>
