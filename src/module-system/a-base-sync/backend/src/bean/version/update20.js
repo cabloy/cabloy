@@ -2,6 +2,7 @@ module.exports = function (ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate20 {
     async run() {
+      throw new Error('正在加入新功能，暂时不可用');
       await this._alterTables();
       await this._alterViews_aRoleRight();
     }
