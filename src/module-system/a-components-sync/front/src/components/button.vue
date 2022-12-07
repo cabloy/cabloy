@@ -1,6 +1,7 @@
 <script>
 import Vue from 'vue';
 import perform from '../common/perform.js';
+import contextMenu from '../common/contextMenu.js';
 const f7Button = Vue.options.components['f7-button'].extendOptions;
 export default {
   meta: {
@@ -8,7 +9,7 @@ export default {
   },
   name: 'eb-button',
   extends: f7Button,
-  mixins: [perform],
+  mixins: [perform, contextMenu],
 };
 </script>
 <style scoped></style>

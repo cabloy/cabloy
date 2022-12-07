@@ -2,6 +2,7 @@
 import Vue from 'vue';
 import perform from '../common/perform.js';
 import link from '../common/link.js';
+import contextMenu from '../common/contextMenu.js';
 import stats from '../common/stats.js';
 const f7Link = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-link'].extendOptions);
 delete f7Link.props.href;
@@ -11,7 +12,7 @@ export default {
   },
   name: 'eb-link',
   extends: f7Link,
-  mixins: [perform, link, stats],
+  mixins: [perform, link, contextMenu, stats],
   props: {
     link: {
       type: [String, Boolean],
