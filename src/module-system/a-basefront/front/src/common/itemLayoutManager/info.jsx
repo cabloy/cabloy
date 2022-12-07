@@ -122,7 +122,11 @@ export default {
         }
       }
       // ok
-      return children;
+      return (
+        <div key="actionsLeft:group" class="atom-actions-left-group">
+          {children}
+        </div>
+      );
     },
     info_renderAvatar() {
       const item = this.base.item;

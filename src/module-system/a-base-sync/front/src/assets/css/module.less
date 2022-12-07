@@ -88,12 +88,12 @@
 
       .item-inner {
         .item-title {
-          transition: flex-shrink 500ms;
+          transition: flex-shrink 300ms;
           flex-shrink: 0;
         }
 
         .item-after {
-          transition: flex-shrink 500ms;
+          transition: flex-shrink 300ms;
           flex-shrink: 1;
         }
       }
@@ -145,46 +145,19 @@
 }
 
 :root {
-  .atom-item-title-info-container {
-    .info-avatar,
-    .info-date {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-
-      color: var(--f7-block-footer-text-color);
-      font-size: 10px;
+  .navbar {
+    .title {
+      transition-duration: 300ms;
     }
-  }
+    .title:hover {
+      flex-shrink: 0;
+    }
 
-  .atom-list-subnavbar-container,
-  .atom-item-subnavbar-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    font-size: var(--f7-toolbar-font-size);
-
-    .actions-block {
-      height: var(--f7-toolbar-height);
-      display: flex;
-      align-items: center;
-
-      a.link {
-        padding: 0 6px;
-        width: auto;
-        min-width: auto;
+    .atom-item-title-info-container {
+      .atom-actions-left-group {
+        border-left: 1px dashed var(--f7-list-item-border-color);
+        border-right: 1px dashed var(--f7-list-item-border-color);
       }
-    }
-
-    .actions-block-left {
-      justify-content: flex-start;
-    }
-
-    .actions-block-right {
-      justify-content: flex-end;
 
       .info-avatar,
       .info-date {
@@ -195,6 +168,56 @@
 
         color: var(--f7-block-footer-text-color);
         font-size: 10px;
+      }
+    }
+
+    .atom-list-subnavbar-container,
+    .atom-item-subnavbar-container {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--f7-toolbar-font-size);
+
+      .actions-block {
+        height: var(--f7-toolbar-height);
+        display: flex;
+        align-items: center;
+
+        a.link {
+          padding: 0 6px;
+          width: auto;
+          min-width: auto;
+        }
+      }
+
+      .actions-block-left {
+        justify-content: flex-start;
+      }
+
+      .actions-block-right {
+        justify-content: flex-end;
+
+        .info-avatar,
+        .info-date {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+
+          color: var(--f7-block-footer-text-color);
+          font-size: 10px;
+        }
+      }
+    }
+
+    .atom-actions-left-group {
+      display: flex;
+      a.link {
+        padding: 0 6px;
+        width: auto;
+        min-width: auto;
       }
     }
   }
