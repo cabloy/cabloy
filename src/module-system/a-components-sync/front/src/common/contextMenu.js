@@ -1,4 +1,9 @@
 export default {
+  data() {
+    return {
+      contextmenu_checkPopover: true,
+    };
+  },
   mounted() {
     this.$$(this.$el).on('contextmenu', this.onContextMenu);
   },
@@ -11,12 +16,18 @@ export default {
       event.stopPropagation();
       event.preventDefault();
 
-      const popover = this.$$(this.$el).find('.popover');
-      if (popover.length === 0) return;
+      let $el;
+      let $popover;
+      if (this.contextmenu_checkPopover) {
+        $el = this.$el;
+        $popover = this.$$($el).find('.popover');
+      }
 
       // finished the event immediately
       this.$nextTick(() => {
-        this.$f7.popover.open(popover, this.$el);
+        if ($popover && $popover.length > 0) {
+          this.$f7.popover.open($popover, $el);
+        }
         this.$emit('contextmenuOpened', event);
       });
     },
