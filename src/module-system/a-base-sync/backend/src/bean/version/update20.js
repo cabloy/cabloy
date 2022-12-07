@@ -5,6 +5,7 @@ module.exports = function (ctx) {
       throw new Error('正在加入新功能，暂时不可用');
       await this._alterTables();
       await this._alterViews_aRoleRight();
+      await this._alterViews_aRoleRightRef();
     }
 
     async _alterTables() {
@@ -53,6 +54,17 @@ module.exports = function (ctx) {
             inner join aRoleRight b on a.roleIdBase=b.roleId
       `;
       await ctx.model.query(sql);
+    }
+
+    async _alterViews_aRoleRightRef() {
+      // level1:
+      //   aViewUserRightRefAtomClass(13)
+      //   aViewUserRightAtomClassUser(13)
+      //   aViewRoleRightAtomClassUser(13)
+      //   aViewRoleRightAtomClassRole(13)
+      //   aViewUserRightAtomClassRole(8)
+      // level2:
+      //
     }
   }
 
