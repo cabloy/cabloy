@@ -64,7 +64,46 @@ module.exports = function (ctx) {
       //   aViewRoleRightAtomClassRole(13)
       //   aViewUserRightAtomClassRole(8)
       // level2:
-      //
+      //   aViewUserRightAtom(9)
+      //   aViewRoleRightAtom(9)
+      //   aViewUserRightAtomRole(9)
+
+      // aViewUserRightRefAtomClass
+      await ctx.model.query('drop view aViewUserRightRefAtomClass');
+      let sql = `
+        create view aViewUserRightRefAtomClass as
+          select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
+                b.id as roleRightRefId,b.roleRightId,b.atomClassId,b.action,b.roleIdScope as roleIdWhom,b.areaKey,b.areaScope
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+        `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClassUser
+      await ctx.model.query('drop view aViewUserRightAtomClassUser');
+      sql = `
+        create view aViewUserRightAtomClassUser as
+          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope
+                c.userId as userIdWhom,c.roleId as roleIdWhom,
+                a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+      `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClassUser
+      await ctx.model.query('drop view aViewUserRightAtomClassUser');
+      sql = `
+        create view aViewUserRightAtomClassUser as
+          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope
+                c.userId as userIdWhom,c.roleId as roleIdWhom,
+                a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+      `;
+      await ctx.model.query(sql);
     }
   }
 
