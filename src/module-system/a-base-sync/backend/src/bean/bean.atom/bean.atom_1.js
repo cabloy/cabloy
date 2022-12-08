@@ -610,8 +610,8 @@ module.exports = ctx => {
     // useAreaScope
     _checkUseAreaScope(atomClass) {
       if (!atomClass) return true;
-      const atomClassBase = ctx.bean.base.atomClass(atomClass);
-      return !!atomClassBase.areaScope;
+      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
+      return !!areaScopeMeta;
     }
 
     async _list({
