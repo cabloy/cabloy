@@ -4,8 +4,9 @@ module.exports = function (ctx) {
     async run() {
       throw new Error('正在加入新功能，源码模式暂时不可用。请使用项目模式来创建Cabloy项目');
       await this._alterTables();
-      await this._alterViews_aRoleRight();
-      await this._alterViews_aRoleRightRef();
+      await this._alterViews_aRoleRight_level1();
+      await this._alterViews_aRoleRightRef_level1();
+      await this._alterViews_aRoleRightRef_level2();
     }
 
     async _alterTables() {
@@ -34,7 +35,7 @@ module.exports = function (ctx) {
       await ctx.model.query(sql);
     }
 
-    async _alterViews_aRoleRight() {
+    async _alterViews_aRoleRight_level1() {
       // level1: aViewRoleRightAtomClass(8) aViewUserRightAtomClass(1)
 
       // aViewRoleRightAtomClass
@@ -60,17 +61,13 @@ module.exports = function (ctx) {
       await ctx.model.query(sql);
     }
 
-    async _alterViews_aRoleRightRef() {
+    async _alterViews_aRoleRightRef_level1() {
       // level1:
       //   aViewUserRightRefAtomClass(13)
       //   aViewUserRightAtomClassUser(13)
       //   aViewRoleRightAtomClassUser(13)
       //   aViewRoleRightAtomClassRole(13)
       //   aViewUserRightAtomClassRole(8)
-      // level2:
-      //   aViewUserRightAtom(9)
-      //   aViewRoleRightAtom(9)
-      //   aViewUserRightAtomRole(9)
 
       // aViewUserRightRefAtomClass
       await ctx.model.query('drop view aViewUserRightRefAtomClass');
@@ -134,6 +131,13 @@ module.exports = function (ctx) {
               inner join aRoleRef c on b.roleIdScope=c.roleIdParent
           `;
       await ctx.model.query(sql);
+    }
+
+    async _alterViews_aRoleRightRef_level2() {
+      // level2:
+      //   aViewUserRightAtom(9)
+      //   aViewRoleRightAtom(9)
+      //   aViewUserRightAtomRole(9)
     }
   }
 
