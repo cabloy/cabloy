@@ -14,6 +14,14 @@ const {
 module.exports = appInfo => {
   const config = {};
 
+  if (_config.backend.maintenance) {
+    const message = '正在开发维护当中，源码模式可能存在不稳定情况。请使用项目模式来创建Cabloy项目';
+    console.log(chalk.keyword('orange')(message));
+    setTimeout(() => {
+      console.log(chalk.keyword('orange')(message));
+    }, 7000);
+  }
+
   // headers for proxy
   config.hostHeaders = 'x-forwarded-host,host';
   config.protocolHeaders = 'x-forwarded-proto';
