@@ -1,22 +1,40 @@
 module.exports = ctx => {
   class Atom {
-    async setAreaScopeValue({ atomId, atomClass, atomAreaValue }) {
+    async adjustKeyAndValue({ atomAreaKey, atomAreaValue }) {
       // atomAreaValue
-      if (!atomAreaValue) return;
-      if (Array.isArray(atomAreaValue)) {
+      if (atomAreaValue === null || atomAreaValue === undefined || atomAreaValue === '') {
+        atomAreaValue = null;
+      } else if (Array.isArray(atomAreaValue)) {
         if (
           atomAreaValue.length === 0 ||
           atomAreaValue.some(item => item === null || item === undefined || item === '')
         ) {
-          return;
+          atomAreaValue = null;
+        } else {
+          atomAreaValue = atomAreaValue.join('|');
         }
-        atomAreaValue = atomAreaValue.join('|');
       }
+      // atomAreaKey
+      if (!atomAreaValue) {
+        atomAreaKey = null;
+      } else if (Array.isArray(atomAreaKey)) {
+        atomAreaKey = atomAreaKey.join('|');
+      }
+      // ok
+      return { atomAreaKey, atomAreaValue };
+    }
+    async setAreaScopeValue({ atomId, atomClass, atomAreaValue }) {
       // meta
       const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: true });
-      if (!areaScopeMeta) return;
+      if (!areaScopeMeta) {
+        // not support area scope
+        return;
+      }
       // atomAreaKey
-      const atomAreaKey = Object.keys(areaScopeMeta.schemas).join('|');
+      let atomAreaKey = Object.keys(areaScopeMeta.schemas);
+      const adjustRes = this.adjustKeyAndValue({ atomAreaKey, atomAreaValue });
+      atomAreaKey = adjustRes.atomAreaKey;
+      atomAreaValue = adjustRes.atomAreaValue;
       // update
       await this.modelAtom.update({
         id: atomId,
