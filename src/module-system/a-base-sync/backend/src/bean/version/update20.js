@@ -138,6 +138,45 @@ module.exports = function (ctx) {
       //   aViewUserRightAtom(9)
       //   aViewRoleRightAtom(9)
       //   aViewUserRightAtomRole(9)
+
+      // aViewUserRightAtom
+      await ctx.model.query('drop view aViewUserRightAtom');
+      let sql = `
+          create view aViewUserRightAtom as
+            select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,
+                   b.userIdWho,b.action,b.areaKey,b.areaScope 
+              from aAtom a,aViewUserRightAtomClassUser b
+                where a.deleted=0 and a.atomStage>0
+                  and a.atomClassId=b.atomClassId
+                  and a.userIdCreated=b.userIdWhom
+      `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtom
+      await ctx.model.query('drop view aViewRoleRightAtom');
+      sql = `
+          create view aViewRoleRightAtom as
+            select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,
+                   b.roleIdWho,b.action,b.areaKey,b.areaScope
+              from aAtom a,aViewRoleRightAtomClassUser b
+                where a.deleted=0 and a.atomStage>0
+                  and a.atomClassId=b.atomClassId
+                  and a.userIdCreated=b.userIdWhom
+      `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomRole
+      await ctx.model.query('drop view aViewUserRightAtomRole');
+      sql = `
+          create view aViewUserRightAtomRole as
+            select a.iid, a.id as atomId,a.roleIdOwner as roleIdWhom,
+                   b.userIdWho,b.action,b.areaKey,b.areaScope
+              from aAtom a,aViewUserRightAtomClassRole b
+                where a.deleted=0 and a.atomStage>0
+                  and a.atomClassId=b.atomClassId
+                  and a.roleIdOwner=b.roleIdWhom
+        `;
+      await ctx.model.query(sql);
     }
   }
 
