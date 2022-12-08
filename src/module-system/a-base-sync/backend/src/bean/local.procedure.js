@@ -1,9 +1,24 @@
 const procedure_atom = require('./local.procedure/local.procedure_atom.js');
+const procedure_atom_0 = require('./local.procedure/local.procedure_atom_0.js');
+const procedure_atom_draft = require('./local.procedure/local.procedure_atom_draft.js');
+const procedure_atom_formal = require('./local.procedure/local.procedure_atom_formal.js');
+const procedure_atom_getAtom = require('./local.procedure/local.procedure_atom_getAtom.js');
 const procedure_atomRight = require('./local.procedure/local.procedure_atomRight.js');
 const procedure_resource = require('./local.procedure/local.procedure_resource.js');
 
 module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(procedure_atom, [procedure_atomRight, procedure_resource], ctx);
+  return ctx.app.meta.util.mixinClasses(
+    procedure_atom,
+    [
+      procedure_atom_0,
+      procedure_atom_draft,
+      procedure_atom_formal,
+      procedure_atom_getAtom,
+      procedure_atomRight,
+      procedure_resource,
+    ],
+    ctx
+  );
 };
 
 // /* backup */
