@@ -19,7 +19,7 @@ module.exports = appInfo => {
     const message =
       typeof _maintenance === 'string'
         ? _maintenance
-        : '正在开发维护当中，源码模式可能存在不稳定情况。请使用项目模式来创建Cabloy项目';
+        : '正在开发维护当中，源码模式可能存在不稳定情况。请持续关注开发进度，或者使用项目模式来创建CabloyJS项目';
     console.log(chalk.keyword('orange')(message));
     setTimeout(() => {
       console.log(chalk.keyword('orange')(message));
