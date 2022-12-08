@@ -208,7 +208,7 @@ module.exports = ctx => {
       let useAreaScopeWhere = '';
       if (useAreaScope) {
         useAreaScopeWhere =
-          ' and (c.areaScope is null or a.atomAreaValue is null or (c.areaKey=a.atomAreaKey and POSITION(c.areaKey in a.atomAreaKey)=1) )';
+          ' and (c.areaScope is null or a.atomAreaValue is null or (c.areaKey=a.atomAreaKey and POSITION(c.areaScope in a.atomAreaValue)=1) )';
       }
 
       // _rightWhere
