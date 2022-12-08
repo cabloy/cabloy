@@ -2,7 +2,7 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role {
     // add role right
-    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
+    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, areaKey, areaScope, user }) {
       // check atomClass/action
       const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
       if (!_check) ctx.throw(403);
@@ -31,6 +31,8 @@ module.exports = ctx => {
         atomClassId,
         action,
         scope: JSON.stringify(scope),
+        areaKey,
+        areaScope,
       });
       const roleRightId = res.insertId;
       // roleRightRef
@@ -42,6 +44,8 @@ module.exports = ctx => {
             atomClassId,
             action,
             roleIdScope,
+            areaKey,
+            areaScope,
           });
         }
       }
