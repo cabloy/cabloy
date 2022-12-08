@@ -8,7 +8,9 @@ module.exports = ctx => {
         const meta = atomClassBase.areaScope;
         if (!meta) return null;
         if (!meta.sameAs || !escape) return meta;
-        atomClassBase = ctx.bean.base.atomClass(meta.sameAs);
+        const _atomClassBase = ctx.bean.base.atomClass(meta.sameAs);
+        if (_atomClassBase === atomClassBase) return meta;
+        atomClassBase = _atomClassBase;
       }
     }
   }
