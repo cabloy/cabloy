@@ -22,6 +22,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      useAreaScope,
       role,
     }) {
       // -- tables
@@ -203,6 +204,13 @@ module.exports = ctx => {
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
+      // useAreaScope
+      let useAreaScopeWhere = '';
+      if (useAreaScope) {
+        useAreaScopeWhere =
+          ' and (c.areaScope is null or a.atomAreaValue is null or (c.areaKey=a.atomAreaKey and POSITION(c.areaKey in a.atomAreaKey)=1) )';
+      }
+
       // _rightWhere
       let _rightWhere;
       if (resource) {
@@ -237,6 +245,7 @@ module.exports = ctx => {
             exists(
               select c.roleIdWhom from aViewUserRightAtomClassRole c 
                 where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+                  ${useAreaScopeWhere}
             )
           `;
         }

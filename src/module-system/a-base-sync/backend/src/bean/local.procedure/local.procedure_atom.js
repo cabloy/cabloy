@@ -22,6 +22,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      useAreaScope,
       role,
     }) {
       iid = parseInt(iid);
@@ -105,6 +106,7 @@ module.exports = ctx => {
         mode,
         cms,
         forAtomUser,
+        useAreaScope,
         role,
       });
     }
