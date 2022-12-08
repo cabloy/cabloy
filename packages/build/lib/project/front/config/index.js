@@ -40,6 +40,10 @@ module.exports = (context, cb) => {
   // entry
   const entryDefault = path.join(context.projectPath, 'src/front/config/config.default.js');
   const entryScene = path.join(context.projectPath, `src/front/config/config.${sceneValue}.js`);
+  if (!fse.existsSync(entryDefault)) {
+    console.log(chalk.red('Please copy directory: from _config to config\n'));
+    process.exit(0);
+  }
   if (!fse.existsSync(entryScene)) {
     console.log(chalk.red(`  Scene Config File Not Found:\n  ${entryScene}\n`));
     process.exit(0);

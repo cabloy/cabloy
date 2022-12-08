@@ -135,7 +135,7 @@ const utils = {
     const fileConfigDefault = path.join(baseDir, 'config/config.default.js');
     const fileConfigEnv = path.join(baseDir, `config/config.${env}.js`);
     if (!fse.existsSync(fileConfigDefault)) {
-      console.log(chalk.red('Please create config directory from _config\n'));
+      console.log(chalk.red('Please copy directory: from _config to config\n'));
       process.exit(0);
     }
     const configDefault = require(fileConfigDefault)({});
