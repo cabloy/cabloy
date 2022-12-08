@@ -108,6 +108,32 @@ module.exports = function (ctx) {
             inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
         `;
       await ctx.model.query(sql);
+
+      // aViewRoleRightAtomClassRole
+      await ctx.model.query('drop view aViewRoleRightAtomClassRole');
+      sql = `
+        create view aViewRoleRightAtomClassRole as
+          select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+                c.roleId as roleIdWhom,
+                a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+            from aRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+      `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClassRole
+      await ctx.model.query('drop view aViewUserRightAtomClassRole');
+      sql = `
+        create view aViewUserRightAtomClassRole as
+          select a.iid,a.userId as userIdWho,
+                 b.atomClassId,b.action,b.areaKey,b.areaScope,
+                 c.roleId as roleIdWhom
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+          `;
+      await ctx.model.query(sql);
     }
   }
 
