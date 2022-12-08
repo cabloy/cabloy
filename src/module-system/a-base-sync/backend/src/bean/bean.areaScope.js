@@ -1,7 +1,7 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AreaScope {
-    async adjustKeyAndValue({ atomAreaKey, atomAreaValue }) {
+    adjustKeyAndValue({ atomAreaKey, atomAreaValue }) {
       // atomAreaValue
       if (atomAreaValue === null || atomAreaValue === undefined || atomAreaValue === '') {
         atomAreaValue = null;
