@@ -4,6 +4,11 @@ const procedure_atom_draft = require('./local.procedure/local.procedure_atom_dra
 const procedure_atom_formal = require('./local.procedure/local.procedure_atom_formal.js');
 const procedure_atom_getAtom = require('./local.procedure/local.procedure_atom_getAtom.js');
 const procedure_atomRight = require('./local.procedure/local.procedure_atomRight.js');
+const procedure_atomRight_checkRoleRightRead = require('./local.procedure/local.procedure_atomRight_checkRoleRightRead.js');
+const procedure_atomRight_checkRightRead = require('./local.procedure/local.procedure_atomRight_checkRightRead.js');
+const procedure_atomRight_checkRightAction = require('./local.procedure/local.procedure_atomRight_checkRightAction.js');
+const procedure_atomRight_checkRightActionBulk = require('./local.procedure/local.procedure_atomRight_checkRightActionBulk.js');
+const procedure_atomRight_checkRightCreateRole = require('./local.procedure/local.procedure_atomRight_checkRightCreateRole.js');
 const procedure_resource = require('./local.procedure/local.procedure_resource.js');
 
 module.exports = ctx => {
@@ -15,6 +20,11 @@ module.exports = ctx => {
       procedure_atom_formal,
       procedure_atom_getAtom,
       procedure_atomRight,
+      procedure_atomRight_checkRoleRightRead,
+      procedure_atomRight_checkRightRead,
+      procedure_atomRight_checkRightAction,
+      procedure_atomRight_checkRightActionBulk,
+      procedure_atomRight_checkRightCreateRole,
       procedure_resource,
     ],
     ctx
