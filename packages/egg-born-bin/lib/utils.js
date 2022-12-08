@@ -1,4 +1,5 @@
 const path = require('path');
+const fse = require('fs-extra');
 const urllib = require('urllib');
 const semver = require('semver');
 const chalk = require('chalk');
@@ -133,6 +134,10 @@ const utils = {
   loadEnvConfig({ baseDir, env }) {
     const fileConfigDefault = path.join(baseDir, 'config/config.default.js');
     const fileConfigEnv = path.join(baseDir, `config/config.${env}.js`);
+    if (!fse.existsSync(fileConfigDefault)) {
+      console.log(chalk.red('Please create config directory from _config\n'));
+      process.exit(0);
+    }
     const configDefault = require(fileConfigDefault)({});
     const configEnv = require(fileConfigEnv)({});
     return extend(true, {}, configDefault, configEnv);
