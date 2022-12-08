@@ -67,12 +67,15 @@ module.exports = ctx => {
       }
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
+      // useAreaScope
+      const useAreaScope = this._checkUseAreaScope(atomClass);
       // formal/history
       const sql = this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId,
         forAtomUser,
+        useAreaScope,
       });
       return await ctx.model.queryOne(sql);
     }
