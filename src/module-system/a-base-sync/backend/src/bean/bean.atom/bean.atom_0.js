@@ -167,12 +167,15 @@ module.exports = ctx => {
       const cms = _atomClass && _atomClass.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
+      // useAreaScope
+      const useAreaScope = this._checkUseAreaScope(atomClass);
       // select
       const items = await this._list({
         tableName,
         options,
         cms,
         forAtomUser,
+        useAreaScope,
         user,
         pageForce,
         count,

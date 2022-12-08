@@ -607,6 +607,13 @@ module.exports = ctx => {
       return atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
     }
 
+    // useAreaScope
+    _checkUseAreaScope(atomClass) {
+      if (!atomClass) return true;
+      const atomClassBase = ctx.bean.base.atomClass(atomClass);
+      return !!atomClassBase.areaScope;
+    }
+
     async _list({
       tableName,
       options: {
@@ -629,6 +636,7 @@ module.exports = ctx => {
       },
       cms,
       forAtomUser,
+      useAreaScope,
       user,
       pageForce = true,
       count = 0,
@@ -657,6 +665,7 @@ module.exports = ctx => {
         mode,
         cms,
         forAtomUser,
+        useAreaScope,
         role,
       });
       debug('===== selectAtoms =====\n%s', sql);
