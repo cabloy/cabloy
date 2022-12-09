@@ -39,6 +39,13 @@ module.exports = appInfo => {
     },
   };
 
+  // versionReady
+  config.versionReady = {
+    retry: {
+      timeout: 3000,
+    },
+  };
+
   // safe
   config.security = {
     csrf: {
