@@ -135,7 +135,7 @@ module.exports = ctx => {
       roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
         select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
@@ -147,11 +147,14 @@ module.exports = ctx => {
         [ctx.instance.id, roleId]
       );
       // scope
-      for (const item of list) {
+      for (const item of items) {
         const scope = JSON.parse(item.scope);
         item.scopeRoles = await this._scopeRoles({ scope });
       }
-      return list;
+      // area scope
+      await this._translateAtomAreaValue({ items });
+      // ok
+      return items;
     }
 
     // role spreads
@@ -230,6 +233,20 @@ module.exports = ctx => {
         item.roleNameLocale = ctx.text(item.roleName);
       }
       return items;
+    }
+
+    async _translateAtomAreaValue({ items }) {
+      for (const item of items) {
+        // area scope
+        const atomAreaValueTitle = await ctx.bean.areaScope.translateAtomAreaValue({
+          atomClass: { module: item.module, atomClassName: item.atomClassName },
+          atomAreaKey: item.areaKey,
+          atomAreaValue: item.areaScope,
+        });
+        if (atomAreaValueTitle) {
+          item.areaScopeTitle = atomAreaValueTitle;
+        }
+      }
     }
   }
 

@@ -9,9 +9,17 @@
               {{ $text('Self') }}
             </f7-badge>
             <template v-if="item.scopeRoles">
-              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">
+              <f7-badge
+                v-for="scopeRole of item.scopeRoles"
+                :key="scopeRole.id"
+                color="teal"
+                :tooltip="$text('DataScope')"
+              >
                 {{ scopeRole.roleNameLocale }}
               </f7-badge>
+            </template>
+            <template v-if="item.areaScopeTitle">
+              <f7-badge color="blue" :tooltip="$text('AreaScope')">{{ item.areaScopeTitle }}</f7-badge>
             </template>
           </div>
           <eb-context-menu>

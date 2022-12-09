@@ -47,6 +47,11 @@ module.exports = ctx => {
         atomClassBase = _atomClassBase;
       }
     }
+
+    async translateAtomAreaValue({ atomClass, atomAreaKey, atomAreaValue }) {
+      // check if atomAreaKey equal
+      return '中国';
+    }
   }
   return AreaScope;
 };
