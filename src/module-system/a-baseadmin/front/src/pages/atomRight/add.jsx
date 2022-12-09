@@ -12,6 +12,8 @@ export default {
       actionSelectOptions: null,
       scopeSelf: true,
       scope: null,
+      areaScopeData: {},
+      areaScopeSchema: null,
     };
   },
   computed: {
@@ -38,6 +40,11 @@ export default {
       const atomClassInfo = this.getAtomClass(this.atomClass);
       return !!atomClassInfo.areaScope;
     },
+    areaScopeMeta() {
+      if (!this.atomClass) return null;
+      const atomClassInfo = this.getAtomClass(this.atomClass);
+      return atomClassInfo.areaScope;
+    },
     actionCurrent() {
       if (!this.atomClass || !this.actionName) return null;
       return this.getAction({
@@ -54,6 +61,7 @@ export default {
     atomClass() {
       this.actionName = '';
       this.loadActionSelectOptions();
+      this.loadAreaScopeSchema();
     },
   },
   methods: {
@@ -129,6 +137,25 @@ export default {
         }
       }
       this.actionSelectOptions = [groupAtom, groupBulk];
+    },
+    loadAreaScopeSchema() {
+      // always reset data
+      this.areaScopeData = {};
+      // schema
+      const areaScopeMeta = this.areaScopeMeta;
+      if (!areaScopeMeta) {
+        this.areaScopeSchema = null;
+      } else {
+        this.areaScopeSchema = {
+          module: areaScopeMeta.atomClass.module,
+          schema: {
+            type: 'object',
+            properties: {
+              ...areaScopeMeta.schemas,
+            },
+          },
+        };
+      }
     },
   },
 };

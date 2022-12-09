@@ -11,6 +11,20 @@ export default {
         </eb-navbar>
       );
     },
+    _renderAreaScopeGroup() {
+      if (this.isOpenAuthScope || !this.areaScopeEnable) return null;
+      const areaScopeMeta = this.areaScopeMeta;
+      const children = [];
+      for (const key in areaScopeMeta.schemas) {
+        children.push(<eb-list-item-validate key={key} dataKey={key}></eb-list-item-validate>);
+      }
+      return (
+        <f7-list-group>
+          <f7-list-item title={this.$text('AreaScope')} group-title></f7-list-item>
+          {children}
+        </f7-list-group>
+      );
+    },
     _renderList() {
       if (!this.ready) return null;
       //
@@ -44,31 +58,25 @@ export default {
           </f7-list-item>
         );
       }
-      //
-      let domAreaScopeGroup;
-      if (!this.isOpenAuthScope && this.areaScopeEnable) {
-        domAreaScopeGroup = (
-          <f7-list-group>
-            <f7-list-item title={this.$text('AreaScope')} group-title></f7-list-item>
-          </f7-list-group>
-        );
-      }
+
       return (
-        <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
-          <f7-list-group>
-            <f7-list-item title={this.$text('AuthorizationObjective')} group-title></f7-list-item>
-            <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
-              <div slot="after">{this.atomClass && this.atomClass.title}</div>
-            </f7-list-item>
-            {domAtomAction}
-          </f7-list-group>
-          <f7-list-group>
-            <f7-list-item title={this.$text('DataScope')} group-title></f7-list-item>
-            {domScopeSelf}
-            {domScope}
-          </f7-list-group>
-          {domAreaScopeGroup}
-        </eb-list>
+        <eb-validate ref="validate" auto={false} data={this.areaScopeData} meta={{ schema: this.areaScopeSchema }}>
+          <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
+            <f7-list-group>
+              <f7-list-item title={this.$text('AuthorizationObjective')} group-title></f7-list-item>
+              <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
+                <div slot="after">{this.atomClass && this.atomClass.title}</div>
+              </f7-list-item>
+              {domAtomAction}
+            </f7-list-group>
+            <f7-list-group>
+              <f7-list-item title={this.$text('DataScope')} group-title></f7-list-item>
+              {domScopeSelf}
+              {domScope}
+            </f7-list-group>
+            {this._renderAreaScopeGroup()}
+          </eb-list>
+        </eb-validate>
       );
     },
   },
