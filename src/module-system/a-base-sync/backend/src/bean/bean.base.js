@@ -124,7 +124,12 @@ module.exports = ctx => {
 
     atomClasses() {
       if (!_atomClasses[ctx.locale]) {
-        _atomClasses[ctx.locale] = this._prepareAtomClasses();
+        // prepare
+        const atomClassesAll = this._prepareAtomClasses();
+        // hold
+        _atomClasses[ctx.locale] = atomClassesAll;
+        // patch
+        this._patchAtomClassesAreaScope(atomClassesAll);
       }
       return _atomClasses[ctx.locale];
     }
@@ -251,6 +256,27 @@ module.exports = ctx => {
         }
       }
       return atomClasses;
+    }
+
+    _patchAtomClassesAreaScope(atomClassesAll) {
+      for (const relativeName in atomClassesAll) {
+        const atomClasses = atomClassesAll[relativeName];
+        this._patchAtomClassesAreaScopeModule(relativeName, atomClasses);
+      }
+    }
+
+    _patchAtomClassesAreaScopeModule(relativeName, atomClasses) {
+      for (const atomClassName in atomClasses) {
+        const atomClassInfo = atomClasses[atomClassName];
+        const atomClass = { module: relativeName, atomClassName };
+        const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: true });
+        if (areaScopeMeta) {
+          atomClassInfo.areaScope = Object.assign({}, atomClassInfo.areaScope, areaScopeMeta, {
+            sameAs: undefined,
+            atomClass,
+          });
+        }
+      }
     }
 
     _prepareAtomClassesModule(module, _atoms) {
