@@ -1,6 +1,14 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AreaScope {
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+
+    areaScopeEnabled() {
+      return this.configModule.configFront.areaScope.enable;
+    }
+
     adjustKeyAndValue({ atomAreaKey, atomAreaValue }) {
       // atomAreaValue
       if (atomAreaValue === null || atomAreaValue === undefined || atomAreaValue === '') {

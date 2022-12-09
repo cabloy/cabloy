@@ -1,6 +1,8 @@
 module.exports = ctx => {
   class Atom {
     async setAreaScopeValue({ atomId, atomClass, atomAreaValue }) {
+      // // enabled
+      // if (!ctx.bean.areaScope.areaScopeEnabled()) return;
       // meta
       const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: true });
       if (!areaScopeMeta) {

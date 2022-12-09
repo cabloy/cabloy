@@ -609,6 +609,7 @@ module.exports = ctx => {
 
     // useAreaScope
     _checkUseAreaScope(atomClass) {
+      if (!ctx.bean.areaScope.areaScopeEnabled()) return false;
       if (!atomClass) return true;
       const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
       return !!areaScopeMeta;
