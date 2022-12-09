@@ -11,4 +11,8 @@ export default {
   'Atom Actions': 'Data Actions',
   Atoms: 'Data',
   AddChild: 'Add Child',
+  AuthorizationObjective: 'Auth Objective',
+  DataScope: 'Data Scope',
+  DataScopeSelfTitle: 'Operate Self Data',
+  DataScopeTitle: 'Select Data Scope',
 };

@@ -30,8 +30,7 @@ export default {
       let domScopeSelf;
       if (!this.isOpenAuthScope && this.scopeSelfEnable) {
         domScopeSelf = (
-          <f7-list-item title={this.$text('Scope')}>
-            <span class="text-color-gray">{this.$text('Self')}</span>
+          <f7-list-item title={this.$text('DataScopeSelfTitle')}>
             <eb-toggle vModel={this.scopeSelf}></eb-toggle>
           </f7-list-item>
         );
@@ -40,7 +39,7 @@ export default {
       let domScope;
       if (!this.isOpenAuthScope && this.scopeEnable) {
         domScope = (
-          <f7-list-item title={this.$text('Scope')} link="#" onClick={this.onSelectScope}>
+          <f7-list-item title={this.$text('DataScopeTitle')} link="#" onClick={this.onSelectScope}>
             <div slot="after">{this.scopeTitle}</div>
           </f7-list-item>
         );
@@ -56,12 +55,19 @@ export default {
       }
       return (
         <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
-          <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
-            <div slot="after">{this.atomClass && this.atomClass.title}</div>
-          </f7-list-item>
-          {domAtomAction}
-          {domScopeSelf}
-          {domScope}
+          <f7-list-group>
+            <f7-list-item title={this.$text('AuthorizationObjective')} group-title></f7-list-item>
+            <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
+              <div slot="after">{this.atomClass && this.atomClass.title}</div>
+            </f7-list-item>
+            {domAtomAction}
+          </f7-list-group>
+          <f7-list-group>
+            <f7-list-item title={this.$text('DataScope')} group-title></f7-list-item>
+            {domScopeSelf}
+            {domScope}
+          </f7-list-group>
+
           {domAreaScope}
         </eb-list>
       );

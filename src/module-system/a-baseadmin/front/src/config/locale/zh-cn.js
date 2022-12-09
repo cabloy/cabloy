@@ -100,4 +100,8 @@ export default {
   Copied: '已复制',
   Others: '其它',
   AddChild: '添加子项',
+  AuthorizationObjective: '授权目标',
+  DataScope: '数据范围',
+  DataScopeSelfTitle: '操作自己数据',
+  DataScopeTitle: '选择数据范围',
 };
