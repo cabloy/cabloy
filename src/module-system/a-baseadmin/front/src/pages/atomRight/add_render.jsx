@@ -45,6 +45,15 @@ export default {
           </f7-list-item>
         );
       }
+      //
+      let domAreaScope;
+      if (!this.isOpenAuthScope && this.areaScopeEnable) {
+        domAreaScope = (
+          <f7-list-item title={this.$text('AreaScope')} link="#" onClick={this.onSelectScope}>
+            <div slot="after">{this.scopeTitle}</div>
+          </f7-list-item>
+        );
+      }
       return (
         <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
           <f7-list-item title={this.$text('Atom Class')} link="#" onClick={this.onSelectAtomClass}>
@@ -53,6 +62,7 @@ export default {
           {domAtomAction}
           {domScopeSelf}
           {domScope}
+          {domAreaScope}
         </eb-list>
       );
     },

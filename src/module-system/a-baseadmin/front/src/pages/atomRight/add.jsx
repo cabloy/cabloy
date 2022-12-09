@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import roleItemBase from '../../components/role/roleItemBase.js';
 import pageRender from './add_render.jsx';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
-  mixins: [roleItemBase, ebAtomActions, pageRender],
+  mixins: [roleItemBase, ebAtomClasses, ebAtomActions, pageRender],
   data() {
     return {
       atomClass: null,
@@ -15,7 +16,7 @@ export default {
   },
   computed: {
     ready() {
-      return this.role && this.actionsAll;
+      return this.role && this.atomClassesAll && this.actionsAll;
     },
     scopeTitle() {
       if (!this.scope) return null;
@@ -31,7 +32,12 @@ export default {
       if (!action) return false;
       return !action.bulk && !this.scopeSelf;
     },
-    areaScopeEnable() {},
+    areaScopeEnable() {
+      if (!this.scopeEnable) return false;
+      if (!this.$meta.config.modules['a-base'].areaScope.enable) return false;
+      const atomClassInfo = this.getAtomClass(this.atomClass);
+      return !!atomClassInfo.areaScope;
+    },
     actionCurrent() {
       if (!this.atomClass || !this.actionName) return null;
       return this.getAction({
