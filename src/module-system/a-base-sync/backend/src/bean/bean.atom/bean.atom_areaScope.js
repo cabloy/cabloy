@@ -4,7 +4,7 @@ module.exports = ctx => {
       // // enabled
       // if (!ctx.bean.areaScope.areaScopeEnabled()) return;
       // meta
-      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: true });
+      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
       if (!areaScopeMeta) {
         // not support area scope
         return;
