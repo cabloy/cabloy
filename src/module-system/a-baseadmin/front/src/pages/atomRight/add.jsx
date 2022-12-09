@@ -31,6 +31,7 @@ export default {
       if (!action) return false;
       return !action.bulk && !this.scopeSelf;
     },
+    areaScopeEnable() {},
     actionCurrent() {
       if (!this.atomClass || !this.actionName) return null;
       return this.getAction({
