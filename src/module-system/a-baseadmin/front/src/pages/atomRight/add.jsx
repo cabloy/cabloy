@@ -106,13 +106,25 @@ export default {
     async onSave() {
       const action = this.actionCurrent;
       if (!action) return;
-      await this.$api.post('atomRight/add', {
+      const data = {
         key: this.roleKey,
         atomClass: this.atomClass,
         actionCode: parseInt(action.code),
         scopeSelf: this.scopeSelf,
         scope: this.scope ? this.scope.map(item => item.itemId) : [],
-      });
+      };
+      if (this.areaScopeEnable) {
+        const areaScopeMeta = this.areaScopeMeta;
+        const areaKey = [];
+        const areaScope = [];
+        for (const key in areaScopeMeta.schemas) {
+          areaKey.push(key);
+          areaScope.push(this.areaScopeData[key]);
+        }
+        data.areaKey = areaKey;
+        data.areaScope = areaScope;
+      }
+      await this.$api.post('atomRight/add', data);
       this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
       this.$f7router.back();
     },

@@ -19,6 +19,8 @@ module.exports = app => {
         actionCode: this.ctx.request.body.actionCode,
         scopeSelf: this.ctx.request.body.scopeSelf,
         scope: this.ctx.request.body.scope,
+        areaKey: this.ctx.request.body.areaKey,
+        areaScope: this.ctx.request.body.areaScope,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
