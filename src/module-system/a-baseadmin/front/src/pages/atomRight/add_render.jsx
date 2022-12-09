@@ -45,12 +45,12 @@ export default {
         );
       }
       //
-      let domAreaScope;
+      let domAreaScopeGroup;
       if (!this.isOpenAuthScope && this.areaScopeEnable) {
-        domAreaScope = (
-          <f7-list-item title={this.$text('AreaScope')} link="#" onClick={this.onSelectScope}>
-            <div slot="after">{this.scopeTitle}</div>
-          </f7-list-item>
+        domAreaScopeGroup = (
+          <f7-list-group>
+            <f7-list-item title={this.$text('AreaScope')} group-title></f7-list-item>
+          </f7-list-group>
         );
       }
       return (
@@ -67,8 +67,7 @@ export default {
             {domScopeSelf}
             {domScope}
           </f7-list-group>
-
-          {domAreaScope}
+          {domAreaScopeGroup}
         </eb-list>
       );
     },
