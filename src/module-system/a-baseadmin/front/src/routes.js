@@ -14,7 +14,7 @@ export default [
   { path: 'user/atomRights', component: loadjsx('user/atomRights') },
   { path: 'user/resourceRights', component: loadjsx('user/resourceRights') },
   { path: 'atomRight/edit', component: loadjsx('atomRight/edit') },
-  { path: 'atomRight/add', component: load('atomRight/add') },
+  { path: 'atomRight/add', component: loadjsx('atomRight/add') },
   { path: 'resourceRight/edit', component: loadjsx('resourceRight/edit') },
   { path: 'resourceRight/add', component: load('resourceRight/add') },
   { path: 'auth/list', component: loadjsx('auth/list') },

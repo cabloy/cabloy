@@ -1,38 +1,9 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="getPageTitle('New Authorization')" eb-back-link="Back">
-      <f7-nav-right>
-        <eb-link v-if="!!actionCurrent" ref="buttonSubmit" iconF7="::save" :onPerform="onSave"></eb-link>
-      </f7-nav-right>
-    </eb-navbar>
-    <eb-list v-if="ready" form inline-labels no-hairlines-md @submit="onFormSubmit">
-      <f7-list-item :title="$text('Atom Class')" link="#" @click="onSelectAtomClass">
-        <div slot="after">{{ atomClass && atomClass.title }}</div>
-      </f7-list-item>
-      <f7-list-item
-        v-if="atomClass"
-        smartSelect
-        :title="$text('Atom Action')"
-        :smartSelectParams="{ openIn: 'page', closeOnSelect: true }"
-      >
-        <eb-select name="actionName" v-model="actionName" :options="actionSelectOptions"></eb-select>
-      </f7-list-item>
-      <f7-list-item v-if="!isOpenAuthScope && scopeSelfEnable" :title="$text('Scope')">
-        <span class="text-color-gray">{{ $text('Self') }}</span>
-        <eb-toggle v-model="scopeSelf"></eb-toggle>
-      </f7-list-item>
-      <f7-list-item v-if="!isOpenAuthScope && scopeEnable" :title="$text('Scope')" link="#" @click="onSelectScope">
-        <div slot="after">{{ scopeTitle }}</div>
-      </f7-list-item>
-    </eb-list>
-  </eb-page>
-</template>
-<script>
 import Vue from 'vue';
 import roleItemBase from '../../components/role/roleItemBase.js';
+import pageRender from './add_render.jsx';
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
-  mixins: [roleItemBase, ebAtomActions],
+  mixins: [roleItemBase, ebAtomActions, pageRender],
   data() {
     return {
       atomClass: null,
@@ -154,5 +125,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
