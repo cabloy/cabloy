@@ -14,12 +14,13 @@ const {
 module.exports = appInfo => {
   const config = {};
 
+  const _maintenanceEnus =
+    'Under development and maintenance, the source code mode may be unstable. Please keep an eye on the development progress, or use the project mode to create a CabloyJS project.';
+  const _maintenanceZhcn =
+    '正在开发维护当中，源码模式可能存在不稳定情况。请持续关注开发进度，或者使用项目模式来创建CabloyJS项目。';
   const _maintenance = _config.backend.maintenance;
   if (_maintenance) {
-    const message =
-      typeof _maintenance === 'string'
-        ? _maintenance
-        : '正在开发维护当中，源码模式可能存在不稳定情况。请持续关注开发进度，或者使用项目模式来创建CabloyJS项目';
+    const message = typeof _maintenance === 'string' ? _maintenance : `${_maintenanceEnus}\n${_maintenanceZhcn}`;
     console.log(chalk.keyword('orange')(message));
     setTimeout(() => {
       console.log(chalk.keyword('orange')(message));
