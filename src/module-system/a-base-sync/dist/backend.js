@@ -625,6 +625,87 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 9025:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AreaScope {
+    get configModule() {
+      return ctx.config.module(moduleInfo.relativeName);
+    }
+
+    areaScopeEnabled() {
+      return this.configModule.configFront.areaScope.enable;
+    }
+
+    _checkIfEmpty(value) {
+      return value === null || value === undefined || value === '';
+    }
+
+    adjustValue({ atomAreaValue, trimEnd = false }) {
+      // check if empty
+      if (this._checkIfEmpty(atomAreaValue)) return null;
+      if (!Array.isArray(atomAreaValue)) {
+        atomAreaValue = atomAreaValue.split('|');
+      }
+      if (atomAreaValue.length === 0) return null;
+      // clear tailing empty
+      let hasTailingEmpty = false;
+      for (let i = atomAreaValue.length - 1; i >= 0; i--) {
+        if (this._checkIfEmpty(atomAreaValue[i])) {
+          hasTailingEmpty = true;
+          atomAreaValue.splice(i, 1);
+        } else {
+          break;
+        }
+      }
+      if (atomAreaValue.length === 0) return null;
+      // check middle empty
+      if (atomAreaValue.some(item => this._checkIfEmpty(item))) {
+        return null; // invalid
+      }
+      // append tailing
+      if (hasTailingEmpty && !trimEnd) {
+        atomAreaValue.push('');
+      }
+      return atomAreaValue.join('|');
+    }
+
+    adjustKeyAndValue({ atomAreaKey, atomAreaValue, trimEnd = false }) {
+      // atomAreaValue
+      atomAreaValue = this.adjustValue({ atomAreaValue, trimEnd });
+      // atomAreaKey
+      if (!atomAreaValue) {
+        atomAreaKey = null;
+      } else if (!atomAreaKey) {
+        atomAreaKey = null;
+      } else if (Array.isArray(atomAreaKey)) {
+        atomAreaKey = atomAreaKey.join('|');
+      }
+      // ok
+      return { atomAreaKey, atomAreaValue };
+    }
+
+    getAreaScopeMeta({ atomClass, escape = true }) {
+      if (!atomClass) return null;
+      let atomClassBase = ctx.bean.base.atomClass(atomClass);
+      while (true) {
+        const meta = atomClassBase.areaScope;
+        if (!meta) return null;
+        if (!meta.sameAs || !escape) return meta;
+        const _atomClassBase = ctx.bean.base.atomClass(meta.sameAs);
+        if (_atomClassBase === atomClassBase) return meta;
+        atomClassBase = _atomClassBase;
+      }
+    }
+  }
+  return AreaScope;
+};
+
+
+/***/ }),
+
 /***/ 5528:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -632,9 +713,10 @@ const atom_0 = __webpack_require__(7399);
 const atom_1 = __webpack_require__(3765);
 const atom_right = __webpack_require__(6681);
 const atom_starLabel = __webpack_require__(8388);
+const atom_areaScope = __webpack_require__(4213);
 
 module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(atom_0, [atom_1, atom_right, atom_starLabel], ctx);
+  return ctx.app.meta.util.mixinClasses(atom_0, [atom_1, atom_right, atom_starLabel, atom_areaScope], ctx);
 };
 
 
@@ -812,12 +894,15 @@ module.exports = ctx => {
       const cms = _atomClass && _atomClass.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
+      // useAreaScope
+      const useAreaScope = this._checkUseAreaScope(atomClass);
       // select
       const items = await this._list({
         tableName,
         options,
         cms,
         forAtomUser,
+        useAreaScope,
         user,
         pageForce,
         count,
@@ -1931,6 +2016,14 @@ module.exports = ctx => {
       return atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
     }
 
+    // useAreaScope
+    _checkUseAreaScope(atomClass) {
+      if (!ctx.bean.areaScope.areaScopeEnabled()) return false;
+      if (!atomClass) return true;
+      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
+      return !!areaScopeMeta;
+    }
+
     async _list({
       tableName,
       options: {
@@ -1953,6 +2046,7 @@ module.exports = ctx => {
       },
       cms,
       forAtomUser,
+      useAreaScope,
       user,
       pageForce = true,
       count = 0,
@@ -1981,6 +2075,7 @@ module.exports = ctx => {
         mode,
         cms,
         forAtomUser,
+        useAreaScope,
         role,
       });
       debug('===== selectAtoms =====\n%s', sql);
@@ -2141,6 +2236,81 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 4213:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  class Atom {
+    async setAreaScopeValue({ atomId, atomClass, atomAreaValue }) {
+      // // enabled
+      // if (!ctx.bean.areaScope.areaScopeEnabled()) return;
+      // meta
+      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
+      if (!areaScopeMeta) {
+        // not support area scope
+        return;
+      }
+      // atomAreaKey
+      let atomAreaKey = Object.keys(areaScopeMeta.schemas);
+      const adjustRes = ctx.bean.areaScope.adjustKeyAndValue({ atomAreaKey, atomAreaValue });
+      atomAreaKey = adjustRes.atomAreaKey;
+      atomAreaValue = adjustRes.atomAreaValue;
+      // update
+      await this.modelAtom.update({
+        id: atomId,
+        atomAreaKey,
+        atomAreaValue,
+      });
+    }
+
+    async translateAreaScopeValue({ atomClass, atomAreaKey, atomAreaValue }) {
+      // adjust
+      const adjustRes = ctx.bean.areaScope.adjustKeyAndValue({ atomAreaKey, atomAreaValue });
+      atomAreaKey = adjustRes.atomAreaKey;
+      atomAreaValue = adjustRes.atomAreaValue;
+      if (!atomAreaKey || !atomAreaValue) return null;
+      // check if areaScopeMeta
+      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
+      if (!areaScopeMeta) {
+        ctx.logger.info(`areaScope of atomClass not found: ${atomClass.module}:${atomClass.atomClassName}`);
+        return { error: ctx.text('Invalid') };
+      }
+      // atomClass
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // check if atomAreaKey equal
+      const atomAreaKeySchema = Object.keys(areaScopeMeta.schemas).join('|');
+      if (atomAreaKey !== atomAreaKeySchema) {
+        return { error: ctx.text('Invalid') };
+      }
+      // adjust again
+      atomAreaKey = atomAreaKey.split('|');
+      atomAreaValue = atomAreaValue.split('|');
+      // translate { title, error }
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const res = await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue },
+        fn: 'translateAreaScopeValue',
+      });
+      if (res) {
+        res.title = ctx.bean.areaScope.adjustValue({ atomAreaValue: res.title, trimEnd: true });
+        res.titleLocale = ctx.bean.areaScope.adjustValue({ atomAreaValue: res.titleLocale, trimEnd: true });
+      }
+      return res;
+    }
+  }
+  return Atom;
+};
+
+
+/***/ }),
+
 /***/ 6681:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -2213,12 +2383,15 @@ module.exports = ctx => {
       }
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
+      // useAreaScope
+      const useAreaScope = this._checkUseAreaScope(atomClass);
       // formal/history
       const sql = this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomId,
         forAtomUser,
+        useAreaScope,
       });
       return await ctx.model.queryOne(sql);
     }
@@ -2944,6 +3117,10 @@ module.exports = app => {
 
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
       return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+    }
+
+    async translateAreaScopeValue(/* { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue }*/) {
+      return { error: this.ctx.text('NotImplemented') };
     }
   }
   return AtomBase;
@@ -3969,7 +4146,12 @@ module.exports = ctx => {
 
     atomClasses() {
       if (!_atomClasses[ctx.locale]) {
-        _atomClasses[ctx.locale] = this._prepareAtomClasses();
+        // prepare
+        const atomClassesAll = this._prepareAtomClasses();
+        // hold
+        _atomClasses[ctx.locale] = atomClassesAll;
+        // patch
+        this._patchAtomClassesAreaScope(atomClassesAll);
       }
       return _atomClasses[ctx.locale];
     }
@@ -4096,6 +4278,27 @@ module.exports = ctx => {
         }
       }
       return atomClasses;
+    }
+
+    _patchAtomClassesAreaScope(atomClassesAll) {
+      for (const relativeName in atomClassesAll) {
+        const atomClasses = atomClassesAll[relativeName];
+        this._patchAtomClassesAreaScopeModule(relativeName, atomClasses);
+      }
+    }
+
+    _patchAtomClassesAreaScopeModule(relativeName, atomClasses) {
+      for (const atomClassName in atomClasses) {
+        const atomClassInfo = atomClasses[atomClassName];
+        const atomClass = { module: relativeName, atomClassName };
+        const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: true });
+        if (areaScopeMeta) {
+          atomClassInfo.areaScope = Object.assign({}, atomClassInfo.areaScope, areaScopeMeta, {
+            sameAs: undefined,
+            atomClass,
+          });
+        }
+      }
     }
 
     _prepareAtomClassesModule(module, _atoms) {
@@ -5153,10 +5356,14 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role {
     // add role right
-    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
+    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, areaKey, areaScope, user }) {
       // check atomClass/action
       const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
       if (!_check) ctx.throw(403);
+      // area scope
+      const adjustRes = ctx.bean.areaScope.adjustKeyAndValue({ atomAreaKey: areaKey, atomAreaValue: areaScope });
+      areaKey = adjustRes.atomAreaKey;
+      areaScope = adjustRes.atomAreaValue;
       // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
@@ -5182,6 +5389,8 @@ module.exports = ctx => {
         atomClassId,
         action,
         scope: JSON.stringify(scope),
+        areaKey,
+        areaScope,
       });
       const roleRightId = res.insertId;
       // roleRightRef
@@ -5193,6 +5402,8 @@ module.exports = ctx => {
             atomClassId,
             action,
             roleIdScope,
+            areaKey,
+            areaScope,
           });
         }
       }
@@ -5278,7 +5489,7 @@ module.exports = ctx => {
       roleId = await this._forceRoleId({ roleAtomId, roleId });
       page = ctx.bean.util.page(page, false);
       const _limit = ctx.model._limit(page.size, page.index);
-      const list = await ctx.model.query(
+      const items = await ctx.model.query(
         `
         select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
@@ -5290,11 +5501,11 @@ module.exports = ctx => {
         [ctx.instance.id, roleId]
       );
       // scope
-      for (const item of list) {
-        const scope = JSON.parse(item.scope);
-        item.scopeRoles = await this._scopeRoles({ scope });
-      }
-      return list;
+      await this._adjustAtomRightsScopeRoles({ items });
+      // area scope
+      await this._translateAreaScopeValue({ items });
+      // ok
+      return items;
     }
 
     // role spreads
@@ -5304,7 +5515,7 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           left join aRoleExpand d on a.roleId=d.roleIdBase
@@ -5315,8 +5526,12 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, roleId]
       );
+      // scope
+      await this._adjustAtomRightsScopeRoles({ items });
+      // area scope
+      await this._translateAreaScopeValue({ items });
       // locale
-      await this._atomRightsLocale({ items });
+      await this._adjustAtomRightsLocale({ items });
       // ok
       return items;
     }
@@ -5338,17 +5553,25 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, userId]
       );
+      // scope
+      await this._adjustAtomRightsScopeRoles({ items });
+      // area scope
+      await this._translateAreaScopeValue({ items });
       // locale
-      await this._atomRightsLocale({ items });
+      await this._adjustAtomRightsLocale({ items });
       // ok
       return items;
     }
 
-    async _atomRightsLocale({ items }) {
+    async _adjustAtomRightsScopeRoles({ items }) {
       for (const item of items) {
-        // scope
         const scope = JSON.parse(item.scope);
         item.scopeRoles = await this._scopeRoles({ scope });
+      }
+    }
+
+    async _adjustAtomRightsLocale({ items }) {
+      for (const item of items) {
         // roleNameBase
         if (item.roleNameBase) {
           item.roleNameBaseLocale = ctx.text(item.roleNameBase);
@@ -5373,6 +5596,20 @@ module.exports = ctx => {
         item.roleNameLocale = ctx.text(item.roleName);
       }
       return items;
+    }
+
+    async _translateAreaScopeValue({ items }) {
+      for (const item of items) {
+        // area scope
+        const res = await ctx.bean.atom.translateAreaScopeValue({
+          atomClass: { module: item.module, atomClassName: item.atomClassName },
+          atomAreaKey: item.areaKey,
+          atomAreaValue: item.areaScope,
+        });
+        if (res) {
+          item.areaScopeInfo = res;
+        }
+      }
     }
   }
 
@@ -7793,11 +8030,36 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const procedure_atom = __webpack_require__(8986);
+const procedure_atom_0 = __webpack_require__(9277);
+const procedure_atom_draft = __webpack_require__(9257);
+const procedure_atom_formal = __webpack_require__(2999);
+const procedure_atom_getAtom = __webpack_require__(3195);
 const procedure_atomRight = __webpack_require__(986);
+const procedure_atomRight_checkRoleRightRead = __webpack_require__(579);
+const procedure_atomRight_checkRightRead = __webpack_require__(1900);
+const procedure_atomRight_checkRightAction = __webpack_require__(1311);
+const procedure_atomRight_checkRightActionBulk = __webpack_require__(9695);
+const procedure_atomRight_checkRightCreateRole = __webpack_require__(8468);
 const procedure_resource = __webpack_require__(5309);
 
 module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(procedure_atom, [procedure_atomRight, procedure_resource], ctx);
+  return ctx.app.meta.util.mixinClasses(
+    procedure_atom,
+    [
+      procedure_atom_0,
+      procedure_atom_draft,
+      procedure_atom_formal,
+      procedure_atom_getAtom,
+      procedure_atomRight,
+      procedure_atomRight_checkRoleRightRead,
+      procedure_atomRight_checkRightRead,
+      procedure_atomRight_checkRightAction,
+      procedure_atomRight_checkRightActionBulk,
+      procedure_atomRight_checkRightCreateRole,
+      procedure_resource,
+    ],
+    ctx
+  );
 };
 
 // /* backup */
@@ -7979,6 +8241,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      useAreaScope,
       role,
     }) {
       iid = parseInt(iid);
@@ -8062,6 +8325,7 @@ module.exports = ctx => {
         mode,
         cms,
         forAtomUser,
+        useAreaScope,
         role,
       });
     }
@@ -8090,220 +8354,281 @@ module.exports = ctx => {
 
       return { _cmsField, _cmsJoin, _cmsWhere };
     }
+  }
+  return Procedure;
+};
 
-    _selectAtoms_draft({
-      iid,
-      userIdWho,
-      tableName,
-      where,
-      orders,
-      page,
-      star,
-      label,
-      comment,
-      file,
-      count,
-      stage,
-      language,
-      category,
-      tag,
-      mode,
-      cms,
-    }) {
-      // -- tables
-      // -- a: aAtom
-      // -- b: aAtomClass
-      // -- c: aViewUserRightAtomClassRole
-      // -- d: aAtomStar
-      // -- e: aAtomLabelRef
-      // -- f: {item}
-      // -- g: aUser
-      // -- g2: aUser
-      // -- h: aComment
-      // -- i: aFile
-      // -- j: aCategory
-      // -- k: aTagRef
-      // -- p: aCmsArticle
-      // -- q: aCmsContent
-      // -- r: aFlow
 
+/***/ }),
+
+/***/ 986:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    // checkRoleRightRead
+    // checkRightRead: check for formal/history
+    // checkRightAction
+    // checkRightActionBulk
+    // checkRightCreateRole
+  }
+  return Procedure;
+};
+
+
+/***/ }),
+
+/***/ 1311:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    checkRightAction({ iid, userIdWho, atomId, action, forAtomUser }) {
       // for safe
-      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
-      where = where ? ctx.model._where(where) : null;
-      orders = orders ? ctx.model._orders(orders) : null;
-      const limit = page ? ctx.model._limit(page.size, page.index) : null;
-
-      // vars
-      let _languageWhere;
-      let _categoryWhere;
-      let _tagJoin, _tagWhere;
-
-      let _starJoin, _starWhere;
-
-      let _labelJoin, _labelWhere;
-      let _commentField, _commentJoin, _commentWhere;
-
-      let _fileField, _fileJoin, _fileWhere;
-
-      let _itemField, _itemJoin;
-
-      let _atomClassWhere;
-
-      // cms
-      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
-
-      //
-      const _where = where ? `${where} AND` : ' WHERE';
-      const _orders = orders || '';
-      const _limit = limit || '';
-
-      // language
-      if (language) {
-        _languageWhere = ctx.model.format(' and a.atomLanguage=?', language);
-      } else {
-        _languageWhere = '';
-      }
-
-      // category
-      if (category) {
-        _categoryWhere = ` and a.atomCategoryId=${category}`;
-      } else {
-        _categoryWhere = '';
-      }
-
-      // tag
-      if (tag) {
-        _tagJoin = ' inner join aTagRef k on k.atomId=a.id';
-        _tagWhere = ` and k.iid=${iid} and k.tagId=${tag}`;
-      } else {
-        _tagJoin = '';
-        _tagWhere = '';
-      }
-
-      // star
-      if (star) {
-        _starJoin = ' inner join aAtomStar d on a.id=d.atomId';
-        _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
-      } else {
-        _starJoin = '';
-        _starWhere = '';
-      }
-      const _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
-
-      // label
-      if (label) {
-        _labelJoin = ' inner join aAtomLabelRef e on a.id=e.atomId';
-        _labelWhere = ` and e.iid=${iid} and e.userId=${userIdWho} and e.labelId=${label}`;
-      } else {
-        _labelJoin = '';
-        _labelWhere = '';
-      }
-      const _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
-
-      // comment
-      if (comment) {
-        _commentField = `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
-               (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
-
-        _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
-        _commentWhere = ` and h.iid=${iid} and h.deleted=0`;
-      } else {
-        _commentField = '';
-        _commentJoin = '';
-        _commentWhere = '';
-      }
-
-      // file
-      if (file) {
-        _fileField =
-          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
-        _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
-        _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
-      } else {
-        _fileField = '';
-        _fileJoin = '';
-        _fileWhere = '';
-      }
-
-      // flow
-      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
-      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
-      const _flowWhere = '';
-
-      // tableName
-      if (tableName) {
-        _itemField = 'f.*,';
-        _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
-      } else {
-        _itemField = '';
-        _itemJoin = '';
-      }
-
-      // atomClassInner
-      // eslint-disable-next-line
-      _atomClassWhere = '';
-      // if (tableName || star || label) {
-      //   _atomClassWhere = '';
-      // } else {
-      //   _atomClassWhere = ' and b.atomClassInner=0';
-      // }
-
-      // fields
-      let _selectFields;
-      if (count) {
-        _selectFields = 'count(*) as _count';
-      } else {
-        _selectFields = `${_itemField}
-                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
-                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
-                b.module,b.atomClassName,b.atomClassIdParent,
-                g.userName,g.avatar,
-                g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_starField} ${_labelField} ${_commentField}
-                ${_fileField} ${_flowField}
-                ${_cmsField}
-              `;
-      }
-
-      // sql
-      const _sql = `select ${_selectFields} from aAtom a
-            inner join aAtomClass b on a.atomClassId=b.id
-            left join aUser g on a.userIdCreated=g.id
-            left join aUser g2 on a.userIdUpdated=g2.id
-            left join aCategory j on a.atomCategoryId=j.id
-            ${_itemJoin}
-            ${_tagJoin}
-            ${_starJoin}
-            ${_labelJoin}
-            ${_commentJoin}
-            ${_fileJoin}
-            ${_flowJoin}
-            ${_cmsJoin}
-
-          ${_where}
-           (
-             a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
-             ${_atomClassWhere}
-             ${_languageWhere}
-             ${_categoryWhere}
-             ${_tagWhere}
-             ${_starWhere}
-             ${_labelWhere}
-             ${_commentWhere}
-             ${_fileWhere}
-             ${_flowWhere}
-             ${_cmsWhere}
-           )
-
-          ${count ? '' : _orders}
-          ${count ? '' : _limit}
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+      action = parseInt(action);
+      // _rightWhere
+      let _rightWhere;
+      const _mine = `
+        (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
+      `;
+      let _others;
+      if (forAtomUser) {
+        _others = `
+          exists(
+            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=${action} and c.userIdWho=${userIdWho}
+          )
         `;
-
-      // ok
+      } else {
+        _others = `
+          exists(
+            select c.roleIdWhom from aViewUserRightAtomClassRole c 
+              where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=${action} and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+          )
+        `;
+      }
+      //
+      _rightWhere = `
+        (
+          ${_mine}
+          or
+          ${_others}
+        )
+      `;
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
+      // sql
+      const _sql = `select a.* from aAtom a
+            where
+            (
+              a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+              and a.atomStage>0
+              ${_rightWhere} 
+            )
+        `;
       return _sql;
     }
+  }
+  return Procedure;
+};
 
+
+/***/ }),
+
+/***/ 9695:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    checkRightActionBulk({ iid, userIdWho, atomClassId, action }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomClassId = parseInt(atomClassId);
+      action = parseInt(action || 0);
+
+      const _actionWhere = action ? `and a.code=${action}` : '';
+      const _rightWhere = `
+        and exists(
+          select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.atomClassId=b.atomClassId and a.code=b.action and b.userIdWho=${userIdWho}
+        )
+      `;
+      // sql
+      const _sql = `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
+            left join aAtomClass c on a.atomClassId=c.id
+              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
+        `;
+      return _sql;
+    }
+  }
+  return Procedure;
+};
+
+
+/***/ }),
+
+/***/ 8468:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    checkRightCreateRole({ iid, userIdWho, atomClassId, roleIdOwner }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomClassId = parseInt(atomClassId);
+      roleIdOwner = parseInt(roleIdOwner);
+
+      const _rightWhere = `
+        and exists(
+          select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.id=b.atomClassId and b.action=1 and b.userIdWho=${userIdWho} and b.roleId=${roleIdOwner}
+        )
+      `;
+      // sql
+      const _sql = `select a.* from aAtomClass a
+            where a.iid=${iid} and a.id=${atomClassId} ${_rightWhere}
+        `;
+      return _sql;
+    }
+  }
+  return Procedure;
+};
+
+
+/***/ }),
+
+/***/ 1900:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    // check for formal/history
+    checkRightRead({ iid, userIdWho, atomId, forAtomUser, useAreaScope }) {
+      // for safe
+      iid = parseInt(iid);
+      userIdWho = parseInt(userIdWho);
+      atomId = parseInt(atomId);
+
+      // useAreaScope
+      let useAreaScopeWhere = '';
+      if (useAreaScope) {
+        useAreaScopeWhere =
+          ' and (c.areaScope is null or a.atomAreaValue is null or (c.areaKey=a.atomAreaKey and POSITION(c.areaScope in a.atomAreaValue)=1) )';
+      }
+
+      // _rightWhere
+      let _rightWhere;
+      const _mine = `
+          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+          `;
+      let _others;
+      if (forAtomUser) {
+        _others = `
+          exists(
+            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
+          )
+        `;
+      } else {
+        _others = `
+            exists(
+              select c.roleIdWhom from aViewUserRightAtomClassRole c 
+                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+                  ${useAreaScopeWhere}
+            )
+          `;
+      }
+      //
+      _rightWhere = `
+        (
+          ${_mine}
+          or
+          ${_others}
+        )
+      `;
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
+      // sql
+      const _sql = `select a.* from aAtom a
+           left join aAtomClass b on a.atomClassId=b.id
+             where
+             (
+                 a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+                 and a.atomStage>0 
+                 ${_rightWhere}
+             )
+        `;
+      return _sql;
+    }
+  }
+  return Procedure;
+};
+
+
+/***/ }),
+
+/***/ 579:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    checkRoleRightRead({ iid, roleIdWho, atomId, forAtomUser }) {
+      // for safe
+      iid = parseInt(iid);
+      roleIdWho = parseInt(roleIdWho);
+      atomId = parseInt(atomId);
+      // _rightWhere
+      let _rightWhere;
+      if (forAtomUser) {
+        _rightWhere = `
+          exists(
+            select c.userIdWhom from aViewRoleRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWho=${roleIdWho}
+          )
+        `;
+      } else {
+        _rightWhere = `
+            exists(
+              select c.roleIdWhom from aViewRoleRightAtomClassRole c 
+                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.roleIdWho=${roleIdWho}
+            )
+          `;
+      }
+      if (_rightWhere) {
+        _rightWhere = ` and ( ${_rightWhere} )`;
+      } else {
+        _rightWhere = '';
+      }
+      // sql
+      const _sql = `select a.* from aAtom a
+           left join aAtomClass b on a.atomClassId=b.id
+            where
+            (
+               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
+               and a.atomStage>0
+               ${_rightWhere}
+            )
+        `;
+      return _sql;
+    }
+  }
+  return Procedure;
+};
+
+
+/***/ }),
+
+/***/ 9277:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
     _selectAtoms_0({
       iid,
       tableName,
@@ -8518,7 +8843,242 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
+  }
+  return Procedure;
+};
 
+
+/***/ }),
+
+/***/ 9257:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
+    _selectAtoms_draft({
+      iid,
+      userIdWho,
+      tableName,
+      where,
+      orders,
+      page,
+      star,
+      label,
+      comment,
+      file,
+      count,
+      stage,
+      language,
+      category,
+      tag,
+      mode,
+      cms,
+    }) {
+      // -- tables
+      // -- a: aAtom
+      // -- b: aAtomClass
+      // -- c: aViewUserRightAtomClassRole
+      // -- d: aAtomStar
+      // -- e: aAtomLabelRef
+      // -- f: {item}
+      // -- g: aUser
+      // -- g2: aUser
+      // -- h: aComment
+      // -- i: aFile
+      // -- j: aCategory
+      // -- k: aTagRef
+      // -- p: aCmsArticle
+      // -- q: aCmsContent
+      // -- r: aFlow
+
+      // for safe
+      // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
+      where = where ? ctx.model._where(where) : null;
+      orders = orders ? ctx.model._orders(orders) : null;
+      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+
+      // vars
+      let _languageWhere;
+      let _categoryWhere;
+      let _tagJoin, _tagWhere;
+
+      let _starJoin, _starWhere;
+
+      let _labelJoin, _labelWhere;
+      let _commentField, _commentJoin, _commentWhere;
+
+      let _fileField, _fileJoin, _fileWhere;
+
+      let _itemField, _itemJoin;
+
+      let _atomClassWhere;
+
+      // cms
+      const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
+
+      //
+      const _where = where ? `${where} AND` : ' WHERE';
+      const _orders = orders || '';
+      const _limit = limit || '';
+
+      // language
+      if (language) {
+        _languageWhere = ctx.model.format(' and a.atomLanguage=?', language);
+      } else {
+        _languageWhere = '';
+      }
+
+      // category
+      if (category) {
+        _categoryWhere = ` and a.atomCategoryId=${category}`;
+      } else {
+        _categoryWhere = '';
+      }
+
+      // tag
+      if (tag) {
+        _tagJoin = ' inner join aTagRef k on k.atomId=a.id';
+        _tagWhere = ` and k.iid=${iid} and k.tagId=${tag}`;
+      } else {
+        _tagJoin = '';
+        _tagWhere = '';
+      }
+
+      // star
+      if (star) {
+        _starJoin = ' inner join aAtomStar d on a.id=d.atomId';
+        _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
+      } else {
+        _starJoin = '';
+        _starWhere = '';
+      }
+      const _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
+
+      // label
+      if (label) {
+        _labelJoin = ' inner join aAtomLabelRef e on a.id=e.atomId';
+        _labelWhere = ` and e.iid=${iid} and e.userId=${userIdWho} and e.labelId=${label}`;
+      } else {
+        _labelJoin = '';
+        _labelWhere = '';
+      }
+      const _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
+
+      // comment
+      if (comment) {
+        _commentField = `,h.id h_id,h.createdAt h_createdAt,h.updatedAt h_updatedAt,h.userId h_userId,h.sorting h_sorting,h.heartCount h_heartCount,h.replyId h_replyId,h.replyUserId h_replyUserId,h.replyContent h_replyContent,h.content h_content,h.summary h_summary,h.html h_html,h.userName h_userName,h.avatar h_avatar,h.replyUserName h_replyUserName,
+               (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
+
+        _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
+        _commentWhere = ` and h.iid=${iid} and h.deleted=0`;
+      } else {
+        _commentField = '';
+        _commentJoin = '';
+        _commentWhere = '';
+      }
+
+      // file
+      if (file) {
+        _fileField =
+          ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
+        _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
+        _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
+      } else {
+        _fileField = '';
+        _fileJoin = '';
+        _fileWhere = '';
+      }
+
+      // flow
+      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
+      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
+      const _flowWhere = '';
+
+      // tableName
+      if (tableName) {
+        _itemField = 'f.*,';
+        _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
+      } else {
+        _itemField = '';
+        _itemJoin = '';
+      }
+
+      // atomClassInner
+      // eslint-disable-next-line
+      _atomClassWhere = '';
+      // if (tableName || star || label) {
+      //   _atomClassWhere = '';
+      // } else {
+      //   _atomClassWhere = ' and b.atomClassInner=0';
+      // }
+
+      // fields
+      let _selectFields;
+      if (count) {
+        _selectFields = 'count(*) as _count';
+      } else {
+        _selectFields = `${_itemField}
+                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,a.atomSimple,a.atomDisabled,
+                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
+                b.module,b.atomClassName,b.atomClassIdParent,
+                g.userName,g.avatar,
+                g2.userName as userNameUpdated,g2.avatar as avatarUpdated
+                ${_starField} ${_labelField} ${_commentField}
+                ${_fileField} ${_flowField}
+                ${_cmsField}
+              `;
+      }
+
+      // sql
+      const _sql = `select ${_selectFields} from aAtom a
+            inner join aAtomClass b on a.atomClassId=b.id
+            left join aUser g on a.userIdCreated=g.id
+            left join aUser g2 on a.userIdUpdated=g2.id
+            left join aCategory j on a.atomCategoryId=j.id
+            ${_itemJoin}
+            ${_tagJoin}
+            ${_starJoin}
+            ${_labelJoin}
+            ${_commentJoin}
+            ${_fileJoin}
+            ${_flowJoin}
+            ${_cmsJoin}
+
+          ${_where}
+           (
+             a.deleted=0 and a.iid=${iid} and a.atomStage=${stage} and a.atomClosed=0 and a.userIdUpdated=${userIdWho}
+             ${_atomClassWhere}
+             ${_languageWhere}
+             ${_categoryWhere}
+             ${_tagWhere}
+             ${_starWhere}
+             ${_labelWhere}
+             ${_commentWhere}
+             ${_fileWhere}
+             ${_flowWhere}
+             ${_cmsWhere}
+           )
+
+          ${count ? '' : _orders}
+          ${count ? '' : _limit}
+        `;
+
+      // ok
+      return _sql;
+    }
+  }
+  return Procedure;
+};
+
+
+/***/ }),
+
+/***/ 2999:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
     _selectAtoms({
       iid,
       userIdWho,
@@ -8541,6 +9101,7 @@ module.exports = ctx => {
       mode,
       cms,
       forAtomUser,
+      useAreaScope,
       role,
     }) {
       // -- tables
@@ -8722,6 +9283,13 @@ module.exports = ctx => {
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
       }
 
+      // useAreaScope
+      let useAreaScopeWhere = '';
+      if (useAreaScope) {
+        useAreaScopeWhere =
+          ' and (c.areaScope is null or a.atomAreaValue is null or (c.areaKey=a.atomAreaKey and POSITION(c.areaScope in a.atomAreaValue)=1) )';
+      }
+
       // _rightWhere
       let _rightWhere;
       if (resource) {
@@ -8756,6 +9324,7 @@ module.exports = ctx => {
             exists(
               select c.roleIdWhom from aViewUserRightAtomClassRole c 
                 where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
+                  ${useAreaScopeWhere}
             )
           `;
         }
@@ -8825,7 +9394,18 @@ module.exports = ctx => {
       // ok
       return _sql;
     }
+  }
+  return Procedure;
+};
 
+
+/***/ }),
+
+/***/ 3195:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Procedure {
     getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms, forAtomUser }) {
       // -- tables
       // -- a: aAtom
@@ -8941,199 +9521,6 @@ module.exports = ctx => {
         `;
 
       // ok
-      return _sql;
-    }
-  }
-  return Procedure;
-};
-
-
-/***/ }),
-
-/***/ 986:
-/***/ ((module) => {
-
-module.exports = ctx => {
-  class Procedure {
-    checkRoleRightRead({ iid, roleIdWho, atomId, forAtomUser }) {
-      // for safe
-      iid = parseInt(iid);
-      roleIdWho = parseInt(roleIdWho);
-      atomId = parseInt(atomId);
-      // _rightWhere
-      let _rightWhere;
-      if (forAtomUser) {
-        _rightWhere = `
-          exists(
-            select c.userIdWhom from aViewRoleRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWho=${roleIdWho}
-          )
-        `;
-      } else {
-        _rightWhere = `
-            exists(
-              select c.roleIdWhom from aViewRoleRightAtomClassRole c 
-                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.roleIdWho=${roleIdWho}
-            )
-          `;
-      }
-      if (_rightWhere) {
-        _rightWhere = ` and ( ${_rightWhere} )`;
-      } else {
-        _rightWhere = '';
-      }
-      // sql
-      const _sql = `select a.* from aAtom a
-           left join aAtomClass b on a.atomClassId=b.id
-            where
-            (
-               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-               and a.atomStage>0
-               ${_rightWhere}
-            )
-        `;
-      return _sql;
-    }
-
-    // check for formal/history
-    checkRightRead({ iid, userIdWho, atomId, forAtomUser }) {
-      // for safe
-      iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      atomId = parseInt(atomId);
-      // _rightWhere
-      let _rightWhere;
-      const _mine = `
-          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-          `;
-      let _others;
-      if (forAtomUser) {
-        _others = `
-          exists(
-            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
-          )
-        `;
-      } else {
-        _others = `
-            exists(
-              select c.roleIdWhom from aViewUserRightAtomClassRole c 
-                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
-            )
-          `;
-      }
-      //
-      _rightWhere = `
-        (
-          ${_mine}
-          or
-          ${_others}
-        )
-      `;
-      if (_rightWhere) {
-        _rightWhere = ` and ( ${_rightWhere} )`;
-      } else {
-        _rightWhere = '';
-      }
-      // sql
-      const _sql = `select a.* from aAtom a
-           left join aAtomClass b on a.atomClassId=b.id
-             where
-             (
-                 a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-                 and a.atomStage>0 
-                 ${_rightWhere}
-             )
-        `;
-      return _sql;
-    }
-
-    checkRightAction({ iid, userIdWho, atomId, action, forAtomUser }) {
-      // for safe
-      iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      atomId = parseInt(atomId);
-      action = parseInt(action);
-      // _rightWhere
-      let _rightWhere;
-      const _mine = `
-        (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
-      `;
-      let _others;
-      if (forAtomUser) {
-        _others = `
-          exists(
-            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=${action} and c.userIdWho=${userIdWho}
-          )
-        `;
-      } else {
-        _others = `
-          exists(
-            select c.roleIdWhom from aViewUserRightAtomClassRole c 
-              where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=${action} and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
-          )
-        `;
-      }
-      //
-      _rightWhere = `
-        (
-          ${_mine}
-          or
-          ${_others}
-        )
-      `;
-      if (_rightWhere) {
-        _rightWhere = ` and ( ${_rightWhere} )`;
-      } else {
-        _rightWhere = '';
-      }
-      // sql
-      const _sql = `select a.* from aAtom a
-            where
-            (
-              a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-              and a.atomStage>0
-              ${_rightWhere} 
-            )
-        `;
-      return _sql;
-    }
-
-    checkRightActionBulk({ iid, userIdWho, atomClassId, action }) {
-      // for safe
-      iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      atomClassId = parseInt(atomClassId);
-      action = parseInt(action || 0);
-
-      const _actionWhere = action ? `and a.code=${action}` : '';
-      const _rightWhere = `
-        and exists(
-          select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.atomClassId=b.atomClassId and a.code=b.action and b.userIdWho=${userIdWho}
-        )
-      `;
-      // sql
-      const _sql = `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
-            left join aAtomClass c on a.atomClassId=c.id
-              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
-        `;
-      return _sql;
-    }
-
-    checkRightCreateRole({ iid, userIdWho, atomClassId, roleIdOwner }) {
-      // for safe
-      iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
-      atomClassId = parseInt(atomClassId);
-      roleIdOwner = parseInt(roleIdOwner);
-
-      const _rightWhere = `
-        and exists(
-          select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.id=b.atomClassId and b.action=1 and b.userIdWho=${userIdWho} and b.roleId=${roleIdOwner}
-        )
-      `;
-      // sql
-      const _sql = `select a.* from aAtomClass a
-            where a.iid=${iid} and a.id=${atomClassId} ${_rightWhere}
-        `;
       return _sql;
     }
   }
@@ -9931,6 +10318,7 @@ const VersionUpdate16Fn = __webpack_require__(4938);
 const VersionUpdate17Fn = __webpack_require__(1223);
 const VersionUpdate18Fn = __webpack_require__(5140);
 const VersionUpdate19Fn = __webpack_require__(3836);
+const VersionUpdate20Fn = __webpack_require__(2523);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
@@ -9943,6 +10331,10 @@ const VersionInit15Fn = __webpack_require__(3166);
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 20) {
+        const versionUpdate20 = new (VersionUpdate20Fn(this.ctx))();
+        await versionUpdate20.run();
+      }
       if (options.version === 19) {
         const versionUpdate19 = new (VersionUpdate19Fn(this.ctx))();
         await versionUpdate19.run();
@@ -11587,6 +11979,196 @@ module.exports = function (ctx) {
 
 /***/ }),
 
+/***/ 2523:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate20 {
+    async run() {
+      await this._alterTables();
+      await this._alterViews_aRoleRight_level1();
+      await this._alterViews_aRoleRightRef_level1();
+      await this._alterViews_aRoleRightRef_level2();
+    }
+
+    async _alterTables() {
+      // aAtom: add atomAreaKey atomAreaValue
+      let sql = `
+        ALTER TABLE aAtom
+          ADD COLUMN atomAreaKey varchar(255) DEFAULT NULL,
+          ADD COLUMN atomAreaValue varchar(255) DEFAULT NULL
+      `;
+      await ctx.model.query(sql);
+
+      // aRoleRight: add areaKey areaScope
+      sql = `
+        ALTER TABLE aRoleRight
+          ADD COLUMN areaKey varchar(255) DEFAULT NULL,
+          ADD COLUMN areaScope varchar(255) DEFAULT NULL
+      `;
+      await ctx.model.query(sql);
+
+      // aRoleRightRef: add areaKey areaScope
+      sql = `
+        ALTER TABLE aRoleRightRef
+          ADD COLUMN areaKey varchar(255) DEFAULT NULL,
+          ADD COLUMN areaScope varchar(255) DEFAULT NULL
+      `;
+      await ctx.model.query(sql);
+    }
+
+    async _alterViews_aRoleRight_level1() {
+      // level1: aViewRoleRightAtomClass(8) aViewUserRightAtomClass(1)
+
+      // aViewRoleRightAtomClass
+      await ctx.model.query('drop view aViewRoleRightAtomClass');
+      let sql = `
+        create view aViewRoleRightAtomClass as
+          select a.iid,a.roleId as roleIdWho,a.roleIdBase,
+                 b.id as roleRightId,b.atomClassId,b.action,b.scope,b.areaKey,b.areaScope 
+            from aRoleExpand a
+              inner join aRoleRight b on a.roleIdBase=b.roleId
+      `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClass
+      await ctx.model.query('drop view aViewUserRightAtomClass');
+      sql = `
+        create view aViewUserRightAtomClass as
+          select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
+                 b.id as roleRightId,b.atomClassId,b.action,b.scope,b.areaKey,b.areaScope
+            from aViewUserRoleExpand a
+              inner join aRoleRight b on a.roleIdBase=b.roleId
+      `;
+      await ctx.model.query(sql);
+    }
+
+    async _alterViews_aRoleRightRef_level1() {
+      // level1:
+      //   aViewUserRightRefAtomClass(13)
+      //   aViewUserRightAtomClassUser(13)
+      //   aViewRoleRightAtomClassUser(13)
+      //   aViewRoleRightAtomClassRole(13)
+      //   aViewUserRightAtomClassRole(8)
+
+      // aViewUserRightRefAtomClass
+      await ctx.model.query('drop view aViewUserRightRefAtomClass');
+      let sql = `
+        create view aViewUserRightRefAtomClass as
+          select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
+                b.id as roleRightRefId,b.roleRightId,b.atomClassId,b.action,b.roleIdScope as roleIdWhom,b.areaKey,b.areaScope
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+        `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClassUser
+      await ctx.model.query('drop view aViewUserRightAtomClassUser');
+      sql = `
+        create view aViewUserRightAtomClassUser as
+          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+                c.userId as userIdWhom,c.roleId as roleIdWhom,
+                a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+      `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtomClassUser
+      await ctx.model.query('drop view aViewRoleRightAtomClassUser');
+      sql = `
+      create view aViewRoleRightAtomClassUser as
+        select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+               c.userId as userIdWhom,c.roleId as roleIdWhom,
+               a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+          from aRoleExpand a
+            inner join aRoleRightRef b on a.roleIdBase=b.roleId
+            inner join aViewUserRoleRef c on b.roleIdScope=c.roleIdParent
+        `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtomClassRole
+      await ctx.model.query('drop view aViewRoleRightAtomClassRole');
+      sql = `
+        create view aViewRoleRightAtomClassRole as
+          select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+                c.roleId as roleIdWhom,
+                a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
+            from aRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+      `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomClassRole
+      await ctx.model.query('drop view aViewUserRightAtomClassRole');
+      sql = `
+        create view aViewUserRightAtomClassRole as
+          select a.iid,a.userId as userIdWho,
+                 b.atomClassId,b.action,b.areaKey,b.areaScope,
+                 c.roleId as roleIdWhom
+            from aViewUserRoleExpand a
+              inner join aRoleRightRef b on a.roleIdBase=b.roleId
+              inner join aRoleRef c on b.roleIdScope=c.roleIdParent
+          `;
+      await ctx.model.query(sql);
+    }
+
+    async _alterViews_aRoleRightRef_level2() {
+      // level2:
+      //   aViewUserRightAtom(9)
+      //   aViewRoleRightAtom(9)
+      //   aViewUserRightAtomRole(9)
+
+      // aViewUserRightAtom
+      await ctx.model.query('drop view aViewUserRightAtom');
+      let sql = `
+          create view aViewUserRightAtom as
+            select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,
+                   b.userIdWho,b.action,b.areaKey,b.areaScope 
+              from aAtom a,aViewUserRightAtomClassUser b
+                where a.deleted=0 and a.atomStage>0
+                  and a.atomClassId=b.atomClassId
+                  and a.userIdCreated=b.userIdWhom
+      `;
+      await ctx.model.query(sql);
+
+      // aViewRoleRightAtom
+      await ctx.model.query('drop view aViewRoleRightAtom');
+      sql = `
+          create view aViewRoleRightAtom as
+            select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,
+                   b.roleIdWho,b.action,b.areaKey,b.areaScope
+              from aAtom a,aViewRoleRightAtomClassUser b
+                where a.deleted=0 and a.atomStage>0
+                  and a.atomClassId=b.atomClassId
+                  and a.userIdCreated=b.userIdWhom
+      `;
+      await ctx.model.query(sql);
+
+      // aViewUserRightAtomRole
+      await ctx.model.query('drop view aViewUserRightAtomRole');
+      sql = `
+          create view aViewUserRightAtomRole as
+            select a.iid, a.id as atomId,a.roleIdOwner as roleIdWhom,
+                   b.userIdWho,b.action,b.areaKey,b.areaScope
+              from aAtom a,aViewUserRightAtomClassRole b
+                where a.deleted=0 and a.atomStage>0
+                  and a.atomClassId=b.atomClassId
+                  and a.roleIdOwner=b.roleIdWhom
+        `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate20;
+};
+
+
+/***/ }),
+
 /***/ 2901:
 /***/ ((module) => {
 
@@ -12123,6 +12705,7 @@ const beanUtil = __webpack_require__(4368);
 const beanCategory = __webpack_require__(30);
 const beanTag = __webpack_require__(8636);
 const beanBodyCrypto = __webpack_require__(852);
+const beanAreaScope = __webpack_require__(9025);
 const statsDrafts = __webpack_require__(4571);
 const statsDraftsFlowing = __webpack_require__(6431);
 const statsStars = __webpack_require__(8999);
@@ -12287,6 +12870,11 @@ module.exports = app => {
     bodyCrypto: {
       mode: 'ctx',
       bean: beanBodyCrypto,
+      global: true,
+    },
+    areaScope: {
+      mode: 'ctx',
+      bean: beanAreaScope,
       global: true,
     },
     // stats
@@ -12548,6 +13136,10 @@ module.exports = appInfo => {
       cover: '/api/static/a/base/img/cabloy.png',
     },
     demo: {
+      enable: false,
+    },
+    // areaScope
+    areaScope: {
       enable: false,
     },
   };
@@ -12835,6 +13427,7 @@ module.exports = {
   BasicProfile: 'Basic Profile',
   BasicAdmin: 'Basic Admin',
   WorkplaceTitle: 'Workplace',
+  NotImplemented: 'Not Implemented',
   'Only Valid for Formal Atom': 'Only Valid for Formal Data',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
@@ -12998,6 +13591,8 @@ module.exports = {
   Anonymous: '匿名',
   WorkplaceTitle: '工作台',
   Order: '订单',
+  Invalid: '无效',
+  NotImplemented: '未实现',
   // role name
   root: '根',
   anonymous: '匿名',

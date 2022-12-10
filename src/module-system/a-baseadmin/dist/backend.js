@@ -755,6 +755,8 @@ module.exports = app => {
         actionCode: this.ctx.request.body.actionCode,
         scopeSelf: this.ctx.request.body.scopeSelf,
         scope: this.ctx.request.body.scope,
+        areaKey: this.ctx.request.body.areaKey,
+        areaScope: this.ctx.request.body.areaScope,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
@@ -1495,7 +1497,7 @@ module.exports = app => {
       return await this.ctx.bean.role.roleRights({ roleAtomId, page, user });
     }
 
-    async add({ roleAtomId, atomClass, actionCode, scopeSelf, scope, user }) {
+    async add({ roleAtomId, atomClass, actionCode, scopeSelf, scope, areaKey, areaScope, user }) {
       const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
       if (scopeSelf) {
         scope = 0;
@@ -1505,6 +1507,8 @@ module.exports = app => {
         atomClassId: _atomClass.id,
         action: actionCode,
         scope,
+        areaKey,
+        areaScope,
         user,
       });
     }
