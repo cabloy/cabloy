@@ -152,7 +152,7 @@ module.exports = ctx => {
         item.scopeRoles = await this._scopeRoles({ scope });
       }
       // area scope
-      await this._translateAtomAreaValue({ items });
+      await this._translateAreaScopeValue({ items });
       // ok
       return items;
     }
@@ -235,10 +235,10 @@ module.exports = ctx => {
       return items;
     }
 
-    async _translateAtomAreaValue({ items }) {
+    async _translateAreaScopeValue({ items }) {
       for (const item of items) {
         // area scope
-        const atomAreaValueTitle = await ctx.bean.areaScope.translateAtomAreaValue({
+        const atomAreaValueTitle = await ctx.bean.areaScope.translateAreaScopeValue({
           atomClass: { module: item.module, atomClassName: item.atomClassName },
           atomAreaKey: item.areaKey,
           atomAreaValue: item.areaScope,
