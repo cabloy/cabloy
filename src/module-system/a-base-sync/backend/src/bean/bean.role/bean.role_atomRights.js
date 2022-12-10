@@ -238,13 +238,13 @@ module.exports = ctx => {
     async _translateAreaScopeValue({ items }) {
       for (const item of items) {
         // area scope
-        const atomAreaValueTitle = await ctx.bean.areaScope.translateAreaScopeValue({
+        const res = await ctx.bean.atom.translateAreaScopeValue({
           atomClass: { module: item.module, atomClassName: item.atomClassName },
           atomAreaKey: item.areaKey,
           atomAreaValue: item.areaScope,
         });
-        if (atomAreaValueTitle) {
-          item.areaScopeTitle = atomAreaValueTitle;
+        if (res) {
+          item.areaScopeInfo = res;
         }
       }
     }

@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const mparse = require3('egg-born-mparse').default;
+
 module.exports = ctx => {
   class Atom {
     async setAreaScopeValue({ atomId, atomClass, atomAreaValue }) {
@@ -19,6 +22,37 @@ module.exports = ctx => {
         id: atomId,
         atomAreaKey,
         atomAreaValue,
+      });
+    }
+
+    async translateAreaScopeValue({ atomClass, atomAreaKey, atomAreaValue }) {
+      // adjust
+      const adjustRes = ctx.bean.areaScope.adjustKeyAndValue({ atomAreaKey, atomAreaValue });
+      atomAreaKey = adjustRes.atomAreaKey;
+      atomAreaValue = adjustRes.atomAreaValue;
+      if (!atomAreaKey || !atomAreaValue) return null;
+      // check if areaScopeMeta
+      const areaScopeMeta = ctx.bean.areaScope.getAreaScopeMeta({ atomClass, escape: false });
+      if (!areaScopeMeta) {
+        ctx.logger.info(`areaScope of atomClass not found: ${atomClass.module}:${atomClass.atomClassName}`);
+        return { error: ctx.text('Invalid') };
+      }
+      // atomClass
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // check if atomAreaKey equal
+      const atomAreaKeySchema = Object.keys(areaScopeMeta.schemas).join('|');
+      if (atomAreaKey !== atomAreaKeySchema) {
+        return { error: ctx.text('Invalid') };
+      }
+      // translate { title, error }
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue },
+        fn: 'translateAreaScopeValue',
       });
     }
   }

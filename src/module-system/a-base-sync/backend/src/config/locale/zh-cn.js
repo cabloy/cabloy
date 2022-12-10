@@ -147,6 +147,8 @@ module.exports = {
   Anonymous: '匿名',
   WorkplaceTitle: '工作台',
   Order: '订单',
+  Invalid: '无效',
+  NotImplemented: '未实现',
   // role name
   root: '根',
   anonymous: '匿名',

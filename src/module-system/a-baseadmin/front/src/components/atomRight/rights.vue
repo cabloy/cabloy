@@ -18,8 +18,10 @@
                 {{ scopeRole.roleNameLocale }}
               </f7-badge>
             </template>
-            <template v-if="item.areaScopeTitle">
-              <f7-badge color="blue" :tooltip="$text('AreaScope')">{{ item.areaScopeTitle }}</f7-badge>
+            <template v-if="item.areaScopeInfo">
+              <f7-badge :color="item.areaScopeInfo.error ? 'red' : 'blue'" :tooltip="$text('AreaScope')">{{
+                item.areaScopeInfo.error || item.areaScopeInfo.title
+              }}</f7-badge>
             </template>
           </div>
           <eb-context-menu>

@@ -269,6 +269,10 @@ module.exports = app => {
     async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
       return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
     }
+
+    async translateAreaScopeValue(/* { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue }*/) {
+      return { error: this.ctx.text('NotImplemented') };
+    }
   }
   return AtomBase;
 };
