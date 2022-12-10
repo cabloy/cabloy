@@ -9,20 +9,42 @@ module.exports = ctx => {
       return this.configModule.configFront.areaScope.enable;
     }
 
-    adjustKeyAndValue({ atomAreaKey, atomAreaValue }) {
-      // atomAreaValue
-      if (atomAreaValue === null || atomAreaValue === undefined || atomAreaValue === '') {
-        atomAreaValue = null;
-      } else if (Array.isArray(atomAreaValue)) {
-        if (
-          atomAreaValue.length === 0 ||
-          atomAreaValue.some(item => item === null || item === undefined || item === '')
-        ) {
-          atomAreaValue = null;
+    _checkIfEmpty(value) {
+      return value === null || value === undefined || value === '';
+    }
+
+    adjustValue({ atomAreaValue, trimEnd = false }) {
+      // check if empty
+      if (this._checkIfEmpty(atomAreaValue)) return null;
+      if (!Array.isArray(atomAreaValue)) {
+        atomAreaValue = atomAreaValue.split('|');
+      }
+      if (atomAreaValue.length === 0) return null;
+      // clear tailing empty
+      let hasTailingEmpty = false;
+      for (let i = atomAreaValue.length - 1; i >= 0; i--) {
+        if (this._checkIfEmpty(atomAreaValue[i])) {
+          hasTailingEmpty = true;
+          atomAreaValue.splice(i, 1);
         } else {
-          atomAreaValue = atomAreaValue.join('|');
+          break;
         }
       }
+      if (atomAreaValue.length === 0) return null;
+      // check middle empty
+      if (atomAreaValue.some(item => this._checkIfEmpty(item))) {
+        return null; // invalid
+      }
+      // append tailing
+      if (hasTailingEmpty && !trimEnd) {
+        atomAreaValue.push('');
+      }
+      return atomAreaValue.join('|');
+    }
+
+    adjustKeyAndValue({ atomAreaKey, atomAreaValue, trimEnd = false }) {
+      // atomAreaValue
+      atomAreaValue = this.adjustValue({ atomAreaValue, trimEnd });
       // atomAreaKey
       if (!atomAreaValue) {
         atomAreaKey = null;

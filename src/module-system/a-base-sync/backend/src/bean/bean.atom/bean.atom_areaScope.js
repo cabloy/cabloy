@@ -58,12 +58,8 @@ module.exports = ctx => {
         fn: 'translateAreaScopeValue',
       });
       if (res) {
-        if (Array.isArray(res.title)) {
-          res.title = res.title.join('|');
-        }
-        if (Array.isArray(res.titleLocale)) {
-          res.titleLocale = res.titleLocale.join('|');
-        }
+        res.title = ctx.bean.areaScope.adjustValue({ atomAreaValue: res.title, trimEnd: true });
+        res.titleLocale = ctx.bean.areaScope.adjustValue({ atomAreaValue: res.titleLocale, trimEnd: true });
       }
       return res;
     }
