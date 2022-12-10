@@ -147,10 +147,7 @@ module.exports = ctx => {
         [ctx.instance.id, roleId]
       );
       // scope
-      for (const item of items) {
-        const scope = JSON.parse(item.scope);
-        item.scopeRoles = await this._scopeRoles({ scope });
-      }
+      await this._adjustAtomRightsScopeRoles({ items });
       // area scope
       await this._translateAreaScopeValue({ items });
       // ok
@@ -175,8 +172,12 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, roleId]
       );
+      // scope
+      await this._adjustAtomRightsScopeRoles({ items });
+      // area scope
+      await this._translateAreaScopeValue({ items });
       // locale
-      await this._atomRightsLocale({ items });
+      await this._adjustAtomRightsLocale({ items });
       // ok
       return items;
     }
@@ -198,17 +199,25 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, userId]
       );
+      // scope
+      await this._adjustAtomRightsScopeRoles({ items });
+      // area scope
+      await this._translateAreaScopeValue({ items });
       // locale
-      await this._atomRightsLocale({ items });
+      await this._adjustAtomRightsLocale({ items });
       // ok
       return items;
     }
 
-    async _atomRightsLocale({ items }) {
+    async _adjustAtomRightsScopeRoles({ items }) {
       for (const item of items) {
-        // scope
         const scope = JSON.parse(item.scope);
         item.scopeRoles = await this._scopeRoles({ scope });
+      }
+    }
+
+    async _adjustAtomRightsLocale({ items }) {
+      for (const item of items) {
         // roleNameBase
         if (item.roleNameBase) {
           item.roleNameBaseLocale = ctx.text(item.roleNameBase);
