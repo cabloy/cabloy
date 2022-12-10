@@ -45,15 +45,27 @@ module.exports = ctx => {
       if (atomAreaKey !== atomAreaKeySchema) {
         return { error: ctx.text('Invalid') };
       }
+      // adjust again
+      atomAreaKey = atomAreaKey.split('|');
+      atomAreaValue = atomAreaValue.split('|');
       // translate { title, error }
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.meta.util.executeBean({
+      const res = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
         context: { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue },
         fn: 'translateAreaScopeValue',
       });
+      if (res) {
+        if (Array.isArray(res.title)) {
+          res.title = res.title.join('|');
+        }
+        if (Array.isArray(res.titleLocale)) {
+          res.titleLocale = res.titleLocale.join('|');
+        }
+      }
+      return res;
     }
   }
   return Atom;

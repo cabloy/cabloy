@@ -20,7 +20,7 @@
             </template>
             <template v-if="item.areaScopeInfo">
               <f7-badge :color="item.areaScopeInfo.error ? 'red' : 'blue'" :tooltip="$text('AreaScope')">{{
-                item.areaScopeInfo.error || item.areaScopeInfo.title
+                item.areaScopeInfo.error || item.areaScopeInfo.titleLocale || item.areaScopeInfo.title
               }}</f7-badge>
             </template>
           </div>
