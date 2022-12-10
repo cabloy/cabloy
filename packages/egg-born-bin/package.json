@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "4.2.26",
+  "version": "4.2.27",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -27,7 +27,7 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
-    "@zhennann/build": "^1.5.4",
+    "@zhennann/build": "^1.5.5",
     "@zhennann/egg-bin": "^5.0.6",
     "@zhennann/socketio": "^4.0.2",
     "babel-loader": "^8.2.2",
@@ -37,7 +37,7 @@
     "chalk": "^3.0.0",
     "cli-table3": "^0.6.2",
     "compressing": "^1.5.1",
-    "egg-born-backend": "^7.0.10",
+    "egg-born-backend": "^7.0.11",
     "egg-born-front": "^8.6.14",
     "egg-born-utils": "^1.0.13",
     "egg-mock": "^3.25.1",
