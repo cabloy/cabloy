@@ -11,9 +11,19 @@
           <div slot="after">
             <f7-badge v-if="item.actionBulk === 0 && item.scope === '0'">{{ $text('Self') }}</f7-badge>
             <template v-if="item.scopeRoles">
-              <f7-badge v-for="scopeRole of item.scopeRoles" :key="scopeRole.id">
+              <f7-badge
+                v-for="scopeRole of item.scopeRoles"
+                :key="scopeRole.id"
+                color="teal"
+                :tooltip="$text('DataScope')"
+              >
                 {{ scopeRole.roleNameLocale }}
               </f7-badge>
+            </template>
+            <template v-if="item.areaScopeInfo">
+              <f7-badge :color="item.areaScopeInfo.error ? 'red' : 'blue'" :tooltip="$text('AreaScope')">{{
+                item.areaScopeInfo.error || item.areaScopeInfo.titleLocale || item.areaScopeInfo.title
+              }}</f7-badge>
             </template>
           </div>
           <div slot="root-end" class="summary-no-media">

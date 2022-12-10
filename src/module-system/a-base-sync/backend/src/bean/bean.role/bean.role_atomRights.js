@@ -161,7 +161,7 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
           left join aAtomClass b on a.atomClassId=b.id
           left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           left join aRoleExpand d on a.roleId=d.roleIdBase
