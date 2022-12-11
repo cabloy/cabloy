@@ -10,7 +10,7 @@ export default {
       atomClass: null,
       actionName: '',
       actionSelectOptions: null,
-      scopeSelf: true,
+      scopeSelf: false,
       scope: null,
       areaScopeData: {},
       areaScopeSchema: null,
