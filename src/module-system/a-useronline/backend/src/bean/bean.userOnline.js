@@ -40,6 +40,7 @@ module.exports = ctx => {
         // userOnlineHistory
         await this._insertUserOnlineHistory({ user, data, isLogin });
       }
+      return res;
     }
 
     async heartBeat({ user }) {
