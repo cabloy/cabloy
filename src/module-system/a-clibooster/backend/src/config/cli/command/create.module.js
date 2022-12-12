@@ -36,10 +36,6 @@ module.exports = app => {
               { name: 'module-icon', message: 'cabloy icon module template' },
             ],
           },
-          suite: {
-            type: 'input',
-            message: 'suite name',
-          },
         },
       },
       moduleInfo: {
@@ -51,6 +47,10 @@ module.exports = app => {
               expression: 'context.argv._[0]',
             },
             required: true,
+          },
+          suite: {
+            type: 'input',
+            message: 'suite name',
           },
           description: {
             type: 'input',
