@@ -2,7 +2,7 @@
 <%
   const sticky = !article.sticky ? '' : '<i class="fas fa-thumbtack"></i> ';
   const attachment = article.attachmentCount===0 ? '' : '<a href="#attachments"><i class="fas fa-paperclip"></i></a> ';
-  const atomName=`<span>${util.escapeHtml(article.atomName)}</span>`;
+  const atomName=`<span>${util.escapeHtml(article.atomNameFull || article.atomName)}</span>`;
   const edit=`<span class="article-edit"></span>`;
   echo(`${sticky}${attachment}${atomName}${edit}`);
 %>

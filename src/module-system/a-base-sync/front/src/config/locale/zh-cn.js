@@ -191,6 +191,7 @@ export default {
   Import: '导入',
   Order: '订单',
   AreaScope: '区域范围',
+  SubTitle: '副标题',
   'Role Name': '角色名称',
   'Role Type': '角色类型',
   'New Category': '新目录',

@@ -74,7 +74,7 @@ ${tagsText}
           <div class="article-list-section">
             <div class="article-list-content">
               ${media}
-              <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomName)}</a></h4>
+              <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${url(item.url)}">${util.escapeHtml(item.atomNameFull || item.atomName)}</a></h4>
               <p>${util.escapeHtml(item.description) || item.summary}</p>
             </div>
             ${stat}

@@ -267,6 +267,10 @@ module.exports = app => {
       if (item.sorting && showSorting) meta.flags.push(item.sorting);
       // meta.summary
       meta.summary = item.description || item.summary;
+      // atomNameSub
+      if (item.atomNameSub) {
+        item.atomNameFull = `${item.atomName}: ${item.atomNameSub}`;
+      }
     }
   }
   return AtomCmsBase;

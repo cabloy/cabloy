@@ -400,7 +400,7 @@ ${tagsText}
               ${media}
               <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(
           item.url
-        )}">${util.escapeHtml(item.atomName)}</a></h4>
+        )}">${util.escapeHtml(item.atomNameFull || item.atomName)}</a></h4>
               <p>${util.escapeHtml(item.description) || item.summary}</p>
             </div>
             ${stat}

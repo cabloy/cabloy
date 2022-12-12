@@ -36,6 +36,7 @@ export default {
   UsernameNew: 'New Username',
   ImportCompleted: 'Import Completed',
   AreaScope: 'Area Scope',
+  SubTitle: 'Sub Title',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Search Atom': 'Search Data',
