@@ -20,7 +20,7 @@ export default {
       type: Object,
     },
     button: {
-      type: Object, // text/onPerform: actionModule/actionComponent/actionPath
+      type: Object, // text/onPerform: actionModule/actionComponent/actionPath/name
     },
     buttons: {
       type: Array,
