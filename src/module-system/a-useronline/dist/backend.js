@@ -250,7 +250,8 @@ module.exports = ctx => {
       const res = await this._insertUserOnline({ user, data, isLogin });
       if (res) {
         // userOnlineHistory
-        await this._insertUserOnlineHistory({ user, data, isLogin });
+        const res2 = await this._insertUserOnlineHistory({ user, data, isLogin });
+        Object.assign(res, res2);
       }
       return res;
     }
@@ -340,7 +341,7 @@ module.exports = ctx => {
         };
       } else {
         // check expireTime
-        if (item.expireTime > Date.now()) return false;
+        if (item.expireTime > Date.now()) return null;
         data = {
           onlineCount: item.onlineCount + 1,
           ...data,
@@ -351,7 +352,10 @@ module.exports = ctx => {
         id: item.id,
         ...data,
       });
-      return true;
+      // ok
+      return {
+        userOnlineId: item.id,
+      };
     }
 
     async _insertUserOnlineHistory({ user, data, isLogin }) {
@@ -380,6 +384,10 @@ module.exports = ctx => {
         },
         user,
       });
+      // ok
+      return {
+        userOnlineHistoryId: atomKey.itemId,
+      };
     }
   }
   return UserOnline;
