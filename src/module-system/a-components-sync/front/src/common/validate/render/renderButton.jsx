@@ -20,7 +20,9 @@ export default {
       }
       return (
         <f7-list-item key={key} class={className} title={title}>
-          <div slot="after">{children}</div>
+          <div slot="after" class="buttons">
+            {children}
+          </div>
         </f7-list-item>
       );
     },
@@ -44,6 +46,13 @@ export default {
           {_text}
         </eb-button>
       );
+    },
+    _renderButton_buttons(property, buttons) {
+      const children = [];
+      for (const button of buttons) {
+        children.push(this._renderButton_button(property, button));
+      }
+      return children;
     },
   },
 };
