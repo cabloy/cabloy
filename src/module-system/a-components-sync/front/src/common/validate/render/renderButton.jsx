@@ -8,19 +8,23 @@ export default {
       const buttons = property.ebParams.buttons;
       let children;
       let className;
+      let classNameAfter;
       if (!button && !buttons) {
         children = null;
         className = '';
+        classNameAfter = '';
       } else if (button) {
         children = this._renderButton_button(property, button);
         className = 'eb-list-item-render-button';
+        classNameAfter = 'button-wrapper';
       } else if (buttons) {
         children = this._renderButton_buttons(property, buttons);
         className = 'eb-list-item-render-buttons';
+        classNameAfter = 'buttons-wrapper';
       }
       return (
         <f7-list-item key={key} class={className} title={title}>
-          <div slot="after" class="buttons">
+          <div slot="after" class={classNameAfter}>
             {children}
           </div>
         </f7-list-item>
