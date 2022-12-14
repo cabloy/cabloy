@@ -1,5 +1,10 @@
 # History
 
+## 2022-12-14, Version 4.27.7
+
+- **Feat**
+  - 新增表单字段渲染组件: `ebType: 'button'`
+
 ## 2022-12-10, Version 4.27.1
 
 - **Feat**
