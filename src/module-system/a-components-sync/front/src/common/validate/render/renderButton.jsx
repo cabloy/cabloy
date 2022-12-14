@@ -14,11 +14,11 @@ export default {
         className = '';
         classNameAfter = '';
       } else if (button) {
-        children = this._renderButton_button(property, button);
+        children = this._renderButton_button(context, property, button);
         className = 'eb-list-item-render-button';
         classNameAfter = 'button-wrapper';
       } else if (buttons) {
-        children = this._renderButton_buttons(property, buttons);
+        children = this._renderButton_buttons(context, property, buttons);
         className = 'eb-list-item-render-buttons';
         classNameAfter = 'buttons-wrapper';
       }
@@ -30,14 +30,14 @@ export default {
         </f7-list-item>
       );
     },
-    _renderButton_onPerform(event, button) {
+    _renderButton_onPerform(event, context, button) {
       return this.$meta.util.performAction({
         ctx: this,
         action: button.onPerform,
         item: { context },
       });
     },
-    _renderButton_button(property, button) {
+    _renderButton_button(context, property, button) {
       // text
       // not use parcel.data
       let _text = this.$meta.util.replaceTemplate(button.text, this.parcel.data) || '';
@@ -46,15 +46,19 @@ export default {
       const props = Object.assign({}, button.props);
       // render
       return (
-        <eb-button key={_text} {...{ props }} propsOnPerform={event => this._renderButton_onPerform(event, button)}>
+        <eb-button
+          key={_text}
+          {...{ props }}
+          propsOnPerform={event => this._renderButton_onPerform(event, context, button)}
+        >
           {_text}
         </eb-button>
       );
     },
-    _renderButton_buttons(property, buttons) {
+    _renderButton_buttons(context, property, buttons) {
       const children = [];
       for (const button of buttons) {
-        children.push(this._renderButton_button(property, button));
+        children.push(this._renderButton_button(context, property, button));
       }
       return children;
     },
