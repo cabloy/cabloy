@@ -66,6 +66,28 @@ CabloyJS 提供了大量在线演示:
 
 ![wx-zhennann](./docs/assets/images/wx-zhennann.jpg)
 
+## 入门起步
+
+如果您想在第一时间把 CabloyJS 全栈框架用起来，可以先查阅以下教程，对`开箱即用`的效果和`灵活定制`的机制有一个初步的认知：
+
+### 0. 创建第一个 CabloyJS 项目
+
+- 文档：[快速开始（项目模式）](https://cabloy.com/zh-cn/articles/guide-quick-start.html)
+
+- 视频：[B 站：新建项目](https://www.bilibili.com/video/BV1JB4y1H7iH/?vd_source=8a2b870d6d5dc83f8f4b973c95613fd8)
+
+### 1. 开箱即用起步
+
+- 文档：[教程：业务表单与审批流](https://cabloy.com/zh-cn/articles/tutorial-crud-flow.html)
+
+- 视频：[B 站：新建业务表单+审批工作流](https://www.bilibili.com/video/BV1yL4y1w7dc/?vd_source=8a2b870d6d5dc83f8f4b973c95613fd8)
+
+### 2. 灵活定制起步
+
+- 文档：[教程：前后端开发基本流程](https://cabloy.com/zh-cn/articles/tutorial-advanced-front-backend.html)
+
+- 视频：[B 站：前后端开发基本流程](https://www.bilibili.com/video/BV1GU4y1D7AF/?vd_source=8a2b870d6d5dc83f8f4b973c95613fd8)
+
 ## 引言
 
 > 凡是可以用 JavaScript 来写的应用，最终都会用 JavaScript 来写 | Atwood 定律
