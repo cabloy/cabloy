@@ -122,5 +122,8 @@ export default {
     _getHideToolbarOnScroll() {
       return this.ebHideToolbarOnScroll === undefined ? this.$device.hostEnabled : this.ebHideToolbarOnScroll;
     },
+    getAbsoluteUrl() {
+      return this.$meta.util.combineHash(this.$pageRoute.url);
+    },
   },
 };
