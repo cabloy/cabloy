@@ -18,9 +18,11 @@ export default {
         children = this._renderButton_buttons(property, buttons);
         className = 'eb-list-item-render-buttons';
       }
-      <f7-list-item key={key} class={className} title={title}>
-        <div slot="after">{children}</div>
-      </f7-list-item>;
+      return (
+        <f7-list-item key={key} class={className} title={title}>
+          <div slot="after">{children}</div>
+        </f7-list-item>
+      );
     },
     _renderButton_onPerform(event, button) {
       return this.$meta.util.performAction({
