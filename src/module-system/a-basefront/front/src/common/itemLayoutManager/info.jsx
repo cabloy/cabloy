@@ -164,7 +164,7 @@ export default {
       children.push(
         <img
           key="avatar:two"
-          class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
+          class={`avatar ${small ? 'avatar12' : 'avatar24'}`}
           src={this.info_getItemMetaMedia(item.avatar)}
           title={item.userName}
         />
