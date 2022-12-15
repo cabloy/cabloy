@@ -844,6 +844,8 @@ module.exports = app => {
             language: false,
             category: false,
             tag: false,
+            comment: false,
+            attachment: false,
             layout: {
               config: {
                 atomList: 'layoutAtomListDict',

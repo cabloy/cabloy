@@ -16047,6 +16047,8 @@ module.exports = app => {
             category: true,
             tag: true,
             resource: true,
+            comment: false,
+            attachment: false,
             layout: {
               config: {
                 atomList: 'a-baseadmin:layoutAtomListResource',
@@ -16077,6 +16079,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
             fields: {
               custom: ['catalog', 'system', 'roleIdParent'],
             },
@@ -16180,6 +16184,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
             fields: {
               custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
             },

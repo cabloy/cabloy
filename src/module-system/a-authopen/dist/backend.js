@@ -1431,6 +1431,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
             fields: {
               custom: ['clientID,clientSecret,clientSecretHidden'],
             },

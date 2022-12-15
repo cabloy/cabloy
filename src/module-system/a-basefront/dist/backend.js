@@ -62,8 +62,8 @@ module.exports = app => {
           },
         },
       },
-      attachment: true,
-      comment: true,
+      attachment: null, // null/true/false
+      comment: null, // null/true/false
     },
     layouts: {
       base: {
@@ -101,7 +101,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomItemBase',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 4,
     content: JSON.stringify(content),
