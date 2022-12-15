@@ -456,6 +456,11 @@ input[type='search']::-webkit-search-decoration {
   .eb-list-item-render-buttons {
     .buttons-wrapper {
       display: flex;
+      .button {
+        & + .button {
+          margin-left: 6px;
+        }
+      }
     }
   }
 }
