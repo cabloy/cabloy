@@ -59,6 +59,28 @@ Therefore, it is strongly recommended that you go to: [Demo Online](https://cabl
 
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
+## Getting Started
+
+If you want to use the CabloyJS full stack framework immediately, you can refer to the following tutorials to have a preliminary understanding of the `out-of-the-box` effect and `flexible-customization` mechanism:
+
+### 0. Create the first CabloyJS project
+
+- Doc: [Quick Start (Project Mode)](https://cabloy.com/articles/guide-quick-start.html)
+
+- Video: [Bilibili Video: 新建项目](https://www.bilibili.com/video/BV1JB4y1H7iH/?vd_source=8a2b870d6d5dc83f8f4b973c95613fd8) (Translation Wanted)
+
+### 1. Start to out-of-the-box
+
+- Doc: [Tutorial: Create Module](https://cabloy.com/articles/a5adc438c4a24985baee645028baea56.html)
+
+- Video: [Bilibili Video: 新建业务表单+审批工作流](https://www.bilibili.com/video/BV1yL4y1w7dc/?vd_source=8a2b870d6d5dc83f8f4b973c95613fd8) (Translation Wanted)
+
+### 2. Start to flexible-customization
+
+- Doc：[Tutorial: Basic process of frontend and backend development](https://cabloy.com/articles/tutorial-advanced-front-backend.html)
+
+- Video：[Bilibili Video: 前后端开发基本流程](https://www.bilibili.com/video/BV1GU4y1D7AF/?vd_source=8a2b870d6d5dc83f8f4b973c95613fd8) (Translation Wanted)
+
 ## Preface
 
 > Any application that can be written in Javascript, will eventually be written in Javascript | Jeff Atwood (2007)
