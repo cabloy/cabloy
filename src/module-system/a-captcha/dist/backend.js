@@ -48,6 +48,17 @@ module.exports = ctx => {
       return { providerInstanceId, provider };
     }
 
+    // refresh provider instance
+    async refreshProviderInstance({ providerInstanceId, module, sceneName, context }) {
+      // provider
+      const provider = await this.getProvider({ module, sceneName });
+      // cache
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+      // ok
+      return { providerInstanceId, provider };
+    }
+
     // get
     async getProviderInstance({ providerInstanceId }) {
       const key = utils.getCacheKey({ ctx, providerInstanceId });
@@ -315,6 +326,16 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async refreshProviderInstance() {
+      const res = await this.service.captcha.refreshProviderInstance({
+        providerInstanceId: this.ctx.request.body.providerInstanceId,
+        module: this.ctx.request.body.module,
+        sceneName: this.ctx.request.body.sceneName,
+        context: this.ctx.request.body.context,
+      });
+      this.ctx.success(res);
+    }
   }
   return CaptchaController;
 };
@@ -413,6 +434,7 @@ module.exports = app => {
   const routes = [
     // captcha
     { method: 'post', path: 'captcha/createProviderInstance', controller: 'captcha' },
+    { method: 'post', path: 'captcha/refreshProviderInstance', controller: 'captcha' },
   ];
   return routes;
 };
@@ -427,6 +449,10 @@ module.exports = app => {
   class Captcha extends app.Service {
     async createProviderInstance({ module, sceneName, context }) {
       return await this.ctx.bean.captcha.createProviderInstance({ module, sceneName, context });
+    }
+
+    async refreshProviderInstance({ providerInstanceId, module, sceneName, context }) {
+      return await this.ctx.bean.captcha.refreshProviderInstance({ providerInstanceId, module, sceneName, context });
     }
   }
 
