@@ -134,7 +134,7 @@ function sync(registry, name, callback) {
 }
 
 function syncByNames(names) {
-  const queue = new Bagpipe(1);
+  const queue = new Bagpipe(10);
   let remain = names.length * registrys.length;
   if (!names) {
     console.log('Can not find any packages to sync.');
