@@ -18,6 +18,9 @@ export default {
                 sceneName: this.sceneName,
                 context: this.context,
                 providerInstance: this.providerInstance,
+                onRefresh: () => {
+                  return this.onRefresh();
+                },
               },
             },
           },
@@ -66,8 +69,14 @@ export default {
     async refresh() {
       const captchaInstance = this.$refs.captcha && this.$refs.captcha.getComponentInstance();
       if (captchaInstance) {
+        if (!captchaInstance.refresh) {
+          throw new Error('should provide refresh');
+        }
         await captchaInstance.refresh();
       }
+    },
+    onRefresh() {
+      return this.refresh();
     },
   },
 };

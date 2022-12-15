@@ -17,6 +17,9 @@ export default {
     providerInstance: {
       type: Object,
     },
+    onRefresh: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -50,7 +53,7 @@ export default {
       this.src = this.$meta.util.combineQueries(url, query);
     },
     onClick() {
-      this.changeSrc();
+      this.onRefresh();
     },
   },
 };
