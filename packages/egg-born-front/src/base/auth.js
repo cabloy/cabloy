@@ -2,7 +2,8 @@ export default function (Vue) {
   function _setUser(state, user) {
     state.user = Object.assign({}, state.user, user);
     // agent rather then op
-    if (user && user.agent && user.agent.locale) {
+    const userAgent = user && user.agent;
+    if (userAgent && !userAgent.anonymous && userAgent.locale) {
       // cookie
       Vue.prototype.$meta.util.setLocale(user.agent.locale);
     }
