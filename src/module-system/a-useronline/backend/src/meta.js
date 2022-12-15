@@ -20,6 +20,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
             layout: {
               config: {
                 atomList: 'layoutAtomListUserOnline',
@@ -53,6 +55,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
           },
           actions: {},
           validator: 'userOnlineHistory',

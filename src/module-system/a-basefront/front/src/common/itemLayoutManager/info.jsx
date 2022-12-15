@@ -54,12 +54,19 @@ export default {
       const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
       return this.$meta.util.combineImageUrl(media, 16);
     },
+    info_checkEnableComment(item) {
+      // atomStage 0 for workflow
+      if (item.atomStage === 0) return true;
+      const atomClassBase = this.getAtomClass(this.base.atomClass);
+      if (atomClassBase.comment === false) return false;
+      return this.layout.configFull.info.comment;
+    },
     info_renderActionsLeft() {
       if (!this.base_ready) return;
       const item = this.base.item;
       const children = [];
       // comment
-      if (item.atomStage === 0 || this.layout.configFull.info.comment) {
+      if (this.info_checkEnableComment(item)) {
         children.push(
           <eb-link
             key="actionsLeft:comment"
