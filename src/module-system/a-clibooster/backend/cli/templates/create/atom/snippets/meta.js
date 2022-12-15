@@ -4,8 +4,10 @@ const __snippet_atom = `<%=argv.atomClassName%>: {
     title: '<%=argv.atomClassNameCapitalize%>',
     tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',
     language: false,
-    category: true,
-    tag: true,
+    category: false,
+    tag: false,
+    comment: false,
+    attachment: false,
     layout: {
       config: {
         // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
