@@ -1,5 +1,10 @@
 # History
 
+## 2022-12-15, Version 4.27.9
+
+- **Feat**
+  - 原子类型提供 meta 参数：comment/attachment
+
 ## 2022-12-14, Version 4.27.7
 
 - **Feat**
