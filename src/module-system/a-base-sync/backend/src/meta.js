@@ -58,6 +58,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
             fields: {
               custom: ['catalog', 'system', 'roleIdParent'],
             },
@@ -161,6 +163,8 @@ module.exports = app => {
             simple: true,
             history: false,
             inner: true,
+            comment: false,
+            attachment: false,
             fields: {
               custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
             },

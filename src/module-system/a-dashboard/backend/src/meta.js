@@ -15,6 +15,8 @@ module.exports = app => {
             },
             inner: true,
             resource: true,
+            comment: false,
+            attachment: false,
           },
           actions: {
             write: {
