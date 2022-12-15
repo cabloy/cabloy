@@ -21,6 +21,8 @@ module.exports = app => {
             language: false,
             category: true,
             tag: false,
+            comment: false,
+            attachment: false,
             layout: {
               config: {
                 atomList: 'layoutAtomListApp',

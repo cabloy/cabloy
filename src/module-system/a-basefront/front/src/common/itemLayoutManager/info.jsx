@@ -55,16 +55,22 @@ export default {
       return this.$meta.util.combineImageUrl(media, 16);
     },
     info_checkEnableComment(item) {
-      // atomStage 0 for workflow
+      // 0. atomStage 0 for workflow
       if (item.atomStage === 0) return true;
+      // 1. config
+      const configComment = this.layout.configFull.info.comment;
+      if (configComment === true || configComment === false) return configComment;
+      // 2. meta
       const atomClassBase = this.getAtomClass(this.base.atomClass);
-      if (atomClassBase.comment === false) return false;
-      return this.layout.configFull.info.comment;
+      return atomClassBase.comment !== false;
     },
     info_checkEnableAttachment(/* item*/) {
+      // 1. config
+      const configAttachment = this.layout.configFull.info.attachment;
+      if (configAttachment === true || configAttachment === false) return configAttachment;
+      // 2. meta
       const atomClassBase = this.getAtomClass(this.base.atomClass);
-      if (atomClassBase.attachment === false) return false;
-      return this.layout.configFull.info.attachment;
+      return atomClassBase.attachment !== false;
     },
     info_renderActionsLeft() {
       if (!this.base_ready) return;

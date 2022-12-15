@@ -26,6 +26,8 @@ module.exports = app => {
             category: true,
             tag: true,
             resource: true,
+            comment: false,
+            attachment: false,
             layout: {
               config: {
                 atomList: 'a-baseadmin:layoutAtomListResource',
