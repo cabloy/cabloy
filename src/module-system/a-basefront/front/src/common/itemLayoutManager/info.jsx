@@ -61,6 +61,11 @@ export default {
       if (atomClassBase.comment === false) return false;
       return this.layout.configFull.info.comment;
     },
+    info_checkEnableAttachment(/* item*/) {
+      const atomClassBase = this.getAtomClass(this.base.atomClass);
+      if (atomClassBase.attachment === false) return false;
+      return this.layout.configFull.info.attachment;
+    },
     info_renderActionsLeft() {
       if (!this.base_ready) return;
       const item = this.base.item;
@@ -78,7 +83,7 @@ export default {
         );
       }
       // attachment
-      if (this.layout.configFull.info.attachment) {
+      if (this.info_checkEnableAttachment(item)) {
         children.push(
           <eb-link
             key="actionsLeft:attachment"
