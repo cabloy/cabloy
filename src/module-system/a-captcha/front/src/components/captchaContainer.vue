@@ -67,6 +67,15 @@ export default {
       };
     },
     async refresh() {
+      if (!this.providerInstance) return;
+      // refresh
+      this.providerInstance = await this.$api.post('captcha/refreshProviderInstance', {
+        providerInstanceId: this.providerInstance.providerInstanceId,
+        module: this.module,
+        sceneName: this.sceneName,
+        context: this.context,
+      });
+      // refresh
       const captchaInstance = this.$refs.captcha && this.$refs.captcha.getComponentInstance();
       if (captchaInstance) {
         if (!captchaInstance.refresh) {

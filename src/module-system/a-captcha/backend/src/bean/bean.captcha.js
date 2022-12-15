@@ -42,6 +42,17 @@ module.exports = ctx => {
       return { providerInstanceId, provider };
     }
 
+    // refresh provider instance
+    async refreshProviderInstance({ providerInstanceId, module, sceneName, context }) {
+      // provider
+      const provider = await this.getProvider({ module, sceneName });
+      // cache
+      const key = utils.getCacheKey({ ctx, providerInstanceId });
+      await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+      // ok
+      return { providerInstanceId, provider };
+    }
+
     // get
     async getProviderInstance({ providerInstanceId }) {
       const key = utils.getCacheKey({ ctx, providerInstanceId });
