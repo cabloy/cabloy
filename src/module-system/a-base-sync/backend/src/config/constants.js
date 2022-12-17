@@ -171,6 +171,10 @@ module.exports = app => {
           title: 'Draft',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'actionBulk',
+          render: {
+            module: 'a-baserender',
+            name: 'renderAtomListDraftStats',
+          },
           bulk: true,
           select: false,
           stage: 'formal',
