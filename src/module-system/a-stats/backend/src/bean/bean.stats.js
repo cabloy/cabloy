@@ -49,7 +49,7 @@ module.exports = ctx => {
       // loop names
       await this._notify_queue_names({ module, name, nameSub, user });
       // deps
-      await this._notify_queue_deps({ module, name, user });
+      await this._notify_queue_deps({ module, name, nameSub, user });
     }
 
     async _notify_queue_names({ module, name, nameSub, user }) {
@@ -76,13 +76,13 @@ module.exports = ctx => {
       }
     }
 
-    async _notify_queue_deps({ module, name, user }) {
+    async _notify_queue_deps({ module, name, nameSub, user }) {
       const fullKey = `${module}:${name}`;
       const deps = __statsDeps[fullKey];
       if (!deps || deps.length === 0) return;
       for (const dep of deps) {
         const [depModule, depName] = dep.split(':');
-        await this._notify_queue({ module: depModule, name: depName, user });
+        await this._notify_queue({ module: depModule, name: depName, nameSub, user });
       }
     }
 
