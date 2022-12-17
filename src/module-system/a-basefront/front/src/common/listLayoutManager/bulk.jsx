@@ -45,10 +45,28 @@ export default {
     },
     async bulk_loadActions() {
       if (this.bulk.actions) return;
-      this.bulk.actions = await this.$api.post('/a/base/atom/actionsBulk', {
+      const actions = await this.$api.post('/a/base/atom/actionsBulk', {
         atomClass: this.container.atomClass,
         stage: this.base_getCurrentStage(),
       });
+      this.bulk.actions = this.bulk_patchActions(actions);
+    },
+    bulk_patchActions(actions) {
+      let action;
+      const index = actions.findIndex(item => item.name === 'draftStatsBulk');
+      if (index > -1) {
+        action = actions.splice(index, 1)[0];
+      } else {
+        action = {
+          module: this.container.atomClass.module,
+          atomClassName: this.container.atomClass.atomClassName,
+          name: 'draftStatsBulk',
+          bulk: 1,
+          code: 46,
+        };
+      }
+      actions.unshift(action);
+      return actions;
     },
     bulk_clearSelectedAtoms() {
       this.bulk.selectedAtoms = [];
