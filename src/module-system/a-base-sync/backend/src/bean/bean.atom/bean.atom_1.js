@@ -791,7 +791,7 @@ module.exports = ctx => {
     _notifyDrafts(user) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
-        name: 'drafts',
+        name: 'draftsDrafting',
         user,
       });
     }
