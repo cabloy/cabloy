@@ -54,7 +54,7 @@ module.exports = ctx => {
         atomIdFormal: keyFormal.atomId,
       });
       // notify
-      this._notifyDrafts(user);
+      this._notifyDraftsDrafting(user);
       if (item.atomFlowId > 0) {
         this._notifyDraftsFlowing(user);
       }
@@ -121,7 +121,7 @@ module.exports = ctx => {
           fn: 'delete',
         });
         // notify to change draft stats
-        this._notifyDrafts();
+        this._notifyDraftsDrafting();
       }
       // ok
       if (atom.atomStage === 0) {
@@ -297,7 +297,7 @@ module.exports = ctx => {
         userIdUpdated: user.id,
       });
       // notify
-      this._notifyDrafts();
+      this._notifyDraftsDrafting();
     }
 
     // target: draft/formal/history/clone
@@ -788,7 +788,7 @@ module.exports = ctx => {
       return actionRes;
     }
 
-    _notifyDrafts(user) {
+    _notifyDraftsDrafting(user) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'draftsDrafting',

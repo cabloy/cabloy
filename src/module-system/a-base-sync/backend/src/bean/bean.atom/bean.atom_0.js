@@ -75,7 +75,7 @@ module.exports = ctx => {
         user,
       });
       // notify
-      this._notifyDrafts();
+      this._notifyDraftsDrafting();
       // ok
       const key = { atomId, itemId };
       const returnAtom = options.returnAtom;
@@ -302,7 +302,7 @@ module.exports = ctx => {
             fn: 'delete',
           });
           // notify
-          this._notifyDrafts();
+          this._notifyDraftsDrafting();
         }
         // delete formal
         await ctx.meta.util.executeBean({
@@ -390,7 +390,7 @@ module.exports = ctx => {
         }
       }
       // notify
-      this._notifyDrafts(user);
+      this._notifyDraftsDrafting(user);
       this._notifyDraftsFlowing(user);
     }
 
@@ -577,7 +577,7 @@ module.exports = ctx => {
       // notify
       const item = await this.modelAtom.get({ id: key.atomId });
       const user = { id: item.userIdUpdated };
-      this._notifyDrafts(user);
+      this._notifyDraftsDrafting(user);
       this._notifyDraftsFlowing(user);
     }
 
