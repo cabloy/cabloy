@@ -302,11 +302,11 @@ module.exports = app => {
         },
         draftsDrafting: {
           user: true,
-          bean: 'draftsDrafting',
+          bean: 'draftsCommon',
         },
         draftsFlowing: {
           user: true,
-          bean: 'draftsFlowing',
+          bean: 'draftsCommon',
         },
         stars: {
           user: true,

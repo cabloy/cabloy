@@ -190,6 +190,8 @@ module.exports = ctx => {
           // ok
           stats[fullKey] = {
             ...provider,
+            key,
+            fullKey,
             beanFullName,
             dependencies,
           };

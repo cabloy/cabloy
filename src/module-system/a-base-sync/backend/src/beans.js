@@ -33,8 +33,7 @@ const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
 const beanBodyCrypto = require('./bean/bean.bodyCrypto.js');
 const beanAreaScope = require('./bean/bean.areaScope.js');
-const statsDraftsDrafting = require('./bean/stats.draftsDrafting.js');
-const statsDraftsFlowing = require('./bean/stats.draftsFlowing.js');
+const statsDraftsCommon = require('./bean/stats.draftsCommon.js');
 const statsStars = require('./bean/stats.stars.js');
 const statsLabels = require('./bean/stats.labels.js');
 const statsStarsLabels = require('./bean/stats.starsLabels.js');
@@ -205,13 +204,9 @@ module.exports = app => {
       global: true,
     },
     // stats
-    'stats.draftsDrafting': {
+    'stats.draftsCommon': {
       mode: 'ctx',
-      bean: statsDraftsDrafting,
-    },
-    'stats.draftsFlowing': {
-      mode: 'ctx',
-      bean: statsDraftsFlowing,
+      bean: statsDraftsCommon,
     },
     'stats.stars': {
       mode: 'ctx',
