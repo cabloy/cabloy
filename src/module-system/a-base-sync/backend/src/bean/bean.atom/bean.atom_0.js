@@ -75,7 +75,7 @@ module.exports = ctx => {
         user,
       });
       // notify
-      this._notifyDraftsDrafting();
+      this._notifyDraftsDrafting(null, atomClass);
       // ok
       const key = { atomId, itemId };
       const returnAtom = options.returnAtom;
@@ -302,7 +302,7 @@ module.exports = ctx => {
             fn: 'delete',
           });
           // notify
-          this._notifyDraftsDrafting();
+          this._notifyDraftsDrafting(null, atomClass);
         }
         // delete formal
         await ctx.meta.util.executeBean({
@@ -390,8 +390,8 @@ module.exports = ctx => {
         }
       }
       // notify
-      this._notifyDraftsDrafting(user);
-      this._notifyDraftsFlowing(user);
+      this._notifyDraftsDrafting(user, atomClass);
+      this._notifyDraftsFlowing(user, atomClass);
     }
 
     async openDraft({ key, user }) {
@@ -570,6 +570,7 @@ module.exports = ctx => {
     }
 
     async flow({ key, atom: { atomFlowId } }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       await this.modelAtom.update({
         id: key.atomId,
         atomFlowId,
@@ -577,8 +578,8 @@ module.exports = ctx => {
       // notify
       const item = await this.modelAtom.get({ id: key.atomId });
       const user = { id: item.userIdUpdated };
-      this._notifyDraftsDrafting(user);
-      this._notifyDraftsFlowing(user);
+      this._notifyDraftsDrafting(user, atomClass);
+      this._notifyDraftsFlowing(user, atomClass);
     }
 
     async readCount({ key, atom: { readCount = 1 }, user }) {

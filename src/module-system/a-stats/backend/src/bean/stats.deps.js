@@ -8,7 +8,7 @@ module.exports = ctx => {
         const [module, name] = dep.split(':');
         const value = await ctx.bean.stats._get({
           module,
-          name,
+          fullName: name,
           user,
         });
         if (value) {

@@ -54,9 +54,9 @@ module.exports = ctx => {
         atomIdFormal: keyFormal.atomId,
       });
       // notify
-      this._notifyDraftsDrafting(user);
+      this._notifyDraftsDrafting(user, atomClass);
       if (item.atomFlowId > 0) {
-        this._notifyDraftsFlowing(user);
+        this._notifyDraftsFlowing(user, atomClass);
       }
       // get formal atom
       const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
@@ -121,7 +121,7 @@ module.exports = ctx => {
           fn: 'delete',
         });
         // notify to change draft stats
-        this._notifyDraftsDrafting();
+        this._notifyDraftsDrafting(null, atomClass);
       }
       // ok
       if (atom.atomStage === 0) {
@@ -289,6 +289,7 @@ module.exports = ctx => {
     }
 
     async _openDraft_update({ atomId, atomRevision, user }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
       await this.modelAtom.update({
         id: atomId,
         atomFlowId: 0,
@@ -297,7 +298,7 @@ module.exports = ctx => {
         userIdUpdated: user.id,
       });
       // notify
-      this._notifyDraftsDrafting();
+      this._notifyDraftsDrafting(null, atomClass);
     }
 
     // target: draft/formal/history/clone
@@ -788,10 +789,11 @@ module.exports = ctx => {
       return actionRes;
     }
 
-    _notifyDraftsDrafting(user) {
+    _notifyDraftsDrafting(user, atomClass) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'draftsDrafting',
+        nameSub: `${atomClass.module}_${atomClass.atomClassName}`,
         user,
       });
     }
