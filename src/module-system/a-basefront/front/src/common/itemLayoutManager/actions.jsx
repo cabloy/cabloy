@@ -153,7 +153,7 @@ export default {
         const actionIcon = mode === 'edit' ? '::save' : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
         const actionTitleDraft = this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
-        const actionTitle = mode === 'edit' ? actionTitleDraft : 'Edit';
+        const actionTitle = mode === 'edit' ? actionTitleDraft : this.actions_getActionTitle(actionWrite);
         return (
           <eb-link
             key={actionName}
