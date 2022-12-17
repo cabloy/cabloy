@@ -188,6 +188,7 @@ export default {
           action={action}
           config={actionBase}
           renderParams={actionBase.render}
+          propsonPerform={event => this.bulk_onAction(event, action)}
         ></AtomButton>
       );
     },

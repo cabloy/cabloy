@@ -43,6 +43,9 @@ export default {
     renderParams: {
       type: Object,
     },
+    onPerform: {
+      type: Function,
+    },
   },
   data() {
     return {

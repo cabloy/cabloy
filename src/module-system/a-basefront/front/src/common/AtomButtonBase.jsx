@@ -47,7 +47,7 @@ export default function (Vue) {
     },
     methods: {
       onPerformClick(event) {
-        return this.button.onPerformClick(event);
+        return this.button.onPerform(event);
       },
     },
     render() {
