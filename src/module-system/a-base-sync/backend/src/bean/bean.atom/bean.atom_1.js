@@ -798,10 +798,11 @@ module.exports = ctx => {
       });
     }
 
-    _notifyDraftsFlowing(user) {
+    _notifyDraftsFlowing(user, atomClass) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'draftsFlowing',
+        nameSub: `${atomClass.module}_${atomClass.atomClassName}`,
         user,
       });
     }
