@@ -82,7 +82,13 @@ module.exports = ctx => {
       if (!deps || deps.length === 0) return;
       for (const dep of deps) {
         const [depModule, depName] = dep.split(':');
-        await this._notify_queue({ module: depModule, name: depName, nameSub, user });
+        const providerDep = this._findStatsProvider({ module: depModule, name: depName });
+        await this._notify_queue({
+          module: depModule,
+          name: depName,
+          nameSub: providerDep.inheritNameSub ? nameSub : undefined,
+          user,
+        });
       }
     }
 
