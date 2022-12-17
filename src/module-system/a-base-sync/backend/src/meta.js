@@ -297,6 +297,7 @@ module.exports = app => {
             module: 'a-stats',
             name: 'deps',
           },
+          inheritNameSub: true,
           dependencies: ['a-base:draftsDrafting', 'a-base:draftsFlowing'],
         },
         draftsDrafting: {
