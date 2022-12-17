@@ -3,6 +3,7 @@ import ActionBulkDelete from './actionBulk/actionBulkDelete.js';
 import ActionBulkExport from './actionBulk/actionBulkExport.js';
 import ActionBulkImport from './actionBulk/actionBulkImport.js';
 import ActionBulkLayout from './actionBulk/actionBulkLayout.js';
+import ActionBulkDraftStats from './actionBulk/actionBulkDraftStats.js';
 
 export default {
   meta: {
@@ -14,6 +15,7 @@ export default {
     ActionBulkExport,
     ActionBulkImport,
     ActionBulkLayout,
+    ActionBulkDraftStats,
   ],
   methods: {
     async onAction() {
@@ -25,6 +27,8 @@ export default {
         return await this._onActionBulkImport();
       } else if (this.action.name === 'layoutBulk') {
         return await this._onActionBulkLayout();
+      } else if (this.action.name === 'draftStatsBulk') {
+        return await this._onActionBulkDraftStats();
       }
     },
   },
