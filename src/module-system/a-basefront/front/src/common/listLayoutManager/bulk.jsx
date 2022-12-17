@@ -183,6 +183,7 @@ export default {
       // custom render
       return (
         <AtomButton
+          key={`actionsRight:${actionBase.name}`}
           layoutManager={this}
           action={action}
           config={actionBase}

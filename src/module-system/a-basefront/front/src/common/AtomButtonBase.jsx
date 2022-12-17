@@ -27,11 +27,11 @@ export default function (Vue) {
       },
       buttonLabel() {
         if (!this.buttonConfig.showLabel) return null;
-        return this.button.options.titleLocale;
+        return this.buttonConfig.titleLocale;
       },
       buttonTooltip() {
         if (this.buttonConfig.showLabel) return null;
-        return this.button.options.titleLocale;
+        return this.buttonConfig.titleLocale;
       },
       buttonClass() {
         return {

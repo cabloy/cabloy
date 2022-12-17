@@ -10,19 +10,40 @@ function installFactory(_Vue) {
   return {
     mixins: [ebAtomButtonBase],
     data() {
-      return {};
+      return {
+        stats: {
+          drafts: 0,
+        },
+      };
+    },
+    computed: {
+      nameSub() {
+        const atomClass = this.layoutManager.container.atomClass;
+        return `${atomClass.module}_${atomClass.atomClassName}`;
+      },
     },
     created() {
-      this.button.hide();
+      // this.button.hide();
     },
-    methods: {},
+    methods: {
+      onStatsChange(event) {
+        this.stats.drafts = event;
+      },
+    },
     render() {
       return (
         <eb-link
           class={this.buttonClass}
-          iconF7={this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
-          tooltip={this.$meta.util.screenfull.isFullscreen ? this.$text('Exit Fullscreen') : this.$text('Fullscreen')}
-          propsOnPerform={this.onPerform}
+          iconMaterial={this.buttonIcon && this.buttonIcon.material}
+          iconF7={this.buttonIcon && this.buttonIcon.f7}
+          iconSize={this.buttonIconSize}
+          text={this.buttonLabel}
+          tooltip={this.buttonTooltip}
+          propsOnPerform={event => this.onPerformClick(event)}
+          badgeColor="orange"
+          iconBadge={this.stats.drafts}
+          stats_params={{ module: 'a-base', name: 'drafts', nameSub: this.nameSub }}
+          onStats_change={event => this.onStatsChange(event)}
         ></eb-link>
       );
     },
