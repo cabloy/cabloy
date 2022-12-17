@@ -153,34 +153,47 @@ export default {
       const selectedAtoms = this.bulk.selectedAtoms;
       if (this.bulk.actions && this.actionsAll) {
         for (const action of this.bulk.actions) {
-          const _action = this.getAction(action);
-          // stage
-          if (_action.stage) {
-            const stages = _action.stage.split(',');
-            if (!stages.some(item => item === stageCurrent)) continue;
+          const actionBase = this.getAction(action);
+          if (!this.bulk_renderActionsRight_checkIfRender(actionBase, stageCurrent, selectedAtoms)) {
+            continue;
           }
-          // select
-          if (
-            _action.select === undefined ||
-            _action.select === null ||
-            (_action.select === true && selectedAtoms.length > 0) ||
-            (_action.select === false && !this.bulk.selecting)
-          ) {
-            children.push(
-              <eb-link
-                key={`actionsRight:${_action.name}`}
-                iconMaterial={_action.icon && _action.icon.material}
-                iconF7={_action.icon && _action.icon.f7}
-                tooltip={_action.icon && _action.titleLocale}
-                propsOnPerform={event => this.bulk_onAction(event, action)}
-              >
-                {!_action.icon && _action.titleLocale}
-              </eb-link>
-            );
-          }
+          children.push(this.bulk_renderActionsRight_render(action, actionBase));
         }
       }
       return children;
+    },
+    bulk_renderActionsRight_render(action, actionBase) {
+      if (!actionBase.render) {
+        return (
+          <eb-link
+            key={`actionsRight:${actionBase.name}`}
+            iconMaterial={actionBase.icon && actionBase.icon.material}
+            iconF7={actionBase.icon && actionBase.icon.f7}
+            tooltip={actionBase.icon && actionBase.titleLocale}
+            propsOnPerform={event => this.bulk_onAction(event, action)}
+          >
+            {!actionBase.icon && actionBase.titleLocale}
+          </eb-link>
+        );
+      }
+      return 123;
+    },
+    bulk_renderActionsRight_checkIfRender(actionBase, stageCurrent, selectedAtoms) {
+      // stage
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => item === stageCurrent)) return false;
+      }
+      // select
+      if (
+        actionBase.select === undefined ||
+        actionBase.select === null ||
+        (actionBase.select === true && selectedAtoms.length > 0) ||
+        (actionBase.select === false && !this.bulk.selecting)
+      ) {
+        return true;
+      }
+      return false;
     },
   },
 };
