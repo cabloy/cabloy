@@ -13188,6 +13188,7 @@ module.exports = app => {
         importBulk: 37,
         // reportBulk: 38,
         layoutBulk: 45,
+        draftStatsBulk: 46,
 
         save: 51,
         submit: 52,
@@ -13314,6 +13315,19 @@ module.exports = app => {
           bulk: true,
           select: null,
           icon: { f7: '::view-list' },
+        },
+        draftStatsBulk: {
+          title: 'Draft',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'actionBulk',
+          render: {
+            module: 'a-baserender',
+            name: 'renderAtomListDraftStats',
+          },
+          bulk: true,
+          select: false,
+          stage: 'formal',
+          icon: { f7: ':outline:draft-outline' },
         },
         save: {
           title: 'Save',
