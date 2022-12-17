@@ -7,6 +7,7 @@ export default {
   SharingCompleted: '分享已完成',
   DraftsFlowingMineTab: '流转中',
   OpenLinkTitleRedirect: '跳转',
+  SaveAsDraft: '保存为草稿',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',
   CabloyAboutTip2: '前端采用VueJS + Framework7 + Webpack，后端采用KoaJS + EggJS，数据库采用MySQL',
   CabloyAboutTip3: '在纵向上，将前端和后端打通，形成一个有机的整体，避免前端和后端各自为政的状况',

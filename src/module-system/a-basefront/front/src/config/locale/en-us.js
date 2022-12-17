@@ -4,6 +4,7 @@ export default {
   ShowAllComments: 'Show All Comments',
   SharingCompleted: 'Sharing Completed',
   DraftsFlowingMineTab: 'Flowings',
+  SaveAsDraft: 'Save as Draft',
   CabloyAboutTip1: 'CabloyJS - The Ultimate NodeJS Full Stack Business Development Platform',
   CabloyAboutTip2:
     'The frontend of CabloyJS uses VueJS + Framework7 + Webpack, while the backend uses KoaJS + EggJS, and the database uses MySQL',
