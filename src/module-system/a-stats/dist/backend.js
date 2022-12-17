@@ -55,7 +55,7 @@ module.exports = ctx => {
       // loop names
       await this._notify_queue_names({ module, name, nameSub, user });
       // deps
-      await this._notify_queue_deps({ module, name, user });
+      await this._notify_queue_deps({ module, name, nameSub, user });
     }
 
     async _notify_queue_names({ module, name, nameSub, user }) {
@@ -82,13 +82,19 @@ module.exports = ctx => {
       }
     }
 
-    async _notify_queue_deps({ module, name, user }) {
+    async _notify_queue_deps({ module, name, nameSub, user }) {
       const fullKey = `${module}:${name}`;
       const deps = __statsDeps[fullKey];
       if (!deps || deps.length === 0) return;
       for (const dep of deps) {
         const [depModule, depName] = dep.split(':');
-        await this._notify_queue({ module: depModule, name: depName, user });
+        const providerDep = this._findStatsProvider({ module: depModule, name: depName });
+        await this._notify_queue({
+          module: depModule,
+          name: depName,
+          nameSub: providerDep.inheritNameSub ? nameSub : undefined,
+          user,
+        });
       }
     }
 
@@ -190,6 +196,8 @@ module.exports = ctx => {
           // ok
           stats[fullKey] = {
             ...provider,
+            key,
+            fullKey,
             beanFullName,
             dependencies,
           };
@@ -290,11 +298,14 @@ module.exports = app => {
 module.exports = ctx => {
   class Stats {
     async execute(context) {
-      const { provider, user } = context;
+      const { keys, provider, user } = context;
       const dependencies = provider.dependencies;
       let count = 0;
       for (const dep of dependencies) {
-        const [module, fullName] = dep.split(':');
+        const [module, name] = dep.split(':');
+        const _keys = keys.slice(0);
+        _keys.splice(0, 1, name);
+        const fullName = _keys.join('.');
         const value = await ctx.bean.stats._get({
           module,
           fullName,

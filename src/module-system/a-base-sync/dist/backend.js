@@ -802,7 +802,7 @@ module.exports = ctx => {
         user,
       });
       // notify
-      this._notifyDrafts();
+      this._notifyDraftsDrafting(null, atomClass);
       // ok
       const key = { atomId, itemId };
       const returnAtom = options.returnAtom;
@@ -1029,7 +1029,7 @@ module.exports = ctx => {
             fn: 'delete',
           });
           // notify
-          this._notifyDrafts();
+          this._notifyDraftsDrafting(null, atomClass);
         }
         // delete formal
         await ctx.meta.util.executeBean({
@@ -1117,8 +1117,8 @@ module.exports = ctx => {
         }
       }
       // notify
-      this._notifyDrafts(user);
-      this._notifyDraftsFlowing(user);
+      this._notifyDraftsDrafting(user, atomClass);
+      this._notifyDraftsFlowing(user, atomClass);
     }
 
     async openDraft({ key, user }) {
@@ -1297,6 +1297,7 @@ module.exports = ctx => {
     }
 
     async flow({ key, atom: { atomFlowId } }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       await this.modelAtom.update({
         id: key.atomId,
         atomFlowId,
@@ -1304,8 +1305,8 @@ module.exports = ctx => {
       // notify
       const item = await this.modelAtom.get({ id: key.atomId });
       const user = { id: item.userIdUpdated };
-      this._notifyDrafts(user);
-      this._notifyDraftsFlowing(user);
+      this._notifyDraftsDrafting(user, atomClass);
+      this._notifyDraftsFlowing(user, atomClass);
     }
 
     async readCount({ key, atom: { readCount = 1 }, user }) {
@@ -1463,9 +1464,9 @@ module.exports = ctx => {
         atomIdFormal: keyFormal.atomId,
       });
       // notify
-      this._notifyDrafts(user);
+      this._notifyDraftsDrafting(user, atomClass);
       if (item.atomFlowId > 0) {
-        this._notifyDraftsFlowing(user);
+        this._notifyDraftsFlowing(user, atomClass);
       }
       // get formal atom
       const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
@@ -1530,7 +1531,7 @@ module.exports = ctx => {
           fn: 'delete',
         });
         // notify to change draft stats
-        this._notifyDrafts();
+        this._notifyDraftsDrafting(null, atomClass);
       }
       // ok
       if (atom.atomStage === 0) {
@@ -1698,6 +1699,7 @@ module.exports = ctx => {
     }
 
     async _openDraft_update({ atomId, atomRevision, user }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
       await this.modelAtom.update({
         id: atomId,
         atomFlowId: 0,
@@ -1706,7 +1708,7 @@ module.exports = ctx => {
         userIdUpdated: user.id,
       });
       // notify
-      this._notifyDrafts();
+      this._notifyDraftsDrafting(null, atomClass);
     }
 
     // target: draft/formal/history/clone
@@ -2197,18 +2199,20 @@ module.exports = ctx => {
       return actionRes;
     }
 
-    _notifyDrafts(user) {
+    _notifyDraftsDrafting(user, atomClass) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
-        name: 'drafts',
+        name: 'draftsDrafting',
+        nameSub: `${atomClass.module}_${atomClass.atomClassName}`,
         user,
       });
     }
 
-    _notifyDraftsFlowing(user) {
+    _notifyDraftsFlowing(user, atomClass) {
       ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'draftsFlowing',
+        nameSub: `${atomClass.module}_${atomClass.atomClassName}`,
         user,
       });
     }
@@ -10133,49 +10137,44 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 4571:
+/***/ 1015:
 /***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Stats {
     async execute(context) {
-      const { user } = context;
-      const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
-      const count = await modelAtom.count({
+      const { keys, provider, user } = context;
+      // params
+      const params = {
         userIdUpdated: user.id,
         atomStage: 0,
         atomClosed: 0,
-        atomFlowId: 0,
-      });
-      return count;
-    }
-  }
-
-  return Stats;
-};
-
-
-/***/ }),
-
-/***/ 6431:
-/***/ ((module) => {
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Stats {
-    async execute(context) {
-      const { user } = context;
-      const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
-      const count = await modelAtom.count({
-        userIdUpdated: user.id,
-        atomStage: 0,
-        atomClosed: 0,
-        atomFlowId: {
+      };
+      // draftsDrafting/draftsFlowing
+      if (provider.key === 'draftsDrafting') {
+        params.atomFlowId = 0;
+      } else if (provider.key === 'draftsFlowing') {
+        params.atomFlowId = {
           op: '>',
           val: 0,
-        },
-      });
+        };
+      }
+      // atomClass
+      let atomClass;
+      if (keys.length > 1) {
+        const [module, atomClassName] = keys[1].split('_');
+        atomClass = await ctx.bean.atomClass.get({
+          module,
+          atomClassName,
+        });
+      }
+      if (atomClass) {
+        params.atomClassId = atomClass.id;
+      }
+      // count
+      const modelAtom = ctx.model.module(moduleInfo.relativeName).atom;
+      const count = await modelAtom.count(params);
       return count;
     }
   }
@@ -12706,8 +12705,7 @@ const beanCategory = __webpack_require__(30);
 const beanTag = __webpack_require__(8636);
 const beanBodyCrypto = __webpack_require__(852);
 const beanAreaScope = __webpack_require__(9025);
-const statsDrafts = __webpack_require__(4571);
-const statsDraftsFlowing = __webpack_require__(6431);
+const statsDraftsCommon = __webpack_require__(1015);
 const statsStars = __webpack_require__(8999);
 const statsLabels = __webpack_require__(6318);
 const statsStarsLabels = __webpack_require__(442);
@@ -12878,13 +12876,9 @@ module.exports = app => {
       global: true,
     },
     // stats
-    'stats.drafts': {
+    'stats.draftsCommon': {
       mode: 'ctx',
-      bean: statsDrafts,
-    },
-    'stats.draftsFlowing': {
-      mode: 'ctx',
-      bean: statsDraftsFlowing,
+      bean: statsDraftsCommon,
     },
     'stats.stars': {
       mode: 'ctx',
@@ -16314,11 +16308,20 @@ module.exports = app => {
       providers: {
         drafts: {
           user: true,
-          bean: 'drafts',
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
+          inheritNameSub: true,
+          dependencies: ['a-base:draftsDrafting', 'a-base:draftsFlowing'],
+        },
+        draftsDrafting: {
+          user: true,
+          bean: 'draftsCommon',
         },
         draftsFlowing: {
           user: true,
-          bean: 'draftsFlowing',
+          bean: 'draftsCommon',
         },
         stars: {
           user: true,
