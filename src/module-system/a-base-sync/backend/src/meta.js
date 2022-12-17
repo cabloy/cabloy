@@ -293,7 +293,15 @@ module.exports = app => {
       providers: {
         drafts: {
           user: true,
-          bean: 'drafts',
+          bean: {
+            module: 'a-stats',
+            name: 'deps',
+          },
+          dependencies: ['a-base:draftsDrafting', 'a-base:draftsFlowing'],
+        },
+        draftsDrafting: {
+          user: true,
+          bean: 'draftsDrafting',
         },
         draftsFlowing: {
           user: true,
