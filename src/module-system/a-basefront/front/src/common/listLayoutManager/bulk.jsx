@@ -1,7 +1,7 @@
 import AtomButton from '../../components/atom/atomButton.vue';
 
 export default {
-  components: [AtomButton],
+  components: { AtomButton },
   data() {
     return {
       bulk: {
