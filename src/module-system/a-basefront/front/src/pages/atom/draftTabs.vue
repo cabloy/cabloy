@@ -6,17 +6,17 @@
           <eb-link
             :tab-link="`#${tabId.drafts}`"
             :tabLinkActive="tabName === 'drafts'"
-            :text="$text('Drafts')"
+            :text="$text('DraftsDraftingMineTab')"
             badge-color="orange"
             :badge="stats.drafts"
-            :stats_params="{ module: 'a-base', name: 'drafts' }"
+            :stats_params="{ module: 'a-base', name: 'draftsDrafting' }"
             @stats_change="onStatsChange($event, 'drafts')"
           ></eb-link>
           <eb-link
             :tab-link="`#${tabId.draftsFlowing}`"
             :tabLinkActive="tabName === 'draftsFlowing'"
             :text="$text('DraftsFlowingMineTab')"
-            badge-color="gray"
+            badge-color="orange"
             :badge="stats.draftsFlowing"
             :stats_params="{ module: 'a-base', name: 'draftsFlowing' }"
             @stats_change="onStatsChange($event, 'draftsFlowing')"
