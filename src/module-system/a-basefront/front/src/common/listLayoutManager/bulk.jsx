@@ -1,4 +1,7 @@
+import AtomButton from '../../components/atom/atomButton.vue';
+
 export default {
+  components: [AtomButton],
   data() {
     return {
       bulk: {
@@ -163,6 +166,7 @@ export default {
       return children;
     },
     bulk_renderActionsRight_render(action, actionBase) {
+      // default render
       if (!actionBase.render) {
         return (
           <eb-link
@@ -176,7 +180,15 @@ export default {
           </eb-link>
         );
       }
-      return 123;
+      // custom render
+      return (
+        <AtomButton
+          layoutManager={this}
+          action={action}
+          config={actionBase}
+          renderParams={actionBase.render}
+        ></AtomButton>
+      );
     },
     bulk_renderActionsRight_checkIfRender(actionBase, stageCurrent, selectedAtoms) {
       // stage

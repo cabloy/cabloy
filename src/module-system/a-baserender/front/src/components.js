@@ -16,6 +16,8 @@ import renderUserLabel from './components/render/renderUserLabel.jsx';
 import renderUser from './components/render/renderUser.jsx';
 import renderRole from './components/render/renderRole.jsx';
 import renderMarkdown from './components/render/renderMarkdown.jsx';
+// atom button
+import renderAtomListDraftStats from './components/render/renderAtomListDraftStats.jsx';
 
 export default {
   componentAction,
@@ -36,4 +38,5 @@ export default {
   renderUser,
   renderRole,
   renderMarkdown,
+  renderAtomListDraftStats,
 };

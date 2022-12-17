@@ -6,7 +6,7 @@ export default {
 // installFactory
 function installFactory(_Vue) {
   const Vue = _Vue;
-  const ebAtomButtonBase = Vue.prototype.$meta.module.get('a-layoutfront').options.mixins.ebAtomButtonBase;
+  const ebAtomButtonBase = Vue.prototype.$meta.module.get('a-basefront').options.mixins.ebAtomButtonBase;
   return {
     mixins: [ebAtomButtonBase],
     data() {

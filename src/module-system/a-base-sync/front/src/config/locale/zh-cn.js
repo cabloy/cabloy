@@ -241,4 +241,5 @@ export default {
   'Block Not Found': '区块未发现',
   'Flow Chart': '流程图',
   'App Key': '应用Key',
+  'Button Not Found': '按钮未发现',
 };

@@ -5,6 +5,7 @@ import categorySelect from './components/category/categorySelect.jsx';
 import tagSelect from './components/tag/tagSelect.jsx';
 // atom
 import atomList from './components/atom/atomList.jsx';
+import atomButton from './components/atom/atomButton.vue';
 // listLayoutData
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
 import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
@@ -22,6 +23,7 @@ export default {
   tagSelect,
   // atom
   atomList,
+  atomButton,
   // layout
   listLayoutDataAdapter,
   listLayoutDataProviderAll,
