@@ -16,9 +16,11 @@ export default {
         // layout
         if (action.name === 'layout') continue;
         // write: support simple
-        if (action.name === 'write' && this.base.item.atomStage === this.base.item.atomSimple) continue;
+        // if (action.name === 'write' && this.base.item.atomStage === this.base.item.atomSimple) continue;
+        if (action.name === 'write' && this.base.item.atomStage !== 2) continue;
         // view
-        if (action.name === 'read' && this.container.mode === 'view') continue;
+        // if (action.name === 'read' && this.container.mode === 'view') continue;
+        if (action.name === 'read') continue;
         // stage
         const _action = this.getAction(action);
         if (_action.stage) {
@@ -119,12 +121,34 @@ export default {
     actions_getActionTitle(action) {
       return this.getActionTitle(action, this.base.item);
     },
+    actions_renderButtonView() {
+      // only show on draft/edit
+      const atomClosed = this.base.item.atomClosed === 1;
+      const mode = this.container.mode;
+      const actionView = this.actions_findAction('read');
+      if (mode === 'edit' && actionView && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
+        const actionIcon = '::visibility';
+        const actionName = 'read';
+        const actionTitle = 'View';
+        return (
+          <eb-link
+            key={actionName}
+            ref="buttonView"
+            iconF7={actionIcon}
+            tooltip={this.$text(actionTitle)}
+            propsOnPerform={event => this.actions_onAction(event, actionName)}
+          ></eb-link>
+        );
+      }
+      return null;
+    },
     actions_renderButtonSave() {
       // only show on draft
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
       // support simple
-      if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
+      // if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
+      if (actionWrite && this.base.item.atomStage !== 2 && !atomClosed) {
         const mode = this.container.mode;
         const actionIcon = mode === 'edit' ? '::save' : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
@@ -153,7 +177,7 @@ export default {
             key={actionName}
             ref="buttonSubmit"
             iconF7="::done"
-            tooltip={this.$text('Submit')}
+            tooltip={this.$text('SaveAndSubmit')}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
         );
@@ -183,6 +207,9 @@ export default {
       if (buttonSave) children.push(buttonSave);
       const buttonSubmit = this.actions_renderButtonSubmit();
       if (buttonSubmit) children.push(buttonSubmit);
+      // only show on draft/edit
+      const buttonView = this.actions_renderButtonView();
+      if (buttonView) children.push(buttonView);
       // popover
       if (this.actions_listPopover) {
         children.push(
