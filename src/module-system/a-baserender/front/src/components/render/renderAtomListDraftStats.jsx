@@ -23,11 +23,16 @@ function installFactory(_Vue) {
       },
     },
     created() {
-      // this.button.hide();
+      this.button.hide();
     },
     methods: {
       onStatsChange(event) {
         this.stats.drafts = event;
+        if (event > 0) {
+          this.button.show();
+        } else {
+          this.button.hide();
+        }
       },
     },
     render() {
