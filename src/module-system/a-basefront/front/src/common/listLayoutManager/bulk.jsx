@@ -17,7 +17,7 @@ export default {
         await this.bulk_loadActions();
       }
     },
-    bulk_onAction(event, action) {
+    async bulk_onAction(event, action) {
       this.$f7.tooltip.hide(event.currentTarget);
       // action
       let _action = this.getAction(action);
@@ -44,7 +44,7 @@ export default {
         }
       }
       // performAction
-      return this.$meta.util.performAction({ ctx: this, action: _action, item });
+      return await this.$meta.util.performAction({ ctx: this, action: _action, item });
     },
     async bulk_loadActions() {
       if (this.bulk.actions) return;

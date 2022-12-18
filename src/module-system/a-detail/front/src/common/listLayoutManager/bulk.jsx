@@ -10,7 +10,7 @@ export default {
     this.bulk_loadActions();
   },
   methods: {
-    bulk_onAction(event, action) {
+    async bulk_onAction(event, action) {
       this.$f7.tooltip.hide(event.currentTarget);
       // action
       let _action = this.getDetailAction(action);
@@ -23,7 +23,7 @@ export default {
         detailClassName: action.detailClassName,
       };
       // performAction
-      return this.$meta.util.performAction({
+      return await this.$meta.util.performAction({
         ctx: this,
         action: _action,
         item: {
