@@ -20,6 +20,12 @@ export default {
     async base_onInit() {
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
+      // adjust container category
+      await this.base_adjustContainerCategory();
+    },
+    async base_adjustContainerCategory() {
+      const category = this.container.options && this.container.options.category;
+      if (!category || typeof category !== 'string') return;
     },
     base_prepareReadOptions() {
       // options
