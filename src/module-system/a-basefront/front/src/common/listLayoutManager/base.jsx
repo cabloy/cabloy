@@ -24,8 +24,18 @@ export default {
       await this.base_adjustContainerCategory();
     },
     async base_adjustContainerCategory() {
-      const category = this.container.options && this.container.options.category;
-      if (!category || typeof category !== 'string') return;
+      const categoryName = this.container.options && this.container.options.category;
+      if (!categoryName || typeof categoryName !== 'string') return;
+      const language = this.container.options.language;
+      const category = await this.$api.post('/a/base/category/parseCategoryName', {
+        atomClass: this.container.atomClass,
+        language,
+        categoryName,
+      });
+      if (!category) {
+        throw new Error(`Category not found: ${categoryName}`);
+      }
+      this.container.options.category = category.id;
     },
     base_prepareReadOptions() {
       // options
