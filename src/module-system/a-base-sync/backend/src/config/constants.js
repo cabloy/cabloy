@@ -39,7 +39,6 @@ module.exports = app => {
         importBulk: 37,
         // reportBulk: 38,
         layoutBulk: 45,
-        draftStatsBulk: 46,
 
         save: 51,
         submit: 52,
@@ -47,6 +46,11 @@ module.exports = app => {
         formal: 54,
         draft: 55,
         workflow: 56,
+
+        //
+        draftStatsBulk: 71,
+        readBulk: 72,
+
         custom: 100, // custom action start from custom
       },
       actionMeta: {
@@ -179,6 +183,15 @@ module.exports = app => {
           select: false,
           stage: 'formal',
           icon: { f7: ':outline:draft-outline' },
+          authorize: false,
+        },
+        readBulk: {
+          title: 'List',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'actionBulk',
+          bulk: true,
+          icon: { f7: '::visibility' },
+          authorize: false,
         },
         save: {
           title: 'Save',

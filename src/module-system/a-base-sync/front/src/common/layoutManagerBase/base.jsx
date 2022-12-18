@@ -39,9 +39,14 @@ export default {
         });
       } else if (resourceConfig.atomAction === 'read') {
         if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
-          resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
+          action = this.getAction({
+            module: resourceConfig.module,
+            atomClassName: resourceConfig.atomClassName,
+            name: 'readBulk',
+          });
+        } else {
+          action = resourceConfig;
         }
-        action = resourceConfig;
         item = Object.assign({}, item, {
           module: resourceConfig.module,
           atomClassName: resourceConfig.atomClassName,
