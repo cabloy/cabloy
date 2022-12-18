@@ -45,6 +45,19 @@ module.exports = app => {
         }
         item.roleIdOwner = roleId;
       }
+      // atomCategoryId
+      if (item.atomCategoryId && typeof item.atomCategoryId === 'string') {
+        const category = await this.ctx.bean.category.parseCategoryName({
+          atomClass,
+          language: item.atomLanguage,
+          categoryName: item.atomCategoryId,
+          force: false, // not force, because this api maybe called by normal user
+        });
+        if (!category) {
+          throw new Error(`Category not found: ${item.atomCategoryId}`);
+        }
+        item.atomCategoryId = category.id;
+      }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
       return { atomId };

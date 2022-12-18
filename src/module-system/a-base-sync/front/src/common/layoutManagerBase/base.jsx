@@ -25,7 +25,7 @@ export default {
       const resourceConfig = JSON.parse(resource.resourceConfig);
       // special for action
       let action;
-      let item;
+      let item = resourceConfig.actionItem;
       if (resourceConfig.atomAction === 'create') {
         //
         action = this.getAction({
@@ -33,19 +33,19 @@ export default {
           atomClassName: resourceConfig.atomClassName,
           name: resourceConfig.atomAction,
         });
-        item = {
+        item = Object.assign({}, item, {
           module: resourceConfig.module,
           atomClassName: resourceConfig.atomClassName,
-        };
+        });
       } else if (resourceConfig.atomAction === 'read') {
         if (!resourceConfig.actionComponent && !resourceConfig.actionPath) {
           resourceConfig.actionPath = '/a/basefront/atom/list?module={{module}}&atomClassName={{atomClassName}}';
         }
         action = resourceConfig;
-        item = {
+        item = Object.assign({}, item, {
           module: resourceConfig.module,
           atomClassName: resourceConfig.atomClassName,
-        };
+        });
       } else {
         action = resourceConfig;
       }
