@@ -61,6 +61,16 @@ module.exports = app => {
     async relativeTop({ categoryId, setLocale }) {
       return await this.ctx.bean.category.relativeTop({ categoryId, setLocale });
     }
+
+    async parseCategoryName({ atomClass, language, categoryName, categoryIdParent, force }) {
+      return await this.ctx.bean.category.parseCategoryName({
+        atomClass,
+        language,
+        categoryName,
+        categoryIdParent,
+        force,
+      });
+    }
   }
 
   return Category;

@@ -277,6 +277,7 @@ module.exports = app => {
     },
     { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
+    { method: 'post', path: 'category/parseCategoryName', controller: 'category' }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: 'tag' },
     {

@@ -104,6 +104,18 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async parseCategoryName() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const category = await this.ctx.service.category.parseCategoryName({
+        atomClass,
+        language: this.ctx.request.body.language,
+        categoryName: this.ctx.request.body.categoryName,
+        categoryIdParent: this.ctx.request.body.categoryIdParent,
+        force: false,
+      });
+      this.ctx.success(category);
+    }
   }
   return CategoryController;
 };
