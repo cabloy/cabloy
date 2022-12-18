@@ -19,6 +19,9 @@ export default {
         roleNameLocale: (this.container.options && this.container.options.roleNameLocale) || null,
         atomClass: this.container.atomClass,
       };
+      // adjust category
+      form.category = await this.filter_adjustCategory(form.category);
+      // formAtomClass
       const formAtomClass = this.$meta.util.getProperty(this.container, 'params.filter.formAtomClass') || {};
       // validator: tabBasic/tabGeneral
       const schemaBasic = await this.filter_loadSchemaBasic();
@@ -36,6 +39,9 @@ export default {
         searchStatesGeneral: null,
         searchStatesSearch: null,
       };
+    },
+    async filter_adjustCategory(category) {
+      if (!category || typeof category !== 'string') return category;
     },
     async filter_loadSchemaBasic() {
       const filterConfig = this.filter_getConfig();
