@@ -2898,6 +2898,19 @@ module.exports = app => {
         }
         item.roleIdOwner = roleId;
       }
+      // atomCategoryId
+      if (item.atomCategoryId && typeof item.atomCategoryId === 'string') {
+        const category = await this.ctx.bean.category.parseCategoryName({
+          atomClass,
+          language: item.atomLanguage,
+          categoryName: item.atomCategoryId,
+          force: false, // not force, because this api maybe called by normal user
+        });
+        if (!category) {
+          throw new Error(`Category not found: ${item.atomCategoryId}`);
+        }
+        item.atomCategoryId = category.id;
+      }
       // add
       const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
       return { atomId };
@@ -13188,7 +13201,6 @@ module.exports = app => {
         importBulk: 37,
         // reportBulk: 38,
         layoutBulk: 45,
-        draftStatsBulk: 46,
 
         save: 51,
         submit: 52,
@@ -13196,6 +13208,11 @@ module.exports = app => {
         formal: 54,
         draft: 55,
         workflow: 56,
+
+        //
+        draftStatsBulk: 71,
+        readBulk: 72,
+
         custom: 100, // custom action start from custom
       },
       actionMeta: {
@@ -13328,6 +13345,15 @@ module.exports = app => {
           select: false,
           stage: 'formal',
           icon: { f7: ':outline:draft-outline' },
+          authorize: false,
+        },
+        readBulk: {
+          title: 'List',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'actionBulk',
+          bulk: true,
+          icon: { f7: '::visibility' },
+          authorize: false,
         },
         save: {
           title: 'Save',
@@ -15527,6 +15553,18 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
+
+    async parseCategoryName() {
+      const atomClass = this.ctx.request.body.atomClass;
+      const category = await this.ctx.service.category.parseCategoryName({
+        atomClass,
+        language: this.ctx.request.body.language,
+        categoryName: this.ctx.request.body.categoryName,
+        categoryIdParent: this.ctx.request.body.categoryIdParent,
+        force: false,
+      });
+      this.ctx.success(category);
+    }
   }
   return CategoryController;
 };
@@ -17148,6 +17186,7 @@ module.exports = app => {
     },
     { method: 'post', path: 'category/tree', controller: 'category' }, // not set function right
     { method: 'post', path: 'category/relativeTop', controller: 'category' }, // not set function right
+    { method: 'post', path: 'category/parseCategoryName', controller: 'category' }, // not set function right
     // tag
     { method: 'post', path: 'tag/list', controller: 'tag' },
     {
@@ -17485,6 +17524,16 @@ module.exports = app => {
 
     async relativeTop({ categoryId, setLocale }) {
       return await this.ctx.bean.category.relativeTop({ categoryId, setLocale });
+    }
+
+    async parseCategoryName({ atomClass, language, categoryName, categoryIdParent, force }) {
+      return await this.ctx.bean.category.parseCategoryName({
+        atomClass,
+        language,
+        categoryName,
+        categoryIdParent,
+        force,
+      });
     }
   }
 
