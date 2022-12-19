@@ -58,8 +58,9 @@ export default {
         arr.push(resourceType);
       }
       // atomCategoryName
+      const formCategory = this.$meta.util.getProperty(this.filter.data, 'form.category');
       const atomCategoryName = item.atomCategoryNameLocale || item.atomCategoryName;
-      if (atomCategoryName) {
+      if (!formCategory && atomCategoryName) {
         arr.push(atomCategoryName);
       }
       // summary
