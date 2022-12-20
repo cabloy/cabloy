@@ -1,6 +1,6 @@
 {
   "name": "egg-born-bin",
-  "version": "4.2.28",
+  "version": "4.2.29",
   "description": "egg-born-bin",
   "main": "index.js",
   "bin": {
@@ -27,7 +27,7 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
-    "@zhennann/build": "^1.5.5",
+    "@zhennann/build": "^1.5.6",
     "@zhennann/egg-bin": "^5.0.6",
     "@zhennann/socketio": "^4.0.2",
     "babel-loader": "^8.2.2",
