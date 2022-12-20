@@ -180,6 +180,9 @@
           "a-status": {
             "scripts": ["npmPublish"]
           },
+          "a-swiper": {
+            "scripts": ["npmPublish"]
+          },
           "a-themebrilliant": {
             "scripts": ["npmPublish"]
           },
