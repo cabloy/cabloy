@@ -12,6 +12,7 @@ import renderTableCellDatetime from './components/render/renderTableCellDatetime
 import renderTableCellLink from './components/render/renderTableCellLink.jsx';
 import renderTableCellButton from './components/render/renderTableCellButton.jsx';
 import renderTableCellImage from './components/render/renderTableCellImage.jsx';
+import renderTableCellIcon from './components/render/renderTableCellIcon.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
 import renderUser from './components/render/renderUser.jsx';
 import renderRole from './components/render/renderRole.jsx';
@@ -34,6 +35,7 @@ export default {
   renderTableCellLink,
   renderTableCellButton,
   renderTableCellImage,
+  renderTableCellIcon,
   renderUserLabel,
   renderUser,
   renderRole,

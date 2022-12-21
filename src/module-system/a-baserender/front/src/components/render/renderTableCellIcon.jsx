@@ -15,6 +15,9 @@ export default {
     info: {
       type: Object,
     },
+    size: {
+      type: Number,
+    },
   },
   data() {
     return {};
@@ -24,7 +27,7 @@ export default {
     _renderMedia() {
       const text = this.info.text;
       if (!text) return null;
-      return <f7-icon f7={text} size="16"></f7-icon>;
+      return <f7-icon f7={text} size={this.size}></f7-icon>;
     },
   },
   render() {

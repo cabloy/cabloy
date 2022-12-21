@@ -13,6 +13,7 @@ const __baseRenders = [
   'renderTableCellLink',
   'renderTableCellButton',
   'renderTableCellImage',
+  'renderTableCellIcon',
   'renderUserLabel',
   'renderUser',
   'renderRole',

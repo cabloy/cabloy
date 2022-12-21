@@ -32,7 +32,6 @@ import listLayoutBlockSelectingItems from './components/atom/listLayoutList/list
 // listLayoutTable
 import listLayoutTableCellUserName from './components/atom/listLayoutTable/listLayoutTableCellUserName.jsx';
 import listLayoutTableCellAtomName from './components/atom/listLayoutTable/listLayoutTableCellAtomName.jsx';
-import listLayoutTableCellIcon from './components/atom/listLayoutTable/listLayoutTableCellIcon.jsx';
 // listLayoutTree
 import listLayoutBlockTreeTitle from './components/atom/listLayoutTree/listLayoutBlockTreeTitle.jsx';
 import listLayoutBlockTreeItems from './components/atom/listLayoutTree/listLayoutBlockTreeItems.jsx';
@@ -74,7 +73,6 @@ export default {
   // listLayoutTable
   listLayoutTableCellUserName,
   listLayoutTableCellAtomName,
-  listLayoutTableCellIcon,
   // listLayoutTree
   listLayoutBlockTreeTitle,
   listLayoutBlockTreeItems,
