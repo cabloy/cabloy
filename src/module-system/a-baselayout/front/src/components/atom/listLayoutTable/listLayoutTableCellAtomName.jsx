@@ -49,13 +49,15 @@ export default {
     const domSummary = <div class="atomName-summary">{this.layoutManager.item_getMetaSummary(item)}</div>;
     // domMedia
     const domMedia = this._renderMedia();
+    // atomName
+    const atomName = this.layoutManager.item_getAtomName(item);
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
-          <div class="atomName-left">
+          <div class="atomName-left" title={atomName}>
             <eb-link propsOnPerform={event => this.onItemClick(event)}>
               {domMedia}
-              {this.layoutManager.item_getAtomName(item)}
+              {atomName}
             </eb-link>
           </div>
           <div class="atomName-right">
