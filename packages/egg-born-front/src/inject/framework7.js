@@ -1,4 +1,4 @@
-import App from './pages/app.vue';
+import App from './pages/app.jsx';
 import routes from './routes.js';
 import patchDevice from './patch/device.js';
 import patchRouter from './patch/router.js';

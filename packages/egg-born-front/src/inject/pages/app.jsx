@@ -1,4 +1,3 @@
-<script>
 const F7Locales = {
   dialog: ['buttonCancel', 'buttonOk', 'passwordPlaceholder', 'preloaderTitle', 'progressTitle', 'usernamePlaceholder'],
   picker: ['toolbarCloseText'],
@@ -458,5 +457,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
