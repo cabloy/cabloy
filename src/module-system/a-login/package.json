@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-login",
-  "version": "4.8.4",
+  "version": "4.8.5",
   "eggBornModule": {
     "dependencies": {}
   },
