@@ -4,8 +4,6 @@
     const query = util.parseUrlQuery();
     // title
     title(query);
-    // menu active
-    menuActive(query);
     // breadcrumb
     breadcrumb(query);
     // search text
@@ -284,14 +282,6 @@
       }
     } else if (env.site.path === 'static/comments') {
       document.title = `<%=text('Comments')%> | ${env.base.title}`;
-    }
-  }
-
-  function menuActive(query) {
-    const categoryId = query.categoryId || (env.article && env.article.atomCategoryId);
-    if (categoryId) {
-      const link = $(`.category-${categoryId}`);
-      link.parents('li').addClass('active');
     }
   }
 

@@ -1,0 +1,35 @@
+(function () {
+  $(document).ready(function () {
+    // query
+    const query = util.parseUrlQuery();
+    // menu active
+    menuActive(query);
+  });
+
+  function menuActive(query) {
+    // 1. category
+    const categoryId = query.categoryId || (env.article && env.article.atomCategoryId);
+    if (categoryId) {
+      const domLink = $(`.category-${categoryId}`);
+      if (menuActive_link(domLink)) {
+        return true;
+      }
+    }
+    // 2. site-path
+    const domLink = $(`a[data-site-path="${env.site.path}"]`);
+    if (menuActive_link(domLink)) {
+      return true;
+    }
+  }
+
+  function menuActive_link(domLink) {
+    if (domLink.length === 0) return false;
+    const domLi = domLink.parents('li');
+    if (domLi.length === 0) {
+      domLink.addClass('active');
+    } else {
+      domLi.addClass('active');
+    }
+    return true;
+  }
+})();
