@@ -1,4 +1,4 @@
-import Empty from './pages/empty.vue';
+import Empty from './pages/empty.jsx';
 
 export default [
   {
