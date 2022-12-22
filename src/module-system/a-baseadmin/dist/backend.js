@@ -263,8 +263,13 @@ module.exports = app => {
                 title: 'Icon',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellIcon',
+                  module: 'a-baserender',
+                  name: 'renderTableCellIcon',
+                  options: {
+                    props: {
+                      size: 24,
+                    },
+                  },
                 },
               },
               {
@@ -305,7 +310,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Resource',
     atomStaticKey: 'layoutAtomListResource',
-    atomRevision: 1,
+    atomRevision: 4,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
