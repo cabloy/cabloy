@@ -46,7 +46,7 @@ if(!site._menuItems){
     <%if(typeof article!=='undefined'){%>
       <a class="category-sidebar-toggle" href="#"><i class="fas fa-bars"></i></a>
     <%}%>
-    <a class="navbar-brand" href="<%=url('index.html')%>">
+    <a class="navbar-brand" data-site-path="main/index/index" href="<%=url('index.html')%>">
       <img class="logo" src="<%=url(site._project.logoMask)%>">
       <span><%=site.base.title%></span>
     </a>
