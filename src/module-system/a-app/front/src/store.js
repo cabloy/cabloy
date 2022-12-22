@@ -292,6 +292,10 @@ async function __fetchAppItem({ Vue, appKey }) {
 async function __saveCurrent({ Vue, current }) {
   // load appItem
   const appItem = await Vue.prototype.$meta.store.dispatch('a/app/getAppItem', { appKey: current.appKey });
+  if (!appItem) {
+    // maybe no access right for anonymous
+    return;
+  }
   if (current.appKey !== __appKeyDefault && appItem.appIsolate) return;
   // layout config
   const layoutConfig = await Vue.prototype.$meta.store.dispatch('a/app/getLayoutConfig');
