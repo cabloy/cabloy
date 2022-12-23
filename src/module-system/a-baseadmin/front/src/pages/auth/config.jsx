@@ -1,12 +1,11 @@
 import Vue from 'vue';
-const ebClipboard = Vue.prototype.$meta.module.get('a-components').options.mixins.ebClipboard;
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebClipboard, ebPageContext, ebPageDirty],
+  mixins: [ebPageContext, ebPageDirty],
   data() {
     return {
       sceneName: this.$f7route.query.sceneName,
