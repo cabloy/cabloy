@@ -274,7 +274,7 @@ function __getPresetConfig({ Vue, appItem, current }) {
 
 async function __fetchAppItem({ Vue, appKey }) {
   try {
-    const appItem = await Vue.prototype.$meta.api.post('/a/base/resource/read', {
+    const appItem = await Vue.prototype.$meta.api.post('/a/app/resource/read', {
       atomStaticKey: appKey,
       options: {
         //  locale: false, // should return locale info

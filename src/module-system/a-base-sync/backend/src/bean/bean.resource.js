@@ -203,6 +203,7 @@ module.exports = ctx => {
     }
 
     async _checkRightResource_normal({ resourceAtomId, atomStaticKey, user }) {
+      if (!user || user.id === 0) return true;
       if (!resourceAtomId) {
         const atom = await ctx.bean.atom.modelAtom.get({ atomStaticKey, atomDisabled: 0, atomStage: 1 });
         if (!atom) return null;
@@ -213,7 +214,7 @@ module.exports = ctx => {
         userIdWho: user.id,
         resourceAtomId,
       });
-      return await ctx.model.queryOne(sql);
+      return !!(await ctx.model.queryOne(sql));
     }
 
     async resourceRoles({ key /* , user */ }) {
