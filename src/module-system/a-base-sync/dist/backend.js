@@ -3908,12 +3908,12 @@ module.exports = ctx => {
           },
         },
       });
-      // theme
-      const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
-      const theme = await ctx.bean.status.module('a-user').get(themeStatus);
-      if (theme) {
-        config.theme = theme;
-      }
+      // // theme
+      // const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
+      // const theme = await ctx.bean.status.module('a-user').get(themeStatus);
+      // if (theme) {
+      //   config.theme = theme;
+      // }
       // localeModules
       config.localeModules = ctx.bean.base.localeModules();
       // ok
@@ -5018,7 +5018,7 @@ module.exports = ctx => {
       }
       const sql = this.sqlProcedure.checkRightResource({
         iid: ctx.instance.id,
-        userIdWho: user.id,
+        userIdWho: user && user.id,
         resourceAtomId,
       });
       return await ctx.model.queryOne(sql);
@@ -9555,14 +9555,21 @@ module.exports = ctx => {
     checkRightResource({ iid, userIdWho, resourceAtomId }) {
       // for safe
       iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
+      userIdWho = parseInt(userIdWho || 0);
       resourceAtomId = parseInt(resourceAtomId);
+      // _rightWhere
+      let _rightWhere = '';
+      if (userIdWho) {
+        _rightWhere = `
+          and (
+            exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
+              )
+        `;
+      }
       // sql
       const _sql = `select a.id as atomId,a.atomName from aAtom a
             where a.iid=${iid} and a.deleted=0 and a.atomDisabled=0 and a.atomStage=1 and a.id=${resourceAtomId}
-              and (
-                exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
-                  )
+              ${_rightWhere}
         `;
       return _sql;
     }

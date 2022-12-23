@@ -846,11 +846,33 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 696:
 /***/ ((module) => {
 
 module.exports = app => {
-  const controllers = {};
+  class ResourceController extends app.Controller {
+    async read() {
+      const res = await this.ctx.service.resource.read({
+        atomStaticKey: this.ctx.request.body.atomStaticKey,
+        options: this.ctx.request.body.options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+  }
+
+  return ResourceController;
+};
+
+
+/***/ }),
+
+/***/ 95:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const resource = __webpack_require__(696);
+module.exports = app => {
+  const controllers = { resource };
   return controllers;
 };
 
@@ -1040,18 +1062,41 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  const routes = [];
+  const routes = [
+    // resource
+    { method: 'post', path: 'resource/read', controller: 'resource' },
+  ];
   return routes;
 };
 
 
 /***/ }),
 
-/***/ 214:
+/***/ 55:
 /***/ ((module) => {
 
 module.exports = app => {
-  const services = {};
+  class Resource extends app.Service {
+    async read({ atomStaticKey, options, user }) {
+      // donot check user access right, but must check atomClass
+      const appItem = await this.ctx.bean.resource.readByStaticKey({ atomStaticKey, options /* , user*/ });
+      if (appItem.module !== 'a-app' || appItem.atomClassName !== 'app') this.ctx.throw(403);
+      return appItem;
+    }
+  }
+
+  return Resource;
+};
+
+
+/***/ }),
+
+/***/ 214:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const resource = __webpack_require__(55);
+module.exports = app => {
+  const services = { resource };
   return services;
 };
 
