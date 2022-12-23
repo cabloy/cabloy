@@ -144,7 +144,8 @@ export default function (Vue) {
 
   return {
     get(appKey) {
-      return __storageLoad(appKey) || this.default();
+      return __storageLoad(appKey);
+      // return __storageLoad(appKey) || this.default();
     },
     set(appKey, _theme) {
       const theme = _theme || __storageLoad(appKey) || this.default();
