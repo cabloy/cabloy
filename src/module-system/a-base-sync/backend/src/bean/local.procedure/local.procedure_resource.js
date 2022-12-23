@@ -3,14 +3,21 @@ module.exports = ctx => {
     checkRightResource({ iid, userIdWho, resourceAtomId }) {
       // for safe
       iid = parseInt(iid);
-      userIdWho = parseInt(userIdWho);
+      userIdWho = parseInt(userIdWho || 0);
       resourceAtomId = parseInt(resourceAtomId);
+      // _rightWhere
+      let _rightWhere = '';
+      if (userIdWho) {
+        _rightWhere = `
+          and (
+            exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
+              )
+        `;
+      }
       // sql
       const _sql = `select a.id as atomId,a.atomName from aAtom a
             where a.iid=${iid} and a.deleted=0 and a.atomDisabled=0 and a.atomStage=1 and a.id=${resourceAtomId}
-              and (
-                exists(select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and c.resourceAtomId=${resourceAtomId} and c.userIdWho=${userIdWho})
-                  )
+              ${_rightWhere}
         `;
       return _sql;
     }
