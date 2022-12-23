@@ -56,33 +56,17 @@ export default {
     },
   },
   created() {
-    this.$api.post('user/themeLoad').then(data => {
-      this.theme = data || this.$meta.theme.default();
-    });
-    this.$api.post('/a/base/base/themes').then(data => {
-      this.moduleThemes = data;
-    });
+    this.init();
   },
   methods: {
-    save() {
-      // user.op
-      if (this.user.op.anonymous) return;
-      this.$api
-        .post('user/themeSave', {
-          theme: this.theme,
-        })
-        .then(() => {
-          // donothing
-        })
-        .catch(err => {
-          this.$view.toast.show({ text: err.message });
-        });
+    async init() {
+      this.theme = this.$meta.vueLayout.theme_get();
+      this.moduleThemes = await this.$api.post('/a/base/base/themes');
     },
     checkSave(type, force) {
       if (force || this.theme.type !== type) {
         this.theme.type = type;
-        this.$meta.theme.set(this.theme);
-        this.save();
+        this.$meta.vueLayout.theme_set(this.theme);
         return true;
       }
       return false;
@@ -120,8 +104,7 @@ export default {
             builtIn: this.theme.builtIn,
             onChange: builtIn => {
               this.theme = { ...this.theme, builtIn };
-              this.$meta.theme.set(this.theme);
-              this.save();
+              this.$meta.vueLayout.theme_set(this.theme);
             },
           },
           callback: (code, data) => {
