@@ -1,6 +1,8 @@
 const require3 = require('require3');
 const extend = require3('@zhennann/extend');
 
+const __appKeyDefault = 'a-app:appDefault';
+
 module.exports = app => {
   class User extends app.Service {
     async save({ data, user }) {
@@ -118,14 +120,18 @@ module.exports = app => {
       ]);
     }
 
-    async themeLoad({ user }) {
-      const name = `user-theme:${user.id}`;
-      return await this.ctx.bean.status.get(name);
+    async themeLoad({ appKey, user }) {
+      const key = this._getThemeKey({ appKey, user });
+      return await this.ctx.bean.status.get(key);
     }
 
-    async themeSave({ theme, user }) {
-      const name = `user-theme:${user.id}`;
-      await this.ctx.bean.status.set(name, theme);
+    async themeSave({ appKey, theme, user }) {
+      const key = this._getThemeKey({ appKey, user });
+      await this.ctx.bean.status.set(key, theme);
+    }
+
+    _getThemeKey({ appKey, user }) {
+      return `user-theme:${user.id}:${appKey || __appKeyDefault}`;
     }
   }
 

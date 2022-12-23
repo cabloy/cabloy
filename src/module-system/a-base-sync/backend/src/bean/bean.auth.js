@@ -99,12 +99,12 @@ module.exports = ctx => {
           },
         },
       });
-      // theme
-      const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
-      const theme = await ctx.bean.status.module('a-user').get(themeStatus);
-      if (theme) {
-        config.theme = theme;
-      }
+      // // theme
+      // const themeStatus = `user-theme:${ctx.state.user.agent.id}`;
+      // const theme = await ctx.bean.status.module('a-user').get(themeStatus);
+      // if (theme) {
+      //   config.theme = theme;
+      // }
       // localeModules
       config.localeModules = ctx.bean.base.localeModules();
       // ok

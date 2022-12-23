@@ -106,6 +106,7 @@ module.exports = app => {
 
     async themeLoad() {
       const res = await this.service.user.themeLoad({
+        appKey: this.ctx.request.body.appKey,
         user: this.ctx.state.user.agent,
       });
       this.ctx.success(res);
@@ -113,6 +114,7 @@ module.exports = app => {
 
     async themeSave() {
       await this.service.user.themeSave({
+        appKey: this.ctx.request.body.appKey,
         theme: this.ctx.request.body.theme,
         user: this.ctx.state.user.agent,
       });
