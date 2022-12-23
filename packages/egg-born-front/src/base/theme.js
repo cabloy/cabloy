@@ -127,21 +127,30 @@ export default function (Vue) {
     return styles.trim();
   }
 
-  function __storageLoad() {
-    const theme = window.localStorage['eb-theme'];
+  function __storageLoad(appKey) {
+    const key = __storageKey(appKey);
+    const theme = window.localStorage[key];
     return theme ? JSON.parse(theme) : null;
   }
 
-  function __storageSave(theme) {
-    window.localStorage['eb-theme'] = JSON.stringify(theme);
+  function __storageSave(appKey, theme) {
+    const key = __storageKey(appKey);
+    window.localStorage[key] = JSON.stringify(theme);
+  }
+
+  function __storageKey(appKey) {
+    return `eb-theme:${appKey}`;
   }
 
   return {
-    set(_theme) {
-      const theme = _theme || __storageLoad() || this.default();
+    get(appKey) {
+      return __storageLoad(appKey) || this.default();
+    },
+    set(appKey, _theme) {
+      const theme = _theme || __storageLoad(appKey) || this.default();
       return new Promise(resolve => {
         function done() {
-          if (_theme) __storageSave(_theme);
+          if (_theme) __storageSave(appKey, _theme);
           resolve();
         }
         if (theme.type === 'thirdParty' && !theme.thirdParty) {
