@@ -1,12 +1,13 @@
 import TabViews from './tabViews.vue';
 import Group from './group.vue';
 import MixinApp from '../common/layout/app.js';
+import MixinTheme from '../common/layout/theme.js';
 
 export default {
   meta: {
     global: false,
   },
-  mixins: [MixinApp],
+  mixins: [MixinApp, MixinTheme],
   components: {
     ebTabViews: TabViews,
     ebGroup: Group,
@@ -266,6 +267,8 @@ export default {
     },
     async __init() {
       const layoutKey = await this.__initLayoutKey();
+      // theme
+      await this.theme_init();
       // buttonsAll
       await this.__getResourcesAll();
       // layoutDefault
