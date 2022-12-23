@@ -5,6 +5,7 @@ import cookies from 'js-cookie';
 import queue from 'async/queue';
 import debounce from '@zhennann/debounce';
 import extend from '@zhennann/extend';
+import clipboardFn from './clipboard.js';
 import sandboxFn from './sandbox.js';
 import screenfull from './screenfull.jsx';
 import visibilityChange from './visibilityChange.jsx';
@@ -706,6 +707,7 @@ export default function (Vue) {
 
   // mixin
   Object.assign(util, {
+    clipboard: clipboardFn(Vue),
     sandbox: sandboxFn(Vue),
     moment,
     uuid,

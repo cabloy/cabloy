@@ -20,6 +20,9 @@ export default {
     this._loadIcons();
   },
   methods: {
+    onClickCopy(svg) {
+      this.$meta.util.clipboard.copy(svg, { ctx: this });
+    },
     onClickEnable() {
       this.$refs.searchbar.f7Searchbar.enable(true);
     },
@@ -88,7 +91,7 @@ export default {
         if (this.query && icon.indexOf(this.query) === -1) continue;
         const svg = this._combineIconName(moduleName, groupName, icon);
         children.push(
-          <div key={icon} class="box-grid-cell" data-clipboard-text={svg}>
+          <div key={icon} class="box-grid-cell" onClick={() => this.onClickCopy(svg)}>
             <div class="box-grid-cell-icon">
               <f7-icon f7={svg} size="24"></f7-icon>
             </div>
