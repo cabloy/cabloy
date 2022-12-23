@@ -1,5 +1,13 @@
 # History
 
+## 2022-12-23, Version 4.28.0
+
+- **Feat**
+  - App Theme: 可以为 app 应用设置独立的 Theme 主题
+    - 参见: [如何创建 App 应用](https://cabloy.com/zh-cn/articles/app-create.html)
+  - App Mine 页面（个人信息页面）: 不再强制弹出
+  - Clipboard 工具：弃用 clipboard.js，改用 copy-to-clipboard
+
 ## 2022-12-18, Version 4.27.11
 
 - **Feat**
