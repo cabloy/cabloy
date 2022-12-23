@@ -12,7 +12,5 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "dependencies": {
-    "clipboard": "^2.0.4"
-  }
+  "dependencies": {}
 }
