@@ -124,18 +124,6 @@ export default {
         },
       };
     },
-    // clipboardCreate() {
-    //   if (!this.meta) return;
-    //   this.$nextTick(() => {
-    //     for (const btn of ['loginURL', 'callbackURL']) {
-    //       this.addClipboardTrigger(this.$refs[btn].$el, {
-    //         text: (/* trigger*/) => {
-    //           return this.meta[btn];
-    //         },
-    //       });
-    //     }
-    //   });
-    // },
     _renderValidate() {
       if (!this.ready) return;
       return (

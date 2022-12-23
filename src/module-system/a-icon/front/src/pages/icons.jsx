@@ -1,7 +1,4 @@
-import Vue from 'vue';
-const ebClipboard = Vue.prototype.$meta.module.get('a-components').options.mixins.ebClipboard;
 export default {
-  mixins: [ebClipboard],
   data() {
     return {
       iconsAll: null,
@@ -30,18 +27,8 @@ export default {
       this.query = query;
       this._resetClipboards();
     },
-    _resetClipboards() {
-      this.$nextTick(() => {
-        this.removeAllClipboardTriggers();
-        const domCells = this.$$('.box-grid-cell', this.$el);
-        for (let index = 0; index < domCells.length; index++) {
-          this.addClipboardTrigger(domCells[index]);
-        }
-      });
-    },
     async _loadIcons() {
       this.iconsAll = await this.$api.post('icon/getIcons');
-      this._resetClipboards();
     },
     _combineIconName(moduleName, groupName, icon) {
       if (moduleName === 'a-iconbooster') moduleName = '';
