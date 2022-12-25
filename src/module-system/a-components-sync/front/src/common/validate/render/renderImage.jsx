@@ -34,6 +34,9 @@ export default {
             onClick={event => this._renderImage_preview(event, context, image)}
           >
             <img src={image} />
+            <a class="image-delete">
+              <f7-icon f7="::close"></f7-icon>
+            </a>
           </a>
         );
       }

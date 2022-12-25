@@ -467,17 +467,26 @@ input[type='search']::-webkit-search-decoration {
   .eb-list-item-render-image {
     .eb-box-grid-row.images-container {
       .box-grid-cell {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
         border: 1px solid var(--f7-list-group-title-bg-color);
         padding: 0;
-
+      }
+      .box-grid-cell.image-preview {
         img {
           width: 100%;
           height: 100%;
           border-radius: 6px;
           border: 1px solid var(--f7-list-group-title-bg-color);
+        }
+        .image-delete {
+          position: absolute;
+          right: -12px;
+          top: -12px;
+          background: var(--f7-list-group-title-bg-color);
+          border-radius: 12px;
         }
       }
     }
