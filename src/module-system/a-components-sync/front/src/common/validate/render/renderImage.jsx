@@ -5,7 +5,7 @@ export default {
       const ebParams = property.ebParams || {};
       const title = this.getTitle(context);
       //
-      const placeholder = this.getPlaceholder(context);
+      // const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       // params
       const max = ebParams.max || 1;
@@ -85,16 +85,37 @@ export default {
         'eb-property-edit': !modeView,
         'text-color-gray': property.ebReadOnly,
       };
+      if (modeView) {
+        return (
+          <f7-list-item key={key} class={className}>
+            <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+              {title}
+            </div>
+            <div slot="root" class="images-container">
+              {domImages}
+              {domImageAdd}
+            </div>
+          </f7-list-item>
+        );
+      }
+      const props = {
+        floatingLabel: this.$config.form.floatingLabel,
+        // placeholder,
+        info,
+        clearButton: false,
+        dataPath,
+        // disabled: true,
+      };
       return (
-        <f7-list-item key={key} class={className}>
-          <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+        <eb-list-input key={key} class={className} {...{ props }}>
+          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
           <div slot="root" class="images-container">
             {domImages}
             {domImageAdd}
           </div>
-        </f7-list-item>
+        </eb-list-input>
       );
     },
     _renderImage_preview(event, context, images, index) {
@@ -131,7 +152,7 @@ export default {
       context.setValue(images.join(','));
     },
     _renderImage_add(event, context) {
-      const { property } = context;
+      const { property, dataPath } = context;
       const ebParams = property.ebParams || {};
       // atomId: maybe from host
       const atomId = this.getAtomId(context);
@@ -161,6 +182,8 @@ export default {
               const parts = valueOld ? valueOld.split(',') : [];
               parts.push(value.downloadUrl);
               context.setValue(parts.join(','));
+              const _validate = this.getValidate();
+              _validate.clearError(dataPath);
             }
           },
         },

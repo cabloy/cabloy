@@ -465,6 +465,22 @@ input[type='search']::-webkit-search-decoration {
   }
 
   .eb-list-item-render-image {
+    .item-input-wrap {
+      .item-input-info,
+      .item-input-error-message {
+        top: 30%;
+      }
+      input {
+        display: none;
+      }
+      &::after {
+        display: none !important;
+      }
+    }
+    .item-input-with-error-message,
+    .item-input-with-info {
+      padding-bottom: 0;
+    }
     .images-container {
       display: flex;
       flex-wrap: wrap;
