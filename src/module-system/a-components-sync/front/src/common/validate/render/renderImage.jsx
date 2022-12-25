@@ -39,6 +39,14 @@ export default {
             />
           );
         } else {
+          let domImageDelete;
+          if (!modeView) {
+            domImageDelete = (
+              <a class="image-delete" onClick={event => this._renderImage_delete(event, context, images, index)}>
+                <f7-icon f7="::close"></f7-icon>
+              </a>
+            );
+          }
           <a
             key={index}
             class="image-item image-preview"
@@ -46,13 +54,11 @@ export default {
             onClick={event => this._renderImage_preview(event, context, images, index)}
           >
             <img src={image} />
-            <a class="image-delete" onClick={event => this._renderImage_delete(event, context, images, index)}>
-              <f7-icon f7="::close"></f7-icon>
-            </a>
+            {domImageDelete}
           </a>;
         }
         domImages.push(domImage);
-        if (max === 1) {
+        if (!modeView && max === 1) {
           domImages.push(
             <a class="image-delete-single" onClick={event => this._renderImage_delete(event, context, images, index)}>
               <f7-icon f7="::close"></f7-icon>
