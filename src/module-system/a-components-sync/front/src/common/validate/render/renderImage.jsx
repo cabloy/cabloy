@@ -3,7 +3,6 @@ export default {
     _renderImage_render({ modeView, context }) {
       const { parcel, key, property, dataPath } = context;
       const title = this.getTitle(context);
-      const value = context.getValue();
       //
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
@@ -13,7 +12,7 @@ export default {
       let cellStyle = property.ebParams.cellStyle;
       if (!cellStyle) {
         if (max === 1) {
-          cellStyle = { 'max-width': '80%', 'max-height': '100px' };
+          cellStyle = { 'max-width': '80%', 'max-height': '120px' };
         } else {
           cellStyle = {
             width: '80px',
@@ -24,17 +23,19 @@ export default {
       const cellStyleAdd = max === 1 ? { width: '80px', height: '80px' } : cellStyle;
       // domImages
       const domImages = [];
-      const value2 = value || '';
+      const value2 = context.getValue() || '';
       const images = value2 ? value2.split(',') : [];
-      for (const image of images) {
+      for (let index = 0; index < images.length; index++) {
+        const image = images[index];
         domImages.push(
           <a
-            class="box-grid-cell image-preview"
+            key={index}
+            class="image-item image-preview"
             style={cellStyle}
-            onClick={event => this._renderImage_preview(event, context, image)}
+            onClick={event => this._renderImage_preview(event, context, images, index)}
           >
             <img src={image} />
-            <a class="image-delete">
+            <a class="image-delete" onClick={event => this._renderImage_delete(event, context, images, index)}>
               <f7-icon f7="::close"></f7-icon>
             </a>
           </a>
@@ -44,11 +45,7 @@ export default {
       let domImageAdd;
       if (!modeView && max - images.length > 0) {
         domImageAdd = (
-          <a
-            class="box-grid-cell image-add"
-            style={cellStyleAdd}
-            onClick={event => this._renderImage_add(event, context)}
-          >
+          <a class="image-item image-add" style={cellStyleAdd} onClick={event => this._renderImage_add(event, context)}>
             <f7-icon f7="::add"></f7-icon>
           </a>
         );
@@ -65,12 +62,16 @@ export default {
           <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
-          <div slot="root" class="eb-box-grid-row images-container">
+          <div slot="root" class="images-container">
             {domImages}
             {domImageAdd}
           </div>
         </f7-list-item>
       );
+    },
+    _renderImage_delete(event, context, images, index) {
+      images.splice(index, 1);
+      context.setValue(images.join(','));
     },
     _renderImage_add(event, context) {
       const { property } = context;
@@ -98,7 +99,10 @@ export default {
           },
           callback: (code, value) => {
             if (code === 200) {
-              context.setValue(value.downloadUrl);
+              const valueOld = context.getValue() || '';
+              const parts = valueOld ? valueOld.split(',') : [];
+              parts.push(value.downloadUrl);
+              context.setValue(parts.join(','));
             }
           },
         },
