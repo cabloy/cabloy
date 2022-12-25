@@ -12,7 +12,7 @@ export default {
       let cellStyle = property.ebParams.cellStyle;
       if (!cellStyle) {
         if (max === 1) {
-          cellStyle = { 'max-width': '80%', 'max-height': '120px' };
+          cellStyle = { 'max-width': '80%', 'max-height': '100px' };
         } else {
           cellStyle = {
             width: '80px',
@@ -27,7 +27,18 @@ export default {
       const images = value2 ? value2.split(',') : [];
       for (let index = 0; index < images.length; index++) {
         const image = images[index];
-        domImages.push(
+        let domImage;
+        if (max === 1) {
+          domImage = (
+            <img
+              key={index}
+              class="image-item image-preview"
+              style={cellStyle}
+              onClick={event => this._renderImage_preview(event, context, images, index)}
+              src={image}
+            />
+          );
+        } else {
           <a
             key={index}
             class="image-item image-preview"
@@ -38,8 +49,16 @@ export default {
             <a class="image-delete" onClick={event => this._renderImage_delete(event, context, images, index)}>
               <f7-icon f7="::close"></f7-icon>
             </a>
-          </a>
-        );
+          </a>;
+        }
+        domImages.push(domImage);
+        if (max === 1) {
+          domImages.push(
+            <a class="image-delete-single" onClick={event => this._renderImage_delete(event, context, images, index)}>
+              <f7-icon f7="::close"></f7-icon>
+            </a>
+          );
+        }
       }
       // domImageAdd
       let domImageAdd;
