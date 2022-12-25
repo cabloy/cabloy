@@ -35,7 +35,7 @@ export default {
       );
     },
     renderFile(context) {
-      const { parcel, key, property, dataPath } = context;
+      const { /* parcel,*/ key, property, dataPath } = context;
       const title = this.getTitle(context);
       const value = context.getValue();
       // params

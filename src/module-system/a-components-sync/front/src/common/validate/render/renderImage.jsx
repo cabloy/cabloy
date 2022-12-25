@@ -1,7 +1,7 @@
 export default {
   methods: {
     _renderImage_render({ modeView, context }) {
-      const { parcel, key, property, dataPath } = context;
+      const { key, property, dataPath } = context;
       const title = this.getTitle(context);
       //
       const placeholder = this.getPlaceholder(context);
@@ -136,9 +136,7 @@ export default {
       });
     },
     renderImage(context) {
-      const { parcel, key, property, dataPath } = context;
-      const title = this.getTitle(context);
-      const value = context.getValue();
+      const { property } = context;
       // view
       if (this.validate.readOnly || property.ebReadOnly) {
         return this._renderImage_render({ modeView: true, context });
