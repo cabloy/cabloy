@@ -2,14 +2,15 @@ export default {
   methods: {
     _renderImage_render({ modeView, context }) {
       const { key, property, dataPath } = context;
+      const ebParams = property.ebParams || {};
       const title = this.getTitle(context);
       //
       const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
       // params
-      const max = property.ebParams.max || 1;
+      const max = ebParams.max || 1;
       // style
-      let cellStyle = property.ebParams.cellStyle;
+      let cellStyle = ebParams.cellStyle;
       if (!cellStyle) {
         if (max === 1) {
           cellStyle = { 'max-width': '80%', 'max-height': '100px' };
@@ -131,16 +132,17 @@ export default {
     },
     _renderImage_add(event, context) {
       const { property } = context;
+      const ebParams = property.ebParams || {};
       // atomId: maybe from host
       const atomId = this.getAtomId(context);
       // attachment
-      const attachment = property.ebParams.attachment;
+      const attachment = ebParams.attachment;
       // flag
-      const flag = property.ebParams.flag;
+      const flag = ebParams.flag;
       // accept
-      const accept = property.ebParams.accept;
+      const accept = ebParams.accept;
       // fixed
-      const fixed = property.ebParams.fixed;
+      const fixed = ebParams.fixed;
       // upload
       this.$view.navigate('/a/file/file/upload', {
         target: '_self',
