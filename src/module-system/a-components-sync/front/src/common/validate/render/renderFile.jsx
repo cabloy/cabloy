@@ -80,12 +80,7 @@ export default {
         type = 'text';
       }
       // atomId: maybe from host
-      let atomId = (this.validate.host && this.validate.host.atomId) || property.ebParams.atomId;
-      if (typeof atomId === 'string') {
-        atomId = parcel.data[atomId] || 0;
-      } else {
-        atomId = atomId || 0;
-      }
+      const atomId = this.getAtomId(context);
       // attachment
       const attachment = property.ebParams.attachment;
       // flag

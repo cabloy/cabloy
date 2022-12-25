@@ -63,9 +63,9 @@ module.exports = app => {
       },
       imageCover: {
         type: 'string',
-        ebType: 'file',
+        ebType: 'image',
         ebTitle: 'ArticleCover',
-        ebParams: { mode: 1 },
+        ebParams: {},
       },
       // Extra
       __groupExtra: {

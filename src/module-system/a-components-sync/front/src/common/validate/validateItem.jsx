@@ -14,6 +14,7 @@ import renderColorPicker from './render/renderColorPicker.jsx';
 import renderDatePicker from './render/renderDatePicker.jsx';
 import renderDateRange from './render/renderDateRange.jsx';
 import renderFile from './render/renderFile.jsx';
+import renderImage from './render/renderImage.jsx';
 import renderToggle from './render/renderToggle.jsx';
 import renderSelect from './render/renderSelect.jsx';
 import renderButton from './render/renderButton.jsx';
@@ -43,6 +44,7 @@ const __renderTypes = [
   ['toggle', 'renderToggle'],
   ['select', 'renderSelect'],
   ['file', 'renderFile'],
+  ['image', 'renderImage'],
   ['colorPicker', 'renderColorPicker'],
   ['datePicker', 'renderDatePicker'],
   ['dateRange', 'renderDateRange'],
@@ -87,6 +89,7 @@ export default {
     renderDatePicker,
     renderDateRange,
     renderFile,
+    renderImage,
     renderToggle,
     renderSelect,
     renderButton,
@@ -312,6 +315,16 @@ export default {
       const { property } = context;
       if (this.validate.readOnly || property.ebReadOnly) return undefined;
       return property.ebDescription ? this.$text(property.ebDescription) : this.getTitle(context, true);
+    },
+    getAtomId(context) {
+      const { parcel, property } = context;
+      // atomId: maybe from host
+      let atomId = (this.validate.host && this.validate.host.atomId) || property.ebParams.atomId;
+      if (typeof atomId === 'string') {
+        atomId = parcel.data[atomId] || 0;
+      } else {
+        atomId = atomId || 0;
+      }
     },
     onSubmit(event) {
       this.validate.onSubmit(event);
