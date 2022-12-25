@@ -28,20 +28,21 @@ export default {
       const images = value2 ? value2.split(',') : [];
       for (const image of images) {
         domImages.push(
-          <img
-            class="box-grid-cell images-preview"
+          <a
+            class="box-grid-cell image-preview"
             style={cellStyle}
             onClick={event => this._renderImage_preview(event, context, image)}
-            src={image}
-          />
+          >
+            <img src={image} />
+          </a>
         );
       }
       // domImageAdd
       let domImageAdd;
-      if (max - images.length > 0) {
+      if (!modeView && max - images.length > 0) {
         domImageAdd = (
           <a
-            class="box-grid-cell images-add"
+            class="box-grid-cell image-add"
             style={cellStyleAdd}
             onClick={event => this._renderImage_add(event, context)}
           >
