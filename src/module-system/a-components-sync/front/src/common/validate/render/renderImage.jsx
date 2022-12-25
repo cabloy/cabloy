@@ -96,6 +96,35 @@ export default {
         </f7-list-item>
       );
     },
+    _renderImage_preview(event, context, images, index) {
+      const { property } = context;
+      const title = this.getTitle(context);
+      // target
+      let target = this.$meta.util.getProperty(property, 'ebParams.target');
+      if (target === undefined) target = '_self';
+      // photos
+      const photos = [];
+      for (let index = 0; index < images.length; index++) {
+        const image = images[index];
+        photos.push({
+          url: image,
+          caption: title,
+        });
+      }
+      // pageContext
+      const pageContext = {
+        params: {
+          title: this.$text('View'),
+          photos,
+          activeIndex: index,
+        },
+      };
+      // navigate
+      this.$view.navigate(`/a/photobrowser/photoBrowser?t=${Date.now()}`, {
+        target,
+        context: pageContext,
+      });
+    },
     _renderImage_delete(event, context, images, index) {
       images.splice(index, 1);
       context.setValue(images.join(','));
