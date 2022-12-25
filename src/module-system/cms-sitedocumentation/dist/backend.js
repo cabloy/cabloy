@@ -566,9 +566,8 @@ module.exports = app => {
       },
       imageCover: {
         type: 'string',
-        ebType: 'file',
+        ebType: 'image',
         ebTitle: 'ArticleCover',
-        ebParams: { mode: 1 },
       },
       // Extra
       __groupExtra: {
