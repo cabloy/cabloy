@@ -65,7 +65,9 @@ module.exports = app => {
         type: 'string',
         ebType: 'image',
         ebTitle: 'ArticleCover',
-        ebParams: {},
+        ebParams: {
+          max: 3,
+        },
       },
       // Extra
       __groupExtra: {

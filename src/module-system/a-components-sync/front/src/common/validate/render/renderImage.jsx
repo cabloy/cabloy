@@ -47,15 +47,17 @@ export default {
               </a>
             );
           }
-          <a
-            key={index}
-            class="image-item image-preview"
-            style={cellStyle}
-            onClick={event => this._renderImage_preview(event, context, images, index)}
-          >
-            <img src={image} />
-            {domImageDelete}
-          </a>;
+          domImage = (
+            <a
+              key={index}
+              class="image-item image-preview"
+              style={cellStyle}
+              onClick={event => this._renderImage_preview(event, context, images, index)}
+            >
+              <img src={image} />
+              {domImageDelete}
+            </a>
+          );
         }
         domImages.push(domImage);
         if (!modeView && max === 1) {
