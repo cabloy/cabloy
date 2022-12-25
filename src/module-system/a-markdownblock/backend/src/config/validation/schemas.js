@@ -54,9 +54,8 @@ module.exports = app => {
           },
           cover: {
             type: 'string',
-            ebType: 'file',
+            ebType: 'image',
             ebTitle: 'AudioCover',
-            ebParams: { mode: 1 },
           },
         },
       },
