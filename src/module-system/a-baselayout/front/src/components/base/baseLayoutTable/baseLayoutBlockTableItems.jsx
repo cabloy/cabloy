@@ -172,13 +172,15 @@ export default {
       return false;
     },
     _customRender(text, record, index, column) {
+      const pageInfo = this.layoutManager.data.adapter.getPageInfo();
+      const indexTotal = pageInfo.pageCurrent === 0 ? index : (pageInfo.pageCurrent - 1) * pageInfo.pageSize + index;
       // options
       let options = {
         props: {
           layoutManager: this.layoutManager,
           layout: this.layout,
           layoutItems: this,
-          info: { text, record, index, column },
+          info: { text, record, index, indexTotal, column },
         },
       };
       // default
