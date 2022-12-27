@@ -216,10 +216,18 @@ module.exports = {
     const fun = function (data, path, rootData) {
       // notEmpty=false
       if (!schema) return true;
+      // ctx
+      const ctx = this;
+      // saveDraftOnly
+      const saveDraftOnly = ctx.bean.util.getProperty(ctx.meta, 'validateHost.options.saveDraftOnly');
+      if (saveDraftOnly) {
+        // not check
+        return true;
+      }
       // expression
       const expression = schema && schema.expression;
       if (expression) {
-        const res = evaluateExpression({ expression, rootData, ctx: this });
+        const res = evaluateExpression({ expression, rootData, ctx });
         if (!res) return true;
       }
       if (checkIfEmpty(schema, schemaProperty, data)) {

@@ -15111,7 +15111,12 @@ module.exports = app => {
     }
 
     async write() {
-      const options = { ignoreValidate: false };
+      const _options = this.ctx.request.body.options;
+      const saveDraftOnly = _options && _options.saveDraftOnly;
+      const options = {
+        ignoreValidate: false,
+        saveDraftOnly,
+      };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
         item: this.ctx.request.body.item,
