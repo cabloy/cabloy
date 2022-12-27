@@ -14,6 +14,8 @@ export default {
   methods: {
     async onChooseAtom() {
       const { key, property } = this.context;
+      // value is atomId
+      const value = this.context.getValue();
       // target
       let target = property.ebParams.target;
       if (target === undefined) target = '_self';
@@ -21,17 +23,8 @@ export default {
       const atomClass = property.ebParams.atomClass;
       // selectOptions
       const selectOptions = property.ebParams.selectOptions;
-      // atomId: maybe from host
-      //         should not from host
-      // let atomId = (validate.host && validate.host.atomId) || property.ebParams.atomId;
-      let atomId = property.ebParams.atomId;
-      if (typeof atomId === 'string') {
-        atomId = this.context.getValue(atomId);
-      } else {
-        atomId = atomId || 0;
-      }
       // mapper
-      const mapper = property.ebParams.mapper;
+      const mapper = property.ebParams.mapper || {};
       return new Promise(resolve => {
         const url = '/a/basefront/atom/select';
         this.$view.navigate(url, {
@@ -39,21 +32,17 @@ export default {
           context: {
             params: {
               selectMode: 'single',
-              selectedAtomId: atomId,
+              selectedAtomId: value,
               atomClass,
               options: selectOptions,
             },
             callback: (code, selectedAtom) => {
               if (code === 200) {
+                // atomId
+                this.context.setValue(selectedAtom.atomId, key);
                 // mapper
-                if (mapper) {
-                  for (const key in mapper) {
-                    const value = selectedAtom[mapper[key]];
-                    this.context.setValue(value, key);
-                  }
-                } else {
-                  const value = selectedAtom[key];
-                  this.context.setValue(value, key);
+                for (const _key in mapper) {
+                  this.context.setValue(selectedAtom[_key], mapper[_key]);
                 }
                 resolve(true);
               } else if (code === false) {
@@ -64,21 +53,35 @@ export default {
         });
       });
     },
+    getDisplayName() {
+      const { key, property } = this.context;
+      let displayName = property.ebParams.displayName;
+      if (!displayName) {
+        const mapper = property.ebParams.mapper || {};
+        displayName = mapper.atomName;
+      }
+      if (displayName) {
+        return this.context.getValue(displayName);
+      }
+      const title1 = `_${key}TitleLocale`;
+      const title2 = `_${key}Title`;
+      return this.context.getValue(title1) || this.context.getValue(title2);
+    },
   },
   render() {
     const { dataPath, property, validate } = this.context;
     const title = this.context.getTitle();
-    const value = this.context.getValue();
+    const displayName = this.getDisplayName();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item title={title}>
-          <div slot="after">{value}</div>
+          <div slot="after">{displayName}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseAtom}>
-        <div slot="after">{value}</div>
+        <div slot="after">{displayName}</div>
       </eb-list-item-choose>
     );
   },
