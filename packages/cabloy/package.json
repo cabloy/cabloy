@@ -39,7 +39,7 @@
     "egg-born-module-a-baseadmin": "^4.8.8",
     "egg-born-module-a-basefront": "^4.8.14",
     "egg-born-module-a-baselayout": "^4.8.8",
-    "egg-born-module-a-baserender": "^4.0.5",
+    "egg-born-module-a-baserender": "^4.0.6",
     "egg-born-module-a-cache": "^4.8.5",
     "egg-born-module-a-captcha": "^4.8.6",
     "egg-born-module-a-captchasimple": "^4.8.5",
