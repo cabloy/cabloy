@@ -35,7 +35,7 @@
     "egg-born-module-a-authopen": "^4.8.7",
     "egg-born-module-a-authsimple": "^4.8.6",
     "egg-born-module-a-authsms": "^4.8.5",
-    "egg-born-module-a-base-sync": "^4.8.34",
+    "egg-born-module-a-base-sync": "^4.8.35",
     "egg-born-module-a-baseadmin": "^4.8.8",
     "egg-born-module-a-basefront": "^4.8.14",
     "egg-born-module-a-baselayout": "^4.8.8",
