@@ -1,7 +1,7 @@
 import Vue from 'vue';
 const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellFormat;
 
-const __watchNames = ['info.record', 'info.index'];
+const __watchNames = ['info.record', 'info.index', 'info.indexTotal'];
 export default {
   meta: {
     global: false,
@@ -50,7 +50,7 @@ export default {
   methods: {
     evaluate() {
       // evaluate
-      let { text, record, index, column } = this.info;
+      let { text, record, index, indexTotal, column } = this.info;
       // for tree table
       if (record.children) {
         record = Object.assign({}, record, { children: undefined });
@@ -59,9 +59,10 @@ export default {
         text,
         record,
         index,
+        indexTotal,
         params: column.params,
         options: column.component && column.component.options,
-      }; // { text, record, index, column }
+      }; // { text, record, index, indexTotal, column }
       this.$meta.util.sandbox
         .evaluate(this.expression, scope)
         .then(value => {
