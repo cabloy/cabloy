@@ -15,6 +15,7 @@ const pump = require3('pump');
 const fse = require3('fs-extra');
 const extend = require3('@zhennann/extend');
 const base64url = require3('base64url');
+const FileType = require3('file-type');
 
 const REGEXP_DATA_URL = /^data:([^;]+);[^,]*base64,(.*)/;
 
@@ -182,6 +183,38 @@ module.exports = ctx => {
         },
       };
       return await this._upload({ fileContent, meta, user });
+    }
+
+    async uploadByLocalFile({ pathFile, meta, user }) {
+      if (!meta) meta = {};
+      if (!meta.fields) meta.fields = {};
+      // mode
+      if (!meta.fields.mode) {
+        meta.fields.mode = 2; // file
+      }
+      // filename
+      if (!meta.filename) {
+        meta.filename = path.basename(pathFile);
+      }
+      // encoding
+      if (!meta.encoding) {
+        meta.encoding = '7bit';
+      }
+      // content
+      const fileContent = await fse.readFile(pathFile);
+      // mime
+      if (!meta.mime) {
+        const res = await FileType.fileTypeFromBuffer(fileContent);
+        if (res) {
+          meta.mime = res.mime;
+        }
+      }
+      // upload
+      return await this._upload({
+        fileContent,
+        meta,
+        user,
+      });
     }
 
     async _upload({ fileContent, meta, user }) {
