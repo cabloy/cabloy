@@ -286,6 +286,10 @@ module.exports = app => {
     async translateAreaScopeValue(/* { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue }*/) {
       return { error: this.ctx.text('NotImplemented') };
     }
+
+    async prepareStaticItem({ moduleName, atomClass, item, register }) {
+      return await this.ctx.bean.atomStatic._adjustItem_base({ moduleName, atomClass, item, register });
+    }
   }
   return AtomBase;
 };

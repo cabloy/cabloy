@@ -1,3 +1,6 @@
+const require3 = require('require3');
+const mparse = require3('egg-born-mparse').default;
+
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomStatic extends ctx.app.meta.BeanModuleBase {
@@ -43,6 +46,7 @@ module.exports = ctx => {
       const atomStaticKey = `${moduleName}:${item.atomStaticKey}`;
       const atomRevision = item.atomRevision || 0;
       // atomClassBase
+      atomClass = await ctx.bean.atomClass.get(atomClass);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // get by key
       const atom = await ctx.bean.atom.readByStaticKey({
@@ -64,7 +68,7 @@ module.exports = ctx => {
           atomRevisionCurrent: atom.atomRevision,
         });
         if (changed) {
-          item = await this._adjustItem({ moduleName, atomClass, item, register: false });
+          item = await this._adjustItem({ moduleName, atomClass, atomClassBase, item, register: false });
           await this._updateRevision({
             atomClassBase,
             atomClass,
@@ -82,7 +86,7 @@ module.exports = ctx => {
         return null;
       }
       // register
-      item = await this._adjustItem({ moduleName, atomClass, item, register: true });
+      item = await this._adjustItem({ moduleName, atomClass, atomClassBase, item, register: true });
       const atomKey = await this._register({ atomClass, item });
       await this._addResourceRoles({ atomId: atomKey.atomId, roles: item.resourceRoles });
       return atomKey;
@@ -134,7 +138,19 @@ module.exports = ctx => {
       }
     }
 
-    async _adjustItem({ moduleName, atomClass, item, register }) {
+    async _adjustItem({ moduleName, atomClass, atomClassBase, item, register }) {
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
+      item = await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { moduleName, atomClass, item, register },
+        fn: 'prepareStaticItem',
+      });
+      return item;
+    }
+    async _adjustItem_base({ moduleName, atomClass, item, register }) {
       // item
       item = {
         ...item,
