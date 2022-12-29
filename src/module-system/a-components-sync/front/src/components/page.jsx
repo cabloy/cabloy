@@ -22,6 +22,7 @@ export default {
       hideNavbarOnScroll: false,
       hideToolbarOnScroll: false,
       className: '',
+      firstOfPageAfterIn: true,
     };
   },
   created() {
@@ -94,7 +95,11 @@ export default {
       this.setState({
         routerPositionClass: 'page-current',
       });
-      this.dispatchEvent('page:afterin pageAfterIn', page);
+      // event
+      this.dispatchEvent('page:afterin pageAfterIn', page, this.firstOfPageAfterIn);
+      if (this.firstOfPageAfterIn) {
+        this.firstOfPageAfterIn = false;
+      }
 
       // title
       if (this.pageTitle === null) {
