@@ -1,5 +1,15 @@
 # History
 
+## 2022-12-29, Version 4.28.7
+
+- **Feat**
+  - test-party 套件：创建一个独立的 App 应用：UI 组件，从而可以更加便利直观的查看 CabloyJS 和 Framework7 提供的 UI 组件库
+
+## 2022-12-28, Version 4.28.6
+
+- **Feat**
+  - 静态原子数据：可以通过重载方法 prepareStaticItem，对静态数据进行调整
+
 ## 2022-12-27, Version 4.28.4
 
 - **Feat**
