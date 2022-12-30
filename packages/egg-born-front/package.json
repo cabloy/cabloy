@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/zhennann/egg-born-front#readme",
   "dependencies": {
-    "@zhennann/currency": "^1.0.1",
+    "@zhennann/currency": "^1.0.2",
     "@zhennann/debounce": "^1.0.0",
     "@zhennann/extend": "^3.0.2",
     "@zhennann/framework7": "^6.1.6",
