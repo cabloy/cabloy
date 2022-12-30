@@ -14,7 +14,8 @@ export default {
       }
       // currency
       if (params.currency) {
-        return isNaN(text) ? text : (Number(text) / 100).toFixed(2);
+        const currency = this.$meta.util.currency(params.currency);
+        return currency.format(text);
       }
       // text
       if (params.locale) {

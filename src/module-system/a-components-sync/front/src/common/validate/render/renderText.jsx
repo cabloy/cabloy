@@ -93,7 +93,9 @@ export default {
           }}
           onChange={valueNew => {
             if (!immediate) {
-              valueNew = this._updateValueCurrency(valueNew);
+              if (ebCurrency) {
+                valueNew = this._updateValueCurrency(valueNew, ebCurrency);
+              }
               context.setValue(valueNew);
             }
           }}
