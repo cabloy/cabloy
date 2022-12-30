@@ -1,20 +1,20 @@
 // Deprecate: ebCurrency\ebLocale\ebDateFormat\ebTextarea\ebSecure\ebInputType
 export default {
   methods: {
-    _formatValueCurrency(value) {
-      if (isNaN(value)) return value;
-      return (Number(value) / 100).toFixed(2);
+    _formatValueCurrency(value, currencyOptions) {
+      const currency = this.$meta.util.currency(currencyOptions);
+      return currency.format(value);
     },
-    _updateValueCurrency(value) {
-      if (isNaN(value)) return value;
-      return Number((Number(value) * 100).toFixed(0));
+    _updateValueCurrency(value, currencyOptions) {
+      const currency = this.$meta.util.currency(currencyOptions);
+      return currency.update(value);
     },
     _formatTextGeneral(property, value) {
       if (this.checkIfEmptyForSelect(value)) return value;
       // currency
       const ebCurrency = this.$meta.util.getPropertyDeprecate(property, 'ebParams.currency', 'ebCurrency');
       if (ebCurrency) {
-        value = this._formatValueCurrency(value);
+        value = this._formatValueCurrency(value, ebCurrency);
       }
       // locale
       const ebLocale = this.$meta.util.getPropertyDeprecate(property, 'ebParams.locale', 'ebLocale');

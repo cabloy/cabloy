@@ -4,6 +4,7 @@ import * as uuid from 'uuid';
 import cookies from 'js-cookie';
 import queue from 'async/queue';
 import debounce from '@zhennann/debounce';
+import currency from '@zhennann/currency';
 import extend from '@zhennann/extend';
 import clipboardFn from './clipboard.js';
 import sandboxFn from './sandbox.js';
@@ -714,6 +715,7 @@ export default function (Vue) {
     queue,
     cookies,
     debounce,
+    currency,
     extend(...args) {
       return extend(true, ...args);
     },
