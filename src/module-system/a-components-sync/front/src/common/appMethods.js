@@ -12,11 +12,18 @@ export default function (ctx) {
   const dialog = Dialog(ctx);
   // actions
   const actions = Actions(ctx);
-  // ok
-  return {
+  // appMethods
+  const appMethods = {
     calendar,
     toast,
     dialog,
     actions,
   };
+  // patch
+  if (!ctx.getHostEl) {
+    ctx.getHostEl = function () {
+      return ctx.$f7.root;
+    };
+  }
+  return appMethods;
 }

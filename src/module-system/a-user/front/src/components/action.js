@@ -23,7 +23,11 @@ export default {
           // locale
           ctx.$meta.util.setLocale(locale.value);
           // confirm
-          await ctx.$view.dialog.confirm(ctx.$text('LocaleReloadConfirmText'));
+          let view = ctx.$view;
+          if (!view) {
+            view = this.$meta.vueLayout.appMethods;
+          }
+          await view.dialog.confirm(ctx.$text('LocaleReloadConfirmText'));
           // this.$meta.vueApp.reload({ echo: false });
           window.location.reload();
         }
