@@ -39,7 +39,12 @@ export default {
         targetEl: action.targetEl,
         buttons,
       };
-      const button = await ctx.$view.actions.choose(params);
+      let view = ctx.$view;
+      if (!view) {
+        view = this.$meta.vueLayout.appMethods;
+        params.forceToPopover = true;
+      }
+      const button = await view.actions.choose(params);
       return button.data;
     },
   },

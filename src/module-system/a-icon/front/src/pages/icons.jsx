@@ -25,7 +25,6 @@ export default {
     },
     _onSearch(query) {
       this.query = query;
-      this._resetClipboards();
     },
     async _loadIcons() {
       this.iconsAll = await this.$api.post('icon/getIcons');
