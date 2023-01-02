@@ -59,12 +59,12 @@ export default function (Vue) {
         //
         // state.layoutConfig = null;
       },
-      setCurrent(state, { appKey, appLanguage }) {
+      setCurrent(state, { appKey, appLanguage, cb }) {
         if (!appKey && !appLanguage) return;
         if (appKey) state.currentInner.appKey = appKey;
         if (appLanguage) state.currentInner.appLanguage = appLanguage;
         // save current
-        __saveCurrent({ Vue, current: state.currentInner });
+        __saveCurrent({ Vue, current: state.currentInner, cb });
       },
       setAppItem(state, { appKey, appItem }) {
         state.appItems = {
@@ -246,12 +246,17 @@ export default function (Vue) {
           Vue.prototype.$meta.util.preloadModules('a-antdv');
         }
       },
-      async setCurrent({ state }, { appKey, appLanguage }) {
-        if (!appKey && !appLanguage) return;
-        if (appKey) state.currentInner.appKey = appKey;
-        if (appLanguage) state.currentInner.appLanguage = appLanguage;
-        // save current
-        await __saveCurrent({ Vue, current: state.currentInner });
+      async setCurrent({ state, commit }, { appKey, appLanguage }) {
+        return new Promise((resolve, reject) => {
+          commit('setCurrent', {
+            appKey,
+            appLanguage,
+            cb: err => {
+              if (err) return reject(err);
+              resolve();
+            },
+          });
+        });
       },
     },
   };
@@ -295,8 +300,21 @@ async function __fetchAppItem({ Vue, appKey }) {
     throw err;
   }
 }
+async function __saveCurrent({ Vue, current, cb }) {
+  if (cb) {
+    __saveCurrent_inner({ Vue, current })
+      .then(() => {
+        cb();
+      })
+      .catch(err => {
+        cb(err);
+      });
+    return;
+  }
+  return await __saveCurrent_inner({ Vue, current });
+}
 
-async function __saveCurrent({ Vue, current }) {
+async function __saveCurrent_inner({ Vue, current }) {
   // load appItem
   const appItem = await Vue.prototype.$meta.store.dispatch('a/app/getAppItem', { appKey: current.appKey });
   if (!appItem) {

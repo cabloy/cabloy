@@ -16,7 +16,7 @@ export default function (Vue) {
       })
       .catch(err => {
         console.error(err);
-        cb();
+        cb(err);
       });
   });
 
@@ -441,12 +441,13 @@ export default function (Vue) {
         });
       },
       async setLayoutConfigKey({ state, commit }, { module, key, value }) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
           commit('setLayoutConfigKey', {
             module,
             key,
             value,
-            cb: () => {
+            cb: err => {
+              if (err) return reject(err);
               resolve();
             },
           });
