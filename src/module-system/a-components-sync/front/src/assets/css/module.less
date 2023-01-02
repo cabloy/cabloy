@@ -1,34 +1,5 @@
-*,
-::after,
-::before {
-  box-sizing: border-box;
-}
-
-html,
-html.theme-dark {
-  ::-webkit-scrollbar {
-    width: 6px;
-    background-color: var(--f7-page-bg-color);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    background-color: var(--f7-text-editor-border-color);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--f7-text-editor-button-divider-color);
-  }
-
-  ::selection {
-    color: #fff;
-    background: #fb9337;
-  }
-}
-
-.page.eb-page-empty {
-  background-color: transparent;
-}
+@import './common/general.less';
+@import './common/list.less';
 
 .button-backdrop {
   position: absolute;
@@ -263,88 +234,9 @@ input[type='search']::-webkit-search-decoration {
     }
   }
 
-  .list-group-title > span {
-    width: 100%;
-    display: block;
-  }
-
-  .list {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  .list.inset {
-    margin-top: var(--f7-list-inset-side-margin);
-    margin-bottom: var(--f7-list-inset-side-margin);
-  }
-
   .login-screen-page {
     --f7-login-screen-blocks-max-width: none;
   }
-
-  form.list .eb-input-file-upload {
-    position: absolute;
-    right: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right));
-    bottom: 10px;
-    font-size: 12px;
-    background-color: var(--f7-text-editor-border-color);
-    display: none;
-  }
-
-  form.list .item-title {
-    color: var(--f7-label-text-color);
-    min-width: 80px;
-  }
-
-  form.list .item-panel-invalid,
-  form.list .item-choose-invalid,
-  form.list .item-component-invalid {
-    color: var(--f7-input-error-text-color);
-
-    .item-title {
-      color: var(--f7-input-error-text-color);
-    }
-  }
-
-  form.list .item-component-invalid-input-text {
-    font-size: var(--f7-input-error-font-size);
-    line-height: var(--f7-input-error-line-height);
-    color: var(--f7-input-error-text-color);
-    font-weight: var(--f7-input-error-font-weight);
-    margin-top: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  form.list input.input-with-value[disabled] {
-    text-align: right;
-    font-size: var(--f7-list-item-after-font-size);
-    color: var(--f7-list-item-after-text-color);
-  }
-
-  form.list div.item-input {
-    &.item-input-clear-button {
-      span.input-clear-button {
-        visibility: hidden;
-      }
-    }
-
-    &.item-input-clear-button.item-input-with-value.item-input-focused {
-      input.input-with-value {
-        padding-right: var(--f7-input-clear-button-size);
-      }
-      span.input-clear-button {
-        visibility: visible;
-      }
-    }
-  }
-
-  // should not set this styles, for inline-labels: align-self:flex-end
-  //.list .item-media {
-  //padding-top: 0;
-  //padding-bottom: 0;
-  //}
 
   textarea:disabled {
     font-size: var(--f7-list-item-after-font-size);

@@ -1,0 +1,31 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+html,
+html.theme-dark {
+  ::-webkit-scrollbar {
+    width: 6px;
+    background-color: var(--f7-page-bg-color);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--f7-text-editor-border-color);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--f7-text-editor-button-divider-color);
+  }
+
+  ::selection {
+    color: #fff;
+    background: #fb9337;
+  }
+}
+
+.page.eb-page-empty {
+  background-color: transparent;
+}
