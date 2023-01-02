@@ -1,5 +1,6 @@
 @import './common/general.less';
 @import './common/list.less';
+@import './common/navbar.less';
 
 .button-backdrop {
   position: absolute;
@@ -328,21 +329,6 @@ input[type='search']::-webkit-search-decoration {
       display: inline-block;
       padding: 0 8px;
     }
-  }
-
-  .page-with-navbar-large li.list-group-title,
-  .page-with-navbar-large .list li.list-group-title  {
-    top: calc(-1 * var(--f7-navbar-large-title-height));
-  }
-
-  .page-with-navbar-large .hide-navbar-on-scroll li.list-group-title,
-  .page-with-navbar-large .hide-navbar-on-scroll .list li.list-group-title  {
-    top: calc(-1 * var(--f7-navbar-large-title-height) - 1 * var(--f7-navbar-height));
-  }
-
-  .hide-navbar-on-scroll li.list-group-title,
-  .hide-navbar-on-scroll .list li.list-group-title  {
-    top: calc(-1 * var(--f7-navbar-height));
   }
 
   .eb-list-item-render-buttons {
