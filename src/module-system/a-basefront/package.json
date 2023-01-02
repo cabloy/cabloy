@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-basefront",
-  "version": "4.8.14",
+  "version": "4.8.15",
   "title": "Base Front",
   "eggBornModule": {
     "dependencies": {}
