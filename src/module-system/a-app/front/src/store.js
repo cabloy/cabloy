@@ -20,7 +20,7 @@ export default function (Vue) {
         appLanguage: null,
       },
       appItemsAll: null,
-      layoutConfig: null,
+      // layoutConfig: null, // should not cache, because maybe changed
       // global
       appItems: {},
     },
@@ -57,7 +57,7 @@ export default function (Vue) {
         state.currentInner.appKey = null;
         state.appItemsAll = null;
         //
-        state.layoutConfig = null;
+        // state.layoutConfig = null;
       },
       setCurrent(state, { appKey, appLanguage }) {
         if (!appKey && !appLanguage) return;
@@ -75,15 +75,15 @@ export default function (Vue) {
       setAppItemsAll(state, { appItems }) {
         state.appItemsAll = appItems;
       },
-      setLayoutConfig(state, { layoutConfig }) {
-        state.layoutConfig = layoutConfig;
-      },
+      // setLayoutConfig(state, { layoutConfig }) {
+      //   state.layoutConfig = layoutConfig;
+      // },
     },
     actions: {
-      async getLayoutConfig({ state, commit }) {
-        if (state.layoutConfig) return state.layoutConfig;
+      async getLayoutConfig(/* { state, commit }*/) {
+        // if (state.layoutConfig) return state.layoutConfig;
         const layoutConfig = await Vue.prototype.$meta.store.dispatch('a/base/getLayoutConfig', 'a-basefront');
-        commit('setLayoutConfig', { layoutConfig });
+        // commit('setLayoutConfig', { layoutConfig });
         return layoutConfig;
       },
       async getCurrent({ state, getters, commit, dispatch }) {
