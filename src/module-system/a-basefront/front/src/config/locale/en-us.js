@@ -1,4 +1,5 @@
 export default {
+  kitchenSinkSource: 'Source',
   OpenLinkTitleRedirect: 'Redirect',
   PleaseInputText: 'Please Input text',
   ShowAllComments: 'Show All Comments',

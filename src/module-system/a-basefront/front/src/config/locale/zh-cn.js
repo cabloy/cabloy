@@ -1,4 +1,5 @@
 export default {
+  kitchenSinkSource: '源码',
   About: '关于',
   Documentation: '文档',
   Community: '社区',
