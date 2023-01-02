@@ -6,6 +6,11 @@ export default function () {
         return ctx.$f7router && ctx.$f7router.view.$el[0].__vue__;
       },
     });
+    Object.defineProperty(ctx, '$viewAppMethods', {
+      get() {
+        return ctx.$view || ctx.$meta.vueLayout.appMethods;
+      },
+    });
     Object.defineProperty(ctx, '$page', {
       get() {
         let page = ctx.$pageContainer;

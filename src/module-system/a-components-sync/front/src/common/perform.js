@@ -61,11 +61,11 @@ export default {
         this._hidePreloader();
         if (err && (err.code === 422 || err.code === -422)) {
           const message = this.$text('Data Validation Error');
-          this.$view.toast.show({ text: message });
+          this.$viewAppMethods.toast.show({ text: message });
           return;
         }
         if (err && err.code !== 401 && err.message) {
-          this.$view.toast.show({ text: trimMessage(this, err.message) });
+          this.$viewAppMethods.toast.show({ text: trimMessage(this, err.message) });
         }
         if (err && err.message) {
           throw err;
@@ -74,9 +74,9 @@ export default {
     },
     _handleResult(res) {
       if (res === true) {
-        this.$view.toast.show({ text: this.$text('Operation Succeeded') });
+        this.$viewAppMethods.toast.show({ text: this.$text('Operation Succeeded') });
       } else if (typeof res === 'string') {
-        this.$view.toast.show({ text: res });
+        this.$viewAppMethods.toast.show({ text: res });
       }
     },
     _showPreloader() {
