@@ -246,6 +246,13 @@ export default function (Vue) {
           Vue.prototype.$meta.util.preloadModules('a-antdv');
         }
       },
+      async setCurrent({ state }, { appKey, appLanguage }) {
+        if (!appKey && !appLanguage) return;
+        if (appKey) state.currentInner.appKey = appKey;
+        if (appLanguage) state.currentInner.appLanguage = appLanguage;
+        // save current
+        await __saveCurrent({ Vue, current: state.currentInner });
+      },
     },
   };
 }
@@ -305,7 +312,7 @@ async function __saveCurrent({ Vue, current }) {
   const layoutConfigValueApp = layoutConfigValue.appKey;
   const layoutConfigValueLanguage = layoutConfigValue.appLanguage;
   if (layoutConfigValueApp !== current.appKey || layoutConfigValueLanguage !== current.appLanguage) {
-    Vue.prototype.$meta.store.commit('a/base/setLayoutConfigKey', {
+    await Vue.prototype.$meta.store.dispatch('a/base/setLayoutConfigKey', {
       module: 'a-basefront',
       key: layoutConfigKey,
       value: { appKey: current.appKey, appLanguage: current.appLanguage },

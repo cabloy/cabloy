@@ -79,7 +79,7 @@ export default function (Vue) {
           [module]: data,
         };
       },
-      setLayoutConfigKey(state, { module, key, value }) {
+      setLayoutConfigKey(state, { module, key, value, cb }) {
         let layoutConfigModule = state.layoutConfig[module] || {};
         layoutConfigModule = {
           ...layoutConfigModule,
@@ -93,7 +93,7 @@ export default function (Vue) {
         const user = Vue.prototype.$meta.store.getState('auth/user');
         if (!user.op.anonymous) {
           const data = { module, key, value };
-          queueLayoutConfig.push({ userId: user.op.id, data });
+          queueLayoutConfig.push({ userId: user.op.id, data }, cb);
         }
       },
       setUserAtomClassRolesPreferred(state, { atomClassId, roleIdOwner }) {
@@ -438,6 +438,18 @@ export default function (Vue) {
             .catch(err => {
               reject(err);
             });
+        });
+      },
+      async setLayoutConfigKey({ state, commit }, { module, key, value }) {
+        return new Promise(resolve => {
+          commit('setLayoutConfigKey', {
+            module,
+            key,
+            value,
+            cb: () => {
+              resolve();
+            },
+          });
         });
       },
     },

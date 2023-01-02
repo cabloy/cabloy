@@ -22,12 +22,15 @@ export default {
           });
           // locale
           ctx.$meta.util.setLocale(locale.value);
+          // set current app language
+          await this.$meta.store.dispatch('a/app/setCurrent', { appLanguage: locale.value });
           // // confirm
           // let view = ctx.$view;
           // if (!view) {
           //   view = this.$meta.vueLayout.appMethods;
           // }
           // await view.dialog.confirm(ctx.$text('LocaleReloadConfirmText'));
+          // reload
           // this.$meta.vueApp.reload({ echo: false });
           window.location.reload();
         }
