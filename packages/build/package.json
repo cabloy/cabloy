@@ -1,6 +1,6 @@
 {
   "name": "@zhennann/build",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "Cabloy Build System",
   "main": "index.js",
   "publishConfig": {
@@ -37,7 +37,7 @@
     "egg-born-mglob": "^3.0.8",
     "egg-born-mparse": "^2.1.8",
     "eslint": "^8.27.0",
-    "eslint-config-egg-born": "^1.1.4",
+    "eslint-config-egg-born": "^1.1.5",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jsdoc": "^39.6.4",
     "eslint-plugin-node": "^11.1.0",
