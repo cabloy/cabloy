@@ -344,6 +344,13 @@ input[type='search']::-webkit-search-decoration {
   }
 
   .eb-list-item-render-image {
+    .item-content {
+      .item-inner {
+        &::after {
+          display: none !important;
+        }
+      }
+    }
     .item-input-wrap {
       .item-input-info,
       .item-input-error-message {
