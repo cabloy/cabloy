@@ -35,7 +35,7 @@
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
     "egg-born-mglob": "^3.0.8",
-    "egg-born-mparse": "^2.1.8",
+    "egg-born-mparse": "^2.1.9",
     "eslint": "^8.27.0",
     "eslint-config-egg-born": "^1.1.5",
     "eslint-config-prettier": "^8.5.0",

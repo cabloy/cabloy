@@ -23,6 +23,6 @@
     "url": "https://github.com/zhennann/cabloy-lerna/issues"
   },
   "dependencies": {
-    "egg-born-mparse": "^2.1.8"
+    "egg-born-mparse": "^2.1.9"
   }
 }

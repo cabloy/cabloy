@@ -36,7 +36,7 @@
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mglob": "^3.0.8",
     "egg-born-mock": "^2.2.0",
-    "egg-born-mparse": "^2.1.8",
+    "egg-born-mparse": "^2.1.9",
     "egg-mysql": "^3.0.0",
     "egg-redis": "^2.4.0",
     "egg-schedule": "^3.6.6",
