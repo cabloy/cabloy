@@ -2134,7 +2134,11 @@ module.exports = ctx => {
         if (_atom.atomClosed) {
           // enable on 'self and write', not including 'delete'
           if (bSelf && action === 3) {
-            return _atom;
+            // return _atom;
+            if (_atom.atomIdFormal) {
+              const _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
+              return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow });
+            }
           }
           return null;
         }
@@ -5483,7 +5487,12 @@ module.exports = ctx => {
       if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {
         // role
-        const role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
+        let role;
+        if (roleRight.roleAtomId || roleRight.roleId) {
+          role = await this._forceRole({ roleAtomId: roleRight.roleAtomId, roleId: roleRight.roleId });
+        } else {
+          role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
+        }
         // scope
         let scope;
         if (!roleRight.scopeNames) {
