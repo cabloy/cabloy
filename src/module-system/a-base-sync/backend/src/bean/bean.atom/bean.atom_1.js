@@ -724,7 +724,11 @@ module.exports = ctx => {
         if (_atom.atomClosed) {
           // enable on 'self and write', not including 'delete'
           if (bSelf && action === 3) {
-            return _atom;
+            // return _atom;
+            if (_atom.atomIdFormal) {
+              const _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
+              return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow });
+            }
           }
           return null;
         }
