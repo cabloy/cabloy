@@ -92,7 +92,12 @@ module.exports = ctx => {
       if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {
         // role
-        const role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
+        let role;
+        if (roleRight.roleAtomId || roleRight.roleId) {
+          role = await this._forceRole({ roleAtomId: roleRight.roleAtomId, roleId: roleRight.roleId });
+        } else {
+          role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
+        }
         // scope
         let scope;
         if (!roleRight.scopeNames) {
