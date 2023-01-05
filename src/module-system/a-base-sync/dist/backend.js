@@ -5492,7 +5492,7 @@ module.exports = ctx => {
     //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
     //   { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
     //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
-    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
+    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated', areaKey: null, areaScope: null },
     // ];
     async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
       // module
@@ -5543,6 +5543,8 @@ module.exports = ctx => {
           atomClassId: atomClass.id,
           action: actionCode,
           scope,
+          areaKey: roleRight.areaKey,
+          areaScope: roleRight.areaScope,
         });
       }
     }
