@@ -3140,8 +3140,25 @@ module.exports = app => {
       return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
     }
 
-    async translateAreaScopeValue(/* { atomClass, areaScopeMeta, atomAreaKey, atomAreaValue }*/) {
-      return { error: this.ctx.text('NotImplemented') };
+    async translateAreaScopeValue({ /* atomClass,*/ areaScopeMeta, atomAreaKey, atomAreaValue }) {
+      const count = atomAreaKey.length;
+      const title = [];
+      const titleLocale = [];
+      for (let i = 0; i < count; i++) {
+        const key = atomAreaKey[i];
+        const code = atomAreaValue[i];
+        const schema = areaScopeMeta.schemas[key];
+        const dictItem = await this.ctx.bean.dict.findItem({
+          dictKey: schema.ebParams.dictKey,
+          code,
+          options: { separator: schema.ebParams.separator },
+        });
+        title.push(dictItem ? dictItem.titleFull : '');
+        titleLocale.push(dictItem ? dictItem.titleLocaleFull : '');
+      }
+      // ok
+      return { title, titleLocale };
+      // return { error: this.ctx.text('NotImplemented') };
     }
 
     async prepareStaticItem({ moduleName, atomClass, item, register }) {
