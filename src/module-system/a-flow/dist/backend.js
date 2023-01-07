@@ -2621,32 +2621,38 @@ module.exports = class FlowNodeBase {
   }
 
   async onNodeEnter() {
-    await this.flowInstance._flowListener.onNodeEnter(this.contextNode);
+    const res = await this.flowInstance._flowListener.onNodeEnter(this.contextNode);
+    if (res === false) return false;
     return true;
   }
 
   async onNodeBegin() {
-    await this.flowInstance._flowListener.onNodeBegin(this.contextNode);
+    const res = await this.flowInstance._flowListener.onNodeBegin(this.contextNode);
+    if (res === false) return false;
     return true;
   }
 
   async onNodeDoing() {
-    await this.flowInstance._flowListener.onNodeDoing(this.contextNode);
+    const res = await this.flowInstance._flowListener.onNodeDoing(this.contextNode);
+    if (res === false) return false;
     return true;
   }
 
   async onNodeEnd() {
-    await this.flowInstance._flowListener.onNodeEnd(this.contextNode);
+    const res = await this.flowInstance._flowListener.onNodeEnd(this.contextNode);
+    if (res === false) return false;
     return true;
   }
 
   async onNodeLeave() {
-    await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
+    const res = await this.flowInstance._flowListener.onNodeLeave(this.contextNode);
+    if (res === false) return false;
     return true;
   }
 
   async onNodeClear({ options }) {
-    await this.flowInstance._flowListener.onNodeClear(this.contextNode, { options });
+    const res = await this.flowInstance._flowListener.onNodeClear(this.contextNode, { options });
+    if (res === false) return false;
     return true;
   }
 
