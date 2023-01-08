@@ -5,7 +5,7 @@
 - **Feat**
 
   - 工作台：在九宫格中每个应用的 DOM 节点增加属性：`data-dev-app-key`，方便快速定位 AppKey
-  - 创建前端页面组件：支持带目录的名称，比如: `npm run cli :create:pagex student/add`
+  - Cli 终端命令：创建前端页面组件，支持带目录的名称，比如: `npm run cli :create:pagex student/add`
   - ctx.bean.util.extend 代替 const extend = require3('@zhennann/extend');
   - ctx.bean.util.uuid 代替 const uuid = require3('uuid');
 
