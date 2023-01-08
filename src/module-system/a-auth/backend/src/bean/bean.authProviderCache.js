@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 const __authProvidersConfigCache = {};
 const __authProvidersConfigCache_login = {};
 const __authProvidersConfigCache_admin = {};
@@ -61,7 +58,7 @@ module.exports = ctx => {
     }
 
     purgeScene(scene) {
-      const res = extend(true, {}, scene);
+      const res = ctx.bean.util.extend({}, scene);
       delete res.__valid;
       delete res.titleLocale;
       return res;
@@ -188,14 +185,14 @@ module.exports = ctx => {
       if (authProvider.meta.scene) {
         // scene: true
         const itemScenes = providerItem.scenes ? JSON.parse(providerItem.scenes) : null;
-        const scenes = extend(true, {}, configDefault && configDefault.scenes, itemScenes);
+        const scenes = ctx.bean.util.extend({}, configDefault && configDefault.scenes, itemScenes);
         configProvider = {
           scenes,
         };
       } else {
         // scene: false
         const itemConfig = providerItem.config ? JSON.parse(providerItem.config) : null;
-        configProvider = extend(true, {}, configDefault, itemConfig);
+        configProvider = ctx.bean.util.extend({}, configDefault, itemConfig);
       }
       return {
         authProvider,

@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const uuid = require3('uuid');
-const extend = require3('@zhennann/extend');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -92,7 +91,7 @@ module.exports = ctx => {
         modules: instanceConfigsFront,
       };
       // config base
-      config = extend(true, config, {
+      config = ctx.bean.util.extend(config, {
         modules: {
           'a-base': {
             account: this._getAccount(),
@@ -113,14 +112,14 @@ module.exports = ctx => {
 
     _getAccount() {
       // account
-      const account = extend(true, {}, ctx.config.module(moduleInfo.relativeName).account);
+      const account = ctx.bean.util.extend({}, ctx.config.module(moduleInfo.relativeName).account);
       account.activatedRoles = undefined;
       // url
       for (const key in account.activationProviders) {
         const relativeName = account.activationProviders[key];
         if (relativeName) {
           const moduleConfig = ctx.config.module(relativeName);
-          extend(true, account.url, moduleConfig.account.url);
+          ctx.bean.util.extend(account.url, moduleConfig.account.url);
         }
       }
       return account;

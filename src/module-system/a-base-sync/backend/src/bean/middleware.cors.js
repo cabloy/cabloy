@@ -1,6 +1,5 @@
 const URL = require('url').URL;
 const require3 = require('require3');
-const extend = require3('@zhennann/extend');
 const koaCors = require3('@koa/cors');
 
 const optionsDefault = {
@@ -30,7 +29,7 @@ module.exports = ctx => {
       }
 
       // options
-      const optionsCors = extend(true, {}, optionsDefault, options);
+      const optionsCors = ctx.bean.util.extend({}, optionsDefault, options);
 
       // origin
       // if security plugin enabled, and origin config is not provided, will only allow safe domains support CORS.

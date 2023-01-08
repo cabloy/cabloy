@@ -1,7 +1,6 @@
 const path = require('path');
 const require3 = require('require3');
 const fse = require3('fs-extra');
-const extend = require3('@zhennann/extend');
 
 const _modulesLocales = {};
 const _themesLocales = {};
@@ -320,7 +319,7 @@ module.exports = ctx => {
       const _actions = atomClass.actions;
       const _actionsSystem = ctx.constant.module(moduleInfo.relativeName).atom.action;
       const _actionsSystemMeta = ctx.constant.module(moduleInfo.relativeName).atom.actionMeta;
-      const _actionsAll = extend(true, {}, _actionsSystemMeta, _actions);
+      const _actionsAll = ctx.bean.util.extend({}, _actionsSystemMeta, _actions);
       for (const key in _actionsAll) {
         if (key === 'custom') continue;
         const action = _actionsAll[key];
@@ -349,7 +348,7 @@ module.exports = ctx => {
           if (!_authProvider.meta.title) {
             throw new Error(`should specify the title of auth provider: ${providerFullName}`);
           }
-          const authProvider = extend(true, {}, _authProvider);
+          const authProvider = ctx.bean.util.extend({}, _authProvider);
           this._prepareAuthProvider(relativeName, providerName, authProvider);
           authProviders[providerFullName] = authProvider;
         }
@@ -380,7 +379,7 @@ module.exports = ctx => {
           _meta[key] = metaConfig[key];
         }
       }
-      return extend(true, {}, _meta, metaScene);
+      return ctx.bean.util.extend({}, _meta, metaScene);
     }
 
     _prepareAuthProvider_meta(relativeName, meta) {

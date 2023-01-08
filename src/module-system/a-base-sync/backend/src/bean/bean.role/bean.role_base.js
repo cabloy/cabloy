@@ -1,5 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
 const initData15 = require('../version/initData15.js');
 
 module.exports = ctx => {
@@ -388,7 +386,7 @@ module.exports = ctx => {
             }
           }
           // add
-          role = extend(true, { module }, role, { roleIdParent });
+          role = ctx.bean.util.extend({ module }, role, { roleIdParent });
           roleIds[roleName] = await this.add(role);
         }
       }

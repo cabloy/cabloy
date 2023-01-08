@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 module.exports = ctx => {
   class Passport {
     async authenticate({ module, providerName, providerScene, next }) {
@@ -43,7 +40,7 @@ module.exports = ctx => {
       config.successRedirect = config.successReturnToOrRedirect =
         beanProvider.metaScene.mode === 'redirect' ? '/' : false;
       // strategy
-      const strategy = await _createProviderStrategy(authProvider, beanProvider);
+      const strategy = await _createProviderStrategy(ctx, authProvider, beanProvider);
       // invoke authenticate
       const authenticate = ctx.app.passport.authenticate(strategy, config);
       await authenticate(ctx, next || function () {});
@@ -52,7 +49,7 @@ module.exports = ctx => {
   return Passport;
 };
 
-async function _createProviderStrategy(authProvider, beanProvider) {
+async function _createProviderStrategy(ctx, authProvider, beanProvider) {
   // config
   let config = {};
   config.passReqToCallback = true;
@@ -60,7 +57,7 @@ async function _createProviderStrategy(authProvider, beanProvider) {
   config.successRedirect = config.successReturnToOrRedirect = beanProvider.metaScene.mode === 'redirect' ? '/' : false;
   config.beanProvider = beanProvider;
   // combine
-  config = extend(true, {}, beanProvider.configProviderScene, config);
+  config = ctx.bean.util.extend({}, beanProvider.configProviderScene, config);
   // adjust
   config = await beanProvider.adjustConfigForAuthenticate(config);
   // strategy

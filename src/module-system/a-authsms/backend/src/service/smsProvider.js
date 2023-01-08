@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class SmsProvider extends app.Service {
@@ -28,7 +25,7 @@ module.exports = app => {
     async save({ providerName, data }) {
       const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
       const providerOld = providers[providerName];
-      data = extend(true, {}, providerOld, data);
+      data = this.ctx.bean.util.extend({}, providerOld, data);
       await this._save({ providerName, data });
     }
 

@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 const __smsProvidersConfigCache = {};
 
 module.exports = ctx => {
@@ -23,7 +20,7 @@ module.exports = ctx => {
 
     getSmsProvidersConfigForAdmin() {
       let providers = this.getSmsProvidersConfigCache();
-      providers = extend(true, {}, providers);
+      providers = ctx.bean.util.extend({}, providers);
       for (const providerName in providers) {
         const provider = providers[providerName];
         provider.titleLocale = ctx.text(provider.title);
@@ -43,7 +40,7 @@ module.exports = ctx => {
     }
 
     purgeProvider(provider) {
-      const res = extend(true, {}, provider);
+      const res = ctx.bean.util.extend({}, provider);
       delete res.titleLocale;
       return res;
     }
@@ -53,7 +50,7 @@ module.exports = ctx => {
       const configDefault = this.configModule.sms.providers;
       // configProviders
       let configProviders = await this.statusModule.get('smsProviders');
-      configProviders = extend(true, {}, configDefault, configProviders);
+      configProviders = ctx.bean.util.extend({}, configDefault, configProviders);
       // cache
       __smsProvidersConfigCache[ctx.subdomain] = configProviders;
     }
