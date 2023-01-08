@@ -44,8 +44,14 @@ function installFactory(_Vue) {
       _renderGroup(group) {
         const children = [];
         for (const item of group.items) {
+          const devAppKey = this.$meta.config.env === 'development' ? item.atomStaticKey : null;
           const domItem = (
-            <eb-link key={item.atomId} class="box-grid-cell" propsOnPerform={event => this.onItemClick(event, item)}>
+            <eb-link
+              key={item.atomId}
+              data-dev-app-key={devAppKey}
+              class="box-grid-cell"
+              propsOnPerform={event => this.onItemClick(event, item)}
+            >
               <div class="box-grid-cell-icon">
                 <f7-icon f7={item.appIcon} size="24"></f7-icon>
               </div>
