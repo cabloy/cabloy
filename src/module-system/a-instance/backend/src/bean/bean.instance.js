@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const extend = require3('@zhennann/extend');
 const async = require3('async');
 const chalk = require3('chalk');
 const boxen = require3('boxen');
@@ -114,7 +113,7 @@ module.exports = ctx => {
       // config
       instance.config = JSON.parse(instance.config) || {};
       // cache configs
-      const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
+      const instanceConfigs = ctx.bean.util.extend({}, ctx.app.meta.configs, instance.config);
       this.cacheMem.set('instanceConfigs', instanceConfigs);
       // cache configsFront
       const instanceConfigsFront = this._mergeInstanceConfigFront({ instanceConfigs });

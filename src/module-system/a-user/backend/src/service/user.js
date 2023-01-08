@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 const __appKeyDefault = 'a-app:appDefault';
 
 module.exports = app => {
@@ -62,7 +59,7 @@ module.exports = app => {
 
     async authentications({ user }) {
       // 1. get auth providers list from a-login
-      let listLogin = extend(true, [], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
+      let listLogin = this.ctx.bean.util.extend([], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
       if (listLogin.length === 0) return [];
       // 2. list aAuth
       const sql = `

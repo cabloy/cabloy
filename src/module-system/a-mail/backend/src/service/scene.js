@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Scene extends app.Service {
@@ -15,7 +12,7 @@ module.exports = app => {
     async save({ sceneName, data }) {
       const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
       const sceneOld = scenes[sceneName];
-      data = extend(true, {}, sceneOld, data);
+      data = this.ctx.bean.util.extend({}, sceneOld, data);
       await this._save({ sceneName, data });
     }
 
@@ -33,7 +30,7 @@ module.exports = app => {
     }
 
     async add({ sceneName, data }) {
-      data = extend(true, {}, this.ctx.config.scene.default, data);
+      data = this.ctx.bean.util.extend({}, this.ctx.config.scene.default, data);
       await this._save({ sceneName, data });
     }
   }

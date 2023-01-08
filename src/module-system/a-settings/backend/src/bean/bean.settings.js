@@ -1,5 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
 const constants = require('../config/constants.js');
 
 module.exports = ctx => {
@@ -89,7 +87,7 @@ module.exports = ctx => {
       });
       // always extend config, as maybe has new values
       const config = ctx.config.module(module).settings[scene];
-      return res ? extend(true, {}, config, JSON.parse(res.value)) : config;
+      return res ? ctx.bean.util.extend({}, config, JSON.parse(res.value)) : config;
     }
 
     async _saveSettings({ scene, module, data }) {
@@ -179,7 +177,7 @@ module.exports = ctx => {
         validator: validator.validator,
         schema: schemaName,
       });
-      return extend(true, {}, schema);
+      return ctx.bean.util.extend({}, schema);
     }
   }
 

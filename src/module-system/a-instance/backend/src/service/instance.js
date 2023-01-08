@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
 
 module.exports = app => {
@@ -22,7 +19,7 @@ module.exports = app => {
 
     async getConfigsPreview() {
       const instance = await this.item();
-      let configPreview = extend(true, {}, app.meta.configs, JSON.parse(instance.config));
+      let configPreview = this.ctx.bean.util.extend({}, app.meta.configs, JSON.parse(instance.config));
       configPreview = this.__configBlackFields(configPreview);
       return { data: configPreview };
     }
