@@ -1,5 +1,15 @@
 # History
 
+## 2023-01-08, Version 4.28.xx
+
+- **Feat**
+
+  - 工作台：在九宫格中每个应用的 DOM 节点增加属性：`data-dev-app-key`，方便快速定位 AppKey
+  - 创建前端页面组件：支持带目录的名称，比如: `npm run cli :create:pagex student/add`
+
+- **Enhance**
+  - 时间字段：在表格中默认采用多行模式：`ebParams.dateFormat.lines=true`
+
 ## 2023-01-02, Version 4.28.13
 
 - **Feat**
