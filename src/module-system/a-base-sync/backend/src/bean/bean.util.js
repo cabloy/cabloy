@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const uuid = require3('uuid');
 const extend = require3('@zhennann/extend');
 const currency = require3('@zhennann/currency').default;
 const moment = require3('moment');
@@ -11,6 +12,14 @@ module.exports = app => {
   class Util extends app.meta.BeanBase {
     get localConfig() {
       return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
+    get uuid() {
+      return uuid;
+    }
+
+    uuidv4() {
+      return uuid.v4().replace(/-/g, '');
     }
 
     page(_page, force = true) {
