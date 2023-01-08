@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = (ctx, pageMode) => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli extends ctx.app.meta.CliBase(ctx) {
@@ -15,11 +17,30 @@ module.exports = (ctx, pageMode) => {
       }
       // target dir
       const targetDir = await this.helper.ensureDir(_module.root);
-      // render
+      // pageName
+      const pageName = argv.pageName;
+      // pageName2
+      const parts = pageName.split('/');
+      const pageName2 = parts[parts.length - 1];
+      argv.pageName2 = pageName2;
+      // directory
+      let pageDir = path.join(targetDir, 'front/src/pages');
+      if (parts.length > 1) {
+        pageDir = path.join(pageDir, parts.slice(0, parts.length - 1).join('/'));
+      }
+      await this.helper.ensureDir(pageDir);
+      // render snippets
       await this.template.renderBoilerplateAndSnippets({
         targetDir,
         moduleName: moduleInfo.relativeName,
         snippetsPath: `create/${pageMode}/snippets`,
+        boilerplatePath: null,
+      });
+      // render boilerplate
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir: pageDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: null,
         boilerplatePath: `create/${pageMode}/boilerplate`,
       });
       // need not reload
