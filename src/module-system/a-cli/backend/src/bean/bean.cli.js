@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 let __commandsMap;
 let __commandsAll;
 
@@ -114,7 +111,7 @@ module.exports = ctx => {
             const command = group[key];
             const fullKey = `${moduleName}:${groupName}:${key}`;
             // command
-            const _command = extend(true, {}, command);
+            const _command = ctx.bean.util.extend({}, command);
             // bean
             const beanName = command.bean;
             let beanFullName;

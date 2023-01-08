@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 const _actions = {};
 
 module.exports = ctx => {
@@ -68,7 +65,7 @@ module.exports = ctx => {
       const _actions = detailClass.actions;
       const _actionsSystem = ctx.constant.module(moduleInfo.relativeName).detail.action;
       const _actionsSystemMeta = ctx.constant.module(moduleInfo.relativeName).detail.actionMeta;
-      const _actionsAll = extend(true, {}, _actionsSystemMeta, _actions);
+      const _actionsAll = ctx.bean.util.extend({}, _actionsSystemMeta, _actions);
       for (const key in _actionsAll) {
         if (key === 'custom') continue;
         const action = _actionsAll[key];

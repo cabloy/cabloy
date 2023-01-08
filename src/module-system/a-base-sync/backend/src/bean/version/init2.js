@@ -1,5 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
 const initData = require('./initData2.js');
 
 module.exports = function (ctx) {
@@ -36,14 +34,14 @@ module.exports = function (ctx) {
       // users
       const users = [];
       // user: root
-      const userRoot = extend(true, {}, initData.users.root);
+      const userRoot = ctx.bean.util.extend({}, initData.users.root);
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
       users.push(userRoot);
       // user: admin
       const demo = ctx.config.module(moduleInfo.relativeName).configFront.demo;
       if (demo.enable) {
-        const userAdmin = extend(true, {}, initData.users.admin);
+        const userAdmin = ctx.bean.util.extend({}, initData.users.admin);
         users.push(userAdmin);
       }
       for (const user of users) {

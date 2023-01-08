@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const __atomClassUser = {
@@ -135,7 +132,7 @@ module.exports = ctx => {
     async getFields({ removePrivacy }) {
       let fields = await this.model.columns();
       if (removePrivacy) {
-        fields = extend(true, {}, fields);
+        fields = ctx.bean.util.extend({}, fields);
         const privacyFields = ctx.config.module(moduleInfo.relativeName).user.privacyFields.split(',');
         for (const privacyField of privacyFields) {
           delete fields[privacyField];

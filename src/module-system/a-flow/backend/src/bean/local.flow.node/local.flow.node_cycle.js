@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 const __adapter = (context, chain) => {
   return {
     receiver: chain.behaviorBean,
@@ -25,7 +22,7 @@ module.exports = ctx => {
       const behavior = this.behaviors.find(item => item.behaviorDef.id === behaviorDefId);
       const optionsDefault = behavior.behaviorBase.options.default;
       if (optionsDefault) {
-        options = extend(true, {}, optionsDefault, options);
+        options = ctx.bean.util.extend({}, optionsDefault, options);
       }
       // invoke
       return this._behaviorsInvoke({
@@ -43,7 +40,7 @@ module.exports = ctx => {
       // default
       const optionsDefault = this.nodeBase.options.default;
       if (optionsDefault) {
-        options = extend(true, {}, optionsDefault, options);
+        options = ctx.bean.util.extend({}, optionsDefault, options);
       }
       // invoke
       return this._behaviorsInvoke({

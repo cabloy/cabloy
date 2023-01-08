@@ -2,7 +2,6 @@ const path = require('path');
 const require3 = require('require3');
 const ejs = require3('@zhennann/ejs');
 const pMap = require3('p-map');
-const extend = require3('@zhennann/extend');
 const fse = require3('fs-extra');
 const moment = require3('moment');
 const eggBornUtils = require3('egg-born-utils');
@@ -43,7 +42,7 @@ module.exports = app => {
       }
 
       // site
-      const site = extend(true, {}, configSite);
+      const site = this.ctx.bean.util.extend({}, configSite);
 
       // plugins
       site.plugins = {};
@@ -139,7 +138,7 @@ module.exports = app => {
       const configSite = await this.getConfigSite();
       if (configSite) {
         if (mergeConfigSite) {
-          site = extend(true, site, configSite);
+          site = this.ctx.bean.util.extend(site, configSite);
         } else {
           if (configSite.language) site.language = configSite.language;
           if (configSite.themes) site.themes = configSite.themes;
@@ -161,7 +160,7 @@ module.exports = app => {
       // language(db)
       const configLanguage = await this.getConfigLanguage({ language });
       // combine
-      return extend(true, {}, siteBase, theme, configSite, configLanguage, {
+      return this.ctx.bean.util.extend({}, siteBase, theme, configSite, configLanguage, {
         language: language ? { current: language } : false,
       });
     }
@@ -177,7 +176,11 @@ module.exports = app => {
       if (!module) this.ctx.throw.module(moduleInfo.relativeName, 1003, themeModuleName);
       const moduleExtend = this.ctx.bean.util.getProperty(module, 'package.eggBornModule.cms.extend');
       if (!moduleExtend) return this.ctx.config.module(themeModuleName).theme;
-      return extend(true, {}, this._combineThemes(moduleExtend), this.ctx.config.module(themeModuleName).theme);
+      return this.ctx.bean.util.extend(
+        {},
+        this._combineThemes(moduleExtend),
+        this.ctx.config.module(themeModuleName).theme
+      );
     }
 
     // site<plugin<theme<site(db)<language(db)
@@ -206,8 +209,7 @@ module.exports = app => {
       // front
       site.front = {};
       // front.env
-      site.front.env = extend(
-        true,
+      site.front.env = this.ctx.bean.util.extend(
         {
           base: site.base,
           language: site.language,
@@ -720,17 +722,17 @@ module.exports = app => {
           const key = keys[index];
           value = value ? { [key]: value } : { [key]: data._envs[name] };
         }
-        extend(true, _env, value);
+        this.ctx.bean.util.extend(_env, value);
       }
       // combine
-      const env = extend(true, site.front.env, _env);
+      const env = this.ctx.bean.util.extend(site.front.env, _env);
       // front.envs
       if (site.front.envs) {
         env.envs = site.front.envs;
       }
       // article
       if (data.article) {
-        env.article = extend(true, {}, data.article);
+        env.article = this.ctx.bean.util.extend({}, data.article);
         // delete
         env.article.summary = undefined;
         env.article.content = undefined;

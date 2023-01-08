@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const extend = require3('@zhennann/extend');
 const chalk = require3('chalk');
 
 module.exports = app => {
@@ -16,7 +15,12 @@ module.exports = app => {
           }
         }
         // combine indexes all
-        const indexes = extend(true, {}, this.ctx.config.indexes, moduleIndexes, this.ctx.config.indexesExtend);
+        const indexes = this.ctx.bean.util.extend(
+          {},
+          this.ctx.config.indexes,
+          moduleIndexes,
+          this.ctx.config.indexesExtend
+        );
         // create indexes
         for (const moduleRelativeName in indexes) {
           if (this.app.meta.modules[moduleRelativeName]) {

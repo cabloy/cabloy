@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const extend = require3('@zhennann/extend');
-
 module.exports = app => {
   class Settings extends app.Service {
     async load({ module, user }) {
@@ -15,7 +12,7 @@ module.exports = app => {
 
     async saveKey({ module, key, value, user }) {
       const layoutConfig = await this.load({ module, user });
-      const data = extend(true, {}, layoutConfig || {}, { [key]: value });
+      const data = this.ctx.bean.util.extend({}, layoutConfig || {}, { [key]: value });
       await this.save({ module, data, user });
     }
   }

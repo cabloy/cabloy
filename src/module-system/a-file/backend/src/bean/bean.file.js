@@ -7,7 +7,6 @@ const Jimp = require3('jimp');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
-const extend = require3('@zhennann/extend');
 const base64url = require3('base64url');
 const Mime = require3('mime');
 
@@ -90,7 +89,7 @@ module.exports = ctx => {
     async attachments({ key, options, user }) {
       options = options || {};
       // filter drafts
-      options.where = extend(true, options.where, {
+      options.where = ctx.bean.util.extend(options.where, {
         mode: 2,
         attachment: 1,
       });
