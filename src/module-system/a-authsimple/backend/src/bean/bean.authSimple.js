@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
@@ -204,7 +201,7 @@ module.exports = ctx => {
       // user by email
       const user = await ctx.bean.user.exists({ email });
       // link
-      const token = uuid.v4().replace(/-/g, '');
+      const token = ctx.bean.util.uuidv4();
       const link = ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
       // config
       const configTemplate = this.configModule.email.templates.passwordReset;
@@ -237,7 +234,7 @@ module.exports = ctx => {
         user: { id: user.id, email, emailConfirmed: 0 },
       });
       // link
-      const token = uuid.v4().replace(/-/g, '');
+      const token = ctx.bean.util.uuidv4();
       const link = ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
       // config
       const configTemplate = this.configModule.email.templates.confirmation;

@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Version {
@@ -94,7 +91,7 @@ module.exports = app => {
     }
 
     _uuid() {
-      return uuid.v4().replace(/-/g, '');
+      return this.ctx.bean.util.uuidv4();
     }
   }
   return Version;

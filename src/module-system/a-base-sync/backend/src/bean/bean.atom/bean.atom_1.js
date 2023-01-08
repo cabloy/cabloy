@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const debug = require3('debug')('sql');
-const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -384,7 +383,7 @@ module.exports = ctx => {
         atomName = `${srcItem.atomName}-${ctx.text('CloneCopyText')}`;
         atomStatic = 0;
         if (atomStaticKey) {
-          atomStaticKey = uuid.v4().replace(/-/g, '');
+          atomStaticKey = ctx.bean.util.uuidv4();
         }
         atomRevision = 0;
       }

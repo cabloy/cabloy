@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
-const uuid = require3('uuid');
 const utils = require('../common/utils.js');
 
 module.exports = ctx => {
@@ -33,7 +32,7 @@ module.exports = ctx => {
       // provider
       const provider = await this.getProvider({ module, sceneName });
       // instance id
-      const providerInstanceId = uuid.v4().replace(/-/g, '');
+      const providerInstanceId = ctx.bean.util.uuidv4();
       // cache
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);

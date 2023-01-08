@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 const _usersAnonymous = {};
 
 module.exports = ctx => {
@@ -82,7 +79,7 @@ module.exports = ctx => {
     anonymousId() {
       let _anonymousId = ctx.cookies.get('anonymous', { encrypt: true });
       if (!_anonymousId) {
-        _anonymousId = uuid.v4().replace(/-/g, '');
+        _anonymousId = ctx.bean.util.uuidv4();
         const maxAge = this.config.auth.maxAge.anonymous;
         ctx.cookies.set('anonymous', _anonymousId, { encrypt: true, maxAge });
       }

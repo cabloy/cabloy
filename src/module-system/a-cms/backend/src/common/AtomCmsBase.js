@@ -1,6 +1,5 @@
 const require3 = require('require3');
 const trimHtml = require3('@zhennann/trim-html');
-const uuid = require3('uuid');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -29,7 +28,7 @@ module.exports = app => {
         editMode,
       };
       // uuid
-      params.uuid = item.uuid || uuid.v4().replace(/-/g, '');
+      params.uuid = item.uuid || this.ctx.bean.util.uuidv4();
       // insert
       await this.modelArticle.insert(params);
       // add content

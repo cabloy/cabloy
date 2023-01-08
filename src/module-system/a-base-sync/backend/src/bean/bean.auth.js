@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
 
@@ -63,7 +60,7 @@ module.exports = ctx => {
       }
       // clientId
       if (needClientId) {
-        info.clientId = uuid.v4().replace(/-/g, '');
+        info.clientId = ctx.bean.util.uuidv4();
       }
       // login info event
       if (!isAuthOpen) {
@@ -166,7 +163,7 @@ module.exports = ctx => {
         _user.token = null;
       }
       if (!_user.token) {
-        _user.token = uuid.v4().replace(/-/g, '');
+        _user.token = ctx.bean.util.uuidv4();
       }
       await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
       // register user online

@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
 module.exports = app => {
@@ -21,7 +20,7 @@ module.exports = app => {
       }
       // atomStaticKey
       if (!item.atomStaticKey) {
-        item.atomStaticKey = uuid.v4().replace(/-/g, '');
+        item.atomStaticKey = this.ctx.bean.util.uuidv4();
       }
       // atomSimple
       if (_atomClass.simple) {
