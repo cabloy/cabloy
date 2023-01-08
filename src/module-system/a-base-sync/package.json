@@ -21,6 +21,7 @@
   "dependencies": {
     "@koa/cors": "^3.0.0",
     "@zhennann/currency": "^1.0.3",
+    "@zhennann/extend": "^3.0.2",
     "@zhennann/trim-html": "^0.1.12",
     "exceljs": "^4.3.0",
     "moment": "^2.24.0",

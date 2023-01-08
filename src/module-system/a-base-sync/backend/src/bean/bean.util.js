@@ -1,4 +1,5 @@
 const require3 = require('require3');
+const extend = require3('@zhennann/extend');
 const currency = require3('@zhennann/currency').default;
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
@@ -25,6 +26,10 @@ module.exports = app => {
 
     user(_user) {
       return _user || this.ctx.state.user.op;
+    }
+
+    extend(...args) {
+      return extend(true, ...args);
     }
 
     currency(options) {
