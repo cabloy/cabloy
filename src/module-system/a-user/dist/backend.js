@@ -592,10 +592,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 323:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 const __appKeyDefault = 'a-app:appDefault';
 
@@ -658,7 +655,7 @@ module.exports = app => {
 
     async authentications({ user }) {
       // 1. get auth providers list from a-login
-      let listLogin = extend(true, [], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
+      let listLogin = this.ctx.bean.util.extend([], this.ctx.bean.authProviderCache.getAuthProvidersConfigForLogin());
       if (listLogin.length === 0) return [];
       // 2. list aAuth
       const sql = `
@@ -751,14 +748,6 @@ module.exports = app => {
   return services;
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

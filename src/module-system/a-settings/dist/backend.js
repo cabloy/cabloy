@@ -4,8 +4,6 @@
 /***/ 564:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
 const constants = __webpack_require__(479);
 
 module.exports = ctx => {
@@ -95,7 +93,7 @@ module.exports = ctx => {
       });
       // always extend config, as maybe has new values
       const config = ctx.config.module(module).settings[scene];
-      return res ? extend(true, {}, config, JSON.parse(res.value)) : config;
+      return res ? ctx.bean.util.extend({}, config, JSON.parse(res.value)) : config;
     }
 
     async _saveSettings({ scene, module, data }) {
@@ -185,7 +183,7 @@ module.exports = ctx => {
         validator: validator.validator,
         schema: schemaName,
       });
-      return extend(true, {}, schema);
+      return ctx.bean.util.extend({}, schema);
     }
   }
 
@@ -661,14 +659,6 @@ module.exports = {
   settings,
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

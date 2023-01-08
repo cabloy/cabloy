@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 224:
+/***/ 5224:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -12,7 +12,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 511:
+/***/ 5511:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -50,7 +50,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 199:
+/***/ 2199:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -88,11 +88,11 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 554:
+/***/ 1554:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const fs = __webpack_require__(147);
-const path = __webpack_require__(17);
+const fs = __webpack_require__(7147);
+const path = __webpack_require__(1017);
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -152,87 +152,39 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 863:
-/***/ ((module) => {
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Cli extends ctx.app.meta.CliBase(ctx) {
-    async execute({ user }) {
-      const { argv } = this.context;
-      // super
-      await super.execute({ user });
-      // module name/info
-      const moduleName = argv.module;
-      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
-      // check if exists
-      const _module = this.helper.findModule(moduleName);
-      if (!_module) {
-        throw new Error(`module does not exist: ${moduleName}`);
-      }
-      // target dir
-      const targetDir = await this.helper.ensureDir(_module.root);
-      // render
-      await this.template.renderBoilerplateAndSnippets({
-        targetDir,
-        moduleName: moduleInfo.relativeName,
-        snippetsPath: 'create/page/snippets',
-        boilerplatePath: 'create/page/boilerplate',
-      });
-      // need not reload
-      // ctx.app.meta.reload.now();
-    }
-  }
-
-  return Cli;
-};
-
-
-/***/ }),
-
-/***/ 232:
-/***/ ((module) => {
-
-module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Cli extends ctx.app.meta.CliBase(ctx) {
-    async execute({ user }) {
-      const { argv } = this.context;
-      // super
-      await super.execute({ user });
-      // module name/info
-      const moduleName = argv.module;
-      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
-      // check if exists
-      const _module = this.helper.findModule(moduleName);
-      if (!_module) {
-        throw new Error(`module does not exist: ${moduleName}`);
-      }
-      // target dir
-      const targetDir = await this.helper.ensureDir(_module.root);
-      // render
-      await this.template.renderBoilerplateAndSnippets({
-        targetDir,
-        moduleName: moduleInfo.relativeName,
-        snippetsPath: 'create/pagex/snippets',
-        boilerplatePath: 'create/pagex/boilerplate',
-      });
-      // need not reload
-      // ctx.app.meta.reload.now();
-    }
-  }
-
-  return Cli;
-};
-
-
-/***/ }),
-
-/***/ 29:
+/***/ 5863:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const fs = __webpack_require__(147);
-const path = __webpack_require__(17);
+const CliCreatePage = __webpack_require__(8874);
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends CliCreatePage(ctx, 'page') {}
+  return Cli;
+};
+
+
+/***/ }),
+
+/***/ 1232:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const CliCreatePage = __webpack_require__(8874);
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends CliCreatePage(ctx, 'pagex') {}
+  return Cli;
+};
+
+
+/***/ }),
+
+/***/ 6029:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const fs = __webpack_require__(7147);
+const path = __webpack_require__(1017);
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -273,7 +225,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 66:
+/***/ 3066:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -372,18 +324,18 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 467:
+/***/ 9467:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(17);
-const require3 = __webpack_require__(638);
+const path = __webpack_require__(1017);
+const require3 = __webpack_require__(5638);
 const fse = require3('fs-extra');
 const JSZip = require3('jszip');
 const shajs = require3('sha.js');
 const semver = require3('semver');
 const utility = require3('utility');
 const eggBornUtils = require3('egg-born-utils');
-const CliStoreBase = __webpack_require__(210);
+const CliStoreBase = __webpack_require__(7210);
 
 module.exports = ctx => {
   class Cli extends CliStoreBase(ctx) {
@@ -807,18 +759,18 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 937:
+/***/ 5937:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(17);
-const os = __webpack_require__(37);
-const require3 = __webpack_require__(638);
+const path = __webpack_require__(1017);
+const os = __webpack_require__(2037);
+const require3 = __webpack_require__(5638);
 const eggBornUtils = require3('egg-born-utils');
 const AdmZip = require3('adm-zip');
 const semver = require3('semver');
 const fse = require3('fs-extra');
 const rimraf = require3('mz-modules/rimraf');
-const CliStoreBase = __webpack_require__(210);
+const CliStoreBase = __webpack_require__(7210);
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -957,7 +909,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 971:
+/***/ 2971:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -990,7 +942,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 65:
+/***/ 2065:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1020,7 +972,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 301:
+/***/ 9301:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -1059,11 +1011,11 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 544:
+/***/ 6544:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(17);
-const require3 = __webpack_require__(638);
+const path = __webpack_require__(1017);
+const require3 = __webpack_require__(5638);
 const babel = require3('@babel/core');
 const UglifyJS = require3('uglify-js');
 const fse = require3('fs-extra');
@@ -1118,11 +1070,11 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 508:
+/***/ 9508:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const path = __webpack_require__(17);
-const require3 = __webpack_require__(638);
+const path = __webpack_require__(1017);
+const require3 = __webpack_require__(5638);
 const fse = require3('fs-extra');
 const eggBornUtils = require3('egg-born-utils');
 const bb = require3('bluebird');
@@ -1252,7 +1204,7 @@ ${symbols.join('\n')}
 
 /***/ }),
 
-/***/ 899:
+/***/ 6899:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1270,24 +1222,24 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 187:
+/***/ 5187:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const versionManager = __webpack_require__(899);
-const cliDefaultList = __webpack_require__(66);
-const cliTokenAdd = __webpack_require__(971);
-const cliTokenDelete = __webpack_require__(65);
-const cliTokenList = __webpack_require__(301);
-const cliToolsBabel = __webpack_require__(544);
-const cliToolsIcons = __webpack_require__(508);
-const cliCreateSuite = __webpack_require__(29);
-const cliCreateModule = __webpack_require__(554);
-const cliCreateAtom = __webpack_require__(511);
-const cliCreateController = __webpack_require__(199);
-const cliCreatePage = __webpack_require__(863);
-const cliCreatePagex = __webpack_require__(232);
-const cliStoreSync = __webpack_require__(937);
-const cliStorePublish = __webpack_require__(467);
+const versionManager = __webpack_require__(6899);
+const cliDefaultList = __webpack_require__(3066);
+const cliTokenAdd = __webpack_require__(2971);
+const cliTokenDelete = __webpack_require__(2065);
+const cliTokenList = __webpack_require__(9301);
+const cliToolsBabel = __webpack_require__(6544);
+const cliToolsIcons = __webpack_require__(9508);
+const cliCreateSuite = __webpack_require__(6029);
+const cliCreateModule = __webpack_require__(1554);
+const cliCreateAtom = __webpack_require__(5511);
+const cliCreateController = __webpack_require__(2199);
+const cliCreatePage = __webpack_require__(5863);
+const cliCreatePagex = __webpack_require__(1232);
+const cliStoreSync = __webpack_require__(5937);
+const cliStorePublish = __webpack_require__(9467);
 
 module.exports = app => {
   const beans = {
@@ -1360,10 +1312,69 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 210:
+/***/ 8874:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(638);
+const path = __webpack_require__(1017);
+
+module.exports = (ctx, pageMode) => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // module name/info
+      const moduleName = argv.module;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!_module) {
+        throw new Error(`module does not exist: ${moduleName}`);
+      }
+      // target dir
+      const targetDir = await this.helper.ensureDir(_module.root);
+      // pageName
+      const pageName = argv.pageName;
+      // pageName2
+      const parts = pageName.split('/');
+      const pageName2 = parts[parts.length - 1];
+      argv.pageName2 = pageName2;
+      // directory
+      let pageDir = path.join(targetDir, 'front/src/pages');
+      if (parts.length > 1) {
+        pageDir = path.join(pageDir, parts.slice(0, parts.length - 1).join('/'));
+      }
+      await this.helper.ensureDir(pageDir);
+      // render snippets
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: `create/${pageMode}/snippets`,
+        boilerplatePath: null,
+      });
+      // render boilerplate
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir: pageDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: null,
+        boilerplatePath: `create/${pageMode}/boilerplate`,
+      });
+      // need not reload
+      // ctx.app.meta.reload.now();
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
+/***/ 7210:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
 const eggBornUtils = require3('egg-born-utils');
 
 // const __storeTokenHost = 'https://admin.cabloy.com';
@@ -1564,7 +1575,7 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 184:
+/***/ 4184:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1630,7 +1641,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 222:
+/***/ 2222:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1696,7 +1707,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 793:
+/***/ 8793:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1809,7 +1820,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 111:
+/***/ 2111:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1854,7 +1865,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 586:
+/***/ 1586:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1899,7 +1910,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 687:
+/***/ 3687:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1942,7 +1953,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 666:
+/***/ 7017:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -1972,7 +1983,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 730:
+/***/ 9730:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2015,7 +2026,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 609:
+/***/ 5609:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2053,7 +2064,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 552:
+/***/ 1552:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2113,7 +2124,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 443:
+/***/ 7443:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2170,7 +2181,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 807:
+/***/ 4807:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2192,7 +2203,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 571:
+/***/ 7571:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2214,23 +2225,23 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 407:
+/***/ 4407:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const defaultList = __webpack_require__(666);
-const tokenAdd = __webpack_require__(552);
-const tokenDelete = __webpack_require__(443);
+const defaultList = __webpack_require__(7017);
+const tokenAdd = __webpack_require__(1552);
+const tokenDelete = __webpack_require__(7443);
 const tokenList = __webpack_require__(160);
-const toolsBabel = __webpack_require__(807);
-const toolsIcons = __webpack_require__(571);
-const createSuite = __webpack_require__(687);
-const createModule = __webpack_require__(793);
-const createAtom = __webpack_require__(184);
-const createController = __webpack_require__(222);
-const createPage = __webpack_require__(111);
-const createPagex = __webpack_require__(586);
-const storeSync = __webpack_require__(609);
-const storePublish = __webpack_require__(730);
+const toolsBabel = __webpack_require__(4807);
+const toolsIcons = __webpack_require__(7571);
+const createSuite = __webpack_require__(3687);
+const createModule = __webpack_require__(8793);
+const createAtom = __webpack_require__(4184);
+const createController = __webpack_require__(2222);
+const createPage = __webpack_require__(2111);
+const createPagex = __webpack_require__(1586);
+const storeSync = __webpack_require__(5609);
+const storePublish = __webpack_require__(9730);
 
 module.exports = app => {
   const commands = {
@@ -2265,7 +2276,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 76:
+/***/ 7076:
 /***/ ((module) => {
 
 // eslint-disable-next-line
@@ -2303,7 +2314,7 @@ module.exports = appInfo => {
 
 /***/ }),
 
-/***/ 624:
+/***/ 5624:
 /***/ ((module) => {
 
 // error code should start from 1001
@@ -2322,7 +2333,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 327:
+/***/ 6327:
 /***/ ((module) => {
 
 module.exports = {
@@ -2334,7 +2345,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 72:
+/***/ 3072:
 /***/ ((module) => {
 
 module.exports = {
@@ -2359,14 +2370,14 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = {
-  'en-us': __webpack_require__(327),
-  'zh-cn': __webpack_require__(72),
+  'en-us': __webpack_require__(6327),
+  'zh-cn': __webpack_require__(3072),
 };
 
 
 /***/ }),
 
-/***/ 429:
+/***/ 5429:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2435,7 +2446,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 746:
+/***/ 8232:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2446,7 +2457,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 95:
+/***/ 7095:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2457,26 +2468,26 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 421:
+/***/ 9421:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const config = __webpack_require__(76);
+const config = __webpack_require__(7076);
 const locales = __webpack_require__(25);
-const errors = __webpack_require__(624);
+const errors = __webpack_require__(5624);
 
 module.exports = app => {
   // aops
-  const aops = __webpack_require__(224)(app);
+  const aops = __webpack_require__(5224)(app);
   // beans
-  const beans = __webpack_require__(187)(app);
+  const beans = __webpack_require__(5187)(app);
   // routes
-  const routes = __webpack_require__(825)(app);
+  const routes = __webpack_require__(3825)(app);
   // controllers
-  const controllers = __webpack_require__(95)(app);
+  const controllers = __webpack_require__(7095)(app);
   // services
-  const services = __webpack_require__(214)(app);
+  const services = __webpack_require__(7214)(app);
   // models
-  const models = __webpack_require__(230)(app);
+  const models = __webpack_require__(3230)(app);
   // meta
   const meta = __webpack_require__(458)(app);
 
@@ -2502,11 +2513,11 @@ module.exports = app => {
 
 module.exports = app => {
   // schemas
-  const schemas = __webpack_require__(746)(app);
+  const schemas = __webpack_require__(8232)(app);
   // static
-  const staticResources = __webpack_require__(429)(app);
+  const staticResources = __webpack_require__(5429)(app);
   // cli commands
-  const cliCommands = __webpack_require__(407)(app);
+  const cliCommands = __webpack_require__(4407)(app);
   // meta
   const meta = {
     base: {
@@ -2532,7 +2543,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 230:
+/***/ 3230:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2543,7 +2554,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 825:
+/***/ 3825:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2554,7 +2565,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 214:
+/***/ 7214:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -2565,7 +2576,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 638:
+/***/ 5638:
 /***/ ((module) => {
 
 "use strict";
@@ -2573,7 +2584,7 @@ module.exports = require("require3");
 
 /***/ }),
 
-/***/ 147:
+/***/ 7147:
 /***/ ((module) => {
 
 "use strict";
@@ -2581,7 +2592,7 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 37:
+/***/ 2037:
 /***/ ((module) => {
 
 "use strict";
@@ -2589,7 +2600,7 @@ module.exports = require("os");
 
 /***/ }),
 
-/***/ 17:
+/***/ 1017:
 /***/ ((module) => {
 
 "use strict";
@@ -2628,7 +2639,7 @@ module.exports = require("path");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(421);
+/******/ 	var __webpack_exports__ = __webpack_require__(9421);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

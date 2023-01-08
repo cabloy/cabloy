@@ -1410,7 +1410,6 @@ module.exports = ctx => {
 
 const require3 = __webpack_require__(5638);
 const debug = require3('debug')('sql');
-const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -1794,7 +1793,7 @@ module.exports = ctx => {
         atomName = `${srcItem.atomName}-${ctx.text('CloneCopyText')}`;
         atomStatic = 0;
         if (atomStaticKey) {
-          atomStaticKey = uuid.v4().replace(/-/g, '');
+          atomStaticKey = ctx.bean.util.uuidv4();
         }
         atomRevision = 0;
       }
@@ -2856,7 +2855,6 @@ module.exports = app => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
-const uuid = require3('uuid');
 const ExcelJS = require3('exceljs');
 
 module.exports = app => {
@@ -2878,7 +2876,7 @@ module.exports = app => {
       }
       // atomStaticKey
       if (!item.atomStaticKey) {
-        item.atomStaticKey = uuid.v4().replace(/-/g, '');
+        item.atomStaticKey = this.ctx.bean.util.uuidv4();
       }
       // atomSimple
       if (_atomClass.simple) {
@@ -3846,11 +3844,7 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 452:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const uuid = require3('uuid');
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -3914,7 +3908,7 @@ module.exports = ctx => {
       }
       // clientId
       if (needClientId) {
-        info.clientId = uuid.v4().replace(/-/g, '');
+        info.clientId = ctx.bean.util.uuidv4();
       }
       // login info event
       if (!isAuthOpen) {
@@ -3942,7 +3936,7 @@ module.exports = ctx => {
         modules: instanceConfigsFront,
       };
       // config base
-      config = extend(true, config, {
+      config = ctx.bean.util.extend(config, {
         modules: {
           'a-base': {
             account: this._getAccount(),
@@ -3963,14 +3957,14 @@ module.exports = ctx => {
 
     _getAccount() {
       // account
-      const account = extend(true, {}, ctx.config.module(moduleInfo.relativeName).account);
+      const account = ctx.bean.util.extend({}, ctx.config.module(moduleInfo.relativeName).account);
       account.activatedRoles = undefined;
       // url
       for (const key in account.activationProviders) {
         const relativeName = account.activationProviders[key];
         if (relativeName) {
           const moduleConfig = ctx.config.module(relativeName);
-          extend(true, account.url, moduleConfig.account.url);
+          ctx.bean.util.extend(account.url, moduleConfig.account.url);
         }
       }
       return account;
@@ -4017,7 +4011,7 @@ module.exports = ctx => {
         _user.token = null;
       }
       if (!_user.token) {
-        _user.token = uuid.v4().replace(/-/g, '');
+        _user.token = ctx.bean.util.uuidv4();
       }
       await this.redisAuth.set(key, _user.token, 'PX', ctx.session.maxAge);
       // register user online
@@ -4081,7 +4075,6 @@ module.exports = ctx => {
 const path = __webpack_require__(1017);
 const require3 = __webpack_require__(5638);
 const fse = require3('fs-extra');
-const extend = require3('@zhennann/extend');
 
 const _modulesLocales = {};
 const _themesLocales = {};
@@ -4400,7 +4393,7 @@ module.exports = ctx => {
       const _actions = atomClass.actions;
       const _actionsSystem = ctx.constant.module(moduleInfo.relativeName).atom.action;
       const _actionsSystemMeta = ctx.constant.module(moduleInfo.relativeName).atom.actionMeta;
-      const _actionsAll = extend(true, {}, _actionsSystemMeta, _actions);
+      const _actionsAll = ctx.bean.util.extend({}, _actionsSystemMeta, _actions);
       for (const key in _actionsAll) {
         if (key === 'custom') continue;
         const action = _actionsAll[key];
@@ -4429,7 +4422,7 @@ module.exports = ctx => {
           if (!_authProvider.meta.title) {
             throw new Error(`should specify the title of auth provider: ${providerFullName}`);
           }
-          const authProvider = extend(true, {}, _authProvider);
+          const authProvider = ctx.bean.util.extend({}, _authProvider);
           this._prepareAuthProvider(relativeName, providerName, authProvider);
           authProviders[providerFullName] = authProvider;
         }
@@ -4460,7 +4453,7 @@ module.exports = ctx => {
           _meta[key] = metaConfig[key];
         }
       }
-      return extend(true, {}, _meta, metaScene);
+      return ctx.bean.util.extend({}, _meta, metaScene);
     }
 
     _prepareAuthProvider_meta(relativeName, meta) {
@@ -5687,8 +5680,6 @@ module.exports = ctx => {
 /***/ 1638:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(5638);
-const extend = require3('@zhennann/extend');
 const initData15 = __webpack_require__(5384);
 
 module.exports = ctx => {
@@ -6077,7 +6068,7 @@ module.exports = ctx => {
             }
           }
           // add
-          role = extend(true, { module }, role, { roleIdParent });
+          role = ctx.bean.util.extend({ module }, role, { roleIdParent });
           roleIds[roleName] = await this.add(role);
         }
       }
@@ -6906,10 +6897,7 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 4366:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 const _usersAnonymous = {};
 
@@ -6992,7 +6980,7 @@ module.exports = ctx => {
     anonymousId() {
       let _anonymousId = ctx.cookies.get('anonymous', { encrypt: true });
       if (!_anonymousId) {
-        _anonymousId = uuid.v4().replace(/-/g, '');
+        _anonymousId = ctx.bean.util.uuidv4();
         const maxAge = this.config.auth.maxAge.anonymous;
         ctx.cookies.set('anonymous', _anonymousId, { encrypt: true, maxAge });
       }
@@ -7526,10 +7514,7 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 6937:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -7665,7 +7650,7 @@ module.exports = ctx => {
     async getFields({ removePrivacy }) {
       let fields = await this.model.columns();
       if (removePrivacy) {
-        fields = extend(true, {}, fields);
+        fields = ctx.bean.util.extend({}, fields);
         const privacyFields = ctx.config.module(moduleInfo.relativeName).user.privacyFields.split(',');
         for (const privacyField of privacyFields) {
           delete fields[privacyField];
@@ -7838,6 +7823,8 @@ module.exports = ctx => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
+const uuid = require3('uuid');
+const extend = require3('@zhennann/extend');
 const currency = require3('@zhennann/currency').default;
 const moment = require3('moment');
 const mparse = require3('egg-born-mparse').default;
@@ -7849,6 +7836,14 @@ module.exports = app => {
   class Util extends app.meta.BeanBase {
     get localConfig() {
       return this.ctx.config.module(moduleInfo.relativeName);
+    }
+
+    get uuid() {
+      return uuid;
+    }
+
+    uuidv4() {
+      return uuid.v4().replace(/-/g, '');
     }
 
     page(_page, force = true) {
@@ -7864,6 +7859,10 @@ module.exports = app => {
 
     user(_user) {
       return _user || this.ctx.state.user.op;
+    }
+
+    extend(...args) {
+      return extend(true, ...args);
     }
 
     currency(options) {
@@ -9694,7 +9693,6 @@ module.exports = ctx => {
 
 const URL = (__webpack_require__(7310).URL);
 const require3 = __webpack_require__(5638);
-const extend = require3('@zhennann/extend');
 const koaCors = require3('@koa/cors');
 
 const optionsDefault = {
@@ -9724,7 +9722,7 @@ module.exports = ctx => {
       }
 
       // options
-      const optionsCors = extend(true, {}, optionsDefault, options);
+      const optionsCors = ctx.bean.util.extend({}, optionsDefault, options);
 
       // origin
       // if security plugin enabled, and origin config is not provided, will only allow safe domains support CORS.
@@ -10711,8 +10709,6 @@ module.exports = function (ctx) {
 /***/ 3674:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const require3 = __webpack_require__(5638);
-const extend = require3('@zhennann/extend');
 const initData = __webpack_require__(7714);
 
 module.exports = function (ctx) {
@@ -10749,14 +10745,14 @@ module.exports = function (ctx) {
       // users
       const users = [];
       // user: root
-      const userRoot = extend(true, {}, initData.users.root);
+      const userRoot = ctx.bean.util.extend({}, initData.users.root);
       userRoot.item.email = options.email;
       userRoot.item.mobile = options.mobile;
       users.push(userRoot);
       // user: admin
       const demo = ctx.config.module(moduleInfo.relativeName).configFront.demo;
       if (demo.enable) {
-        const userAdmin = extend(true, {}, initData.users.admin);
+        const userAdmin = ctx.bean.util.extend({}, initData.users.admin);
         users.push(userAdmin);
       }
       for (const user of users) {
@@ -18031,10 +18027,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 2637:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(5638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 module.exports = app => {
   class Settings extends app.Service {
@@ -18050,7 +18043,7 @@ module.exports = app => {
 
     async saveKey({ module, key, value, user }) {
       const layoutConfig = await this.load({ module, user });
-      const data = extend(true, {}, layoutConfig || {}, { [key]: value });
+      const data = this.ctx.bean.util.extend({}, layoutConfig || {}, { [key]: value });
       await this.save({ module, data, user });
     }
   }

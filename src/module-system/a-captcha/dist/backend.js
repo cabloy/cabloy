@@ -6,8 +6,6 @@
 
 const require3 = __webpack_require__(638);
 const mparse = require3('egg-born-mparse').default;
-const extend = require3('@zhennann/extend');
-const uuid = require3('uuid');
 const utils = __webpack_require__(294);
 
 module.exports = ctx => {
@@ -32,7 +30,7 @@ module.exports = ctx => {
       // module scene
       const configModuleScene = ctx.config.module(module);
       const sceneModule = ctx.bean.util.getProperty(configModuleScene, `captcha.scenes.${sceneName}`) || null;
-      return extend(true, {}, sceneDefault, sceneModule);
+      return ctx.bean.util.extend({}, sceneDefault, sceneModule);
     }
 
     // create provider instance
@@ -40,7 +38,7 @@ module.exports = ctx => {
       // provider
       const provider = await this.getProvider({ module, sceneName });
       // instance id
-      const providerInstanceId = uuid.v4().replace(/-/g, '');
+      const providerInstanceId = ctx.bean.util.uuidv4();
       // cache
       const key = utils.getCacheKey({ ctx, providerInstanceId });
       await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);

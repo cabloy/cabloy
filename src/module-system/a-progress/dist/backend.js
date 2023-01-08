@@ -2,10 +2,7 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 146:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -58,7 +55,7 @@ module.exports = ctx => {
       let progressId = options && options.progressId;
       // create
       if (!progressId) {
-        progressId = uuid.v4().replace(/-/g, '');
+        progressId = ctx.bean.util.uuidv4();
       } else {
         // check if exists
         const item = await this._getRedisValue({ progressId });
@@ -578,14 +575,6 @@ module.exports = app => {
   return services;
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

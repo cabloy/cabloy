@@ -197,10 +197,7 @@ module.exports = function (ctx) {
 /***/ }),
 
 /***/ 454:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -405,7 +402,7 @@ module.exports = ctx => {
       // user by email
       const user = await ctx.bean.user.exists({ email });
       // link
-      const token = uuid.v4().replace(/-/g, '');
+      const token = ctx.bean.util.uuidv4();
       const link = ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
       // config
       const configTemplate = this.configModule.email.templates.passwordReset;
@@ -438,7 +435,7 @@ module.exports = ctx => {
         user: { id: user.id, email, emailConfirmed: 0 },
       });
       // link
-      const token = uuid.v4().replace(/-/g, '');
+      const token = ctx.bean.util.uuidv4();
       const link = ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
       // config
       const configTemplate = this.configModule.email.templates.confirmation;
@@ -1612,14 +1609,6 @@ module.exports = {
   auth,
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ }),
 

@@ -13,10 +13,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 133:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -45,7 +42,7 @@ module.exports = ctx => {
       // insert
       if (!item) {
         item = {
-          uuid: uuid.v4().replace(/-/g, ''),
+          uuid: ctx.bean.util.uuidv4(),
           atomId,
           userId,
           host,
@@ -522,14 +519,6 @@ module.exports = app => {
   return services;
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

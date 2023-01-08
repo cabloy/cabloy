@@ -167,10 +167,7 @@ function _createAuthenticate() {
 /***/ }),
 
 /***/ 602:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 const __authProvidersConfigCache = {};
 const __authProvidersConfigCache_login = {};
@@ -232,7 +229,7 @@ module.exports = ctx => {
     }
 
     purgeScene(scene) {
-      const res = extend(true, {}, scene);
+      const res = ctx.bean.util.extend({}, scene);
       delete res.__valid;
       delete res.titleLocale;
       return res;
@@ -359,14 +356,14 @@ module.exports = ctx => {
       if (authProvider.meta.scene) {
         // scene: true
         const itemScenes = providerItem.scenes ? JSON.parse(providerItem.scenes) : null;
-        const scenes = extend(true, {}, configDefault && configDefault.scenes, itemScenes);
+        const scenes = ctx.bean.util.extend({}, configDefault && configDefault.scenes, itemScenes);
         configProvider = {
           scenes,
         };
       } else {
         // scene: false
         const itemConfig = providerItem.config ? JSON.parse(providerItem.config) : null;
-        configProvider = extend(true, {}, configDefault, itemConfig);
+        configProvider = ctx.bean.util.extend({}, configDefault, itemConfig);
       }
       return {
         authProvider,
@@ -521,10 +518,7 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 963:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 module.exports = ctx => {
   class Passport {
@@ -568,7 +562,7 @@ module.exports = ctx => {
       config.successRedirect = config.successReturnToOrRedirect =
         beanProvider.metaScene.mode === 'redirect' ? '/' : false;
       // strategy
-      const strategy = await _createProviderStrategy(authProvider, beanProvider);
+      const strategy = await _createProviderStrategy(ctx, authProvider, beanProvider);
       // invoke authenticate
       const authenticate = ctx.app.passport.authenticate(strategy, config);
       await authenticate(ctx, next || function () {});
@@ -577,7 +571,7 @@ module.exports = ctx => {
   return Passport;
 };
 
-async function _createProviderStrategy(authProvider, beanProvider) {
+async function _createProviderStrategy(ctx, authProvider, beanProvider) {
   // config
   let config = {};
   config.passReqToCallback = true;
@@ -585,7 +579,7 @@ async function _createProviderStrategy(authProvider, beanProvider) {
   config.successRedirect = config.successReturnToOrRedirect = beanProvider.metaScene.mode === 'redirect' ? '/' : false;
   config.beanProvider = beanProvider;
   // combine
-  config = extend(true, {}, beanProvider.configProviderScene, config);
+  config = ctx.bean.util.extend({}, beanProvider.configProviderScene, config);
   // adjust
   config = await beanProvider.adjustConfigForAuthenticate(config);
   // strategy
@@ -1094,14 +1088,6 @@ module.exports = app => {
   return services;
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

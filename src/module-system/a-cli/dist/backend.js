@@ -13,10 +13,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 235:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 let __commandsMap;
 let __commandsAll;
@@ -131,7 +128,7 @@ module.exports = ctx => {
             const command = group[key];
             const fullKey = `${moduleName}:${groupName}:${key}`;
             // command
-            const _command = extend(true, {}, command);
+            const _command = ctx.bean.util.extend({}, command);
             // bean
             const beanName = command.bean;
             let beanFullName;

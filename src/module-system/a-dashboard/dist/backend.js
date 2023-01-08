@@ -2,10 +2,7 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 730:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
@@ -20,7 +17,7 @@ module.exports = app => {
       // add content
       const content = {
         root: {
-          id: uuid.v4().replace(/-/g, ''),
+          id: this.ctx.bean.util.uuidv4(),
           widgets: [],
         },
       };
@@ -1272,14 +1269,6 @@ module.exports = app => {
   return services;
 };
 
-
-/***/ }),
-
-/***/ 638:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("require3");
 
 /***/ })
 

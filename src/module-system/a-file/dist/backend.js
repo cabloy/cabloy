@@ -8,12 +8,10 @@ const path = __webpack_require__(17);
 const fs = __webpack_require__(147);
 const require3 = __webpack_require__(638);
 const sendToWormhole = require3('stream-wormhole');
-const uuid = require3('uuid');
 const Jimp = require3('jimp');
 const bb = require3('bluebird');
 const pump = require3('pump');
 const fse = require3('fs-extra');
-const extend = require3('@zhennann/extend');
 const base64url = require3('base64url');
 const Mime = require3('mime');
 
@@ -96,7 +94,7 @@ module.exports = ctx => {
     async attachments({ key, options, user }) {
       options = options || {};
       // filter drafts
-      options.where = extend(true, options.where, {
+      options.where = ctx.bean.util.extend(options.where, {
         mode: 2,
         attachment: 1,
       });
@@ -235,9 +233,9 @@ module.exports = ctx => {
       if (fileInfo.ext === '.jpeg') fileInfo.ext = '.jpg';
 
       // dest
-      const downloadId = uuid.v4().replace(/-/g, '');
+      const downloadId = ctx.bean.util.uuidv4();
       const _filePath = `file/${mode === 1 ? 'image' : mode === 2 ? 'file' : 'audio'}/${ctx.bean.util.today()}`;
-      const _fileName = uuid.v4().replace(/-/g, '');
+      const _fileName = ctx.bean.util.uuidv4();
       const destDir = await ctx.bean.base.getPath(_filePath, true);
       const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
 

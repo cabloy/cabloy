@@ -5,7 +5,6 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -469,7 +468,7 @@ module.exports = ctx => {
         }
         detailStatic = 0;
         if (detailStaticKey) {
-          detailStaticKey = uuid.v4().replace(/-/g, '');
+          detailStaticKey = ctx.bean.util.uuidv4();
         }
       }
       // destItem
@@ -844,10 +843,7 @@ async function _checkDetailClassExpect({ detailClass, options, ctx }) {
 /***/ }),
 
 /***/ 619:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 const _actions = {};
 
@@ -916,7 +912,7 @@ module.exports = ctx => {
       const _actions = detailClass.actions;
       const _actionsSystem = ctx.constant.module(moduleInfo.relativeName).detail.action;
       const _actionsSystemMeta = ctx.constant.module(moduleInfo.relativeName).detail.actionMeta;
-      const _actionsAll = extend(true, {}, _actionsSystemMeta, _actions);
+      const _actionsAll = ctx.bean.util.extend({}, _actionsSystemMeta, _actions);
       for (const key in _actionsAll) {
         if (key === 'custom') continue;
         const action = _actionsAll[key];
@@ -1299,10 +1295,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 616:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 // detailLineNo will be changed by other way
 const __detailBasicFields = ['detailCodeId', 'detailCode', 'detailName', 'detailStatic', 'detailStaticKey'];
@@ -1320,7 +1313,7 @@ module.exports = app => {
       }
       // detailStaticKey
       if (!item.detailStaticKey) {
-        item.detailStaticKey = uuid.v4().replace(/-/g, '');
+        item.detailStaticKey = this.ctx.bean.util.uuidv4();
       }
       // detailLineNo
       item.detailLineNo = await this._createLineNo({ atomKey, detailClass });

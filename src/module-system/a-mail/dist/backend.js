@@ -48,10 +48,7 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 342:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 const __mailScenesConfigCache = {};
 
@@ -75,7 +72,7 @@ module.exports = ctx => {
 
     getMailScenesConfigForAdmin() {
       let scenes = this.getMailScenesConfigCache();
-      scenes = extend(true, {}, scenes);
+      scenes = ctx.bean.util.extend({}, scenes);
       for (const sceneName in scenes) {
         const scene = scenes[sceneName];
         scene.titleLocale = ctx.text(scene.title);
@@ -95,7 +92,7 @@ module.exports = ctx => {
     }
 
     purgeScene(scene) {
-      const res = extend(true, {}, scene);
+      const res = ctx.bean.util.extend({}, scene);
       delete res.titleLocale;
       return res;
     }
@@ -105,7 +102,7 @@ module.exports = ctx => {
       const configDefault = this.configModule.scenes;
       // configScenes
       let configScenes = await this.statusModule.get('mailScenes');
-      configScenes = extend(true, {}, configDefault, configScenes);
+      configScenes = ctx.bean.util.extend({}, configDefault, configScenes);
       // cache
       __mailScenesConfigCache[ctx.subdomain] = configScenes;
     }
@@ -866,10 +863,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 93:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -885,7 +879,7 @@ module.exports = app => {
     async save({ sceneName, data }) {
       const scenes = this.ctx.bean.mailSceneCache.getMailScenesConfigCache();
       const sceneOld = scenes[sceneName];
-      data = extend(true, {}, sceneOld, data);
+      data = this.ctx.bean.util.extend({}, sceneOld, data);
       await this._save({ sceneName, data });
     }
 
@@ -903,7 +897,7 @@ module.exports = app => {
     }
 
     async add({ sceneName, data }) {
-      data = extend(true, {}, this.ctx.config.scene.default, data);
+      data = this.ctx.bean.util.extend({}, this.ctx.config.scene.default, data);
       await this._save({ sceneName, data });
     }
   }

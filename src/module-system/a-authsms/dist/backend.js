@@ -109,10 +109,7 @@ module.exports = function (ctx) {
 /***/ }),
 
 /***/ 676:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 const __smsProvidersConfigCache = {};
 
@@ -136,7 +133,7 @@ module.exports = ctx => {
 
     getSmsProvidersConfigForAdmin() {
       let providers = this.getSmsProvidersConfigCache();
-      providers = extend(true, {}, providers);
+      providers = ctx.bean.util.extend({}, providers);
       for (const providerName in providers) {
         const provider = providers[providerName];
         provider.titleLocale = ctx.text(provider.title);
@@ -156,7 +153,7 @@ module.exports = ctx => {
     }
 
     purgeProvider(provider) {
-      const res = extend(true, {}, provider);
+      const res = ctx.bean.util.extend({}, provider);
       delete res.titleLocale;
       return res;
     }
@@ -166,7 +163,7 @@ module.exports = ctx => {
       const configDefault = this.configModule.sms.providers;
       // configProviders
       let configProviders = await this.statusModule.get('smsProviders');
-      configProviders = extend(true, {}, configDefault, configProviders);
+      configProviders = ctx.bean.util.extend({}, configDefault, configProviders);
       // cache
       __smsProvidersConfigCache[ctx.subdomain] = configProviders;
     }
@@ -1307,10 +1304,7 @@ module.exports = app => {
 /***/ }),
 
 /***/ 435:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -1339,7 +1333,7 @@ module.exports = app => {
     async save({ providerName, data }) {
       const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
       const providerOld = providers[providerName];
-      data = extend(true, {}, providerOld, data);
+      data = this.ctx.bean.util.extend({}, providerOld, data);
       await this._save({ providerName, data });
     }
 

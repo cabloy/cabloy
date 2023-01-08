@@ -333,10 +333,7 @@ module.exports = {
 /***/ }),
 
 /***/ 728:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const uuid = require3('uuid');
+/***/ ((module) => {
 
 module.exports = ctx => {
   class Validation extends ctx.app.meta.BeanModuleBase {
@@ -395,7 +392,7 @@ module.exports = ctx => {
         params.keywords = meta.validation.keywords;
       }
       // schemas
-      params.schemaRoot = uuid.v4();
+      params.schemaRoot = ctx.bean.util.uuid.v4();
       params.schemas = {
         [params.schemaRoot]: { ...schema, $async: true },
       };

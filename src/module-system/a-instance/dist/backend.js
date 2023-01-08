@@ -5,7 +5,6 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
 const async = require3('async');
 const chalk = require3('chalk');
 const boxen = require3('boxen');
@@ -120,7 +119,7 @@ module.exports = ctx => {
       // config
       instance.config = JSON.parse(instance.config) || {};
       // cache configs
-      const instanceConfigs = extend(true, {}, ctx.app.meta.configs, instance.config);
+      const instanceConfigs = ctx.bean.util.extend({}, ctx.app.meta.configs, instance.config);
       this.cacheMem.set('instanceConfigs', instanceConfigs);
       // cache configsFront
       const instanceConfigsFront = this._mergeInstanceConfigFront({ instanceConfigs });
@@ -771,10 +770,7 @@ module.exports = [
 /***/ }),
 
 /***/ 878:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const require3 = __webpack_require__(638);
-const extend = require3('@zhennann/extend');
+/***/ ((module) => {
 
 const __blackFields = ['startups', 'queues', 'broadcasts', 'middlewares', 'schedules'];
 
@@ -797,7 +793,7 @@ module.exports = app => {
 
     async getConfigsPreview() {
       const instance = await this.item();
-      let configPreview = extend(true, {}, app.meta.configs, JSON.parse(instance.config));
+      let configPreview = this.ctx.bean.util.extend({}, app.meta.configs, JSON.parse(instance.config));
       configPreview = this.__configBlackFields(configPreview);
       return { data: configPreview };
     }
