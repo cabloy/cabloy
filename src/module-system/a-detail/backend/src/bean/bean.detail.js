@@ -1,5 +1,4 @@
 const require3 = require('require3');
-const uuid = require3('uuid');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
@@ -463,7 +462,7 @@ module.exports = ctx => {
         }
         detailStatic = 0;
         if (detailStaticKey) {
-          detailStaticKey = uuid.v4().replace(/-/g, '');
+          detailStaticKey = ctx.bean.util.uuidv4();
         }
       }
       // destItem

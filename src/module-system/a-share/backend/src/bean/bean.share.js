@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Share {
@@ -28,7 +25,7 @@ module.exports = ctx => {
       // insert
       if (!item) {
         item = {
-          uuid: uuid.v4().replace(/-/g, ''),
+          uuid: ctx.bean.util.uuidv4(),
           atomId,
           userId,
           host,

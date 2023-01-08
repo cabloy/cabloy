@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const require3 = require('require3');
 const sendToWormhole = require3('stream-wormhole');
-const uuid = require3('uuid');
 const Jimp = require3('jimp');
 const bb = require3('bluebird');
 const pump = require3('pump');
@@ -228,9 +227,9 @@ module.exports = ctx => {
       if (fileInfo.ext === '.jpeg') fileInfo.ext = '.jpg';
 
       // dest
-      const downloadId = uuid.v4().replace(/-/g, '');
+      const downloadId = ctx.bean.util.uuidv4();
       const _filePath = `file/${mode === 1 ? 'image' : mode === 2 ? 'file' : 'audio'}/${ctx.bean.util.today()}`;
-      const _fileName = uuid.v4().replace(/-/g, '');
+      const _fileName = ctx.bean.util.uuidv4();
       const destDir = await ctx.bean.base.getPath(_filePath, true);
       const destFile = path.join(destDir, `${_fileName}${fileInfo.ext}`);
 

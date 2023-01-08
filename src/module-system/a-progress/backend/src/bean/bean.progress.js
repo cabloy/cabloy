@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Progress extends ctx.app.meta.BeanModuleBase {
@@ -52,7 +49,7 @@ module.exports = ctx => {
       let progressId = options && options.progressId;
       // create
       if (!progressId) {
-        progressId = uuid.v4().replace(/-/g, '');
+        progressId = ctx.bean.util.uuidv4();
       } else {
         // check if exists
         const item = await this._getRedisValue({ progressId });

@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = ctx => {
   class Validation extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
@@ -58,7 +55,7 @@ module.exports = ctx => {
         params.keywords = meta.validation.keywords;
       }
       // schemas
-      params.schemaRoot = uuid.v4();
+      params.schemaRoot = ctx.bean.util.uuid.v4();
       params.schemas = {
         [params.schemaRoot]: { ...schema, $async: true },
       };

@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 // detailLineNo will be changed by other way
 const __detailBasicFields = ['detailCodeId', 'detailCode', 'detailName', 'detailStatic', 'detailStaticKey'];
 
@@ -17,7 +14,7 @@ module.exports = app => {
       }
       // detailStaticKey
       if (!item.detailStaticKey) {
-        item.detailStaticKey = uuid.v4().replace(/-/g, '');
+        item.detailStaticKey = this.ctx.bean.util.uuidv4();
       }
       // detailLineNo
       item.detailLineNo = await this._createLineNo({ atomKey, detailClass });

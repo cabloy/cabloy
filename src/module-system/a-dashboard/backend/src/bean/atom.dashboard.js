@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const uuid = require3('uuid');
-
 module.exports = app => {
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, options, user }) {
@@ -14,7 +11,7 @@ module.exports = app => {
       // add content
       const content = {
         root: {
-          id: uuid.v4().replace(/-/g, ''),
+          id: this.ctx.bean.util.uuidv4(),
           widgets: [],
         },
       };
