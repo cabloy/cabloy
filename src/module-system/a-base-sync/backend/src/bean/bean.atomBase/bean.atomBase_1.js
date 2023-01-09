@@ -20,17 +20,12 @@ module.exports = app => {
     async _writeValidate({ atomClass, target, key, item, options, user }) {
       // options
       const ignoreValidate = options && options.ignoreValidate;
-      let ignoreNotEmpty = options && options.ignoreNotEmpty;
       if (ignoreValidate) return;
+      // filterOptions
+      const filterOptions = { type: true, ebReadOnly: true };
       if (target) {
-        // means copy
-        ignoreNotEmpty = true;
+        filterOptions.ignoreRules = true;
       }
-      options = {
-        ...options,
-        ignoreValidate,
-        ignoreNotEmpty,
-      };
       // validate
       this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
         atomClass,
@@ -38,7 +33,7 @@ module.exports = app => {
         options,
         user,
       });
-      await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
+      await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions });
       this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
     }
 

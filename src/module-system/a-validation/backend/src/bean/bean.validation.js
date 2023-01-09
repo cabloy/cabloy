@@ -26,8 +26,13 @@ module.exports = ctx => {
     }
 
     async validate({ module, validator, schema, data, filterOptions }) {
-      const _validator = this._checkValidator({ module, validator });
-      return await _validator.ajv.v({ ctx, schema, data, filterOptions });
+      // validator
+      const _validator = this._checkValidator({ module, validator, filterOptions });
+      // ignoreRules
+      const ignoreRules = filterOptions && filterOptions.ignoreRules;
+      // cache key
+      const cacheKey = ignoreRules ? 'ajv_ignoreRules' : 'ajv';
+      return await _validator[cacheKey].v({ ctx, schema, data, filterOptions });
     }
 
     async ajvFromSchemaAndValidate({ module, schema, options, data, filterOptions }) {
@@ -64,6 +69,7 @@ module.exports = ctx => {
     }
 
     _checkValidator({ module, validator }) {
+      // check ajv cache
       module = module || this.moduleName;
       const meta = ctx.app.meta.modules[module].main.meta;
       const _validator = meta.validation.validators[validator];
@@ -83,7 +89,20 @@ module.exports = ctx => {
         schemas,
         schemaRoot: _schemas[0],
       });
+      // create ajv_ignoreRules
+      const schemas2 = this._prepareSchemas_ignoreRules({ schemas });
+      _validator.ajv = ctx.app.meta.ajv.create({
+        options: _validator.options,
+        keywords: meta.validation.keywords,
+        schemas: schemas2,
+        schemaRoot: _schemas[0],
+      });
+      // ok
       return _validator;
+    }
+
+    _prepareSchemas_ignoreRules({ schemas }) {
+      // const schemas2
     }
 
     _adjustSchemas(schemas) {
