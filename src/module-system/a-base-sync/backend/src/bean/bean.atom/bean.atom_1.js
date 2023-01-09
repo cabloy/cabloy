@@ -442,7 +442,7 @@ module.exports = ctx => {
         atomRevision: destItem.atomRevision,
         atomSimple: destItem.atomSimple,
         atomStage: destItem.atomStage,
-        // atomFlowId: destItem.atomFlowId,
+        atomFlowId: destItem.atomFlowId,
         attachmentCount: destItem.attachmentCount,
         // atomClosed: destItem.atomClosed,
         atomIdDraft: destItem.atomIdDraft,
