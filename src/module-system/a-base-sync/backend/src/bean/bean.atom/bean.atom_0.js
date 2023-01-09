@@ -48,8 +48,11 @@ module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, atomStage, roleIdOwner, item, options, user }) {
+    async create({ atomClass, atomStage, roleIdOwner, item, options, createOptions, user }) {
       options = options || {};
+      if (createOptions) {
+        options.createOptions = createOptions;
+      }
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);

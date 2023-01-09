@@ -416,6 +416,7 @@ module.exports = ctx => {
           atomStage: destItem.atomStage,
           roleIdOwner: srcItem.roleIdOwner,
           item: null,
+          createOptions: { target, srcItem, destItem },
           user,
         });
       }
