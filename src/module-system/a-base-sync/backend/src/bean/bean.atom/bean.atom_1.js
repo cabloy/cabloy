@@ -300,20 +300,7 @@ module.exports = ctx => {
       this._notifyDraftsDrafting(null, atomClass);
     }
 
-    // target: draft/formal/history/clone
-    async _copy({ target, srcKey, srcItem, destKey, options, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      // srcItem
-      if (!srcItem) {
-        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user });
-      }
+    _copy_prepareDestItem({ target, srcItem, user }) {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
       // atomStage
@@ -324,14 +311,6 @@ module.exports = ctx => {
       // if (target === 'clone') {
       //   atomStage = atomSimple; // support simple
       // }
-      // destKey
-      if (!destKey) {
-        destKey = await this.create({ atomClass, atomStage, roleIdOwner: srcItem.roleIdOwner, item: null, user });
-      }
-      if (!destKey.itemId) {
-        const _item = await this.modelAtom.get({ id: destKey.atomId });
-        destKey.itemId = _item.itemId;
-      }
       // atomClosed
       const atomClosed = 0;
       // atomIdDraft/atomIdFormal
@@ -351,7 +330,7 @@ module.exports = ctx => {
         atomIdDraft = 0;
         atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
         userIdUpdated = user.id;
-        atomFlowId = 0;
+        atomFlowId = 0; // will start a new flow instance
         // formal->draft: = srcItem.atomRevision
         if (srcItem.atomStage === 2) {
           // history->draft
@@ -389,8 +368,8 @@ module.exports = ctx => {
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
-        atomId: destKey.atomId,
-        itemId: destKey.itemId,
+        // atomId: destKey.atomId,
+        // itemId: destKey.itemId,
         userIdCreated,
         userIdUpdated,
         atomName,
@@ -411,8 +390,44 @@ module.exports = ctx => {
         createdAt: srcItem.atomCreatedAt,
         updatedAt: srcItem.atomUpdatedAt,
       });
+      return destItem;
+    }
+
+    // target: draft/formal/history/clone
+    async _copy({ target, srcKey, srcItem, destKey, options, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      // srcItem
+      if (!srcItem) {
+        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user });
+      }
+      // destItem
+      const destItem = this._copy_prepareDestItem({ target, srcItem, user });
+      // destKey
+      if (!destKey) {
+        destKey = await this.create({
+          atomClass,
+          atomStage: destItem.atomStage,
+          roleIdOwner: srcItem.roleIdOwner,
+          item: null,
+          user,
+        });
+      }
+      if (!destKey.itemId) {
+        const _item = await this.modelAtom.get({ id: destKey.atomId });
+        destKey.itemId = _item.itemId;
+      }
+      // append destKey
+      destItem.atomId = destKey.atomId;
+      destItem.itemId = destKey.itemId;
       // update fields
-      await this.modelAtom.update({
+      const data = {
         id: destItem.atomId,
         userIdCreated: destItem.userIdCreated,
         userIdUpdated: destItem.userIdUpdated,
@@ -427,14 +442,19 @@ module.exports = ctx => {
         atomRevision: destItem.atomRevision,
         atomSimple: destItem.atomSimple,
         atomStage: destItem.atomStage,
-        atomFlowId: destItem.atomFlowId,
+        // atomFlowId: destItem.atomFlowId,
         attachmentCount: destItem.attachmentCount,
-        atomClosed: destItem.atomClosed,
+        // atomClosed: destItem.atomClosed,
         atomIdDraft: destItem.atomIdDraft,
         atomIdFormal: destItem.atomIdFormal,
         createdAt: destItem.createdAt,
         updatedAt: destItem.updatedAt,
-      });
+      };
+      if (target === 'draft' || target === 'clone') {
+        data.atomClosed = destItem.atomClosed;
+        data.atomFlowId = destItem.atomFlowId;
+      }
+      await this.modelAtom.update(data);
       // bean write
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
