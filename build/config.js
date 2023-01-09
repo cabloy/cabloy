@@ -8,7 +8,7 @@
 const backend = {
   port: 7102,
   hostname: '0.0.0.0',
-  maintenance: false, // true,
+  maintenance: true, // true,
 };
 
 /** front
