@@ -92,7 +92,7 @@ module.exports = ctx => {
       // create ajv_ignoreRules
       const schemas2 = this._prepareSchemas_ignoreRules({ schemas });
       _validator.ajv_ignoreRules = ctx.app.meta.ajv.create({
-        options: _validator.options,
+        options: { coerceTypes: false }, // not use _validator.options
         keywords: meta.validation.keywords,
         schemas: schemas2,
         schemaRoot: _schemas[0],
