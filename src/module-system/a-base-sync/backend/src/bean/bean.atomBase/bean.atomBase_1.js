@@ -48,8 +48,8 @@ module.exports = app => {
       meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
-    async _dictTranslate({ item, _atomClass }) {
-      const fields = _atomClass.dict && _atomClass.dict.fields;
+    async _dictTranslate({ item, atomClassBase }) {
+      const fields = atomClassBase.dict && atomClassBase.dict.fields;
       for (const fieldName in fields) {
         const field = fields[fieldName];
         const code = item[fieldName];
@@ -84,11 +84,11 @@ module.exports = app => {
       return _item;
     }
 
-    async _writeHandleResource({ _atomClass, key, item }) {
+    async _writeHandleResource({ atomClassBase, key, item }) {
       // atomId/stage
       const atomId = key.atomId;
       const atomStage = item.atomStage;
-      if (_atomClass.resource && atomStage === 1) {
+      if (atomClassBase.resource && atomStage === 1) {
         // update locales
         if (item.atomName) {
           await this.ctx.bean.resource.setLocales({

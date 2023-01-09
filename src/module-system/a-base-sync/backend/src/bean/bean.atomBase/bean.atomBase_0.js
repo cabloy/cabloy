@@ -6,7 +6,7 @@ module.exports = app => {
   class AtomBase extends app.meta.BeanBase {
     async create({ atomClass, item, options, user }) {
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // atomName
       if (!item.atomName) {
         // draftId
@@ -23,7 +23,7 @@ module.exports = app => {
         item.atomStaticKey = this.ctx.bean.util.uuidv4();
       }
       // atomSimple
-      if (_atomClass.simple) {
+      if (atomClassBase.simple) {
         item.atomSimple = 1;
         item.atomStage = 1;
       } else {
@@ -67,9 +67,9 @@ module.exports = app => {
       const item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
       if (!item) return item;
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // dict translate
-      await this._dictTranslate({ item, _atomClass });
+      await this._dictTranslate({ item, atomClassBase });
       // revision
       this._appendRevisionToHistory({ item });
       // flow
@@ -93,11 +93,11 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       if (items.length === 0) return;
       // atomClass
-      const _atomClass = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
+      const atomClassBase = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
       // dict translate
-      if (_atomClass) {
+      if (atomClassBase) {
         for (const item of items) {
-          await this._dictTranslate({ item, _atomClass });
+          await this._dictTranslate({ item, atomClassBase });
         }
       }
       // revision
@@ -125,8 +125,8 @@ module.exports = app => {
 
     async delete({ atomClass, key, options, user }) {
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      if (_atomClass.tag) {
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      if (atomClassBase.tag) {
         const _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
         if (_atomOld.atomTags) {
           // stage
@@ -153,9 +153,9 @@ module.exports = app => {
       const atomSimple = item.atomSimple;
       const atomStage = item.atomStage;
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       let _atomOld;
-      if (_atomClass.tag && item.atomTags !== undefined && atomStage === 1) {
+      if (atomClassBase.tag && item.atomTags !== undefined && atomStage === 1) {
         _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       }
       // validate
@@ -178,16 +178,16 @@ module.exports = app => {
       // write atom
       await this._writeAtom({ key, item, user, atomSimple, atomStage });
       // tag
-      if (_atomClass.tag && item.atomTags !== undefined) {
+      if (atomClassBase.tag && item.atomTags !== undefined) {
         await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
         if (atomStage === 1) {
           await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
         }
       }
       // handle resource
-      await this._writeHandleResource({ _atomClass, key, item });
+      await this._writeHandleResource({ atomClassBase, key, item });
       // remove fields.custom
-      const fieldsCustom = _atomClass.fields && _atomClass.fields.custom;
+      const fieldsCustom = atomClassBase.fields && atomClassBase.fields.custom;
       if (fieldsCustom) {
         for (const field of fieldsCustom) {
           delete item[field];
