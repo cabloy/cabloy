@@ -91,7 +91,7 @@ module.exports = ctx => {
       });
       // create ajv_ignoreRules
       const schemas2 = this._prepareSchemas_ignoreRules({ schemas });
-      _validator.ajv = ctx.app.meta.ajv.create({
+      _validator.ajv_ignoreRules = ctx.app.meta.ajv.create({
         options: _validator.options,
         keywords: meta.validation.keywords,
         schemas: schemas2,
@@ -102,7 +102,35 @@ module.exports = ctx => {
     }
 
     _prepareSchemas_ignoreRules({ schemas }) {
-      // const schemas2
+      const schemas2 = {};
+      for (const schemaName in schemas) {
+        const schema = schemas[schemaName];
+        const schema2 = { type: 'object', properties: {} };
+        this._prepareProperties_ignoreRules({ propertiesFrom: schema.properties, propertiesTo: schema2.properties });
+        schemas2[schemaName] = schema2;
+      }
+      return schemas2;
+    }
+
+    _prepareProperties_ignoreRules({ propertiesFrom, propertiesTo }) {
+      const __basicRuleNames = ['type', 'ebType', 'ebReadOnly', '$async'];
+      for (const key in propertiesFrom) {
+        const propertyFrom = propertiesFrom[key];
+        const propertyTo = {};
+        propertiesTo[key] = propertyTo;
+        for (const ruleName in propertyFrom) {
+          if (__basicRuleNames.includes(ruleName)) {
+            propertyTo[ruleName] = propertyFrom[ruleName];
+          }
+          if (ruleName === 'properties') {
+            propertyTo.properties = {};
+            this._prepareProperties_ignoreRules({
+              propertiesFrom: propertyFrom.properties,
+              propertiesTo: propertyTo.properties,
+            });
+          }
+        }
+      }
     }
 
     _adjustSchemas(schemas) {
