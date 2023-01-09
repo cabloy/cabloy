@@ -319,7 +319,7 @@ module.exports = ctx => {
       // atomStage
       let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target];
       if (atomStage === undefined) {
-        atomStage = atomSimple; // support simple
+        atomStage = atomSimple; // support simple when target='clone'
       }
       // if (target === 'clone') {
       //   atomStage = atomSimple; // support simple
