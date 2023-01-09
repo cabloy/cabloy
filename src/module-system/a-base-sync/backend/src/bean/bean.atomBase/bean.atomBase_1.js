@@ -17,6 +17,39 @@ module.exports = app => {
       return this.ctx.model.module(moduleInfo.relativeName).resourceRole;
     }
 
+    async _writeValidate({ atomClass, target, key, item, options, user }) {
+      // simple/stage
+      const atomSimple = item.atomSimple;
+      const atomStage = item.atomStage;
+      // validate
+      const ignoreValidate = options && options.ignoreValidate;
+      let ignoreNotEmpty = options && options.ignoreNotEmpty;
+      if (ignoreValidate) return;
+      if (target) {
+        // means copy
+        ignoreNotEmpty = true;
+      }
+      options = {
+        ...options,
+        ignoreValidate,
+        ignoreNotEmpty,
+      };
+      if (
+        ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) &&
+        !target &&
+        !ignoreValidate
+      ) {
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          atomClass,
+          key,
+          options,
+          user,
+        });
+        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
+      }
+    }
+
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {
       // write atom
       const atom = {};

@@ -6,9 +6,9 @@ module.exports = {
       if (!schema) return true;
       // ctx
       const ctx = this;
-      // saveDraftOnly
-      const saveDraftOnly = ctx.bean.util.getProperty(ctx.meta, 'validateHost.options.saveDraftOnly');
-      if (saveDraftOnly) {
+      // ignoreNotEmpty
+      const ignoreNotEmpty = ctx.bean.util.getProperty(ctx.meta, 'validateHost.options.ignoreNotEmpty');
+      if (ignoreNotEmpty) {
         // not check
         return true;
       }

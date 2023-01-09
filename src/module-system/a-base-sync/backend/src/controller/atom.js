@@ -91,6 +91,7 @@ module.exports = app => {
       const options = {
         ignoreValidate: false,
         saveDraftOnly,
+        ignoreNotEmpty: saveDraftOnly,
       };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
