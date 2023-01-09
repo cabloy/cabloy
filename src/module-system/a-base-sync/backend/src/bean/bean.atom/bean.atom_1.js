@@ -405,7 +405,7 @@ module.exports = ctx => {
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       // srcItem
       if (!srcItem) {
-        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user });
+        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user: null });
       }
       // destItem
       const destItem = this._copy_prepareDestItem({ target, srcItem, user });
