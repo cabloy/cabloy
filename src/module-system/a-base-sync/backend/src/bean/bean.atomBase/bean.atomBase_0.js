@@ -183,7 +183,7 @@ module.exports = app => {
 
     async submit({ /* atomClass,*/ key, options, user }) {
       const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.ctx.bean.atom.read({ key, user });
+      const _atom = await this.ctx.bean.atom.read({ key, user: null });
       if (_atom.atomStage > 0) this.ctx.throw(403);
       // check atom flow
       if (!ignoreFlow) {
