@@ -71,7 +71,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update authOpen
       const data = await this.ctx.model.authOpen.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.authOpen.update(data);
     }
 

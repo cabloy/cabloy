@@ -9,7 +9,7 @@ const __atomBasicFields = [
   // 'atomStaticKey',
   // 'atomRevision',
 ];
-const __itemBasicFields = ['id', 'iid', 'atomId', 'itemId', 'atomStage'];
+const __itemBasicFields = ['iid', 'atomId', 'itemId', 'atomStage'];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -50,9 +50,8 @@ module.exports = app => {
         }
       }
       // append itemId
-      if (item.id === undefined && key.itemId !== undefined) {
-        item.id = key.itemId;
-      }
+      //   why always set value here: resource, data.id!==key.itemId
+      item.id = key.itemId;
     }
 
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {

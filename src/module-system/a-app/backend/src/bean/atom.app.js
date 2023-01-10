@@ -42,7 +42,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update app
       const data = await this.ctx.model.app.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.app.update(data);
       // update content
       await this.ctx.model.appContent.update(
