@@ -19,34 +19,35 @@ module.exports = app => {
     }
 
     async _writeValidate({ atomClass, target, key, item, options, user }) {
-      // itemHold
-      const itemHold = {};
-      for (const field of __itemBasicFields) {
-        if (item[field] !== undefined) {
-          itemHold[field] = item[field];
-        }
-      }
       // options
       const ignoreValidate = options && options.ignoreValidate;
-      if (ignoreValidate) return;
-      // filterOptions
-      const filterOptions = { type: true, ebReadOnly: true };
-      if (target) {
-        filterOptions.ignoreRules = true;
-      }
-      // validate
-      this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
-        atomClass,
-        key,
-        options,
-        user,
-      });
-      await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions });
-      this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
-      // itemHold
-      for (const field of __itemBasicFields) {
-        if (item[field] === undefined && itemHold[field] !== undefined) {
-          item[field] = itemHold[field];
+      if (!ignoreValidate) {
+        // itemHold
+        const itemHold = {};
+        for (const field of __itemBasicFields) {
+          if (item[field] !== undefined) {
+            itemHold[field] = item[field];
+          }
+        }
+        // filterOptions
+        const filterOptions = { type: true, ebReadOnly: true };
+        if (target) {
+          filterOptions.ignoreRules = true;
+        }
+        // validate
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          atomClass,
+          key,
+          options,
+          user,
+        });
+        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
+        // itemHold
+        for (const field of __itemBasicFields) {
+          if (item[field] === undefined && itemHold[field] !== undefined) {
+            item[field] = itemHold[field];
+          }
         }
       }
       // append itemId
