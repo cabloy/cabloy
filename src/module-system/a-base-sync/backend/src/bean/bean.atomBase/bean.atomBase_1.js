@@ -49,6 +49,10 @@ module.exports = app => {
           item[field] = itemHold[field];
         }
       }
+      // append itemId
+      if (item.id === undefined && key.itemId !== undefined) {
+        item.id = key.itemId;
+      }
     }
 
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {
