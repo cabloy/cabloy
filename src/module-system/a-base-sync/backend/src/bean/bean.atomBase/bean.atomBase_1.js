@@ -9,6 +9,7 @@ const __atomBasicFields = [
   // 'atomStaticKey',
   // 'atomRevision',
 ];
+const __itemBasicFields = ['id', 'iid', 'atomId', 'itemId', 'atomStage'];
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -18,6 +19,13 @@ module.exports = app => {
     }
 
     async _writeValidate({ atomClass, target, key, item, options, user }) {
+      // itemHold
+      const itemHold = {};
+      for (const field of __itemBasicFields) {
+        if (item[field] !== undefined) {
+          itemHold[field] = item[field];
+        }
+      }
       // options
       const ignoreValidate = options && options.ignoreValidate;
       if (ignoreValidate) return;
@@ -35,6 +43,12 @@ module.exports = app => {
       });
       await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions });
       this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
+      // itemHold
+      for (const field of __itemBasicFields) {
+        if (item[field] === undefined && itemHold[field] !== undefined) {
+          item[field] = itemHold[field];
+        }
+      }
     }
 
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {
@@ -104,11 +118,12 @@ module.exports = app => {
       return _item;
     }
 
-    async _writeHandleResource({ atomClassBase, key, item }) {
+    async _writeHandleResource({ atomClass, atomClassBase, key, item }) {
       // atomId/stage
       const atomId = key.atomId;
       const atomStage = item.atomStage;
-      if (atomClassBase.resource && atomStage === 1) {
+      const isAtomClassRole = atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
+      if (!isAtomClassRole && atomClassBase.resource && atomStage === 1) {
         // update locales
         if (item.atomName) {
           await this.ctx.bean.resource.setLocales({
