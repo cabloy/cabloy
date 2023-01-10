@@ -41,7 +41,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update flowDef
       const data = await this.ctx.model.flowDef.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.flowDef.update(data);
       // update content
       await this.ctx.model.flowDefContent.update(
