@@ -60,9 +60,6 @@ module.exports = app => {
             inner: true,
             comment: false,
             attachment: false,
-            fields: {
-              custom: ['catalog', 'system', 'roleIdParent'],
-            },
             dict: {
               fields: {
                 roleTypeCode: {
@@ -165,9 +162,9 @@ module.exports = app => {
             inner: true,
             comment: false,
             attachment: false,
-            fields: {
-              custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
-            },
+            // fields: {
+            //   custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
+            // },
             layout: {
               config: {
                 atomList: 'a-baseadmin:layoutAtomListUser',

@@ -33,9 +33,6 @@ module.exports = app => {
             inner: true,
             comment: false,
             attachment: false,
-            fields: {
-              custom: ['clientID,clientSecret,clientSecretHidden'],
-            },
             layout: {
               config: {
                 atomList: 'layoutAtomListAuthOpen',
