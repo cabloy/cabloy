@@ -172,13 +172,6 @@ module.exports = app => {
       }
       // handle resource
       await this._writeHandleResource({ atomClass, atomClassBase, key, item });
-      // remove fields.custom
-      const fieldsCustom = atomClassBase.fields && atomClassBase.fields.custom;
-      if (fieldsCustom) {
-        for (const field of fieldsCustom) {
-          delete item[field];
-        }
-      }
     }
 
     async submit({ /* atomClass,*/ key, options, user }) {
