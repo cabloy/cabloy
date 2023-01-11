@@ -141,10 +141,14 @@ module.exports = ctx => {
       return new Promise((resolve, reject) => {
         const logPrefix = options.logPrefix;
         const proc = spawn(cmd, args, options);
+        let stdout = '';
+        // let stderr = '';
         proc.stdout.on('data', async data => {
+          stdout += data.toString();
           await this.console.log({ text: data.toString() }, { logPrefix });
         });
         proc.stderr.on('data', async data => {
+          // stderr += data.toString();
           await this.console.log({ text: data.toString() }, { logPrefix });
         });
         proc.once('exit', code => {
@@ -153,13 +157,25 @@ module.exports = ctx => {
             err.code = 10000 + code;
             return reject(err);
           }
-          resolve();
+          resolve(stdout);
         });
       });
     }
     async gitCommit({ cwd, message }) {
+      // git status
+      const stdout = await this.spawnExe({
+        cmd: 'git',
+        args: ['status'],
+        options: {
+          cwd,
+        },
+      });
+      if (stdout.indexOf('nothing to commit, working tree clean') > -1) {
+        // do nothing
+        return;
+      }
       // git add .
-      await this.helper.spawnExe({
+      await this.spawnExe({
         cmd: 'git',
         args: ['add', '.'],
         options: {
@@ -167,7 +183,7 @@ module.exports = ctx => {
         },
       });
       // git commit
-      await this.helper.spawnExe({
+      await this.spawnExe({
         cmd: 'git',
         args: ['commit', '-m', message],
         options: {
@@ -175,7 +191,7 @@ module.exports = ctx => {
         },
       });
       // git push
-      await this.helper.spawnExe({
+      await this.spawnExe({
         cmd: 'git',
         args: ['push'],
         options: {

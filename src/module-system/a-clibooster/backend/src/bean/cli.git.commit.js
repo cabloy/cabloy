@@ -45,6 +45,7 @@ module.exports = ctx => {
           entities.push(entity);
         }
       }
+      return entities;
     }
   }
 
