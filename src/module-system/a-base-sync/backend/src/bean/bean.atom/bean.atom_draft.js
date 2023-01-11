@@ -168,6 +168,32 @@ module.exports = ctx => {
       // notify
       this._notifyDraftsDrafting(null, atomClass);
     }
+
+    async _createDraftFromFormal({ atomIdFormal, user }) {
+      // ** create draft from formal
+      const keyDraft = await this._copy({
+        target: 'draft',
+        srcKey: { atomId: atomIdFormal },
+        srcItem: null,
+        destKey: null,
+        user,
+      });
+      // update history
+      await ctx.model.query(
+        `
+          update aAtom set atomIdDraft=?
+            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
+        `,
+        [keyDraft.atomId, ctx.instance.id, atomIdFormal]
+      );
+      // update formal
+      await this.modelAtom.update({
+        id: atomIdFormal,
+        atomIdDraft: keyDraft.atomId,
+      });
+      // ok
+      return keyDraft;
+    }
   }
   return Atom;
 };
