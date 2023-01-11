@@ -48,7 +48,7 @@ module.exports = ctx => {
       if (atom.atomStage === 2) {
         const atomIdFormal = atom.atomIdFormal;
         keyFormal = { atomId: atomIdFormal };
-        // ** create formal from history
+        // ** copy formal from history
         keyFormal = await this._copy({
           target: 'formal',
           srcKey: { atomId: atom.id },
