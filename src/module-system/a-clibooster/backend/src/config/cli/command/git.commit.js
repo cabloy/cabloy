@@ -2,33 +2,23 @@ module.exports = app => {
   return {
     bean: 'git.commit',
     resource: {
-      atomStaticKey: 'cliCreate',
+      atomStaticKey: 'cliGit',
     },
     info: {
       version: '4.0.0',
-      title: 'Cli: Create Page Component',
-      usage: 'npm run cli :create:page pageName -- [--module=]',
+      title: 'Cli: Git Commit',
+      usage: 'npm run cli :git:commit message',
     },
-    options: {
-      module: {
-        description: 'module name',
-        type: 'string',
-      },
-    },
+    options: {},
     groups: {
       default: {
         questions: {
-          pageName: {
+          message: {
             type: 'input',
-            message: 'pageName',
+            message: 'message',
             initial: {
               expression: 'context.argv._[0]',
             },
-            required: true,
-          },
-          module: {
-            type: 'input',
-            message: 'module name',
             required: true,
           },
         },

@@ -301,7 +301,7 @@
   "cli": {
     "commands": {
       ":git:commit": {
-        "repos": [
+        "entities": [
           "a-flownodebooster",
           "a-flowtask",
           "a-layoutpc",
