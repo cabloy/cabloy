@@ -17,15 +17,28 @@ module.exports = app => {
     }
 
     async create({ atomClass, item, options, user }) {
+      const atomStage = item.atomStage;
       // super
       const key = await super.create({ atomClass, item, options, user });
       // article
-      const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      const editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
+      let editMode;
+      let slug;
+      if (atomStage === 0) {
+        // draft init
+        const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
+        editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
+        slug = null;
+      } else {
+        // copy init
+        const srcItem = options.createOptions.srcItem;
+        editMode = srcItem.editMode;
+        slug = srcItem.slug;
+      }
       // add article
       const params = {
         atomId: key.atomId,
         editMode,
+        slug,
       };
       // uuid
       params.uuid = item.uuid || this.ctx.bean.util.uuidv4();
