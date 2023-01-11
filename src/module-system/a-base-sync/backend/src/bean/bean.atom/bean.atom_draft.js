@@ -37,72 +37,93 @@ module.exports = ctx => {
     }
 
     async _openDraft_asSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
-      let keyDraft;
-      let changed = true;
       // draft
       if (atom.atomStage === 0) {
-        keyDraft = { atomId: atom.id, itemId: atom.itemId };
-        if (atom.atomClosed === 1) {
-          // ** copy draft from formal
-          if (atom.atomIdFormal > 0) {
-            await this._copy({
-              target: 'draft',
-              srcKey: { atomId: atom.atomIdFormal },
-              srcItem: null,
-              destKey: keyDraft,
-              user,
-            });
-          }
-          // open
-          await this._openDraft_update({
-            atomId: atom.id,
-            atomRevision: atom.atomRevision + 1,
-            user,
-          });
-        } else {
-          changed = false;
-        }
+        return await this._openDraft_asSimpleZero_draft({ atom, user });
       }
       // formal
       if (atom.atomStage === 1) {
-        if (atom.atomIdDraft > 0) {
-          keyDraft = { atomId: atom.atomIdDraft };
-        } else {
-          // ** create draft from formal
-          keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.id, user });
-        }
-        // open
-        await this._openDraft_update({
-          atomId: keyDraft.atomId,
-          atomRevision: atom.atomRevision + 1,
-          user,
-        });
+        return await this._openDraft_asSimpleZero_formal({ atom, user });
       }
       // history
       if (atom.atomStage === 2) {
-        if (atom.atomIdDraft > 0) {
-          keyDraft = { atomId: atom.atomIdDraft };
-        } else {
-          // ** create draft from formal
-          keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
+        return await this._openDraft_asSimpleZero_history({ atom, user });
+      }
+      // never go here
+    }
+
+    async _openDraft_asSimpleZero_history({ atom, user }) {
+      let keyDraft;
+      const changed = true;
+      if (atom.atomIdDraft > 0) {
+        keyDraft = { atomId: atom.atomIdDraft };
+      } else {
+        // ** create draft from formal
+        keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
+      }
+      // hold atomRevision
+      const atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
+      const atomRevision = atomDraft.atomRevision;
+      // ** create draft from history
+      keyDraft = await this._copy({
+        target: 'draft',
+        srcKey: { atomId: atom.id },
+        srcItem: null,
+        destKey: keyDraft,
+        user,
+      });
+      // open
+      await this._openDraft_update({
+        atomId: keyDraft.atomId,
+        atomRevision: atomRevision + 1,
+        user,
+      });
+      // ok
+      return { draft: { key: keyDraft }, changed };
+    }
+
+    async _openDraft_asSimpleZero_formal({ atom, user }) {
+      let keyDraft;
+      const changed = true;
+      if (atom.atomIdDraft > 0) {
+        keyDraft = { atomId: atom.atomIdDraft };
+      } else {
+        // ** create draft from formal
+        keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.id, user });
+      }
+      // open
+      await this._openDraft_update({
+        atomId: keyDraft.atomId,
+        atomRevision: atom.atomRevision + 1,
+        user,
+      });
+      // ok
+      return { draft: { key: keyDraft }, changed };
+    }
+
+    async _openDraft_asSimpleZero_draft({ atom, user }) {
+      let changed = true;
+      // key
+      const keyDraft = { atomId: atom.id, itemId: atom.itemId };
+      if (atom.atomClosed === 1) {
+        // ** copy draft from formal
+        if (atom.atomIdFormal > 0) {
+          await this._copy({
+            target: 'draft',
+            srcKey: { atomId: atom.atomIdFormal },
+            srcItem: null,
+            destKey: keyDraft,
+            user,
+          });
         }
-        // hold atomRevision
-        const atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
-        const atomRevision = atomDraft.atomRevision;
-        // ** create draft from history
-        keyDraft = await this._copy({
-          target: 'draft',
-          srcKey: { atomId: atom.id },
-          srcItem: null,
-          destKey: keyDraft,
-          user,
-        });
         // open
         await this._openDraft_update({
-          atomId: keyDraft.atomId,
-          atomRevision: atomRevision + 1,
+          atomId: atom.id,
+          atomRevision: atom.atomRevision + 1,
           user,
         });
+      } else {
+        changed = false;
       }
       // ok
       return { draft: { key: keyDraft }, changed };
