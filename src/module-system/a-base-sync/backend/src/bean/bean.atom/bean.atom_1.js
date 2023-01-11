@@ -232,6 +232,16 @@ module.exports = ctx => {
       if (atom.atomStage === 0) {
         keyDraft = { atomId: atom.id, itemId: atom.itemId };
         if (atom.atomClosed === 1) {
+          // ** copy draft from formal
+          if (atom.atomIdFormal > 0) {
+            await this._copy({
+              target: 'draft',
+              srcKey: { atomId: atom.atomIdFormal },
+              srcItem: null,
+              destKey: keyDraft,
+              user,
+            });
+          }
           // open
           await this._openDraft_update({
             atomId: atom.id,
