@@ -54,30 +54,35 @@ module.exports = ctx => {
 
     async _openDraft_asSimpleZero_history({ atom, user }) {
       let keyDraft;
-      const changed = true;
+      let changed = true;
       if (atom.atomIdDraft > 0) {
         keyDraft = { atomId: atom.atomIdDraft };
       } else {
         // ** create draft from formal
         keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
       }
-      // hold atomRevision
+      // check if opened
       const atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
-      const atomRevision = atomDraft.atomRevision;
-      // ** create draft from history
-      keyDraft = await this._copy({
-        target: 'draft',
-        srcKey: { atomId: atom.id },
-        srcItem: null,
-        destKey: keyDraft,
-        user,
-      });
-      // open
-      await this._openDraft_update({
-        atomId: keyDraft.atomId,
-        atomRevision: atomRevision + 1,
-        user,
-      });
+      if (atomDraft.atomClosed === 0) {
+        changed = false;
+      } else {
+        // hold atomRevision
+        const atomRevision = atomDraft.atomRevision;
+        // ** copy draft from history
+        keyDraft = await this._copy({
+          target: 'draft',
+          srcKey: { atomId: atom.id },
+          srcItem: null,
+          destKey: keyDraft,
+          user,
+        });
+        // open
+        await this._openDraft_update({
+          atomId: keyDraft.atomId,
+          atomRevision: atomRevision + 1,
+          user,
+        });
+      }
       // ok
       return { draft: { key: keyDraft }, changed };
     }
