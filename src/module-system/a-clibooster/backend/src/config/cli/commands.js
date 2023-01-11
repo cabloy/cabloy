@@ -12,6 +12,7 @@ const createPage = require('./command/create.page.js');
 const createPagex = require('./command/create.pagex.js');
 const storeSync = require('./command/store.sync.js');
 const storePublish = require('./command/store.publish.js');
+const gitCommit = require('./command/git.commit.js');
 
 module.exports = app => {
   const commands = {
@@ -38,6 +39,9 @@ module.exports = app => {
     store: {
       sync: storeSync(app),
       publish: storePublish(app),
+    },
+    git: {
+      commit: gitCommit(app),
     },
   };
   return commands;

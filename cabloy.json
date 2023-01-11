@@ -297,5 +297,26 @@
         "entities": {}
       }
     }
+  },
+  "cli": {
+    "commands": {
+      ":git:commit": {
+        "repos": [
+          "a-flownodebooster",
+          "a-flowtask",
+          "a-layoutpc",
+          "a-markdown",
+          "a-socketio",
+          "test-flow",
+          "test-note",
+          "a-paypal",
+          "a-wechat",
+          "a-wxwork",
+          "a-dingtalk",
+          "bz-diancai",
+          "test-party"
+        ]
+      }
+    }
   }
 }

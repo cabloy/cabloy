@@ -13,6 +13,7 @@ const cliCreatePage = require('./bean/cli.create.page.js');
 const cliCreatePagex = require('./bean/cli.create.pagex.js');
 const cliStoreSync = require('./bean/cli.store.sync.js');
 const cliStorePublish = require('./bean/cli.store.publish.js');
+const cliGitCommit = require('./bean/cli.git.commit.js');
 
 module.exports = app => {
   const beans = {
@@ -77,6 +78,10 @@ module.exports = app => {
     'cli.store.publish': {
       mode: 'ctx',
       bean: cliStorePublish,
+    },
+    'cli.git.commit': {
+      mode: 'ctx',
+      bean: cliGitCommit,
     },
   };
   return beans;
