@@ -105,7 +105,7 @@ module.exports = ctx => {
       if (!Array.isArray(welcomes)) welcomes = [welcomes];
       welcomes = welcomes.map(item => ctx.text(item));
       // helper doc
-      const configHelper = this.cabloyConfig.cli && this.cabloyConfig.cli.helper;
+      const configHelper = ctx.bean.util.getProperty(this.cabloyConfig.get(), 'cli.helper');
       if (configHelper !== false) {
         let url = `https://cabloy.com/${ctx.locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
         url = this.helper.chalk.keyword('cyan')(url);

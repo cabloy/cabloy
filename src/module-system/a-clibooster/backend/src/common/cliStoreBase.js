@@ -185,7 +185,8 @@ module.exports = ctx => {
     }
 
     _logHelperDocs({ welcomes, user }) {
-      if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
+      const configHelper = ctx.bean.util.getProperty(this.cabloyConfig.get(), 'cli.helper');
+      if (configHelper === false) {
         return;
       }
       const url = this._getCabloyDocsURL({ slug: 'cli-store', user });

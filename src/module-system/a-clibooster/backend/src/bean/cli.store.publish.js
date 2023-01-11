@@ -385,29 +385,9 @@ module.exports = ctx => {
     }
 
     async _handleScripts_gitCommit({ entityMeta }) {
-      // git add .
-      await this.helper.spawnExe({
-        cmd: 'git',
-        args: ['add', '.'],
-        options: {
-          cwd: entityMeta.root,
-        },
-      });
-      // git commit
-      await this.helper.spawnExe({
-        cmd: 'git',
-        args: ['commit', '-m', `chore: version ${entityMeta.package.version}`],
-        options: {
-          cwd: entityMeta.root,
-        },
-      });
-      // git push
-      await this.helper.spawnExe({
-        cmd: 'git',
-        args: ['push'],
-        options: {
-          cwd: entityMeta.root,
-        },
+      await this.helper.gitCommit({
+        cwd: entityMeta.root,
+        message: `chore: version ${entityMeta.package.version}`,
       });
     }
 

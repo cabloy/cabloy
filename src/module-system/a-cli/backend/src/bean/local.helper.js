@@ -157,6 +157,32 @@ module.exports = ctx => {
         });
       });
     }
+    async gitCommit({ cwd, message }) {
+      // git add .
+      await this.helper.spawnExe({
+        cmd: 'git',
+        args: ['add', '.'],
+        options: {
+          cwd,
+        },
+      });
+      // git commit
+      await this.helper.spawnExe({
+        cmd: 'git',
+        args: ['commit', '-m', message],
+        options: {
+          cwd,
+        },
+      });
+      // git push
+      await this.helper.spawnExe({
+        cmd: 'git',
+        args: ['push'],
+        options: {
+          cwd,
+        },
+      });
+    }
   }
   return Local;
 };
