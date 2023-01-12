@@ -2,8 +2,11 @@ const path = require('path');
 const fse = require('fs-extra');
 const semver = require('semver');
 const chalk = require('chalk');
+const boxen = require('boxen');
 const eggBornUtils = require('egg-born-utils');
 const mparse = require('egg-born-mparse').default;
+
+const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 
 module.exports = {
   glob: eggBornMglob,
@@ -174,11 +177,11 @@ function __orderDependencies(context, modules, module, moduleRelativeName) {
   for (const key in dependencies) {
     const subModule = modules[key];
     if (!subModule) {
-      console.warn(
+      const message =
         chalk.keyword('orange')(`module ${moduleRelativeName} disabled`) +
-          ', because ' +
-          chalk.keyword('cyan')(`module ${key} not exists`)
-      );
+        ', because ' +
+        chalk.keyword('cyan')(`module ${key} not exists`);
+      console.log('\n' + boxen(message, boxenOptions) + '\n');
       enabled = false; // process.exit(0);
       continue;
     }
