@@ -6,7 +6,7 @@ module.exports = function (ctx) {
     }
 
     async _alterTables() {
-      // aAtom: add atomState
+      // aAtom: add atomState, default value is null
       const sql = `
         ALTER TABLE aAtom
           ADD COLUMN atomState varchar(255) DEFAULT NULL
