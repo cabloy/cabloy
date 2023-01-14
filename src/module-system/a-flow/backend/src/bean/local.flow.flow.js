@@ -399,13 +399,13 @@ module.exports = ctx => {
 
     async _parseAssignees_users(str) {
       if (!str) return null;
-      return await ctx.bean.flow._parseAssignees_userIds(str);
+      return await ctx.bean.flow._adjustAssignees_userIds(str);
     }
 
     async _parseAssignees_roles(str) {
       if (!str) return null;
       // roleIds
-      const roleIds = await ctx.bean.flow._parseAssignees_roleIds(str);
+      const roleIds = await ctx.bean.flow._adjustAssignees_roleIds(str);
       // users
       let users = [];
       for (const roleId of roleIds) {
@@ -419,7 +419,7 @@ module.exports = ctx => {
     async _parseAssignees_vars(str) {
       if (!str) return null;
       // vars
-      const _vars = await ctx.bean.flow._parseAssignees_vars(str);
+      const _vars = await ctx.bean.flow._adjustAssignees_vars(str);
       // users
       let users = [];
       for (const _var of _vars) {

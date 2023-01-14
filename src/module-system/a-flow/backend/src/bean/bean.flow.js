@@ -1,3 +1,7 @@
+const __VARTITLES = {
+  flowUser: 'FlowInitiator',
+  auto: 'FlowVarAutoPick',
+};
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
@@ -137,7 +141,7 @@ module.exports = ctx => {
     async _normalizeAssignees_users(str) {
       if (!str) return [];
       // userIds
-      const userIds = await this._parseAssignees_userIds(str);
+      const userIds = await this._adjustAssignees_userIds(str);
       if (userIds.length === 0) return [];
       // select
       return await ctx.bean.user.select({
@@ -155,7 +159,7 @@ module.exports = ctx => {
     async _normalizeAssignees_roles(str) {
       if (!str) return [];
       // roleIds
-      const roleIds = await this._parseAssignees_roleIds(str);
+      const roleIds = await this._adjustAssignees_roleIds(str);
       if (roleIds.length === 0) return [];
       // select
       return await ctx.bean.role.model.select({
@@ -168,15 +172,10 @@ module.exports = ctx => {
     async _normalizeAssignees_vars(str) {
       if (!str) return [];
       // vars
-      const _vars = await this._parseAssignees_vars(str);
+      const _vars = await this._adjustAssignees_vars(str);
       // title
       return _vars.map(item => {
-        let title;
-        if (item === 'flowUser') {
-          title = 'FlowInitiator';
-        } else {
-          title = item;
-        }
+        const title = __VARTITLES[item] || item;
         // others
         return {
           name: item,
@@ -186,7 +185,7 @@ module.exports = ctx => {
       });
     }
 
-    async _parseAssignees_userIds(str) {
+    async _adjustAssignees_userIds(str) {
       if (!str) return null;
       if (!Array.isArray(str)) {
         str = str.toString().split(',');
@@ -196,7 +195,7 @@ module.exports = ctx => {
       });
     }
 
-    async _parseAssignees_roleIds(str) {
+    async _adjustAssignees_roleIds(str) {
       if (!str) return null;
       if (!Array.isArray(str)) {
         str = str.toString().split(',');
@@ -220,7 +219,7 @@ module.exports = ctx => {
       return arr;
     }
 
-    async _parseAssignees_vars(str) {
+    async _adjustAssignees_vars(str) {
       if (!str) return null;
       if (!Array.isArray(str)) {
         str = str.toString().split(',');
