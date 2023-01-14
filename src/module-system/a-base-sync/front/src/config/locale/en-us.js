@@ -42,5 +42,6 @@ export default {
   'Search Atom': 'Search Data',
   'Select Atom Class': 'Select Data Class',
   'Atom Class': 'Data Class',
+  'Atom Stage': 'Data Stage',
   'My Atoms': 'My Data',
 };
