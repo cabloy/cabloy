@@ -386,7 +386,7 @@ module.exports = ctx => {
       }
 
       // 3. vars
-      const _vars = await this._parseAssignees_vars(vars);
+      const _vars = await this._parseAssignees_vars({ nodeInstance, vars });
       if (_vars) {
         userIds = userIds.concat(_vars);
       }
@@ -417,14 +417,14 @@ module.exports = ctx => {
       return users;
     }
 
-    async _parseAssignees_vars(str) {
-      if (!str) return null;
+    async _parseAssignees_vars({ nodeInstance, vars }) {
+      if (!vars) return null;
       // vars
-      const _vars = await ctx.bean.flow._adjustAssignees_vars(str);
+      const _vars = await ctx.bean.flow._adjustAssignees_vars(vars);
       // users
       let users = [];
       for (const _var of _vars) {
-        const userId = await this._parseUserVar({ _var });
+        const userId = await this._parseUserVar({ nodeInstance, _var });
         if (userId) {
           if (Array.isArray(userId)) {
             users = users.concat(userId);
@@ -437,7 +437,7 @@ module.exports = ctx => {
       return users;
     }
 
-    async _parseUserVar({ _var }) {
+    async _parseUserVar({ nodeInstance, _var }) {
       if (_var === 'flowUser') {
         return this.context._flow.flowUserId;
       }
