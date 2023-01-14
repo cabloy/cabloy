@@ -368,33 +368,34 @@ module.exports = ctx => {
       return null;
     }
 
-    async _parseAssignees({ users, roles, vars }) {
+    async _parseAssignees({ nodeInstance, assignees }) {
+      const { users, roles, vars } = assignees;
       // init
-      let assignees = [];
+      let userIds = [];
 
       // 1. users
       const _users = await this._parseAssignees_users(users);
       if (_users) {
-        assignees = assignees.concat(_users);
+        userIds = userIds.concat(_users);
       }
 
       // 2. roles
       const _roles = await this._parseAssignees_roles(roles);
       if (_roles) {
-        assignees = assignees.concat(_roles);
+        userIds = userIds.concat(_roles);
       }
 
       // 3. vars
       const _vars = await this._parseAssignees_vars(vars);
       if (_vars) {
-        assignees = assignees.concat(_vars);
+        userIds = userIds.concat(_vars);
       }
 
       // unique
-      assignees = Set.unique(assignees);
+      userIds = Set.unique(userIds);
 
       // ok
-      return assignees;
+      return userIds;
     }
 
     async _parseAssignees_users(str) {
