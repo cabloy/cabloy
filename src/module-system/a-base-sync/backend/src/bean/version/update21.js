@@ -18,7 +18,8 @@ module.exports = function (ctx) {
         ALTER TABLE aAtomAction
           ADD COLUMN actionMode int(11) DEFAULT '0',
           ADD COLUMN flowKey varchar(50) DEFAULT NULL,
-          ADD COLUMN nodeDefId varchar(50) DEFAULT NULL
+          ADD COLUMN nodeDefId varchar(50) DEFAULT NULL,
+          ADD COLUMN nodeDefName varchar(255) DEFAULT NULL
       `;
       await ctx.model.query(sql);
     }
