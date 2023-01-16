@@ -1,5 +1,27 @@
 # History
 
+## 2023-01-16, Version 4.29.0
+
+\*\* to be done
+
+- **Feat**
+
+  - Cli 引擎
+    - 新增命令: npm run cli :git:commit
+  - 工作流引擎
+    - 新思路：工作流 = 审批流程 + 业务流程
+    - 审批流程：用于草稿副本的流转：如博客文章
+    - 业务流程：用于正式副本的流转：如采购订单
+    - 新增字段 atomState: 用于标记数据当前状态，与工作流配合使用
+    - 新增参与人变量：auto，用于动态拾取流程节点的参与人
+
+- **Refactor**
+  - 原子数据：
+    - 在进行副本拷贝时以基础 schema 为准，进行字段过滤
+    - create 方法增加 createOptions 参数，为副本拷贝提供额外线索信息
+    - 不再需要指定配置: fields.custom
+    - write 方法中不再需要 data.id = key.itemId;
+
 ## 2023-01-08, Version 4.28.20
 
 - **Feat**
