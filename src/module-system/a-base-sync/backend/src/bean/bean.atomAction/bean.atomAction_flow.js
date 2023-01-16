@@ -25,13 +25,14 @@ module.exports = ctx => {
 
     async _registerLockByModeFlow_inner({ atomClassId, flowKey, nodeDefId, nodeDefName }) {
       // get
-      const res = await this.model.get({ atomClassId, flowKey, nodeDefId, nodeDefName });
+      const res = await this.model.get({ atomClassId, flowKey, nodeDefId });
       if (res) return res;
       // code
-
+      const sequence = ctx.bean.sequence.module(moduleInfo.relativeName);
+      const flowActionCode = await sequence.next('flowAction');
       const data = {
         atomClassId,
-        code: 0,
+        code: flowActionCode,
         name: nodeDefName,
         bulk: 0,
         flowKey,

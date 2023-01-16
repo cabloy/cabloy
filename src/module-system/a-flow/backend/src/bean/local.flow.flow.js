@@ -455,17 +455,25 @@ module.exports = ctx => {
     async _parseUserVar_auto({ nodeInstance }) {
       const flowKey = this.context._flowDef.atomStaticKey;
       const nodeDefId = nodeInstance.contextNode._nodeDef.id;
+      const nodeDefName = nodeInstance.contextNode._nodeDef.name;
       console.log('------------', flowKey, nodeDefId);
       const atom = this.context.atom;
       // get action
+      const action = await ctx.bean.atomAction.getByModeFlow({
+        atomClassId: atom.atomClassId,
+        flowKey,
+        nodeDefId,
+        nodeDefName,
+      });
       const sql = `
           select * from aViewUserRightAtomClassRole
-            where iid=? and atomClassId=? and action=2 and roleIdWhom=? and
+            where iid=? and atomClassId=? and action=? and roleIdWhom=? and
       (areaScope is null or ? is null or (areaKey=? and POSITION(areaScope in ?)=1) )
       `;
       const items = await ctx.model.query(sql, [
         atom.iid,
         atom.atomClassId,
+        action.code,
         atom.roleIdOwner,
         atom.atomAreaValue,
         atom.atomAreaKey,
