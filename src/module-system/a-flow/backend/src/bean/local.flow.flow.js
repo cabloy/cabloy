@@ -440,15 +440,39 @@ module.exports = ctx => {
     async _parseUserVar({ nodeInstance, _var }) {
       // flowUser
       if (_var === 'flowUser') {
-        return this.context._flow.flowUserId;
+        return this._parseUserVar_flowUser({ nodeInstance });
       }
       // auto
       if (_var === 'auto') {
-        const flowKey = this.context._flowDef.atomStaticKey;
-        const nodeDefId = nodeInstance.contextNode._nodeDef.id;
-
-        console.log('------------', flowKey, nodeDefId);
+        return await this._parseUserVar_auto({ nodeInstance });
       }
+    }
+
+    _parseUserVar_flowUser(/* { nodeInstance }*/) {
+      return this.context._flow.flowUserId;
+    }
+
+    async _parseUserVar_auto({ nodeInstance }) {
+      const flowKey = this.context._flowDef.atomStaticKey;
+      const nodeDefId = nodeInstance.contextNode._nodeDef.id;
+      console.log('------------', flowKey, nodeDefId);
+      const atom = this.context.atom;
+      const sql = `
+          select * from aViewUserRightAtomClassRole
+            where iid=? and atomClassId=? and action=2 and roleIdWhom=? and
+      (areaScope is null or ? is null or (areaKey=? and POSITION(areaScope in ?)=1) )
+      `;
+      const items = await ctx.model.query(sql, [
+        atom.iid,
+        atom.atomClassId,
+        atom.roleIdOwner,
+        atom.atomAreaValue,
+        atom.atomAreaKey,
+        atom.atomAreaValue,
+      ]);
+      console.log(items);
+      // ok
+      return items.map(item => item.userIdWho);
     }
 
     _getOpUser() {
