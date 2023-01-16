@@ -457,6 +457,7 @@ module.exports = ctx => {
       const nodeDefId = nodeInstance.contextNode._nodeDef.id;
       console.log('------------', flowKey, nodeDefId);
       const atom = this.context.atom;
+      // get action
       const sql = `
           select * from aViewUserRightAtomClassRole
             where iid=? and atomClassId=? and action=2 and roleIdWhom=? and
