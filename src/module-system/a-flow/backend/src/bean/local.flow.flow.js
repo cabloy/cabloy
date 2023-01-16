@@ -438,8 +438,16 @@ module.exports = ctx => {
     }
 
     async _parseUserVar({ nodeInstance, _var }) {
+      // flowUser
       if (_var === 'flowUser') {
         return this.context._flow.flowUserId;
+      }
+      // auto
+      if (_var === 'auto') {
+        const flowKey = this.context._flowDef.atomStaticKey;
+        const nodeDefId = nodeInstance.contextNode._nodeDef.id;
+
+        console.log('------------', flowKey, nodeDefId);
       }
     }
 
