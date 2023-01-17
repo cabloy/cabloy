@@ -99,25 +99,7 @@ module.exports = ctx => {
           role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
         }
         // scope
-        let scope;
-        if (!roleRight.scopeNames) {
-          scope = 0;
-        } else {
-          scope = [];
-          const scopeNames = Array.isArray(roleRight.scopeNames)
-            ? roleRight.scopeNames
-            : roleRight.scopeNames.split(',');
-          for (const scopeName of scopeNames) {
-            let roleScopeId;
-            if (typeof scopeName === 'number') {
-              roleScopeId = scopeName;
-            } else {
-              const roleScope = await this.parseRoleName({ roleName: scopeName, force: false });
-              roleScopeId = roleScope.id;
-            }
-            scope.push(roleScopeId);
-          }
-        }
+        const scope = await this._parseScopeNames({ scopeNames: roleRight.scopeNames });
         // add role right
         const actionCode = ctx.bean.atomAction.parseActionCode({
           action: roleRight.action,
@@ -134,6 +116,26 @@ module.exports = ctx => {
           areaKey: roleRight.areaKey,
           areaScope: roleRight.areaScope,
         });
+      }
+    }
+
+    async _parseScopeNames({ scopeNames }) {
+      let scope;
+      if (!scopeNames) {
+        scope = 0;
+      } else {
+        scope = [];
+        const _scopeNames = Array.isArray(scopeNames) ? scopeNames : scopeNames.split(',');
+        for (const scopeName of _scopeNames) {
+          let roleScopeId;
+          if (typeof scopeName === 'number') {
+            roleScopeId = scopeName;
+          } else {
+            const roleScope = await this.parseRoleName({ roleName: scopeName, force: false });
+            roleScopeId = roleScope.id;
+          }
+          scope.push(roleScopeId);
+        }
       }
     }
 
