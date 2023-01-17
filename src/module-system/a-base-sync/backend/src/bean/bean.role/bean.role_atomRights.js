@@ -137,6 +137,7 @@ module.exports = ctx => {
           scope.push(roleScopeId);
         }
       }
+      return scope;
     }
 
     // role rights
