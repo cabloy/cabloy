@@ -28,11 +28,9 @@ module.exports = ctx => {
       const res = await this.model.get({ atomClassId, flowKey, nodeDefId });
       if (res) return res;
       // code
-      const sequence = ctx.bean.sequence.module(moduleInfo.relativeName);
-      const flowActionCode = await sequence.next('flowAction');
       const data = {
         atomClassId,
-        code: flowActionCode,
+        // code: flowActionCode,
         name: nodeDefName,
         bulk: 0,
         flowKey,
@@ -41,6 +39,10 @@ module.exports = ctx => {
       // insert
       const res2 = await this.model.insert(data);
       data.id = res2.insertId;
+      data.code = data.id;
+      // update code = id
+      await this.model.update({ id: data.id, code: data.id });
+      // ok
       return data;
     }
   }

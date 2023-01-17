@@ -241,13 +241,6 @@ module.exports = app => {
           },
           start: 0,
         },
-        flowAction: {
-          bean: {
-            module: 'a-sequence',
-            name: 'simple',
-          },
-          start: 10000,
-        },
       },
     },
     validation: {
