@@ -456,7 +456,6 @@ module.exports = ctx => {
       const flowKey = this.context._flowDef.atomStaticKey;
       const nodeDefId = nodeInstance.contextNode._nodeDef.id;
       const nodeDefName = nodeInstance.contextNode._nodeDef.name;
-      console.log('------------', flowKey, nodeDefId);
       const atom = this.context.atom;
       // get action
       const action = await ctx.bean.atomAction.getByModeFlow({
@@ -479,7 +478,6 @@ module.exports = ctx => {
         atom.atomAreaKey,
         atom.atomAreaValue,
       ]);
-      console.log(items);
       // ok
       return items.map(item => item.userIdWho);
     }
