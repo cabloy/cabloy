@@ -1,6 +1,6 @@
 export default {
   methods: {
-    async loadActionSelectOptions() {
+    async loadActionSelectOptions_normal() {
       //
       const actions = this.getActionsOfAtomClass(this.atomClass);
       const actionsUser = await this.$api.post('/a/base/atomClass/actionsUser', {
@@ -20,7 +20,16 @@ export default {
           groupBulk.options.push(option);
         }
       }
-      this.actionSelectOptions = [groupAtom, groupBulk];
+      return [groupAtom, groupBulk];
+    },
+    async loadActionSelectOptions_flow() {},
+    async loadActionSelectOptions() {
+      // normal
+      const [groupAtom, groupBulk] = await this.loadActionSelectOptions_normal();
+      // flow
+      const groupFlow = await this.loadActionSelectOptions_flow();
+      // ok
+      this.actionSelectOptions = [groupAtom, groupBulk, groupFlow];
     },
   },
 };
