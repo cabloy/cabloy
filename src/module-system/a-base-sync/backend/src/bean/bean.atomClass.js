@@ -153,9 +153,10 @@ module.exports = ctx => {
       // items
       const items = await ctx.model.query(
         `
-      select distinct a.action from aViewUserRightAtomClass a
-          where a.iid=? and a.atomClassId=? and a.userIdWho=?
-    `,
+          select distinct a.atomClassId,a.action,b.name,b.bulk,b.actionMode from aViewUserRightAtomClass a
+            inner join aAtomAction b on a.atomClassId=b.atomClassId and a.action=b.code
+              where a.iid=? and a.atomClassId=? and a.userIdWho=?
+        `,
         [ctx.instance.id, atomClassId, user.id]
       );
       return items;

@@ -35,6 +35,7 @@ module.exports = ctx => {
         code: flowActionCode,
         name: nodeDefName,
         bulk: 0,
+        actionMode: 1,
         flowKey,
         nodeDefId,
       };
