@@ -44,6 +44,7 @@ export default {
   'Callback URL': '回调URL',
   'Atom Actions': '数据指令',
   'Bulk Actions': '批量指令',
+  'WorkFlow Actions': '工作流指令',
   'Category Management': '目录管理',
   'Tag Management': '标签管理',
   'Please Reload App': '请重新加载App',

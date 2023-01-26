@@ -16,6 +16,7 @@ export default {
       scope: null,
       areaScopeData: {},
       areaScopeSchema: null,
+      actionsUser: null,
     };
   },
   computed: {
@@ -29,11 +30,17 @@ export default {
     scopeSelfEnable() {
       const action = this.actionCurrent;
       if (!action) return false;
+      if (action.actionMode === 1) {
+        return false;
+      }
       return !action.bulk;
     },
     scopeEnable() {
       const action = this.actionCurrent;
       if (!action) return false;
+      if (action.actionMode === 1) {
+        return true;
+      }
       return !action.bulk && !this.scopeSelf;
     },
     areaScopeEnable() {
@@ -49,11 +56,15 @@ export default {
     },
     actionCurrent() {
       if (!this.atomClass || !this.actionName) return null;
-      return this.getAction({
+      // normal
+      const action = this.getAction({
         module: this.atomClass.module,
         atomClassName: this.atomClass.atomClassName,
         name: this.actionName,
       });
+      if (action) return action;
+      // flow
+      return this.actionsUser.find(item => item.actionId === parseInt(this.actionName));
     },
     isOpenAuthScope() {
       return this.role && this.role.roleTypeCode === 6;

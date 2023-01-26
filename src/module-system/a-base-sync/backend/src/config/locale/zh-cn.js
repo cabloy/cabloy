@@ -149,6 +149,7 @@ module.exports = {
   Order: '订单',
   Invalid: '无效',
   NotImplemented: '未实现',
+  Unnamed: '未命名',
   // role name
   root: '根',
   anonymous: '匿名',

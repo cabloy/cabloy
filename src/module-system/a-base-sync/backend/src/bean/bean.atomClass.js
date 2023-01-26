@@ -153,12 +153,19 @@ module.exports = ctx => {
       // items
       const items = await ctx.model.query(
         `
-          select distinct a.atomClassId,a.action,b.name,b.bulk,b.actionMode from aViewUserRightAtomClass a
+          select distinct a.atomClassId,a.action,b.id as actionId,b.name,b.bulk,b.actionMode from aViewUserRightAtomClass a
             inner join aAtomAction b on a.atomClassId=b.atomClassId and a.action=b.code
               where a.iid=? and a.atomClassId=? and a.userIdWho=?
         `,
         [ctx.instance.id, atomClassId, user.id]
       );
+      // locale
+      for (const item of items) {
+        if (item.actionMode === 1) {
+          item.nameLocale = ctx.text(item.name || 'Unnamed');
+        }
+      }
+      // ok
       return items;
     }
 
