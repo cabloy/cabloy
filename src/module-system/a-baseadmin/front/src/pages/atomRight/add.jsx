@@ -122,7 +122,7 @@ export default {
       const data = {
         key: this.roleKey,
         atomClass: this.atomClass,
-        actionCode: parseInt(action.code),
+        actionCode: parseInt(action.code || action.action),
         scopeSelf: this.scopeSelf,
         scope: this.scope ? this.scope.map(item => item.itemId) : [],
       };
