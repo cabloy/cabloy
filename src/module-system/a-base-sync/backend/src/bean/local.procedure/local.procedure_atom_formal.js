@@ -147,7 +147,7 @@ module.exports = ctx => {
       // resource
       if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
-        _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
+        _resourceJoin = ' inner join aResourceLocale m on m.atomId=a.id';
         _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
       } else {
         _resourceField = '';
