@@ -15,6 +15,7 @@ module.exports = app => {
               full: 'aFlowDefViewFull',
             },
             inner: true,
+            resource: true,
             category: true,
             tag: true,
             comment: false,
