@@ -8,7 +8,7 @@ export default {
       if (!this.base.item) {
         title = this.container.mode === 'edit' ? this.$text('Edit') : this.$text('View');
       } else {
-        title = this.base.item.atomName;
+        title = this.base.item.atomNameLocale || this.base.item.atomName;
       }
       return this.page_getDirtyTitle(title);
       // return `${name}: ${this.base.item.atomName}`;
