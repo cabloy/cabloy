@@ -26,14 +26,19 @@ export default {
       //
       const actionsFlow = actionsUser
         .filter(item => item.actionMode === 1)
-        .sort((a, b) => a.flowDefName > b.flowDefName);
+        .sort((a, b) => a.flowDefNameLocale > b.flowDefNameLocale)
+        .group(item => item.flowDefNameLocale);
       //
-      const groupFlow = { title: 'WorkFlow Actions', options: [] };
-      for (const actionUser of actionsFlow) {
-        const option = { title: actionUser.nameLocale, value: actionUser.actionId };
-        groupFlow.options.push(option);
+      for (const flowDefNameLocale in actionsFlow) {
+        const actions = actionsFlow[flowDefNameLocale];
+        const groupFlow = { title: `${this.$text('WorkFlow Actions')}: ${flowDefNameLocale}`, options: [] };
+        for (const action of actions) {
+          const option = { title: action.nameLocale, value: action.actionId };
+          groupFlow.options.push(option);
+        }
+        groupFlows.push(groupFlow);
       }
-      return groupFlow;
+      return groupFlows;
     },
     async loadActionSelectOptions() {
       // actionsUser
@@ -43,10 +48,10 @@ export default {
       // normal
       const [groupAtom, groupBulk] = await this.loadActionSelectOptions_normal({ actionsUser });
       // flow
-      const groupFlow = await this.loadActionSelectOptions_flow({ actionsUser });
+      const groupFlows = await this.loadActionSelectOptions_flow({ actionsUser });
       // ok
       this.actionsUser = actionsUser;
-      this.actionSelectOptions = [groupAtom, groupBulk, groupFlow];
+      this.actionSelectOptions = [groupAtom, groupBulk].concat(groupFlows);
     },
   },
 };
