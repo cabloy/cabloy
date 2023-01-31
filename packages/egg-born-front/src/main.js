@@ -7,6 +7,9 @@ const Vue = require('./base/vue.js').default;
 // json
 require('./base/json.js');
 
+// array.prototype.group
+require('./base/arrayGroup.js');
+
 // meta
 const meta = (Vue.prototype.$meta = {});
 
