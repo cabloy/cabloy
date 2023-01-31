@@ -4,13 +4,15 @@ export default {
   },
   methods: {
     async onAction({ ctx, action, item }) {
-      if (action.name === 'getSchemaReference') {
+      if (action.name === 'getAtomClassAndStage') {
+        return await this.onAction_getAtomClassAndStage({ ctx, item });
+      } else if (action.name === 'getSchemaReference') {
         return await this.onAction_getSchemaReference({ ctx, item });
       } else if (action.name === 'schemaReference') {
         return await this.onAction_schemaReference({ ctx, action, item });
       }
     },
-    async onAction_getSchemaReference({ ctx, item }) {
+    async onAction_getAtomClassAndStage({ ctx, item }) {
       // validate
       const { validate } = item;
       // container
@@ -31,9 +33,18 @@ export default {
         ctx.$view.toast.show({ text: this.$text('NotSetStartEventAtom') });
         return;
       }
+      // atomStage
+      const atomStage = nodeStartEventAtom.options && nodeStartEventAtom.options.atomStage;
+      // ok
+      return { atomClass, atomStage };
+    },
+    async onAction_getSchemaReference({ ctx, item }) {
+      // atomClass
+      const atomClassAndStage = await this.onAction_getAtomClassAndStage({ ctx, item });
+      if (!atomClassAndStage) return;
       // validator
       const validator = await ctx.$api.post('/a/base/atom/validator', {
-        atomClass,
+        atomClass: atomClassAndStage.atomClass,
       });
       // schema
       const schemaRes = await ctx.$api.post('/a/validation/validation/schema', {
