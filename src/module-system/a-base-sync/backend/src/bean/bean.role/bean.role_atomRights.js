@@ -205,10 +205,11 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aViewUserRightAtomClass a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-          left join aRole e on a.roleIdBase=e.id
+        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,c.actionMode,e.roleName as roleNameBase,f.atomName as flowDefName from aViewUserRightAtomClass a
+          inner join aAtomClass b on a.atomClassId=b.id
+          inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          inner join aRole e on a.roleIdBase=e.id
+          left join aAtom f on c.flowKey=f.atomStaticKey and f.atomStage=1 
             where a.iid=? and a.userIdWho=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
@@ -221,6 +222,8 @@ module.exports = ctx => {
       await this._translateAreaScopeValue({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
+      // actionFlows
+      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
