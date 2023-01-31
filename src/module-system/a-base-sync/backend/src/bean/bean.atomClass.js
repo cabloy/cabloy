@@ -161,7 +161,7 @@ module.exports = ctx => {
         [ctx.instance.id, atomClassId, user.id]
       );
       // locale
-      await ctx.bean.role._translateActionFlows({ items, actionNameKey: 'name' });
+      await ctx.bean.role._adjustFlowActionsLocale({ items, actionNameKey: 'name' });
       // ok
       return items;
     }

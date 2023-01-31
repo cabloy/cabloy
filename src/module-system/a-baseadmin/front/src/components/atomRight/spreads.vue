@@ -30,6 +30,9 @@
             <div v-if="item.actionBulk === 1 && item.actionCode !== 1">
               {{ $text('Bulk') }}
             </div>
+            <div v-if="item.actionMode === 1">
+              {{ `${$text('WorkFlow Actions')}: ${item.flowDefNameLocale}` }}
+            </div>
           </div>
         </eb-list-item>
       </f7-list-group>
@@ -102,21 +105,26 @@ export default {
         const _key = `${item.roleExpandId}:${item.roleRightId}`;
         if (!_keys[_key]) {
           _keys[_key] = true;
-          const action = this.getAction({
-            module: item.module,
-            atomClassName: item.atomClassName,
-            name: item.actionName,
-          });
           const _item = {
             _key,
             ...item,
           };
-          if (!action) {
+          if (item.actionMode === 1) {
             _item.title = item.actionName;
-            _item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
+            _item.titleLocale = item.actionNameLocale;
           } else {
-            _item.title = action.title;
-            _item.titleLocale = action.titleLocale;
+            const action = this.getAction({
+              module: item.module,
+              atomClassName: item.atomClassName,
+              name: item.actionName,
+            });
+            if (!action) {
+              _item.title = item.actionName;
+              _item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
+            } else {
+              _item.title = action.title;
+              _item.titleLocale = action.titleLocale;
+            }
           }
           // push
           group.items.push(_item);

@@ -162,7 +162,7 @@ module.exports = ctx => {
       // area scope
       await this._translateAreaScopeValue({ items });
       // actionFlows
-      await this._translateActionFlows({ items, actionNameKey: 'actionName' });
+      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
@@ -174,11 +174,12 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-          left join aRoleExpand d on a.roleId=d.roleIdBase
-          left join aRole e on d.roleIdBase=e.id
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,c.actionMode,e.roleName as roleNameBase,f.atomName as flowDefName from aRoleRight a
+          inner join aAtomClass b on a.atomClassId=b.id
+          inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          inner join aRoleExpand d on a.roleId=d.roleIdBase
+          inner join aRole e on d.roleIdBase=e.id
+          left join aAtom f on c.flowKey=f.atomStaticKey and f.atomStage=1
             where d.iid=? and d.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
@@ -191,6 +192,8 @@ module.exports = ctx => {
       await this._translateAreaScopeValue({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
+      // actionFlows
+      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
@@ -272,7 +275,7 @@ module.exports = ctx => {
     }
 
     // actionFlows
-    async _translateActionFlows({ items, actionNameKey }) {
+    async _adjustFlowActionsLocale({ items, actionNameKey }) {
       for (const item of items) {
         if (item.actionMode === 1) {
           item[`${actionNameKey}Locale`] = ctx.text(item[actionNameKey] || 'Unnamed');
