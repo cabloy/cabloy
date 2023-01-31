@@ -9,6 +9,7 @@ export default {
   Behavior: '行为',
   Behaviors: '行为',
   FlowInitiator: '流程发起人',
+  FlowVarAutoPick: '自动提取',
   NotFoundStartEventAtom: '未发现：数据起草开始事件',
   NotSetStartEventAtom: '未设置：数据起草开始事件',
   Gateway: '网关',

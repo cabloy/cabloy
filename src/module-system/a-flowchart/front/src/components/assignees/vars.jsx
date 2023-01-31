@@ -1,3 +1,8 @@
+const __VARTITLES = {
+  flowUser: 'FlowInitiator',
+  auto: 'FlowVarAutoPick',
+};
+
 export default {
   props: {
     readOnly: {
@@ -11,15 +16,33 @@ export default {
     return {};
   },
   methods: {
-    onPerformAdd() {
-      const _var = this.assignees.vars.find(item => item.name === 'flowUser');
+    async onPerformAdd(event) {
+      const buttons = [];
+      const icon = await this.$meta.util.combineIcon({ f7: ':login:person-outline' });
+      for (const varName in __VARTITLES) {
+        const title = __VARTITLES[varName];
+        buttons.push({
+          icon,
+          text: this.$text(title),
+          data: {
+            name: varName,
+            title,
+            titleLocale: this.$text(title),
+          },
+        });
+      }
+      // choose
+      const params = {
+        forceToPopover: true,
+        targetEl: event.currentTarget,
+        buttons,
+      };
+      const button = await this.$view.actions.choose(params);
+      const varItem = button.data;
+      // append
+      const _var = this.assignees.vars.find(item => item.name === varItem.name);
       if (!_var) {
-        const flowUser = {
-          name: 'flowUser',
-          title: 'FlowInitiator',
-          titleLocale: this.$text('FlowInitiator'),
-        };
-        this.assignees.vars.push(flowUser);
+        this.assignees.vars.push(varItem);
       }
     },
     onPerformRemove(event, item, index) {
@@ -68,7 +91,7 @@ export default {
   render() {
     let domAdd;
     if (!this.readOnly) {
-      domAdd = <eb-link iconF7="::add" propsOnPerform={this.onPerformAdd}></eb-link>;
+      domAdd = <eb-link iconF7="::add" propsOnPerform={event => this.onPerformAdd(event)}></eb-link>;
     }
     return (
       <f7-list-group>
