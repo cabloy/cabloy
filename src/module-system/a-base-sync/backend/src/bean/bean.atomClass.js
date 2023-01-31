@@ -161,12 +161,7 @@ module.exports = ctx => {
         [ctx.instance.id, atomClassId, user.id]
       );
       // locale
-      for (const item of items) {
-        if (item.actionMode === 1) {
-          item.nameLocale = ctx.text(item.name || 'Unnamed');
-          item.flowDefNameLocale = ctx.text(item.flowDefName);
-        }
-      }
+      await ctx.bean.role._translateActionFlows({ items, actionNameKey: 'name' });
       // ok
       return items;
     }

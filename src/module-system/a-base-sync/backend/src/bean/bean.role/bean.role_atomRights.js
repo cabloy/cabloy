@@ -147,9 +147,10 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk,c.actionMode,d.atomName as flowDefName from aRoleRight a
+          inner join aAtomClass b on a.atomClassId=b.id
+          inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          left join aAtom d on c.flowKey=d.atomStaticKey and d.atomStage=1
             where a.iid=? and a.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
@@ -160,6 +161,8 @@ module.exports = ctx => {
       await this._adjustAtomRightsScopeRoles({ items });
       // area scope
       await this._translateAreaScopeValue({ items });
+      // actionFlows
+      await this._translateActionFlows({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
@@ -264,6 +267,16 @@ module.exports = ctx => {
         });
         if (res) {
           item.areaScopeInfo = res;
+        }
+      }
+    }
+
+    // actionFlows
+    async _translateActionFlows({ items, actionNameKey }) {
+      for (const item of items) {
+        if (item.actionMode === 1) {
+          item[`${actionNameKey}Locale`] = ctx.text(item[actionNameKey] || 'Unnamed');
+          item.flowDefNameLocale = ctx.text(item.flowDefName);
         }
       }
     }
