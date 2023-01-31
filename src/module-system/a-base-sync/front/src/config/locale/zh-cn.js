@@ -193,6 +193,7 @@ export default {
   AreaScope: '区域范围',
   SubTitle: '副标题',
   Stage: '阶段',
+  AtomState: '数据状态',
   'Role Name': '角色名称',
   'Role Type': '角色类型',
   'New Category': '新目录',

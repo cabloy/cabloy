@@ -1,4 +1,5 @@
 import actionUserTask from './components/action/actionUserTask.js';
+import renderAtomState from './components/flowDef/renderAtomState.jsx';
 import renderAssignees from './components/flowDef/renderAssignees.jsx';
 import renderBeanFlowService from './components/flowDef/renderBeanFlowService.jsx';
 import renderBehaviors from './components/flowDef/renderBehaviors.jsx';
@@ -13,6 +14,7 @@ import schemaFieldsTab from './components/schemaFields/schemaFieldsTab.jsx';
 
 export default {
   actionUserTask,
+  renderAtomState,
   renderAssignees,
   renderBeanFlowService,
   renderBehaviors,

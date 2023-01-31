@@ -37,6 +37,7 @@ export default {
   ImportCompleted: 'Import Completed',
   AreaScope: 'Area Scope',
   SubTitle: 'Sub Title',
+  AtomState: 'Data State',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Search Atom': 'Search Data',
