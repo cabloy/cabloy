@@ -30,19 +30,19 @@ export default {
     scopeSelfEnable() {
       const action = this.actionCurrent;
       if (!action) return false;
-      // not check to support multilevelAuthorization
-      // if (action.actionMode === 1) {
-      //   return false;
-      // }
+      // set scopes=[] rather then scoleSelf to support multilevelAuthorization
+      if (action.actionMode === 1) {
+        return false;
+      }
       return !action.bulk;
     },
     scopeEnable() {
       const action = this.actionCurrent;
       if (!action) return false;
-      // not check to support multilevelAuthorization
-      // if (action.actionMode === 1) {
-      //   return true;
-      // }
+      // set scopes=[] rather then scoleSelf to support multilevelAuthorization
+      if (action.actionMode === 1) {
+        return true;
+      }
       return !action.bulk && !this.scopeSelf;
     },
     areaScopeEnable() {
