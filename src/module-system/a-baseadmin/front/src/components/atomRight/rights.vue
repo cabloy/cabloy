@@ -3,9 +3,9 @@
     <f7-list v-if="ready">
       <f7-list-group v-for="group of itemGroups" :key="group.id">
         <f7-list-item :title="`${group.atomClassTitle} [${group.moduleTitle}]`" group-title></f7-list-item>
-        <eb-list-item v-for="item of group.items" :key="item.id" :title="item.titleLocale" swipeout>
+        <eb-list-item class="item" v-for="item of group.items" :key="item.id" :title="item.titleLocale" swipeout>
           <div slot="after">
-            <f7-badge v-if="!isOpenAuthScope && item.actionBulk === 0 && item.scope === '0'">
+            <f7-badge v-if="!isOpenAuthScope && item.actionBulk === 0 && parseInt(item.scope) === 0">
               {{ $text('Self') }}
             </f7-badge>
             <template v-if="item.scopeRoles">
@@ -23,6 +23,14 @@
                 item.areaScopeInfo.error || item.areaScopeInfo.titleLocale || item.areaScopeInfo.title
               }}</f7-badge>
             </template>
+          </div>
+          <div slot="root-end" class="summary-no-media">
+            <div v-if="item.actionBulk === 1 && item.actionCode !== 1">
+              {{ $text('Bulk') }}
+            </div>
+            <div v-if="item.actionMode === 1">
+              {{ `${$text('WorkFlow Actions')}: ${item.flowDefNameLocale}` }}
+            </div>
           </div>
           <eb-context-menu>
             <div slot="right">
@@ -93,17 +101,22 @@ export default {
           groups.push(group);
         }
         // item
-        const action = this.getAction({
-          module: item.module,
-          atomClassName: item.atomClassName,
-          name: item.actionName,
-        });
-        if (!action) {
+        if (item.actionMode === 1) {
           item.title = item.actionName;
-          item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
+          item.titleLocale = item.actionNameLocale;
         } else {
-          item.title = action.title;
-          item.titleLocale = action.titleLocale;
+          const action = this.getAction({
+            module: item.module,
+            atomClassName: item.atomClassName,
+            name: item.actionName,
+          });
+          if (!action) {
+            item.title = item.actionName;
+            item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
+          } else {
+            item.title = action.title;
+            item.titleLocale = action.titleLocale;
+          }
         }
         // push
         group.items.push(item);
