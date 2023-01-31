@@ -21,9 +21,15 @@ export default {
       return [groupAtom, groupBulk];
     },
     async loadActionSelectOptions_flow({ actionsUser }) {
+      //
+      const groupFlows = [];
+      //
+      const actionsFlow = actionsUser
+        .filter(item => item.actionMode === 1)
+        .sort((a, b) => a.flowDefName > b.flowDefName);
+      //
       const groupFlow = { title: 'WorkFlow Actions', options: [] };
-      for (const actionUser of actionsUser) {
-        if (actionUser.actionMode !== 1) continue;
+      for (const actionUser of actionsFlow) {
         const option = { title: actionUser.nameLocale, value: actionUser.actionId };
         groupFlow.options.push(option);
       }

@@ -153,8 +153,9 @@ module.exports = ctx => {
       // items
       const items = await ctx.model.query(
         `
-          select distinct a.atomClassId,a.action,b.id as actionId,b.name,b.bulk,b.actionMode from aViewUserRightAtomClass a
+          select distinct a.atomClassId,a.action,b.id as actionId,b.name,b.bulk,b.actionMode,c.atomName as flowDefName from aViewUserRightAtomClass a
             inner join aAtomAction b on a.atomClassId=b.atomClassId and a.action=b.code
+            left join aAtom c on b.flowKey=c.atomStaticKey and c.atomStage=1
               where a.iid=? and a.atomClassId=? and a.userIdWho=?
         `,
         [ctx.instance.id, atomClassId, user.id]
@@ -163,6 +164,7 @@ module.exports = ctx => {
       for (const item of items) {
         if (item.actionMode === 1) {
           item.nameLocale = ctx.text(item.name || 'Unnamed');
+          item.flowDefNameLocale = ctx.text(item.flowDefName);
         }
       }
       // ok
