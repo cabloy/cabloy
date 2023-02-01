@@ -1,4 +1,7 @@
+import Vue from 'vue';
+const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
+  mixins: [ebAtomClasses],
   props: {
     context: {
       type: Object,
@@ -6,7 +9,8 @@ export default {
   },
   data() {
     return {
-      atomClassAndStage: null,
+      atomClass: null,
+      atomStage: null,
     };
   },
   computed: {},
@@ -15,7 +19,10 @@ export default {
   },
   methods: {
     async init() {
-      this.atomClassAndStage = await this.getAtomClassAndStage();
+      const atomClassAndStage = await this.getAtomClassAndStage();
+      if (!atomClassAndStage) return;
+      this.atomClass = atomClassAndStage.atomClass;
+      this.atomStage = parseInt(atomClassAndStage.atomStage || 0);
     },
     async getAtomClassAndStage() {
       const action = {
@@ -25,7 +32,14 @@ export default {
       };
       return await this.$meta.util.performAction({ ctx: this, action, item: this.context });
     },
-    getDictKey() {},
+    getDictKey() {
+      if (!this.atomClass) return null;
+      const atomClassBase = this.getAtomClass(this.atomClass);
+      if (!atomClassBase) return null;
+      const atomStage = this.atomStage === 1 ? 'formal' : 'draft';
+      const dictKey = this.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
+      return dictKey;
+    },
   },
   render() {
     const { parcel, key, property } = this.context;
@@ -36,6 +50,7 @@ export default {
     }
     const propertyNew = this.$meta.util.extend({}, property, {
       ebType: 'dict',
+      ebOptionsBlankAuto: true,
       ebParams: {
         dictKey,
         mode: 'select',
