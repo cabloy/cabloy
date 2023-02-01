@@ -10,6 +10,16 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).atomAction;
     }
 
+    async delete({ atomClassId, code }) {
+      // delete roleRight
+      await ctx.bean.role.deleteRoleRightByAction({
+        atomClassId,
+        action: code,
+      });
+      // delete
+      await this.model.delete({ atomClassId, code });
+    }
+
     async get({ id, atomClassId, code }) {
       const data = id ? { id } : { atomClassId, code };
       const res = await this.model.get(data);

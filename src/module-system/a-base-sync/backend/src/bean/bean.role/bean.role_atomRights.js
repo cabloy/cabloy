@@ -75,6 +75,11 @@ module.exports = ctx => {
       await this.modelRoleRightRef.delete({ roleRightId, roleId });
     }
 
+    async deleteRoleRightByAction({ atomClassId, action }) {
+      await this.modelRoleRight.delete({ atomClassId, action });
+      await this.modelRoleRightRef.delete({ atomClassId, action });
+    }
+
     // const roleRights = [
     //   { roleName: 'cms-writer', action: 'create' },
     //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
