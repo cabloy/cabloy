@@ -31,6 +31,7 @@ module.exports = ctx => {
           atomClassId: atomClass.id,
           flowKey: roleRight.flowKey,
           nodeDefId: roleRight.nodeDefId,
+          nodeDefName: roleRight.nodeDefName,
         });
         await this.addRoleRight({
           roleId: role.id,

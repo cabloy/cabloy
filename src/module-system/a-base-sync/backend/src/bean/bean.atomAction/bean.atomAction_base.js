@@ -20,6 +20,10 @@ module.exports = ctx => {
       await this.model.delete({ atomClassId, code });
     }
 
+    async update(data) {
+      await this.model.update(data);
+    }
+
     async get({ id, atomClassId, code }) {
       const data = id ? { id } : { atomClassId, code };
       const res = await this.model.get(data);

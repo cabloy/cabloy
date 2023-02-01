@@ -13,7 +13,7 @@ module.exports = ctx => {
       // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
-      // scope
+      // scope: allowed []
       if (scope) {
         if (typeof scope === 'string') {
           scope = scope.split(',');
