@@ -63,7 +63,7 @@ module.exports = app => {
       // deploy
       const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 1) {
-        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true, deleting: true });
       }
       // super
       await super.delete({ atomClass, key, options, user });

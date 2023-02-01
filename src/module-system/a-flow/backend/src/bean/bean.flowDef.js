@@ -42,7 +42,7 @@ module.exports = ctx => {
       return null;
     }
 
-    async deploy({ flowDefId, undeploy }) {
+    async deploy({ flowDefId, undeploy, deleting }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
       if (!flowDef) return;
@@ -58,6 +58,7 @@ module.exports = ctx => {
         if (_nodeBaseBean.deploy) {
           await _nodeBaseBean.deploy({
             deploy: !undeploy && flowDef.atomDisabled === 0,
+            deleting,
             flowDefId,
             node,
           });
