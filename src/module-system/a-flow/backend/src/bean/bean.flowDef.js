@@ -58,9 +58,10 @@ module.exports = ctx => {
         if (_nodeBaseBean.deploy) {
           await _nodeBaseBean.deploy({
             deploy: !undeploy && flowDef.atomDisabled === 0,
-            deleting,
             flowDefId,
             node,
+            deleting,
+            flowDef,
             content,
           });
         }
