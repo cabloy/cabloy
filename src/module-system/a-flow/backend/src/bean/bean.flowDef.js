@@ -61,6 +61,7 @@ module.exports = ctx => {
             deleting,
             flowDefId,
             node,
+            content,
           });
         }
       }
