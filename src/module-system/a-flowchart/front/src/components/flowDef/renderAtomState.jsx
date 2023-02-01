@@ -5,7 +5,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      atomClassAndStage: null,
+    };
   },
   computed: {},
   created() {
@@ -13,8 +15,7 @@ export default {
   },
   methods: {
     async init() {
-      const atomClassAndStage = await this.getAtomClassAndStage();
-      console.log(atomClassAndStage);
+      this.atomClassAndStage = await this.getAtomClassAndStage();
     },
     async getAtomClassAndStage() {
       const action = {
@@ -24,10 +25,23 @@ export default {
       };
       return await this.$meta.util.performAction({ ctx: this, action, item: this.context });
     },
+    getDictKey() {},
   },
   render() {
-    const { dataPath } = this.context;
+    const { parcel, key, property } = this.context;
     const title = this.context.getTitle();
-    return <div></div>;
+    const dictKey = this.getDictKey();
+    if (!dictKey) {
+      return <f7-list-item title={title}></f7-list-item>;
+    }
+    const propertyNew = this.$meta.util.extend({}, property, {
+      ebType: 'dict',
+      ebParams: {
+        dictKey,
+        mode: 'select',
+      },
+      ebRender: null,
+    });
+    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
   },
 };
