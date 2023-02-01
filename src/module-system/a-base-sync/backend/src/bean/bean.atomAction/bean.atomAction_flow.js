@@ -1,6 +1,16 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomAction {
+    async selectFlowActions({ atomClass, flowKey }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      return await this.model.select({
+        where: {
+          atomClassId: atomClass.id,
+          flowKey,
+        },
+      });
+    }
+
     async getByModeFlow({ id, atomClassId, flowKey, nodeDefId, nodeDefName }) {
       const data = id ? { id } : { atomClassId, flowKey, nodeDefId };
       const res = await this.model.get(data);
