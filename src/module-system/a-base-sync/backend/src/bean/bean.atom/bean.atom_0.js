@@ -500,6 +500,13 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user, atomClass);
     }
 
+    async atomState({ key, atom: { atomState } }) {
+      await this.modelAtom.update({
+        id: key.atomId,
+        atomState,
+      });
+    }
+
     async readCount({ key, atom: { readCount = 1 }, user }) {
       await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [
         readCount,
