@@ -483,7 +483,9 @@ module.exports = ctx => {
       });
       // if (!actionBase) throw new Error(`action not found: ${atomClass.module}:${atomClass.atomClassName}:${action}`);
       if (!actionBase) {
-        await ctx.bean.atomAction.model.delete({ atomClassId: atomClass.id, code: action });
+        if (action < 10000) {
+          await ctx.bean.atomAction.delete({ atomClassId: atomClass.id, code: action });
+        }
         return null;
       }
       if (actionBase.stage) {
@@ -569,7 +571,9 @@ module.exports = ctx => {
         code: actionRes.code,
       });
       if (!actionBase) {
-        await ctx.bean.atomAction.model.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
+        if (actionRes.code < 10000) {
+          await ctx.bean.atomAction.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
+        }
         return null;
       }
       if (actionBase.stage) {
