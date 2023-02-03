@@ -210,10 +210,10 @@ export default {
         );
       }
       // flow
-      if (item.atomStage === 0 && item.flowNodeNameCurrentLocale) {
+      if (item._atomStateTitleLocale) {
         children.push(
-          <f7-badge key="flowNodeNameCurrent" color="orange">
-            {item.flowNodeNameCurrentLocale}
+          <f7-badge key="_atomStateTitleLocale" color="orange">
+            {item._atomStateTitleLocale}
           </f7-badge>
         );
       }

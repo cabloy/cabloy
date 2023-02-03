@@ -82,6 +82,11 @@ module.exports = app => {
       }
       // atomDisabled
       await this._atomDisabledTranslate({ atomClass, item });
+      // atomState
+      const atomState = item.atomState;
+      if (atomState !== undefined && atomState !== null) {
+        await this._atomStateTranslate({ item });
+      }
       // ok
       return item;
     }
@@ -120,6 +125,13 @@ module.exports = app => {
           item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
         }
         await this._atomDisabledTranslate({ atomClass, item });
+      }
+      // atomState
+      for (const item of items) {
+        const atomState = item.atomState;
+        if (atomState !== undefined && atomState !== null) {
+          await this._atomStateTranslate({ item });
+        }
       }
     }
 

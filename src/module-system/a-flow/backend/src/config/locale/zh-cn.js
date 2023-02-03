@@ -7,7 +7,7 @@ module.exports = {
   End: '结束',
   Current: '当前',
   Drafting: '起草',
-  Review: '评审',
+  Review: '审核',
   Pass: '通过',
   Reject: '驳回',
   Passed: '已通过',

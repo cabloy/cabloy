@@ -86,6 +86,29 @@ module.exports = app => {
       meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
+    async _atomStateTranslate({ item }) {
+      // atomState
+      const atomState = item.atomState;
+      if (atomState === undefined || atomState === null) return;
+      // atomClass
+      const atomClassBase = this.ctx.bean.base.atomClass({
+        module: item.module,
+        atomClassName: item.atomClassName,
+      });
+      // dictKey
+      const atomStage = item.atomStage === 1 ? 'formal' : 'draft';
+      const dictKey = this.ctx.bean.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
+      // dictItem
+      const dictItem = await this.ctx.bean.dict.findItem({
+        dictKey,
+        code: atomState,
+      });
+      if (!dictItem) return;
+      // res
+      item._atomStateTitle = dictItem.titleFull;
+      item._atomStateTitleLocale = dictItem.titleLocaleFull;
+    }
+
     async _dictTranslate({ item, atomClassBase }) {
       const fields = atomClassBase.dict && atomClassBase.dict.fields;
       for (const fieldName in fields) {
