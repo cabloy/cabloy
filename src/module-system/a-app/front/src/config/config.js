@@ -3,6 +3,7 @@ export default {
     default: 'a-app:appDefault',
     base: 'a-app:appBase',
     unclassified: 'a-appbooster:appUnclassified',
+    general: 'a-appbooster:appGeneral',
   },
   appMenu: {
     categoriesTop: {

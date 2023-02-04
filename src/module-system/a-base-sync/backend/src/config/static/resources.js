@@ -46,7 +46,7 @@ module.exports = app => {
     {
       atomName: 'Comment List',
       atomStaticKey: 'listComment',
-      atomRevision: 3,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
