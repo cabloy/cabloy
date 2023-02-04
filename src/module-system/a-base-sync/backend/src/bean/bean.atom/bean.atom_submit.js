@@ -26,14 +26,34 @@ module.exports = ctx => {
       });
     }
 
+    async _submitBase({ /* atomClass,*/ key, options, user }) {
+      // ignoreFlow only used by draft
+      const ignoreFlow = options && options.ignoreFlow;
+      const _atom = await ctx.bean.atom.read({ key, user: null });
+      if (_atom.atomStage > 0) ctx.throw(403);
+      // check atom flow
+      if (!ignoreFlow) {
+        const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
+        if (flowInstance) {
+          // set atom flow
+          const atomFlowId = flowInstance.context._flowId;
+          await ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+          // ok
+          return { flow: { id: atomFlowId } };
+        }
+      }
+      return await this._submitDirect({ key, item: _atom, options, user });
+    }
+
     async _submitDirect({ key, item, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // formal -> history
       if (item.atomIdFormal) {
-        if (_atomClass.history !== false) {
+        if (atomClassBase.history !== false) {
           await this._copy({
             target: 'history',
             srcKey: { atomId: item.atomIdFormal },

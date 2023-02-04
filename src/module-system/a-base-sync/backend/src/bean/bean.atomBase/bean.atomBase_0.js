@@ -186,23 +186,8 @@ module.exports = app => {
       await this._writeHandleResource({ atomClass, atomClassBase, key, item });
     }
 
-    async submit({ /* atomClass,*/ key, options, user }) {
-      const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.ctx.bean.atom.read({ key, user: null });
-      if (_atom.atomStage > 0) this.ctx.throw(403);
-      // check atom flow
-      if (!ignoreFlow) {
-        const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
-        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
-        if (flowInstance) {
-          // set atom flow
-          const atomFlowId = flowInstance.context._flowId;
-          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
-          // ok
-          return { flow: { id: atomFlowId } };
-        }
-      }
-      return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
+    async submit({ atomClass, key, options, user }) {
+      return await this.ctx.bean.atom._submitBase({ atomClass, key, options, user });
     }
 
     async enable({ /* atomClass,*/ key /* , user*/ }) {

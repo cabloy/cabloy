@@ -5,6 +5,7 @@ const atom_starLabel = require('./bean.atom/bean.atom_starLabel.js');
 const atom_areaScope = require('./bean.atom/bean.atom_areaScope.js');
 const atom_draft = require('./bean.atom/bean.atom_draft.js');
 const atom_simple = require('./bean.atom/bean.atom_simple.js');
+const atom_submit = require('./bean.atom/bean.atom_submit.js');
 
 module.exports = ctx => {
   return ctx.app.meta.util.mixinClasses(
@@ -17,6 +18,7 @@ module.exports = ctx => {
       atom_areaScope,
       atom_draft,
       atom_simple,
+      atom_submit,
     ],
     ctx
   );
