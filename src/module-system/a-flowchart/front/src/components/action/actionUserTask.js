@@ -34,7 +34,7 @@ export default {
         return;
       }
       // atomStage
-      const atomStage = nodeStartEventAtom.options && nodeStartEventAtom.options.atomStage;
+      const atomStage = (nodeStartEventAtom.options && nodeStartEventAtom.options.atomStage) || 0;
       // ok
       return { atomClass, atomStage };
     },
