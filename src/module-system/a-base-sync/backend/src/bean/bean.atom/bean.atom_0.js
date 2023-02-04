@@ -325,28 +325,6 @@ module.exports = ctx => {
       }
     }
 
-    async submit({ key, options, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
-      // atom
-      const _atom = await this.modelAtom.get({ id: key.atomId });
-      if (_atom.atomSimple === 1 && _atom.atomStage === 1) {
-        // if simple, just return formal, so as for compatible with not simple
-        return { formal: { key } };
-      }
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, key, options, user },
-        fn: 'submit',
-      });
-    }
-
     async enable({ key, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });

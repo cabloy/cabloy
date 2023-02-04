@@ -19,53 +19,6 @@ module.exports = ctx => {
       return true;
     }
 
-    async _submitDirect({ key, item, options, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // formal -> history
-      if (item.atomIdFormal) {
-        if (_atomClass.history !== false) {
-          await this._copy({
-            target: 'history',
-            srcKey: { atomId: item.atomIdFormal },
-            srcItem: null,
-            destKey: null,
-            options,
-            user,
-          });
-        }
-      }
-      // draft -> formal
-      const keyFormal = await this._copy({
-        target: 'formal',
-        srcKey: { atomId: item.atomId },
-        srcItem: item,
-        destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
-        options,
-        user,
-      });
-      // update draft
-      await this.modelAtom.update({
-        id: item.atomId,
-        atomClosed: 1,
-        atomIdFormal: keyFormal.atomId,
-      });
-      // notify
-      this._notifyDraftsDrafting(user, atomClass);
-      if (item.atomFlowId > 0) {
-        this._notifyDraftsFlowing(user, atomClass);
-      }
-      // get formal atom
-      const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
-      atomFormal.atomId = atomFormal.id;
-      atomFormal.module = atomClass.module;
-      atomFormal.atomClassName = atomClass.atomClassName;
-      // return keyFormal
-      return { formal: { key: keyFormal, atom: atomFormal } };
-    }
-
     _copy_prepareDestItem({ target, srcItem, user }) {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
