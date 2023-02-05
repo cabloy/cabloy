@@ -60,6 +60,8 @@ module.exports = ctx => {
       // { formal }
       let result = await this._submitDirect_formal({ key, item, options, user });
       // check atom flow
+      key = result.formal.key;
+      item = { ...item, atomStage: 1 };
       const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
       const flowInstance = await _nodeBaseBean._match({ atom: item, userId: item.userIdUpdated });
       if (flowInstance) {
