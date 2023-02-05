@@ -30,7 +30,6 @@ module.exports = ctx => {
       // ignoreFlow only used by draft
       const ignoreFlow = options && options.ignoreFlow;
       const _atom = await ctx.bean.atom.read({ key, user: null });
-      if (_atom.atomStage > 0) ctx.throw(403);
       // check atom flow
       if (!ignoreFlow) {
         const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
@@ -40,13 +39,43 @@ module.exports = ctx => {
           const atomFlowId = flowInstance.context._flowId;
           await ctx.bean.atom.flow({ key, atom: { atomFlowId } });
           // ok
-          return { flow: { id: atomFlowId } };
+          return {
+            flow: { id: atomFlowId },
+            draft: {
+              key,
+              atom: {
+                atomId: _atom.atomId,
+                module: _atom.module,
+                atomClassName: _atom.atomClassName,
+                atomStage: _atom.atomStage,
+              },
+            },
+          };
         }
       }
       return await this._submitDirect({ key, item: _atom, options, user });
     }
 
     async _submitDirect({ key, item, options, user }) {
+      // { formal }
+      let result = await this._submitDirect_formal({ key, item, options, user });
+      // check atom flow
+      const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+      const flowInstance = await _nodeBaseBean._match({ atom: item, userId: item.userIdUpdated });
+      if (flowInstance) {
+        // set atom flow
+        const atomFlowId = flowInstance.context._flowId;
+        await ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+        result = {
+          flow: { id: atomFlowId },
+          formal: result.formal,
+        };
+      }
+      // ok
+      return result;
+    }
+
+    async _submitDirect_formal({ key, item, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
@@ -89,7 +118,7 @@ module.exports = ctx => {
       atomFormal.atomId = atomFormal.id;
       atomFormal.module = atomClass.module;
       atomFormal.atomClassName = atomClass.atomClassName;
-      // return keyFormal
+      // ok
       return { formal: { key: keyFormal, atom: atomFormal } };
     }
   }
