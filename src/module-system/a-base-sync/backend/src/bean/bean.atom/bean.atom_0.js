@@ -214,7 +214,8 @@ module.exports = ctx => {
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       // basic info
       const _atomBasic = await this.modelAtom.get({ id: key.atomId });
-      if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
+      // support formal flow
+      // if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
       if (_atomBasic.atomSimple) {
         if (_atomClass.history !== false) {
           //  formal -> history
@@ -233,7 +234,7 @@ module.exports = ctx => {
         atomId: key.atomId,
         itemId: key.itemId,
         atomSimple: _atomBasic.atomSimple,
-        atomStage: _atomBasic.atomSimple ? 1 : 0,
+        atomStage: _atomBasic.atomSimple ? 1 : _atomBasic.atomStage,
       });
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
