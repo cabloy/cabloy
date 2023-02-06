@@ -54,10 +54,17 @@ module.exports = ctx => {
           user: { id: this.context._atom.userIdUpdated },
         });
       } else if (options.atom.close) {
-        // close draft
-        await ctx.bean.atom.closeDraft({
-          key: { atomId },
-        });
+        // close draft/formal
+        const atomStage = this.context._atom.atomStage;
+        if (atomStage === 0) {
+          await ctx.bean.atom.closeDraft({
+            key: { atomId },
+          });
+        } else if (atomStage === 1) {
+          await ctx.bean.atom.closeFormal({
+            key: { atomId },
+          });
+        }
       }
     }
 
