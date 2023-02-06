@@ -42,6 +42,25 @@ module.exports = ctx => {
       this._notifyFlowInitiateds(this.context._flow.flowUserId);
     }
 
+    async _endFlow_handleAtom(options) {
+      if (!options.atom) return;
+      const atomId = this.context._flow.flowAtomId;
+      if (!atomId) return;
+      if (options.atom.submit) {
+        // submit: _submitDirect
+        await ctx.bean.atom._submitDirect({
+          key: { atomId },
+          item: this.context._atom,
+          user: { id: this.context._atom.userIdUpdated },
+        });
+      } else if (options.atom.close) {
+        // close draft
+        await ctx.bean.atom.closeDraft({
+          key: { atomId },
+        });
+      }
+    }
+
     async _clearNodeRemains() {
       const flowId = this.context._flowId;
       const flowNodes = await this.modelFlowNode.select({

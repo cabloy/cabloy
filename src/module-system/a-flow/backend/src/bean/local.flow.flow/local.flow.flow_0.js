@@ -142,25 +142,6 @@ module.exports = ctx => {
       this.context._flowVars._dirty = false;
     }
 
-    async _endFlow_handleAtom(options) {
-      if (!options.atom) return;
-      const atomId = this.context._flow.flowAtomId;
-      if (!atomId) return;
-      if (options.atom.submit) {
-        // submit: _submitDirect
-        await ctx.bean.atom._submitDirect({
-          key: { atomId },
-          item: this.context._atom,
-          user: { id: this.context._atom.userIdUpdated },
-        });
-      } else if (options.atom.close) {
-        // close draft
-        await ctx.bean.atom.closeDraft({
-          key: { atomId },
-        });
-      }
-    }
-
     async _createFlow({ flowName, flowAtomId, flowVars, flowUserId }) {
       // flowName
       if (!flowName && flowAtomId) {
