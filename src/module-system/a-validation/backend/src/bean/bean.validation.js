@@ -40,7 +40,7 @@ module.exports = ctx => {
         const _schema = this.getSchema({ module, schema });
         schema = _schema.schema;
       }
-      const ajv = this.ajvFromSchema({ module, schema, options });
+      const ajv = this.ajvFromSchema({ module, schema, options, filterOptions });
       return await this.ajvValidate({ ajv, schema: null, data, filterOptions });
     }
 
@@ -48,8 +48,13 @@ module.exports = ctx => {
       return await ajv.v({ ctx, schema, data, filterOptions });
     }
 
-    ajvFromSchema({ module, schema, options }) {
+    ajvFromSchema({ module, schema, options, filterOptions }) {
+      // ignoreRules
+      const ignoreRules = filterOptions && filterOptions.ignoreRules;
       // params
+      if (ignoreRules) {
+        options = { coerceTypes: false }; // not use _validator.options
+      }
       const params = {
         options,
       };
@@ -61,9 +66,10 @@ module.exports = ctx => {
       }
       // schemas
       params.schemaRoot = ctx.bean.util.uuid.v4();
-      params.schemas = {
+      const schemas = {
         [params.schemaRoot]: { ...schema, $async: true },
       };
+      params.schemas = this._prepareSchemas_ignoreRules({ schemas });
       // create
       return ctx.app.meta.ajv.create(params);
     }

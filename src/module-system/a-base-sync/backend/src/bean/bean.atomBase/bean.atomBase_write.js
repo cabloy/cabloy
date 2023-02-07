@@ -9,7 +9,7 @@ const __atomBasicFields = [
   // 'atomStaticKey',
   // 'atomRevision',
 ];
-const __itemBasicFields = ['iid', 'atomId', 'itemId', 'atomStage'];
+const __itemBasicFields = ['id', 'iid', 'atomId', 'itemId', 'atomStage'];
 
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
