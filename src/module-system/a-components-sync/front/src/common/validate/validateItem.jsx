@@ -32,6 +32,7 @@ import renderAtom from './render/renderAtom.jsx';
 import renderAtomClass from './render/renderAtomClass.jsx';
 import renderDivider from './render/renderDivider.jsx';
 import renderUserLabel from './render/renderUserLabel.jsx';
+import renderUserName from './render/renderUserName.jsx';
 import renderUser from './render/renderUser.jsx';
 import renderRole from './render/renderRole.jsx';
 
@@ -67,6 +68,7 @@ const __renderTypes = [
   ['atomClass', 'renderAtomClass'],
   ['divider', 'renderDivider'],
   ['userLabel', 'renderUserLabel'],
+  ['userName', 'renderUserName'],
   ['user', 'renderUser'],
   ['role', 'renderRole'],
 ];
@@ -107,6 +109,7 @@ export default {
     renderAtomClass,
     renderDivider,
     renderUserLabel,
+    renderUserName,
     renderUser,
     renderRole,
   ],

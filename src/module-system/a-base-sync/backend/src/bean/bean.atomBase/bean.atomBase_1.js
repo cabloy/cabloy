@@ -228,7 +228,7 @@ module.exports = app => {
           if (!userId) continue;
           const user = users.find(item => item.id === userId);
           if (!user) continue;
-          item[`_${userIdKey}Title`] = user.userName;
+          item[`_${userIdKey}Name`] = user.userName;
           item[`_${userIdKey}Avatar`] = user.avatar;
         }
       }
