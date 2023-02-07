@@ -37,7 +37,6 @@ module.exports = app => {
     }
 
     async _readValidate({ atomClass, item, options, user }) {
-      console.log(JSON.stringify(item));
       // schema
       const schema = options && options.schema;
       if (!schema) return item;
