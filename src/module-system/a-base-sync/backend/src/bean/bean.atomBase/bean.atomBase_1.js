@@ -213,8 +213,25 @@ module.exports = app => {
           }
         }
       }
-      const userIdsWant = Object.keys(userIdsWantMap);
-      console.log(userIdsWant);
+      const userIdsWant = Object.keys(userIdsWantMap).map(userId => parseInt(userId));
+      if (userIdsWant.length === 0) return;
+      // select
+      const users = await this.ctx.bean.user.model.select({
+        where: {
+          id: userIdsWant,
+        },
+      });
+      // set
+      for (item of items) {
+        for (const userIdKey of userIdsKey) {
+          const userId = item[userIdKey];
+          if (!userId) continue;
+          const user = users.find(item => item.id === userId);
+          if (!user) continue;
+          item[`_${userIdKey}Title`] = user.userName;
+          item[`_${userIdKey}Avatar`] = user.avatar;
+        }
+      }
     }
   }
 
