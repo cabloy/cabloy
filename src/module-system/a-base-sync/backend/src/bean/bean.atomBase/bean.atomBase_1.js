@@ -192,7 +192,30 @@ module.exports = app => {
       meta.flags.push(this.ctx.text(title));
     }
 
-    async _userIdsTranslate({ items, item, atomClassBase }) {}
+    async _userIdsTranslate({ items, item, atomClassBase }) {
+      // userIds
+      if (!atomClassBase.userIds) return;
+      let userIdsKey = atomClassBase.userIds;
+      if (!Array.isArray(userIdsKey)) {
+        userIdsKey = userIdsKey.split(',');
+      }
+      // items
+      if (item) {
+        items = [item];
+      }
+      // userIdsWant
+      const userIdsWantMap = {};
+      for (item of items) {
+        for (const userIdKey of userIdsKey) {
+          const userId = item[userIdKey];
+          if (userId) {
+            userIdsWantMap[userId] = true;
+          }
+        }
+      }
+      const userIdsWant = Object.keys(userIdsWantMap);
+      console.log(userIdsWant);
+    }
   }
 
   return AtomBase;
