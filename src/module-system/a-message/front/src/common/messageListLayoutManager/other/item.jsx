@@ -74,8 +74,7 @@ export default {
       }
     },
     item_getItemMetaMedia(content) {
-      const media = content.issuerAvatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 24);
+      return this.$meta.util.combineAvatarUrl(content.issuerAvatar, 24);
     },
     item_getItemMetaMediaLabel(content) {
       const mediaLabel = content.issuerName;

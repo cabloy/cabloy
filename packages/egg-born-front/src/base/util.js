@@ -389,6 +389,10 @@ export default function (Vue) {
       const locale = this.getLocale();
       return `https://store.cabloy.com/${locale === 'zh-cn' ? 'zh-cn/' : ''}articles/${entityName}.html`;
     },
+    combineAvatarUrl(url, width, height) {
+      const media = url || Vue.prototype.$meta.config.modules['a-base'].user.avatar.default;
+      return this.combineImageUrl(media, width, height);
+    },
     combineImageUrl(url, width, height) {
       if (!url) return url;
       if (url.indexOf('data:image/') === 0) return url;

@@ -236,8 +236,7 @@ export default {
       return this.$meta.util.performAction({ ctx: this, action: _action, item });
     },
     getItemMedia(item) {
-      const media = item.h_avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 32);
+      return this.$meta.util.combineAvatarUrl(item.h_avatar, 32);
     },
   },
 };

@@ -48,12 +48,7 @@ export default {
       return userName;
     },
     userAvatar() {
-      let avatar = this.user.op.avatar;
-      if (!avatar) {
-        const configBase = this.$meta.config.modules['a-base'];
-        avatar = configBase.user.avatar.default;
-      }
-      return this.$meta.util.combineImageUrl(avatar, 48);
+      return this.$meta.util.combineAvatarUrl(this.user.op.avatar, 48);
     },
     viewEnable() {
       return this.$meta.vueApp.layout === 'pc' && this.$meta.vueLayout.closePanel;

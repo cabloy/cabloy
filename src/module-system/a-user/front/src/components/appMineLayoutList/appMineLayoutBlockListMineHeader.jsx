@@ -37,12 +37,7 @@ export default {
       return userName;
     },
     userAvatar() {
-      let avatar = this.userOp.avatar;
-      if (!avatar) {
-        const configBase = this.$meta.config.modules['a-base'];
-        avatar = configBase.user.avatar.default;
-      }
-      return this.$meta.util.combineImageUrl(avatar, 48);
+      return this.$meta.util.combineAvatarUrl(this.userOp.avatar, 48);
     },
   },
   methods: {

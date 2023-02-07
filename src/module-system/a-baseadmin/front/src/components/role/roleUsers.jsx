@@ -69,8 +69,7 @@ export default {
       this.$view.toast.show({ text: this.$text('Operation Succeeded') });
     },
     getItemMedia(item) {
-      const media = item.avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 32);
+      return this.$meta.util.combineAvatarUrl(item.avatar, 32);
     },
     async onPerformItem(event, item) {
       const action = {

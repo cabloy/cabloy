@@ -51,8 +51,7 @@ export default {
       return this.base_userLabels[id];
     },
     info_getItemMetaMedia(avatar) {
-      const media = avatar || this.$meta.config.modules['a-base'].user.avatar.default;
-      return this.$meta.util.combineImageUrl(media, 16);
+      return this.$meta.util.combineAvatarUrl(avatar, 16);
     },
     info_checkEnableComment(item) {
       // 0. atomStage 0 for workflow

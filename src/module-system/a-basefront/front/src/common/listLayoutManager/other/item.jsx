@@ -31,10 +31,7 @@ export default {
       } else {
         media = item[avatarFieldName];
       }
-      if (!media) {
-        media = this.$meta.config.modules['a-base'].user.avatar.default;
-      }
-      return this.$meta.util.combineImageUrl(media, 24);
+      return this.$meta.util.combineAvatarUrl(media, 24);
     },
     item_getMetaMediaLabel(item) {
       const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
