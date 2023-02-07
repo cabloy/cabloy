@@ -191,6 +191,8 @@ module.exports = app => {
       const meta = this._ensureItemMeta(item);
       meta.flags.push(this.ctx.text(title));
     }
+
+    async _userIdsTranslate({ items, item, atomClassBase }) {}
   }
 
   return AtomBase;

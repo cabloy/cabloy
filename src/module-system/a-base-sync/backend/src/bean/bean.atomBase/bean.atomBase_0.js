@@ -87,6 +87,8 @@ module.exports = app => {
       if (atomState !== undefined && atomState !== null) {
         await this._atomStateTranslate({ item });
       }
+      // userIds
+      await this._userIdsTranslate({ item, atomClassBase });
       // ok
       return item;
     }
@@ -132,6 +134,10 @@ module.exports = app => {
         if (atomState !== undefined && atomState !== null) {
           await this._atomStateTranslate({ item });
         }
+      }
+      // userIds
+      if (atomClassBase) {
+        await this._userIdsTranslate({ items, atomClassBase });
       }
     }
 
