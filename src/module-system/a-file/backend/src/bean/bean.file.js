@@ -508,7 +508,7 @@ module.exports = ctx => {
       const res = await ctx.bean.atom.checkRightAction({
         atom: { id: atomId },
         action: 3,
-        stage: 'draft',
+        // stage: 'draft', // support formal
         user,
         checkFlow: true,
         disableAuthOpenCheck: true,

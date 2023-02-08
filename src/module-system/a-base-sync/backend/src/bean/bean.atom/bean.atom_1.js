@@ -470,8 +470,7 @@ module.exports = ctx => {
       // checkFlow
       if (_atom.atomFlowId > 0 && checkFlow) {
         const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
-        if (!flow) return null;
-        return _atom;
+        if (flow) return _atom;
       }
       // 1. closed
       if (_atom.atomClosed) {
@@ -516,6 +515,11 @@ module.exports = ctx => {
         _atomDraft.userIdUpdated === user.id
       ) {
         return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow: false });
+      }
+      // checkFlow
+      if (_atom.atomFlowId > 0 && !_atom.atomClosed && checkFlow) {
+        const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+        if (flow) return _atom;
       }
       // check enableOnOpened
       const enableOnOpened = actionBase.enableOnOpened !== false;

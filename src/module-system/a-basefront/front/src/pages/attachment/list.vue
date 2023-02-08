@@ -92,7 +92,7 @@ export default {
       const data = await this.$api.post('/a/base/atom/checkRightAction', {
         key: { atomId: this.atomId },
         action: 3,
-        stage: 'draft',
+        // stage: 'draft', // support formal
         checkFlow: true,
       });
       if (data && data.atomClosed === 0) {
