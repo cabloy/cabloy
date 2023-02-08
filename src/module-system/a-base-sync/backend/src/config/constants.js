@@ -69,6 +69,7 @@ module.exports = app => {
           // actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           icon: { f7: '::visibility' },
         },
         write: {
@@ -77,6 +78,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: false,
           enableOnOpened: false,
+          enableOnFlowing: false,
           icon: { f7: '::edit' },
         },
         delete: {
@@ -85,6 +87,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: false,
           enableOnOpened: false,
+          enableOnFlowing: false,
           icon: { f7: '::delete' },
         },
         clone: {
@@ -93,6 +96,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           icon: { f7: ':outline:copy-outline' },
         },
         enable: {
@@ -101,6 +105,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           stage: 'formal',
           icon: { f7: '::play-arrow' },
         },
@@ -110,6 +115,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           stage: 'formal',
           icon: { f7: '::stop' },
         },
@@ -119,6 +125,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           disableInList: true,
           icon: { f7: '::view-list' },
         },
@@ -128,6 +135,7 @@ module.exports = app => {
           actionPath: '/a/basefront/resource/authorize?atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           stage: 'formal',
           icon: { f7: '::groups' },
         },
