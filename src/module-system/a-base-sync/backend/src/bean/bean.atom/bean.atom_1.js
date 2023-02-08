@@ -515,11 +515,15 @@ module.exports = ctx => {
         !_atomDraft.atomClosed &&
         _atomDraft.userIdUpdated === user.id
       ) {
-        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow });
+        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow: false });
       }
       // check enableOnOpened
       const enableOnOpened = actionBase.enableOnOpened !== false;
       if (_atomDraft && !_atomDraft.atomClosed && !enableOnOpened) return null;
+      // flow
+      const enableOnFlowing = actionBase.enableOnFlowing !== false;
+      const isFlowing = this._checkRightAction_isFlowing({ atom: _atom, atomAnother: _atomDraft });
+      if (!enableOnFlowing && isFlowing) return null;
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
       if (action === 7 && _atom.atomDisabled === 1) return null;
