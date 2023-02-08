@@ -196,6 +196,9 @@ export default {
         </div>
       );
     },
+    info_getAtomStateColor(item) {
+      return item.atomClosed === 0 ? 'orange' : 'gray';
+    },
     info_renderActionsRight() {
       if (!this.base_ready) return;
       const item = this.base.item;
@@ -211,7 +214,7 @@ export default {
       // flow
       if (item._atomStateTitleLocale) {
         children.push(
-          <f7-badge key="_atomStateTitleLocale" color="orange">
+          <f7-badge key="_atomStateTitleLocale" color={this.info_getAtomStateColor(item)}>
             {item._atomStateTitleLocale}
           </f7-badge>
         );
