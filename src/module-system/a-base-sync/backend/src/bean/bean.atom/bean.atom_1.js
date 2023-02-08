@@ -453,13 +453,18 @@ module.exports = ctx => {
       }
       // draft
       if (_atom.atomStage === 0) {
-        return await this._checkRightAction_draft({ _atom, action, user, checkFlow });
+        return await this._checkRightAction_draft({ actionBase, _atom, action, user, checkFlow });
       }
       // not draft
       return await this._checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow });
     }
 
-    async _checkRightAction_draft({ _atom, action, user, checkFlow }) {
+    async _checkRightAction_draft({ actionBase, _atom, action, user, checkFlow }) {
+      // _atomFormal
+      let _atomFormal;
+      if (_atom.atomIdFormal) {
+        _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
+      }
       // self
       const bSelf = _atom.userIdUpdated === user.id;
       // checkFlow
@@ -473,19 +478,26 @@ module.exports = ctx => {
         // enable on 'self and write', not including 'delete'
         if (bSelf && action === 3) {
           // return _atom;
-          if (_atom.atomIdFormal) {
-            const _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
-            return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow });
+          if (_atomFormal) {
+            return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow: false });
           }
         }
         return null;
       }
       // 2. flow
-      if (_atom.atomFlowId > 0) return null;
+      const enableOnFlowing = actionBase.enableOnFlowing !== false;
+      const isFlowing = this._checkRightAction_isFlowing({ atom: _atom, atomAnother: _atomFormal });
+      if (!enableOnFlowing && isFlowing) return null;
       // 3. self
       if (bSelf) return _atom;
       // others
       return null;
+    }
+
+    _checkRightAction_isFlowing({ atom, atomAnother }) {
+      const a = atom && atom.atomFlowId > 0 && atom.atomClosed === 0;
+      const b = atomAnother && atomAnother.atomFlowId > 0 && atomAnother.atomClosed === 0;
+      return a || b;
     }
 
     async _checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow }) {
