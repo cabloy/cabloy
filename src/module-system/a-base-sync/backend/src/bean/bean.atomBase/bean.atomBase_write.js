@@ -55,10 +55,7 @@ module.exports = app => {
           }
         }
         // filterOptions
-        const filterOptions = { type: true, ebReadOnly: true };
-        if (target) {
-          filterOptions.ignoreRules = true;
-        }
+        const filterOptions = this._writeValidate_prepareFilterOptions({ target });
         // validate
         this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
           atomClass,
@@ -78,6 +75,26 @@ module.exports = app => {
       // append itemId
       //   why always set value here: resource, data.id!==key.itemId
       item.id = key.itemId;
+    }
+
+    _writeValidate_prepareFilterOptions({ target }) {
+      const filterOptions = {};
+      if (!target) {
+        // just save
+        filterOptions.type = true;
+        filterOptions.ebReadOnly = true;
+      } else if (target === 'clone') {
+        // clone
+        filterOptions.type = true;
+        filterOptions.ebReadOnly = true;
+        filterOptions.ignoreRules = true;
+      } else {
+        // other target
+        filterOptions.type = true;
+        // filterOptions.ebReadOnly = true; // not set ebReadOnly
+        filterOptions.ignoreRules = true;
+      }
+      return filterOptions;
     }
 
     async _writeAtom({ key, item, user, atomSimple, atomStage }) {
