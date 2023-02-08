@@ -453,33 +453,42 @@ module.exports = ctx => {
       }
       // draft
       if (_atom.atomStage === 0) {
-        // self
-        const bSelf = _atom.userIdUpdated === user.id;
-        // checkFlow
-        if (_atom.atomFlowId > 0 && checkFlow) {
-          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
-          if (!flow) return null;
-          return _atom;
-        }
-        // 1. closed
-        if (_atom.atomClosed) {
-          // enable on 'self and write', not including 'delete'
-          if (bSelf && action === 3) {
-            // return _atom;
-            if (_atom.atomIdFormal) {
-              const _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
-              return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow });
-            }
+        return await this._checkRightAction_draft({ _atom, action, user, checkFlow });
+      }
+      // not draft
+      return await this._checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow });
+    }
+
+    async _checkRightAction_draft({ _atom, action, user, checkFlow }) {
+      // self
+      const bSelf = _atom.userIdUpdated === user.id;
+      // checkFlow
+      if (_atom.atomFlowId > 0 && checkFlow) {
+        const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+        if (!flow) return null;
+        return _atom;
+      }
+      // 1. closed
+      if (_atom.atomClosed) {
+        // enable on 'self and write', not including 'delete'
+        if (bSelf && action === 3) {
+          // return _atom;
+          if (_atom.atomIdFormal) {
+            const _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
+            return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow });
           }
-          return null;
         }
-        // 2. flow
-        if (_atom.atomFlowId > 0) return null;
-        // 3. self
-        if (bSelf) return _atom;
-        // others
         return null;
       }
+      // 2. flow
+      if (_atom.atomFlowId > 0) return null;
+      // 3. self
+      if (bSelf) return _atom;
+      // others
+      return null;
+    }
+
+    async _checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow }) {
       // draft: must closed
       let _atomDraft;
       if (_atom.atomIdDraft) {
@@ -497,7 +506,8 @@ module.exports = ctx => {
         return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow });
       }
       // check enableOnOpened
-      if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
+      const enableOnOpened = actionBase.enableOnOpened !== false;
+      if (_atomDraft && !_atomDraft.atomClosed && !enableOnOpened) return null;
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
       if (action === 7 && _atom.atomDisabled === 1) return null;
@@ -507,7 +517,7 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomId: atom.id,
+        atomId: _atom.id,
         action,
         forAtomUser,
       });
