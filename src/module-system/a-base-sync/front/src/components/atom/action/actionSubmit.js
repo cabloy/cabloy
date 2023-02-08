@@ -40,9 +40,13 @@ export default {
           });
         }
         // back
-        ctx.page_setDirty(false); // should before navigate
-        ctx.$f7router.back();
-      } else {
+        if (!data.flow) {
+          ctx.page_setDirty(false); // should before navigate
+          ctx.$f7router.back();
+        }
+      }
+      // check if flow
+      if (data.flow) {
         // flow
         const flow = data.flow;
         // update draft
