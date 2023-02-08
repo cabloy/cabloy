@@ -23,7 +23,11 @@ export default {
     return {};
   },
   created() {},
-  methods: {},
+  methods: {
+    getAvatarUrl(avatar, size) {
+      return this.$meta.util.combineAvatarUrl(avatar, size);
+    },
+  },
   render() {
     const { column, record } = this.info;
     // userId
