@@ -20,14 +20,16 @@ export default {
     const userName = this.context.getValue(`_${key}Name`);
     const userAvatar = this.context.getValue(`_${key}Avatar`);
     let domImg;
+    let domUserName;
     if (value) {
       domImg = <img class="avatar avatar16" src={this.getAvatarUrl(userAvatar, 16)} />;
+      domUserName = <span>{userName}</span>;
     }
     return (
       <f7-list-item title={title}>
         <div slot="after" class="display-flex align-items-center">
           {domImg}
-          <span>{userName}</span>
+          {domUserName}
         </div>
       </f7-list-item>
     );
