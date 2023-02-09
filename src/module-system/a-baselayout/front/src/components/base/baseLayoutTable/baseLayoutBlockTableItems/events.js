@@ -50,5 +50,13 @@ export default {
     onRowClick(event, item) {
       this.layoutManager.bulk[this.activeItemKey] = item;
     },
+    onRowMouseEnter(event, item) {
+      this.layoutManager.bulk[this.hoverItemKey] = item;
+    },
+    onRowMouseLeave(event, item) {
+      if (this.layoutManager.bulk[this.hoverItemKey] === item) {
+        this.layoutManager.bulk[this.hoverItemKey] = null;
+      }
+    },
   },
 };

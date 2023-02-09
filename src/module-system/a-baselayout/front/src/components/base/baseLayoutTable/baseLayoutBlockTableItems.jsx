@@ -217,6 +217,12 @@ export default {
           click: event => {
             this.onRowClick(event, record);
           },
+          mouseenter: event => {
+            this.onRowMouseEnter(event, record);
+          },
+          mouseleave: event => {
+            this.onRowMouseLeave(event, record);
+          },
           contextmenu: event => {
             this.onRowContextMenu(event, record);
           },
