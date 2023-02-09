@@ -1,12 +1,8 @@
-const _heightTableHeader = 44;
 export default {
   methods: {
     onPageCurrentChanged() {
       // always true
       this._scroll(true);
-    },
-    onViewSizeChange(size) {
-      this.tableHeight = size.height - _heightTableHeader;
     },
     onTableChange(pagination, filters, sorter) {
       if (!this.enableOrder) return;

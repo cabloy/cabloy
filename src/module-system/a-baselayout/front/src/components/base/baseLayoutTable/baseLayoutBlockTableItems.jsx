@@ -1,12 +1,11 @@
-import Vue from 'vue';
 import Events from './baseLayoutBlockTableItems/events.js';
-const ebViewSizeChange = Vue.prototype.$meta.module.get('a-components').options.mixins.ebViewSizeChange;
+import Scroll from './baseLayoutBlockTableItems/scroll.js';
 
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebViewSizeChange, Events],
+  mixins: [Events, Scroll],
   props: {
     layoutManager: {
       type: Object,
@@ -20,11 +19,7 @@ export default {
   },
   data() {
     return {
-      tableHeight: 0,
       contextmenuRecord: null,
-      // viewSize
-      header: true,
-      // toolbar: true,
     };
   },
   computed: {
@@ -39,9 +34,6 @@ export default {
     },
     hoverItemKey() {
       return this.layoutManager.data.provider.hoverItemKey || 'hoverAtom';
-    },
-    enableTableHeight() {
-      return this.blockConfig.enableTableHeight !== false;
     },
     toolbar() {
       return this.layoutManager.bottombar.enable;
@@ -331,10 +323,7 @@ export default {
       return this.layoutManager.item_renderContextMenu(item, 'menu');
     },
     _renderTable() {
-      const scroll = {};
-      if (this.enableTableHeight) {
-        scroll.y = this.tableHeight;
-      }
+      const scroll = this._getTableScroll();
       const indentSize = this.blockConfig.indentSize || 29;
       return (
         <a-table

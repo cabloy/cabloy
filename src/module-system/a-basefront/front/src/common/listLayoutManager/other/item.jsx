@@ -86,6 +86,7 @@ export default {
       return this.getActionTitle(action, item);
     },
     item_renderContextMenu(item, mode) {
+      // return <eb-actions-bar></eb-actions-bar>;
       // domLeft
       let domLeft;
       if (item && item.atomStage === 1) {
