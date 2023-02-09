@@ -8,6 +8,8 @@ export default {
         actions: null,
         selectedAtoms: [],
         selecting: false,
+        activeAtom: null,
+        hoverAtom: null,
       },
     };
   },

@@ -1,11 +1,12 @@
 import Vue from 'vue';
+import Events from './baseLayoutBlockTableItems/events.js';
 const ebViewSizeChange = Vue.prototype.$meta.module.get('a-components').options.mixins.ebViewSizeChange;
-const _heightTableHeader = 44;
+
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebViewSizeChange],
+  mixins: [ebViewSizeChange, Events],
   props: {
     layoutManager: {
       type: Object,
@@ -123,35 +124,6 @@ export default {
       if ($tableBody.scrollTop() === scrollTopNew) return cb();
       $tableBody.scrollTop(scrollTopNew, 300, cb);
     },
-    onPageCurrentChanged() {
-      // always true
-      this._scroll(true);
-    },
-    onViewSizeChange(size) {
-      this.tableHeight = size.height - _heightTableHeader;
-    },
-    onTableChange(pagination, filters, sorter) {
-      if (!this.enableOrder) return;
-      const { field, order = 'ascend' } = sorter;
-      const currentOrder = this._columnSorterCurrent(field);
-      if (currentOrder === order) return;
-      const _order = this._columnSorterFind(field);
-      this.layoutManager.order_onPerformChange(null, _order);
-    },
-    onSelectChange(selectedRowKeys) {
-      if (!this.enableSelection) return;
-      const items = this.layoutManager.base_getItems();
-      // eslint-disable-next-line
-      this.layoutManager.bulk[this.selectedItemsKey] = items.filter(item => {
-        return selectedRowKeys.findIndex(rowKey => rowKey === item[this.itemKey]) > -1;
-      });
-    },
-    onSwipeoutOpened(event, item) {
-      // callback
-      if (this.layoutManager.layout_onSwipeoutOpened) {
-        this.layoutManager.layout_onSwipeoutOpened(event, item);
-      }
-    },
     _checkColumnNameEqualOrder(order, columnName) {
       // callback
       if (this.layoutManager.layout_onColumnNameEqualOrder) {
@@ -226,22 +198,9 @@ export default {
       return {
         props: {},
         on: {
+          // click: event => {},
           contextmenu: event => {
-            // popover
-            const popover = this.$$(this.$el).find('.popover');
-            if (popover.length === 0) return;
-
-            event.stopPropagation();
-            event.preventDefault();
-
-            const target = event.target;
-            // finished the event immediately
-            this.$nextTick(() => {
-              this.$f7.popover.open(popover, target);
-              // record
-              this.contextmenuRecord = record;
-              this.onSwipeoutOpened(null, record);
-            });
+            this.onRowContextMenu(event, record);
           },
         },
       };

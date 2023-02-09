@@ -5,6 +5,8 @@ export default {
         provider: {
           itemKey: 'atomId',
           selectedItemsKey: 'selectedAtoms',
+          activeItemKey: 'activeAtom',
+          hoverItemKey: 'hoverAtom',
         },
       },
     };
