@@ -10,7 +10,7 @@ module.exports = app => {
                 dataIndex: 'detailLineNo',
                 title: '#',
                 align: 'center',
-                width: '50px',
+                width: 50,
                 component: {
                   module: 'a-detail',
                   name: 'listLayoutTableCellDetailLineNo',

@@ -55,7 +55,7 @@ module.exports = app => {
                 dataIndex: 'detailLineNo',
                 title: '#',
                 align: 'center',
-                width: '50px',
+                width: 50,
                 component: {
                   module: 'a-detail',
                   name: 'listLayoutTableCellDetailLineNo',
@@ -79,7 +79,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
