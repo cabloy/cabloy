@@ -43,7 +43,13 @@ export default {
     },
     _render_swipeout() {
       const domLeft = this._render_swipeout_actions('left', this.left);
-      return <div>{domLeft}</div>;
+      const domRight = this._render_swipeout_actions('right', this.right);
+      return (
+        <div>
+          {domLeft}
+          {domRight}
+        </div>
+      );
     },
   },
   render() {

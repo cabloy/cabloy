@@ -30,37 +30,58 @@ export default {
       return this.getActionTitle(action, item);
     },
     item_prepareActions(item) {
-      // left
       const left = this.item_prepareActions_left(item);
-      return { left };
+      const right = this.item_prepareActions_right(item);
+      return { left, right };
     },
     item_prepareActions_left(item) {
+      if (!item || item.atomStage !== 1) return null;
       const actionsLeft = [];
-      if (item && item.atomStage === 1) {
-        // star
-        actionsLeft.push({
-          key: 'star',
-          title: this.$text(item.star ? 'Unstar' : 'UserStar'),
+      // star
+      actionsLeft.push({
+        key: 'star',
+        title: this.$text(item.star ? 'Unstar' : 'UserStar'),
+        icon: {
+          f7: item.star ? '::star' : ':outline:star-outline',
+          color: item.star ? 'orange' : '',
+        },
+        color: 'teal',
+        onPerform: event => this.star_onSwitch(event, item),
+      });
+      // label
+      actionsLeft.push({
+        key: 'label',
+        title: this.$text('UserLabels'),
+        icon: {
+          f7: ':outline:label-outline',
+          color: '',
+        },
+        color: 'blue',
+        onPerform: event => this.labels_onClick(event, item),
+      });
+      return actionsLeft;
+    },
+    item_prepareActions_right(item) {
+      if (!item || !item._actions) {
+        return null;
+      }
+      const actionsRight = [];
+      for (let index in item._actions) {
+        index = parseInt(index);
+        const action = item._actions[index];
+        const _action = this.getAction(action);
+        actionsRight.push({
+          key: action.id,
+          title: this.item_getActionTitle(action, item),
           icon: {
-            f7: item.star ? '::star' : ':outline:star-outline',
-            color: item.star ? 'orange' : '',
-          },
-          color: 'teal',
-          onPerform: event => this.star_onSwitch(event, item),
-        });
-        // label
-        actionsLeft.push({
-          key: 'label',
-          title: this.$text('UserLabels'),
-          icon: {
-            f7: ':outline:label-outline',
+            f7: _action.icon && _action.icon.f7,
             color: '',
           },
-          color: 'blue',
-          onPerform: event => this.labels_onClick(event, item),
+          color: this.item_getActionColor(action, index),
+          onPerform: event => this.item_onAction(event, item, action),
         });
-        return actionsLeft;
       }
+      return actionsRight;
     },
     item_renderContextMenu(item, mode) {
       const { left, right, more } = this.item_prepareActions(item);
