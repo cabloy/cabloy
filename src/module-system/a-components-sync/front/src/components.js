@@ -26,6 +26,7 @@ import tabPageContent from './components/tabPageContent.jsx';
 import searchPage from './components/searchPage.vue';
 import popover from './components/popover.vue';
 import contextMenu from './components/contextMenu.vue';
+import actionsBar from './components/actionsBar.jsx';
 import box from './components/box.vue';
 import treeview from './components/treeview/treeview.vue';
 import treeviewItem from './components/treeview/treeviewItem.vue';
@@ -63,6 +64,7 @@ export default {
   ebSearchPage: searchPage,
   ebPopover: popover,
   ebContextMenu: contextMenu,
+  ebActionsBar: actionsBar,
   ebBox: box,
   ebTreeview: treeview,
   ebTreeviewItem: treeviewItem,
