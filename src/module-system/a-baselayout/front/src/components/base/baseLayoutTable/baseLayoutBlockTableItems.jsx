@@ -34,6 +34,12 @@ export default {
     selectedItemsKey() {
       return this.layoutManager.data.provider.selectedItemsKey || 'selectedItems';
     },
+    activeItemKey() {
+      return this.layoutManager.data.provider.activeItemKey || 'activeAtom';
+    },
+    hoverItemKey() {
+      return this.layoutManager.data.provider.hoverItemKey || 'hoverAtom';
+    },
     enableTableHeight() {
       return this.blockConfig.enableTableHeight !== false;
     },
@@ -194,11 +200,23 @@ export default {
         },
       };
     },
+    _getRowClassName(record) {
+      const className = {};
+      // active
+      const activeItem = this.layoutManager.bulk[this.activeItemKey];
+      if (activeItem && activeItem[this.itemKey] === record[this.itemKey]) {
+        className.active = true;
+      }
+      return className;
+    },
     _customRow(record) {
       return {
+        className: this._getRowClassName(record),
         props: {},
         on: {
-          // click: event => {},
+          click: event => {
+            this.onRowClick(event, record);
+          },
           contextmenu: event => {
             this.onRowContextMenu(event, record);
           },

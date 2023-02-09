@@ -30,7 +30,7 @@ export default {
         this.layoutManager.layout_onSwipeoutOpened(event, item);
       }
     },
-    onRowContextMenu(event, record) {
+    onRowContextMenu(event, item) {
       // popover
       const popover = this.$$(this.$el).find('.popover');
       if (popover.length === 0) return;
@@ -43,9 +43,12 @@ export default {
       this.$nextTick(() => {
         this.$f7.popover.open(popover, target);
         // record
-        this.contextmenuRecord = record;
-        this.onSwipeoutOpened(null, record);
+        this.contextmenuRecord = item;
+        this.onSwipeoutOpened(null, item);
       });
+    },
+    onRowClick(event, item) {
+      this.layoutManager.bulk[this.activeItemKey] = item;
     },
   },
 };
