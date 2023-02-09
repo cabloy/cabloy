@@ -23,10 +23,20 @@ export default {
     },
     _getTableScroll() {
       const scroll = {};
+      // y
       if (this.enableTableHeight) {
         scroll.y = this.tableHeight;
       }
-      // scroll.x = 1300;
+      // x
+      let x = 0;
+      const columns = this.blockConfig.columns;
+      for (const column of columns) {
+        if (column.visible === false) continue;
+        const width = column.width;
+        x += !width ? 120 : parseInt(width);
+      }
+      scroll.x = x;
+      // ok
       return scroll;
     },
   },
