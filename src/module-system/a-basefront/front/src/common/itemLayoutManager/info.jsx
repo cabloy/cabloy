@@ -199,6 +199,24 @@ export default {
     info_getAtomStateColor(item) {
       return item.atomClosed === 0 ? 'orange' : 'gray';
     },
+    info_renderFlowNodeState(item) {
+      const color = this.info_getAtomStateColor(item);
+      if (item._atomStateTitleLocale) {
+        return (
+          <f7-badge key="_atomStateTitleLocale" color={color}>
+            {item._atomStateTitleLocale}
+          </f7-badge>
+        );
+      }
+      if (item.flowNodeNameCurrentLocale) {
+        return (
+          <f7-badge key="flowNodeNameCurrent" color={color}>
+            {item.flowNodeNameCurrentLocale}
+          </f7-badge>
+        );
+      }
+      return null;
+    },
     info_renderActionsRight() {
       if (!this.base_ready) return;
       const item = this.base.item;
@@ -212,12 +230,9 @@ export default {
         );
       }
       // flow
-      if (item._atomStateTitleLocale) {
-        children.push(
-          <f7-badge key="_atomStateTitleLocale" color={this.info_getAtomStateColor(item)}>
-            {item._atomStateTitleLocale}
-          </f7-badge>
-        );
+      const domFlowNodeState = this.info_renderFlowNodeState(item);
+      if (domFlowNodeState) {
+        children.push(domFlowNodeState);
       }
       // avatar
       children.push(this.info_renderAvatar());

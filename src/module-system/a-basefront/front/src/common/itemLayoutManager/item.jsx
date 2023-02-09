@@ -3,15 +3,30 @@ export default {
     item_getAtomStateColor(item) {
       return item.atomClosed === 0 ? 'orange' : 'gray';
     },
-    item_renderMetaFlags(item) {
-      const domMetaFlags = [];
-      // flow
+    item_renderFlowNodeState(item) {
+      const color = this.item_getAtomStateColor(item);
       if (item._atomStateTitleLocale) {
-        domMetaFlags.push(
-          <f7-badge key="_atomStateTitleLocale" color={this.item_getAtomStateColor(item)}>
+        return (
+          <f7-badge key="_atomStateTitleLocale" color={color}>
             {item._atomStateTitleLocale}
           </f7-badge>
         );
+      }
+      if (item.flowNodeNameCurrentLocale) {
+        return (
+          <f7-badge key="flowNodeNameCurrent" color={color}>
+            {item.flowNodeNameCurrentLocale}
+          </f7-badge>
+        );
+      }
+      return null;
+    },
+    item_renderMetaFlags(item) {
+      const domMetaFlags = [];
+      // flow
+      const domFlowNodeState = this.item_renderFlowNodeState(item);
+      if (domFlowNodeState) {
+        domMetaFlags.push(domFlowNodeState);
       }
       // flags
       const itemFlags = this.item_getMetaFlags(item);
