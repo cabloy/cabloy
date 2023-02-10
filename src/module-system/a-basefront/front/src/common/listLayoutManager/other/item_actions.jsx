@@ -29,9 +29,9 @@ export default {
     item_getActionTitle(action, item) {
       return this.getActionTitle(action, item);
     },
-    item_prepareActions(item) {
-      const left = this.item_prepareActions_left(item);
-      const right = this.item_prepareActions_right(item);
+    item_prepareActions(item, mode) {
+      const left = this.item_prepareActions_left(item, mode);
+      const right = this.item_prepareActions_right(item, mode);
       return { left, right };
     },
     item_prepareActions_left(item) {
@@ -40,7 +40,7 @@ export default {
       // star
       actionsLeft.push({
         key: 'star',
-        title: this.$text(item.star ? 'Unstar' : 'UserStar'),
+        title: this.$text(item.star ? 'Unstar' : 'UserStarShort'),
         icon: {
           f7: item.star ? '::star' : ':outline:star-outline',
           color: item.star ? 'orange' : '',
@@ -51,7 +51,7 @@ export default {
       // label
       actionsLeft.push({
         key: 'label',
-        title: this.$text('UserLabels'),
+        title: this.$text('UserLabelsShort'),
         icon: {
           f7: ':outline:label-outline',
           color: '',
@@ -69,12 +69,13 @@ export default {
       for (let index in item._actions) {
         index = parseInt(index);
         const action = item._actions[index];
-        const _action = this.getAction(action);
+        const actionBase = this.getAction(action);
+        console.log(actionBase);
         actionsRight.push({
           key: action.id,
           title: this.item_getActionTitle(action, item),
           icon: {
-            f7: _action.icon && _action.icon.f7,
+            f7: actionBase.icon && actionBase.icon.f7,
             color: '',
           },
           color: this.item_getActionColor(action, index),
@@ -83,8 +84,14 @@ export default {
       }
       return actionsRight;
     },
+    // toolbar / menu / swipeout
+    item_renderContextMenu_adjustMode(mode) {
+      if (mode) return mode;
+      return this.$device.desktop ? 'menu' : 'swipeout';
+    },
     item_renderContextMenu(item, mode) {
-      const { left, right, more } = this.item_prepareActions(item);
+      mode = this.item_renderContextMenu_adjustMode(mode);
+      const { left, right, more } = this.item_prepareActions(item, mode);
       return <eb-actions-bar mode={mode} left={left} right={right} more={more}></eb-actions-bar>;
       // domLeft
       let domLeft;
