@@ -99,7 +99,7 @@ export default {
     _render_toolbar() {
       const ready = !!this.right;
       return (
-        <eb-popover ready={ready}>
+        <eb-popover backdrop={false} ready={ready}>
           <f7-toolbar>
             <eb-link iconF7="::person"></eb-link>
           </f7-toolbar>

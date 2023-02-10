@@ -47,6 +47,7 @@ export default {
       if (this.layoutManager.bulk[this.activeItemKey] !== item) {
         this.layoutManager.bulk[this.activeItemKey] = item;
       }
+      this.onRowContextMenu(event, item);
     },
     onRowMouseEnter(event, item) {
       if (this.layoutManager.bulk[this.hoverItemKey] !== item) {
