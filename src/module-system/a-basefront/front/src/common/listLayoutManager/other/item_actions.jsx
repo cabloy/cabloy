@@ -61,6 +61,9 @@ export default {
         if (location === 'right') return actionBase.directShowOnSwipeout;
         if (location === 'more') return !actionBase.directShowOnSwipeout;
       }
+      // toolbar/menu
+      if (location === 'right') return actionBase.directShowOnList;
+      if (location === 'more') return !actionBase.directShowOnList;
     },
     item_prepareActions_rightmore(item, mode, location) {
       if (!item || !item._actions) {
