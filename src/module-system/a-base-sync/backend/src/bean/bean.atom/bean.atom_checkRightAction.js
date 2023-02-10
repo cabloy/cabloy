@@ -103,6 +103,7 @@ module.exports = ctx => {
           where: {
             'b.flowNodeDefId': actionItem.nodeDefId,
             'c.flowDefKey': actionItem.flowKey,
+            'c.flowAtomId': _atom.id,
           },
           history: 0,
         },
