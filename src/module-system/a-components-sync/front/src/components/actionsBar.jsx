@@ -23,6 +23,7 @@ export default {
       if (this.mode) return this.mode;
       return this.$device.desktop ? 'menu' : 'swipeout';
     },
+    onPerformSwipeoutMore(event) {},
     _getReadyForMenuToolbar() {
       let keys = [];
       if (this.left) {
@@ -41,7 +42,7 @@ export default {
     },
     _render_swipeout_actions(direction, actions) {
       const domActions = [];
-      if (actions && actions.length > 0) {
+      if (actions) {
         for (const action of actions) {
           domActions.push(
             <eb-swipeout-button
@@ -52,6 +53,14 @@ export default {
             >
               <f7-icon color={action.icon.color} f7={action.icon.f7}></f7-icon>
               {action.title}
+            </eb-swipeout-button>
+          );
+        }
+        // more
+        if (direction === 'right' && this.more && this.more.length > 0) {
+          domActions.push(
+            <eb-swipeout-button key="__more" color="gray" propsOnPerform={event => this.onPerformSwipeoutMore(event)}>
+              <f7-icon color="" f7="::more-horiz"></f7-icon>
             </eb-swipeout-button>
           );
         }

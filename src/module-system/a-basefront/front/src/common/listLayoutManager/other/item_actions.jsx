@@ -29,11 +29,6 @@ export default {
     item_getActionTitle(action, item) {
       return this.getActionTitle(action, item);
     },
-    item_prepareActions(item, mode) {
-      const left = this.item_prepareActions_left(item, mode);
-      const right = this.item_prepareActions_right(item, mode);
-      return { left, right };
-    },
     item_prepareActions_left(item) {
       if (!item || item.atomStage !== 1) return null;
       const actionsLeft = [];
@@ -61,7 +56,13 @@ export default {
       });
       return actionsLeft;
     },
-    item_prepareActions_right(item) {
+    item_prepareActions_rightmore_checkIfShow(actionBase, mode, location) {
+      if (mode === 'swipeout') {
+        if (location === 'right') return actionBase.directShowOnSwipeout;
+        if (location === 'more') return !actionBase.directShowOnSwipeout;
+      }
+    },
+    item_prepareActions_rightmore(item, mode, location) {
       if (!item || !item._actions) {
         return null;
       }
@@ -70,7 +71,8 @@ export default {
         index = parseInt(index);
         const action = item._actions[index];
         const actionBase = this.getAction(action);
-        console.log(actionBase);
+        const valid = this.item_prepareActions_rightmore_checkIfShow(actionBase, mode, location);
+        if (!valid) continue;
         actionsRight.push({
           key: action.id,
           title: this.item_getActionTitle(action, item),
@@ -83,6 +85,12 @@ export default {
         });
       }
       return actionsRight;
+    },
+    item_prepareActions(item, mode) {
+      const left = this.item_prepareActions_left(item, mode);
+      const right = this.item_prepareActions_rightmore(item, mode, 'right');
+      const more = this.item_prepareActions_rightmore(item, mode, 'more');
+      return { left, right, more };
     },
     // toolbar / menu / swipeout
     item_renderContextMenu_adjustMode(mode) {

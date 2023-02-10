@@ -79,6 +79,7 @@ module.exports = app => {
           enableOnStatic: false,
           enableOnOpened: false,
           enableOnFlowing: false,
+          directShowOnSwipeout: true,
           icon: { f7: '::edit' },
         },
         delete: {
@@ -88,6 +89,7 @@ module.exports = app => {
           enableOnStatic: false,
           enableOnOpened: false,
           enableOnFlowing: false,
+          directShowOnSwipeout: true,
           icon: { f7: '::delete' },
         },
         clone: {
