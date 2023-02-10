@@ -23,6 +23,22 @@ export default {
       if (this.mode) return this.mode;
       return this.$device.desktop ? 'menu' : 'swipeout';
     },
+    _getReadyForMenuToolbar() {
+      let keys = [];
+      if (this.left) {
+        keys = keys.concat(this.left.map(item => item.key));
+      }
+      if (this.right) {
+        keys = keys.concat(this.right.map(item => item.key));
+      }
+      if (this.more) {
+        keys = keys.concat(this.more.map(item => item.key));
+      }
+      return keys.join(',');
+    },
+    _getReadyForSwipeout(actions) {
+      return !!actions;
+    },
     _render_swipeout_actions(direction, actions) {
       const domActions = [];
       if (actions && actions.length > 0) {
@@ -41,7 +57,7 @@ export default {
         }
       }
       return (
-        <eb-swipeout-actions side={direction} ready={!!actions}>
+        <eb-swipeout-actions side={direction} ready={this._getReadyForSwipeout(actions)}>
           {domActions}
         </eb-swipeout-actions>
       );
@@ -70,7 +86,7 @@ export default {
       return domActions;
     },
     _render_menu() {
-      const ready = !!this.right;
+      const ready = this._getReadyForMenuToolbar();
       // parts
       const domLeft = this._render_menu_actions('left', this.left);
       const domRight = this._render_menu_actions('right', this.right);
@@ -105,7 +121,7 @@ export default {
         domActions.push(
           <eb-link
             key={action.key}
-            popoverClose
+            popoverClose={true}
             propsOnPerform={event => action.onPerform(event)}
             iconF7={action.icon.f7}
             iconColor={action.icon.color}
@@ -117,7 +133,7 @@ export default {
       return domActions;
     },
     _render_toolbar() {
-      const ready = !!this.right;
+      const ready = this._getReadyForMenuToolbar();
       // parts
       const domLeft = this._render_toolbar_actions('left', this.left);
       const domRight = this._render_toolbar_actions('right', this.right);

@@ -9,17 +9,17 @@ export default {
   extends: f7Popover,
   props: {
     ready: {
-      type: Boolean,
+      type: [Boolean, String],
       default: true,
     },
   },
   watch: {
-    ready(value) {
-      if (value) {
-        this.$nextTick(() => {
-          this.resize();
-        });
-      }
+    ready(/* value*/) {
+      // if (value) {
+      this.$nextTick(() => {
+        this.resize();
+      });
+      // }
     },
   },
   methods: {
