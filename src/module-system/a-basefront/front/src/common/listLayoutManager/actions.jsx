@@ -13,6 +13,7 @@ export default {
       });
       // filter
       actions = actions.filter(action => {
+        if (action.actionMode === 1) return true;
         const _action = this.getAction(action);
         return !_action.disableInList;
       });

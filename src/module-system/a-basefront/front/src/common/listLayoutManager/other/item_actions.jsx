@@ -56,14 +56,16 @@ export default {
       });
       return actionsLeft;
     },
-    item_prepareActions_rightmore_checkIfShow(actionBase, mode, location) {
+    item_prepareActions_rightmore_checkIfShow(action, actionBase, mode, location) {
       if (mode === 'swipeout') {
-        if (location === 'right') return actionBase.directShowOnSwipeout;
-        if (location === 'more') return !actionBase.directShowOnSwipeout;
+        const bRight = action.actionMode === 0 && actionBase.directShowOnSwipeout;
+        if (location === 'right') return bRight;
+        if (location === 'more') return !bRight;
       }
       // toolbar/menu
-      if (location === 'right') return actionBase.directShowOnList;
-      if (location === 'more') return !actionBase.directShowOnList;
+      const bRight = action.actionMode === 1 || actionBase.directShowOnList;
+      if (location === 'right') return bRight;
+      if (location === 'more') return !bRight;
     },
     item_prepareActions_rightmore(item, mode, location) {
       if (!item || !item._actions) {
@@ -74,18 +76,31 @@ export default {
         index = parseInt(index);
         const action = item._actions[index];
         const actionBase = this.getAction(action);
-        const valid = this.item_prepareActions_rightmore_checkIfShow(actionBase, mode, location);
+        const valid = this.item_prepareActions_rightmore_checkIfShow(action, actionBase, mode, location);
         if (!valid) continue;
-        actionsRight.push({
-          key: action.id,
-          title: this.item_getActionTitle(action, item),
-          icon: {
-            f7: actionBase.icon && actionBase.icon.f7,
+        if (action.actionMode === 1) {
+          actionsRight.push({
+            key: action.id,
+            title: action.__task.flowNodeNameLocale,
+            icon: {
+              f7: ':flow:activity-user-task',
+              color: '',
+            },
             color: '',
-          },
-          color: this.item_getActionColor(action, index),
-          onPerform: event => this.item_onAction(event, item, action),
-        });
+            onPerform: event => this.item_onActionByModeFlow(event, item, action),
+          });
+        } else {
+          actionsRight.push({
+            key: action.id,
+            title: this.item_getActionTitle(action, item),
+            icon: {
+              f7: actionBase.icon && actionBase.icon.f7,
+              color: '',
+            },
+            color: this.item_getActionColor(action, index),
+            onPerform: event => this.item_onAction(event, item, action),
+          });
+        }
       }
       return actionsRight;
     },
@@ -104,6 +119,7 @@ export default {
       mode = this.item_renderContextMenu_adjustMode(mode);
       const { left, right, more } = this.item_prepareActions(item, mode);
       return <eb-actions-bar mode={mode} left={left} right={right} more={more}></eb-actions-bar>;
+      /* old solution
       // domLeft
       let domLeft;
       if (item && item.atomStage === 1) {
@@ -178,6 +194,7 @@ export default {
           {domRight}
         </eb-context-menu>
       );
+      */
     },
   },
 };
