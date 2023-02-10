@@ -29,7 +29,7 @@ export default {
       await this.layoutManager.actions_fetchActions(item);
     },
     _renderListItemContextMenu(item) {
-      return this.layoutManager.item_renderContextMenu(item, 'menu');
+      return this.layoutManager.item_renderContextMenu(item, 'toolbar');
     },
     _renderNodeLabelStart(node) {
       const item = node.data;

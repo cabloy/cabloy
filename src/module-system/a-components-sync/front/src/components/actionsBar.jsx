@@ -96,6 +96,16 @@ export default {
         </eb-popover>
       );
     },
+    _render_toolbar() {
+      const ready = !!this.right;
+      return (
+        <eb-popover ready={ready}>
+          <f7-toolbar>
+            <eb-link iconF7="::person"></eb-link>
+          </f7-toolbar>
+        </eb-popover>
+      );
+    },
   },
   render() {
     const mode = this.getMode();
@@ -103,6 +113,8 @@ export default {
       return this._render_swipeout();
     } else if (mode === 'menu') {
       return this._render_menu();
+    } else if (mode === 'toolbar') {
+      return this._render_toolbar();
     }
     return <div>sssss</div>;
   },

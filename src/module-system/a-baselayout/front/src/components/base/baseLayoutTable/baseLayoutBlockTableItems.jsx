@@ -320,7 +320,7 @@ export default {
     _renderListItemContextMenu() {
       if (!this.layoutManager.item_renderContextMenu) return null;
       const item = this.contextmenuRecord;
-      return this.layoutManager.item_renderContextMenu(item, 'menu');
+      return this.layoutManager.item_renderContextMenu(item, 'toolbar');
     },
     _renderTable() {
       const scroll = this._getTableScroll();
