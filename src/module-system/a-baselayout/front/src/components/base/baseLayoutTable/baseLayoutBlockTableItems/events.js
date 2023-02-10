@@ -39,7 +39,7 @@ export default {
       this.$nextTick(() => {
         this.$f7.popover.open(popover, target);
         // record
-        this.contextmenuRecord = item;
+        this.contextmenuRecordKey = item[this.itemKey];
         this.onSwipeoutOpened(null, item);
       });
     },

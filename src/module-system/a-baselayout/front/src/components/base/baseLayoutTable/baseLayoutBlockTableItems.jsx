@@ -19,7 +19,7 @@ export default {
   },
   data() {
     return {
-      contextmenuRecord: null,
+      contextmenuRecordKey: null,
     };
   },
   computed: {
@@ -317,9 +317,13 @@ export default {
         </div>
       );
     },
+    _getContextmenuRecord() {
+      if (!this.contextmenuRecordKey) return null;
+      return this.dataSource.find(item => item[this.itemKey] === this.contextmenuRecordKey);
+    },
     _renderListItemContextMenu() {
       if (!this.layoutManager.item_renderContextMenu) return null;
-      const item = this.contextmenuRecord;
+      const item = this._getContextmenuRecord();
       return this.layoutManager.item_renderContextMenu(item, 'toolbar');
     },
     _renderTable() {
