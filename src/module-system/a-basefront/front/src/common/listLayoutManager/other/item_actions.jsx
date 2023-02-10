@@ -1,5 +1,10 @@
 export default {
   methods: {
+    async item_onActionByModeFlow(event, item, action) {
+      const task = action.__task;
+      const url = `/a/flowtask/flow?flowId=${task.flowId}&flowTaskId=${task.flowTaskId}`;
+      this.$view.navigate(url);
+    },
     async item_onAction(event, item, action) {
       const _action = this.getAction(action);
       if (!_action) return;
