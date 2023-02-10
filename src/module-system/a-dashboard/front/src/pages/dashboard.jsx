@@ -451,7 +451,7 @@ export default {
       const buttons = [];
       for (const item of this.dashboardUsers) {
         buttons.push({
-          icon: dashboardUserIdCurrent === item.id ? iconDone : '<i class="icon"></i>',
+          icon: dashboardUserIdCurrent === item.id ? iconDone : this.$meta.util.emptyIcon,
           text: item.dashboardName,
           disabled: dashboardUserIdCurrent === item.id,
           data: item,

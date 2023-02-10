@@ -10,7 +10,7 @@ export default {
       const layoutCurrent = ctx.layout.current;
       const buttons = [];
       for (const layout of layouts) {
-        const icon = layoutCurrent === layout.name ? iconDone : '<i class="icon"></i>';
+        const icon = layoutCurrent === layout.name ? iconDone : ctx.$meta.util.emptyIcon;
         buttons.push({
           icon,
           text: layout.titleLocale,

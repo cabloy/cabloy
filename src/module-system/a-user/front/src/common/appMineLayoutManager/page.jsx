@@ -34,7 +34,7 @@ export default {
         // buttons
         const buttons = [];
         for (const appInfo of this.base.appInfos) {
-          const icon = this.base_app_isCurrentSame(appInfo, appInfoCurrent) ? iconDone : '<i class="icon"></i>';
+          const icon = this.base_app_isCurrentSame(appInfo, appInfoCurrent) ? iconDone : this.$meta.util.emptyIcon;
           buttons.push({
             icon,
             text: appInfo.appItem.atomNameLocale,

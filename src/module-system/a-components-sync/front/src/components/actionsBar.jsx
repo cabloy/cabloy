@@ -37,7 +37,7 @@ export default {
       const buttons = [];
       for (const action of actions) {
         buttons.push({
-          icon: icons[action.key] || '<i class="icon"></i>',
+          icon: icons[action.key] || this.$meta.util.emptyIcon,
           text: action.title,
           data: action,
         });

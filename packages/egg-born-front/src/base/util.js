@@ -694,6 +694,9 @@ export default function (Vue) {
     compareViewSize(sizeA, sizeB) {
       return __ViewSizes.indexOf(sizeA) - __ViewSizes.indexOf(sizeB);
     },
+    get emptyIcon() {
+      return '<i class="icon"></i>';
+    },
   };
 
   // moment

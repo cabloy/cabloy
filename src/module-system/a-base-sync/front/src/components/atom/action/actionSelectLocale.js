@@ -27,7 +27,7 @@ export default {
         },
       ];
       for (const locale of locales) {
-        const icon = locale.value === current.value ? iconDone : '<i class="icon"></i>';
+        const icon = locale.value === current.value ? iconDone : this.$meta.util.emptyIcon;
         buttons.push({
           icon,
           text: locale.title,
