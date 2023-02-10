@@ -23,7 +23,35 @@ export default {
       if (this.mode) return this.mode;
       return this.$device.desktop ? 'menu' : 'swipeout';
     },
-    onPerformShowMore(event) {},
+    async onPerformShowMore(event) {
+      if (!this.more) return;
+      const actions = this.more;
+      // preload icons
+      const icons = {};
+      for (const action of actions) {
+        if (action.icon && action.icon.f7) {
+          icons[action.key] = await this.$meta.util.combineIcon({ f7: action.icon.f7 });
+        }
+      }
+      // buttons
+      const buttons = [];
+      for (const action of actions) {
+        buttons.push({
+          icon: icons[action.key] || '<i class="icon"></i>',
+          text: action.title,
+          data: action,
+        });
+      }
+      // choose
+      const params = {
+        forceToPopover: true,
+        targetEl: event.currentTarget,
+        buttons,
+      };
+      const button = await this.$view.actions.choose(params);
+      // perform
+      await button.data.onPerform(event);
+    },
     _getReadyForMenuToolbar() {
       let keys = [];
       if (this.left) {
@@ -51,7 +79,7 @@ export default {
               color={action.color}
               propsOnPerform={event => action.onPerform(event)}
             >
-              <f7-icon color={action.icon.color} f7={action.icon.f7}></f7-icon>
+              <f7-icon color={action.icon && action.icon.color} f7={action.icon && action.icon.f7}></f7-icon>
               {action.title}
             </eb-swipeout-button>
           );
@@ -87,7 +115,7 @@ export default {
       for (const action of actions) {
         domActions.push(
           <eb-list-item key={action.key} link="#" popoverClose propsOnPerform={event => action.onPerform(event)}>
-            <f7-icon slot="media" color={action.icon.color} f7={action.icon.f7}></f7-icon>
+            <f7-icon slot="media" color={action.icon && action.icon.color} f7={action.icon && action.icon.f7}></f7-icon>
             {action.title}
           </eb-list-item>
         );
@@ -132,8 +160,8 @@ export default {
             key={action.key}
             popoverClose={true}
             propsOnPerform={event => action.onPerform(event)}
-            iconF7={action.icon.f7}
-            iconColor={action.icon.color}
+            iconF7={action.icon && action.icon.f7}
+            iconColor={action.icon && action.icon.color}
           >
             {action.title}
           </eb-link>
