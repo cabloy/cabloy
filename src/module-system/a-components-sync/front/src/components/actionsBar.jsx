@@ -71,10 +71,12 @@ export default {
     },
     _render_menu() {
       const ready = !!this.right;
-      let children = [];
+      // parts
       const domLeft = this._render_menu_actions('left', this.left);
       const domRight = this._render_menu_actions('right', this.right);
       const domMore = this._render_menu_actions('more', this.more);
+      // combine
+      let children = [];
       if (domLeft) {
         children = children.concat(domLeft);
       }
@@ -96,13 +98,40 @@ export default {
         </eb-popover>
       );
     },
+    _render_toolbar_actions(direction, actions) {
+      if (!actions || actions.length === 0) return null;
+      const domActions = [];
+      for (const action of actions) {
+        domActions.push(
+          <eb-link
+            key={action.key}
+            popoverClose
+            propsOnPerform={event => action.onPerform(event)}
+            iconF7={action.icon.f7}
+            iconColor={action.icon.color}
+          >
+            {action.title}
+          </eb-link>
+        );
+      }
+      return domActions;
+    },
     _render_toolbar() {
       const ready = !!this.right;
+      // parts
+      const domLeft = this._render_toolbar_actions('left', this.left);
+      const domRight = this._render_toolbar_actions('right', this.right);
+      // combine
+      let children = [];
+      if (domLeft) {
+        children = children.concat(domLeft);
+      }
+      if (domRight) {
+        children = children.concat(domRight);
+      }
       return (
         <eb-popover backdrop={false} ready={ready}>
-          <f7-toolbar>
-            <eb-link iconF7="::person"></eb-link>
-          </f7-toolbar>
+          <f7-toolbar>{children}</f7-toolbar>
         </eb-popover>
       );
     },
