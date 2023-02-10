@@ -87,7 +87,7 @@ export default {
         // more
         if (direction === 'right' && this.more && this.more.length > 0) {
           domActions.push(
-            <eb-swipeout-button key="__more" color="gray" propsOnPerform={event => this.onPerformShowMore(event)}>
+            <eb-swipeout-button key="__more" color="blue" propsOnPerform={event => this.onPerformShowMore(event)}>
               <f7-icon color="" f7="::more-horiz"></f7-icon>
             </eb-swipeout-button>
           );

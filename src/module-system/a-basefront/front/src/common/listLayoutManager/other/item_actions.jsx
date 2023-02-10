@@ -26,9 +26,10 @@ export default {
         name: actionName,
       });
     },
-    item_getActionColor(action, index) {
-      if (index === 0) return 'orange';
-      else if (index === 1) return 'red';
+    item_getActionColor(action /* , index*/) {
+      if (action.actionMode === 1) return 'teal';
+      if (action.code === 3) return 'orange';
+      if (action.code === 4) return 'red';
       return 'blue';
     },
     item_getActionTitle(action, item) {
@@ -63,7 +64,7 @@ export default {
     },
     item_prepareActions_rightmore_checkIfShow(action, actionBase, mode, location) {
       if (mode === 'swipeout') {
-        const bRight = action.actionMode === 0 && actionBase.directShowOnSwipeout;
+        const bRight = action.actionMode === 1 || actionBase.directShowOnSwipeout;
         if (location === 'right') return bRight;
         if (location === 'more') return !bRight;
       }
@@ -91,7 +92,7 @@ export default {
               f7: ':flow:activity-user-task',
               color: '',
             },
-            color: '',
+            color: this.item_getActionColor(action, index),
             onPerform: event => this.item_onActionByModeFlow(event, item, action),
           });
         } else {
