@@ -1,6 +1,3 @@
-const require3 = require('require3');
-const mparse = require3('egg-born-mparse').default;
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
@@ -80,43 +77,6 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightAction({ atom: { id }, action, stage, user, checkFlow, disableAuthOpenCheck }) {
-      const _atom = await this.modelAtom.get({ id });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // normal check
-      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
-      if (!res) return res;
-      // auth open check
-      if (!disableAuthOpenCheck) {
-        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
-        if (!resAuthOpenCheck) return null;
-      }
-      // ok
-      return res;
-    }
-
-    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // parse action code
-      action = ctx.bean.atomAction.parseActionCode({
-        action,
-        atomClass,
-      });
-      // check right
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
-        fn: 'checkRightAction',
-      });
-    }
-
     // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
     async checkRightActionBulk({ atomClass, action, stage, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
@@ -193,7 +153,12 @@ module.exports = ctx => {
       const actionsRes = [];
       for (const action of actions) {
         const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
-        if (res) actionsRes.push(action);
+        if (res) {
+          if (res.__task) {
+            action.__task = res.__task;
+          }
+          actionsRes.push(action);
+        }
       }
       return actionsRes;
     }
