@@ -1,7 +1,8 @@
 import Actions from './item_actions.jsx';
+import ContextMenu from './item_contextMenu.jsx';
 
 export default {
-  mixins: [Actions],
+  mixins: [Actions, ContextMenu],
   methods: {
     item_getAtomName(item) {
       return item.atomNameLocale || item.atomName;
