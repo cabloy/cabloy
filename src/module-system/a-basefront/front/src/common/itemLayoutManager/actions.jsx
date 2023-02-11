@@ -22,9 +22,9 @@ export default {
         // if (action.name === 'read' && this.container.mode === 'view') continue;
         if (action.name === 'read') continue;
         // stage
-        const _action = this.getAction(action);
-        if (_action.stage) {
-          const stages = _action.stage.split(',');
+        const actionBase = this.getAction(action);
+        if (actionBase.stage) {
+          const stages = actionBase.stage.split(',');
           if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) {
             continue;
           }
@@ -109,14 +109,14 @@ export default {
         };
       }
       // action
-      let _action = this.getAction(action);
-      if (!_action) return;
-      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
+      let actionBase = this.getAction(action);
+      if (!actionBase) return;
+      actionBase = this.$utils.extend({}, actionBase, { targetEl: event.currentTarget });
       // for write
       if (action.name === 'write') {
-        _action = this.$utils.extend({}, _action, { navigateOptions: { target: '_self' } });
+        actionBase = this.$utils.extend({}, actionBase, { navigateOptions: { target: '_self' } });
       }
-      return this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      return this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
     },
     actions_getActionTitle(action) {
       return this.getActionTitle(action, this.base.item);
@@ -252,7 +252,7 @@ export default {
       if (actions) {
         const children = [];
         for (const action of actions) {
-          const _action = this.getAction(action);
+          const actionBase = this.getAction(action);
           children.push(
             <eb-list-item
               key={action.id}
@@ -262,8 +262,8 @@ export default {
             >
               <f7-icon
                 slot="media"
-                material={_action.icon && _action.icon.material}
-                f7={_action.icon && _action.icon.f7}
+                material={actionBase.icon && actionBase.icon.material}
+                f7={actionBase.icon && actionBase.icon.f7}
               ></f7-icon>
               <div slot="title">{this.actions_getActionTitle(action)}</div>
             </eb-list-item>
