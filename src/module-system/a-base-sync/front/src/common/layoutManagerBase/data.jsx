@@ -71,6 +71,9 @@ export default {
     data_getItemsAll() {
       return this.data_callMethod('getItemsAll');
     },
+    data_findItem(key) {
+      return this.data_callMethod('findItem', key);
+    },
     data_getLoading() {
       return this.data_callMethod('getLoading');
     },

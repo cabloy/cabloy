@@ -319,7 +319,8 @@ export default {
     },
     _getContextmenuRecord() {
       if (!this.contextmenuRecordKey) return null;
-      return this.dataSource.find(item => item[this.itemKey] === this.contextmenuRecordKey);
+      const { item } = this.layoutManager.data_findItem(this.contextmenuRecordKey);
+      return item;
     },
     _renderListItemContextMenu() {
       if (!this.layoutManager.item_renderContextMenu) return null;
