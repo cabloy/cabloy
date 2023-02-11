@@ -232,9 +232,10 @@ export default {
             <eb-link
               key={action.id}
               iconF7=":flow:activity-user-task"
-              tooltip={action.__task.flowNodeNameLocale}
               propsOnPerform={event => this.actions_onActionByModeFlow(event, action)}
-            ></eb-link>
+            >
+              {action.__task.flowNodeNameLocale}
+            </eb-link>
           );
         } else if (actionBase.directShowOnItem) {
           children.push(
