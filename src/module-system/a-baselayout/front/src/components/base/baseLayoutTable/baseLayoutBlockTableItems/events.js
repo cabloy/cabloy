@@ -34,7 +34,9 @@ export default {
       event.stopPropagation();
       event.preventDefault();
 
-      const target = event.target;
+      // not use currentTarget, because currentTarget is tr
+      const $targetTd = this.$$(event.target).closest('td');
+      const target = $targetTd.length === 0 ? event.target : $targetTd;
       // finished the event immediately
       this.$nextTick(() => {
         this.$f7.popover.open(popover, target);
