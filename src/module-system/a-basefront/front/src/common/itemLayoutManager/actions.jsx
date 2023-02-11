@@ -21,16 +21,22 @@ export default {
         // view
         // if (action.name === 'read' && this.container.mode === 'view') continue;
         if (action.name === 'read') continue;
-        // stage
+        // flow actions
+        if (action.actionMode === 1) continue;
+        // actionBase
         const actionBase = this.getAction(action);
-        if (actionBase.stage) {
-          const stages = actionBase.stage.split(',');
-          if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) {
-            continue;
+        // directShowOnItem
+        if (!actionBase.directShowOnItem) {
+          // stage
+          if (actionBase.stage) {
+            const stages = actionBase.stage.split(',');
+            if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) {
+              continue;
+            }
           }
+          // ok
+          actions.push(action);
         }
-        // ok
-        actions.push(action);
       }
       // specials
       //    need not append draft button again
@@ -117,6 +123,11 @@ export default {
         actionBase = this.$utils.extend({}, actionBase, { navigateOptions: { target: '_self' } });
       }
       return this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
+    },
+    async actions_onActionByModeFlow(event, action) {
+      const task = action.__task;
+      const url = `/a/flowtask/flow?flowId=${task.flowId}&flowTaskId=${task.flowTaskId}`;
+      this.$view.navigate(url);
     },
     actions_getActionTitle(action) {
       return this.getActionTitle(action, this.base.item);
@@ -217,19 +228,23 @@ export default {
         if (actionNamesRight.includes(actionName)) continue;
         const actionBase = this.getAction(action);
         if (action.actionMode === 1) {
-          <eb-link
-            key={action.id}
-            iconF7=":flow:activity-user-task"
-            tooltip={action.__task.flowNodeNameLocale}
-            propsOnPerform={event => this.actions_onActionByModeFlow(event, action)}
-          ></eb-link>;
+          children.push(
+            <eb-link
+              key={action.id}
+              iconF7=":flow:activity-user-task"
+              tooltip={action.__task.flowNodeNameLocale}
+              propsOnPerform={event => this.actions_onActionByModeFlow(event, action)}
+            ></eb-link>
+          );
         } else if (actionBase.directShowOnItem) {
-          <eb-link
-            key={action.id}
-            iconF7={actionBase.icon && actionBase.icon.f7}
-            tooltip={this.actions_getActionTitle(action)}
-            propsOnPerform={event => this.actions_onAction(event, action)}
-          ></eb-link>;
+          children.push(
+            <eb-link
+              key={action.id}
+              iconF7={actionBase.icon && actionBase.icon.f7}
+              tooltip={this.actions_getActionTitle(action)}
+              propsOnPerform={event => this.actions_onAction(event, action)}
+            ></eb-link>
+          );
         }
       }
       // popover
