@@ -44,18 +44,18 @@ export default {
       });
     },
     onRowClick(event, item) {
-      if (this.layoutManager.bulk[this.activeItemKey] !== item) {
-        this.layoutManager.bulk[this.activeItemKey] = item;
+      if (this.layoutManager.bulk[this.activeItemKey] !== item[this.itemKey]) {
+        this.layoutManager.bulk[this.activeItemKey] = item[this.itemKey];
       }
       this.onRowContextMenu(event, item);
     },
     onRowMouseEnter(event, item) {
-      if (this.layoutManager.bulk[this.hoverItemKey] !== item) {
-        this.layoutManager.bulk[this.hoverItemKey] = item;
+      if (this.layoutManager.bulk[this.hoverItemKey] !== item[this.itemKey]) {
+        this.layoutManager.bulk[this.hoverItemKey] = item[this.itemKey];
       }
     },
     onRowMouseLeave(event, item) {
-      if (this.layoutManager.bulk[this.hoverItemKey] === item) {
+      if (this.layoutManager.bulk[this.hoverItemKey] === item[this.itemKey]) {
         this.layoutManager.bulk[this.hoverItemKey] = null;
       }
     },

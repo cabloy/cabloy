@@ -30,10 +30,10 @@ export default {
       return this.layoutManager.data.provider.selectedItemsKey || 'selectedItems';
     },
     activeItemKey() {
-      return this.layoutManager.data.provider.activeItemKey || 'activeAtom';
+      return this.layoutManager.data.provider.activeItemKey || 'activeAtomKey';
     },
     hoverItemKey() {
-      return this.layoutManager.data.provider.hoverItemKey || 'hoverAtom';
+      return this.layoutManager.data.provider.hoverItemKey || 'hoverAtomKey';
     },
     toolbar() {
       return this.layoutManager.bottombar.enable;
@@ -195,8 +195,8 @@ export default {
     _getRowClassName(record) {
       const className = {};
       // active
-      const activeItem = this.layoutManager.bulk[this.activeItemKey];
-      if (activeItem && activeItem[this.itemKey] === record[this.itemKey]) {
+      const activeItemKey = this.layoutManager.bulk[this.activeItemKey];
+      if (activeItemKey && activeItemKey === record[this.itemKey]) {
         className.active = true;
       }
       return className;
