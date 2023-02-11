@@ -202,21 +202,22 @@ export default {
       return className;
     },
     _customRow(record) {
+      const { item } = this.layoutManager.data_findItem(record[this.itemKey]);
       return {
-        className: this._getRowClassName(record),
+        className: this._getRowClassName(item, record),
         props: {},
         on: {
           click: event => {
-            this.onRowClick(event, record);
+            this.onRowClick(event, item, record);
           },
           mouseenter: event => {
-            this.onRowMouseEnter(event, record);
+            this.onRowMouseEnter(event, item, record);
           },
           mouseleave: event => {
-            this.onRowMouseLeave(event, record);
+            this.onRowMouseLeave(event, item, record);
           },
           contextmenu: event => {
-            this.onRowContextMenu(event, record);
+            this.onRowContextMenu(event, item, record);
           },
         },
       };
