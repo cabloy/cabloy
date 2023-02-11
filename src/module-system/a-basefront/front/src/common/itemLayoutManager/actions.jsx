@@ -242,9 +242,10 @@ export default {
             <eb-link
               key={action.id}
               iconF7={actionBase.icon && actionBase.icon.f7}
-              tooltip={this.actions_getActionTitle(action)}
               propsOnPerform={event => this.actions_onAction(event, action)}
-            ></eb-link>
+            >
+              {this.actions_getActionTitle(action)}
+            </eb-link>
           );
         }
       }
