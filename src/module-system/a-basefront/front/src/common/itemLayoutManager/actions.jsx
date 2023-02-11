@@ -186,6 +186,7 @@ export default {
     },
     actions_render() {
       if (!this.base_ready) return null;
+      const actionNamesRight = ['layout', 'write', 'read'];
       const children = [];
       // layout button before save
       const actionLayout = this.actions_findAction('layout');
@@ -210,10 +211,36 @@ export default {
       // only show on draft/edit
       const buttonView = this.actions_renderButtonView();
       if (buttonView) children.push(buttonView);
+      // flow actions / directShowOnItem
+      for (const action of this.actions.list) {
+        const actionName = action.name;
+        if (actionNamesRight.includes(actionName)) continue;
+        const actionBase = this.getAction(action);
+        if (action.actionMode === 1) {
+          <eb-link
+            key={action.id}
+            iconF7=":flow:activity-user-task"
+            tooltip={action.__task.flowNodeNameLocale}
+            propsOnPerform={event => this.actions_onActionByModeFlow(event, action)}
+          ></eb-link>;
+        } else if (actionBase.directShowOnItem) {
+          <eb-link
+            key={action.id}
+            iconF7={actionBase.icon && actionBase.icon.f7}
+            tooltip={this.actions_getActionTitle(action)}
+            propsOnPerform={event => this.actions_onAction(event, action)}
+          ></eb-link>;
+        }
+      }
       // popover
       if (this.actions_listPopover) {
         children.push(
-          <f7-link key="actionsPopover" iconF7="::more-horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
+          <f7-link
+            key="actionsPopover"
+            iconF7="::more-horiz"
+            tooltip={this.$text('More')}
+            popover-open={`#${this.actions.popoverId}`}
+          ></f7-link>
         );
       }
       //

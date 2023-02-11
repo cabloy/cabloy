@@ -196,6 +196,7 @@ export default {
   SubTitle: '副标题',
   Stage: '阶段',
   AtomState: '数据状态',
+  More: '更多',
   'Role Name': '角色名称',
   'Role Type': '角色类型',
   'New Category': '新目录',
