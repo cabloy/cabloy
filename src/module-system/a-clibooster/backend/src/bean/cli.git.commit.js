@@ -31,11 +31,11 @@ module.exports = ctx => {
       // prepare
       const entities = [];
       for (const entityName of entityNames) {
-        // try module
-        let entity = this.helper.findModule(entityName);
+        // try suite
+        let entity = this.helper.findSuite(entityName);
         if (!entity) {
-          // try suite
-          entity = this.helper.findSuite(entityName);
+          // try module
+          entity = this.helper.findModule(entityName);
         }
         if (!entity) {
           // not throw error
