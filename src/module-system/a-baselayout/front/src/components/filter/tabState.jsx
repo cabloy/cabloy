@@ -23,10 +23,9 @@ export default {
       const dictKey = this.filterContainer.atomStateDictKey;
       this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
     },
-    onChange() {
-      const checked = this.getComponentInstance().checked();
+    onItemChange(event, item) {
       // eslint-disable-next-line
-      this.filterContainer.form.atomState = checked;
+      this.filterContainer.form.state = item ? item.code : null;
     },
     _renderStateSelect() {
       if (!this.dict) return null;
@@ -39,6 +38,7 @@ export default {
           radio
           checked={stateCurrent === undefined || stateCurrent === null}
           title={this.$text('All')}
+          onChange={event => this.onItemChange(event, null)}
         ></eb-list-item>
       );
       for (const item of this.dict._dictItems) {
@@ -48,6 +48,7 @@ export default {
             radio
             checked={stateCurrent === item.code}
             title={item.titleLocale}
+            onChange={event => this.onItemChange(event, item)}
           ></eb-list-item>
         );
       }
