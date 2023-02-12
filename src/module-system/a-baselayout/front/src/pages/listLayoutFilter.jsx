@@ -3,6 +3,7 @@ const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mix
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 import tabBasic from '../components/filter/tabBasic.jsx';
 import tabGeneral from '../components/filter/tabGeneral.jsx';
+import tabState from '../components/filter/tabState.jsx';
 import tabCategory from '../components/filter/tabCategory.jsx';
 import tabTag from '../components/filter/tabTag.jsx';
 
@@ -11,6 +12,7 @@ export default {
   components: {
     tabBasic,
     tabGeneral,
+    tabState,
     tabCategory,
     tabTag,
   },
@@ -19,6 +21,7 @@ export default {
       tabId: {
         basic: Vue.prototype.$meta.util.nextId('basic'),
         general: Vue.prototype.$meta.util.nextId('general'),
+        state: Vue.prototype.$meta.util.nextId('state'),
         category: Vue.prototype.$meta.util.nextId('category'),
         tag: Vue.prototype.$meta.util.nextId('tag'),
       },
@@ -259,6 +262,13 @@ export default {
       // general
       const domLinkGeneral = this._renderNavbarSubLink('general', 'General');
       // category
+      let domLinkState;
+      const atomStage = this.stage === 1 ? 'formal' : 'draft';
+      const dictKey = this.$meta.util.getProperty(this.atomClassBase, `dict.states.${atomStage}.dictKey`);
+      if (dictKey) {
+        domLinkState = this._renderNavbarSubLink('state', 'State');
+      }
+      // category
       let domLinkCategory;
       if (this.atomClassBase && this.atomClassBase.category) {
         domLinkCategory = this._renderNavbarSubLink('category', 'Category');
@@ -273,6 +283,7 @@ export default {
           <f7-toolbar top tabbar>
             {domLinkBasic}
             {domLinkGeneral}
+            {domLinkState}
             {domLinkCategory}
             {domLinkTag}
           </f7-toolbar>
