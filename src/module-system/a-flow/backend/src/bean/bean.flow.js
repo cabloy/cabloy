@@ -1,4 +1,5 @@
 const flow_0 = require('./bean.flow/bean.flow_0.js');
+const flow_assignees = require('./bean.flow/bean.flow_assignees.js');
 const flow_query = require('./bean.flow/bean.flow_query.js');
 
 module.exports = ctx => {
@@ -6,6 +7,7 @@ module.exports = ctx => {
     flow_0,
     [
       //
+      flow_assignees,
       flow_query,
     ],
     ctx
