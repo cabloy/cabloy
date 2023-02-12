@@ -90,6 +90,16 @@ export default {
       }
       return stages;
     },
+    atomStateDictKey() {
+      let atomStage;
+      if (typeof this.stage === 'string') {
+        atomStage = this.stage;
+      } else {
+        atomStage = this.stage === 0 ? 'draft' : this.stage === 1 ? 'formal' : 'history';
+      }
+      if (atomStage === 'history') return null;
+      return this.$meta.util.getProperty(this.atomClassBase, `dict.states.${atomStage}.dictKey`);
+    },
   },
   watch: {
     'form.atomClass': function (valNew, valOld) {
@@ -261,11 +271,9 @@ export default {
       const domLinkBasic = this._renderNavbarSubLink('basic', 'Basic');
       // general
       const domLinkGeneral = this._renderNavbarSubLink('general', 'General');
-      // category
+      // state: not support history
       let domLinkState;
-      const atomStage = this.stage === 1 ? 'formal' : 'draft';
-      const dictKey = this.$meta.util.getProperty(this.atomClassBase, `dict.states.${atomStage}.dictKey`);
-      if (dictKey) {
+      if (this.atomStateDictKey) {
         domLinkState = this._renderNavbarSubLink('state', 'State');
       }
       // category
@@ -296,6 +304,11 @@ export default {
       const domTabBasic = this._renderTab('basic', 'tabBasic');
       // general
       const domTabGeneral = this._renderTab('general', 'tabGeneral');
+      // state
+      let domTabState;
+      if (this.atomStateDictKey) {
+        domTabState = this._renderTab('state', 'tabState');
+      }
       // category
       let domTabCategory;
       if (this.atomClassBase && this.atomClassBase.category) {
@@ -310,6 +323,7 @@ export default {
         <f7-tabs>
           {domTabBasic}
           {domTabGeneral}
+          {domTabState}
           {domTabCategory}
           {domTabTag}
         </f7-tabs>

@@ -36,7 +36,8 @@ export default {
       if (!this.atomClass) return null;
       const atomClassBase = this.getAtomClass(this.atomClass);
       if (!atomClassBase) return null;
-      const atomStage = this.atomStage === 1 ? 'formal' : 'draft';
+      const atomStage = this.atomStage === 0 ? 'draft' : this.atomStage === 1 ? 'formal' : null;
+      if (!atomStage) return null;
       const dictKey = this.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
       return dictKey;
     },

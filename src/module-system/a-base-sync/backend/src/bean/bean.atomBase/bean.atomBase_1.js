@@ -29,8 +29,10 @@ module.exports = app => {
         atomClassName: item.atomClassName,
       });
       // dictKey
-      const atomStage = item.atomStage === 1 ? 'formal' : 'draft';
+      const atomStage = item.atomStage === 0 ? 'draft' : item.atomStage === 1 ? 'formal' : null;
+      if (!atomStage) return;
       const dictKey = this.ctx.bean.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
+      if (!dictKey) return;
       // dictItem
       const dictItem = await this.ctx.bean.dict.findItem({
         dictKey,
