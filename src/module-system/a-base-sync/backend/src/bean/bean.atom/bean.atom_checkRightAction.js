@@ -98,7 +98,7 @@ module.exports = ctx => {
       const actionItem = await ctx.bean.atomAction.model.get({ atomClassId: _atom.atomClassId, code: action });
       if (!actionItem) return null;
       // flowTask
-      const task = await ctx.bean.flowTask.read({
+      const task = await ctx.bean.flowTask.get({
         options: {
           where: {
             'b.flowNodeDefId': actionItem.nodeDefId,
