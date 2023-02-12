@@ -25,10 +25,10 @@ module.exports = app => {
           name: 'Review',
           type: 'activityUserTask',
           options: {
+            atomState: 1,
             assignees: {
               roles: 'superuser',
             },
-            atomState: 1,
             confirmation: false,
             bidding: true,
             schema: {
