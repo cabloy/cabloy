@@ -33,7 +33,7 @@ export default {
       for (const column of columns) {
         if (column.visible === false) continue;
         const width = column.width;
-        x += !width ? 120 : parseInt(width);
+        x += !width ? 110 : parseInt(width);
       }
       scroll.x = x;
       // ok
