@@ -14,6 +14,7 @@ import ActionSelectResourceType from './action/actionSelectResourceType.js';
 import ActionEnable from './action/actionEnable.js';
 import ActionDisable from './action/actionDisable.js';
 import ActionWorkflow from './action/actionWorkflow.js';
+import ActionWorkflowFormal from './action/actionWorkflowFormal.js';
 import ActionLayout from './action/actionLayout.js';
 
 export default {
@@ -37,6 +38,7 @@ export default {
     ActionEnable,
     ActionDisable,
     ActionWorkflow,
+    ActionWorkflowFormal,
     ActionLayout,
   ],
   methods: {
@@ -72,6 +74,8 @@ export default {
         return await this._onActionDisable();
       } else if (action.name === 'workflow') {
         return await this._onActionWorkflow();
+      } else if (action.name === 'workflowFormal') {
+        return await this._onActionWorkflowFormal();
       } else if (action.name === 'layout') {
         return await this._onActionLayout();
       }

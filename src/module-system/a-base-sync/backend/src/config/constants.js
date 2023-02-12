@@ -30,7 +30,8 @@ module.exports = app => {
         enable: 6,
         disable: 7,
         layout: 15,
-        // report: 16,
+        workflowFormal: 16,
+        // report: 17,
 
         authorize: 25,
 
@@ -134,6 +135,17 @@ module.exports = app => {
           enableOnFlowing: true,
           disableInList: true,
           icon: { f7: '::view-list' },
+        },
+        workflowFormal: {
+          title: 'WorkFlow',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          enableOnStatic: true,
+          enableOnOpened: true,
+          enableOnFlowing: true,
+          directShowOnList: true,
+          stage: 'formal',
+          icon: { f7: '::flow-chart' },
         },
         authorize: {
           title: 'Authorize',
