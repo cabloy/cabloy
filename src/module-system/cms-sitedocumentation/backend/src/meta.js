@@ -18,6 +18,13 @@ module.exports = app => {
             category: true,
             tag: true,
             cms: true,
+            dict: {
+              states: {
+                draft: {
+                  dictKey: 'a-dictbooster:dictAtomStateDraft',
+                },
+              },
+            },
           },
           actions: {
             preview: {

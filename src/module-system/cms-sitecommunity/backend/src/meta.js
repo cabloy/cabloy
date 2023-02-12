@@ -27,6 +27,13 @@ module.exports = app => {
                 atomList: 'layoutAtomListPost',
               },
             },
+            dict: {
+              states: {
+                draft: {
+                  dictKey: 'a-dictbooster:dictAtomStateDraft',
+                },
+              },
+            },
           },
           actions: {
             preview: {

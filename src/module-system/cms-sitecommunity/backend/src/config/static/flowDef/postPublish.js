@@ -13,7 +13,11 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'post',
             },
+            atomStage: 0, // draft
             conditionExpression: null,
+            task: {
+              atomState: 0, // state: drafting
+            },
           },
         },
         {
@@ -24,6 +28,7 @@ module.exports = app => {
             assignees: {
               roles: 'superuser',
             },
+            atomState: 1,
             confirmation: false,
             bidding: true,
             schema: {
@@ -38,6 +43,9 @@ module.exports = app => {
           id: 'endEvent_1',
           name: 'End',
           type: 'endEventAtom',
+          options: {
+            atomState: 2,
+          },
         },
       ],
       edges: [
@@ -57,7 +65,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Community Post Publish',
     atomStaticKey: 'flowPostPublish',
-    atomRevision: 101,
+    atomRevision: 102,
     description: '',
     content: JSON.stringify(content),
   };
