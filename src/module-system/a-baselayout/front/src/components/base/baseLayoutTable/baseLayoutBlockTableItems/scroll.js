@@ -22,6 +22,7 @@ export default {
       this.tableHeight = size.height - _heightTableHeader;
     },
     _getTableScroll() {
+      const cellWidthDefault = this.$config.table.cell.width.default;
       const scroll = {};
       // y
       if (this.enableTableHeight) {
@@ -33,7 +34,7 @@ export default {
       for (const column of columns) {
         if (column.visible === false) continue;
         const width = column.width;
-        x += !width ? 110 : parseInt(width);
+        x += !width ? cellWidthDefault : parseInt(width);
       }
       scroll.x = x;
       // ok
