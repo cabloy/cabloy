@@ -12,55 +12,50 @@ export default {
   },
   data() {
     return {
-      searchQuery: null,
+      dict: null,
     };
   },
+  created() {
+    this._loadDict();
+  },
   methods: {
-    getComponentInstance() {
-      return this.$refs.tagSelect.getComponentInstance();
+    async _loadDict() {
+      const dictKey = this.filterContainer.atomStateDictKey;
+      this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
     },
     onChange() {
       const checked = this.getComponentInstance().checked();
       // eslint-disable-next-line
-      this.filterContainer.form.tag = checked;
+      this.filterContainer.form.atomState = checked;
     },
-    onPerformSelectLanguage() {
-      return this.filterContainer.onPerformSelectLanguage();
-    },
-    _renderSelectLanguage() {
-      return <eb-button propsOnPerform={this.onPerformSelectLanguage}>{this.$text('Select Language')}</eb-button>;
-    },
-    _renderTagSelect() {
-      const selectedTags = this.filterContainer.form.tag;
-      const options = {
-        props: {
-          atomClass: this.filterContainer.atomClass,
-          language: this.filterContainer.form.language,
-          multiple: false,
-          searchQuery: this.searchQuery,
-          selectedTags,
-          showBlockCurrent: false,
-        },
-        on: {
-          change: this.onChange,
-        },
-      };
-      return <eb-component ref="tagSelect" module="a-basefront" name="tagSelect" options={options}></eb-component>;
+    _renderStateSelect() {
+      if (!this.dict) return null;
+      // current state
+      const stateCurrent = this.filterContainer.form.state;
+      const children = [];
+      children.push(
+        <eb-list-item
+          key="All"
+          radio
+          checked={stateCurrent === undefined || stateCurrent === null}
+          title={this.$text('All')}
+        ></eb-list-item>
+      );
+      for (const item of this.dict._dictItems) {
+        children.push(
+          <eb-list-item
+            key={item.code}
+            radio
+            checked={stateCurrent === item.code}
+            title={item.titleLocale}
+          ></eb-list-item>
+        );
+      }
+      return <eb-list inset>{children}</eb-list>;
     },
   },
   render() {
-    let domSelectLanguage;
-    let domTagSelect;
-    if (this.filterContainer.atomClassBase.language && !this.filterContainer.form.language) {
-      domSelectLanguage = this._renderSelectLanguage();
-    } else {
-      domTagSelect = this._renderTagSelect();
-    }
-    return (
-      <div>
-        {domSelectLanguage}
-        {domTagSelect}
-      </div>
-    );
+    const domStateSelect = this._renderStateSelect();
+    return <div>{domStateSelect}</div>;
   },
 };

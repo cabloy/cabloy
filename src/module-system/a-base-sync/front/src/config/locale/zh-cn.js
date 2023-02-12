@@ -198,6 +198,7 @@ export default {
   AtomState: '数据状态',
   More: '更多',
   State: '状态',
+  All: '所有',
   'Role Name': '角色名称',
   'Role Type': '角色类型',
   'New Category': '新目录',

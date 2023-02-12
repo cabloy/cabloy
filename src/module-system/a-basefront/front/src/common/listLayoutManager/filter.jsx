@@ -4,11 +4,17 @@ export default {
   },
   methods: {
     async filter_onPrepareData() {
+      // state: maybe 0
+      let state = this.container.options && this.container.options.state;
+      if (state === undefined || state === null) {
+        state = null;
+      }
       // form
       const form = {
         atomName: null,
         mine: (this.container.options && this.container.options.mine) || 0,
         stage: (this.container.options && this.container.options.stage) || 'formal',
+        state,
         language: (this.container.options && this.container.options.language) || '',
         category: (this.container.options && this.container.options.category) || 0,
         tag: (this.container.options && this.container.options.tag) || 0,
@@ -122,6 +128,10 @@ export default {
         }
         if (form.tag) {
           options.tag = form.tag;
+        }
+        // state
+        if (form.state !== undefined && form.state !== null) {
+          options.where['a.atomState'] = form.state;
         }
       }
       // formAtomClass
