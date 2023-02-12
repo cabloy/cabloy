@@ -15,12 +15,22 @@ export default {
       dict: null,
     };
   },
+  computed: {
+    atomStateDictKey() {
+      return this.filterContainer.atomStateDictKey;
+    },
+  },
+  watch: {
+    atomStateDictKey() {
+      this._loadDict();
+    },
+  },
   created() {
     this._loadDict();
   },
   methods: {
     async _loadDict() {
-      const dictKey = this.filterContainer.atomStateDictKey;
+      const dictKey = this.atomStateDictKey;
       this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
     },
     onItemChange(event, item) {
