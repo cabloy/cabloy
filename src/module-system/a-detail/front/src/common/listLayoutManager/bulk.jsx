@@ -3,6 +3,8 @@ export default {
     return {
       bulk: {
         actions: null,
+        activeDetailKey: null,
+        hoverDetailKey: null,
       },
     };
   },

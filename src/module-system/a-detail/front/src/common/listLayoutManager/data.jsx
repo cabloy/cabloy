@@ -4,6 +4,8 @@ export default {
       data: {
         provider: {
           itemKey: 'detailId',
+          activeItemKey: 'activeDetailKey',
+          hoverItemKey: 'hoverDetailKey',
         },
       },
     };
