@@ -43,6 +43,8 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnSwipeout: true,
+          directShowOnList: true,
         },
         delete: {
           title: 'Delete',
@@ -52,6 +54,8 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnSwipeout: true,
+          directShowOnList: true,
         },
         clone: {
           title: 'Clone',
@@ -70,6 +74,7 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          disableOnItem: true,
         },
         moveDown: {
           title: 'Move Down',
@@ -79,6 +84,7 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          disableOnItem: true,
         },
         save: {
           title: 'Save',

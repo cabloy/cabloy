@@ -21,7 +21,10 @@ export default {
       let actions = this.actions_itemActions;
       if (!actions) return null;
       // just remove write
-      actions = actions.filter(item => ['write'].indexOf(item.name) === -1);
+      actions = actions.filter(action => {
+        const _action = this.getDetailAction(action);
+        return !['write'].includes(action.name) && !_action.disableOnItem;
+      });
       // ok
       return actions.length > 0 ? actions : null;
     },
