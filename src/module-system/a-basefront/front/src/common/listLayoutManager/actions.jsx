@@ -15,8 +15,8 @@ export default {
       actions = actions.filter(action => {
         if (action.actionMode === 1) return true;
         const _action = this.getAction(action);
-        // filter: view/disableInList
-        return action.code !== 2 && !_action.disableInList;
+        // filter: view/disableOnList
+        return action.code !== 2 && !_action.disableOnList;
       });
       // workflow
       if (item.atomStage === 0 && item.atomFlowId > 0) {

@@ -133,7 +133,7 @@ module.exports = app => {
           enableOnStatic: true,
           enableOnOpened: true,
           enableOnFlowing: true,
-          disableInList: true,
+          disableOnList: true,
           icon: { f7: '::view-list' },
         },
         workflowFormal: {
