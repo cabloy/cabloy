@@ -81,9 +81,18 @@ export default {
   },
   methods: {
     async actions_fetchActions() {
-      this.actions.list = await this.$api.post('/a/base/atom/actions', {
+      let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: this.container.atomId },
       });
+      // filter
+      actions = actions.filter(action => {
+        if (action.actionMode === 1) return true;
+        const _action = this.getAction(action);
+        // filter: disableOnItem
+        return !_action.disableOnItem;
+      });
+      // ok
+      this.actions.list = actions;
     },
     actions_findAction(actionName) {
       if (!this.actions.list) return null;

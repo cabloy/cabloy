@@ -14,7 +14,9 @@ export default {
       const actions = this.actions.list;
       // just remove read
       //    should show write/moveUp/moveDown
-      return actions.filter(item => ['read'].indexOf(item.name) === -1);
+      return actions.filter(action => {
+        return !['read'].includes(action.name);
+      });
     },
     actions_listPopover() {
       if (!this.base_ready) return null;
@@ -22,8 +24,7 @@ export default {
       if (!actions) return null;
       // just remove write
       actions = actions.filter(action => {
-        const _action = this.getDetailAction(action);
-        return !['write'].includes(action.name) && !_action.disableOnItem;
+        return !['write'].includes(action.name);
       });
       // ok
       return actions.length > 0 ? actions : null;
@@ -32,12 +33,19 @@ export default {
   methods: {
     async actions_fetchActions() {
       if (this.actions.list) return;
-      this.actions.list = await this.$api.post('/a/detail/detail/actions', {
+      let actions = await this.$api.post('/a/detail/detail/actions', {
         flowTaskId: this.container.flowTaskId,
         atomKey: { atomId: this.base.item.atomId },
         detailClass: this.base.detailClass,
         mode: this.container.mode,
       });
+      // filter
+      actions = actions.filter(action => {
+        const _action = this.getDetailAction(action);
+        // filter: disableOnItem
+        return !_action.disableOnItem;
+      });
+      this.actions.list = actions;
     },
     actions_findAction(actionName) {
       if (!this.actions_itemActions) return null;
