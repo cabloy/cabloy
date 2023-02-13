@@ -22,7 +22,7 @@ export default {
         const valid = this.item_prepareActions_rightmore_checkIfShow(action, actionBase, mode, location);
         if (!valid) continue;
         actionsRight.push({
-          key: action.id,
+          key: action.code, // not use action.id
           title: this.item_getActionTitle(action, item),
           icon: {
             f7: actionBase.icon && actionBase.icon.f7,

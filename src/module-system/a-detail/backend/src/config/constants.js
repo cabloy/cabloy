@@ -74,6 +74,7 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnList: true,
           disableOnItem: true,
         },
         moveDown: {
@@ -84,6 +85,7 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnList: true,
           disableOnItem: true,
         },
         save: {
