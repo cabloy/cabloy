@@ -89,6 +89,7 @@ export default {
             key={actionName}
             ref="buttonSave"
             iconF7={actionIcon}
+            tooltip={this.$text('Save')}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
         );
@@ -97,6 +98,7 @@ export default {
             key="saveDone"
             ref="buttonSaveDone"
             iconF7="::done"
+            tooltip={this.$text('SaveAndReturn')}
             propsOnPerform={event => this.actions_onSaveDone(event)}
           ></eb-link>
         );
@@ -104,7 +106,12 @@ export default {
       //
       if (this.actions_listPopover) {
         children.push(
-          <f7-link key="actionsPopover" iconF7="::more-horiz" popover-open={`#${this.actions.popoverId}`}></f7-link>
+          <f7-link
+            key="actionsPopover"
+            iconF7="::more-horiz"
+            tooltip={this.$text('More')}
+            popover-open={`#${this.actions.popoverId}`}
+          ></f7-link>
         );
       }
       //
