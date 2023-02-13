@@ -1,4 +1,8 @@
+import Actions from './item_actions.jsx';
+import ContextMenu from './item_contextMenu.jsx';
+
 export default {
+  mixins: [Actions, ContextMenu],
   methods: {
     async item_onAction(event, item, action) {
       const _action = this.getDetailAction(action);
