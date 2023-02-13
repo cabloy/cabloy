@@ -36,18 +36,14 @@ export default {
         },
       });
     },
-    bulk_loadActions() {
+    async bulk_loadActions() {
       if (this.bulk.actions) return;
-      this.$api
-        .post('/a/detail/detail/actionsBulk', {
-          flowTaskId: this.container.flowTaskId,
-          atomKey: { atomId: this.container.atomId },
-          detailClass: this.container.detailClass,
-          mode: this.container.mode,
-        })
-        .then(data => {
-          this.bulk.actions = data;
-        });
+      this.bulk.actions = await this.$api.post('/a/detail/detail/actionsBulk', {
+        flowTaskId: this.container.flowTaskId,
+        atomKey: { atomId: this.container.atomId },
+        detailClass: this.container.detailClass,
+        mode: this.container.mode,
+      });
     },
     bulk_renderActionsRight() {
       const children = [];
