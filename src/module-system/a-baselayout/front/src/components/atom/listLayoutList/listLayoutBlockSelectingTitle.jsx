@@ -35,11 +35,19 @@ export default {
     },
   },
   render() {
+    let domDone;
+    if (this.selectedAtoms.length > 0) {
+      domDone = <eb-link iconF7="::done" tooltip={this.$text('Done')} propsOnPerform={this.onPerformDone}></eb-link>;
+    }
     return (
       <f7-nav-right>
-        <eb-link iconF7="::sort" propsOnPerform={event => this.onPerformAtomOrders(event)}></eb-link>
-        <eb-link iconF7="::search" propsOnPerform={this.onPerformFilter}></eb-link>
-        {this.selectedAtoms.length > 0 && <eb-link iconF7="::done" propsOnPerform={this.onPerformDone}></eb-link>}
+        <eb-link
+          iconF7="::sort"
+          tooltip={this.$text('Sort')}
+          propsOnPerform={event => this.onPerformAtomOrders(event)}
+        ></eb-link>
+        <eb-link iconF7="::search" tooltip={this.$text('Search')} propsOnPerform={this.onPerformFilter}></eb-link>
+        {domDone}
       </f7-nav-right>
     );
   },
