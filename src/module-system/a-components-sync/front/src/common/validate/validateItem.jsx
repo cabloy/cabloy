@@ -322,12 +322,13 @@ export default {
     getAtomId(context) {
       const { parcel, property } = context;
       // atomId: maybe from host
-      let atomId = (this.validate.host && this.validate.host.atomId) || property.ebParams.atomId;
+      let atomId = (this.validate.host && this.validate.host.atomId) || (property.ebParams && property.ebParams.atomId);
       if (typeof atomId === 'string') {
         atomId = parcel.data[atomId] || 0;
       } else {
         atomId = atomId || 0;
       }
+      return atomId;
     },
     onSubmit(event) {
       this.validate.onSubmit(event);
