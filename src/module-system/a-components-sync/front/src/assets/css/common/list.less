@@ -61,7 +61,23 @@
     color: var(--f7-list-item-after-text-color);
   }
 
-  form.list div.item-input {
+  form.list div.item-input.item-title-floating-label {
+    &.item-input-clear-button {
+      span.input-clear-button {
+        visibility: hidden;
+      }
+    }
+    &.item-input-clear-button.item-input-with-value.item-input-focused {
+      input.input-with-value {
+        padding-right: var(--f7-input-clear-button-size);
+      }
+      span.input-clear-button {
+        visibility: visible;
+      }
+    }
+  }
+
+  form.list div.item-input:not(.item-title-floating-label) {
     input {
       text-align: right;
     }
@@ -82,9 +98,6 @@
     }
 
     &.item-input-clear-button.item-input-with-value.item-input-focused {
-      input.input-with-value {
-        //padding-right: var(--f7-input-clear-button-size);
-      }
       span.input-clear-button {
         visibility: visible;
         left: 0;
