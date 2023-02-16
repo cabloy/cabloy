@@ -62,6 +62,19 @@
   }
 
   form.list div.item-input {
+    input {
+      text-align: right;
+    }
+    textarea {
+      text-align: right;
+    }
+    .item-input-error-message {
+      text-align: right;
+    }
+    .item-input-info {
+      text-align: right;
+    }
+
     &.item-input-clear-button {
       span.input-clear-button {
         visibility: hidden;
@@ -70,10 +83,11 @@
 
     &.item-input-clear-button.item-input-with-value.item-input-focused {
       input.input-with-value {
-        padding-right: var(--f7-input-clear-button-size);
+        //padding-right: var(--f7-input-clear-button-size);
       }
       span.input-clear-button {
         visibility: visible;
+        left: 0;
       }
     }
   }
