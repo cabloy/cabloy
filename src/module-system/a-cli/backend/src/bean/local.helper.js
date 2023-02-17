@@ -170,26 +170,28 @@ module.exports = ctx => {
           cwd,
         },
       });
-      if (stdout.indexOf('nothing to commit, working tree clean') > -1) {
+      if (stdout.indexOf('nothing to commit, working tree clean') > -1 && stdout.indexOf('is ahead of') === -1) {
         // do nothing
         return;
       }
-      // git add .
-      await this.spawnExe({
-        cmd: 'git',
-        args: ['add', '.'],
-        options: {
-          cwd,
-        },
-      });
-      // git commit
-      await this.spawnExe({
-        cmd: 'git',
-        args: ['commit', '-m', message],
-        options: {
-          cwd,
-        },
-      });
+      if (stdout.indexOf('is ahead of') === -1) {
+        // git add .
+        await this.spawnExe({
+          cmd: 'git',
+          args: ['add', '.'],
+          options: {
+            cwd,
+          },
+        });
+        // git commit
+        await this.spawnExe({
+          cmd: 'git',
+          args: ['commit', '-m', message],
+          options: {
+            cwd,
+          },
+        });
+      }
       // git push
       await this.spawnExe({
         cmd: 'git',
