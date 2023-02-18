@@ -84,7 +84,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql = `select ${_itemField}
+      const _sql = `select ${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,a.atomState,
@@ -96,7 +96,6 @@ module.exports = ctx => {
                 ${_labelField}
                 ${_resourceField}
                 ${_flowField}
-                ${_cmsField}
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id

@@ -162,7 +162,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `${_itemField}
+        _selectFields = `${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,a.atomState,
@@ -172,7 +172,6 @@ module.exports = ctx => {
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField} ${_labelField} ${_commentField}
                 ${_fileField} ${_flowField}
-                ${_cmsField}
               `;
       }
 
