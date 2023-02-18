@@ -151,7 +151,7 @@ module.exports = app => {
           },
         },
         {
-          atomStaticKey: 'test-note:widgetAbout',
+          atomStaticKey: 'test-party:widgetAbout',
           id: '8a04bfa743fb42b2a65a104e018ab924',
           properties: {
             height: {
@@ -182,7 +182,7 @@ module.exports = app => {
   const dashboard = {
     atomName: 'Home',
     atomStaticKey: 'dashboardHome',
-    atomRevision: 21,
+    atomRevision: 22,
     description: 'Home(Authenticated)',
     content: JSON.stringify(content),
     resourceRoles: 'root',

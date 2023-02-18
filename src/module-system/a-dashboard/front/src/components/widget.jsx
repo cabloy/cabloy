@@ -415,8 +415,8 @@ export default {
       if (fullName === 'test-party:widgetSimpleChat') {
         fullName = 'test-note:widgetSimpleChat';
       }
-      if (fullName === 'a-dashboard:widgetAbout') {
-        fullName = 'test-note:widgetAbout';
+      if (fullName === 'a-dashboard:widgetAbout' || fullName === 'test-note:widgetAbout') {
+        fullName = 'test-party:widgetAbout';
       }
       return fullName;
     },
