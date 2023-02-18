@@ -6,15 +6,21 @@
   "configurations": [
     {
       "name": "dev:backend",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev:backend"]
     },
     {
+      "name": "dev:backend",
+      "type": "node",
+      "request": "attach",
+      "cwd": "${workspaceRoot}"
+    },
+    {
       "name": "test:backend",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
@@ -22,7 +28,7 @@
     },
     {
       "name": "cov:backend",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
@@ -30,7 +36,7 @@
     },
     {
       "name": "dev:front",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
@@ -38,7 +44,7 @@
     },
     {
       "name": "build:backend:test-party",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}/src/module-vendor/test-party",
       "runtimeExecutable": "npm",
