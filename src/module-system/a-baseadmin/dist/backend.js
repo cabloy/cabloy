@@ -364,7 +364,7 @@ module.exports = app => {
                 dataIndex: 'atomName',
                 title: 'Role Name',
                 align: 'left',
-                width: '300px',
+                width: 300,
                 component: {
                   module: 'a-baselayout',
                   name: 'listLayoutTableCellAtomName',
@@ -414,7 +414,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Role',
     atomStaticKey: 'layoutAtomListRole',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

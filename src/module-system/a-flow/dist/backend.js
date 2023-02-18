@@ -58,7 +58,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update flowDef
       const data = await this.ctx.model.flowDef.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.flowDef.update(data);
       // update content
       await this.ctx.model.flowDefContent.update(
@@ -81,7 +80,7 @@ module.exports = app => {
       // deploy
       const _atom = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
       if (_atom.atomStage === 1) {
-        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
+        await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true, deleting: true });
       }
       // super
       await super.delete({ atomClass, key, options, user });
@@ -124,6 +123,34 @@ module.exports = app => {
 /***/ }),
 
 /***/ 5869:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const flow_0 = __webpack_require__(2246);
+const flow_assignees = __webpack_require__(7659);
+const flow_load = __webpack_require__(458);
+const flow_query = __webpack_require__(7384);
+const flow_start = __webpack_require__(635);
+const flow_utils = __webpack_require__(1029);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(
+    flow_0,
+    [
+      //
+      flow_assignees,
+      flow_load,
+      flow_query,
+      flow_start,
+      flow_utils,
+    ],
+    ctx
+  );
+};
+
+
+/***/ }),
+
+/***/ 2246:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -145,62 +172,137 @@ module.exports = ctx => {
     get sqlProcedure() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
     }
+  }
 
-    async startByKey({ flowDefKey, flowAtomId, flowVars, flowUserId, startEventId }) {
-      // fullKey
-      const { fullKey } = ctx.bean.flowDef._combineFullKey({ flowDefKey });
-      // get flow def
-      const flowDef = await ctx.bean.flowDef.getByKey({ flowDefKey });
-      if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
-      if (flowDef.atomDisabled === 1) ctx.throw.module(moduleInfo.relativeName, 1002, fullKey);
-      return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
+  return Flow;
+};
+
+
+/***/ }),
+
+/***/ 7659:
+/***/ ((module) => {
+
+const __VARTITLES = {
+  flowUser: 'FlowInitiator',
+  auto: 'FlowVarAutoPick',
+};
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Flow {
+    async normalizeAssignees({ users, roles, vars }) {
+      const assignees = {};
+      assignees.users = await this._normalizeAssignees_users(users);
+      assignees.roles = await this._normalizeAssignees_roles(roles);
+      assignees.vars = await this._normalizeAssignees_vars(vars);
+      return assignees;
     }
 
-    async startById({ flowDefId, flowAtomId, flowVars, flowUserId, startEventId }) {
-      // get flow def
-      const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
-      if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefId);
-      if (flowDef.atomDisabled === 1) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.atomStaticKey);
-      return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
+    async _normalizeAssignees_users(str) {
+      if (!str) return [];
+      // userIds
+      const userIds = await this._adjustAssignees_userIds(str);
+      if (userIds.length === 0) return [];
+      // select
+      return await ctx.bean.user.select({
+        options: {
+          where: {
+            'f.disabled': 0,
+            'f.id': userIds,
+          },
+          orders: [['f.userName', 'asc']],
+          removePrivacy: true,
+        },
+      });
     }
 
-    evaluateExpression({ expression, globals }) {
-      return ctx.bean.util.evaluateExpression({ expression, globals });
+    async _normalizeAssignees_roles(str) {
+      if (!str) return [];
+      // roleIds
+      const roleIds = await this._adjustAssignees_roleIds(str);
+      if (roleIds.length === 0) return [];
+      // select
+      return await ctx.bean.role.model.select({
+        where: {
+          id: roleIds,
+        },
+      });
     }
 
-    async executeService({ bean, parameterExpression, parameter, globals }) {
-      if (parameterExpression !== undefined) {
-        parameter = this.evaluateExpression({ expression: parameterExpression, globals });
+    async _normalizeAssignees_vars(str) {
+      if (!str) return [];
+      // vars
+      const _vars = await this._adjustAssignees_vars(str);
+      // title
+      return _vars.map(item => {
+        const title = __VARTITLES[item] || item;
+        // others
+        return {
+          name: item,
+          title,
+          titleLocale: ctx.text(title),
+        };
+      });
+    }
+
+    async _adjustAssignees_userIds(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
       }
-      return await this._executeServiceInner({ bean, parameter, globals });
+      return str.map(item => {
+        return typeof item === 'object' ? item.id : parseInt(item);
+      });
     }
 
-    async _executeServiceInner({ bean, parameter, globals }) {
-      if (!bean) throw new Error('flow service bean is not set');
-      // bean
-      const beanFullName = `${bean.module}.flow.service.${bean.name}`;
-      const beanInstance = ctx.bean._getBean(beanFullName);
-      if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
-      if (Object.getPrototypeOf(Object.getPrototypeOf(beanInstance)).constructor.name !== 'FlowServiceBase') {
-        throw new Error(`bean should extends FlowServiceBase: ${beanFullName}`);
+    async _adjustAssignees_roleIds(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
       }
-      // context
-      const context = Object.assign({}, globals);
-      if (parameter !== undefined) {
-        context.parameter = parameter;
+      const arr = [];
+      for (const item of str) {
+        if (typeof item === 'object') {
+          // object
+          arr.push(item.id);
+        } else if (isNaN(item)) {
+          // string
+          const role = await ctx.bean.role.parseRoleName({ roleName: item });
+          if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
+          arr.push(role.id);
+        } else {
+          // number
+          arr.push(item);
+        }
       }
-      return await beanInstance.execute(context);
-    }
-
-    async _start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId }) {
-      // flowInstance
-      const flowInstance = this._createFlowInstance({ flowDef });
-      // start
-      await flowInstance.start({ flowAtomId, flowVars, flowUserId, startEventId });
       // ok
-      return flowInstance;
+      return arr;
     }
 
+    async _adjustAssignees_vars(str) {
+      if (!str) return null;
+      if (!Array.isArray(str)) {
+        str = str.toString().split(',');
+      }
+      return str.map(item => {
+        return typeof item === 'object' ? item.name : item;
+      });
+    }
+  }
+
+  return Flow;
+};
+
+
+/***/ }),
+
+/***/ 458:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Flow {
     async _loadFlowInstance({ flowId, history }) {
       // flow
       let flow;
@@ -228,13 +330,6 @@ module.exports = ctx => {
       return flowInstance;
     }
 
-    _createFlowInstance({ flowDef }) {
-      const flowInstance = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.flow`, {
-        flowDef,
-      });
-      return flowInstance;
-    }
-
     async _loadFlowNodeInstance({ flowNodeId, history }) {
       // get
       let flowNode;
@@ -253,111 +348,20 @@ module.exports = ctx => {
       const flowNodeInstance = await flowInstance._loadNodeInstance({ flowNode, history });
       return flowNodeInstance;
     }
+  }
 
-    async normalizeAssignees({ users, roles, vars }) {
-      const assignees = {};
-      assignees.users = await this._normalizeAssignees_users(users);
-      assignees.roles = await this._normalizeAssignees_roles(roles);
-      assignees.vars = await this._normalizeAssignees_vars(vars);
-      return assignees;
-    }
+  return Flow;
+};
 
-    async _normalizeAssignees_users(str) {
-      if (!str) return [];
-      // userIds
-      const userIds = await this._parseAssignees_userIds(str);
-      if (userIds.length === 0) return [];
-      // select
-      return await ctx.bean.user.select({
-        options: {
-          where: {
-            'f.disabled': 0,
-            'f.id': userIds,
-          },
-          orders: [['f.userName', 'asc']],
-          removePrivacy: true,
-        },
-      });
-    }
 
-    async _normalizeAssignees_roles(str) {
-      if (!str) return [];
-      // roleIds
-      const roleIds = await this._parseAssignees_roleIds(str);
-      if (roleIds.length === 0) return [];
-      // select
-      return await ctx.bean.role.model.select({
-        where: {
-          id: roleIds,
-        },
-      });
-    }
+/***/ }),
 
-    async _normalizeAssignees_vars(str) {
-      if (!str) return [];
-      // vars
-      const _vars = await this._parseAssignees_vars(str);
-      // title
-      return _vars.map(item => {
-        let title;
-        if (item === 'flowUser') {
-          title = 'FlowInitiator';
-        } else {
-          title = item;
-        }
-        // others
-        return {
-          name: item,
-          title,
-          titleLocale: ctx.text(title),
-        };
-      });
-    }
+/***/ 7384:
+/***/ ((module) => {
 
-    async _parseAssignees_userIds(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str.map(item => {
-        return typeof item === 'object' ? item.id : parseInt(item);
-      });
-    }
-
-    async _parseAssignees_roleIds(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      const arr = [];
-      for (const item of str) {
-        if (typeof item === 'object') {
-          // object
-          arr.push(item.id);
-        } else if (isNaN(item)) {
-          // string
-          const role = await ctx.bean.role.parseRoleName({ roleName: item });
-          if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
-          arr.push(role.id);
-        } else {
-          // number
-          arr.push(item);
-        }
-      }
-      // ok
-      return arr;
-    }
-
-    async _parseAssignees_vars(str) {
-      if (!str) return null;
-      if (!Array.isArray(str)) {
-        str = str.toString().split(',');
-      }
-      return str.map(item => {
-        return typeof item === 'object' ? item.name : item;
-      });
-    }
-
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Flow {
     async count({ options, user }) {
       return await this.select({ options, user, count: 1 });
     }
@@ -376,6 +380,12 @@ module.exports = ctx => {
     }
 
     async get({ flowId, history, user }) {
+      // check workflowFormal
+      const res = await this._checkWorkflowFormal({ flowId, user });
+      if (res) {
+        user = { id: 0 };
+      }
+      // where
       const where = {};
       if (history) {
         where['a.flowId'] = flowId;
@@ -406,6 +416,105 @@ module.exports = ctx => {
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
+    }
+
+    async _checkWorkflowFormal({ flowId, user }) {
+      const flowItem = await ctx.bean.flow.modelFlowHistory.get({ flowId });
+      const atomId = flowItem.flowAtomId;
+      if (!atomId) return null;
+      return await ctx.bean.atom.checkRightAction({
+        atom: { id: atomId },
+        action: 'workflowFormal',
+        user,
+      });
+    }
+  }
+
+  return Flow;
+};
+
+
+/***/ }),
+
+/***/ 635:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Flow {
+    async startByKey({ flowDefKey, flowAtomId, flowVars, flowUserId, startEventId }) {
+      // fullKey
+      const { fullKey } = ctx.bean.flowDef._combineFullKey({ flowDefKey });
+      // get flow def
+      const flowDef = await ctx.bean.flowDef.getByKey({ flowDefKey });
+      if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, fullKey);
+      if (flowDef.atomDisabled === 1) ctx.throw.module(moduleInfo.relativeName, 1002, fullKey);
+      return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
+    }
+
+    async startById({ flowDefId, flowAtomId, flowVars, flowUserId, startEventId }) {
+      // get flow def
+      const flowDef = await ctx.bean.flowDef.getById({ flowDefId });
+      if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flowDefId);
+      if (flowDef.atomDisabled === 1) ctx.throw.module(moduleInfo.relativeName, 1002, flowDef.atomStaticKey);
+      return await this._start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId });
+    }
+
+    async _start({ flowDef, flowAtomId, flowVars, flowUserId, startEventId }) {
+      // flowInstance
+      const flowInstance = this._createFlowInstance({ flowDef });
+      // start
+      await flowInstance.start({ flowAtomId, flowVars, flowUserId, startEventId });
+      // ok
+      return flowInstance;
+    }
+
+    _createFlowInstance({ flowDef }) {
+      const flowInstance = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.flow`, {
+        flowDef,
+      });
+      return flowInstance;
+    }
+  }
+
+  return Flow;
+};
+
+
+/***/ }),
+
+/***/ 1029:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Flow {
+    evaluateExpression({ expression, globals }) {
+      return ctx.bean.util.evaluateExpression({ expression, globals });
+    }
+
+    async executeService({ bean, parameterExpression, parameter, globals }) {
+      if (parameterExpression !== undefined) {
+        parameter = this.evaluateExpression({ expression: parameterExpression, globals });
+      }
+      return await this._executeServiceInner({ bean, parameter, globals });
+    }
+
+    async _executeServiceInner({ bean, parameter, globals }) {
+      if (!bean) throw new Error('flow service bean is not set');
+      // bean
+      const beanFullName = `${bean.module}.flow.service.${bean.name}`;
+      const beanInstance = ctx.bean._getBean(beanFullName);
+      if (!beanInstance) throw new Error(`bean not found: ${beanFullName}`);
+      if (Object.getPrototypeOf(Object.getPrototypeOf(beanInstance)).constructor.name !== 'FlowServiceBase') {
+        throw new Error(`bean should extends FlowServiceBase: ${beanFullName}`);
+      }
+      // context
+      const context = Object.assign({}, globals);
+      if (parameter !== undefined) {
+        context.parameter = parameter;
+      }
+      return await beanInstance.execute(context);
     }
   }
 
@@ -462,7 +571,7 @@ module.exports = ctx => {
       return null;
     }
 
-    async deploy({ flowDefId, undeploy }) {
+    async deploy({ flowDefId, undeploy, deleting }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
       if (!flowDef) return;
@@ -480,6 +589,9 @@ module.exports = ctx => {
             deploy: !undeploy && flowDef.atomDisabled === 0,
             flowDefId,
             node,
+            deleting,
+            flowDef,
+            content,
           });
         }
       }
@@ -941,6 +1053,28 @@ module.exports = ctx => {
 /***/ 59:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const flow_0 = __webpack_require__(3595);
+const flow_assignees = __webpack_require__(8571);
+const flow_endFlow = __webpack_require__(2);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(
+    flow_0,
+    [
+      //
+      flow_assignees,
+      flow_endFlow,
+    ],
+    ctx
+  );
+};
+
+
+/***/ }),
+
+/***/ 3595:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
 const VarsFn = __webpack_require__(1418);
 const UtilsFn = __webpack_require__(9294);
 
@@ -1085,115 +1219,6 @@ module.exports = ctx => {
       this.context._flowVars._dirty = false;
     }
 
-    async _endFlow_handleAtom(options) {
-      if (!options.atom) return;
-      const atomId = this.context._flow.flowAtomId;
-      if (!atomId) return;
-      if (options.atom.submit) {
-        // submit: _submitDirect
-        await ctx.bean.atom._submitDirect({
-          key: { atomId },
-          item: this.context._atom,
-          user: { id: this.context._atom.userIdUpdated },
-        });
-      } else if (options.atom.close) {
-        // close draft
-        await ctx.bean.atom.closeDraft({
-          key: { atomId },
-        });
-      }
-    }
-
-    async _endFlow(options) {
-      options = options || {};
-      const flowHandleStatus = options.flowHandleStatus || 1;
-      const flowRemark = options.flowRemark || null;
-      const flowId = this.context._flowId;
-      const flowStatus = this.constant.flow.status.end;
-      const timeEnd = new Date();
-      // check if end
-      if (this.context._flow.flowStatus === flowStatus) {
-        ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
-      }
-      // handle atom
-      await this._endFlow_handleAtom(options);
-      // tail
-      ctx.tail(async () => {
-        // need not in transaction
-        // flow: update fields for onFlowEnd
-        this.context._flow.flowStatus = flowStatus;
-        this.context._flow.flowHandleStatus = flowHandleStatus;
-        this.context._flow.flowRemark = flowRemark;
-        this.context._flow.timeEnd = timeEnd;
-        await this.modelFlow.delete({ id: flowId });
-        // flow history
-        this.context._flowHistory.flowStatus = flowStatus;
-        this.context._flowHistory.flowHandleStatus = flowHandleStatus;
-        this.context._flowHistory.flowRemark = flowRemark;
-        this.context._flowHistory.timeEnd = timeEnd;
-        await this.modelFlowHistory.update(this.context._flowHistory);
-        // raise event: onFlowEnd
-        await this._flowListener.onFlowEnd(options);
-        // clear nodes
-        await this._clearNodeRemains();
-        // publish uniform message
-        await this._endFlowPublish();
-        // log
-        // console.log(`--------flow end: ${flowId}`);
-      });
-      // notify
-      this._notifyFlowInitiateds(this.context._flow.flowUserId);
-    }
-
-    async _endFlowPublish() {
-      // publish uniform message
-      const userOp = this._getOpUser();
-      const flowUserId = this.context._flow.flowUserId;
-      if (flowUserId !== userOp.id) {
-        const userFlow = await ctx.bean.user.get({ id: flowUserId });
-        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(
-          userFlow.locale,
-          this.context._flow.flowRemark || 'End'
-        )}`;
-        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}`;
-        const message = {
-          userIdTo: flowUserId,
-          content: {
-            issuerId: userFlow.id,
-            issuerName: userFlow.userName,
-            issuerAvatar: userFlow.avatar,
-            title,
-            body: this.context._flow.flowName,
-            actionPath,
-            params: {
-              flowId: this.context._flowId,
-            },
-          },
-        };
-        // jump out of the transaction
-        ctx.tail(async () => {
-          await ctx.bean.io.publish({
-            message,
-            messageClass: {
-              module: 'a-flow',
-              messageClassName: 'workflow',
-            },
-          });
-        });
-      }
-    }
-
-    async _clearNodeRemains() {
-      const flowId = this.context._flowId;
-      const flowNodes = await this.modelFlowNode.select({
-        where: { flowId },
-      });
-      for (const flowNode of flowNodes) {
-        const flowNodeInstance = await this._loadNodeInstance({ flowNode });
-        await flowNodeInstance.clear({ flowNodeHandleStatus: 0 });
-      }
-    }
-
     async _createFlow({ flowName, flowAtomId, flowVars, flowUserId }) {
       // flowName
       if (!flowName && flowAtomId) {
@@ -1311,80 +1336,6 @@ module.exports = ctx => {
       return null;
     }
 
-    async _parseAssignees({ users, roles, vars }) {
-      // init
-      let assignees = [];
-
-      // 1. users
-      const _users = await this._parseAssignees_users(users);
-      if (_users) {
-        assignees = assignees.concat(_users);
-      }
-
-      // 2. roles
-      const _roles = await this._parseAssignees_roles(roles);
-      if (_roles) {
-        assignees = assignees.concat(_roles);
-      }
-
-      // 3. vars
-      const _vars = await this._parseAssignees_vars(vars);
-      if (_vars) {
-        assignees = assignees.concat(_vars);
-      }
-
-      // unique
-      assignees = Set.unique(assignees);
-
-      // ok
-      return assignees;
-    }
-
-    async _parseAssignees_users(str) {
-      if (!str) return null;
-      return await ctx.bean.flow._parseAssignees_userIds(str);
-    }
-
-    async _parseAssignees_roles(str) {
-      if (!str) return null;
-      // roleIds
-      const roleIds = await ctx.bean.flow._parseAssignees_roleIds(str);
-      // users
-      let users = [];
-      for (const roleId of roleIds) {
-        const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
-        users = users.concat(list.map(item => item.id));
-      }
-      // ok
-      return users;
-    }
-
-    async _parseAssignees_vars(str) {
-      if (!str) return null;
-      // vars
-      const _vars = await ctx.bean.flow._parseAssignees_vars(str);
-      // users
-      let users = [];
-      for (const _var of _vars) {
-        const userId = await this._parseUserVar({ _var });
-        if (userId) {
-          if (Array.isArray(userId)) {
-            users = users.concat(userId);
-          } else {
-            users.push(userId);
-          }
-        }
-      }
-      // ok
-      return users;
-    }
-
-    async _parseUserVar({ _var }) {
-      if (_var === 'flowUser') {
-        return this.context._flow.flowUserId;
-      }
-    }
-
     _getOpUser() {
       let user = ctx.state.user && ctx.state.user.op;
       if (!user || user.anonymous === 1) {
@@ -1400,6 +1351,262 @@ module.exports = ctx => {
           module: moduleInfo.relativeName,
           name: 'flowInitiateds',
           user: { id: flowUserId },
+        });
+      }
+    }
+  }
+
+  return FlowInstance;
+};
+
+
+/***/ }),
+
+/***/ 8571:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowInstance {
+    async _parseAssignees({ nodeInstance, assignees }) {
+      const { users, roles, vars } = assignees;
+      // init
+      let userIds = [];
+
+      // 1. users
+      const _users = await this._parseAssignees_users(users);
+      if (_users) {
+        userIds = userIds.concat(_users);
+      }
+
+      // 2. roles
+      const _roles = await this._parseAssignees_roles(roles);
+      if (_roles) {
+        userIds = userIds.concat(_roles);
+      }
+
+      // 3. vars
+      const _vars = await this._parseAssignees_vars({ nodeInstance, vars });
+      if (_vars) {
+        userIds = userIds.concat(_vars);
+      }
+
+      // unique
+      userIds = Set.unique(userIds);
+
+      // ok
+      return userIds;
+    }
+
+    async _parseAssignees_users(str) {
+      if (!str) return null;
+      return await ctx.bean.flow._adjustAssignees_userIds(str);
+    }
+
+    async _parseAssignees_roles(str) {
+      if (!str) return null;
+      // roleIds
+      const roleIds = await ctx.bean.flow._adjustAssignees_roleIds(str);
+      // users
+      let users = [];
+      for (const roleId of roleIds) {
+        const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
+        users = users.concat(list.map(item => item.id));
+      }
+      // ok
+      return users;
+    }
+
+    async _parseAssignees_vars({ nodeInstance, vars }) {
+      if (!vars) return null;
+      // vars
+      const _vars = await ctx.bean.flow._adjustAssignees_vars(vars);
+      // users
+      let users = [];
+      for (const _var of _vars) {
+        const userId = await this._parseUserVar({ nodeInstance, _var });
+        if (userId) {
+          if (Array.isArray(userId)) {
+            users = users.concat(userId);
+          } else {
+            users.push(userId);
+          }
+        }
+      }
+      // ok
+      return users;
+    }
+
+    async _parseUserVar({ nodeInstance, _var }) {
+      // flowUser
+      if (_var === 'flowUser') {
+        return this._parseUserVar_flowUser({ nodeInstance });
+      }
+      // auto
+      if (_var === 'auto') {
+        return await this._parseUserVar_auto({ nodeInstance });
+      }
+    }
+
+    _parseUserVar_flowUser(/* { nodeInstance }*/) {
+      return this.context._flow.flowUserId;
+    }
+
+    async _parseUserVar_auto({ nodeInstance }) {
+      const flowKey = this.context._flowDef.atomStaticKey;
+      const nodeDefId = nodeInstance.contextNode._nodeDef.id;
+      const nodeDefName = nodeInstance.contextNode._nodeDef.name;
+      const atom = this.context.atom;
+      // get action
+      const action = await ctx.bean.atomAction.getByModeFlow({
+        atomClassId: atom.atomClassId,
+        flowKey,
+        nodeDefId,
+        nodeDefName,
+      });
+      const sql = `
+          select * from aViewUserRightAtomClassRole
+            where iid=? and atomClassId=? and action=? and roleIdWhom=? and
+      (areaScope is null or ? is null or (areaKey=? and POSITION(areaScope in ?)=1) )
+      `;
+      const items = await ctx.model.query(sql, [
+        atom.iid,
+        atom.atomClassId,
+        action.code,
+        atom.roleIdOwner,
+        atom.atomAreaValue,
+        atom.atomAreaKey,
+        atom.atomAreaValue,
+      ]);
+      // ok
+      return items.map(item => item.userIdWho);
+    }
+  }
+
+  return FlowInstance;
+};
+
+
+/***/ }),
+
+/***/ 2:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowInstance {
+    async _endFlow(options) {
+      options = options || {};
+      const flowHandleStatus = options.flowHandleStatus || 1;
+      const flowRemark = options.flowRemark || null;
+      const flowId = this.context._flowId;
+      const flowStatus = this.constant.flow.status.end;
+      const timeEnd = new Date();
+      // check if end
+      if (this.context._flow.flowStatus === flowStatus) {
+        ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
+      }
+      // handle atom
+      await this._endFlow_handleAtom(options);
+      // tail
+      ctx.tail(async () => {
+        // need not in transaction
+        // flow: update fields for onFlowEnd
+        this.context._flow.flowStatus = flowStatus;
+        this.context._flow.flowHandleStatus = flowHandleStatus;
+        this.context._flow.flowRemark = flowRemark;
+        this.context._flow.timeEnd = timeEnd;
+        await this.modelFlow.delete({ id: flowId });
+        // flow history
+        this.context._flowHistory.flowStatus = flowStatus;
+        this.context._flowHistory.flowHandleStatus = flowHandleStatus;
+        this.context._flowHistory.flowRemark = flowRemark;
+        this.context._flowHistory.timeEnd = timeEnd;
+        await this.modelFlowHistory.update(this.context._flowHistory);
+        // raise event: onFlowEnd
+        await this._flowListener.onFlowEnd(options);
+        // clear nodes
+        await this._clearNodeRemains();
+        // publish uniform message
+        await this._endFlowPublish();
+        // log
+        // console.log(`--------flow end: ${flowId}`);
+      });
+      // notify
+      this._notifyFlowInitiateds(this.context._flow.flowUserId);
+    }
+
+    async _endFlow_handleAtom(options) {
+      if (!options.atom) return;
+      const atomId = this.context._flow.flowAtomId;
+      if (!atomId) return;
+      if (options.atom.submit) {
+        // submit: _submitDirect
+        await ctx.bean.atom._submitDirect({
+          key: { atomId },
+          item: this.context._atom,
+          user: { id: this.context._atom.userIdUpdated },
+        });
+      } else if (options.atom.close) {
+        // close draft/formal
+        const atomStage = this.context._atom.atomStage;
+        if (atomStage === 0) {
+          await ctx.bean.atom.closeDraft({
+            key: { atomId },
+          });
+        } else if (atomStage === 1) {
+          await ctx.bean.atom.closeFormal({
+            key: { atomId },
+          });
+        }
+      }
+    }
+
+    async _clearNodeRemains() {
+      const flowId = this.context._flowId;
+      const flowNodes = await this.modelFlowNode.select({
+        where: { flowId },
+      });
+      for (const flowNode of flowNodes) {
+        const flowNodeInstance = await this._loadNodeInstance({ flowNode });
+        await flowNodeInstance.clear({ flowNodeHandleStatus: 0 });
+      }
+    }
+
+    async _endFlowPublish() {
+      // publish uniform message
+      const userOp = this._getOpUser();
+      const flowUserId = this.context._flow.flowUserId;
+      if (flowUserId !== userOp.id) {
+        const userFlow = await ctx.bean.user.get({ id: flowUserId });
+        const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(
+          userFlow.locale,
+          this.context._flow.flowRemark || 'End'
+        )}`;
+        const actionPath = `/a/flowtask/flow?flowId=${this.context._flowId}`;
+        const message = {
+          userIdTo: flowUserId,
+          content: {
+            issuerId: userFlow.id,
+            issuerName: userFlow.userName,
+            issuerAvatar: userFlow.avatar,
+            title,
+            body: this.context._flow.flowName,
+            actionPath,
+            params: {
+              flowId: this.context._flowId,
+            },
+          },
+        };
+        // jump out of the transaction
+        ctx.tail(async () => {
+          await ctx.bean.io.publish({
+            message,
+            messageClass: {
+              module: 'a-flow',
+              messageClassName: 'workflow',
+            },
+          });
         });
       }
     }
@@ -2829,6 +3036,7 @@ module.exports = {
   WorkFlows: 'Work Flows',
   FlowDefinitions: 'Work Flow Definitions',
   FlowInitiator: 'Flow Initiator',
+  FlowVarAutoPick: 'Auto Pick',
   'NoMatchedFlowEdge: %s': 'No matched flow edge: %s',
 };
 
@@ -2847,13 +3055,14 @@ module.exports = {
   End: '结束',
   Current: '当前',
   Drafting: '起草',
-  Review: '评审',
+  Review: '审核',
   Pass: '通过',
   Reject: '驳回',
   Passed: '已通过',
   Rejected: '已驳回',
   Cancelled: '已取消',
   FlowInitiator: '流程发起人',
+  FlowVarAutoPick: '自动提取',
   'Create FlowDefinition': '新建流程定义',
   'FlowDefinition List': '流程定义列表',
   'Flow definition not Found: %s': '流程定义未发现: %s',
@@ -3154,7 +3363,7 @@ module.exports = app => {
   // models
   const models = __webpack_require__(3230)(app);
   // meta
-  const meta = __webpack_require__(458)(app);
+  const meta = __webpack_require__(9644)(app);
 
   return {
     aops,
@@ -3174,7 +3383,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 458:
+/***/ 9644:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = app => {
@@ -3194,6 +3403,7 @@ module.exports = app => {
               full: 'aFlowDefViewFull',
             },
             inner: true,
+            resource: true,
             category: true,
             tag: true,
             comment: false,

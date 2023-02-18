@@ -1468,6 +1468,8 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnSwipeout: true,
+          directShowOnList: true,
         },
         delete: {
           title: 'Delete',
@@ -1477,6 +1479,8 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnSwipeout: true,
+          directShowOnList: true,
         },
         clone: {
           title: 'Clone',
@@ -1495,6 +1499,8 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnList: true,
+          disableOnItem: true,
         },
         moveDown: {
           title: 'Move Down',
@@ -1504,6 +1510,8 @@ module.exports = app => {
           inherit: 'write',
           mode: 'edit',
           stage: 'draft',
+          directShowOnList: true,
+          disableOnItem: true,
         },
         save: {
           title: 'Save',
@@ -1668,7 +1676,7 @@ module.exports = app => {
                 dataIndex: 'detailLineNo',
                 title: '#',
                 align: 'center',
-                width: '50px',
+                width: 50,
                 component: {
                   module: 'a-detail',
                   name: 'listLayoutTableCellDetailLineNo',
@@ -1692,7 +1700,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),

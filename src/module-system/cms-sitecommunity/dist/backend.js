@@ -256,6 +256,7 @@ module.exports = {
   'Create Post': '新建帖子',
   'Post List': '帖子列表',
   'Post List(by Category)': '帖子列表(按目录)',
+  'Community Post Publish': '社区帖子发布',
 };
 
 
@@ -304,8 +305,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Community',
     atomStaticKey: 'appCommunity',
-    atomRevision: 4,
-    atomCategoryId: 'AppCategoryFront',
+    atomRevision: 5,
+    atomCategoryId: 'AppCategoryCMS',
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,
@@ -355,7 +356,11 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'post',
             },
+            atomStage: 0, // draft
             conditionExpression: null,
+            task: {
+              atomState: 0, // state: drafting
+            },
           },
         },
         {
@@ -363,6 +368,7 @@ module.exports = app => {
           name: 'Review',
           type: 'activityUserTask',
           options: {
+            atomState: 1,
             assignees: {
               roles: 'superuser',
             },
@@ -380,6 +386,9 @@ module.exports = app => {
           id: 'endEvent_1',
           name: 'End',
           type: 'endEventAtom',
+          options: {
+            atomState: 2,
+          },
         },
       ],
       edges: [
@@ -399,7 +408,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Community Post Publish',
     atomStaticKey: 'flowPostPublish',
-    atomRevision: 100,
+    atomRevision: 102,
     description: '',
     content: JSON.stringify(content),
   };
@@ -661,6 +670,13 @@ module.exports = app => {
             layout: {
               config: {
                 atomList: 'layoutAtomListPost',
+              },
+            },
+            dict: {
+              states: {
+                draft: {
+                  dictKey: 'a-dictbooster:dictAtomStateDraft',
+                },
               },
             },
           },

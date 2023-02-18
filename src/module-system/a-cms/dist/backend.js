@@ -3040,15 +3040,28 @@ module.exports = app => {
     }
 
     async create({ atomClass, item, options, user }) {
+      const atomStage = item.atomStage;
       // super
       const key = await super.create({ atomClass, item, options, user });
       // article
-      const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-      const editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
+      let editMode;
+      let slug;
+      if (atomStage === 0) {
+        // draft init
+        const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
+        editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
+        slug = null;
+      } else {
+        // copy init
+        const srcItem = options.createOptions.srcItem;
+        editMode = srcItem.editMode;
+        slug = srcItem.slug;
+      }
       // add article
       const params = {
         atomId: key.atomId,
         editMode,
+        slug,
       };
       // uuid
       params.uuid = item.uuid || this.ctx.bean.util.uuidv4();
@@ -3736,6 +3749,7 @@ module.exports = {
   'Build Site First': '请先构建站点',
   'Cannot delete if has children': '有子元素时不允许删除',
   'Cannot delete if has articles': '有文章时不允许删除',
+  'CMS Article Publish': 'CMS文章发布',
 };
 
 
@@ -3801,8 +3815,8 @@ module.exports = app => {
   const _app = {
     atomName: 'CMS',
     atomStaticKey: 'appCms',
-    atomRevision: 4,
-    atomCategoryId: 'AppCategoryFront',
+    atomRevision: 5,
+    atomCategoryId: 'AppCategoryCMS',
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,
@@ -3854,7 +3868,11 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'article',
             },
+            atomStage: 0, // draft
             conditionExpression: null,
+            task: {
+              atomState: 0, // state: drafting
+            },
           },
         },
         {
@@ -3862,6 +3880,7 @@ module.exports = app => {
           name: 'Review',
           type: 'activityUserTask',
           options: {
+            atomState: 1,
             assignees: {
               roles: 'superuser',
             },
@@ -3876,6 +3895,9 @@ module.exports = app => {
           id: 'endEvent_1',
           name: 'End',
           type: 'endEventAtom',
+          options: {
+            atomState: 2,
+          },
         },
       ],
       edges: [
@@ -3895,7 +3917,7 @@ module.exports = app => {
   const definition = {
     atomName: 'CMS Article Publish',
     atomStaticKey: 'flowArticlePublish',
-    atomRevision: 100,
+    atomRevision: 102,
     description: '',
     content: JSON.stringify(content),
   };
@@ -4858,6 +4880,13 @@ module.exports = app => {
             category: true,
             tag: true,
             cms: true,
+            dict: {
+              states: {
+                draft: {
+                  dictKey: 'a-dictbooster:dictAtomStateDraft',
+                },
+              },
+            },
           },
           actions: {
             preview: {

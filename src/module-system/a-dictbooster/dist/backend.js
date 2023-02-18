@@ -73,7 +73,9 @@ module.exports = {};
 /***/ 327:
 /***/ ((module) => {
 
-module.exports = {};
+module.exports = {
+  AtomStateDraft: 'Draft State',
+};
 
 
 /***/ }),
@@ -83,6 +85,7 @@ module.exports = {};
 
 module.exports = {
   Countries: '国家',
+  AtomStateDraft: '草稿状态',
   'Cities USA': '美国城市',
   'Cities China': '中国城市',
   'Online Status': '在线状态',
@@ -98,6 +101,46 @@ module.exports = {
 module.exports = {
   'en-us': __webpack_require__(327),
   'zh-cn': __webpack_require__(72),
+};
+
+
+/***/ }),
+
+/***/ 356:
+/***/ ((module) => {
+
+module.exports = app => {
+  const dictItems = [
+    {
+      code: 0,
+      title: 'Drafting',
+    },
+    {
+      code: 1,
+      title: 'Reviewing',
+    },
+    {
+      code: 2,
+      title: 'Reviewed',
+    },
+  ];
+  const dictLocales = {
+    'zh-cn': {
+      Drafting: '起草中',
+      Reviewing: '审核中',
+      Reviewed: '已审核',
+    },
+  };
+  const dict = {
+    atomName: 'AtomStateDraft',
+    atomStaticKey: 'dictAtomStateDraft',
+    atomRevision: 0,
+    description: '',
+    dictItems: JSON.stringify(dictItems),
+    dictLocales: JSON.stringify(dictLocales),
+    resourceRoles: 'root',
+  };
+  return dict;
 };
 
 
@@ -333,6 +376,7 @@ const citiesUSA = __webpack_require__(345);
 const citiesChina = __webpack_require__(568);
 const onlineStatus = __webpack_require__(461);
 const layoutType = __webpack_require__(549);
+const atomStateDraft = __webpack_require__(356);
 
 module.exports = app => {
   const dicts = [
@@ -341,6 +385,7 @@ module.exports = app => {
     citiesChina(app),
     onlineStatus(app),
     layoutType(app),
+    atomStateDraft(app),
   ];
   return dicts;
 };

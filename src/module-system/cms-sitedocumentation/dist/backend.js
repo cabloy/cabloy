@@ -288,6 +288,7 @@ module.exports = {
   Document: '文档',
   'Create Document': '新建文档',
   'Document List': '文档列表',
+  'CMS Document Publish': 'CMS文档发布',
 };
 
 
@@ -336,8 +337,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Documentation',
     atomStaticKey: 'appDocumentation',
-    atomRevision: 4,
-    atomCategoryId: 'AppCategoryFront',
+    atomRevision: 5,
+    atomCategoryId: 'AppCategoryCMS',
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,
@@ -387,7 +388,11 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'document',
             },
+            atomStage: 0, // draft
             conditionExpression: null,
+            task: {
+              atomState: 0, // state: drafting
+            },
           },
         },
         {
@@ -395,6 +400,7 @@ module.exports = app => {
           name: 'Review',
           type: 'activityUserTask',
           options: {
+            atomState: 1,
             assignees: {
               roles: 'superuser',
             },
@@ -412,6 +418,9 @@ module.exports = app => {
           id: 'endEvent_1',
           name: 'End',
           type: 'endEventAtom',
+          options: {
+            atomState: 2,
+          },
         },
       ],
       edges: [
@@ -431,7 +440,7 @@ module.exports = app => {
   const definition = {
     atomName: 'CMS Document Publish',
     atomStaticKey: 'flowDocumentPublish',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     content: JSON.stringify(content),
   };
@@ -724,6 +733,13 @@ module.exports = app => {
             category: true,
             tag: true,
             cms: true,
+            dict: {
+              states: {
+                draft: {
+                  dictKey: 'a-dictbooster:dictAtomStateDraft',
+                },
+              },
+            },
           },
           actions: {
             preview: {

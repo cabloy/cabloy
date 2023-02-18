@@ -53,7 +53,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update dashboard
       const data = await this.ctx.model.dashboard.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.dashboard.update(data);
       // update content
       await this.ctx.model.dashboardContent.update(
@@ -539,7 +538,7 @@ module.exports = app => {
           },
         },
         {
-          atomStaticKey: 'test-note:widgetSimpleChat',
+          atomStaticKey: 'test-party:widgetSimpleChat',
           id: '650acfa718f645098bf0516628d678f0',
           properties: {
             height: {
@@ -565,7 +564,7 @@ module.exports = app => {
           },
         },
         {
-          atomStaticKey: 'test-note:widgetAbout',
+          atomStaticKey: 'test-party:widgetAbout',
           id: '8a04bfa743fb42b2a65a104e018ab924',
           properties: {
             height: {
@@ -596,7 +595,7 @@ module.exports = app => {
   const dashboard = {
     atomName: 'Home',
     atomStaticKey: 'dashboardHome',
-    atomRevision: 21,
+    atomRevision: 23,
     description: 'Home(Authenticated)',
     content: JSON.stringify(content),
     resourceRoles: 'root',

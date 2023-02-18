@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-useronline",
-  "version": "4.8.7",
+  "version": "4.8.8",
   "title": "Online Users",
   "eggBornModule": {
     "fileVersion": 1,

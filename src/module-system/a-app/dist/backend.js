@@ -59,7 +59,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update app
       const data = await this.ctx.model.app.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.app.update(data);
       // update content
       await this.ctx.model.appContent.update(
@@ -260,6 +259,9 @@ module.exports = {
   AppCategoryFront: 'Front Apps',
   AppCategoryBackend: 'Backend Apps',
   AppCategoryManagement: 'Management',
+  AppCategoryServices: 'Services',
+  AppCategoryCMS: 'CMS',
+  AppCategoryBusiness: 'Business',
 };
 
 
@@ -279,6 +281,9 @@ module.exports = {
   AppCategoryFront: '前台应用',
   AppCategoryBackend: '后台应用',
   AppCategoryManagement: '管理',
+  AppCategoryServices: '服务',
+  AppCategoryCMS: 'CMS',
+  AppCategoryBusiness: '业务',
 };
 
 

@@ -271,7 +271,7 @@ module.exports = ctx => {
       if (!Array.isArray(welcomes)) welcomes = [welcomes];
       welcomes = welcomes.map(item => ctx.text(item));
       // helper doc
-      const configHelper = this.cabloyConfig.cli && this.cabloyConfig.cli.helper;
+      const configHelper = ctx.bean.util.getProperty(this.cabloyConfig.get(), 'cli.helper');
       if (configHelper !== false) {
         let url = `https://cabloy.com/${ctx.locale === 'zh-cn' ? 'zh-cn/' : ''}articles/cli-introduce.html`;
         url = this.helper.chalk.keyword('cyan')(url);
@@ -486,10 +486,14 @@ module.exports = ctx => {
       return new Promise((resolve, reject) => {
         const logPrefix = options.logPrefix;
         const proc = spawn(cmd, args, options);
+        let stdout = '';
+        // let stderr = '';
         proc.stdout.on('data', async data => {
+          stdout += data.toString();
           await this.console.log({ text: data.toString() }, { logPrefix });
         });
         proc.stderr.on('data', async data => {
+          // stderr += data.toString();
           await this.console.log({ text: data.toString() }, { logPrefix });
         });
         proc.once('exit', code => {
@@ -498,8 +502,48 @@ module.exports = ctx => {
             err.code = 10000 + code;
             return reject(err);
           }
-          resolve();
+          resolve(stdout);
         });
+      });
+    }
+    async gitCommit({ cwd, message }) {
+      // git status
+      const stdout = await this.spawnExe({
+        cmd: 'git',
+        args: ['status'],
+        options: {
+          cwd,
+        },
+      });
+      if (stdout.indexOf('nothing to commit, working tree clean') > -1 && stdout.indexOf('is ahead of') === -1) {
+        // do nothing
+        return;
+      }
+      if (stdout.indexOf('is ahead of') === -1) {
+        // git add .
+        await this.spawnExe({
+          cmd: 'git',
+          args: ['add', '.'],
+          options: {
+            cwd,
+          },
+        });
+        // git commit
+        await this.spawnExe({
+          cmd: 'git',
+          args: ['commit', '-m', message],
+          options: {
+            cwd,
+          },
+        });
+      }
+      // git push
+      await this.spawnExe({
+        cmd: 'git',
+        args: ['push'],
+        options: {
+          cwd,
+        },
       });
     }
   }

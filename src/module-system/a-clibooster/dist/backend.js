@@ -324,6 +324,66 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 5354:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // prepare entities
+      const entities = await this.__prepareEntities();
+      const total = entities.length;
+      for (let index = 0; index < total; index++) {
+        const entity = entities[index];
+        // log
+        await this.console.log({
+          progressNo: 0,
+          total,
+          progress: index,
+          text: entity.info.relativeName,
+        });
+        // git commit
+        const message = argv.message;
+        await this.helper.gitCommit({
+          cwd: entity.root,
+          message,
+        });
+      }
+    }
+
+    async __prepareEntities() {
+      // load all entities
+      const entityNames = ctx.bean.util.getProperty(this.cabloyConfig.get(), 'cli.commands.:git:commit.entities');
+      // prepare
+      const entities = [];
+      for (const entityName of entityNames) {
+        // try suite
+        let entity = this.helper.findSuite(entityName);
+        if (!entity) {
+          // try module
+          entity = this.helper.findModule(entityName);
+        }
+        if (!entity) {
+          // not throw error
+          const text = `entity does not exist: ${entityName}`;
+          await this.console.log({ text });
+        } else {
+          entities.push(entity);
+        }
+      }
+      return entities;
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
 /***/ 9467:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -714,29 +774,9 @@ module.exports = ctx => {
     }
 
     async _handleScripts_gitCommit({ entityMeta }) {
-      // git add .
-      await this.helper.spawnExe({
-        cmd: 'git',
-        args: ['add', '.'],
-        options: {
-          cwd: entityMeta.root,
-        },
-      });
-      // git commit
-      await this.helper.spawnExe({
-        cmd: 'git',
-        args: ['commit', '-m', `chore: version ${entityMeta.package.version}`],
-        options: {
-          cwd: entityMeta.root,
-        },
-      });
-      // git push
-      await this.helper.spawnExe({
-        cmd: 'git',
-        args: ['push'],
-        options: {
-          cwd: entityMeta.root,
-        },
+      await this.helper.gitCommit({
+        cwd: entityMeta.root,
+        message: `chore: version ${entityMeta.package.version}`,
       });
     }
 
@@ -1240,6 +1280,7 @@ const cliCreatePage = __webpack_require__(5863);
 const cliCreatePagex = __webpack_require__(1232);
 const cliStoreSync = __webpack_require__(5937);
 const cliStorePublish = __webpack_require__(9467);
+const cliGitCommit = __webpack_require__(5354);
 
 module.exports = app => {
   const beans = {
@@ -1304,6 +1345,10 @@ module.exports = app => {
     'cli.store.publish': {
       mode: 'ctx',
       bean: cliStorePublish,
+    },
+    'cli.git.commit': {
+      mode: 'ctx',
+      bean: cliGitCommit,
     },
   };
   return beans;
@@ -1561,7 +1606,8 @@ module.exports = ctx => {
     }
 
     _logHelperDocs({ welcomes, user }) {
-      if (this.cabloyConfig.cli && this.cabloyConfig.cli.helper === false) {
+      const configHelper = ctx.bean.util.getProperty(this.cabloyConfig.get(), 'cli.helper');
+      if (configHelper === false) {
         return;
       }
       const url = this._getCabloyDocsURL({ slug: 'cli-store', user });
@@ -1983,6 +2029,41 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 8289:
+/***/ ((module) => {
+
+module.exports = app => {
+  return {
+    bean: 'git.commit',
+    resource: {
+      atomStaticKey: 'cliGit',
+    },
+    info: {
+      version: '4.0.0',
+      title: 'Cli: Git Commit',
+      usage: 'npm run cli :git:commit message',
+    },
+    options: {},
+    groups: {
+      default: {
+        questions: {
+          message: {
+            type: 'input',
+            message: 'message',
+            initial: {
+              expression: 'context.argv._[0]',
+            },
+            required: true,
+          },
+        },
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
 /***/ 9730:
 /***/ ((module) => {
 
@@ -2242,6 +2323,7 @@ const createPage = __webpack_require__(2111);
 const createPagex = __webpack_require__(1586);
 const storeSync = __webpack_require__(5609);
 const storePublish = __webpack_require__(9730);
+const gitCommit = __webpack_require__(8289);
 
 module.exports = app => {
   const commands = {
@@ -2268,6 +2350,9 @@ module.exports = app => {
     store: {
       sync: storeSync(app),
       publish: storePublish(app),
+    },
+    git: {
+      commit: gitCommit(app),
     },
   };
   return commands;
@@ -2432,6 +2517,15 @@ module.exports = app => {
     {
       atomName: 'Cli Store',
       atomStaticKey: 'cliStore',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:function.Cli',
+      resourceType: 'a-base:function',
+      resourceConfig: null,
+      resourceRoles: 'template.system,RoleScopeCliDevelopment',
+    },
+    {
+      atomName: 'Cli Git',
+      atomStaticKey: 'cliGit',
       atomRevision: 0,
       atomCategoryId: 'a-base:function.Cli',
       resourceType: 'a-base:function',

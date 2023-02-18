@@ -179,7 +179,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update resource
       const data = await this.ctx.model.resource.prepareData(item);
-      data.id = key.itemId;
       await this.ctx.model.resource.update(data);
     }
 
@@ -326,7 +325,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update role
       const data = await this.ctx.model.role.prepareData(item);
-      data.id = key.itemId;
       if (item.atomName) data.roleName = item.atomName;
       await this.ctx.model.role.update(data);
     }
@@ -550,7 +548,6 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update user
       const data = await this.ctx.model.user.prepareData(item);
-      data.id = key.itemId;
       if (item.atomName) data.userName = item.atomName;
       await this.ctx.model.user.update(data);
     }
@@ -714,9 +711,29 @@ const atom_1 = __webpack_require__(3765);
 const atom_right = __webpack_require__(6681);
 const atom_starLabel = __webpack_require__(8388);
 const atom_areaScope = __webpack_require__(4213);
+const atom_draft = __webpack_require__(6102);
+const atom_formal = __webpack_require__(2751);
+const atom_simple = __webpack_require__(531);
+const atom_submit = __webpack_require__(2293);
+const atom_checkRightAction = __webpack_require__(8853);
 
 module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(atom_0, [atom_1, atom_right, atom_starLabel, atom_areaScope], ctx);
+  return ctx.app.meta.util.mixinClasses(
+    atom_0,
+    [
+      //
+      atom_1,
+      atom_right,
+      atom_starLabel,
+      atom_areaScope,
+      atom_draft,
+      atom_formal,
+      atom_simple,
+      atom_submit,
+      atom_checkRightAction,
+    ],
+    ctx
+  );
 };
 
 
@@ -775,8 +792,11 @@ module.exports = ctx => {
     // atom and item
 
     // create
-    async create({ atomClass, atomStage, roleIdOwner, item, options, user }) {
+    async create({ atomClass, atomStage, roleIdOwner, item, options, createOptions, user }) {
       options = options || {};
+      if (createOptions) {
+        options.createOptions = createOptions;
+      }
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
       const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
@@ -938,7 +958,8 @@ module.exports = ctx => {
       const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
       // basic info
       const _atomBasic = await this.modelAtom.get({ id: key.atomId });
-      if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
+      // support formal flow
+      // if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
       if (_atomBasic.atomSimple) {
         if (_atomClass.history !== false) {
           //  formal -> history
@@ -957,7 +978,7 @@ module.exports = ctx => {
         atomId: key.atomId,
         itemId: key.itemId,
         atomSimple: _atomBasic.atomSimple,
-        atomStage: _atomBasic.atomSimple ? 1 : 0,
+        atomStage: _atomBasic.atomSimple ? 1 : _atomBasic.atomStage,
       });
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -1047,113 +1068,6 @@ module.exports = ctx => {
           fn: 'delete',
         });
       }
-    }
-
-    async submit({ key, options, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
-      // atom
-      const _atom = await this.modelAtom.get({ id: key.atomId });
-      if (_atom.atomSimple === 1 && _atom.atomStage === 1) {
-        // if simple, just return formal, so as for compatible with not simple
-        return { formal: { key } };
-      }
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atomClass, key, options, user },
-        fn: 'submit',
-      });
-    }
-
-    async closeDraft({ key }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      // draft
-      const atomIdDraft = key.atomId;
-      const atomDraft = await this.modelAtom.get({ id: atomIdDraft });
-      const user = { id: atomDraft.userIdUpdated };
-      // ** update draft from formal
-      if (atomDraft.atomIdFormal) {
-        await this._copy({
-          target: 'draft',
-          srcKey: { atomId: atomDraft.atomIdFormal },
-          srcItem: null,
-          destKey: key,
-          user,
-        });
-        // update atomClosed
-        await this.modelAtom.update({
-          id: atomIdDraft,
-          atomClosed: 1,
-        });
-      } else {
-        // not delete draft if atomFlowId>0
-        if (atomDraft.atomFlowId > 0) {
-          // update atomClosed
-          await this.modelAtom.update({
-            id: atomIdDraft,
-            atomClosed: 1,
-            atomRevision: atomDraft.atomRevision - 1,
-          });
-        } else {
-          // delete
-          await ctx.meta.util.executeBean({
-            beanModule: _moduleInfo.relativeName,
-            beanFullName,
-            context: { atomClass, key, user },
-            fn: 'delete',
-          });
-        }
-      }
-      // notify
-      this._notifyDraftsDrafting(user, atomClass);
-      this._notifyDraftsFlowing(user, atomClass);
-    }
-
-    async openDraft({ key, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // atom
-      let atom = await this.modelAtom.get({ id: key.atomId });
-      if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // check simple switch
-      atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom, user });
-      // open draft
-      let res;
-      if (atom.atomSimple) {
-        // simple
-        res = await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
-      } else {
-        // not simple
-        res = await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
-      }
-      // ok
-      // get atom
-      const resData = res.draft || res.formal;
-      const keyDraft = resData.key;
-      atom = await this.modelAtom.get({ id: keyDraft.atomId });
-      atom.atomId = atom.id;
-      atom.module = atomClass.module;
-      atom.atomClassName = atomClass.atomClassName;
-      if (res.draft) {
-        res.draft.atom = atom;
-      } else {
-        res.formal.atom = atom;
-      }
-      return res;
     }
 
     async enable({ key, user }) {
@@ -1309,6 +1223,13 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user, atomClass);
     }
 
+    async atomState({ key, atom: { atomState } }) {
+      await this.modelAtom.update({
+        id: key.atomId,
+        atomState,
+      });
+    }
+
     async readCount({ key, atom: { readCount = 1 }, user }) {
       await this.modelAtom.query('update aAtom set readCount = readCount + ? where iid=? and id=?', [
         readCount,
@@ -1429,319 +1350,17 @@ module.exports = ctx => {
       return true;
     }
 
-    async _submitDirect({ key, item, options, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // formal -> history
-      if (item.atomIdFormal) {
-        if (_atomClass.history !== false) {
-          await this._copy({
-            target: 'history',
-            srcKey: { atomId: item.atomIdFormal },
-            srcItem: null,
-            destKey: null,
-            options,
-            user,
-          });
-        }
-      }
-      // draft -> formal
-      const keyFormal = await this._copy({
-        target: 'formal',
-        srcKey: { atomId: item.atomId },
-        srcItem: item,
-        destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
-        options,
-        user,
-      });
-      // update draft
-      await this.modelAtom.update({
-        id: item.atomId,
-        atomClosed: 1,
-        atomIdFormal: keyFormal.atomId,
-      });
-      // notify
-      this._notifyDraftsDrafting(user, atomClass);
-      if (item.atomFlowId > 0) {
-        this._notifyDraftsFlowing(user, atomClass);
-      }
-      // get formal atom
-      const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
-      atomFormal.atomId = atomFormal.id;
-      atomFormal.module = atomClass.module;
-      atomFormal.atomClassName = atomClass.atomClassName;
-      // return keyFormal
-      return { formal: { key: keyFormal, atom: atomFormal } };
-    }
-
-    async _switchToSimple({ atomClass, _atomClass, atom, user }) {
-      let atomIdDraft;
-      let atomIdFormal;
-      if (atom.atomStage === 0) {
-        // is draft
-        atomIdDraft = atom.id;
-        atomIdFormal = atom.atomIdFormal;
-        if (!atomIdFormal) {
-          // formal/history not exists, so copy it
-          // create formal
-          const srcItem = await ctx.bean.atom.read({ key: { atomId: atomIdDraft }, user });
-          srcItem.atomSimple = 1; // important
-          const keyFormal = await this._copy({
-            target: 'formal',
-            srcKey: { atomId: atomIdDraft },
-            srcItem,
-            destKey: null,
-            options: null,
-            user,
-          });
-          atomIdFormal = keyFormal.atomId;
-        }
-      } else {
-        // is formal/history
-        atomIdDraft = atom.atomIdDraft;
-        atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
-      }
-      // update history
-      await ctx.model.query(
-        `
-          update aAtom set atomSimple=1, atomIdDraft=0 
-            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
-        `,
-        [ctx.instance.id, atomIdFormal]
-      );
-      // update formal
-      await this.modelAtom.update({
-        id: atomIdFormal,
-        atomSimple: 1,
-        atomIdDraft: 0,
-      });
-      // delete draft
-      if (atomIdDraft) {
-        const atomDraft = atom.atomStage === 0 ? atom : await this.modelAtom.get({ id: atomIdDraft });
-        const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
-        const _moduleInfo = mparse.parseInfo(atomClass.module);
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-        await ctx.meta.util.executeBean({
-          beanModule: _moduleInfo.relativeName,
-          beanFullName,
-          context: { atomClass, key: keyDraft, user },
-          fn: 'delete',
-        });
-        // notify to change draft stats
-        this._notifyDraftsDrafting(null, atomClass);
-      }
-      // ok
-      if (atom.atomStage === 0) {
-        // fetch formal
-        return await this.modelAtom.get({ id: atomIdFormal });
-      }
-      atom.atomSimple = 1;
-      return atom;
-    }
-
-    async _switchToSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
-      const atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
-      // update history's atomSimple
-      await ctx.model.query(
-        `
-          update aAtom set atomSimple=0
-            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
-        `,
-        [ctx.instance.id, atomIdFormal]
-      );
-      // update formal's atomSimple
-      await this.modelAtom.update({
-        id: atomIdFormal,
-        atomSimple: 0,
-      });
-      // ** create draft from formal
-      const keyDraft = await this._createDraftFromFormal({ atomIdFormal, user });
-      // update draft's atomClosed
-      await this.modelAtom.update({
-        id: keyDraft.atomId,
-        atomClosed: 1,
-      });
-      // ok
-      atom.atomSimple = 0;
-      return atom;
-    }
-
-    async _checkSimpleSwitch({ atomClass, _atomClass, atom, user }) {
-      // the same mode
-      if (Boolean(atom.atomSimple) === Boolean(_atomClass.simple)) return atom;
-      // -> simple
-      if (_atomClass.simple) {
-        return await this._switchToSimple({ atomClass, _atomClass, atom, user });
-      }
-      // -> not simple
-      return await this._switchToSimpleZero({ atomClass, _atomClass, atom, user });
-    }
-
-    async _createDraftFromFormal({ atomIdFormal, user }) {
-      // ** create draft from formal
-      const keyDraft = await this._copy({
-        target: 'draft',
-        srcKey: { atomId: atomIdFormal },
-        srcItem: null,
-        destKey: null,
-        user,
-      });
-      // update history
-      await ctx.model.query(
-        `
-          update aAtom set atomIdDraft=?
-            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
-        `,
-        [keyDraft.atomId, ctx.instance.id, atomIdFormal]
-      );
-      // update formal
-      await this.modelAtom.update({
-        id: atomIdFormal,
-        atomIdDraft: keyDraft.atomId,
-      });
-      // ok
-      return keyDraft;
-    }
-
-    async _openDraft_asSimple({ atom, user }) {
-      let keyFormal;
-      let changed = true;
-      // formal
-      if (atom.atomStage === 1) {
-        keyFormal = { atomId: atom.id, itemId: atom.itemId };
-        changed = false;
-      }
-      // history
-      if (atom.atomStage === 2) {
-        const atomIdFormal = atom.atomIdFormal;
-        keyFormal = { atomId: atomIdFormal };
-        // ** create formal from history
-        keyFormal = await this._copy({
-          target: 'formal',
-          srcKey: { atomId: atom.id },
-          srcItem: null,
-          destKey: keyFormal,
-          user,
-        });
-        // update formal
-        await this.modelAtom.update({
-          id: atomIdFormal,
-          userIdUpdated: user.id,
-        });
-      }
-      // ok
-      return { formal: { key: keyFormal }, changed };
-    }
-
-    async _openDraft_asSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
-      let keyDraft;
-      let changed = true;
-      // draft
-      if (atom.atomStage === 0) {
-        keyDraft = { atomId: atom.id, itemId: atom.itemId };
-        if (atom.atomClosed === 1) {
-          // open
-          await this._openDraft_update({
-            atomId: atom.id,
-            atomRevision: atom.atomRevision + 1,
-            user,
-          });
-        } else {
-          changed = false;
-        }
-      }
-      // formal
-      if (atom.atomStage === 1) {
-        if (atom.atomIdDraft > 0) {
-          keyDraft = { atomId: atom.atomIdDraft };
-        } else {
-          // ** create draft from formal
-          keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.id, user });
-        }
-        // open
-        await this._openDraft_update({
-          atomId: keyDraft.atomId,
-          atomRevision: atom.atomRevision + 1,
-          user,
-        });
-      }
-      // history
-      if (atom.atomStage === 2) {
-        if (atom.atomIdDraft > 0) {
-          keyDraft = { atomId: atom.atomIdDraft };
-        } else {
-          // ** create draft from formal
-          keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
-        }
-        // hold atomRevision
-        const atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
-        const atomRevision = atomDraft.atomRevision;
-        // ** create draft from history
-        keyDraft = await this._copy({
-          target: 'draft',
-          srcKey: { atomId: atom.id },
-          srcItem: null,
-          destKey: keyDraft,
-          user,
-        });
-        // open
-        await this._openDraft_update({
-          atomId: keyDraft.atomId,
-          atomRevision: atomRevision + 1,
-          user,
-        });
-      }
-      // ok
-      return { draft: { key: keyDraft }, changed };
-    }
-
-    async _openDraft_update({ atomId, atomRevision, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
-      await this.modelAtom.update({
-        id: atomId,
-        atomFlowId: 0,
-        atomClosed: 0,
-        atomRevision,
-        userIdUpdated: user.id,
-      });
-      // notify
-      this._notifyDraftsDrafting(null, atomClass);
-    }
-
-    // target: draft/formal/history/clone
-    async _copy({ target, srcKey, srcItem, destKey, options, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      // srcItem
-      if (!srcItem) {
-        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user });
-      }
+    _copy_prepareDestItem({ target, srcItem, user }) {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
       // atomStage
       let atomStage = ctx.constant.module(moduleInfo.relativeName).atom.stage[target];
       if (atomStage === undefined) {
-        atomStage = atomSimple; // support simple
+        atomStage = atomSimple; // support simple when target='clone'
       }
       // if (target === 'clone') {
       //   atomStage = atomSimple; // support simple
       // }
-      // destKey
-      if (!destKey) {
-        destKey = await this.create({ atomClass, atomStage, roleIdOwner: srcItem.roleIdOwner, item: null, user });
-      }
-      if (!destKey.itemId) {
-        const _item = await this.modelAtom.get({ id: destKey.atomId });
-        destKey.itemId = _item.itemId;
-      }
       // atomClosed
       const atomClosed = 0;
       // atomIdDraft/atomIdFormal
@@ -1761,7 +1380,7 @@ module.exports = ctx => {
         atomIdDraft = 0;
         atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
         userIdUpdated = user.id;
-        atomFlowId = 0;
+        atomFlowId = 0; // will start a new flow instance
         // formal->draft: = srcItem.atomRevision
         if (srcItem.atomStage === 2) {
           // history->draft
@@ -1799,8 +1418,8 @@ module.exports = ctx => {
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
-        atomId: destKey.atomId,
-        itemId: destKey.itemId,
+        // atomId: destKey.atomId,
+        // itemId: destKey.itemId,
         userIdCreated,
         userIdUpdated,
         atomName,
@@ -1821,8 +1440,45 @@ module.exports = ctx => {
         createdAt: srcItem.atomCreatedAt,
         updatedAt: srcItem.atomUpdatedAt,
       });
+      return destItem;
+    }
+
+    // target: draft/formal/history/clone
+    async _copy({ target, srcKey, srcItem, destKey, options, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      // srcItem
+      if (!srcItem) {
+        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user: null });
+      }
+      // destItem
+      const destItem = this._copy_prepareDestItem({ target, srcItem, user });
+      // destKey
+      if (!destKey) {
+        destKey = await this.create({
+          atomClass,
+          atomStage: destItem.atomStage,
+          roleIdOwner: srcItem.roleIdOwner,
+          item: null,
+          createOptions: { target, srcItem, destItem },
+          user,
+        });
+      }
+      if (!destKey.itemId) {
+        const _item = await this.modelAtom.get({ id: destKey.atomId });
+        destKey.itemId = _item.itemId;
+      }
+      // append destKey
+      destItem.atomId = destKey.atomId;
+      destItem.itemId = destKey.itemId;
       // update fields
-      await this.modelAtom.update({
+      const data = {
         id: destItem.atomId,
         userIdCreated: destItem.userIdCreated,
         userIdUpdated: destItem.userIdUpdated,
@@ -1837,14 +1493,19 @@ module.exports = ctx => {
         atomRevision: destItem.atomRevision,
         atomSimple: destItem.atomSimple,
         atomStage: destItem.atomStage,
-        atomFlowId: destItem.atomFlowId,
+        // atomFlowId: destItem.atomFlowId,
         attachmentCount: destItem.attachmentCount,
-        atomClosed: destItem.atomClosed,
+        // atomClosed: destItem.atomClosed,
         atomIdDraft: destItem.atomIdDraft,
         atomIdFormal: destItem.atomIdFormal,
         createdAt: destItem.createdAt,
         updatedAt: destItem.updatedAt,
-      });
+      };
+      if (target === 'draft' || target === 'clone') {
+        data.atomClosed = destItem.atomClosed;
+        data.atomFlowId = destItem.atomFlowId;
+      }
+      await this.modelAtom.update(data);
       // bean write
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -2086,102 +1747,6 @@ module.exports = ctx => {
 
     // right
 
-    async _checkRightAction({ atom, action, stage, user, checkFlow }) {
-      const _atom = atom;
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // adjust for simple
-      if (stage === 'draft' && _atom.atomSimple === 1) stage = 'formal';
-      if (
-        (stage === 'draft' && _atom.atomStage > 0) ||
-        ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)
-      ) {
-        return null;
-      }
-      // action.stage
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      const actionBase = ctx.bean.base.action({
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
-        code: action,
-      });
-      // if (!actionBase) throw new Error(`action not found: ${atomClass.module}:${atomClass.atomClassName}:${action}`);
-      if (!actionBase) {
-        await ctx.bean.atomAction.model.delete({ atomClassId: atomClass.id, code: action });
-        return null;
-      }
-      if (actionBase.stage) {
-        const stages = actionBase.stage.split(',');
-        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) {
-          return null;
-        }
-      }
-      // actionBase.enableOnStatic
-      if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
-        return null;
-      }
-      // draft
-      if (_atom.atomStage === 0) {
-        // self
-        const bSelf = _atom.userIdUpdated === user.id;
-        // checkFlow
-        if (_atom.atomFlowId > 0 && checkFlow) {
-          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
-          if (!flow) return null;
-          return _atom;
-        }
-        // 1. closed
-        if (_atom.atomClosed) {
-          // enable on 'self and write', not including 'delete'
-          if (bSelf && action === 3) {
-            // return _atom;
-            if (_atom.atomIdFormal) {
-              const _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
-              return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow });
-            }
-          }
-          return null;
-        }
-        // 2. flow
-        if (_atom.atomFlowId > 0) return null;
-        // 3. self
-        if (bSelf) return _atom;
-        // others
-        return null;
-      }
-      // draft: must closed
-      let _atomDraft;
-      if (_atom.atomIdDraft) {
-        _atomDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
-      }
-      // check draft for ( action 3 + atomStage 1)
-      //   not handle for history
-      if (
-        action === 3 &&
-        _atom.atomStage === 1 &&
-        _atomDraft &&
-        !_atomDraft.atomClosed &&
-        _atomDraft.userIdUpdated === user.id
-      ) {
-        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow });
-      }
-      // check enableOnOpened
-      if (_atomDraft && !_atomDraft.atomClosed && !actionBase.enableOnOpened) return null;
-      // enable/disable
-      if (action === 6 && _atom.atomDisabled === 0) return null;
-      if (action === 7 && _atom.atomDisabled === 1) return null;
-      // forAtomUser
-      const forAtomUser = this._checkForAtomUser(atomClass);
-      // check formal/history
-      const sql = this.sqlProcedure.checkRightAction({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomId: atom.id,
-        action,
-        forAtomUser,
-      });
-      return await ctx.model.queryOne(sql);
-    }
-
     async __checkRightActionBulk({ actionRes, stage /* user*/ }) {
       // not care about stage
       if (!stage) return actionRes;
@@ -2192,7 +1757,9 @@ module.exports = ctx => {
         code: actionRes.code,
       });
       if (!actionBase) {
-        await ctx.bean.atomAction.model.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
+        if (actionRes.code < 10000) {
+          await ctx.bean.atomAction.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
+        }
         return null;
       }
       if (actionBase.stage) {
@@ -2318,11 +1885,525 @@ module.exports = ctx => {
 
 /***/ }),
 
-/***/ 6681:
+/***/ 8853:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const require3 = __webpack_require__(5638);
 const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async checkRightAction({ atom: { id }, action, stage, user, checkFlow, disableAuthOpenCheck }) {
+      const _atom = await this.modelAtom.get({ id });
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // normal check
+      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
+      if (!res) return res;
+      // auth open check
+      if (!disableAuthOpenCheck) {
+        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
+        if (!resAuthOpenCheck) return null;
+      }
+      // ok
+      return res;
+    }
+
+    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // parse action code
+      action = ctx.bean.atomAction.parseActionCode({
+        action,
+        atomClass,
+      });
+      // check right
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
+        fn: 'checkRightAction',
+      });
+    }
+
+    async _checkRightAction({ atom, action, stage, user, checkFlow }) {
+      const _atom = atom;
+      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // adjust for simple
+      if (stage === 'draft' && _atom.atomSimple === 1) stage = 'formal';
+      // action.stage
+      if (
+        (stage === 'draft' && _atom.atomStage > 0) ||
+        ((stage === 'formal' || stage === 'history') && _atom.atomStage === 0)
+      ) {
+        return null;
+      }
+      // flow action
+      if (action >= 10000) {
+        const task = await this._checkRightAction_flowAction({ _atom, action, user });
+        if (!task) return null;
+        _atom.__task = task;
+        return _atom;
+      }
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      // actionBase
+      const actionBase = ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        code: action,
+      });
+      // if (!actionBase) throw new Error(`action not found: ${atomClass.module}:${atomClass.atomClassName}:${action}`);
+      if (!actionBase) {
+        if (action < 10000) {
+          await ctx.bean.atomAction.delete({ atomClassId: atomClass.id, code: action });
+        }
+        return null;
+      }
+      if (actionBase.stage) {
+        const stages = actionBase.stage.split(',');
+        if (!stages.some(item => ctx.constant.module(moduleInfo.relativeName).atom.stage[item] === _atom.atomStage)) {
+          return null;
+        }
+      }
+      // actionBase.enableOnStatic
+      if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
+        return null;
+      }
+      // draft
+      if (_atom.atomStage === 0) {
+        return await this._checkRightAction_draft({ actionBase, _atom, action, user, checkFlow });
+      }
+      // not draft
+      return await this._checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow });
+    }
+
+    async _checkRightAction_flowAction({ _atom, action, user }) {
+      // actionItem
+      const actionItem = await ctx.bean.atomAction.model.get({ atomClassId: _atom.atomClassId, code: action });
+      if (!actionItem) return null;
+      // flowTask
+      const task = await ctx.bean.flowTask.get({
+        options: {
+          where: {
+            'b.flowNodeDefId': actionItem.nodeDefId,
+            'c.flowDefKey': actionItem.flowKey,
+            'c.flowAtomId': _atom.id,
+          },
+          history: 0,
+        },
+        user,
+      });
+      return task;
+    }
+
+    async _checkRightAction_draft({ actionBase, _atom, action, user, checkFlow }) {
+      // _atomFormal
+      let _atomFormal;
+      if (_atom.atomIdFormal) {
+        _atomFormal = await this.modelAtom.get({ id: _atom.atomIdFormal });
+      }
+      // self
+      const bSelf = _atom.userIdUpdated === user.id;
+      // checkFlow
+      if (_atom.atomFlowId > 0 && checkFlow) {
+        const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+        if (flow) return _atom;
+      }
+      // 1. closed
+      if (_atom.atomClosed) {
+        // enable on 'self and write', not including 'delete'
+        if (bSelf && action === 3) {
+          // return _atom;
+          if (_atomFormal) {
+            return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow: false });
+          }
+        }
+        return null;
+      }
+      // 2. flow
+      const enableOnFlowing = actionBase.enableOnFlowing !== false;
+      const isFlowing = this._checkRightAction_isFlowing({ atom: _atom, atomAnother: _atomFormal });
+      if (!enableOnFlowing && isFlowing) return null;
+      // 3. self
+      if (bSelf) return _atom;
+      // others
+      return null;
+    }
+
+    _checkRightAction_isFlowing({ atom, atomAnother }) {
+      const a = atom && atom.atomFlowId > 0 && atom.atomClosed === 0;
+      const b = atomAnother && atomAnother.atomFlowId > 0 && atomAnother.atomClosed === 0;
+      return a || b;
+    }
+
+    async _checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow }) {
+      // draft: must closed
+      let _atomDraft;
+      if (_atom.atomIdDraft) {
+        _atomDraft = await this.modelAtom.get({ id: _atom.atomIdDraft });
+      }
+      // check draft for ( action 3 + atomStage 1)
+      //   not handle for history
+      if (
+        action === 3 &&
+        _atom.atomStage === 1 &&
+        _atomDraft &&
+        !_atomDraft.atomClosed &&
+        _atomDraft.userIdUpdated === user.id
+      ) {
+        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow: false });
+      }
+      // checkFlow
+      if (_atom.atomFlowId > 0 && !_atom.atomClosed && checkFlow) {
+        const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+        if (flow) return _atom;
+      }
+      // check enableOnOpened
+      const enableOnOpened = actionBase.enableOnOpened !== false;
+      if (_atomDraft && !_atomDraft.atomClosed && !enableOnOpened) return null;
+      // flow
+      const enableOnFlowing = actionBase.enableOnFlowing !== false;
+      const isFlowing = this._checkRightAction_isFlowing({ atom: _atom, atomAnother: _atomDraft });
+      if (!enableOnFlowing && isFlowing) return null;
+      // enable/disable
+      if (action === 6 && _atom.atomDisabled === 0) return null;
+      if (action === 7 && _atom.atomDisabled === 1) return null;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
+      // check formal/history
+      const sql = this.sqlProcedure.checkRightAction({
+        iid: ctx.instance.id,
+        userIdWho: user.id,
+        atomId: _atom.id,
+        action,
+        forAtomUser,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+  }
+  return Atom;
+};
+
+
+/***/ }),
+
+/***/ 6102:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async closeDraft({ key }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!key.itemId) key.itemId = atomClass.itemId;
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      // draft
+      const atomIdDraft = key.atomId;
+      const atomDraft = await this.modelAtom.get({ id: atomIdDraft });
+      const user = { id: atomDraft.userIdUpdated };
+      // ** update draft from formal
+      if (atomDraft.atomIdFormal) {
+        await this._copy({
+          target: 'draft',
+          srcKey: { atomId: atomDraft.atomIdFormal },
+          srcItem: null,
+          destKey: key,
+          user,
+        });
+        // update atomClosed
+        await this.modelAtom.update({
+          id: atomIdDraft,
+          atomClosed: 1,
+        });
+      } else {
+        // not delete draft if atomFlowId>0
+        if (atomDraft.atomFlowId > 0) {
+          // update atomClosed
+          await this.modelAtom.update({
+            id: atomIdDraft,
+            atomClosed: 1,
+            atomRevision: atomDraft.atomRevision - 1,
+          });
+        } else {
+          // delete
+          await ctx.meta.util.executeBean({
+            beanModule: _moduleInfo.relativeName,
+            beanFullName,
+            context: { atomClass, key, user },
+            fn: 'delete',
+          });
+        }
+      }
+      // notify
+      this._notifyDraftsDrafting(user, atomClass);
+      this._notifyDraftsFlowing(user, atomClass);
+    }
+
+    async openDraft({ key, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      // atom
+      let atom = await this.modelAtom.get({ id: key.atomId });
+      if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // check simple switch
+      atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom, user });
+      // open draft
+      let res;
+      if (atom.atomSimple) {
+        // simple
+        res = await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+      } else {
+        // not simple
+        res = await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
+      }
+      // ok
+      // get atom
+      const resData = res.draft || res.formal;
+      const keyDraft = resData.key;
+      atom = await this.modelAtom.get({ id: keyDraft.atomId });
+      atom.atomId = atom.id;
+      atom.module = atomClass.module;
+      atom.atomClassName = atomClass.atomClassName;
+      if (res.draft) {
+        res.draft.atom = atom;
+      } else {
+        res.formal.atom = atom;
+      }
+      return res;
+    }
+
+    async _openDraft_asSimple({ atom, user }) {
+      let keyFormal;
+      let changed = true;
+      // formal
+      if (atom.atomStage === 1) {
+        keyFormal = { atomId: atom.id, itemId: atom.itemId };
+        changed = false;
+      }
+      // history
+      if (atom.atomStage === 2) {
+        const atomIdFormal = atom.atomIdFormal;
+        keyFormal = { atomId: atomIdFormal };
+        // ** copy formal from history
+        keyFormal = await this._copy({
+          target: 'formal',
+          srcKey: { atomId: atom.id },
+          srcItem: null,
+          destKey: keyFormal,
+          user,
+        });
+        // update formal
+        await this.modelAtom.update({
+          id: atomIdFormal,
+          userIdUpdated: user.id,
+        });
+      }
+      // ok
+      return { formal: { key: keyFormal }, changed };
+    }
+
+    async _openDraft_asSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
+      // draft
+      if (atom.atomStage === 0) {
+        return await this._openDraft_asSimpleZero_draft({ atom, user });
+      }
+      // formal
+      if (atom.atomStage === 1) {
+        return await this._openDraft_asSimpleZero_formal({ atom, user });
+      }
+      // history
+      if (atom.atomStage === 2) {
+        return await this._openDraft_asSimpleZero_history({ atom, user });
+      }
+      // never go here
+    }
+
+    async _openDraft_asSimpleZero_history({ atom, user }) {
+      let keyDraft;
+      let changed = true;
+      let atomDraft;
+      if (atom.atomIdDraft > 0) {
+        keyDraft = { atomId: atom.atomIdDraft };
+        // check if opened
+        atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
+        if (atomDraft.atomClosed === 0) {
+          changed = false;
+        }
+      } else {
+        // ** create draft from formal
+        keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
+      }
+      // copy
+      if (changed) {
+        // hold atomRevision
+        if (!atomDraft) {
+          atomDraft = await this.modelAtom.get({ id: keyDraft.atomId });
+        }
+        const atomRevision = atomDraft.atomRevision;
+        // ** copy draft from history
+        keyDraft = await this._copy({
+          target: 'draft',
+          srcKey: { atomId: atom.id },
+          srcItem: null,
+          destKey: keyDraft,
+          user,
+        });
+        // open
+        await this._openDraft_update({
+          atomId: keyDraft.atomId,
+          atomRevision: atomRevision + 1,
+          user,
+        });
+      }
+      // ok
+      return { draft: { key: keyDraft }, changed };
+    }
+
+    async _openDraft_asSimpleZero_formal({ atom, user }) {
+      let keyDraft;
+      let changed = true;
+      if (atom.atomIdDraft > 0) {
+        keyDraft = { atomId: atom.atomIdDraft };
+        // check if opened
+        const _item = await this.modelAtom.get({ id: keyDraft.atomId });
+        if (_item.atomClosed === 0) {
+          changed = false;
+        } else {
+          // ** copy draft from formal
+          await this._copy({
+            target: 'draft',
+            srcKey: { atomId: atom.id },
+            srcItem: null,
+            destKey: keyDraft,
+            user,
+          });
+        }
+      } else {
+        // ** create draft from formal
+        keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.id, user });
+      }
+      // open
+      if (changed) {
+        await this._openDraft_update({
+          atomId: keyDraft.atomId,
+          atomRevision: atom.atomRevision + 1,
+          user,
+        });
+      }
+      // ok
+      return { draft: { key: keyDraft }, changed };
+    }
+
+    async _openDraft_asSimpleZero_draft({ atom, user }) {
+      let changed = true;
+      // key
+      const keyDraft = { atomId: atom.id, itemId: atom.itemId };
+      if (atom.atomClosed === 1) {
+        // ** copy draft from formal
+        if (atom.atomIdFormal > 0) {
+          await this._copy({
+            target: 'draft',
+            srcKey: { atomId: atom.atomIdFormal },
+            srcItem: null,
+            destKey: keyDraft,
+            user,
+          });
+        }
+        // open
+        await this._openDraft_update({
+          atomId: atom.id,
+          atomRevision: atom.atomRevision + 1,
+          user,
+        });
+      } else {
+        changed = false;
+      }
+      // ok
+      return { draft: { key: keyDraft }, changed };
+    }
+
+    async _openDraft_update({ atomId, atomRevision, user }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
+      await this.modelAtom.update({
+        id: atomId,
+        atomFlowId: 0,
+        atomClosed: 0,
+        atomRevision,
+        userIdUpdated: user.id,
+      });
+      // notify
+      this._notifyDraftsDrafting(null, atomClass);
+    }
+
+    async _createDraftFromFormal({ atomIdFormal, user }) {
+      // ** create draft from formal
+      const keyDraft = await this._copy({
+        target: 'draft',
+        srcKey: { atomId: atomIdFormal },
+        srcItem: null,
+        destKey: null,
+        user,
+      });
+      // update history
+      await ctx.model.query(
+        `
+          update aAtom set atomIdDraft=?
+            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
+        `,
+        [keyDraft.atomId, ctx.instance.id, atomIdFormal]
+      );
+      // update formal
+      await this.modelAtom.update({
+        id: atomIdFormal,
+        atomIdDraft: keyDraft.atomId,
+      });
+      // ok
+      return keyDraft;
+    }
+  }
+  return Atom;
+};
+
+
+/***/ }),
+
+/***/ 2751:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async closeFormal({ key }) {
+      // update atomClosed
+      await this.modelAtom.update({
+        id: key.atomId,
+        atomClosed: 1,
+      });
+    }
+  }
+  return Atom;
+};
+
+
+/***/ }),
+
+/***/ 6681:
+/***/ ((module) => {
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -2403,43 +2484,6 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightAction({ atom: { id }, action, stage, user, checkFlow, disableAuthOpenCheck }) {
-      const _atom = await this.modelAtom.get({ id });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // normal check
-      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
-      if (!res) return res;
-      // auth open check
-      if (!disableAuthOpenCheck) {
-        const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
-        if (!resAuthOpenCheck) return null;
-      }
-      // ok
-      return res;
-    }
-
-    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
-      // atom bean
-      const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      // parse action code
-      action = ctx.bean.atomAction.parseActionCode({
-        action,
-        atomClass,
-      });
-      // check right
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
-      return await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
-        fn: 'checkRightAction',
-      });
-    }
-
     // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
     async checkRightActionBulk({ atomClass, action, stage, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
@@ -2516,7 +2560,12 @@ module.exports = ctx => {
       const actionsRes = [];
       for (const action of actions) {
         const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
-        if (res) actionsRes.push(action);
+        if (res) {
+          if (res.__task) {
+            action.__task = res.__task;
+          }
+          actionsRes.push(action);
+        }
       }
       return actionsRes;
     }
@@ -2579,6 +2628,124 @@ module.exports = ctx => {
     }
   }
 
+  return Atom;
+};
+
+
+/***/ }),
+
+/***/ 531:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async _switchToSimple({ atomClass, _atomClass, atom, user }) {
+      let atomIdDraft;
+      let atomIdFormal;
+      if (atom.atomStage === 0) {
+        // is draft
+        atomIdDraft = atom.id;
+        atomIdFormal = atom.atomIdFormal;
+        if (!atomIdFormal) {
+          // formal/history not exists, so copy it
+          // create formal
+          const srcItem = await ctx.bean.atom.read({ key: { atomId: atomIdDraft }, user });
+          srcItem.atomSimple = 1; // important
+          const keyFormal = await this._copy({
+            target: 'formal',
+            srcKey: { atomId: atomIdDraft },
+            srcItem,
+            destKey: null,
+            options: null,
+            user,
+          });
+          atomIdFormal = keyFormal.atomId;
+        }
+      } else {
+        // is formal/history
+        atomIdDraft = atom.atomIdDraft;
+        atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
+      }
+      // update history
+      await ctx.model.query(
+        `
+          update aAtom set atomSimple=1, atomIdDraft=0 
+            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
+        `,
+        [ctx.instance.id, atomIdFormal]
+      );
+      // update formal
+      await this.modelAtom.update({
+        id: atomIdFormal,
+        atomSimple: 1,
+        atomIdDraft: 0,
+      });
+      // delete draft
+      if (atomIdDraft) {
+        const atomDraft = atom.atomStage === 0 ? atom : await this.modelAtom.get({ id: atomIdDraft });
+        const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
+        const _moduleInfo = mparse.parseInfo(atomClass.module);
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        await ctx.meta.util.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, key: keyDraft, user },
+          fn: 'delete',
+        });
+        // notify to change draft stats
+        this._notifyDraftsDrafting(null, atomClass);
+      }
+      // ok
+      if (atom.atomStage === 0) {
+        // fetch formal
+        return await this.modelAtom.get({ id: atomIdFormal });
+      }
+      atom.atomSimple = 1;
+      return atom;
+    }
+
+    async _switchToSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
+      const atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
+      // update history's atomSimple
+      await ctx.model.query(
+        `
+          update aAtom set atomSimple=0
+            where iid=? and deleted=0 and atomStage=2 and atomIdFormal=?
+        `,
+        [ctx.instance.id, atomIdFormal]
+      );
+      // update formal's atomSimple
+      await this.modelAtom.update({
+        id: atomIdFormal,
+        atomSimple: 0,
+      });
+      // ** create draft from formal
+      const keyDraft = await this._createDraftFromFormal({ atomIdFormal, user });
+      // update draft's atomClosed
+      await this.modelAtom.update({
+        id: keyDraft.atomId,
+        atomClosed: 1,
+      });
+      // ok
+      atom.atomSimple = 0;
+      return atom;
+    }
+
+    async _checkSimpleSwitch({ atomClass, _atomClass, atom, user }) {
+      // the same mode
+      if (Boolean(atom.atomSimple) === Boolean(_atomClass.simple)) return atom;
+      // -> simple
+      if (_atomClass.simple) {
+        return await this._switchToSimple({ atomClass, _atomClass, atom, user });
+      }
+      // -> not simple
+      return await this._switchToSimpleZero({ atomClass, _atomClass, atom, user });
+    }
+  }
   return Atom;
 };
 
@@ -2762,7 +2929,161 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 2293:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const require3 = __webpack_require__(5638);
+const mparse = require3('egg-born-mparse').default;
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom {
+    async submit({ key, options, user }) {
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!key.itemId) key.itemId = atomClass.itemId;
+      // atom
+      const _atom = await this.modelAtom.get({ id: key.atomId });
+      if (_atom.atomSimple === 1 && _atom.atomStage === 1) {
+        // if simple, just return formal, so as for compatible with not simple
+        return { formal: { key } };
+      }
+      // atom bean
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      return await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, key, options, user },
+        fn: 'submit',
+      });
+    }
+
+    async _submitBase({ /* atomClass,*/ key, options, user }) {
+      // ignoreFlow only used by draft
+      const ignoreFlow = options && options.ignoreFlow;
+      const _atom = await ctx.bean.atom.read({ key, user: null });
+      // check atom flow
+      if (!ignoreFlow) {
+        const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
+        if (flowInstance) {
+          // set atom flow
+          const atomFlowId = flowInstance.context._flowId;
+          await ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+          // ok
+          return {
+            flow: { id: atomFlowId },
+            draft: {
+              key,
+              atom: {
+                atomId: _atom.atomId,
+                module: _atom.module,
+                atomClassName: _atom.atomClassName,
+                atomStage: _atom.atomStage,
+              },
+            },
+          };
+        }
+      }
+      return await this._submitDirect({ key, item: _atom, options, user });
+    }
+
+    async _submitDirect({ key, item, options, user }) {
+      // { formal }
+      let result = await this._submitDirect_formal({ key, item, options, user });
+      // check atom flow
+      key = result.formal.key;
+      item = { ...item, id: key.itemId, atomId: key.atomId, itemId: key.itemId, atomStage: 1 };
+      const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+      const flowInstance = await _nodeBaseBean._match({ atom: item, userId: item.userIdUpdated });
+      if (flowInstance) {
+        // set atom flow
+        const atomFlowId = flowInstance.context._flowId;
+        await ctx.bean.atom.flow({ key, atom: { atomFlowId } });
+        result = {
+          flow: { id: atomFlowId },
+          formal: result.formal,
+        };
+      }
+      // ok
+      return result;
+    }
+
+    async _submitDirect_formal({ key, item, options, user }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // formal -> history
+      if (item.atomIdFormal) {
+        if (atomClassBase.history !== false) {
+          await this._copy({
+            target: 'history',
+            srcKey: { atomId: item.atomIdFormal },
+            srcItem: null,
+            destKey: null,
+            options,
+            user,
+          });
+        }
+      }
+      // draft -> formal
+      const keyFormal = await this._copy({
+        target: 'formal',
+        srcKey: { atomId: item.atomId },
+        srcItem: item,
+        destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,
+        options,
+        user,
+      });
+      // update draft
+      await this.modelAtom.update({
+        id: item.atomId,
+        atomClosed: 1,
+        atomIdFormal: keyFormal.atomId,
+      });
+      // notify
+      this._notifyDraftsDrafting(user, atomClass);
+      if (item.atomFlowId > 0) {
+        this._notifyDraftsFlowing(user, atomClass);
+      }
+      // get formal atom
+      const atomFormal = await this.modelAtom.get({ id: keyFormal.atomId });
+      atomFormal.atomId = atomFormal.id;
+      atomFormal.module = atomClass.module;
+      atomFormal.atomClassName = atomClass.atomClassName;
+      // ok
+      return { formal: { key: keyFormal, atom: atomFormal } };
+    }
+  }
+  return Atom;
+};
+
+
+/***/ }),
+
 /***/ 3127:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const atomAction_base = __webpack_require__(6560);
+const atomAction_flow = __webpack_require__(1265);
+
+module.exports = ctx => {
+  return ctx.app.meta.util.mixinClasses(
+    atomAction_base,
+    [
+      atomAction_flow, //
+    ],
+    ctx
+  );
+};
+
+
+/***/ }),
+
+/***/ 6560:
 /***/ ((module) => {
 
 module.exports = ctx => {
@@ -2775,6 +3096,20 @@ module.exports = ctx => {
 
     get model() {
       return ctx.model.module(moduleInfo.relativeName).atomAction;
+    }
+
+    async delete({ atomClassId, code }) {
+      // delete roleRight
+      await ctx.bean.role.deleteRoleRightByAction({
+        atomClassId,
+        action: code,
+      });
+      // delete
+      await this.model.delete({ atomClassId, code });
+    }
+
+    async update(data) {
+      await this.model.update(data);
     }
 
     async get({ id, atomClassId, code }) {
@@ -2838,14 +3173,92 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 1265:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomAction {
+    async selectFlowActions({ atomClass, flowKey }) {
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      return await this.model.select({
+        where: {
+          atomClassId: atomClass.id,
+          flowKey,
+        },
+      });
+    }
+
+    async getByModeFlow({ id, atomClassId, flowKey, nodeDefId, nodeDefName }) {
+      const data = id ? { id } : { atomClassId, flowKey, nodeDefId };
+      const res = await this.model.get(data);
+      if (res) return res;
+      // lock
+      return await ctx.meta.util.lock({
+        resource: `${moduleInfo.relativeName}.atomAction.register`,
+        fn: async () => {
+          return await ctx.meta.util.executeBeanIsolate({
+            beanModule: moduleInfo.relativeName,
+            beanFullName: 'atomAction',
+            context: { atomClassId, flowKey, nodeDefId, nodeDefName },
+            fn: '_registerLockByModeFlow',
+          });
+        },
+      });
+    }
+
+    async _registerLockByModeFlow({ atomClassId, flowKey, nodeDefId, nodeDefName }) {
+      return await this._registerLockByModeFlow_inner({ atomClassId, flowKey, nodeDefId, nodeDefName });
+    }
+
+    async _registerLockByModeFlow_inner({ atomClassId, flowKey, nodeDefId, nodeDefName }) {
+      // get
+      const res = await this.model.get({ atomClassId, flowKey, nodeDefId });
+      if (res) return res;
+      // code
+      const sequence = ctx.bean.sequence.module(moduleInfo.relativeName);
+      const flowActionCode = await sequence.next('flowAction');
+      const data = {
+        atomClassId,
+        code: flowActionCode,
+        name: nodeDefName,
+        bulk: 0,
+        actionMode: 1,
+        flowKey,
+        nodeDefId,
+      };
+      // insert
+      const res2 = await this.model.insert(data);
+      data.id = res2.insertId;
+      return data;
+    }
+  }
+
+  return AtomAction;
+};
+
+
+/***/ }),
+
 /***/ 6542:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const atomBase_0 = __webpack_require__(1149);
 const atomBase_1 = __webpack_require__(9667);
+const atomBase_read = __webpack_require__(7624);
+const atomBase_write = __webpack_require__(5546);
 
 module.exports = app => {
-  return app.meta.util.mixinClasses(atomBase_0, atomBase_1, app);
+  return app.meta.util.mixinClasses(
+    atomBase_0,
+    [
+      //
+      atomBase_1,
+      atomBase_read,
+      atomBase_write,
+    ],
+    app
+  );
 };
 
 
@@ -2862,7 +3275,7 @@ module.exports = app => {
   class AtomBase extends app.meta.BeanBase {
     async create({ atomClass, item, options, user }) {
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // atomName
       if (!item.atomName) {
         // draftId
@@ -2879,7 +3292,7 @@ module.exports = app => {
         item.atomStaticKey = this.ctx.bean.util.uuidv4();
       }
       // atomSimple
-      if (_atomClass.simple) {
+      if (atomClassBase.simple) {
         item.atomSimple = 1;
         item.atomStage = 1;
       } else {
@@ -2918,30 +3331,6 @@ module.exports = app => {
       return { atomId };
     }
 
-    async read({ atomClass, options, key, user }) {
-      // get
-      const item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
-      if (!item) return item;
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      // dict translate
-      await this._dictTranslate({ item, _atomClass });
-      // revision
-      this._appendRevisionToHistory({ item });
-      // flow
-      if (item.flowNodeNameCurrent) {
-        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
-      }
-      // atomLanguage
-      if (item.atomLanguage) {
-        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
-      }
-      // atomDisabled
-      await this._atomDisabledTranslate({ atomClass, item });
-      // ok
-      return item;
-    }
-
     async selectBefore(/* { atomClass, options, user }*/) {
       // donothing
     }
@@ -2949,11 +3338,11 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       if (items.length === 0) return;
       // atomClass
-      const _atomClass = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
+      const atomClassBase = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
       // dict translate
-      if (_atomClass) {
+      if (atomClassBase) {
         for (const item of items) {
-          await this._dictTranslate({ item, _atomClass });
+          await this._dictTranslate({ item, atomClassBase });
         }
       }
       // revision
@@ -2977,12 +3366,23 @@ module.exports = app => {
         }
         await this._atomDisabledTranslate({ atomClass, item });
       }
+      // atomState
+      for (const item of items) {
+        const atomState = item.atomState;
+        if (atomState !== undefined && atomState !== null) {
+          await this._atomStateTranslate({ item });
+        }
+      }
+      // userIds
+      if (atomClassBase) {
+        await this._userIdsTranslate({ items, atomClassBase });
+      }
     }
 
     async delete({ atomClass, key, options, user }) {
       // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      if (_atomClass.tag) {
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      if (atomClassBase.tag) {
         const _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
         if (_atomOld.atomTags) {
           // stage
@@ -3001,73 +3401,8 @@ module.exports = app => {
       });
     }
 
-    async write({ atomClass, target, key, item, options, user }) {
-      if (!item) return;
-      // force delete atomDisabled
-      delete item.atomDisabled;
-      // simple/stage
-      const atomSimple = item.atomSimple;
-      const atomStage = item.atomStage;
-      // atomClass
-      const _atomClass = await this.ctx.bean.atomClass.atomClass(atomClass);
-      let _atomOld;
-      if (_atomClass.tag && item.atomTags !== undefined && atomStage === 1) {
-        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
-      }
-      // validate
-      const ignoreValidate = options && options.ignoreValidate;
-      if (
-        ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) &&
-        !target &&
-        !ignoreValidate
-      ) {
-        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
-          atomClass,
-          key,
-          options,
-          user,
-        });
-        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions: true });
-        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
-      }
-      // --- item is filtered by validation
-      // write atom
-      await this._writeAtom({ key, item, user, atomSimple, atomStage });
-      // tag
-      if (_atomClass.tag && item.atomTags !== undefined) {
-        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
-        if (atomStage === 1) {
-          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
-        }
-      }
-      // handle resource
-      await this._writeHandleResource({ _atomClass, key, item });
-      // remove fields.custom
-      const fieldsCustom = _atomClass.fields && _atomClass.fields.custom;
-      if (fieldsCustom) {
-        for (const field of fieldsCustom) {
-          delete item[field];
-        }
-      }
-    }
-
-    async submit({ /* atomClass,*/ key, options, user }) {
-      const ignoreFlow = options && options.ignoreFlow;
-      const _atom = await this.ctx.bean.atom.read({ key, user });
-      if (_atom.atomStage > 0) this.ctx.throw(403);
-      // check atom flow
-      if (!ignoreFlow) {
-        const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
-        const flowInstance = await _nodeBaseBean._match({ atom: _atom, userId: _atom.userIdUpdated });
-        if (flowInstance) {
-          // set atom flow
-          const atomFlowId = flowInstance.context._flowId;
-          await this.ctx.bean.atom.flow({ key, atom: { atomFlowId } });
-          // ok
-          return { flow: { id: atomFlowId } };
-        }
-      }
-      return await this.ctx.bean.atom._submitDirect({ key, item: _atom, options, user });
+    async submit({ atomClass, key, options, user }) {
+      return await this.ctx.bean.atom._submitBase({ atomClass, key, options, user });
     }
 
     async enable({ /* atomClass,*/ key /* , user*/ }) {
@@ -3172,40 +3507,11 @@ module.exports = app => {
 /***/ 9667:
 /***/ ((module) => {
 
-// maybe modified by user
-const __atomBasicFields = [
-  'atomName', //
-  'atomLanguage',
-  'atomCategoryId',
-  'atomTags',
-  'allowComment',
-  // 'atomStatic',
-  // 'atomStaticKey',
-  // 'atomRevision',
-];
-
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase {
     get modelResourceRole() {
       return this.ctx.model.module(moduleInfo.relativeName).resourceRole;
-    }
-
-    async _writeAtom({ key, item, user, atomSimple, atomStage }) {
-      // write atom
-      const atom = {};
-      for (const field of __atomBasicFields) {
-        if (item[field] !== undefined) atom[field] = item[field];
-      }
-      if ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) {
-        atom.updatedAt = new Date();
-      }
-      if (atom.atomName) {
-        atom.atomName = atom.atomName.trim();
-      }
-      // update
-      atom.id = key.atomId;
-      await this.ctx.bean.atom._update({ atom, user });
     }
 
     _ensureItemMeta(item) {
@@ -3222,8 +3528,33 @@ module.exports = app => {
       meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
-    async _dictTranslate({ item, _atomClass }) {
-      const fields = _atomClass.dict && _atomClass.dict.fields;
+    async _atomStateTranslate({ item }) {
+      // atomState
+      const atomState = item.atomState;
+      if (atomState === undefined || atomState === null) return;
+      // atomClass
+      const atomClassBase = this.ctx.bean.base.atomClass({
+        module: item.module,
+        atomClassName: item.atomClassName,
+      });
+      // dictKey
+      const atomStage = item.atomStage === 0 ? 'draft' : item.atomStage === 1 ? 'formal' : null;
+      if (!atomStage) return;
+      const dictKey = this.ctx.bean.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
+      if (!dictKey) return;
+      // dictItem
+      const dictItem = await this.ctx.bean.dict.findItem({
+        dictKey,
+        code: atomState,
+      });
+      if (!dictItem) return;
+      // res
+      item._atomStateTitle = dictItem.titleFull;
+      item._atomStateTitleLocale = dictItem.titleLocaleFull;
+    }
+
+    async _dictTranslate({ item, atomClassBase }) {
+      const fields = atomClassBase.dict && atomClassBase.dict.fields;
       for (const fieldName in fields) {
         const field = fields[fieldName];
         const code = item[fieldName];
@@ -3258,11 +3589,274 @@ module.exports = app => {
       return _item;
     }
 
-    async _writeHandleResource({ _atomClass, key, item }) {
+    async _atomDisabledTranslate({ atomClass, item }) {
+      //
+      if (!item.atomDisabled) return;
+      //
+      if (!atomClass) {
+        atomClass = await this.ctx.bean.atomClass.get({ id: item.atomClassId });
+      }
+      //
+      const actionBase = this.ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: 'disable',
+      });
+      const title = this.ctx.bean.util.getProperty(actionBase, 'params.atomDisabled.title') || 'Disabled';
+      const meta = this._ensureItemMeta(item);
+      meta.flags.push(this.ctx.text(title));
+    }
+
+    async _userIdsTranslate({ items, item, atomClassBase }) {
+      // userIds
+      if (!atomClassBase.userIds) return;
+      let userIdsKey = atomClassBase.userIds;
+      if (!Array.isArray(userIdsKey)) {
+        userIdsKey = userIdsKey.split(',');
+      }
+      // items
+      if (item) {
+        items = [item];
+      }
+      // userIdsWant
+      const userIdsWantMap = {};
+      for (item of items) {
+        for (const userIdKey of userIdsKey) {
+          const userId = item[userIdKey];
+          if (userId) {
+            userIdsWantMap[userId] = true;
+          }
+        }
+      }
+      const userIdsWant = Object.keys(userIdsWantMap).map(userId => parseInt(userId));
+      if (userIdsWant.length === 0) return;
+      // select
+      const users = await this.ctx.bean.user.model.select({
+        where: {
+          id: userIdsWant,
+        },
+      });
+      // set
+      for (item of items) {
+        for (const userIdKey of userIdsKey) {
+          const userId = item[userIdKey];
+          if (!userId) continue;
+          const user = users.find(item => item.id === userId);
+          if (!user) continue;
+          item[`_${userIdKey}Name`] = user.userName;
+          item[`_${userIdKey}Avatar`] = user.avatar;
+        }
+      }
+    }
+  }
+
+  return AtomBase;
+};
+
+
+/***/ }),
+
+/***/ 7624:
+/***/ ((module) => {
+
+const __itemBasicFields = ['id', 'iid', 'atomId', 'itemId', 'atomStage'];
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomBase {
+    async read({ atomClass, options, key, user }) {
+      // get
+      let item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });
+      if (!item) return item;
+      // validate
+      item = await this._readValidate({ atomClass, item, options, user });
+      // atomClass
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // dict translate
+      await this._dictTranslate({ item, atomClassBase });
+      // revision
+      this._appendRevisionToHistory({ item });
+      // flow
+      if (item.flowNodeNameCurrent) {
+        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
+      }
+      // atomLanguage
+      if (item.atomLanguage) {
+        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+      }
+      // atomDisabled
+      await this._atomDisabledTranslate({ atomClass, item });
+      // atomState
+      const atomState = item.atomState;
+      if (atomState !== undefined && atomState !== null) {
+        await this._atomStateTranslate({ item });
+      }
+      // userIds
+      await this._userIdsTranslate({ item, atomClassBase });
+      // ok
+      return item;
+    }
+
+    async _readValidate({ atomClass, item, options, user }) {
+      // schema
+      const schema = options && options.schema;
+      if (!schema) return item;
+      // itemHold
+      const itemHold = {};
+      for (const field of __itemBasicFields) {
+        if (item[field] !== undefined) {
+          itemHold[field] = item[field];
+        }
+      }
+      // itemBusiness
+      const itemBusiness = {};
+      for (const field of Object.keys(item)) {
+        if (field === 'itemId') break;
+        itemBusiness[field] = item[field];
+        delete item[field];
+      }
+      // filterOptions
+      const filterOptions = {
+        ignoreRules: true,
+      };
+      await this.ctx.bean.validation._validate({ atomClass, data: itemBusiness, options, filterOptions });
+      // assign
+      item = Object.assign({}, itemHold, itemBusiness, item);
+      return item;
+    }
+  }
+
+  return AtomBase;
+};
+
+
+/***/ }),
+
+/***/ 5546:
+/***/ ((module) => {
+
+// maybe modified by user
+const __atomBasicFields = [
+  'atomName', //
+  'atomLanguage',
+  'atomCategoryId',
+  'atomTags',
+  'allowComment',
+  // 'atomStatic',
+  // 'atomStaticKey',
+  // 'atomRevision',
+];
+const __itemBasicFields = ['id', 'iid', 'atomId', 'itemId', 'atomStage'];
+
+module.exports = app => {
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class AtomBase {
+    async write({ atomClass, target, key, item, options, user }) {
+      if (!item) return;
+      // force delete atomDisabled
+      delete item.atomDisabled;
+      // simple/stage
+      const atomSimple = item.atomSimple;
+      const atomStage = item.atomStage;
+      // atomClass
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      let _atomOld;
+      if (atomClassBase.tag && item.atomTags !== undefined && atomStage === 1) {
+        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      }
+      // validate
+      await this._writeValidate({ atomClass, target, key, item, options, user });
+      // --- item is filtered by validation
+      // write atom
+      await this._writeAtom({ key, item, user, atomSimple, atomStage });
+      // tag
+      if (atomClassBase.tag && item.atomTags !== undefined) {
+        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
+        if (atomStage === 1) {
+          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
+        }
+      }
+      // handle resource
+      await this._writeHandleResource({ atomClass, atomClassBase, key, item });
+    }
+
+    async _writeValidate({ atomClass, target, key, item, options, user }) {
+      // options
+      const ignoreValidate = options && options.ignoreValidate;
+      if (!ignoreValidate) {
+        // itemHold
+        const itemHold = {};
+        for (const field of __itemBasicFields) {
+          if (item[field] !== undefined) {
+            itemHold[field] = item[field];
+          }
+        }
+        // filterOptions
+        const filterOptions = this._writeValidate_prepareFilterOptions({ target });
+        // validate
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', {
+          atomClass,
+          key,
+          options,
+          user,
+        });
+        await this.ctx.bean.validation._validate({ atomClass, data: item, options, filterOptions });
+        this.ctx.bean.util.setProperty(this.ctx, 'meta.validateHost', null);
+        // itemHold
+        for (const field of __itemBasicFields) {
+          if (item[field] === undefined && itemHold[field] !== undefined) {
+            item[field] = itemHold[field];
+          }
+        }
+      }
+      // append itemId
+      //   why always set value here: resource, data.id!==key.itemId
+      item.id = key.itemId;
+    }
+
+    _writeValidate_prepareFilterOptions({ target }) {
+      const filterOptions = {};
+      if (!target) {
+        // just save
+        filterOptions.type = true;
+        filterOptions.ebReadOnly = true;
+      } else if (target === 'clone') {
+        // clone
+        filterOptions.type = true;
+        filterOptions.ebReadOnly = true;
+        filterOptions.ignoreRules = true;
+      } else {
+        // other target
+        filterOptions.type = true;
+        // filterOptions.ebReadOnly = true; // not set ebReadOnly
+        filterOptions.ignoreRules = true;
+      }
+      return filterOptions;
+    }
+
+    async _writeAtom({ key, item, user, atomSimple, atomStage }) {
+      // write atom
+      const atom = {};
+      for (const field of __atomBasicFields) {
+        if (item[field] !== undefined) atom[field] = item[field];
+      }
+      if ((atomSimple === 0 && atomStage === 0) || (atomSimple === 1 && atomStage === 1)) {
+        atom.updatedAt = new Date();
+      }
+      if (atom.atomName) {
+        atom.atomName = atom.atomName.trim();
+      }
+      // update
+      atom.id = key.atomId;
+      await this.ctx.bean.atom._update({ atom, user });
+    }
+
+    async _writeHandleResource({ atomClass, atomClassBase, key, item }) {
       // atomId/stage
       const atomId = key.atomId;
       const atomStage = item.atomStage;
-      if (_atomClass.resource && atomStage === 1) {
+      const isAtomClassRole = atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
+      if (!isAtomClassRole && atomClassBase.resource && atomStage === 1) {
         // update locales
         if (item.atomName) {
           await this.ctx.bean.resource.setLocales({
@@ -3284,24 +3878,6 @@ module.exports = app => {
           });
         }
       }
-    }
-
-    async _atomDisabledTranslate({ atomClass, item }) {
-      //
-      if (!item.atomDisabled) return;
-      //
-      if (!atomClass) {
-        atomClass = await this.ctx.bean.atomClass.get({ id: item.atomClassId });
-      }
-      //
-      const actionBase = this.ctx.bean.base.action({
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
-        name: 'disable',
-      });
-      const title = this.ctx.bean.util.getProperty(actionBase, 'params.atomDisabled.title') || 'Disabled';
-      const meta = this._ensureItemMeta(item);
-      meta.flags.push(this.ctx.text(title));
     }
   }
 
@@ -3469,11 +4045,16 @@ module.exports = ctx => {
       // items
       const items = await ctx.model.query(
         `
-      select distinct a.action from aViewUserRightAtomClass a
-          where a.iid=? and a.atomClassId=? and a.userIdWho=?
-    `,
+          select distinct a.atomClassId,a.action,b.id as actionId,b.name,b.bulk,b.actionMode,c.atomName as flowDefName from aViewUserRightAtomClass a
+            inner join aAtomAction b on a.atomClassId=b.atomClassId and a.action=b.code
+            left join aAtom c on b.flowKey=c.atomStaticKey and c.atomStage=1
+              where a.iid=? and a.atomClassId=? and a.userIdWho=?
+        `,
         [ctx.instance.id, atomClassId, user.id]
       );
+      // locale
+      await ctx.bean.role._adjustFlowActionsLocale({ items, actionNameKey: 'name' });
+      // ok
       return items;
     }
 
@@ -5381,6 +5962,7 @@ const role_includes = __webpack_require__(2249);
 const role_others = __webpack_require__(1292);
 const role_resourceRights = __webpack_require__(5465);
 const role_users = __webpack_require__(5393);
+const role_flow = __webpack_require__(4805);
 
 module.exports = ctx => {
   return ctx.app.meta.util.mixinClasses(
@@ -5392,6 +5974,7 @@ module.exports = ctx => {
       role_others,
       role_resourceRights,
       role_users,
+      role_flow,
     ],
     ctx
   );
@@ -5418,7 +6001,7 @@ module.exports = ctx => {
       // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
-      // scope
+      // scope: allowed []
       if (scope) {
         if (typeof scope === 'string') {
           scope = scope.split(',');
@@ -5480,6 +6063,11 @@ module.exports = ctx => {
       await this.modelRoleRightRef.delete({ roleRightId, roleId });
     }
 
+    async deleteRoleRightByAction({ atomClassId, action }) {
+      await this.modelRoleRight.delete({ atomClassId, action });
+      await this.modelRoleRightRef.delete({ atomClassId, action });
+    }
+
     // const roleRights = [
     //   { roleName: 'cms-writer', action: 'create' },
     //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
@@ -5504,25 +6092,7 @@ module.exports = ctx => {
           role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
         }
         // scope
-        let scope;
-        if (!roleRight.scopeNames) {
-          scope = 0;
-        } else {
-          scope = [];
-          const scopeNames = Array.isArray(roleRight.scopeNames)
-            ? roleRight.scopeNames
-            : roleRight.scopeNames.split(',');
-          for (const scopeName of scopeNames) {
-            let roleScopeId;
-            if (typeof scopeName === 'number') {
-              roleScopeId = scopeName;
-            } else {
-              const roleScope = await this.parseRoleName({ roleName: scopeName, force: false });
-              roleScopeId = roleScope.id;
-            }
-            scope.push(roleScopeId);
-          }
-        }
+        const scope = await this._parseScopeNames({ scopeNames: roleRight.scopeNames });
         // add role right
         const actionCode = ctx.bean.atomAction.parseActionCode({
           action: roleRight.action,
@@ -5542,6 +6112,27 @@ module.exports = ctx => {
       }
     }
 
+    async _parseScopeNames({ scopeNames }) {
+      let scope;
+      if (!scopeNames) {
+        scope = 0;
+      } else {
+        scope = [];
+        const _scopeNames = Array.isArray(scopeNames) ? scopeNames : scopeNames.split(',');
+        for (const scopeName of _scopeNames) {
+          let roleScopeId;
+          if (typeof scopeName === 'number') {
+            roleScopeId = scopeName;
+          } else {
+            const roleScope = await this.parseRoleName({ roleName: scopeName, force: false });
+            roleScopeId = roleScope.id;
+          }
+          scope.push(roleScopeId);
+        }
+      }
+      return scope;
+    }
+
     // role rights
     async roleRights({ roleAtomId, roleId, page }) {
       roleId = await this._forceRoleId({ roleAtomId, roleId });
@@ -5549,9 +6140,10 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk from aRoleRight a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+        select a.*,b.module,b.atomClassName,c.name as actionName,c.bulk as actionBulk,c.actionMode,d.atomName as flowDefName from aRoleRight a
+          inner join aAtomClass b on a.atomClassId=b.id
+          inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          left join aAtom d on c.flowKey=d.atomStaticKey and d.atomStage=1
             where a.iid=? and a.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
@@ -5562,6 +6154,8 @@ module.exports = ctx => {
       await this._adjustAtomRightsScopeRoles({ items });
       // area scope
       await this._translateAreaScopeValue({ items });
+      // actionFlows
+      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
@@ -5573,11 +6167,12 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aRoleRight a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-          left join aRoleExpand d on a.roleId=d.roleIdBase
-          left join aRole e on d.roleIdBase=e.id
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,c.actionMode,e.roleName as roleNameBase,f.atomName as flowDefName from aRoleRight a
+          inner join aAtomClass b on a.atomClassId=b.id
+          inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          inner join aRoleExpand d on a.roleId=d.roleIdBase
+          inner join aRole e on d.roleIdBase=e.id
+          left join aAtom f on c.flowKey=f.atomStaticKey and f.atomStage=1
             where d.iid=? and d.roleId=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
@@ -5590,6 +6185,8 @@ module.exports = ctx => {
       await this._translateAreaScopeValue({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
+      // actionFlows
+      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
@@ -5601,10 +6198,11 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,e.roleName as roleNameBase from aViewUserRightAtomClass a
-          left join aAtomClass b on a.atomClassId=b.id
-          left join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
-          left join aRole e on a.roleIdBase=e.id
+        select a.*,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,c.actionMode,e.roleName as roleNameBase,f.atomName as flowDefName from aViewUserRightAtomClass a
+          inner join aAtomClass b on a.atomClassId=b.id
+          inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
+          inner join aRole e on a.roleIdBase=e.id
+          left join aAtom f on c.flowKey=f.atomStaticKey and f.atomStage=1 
             where a.iid=? and a.userIdWho=?
             order by b.module,a.atomClassId,a.action
             ${_limit}
@@ -5617,6 +6215,8 @@ module.exports = ctx => {
       await this._translateAreaScopeValue({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
+      // actionFlows
+      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
       return items;
     }
@@ -5666,6 +6266,16 @@ module.exports = ctx => {
         });
         if (res) {
           item.areaScopeInfo = res;
+        }
+      }
+    }
+
+    // actionFlows
+    async _adjustFlowActionsLocale({ items, actionNameKey }) {
+      for (const item of items) {
+        if (item.actionMode === 1) {
+          item[`${actionNameKey}Locale`] = ctx.text(item[actionNameKey] || 'Unnamed');
+          item.flowDefNameLocale = ctx.text(item.flowDefName);
         }
       }
     }
@@ -6241,6 +6851,61 @@ module.exports = ctx => {
     }
   }
 
+  return Role;
+};
+
+
+/***/ }),
+
+/***/ 4805:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  class Role {
+    // const roleRights = [
+    //   {
+    //     roleName: 'family.father',
+    //     flowKey: 'test-flow:set03_atomStateDraft',
+    //     nodeDefId: 'activity_1',
+    //     scopeNames: 'family',
+    //   },
+    // ];
+    async addRoleRightBatchByModeFlow({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
+      // module
+      module = module || this.moduleName;
+      // const _module = ctx.app.meta.modules[module];
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      // roleRights
+      if (!roleRights || !roleRights.length) return;
+      for (const roleRight of roleRights) {
+        // role
+        let role;
+        if (roleRight.roleAtomId || roleRight.roleId) {
+          role = await this._forceRole({ roleAtomId: roleRight.roleAtomId, roleId: roleRight.roleId });
+        } else {
+          role = await this.parseRoleName({ roleName: roleRight.roleName, force: true });
+        }
+        // scope
+        const scope = await this._parseScopeNames({ scopeNames: roleRight.scopeNames });
+        // add role right
+        const action = await ctx.bean.atomAction.getByModeFlow({
+          atomClassId: atomClass.id,
+          flowKey: roleRight.flowKey,
+          nodeDefId: roleRight.nodeDefId,
+          nodeDefName: roleRight.nodeDefName,
+        });
+        await this.addRoleRight({
+          roleId: role.id,
+          atomClassId: atomClass.id,
+          action: action.code,
+          scope,
+          areaKey: roleRight.areaKey,
+          areaScope: roleRight.areaScope,
+        });
+      }
+    }
+  }
   return Role;
 };
 
@@ -8404,14 +9069,14 @@ module.exports = ctx => {
 
       // cms
       if (cms) {
-        _cmsField = `,${
+        _cmsField = `${
           tableName ? '' : 'p.createdAt,p.updatedAt,'
-        }p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt`;
+        }p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt,`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
         _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
         if (mode && mode !== 'default') {
           // full/search/others
-          _cmsField += ',q.content,q.html';
+          _cmsField += 'q.content,q.html,';
           _cmsJoin += ' inner join aCmsContent q on q.atomId=a.id';
           _cmsWhere += ` and q.iid=${iid} and q.deleted=0`;
         }
@@ -8814,7 +9479,7 @@ module.exports = ctx => {
       // resource
       if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
-        _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
+        _resourceJoin = ' inner join aResourceLocale m on m.atomId=a.id';
         _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
       } else {
         _resourceField = '';
@@ -8853,15 +9518,15 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `${_itemField}
+        _selectFields = `${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
-                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,
+                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
+                ${_commentField} ${_fileField} ${_resourceField}`;
       }
 
       // _rightWhere
@@ -9087,17 +9752,16 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `${_itemField}
+        _selectFields = `${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
-                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,
+                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField} ${_labelField} ${_commentField}
                 ${_fileField} ${_flowField}
-                ${_cmsField}
               `;
       }
 
@@ -9297,7 +9961,7 @@ module.exports = ctx => {
       // resource
       if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
-        _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
+        _resourceJoin = ' inner join aResourceLocale m on m.atomId=a.id';
         _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
       } else {
         _resourceField = '';
@@ -9344,15 +10008,15 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `${_itemField}
+        _selectFields = `${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
-                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,
+                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
-                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField} ${_cmsField}`;
+                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField}`;
       }
 
       // useAreaScope
@@ -9526,7 +10190,7 @@ module.exports = ctx => {
       // resource
       if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
-        _resourceJoin = ' left join aResourceLocale m on m.atomId=a.id';
+        _resourceJoin = ' inner join aResourceLocale m on m.atomId=a.id';
         // not check atomDisabled
         _resourceWhere = ctx.model.format(' and m.locale=?', resourceLocale);
       } else {
@@ -9562,10 +10226,10 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql = `select ${_itemField}
+      const _sql = `select ${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
-                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,
+                a.atomSimple,a.atomDisabled,a.atomAreaKey,a.atomAreaValue,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
                 b.module,b.atomClassName,b.atomClassIdParent,
                 ${_userField}
@@ -9574,7 +10238,6 @@ module.exports = ctx => {
                 ${_labelField}
                 ${_resourceField}
                 ${_flowField}
-                ${_cmsField}
           from aAtom a
 
             inner join aAtomClass b on a.atomClassId=b.id
@@ -10393,6 +11056,7 @@ const VersionUpdate17Fn = __webpack_require__(1223);
 const VersionUpdate18Fn = __webpack_require__(5140);
 const VersionUpdate19Fn = __webpack_require__(3836);
 const VersionUpdate20Fn = __webpack_require__(2523);
+const VersionUpdate21Fn = __webpack_require__(5848);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
@@ -10405,6 +11069,10 @@ const VersionInit15Fn = __webpack_require__(3166);
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 21) {
+        const versionUpdate21 = new (VersionUpdate21Fn(this.ctx))();
+        await versionUpdate21.run();
+      }
       if (options.version === 20) {
         const versionUpdate20 = new (VersionUpdate20Fn(this.ctx))();
         await versionUpdate20.run();
@@ -12241,6 +12909,41 @@ module.exports = function (ctx) {
 
 /***/ }),
 
+/***/ 5848:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate21 {
+    async run() {
+      await this._alterTables();
+    }
+
+    async _alterTables() {
+      // aAtom: add atomState, default value is null
+      let sql = `
+        ALTER TABLE aAtom
+          ADD COLUMN atomState varchar(255) DEFAULT NULL
+      `;
+      await ctx.model.query(sql);
+      // aAtomAction: for workflow
+      //   actionMode: 0/default 1/workflow
+      sql = `
+        ALTER TABLE aAtomAction
+          ADD COLUMN actionMode int(11) DEFAULT '0',
+          ADD COLUMN flowKey varchar(50) DEFAULT NULL,
+          ADD COLUMN nodeDefId varchar(50) DEFAULT NULL
+      `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate21;
+};
+
+
+/***/ }),
+
 /***/ 2901:
 /***/ ((module) => {
 
@@ -13252,7 +13955,8 @@ module.exports = app => {
         enable: 6,
         disable: 7,
         layout: 15,
-        // report: 16,
+        workflowFormal: 16,
+        // report: 17,
 
         authorize: 25,
 
@@ -13291,6 +13995,7 @@ module.exports = app => {
           // actionPath: '/a/basefront/atom/item?mode=view&atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           icon: { f7: '::visibility' },
         },
         write: {
@@ -13299,6 +14004,9 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: false,
           enableOnOpened: false,
+          enableOnFlowing: false,
+          directShowOnSwipeout: true,
+          directShowOnList: true,
           icon: { f7: '::edit' },
         },
         delete: {
@@ -13307,6 +14015,9 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: false,
           enableOnOpened: false,
+          enableOnFlowing: false,
+          directShowOnSwipeout: true,
+          directShowOnList: true,
           icon: { f7: '::delete' },
         },
         clone: {
@@ -13315,6 +14026,7 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
           icon: { f7: ':outline:copy-outline' },
         },
         enable: {
@@ -13323,6 +14035,8 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
+          directShowOnList: true,
           stage: 'formal',
           icon: { f7: '::play-arrow' },
         },
@@ -13332,6 +14046,8 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
+          directShowOnList: true,
           stage: 'formal',
           icon: { f7: '::stop' },
         },
@@ -13341,8 +14057,20 @@ module.exports = app => {
           actionComponent: 'action',
           enableOnStatic: true,
           enableOnOpened: true,
-          disableInList: true,
+          enableOnFlowing: true,
+          disableOnList: true,
           icon: { f7: '::view-list' },
+        },
+        workflowFormal: {
+          title: 'WorkFlow',
+          actionModule: moduleInfo.relativeName,
+          actionComponent: 'action',
+          enableOnStatic: true,
+          enableOnOpened: true,
+          enableOnFlowing: true,
+          directShowOnList: true,
+          stage: 'formal',
+          icon: { f7: '::flow-chart' },
         },
         authorize: {
           title: 'Authorize',
@@ -13350,11 +14078,13 @@ module.exports = app => {
           actionPath: '/a/basefront/resource/authorize?atomId={{atomId}}&itemId={{itemId}}',
           enableOnStatic: true,
           enableOnOpened: true,
+          enableOnFlowing: true,
+          directShowOnList: true,
           stage: 'formal',
           icon: { f7: '::groups' },
         },
         deleteBulk: {
-          title: 'Delete',
+          title: 'BatchDelete',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'actionBulk',
           bulk: true,
@@ -13522,6 +14252,7 @@ module.exports = {
   BasicAdmin: 'Basic Admin',
   WorkplaceTitle: 'Workplace',
   NotImplemented: 'Not Implemented',
+  BatchDelete: 'Batch Delete',
   'Only Valid for Formal Atom': 'Only Valid for Formal Data',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
@@ -13687,6 +14418,8 @@ module.exports = {
   Order: '订单',
   Invalid: '无效',
   NotImplemented: '未实现',
+  Unnamed: '未命名',
+  BatchDelete: '批量删除',
   // role name
   root: '根',
   anonymous: '匿名',
@@ -14451,7 +15184,7 @@ module.exports = app => {
     {
       atomName: 'Comment List',
       atomStaticKey: 'listComment',
-      atomRevision: 3,
+      atomRevision: -1,
       atomCategoryId: 'a-base:menu.Tools',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
@@ -15169,6 +15902,7 @@ module.exports = app => {
       const options = {
         ignoreValidate: false,
         saveDraftOnly,
+        ignoreNotEmpty: saveDraftOnly,
       };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
@@ -16191,9 +16925,6 @@ module.exports = app => {
             inner: true,
             comment: false,
             attachment: false,
-            fields: {
-              custom: ['catalog', 'system', 'roleIdParent'],
-            },
             dict: {
               fields: {
                 roleTypeCode: {
@@ -16296,9 +17027,9 @@ module.exports = app => {
             inner: true,
             comment: false,
             attachment: false,
-            fields: {
-              custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
-            },
+            // fields: {
+            //   custom: ['disabled', 'anonymous', 'activated', 'emailConfirmed', 'mobileVerified'],
+            // },
             layout: {
               config: {
                 atomList: 'a-baseadmin:layoutAtomListUser',
@@ -16374,6 +17105,13 @@ module.exports = app => {
             name: 'simple',
           },
           start: 0,
+        },
+        flowAction: {
+          bean: {
+            module: 'a-sequence',
+            name: 'simple',
+          },
+          start: 10000,
         },
       },
     },
@@ -16563,7 +17301,7 @@ module.exports = app => {
 
 /***/ }),
 
-/***/ 5848:
+/***/ 4735:
 /***/ ((module) => {
 
 module.exports = app => {
@@ -16907,7 +17645,7 @@ module.exports = app => {
 const atom = __webpack_require__(3657);
 const atomAction = __webpack_require__(6133);
 const atomClass = __webpack_require__(7251);
-const auth = __webpack_require__(5848);
+const auth = __webpack_require__(4735);
 const authProvider = __webpack_require__(9842);
 const role = __webpack_require__(9926);
 const roleInc = __webpack_require__(2248);
