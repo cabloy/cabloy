@@ -337,8 +337,8 @@ export default {
     __findResourceStock(resourcesAll, resource) {
       if (!resourcesAll) return null;
       let fullName = this.__resourceFullName(resource);
-      if (fullName === 'test-party:widgetSimpleChat') {
-        fullName = 'test-note:widgetSimpleChat';
+      if (fullName === 'test-note:widgetSimpleChat') {
+        fullName = 'test-party:widgetSimpleChat';
       }
       if (fullName === 'a-dashboard:widgetAbout' || fullName === 'test-note:widgetAbout') {
         fullName = 'test-party:widgetAbout';

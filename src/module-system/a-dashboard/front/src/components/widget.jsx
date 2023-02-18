@@ -412,8 +412,8 @@ export default {
     },
     __getFullName(options) {
       let fullName = this.dashboard.__resourceFullName(options || this.options);
-      if (fullName === 'test-party:widgetSimpleChat') {
-        fullName = 'test-note:widgetSimpleChat';
+      if (fullName === 'test-note:widgetSimpleChat') {
+        fullName = 'test-party:widgetSimpleChat';
       }
       if (fullName === 'a-dashboard:widgetAbout' || fullName === 'test-note:widgetAbout') {
         fullName = 'test-party:widgetAbout';
