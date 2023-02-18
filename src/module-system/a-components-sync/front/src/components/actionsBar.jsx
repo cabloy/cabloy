@@ -162,6 +162,7 @@ export default {
             propsOnPerform={event => action.onPerform(event)}
             iconF7={action.icon && action.icon.f7}
             iconColor={action.icon && action.icon.color}
+            iconBadge={action.icon && action.icon.badge}
           >
             {action.title}
           </eb-link>

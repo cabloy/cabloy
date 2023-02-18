@@ -66,6 +66,7 @@ export default {
   Select: '选择',
   Selecting: '选择中',
   Selected: '已选择',
+  Deselect: '取消选择',
   Remove: '移除',
   HeartForAtom: '点赞',
   Hearted: '已点赞',

@@ -145,7 +145,7 @@ export default {
           key="actionsLeftB:select"
           iconF7="::grading"
           iconBadge={this.bulk.selecting ? selectedAtoms.length.toString() : 0}
-          tooltip={this.$text('Select')}
+          tooltip={this.bulk.selecting ? this.$text('Deselect') : this.$text('Select')}
           propsOnPerform={this.bulk_onSelectingSwitch}
         ></eb-link>
       );

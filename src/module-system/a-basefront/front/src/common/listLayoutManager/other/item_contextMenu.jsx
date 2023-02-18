@@ -1,8 +1,23 @@
 export default {
   methods: {
-    item_prepareActions_left(item) {
-      if (!item || item.atomStage !== 1) return null;
+    item_prepareActions_left(item, mode) {
       const actionsLeft = [];
+      // toolbar
+      if (mode === 'toolbar') {
+        //
+        const selectedAtoms = this.bulk.selectedAtoms;
+        actionsLeft.push({
+          key: 'actionsLeftB:select',
+          title: this.bulk.selecting ? this.$text('Deselect') : this.$text('Select'),
+          icon: {
+            f7: '::grading',
+            badge: this.bulk.selecting ? selectedAtoms.length.toString() : 0,
+          },
+          onPerform: event => this.bulk_onSelectingSwitch(event),
+        });
+      }
+      // check formal
+      if (!item || item.atomStage !== 1) return actionsLeft;
       // star
       actionsLeft.push({
         key: 'star',
