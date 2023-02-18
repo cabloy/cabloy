@@ -6,15 +6,23 @@
   "configurations": [
     {
       "name": "dev:backend",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev:backend"]
     },
     {
+      "name": "dev:backend(attach)",
+      "type": "node",
+      "request": "attach",
+      "processId": "${command:PickProcess}",
+      "cwd": "${workspaceRoot}",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
       "name": "test:backend",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
@@ -22,11 +30,19 @@
     },
     {
       "name": "cov:backend",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "cov:backend"]
+    },
+    {
+      "name": "dev:front",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:front"]
     }
   ]
 }
