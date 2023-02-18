@@ -35,8 +35,8 @@ module.exports = app => {
   const _app = {
     atomName: 'CMS(Inner Test)',
     atomStaticKey: 'appCmsInnerTest',
-    atomRevision: 2,
-    atomCategoryId: 'AppCategoryFront',
+    atomRevision: 3,
+    atomCategoryId: 'AppCategoryCMS',
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,

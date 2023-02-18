@@ -9,4 +9,7 @@ module.exports = {
   AppCategoryFront: '前台应用',
   AppCategoryBackend: '后台应用',
   AppCategoryManagement: '管理',
+  AppCategoryServices: '服务',
+  AppCategoryCMS: 'CMS',
+  AppCategoryBusiness: '业务',
 };

@@ -4,4 +4,7 @@ module.exports = {
   AppCategoryFront: 'Front Apps',
   AppCategoryBackend: 'Backend Apps',
   AppCategoryManagement: 'Management',
+  AppCategoryServices: 'Services',
+  AppCategoryCMS: 'CMS',
+  AppCategoryBusiness: 'Business',
 };

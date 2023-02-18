@@ -27,8 +27,8 @@ module.exports = app => {
   const _app = {
     atomName: 'Documentation',
     atomStaticKey: 'appDocumentation',
-    atomRevision: 4,
-    atomCategoryId: 'AppCategoryFront',
+    atomRevision: 5,
+    atomCategoryId: 'AppCategoryCMS',
     description: '',
     appIcon: ':outline:article-outline',
     appIsolate: false,
