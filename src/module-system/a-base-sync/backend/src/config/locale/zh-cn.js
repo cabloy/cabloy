@@ -150,6 +150,7 @@ module.exports = {
   Invalid: '无效',
   NotImplemented: '未实现',
   Unnamed: '未命名',
+  BatchDelete: '批量删除',
   // role name
   root: '根',
   anonymous: '匿名',

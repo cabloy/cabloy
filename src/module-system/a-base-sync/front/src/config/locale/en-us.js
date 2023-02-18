@@ -40,6 +40,7 @@ export default {
   AreaScope: 'Area Scope',
   SubTitle: 'Sub Title',
   AtomState: 'Data State',
+  BatchDelete: 'Batch Delete',
   'Atom Flag': 'Data Flag',
   'Atom Name': 'Title',
   'Search Atom': 'Search Data',

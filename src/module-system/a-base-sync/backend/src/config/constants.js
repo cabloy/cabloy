@@ -159,7 +159,7 @@ module.exports = app => {
           icon: { f7: '::groups' },
         },
         deleteBulk: {
-          title: 'Delete',
+          title: 'BatchDelete',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'actionBulk',
           bulk: true,
