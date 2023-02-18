@@ -170,15 +170,30 @@ export default {
       }
       // more
       if (direction === 'right' && this.more && this.more.length > 0) {
-        domActions.push(
-          <eb-link
-            key="__more"
-            popoverClose={false}
-            propsOnPerform={event => this.onPerformShowMore(event)}
-            iconF7="::more-horiz"
-            iconColor=""
-          ></eb-link>
-        );
+        if (this.more.length === 1) {
+          const action = this.more[0];
+          domActions.push(
+            <eb-link
+              key={action.key}
+              popoverClose={true}
+              propsOnPerform={event => action.onPerform(event)}
+              iconF7={action.icon && action.icon.f7}
+              iconColor=""
+            >
+              {action.title}
+            </eb-link>
+          );
+        } else {
+          domActions.push(
+            <eb-link
+              key="__more"
+              popoverClose={false}
+              propsOnPerform={event => this.onPerformShowMore(event)}
+              iconF7="::more-horiz"
+              iconColor=""
+            ></eb-link>
+          );
+        }
       }
       return domActions;
     },
