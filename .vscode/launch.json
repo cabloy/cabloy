@@ -13,10 +13,12 @@
       "runtimeArgs": ["run", "dev:backend"]
     },
     {
-      "name": "dev:backend",
+      "name": "dev:backend(attach)",
       "type": "node",
       "request": "attach",
-      "cwd": "${workspaceRoot}"
+      "processId": "${command:PickProcess}",
+      "cwd": "${workspaceRoot}",
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "name": "test:backend",
