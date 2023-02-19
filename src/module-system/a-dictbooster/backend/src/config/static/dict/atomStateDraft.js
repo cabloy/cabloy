@@ -12,18 +12,23 @@ module.exports = app => {
       code: 2,
       title: 'Reviewed',
     },
+    {
+      code: -3,
+      title: 'Cancelled',
+    },
   ];
   const dictLocales = {
     'zh-cn': {
       Drafting: '起草中',
       Reviewing: '审核中',
       Reviewed: '已审核',
+      Cancelled: '已取消',
     },
   };
   const dict = {
     atomName: 'AtomStateDraft',
     atomStaticKey: 'dictAtomStateDraft',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
