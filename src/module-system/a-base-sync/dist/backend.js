@@ -3857,8 +3857,7 @@ module.exports = app => {
       // atomId/stage
       const atomId = key.atomId;
       const atomStage = item.atomStage;
-      const isAtomClassRole = atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
-      if (!isAtomClassRole && atomClassBase.resource && atomStage === 1) {
+      if (atomClassBase.resource && atomStage === 1) {
         // update locales
         if (item.atomName) {
           await this.ctx.bean.resource.setLocales({
@@ -3867,17 +3866,20 @@ module.exports = app => {
           });
         }
         // role
-        //   check if any role exists
-        const right = await this.modelResourceRole.get({
-          atomId,
-        });
-        if (!right) {
-          // always add role of template.system when no records
-          const roleSystem = await this.ctx.bean.role.parseRoleName({ roleName: 'template.system' });
-          await this.ctx.bean.resource.addResourceRole({
+        const isAtomClassRole = atomClass.module === 'a-base' && atomClass.atomClassName === 'role';
+        if (!isAtomClassRole) {
+          //   check if any role exists
+          const right = await this.modelResourceRole.get({
             atomId,
-            roleId: roleSystem.id,
           });
+          if (!right) {
+            // always add role of template.system when no records
+            const roleSystem = await this.ctx.bean.role.parseRoleName({ roleName: 'template.system' });
+            await this.ctx.bean.resource.addResourceRole({
+              atomId,
+              roleId: roleSystem.id,
+            });
+          }
         }
       }
     }
