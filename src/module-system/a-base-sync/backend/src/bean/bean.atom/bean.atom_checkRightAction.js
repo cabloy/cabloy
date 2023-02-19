@@ -184,6 +184,8 @@ module.exports = ctx => {
       // enable/disable
       if (action === 6 && _atom.atomDisabled === 0) return null;
       if (action === 7 && _atom.atomDisabled === 1) return null;
+      // workflowFormal
+      if (action === 16 && _atom.atomFlowId === 0) return null;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // check formal/history
