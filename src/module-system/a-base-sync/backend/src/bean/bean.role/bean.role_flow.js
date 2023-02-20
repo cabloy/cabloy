@@ -8,12 +8,15 @@ module.exports = ctx => {
     //     scopeNames: 'family',
     //   },
     // ];
-    async addRoleRightBatchByModeFlow({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
+    async addRoleRightBatchByModeFlow({ atomClassId, module, atomClassName, atomClassIdParent = 0, roleRights }) {
       // module
       module = module || this.moduleName;
       // const _module = ctx.app.meta.modules[module];
       // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      const atomClass = await ctx.bean.atomClass.get({ id: atomClassId, module, atomClassName, atomClassIdParent });
+      // write back, for use atomClassId
+      module = atomClass.module;
+      atomClassName = atomClass.atomClassName;
       // roleRights
       if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {

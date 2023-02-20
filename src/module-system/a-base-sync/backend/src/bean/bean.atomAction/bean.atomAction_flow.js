@@ -52,6 +52,21 @@ module.exports = ctx => {
       // insert
       const res2 = await this.model.insert(data);
       data.id = res2.insertId;
+      // role right
+      const roleRights = [
+        {
+          roleName: 'template.system',
+          flowKey,
+          nodeDefId,
+          nodeDefName,
+          scopeNames: [],
+        },
+      ];
+      await ctx.bean.role.addRoleRightBatchByModeFlow({
+        atomClassId,
+        roleRights,
+      });
+      // ok
       return data;
     }
   }
