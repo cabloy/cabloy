@@ -16,6 +16,10 @@ export default {
     value() {
       return this.context.getValue();
     },
+    needLoadDict() {
+      const { property, validate } = this.context;
+      return (!validate.readOnly && !property.ebReadOnly) || property.ebParams.forceLoad;
+    },
   },
   watch: {
     context() {
@@ -30,18 +34,18 @@ export default {
   },
   methods: {
     async _loadDict() {
-      const { property, validate } = this.context;
+      const { property } = this.context;
       const dictKey = property.ebParams.dictKey;
-      if (!validate.readOnly && !property.ebReadOnly) {
+      if (this.needLoadDict) {
         this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
       }
       // load dict item
       await this._loadDictItem();
     },
     async _loadDictItem() {
-      const { key, property, validate } = this.context;
+      const { key, property } = this.context;
       const dictKey = property.ebParams.dictKey;
-      if (validate.readOnly || property.ebReadOnly) {
+      if (!this.needLoadDict) {
         this.dictItemTitle = this.context.getValue(`_${key}TitleLocale`);
         this.dictItemOptions = this.context.getValue(`_${key}Options`);
       } else {

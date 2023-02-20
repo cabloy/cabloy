@@ -55,6 +55,7 @@ export default {
       ebParams: {
         dictKey,
         mode: 'select',
+        forceLoad: true,
       },
       ebRender: null,
     });
