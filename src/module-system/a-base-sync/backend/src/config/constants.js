@@ -137,7 +137,7 @@ module.exports = app => {
           icon: { f7: '::view-list' },
         },
         workflowFormal: {
-          title: 'WorkFlow',
+          title: 'ViewWorkFlow',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           enableOnStatic: true,
@@ -256,7 +256,7 @@ module.exports = app => {
           icon: { f7: ':outline:draft-outline' },
         },
         workflow: {
-          title: 'WorkFlow',
+          title: 'ViewWorkFlow',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           authorize: false,

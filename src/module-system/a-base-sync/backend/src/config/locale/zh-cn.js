@@ -120,6 +120,7 @@ module.exports = {
   Themes: '主题',
   ViewLayout: '视图',
   WorkFlow: '工作流',
+  ViewWorkFlow: '查看工作流',
   Detail: '明细',
   Details: '明细',
   StarsLabels: '星标',

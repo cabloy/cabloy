@@ -17,6 +17,7 @@ module.exports = {
   KeyForAtom: 'Key',
   ViewLayout: 'View',
   WorkFlow: 'Work Flow',
+  ViewWorkFlow: 'View WorkFlow',
   StarsLabels: 'Stars & Labels',
   OpenAuthScope: 'Open Auth Scope',
   BasicProfile: 'Basic Profile',
