@@ -1973,6 +1973,12 @@ module.exports = ctx => {
       }
       // actionBase.enableOnStatic
       if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
+        // except action=4 and atomStage===0
+        if (action === 4 && _atom.atomStage === 0 && _atom.atomClosed === 0 && bSelf) {
+          return _atom;
+        }
         return null;
       }
       // draft
@@ -11079,6 +11085,7 @@ const VersionUpdate18Fn = __webpack_require__(5140);
 const VersionUpdate19Fn = __webpack_require__(3836);
 const VersionUpdate20Fn = __webpack_require__(2523);
 const VersionUpdate21Fn = __webpack_require__(5848);
+const VersionUpdate22Fn = __webpack_require__(9091);
 const VersionInit2Fn = __webpack_require__(3674);
 const VersionInit4Fn = __webpack_require__(6967);
 const VersionInit5Fn = __webpack_require__(6069);
@@ -11091,6 +11098,10 @@ const VersionInit15Fn = __webpack_require__(3166);
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
+      if (options.version === 22) {
+        const versionUpdate22 = new (VersionUpdate22Fn(this.ctx))();
+        await versionUpdate22.run();
+      }
       if (options.version === 21) {
         const versionUpdate21 = new (VersionUpdate21Fn(this.ctx))();
         await versionUpdate21.run();
@@ -12961,6 +12972,26 @@ module.exports = function (ctx) {
   }
 
   return VersionUpdate21;
+};
+
+
+/***/ }),
+
+/***/ 9091:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate22 {
+    async run() {
+      const sql = `
+        update aAtom set atomFlowId=0 where atomStage in (1,2)
+      `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate22;
 };
 
 
