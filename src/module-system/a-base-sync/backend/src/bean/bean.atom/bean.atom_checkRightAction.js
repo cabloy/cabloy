@@ -83,6 +83,12 @@ module.exports = ctx => {
       }
       // actionBase.enableOnStatic
       if (_atom.atomStatic === 1 && !actionBase.enableOnStatic) {
+        // self
+        const bSelf = _atom.userIdUpdated === user.id;
+        // except action=4 and atomStage===0
+        if (action === 4 && _atom.atomStage === 0 && _atom.atomClosed === 0 && bSelf) {
+          return _atom;
+        }
         return null;
       }
       // draft
