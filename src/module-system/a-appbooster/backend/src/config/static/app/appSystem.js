@@ -20,8 +20,8 @@ module.exports = app => {
   const _app = {
     atomName: 'System',
     atomStaticKey: 'appSystem',
-    atomRevision: 1,
-    atomCategoryId: 'AppCategoryManagement',
+    atomRevision: 2,
+    atomCategoryId: 'AppCategorySettings',
     description: '',
     appIcon: '::menu',
     appIsolate: false,

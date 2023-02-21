@@ -7,4 +7,5 @@ module.exports = {
   AppCategoryServices: 'Services',
   AppCategoryCMS: 'CMS',
   AppCategoryBusiness: 'Business',
+  AppCategorySettings: 'Settings',
 };

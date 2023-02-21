@@ -7,7 +7,13 @@ export default {
   },
   appMenu: {
     categoriesTop: {
-      'a-app:appDefault': ['AppCategoryServices', 'AppCategoryCMS', 'AppCategoryBusiness', 'AppCategoryManagement'],
+      'a-app:appDefault': [
+        'AppCategoryServices',
+        'AppCategoryCMS',
+        'AppCategoryBusiness',
+        'AppCategoryManagement',
+        'AppCategorySettings',
+      ],
       'a-appbooster:appGeneral': ['Create', 'List', 'Tools'],
       'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'Tools'],
     },
