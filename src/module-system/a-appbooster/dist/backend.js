@@ -124,8 +124,8 @@ module.exports = app => {
   const _app = {
     atomName: 'General',
     atomStaticKey: 'appGeneral',
-    atomRevision: 8,
-    atomCategoryId: 'AppCategoryBusiness',
+    atomRevision: 9,
+    atomCategoryId: 'AppCategoryManagement',
     description: '',
     appIcon: '::radio-button-unchecked',
     appIsolate: false,
@@ -164,8 +164,8 @@ module.exports = app => {
   const _app = {
     atomName: 'System',
     atomStaticKey: 'appSystem',
-    atomRevision: 1,
-    atomCategoryId: 'AppCategoryManagement',
+    atomRevision: 2,
+    atomCategoryId: 'AppCategorySettings',
     description: '',
     appIcon: '::menu',
     appIsolate: false,

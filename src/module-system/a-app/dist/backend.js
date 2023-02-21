@@ -262,6 +262,7 @@ module.exports = {
   AppCategoryServices: 'Services',
   AppCategoryCMS: 'CMS',
   AppCategoryBusiness: 'Business',
+  AppCategorySettings: 'Settings',
 };
 
 
@@ -284,6 +285,7 @@ module.exports = {
   AppCategoryServices: '服务',
   AppCategoryCMS: 'CMS',
   AppCategoryBusiness: '业务',
+  AppCategorySettings: '设置',
 };
 
 

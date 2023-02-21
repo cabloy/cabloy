@@ -3232,6 +3232,21 @@ module.exports = ctx => {
       // insert
       const res2 = await this.model.insert(data);
       data.id = res2.insertId;
+      // role right
+      const roleRights = [
+        {
+          roleName: 'template.system',
+          flowKey,
+          nodeDefId,
+          nodeDefName,
+          scopeNames: [],
+        },
+      ];
+      await ctx.bean.role.addRoleRightBatchByModeFlow({
+        atomClassId,
+        roleRights,
+      });
+      // ok
       return data;
     }
   }
@@ -6874,12 +6889,15 @@ module.exports = ctx => {
     //     scopeNames: 'family',
     //   },
     // ];
-    async addRoleRightBatchByModeFlow({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
+    async addRoleRightBatchByModeFlow({ atomClassId, module, atomClassName, atomClassIdParent = 0, roleRights }) {
       // module
       module = module || this.moduleName;
       // const _module = ctx.app.meta.modules[module];
       // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      const atomClass = await ctx.bean.atomClass.get({ id: atomClassId, module, atomClassName, atomClassIdParent });
+      // write back, for use atomClassId
+      module = atomClass.module;
+      atomClassName = atomClass.atomClassName;
       // roleRights
       if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {
@@ -14066,7 +14084,7 @@ module.exports = app => {
           icon: { f7: '::view-list' },
         },
         workflowFormal: {
-          title: 'WorkFlow',
+          title: 'ViewWorkFlow',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           enableOnStatic: true,
@@ -14185,7 +14203,7 @@ module.exports = app => {
           icon: { f7: ':outline:draft-outline' },
         },
         workflow: {
-          title: 'WorkFlow',
+          title: 'ViewWorkFlow',
           actionModule: moduleInfo.relativeName,
           actionComponent: 'action',
           authorize: false,
@@ -14250,6 +14268,7 @@ module.exports = {
   KeyForAtom: 'Key',
   ViewLayout: 'View',
   WorkFlow: 'Work Flow',
+  ViewWorkFlow: 'View WorkFlow',
   StarsLabels: 'Stars & Labels',
   OpenAuthScope: 'Open Auth Scope',
   BasicProfile: 'Basic Profile',
@@ -14393,6 +14412,7 @@ module.exports = {
   Themes: '主题',
   ViewLayout: '视图',
   WorkFlow: '工作流',
+  ViewWorkFlow: '查看工作流',
   Detail: '明细',
   Details: '明细',
   StarsLabels: '星标',
