@@ -61,15 +61,24 @@
     color: var(--f7-list-item-after-text-color);
   }
 
-  form.list div.item-input.item-title-floating-label {
+  form.list div.item-input {
     &.item-input-clear-button {
       span.input-clear-button {
         visibility: hidden;
+
+        // override the md size: 48*48
+        &:before {
+          width: auto;
+          height: auto;
+          margin-left: auto;
+          margin-top: auto;
+        }
       }
     }
+
     &.item-input-clear-button.item-input-with-value.item-input-focused {
       input.input-with-value {
-        padding-right: var(--f7-input-clear-button-size);
+        padding-right: calc(var(--f7-input-clear-button-size) + 8px);
       }
       span.input-clear-button {
         visibility: visible;
@@ -77,33 +86,49 @@
     }
   }
 
-  form.list div.item-input:not(.item-title-floating-label) {
-    input {
-      text-align: right;
-    }
-    textarea {
-      text-align: right;
-    }
-    .item-input-error-message {
-      text-align: right;
-    }
-    .item-input-info {
-      text-align: right;
-    }
+  // form.list div.item-input.item-title-floating-label {
+  //   &.item-input-clear-button {
+  //     span.input-clear-button {
+  //       visibility: hidden;
+  //     }
+  //   }
+  //   &.item-input-clear-button.item-input-with-value.item-input-focused {
+  //     input.input-with-value {
+  //       padding-right: var(--f7-input-clear-button-size);
+  //     }
+  //     span.input-clear-button {
+  //       visibility: visible;
+  //     }
+  //   }
+  // }
 
-    &.item-input-clear-button {
-      span.input-clear-button {
-        visibility: hidden;
-      }
-    }
+  // form.list div.item-input:not(.item-title-floating-label) {
+  //   input {
+  //     text-align: right;
+  //   }
+  //   textarea {
+  //     text-align: right;
+  //   }
+  //   .item-input-error-message {
+  //     text-align: right;
+  //   }
+  //   .item-input-info {
+  //     text-align: right;
+  //   }
 
-    &.item-input-clear-button.item-input-with-value.item-input-focused {
-      span.input-clear-button {
-        visibility: visible;
-        left: 0;
-      }
-    }
-  }
+  //   &.item-input-clear-button {
+  //     span.input-clear-button {
+  //       visibility: hidden;
+  //     }
+  //   }
+
+  //   &.item-input-clear-button.item-input-with-value.item-input-focused {
+  //     span.input-clear-button {
+  //       visibility: visible;
+  //       left: 0;
+  //     }
+  //   }
+  // }
 
   // should not set this styles, for inline-labels: align-self:flex-end
   //.list .item-media {
