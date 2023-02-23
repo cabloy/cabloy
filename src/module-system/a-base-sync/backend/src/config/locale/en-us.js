@@ -12,7 +12,7 @@ module.exports = {
   CommentPublishTitleEditComment: 'Modified the comment',
   CommentPublishTitleReplyComment: 'Replied to your comment',
   CommentPublishTitleEditReplyComment: 'Modified the comment replied before',
-  DisabledOnDemoMode: 'Disabled on Demo Mode',
+  DisabledOnDemoMode: 'Disabled on Demo Mode, please create a local project to experience',
   CloneCopyText: 'Copy',
   KeyForAtom: 'Key',
   ViewLayout: 'View',
