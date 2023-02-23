@@ -44,10 +44,11 @@ export default {
   },
   render() {
     const { parcel, key, property } = this.context;
-    const title = this.context.getTitle();
+    // const title = this.context.getTitle();
     const dictKey = this.getDictKey();
     if (!dictKey) {
-      return <f7-list-item title={title}></f7-list-item>;
+      return null;
+      // return <f7-list-item title={title}></f7-list-item>;
     }
     const propertyNew = this.$meta.util.extend({}, property, {
       ebType: 'dict',
