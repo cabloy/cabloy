@@ -60,10 +60,7 @@ module.exports = app => {
 
     async write({ atomClass, target, key, item, options, user }) {
       // check demo
-      const ctxCaller = this.ctx.ctxCaller;
-      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/write') {
-        this.ctx.bean.util.checkDemo();
-      }
+      this.ctx.bean.util.checkDemoForAtomWrite();
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update user

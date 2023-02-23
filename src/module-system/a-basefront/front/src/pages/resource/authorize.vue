@@ -71,13 +71,17 @@ export default {
       });
     },
     async _resourceRoleAdd(_roles) {
-      if (!_roles || _roles.length === 0) return;
-      const roles = _roles.map(item => item.itemId);
-      await this.$api.post('/a/base/resource/resourceRoleAdd', {
-        key: { atomId: this.atomId },
-        data: { roles },
-      });
-      this.reload();
+      try {
+        if (!_roles || _roles.length === 0) return;
+        const roles = _roles.map(item => item.itemId);
+        await this.$api.post('/a/base/resource/resourceRoleAdd', {
+          key: { atomId: this.atomId },
+          data: { roles },
+        });
+        this.reload();
+      } catch (err) {
+        this.$view.toast.show({ text: err.message });
+      }
     },
     async onItemClick(event, item) {
       await this.onPerformEdit(event, item);
