@@ -175,6 +175,8 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemoForAtomWrite();
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update resource
@@ -315,10 +317,7 @@ module.exports = app => {
 
     async write({ atomClass, target, key, item, options, user }) {
       // check demo
-      const ctxCaller = this.ctx.ctxCaller;
-      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/write') {
-        this.ctx.bean.util.checkDemo();
-      }
+      this.ctx.bean.util.checkDemoForAtomWrite();
       // roleIdParent maybe string, so cause validate error
       delete item.roleIdParent;
       // super
@@ -540,10 +539,7 @@ module.exports = app => {
 
     async write({ atomClass, target, key, item, options, user }) {
       // check demo
-      const ctxCaller = this.ctx.ctxCaller;
-      if (ctxCaller && ctxCaller.path === '/api/a/base/atom/write') {
-        this.ctx.bean.util.checkDemo();
-      }
+      this.ctx.bean.util.checkDemoForAtomWrite();
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update user
@@ -8682,6 +8678,15 @@ module.exports = app => {
       return false;
     }
 
+    checkDemoForAtomWrite(throwError = true) {
+      const ctxCaller = this.ctx.ctxCaller;
+      if (!ctxCaller) return true;
+      if (ctxCaller.path === '/api/a/base/atom/write' || ctxCaller.path === '/api/a/base/atom/writeSubmit') {
+        return this.checkDemo(throwError);
+      }
+      return true;
+    }
+
     escapeHtml(str) {
       return utils.escapeHtml(str);
     }
@@ -14294,7 +14299,7 @@ module.exports = {
   CommentPublishTitleEditComment: 'Modified the comment',
   CommentPublishTitleReplyComment: 'Replied to your comment',
   CommentPublishTitleEditReplyComment: 'Modified the comment replied before',
-  DisabledOnDemoMode: 'Disabled on Demo Mode',
+  DisabledOnDemoMode: 'Disabled on Demo Mode, please create a local project to experience',
   CloneCopyText: 'Copy',
   KeyForAtom: 'Key',
   ViewLayout: 'View',
@@ -14370,7 +14375,7 @@ module.exports = {
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
   CommentPublishTitleEditReplyComment: '修改了回复的评论',
-  DisabledOnDemoMode: '演示模式中禁用',
+  DisabledOnDemoMode: '演示模式中禁用，请创建本地项目进行体验',
   Draft: '草稿',
   Drafts: '草稿',
   Formal: '正式',

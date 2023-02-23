@@ -54,6 +54,8 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemoForAtomWrite();
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update flowDef
@@ -577,7 +579,7 @@ module.exports = ctx => {
       if (!flowDef) return;
       // content
       const content = flowDef.content ? JSON.parse(flowDef.content) : null;
-      if (!content) return;
+      if (!content || !content.process) return;
       // all startEvents
       for (const node of content.process.nodes) {
         const nodeType = node.type;
