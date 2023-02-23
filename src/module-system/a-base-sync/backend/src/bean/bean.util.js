@@ -165,6 +165,15 @@ module.exports = app => {
       return false;
     }
 
+    checkDemoForAtomWrite(throwError = true) {
+      const ctxCaller = this.ctx.ctxCaller;
+      if (!ctxCaller) return true;
+      if (ctxCaller.path === '/api/a/base/atom/write' || ctxCaller.path === '/api/a/base/atom/writeSubmit') {
+        return this.checkDemo(throwError);
+      }
+      return true;
+    }
+
     escapeHtml(str) {
       return utils.escapeHtml(str);
     }

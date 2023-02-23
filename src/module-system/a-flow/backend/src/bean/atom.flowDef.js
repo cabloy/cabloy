@@ -37,6 +37,8 @@ module.exports = app => {
     }
 
     async write({ atomClass, target, key, item, options, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemoForAtomWrite();
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update flowDef

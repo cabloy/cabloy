@@ -48,7 +48,7 @@ module.exports = ctx => {
       if (!flowDef) return;
       // content
       const content = flowDef.content ? JSON.parse(flowDef.content) : null;
-      if (!content) return;
+      if (!content || !content.process) return;
       // all startEvents
       for (const node of content.process.nodes) {
         const nodeType = node.type;
