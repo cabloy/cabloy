@@ -264,4 +264,4 @@ Cabloy 来自蓝精灵的魔法咒语，拼对了 Cabloy 这个单词就会有�
 
 ## License
 
-[MIT](./LICENSE)，免费商用
+[MIT](./LICENSE)，可免费商用
