@@ -7,7 +7,7 @@ export default {
     };
   },
   created() {
-    this.actions_fetchActions();
+    // this.actions_fetchActions();
   },
   methods: {
     async actions_fetchActions() {

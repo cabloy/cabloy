@@ -12,6 +12,10 @@ export default {
     async base_onInit() {
       // load detailClasses
       await this.$store.dispatch('a/base/getDetailClasses');
+      // load detailActions
+      await this.$store.dispatch('a/base/getDetailActions');
+      // fetchActions
+      await this.actions_fetchActions();
     },
     base_prepareReadOptions() {
       // options

@@ -27,6 +27,8 @@ export default {
     async base_onInit() {
       // load detailClasses
       await this.$store.dispatch('a/base/getDetailClasses');
+      // load detailActions
+      await this.$store.dispatch('a/base/getDetailActions');
     },
     async base_loadItem() {
       try {
