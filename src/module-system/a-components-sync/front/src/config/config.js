@@ -1,8 +1,8 @@
 export default {
   validate: {
     hint: {
-      optional: '(?)',
-      must: '',
+      optional: '', // '(?)',
+      must: ' *',
     },
   },
   form: {
