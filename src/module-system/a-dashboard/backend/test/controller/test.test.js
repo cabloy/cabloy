@@ -24,7 +24,7 @@ describe('[your tests start from here]', () => {
       .httpRequest()
       .post(mockUrl('/a/base/atom/create'))
       .send({
-        atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+        atomClass: { module: atomClassModule, atomClassName },
       });
     assert(result.body.code === 0);
     const keyDraft = result.body.data;

@@ -26,7 +26,7 @@ describe.skip('test/controller/test.test.js', () => {
       .httpRequest()
       .post(mockUrl('/a/base/atom/create'))
       .send({
-        atomClass: { module: atomClassModule, atomClassName, atomClassIdParent: 0 },
+        atomClass: { module: atomClassModule, atomClassName },
       });
     if (result.body.code !== 0) {
       const sessionNew = JSON.stringify(app.context.session);

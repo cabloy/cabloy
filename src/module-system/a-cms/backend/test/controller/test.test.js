@@ -129,7 +129,7 @@ describe('test/controller/test.test.js', () => {
         .httpRequest()
         .post(mockUrl('/a/base/atom/create'))
         .send({
-          atomClass: { module: mockInfo().relativeName, atomClassName: 'article', atomClassIdParent: 0 },
+          atomClass: { module: mockInfo().relativeName, atomClassName: 'article' },
         });
       assert(result.body.code === 0);
       const keyDraft = result.body.data;
