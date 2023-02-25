@@ -15,7 +15,6 @@ export default {
   },
   render() {
     const { key } = this.context;
-    const title = this.context.getTitle();
     const value = parseInt(this.context.getValue() || 0);
     const userName = this.context.getValue(`_${key}Name`);
     const userAvatar = this.context.getValue(`_${key}Avatar`);
@@ -26,7 +25,8 @@ export default {
       domUserName = <span>{userName}</span>;
     }
     return (
-      <f7-list-item title={title}>
+      <f7-list-item>
+        {this.context.renderTitle({ slot: 'title' })}
         <div slot="after" class="display-flex align-items-center">
           {domImg}
           {domUserName}

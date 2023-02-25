@@ -65,17 +65,18 @@ export default {
   },
   render() {
     const { dataPath, property, validate } = this.context;
-    const title = this.context.getTitle();
     const domAfterLabel = this._renderAfterLabel();
     if (validate.readOnly || property.ebReadOnly) {
       return (
-        <f7-list-item title={title}>
+        <f7-list-item>
+          {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{domAfterLabel}</div>
         </f7-list-item>
       );
     }
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseLabel}>
+      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseLabel}>
+        {this.context.renderTitle({ slot: 'title' })}
         <div slot="after">{domAfterLabel}</div>
       </eb-list-item-choose>
     );

@@ -78,17 +78,18 @@ export default {
   },
   render() {
     const { dataPath, property, validate } = this.context;
-    const title = this.context.getTitle();
     const value = this._getMapperRoleName();
     if (validate.readOnly || property.ebReadOnly) {
       return (
-        <f7-list-item title={title}>
+        <f7-list-item>
+          {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{value}</div>
         </f7-list-item>
       );
     }
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseRole}>
+      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseRole}>
+        {this.context.renderTitle({ slot: 'title' })}
         <div slot="after">{value}</div>
       </eb-list-item-choose>
     );

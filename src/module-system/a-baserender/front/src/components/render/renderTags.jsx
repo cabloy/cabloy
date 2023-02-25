@@ -96,16 +96,17 @@ export default {
   },
   render() {
     const { parcel, dataPath, property, validate } = this.context;
-    const title = this.context.getTitle();
     if (validate.readOnly || property.ebReadOnly) {
       return (
-        <f7-list-item title={title}>
+        <f7-list-item>
+          {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{this.adjustTags(parcel.data.atomTags)}</div>
         </f7-list-item>
       );
     }
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseTags}>
+      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseTags}>
+        {this.context.renderTitle({ slot: 'title' })}
         <div slot="after">{this.adjustTags(parcel.data.atomTags)}</div>
       </eb-list-item-choose>
     );

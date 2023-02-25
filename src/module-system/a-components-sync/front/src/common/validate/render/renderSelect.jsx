@@ -2,8 +2,6 @@ export default {
   methods: {
     renderSelect(context) {
       const { key, property, dataPath } = context;
-      // title
-      const title = context.getTitle();
       // value
       const valueCurrent = context.getValue();
       // attrs
@@ -43,9 +41,7 @@ export default {
       // render
       return (
         <eb-list-item key={key} {...{ props }}>
-          <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-            {title}
-          </div>
+          {context.renderTitle({ slot: 'title' })}
           <eb-select
             slot={readOnly ? 'after' : null}
             {...{ props: attrs }}
