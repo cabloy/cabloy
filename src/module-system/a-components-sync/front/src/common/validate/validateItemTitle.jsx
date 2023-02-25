@@ -8,18 +8,26 @@ export default {
         </div>
       );
     },
-    getTitle(context, notHint) {
+    __getTitle(context, notHint) {
       const { property } = context;
+      // result
+      const result = {
+        title: null,
+        must: null,
+        Optional: null,
+      };
       // not use 'key' as default title
-      let title = property.ebTitle || '';
-      if (title) {
-        title = this.$text(title);
+      const _title = property.ebTitle || '';
+      if (_title) {
+        result.title = this.$text(_title);
       }
       // ignore panel/group/toggle
       const ebType = property.ebType;
-      if (ebType === 'panel' || ebType === 'group' || ebType === 'group-flatten' || ebType === 'toggle') return title;
+      if (ebType === 'panel' || ebType === 'group' || ebType === 'group-flatten' || ebType === 'toggle') {
+        return result;
+      }
       // only edit
-      if (this.validate.readOnly || property.ebReadOnly) return title;
+      if (this.validate.readOnly || property.ebReadOnly) return result;
       // hint
       if (!notHint) {
         // config
@@ -28,21 +36,34 @@ export default {
           hint = this.$config.validate.hint;
         }
         if (hint === false) {
-          return title;
+          return result;
         }
         const hintOptional = hint.optional;
         const hintMust = hint.must;
         // check optional
         if (hintOptional && !property.notEmpty) {
-          return `${title}${this.$text(hintOptional)}`;
+          result.optional = this.$text(hintOptional);
+          return result;
         }
         // check must
         if (hintMust && property.notEmpty) {
-          return `${title}${this.$text(hintMust)}`;
+          result.must = this.$text(hintMust);
+          return result;
         }
       }
       // default
-      return title;
+      return result;
+    },
+    getTitle(context, notHint) {
+      const result = this.__getTitle(context, notHint);
+      if (result.optional) {
+        return `${result.title}${result.optional}`;
+      }
+      if (result.must) {
+        return `${result.title}${result.must}`;
+      }
+      // default
+      return result.title;
     },
     getPlaceholder(context) {
       const { property } = context;
