@@ -2,7 +2,7 @@ export default {
   validate: {
     hint: {
       optional: '', // '(?)',
-      must: ' *',
+      must: '*',
     },
   },
   form: {

@@ -1,10 +1,31 @@
 export default {
   methods: {
     renderTitle(context, { slot, notHint }) {
+      const { property } = context;
+      // title
+      const result = this.__getTitle(context, notHint);
+      const options = {
+        slot: 'label',
+      };
+      // slot
+      if (slot) {
+        options.slot = slot;
+      }
+      // class
+      options.class =
+        !this.validate.readOnly && property.ebReadOnly ? 'eb-form-item-title text-color-gray' : 'eb-form-item-title';
+      // hint
+      let domHint;
+      if (result.optional) {
+        domHint = <span class="eb-form-item-title-hint-optional">{result.optional}</span>;
+      } else if (result.must) {
+        domHint = <span class="eb-form-item-title-hint-must">{result.must}</span>;
+      }
+      // return
       return (
-        <div slot="label">
-          <span>aa</span>
-          <span> *</span>
+        <div {...options}>
+          <span class="eb-form-item-title-inner">{result.title}</span>
+          {domHint}
         </div>
       );
     },
