@@ -44,11 +44,7 @@ export default {
       const ebSecure = this.$meta.util.getPropertyDeprecate(property, 'ebParams.secure', 'ebSecure');
       if ((this.validate.readOnly || property.ebReadOnly) && !ebTextarea) {
         const children = [];
-        children.push(
-          <div key="title" slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-            {title}
-          </div>
-        );
+        children.push(context.renderTitle({ key: 'title', slot: 'title' }));
         if (mode === 1 && value) {
           const domButton = this._renderFileButtonPhotoView(context, title, value);
           children.push(
@@ -124,11 +120,7 @@ export default {
       );
       // children
       const children = [];
-      children.push(
-        <div key="label" slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-          {title}
-        </div>
-      );
+      children.push(context.renderTitle({ key: 'label', slot: 'label' }));
       children.push(
         <div key="buttons" slot="root-end" staticClass="eb-input-file-upload">
           {buttons}

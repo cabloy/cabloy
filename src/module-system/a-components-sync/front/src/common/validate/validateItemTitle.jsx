@@ -1,11 +1,15 @@
 export default {
   methods: {
-    renderTitle(context, { slot, notHint }) {
+    renderTitle(context, { key, slot, notHint }) {
       const { property } = context;
       // title
       const result = this.__getTitle(context, notHint);
       // options
       const options = {};
+      // key
+      if (key) {
+        options.key = key;
+      }
       // slot
       if (slot) {
         options.slot = slot;

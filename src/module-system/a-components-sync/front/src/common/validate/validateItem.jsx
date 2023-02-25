@@ -323,8 +323,8 @@ export default {
         meta,
         index,
         groupCount,
-        renderTitle: ({ slot, notHint }) => {
-          return this.renderTitle(context, { slot, notHint });
+        renderTitle: ({ key, slot, notHint }) => {
+          return this.renderTitle(context, { key, slot, notHint });
         },
         getTitle: notHint => {
           return this.getTitle(context, notHint);

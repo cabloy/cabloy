@@ -2,7 +2,6 @@ export default {
   methods: {
     renderDatePicker(context) {
       const { key, property, dataPath } = context;
-      const title = this.getTitle(context);
       // value
       let value = context.getValue();
       if (!value) {
@@ -51,9 +50,7 @@ export default {
             }
           }}
         >
-          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-            {title}
-          </div>
+          {context.renderTitle({ slot: 'label' })}
           {this.__searchStates_render_list_item(context)}
         </eb-list-input>
       );
