@@ -51,9 +51,7 @@ export default {
         const valueView = this._formatTextView(value);
         return (
           <f7-list-item key={key} staticClass="" after={valueView}>
-            <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-              {title}
-            </div>
+            {context.renderTitle({ slot: 'title' })}
           </f7-list-item>
         );
       }
