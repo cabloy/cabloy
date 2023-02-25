@@ -34,7 +34,6 @@ export default {
     },
     renderText(context) {
       const { key, property, dataPath } = context;
-      const title = this.getTitle(context);
       let value = context.getValue();
       // params
       const ebCurrency = this.$meta.util.getPropertyDeprecate(property, 'ebParams.currency', 'ebCurrency');
