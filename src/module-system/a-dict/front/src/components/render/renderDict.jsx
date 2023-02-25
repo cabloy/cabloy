@@ -60,7 +60,7 @@ export default {
       const { property } = this.context;
       let leafOnly = property.ebParams.leafOnly;
       if (leafOnly === undefined) leafOnly = true;
-      const title = this.context.getTitle();
+      const title = this.context.getTitle(true);
       // selectedCodes
       const code = this.value;
       const selectedCodes = code ? [code] : [];
@@ -133,9 +133,9 @@ export default {
     },
     _renderAsTree() {
       const { dataPath } = this.context;
-      const title = this.context.getTitle();
       return (
-        <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseDictItem}>
+        <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseDictItem}>
+          {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{this._renderItemTitle()}</div>
         </eb-list-item-choose>
       );
@@ -157,9 +157,9 @@ export default {
     const { property, validate } = this.context;
     // readOnly
     if (validate.readOnly || property.ebReadOnly) {
-      const title = this.context.getTitle();
       return (
-        <f7-list-item title={title}>
+        <f7-list-item>
+          {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{this._renderItemTitle()}</div>
         </f7-list-item>
       );

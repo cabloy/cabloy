@@ -40,14 +40,10 @@ export default {
   },
   render() {
     const { dataPath } = this.context;
-    const title = this.context.getTitle();
     return (
-      <eb-list-item-choose
-        link="#"
-        dataPath={dataPath}
-        title={title}
-        propsOnChoose={this.onChooseAssignees}
-      ></eb-list-item-choose>
+      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseAssignees}>
+        {this.context.renderTitle({ slot: 'title' })}
+      </eb-list-item-choose>
     );
   },
 };
