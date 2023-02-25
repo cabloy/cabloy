@@ -36,7 +36,7 @@ export default {
     },
     renderFile(context) {
       const { /* parcel,*/ key, property, dataPath } = context;
-      const title = this.getTitle(context);
+      const title = this.getTitle(context, true); // only for photobrowser
       const value = context.getValue();
       // params
       const mode = property.ebParams.mode;
