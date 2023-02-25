@@ -87,17 +87,18 @@ export default {
   },
   render() {
     const { parcel, dataPath, property, validate } = this.context;
-    const title = this.context.getTitle();
     const categoryName = parcel.data.atomCategoryNameLocale || parcel.data.atomCategoryName;
     if (validate.readOnly || property.ebReadOnly) {
       return (
-        <f7-list-item title={title}>
+        <f7-list-item>
+          {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{categoryName}</div>
         </f7-list-item>
       );
     }
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} title={title} propsOnChoose={this.onChooseCategory}>
+      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseCategory}>
+        {this.context.renderTitle({ slot: 'title' })}
         <div slot="after">{categoryName}</div>
       </eb-list-item-choose>
     );

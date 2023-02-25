@@ -56,7 +56,7 @@ export default {
     },
     _onPerform_pageContext(context) {
       const { property, validate } = context;
-      const title = context.getTitle();
+      const title = context.getTitle(true);
       // host
       const host = this.$meta.util.getProperty(property, 'ebParams.host');
       // actionSave
@@ -101,7 +101,6 @@ export default {
     _renderMarkdown() {
       const context = this.context;
       const { key, property } = context;
-      const title = context.getTitle();
       // render
       return (
         <eb-list-item
@@ -110,9 +109,7 @@ export default {
           link="#"
           propsOnPerform={this._onPerform}
         >
-          <div slot="title" class={property.ebReadOnly ? 'text-color-gray' : ''}>
-            {title}
-          </div>
+          {context.renderTitle({ slot: 'title' })}
         </eb-list-item>
       );
     },
