@@ -327,13 +327,5 @@ export default {
     onSubmit(event) {
       this.$emit('submit', event);
     },
-    renderPropertyTitle(title) {
-      return (
-        <template>
-          <span>{title}</span>
-          <span>*</span>
-        </template>
-      );
-    },
   },
 };

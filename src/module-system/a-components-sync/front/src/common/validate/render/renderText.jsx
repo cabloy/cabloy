@@ -35,6 +35,7 @@ export default {
     renderText(context) {
       const { key, property, dataPath } = context;
       const title = this.getTitle(context);
+      const domTitle = context.renderTitle(context, { slot: 'label' });
       let value = context.getValue();
       // params
       const ebCurrency = this.$meta.util.getPropertyDeprecate(property, 'ebParams.currency', 'ebCurrency');
@@ -100,9 +101,10 @@ export default {
             }
           }}
         >
-          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+          {domTitle}
+          {/* <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
-          </div>
+          </div> */}
           {this.__searchStates_render_list_item(context)}
         </eb-list-input>
       );

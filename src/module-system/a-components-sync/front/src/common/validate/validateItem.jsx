@@ -1,6 +1,7 @@
 import validateActionModule from './validateActionModule.js';
 import validateComputedValue from './validateComputedValue.js';
 import validateComputedDisplay from './validateComputedDisplay.js';
+import validateItemTitle from './validateItem_Title.jsx';
 import renderSearchStates from './render/renderSearchStates.jsx';
 import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
@@ -79,6 +80,7 @@ export default {
     validateActionModule,
     validateComputedValue,
     validateComputedDisplay,
+    validateItemTitle,
     renderProperties,
     renderComponent,
     renderComponentAction,
@@ -278,47 +280,6 @@ export default {
       if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
-    getTitle(context, notHint) {
-      const { property } = context;
-      // not use 'key' as default title
-      let title = property.ebTitle || '';
-      if (title) {
-        title = this.$text(title);
-      }
-      // ignore panel/group/toggle
-      const ebType = property.ebType;
-      if (ebType === 'panel' || ebType === 'group' || ebType === 'group-flatten' || ebType === 'toggle') return title;
-      // only edit
-      if (this.validate.readOnly || property.ebReadOnly) return title;
-      // hint
-      if (!notHint) {
-        // config
-        let hint = this.validate.host && this.validate.host.hint;
-        if (!hint && hint !== false) {
-          hint = this.$config.validate.hint;
-        }
-        if (hint === false) {
-          return title;
-        }
-        const hintOptional = hint.optional;
-        const hintMust = hint.must;
-        // check optional
-        if (hintOptional && !property.notEmpty) {
-          return `${title}${this.$text(hintOptional)}`;
-        }
-        // check must
-        if (hintMust && property.notEmpty) {
-          return `${title}${this.$text(hintMust)}`;
-        }
-      }
-      // default
-      return title;
-    },
-    getPlaceholder(context) {
-      const { property } = context;
-      if (this.validate.readOnly || property.ebReadOnly) return undefined;
-      return property.ebDescription ? this.$text(property.ebDescription) : this.getTitle(context, true);
-    },
     getAtomId(context) {
       const { parcel, property } = context;
       // atomId: maybe from host
@@ -362,6 +323,9 @@ export default {
         meta,
         index,
         groupCount,
+        renderTitle: ({ slot, notHint }) => {
+          return this.renderTitle(context, { slot, notHint });
+        },
         getTitle: notHint => {
           return this.getTitle(context, notHint);
         },
