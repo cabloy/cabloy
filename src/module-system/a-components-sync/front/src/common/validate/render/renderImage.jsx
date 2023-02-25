@@ -3,7 +3,6 @@ export default {
     _renderImage_render({ modeView, context }) {
       const { key, property, dataPath } = context;
       const ebParams = property.ebParams || {};
-      const title = this.getTitle(context);
       //
       // const placeholder = this.getPlaceholder(context);
       const info = property.ebHelp ? this.$text(property.ebHelp) : undefined;
@@ -88,9 +87,7 @@ export default {
       if (modeView) {
         return (
           <f7-list-item key={key} class={className}>
-            <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-              {title}
-            </div>
+            {context.renderTitle({ slot: 'title' })}
             <div slot="root" class="images-container">
               {domImages}
               {domImageAdd}
@@ -108,9 +105,7 @@ export default {
       };
       return (
         <eb-list-input key={key} class={className} {...{ props }}>
-          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-            {title}
-          </div>
+          {context.renderTitle({ slot: 'label' })}
           <div slot="root" class="images-container">
             {domImages}
             {domImageAdd}
@@ -120,7 +115,7 @@ export default {
     },
     _renderImage_preview(event, context, images, index) {
       const { property } = context;
-      const title = this.getTitle(context);
+      const title = this.getTitle(context, true); // only for preview
       // target
       let target = this.$meta.util.getProperty(property, 'ebParams.target');
       if (target === undefined) target = '_self';
