@@ -2,7 +2,6 @@ export default {
   methods: {
     renderButton(context) {
       const { key, property } = context;
-      const title = this.getTitle(context, true);
       // button/buttons
       const button = property.ebParams.button;
       const buttons = property.ebParams.buttons;
@@ -23,7 +22,8 @@ export default {
         classNameAfter = 'buttons-wrapper';
       }
       return (
-        <f7-list-item key={key} class={className} title={title}>
+        <f7-list-item key={key} class={className}>
+          {context.renderTitle({ slot: 'title', notHint: true })}
           <div slot="after" class={classNameAfter}>
             {children}
           </div>

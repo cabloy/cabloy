@@ -2,7 +2,6 @@ export default {
   methods: {
     renderColorPicker(context) {
       const { key, property, dataPath } = context;
-      const title = this.getTitle(context);
       // value
       let value = context.getValue();
       if (!value || value.indexOf('#') === -1) {
@@ -16,9 +15,7 @@ export default {
         const style = _value ? { color: _value } : null;
         return (
           <f7-list-item key={key} staticClass="">
-            <div slot="title" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-              {title}
-            </div>
+            {context.renderTitle({ slot: 'title' })}
             <div slot="after" style={style}>
               {_value}
             </div>
@@ -70,9 +67,7 @@ export default {
             }
           }}
         >
-          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
-            {title}
-          </div>
+          {context.renderTitle({ slot: 'label' })}
           {this.__searchStates_render_list_item(context)}
         </eb-list-input>
       );
