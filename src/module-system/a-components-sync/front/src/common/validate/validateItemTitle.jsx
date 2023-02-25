@@ -4,9 +4,8 @@ export default {
       const { property } = context;
       // title
       const result = this.__getTitle(context, notHint);
-      const options = {
-        slot: 'label',
-      };
+      // options
+      const options = {};
       // slot
       if (slot) {
         options.slot = slot;
