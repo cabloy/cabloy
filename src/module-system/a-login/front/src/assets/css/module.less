@@ -10,15 +10,28 @@
     margin-bottom: unset;
   }
 
-  .login-screen-page {
+  .eb-login-container {
+    width: 100%;
+    overflow: scroll;
+
+    .list-button {
+      text-align: center;
+      color: var(--f7-login-screen-list-button-text-color, var(--f7-theme-color));
+      &:hover {
+        color: #fb9337;
+      }
+    }
+
     .close {
       position: absolute;
       top: 16px;
       left: 16px;
     }
 
-    .login-screen-title.sub-title {
-      font-size: 20px;
+    .login-screen-title {
+      .sub-title {
+        font-size: 20px;
+      }
     }
 
     .divider-line {
