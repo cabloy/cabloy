@@ -34,7 +34,7 @@ module.exports = app => {
               title: 'ActionKickOut',
               actionModule: moduleInfo.relativeName,
               actionComponent: 'action',
-              icon: { f7: ':outline:log-out-outline' },
+              icon: { f7: ':outline:logout-outline' },
               // enableOnOpened: true,
               stage: 'formal',
             },
