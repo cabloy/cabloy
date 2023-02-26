@@ -267,6 +267,9 @@
           "a-socketio": {
             "scripts": ["npmPublish", "gitCommit"]
           },
+          "bz-login": {
+            "scripts": ["gitCommit"]
+          },
           "test-flow": {
             "scripts": ["gitCommit"]
           },
