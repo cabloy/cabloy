@@ -4724,9 +4724,12 @@ module.exports = ctx => {
 
     // get forward url
     getForwardUrl(path) {
-      const prefix =
-        ctx.app.meta.isTest || ctx.app.meta.isLocal ? ctx.app.config.static.prefix + 'public/' : '/public/';
+      const prefix = this.useAccelRedirect() ? '/public/' : ctx.app.config.static.prefix + 'public/';
       return `${prefix}${ctx.instance.id}/${path}`;
+    }
+
+    useAccelRedirect() {
+      return ctx.app.meta.isProd && ctx.app.config.proxyProvider !== 'apache';
     }
 
     // get root path

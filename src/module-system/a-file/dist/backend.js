@@ -324,7 +324,7 @@ module.exports = ctx => {
       const forwardUrl = ctx.bean.base.getForwardUrl(`${file.filePath}/${fileName}${file.fileExt}`);
 
       // send
-      if (ctx.app.meta.isTest || ctx.app.meta.isLocal) {
+      if (!ctx.bean.base.useAccelRedirect()) {
         // redirect
         ctx.redirect(forwardUrl);
       } else {
