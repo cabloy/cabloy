@@ -28,7 +28,7 @@ export default {
             f7: actionBase.icon && actionBase.icon.f7,
             color: '',
           },
-          color: this.item_getActionColor(action, index),
+          color: actionBase.color, // this.item_getActionColor(action, index),
           onPerform: event => this.item_onAction(event, item, action),
         });
       }

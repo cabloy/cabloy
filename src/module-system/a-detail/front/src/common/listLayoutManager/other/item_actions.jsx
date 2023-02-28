@@ -23,13 +23,13 @@ export default {
         name: this.container.mode === 'view' ? 'read' : 'write',
       });
     },
-    item_getActionColor(action /* , index*/) {
-      if (action.code === 3) return 'orange';
-      if (action.code === 4) return 'red';
-      return 'blue';
-    },
     item_getActionTitle(action) {
       return this.getDetailActionTitle(action);
     },
+    // item_getActionColor(action /* , index*/) {
+    //   if (action.code === 3) return 'orange';
+    //   if (action.code === 4) return 'red';
+    //   return 'blue';
+    // },
   },
 };
