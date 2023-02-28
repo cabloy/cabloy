@@ -26,14 +26,14 @@ export default {
         name: actionName,
       });
     },
-    item_getActionColor(action /* , index*/) {
-      if (action.actionMode === 1) return 'teal';
-      if (action.code === 3) return 'orange';
-      if (action.code === 4) return 'red';
-      return 'blue';
-    },
     item_getActionTitle(action, item) {
       return this.getActionTitle(action, item);
     },
+    // item_getActionColor(action /* , index*/) {
+    //   if (action.actionMode === 1) return 'teal';
+    //   if (action.code === 3) return 'orange';
+    //   if (action.code === 4) return 'red';
+    //   return 'blue';
+    // },
   },
 };
