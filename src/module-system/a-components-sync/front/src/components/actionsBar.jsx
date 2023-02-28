@@ -160,6 +160,7 @@ export default {
           iconF7={action.icon && action.icon.f7}
           iconColor={action.icon && action.icon.color}
           iconBadge={action.icon && action.icon.badge}
+          color={action.color}
         >
           {action.title}
         </eb-link>

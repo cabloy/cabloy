@@ -13,6 +13,7 @@ export default {
             f7: '::grading',
             badge: this.bulk.selecting ? selectedAtoms.length.toString() : 0,
           },
+          color: 'teal',
           onPerform: event => this.bulk_onSelectingSwitch(event),
         });
       }
@@ -37,7 +38,7 @@ export default {
           f7: ':outline:label-outline',
           color: '',
         },
-        color: 'blue',
+        color: mode === 'swipeout' ? 'blue' : 'teal',
         onPerform: event => this.labels_onClick(event, item),
       });
       return actionsLeft;
@@ -69,10 +70,10 @@ export default {
             key: action.id,
             title: action.__task.flowNodeNameLocale,
             icon: {
-              f7: ':flow:activity-user-task',
+              f7: ':tools:pomotodo',
               color: '',
             },
-            color: this.item_getActionColor(action, index),
+            color: 'orange', // 'teal', // this.item_getActionColor(action, index),
             onPerform: event => this.item_onActionByModeFlow(event, item, action),
           });
         } else {
@@ -83,7 +84,7 @@ export default {
               f7: actionBase.icon && actionBase.icon.f7,
               color: '',
             },
-            color: this.item_getActionColor(action, index),
+            color: actionBase.color, // this.item_getActionColor(action, index),
             onPerform: event => this.item_onAction(event, item, action),
           });
         }

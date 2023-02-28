@@ -7,6 +7,7 @@ import _login from '../assets/icons/groups/login.svg';
 import _outline from '../assets/icons/groups/outline.svg';
 import _role from '../assets/icons/groups/role.svg';
 import _social from '../assets/icons/groups/social.svg';
+import _tools from '../assets/icons/groups/tools.svg';
 
 export default {
   auth: _auth,
@@ -18,4 +19,5 @@ export default {
   outline: _outline,
   role: _role,
   social: _social,
+  tools: _tools,
 };
