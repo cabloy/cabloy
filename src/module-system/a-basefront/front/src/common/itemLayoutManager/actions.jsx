@@ -279,15 +279,19 @@ export default {
         const children = [];
         for (const action of actions) {
           const actionBase = this.getAction(action);
+          const actionColor = actionBase.color;
+          const iconColor = (actionBase.icon && actionBase.icon.color) || actionColor;
           children.push(
             <eb-list-item
               key={action.id}
+              text-color={actionColor}
               link="#"
               popover-close
               propsOnPerform={event => this.actions_onAction(event, action)}
             >
               <f7-icon
                 slot="media"
+                color={iconColor}
                 material={actionBase.icon && actionBase.icon.material}
                 f7={actionBase.icon && actionBase.icon.f7}
               ></f7-icon>
