@@ -116,11 +116,15 @@ export default {
         const actionColor = action.color;
         const iconColor = (action.icon && action.icon.color) || actionColor;
         domActions.push(
-          <eb-list-item key={action.key} link="#" popoverClose propsOnPerform={event => action.onPerform(event)}>
+          <eb-list-item
+            key={action.key}
+            text-color={actionColor}
+            link="#"
+            popoverClose
+            propsOnPerform={event => action.onPerform(event)}
+          >
             <f7-icon slot="media" color={iconColor} f7={action.icon && action.icon.f7}></f7-icon>
-            <f7-link slot="title" text-color={actionColor}>
-              {action.title}
-            </f7-link>
+            <div slot="title">{action.title}</div>
           </eb-list-item>
         );
       }
