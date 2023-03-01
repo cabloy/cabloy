@@ -1422,7 +1422,7 @@ module.exports = (ctx, pageMode) => {
 const require3 = __webpack_require__(5638);
 const eggBornUtils = require3('egg-born-utils');
 
-// const __storeTokenHost = 'https://admin.cabloy.com';
+// const __storeTokenHost = 'https://portal.cabloy.com';
 // const __storeTokenHost = 'http://localhost:9192';
 
 module.exports = ctx => {
@@ -2371,7 +2371,7 @@ module.exports = appInfo => {
   // store
   config.store = {
     token: {
-      host: 'https://admin.cabloy.com',
+      host: 'https://portal.cabloy.com',
     },
     publish: {
       patterns: {

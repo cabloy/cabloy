@@ -3097,13 +3097,37 @@ module.exports = app => {
 
     async write({ atomClass, target, key, item, options, user }) {
       const atomStage = item.atomStage;
+      // super
+      if (!target) {
+        await super.write({ atomClass, target, key, item, options, user });
+      }
+      // write cms
+      await this._write_cms({ atomStage, target, key, item, options, user });
+      // super
+      if (target) {
+        await super.write({ atomClass, target, key, item, options, user });
+      }
+      // render
+      const ignoreRender = options && options.ignoreRender;
+      const renderSync = options && options.renderSync;
+      if (!ignoreRender) {
+        if (atomStage === 0 || atomStage === 1) {
+          const inner = atomStage === 0;
+          if (renderSync) {
+            await this.ctx.bean.cms.render._renderArticlePushAsync({ atomClass, key, inner });
+          } else {
+            await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner });
+          }
+        }
+      }
+    }
+
+    async _write_cms({ atomStage, target, key, item, options, user }) {
       // get atom for safety
       const atomOld = await this.ctx.bean.atom.read({ key, user });
-      // super
-      await super.write({ atomClass, target, key, item, options, user });
       // if undefined then old
       const fields = [
-        'atomLanguage',
+        // 'atomLanguage',
         'slug',
         'editMode',
         'content',
@@ -3199,20 +3223,6 @@ module.exports = app => {
         this.ctx.instance.id,
         key.atomId,
       ]);
-
-      // render
-      const ignoreRender = options && options.ignoreRender;
-      const renderSync = options && options.renderSync;
-      if (!ignoreRender) {
-        if (atomStage === 0 || atomStage === 1) {
-          const inner = atomStage === 0;
-          if (renderSync) {
-            await this.ctx.bean.cms.render._renderArticlePushAsync({ atomClass, key, inner });
-          } else {
-            await this.ctx.bean.cms.render._renderArticlePush({ atomClass, key, inner });
-          }
-        }
-      }
     }
 
     async _renderContent({ item, atomId }) {
