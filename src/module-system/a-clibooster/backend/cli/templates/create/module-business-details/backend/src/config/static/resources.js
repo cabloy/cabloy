@@ -14,7 +14,7 @@ module.exports = app => {
         atomAction: 'create',
       }),
       resourceIcon: '::add',
-      appKey: 'a-appbooster:appGeneral',
+      appKey: 'a-appbooster:appUnclassified',
       resourceRoles: 'authenticated',
     },
     {
@@ -29,7 +29,7 @@ module.exports = app => {
         atomAction: 'read',
       }),
       resourceIcon: ':outline:data-list-outline',
-      appKey: 'a-appbooster:appGeneral',
+      appKey: 'a-appbooster:appUnclassified',
       resourceRoles: 'authenticated',
     },
   ];

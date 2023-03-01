@@ -10,7 +10,7 @@ const __snippet = `{
     atomAction: 'create',
   }),
   resourceIcon: '::add',
-  appKey: 'a-appbooster:appGeneral',
+  appKey: 'a-appbooster:appUnclassified',
   resourceRoles: 'authenticated',
 },
 {
@@ -25,7 +25,7 @@ const __snippet = `{
     atomAction: 'read',
   }),
   resourceIcon: ':outline:data-list-outline',
-  appKey: 'a-appbooster:appGeneral',
+  appKey: 'a-appbooster:appUnclassified',
   resourceRoles: 'authenticated',
 },`;
 
