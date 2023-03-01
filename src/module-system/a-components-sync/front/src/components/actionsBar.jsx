@@ -1,7 +1,12 @@
+import RenderMenu from './actionsBar/actionsBar_renderMenu.jsx';
+import RenderSwipeout from './actionsBar/actionsBar_renderSwipeout.jsx';
+import RenderToolbar from './actionsBar/actionsBar_renderToolbar.jsx';
+
 export default {
   meta: {
     global: true,
   },
+  mixins: [RenderMenu, RenderSwipeout, RenderToolbar],
   name: 'eb-actions-bar',
   props: {
     // toolbar/swipeout/menu
@@ -52,22 +57,29 @@ export default {
       // perform
       await button.data.onPerform(event);
     },
-    _getReadyForMenuToolbar() {
-      let keys = [];
-      if (this.left) {
-        keys = keys.concat(this.left.map(item => item.key));
-      }
-      if (this.right) {
-        keys = keys.concat(this.right.map(item => item.key));
-      }
-      if (this.more) {
-        keys = keys.concat(this.more.map(item => item.key));
-      }
-      return keys.join(',');
-    },
     _getReadyForSwipeout(actions) {
       return !!actions;
     },
+    _getReadyForMenuToolbar() {
+      let footPrint = '';
+      for (const actions of [this.left, this.right, this.more]) {
+        footPrint += JSON.stringify(actions) + ',';
+      }
+      return footPrint;
+    },
+    // _getReadyForMenuToolbar() {
+    //   let keys = [];
+    //   if (this.left) {
+    //     keys = keys.concat(this.left.map(item => item.key));
+    //   }
+    //   if (this.right) {
+    //     keys = keys.concat(this.right.map(item => item.key));
+    //   }
+    //   if (this.more) {
+    //     keys = keys.concat(this.more.map(item => item.key));
+    //   }
+    //   return keys.join(',');
+    // },
   },
   render() {
     const mode = this.getMode();
