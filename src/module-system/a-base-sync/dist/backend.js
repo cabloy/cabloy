@@ -14069,6 +14069,7 @@ module.exports = app => {
           directShowOnSwipeout: true,
           directShowOnList: true,
           icon: { f7: '::edit' },
+          color: 'orange',
         },
         delete: {
           title: 'Delete',
@@ -14080,6 +14081,7 @@ module.exports = app => {
           directShowOnSwipeout: true,
           directShowOnList: true,
           icon: { f7: '::delete' },
+          color: 'red',
         },
         clone: {
           title: 'Clone',
