@@ -1,7 +1,7 @@
 const require3 = require('require3');
 const eggBornUtils = require3('egg-born-utils');
 
-// const __storeTokenHost = 'https://admin.cabloy.com';
+// const __storeTokenHost = 'https://portal.cabloy.com';
 // const __storeTokenHost = 'http://localhost:9192';
 
 module.exports = ctx => {

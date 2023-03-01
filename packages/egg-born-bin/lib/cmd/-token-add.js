@@ -33,7 +33,7 @@ class TokenAddCommand extends Command {
       host: {
         type: 'input',
         message: 'host',
-        default: 'https://admin.cabloy.com',
+        default: 'https://portal.cabloy.com',
       },
       clientID: {
         type: 'input',

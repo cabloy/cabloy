@@ -58,7 +58,7 @@ const utils = {
   async versionCheck({ moduleName, moduleVersion, scene, mode }) {
     try {
       const httpClient = urllib.create();
-      const url = 'https://admin.cabloy.com/api/cabloy/store/util/version';
+      const url = 'https://portal.cabloy.com/api/cabloy/store/util/version';
       const options = {
         method: 'POST',
         data: {
