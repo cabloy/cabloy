@@ -142,7 +142,7 @@
             // node._id
             node._id = category.id;
             // menu active
-            menuActive({ categoryId: category.id });
+            window.menuActive({ categoryId: category.id });
             // title
             $title.text(category.categoryName);
             // tree
@@ -350,10 +350,10 @@
         const category =
           categoryId === undefined
             ? `<a target="_blank" href="${util.url('static/articles.html')}?categoryId=${
-                item.atomCategoryId
-              }&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(
-                item.atomCategoryName
-              )}</span></a>`
+              item.atomCategoryId
+            }&categoryName=${encodeURIComponent(item.atomCategoryName)}"><span class="num category">${util.escapeHtml(
+              item.atomCategoryName
+            )}</span></a>`
             : '';
         // tags
         let tagsText = '';
@@ -378,8 +378,8 @@ ${category}
 <i class="fas fa-eye"></i><span class="num readCount">${item.readCount}</span>
 <i class="fas fa-heart"></i><span class="num starCount">${item.starCount}</span>
 <a target="_blank" href="${util.url(item.url)}#comments"><i class="fas fa-comment"></i><span class="num commentCount">${
-          item.commentCount
-        }</span></a>
+    item.commentCount
+  }</span></a>
 ${tagsText}
 </div>
         `;
@@ -389,8 +389,8 @@ ${tagsText}
             <div class="article-list-content">
               ${media}
               <h4 class="article-list-title">${sticky}${audio}${attachment}<a target="_blank" href="${util.url(
-          item.url
-        )}">${util.escapeHtml(item.atomNameFull || item.atomName)}</a></h4>
+    item.url
+  )}">${util.escapeHtml(item.atomNameFull || item.atomName)}</a></h4>
               <p>${util.escapeHtml(item.description) || item.summary}</p>
             </div>
             ${stat}
