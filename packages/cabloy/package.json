@@ -96,7 +96,7 @@
     "egg-born-module-a-version": "^4.8.5",
     "egg-born-module-cms-pluginarticle": "^4.8.5",
     "egg-born-module-cms-pluginbacktotop": "^4.8.4",
-    "egg-born-module-cms-pluginbase": "^4.8.8",
+    "egg-born-module-cms-pluginbase": "^4.8.9",
     "egg-born-module-cms-plugincopyright": "^4.8.4",
     "egg-born-module-cms-pluginmarkdowngithub": "^4.8.4",
     "egg-born-module-cms-pluginrss": "^4.8.4",
@@ -108,7 +108,7 @@
     "egg-born-module-cms-themeaws": "^4.8.5",
     "egg-born-module-cms-themeblog": "^4.8.6",
     "egg-born-module-cms-themecommunity": "^4.8.6",
-    "egg-born-module-cms-themedocs": "^4.8.7",
+    "egg-born-module-cms-themedocs": "^4.8.8",
     "egg-born-scripts": "^3.5.1"
   }
 }
