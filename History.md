@@ -1,5 +1,15 @@
 # History
 
+## 2023-03-01, Version 4.29.18
+
+- **Feat**
+
+  - 增加创建 App 应用的 Cli 指令：
+
+```bash
+$ npm run cli :create:app appName -- [--module=]
+```
+
 ## 2023-03-01, Version 4.29.15
 
 - **Feat**
