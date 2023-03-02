@@ -18,14 +18,14 @@ module.exports = ctx => {
       // appName
       const appName = argv.appName.toLowerCase();
       argv.appName = appName;
-      argv.appNameCapitalize = appName.toUpperCase();
+      argv.appNameCapitalize = appName.replace(appName[0], appName[0].toUpperCase());
       argv.appKey = `app${argv.appNameCapitalize}`;
       // render
       await this.template.renderBoilerplateAndSnippets({
         targetDir,
         moduleName: moduleInfo.relativeName,
-        snippetsPath: 'create/controller/snippets',
-        boilerplatePath: 'create/controller/boilerplate',
+        snippetsPath: 'create/app/snippets',
+        boilerplatePath: 'create/app/boilerplate',
       });
       // reload
       ctx.app.meta.reload.now();
