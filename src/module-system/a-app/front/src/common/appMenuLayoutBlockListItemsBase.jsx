@@ -202,9 +202,19 @@ export default {
         </eb-list>
       );
     },
+    _renderUnclassifiedTip() {
+      const appKey = this.layoutManager.container.appKey;
+      if (appKey !== 'a-appbooster:appUnclassified') return null;
+      return <div>sssss</div>;
+    },
     renderItems() {
       if (!this.ready) return null;
-      return <div>{this._renderAccordions()}</div>;
+      return (
+        <div>
+          {this._renderAccordions()}
+          {this._renderUnclassifiedTip()}
+        </div>
+      );
     },
   },
   render() {
