@@ -179,8 +179,13 @@ module.exports = ctx => {
     async applySnippet({ targetFile, snippet }) {
       await this.console.log(`apply changes to ${targetFile}`);
       // source code
-      let sourceCode = fs.readFileSync(targetFile);
-      sourceCode = sourceCode.toString('utf8');
+      let sourceCode;
+      if (fs.existsSync(targetFile)) {
+        sourceCode = fs.readFileSync(targetFile);
+        sourceCode = sourceCode.toString('utf8');
+      } else {
+        sourceCode = snippet.init;
+      }
       // language
       const language = snippet.parseOptions && snippet.parseOptions.language;
       // transform
