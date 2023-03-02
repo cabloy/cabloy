@@ -16,7 +16,8 @@ module.exports = ctx => {
       // target dir
       const targetDir = await this.helper.ensureDir(_module.root);
       // appName
-      const appName = argv.appName.toLowerCase();
+      let appName = argv.appName;
+      appName = appName.replace(appName[0], appName[0].toLowerCase());
       argv.appName = appName;
       argv.appNameCapitalize = appName.replace(appName[0], appName[0].toUpperCase());
       argv.appKey = `app${argv.appNameCapitalize}`;
