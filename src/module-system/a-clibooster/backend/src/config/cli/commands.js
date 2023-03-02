@@ -6,6 +6,7 @@ const toolsBabel = require('./command/tools.babel.js');
 const toolsIcons = require('./command/tools.icons.js');
 const createSuite = require('./command/create.suite.js');
 const createModule = require('./command/create.module.js');
+const createApp = require('./command/create.app.js');
 const createAtom = require('./command/create.atom.js');
 const createController = require('./command/create.controller.js');
 const createPage = require('./command/create.page.js');
@@ -31,6 +32,7 @@ module.exports = app => {
     create: {
       suite: createSuite(app),
       module: createModule(app),
+      app: createApp(app),
       atom: createAtom(app),
       controller: createController(app),
       page: createPage(app),
