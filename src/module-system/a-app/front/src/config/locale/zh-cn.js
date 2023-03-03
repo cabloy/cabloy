@@ -6,4 +6,10 @@ export default {
   AppHiddenTitle: '隐藏',
   AppLanguageTitle: '支持语言',
   AppCmsTitle: '支持CMS',
+  AppUnclassifiedOptionsTip1_Desp: '选项1：请为您的业务创建一个应用，并将菜单放入该应用中，请参见：',
+  AppUnclassifiedOptionsTip1_LinkTitle: '如何创建App应用',
+  AppUnclassifiedOptionsTip1_LinkURL: 'https://cabloy.com/zh-cn/articles/app-create.html',
+  AppUnclassifiedOptionsTip2_Desp: '选项2：将菜单放入现有应用中，请参见：',
+  AppUnclassifiedOptionsTip2_LinkTitle: '创建资源（菜单）',
+  AppUnclassifiedOptionsTip2_LinkURL: 'https://cabloy.com/zh-cn/articles/resource-static.html',
 };

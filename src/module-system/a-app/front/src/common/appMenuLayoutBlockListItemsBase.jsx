@@ -205,7 +205,22 @@ export default {
     _renderUnclassifiedTip() {
       const appKey = this.layoutManager.container.appKey;
       if (appKey !== 'a-appbooster:appUnclassified') return null;
-      return <div>sssss</div>;
+      return (
+        <ul>
+          <li>
+            {this.$text('AppUnclassifiedOptionsTip1_Desp')}
+            <f7-link external={true} target="_blank" href={this.$text('AppUnclassifiedOptionsTip1_LinkURL')}>
+              {this.$text('AppUnclassifiedOptionsTip1_LinkTitle')}
+            </f7-link>
+          </li>
+          <li>
+            {this.$text('AppUnclassifiedOptionsTip2_Desp')}
+            <f7-link external={true} target="_blank" href={this.$text('AppUnclassifiedOptionsTip2_LinkURL')}>
+              {this.$text('AppUnclassifiedOptionsTip2_LinkTitle')}
+            </f7-link>
+          </li>
+        </ul>
+      );
     },
     renderItems() {
       if (!this.ready) return null;
