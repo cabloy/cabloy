@@ -1,6 +1,6 @@
 # History
 
-## 2023-03-03, Version 4.29.18
+## 2023-03-03, Version 4.29.19
 
 - **Feat**
 
@@ -8,6 +8,20 @@
 
 ```bash
 $ npm run cli :create:app appName -- [--module=]
+```
+
+- 如果您只有一个应用，那么可以把这个应用设置为初始应用
+
+`src/front/config/config.default.js`
+
+```javascript
+modules: {
+  'a-app': {
+    appInit: {
+      default: {your app key},
+    },
+  },
+}
 ```
 
 ## 2023-03-01, Version 4.29.15
