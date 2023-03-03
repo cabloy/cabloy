@@ -100,7 +100,7 @@ export default function (Vue) {
         const layoutConfigValueApp = layoutConfigValue.appKey;
         const layoutConfigValueLanguage = layoutConfigValue.appLanguage;
         // set current
-        const appKey = query.appKey || layoutConfigValueApp || __appKeyDefault;
+        const appKey = query.appKey || layoutConfigValueApp || __getDefaultAppKeyFromConfig({ Vue }) || __appKeyDefault;
         const appLanguage = query.appLanguage || layoutConfigValueLanguage || Vue.prototype.$meta.util.getLocale();
         commit('setCurrent', { appKey, appLanguage });
         return getters.current;
@@ -260,6 +260,15 @@ export default function (Vue) {
       },
     },
   };
+}
+
+function __getDefaultAppKeyFromConfig({ Vue }) {
+  const configModule = Vue.prototype.$meta.config.modules['a-app'];
+  let appKey = configModule.appInit[window.location.host];
+  if (!appKey) {
+    appKey = configModule.appInit.default;
+  }
+  return appKey;
 }
 
 function __getUserStatusAndLayout({ Vue }) {

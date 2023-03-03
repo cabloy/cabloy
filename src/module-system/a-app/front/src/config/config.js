@@ -18,4 +18,8 @@ export default {
       'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'Tools'],
     },
   },
+  appInit: {
+    default: null,
+    'localhost:9092': null,
+  },
 };
