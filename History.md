@@ -10,7 +10,7 @@
 $ npm run cli :create:app appName -- [--module=]
 ```
 
-- 如果您只有一个应用，那么可以把这个应用设置为初始应用
+- 如果您只有一个应用，那么可以把这个应用设置为初始应用，从而实现打开网页时默认显示该应用
 
 `src/front/config/config.default.js`
 
