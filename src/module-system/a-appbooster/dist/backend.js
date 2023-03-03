@@ -84,7 +84,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  Unclassified: '未分类',
+  Unclassified: '未归类',
   DemoIsolateApp: '演示: 独立应用',
 };
 

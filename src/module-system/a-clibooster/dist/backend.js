@@ -12,6 +12,50 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 9389:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // module name/info
+      const moduleName = argv.module;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!_module) {
+        throw new Error(`module does not exist: ${moduleName}`);
+      }
+      // target dir
+      const targetDir = await this.helper.ensureDir(_module.root);
+      // appName
+      let appName = argv.appName;
+      appName = appName.replace(appName[0], appName[0].toLowerCase());
+      argv.appName = appName;
+      argv.appNameCapitalize = appName.replace(appName[0], appName[0].toUpperCase());
+      argv.appKey = `app${argv.appNameCapitalize}`;
+      // render
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: 'create/app/snippets',
+        boilerplatePath: 'create/app/boilerplate',
+      });
+      // reload
+      ctx.app.meta.reload.now();
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
 /***/ 5511:
 /***/ ((module) => {
 
@@ -1274,6 +1318,7 @@ const cliToolsBabel = __webpack_require__(6544);
 const cliToolsIcons = __webpack_require__(9508);
 const cliCreateSuite = __webpack_require__(6029);
 const cliCreateModule = __webpack_require__(1554);
+const cliCreateApp = __webpack_require__(9389);
 const cliCreateAtom = __webpack_require__(5511);
 const cliCreateController = __webpack_require__(2199);
 const cliCreatePage = __webpack_require__(5863);
@@ -1321,6 +1366,10 @@ module.exports = app => {
     'cli.create.module': {
       mode: 'ctx',
       bean: cliCreateModule,
+    },
+    'cli.create.app': {
+      mode: 'ctx',
+      bean: cliCreateApp,
     },
     'cli.create.atom': {
       mode: 'ctx',
@@ -1616,6 +1665,51 @@ module.exports = ctx => {
     }
   }
   return CliStoreBase;
+};
+
+
+/***/ }),
+
+/***/ 8468:
+/***/ ((module) => {
+
+module.exports = app => {
+  return {
+    bean: 'create.app',
+    resource: {
+      atomStaticKey: 'cliCreate',
+    },
+    info: {
+      version: '4.0.0',
+      title: 'Cli: Create App',
+      usage: 'npm run cli :create:app appName -- [--module=]',
+    },
+    options: {
+      module: {
+        description: 'module name',
+        type: 'string',
+      },
+    },
+    groups: {
+      default: {
+        questions: {
+          appName: {
+            type: 'input',
+            message: 'appName',
+            initial: {
+              expression: 'context.argv._[0]',
+            },
+            required: true,
+          },
+          module: {
+            type: 'input',
+            message: 'module name',
+            required: true,
+          },
+        },
+      },
+    },
+  };
 };
 
 
@@ -2317,6 +2411,7 @@ const toolsBabel = __webpack_require__(4807);
 const toolsIcons = __webpack_require__(7571);
 const createSuite = __webpack_require__(3687);
 const createModule = __webpack_require__(8793);
+const createApp = __webpack_require__(8468);
 const createAtom = __webpack_require__(4184);
 const createController = __webpack_require__(2222);
 const createPage = __webpack_require__(2111);
@@ -2342,6 +2437,7 @@ module.exports = app => {
     create: {
       suite: createSuite(app),
       module: createModule(app),
+      app: createApp(app),
       atom: createAtom(app),
       controller: createController(app),
       page: createPage(app),
