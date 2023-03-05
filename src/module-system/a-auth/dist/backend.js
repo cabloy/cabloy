@@ -577,9 +577,9 @@ async function _createProviderStrategy(ctx, authProvider, beanProvider) {
   config.passReqToCallback = true;
   config.failWithError = false;
   config.successRedirect = config.successReturnToOrRedirect = beanProvider.metaScene.mode === 'redirect' ? '/' : false;
-  config.beanProvider = beanProvider;
   // combine
   config = ctx.bean.util.extend({}, beanProvider.configProviderScene, config);
+  // config.beanProvider = beanProvider;
   // adjust
   config = await beanProvider.adjustConfigForAuthenticate(config);
   // strategy
