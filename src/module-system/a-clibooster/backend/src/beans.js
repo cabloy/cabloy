@@ -12,6 +12,7 @@ const cliCreateAtom = require('./bean/cli.create.atom.js');
 const cliCreateController = require('./bean/cli.create.controller.js');
 const cliCreatePage = require('./bean/cli.create.page.js');
 const cliCreatePagex = require('./bean/cli.create.pagex.js');
+const cliFrontRenderTableCell = require('./bean/cli.front.renderTableCell.js');
 const cliStoreSync = require('./bean/cli.store.sync.js');
 const cliStorePublish = require('./bean/cli.store.publish.js');
 const cliGitCommit = require('./bean/cli.git.commit.js');
@@ -75,6 +76,10 @@ module.exports = app => {
     'cli.create.pagex': {
       mode: 'ctx',
       bean: cliCreatePagex,
+    },
+    'cli.front.renderTableCell': {
+      mode: 'ctx',
+      bean: cliFrontRenderTableCell,
     },
     'cli.store.sync': {
       mode: 'ctx',
