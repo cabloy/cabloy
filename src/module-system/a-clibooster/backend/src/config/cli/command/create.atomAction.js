@@ -37,9 +37,7 @@ module.exports = app => {
           actionCode: {
             type: 'input',
             message: 'actionCode',
-            initial: {
-              expression: '101',
-            },
+            default: 101,
             required: true,
           },
           module: {
