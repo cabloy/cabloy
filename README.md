@@ -48,7 +48,7 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 
 ## API
 
-- [Postman API 集](https://www.postman.com/cabloyjs/workspace/cabloyjs)
+- [Postman API 集](https://www.postman.com/cabloyjs/workspace/cabloyjs)(持续更新中)
 
 ## 视频课程
 
