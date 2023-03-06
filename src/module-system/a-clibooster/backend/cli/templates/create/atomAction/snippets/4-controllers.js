@@ -6,9 +6,12 @@ module.exports = {
   async transform({ cli, ast, argv, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
-    ast.before(code);
-    code = await cli.template.renderContent({ content: __snippet_body });
-    ast.replace(`const controllers = {$$$0}`, `const controllers = {${code} \n $$$0}`);
+    const exists = ast.find(code);
+    if (exists.length === 0) {
+      ast.before(code);
+      code = await cli.template.renderContent({ content: __snippet_body });
+      ast.replace(`const controllers = {$$$0}`, `const controllers = {${code} \n $$$0}`);
+    }
     // ok
     return ast;
   },
