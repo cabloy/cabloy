@@ -31,6 +31,7 @@ export default {
   },
   methods: {
     onPerformClick(event, button) {
+      event.stopPropagation();
       const { record } = this.info;
       return this.$meta.util.performAction({ ctx: this.layoutManager, action: button.onPerform, item: record });
     },
