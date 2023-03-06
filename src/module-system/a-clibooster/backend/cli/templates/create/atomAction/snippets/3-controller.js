@@ -15,19 +15,16 @@ module.exports = {
     class <%=argv.atomClassNameCapitalize%>Controller extends app.Controller {
     }
   
-    return <%=argv.controllerNameCapitalize%>Controller;
+    return <%=argv.atomClassNameCapitalize%>Controller;
   };
   `,
   async transform({ cli, ast, argv, ctx }) {
-    // code
-    let code = await cli.template.renderContent({ content: __snippet_declare });
-    ast.before(code);
-    code = await cli.template.renderContent({ content: __snippet_body });
-    if (!ast.has(`const apps = [$_$]`)) {
-      ast.replace(`const apps = []`, `const apps = [${code}]`);
-    } else {
-      ast.replace(`const apps = [$_$]`, `const apps = [$_$, \n ${code}]`);
-    }
+    // add action
+    const code = await cli.template.renderContent({ content: __snippet_body });
+    ast.replace(
+      `class ${argv.atomClassNameCapitalize}Controller extends app.Controller {$$$0}`,
+      `class ${argv.atomClassNameCapitalize}Controller extends app.Controller {$$$0 \n ${code} }`
+    );
     // ok
     return ast;
   },
