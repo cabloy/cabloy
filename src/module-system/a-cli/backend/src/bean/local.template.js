@@ -171,7 +171,8 @@ module.exports = ctx => {
       // for
       for (const file of files) {
         const snippet = require3(path.join(snippetsDir, file));
-        const targetFile = path.join(targetDir, snippet.file);
+        const fileName = await this.renderContent({ content: snippet.file });
+        const targetFile = path.join(targetDir, fileName);
         await this.applySnippet({ targetFile, snippet });
       }
     }
@@ -184,7 +185,10 @@ module.exports = ctx => {
         sourceCode = fs.readFileSync(targetFile);
         sourceCode = sourceCode.toString('utf8');
       } else {
-        sourceCode = snippet.init;
+        if (!snippet.init) {
+          throw new Error('should provider init content for: ', targetFile);
+        }
+        sourceCode = await this.renderContent({ content: snippet.init });
       }
       // language
       const language = snippet.parseOptions && snippet.parseOptions.language;
