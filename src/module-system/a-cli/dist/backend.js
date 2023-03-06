@@ -684,6 +684,7 @@ module.exports = ctx => {
     }
 
     async renderContent({ content }) {
+      if (!content) return content;
       const data = this.getEjsData();
       const options = this.getEjsOptions();
       return await ejs.render(content, data, options);
@@ -728,8 +729,13 @@ module.exports = ctx => {
         .sort((a, b) => this._parseSnippetFilePrefix(a) - this._parseSnippetFilePrefix(b));
       // for
       for (const file of files) {
-        const snippet = require3(path.join(snippetsDir, file));
-        const targetFile = path.join(targetDir, snippet.file);
+        const snippetTemplatePath = path.join(snippetsDir, file);
+        const snippet = require3(snippetTemplatePath);
+        if (!snippet.file) {
+          throw new Error(`should provider file path for: ${file}`);
+        }
+        const fileName = await this.renderContent({ content: snippet.file });
+        const targetFile = path.join(targetDir, fileName);
         await this.applySnippet({ targetFile, snippet });
       }
     }
@@ -742,7 +748,10 @@ module.exports = ctx => {
         sourceCode = fs.readFileSync(targetFile);
         sourceCode = sourceCode.toString('utf8');
       } else {
-        sourceCode = snippet.init;
+        if (!snippet.init) {
+          throw new Error(`should provider init content for: ${targetFile}`);
+        }
+        sourceCode = await this.renderContent({ content: snippet.init });
       }
       // language
       const language = snippet.parseOptions && snippet.parseOptions.language;

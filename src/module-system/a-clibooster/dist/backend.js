@@ -94,6 +94,44 @@ module.exports = ctx => {
 
 /***/ }),
 
+/***/ 5981:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // module name/info
+      const moduleName = argv.module;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!_module) {
+        throw new Error(`module does not exist: ${moduleName}`);
+      }
+      // target dir
+      const targetDir = await this.helper.ensureDir(_module.root);
+      // render
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: 'create/atomAction/snippets',
+        boilerplatePath: 'create/atomAction/boilerplate',
+      });
+      // reload
+      ctx.app.meta.reload.now();
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
 /***/ 2199:
 /***/ ((module) => {
 
@@ -359,6 +397,46 @@ module.exports = ctx => {
       }
       parts.push(commandName);
       return parts.join(':');
+    }
+  }
+
+  return Cli;
+};
+
+
+/***/ }),
+
+/***/ 221:
+/***/ ((module) => {
+
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Cli extends ctx.app.meta.CliBase(ctx) {
+    async execute({ user }) {
+      const { argv } = this.context;
+      // super
+      await super.execute({ user });
+      // module name/info
+      const moduleName = argv.module;
+      argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+      // check if exists
+      const _module = this.helper.findModule(moduleName);
+      if (!_module) {
+        throw new Error(`module does not exist: ${moduleName}`);
+      }
+      // target dir
+      const targetDir = await this.helper.ensureDir(_module.root);
+      // componentName
+      // const componentName=argv.componentName;
+      // render
+      await this.template.renderBoilerplateAndSnippets({
+        targetDir,
+        moduleName: moduleInfo.relativeName,
+        snippetsPath: 'front/renderTableCell/snippets',
+        boilerplatePath: 'front/renderTableCell/boilerplate',
+      });
+      // need not reload
+      // ctx.app.meta.reload.now();
     }
   }
 
@@ -1320,9 +1398,11 @@ const cliCreateSuite = __webpack_require__(6029);
 const cliCreateModule = __webpack_require__(1554);
 const cliCreateApp = __webpack_require__(9389);
 const cliCreateAtom = __webpack_require__(5511);
+const cliCreateAtomAction = __webpack_require__(5981);
 const cliCreateController = __webpack_require__(2199);
 const cliCreatePage = __webpack_require__(5863);
 const cliCreatePagex = __webpack_require__(1232);
+const cliFrontRenderTableCell = __webpack_require__(221);
 const cliStoreSync = __webpack_require__(5937);
 const cliStorePublish = __webpack_require__(9467);
 const cliGitCommit = __webpack_require__(5354);
@@ -1375,6 +1455,10 @@ module.exports = app => {
       mode: 'ctx',
       bean: cliCreateAtom,
     },
+    'cli.create.atomAction': {
+      mode: 'ctx',
+      bean: cliCreateAtomAction,
+    },
     'cli.create.controller': {
       mode: 'ctx',
       bean: cliCreateController,
@@ -1386,6 +1470,10 @@ module.exports = app => {
     'cli.create.pagex': {
       mode: 'ctx',
       bean: cliCreatePagex,
+    },
+    'cli.front.renderTableCell': {
+      mode: 'ctx',
+      bean: cliFrontRenderTableCell,
     },
     'cli.store.sync': {
       mode: 'ctx',
@@ -1781,6 +1869,92 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 6798:
+/***/ ((module) => {
+
+module.exports = app => {
+  return {
+    bean: 'create.atomAction',
+    resource: {
+      atomStaticKey: 'cliCreate',
+    },
+    info: {
+      version: '4.0.0',
+      title: 'Cli: Create Atom Action',
+      usage: 'npm run cli :create:atomAction actionName -- [--actionCode=] [--module=] [--atomClassName=]',
+    },
+    options: {
+      actionCode: {
+        description: 'action code',
+        type: 'number',
+      },
+      module: {
+        description: 'module name',
+        type: 'string',
+      },
+      atomClassName: {
+        description: 'atomClass name',
+        type: 'string',
+      },
+    },
+    groups: {
+      default: {
+        questions: {
+          actionName: {
+            type: 'input',
+            message: 'actionName',
+            initial: {
+              expression: 'context.argv._[0]',
+            },
+            required: true,
+          },
+          actionCode: {
+            type: 'input',
+            message: 'actionCode',
+            default: 101,
+            required: true,
+          },
+          module: {
+            type: 'input',
+            message: 'moduleName',
+            required: true,
+          },
+          atomClassName: {
+            type: 'input',
+            message: 'atomClassName',
+            required: true,
+          },
+        },
+      },
+      actionInfoAuto: {
+        questions: {
+          actionNameCapitalize: {
+            type: 'input',
+            message: 'actionNameCapitalize',
+            initial: {
+              expression:
+                'context.argv.actionName.replace(context.argv.actionName[0], context.argv.actionName[0].toUpperCase())',
+            },
+            silent: true,
+          },
+          atomClassNameCapitalize: {
+            type: 'input',
+            message: 'atomClassNameCapitalize',
+            initial: {
+              expression:
+                'context.argv.atomClassName.replace(context.argv.atomClassName[0], context.argv.atomClassName[0].toUpperCase())',
+            },
+            silent: true,
+          },
+        },
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
 /***/ 2222:
 /***/ ((module) => {
 
@@ -2123,6 +2297,51 @@ module.exports = app => {
 
 /***/ }),
 
+/***/ 3227:
+/***/ ((module) => {
+
+module.exports = app => {
+  return {
+    bean: 'front.renderTableCell',
+    resource: {
+      atomStaticKey: 'cliCreate',
+    },
+    info: {
+      version: '4.0.0',
+      title: 'Cli: Render Table Cell',
+      usage: 'npm run cli :front:renderTableCell componentName -- [--module=]',
+    },
+    options: {
+      module: {
+        description: 'module name',
+        type: 'string',
+      },
+    },
+    groups: {
+      default: {
+        questions: {
+          componentName: {
+            type: 'input',
+            message: 'componentName',
+            initial: {
+              expression: 'context.argv._[0]',
+            },
+            required: true,
+          },
+          module: {
+            type: 'input',
+            message: 'module name',
+            required: true,
+          },
+        },
+      },
+    },
+  };
+};
+
+
+/***/ }),
+
 /***/ 8289:
 /***/ ((module) => {
 
@@ -2413,9 +2632,11 @@ const createSuite = __webpack_require__(3687);
 const createModule = __webpack_require__(8793);
 const createApp = __webpack_require__(8468);
 const createAtom = __webpack_require__(4184);
+const createAtomAction = __webpack_require__(6798);
 const createController = __webpack_require__(2222);
 const createPage = __webpack_require__(2111);
 const createPagex = __webpack_require__(1586);
+const renderTableCell = __webpack_require__(3227);
 const storeSync = __webpack_require__(5609);
 const storePublish = __webpack_require__(9730);
 const gitCommit = __webpack_require__(8289);
@@ -2439,9 +2660,13 @@ module.exports = app => {
       module: createModule(app),
       app: createApp(app),
       atom: createAtom(app),
+      atomAction: createAtomAction(app),
       controller: createController(app),
       page: createPage(app),
       pagex: createPagex(app),
+    },
+    front: {
+      renderTableCell: renderTableCell(app),
     },
     store: {
       sync: storeSync(app),
