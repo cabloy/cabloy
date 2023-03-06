@@ -32,7 +32,10 @@ export default {
   },
   created() {},
   methods: {
-    onClickImage() {
+    onClickImage(event) {
+      // stopPropagation
+      event.stopPropagation();
+      // info
       const { index, column } = this.info;
       // target
       const target = this.target === undefined ? '_popup' : this.target;
@@ -86,7 +89,7 @@ export default {
       if (height) style.height = height + 'px';
       if (width) style.width = width + 'px';
       // dom
-      return <img src={url} style={style} onClick={this.onClickImage} />;
+      return <img src={url} style={style} onClick={event => this.onClickImage(event)} />;
     },
   },
   render() {
