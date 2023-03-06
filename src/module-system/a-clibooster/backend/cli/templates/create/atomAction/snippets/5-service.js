@@ -1,5 +1,7 @@
 const __snippet_body = `
-async <%=argv.actionName%>({ key, user }) {}
+async <%=argv.actionName%>({ key, user }) {
+  return true;
+}
 `;
 
 module.exports = {

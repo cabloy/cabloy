@@ -15,7 +15,6 @@ module.exports = ctx => {
       }
       // target dir
       const targetDir = await this.helper.ensureDir(_module.root);
-      console.log(argv);
       // render
       await this.template.renderBoilerplateAndSnippets({
         targetDir,
