@@ -63,6 +63,15 @@ module.exports = app => {
             },
             silent: true,
           },
+          atomClassNameCapitalize: {
+            type: 'input',
+            message: 'atomClassNameCapitalize',
+            initial: {
+              expression:
+                'context.argv.atomClassName.replace(context.argv.atomClassName[0], context.argv.atomClassName[0].toUpperCase())',
+            },
+            silent: true,
+          },
         },
       },
     },
