@@ -1,5 +1,23 @@
 # History
 
+## 2023-03-06, Version 4.29.21
+
+- **Feat**
+
+  - 增加 Cli 指令：创建原子自定义指令
+
+```bash
+$ npm run cli :create:atomAction actionName -- [--actionCode=] [--module=] [--atomClassName=]
+```
+
+- 参见文档：[原子指令-自定义指令(Cli 创建)](https://cabloy.com/zh-cn/articles/atom-action-custom-cli.html)
+
+* 增加 Cli 指令：创建表格单元格的渲染组件
+
+```bash
+$ npm run cli :front:renderTableCell componentName -- [--module=]
+```
+
 ## 2023-03-03, Version 4.29.19
 
 - **Feat**
