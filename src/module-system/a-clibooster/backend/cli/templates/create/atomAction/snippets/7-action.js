@@ -5,7 +5,7 @@ const __snippet_method = `if (this.action.name === '<%=argv.actionName%>') {
 }`;
 
 module.exports = {
-  file: 'front/src/components/action1.js',
+  file: 'front/src/components/action.js',
   init: `
   import Vue from 'vue';
   const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
