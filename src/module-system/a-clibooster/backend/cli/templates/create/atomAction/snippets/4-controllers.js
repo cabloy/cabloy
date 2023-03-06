@@ -1,5 +1,5 @@
-const __snippet_declare = `const <%=argv.controllerName%> = require('./controller/<%=argv.controllerName%>.js');`;
-const __snippet_body = `<%=argv.controllerName%>,`;
+const __snippet_declare = `const <%=argv.atomClassName%> = require('./controller/<%=argv.atomClassName%>.js');`;
+const __snippet_body = `<%=argv.atomClassName%>,`;
 
 module.exports = {
   file: 'backend/src/controllers.js',

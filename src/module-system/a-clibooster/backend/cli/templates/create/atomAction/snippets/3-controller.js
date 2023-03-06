@@ -1,6 +1,6 @@
 const __snippet_body = `
 async <%=argv.actionName%>() {
-  const res = await this.ctx.service.<%=argv.atomClassNameCapitalize%>.<%=argv.actionName%>({
+  const res = await this.ctx.service.<%=argv.atomClassName%>.<%=argv.actionName%>({
     key: this.ctx.request.body.key,
     user: this.ctx.state.user.op,
   });
