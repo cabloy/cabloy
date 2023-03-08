@@ -33,6 +33,13 @@ export default {
       // load wasm
       return await WebAssembly.instantiateStreaming(fetch(item.source), go.importObject);
     },
-    async _run({ item }) {},
+    async _run({ item }) {
+      // force __goInstance
+      const go = this._go();
+      // load wasm
+      const wasmResult = await this._loadWasm({ item });
+      // run wasm
+      return await go.run(wasmResult.instance);
+    },
   },
 };
