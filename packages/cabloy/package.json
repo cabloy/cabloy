@@ -94,6 +94,7 @@
     "egg-born-module-a-useronline": "^4.8.9",
     "egg-born-module-a-validation": "^4.8.7",
     "egg-born-module-a-version": "^4.8.5",
+    "egg-born-module-a-wasmgo": "^4.0.0",
     "egg-born-module-cms-pluginarticle": "^4.8.5",
     "egg-born-module-cms-pluginbacktotop": "^4.8.4",
     "egg-born-module-cms-pluginbase": "^4.8.9",

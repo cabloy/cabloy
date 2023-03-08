@@ -201,6 +201,9 @@
           "a-version": {
             "scripts": ["npmPublish"]
           },
+          "a-wasmgo": {
+            "scripts": ["npmPublish"]
+          },
           "cms-pluginarticle": {
             "scripts": ["npmPublish"]
           },
