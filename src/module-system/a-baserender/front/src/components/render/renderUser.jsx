@@ -29,15 +29,13 @@ export default {
             },
             callback: (code, selectedUser) => {
               if (code === 200) {
+                // userId
+                this.context.setValue(selectedUser.id, key);
                 // mapper
                 if (mapper) {
-                  for (const key in mapper) {
-                    const value = selectedUser[mapper[key]];
-                    this.context.setValue(value, key);
+                  for (const _key in mapper) {
+                    this.context.setValue(selectedUser[_key], mapper[_key]);
                   }
-                } else {
-                  const value = selectedUser[key];
-                  this.context.setValue(value, key);
                 }
                 resolve(true);
               } else if (code === false) {
@@ -48,22 +46,34 @@ export default {
         });
       });
     },
+    getDisplayName() {
+      const { property } = this.context;
+      let displayName = property.ebParams.displayName;
+      if (!displayName) {
+        const mapper = property.ebParams.mapper || {};
+        displayName = mapper.userName || 'userName';
+      }
+      if (displayName) {
+        return this.context.getValue(displayName);
+      }
+      return null;
+    },
   },
   render() {
     const { dataPath, property, validate } = this.context;
-    const value = this.context.getValue();
+    const displayName = this.getDisplayName();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item>
           {this.context.renderTitle({ slot: 'title' })}
-          <div slot="after">{value}</div>
+          <div slot="after">{displayName}</div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseUser}>
         {this.context.renderTitle({ slot: 'title' })}
-        <div slot="after">{value}</div>
+        <div slot="after">{displayName}</div>
       </eb-list-item-choose>
     );
   },

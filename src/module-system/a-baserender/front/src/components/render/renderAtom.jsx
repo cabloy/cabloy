@@ -41,8 +41,10 @@ export default {
                 // atomId
                 this.context.setValue(selectedAtom.atomId, key);
                 // mapper
-                for (const _key in mapper) {
-                  this.context.setValue(selectedAtom[_key], mapper[_key]);
+                if (mapper) {
+                  for (const _key in mapper) {
+                    this.context.setValue(selectedAtom[_key], mapper[_key]);
+                  }
                 }
                 resolve(true);
               } else if (code === false) {
