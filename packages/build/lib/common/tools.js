@@ -72,6 +72,17 @@ module.exports = context => {
             esModule: false,
           },
         },
+        {
+          test: /\.(wasm)(\?.*)?$/,
+          loader: 'url-loader',
+          options: {
+            limit: false,
+            name(file) {
+              return tools.combineHashFileName(file, 'wasm');
+            },
+            esModule: false,
+          },
+        },
       ];
     },
   };
