@@ -5,6 +5,7 @@
 - **Feat**
 
   - 1. 增加核心模块 a-wasmgo: 用于加载 go wasm 模块
+    - 参见文档：[https://cabloy.com/zh-cn/articles/go-wasm.html](https://cabloy.com/zh-cn/articles/go-wasm.html)
 
 ## 2023-03-06, Version 4.29.21
 
