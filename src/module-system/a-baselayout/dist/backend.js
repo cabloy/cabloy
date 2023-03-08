@@ -408,9 +408,10 @@ module.exports = app => {
   schemas.filterTabGeneral = {
     type: 'object',
     properties: {
+      // need not
       stage: {
         type: 'string',
-        ebType: 'select',
+        // ebType: 'select',
         ebTitle: 'Stage',
         ebParams: { openIn: 'sheet', closeOnSelect: true },
         ebDisplay: {
@@ -420,9 +421,10 @@ module.exports = app => {
           tableAlias: null,
         },
       },
+      // need not
       mine: {
         type: 'number',
-        ebType: 'toggle',
+        // ebType: 'toggle',
         ebTitle: 'Mine',
         ebDisplay: {
           expression: '!_meta.host.container.options || !_meta.host.container.options.mine',
