@@ -199,6 +199,7 @@ export default {
   AtomState: '数据状态',
   More: '更多',
   State: '状态',
+  Status: '状态',
   All: '所有',
   BatchDelete: '批量删除',
   'Role Name': '角色名称',
