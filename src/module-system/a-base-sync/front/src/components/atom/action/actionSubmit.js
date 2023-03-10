@@ -7,11 +7,17 @@ export default {
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSubmitBefore) {
         await ctx.layout.instanceExtend.onActionSubmitBefore(this.$props);
       }
-      // confirm
-      await ctx.$view.dialog.confirm(this.$text('AtomActionSubmitConfirm'));
-      // submit
+      // key
       const key = { atomId: item.atomId, itemId: item.itemId };
-      const data = await ctx.$api.post('/a/base/atom/writeSubmit', { key, item });
+      // step one: write
+      const options = {
+        saveDraftOnly: false,
+      };
+      await ctx.$api.post('/a/base/atom/write', { key, item, options });
+      // step middle: confirm
+      await ctx.$view.dialog.confirm(this.$text('AtomActionSubmitConfirm'));
+      // step two: submit
+      const data = await ctx.$api.post('/a/base/atom/submit', { key });
       if (data.formal) {
         // delete draft
         if (item.atomStage === 0) {
