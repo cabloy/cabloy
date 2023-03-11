@@ -5,12 +5,64 @@ const Command = require('@zhennann/egg-bin').Command;
 const mglob = require('egg-born-mglob');
 const eggBornUtils = require('egg-born-utils');
 
+const __patterns = {
+  module: {
+    all: [
+      '**',
+      '!node_modules',
+      '!miniprogram_npm',
+      '!.git',
+      '!.DS_Store',
+      '!backend/src',
+      '!backend/static',
+      '!backend/test',
+      '!front/src',
+      '!icons',
+      '!build',
+    ],
+    backend: [
+      '**',
+      '!node_modules',
+      '!miniprogram_npm',
+      '!.git',
+      '!.DS_Store',
+      '!backend/src',
+      '!backend/static',
+      '!backend/test',
+      '!front/src',
+      '!icons',
+      '!build',
+      '!dist/front.js*',
+      '!dist/static',
+    ],
+    front: [
+      '**',
+      '!node_modules',
+      '!miniprogram_npm',
+      '!.git',
+      '!.DS_Store',
+      '!backend/src',
+      '!backend/static',
+      '!backend/test',
+      '!front/src',
+      '!icons',
+      '!build',
+      '!dist/backend.js*',
+      '!dist/staticBackend',
+    ],
+  },
+  suite: ['**', '!node_modules', '!miniprogram_npm', '!.git', '!.DS_Store', '!modules'],
+};
+
 class ReleaseCommand extends Command {
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin release';
   }
 
+  get type2() {
+    return this.type || 'all';
+  }
   *run({ cwd, argv }) {
     const description = this.type ? `release ${this.type}` : 'release';
     console.log(`run ${description} at %s`, cwd);
@@ -60,27 +112,32 @@ class ReleaseCommand extends Command {
         'modules',
         entityModule.package.name.substring('egg-born-module-'.length)
       );
-      yield this.__buildModule(entityModule, dirSrcModule, dirDestModule);
+      yield this.__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule);
     }
   }
 
   *__releaseModule(entity, entityRepos) {
     const { dirSrc, dirDest } = this.__prepareDirectory(entity);
-    yield this.__buildModule(entity, dirSrc, dirDest);
+    yield this.__releaseModuleIsolate(entity, dirSrc, dirDest);
   }
 
-  *__buildModule(entityModule, dirSrcModule, dirDestModule) {
-    //
-    console.log(dirSrcModule, dirDestModule);
+  *__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule) {
     // build
-    const buildType = this.type || 'all';
     yield eggBornUtils.process.spawnCmd({
       cmd: 'npm',
-      args: ['run', `build:${buildType}`],
+      args: ['run', `build:${this.type2}`],
       options: {
         cwd: dirSrcModule,
       },
     });
+    // globby
+    const files = yield eggBornUtils.tools.globbyAsync(__patterns.module[this.type2], { cwd: dirSrcModule });
+    // copy
+    for (const file of files) {
+      const fileSrc = path.join(dirSrcModule, file);
+      const fileDest = path.join(dirDestModule, file);
+      fse.copySync(fileSrc, fileDest);
+    }
   }
 
   __prepareDirectory(entity) {
@@ -98,7 +155,7 @@ class ReleaseCommand extends Command {
       this.context.cwd,
       'dist',
       'release',
-      this.type || 'all',
+      this.type2,
       entity.modules ? 'suite' : 'modue',
       entityPathName
     );
