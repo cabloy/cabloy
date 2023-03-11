@@ -4,11 +4,7 @@ class ReleaseBackendCommand extends ReleaseCommand {
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = 'Usage: egg-born-bin release-backend';
-  }
-
-  *run({ cwd, argv }) {
-    argv.type = 'backend';
-    yield super.run({ cwd, argv });
+    this.type = 'backend';
   }
 
   description() {

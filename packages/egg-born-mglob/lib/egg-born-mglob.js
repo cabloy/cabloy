@@ -124,6 +124,9 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
     modulesLocal: context.modulesLocal,
     modulesGlobal: context.modulesGlobal,
     modulesMonkey: context.modulesMonkey,
+    //
+    suitesLocal: context.suitesLocal,
+    suitesVendor: context.suitesVendor,
   };
 }
 
