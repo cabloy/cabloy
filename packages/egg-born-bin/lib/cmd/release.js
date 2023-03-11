@@ -86,8 +86,10 @@ class ReleaseCommand extends Command {
         continue;
       } else {
         entity = entityRepos.modules[entityName];
-        if (entity && !entity.suite) {
-          yield this.__releaseModule(entity, entityRepos);
+        if (entity) {
+          if (!entity.suite) {
+            yield this.__releaseModule(entity, entityRepos);
+          }
           continue;
         }
       }
