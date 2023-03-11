@@ -10,7 +10,8 @@ class ReleaseCommand extends Command {
   }
 
   *run({ cwd, argv }) {
-    console.log('run release at %s', cwd);
+    const description = argv.type ? `release ${argv.type}` : 'release';
+    console.log(`run ${description} at %s`, cwd);
 
     console.log(argv);
     const files = argv._;
@@ -18,7 +19,7 @@ class ReleaseCommand extends Command {
       console.log(file);
     }
     // done
-    console.log(chalk.cyan('  release successfully!'));
+    console.log(chalk.cyan(`  ${description} successfully!`));
   }
 
   description() {
