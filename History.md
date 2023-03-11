@@ -5,9 +5,15 @@
 - **Feat**
 
   - 草稿两阶段提交：
+
     1. 先提交一次保存，如果有数据验证失败，则进行提示
     2. 如果数据验证成功，则弹出提交确认框
     3. 将草稿提交，以便生成正式数据
+
+  - 新增脚本命令
+    1. npm run release
+    2. npm run release:front
+    3. npm run release:backend
 
 ## 2023-03-08, Version 4.30.1
 
