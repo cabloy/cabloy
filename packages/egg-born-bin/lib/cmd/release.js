@@ -113,6 +113,14 @@ class ReleaseCommand extends Command {
       );
       yield this.__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule);
     }
+    // globby
+    const files = yield eggBornUtils.tools.globbyAsync(__patterns.suite, { cwd: dirSrc });
+    // copy
+    for (const file of files) {
+      const fileSrc = path.join(dirSrc, file);
+      const fileDest = path.join(dirDest, file);
+      fse.copySync(fileSrc, fileDest);
+    }
   }
 
   *__releaseModule(entity) {
