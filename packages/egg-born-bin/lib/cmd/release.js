@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const fse = require('fs-extra');
 const Command = require('@zhennann/egg-bin').Command;
 const mglob = require('egg-born-mglob');
+const eggBornUtils = require('egg-born-utils');
 
 class ReleaseCommand extends Command {
   constructor(rawArgv) {
@@ -59,17 +60,27 @@ class ReleaseCommand extends Command {
         'modules',
         entityModule.package.name.substring('egg-born-module-'.length)
       );
-      yield this.__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule);
+      yield this.__buildModule(entityModule, dirSrcModule, dirDestModule);
     }
   }
 
   *__releaseModule(entity, entityRepos) {
-    const dirDest = this.__prepareDirectory(entity);
+    const { dirSrc, dirDest } = this.__prepareDirectory(entity);
+    yield this.__buildModule(entity, dirSrc, dirDest);
   }
 
-  *__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule) {
+  *__buildModule(entityModule, dirSrcModule, dirDestModule) {
     //
     console.log(dirSrcModule, dirDestModule);
+    // build
+    const buildType = this.type || 'all';
+    yield eggBornUtils.process.spawnCmd({
+      cmd: 'npm',
+      args: ['run', `build:${buildType}`],
+      options: {
+        cwd: dirSrcModule,
+      },
+    });
   }
 
   __prepareDirectory(entity) {
