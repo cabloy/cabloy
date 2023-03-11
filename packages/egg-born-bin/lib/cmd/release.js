@@ -101,6 +101,7 @@ class ReleaseCommand extends Command {
 
   *__releaseSuite(entity, entityRepos) {
     const { dirSrc, dirDest } = this.__prepareDirectory(entity);
+    fse.emptyDirSync(dirDest);
     // build modules
     for (const moduleName of entity.modules) {
       const entityModule = entityRepos.modules[moduleName];
@@ -116,6 +117,7 @@ class ReleaseCommand extends Command {
 
   *__releaseModule(entity) {
     const { dirSrc, dirDest } = this.__prepareDirectory(entity);
+    fse.emptyDirSync(dirDest);
     yield this.__releaseModuleIsolate(entity, dirSrc, dirDest);
   }
 
@@ -148,17 +150,13 @@ class ReleaseCommand extends Command {
     } else {
       entityPathName = entity.package.name.substring('egg-born-module-'.length);
     }
-
     const dirDest = path.join(
       this.context.cwd,
-      'dist',
-      'release',
+      'dist-release',
       this.type2,
       entity.modules ? 'suite' : 'modue',
       entityPathName
     );
-    // clear dirDest
-    fse.emptyDirSync(dirDest);
     // ok
     return { dirSrc, dirDest };
   }
