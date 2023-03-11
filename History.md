@@ -11,9 +11,22 @@
     3. 将草稿提交，以便生成正式数据
 
   - 新增脚本命令
+
     1. npm run release
     2. npm run release:front
     3. npm run release:backend
+
+  - 旧项目：在 package.json 文件中增加如下脚本配置：
+
+```javascript
+"scripts": {
+  ...
+  "release": "egg-born-bin release",
+  "release:front": "egg-born-bin release-front",
+  "release:backend": "egg-born-bin release-backend",
+  ...
+}
+```
 
 ## 2023-03-08, Version 4.30.1
 
