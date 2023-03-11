@@ -16,6 +16,9 @@
     "start:backend": "egg-born-scripts backend-start",
     "start:backend-daemon": "egg-born-scripts backend-start --daemon",
     "stop:backend": "egg-born-scripts backend-stop",
+    "release": "egg-born-bin release",
+    "release:front": "egg-born-bin release-front",
+    "release:backend": "egg-born-bin release-backend",
     "format": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\"",
     "lint": "prettier --check \"**/*.js\" \"**/*.json\" \"**/*.jsx\" \"**/*.vue\""
   },

@@ -2,6 +2,7 @@ node_modules
 miniprogram_npm
 /coverage/lcov-report
 /dist
+/dist-release
 /docs-api
 
 .idea

@@ -29,7 +29,7 @@ const __patterns = {
       '!backend/src',
       '!backend/static',
       '!backend/test',
-      '!front/src',
+      '!front',
       '!icons',
       '!build',
       '!dist/front.js*',
@@ -41,9 +41,7 @@ const __patterns = {
       '!miniprogram_npm',
       '!.git',
       '!.DS_Store',
-      '!backend/src',
-      '!backend/static',
-      '!backend/test',
+      '!backend',
       '!front/src',
       '!icons',
       '!build',
@@ -116,7 +114,7 @@ class ReleaseCommand extends Command {
     }
   }
 
-  *__releaseModule(entity, entityRepos) {
+  *__releaseModule(entity) {
     const { dirSrc, dirDest } = this.__prepareDirectory(entity);
     yield this.__releaseModuleIsolate(entity, dirSrc, dirDest);
   }
