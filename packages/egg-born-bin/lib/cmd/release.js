@@ -32,12 +32,16 @@ class ReleaseCommand extends Command {
       let entity = entityRepos.suites[entityName];
       if (entity) {
         yield this.__releaseSuite(entity, entityRepos);
+        continue;
       } else {
         entity = entityRepos.modules[entityName];
         if (entity && !entity.suite) {
           yield this.__releaseModule(entity, entityRepos);
+          continue;
         }
       }
+      // not found
+      console.log(chalk.red(`  ${entityName} not found!`));
     }
 
     // done
@@ -45,11 +49,27 @@ class ReleaseCommand extends Command {
   }
 
   *__releaseSuite(entity, entityRepos) {
-    const dirDest = this.__prepareDirectory(entity);
+    const { dirSrc, dirDest } = this.__prepareDirectory(entity);
+    // build modules
+    for (const moduleName of entity.modules) {
+      const entityModule = entityRepos.modules[moduleName];
+      const { dirSrc: dirSrcModule } = this.__prepareDirectory(entityModule);
+      const dirDestModule = path.join(
+        dirDest,
+        'modules',
+        entityModule.package.name.substring('egg-born-module-'.length)
+      );
+      yield this.__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule);
+    }
   }
 
   *__releaseModule(entity, entityRepos) {
     const dirDest = this.__prepareDirectory(entity);
+  }
+
+  *__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule) {
+    //
+    console.log(dirSrcModule, dirDestModule);
   }
 
   __prepareDirectory(entity) {
