@@ -80,7 +80,8 @@ const __pathsModules = [
   },
 ];
 
-function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
+// type: front/backend/all
+function eggBornMglob(projectPath, disabledModules, disabledSuites, log, type) {
   // context
   const context = {
     suites: {},
@@ -102,7 +103,7 @@ function eggBornMglob(projectPath, disabledModules, disabledSuites, log) {
   // parse suites
   const suites = __parseSuites(projectPath);
   // parse modules
-  const modules = __parseModules(projectPath);
+  const modules = __parseModules(projectPath, type);
   // bind suites modules
   __bindSuitesModules(suites, modules);
 
@@ -203,7 +204,7 @@ function __orderDependencies(context, modules, module, moduleRelativeName) {
   return enabled;
 }
 
-function __parseModules(projectPath) {
+function __parseModules(projectPath, type) {
   const modules = {};
   for (const __path of __pathsModules) {
     const prefix = `${projectPath}/${__path.prefix}`;
@@ -239,7 +240,7 @@ function __parseModules(projectPath) {
           js: {},
           static: {},
         };
-        const _moduleMeta = __parseModule(__path, moduleMeta);
+        const _moduleMeta = __parseModule(__path, moduleMeta, type);
         if (_moduleMeta) {
           // enhance check public
           // if (_moduleMeta.info.public) {
@@ -255,28 +256,36 @@ function __parseModules(projectPath) {
   return modules;
 }
 
-function __parseModule(__path, moduleMeta) {
+function __parseModule(__path, moduleMeta, type) {
   const root = moduleMeta.root;
   // front
-  for (const item of __path.fronts) {
-    const file = path.join(root, item.js);
-    if (fse.existsSync(file)) {
-      moduleMeta.js.front = file;
-      break;
+  if (type !== 'backend') {
+    for (const item of __path.fronts) {
+      const file = path.join(root, item.js);
+      if (fse.existsSync(file)) {
+        moduleMeta.js.front = file;
+        break;
+      }
+    }
+    if (!moduleMeta.js.front) {
+      return null;
     }
   }
   // backend
-  for (const item of __path.backends) {
-    const file = path.join(root, item.js);
-    if (fse.existsSync(file)) {
-      moduleMeta.js.backend = file;
-      const staticBackendPath = path.normalize(path.join(root, item.static));
-      moduleMeta.static.backend = staticBackendPath;
-      break;
+  if (type !== 'front') {
+    for (const item of __path.backends) {
+      const file = path.join(root, item.js);
+      if (fse.existsSync(file)) {
+        moduleMeta.js.backend = file;
+        const staticBackendPath = path.normalize(path.join(root, item.static));
+        moduleMeta.static.backend = staticBackendPath;
+        break;
+      }
+    }
+    if (!moduleMeta.js.backend) {
+      return null;
     }
   }
-  // check if empty
-  if (!moduleMeta.js.front || !moduleMeta.js.backend) return null;
   // ok
   return moduleMeta;
 }

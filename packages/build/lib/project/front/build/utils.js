@@ -78,7 +78,8 @@ module.exports = context => {
         context.config.projectPath,
         context.config.configProject.base.disabledModules,
         context.config.configProject.base.disabledSuites,
-        true
+        true,
+        'front'
       );
 
       // clear

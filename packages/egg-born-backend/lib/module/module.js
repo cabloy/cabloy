@@ -7,7 +7,8 @@ module.exports = function (loader) {
     path.join(loader.app.options.baseDir, '../..'),
     loader.app.config.disabledModules,
     loader.app.config.disabledSuites,
-    !!loader.app.meta.inAgent
+    !!loader.app.meta.inAgent,
+    'backend'
   );
   // eslint-disable-next-line
   const ebSuites = (loader.app.meta.suites = suites);
