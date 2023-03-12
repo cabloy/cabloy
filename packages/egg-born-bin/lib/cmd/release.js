@@ -164,7 +164,7 @@ class ReleaseCommand extends Command {
       this.context.cwd,
       'dist-release',
       this.type2,
-      entity.modules ? 'suite' : 'modue',
+      entity.modules ? 'suite' : 'module',
       entityPathName
     );
     // ok
