@@ -6,6 +6,35 @@ const mglob = require('egg-born-mglob');
 const eggBornUtils = require('egg-born-utils');
 
 const __patterns = {
+  project: {
+    all: [
+      'build',
+      'scripts',
+      'src/backend',
+      '!src/backend/_config',
+      '!src/backend/app',
+      '!src/backend/logs',
+      '!src/backend/run',
+      'src/front',
+      '!src/front/_config',
+      'lerna.json',
+      'LICENSE',
+      'package.json',
+    ],
+    backend: [
+      'build',
+      'scripts',
+      'src/backend',
+      '!src/backend/_config',
+      '!src/backend/app',
+      '!src/backend/logs',
+      '!src/backend/run',
+      'lerna.json',
+      'LICENSE',
+      'package.json',
+    ],
+    front: ['build', 'scripts', 'src/front', '!src/front/_config', 'lerna.json', 'LICENSE', 'package.json'],
+  },
   module: {
     all: [
       '**',
@@ -100,8 +129,27 @@ class ReleaseCommand extends Command {
       console.log(chalk.red(`  ${entityName} not found!`));
     }
 
+    // copy project files
+    yield this.__copyProjectFiles();
+
     // done
     console.log(chalk.cyan(`  ${description} successfully!`));
+  }
+
+  *__copyProjectFiles() {
+    const dirSrc = this.context.cwd;
+    const dirDest = path.join(this.context.cwd, 'dist-release', this.type2);
+    // globby
+    const files = yield eggBornUtils.tools.globbyAsync(__patterns.project[this.type2], { cwd: this.context.cwd });
+    // copy
+    for (const file of files) {
+      const fileSrc = path.join(dirSrc, file);
+      const fileDest = path.join(dirDest, file);
+      // only copy once
+      if (!fse.existsSync(fileDest)) {
+        fse.copySync(fileSrc, fileDest);
+      }
+    }
   }
 
   *__releaseSuite(entity, entityRepos) {
