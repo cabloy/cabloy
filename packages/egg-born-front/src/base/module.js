@@ -87,6 +87,14 @@ export default function (Vue) {
         });
       }
     },
+    async tryUse(moduleName) {
+      try {
+        const module = await this.use(moduleName);
+        return module;
+      } catch (err) {
+        return null;
+      }
+    },
     loadWaitings() {
       for (const key in Vue.prototype.$meta.modulesWaiting) {
         this._registerRoutes(Vue.prototype.$meta.modulesWaiting[key]);
