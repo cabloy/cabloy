@@ -99,7 +99,14 @@ class ReleaseCommand extends Command {
     console.log(`run ${description} at %s`, cwd);
 
     // entityRepos
-    const entityRepos = mglob.glob(cwd, null, null, false, this.type2);
+    const entityRepos = mglob.glob({
+      projectPath: cwd,
+      disabledModules: null,
+      disabledSuites: null,
+      log: false,
+      type: this.type2,
+      disableCheckDependencies: true,
+    });
 
     // entityNames
     let entityNames = argv._;

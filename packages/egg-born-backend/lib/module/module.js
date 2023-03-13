@@ -3,13 +3,13 @@ const mglob = require('egg-born-mglob');
 
 module.exports = function (loader) {
   // all modules
-  const { suites, modules, modulesArray, modulesMonkey } = mglob.glob(
-    path.join(loader.app.options.baseDir, '../..'),
-    loader.app.config.disabledModules,
-    loader.app.config.disabledSuites,
-    !!loader.app.meta.inAgent,
-    'backend'
-  );
+  const { suites, modules, modulesArray, modulesMonkey } = mglob.glob({
+    projectPath: path.join(loader.app.options.baseDir, '../..'),
+    disabledModules: loader.app.config.disabledModules,
+    disabledSuites: loader.app.config.disabledSuites,
+    log: !!loader.app.meta.inAgent,
+    type: 'backend',
+  });
   // eslint-disable-next-line
   const ebSuites = (loader.app.meta.suites = suites);
   const ebModules = (loader.app.meta.modules = modules);

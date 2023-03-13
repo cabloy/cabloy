@@ -88,9 +88,11 @@ const __pathsModules = [
 ];
 
 // type: front/backend/all
-function eggBornMglob(projectPath, disabledModules, disabledSuites, log, type) {
+function eggBornMglob(options) {
+  const { projectPath, disabledModules, disabledSuites, log, type } = options;
   // context
   const context = {
+    options,
     suites: {},
     modules: {},
     modulesArray: [],
@@ -180,6 +182,7 @@ function __pushModule(context, modules, moduleRelativeName) {
 }
 
 function __orderDependencies(context, modules, module, moduleRelativeName) {
+  if (context.options.disableCheckDependencies) return true;
   if (!module.package.eggBornModule || !module.package.eggBornModule.dependencies) return true;
 
   let enabled = true;

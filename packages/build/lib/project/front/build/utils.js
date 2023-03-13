@@ -74,13 +74,13 @@ module.exports = context => {
       // const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
 
       // modules
-      const { modules, modulesGlobal } = mglob.glob(
-        context.config.projectPath,
-        context.config.configProject.base.disabledModules,
-        context.config.configProject.base.disabledSuites,
-        true,
-        'front'
-      );
+      const { modules, modulesGlobal } = mglob.glob({
+        projectPath: context.config.projectPath,
+        disabledModules: context.config.configProject.base.disabledModules,
+        disabledSuites: context.config.configProject.base.disabledSuites,
+        log: true,
+        type: 'front',
+      });
 
       // clear
       fse.emptyDirSync(runtimePath);
