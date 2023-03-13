@@ -90,7 +90,7 @@ class ReleaseCommand extends Command {
         entity = entityRepos.modules[entityName];
         if (entity) {
           // check if node_modules / in suite
-          if (!entity.node_modules && !entity.suite) {
+          if (!entity.info.node_modules && !entity.suite) {
             yield this.__releaseModule(entity, entityRepos);
           }
           continue;
@@ -183,11 +183,16 @@ class ReleaseCommand extends Command {
     } else {
       entityPathName = entity.package.name.substring('egg-born-module-'.length);
     }
+    let entityPathNameParent = entity.modules ? 'suite' : 'module';
+    if (entity.info.vendor) {
+      entityPathNameParent = `${entityPathNameParent}-vendor`;
+    }
     const dirDest = path.join(
       this.context.cwd,
       'dist-release',
       this.type2,
-      entity.modules ? 'suite' : 'module',
+      'src',
+      entityPathNameParent,
       entityPathName
     );
     // ok
