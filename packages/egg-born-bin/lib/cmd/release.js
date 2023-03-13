@@ -135,14 +135,34 @@ class ReleaseCommand extends Command {
   }
 
   *__releaseModuleIsolate(entityModule, dirSrcModule, dirDestModule) {
-    // build
-    yield eggBornUtils.process.spawnCmd({
-      cmd: 'npm',
-      args: ['run', `build:${this.type2}`],
-      options: {
-        cwd: dirSrcModule,
-      },
-    });
+    // build front
+    if (this.type2 !== 'backend') {
+      // check if include 'main.js'
+      if (entityModule.js.front.indexOf('main.js') > -1) {
+        // build
+        yield eggBornUtils.process.spawnCmd({
+          cmd: 'npm',
+          args: ['run', 'build:front'],
+          options: {
+            cwd: dirSrcModule,
+          },
+        });
+      }
+    }
+    // build backend
+    if (this.type2 !== 'front') {
+      // check if include 'main.js'
+      if (entityModule.js.backend.indexOf('main.js') > -1) {
+        // build
+        yield eggBornUtils.process.spawnCmd({
+          cmd: 'npm',
+          args: ['run', 'build:backend'],
+          options: {
+            cwd: dirSrcModule,
+          },
+        });
+      }
+    }
     // globby
     const files = yield eggBornUtils.tools.globbyAsync(__patterns.module[this.type2], { cwd: dirSrcModule });
     // copy
