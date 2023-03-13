@@ -75,10 +75,8 @@ class ReleaseCommand extends Command {
     // entityNames
     let entityNames = argv._;
     if (entityNames.length === 0) {
-      // only local entity
-      entityNames = Array.from(
-        new Set(Object.keys(entityRepos.modulesLocal).concat(Object.keys(entityRepos.suitesLocal)))
-      );
+      // all entities
+      entityNames = Array.from(new Set(Object.keys(entityRepos.modules).concat(Object.keys(entityRepos.suites))));
     }
 
     // loop
@@ -91,7 +89,8 @@ class ReleaseCommand extends Command {
       } else {
         entity = entityRepos.modules[entityName];
         if (entity) {
-          if (!entity.suite) {
+          // check if node_modules / in suite
+          if (!entity.node_modules && !entity.suite) {
             yield this.__releaseModule(entity, entityRepos);
           }
           continue;

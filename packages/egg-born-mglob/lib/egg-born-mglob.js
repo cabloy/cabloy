@@ -78,6 +78,7 @@ const __pathsModules = [
     prefix: 'node_modules/egg-born-module-',
     vendor: true,
     public: true,
+    node_modules: true,
     fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
     backends: [
       { js: 'dist/backend.js', static: 'dist/staticBackend' },
@@ -239,6 +240,7 @@ function __parseModules(projectPath, type) {
       }
       info.vendor = __path.vendor;
       info.public = __path.public;
+      info.node_modules = __path.node_modules;
       // check if exists
       if (!modules[info.relativeName]) {
         // meta
