@@ -4,6 +4,9 @@
   "title": "{{name}}",
   "description": "{{description}}",
   "keywords": ["Cabloy Project"],
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
   "scripts": {
     "cli": "egg-born-bin cli",
     "db:reset": "egg-born-bin backend-db-reset",

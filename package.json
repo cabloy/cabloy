@@ -21,6 +21,9 @@
     "url": "https://github.com/zhennann/cabloy/issues"
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
   "scripts": {
     "cli": "node ./packages/egg-born-bin/bin/egg-born-bin.js cli",
     "db:reset": "node ./packages/egg-born-bin/bin/egg-born-bin.js backend-db-reset",
