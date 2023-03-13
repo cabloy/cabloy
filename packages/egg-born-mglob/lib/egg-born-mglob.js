@@ -26,6 +26,7 @@ const __pathSuites = [
 const __pathsModules = [
   {
     prefix: 'src/module/',
+    vendor: false,
     public: false,
     fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
     backends: [
@@ -35,6 +36,7 @@ const __pathsModules = [
   },
   {
     prefix: 'src/module-system/',
+    vendor: false,
     public: false,
     fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
     backends: [
@@ -44,6 +46,7 @@ const __pathsModules = [
   },
   {
     prefix: 'src/suite/*/modules/',
+    vendor: false,
     public: false,
     fronts: [{ js: 'front/src/main.js' }, { js: 'dist/front.js' }],
     backends: [
@@ -53,6 +56,7 @@ const __pathsModules = [
   },
   {
     prefix: 'src/module-vendor/',
+    vendor: true,
     public: false,
     fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
     backends: [
@@ -62,6 +66,7 @@ const __pathsModules = [
   },
   {
     prefix: 'src/suite-vendor/*/modules/',
+    vendor: true,
     public: false,
     fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
     backends: [
@@ -71,6 +76,7 @@ const __pathsModules = [
   },
   {
     prefix: 'node_modules/egg-born-module-',
+    vendor: true,
     public: true,
     fronts: [{ js: 'dist/front.js' }, { js: 'front/src/main.js' }],
     backends: [
@@ -212,6 +218,12 @@ function __parseModules(projectPath, type) {
     for (let filePkg of filePkgs) {
       // name
       let name = filePkg.split('/').slice(-2)[0];
+      // check if '-' prefix exists
+      if (name.substring(0, 1) === '-') {
+        // skip
+        continue;
+      }
+      // check if full name
       if (!__path.public && name.indexOf('egg-born-module-') > -1) {
         const pathSrc = path.join(prefix, name);
         name = name.substring('egg-born-module-'.length);
@@ -225,6 +237,7 @@ function __parseModules(projectPath, type) {
       if (!info) {
         throw new Error(`module name is not valid: ${name}`);
       }
+      info.vendor = __path.vendor;
       info.public = __path.public;
       // check if exists
       if (!modules[info.relativeName]) {
@@ -369,6 +382,12 @@ function __parseSuites(projectPath) {
     for (let filePkg of filePkgs) {
       // name
       let name = filePkg.split('/').slice(-2)[0];
+      // check if '-' prefix exists
+      if (name.substring(0, 1) === '-') {
+        // skip
+        continue;
+      }
+      // check if full name
       if (name.indexOf('egg-born-suite-') > -1) {
         const pathSrc = path.join(prefix, name);
         name = name.substring('egg-born-suite-'.length);
@@ -416,9 +435,15 @@ function __bindSuitesModules(suites, modules) {
     if (!res) continue;
     // suiteName
     const suiteName = res[1];
-    // bind
-    module.suite = suiteName;
-    suites[suiteName].modules.push(moduleName);
+    const suite = suites[suiteName];
+    if (!suite) {
+      // means disabled
+      delete modules[moduleName];
+    } else {
+      // bind
+      module.suite = suiteName;
+      suite.modules.push(moduleName);
+    }
   }
 }
 
