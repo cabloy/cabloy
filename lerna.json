@@ -10,7 +10,7 @@
   ],
   "command": {
     "bootstrap": {
-      "hoist": "**"
+      "hoist": true
     },
     "publish": {
       "ignoreChanges": [
