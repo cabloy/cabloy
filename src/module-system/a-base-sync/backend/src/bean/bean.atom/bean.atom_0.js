@@ -535,7 +535,6 @@ module.exports = ctx => {
 
     async validator({ atomClass }) {
       atomClass = await this.atomClass.get(atomClass);
-      atomClass = await this.atomClass.top(atomClass);
       return await this.atomClass.validator({ atomClass });
     }
 

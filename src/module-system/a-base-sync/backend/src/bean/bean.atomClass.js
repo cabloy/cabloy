@@ -11,16 +11,7 @@ module.exports = ctx => {
     }
 
     async atomClass(atomClass) {
-      atomClass = await this.top(atomClass);
       return ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
-    }
-
-    async top(atomClass) {
-      while (true) {
-        if (!atomClass.atomClassIdParent) break;
-        atomClass = await this.get({ id: atomClass.atomClassIdParent });
-      }
-      return atomClass;
     }
 
     async get({ id, module, atomClassName, atomClassIdParent = 0 }) {
@@ -89,11 +80,6 @@ module.exports = ctx => {
         [ctx.instance.id, atomId]
       );
       return res[0];
-    }
-
-    async getTopByAtomId({ atomId }) {
-      const atomClass = await this.getByAtomId({ atomId });
-      return await this.top(atomClass);
     }
 
     async validator({ atomClass }) {
