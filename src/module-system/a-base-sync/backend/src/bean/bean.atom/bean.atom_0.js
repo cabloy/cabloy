@@ -568,9 +568,9 @@ module.exports = ctx => {
       return tableName;
     }
 
-    async getAtomClassId({ module, atomClassName, atomClassIdParent = 0 }) {
+    async getAtomClassId({ module, atomClassName }) {
       ctx.app.meta.util.deprecated('ctx.bean.atom.getAtomClassId', 'ctx.bean.atomClass.get');
-      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName });
       return atomClass.id;
     }
   }

@@ -14,9 +14,9 @@ module.exports = ctx => {
       return ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
     }
 
-    async get({ id, module, atomClassName, atomClassIdParent = 0 }) {
+    async get({ id, module, atomClassName }) {
       module = module || this.moduleName;
-      const data = id ? { id } : { module, atomClassName, atomClassIdParent };
+      const data = id ? { id } : { module, atomClassName };
       const res = await this.model.get(data);
       if (res) return res;
       if (!module || !atomClassName) ctx.throw.module(moduleInfo.relativeName, 1011);
@@ -27,16 +27,16 @@ module.exports = ctx => {
           return await ctx.meta.util.executeBeanIsolate({
             beanModule: moduleInfo.relativeName,
             beanFullName: 'atomClass',
-            context: { module, atomClassName, atomClassIdParent },
+            context: { module, atomClassName },
             fn: '_registerLock',
           });
         },
       });
     }
 
-    async _registerLock({ module, atomClassName, atomClassIdParent }) {
+    async _registerLock({ module, atomClassName }) {
       // atom class
-      const data = await this._registerLock_inner({ module, atomClassName, atomClassIdParent });
+      const data = await this._registerLock_inner({ module, atomClassName });
       // atom action: basics
       for (const code of [1, 2, 3, 4]) {
         await ctx.bean.atomAction._registerLock_inner({ atomClassId: data.id, code });
@@ -45,9 +45,9 @@ module.exports = ctx => {
       return data;
     }
 
-    async _registerLock_inner({ module, atomClassName, atomClassIdParent }) {
+    async _registerLock_inner({ module, atomClassName }) {
       // get
-      const res = await this.model.get({ module, atomClassName, atomClassIdParent });
+      const res = await this.model.get({ module, atomClassName });
       if (res) return res;
       // data
       const atomClass = ctx.bean.base.atomClass({ module, atomClassName });
@@ -55,7 +55,6 @@ module.exports = ctx => {
       const data = {
         module,
         atomClassName,
-        atomClassIdParent,
         atomClassInner: atomClass.inner ? 1 : 0,
       };
       // insert

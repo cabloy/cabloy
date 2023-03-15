@@ -14,7 +14,7 @@ module.exports = ctx => {
         )
       `;
       // sql
-      const _sql = `select a.*,c.module,c.atomClassName,c.atomClassIdParent from aAtomAction a
+      const _sql = `select a.*,c.module,c.atomClassName from aAtomAction a
             left join aAtomClass c on a.atomClassId=c.id
               where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
         `;

@@ -109,7 +109,6 @@
         const item = {
           module: env.site.atomClass.module,
           atomClassName: env.site.atomClass.atomClassName,
-          atomClassIdParent: env.site.atomClass.atomClassIdParent,
         };
         if (env.language) {
           item.language = env.language.current;
@@ -133,7 +132,6 @@
         atomClass = {
           module: $container.data('module'),
           atomClassName: $container.data('atomclassname'),
-          atomClassIdParent: parseInt($container.data('atomclassidparent') || 0),
         };
       } else {
         atomClass = env.site.atomClass;
@@ -175,7 +173,6 @@
         atomClass = {
           module: $container.data('module'),
           atomClassName: $container.data('atomclassname'),
-          atomClassIdParent: parseInt($container.data('atomclassidparent') || 0),
         };
       } else {
         atomClass = env.site.atomClass;

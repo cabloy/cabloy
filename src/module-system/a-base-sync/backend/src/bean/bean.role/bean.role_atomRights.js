@@ -87,12 +87,12 @@ module.exports = ctx => {
     //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
     //   { roleName: 'root', action: 'read', scopeNames: 'authenticated', areaKey: null, areaScope: null },
     // ];
-    async addRoleRightBatch({ module, atomClassName, atomClassIdParent = 0, roleRights }) {
+    async addRoleRightBatch({ module, atomClassName, roleRights }) {
       // module
       module = module || this.moduleName;
       // const _module = ctx.app.meta.modules[module];
       // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName, atomClassIdParent });
+      const atomClass = await ctx.bean.atomClass.get({ module, atomClassName });
       // roleRights
       if (!roleRights || !roleRights.length) return;
       for (const roleRight of roleRights) {

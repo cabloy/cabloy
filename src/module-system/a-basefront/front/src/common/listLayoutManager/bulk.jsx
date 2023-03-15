@@ -30,7 +30,6 @@ export default {
         atomClassId: action.atomClassId,
         module: action.module,
         atomClassName: action.atomClassName,
-        atomClassIdParent: action.atomClassIdParent,
       };
       if (_action.name === 'create') {
         const createParams = this.$meta.util.getProperty(this.container.params, 'createParams');

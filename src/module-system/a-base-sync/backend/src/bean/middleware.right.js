@@ -1,6 +1,6 @@
 // request.body
 //   key: atomId itemId
-//   atomClass: id,module,atomClassName,atomClassIdParent
+//   atomClass: id,module,atomClassName
 //   item:
 // options
 //   type: atom/resource/detail

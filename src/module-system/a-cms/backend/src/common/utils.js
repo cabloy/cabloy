@@ -5,14 +5,12 @@ module.exports = {
       _atomClass = {
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
-        atomClassIdParent: atomClass.atomClassIdParent || 0,
       };
       if (atomClass.id) _atomClass.id = atomClass.id;
     } else {
       _atomClass = {
         module: 'a-cms',
         atomClassName: 'article',
-        atomClassIdParent: 0,
       };
     }
     return _atomClass;

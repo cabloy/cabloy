@@ -18,7 +18,6 @@ module.exports = app => {
           const atomClass = {
             module: module.info.relativeName,
             atomClassName: key,
-            atomClassIdParent: 0,
           };
           const build = this.ctx.bean.cms.build({ atomClass });
           await build.registerWatchers();

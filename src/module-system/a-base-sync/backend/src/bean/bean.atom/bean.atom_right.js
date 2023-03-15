@@ -77,7 +77,7 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
+    // atomClass: { id, module, atomClassName }
     async checkRightActionBulk({ atomClass, action, stage, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // normal check
@@ -111,7 +111,7 @@ module.exports = ctx => {
       return await this.checkRightActionBulk({ atomClass, action: 1, user });
     }
 
-    // atomClass: { id, module, atomClassName, atomClassIdParent = 0 }
+    // atomClass: { id, module, atomClassName }
     async checkRightCreateRole({ atomClass, roleIdOwner, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // normal check
@@ -143,7 +143,7 @@ module.exports = ctx => {
       // actions
       const _basic = basic ? 'and a.code in (3,4)' : '';
       const sql = `
-        select a.*,b.module,b.atomClassName,b.atomClassIdParent from aAtomAction a
+        select a.*,b.module,b.atomClassName from aAtomAction a
           left join aAtomClass b on a.atomClassId=b.id
             where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
               order by a.code asc

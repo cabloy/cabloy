@@ -203,7 +203,6 @@
           itemId: env.article.itemId,
           module: env.site.atomClass.module,
           atomClassName: env.site.atomClass.atomClassName,
-          atomClassIdParent: env.site.atomClass.atomClassIdParent,
         };
         const url = `${env.site.serverUrl}/#!/a/cms/article/edit?item=${encodeURIComponent(JSON.stringify(item))}`;
         const edit = `<a href="${url}" target="_blank"><i class="fas fa-edit"></i></a>`;

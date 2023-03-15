@@ -1291,7 +1291,6 @@ Sitemap: ${urlRawRoot}/sitemapindex.xml
           const atomClass = {
             module: module.info.relativeName,
             atomClassName: key,
-            atomClassIdParent: 0,
           };
           const atomClassFullName = this.getAtomClassFullName(atomClass);
           if (this.getAtomClassFullName(this.atomClass) !== atomClassFullName) {

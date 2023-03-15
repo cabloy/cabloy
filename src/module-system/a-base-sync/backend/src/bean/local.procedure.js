@@ -131,7 +131,7 @@ module.exports = ctx => {
 //   // sql
 //   const _sql =
 //         `select a.*,
-//                 e.atomClassName,e.atomClassIdParent
+//                 e.atomClassName
 //                 ${_localeField}
 //                 ${_starField}
 //            from aFunction a
