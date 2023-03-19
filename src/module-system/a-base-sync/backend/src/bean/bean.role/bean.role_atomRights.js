@@ -2,14 +2,10 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role {
     // add role right
-    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, areaKey, areaScope, user }) {
+    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
       // check atomClass/action
       const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
       if (!_check) ctx.throw(403);
-      // area scope
-      const adjustRes = ctx.bean.areaScope.adjustKeyAndValue({ atomAreaKey: areaKey, atomAreaValue: areaScope });
-      areaKey = adjustRes.atomAreaKey;
-      areaScope = adjustRes.atomAreaValue;
       // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
@@ -35,8 +31,6 @@ module.exports = ctx => {
         atomClassId,
         action,
         scope: JSON.stringify(scope),
-        areaKey,
-        areaScope,
       });
       const roleRightId = res.insertId;
       // roleRightRef
@@ -48,8 +42,6 @@ module.exports = ctx => {
             atomClassId,
             action,
             roleIdScope,
-            areaKey,
-            areaScope,
           });
         }
       }
@@ -85,7 +77,7 @@ module.exports = ctx => {
     //   { roleName: 'cms-writer', action: 'write', scopeNames: 0 },
     //   { roleName: 'cms-writer', action: 'delete', scopeNames: 0 },
     //   { roleName: 'cms-writer', action: 'read', scopeNames: 'authenticated' },
-    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated', areaKey: null, areaScope: null },
+    //   { roleName: 'root', action: 'read', scopeNames: 'authenticated' },
     // ];
     async addRoleRightBatch({ module, atomClassName, roleRights }) {
       // module
