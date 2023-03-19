@@ -46,7 +46,7 @@ module.exports = app => {
     {
       atomName: 'Atom',
       atomStaticKey: 'buttonAtom',
-      atomRevision: 2,
+      atomRevision: -1, // 2,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({
@@ -60,7 +60,7 @@ module.exports = app => {
     {
       atomName: 'Search',
       atomStaticKey: 'buttonSearch',
-      atomRevision: 0,
+      atomRevision: -1, // 0,
       atomCategoryId: 'a-layoutmobile:button.General',
       resourceType: 'a-layoutmobile:button',
       resourceConfig: JSON.stringify({

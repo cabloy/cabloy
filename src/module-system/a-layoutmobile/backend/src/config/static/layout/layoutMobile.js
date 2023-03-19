@@ -12,7 +12,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Mobile Layout(Authenticated)',
     atomStaticKey: 'layoutMobile',
-    atomRevision: 8,
+    atomRevision: 9,
     description: '',
     layoutTypeCode: 1,
     content: JSON.stringify(content),
