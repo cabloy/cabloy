@@ -14,8 +14,6 @@ export default {
       actionSelectOptions: null,
       scopeSelf: false,
       scope: null,
-      areaScopeData: {},
-      areaScopeSchema: null,
       actionsUser: null,
     };
   },
@@ -45,17 +43,6 @@ export default {
       }
       return !action.bulk && !this.scopeSelf;
     },
-    areaScopeEnable() {
-      if (!this.scopeEnable) return false;
-      if (!this.$meta.config.modules['a-base'].areaScope.enable) return false;
-      const atomClassInfo = this.getAtomClass(this.atomClass);
-      return !!atomClassInfo.areaScope;
-    },
-    areaScopeMeta() {
-      if (!this.atomClass) return null;
-      const atomClassInfo = this.getAtomClass(this.atomClass);
-      return atomClassInfo.areaScope;
-    },
     actionCurrent() {
       if (!this.atomClass || !this.actionName) return null;
       // normal
@@ -76,7 +63,6 @@ export default {
     atomClass() {
       this.actionName = '';
       this.loadActionSelectOptions();
-      this.loadAreaScopeSchema();
     },
   },
   methods: {
@@ -128,39 +114,9 @@ export default {
         scopeSelf: this.scopeSelf,
         scope: this.scope ? this.scope.map(item => item.itemId) : [],
       };
-      if (this.areaScopeEnable) {
-        const areaScopeMeta = this.areaScopeMeta;
-        const areaKey = [];
-        const areaScope = [];
-        for (const key in areaScopeMeta.schemas) {
-          areaKey.push(key);
-          areaScope.push(this.areaScopeData[key]);
-        }
-        data.areaKey = areaKey;
-        data.areaScope = areaScope;
-      }
       await this.$api.post('atomRight/add', data);
       this.$meta.eventHub.$emit('atomRight:add', { roleId: this.roleId });
       this.$f7router.back();
-    },
-    loadAreaScopeSchema() {
-      // always reset data
-      this.areaScopeData = {};
-      // schema
-      const areaScopeMeta = this.areaScopeMeta;
-      if (!areaScopeMeta) {
-        this.areaScopeSchema = null;
-      } else {
-        this.areaScopeSchema = {
-          module: areaScopeMeta.atomClass.module,
-          schema: {
-            type: 'object',
-            properties: {
-              ...areaScopeMeta.schemas,
-            },
-          },
-        };
-      }
     },
   },
 };

@@ -18,11 +18,6 @@
                 {{ scopeRole.roleNameLocale }}
               </f7-badge>
             </template>
-            <template v-if="item.areaScopeInfo">
-              <f7-badge :color="item.areaScopeInfo.error ? 'red' : 'blue'" :tooltip="$text('AreaScope')">{{
-                item.areaScopeInfo.error || item.areaScopeInfo.titleLocale || item.areaScopeInfo.title
-              }}</f7-badge>
-            </template>
           </div>
           <div slot="root-end" class="summary-no-media">
             <div v-if="item.actionBulk === 1 && item.actionCode !== 1">

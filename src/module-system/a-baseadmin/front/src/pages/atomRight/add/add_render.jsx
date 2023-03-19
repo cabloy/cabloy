@@ -11,20 +11,6 @@ export default {
         </eb-navbar>
       );
     },
-    _renderAreaScopeGroup() {
-      if (this.isOpenAuthScope || !this.areaScopeEnable) return null;
-      const areaScopeMeta = this.areaScopeMeta;
-      const children = [];
-      for (const key in areaScopeMeta.schemas) {
-        children.push(<eb-list-item-validate key={key} dataKey={key}></eb-list-item-validate>);
-      }
-      return (
-        <f7-list-group>
-          <f7-list-item title={this.$text('AreaScope')} group-title></f7-list-item>
-          {children}
-        </f7-list-group>
-      );
-    },
     _renderList() {
       if (!this.ready) return null;
       //
@@ -60,7 +46,7 @@ export default {
       }
 
       return (
-        <eb-validate ref="validate" auto={false} data={this.areaScopeData} meta={{ schema: this.areaScopeSchema }}>
+        <eb-validate ref="validate" auto={false}>
           <eb-list form inline-labels no-hairlines-md onSubmit={this.onFormSubmit}>
             <f7-list-group>
               <f7-list-item title={this.$text('AuthorizationObjective')} group-title></f7-list-item>
@@ -74,7 +60,6 @@ export default {
               {domScopeSelf}
               {domScope}
             </f7-list-group>
-            {this._renderAreaScopeGroup()}
           </eb-list>
         </eb-validate>
       );
