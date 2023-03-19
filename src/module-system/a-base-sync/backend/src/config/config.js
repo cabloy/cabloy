@@ -168,10 +168,6 @@ module.exports = appInfo => {
     demo: {
       enable: false,
     },
-    // areaScope
-    areaScope: {
-      enable: false,
-    },
   };
 
   return config;

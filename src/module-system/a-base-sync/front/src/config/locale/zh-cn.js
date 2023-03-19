@@ -193,7 +193,6 @@ export default {
   ImportCompleted: '导入完成',
   Import: '导入',
   Order: '订单',
-  AreaScope: '区域范围',
   SubTitle: '副标题',
   Stage: '阶段',
   AtomState: '数据状态',

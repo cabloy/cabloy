@@ -37,7 +37,6 @@ export default {
   UsernameOld: 'Old Username',
   UsernameNew: 'New Username',
   ImportCompleted: 'Import Completed',
-  AreaScope: 'Area Scope',
   SubTitle: 'Sub Title',
   AtomState: 'Data State',
   BatchDelete: 'Batch Delete',

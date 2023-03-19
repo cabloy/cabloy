@@ -99,17 +99,14 @@ module.exports = ctx => {
       });
       const sql = `
           select * from aViewUserRightAtomClassRole
-            where iid=? and atomClassId=? and action=? and roleIdWhom=? and
-      (areaScope is null or ? is null or (areaKey=? and POSITION(areaScope in ?)=1) )
+            where iid=? and atomClassId=? and action=? and roleIdWhom=?
       `;
       const items = await ctx.model.query(sql, [
+        //
         atom.iid,
         atom.atomClassId,
         action.code,
         atom.roleIdOwner,
-        atom.atomAreaValue,
-        atom.atomAreaKey,
-        atom.atomAreaValue,
       ]);
       // ok
       return items.map(item => item.userIdWho);
