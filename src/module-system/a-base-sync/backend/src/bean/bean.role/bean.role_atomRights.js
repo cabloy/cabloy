@@ -110,8 +110,6 @@ module.exports = ctx => {
           atomClassId: atomClass.id,
           action: actionCode,
           scope,
-          areaKey: roleRight.areaKey,
-          areaScope: roleRight.areaScope,
         });
       }
     }
@@ -156,8 +154,6 @@ module.exports = ctx => {
       );
       // scope
       await this._adjustAtomRightsScopeRoles({ items });
-      // area scope
-      await this._translateAreaScopeValue({ items });
       // actionFlows
       await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
       // ok
@@ -171,7 +167,7 @@ module.exports = ctx => {
       const _limit = ctx.model._limit(page.size, page.index);
       const items = await ctx.model.query(
         `
-        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,a.areaKey,a.areaScope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,c.actionMode,e.roleName as roleNameBase,f.atomName as flowDefName from aRoleRight a
+        select d.*,d.id as roleExpandId,a.id as roleRightId,a.scope,b.module,b.atomClassName,c.code as actionCode,c.name as actionName,c.bulk as actionBulk,c.actionMode,e.roleName as roleNameBase,f.atomName as flowDefName from aRoleRight a
           inner join aAtomClass b on a.atomClassId=b.id
           inner join aAtomAction c on a.atomClassId=c.atomClassId and a.action=c.code
           inner join aRoleExpand d on a.roleId=d.roleIdBase
@@ -185,8 +181,6 @@ module.exports = ctx => {
       );
       // scope
       await this._adjustAtomRightsScopeRoles({ items });
-      // area scope
-      await this._translateAreaScopeValue({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
       // actionFlows
@@ -215,8 +209,6 @@ module.exports = ctx => {
       );
       // scope
       await this._adjustAtomRightsScopeRoles({ items });
-      // area scope
-      await this._translateAreaScopeValue({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
       // actionFlows
@@ -258,20 +250,6 @@ module.exports = ctx => {
         item.roleNameLocale = ctx.text(item.roleName);
       }
       return items;
-    }
-
-    async _translateAreaScopeValue({ items }) {
-      for (const item of items) {
-        // area scope
-        const res = await ctx.bean.atom.translateAreaScopeValue({
-          atomClass: { module: item.module, atomClassName: item.atomClassName },
-          atomAreaKey: item.areaKey,
-          atomAreaValue: item.areaScope,
-        });
-        if (res) {
-          item.areaScopeInfo = res;
-        }
-      }
     }
 
     // actionFlows

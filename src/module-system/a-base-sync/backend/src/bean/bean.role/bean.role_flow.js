@@ -41,8 +41,6 @@ module.exports = ctx => {
           atomClassId: atomClass.id,
           action: action.code,
           scope,
-          areaKey: roleRight.areaKey,
-          areaScope: roleRight.areaScope,
         });
       }
     }
