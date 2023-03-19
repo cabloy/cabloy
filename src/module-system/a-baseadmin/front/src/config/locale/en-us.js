@@ -12,7 +12,6 @@ export default {
   Atoms: 'Data',
   AddChild: 'Add Child',
   AuthorizationObjective: 'Auth Objective',
-  AreaScope: 'Area Scope',
   DataScope: 'Data Scope',
   DataScopeSelfTitle: 'Operate Self Data',
   DataScopeTitle: 'Select Data Scope',
