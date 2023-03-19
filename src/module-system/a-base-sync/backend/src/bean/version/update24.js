@@ -53,7 +53,7 @@ module.exports = function (ctx) {
       sql = `
         create view aViewUserRightAtomClass as
           select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
-                 b.id as roleRightId,b.atomClassId,b.action,b.scope,b.areaKey,b.areaScope
+                 b.id as roleRightId,b.atomClassId,b.action,b.scope
             from aViewUserRoleExpand a
               inner join aRoleRight b on a.roleIdBase=b.roleId
       `;
@@ -73,7 +73,7 @@ module.exports = function (ctx) {
       let sql = `
         create view aViewUserRightRefAtomClass as
           select a.iid,a.userId as userIdWho,a.roleExpandId,a.roleId,a.roleIdBase,
-                b.id as roleRightRefId,b.roleRightId,b.atomClassId,b.action,b.roleIdScope as roleIdWhom,b.areaKey,b.areaScope
+                b.id as roleRightRefId,b.roleRightId,b.atomClassId,b.action,b.roleIdScope as roleIdWhom
             from aViewUserRoleExpand a
               inner join aRoleRightRef b on a.roleIdBase=b.roleId
         `;
@@ -83,7 +83,7 @@ module.exports = function (ctx) {
       await ctx.model.query('drop view aViewUserRightAtomClassUser');
       sql = `
         create view aViewUserRightAtomClassUser as
-          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+          select a.iid,a.userId as userIdWho,b.atomClassId,b.action,
                 c.userId as userIdWhom,c.roleId as roleIdWhom,
                 a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
             from aViewUserRoleExpand a
@@ -96,7 +96,7 @@ module.exports = function (ctx) {
       await ctx.model.query('drop view aViewRoleRightAtomClassUser');
       sql = `
       create view aViewRoleRightAtomClassUser as
-        select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+        select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,
                c.userId as userIdWhom,c.roleId as roleIdWhom,
                a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
           from aRoleExpand a
@@ -109,7 +109,7 @@ module.exports = function (ctx) {
       await ctx.model.query('drop view aViewRoleRightAtomClassRole');
       sql = `
         create view aViewRoleRightAtomClassRole as
-          select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,b.areaKey,b.areaScope,
+          select a.iid,a.roleId as roleIdWho,b.atomClassId,b.action,
                 c.roleId as roleIdWhom,
                 a.roleIdBase,c.roleIdParent,c.level as roleIdParentLevel
             from aRoleExpand a
@@ -123,7 +123,7 @@ module.exports = function (ctx) {
       sql = `
         create view aViewUserRightAtomClassRole as
           select a.iid,a.userId as userIdWho,
-                 b.atomClassId,b.action,b.areaKey,b.areaScope,
+                 b.atomClassId,b.action,
                  c.roleId as roleIdWhom
             from aViewUserRoleExpand a
               inner join aRoleRightRef b on a.roleIdBase=b.roleId
@@ -143,7 +143,7 @@ module.exports = function (ctx) {
       let sql = `
           create view aViewUserRightAtom as
             select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,
-                   b.userIdWho,b.action,b.areaKey,b.areaScope 
+                   b.userIdWho,b.action 
               from aAtom a,aViewUserRightAtomClassUser b
                 where a.deleted=0 and a.atomStage>0
                   and a.atomClassId=b.atomClassId
@@ -156,7 +156,7 @@ module.exports = function (ctx) {
       sql = `
           create view aViewRoleRightAtom as
             select a.iid, a.id as atomId,a.userIdCreated as userIdWhom,
-                   b.roleIdWho,b.action,b.areaKey,b.areaScope
+                   b.roleIdWho,b.action
               from aAtom a,aViewRoleRightAtomClassUser b
                 where a.deleted=0 and a.atomStage>0
                   and a.atomClassId=b.atomClassId
@@ -169,7 +169,7 @@ module.exports = function (ctx) {
       sql = `
           create view aViewUserRightAtomRole as
             select a.iid, a.id as atomId,a.roleIdOwner as roleIdWhom,
-                   b.userIdWho,b.action,b.areaKey,b.areaScope
+                   b.userIdWho,b.action
               from aAtom a,aViewUserRightAtomClassRole b
                 where a.deleted=0 and a.atomStage>0
                   and a.atomClassId=b.atomClassId
