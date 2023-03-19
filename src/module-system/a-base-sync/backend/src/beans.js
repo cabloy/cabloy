@@ -32,7 +32,6 @@ const beanUtil = require('./bean/bean.util.js');
 const beanCategory = require('./bean/bean.category.js');
 const beanTag = require('./bean/bean.tag.js');
 const beanBodyCrypto = require('./bean/bean.bodyCrypto.js');
-const beanAreaScope = require('./bean/bean.areaScope.js');
 const statsDraftsCommon = require('./bean/stats.draftsCommon.js');
 const statsStars = require('./bean/stats.stars.js');
 const statsLabels = require('./bean/stats.labels.js');
@@ -196,11 +195,6 @@ module.exports = app => {
     bodyCrypto: {
       mode: 'ctx',
       bean: beanBodyCrypto,
-      global: true,
-    },
-    areaScope: {
-      mode: 'ctx',
-      bean: beanAreaScope,
       global: true,
     },
     // stats
