@@ -41,19 +41,16 @@ module.exports = appInfo => {
 
   // mysql
   config.mysql = {
-    clients: {
-      // donnot change the name
-      __ebdb: {
-        host: 'mysql', // see: docker-compose.yml
-        port: '3306',
-        user: 'web_user',
-        password: '!%{9mov.Tw3LmcYP',
-        database: 'cabloy',
-        charset: 'utf8mb4_general_ci',
-        hook: {
-          meta: {
-            long_query_time: 500,
-          },
+    default: {
+      host: 'mysql', // see: docker-compose.yml
+      port: '3306',
+      user: 'web_user',
+      password: '!%{9mov.Tw3LmcYP',
+      database: 'cabloy',
+      charset: 'utf8mb4_general_ci',
+      hook: {
+        meta: {
+          long_query_time: 500,
         },
       },
     },
