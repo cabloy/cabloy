@@ -7,12 +7,12 @@ module.exports = ctx => {
       this._redisSummer = null;
     }
 
-    async get(key) {
-      const redisKey = this._getRedisKey(key);
+    async get(keyHash) {
+      const redisKey = this._getRedisKey(keyHash);
       let value = await this.redisSummer.get(redisKey);
       value = value ? JSON.parse(value) : undefined;
       if (value === undefined) {
-        value = await this.layered.get(key);
+        value = await this.layered.get(keyHash);
         await this.redisSummer.set(redisKey, JSON.stringify(value), 'PX', this._cacheBase.redis.ttl);
       }
       return value;

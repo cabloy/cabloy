@@ -10,8 +10,8 @@ module.exports = ctx => {
     }
 
     async get(key) {
-      key = this.__adjustKey(key);
-      return await this.layered.get(key);
+      const keyHash = this.__getKeyHash(key);
+      return await this.layered.get(keyHash);
     }
 
     get layered() {
@@ -26,7 +26,7 @@ module.exports = ctx => {
       return this._layered;
     }
 
-    __adjustKey(key) {
+    __getKeyHash(key) {
       if (!key) throw new Error('key is required');
       if (Array.isArray(key) || typeof key === 'object') {
         key = objectHash(key);

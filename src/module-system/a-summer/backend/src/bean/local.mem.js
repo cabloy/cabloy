@@ -11,11 +11,11 @@ module.exports = ctx => {
       this._lruCache = null;
     }
 
-    async get(key) {
-      let value = this.lruCache.get(key);
+    async get(keyHash) {
+      let value = this.lruCache.get(keyHash);
       if (value === undefined) {
-        value = await this.layered.get(key);
-        this.lruCache.set(key, value);
+        value = await this.layered.get(keyHash);
+        this.lruCache.set(keyHash, value);
       }
       return value;
     }
