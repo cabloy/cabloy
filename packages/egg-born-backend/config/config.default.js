@@ -241,16 +241,14 @@ module.exports = appInfo => {
     app: true,
     agent: false,
     default: {
+      host: '127.0.0.1',
+      port: 6379,
+      password: '',
+      db: 0,
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
     },
     clients: {
-      default: {
-        host: '127.0.0.1',
-        port: 6379,
-        password: '',
-        db: 0,
-      },
       redlock: {},
       limiter: {},
       queue: {},
