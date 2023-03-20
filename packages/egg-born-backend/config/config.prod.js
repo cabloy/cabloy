@@ -8,13 +8,10 @@ module.exports = appInfo => {
 
   // mysql
   config.mysql = {
-    clients: {
-      // donnot change the name
-      __ebdb: {
-        hook: {
-          meta: {
-            long_query_time: 500,
-          },
+    default: {
+      hook: {
+        meta: {
+          long_query_time: 500,
         },
       },
     },

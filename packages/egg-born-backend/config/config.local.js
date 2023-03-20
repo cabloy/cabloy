@@ -16,13 +16,12 @@ module.exports = appInfo => {
 
   // mysql
   config.mysql = {
-    clients: {
-      // donnot change the name
-      __ebdb: {
-        hook: {
-          meta: {
-            long_query_time: 0,
-          },
+    default: {
+      connectionLimit: 1,
+      connectionLimitInner: 1,
+      hook: {
+        meta: {
+          long_query_time: 0,
         },
       },
     },
