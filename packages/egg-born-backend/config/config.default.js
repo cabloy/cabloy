@@ -244,6 +244,21 @@ module.exports = appInfo => {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
     },
+    clients: {
+      default: {
+        host: '127.0.0.1',
+        port: 6379,
+        password: '',
+        db: 0,
+      },
+      redlock: {},
+      limiter: {},
+      queue: {},
+      broadcast: {},
+      cache: { keyPrefix: `cache_${appInfo.name}:` },
+      io: { keyPrefix: `io_${appInfo.name}:` },
+      auth: { keyPrefix: `auth_${appInfo.name}:` },
+    },
   };
 
   // onerror
