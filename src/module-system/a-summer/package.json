@@ -1,0 +1,24 @@
+{
+  "name": "egg-born-module-a-summer",
+  "version": "4.0.0",
+  "title": "a-summer",
+  "eggBornModule": {
+    "fileVersion": 0,
+    "dependencies": {
+      "a-instance": "4.0.0"
+    }
+  },
+  "description": "Layered Cache",
+  "keywords": [
+    "Cabloy Module"
+  ],
+  "scripts": {
+    "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
+    "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",
+    "build:all": "npm run build:front && npm run build:backend",
+    "preversion": "npm run build:all && git add ."
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {}
+}

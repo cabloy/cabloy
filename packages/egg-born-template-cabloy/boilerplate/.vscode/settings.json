@@ -30,6 +30,9 @@
     "/.vscode/**": true,
     "/coverage/**": true,
     "/docs/**": true,
-    "**/dist/**": true
+    "**/dist/**": true,
+    "/src/backend/app/**": true,
+    "/src/backend/logs/**": true,
+    "/src/backend/run/**": true
   }
 }
