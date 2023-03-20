@@ -1,6 +1,9 @@
+const CacheBase = require('../common/cacheBase.js');
+
 module.exports = ctx => {
-  class LocalRedis {
-    constructor() {
+  class LocalRedis extends CacheBase(ctx) {
+    constructor({ cacheBase }) {
+      super({ cacheBase });
       this._redisSummer = null;
     }
 

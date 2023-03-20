@@ -3,6 +3,7 @@ const beanSummer = require('./bean/bean.summer.js');
 const localCache = require('./bean/local.cache.js');
 const localMem = require('./bean/local.mem.js');
 const localRedis = require('./bean/local.redis.js');
+const localFetch = require('./bean/local.fetch.js');
 
 module.exports = app => {
   const beans = {
@@ -23,6 +24,10 @@ module.exports = app => {
     'local.redis': {
       mode: 'ctx',
       bean: localRedis,
+    },
+    'local.fetch': {
+      mode: 'ctx',
+      bean: localFetch,
     },
     // summer
     summer: {

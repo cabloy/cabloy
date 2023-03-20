@@ -20,5 +20,8 @@
   },
   "author": "zhennann",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "lru-cache": "^8.0.4",
+    "object-hash": "^3.0.0"
+  }
 }
