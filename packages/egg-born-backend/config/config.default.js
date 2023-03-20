@@ -256,6 +256,7 @@ module.exports = appInfo => {
       cache: { keyPrefix: `cache_${appInfo.name}:` },
       io: { keyPrefix: `io_${appInfo.name}:` },
       auth: { keyPrefix: `auth_${appInfo.name}:` },
+      summer: { keyPrefix: `summer_${appInfo.name}:` },
     },
   };
 
