@@ -7,8 +7,8 @@ module.exports = ctx => {
       this._cacheBean = null;
     }
 
-    async get(keyHash) {
-      return await this.cacheBean.get(keyHash);
+    async get(keyHash, key) {
+      return await this.cacheBean.get(key, keyHash);
     }
 
     get cacheBean() {

@@ -11,7 +11,7 @@ module.exports = ctx => {
 
     async get(key) {
       const keyHash = this.__getKeyHash(key);
-      return await this.layered.get(keyHash);
+      return await this.layered.get(keyHash, key);
     }
 
     get layered() {
