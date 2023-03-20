@@ -30,7 +30,8 @@ module.exports = ctx => {
     _collectCacheBases() {
       const cacheBases = {};
       for (const module of ctx.app.meta.modulesArray) {
-        const caches = module.main.meta && module.main.meta.summer && module.main.meta.summer.caches;
+        const config = ctx.app.meta.configs[module.info.relativeName];
+        const caches = ctx.bean.util.getProperty(config, 'summer.caches');
         if (!caches) continue;
         for (const key in caches) {
           const cache = caches[key];
