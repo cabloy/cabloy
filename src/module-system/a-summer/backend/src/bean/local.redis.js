@@ -18,6 +18,13 @@ module.exports = ctx => {
       return value;
     }
 
+    get layered() {
+      if (!this._layered) {
+        this._layered = this.localFetch;
+      }
+      return this._layered;
+    }
+
     get redisSummer() {
       if (!this._redisSummer) {
         this._redisSummer = ctx.app.redis.get('summer');
