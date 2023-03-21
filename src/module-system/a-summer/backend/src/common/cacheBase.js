@@ -3,7 +3,6 @@ module.exports = ctx => {
   class CacheBase {
     constructor({ cacheBase }) {
       this._cacheBase = cacheBase;
-      this._layered = null;
       this._localMem = null;
       this._localRedis = null;
       this._localFetch = null;

@@ -9,21 +9,19 @@ module.exports = ctx => {
       super({ cacheBase });
     }
 
-    async get(key) {
+    async get(key, options) {
       const keyHash = this.__getKeyHash(key);
-      return await this.layered.get(keyHash, key);
+      const layered = this.__getLayered(options);
+      return await layered.get(keyHash, key, options);
     }
 
-    get layered() {
-      if (!this._layered) {
-        const mode = this._cacheBase.mode || 'all';
-        if (mode === 'all' || mode === 'mem') {
-          this._layered = this.localMem;
-        } else {
-          this._layered = this.localRedis;
-        }
+    __getLayered(options) {
+      let mode = options && options.mode;
+      mode = mode || this._cacheBase.mode || 'all';
+      if (mode === 'all' || mode === 'mem') {
+        return this.localMem;
       }
-      return this._layered;
+      return this.localRedis;
     }
 
     __getKeyHash(key) {
