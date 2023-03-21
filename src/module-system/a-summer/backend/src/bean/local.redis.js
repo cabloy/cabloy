@@ -19,6 +19,37 @@ module.exports = ctx => {
       return value;
     }
 
+    async mget(keysHash, keys, options) {
+      // peek
+      let values = await this.redisSummer.mget(keysHash);
+      values = values.map(v => (v ? JSON.parse(v) : undefined));
+      const keysHashMissing = [];
+      const keysMissing = [];
+      const indexesMissing = [];
+      for (let i = 0; i < values.length; i++) {
+        if (values[i] === undefined) {
+          keysHashMissing.push(keysHash[i]);
+          keysMissing.push(keys[i]);
+          indexesMissing.push(i);
+        }
+      }
+      // mget
+      if (keysHashMissing.length > 0) {
+        const layered = this.__getLayered(options);
+        const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
+        // set/merge
+        const multi = this.redisSummer.multi();
+        for (let i = 0; i < keysHashMissing.length; i++) {
+          const valueMissing = valuesMissing[i];
+          multi.setex(keysHashMissing[i], Math.trunc(this._cacheBase.redis.ttl / 1000), JSON.stringify(valueMissing));
+          values[indexesMissing[i]] = valueMissing;
+        }
+        await multi.exec();
+      }
+      // ok
+      return values;
+    }
+
     async peek(keyHash, key, options) {
       const redisKey = this._getRedisKey(keyHash);
       let value = await this.redisSummer.get(redisKey);

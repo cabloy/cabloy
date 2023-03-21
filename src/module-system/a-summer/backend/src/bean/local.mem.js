@@ -35,13 +35,15 @@ module.exports = ctx => {
         }
       }
       // mget
-      const layered = this.__getLayered(options);
-      const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
-      // set/merge
-      for (let i = 0; i < keysHashMissing.length; i++) {
-        const valueMissing = valuesMissing[i];
-        this.lruCache.set(keysHashMissing[i], valueMissing);
-        values[indexesMissing[i]] = valueMissing;
+      if (keysHashMissing.length > 0) {
+        const layered = this.__getLayered(options);
+        const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
+        // set/merge
+        for (let i = 0; i < keysHashMissing.length; i++) {
+          const valueMissing = valuesMissing[i];
+          this.lruCache.set(keysHashMissing[i], valueMissing);
+          values[indexesMissing[i]] = valueMissing;
+        }
       }
       // ok
       return values;
