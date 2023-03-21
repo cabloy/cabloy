@@ -12,6 +12,7 @@ module.exports = ctx => {
     }
 
     async mget(keysHash, keys, options) {
+      // mget
       if (this.cacheBean.mget) {
         return await this.cacheBean.mget(keys, options, keysHash);
       }
