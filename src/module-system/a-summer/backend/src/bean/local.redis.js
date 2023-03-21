@@ -65,12 +65,18 @@ module.exports = ctx => {
     }
 
     async clear(/* options*/) {
-      const keyPrefix = this.redisAuth.options.keyPrefix;
-      const keyPattern = this._getAuthRedisKeyPattern({ user, keyPrefix });
-      const keys = await this.redisAuth.keys(keyPattern);
+      const redisKey = this._getRedisKey('*');
+      const keyPrefix = this.redisSummer.options.keyPrefix;
+      const keyPattern = `${keyPrefix}${redisKey}`;
+      const keys = await this.redisSummer.keys(keyPattern);
+      const keysDel = [];
       for (const fullKey of keys) {
         const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
-        await this.redisAuth.del(key);
+        keysDel.push(key);
+      }
+      if (keysDel.length > 0) {
+        const res = await this.redisSummer.del(keysDel);
+        console.log('-------redis clear:', res);
       }
     }
 

@@ -37,6 +37,10 @@ module.exports = ctx => {
       // do nothing
     }
 
+    async clear(/* options*/) {
+      // do nothing
+    }
+
     get cacheBean() {
       if (!this._cacheBean) {
         this._cacheBean = ctx.bean._newBean(this._cacheBase.beanFullName, {
