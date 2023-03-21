@@ -79,6 +79,20 @@ module.exports = ctx => {
       await layered.mdel(keysHash, keys, options);
     }
 
+    async clear(options) {
+      // clear on this worker
+      this.lruCache.clear();
+      // clear on other workers by broadcast
+      ctx.meta.util.broadcastEmit({
+        module: moduleInfo.relativeName,
+        broadcastName: 'memClear',
+        data: { fullKey: this._cacheBase.fullKey, options },
+      });
+      // clear layered
+      const layered = this.__getLayered(options);
+      await layered.clear(options);
+    }
+
     async peek(keyHash, key, options) {
       let value = this.lruCache.peek(keyHash);
       if (value === undefined) {

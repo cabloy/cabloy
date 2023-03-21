@@ -39,6 +39,11 @@ module.exports = ctx => {
       return await layered.mdel(keysHash, keys, options);
     }
 
+    async clear(options) {
+      const layered = this.__getLayered(options);
+      return await layered.clear(options);
+    }
+
     async peek(key, options) {
       const keyHash = this.__getKeyHash(key);
       const layered = this.__getLayered(options);

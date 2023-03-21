@@ -64,6 +64,16 @@ module.exports = ctx => {
       await this.redisSummer.del(redisKeys);
     }
 
+    async clear(/* options*/) {
+      const keyPrefix = this.redisAuth.options.keyPrefix;
+      const keyPattern = this._getAuthRedisKeyPattern({ user, keyPrefix });
+      const keys = await this.redisAuth.keys(keyPattern);
+      for (const fullKey of keys) {
+        const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
+        await this.redisAuth.del(key);
+      }
+    }
+
     async peek(keyHash /* , key, options*/) {
       const redisKey = this._getRedisKey(keyHash);
       let value = await this.redisSummer.get(redisKey);
@@ -88,7 +98,7 @@ module.exports = ctx => {
     }
 
     _getRedisKey(key) {
-      return `${this._cacheBase.fullKey}!${key}`;
+      return `${ctx.instance.id}!${this._cacheBase.fullKey}!${key}`;
     }
   }
 
