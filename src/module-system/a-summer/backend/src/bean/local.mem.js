@@ -38,6 +38,7 @@ module.exports = ctx => {
       if (keysHashMissing.length > 0) {
         const layered = this.__getLayered(options);
         const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
+        console.log('-------mem:', valuesMissing);
         // set/merge
         for (let i = 0; i < keysHashMissing.length; i++) {
           const valueMissing = valuesMissing[i];

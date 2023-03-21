@@ -21,13 +21,17 @@ module.exports = ctx => {
 
     async mget(keysHash, keys, options) {
       // peek
-      let values = await this.redisSummer.mget(keysHash);
+      const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
+      let values = await this.redisSummer.mget(redisKeys);
       values = values.map(v => (v ? JSON.parse(v) : undefined));
+      console.log('------redis cache:', values);
+      const redisKeysMissing = [];
       const keysHashMissing = [];
       const keysMissing = [];
       const indexesMissing = [];
       for (let i = 0; i < values.length; i++) {
         if (values[i] === undefined) {
+          redisKeysMissing.push(redisKeys[i]);
           keysHashMissing.push(keysHash[i]);
           keysMissing.push(keys[i]);
           indexesMissing.push(i);
@@ -37,11 +41,12 @@ module.exports = ctx => {
       if (keysHashMissing.length > 0) {
         const layered = this.__getLayered(options);
         const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
+        console.log('-------redis:', valuesMissing);
         // set/merge
         const multi = this.redisSummer.multi();
         for (let i = 0; i < keysHashMissing.length; i++) {
           const valueMissing = valuesMissing[i];
-          multi.setex(keysHashMissing[i], Math.trunc(this._cacheBase.redis.ttl / 1000), JSON.stringify(valueMissing));
+          multi.setex(redisKeysMissing[i], Math.trunc(this._cacheBase.redis.ttl / 1000), JSON.stringify(valueMissing));
           values[indexesMissing[i]] = valueMissing;
         }
         await multi.exec();
