@@ -21,6 +21,15 @@ module.exports = ctx => {
       return await layered.peek(keyHash, key, options);
     }
 
+    async mget(keys, options) {
+      if (!keys || keys.length === 0) {
+        return [];
+      }
+      const keysHash = this.__getKeysHash(keys);
+      const layered = this.__getLayered(options);
+      return await layered.mget(keysHash, keys, options);
+    }
+
     __getLayered(options) {
       const mode = this.__getOptionsMode(options);
       if (mode === 'all' || mode === 'mem') {
@@ -37,6 +46,10 @@ module.exports = ctx => {
         key = String(key);
       }
       return key;
+    }
+
+    __getKeysHash(keys) {
+      return keys.map(key => this.__getKeyHash(key));
     }
   }
 
