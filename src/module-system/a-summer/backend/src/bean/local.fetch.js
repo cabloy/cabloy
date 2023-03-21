@@ -29,6 +29,10 @@ module.exports = ctx => {
       return undefined;
     }
 
+    async del(/* keyHash , key, options*/) {
+      // do nothing
+    }
+
     get cacheBean() {
       if (!this._cacheBean) {
         this._cacheBean = ctx.bean._newBean(this._cacheBase.beanFullName, {

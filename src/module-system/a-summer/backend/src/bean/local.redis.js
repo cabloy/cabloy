@@ -54,14 +54,20 @@ module.exports = ctx => {
       return values;
     }
 
-    async peek(keyHash, key, options) {
+    async del(keyHash /* , key, options*/) {
+      const redisKey = this._getRedisKey(keyHash);
+      await this.redisSummer.del(redisKey);
+    }
+
+    async peek(keyHash /* , key, options*/) {
       const redisKey = this._getRedisKey(keyHash);
       let value = await this.redisSummer.get(redisKey);
       value = value ? JSON.parse(value) : undefined;
-      if (value === undefined) {
-        const layered = this.__getLayered(options);
-        value = await layered.peek(keyHash, key, options);
-      }
+      // need not call layered.peek
+      // if (value === undefined) {
+      //   const layered = this.__getLayered(options);
+      //   value = await layered.peek(keyHash, key, options);
+      // }
       return value;
     }
 
