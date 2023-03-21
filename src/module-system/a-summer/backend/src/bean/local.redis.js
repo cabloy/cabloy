@@ -59,6 +59,11 @@ module.exports = ctx => {
       await this.redisSummer.del(redisKey);
     }
 
+    async mdel(keysHash /* , keys, options*/) {
+      const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
+      await this.redisSummer.del(redisKeys);
+    }
+
     async peek(keyHash /* , key, options*/) {
       const redisKey = this._getRedisKey(keyHash);
       let value = await this.redisSummer.get(redisKey);

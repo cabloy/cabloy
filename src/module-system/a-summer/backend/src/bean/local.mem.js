@@ -65,8 +65,18 @@ module.exports = ctx => {
       await layered.del(keyHash, key, options);
     }
 
-    _delRaw(keyHash /* , key, options*/) {
-      this.lruCache.delete(keyHash);
+    async mdel(keysHash, keys, options) {
+      // del on this worker
+      keysHash.forEach(keyHash => this.lruCache.delete(keyHash));
+      // del on other workers by broadcast
+      ctx.meta.util.broadcastEmit({
+        module: moduleInfo.relativeName,
+        broadcastName: 'memMultiDel',
+        data: { fullKey: this._cacheBase.fullKey, keysHash, keys, options },
+      });
+      // del layered
+      const layered = this.__getLayered(options);
+      await layered.mdel(keysHash, keys, options);
     }
 
     async peek(keyHash, key, options) {
@@ -76,6 +86,10 @@ module.exports = ctx => {
         value = await layered.peek(keyHash, key, options);
       }
       return value;
+    }
+
+    __delRaw(keyHash /* , key, options*/) {
+      this.lruCache.delete(keyHash);
     }
 
     __getLayered(options) {

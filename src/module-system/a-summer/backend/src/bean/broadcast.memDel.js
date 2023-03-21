@@ -5,7 +5,7 @@ module.exports = app => {
       const { fullKey, keyHash, key, options } = context.data;
       if (!sameAsCaller) {
         const cache = this.ctx.bean.summer.getCache(fullKey);
-        cache.localMem._delRaw(keyHash, key, options);
+        cache.localMem.__delRaw(keyHash, key, options);
       }
     }
   }
