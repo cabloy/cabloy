@@ -5,6 +5,7 @@ const CacheBase = require('../common/cacheBase.js');
 const SUMMERCACHEMEMORY = Symbol('APP#__SUMMERCACHEMEMORY');
 
 module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class LocalMem extends CacheBase(ctx) {
     constructor({ cacheBase }) {
       super({ cacheBase });
@@ -48,6 +49,20 @@ module.exports = ctx => {
       }
       // ok
       return values;
+    }
+
+    async del(keyHash, key, options) {
+      // del on this worker
+      this.lruCache.delete(keyHash);
+      // del on other workers by broadcast
+      ctx.meta.util.broadcastEmit({
+        module: moduleInfo.relativeName,
+        broadcastName: 'memDel',
+        data: { keyHash, key, options },
+      });
+      // del layered
+      const layered = this.__getLayered(options);
+      await layered.del(keyHash, key, options);
     }
 
     async peek(keyHash, key, options) {
