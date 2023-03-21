@@ -58,11 +58,15 @@ module.exports = ctx => {
       ctx.meta.util.broadcastEmit({
         module: moduleInfo.relativeName,
         broadcastName: 'memDel',
-        data: { keyHash, key, options },
+        data: { fullKey: this._cacheBase.fullKey, keyHash, key, options },
       });
       // del layered
       const layered = this.__getLayered(options);
       await layered.del(keyHash, key, options);
+    }
+
+    _delRaw(keyHash /* , key, options*/) {
+      this.lruCache.delete(keyHash);
     }
 
     async peek(keyHash, key, options) {

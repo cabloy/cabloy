@@ -8,17 +8,19 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
-    getCache({ module, name }) {
+    getCache({ module, name, fullKey }) {
       module = module || this.moduleName;
-      const cacheBase = this._findCacheBase({ module, name });
+      const cacheBase = this._findCacheBase({ module, name, fullKey });
       return ctx.bean._newBean(`${moduleInfo.relativeName}.local.cache`, {
         cacheBase,
       });
     }
 
-    _findCacheBase({ module, name }) {
+    _findCacheBase({ module, name, fullKey }) {
       module = module || this.moduleName;
-      const fullKey = `${module}:${name}`;
+      if (!fullKey) {
+        fullKey = `${module}:${name}`;
+      }
       if (!__cacheBases) {
         __cacheBases = this._collectCacheBases();
       }
