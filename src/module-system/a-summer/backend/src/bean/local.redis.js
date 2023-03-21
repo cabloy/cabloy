@@ -19,6 +19,17 @@ module.exports = ctx => {
       return value;
     }
 
+    async peek(keyHash, key, options) {
+      const redisKey = this._getRedisKey(keyHash);
+      let value = await this.redisSummer.get(redisKey);
+      value = value ? JSON.parse(value) : undefined;
+      if (value === undefined) {
+        const layered = this.__getLayered(options);
+        value = await layered.peek(keyHash, key, options);
+      }
+      return value;
+    }
+
     __getLayered(/* options*/) {
       return this.localFetch;
     }

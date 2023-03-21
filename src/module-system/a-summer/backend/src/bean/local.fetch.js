@@ -11,6 +11,10 @@ module.exports = ctx => {
       return await this.cacheBean.get(key, options, keyHash);
     }
 
+    async peek(/* keyHash, key, options*/) {
+      return undefined;
+    }
+
     get cacheBean() {
       if (!this._cacheBean) {
         this._cacheBean = ctx.bean._newBean(this._cacheBase.beanFullName, {

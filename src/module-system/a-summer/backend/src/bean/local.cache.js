@@ -15,6 +15,12 @@ module.exports = ctx => {
       return await layered.get(keyHash, key, options);
     }
 
+    async peek(key, options) {
+      const keyHash = this.__getKeyHash(key);
+      const layered = this.__getLayered(options);
+      return await layered.peek(keyHash, key, options);
+    }
+
     __getLayered(options) {
       const mode = this.__getOptionsMode(options);
       if (mode === 'all' || mode === 'mem') {

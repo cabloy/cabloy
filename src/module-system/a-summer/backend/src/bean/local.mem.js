@@ -21,6 +21,15 @@ module.exports = ctx => {
       return value;
     }
 
+    async peek(keyHash, key, options) {
+      let value = this.lruCache.peek(keyHash);
+      if (value === undefined) {
+        const layered = this.__getLayered(options);
+        value = await layered.peek(keyHash, key, options);
+      }
+      return value;
+    }
+
     __getLayered(options) {
       const mode = this.__getOptionsMode(options);
       if (mode === 'all') {
