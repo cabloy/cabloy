@@ -92,6 +92,10 @@ module.exports = ctx => {
       this.lruCache.delete(keyHash);
     }
 
+    __mdelRaw(keysHash /* , keys, options*/) {
+      keysHash.forEach(keyHash => this.lruCache.delete(keyHash));
+    }
+
     __getLayered(options) {
       const mode = this.__getOptionsMode(options);
       if (mode === 'all') {

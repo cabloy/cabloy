@@ -33,7 +33,7 @@ module.exports = ctx => {
       // do nothing
     }
 
-    async mdel(/* keyHash , key, options*/) {
+    async mdel(/* keysHash, keys, options*/) {
       // do nothing
     }
 
