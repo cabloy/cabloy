@@ -11,7 +11,20 @@ module.exports = ctx => {
       return await this.cacheBean.get(key, options, keyHash);
     }
 
+    async mget(keysHash, keys, options) {
+      if (this.cacheBean.mget) {
+        return await this.cacheBean.mget(keys, options, keysHash);
+      }
+      // fallback
+      const values = [];
+      for (let i = 0; i < keys.length; i++) {
+        values.push(await this.get(keysHash[i], keys[i], options));
+      }
+      return values;
+    }
+
     async peek(/* keyHash, key, options*/) {
+      // just return undefined
       return undefined;
     }
 
