@@ -21,6 +21,32 @@ module.exports = ctx => {
       return value;
     }
 
+    async mget(keysHash, keys, options) {
+      // peek
+      const values = keysHash.map(keyHash => this.lruCache.peek(keyHash));
+      const keysHashMissing = [];
+      const keysMissing = [];
+      const indexesMissing = [];
+      for (let i = 0; i < values.length; i++) {
+        if (values[i] === undefined) {
+          keysHashMissing.push(keysHash[i]);
+          keysMissing.push(keys[i]);
+          indexesMissing.push(i);
+        }
+      }
+      // mget
+      const layered = this.__getLayered(options);
+      const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
+      // set/merge
+      for (let i = 0; i < keysHashMissing.length; i++) {
+        const valueMissing = valuesMissing[i];
+        this.lruCache.set(keysHashMissing[i], valueMissing);
+        values[indexesMissing[i]] = valueMissing;
+      }
+      // ok
+      return values;
+    }
+
     async peek(keyHash, key, options) {
       let value = this.lruCache.peek(keyHash);
       if (value === undefined) {

@@ -15,12 +15,6 @@ module.exports = ctx => {
       return await layered.get(keyHash, key, options);
     }
 
-    async peek(key, options) {
-      const keyHash = this.__getKeyHash(key);
-      const layered = this.__getLayered(options);
-      return await layered.peek(keyHash, key, options);
-    }
-
     async mget(keys, options) {
       if (!keys || keys.length === 0) {
         return [];
@@ -28,6 +22,12 @@ module.exports = ctx => {
       const keysHash = this.__getKeysHash(keys);
       const layered = this.__getLayered(options);
       return await layered.mget(keysHash, keys, options);
+    }
+
+    async peek(key, options) {
+      const keyHash = this.__getKeyHash(key);
+      const layered = this.__getLayered(options);
+      return await layered.peek(keyHash, key, options);
     }
 
     __getLayered(options) {
