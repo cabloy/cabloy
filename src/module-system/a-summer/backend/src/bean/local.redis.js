@@ -75,8 +75,7 @@ module.exports = ctx => {
         keysDel.push(key);
       }
       if (keysDel.length > 0) {
-        const res = await this.redisSummer.del(keysDel);
-        console.log('-------redis clear:', res);
+        await this.redisSummer.del(keysDel);
       }
     }
 
