@@ -24,7 +24,6 @@ module.exports = ctx => {
       const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
       let values = await this.redisSummer.mget(redisKeys);
       values = values.map(v => (v ? JSON.parse(v) : undefined));
-      console.log('------redis cache:', values);
       const redisKeysMissing = [];
       const keysHashMissing = [];
       const keysMissing = [];
@@ -41,7 +40,7 @@ module.exports = ctx => {
       if (keysHashMissing.length > 0) {
         const layered = this.__getLayered(options);
         const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
-        console.log('-------redis:', valuesMissing);
+        // console.log('-------redis:', valuesMissing);
         // set/merge
         const multi = this.redisSummer.multi();
         for (let i = 0; i < keysHashMissing.length; i++) {
