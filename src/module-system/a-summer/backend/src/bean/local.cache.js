@@ -16,8 +16,7 @@ module.exports = ctx => {
     }
 
     __getLayered(options) {
-      let mode = options && options.mode;
-      mode = mode || this._cacheBase.mode || 'all';
+      const mode = this.__getOptionsMode(options);
       if (mode === 'all' || mode === 'mem') {
         return this.localMem;
       }

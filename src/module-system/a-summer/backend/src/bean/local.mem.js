@@ -11,25 +11,22 @@ module.exports = ctx => {
       this._lruCache = null;
     }
 
-    async get(keyHash, key) {
+    async get(keyHash, key, options) {
       let value = this.lruCache.get(keyHash);
       if (value === undefined) {
-        value = await this.layered.get(keyHash, key);
+        const layered = this.__getLayered(options);
+        value = await layered.get(keyHash, key, options);
         this.lruCache.set(keyHash, value);
       }
       return value;
     }
 
-    get layered() {
-      if (!this._layered) {
-        const mode = this._cacheBase.mode || 'all';
-        if (mode === 'all') {
-          this._layered = this.localRedis;
-        } else {
-          this._layered = this.localFetch;
-        }
+    __getLayered(options) {
+      const mode = this.__getOptionsMode(options);
+      if (mode === 'all') {
+        return this.localRedis;
       }
-      return this._layered;
+      return this.localFetch;
     }
 
     get lruCache() {

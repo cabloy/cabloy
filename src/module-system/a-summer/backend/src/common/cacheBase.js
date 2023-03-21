@@ -34,6 +34,11 @@ module.exports = ctx => {
       }
       return this._localFetch;
     }
+
+    __getOptionsMode(options) {
+      const mode = options && options.mode;
+      return mode || this._cacheBase.mode || 'all';
+    }
   }
 
   return CacheBase;
