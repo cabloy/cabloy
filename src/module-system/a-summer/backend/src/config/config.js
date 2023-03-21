@@ -10,9 +10,9 @@ module.exports = appInfo => {
     memMultiDel: {
       bean: 'memMultiDel',
     },
-    // memClear: {
-    //   bean: 'memClear',
-    // },
+    memClear: {
+      bean: 'memClear',
+    },
   };
 
   return config;

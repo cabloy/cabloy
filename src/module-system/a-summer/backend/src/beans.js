@@ -6,6 +6,7 @@ const localRedis = require('./bean/local.redis.js');
 const localFetch = require('./bean/local.fetch.js');
 const broadcastMemDel = require('./bean/broadcast.memDel.js');
 const broadcastMemMultiDel = require('./bean/broadcast.memMultiDel.js');
+const broadcastMemClear = require('./bean/broadcast.memClear.js');
 
 module.exports = app => {
   const beans = {
@@ -39,6 +40,10 @@ module.exports = app => {
     'broadcast.memMultiDel': {
       mode: 'app',
       bean: broadcastMemMultiDel,
+    },
+    'broadcast.memClear': {
+      mode: 'app',
+      bean: broadcastMemClear,
     },
     // summer
     summer: {

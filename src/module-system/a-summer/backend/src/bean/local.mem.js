@@ -110,6 +110,10 @@ module.exports = ctx => {
       keysHash.forEach(keyHash => this.lruCache.delete(keyHash));
     }
 
+    __clearRaw(/* options*/) {
+      this.lruCache.clear();
+    }
+
     __getLayered(options) {
       const mode = this.__getOptionsMode(options);
       if (mode === 'all') {
