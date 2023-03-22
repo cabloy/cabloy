@@ -133,6 +133,11 @@ module.exports = ctx => {
 
       return { _cmsField, _cmsJoin, _cmsWhere };
     }
+
+    async _prepare_atomClassIdsInner() {
+      const __atomClassIds = await ctx.bean.atomClass.getAtomClassIdsInner({ inner: false });
+      return ` and a.atomClassId in (${__atomClassIds.join(',')})`;
+    }
   }
   return Procedure;
 };

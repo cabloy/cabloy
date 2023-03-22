@@ -176,7 +176,7 @@ module.exports = ctx => {
       if (tableName || star || label) {
         _atomClassWhere = '';
       } else {
-        _atomClassWhere = ' and b.atomClassInner=0';
+        _atomClassWhere = await this._prepare_atomClassIdsInner();
       }
 
       // aUser
