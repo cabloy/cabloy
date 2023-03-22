@@ -55,7 +55,6 @@ module.exports = ctx => {
       const data = {
         module,
         atomClassName,
-        atomClassInner: atomClass.inner ? 1 : 0,
       };
       // insert
       const res2 = await this.model.insert(data);

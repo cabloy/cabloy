@@ -134,7 +134,6 @@ module.exports = ctx => {
       }
 
       // atomClassInner
-      // atomClassInner
       if (tableName) {
         _atomClassWhere = '';
       } else {
