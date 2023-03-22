@@ -172,7 +172,7 @@ module.exports = ctx => {
         _itemKeyName = 'a.id';
       }
 
-      // atomClassInner
+      // atomClass inner
       if (tableName || star || label) {
         _atomClassWhere = '';
       } else {

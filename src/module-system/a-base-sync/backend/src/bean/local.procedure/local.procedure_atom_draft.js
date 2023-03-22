@@ -148,13 +148,13 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // atomClassInner
+      // atomClass inner
       // eslint-disable-next-line
       _atomClassWhere = '';
       // if (tableName || star || label) {
       //   _atomClassWhere = '';
       // } else {
-      //   _atomClassWhere = ' and b.atomClassInner=0';
+      //   _atomClassWhere = await this._prepare_atomClassIdsInner();
       // }
 
       // fields

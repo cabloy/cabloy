@@ -133,11 +133,11 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // atomClassInner
+      // atomClass inner
       if (tableName) {
         _atomClassWhere = '';
       } else {
-        _atomClassWhere = ' and b.atomClassInner=0';
+        _atomClassWhere = await this._prepare_atomClassIdsInner();
       }
 
       // aUser
