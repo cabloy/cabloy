@@ -1,6 +1,6 @@
 module.exports = ctx => {
   class Procedure {
-    selectAtoms({
+    async selectAtoms({
       iid,
       userIdWho,
       tableName,
@@ -40,7 +40,7 @@ module.exports = ctx => {
       // draft
       if (stage === 0) {
         // userIdWho must be set
-        return this._selectAtoms_draft({
+        return await this._selectAtoms_draft({
           iid,
           userIdWho,
           tableName,
@@ -61,7 +61,7 @@ module.exports = ctx => {
         });
       }
       if (userIdWho === 0) {
-        return this._selectAtoms_0({
+        return await this._selectAtoms_0({
           iid,
           tableName,
           where,
@@ -83,7 +83,7 @@ module.exports = ctx => {
         });
       }
       // formal/history
-      return this._selectAtoms({
+      return await this._selectAtoms({
         iid,
         userIdWho,
         tableName,

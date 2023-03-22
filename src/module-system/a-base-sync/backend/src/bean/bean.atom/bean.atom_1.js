@@ -326,7 +326,7 @@ module.exports = ctx => {
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // sql
-      const sql = this.sqlProcedure.getAtom({
+      const sql = await this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName,
@@ -375,7 +375,7 @@ module.exports = ctx => {
     }) {
       page = ctx.bean.util.page(page, pageForce);
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
-      const sql = this.sqlProcedure.selectAtoms({
+      const sql = await this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         tableName,

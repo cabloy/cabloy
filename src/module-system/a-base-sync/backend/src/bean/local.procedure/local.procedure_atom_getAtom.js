@@ -1,6 +1,6 @@
 module.exports = ctx => {
   class Procedure {
-    getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms, forAtomUser }) {
+    async getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms, forAtomUser }) {
       // -- tables
       // -- a: aAtom
       // -- b: aAtomClass

@@ -1,6 +1,6 @@
 module.exports = ctx => {
   class Procedure {
-    _selectAtoms({
+    async _selectAtoms({
       iid,
       userIdWho,
       tableName,
