@@ -26,7 +26,7 @@ module.exports = ctx => {
       return await cache.get({ module, atomClassName });
     }
 
-    async __getInner({ id, module, atomClassName }) {
+    async __getRaw({ id, module, atomClassName }) {
       module = module || this.moduleName;
       const data = id ? { id } : { module, atomClassName };
       const res = await this.model.get(data);
