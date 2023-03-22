@@ -203,7 +203,7 @@ module.exports = ctx => {
     async write({ key, target, item, options, user }) {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!atomClass) throw new Error(`atomClass not found for atom: ${key.atomId}`);
       if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
