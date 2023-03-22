@@ -15,6 +15,18 @@ module.exports = ctx => {
     }
 
     async get({ id, module, atomClassName }) {
+      // cache
+      const cache = ctx.bean.summer.getCache({ module: moduleInfo.relativeName, name: 'atomClassInfo' });
+      // id
+      if (id) {
+        return await cache.get(id);
+      }
+      // module/atomClassName
+      module = module || this.moduleName;
+      return await cache.get({ module, atomClassName });
+    }
+
+    async __getInner({ id, module, atomClassName }) {
       module = module || this.moduleName;
       const data = id ? { id } : { module, atomClassName };
       const res = await this.model.get(data);

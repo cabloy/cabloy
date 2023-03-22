@@ -7,7 +7,8 @@
     "dependencies": {
       "a-instance": "4.0.0",
       "a-status": "4.0.0",
-      "a-sequence": "4.0.0"
+      "a-sequence": "4.0.0",
+      "a-summer": "4.0.0"
     }
   },
   "description": "",

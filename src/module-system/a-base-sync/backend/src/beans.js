@@ -36,6 +36,7 @@ const statsDraftsCommon = require('./bean/stats.draftsCommon.js');
 const statsStars = require('./bean/stats.stars.js');
 const statsLabels = require('./bean/stats.labels.js');
 const statsStarsLabels = require('./bean/stats.starsLabels.js');
+const summerCacheAtomClassInfo = require('./bean/summer.cache.atomClassInfo.js');
 
 module.exports = app => {
   const beans = {
@@ -213,6 +214,11 @@ module.exports = app => {
     'stats.starsLabels': {
       mode: 'ctx',
       bean: statsStarsLabels,
+    },
+    // summer
+    'summer.cache.atomClassInfo': {
+      mode: 'ctx',
+      bean: summerCacheAtomClassInfo,
     },
   };
   return beans;

@@ -1,5 +1,5 @@
 module.exports = function (ctx) {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate12 {
     async run(options) {
       // aAtomClass: add atomClassInner

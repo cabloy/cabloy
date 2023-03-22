@@ -78,6 +78,32 @@ module.exports = appInfo => {
     },
   };
 
+  // summer
+  config.summer = {
+    caches: {
+      atomClassInfo: {
+        bean: 'atomClassInfo',
+        mode: 'all',
+        mem: {
+          max: 500,
+        },
+        redis: {
+          ttl: 2 * 60 * 60 * 1000, // 2 hours
+        },
+      },
+      atomClassInner: {
+        bean: 'atomClassInner',
+        mode: 'all',
+        mem: {
+          max: 500,
+        },
+        redis: {
+          ttl: 2 * 60 * 60 * 1000, // 2 hours
+        },
+      },
+    },
+  };
+
   // pageSize
   config.pageSize = 20;
 
