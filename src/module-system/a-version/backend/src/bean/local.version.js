@@ -288,7 +288,7 @@ module.exports = app => {
     async __database() {
       // dev/debug db
       if (app.meta.isLocal) {
-        const mysqlConfig = app.config.mysql.clients.__ebdb;
+        const mysqlConfig = this.__getMysqlConfig('__ebdb');
         if ((mysqlConfig.database === 'sys' || mysqlConfig.database === 'mysql') && !app.mysql.__ebdb_test) {
           let databaseName;
           const dbs = await this.__fetchDatabases();
@@ -317,7 +317,7 @@ module.exports = app => {
         // create database
         const databaseName = await this.__createDatabase();
         // create test mysql
-        const mysqlConfig = app.config.mysql.clients.__ebdb;
+        const mysqlConfig = this.__getMysqlConfig('__ebdb');
         mysqlConfig.database = databaseName;
         app.mysql.__ebdb_test = mysqlConfig;
         this.ctx.db = null; // reset
@@ -326,8 +326,14 @@ module.exports = app => {
       }
       // default
       if (!app.mysql.__ebdb_test) {
-        app.mysql.__ebdb_test = app.config.mysql.clients.__ebdb;
+        app.mysql.__ebdb_test = this.__getMysqlConfig('__ebdb');
       }
+    }
+
+    // get mysql config
+    __getMysqlConfig(clientName) {
+      const mysqlConfig = app.config.mysql.clients[clientName];
+      return Object.assign({}, app.config.mysql.default, mysqlConfig);
     }
 
     // get module
