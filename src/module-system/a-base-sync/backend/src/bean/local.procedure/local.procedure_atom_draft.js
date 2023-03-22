@@ -21,7 +21,6 @@ module.exports = ctx => {
     }) {
       // -- tables
       // -- a: aAtom
-      // -- b: aAtomClass
       // -- c: aViewUserRightAtomClassRole
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
@@ -167,7 +166,6 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
-                b.module,b.atomClassName,
                 g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField} ${_labelField} ${_commentField}
@@ -177,7 +175,6 @@ module.exports = ctx => {
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
-            inner join aAtomClass b on a.atomClassId=b.id
             left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id

@@ -339,7 +339,12 @@ module.exports = ctx => {
       });
       debug('===== getAtom =====\n%s', sql);
       // query
-      return await ctx.model.queryOne(sql);
+      const item = await ctx.model.queryOne(sql);
+      if (!item) return item;
+      // patch atomClass
+      await this._listPatchAtomClass({ items: [item] });
+      // ok
+      return item;
     }
 
     // forAtomUser
@@ -400,8 +405,28 @@ module.exports = ctx => {
         role,
       });
       debug('===== selectAtoms =====\n%s', sql);
-      const res = await ctx.model.query(sql);
-      return count ? res[0]._count : res;
+      const items = await ctx.model.query(sql);
+      // count
+      if (count) {
+        return items[0]._count;
+      }
+      // patch atomClass
+      await this._listPatchAtomClass({ items });
+      // ok
+      return items;
+    }
+
+    async _listPatchAtomClass({ items }) {
+      if (items.length === 0) return;
+      const atomClassIds = Set.unique(items.map(item => item.atomClassId));
+      // cache
+      const cache = ctx.bean.summer.getCache({ module: moduleInfo.relativeName, name: 'atomClassInfo' });
+      const atomClasses = await cache.mget(atomClassIds);
+      for (const item of items) {
+        const atomClass = atomClasses.find(atomClass => atomClass.id === item.atomClassId);
+        item.module = atomClass.module;
+        item.atomClassName = atomClass.atomClassName;
+      }
     }
 
     // right

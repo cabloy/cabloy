@@ -3,7 +3,6 @@ module.exports = ctx => {
     async getAtom({ iid, userIdWho, tableName, atomId, resource, resourceLocale, mode, cms, forAtomUser }) {
       // -- tables
       // -- a: aAtom
-      // -- b: aAtomClass
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
@@ -89,7 +88,6 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
-                b.module,b.atomClassName,
                 ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField}
@@ -98,7 +96,6 @@ module.exports = ctx => {
                 ${_flowField}
           from aAtom a
 
-            inner join aAtomClass b on a.atomClassId=b.id
             ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
