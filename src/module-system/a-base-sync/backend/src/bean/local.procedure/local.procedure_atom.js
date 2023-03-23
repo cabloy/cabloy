@@ -86,7 +86,7 @@ module.exports = ctx => {
         });
       }
       // formal/history
-      return await this._selectAtoms({
+      return await this._selectAtoms_formal({
         iid,
         userIdWho,
         atomClassId,
@@ -149,9 +149,7 @@ module.exports = ctx => {
         action,
         userId: userIdWho,
       });
-      if (roleScopes === false) return false;
-      if (roleScopes === true) return '';
-      return ` a.roleIdOwner in (${roleScopes.join(',')}) `;
+      return roleScopes;
     }
   }
   return Procedure;

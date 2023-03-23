@@ -1,6 +1,6 @@
 module.exports = ctx => {
   class Procedure {
-    async _selectAtoms({
+    async _selectAtoms_formal({
       iid,
       userIdWho,
       atomClassId,
@@ -69,8 +69,6 @@ module.exports = ctx => {
       let _resourceField, _resourceJoin, _resourceWhere;
 
       let _userField, _userJoin;
-
-      let _itemKeyName;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -168,15 +166,6 @@ module.exports = ctx => {
         _itemJoin = '';
       }
 
-      // _itemKeyName
-      if (resource && resourceLocale) {
-        _itemKeyName = 'm.atomId';
-      } else if (tableName) {
-        _itemKeyName = 'f.atomId';
-      } else {
-        _itemKeyName = 'a.id';
-      }
-
       // atomClass inner
       if (tableName || star || label) {
         _atomClassWhere = '';
@@ -208,71 +197,11 @@ module.exports = ctx => {
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField}`;
       }
 
-      // _rightWhere
-      let _rightWhere;
-      if (resource) {
-        _rightWhere = `
-          exists(
-            select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and ${_itemKeyName}=c.resourceAtomId and c.userIdWho=${userIdWho}
-          )
-        `;
-      } else {
-        const _mine = `
-          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `;
-        let _others;
-        if (forAtomUser) {
-          // get users of role
-          if (role) {
-            _others = `
-              exists(
-                select c.userIdWhom from aViewUserRightAtomClassUser c
-                  inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
-                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
-              )
-            `;
-          } else {
-            _others = `
-              exists(
-                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
-              )
-            `;
-          }
-        } else {
-          const roleScopes = await this._prepare_roleScopesOfUser({ atomClassId, action, userIdWho });
-          _others = `
-            exists(
-              select c.roleIdWhom from aViewUserRightAtomClassRole c 
-                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.userIdWho=${userIdWho}
-            )
-          `;
-        }
-        //
-        if (mine) {
-          _rightWhere = _mine;
-        } else if (star || label) {
-          _rightWhere = `
-            (
-              ${_mine}
-              or
-              ${_others}
-            )
-          `;
-        } else {
-          // _rightWhere = _others;
-          _rightWhere = `
-            (
-              ${_mine}
-              or
-              ${_others}
-            )
-          `;
-        }
-      }
+      // _rightWhere: false/empty/clause
+      let _rightWhere = await this._selectAtoms_formal_rightWhere({});
+      if (_rightWhere === false) return false;
       if (_rightWhere) {
         _rightWhere = ` and ( ${_rightWhere} )`;
-      } else {
-        _rightWhere = '';
       }
 
       // sql
@@ -311,6 +240,88 @@ module.exports = ctx => {
 
       // ok
       return _sql;
+    }
+
+    async _selectAtoms_formal_rightWhere({
+      iid,
+      userIdWho,
+      atomClassId,
+      tableName,
+      star,
+      label,
+      mine,
+      resource,
+      resourceLocale,
+      forAtomUser,
+      role,
+    }) {
+      // pass through for star/label
+      if (star || label) return '';
+
+      // resource
+      if (resource) {
+        // _itemKeyName
+        let _itemKeyName;
+        if (resource && resourceLocale) {
+          _itemKeyName = 'm.atomId';
+        } else if (tableName) {
+          _itemKeyName = 'f.atomId';
+        } else {
+          _itemKeyName = 'a.id';
+        }
+        return `
+          exists(
+            select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and ${_itemKeyName}=c.resourceAtomId and c.userIdWho=${userIdWho}
+          )
+        `;
+      }
+
+      //
+      const _mine = `
+          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+        `;
+      let _others;
+      if (forAtomUser) {
+        if (role) {
+          // get users of role
+          _others = `
+              exists(
+                select c.userIdWhom from aViewUserRightAtomClassUser c
+                  inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
+                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
+              )
+            `;
+        } else {
+          _others = `
+              exists(
+                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
+              )
+            `;
+        }
+      } else {
+        const roleScopes = await this._prepare_roleScopesOfUser({ atomClassId, action: 2, userIdWho });
+        if (roleScopes === false) return false; // deny
+        if (roleScopes === true) return ''; // pass through
+        _others = `
+          a.roleIdOwner in (${roleScopes.join(',')})
+        `;
+      }
+      //
+      let _rightWhere;
+      if (mine) {
+        _rightWhere = _mine;
+      } else {
+        // _rightWhere = _others;
+        _rightWhere = `
+            (
+              ${_mine}
+              or
+              ${_others}
+            )
+          `;
+      }
+      // ok
+      return _rightWhere;
     }
   }
   return Procedure;
