@@ -16,9 +16,7 @@ module.exports = app => {
       // revision
       this._appendRevisionToHistory({ item });
       // flow
-      if (item.flowNodeNameCurrent) {
-        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
-      }
+      this._flowNodeNameCurrentLocaleTranslate({ item });
       // atomLanguage
       await this._atomLanguageLocaleTranslate({ item });
       // atomDisabled

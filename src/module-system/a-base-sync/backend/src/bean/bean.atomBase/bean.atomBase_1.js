@@ -213,6 +213,19 @@ module.exports = app => {
         }
       }
     }
+
+    _flowNodeNameCurrentLocaleTranslate({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        if (item.flowNodeNameCurrent) {
+          item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
+        }
+      }
+    }
   }
 
   return AtomBase;
