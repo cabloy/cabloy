@@ -195,13 +195,15 @@ module.exports = ctx => {
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // check formal/history
-      const sql = this.sqlProcedure.checkRightAction({
+      const sql = await this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
+        atomClassId: atomClass.id,
         atomId: _atom.id,
         action,
         forAtomUser,
       });
+      if (sql === false) return null;
       return await ctx.model.queryOne(sql);
     }
   }

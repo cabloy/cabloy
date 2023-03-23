@@ -312,15 +312,18 @@ module.exports = ctx => {
         }
       } else {
         const roleScopes = await this._prepare_roleScopesOfUser({ atomClassId, action: 2, userIdWho });
-        if (roleScopes === false) return false; // deny
         if (roleScopes === true) return ''; // pass through
-        _others = `
-          a.roleIdOwner in (${roleScopes.join(',')})
-        `;
+        if (roleScopes === false) {
+          _others = ''; // should check mine
+        } else {
+          _others = `
+            a.roleIdOwner in (${roleScopes.join(',')})
+          `;
+        }
       }
       //
       let _rightWhere;
-      if (mine) {
+      if (mine || !_others) {
         _rightWhere = _mine;
       } else {
         // _rightWhere = _others;
