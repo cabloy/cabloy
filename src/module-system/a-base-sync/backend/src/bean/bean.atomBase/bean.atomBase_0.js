@@ -71,11 +71,7 @@ module.exports = app => {
       // atomClass
       const atomClassBase = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
       // dict translate
-      if (atomClassBase) {
-        for (const item of items) {
-          await this._dictTranslate({ item, atomClassBase });
-        }
-      }
+      await this._dictTranslate({ items, atomClassBase });
       // revision
       this._appendRevisionToHistory({ items });
       // flow

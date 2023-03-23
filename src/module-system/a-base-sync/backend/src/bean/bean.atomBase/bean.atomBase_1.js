@@ -61,7 +61,19 @@ module.exports = app => {
       item._atomStateTitleLocale = dictItem.titleLocaleFull;
     }
 
-    async _dictTranslate({ item, atomClassBase }) {
+    async _dictTranslate({ items, item, atomClassBase }) {
+      if (!atomClassBase) return;
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        await this._dictTranslate_item({ item, atomClassBase });
+      }
+    }
+
+    async _dictTranslate_item({ item, atomClassBase }) {
       const fields = atomClassBase.dict && atomClassBase.dict.fields;
       for (const fieldName in fields) {
         const field = fields[fieldName];
