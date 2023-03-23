@@ -353,6 +353,7 @@ module.exports = ctx => {
     }
 
     async _list({
+      atomClassId,
       tableName,
       options: {
         where,
@@ -383,6 +384,7 @@ module.exports = ctx => {
       const sql = await this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
+        atomClassId,
         tableName,
         where,
         orders,

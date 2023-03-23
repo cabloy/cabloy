@@ -3,6 +3,7 @@ module.exports = ctx => {
     async _selectAtoms({
       iid,
       userIdWho,
+      atomClassId,
       tableName,
       where,
       orders,
@@ -39,6 +40,11 @@ module.exports = ctx => {
       // -- m: aResourceLocale
       // -- p: aCmsArticle
       // -- q: aCmsContent
+
+      // important
+      if (!tableName && !star && !label) {
+        ctx.throw(403);
+      }
 
       // for safe
       // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName

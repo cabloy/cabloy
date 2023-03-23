@@ -3,6 +3,7 @@ module.exports = ctx => {
     async selectAtoms({
       iid,
       userIdWho,
+      atomClassId,
       tableName,
       where,
       orders,
@@ -43,6 +44,7 @@ module.exports = ctx => {
         return await this._selectAtoms_draft({
           iid,
           userIdWho,
+          atomClassId,
           tableName,
           where,
           orders,
@@ -63,6 +65,7 @@ module.exports = ctx => {
       if (userIdWho === 0) {
         return await this._selectAtoms_0({
           iid,
+          atomClassId,
           tableName,
           where,
           orders,
@@ -86,6 +89,7 @@ module.exports = ctx => {
       return await this._selectAtoms({
         iid,
         userIdWho,
+        atomClassId,
         tableName,
         where,
         orders,

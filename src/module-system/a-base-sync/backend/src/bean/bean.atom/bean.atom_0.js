@@ -152,6 +152,7 @@ module.exports = ctx => {
         });
       }
       // tableName
+      let atomClassId;
       let tableName = '';
       if (_atomClass) {
         tableName = await this.getTableName({
@@ -165,6 +166,7 @@ module.exports = ctx => {
         });
         // 'where' should append atomClassId, such as article/post using the same table
         options.where['a.atomClassId'] = atomClass.id;
+        atomClassId = atomClass.id;
       }
       // cms
       const cms = _atomClass && _atomClass.cms;
@@ -172,6 +174,7 @@ module.exports = ctx => {
       const forAtomUser = this._checkForAtomUser(atomClass);
       // select
       const items = await this._list({
+        atomClassId,
         tableName,
         options,
         cms,
