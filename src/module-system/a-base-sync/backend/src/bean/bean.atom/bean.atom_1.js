@@ -407,7 +407,7 @@ module.exports = ctx => {
         role,
       });
       debug('===== selectAtoms =====\n%s', sql);
-      const items = await ctx.model.query(sql);
+      const items = sql === false ? [] : await ctx.model.query(sql);
       // count
       if (count) {
         return items[0]._count;
