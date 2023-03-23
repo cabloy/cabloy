@@ -10,9 +10,14 @@ module.exports = ctx => {
         atomClass,
       });
       // cache
-      const cache = ctx.bean.summer.getCache({ module: moduleInfo.relativeName, name: 'roleScopesOfUser' });
-      const key = { atomClassId: atomClass.id, action, userId };
-      return await cache.get(key);
+      return await ctx.bean.summer.get(
+        { module: moduleInfo.relativeName, name: 'roleScopesOfUser' },
+        { atomClassId: atomClass.id, action, userId }
+      );
+    }
+
+    async clearSummer_roleScopesOfUser() {
+      await ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'roleScopesOfUser' });
     }
 
     async __getRoleScopesOfUserRaw({ atomClassId, action, userId }) {
