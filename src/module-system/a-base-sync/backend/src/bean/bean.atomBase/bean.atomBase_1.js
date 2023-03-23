@@ -91,17 +91,24 @@ module.exports = app => {
       return _item;
     }
 
-    async _atomDisabledTranslate({ atomClass, item }) {
+    async _atomDisabledTranslate({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        await this._atomDisabledTranslate_item({ item });
+      }
+    }
+
+    async _atomDisabledTranslate_item({ item }) {
       //
       if (!item.atomDisabled) return;
       //
-      if (!atomClass) {
-        atomClass = await this.ctx.bean.atomClass.get({ id: item.atomClassId });
-      }
-      //
       const actionBase = this.ctx.bean.base.action({
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
+        module: item.module,
+        atomClassName: item.atomClassName,
         name: 'disable',
       });
       const title = this.ctx.bean.util.getProperty(actionBase, 'params.atomDisabled.title') || 'Disabled';

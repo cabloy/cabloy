@@ -24,7 +24,7 @@ module.exports = app => {
         item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
       }
       // atomDisabled
-      await this._atomDisabledTranslate({ atomClass, item });
+      await this._atomDisabledTranslate({ item });
       // atomState
       await this._atomStateTranslate({ item });
       // userIds
