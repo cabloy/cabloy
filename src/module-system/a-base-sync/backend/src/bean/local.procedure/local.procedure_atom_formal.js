@@ -42,7 +42,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // important
-      if (!atomClassId && !star && !label) {
+      if (!atomClassId && !star && !label && !mine) {
         ctx.throw(403);
       }
 
@@ -288,10 +288,15 @@ module.exports = ctx => {
         `;
       }
 
-      //
+      // mine
       const _mine = `
-          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `;
+        (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+      `;
+      if (mine) {
+        return _mine;
+      }
+
+      // others
       let _others;
       if (forAtomUser) {
         if (role) {
@@ -323,7 +328,7 @@ module.exports = ctx => {
       }
       //
       let _rightWhere;
-      if (mine || !_others) {
+      if (!_others) {
         _rightWhere = _mine;
       } else {
         // _rightWhere = _others;
