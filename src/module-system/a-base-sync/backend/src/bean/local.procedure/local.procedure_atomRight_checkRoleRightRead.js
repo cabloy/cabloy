@@ -28,7 +28,6 @@ module.exports = ctx => {
       }
       // sql
       const _sql = `select a.* from aAtom a
-           left join aAtomClass b on a.atomClassId=b.id
             where
             (
                a.deleted=0 and a.iid=${iid} and a.id=${atomId}
