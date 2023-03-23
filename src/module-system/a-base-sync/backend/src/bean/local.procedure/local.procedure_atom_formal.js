@@ -42,7 +42,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // important
-      if (!tableName && !star && !label) {
+      if (!atomClassId && !star && !label) {
         ctx.throw(403);
       }
 
@@ -167,7 +167,7 @@ module.exports = ctx => {
       }
 
       // atomClass inner
-      if (tableName || star || label) {
+      if (atomClassId || star || label) {
         _atomClassWhere = '';
       } else {
         _atomClassWhere = await this._prepare_atomClassIdsInner();
