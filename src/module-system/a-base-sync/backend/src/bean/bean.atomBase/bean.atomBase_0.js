@@ -108,6 +108,8 @@ module.exports = app => {
       if (atomClassBase) {
         await this._userIdsTranslate({ items, atomClassBase });
       }
+      // atomNameLocale for resource
+      await this._atomNameLocaleTranslate({ items, atomClassBase });
     }
 
     async delete({ atomClass, key, options, user }) {

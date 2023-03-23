@@ -139,6 +139,21 @@ module.exports = app => {
         }
       }
     }
+
+    async _atomNameLocaleTranslate({ items, item, atomClassBase }) {
+      if (!atomClassBase) return;
+      if (!atomClassBase.resource) return;
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        if (!item.atomNameLocale) {
+          item.atomNameLocale = this.ctx.text(item.atomName);
+        }
+      }
+    }
   }
 
   return AtomBase;

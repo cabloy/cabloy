@@ -32,6 +32,8 @@ module.exports = app => {
       }
       // userIds
       await this._userIdsTranslate({ item, atomClassBase });
+      // atomNameLocale for resource
+      await this._atomNameLocaleTranslate({ item, atomClassBase });
       // ok
       return item;
     }
