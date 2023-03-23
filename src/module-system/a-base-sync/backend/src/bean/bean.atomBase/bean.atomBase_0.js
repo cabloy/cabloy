@@ -90,12 +90,8 @@ module.exports = app => {
           }
         }
       }
-      // atomLanguage/atomDisabled
-      for (const item of items) {
-        if (item.atomLanguage) {
-          item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
-        }
-      }
+      // atomLanguage
+      await this._atomLanguageLocaleTranslate({ items });
       // atomDisabled
       await this._atomDisabledTranslate({ items });
       // atomState

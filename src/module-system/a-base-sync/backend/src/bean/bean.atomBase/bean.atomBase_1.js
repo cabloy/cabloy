@@ -182,6 +182,19 @@ module.exports = app => {
         }
       }
     }
+
+    async _atomLanguageLocaleTranslate({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        if (item.atomLanguage) {
+          item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
+        }
+      }
+    }
   }
 
   return AtomBase;

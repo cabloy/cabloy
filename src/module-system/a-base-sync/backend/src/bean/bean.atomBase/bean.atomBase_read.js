@@ -20,9 +20,7 @@ module.exports = app => {
         item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
       }
       // atomLanguage
-      if (item.atomLanguage) {
-        item.atomLanguageLocale = this.ctx.text(item.atomLanguage);
-      }
+      await this._atomLanguageLocaleTranslate({ item });
       // atomDisabled
       await this._atomDisabledTranslate({ item });
       // atomState
