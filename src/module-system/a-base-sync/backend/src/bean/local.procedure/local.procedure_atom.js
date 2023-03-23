@@ -138,6 +138,17 @@ module.exports = ctx => {
       const __atomClassIds = await ctx.bean.atomClass.getAtomClassIdsInner({ inner: false });
       return ` and a.atomClassId in (${__atomClassIds.join(',')})`;
     }
+
+    async _prepare_roleScopesOfUser({ atomClassId, action, userIdWho }) {
+      const roleScopes = await ctx.bean.atom.getRoleScopesOfUser({
+        atomClass: { id: atomClassId },
+        action,
+        userId: userIdWho,
+      });
+      if (roleScopes === false) return false;
+      if (roleScopes === true) return '';
+      return ` a.roleIdOwner in (${roleScopes.join(',')}) `;
+    }
   }
   return Procedure;
 };

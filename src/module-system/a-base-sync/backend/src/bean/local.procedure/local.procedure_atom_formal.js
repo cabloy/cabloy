@@ -216,6 +216,7 @@ module.exports = ctx => {
         `;
         let _others;
         if (forAtomUser) {
+          // get users of role
           if (role) {
             _others = `
               exists(
@@ -232,6 +233,7 @@ module.exports = ctx => {
             `;
           }
         } else {
+          const roleScopes = await this._prepare_roleScopesOfUser({ atomClassId, action, userIdWho });
           _others = `
             exists(
               select c.roleIdWhom from aViewUserRightAtomClassRole c 
