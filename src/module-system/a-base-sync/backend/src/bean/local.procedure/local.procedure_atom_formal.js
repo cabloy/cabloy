@@ -198,7 +198,19 @@ module.exports = ctx => {
       }
 
       // _rightWhere: false/empty/clause
-      let _rightWhere = await this._selectAtoms_formal_rightWhere({});
+      let _rightWhere = await this._selectAtoms_formal_rightWhere({
+        iid,
+        userIdWho,
+        atomClassId,
+        tableName,
+        star,
+        label,
+        mine,
+        resource,
+        resourceLocale,
+        forAtomUser,
+        role,
+      });
       if (_rightWhere === false) return false;
       if (_rightWhere) {
         _rightWhere = ` and ( ${_rightWhere} )`;
