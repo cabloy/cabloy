@@ -45,6 +45,9 @@ module.exports = ctx => {
           });
         }
       }
+      // clear summer
+      await ctx.bean.atom.clearSummer_roleScopesOfUser();
+      // ok
       return roleRightId;
     }
 
@@ -65,11 +68,15 @@ module.exports = ctx => {
       // id + roleId for safety
       await this.modelRoleRight.delete({ id: roleRightId, roleId });
       await this.modelRoleRightRef.delete({ roleRightId, roleId });
+      // clear summer
+      await ctx.bean.atom.clearSummer_roleScopesOfUser();
     }
 
     async deleteRoleRightByAction({ atomClassId, action }) {
       await this.modelRoleRight.delete({ atomClassId, action });
       await this.modelRoleRightRef.delete({ atomClassId, action });
+      // clear summer
+      await ctx.bean.atom.clearSummer_roleScopesOfUser();
     }
 
     // const roleRights = [

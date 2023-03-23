@@ -72,6 +72,9 @@ module.exports = ctx => {
         userId,
         roleId,
       });
+      // clear summer
+      await ctx.bean.atom.clearSummer_roleScopesOfUser();
+      // ok
       return res.insertId;
     }
 
@@ -82,6 +85,8 @@ module.exports = ctx => {
       // user
       const _user = await ctx.bean.user._forceUserAndCheckRightRead({ userAtomId, userId, user });
       userId = _user.id;
+      // clear summer
+      await ctx.bean.atom.clearSummer_roleScopesOfUser();
       // delete
       await this.modelUserRole.delete({
         userId,

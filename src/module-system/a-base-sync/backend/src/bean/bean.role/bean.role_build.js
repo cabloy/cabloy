@@ -3,6 +3,11 @@ module.exports = ctx => {
   class Role {
     // set dirty
     async setDirty(dirty) {
+      // when build done, clear summer
+      if (!dirty) {
+        await ctx.bean.atom.clearSummer_roleScopesOfUser();
+      }
+      // status
       await ctx.bean.status.module(moduleInfo.relativeName).set('roleDirty', dirty);
     }
 
