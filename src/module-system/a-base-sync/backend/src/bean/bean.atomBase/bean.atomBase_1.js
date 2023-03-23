@@ -12,11 +12,17 @@ module.exports = app => {
       return item._meta;
     }
 
-    _appendRevisionToHistory({ item }) {
-      if (!item) return;
-      if (!item.atomRevision || item.atomStage !== 2) return;
-      const meta = this._ensureItemMeta(item);
-      meta.flags.push(`Rev.${item.atomRevision}`);
+    _appendRevisionToHistory({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        if (!item.atomRevision || item.atomStage !== 2) continue;
+        const meta = this._ensureItemMeta(item);
+        meta.flags.push(`Rev.${item.atomRevision}`);
+      }
     }
 
     async _atomStateTranslate({ items, item }) {

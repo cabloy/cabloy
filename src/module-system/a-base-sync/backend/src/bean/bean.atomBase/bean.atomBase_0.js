@@ -77,11 +77,7 @@ module.exports = app => {
         }
       }
       // revision
-      if (options.stage === 'history') {
-        for (const item of items) {
-          this._appendRevisionToHistory({ item });
-        }
-      }
+      this._appendRevisionToHistory({ items });
       // flow
       if (options.stage === 'draft') {
         for (const item of items) {
