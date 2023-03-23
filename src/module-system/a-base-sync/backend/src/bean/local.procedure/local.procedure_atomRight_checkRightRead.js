@@ -7,7 +7,7 @@ module.exports = ctx => {
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       // _rightWhere
-      let _rightWhere = await this._checkRightAction_rightWhere({ iid, userIdWho, atomClassId, forAtomUser });
+      let _rightWhere = await this._checkRightRead_rightWhere({ iid, userIdWho, atomClassId, forAtomUser });
       if (_rightWhere === false) return false;
       if (_rightWhere) {
         _rightWhere = ` and ( ${_rightWhere} )`;
