@@ -160,14 +160,23 @@ module.exports = app => {
     }
 
     async _atomNameLocaleTranslate({ items, item, atomClassBase }) {
-      if (!atomClassBase) return;
-      if (!atomClassBase.resource) return;
+      if (atomClassBase && !atomClassBase.resource) return;
       // items
       if (item) {
         items = [item];
       }
       // set
       for (item of items) {
+        // atomClass
+        let _atomClassBase = atomClassBase;
+        if (!_atomClassBase) {
+          _atomClassBase = this.ctx.bean.base.atomClass({
+            module: item.module,
+            atomClassName: item.atomClassName,
+          });
+        }
+        if (!_atomClassBase.resource) continue;
+        // set
         if (!item.atomNameLocale) {
           item.atomNameLocale = this.ctx.text(item.atomName);
         }
