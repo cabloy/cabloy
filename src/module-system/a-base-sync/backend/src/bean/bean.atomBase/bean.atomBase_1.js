@@ -19,7 +19,18 @@ module.exports = app => {
       meta.flags.push(`Rev.${item.atomRevision}`);
     }
 
-    async _atomStateTranslate({ item }) {
+    async _atomStateTranslate({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
+      // set
+      for (item of items) {
+        await this._atomStateTranslate_item({ item });
+      }
+    }
+
+    async _atomStateTranslate_item({ item }) {
       // atomState
       const atomState = item.atomState;
       if (atomState === undefined || atomState === null) return;
@@ -99,6 +110,7 @@ module.exports = app => {
     }
 
     async _userIdsTranslate({ items, item, atomClassBase }) {
+      if (!atomClassBase) return;
       // userIds
       if (!atomClassBase.userIds) return;
       let userIdsKey = atomClassBase.userIds;

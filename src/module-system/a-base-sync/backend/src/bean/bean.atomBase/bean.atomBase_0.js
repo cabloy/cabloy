@@ -98,16 +98,9 @@ module.exports = app => {
         await this._atomDisabledTranslate({ atomClass, item });
       }
       // atomState
-      for (const item of items) {
-        const atomState = item.atomState;
-        if (atomState !== undefined && atomState !== null) {
-          await this._atomStateTranslate({ item });
-        }
-      }
+      await this._atomStateTranslate({ items });
       // userIds
-      if (atomClassBase) {
-        await this._userIdsTranslate({ items, atomClassBase });
-      }
+      await this._userIdsTranslate({ items, atomClassBase });
       // atomNameLocale for resource
       await this._atomNameLocaleTranslate({ items, atomClassBase });
     }
