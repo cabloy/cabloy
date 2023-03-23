@@ -18,15 +18,15 @@ module.exports = app => {
       // flow
       this._flowNodeNameCurrentLocaleTranslate({ item });
       // atomLanguage
-      await this._atomLanguageLocaleTranslate({ item });
+      this._atomLanguageLocaleTranslate({ item });
       // atomDisabled
-      await this._atomDisabledTranslate({ item });
+      this._atomDisabledTranslate({ item });
       // atomState
       await this._atomStateTranslate({ item });
       // userIds
       await this._userIdsTranslate({ item, atomClassBase });
       // atomNameLocale for resource
-      await this._atomNameLocaleTranslate({ item, atomClassBase });
+      this._atomNameLocaleTranslate({ item, atomClassBase });
       // ok
       return item;
     }

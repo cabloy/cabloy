@@ -109,18 +109,18 @@ module.exports = app => {
       return _item;
     }
 
-    async _atomDisabledTranslate({ items, item }) {
+    _atomDisabledTranslate({ items, item }) {
       // items
       if (item) {
         items = [item];
       }
       // set
       for (item of items) {
-        await this._atomDisabledTranslate_item({ item });
+        this._atomDisabledTranslate_item({ item });
       }
     }
 
-    async _atomDisabledTranslate_item({ item }) {
+    _atomDisabledTranslate_item({ item }) {
       //
       if (!item.atomDisabled) return;
       //
@@ -177,7 +177,7 @@ module.exports = app => {
       }
     }
 
-    async _atomNameLocaleTranslate({ items, item, atomClassBase }) {
+    _atomNameLocaleTranslate({ items, item, atomClassBase }) {
       if (atomClassBase && !atomClassBase.resource) return;
       // items
       if (item) {
@@ -201,7 +201,7 @@ module.exports = app => {
       }
     }
 
-    async _atomLanguageLocaleTranslate({ items, item }) {
+    _atomLanguageLocaleTranslate({ items, item }) {
       // items
       if (item) {
         items = [item];

@@ -77,15 +77,15 @@ module.exports = app => {
       // flow
       this._flowNodeNameCurrentLocaleTranslate({ items });
       // atomLanguage
-      await this._atomLanguageLocaleTranslate({ items });
+      this._atomLanguageLocaleTranslate({ items });
       // atomDisabled
-      await this._atomDisabledTranslate({ items });
+      this._atomDisabledTranslate({ items });
       // atomState
       await this._atomStateTranslate({ items });
       // userIds
       await this._userIdsTranslate({ items, atomClassBase });
       // atomNameLocale for resource
-      await this._atomNameLocaleTranslate({ items, atomClassBase });
+      this._atomNameLocaleTranslate({ items, atomClassBase });
     }
 
     async delete({ atomClass, key, options, user }) {
