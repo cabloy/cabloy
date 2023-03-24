@@ -39,6 +39,7 @@ const statsStarsLabels = require('./bean/stats.starsLabels.js');
 const summerCacheAtomClassInfo = require('./bean/summer.cache.atomClassInfo.js');
 const summerCacheAtomClassInner = require('./bean/summer.cache.atomClassInner.js');
 const summerCacheRoleScopesOfUser = require('./bean/summer.cache.roleScopesOfUser.js');
+const summerCacheUserInfo = require('./bean/summer.cache.userInfo.js');
 
 module.exports = app => {
   const beans = {
@@ -229,6 +230,10 @@ module.exports = app => {
     'summer.cache.roleScopesOfUser': {
       mode: 'ctx',
       bean: summerCacheRoleScopesOfUser,
+    },
+    'summer.cache.userInfo': {
+      mode: 'ctx',
+      bean: summerCacheUserInfo,
     },
   };
   return beans;

@@ -159,17 +159,13 @@ module.exports = app => {
       const userIdsWant = Object.keys(userIdsWantMap).map(userId => parseInt(userId));
       if (userIdsWant.length === 0) return;
       // select
-      const users = await this.ctx.bean.user.model.select({
-        where: {
-          id: userIdsWant,
-        },
-      });
+      const usersWant = await this.ctx.bean.user.getCacheUsers({ userIds: userIdsWant });
       // set
       for (item of items) {
         for (const userIdKey of userIdsKey) {
           const userId = item[userIdKey];
           if (!userId) continue;
-          const user = users.find(item => item.id === userId);
+          const user = usersWant.find(item => item.id === userId);
           if (!user) continue;
           item[`_${userIdKey}Name`] = user.userName;
           item[`_${userIdKey}Avatar`] = user.avatar;

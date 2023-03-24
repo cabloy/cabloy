@@ -108,7 +108,17 @@ module.exports = appInfo => {
           max: 500,
         },
         redis: {
-          ttl: 2 * 60 * 60 * 1000, // 2 hours
+          ttl: 4 * 60 * 60 * 1000, // 4 hours
+        },
+      },
+      userInfo: {
+        bean: 'userInfo',
+        mode: 'all',
+        mem: {
+          max: 500,
+        },
+        redis: {
+          ttl: 4 * 60 * 60 * 1000, // 4 hours
         },
       },
     },
