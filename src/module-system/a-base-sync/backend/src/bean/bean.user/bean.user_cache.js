@@ -20,6 +20,16 @@ module.exports = ctx => {
         userId
       );
     }
+
+    async deleteCacheUser({ userId }) {
+      return await ctx.bean.summer.del(
+        {
+          module: moduleInfo.relativeName,
+          name: 'userInfo',
+        },
+        userId
+      );
+    }
   }
   return User;
 };
