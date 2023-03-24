@@ -15,8 +15,6 @@ module.exports = app => {
       await this._atomCategoryIdTranslate({ items });
       // revision
       this._appendRevisionToHistory({ items });
-      // flow
-      this._flowNodeNameCurrentLocaleTranslate({ items });
       // atomLanguage
       this._atomLanguageLocaleTranslate({ items });
       // atomDisabled

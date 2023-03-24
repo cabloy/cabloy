@@ -208,13 +208,6 @@ export default {
           </f7-badge>
         );
       }
-      if (item.flowNodeNameCurrentLocale) {
-        return (
-          <f7-badge key="flowNodeNameCurrent" color={color}>
-            {item.flowNodeNameCurrentLocale}
-          </f7-badge>
-        );
-      }
       return null;
     },
     info_renderActionsRight() {

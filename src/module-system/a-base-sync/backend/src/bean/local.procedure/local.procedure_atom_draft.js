@@ -30,7 +30,6 @@ module.exports = ctx => {
       // -- k: aTagRef
       // -- p: aCmsArticle
       // -- q: aCmsContent
-      // -- r: aFlow
 
       // for safe
       // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
@@ -130,11 +129,6 @@ module.exports = ctx => {
         _fileWhere = '';
       }
 
-      // flow
-      const _flowField = ',r.flowStatus,r.flowNodeIdCurrent,r.flowNodeNameCurrent';
-      const _flowJoin = ' left join aFlow r on r.id=a.atomFlowId';
-      const _flowWhere = '';
-
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
@@ -164,7 +158,7 @@ module.exports = ctx => {
                 a.atomSimple,a.atomDisabled,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt
                 ${_starField} ${_labelField} ${_commentField}
-                ${_fileField} ${_flowField}
+                ${_fileField}
               `;
       }
 
@@ -176,7 +170,6 @@ module.exports = ctx => {
             ${_labelJoin}
             ${_commentJoin}
             ${_fileJoin}
-            ${_flowJoin}
             ${_cmsJoin}
 
           ${_where}
@@ -190,7 +183,6 @@ module.exports = ctx => {
              ${_labelWhere}
              ${_commentWhere}
              ${_fileWhere}
-             ${_flowWhere}
              ${_cmsWhere}
            )
 
