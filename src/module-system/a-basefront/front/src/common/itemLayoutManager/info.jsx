@@ -200,8 +200,8 @@ export default {
       return item.atomClosed === 0 ? 'orange' : 'gray';
     },
     info_renderFlowNodeState(item) {
-      const color = this.info_getAtomStateColor(item);
       if (item._atomStateTitleLocale) {
+        const color = this.info_getAtomStateColor(item);
         return (
           <f7-badge key="_atomStateTitleLocale" color={color}>
             {item._atomStateTitleLocale}
