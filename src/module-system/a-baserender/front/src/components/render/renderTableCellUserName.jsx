@@ -27,14 +27,24 @@ export default {
     getAvatarUrl(avatar, size) {
       return this.$meta.util.combineAvatarUrl(avatar, size);
     },
+    _getUserNameField(key) {
+      if (key === 'userIdCreated') return 'userName';
+      if (key === 'userIdUpdated') return 'userNameUpdated';
+      return (this.mapper && this.mapper.userName) || `_${key}Name`;
+    },
+    _getAvatarField(key) {
+      if (key === 'userIdCreated') return 'avatar';
+      if (key === 'userIdUpdated') return 'avatarUpdated';
+      return (this.mapper && this.mapper.avatar) || `_${key}Avatar`;
+    },
   },
   render() {
     const { column, record } = this.info;
     // userId
     const userId = parseInt(this.info.text || 0);
     const key = column.key;
-    const userNameField = key === 'userIdCreated' ? 'userName' : (this.mapper && this.mapper.userName) || `_${key}Name`;
-    const avatarField = key === 'userIdCreated' ? 'avatar' : (this.mapper && this.mapper.avatar) || `_${key}Avatar`;
+    const userNameField = this._getUserNameField(key);
+    const avatarField = this._getAvatarField(key);
     const userName = record[userNameField];
     const userAvatar = record[avatarField];
     // avatar
