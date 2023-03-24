@@ -33,8 +33,8 @@ export default {
     // userId
     const userId = parseInt(this.info.text || 0);
     const key = column.key;
-    const userNameField = (this.mapper && this.mapper.userName) || `_${key}Name`;
-    const avatarField = (this.mapper && this.mapper.avatar) || `_${key}Avatar`;
+    const userNameField = key === 'userIdCreated' ? 'userName' : (this.mapper && this.mapper.userName) || `_${key}Name`;
+    const avatarField = key === 'userIdCreated' ? 'avatar' : (this.mapper && this.mapper.avatar) || `_${key}Avatar`;
     const userName = record[userNameField];
     const userAvatar = record[avatarField];
     // avatar

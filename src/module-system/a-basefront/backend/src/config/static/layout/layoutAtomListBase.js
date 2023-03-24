@@ -145,12 +145,12 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'userName',
+                dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellUserName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellUserName',
                 },
               },
               {
@@ -236,12 +236,12 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'userName',
+                dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellUserName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellUserName',
                 },
               },
               {
@@ -320,7 +320,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
