@@ -135,13 +135,13 @@ module.exports = app => {
     }
 
     async _userIdsTranslate({ items, item, atomClassBase }) {
-      if (!atomClassBase) return;
-      // userIds
-      if (!atomClassBase.userIds) return;
-      let userIdsKey = atomClassBase.userIds;
+      // userIdsKey
+      let userIdsKey = (atomClassBase && atomClassBase.userIds) || [];
       if (!Array.isArray(userIdsKey)) {
         userIdsKey = userIdsKey.split(',');
       }
+      userIdsKey.push('userIdCreated');
+      userIdsKey.push('userIdUpdated');
       // items
       if (item) {
         items = [item];
@@ -167,8 +167,16 @@ module.exports = app => {
           if (!userId) continue;
           const user = usersWant.find(item => item.id === userId);
           if (!user) continue;
-          item[`_${userIdKey}Name`] = user.userName;
-          item[`_${userIdKey}Avatar`] = user.avatar;
+          if (userIdKey === 'userIdCreated') {
+            item.userName = user.userName;
+            item.avatar = user.avatar;
+          } else if (userIdKey === 'userIdUpdated') {
+            item.userNameUpdated = user.userName;
+            item.avatarUpdated = user.avatar;
+          } else {
+            item[`_${userIdKey}Name`] = user.userName;
+            item[`_${userIdKey}Avatar`] = user.avatar;
+          }
         }
       }
     }
