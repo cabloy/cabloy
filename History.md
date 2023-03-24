@@ -9,7 +9,7 @@
     - 业务模块: a-summer
     - 一级：内存分布式缓存
     - 二级：Redis 分布式缓存
-    - 增加 Summer 缓存用例：atomClassInfo/atomClassInner/roleScopesOfUser/userInfo/categoryInfo
+    - 增加 Summer 缓存用例，减少查库次数：atomClassInfo/atomClassInner/roleScopesOfUser/userInfo/categoryInfo
 
   - 性能优化
     - 查询数据：权限匹配优化
