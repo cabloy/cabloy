@@ -26,7 +26,6 @@ module.exports = ctx => {
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
-      // -- g2: aUser
       // -- h: aComment
       // -- i: aFile
       // -- j: aCategory
@@ -145,8 +144,7 @@ module.exports = ctx => {
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomState,
-                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
-                g2.userName as userNameUpdated,g2.avatar as avatarUpdated
+                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt
                 ${_commentField} ${_fileField} ${_resourceField}`;
       }
 
@@ -167,7 +165,6 @@ module.exports = ctx => {
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
-            left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
             ${_tagJoin}
