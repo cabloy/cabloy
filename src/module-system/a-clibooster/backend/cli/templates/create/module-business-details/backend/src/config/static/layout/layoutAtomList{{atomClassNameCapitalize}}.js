@@ -21,12 +21,12 @@ module.exports = app => {
                 align: 'left',
               },
               {
-                dataIndex: 'userName',
+                dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellUserName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellUserName',
                 },
               },
               {

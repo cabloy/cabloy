@@ -62,12 +62,12 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'userName',
+                dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellUserName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellUserName',
                 },
               },
               {
@@ -99,7 +99,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Resource',
     atomStaticKey: 'layoutAtomListResource',
-    atomRevision: 5,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
