@@ -1,16 +1,19 @@
 # History
 
-## 2023-03-22, Version 4.31.0
+## 2023-03-24, Version 4.31.0（未发布）
 
 - **Feat**
 
-  - 二级分布式缓存
+  - 二级分布式缓存：Summer
 
+    - 业务模块: a-summer
     - 一级：内存分布式缓存
     - 二级：Redis 分布式缓存
+    - 增加 Summer 缓存用例：atomClassInfo/atomClassInner/roleScopesOfUser/userInfo/categoryInfo
 
   - 性能优化
-    - atomClassInner 逻辑优化
+    - 查询数据：权限匹配优化
+    - 查询数据：基于 summer 缓存提升查询性能，从而移除多表联合查询机制：aAtomClass/aUser/aCategory/aFlow
 
 ## 2023-03-10, Version 4.30.3
 
