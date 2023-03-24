@@ -33,7 +33,6 @@ module.exports = ctx => {
       // -- f: {item}
       // -- h: aComment
       // -- i: aFile
-      // -- j: aCategory
       // -- k: aTagRef
       // -- m: aResourceLocale
       // -- p: aCmsArticle
@@ -176,7 +175,7 @@ module.exports = ctx => {
       } else {
         _selectFields = `${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
+                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField}`;
@@ -203,7 +202,6 @@ module.exports = ctx => {
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
-            left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
             ${_tagJoin}
             ${_starJoin}
