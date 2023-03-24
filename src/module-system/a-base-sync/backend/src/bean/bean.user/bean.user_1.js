@@ -7,6 +7,10 @@ module.exports = ctx => {
 
   class User {
     async get(where) {
+      const keys = Object.keys(where);
+      if (keys.length === 1 && keys[0] === 'id') {
+        return await ctx.bean.user.getCacheUser({ userId: where.id });
+      }
       return await this.model.get(where);
     }
 

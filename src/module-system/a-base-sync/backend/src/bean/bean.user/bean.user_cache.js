@@ -10,6 +10,16 @@ module.exports = ctx => {
         userIds
       );
     }
+
+    async getCacheUser({ userId }) {
+      return await ctx.bean.summer.get(
+        {
+          module: moduleInfo.relativeName,
+          name: 'userInfo',
+        },
+        userId
+      );
+    }
   }
   return User;
 };
