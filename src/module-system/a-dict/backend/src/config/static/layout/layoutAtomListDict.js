@@ -21,12 +21,12 @@ module.exports = app => {
                 align: 'left',
               },
               {
-                dataIndex: 'userName',
+                dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellUserName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellUserName',
                 },
               },
               {
@@ -58,7 +58,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Dict',
     atomStaticKey: 'layoutAtomListDict',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
