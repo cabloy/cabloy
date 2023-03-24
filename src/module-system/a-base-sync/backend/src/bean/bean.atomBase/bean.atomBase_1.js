@@ -134,6 +134,33 @@ module.exports = app => {
       meta.flags.push(this.ctx.text(title));
     }
 
+    async _atomCategoryIdTranslate({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
+      // categoryIdsWant
+      const categoryIdsWantMap = {};
+      for (item of items) {
+        const categoryId = item.atomCategoryId;
+        if (categoryId) {
+          categoryIdsWantMap[categoryId] = true;
+        }
+      }
+      const categoryIdsWant = Object.keys(categoryIdsWantMap).map(categoryId => parseInt(categoryId));
+      if (categoryIdsWant.length === 0) return;
+      // select
+      const categoriesWant = await this.ctx.bean.category.getCacheCategories({ categoryIds: categoryIdsWant });
+      // set
+      for (item of items) {
+        const categoryId = item.atomCategoryId;
+        if (!categoryId) continue;
+        const category = categoriesWant.find(item => item.id === categoryId);
+        if (!category) continue;
+        item.atomCategoryName = category.categoryName;
+      }
+    }
+
     async _userIdsTranslate({ items, item, atomClassBase }) {
       // userIdsKey
       let userIdsKey = (atomClassBase && atomClassBase.userIds) || [];

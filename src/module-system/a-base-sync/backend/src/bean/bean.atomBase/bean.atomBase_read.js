@@ -13,6 +13,8 @@ module.exports = app => {
       const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // dict translate
       await this._dictTranslate({ item, atomClassBase });
+      // atomCategoryName
+      await this._atomCategoryIdTranslate({ item });
       // revision
       this._appendRevisionToHistory({ item });
       // flow
