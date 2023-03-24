@@ -6,7 +6,6 @@ module.exports = ctx => {
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
-      // -- g: aUser
       // -- g2: aUser
       // -- j: aCategory
       // -- m: aResourceLocale
@@ -27,8 +26,6 @@ module.exports = ctx => {
       let _itemField, _itemJoin;
 
       let _resourceField, _resourceJoin, _resourceWhere;
-
-      let _userField, _userJoin;
 
       // star
       if (userIdWho) {
@@ -73,30 +70,18 @@ module.exports = ctx => {
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
-      // aUser
-      if (forAtomUser) {
-        _userField = '';
-        _userJoin = '';
-      } else {
-        _userField = 'g.userName,g.avatar,';
-        _userJoin = ' left join aUser g on a.userIdCreated=g.id';
-      }
-
       // sql
       const _sql = `select ${_itemField} ${_cmsField}
                 a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
-                ${_userField}
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField}
                 ${_labelField}
                 ${_resourceField}
                 ${_flowField}
           from aAtom a
-
-            ${_userJoin}
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}

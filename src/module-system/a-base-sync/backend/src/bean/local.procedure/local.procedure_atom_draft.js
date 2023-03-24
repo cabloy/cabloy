@@ -25,7 +25,6 @@ module.exports = ctx => {
       // -- d: aAtomStar
       // -- e: aAtomLabelRef
       // -- f: {item}
-      // -- g: aUser
       // -- g2: aUser
       // -- h: aComment
       // -- i: aFile
@@ -166,7 +165,6 @@ module.exports = ctx => {
                 a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,j.categoryName as atomCategoryName,a.atomTags,
                 a.atomSimple,a.atomDisabled,a.atomState,
                 a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt,
-                g.userName,g.avatar,
                 g2.userName as userNameUpdated,g2.avatar as avatarUpdated
                 ${_starField} ${_labelField} ${_commentField}
                 ${_fileField} ${_flowField}
@@ -175,7 +173,6 @@ module.exports = ctx => {
 
       // sql
       const _sql = `select ${_selectFields} from aAtom a
-            left join aUser g on a.userIdCreated=g.id
             left join aUser g2 on a.userIdUpdated=g2.id
             left join aCategory j on a.atomCategoryId=j.id
             ${_itemJoin}
