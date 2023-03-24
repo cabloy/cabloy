@@ -196,20 +196,6 @@ export default {
         </div>
       );
     },
-    info_getAtomStateColor(item) {
-      return item.atomClosed === 0 ? 'orange' : 'gray';
-    },
-    info_renderFlowNodeState(item) {
-      if (item._atomStateTitleLocale) {
-        const color = this.info_getAtomStateColor(item);
-        return (
-          <f7-badge key="_atomStateTitleLocale" color={color}>
-            {item._atomStateTitleLocale}
-          </f7-badge>
-        );
-      }
-      return null;
-    },
     info_renderActionsRight() {
       if (!this.base_ready) return;
       const item = this.base.item;
@@ -223,7 +209,7 @@ export default {
         );
       }
       // flow
-      const domFlowNodeState = this.info_renderFlowNodeState(item);
+      const domFlowNodeState = this.item_renderFlowNodeState(item);
       if (domFlowNodeState) {
         children.push(domFlowNodeState);
       }
