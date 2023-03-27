@@ -266,6 +266,19 @@ module.exports = ctx => {
           name: key,
           ..._atoms[key].info,
         };
+        // patch itemOnly
+        if (atomClass.itemOnly) {
+          Object.assign(atomClass, {
+            language: false,
+            category: false,
+            tag: false,
+            simple: true,
+            history: false,
+            inner: true,
+            comment: false,
+            attachment: false,
+          });
+        }
         // titleLocale
         atomClass.titleLocale = ctx.text(atomClass.title);
         // ok
