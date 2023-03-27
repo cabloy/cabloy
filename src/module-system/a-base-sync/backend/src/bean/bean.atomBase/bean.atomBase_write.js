@@ -15,32 +15,43 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase {
     async write({ atomClass, target, key, item, options, user }) {
-      if (!item) return;
+      if (!item) return; // atomClass
+      // atomClassBase
+      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // force delete atomDisabled
-      delete item.atomDisabled;
+      if (!atomClassBase.itemOnly) {
+        delete item.atomDisabled;
+      }
       // simple/stage
       const atomSimple = item.atomSimple;
       const atomStage = item.atomStage;
-      // atomClass
-      const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // _atomOld
       let _atomOld;
-      if (atomClassBase.tag && item.atomTags !== undefined && atomStage === 1) {
-        _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      if (!atomClassBase.itemOnly) {
+        if (atomClassBase.tag && item.atomTags !== undefined && atomStage === 1) {
+          _atomOld = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+        }
       }
       // validate
       await this._writeValidate({ atomClass, target, key, item, options, user });
       // --- item is filtered by validation
       // write atom
-      await this._writeAtom({ key, item, user, atomSimple, atomStage });
+      if (!atomClassBase.itemOnly) {
+        await this._writeAtom({ key, item, user, atomSimple, atomStage });
+      }
       // tag
-      if (atomClassBase.tag && item.atomTags !== undefined) {
-        await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
-        if (atomStage === 1) {
-          await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
+      if (!atomClassBase.itemOnly) {
+        if (atomClassBase.tag && item.atomTags !== undefined) {
+          await this.ctx.bean.tag.updateTagRefs({ atomId: key.atomId, atomTags: item.atomTags });
+          if (atomStage === 1) {
+            await this.ctx.bean.tag.setTagAtomCount({ tagsNew: item.atomTags, tagsOld: _atomOld.atomTags });
+          }
         }
       }
       // handle resource
-      await this._writeHandleResource({ atomClass, atomClassBase, key, item });
+      if (!atomClassBase.itemOnly) {
+        await this._writeHandleResource({ atomClass, atomClassBase, key, item });
+      }
     }
 
     async _writeValidate({ atomClass, target, key, item, options, user }) {
