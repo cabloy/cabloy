@@ -41,6 +41,15 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+
+      if (options.version === 2) {
+        // aAtom: drop atomId
+        const sql = `
+          ALTER TABLE aUserOnlineHistory
+            DROP COLUMN atomId
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {
