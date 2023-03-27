@@ -4,6 +4,18 @@ module.exports = app => {
     async create({ atomClass, item, options, user }) {
       // atomClass
       const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // itemOnly
+      if (atomClassBase.itemOnly) {
+        return { atomId: undefined };
+      }
+      // prepare
+      await this._create_prepareItem({ atomClassBase, atomClass, item, options, user });
+      // add
+      const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
+      return { atomId };
+    }
+
+    async _create_prepareItem({ atomClassBase, atomClass, item, options, user }) {
       // atomName
       if (!item.atomName) {
         // draftId
@@ -54,9 +66,6 @@ module.exports = app => {
         }
         item.atomCategoryId = category.id;
       }
-      // add
-      const atomId = await this.ctx.bean.atom._add({ atomClass, atom: item, user });
-      return { atomId };
     }
   }
 

@@ -55,16 +55,18 @@ module.exports = ctx => {
       }
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // atomSimple
-      const atomSimple = Number(Boolean(_atomClass.simple));
+      const atomSimple = Number(Boolean(atomClassBase.simple));
       // item
       item = item || {};
-      item.atomStage = atomStage !== undefined ? atomStage : atomSimple;
-      item.roleIdOwner = roleIdOwner;
+      if (!atomClassBase.itemOnly) {
+        item.atomStage = atomStage !== undefined ? atomStage : atomSimple;
+        item.roleIdOwner = roleIdOwner;
+      }
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       const res = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,

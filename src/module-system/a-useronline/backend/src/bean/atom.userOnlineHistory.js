@@ -2,13 +2,12 @@ module.exports = app => {
   class Atom extends app.meta.AtomBase {
     async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, options, user });
+      await super.create({ atomClass, item, options, user });
       // add userOnlineHistory
-      const res = await this.ctx.model.userOnlineHistory.insert({
-        atomId: key.atomId,
-      });
+      const res = await this.ctx.model.userOnlineHistory.insert();
       // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      const itemId = res.insertId;
+      return { atomId: itemId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
