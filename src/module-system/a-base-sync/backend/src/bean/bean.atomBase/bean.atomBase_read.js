@@ -11,6 +11,8 @@ module.exports = app => {
       item = await this._readValidate({ atomClass, item, options, user });
       // atomClass
       const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
+      // patchAtomClassInfo
+      await this._patchAtomClassInfo({ item });
       // dict translate
       await this._dictTranslate({ item, atomClassBase });
       // atomCategoryName

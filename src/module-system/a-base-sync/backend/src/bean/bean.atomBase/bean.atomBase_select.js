@@ -9,6 +9,8 @@ module.exports = app => {
       if (items.length === 0) return;
       // atomClass
       const atomClassBase = atomClass ? await this.ctx.bean.atomClass.atomClass(atomClass) : null;
+      // patchAtomClassInfo
+      await this._patchAtomClassInfo({ items });
       // dict translate
       await this._dictTranslate({ items, atomClassBase });
       // atomCategoryName

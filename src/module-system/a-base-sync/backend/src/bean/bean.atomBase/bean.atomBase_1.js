@@ -244,6 +244,19 @@ module.exports = app => {
         }
       }
     }
+
+    async _listPatchAtomClass({ items }) {
+      if (items.length === 0) return;
+      const atomClassIds = Set.unique(items.map(item => item.atomClassId));
+      // cache
+      const cache = ctx.bean.summer.getCache({ module: moduleInfo.relativeName, name: 'atomClassInfo' });
+      const atomClasses = await cache.mget(atomClassIds);
+      for (const item of items) {
+        const atomClass = atomClasses.find(atomClass => atomClass.id === item.atomClassId);
+        item.module = atomClass.module;
+        item.atomClassName = atomClass.atomClassName;
+      }
+    }
   }
 
   return AtomBase;
