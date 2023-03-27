@@ -50,14 +50,6 @@ module.exports = app => {
             title: 'Online Users(History)',
             tableName: 'aUserOnlineHistory',
             itemOnly: true,
-            // language: false,
-            // category: false,
-            // tag: false,
-            // simple: true,
-            // history: false,
-            // inner: true,
-            // comment: false,
-            // attachment: false,
           },
           actions: {},
           validator: 'userOnlineHistory',
@@ -96,7 +88,7 @@ module.exports = app => {
     index: {
       indexes: {
         aUserOnline: 'createdAt,updatedAt,atomId,userId,onlineTimeLast,expireTime',
-        aUserOnlineHistory: 'createdAt,updatedAt,atomId,userId,onlineTime',
+        aUserOnlineHistory: 'createdAt,updatedAt,userId,onlineTime',
       },
     },
   };
