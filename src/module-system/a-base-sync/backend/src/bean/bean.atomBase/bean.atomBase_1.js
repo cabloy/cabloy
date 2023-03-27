@@ -245,12 +245,19 @@ module.exports = app => {
       }
     }
 
-    async _listPatchAtomClass({ items }) {
+    async _patchAtomClassInfo({ items, item }) {
+      // items
+      if (item) {
+        items = [item];
+      }
       if (items.length === 0) return;
+      // atomClassIds
       const atomClassIds = Set.unique(items.map(item => item.atomClassId));
       // cache
-      const cache = ctx.bean.summer.getCache({ module: moduleInfo.relativeName, name: 'atomClassInfo' });
-      const atomClasses = await cache.mget(atomClassIds);
+      const atomClasses = await this.ctx.bean.summer.mget(
+        { module: moduleInfo.relativeName, name: 'atomClassInfo' },
+        atomClassIds
+      );
       for (const item of items) {
         const atomClass = atomClasses.find(atomClass => atomClass.id === item.atomClassId);
         item.module = atomClass.module;
