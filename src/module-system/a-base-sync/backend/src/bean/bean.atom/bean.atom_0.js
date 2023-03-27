@@ -100,6 +100,8 @@ module.exports = ctx => {
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
         if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      } else {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
       }
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -211,39 +213,59 @@ module.exports = ctx => {
 
     // write
     //   target: should be null for frontend call
-    async write({ key, target, item, options, user }) {
+    async write({ key, atomClass, target, item, options, user }) {
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) throw new Error(`atomClass not found for atom: ${key.atomId}`);
-      if (!key.itemId) key.itemId = atomClass.itemId;
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+        if (!atomClass) throw new Error(`atomClass not found for atom: ${key.atomId}`);
+      } else {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+      }
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // basic info
-      const _atomBasic = await this.modelAtom.get({ id: key.atomId });
+      let _atomBasic;
+      if (!atomClassBase.itemOnly) {
+        _atomBasic = await this.modelAtom.get({ id: key.atomId });
+        key.itemId = _atomBasic.itemId;
+      } else {
+        key.itemId = key.atomId;
+      }
       // support formal flow
       // if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
-      if (_atomBasic.atomSimple) {
-        if (_atomClass.history !== false) {
-          //  formal -> history
-          await this._copy({
-            target: 'history',
-            srcKey: { atomId: key.atomId },
-            srcItem: null,
-            destKey: null,
-            options,
-            user,
-          });
+      if (!atomClassBase.itemOnly) {
+        if (_atomBasic.atomSimple) {
+          if (atomClassBase.history !== false) {
+            //  formal -> history
+            await this._copy({
+              target: 'history',
+              srcKey: { atomId: key.atomId },
+              srcItem: null,
+              destKey: null,
+              options,
+              user,
+            });
+          }
         }
       }
       // write draft/formal(simple)
-      const itemWrite = Object.assign({}, item, {
-        atomId: key.atomId,
-        itemId: key.itemId,
-        atomSimple: _atomBasic.atomSimple,
-        atomStage: _atomBasic.atomSimple ? 1 : _atomBasic.atomStage,
-      });
+      let itemWrite;
+      if (!atomClassBase.itemOnly) {
+        itemWrite = Object.assign({}, item, {
+          atomId: key.atomId,
+          itemId: key.itemId,
+          atomSimple: _atomBasic.atomSimple,
+          atomStage: _atomBasic.atomSimple ? 1 : _atomBasic.atomStage,
+        });
+      } else {
+        itemWrite = Object.assign({}, item, {
+          atomId: key.atomId,
+          itemId: key.itemId,
+        });
+      }
+      // write
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
@@ -251,11 +273,13 @@ module.exports = ctx => {
         fn: 'write',
       });
       // update formal version for simple
-      if (_atomBasic.atomSimple) {
-        await this.modelAtom.update({
-          id: key.atomId,
-          atomRevision: _atomBasic.atomRevision + 1,
-        });
+      if (!atomClassBase.itemOnly) {
+        if (_atomBasic.atomSimple) {
+          await this.modelAtom.update({
+            id: key.atomId,
+            atomRevision: _atomBasic.atomRevision + 1,
+          });
+        }
       }
     }
 
