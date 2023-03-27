@@ -75,30 +75,36 @@ module.exports = ctx => {
       });
       const { atomId, itemId } = res;
       // save itemId
-      await this._update({
-        atom: { id: atomId, itemId },
-        user,
-      });
+      if (!atomClassBase.itemOnly) {
+        await this._update({
+          atom: { id: atomId, itemId },
+          user,
+        });
+      }
       // notify
-      this._notifyDraftsDrafting(null, atomClass);
+      if (!atomClassBase.itemOnly) {
+        this._notifyDraftsDrafting(null, atomClass);
+      }
       // ok
       const key = { atomId, itemId };
       const returnAtom = options.returnAtom;
       if (!returnAtom) return key;
       // read
-      item = await this.read({ key, user });
+      item = await this.read({ key, atomClass, user });
       return { key, atom: item };
     }
 
     // read
-    async read({ key, options, user }) {
+    async read({ key, atomClass, options, user }) {
       options = options || {};
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+        if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      }
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       const item = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,

@@ -86,10 +86,13 @@ module.exports = app => {
   ['insert'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
-        return function () {
-          const args = [];
-          if (this.table) args.push(this.table);
-          for (const arg of arguments) args.push(arg);
+        return function (...args) {
+          if (args.length === 0) {
+            args.push({});
+          }
+          if (this.table) {
+            args.unshift(this.table);
+          }
           this._insertRowsCheck(args[1]);
           return this.ctx.db[method].apply(this.ctx.db, args);
         };
