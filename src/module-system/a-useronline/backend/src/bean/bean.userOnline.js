@@ -155,6 +155,7 @@ module.exports = ctx => {
       //   write
       await ctx.bean.atom.write({
         key: atomKey,
+        atomClass: __atomClassUserOnlineHistory,
         item: {
           userId,
           onlineIP: data.onlineIPLast,
@@ -164,7 +165,6 @@ module.exports = ctx => {
         options: {
           ignoreValidate: true,
         },
-        user,
       });
       // ok
       return {
