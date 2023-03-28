@@ -144,16 +144,16 @@ module.exports = ctx => {
       if (!options.where) options.where = {};
       if (!options.orders) options.orders = [];
       // atomClass
-      let _atomClass;
+      let atomClassBase;
       let _moduleInfo;
       if (atomClass) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
-        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
         _moduleInfo = mparse.parseInfo(atomClass.module);
       }
       // selectBefore
       if (atomClass) {
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
         await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
@@ -164,10 +164,10 @@ module.exports = ctx => {
       // tableName
       let atomClassId;
       let tableName = '';
-      if (_atomClass) {
+      if (atomClassBase) {
         tableName = await this.getTableName({
           atomClass,
-          atomClassBase: _atomClass,
+          atomClassBase,
           options,
           mode: options.mode,
           user,
@@ -179,7 +179,7 @@ module.exports = ctx => {
         atomClassId = atomClass.id;
       }
       // cms
-      const cms = _atomClass && _atomClass.cms;
+      const cms = atomClassBase && atomClassBase.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // select
@@ -196,7 +196,7 @@ module.exports = ctx => {
       // select items
       if (!count) {
         if (atomClass) {
-          const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+          const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
           await ctx.meta.util.executeBean({
             beanModule: _moduleInfo.relativeName,
             beanFullName,
