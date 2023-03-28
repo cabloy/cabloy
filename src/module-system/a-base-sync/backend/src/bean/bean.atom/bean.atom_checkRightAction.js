@@ -198,7 +198,7 @@ module.exports = ctx => {
       const sql = await this.sqlProcedure.checkRightAction({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: atomClass.id,
+        atomClass,
         atomId: _atom.id,
         action,
         forAtomUser,
