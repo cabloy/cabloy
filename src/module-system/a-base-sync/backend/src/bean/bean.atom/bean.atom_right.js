@@ -67,7 +67,7 @@ module.exports = ctx => {
       // formal/history
       const sql = await this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
-        atomClassId: atomClass.id,
+        atomClass,
         userIdWho: user.id,
         atomId,
         forAtomUser,
@@ -99,7 +99,7 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: atomClass.id,
+        atomClass,
         action,
       });
       const actionRes = await ctx.model.queryOne(sql);
@@ -128,7 +128,7 @@ module.exports = ctx => {
       const sql = this.sqlProcedure.checkRightCreateRole({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId: atomClass.id,
+        atomClass,
         roleIdOwner,
       });
       return await ctx.model.queryOne(sql);
@@ -165,11 +165,10 @@ module.exports = ctx => {
     // actionsBulk of atomClass
     async actionsBulk({ atomClass, stage, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      const atomClassId = atomClass.id;
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
-        atomClassId,
+        atomClass,
       });
       const actionsRes = await ctx.model.query(sql);
       const res = [];
