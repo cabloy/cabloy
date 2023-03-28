@@ -277,6 +277,7 @@ module.exports = ctx => {
             inner: true,
             comment: false,
             attachment: false,
+            cms: false,
           });
         }
         // titleLocale
