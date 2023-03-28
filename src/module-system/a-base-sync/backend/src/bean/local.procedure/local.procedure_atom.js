@@ -3,7 +3,7 @@ module.exports = ctx => {
     async selectAtoms({
       iid,
       userIdWho,
-      atomClassId,
+      atomClass,
       tableName,
       where,
       orders,
@@ -44,7 +44,7 @@ module.exports = ctx => {
         return await this._selectAtoms_draft({
           iid,
           userIdWho,
-          atomClassId,
+          atomClass,
           tableName,
           where,
           orders,
@@ -65,7 +65,7 @@ module.exports = ctx => {
       if (userIdWho === 0) {
         return await this._selectAtoms_0({
           iid,
-          atomClassId,
+          atomClass,
           tableName,
           where,
           orders,
@@ -89,7 +89,7 @@ module.exports = ctx => {
       return await this._selectAtoms_formal({
         iid,
         userIdWho,
-        atomClassId,
+        atomClass,
         tableName,
         where,
         orders,
@@ -143,9 +143,9 @@ module.exports = ctx => {
       return ` and a.atomClassId in (${__atomClassIds.join(',')})`;
     }
 
-    async _prepare_roleScopesOfUser({ atomClassId, action, userIdWho }) {
+    async _prepare_roleScopesOfUser({ atomClass, action, userIdWho }) {
       const roleScopes = await ctx.bean.atom.getRoleScopesOfUser({
-        atomClass: { id: atomClassId },
+        atomClass: { id: atomClass.id },
         action,
         userId: userIdWho,
       });

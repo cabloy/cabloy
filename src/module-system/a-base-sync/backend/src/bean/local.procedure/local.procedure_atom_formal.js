@@ -3,7 +3,7 @@ module.exports = ctx => {
     async _selectAtoms_formal({
       iid,
       userIdWho,
-      atomClassId,
+      atomClass,
       tableName,
       where,
       orders,
@@ -39,7 +39,7 @@ module.exports = ctx => {
       // -- q: aCmsContent
 
       // important
-      if (!atomClassId && !star && !label && !mine) {
+      if (!atomClass && !star && !label && !mine) {
         ctx.throw(403);
       }
 
@@ -162,7 +162,7 @@ module.exports = ctx => {
       }
 
       // atomClass inner
-      if (atomClassId || star || label) {
+      if (atomClass || star || label) {
         _atomClassWhere = '';
       } else {
         _atomClassWhere = await this._prepare_atomClassIdsInner();
@@ -185,7 +185,7 @@ module.exports = ctx => {
       let _rightWhere = await this._selectAtoms_formal_rightWhere({
         iid,
         userIdWho,
-        atomClassId,
+        atomClass,
         tableName,
         star,
         label,
@@ -238,7 +238,7 @@ module.exports = ctx => {
     async _selectAtoms_formal_rightWhere({
       iid,
       userIdWho,
-      atomClassId,
+      atomClass,
       tableName,
       star,
       label,
@@ -297,7 +297,7 @@ module.exports = ctx => {
             `;
         }
       } else {
-        const roleScopes = await this._prepare_roleScopesOfUser({ atomClassId, action: 2, userIdWho });
+        const roleScopes = await this._prepare_roleScopesOfUser({ atomClass, action: 2, userIdWho });
         if (roleScopes === true) return ''; // pass through
         if (roleScopes === false) {
           _others = ''; // should check mine

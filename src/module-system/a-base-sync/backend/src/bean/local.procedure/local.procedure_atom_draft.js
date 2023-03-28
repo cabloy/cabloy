@@ -141,7 +141,7 @@ module.exports = ctx => {
       // atomClass inner
       // eslint-disable-next-line
       _atomClassWhere = '';
-      // if (atomClassId || star || label) {
+      // if (atomClass || star || label) {
       //   _atomClassWhere = '';
       // } else {
       //   _atomClassWhere = await this._prepare_atomClassIdsInner();
