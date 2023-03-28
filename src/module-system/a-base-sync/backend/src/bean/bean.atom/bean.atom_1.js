@@ -310,11 +310,11 @@ module.exports = ctx => {
       const resource = options.resource || 0;
       const resourceLocale = options.resourceLocale === false ? false : options.resourceLocale || ctx.locale;
       // atomClass
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // tableName
       const tableName = await this.getTableName({
         atomClass,
-        atomClassBase: _atomClass,
+        atomClassBase,
         options,
         mode,
         user,
@@ -322,7 +322,7 @@ module.exports = ctx => {
         key,
       });
       // cms
-      const cms = _atomClass && _atomClass.cms;
+      const cms = atomClassBase && atomClassBase.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // sql
@@ -347,10 +347,8 @@ module.exports = ctx => {
       return atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
     }
 
-    async _list({
-      atomClassId,
-      tableName,
-      options: {
+    async _list({ atomClass, options, user, pageForce = true, count = 0 }) {
+      const {
         where,
         orders,
         page,
@@ -367,15 +365,35 @@ module.exports = ctx => {
         resourceLocale,
         role = 0,
         mode,
-      },
-      cms,
-      forAtomUser,
-      user,
-      pageForce = true,
-      count = 0,
-    }) {
+      } = options;
+      // page
       page = ctx.bean.util.page(page, pageForce);
+      // stage
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
+      // atomClass
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // tableName
+      let atomClassId;
+      let tableName = '';
+      if (atomClassBase) {
+        tableName = await this.getTableName({
+          atomClass,
+          atomClassBase,
+          options,
+          mode: options.mode,
+          user,
+          action: 'select',
+          count,
+        });
+        // 'where' should append atomClassId, such as article/post using the same table
+        options.where['a.atomClassId'] = atomClass.id;
+        atomClassId = atomClass.id;
+      }
+      // cms
+      const cms = atomClassBase && atomClassBase.cms;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
+
       const sql = await this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,

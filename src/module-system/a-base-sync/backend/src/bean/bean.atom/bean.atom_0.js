@@ -161,31 +161,9 @@ module.exports = ctx => {
           fn: 'selectBefore',
         });
       }
-      // tableName
-      let atomClassId;
-      let tableName = '';
-      if (atomClassBase) {
-        tableName = await this.getTableName({
-          atomClass,
-          atomClassBase,
-          options,
-          mode: options.mode,
-          user,
-          action: 'select',
-          count,
-        });
-        // 'where' should append atomClassId, such as article/post using the same table
-        options.where['a.atomClassId'] = atomClass.id;
-        atomClassId = atomClass.id;
-      }
-      // cms
-      const cms = atomClassBase && atomClassBase.cms;
-      // forAtomUser
-      const forAtomUser = this._checkForAtomUser(atomClass);
       // select
       const items = await this._list({
-        atomClassId,
-        tableName,
+        atomClass,
         options,
         cms,
         forAtomUser,
