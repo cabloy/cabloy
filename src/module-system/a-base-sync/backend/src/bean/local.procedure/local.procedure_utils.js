@@ -38,6 +38,11 @@ module.exports = ctx => {
       });
       return roleScopes;
     }
+
+    _combineFields(fields) {
+      const _fields = fields.filter(field => !!field).map(field => field.trim().replace(/(^,)|(,$)/g, ''));
+      return _fields.join(',');
+    }
   }
   return Procedure;
 };

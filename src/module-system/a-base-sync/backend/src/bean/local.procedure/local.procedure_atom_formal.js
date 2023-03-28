@@ -199,8 +199,16 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `${_itemField} ${_cmsField} ${_atomField}
-                ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField}`;
+        _selectFields = this._combineFields([
+          _itemField,
+          _cmsField,
+          _atomField,
+          _starField,
+          _labelField,
+          _commentField,
+          _fileField,
+          _resourceField,
+        ]);
       }
 
       // _rightWhere: false/empty/clause
