@@ -10,6 +10,7 @@ const procedure_atomRight_checkRightAction = require('./local.procedure/local.pr
 const procedure_atomRight_checkRightActionBulk = require('./local.procedure/local.procedure_atomRight_checkRightActionBulk.js');
 const procedure_atomRight_checkRightCreateRole = require('./local.procedure/local.procedure_atomRight_checkRightCreateRole.js');
 const procedure_resource = require('./local.procedure/local.procedure_resource.js');
+const procedure_utils = require('./local.procedure/local.procedure_utils.js');
 
 module.exports = ctx => {
   return ctx.app.meta.util.mixinClasses(
@@ -26,6 +27,7 @@ module.exports = ctx => {
       procedure_atomRight_checkRightActionBulk,
       procedure_atomRight_checkRightCreateRole,
       procedure_resource,
+      procedure_utils,
     ],
     ctx
   );
