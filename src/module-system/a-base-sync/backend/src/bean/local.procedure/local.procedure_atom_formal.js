@@ -61,7 +61,7 @@ module.exports = ctx => {
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
-      let _atomField, _atomJoin;
+      let _atomField, _atomJoin, _atomWhere;
 
       let _atomClassWhere;
 
@@ -106,7 +106,7 @@ module.exports = ctx => {
         _starJoin = '';
         _starWhere = '';
       }
-      if (!atomClassBase.itemOnly) {
+      if (!atomClassBase || !atomClassBase.itemOnly) {
         _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
       } else {
         _starField = '';
@@ -120,7 +120,7 @@ module.exports = ctx => {
         _labelJoin = '';
         _labelWhere = '';
       }
-      if (!atomClassBase.itemOnly) {
+      if (!atomClassBase || !atomClassBase.itemOnly) {
         _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
       } else {
         _labelField = '';
@@ -165,7 +165,7 @@ module.exports = ctx => {
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
-        if (!atomClassBase.itemOnly) {
+        if (!atomClassBase || !atomClassBase.itemOnly) {
           _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
         } else {
           _itemJoin = `from ${tableName} f`;
@@ -176,15 +176,17 @@ module.exports = ctx => {
       }
 
       // atom
-      if (!atomClassBase.itemOnly) {
+      if (!atomClassBase || !atomClassBase.itemOnly) {
         _atomField = `a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
           a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
           a.atomSimple,a.atomDisabled,a.atomState,
           a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt`;
         _atomJoin = 'from aAtom a';
+        _atomWhere = `a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}`;
       } else {
         _atomField = '';
         _atomJoin = '';
+        _atomWhere = `f.deleted=0 and f.iid=${iid}`;
       }
 
       // atomClass inner
@@ -216,6 +218,7 @@ module.exports = ctx => {
         iid,
         userIdWho,
         atomClass,
+        atomClassBase,
         tableName,
         star,
         label,
@@ -243,7 +246,7 @@ module.exports = ctx => {
 
           ${_where}
            (
-             a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}
+             ${_atomWhere}
              ${_atomClassWhere}
              ${_languageWhere}
              ${_categoryWhere}
@@ -269,6 +272,7 @@ module.exports = ctx => {
       iid,
       userIdWho,
       atomClass,
+      atomClassBase,
       tableName,
       star,
       label,
@@ -300,9 +304,18 @@ module.exports = ctx => {
       }
 
       // mine
-      const _mine = `
-        (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-      `;
+      let _mine;
+      if (!atomClassBase || !atomClassBase.itemOnly) {
+        _mine = `
+          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+        `;
+      } else {
+        const enableRightMine = atomClassBase.enableRightMine;
+        const userIdFieldName = typeof enableRightMine === 'string' ? enableRightMine : 'userIdCreated';
+        _mine = `
+          (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+        `;
+      }
       if (mine) {
         return _mine;
       }

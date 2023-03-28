@@ -21,6 +21,13 @@ module.exports = ctx => {
     }
 
     async __getRoleScopesOfUserRaw({ atomClassId, action, userId }) {
+      // atomClass
+      const atomClass = await ctx.bean.atomClass.get({ id: atomClassId });
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // itemOnly
+      if (atomClassBase.itemOnly) {
+        return await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user: { id: userId } });
+      }
       // sql
       const sql = `
         select c.roleIdWhom from aViewUserRightAtomClassRole c
