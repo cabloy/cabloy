@@ -1,10 +1,9 @@
 module.exports = ctx => {
   class Procedure {
-    checkRightActionBulk({ iid, userIdWho, atomClassId, action }) {
+    checkRightActionBulk({ iid, userIdWho, atomClass, action }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
-      atomClassId = parseInt(atomClassId);
       action = parseInt(action || 0);
 
       const _actionWhere = action ? `and a.code=${action}` : '';
@@ -16,7 +15,7 @@ module.exports = ctx => {
       // sql
       const _sql = `select a.*,c.module,c.atomClassName from aAtomAction a
             left join aAtomClass c on a.atomClassId=c.id
-              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClassId} ${_actionWhere} ${_rightWhere}
+              where a.iid=${iid} and a.bulk=1 and a.atomClassId=${atomClass.id} ${_actionWhere} ${_rightWhere}
         `;
       return _sql;
     }

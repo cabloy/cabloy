@@ -1,8 +1,8 @@
 module.exports = ctx => {
   class Procedure {
     // check for formal/history
-    async checkRightRead({ iid, userIdWho, atomClassId, atomId, forAtomUser }) {
-      return await this.checkRightAction({ iid, userIdWho, atomClassId, atomId, action: 2, forAtomUser });
+    async checkRightRead({ iid, userIdWho, atomClass, atomId, forAtomUser }) {
+      return await this.checkRightAction({ iid, userIdWho, atomClass, atomId, action: 2, forAtomUser });
     }
 
     // // check for formal/history

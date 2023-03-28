@@ -1,10 +1,9 @@
 module.exports = ctx => {
   class Procedure {
-    checkRightCreateRole({ iid, userIdWho, atomClassId, roleIdOwner }) {
+    checkRightCreateRole({ iid, userIdWho, atomClass, roleIdOwner }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
-      atomClassId = parseInt(atomClassId);
       roleIdOwner = parseInt(roleIdOwner);
 
       const _rightWhere = `
@@ -14,7 +13,7 @@ module.exports = ctx => {
       `;
       // sql
       const _sql = `select a.* from aAtomClass a
-            where a.iid=${iid} and a.id=${atomClassId} ${_rightWhere}
+            where a.iid=${iid} and a.id=${atomClass.id} ${_rightWhere}
         `;
       return _sql;
     }

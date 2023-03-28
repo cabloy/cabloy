@@ -1,13 +1,13 @@
 module.exports = ctx => {
   class Procedure {
-    async checkRightAction({ iid, userIdWho, atomClassId, atomId, action, forAtomUser }) {
+    async checkRightAction({ iid, userIdWho, atomClass, atomId, action, forAtomUser }) {
       // for safe
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       action = parseInt(action);
       // _rightWhere
-      let _rightWhere = await this._checkRightAction_rightWhere({ iid, userIdWho, atomClassId, action, forAtomUser });
+      let _rightWhere = await this._checkRightAction_rightWhere({ iid, userIdWho, atomClass, action, forAtomUser });
       if (_rightWhere === false) return false;
       if (_rightWhere) {
         _rightWhere = ` and ( ${_rightWhere} )`;
@@ -24,7 +24,7 @@ module.exports = ctx => {
       return _sql;
     }
 
-    async _checkRightAction_rightWhere({ iid, userIdWho, atomClassId, action, forAtomUser }) {
+    async _checkRightAction_rightWhere({ iid, userIdWho, atomClass, action, forAtomUser }) {
       const _mine = `
         (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
       `;
@@ -36,7 +36,7 @@ module.exports = ctx => {
           )
         `;
       } else {
-        const roleScopes = await this._prepare_roleScopesOfUser({ atomClassId, action, userIdWho });
+        const roleScopes = await this._prepare_roleScopesOfUser({ atomClass, action, userIdWho });
         if (roleScopes === true) return ''; // pass through
         if (roleScopes === false) {
           _others = ''; // should check mine
