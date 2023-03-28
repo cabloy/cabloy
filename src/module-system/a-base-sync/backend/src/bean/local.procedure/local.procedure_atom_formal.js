@@ -55,12 +55,13 @@ module.exports = ctx => {
       let _categoryWhere;
       let _tagJoin, _tagWhere;
 
-      let _starJoin, _starWhere;
+      let _starField, _starJoin, _starWhere;
+      let _labelField, _labelJoin, _labelWhere;
 
-      let _labelJoin, _labelWhere;
       let _commentField, _commentJoin, _commentWhere;
       let _fileField, _fileJoin, _fileWhere;
       let _itemField, _itemJoin;
+      let _atomField, _atomJoin;
 
       let _atomClassWhere;
 
@@ -105,7 +106,11 @@ module.exports = ctx => {
         _starJoin = '';
         _starWhere = '';
       }
-      const _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
+      if (!atomClassBase.itemOnly) {
+        _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
+      } else {
+        _starField = '';
+      }
 
       // label
       if (label) {
@@ -115,7 +120,11 @@ module.exports = ctx => {
         _labelJoin = '';
         _labelWhere = '';
       }
-      const _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
+      if (!atomClassBase.itemOnly) {
+        _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
+      } else {
+        _labelField = '';
+      }
 
       // comment
       if (comment) {
@@ -156,10 +165,26 @@ module.exports = ctx => {
       // tableName
       if (tableName) {
         _itemField = 'f.*,';
-        _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
+        if (!atomClassBase.itemOnly) {
+          _itemJoin = ` inner join ${tableName} f on f.atomId=a.id`;
+        } else {
+          _itemJoin = `from ${tableName} f`;
+        }
       } else {
         _itemField = '';
         _itemJoin = '';
+      }
+
+      // atom
+      if (!atomClassBase.itemOnly) {
+        _atomField = `a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
+          a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
+          a.atomSimple,a.atomDisabled,a.atomState,
+          a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt`;
+        _atomJoin = 'from aAtom a';
+      } else {
+        _atomField = '';
+        _atomJoin = '';
       }
 
       // atomClass inner
@@ -174,11 +199,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `${_itemField} ${_cmsField}
-                a.id as atomId,a.itemId,a.atomStage,a.atomFlowId,a.atomClosed,a.atomIdDraft,a.atomIdFormal,a.roleIdOwner,a.atomClassId,a.atomName,
-                a.atomStatic,a.atomStaticKey,a.atomRevision,a.atomLanguage,a.atomCategoryId,a.atomTags,
-                a.atomSimple,a.atomDisabled,a.atomState,
-                a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt
+        _selectFields = `${_itemField} ${_cmsField} ${_atomField}
                 ${_starField} ${_labelField} ${_commentField} ${_fileField} ${_resourceField}`;
       }
 
@@ -202,7 +223,7 @@ module.exports = ctx => {
       }
 
       // sql
-      const _sql = `select ${_selectFields} from aAtom a
+      const _sql = `select ${_selectFields} ${_atomJoin}
             ${_itemJoin}
             ${_tagJoin}
             ${_starJoin}
