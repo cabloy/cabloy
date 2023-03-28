@@ -165,8 +165,6 @@ module.exports = ctx => {
       const items = await this._list({
         atomClass,
         options,
-        cms,
-        forAtomUser,
         user,
         pageForce,
         count,

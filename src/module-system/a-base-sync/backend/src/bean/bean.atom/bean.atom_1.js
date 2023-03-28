@@ -348,7 +348,7 @@ module.exports = ctx => {
     }
 
     async _list({ atomClass, options, user, pageForce = true, count = 0 }) {
-      const {
+      let {
         where,
         orders,
         page,
@@ -370,12 +370,11 @@ module.exports = ctx => {
       page = ctx.bean.util.page(page, pageForce);
       // stage
       stage = typeof stage === 'number' ? stage : ctx.constant.module(moduleInfo.relativeName).atom.stage[stage];
-      // atomClass
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // tableName
-      let atomClassId;
+      let atomClassBase;
       let tableName = '';
-      if (atomClassBase) {
+      if (atomClass) {
+        atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
         tableName = await this.getTableName({
           atomClass,
           atomClassBase,
@@ -387,17 +386,16 @@ module.exports = ctx => {
         });
         // 'where' should append atomClassId, such as article/post using the same table
         options.where['a.atomClassId'] = atomClass.id;
-        atomClassId = atomClass.id;
       }
       // cms
       const cms = atomClassBase && atomClassBase.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
-
+      // select
       const sql = await this.sqlProcedure.selectAtoms({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
-        atomClassId,
+        atomClass,
         tableName,
         where,
         orders,
