@@ -4,6 +4,7 @@ module.exports = ctx => {
       iid,
       userIdWho,
       atomClass,
+      atomClassBase,
       tableName,
       where,
       orders,

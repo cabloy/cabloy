@@ -385,7 +385,9 @@ module.exports = ctx => {
           count,
         });
         // 'where' should append atomClassId, such as article/post using the same table
-        options.where['a.atomClassId'] = atomClass.id;
+        if (!atomClassBase.itemOnly) {
+          options.where['a.atomClassId'] = atomClass.id;
+        }
       }
       // cms
       const cms = atomClassBase && atomClassBase.cms;
@@ -396,6 +398,7 @@ module.exports = ctx => {
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         atomClass,
+        atomClassBase,
         tableName,
         where,
         orders,
