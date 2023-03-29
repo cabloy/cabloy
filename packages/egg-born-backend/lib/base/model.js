@@ -243,26 +243,29 @@ function _formatOrAnd(db, ors, orAnd) {
 }
 
 function _formatWhere(db, where) {
-  if (!where) {
-    return '';
+  if (where === true || where === false) return where;
+  if (where === undefined || where === null) {
+    return true;
   }
 
   const wheres = [];
   for (const key in where) {
     const value = where[key];
-    // check key
+    // check key or/and
+    let keyOrAnd;
     if (key.indexOf(__whereOrPlaceholder) > -1) {
-      // or
-      const _where = _formatOrAnd(db, value, 'OR');
-      if (_where) {
-        wheres.push(`(${_where})`);
-      }
-      continue;
+      keyOrAnd = 'OR';
+    } else if (key.indexOf(__whereAndPlaceholder) > -1) {
+      keyOrAnd = 'AND';
     }
-    if (key.indexOf(__whereAndPlaceholder) > -1) {
-      // and
-      const _where = _formatOrAnd(db, value, 'AND');
-      if (_where) {
+    if (keyOrAnd) {
+      const _where = _formatOrAnd(db, value, keyOrAnd);
+      if (_where === true) {
+        // ignore
+      } else if (_where === false) {
+        // deny
+        return false;
+      } else {
         wheres.push(`(${_where})`);
       }
       continue;
