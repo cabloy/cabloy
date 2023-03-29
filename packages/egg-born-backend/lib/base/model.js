@@ -272,6 +272,9 @@ function _formatWhere(db, where) {
     }
     // check value
     if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return false;
+      }
       wheres.push(db.format('?? IN (?)', [key, value]));
     } else if (value === null || value === undefined) {
       wheres.push(db.format('?? IS ?', [key, value]));
@@ -289,7 +292,7 @@ function _formatWhere(db, where) {
       wheres.push(db.format('?? = ?', [key, value]));
     }
   }
-  if (wheres.length === 0) return '';
+  if (wheres.length === 0) return true;
   return wheres.join(' AND ');
 }
 
