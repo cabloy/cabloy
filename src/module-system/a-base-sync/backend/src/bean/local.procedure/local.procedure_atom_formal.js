@@ -322,7 +322,7 @@ module.exports = ctx => {
       }
       if (mine) {
         // return false if not support mine right
-        if (!_mine) return false;
+        if (_mine === false) return false;
         return _mine;
       }
 
