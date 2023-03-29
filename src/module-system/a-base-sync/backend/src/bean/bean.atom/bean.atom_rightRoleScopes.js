@@ -26,7 +26,12 @@ module.exports = ctx => {
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // itemOnly
       if (atomClassBase.itemOnly) {
-        return await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user: { id: userId } });
+        return await ctx.bean.atomClass.checkRightAtomClassAction({
+          atomClassId,
+          action,
+          user: { id: userId },
+          excludeMine: true,
+        });
       }
       // sql
       const sql = `

@@ -171,12 +171,13 @@ module.exports = ctx => {
       return items;
     }
 
-    async checkRightAtomClassAction({ atomClassId, action, user }) {
+    async checkRightAtomClassAction({ atomClassId, action, user, excludeMine }) {
       if (!user || user.id === 0) return true;
+      const mine = excludeMine ? ' and scope<>0 ' : '';
       const res = await ctx.model.queryOne(
         `
         select * from aViewUserRightAtomClass 
-          where iid=? and atomClassId=? and action=? and userIdWho=?
+          where iid=? and atomClassId=? and action=? ${mine} and userIdWho=?
       `,
         [ctx.instance.id, atomClassId, action, user.id]
       );
