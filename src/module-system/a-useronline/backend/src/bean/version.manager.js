@@ -65,7 +65,7 @@ module.exports = app => {
         //
         roleRights = [
           //
-          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+          { roleName: 'system', action: 'read' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
       }

@@ -9,7 +9,10 @@ module.exports = ctx => {
       // check role
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id;
-      // scope: allowed []
+      // scope: allowed [] / 0
+      if (scope === undefined || scope === null) {
+        scope = [];
+      }
       if (scope) {
         if (typeof scope === 'string') {
           scope = scope.split(',');
@@ -123,7 +126,9 @@ module.exports = ctx => {
 
     async _parseScopeNames({ scopeNames }) {
       let scope;
-      if (!scopeNames) {
+      if (scopeNames === undefined || scopeNames === null) {
+        scope = [];
+      } else if (scopeNames === 0) {
         scope = 0;
       } else {
         scope = [];
