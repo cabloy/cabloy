@@ -236,6 +236,7 @@ function _formatOrAnd(db, ors, orAnd) {
     return _formatOrAnd_or(db, ors);
   }
   // and
+  return _formatOrAnd_and(db, ors);
 }
 
 function _formatOrAnd_or(db, ors) {
@@ -252,6 +253,23 @@ function _formatOrAnd_or(db, ors) {
   }
   if (wheres.length === 0) return false;
   return wheres.join(' OR ');
+}
+
+function _formatOrAnd_and(db, ors) {
+  const wheres = [];
+  for (const or of ors) {
+    const _where = _formatWhere(db, or);
+    if (_where === true) {
+      // ignore
+    } else if (_where === false) {
+      // deny
+      return false;
+    } else {
+      wheres.push(_where);
+    }
+  }
+  if (wheres.length === 0) return true;
+  return wheres.join(' AND ');
 }
 
 function _formatWhere(db, where) {
