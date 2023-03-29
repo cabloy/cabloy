@@ -225,8 +225,13 @@ module.exports = app => {
 };
 
 function _whereClause(db, where) {
+  // true/false/clause
   const wheres = _formatWhere(db, where);
-  if (!wheres) return '';
+  if (wheres === true) {
+    return '';
+  } else if (wheres === false) {
+    return ' WHERE false';
+  }
   return ` WHERE (${wheres})`;
 }
 
