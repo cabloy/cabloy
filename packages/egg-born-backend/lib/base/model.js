@@ -194,6 +194,16 @@ module.exports = app => {
     });
   });
 
+  ['_formatWhere'].forEach(method => {
+    Object.defineProperty(Model.prototype, method, {
+      get() {
+        return function () {
+          return _formatWhere(this.ctx.db, arguments[0]);
+        };
+      },
+    });
+  });
+
   ['_orders'].forEach(method => {
     Object.defineProperty(Model.prototype, method, {
       get() {
