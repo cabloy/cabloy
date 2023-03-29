@@ -311,12 +311,18 @@ module.exports = ctx => {
         `;
       } else {
         const enableRightMine = atomClassBase.enableRightMine;
-        const userIdFieldName = typeof enableRightMine === 'string' ? enableRightMine : 'userIdCreated';
-        _mine = `
+        if (!enableRightMine) {
+          _mine = false;
+        } else {
+          const userIdFieldName = typeof enableRightMine === 'string' ? enableRightMine : 'userIdCreated';
+          _mine = `
           (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
         `;
+        }
       }
       if (mine) {
+        // return false if not support mine right
+        if (!_mine) return false;
         return _mine;
       }
 
