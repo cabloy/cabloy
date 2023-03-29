@@ -231,15 +231,27 @@ function _whereClause(db, where) {
 }
 
 function _formatOrAnd(db, ors, orAnd) {
+  // or
+  if (orAnd === 'OR') {
+    return _formatOrAnd_or(db, ors);
+  }
+  // and
+}
+
+function _formatOrAnd_or(db, ors) {
   const wheres = [];
   for (const or of ors) {
     const _where = _formatWhere(db, or);
-    if (_where) {
+    if (_where === false) {
+      // ignore
+    } else if (_where === true) {
+      return true;
+    } else {
       wheres.push(_where);
     }
   }
-  if (wheres.length === 0) return '';
-  return wheres.join(` ${orAnd} `);
+  if (wheres.length === 0) return false;
+  return wheres.join(' OR ');
 }
 
 function _formatWhere(db, where) {
