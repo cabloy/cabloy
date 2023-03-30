@@ -63,6 +63,7 @@ module.exports = app => {
     '_formatValue',
     '_formatWhere',
     '_where',
+    '_orders',
     'query',
     'queryOne',
     '_query',
@@ -178,18 +179,6 @@ module.exports = app => {
           args[1].where = args[1].where || {};
           this._rowCheck(args[1].where);
           return this.ctx.db[method].apply(this.ctx.db, args);
-        };
-      },
-    });
-  });
-
-  ['_orders'].forEach(method => {
-    Object.defineProperty(Model.prototype, method, {
-      get() {
-        return function () {
-          const value = arguments[0];
-          if (!value || !Array.isArray(value) || value.length === 0) return null;
-          return this.ctx.db[method].apply(this.ctx.db, arguments);
         };
       },
     });
