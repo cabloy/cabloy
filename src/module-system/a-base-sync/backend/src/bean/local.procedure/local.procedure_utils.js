@@ -1,7 +1,8 @@
 module.exports = ctx => {
   class Procedure {
     _prepare_cms({ tableName, iid, mode, cms }) {
-      let _cmsField, _cmsJoin, _cmsWhere;
+      let _cmsField, _cmsJoin;
+      const _cmsWhere = {};
 
       // cms
       if (cms) {
@@ -9,17 +10,18 @@ module.exports = ctx => {
           tableName ? '' : 'p.createdAt,p.updatedAt,'
         }p.sticky,p.keywords,p.description,p.summary,p.url,p.editMode,p.slug,p.sorting,p.flag,p.extra,p.imageCover,p.imageFirst,p.audioFirst,p.audioCoverFirst,p.uuid,p.renderAt,`;
         _cmsJoin = ' inner join aCmsArticle p on p.atomId=a.id';
-        _cmsWhere = ` and p.iid=${iid} and p.deleted=0`;
+        _cmsWhere['p.iid'] = iid;
+        _cmsWhere['p.deleted'] = 0;
         if (mode && mode !== 'default') {
           // full/search/others
           _cmsField += 'q.content,q.html,';
           _cmsJoin += ' inner join aCmsContent q on q.atomId=a.id';
-          _cmsWhere += ` and q.iid=${iid} and q.deleted=0`;
+          _cmsWhere['q.iid'] = iid;
+          _cmsWhere['q.deleted'] = 0;
         }
       } else {
         _cmsField = '';
         _cmsJoin = '';
-        _cmsWhere = '';
       }
 
       return { _cmsField, _cmsJoin, _cmsWhere };

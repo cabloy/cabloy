@@ -65,6 +65,7 @@ module.exports = ctx => {
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
+      _where.__and__cms = _cmsWhere;
 
       // language
       if (language) {
@@ -218,7 +219,7 @@ module.exports = ctx => {
         forAtomUser,
         role,
       });
-      _where.__and__rightWhere = _rightWhere;
+      _where.__and__right = _rightWhere;
       let _whereClause = ctx.model._formatWhere(_where);
       if (_whereClause === false) return false;
       _whereClause = _whereClause === true ? '' : ` WHERE (${_whereClause})`;
