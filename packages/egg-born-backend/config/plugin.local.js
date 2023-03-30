@@ -9,7 +9,7 @@ module.exports = {
 
   mysql: {
     enable: true,
-    package: 'egg-mysql',
+    package: '@zhennann/egg-mysql',
   },
 
   passport: {

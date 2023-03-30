@@ -24,6 +24,7 @@
   "dependencies": {
     "@zhennann/ali-rds": "^4.1.0",
     "@zhennann/egg": "^2.37.0",
+    "@zhennann/egg-mysql": "^3.4.0",
     "@zhennann/egg-passport": "^2.1.5",
     "@zhennann/egg-socket.io": "^5.0.4",
     "@zhennann/koa-static-cache": "^5.1.8",
@@ -37,7 +38,6 @@
     "egg-born-mglob": "^4.0.1",
     "egg-born-mock": "^2.2.0",
     "egg-born-mparse": "^2.1.9",
-    "egg-mysql": "^3.0.0",
     "egg-redis": "^2.4.0",
     "egg-schedule": "^3.6.6",
     "is-type-of": "^1.2.0",
