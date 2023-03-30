@@ -279,12 +279,12 @@ module.exports = ctx => {
 
 // async list({ roleId, query, anonymous, page, removePrivacy }) {
 //   const roleJoin = roleId ? 'left join aUserRole b on a.id=b.userId' : '';
-//   const roleWhere = roleId ? `and b.roleId=${ctx.model._format(roleId)}` : '';
-//   const queryLike = query ? ctx.model._format({ op: 'like', val: query }) : '';
+//   const roleWhere = roleId ? `and b.roleId=${ctx.model._formatValue(roleId)}` : '';
+//   const queryLike = query ? ctx.model._formatValue({ op: 'like', val: query }) : '';
 //   const queryWhere = query
 //     ? `and ( a.userName like ${queryLike} or a.realName like ${queryLike} or a.mobile like ${queryLike} )`
 //     : '';
-//   const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._format(anonymous)}` : '';
+//   const anonymousWhere = anonymous !== undefined ? `and a.anonymous=${ctx.model._formatValue(anonymous)}` : '';
 //   const _limit = ctx.model._limit(page.size, page.index);
 //   // fields
 //   const fields = await this.getFieldsSelect({ removePrivacy, alias: 'a' });

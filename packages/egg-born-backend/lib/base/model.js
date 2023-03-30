@@ -1,8 +1,5 @@
 const is = require('is-type-of');
-const moment = require('moment');
 
-const __whereOrPlaceholder = '__or__';
-const __whereAndPlaceholder = '__and__';
 const __columns = {};
 
 module.exports = app => {
@@ -65,6 +62,7 @@ module.exports = app => {
     'format',
     '_formatValue',
     '_formatWhere',
+    '_where',
     'query',
     'queryOne',
     '_query',
@@ -197,31 +195,5 @@ module.exports = app => {
     });
   });
 
-  ['_where'].forEach(method => {
-    Object.defineProperty(Model.prototype, method, {
-      get() {
-        return function () {
-          return _whereClause(this.ctx.db, arguments[0]);
-        };
-      },
-    });
-  });
-
-  // // replace _where
-  // RDSClient.prototype._where = function (where) {
-  //   return _whereClause(this, where);
-  // };
-
   return Model;
 };
-
-function _whereClause(db, where) {
-  // true/false/clause
-  const wheres = _formatWhere(db, where);
-  if (wheres === true) {
-    return '';
-  } else if (wheres === false) {
-    return ' WHERE false';
-  }
-  return ` WHERE (${wheres})`;
-}
