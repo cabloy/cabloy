@@ -24,6 +24,6 @@
   "dependencies": {
     "@zhennann/egg-bin": "^5.0.7",
     "@zhennann/egg-scripts": "^2.17.1",
-    "egg-born-backend": "^7.1.4"
+    "egg-born-backend": "^8.0.0"
   }
 }
