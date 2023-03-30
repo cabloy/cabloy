@@ -23,7 +23,7 @@
   "homepage": "https://github.com/zhennann/egg-born-backend#readme",
   "dependencies": {
     "@zhennann/egg": "^2.37.0",
-    "@zhennann/egg-mysql": "^4.0.0",
+    "@zhennann/egg-mysql": "^4.0.1",
     "@zhennann/egg-passport": "^2.1.5",
     "@zhennann/egg-socket.io": "^5.0.4",
     "@zhennann/koa-static-cache": "^5.1.8",
