@@ -54,3 +54,4 @@ sftp-config-.json
 
 /packages/build/lib/project/front/dist
 /packages/egg-born-front/__runtime
+/packages/ali-rds
