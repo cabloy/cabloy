@@ -5,7 +5,6 @@ require('regenerator-runtime/runtime');
 // process.traceDeprecation = true;
 
 const moduleAlias = require('module-alias');
-moduleAlias.addAlias('ali-rds', '@zhennann/ali-rds');
 moduleAlias.addAlias('egg', '@zhennann/egg');
 moduleAlias.addAlias('koa-static-cache', '@zhennann/koa-static-cache');
 

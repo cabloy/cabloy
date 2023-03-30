@@ -1,6 +1,5 @@
 const is = require('is-type-of');
 const moment = require('moment');
-const RDSClient = require('ali-rds');
 
 const __whereOrPlaceholder = '__or__';
 const __whereAndPlaceholder = '__and__';
@@ -226,10 +225,10 @@ module.exports = app => {
     });
   });
 
-  // replace _where
-  RDSClient.prototype._where = function (where) {
-    return _whereClause(this, where);
-  };
+  // // replace _where
+  // RDSClient.prototype._where = function (where) {
+  //   return _whereClause(this, where);
+  // };
 
   return Model;
 };
