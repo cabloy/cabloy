@@ -83,19 +83,20 @@ module.exports = ctx => {
       // tag
       if (tag) {
         _tagJoin = ' inner join aTagRef k on k.atomId=a.id';
-        _tagWhere = ` and k.iid=${iid} and k.tagId=${tag}`;
+        _where['k.iid'] = iid;
+        _where['k.tagId'] = tag;
       } else {
         _tagJoin = '';
-        _tagWhere = '';
       }
 
       // star
       if (star) {
         _starJoin = ' inner join aAtomStar d on a.id=d.atomId';
-        _starWhere = ` and d.iid=${iid} and d.userId=${userIdWho} and d.star=1`;
+        _where['d.iid'] = iid;
+        _where['d.userId'] = userIdWho;
+        _where['d.star'] = 1;
       } else {
         _starJoin = '';
-        _starWhere = '';
       }
       if (!atomClassBase || !atomClassBase.itemOnly) {
         _starField = `,(select d2.star from aAtomStar d2 where d2.iid=${iid} and d2.atomId=a.id and d2.userId=${userIdWho}) as star`;
@@ -106,10 +107,11 @@ module.exports = ctx => {
       // label
       if (label) {
         _labelJoin = ' inner join aAtomLabelRef e on a.id=e.atomId';
-        _labelWhere = ` and e.iid=${iid} and e.userId=${userIdWho} and e.labelId=${label}`;
+        _where['e.iid'] = iid;
+        _where['e.userId'] = userIdWho;
+        _where['e.labelId'] = label;
       } else {
         _labelJoin = '';
-        _labelWhere = '';
       }
       if (!atomClassBase || !atomClassBase.itemOnly) {
         _labelField = `,(select e2.labels from aAtomLabel e2 where e2.iid=${iid} and e2.atomId=a.id and e2.userId=${userIdWho}) as labels`;
@@ -123,11 +125,11 @@ module.exports = ctx => {
                (select h2.heart from aCommentHeart h2 where h2.iid=${iid} and h2.commentId=h.id and h2.userId=${userIdWho}) as h_heart`;
 
         _commentJoin = ' inner join aViewComment h on h.atomId=a.id';
-        _commentWhere = ` and h.iid=${iid} and h.deleted=0`;
+        _where['h.iid'] = iid;
+        _where['h.deleted'] = 0;
       } else {
         _commentField = '';
         _commentJoin = '';
-        _commentWhere = '';
       }
 
       // file
@@ -135,22 +137,22 @@ module.exports = ctx => {
         _fileField =
           ',i.id i_id,i.createdAt i_createdAt,i.updatedAt i_updatedAt,i.userId i_userId,i.downloadId i_downloadId,i.mode i_mode,i.fileSize i_fileSize,i.width i_width,i.height i_height,i.filePath i_filePath,i.fileName i_fileName,i.realName i_realName,i.fileExt i_fileExt,i.encoding i_encoding,i.mime i_mime,i.attachment i_attachment,i.flag i_flag,i.userName i_userName,i.avatar i_avatar';
         _fileJoin = ' inner join aViewFile i on i.atomId=a.id';
-        _fileWhere = ` and i.iid=${iid} and i.deleted=0`;
+        _where['i.iid'] = iid;
+        _where['i.deleted'] = 0;
       } else {
         _fileField = '';
         _fileJoin = '';
-        _fileWhere = '';
       }
 
       // resource
       if (resource && resourceLocale) {
         _resourceField = ',m.atomNameLocale';
         _resourceJoin = ' inner join aResourceLocale m on m.atomId=a.id';
-        _resourceWhere = ctx.model.format(' and a.atomDisabled=0 and m.locale=?', resourceLocale);
+        _where['a.atomDisabled'] = 0;
+        _where['m.locale'] = resourceLocale;
       } else {
         _resourceField = '';
         _resourceJoin = '';
-        _resourceWhere = '';
       }
 
       // tableName
@@ -173,18 +175,19 @@ module.exports = ctx => {
           a.atomSimple,a.atomDisabled,a.atomState,
           a.allowComment,a.starCount,a.commentCount,a.attachmentCount,a.readCount,a.userIdCreated,a.userIdUpdated,a.createdAt as atomCreatedAt,a.updatedAt as atomUpdatedAt`;
         _atomJoin = 'from aAtom a';
-        _atomWhere = `a.deleted=0 and a.iid=${iid} and a.atomStage=${stage}`;
+        _where['a.deleted'] = 0;
+        _where['a.iid'] = iid;
+        _where['a.atomStage'] = stage;
       } else {
         _atomField = '';
         _atomJoin = '';
-        _atomWhere = `f.deleted=0 and f.iid=${iid}`;
+        _where['f.deleted'] = 0;
+        _where['f.iid'] = iid;
       }
 
       // atomClass inner
-      if (atomClass || star || label) {
-        _atomClassWhere = '';
-      } else {
-        _atomClassWhere = await this._prepare_atomClassIdsInner();
+      if (!atomClass && !star && !label) {
+        _where['a.atomClassId'] = await this._prepare_atomClassIdsInner();
       }
 
       // fields
@@ -204,8 +207,8 @@ module.exports = ctx => {
         ]);
       }
 
-      // _rightWhere: false/empty/clause
-      let _rightWhere = await this._selectAtoms_formal_rightWhere({
+      // _rightWhere
+      const _rightWhere = await this._selectAtoms_formal_rightWhere({
         iid,
         userIdWho,
         atomClass,
@@ -219,10 +222,10 @@ module.exports = ctx => {
         forAtomUser,
         role,
       });
-      if (_rightWhere === false) return false;
-      if (_rightWhere) {
-        _rightWhere = ` and ( ${_rightWhere} )`;
-      }
+      _where.__and__rightWhere = _rightWhere;
+      let _whereClause = ctx.model._formatWhere(_where);
+      if (_whereClause === false) return false;
+      _whereClause = _whereClause === true ? '' : ` WHERE (${_whereClause})`;
 
       // sql
       const _sql = `select ${_selectFields} ${_atomJoin}
@@ -235,21 +238,7 @@ module.exports = ctx => {
             ${_resourceJoin}
             ${_cmsJoin}
 
-          ${_where}
-           (
-             ${_atomWhere}
-             ${_atomClassWhere}
-             ${_languageWhere}
-             ${_categoryWhere}
-             ${_tagWhere}
-             ${_starWhere}
-             ${_labelWhere}
-             ${_commentWhere}
-             ${_fileWhere}
-             ${_resourceWhere}
-             ${_cmsWhere}
-             ${_rightWhere}
-           )
+          ${_whereClause}
 
           ${count ? '' : _orders}
           ${count ? '' : _limit}
@@ -274,7 +263,7 @@ module.exports = ctx => {
       role,
     }) {
       // pass through for star/label
-      if (star || label) return '';
+      if (star || label) return true;
 
       // resource
       if (resource) {
@@ -367,3 +356,19 @@ module.exports = ctx => {
   }
   return Procedure;
 };
+
+// ${_where}
+//    (
+//      ${_atomWhere}
+//      ${_atomClassWhere}
+//      ${_languageWhere}
+//      ${_categoryWhere}
+//      ${_tagWhere}
+//      ${_starWhere}
+//      ${_labelWhere}
+//      ${_commentWhere}
+//      ${_fileWhere}
+//      ${_resourceWhere}
+//      ${_cmsWhere}
+//      ${_rightWhere}
+//    )
