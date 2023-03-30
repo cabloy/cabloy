@@ -46,9 +46,9 @@ module.exports = ctx => {
 
       // for safe
       // tableName = tableName ? ctx.model.format('??', tableName) : null; // not format tableName
-      where = where ? ctx.model._where(where) : null;
-      orders = orders ? ctx.model._orders(orders) : null;
-      const limit = page ? ctx.model._limit(page.size, page.index) : null;
+      const _where = Object.assign({}, where);
+      const _orders = orders ? ctx.model._orders(orders) : '';
+      const _limit = page ? ctx.model._limit(page.size, page.index) : '';
 
       // vars
       let _languageWhere;
@@ -70,23 +70,14 @@ module.exports = ctx => {
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
 
-      //
-      const _where = where ? `${where} AND` : ' WHERE';
-      const _orders = orders || '';
-      const _limit = limit || '';
-
       // language
       if (language) {
-        _languageWhere = ctx.model.format(' and a.atomLanguage=?', language);
-      } else {
-        _languageWhere = '';
+        _where['a.atomLanguage'] = language;
       }
 
       // category
       if (category) {
-        _categoryWhere = ` and a.atomCategoryId=${category}`;
-      } else {
-        _categoryWhere = '';
+        _where['a.atomCategoryId'] = category;
       }
 
       // tag
