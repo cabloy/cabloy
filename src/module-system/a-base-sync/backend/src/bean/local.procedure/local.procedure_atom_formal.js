@@ -51,21 +51,17 @@ module.exports = ctx => {
       const _limit = page ? ctx.model._limit(page.size, page.index) : '';
 
       // vars
-      let _languageWhere;
-      let _categoryWhere;
-      let _tagJoin, _tagWhere;
+      let _tagJoin;
 
-      let _starField, _starJoin, _starWhere;
-      let _labelField, _labelJoin, _labelWhere;
+      let _starField, _starJoin;
+      let _labelField, _labelJoin;
 
-      let _commentField, _commentJoin, _commentWhere;
-      let _fileField, _fileJoin, _fileWhere;
+      let _commentField, _commentJoin;
+      let _fileField, _fileJoin;
       let _itemField, _itemJoin;
-      let _atomField, _atomJoin, _atomWhere;
+      let _atomField, _atomJoin;
 
-      let _atomClassWhere;
-
-      let _resourceField, _resourceJoin, _resourceWhere;
+      let _resourceField, _resourceJoin;
 
       // cms
       const { _cmsField, _cmsJoin, _cmsWhere } = this._prepare_cms({ tableName, iid, mode, cms });
@@ -276,28 +272,28 @@ module.exports = ctx => {
         } else {
           _itemKeyName = 'a.id';
         }
-        return `
+        return ctx.model.raw(`
           exists(
             select c.resourceAtomId from aViewUserRightResource c where c.iid=${iid} and ${_itemKeyName}=c.resourceAtomId and c.userIdWho=${userIdWho}
           )
-        `;
+        `);
       }
 
       // mine
       let _mine;
       if (!atomClassBase || !atomClassBase.itemOnly) {
-        _mine = `
+        _mine = ctx.model.raw(`
           (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `;
+        `);
       } else {
         const enableRightMine = atomClassBase.enableRightMine;
         if (!enableRightMine) {
           _mine = false;
         } else {
           const userIdFieldName = typeof enableRightMine === 'string' ? enableRightMine : 'userIdCreated';
-          _mine = `
+          _mine = ctx.model.raw(`
           (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `;
+        `);
         }
       }
       if (mine) {
@@ -311,19 +307,19 @@ module.exports = ctx => {
       if (forAtomUser) {
         if (role) {
           // get users of role
-          _others = `
+          _others = ctx.model.raw(`
               exists(
                 select c.userIdWhom from aViewUserRightAtomClassUser c
                   inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
                   where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
               )
-            `;
+            `);
         } else {
-          _others = `
+          _others = ctx.model.raw(`
               exists(
                 select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
               )
-            `;
+            `);
         }
       } else {
         const roleScopes = await this._prepare_roleScopesOfUser({ atomClass, action: 2, userIdWho });
@@ -331,9 +327,9 @@ module.exports = ctx => {
         if (roleScopes === false) {
           _others = false; // should check mine
         } else {
-          _others = `
+          _others = ctx.model.raw(`
             a.roleIdOwner in (${roleScopes.join(',')})
-          `;
+          `);
         }
       }
       // mine or others

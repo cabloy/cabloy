@@ -64,6 +64,7 @@ module.exports = app => {
     '_formatWhere',
     '_where',
     '_orders',
+    'raw',
     'query',
     'queryOne',
     '_query',
