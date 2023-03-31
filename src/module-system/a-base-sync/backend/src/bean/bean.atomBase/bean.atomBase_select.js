@@ -20,9 +20,9 @@ module.exports = app => {
       // atomLanguage
       this._atomLanguageLocaleTranslate({ items, atomClassBase });
       // atomDisabled
-      this._atomDisabledTranslate({ items });
+      this._atomDisabledTranslate({ items, atomClassBase });
       // atomState
-      await this._atomStateTranslate({ items });
+      await this._atomStateTranslate({ items, atomClassBase });
       // userIds
       await this._userIdsTranslate({ items, atomClassBase });
       // atomNameLocale for resource

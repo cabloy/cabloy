@@ -26,7 +26,8 @@ module.exports = app => {
       }
     }
 
-    async _atomStateTranslate({ items, item }) {
+    async _atomStateTranslate({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];
@@ -110,7 +111,8 @@ module.exports = app => {
       return _item;
     }
 
-    _atomDisabledTranslate({ items, item }) {
+    _atomDisabledTranslate({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];
@@ -211,6 +213,7 @@ module.exports = app => {
     }
 
     _atomNameLocaleTranslate({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       if (atomClassBase && !atomClassBase.resource) return;
       // items
       if (item) {
