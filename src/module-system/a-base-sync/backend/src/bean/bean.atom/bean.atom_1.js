@@ -329,6 +329,8 @@ module.exports = ctx => {
       const sql = await this.sqlProcedure.getAtom({
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
+        atomClass,
+        atomClassBase,
         tableName,
         atomId: key.atomId,
         resource,
