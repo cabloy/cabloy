@@ -1,41 +1,51 @@
 module.exports = ctx => {
   class Procedure {
-    checkRoleRightRead({ iid, roleIdWho, atomId, forAtomUser }) {
+    async checkRoleRightRead({ iid, roleIdWho, atomId, forAtomUser }) {
       // for safe
       iid = parseInt(iid);
       roleIdWho = parseInt(roleIdWho);
       atomId = parseInt(atomId);
+      // _where
+      const _where = {
+        'a.deleted': 0,
+        'a.iid': iid,
+        'a.id': atomId,
+        'a.atomStage': [1, 2],
+      };
+      // _rightWhere
+      const _rightWhere = await this._checkRoleRightRead_rightWhere({ iid, roleIdWho, forAtomUser });
+      _where.__and__right = _rightWhere;
+
+      // where clause
+      let _whereClause = ctx.model._formatWhere(_where);
+      if (_whereClause === false) return false;
+      _whereClause = _whereClause === true ? '' : ` WHERE (${_whereClause})`;
+
+      // sql
+      const _sql = `select a.* from aAtom a
+        ${_whereClause}
+      `;
+      return _sql;
+    }
+
+    async _checkRoleRightRead_rightWhere({ iid, roleIdWho, forAtomUser }) {
       // _rightWhere
       let _rightWhere;
       if (forAtomUser) {
-        _rightWhere = `
+        _rightWhere = ctx.model.raw(`
           exists(
             select c.userIdWhom from aViewRoleRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWho=${roleIdWho}
           )
-        `;
+        `);
       } else {
-        _rightWhere = `
-            exists(
-              select c.roleIdWhom from aViewRoleRightAtomClassRole c 
-                where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.roleIdWho=${roleIdWho}
-            )
-          `;
+        _rightWhere = ctx.model.raw(`
+          exists(
+            select c.roleIdWhom from aViewRoleRightAtomClassRole c 
+              where c.iid=${iid} and c.atomClassId=a.atomClassId and c.action=2 and c.roleIdWhom=a.roleIdOwner and c.roleIdWho=${roleIdWho}
+          )
+        `);
       }
-      if (_rightWhere) {
-        _rightWhere = ` and ( ${_rightWhere} )`;
-      } else {
-        _rightWhere = '';
-      }
-      // sql
-      const _sql = `select a.* from aAtom a
-            where
-            (
-               a.deleted=0 and a.iid=${iid} and a.id=${atomId}
-               and a.atomStage>0
-               ${_rightWhere}
-            )
-        `;
-      return _sql;
+      return _rightWhere;
     }
   }
   return Procedure;

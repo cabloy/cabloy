@@ -10,7 +10,7 @@ module.exports = ctx => {
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history
-      const sql = this.sqlProcedure.checkRoleRightRead({
+      const sql = await this.sqlProcedure.checkRoleRightRead({
         iid: ctx.instance.id,
         roleIdWho: roleId,
         atomId,
