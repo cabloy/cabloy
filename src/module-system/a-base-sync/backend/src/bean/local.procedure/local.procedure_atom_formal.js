@@ -220,6 +220,8 @@ module.exports = ctx => {
         role,
       });
       _where.__and__right = _rightWhere;
+
+      // where clause
       let _whereClause = ctx.model._formatWhere(_where);
       if (_whereClause === false) return false;
       _whereClause = _whereClause === true ? '' : ` WHERE (${_whereClause})`;

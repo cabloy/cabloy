@@ -68,8 +68,8 @@ module.exports = ctx => {
         return await this._selectAtoms_0({
           iid,
           atomClass,
-          tableName,
           atomClassBase,
+          tableName,
           where,
           orders,
           page,
