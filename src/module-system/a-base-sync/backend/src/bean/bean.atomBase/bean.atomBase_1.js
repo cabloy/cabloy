@@ -245,7 +245,8 @@ module.exports = app => {
       }
     }
 
-    async _patchAtomClassInfo({ items, item }) {
+    async _patchAtomClassInfo({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];
