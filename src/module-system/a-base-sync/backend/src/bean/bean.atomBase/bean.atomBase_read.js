@@ -16,11 +16,11 @@ module.exports = app => {
       // dict translate
       await this._dictTranslate({ item, atomClassBase });
       // atomCategoryName
-      await this._atomCategoryIdTranslate({ item });
+      await this._atomCategoryIdTranslate({ item, atomClassBase });
       // revision
-      this._appendRevisionToHistory({ item });
+      this._appendRevisionToHistory({ item, atomClassBase });
       // atomLanguage
-      this._atomLanguageLocaleTranslate({ item });
+      this._atomLanguageLocaleTranslate({ item, atomClassBase });
       // atomDisabled
       this._atomDisabledTranslate({ item });
       // atomState

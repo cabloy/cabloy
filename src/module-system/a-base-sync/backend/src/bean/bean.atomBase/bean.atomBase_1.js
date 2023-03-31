@@ -12,7 +12,8 @@ module.exports = app => {
       return item._meta;
     }
 
-    _appendRevisionToHistory({ items, item }) {
+    _appendRevisionToHistory({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];
@@ -134,7 +135,8 @@ module.exports = app => {
       meta.flags.push(this.ctx.text(title));
     }
 
-    async _atomCategoryIdTranslate({ items, item }) {
+    async _atomCategoryIdTranslate({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];
@@ -232,7 +234,8 @@ module.exports = app => {
       }
     }
 
-    _atomLanguageLocaleTranslate({ items, item }) {
+    _atomLanguageLocaleTranslate({ items, item, atomClassBase }) {
+      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];

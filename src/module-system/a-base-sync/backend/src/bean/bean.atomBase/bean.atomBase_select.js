@@ -14,11 +14,11 @@ module.exports = app => {
       // dict translate
       await this._dictTranslate({ items, atomClassBase });
       // atomCategoryName
-      await this._atomCategoryIdTranslate({ items });
+      await this._atomCategoryIdTranslate({ items, atomClassBase });
       // revision
-      this._appendRevisionToHistory({ items });
+      this._appendRevisionToHistory({ items, atomClassBase });
       // atomLanguage
-      this._atomLanguageLocaleTranslate({ items });
+      this._atomLanguageLocaleTranslate({ items, atomClassBase });
       // atomDisabled
       this._atomDisabledTranslate({ items });
       // atomState
