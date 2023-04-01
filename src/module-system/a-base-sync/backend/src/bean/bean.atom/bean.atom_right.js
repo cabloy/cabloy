@@ -19,11 +19,17 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightRead({ atom: { id }, user, checkFlow, disableAuthOpenCheck }) {
-      const _atom = await this.modelAtom.get({ id });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+    async checkRightRead({ atom: { id }, atomClass, user, checkFlow, disableAuthOpenCheck }) {
+      let _atom;
+      if (!atomClass) {
+        _atom = await this.modelAtom.get({ id });
+        if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        // atomClass
+        atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      } else {
+        _atom = { id };
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+      }
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
       // normal check
       const res = await this._checkRightRead_normal({ _atom, atomClass, user, checkFlow });
@@ -38,29 +44,32 @@ module.exports = ctx => {
     }
 
     async _checkRightRead_normal({ _atom, atomClass, user, checkFlow }) {
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // draft: only userIdUpdated
       const atomId = _atom.id;
       // check right
-      if (_atom.atomStage === 0) {
-        // self
-        const bSelf = _atom.userIdUpdated === user.id;
-        // checkFlow
-        if (_atom.atomFlowId > 0 && checkFlow) {
-          const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
-          if (!flow) return null;
-          return _atom;
-        }
-        // 1. closed
-        if (_atom.atomClosed) {
+      if (!atomClassBase.itemOnly) {
+        if (_atom.atomStage === 0) {
+          // self
+          const bSelf = _atom.userIdUpdated === user.id;
+          // checkFlow
+          if (_atom.atomFlowId > 0 && checkFlow) {
+            const flow = await ctx.bean.flow.get({ flowId: _atom.atomFlowId, history: true, user });
+            if (!flow) return null;
+            return _atom;
+          }
+          // 1. closed
+          if (_atom.atomClosed) {
+            if (bSelf) return _atom;
+            return null;
+          }
+          // // 2. flow
+          // if (_atom.atomFlowId > 0) return null;
+          // 3. self
           if (bSelf) return _atom;
+          // others
           return null;
         }
-        // // 2. flow
-        // if (_atom.atomFlowId > 0) return null;
-        // 3. self
-        if (bSelf) return _atom;
-        // others
-        return null;
       }
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
@@ -68,6 +77,7 @@ module.exports = ctx => {
       const sql = await this.sqlProcedure.checkRightRead({
         iid: ctx.instance.id,
         atomClass,
+        atomClassBase,
         userIdWho: user.id,
         atomId,
         forAtomUser,
