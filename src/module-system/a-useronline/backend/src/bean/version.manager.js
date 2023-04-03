@@ -66,23 +66,15 @@ module.exports = app => {
         roleRights = [
           //
           { roleName: 'system', action: 'read' },
+          { roleName: 'system', action: 'delete' },
+          { roleName: 'system', action: 'deleteBulk' },
+          { roleName: 'system', action: 'exportBulk' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
       }
     }
 
-    async test() {
-      const roleRights = [
-        // for testing purposes
-        { roleName: 'system', action: 'create' },
-        { roleName: 'system', action: 'write' },
-        { roleName: 'system', action: 'delete' },
-        { roleName: 'system', action: 'clone' },
-        { roleName: 'system', action: 'deleteBulk' },
-        { roleName: 'system', action: 'exportBulk' },
-      ];
-      await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
-    }
+    async test() {}
   }
 
   return Version;
