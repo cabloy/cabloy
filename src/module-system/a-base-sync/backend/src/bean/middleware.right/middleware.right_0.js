@@ -35,13 +35,13 @@ module.exports = ctx => {
 
     async checkRight(type, moduleInfo, options) {
       // atom
-      if (type === 'atom') await this.checkAtom(moduleInfo, options);
+      if (type === 'atom') return await this.checkAtom(moduleInfo, options);
 
       // resource
-      if (type === 'resource') await this.checkResource(moduleInfo, options);
+      if (type === 'resource') return await this.checkResource(moduleInfo, options);
 
       // detail
-      if (type === 'detail') await this.checkDetail(moduleInfo, options);
+      if (type === 'detail') return await this.checkDetail(moduleInfo, options);
     }
   }
   return Middleware;

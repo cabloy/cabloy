@@ -5,43 +5,23 @@ module.exports = ctx => {
       // constant
       const constant = ctx.constant.module(moduleInfo.relativeName);
 
+      // user
+      const user = ctx.state.user.op;
+
+      // atomClass
       const { atomKey, atomClass, atomClassBase } = await this._checkAtomClassExpect({ options });
 
       // create
       if (options.action === 'create' || options.action === constant.atom.action.create) {
-        // atomClassId
-        const atomClassId = atomClass.id;
-        // roleIdOwner
-        const roleIdOwner = ctx.request.body.roleIdOwner;
-        if (roleIdOwner) {
-          // check
-          const res = await ctx.bean.atom.checkRightCreateRole({
-            atomClass: {
-              id: atomClassId,
-            },
-            roleIdOwner,
-            user: ctx.state.user.op,
-          });
-          if (!res) ctx.throw(403);
-        } else {
-          // retrieve default one, must exists
-          const roleId = await ctx.bean.atom.preferredRoleId({
-            atomClass: {
-              id: atomClassId,
-            },
-            user: ctx.state.user.op,
-          });
-          if (roleId === 0) ctx.throw(403);
-          ctx.request.body.roleIdOwner = roleId;
-        }
-        return;
+        return await this._checkAtom_create({ atomClass, atomClassBase, user });
       }
 
       // read
       if (options.action === 'read' || options.action === constant.atom.action.read) {
         const res = await ctx.bean.atom.checkRightRead({
           atom: { id: atomKey.atomId },
-          user: ctx.state.user.op,
+          atomClass,
+          user,
           checkFlow: options.checkFlow,
         });
         if (!res) ctx.throw(403);
@@ -63,6 +43,7 @@ module.exports = ctx => {
       } else {
         const res = await ctx.bean.atom.checkRightAction({
           atom: { id: atomKey.atomId },
+          atomClass,
           action: actionOther,
           stage: options.stage,
           user: ctx.state.user.op,
@@ -70,6 +51,43 @@ module.exports = ctx => {
         });
         if (!res) ctx.throw(403);
         atomKey.itemId = res.itemId;
+      }
+    }
+
+    async _checkAtom_create({ atomClass, atomClassBase, user }) {
+      // atomClassId
+      const atomClassId = atomClass.id;
+      // itemOnly
+      if (atomClassBase.itemOnly) {
+        const res = await ctx.bean.atom.checkRightCreate({
+          atomClass,
+          user,
+        });
+        if (!res) ctx.throw(403);
+        return;
+      }
+      // roleIdOwner
+      const roleIdOwner = ctx.request.body.roleIdOwner;
+      if (roleIdOwner) {
+        // check
+        const res = await ctx.bean.atom.checkRightCreateRole({
+          atomClass: {
+            id: atomClassId,
+          },
+          roleIdOwner,
+          user: ctx.state.user.op,
+        });
+        if (!res) ctx.throw(403);
+      } else {
+        // retrieve default one, must exists
+        const roleId = await ctx.bean.atom.preferredRoleId({
+          atomClass: {
+            id: atomClassId,
+          },
+          user: ctx.state.user.op,
+        });
+        if (roleId === 0) ctx.throw(403);
+        ctx.request.body.roleIdOwner = roleId;
       }
     }
 
