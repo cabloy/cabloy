@@ -100,6 +100,7 @@ module.exports = ctx => {
     }
 
     async _checkRightActionBulk_normal({ atomClass, action, stage, user }) {
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // parse action code
       action = ctx.bean.atomAction.parseActionCode({
         action,
@@ -113,7 +114,7 @@ module.exports = ctx => {
         action,
       });
       const actionRes = await ctx.model.queryOne(sql);
-      return await this.__checkRightActionBulk({ actionRes, stage, user });
+      return await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
     }
 
     async checkRightCreate({ atomClass, user }) {
@@ -175,6 +176,7 @@ module.exports = ctx => {
     // actionsBulk of atomClass
     async actionsBulk({ atomClass, stage, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const sql = this.sqlProcedure.checkRightActionBulk({
         iid: ctx.instance.id,
         userIdWho: user.id,
@@ -183,7 +185,7 @@ module.exports = ctx => {
       const actionsRes = await ctx.model.query(sql);
       const res = [];
       for (const actionRes of actionsRes) {
-        const _res = await this.__checkRightActionBulk({ actionRes, stage, user });
+        const _res = await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
         if (_res) {
           res.push(_res);
         }

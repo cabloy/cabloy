@@ -434,7 +434,8 @@ module.exports = ctx => {
 
     // right
 
-    async __checkRightActionBulk({ actionRes, stage /* user*/ }) {
+    async __checkRightActionBulk({ atomClassBase, actionRes, stage /* user*/ }) {
+      if (atomClassBase.itemOnly) return actionRes;
       // not care about stage
       if (!stage) return actionRes;
       // action base
