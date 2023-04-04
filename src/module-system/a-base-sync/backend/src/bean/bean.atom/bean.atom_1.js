@@ -5,16 +5,17 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async _deleteBulk_item({ key, user }) {
+    async _deleteBulk_item({ atomClass, key, user }) {
       // check right
       const res = await ctx.bean.atom.checkRightAction({
         atom: { id: key.atomId },
+        atomClass,
         action: 4,
         user,
       });
       if (!res) return false;
       // delete
-      await this.delete({ key, user });
+      await this.delete({ atomClass, key, user });
       // ok
       return true;
     }

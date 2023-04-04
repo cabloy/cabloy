@@ -56,6 +56,7 @@ module.exports = app => {
     async read() {
       const res = await this.ctx.service.atom.read({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         options: this.ctx.request.body.options,
         user: this.ctx.state.user.op,
       });
@@ -95,6 +96,7 @@ module.exports = app => {
       };
       await this.ctx.service.atom.write({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         item: this.ctx.request.body.item,
         user: this.ctx.state.user.op,
         options,
@@ -140,6 +142,7 @@ module.exports = app => {
     async delete() {
       await this.ctx.service.atom.delete({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         user: this.ctx.state.user.op,
       });
       this.ctx.success();
@@ -253,6 +256,7 @@ module.exports = app => {
     async checkRightAction() {
       const res = await this.ctx.service.atom.checkRightAction({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         action: this.ctx.request.body.action,
         stage: this.ctx.request.body.stage,
         user: this.ctx.state.user.op,

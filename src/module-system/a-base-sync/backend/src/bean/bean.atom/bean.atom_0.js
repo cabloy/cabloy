@@ -260,10 +260,10 @@ module.exports = ctx => {
     }
 
     // deleteBulk
-    async deleteBulk({ keys, user }) {
+    async deleteBulk({ atomClass, keys, user }) {
       const resKeys = [];
       for (const key of keys) {
-        const res = await this._deleteBulk_item({ key, user });
+        const res = await this._deleteBulk_item({ atomClass, key, user });
         if (res) {
           resKeys.push(key);
         }

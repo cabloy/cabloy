@@ -24,8 +24,8 @@ module.exports = app => {
         atomClassName: atomClass.atomClassName,
       };
     }
-    async read({ key, options, user }) {
-      return await this.ctx.bean.atom.read({ key, options, user });
+    async read({ key, atomClass, options, user }) {
+      return await this.ctx.bean.atom.read({ key, atomClass, options, user });
     }
 
     async select({ atomClass, options, user }) {
@@ -36,8 +36,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.count({ atomClass, options, user });
     }
 
-    async write({ key, item, options, user }) {
-      return await this.ctx.bean.atom.write({ key, item, options, user });
+    async write({ key, atomClass, item, options, user }) {
+      return await this.ctx.bean.atom.write({ key, atomClass, item, options, user });
     }
 
     async openDraft({ key, user }) {
@@ -48,12 +48,12 @@ module.exports = app => {
       return await this.ctx.bean.atom.submit({ key, options, user });
     }
 
-    async delete({ key, user }) {
-      return await this.ctx.bean.atom.delete({ key, user });
+    async delete({ key, atomClass, user }) {
+      return await this.ctx.bean.atom.delete({ key, atomClass, user });
     }
 
-    async deleteBulk({ keys, user }) {
-      return await this.ctx.bean.atom.deleteBulk({ keys, user });
+    async deleteBulk({ atomClass, keys, user }) {
+      return await this.ctx.bean.atom.deleteBulk({ atomClass, keys, user });
     }
 
     async clone({ key, user }) {
@@ -119,8 +119,15 @@ module.exports = app => {
       return await this.ctx.bean.atom.actionsBulk({ atomClass, stage, user });
     }
 
-    async checkRightAction({ key, action, stage, user, checkFlow }) {
-      return await this.ctx.bean.atom.checkRightAction({ atom: { id: key.atomId }, action, stage, user, checkFlow });
+    async checkRightAction({ key, atomClass, action, stage, user, checkFlow }) {
+      return await this.ctx.bean.atom.checkRightAction({
+        atom: { id: key.atomId },
+        atomClass,
+        action,
+        stage,
+        user,
+        checkFlow,
+      });
     }
 
     async schema({ atomClass, schema }) {
