@@ -4,12 +4,17 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async checkRightAction({ atom: { id }, action, stage, user, checkFlow, disableAuthOpenCheck }) {
-      const _atom = await this.modelAtom.get({ id });
-      if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+    async checkRightAction({ atom: { id }, atomClass, action, stage, user, checkFlow, disableAuthOpenCheck }) {
+      let _atom;
+      if (!atomClass) {
+        _atom = await this.modelAtom.get({ id });
+        if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        // atomClass
+        atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
+      } else {
+        _atom = { id };
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+      }
       // normal check
       const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
@@ -41,9 +46,14 @@ module.exports = ctx => {
       });
     }
 
-    async _checkRightAction({ atom, action, stage, user, checkFlow }) {
+    async _checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
       const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      if (atomClassBase.itemOnly) {
+        // check basic
+        return await this._checkRightAction_itemOnly({ atomClass, _atom, action, user });
+      }
       // adjust for simple
       if (stage === 'draft' && _atom.atomSimple === 1) stage = 'formal';
       // action.stage
@@ -55,13 +65,11 @@ module.exports = ctx => {
       }
       // flow action
       if (action >= 10000) {
-        const task = await this._checkRightAction_flowAction({ _atom, action, user });
+        const task = await this._checkRightAction_flowAction({ _atom, atomClass, action, user });
         if (!task) return null;
         _atom.__task = task;
         return _atom;
       }
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
       // actionBase
       const actionBase = ctx.bean.base.action({
         module: atomClass.module,
@@ -93,15 +101,15 @@ module.exports = ctx => {
       }
       // draft
       if (_atom.atomStage === 0) {
-        return await this._checkRightAction_draft({ actionBase, _atom, action, user, checkFlow });
+        return await this._checkRightAction_draft({ atomClass, actionBase, _atom, action, user, checkFlow });
       }
       // not draft
       return await this._checkRightAction_not_draft({ atomClass, actionBase, _atom, action, user, checkFlow });
     }
 
-    async _checkRightAction_flowAction({ _atom, action, user }) {
+    async _checkRightAction_flowAction({ _atom, atomClass, action, user }) {
       // actionItem
-      const actionItem = await ctx.bean.atomAction.model.get({ atomClassId: _atom.atomClassId, code: action });
+      const actionItem = await ctx.bean.atomAction.model.get({ atomClassId: atomClass.id, code: action });
       if (!actionItem) return null;
       // flowTask
       const task = await ctx.bean.flowTask.get({
@@ -118,7 +126,7 @@ module.exports = ctx => {
       return task;
     }
 
-    async _checkRightAction_draft({ actionBase, _atom, action, user, checkFlow }) {
+    async _checkRightAction_draft({ atomClass, actionBase, _atom, action, user, checkFlow }) {
       // _atomFormal
       let _atomFormal;
       if (_atom.atomIdFormal) {
@@ -137,7 +145,14 @@ module.exports = ctx => {
         if (bSelf && action === 3) {
           // return _atom;
           if (_atomFormal) {
-            return await this._checkRightAction({ atom: _atomFormal, action, stage: 'formal', user, checkFlow: false });
+            return await this._checkRightAction({
+              atom: _atomFormal,
+              atomClass,
+              action,
+              stage: 'formal',
+              user,
+              checkFlow: false,
+            });
           }
         }
         return null;
@@ -173,7 +188,14 @@ module.exports = ctx => {
         !_atomDraft.atomClosed &&
         _atomDraft.userIdUpdated === user.id
       ) {
-        return await this._checkRightAction({ atom: _atomDraft, action, stage: 'draft', user, checkFlow: false });
+        return await this._checkRightAction({
+          atom: _atomDraft,
+          atomClass,
+          action,
+          stage: 'draft',
+          user,
+          checkFlow: false,
+        });
       }
       // checkFlow
       if (_atom.atomFlowId > 0 && !_atom.atomClosed && checkFlow) {
@@ -192,6 +214,17 @@ module.exports = ctx => {
       if (action === 7 && _atom.atomDisabled === 1) return null;
       // workflowFormal
       if (action === 16 && _atom.atomFlowId === 0) return null;
+      // check basic
+      return await this._checkRightAction_basic({ atomClass, _atom, action, user });
+    }
+
+    async _checkRightAction_itemOnly({ atomClass, _atom, action, user }) {
+      // check basic
+      return await this._checkRightAction_basic({ atomClass, _atom, action, user });
+    }
+
+    async _checkRightAction_basic({ atomClass, _atom, action, user }) {
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // check formal/history
@@ -199,6 +232,7 @@ module.exports = ctx => {
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClass,
+        atomClassBase,
         atomId: _atom.id,
         action,
         forAtomUser,
@@ -207,5 +241,6 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
   }
+
   return Atom;
 };
