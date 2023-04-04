@@ -272,16 +272,38 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key, options, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
+    async delete({ key, atomClass, options, user }) {
+      // atomClass
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+        if (!atomClass) throw new Error(`atomClass not found for atom: ${key.atomId}`);
+      } else {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+      }
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // atom
-      const _atom = await this.modelAtom.get({ id: key.atomId });
+      let _atom;
+      if (!atomClassBase.itemOnly) {
+        _atom = await this.modelAtom.get({ id: key.atomId });
+        key.itemId = _atom.itemId;
+      } else {
+        key.itemId = key.atomId;
+      }
+      // itemOnly
+      if (atomClassBase.itemOnly) {
+        // delete as formal
+        await ctx.meta.util.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, key, options, user },
+          fn: 'delete',
+        });
+        return;
+      }
+      // atom
       if (_atom.atomStage === 0) {
         // close draft
         await this.closeDraft({ key });
