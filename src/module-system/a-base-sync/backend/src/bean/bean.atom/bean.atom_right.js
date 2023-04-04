@@ -20,17 +20,9 @@ module.exports = ctx => {
     }
 
     async checkRightRead({ atom: { id }, atomClass, user, checkFlow, disableAuthOpenCheck }) {
-      let _atom;
-      if (!atomClass) {
-        _atom = await this.modelAtom.get({ id });
-        if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-        // atomClass
-        atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      } else {
-        _atom = { id };
-        atomClass = await ctx.bean.atomClass.get(atomClass);
-      }
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const _res = await this._prepareAtomAndAtomClass({ atomId: id, atomClass });
+      const _atom = _res.atom;
+      atomClass = _res.atomClass;
       // normal check
       const res = await this._checkRightRead_normal({ _atom, atomClass, user, checkFlow });
       if (!res) return res;

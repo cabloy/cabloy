@@ -8,6 +8,7 @@ const atom_simple = require('./bean.atom/bean.atom_simple.js');
 const atom_submit = require('./bean.atom/bean.atom_submit.js');
 const atom_checkRightAction = require('./bean.atom/bean.atom_checkRightAction.js');
 const atom_rightRoleScopes = require('./bean.atom/bean.atom_rightRoleScopes.js');
+const atom_utils = require('./bean.atom/bean.atom_utils.js');
 
 module.exports = ctx => {
   return ctx.app.meta.util.mixinClasses(
@@ -23,6 +24,7 @@ module.exports = ctx => {
       atom_submit,
       atom_checkRightAction,
       atom_rightRoleScopes,
+      atom_utils,
     ],
     ctx
   );

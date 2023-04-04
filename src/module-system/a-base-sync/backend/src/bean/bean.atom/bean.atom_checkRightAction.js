@@ -5,16 +5,9 @@ module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
     async checkRightAction({ atom: { id }, atomClass, action, stage, user, checkFlow, disableAuthOpenCheck }) {
-      let _atom;
-      if (!atomClass) {
-        _atom = await this.modelAtom.get({ id });
-        if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
-        // atomClass
-        atomClass = await ctx.bean.atomClass.get({ id: _atom.atomClassId });
-      } else {
-        _atom = { id };
-        atomClass = await ctx.bean.atomClass.get(atomClass);
-      }
+      const _res = await this._prepareAtomAndAtomClass({ atomId: id, atomClass });
+      const _atom = _res.atom;
+      atomClass = _res.atomClass;
       // normal check
       const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
