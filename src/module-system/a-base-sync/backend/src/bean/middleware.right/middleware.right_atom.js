@@ -25,7 +25,12 @@ module.exports = ctx => {
           checkFlow: options.checkFlow,
         });
         if (!res) ctx.throw(403);
-        atomKey.itemId = res.itemId;
+        // itemId
+        if (atomClassBase.itemOnly) {
+          atomKey.itemId = atomKey.atomId;
+        } else {
+          atomKey.itemId = res.itemId;
+        }
         return;
       }
 
@@ -50,7 +55,12 @@ module.exports = ctx => {
           checkFlow: options.checkFlow,
         });
         if (!res) ctx.throw(403);
-        atomKey.itemId = res.itemId;
+        // itemId
+        if (atomClassBase.itemOnly) {
+          atomKey.itemId = atomKey.atomId;
+        } else {
+          atomKey.itemId = res.itemId;
+        }
       }
     }
 
