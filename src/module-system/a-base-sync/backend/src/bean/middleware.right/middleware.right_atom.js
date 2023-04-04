@@ -1,11 +1,11 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Middleware {
-    async checkAtom(moduleInfo, options, ctx) {
+    async checkAtom(moduleInfo, options) {
       // constant
       const constant = ctx.constant.module(moduleInfo.relativeName);
 
-      const { atomKey, atomClass, atomClassBase } = await _checkAtomClassExpect({ options, ctx });
+      const { atomKey, atomClass, atomClassBase } = await this._checkAtomClassExpect({ options });
 
       // create
       if (options.action === 'create' || options.action === constant.atom.action.create) {
@@ -73,7 +73,7 @@ module.exports = ctx => {
       }
     }
 
-    function _parseAtomClass(atomClass) {
+    _parseAtomClass(atomClass) {
       if (!atomClass) return atomClass;
       if (typeof atomClass === 'string') {
         const [module, atomClassName] = atomClass.split(':');
@@ -81,14 +81,14 @@ module.exports = ctx => {
       }
       return atomClass;
     }
-    
-    function _checkIfSameAtomClass(atomClassA, atomClassB) {
+
+    _checkIfSameAtomClass(atomClassA, atomClassB) {
       return atomClassA.module === atomClassB.module && atomClassA.atomClassName === atomClassB.atomClassName;
     }
-    
-    async function _checkAtomClassExpect({ options, ctx }) {
+
+    async _checkAtomClassExpect({ options }) {
       // atomClassExpect
-      const atomClassExpect = _parseAtomClass(options.atomClass);
+      const atomClassExpect = this._parseAtomClass(options.atomClass);
       // atomKey
       const atomKey = ctx.request.body.key;
       // atomClass: support itemOnly
@@ -100,7 +100,7 @@ module.exports = ctx => {
       }
       // check if valid & same
       if (!atomClass && !atomClassExpect) ctx.throw(403);
-      if (atomClass && atomClassExpect && !_checkIfSameAtomClass(atomClass, atomClassExpect)) {
+      if (atomClass && atomClassExpect && !this._checkIfSameAtomClass(atomClass, atomClassExpect)) {
         ctx.throw(403);
       }
       // neednot check !!atomClassExpect
@@ -118,7 +118,6 @@ module.exports = ctx => {
         atomClassBase,
       };
     }
-    
   }
   return Middleware;
 };
