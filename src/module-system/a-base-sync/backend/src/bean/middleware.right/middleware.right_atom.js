@@ -42,7 +42,7 @@ module.exports = ctx => {
           atomClass,
           action: actionOther,
           stage: options.stage,
-          user: ctx.state.user.op,
+          user,
         });
         if (!res) ctx.throw(403);
       } else {
@@ -51,7 +51,7 @@ module.exports = ctx => {
           atomClass,
           action: actionOther,
           stage: options.stage,
-          user: ctx.state.user.op,
+          user,
           checkFlow: options.checkFlow,
         });
         if (!res) ctx.throw(403);
@@ -85,7 +85,7 @@ module.exports = ctx => {
             id: atomClassId,
           },
           roleIdOwner,
-          user: ctx.state.user.op,
+          user,
         });
         if (!res) ctx.throw(403);
       } else {
@@ -94,7 +94,7 @@ module.exports = ctx => {
           atomClass: {
             id: atomClassId,
           },
-          user: ctx.state.user.op,
+          user,
         });
         if (roleId === 0) ctx.throw(403);
         ctx.request.body.roleIdOwner = roleId;
