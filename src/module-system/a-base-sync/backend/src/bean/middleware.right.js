@@ -60,7 +60,7 @@ async function checkAtom(moduleInfo, options, ctx) {
   // constant
   const constant = ctx.constant.module(moduleInfo.relativeName);
 
-  const { atomKey, atomClass } = await _checkAtomClassExpect({ options, ctx });
+  const { atomKey, atomClass, atomClassBase } = await _checkAtomClassExpect({ options, ctx });
 
   // create
   if (options.action === 'create' || options.action === constant.atom.action.create) {
@@ -189,16 +189,14 @@ async function _checkAtomClassExpect({ options, ctx }) {
   const atomClassExpect = _parseAtomClass(options.atomClass);
   // atomKey
   const atomKey = ctx.request.body.key;
-  // key first, then atomClass
-  let atomClass;
-  if (atomKey) {
+  // atomClass: support itemOnly
+  let atomClass = ctx.request.body.atomClass;
+  if (atomClass) {
+    atomClass = await ctx.bean.atomClass.get(atomClass);
+  } else if (atomKey) {
     atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atomKey.atomId });
-  } else {
-    const _atomClass = ctx.request.body.atomClass;
-    if (_atomClass) {
-      atomClass = await ctx.bean.atomClass.get(_atomClass);
-    }
   }
+  // check if valid & same
   if (!atomClass && !atomClassExpect) ctx.throw(403);
   if (atomClass && atomClassExpect && !_checkIfSameAtomClass(atomClass, atomClassExpect)) {
     ctx.throw(403);
@@ -208,12 +206,13 @@ async function _checkAtomClassExpect({ options, ctx }) {
     atomClass = await ctx.bean.atomClass.get(atomClassExpect);
   }
   // force consistent for safe
-  if (options.atomClassForce !== false) {
-    ctx.request.body.atomClass = atomClass;
-  }
+  ctx.request.body.atomClass = atomClass;
+  // atomClassBase
+  const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
   // ok
   return {
     atomKey,
     atomClass,
+    atomClassBase,
   };
 }

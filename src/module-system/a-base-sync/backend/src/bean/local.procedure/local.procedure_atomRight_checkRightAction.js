@@ -16,6 +16,7 @@ module.exports = ctx => {
           'a.iid': iid,
           'a.id': atomId,
           'a.atomStage': [1, 2],
+          'a.atomClassId': atomClass.id,
         };
         _selectFields = 'a.*';
         _atomJoin = 'from aAtom a';
