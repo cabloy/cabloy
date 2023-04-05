@@ -1,8 +1,8 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase {
-    async selectBefore(/* { atomClass, options, user }*/) {
-      // donothing
+    async selectQuery({ atomClass, options, user }) {
+      return await this.ctx.bean.atom._selectQuery({ atomClass, options, user });
     }
 
     async select({ atomClass, options, items, user }) {

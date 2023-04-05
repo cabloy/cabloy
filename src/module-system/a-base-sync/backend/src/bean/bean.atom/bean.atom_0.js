@@ -151,16 +151,6 @@ module.exports = ctx => {
         atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
         _moduleInfo = mparse.parseInfo(atomClass.module);
       }
-      // selectBefore
-      if (atomClass) {
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
-        await ctx.meta.util.executeBean({
-          beanModule: _moduleInfo.relativeName,
-          beanFullName,
-          context: { atomClass, options, user },
-          fn: 'selectBefore',
-        });
-      }
       // select
       const items = await this._list({
         atomClass,

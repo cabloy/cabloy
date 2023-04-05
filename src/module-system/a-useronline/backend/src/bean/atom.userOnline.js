@@ -21,7 +21,7 @@ module.exports = app => {
       // ok
       return item;
     }
-
+    /*
     async selectBefore({ atomClass, options, user }) {
       // super
       await super.selectBefore({ atomClass, options, user });
@@ -47,7 +47,7 @@ module.exports = app => {
         }
       }
     }
-
+*/
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });

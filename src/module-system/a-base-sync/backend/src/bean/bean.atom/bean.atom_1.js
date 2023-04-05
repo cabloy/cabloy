@@ -396,8 +396,8 @@ module.exports = ctx => {
       const cms = atomClassBase && atomClassBase.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
-      // select
-      const sql = await this.sqlProcedure.selectAtoms({
+      // options: maybe has another custom options
+      options = Object.assign({}, options, {
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         atomClass,
@@ -423,7 +423,22 @@ module.exports = ctx => {
         forAtomUser,
         role,
       });
+      // selectQuery
+      let sql;
+      if (atomClass) {
+        const _moduleInfo = mparse.parseInfo(atomClass.module);
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
+        sql = await ctx.meta.util.executeBean({
+          beanModule: _moduleInfo.relativeName,
+          beanFullName,
+          context: { atomClass, options, user },
+          fn: 'selectQuery',
+        });
+      } else {
+        sql = await this._selectQuery({ atomClass, options, user });
+      }
       debug('===== selectAtoms =====\n%s', sql);
+      // select
       const items = sql === false ? [] : await ctx.model.query(sql);
       // count
       if (count) {
@@ -431,6 +446,10 @@ module.exports = ctx => {
       }
       // ok
       return items;
+    }
+
+    async _selectQuery({ /* atomClass, */ options, user }) {
+      return await this.sqlProcedure.selectAtoms(options);
     }
 
     // right
