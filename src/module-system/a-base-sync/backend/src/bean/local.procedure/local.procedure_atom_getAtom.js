@@ -3,7 +3,7 @@ module.exports = ctx => {
     async getAtom({
       iid,
       userIdWho,
-      // atomClass,
+      atomClass,
       atomClassBase,
       tableName,
       atomId,
@@ -97,6 +97,11 @@ module.exports = ctx => {
         _where['f.id'] = atomId;
         _where['f.deleted'] = 0;
         _where['f.iid'] = iid;
+      }
+
+      // atomClass
+      if (atomClass && !atomClassBase.itemOnly) {
+        _where['a.atomClassId'] = atomClass.id;
       }
 
       // fields

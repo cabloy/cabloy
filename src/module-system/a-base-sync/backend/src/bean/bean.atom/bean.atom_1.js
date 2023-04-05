@@ -402,10 +402,11 @@ module.exports = ctx => {
           action: 'select',
           count,
         });
-        // 'where' should append atomClassId, such as article/post using the same table
-        if (!atomClassBase.itemOnly) {
-          options.where['a.atomClassId'] = atomClass.id;
-        }
+        // need not, moved to local.procedure
+        // // 'where' should append atomClassId, such as article/post using the same table
+        // if (!atomClassBase.itemOnly) {
+        //   options.where['a.atomClassId'] = atomClass.id;
+        // }
       }
       // cms
       const cms = atomClassBase && atomClassBase.cms;

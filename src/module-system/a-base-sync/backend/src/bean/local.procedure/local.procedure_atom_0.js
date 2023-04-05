@@ -148,6 +148,9 @@ module.exports = ctx => {
       if (!atomClass) {
         _where['a.atomClassId'] = await this._prepare_atomClassIdsInner();
       }
+      if (atomClass && !atomClassBase.itemOnly) {
+        _where['a.atomClassId'] = atomClass.id;
+      }
 
       // fields
       let _selectFields;

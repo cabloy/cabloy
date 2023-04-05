@@ -7,12 +7,15 @@ module.exports = ctx => {
       // atomClass
       const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
       if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history
       const sql = await this.sqlProcedure.checkRoleRightRead({
         iid: ctx.instance.id,
         roleIdWho: roleId,
+        atomClass,
+        atomClassBase,
         atomId,
         forAtomUser,
       });

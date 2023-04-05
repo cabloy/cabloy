@@ -1,6 +1,13 @@
 module.exports = ctx => {
   class Procedure {
-    async checkRoleRightRead({ iid, roleIdWho, atomId, forAtomUser }) {
+    async checkRoleRightRead({
+      iid,
+      roleIdWho,
+      atomClass,
+      // atomClassBase,
+      atomId,
+      forAtomUser,
+    }) {
       // for safe
       iid = parseInt(iid);
       roleIdWho = parseInt(roleIdWho);
@@ -11,6 +18,7 @@ module.exports = ctx => {
         'a.iid': iid,
         'a.id': atomId,
         'a.atomStage': [1, 2],
+        'a.atomClassId': atomClass.id,
       };
       // _rightWhere
       const _rightWhere = await this._checkRoleRightRead_rightWhere({ iid, roleIdWho, forAtomUser });
