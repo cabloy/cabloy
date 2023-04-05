@@ -3,6 +3,10 @@ const __itemBasicFields = ['id', 'iid', 'atomId', 'itemId', 'atomStage'];
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomBase {
+    async readQuery({ atomClass, options, user }) {
+      return await this.ctx.bean.atom._readQuery({ atomClass, options, user });
+    }
+
     async read({ atomClass, options, key, user }) {
       // get
       let item = await this.ctx.bean.atom._get({ atomClass, options, key, mode: 'full', user });

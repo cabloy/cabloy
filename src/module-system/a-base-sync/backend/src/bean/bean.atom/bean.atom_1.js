@@ -326,8 +326,8 @@ module.exports = ctx => {
       const cms = atomClassBase && atomClassBase.cms;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
-      // sql
-      const sql = await this.sqlProcedure.getAtom({
+      // options: maybe has another custom options
+      options = Object.assign({}, options, {
         iid: ctx.instance.id,
         userIdWho: user ? user.id : 0,
         atomClass,
@@ -340,9 +340,24 @@ module.exports = ctx => {
         cms,
         forAtomUser,
       });
+      // readQuery
+      const _moduleInfo = mparse.parseInfo(atomClass.module);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
+      const sql = await ctx.meta.util.executeBean({
+        beanModule: _moduleInfo.relativeName,
+        beanFullName,
+        context: { atomClass, options, user },
+        fn: 'readQuery',
+      });
       debug('===== getAtom =====\n%s', sql);
       // query
-      return await ctx.model.queryOne(sql);
+      const item = sql === false ? null : await ctx.model.queryOne(sql);
+      // ok
+      return item;
+    }
+
+    async _readQuery({ /* atomClass, */ options, user }) {
+      return await this.sqlProcedure.getAtom(options);
     }
 
     // forAtomUser
@@ -438,7 +453,7 @@ module.exports = ctx => {
         sql = await this._selectQuery({ atomClass, options, user });
       }
       debug('===== selectAtoms =====\n%s', sql);
-      // select
+      // query
       const items = sql === false ? [] : await ctx.model.query(sql);
       // count
       if (count) {
