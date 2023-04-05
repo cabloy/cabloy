@@ -18,8 +18,8 @@ module.exports = app => {
     {
       atomName: 'Users Status',
       atomStaticKey: 'listUserStatus',
-      atomRevision: 1,
-      atomCategoryId: 'a-base:menu.Tools',
+      atomRevision: 2,
+      atomCategoryId: 'a-base:menu.RuntimeData',
       resourceType: 'a-base:menu',
       resourceConfig: JSON.stringify({
         module: moduleInfo.relativeName,

@@ -22,6 +22,7 @@ module.exports = {
   OpenAuthScope: 'Open Auth Scope',
   BasicProfile: 'Basic Profile',
   BasicAdmin: 'Basic Admin',
+  RuntimeData: 'Runtime Data',
   WorkplaceTitle: 'Workplace',
   NotImplemented: 'Not Implemented',
   BatchDelete: 'Batch Delete',

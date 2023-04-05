@@ -15,7 +15,7 @@ export default {
         'AppCategorySettings',
       ],
       'a-appbooster:appGeneral': ['Create', 'List', 'Tools'],
-      'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'Tools'],
+      'a-appbooster:appSystem': ['BasicProfile', 'BasicAdmin', 'Settings', 'RuntimeData', 'Tools'],
     },
   },
   appInit: {

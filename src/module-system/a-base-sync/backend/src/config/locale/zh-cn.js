@@ -144,6 +144,7 @@ module.exports = {
   About: '关于',
   BasicProfile: '基础资料',
   BasicAdmin: '基础管理',
+  RuntimeData: '运行数据',
   Authenticated: '已验证',
   Anonymous: '匿名',
   WorkplaceTitle: '工作台',

@@ -12,7 +12,7 @@ module.exports = app => {
         userOnline: {
           info: {
             bean: 'userOnline',
-            title: 'Online Users',
+            title: 'Users Status', // 'Online Users',
             tableName: 'aUserOnline',
             language: false,
             category: false,
