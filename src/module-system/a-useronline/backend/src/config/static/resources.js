@@ -29,6 +29,23 @@ module.exports = app => {
       resourceIcon: '::people',
       appKey: 'a-appbooster:appSystem',
       resourceRoles: 'template.system',
+      resourceSorting: 1,
+    },
+    {
+      atomName: 'LoginLog',
+      atomStaticKey: 'listLoginLog',
+      atomRevision: 0,
+      atomCategoryId: 'a-base:menu.RuntimeData',
+      resourceType: 'a-base:menu',
+      resourceConfig: JSON.stringify({
+        module: moduleInfo.relativeName,
+        atomClassName: 'userOnlineHistory',
+        atomAction: 'read',
+      }),
+      resourceIcon: ':role:shield-key',
+      appKey: 'a-appbooster:appSystem',
+      resourceRoles: 'template.system',
+      resourceSorting: 2,
     },
     // {
     //   atomName: 'Online Users(History)',

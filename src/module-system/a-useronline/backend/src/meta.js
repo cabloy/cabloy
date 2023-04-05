@@ -47,7 +47,7 @@ module.exports = app => {
         userOnlineHistory: {
           info: {
             bean: 'userOnlineHistory',
-            title: 'Online Users(History)',
+            title: 'LoginLog',
             tableName: 'aUserOnlineHistory',
             itemOnly: true,
           },
