@@ -15,7 +15,7 @@ module.exports = app => {
       this.ctx.bean.util.checkDemo();
       const res = await this.service.atomRight.add({
         roleAtomId: this.ctx.request.body.key.atomId,
-        atomClass: this.ctx.request.body.atomClass,
+        atomClass: this.ctx.request.body.atomClassTarget,
         actionCode: this.ctx.request.body.actionCode,
         scopeSelf: this.ctx.request.body.scopeSelf,
         scope: this.ctx.request.body.scope,

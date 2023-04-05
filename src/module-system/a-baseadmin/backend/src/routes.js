@@ -121,7 +121,7 @@ module.exports = app => {
       method: 'post',
       path: 'atomRight/add',
       controller: 'atomRight',
-      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations', atomClassForce: false } },
+      meta: { right: { type: 'atom', atomClass: 'a-base:role', action: 'atomAuthorizations' } },
     },
     {
       method: 'post',

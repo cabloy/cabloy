@@ -109,7 +109,7 @@ export default {
       if (!action) return;
       const data = {
         key: this.roleKey,
-        atomClass: this.atomClass,
+        atomClassTarget: this.atomClass,
         actionCode: parseInt(action.code || action.action),
         scopeSelf: this.scopeSelf,
         scope: this.scope ? this.scope.map(item => item.itemId) : [],
