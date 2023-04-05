@@ -21,10 +21,8 @@ module.exports = app => {
       // ok
       return item;
     }
-    /*
-    async selectBefore({ atomClass, options, user }) {
-      // super
-      await super.selectBefore({ atomClass, options, user });
+
+    async selectQuery({ atomClass, options, user }) {
       // orders
       for (const order of options.orders) {
         if (order[0] === 'f.onlineStatus') {
@@ -46,8 +44,10 @@ module.exports = app => {
           options.where['f.expireTime'] = clause;
         }
       }
+      // super
+      return await super.selectQuery({ atomClass, options, user });
     }
-*/
+
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });
