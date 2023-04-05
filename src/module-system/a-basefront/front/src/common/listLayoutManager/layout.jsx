@@ -20,8 +20,12 @@ export default {
       const atomClass = this.container.atomClass;
       const atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;
       // atom base
+      const layoutKeyBase =
+        atomClassBase && atomClassBase.itemOnly
+          ? 'a-basefront:layoutItemOnlyListBase'
+          : 'a-basefront:layoutAtomListBase';
       let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: 'a-basefront:layoutAtomListBase',
+        layoutKey: layoutKeyBase,
       });
       this.base.configAtomBase = layoutItem.content;
       // atom cms
