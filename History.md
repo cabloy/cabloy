@@ -1,5 +1,12 @@
 # History
 
+## 2023-04-05, Version 4.32.0（未发布）
+
+- **Feat**
+  - ItemOnly：Atom 降级策略
+  - 其他优化：
+    - atom bean 组件：增加 selectQuery 和 readQuery
+
 ## 2023-03-24, Version 4.31.0（未发布）
 
 - **Feat**
