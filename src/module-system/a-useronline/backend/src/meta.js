@@ -50,6 +50,7 @@ module.exports = app => {
             title: 'LoginLog',
             tableName: 'aUserOnlineHistory',
             itemOnly: true,
+            userIds: 'userId',
           },
           actions: {},
           validator: 'userOnlineHistory',

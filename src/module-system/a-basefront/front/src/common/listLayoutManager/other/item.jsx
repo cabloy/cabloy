@@ -5,7 +5,7 @@ export default {
   mixins: [Actions, ContextMenu],
   methods: {
     item_getAtomName(item) {
-      return item.atomNameLocale || item.atomName;
+      return item.atomNameLocale || item.atomName || item._meta.atomName;
     },
     item_getMetaMedia(item, avatarFieldName) {
       let media;
