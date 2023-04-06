@@ -52,7 +52,7 @@ export default {
           </div>
           <div class="date">
             {this.layoutManager.item_renderStats(item)}
-            <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt)}</span>
+            <span>{this.$meta.util.formatDateTimeRelative(item.atomUpdatedAt || item.updatedAt)}</span>
           </div>
         </div>
       );
