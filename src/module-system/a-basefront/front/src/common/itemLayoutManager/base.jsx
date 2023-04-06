@@ -120,7 +120,11 @@ export default {
       if (action.name === 'save' && this.container.mode === 'edit' && this.page_getDirty()) {
         if (data.actionSource === this) {
           // just update time
-          this.base.item.atomUpdatedAt = new Date();
+          if (this.base.item.atomUpdatedAt) {
+            this.base.item.atomUpdatedAt = new Date();
+          } else {
+            this.base.item.updatedAt = new Date();
+          }
         } else {
           // prompt
           const title = this.base.item.atomNameLocale || this.base.item.atomName;
@@ -133,7 +137,11 @@ export default {
             }
           } catch (err) {
             // just update time
-            this.base.item.atomUpdatedAt = new Date();
+            if (this.base.item.atomUpdatedAt) {
+              this.base.item.atomUpdatedAt = new Date();
+            } else {
+              this.base.item.updatedAt = new Date();
+            }
           }
         }
         return;

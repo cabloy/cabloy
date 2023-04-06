@@ -177,8 +177,8 @@ export default {
     info_renderDate() {
       const item = this.base.item;
       const children = [];
-      const dateCreated = this.$meta.util.formatDateTime(item.atomCreatedAt);
-      const dateUpdated = this.$meta.util.formatDateTime(item.atomUpdatedAt);
+      const dateCreated = this.$meta.util.formatDateTime(item.atomCreatedAt || item.createdAt);
+      const dateUpdated = this.$meta.util.formatDateTime(item.atomUpdatedAt || item.updatedAt);
       let small = false;
       if (dateCreated !== dateUpdated) {
         small = true;
@@ -187,8 +187,8 @@ export default {
       if (small) {
         children.push(<div key="date:two">{dateCreated}</div>);
       } else {
-        children.push(<div key="date:one2">{this.$meta.util.formatDate(item.atomCreatedAt)}</div>);
-        children.push(<div key="date:two2">{this.$meta.util.formatTime(item.atomCreatedAt)}</div>);
+        children.push(<div key="date:one2">{this.$meta.util.formatDate(item.atomCreatedAt || item.createdAt)}</div>);
+        children.push(<div key="date:two2">{this.$meta.util.formatTime(item.atomCreatedAt || item.createdAt)}</div>);
       }
       return (
         <div key="date" class="info-date">

@@ -17,8 +17,8 @@ export default {
       return key === `a.${columnName}` || key === `f.${columnName}` || key === columnName;
     },
     async layout_onPrepareConfigFull() {
-      const atomClass = this.container.atomClass;
-      const atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;
+      const atomClass = this.base_atomClass;
+      const atomClassBase = this.base_atomClassBase;
       // atom base
       const layoutKeyBase =
         atomClassBase && atomClassBase.itemOnly

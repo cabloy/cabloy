@@ -12,6 +12,13 @@ export default {
     base_userLabels() {
       return this.$store.getters['a/base/userLabels'];
     },
+    base_atomClass() {
+      return this.container.atomClass;
+    },
+    base_atomClassBase() {
+      const atomClass = this.base_atomClass;
+      return atomClass ? this.getAtomClass(atomClass) : null;
+    },
   },
   created() {
     this.$store.dispatch('a/base/getLabels');
