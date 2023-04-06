@@ -15,7 +15,7 @@ module.exports = app => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      this._getMeta(item);
+      this._getMeta(item, options);
       // ok
       return item;
     }
@@ -25,7 +25,7 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
       // meta
       for (const item of items) {
-        this._getMeta(item);
+        this._getMeta(item, options);
       }
     }
 
@@ -46,15 +46,20 @@ module.exports = app => {
       });
     }
 
-    _getMeta(item) {
+    _getMeta(item, options) {
+      // layout: list/table/mobile/pc
+      const layout = options && options.layout;
+      // meta
       const meta = this._ensureItemMeta(item);
-      // media
-      meta.media = item._userIdAvatar;
-      meta.atomName = item._userIdName;
-      // meta.flags
-      meta.flags.push(item.onlineIP);
-      // meta.summary
-      meta.summary = item.description;
+      if (layout === 'list') {
+        // media
+        meta.media = item._userIdAvatar;
+        meta.atomName = item._userIdName;
+        // meta.flags
+        meta.flags.push('重新上线');
+        // meta.summary
+        meta.summary = item.onlineIP;
+      }
     }
   }
 
