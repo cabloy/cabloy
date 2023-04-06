@@ -56,9 +56,10 @@ module.exports = app => {
         meta.media = item._userIdAvatar;
         meta.atomName = item._userIdName;
         // meta.flags
-        meta.flags.push('重新上线');
+        meta.flags.push(item.onlineIP);
+        meta.flags.push(item._isLoginTitleLocale);
         // meta.summary
-        meta.summary = item.onlineIP;
+        // meta.summary = item.onlineIP;
       }
     }
   }

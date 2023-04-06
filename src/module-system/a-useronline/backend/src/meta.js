@@ -5,6 +5,7 @@ module.exports = app => {
   // static
   const staticLayouts = require('./config/static/layouts.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
+  const staticDicts = require('./config/static/dicts.js')(app);
   // meta
   const meta = {
     base: {
@@ -51,6 +52,13 @@ module.exports = app => {
             tableName: 'aUserOnlineHistory',
             itemOnly: true,
             userIds: 'userId',
+            dict: {
+              fields: {
+                isLogin: {
+                  dictKey: 'a-userOnline:dictLoginType',
+                },
+              },
+            },
           },
           actions: {},
           validator: 'userOnlineHistory',
@@ -65,6 +73,9 @@ module.exports = app => {
         },
         'a-base.resource': {
           items: staticResources,
+        },
+        'a-dict.dict': {
+          items: staticDicts,
         },
       },
     },
