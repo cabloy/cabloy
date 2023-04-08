@@ -4,7 +4,7 @@ module.exports = app => {
     info: {
       ordersBase: [
         //
-        { name: 'onlineStatus', title: 'Status', by: 'desc', tableAlias: 'f', default: true },
+        { name: 'onlineTime', title: 'OnlineTime', by: 'desc', tableAlias: 'f', default: true },
       ],
     },
     layouts: {
@@ -70,8 +70,8 @@ module.exports = app => {
     },
   };
   const layout = {
-    atomName: 'Users Status',
-    atomStaticKey: 'layoutAtomListUserOnline',
+    atomName: 'LoginLog',
+    atomStaticKey: 'layoutAtomListUserOnlineHistory',
     atomRevision: 1,
     description: '',
     layoutTypeCode: 3,

@@ -59,6 +59,11 @@ module.exports = app => {
                 },
               },
             },
+            layout: {
+              config: {
+                atomList: 'layoutAtomListUserOnlineHistory',
+              },
+            },
           },
           actions: {},
           validator: 'userOnlineHistory',
