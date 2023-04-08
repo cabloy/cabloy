@@ -51,10 +51,10 @@ module.exports = app => {
       const layout = options && options.layout;
       // meta
       const meta = this._ensureItemMeta(item);
+      // media
+      meta.media = item._userIdAvatar;
+      meta.atomName = item._userIdName;
       if (layout === 'list') {
-        // media
-        meta.media = item._userIdAvatar;
-        meta.atomName = item._userIdName;
         // meta.flags
         meta.flags.push(item.onlineIP);
         meta.flags.push(item._isLoginTitleLocale);
