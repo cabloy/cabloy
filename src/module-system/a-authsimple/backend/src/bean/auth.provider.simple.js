@@ -16,6 +16,7 @@ module.exports = function (ctx) {
       return Strategy;
     }
     async onVerify(body) {
+      console.log('----onVerify this:', this.providerModule, this.providerName, this.providerScene);
       const { auth, password, rememberMe } = body.data;
       // validate
       await ctx.bean.validation.validate({ module: moduleInfo.relativeName, validator: 'signin', data: body.data });
