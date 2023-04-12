@@ -21,6 +21,6 @@
   "author": "<%=argv.author%>",
   "devDependencies": {},
   "dependencies": {
-    "require3": "./build/require3.js"
+    "require3": "./backend/utils/require3.js"
   }
 }
