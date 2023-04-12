@@ -86,7 +86,7 @@ module.exports = ctx => {
     }
     async lernaBootstrap() {
       // args
-      const args = ['bootstrap'];
+      const args = ['install'];
       // registry
       const registry = this.getNpmRegistry();
       const registryOption = registry ? `--registry=${registry}` : '';
@@ -94,10 +94,10 @@ module.exports = ctx => {
         args.push(registryOption);
       }
       // log
-      await this.console.log(`===> lerna bootstrap ${registryOption}`);
+      await this.console.log(`===> npm install ${registryOption}`);
       // spawn
       await this.spawnCmd({
-        cmd: 'lerna',
+        cmd: 'npm',
         args,
       });
     }

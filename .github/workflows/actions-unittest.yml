@@ -22,8 +22,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - run: npm install -g lerna
-      - run: lerna bootstrap
+      - run: npm install
       - run: cp -r src/front/_config src/front/config
       - run: cp -r src/backend/_config src/backend/config
       - run: npm run build:front

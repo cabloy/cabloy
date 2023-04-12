@@ -109,7 +109,7 @@ const utils = {
         )} → ${chalk.keyword('orange')(moduleVersionCurrent)}`;
         if (mode === 'lerna') {
           message += `\nRun ${chalk.keyword('orange')('> git pull <')} to update cabloy!`;
-          message += `\nRun ${chalk.keyword('orange')('> lerna bootstrap <')} to install dependencies!`;
+          message += `\nRun ${chalk.keyword('orange')('> npm install <')} to install dependencies!`;
         } else {
           // message += `\nRun ${chalk.keyword('orange')('> npm update <')} to update cabloy!`;
           // message += `\nRun ${chalk.keyword('orange')('> npm run update:test <')} to update the test modules!`;

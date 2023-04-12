@@ -18,7 +18,7 @@ co(function* () {
   command.printUsage = function () {
     this.log(`usage:
       - cd ${this.targetDir}
-      - lerna bootstrap
+      - npm install
       - npm run cli
       - npm run db:reset
       - npm run test:backend

@@ -11,21 +11,22 @@ COPY ./lerna.json /opt/node/app
 COPY ./package.json /opt/node/app
 COPY ./README.md /opt/node/app
 
-RUN chmod +x  /opt/node/app/scripts/*.sh
+RUN chmod +x /opt/node/app/scripts/\*.sh
 
-# do not uncomment this line unless run 'lerna bootstrap' manually
+# do not uncomment this line unless run 'npm install' manually
+
 # COPY ./node_modules /opt/node/app/node_modules
 
 # do not uncomment this line unless run 'npm run build:front' manually
+
 # COPY ./dist /opt/node/app/dist
 
-RUN npm i -g lerna
-RUN lerna bootstrap
+RUN npm install
 
-# RUN npm i -g lerna --registry=https://registry.npmmirror.com
-# RUN lerna bootstrap --registry=https://registry.npmmirror.com
+# RUN npm install --registry=https://registry.npmmirror.com
 
 RUN npm run build:front
 
 # start
+
 CMD npm run start:backend

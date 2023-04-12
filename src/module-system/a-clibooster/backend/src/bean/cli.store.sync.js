@@ -86,7 +86,7 @@ module.exports = ctx => {
       }
       // remove temp path
       await rimraf(tempPath);
-      // lerna bootstrap
+      // npm install
       this._needLernaBootstrap = true;
       // synced
       return { code: 3000, args: [entityVersion] };

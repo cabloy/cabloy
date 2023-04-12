@@ -46,7 +46,7 @@ module.exports = ctx => {
       });
       // render
       await this.template.renderDir({ targetDir, templateDir });
-      // lerna bootstrap
+      // npm install
       await this.helper.lernaBootstrap();
       // reload
       ctx.app.meta.reload.now();
