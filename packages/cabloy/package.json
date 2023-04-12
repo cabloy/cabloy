@@ -20,6 +20,9 @@
     "url": "https://github.com/zhennann/cabloy/issues"
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
+  "peerDependencies": {
+    "lerna": "^6.6.1"
+  },
   "dependencies": {
     "egg-born-backend": "^8.0.0",
     "egg-born-bin": "^4.3.7",

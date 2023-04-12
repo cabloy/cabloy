@@ -2,6 +2,8 @@
   "name": "{{name}}",
   "version": "1.0.0",
   "title": "{{name}}",
+  "private": true,
+  "workspaces": ["src/module/*", "src/module-vendor/*", "src/suite/*/modules/*", "src/suite-vendor/*/modules/*"],
   "description": "{{description}}",
   "keywords": ["Cabloy Project"],
   "engines": {
