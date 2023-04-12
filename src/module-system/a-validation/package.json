@@ -18,6 +18,7 @@
     "ajv": "^6.11.0",
     "ajv-i18n": "^3.5.0",
     "ajv-keywords": "^3.4.1",
-    "js-beautify": "^1.10.3"
+    "js-beautify": "^1.10.3",
+    "require3": "./build/require3.js"
   }
 }

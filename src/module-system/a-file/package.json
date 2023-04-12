@@ -25,6 +25,7 @@
     "jimp": "^0.16.2",
     "pump": "^3.0.0",
     "stream-wormhole": "^1.1.0",
-    "mime": "^3.0.0"
+    "mime": "^3.0.0",
+    "require3": "./build/require3.js"
   }
 }

@@ -21,6 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "@zhennann/ant-design-vue": "^1.7.9"
+    "@zhennann/ant-design-vue": "^1.7.9",
+    "require3": "./build/require3.js"
   }
 }

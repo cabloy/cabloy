@@ -21,6 +21,7 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "randomatic": "^3.1.1"
+    "randomatic": "^3.1.1",
+    "require3": "./build/require3.js"
   }
 }

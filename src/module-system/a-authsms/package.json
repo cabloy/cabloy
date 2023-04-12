@@ -24,6 +24,7 @@
   "dependencies": {
     "@alicloud/pop-core": "^1.7.9",
     "boxen": "^4.2.0",
-    "chalk": "^3.0.0"
+    "chalk": "^3.0.0",
+    "require3": "./build/require3.js"
   }
 }

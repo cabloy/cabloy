@@ -14,5 +14,8 @@
     "build:all": "npm run build:front && npm run build:backend",
     "preversion": "npm run build:all && git add ."
   },
-  "author": "zhennann"
+  "author": "zhennann",
+  "dependencies": {
+    "require3": "./build/require3.js"
+  }
 }

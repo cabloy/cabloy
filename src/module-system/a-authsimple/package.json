@@ -20,6 +20,7 @@
   "author": "zhennann",
   "dependencies": {
     "passport-strategy": "^1.0.0",
-    "password-hash-and-salt": "^0.1.4"
+    "password-hash-and-salt": "^0.1.4",
+    "require3": "./build/require3.js"
   }
 }

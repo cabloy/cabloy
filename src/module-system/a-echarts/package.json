@@ -22,5 +22,8 @@
   "author": "zhennann",
   "devDependencies": {
     "echarts": "^5.2.1"
+  },
+  "dependencies": {
+    "require3": "./build/require3.js"
   }
 }
