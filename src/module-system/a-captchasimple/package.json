@@ -18,7 +18,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "trek-captcha": "^0.4.0",
-    "require3": "./build/require3.js"
+    "trek-captcha": "^0.4.0"
   }
 }

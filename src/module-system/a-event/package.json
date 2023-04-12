@@ -15,7 +15,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "assert": "^2.0.0",
-    "require3": "./build/require3.js"
+    "assert": "^2.0.0"
   }
 }

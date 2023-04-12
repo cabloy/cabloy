@@ -22,7 +22,6 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^3.0.0",
-    "fs-extra": "^10.1.0",
-    "require3": "./build/require3.js"
+    "fs-extra": "^10.1.0"
   }
 }

@@ -23,7 +23,6 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "vue-lazyload": "^1.3.4",
-    "require3": "./build/require3.js"
+    "vue-lazyload": "^1.3.4"
   }
 }

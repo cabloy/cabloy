@@ -19,7 +19,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "chalk": "^3.0.0",
-    "require3": "./build/require3.js"
+    "chalk": "^3.0.0"
   }
 }

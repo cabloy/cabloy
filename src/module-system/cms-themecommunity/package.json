@@ -20,7 +20,5 @@
     "preversion": "npm run build:all && git add ."
   },
   "author": "zhennann",
-  "dependencies": {
-    "require3": "./build/require3.js"
-  }
+  "dependencies": {}
 }

@@ -22,8 +22,5 @@
   "author": "zhennann",
   "devDependencies": {
     "@antv/x6": "^1.34.5"
-  },
-  "dependencies": {
-    "require3": "./build/require3.js"
   }
 }
