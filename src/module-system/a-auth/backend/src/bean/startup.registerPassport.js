@@ -6,6 +6,7 @@ module.exports = app => {
         // state: login/associate
         const state = ctx.request.query.state || 'login';
         // user verify
+        console.log('----app.passport.verify:', profileUser.module, profileUser.provider, profileUser.providerScene);
         return await ctx.bean.user.verify({ state, profileUser });
       });
       // serializeUser

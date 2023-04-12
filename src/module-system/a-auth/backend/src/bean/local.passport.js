@@ -79,6 +79,7 @@ function _createStrategyCallback(beanProvider) {
       // onVerify
       console.log('----onVerify:', beanProvider.providerModule, beanProvider.providerName, beanProvider.providerScene);
       const verifyUser = await beanProvider.onVerify(...args);
+      console.log('----onVerify user:', verifyUser.module, verifyUser.provider, verifyUser.providerScene);
       if (!verifyUser) {
         done(null, null);
         return;
