@@ -20,5 +20,7 @@
   },
   "author": "<%=argv.author%>",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "require3": "./build/require3.js"
+  }
 }
