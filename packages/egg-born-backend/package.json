@@ -47,7 +47,6 @@
     "moment": "^2.24.0",
     "passport-oauth2": "^1.6.1",
     "redlock": "^4.1.0",
-    "require3": "^2.2.0",
     "semver": "^7.3.7",
     "supertest": "^4.0.2",
     "uuid": "^8.3.2"
