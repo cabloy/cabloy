@@ -2,6 +2,14 @@
   "name": "cabloy-source",
   "title": "Cabloy",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "src/module/*",
+    "src/module-system/*",
+    "src/module-vendor/*",
+    "src/suite/*/modules/*",
+    "src/suite-vendor/*/modules/*"
+  ],
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
@@ -91,8 +99,8 @@
     "npm-request": "^1.0.0",
     "open": "^7.0.2",
     "ora": "^4.0.3",
-    "prettier": "2.3.2",
     "p-map": "^3.0.0",
+    "prettier": "2.3.2",
     "regenerator-runtime": "^0.13.7",
     "rimraf": "^3.0.2",
     "semver": "^7.3.7",
