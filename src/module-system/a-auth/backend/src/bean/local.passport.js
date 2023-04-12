@@ -1,5 +1,3 @@
-const provider = require('../../../../../suite/cabloy-store/modules/cabloy-store/backend/src/controller/provider');
-
 module.exports = ctx => {
   class Passport {
     async authenticate({ module, providerName, providerScene, next }) {
