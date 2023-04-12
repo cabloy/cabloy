@@ -27,6 +27,7 @@
     "exceljs": "^4.3.0",
     "moment": "^2.24.0",
     "qr-image": "^3.2.0",
-    "vm2": "^3.9.11"
+    "vm2": "^3.9.11",
+    "require3": "./backend/utils/require3.js"
   }
 }

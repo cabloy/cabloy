@@ -22,5 +22,8 @@
   "author": "zhennann",
   "devDependencies": {
     "@antv/g6": "^4.7.8"
+  },
+  "dependencies": {
+    "require3": "./backend/utils/require3.js"
   }
 }
