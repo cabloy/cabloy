@@ -29,33 +29,23 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'onlineStatus',
-                title: 'Status',
+                dataIndex: 'isLogin',
+                title: 'LoginType',
                 align: 'left',
                 params: {
                   computed: {
-                    expression: 'record._onlineStatusTitleLocale',
+                    expression: 'record._isLoginTitleLocale',
                   },
                 },
               },
               {
-                dataIndex: 'loginCount',
-                title: 'LoginCount',
+                dataIndex: 'onlineIP',
+                title: 'OnlineIP',
                 align: 'left',
               },
               {
-                dataIndex: 'onlineCount',
-                title: 'OnlineCount',
-                align: 'left',
-              },
-              {
-                dataIndex: 'onlineIPLast',
-                title: 'OnlineIPLast',
-                align: 'left',
-              },
-              {
-                dataIndex: 'onlineTimeLast',
-                title: 'OnlineTimeLast',
+                dataIndex: 'onlineTime',
+                title: 'OnlineTime',
                 align: 'center',
                 params: {
                   dateFormat: {
@@ -72,7 +62,7 @@ module.exports = app => {
   const layout = {
     atomName: 'LoginLog',
     atomStaticKey: 'layoutAtomListUserOnlineHistory',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
