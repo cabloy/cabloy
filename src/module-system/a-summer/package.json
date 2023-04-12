@@ -22,6 +22,7 @@
   "devDependencies": {},
   "dependencies": {
     "lru-cache": "^8.0.4",
-    "object-hash": "^3.0.0"
+    "object-hash": "^3.0.0",
+    "require3": "./build/require3.js"
   }
 }
