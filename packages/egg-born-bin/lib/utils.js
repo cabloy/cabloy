@@ -65,7 +65,7 @@ const utils = {
     if (devServerRunning) return null;
     // start
     const Command = require('../index.js');
-    const commandDev = new Command(['backend-dev']);
+    const commandDev = new Command(['backend-dev', '--workers=1']);
     commandDev.start();
     // check if running
     while (true) {
