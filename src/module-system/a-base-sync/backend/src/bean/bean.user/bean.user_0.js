@@ -263,7 +263,6 @@ module.exports = ctx => {
 
     // state: login/associate/migrate
     async verify({ state = 'login', profileUser }) {
-      console.log('----login verify profileUser:', profileUser.module, profileUser.provider, profileUser.providerScene);
       if (state === 'migrate' || state === 'associate') {
         ctx.bean.util.checkDemo();
       }

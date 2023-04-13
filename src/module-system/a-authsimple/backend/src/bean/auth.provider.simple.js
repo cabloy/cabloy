@@ -16,7 +16,6 @@ module.exports = function (ctx) {
       return Strategy;
     }
     async onVerify(body) {
-      console.log('----onVerify this:', this.providerModule, this.providerName, this.providerScene);
       const { auth, password, rememberMe } = body.data;
       // validate
       await ctx.bean.validation.validate({ module: moduleInfo.relativeName, validator: 'signin', data: body.data });
@@ -28,7 +27,6 @@ module.exports = function (ctx) {
       // verify
       const authSimple = await this.localSimple.verify({ userId: user.id, password });
       if (!authSimple) return ctx.throw.module(moduleInfo.relativeName, 1001);
-      console.log('----onVerify this2:', this.providerModule, this.providerName, this.providerScene);
       return {
         module: this.providerModule,
         provider: this.providerName,

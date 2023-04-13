@@ -50,7 +50,6 @@ module.exports = ctx => {
 };
 
 async function _createProviderStrategy(ctx, authProvider, beanProvider) {
-  console.log('----create:', beanProvider.providerModule, beanProvider.providerName, beanProvider.providerScene);
   // config
   let config = {};
   config.passReqToCallback = true;
@@ -77,9 +76,7 @@ function _createStrategyCallback(beanProvider) {
     args.push(state);
     try {
       // onVerify
-      console.log('----onVerify:', beanProvider.providerModule, beanProvider.providerName, beanProvider.providerScene);
       const verifyUser = await beanProvider.onVerify(...args);
-      console.log('----onVerify user:', verifyUser.module, verifyUser.provider, verifyUser.providerScene);
       if (!verifyUser) {
         done(null, null);
         return;
