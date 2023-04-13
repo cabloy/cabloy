@@ -36,26 +36,13 @@ class EggBornBinCommand extends Command {
     argv.projectPath = process.cwd();
     // cli
     Object.assign(argv, this._prepareCliFullName(parsed._[1]));
-    // token
-    const tokenName = parsed.token || parsed.t;
-    const token = yield utils.prepareToken(argv.projectPath, tokenName, { warnWhenEmpty: true });
-    if (!token) {
-      // interrupted
-      console.log(chalk.red('  cli interrupted!\n'));
+    // token / proc
+    const tokenAndProc = yield this._prepareTokenAndDevServer({ parsed, argv });
+    if (!tokenAndProc) {
+      // do nothing
       return;
     }
-    // check dev server
-    if (token.host.indexOf('http://127.0.0.1') === 0 || token.host.indexOf('http://localhost') === 0) {
-      const devServerRunning = yield utils.checkIfDevServerRunning({
-        projectPath: argv.projectPath,
-        needDevServer: true,
-      });
-      if (!devServerRunning) {
-        // interrupted
-        console.log(chalk.red('  cli interrupted!\n'));
-        return;
-      }
-    }
+    const { token, proc } = tokenAndProc;
     // OpenAuthClient
     const openAuthClient = new eggBornUtils.OpenAuthClient({ token });
     // signin
@@ -76,8 +63,42 @@ class EggBornBinCommand extends Command {
     yield command[DISPATCH]();
     // logout
     yield openAuthClient.logout();
+    // proc kill
+    if (proc) {
+      proc.kill('SIGTERM');
+      yield eggBornUtils.tools.sleep(1500);
+    }
     // force exit
     process.exit(0);
+  }
+
+  async _prepareTokenAndDevServer({ parsed, argv }) {
+    const tokenName = parsed.token || parsed.t;
+    let token = await utils.prepareToken(argv.projectPath, tokenName, { warnWhenEmpty: false });
+    if (!token && tokenName) {
+      console.log(chalk.red(`Open auth token not found: ${tokenName}`));
+      // interrupted
+      console.log(chalk.red('  cli interrupted!\n'));
+      return null;
+    }
+    // check dev server
+    let proc;
+    if (!token || token.host.indexOf('http://127.0.0.1') === 0 || token.host.indexOf('http://localhost') === 0) {
+      proc = await utils.forceDevServerRunning({
+        projectPath: argv.projectPath,
+      });
+    }
+    // reload token
+    if (!token || proc) {
+      token = await utils.prepareToken(argv.projectPath, tokenName, { warnWhenEmpty: true });
+      if (!token) {
+        // interrupted
+        console.log(chalk.red('  cli interrupted!\n'));
+        return null;
+      }
+    }
+    // ready
+    return { token, proc };
   }
 
   _prepareCliFullName(cliName) {

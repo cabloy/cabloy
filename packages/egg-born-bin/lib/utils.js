@@ -55,6 +55,35 @@ const utils = {
       // return true;
     }
   },
+  async forceDevServerRunning(options) {
+    // check if running
+    let devServerRunning = await this.checkIfDevServerRunning({
+      projectPath: options.projectPath,
+      needDevServer: false,
+      warnWhenRunning: false,
+    });
+    if (devServerRunning) return null;
+    // start
+    const Command = require('../index.js');
+    const commandDev = new Command(['backend-dev']);
+    commandDev.start();
+    // check if running
+    while (true) {
+      // sleep
+      await eggBornUtils.tools.sleep(1000);
+      // check
+      devServerRunning = await this.checkIfDevServerRunning({
+        projectPath: options.projectPath,
+        needDevServer: false,
+        warnWhenRunning: false,
+      });
+      if (devServerRunning) {
+        break;
+      }
+    }
+    // proc
+    return commandDev.subCommand.proc;
+  },
   async versionCheck({ moduleName, moduleVersion, scene, mode }) {
     try {
       const httpClient = urllib.create();

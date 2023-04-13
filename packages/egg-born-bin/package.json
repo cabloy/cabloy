@@ -28,7 +28,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "@zhennann/build": "^1.6.4",
-    "@zhennann/egg-bin": "^5.0.7",
+    "@zhennann/egg-bin": "^6.0.0",
     "@zhennann/socketio": "^4.0.2",
     "babel-loader": "^8.2.2",
     "bluebird": "^3.7.2",
