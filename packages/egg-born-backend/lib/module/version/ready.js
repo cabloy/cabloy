@@ -3,7 +3,17 @@ const constant = require('../../base/constants.js');
 module.exports = function (app) {
   return {
     initialize() {
-      //
+      // checkAppReady
+      app.meta.checkAppReady = async function () {
+        return new Promise((resolve, reject) => {
+          app.on(constant.event.appReady, () => {
+            resolve();
+          });
+          app.on(constant.event.appReadyError, err => {
+            reject(err);
+          });
+        });
+      };
     },
     async execute() {
       try {
@@ -18,7 +28,7 @@ module.exports = function (app) {
         });
       } catch (err) {
         // event: appReadyError
-        app.emit(constant.event.appReadyError);
+        app.emit(constant.event.appReadyError, err);
         throw err;
       }
     },
