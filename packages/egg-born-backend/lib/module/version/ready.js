@@ -1,6 +1,24 @@
 const constant = require('../../base/constants.js');
 
 module.exports = async function (app) {
+  try {
+    // version ready
+    await _versionReady(app);
+    // event: appReady
+    app.emit(constant.event.appReady);
+    // event to agent
+    app.meta.messenger.callAgent({
+      name: 'appReady',
+      data: { pid: process.pid },
+    });
+  } catch (err) {
+    // event: appReadyError
+    app.emit(constant.event.appReadyError);
+    throw err;
+  }
+};
+
+async function _versionReady(app) {
   // clear keys
   if (app.meta.isTest) {
     await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
@@ -58,15 +76,7 @@ module.exports = async function (app) {
       fn: '__instanceTest',
     });
   }
-
-  // event: appReady
-  app.emit(constant.event.appReady);
-  // event to agent
-  app.meta.messenger.callAgent({
-    name: 'appReady',
-    data: { pid: process.pid },
-  });
-};
+}
 
 async function _clearRedisKeys(redis, pattern) {
   if (!redis) return;
