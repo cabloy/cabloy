@@ -6,6 +6,14 @@ module.exports = function (app) {
       // checkAppReady
       app.meta.checkAppReady = async function () {
         return new Promise((resolve, reject) => {
+          // check once
+          if (app.meta.__versionReady) {
+            resolve();
+          }
+          if (app.meta.__versionReadyError) {
+            reject(app.meta.__versionReadyError);
+          }
+          // listen
           app.on(constant.event.appReady, () => {
             resolve();
           });
@@ -19,6 +27,8 @@ module.exports = function (app) {
       try {
         // version ready
         await _versionReady(app);
+        // record
+        app.meta.__versionReady = true;
         // event: appReady
         app.emit(constant.event.appReady);
         // event to agent
@@ -27,8 +37,11 @@ module.exports = function (app) {
           data: { pid: process.pid },
         });
       } catch (err) {
+        // record
+        app.meta.__versionReadyError = err;
         // event: appReadyError
         app.emit(constant.event.appReadyError, err);
+        // throw exception
         throw err;
       }
     },
