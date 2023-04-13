@@ -1,14 +1,18 @@
-const versionReady = require('../version/ready.js');
+const VersionReadyFn = require('../version/ready.js');
 
 module.exports = function (loader) {
+  const app = loader.app;
+  const versionReady = VersionReadyFn(app);
+  // initialize
+  versionReady.initialize();
   // egg-ready
-  loader.app.messenger.once('egg-ready', async () => {
+  app.messenger.once('egg-ready', async () => {
     // version ready
-    await versionReady(loader.app);
+    await versionReady.execute();
   });
   // eb_clear
-  loader.app.messenger.once('eb_clear', async data => {
-    await loader.app.meta.queue._clearWorkers();
+  app.messenger.once('eb_clear', async data => {
+    await app.meta.queue._clearWorkers();
     process.send({ to: 'master', action: 'eb_clear_done', data: { id: data.id } });
   });
 };
