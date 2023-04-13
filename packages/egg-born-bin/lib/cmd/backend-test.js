@@ -5,7 +5,6 @@ const eggBornUtils = require('egg-born-utils');
 const mock = require('egg-mock');
 const TestCommand = require('@zhennann/egg-bin').TestCommand;
 const utils = require('../utils.js');
-const eventAppReady = 'eb:event:appReady';
 
 class BackendTestCommand extends TestCommand {
   constructor(rawArgv) {
