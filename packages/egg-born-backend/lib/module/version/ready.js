@@ -85,8 +85,8 @@ async function _versionReady(app) {
     }
   }
 
-  // version test
-  if (app.meta.isTest) {
+  // version init
+  if (app.meta.isTest || app.meta.isLocal) {
     // subdomain
     const subdomain = '';
     // init
@@ -97,6 +97,12 @@ async function _versionReady(app) {
       context: { subdomain },
       fn: 'instanceStartup',
     });
+  }
+
+  // version test
+  if (app.meta.isTest) {
+    // subdomain
+    const subdomain = '';
     // test
     await app.meta.util.executeBean({
       subdomain,
