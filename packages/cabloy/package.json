@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "4.30.7",
+  "version": "4.30.8",
   "description": "A Node.js full-stack framework with workflow engine, based on koa + egg + vue + framework7",
   "repository": {
     "type": "git",
