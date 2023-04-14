@@ -174,66 +174,35 @@ export default function (Vue) {
       },
     },
     actions: {
-      getLabels({ commit, getters }) {
-        return new Promise((resolve, reject) => {
-          const userLabels = getters.userLabels;
-          if (userLabels) return resolve(userLabels);
-          Vue.prototype.$meta.api
-            .post('/a/base/user/getLabels')
-            .then(data => {
-              data = data || {};
-              commit('setLabels', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getLabels({ commit, getters }) {
+        const userLabels = getters.userLabels;
+        if (userLabels) return userLabels;
+        let data = await Vue.prototype.$meta.api.post('/a/base/user/getLabels');
+        data = data || {};
+        commit('setLabels', data);
+        return data;
       },
-      getModules({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.modules) return resolve(state.modules);
-          Vue.prototype.$meta.api
-            .post('/a/base/base/modules')
-            .then(data => {
-              data = data || {};
-              commit('setModules', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getModules({ state, commit }) {
+        if (state.modules) return state.modules;
+        let data = await Vue.prototype.$meta.api.post('/a/base/base/modules');
+        data = data || {};
+        commit('setModules', data);
+        return data;
       },
-      getResourceTypes({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.resourceTypes) return resolve(state.resourceTypes);
-          Vue.prototype.$meta.api
-            .post('/a/base/base/resourceTypes')
-            .then(data => {
-              data = data || {};
-              commit('setResourceTypes', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getResourceTypes({ state, commit }) {
+        if (state.resourceTypes) return state.resourceTypes;
+        let data = await Vue.prototype.$meta.api.post('/a/base/base/resourceTypes');
+        data = data || {};
+        commit('setResourceTypes', data);
+        return data;
       },
-      getLocales({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.locales) return resolve(state.locales);
-          Vue.prototype.$meta.api
-            .post('/a/base/base/locales')
-            .then(data => {
-              data = data || [];
-              commit('setLocales', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getLocales({ state, commit }) {
+        if (state.locales) return state.locales;
+        let data = await Vue.prototype.$meta.api.post('/a/base/base/locales');
+
+        data = data || [];
+        commit('setLocales', data);
+        return data;
       },
       async getAtomClasses({ state, commit }) {
         if (state.atomClasses) return state.atomClasses;
