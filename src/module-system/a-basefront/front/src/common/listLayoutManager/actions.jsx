@@ -20,11 +20,7 @@ export default {
       });
       // workflow
       if (item.atomStage === 0 && item.atomFlowId > 0) {
-        actions.push({
-          module: item.module,
-          atomClassName: item.atomClassName,
-          name: 'workflow',
-        });
+        actions.push(Object.assign({}, this.item_getAtomClass(item), { name: 'workflow' }));
       }
       // set
       Vue.set(item, '_actions', actions);

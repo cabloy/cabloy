@@ -20,11 +20,8 @@ export default {
           actionName = 'read';
         }
       }
-      return await this.item_onAction(event, item, {
-        module: item.module,
-        atomClassName: item.atomClassName,
-        name: actionName,
-      });
+      const action = Object.assign({}, this.item_getAtomClass(item), { name: actionName });
+      return await this.item_onAction(event, item, action);
     },
     item_getActionTitle(action, item) {
       return this.getActionTitle(action, item);

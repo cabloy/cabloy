@@ -4,6 +4,9 @@ import ContextMenu from './item_contextMenu.jsx';
 export default {
   mixins: [Actions, ContextMenu],
   methods: {
+    item_getAtomClass(item) {
+      return this.base_atomClass || { module: item.module, atomClassName: item.atomClassName };
+    },
     item_getAtomName(item) {
       return item.atomNameLocale || item.atomName || item._meta.atomName;
     },
