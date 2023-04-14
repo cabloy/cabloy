@@ -9,6 +9,7 @@ export default {
       // fetch
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: item.atomId },
+        atomClass: this.base.atomClass,
         // basic: !this.$device.desktop,
       });
       // filter
