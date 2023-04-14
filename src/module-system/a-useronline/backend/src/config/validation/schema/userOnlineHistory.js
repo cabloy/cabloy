@@ -4,16 +4,31 @@ module.exports = app => {
   schemas.userOnlineHistory = {
     type: 'object',
     properties: {
-      atomName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Name',
-        notEmpty: true,
+      userId: {
+        ebType: 'userName',
+        ebTitle: 'Username',
       },
-      description: {
+      isLogin: {
+        type: 'string',
+        ebType: 'dict',
+        ebTitle: 'LoginType',
+        ebParams: {
+          dictKey: 'a-userOnline:dictLoginType',
+          mode: 'select',
+        },
+      },
+      onlineIP: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'Description',
+        ebTitle: 'OnlineIP',
+      },
+      onlineTime: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'OnlineTime',
+        ebParams: {
+          dateFormat: true,
+        },
       },
     },
   };
