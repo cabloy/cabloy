@@ -18,6 +18,13 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    getAtomClassBase() {
+      const res = this.ctx.service.base.getAtomClassBase({
+        atomClass: this.ctx.request.body.atomClass,
+      });
+      this.ctx.success(res);
+    }
+
     atomClasses() {
       const res = this.ctx.service.base.atomClasses();
       this.ctx.success(res);

@@ -12,6 +12,10 @@ module.exports = app => {
       return this.ctx.bean.base.resourceTypes();
     }
 
+    getAtomClassBase({ atomClass }) {
+      return this.ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
+    }
+
     atomClasses() {
       return this.ctx.bean.base.atomClasses();
     }
