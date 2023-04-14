@@ -1,6 +1,6 @@
 # History
 
-## 2023-04-05, Version 4.32.0（未发布）
+## 2023-04-14, Version 4.32.0（未发布）
 
 - **Feat**
   - ItemOnly：Atom 降级策略
