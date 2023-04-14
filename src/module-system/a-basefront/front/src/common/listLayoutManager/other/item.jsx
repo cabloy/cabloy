@@ -5,6 +5,7 @@ export default {
   mixins: [Actions, ContextMenu],
   methods: {
     item_getAtomClass(item) {
+      // support itemOnly
       return this.base_atomClass || { module: item.module, atomClassName: item.atomClassName };
     },
     item_getAtomName(item) {
