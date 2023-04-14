@@ -8,6 +8,7 @@ export default {
         //
         item: null,
         atomClass: null,
+        atomClassBase: null,
         module: null,
         validateParams: null,
       },
@@ -55,6 +56,7 @@ export default {
             key: { atomId: this.container.atomId },
           });
         }
+        this.base.atomClassBase = this.getAtomClass(this.base.atomClass);
         // module
         this.base.module = await this.$meta.module.use(this.base.atomClass.module);
         // validateParams

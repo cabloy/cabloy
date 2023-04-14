@@ -5,19 +5,15 @@ export default {
         configAtomBase: null,
         configAtomCms: null,
         configAtom: null,
+        //
+        atomClass: null,
+        atomClassBase: null,
       },
     };
   },
   computed: {
     base_userLabels() {
       return this.$store.getters['a/base/userLabels'];
-    },
-    base_atomClass() {
-      return this.container.atomClass;
-    },
-    base_atomClassBase() {
-      const atomClass = this.base_atomClass;
-      return atomClass ? this.getAtomClass(atomClass) : null;
     },
   },
   created() {
@@ -29,6 +25,16 @@ export default {
       await this.$store.dispatch('a/base/getAtomClasses');
       // adjust container category
       await this.base_adjustContainerCategory();
+    },
+    async base_loadAtomClass() {
+      try {
+        const atomClass = this.container.atomClass;
+        this.base.atomClass = atomClass;
+        this.base.atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;
+        return true;
+      } catch (err) {
+        return false;
+      }
     },
     async base_adjustContainerCategory() {
       const categoryName = this.container.options && this.container.options.category;

@@ -59,6 +59,8 @@ export default {
   methods: {
     async index_init() {
       await this.base_init();
+      const res = await this.base_loadAtomClass();
+      if (!res) return;
       await this.select_prepareSelectedAtoms();
       await this.layout_prepareConfigLayout();
       await this.bulk_actionsInit();

@@ -53,7 +53,7 @@ export default {
     _order_default_others() {
       const item = this.order_list.find(item => item.default);
       if (item) return item;
-      const atomClassBase = this.base_atomClassBase;
+      const atomClassBase = this.base.atomClassBase;
       const orderName = atomClassBase && atomClassBase.itemOnly ? 'updatedAt' : 'atomUpdatedAt';
       return {
         name: orderName,
