@@ -141,10 +141,14 @@ module.exports = ctx => {
     }
 
     // actions of atom
-    async actions({ key, basic, user }) {
+    async actions({ key, atomClass, basic, user }) {
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      if (!atomClass) {
+        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
+        if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      } else {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+      }
       // actions
       const _basic = basic ? 'and a.code in (3,4)' : '';
       const sql = `
@@ -157,7 +161,7 @@ module.exports = ctx => {
       // actions res
       const actionsRes = [];
       for (const action of actions) {
-        const res = await this.checkRightAction({ atom: { id: key.atomId }, action: action.code, user });
+        const res = await this.checkRightAction({ atom: { id: key.atomId }, atomClass, action: action.code, user });
         if (res) {
           if (res.__task) {
             action.__task = res.__task;

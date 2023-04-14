@@ -238,6 +238,7 @@ module.exports = app => {
     async actions() {
       const res = await this.ctx.service.atom.actions({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         basic: this.ctx.request.body.basic,
         user: this.ctx.state.user.op,
       });

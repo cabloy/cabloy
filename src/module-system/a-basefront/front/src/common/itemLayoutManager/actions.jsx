@@ -83,6 +83,7 @@ export default {
     async actions_fetchActions() {
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: this.container.atomId },
+        atomClass: this.base.atomClass,
       });
       // filter
       actions = actions.filter(action => {
