@@ -109,6 +109,10 @@ export default function (Vue) {
       setModules(state, modules) {
         state.modules = modules;
       },
+      setAtomClassBase(state, { atomClass, atomClassBase }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}`;
+        state.atomClassBases[key] = atomClassBase;
+      },
       setAtomClasses(state, atomClasses) {
         state.atomClasses = atomClasses;
       },
@@ -202,6 +206,15 @@ export default function (Vue) {
         data = data || [];
         commit('setLocales', data);
         return data;
+      },
+      async getAtomClassBase({ state, commit }, { atomClass }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}`;
+        if (state.atomClassBases[key]) return state.atomClassBases[key];
+        const atomClassBase = await Vue.prototype.$meta.api.post('/a/base/base/getAtomClassBase', {
+          atomClass,
+        });
+        commit('setAtomClassBase', { atomClass, atomClassBase });
+        return atomClassBase;
       },
       async getAtomClasses({ state, commit }) {
         if (state.atomClasses) return state.atomClasses;

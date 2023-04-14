@@ -2,6 +2,13 @@ export default {
   methods: {
     async _onActionCreate() {
       const { ctx, action, item } = this.$props;
+      // atomClass
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
+      // atomClassBase
+      const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       // get roleIdOwner
       const roleIdOwner = await this._onActionCreateGetRoleIdOwner();
       if (!roleIdOwner) return;
