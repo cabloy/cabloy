@@ -10,15 +10,14 @@ export default {
       // atomClassBase
       const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       // get roleIdOwner
-      const roleIdOwner = await this._onActionCreateGetRoleIdOwner();
-      if (!roleIdOwner) return;
+      let roleIdOwner;
+      if (!atomClassBase.itemOnly) {
+        roleIdOwner = await this._onActionCreateGetRoleIdOwner();
+        if (!roleIdOwner) return;
+      }
       // create
       const { key, atom } = await ctx.$api.post('/a/base/atom/create', {
-        atomClass: {
-          id: item.atomClassId,
-          module: item.module,
-          atomClassName: item.atomClassName,
-        },
+        atomClass,
         roleIdOwner,
         item,
         options: {
