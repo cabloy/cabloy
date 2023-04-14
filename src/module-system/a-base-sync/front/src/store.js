@@ -199,7 +199,6 @@ export default function (Vue) {
       async getLocales({ state, commit }) {
         if (state.locales) return state.locales;
         let data = await Vue.prototype.$meta.api.post('/a/base/base/locales');
-
         data = data || [];
         commit('setLocales', data);
         return data;
@@ -284,91 +283,59 @@ export default function (Vue) {
         commit('setCategoryTreeResource', { resourceType, tree });
         return tree;
       },
-      getResources({ state, commit }, { resourceType, appKey }) {
-        return __getResources({ state, commit }, { resourceType, appKey, useArray: false });
+      async getResources({ state, commit }, { resourceType, appKey }) {
+        return await __getResources({ state, commit }, { resourceType, appKey, useArray: false });
       },
-      getResourcesArray({ state, commit }, { resourceType, appKey }) {
-        return __getResources({ state, commit }, { resourceType, appKey, useArray: true });
+      async getResourcesArray({ state, commit }, { resourceType, appKey }) {
+        return await __getResources({ state, commit }, { resourceType, appKey, useArray: true });
       },
-      getCategoryTree({ state, commit }, { atomClass, language, categoryHidden }) {
-        return new Promise((resolve, reject) => {
-          const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
-          if (state.categoryTrees[key]) return resolve(state.categoryTrees[key]);
-          Vue.prototype.$meta.api
-            .post('/a/base/category/tree', {
-              atomClass,
-              language: language || undefined,
-              categoryHidden,
-            })
-            .then(data => {
-              const tree = data.list;
-              commit('setCategoryTree', { atomClass, language, categoryHidden, tree });
-              resolve(tree);
-            })
-            .catch(err => {
-              reject(err);
-            });
+      async getCategoryTree({ state, commit }, { atomClass, language, categoryHidden }) {
+        const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
+        if (state.categoryTrees[key]) return state.categoryTrees[key];
+        const data = await Vue.prototype.$meta.api.post('/a/base/category/tree', {
+          atomClass,
+          language: language || undefined,
+          categoryHidden,
         });
+        const tree = data.list;
+        commit('setCategoryTree', { atomClass, language, categoryHidden, tree });
+        return tree;
       },
-      getCategories({ state, commit }, { atomClass, language, categoryHidden }) {
-        return new Promise((resolve, reject) => {
-          const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
-          if (state.categories[key]) return resolve(state.categories[key]);
-          Vue.prototype.$meta.api
-            .post('/a/base/category/children', {
-              atomClass,
-              language: language || undefined,
-            })
-            .then(data => {
-              const categories = data.list;
-              commit('setCategories', { atomClass, language, categoryHidden, categories });
-              resolve(categories);
-            })
-            .catch(err => {
-              reject(err);
-            });
+      async getCategories({ state, commit }, { atomClass, language, categoryHidden }) {
+        const key = __getCategoryStoreKey({ atomClass, language, categoryHidden });
+        if (state.categories[key]) return state.categories[key];
+        const data = await Vue.prototype.$meta.api.post('/a/base/category/children', {
+          atomClass,
+          language: language || undefined,
         });
+        const categories = data.list;
+        commit('setCategories', { atomClass, language, categoryHidden, categories });
+        return categories;
       },
-      getTags({ state, commit }, { atomClass, language }) {
-        return new Promise((resolve, reject) => {
-          const key = __getTagStoreKey({ atomClass, language });
-          if (state.tags[key]) return resolve(state.tags[key]);
-          const options = {
-            where: {},
-            orders: [['tagName', 'asc']],
-          };
-          if (language) {
-            options.where.language = language;
-          }
-          Vue.prototype.$meta.api
-            .post('/a/base/tag/list', {
-              atomClass,
-              options,
-            })
-            .then(data => {
-              const tags = data.list;
-              commit('setTags', { atomClass, language, tags });
-              resolve(tags);
-            })
-            .catch(err => {
-              reject(err);
-            });
+      async getTags({ state, commit }, { atomClass, language }) {
+        const key = __getTagStoreKey({ atomClass, language });
+        if (state.tags[key]) return state.tags[key];
+        const options = {
+          where: {},
+          orders: [['tagName', 'asc']],
+        };
+        if (language) {
+          options.where.language = language;
+        }
+        const data = await Vue.prototype.$meta.api.post('/a/base/tag/list', {
+          atomClass,
+          options,
         });
+        const tags = data.list;
+        commit('setTags', { atomClass, language, tags });
+        return tags;
       },
-      getLayoutConfig({ state, commit }, module) {
-        return new Promise((resolve, reject) => {
-          if (state.layoutConfig[module]) return resolve(state.layoutConfig[module]);
-          Vue.prototype.$meta.api
-            .post('/a/base/layoutConfig/load', { module })
-            .then(data => {
-              data = data || {};
-              commit('setLayoutConfig', { module, data });
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getLayoutConfig({ state, commit }, module) {
+        if (state.layoutConfig[module]) return state.layoutConfig[module];
+        let data = await Vue.prototype.$meta.api.post('/a/base/layoutConfig/load', { module });
+        data = data || {};
+        commit('setLayoutConfig', { module, data });
+        return data;
       },
       async setLayoutConfigKey({ state, commit }, { module, key, value }) {
         return new Promise((resolve, reject) => {
