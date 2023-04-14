@@ -138,7 +138,7 @@ module.exports = ctx => {
         _where['a.iid'] = iid;
         _where['a.atomStage'] = stage;
       } else {
-        _atomField = '';
+        _atomField = 'f.id as atomId,f.id as itemId';
         _atomJoin = '';
         _where['f.deleted'] = 0;
         _where['f.iid'] = iid;

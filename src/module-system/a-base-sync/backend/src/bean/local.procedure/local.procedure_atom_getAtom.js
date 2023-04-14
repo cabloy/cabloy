@@ -92,7 +92,7 @@ module.exports = ctx => {
         _where['a.deleted'] = 0;
         _where['a.iid'] = iid;
       } else {
-        _atomField = '';
+        _atomField = 'f.id as atomId,f.id as itemId';
         _atomJoin = '';
         _where['f.id'] = atomId;
         _where['f.deleted'] = 0;
