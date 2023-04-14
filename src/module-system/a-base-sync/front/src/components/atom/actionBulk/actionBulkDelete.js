@@ -5,7 +5,10 @@ export default {
       // confirm
       await ctx.$view.dialog.confirm();
       // atomClass
-      const atomClass = { id: item.atomClassId };
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
       // keys
       const selectedAtoms = ctx.bulk.selectedAtoms;
       const keys = selectedAtoms.map(item => {
