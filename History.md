@@ -6,6 +6,7 @@
   - ItemOnly：Atom 降级策略
   - 其他优化：
     - atom bean 组件：增加 selectQuery 和 readQuery
+    - npm run cli：支持自动启动后端服务，用完自动销毁
 
 ## 2023-03-24, Version 4.31.0（未发布）
 
