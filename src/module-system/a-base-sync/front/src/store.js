@@ -42,6 +42,7 @@ export default function (Vue) {
       locales: null,
       modules: null,
       atomClasses: null,
+      atomClassBases: {},
       actions: null,
       detailClasses: null,
       detailActions: null,
@@ -234,80 +235,40 @@ export default function (Vue) {
             });
         });
       },
-      getAtomClasses({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.atomClasses) return resolve(state.atomClasses);
-          Vue.prototype.$meta.api
-            .post('/a/base/base/atomClasses')
-            .then(data => {
-              data = data || {};
-              commit('setAtomClasses', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getAtomClasses({ state, commit }) {
+        if (state.atomClasses) return state.atomClasses;
+        let data = await Vue.prototype.$meta.api.post('/a/base/base/atomClasses');
+        data = data || {};
+        commit('setAtomClasses', data);
+        return data;
       },
-      getAtomClassesUser({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.atomClassesUser) return resolve(state.atomClassesUser);
-          Vue.prototype.$meta.api
-            .post('/a/base/atomClass/atomClassesUser')
-            .then(data => {
-              data = data || {};
-              commit('setAtomClassesUser', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getAtomClassesUser({ state, commit }) {
+        if (state.atomClassesUser) return state.atomClassesUser;
+        let data = await Vue.prototype.$meta.api.post('/a/base/atomClass/atomClassesUser');
+        data = data || {};
+        commit('setAtomClassesUser', data);
+        return data;
       },
-      getActions({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.actions) return resolve(state.actions);
-          Vue.prototype.$meta.api
-            .post('/a/base/base/actions')
-            .then(data => {
-              data = data || {};
-              commit('setActions', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getActions({ state, commit }) {
+        if (state.actions) return state.actions;
+        let data = await Vue.prototype.$meta.api.post('/a/base/base/actions');
+        data = data || {};
+        commit('setActions', data);
+        return data;
       },
-      getDetailClasses({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.detailClasses) return resolve(state.detailClasses);
-          Vue.prototype.$meta.api
-            .post('/a/detail/base/detailClasses')
-            .then(data => {
-              data = data || {};
-              commit('setDetailClasses', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getDetailClasses({ state, commit }) {
+        if (state.detailClasses) return state.detailClasses;
+        let data = await Vue.prototype.$meta.api.post('/a/detail/base/detailClasses');
+        data = data || {};
+        commit('setDetailClasses', data);
+        return data;
       },
-      getDetailActions({ state, commit }) {
-        return new Promise((resolve, reject) => {
-          if (state.detailActions) return resolve(state.detailActions);
-          Vue.prototype.$meta.api
-            .post('/a/detail/base/actions')
-            .then(data => {
-              data = data || {};
-              commit('setDetailActions', data);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
+      async getDetailActions({ state, commit }) {
+        if (state.detailActions) return state.detailActions;
+        let data = await Vue.prototype.$meta.api.post('/a/detail/base/actions');
+        data = data || {};
+        commit('setDetailActions', data);
+        return data;
       },
       async getCategoryTreeResourceMenu({ state, commit }, { resourceType, appKey }) {
         const key = `${resourceType}_${appKey}`;
