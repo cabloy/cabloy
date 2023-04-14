@@ -252,12 +252,26 @@ module.exports = app => {
     }
 
     async _patchAtomClassInfo({ items, item, atomClassBase }) {
-      if (atomClassBase && atomClassBase.itemOnly) return;
       // items
       if (item) {
         items = [item];
       }
       if (items.length === 0) return;
+      if (atomClassBase) {
+        await this._patchAtomClassInfo_same({ items, atomClassBase });
+      } else {
+        await this._patchAtomClassInfo_notSame({ items });
+      }
+    }
+
+    async _patchAtomClassInfo_same({ items, atomClassBase }) {
+      for (const item of items) {
+        item.module = atomClassBase.module;
+        item.atomClassName = atomClassBase.atomClassName;
+      }
+    }
+
+    async _patchAtomClassInfo_notSame({ items }) {
       // atomClassIds
       const atomClassIds = Set.unique(items.map(item => item.atomClassId));
       // cache
@@ -270,11 +284,9 @@ module.exports = app => {
         item.module = atomClass.module;
         item.atomClassName = atomClass.atomClassName;
         // special for !atomClassBase
-        if (!atomClassBase) {
-          const _atomClassBaseItem = await this.ctx.bean.atomClass.atomClass(atomClass);
-          item.atomClassTitle = _atomClassBaseItem.title;
-          item.atomClassTitleLocale = _atomClassBaseItem.titleLocale;
-        }
+        const _atomClassBaseItem = await this.ctx.bean.atomClass.atomClass(atomClass);
+        item.atomClassTitle = _atomClassBaseItem.title;
+        item.atomClassTitleLocale = _atomClassBaseItem.titleLocale;
       }
     }
   }
