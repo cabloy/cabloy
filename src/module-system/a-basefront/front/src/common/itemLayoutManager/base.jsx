@@ -82,6 +82,7 @@ export default {
         const options = this.base_prepareReadOptions();
         this.base.item = await this.$api.post('/a/base/atom/read', {
           key: { atomId: this.container.atomId },
+          atomClass: this.base.atomClass,
           options,
         });
         // actions
