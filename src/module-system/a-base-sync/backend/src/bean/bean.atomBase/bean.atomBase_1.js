@@ -251,23 +251,23 @@ module.exports = app => {
       }
     }
 
-    async _patchAtomClassInfo({ items, item, atomClassBase }) {
+    async _patchAtomClassInfo({ items, item, atomClass }) {
       // items
       if (item) {
         items = [item];
       }
       if (items.length === 0) return;
-      if (atomClassBase) {
-        await this._patchAtomClassInfo_same({ items, atomClassBase });
+      if (atomClass) {
+        await this._patchAtomClassInfo_same({ items, atomClass });
       } else {
         await this._patchAtomClassInfo_notSame({ items });
       }
     }
 
-    async _patchAtomClassInfo_same({ items, atomClassBase }) {
+    async _patchAtomClassInfo_same({ items, atomClass }) {
       for (const item of items) {
-        item.module = atomClassBase.module;
-        item.atomClassName = atomClassBase.atomClassName;
+        item.module = atomClass.module;
+        item.atomClassName = atomClass.atomClassName;
       }
     }
 
@@ -283,7 +283,7 @@ module.exports = app => {
         const atomClass = atomClasses.find(atomClass => atomClass.id === item.atomClassId);
         item.module = atomClass.module;
         item.atomClassName = atomClass.atomClassName;
-        // special for !atomClassBase
+        // special for !atomClass
         const _atomClassBaseItem = await this.ctx.bean.atomClass.atomClass(atomClass);
         item.atomClassTitle = _atomClassBaseItem.title;
         item.atomClassTitleLocale = _atomClassBaseItem.titleLocale;

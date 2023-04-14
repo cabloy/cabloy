@@ -16,7 +16,7 @@ module.exports = app => {
       // atomClass
       const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
       // patchAtomClassInfo
-      await this._patchAtomClassInfo({ item, atomClassBase });
+      await this._patchAtomClassInfo({ item, atomClass });
       // dict translate
       await this._dictTranslate({ item, atomClassBase });
       // atomCategoryName
