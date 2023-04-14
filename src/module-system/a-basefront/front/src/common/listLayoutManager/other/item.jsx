@@ -28,13 +28,7 @@ export default {
       const arr = [];
       // atomClass
       if (!this.container.atomClass) {
-        const atomClass = this.getAtomClass({
-          module: item.module,
-          atomClassName: item.atomClassName,
-        });
-        if (atomClass) {
-          arr.push(atomClass.titleLocale);
-        }
+        arr.push(item.atomClassTitleLocale);
       }
       // resourceType
       const resourceType = item.resourceTypeLocale;

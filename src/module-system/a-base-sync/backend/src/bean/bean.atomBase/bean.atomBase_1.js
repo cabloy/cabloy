@@ -269,6 +269,12 @@ module.exports = app => {
         const atomClass = atomClasses.find(atomClass => atomClass.id === item.atomClassId);
         item.module = atomClass.module;
         item.atomClassName = atomClass.atomClassName;
+        // special for !atomClassBase
+        if (!atomClassBase) {
+          const _atomClassBaseItem = await this.ctx.bean.atomClass.atomClass(atomClass);
+          item.atomClassTitle = _atomClassBaseItem.title;
+          item.atomClassTitleLocale = _atomClassBaseItem.titleLocale;
+        }
       }
     }
   }
