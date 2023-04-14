@@ -5,7 +5,8 @@ export default {
       // delete
       await ctx.$view.dialog.confirm();
       const key = { atomId: item.atomId, itemId: item.itemId };
-      await ctx.$api.post('/a/base/atom/delete', { key });
+      const atomClass = { module: item.module, atomClassName: item.atomClassName };
+      await ctx.$api.post('/a/base/atom/delete', { key, atomClass });
       ctx.$meta.eventHub.$emit('atom:action', { key, action });
       // update formal
       if (item.atomStage === 0 && item.atomIdFormal) {
