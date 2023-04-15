@@ -2,19 +2,27 @@ export default {
   methods: {
     async _onActionSave() {
       const { ctx, action, item } = this.$props;
+      // atomClass
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
+      // atomClassBase
+      const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       // onActionSaveBefore
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSaveBefore) {
         await ctx.layout.instanceExtend.onActionSaveBefore(this.$props);
       }
       // options
-      const options = {
-        saveDraftOnly: item.atomStage === 0,
-      };
+      const options = {};
+      if (!atomClassBase.itemOnly && item.atomStage === 0) {
+        options.saveDraftOnly = true;
+      }
       // write
       const key = { atomId: item.atomId, itemId: item.itemId };
-      await ctx.$api.post('/a/base/atom/write', { key, item, options });
-      ctx.$meta.eventHub.$emit('atom:action', { key, action, actionSource: ctx });
+      await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, actionSource: ctx });
       // toast
       return ctx.$text('Saved');
     },
