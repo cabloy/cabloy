@@ -95,17 +95,15 @@ module.exports = ctx => {
     }
 
     // read
-    async read({ key, atomClass, options, user }) {
+    async read({ key, atomClass: atomClassOuter, options, user }) {
       options = options || {};
-      if (!atomClass) {
-        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-        if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      } else {
-        atomClass = await ctx.bean.atomClass.get(atomClass);
-      }
+      // atomClass
+      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
+        atomId: key.atomId,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       const item = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -179,17 +177,14 @@ module.exports = ctx => {
 
     // write
     //   target: should be null for frontend call
-    async write({ key, atomClass, target, item, options, user }) {
+    async write({ key, atomClass: atomClassOuter, target, item, options, user }) {
       // atomClass
-      if (!atomClass) {
-        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-        if (!atomClass) throw new Error(`atomClass not found for atom: ${key.atomId}`);
-      } else {
-        atomClass = await ctx.bean.atomClass.get(atomClass);
-      }
+      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
+        atomId: key.atomId,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // basic info
       let _atomBasic;
