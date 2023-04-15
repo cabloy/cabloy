@@ -3,7 +3,10 @@ export default {
     async _onActionBulkImport() {
       const { ctx, item } = this.$props;
       // atomClass
-      const atomClass = { id: item.atomClassId };
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
       // 1. upload file
       const file = await this._onActionBulkImport_uploadFile();
       if (!file) return;
