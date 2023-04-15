@@ -107,6 +107,7 @@ module.exports = app => {
     async openDraft() {
       const res = await this.ctx.service.atom.openDraft({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

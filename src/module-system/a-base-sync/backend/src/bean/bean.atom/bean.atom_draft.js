@@ -54,24 +54,24 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user, atomClass);
     }
 
-    async openDraft({ key, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+    async openDraft({ key, atomClass: atomClassOuter, user }) {
+      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
+        atomId: key.atomId,
+        atomClass: atomClassOuter,
+      });
       // atom
       let atom = await this.modelAtom.get({ id: key.atomId });
       if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       // check simple switch
-      atom = await this._checkSimpleSwitch({ atomClass, _atomClass, atom, user });
+      atom = await this._checkSimpleSwitch({ atomClass, atomClassBase, atom, user });
       // open draft
       let res;
       if (atom.atomSimple) {
         // simple
-        res = await this._openDraft_asSimple({ atomClass, _atomClass, atom, user });
+        res = await this._openDraft_asSimple({ atomClass, atomClassBase, atom, user });
       } else {
         // not simple
-        res = await this._openDraft_asSimpleZero({ atomClass, _atomClass, atom, user });
+        res = await this._openDraft_asSimpleZero({ atomClass, atomClassBase, atom, user });
       }
       // ok
       // get atom
@@ -119,7 +119,7 @@ module.exports = ctx => {
       return { formal: { key: keyFormal }, changed };
     }
 
-    async _openDraft_asSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
+    async _openDraft_asSimpleZero({ /* atomClass, atomClassBase,*/ atom, user }) {
       // draft
       if (atom.atomStage === 0) {
         return await this._openDraft_asSimpleZero_draft({ atom, user });

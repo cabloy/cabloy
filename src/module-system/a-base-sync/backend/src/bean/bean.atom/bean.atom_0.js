@@ -353,8 +353,8 @@ module.exports = ctx => {
       if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
