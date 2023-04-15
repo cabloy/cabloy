@@ -265,10 +265,12 @@ module.exports = ctx => {
       await this.modelAtom.update(atom);
     }
 
-    async _delete({ atomClass, atom, user }) {
-      if (!atomClass) {
-        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atom.id });
-      }
+    async _delete({ atomClass: atomClassOuter, atom, user }) {
+      // atomClass
+      const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
+        atomId: atom.id,
+        atomClass: atomClassOuter,
+      });
       // stars
       await this._delete_stars({ atomId: atom.id });
       // labels

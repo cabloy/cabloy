@@ -257,17 +257,14 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key, atomClass, options, user }) {
+    async delete({ key, atomClass: atomClassOuter, options, user }) {
       // atomClass
-      if (!atomClass) {
-        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-        if (!atomClass) throw new Error(`atomClass not found for atom: ${key.atomId}`);
-      } else {
-        atomClass = await ctx.bean.atomClass.get(atomClass);
-      }
+      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
+        atomId: key.atomId,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // atom
       let _atom;
