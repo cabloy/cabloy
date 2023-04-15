@@ -370,8 +370,8 @@ module.exports = ctx => {
       if (!key.itemId) key.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
@@ -403,16 +403,16 @@ module.exports = ctx => {
 
     async exportBulk({ atomClass, options, fields, user }) {
       // atomClass
-      let _atomClass;
+      let atomClassBase;
       if (atomClass) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
-        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       }
       // select
       const items = await this.select({ atomClass, options, user, pageForce: false });
       // export
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       const resExport = await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
@@ -431,10 +431,10 @@ module.exports = ctx => {
 
     async importBulk({ atomClass, options, file, user }) {
       // atomClass
-      let _atomClass;
+      let atomClassBase;
       if (atomClass) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
-        _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+        atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       }
       // options
       if (!options) {
@@ -456,10 +456,10 @@ module.exports = ctx => {
         let resImport;
         if (options.transaction) {
           resImport = await ctx.transaction.begin(async () => {
-            return await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+            return await this._importBulk_inner({ atomClass, atomClassBase, options, file, user });
           });
         } else {
-          resImport = await this._importBulk_inner({ atomClass, _atomClass, options, file, user });
+          resImport = await this._importBulk_inner({ atomClass, atomClassBase, options, file, user });
         }
         // ok
         return resImport;
@@ -469,9 +469,9 @@ module.exports = ctx => {
       }
     }
 
-    async _importBulk_inner({ atomClass, _atomClass, options, file, user }) {
+    async _importBulk_inner({ atomClass, atomClassBase, options, file, user }) {
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,

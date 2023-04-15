@@ -4,7 +4,7 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async _switchToSimple({ atomClass, _atomClass, atom, user }) {
+    async _switchToSimple({ atomClass, atomClassBase, atom, user }) {
       let atomIdDraft;
       let atomIdFormal;
       if (atom.atomStage === 0) {
@@ -50,7 +50,7 @@ module.exports = ctx => {
         const atomDraft = atom.atomStage === 0 ? atom : await this.modelAtom.get({ id: atomIdDraft });
         const keyDraft = { atomId: atomDraft.id, itemId: atomDraft.itemId };
         const _moduleInfo = mparse.parseInfo(atomClass.module);
-        const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+        const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
         await ctx.meta.util.executeBean({
           beanModule: _moduleInfo.relativeName,
           beanFullName,
@@ -69,7 +69,7 @@ module.exports = ctx => {
       return atom;
     }
 
-    async _switchToSimpleZero({ /* atomClass, _atomClass,*/ atom, user }) {
+    async _switchToSimpleZero({ /* atomClass, atomClassBase,*/ atom, user }) {
       const atomIdFormal = atom.atomStage === 1 ? atom.id : atom.atomIdFormal;
       // update history's atomSimple
       await ctx.model.query(
@@ -96,15 +96,15 @@ module.exports = ctx => {
       return atom;
     }
 
-    async _checkSimpleSwitch({ atomClass, _atomClass, atom, user }) {
+    async _checkSimpleSwitch({ atomClass, atomClassBase, atom, user }) {
       // the same mode
-      if (Boolean(atom.atomSimple) === Boolean(_atomClass.simple)) return atom;
+      if (Boolean(atom.atomSimple) === Boolean(atomClassBase.simple)) return atom;
       // -> simple
-      if (_atomClass.simple) {
-        return await this._switchToSimple({ atomClass, _atomClass, atom, user });
+      if (atomClassBase.simple) {
+        return await this._switchToSimple({ atomClass, atomClassBase, atom, user });
       }
       // -> not simple
-      return await this._switchToSimpleZero({ atomClass, _atomClass, atom, user });
+      return await this._switchToSimpleZero({ atomClass, atomClassBase, atom, user });
     }
   }
   return Atom;

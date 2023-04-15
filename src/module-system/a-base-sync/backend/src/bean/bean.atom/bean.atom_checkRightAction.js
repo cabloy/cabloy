@@ -23,14 +23,14 @@ module.exports = ctx => {
     async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // parse action code
       action = ctx.bean.atomAction.parseActionCode({
         action,
         atomClass,
       });
       // check right
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,

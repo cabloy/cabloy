@@ -121,8 +121,8 @@ module.exports = ctx => {
       if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const beanFullName = `${_moduleInfo.relativeName}.atom.${_atomClass.bean}`;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // srcItem
       if (!srcItem) {
         srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user: null });
