@@ -4,6 +4,11 @@ module.exports = app => {
   schemas.userOnlineHistory = {
     type: 'object',
     properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Basic Info',
+      },
       userId: {
         ebType: 'userName',
         ebTitle: 'Username',
@@ -16,6 +21,11 @@ module.exports = app => {
           dictKey: 'a-userOnline:dictLoginType',
           mode: 'select',
         },
+      },
+      // Online Info
+      __groupOnlineInfo: {
+        ebType: 'group-flatten',
+        ebTitle: 'Online Info',
       },
       onlineIP: {
         type: 'string',
