@@ -55,13 +55,21 @@ module.exports = ctx => {
     }
 
     async openDraft({ key, atomClass: atomClassOuter, user }) {
-      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
+      let { atom, atomClass, atomClassBase } = await this._prepareAtomAndAtomClass({
         atomId: key.atomId,
         atomClass: atomClassOuter,
       });
-      // atom
-      let atom = await this.modelAtom.get({ id: key.atomId });
-      if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // check itemOnly
+      if (atomClassBase.itemOnly) {
+        atom.atomId = atom.id;
+        atom.itemId = atom.id;
+        atom.module = atomClass.module;
+        atom.atomClassName = atomClass.atomClassName;
+        return {
+          formal: { key, atom },
+          changed: false,
+        };
+      }
       // check simple switch
       atom = await this._checkSimpleSwitch({ atomClass, atomClassBase, atom, user });
       // open draft
