@@ -25,7 +25,7 @@ export default {
         },
       });
       // event
-      ctx.$meta.eventHub.$emit('atom:action', { atomClass, key, action, atom });
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom });
       // menu
       if (!action.__noActionWrite) {
         const itemWrite = ctx.$utils.extend({}, item, key);

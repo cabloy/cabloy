@@ -3,28 +3,56 @@ export default {
     async _onActionWrite() {
       const { ctx, action, item } = this.$props;
       const key = { atomId: item.atomId, itemId: item.itemId };
+      // atomClass
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
+      // atomClassBase
+      const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      if (atomClassBase.itemOnly) {
+        await this._onActionWrite_itemOnly({ ctx, action, key, atomClass });
+      } else {
+        await this._onActionWrite_normal({ ctx, action, key, atomClass });
+      }
+    },
+    async _onActionWrite_itemOnly({ ctx, action, key, atomClass }) {
+      // queries
+      const queries = {
+        mode: 'edit',
+        atomId: key.atomId,
+        itemId: key.atomId,
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      };
+      // navigate
+      const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
+      ctx.$view.navigate(url, action.navigateOptions);
+    },
+    async _onActionWrite_normal({ ctx, action, key, atomClass }) {
       // openDraft
-      const data = await ctx.$api.post('/a/base/atom/openDraft', { key });
+      const data = await ctx.$api.post('/a/base/atom/openDraft', { key, atomClass });
       const dataRes = data.draft || data.formal;
       const keyWrite = dataRes.key;
       const atomWrite = dataRes.atom;
       const changed = data.changed;
       // emit
       if (changed) {
-        ctx.$meta.eventHub.$emit('atom:action', { key: keyWrite, action: { name: 'create' }, atom: atomWrite });
+        ctx.$meta.eventHub.$emit('atom:action', {
+          key: keyWrite,
+          atomClass,
+          action: { name: 'create' },
+          atom: atomWrite,
+        });
       }
       // queries
       const queries = {
         mode: 'edit',
         atomId: atomWrite.atomId,
         itemId: atomWrite.itemId,
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
       };
-      const module = atomWrite.module;
-      const atomClassName = atomWrite.atomClassName;
-      if (module && atomClassName) {
-        queries.module = module;
-        queries.atomClassName = atomClassName;
-      }
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       ctx.$view.navigate(url, action.navigateOptions);
@@ -33,7 +61,7 @@ export default {
       //   ctx.$meta.eventHub.$emit('atom:actions', { key });
       // }
       if (changed) {
-        ctx.$meta.eventHub.$emit('atom:actions', { key });
+        ctx.$meta.eventHub.$emit('atom:actions', { key, atomClass });
       }
     },
   },
