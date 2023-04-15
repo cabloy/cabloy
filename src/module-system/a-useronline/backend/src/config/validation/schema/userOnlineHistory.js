@@ -33,7 +33,7 @@ module.exports = app => {
         ebTitle: 'OnlineIP',
       },
       onlineTime: {
-        type: 'string',
+        type: ['object', 'null'],
         ebType: 'text',
         ebTitle: 'OnlineTime',
         ebParams: {
