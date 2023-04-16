@@ -16,20 +16,32 @@ module.exports = ctx => {
       return { atomClass, atomClassBase };
     }
 
-    async _prepareAtomAndAtomClass({ atomId, atomClass: atomClassOuter }) {
+    async _prepareKeyAndAtomAndAtomClass({ key: keyOuter, atomClass: atomClassOuter }) {
+      const atomId = keyOuter.atomId;
       const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
         atomId,
         atomClass: atomClassOuter,
       });
-      let atom;
+      let atom, key;
       if (atomClassBase.itemOnly) {
-        atom = { id: atomId };
+        atom = { id: atomId, iid: ctx.instance.id };
+        key = { atomId, itemId: atomId };
       } else {
         atom = await this.modelAtom.get({ id: atomId });
         if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        if (atom.atomClassId !== atomClass.id) ctx.throw(403);
+        key = { atomId, itemId: atom.itemId };
       }
+      atom = {
+        ...atom,
+        atomId: key.atomId,
+        itemId: key.itemId,
+        atomClassId: atomClass.id,
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      };
       // ok
-      return { atom, atomClass, atomClassBase };
+      return { key, atom, atomClass, atomClassBase };
     }
   }
   return Atom;
