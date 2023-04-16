@@ -2,21 +2,26 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async submit({ key, options, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
+    async submit({ key: keyOuter, atomClass: atomClassOuter, options, user }) {
+      // atomClass
+      const {
+        key,
+        atom: _atom,
+        atomClass,
+        atomClassBase,
+      } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
+        atomClass: atomClassOuter,
+      });
       // atom
-      const _atom = await this.modelAtom.get({ id: key.atomId });
       if (_atom.atomSimple === 1 && _atom.atomStage === 1) {
         // if simple, just return formal, so as for compatible with not simple
         return { formal: { key } };
       }
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,

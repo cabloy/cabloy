@@ -1,13 +1,14 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async checkRoleRightRead({ atom: { id }, roleId }) {
+    async checkRoleRightRead({ atom: { id }, atomClass: atomClassOuter, roleId }) {
       // not check draft
       const atomId = id;
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const { atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: { atomId: id },
+        atomClass: atomClassOuter,
+      });
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history

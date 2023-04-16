@@ -2,15 +2,16 @@ const require3 = require('require3');
 const mparse = require3('egg-born-mparse').default;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async closeDraft({ key }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
+    async closeDraft({ key: keyOuter, atomClass: atomClassOuter }) {
+      // atomClass
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // draft
       const atomIdDraft = key.atomId;
@@ -178,6 +179,7 @@ module.exports = ctx => {
         });
         // open
         await this._openDraft_update({
+          atomClass,
           atomId: keyDraft.atomId,
           atomRevision: atomRevision + 1,
           user,
@@ -214,6 +216,7 @@ module.exports = ctx => {
       // open
       if (changed) {
         await this._openDraft_update({
+          atomClass,
           atomId: keyDraft.atomId,
           atomRevision: atom.atomRevision + 1,
           user,
@@ -241,6 +244,7 @@ module.exports = ctx => {
         }
         // open
         await this._openDraft_update({
+          atomClass,
           atomId: atom.id,
           atomRevision: atom.atomRevision + 1,
           user,
@@ -252,8 +256,7 @@ module.exports = ctx => {
       return { draft: { key: keyDraft }, changed };
     }
 
-    async _openDraft_update({ atomId, atomRevision, user }) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
+    async _openDraft_update({ atomClass, atomId, atomRevision, user }) {
       await this.modelAtom.update({
         id: atomId,
         atomFlowId: 0,

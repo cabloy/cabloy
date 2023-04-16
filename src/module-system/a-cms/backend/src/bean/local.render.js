@@ -1,10 +1,12 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Render {
-    async getArticleUrl({ atomClass, key, options }) {
-      if (!atomClass) {
-        atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      }
+    async getArticleUrl({ key: keyOuter, atomClass: atomClassOuter, options }) {
+      // atomClass
+      const { key, atomClass } = await ctx.bean.atom._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
+        atomClass: atomClassOuter,
+      });
       const build = ctx.bean.cms.build({ atomClass });
       return await build.getArticleUrl({ key, options });
     }
