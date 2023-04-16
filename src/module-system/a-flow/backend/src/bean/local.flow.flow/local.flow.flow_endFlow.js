@@ -48,9 +48,16 @@ module.exports = ctx => {
       if (!atomId) return;
       if (options.atom.submit) {
         // submit: _submitDirect
+        const item = this.context._atom;
+        const atomClass = {
+          id: item.atomClassId,
+          module: item.module,
+          atomClassName: item.atomClassName,
+        };
         await ctx.bean.atom._submitDirect({
+          atomClass,
           key: { atomId },
-          item: this.context._atom,
+          item,
           user: { id: this.context._atom.userIdUpdated },
         });
       } else if (options.atom.close) {

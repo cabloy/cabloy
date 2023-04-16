@@ -18,6 +18,7 @@ module.exports = ctx => {
           srcItem.atomSimple = 1; // important
           const keyFormal = await this._copy({
             target: 'formal',
+            atomClass,
             srcKey: { atomId: atomIdDraft },
             srcItem,
             destKey: null,

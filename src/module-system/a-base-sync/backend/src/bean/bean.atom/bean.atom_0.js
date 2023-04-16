@@ -202,6 +202,7 @@ module.exports = ctx => {
             //  formal -> history
             await this._copy({
               target: 'history',
+              atomClass,
               srcKey: { atomId: key.atomId },
               srcItem: null,
               destKey: null,
@@ -338,14 +339,14 @@ module.exports = ctx => {
       }
     }
 
-    async enable({ key, user }) {
+    async enable({ key: keyOuter, atomClass: atomClassOuter, user }) {
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -355,14 +356,14 @@ module.exports = ctx => {
       });
     }
 
-    async disable({ key, user }) {
+    async disable({ key: keyOuter, atomClass: atomClassOuter, user }) {
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!key.itemId) key.itemId = atomClass.itemId;
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -372,13 +373,16 @@ module.exports = ctx => {
       });
     }
 
-    async clone({ key, user }) {
+    async clone({ key: keyOuter, atomClass: atomClassOuter, user }) {
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      const { key, atomClass /* , atomClassBase*/ } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
+        atomClass: atomClassOuter,
+      });
       // copy
       const keyDraft = await this._copy({
         target: 'clone',
+        atomClass,
         srcKey: { atomId: key.atomId },
         srcItem: null,
         destKey: null,
@@ -386,7 +390,7 @@ module.exports = ctx => {
       });
       // ok
       // get atom
-      const atom = await this.read({ key: keyDraft, user });
+      const atom = await this.read({ key: keyDraft, atomClass, user });
       // draft/formal
       const res = { key: keyDraft, atom };
       if (atom.atomStage === 0) return { draft: res };

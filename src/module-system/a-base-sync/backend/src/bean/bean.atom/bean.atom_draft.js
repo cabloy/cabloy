@@ -20,6 +20,7 @@ module.exports = ctx => {
       if (atomDraft.atomIdFormal) {
         await this._copy({
           target: 'draft',
+          atomClass,
           srcKey: { atomId: atomDraft.atomIdFormal },
           srcItem: null,
           destKey: key,
@@ -97,7 +98,7 @@ module.exports = ctx => {
       return res;
     }
 
-    async _openDraft_asSimple({ atom, user }) {
+    async _openDraft_asSimple({ atomClass, atom, user }) {
       let keyFormal;
       let changed = true;
       // formal
@@ -112,6 +113,7 @@ module.exports = ctx => {
         // ** copy formal from history
         keyFormal = await this._copy({
           target: 'formal',
+          atomClass,
           srcKey: { atomId: atom.id },
           srcItem: null,
           destKey: keyFormal,
@@ -127,23 +129,23 @@ module.exports = ctx => {
       return { formal: { key: keyFormal }, changed };
     }
 
-    async _openDraft_asSimpleZero({ /* atomClass, atomClassBase,*/ atom, user }) {
+    async _openDraft_asSimpleZero({ atomClass, atomClassBase, atom, user }) {
       // draft
       if (atom.atomStage === 0) {
-        return await this._openDraft_asSimpleZero_draft({ atom, user });
+        return await this._openDraft_asSimpleZero_draft({ atomClass, atomClassBase, atom, user });
       }
       // formal
       if (atom.atomStage === 1) {
-        return await this._openDraft_asSimpleZero_formal({ atom, user });
+        return await this._openDraft_asSimpleZero_formal({ atomClass, atomClassBase, atom, user });
       }
       // history
       if (atom.atomStage === 2) {
-        return await this._openDraft_asSimpleZero_history({ atom, user });
+        return await this._openDraft_asSimpleZero_history({ atomClass, atomClassBase, atom, user });
       }
       // never go here
     }
 
-    async _openDraft_asSimpleZero_history({ atom, user }) {
+    async _openDraft_asSimpleZero_history({ atomClass, atom, user }) {
       let keyDraft;
       let changed = true;
       let atomDraft;
@@ -156,7 +158,7 @@ module.exports = ctx => {
         }
       } else {
         // ** create draft from formal
-        keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.atomIdFormal, user });
+        keyDraft = await this._createDraftFromFormal({ atomClass, atomIdFormal: atom.atomIdFormal, user });
       }
       // copy
       if (changed) {
@@ -168,6 +170,7 @@ module.exports = ctx => {
         // ** copy draft from history
         keyDraft = await this._copy({
           target: 'draft',
+          atomClass,
           srcKey: { atomId: atom.id },
           srcItem: null,
           destKey: keyDraft,
@@ -184,7 +187,7 @@ module.exports = ctx => {
       return { draft: { key: keyDraft }, changed };
     }
 
-    async _openDraft_asSimpleZero_formal({ atom, user }) {
+    async _openDraft_asSimpleZero_formal({ atomClass, atom, user }) {
       let keyDraft;
       let changed = true;
       if (atom.atomIdDraft > 0) {
@@ -197,6 +200,7 @@ module.exports = ctx => {
           // ** copy draft from formal
           await this._copy({
             target: 'draft',
+            atomClass,
             srcKey: { atomId: atom.id },
             srcItem: null,
             destKey: keyDraft,
@@ -205,7 +209,7 @@ module.exports = ctx => {
         }
       } else {
         // ** create draft from formal
-        keyDraft = await this._createDraftFromFormal({ atomIdFormal: atom.id, user });
+        keyDraft = await this._createDraftFromFormal({ atomClass, atomIdFormal: atom.id, user });
       }
       // open
       if (changed) {
@@ -219,7 +223,7 @@ module.exports = ctx => {
       return { draft: { key: keyDraft }, changed };
     }
 
-    async _openDraft_asSimpleZero_draft({ atom, user }) {
+    async _openDraft_asSimpleZero_draft({ atomClass, atom, user }) {
       let changed = true;
       // key
       const keyDraft = { atomId: atom.id, itemId: atom.itemId };
@@ -228,6 +232,7 @@ module.exports = ctx => {
         if (atom.atomIdFormal > 0) {
           await this._copy({
             target: 'draft',
+            atomClass,
             srcKey: { atomId: atom.atomIdFormal },
             srcItem: null,
             destKey: keyDraft,
@@ -260,10 +265,11 @@ module.exports = ctx => {
       this._notifyDraftsDrafting(null, atomClass);
     }
 
-    async _createDraftFromFormal({ atomIdFormal, user }) {
+    async _createDraftFromFormal({ atomClass, atomIdFormal, user }) {
       // ** create draft from formal
       const keyDraft = await this._copy({
         target: 'draft',
+        atomClass,
         srcKey: { atomId: atomIdFormal },
         srcItem: null,
         destKey: null,

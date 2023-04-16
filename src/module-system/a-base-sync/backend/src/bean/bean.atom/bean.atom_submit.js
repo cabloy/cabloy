@@ -26,7 +26,7 @@ module.exports = ctx => {
       });
     }
 
-    async _submitBase({ /* atomClass,*/ key, options, user }) {
+    async _submitBase({ atomClass, key, options, user }) {
       // ignoreFlow only used by draft
       const ignoreFlow = options && options.ignoreFlow;
       const _atom = await ctx.bean.atom.read({ key, user: null });
@@ -53,12 +53,12 @@ module.exports = ctx => {
           };
         }
       }
-      return await this._submitDirect({ key, item: _atom, options, user });
+      return await this._submitDirect({ atomClass, key, item: _atom, options, user });
     }
 
-    async _submitDirect({ key, item, options, user }) {
+    async _submitDirect({ atomClass, key, item, options, user }) {
       // { formal }
-      let result = await this._submitDirect_formal({ key, item, options, user });
+      let result = await this._submitDirect_formal({ atomClass, key, item, options, user });
       // check atom flow
       key = result.formal.key;
       item = { ...item, id: key.itemId, atomId: key.atomId, itemId: key.itemId, atomStage: 1 };
@@ -77,16 +77,14 @@ module.exports = ctx => {
       return result;
     }
 
-    async _submitDirect_formal({ key, item, options, user }) {
-      // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: key.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+    async _submitDirect_formal({ atomClass, /* key,*/ item, options, user }) {
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // formal -> history
       if (item.atomIdFormal) {
         if (atomClassBase.history !== false) {
           await this._copy({
             target: 'history',
+            atomClass,
             srcKey: { atomId: item.atomIdFormal },
             srcItem: null,
             destKey: null,
@@ -98,6 +96,7 @@ module.exports = ctx => {
       // draft -> formal
       const keyFormal = await this._copy({
         target: 'formal',
+        atomClass,
         srcKey: { atomId: item.atomId },
         srcItem: item,
         destKey: item.atomIdFormal ? { atomId: item.atomIdFormal } : null,

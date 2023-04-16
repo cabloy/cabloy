@@ -114,14 +114,18 @@ module.exports = ctx => {
     }
 
     // target: draft/formal/history/clone
-    async _copy({ target, srcKey, srcItem, destKey, options, user }) {
+    async _copy({ target, atomClass: atomClassOuter, srcKey: srcKeyOuter, srcItem, destKey, options, user }) {
       // atomClass
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: srcKey.atomId });
-      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
-      if (!srcKey.itemId) srcKey.itemId = atomClass.itemId;
+      const {
+        key: srcKey,
+        atomClass,
+        atomClassBase,
+      } = await this._prepareKeyAndAtomAndAtomClass({
+        key: srcKeyOuter,
+        atomClass: atomClassOuter,
+      });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // srcItem
       if (!srcItem) {
