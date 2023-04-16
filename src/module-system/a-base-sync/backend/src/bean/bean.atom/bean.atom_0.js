@@ -177,10 +177,10 @@ module.exports = ctx => {
 
     // write
     //   target: should be null for frontend call
-    async write({ key, atomClass: atomClassOuter, target, item, options, user }) {
+    async write({ key: keyOuter, atomClass: atomClassOuter, target, item, options, user }) {
       // atomClass
-      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
-        atomId: key.atomId,
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
         atomClass: atomClassOuter,
       });
       // atom bean
@@ -257,10 +257,10 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key, atomClass: atomClassOuter, options, user }) {
+    async delete({ key: keyOuter, atomClass: atomClassOuter, options, user }) {
       // atomClass
-      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
-        atomId: key.atomId,
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
         atomClass: atomClassOuter,
       });
       // atom bean

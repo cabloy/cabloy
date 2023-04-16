@@ -268,7 +268,7 @@ module.exports = ctx => {
     async _delete({ atomClass: atomClassOuter, atom, user }) {
       // atomClass
       const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
-        atomId: atom.id,
+        key: { atomId: atom.id },
         atomClass: atomClassOuter,
       });
       // stars

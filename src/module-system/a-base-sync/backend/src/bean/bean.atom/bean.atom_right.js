@@ -145,7 +145,7 @@ module.exports = ctx => {
     async actions({ key, atomClass: atomClassOuter, basic, user }) {
       // atomClass
       const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
-        atomId: key.atomId,
+        key,
         atomClass: atomClassOuter,
       });
       // actions
