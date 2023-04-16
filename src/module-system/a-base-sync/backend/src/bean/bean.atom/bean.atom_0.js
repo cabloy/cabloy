@@ -95,11 +95,11 @@ module.exports = ctx => {
     }
 
     // read
-    async read({ key, atomClass: atomClassOuter, options, user }) {
+    async read({ key: keyOuter, atomClass: atomClassOuter, options, user }) {
       options = options || {};
       // atomClass
-      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
-        atomId: key.atomId,
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
         atomClass: atomClassOuter,
       });
       // atom bean

@@ -1,7 +1,8 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async _prepareAtomClassAndAtomClassBase({ atomId, atomClass }) {
+    async _prepareAtomClassAndAtomClassBase({ key, atomClass }) {
+      const atomId = key.atomId;
       // atomClass
       if (!atomClass) {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId });
@@ -19,7 +20,7 @@ module.exports = ctx => {
     async _prepareKeyAndAtomAndAtomClass({ key: keyOuter, atomClass: atomClassOuter }) {
       const atomId = keyOuter.atomId;
       const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
-        atomId,
+        key: keyOuter,
         atomClass: atomClassOuter,
       });
       let atom, key;
