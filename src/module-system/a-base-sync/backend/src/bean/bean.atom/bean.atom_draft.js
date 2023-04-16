@@ -54,9 +54,9 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user, atomClass);
     }
 
-    async openDraft({ key, atomClass: atomClassOuter, user }) {
-      let { atom, atomClass, atomClassBase } = await this._prepareAtomAndAtomClass({
-        atomId: key.atomId,
+    async openDraft({ key: keyOuter, atomClass: atomClassOuter, user }) {
+      let { key, atom, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+        key: keyOuter,
         atomClass: atomClassOuter,
       });
       // check itemOnly

@@ -22,10 +22,11 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightRead({ atom: { id }, atomClass, user, checkFlow, disableAuthOpenCheck }) {
-      const _res = await this._prepareAtomAndAtomClass({ atomId: id, atomClass });
-      const _atom = _res.atom;
-      atomClass = _res.atomClass;
+    async checkRightRead({ atom: { id }, atomClass: atomClassOuter, user, checkFlow, disableAuthOpenCheck }) {
+      const { atom: _atom, atomClass } = await this._prepareKeyAndAtomAndAtomClass({
+        key: { atomId: id },
+        atomClass: atomClassOuter,
+      });
       // normal check
       const res = await this._checkRightRead_normal({ _atom, atomClass, user, checkFlow });
       if (!res) return res;

@@ -4,10 +4,19 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async checkRightAction({ atom: { id }, atomClass, action, stage, user, checkFlow, disableAuthOpenCheck }) {
-      const _res = await this._prepareAtomAndAtomClass({ atomId: id, atomClass });
-      const _atom = _res.atom;
-      atomClass = _res.atomClass;
+    async checkRightAction({
+      atom: { id },
+      atomClass: atomClassOuter,
+      action,
+      stage,
+      user,
+      checkFlow,
+      disableAuthOpenCheck,
+    }) {
+      const { atom: _atom, atomClass } = await this._prepareKeyAndAtomAndAtomClass({
+        key: { atomId: id },
+        atomClass: atomClassOuter,
+      });
       // normal check
       const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
       if (!res) return res;
