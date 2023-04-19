@@ -46,10 +46,20 @@ module.exports = app => {
   schemas.userOnlineHistorySearch = {
     type: 'object',
     properties: {
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
+      userId: {
+        type: 'number',
+        ebType: 'user',
+        ebTitle: 'Username',
+        ebParams: {
+          target: '_self',
+          displayName: 'userName',
+          mapper: {
+            userName: 'userName',
+          },
+        },
+        ebSearch: {
+          ignoreValue: 0,
+        },
       },
     },
   };
