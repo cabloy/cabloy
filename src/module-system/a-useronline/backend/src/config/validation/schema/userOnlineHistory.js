@@ -60,6 +60,9 @@ module.exports = app => {
         ebSearch: {
           ignoreValue: 0,
         },
+        ebDisplay: {
+          expression: '!_meta.host.container.options.actionLoginLog',
+        },
       },
       isLogin: {
         type: 'string',

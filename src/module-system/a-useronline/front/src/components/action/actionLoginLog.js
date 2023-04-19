@@ -11,7 +11,9 @@ export default {
           },
         },
       };
-      const options = {};
+      const options = {
+        actionLoginLog: true,
+      };
       const queries = {
         module: 'a-useronline',
         atomClassName: 'userOnlineHistory',
