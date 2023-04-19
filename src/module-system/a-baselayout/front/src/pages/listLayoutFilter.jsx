@@ -63,6 +63,9 @@ export default {
       },
     },
     //
+    itemOnly() {
+      return !!(this.atomClassBase && this.atomClassBase.itemOnly);
+    },
     atomClass() {
       return this.form.atomClass;
     },
@@ -249,6 +252,14 @@ export default {
       };
       return host;
     },
+    _renderNavbarItemOnly() {
+      const domNavbarRight = this._renderNavbarRight();
+      return (
+        <eb-navbar title={this.pageTitle} eb-back-link="Back">
+          {domNavbarRight}
+        </eb-navbar>
+      );
+    },
     _renderNavbar() {
       const domNavbarRight = this._renderNavbarRight();
       const domNavbarSub = this._renderNavbarSub();
@@ -352,10 +363,19 @@ export default {
     },
   },
   render() {
+    const pageContent = this.itemOnly;
+    const tabs = !this.itemOnly;
+    const withSubnavbar = !this.itemOnly;
+    const domChildren = [];
+    if (this.itemOnly) {
+      domChildren.push(this._renderNavbarItemOnly());
+    } else {
+      domChildren.push(this._renderNavbar());
+      domChildren.push(this._renderTabs());
+    }
     return (
-      <eb-page page-content={false} tabs with-subnavbar>
-        {this._renderNavbar()}
-        {this._renderTabs()}
+      <eb-page page-content={pageContent} tabs={tabs} with-subnavbar={withSubnavbar}>
+        {domChildren}
       </eb-page>
     );
   },
