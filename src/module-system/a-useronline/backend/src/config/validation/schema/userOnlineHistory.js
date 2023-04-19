@@ -61,6 +61,16 @@ module.exports = app => {
           ignoreValue: 0,
         },
       },
+      isLogin: {
+        type: 'string',
+        ebType: 'dict',
+        ebTitle: 'LoginType',
+        ebParams: {
+          dictKey: 'a-userOnline:dictLoginType',
+          mode: 'select',
+        },
+        ebOptionsBlankAuto: true,
+      },
     },
   };
   return schemas;
