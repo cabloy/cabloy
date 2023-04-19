@@ -64,22 +64,39 @@ export default {
       const displayName = property.ebParams.displayName || this.mapper2.userName;
       return this.context.getValue(displayName);
     },
+    getDisplayAvatar() {
+      const { property } = this.context;
+      const displayAvatar = property.ebParams.displayName || this.mapper2.avatar;
+      return this.context.getValue(displayAvatar);
+    },
   },
   render() {
     const { dataPath, property, validate } = this.context;
-    const displayName = this.getDisplayName();
+    const value = parseInt(this.context.getValue() || 0);
+    let domImg;
+    let domUserName;
+    if (value) {
+      domImg = <img class="avatar avatar16" src={this.getAvatarUrl(this.getDisplayAvatar(), 16)} />;
+      domUserName = <span>{this.getDisplayName()}</span>;
+    }
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item>
           {this.context.renderTitle({ slot: 'title' })}
-          <div slot="after">{displayName}</div>
+          <div slot="after" class="display-flex align-items-center">
+            {domImg}
+            {domUserName}
+          </div>
         </f7-list-item>
       );
     }
     return (
       <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseUser}>
         {this.context.renderTitle({ slot: 'title' })}
-        <div slot="after">{displayName}</div>
+        <div slot="after" class="display-flex align-items-center">
+          {domImg}
+          {domUserName}
+        </div>
       </eb-list-item-choose>
     );
   },
