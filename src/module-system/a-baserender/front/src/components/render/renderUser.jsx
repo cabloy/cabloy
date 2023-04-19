@@ -10,7 +10,7 @@ export default {
   computed: {
     mapper2() {
       const { key, property } = this.context;
-      const mapper = property.ebParams.mapper || {};
+      const mapper = property.ebParams?.mapper || {};
       if (!mapper.userName) {
         mapper.userName = `_${key}Name`;
       }
@@ -25,12 +25,12 @@ export default {
     async onChooseUser() {
       const { key, property } = this.context;
       // target
-      let target = property.ebParams.target;
+      let target = property.ebParams?.target;
       if (target === undefined) target = '_self';
       // mapper
       const mapper = this.mapper2;
       // apiFetchUsers
-      const apiFetchUsers = property.ebParams.apiFetchUsers;
+      const apiFetchUsers = property.ebParams?.apiFetchUsers;
       return new Promise(resolve => {
         const url = '/a/baseadmin/user/select';
         this.$view.navigate(url, {
@@ -61,12 +61,12 @@ export default {
     },
     getDisplayName() {
       const { property } = this.context;
-      const displayName = property.ebParams.displayName || this.mapper2.userName;
+      const displayName = property.ebParams?.displayName || this.mapper2.userName;
       return this.context.getValue(displayName);
     },
     getDisplayAvatar() {
       const { property } = this.context;
-      const displayAvatar = property.ebParams.displayAvatar || this.mapper2.avatar;
+      const displayAvatar = property.ebParams?.displayAvatar || this.mapper2.avatar;
       return this.context.getValue(displayAvatar);
     },
     getAvatarUrl(avatar, size) {

@@ -9,6 +9,16 @@ export default {
   },
   created() {},
   methods: {
+    getDisplayName() {
+      const { property } = this.context;
+      const displayName = property.ebParams?.displayName || this.mapper2.userName;
+      return this.context.getValue(displayName);
+    },
+    getDisplayAvatar() {
+      const { property } = this.context;
+      const displayAvatar = property.ebParams?.displayAvatar || this.mapper2.avatar;
+      return this.context.getValue(displayAvatar);
+    },
     getAvatarUrl(avatar, size) {
       return this.$meta.util.combineAvatarUrl(avatar, size);
     },

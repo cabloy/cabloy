@@ -50,13 +50,13 @@ module.exports = app => {
         type: 'number',
         ebType: 'user',
         ebTitle: 'Username',
-        ebParams: {
-          target: '_self',
-          displayName: 'userName',
-          mapper: {
-            userName: 'userName',
-          },
-        },
+        // ebParams: {
+        //   target: '_self',
+        //   displayName: 'userName',
+        //   mapper: {
+        //     userName: 'userName',
+        //   },
+        // },
         ebSearch: {
           ignoreValue: 0,
         },
