@@ -10,13 +10,13 @@ export default {
   created() {},
   methods: {
     getDisplayName() {
-      const { property } = this.context;
-      const displayName = property.ebParams?.displayName || this.mapper2.userName;
+      const { key, property } = this.context;
+      const displayName = property.ebParams?.displayName || `_${key}Name`;
       return this.context.getValue(displayName);
     },
     getDisplayAvatar() {
-      const { property } = this.context;
-      const displayAvatar = property.ebParams?.displayAvatar || this.mapper2.avatar;
+      const { key, property } = this.context;
+      const displayAvatar = property.ebParams?.displayAvatar || `_${key}Avatar`;
       return this.context.getValue(displayAvatar);
     },
     getAvatarUrl(avatar, size) {
@@ -24,13 +24,12 @@ export default {
     },
   },
   render() {
-    const { key } = this.context;
     const value = parseInt(this.context.getValue() || 0);
-    const userName = this.context.getValue(`_${key}Name`);
-    const userAvatar = this.context.getValue(`_${key}Avatar`);
     let domImg;
     let domUserName;
     if (value) {
+      const userName = this.getDisplayName();
+      const userAvatar = this.getDisplayAvatar();
       domImg = <img class="avatar avatar16" src={this.getAvatarUrl(userAvatar, 16)} />;
       domUserName = <span>{userName}</span>;
     }

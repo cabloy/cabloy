@@ -79,8 +79,10 @@ export default {
     let domImg;
     let domUserName;
     if (value) {
-      domImg = <img class="avatar avatar16" src={this.getAvatarUrl(this.getDisplayAvatar(), 16)} />;
-      domUserName = <span>{this.getDisplayName()}</span>;
+      const userName = this.getDisplayName();
+      const userAvatar = this.getDisplayAvatar();
+      domImg = <img class="avatar avatar16" src={this.getAvatarUrl(userAvatar, 16)} />;
+      domUserName = <span>{userName}</span>;
     }
     if (validate.readOnly || property.ebReadOnly) {
       return (
