@@ -33,6 +33,7 @@ module.exports = app => {
       },
       export: {
         fields: [
+          { name: 'id', title: 'ID' },
           { name: 'createdAt', title: 'Created Time' },
           { name: 'updatedAt', title: 'Modification Time' },
         ],
@@ -281,7 +282,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(ItemOnly)',
     atomStaticKey: 'layoutItemOnlyListBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

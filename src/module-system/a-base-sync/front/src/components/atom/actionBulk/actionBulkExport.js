@@ -9,17 +9,20 @@ export default {
         module: item.module,
         atomClassName: item.atomClassName,
       };
+      // atomClassBase
+      const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       // options
       let options;
       const selectParams = ctx.base_prepareSelectParams();
       const selectedAtoms = ctx.bulk.selectedAtoms;
       if (selectedAtoms.length > 0) {
+        const idFieldName = atomClassBase.itemOnly ? 'f.id' : 'a.id';
         const keys = selectedAtoms.map(item => {
           return { atomId: item.atomId, itemId: item.itemId };
         });
         options = {
           where: {
-            'a.id': keys.map(key => key.atomId),
+            [idFieldName]: keys.map(key => key.atomId),
           },
           stage: selectParams.options.stage,
         };
