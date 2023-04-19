@@ -7,6 +7,19 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    mapper2() {
+      const { key, property } = this.context;
+      const mapper = property.ebParams.mapper || {};
+      if (!mapper.userName) {
+        mapper.userName = `_${key}Name`;
+      }
+      if (!mapper.avatar) {
+        mapper.avatar = `_${key}Avatar`;
+      }
+      return mapper;
+    },
+  },
   created() {},
   methods: {
     async onChooseUser() {
@@ -15,7 +28,7 @@ export default {
       let target = property.ebParams.target;
       if (target === undefined) target = '_self';
       // mapper
-      const mapper = property.ebParams.mapper;
+      const mapper = this.mapper2;
       // apiFetchUsers
       const apiFetchUsers = property.ebParams.apiFetchUsers;
       return new Promise(resolve => {
@@ -48,15 +61,8 @@ export default {
     },
     getDisplayName() {
       const { property } = this.context;
-      let displayName = property.ebParams.displayName;
-      if (!displayName) {
-        const mapper = property.ebParams.mapper || {};
-        displayName = mapper.userName || 'userName';
-      }
-      if (displayName) {
-        return this.context.getValue(displayName);
-      }
-      return null;
+      const displayName = property.ebParams.displayName || this.mapper2.userName;
+      return this.context.getValue(displayName);
     },
   },
   render() {
