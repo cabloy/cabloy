@@ -39,6 +39,15 @@ module.exports = app => {
               // enableOnOpened: true,
               stage: 'formal',
             },
+            loginLog: {
+              code: 102,
+              title: 'LoginLog',
+              actionModule: moduleInfo.relativeName,
+              actionComponent: 'action',
+              icon: { f7: ':role:shield-key' },
+              // enableOnOpened: true,
+              stage: 'formal',
+            },
           },
           validator: 'userOnline',
           search: {

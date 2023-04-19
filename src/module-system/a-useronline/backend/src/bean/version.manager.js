@@ -76,6 +76,15 @@ module.exports = app => {
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
       }
+
+      if (options.version === 2) {
+        // add role rights
+        const roleRights = [
+          // custom
+          { roleName: 'system', action: 'loginLog', scopeNames: 'authenticated' },
+        ];
+        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnline', roleRights });
+      }
     }
 
     async test() {}
