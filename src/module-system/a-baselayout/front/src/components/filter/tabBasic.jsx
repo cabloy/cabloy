@@ -10,6 +10,9 @@ export default {
     filterContainer: {
       type: Object,
     },
+    itemOnly: {
+      type: Boolean,
+    },
   },
   data() {
     return {};
@@ -19,6 +22,7 @@ export default {
       this.filterContainer.onFormSubmit();
     },
     _renderFormBasic() {
+      if (this.itemOnly) return null;
       // host
       const host = this.filterContainer._getFormHost();
       // meta

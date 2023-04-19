@@ -64,7 +64,7 @@ export default {
     },
     //
     itemOnly() {
-      return !!(this.atomClassBase && this.atomClassBase.itemOnly);
+      return !!(this.layoutManager.base.atomClassBase && this.layoutManager.base.atomClassBase.itemOnly);
     },
     atomClass() {
       return this.form.atomClass;
@@ -309,6 +309,17 @@ export default {
         </f7-subnavbar>
       );
     },
+    _renderTabItemOnly() {
+      if (!this.ready) return;
+      return (
+        <tabBasic
+          layoutManager={this.layoutManager}
+          filterConfig={this.filterConfig}
+          filterContainer={this}
+          itemOnly={true}
+        ></tabBasic>
+      );
+    },
     _renderTabs() {
       if (!this.ready) return;
       // basic
@@ -369,6 +380,7 @@ export default {
     const domChildren = [];
     if (this.itemOnly) {
       domChildren.push(this._renderNavbarItemOnly());
+      domChildren.push(this._renderTabItemOnly());
     } else {
       domChildren.push(this._renderNavbar());
       domChildren.push(this._renderTabs());
