@@ -10,7 +10,7 @@ export default {
           module: item.module,
           atomClassName: item.atomClassName,
         };
-        const data = await ctx.$api.post('/a/base/atom/clone', { key });
+        const data = await ctx.$api.post('/a/base/atom/clone', { key, atomClass });
         const dataRes = data.draft || data.formal;
         const keyDraft = dataRes.key;
         const atomDraft = dataRes.atom;
@@ -21,11 +21,16 @@ export default {
           action: { name: 'create' },
           atom: atomDraft,
         });
+        // queries
+        const queries = {
+          mode: 'edit',
+          atomId: atomDraft.atomId,
+          itemId: atomDraft.itemId,
+          ...atomClass,
+        };
+        // url
+        const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
         // open
-        const url = ctx.$meta.util.replaceTemplate(
-          '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
-          atomDraft
-        );
         let navigateOptions = action.navigateOptions;
         if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
           navigateOptions = { target: '_self' };
