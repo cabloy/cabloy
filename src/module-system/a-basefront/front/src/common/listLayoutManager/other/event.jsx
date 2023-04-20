@@ -1,13 +1,13 @@
 export default {
-  created() {
+  mounted() {
     this.$meta.eventHub.$on('atom:action', this.event_onActionChanged);
-    this.$meta.eventHub.$on('atom:action:ext', this.event_onActionExtChanged);
     this.$meta.eventHub.$on('atom:actions', this.event_onActionsChanged);
+    // this.$meta.eventHub.$on('atom:action:ext', this.event_onActionExtChanged);
   },
   beforeDestroy() {
     this.$meta.eventHub.$off('atom:action', this.event_onActionChanged);
-    this.$meta.eventHub.$off('atom:action:ext', this.event_onActionExtChanged);
     this.$meta.eventHub.$off('atom:actions', this.event_onActionsChanged);
+    // this.$meta.eventHub.$off('atom:action:ext', this.event_onActionExtChanged);
   },
   methods: {
     async event_onActionChanged_create(data) {
@@ -125,12 +125,6 @@ export default {
         await this.event_onActionChanged_others(data);
       }
     },
-    async event_onActionExtChanged(bundle) {
-      // loop
-      await this.data.adapter._loopProviders(async provider => {
-        this.data.adapter._callMethodProvider(provider, 'onActionExt', bundle);
-      });
-    },
     async event_onActionsChanged(data) {
       // const atomClass = data.atomClass;
       const key = data.key;
@@ -150,5 +144,11 @@ export default {
         });
       });
     },
+    // async event_onActionExtChanged(bundle) {
+    //   // loop
+    //   await this.data.adapter._loopProviders(async provider => {
+    //     this.data.adapter._callMethodProvider(provider, 'onActionExt', bundle);
+    //   });
+    // },
   },
 };
