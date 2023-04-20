@@ -6,7 +6,7 @@ module.exports = ctx => {
   class Atom {
     async clone({ key: keyOuter, atomClass: atomClassOuter, user }) {
       // atomClass
-      const { key, atomClass /* , atomClassBase*/ } = await this._prepareKeyAndAtomAndAtomClass({
+      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
       });
@@ -24,7 +24,7 @@ module.exports = ctx => {
       const atom = await this.read({ key: keyDraft, atomClass, user });
       // draft/formal
       const res = { key: keyDraft, atom };
-      if (atom.atomStage === 0) return { draft: res };
+      if (!atomClassBase.itemOnly && atom.atomStage === 0) return { draft: res };
       return { formal: res };
     }
 
