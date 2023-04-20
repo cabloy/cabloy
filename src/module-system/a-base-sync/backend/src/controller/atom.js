@@ -161,6 +161,7 @@ module.exports = app => {
     async clone() {
       const res = await this.ctx.service.atom.clone({
         key: this.ctx.request.body.key,
+        atomClass: this.ctx.request.body.atomClass,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

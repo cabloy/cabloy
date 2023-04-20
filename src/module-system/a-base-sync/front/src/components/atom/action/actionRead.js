@@ -16,6 +16,7 @@ export default {
       };
       // url
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
+      // open
       ctx.$view.navigate(url, {
         // target: '_self'
       });
