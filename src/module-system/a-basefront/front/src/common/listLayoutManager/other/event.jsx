@@ -88,6 +88,8 @@ export default {
     async event_onActionChanged(data) {
       const action = data.action;
       const atomClass = data.atomClass;
+      if (!atomClass) throw new Error('Should specify atom class');
+
       const atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       if (atomClassBase.itemOnly) {
         if (!this.base.atomClass) return;

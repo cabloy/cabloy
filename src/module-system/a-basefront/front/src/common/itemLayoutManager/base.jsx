@@ -115,8 +115,9 @@ export default {
     },
     async base_onActionChanged(data) {
       const key = data.key;
-      const atomClass = data.atomClass;
       const action = data.action;
+      const atomClass = data.atomClass;
+      if (!atomClass) throw new Error('Should specify atom class');
 
       if (!this.base_ready) return;
       if (
