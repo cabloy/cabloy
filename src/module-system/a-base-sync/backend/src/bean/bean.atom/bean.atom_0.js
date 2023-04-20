@@ -373,30 +373,6 @@ module.exports = ctx => {
       });
     }
 
-    async clone({ key: keyOuter, atomClass: atomClassOuter, user }) {
-      // atomClass
-      const { key, atomClass /* , atomClassBase*/ } = await this._prepareKeyAndAtomAndAtomClass({
-        key: keyOuter,
-        atomClass: atomClassOuter,
-      });
-      // copy
-      const keyDraft = await this._copy({
-        target: 'clone',
-        atomClass,
-        srcKey: { atomId: key.atomId },
-        srcItem: null,
-        destKey: null,
-        user,
-      });
-      // ok
-      // get atom
-      const atom = await this.read({ key: keyDraft, atomClass, user });
-      // draft/formal
-      const res = { key: keyDraft, atom };
-      if (atom.atomStage === 0) return { draft: res };
-      return { formal: res };
-    }
-
     async exportBulk({ atomClass, options, fields, user }) {
       // atomClass
       let atomClassBase;
