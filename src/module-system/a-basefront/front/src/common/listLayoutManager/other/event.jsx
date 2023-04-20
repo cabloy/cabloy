@@ -111,7 +111,7 @@ export default {
       }
       if (action.name === 'create') {
         // create
-        await this.event_onActionChanged_create(data, atomClassBase);
+        await this.event_onActionChanged_create(data);
       } else if (action.name === 'delete') {
         // delete
         await this.event_onActionChanged_delete(data);
