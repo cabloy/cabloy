@@ -3,6 +3,10 @@ export default {
     async _onActionMove() {
       const { ctx, /* action,*/ item } = this.$props;
       const key = { atomId: item.atomId, itemId: item.itemId };
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
       // select role
       const roleIdParent = await this._onActionMove_selectRole({ ctx, item });
       if (!roleIdParent) return;
@@ -15,8 +19,13 @@ export default {
       const progressId = data.progressId;
       await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
       // action: moveNode/save
-      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'moveNode' }, node: { parentId: roleIdParent } });
-      ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'save' }, actionSource: ctx });
+      ctx.$meta.eventHub.$emit('atom:action', {
+        key,
+        atomClass,
+        action: { name: 'moveNode' },
+        node: { parentId: roleIdParent },
+      });
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' }, actionSource: ctx });
     },
     async _onActionMove_selectRole({ ctx, item }) {
       return new Promise(resolve => {

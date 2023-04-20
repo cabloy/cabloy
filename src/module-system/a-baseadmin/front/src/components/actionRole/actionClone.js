@@ -6,6 +6,10 @@ export default {
       try {
         // clone
         const key = { atomId: item.atomId, itemId: item.itemId };
+        const atomClass = {
+          module: item.module,
+          atomClassName: item.atomClassName,
+        };
         const data = await ctx.$api.post('/a/baseadmin/role/clone', { key });
         const dataRes = data.draft || data.formal;
         const keyDraft = dataRes.key;
@@ -16,6 +20,7 @@ export default {
         // event
         ctx.$meta.eventHub.$emit('atom:action', {
           key: keyDraft,
+          atomClass,
           action: { name: 'addChildNode' },
           node: { parentId: atomDraft.roleIdParent },
         });

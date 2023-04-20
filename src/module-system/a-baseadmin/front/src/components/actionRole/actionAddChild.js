@@ -5,6 +5,10 @@ export default {
       try {
         // add
         const key = { atomId: item.atomId, itemId: item.itemId };
+        const atomClass = {
+          module: item.module,
+          atomClassName: item.atomClassName,
+        };
         const data = await ctx.$api.post('/a/baseadmin/role/addChild', { key });
         const keyChild = data.key;
         const atomChild = data.atom;
@@ -14,6 +18,7 @@ export default {
         // event
         ctx.$meta.eventHub.$emit('atom:action', {
           key: keyChild,
+          atomClass,
           action: { name: 'addChildNode' },
           node: { parentId: atomChild.roleIdParent },
         });

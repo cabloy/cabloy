@@ -115,9 +115,16 @@ export default {
     },
     async base_onActionChanged(data) {
       const key = data.key;
+      const atomClass = data.atomClass;
       const action = data.action;
 
       if (!this.base_ready) return;
+      if (
+        atomClass.module !== this.base.atomClass.module ||
+        atomClass.atomClassName !== this.base.atomClass.atomClassName
+      ) {
+        return;
+      }
       if (this.base.item.atomId !== key.atomId) return;
 
       if (action.name === 'save' && this.container.mode === 'edit' && this.page_getDirty()) {
