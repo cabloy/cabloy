@@ -24,7 +24,7 @@ export default {
           selectedAtoms.splice(index, 1);
         }
         // action
-        ctx.$meta.eventHub.$emit('atom:action', { key, action: { name: 'delete' } });
+        ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'delete' } });
       }
       // check result
       if (res.keys.length === keys.length) return true;

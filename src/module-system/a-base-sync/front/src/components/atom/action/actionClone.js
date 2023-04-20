@@ -6,12 +6,21 @@ export default {
       try {
         // clone
         const key = { atomId: item.atomId, itemId: item.itemId };
+        const atomClass = {
+          module: item.module,
+          atomClassName: item.atomClassName,
+        };
         const data = await ctx.$api.post('/a/base/atom/clone', { key });
         const dataRes = data.draft || data.formal;
         const keyDraft = dataRes.key;
         const atomDraft = dataRes.atom;
         // event
-        ctx.$meta.eventHub.$emit('atom:action', { key: keyDraft, action: { name: 'create' }, atom: atomDraft });
+        ctx.$meta.eventHub.$emit('atom:action', {
+          key: keyDraft,
+          atomClass,
+          action: { name: 'create' },
+          atom: atomDraft,
+        });
         // open
         const url = ctx.$meta.util.replaceTemplate(
           '/a/basefront/atom/item?mode=edit&atomId={{atomId}}&itemId={{itemId}}',
