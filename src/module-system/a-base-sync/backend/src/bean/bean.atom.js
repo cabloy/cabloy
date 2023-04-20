@@ -2,6 +2,7 @@ const atom_0 = require('./bean.atom/bean.atom_0.js');
 const atom_1 = require('./bean.atom/bean.atom_1.js');
 const atom_right = require('./bean.atom/bean.atom_right.js');
 const atom_starLabel = require('./bean.atom/bean.atom_starLabel.js');
+const atom_clone = require('./bean.atom/bean.atom_clone.js');
 const atom_draft = require('./bean.atom/bean.atom_draft.js');
 const atom_formal = require('./bean.atom/bean.atom_formal.js');
 const atom_simple = require('./bean.atom/bean.atom_simple.js');
@@ -18,6 +19,7 @@ module.exports = ctx => {
       atom_1,
       atom_right,
       atom_starLabel,
+      atom_clone,
       atom_draft,
       atom_formal,
       atom_simple,
