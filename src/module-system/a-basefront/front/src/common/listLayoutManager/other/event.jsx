@@ -85,20 +85,28 @@ export default {
         this.data.adapter._callMethodProvider(provider, 'moveNode', { key, node });
       });
     },
-    async event_onActionChanged(data) {
-      const action = data.action;
+    async event_checkIfEventActionValid(data) {
       const atomClass = data.atomClass;
       if (!atomClass) throw new Error('Should specify atom class');
 
       const atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       if (atomClassBase.itemOnly) {
-        if (!this.base.atomClass) return;
+        if (!this.base.atomClass) return false;
         if (
           atomClass.module !== this.base.atomClass.module ||
           atomClass.atomClassName !== this.base.atomClass.atomClassName
         ) {
-          return;
+          return false;
         }
+      }
+      // ok
+      return true;
+    },
+    async event_onActionChanged(data) {
+      // const atomClass = data.atomClass;
+      const action = data.action;
+      if (!(await this.event_checkIfEventActionValid(data))) {
+        return;
       }
       if (action.name === 'create') {
         // create
@@ -124,7 +132,11 @@ export default {
       });
     },
     async event_onActionsChanged(data) {
+      // const atomClass = data.atomClass;
       const key = data.key;
+      if (!(await this.event_checkIfEventActionValid(data))) {
+        return;
+      }
       // loop
       await this.data.adapter._loopProviders(async provider => {
         // findItem
