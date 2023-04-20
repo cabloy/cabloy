@@ -47,7 +47,12 @@ module.exports = ctx => {
         srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, atomClass, user: null });
       }
       // destItem
-      const destItem = this._copy_prepareDestItem({ target, srcItem, user });
+      let destItem;
+      if (!atomClassBase.itemOnly) {
+        destItem = this._copy_prepareDestItem_normal({ target, srcItem, user });
+      } else {
+        destItem = this._copy_prepareDestItem_itemOnly({ target, srcItem, user });
+      }
       // destKey
       if (!destKey) {
         destKey = await this.create({
@@ -71,7 +76,9 @@ module.exports = ctx => {
       destItem.atomId = destKey.atomId;
       destItem.itemId = destKey.itemId;
       // update atom fields
-      await this._copy_updateAtomFields({ target, atomClassBase, destItem });
+      if (!atomClassBase.itemOnly) {
+        await this._copy_updateAtomFields({ target, destItem });
+      }
       // bean write
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -87,23 +94,27 @@ module.exports = ctx => {
         fn: 'copy',
       });
       // copy attachments
-      await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
+      if (!atomClassBase.itemOnly) {
+        await this._copyAttachments({ atomIdSrc: srcKey.atomId, atomIdDest: destKey.atomId });
+      }
       // copy details
-      await ctx.bean.detail._copyDetails({
-        atomClass,
-        target,
-        srcKeyAtom: srcKey,
-        destKeyAtom: destKey,
-        destAtom: destItem,
-        options,
-        user,
-      });
+      // todo: itemOnly maybe has details
+      if (!atomClassBase.itemOnly) {
+        await ctx.bean.detail._copyDetails({
+          atomClass,
+          target,
+          srcKeyAtom: srcKey,
+          destKeyAtom: destKey,
+          destAtom: destItem,
+          options,
+          user,
+        });
+      }
       // ok
       return destKey;
     }
 
-    async _copy_updateAtomFields({ target, atomClassBase, destItem }) {
-      if (atomClassBase.itemOnly) return;
+    async _copy_updateAtomFields({ target, destItem }) {
       const data = {
         id: destItem.atomId,
         userIdCreated: destItem.userIdCreated,
@@ -134,7 +145,18 @@ module.exports = ctx => {
       await this.modelAtom.update(data);
     }
 
-    _copy_prepareDestItem({ target, srcItem, user }) {
+    _copy_prepareDestItem_itemOnly({ /* target,*/ srcItem, user }) {
+      // destItem
+      const destItem = Object.assign({}, srcItem, {
+        // atomId: destKey.atomId,
+        // itemId: destKey.itemId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      return destItem;
+    }
+
+    _copy_prepareDestItem_normal({ target, srcItem, user }) {
       // atomSimple
       const atomSimple = srcItem.atomSimple;
       // atomStage
@@ -160,6 +182,8 @@ module.exports = ctx => {
       const atomLanguage = srcItem.atomLanguage;
       const atomCategoryId = srcItem.atomCategoryId;
       const atomTags = srcItem.atomTags;
+      let createdAt = srcItem.atomCreatedAt;
+      let updatedAt = srcItem.atomUpdatedAt;
       if (target === 'draft') {
         atomIdDraft = 0;
         atomIdFormal = srcItem.atomStage === 1 ? srcItem.atomId : srcItem.atomIdFormal;
@@ -199,6 +223,8 @@ module.exports = ctx => {
           atomStaticKey = ctx.bean.util.uuidv4();
         }
         atomRevision = 0;
+        createdAt = new Date();
+        updatedAt = new Date();
       }
       // destItem
       const destItem = Object.assign({}, srcItem, {
@@ -221,8 +247,8 @@ module.exports = ctx => {
         atomClosed,
         atomIdDraft,
         atomIdFormal,
-        createdAt: srcItem.atomCreatedAt,
-        updatedAt: srcItem.atomUpdatedAt,
+        createdAt,
+        updatedAt,
       });
       return destItem;
     }
