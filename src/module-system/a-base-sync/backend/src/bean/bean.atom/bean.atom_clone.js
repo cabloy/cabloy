@@ -44,7 +44,7 @@ module.exports = ctx => {
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       // srcItem
       if (!srcItem) {
-        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, user: null });
+        srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, atomClass, user: null });
       }
       // destItem
       const destItem = this._copy_prepareDestItem({ target, srcItem, user });
@@ -60,41 +60,18 @@ module.exports = ctx => {
         });
       }
       if (!destKey.itemId) {
-        const _item = await this.modelAtom.get({ id: destKey.atomId });
-        destKey.itemId = _item.itemId;
+        if (!atomClassBase.itemOnly) {
+          const _item = await this.modelAtom.get({ id: destKey.atomId });
+          destKey.itemId = _item.itemId;
+        } else {
+          destKey.itemId = destKey.atomId;
+        }
       }
       // append destKey
       destItem.atomId = destKey.atomId;
       destItem.itemId = destKey.itemId;
-      // update fields
-      const data = {
-        id: destItem.atomId,
-        userIdCreated: destItem.userIdCreated,
-        userIdUpdated: destItem.userIdUpdated,
-        //   see also: atomBase
-        // atomName: destItem.atomName,
-        // atomLanguage: destItem.atomLanguage,
-        // atomCategoryId: destItem.atomCategoryId,
-        // atomTags: destItem.atomTags,
-        // allowComment: destItem.allowComment,
-        atomStatic: destItem.atomStatic,
-        atomStaticKey: destItem.atomStaticKey,
-        atomRevision: destItem.atomRevision,
-        atomSimple: destItem.atomSimple,
-        atomStage: destItem.atomStage,
-        // atomFlowId: destItem.atomFlowId,
-        attachmentCount: destItem.attachmentCount,
-        // atomClosed: destItem.atomClosed,
-        atomIdDraft: destItem.atomIdDraft,
-        atomIdFormal: destItem.atomIdFormal,
-        createdAt: destItem.createdAt,
-        updatedAt: destItem.updatedAt,
-      };
-      if (target === 'draft' || target === 'clone') {
-        data.atomClosed = destItem.atomClosed;
-        data.atomFlowId = destItem.atomFlowId;
-      }
-      await this.modelAtom.update(data);
+      // update atom fields
+      await this._copy_updateAtomFields({ target, atomClassBase, destItem });
       // bean write
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
@@ -123,6 +100,38 @@ module.exports = ctx => {
       });
       // ok
       return destKey;
+    }
+
+    async _copy_updateAtomFields({ target, atomClassBase, destItem }) {
+      if (atomClassBase.itemOnly) return;
+      const data = {
+        id: destItem.atomId,
+        userIdCreated: destItem.userIdCreated,
+        userIdUpdated: destItem.userIdUpdated,
+        //   see also: atomBase
+        // atomName: destItem.atomName,
+        // atomLanguage: destItem.atomLanguage,
+        // atomCategoryId: destItem.atomCategoryId,
+        // atomTags: destItem.atomTags,
+        // allowComment: destItem.allowComment,
+        atomStatic: destItem.atomStatic,
+        atomStaticKey: destItem.atomStaticKey,
+        atomRevision: destItem.atomRevision,
+        atomSimple: destItem.atomSimple,
+        atomStage: destItem.atomStage,
+        // atomFlowId: destItem.atomFlowId,
+        attachmentCount: destItem.attachmentCount,
+        // atomClosed: destItem.atomClosed,
+        atomIdDraft: destItem.atomIdDraft,
+        atomIdFormal: destItem.atomIdFormal,
+        createdAt: destItem.createdAt,
+        updatedAt: destItem.updatedAt,
+      };
+      if (target === 'draft' || target === 'clone') {
+        data.atomClosed = destItem.atomClosed;
+        data.atomFlowId = destItem.atomFlowId;
+      }
+      await this.modelAtom.update(data);
     }
 
     _copy_prepareDestItem({ target, srcItem, user }) {
