@@ -10,6 +10,7 @@ module.exports = app => {
         ebTitle: 'Basic Info',
       },
       userId: {
+        type: 'number',
         ebType: 'userName',
         ebTitle: 'Username',
       },
