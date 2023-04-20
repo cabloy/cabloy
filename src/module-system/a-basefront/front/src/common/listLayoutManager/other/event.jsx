@@ -144,6 +144,8 @@ export default {
         });
       });
     },
+    // *** if enabled, the arguments layout should be same as atom:action
+    //        and also should check if atomClass valid
     // async event_onActionExtChanged(bundle) {
     //   // loop
     //   await this.data.adapter._loopProviders(async provider => {
