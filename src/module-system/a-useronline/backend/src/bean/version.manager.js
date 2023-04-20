@@ -69,10 +69,10 @@ module.exports = app => {
           { roleName: 'system', action: 'delete' },
           { roleName: 'system', action: 'deleteBulk' },
           // todo: only for test
-          { roleName: 'system', action: 'exportBulk' },
-          { roleName: 'system', action: 'create' },
-          { roleName: 'system', action: 'write' },
-          { roleName: 'system', action: 'clone' },
+          // { roleName: 'system', action: 'exportBulk' },
+          // { roleName: 'system', action: 'create' },
+          // { roleName: 'system', action: 'write' },
+          // { roleName: 'system', action: 'clone' },
         ];
         await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
       }
