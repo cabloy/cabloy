@@ -85,6 +85,17 @@ export default {
     },
     async event_onActionChanged(data) {
       const action = data.action;
+      const atomClass = data.atomClass;
+      const atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      if (atomClassBase.itemOnly) {
+        if (!this.base.atomClass) return;
+        if (
+          atomClass.module !== this.base.atomClass.module ||
+          atomClass.atomClassName !== this.base.atomClass.atomClassName
+        ) {
+          return;
+        }
+      }
       if (action.name === 'create') {
         // create
         await this.event_onActionChanged_create(data);
