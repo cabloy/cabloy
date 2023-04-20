@@ -58,7 +58,7 @@ export default {
       ctx.$view.navigate(url, action.navigateOptions);
       // event: neednot check atomStage
       // if (item.atomStage > 0) {
-      //   ctx.$meta.eventHub.$emit('atom:actions', { key });
+      //   ctx.$meta.eventHub.$emit('atom:actions', { key, atomClass });
       // }
       if (changed) {
         ctx.$meta.eventHub.$emit('atom:actions', { key, atomClass });

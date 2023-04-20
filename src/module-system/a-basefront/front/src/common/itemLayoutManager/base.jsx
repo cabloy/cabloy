@@ -113,20 +113,29 @@ export default {
     base_stageToString(stage) {
       return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
     },
-    async base_onActionChanged(data) {
+    base_checkIfEventActionValid(data) {
       const key = data.key;
-      const action = data.action;
       const atomClass = data.atomClass;
       if (!atomClass) throw new Error('Should specify atom class');
 
-      if (!this.base_ready) return;
+      if (!this.base_ready) return false;
       if (
         atomClass.module !== this.base.atomClass.module ||
         atomClass.atomClassName !== this.base.atomClass.atomClassName
       ) {
+        return false;
+      }
+      if (this.base.item.atomId !== key.atomId) return false;
+      // ok
+      return true;
+    },
+    async base_onActionChanged(data) {
+      // const key = data.key;
+      // const atomClass = data.atomClass;
+      const action = data.action;
+      if (!this.base_checkIfEventActionValid(data)) {
         return;
       }
-      if (this.base.item.atomId !== key.atomId) return;
 
       if (action.name === 'save' && this.container.mode === 'edit' && this.page_getDirty()) {
         if (data.actionSource === this) {
@@ -178,10 +187,11 @@ export default {
       await this.base_loadItem();
     },
     async base_onActionsChanged(data) {
-      const key = data.key;
-
-      if (!this.base_ready) return;
-      if (this.base.item.atomId !== key.atomId) return;
+      // const key = data.key;
+      // const atomClass = data.atomClass;
+      if (!this.base_checkIfEventActionValid(data)) {
+        return;
+      }
 
       await this.actions_fetchActions();
     },
