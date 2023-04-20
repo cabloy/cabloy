@@ -19,7 +19,7 @@ export default {
       const paramsStage = params.options.stage;
 
       // check stage
-      if (this.base_stageToString(atom.atomStage) !== paramsStage) {
+      if (atom.atomStage !== undefined && this.base_stageToString(atom.atomStage) !== paramsStage) {
         // do nothing
         return;
       }
@@ -100,17 +100,18 @@ export default {
         }
       }
       // ok
-      return true;
+      return atomClassBase;
     },
     async event_onActionChanged(data) {
       // const atomClass = data.atomClass;
       const action = data.action;
-      if (!(await this.event_checkIfEventActionValid(data))) {
+      const atomClassBase = await this.event_checkIfEventActionValid(data);
+      if (!atomClassBase) {
         return;
       }
       if (action.name === 'create') {
         // create
-        await this.event_onActionChanged_create(data);
+        await this.event_onActionChanged_create(data, atomClassBase);
       } else if (action.name === 'delete') {
         // delete
         await this.event_onActionChanged_delete(data);
