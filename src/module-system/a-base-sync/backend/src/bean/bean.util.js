@@ -165,6 +165,15 @@ module.exports = app => {
       return false;
     }
 
+    checkDemoForAtomCreate(throwError = true) {
+      const ctxCaller = this.ctx.ctxCaller;
+      if (!ctxCaller) return true;
+      if (ctxCaller.path === '/api/a/base/atom/create') {
+        return this.checkDemo(throwError);
+      }
+      return true;
+    }
+
     checkDemoForAtomWrite(throwError = true) {
       const ctxCaller = this.ctx.ctxCaller;
       if (!ctxCaller) return true;
