@@ -174,6 +174,25 @@ module.exports = app => {
       return true;
     }
 
+    checkDemoForAtomRead(throwError = true) {
+      const ctxCaller = this.ctx.ctxCaller;
+      if (!ctxCaller) return true;
+      console.log(ctxCaller.path);
+      if (ctxCaller.path === '/api/a/base/atom/read') {
+        return this.checkDemo(throwError);
+      }
+      return true;
+    }
+
+    checkDemoForAtomSelect(throwError = true) {
+      const ctxCaller = this.ctx.ctxCaller;
+      if (!ctxCaller) return true;
+      if (ctxCaller.path === '/api/a/base/atom/select') {
+        return this.checkDemo(throwError);
+      }
+      return true;
+    }
+
     checkDemoForAtomWrite(throwError = true) {
       const ctxCaller = this.ctx.ctxCaller;
       if (!ctxCaller) return true;

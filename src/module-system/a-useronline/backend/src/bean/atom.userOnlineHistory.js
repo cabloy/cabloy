@@ -11,6 +11,8 @@ module.exports = app => {
     }
 
     async read({ atomClass, options, key, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemoForAtomRead();
       // super
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
@@ -21,6 +23,8 @@ module.exports = app => {
     }
 
     async select({ atomClass, options, items, user }) {
+      // check demo
+      this.ctx.bean.util.checkDemoForAtomSelect();
       // super
       await super.select({ atomClass, options, items, user });
       // meta
