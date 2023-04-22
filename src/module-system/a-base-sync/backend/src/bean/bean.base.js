@@ -280,7 +280,7 @@ module.exports = ctx => {
           };
         }
         // info
-        const atomClass = ctx.bean.util.extend({ name: key }, enableRight, _atomClass);
+        const atomClass = ctx.bean.util.extend({ name: key, enableRight }, _atomClass);
         // patch itemOnly
         if (_atomClass.itemOnly) {
           Object.assign(atomClass, {
