@@ -45,10 +45,13 @@ module.exports = context => {
         },
         {
           test: /\.jsx$/,
-          use: {
-            loader: 'babel-loader',
-            options: context.utils.babelLoaderOptions(),
-          },
+          use: [
+            { loader: 'thread-loader', options: {} },
+            {
+              loader: 'babel-loader',
+              options: context.utils.babelLoaderOptions(),
+            },
+          ],
         },
         ...loaderRulesResource,
       ],

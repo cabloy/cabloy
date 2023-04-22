@@ -62,6 +62,7 @@
     "prettier": "2.3.2",
     "rimraf": "^3.0.2",
     "semver": "^7.3.7",
+    "thread-loader": "^4.0.1",
     "url-loader": "^4.1.1",
     "vue-eslint-parser": "^9.1.0",
     "vue-loader": "^15.10.0",
