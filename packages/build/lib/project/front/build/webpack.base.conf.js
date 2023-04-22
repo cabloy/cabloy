@@ -41,12 +41,17 @@ module.exports = context => {
       rules: [
         {
           test: /\.vue$/,
-          loader: 'vue-loader',
+          use: [
+            // { loader: 'thread-loader', options: {} },
+            {
+              loader: 'vue-loader',
+            },
+          ],
         },
         {
           test: /\.jsx$/,
           use: [
-            { loader: 'thread-loader', options: {} },
+            // { loader: 'thread-loader', options: {} },
             {
               loader: 'babel-loader',
               options: context.utils.babelLoaderOptions(),
