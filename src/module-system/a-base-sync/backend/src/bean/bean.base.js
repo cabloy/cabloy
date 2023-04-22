@@ -261,13 +261,28 @@ module.exports = ctx => {
     _prepareAtomClassesModule(module, _atoms) {
       const atomClasses = {};
       for (const key in _atoms) {
+        const _atomClass = _atoms[key].info;
+        // enableRight
+        let enableRight;
+        if (_atomClass.itemOnly) {
+          enableRight = {
+            mine: false,
+            role: true,
+            custom: false,
+          };
+        } else {
+          enableRight = {
+            mine: true,
+            role: {
+              scopes: true,
+            },
+            custom: false,
+          };
+        }
         // info
-        const atomClass = {
-          name: key,
-          ..._atoms[key].info,
-        };
+        const atomClass = ctx.bean.util.extend({ name: key }, enableRight, _atomClass);
         // patch itemOnly
-        if (atomClass.itemOnly) {
+        if (_atomClass.itemOnly) {
           Object.assign(atomClass, {
             language: false,
             category: false,
