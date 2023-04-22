@@ -53,42 +53,16 @@ module.exports = ctx => {
     }
 
     async _checkRightAction_rightWhere({ iid, userIdWho, atomClass, atomClassBase, action, forAtomUser }) {
-      let _mine;
-      if (!atomClassBase.itemOnly) {
-        _mine = ctx.model.raw(`
-          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
-        `);
-      } else {
-        const enableRightMine = atomClassBase.enableRightMine;
-        if (!enableRightMine) {
-          _mine = false;
-        } else {
-          const userIdFieldName = typeof enableRightMine === 'string' ? enableRightMine : 'userIdCreated';
-          _mine = ctx.model.raw(`
-            (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
-          `);
-        }
-      }
-      let _others;
-      if (forAtomUser) {
-        _others = ctx.model.raw(`
-          exists(
-            select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=${action} and c.userIdWho=${userIdWho}
-          )
-        `);
-      } else {
-        const roleScopes = await this._prepare_roleScopesOfUser({ atomClass, action, userIdWho });
-        if (roleScopes === true) return true; // pass through
-        if (roleScopes === false) {
-          _others = false; // should check mine
-        } else {
-          _others = ctx.model.raw(`
-            a.roleIdOwner in (${roleScopes.join(',')})
-          `);
-        }
-      }
-      // mine or others
-      return { __or__: [_mine, _others] };
+      // right
+      return await this._prepareRight({
+        iid,
+        atomClass,
+        atomClassBase,
+        action,
+        userIdWho,
+        forAtomUser,
+        role: undefined,
+      });
     }
   }
   return Procedure;
