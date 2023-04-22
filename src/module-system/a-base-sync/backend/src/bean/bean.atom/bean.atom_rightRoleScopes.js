@@ -24,8 +24,19 @@ module.exports = ctx => {
       // atomClass
       const atomClass = await ctx.bean.atomClass.get({ id: atomClassId });
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
-      // itemOnly
-      if (atomClassBase.itemOnly) {
+      // not check atomClassBase.itemOnly
+      // just check atomClassBase.enableRight.role.roleScopes
+      // enableRight
+      const enableRight = atomClassBase.enableRight;
+      if (!enableRight) {
+        // if pass right checked, should check enableRight outer
+        // throw error
+        ctx.throw(403);
+      }
+      const enableRightRole = enableRight.role;
+      if (!enableRightRole) return false;
+      const enableRightRoleScopes = enableRightRole.scopes;
+      if (!enableRightRoleScopes) {
         return await ctx.bean.atomClass.checkRightAtomClassAction({
           atomClassId,
           action,

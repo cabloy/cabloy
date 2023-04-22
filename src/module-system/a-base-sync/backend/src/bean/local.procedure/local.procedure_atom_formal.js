@@ -287,43 +287,11 @@ module.exports = ctx => {
 
       // mine
       if (mine) {
-        return this._prepareRightMine({ iid, atomClass, atomClassBase, action: 2, userIdWho });
+        return await this._prepareRightMine({ iid, atomClass, atomClassBase, action: 2, userIdWho });
       }
 
       // right
-
-      // others
-      let _others;
-      if (forAtomUser) {
-        if (role) {
-          // get users of role
-          _others = ctx.model.raw(`
-              exists(
-                select c.userIdWhom from aViewUserRightAtomClassUser c
-                  inner join aViewUserRoleRef c2 on c.userIdWhom=c2.userId and c2.roleIdParent=${role}
-                  where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
-              )
-            `);
-        } else {
-          _others = ctx.model.raw(`
-              exists(
-                select c.userIdWhom from aViewUserRightAtomClassUser c where c.iid=${iid} and a.itemId=c.userIdWhom and c.atomClassId=a.atomClassId and c.action=2 and c.userIdWho=${userIdWho}
-              )
-            `);
-        }
-      } else {
-        const roleScopes = await this._prepare_roleScopesOfUser({ atomClass, action: 2, userIdWho });
-        if (roleScopes === true) return true; // pass through
-        if (roleScopes === false) {
-          _others = false; // should check mine
-        } else {
-          _others = ctx.model.raw(`
-            a.roleIdOwner in (${roleScopes.join(',')})
-          `);
-        }
-      }
-      // mine or others
-      return { __or__: [_mine, _others] };
+      return await this._prepareRight({ iid, atomClass, atomClassBase, action: 2, userIdWho, forAtomUser, role });
     }
   }
   return Procedure;
