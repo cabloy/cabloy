@@ -65,7 +65,7 @@ module.exports = ctx => {
         } else {
           const userIdFieldName = typeof enableRightMine === 'string' ? enableRightMine : 'userIdCreated';
           _mine = ctx.model.raw(`
-            (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
+            (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=${action} and c.scope=0 and c.userIdWho=${userIdWho}))
           `);
         }
       }

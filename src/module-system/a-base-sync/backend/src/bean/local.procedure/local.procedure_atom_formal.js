@@ -286,27 +286,11 @@ module.exports = ctx => {
       }
 
       // mine
-      let _mine;
-      if (!atomClassBase || !atomClassBase.itemOnly) {
-        _mine = ctx.model.raw(`
-          (a.userIdCreated=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and a.atomClassId=c.atomClassId and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `);
-      } else {
-        const enableRightMine = atomClassBase.enableRightMine;
-        if (!enableRightMine) {
-          _mine = false;
-        } else {
-          const userIdFieldName = enableRightMine.userIdCreated || 'userIdCreated';
-          _mine = ctx.model.raw(`
-          (f.${userIdFieldName}=${userIdWho} and exists(select c.atomClassId from aViewUserRightAtomClass c where c.iid=${iid} and c.atomClassId=${atomClass.id} and c.action=2 and c.scope=0 and c.userIdWho=${userIdWho}))
-        `);
-        }
-      }
       if (mine) {
-        // return false if not support mine right
-        if (_mine === false) return false;
-        return _mine;
+        return this._prepareRightMine({ iid, atomClass, atomClassBase, action: 2, userIdWho });
       }
+
+      // right
 
       // others
       let _others;
