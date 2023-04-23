@@ -60,12 +60,13 @@ module.exports = ctx => {
     }
 
     // delete role right
-    async deleteRoleRight({ roleAtomId, roleId, roleRightId, user }) {
-      // role
-      const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
-      roleId = _role.id;
-      // scope
+    async deleteRoleRight({ roleRightId, user }) {
+      // role right
       const item = await this.modelRoleRight.get({ id: roleRightId });
+      const { roleAtomId, roleId } = item;
+      // check right
+      await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
+      // check right of scope
       const scope = JSON.parse(item.scope);
       if (scope) {
         // check right
@@ -73,9 +74,12 @@ module.exports = ctx => {
           await this._forceRoleAndCheckRightRead({ roleAtomId: null, roleId: roleIdScope, user });
         }
       }
-      // id + roleId for safety
-      await this.modelRoleRight.delete({ id: roleRightId, roleId });
-      await this.modelRoleRightRef.delete({ roleRightId, roleId });
+      // // id + roleId for safety
+      // await this.modelRoleRight.delete({ id: roleRightId, roleId });
+      // await this.modelRoleRightRef.delete({ roleRightId, roleId });
+      // id
+      await this.modelRoleRight.delete({ id: roleRightId });
+      await this.modelRoleRightRef.delete({ roleRightId });
       // clear summer
       await ctx.bean.atom.clearSummer_roleScopesOfUser();
     }
