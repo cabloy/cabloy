@@ -1,4 +1,4 @@
-const initData15 = require('../version/initData15.js');
+const initData15 = require('../version/init/initData15.js');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

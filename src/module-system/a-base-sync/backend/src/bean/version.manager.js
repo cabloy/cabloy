@@ -197,6 +197,11 @@ module.exports = app => {
       const versionUpdate19 = new (VersionUpdate19Fn(this.ctx))();
       await versionUpdate19._adjustCategoriesInstance({ resourceType });
     }
+
+    async update26_adjustRoleRights(options) {
+      const versionUpdate26 = new (VersionUpdate26Fn(this.ctx))();
+      await versionUpdate26._adjustRoleRightsInstance(options);
+    }
   }
 
   return Version;
