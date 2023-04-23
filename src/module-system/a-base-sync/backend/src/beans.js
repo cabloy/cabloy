@@ -1,6 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const atomResource = require('./bean/atom.resource.js');
 const atomRole = require('./bean/atom.role.js');
+const atomRoleRight = require('./bean/atom.roleRight.js');
 const atomUser = require('./bean/atom.user.js');
 const localProcedure = require('./bean/local.procedure.js');
 const queueSchedule = require('./bean/queue.schedule.js');
@@ -57,6 +58,10 @@ module.exports = app => {
     'atom.role': {
       mode: 'app',
       bean: atomRole,
+    },
+    'atom.roleRight': {
+      mode: 'app',
+      bean: atomRoleRight,
     },
     'atom.user': {
       mode: 'app',
