@@ -216,6 +216,7 @@ module.exports = app => {
                 atomClassName: 'role',
               },
             },
+            enableRight: false,
             layout: {
               config: {},
             },
