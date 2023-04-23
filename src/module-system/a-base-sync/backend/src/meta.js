@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // keywords
   const keywords = require('./config/validation/keywords.js')(app);
   // schemas
@@ -199,6 +199,32 @@ module.exports = app => {
           search: {
             validator: 'userAdminSearch',
           },
+        },
+        roleRight: {
+          info: {
+            bean: 'role',
+            title: 'Atom Right',
+            tableName: 'aRoleRight',
+            tableNameModes: {
+              default: 'aRoleRight',
+            },
+            inner: true,
+            itemOnly: true,
+            detail: {
+              atomClassMain: {
+                module: moduleInfo.relativeName,
+                atomClassName: 'role',
+              },
+            },
+            layout: {
+              config: {},
+            },
+          },
+          actions: {},
+          // validator: 'roleRight',
+          // search: {
+          //   validator: 'roleRightSearch',
+          // },
         },
       },
       resources: {

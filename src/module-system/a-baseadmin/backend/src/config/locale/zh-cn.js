@@ -2,6 +2,7 @@ module.exports = {
   'Basic Admin': '基础管理',
   'User Management': '用户管理',
   'Role Management': '角色管理',
+  'Atom Right': '数据权限',
   'Atom Right Management': '数据权限管理',
   'Resource Right Management': '资源权限管理',
   'Menu Right Management': '菜单权限管理',
