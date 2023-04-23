@@ -42,17 +42,21 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update roleRight
       const roleRightId = key.itemId;
-      const data = await this.ctx.model.roleRight.prepareData(item);
-      await this.ctx.model.roleRight.update(data);
+      await this.ctx.bean.role.addRoleRight({
+        atomClassId: item.atomClassId,
+        action: item.action,
+        scope: item.scope,
+        user,
+        roleRightId,
+      });
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
       // delete roleRight
-      await this.ctx.model.roleRight.delete({
-        id: key.itemId,
-      });
+      const roleRightId = key.itemId;
+      await this.ctx.bean.role.deleteRoleRight({ roleRightId, user });
     }
 
     _getMeta(/* item, options*/) {

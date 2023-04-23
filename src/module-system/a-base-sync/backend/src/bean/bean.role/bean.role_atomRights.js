@@ -2,7 +2,7 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role {
     // add role right
-    async addRoleRight({ roleAtomId, roleId, atomClass, atomClassId, action, scope, user }) {
+    async addRoleRight({ roleAtomId, roleId, atomClass, atomClassId, action, scope, user, roleRightId }) {
       // atomClassId
       if (!atomClassId) {
         atomClass = await ctx.bean.atomClass.get(atomClass);
@@ -11,9 +11,15 @@ module.exports = ctx => {
       // check atomClass/action
       const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
       if (!_check) ctx.throw(403);
-      // check role
+      // check role right
+      if (roleRightId) {
+        // update
+        const item = await this.modelRoleRight.get({ id: roleRightId });
+        roleAtomId = item.roleAtomId;
+        roleId = item.roleId;
+      }
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
-      roleId = _role.id;
+      roleId = _role.id; // support create
       // scope: allowed [] / 0
       if (scope === undefined || scope === null) {
         scope = [];
@@ -34,13 +40,29 @@ module.exports = ctx => {
       await ctx.bean.atomAction.get({ atomClassId, code: action });
 
       // roleRight
-      const res = await this.modelRoleRight.insert({
-        roleId,
-        atomClassId,
-        action,
-        scope: JSON.stringify(scope),
-      });
-      const roleRightId = res.insertId;
+      if (roleRightId) {
+        // update
+        await this.modelRoleRight.update({
+          id: roleRightId,
+          roleAtomId,
+          roleId,
+          atomClassId,
+          action,
+          scope: JSON.stringify(scope),
+        });
+        // delete ref
+        await this.modelRoleRightRef.delete({ roleRightId });
+      } else {
+        // create
+        const res = await this.modelRoleRight.insert({
+          roleAtomId,
+          roleId,
+          atomClassId,
+          action,
+          scope: JSON.stringify(scope),
+        });
+        roleRightId = res.insertId;
+      }
       // roleRightRef
       if (scope) {
         for (const roleIdScope of scope) {
