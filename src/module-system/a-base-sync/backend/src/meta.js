@@ -211,6 +211,7 @@ module.exports = app => {
             inner: true,
             itemOnly: true,
             detail: {
+              atomIdMain: 'roleAtomId',
               atomClassMain: {
                 module: moduleInfo.relativeName,
                 atomClassName: 'role',
