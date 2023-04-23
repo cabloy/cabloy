@@ -202,7 +202,7 @@ module.exports = app => {
         },
         roleRight: {
           info: {
-            bean: 'role',
+            bean: 'roleRight',
             title: 'Atom Right',
             tableName: 'aRoleRight',
             tableNameModes: {
