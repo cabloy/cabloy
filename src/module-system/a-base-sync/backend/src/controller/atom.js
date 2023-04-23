@@ -241,6 +241,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.actions({
         key: this.ctx.request.body.key,
         atomClass: this.ctx.request.body.atomClass,
+        mode: this.ctx.request.body.mode,
         basic: this.ctx.request.body.basic,
         user: this.ctx.state.user.op,
       });
@@ -251,6 +252,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.actionsBulk({
         atomClass: this.ctx.request.body.atomClass,
         stage: this.ctx.request.body.stage,
+        mode: this.ctx.request.body.mode,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);

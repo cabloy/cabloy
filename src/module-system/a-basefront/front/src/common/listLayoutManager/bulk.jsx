@@ -52,6 +52,7 @@ export default {
       const actions = await this.$api.post('/a/base/atom/actionsBulk', {
         atomClass: this.container.atomClass,
         stage: this.base_getCurrentStage(),
+        mode: this.container.mode, // for detail
       });
       this.bulk.actions = this.bulk_patchActions(actions);
     },

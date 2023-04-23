@@ -25,6 +25,7 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 //   scene, // default/search/select/selecting
 //   layout,
 //   resource,
+//   mode,  // edit/view : for detail
 // },
 
 export default {

@@ -143,7 +143,7 @@ module.exports = ctx => {
     }
 
     // actions of atom
-    async actions({ key, atomClass: atomClassOuter, basic, user }) {
+    async actions({ key, atomClass: atomClassOuter, mode, basic, user }) {
       // atomClass
       const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
         key,
@@ -161,6 +161,16 @@ module.exports = ctx => {
       // actions res
       const actionsRes = [];
       for (const action of actions) {
+        // just for listing check, not for right check
+        const actionBase = ctx.bean.base.action({
+          module: action.module,
+          atomClassName: action.atomClassName,
+          code: action.code,
+        });
+        if (actionBase.mode && mode && actionBase.mode !== mode) {
+          continue;
+        }
+        // right check
         const res = await this.checkRightAction({ atom: { id: key.atomId }, atomClass, action: action.code, user });
         if (res) {
           if (res.__task) {
@@ -173,7 +183,7 @@ module.exports = ctx => {
     }
 
     // actionsBulk of atomClass
-    async actionsBulk({ atomClass, stage, user }) {
+    async actionsBulk({ atomClass, stage, mode, user }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const sql = this.sqlProcedure.checkRightActionBulk({
@@ -184,6 +194,16 @@ module.exports = ctx => {
       const actionsRes = await ctx.model.query(sql);
       const res = [];
       for (const actionRes of actionsRes) {
+        // just for listing check, not for right check
+        const actionBase = ctx.bean.base.action({
+          module: actionRes.module,
+          atomClassName: actionRes.atomClassName,
+          code: actionRes.code,
+        });
+        if (actionBase.mode && mode && actionBase.mode !== mode) {
+          continue;
+        }
+        // right check
         const _res = await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
         if (_res) {
           res.push(_res);

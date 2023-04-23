@@ -84,6 +84,7 @@ export default {
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: this.container.atomId },
         atomClass: this.base.atomClass,
+        mode: this.container.mode,
       });
       // filter
       actions = actions.filter(action => {
