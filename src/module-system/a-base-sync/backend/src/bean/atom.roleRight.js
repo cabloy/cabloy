@@ -3,10 +3,18 @@ module.exports = app => {
     async create({ atomClass, item, options, user }) {
       // super
       await super.create({ atomClass, item, options, user });
+      // atomIdMain
+      const atomIdMain = options.atomIdMain;
       // add roleRight
-      const res = await this.ctx.model.roleRight.insert();
+      const roleRightId = await this.ctx.bean.role.addRoleRight({
+        roleAtomId: atomIdMain,
+        atomClassId: item.atomClassId,
+        action: item.action,
+        scope: item.scope,
+        user,
+      });
       // return key
-      const itemId = res.insertId;
+      const itemId = roleRightId;
       return { atomId: itemId, itemId };
     }
 
@@ -33,6 +41,7 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update roleRight
+      const roleRightId = key.itemId;
       const data = await this.ctx.model.roleRight.prepareData(item);
       await this.ctx.model.roleRight.update(data);
     }

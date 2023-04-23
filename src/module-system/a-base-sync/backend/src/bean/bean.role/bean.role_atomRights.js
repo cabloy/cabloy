@@ -2,7 +2,12 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Role {
     // add role right
-    async addRoleRight({ roleAtomId, roleId, atomClassId, action, scope, user }) {
+    async addRoleRight({ roleAtomId, roleId, atomClass, atomClassId, action, scope, user }) {
+      // atomClassId
+      if (!atomClassId) {
+        atomClass = await ctx.bean.atomClass.get(atomClass);
+        atomClassId = atomClass.id;
+      }
       // check atomClass/action
       const _check = await ctx.bean.atomClass.checkRightAtomClassAction({ atomClassId, action, user });
       if (!_check) ctx.throw(403);
