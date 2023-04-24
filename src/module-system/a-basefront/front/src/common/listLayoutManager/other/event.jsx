@@ -10,7 +10,7 @@ export default {
     // this.$meta.eventHub.$off('atom:action:ext', this.event_onActionExtChanged);
   },
   methods: {
-    async event_onActionChanged_create(data) {
+    async event_onActionChanged_create(data, atomClassBase) {
       const key = data.key;
       const atom = data.atom;
       // params
@@ -19,7 +19,7 @@ export default {
       const paramsStage = params.options.stage;
 
       // check stage
-      if (atom.atomStage !== undefined && this.base_stageToString(atom.atomStage) !== paramsStage) {
+      if (!atomClassBase.itemOnly && this.base_stageToString(atom.atomStage) !== paramsStage) {
         // do nothing
         return;
       }
@@ -111,7 +111,7 @@ export default {
       }
       if (action.name === 'create') {
         // create
-        await this.event_onActionChanged_create(data);
+        await this.event_onActionChanged_create(data, atomClassBase);
       } else if (action.name === 'delete') {
         // delete
         await this.event_onActionChanged_delete(data);
