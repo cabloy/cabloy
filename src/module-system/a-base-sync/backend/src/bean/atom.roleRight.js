@@ -6,15 +6,19 @@ module.exports = app => {
       // atomIdMain
       const atomIdMain = options.atomIdMain;
       // add roleRight
-      const roleRightId = await this.ctx.bean.role.addRoleRight({
+      const res = await this.ctx.model.roleRight.insert({
         roleAtomId: atomIdMain,
-        atomClassId: item.atomClassId,
-        action: item.action,
-        scope: item.scope,
-        user,
       });
+      // const roleRightId = await this.ctx.bean.role.addRoleRight({
+      //   roleAtomId: atomIdMain,
+      //   atomClassId: item.atomClassId,
+      //   action: item.action,
+      //   scope: item.scope,
+      //   user,
+      // });
+      // const itemId = roleRightId;
       // return key
-      const itemId = roleRightId;
+      const itemId = res.insertId;
       return { atomId: itemId, itemId };
     }
 

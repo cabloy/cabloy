@@ -16,7 +16,7 @@ module.exports = ctx => {
         // update
         const item = await this.modelRoleRight.get({ id: roleRightId });
         roleAtomId = item.roleAtomId;
-        roleId = item.roleId;
+        roleId = item.roleId; // maybe empty when create
       }
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
       roleId = _role.id; // support create
