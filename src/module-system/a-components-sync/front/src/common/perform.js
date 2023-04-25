@@ -58,6 +58,7 @@ export default {
         if ($clickedLinkEl && this.$meta.config.env === 'development') {
           const _debugger = $clickedLinkEl.attr('debugger');
           if (_debugger === '' || _debugger === 'true') {
+            window.__debugger = true;
             debugger;
           }
         }
@@ -65,7 +66,9 @@ export default {
         const res = await this.onPerform(event, this.context);
         this._hidePreloader();
         this._handleResult(res);
+        window.__debugger = false;
       } catch (err) {
+        window.__debugger = false;
         this._hidePreloader();
         if (err && (err.code === 422 || err.code === -422)) {
           const message = this.$text('Data Validation Error');

@@ -290,6 +290,9 @@ export default function (Vue) {
       // create instance
       const componentInstance = this.createComponentInstance(component, options);
       try {
+        if (window.__debugger) {
+          debugger;
+        }
         const res = await componentInstance.onAction(args);
         componentInstance.$destroy();
         return res;
@@ -320,6 +323,9 @@ export default function (Vue) {
       // create instance
       const componentInstance = this.createComponentInstance(component, options);
       try {
+        if (window.__debugger) {
+          debugger;
+        }
         const res = componentInstance.onAction(args);
         componentInstance.$destroy();
         return res;
