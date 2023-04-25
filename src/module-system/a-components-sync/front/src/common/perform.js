@@ -41,9 +41,9 @@ export default {
       if (event && event.preventF7Router) return;
 
       // onPerform
-      this._onPerformInner(event);
+      this._onPerformInner(event, $clickedLinkEl);
     },
-    async _onPerformInner(event) {
+    async _onPerformInner(event, $clickedLinkEl) {
       // linkClick
       if (!this.onPerform) {
         if (this.onLinkClick) {
@@ -54,6 +54,14 @@ export default {
       // onPerform
       try {
         this._showPreloader();
+        // dev info
+        if ($clickedLinkEl && this.$meta.config.env === 'development') {
+          const _debugger = $clickedLinkEl.attr('debugger');
+          if (_debugger === '' || _debugger === 'true') {
+            debugger;
+          }
+        }
+        // onPerform
         const res = await this.onPerform(event, this.context);
         this._hidePreloader();
         this._handleResult(res);
