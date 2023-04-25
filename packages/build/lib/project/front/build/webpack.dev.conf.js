@@ -51,7 +51,7 @@ module.exports = context => {
     },
     watchOptions: {
       aggregateTimeout: 1000,
-      ignored: ['**/.git/**'],
+      ignored: ['**/.git/**', '/node_modules/'],
       // ignored: [ '**/backend/cms/**', '**/backend/test/**', '**/src/module/*/dist/**', '**/.git/**' ],
     },
   });
