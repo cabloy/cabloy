@@ -105,13 +105,21 @@ module.exports = ctx => {
       // default
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].validator;
-      return validator ? { module: atomClass.module, validator } : null;
+      if (!validator) return null;
+      if (typeof validator === 'string') {
+        return { module: atomClass.module, validator };
+      }
+      return validator;
     }
 
     async validatorSearch({ atomClass }) {
       const _module = ctx.app.meta.modules[atomClass.module];
       const validator = _module.main.meta.base.atoms[atomClass.atomClassName].search.validator;
-      return validator ? { module: atomClass.module, validator } : null;
+      if (!validator) return null;
+      if (typeof validator === 'string') {
+        return { module: atomClass.module, validator };
+      }
+      return validator;
     }
 
     async atomClassesUser({ user }) {
