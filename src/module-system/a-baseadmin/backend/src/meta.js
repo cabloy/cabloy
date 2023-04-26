@@ -17,9 +17,16 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {},
+      validators: {
+        roleRight: {
+          schemas: 'roleRight',
+        },
+        roleRightSearch: {
+          schemas: 'roleRightSearch',
+        },
+      },
       keywords: {},
-      schemas: {},
+      schemas,
     },
   };
 
