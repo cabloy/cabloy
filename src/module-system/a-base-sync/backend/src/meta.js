@@ -223,10 +223,16 @@ module.exports = app => {
             },
           },
           actions: {},
-          // validator: 'roleRight',
-          // search: {
-          //   validator: 'roleRightSearch',
-          // },
+          validator: {
+            module: 'a-baseadmin',
+            name: 'roleRight',
+          },
+          search: {
+            validator: {
+              module: 'a-baseadmin',
+              name: 'roleRightSearch',
+            },
+          },
         },
       },
       resources: {

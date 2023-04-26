@@ -109,7 +109,10 @@ module.exports = ctx => {
       if (typeof validator === 'string') {
         return { module: atomClass.module, validator };
       }
-      return validator;
+      return {
+        module: validator.module,
+        validator: validator.name,
+      };
     }
 
     async validatorSearch({ atomClass }) {
@@ -119,7 +122,10 @@ module.exports = ctx => {
       if (typeof validator === 'string') {
         return { module: atomClass.module, validator };
       }
-      return validator;
+      return {
+        module: validator.module,
+        validator: validator.name,
+      };
     }
 
     async atomClassesUser({ user }) {
