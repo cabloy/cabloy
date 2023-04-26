@@ -144,9 +144,14 @@ export default {
       return this.getActionTitle(action, this.base.item);
     },
     actions_renderButtonView() {
+      // need not show view button even on edit mode
+      const mode = this.container.mode;
+      if (mode === 'edit') {
+        return null;
+      }
+      // hold the following codes for future restructures
       // only show on draft/edit
       const atomClosed = this.base.item.atomClosed === 1;
-      const mode = this.container.mode;
       const actionView = this.actions_findAction('read');
       if (mode === 'edit' && actionView && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
         const actionIcon = '::visibility';
