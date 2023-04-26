@@ -257,7 +257,12 @@ module.exports = ctx => {
       }
       debug('===== selectAtoms =====\n%s', sql);
       // query
-      const items = sql === false ? [] : await ctx.model.query(sql);
+      let items;
+      if (Array.isArray(sql)) {
+        items = sql;
+      } else {
+        items = sql === false ? [] : await ctx.model.query(sql);
+      }
       // count
       if (count) {
         return items[0]._count;
