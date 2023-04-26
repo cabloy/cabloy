@@ -219,7 +219,9 @@ module.exports = app => {
             },
             enableRight: false,
             layout: {
-              config: {},
+              config: {
+                atomList: 'a-baseadmin:layoutAtomListRoleRight',
+              },
             },
           },
           actions: {},
