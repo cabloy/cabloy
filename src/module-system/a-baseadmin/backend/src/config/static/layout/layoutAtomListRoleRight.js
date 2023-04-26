@@ -5,6 +5,12 @@ module.exports = app => {
       ordersBase: [],
     },
     layouts: {
+      list: {
+        subnavbar: {
+          render: true,
+          enable: false,
+        },
+      },
       table: {
         blocks: {
           items: {
@@ -59,7 +65,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Atom Right',
     atomStaticKey: 'layoutAtomListRoleRight',
-    atomRevision: 2,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

@@ -3,7 +3,7 @@ export default {
     return {
       subnavbar: {
         enable: false,
-        render: false, // will render in title if true
+        render: false, // will render in titlebar if true
       },
     };
   },
@@ -14,8 +14,28 @@ export default {
       this.subnavbar.render = render;
     },
     subnavbar_policyDefaultCalc() {
-      const render = true;
-      const enable = this.$view.size === 'small';
+      const subnavbar = this.layout.config.subnavbar;
+      // render
+      let render = subnavbar?.render;
+      if (render === undefined) {
+        if (this.subnavbar_policyDefaultCalc_render) {
+          render = this.subnavbar_policyDefaultCalc_render();
+        } else {
+          render = true;
+        }
+      }
+      // enable
+      let enable = false;
+      if (render) {
+        enable = subnavbar?.enable;
+        if (enable === undefined) {
+          if (this.subnavbar_policyDefaultCalc_enable) {
+            enable = this.subnavbar_policyDefaultCalc_enable();
+          } else {
+            enable = this.$view.size === 'small';
+          }
+        }
+      }
       // ok
       return { enable, render };
     },
