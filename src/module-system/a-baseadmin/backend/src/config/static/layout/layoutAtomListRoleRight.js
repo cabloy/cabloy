@@ -2,10 +2,7 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const content = {
     info: {
-      ordersBase: [
-        //
-        { name: 'onlineTime', title: 'OnlineTime', by: 'desc', tableAlias: 'f', default: true },
-      ],
+      ordersBase: [],
     },
     layouts: {
       table: {
@@ -62,7 +59,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Atom Right',
     atomStaticKey: 'layoutAtomListRoleRight',
-    atomRevision: 0,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

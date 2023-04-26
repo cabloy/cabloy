@@ -98,6 +98,7 @@ export default {
       return '';
     },
     order_renderAction() {
+      if (!this.order_list || this.order_list.length === 0) return null;
       return (
         <eb-link
           iconF7="::sort"
