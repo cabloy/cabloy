@@ -64,12 +64,41 @@ export default {
         summary = `${this.$text('WorkFlow Actions')}: ${item.flowDefNameLocale}`;
       }
       return (
-        <div slot="root-end" class="summary-no-media">
+        <div slot="root-end" class="summary">
           {summary}
         </div>
       );
     },
+    _renderItemMedia(item) {
+      // color
+      let color;
+      let icon;
+      if (item.actionMode === 1) {
+        color = 'teal';
+        icon = '::flow-chart';
+      } else if (!item._action) {
+        color = 'gray';
+        icon = '::radio-button-unchecked';
+      } else if (item.actionBulk === 0) {
+        color = 'blue';
+        icon = item._action?.icon?.f7;
+      } else {
+        color = 'green';
+        icon = item._action?.icon?.f7;
+      }
+      let domMedia;
+      if (icon) {
+        domMedia = <f7-icon f7={icon} color={color} size="24"></f7-icon>;
+      }
+      return (
+        <div slot="media" class="avatar24-wrapper">
+          {domMedia}
+        </div>
+      );
+    },
     _renderListItem(item) {
+      // domMedia
+      const domMedia = this._renderItemMedia(item);
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
@@ -99,6 +128,7 @@ export default {
           }}
           onChange={event => this.onItemChange(event, item)}
         >
+          {domMedia}
           {domTitle}
           {domSummary}
           {domAfter}

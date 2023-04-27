@@ -57,6 +57,7 @@ export default {
             atomClassName: item.atomClassName,
             name: item.actionName,
           });
+          item._action = action;
           if (!action) {
             item.title = item.actionName;
             item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
