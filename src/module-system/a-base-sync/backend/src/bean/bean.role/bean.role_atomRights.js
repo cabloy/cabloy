@@ -19,7 +19,8 @@ module.exports = ctx => {
         roleId = item.roleId; // maybe empty when create
       }
       const _role = await this._forceRoleAndCheckRightRead({ roleAtomId, roleId, user });
-      roleId = _role.id; // support create
+      roleId = _role.id; // force exists: support create
+      roleAtomId = _role.atomId; // force exists: support create
       // scope: allowed [] / 0
       if (scope === undefined || scope === null) {
         scope = [];
