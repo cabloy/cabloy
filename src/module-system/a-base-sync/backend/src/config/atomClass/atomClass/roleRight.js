@@ -6,7 +6,11 @@ module.exports = app => {
       title: 'Atom Right',
       tableName: 'aRoleRight',
       tableNameModes: {
-        default: 'aRoleRight',
+        default: `
+          (select __a.*,__b.module,__b.atomClassName,__c.name as actionName,__c.bulk as actionBulk,__c.actionMode,__d.atomName as flowDefName from aRoleRight __a
+            inner join aAtomClass __b on __a.atomClassId=__b.id
+            inner join aAtomAction __c on __a.atomClassId=__c.atomClassId and __a.action=__c.code
+            left join aAtom __d on __c.flowKey=__d.atomStaticKey and __d.atomStage=1)`,
       },
       inner: true,
       itemOnly: true,
