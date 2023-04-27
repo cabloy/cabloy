@@ -8,6 +8,8 @@ import userItemLayoutBlockDefaultTitle from './components/user/itemLayoutDefault
 import userItemLayoutBlockDefaultSubnavbar from './components/user/itemLayoutDefault/itemLayoutBlockDefaultSubnavbar.jsx';
 // user: listLayoutExtend
 import userListLayoutExtend from './components/user/listLayoutExtend.jsx';
+// roleRight: listLayoutList
+import roleRightListLayoutBlockListItems from './components/roleRight/listLayoutList/listLayoutBlockListItems.jsx';
 //
 import actionRole from './components/actionRole.js';
 import actionUser from './components/actionUser.js';
@@ -31,6 +33,8 @@ export default {
   userItemLayoutBlockDefaultSubnavbar,
   // user: listLayoutExtend
   userListLayoutExtend,
+  // roleRight: roleListLayout
+  roleRightListLayoutBlockListItems,
   //
   actionRole,
   actionUser,

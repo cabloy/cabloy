@@ -10,53 +10,12 @@ module.exports = app => {
           render: true,
           enable: false,
         },
-      },
-      table: {
         blocks: {
           items: {
-            columns: [
-              {
-                dataIndex: 'atomName',
-                title: 'Username',
-                align: 'left',
-                component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
-                  options: {
-                    props: {
-                      mapper: {
-                        avatar: true,
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                dataIndex: 'isLogin',
-                title: 'LoginType',
-                align: 'left',
-                params: {
-                  computed: {
-                    expression: 'record._isLoginTitleLocale',
-                  },
-                },
-              },
-              {
-                dataIndex: 'onlineIP',
-                title: 'OnlineIP',
-                align: 'left',
-              },
-              {
-                dataIndex: 'onlineTime',
-                title: 'OnlineTime',
-                align: 'center',
-                params: {
-                  dateFormat: {
-                    lines: true,
-                  },
-                },
-              },
-            ],
+            component: {
+              module: 'a-baseadmin',
+              name: 'roleRightListLayoutBlockListItems',
+            },
           },
         },
       },
@@ -65,7 +24,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Atom Right',
     atomStaticKey: 'layoutAtomListRoleRight',
-    atomRevision: 6,
+    atomRevision: 8,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
