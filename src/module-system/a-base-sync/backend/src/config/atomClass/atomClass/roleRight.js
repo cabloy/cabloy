@@ -7,7 +7,12 @@ module.exports = app => {
       tableName: 'aRoleRight',
       tableNameModes: {
         default: `
-          (select __a.*,__b.module,__b.atomClassName,__c.name as actionName,__c.bulk as actionBulk,__c.actionMode,__d.atomName as flowDefName from aRoleRight __a
+          (select 
+              __a.id,__a.createdAt,__a.updatedAt,__a.deleted,__a.iid,__a.roleId,__a.atomClassId as atomClassId2,__a.action,__a.scope,__a.roleAtomId,
+              __b.module as module2,__b.atomClassName as atomClassName2,
+              __c.name as actionName,__c.bulk as actionBulk,__c.actionMode,
+              __d.atomName as flowDefName 
+            from aRoleRight __a
             inner join aAtomClass __b on __a.atomClassId=__b.id
             inner join aAtomAction __c on __a.atomClassId=__c.atomClassId and __a.action=__c.code
             left join aAtom __d on __c.flowKey=__d.atomStaticKey and __d.atomStage=1)`,
