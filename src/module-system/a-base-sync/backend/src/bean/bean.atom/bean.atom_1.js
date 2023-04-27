@@ -195,6 +195,7 @@ module.exports = ctx => {
       let tableName = '';
       if (atomClass) {
         atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+        if (!atomClassBase) throw new Error(`atomClass not found: ${atomClass.module}:${atomClass.atomClassName}`);
         tableName = await this.getTableName({
           atomClass,
           atomClassBase,

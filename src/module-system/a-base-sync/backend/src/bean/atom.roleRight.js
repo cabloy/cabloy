@@ -32,6 +32,12 @@ module.exports = app => {
       return item;
     }
 
+    async selectQuery({ atomClass, options, user }) {
+      console.log('select query');
+      // super
+      return await super.selectQuery({ atomClass, options, user });
+    }
+
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });
