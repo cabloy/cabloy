@@ -8,8 +8,8 @@ module.exports = app => {
       tableNameModes: {
         default: `
           (select 
-              __a.id,__a.createdAt,__a.updatedAt,__a.deleted,__a.iid,__a.roleId,__a.atomClassId as atomClassId2,__a.action,__a.scope,__a.roleAtomId,
-              __b.module as module2,__b.atomClassName as atomClassName2,
+              __a.id,__a.createdAt,__a.updatedAt,__a.deleted,__a.iid,__a.roleId,__a.atomClassId as atomClassIdTarget,__a.action,__a.scope,__a.roleAtomId,
+              __b.module as moduleTarget,__b.atomClassName as atomClassNameTarget,
               __c.name as actionName,__c.bulk as actionBulk,__c.actionMode,
               __d.atomName as flowDefName 
             from aRoleRight __a

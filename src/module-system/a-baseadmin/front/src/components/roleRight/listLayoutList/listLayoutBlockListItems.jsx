@@ -35,12 +35,12 @@ export default {
       let group = null;
       for (const item of items) {
         // group
-        const groupName = `${item.module2}.${item.atomClassName2}`;
+        const groupName = `${item.moduleTarget}.${item.atomClassNameTarget}`;
         if (!group || group.id !== groupName) {
-          const module = this.getModule(item.module2);
+          const module = this.getModule(item.moduleTarget);
           const atomClass = this.getAtomClass({
-            module: item.module2,
-            atomClassName: item.atomClassName2,
+            module: item.moduleTarget,
+            atomClassName: item.atomClassNameTarget,
           });
           group = {
             id: groupName,
@@ -56,8 +56,8 @@ export default {
           item.titleLocale = item.actionNameLocale;
         } else {
           const action = this.getAction({
-            module: item.module2,
-            atomClassName: item.atomClassName2,
+            module: item.moduleTarget,
+            atomClassName: item.atomClassNameTarget,
             name: item.actionName,
           });
           item._action = action;

@@ -35,8 +35,8 @@ module.exports = app => {
     async selectQuery({ atomClass, options, user }) {
       options.orders = [
         //
-        ['module2', 'asc'],
-        ['atomClassId2', 'asc'],
+        ['moduleTarget', 'asc'],
+        ['atomClassIdTarget', 'asc'],
         ['action', 'asc'],
       ];
       // super
