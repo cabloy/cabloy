@@ -25,6 +25,7 @@ module.exports = ctx => {
       cms,
       forAtomUser,
       role,
+      atomIdMain,
     }) {
       iid = parseInt(iid);
       userIdWho = parseInt(userIdWho);
@@ -38,6 +39,7 @@ module.exports = ctx => {
       mine = parseInt(mine);
       resource = parseInt(resource);
       role = parseInt(role);
+      atomIdMain = parseInt(atomIdMain);
 
       // draft
       if (stage === 0) {
@@ -62,6 +64,7 @@ module.exports = ctx => {
           tag,
           mode,
           cms,
+          atomIdMain,
         });
       }
       if (userIdWho === 0) {
@@ -86,6 +89,7 @@ module.exports = ctx => {
           cms,
           forAtomUser,
           role,
+          atomIdMain,
         });
       }
       // formal/history
@@ -114,6 +118,7 @@ module.exports = ctx => {
         cms,
         forAtomUser,
         role,
+        atomIdMain,
       });
     }
   }

@@ -11,6 +11,7 @@ module.exports = ctx => {
       resourceLocale,
       mode,
       cms /* , forAtomUser*/,
+      atomIdMain,
     }) {
       // -- tables
       // -- a: aAtom
@@ -28,6 +29,7 @@ module.exports = ctx => {
       userIdWho = parseInt(userIdWho);
       atomId = parseInt(atomId);
       resource = parseInt(resource);
+      atomIdMain = parseInt(atomIdMain);
 
       // where
       const _where = {};
@@ -102,6 +104,12 @@ module.exports = ctx => {
       // atomClass
       if (atomClass && !atomClassBase.itemOnly) {
         _where['a.atomClassId'] = atomClass.id;
+      }
+
+      // atomIdMain
+      if (atomClass && atomClassBase.detail) {
+        const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
+        _where[`f.${atomIdMainField}`] = atomIdMain;
       }
 
       // fields

@@ -25,6 +25,7 @@ module.exports = ctx => {
       cms,
       forAtomUser,
       role,
+      atomIdMain,
     }) {
       // -- tables
       // -- a: aAtom
@@ -188,6 +189,12 @@ module.exports = ctx => {
       }
       if (atomClass && !atomClassBase.itemOnly) {
         _where['a.atomClassId'] = atomClass.id;
+      }
+
+      // atomIdMain
+      if (atomClass && atomClassBase.detail) {
+        const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
+        _where[`f.${atomIdMainField}`] = atomIdMain;
       }
 
       // fields
