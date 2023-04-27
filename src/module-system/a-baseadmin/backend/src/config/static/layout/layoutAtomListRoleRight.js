@@ -6,10 +6,6 @@ module.exports = app => {
     },
     layouts: {
       list: {
-        subnavbar: {
-          render: true,
-          enable: false,
-        },
         blocks: {
           items: {
             component: {
