@@ -11,6 +11,11 @@ module.exports = ctx => {
       // atomClass
       const { atomKey, atomClass, atomClassBase } = await this._checkAtomClassExpect({ options });
 
+      // select
+      if (options.action === 'select') {
+        return await this._checkAtom_select({ atomClass, atomClassBase, user });
+      }
+
       // create
       if (options.action === 'create' || options.action === constant.atom.action.create) {
         return await this._checkAtom_create({ atomClass, atomClassBase, user });
@@ -61,6 +66,13 @@ module.exports = ctx => {
         } else {
           atomKey.itemId = res.itemId;
         }
+      }
+    }
+
+    async _checkAtom_select({ atomClass, atomClassBase, user }) {
+      if (!atomClass) {
+        // do nothing
+        return;
       }
     }
 
@@ -127,18 +139,23 @@ module.exports = ctx => {
         atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: atomKey.atomId });
       }
       // check if valid & same
-      if (!atomClass && !atomClassExpect) ctx.throw(403);
+      if (!atomClass && !atomClassExpect) {
+        // special for select
+        if (options.action !== 'select') {
+          ctx.throw(403);
+        }
+      }
       if (atomClass && atomClassExpect && !this._checkIfSameAtomClass(atomClass, atomClassExpect)) {
         ctx.throw(403);
       }
       // neednot check !!atomClassExpect
-      if (!atomClass) {
+      if (!atomClass && atomClassExpect) {
         atomClass = await ctx.bean.atomClass.get(atomClassExpect);
       }
       // force consistent for safe
       ctx.request.body.atomClass = atomClass;
       // atomClassBase
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const atomClassBase = atomClass ? await ctx.bean.atomClass.atomClass(atomClass) : null;
       // ok
       return {
         atomKey,

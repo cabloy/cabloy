@@ -22,7 +22,7 @@ module.exports = app => {
     },
     { method: 'post', path: 'atom/atomClass', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
     { method: 'post', path: 'atom/read', controller: 'atom', meta: { right: { type: 'atom', action: 'read' } } },
-    { method: 'post', path: 'atom/select', controller: 'atom' },
+    { method: 'post', path: 'atom/select', controller: 'atom', meta: { right: { type: 'atom', action: 'select' } } },
     { method: 'post', path: 'atom/count', controller: 'atom' },
     {
       method: 'post',
