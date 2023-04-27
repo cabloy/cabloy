@@ -12,6 +12,7 @@ module.exports = {
   'Category Management': '目录管理',
   'Tag Management': '标签管理',
   'Select Users': '选择用户',
+  RoleAtomRight: '角色数据权限',
   Users: '用户',
   Includes: '聚合',
   AddChild: '添加子项',

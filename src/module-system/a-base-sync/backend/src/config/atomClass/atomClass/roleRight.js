@@ -3,7 +3,7 @@ module.exports = app => {
   const roleRight = {
     info: {
       bean: 'roleRight',
-      title: 'Atom Right',
+      title: 'RoleAtomRight',
       tableName: 'aRoleRight',
       tableNameModes: {
         default: `
