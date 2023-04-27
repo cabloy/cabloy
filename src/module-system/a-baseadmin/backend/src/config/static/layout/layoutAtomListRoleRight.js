@@ -17,6 +17,12 @@ module.exports = app => {
               name: 'roleRightListLayoutBlockListItems',
             },
           },
+          item: {
+            component: {
+              module: 'a-baseadmin',
+              name: 'roleRightListLayoutBlockListItem',
+            },
+          },
         },
       },
     },
@@ -24,7 +30,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Atom Right',
     atomStaticKey: 'layoutAtomListRoleRight',
-    atomRevision: 8,
+    atomRevision: 9,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
