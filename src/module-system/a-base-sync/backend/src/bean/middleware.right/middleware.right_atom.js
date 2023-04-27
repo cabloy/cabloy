@@ -13,7 +13,15 @@ module.exports = ctx => {
 
       // select
       if (options.action === 'select') {
-        return await this._checkAtom_select({ atomClass, atomClassBase, user });
+        const atomIdMain = ctx.request.body?.options?.atomIdMain;
+        const res = await ctx.bean.atom.checkRightSelect({
+          atomIdMain,
+          atomClass,
+          user,
+          checkFlow: options.checkFlow,
+        });
+        if (!res) ctx.throw(403);
+        return;
       }
 
       // create
@@ -66,13 +74,6 @@ module.exports = ctx => {
         } else {
           atomKey.itemId = res.itemId;
         }
-      }
-    }
-
-    async _checkAtom_select({ atomClass, atomClassBase, user }) {
-      if (!atomClass) {
-        // do nothing
-        return;
       }
     }
 

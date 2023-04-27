@@ -33,7 +33,11 @@ module.exports = app => {
         },
       },
     },
-    actions: {},
+    actions: {
+      read: {
+        rightInherit: 'atomAuthorizations',
+      },
+    },
     validator: {
       module: 'a-baseadmin',
       name: 'roleRight',

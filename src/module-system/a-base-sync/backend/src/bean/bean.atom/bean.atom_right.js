@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
     async checkRoleRightRead({ atom: { id }, atomClass: atomClassOuter, roleId }) {
       // not check draft
@@ -21,6 +21,42 @@ module.exports = ctx => {
         forAtomUser,
       });
       return await ctx.model.queryOne(sql);
+    }
+
+    async checkRightSelect({ atomIdMain, atomClass, user, checkFlow, disableAuthOpenCheck }) {
+      if (!atomClass) {
+        if (!atomIdMain) return true;
+        ctx.throw(403);
+      }
+      // atomClass
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      if (!atomClass) ctx.throw.module(moduleInfo.relativeName, 1002);
+      // atomClassBase
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // check detail
+      if (!atomClassBase.detail) return true;
+      const atomClassMain = atomClassBase.detail.atomClassMain;
+      // action
+      const actionBase = ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: 'read',
+      });
+      const rightInherit = actionBase.rightInherit;
+      if (!rightInherit) {
+        // do nothing
+        return true;
+      }
+      if (!atomIdMain) ctx.throw(403);
+      // check rightInherit
+      return await this.checkRightAction({
+        atom: { id: atomIdMain },
+        atomClass: atomClassMain,
+        action: rightInherit,
+        user,
+        checkFlow,
+        disableAuthOpenCheck,
+      });
     }
 
     async checkRightRead({ atom: { id }, atomClass: atomClassOuter, user, checkFlow, disableAuthOpenCheck }) {
