@@ -129,8 +129,10 @@ module.exports = ctx => {
 
       // atomIdMain
       if (atomClass && atomClassBase.detail) {
-        const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
-        _where[`f.${atomIdMainField}`] = atomIdMain;
+        if (atomIdMain) {
+          const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
+          _where[`f.${atomIdMainField}`] = atomIdMain;
+        }
       }
 
       // fields
