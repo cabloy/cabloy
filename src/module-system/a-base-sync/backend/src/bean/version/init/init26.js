@@ -4,7 +4,7 @@ module.exports = function (ctx) {
       // init roleRight actions
       await ctx.bean.atomAction.init({
         atomClass: { module: 'a-base', atomClassName: 'roleRight' },
-        actions: 'create,read,write,delete',
+        actions: 'create,read,write,delete,clone,deleteBulk',
       });
     }
   }
