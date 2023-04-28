@@ -29,7 +29,9 @@ module.exports = ctx => {
         key = { atomId, itemId: atomId };
       } else {
         atom = await this.modelAtom.get({ id: atomId });
-        if (!atom) ctx.throw.module(moduleInfo.relativeName, 1002);
+        if (!atom) {
+          ctx.throw.module(moduleInfo.relativeName, 1002);
+        }
         if (atom.atomClassId !== atomClass.id) ctx.throw(403);
         key = { atomId, itemId: atom.itemId };
       }
