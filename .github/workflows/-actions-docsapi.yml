@@ -2,8 +2,7 @@ name: CabloyJS API
 on:
   push:
     branches:
-    # to be done
-    #  - master
+      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
