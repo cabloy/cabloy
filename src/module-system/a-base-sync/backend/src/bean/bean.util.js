@@ -177,7 +177,6 @@ module.exports = app => {
     checkDemoForAtomRead(throwError = true) {
       const ctxCaller = this.ctx.ctxCaller;
       if (!ctxCaller) return true;
-      console.log(ctxCaller.path);
       if (ctxCaller.path === '/api/a/base/atom/read') {
         return this.checkDemo(throwError);
       }

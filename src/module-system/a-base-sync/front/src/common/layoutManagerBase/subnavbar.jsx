@@ -20,7 +20,8 @@ export default {
       if (render === undefined) {
         if (this.subnavbar_policyDefaultCalc_render) {
           render = this.subnavbar_policyDefaultCalc_render();
-        } else {
+        }
+        if (render === undefined) {
           render = true;
         }
       }
@@ -31,7 +32,8 @@ export default {
         if (enable === undefined) {
           if (this.subnavbar_policyDefaultCalc_enable) {
             enable = this.subnavbar_policyDefaultCalc_enable();
-          } else {
+          }
+          if (enable === undefined) {
             enable = this.$view.size === 'small';
           }
         }

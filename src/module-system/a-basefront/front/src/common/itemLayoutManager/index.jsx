@@ -5,6 +5,7 @@ import Layout from './layout.jsx';
 import Info from './info.jsx';
 import Event from './event.jsx';
 import Item from './item.jsx';
+import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 import Share from './share.jsx';
@@ -33,6 +34,7 @@ export default {
     Info,
     Event,
     Item,
+    Subnavbar,
     Actions,
     Validate,
     Share,
