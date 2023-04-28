@@ -56,11 +56,17 @@ module.exports = ctx => {
     }
 
     async _registerLock({ module, atomClassName }) {
+      // atomClassBase
+      const atomClassBase = ctx.bean.base.atomClass({ module, atomClassName });
+      if (!atomClassBase) throw new Error(`atomClass ${module}:${atomClassName} not found!`);
       // atom class
       const data = await this._registerLock_inner({ module, atomClassName });
       // atom action: basics
-      for (const code of [1, 2, 3, 4]) {
-        await ctx.bean.atomAction._registerLock_inner({ atomClassId: data.id, code });
+      //  only for !itemOnly
+      if (!atomClassBase.itemOnly) {
+        for (const code of [1, 2, 3, 4]) {
+          await ctx.bean.atomAction._registerLock_inner({ atomClassId: data.id, code });
+        }
       }
       // ok
       return data;
@@ -71,8 +77,6 @@ module.exports = ctx => {
       const res = await this.model.get({ module, atomClassName });
       if (res) return res;
       // data
-      const atomClass = ctx.bean.base.atomClass({ module, atomClassName });
-      if (!atomClass) throw new Error(`atomClass ${module}:${atomClassName} not found!`);
       const data = {
         module,
         atomClassName,
