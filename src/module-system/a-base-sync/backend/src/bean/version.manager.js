@@ -29,6 +29,7 @@ const VersionInit8Fn = require('./version/init/init8.js');
 const VersionInit9Fn = require('./version/init/init9.js');
 const VersionInit14Fn = require('./version/init/init14.js');
 const VersionInit15Fn = require('./version/init/init15.js');
+const VersionInit26Fn = require('./version/init/init26.js');
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
@@ -170,6 +171,10 @@ module.exports = app => {
       if (options.version === 15) {
         const versionInit15 = new (VersionInit15Fn(this.ctx))();
         await versionInit15.run(options);
+      }
+      if (options.version === 26) {
+        const versionInit26 = new (VersionInit26Fn(this.ctx))();
+        await versionInit26.run(options);
       }
     }
 

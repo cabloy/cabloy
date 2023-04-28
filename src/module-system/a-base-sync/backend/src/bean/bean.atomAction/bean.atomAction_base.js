@@ -24,6 +24,23 @@ module.exports = ctx => {
       await this.model.update(data);
     }
 
+    async init({ atomClass, actions, action }) {
+      // actions
+      if (action) {
+        actions = [action];
+      } else if (typeof actions === 'string') {
+        actions = actions.split(',');
+      }
+      // atomClassId
+      atomClass = await ctx.bean.atomClass.get(atomClass);
+      const atomClassId = atomClass.id;
+      // loop
+      for (const _action of actions) {
+        const code = this.parseActionCode({ action: _action, atomClass });
+        await this.get({ atomClassId, code });
+      }
+    }
+
     async get({ id, atomClassId, code }) {
       const data = id ? { id } : { atomClassId, code };
       const res = await this.model.get(data);
