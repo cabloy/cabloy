@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
       - name: dependencies
         run: npm install vue-template-compiler
-      - name: JSDoc Action Patch
+      - name: Build
         uses: zhennann/jsdoc-action@v1
         with:
           source_dir:
