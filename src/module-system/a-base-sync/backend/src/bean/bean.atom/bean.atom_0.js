@@ -98,10 +98,13 @@ module.exports = ctx => {
     async read({ key: keyOuter, atomClass: atomClassOuter, options, user }) {
       options = options || {};
       // atomClass
-      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const res = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        throwOnError: false,
       });
+      if (!res) return null;
+      const { key, atomClass, atomClassBase } = res;
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;

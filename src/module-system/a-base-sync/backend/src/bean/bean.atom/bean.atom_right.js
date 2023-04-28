@@ -5,10 +5,13 @@ module.exports = ctx => {
       // not check draft
       const atomId = id;
       // atomClass
-      const { atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const res = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,
+        throwOnError: false,
       });
+      if (!res) return null;
+      const { atomClass, atomClassBase } = res;
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history
