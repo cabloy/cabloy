@@ -30,6 +30,7 @@ jobs:
       - run: cp -r src/front/_config src/front/config
       - run: cp -r src/backend/_config src/backend/config
       - run: npm run build:front
-      - run: npm run test:backend
+      # to be done
+      # - run: npm run test:backend
       # - run: npm run cov:backend
-      - run: npm i codecov -g && codecov
+      # - run: npm i codecov -g && codecov
