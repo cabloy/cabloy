@@ -8,7 +8,7 @@ module.exports = ctx => {
       const res = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,
-        throwOnError: false,
+        throwWhenEmpty: false,
       });
       if (!res) return null;
       const { atomClass, atomClassBase } = res;

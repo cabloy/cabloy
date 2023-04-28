@@ -101,7 +101,7 @@ module.exports = ctx => {
       const res = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
-        throwOnError: false,
+        throwWhenEmpty: false,
       });
       if (!res) return null;
       const { key, atomClass, atomClassBase } = res;
