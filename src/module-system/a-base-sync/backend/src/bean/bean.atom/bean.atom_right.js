@@ -147,6 +147,7 @@ module.exports = ctx => {
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClass,
+        atomClassBase,
         action,
       });
       const actionRes = await ctx.model.queryOne(sql);
@@ -229,6 +230,7 @@ module.exports = ctx => {
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClass,
+        atomClassBase,
       });
       const actionsRes = await ctx.model.query(sql);
       const res = [];
