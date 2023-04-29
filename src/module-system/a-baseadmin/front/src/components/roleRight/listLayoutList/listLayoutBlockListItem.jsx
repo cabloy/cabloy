@@ -58,10 +58,10 @@ export default {
     },
     _renderItemSummary(item) {
       let summary;
-      if (item.actionBulk === 1 && item.actionCode !== 1) {
-        summary = this.$text('Bulk');
-      } else if (item.actionMode === 1) {
+      if (item.actionMode === 1) {
         summary = `${this.$text('WorkFlow Actions')}: ${item.flowDefNameLocale}`;
+      } else if (item.actionBulk === 1 && item.action !== 1) {
+        summary = this.$text('Bulk');
       }
       return (
         <div slot="root-end" class="summary">
@@ -79,7 +79,7 @@ export default {
       } else if (!item._action) {
         color = 'gray';
         icon = '::radio-button-unchecked';
-      } else if (item.actionBulk === 0) {
+      } else if (item.actionBulk === 0 || item.actionName === 'create') {
         color = 'blue';
         icon = item._action?.icon?.f7;
       } else {
