@@ -86,6 +86,34 @@ module.exports = ctx => {
       // ok
       return { atomIdMain, atomClassMain, rightInherit };
     }
+
+    async _checkDetailRightInherit({ detailRightInherit, user, stage, checkFlow, disableAuthOpenCheck, options }) {
+      const { atomIdMain, atomClassMain, rightInherit } = detailRightInherit;
+      // options
+      options = { ...options, atomIdMain: undefined };
+      // check rightInherit
+      if (rightInherit === 'read') {
+        return await this.checkRightRead({
+          atom: { id: atomIdMain },
+          atomClass: atomClassMain,
+          user,
+          checkFlow,
+          disableAuthOpenCheck,
+          options,
+        });
+      }
+      // others
+      return await this.checkRightAction({
+        atom: { id: atomIdMain },
+        atomClass: atomClassMain,
+        action: rightInherit,
+        user,
+        stage,
+        checkFlow,
+        disableAuthOpenCheck,
+        options,
+      });
+    }
   }
   return Atom;
 };

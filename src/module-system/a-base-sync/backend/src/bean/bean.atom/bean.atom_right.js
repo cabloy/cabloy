@@ -39,35 +39,19 @@ module.exports = ctx => {
       // atomClassBase
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // check detail
-      const detailRight = await this._prepareDetailRightInherit({ atomClass, atomClassBase, action: 'read', options });
-      if (!detailRight) return true;
-      const { atomClassMain, rightInherit } = detailRight;
-      // check rightInherit
-      if (rightInherit === 'read') {
-        return await this.checkRightRead({
-          atom: { id: atomIdMain },
-          atomClass: atomClassMain,
-          user,
-          checkFlow,
-          disableAuthOpenCheck,
-          options: {
-            ...options,
-            atomIdMain: undefined,
-          },
-        });
-      }
-      // others
-      return await this.checkRightAction({
-        atom: { id: atomIdMain },
-        atomClass: atomClassMain,
-        action: rightInherit,
+      const detailRightInherit = await this._prepareDetailRightInherit({
+        atomClass,
+        atomClassBase,
+        action: 'read',
+        options,
+      });
+      if (!detailRightInherit) return true;
+      return await this._checkDetailRightInherit({
+        detailRightInherit,
         user,
         checkFlow,
         disableAuthOpenCheck,
-        options: {
-          ...options,
-          atomIdMain: undefined,
-        },
+        options,
       });
     }
 
