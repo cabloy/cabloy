@@ -27,6 +27,10 @@ export default {
   },
   methods: {
     async base_onInit() {
+      // prepare
+      if (!this.container.options) {
+        this.container.options = {};
+      }
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
     },
