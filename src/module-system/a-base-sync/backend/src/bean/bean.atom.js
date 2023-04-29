@@ -8,6 +8,7 @@ const atom_simple = require('./bean.atom/bean.atom_simple.js');
 const atom_submit = require('./bean.atom/bean.atom_submit.js');
 const atom_notify = require('./bean.atom/bean.atom_notify.js');
 const atom_right = require('./bean.atom/bean.atom_right.js');
+const atom_right_actions = require('./bean.atom/bean.atom_right_actions.js');
 const atom_right_actionsBulk = require('./bean.atom/bean.atom_right_actionsBulk.js');
 const atom_right_checkRightAction = require('./bean.atom/bean.atom_right_checkRightAction.js');
 const atom_right_checkRightCreate = require('./bean.atom/bean.atom_right_checkRightCreate.js');
@@ -29,6 +30,7 @@ module.exports = ctx => {
       atom_submit,
       atom_notify,
       atom_right,
+      atom_right_actions,
       atom_right_actionsBulk,
       atom_right_checkRightAction,
       atom_right_checkRightCreate,
