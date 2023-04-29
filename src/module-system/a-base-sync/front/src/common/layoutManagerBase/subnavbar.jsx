@@ -17,23 +17,24 @@ export default {
       const subnavbar = this.layout.config.subnavbar;
       // render
       let render = subnavbar?.render;
-      if (render === undefined) {
+      if (render === undefined || render === null) {
         if (this.subnavbar_policyDefaultCalc_render) {
           render = this.subnavbar_policyDefaultCalc_render();
         }
-        if (render === undefined) {
+        if (render === undefined || render === null) {
           render = true;
         }
       }
       // enable
-      let enable = false;
-      if (render) {
-        enable = subnavbar?.enable;
-        if (enable === undefined) {
-          if (this.subnavbar_policyDefaultCalc_enable) {
-            enable = this.subnavbar_policyDefaultCalc_enable();
-          }
-          if (enable === undefined) {
+      let enable = subnavbar?.enable;
+      if (enable === undefined || enable === null) {
+        if (this.subnavbar_policyDefaultCalc_enable) {
+          enable = this.subnavbar_policyDefaultCalc_enable();
+        }
+        if (enable === undefined || enable === null) {
+          if (!render) {
+            enable = false;
+          } else {
             enable = this.$view.size === 'small';
           }
         }
