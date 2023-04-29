@@ -91,9 +91,9 @@ module.exports = app => {
       });
     }
 
-    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+    async checkRightAction({ atom, atomClass, action, options, user }) {
       // super
-      const res = await super.checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+      const res = await super.checkRightAction({ atom, atomClass, action, options, user });
       if (!res) return res;
       if (atom.atomStage !== 1) return res;
       // hideClientSecret
