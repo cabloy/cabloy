@@ -32,7 +32,13 @@ module.exports = ctx => {
           continue;
         }
         // right check
-        const res = await this.checkRightAction({ atom: { id: key.atomId }, atomClass, action: action.code, user });
+        const res = await this.checkRightAction({
+          atom: { id: key.atomId },
+          atomClass,
+          action: action.code,
+          options,
+          user,
+        });
         if (res) {
           if (res.__task) {
             action.__task = res.__task;

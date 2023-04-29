@@ -12,13 +12,14 @@ module.exports = ctx => {
       user,
       checkFlow,
       disableAuthOpenCheck,
+      options,
     }) {
       const { atom: _atom, atomClass } = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,
       });
       // normal check
-      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow });
+      const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow, options });
       if (!res) return res;
       // auth open check
       if (!disableAuthOpenCheck) {
@@ -29,7 +30,7 @@ module.exports = ctx => {
       return res;
     }
 
-    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow }) {
+    async _checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow, options }) {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
@@ -39,16 +40,21 @@ module.exports = ctx => {
         atomClass,
       });
       // check right
+      options = {
+        ...options,
+        stage,
+        checkFlow,
+      };
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
       return await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atom: _atom, atomClass, action, stage, user, checkFlow },
+        context: { atom: _atom, atomClass, action, options, user },
         fn: 'checkRightAction',
       });
     }
 
-    async _checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
+    async _checkRightAction({ atom, atomClass, action, stage, user, checkFlow, options }) {
       const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
