@@ -111,12 +111,12 @@ module.exports = app => {
       return await this.ctx.bean.atom.labels({ key, atom, user });
     }
 
-    async actions({ key, atomClass, mode, basic, user }) {
-      return await this.ctx.bean.atom.actions({ key, atomClass, mode, basic, user });
+    async actions({ key, atomClass, options, basic, user }) {
+      return await this.ctx.bean.atom.actions({ key, atomClass, options, basic, user });
     }
 
-    async actionsBulk({ atomClass, stage, mode, user }) {
-      return await this.ctx.bean.atom.actionsBulk({ atomClass, stage, mode, user });
+    async actionsBulk({ atomClass, stage, options, user }) {
+      return await this.ctx.bean.atom.actionsBulk({ atomClass, stage, options, user });
     }
 
     async checkRightAction({ key, atomClass, action, stage, user, checkFlow }) {

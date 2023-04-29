@@ -10,7 +10,9 @@ export default {
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: item.atomId },
         atomClass: this.base.atomClass,
-        mode: this.container.mode,
+        options: {
+          containerMode: this.container.mode,
+        },
         // basic: !this.$device.desktop,
       });
       // filter

@@ -189,7 +189,9 @@ module.exports = ctx => {
     }
 
     // actions of atom
-    async actions({ key, atomClass: atomClassOuter, mode, basic, user }) {
+    async actions({ key, atomClass: atomClassOuter, options, basic, user }) {
+      options = options || {};
+      const containerMode = options.containerMode;
       // atomClass
       const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
         key,
@@ -213,7 +215,7 @@ module.exports = ctx => {
           atomClassName: action.atomClassName,
           code: action.code,
         });
-        if (actionBase.mode && mode && actionBase.mode !== mode) {
+        if (actionBase.containerMode && containerMode && actionBase.containerMode !== containerMode) {
           continue;
         }
         // right check
@@ -229,7 +231,9 @@ module.exports = ctx => {
     }
 
     // actionsBulk of atomClass
-    async actionsBulk({ atomClass, stage, mode, user }) {
+    async actionsBulk({ atomClass, stage, options, user }) {
+      options = options || {};
+      const containerMode = options.containerMode;
       atomClass = await ctx.bean.atomClass.get(atomClass);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const sql = this.sqlProcedure.checkRightActionBulk({
@@ -247,7 +251,7 @@ module.exports = ctx => {
           atomClassName: actionRes.atomClassName,
           code: actionRes.code,
         });
-        if (actionBase.mode && mode && actionBase.mode !== mode) {
+        if (actionBase.containerMode && containerMode && actionBase.containerMode !== containerMode) {
           continue;
         }
         // right check
