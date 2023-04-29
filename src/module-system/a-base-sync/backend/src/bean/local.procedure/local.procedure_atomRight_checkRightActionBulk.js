@@ -39,7 +39,7 @@ module.exports = ctx => {
       const enableRight = atomClassBase.enableRight;
       if (!enableRight) return true;
       return ctx.model.raw(`
-        and exists(
+        exists(
           select b.atomClassId from aViewUserRightAtomClass b where b.iid=${iid} and a.atomClassId=b.atomClassId and a.code=b.action and b.userIdWho=${userIdWho}
         )
       `);
