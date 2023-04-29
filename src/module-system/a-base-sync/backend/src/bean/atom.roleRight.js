@@ -35,9 +35,10 @@ module.exports = app => {
     async selectQuery({ atomClass, options, user }) {
       options.orders = [
         //
-        ['moduleTarget', 'asc'],
-        ['atomClassIdTarget', 'asc'],
-        ['action', 'asc'],
+        ['f.moduleTarget', 'asc'],
+        ['f.atomClassIdTarget', 'asc'],
+        ['f.action', 'asc'],
+        ['f.id', 'asc'], // action maybe duplicated, so use f.id force to unique
       ];
       // super
       return await super.selectQuery({ atomClass, options, user });
