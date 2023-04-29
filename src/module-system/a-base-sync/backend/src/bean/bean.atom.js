@@ -7,8 +7,8 @@ const atom_draft = require('./bean.atom/bean.atom_draft.js');
 const atom_formal = require('./bean.atom/bean.atom_formal.js');
 const atom_simple = require('./bean.atom/bean.atom_simple.js');
 const atom_submit = require('./bean.atom/bean.atom_submit.js');
-const atom_checkRightAction = require('./bean.atom/bean.atom_checkRightAction.js');
-const atom_rightRoleScopes = require('./bean.atom/bean.atom_rightRoleScopes.js');
+const atom_right_checkRightAction = require('./bean.atom/bean.atom_right_checkRightAction.js');
+const atom_right_roleScopes = require('./bean.atom/bean.atom_right_roleScopes.js');
 const atom_utils = require('./bean.atom/bean.atom_utils.js');
 
 module.exports = ctx => {
@@ -24,8 +24,8 @@ module.exports = ctx => {
       atom_formal,
       atom_simple,
       atom_submit,
-      atom_checkRightAction,
-      atom_rightRoleScopes,
+      atom_right_checkRightAction,
+      atom_right_roleScopes,
       atom_utils,
     ],
     ctx
