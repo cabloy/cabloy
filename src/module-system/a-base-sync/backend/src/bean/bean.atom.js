@@ -13,6 +13,7 @@ const atom_right_actionsBulk = require('./bean.atom/bean.atom_right_actionsBulk.
 const atom_right_checkRightAction = require('./bean.atom/bean.atom_right_checkRightAction.js');
 const atom_right_checkRightCreate = require('./bean.atom/bean.atom_right_checkRightCreate.js');
 const atom_right_checkRightRead = require('./bean.atom/bean.atom_right_checkRightRead.js');
+const atom_right_detailRightInherit = require('./bean.atom/bean.atom_right_detailRightInherit.js');
 const atom_right_roleScopes = require('./bean.atom/bean.atom_right_roleScopes.js');
 const atom_utils = require('./bean.atom/bean.atom_utils.js');
 
@@ -34,6 +35,7 @@ module.exports = ctx => {
       atom_right_checkRightAction,
       atom_right_checkRightCreate,
       atom_right_checkRightRead,
+      atom_right_detailRightInherit,
       atom_right_preferredRoles,
       atom_right_roleScopes,
       atom_utils,
