@@ -54,7 +54,9 @@ module.exports = ctx => {
       });
     }
 
-    async _checkRightAction({ atom, atomClass, action, stage, user, checkFlow, options }) {
+    async _checkRightAction({ atom, atomClass, action, options, user }) {
+      let { stage, checkFlow } = options;
+      // atom
       const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);

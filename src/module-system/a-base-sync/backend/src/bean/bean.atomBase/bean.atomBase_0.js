@@ -27,8 +27,8 @@ module.exports = app => {
       // do nothing
     }
 
-    async checkRightAction({ atom, atomClass, action, stage, user, checkFlow }) {
-      return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, stage, user, checkFlow });
+    async checkRightAction({ atom, atomClass, action, options, user }) {
+      return await this.ctx.bean.atom._checkRightAction({ atom, atomClass, action, options, user });
     }
 
     async prepareStaticItem({ moduleName, atomClass, item, register }) {
