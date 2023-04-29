@@ -128,38 +128,6 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    // atomClass: { id, module, atomClassName }
-    async checkRightActionBulk({ atomClass, action, stage, user }) {
-      atomClass = await ctx.bean.atomClass.get(atomClass);
-      // normal check
-      const res = await this._checkRightActionBulk_normal({ atomClass, action, stage, user });
-      if (!res) return res;
-      // auth open check
-      const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
-      if (!resAuthOpenCheck) return null;
-      // ok
-      return res;
-    }
-
-    async _checkRightActionBulk_normal({ atomClass, action, stage, user }) {
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
-      // parse action code
-      action = ctx.bean.atomAction.parseActionCode({
-        action,
-        atomClass,
-      });
-      // check right
-      const sql = this.sqlProcedure.checkRightActionBulk({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomClass,
-        atomClassBase,
-        action,
-      });
-      const actionRes = await ctx.model.queryOne(sql);
-      return await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
-    }
-
     async checkRightCreate({ atomClass, user }) {
       return await this.checkRightActionBulk({ atomClass, action: 1, user });
     }
@@ -228,39 +196,6 @@ module.exports = ctx => {
         }
       }
       return actionsRes;
-    }
-
-    // actionsBulk of atomClass
-    async actionsBulk({ atomClass, stage, options, user }) {
-      options = options || {};
-      const containerMode = options.containerMode;
-      atomClass = await ctx.bean.atomClass.get(atomClass);
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
-      const sql = this.sqlProcedure.checkRightActionBulk({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomClass,
-        atomClassBase,
-      });
-      const actionsRes = await ctx.model.query(sql);
-      const res = [];
-      for (const actionRes of actionsRes) {
-        // just for listing check, not for right check
-        const actionBase = ctx.bean.base.action({
-          module: actionRes.module,
-          atomClassName: actionRes.atomClassName,
-          code: actionRes.code,
-        });
-        if (actionBase.containerMode && containerMode && actionBase.containerMode !== containerMode) {
-          continue;
-        }
-        // right check
-        const _res = await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
-        if (_res) {
-          res.push(_res);
-        }
-      }
-      return res;
     }
 
     // preffered roles

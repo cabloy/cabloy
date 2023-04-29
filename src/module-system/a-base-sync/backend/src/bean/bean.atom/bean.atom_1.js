@@ -276,30 +276,7 @@ module.exports = ctx => {
       return await this.sqlProcedure.selectAtoms(options);
     }
 
-    // right
-
-    async __checkRightActionBulk({ atomClassBase, actionRes, stage /* user*/ }) {
-      if (atomClassBase.itemOnly) return actionRes;
-      // not care about stage
-      if (!stage) return actionRes;
-      // action base
-      const actionBase = ctx.bean.base.action({
-        module: actionRes.module,
-        atomClassName: actionRes.atomClassName,
-        code: actionRes.code,
-      });
-      if (!actionBase) {
-        if (actionRes.code < 10000) {
-          await ctx.bean.atomAction.delete({ atomClassId: actionRes.atomClassId, code: actionRes.code });
-        }
-        return null;
-      }
-      if (actionBase.stage) {
-        const stages = actionBase.stage.split(',');
-        if (!stages.some(item => item === stage)) return null;
-      }
-      return actionRes;
-    }
+    // notify
 
     _notifyDraftsDrafting(user, atomClass) {
       ctx.bean.stats.notify({
