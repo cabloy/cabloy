@@ -1,6 +1,31 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
+    async checkRoleRightRead({ atom: { id }, atomClass: atomClassOuter, roleId }) {
+      // not check draft
+      const atomId = id;
+      // atomClass
+      const res = await this._prepareKeyAndAtomAndAtomClass({
+        key: { atomId: id },
+        atomClass: atomClassOuter,
+        throwWhenEmpty: false,
+      });
+      if (!res) return null;
+      const { atomClass, atomClassBase } = res;
+      // forAtomUser
+      const forAtomUser = this._checkForAtomUser(atomClass);
+      // formal/history
+      const sql = await this.sqlProcedure.checkRoleRightRead({
+        iid: ctx.instance.id,
+        roleIdWho: roleId,
+        atomClass,
+        atomClassBase,
+        atomId,
+        forAtomUser,
+      });
+      return await ctx.model.queryOne(sql);
+    }
+
     async checkRightSelect({ atomClass, user, checkFlow, disableAuthOpenCheck, options }) {
       options = options || {};
       const atomIdMain = options.atomIdMain;
