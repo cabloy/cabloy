@@ -60,7 +60,16 @@ module.exports = ctx => {
       return { key, atom, atomClass, atomClassBase };
     }
 
-    async _prepareDetailRightInherit({ atomClass, atomClassBase, action, options }) {
+    async _checkDetailRightInherit({
+      atomClass,
+      atomClassBase,
+      action,
+      user,
+      stage,
+      checkFlow,
+      disableAuthOpenCheck,
+      options,
+    }) {
       // atomIdMain
       const atomIdMain = options?.atomIdMain;
       // atomClassBase
@@ -68,7 +77,7 @@ module.exports = ctx => {
         atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       }
       // detail
-      if (!atomClassBase.detail) return null;
+      if (!atomClassBase.detail) return true;
       // atomClassMain
       const atomClassMain = atomClassBase.detail.atomClassMain;
       // action
@@ -80,14 +89,30 @@ module.exports = ctx => {
       const rightInherit = actionBase.rightInherit;
       if (!rightInherit) {
         // do nothing
-        return null;
+        return true;
       }
+      // atomIdMain should exists, so throw error better than return false
       if (!atomIdMain) ctx.throw(403);
-      // ok
-      return { atomIdMain, atomClassMain, rightInherit };
+      // check
+      const detailRightInherit = { atomIdMain, atomClassMain, rightInherit };
+      return await this._checkDetailRightInherit_perform({
+        detailRightInherit,
+        user,
+        stage,
+        checkFlow,
+        disableAuthOpenCheck,
+        options,
+      });
     }
 
-    async _checkDetailRightInherit({ detailRightInherit, user, stage, checkFlow, disableAuthOpenCheck, options }) {
+    async _checkDetailRightInherit_perform({
+      detailRightInherit,
+      user,
+      stage,
+      checkFlow,
+      disableAuthOpenCheck,
+      options,
+    }) {
       const { atomIdMain, atomClassMain, rightInherit } = detailRightInherit;
       // options
       options = { ...options, atomIdMain: undefined };
