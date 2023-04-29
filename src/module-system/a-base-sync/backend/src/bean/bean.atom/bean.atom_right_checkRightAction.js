@@ -60,6 +60,18 @@ module.exports = ctx => {
       const _atom = atom;
       if (!_atom) ctx.throw.module(moduleInfo.relativeName, 1002);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // check detail
+      const detailRightInherit = await this._checkDetailRightInherit({
+        atomClass,
+        atomClassBase,
+        action,
+        user,
+        checkFlow,
+        disableAuthOpenCheck: false,
+        options,
+      });
+      if (!detailRightInherit) return null;
+      // check if itemOnly
       if (atomClassBase.itemOnly) {
         // check basic
         return await this._checkRightAction_itemOnly({ atomClass, _atom, action, user });

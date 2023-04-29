@@ -147,6 +147,15 @@ module.exports = ctx => {
     }
 
     action({ module, atomClassName, code, name }) {
+      // prepare
+      if (name && !isNaN(name)) {
+        code = parseInt(name);
+        name = null;
+      } else if (code && isNaN(code)) {
+        name = code;
+        code = null;
+      }
+      // actions
       const _actions = this.actions();
       const actions = _actions[module][atomClassName];
       if (name) return actions[name];
