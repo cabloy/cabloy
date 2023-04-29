@@ -13,12 +13,11 @@ module.exports = ctx => {
 
       // select
       if (options.action === 'select') {
-        const atomIdMain = ctx.request.body?.options?.atomIdMain;
         const res = await ctx.bean.atom.checkRightSelect({
-          atomIdMain,
           atomClass,
           user,
           checkFlow: options.checkFlow,
+          options: ctx.request.body.options,
         });
         if (!res) ctx.throw(403);
         return;

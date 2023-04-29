@@ -26,7 +26,9 @@ module.exports = ctx => {
       return await ctx.model.queryOne(sql);
     }
 
-    async checkRightSelect({ atomIdMain, atomClass, user, checkFlow, disableAuthOpenCheck }) {
+    async checkRightSelect({ atomClass, user, checkFlow, disableAuthOpenCheck, options }) {
+      options = options || {};
+      const atomIdMain = options.atomIdMain;
       if (!atomClass) {
         if (!atomIdMain) return true;
         ctx.throw(403);
@@ -37,21 +39,24 @@ module.exports = ctx => {
       // atomClassBase
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // check detail
-      if (!atomClassBase.detail) return true;
-      const atomClassMain = atomClassBase.detail.atomClassMain;
-      // action
-      const actionBase = ctx.bean.base.action({
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
-        name: 'read',
-      });
-      const rightInherit = actionBase.rightInherit;
-      if (!rightInherit) {
-        // do nothing
-        return true;
-      }
-      if (!atomIdMain) ctx.throw(403);
+      const detailRight = await this._prepareDetailRightInherit({ atomClass, atomClassBase, action: 'read', options });
+      if (!detailRight) return true;
+      const { atomClassMain, rightInherit } = detailRight;
       // check rightInherit
+      if (rightInherit === 'read') {
+        return await this.checkRightRead({
+          atom: { id: atomIdMain },
+          atomClass: atomClassMain,
+          user,
+          checkFlow,
+          disableAuthOpenCheck,
+          options: {
+            ...options,
+            atomIdMain: undefined,
+          },
+        });
+      }
+      // others
       return await this.checkRightAction({
         atom: { id: atomIdMain },
         atomClass: atomClassMain,
@@ -59,10 +64,16 @@ module.exports = ctx => {
         user,
         checkFlow,
         disableAuthOpenCheck,
+        options: {
+          ...options,
+          atomIdMain: undefined,
+        },
       });
     }
 
-    async checkRightRead({ atom: { id }, atomClass: atomClassOuter, user, checkFlow, disableAuthOpenCheck }) {
+    async checkRightRead({ atom: { id }, atomClass: atomClassOuter, user, checkFlow, disableAuthOpenCheck, options }) {
+      options = options || {};
+      const atomIdMain = options.atomIdMain;
       const { atom: _atom, atomClass } = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,

@@ -59,6 +59,33 @@ module.exports = ctx => {
       // ok
       return { key, atom, atomClass, atomClassBase };
     }
+
+    async _prepareDetailRightInherit({ atomClass, atomClassBase, action, options }) {
+      // atomIdMain
+      const atomIdMain = options?.atomIdMain;
+      // atomClassBase
+      if (!atomClassBase) {
+        atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      }
+      // detail
+      if (!atomClassBase.detail) return null;
+      // atomClassMain
+      const atomClassMain = atomClassBase.detail.atomClassMain;
+      // action
+      const actionBase = ctx.bean.base.action({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+        name: action,
+      });
+      const rightInherit = actionBase.rightInherit;
+      if (!rightInherit) {
+        // do nothing
+        return null;
+      }
+      if (!atomIdMain) ctx.throw(403);
+      // ok
+      return { atomIdMain, atomClassMain, rightInherit };
+    }
   }
   return Atom;
 };
