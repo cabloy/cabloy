@@ -34,7 +34,22 @@ module.exports = app => {
       },
     },
     actions: {
+      create: {
+        rightInherit: 'atomAuthorizations',
+      },
       read: {
+        rightInherit: 'atomAuthorizations',
+      },
+      write: {
+        rightInherit: 'atomAuthorizations',
+      },
+      delete: {
+        rightInherit: 'atomAuthorizations',
+      },
+      clone: {
+        rightInherit: 'atomAuthorizations',
+      },
+      deleteBulk: {
         rightInherit: 'atomAuthorizations',
       },
     },

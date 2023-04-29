@@ -26,7 +26,7 @@ module.exports = ctx => {
           continue;
         }
         // right check
-        const _res = await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
+        const _res = await this.__checkRightActionBulk({ atomClass, atomClassBase, actionRes, stage, options, user });
         if (_res) {
           res.push(_res);
         }
@@ -63,10 +63,22 @@ module.exports = ctx => {
         action,
       });
       const actionRes = await ctx.model.queryOne(sql);
-      return await this.__checkRightActionBulk({ atomClassBase, actionRes, stage, user });
+      return await this.__checkRightActionBulk({ atomClass, atomClassBase, actionRes, stage, user });
     }
 
-    async __checkRightActionBulk({ atomClassBase, actionRes, stage /* user*/ }) {
+    async __checkRightActionBulk({ atomClass, atomClassBase, actionRes, stage, options, user }) {
+      // check detail
+      const detailRightInherit = await this._checkDetailRightInherit({
+        atomClass,
+        atomClassBase,
+        action: actionRes.name,
+        user,
+        checkFlow: false,
+        disableAuthOpenCheck: false,
+        options,
+      });
+      if (!detailRightInherit) return null;
+      // check if itemOnly
       if (atomClassBase.itemOnly) return actionRes;
       // not care about stage
       if (!stage) return actionRes;
