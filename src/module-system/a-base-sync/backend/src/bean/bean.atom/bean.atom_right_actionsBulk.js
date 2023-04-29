@@ -67,6 +67,7 @@ module.exports = ctx => {
     }
 
     async __checkRightActionBulk({ atomClass, atomClassBase, actionRes, stage, options, user }) {
+      if (!actionRes) return actionRes;
       // check detail
       const detailRightInherit = await this._checkDetailRightInherit({
         atomClass,
