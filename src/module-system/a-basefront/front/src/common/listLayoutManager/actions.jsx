@@ -7,12 +7,11 @@ export default {
     async actions_fetchActions(item) {
       if (item._actions) return item._actions;
       // fetch
+      const options = this.base_prepareReadOptions();
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: item.atomId },
         atomClass: this.base.atomClass,
-        options: {
-          containerMode: this.container.mode,
-        },
+        options,
         // basic: !this.$device.desktop,
       });
       // filter

@@ -49,12 +49,11 @@ export default {
     },
     async bulk_loadActions() {
       if (this.bulk.actions) return;
+      const options = this.base_prepareReadOptions();
       const actions = await this.$api.post('/a/base/atom/actionsBulk', {
         atomClass: this.container.atomClass,
         stage: this.base_getCurrentStage(),
-        options: {
-          containerMode: this.container.mode, // for detail
-        },
+        options,
       });
       this.bulk.actions = this.bulk_patchActions(actions);
     },

@@ -85,6 +85,10 @@ export default {
       const options = {};
       // layout
       options.layout = this.layout.current;
+      // for detail
+      options.containerMode = this.container.mode;
+      // atomIdMain
+      options.atomIdMain = this.container.options.atomIdMain;
       // options
       return options;
     },

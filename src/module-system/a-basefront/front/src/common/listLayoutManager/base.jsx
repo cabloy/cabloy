@@ -60,6 +60,10 @@ export default {
         options.resource = 1;
         options.resourceLocale = this.$meta.util.getLocale();
       }
+      // for detail
+      options.containerMode = this.container.mode;
+      // atomIdMain
+      options.atomIdMain = this.container.options.atomIdMain;
       // options
       return options;
     },

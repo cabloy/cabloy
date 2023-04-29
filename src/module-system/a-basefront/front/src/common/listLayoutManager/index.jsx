@@ -20,7 +20,7 @@ const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.eb
 
 // container: {
 //   atomClass,
-//   options,
+//   options, // .atomIdMain
 //   params,
 //   scene, // default/search/select/selecting
 //   layout,

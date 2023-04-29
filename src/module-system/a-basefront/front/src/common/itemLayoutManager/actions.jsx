@@ -81,12 +81,11 @@ export default {
   },
   methods: {
     async actions_fetchActions() {
+      const options = this.base_prepareReadOptions();
       let actions = await this.$api.post('/a/base/atom/actions', {
         key: { atomId: this.container.atomId },
         atomClass: this.base.atomClass,
-        options: {
-          containerMode: this.container.mode,
-        },
+        options,
       });
       // filter
       actions = actions.filter(action => {
