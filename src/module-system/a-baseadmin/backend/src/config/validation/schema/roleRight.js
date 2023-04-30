@@ -4,10 +4,10 @@ module.exports = app => {
   schemas.roleRight = {
     type: 'object',
     properties: {
-      // title
-      __groupTitle: {
+      // AuthorizationObjective
+      __groupAuthorizationObjective: {
         ebType: 'group-flatten',
-        ebTitle: 'Title',
+        ebTitle: 'AuthorizationObjective',
       },
       atomName: {
         type: 'string',

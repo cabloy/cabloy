@@ -15,15 +15,22 @@ export default {
         roleIdOwner = await this._onActionCreateGetRoleIdOwner();
         if (!roleIdOwner) return;
       }
-      // create
-      const { key, atom } = await ctx.$api.post('/a/base/atom/create', {
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
+      // params
+      const params = {
         atomClass,
         roleIdOwner,
         item,
         options: {
           returnAtom: true,
         },
-      });
+      };
+      if (dataOptions.atomIdMain) {
+        params.options.atomIdMain = dataOptions.atomIdMain;
+      }
+      // create
+      const { key, atom } = await ctx.$api.post('/a/base/atom/create', params);
       // event
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom });
       // menu

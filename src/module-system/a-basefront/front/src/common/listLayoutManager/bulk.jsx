@@ -24,7 +24,11 @@ export default {
       // action
       let _action = this.getAction(action);
       if (!_action) return;
-      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget });
+      // dataOptions
+      const dataOptions = {
+        atomIdMain: this.container.options.atomIdMain,
+      };
+      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget }, { dataOptions });
       // item
       let item = {
         atomClassId: action.atomClassId,
