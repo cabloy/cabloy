@@ -18,35 +18,35 @@ module.exports = ctx => {
             where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
               order by a.code asc
       `;
-      const actions = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
+      const actionsRes = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
       // actions res
-      const actionsRes = [];
-      for (const action of actions) {
+      const results = [];
+      for (const actionRes of actionsRes) {
         // just for listing check, not for right check
         const actionBase = ctx.bean.base.action({
-          module: action.module,
-          atomClassName: action.atomClassName,
-          code: action.code,
+          module: actionRes.module,
+          atomClassName: actionRes.atomClassName,
+          code: actionRes.code,
         });
         if (actionBase.containerMode && containerMode && actionBase.containerMode !== containerMode) {
           continue;
         }
         // right check
-        const res = await this.checkRightAction({
+        const _resCheck = await this.checkRightAction({
           atom: { id: key.atomId },
           atomClass,
-          action: action.code,
+          action: actionRes.code,
           options,
           user,
         });
-        if (res) {
-          if (res.__task) {
-            action.__task = res.__task;
+        if (_resCheck) {
+          if (_resCheck.__task) {
+            actionRes.__task = _resCheck.__task;
           }
-          actionsRes.push(action);
+          results.push(actionRes);
         }
       }
-      return actionsRes;
+      return results;
     }
   }
 

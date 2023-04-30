@@ -8,7 +8,7 @@ module.exports = ctx => {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const actionsRes = await this.__checkRightActionBulk_fetchActions({ atomClass, atomClassBase, user });
-      const res = [];
+      const results = [];
       for (const actionRes of actionsRes) {
         // just for listing check, not for right check
         const actionBase = ctx.bean.base.action({
@@ -20,7 +20,7 @@ module.exports = ctx => {
           continue;
         }
         // right check
-        const _res = await this.__checkRightActionBulk_check({
+        const _resCheck = await this.__checkRightActionBulk_check({
           atomClass,
           atomClassBase,
           actionRes,
@@ -28,11 +28,11 @@ module.exports = ctx => {
           options,
           user,
         });
-        if (_res) {
-          res.push(_res);
+        if (_resCheck) {
+          results.push(_resCheck);
         }
       }
-      return res;
+      return results;
     }
   }
 
