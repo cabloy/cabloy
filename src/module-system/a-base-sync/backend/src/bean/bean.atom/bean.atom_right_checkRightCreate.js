@@ -6,16 +6,29 @@ module.exports = ctx => {
     }
 
     // atomClass: { id, module, atomClassName }
-    async checkRightCreateRole({ atomClass, roleIdOwner, user }) {
+    async checkRightCreateRole({ atomClass, roleIdOwner, user, options }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
-      // normal check
-      const res = await this._checkRightCreateRole_normal({ atomClass, roleIdOwner, user });
-      if (!res) return res;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // check detail
+      const detailRightInherit = await this._checkDetailRightInherit({
+        atomClass,
+        atomClassBase,
+        action: 'create',
+        user,
+        checkFlow: false,
+        disableAuthOpenCheck: false,
+        options,
+      });
+      if (!detailRightInherit) return null;
       // auth open check
       const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action: 'create' });
       if (!resAuthOpenCheck) return null;
-      // ok
-      return res;
+      // ignore itemOnly and detail
+      if (atomClassBase.itemOnly) {
+        return true;
+      }
+      // normal check
+      return await this._checkRightCreateRole_normal({ atomClass, roleIdOwner, user });
     }
 
     async _checkRightCreateRole_normal({ atomClass, roleIdOwner, user }) {
