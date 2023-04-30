@@ -54,5 +54,9 @@ module.exports = context => {
       ignored: ['**/.git/**', '/node_modules/'],
       // ignored: [ '**/backend/cms/**', '**/backend/test/**', '**/src/module/*/dist/**', '**/.git/**' ],
     },
+    cache: {
+      type: 'filesystem',
+      allowCollectingMemory: true,
+    },
   });
 };
