@@ -6,19 +6,12 @@ module.exports = ctx => {
       options = options || {};
       const containerMode = options.containerMode;
       // atomClass
-      const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
+      const { atomClass, atomClassBase } = await this._prepareAtomClassAndAtomClassBase({
         key,
         atomClass: atomClassOuter,
       });
       // actions
-      const _basic = basic ? 'and a.code in (3,4)' : '';
-      const sql = `
-        select a.*,b.module,b.atomClassName from aAtomAction a
-          left join aAtomClass b on a.atomClassId=b.id
-            where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
-              order by a.code asc
-      `;
-      const actionsRes = await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
+      const actionsRes = await this.__actions_fetchActions({ atomClass, atomClassBase, basic, user });
       // actions res
       const results = [];
       for (const actionRes of actionsRes) {
@@ -47,6 +40,55 @@ module.exports = ctx => {
         }
       }
       return results;
+    }
+
+    async __actions_fetchActions({ atomClass, atomClassBase, basic, user }) {
+      // enableRight
+      const enableRight = atomClassBase.enableRight;
+      if (enableRight) {
+        // from db
+        return await this.__actions_fetchActions_fromDb({ atomClass, atomClassBase, basic, user });
+      }
+      // from meta
+      return await this.__actions_fetchActions_fromMeta({ atomClass, atomClassBase, basic, user });
+    }
+
+    async __actions_fetchActions_fromDb({ atomClass, /* atomClassBase,*/ basic, user }) {
+      const _basic = basic ? 'and a.code in (3,4)' : '';
+      const sql = `
+        select a.*,b.module,b.atomClassName from aAtomAction a
+          left join aAtomClass b on a.atomClassId=b.id
+            where a.iid=? and a.deleted=0 and a.bulk=0 and a.atomClassId=? ${_basic}
+              order by a.code asc
+      `;
+      return await ctx.model.query(sql, [ctx.instance.id, atomClass.id]);
+    }
+
+    async __actions_fetchActions_fromMeta({ atomClass, atomClassBase, basic, user }) {
+      // basic
+      if (basic) {
+        const actionsRes = [];
+        for (const actionName of ['write', 'delete']) {
+          const actionRes = await this.__checkRightActionBulk_fetchActions_fromMeta({
+            atomClass,
+            atomClassBase,
+            action: actionName,
+            user,
+            bulk: false,
+          });
+          if (actionRes) {
+            actionsRes.push(actionRes);
+          }
+        }
+        return actionsRes;
+      }
+      // all
+      return await this.__checkRightActionBulk_fetchActions_fromMeta({
+        atomClass,
+        atomClassBase,
+        user,
+        bulk: false,
+      });
     }
   }
 
