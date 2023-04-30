@@ -16,37 +16,39 @@ module.exports = ctx => {
 
     async _checkRightActionBulk_normal({ atomClass, action, stage, user }) {
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
-      const actionRes = await this.__checkRightActionBulk_fetchAction({ atomClass, atomClassBase, action, user });
+      const actionRes = await this.__checkRightActionBulk_fetchActions({ atomClass, atomClassBase, action, user });
       return await this.__checkRightActionBulk_check({ atomClass, atomClassBase, actionRes, stage, user });
     }
 
-    async __checkRightActionBulk_fetchActions({ atomClass, atomClassBase, user }) {
-      const sql = this.sqlProcedure.checkRightActionBulk({
-        iid: ctx.instance.id,
-        userIdWho: user.id,
-        atomClass,
-        atomClassBase,
-      });
-      const actionsRes = await ctx.model.query(sql);
-      return actionsRes;
+    async __checkRightActionBulk_fetchActions({ atomClass, atomClassBase, action, user }) {
+      // enableRight
+      const enableRight = atomClassBase.enableRight;
+      if (enableRight) {
+        return await this.__checkRightActionBulk_fetchActions_fromDb({ atomClass, atomClassBase, action, user });
+      }
     }
 
-    async __checkRightActionBulk_fetchAction({ atomClass, atomClassBase, action, user }) {
-      // parse action code
-      action = ctx.bean.atomAction.parseActionCode({
-        action,
-        atomClass,
-      });
-      // check right
-      const sql = this.sqlProcedure.checkRightActionBulk({
+    async __checkRightActionBulk_fetchActions_fromDb({ atomClass, atomClassBase, action, user }) {
+      const params = {
         iid: ctx.instance.id,
         userIdWho: user.id,
         atomClass,
         atomClassBase,
-        action,
-      });
-      const actionRes = await ctx.model.queryOne(sql);
-      return actionRes;
+      };
+      if (action) {
+        // parse action code
+        action = ctx.bean.atomAction.parseActionCode({
+          action,
+          atomClass,
+        });
+        params.action = action;
+      }
+      // sql
+      const sql = this.sqlProcedure.checkRightActionBulk(params);
+      if (action) {
+        return await ctx.model.queryOne(sql);
+      }
+      return await ctx.model.query(sql);
     }
 
     async __checkRightActionBulk_check({ atomClass, atomClassBase, actionRes, stage, options, user }) {
