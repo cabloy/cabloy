@@ -39,7 +39,7 @@ export default {
         // write
         const actionsAll = await ctx.$store.dispatch('a/base/getActions');
         let actionWrite = actionsAll[itemWrite.module][itemWrite.atomClassName].write;
-        actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions });
+        actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
         return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item: itemWrite });
       }
       // just return key
