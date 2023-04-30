@@ -2,10 +2,10 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
     // atomClass: { id, module, atomClassName }
-    async checkRightActionBulk({ atomClass, action, stage, user }) {
+    async checkRightActionBulk({ atomClass, action, stage, user, options }) {
       atomClass = await ctx.bean.atomClass.get(atomClass);
       // normal check
-      const res = await this._checkRightActionBulk_normal({ atomClass, action, stage, user });
+      const res = await this._checkRightActionBulk_normal({ atomClass, action, stage, user, options });
       if (!res) return res;
       // auth open check
       const resAuthOpenCheck = await ctx.bean.authOpen.checkRightAtomAction({ atomClass, action });
@@ -14,10 +14,10 @@ module.exports = ctx => {
       return res;
     }
 
-    async _checkRightActionBulk_normal({ atomClass, action, stage, user }) {
+    async _checkRightActionBulk_normal({ atomClass, action, stage, user, options }) {
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       const actionRes = await this.__checkRightActionBulk_fetchActions({ atomClass, atomClassBase, action, user });
-      return await this.__checkRightActionBulk_check({ atomClass, atomClassBase, actionRes, stage, user });
+      return await this.__checkRightActionBulk_check({ atomClass, atomClassBase, actionRes, stage, user, options });
     }
 
     async __checkRightActionBulk_fetchActions({ atomClass, atomClassBase, action, user }) {
@@ -107,7 +107,7 @@ module.exports = ctx => {
       return await ctx.model.query(sql);
     }
 
-    async __checkRightActionBulk_check({ atomClass, atomClassBase, actionRes, stage, options, user }) {
+    async __checkRightActionBulk_check({ atomClass, atomClassBase, actionRes, stage, user, options }) {
       if (!actionRes) return actionRes;
       // check detail
       const detailRightInherit = await this._checkDetailRightInherit({

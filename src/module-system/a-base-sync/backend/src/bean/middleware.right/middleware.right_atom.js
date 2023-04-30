@@ -84,6 +84,7 @@ module.exports = ctx => {
         const res = await ctx.bean.atom.checkRightCreate({
           atomClass,
           user,
+          options: ctx.request.body.options,
         });
         if (!res) ctx.throw(403);
         return;
@@ -98,6 +99,7 @@ module.exports = ctx => {
           },
           roleIdOwner,
           user,
+          options: ctx.request.body.options,
         });
         if (!res) ctx.throw(403);
       } else {
