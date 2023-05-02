@@ -52,15 +52,23 @@ module.exports = ctx => {
       return true;
     }
 
-    async checkRightRead({ atom: { id }, atomClass: atomClassOuter, user, checkFlow, disableAuthOpenCheck, options }) {
-      options = options || {};
+    async checkRightRead({
+      atom: { id },
+      atomClass: atomClassOuter,
+      options: optionsOuter,
+      user,
+      checkFlow,
+      disableAuthOpenCheck,
+    }) {
       const {
         atom: _atom,
         atomClass,
         atomClassBase,
+        options,
       } = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // check detail
       const detailRightInherit = await this._checkDetailRightInherit({
