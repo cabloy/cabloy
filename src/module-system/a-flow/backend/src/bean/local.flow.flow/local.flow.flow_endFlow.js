@@ -56,7 +56,7 @@ module.exports = ctx => {
         };
         await ctx.bean.atom._submitDirect({
           atomClass,
-          key: { atomId },
+          key: { atomId, itemId: item.itemId },
           item,
           user: { id: this.context._atom.userIdUpdated },
         });

@@ -41,6 +41,13 @@ module.exports = ctx => {
       if (!srcItem) {
         srcItem = await ctx.bean.atom.read({ key: { atomId: srcKey.atomId }, atomClass, user: null });
       }
+      if (!srcKey.itemId) {
+        if (!atomClassBase.itemOnly) {
+          srcKey.itemId = srcItem.itemId;
+        } else {
+          srcKey.itemId = srcKey.atomId;
+        }
+      }
       // destItem
       let destItem;
       if (!atomClassBase.itemOnly) {
