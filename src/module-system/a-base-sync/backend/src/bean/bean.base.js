@@ -304,6 +304,10 @@ module.exports = ctx => {
             cms: false,
           });
         }
+        // model
+        if (atomClass.tableName && !atomClass.model) {
+          atomClass.model = key;
+        }
         // titleLocale
         atomClass.titleLocale = ctx.text(atomClass.title);
         // ok

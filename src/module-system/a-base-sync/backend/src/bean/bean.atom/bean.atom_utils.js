@@ -34,6 +34,7 @@ module.exports = ctx => {
       const { atomClass, atomClassBase } = res;
       let atom, key;
       if (atomClassBase.itemOnly) {
+        console.log('--- model: ', atomClassBase.model);
         atom = { id: atomId, iid: ctx.instance.id };
         key = { atomId, itemId: atomId };
       } else {
