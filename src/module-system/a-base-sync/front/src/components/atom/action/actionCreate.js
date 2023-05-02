@@ -9,14 +9,18 @@ export default {
       };
       // atomClassBase
       const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
+      // createDelay
+      if (action.createDelay && !dataOptions.createContinue) {
+        console.log(action);
+      }
       // get roleIdOwner
       let roleIdOwner;
       if (!atomClassBase.itemOnly) {
         roleIdOwner = await this._onActionCreateGetRoleIdOwner();
         if (!roleIdOwner) return;
       }
-      // dataOptions
-      const dataOptions = action.dataOptions || {};
       // params
       const params = {
         atomClass,

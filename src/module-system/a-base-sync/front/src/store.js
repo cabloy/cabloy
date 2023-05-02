@@ -42,8 +42,9 @@ export default function (Vue) {
       locales: null,
       modules: null,
       atomClasses: null,
-      atomClassBases: {},
+      atomClassBases: {}, // new solution
       actions: null,
+      actionsBases: {}, // new solution
       detailClasses: null,
       detailActions: null,
       resourceTypes: null,
@@ -112,6 +113,10 @@ export default function (Vue) {
       setAtomClassBase(state, { atomClass, atomClassBase }) {
         const key = `${atomClass.module}:${atomClass.atomClassName}`;
         state.atomClassBases[key] = atomClassBase;
+      },
+      setActionsBase(state, { atomClass, actionsBase }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}`;
+        state.actionsBases[key] = actionsBase;
       },
       setAtomClasses(state, atomClasses) {
         state.atomClasses = atomClasses;
@@ -215,6 +220,15 @@ export default function (Vue) {
         });
         commit('setAtomClassBase', { atomClass, atomClassBase });
         return atomClassBase;
+      },
+      async getActionsBase({ state, commit }, { atomClass }) {
+        const key = `${atomClass.module}:${atomClass.atomClassName}`;
+        if (state.actionsBases[key]) return state.actionsBases[key];
+        const actionsBase = await Vue.prototype.$meta.api.post('/a/base/base/getActionsBase', {
+          atomClass,
+        });
+        commit('setActionsBase', { atomClass, actionsBase });
+        return actionsBase;
       },
       async getAtomClasses({ state, commit }) {
         if (state.atomClasses) return state.atomClasses;
