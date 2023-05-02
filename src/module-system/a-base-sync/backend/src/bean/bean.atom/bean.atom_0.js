@@ -180,11 +180,12 @@ module.exports = ctx => {
 
     // write
     //   target: should be null for frontend call
-    async write({ key: keyOuter, atomClass: atomClassOuter, target, item, options, user }) {
+    async write({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, target, item, user }) {
       // atomClass
-      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const { key, atomClass, atomClassBase, options } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -261,11 +262,12 @@ module.exports = ctx => {
     }
 
     // delete
-    async delete({ key: keyOuter, atomClass: atomClassOuter, options, user }) {
+    async delete({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, user }) {
       // atomClass
-      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const { key, atomClass, atomClassBase, options } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -342,11 +344,12 @@ module.exports = ctx => {
       }
     }
 
-    async enable({ key: keyOuter, atomClass: atomClassOuter, user }) {
+    async enable({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, user }) {
       // atomClass
-      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const { key, atomClass, atomClassBase, options } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -354,16 +357,17 @@ module.exports = ctx => {
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, user },
+        context: { atomClass, key, options, user },
         fn: 'enable',
       });
     }
 
-    async disable({ key: keyOuter, atomClass: atomClassOuter, user }) {
+    async disable({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, user }) {
       // atomClass
-      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const { key, atomClass, atomClassBase, options } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -371,7 +375,7 @@ module.exports = ctx => {
       await ctx.meta.util.executeBean({
         beanModule: _moduleInfo.relativeName,
         beanFullName,
-        context: { atomClass, key, user },
+        context: { atomClass, key, options, user },
         fn: 'disable',
       });
     }
