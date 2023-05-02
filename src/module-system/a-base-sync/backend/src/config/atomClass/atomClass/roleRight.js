@@ -4,6 +4,7 @@ module.exports = app => {
     info: {
       bean: 'roleRight',
       title: 'RoleAtomRight',
+      model: 'roleRight',
       tableName: 'aRoleRight',
       tableNameModes: {
         default: `

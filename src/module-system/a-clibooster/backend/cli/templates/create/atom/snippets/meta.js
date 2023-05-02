@@ -2,6 +2,7 @@ const __snippet_atom = `<%=argv.atomClassName%>: {
   info: {
     bean: '<%=argv.atomClassName%>',
     title: '<%=argv.atomClassNameCapitalize%>',
+    model: '<%=argv.atomClassName%>',
     tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',
     language: false,
     category: false,

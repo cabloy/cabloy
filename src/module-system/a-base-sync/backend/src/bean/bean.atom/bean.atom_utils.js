@@ -23,7 +23,7 @@ module.exports = ctx => {
       return { atomClass, atomClassBase };
     }
 
-    async _prepareKeyAndAtomAndAtomClass({ key: keyOuter, atomClass: atomClassOuter, throwWhenEmpty = true }) {
+    async _prepareKeyAndAtomAndAtomClass({ key: keyOuter, atomClass: atomClassOuter, options, throwWhenEmpty = true }) {
       const atomId = keyOuter.atomId;
       const res = await this._prepareAtomClassAndAtomClassBase({
         key: keyOuter,

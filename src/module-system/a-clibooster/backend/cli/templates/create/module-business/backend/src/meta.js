@@ -12,6 +12,7 @@ module.exports = app => {
           info: {
             bean: '<%=argv.atomClassName%>',
             title: '<%=argv.atomClassNameCapitalize%>',
+            model: '<%=argv.atomClassName%>',
             tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',
             language: false,
             category: false,
