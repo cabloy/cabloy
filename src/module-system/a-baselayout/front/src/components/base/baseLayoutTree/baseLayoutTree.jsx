@@ -39,7 +39,7 @@ export default {
     },
   },
   render() {
-    const blockName = this.layoutConfig.blockItems || 'items';
+    const blockName = this.layoutConfig.options?.blockItems || 'items';
     return <div>{this.layoutManager.layout_renderBlock({ blockName })}</div>;
   },
 };

@@ -49,7 +49,7 @@ export default {
     },
     _renderConfigProvider() {
       if (!this.antdv.locales) return null;
-      const blockName = this.layoutConfig.blockItems || 'items';
+      const blockName = this.layoutConfig.options?.blockItems || 'items';
       return (
         <a-config-provider locale={this.antdv_getLocale()} renderEmpty={this._renderEmpty}>
           {this.layoutManager.layout_renderBlock({ blockName })}
