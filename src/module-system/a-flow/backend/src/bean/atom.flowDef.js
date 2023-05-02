@@ -79,16 +79,16 @@ module.exports = app => {
       });
     }
 
-    async enable({ atomClass, key, user }) {
+    async enable({ atomClass, key, options, user }) {
       // super
-      await super.enable({ atomClass, key, user });
+      await super.enable({ atomClass, key, options, user });
       // deploy
       await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
     }
 
-    async disable({ atomClass, key, user }) {
+    async disable({ atomClass, key, options, user }) {
       // super
-      await super.disable({ atomClass, key, user });
+      await super.disable({ atomClass, key, options, user });
       // deploy
       await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
     }

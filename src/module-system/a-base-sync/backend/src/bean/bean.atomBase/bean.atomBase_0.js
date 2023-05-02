@@ -5,14 +5,14 @@ module.exports = app => {
       return await this.ctx.bean.atom._submitBase({ atomClass, key, options, user });
     }
 
-    async enable({ /* atomClass,*/ key /* , user*/ }) {
+    async enable({ /* atomClass,*/ key /* , options*/ /* , user*/ }) {
       await this.ctx.bean.atom.modelAtom.update({
         id: key.atomId,
         atomDisabled: 0,
       });
     }
 
-    async disable({ /* atomClass,*/ key /* , user*/ }) {
+    async disable({ /* atomClass,*/ key /* , options*/ /* , user*/ }) {
       await this.ctx.bean.atom.modelAtom.update({
         id: key.atomId,
         atomDisabled: 1,

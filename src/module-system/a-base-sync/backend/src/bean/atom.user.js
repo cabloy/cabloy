@@ -81,14 +81,14 @@ module.exports = app => {
       await this.ctx.model.user.delete({ id: userId });
     }
 
-    async enable({ atomClass, key, user }) {
+    async enable({ atomClass, key, options, user }) {
       // check demo
       const ctxCaller = this.ctx.ctxCaller;
       if (ctxCaller && ctxCaller.path === '/api/a/base/atom/enable') {
         this.ctx.bean.util.checkDemo();
       }
       // super
-      await super.enable({ atomClass, key, user });
+      await super.enable({ atomClass, key, options, user });
       // enable
       await this.ctx.model.user.update({
         id: key.itemId,
@@ -96,14 +96,14 @@ module.exports = app => {
       });
     }
 
-    async disable({ atomClass, key, user }) {
+    async disable({ atomClass, key, options, user }) {
       // check demo
       const ctxCaller = this.ctx.ctxCaller;
       if (ctxCaller && ctxCaller.path === '/api/a/base/atom/disable') {
         this.ctx.bean.util.checkDemo();
       }
       // super
-      await super.disable({ atomClass, key, user });
+      await super.disable({ atomClass, key, options, user });
       // disable
       await this.ctx.model.user.update({
         id: key.itemId,
