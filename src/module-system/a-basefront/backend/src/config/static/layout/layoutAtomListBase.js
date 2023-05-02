@@ -70,8 +70,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        subnavbar: {
-          policyDefault: true,
+        options: {
+          subnavbar: {
+            policyDefault: true,
+          },
         },
         blocks: {
           items: {
@@ -101,8 +103,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        subnavbar: {
-          policyDefault: true,
+        options: {
+          subnavbar: {
+            policyDefault: true,
+          },
         },
         blocks: {
           items: {
@@ -125,8 +129,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutTable',
         },
-        subnavbar: {
-          policyDefault: true,
+        options: {
+          subnavbar: {
+            policyDefault: true,
+          },
         },
         blocks: {
           items: {
@@ -274,8 +280,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        subnavbar: {
-          policyDefault: true,
+        options: {
+          subnavbar: {
+            policyDefault: true,
+          },
         },
         blocks: {
           title: {
@@ -297,8 +305,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        subnavbar: {
-          policyDefault: true,
+        options: {
+          subnavbar: {
+            policyDefault: true,
+          },
         },
         blocks: {
           title: {
@@ -320,7 +330,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

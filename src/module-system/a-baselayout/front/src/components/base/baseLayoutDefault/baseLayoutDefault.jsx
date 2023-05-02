@@ -22,7 +22,7 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      if (this.layoutConfig.subnavbar && this.layoutConfig.subnavbar.policyDefault) {
+      if (this.layoutConfig.options?.subnavbar?.policyDefault) {
         this.layoutManager.subnavbar_policyDefault();
       }
       // instance

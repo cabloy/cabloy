@@ -14,9 +14,9 @@ export default {
       this.subnavbar.render = render;
     },
     subnavbar_policyDefaultCalc() {
-      const subnavbar = this.layout.config.subnavbar;
+      const subnavbar = this.layout.config.options?.subnavbar || {};
       // render
-      let render = subnavbar?.render;
+      let render = subnavbar.render;
       if (render === undefined || render === null) {
         if (this.subnavbar_policyDefaultCalc_render) {
           render = this.subnavbar_policyDefaultCalc_render();
@@ -26,7 +26,7 @@ export default {
         }
       }
       // enable
-      let enable = subnavbar?.enable;
+      let enable = subnavbar.enable;
       if (enable === undefined || enable === null) {
         if (this.subnavbar_policyDefaultCalc_enable) {
           enable = this.subnavbar_policyDefaultCalc_enable();
