@@ -1,5 +1,12 @@
 const atom_0 = require('./bean.atom/bean.atom_0.js');
 const atom_0_create = require('./bean.atom/bean.atom_0_create.js');
+const atom_0_delete = require('./bean.atom/bean.atom_0_delete.js');
+const atom_0_enable = require('./bean.atom/bean.atom_0_enable.js');
+const atom_0_export = require('./bean.atom/bean.atom_0_export.js');
+const atom_0_import = require('./bean.atom/bean.atom_0_import.js');
+const atom_0_read = require('./bean.atom/bean.atom_0_read.js');
+const atom_0_select = require('./bean.atom/bean.atom_0_select.js');
+const atom_0_write = require('./bean.atom/bean.atom_0_write.js');
 const atom_1 = require('./bean.atom/bean.atom_1.js');
 const atom_starLabel = require('./bean.atom/bean.atom_starLabel.js');
 const atom_clone = require('./bean.atom/bean.atom_clone.js');
@@ -25,6 +32,13 @@ module.exports = ctx => {
     [
       //
       atom_0_create,
+      atom_0_delete,
+      atom_0_enable,
+      atom_0_export,
+      atom_0_import,
+      atom_0_read,
+      atom_0_select,
+      atom_0_write,
       atom_1,
       atom_starLabel,
       atom_clone,
