@@ -6,8 +6,11 @@ module.exports = app => {
       // atomIdMain
       const atomIdMain = options.atomIdMain;
       // add roleRight
+      const roleAtomId = atomIdMain;
+      const role = await this.ctx.bean.role._forceRole({ roleAtomId });
       const res = await this.ctx.model.roleRight.insert({
         roleAtomId: atomIdMain,
+        roleId: role.id,
       });
       // const roleRightId = await this.ctx.bean.role.addRoleRight({
       //   roleAtomId: atomIdMain,
