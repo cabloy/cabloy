@@ -1,6 +1,3 @@
-const _modulesLocales = {};
-const _themesLocales = {};
-const _locales = {};
 const _localeModules = {};
 const _resourceTypes = {};
 const _atomClasses = {};
@@ -13,27 +10,6 @@ module.exports = ctx => {
     constructor(moduleName) {
       super(ctx, 'base');
       this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    modules() {
-      if (!_modulesLocales[ctx.locale]) {
-        _modulesLocales[ctx.locale] = this._prepareModules();
-      }
-      return _modulesLocales[ctx.locale];
-    }
-
-    themes() {
-      if (!_themesLocales[ctx.locale]) {
-        _themesLocales[ctx.locale] = this._prepareThemes();
-      }
-      return _themesLocales[ctx.locale];
-    }
-
-    locales() {
-      if (!_locales[ctx.locale]) {
-        _locales[ctx.locale] = this._prepareLocales();
-      }
-      return _locales[ctx.locale];
     }
 
     localeModules() {
@@ -97,56 +73,6 @@ module.exports = ctx => {
     }
 
     // inner methods
-
-    _prepareModules() {
-      const modules = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        const _module = {
-          name: relativeName,
-          title: module.package.title || module.info.name,
-          description: ctx.text(module.package.description),
-          info: module.info,
-        };
-        const icon = module.package.eggBornModule && module.package.eggBornModule.icon;
-        if (icon) {
-          _module.icon = icon;
-        }
-        _module.titleLocale = ctx.text(_module.title);
-        modules[relativeName] = _module;
-      }
-      return modules;
-    }
-
-    _prepareThemes() {
-      const modules = {};
-      for (const relativeName in ctx.app.meta.modules) {
-        const module = ctx.app.meta.modules[relativeName];
-        if (module.package.eggBornModule && module.package.eggBornModule.theme) {
-          const _module = {
-            name: relativeName,
-            title: module.package.title || module.info.name,
-            description: ctx.text(module.package.description),
-            info: module.info,
-          };
-          _module.titleLocale = ctx.text(_module.title);
-          modules[relativeName] = _module;
-        }
-      }
-      return modules;
-    }
-
-    _prepareLocales() {
-      const locales = [];
-      const config = ctx.config.module(moduleInfo.relativeName);
-      for (const locale in config.locales) {
-        locales.push({
-          title: ctx.text(config.locales[locale]),
-          value: locale,
-        });
-      }
-      return locales;
-    }
 
     _prepareLocaleModules() {
       const localeModules = [];
