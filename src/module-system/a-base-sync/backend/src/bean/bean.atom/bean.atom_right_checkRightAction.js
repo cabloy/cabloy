@@ -12,11 +12,16 @@ module.exports = ctx => {
       user,
       checkFlow,
       disableAuthOpenCheck,
-      options,
+      options: optionsOuter,
     }) {
-      const { atom: _atom, atomClass } = await this._prepareKeyAndAtomAndAtomClass({
+      const {
+        atom: _atom,
+        atomClass,
+        options,
+      } = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // normal check
       const res = await this._checkRightAction_normal({ _atom, atomClass, action, stage, user, checkFlow, options });

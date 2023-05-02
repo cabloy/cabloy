@@ -4,16 +4,18 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async submit({ key: keyOuter, atomClass: atomClassOuter, options, user }) {
+    async submit({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, user }) {
       // atomClass
       const {
         key,
         atom: _atom,
         atomClass,
         atomClassBase,
+        options,
       } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // atom
       if (_atom.atomSimple === 1 && _atom.atomStage === 1) {

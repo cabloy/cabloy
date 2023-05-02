@@ -4,11 +4,12 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async closeDraft({ key: keyOuter, atomClass: atomClassOuter }) {
+    async closeDraft({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter }) {
       // atomClass
       const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
@@ -56,10 +57,11 @@ module.exports = ctx => {
       this._notifyDraftsFlowing(user, atomClass);
     }
 
-    async openDraft({ key: keyOuter, atomClass: atomClassOuter, user }) {
+    async openDraft({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, user }) {
       let { key, atom, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // check itemOnly
       if (atomClassBase.itemOnly) {

@@ -1,13 +1,14 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async checkRoleRightRead({ atom: { id }, atomClass: atomClassOuter, roleId }) {
+    async checkRoleRightRead({ atom: { id }, atomClass: atomClassOuter, options: optionsOuter, roleId }) {
       // not check draft
       const atomId = id;
       // atomClass
       const res = await this._prepareKeyAndAtomAndAtomClass({
         key: { atomId: id },
         atomClass: atomClassOuter,
+        options: optionsOuter,
         throwWhenEmpty: false,
       });
       if (!res) return null;
