@@ -230,6 +230,21 @@ export default function (Vue) {
         commit('setActionsBase', { atomClass, actionsBase });
         return actionsBase;
       },
+      async getActionBase({ dispatch }, { atomClass, code, name }) {
+        const actionsBase = await dispatch('getActionsBase', { atomClass });
+        // prepare
+        if (name && !isNaN(name)) {
+          code = parseInt(name);
+          name = null;
+        } else if (code && isNaN(code)) {
+          name = code;
+          code = null;
+        }
+        // action
+        if (name) return actionsBase[name];
+        const key = Object.keys(actionsBase).find(key => actionsBase[key].code === code);
+        return actionsBase[key];
+      },
       async getAtomClasses({ state, commit }) {
         if (state.atomClasses) return state.atomClasses;
         let data = await Vue.prototype.$meta.api.post('/a/base/base/atomClasses');
