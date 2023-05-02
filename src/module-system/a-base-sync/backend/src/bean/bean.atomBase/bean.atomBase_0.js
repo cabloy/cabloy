@@ -19,7 +19,7 @@ module.exports = app => {
       });
     }
 
-    async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, user }*/) {
+    async copy(/* { atomClass, target, srcKey, srcItem, destKey, destItem, options, user }*/) {
       // do nothing
     }
 

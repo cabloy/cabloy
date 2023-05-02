@@ -138,8 +138,8 @@ module.exports = app => {
       await this.beanRole.setDirty(true);
     }
 
-    async copy({ atomClass, target, srcKey, srcItem, destKey, destItem, user }) {
-      await super.copy({ atomClass, target, srcKey, srcItem, destKey, destItem, user });
+    async copy({ atomClass, target, srcKey, srcItem, destKey, destItem, options, user }) {
+      await super.copy({ atomClass, target, srcKey, srcItem, destKey, destItem, options, user });
       if (target === 'clone') {
         await this.ctx.model.role.update({
           id: destKey.itemId,

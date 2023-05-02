@@ -4,11 +4,12 @@ const mparse = require3('egg-born-mparse').default;
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
-    async clone({ key: keyOuter, atomClass: atomClassOuter, user }) {
+    async clone({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, user }) {
       // atomClass
-      const { key, atomClass, atomClassBase } = await this._prepareKeyAndAtomAndAtomClass({
+      const { key, atomClass, atomClassBase, options } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
+        options: optionsOuter,
       });
       // copy
       const keyDraft = await this._copy({
@@ -17,11 +18,12 @@ module.exports = ctx => {
         srcKey: { atomId: key.atomId },
         srcItem: null,
         destKey: null,
+        options,
         user,
       });
       // ok
       // get atom
-      const atom = await this.read({ key: keyDraft, atomClass, user });
+      const atom = await this.read({ key: keyDraft, atomClass, options, user });
       // draft/formal
       const res = { key: keyDraft, atom };
       if (!atomClassBase.itemOnly && atom.atomStage === 0) return { draft: res };
@@ -29,16 +31,9 @@ module.exports = ctx => {
     }
 
     // target: draft/formal/history/clone
-    async _copy({ target, atomClass: atomClassOuter, srcKey: srcKeyOuter, srcItem, destKey, options, user }) {
-      // atomClass
-      const {
-        key: srcKey,
-        atomClass,
-        atomClassBase,
-      } = await this._prepareKeyAndAtomAndAtomClass({
-        key: srcKeyOuter,
-        atomClass: atomClassOuter,
-      });
+    async _copy({ target, atomClass, srcKey, srcItem, destKey, options, user }) {
+      // atomClassBase
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
