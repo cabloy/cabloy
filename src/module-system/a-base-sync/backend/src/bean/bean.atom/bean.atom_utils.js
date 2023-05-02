@@ -79,6 +79,11 @@ module.exports = ctx => {
         atomClassName: atomClass.atomClassName,
       };
     }
+
+    // forAtomUser
+    _checkForAtomUser(atomClass) {
+      return atomClass && atomClass.module === 'a-base' && atomClass.atomClassName === 'user';
+    }
   }
   return Atom;
 };

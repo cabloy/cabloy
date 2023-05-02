@@ -74,6 +74,10 @@ module.exports = ctx => {
         }
       }
     }
+
+    async _update({ atom /* , user,*/ }) {
+      await this.modelAtom.update(atom);
+    }
   }
 
   return Atom;

@@ -50,6 +50,45 @@ module.exports = ctx => {
       item = await this.read({ key, atomClass, user });
       return { key, atom: item };
     }
+
+    async _add({
+      atomClass,
+      atom: {
+        atomStage = 0,
+        itemId,
+        atomName,
+        roleIdOwner = 0,
+        atomStatic = 0,
+        atomStaticKey = null,
+        atomRevision = 0,
+        atomLanguage = null,
+        atomCategoryId = 0,
+        atomTags = null,
+        allowComment = 1,
+        atomSimple = 0,
+      },
+      user,
+    }) {
+      const atomClassId = atomClass.id;
+      const res = await this.modelAtom.insert({
+        atomStage,
+        itemId,
+        atomClassId,
+        atomName,
+        atomStatic,
+        atomStaticKey,
+        atomRevision,
+        atomLanguage,
+        atomCategoryId,
+        atomTags,
+        atomSimple,
+        allowComment,
+        userIdCreated: user.id,
+        userIdUpdated: user.id,
+        roleIdOwner,
+      });
+      return res.insertId;
+    }
   }
 
   return Atom;

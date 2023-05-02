@@ -98,6 +98,64 @@ module.exports = ctx => {
         });
       }
     }
+
+    async _delete({ atomClass: atomClassOuter, atom, user }) {
+      // atomClass
+      const { atomClass } = await this._prepareAtomClassAndAtomClassBase({
+        key: { atomId: atom.id },
+        atomClass: atomClassOuter,
+      });
+      // stars
+      await this._delete_stars({ atomId: atom.id });
+      // labels
+      await this._delete_labels({ atomId: atom.id });
+      // aFile
+      await this.modelFile.delete({ atomId: atom.id });
+      // details
+      await ctx.bean.detail._deleteDetails({ atomClass, atomKey: { atomId: atom.id }, user });
+      // aAtom
+      await this.modelAtom.delete(atom);
+    }
+
+    async _delete_stars({ atomId }) {
+      const items = await this.modelAtomStar.select({
+        where: { atomId, star: 1 },
+      });
+      for (const item of items) {
+        this._notifyStars({ id: item.userId });
+      }
+      if (items.length > 0) {
+        await this.modelAtomStar.delete({ atomId });
+      }
+    }
+
+    async _delete_labels({ atomId }) {
+      const items = await this.modelAtomLabel.select({
+        where: { atomId },
+      });
+      for (const item of items) {
+        this._notifyLabels({ id: item.userId });
+      }
+      if (items.length > 0) {
+        await this.modelAtomLabel.delete({ atomId });
+        await this.modelAtomLabelRef.delete({ atomId });
+      }
+    }
+
+    async _deleteBulk_item({ atomClass, key, user }) {
+      // check right
+      const res = await ctx.bean.atom.checkRightAction({
+        atom: { id: key.atomId },
+        atomClass,
+        action: 4,
+        user,
+      });
+      if (!res) return false;
+      // delete
+      await this.delete({ atomClass, key, user });
+      // ok
+      return true;
+    }
   }
 
   return Atom;
