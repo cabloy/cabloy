@@ -24,6 +24,7 @@ module.exports = ctx => {
     }
 
     async _prepareKeyAndAtomAndAtomClass({ key: keyOuter, atomClass: atomClassOuter, options, throwWhenEmpty = true }) {
+      options = Object.assign({}, options);
       const atomId = keyOuter.atomId;
       const res = await this._prepareAtomClassAndAtomClassBase({
         key: keyOuter,
@@ -34,9 +35,14 @@ module.exports = ctx => {
       const { atomClass, atomClassBase } = res;
       let atom, key;
       if (atomClassBase.itemOnly) {
-        console.log('--- model: ', atomClassBase.model);
-        atom = { id: atomId, iid: ctx.instance.id };
+        const modelItem = ctx.model.module(atomClass.module)[atomClassBase.model];
+        atom = await modelItem.get({ id: atomId });
         key = { atomId, itemId: atomId };
+        // pacth atomIdMain of options
+        if (atomClassBase.detail) {
+          const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
+          options.atomIdMain = atom[atomIdMainField];
+        }
       } else {
         atom = await this.modelAtom.get({ id: atomId });
         if (!atom) {
@@ -49,16 +55,29 @@ module.exports = ctx => {
         if (atom.atomClassId !== atomClass.id) ctx.throw(403);
         key = { atomId, itemId: atom.itemId };
       }
-      atom = {
+      atom = this._patchAtom({ atom, key, atomClass });
+      // ok
+      return { key, atom, atomClass, atomClassBase, options };
+    }
+
+    _patchAtom({ atom, key, atomClass }) {
+      let atomId;
+      let itemId;
+      if (key) {
+        atomId = key.atomId;
+        itemId = key.itemId;
+      } else {
+        atomId = atom.id;
+        itemId = atom.itemId || atomId;
+      }
+      return {
         ...atom,
-        atomId: key.atomId,
-        itemId: key.itemId,
+        atomId,
+        itemId,
         atomClassId: atomClass.id,
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
       };
-      // ok
-      return { key, atom, atomClass, atomClassBase };
     }
   }
   return Atom;
