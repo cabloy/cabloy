@@ -10,6 +10,11 @@ module.exports = ctx => {
       return _actions[ctx.locale];
     }
 
+    actionsBase({ module, atomClassName }) {
+      const _actions = this.actions();
+      return _actions[module] && _actions[module][atomClassName];
+    }
+
     action({ module, atomClassName, code, name }) {
       // prepare
       if (name && !isNaN(name)) {
@@ -20,8 +25,7 @@ module.exports = ctx => {
         code = null;
       }
       // actions
-      const _actions = this.actions();
-      const actions = _actions[module][atomClassName];
+      const actions = this.actionsBase({ module, atomClassName });
       if (name) return actions[name];
       const key = Object.keys(actions).find(key => actions[key].code === code);
       return actions[key];
