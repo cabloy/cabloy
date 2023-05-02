@@ -10,10 +10,14 @@ export default {
       // atomClassBase
       const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       // dataOptions
-      const dataOptions = action.dataOptions || {};
+      let dataOptions = action.dataOptions || {};
       // createDelay
       if (action.createDelay && !dataOptions.createContinue) {
-        console.log(action);
+        // write
+        dataOptions = { ...dataOptions, createDelay: true };
+        let actionWrite = await ctx.$store.dispatch('a/base/getActionBase', { atomClass, name: 'write' });
+        actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
+        return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
       }
       // get roleIdOwner
       let roleIdOwner;
@@ -38,11 +42,10 @@ export default {
       // event
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom });
       // menu
-      if (!action.__noActionWrite) {
+      if (!dataOptions.noActionWrite) {
         const itemWrite = ctx.$utils.extend({}, item, key);
         // write
-        const actionsAll = await ctx.$store.dispatch('a/base/getActions');
-        let actionWrite = actionsAll[itemWrite.module][itemWrite.atomClassName].write;
+        let actionWrite = await ctx.$store.dispatch('a/base/getActionBase', { atomClass, name: 'write' });
         actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
         return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item: itemWrite });
       }
