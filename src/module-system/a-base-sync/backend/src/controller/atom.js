@@ -24,6 +24,33 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
+    async createDelayGetItem() {
+      // options
+      const options = this.ctx.request.body.options;
+      // create
+      const res = await this.ctx.service.atom.createDelayGetItem({
+        atomClass: this.ctx.request.body.atomClass,
+        options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
+    async createDelayCheckItem() {
+      // options
+      const options = this.ctx.request.body.options;
+      // item
+      const item = this.ctx.request.body.item;
+      // create
+      const res = await this.ctx.service.atom.createDelayCheckItem({
+        atomClass: this.ctx.request.body.atomClass,
+        item,
+        options,
+        user: this.ctx.state.user.op,
+      });
+      this.ctx.success(res);
+    }
+
     async create() {
       // options
       const options = this.ctx.request.body.options;

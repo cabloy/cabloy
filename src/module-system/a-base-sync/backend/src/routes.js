@@ -16,6 +16,18 @@ module.exports = app => {
     { method: 'post', path: 'atom/preferredRoleId', controller: 'atom' },
     {
       method: 'post',
+      path: 'atom/createDelayGetItem',
+      controller: 'atom',
+      meta: { right: { type: 'atom', action: 'create' } },
+    },
+    {
+      method: 'post',
+      path: 'atom/createDelayCheckItem',
+      controller: 'atom',
+      meta: { right: { type: 'atom', action: 'create' } },
+    },
+    {
+      method: 'post',
       path: 'atom/create',
       controller: 'atom',
       middlewares: 'transaction',
