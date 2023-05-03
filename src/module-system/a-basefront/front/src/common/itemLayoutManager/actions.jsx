@@ -190,7 +190,8 @@ export default {
       // if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
       if (actionWrite && this.base.item.atomStage !== 2 && !atomClosed) {
         const mode = this.container.mode;
-        const actionIcon = mode === 'edit' ? '::save-as-draft' : '::edit';
+        const actionIconDraft = this.base.item.atomSimple ? '::save' : '::save-as-draft';
+        const actionIcon = mode === 'edit' ? actionIconDraft : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
         const actionTitleDraft = this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
         const actionTitle = mode === 'edit' ? actionTitleDraft : this.actions_getActionTitle(actionWrite);
