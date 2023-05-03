@@ -12,15 +12,20 @@ export default {
       // dataOptions
       let dataOptions = action.dataOptions || {};
       // create params
-      const params = await this._onActionCreatePrepareParams({ atomClass, atomClassBase, dataOptions, item });
-      if (!params) {
-        // do nothing
-        return;
+      let params;
+      if (dataOptions.createContinue) {
+        params = dataOptions.createParams;
+      } else {
+        params = await this._onActionCreatePrepareParams({ atomClass, atomClassBase, dataOptions, item });
+        if (!params) {
+          // do nothing
+          return;
+        }
       }
       // createDelay
       if (action.createDelay && !dataOptions.createContinue) {
         // write
-        dataOptions = { ...dataOptions, createDelay: true };
+        dataOptions = { ...dataOptions, createDelay: true, createParams: params };
         let actionWrite = await ctx.$store.dispatch('a/base/getActionBase', { atomClass, name: 'write' });
         actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
         return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
