@@ -37,22 +37,6 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    async createDelayCheckItem() {
-      // options
-      const options = this.ctx.request.body.options || {};
-      options.ignoreValidate = false;
-      // item
-      const item = this.ctx.request.body.item;
-      // create
-      const res = await this.ctx.service.atom.createDelayCheckItem({
-        atomClass: this.ctx.request.body.atomClass,
-        item,
-        options,
-        user: this.ctx.state.user.op,
-      });
-      this.ctx.success(res);
-    }
-
     async create() {
       // options
       const options = this.ctx.request.body.options;

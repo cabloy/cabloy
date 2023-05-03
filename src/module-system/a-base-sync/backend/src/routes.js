@@ -18,12 +18,7 @@ module.exports = app => {
       method: 'post',
       path: 'atom/createDelayGetItem',
       controller: 'atom',
-      meta: { right: { type: 'atom', action: 'create' } },
-    },
-    {
-      method: 'post',
-      path: 'atom/createDelayCheckItem',
-      controller: 'atom',
+      middlewares: 'transaction',
       meta: { right: { type: 'atom', action: 'create' } },
     },
     {
