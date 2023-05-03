@@ -10,11 +10,32 @@ export default {
       };
       // atomClassBase
       const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
-      if (atomClassBase.itemOnly) {
-        await this._onActionWrite_itemOnly({ ctx, action, key, atomClass });
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
+      if (dataOptions.createDelay) {
+        // create delay
+        await this._onActionWrite_createDelay({ ctx, action, atomClass, dataOptions });
       } else {
-        await this._onActionWrite_normal({ ctx, action, key, atomClass });
+        // general
+        if (atomClassBase.itemOnly) {
+          await this._onActionWrite_itemOnly({ ctx, action, key, atomClass });
+        } else {
+          await this._onActionWrite_normal({ ctx, action, key, atomClass });
+        }
       }
+    },
+    async _onActionWrite_createDelay({ ctx, action, atomClass, dataOptions }) {
+      // queries
+      const queries = {
+        mode: 'edit',
+        atomId: key.atomId,
+        itemId: key.atomId,
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      };
+      // navigate
+      const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
+      ctx.$view.navigate(url, action.navigateOptions);
     },
     async _onActionWrite_itemOnly({ ctx, action, key, atomClass }) {
       // queries

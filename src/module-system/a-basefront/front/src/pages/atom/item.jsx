@@ -13,6 +13,7 @@ export default {
     const module = query && query.module;
     const atomClassName = query && query.atomClassName;
     const atomClass = module && atomClassName ? { module, atomClassName } : null;
+    const params = query && query.params ? JSON.parse(query.params) : {};
     return {
       container: {
         mode,
@@ -20,6 +21,7 @@ export default {
         itemId,
         layout,
         atomClass,
+        params,
       },
     };
   },
