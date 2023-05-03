@@ -19,7 +19,8 @@ const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixin
 //   atomId,
 //   itemId,
 //   layout,
-//   atomClass
+//   atomClass,
+//   params
 // },
 
 export default {
