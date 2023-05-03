@@ -77,8 +77,6 @@ module.exports = ctx => {
     }
 
     async _checkAtom_create({ atomClass, atomClassBase, user }) {
-      // atomClassId
-      const atomClassId = atomClass.id;
       // itemOnly
       if (atomClassBase.itemOnly) {
         const res = await ctx.bean.atom.checkRightCreate({
@@ -89,6 +87,18 @@ module.exports = ctx => {
         if (!res) ctx.throw(403);
         return;
       }
+      // roleIdOwner
+      await this._checkAtom_create_checkRoleIdOwner({ atomClass, atomClassBase, user });
+    }
+
+    async _checkAtom_create_checkRoleIdOwner({ atomClass, atomClassBase, user }) {
+      const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
+      if (!enableRightRoleScopes) {
+        // do nothing
+        return;
+      }
+      // atomClassId
+      const atomClassId = atomClass.id;
       // roleIdOwner
       const roleIdOwner = ctx.request.body.roleIdOwner;
       if (roleIdOwner) {

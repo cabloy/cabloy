@@ -22,8 +22,11 @@ export default {
       // get roleIdOwner
       let roleIdOwner;
       if (!atomClassBase.itemOnly) {
-        roleIdOwner = await this._onActionCreateGetRoleIdOwner();
-        if (!roleIdOwner) return;
+        const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
+        if (enableRightRoleScopes) {
+          roleIdOwner = await this._onActionCreateGetRoleIdOwner();
+          if (!roleIdOwner) return;
+        }
       }
       // params
       const params = {
