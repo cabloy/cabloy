@@ -75,7 +75,7 @@ module.exports = app => {
       },
       resourceAuthorizations: {
         code: 105,
-        title: 'Resource Authorizations',
+        title: 'RoleResourceRight',
         actionModule: 'a-baseadmin',
         actionComponent: 'actionRole',
         icon: { f7: ':outline:archive-lock-outline' },
@@ -83,7 +83,7 @@ module.exports = app => {
       },
       atomAuthorizations: {
         code: 106,
-        title: 'Atom Authorizations',
+        title: 'RoleAtomRight',
         actionModule: 'a-baseadmin',
         actionComponent: 'actionRole',
         icon: { f7: ':outline:database-lock-outline' },
