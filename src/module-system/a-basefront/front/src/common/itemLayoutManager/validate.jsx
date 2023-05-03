@@ -37,10 +37,11 @@ export default {
           this.validate.errors = err.message;
           const message = this.$text('Data Validation Error');
           this.$view.toast.show({ text: message });
-          this.$nextTick(() => {
-            // switch layout
-            this.layout_switchLayout('default');
-          });
+          // need not switch layout, because saveDraftOnly take effect
+          // this.$nextTick(() => {
+          //   // switch layout
+          //   this.layout_switchLayout('default');
+          // });
           return;
         }
         if (err.message) {
