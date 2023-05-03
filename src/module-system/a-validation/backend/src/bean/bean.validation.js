@@ -53,7 +53,7 @@ module.exports = ctx => {
       const ignoreRules = filterOptions && filterOptions.ignoreRules;
       // params
       if (ignoreRules) {
-        options = { coerceTypes: false }; // not use _validator.options
+        options = { coerceTypes: false, useDefaults: true }; // not use _validator.options
       }
       const params = {
         options,
@@ -98,7 +98,7 @@ module.exports = ctx => {
       // create ajv_ignoreRules
       const schemas2 = this._prepareSchemas_ignoreRules({ schemas });
       _validator.ajv_ignoreRules = ctx.app.meta.ajv.create({
-        options: { coerceTypes: false }, // not use _validator.options
+        options: { coerceTypes: false, useDefaults: true }, // not use _validator.options
         keywords: meta.validation.keywords,
         schemas: schemas2,
         schemaRoot: _schemas[0],
