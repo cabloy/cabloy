@@ -9,7 +9,7 @@ export default {
       };
       // params
       const params = {
-        pageTitle: `${this.$text('Atom Right')}: ${item.atomNameLocale || item.atomName}`,
+        //  pageTitle: `${this.$text('Atom Right')}: ${item.atomNameLocale || item.atomName}`,
       };
       // queries
       const queries = {

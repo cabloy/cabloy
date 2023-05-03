@@ -3,7 +3,13 @@ module.exports = app => {
   // roleRight
   schemas.roleRight = {
     type: 'object',
-    properties: {},
+    properties: {
+      // AuthorizationObjective
+      __groupAuthorizationObjective: {
+        ebType: 'group-flatten',
+        ebTitle: 'AuthorizationObjective',
+      },
+    },
   };
   // role right search
   schemas.roleRightSearch = {
