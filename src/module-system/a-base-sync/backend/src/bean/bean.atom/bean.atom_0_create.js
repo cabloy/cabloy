@@ -89,6 +89,14 @@ module.exports = ctx => {
       });
       return res.insertId;
     }
+
+    async createDelayGetItem({ atomClass, options, user }) {
+      // validate
+      const item = {};
+      await ctx.bean.atomBase._writeValidate({ atomClass, target: 'clone', key: null, item, options, user });
+      console.log(item);
+      return item;
+    }
   }
 
   return Atom;

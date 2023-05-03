@@ -69,15 +69,24 @@ export default {
     },
     async base_loadItem() {
       try {
-        // item
+        // options
         const options = this.base_prepareReadOptions();
-        this.base.item = await this.$api.post('/a/base/atom/read', {
-          key: { atomId: this.container.atomId },
-          atomClass: this.base.atomClass,
-          options,
-        });
-        // actions
-        await this.actions_fetchActions();
+        // check create delay
+        if (this.container.params.createDelay) {
+          this.base.item = await this.$api.post('/a/base/atom/createDelayGetItem', {
+            atomClass: this.base.atomClass,
+            options,
+          });
+        } else {
+          // item
+          this.base.item = await this.$api.post('/a/base/atom/read', {
+            key: { atomId: this.container.atomId },
+            atomClass: this.base.atomClass,
+            options,
+          });
+          // actions
+          await this.actions_fetchActions();
+        }
         // found
         this.base.notfound = false;
         // ok
@@ -94,8 +103,9 @@ export default {
       options.layout = this.layout.current;
       // for detail
       options.containerMode = this.container.mode;
-      // atomIdMain
-      options.atomIdMain = this.container.options.atomIdMain;
+      // need not atomIdMain
+      // // atomIdMain
+      // options.atomIdMain = this.container.options.atomIdMain;
       // options
       return options;
     },
