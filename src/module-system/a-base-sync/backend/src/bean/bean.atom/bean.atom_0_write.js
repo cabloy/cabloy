@@ -8,7 +8,13 @@ module.exports = ctx => {
     //   target: should be null for frontend call
     async write({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter, target, item, user }) {
       // atomClass
-      const { key, atomClass, atomClassBase, options } = await this._prepareKeyAndAtomAndAtomClass({
+      const {
+        key,
+        atom: _atomBasic,
+        atomClass,
+        atomClassBase,
+        options,
+      } = await this._prepareKeyAndAtomAndAtomClass({
         key: keyOuter,
         atomClass: atomClassOuter,
         options: optionsOuter,
@@ -16,14 +22,6 @@ module.exports = ctx => {
       // atom bean
       const _moduleInfo = mparse.parseInfo(atomClass.module);
       const beanFullName = `${_moduleInfo.relativeName}.atom.${atomClassBase.bean}`;
-      // basic info
-      let _atomBasic;
-      if (!atomClassBase.itemOnly) {
-        _atomBasic = await this.modelAtom.get({ id: key.atomId });
-        key.itemId = _atomBasic.itemId;
-      } else {
-        key.itemId = key.atomId;
-      }
       // support formal flow
       // if (_atomBasic.atomStage !== _atomBasic.atomSimple) ctx.throw(403);
       if (!atomClassBase.itemOnly) {
