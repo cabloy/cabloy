@@ -183,17 +183,19 @@ export default {
       return null;
     },
     actions_renderButtonSave() {
+      const actionWrite = this.actions_findAction('write');
+      if (!actionWrite) return null;
+      const atomClassBase = this.base.atomClassBase;
       // only show on draft
       const atomClosed = this.base.item.atomClosed === 1;
-      const actionWrite = this.actions_findAction('write');
       // support simple
       // if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
-      if (actionWrite && this.base.item.atomStage !== 2 && !atomClosed) {
+      if (atomClassBase.itemOnly || (this.base.item.atomStage !== 2 && !atomClosed)) {
         const mode = this.container.mode;
-        const actionIconDraft = this.base.item.atomSimple ? '::save' : '::save-as-draft';
+        const actionIconDraft = atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
         const actionIcon = mode === 'edit' ? actionIconDraft : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
-        const actionTitleDraft = this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
+        const actionTitleDraft = atomClassBase.itemOnly || this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
         const actionTitle = mode === 'edit' ? actionTitleDraft : this.actions_getActionTitle(actionWrite);
         return (
           <eb-link
