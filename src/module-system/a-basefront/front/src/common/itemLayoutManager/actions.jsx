@@ -11,6 +11,7 @@ export default {
   computed: {
     actions_listPopover() {
       if (!this.base_ready) return null;
+      if (!this.actions.list) return null;
       const actions = [];
       for (const action of this.actions.list) {
         // layout
@@ -214,8 +215,17 @@ export default {
     },
     actions_render() {
       if (!this.base_ready) return null;
-      const actionNamesRight = ['layout', 'write', 'read'];
       const children = [];
+      // basic
+      this.actions_render_buttonBasic({ children });
+      // flow actions / directShowOnItem
+      this.actions_render_buttonNormal({ children });
+      // popover
+      this.actions_render_buttonPopover({ children });
+      //
+      return children;
+    },
+    actions_render_buttonBasic({ children }) {
       // layout button before save
       const actionLayout = this.actions_findAction('layout');
       if (actionLayout) {
@@ -239,7 +249,10 @@ export default {
       // only show on draft/edit
       const buttonView = this.actions_renderButtonView();
       if (buttonView) children.push(buttonView);
-      // flow actions / directShowOnItem
+    },
+    actions_render_buttonNormal({ children }) {
+      if (!this.actions.list) return;
+      const actionNamesRight = ['layout', 'write', 'read'];
       for (const action of this.actions.list) {
         const actionName = action.name;
         if (actionNamesRight.includes(actionName)) continue;
@@ -266,19 +279,17 @@ export default {
           );
         }
       }
-      // popover
-      if (this.actions_listPopover) {
-        children.push(
-          <f7-link
-            key="actionsPopover"
-            iconF7="::more-horiz"
-            tooltip={this.$text('More')}
-            popover-open={`#${this.actions.popoverId}`}
-          ></f7-link>
-        );
-      }
-      //
-      return children;
+    },
+    actions_render_buttonPopover({ children }) {
+      if (!this.actions_listPopover) return;
+      children.push(
+        <f7-link
+          key="actionsPopover"
+          iconF7="::more-horiz"
+          tooltip={this.$text('More')}
+          popover-open={`#${this.actions.popoverId}`}
+        ></f7-link>
+      );
     },
     actions_renderPopover() {
       let domList;
