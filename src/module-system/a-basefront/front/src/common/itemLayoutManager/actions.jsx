@@ -81,6 +81,17 @@ export default {
     },
   },
   methods: {
+    async actions_createDelayActions() {
+      // just use write action
+      const actions = [];
+      const actionWrite = {
+        code: 3,
+        name: 'write',
+      };
+      actions.push(actionWrite);
+      // ok
+      this.actions.list = actions;
+    },
     async actions_fetchActions() {
       const options = this.base_prepareReadOptions();
       let actions = await this.$api.post('/a/base/atom/actions', {
