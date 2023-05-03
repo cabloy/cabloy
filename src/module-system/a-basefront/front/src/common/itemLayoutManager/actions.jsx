@@ -85,7 +85,8 @@ export default {
       // just use write action
       const actions = [];
       const actionWrite = {
-        code: 3,
+        module: this.base.atomClass.module,
+        atomClassName: this.base.atomClass.atomClassName,
         name: 'write',
       };
       actions.push(actionWrite);

@@ -53,8 +53,15 @@ export default {
     async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
-      const _action = this.getAction(action);
+      let _action = this.getAction(action);
+      if (actionName === 'save' && this.container.params.createDelay) {
+        let dataOptions = this.container.params.createDelay.dataOptions;
+        dataOptions = this.$utils.extend({}, dataOptions, { createContinue: true });
+        _action = this.$utils.extend({}, _action, { dataOptions });
+      }
       const res = await this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      // todo: clear params.createDelay and others
+      // page dirty
       if (actionName === 'save' || actionName === 'submit') {
         this.page_setDirty(false);
       }
