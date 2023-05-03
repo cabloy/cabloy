@@ -11,6 +11,12 @@ export default {
       const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
       // dataOptions
       let dataOptions = action.dataOptions || {};
+      // create params
+      const params = await this._onActionCreatePrepareParams({ atomClass, atomClassBase, dataOptions, item });
+      if (!params) {
+        // do nothing
+        return;
+      }
       // createDelay
       if (action.createDelay && !dataOptions.createContinue) {
         // write
@@ -18,27 +24,6 @@ export default {
         let actionWrite = await ctx.$store.dispatch('a/base/getActionBase', { atomClass, name: 'write' });
         actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
         return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
-      }
-      // get roleIdOwner
-      let roleIdOwner;
-      if (!atomClassBase.itemOnly) {
-        const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
-        if (enableRightRoleScopes) {
-          roleIdOwner = await this._onActionCreateGetRoleIdOwner();
-          if (!roleIdOwner) return;
-        }
-      }
-      // params
-      const params = {
-        atomClass,
-        roleIdOwner,
-        item,
-        options: {
-          returnAtom: true,
-        },
-      };
-      if (dataOptions.atomIdMain) {
-        params.options.atomIdMain = dataOptions.atomIdMain;
       }
       // create
       const { key, atom } = await ctx.$api.post('/a/base/atom/create', params);
@@ -54,6 +39,31 @@ export default {
       }
       // just return key
       return key;
+    },
+    async _onActionCreatePrepareParams({ atomClass, atomClassBase, dataOptions, item }) {
+      // params
+      const params = {
+        atomClass,
+        item,
+        options: {
+          returnAtom: true,
+        },
+      };
+      // roleIdOwner
+      if (!atomClassBase.itemOnly) {
+        const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
+        if (enableRightRoleScopes) {
+          const roleIdOwner = await this._onActionCreateGetRoleIdOwner();
+          if (!roleIdOwner) return null;
+          params.roleIdOwner = roleIdOwner;
+        }
+      }
+      // atomIdMain
+      if (dataOptions.atomIdMain) {
+        params.options.atomIdMain = dataOptions.atomIdMain;
+      }
+      // ok
+      return params;
     },
     async _onActionCreateGetRoleIdOwner() {
       const { ctx } = this.$props;
