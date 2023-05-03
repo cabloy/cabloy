@@ -24,11 +24,10 @@ export default {
         }
       }
     },
-    async _onActionWrite_createDelay({ ctx, action, item, atomClass, dataOptions }) {
+    async _onActionWrite_createDelay({ ctx, action, atomClass, dataOptions }) {
       // params
       const params = {
         createDelay: {
-          item,
           dataOptions,
         },
       };
