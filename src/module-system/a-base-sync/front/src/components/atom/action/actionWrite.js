@@ -14,7 +14,7 @@ export default {
       const dataOptions = action.dataOptions || {};
       if (dataOptions.createDelay) {
         // create delay
-        await this._onActionWrite_createDelay({ ctx, action, atomClass, dataOptions });
+        await this._onActionWrite_createDelay({ ctx, action, item, atomClass, dataOptions });
       } else {
         // general
         if (atomClassBase.itemOnly) {
@@ -24,14 +24,20 @@ export default {
         }
       }
     },
-    async _onActionWrite_createDelay({ ctx, action, atomClass, dataOptions }) {
+    async _onActionWrite_createDelay({ ctx, action, item, atomClass, dataOptions }) {
+      // params
+      const params = {
+        createDelay: {
+          item,
+          dataOptions,
+        },
+      };
       // queries
       const queries = {
         mode: 'edit',
-        atomId: key.atomId,
-        itemId: key.atomId,
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
+        params: JSON.stringify(params),
       };
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
