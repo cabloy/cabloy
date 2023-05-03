@@ -73,11 +73,8 @@ export default {
         const options = this.base_prepareReadOptions();
         // check create delay
         if (this.container.params.createDelay) {
-          options.atomIdMain = this.container.params.createDelay.dataOptions.atomIdMain;
-          this.base.item = await this.$api.post('/a/base/atom/createDelayGetItem', {
-            atomClass: this.base.atomClass,
-            options,
-          });
+          const createParams = this.container.params.createDelay.dataOptions.createParams;
+          this.base.item = await this.$api.post('/a/base/atom/createDelayGetItem', createParams);
         } else {
           // item
           this.base.item = await this.$api.post('/a/base/atom/read', {

@@ -25,12 +25,21 @@ module.exports = app => {
     }
 
     async createDelayGetItem() {
+      // prepare options/item same as create action
       // options
-      const options = this.ctx.request.body.options || {};
-      options.ignoreValidate = false;
+      const options = this.ctx.request.body.options;
+      // item
+      const item = this.ctx.request.body.item || {};
+      // for safe
+      delete item.atomId;
+      delete item.itemId;
+      delete item.atomStaticKey;
+      delete item.atomRevision;
       // create
       const res = await this.ctx.service.atom.createDelayGetItem({
         atomClass: this.ctx.request.body.atomClass,
+        roleIdOwner: this.ctx.request.body.roleIdOwner,
+        item,
         options,
         user: this.ctx.state.user.op,
       });

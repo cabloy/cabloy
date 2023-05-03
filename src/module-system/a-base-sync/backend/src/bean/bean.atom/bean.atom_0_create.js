@@ -90,12 +90,13 @@ module.exports = ctx => {
       return res.insertId;
     }
 
-    async createDelayGetItem({ atomClass, options, user }) {
-      // validate
-      const item = {};
-      await ctx.bean.atomBase._writeValidate({ atomClass, target: 'clone', key: null, item, options, user });
-      console.log(item);
-      return item;
+    async createDelayGetItem({ atomClass, roleIdOwner, item, options, user }) {
+      // create
+      const { key, atom } = await ctx.bean.atom.create({ atomClass, roleIdOwner, item, options, user });
+      // delete
+      await ctx.bean.atom.delete({ key, atomClass, user });
+      // ok
+      return atom;
     }
   }
 

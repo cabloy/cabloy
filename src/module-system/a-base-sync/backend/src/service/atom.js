@@ -12,8 +12,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.preferredRoleId({ atomClass, user });
     }
 
-    async createDelayGetItem({ atomClass, options, user }) {
-      return await this.ctx.bean.atom.createDelayGetItem({ atomClass, options, user });
+    async createDelayGetItem({ atomClass, roleIdOwner, item, options, user }) {
+      return await this.ctx.bean.atom.createDelayGetItem({ atomClass, roleIdOwner, item, options, user });
     }
 
     async create({ atomClass, roleIdOwner, item, options, user }) {
