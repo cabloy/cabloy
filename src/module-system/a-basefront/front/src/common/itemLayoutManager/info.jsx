@@ -146,6 +146,10 @@ export default {
       );
     },
     info_renderAvatar() {
+      if (this.base.atomClassBase.itemOnly) {
+        // do nothing
+        return null;
+      }
       const item = this.base.item;
       const children = [];
       let small = false;
@@ -175,6 +179,10 @@ export default {
       );
     },
     info_renderDate() {
+      if (this.base.atomClassBase.itemOnly) {
+        // do nothing
+        return null;
+      }
       const item = this.base.item;
       const children = [];
       const dateCreated = this.$meta.util.formatDateTime(item.atomCreatedAt || item.createdAt);
@@ -214,9 +222,15 @@ export default {
         children.push(domFlowNodeState);
       }
       // avatar
-      children.push(this.info_renderAvatar());
+      const domAvatar = this.info_renderAvatar();
+      if (domAvatar) {
+        children.push(domAvatar);
+      }
       // date
-      children.push(this.info_renderDate());
+      const domDate = this.info_renderDate();
+      if (domDate) {
+        children.push(domDate);
+      }
       // ok
       return children;
     },
