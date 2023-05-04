@@ -9,7 +9,7 @@ export default {
       };
       // atomClassBase
       const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
-      // onActionSaveBefore
+      // onActionSaveBefore: should after createDelay
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSaveBefore) {
         await ctx.layout.instanceExtend.onActionSaveBefore(this.$props);

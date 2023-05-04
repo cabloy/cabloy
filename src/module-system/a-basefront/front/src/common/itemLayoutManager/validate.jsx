@@ -53,19 +53,48 @@ export default {
     async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
       const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
-      let _action = this.getAction(action);
-      if (actionName === 'save' && this.container.params.createDelay) {
-        let dataOptions = this.container.params.createDelay.dataOptions;
-        dataOptions = this.$utils.extend({}, dataOptions, { createContinue: true });
-        _action = this.$utils.extend({}, _action, { dataOptions });
+      const _action = this.getAction(action);
+      if (actionName === 'save') {
+        await this.validate_onPerformValidate_createDelay();
       }
       const res = await this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
-      // todo: clear params.createDelay and others
       // page dirty
       if (actionName === 'save' || actionName === 'submit') {
         this.page_setDirty(false);
       }
       return res;
+    },
+    async validate_onPerformValidate_createDelay() {
+      if (!this.container.params.createDelay) {
+        // do nothing
+        return;
+      }
+      // create
+      let actionCreate = await this.$store.dispatch('a/base/getActionBase', {
+        atomClass: this.base.atomClass,
+        name: 'create',
+      });
+      // dataOptions
+      let dataOptions = this.container.params.createDelay.dataOptions;
+      dataOptions = this.$utils.extend({}, dataOptions, { createContinue: true, noActionWrite: true });
+      actionCreate = this.$utils.extend({}, actionCreate, { dataOptions });
+      // create
+      const key = await this.$meta.util.performAction({ ctx: this, action: actionCreate, item: this.base.item });
+      // makeup
+      await this.validate_onPerformValidate_createDelay_makeup({ key });
+    },
+    async validate_onPerformValidate_createDelay_makeup({ key }) {
+      // clear createDelay
+      this.container.params.createDelay = null;
+      // container
+      this.container.atomId = key.atomId;
+      this.container.itemId = key.itemId;
+      // item
+      this.base.item.id = key.itemId;
+      this.base.item.atomId = key.atomId;
+      this.base.item.itemId = key.itemId;
+      // actions
+      await this.actions_fetchActions();
     },
     validate_onValidateItemChange() {
       if (this.container.mode !== 'edit') return;
