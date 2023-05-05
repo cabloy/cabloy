@@ -56,7 +56,7 @@ export default {
     // atomClasses_modeUser() {
     //   return this.user;
     // },
-    atomClassesGroup() {
+    atomClassesGroups() {
       // filter
       const atomClasses = this._prepareAtomClasses_filter();
       // group
@@ -69,12 +69,30 @@ export default {
     }, 300);
   },
   methods: {
+    onPerformClearAtomClass() {
+      this.contextCallback(200, null);
+      this.$f7router.back();
+    },
+    onPerformItemClick(event, item) {
+      const { atomClass, atomClassBase } = item;
+      const data = {
+        ...atomClass,
+        title: atomClassBase.title,
+        titleLocale: atomClassBase.titleLocale,
+      };
+      this.contextCallback(200, data);
+      this.$f7router.back();
+    },
     _prepareAtomClasses_filter() {
       const atomClasses = [];
       for (const moduleName in this.atomClassesAll) {
         const moduleBase = this.modulesAll[moduleName];
         const atomClassesModule = this.atomClassesAll[moduleName];
         for (const atomClassName in atomClassesModule) {
+          const atomClass = {
+            module: moduleName,
+            atomClassName,
+          };
           const atomClassBase = atomClassesModule[atomClassName];
           const atomClassTitle = atomClassBase.title;
           const atomClassTitleLocale = atomClassBase.titleLocale;
@@ -100,6 +118,7 @@ export default {
           }
           // push
           atomClasses.push({
+            atomClass,
             atomClassBase,
             moduleBase,
           });
@@ -109,26 +128,26 @@ export default {
     },
     _prepareAtomClasses_group(atomClasses) {
       // group
-      const _atomClassesGroup = atomClasses.group(item => {
+      const _atomClassesGroups = atomClasses.group(item => {
         const groupRule = __groupRules.find(rule => rule.fn(item.atomClassBase));
         return groupRule.name;
       });
       // array
-      let atomClassesGroup = [];
-      for (const key in _atomClassesGroup) {
-        const atomClasses = _atomClassesGroup[key];
+      let atomClassesGroups = [];
+      for (const key in _atomClassesGroups) {
+        const atomClasses = _atomClassesGroups[key];
         const index = __groupRules.findIndex(rule => rule.name === key);
         const group = {
           index,
           groupRule: __groupRules[index],
           children: atomClasses,
         };
-        atomClassesGroup.push(group);
+        atomClassesGroups.push(group);
       }
       // sort
-      atomClassesGroup = atomClassesGroup.sort((a, b) => a.index - b.index);
+      atomClassesGroups = atomClassesGroups.sort((a, b) => a.index - b.index);
       // ok
-      return atomClassesGroup;
+      return atomClassesGroups;
     },
     onClickEnable() {
       this.$refs.searchbar.f7Searchbar.enable(true);
@@ -136,9 +155,76 @@ export default {
     _onSearch(query) {
       this.query = query;
     },
-    _renderContent() {
+    _renderClearButton() {
+      if (!this.optional || !this.selected) {
+        return null;
+      }
+      return (
+        <eb-button propsOnPerform={event => this.onPerformClearAtomClass(event)}>
+          {this.$text('ClearAtomClass')}
+        </eb-button>
+      );
+    },
+    _renderGroup(group) {
+      const children = [];
+      for (const item of group.children) {
+        const { atomClass, atomClassBase, moduleBase } = item;
+        const checked =
+          this.selected &&
+          this.selected.module === atomClass.module &&
+          this.selected.atomClassName === atomClass.atomClassName;
+        const domItem = (
+          <eb-list-item
+            class="item"
+            key={`${atomClass.module}:${atomClass.atomClassName}`}
+            radio
+            checked={checked}
+            title={atomClassBase.titleLocale}
+            propsOnPerform={event => this.onPerformItemClick(event, item)}
+          >
+            <div slot="after">{moduleBase.titleLocale}</div>
+          </eb-list-item>
+        );
+
+        children.push(domItem);
+      }
+      return <eb-list inset>{children}</eb-list>;
+    },
+    _renderAccordion(group /* , index*/) {
+      // domTitle
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{this.$text(group.groupRule.title)}</div>
+        </div>
+      );
+      // domAccordionContent
+      const domGroup = this._renderGroup(group);
+      const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
+      // ok
+      return (
+        <eb-list-item key={group.groupRule.name} accordion-item accordion-item-opened={true}>
+          {domTitle}
+          {domAccordionContent}
+        </eb-list-item>
+      );
+    },
+    _renderAccordions() {
       if (!this.ready) return null;
-      const atomClassesGroup = this.atomClassesGroup;
+      const groups = this.atomClassesGroups;
+      const children = [];
+      // single
+      if (groups.length === 1) {
+        return this._renderGroup(groups[0]);
+      }
+      // more
+      for (let index = 0; index < groups.length; index++) {
+        children.push(this._renderAccordion(groups[index], index));
+      }
+      return (
+        <eb-list accordion-list class="eb-accordion-list">
+          {children}
+        </eb-list>
+      );
     },
   },
   render() {
@@ -161,7 +247,8 @@ export default {
             custom-search={true}
           ></f7-searchbar>
         </eb-navbar>
-        {this._renderContent()}
+        {this._renderClearButton()}
+        {this._renderAccordions()}
       </eb-page>
     );
   },
