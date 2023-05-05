@@ -182,6 +182,10 @@ export default {
       return path.join(__dirname, '../', filename);
     },
     babelLoaderOptions() {
+      const pluginsExclude =
+        process.env.NODE_ENV === 'production'
+          ? []
+          : ['@babel/plugin-transform-regenerator', '@babel/plugin-proposal-async-generator-functions'];
       return {
         babelrc: false,
         presets: [
@@ -191,6 +195,7 @@ export default {
             {
               modules: false,
               useBuiltIns: false,
+              exclude: pluginsExclude,
             },
           ],
         ],
