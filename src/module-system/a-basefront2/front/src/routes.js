@@ -7,5 +7,5 @@ function loadjsx(name) {
 
 export default [
   //
-  { path: 'atom/selectAtomClass', component: load('atom/selectAtomClass') },
+  { path: 'atom/selectAtomClass', component: loadjsx('atom/selectAtomClass') },
 ];

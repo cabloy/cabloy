@@ -26,7 +26,10 @@ export default {
       //
       const actionsFlow = actionsUser
         .filter(item => item.actionMode === 1)
-        .sort((a, b) => a.flowDefNameLocale > b.flowDefNameLocale)
+        .sort((a, b) => {
+          const locale = this.$meta.util.getLocale();
+          return a.flowDefNameLocale.localeCompare(b.flowDefNameLocale, locale);
+        })
         .group(item => item.flowDefNameLocale);
       //
       for (const flowDefNameLocale in actionsFlow) {
