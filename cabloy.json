@@ -45,6 +45,9 @@
           "a-basefront": {
             "scripts": ["npmPublish"]
           },
+          "a-basefront2": {
+            "scripts": ["npmPublish"]
+          },
           "a-baselayout": {
             "scripts": ["npmPublish"]
           },
