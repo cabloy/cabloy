@@ -10,7 +10,6 @@ export default [
   { path: 'atom/searchQuick', component: loadjsx('atom/searchQuick') },
   { path: 'atom/labels', component: load('atom/labels') },
   { path: 'atom/item', component: loadjsx('atom/item') },
-  { path: 'atom/selectAtomClass', component: load('atom/selectAtomClass') },
   { path: 'atom/select', component: loadjsx('atom/select') },
   { path: 'atom/selecting', component: loadjsx('atom/selecting') },
   { path: 'atom/autoStar', component: load('atom/autoStar'), meta: { auth: true } },
