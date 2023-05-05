@@ -9,6 +9,16 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'AuthorizationObjective',
       },
+      atomClass: {
+        type: 'object',
+        ebType: 'atomClass',
+        ebTitle: 'Atom Class',
+        notEmpty: true,
+        ebParams: {
+          simple: 0,
+          inner: null,
+        },
+      },
     },
   };
   // role right search
