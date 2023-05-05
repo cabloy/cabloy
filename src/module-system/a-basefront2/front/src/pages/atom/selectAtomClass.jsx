@@ -97,10 +97,11 @@ export default {
           const atomClassTitle = atomClassBase.title;
           const atomClassTitleLocale = atomClassBase.titleLocale;
           // filter: query
+          const query = this.query && this.query.toLowerCase();
           if (
-            this.query &&
-            atomClassTitle.indexOf(this.query) === -1 &&
-            atomClassTitleLocale.indexOf(this.query) === -1
+            query &&
+            atomClassTitle.toLowerCase().indexOf(query) === -1 &&
+            atomClassTitleLocale.toLowerCase().indexOf(query) === -1
           ) {
             continue;
           }
