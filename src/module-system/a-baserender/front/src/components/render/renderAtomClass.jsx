@@ -38,7 +38,7 @@ export default {
       // inner
       const inner = this.$meta.util.getProperty(property, 'ebParams.inner');
       return new Promise(resolve => {
-        const url = '/a/basefront/atom/selectAtomClass';
+        const url = '/a/basefront2/atom/selectAtomClass';
         this.$view.navigate(url, {
           target,
           context: {
