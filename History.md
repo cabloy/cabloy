@@ -5,6 +5,9 @@
 - **Feat**
 
   - ItemOnly：Atom 降级策略
+  - AtomClass 分为四类：
+    - Business, Inner, Runtime, Detail
+    - 业务数据，内部数据，运行数据，明细数据
 
 - **Enhance**
 
