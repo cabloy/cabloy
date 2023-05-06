@@ -1,7 +1,4 @@
-import Vue from 'vue';
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
-  mixins: [ebAtomClasses],
   props: {
     context: {
       type: Object,

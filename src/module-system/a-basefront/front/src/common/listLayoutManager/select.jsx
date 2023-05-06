@@ -28,6 +28,7 @@ export default {
           options.resourceLocale = this.$meta.util.getLocale();
         }
         const params = {
+          atomClass: this.base.atomClass,
           options,
         };
         const res = await this.$api.post('/a/base/atom/select', params);
