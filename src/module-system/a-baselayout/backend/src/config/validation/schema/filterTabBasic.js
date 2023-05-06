@@ -50,6 +50,10 @@ module.exports = app => {
         ebTitle: 'Atom Class',
         ebParams: {
           optional: true,
+          check: {
+            itemOnly: false,
+            inner: false,
+          },
         },
         ebDisplay: {
           expression: '!_meta.host.container.atomClass',

@@ -1,14 +1,13 @@
-import Vue from 'vue';
-const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 export default {
-  mixins: [ebAtomClasses],
   props: {
     context: {
       type: Object,
     },
   },
   data() {
-    return {};
+    return {
+      atomClassTitle: null,
+    };
   },
   computed: {
     value() {
@@ -19,13 +18,26 @@ export default {
       // atomClass
       return value && typeof value === 'string' ? window.JSON5.parse(value) : value;
     },
-    atomClassTitle() {
-      const atomClassBase = this.getAtomClass(this.atomClass);
-      return atomClassBase ? atomClassBase.titleLocale : null;
+  },
+  watch: {
+    atomClass: {
+      handler(newValue) {
+        this.__changeAtomClassTitle(newValue);
+      },
+      immediate: true,
     },
   },
   created() {},
   methods: {
+    async __changeAtomClassTitle(atomClass) {
+      if (!atomClass) {
+        this.atomClassTitle = null;
+        return;
+      }
+      // atomClassBase
+      const atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      this.atomClassTitle = atomClassBase.titleLocale;
+    },
     async onChooseAtomClass() {
       const { property } = this.context;
       // target
@@ -33,20 +45,17 @@ export default {
       if (target === undefined) target = '_self';
       // optional
       const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
-      // simple
-      const simple = this.$meta.util.getProperty(property, 'ebParams.simple');
-      // inner
-      const inner = this.$meta.util.getProperty(property, 'ebParams.inner');
+      // check: itemOnly/inner/detail/simple/resource
+      const check = this.$meta.util.getProperty(property, 'ebParams.check');
       return new Promise(resolve => {
         const url = '/a/basefront2/atom/selectAtomClass';
         this.$view.navigate(url, {
           target,
           context: {
             params: {
-              atomClass: this.atomClass,
+              selected: this.atomClass,
               optional,
-              simple,
-              inner,
+              check,
             },
             callback: (code, data) => {
               if (code === 200) {
