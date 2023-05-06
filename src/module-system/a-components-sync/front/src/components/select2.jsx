@@ -1,4 +1,3 @@
-<script>
 import validateCheck from '../common/validate/validateCheck.js';
 export default {
   meta: {
@@ -80,7 +79,9 @@ export default {
       const $select = this.$$(this.$el).parents('.smart-select');
       if ($select.length > 0) {
         const f7Select = $select[0].f7SmartSelect;
-        f7Select.setValue(this.value);
+        if (f7Select) {
+          f7Select.setValue(this.value);
+        }
       } else {
         const text = this.getDisplays();
         this.$$(this.$el).text(text);
@@ -320,5 +321,3 @@ export default {
     );
   },
 };
-</script>
-<style scoped></style>
