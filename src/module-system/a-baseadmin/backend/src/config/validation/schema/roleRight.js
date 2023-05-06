@@ -15,8 +15,7 @@ module.exports = app => {
         ebTitle: 'Atom Class',
         notEmpty: true,
         ebParams: {
-          simple: 0,
-          inner: null,
+          check: {},
         },
       },
     },

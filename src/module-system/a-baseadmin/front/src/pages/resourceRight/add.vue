@@ -50,6 +50,7 @@ export default {
             selected: this.atomClass,
             optional: true,
             check: {
+              itemOnly: false,
               resource: true,
             },
           },
