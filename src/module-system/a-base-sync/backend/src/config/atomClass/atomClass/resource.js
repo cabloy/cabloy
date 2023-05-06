@@ -2,7 +2,7 @@ module.exports = app => {
   const resource = {
     info: {
       bean: 'resource',
-      title: 'Resource',
+      title: 'GeneralResource',
       tableName: 'aResource',
       tableNameModes: {
         default: 'aResourceView',

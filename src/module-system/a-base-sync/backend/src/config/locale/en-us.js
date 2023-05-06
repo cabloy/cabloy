@@ -8,6 +8,8 @@ module.exports = {
   Atom: 'Data',
   Atoms: 'Data',
   AtomName: 'Title',
+  GeneralResource: 'General Resource',
+  GeneralResources: 'General Resources',
   CommentPublishTitleNewComment: 'Posted a new comment',
   CommentPublishTitleEditComment: 'Modified the comment',
   CommentPublishTitleReplyComment: 'Replied to your comment',

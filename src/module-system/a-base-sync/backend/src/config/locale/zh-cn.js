@@ -43,6 +43,8 @@ module.exports = {
   'Invalid Configuration': '无效的配置',
   'Not Found': '未发现',
   'Resource does not Exist: %s': '资源不存在: %s',
+  GeneralResource: '通用资源',
+  GeneralResources: '通用资源',
   CommentPublishTitleNewComment: '发表了新评论',
   CommentPublishTitleEditComment: '修改了评论',
   CommentPublishTitleReplyComment: '回复了您的评论',
