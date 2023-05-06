@@ -7,7 +7,7 @@
     </eb-navbar>
     <eb-list form inline-labels no-hairlines-md @submit="onFormSubmit">
       <f7-list-item :title="$text('Resource Class')" link="#" @click="onSelectAtomClass">
-        <div slot="after">{{ atomClass && atomClass.title }}</div>
+        <div slot="after">{{ atomClass && atomClass.titleLocale }}</div>
       </f7-list-item>
       <eb-list-item v-if="atomClass">
         <div slot="after">
@@ -47,10 +47,11 @@ export default {
         target: '_self',
         context: {
           params: {
-            atomClass: this.atomClass,
+            selected: this.atomClass,
             optional: true,
-            resource: true,
-            inner: null,
+            check: {
+              resource: true,
+            },
           },
           callback: (code, data) => {
             if (code === 200) {

@@ -74,9 +74,9 @@ export default {
         target: '_self',
         context: {
           params: {
-            atomClass: this.atomClass,
+            selected: this.atomClass,
             optional: true,
-            inner: null,
+            check: {},
             user: true,
           },
           callback: (code, data) => {
