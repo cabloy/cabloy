@@ -40,8 +40,8 @@ export default {
     ready() {
       return this.modulesAll && this.atomClassesAll;
     },
-    selected() {
-      return this.contextParams.selected;
+    selectedAtomClass() {
+      return this.contextParams.selectedAtomClass;
     },
     optional() {
       return this.contextParams.optional;
@@ -157,7 +157,7 @@ export default {
       this.query = query;
     },
     _renderClearButton() {
-      if (!this.optional || !this.selected) {
+      if (!this.optional || !this.selectedAtomClass) {
         return null;
       }
       return (
@@ -171,9 +171,9 @@ export default {
       for (const item of group.children) {
         const { atomClass, atomClassBase, moduleBase } = item;
         const checked =
-          this.selected &&
-          this.selected.module === atomClass.module &&
-          this.selected.atomClassName === atomClass.atomClassName;
+          this.selectedAtomClass &&
+          this.selectedAtomClass.module === atomClass.module &&
+          this.selectedAtomClass.atomClassName === atomClass.atomClassName;
         const domItem = (
           <eb-list-item
             class="item"

@@ -53,7 +53,7 @@ export default {
           target,
           context: {
             params: {
-              selected: this.atomClass,
+              selectedAtomClass: this.atomClass,
               optional,
               check,
             },

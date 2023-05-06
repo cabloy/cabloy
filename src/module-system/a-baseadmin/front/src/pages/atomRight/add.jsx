@@ -74,7 +74,7 @@ export default {
         target: '_self',
         context: {
           params: {
-            selected: this.atomClass,
+            selectedAtomClass: this.atomClass,
             optional: true,
             check: {},
             user: true,
