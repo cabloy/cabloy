@@ -9,7 +9,7 @@ import component from './components/component.vue';
 import input from './components/input.vue';
 import toggle from './components/toggle.vue';
 import radio from './components/radio.vue';
-import select from './components/select2.vue';
+import select from './components/select2.jsx';
 import validate from './components/validate.jsx';
 import validateItem from './components/validateItem.jsx';
 import list from './components/list.vue';
