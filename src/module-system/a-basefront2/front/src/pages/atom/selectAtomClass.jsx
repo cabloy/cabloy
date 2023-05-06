@@ -181,7 +181,7 @@ export default {
             radio
             checked={checked}
             title={atomClassBase.titleLocale}
-            propsOnPerform={event => this.onPerformItemClick(event, item)}
+            onClick={event => this.onPerformItemClick(event, item)}
           >
             <div slot="after">{moduleBase.titleLocale}</div>
           </eb-list-item>
