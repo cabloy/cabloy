@@ -1,6 +1,7 @@
 import componentAction from './components/render/componentAction.jsx';
 import renderAtom from './components/render/renderAtom.jsx';
 import renderAtomClass from './components/render/renderAtomClass.jsx';
+import renderAtomClassId from './components/render/renderAtomClassId.jsx';
 import renderLanguage from './components/render/renderLanguage.jsx';
 import renderCategory from './components/render/renderCategory.jsx';
 import renderCategoryResource from './components/render/renderCategoryResource.jsx';
@@ -26,6 +27,7 @@ export default {
   componentAction,
   renderAtom,
   renderAtomClass,
+  renderAtomClassId,
   renderLanguage,
   renderCategory,
   renderCategoryResource,
