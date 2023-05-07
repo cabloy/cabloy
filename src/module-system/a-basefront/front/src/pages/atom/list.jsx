@@ -17,6 +17,9 @@ export default {
     }
     // atomMain
     const atomMain = this.$f7route.context?.params?.atomMain;
+    if (atomMain) {
+      options.atomMain = atomMain;
+    }
     return {
       container: {
         atomClass,
@@ -25,7 +28,6 @@ export default {
         scene,
         layout,
         resource,
-        atomMain,
       },
     };
   },
