@@ -18,11 +18,18 @@ export default {
       } else {
         // general
         if (atomClassBase.itemOnly) {
-          await this._onActionWrite_itemOnly({ ctx, action, key, atomClass });
+          await this._onActionWrite_itemOnly({ ctx, action, key, atomClass, dataOptions });
         } else {
-          await this._onActionWrite_normal({ ctx, action, key, atomClass });
+          await this._onActionWrite_normal({ ctx, action, key, atomClass, dataOptions });
         }
       }
+    },
+    _onActionWrite_navigateOptions({ ctx, action, dataOptions }) {
+      return Object.assign({}, action.navigateOptions, {
+        context: {
+          params: { atomMain: dataOptions.atomMain },
+        },
+      });
     },
     async _onActionWrite_createDelay({ ctx, action, atomClass, dataOptions }) {
       // params
@@ -40,9 +47,10 @@ export default {
       };
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
-      ctx.$view.navigate(url, action.navigateOptions);
+      const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });
+      ctx.$view.navigate(url, navigateOptions);
     },
-    async _onActionWrite_itemOnly({ ctx, action, key, atomClass }) {
+    async _onActionWrite_itemOnly({ ctx, action, key, atomClass, dataOptions }) {
       // queries
       const queries = {
         mode: 'edit',
@@ -53,9 +61,10 @@ export default {
       };
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
-      ctx.$view.navigate(url, action.navigateOptions);
+      const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });
+      ctx.$view.navigate(url, navigateOptions);
     },
-    async _onActionWrite_normal({ ctx, action, key, atomClass }) {
+    async _onActionWrite_normal({ ctx, action, key, atomClass, dataOptions }) {
       // openDraft
       const data = await ctx.$api.post('/a/base/atom/openDraft', { key, atomClass });
       const dataRes = data.draft || data.formal;
@@ -81,7 +90,8 @@ export default {
       };
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
-      ctx.$view.navigate(url, action.navigateOptions);
+      const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });
+      ctx.$view.navigate(url, navigateOptions);
       // event: neednot check atomStage
       // if (item.atomStage > 0) {
       //   ctx.$meta.eventHub.$emit('atom:actions', { key, atomClass });
