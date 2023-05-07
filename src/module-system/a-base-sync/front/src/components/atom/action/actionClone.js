@@ -4,12 +4,16 @@ export default {
       const { ctx, action, item } = this.$props;
       await ctx.$view.dialog.confirm();
       try {
-        // clone
+        // key
         const key = { atomId: item.atomId, itemId: item.itemId };
+        // atomClass
         const atomClass = {
           module: item.module,
           atomClassName: item.atomClassName,
         };
+        // dataOptions
+        const dataOptions = action.dataOptions || {};
+        // clone
         const data = await ctx.$api.post('/a/base/atom/clone', { key, atomClass });
         const dataRes = data.draft || data.formal;
         const keyDraft = dataRes.key;
@@ -35,6 +39,11 @@ export default {
         if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
           navigateOptions = { target: '_self' };
         }
+        navigateOptions = Object.assign({}, navigateOptions, {
+          context: {
+            params: { atomMain: dataOptions.atomMain },
+          },
+        });
         ctx.$view.navigate(url, navigateOptions);
       } catch (err) {
         if (err.code === 422) {
