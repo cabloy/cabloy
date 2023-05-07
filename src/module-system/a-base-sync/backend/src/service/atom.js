@@ -28,6 +28,7 @@ module.exports = app => {
         atomClassName: atomClass.atomClassName,
       };
     }
+
     async read({ key, atomClass, options, user }) {
       return await this.ctx.bean.atom.read({ key, atomClass, options, user });
     }
