@@ -9,42 +9,80 @@ export default {
       atomClassBase: null,
     };
   },
+  computed: {
+    value() {
+      return this.context.getValue();
+    },
+    atomClassId() {
+      return this.value;
+    },
+    atomClassTitle() {
+      return this.atomClassBase?.titleLocale;
+    },
+    selectedAtomClass() {
+      if (!this.atomClassBase) return null;
+      return {
+        module: this.atomClassBase.module,
+        atomClassName: this.atomClassBase.atomClassName,
+      };
+    },
+  },
+  watch: {
+    atomClassId: {
+      handler(newValue) {
+        this.__changeAtomClass(newValue);
+      },
+      immediate: true,
+    },
+  },
   created() {},
   methods: {
-    async onChooseAtom() {
+    async __changeAtomClass(atomClassId) {
+      if (!atomClassId) {
+        this.atomClassBase = null;
+        return;
+      }
+      // atomClassBase
+      this.atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass: { id: atomClassId } });
+    },
+    async __onChooseChanged(atomClass) {
       const { key, property } = this.context;
-      // value is atomId
-      const value = this.context.getValue();
+      // change atomClassBase
+      this.atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      // atomClassId
+      this.context.setValue(this.atomClassBase.id, key);
+      // mapper
+      const mapper = property.ebParams.mapper;
+      if (mapper) {
+        for (const _key in mapper) {
+          this.context.setValue(this.atomClassBase[_key], mapper[_key]);
+        }
+      }
+    },
+    async onChooseAtomClass() {
+      const { property } = this.context;
       // target
       let target = property.ebParams.target;
       if (target === undefined) target = '_self';
-      // atomClass
-      const atomClass = property.ebParams.atomClass;
-      // selectOptions
-      const selectOptions = property.ebParams.selectOptions;
+      // optional
+      const optional = this.$meta.util.getProperty(property, 'ebParams.optional');
+      // check: itemOnly/inner/detail/simple/resource
+      const check = this.$meta.util.getProperty(property, 'ebParams.check');
       // mapper
       const mapper = property.ebParams.mapper || {};
       return new Promise(resolve => {
-        const url = '/a/basefront/atom/select';
+        const url = '/a/basefront2/atom/selectAtomClass';
         this.$view.navigate(url, {
           target,
           context: {
             params: {
-              selectMode: 'single',
-              selectedAtomId: value,
-              atomClass,
-              options: selectOptions,
+              selectedAtomClass: this.selectedAtomClass,
+              optional,
+              check,
             },
-            callback: (code, selectedAtom) => {
+            callback: (code, atomClass) => {
               if (code === 200) {
-                // atomId
-                this.context.setValue(selectedAtom.atomId, key);
-                // mapper
-                if (mapper) {
-                  for (const _key in mapper) {
-                    this.context.setValue(selectedAtom[_key], mapper[_key]);
-                  }
-                }
+                this.__onChooseChanged(atomClass);
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
@@ -54,36 +92,21 @@ export default {
         });
       });
     },
-    getDisplayName() {
-      const { key, property } = this.context;
-      let displayName = property.ebParams.displayName;
-      if (!displayName) {
-        const mapper = property.ebParams.mapper || {};
-        displayName = mapper.atomName;
-      }
-      if (displayName) {
-        return this.context.getValue(displayName);
-      }
-      const title1 = `_${key}TitleLocale`;
-      const title2 = `_${key}Title`;
-      return this.context.getValue(title1) || this.context.getValue(title2);
-    },
   },
   render() {
     const { dataPath, property, validate } = this.context;
-    const displayName = this.getDisplayName();
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item>
           {this.context.renderTitle({ slot: 'title' })}
-          <div slot="after">{displayName}</div>
+          <div slot="after">{this.atomClassTitle}</div>
         </f7-list-item>
       );
     }
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseAtom}>
+      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseAtomClass}>
         {this.context.renderTitle({ slot: 'title' })}
-        <div slot="after">{displayName}</div>
+        <div slot="after">{this.atomClassTitle}</div>
       </eb-list-item-choose>
     );
   },

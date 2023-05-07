@@ -25,14 +25,14 @@ export default {
   watch: {
     atomClass: {
       handler(newValue) {
-        this.__changeAtomClassTitle(newValue);
+        this.__changeAtomClass(newValue);
       },
       immediate: true,
     },
   },
   created() {},
   methods: {
-    async __changeAtomClassTitle(atomClass) {
+    async __changeAtomClass(atomClass) {
       if (!atomClass) {
         this.atomClassBase = null;
         return;

@@ -9,13 +9,20 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'AuthorizationObjective',
       },
-      atomClass: {
+      atomClassIdTarget: {
         type: 'object',
-        ebType: 'atomClass',
+        ebType: 'atomClassId',
         ebTitle: 'Atom Class',
         notEmpty: true,
         ebParams: {
-          check: {},
+          target: '_self',
+          check: {
+            enableRight: true,
+          },
+          mapper: {
+            module: 'moduleTarget',
+            atomClassName: 'atomClassNameTarget',
+          },
         },
       },
     },

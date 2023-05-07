@@ -74,11 +74,11 @@ export default {
       this.$f7router.back();
     },
     onPerformItemClick(event, item) {
-      const { atomClass, atomClassBase } = item;
+      const { atomClass } = item;
       const data = {
         ...atomClass,
-        title: atomClassBase.title,
-        titleLocale: atomClassBase.titleLocale,
+        // title: atomClassBase.title,
+        // titleLocale: atomClassBase.titleLocale,
       };
       this.contextCallback(200, data);
       this.$f7router.back();
