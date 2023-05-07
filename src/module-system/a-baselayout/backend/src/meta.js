@@ -19,8 +19,8 @@ module.exports = app => {
             resource: true,
             comment: false,
             attachment: false,
-            dict: {
-              fields: {
+            fields: {
+              dicts: {
                 layoutTypeCode: {
                   dictKey: 'a-dictbooster:dictLayoutType',
                 },

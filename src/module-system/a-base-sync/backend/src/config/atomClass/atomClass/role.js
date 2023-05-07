@@ -15,8 +15,8 @@ module.exports = app => {
       inner: true,
       comment: false,
       attachment: false,
-      dict: {
-        fields: {
+      fields: {
+        dicts: {
           roleTypeCode: {
             translate: false,
             // dictKey: 'a-base:dictRoleType',

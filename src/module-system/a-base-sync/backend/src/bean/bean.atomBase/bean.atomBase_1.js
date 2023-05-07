@@ -76,7 +76,7 @@ module.exports = app => {
     }
 
     async _dictTranslate_item({ item, atomClassBase }) {
-      const fields = atomClassBase.dict && atomClassBase.dict.fields;
+      const fields = atomClassBase?.fields?.dicts;
       for (const fieldName in fields) {
         const field = fields[fieldName];
         const code = item[fieldName];
