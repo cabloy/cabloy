@@ -11,7 +11,10 @@ module.exports = ctx => {
     }
 
     async atomClass(atomClass) {
-      return ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
+      return ctx.bean.base.atomClass({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      });
     }
 
     async get({ id, module, atomClassName }) {
