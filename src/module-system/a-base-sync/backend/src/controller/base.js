@@ -18,8 +18,8 @@ module.exports = app => {
       this.ctx.success(res);
     }
 
-    getAtomClassBase() {
-      const res = this.ctx.service.base.getAtomClassBase({
+    async getAtomClassBase() {
+      const res = await this.ctx.service.base.getAtomClassBase({
         atomClass: this.ctx.request.body.atomClass,
       });
       this.ctx.success(res);

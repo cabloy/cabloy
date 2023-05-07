@@ -12,8 +12,16 @@ module.exports = app => {
       return this.ctx.bean.base.resourceTypes();
     }
 
-    getAtomClassBase({ atomClass }) {
-      return this.ctx.bean.base.atomClass({ module: atomClass.module, atomClassName: atomClass.atomClassName });
+    async getAtomClassBase({ atomClass }) {
+      const atomClassBase = this.ctx.bean.base.atomClass({
+        module: atomClass.module,
+        atomClassName: atomClass.atomClassName,
+      });
+      const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
+      return {
+        id: _atomClass.id,
+        ...atomClassBase,
+      };
     }
 
     getActionsBase({ atomClass }) {
