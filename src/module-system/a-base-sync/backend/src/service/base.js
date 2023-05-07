@@ -18,6 +18,7 @@ module.exports = app => {
         atomClassName: atomClass.atomClassName,
       });
       const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
+      // should not set atomClassBase.id
       return {
         id: _atomClass.id,
         ...atomClassBase,
