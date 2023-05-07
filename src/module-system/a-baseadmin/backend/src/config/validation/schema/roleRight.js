@@ -25,6 +25,15 @@ module.exports = app => {
           },
         },
       },
+      action: {
+        type: 'number',
+        ebType: 'component',
+        ebTitle: 'Atom Action',
+        ebRender: {
+          module: 'a-baseadmin',
+          name: 'renderRoleRightAction',
+        },
+      },
     },
   };
   // role right search
