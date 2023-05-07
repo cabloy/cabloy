@@ -88,6 +88,8 @@ export default {
           // actions
           await this.actions_fetchActions();
         }
+        // atomMain
+        await this.base_loadAtomMain();
         // found
         this.base.notfound = false;
         // ok
@@ -96,6 +98,19 @@ export default {
         this.base.notfound = true;
         return false;
       }
+    },
+    async base_loadAtomMain() {
+      if (!this.base.atomClassBase) return;
+      if (!this.base.atomClassBase.detail) return;
+      if (this.container.options.atomMain) return;
+      const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
+      const atomIdMain = this.base.item[atomIdMainFieldName];
+      this.container.options.atomIdMain = atomIdMain;
+      this.container.options.atomMain = await this.$api.post('/a/base/atom/read', {
+        key: { atomId: atomIdMain },
+        atomClass: this.base.atomClassBase.detail.atomClassMain,
+        options: {},
+      });
     },
     base_prepareReadOptions() {
       // options

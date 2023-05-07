@@ -20,6 +20,7 @@ const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixin
 //   itemId,
 //   layout,
 //   atomClass,
+//   options, // .atomMain
 //   params
 // },
 

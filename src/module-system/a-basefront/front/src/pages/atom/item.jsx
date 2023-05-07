@@ -13,7 +13,13 @@ export default {
     const module = query && query.module;
     const atomClassName = query && query.atomClassName;
     const atomClass = module && atomClassName ? { module, atomClassName } : null;
+    const options = query && query.options ? JSON.parse(query.options) : {};
     const params = query && query.params ? JSON.parse(query.params) : {};
+    // atomMain
+    const atomMain = this.$f7route.context?.params?.atomMain;
+    if (atomMain) {
+      options.atomMain = atomMain;
+    }
     return {
       container: {
         mode,
@@ -21,6 +27,7 @@ export default {
         itemId,
         layout,
         atomClass,
+        options,
         params,
       },
     };
