@@ -111,7 +111,9 @@ export default function (Vue) {
         state.modules = modules;
       },
       setAtomClassBase(state, { atomClass, atomClassBase }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}`;
+        let key = atomClass.id;
+        state.atomClassBases[key] = atomClassBase;
+        key = `${atomClass.module}:${atomClass.atomClassName}`;
         state.atomClassBases[key] = atomClassBase;
       },
       setActionsBase(state, { atomClass, actionsBase }) {
@@ -212,12 +214,20 @@ export default function (Vue) {
         commit('setLocales', data);
         return data;
       },
+      // id, module, atomClassName
       async getAtomClassBase({ state, commit }, { atomClass }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}`;
+        const key = atomClass.id || `${atomClass.module}:${atomClass.atomClassName}`;
         if (state.atomClassBases[key]) return state.atomClassBases[key];
-        const atomClassBase = await Vue.prototype.$meta.api.post('/a/base/base/getAtomClassBase', {
+        const data = await Vue.prototype.$meta.api.post('/a/base/base/getAtomClassBase', {
           atomClass,
         });
+        atomClass = data.atomClass;
+        const atomClassBase = {
+          id: atomClass.id,
+          module: atomClass.module,
+          atomClassName: atomClass.atomClassName,
+          ...data.atomClassBase,
+        };
         commit('setAtomClassBase', { atomClass, atomClassBase });
         return atomClassBase;
       },

@@ -12,16 +12,13 @@ module.exports = app => {
       return this.ctx.bean.base.resourceTypes();
     }
 
+    // id, module, atomClassName
     async getAtomClassBase({ atomClass }) {
-      const atomClassBase = this.ctx.bean.base.atomClass({
-        module: atomClass.module,
-        atomClassName: atomClass.atomClassName,
-      });
-      const _atomClass = await this.ctx.bean.atomClass.get(atomClass);
-      // should not set atomClassBase.id
+      atomClass = await this.ctx.bean.atomClass.get(atomClass);
+      const atomClassBase = this.ctx.bean.base.atomClass(atomClass);
       return {
-        id: _atomClass.id,
-        ...atomClassBase,
+        atomClass,
+        atomClassBase,
       };
     }
 
