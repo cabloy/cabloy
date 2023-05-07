@@ -13,6 +13,8 @@ export default {
         stage,
         mode: this.container.mode,
         atomId: this.container.atomId,
+        container: this.container,
+        atomClassBase: this.base.atomClassBase,
       };
     },
   },
