@@ -60,8 +60,8 @@ module.exports = app => {
             title: 'LoginLog',
             tableName: 'aUserOnlineHistory',
             itemOnly: true,
-            userIds: 'userId',
             fields: {
+              userIds: 'userId',
               dicts: {
                 isLogin: {
                   dictKey: 'a-userOnline:dictLoginType',

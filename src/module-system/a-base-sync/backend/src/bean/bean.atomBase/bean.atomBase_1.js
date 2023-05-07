@@ -167,7 +167,7 @@ module.exports = app => {
 
     async _userIdsTranslate({ items, item, atomClassBase }) {
       // userIdsKey
-      let userIdsKey = (atomClassBase && atomClassBase.userIds) || [];
+      let userIdsKey = atomClassBase?.fields?.userIds || [];
       if (!Array.isArray(userIdsKey)) {
         userIdsKey = userIdsKey.split(',');
       }
