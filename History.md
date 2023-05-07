@@ -8,12 +8,14 @@
   - AtomClass 分为四类：
     - Business, Inner, Runtime, Detail
     - 业务数据，内部数据，运行数据，明细数据
+  - ebType: atomClassId
 
 - **Enhance**
 
   - webpack: 添加基于文件系统的缓存，前端服务启动时间明显缩短
   - atom bean 组件：增加 selectQuery 和 readQuery
   - npm run cli：支持自动启动后端服务，用完自动销毁
+  - ebType: atomClass
 
 ## 2023-03-24, Version 4.31.0（未发布）
 
