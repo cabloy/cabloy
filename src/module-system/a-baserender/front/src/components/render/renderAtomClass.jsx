@@ -6,7 +6,7 @@ export default {
   },
   data() {
     return {
-      atomClassTitle: null,
+      atomClassBase: null,
     };
   },
   computed: {
@@ -17,6 +17,9 @@ export default {
       const value = this.value;
       // atomClass
       return value && typeof value === 'string' ? window.JSON5.parse(value) : value;
+    },
+    atomClassTitle() {
+      return this.atomClassBase?.titleLocale;
     },
   },
   watch: {
@@ -31,12 +34,11 @@ export default {
   methods: {
     async __changeAtomClassTitle(atomClass) {
       if (!atomClass) {
-        this.atomClassTitle = null;
+        this.atomClassBase = null;
         return;
       }
       // atomClassBase
-      const atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
-      this.atomClassTitle = atomClassBase.titleLocale;
+      this.atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
     },
     async onChooseAtomClass() {
       const { property } = this.context;
