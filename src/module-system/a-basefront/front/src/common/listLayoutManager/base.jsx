@@ -8,6 +8,8 @@ export default {
         //
         atomClass: null,
         atomClassBase: null,
+        //
+        atomMain: null,
       },
     };
   },
@@ -38,9 +40,23 @@ export default {
         const atomClass = this.container.atomClass;
         this.base.atomClass = atomClass;
         this.base.atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;
+        await this.base_loadAtomMain();
         return true;
       } catch (err) {
         return false;
+      }
+    },
+    async base_loadAtomMain() {
+      if (!this.base.atomClassBase) return;
+      if (!this.base.atomClassBase.detail) return;
+      if (this.container.atomMain) {
+        this.base.atomMain = this.container.atomMain;
+      } else {
+        this.base.atomMain = await this.$api.post('/a/base/atom/read', {
+          key: { atomId: this.container.options.atomIdMain },
+          atomClass: this.base.atomClassBase.detail.atomClassMain,
+          options: {},
+        });
       }
     },
     async base_adjustContainerCategory() {

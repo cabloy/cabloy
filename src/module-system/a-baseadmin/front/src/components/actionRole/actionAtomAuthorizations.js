@@ -29,6 +29,11 @@ export default {
       if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
         navigateOptions = { target: '_self' };
       }
+      navigateOptions = Object.assign({}, navigateOptions, {
+        context: {
+          params: { atomMain: item },
+        },
+      });
       ctx.$view.navigate(url, navigateOptions);
     },
   },

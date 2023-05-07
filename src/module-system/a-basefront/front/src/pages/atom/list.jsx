@@ -15,6 +15,8 @@ export default {
     if (query.appLanguage) {
       options.language = query.appLanguage;
     }
+    // atomMain
+    const atomMain = this.$f7route.context?.params?.atomMain;
     return {
       container: {
         atomClass,
@@ -23,6 +25,7 @@ export default {
         scene,
         layout,
         resource,
+        atomMain,
       },
     };
   },
