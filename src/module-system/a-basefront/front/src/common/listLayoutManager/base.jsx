@@ -8,8 +8,6 @@ export default {
         //
         atomClass: null,
         atomClassBase: null,
-        //
-        atomMain: null,
       },
     };
   },
@@ -49,15 +47,12 @@ export default {
     async base_loadAtomMain() {
       if (!this.base.atomClassBase) return;
       if (!this.base.atomClassBase.detail) return;
-      if (this.container.atomMain) {
-        this.base.atomMain = this.container.atomMain;
-      } else {
-        this.base.atomMain = await this.$api.post('/a/base/atom/read', {
-          key: { atomId: this.container.options.atomIdMain },
-          atomClass: this.base.atomClassBase.detail.atomClassMain,
-          options: {},
-        });
-      }
+      if (this.container.options.atomMain) return;
+      this.container.options.atomMain = await this.$api.post('/a/base/atom/read', {
+        key: { atomId: this.container.options.atomIdMain },
+        atomClass: this.base.atomClassBase.detail.atomClassMain,
+        options: {},
+      });
     },
     async base_adjustContainerCategory() {
       const categoryName = this.container.options && this.container.options.category;
