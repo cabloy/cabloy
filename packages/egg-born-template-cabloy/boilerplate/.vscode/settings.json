@@ -23,7 +23,8 @@
     "*.js.ejs": "javascript",
     "*.css.ejs": "css",
     "*.less.ejs": "less",
-    "*.code-snippets": "text"
+    "*.code-snippets": "text",
+    "docker-compose-dockerfile-app": "dockerfile"
   },
   // search
   "search.exclude": {

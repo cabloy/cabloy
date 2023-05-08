@@ -12,7 +12,7 @@ COPY ./lerna.json /opt/node/app
 COPY ./package.json /opt/node/app
 COPY ./README.md /opt/node/app
 
-RUN chmod +x /opt/node/app/scripts/\*.sh
+RUN chmod +x /opt/node/app/scripts/*.sh
 
 # do not uncomment this line unless run 'npm install' manually
 
