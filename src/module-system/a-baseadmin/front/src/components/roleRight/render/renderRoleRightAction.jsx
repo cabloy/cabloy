@@ -34,7 +34,7 @@ export default {
         return this.actionsBase[actionName];
       }
       // flow
-      return this.actionsUser.find(item => item.actionId === parseInt(this.actionName));
+      return this.actionsUser.find(item => item.action === parseInt(actionCode));
     },
   },
   watch: {
@@ -99,7 +99,7 @@ export default {
         const actionBase = actionsBase[key];
         if (!actionsUser.find(item => item.action === actionBase.code)) continue;
         if (actionBase.authorize === false) continue;
-        const option = { title: actionBase.titleLocale, value: key };
+        const option = { title: actionBase.titleLocale, value: actionBase.code };
         if (actionBase.code === 1 || !actionBase.bulk) {
           groupAtom.options.push(option);
         } else {
@@ -124,7 +124,7 @@ export default {
         const actions = actionsFlow[flowDefNameLocale];
         const groupFlow = { title: `${this.$text('WorkFlow Actions')}: ${flowDefNameLocale}`, options: [] };
         for (const action of actions) {
-          const option = { title: action.nameLocale, value: action.actionId };
+          const option = { title: action.nameLocale, value: action.action };
           groupFlow.options.push(option);
         }
         groupFlows.push(groupFlow);
