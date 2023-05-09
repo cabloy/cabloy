@@ -134,7 +134,7 @@ export default {
   },
   render() {
     if (!this.atomClassIdTarget) return null;
-    const { parcel, key, property, validate } = this.context;
+    const { dataPath, key, property, validate } = this.context;
     const actionCurrent = this.actionCurrent;
     const actionTitle = actionCurrent?.titleLocale || actionCurrent?.nameLocale;
     if (validate.readOnly || property.ebReadOnly) {
@@ -145,11 +145,30 @@ export default {
         </f7-list-item>
       );
     }
-    const propertyNew = this.$utils.extend({}, property, {
-      ebType: 'select',
-      ebOptions: this.actionSelectOptions,
-      ebParams: null,
-    });
-    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
+    //
+    const attrs = {
+      name: key,
+      dataPath,
+      value: this.value,
+      readOnly: false,
+      options: this.actionSelectOptions,
+    };
+    return (
+      <f7-list-item smartSelect smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
+        {this.context.renderTitle({ slot: 'title' })}
+        <eb-select
+          {...{ props: attrs }}
+          onInput={value => {
+            this.context.setValue(value);
+          }}
+        ></eb-select>
+      </f7-list-item>
+    );
+    // const propertyNew = this.$utils.extend({}, property, {
+    //   ebType: 'select',
+    //   ebOptions: this.actionSelectOptions,
+    //   ebParams: null,
+    // });
+    // return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
   },
 };
