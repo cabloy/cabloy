@@ -150,13 +150,6 @@ export default {
       ebOptions: this.actionSelectOptions,
       ebParams: null,
     });
-    return (
-      <eb-list-item-validate
-        parcel={parcel}
-        dataKey={key}
-        property={propertyNew}
-        // onChange={this.onSelectChange}
-      ></eb-list-item-validate>
-    );
+    return <eb-list-item-validate parcel={parcel} dataKey={key} property={propertyNew}></eb-list-item-validate>;
   },
 };
