@@ -134,7 +134,7 @@ export default {
   },
   render() {
     if (!this.atomClassIdTarget) return null;
-    const { dataPath, property, validate } = this.context;
+    const { parcel, key, property, validate } = this.context;
     const actionCurrent = this.actionCurrent;
     const actionTitle = actionCurrent?.titleLocale || actionCurrent?.nameLocale;
     if (validate.readOnly || property.ebReadOnly) {
@@ -145,11 +145,18 @@ export default {
         </f7-list-item>
       );
     }
+    const propertyNew = this.$utils.extend({}, property, {
+      ebType: 'select',
+      ebOptions: this.actionSelectOptions,
+      ebParams: null,
+    });
     return (
-      <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseAtomClass}>
-        {this.context.renderTitle({ slot: 'title' })}
-        <div slot="after">{this.atomClassTitle}</div>
-      </eb-list-item-choose>
+      <eb-list-item-validate
+        parcel={parcel}
+        dataKey={key}
+        property={propertyNew}
+        // onChange={this.onSelectChange}
+      ></eb-list-item-validate>
     );
   },
 };
