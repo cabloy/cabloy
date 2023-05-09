@@ -7,6 +7,12 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    atomMain() {
+      const { validate } = this.context;
+      return validate.host.atomMain;
+    },
+  },
   watch: {},
   created() {},
   methods: {},
