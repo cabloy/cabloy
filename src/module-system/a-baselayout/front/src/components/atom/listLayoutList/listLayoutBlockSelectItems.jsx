@@ -24,7 +24,7 @@ export default {
       // close
       this.$meta.util.swipeoutClose(event.currentTarget);
       // remove from selectedAtomIds
-      const selectedAtomIds = this.layoutManager.container.params.selectedAtomIds;
+      const selectedAtomIds = this.layoutManager.container.params?.selectedAtomIds;
       if (selectedAtomIds) {
         const index = selectedAtomIds.findIndex(_item => _item === item.atomId);
         if (index !== -1) {

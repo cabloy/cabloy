@@ -103,8 +103,8 @@ export default {
       }
       // select
       if (this.container.scene === 'select') {
-        options.where['a.id'] =
-          this.container.params.selectedAtomIds.length > 0 ? this.container.params.selectedAtomIds : null;
+        const selectedAtomIds = this.container.params?.selectedAtomIds;
+        options.where['a.id'] = selectedAtomIds && selectedAtomIds.length > 0 ? selectedAtomIds : null;
       }
       // extend 1
       if (this.container.options) {

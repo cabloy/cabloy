@@ -10,12 +10,12 @@ export default {
     async select_prepareSelectedAtoms() {
       if (this.container.scene !== 'selecting') return;
       // selectedAtoms
-      if (this.container.params.selectedAtoms) {
-        this.select.selectedAtoms = this.container.params.selectedAtoms;
+      if (this.container.params?.selectedAtoms) {
+        this.select.selectedAtoms = this.container.params?.selectedAtoms;
         return;
       }
       // selectedAtomIds
-      const selectedAtomIds = this.container.params.selectedAtomIds;
+      const selectedAtomIds = this.container.params?.selectedAtomIds;
       if (selectedAtomIds && selectedAtomIds.length > 0) {
         // fetch
         const options = {
@@ -45,7 +45,7 @@ export default {
       }
     },
     select_onItemChange(event, item) {
-      const selectMode = this.container.params.selectMode;
+      const selectMode = this.container.params?.selectMode;
       if (selectMode === 'single') {
         if (event.currentTarget.checked) {
           this.select.selectedAtoms = [item];

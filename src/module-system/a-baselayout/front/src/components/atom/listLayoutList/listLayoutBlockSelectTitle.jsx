@@ -19,7 +19,7 @@ export default {
       // params
       const selectedAtoms = this.layoutManager.select_getSelectedAtoms();
       const params = {
-        selectMode: this.layoutManager.container.params.selectMode,
+        selectMode: this.layoutManager.container.params?.selectMode,
         selectedAtoms,
       };
       const url = '/a/basefront/atom/selecting';
@@ -54,7 +54,7 @@ export default {
     getSelectedAtoms() {
       const selectedAtoms = this.layoutManager.select_getSelectedAtoms();
       let res;
-      if (this.layoutManager.container.params.selectMode === 'single') {
+      if (this.layoutManager.container.params?.selectMode === 'single') {
         res = selectedAtoms && selectedAtoms.length > 0 ? selectedAtoms[0] : null;
       } else {
         res = selectedAtoms && selectedAtoms.length > 0 ? selectedAtoms : null;

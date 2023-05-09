@@ -75,8 +75,8 @@ export default {
           class="item"
           key={item.atomId}
           name={this.radioName}
-          radio={this.layoutManager.container.params.selectMode === 'single'}
-          checkbox={this.layoutManager.container.params.selectMode === 'multiple'}
+          radio={this.layoutManager.container.params?.selectMode === 'single'}
+          checkbox={this.layoutManager.container.params?.selectMode === 'multiple'}
           checked={this._getItemChecked(item)}
           swipeout
           onChange={event => this.onItemChange(event, item)}

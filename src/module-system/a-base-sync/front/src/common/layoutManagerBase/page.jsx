@@ -26,7 +26,7 @@ export default {
     },
     page_getTitle() {
       // 1. container
-      if (this.container.params && this.container.params.pageTitle) return this.container.params.pageTitle;
+      if (this.container.params?.pageTitle) return this.container.params?.pageTitle;
       // 2. config page title
       const configPageTitle = this.$meta.util.getProperty(this.layout.config, 'page.title');
       if (configPageTitle) return this.$text(configPageTitle);

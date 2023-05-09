@@ -69,7 +69,7 @@ export default {
       this.page_onRefresh();
     },
     filter_renderAction() {
-      if (this.container.params && this.container.params.disableFilter === true) return null;
+      if (this.container.params?.disableFilter === true) return null;
       return (
         <eb-link iconF7="::search" tooltip={this.$text('Filter')} propsOnPerform={this.filter_onPerform}></eb-link>
       );

@@ -67,7 +67,7 @@ export default {
       return res;
     },
     async validate_onPerformValidate_createDelay() {
-      if (!this.container.params.createDelay) {
+      if (!this.container.params?.createDelay) {
         // do nothing
         return;
       }
@@ -77,7 +77,7 @@ export default {
         name: 'create',
       });
       // dataOptions
-      let dataOptions = this.container.params.createDelay.dataOptions;
+      let dataOptions = this.container.params?.createDelay.dataOptions;
       dataOptions = this.$utils.extend({}, dataOptions, { createContinue: true, noActionWrite: true });
       actionCreate = this.$utils.extend({}, actionCreate, { dataOptions });
       // create
