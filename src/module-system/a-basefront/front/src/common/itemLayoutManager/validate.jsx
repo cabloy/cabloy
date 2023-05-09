@@ -15,6 +15,8 @@ export default {
         atomId: this.container.atomId,
         container: this.container,
         atomClassBase: this.base.atomClassBase,
+        atomIdMain: this.base_atomIdMain,
+        atomMain: this.base_atomMain,
       };
     },
   },
