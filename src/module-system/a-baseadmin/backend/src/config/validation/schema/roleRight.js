@@ -13,7 +13,6 @@ module.exports = app => {
         type: 'object',
         ebType: 'atomClassId',
         ebTitle: 'Atom Class',
-        notEmpty: true,
         ebParams: {
           target: '_self',
           check: {
@@ -24,6 +23,7 @@ module.exports = app => {
             atomClassName: 'atomClassNameTarget',
           },
         },
+        notEmpty: true,
       },
       action: {
         type: 'number',
@@ -33,6 +33,7 @@ module.exports = app => {
           module: 'a-baseadmin',
           name: 'renderRoleRightAction',
         },
+        notEmpty: true,
       },
     },
   };
