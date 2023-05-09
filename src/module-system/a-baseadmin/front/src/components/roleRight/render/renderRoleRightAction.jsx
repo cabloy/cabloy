@@ -8,14 +8,26 @@ export default {
     return {};
   },
   computed: {
+    atomClassIdTarget() {
+      return this.context.getValue('atomClassIdTarget');
+    },
     atomMain() {
       const { validate } = this.context;
       return validate.host.atomMain;
     },
   },
-  watch: {},
+  watch: {
+    atomClassIdTarget: {
+      handler(newValue) {
+        this.__atomClassIdTargetChanged(newValue);
+      },
+      immediate: true,
+    },
+  },
   created() {},
-  methods: {},
+  methods: {
+    async __atomClassIdTargetChanged(atomClassId) {},
+  },
   render() {
     const { dataPath, property, validate } = this.context;
     if (validate.readOnly || property.ebReadOnly) {
