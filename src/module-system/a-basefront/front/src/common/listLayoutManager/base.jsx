@@ -8,12 +8,20 @@ export default {
         //
         atomClass: null,
         atomClassBase: null,
+        //
+        _atomMain: null,
       },
     };
   },
   computed: {
     base_userLabels() {
       return this.$store.getters['a/base/userLabels'];
+    },
+    base_atomIdMain() {
+      return this.container.options.atomIdMain;
+    },
+    base_atomMain() {
+      return this.container.options.atomMain || this._atomMain;
     },
   },
   created() {
@@ -41,8 +49,9 @@ export default {
       if (!this.base.atomClassBase) return;
       if (!this.base.atomClassBase.detail) return;
       if (this.container.options.atomMain) return;
-      this.container.options.atomMain = await this.$api.post('/a/base/atom/read', {
-        key: { atomId: this.container.options.atomIdMain },
+      const atomIdMain = this.base_atomIdMain;
+      this._atomMain = await this.$api.post('/a/base/atom/read', {
+        key: { atomId: atomIdMain },
         atomClass: this.base.atomClassBase.detail.atomClassMain,
         options: {},
       });
@@ -74,7 +83,7 @@ export default {
       // for detail
       options.containerMode = this.container.mode;
       // atomIdMain
-      options.atomIdMain = this.container.options.atomIdMain;
+      options.atomIdMain = this.base_atomIdMain;
       // options
       return options;
     },

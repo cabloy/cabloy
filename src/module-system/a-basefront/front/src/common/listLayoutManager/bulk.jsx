@@ -26,8 +26,8 @@ export default {
       if (!_action) return;
       // dataOptions
       const dataOptions = {
-        atomIdMain: this.container.options.atomIdMain,
-        atomMain: this.container.options.atomMain,
+        atomIdMain: this.base_atomIdMain,
+        atomMain: this.base_atomMain,
       };
       _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget }, { dataOptions });
       // item

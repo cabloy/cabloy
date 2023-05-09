@@ -11,6 +11,9 @@ export default {
         atomClassBase: null,
         module: null,
         validateParams: null,
+        //
+        _atomIdMain: null,
+        _atomMain: null,
       },
     };
   },
@@ -20,6 +23,12 @@ export default {
     },
     base_userLabels() {
       return this.$store.getters['a/base/userLabels'];
+    },
+    base_atomIdMain() {
+      return this._atomIdMain;
+    },
+    base_atomMain() {
+      return this.container.options.atomMain || this._atomMain;
     },
   },
   created() {
@@ -98,8 +107,8 @@ export default {
       if (this.container.options.atomMain) return;
       const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
       const atomIdMain = this.base.item[atomIdMainFieldName];
-      this.container.options.atomIdMain = atomIdMain;
-      this.container.options.atomMain = await this.$api.post('/a/base/atom/read', {
+      this._atomIdMain = atomIdMain;
+      this._atomMain = await this.$api.post('/a/base/atom/read', {
         key: { atomId: atomIdMain },
         atomClass: this.base.atomClassBase.detail.atomClassMain,
         options: {},
@@ -114,7 +123,7 @@ export default {
       options.containerMode = this.container.mode;
       // need not atomIdMain
       // // atomIdMain
-      // options.atomIdMain = this.container.options.atomIdMain;
+      // options.atomIdMain = this.base_atomIdMain;
       // options
       return options;
     },
