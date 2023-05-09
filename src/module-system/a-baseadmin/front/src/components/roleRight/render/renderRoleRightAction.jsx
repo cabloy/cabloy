@@ -25,14 +25,14 @@ export default {
       return this.context.getValue();
     },
     actionCurrent() {
-      if (!this.atomClass || !this.value) return null;
+      const actionCode = this.value;
+      if (!this.atomClass || !actionCode) return null;
+      if (!this.actionsBase || !this.actionsUser) return null;
       // normal
-      const action = this.getAction({
-        module: this.atomClass.module,
-        atomClassName: this.atomClass.atomClassName,
-        name: this.actionName,
-      });
-      if (action) return action;
+      const actionName = Object.keys(this.actionsBase).find(key => this.actionsBase[key].code === actionCode);
+      if (actionName) {
+        return this.actionsBase[actionName];
+      }
       // flow
       return this.actionsUser.find(item => item.actionId === parseInt(this.actionName));
     },
@@ -135,11 +135,13 @@ export default {
   render() {
     if (!this.atomClassIdTarget) return null;
     const { dataPath, property, validate } = this.context;
+    const actionCurrent = this.actionCurrent;
+    const actionTitle = actionCurrent?.titleLocale || actionCurrent?.nameLocale;
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item>
           {this.context.renderTitle({ slot: 'title' })}
-          <div slot="after">{this.atomClassTitle}</div>
+          <div slot="after">{actionTitle}</div>
         </f7-list-item>
       );
     }
