@@ -25,9 +25,6 @@ export default {
       if (!this.container.options) {
         this.container.options = {};
       }
-      if (!this.container.params) {
-        this.container.params = {};
-      }
       // load atomClasses
       await this.$store.dispatch('a/base/getAtomClasses');
       // adjust container category
