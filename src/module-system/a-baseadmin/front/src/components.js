@@ -12,6 +12,7 @@ import userListLayoutExtend from './components/user/listLayoutExtend.jsx';
 import roleRightListLayoutBlockListItems from './components/roleRight/listLayoutList/listLayoutBlockListItems.jsx';
 import roleRightListLayoutBlockListItem from './components/roleRight/listLayoutList/listLayoutBlockListItem.jsx';
 import renderRoleRightAction from './components/roleRight/render/renderRoleRightAction.jsx';
+import renderRoleRightScope from './components/roleRight/render/renderRoleRightScope.jsx';
 //
 import actionRole from './components/actionRole.js';
 import actionUser from './components/actionUser.js';
@@ -39,6 +40,7 @@ export default {
   roleRightListLayoutBlockListItems,
   roleRightListLayoutBlockListItem,
   renderRoleRightAction,
+  renderRoleRightScope,
   //
   actionRole,
   actionUser,

@@ -35,6 +35,20 @@ module.exports = app => {
         },
         notEmpty: true,
       },
+      __groupAuthorizationDataScope: {
+        ebType: 'group-flatten',
+        ebTitle: 'DataScope',
+      },
+      scope: {
+        type: ['number', 'object'],
+        ebType: 'component',
+        ebTitle: 'DataScopeTitle',
+        ebRender: {
+          module: 'a-baseadmin',
+          name: 'renderRoleRightScope',
+        },
+        // notEmpty: true,
+      },
     },
   };
   // role right search
