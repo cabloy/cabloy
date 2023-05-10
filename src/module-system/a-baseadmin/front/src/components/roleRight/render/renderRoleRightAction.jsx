@@ -36,6 +36,19 @@ export default {
       // flow
       return this.actionsUser.find(item => item.action === parseInt(actionCode));
     },
+    actionCurrentDescription() {
+      const action = this.actionCurrent;
+      if (!action) {
+        return null;
+      }
+      if (action.bulk && action.code !== 1) {
+        return this.$text('Bulk Actions');
+      }
+      if (action.actionMode === 1) {
+        return `${this.$text('WorkFlow Actions')}: ${action.flowDefNameLocale}`;
+      }
+      return null;
+    },
   },
   watch: {
     atomClassIdTarget: {
@@ -154,8 +167,11 @@ export default {
       options: this.actionSelectOptions,
     };
     return (
-      <f7-list-item smartSelect smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
+      <f7-list-item class="item" smartSelect smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
         {this.context.renderTitle({ slot: 'title' })}
+        <div slot="root-end" class="summary-no-media">
+          {this.actionCurrentDescription}
+        </div>
         <eb-select
           {...{ props: attrs }}
           onInput={value => {
