@@ -171,7 +171,7 @@ export default {
     return (
       <f7-list-item class="item" smartSelect smartSelectParams={{ openIn: 'page', closeOnSelect: true }}>
         {this.context.renderTitle({ slot: 'title' })}
-        <div slot="root-end" class="summary-no-media">
+        <div slot="root-end" class="summary-no-media text-align-right">
           {this.actionCurrentDescription}
         </div>
         <eb-select
