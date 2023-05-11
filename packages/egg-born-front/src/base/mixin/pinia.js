@@ -1,39 +1,29 @@
-import { createPinia, PiniaVuePlugin } from 'pinia';
+import { createPinia, PiniaVuePlugin, defineStore } from 'pinia';
 
 export default function (Vue) {
   // install pinia
   Vue.use(PiniaVuePlugin);
 
+  // stores
+  const __stores = {};
+
   // pinia
   const pinia = new createPinia();
 
-  return { pinia, beforeCreate: null };
+  // defineStore
+  pinia.defineStore = defineStore;
 
   // get
   pinia.get = function (path) {
-    const info = Vue.prototype.$meta.util.parseModuleInfo(path);
-    const keys = path.split('/');
-    let value = store.state;
-    for (const key of keys) {
-      if (!value) break;
-      value = value[key];
-    }
-    return value;
+    return __stores[path];
   };
 
-  // dispatch
-  const _dispatch = store.dispatch;
-  store.dispatch = async function (path, ...args) {
-    if (path.indexOf('auth/') === 0) return await _dispatch.call(store, path, ...args);
-    const info = Vue.prototype.$meta.util.parseModuleInfo(path);
-    await Vue.prototype.$meta.module.use(info.relativeName);
-    return await _dispatch.call(store, path, ...args);
+  // set
+  pinia.set = function (path, store) {
+    __stores[path] = store;
   };
 
-  // register module: auth
-  const auth = require('../auth.js').default(Vue);
-  auth.namespaced = true;
-  store.registerModule('auth', auth);
+  return { pinia, beforeCreate: null };
 
   // beforeCreate
   const beforeCreate = function (ctx) {
