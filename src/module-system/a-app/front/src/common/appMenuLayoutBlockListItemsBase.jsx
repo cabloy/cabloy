@@ -139,10 +139,12 @@ export default {
         if (!item) {
           domItem = <f7-list-item divider></f7-list-item>;
         } else {
+          const devResourceKey = this.$meta.config.env === 'development' ? item.atomStaticKey : null;
           domItem = (
             <eb-list-item
               class="item"
               key={item.atomId}
+              data-dev-resource-key={devResourceKey}
               link="#"
               title={item.atomNameLocale}
               propsOnPerform={event => this.onItemClick(event, item)}
