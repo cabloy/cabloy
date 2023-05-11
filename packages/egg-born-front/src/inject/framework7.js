@@ -1,3 +1,4 @@
+import { createPinia } from 'pinia';
 import App from './pages/app.jsx';
 import routes from './routes.js';
 import patchDevice from './patch/device.js';
@@ -18,11 +19,13 @@ export default function (Vue, options, cb) {
 
   // prepare parameters
   function prepareParameters(options) {
+    const pinia = createPinia();
     // f7 parameters
     const f7Parameters = {
       el: '#app',
       render: c => c('app', { ref: 'app' }),
       store: Vue.prototype.$meta.store,
+      pinia,
       framework7: {
         theme: 'md',
         modal: {
