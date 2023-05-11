@@ -4,6 +4,7 @@ import actionBase from './common/actionBase.js';
 import atomClasses from './common/atomClasses.js';
 import atomClasses2 from './common/atomClasses2.js';
 import atomActions from './common/atomActions.js';
+import atomActions2 from './common/atomActions2.js';
 import detailClasses from './common/detailClasses.js';
 import detailActions from './common/detailActions.js';
 import modules from './common/modules.js';
@@ -24,6 +25,7 @@ export default {
   ebAtomClasses: atomClasses,
   ebAtomClasses2: atomClasses2,
   ebAtomActions: atomActions,
+  ebAtomActions2: atomActions2,
   ebDetailClasses: detailClasses,
   ebDetailActions: detailActions,
   ebModules: modules,
