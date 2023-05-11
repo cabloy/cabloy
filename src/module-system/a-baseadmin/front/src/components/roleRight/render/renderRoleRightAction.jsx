@@ -14,6 +14,9 @@ export default {
     };
   },
   computed: {
+    ready() {
+      return this.atomClass && this.atomClassBase && this.actionsBase && this.actionsUser && this.actionSelectOptions;
+    },
     atomMain() {
       const { validate } = this.context;
       return validate.host.atomMain;
@@ -26,8 +29,7 @@ export default {
     },
     actionCurrent() {
       const actionCode = this.value;
-      if (!this.atomClass || !actionCode) return null;
-      if (!this.actionsBase || !this.actionsUser) return null;
+      if (!this.ready || !actionCode) return null;
       // normal
       const actionName = Object.keys(this.actionsBase).find(key => this.actionsBase[key].code === actionCode);
       if (actionName) {
