@@ -16,5 +16,6 @@ module.exports = {
   RoleResourceRight: '角色资源权限',
   Users: '用户',
   Includes: '聚合',
+  Inherits: '继承',
   AddChild: '添加子项',
 };

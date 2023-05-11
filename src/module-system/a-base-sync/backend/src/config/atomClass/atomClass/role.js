@@ -67,7 +67,7 @@ module.exports = app => {
       },
       includes: {
         code: 104,
-        title: 'Includes',
+        title: 'Inherits',
         actionModule: 'a-baseadmin',
         actionComponent: 'actionRole',
         icon: { f7: ':role:role' },

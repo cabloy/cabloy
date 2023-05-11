@@ -76,6 +76,8 @@ export default {
   Function: '功能',
   Functions: '功能',
   Includes: '聚合',
+  Inherits: '继承',
+  AddRoleInherit: '添加继承角色',
   Info: '信息',
   Leader: '负责人',
   Menu: '菜单',
