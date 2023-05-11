@@ -35,7 +35,7 @@ export default function (Vue) {
   // beforeCreate
   const beforeCreate = function (ctx) {
     // local
-    ctx.$local = {};
+    if (!ctx.$local) ctx.$local = {};
 
     Object.defineProperty(ctx.$local, 'state', {
       get() {

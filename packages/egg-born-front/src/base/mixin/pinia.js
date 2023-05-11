@@ -17,12 +17,14 @@ export default function (Vue) {
   pinia.get = async function (path) {
     const info = Vue.prototype.$meta.util.parseModuleInfo(path);
     await Vue.prototype.$meta.module.use(info.relativeName);
-    return __stores[path];
+    const useStore = __stores[path];
+    return useStore();
   };
 
   // get sync
-  pinia.getSync = async function (path) {
-    return __stores[path];
+  pinia.getSync = function (path) {
+    const useStore = __stores[path];
+    return useStore();
   };
 
   // set
@@ -30,34 +32,16 @@ export default function (Vue) {
     __stores[path] = store;
   };
 
-  return { pinia, beforeCreate: null };
-
   // beforeCreate
   const beforeCreate = function (ctx) {
     // local
-    ctx.$local = {};
+    if (!ctx.$local) ctx.$local = {};
 
-    Object.defineProperty(ctx.$local, 'state', {
-      get() {
-        const moduleInfo = ctx.$module.info;
-        return store.state[moduleInfo.pid][moduleInfo.name];
-      },
-    });
-
-    Object.defineProperty(ctx.$local, 'getters', {
-      get() {
-        return function () {
-          const moduleInfo = ctx.$module.info;
-          return store.getters[`${moduleInfo.pid}/${moduleInfo.name}/${arguments[0]}`];
-        };
-      },
-    });
-
-    ['commit', 'dispatch'].forEach(key => {
+    ['get', 'getSync'].forEach(key => {
       Vue.prototype.$meta.util.overrideProperty({
         obj: ctx.$local,
         key,
-        objBase: store,
+        objBase: pinia,
         vueComponent: ctx,
         combinePath: (moduleInfo, arg) => {
           return Vue.prototype.$meta.util.combineStorePath(moduleInfo, arg);
