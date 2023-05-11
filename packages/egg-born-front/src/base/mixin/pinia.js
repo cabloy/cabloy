@@ -13,8 +13,15 @@ export default function (Vue) {
   // defineStore
   pinia.defineStore = defineStore;
 
-  // get
-  pinia.get = function (path) {
+  // get async
+  pinia.get = async function (path) {
+    const info = Vue.prototype.$meta.util.parseModuleInfo(path);
+    await Vue.prototype.$meta.module.use(info.relativeName);
+    return __stores[path];
+  };
+
+  // get sync
+  pinia.getSync = async function (path) {
     return __stores[path];
   };
 
