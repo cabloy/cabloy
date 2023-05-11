@@ -141,10 +141,12 @@ export default {
     _renderGroup(group) {
       const children = [];
       for (const item of group.items) {
+        const devResourceKey = this.$meta.config.env === 'development' ? item.atomStaticKey : null;
         const domItem = (
           <eb-list-item
             class="item"
             key={item.atomId}
+            data-dev-resource-key={devResourceKey}
             link="#"
             title={item.atomNameLocale}
             propsOnPerform={event => this.onItemClick(event, item)}
