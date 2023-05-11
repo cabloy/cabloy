@@ -1,16 +1,17 @@
-import { PiniaVuePlugin } from 'pinia';
+import { createPinia, PiniaVuePlugin } from 'pinia';
 
 export default function (Vue) {
   // install pinia
   Vue.use(PiniaVuePlugin);
 
-  return { store: null, beforeCreate: null };
+  // pinia
+  const pinia = new createPinia();
 
-  // store
-  const store = new Vuex.Store({});
+  return { pinia, beforeCreate: null };
 
-  // get state
-  store.getState = function (path) {
+  // get
+  pinia.get = function (path) {
+    const info = Vue.prototype.$meta.util.parseModuleInfo(path);
     const keys = path.split('/');
     let value = store.state;
     for (const key of keys) {
@@ -68,5 +69,5 @@ export default function (Vue) {
     });
   };
 
-  return { store, beforeCreate };
+  return { pinia, beforeCreate };
 }
