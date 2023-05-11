@@ -2,6 +2,7 @@
 
 import actionBase from './common/actionBase.js';
 import atomClasses from './common/atomClasses.js';
+import atomClasses2 from './common/atomClasses2.js';
 import atomActions from './common/atomActions.js';
 import detailClasses from './common/detailClasses.js';
 import detailActions from './common/detailActions.js';
@@ -21,6 +22,7 @@ import layoutManagerBase from './common/layoutManagerBase/index.jsx';
 export default {
   ebActionBase: actionBase,
   ebAtomClasses: atomClasses,
+  ebAtomClasses2: atomClasses2,
   ebAtomActions: atomActions,
   ebDetailClasses: detailClasses,
   ebDetailActions: detailActions,
