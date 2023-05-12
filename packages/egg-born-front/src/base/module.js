@@ -104,7 +104,8 @@ export default function (Vue) {
       for (const key in Vue.prototype.$meta.modulesMonkey) {
         const moduleMonkey = Vue.prototype.$meta.modulesMonkey[key];
         if (moduleMonkey.options.monkey && moduleMonkey.options.monkey[monkeyName]) {
-          moduleMonkey.options.monkey[monkeyName](monkeyData);
+          const monkeyData2 = Object.assign({ moduleSelf: moduleMonkey }, monkeyData);
+          moduleMonkey.options.monkey[monkeyName](monkeyData2);
         }
       }
     },
