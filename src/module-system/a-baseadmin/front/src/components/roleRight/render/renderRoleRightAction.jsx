@@ -89,7 +89,8 @@ export default {
         atomClassName: this.atomClassBase.atomClassName,
       };
       // actionsBase
-      this.actionsBase = await this.$store.dispatch('a/base/getActionsBase', {
+      const useStoreAtomActions = await this.$store.use('a/base/actions');
+      this.actionsBase = await useStoreAtomActions.getActionsBase({
         atomClass: this.atomClass,
       });
       // actionsUser

@@ -43,7 +43,6 @@ export default function (Vue) {
       modules: null,
       atomClasses: null,
       actions: null,
-      actionsBases: {}, // new solution
       detailClasses: null,
       detailActions: null,
       resourceTypes: null,
@@ -108,10 +107,6 @@ export default function (Vue) {
       },
       setModules(state, modules) {
         state.modules = modules;
-      },
-      setActionsBase(state, { atomClass, actionsBase }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}`;
-        state.actionsBases[key] = actionsBase;
       },
       setAtomClasses(state, atomClasses) {
         state.atomClasses = atomClasses;
@@ -206,30 +201,6 @@ export default function (Vue) {
         data = data || [];
         commit('setLocales', data);
         return data;
-      },
-      async getActionsBase({ state, commit }, { atomClass }) {
-        const key = `${atomClass.module}:${atomClass.atomClassName}`;
-        if (state.actionsBases[key]) return state.actionsBases[key];
-        const actionsBase = await Vue.prototype.$meta.api.post('/a/base/base/getActionsBase', {
-          atomClass,
-        });
-        commit('setActionsBase', { atomClass, actionsBase });
-        return actionsBase;
-      },
-      async getActionBase({ dispatch }, { atomClass, code, name }) {
-        const actionsBase = await dispatch('getActionsBase', { atomClass });
-        // prepare
-        if (name && !isNaN(name)) {
-          code = parseInt(name);
-          name = null;
-        } else if (code && isNaN(code)) {
-          name = code;
-          code = null;
-        }
-        // action
-        if (name) return actionsBase[name];
-        const key = Object.keys(actionsBase).find(key => actionsBase[key].code === code);
-        return actionsBase[key];
       },
       async getAtomClasses({ state, commit }) {
         if (state.atomClasses) return state.atomClasses;
