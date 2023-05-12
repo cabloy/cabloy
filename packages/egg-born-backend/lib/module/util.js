@@ -76,7 +76,8 @@ module.exports = app => {
       for (const key in ebModulesMonkey) {
         const moduleMonkey = ebModulesMonkey[key];
         if (moduleMonkey.main.monkey && moduleMonkey.main.monkey[monkeyName]) {
-          moduleMonkey.main.monkey[monkeyName](monkeyData);
+          const monkeyData2 = Object.assign({ moduleSelf: moduleMonkey }, monkeyData);
+          moduleMonkey.main.monkey[monkeyName](monkeyData2);
         }
       }
     },
