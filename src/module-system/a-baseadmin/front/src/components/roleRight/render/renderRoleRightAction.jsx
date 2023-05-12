@@ -27,7 +27,7 @@ export default {
     value() {
       return this.context.getValue();
     },
-    actionCurrent() {
+    actionBaseCurrent() {
       const actionCode = this.value;
       if (!this.ready || !actionCode) return null;
       // normal
@@ -39,15 +39,15 @@ export default {
       return this.actionsUser.find(item => item.action === parseInt(actionCode));
     },
     actionCurrentDescription() {
-      const action = this.actionCurrent;
-      if (!action) {
+      const actionBase = this.actionBaseCurrent;
+      if (!actionBase) {
         return null;
       }
-      if (action.bulk && action.code !== 1) {
+      if (actionBase.bulk && actionBase.code !== 1) {
         return this.$text('Bulk Actions');
       }
-      if (action.actionMode === 1) {
-        return `${this.$text('WorkFlow Actions')}: ${action.flowDefNameLocale}`;
+      if (actionBase.actionMode === 1) {
+        return `${this.$text('WorkFlow Actions')}: ${actionBase.flowDefNameLocale}`;
       }
       return null;
     },
@@ -152,8 +152,8 @@ export default {
   render() {
     if (!this.atomClassIdTarget) return null;
     const { dataPath, key, property, validate } = this.context;
-    const actionCurrent = this.actionCurrent;
-    const actionTitle = actionCurrent?.titleLocale || actionCurrent?.nameLocale;
+    const actionBaseCurrent = this.actionBaseCurrent;
+    const actionTitle = actionBaseCurrent?.titleLocale || actionBaseCurrent?.nameLocale;
     if (validate.readOnly || property.ebReadOnly) {
       return (
         <f7-list-item>
