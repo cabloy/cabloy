@@ -1,8 +1,4 @@
-import Vue from 'vue';
-const ebAtomClasses2 = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses2;
-
 export default {
-  mixins: [ebAtomClasses2],
   props: {
     context: {
       type: Object,
@@ -84,7 +80,8 @@ export default {
         return;
       }
       // atomClassBase
-      this.atomClassBase = await this.sys_getAtomClassBase({
+      const useStoreAtomClasses = await this.$store.use('a/base/atomClasses');
+      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({
         atomClass: { id: this.atomClassIdTarget },
       });
       this.atomClass = {
