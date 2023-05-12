@@ -10,25 +10,28 @@ export default function (Vue) {
   // pinia
   const pinia = new createPinia();
 
-  // defineStore
-  pinia.defineStore = defineStore;
+  // store
+  const store = Vue.prototype.$meta.store;
 
-  // get async
-  pinia.get = async function (path) {
+  // defineStore
+  store.defineStore = defineStore;
+
+  // use async
+  store.use = async function (path) {
     const info = Vue.prototype.$meta.util.parseModuleInfo(path);
     await Vue.prototype.$meta.module.use(info.relativeName);
     const useStore = __stores[path];
     return useStore();
   };
 
-  // get sync
-  pinia.getSync = function (path) {
+  // use sync
+  store.useSync = function (path) {
     const useStore = __stores[path];
     return useStore();
   };
 
   // set
-  pinia.set = function (path, store) {
+  store.registerStore = function (path, store) {
     __stores[path] = store;
   };
 
@@ -37,11 +40,11 @@ export default function (Vue) {
     // local
     if (!ctx.$local) ctx.$local = {};
 
-    ['get', 'getSync'].forEach(key => {
+    ['use', 'useSync'].forEach(key => {
       Vue.prototype.$meta.util.overrideProperty({
         obj: ctx.$local,
         key,
-        objBase: pinia,
+        objBase: store,
         vueComponent: ctx,
         combinePath: (moduleInfo, arg) => {
           return Vue.prototype.$meta.util.combineStorePath(moduleInfo, arg);

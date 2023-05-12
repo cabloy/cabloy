@@ -253,12 +253,12 @@ export default function (Vue) {
       }
     },
     _registerPinias(module) {
-      const $pinia = Vue.prototype.$meta.pinia;
+      const $store = Vue.prototype.$meta.store;
       for (const key in module.options.pinias) {
         const pinia = module.options.pinias[key];
         const fullKey = `${module.info.url}/${key}`;
-        const useStore = $pinia.defineStore(fullKey, pinia);
-        $pinia.set(fullKey, useStore);
+        const useStore = $store.defineStore(fullKey, pinia);
+        $store.registerStore(fullKey, useStore);
       }
     },
     _registerStore(module) {

@@ -2,10 +2,10 @@ export default function (Vue) {
   // beforeCreates
   const beforeCreates = [];
 
-  // pinia
-  init('pinia', require('./mixin/pinia.js'));
   // store
   init('store', require('./mixin/store.js'));
+  // pinia
+  init('pinia', require('./mixin/pinia.js'));
   // api
   init('api', require('./mixin/api.js'));
   // config
