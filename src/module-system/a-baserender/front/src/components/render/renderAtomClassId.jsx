@@ -43,12 +43,14 @@ export default {
         return;
       }
       // atomClassBase
-      this.atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass: { id: atomClassId } });
+      const useStoreAtomClasses = await this.$store.use('a/base/atomClasses');
+      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass: { id: atomClassId } });
     },
     async __onChooseChanged(atomClass) {
       const { key, property } = this.context;
       // change atomClassBase
-      this.atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      const useStoreAtomClasses = await this.$store.use('a/base/atomClasses');
+      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
       // atomClassId
       this.context.setValue(this.atomClassBase.id, key);
       // mapper

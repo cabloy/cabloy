@@ -9,7 +9,8 @@ export default {
         atomClassName: item.atomClassName,
       };
       // atomClassBase
-      const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      const useStoreAtomClasses = await ctx.$store.use('a/base/atomClasses');
+      const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
       // dataOptions
       const dataOptions = action.dataOptions || {};
       if (dataOptions.createDelay) {

@@ -8,7 +8,8 @@ export default {
         atomClassName: item.atomClassName,
       };
       // atomClassBase
-      const atomClassBase = await ctx.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      const useStoreAtomClasses = await ctx.$store.use('a/base/atomClasses');
+      const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
       // onActionSaveBefore: should after createDelay
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSaveBefore) {

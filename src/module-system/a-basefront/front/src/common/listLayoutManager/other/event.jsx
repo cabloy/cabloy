@@ -89,7 +89,8 @@ export default {
       const atomClass = data.atomClass;
       if (!atomClass) throw new Error('Should specify atom class');
 
-      const atomClassBase = await this.$store.dispatch('a/base/getAtomClassBase', { atomClass });
+      const useStoreAtomClasses = await this.$store.use('a/base/atomClasses');
+      const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
       if (atomClassBase.itemOnly) {
         if (!this.base.atomClass) return false;
         if (
