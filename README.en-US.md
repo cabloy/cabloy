@@ -10,7 +10,6 @@ Each built-in feature of CabloyJS has been carefully adjusted, which reflects th
 [![NPM version][npm-image]][npm-url]
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
-![](https://visitor-badge.glitch.me/badge?page_id=zhannann.cabloy)
 [![NPM download][download-image]][download-url]
 [![NPM Mirror download][download-image-mirror]][download-url-mirror]
 [![Lerna][lerna-image]][lerna-url]
