@@ -74,7 +74,7 @@ export default {
         return;
       }
       // create
-      const useStoreAtomActions = await this.$store.use('a/base/actions');
+      const useStoreAtomActions = await this.$store.use('a/base/atomActions');
       let actionCreate = await useStoreAtomActions.getActionBase({
         atomClass: this.base.atomClass,
         name: 'create',

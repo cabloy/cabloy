@@ -26,7 +26,7 @@ export default {
   methods: {
     __actionChanged() {
       this.context.setValue(null);
-      await this.__loadActionSelectOptions();
+      // await this.__loadActionSelectOptions();
     },
   },
   render() {
