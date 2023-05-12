@@ -285,6 +285,9 @@
           "test-note": {
             "scripts": ["gitCommit"]
           },
+          "test-userpro-monkey": {
+            "scripts": ["gitCommit"]
+          },
           "a-paypal": {
             "scripts": ["gitCommit"]
           },
