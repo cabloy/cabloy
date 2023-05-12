@@ -28,15 +28,10 @@ export default {
       return this.context.getValue();
     },
     actionBaseCurrent() {
-      const actionCode = this.value;
-      if (!this.ready || !actionCode) return null;
-      // normal
-      const actionName = Object.keys(this.actionsBase).find(key => this.actionsBase[key].code === actionCode);
-      if (actionName) {
-        return this.actionsBase[actionName];
-      }
-      // flow
-      return this.actionsUser.find(item => item.action === parseInt(actionCode));
+      const actionBaseCurrent = this.__getActionBaseCurrent();
+      // as to accesible for scope
+      this.context.setValue(actionBaseCurrent, '__actionBaseCurrent');
+      return actionBaseCurrent;
     },
     actionCurrentDescription() {
       const actionBase = this.actionBaseCurrent;
@@ -64,6 +59,17 @@ export default {
     this.__loadActionSelectOptions();
   },
   methods: {
+    __getActionBaseCurrent() {
+      const actionCode = this.value;
+      if (!this.ready || !actionCode) return null;
+      // normal
+      const actionName = Object.keys(this.actionsBase).find(key => this.actionsBase[key].code === actionCode);
+      if (actionName) {
+        return this.actionsBase[actionName];
+      }
+      // flow
+      return this.actionsUser.find(item => item.action === parseInt(actionCode));
+    },
     async __atomClassIdTargetChanged() {
       this.context.setValue(null);
       await this.__loadActionSelectOptions();
@@ -75,6 +81,8 @@ export default {
       this.actionsBase = null;
       this.actionsUser = null;
       this.actionSelectOptions = null;
+      // as to accesible for scope
+      this.context.setValue(this.atomClassBase, '__atomClassBase');
       // check
       if (!this.atomClassIdTarget) {
         return;
@@ -104,6 +112,8 @@ export default {
       // ok
       this.actionsUser = actionsUser;
       this.actionSelectOptions = [groupAtom, groupBulk].concat(groupFlows);
+      // as to accesible for scope
+      this.context.setValue(this.atomClassBase, '__atomClassBase');
     },
     async __loadActionSelectOptions_normal({ actionsUser }) {
       //

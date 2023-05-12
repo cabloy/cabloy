@@ -14,6 +14,12 @@ export default {
     value() {
       return this.context.getValue();
     },
+    atomClassBase() {
+      return this.context.getValue('__atomClassBase');
+    },
+    actionBaseCurrent() {
+      return this.context.getValue('__actionBaseCurrent');
+    },
   },
   watch: {
     action: {
