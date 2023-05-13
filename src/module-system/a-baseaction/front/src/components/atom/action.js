@@ -1,4 +1,4 @@
-import ActionBase from '../../common/actionBase.js';
+import Vue from 'vue';
 import ActionCreate from './action/actionCreate.js';
 import ActionRead from './action/actionRead.js';
 import ActionDelete from './action/actionDelete.js';
@@ -16,13 +16,14 @@ import ActionDisable from './action/actionDisable.js';
 import ActionWorkflow from './action/actionWorkflow.js';
 import ActionWorkflowFormal from './action/actionWorkflowFormal.js';
 import ActionLayout from './action/actionLayout.js';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
   meta: {
     global: false,
   },
   mixins: [
-    ActionBase, //
+    ebActionBase, //
     ActionCreate,
     ActionRead,
     ActionDelete,

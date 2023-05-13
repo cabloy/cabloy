@@ -1,17 +1,18 @@
-import ActionBase from '../../common/actionBase.js';
+import Vue from 'vue';
 import ActionBulkDelete from './actionBulk/actionBulkDelete.js';
 import ActionBulkExport from './actionBulk/actionBulkExport.js';
 import ActionBulkImport from './actionBulk/actionBulkImport.js';
 import ActionBulkLayout from './actionBulk/actionBulkLayout.js';
 import ActionBulkDraftStats from './actionBulk/actionBulkDraftStats.js';
 import ActionBulkRead from './actionBulk/actionBulkRead.js';
+const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
   meta: {
     global: false,
   },
   mixins: [
-    ActionBase, //
+    ebActionBase, //
     ActionBulkDelete,
     ActionBulkExport,
     ActionBulkImport,
