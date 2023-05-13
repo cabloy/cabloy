@@ -54,6 +54,9 @@
           "a-baserender": {
             "scripts": ["npmPublish"]
           },
+          "a-basestore": {
+            "scripts": ["npmPublish"]
+          },
           "a-cache": {
             "scripts": ["npmPublish"]
           },
