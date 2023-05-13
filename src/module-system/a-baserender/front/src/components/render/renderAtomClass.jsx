@@ -38,7 +38,7 @@ export default {
         return;
       }
       // atomClassBase
-      const useStoreAtomClasses = await this.$store.use('a/base/atomClasses');
+      const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
       this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
     },
     async onChooseAtomClass() {
