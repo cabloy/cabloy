@@ -106,5 +106,5 @@ export default {
   AuthorizationObjective: '授权目标',
   DataScope: '数据范围',
   DataScopeSelfTitle: '操作自己数据',
-  DataScopeTitle: '选择数据范围',
+  DataScopeTitle: '数据范围',
 };

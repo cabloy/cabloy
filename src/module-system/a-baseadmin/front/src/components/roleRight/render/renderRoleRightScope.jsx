@@ -31,9 +31,6 @@ export default {
       if (!this.enableRight) return false;
       return this.atomClassBase.enableRight.role?.scopes;
     },
-    action() {
-      return this.context.getValue('action');
-    },
     value() {
       return this.context.getValue();
     },
@@ -43,20 +40,14 @@ export default {
     actionBaseCurrent() {
       return this.context.getValue('__actionBaseCurrent');
     },
-  },
-  watch: {
-    action: {
-      handler(newValue) {
-        this.__actionChanged(newValue);
-      },
-      immediate: false, // true,
+    scopeTitle() {
+      const scopeRoles = this.context.getValue('scopeRoles');
+      if (!scopeRoles) return null;
+      return scopeRoles.map(item => item.roleNameLocale).join(',');
     },
   },
+  watch: {},
   methods: {
-    __actionChanged() {
-      // this.context.setValue(null);
-      // await this.__loadActionSelectOptions();
-    },
     onSelectRoleScopes() {},
     _renderRoleRightMine() {
       if (!this.enableRightMine) return null;

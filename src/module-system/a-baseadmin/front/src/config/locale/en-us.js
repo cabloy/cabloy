@@ -14,6 +14,6 @@ export default {
   AuthorizationObjective: 'Auth Objective',
   DataScope: 'Data Scope',
   DataScopeSelfTitle: 'Operate Self Data',
-  DataScopeTitle: 'Select Data Scope',
+  DataScopeTitle: 'Data Scope',
   AddRoleInherit: 'Add Role Inherit',
 };
