@@ -65,14 +65,10 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update roleRight
       const roleRightId = key.itemId;
-      let scope = item.scope;
-      if (scope && typeof scope === 'string') {
-        scope = JSON.parse(scope);
-      }
       await this.ctx.bean.role.addRoleRight({
         atomClassId: item.atomClassIdTarget,
         action: item.action,
-        scope,
+        scope: item.scope,
         user,
         roleRightId,
       });
@@ -86,7 +82,10 @@ module.exports = app => {
       await this.ctx.bean.role.deleteRoleRight({ roleRightId, user });
     }
 
-    _getMeta(/* item, options*/) {
+    _getMeta(item, options) {
+      if (item.scope) {
+        item.scope = JSON.parse(item.scope);
+      }
       // layout: list/table/mobile/pc
       // const layout = options && options.layout;
       // meta

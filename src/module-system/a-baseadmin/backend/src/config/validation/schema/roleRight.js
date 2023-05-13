@@ -43,7 +43,7 @@ module.exports = app => {
         },
       },
       scope: {
-        type: ['number', 'string', 'array'],
+        type: ['number', 'array'],
         ebType: 'component',
         ebTitle: 'DataScopeTitle',
         ebRender: {
