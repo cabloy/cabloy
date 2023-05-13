@@ -65,10 +65,14 @@ module.exports = app => {
       await super.write({ atomClass, target, key, item, options, user });
       // update roleRight
       const roleRightId = key.itemId;
+      let scope = item.scope;
+      if (scope && typeof scope === 'string') {
+        scope = JSON.parse(scope);
+      }
       await this.ctx.bean.role.addRoleRight({
-        atomClassId: item.atomClassId,
+        atomClassId: item.atomClassIdTarget,
         action: item.action,
-        scope: item.scope,
+        scope,
         user,
         roleRightId,
       });

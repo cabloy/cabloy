@@ -10,7 +10,7 @@ module.exports = app => {
         ebTitle: 'AuthorizationObjective',
       },
       atomClassIdTarget: {
-        type: 'object',
+        type: 'number',
         ebType: 'atomClassId',
         ebTitle: 'Atom Class',
         ebParams: {
@@ -43,7 +43,7 @@ module.exports = app => {
         },
       },
       scope: {
-        type: ['number', 'object'],
+        type: ['number', 'string', 'array'],
         ebType: 'component',
         ebTitle: 'DataScopeTitle',
         ebRender: {
