@@ -308,12 +308,14 @@ export default function (Vue) {
     },
     performActionSync(args) {
       const { action } = args;
+      const actionModule = action.actionModule;
+      const actionComponent = action.actionComponent;
       // actionComponent
       //  should load module before the call
-      const module = Vue.prototype.$meta.module.get(action.actionModule);
-      if (!module) throw new Error(`actionModule not found: ${action.actionModule}:${action.actionComponent}`);
-      const component = module.options.components[action.actionComponent];
-      if (!component) throw new Error(`actionComponent not found: ${action.actionModule}:${action.actionComponent}`);
+      const module = Vue.prototype.$meta.module.get(actionModule);
+      if (!module) throw new Error(`actionModule not found: ${actionModule}`);
+      const component = module.options.components[actionComponent];
+      if (!component) throw new Error(`actionComponent not found: ${actionModule}:${actionComponent}`);
       // componentProps
       const componentProps = {};
       this._combineComponentsProps(componentProps, component);
