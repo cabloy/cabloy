@@ -57,6 +57,7 @@ export default {
       // this.context.setValue(null);
       // await this.__loadActionSelectOptions();
     },
+    onSelectRoleScopes() {},
     _renderRoleRightMine() {
       if (!this.enableRightMine) return null;
       return (
@@ -76,6 +77,17 @@ export default {
     },
     _renderRoleRightScopes() {
       if (!this.enableRightScopes) return null;
+      // adjust
+      if (!this.enableRightMine && this.value === 0) {
+        this.context.setValue([]);
+      }
+      if (this.value === 0) return null;
+      // render
+      return (
+        <f7-list-item title={this.$text('DataScopeTitle')} link="#" onClick={this.onSelectRoleScopes}>
+          <div slot="after">{this.scopeTitle}</div>
+        </f7-list-item>
+      );
     },
   },
   render() {
