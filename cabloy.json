@@ -39,6 +39,9 @@
           "a-base-sync": {
             "scripts": ["npmPublish"]
           },
+          "a-baseaction": {
+            "scripts": ["npmPublish"]
+          },
           "a-baseadmin": {
             "scripts": ["npmPublish"]
           },
