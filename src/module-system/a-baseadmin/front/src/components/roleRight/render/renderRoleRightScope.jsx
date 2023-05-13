@@ -57,13 +57,36 @@ export default {
       // this.context.setValue(null);
       // await this.__loadActionSelectOptions();
     },
+    _renderRoleRightMine() {
+      if (!this.enableRightMine) return null;
+      return (
+        <f7-list-item title={this.$text('DataScopeSelfTitle')}>
+          <eb-toggle
+            value={this.value === 0}
+            onInput={value => {
+              if (value) {
+                this.context.setValue(0);
+              } else {
+                this.context.setValue([]);
+              }
+            }}
+          ></eb-toggle>
+        </f7-list-item>
+      );
+    },
+    _renderRoleRightScopes() {
+      if (!this.enableRightScopes) return null;
+    },
   },
   render() {
     if (!this.enableRight) return null;
+    const domRoleRightMine = this._renderRoleRightMine();
+    const domRoleRightScopes = this._renderRoleRightScopes();
     return (
       <div>
         <eb-list-item title={this.$text('DataScope')} group-title></eb-list-item>
-        <eb-list-item title={this.$text('DataScope')} group-title></eb-list-item>
+        {domRoleRightMine}
+        {domRoleRightScopes}
       </div>
     );
   },
