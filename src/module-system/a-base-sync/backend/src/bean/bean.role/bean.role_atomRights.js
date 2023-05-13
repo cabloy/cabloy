@@ -196,10 +196,8 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, roleId]
       );
-      // scope
-      await this._adjustAtomRightsScopeRoles({ items });
-      // actionFlows
-      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
+      // adjust
+      await this._adjustItems({ items });
       // ok
       return items;
     }
@@ -223,12 +221,8 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, roleId]
       );
-      // scope
-      await this._adjustAtomRightsScopeRoles({ items });
-      // locale
-      await this._adjustAtomRightsLocale({ items });
-      // actionFlows
-      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
+      // adjust
+      await this._adjustItems({ items });
       // ok
       return items;
     }
@@ -251,14 +245,19 @@ module.exports = ctx => {
         `,
         [ctx.instance.id, userId]
       );
+      // adjust
+      await this._adjustItems({ items });
+      // ok
+      return items;
+    }
+
+    async _adjustItems({ items, actionNameKey = 'actionName' }) {
       // scope
       await this._adjustAtomRightsScopeRoles({ items });
       // locale
       await this._adjustAtomRightsLocale({ items });
       // actionFlows
-      await this._adjustFlowActionsLocale({ items, actionNameKey: 'actionName' });
-      // ok
-      return items;
+      await this._adjustFlowActionsLocale({ items, actionNameKey });
     }
 
     async _adjustAtomRightsScopeRoles({ items }) {
