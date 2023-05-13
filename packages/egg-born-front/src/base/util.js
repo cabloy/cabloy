@@ -257,11 +257,16 @@ export default function (Vue) {
     },
     async performAction(args) {
       const { ctx, action, item } = args;
+      let actionModule = action.actionModule;
+      const actionComponent = action.actionComponent;
+      const actionPath = action.actionPath;
+      // patch
+      if (actionModule === 'a-base' && (actionComponent === 'action' || actionComponent === 'actionBulk')) {
+        actionModule = 'a-baseaction';
+      }
       // actionPath
-      if (!action.actionComponent) {
-        const url = action.actionPath
-          ? this.combinePagePath(action.actionModule, this.replaceTemplate(action.actionPath, item))
-          : null;
+      if (!actionComponent) {
+        const url = actionPath ? this.combinePagePath(actionModule, this.replaceTemplate(actionPath, item)) : null;
         const options = Object.assign({}, action.navigateOptions, {
           context: {
             params: {
@@ -273,9 +278,9 @@ export default function (Vue) {
         return;
       }
       // actionComponent
-      const module = await Vue.prototype.$meta.module.use(action.actionModule);
-      const component = module.options.components[action.actionComponent];
-      if (!component) throw new Error(`actionComponent not found: ${action.actionModule}:${action.actionComponent}`);
+      const module = await Vue.prototype.$meta.module.use(actionModule);
+      const component = module.options.components[actionComponent];
+      if (!component) throw new Error(`actionComponent not found: ${actionModule}:${actionComponent}`);
       // componentProps
       const componentProps = {};
       this._combineComponentsProps(componentProps, component);
