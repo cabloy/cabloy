@@ -2,6 +2,7 @@ import validateActionModule from './validateActionModule.js';
 import validateComputedValue from './validateComputedValue.js';
 import validateComputedDisplay from './validateComputedDisplay.js';
 import validateItemTitle from './validateItemTitle.jsx';
+import validateComponentInstance from './validateComponentInstance.js';
 import renderSearchStates from './render/renderSearchStates.jsx';
 import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
@@ -83,6 +84,7 @@ export default {
     validateComputedValue,
     validateComputedDisplay,
     validateItemTitle,
+    validateComponentInstance,
     renderProperties,
     renderComponent,
     renderComponentAction,
@@ -354,6 +356,10 @@ export default {
             value = patchSetValue(value);
           }
           this.setValue(parcel, propertyName, value);
+        },
+        setComponentInstance: (componentInstance, name) => {
+          const propertyName = name || key;
+          this.__componentInstance_set(parcel, propertyName, componentInstance);
         },
       };
       return context;
