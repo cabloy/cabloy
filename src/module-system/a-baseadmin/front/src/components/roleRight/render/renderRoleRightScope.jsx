@@ -8,6 +8,15 @@ export default {
     return {};
   },
   computed: {
+    componentInstanceAction() {
+      return this.context.getComponentInstance('action');
+    },
+    atomClassBase() {
+      return this.componentInstanceAction.atomClassBase;
+    },
+    actionBaseCurrent() {
+      return this.componentInstanceAction.actionBaseCurrent;
+    },
     ready() {
       return this.atomClassBase && this.actionBaseCurrent;
     },
@@ -33,12 +42,6 @@ export default {
     },
     value() {
       return this.context.getValue();
-    },
-    atomClassBase() {
-      return this.context.getValue('__atomClassBase');
-    },
-    actionBaseCurrent() {
-      return this.context.getValue('__actionBaseCurrent');
     },
     scopeTitle() {
       const scopeRoles = this.context.getValue('scopeRoles');

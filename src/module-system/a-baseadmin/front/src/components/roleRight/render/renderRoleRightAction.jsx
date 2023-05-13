@@ -1,4 +1,8 @@
+import Vue from 'vue';
+const ebValidateComponentBase = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateComponentBase;
+
 export default {
+  mixins: [ebValidateComponentBase],
   props: {
     context: {
       type: Object,

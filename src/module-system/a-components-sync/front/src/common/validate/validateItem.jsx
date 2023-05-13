@@ -357,6 +357,10 @@ export default {
           }
           this.setValue(parcel, propertyName, value);
         },
+        getComponentInstance: name => {
+          const propertyName = name || key;
+          return this.__componentInstance_get(parcel, propertyName);
+        },
         setComponentInstance: (componentInstance, name) => {
           const propertyName = name || key;
           this.__componentInstance_set(parcel, propertyName, componentInstance);
