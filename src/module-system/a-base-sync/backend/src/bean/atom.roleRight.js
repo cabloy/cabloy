@@ -29,6 +29,8 @@ module.exports = app => {
       // super
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
+      // adjust
+      await this.ctx.bean.role._adjustItems({ items: [item] });
       // meta
       this._getMeta(item, options);
       // ok
@@ -50,6 +52,8 @@ module.exports = app => {
     async select({ atomClass, options, items, user }) {
       // super
       await super.select({ atomClass, options, items, user });
+      // adjust
+      await this.ctx.bean.role._adjustItems({ items });
       // meta
       for (const item of items) {
         this._getMeta(item, options);
