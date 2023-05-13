@@ -43,12 +43,30 @@ export default {
     scopeTitle() {
       const scopeRoles = this.context.getValue('scopeRoles');
       if (!scopeRoles) return null;
-      return scopeRoles.map(item => item.roleNameLocale).join(',');
+      return scopeRoles.map(item => item.atomNameLocale || item.roleNameLocale).join(',');
     },
   },
   watch: {},
   methods: {
-    onSelectRoleScopes() {},
+    onSelectRoleScopes() {
+      this.$view.navigate('/a/baseadmin/role/select', {
+        target: '_self',
+        context: {
+          params: {
+            roleIdStart: null,
+            multiple: true,
+            roleTypes: [0, 1, 2, 3, 4], // not include roleType: business
+          },
+          callback: (code, roles) => {
+            if (code === 200) {
+              this.context.setValue(roles, 'scopeRoles');
+              const roleIds = roles.map(item => item.itemId);
+              this.context.setValue(roleIds);
+            }
+          },
+        },
+      });
+    },
     _renderRoleRightMine() {
       if (!this.enableRightMine) return null;
       const { parcel, property, validate } = this.context;
