@@ -38,6 +38,9 @@ module.exports = app => {
       __groupAuthorizationDataScope: {
         ebType: 'group-flatten',
         ebTitle: 'DataScope',
+        ebParams: {
+          titleHidden: true,
+        },
       },
       scope: {
         type: ['number', 'object'],

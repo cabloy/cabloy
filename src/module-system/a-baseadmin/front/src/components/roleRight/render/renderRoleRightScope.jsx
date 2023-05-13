@@ -8,6 +8,29 @@ export default {
     return {};
   },
   computed: {
+    ready() {
+      return this.atomClassBase && this.actionBaseCurrent;
+    },
+    atomMain() {
+      const { validate } = this.context;
+      return validate.host.atomMain;
+    },
+    isOpenAuthScope() {
+      return this.atomMain && this.atomMain.roleTypeCode === 6;
+    },
+    enableRight() {
+      if (!this.ready) return false;
+      if (this.isOpenAuthScope) return false;
+      return this.atomClassBase.enableRight;
+    },
+    enableRightMine() {
+      if (!this.enableRight) return false;
+      return this.atomClassBase.enableRight.mine;
+    },
+    enableRightScopes() {
+      if (!this.enableRight) return false;
+      return this.atomClassBase.enableRight.role?.scopes;
+    },
     action() {
       return this.context.getValue('action');
     },
@@ -31,11 +54,17 @@ export default {
   },
   methods: {
     __actionChanged() {
-      this.context.setValue(null);
+      // this.context.setValue(null);
       // await this.__loadActionSelectOptions();
     },
   },
   render() {
-    return <div>scope</div>;
+    if (!this.enableRight) return null;
+    return (
+      <div>
+        <eb-list-item title={this.$text('DataScope')} group-title></eb-list-item>
+        <eb-list-item title={this.$text('DataScope')} group-title></eb-list-item>
+      </div>
+    );
   },
 };
