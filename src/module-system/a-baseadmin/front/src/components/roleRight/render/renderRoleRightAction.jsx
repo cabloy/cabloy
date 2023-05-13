@@ -33,8 +33,6 @@ export default {
     },
     actionBaseCurrent() {
       const actionBaseCurrent = this.__getActionBaseCurrent();
-      // as to accesible for scope
-      this.context.setValue(actionBaseCurrent, '__actionBaseCurrent');
       return actionBaseCurrent;
     },
     actionCurrentDescription() {
@@ -85,8 +83,6 @@ export default {
       this.actionsBase = null;
       this.actionsUser = null;
       this.actionSelectOptions = null;
-      // as to accesible for scope
-      this.context.setValue(this.atomClassBase, '__atomClassBase');
       // check
       if (!this.atomClassIdTarget) {
         return;
@@ -116,8 +112,6 @@ export default {
       // ok
       this.actionsUser = actionsUser;
       this.actionSelectOptions = [groupAtom, groupBulk].concat(groupFlows);
-      // as to accesible for scope
-      this.context.setValue(this.atomClassBase, '__atomClassBase');
     },
     async __loadActionSelectOptions_normal({ actionsUser }) {
       //
