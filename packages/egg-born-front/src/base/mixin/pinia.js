@@ -21,12 +21,18 @@ export default function (Vue) {
     const info = Vue.prototype.$meta.util.parseModuleInfo(path);
     await Vue.prototype.$meta.module.use(info.relativeName);
     const useStore = __stores[path];
+    if (!useStore) {
+      throw new Error(`pinia not found: ${path}`);
+    }
     return useStore();
   };
 
   // use sync
   store.useSync = function (path) {
     const useStore = __stores[path];
+    if (!useStore) {
+      throw new Error(`pinia not found: ${path}`);
+    }
     return useStore();
   };
 
