@@ -60,19 +60,33 @@ export default {
     onSelectRoleScopes() {},
     _renderRoleRightMine() {
       if (!this.enableRightMine) return null;
+      const { parcel } = this.context;
+      const propertyMine = {
+        ebType: 'toggle',
+        ebTitle: 'DataScopeSelfTitle',
+      };
+      const meta = {
+        ebPatch: {
+          getValue: () => {
+            return this.value === 0;
+          },
+          setValue: value => {
+            if (value) {
+              this.context.setValue(0);
+            } else {
+              this.context.setValue([]);
+            }
+            return value;
+          },
+        },
+      };
       return (
-        <f7-list-item title={this.$text('DataScopeSelfTitle')}>
-          <eb-toggle
-            value={this.value === 0}
-            onInput={value => {
-              if (value) {
-                this.context.setValue(0);
-              } else {
-                this.context.setValue([]);
-              }
-            }}
-          ></eb-toggle>
-        </f7-list-item>
+        <eb-list-item-validate
+          parcel={parcel}
+          dataKey="__groupAuthorizationDataScopeMine"
+          property={propertyMine}
+          meta={meta}
+        ></eb-list-item-validate>
       );
     },
     _renderRoleRightScopes() {
