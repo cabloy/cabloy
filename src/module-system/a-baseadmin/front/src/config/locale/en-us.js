@@ -15,5 +15,6 @@ export default {
   DataScope: 'Data Scope',
   DataScopeSelfTitle: 'Operate Self Data',
   DataScopeTitle: 'Data Scope',
+  SelectDataScope: 'Select Data Scope',
   AddRoleInherit: 'Add Role Inherit',
 };

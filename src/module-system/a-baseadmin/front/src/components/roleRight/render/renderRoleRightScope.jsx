@@ -51,7 +51,13 @@ export default {
     onSelectRoleScopes() {},
     _renderRoleRightMine() {
       if (!this.enableRightMine) return null;
-      const { parcel } = this.context;
+      const { parcel, property, validate } = this.context;
+      // special check for view mode
+      if (validate.readOnly || property.ebReadOnly) {
+        if (this.value !== 0) {
+          return null;
+        }
+      }
       const propertyMine = {
         ebType: 'toggle',
         ebTitle: 'DataScopeSelfTitle',
@@ -87,9 +93,18 @@ export default {
         this.context.setValue([]);
       }
       if (this.value === 0) return null;
-      // render
+      const { property, validate } = this.context;
+      // render for view mode
+      if (validate.readOnly || property.ebReadOnly) {
+        return (
+          <f7-list-item title={this.$text('DataScope')}>
+            <div slot="after">{this.scopeTitle}</div>
+          </f7-list-item>
+        );
+      }
+      // render for edit mode
       return (
-        <f7-list-item title={this.$text('DataScopeTitle')} link="#" onClick={this.onSelectRoleScopes}>
+        <f7-list-item title={this.$text('SelectDataScope')} link="#" onClick={this.onSelectRoleScopes}>
           <div slot="after">{this.scopeTitle}</div>
         </f7-list-item>
       );
