@@ -6,8 +6,15 @@ export default {
       this.$view.navigate(url);
     },
     async item_onAction(event, item, action) {
-      const _action = this.getAction(action);
+      let _action = this.getAction(action);
       if (!_action) return;
+      // dataOptions
+      const dataOptions = {
+        atomIdMain: this.base_atomIdMain,
+        atomMain: this.base_atomMain,
+      };
+      // not use this.$utils.extend
+      _action = Object.assign({}, _action, { dataOptions });
       await this.$meta.util.performAction({ ctx: this, action: _action, item });
       this.$meta.util.swipeoutClose(event.currentTarget);
     },

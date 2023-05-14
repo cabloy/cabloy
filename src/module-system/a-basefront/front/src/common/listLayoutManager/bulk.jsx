@@ -29,7 +29,8 @@ export default {
         atomIdMain: this.base_atomIdMain,
         atomMain: this.base_atomMain,
       };
-      _action = this.$utils.extend({}, _action, { targetEl: event.currentTarget }, { dataOptions });
+      // not use this.$utils.extend
+      _action = Object.assign({}, _action, { targetEl: event.currentTarget }, { dataOptions });
       // item
       let item = {
         atomClassId: action.atomClassId,
