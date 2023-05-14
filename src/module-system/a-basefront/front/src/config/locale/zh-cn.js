@@ -10,6 +10,7 @@ export default {
   DraftsDraftingMineTab: '起草中',
   OpenLinkTitleRedirect: '跳转',
   SaveAsDraft: '保存为草稿',
+  SaveAndClose: '保存并关闭',
   SaveAndSubmit: '保存并提交',
   SaveAndReturn: '保存并返回',
   CabloyAboutTip1: 'CabloyJS - 是一款顶级NodeJS全栈业务开发框架',

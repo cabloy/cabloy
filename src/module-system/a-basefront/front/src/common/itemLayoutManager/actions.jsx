@@ -210,6 +210,22 @@ export default {
       }
       return null;
     },
+    actions_renderButtonSaveAndClose() {
+      const mode = this.container.mode;
+      if (mode !== 'edit') return null;
+      const actionIcon = '::save-and-close';
+      const actionName = 'saveAndClose';
+      const actionTitle = 'SaveAndClose';
+      return (
+        <eb-link
+          key={actionName}
+          ref="buttonSaveAndClose"
+          iconF7={actionIcon}
+          tooltip={this.$text(actionTitle)}
+          propsOnPerform={event => this.actions_onAction(event, actionName)}
+        ></eb-link>
+      );
+    },
     actions_renderButtonSubmit() {
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
@@ -261,6 +277,10 @@ export default {
       if (buttonSave) children.push(buttonSave);
       const buttonSubmit = this.actions_renderButtonSubmit();
       if (buttonSubmit) children.push(buttonSubmit);
+      if (buttonSave && !buttonSubmit) {
+        const buttonSaveAndClose = this.actions_renderButtonSaveAndClose();
+        if (buttonSaveAndClose) children.push(buttonSaveAndClose);
+      }
       // only show on draft/edit
       const buttonView = this.actions_renderButtonView();
       if (buttonView) children.push(buttonView);

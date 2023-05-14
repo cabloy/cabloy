@@ -7,6 +7,7 @@ export default {
   DraftsFlowingMineTab: 'Flowing',
   DraftsDraftingMineTab: 'Drafting',
   SaveAsDraft: 'Save as Draft',
+  SaveAndClose: 'Save and Close',
   SaveAndSubmit: 'Save and Submit',
   SaveAndReturn: 'Save and Return',
   CabloyAboutTip1: 'CabloyJS - The Ultimate NodeJS Full Stack Business Development Platform',
