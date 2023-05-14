@@ -55,6 +55,7 @@ export default {
       await this.layout_prepareConfigLayout();
       res = await this.base_loadItem();
       if (!res) return;
+      await this.base_loadAtomMain();
       await this.share_updateLink();
       this.base.ready = true;
     },

@@ -62,6 +62,7 @@ export default {
       await this.base_init();
       const res = await this.base_loadAtomClass();
       if (!res) return;
+      await this.base_loadAtomMain();
       await this.select_prepareSelectedAtoms();
       await this.layout_prepareConfigLayout();
       await this.bulk_actionsInit();

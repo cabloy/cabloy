@@ -91,8 +91,6 @@ export default {
           // actions
           await this.actions_fetchActions();
         }
-        // atomMain
-        await this.base_loadAtomMain();
         // found
         this.base.notfound = false;
         // ok

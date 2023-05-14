@@ -39,7 +39,6 @@ export default {
         const atomClass = this.container.atomClass;
         this.base.atomClass = atomClass;
         this.base.atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;
-        await this.base_loadAtomMain();
         return true;
       } catch (err) {
         return false;
