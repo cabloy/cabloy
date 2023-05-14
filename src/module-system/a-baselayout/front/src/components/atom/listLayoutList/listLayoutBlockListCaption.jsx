@@ -111,6 +111,13 @@ export default {
       if (!atomClass) return null;
       return `${atomClass.module}:${atomClass.atomClassName}:${language || ''}`;
     },
+    _renderAtomMain() {
+      const atomMain = this.layoutManager.base_atomMain;
+      if (!atomMain) return null;
+      const atomName = atomMain.atomNameLocale || atomMain.atomName || atomMain._meta?.atomName;
+      if (!atomName) return null;
+      return <f7-badge>{atomName}</f7-badge>;
+    },
     _renderStage() {
       // stage
       const stage = this.getStage();
@@ -148,6 +155,7 @@ export default {
       <f7-nav-title>
         <div>{this.layoutManager.page_title}</div>
         <div class="subtitle">
+          {this._renderAtomMain()}
           {this._renderStage()}
           {this._renderCategory()}
           {this._renderTag()}
