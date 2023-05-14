@@ -125,6 +125,11 @@ export default {
       }
       return validateInstance.perform(event, options);
     },
+    async actions_onActionSaveAndClose(event) {
+      const res = await this.actions_onAction(event, 'save');
+      this.$f7router.back();
+      return res;
+    },
     actions_onAction(event, action) {
       if (action === 'save' || action === 'submit') {
         return this.actions_submit(event, action);
@@ -222,7 +227,7 @@ export default {
           ref="buttonSaveAndClose"
           iconF7={actionIcon}
           tooltip={this.$text(actionTitle)}
-          propsOnPerform={event => this.actions_onAction(event, actionName)}
+          propsOnPerform={event => this.actions_onActionSaveAndClose(event, actionName)}
         ></eb-link>
       );
     },
