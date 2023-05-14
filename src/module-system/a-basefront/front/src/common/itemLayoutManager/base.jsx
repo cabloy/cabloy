@@ -25,10 +25,10 @@ export default {
       return this.$store.getters['a/base/userLabels'];
     },
     base_atomIdMain() {
-      return this._atomIdMain;
+      return this.base._atomIdMain;
     },
     base_atomMain() {
-      return this.container.options.atomMain || this._atomMain;
+      return this.container.options.atomMain || this.base._atomMain;
     },
   },
   created() {
@@ -107,8 +107,8 @@ export default {
       if (this.container.options.atomMain) return;
       const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
       const atomIdMain = this.base.item[atomIdMainFieldName];
-      this._atomIdMain = atomIdMain;
-      this._atomMain = await this.$api.post('/a/base/atom/read', {
+      this.base._atomIdMain = atomIdMain;
+      this.base._atomMain = await this.$api.post('/a/base/atom/read', {
         key: { atomId: atomIdMain },
         atomClass: this.base.atomClassBase.detail.atomClassMain,
         options: {},

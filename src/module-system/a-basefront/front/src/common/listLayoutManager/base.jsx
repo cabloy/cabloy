@@ -21,7 +21,7 @@ export default {
       return this.container.options.atomIdMain;
     },
     base_atomMain() {
-      return this.container.options.atomMain || this._atomMain;
+      return this.container.options.atomMain || this.base._atomMain;
     },
   },
   created() {
@@ -50,7 +50,7 @@ export default {
       if (!this.base.atomClassBase.detail) return;
       if (this.container.options.atomMain) return;
       const atomIdMain = this.base_atomIdMain;
-      this._atomMain = await this.$api.post('/a/base/atom/read', {
+      this.base._atomMain = await this.$api.post('/a/base/atom/read', {
         key: { atomId: atomIdMain },
         atomClass: this.base.atomClassBase.detail.atomClassMain,
         options: {},
