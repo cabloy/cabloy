@@ -42,33 +42,8 @@ export default {
         return;
       }
 
-      if (action.name === 'save' && this.container.mode === 'edit' && this.page_getDirty()) {
-        if (data.actionSource === this) {
-          // just update time
-          if (this.base.item.atomUpdatedAt) {
-            this.base.item.atomUpdatedAt = new Date();
-          } else {
-            this.base.item.updatedAt = new Date();
-          }
-        } else {
-          // prompt
-          const title = this.base.item.atomNameLocale || this.base.item.atomName;
-          try {
-            await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), title);
-            if (this.page_getDirty()) {
-              // only load once when more updates
-              await this.base_loadItem();
-              this.page_setDirty(false);
-            }
-          } catch (err) {
-            // just update time
-            if (this.base.item.atomUpdatedAt) {
-              this.base.item.atomUpdatedAt = new Date();
-            } else {
-              this.base.item.updatedAt = new Date();
-            }
-          }
-        }
+      if (action.name === 'save' && this.container.mode === 'edit') {
+        await this.event_onActionChanged_saveEdit({ data });
         return;
       }
 
@@ -90,6 +65,40 @@ export default {
       }
       // others
       await this.base_loadItem();
+    },
+    async event_onActionChanged_saveEdit({ data }) {
+      // from self
+      if (data.actionSource === this) {
+        // just update time
+        if (this.base.item.atomUpdatedAt) {
+          this.base.item.atomUpdatedAt = new Date();
+        } else {
+          this.base.item.updatedAt = new Date();
+        }
+        return;
+      }
+      // not dirty
+      if (!this.page_getDirty()) {
+        await this.base_loadItem();
+        return;
+      }
+      // prompt
+      const title = this.base.item.atomNameLocale || this.base.item.atomName;
+      try {
+        await this.$view.dialog.confirm(this.$text('DataChangedReloadConfirm'), title);
+        if (this.page_getDirty()) {
+          // only load once when more updates
+          await this.base_loadItem();
+          this.page_setDirty(false);
+        }
+      } catch (err) {
+        // just update time
+        if (this.base.item.atomUpdatedAt) {
+          this.base.item.atomUpdatedAt = new Date();
+        } else {
+          this.base.item.updatedAt = new Date();
+        }
+      }
     },
     async event_onActionsChanged(data) {
       // const key = data.key;
