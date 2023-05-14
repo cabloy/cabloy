@@ -710,6 +710,17 @@ export default function (Vue) {
     get emptyIcon() {
       return '<i class="icon"></i>';
     },
+    replaceItem(itemDest, itemSrc) {
+      if (!itemDest) return itemSrc;
+      const keys = Object.keys(itemDest);
+      Object.assign(itemDest, itemSrc);
+      for (const key of keys) {
+        if (itemSrc[key] === undefined) {
+          itemDest[key] = undefined;
+        }
+      }
+      return itemDest;
+    },
   };
 
   // moment

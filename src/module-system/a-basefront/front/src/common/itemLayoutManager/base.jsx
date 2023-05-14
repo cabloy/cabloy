@@ -82,11 +82,12 @@ export default {
           await this.actions_createDelayActions();
         } else {
           // item
-          this.base.item = await this.$api.post('/a/base/atom/read', {
+          const item = await this.$api.post('/a/base/atom/read', {
             key: { atomId: this.container.atomId },
             atomClass: this.base.atomClass,
             options,
           });
+          this.base.item = this.$meta.util.replaceItem(this.base.item, item);
           // actions
           await this.actions_fetchActions();
         }
