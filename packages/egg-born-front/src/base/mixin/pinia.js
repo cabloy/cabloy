@@ -22,6 +22,7 @@ export default function (Vue) {
     await Vue.prototype.$meta.module.use(info.relativeName);
     const useStore = __stores[path];
     if (!useStore) {
+      // throw error
       throw new Error(`pinia not found: ${path}`);
     }
     return useStore();
@@ -31,7 +32,8 @@ export default function (Vue) {
   store.useSync = function (path) {
     const useStore = __stores[path];
     if (!useStore) {
-      throw new Error(`pinia not found: ${path}`);
+      // not throw error
+      return null;
     }
     return useStore();
   };
