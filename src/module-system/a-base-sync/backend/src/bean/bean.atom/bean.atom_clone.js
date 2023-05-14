@@ -57,11 +57,18 @@ module.exports = ctx => {
       }
       // destKey
       if (!destKey) {
+        const options = {};
+        // pacth atomIdMain of options
+        if (atomClassBase.detail) {
+          const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
+          options.atomIdMain = srcItem[atomIdMainField];
+        }
         destKey = await this.create({
           atomClass,
           atomStage: destItem.atomStage,
           roleIdOwner: srcItem.roleIdOwner,
           item: null,
+          options,
           createOptions: { target, srcItem, destItem },
           user,
         });
