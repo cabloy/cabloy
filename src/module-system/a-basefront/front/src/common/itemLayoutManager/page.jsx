@@ -6,7 +6,11 @@ export default {
     page_onGetTitle() {
       let title;
       if (this.base.item) {
-        title = this.base.item.atomNameLocale || this.base.item.atomName || this.base.item._meta?.atomName;
+        if (this.container.mode === 'edit') {
+          title = this.base.item.atomName;
+        } else {
+          title = this.base.item.atomNameLocale || this.base.item.atomName || this.base.item._meta?.atomName;
+        }
       }
       if (!title) {
         title = this.base.atomClassBase.titleLocale;
