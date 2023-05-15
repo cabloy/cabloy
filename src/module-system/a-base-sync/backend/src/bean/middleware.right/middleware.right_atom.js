@@ -54,6 +54,7 @@ module.exports = ctx => {
           atomClass,
           action: actionOther,
           stage: options.stage,
+          options: ctx.request.body.options,
           user,
         });
         if (!res) ctx.throw(403);
