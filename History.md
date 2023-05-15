@@ -1,6 +1,6 @@
 # History
 
-## 2023-04-30, Version 4.32.0（未发布）
+## 2023-05-15, Version 4.32.0（未发布）
 
 - **Feat**
 
@@ -9,6 +9,9 @@
     - Business, Inner, Runtime, Detail
     - 业务数据，内部数据，运行数据，明细数据
   - ebType: atomClassId
+  - 基于 pinia 管理数据状态
+  - 角色数据授权：CRUD/基于角色的展开模式/基于用户的展开模式
+  - CreateDelay 模式
 
 - **Enhance**
 
