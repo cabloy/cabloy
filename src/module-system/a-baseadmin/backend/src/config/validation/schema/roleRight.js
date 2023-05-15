@@ -58,7 +58,18 @@ module.exports = app => {
   schemas.roleRightSearch = {
     type: 'object',
     properties: {
-      // todo:
+      atomClassIdTarget: {
+        type: 'number',
+        ebType: 'atomClassId',
+        ebTitle: 'Atom Class',
+        ebParams: {
+          target: '_self',
+          check: {
+            enableRight: true,
+          },
+          optional: true,
+        },
+      },
     },
   };
   return schemas;
