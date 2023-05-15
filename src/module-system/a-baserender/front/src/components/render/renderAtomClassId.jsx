@@ -50,14 +50,14 @@ export default {
       const { key, property } = this.context;
       // change atomClassBase
       const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
-      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      this.atomClassBase = atomClass ? await useStoreAtomClasses.getAtomClassBase({ atomClass }) : null;
       // atomClassId
-      this.context.setValue(this.atomClassBase.id, key);
+      this.context.setValue(atomClass ? this.atomClassBase.id : null, key);
       // mapper
       const mapper = property.ebParams.mapper;
       if (mapper) {
         for (const _key in mapper) {
-          this.context.setValue(this.atomClassBase[_key], mapper[_key]);
+          this.context.setValue(atomClass ? this.atomClassBase[_key] : null, mapper[_key]);
         }
       }
     },
