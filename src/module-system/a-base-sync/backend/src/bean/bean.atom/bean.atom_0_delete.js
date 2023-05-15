@@ -5,7 +5,7 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom {
     // deleteBulk
-    async deleteBulk({ atomClass, keys, user }) {
+    async deleteBulk({ atomClass, keys, options, user }) {
       const resKeys = [];
       for (const key of keys) {
         const res = await this._deleteBulk_item({ atomClass, key, user });

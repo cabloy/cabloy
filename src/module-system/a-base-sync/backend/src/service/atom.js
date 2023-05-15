@@ -57,8 +57,8 @@ module.exports = app => {
       return await this.ctx.bean.atom.delete({ key, atomClass, user });
     }
 
-    async deleteBulk({ atomClass, keys, user }) {
-      return await this.ctx.bean.atom.deleteBulk({ atomClass, keys, user });
+    async deleteBulk({ atomClass, keys, options, user }) {
+      return await this.ctx.bean.atom.deleteBulk({ atomClass, keys, options, user });
     }
 
     async clone({ key, atomClass, user }) {

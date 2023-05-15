@@ -175,6 +175,7 @@ module.exports = app => {
       const res = await this.ctx.service.atom.deleteBulk({
         atomClass: this.ctx.request.body.atomClass,
         keys: this.ctx.request.body.keys,
+        options: this.ctx.request.body.options,
         user: this.ctx.state.user.op,
       });
       this.ctx.success(res);
