@@ -255,11 +255,12 @@ export default function (Vue) {
     },
     _registerStores(module) {
       const $store = Vue.prototype.$meta.store;
+      const $pinia = Vue.prototype.$meta.pinia;
       for (const key in module.options.stores) {
         const store = module.options.stores[key];
         const fullKey = `${module.info.url}/${key}`;
         const useStore = $store.defineStore(fullKey, store);
-        $store.registerStore(fullKey, useStore);
+        $store.registerStore(fullKey, useStore($pinia));
       }
     },
     _registerStore(module) {
