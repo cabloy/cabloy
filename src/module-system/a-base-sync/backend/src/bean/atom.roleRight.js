@@ -11,6 +11,7 @@ module.exports = app => {
       const res = await this.ctx.model.roleRight.insert({
         roleAtomId: atomIdMain,
         roleId: role.id,
+        scope: '[]',
       });
       // const roleRightId = await this.ctx.bean.role.addRoleRight({
       //   roleAtomId: atomIdMain,

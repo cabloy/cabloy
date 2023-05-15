@@ -1,5 +1,5 @@
 const tableNameDefault = function ({ action }) {
-  if (action === 'read') {
+  if (action === 'read' || action === 'select') {
     return `
       (select 
           __a.id,__a.createdAt,__a.updatedAt,__a.deleted,__a.iid,__a.roleId,__a.atomClassId as atomClassIdTarget,__a.action,__a.scope,__a.roleAtomId,

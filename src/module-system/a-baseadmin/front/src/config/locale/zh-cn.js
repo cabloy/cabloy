@@ -58,6 +58,7 @@ export default {
   'Join Time': '加入时间',
   'Join Date': '加入日期',
   'Clear Role': '清除角色',
+  'Not Specified': '未指定',
   SelectedResources: '已选择的资源',
   ActionObsoletedTitle: '已废弃',
   Atoms: '数据',

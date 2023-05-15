@@ -35,19 +35,28 @@ export default {
       let group = null;
       for (const item of items) {
         // group
-        const groupName = `${item.moduleTarget}.${item.atomClassNameTarget}`;
+        const groupName = item.atomClassIdTarget ? `${item.moduleTarget}.${item.atomClassNameTarget}` : null;
         if (!group || group.id !== groupName) {
-          const module = this.getModule(item.moduleTarget);
-          const atomClass = this.getAtomClass({
-            module: item.moduleTarget,
-            atomClassName: item.atomClassNameTarget,
-          });
-          group = {
-            id: groupName,
-            atomClassTitle: atomClass.titleLocale,
-            moduleTitle: module.titleLocale,
-            items: [],
-          };
+          if (item.atomClassIdTarget) {
+            const module = this.getModule(item.moduleTarget);
+            const atomClass = this.getAtomClass({
+              module: item.moduleTarget,
+              atomClassName: item.atomClassNameTarget,
+            });
+            group = {
+              id: groupName,
+              atomClassTitle: atomClass.titleLocale,
+              moduleTitle: module.titleLocale,
+              items: [],
+            };
+          } else {
+            group = {
+              id: groupName,
+              atomClassTitle: this.$text('Not Specified'),
+              moduleTitle: null,
+              items: [],
+            };
+          }
           groups.push(group);
         }
         // item
@@ -55,15 +64,24 @@ export default {
           item.title = item.actionName;
           item.titleLocale = item.actionNameLocale;
         } else {
-          const action = this.getAction({
-            module: item.moduleTarget,
-            atomClassName: item.atomClassNameTarget,
-            name: item.actionName,
-          });
+          let action;
+          if (item.atomClassIdTarget) {
+            action = this.getAction({
+              module: item.moduleTarget,
+              atomClassName: item.atomClassNameTarget,
+              name: item.actionName,
+            });
+          } else {
+            action = null;
+          }
           item._action = action;
           if (!action) {
-            item.title = item.actionName;
-            item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
+            if (item.atomClassIdTarget) {
+              item.title = item.actionName;
+              item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
+            } else {
+              item.titleLocale = item.title = this.$text('Not Specified');
+            }
           } else {
             item.title = action.title;
             item.titleLocale = action.titleLocale;
