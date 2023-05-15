@@ -241,7 +241,7 @@ export default function (Vue) {
     },
     _registerResources(module) {
       module.options.components && this._registerComponents(module);
-      module.options.pinias && this._registerPinias(module);
+      module.options.stores && this._registerStores(module);
       module.options.store && this._registerStore(module);
       module.options.config && this._registerConfig(module);
       module.options.locales && this._registerLocales(module);
@@ -253,12 +253,12 @@ export default function (Vue) {
         Vue.prototype.$meta.util._setComponentGlobal(component);
       }
     },
-    _registerPinias(module) {
+    _registerStores(module) {
       const $store = Vue.prototype.$meta.store;
-      for (const key in module.options.pinias) {
-        const pinia = module.options.pinias[key];
+      for (const key in module.options.stores) {
+        const store = module.options.stores[key];
         const fullKey = `${module.info.url}/${key}`;
-        const useStore = $store.defineStore(fullKey, pinia);
+        const useStore = $store.defineStore(fullKey, store);
         $store.registerStore(fullKey, useStore);
       }
     },
