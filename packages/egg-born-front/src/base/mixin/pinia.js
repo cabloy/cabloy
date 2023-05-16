@@ -5,7 +5,7 @@ export default function (Vue) {
   Vue.use(PiniaVuePlugin);
 
   // stores
-  const __stores = {};
+  const __stores = Vue.exports.reactive({});
 
   // pinia
   const pinia = new createPinia();
@@ -32,8 +32,9 @@ export default function (Vue) {
   store.useSync = function (path) {
     const store = __stores[path];
     if (!store) {
+      Vue.exports.set(__stores, path, null);
       // not throw error
-      return null;
+      return __stores[path];
     }
     return store;
   };
