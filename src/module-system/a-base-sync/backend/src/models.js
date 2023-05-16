@@ -9,6 +9,7 @@ const roleIncRef = require('./model/roleIncRef.js');
 const roleRef = require('./model/roleRef.js');
 const roleRight = require('./model/roleRight.js');
 const roleRightRef = require('./model/roleRightRef.js');
+const roleExpand = require('./model/roleExpand.js');
 const user = require('./model/user.js');
 const userAgent = require('./model/userAgent.js');
 const userRole = require('./model/userRole.js');
@@ -39,6 +40,7 @@ module.exports = app => {
     roleRef,
     roleRight,
     roleRightRef,
+    roleExpand,
     user,
     userAgent,
     userRole,
