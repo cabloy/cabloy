@@ -10,7 +10,15 @@ export default {
     },
     getActionsBaseSync({ atomClass }) {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
-      return this.actionsBases[key];
+      let actionsBase = this.actionsBases[key];
+      if (!actionsBase) {
+        // get async
+        this.getActionsBase({ atomClass });
+        // init
+        Vue.set(this.actionsBases, key, null);
+        actionsBase = this.actionsBases[key];
+      }
+      return actionsBase;
     },
     async getActionsBase({ atomClass }) {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
@@ -28,6 +36,7 @@ export default {
     },
     getActionBaseSync({ atomClass, code, name }) {
       const actionsBase = this.getActionsBaseSync({ atomClass });
+      if (!actionsBase) return actionsBase;
       return this._getActionBaseInner({ actionsBase, code, name });
     },
     _getActionBaseInner({ actionsBase, code, name }) {
