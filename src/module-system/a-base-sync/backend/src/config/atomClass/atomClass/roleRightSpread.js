@@ -33,8 +33,8 @@ module.exports = app => {
     info: {
       bean: 'roleRightSpread',
       title: 'RoleAtomRightSpread',
-      // model: 'roleRightSpread',
-      // tableName: 'aRoleRight',
+      model: 'roleExpand',
+      tableName: 'aRoleExpand',
       tableNameModes: {
         default: tableNameDefault,
       },
