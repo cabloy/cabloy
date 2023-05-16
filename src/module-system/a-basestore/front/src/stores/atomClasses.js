@@ -13,6 +13,9 @@ export default {
       const key = atomClass.id || `${atomClass.module}:${atomClass.atomClassName}`;
       let atomClassBase = this.atomClassBases[key];
       if (!atomClassBase) {
+        // get async
+        this.getAtomClassBase({ atomClass });
+        // init
         Vue.set(this.atomClassBases, key, null);
         atomClassBase = this.atomClassBases[key];
       }
