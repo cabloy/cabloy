@@ -20,23 +20,23 @@ export default function (Vue) {
   store.use = async function (path) {
     const info = Vue.prototype.$meta.util.parseModuleInfo(path);
     await Vue.prototype.$meta.module.use(info.relativeName);
-    const store = __stores[path];
-    if (!store) {
+    const useStore = __stores[path];
+    if (!useStore) {
       // throw error
       throw new Error(`pinia not found: ${path}`);
     }
-    return store;
+    return useStore;
   };
 
   // use sync
   store.useSync = function (path) {
-    const store = __stores[path];
-    if (!store) {
-      Vue.exports.set(__stores, path, null);
+    let useStore = __stores[path];
+    if (!useStore) {
       // not throw error
-      return __stores[path];
+      Vue.set(__stores, path, null);
+      useStore = __stores[path];
     }
-    return store;
+    return useStore;
   };
 
   // set
