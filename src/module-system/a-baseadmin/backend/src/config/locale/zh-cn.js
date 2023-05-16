@@ -13,6 +13,7 @@ module.exports = {
   'Tag Management': '标签管理',
   'Select Users': '选择用户',
   RoleAtomRight: '角色数据权限',
+  RoleAtomRightSpread: '角色数据权限(展开)',
   RoleResourceRight: '角色资源权限',
   Users: '用户',
   Includes: '聚合',
