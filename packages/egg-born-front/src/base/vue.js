@@ -1,6 +1,9 @@
-import Vue from 'vue';
+import * as VueAll from 'vue';
 import DevInfo from './plugin/devInfo.js';
 import Preload from './plugin/preload.js';
+
+const Vue = VueAll.default;
+Vue.exports = VueAll;
 
 if (process.env.NODE_ENV === 'production') {
   Vue.config.productionTip = false;
