@@ -19,4 +19,5 @@ module.exports = {
   Includes: '聚合',
   Inherits: '继承',
   AddChild: '添加子项',
+  Spreads: '展开',
 };

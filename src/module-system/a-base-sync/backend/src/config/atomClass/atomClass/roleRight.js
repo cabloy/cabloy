@@ -79,10 +79,8 @@ module.exports = app => {
         title: 'Spreads',
         actionModule: 'a-baseadmin',
         actionComponent: 'action',
-        icon: { f7: ':outline:check-circle-outline' },
-        // directShowOnList: true,
-        // directShowOnItem: true,
-        // mode: 'view',
+        icon: { f7: ':tools:spreadsheet' },
+        bulk: true,
       },
     },
     validator: {
