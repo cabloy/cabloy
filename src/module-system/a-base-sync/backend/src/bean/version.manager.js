@@ -212,6 +212,11 @@ module.exports = app => {
       const versionUpdate26 = new (VersionUpdate26Fn(this.ctx))();
       await versionUpdate26._adjustRoleRightsInstance(options);
     }
+
+    async update27_adjustRoleExpands(options) {
+      const versionUpdate27 = new (VersionUpdate27Fn(this.ctx))();
+      await versionUpdate27._adjustRoleExpandsInstance(options);
+    }
   }
 
   return Version;

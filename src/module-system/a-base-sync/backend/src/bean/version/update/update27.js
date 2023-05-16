@@ -1,22 +1,22 @@
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class VersionUpdate27 {
-    get modelRoleRight() {
-      return ctx.model.module(moduleInfo.relativeName).roleRight;
+    get modelRoleExpand() {
+      return ctx.model.module(moduleInfo.relativeName).roleExpand;
     }
 
     async run(options) {
-      // aRoleRight: add roleAtomId
+      // aRoleExpand: add roleAtomId
       const sql = `
-        ALTER TABLE aRoleRight
+        ALTER TABLE aRoleExpand
           Add COLUMN roleAtomId int(11) DEFAULT '0'
                   `;
       await ctx.model.query(sql);
-      // adjustRoleRights
-      await this._adjustRoleRights(options);
+      // adjustRoleExpands
+      await this._adjustRoleExpands(options);
     }
 
-    async _adjustRoleRights(options) {
+    async _adjustRoleExpands(options) {
       // all instances
       const instances = await ctx.bean.instance.list({ where: {} });
       for (const instance of instances) {
@@ -25,19 +25,19 @@ module.exports = function (ctx) {
           beanModule: moduleInfo.relativeName,
           beanFullName: `${moduleInfo.relativeName}.version.manager`,
           context: options,
-          fn: 'update26_adjustRoleRights',
+          fn: 'update27_adjustRoleExpands',
         });
       }
     }
 
-    async _adjustRoleRightsInstance() {
+    async _adjustRoleExpandsInstance() {
       // select all role rights
-      const roleRights = await this.modelRoleRight.select();
-      for (const roleRight of roleRights) {
-        const roleId = roleRight.roleId;
+      const roleExpands = await this.modelRoleExpand.select();
+      for (const roleExpand of roleExpands) {
+        const roleId = roleExpand.roleId;
         const role = await ctx.bean.role.get({ id: roleId });
         const roleAtomId = role.atomId;
-        await this.modelRoleRight.update({ id: roleRight.id, roleAtomId });
+        await this.modelRoleExpand.update({ id: roleExpand.id, roleAtomId });
       }
     }
   }
