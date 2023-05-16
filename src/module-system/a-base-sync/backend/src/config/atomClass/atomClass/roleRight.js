@@ -74,15 +74,15 @@ module.exports = app => {
       deleteBulk: {
         rightInherit: 'atomAuthorizations',
       },
-      spreads: {
+      spreadsBulk: {
         code: 101,
         title: 'Spreads',
         actionModule: 'a-baseadmin',
         actionComponent: 'action',
         icon: { f7: ':outline:check-circle-outline' },
-        directShowOnList: true,
-        directShowOnItem: true,
-        mode: 'view',
+        // directShowOnList: true,
+        // directShowOnItem: true,
+        // mode: 'view',
       },
     },
     validator: {
