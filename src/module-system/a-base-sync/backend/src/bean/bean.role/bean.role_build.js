@@ -85,16 +85,17 @@ module.exports = ctx => {
 
     async _buildRolesAdd({ iid, roleIdParent }, progress) {
       const list = await ctx.model.query(
-        `select a.id,a.roleName,a.catalog from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
+        `select a.id,a.roleName,a.catalog,a.atomId from aRole a where a.iid=${iid} and a.roleIdParent=${roleIdParent}`
       );
       for (const item of list) {
         // info
         const roleId = item.id;
+        const roleAtomId = item.atomId;
         const catalog = item.catalog;
         // build
         await this._buildRoleRef({ iid, roleId });
         await this._buildRoleIncRef({ iid, roleId });
-        await this._buildRoleExpand({ iid, roleId });
+        await this._buildRoleExpand({ iid, roleId, roleAtomId });
         // catalog
         if (catalog === 1) {
           await this._buildRolesAdd({ iid, roleIdParent: roleId }, progress);
@@ -143,16 +144,16 @@ module.exports = ctx => {
       );
     }
 
-    async _buildRoleExpand({ iid, roleId }) {
+    async _buildRoleExpand({ iid, roleId, roleAtomId }) {
       await ctx.model.query(
-        `insert into aRoleExpand(iid,roleId,roleIdBase)
-            select a.iid,a.roleId,a.roleIdParent from aRoleRef a
+        `insert into aRoleExpand(iid,roleAtomId,roleId,roleIdBase)
+            select a.iid,${roleAtomId},a.roleId,a.roleIdParent from aRoleRef a
               where a.iid=${iid} and a.roleId=${roleId}
         `
       );
       await ctx.model.query(
-        `insert into aRoleExpand(iid,roleId,roleIdBase)
-            select a.iid,a.roleId,a.roleIdInc from aRoleIncRef a
+        `insert into aRoleExpand(iid,roleAtomId,roleId,roleIdBase)
+            select a.iid,${roleAtomId},a.roleId,a.roleIdInc from aRoleIncRef a
               where a.iid=${iid} and a.roleId=${roleId}
         `
       );
