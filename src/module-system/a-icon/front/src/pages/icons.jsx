@@ -17,8 +17,9 @@ export default {
     this._loadIcons();
   },
   methods: {
-    onClickCopy(svg) {
-      this.$meta.util.clipboard.copy(svg, { ctx: this });
+    async onClickCopy(svg) {
+      const useStoreClipboard = await this.$store.use('a/clipboard/clipboard');
+      useStoreClipboard.copy(svg, { ctx: this });
     },
     onClickEnable() {
       this.$refs.searchbar.f7Searchbar.enable(true);
