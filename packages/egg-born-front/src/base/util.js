@@ -6,7 +6,6 @@ import queue from 'async/queue';
 import debounce from '@zhennann/debounce';
 import currency from '@zhennann/currency';
 import extend from '@zhennann/extend';
-import clipboardFn from './clipboard.js';
 import sandboxFn from './sandbox.js';
 import requirejsFn from './requirejs.js';
 // eslint-disable-next-line
@@ -737,7 +736,6 @@ export default function (Vue) {
 
   // mixin
   Object.assign(util, {
-    clipboard: clipboardFn(Vue),
     sandbox: sandboxFn(Vue),
     moment,
     uuid,
