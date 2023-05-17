@@ -52,6 +52,7 @@
     "egg-born-module-a-chartjs": "^4.8.4",
     "egg-born-module-a-cli": "^4.8.10",
     "egg-born-module-a-clibooster": "^4.8.15",
+    "egg-born-module-a-clipboard": "^4.0.0",
     "egg-born-module-a-cms": "^4.8.13",
     "egg-born-module-a-codemirror": "^4.8.4",
     "egg-born-module-a-components-sync": "^4.8.39",

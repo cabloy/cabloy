@@ -132,6 +132,9 @@
           "a-iconbooster": {
             "scripts": ["npmPublish"]
           },
+          "a-clipboard": {
+            "scripts": ["npmPublish"]
+          },
           "a-index": {
             "scripts": ["npmPublish"]
           },
