@@ -1,4 +1,5 @@
 import { createPinia, PiniaVuePlugin, defineStore } from 'pinia';
+import { PiniaPluginCreated } from 'pinia-plugin-created';
 
 export default function (Vue) {
   // install pinia
@@ -11,11 +12,7 @@ export default function (Vue) {
   const pinia = new createPinia();
 
   // plugin: created
-  pinia.use(context => {
-    if (context.options.created) {
-      context.options.created.call(context.store);
-    }
-  });
+  pinia.use(PiniaPluginCreated);
 
   // store
   const store = Vue.prototype.$meta.store;
