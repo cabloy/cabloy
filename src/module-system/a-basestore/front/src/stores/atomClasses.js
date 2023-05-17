@@ -1,7 +1,9 @@
 import Vue from 'vue';
 
 export default {
-  state: () => ({ atomClassBases: {} }),
+  state() {
+    return { atomClassBases: {} };
+  },
   actions: {
     setAtomClassBase({ atomClass, atomClassBase }) {
       let key = atomClass.id;

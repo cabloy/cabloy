@@ -1,7 +1,9 @@
 import Vue from 'vue';
 
 export default {
-  state: () => ({ actionsBases: {} }),
+  state() {
+    return { actionsBases: {} };
+  },
   actions: {
     // actionsBase
     setActionsBase({ atomClass, actionsBase }) {
