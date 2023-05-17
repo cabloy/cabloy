@@ -1,5 +1,1 @@
-import documentVisibility from './stores/documentVisibility.js';
-
-export default {
-  documentVisibility,
-};
+export default {};
