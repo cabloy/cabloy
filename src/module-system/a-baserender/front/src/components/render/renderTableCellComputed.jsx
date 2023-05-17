@@ -63,14 +63,13 @@ export default {
         params: column.params,
         options: column.component && column.component.options,
       }; // { text, record, index, indexTotal, column }
-      this.$meta.util.sandbox
-        .evaluate(this.expression, scope)
-        .then(value => {
-          this.value = this.formatText({ text: value, column });
-        })
-        .catch(err => {
-          throw err;
-        });
+      this.evaluate_inner({ scope, column });
+    },
+    async evaluate_inner({ scope, column }) {
+      const useStoreSandbox = await this.$meta.store.use('a/sandbox/sandbox');
+      const value = await useStoreSandbox.evaluate(this.expression, scope);
+
+      this.value = this.formatText({ text: value, column });
     },
   },
   render() {

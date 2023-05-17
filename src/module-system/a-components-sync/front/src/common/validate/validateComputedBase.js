@@ -80,7 +80,6 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
     async onChangeDeps_evaluate({ info, scope }) {
       const useStoreSandbox = await ctx.$meta.store.use('a/sandbox/sandbox');
       const value = await useStoreSandbox.evaluate(info.expression, scope);
-
       onChange({
         parcel: info.parcel,
         name: info.name,
