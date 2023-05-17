@@ -15,6 +15,7 @@ function install(_Vue, cb) {
     locales: require('./config/locales.js').default,
     components: require('./components.js').default,
     mixins: require('./mixins.js').default,
+    stores: require('./stores.js').default,
   });
 }
 

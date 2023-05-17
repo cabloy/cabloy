@@ -1,14 +1,16 @@
 export default {
   state() {
     return {
-      visibilityState: document.visibilityState === 'visible',
       initialized: false,
+      visibilityState: undefined,
+      // visibilityState: document.visibilityState === 'visible', // document not ready
     };
   },
   actions: {
     initialize() {
       if (this.initialized) return;
       this.initialized = true;
+      this.visibilityState = document.visibilityState === 'visible';
       document.addEventListener('visibilitychange', () => {
         const visibilityState = document.visibilityState === 'visible';
         if (this.visibilityState !== visibilityState) {
@@ -18,7 +20,7 @@ export default {
     },
     subscribe(callback) {
       this.initialize();
-      this.$subscribe((mutation, state) => {
+      return this.$subscribe((mutation, state) => {
         callback(state.visibilityState);
       });
     },
