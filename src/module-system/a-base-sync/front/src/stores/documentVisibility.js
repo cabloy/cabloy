@@ -10,13 +10,13 @@ export default {
     initialize() {
       if (this.initialized) return;
       this.initialized = true;
-      this.visibilityState = document.visibilityState === 'visible';
+      this.updateVisibilityState();
       document.addEventListener('visibilitychange', () => {
-        const visibilityState = document.visibilityState === 'visible';
-        if (this.visibilityState !== visibilityState) {
-          this.visibilityState = visibilityState;
-        }
+        this.updateVisibilityState();
       });
+    },
+    updateVisibilityState() {
+      this.visibilityState = document.visibilityState === 'visible';
     },
     subscribe(callback) {
       this.initialize();
