@@ -158,6 +158,7 @@ export default {
             key="dashboard-action-lock"
             class="dashboard-action-lock"
             iconF7="::lock"
+            tooltip={this.$text('Unlock')}
             propsOnPerform={event => this.onPerformLock(event)}
           ></eb-link>
         );
@@ -167,6 +168,7 @@ export default {
               key="dashboard-action-profileSwitch"
               class="dashboard-action-profileSwitch"
               iconF7="::view-list"
+              tooltip={this.$text('SwitchDashboardProfile')}
               propsOnPerform={event => this.onPerformProfileSwitch(event)}
             ></eb-link>
           );
@@ -178,6 +180,7 @@ export default {
             key="dashboard-action-unlock"
             class="dashboard-action-unlock"
             iconF7="::lock-open"
+            tooltip={this.$text('Lock')}
             propsOnPerform={event => this.onPerformUnlock(event)}
           ></eb-link>
         );
@@ -188,6 +191,7 @@ export default {
             key="dashboard-action-settings"
             class="dashboard-action-settings"
             iconF7="::settings"
+            tooltip={this.$text('Settings')}
             propsOnPerform={event => this.onPerformSettings(event)}
           ></eb-link>
         );
@@ -200,6 +204,7 @@ export default {
               key="dashboard-action-fullscreen"
               class="dashboard-action-fullscreen"
               iconF7={useStoreScreenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
+              tooltip={useStoreScreenfull.isFullscreen ? this.$text('Exit Fullscreen') : this.$text('Fullscreen')}
               propsOnPerform={event => this.onPerformFullscreen(event)}
             ></eb-link>
           );
