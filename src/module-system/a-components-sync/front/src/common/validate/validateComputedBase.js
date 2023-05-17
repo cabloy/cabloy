@@ -74,18 +74,18 @@ export default ({ ctx, dataRootName, dataRoot, onDataMeta, onChange }) => {
       //   this.fillScope(scope, dataRoot, depName);
       // }
       // evaluate
-      ctx.$meta.util.sandbox
-        .evaluate(info.expression, scope)
-        .then(value => {
-          onChange({
-            parcel: info.parcel,
-            name: info.name,
-            value,
-          });
-        })
-        .catch(err => {
-          throw err;
-        });
+      this.onChangeDeps_evaluate({ info, scope });
+    }
+
+    async onChangeDeps_evaluate({ info, scope }) {
+      const useStoreSandbox = await ctx.$meta.store.use('a/sandbox/sandbox');
+      const value = await useStoreSandbox.evaluate(info.expression, scope);
+
+      onChange({
+        parcel: info.parcel,
+        name: info.name,
+        value,
+      });
     }
 
     unRegister(dataPath) {
