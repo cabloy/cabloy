@@ -68,7 +68,6 @@ export default {
     async evaluate_inner({ scope, column }) {
       const useStoreSandbox = await this.$meta.store.use('a/sandbox/sandbox');
       const value = await useStoreSandbox.evaluate(this.expression, scope);
-
       this.value = this.formatText({ text: value, column });
     },
   },
