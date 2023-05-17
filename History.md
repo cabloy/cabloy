@@ -10,6 +10,7 @@
     - 业务数据，内部数据，运行数据，明细数据
   - ebType: atomClassId
   - 基于 pinia 管理数据状态
+    - 将工具从 egg-born-front 中移出，并重构：clipboard、fullscreen、sandbox、visibilityChange
   - 角色数据授权：CRUD/基于角色的展开模式/基于用户的展开模式
   - CreateDelay 模式
 
