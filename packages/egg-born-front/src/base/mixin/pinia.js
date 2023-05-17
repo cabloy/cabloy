@@ -10,6 +10,13 @@ export default function (Vue) {
   // pinia
   const pinia = new createPinia();
 
+  // plugin: created
+  pinia.use(context => {
+    if (context.options.created) {
+      context.options.created.call(context.store);
+    }
+  });
+
   // store
   const store = Vue.prototype.$meta.store;
 

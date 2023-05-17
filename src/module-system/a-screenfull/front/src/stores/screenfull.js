@@ -7,5 +7,6 @@ export default {
       isEnabled: screenfull.isEnabled,
     };
   },
+  created() {},
   actions: {},
 };
