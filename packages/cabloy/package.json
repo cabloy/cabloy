@@ -87,6 +87,7 @@
     "egg-born-module-a-oauth": "^4.8.4",
     "egg-born-module-a-photobrowser": "^4.8.4",
     "egg-born-module-a-progress": "^4.8.5",
+    "egg-born-module-a-screenfull": "^4.0.0",
     "egg-born-module-a-sequence": "^4.8.4",
     "egg-born-module-a-settings": "^4.8.5",
     "egg-born-module-a-share": "^4.8.5",

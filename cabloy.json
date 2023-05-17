@@ -174,6 +174,9 @@
           "a-progress": {
             "scripts": ["npmPublish"]
           },
+          "a-screenfull": {
+            "scripts": ["npmPublish"]
+          },
           "a-sequence": {
             "scripts": ["npmPublish"]
           },
