@@ -9,7 +9,6 @@ import extend from '@zhennann/extend';
 import clipboardFn from './clipboard.js';
 import sandboxFn from './sandbox.js';
 import screenfull from './screenfull.jsx';
-import visibilityChange from './visibilityChange.jsx';
 import requirejsFn from './requirejs.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
@@ -756,8 +755,6 @@ export default function (Vue) {
   });
   // screenfull
   util.screenfull = util.createComponentInstance(screenfull);
-  // visibilityChange
-  util.visibilityChange = util.createComponentInstance(visibilityChange);
 
   // // test:
   // window.setTimeout(() => {
