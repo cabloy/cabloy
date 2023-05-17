@@ -35,20 +35,18 @@ export default {
 
       // evaluate
       const scope = { details };
-      this.$meta.util.sandbox
-        .evaluate(property.ebParams.expression, scope)
-        .then(value => {
-          this.context.setValue(value);
-          // submit
-          if (property.ebAutoSubmit) {
-            this.$nextTick(() => {
-              validate.onSubmit();
-            });
-          }
-        })
-        .catch(err => {
-          throw err;
+      this.onActionChanged_evaluate({ scope, property, validate });
+    },
+    async onActionChanged_evaluate({ scope, property, validate }) {
+      const useStoreSandbox = await this.$meta.store.use('a/sandbox/sandbox');
+      const value = await useStoreSandbox.evaluate(property.ebParams.expression, scope);
+      this.context.setValue(value);
+      // submit
+      if (property.ebAutoSubmit) {
+        this.$nextTick(() => {
+          validate.onSubmit();
         });
+      }
     },
   },
   render() {
