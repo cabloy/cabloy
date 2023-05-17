@@ -6,7 +6,6 @@ import queue from 'async/queue';
 import debounce from '@zhennann/debounce';
 import currency from '@zhennann/currency';
 import extend from '@zhennann/extend';
-import sandboxFn from './sandbox.js';
 import requirejsFn from './requirejs.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
@@ -736,7 +735,6 @@ export default function (Vue) {
 
   // mixin
   Object.assign(util, {
-    sandbox: sandboxFn(Vue),
     moment,
     uuid,
     queue,
