@@ -192,15 +192,18 @@ export default {
           ></eb-link>
         );
       }
-      if (this.$device.desktop && this.$meta.util.screenfull.isEnabled) {
-        children.push(
-          <eb-link
-            key="dashboard-action-fullscreen"
-            class="dashboard-action-fullscreen"
-            iconF7={this.$meta.util.screenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
-            propsOnPerform={event => this.onPerformFullscreen(event)}
-          ></eb-link>
-        );
+      if (this.$device.desktop) {
+        const useStoreScreenfull = this.$store.useSync('a/screenfull/screenfull');
+        if (useStoreScreenfull && useStoreScreenfull.isEnabled) {
+          children.push(
+            <eb-link
+              key="dashboard-action-fullscreen"
+              class="dashboard-action-fullscreen"
+              iconF7={useStoreScreenfull.isFullscreen ? '::fullscreen-exit' : '::fullscreen'}
+              propsOnPerform={event => this.onPerformFullscreen(event)}
+            ></eb-link>
+          );
+        }
       }
       // ok
       return children;
@@ -439,8 +442,9 @@ export default {
         },
       });
     },
-    onPerformFullscreen() {
-      this.$meta.util.screenfull.toggle(this.$el);
+    async onPerformFullscreen() {
+      const useStoreScreenfull = await this.$store.use('a/screenfull/screenfull');
+      useStoreScreenfull.toggle(this.$el);
     },
     async onPerformProfileSwitch(event) {
       if (!this.dashboardUsers) return;
