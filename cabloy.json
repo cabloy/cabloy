@@ -177,6 +177,9 @@
           "a-progress": {
             "scripts": ["npmPublish"]
           },
+          "a-sandbox": {
+            "scripts": ["npmPublish"]
+          },
           "a-screenfull": {
             "scripts": ["npmPublish"]
           },
