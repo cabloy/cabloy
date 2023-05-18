@@ -17,7 +17,7 @@ export default {
         // get async
         this.getActionsBase({ atomClass });
         // init
-        Vue.set(this.actionsBases, key, null);
+        Vue.set(this.actionsBases, key, undefined);
         actionsBase = this.actionsBases[key];
       }
       return actionsBase;

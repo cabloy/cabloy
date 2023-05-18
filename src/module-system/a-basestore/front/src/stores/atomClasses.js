@@ -18,7 +18,7 @@ export default {
         // get async
         this.getAtomClassBase({ atomClass });
         // init
-        Vue.set(this.atomClassBases, key, null);
+        Vue.set(this.atomClassBases, key, undefined);
         atomClassBase = this.atomClassBases[key];
       }
       return atomClassBase;

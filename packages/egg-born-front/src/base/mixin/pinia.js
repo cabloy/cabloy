@@ -39,7 +39,7 @@ export default function (Vue) {
       // use async
       store.use(path);
       // not throw error
-      Vue.set(__stores, path, null);
+      Vue.set(__stores, path, undefined);
       useStore = __stores[path];
     }
     return useStore;
