@@ -7,11 +7,21 @@ const Vue = VueAll.default;
 Vue.exports = VueAll;
 
 // Vue.get
+async function __get_initializer_invoke(target, key, initializer) {
+  try {
+    await initializer();
+  } catch (err) {
+    delete target[key];
+    // not use Vue.delete, which maybe cause infinite loop
+    // Vue.delete(target, key);
+    throw err;
+  }
+}
 Vue.get = Vue.prototype.$get = function (target, key, initializer) {
   if (!(key in target)) {
     Vue.set(target, key, undefined);
     if (initializer) {
-      initializer();
+      __get_initializer_invoke(target, key, initializer);
     }
   }
   return target[key];
