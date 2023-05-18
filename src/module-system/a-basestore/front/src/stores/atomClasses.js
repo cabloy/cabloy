@@ -13,15 +13,10 @@ export default {
     },
     getAtomClassBaseSync({ atomClass }) {
       const key = atomClass.id || `${atomClass.module}:${atomClass.atomClassName}`;
-      let atomClassBase = this.atomClassBases[key];
-      if (!atomClassBase) {
+      return Vue.get(this.atomClassBases, key, () => {
         // get async
         this.getAtomClassBase({ atomClass });
-        // init
-        Vue.set(this.atomClassBases, key, undefined);
-        atomClassBase = this.atomClassBases[key];
-      }
-      return atomClassBase;
+      });
     },
     // id, module, atomClassName
     async getAtomClassBase({ atomClass }) {

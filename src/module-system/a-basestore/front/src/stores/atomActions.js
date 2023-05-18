@@ -12,15 +12,10 @@ export default {
     },
     getActionsBaseSync({ atomClass }) {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
-      let actionsBase = this.actionsBases[key];
-      if (!actionsBase) {
+      return Vue.get(this.actionsBases, key, () => {
         // get async
         this.getActionsBase({ atomClass });
-        // init
-        Vue.set(this.actionsBases, key, undefined);
-        actionsBase = this.actionsBases[key];
-      }
-      return actionsBase;
+      });
     },
     async getActionsBase({ atomClass }) {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
