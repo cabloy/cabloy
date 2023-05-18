@@ -365,6 +365,10 @@ export default {
           const propertyName = name || key;
           this.__componentInstance_set(parcel, propertyName, componentInstance);
         },
+        removeComponentInstance: (componentInstance, name) => {
+          const propertyName = name || key;
+          this.__componentInstance_remove(parcel, propertyName, componentInstance);
+        },
       };
       return context;
     },

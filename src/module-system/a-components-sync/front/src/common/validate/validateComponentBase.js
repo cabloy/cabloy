@@ -6,6 +6,6 @@ export default {
     this.context.setComponentInstance(this);
   },
   beforeDestroy() {
-    this.context.setComponentInstance(null);
+    this.context.removeComponentInstance(this);
   },
 };
