@@ -34,15 +34,10 @@ export default function (Vue) {
 
   // use sync
   store.useSync = function (path) {
-    let useStore = __stores[path];
-    if (!useStore) {
+    return Vue.get(__stores, path, () => {
       // use async
       store.use(path);
-      // not throw error
-      Vue.set(__stores, path, undefined);
-      useStore = __stores[path];
-    }
-    return useStore;
+    });
   };
 
   // set
