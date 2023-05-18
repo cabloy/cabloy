@@ -36,7 +36,7 @@ export default function (Vue) {
   store.useSync = function (path) {
     return Vue.get(__stores, path, () => {
       // use async
-      store.use(path);
+      return store.use(path);
     });
   };
 

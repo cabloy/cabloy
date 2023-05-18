@@ -15,7 +15,7 @@ export default {
       const key = atomClass.id || `${atomClass.module}:${atomClass.atomClassName}`;
       return Vue.get(this.atomClassBases, key, () => {
         // get async
-        this.getAtomClassBase({ atomClass });
+        return this.getAtomClassBase({ atomClass });
       });
     },
     // id, module, atomClassName

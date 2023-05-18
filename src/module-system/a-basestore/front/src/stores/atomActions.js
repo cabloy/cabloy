@@ -14,7 +14,7 @@ export default {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
       return Vue.get(this.actionsBases, key, () => {
         // get async
-        this.getActionsBase({ atomClass });
+        return this.getActionsBase({ atomClass });
       });
     },
     async getActionsBase({ atomClass }) {
