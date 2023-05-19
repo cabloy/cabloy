@@ -18,7 +18,14 @@ module.exports = app => {
         ebDisplay: {
           expression: 'typeof roleNameBaseLocale!=="undefined"',
         },
-        ebParams: {},
+        ebParams: {
+          atomClass: {
+            module: 'a-base',
+            atomClassName: 'role',
+          },
+          mode: 'view',
+          atomId: 'roleIdBase',
+        },
       },
       // AuthorizationObjective
       __groupAuthorizationObjective: {
