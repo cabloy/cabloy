@@ -19,7 +19,7 @@ export default {
       }
       return <eb-list-item key={key} {...{ props }}></eb-list-item>;
     },
-    renderAtomItem_onPerform(event, context) {
+    async renderAtomItem_onPerform(event, context) {
       const { property } = context;
       // params
       const atomClass = property.ebParams.atomClass;
@@ -27,7 +27,19 @@ export default {
       if (target === undefined) target = '_self';
       // atomId: maybe from host
       const atomId = this.getAtomId(context, false);
-      console.log('ssss');
+      // mode
+      const mode = property.ebParams.mode;
+      // item
+      const item = {
+        atomId,
+        ...atomClass,
+      };
+      // perform action
+      const actionName = mode === 'edit' ? 'write' : 'read';
+      const useStoreAtomActions = await this.$store.use('a/basestore/atomActions');
+      let actionBase = await useStoreAtomActions.getActionBase({ atomClass, name: actionName });
+      actionBase = this.$utils.extend({ navigateOptions: { target } }, actionBase);
+      return await this.$meta.util.performAction({ ctx: this, action: actionBase, item });
     },
   },
 };
