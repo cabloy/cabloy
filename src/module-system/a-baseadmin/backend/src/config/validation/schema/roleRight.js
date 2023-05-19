@@ -13,11 +13,12 @@ module.exports = app => {
         },
       },
       roleNameBaseLocale: {
-        ebType: 'text',
+        ebType: 'atomItem',
         ebTitle: 'From',
         ebDisplay: {
           expression: 'typeof roleNameBaseLocale!=="undefined"',
         },
+        ebParams: {},
       },
       // AuthorizationObjective
       __groupAuthorizationObjective: {
