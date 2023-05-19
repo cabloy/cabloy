@@ -76,7 +76,7 @@ module.exports = app => {
       },
       spreadsBulk: {
         code: 101,
-        title: 'Spreads',
+        title: 'RoleAtomRightSpread',
         actionModule: 'a-baseadmin',
         actionComponent: 'actionRoleRight',
         icon: { f7: ':tools:spreadsheet' },
