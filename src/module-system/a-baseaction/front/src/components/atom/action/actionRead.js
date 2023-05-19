@@ -19,14 +19,12 @@ export default {
       // url
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       // open
-      const navigateOptions = Object.assign(
-        {},
-        {
-          context: {
-            params: { atomMain: dataOptions.atomMain },
-          },
-        }
-      );
+      let navigateOptions = action.navigateOptions;
+      navigateOptions = Object.assign({}, navigateOptions, {
+        context: {
+          params: { atomMain: dataOptions.atomMain },
+        },
+      });
       ctx.$view.navigate(url, navigateOptions);
     },
   },
