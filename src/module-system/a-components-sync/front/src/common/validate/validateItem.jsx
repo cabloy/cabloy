@@ -424,7 +424,7 @@ export default {
       const renderType = __renderTypes.find(item => item[0].toUpperCase() === ebType.toUpperCase());
       if (!renderType) {
         // not support
-        return <div>{`not support: ${ebType}`}</div>;
+        return <div>{`not supported ebType: ${ebType}`}</div>;
       }
       return this[renderType[1]](context);
     },
