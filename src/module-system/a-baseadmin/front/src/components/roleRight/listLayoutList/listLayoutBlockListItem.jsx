@@ -37,6 +37,16 @@ export default {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
     },
+    _renderItemHeader(item) {
+      if (!item.roleNameBaseLocale) return null;
+      const desp = `${this.$text('from')}: ${item.roleNameBaseLocale}`;
+      return (
+        <div slot="root-start" class="header">
+          <div></div>
+          <div>{desp}</div>
+        </div>
+      );
+    },
     _renderItemAfter(item) {
       const children = [];
       if (item.actionBulk === 0 && item.scope === 0) {
@@ -105,6 +115,8 @@ export default {
           <div>{item.titleLocale}</div>
         </div>
       );
+      // domHeader
+      const domHeader = this._renderItemHeader(item);
       // domAfter
       const domAfter = this._renderItemAfter(item);
       // domSummary
@@ -128,6 +140,7 @@ export default {
           }}
           onChange={event => this.onItemChange(event, item)}
         >
+          {domHeader}
           {domMedia}
           {domTitle}
           {domSummary}
