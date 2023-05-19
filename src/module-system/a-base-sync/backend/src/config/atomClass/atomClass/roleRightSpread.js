@@ -7,7 +7,7 @@ const tableNameDefault = function () {
       __a.id as roleRightId,__a.atomClassId as atomClassIdTarget,__a.action,__a.scope,
       __b.module as moduleTarget,__b.atomClassName as atomClassNameTarget,
       __c.name as actionName,__c.bulk as actionBulk,__c.actionMode,
-      __e.roleName as roleNameBase,
+      __e.roleName as roleNameBase,__e.atomId as roleAtomIdBase,
       __f.atomName as flowDefName 
         from aRoleRight __a
         inner join aAtomClass __b on __a.atomClassId=__b.id

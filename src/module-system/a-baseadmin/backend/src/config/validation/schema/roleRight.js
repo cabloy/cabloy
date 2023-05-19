@@ -24,7 +24,7 @@ module.exports = app => {
             atomClassName: 'role',
           },
           mode: 'view',
-          atomId: 'roleIdBase',
+          atomId: 'roleAtomIdBase',
         },
       },
       // AuthorizationObjective
