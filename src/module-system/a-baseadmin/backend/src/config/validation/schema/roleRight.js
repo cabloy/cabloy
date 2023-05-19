@@ -4,6 +4,18 @@ module.exports = app => {
   schemas.roleRight = {
     type: 'object',
     properties: {
+      // AuthorizationSource
+      __groupAuthorizationSource: {
+        ebType: 'group-flatten',
+        ebTitle: 'AuthorizationSource',
+      },
+      roleIdBase: {
+        ebType: 'string',
+        ebTitle: 'From',
+        ebComputed: {
+          expression: 'roleNameBase',
+        },
+      },
       // AuthorizationObjective
       __groupAuthorizationObjective: {
         ebType: 'group-flatten',

@@ -3,7 +3,7 @@ const tableNameDefault = function () {
     (select
       concat_ws(':',__d.id,__a.id) as id,
       __d.id as roleExpandId,
-      __d.createdAt,__d.updatedAt,__d.deleted,__d.iid,__d.roleId,__d.roleAtomId,
+      __d.createdAt,__d.updatedAt,__d.deleted,__d.iid,__d.roleId,__d.roleAtomId,__d.roleIdBase,
       __a.id as roleRightId,__a.atomClassId as atomClassIdTarget,__a.action,__a.scope,
       __b.module as moduleTarget,__b.atomClassName as atomClassNameTarget,
       __c.name as actionName,__c.bulk as actionBulk,__c.actionMode,

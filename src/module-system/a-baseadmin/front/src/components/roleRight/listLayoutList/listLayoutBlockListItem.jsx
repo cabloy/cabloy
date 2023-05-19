@@ -39,7 +39,7 @@ export default {
     },
     _renderItemHeader(item) {
       if (!item.roleNameBaseLocale) return null;
-      const desp = `${this.$text('from')}: ${item.roleNameBaseLocale}`;
+      const desp = `${this.$text('From')}: ${item.roleNameBaseLocale}`;
       return (
         <div slot="root-start" class="header">
           <div></div>
