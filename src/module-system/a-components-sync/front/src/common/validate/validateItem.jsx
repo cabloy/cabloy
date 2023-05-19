@@ -288,10 +288,16 @@ export default {
       if (dataPath[0] !== '/') return this.validate.dataPathRoot + dataPath;
       return dataPath;
     },
-    getAtomId(context) {
+    getAtomId(context, checkHost = true) {
       const { parcel, property } = context;
       // atomId: maybe from host
-      let atomId = (this.validate.host && this.validate.host.atomId) || (property.ebParams && property.ebParams.atomId);
+      let atomId;
+      if (checkHost) {
+        atomId = this.validate.host && this.validate.host.atomId;
+      }
+      if (!atomId) {
+        atomId = property.ebParams && property.ebParams.atomId;
+      }
       if (typeof atomId === 'string') {
         atomId = parcel.data[atomId] || 0;
       } else {
