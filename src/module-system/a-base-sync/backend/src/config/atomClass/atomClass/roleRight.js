@@ -78,7 +78,7 @@ module.exports = app => {
         code: 101,
         title: 'Spreads',
         actionModule: 'a-baseadmin',
-        actionComponent: 'action',
+        actionComponent: 'actionRoleRight',
         icon: { f7: ':tools:spreadsheet' },
         bulk: true,
       },
