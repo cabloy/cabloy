@@ -8,12 +8,15 @@ module.exports = app => {
       __groupAuthorizationSource: {
         ebType: 'group-flatten',
         ebTitle: 'AuthorizationSource',
+        ebDisplay: {
+          expression: 'typeof roleNameBaseLocale!=="undefined"',
+        },
       },
-      roleIdBase: {
-        ebType: 'string',
+      roleNameBaseLocale: {
+        ebType: 'text',
         ebTitle: 'From',
-        ebComputed: {
-          expression: 'roleNameBase',
+        ebDisplay: {
+          expression: 'typeof roleNameBaseLocale!=="undefined"',
         },
       },
       // AuthorizationObjective
