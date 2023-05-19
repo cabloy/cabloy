@@ -1,7 +1,7 @@
 export default {
   methods: {
     async _onActionSpreadsBulk() {
-      const { ctx, action, item } = this.$props;
+      const { ctx, action } = this.$props;
       // dataOptions
       const dataOptions = action.dataOptions || {};
       // options
