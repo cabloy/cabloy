@@ -7,17 +7,15 @@ export default {
     };
   },
   created() {
-    // locales
-    const action = {
-      actionModule: 'a-antdv',
-      actionComponent: 'antdv',
-      name: 'locales',
-    };
-    this.$meta.util.performAction({ ctx: this, action }).then(locales => {
-      this.antdv.locales = locales;
-    });
+    this.antdv_init();
   },
   methods: {
+    async antdv_init() {
+      // locales
+      const useStoreAntdv = await this.$store.use('a/antdv/antdv');
+      const locales = await useStoreAntdv.getLocales();
+      this.antdv.locales = locales;
+    },
     antdv_getLocale() {
       if (!this.antdv.locales) return null;
       const locale = this.$meta.util.getLocale();
