@@ -34,12 +34,8 @@ export default {
       // content
       const content = JSON.parse(message.content);
       // uniform messages
-      const action = {
-        actionModule: 'a-message',
-        actionComponent: 'uniform',
-        name: 'initialize',
-      };
-      const simple = await this.$meta.util.performAction({ ctx: this, action });
+      const useStoreUniform = await this.$store.use('a/message/uniform');
+      const simple = await useStoreUniform.getSimple();
       // open
       await simple._openMessage({
         message,

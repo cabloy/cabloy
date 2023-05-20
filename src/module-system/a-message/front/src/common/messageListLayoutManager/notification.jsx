@@ -8,13 +8,17 @@ export default {
     };
   },
   created() {
-    // uniform messages
-    const action = {
-      actionModule: 'a-message',
-      actionComponent: 'uniform',
-      name: 'initialize',
-    };
-    this.$meta.util.performAction({ ctx: this, action }).then(simple => {
+    this.notification_init();
+  },
+  beforeDestroy() {
+    this.notification_dispose();
+  },
+  methods: {
+    async notification_init() {
+      // uniform messages
+      const useStoreUniform = await this.$store.use('a/message/uniform');
+      const simple = await useStoreUniform.getSimple();
+      //
       const messageClass = this.base_messageClass;
       const messageClassName = `${messageClass.module}:${messageClass.messageClassName}`;
       this.notification.simple = simple;
@@ -22,15 +26,13 @@ export default {
         messageClassName,
         this.notification_callback.bind(this)
       );
-    });
-  },
-  beforeDestroy() {
-    if (this.notification.callbackId) {
-      this.notification.simple.unRegister(this.notification.callbackId);
-      this.notification.callbackId = 0;
-    }
-  },
-  methods: {
+    },
+    notification_dispose() {
+      if (this.notification.callbackId) {
+        this.notification.simple.unRegister(this.notification.callbackId);
+        this.notification.callbackId = 0;
+      }
+    },
     async notification_callback({ scene, message /* , content*/ }) {
       if (scene === 'show') {
         // just only append to list
