@@ -6,6 +6,7 @@ module.exports = ctx => {
     }
 
     async get({ categoryId, setLocale }) {
+      if (!categoryId) return null;
       const category = await this.getCacheCategory({ categoryId });
       if (category && setLocale) {
         category.categoryNameLocale = ctx.text(category.categoryName);
