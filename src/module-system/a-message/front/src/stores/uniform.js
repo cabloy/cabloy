@@ -26,7 +26,7 @@ export default {
       return this.simple;
     },
     async initialize() {
-      await this.getSimple();
+      return await this.getSimple();
     },
   },
 };
