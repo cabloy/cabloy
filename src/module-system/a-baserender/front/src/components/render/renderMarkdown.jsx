@@ -32,15 +32,8 @@ export default {
     async _onValidatePerformBefore() {
       const { validate } = this.context;
       if (validate.readOnly) return;
-      const action = {
-        actionModule: 'a-markdown',
-        actionComponent: 'utils',
-        name: 'checkContent',
-      };
-      const item = {
-        content: this.context.getValue(),
-      };
-      await this.$meta.util.performAction({ ctx: this, action, item });
+      const useStoreUtils = await this.$store.use('a/markdown/utils');
+      await useStoreUtils.checkContent({ ctx: this, content: this.context.getValue() });
     },
     _onPerform() {
       const context = this.context;
