@@ -80,12 +80,8 @@ export default {
       return meta;
     },
     async loadAuthProviders() {
-      const action = {
-        actionModule: 'a-login',
-        actionComponent: 'ebAuthProviders',
-        name: 'loadAuthProviders',
-      };
-      this.providers = await this.$meta.util.performAction({ ctx: this, action, item: { state: this.state2 } });
+      const useStoreAuthProviders = await this.$store.use('a/login/authProviders');
+      this.providers = await useStoreAuthProviders.loadAuthProviders({ ctx: this, state: this.state2 });
     },
     _getRenderComponents({ inline }) {
       const renderComponents = [];

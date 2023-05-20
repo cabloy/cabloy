@@ -1,16 +1,11 @@
 export default {
-  meta: {
-    global: false,
+  state() {
+    return {};
   },
-  methods: {
-    async onAction({ ctx, action, item }) {
-      if (action.name === 'loadAuthProviders') {
-        return await this.loadAuthProviders(ctx, item);
-      }
-    },
-    async loadAuthProviders(ctx, { state }) {
+  actions: {
+    async loadAuthProviders({ ctx, state }) {
       // providers
-      let providers = await this.$api.post('/a/login/auth/list');
+      let providers = await ctx.$api.post('/a/login/auth/list');
       if (providers.length === 0) return providers;
       // check
       providers = await this.__checkAuthProviders({ ctx, providers, state });
@@ -50,9 +45,9 @@ export default {
     async __checkAuthProviderComponent({ ctx, provider, state, sceneName }) {
       const metaScene = this._getMetaScene(provider, sceneName);
       if (!metaScene.render) return null;
-      if (this.$meta.config.base.jwt && metaScene.mode === 'redirect') return null;
+      if (ctx.$meta.config.base.jwt && metaScene.mode === 'redirect') return null;
       // load module
-      const module = await this.$meta.module.use(metaScene.render.module);
+      const module = await ctx.$meta.module.use(metaScene.render.module);
       // checkIfDisable
       if (state === 'migrate' && !metaScene.inline) return null;
       if (state === 'associate' && metaScene.disableAssociate) return null;

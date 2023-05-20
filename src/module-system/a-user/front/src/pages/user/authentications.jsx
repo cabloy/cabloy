@@ -26,12 +26,8 @@ export default {
       // items
       this.items = await this.$api.post('user/authentications');
       // providers login
-      const action = {
-        actionModule: 'a-login',
-        actionComponent: 'ebAuthProviders',
-        name: 'loadAuthProviders',
-      };
-      this.providersLogin = await this.$meta.util.performAction({ ctx: this, action, item: { state: 'associate' } });
+      const useStoreAuthProviders = await this.$store.use('a/login/authProviders');
+      this.providersLogin = await useStoreAuthProviders.loadAuthProviders({ ctx: this, state: 'associate' });
       this.providersLoginMap = {};
       for (const providerLogin of this.providersLogin) {
         const key = `${providerLogin.module}:${providerLogin.providerName}`;
