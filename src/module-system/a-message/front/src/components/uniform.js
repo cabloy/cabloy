@@ -14,12 +14,8 @@ export default {
     async _initialize({ ctx }) {
       if (_simple) return _simple;
       // io
-      const action = {
-        actionModule: 'a-socketio',
-        actionComponent: 'io',
-        name: 'instance',
-      };
-      const _io = await this.$meta.util.performAction({ ctx, action });
+      const useStoreSocketIO = await Vue.prototype.$meta.store.use('a/socketio/socketio');
+      const _io = useStoreSocketIO.getInstance();
       const _helper = helperFn(_io);
       _simple = _helper.simple();
       // auth:login

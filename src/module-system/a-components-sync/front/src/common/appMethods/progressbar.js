@@ -1,11 +1,7 @@
 export default function ({ ctx, progressId, title, canAbort = true }) {
   return new Promise((resolve, reject) => {
-    const action = {
-      actionModule: 'a-socketio',
-      actionComponent: 'io',
-      name: 'helper',
-    };
-    ctx.$meta.util.performAction({ ctx, action }).then(helper => {
+    ctx.$store.use('a/socketio/socketio').then(useStoreSocketIO => {
+      const helper = useStoreSocketIO.getHelper();
       _progressbar({ helper, ctx, progressId, title, canAbort, resolve, reject });
     });
   });

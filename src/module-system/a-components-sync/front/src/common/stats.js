@@ -61,12 +61,8 @@ export default {
     },
     async stats_subscribe() {
       // io
-      const action = {
-        actionModule: 'a-socketio',
-        actionComponent: 'io',
-        name: 'instance',
-      };
-      this.stats_io = await this.$meta.util.performAction({ ctx: this, action });
+      const useStoreSocketIO = await this.$store.use('a/socketio/socketio');
+      this.stats_io = useStoreSocketIO.getInstance();
       // socket io
       const subscribePath = this.stats_getSubscribePath();
       this.stats_subscribeId = this.stats_io.subscribe(subscribePath, this.stats_onMessage, this.stats_onSubscribed);
