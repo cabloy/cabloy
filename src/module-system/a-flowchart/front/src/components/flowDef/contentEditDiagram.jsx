@@ -102,25 +102,16 @@ export default {
     },
     async __prepareInstances() {
       const promises = [];
-      let action = {
-        actionModule: 'a-antvx6',
-        actionComponent: 'x6',
-        name: 'instance',
-      };
-      promises.push(this.__prepareInstance({ action }));
-      action = {
-        actionModule: 'a-antvlayout',
-        actionComponent: 'layout',
-        name: 'instance',
-      };
-      promises.push(this.__prepareInstance({ action }));
+      promises.push(this.__prepareInstance('a/antvx6/x6'));
+      promises.push(this.__prepareInstance('a/antvlayout/layout'));
       const res = await Promise.all(promises);
       // ok
       this.x6 = res[0];
       this.xlayout = res[1];
     },
-    async __prepareInstance({ action }) {
-      return await this.$meta.util.performAction({ ctx: this, action });
+    async __prepareInstance(path) {
+      const useStore = await this.$store.use(path);
+      return useStore.getInstance();
     },
     async __updateChart({ changeSize, changeData }) {
       if (!this.ready) return;
