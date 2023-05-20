@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import * as layout from '@antv/layout';
 
 export default {
@@ -6,7 +7,7 @@ export default {
   },
   actions: {
     getInstance() {
-      return layout;
+      return Vue.exports.shallowReactive(layout);
     },
   },
 };

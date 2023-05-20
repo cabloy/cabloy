@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import * as x6 from '@antv/x6';
 
 export default {
@@ -6,7 +7,7 @@ export default {
   },
   actions: {
     getInstance() {
-      return x6;
+      return Vue.exports.shallowReactive(x6);
     },
   },
 };
