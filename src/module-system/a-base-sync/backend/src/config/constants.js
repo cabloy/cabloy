@@ -181,7 +181,7 @@ module.exports = app => {
           actionModule: moduleInfo.relativeName,
           actionComponent: 'actionBulk',
           bulk: true,
-          select: null,
+          select: false,
           icon: { f7: '::import' },
           params: {
             file: {
@@ -197,7 +197,7 @@ module.exports = app => {
           actionModule: moduleInfo.relativeName,
           actionComponent: 'actionBulk',
           bulk: true,
-          select: null,
+          select: false,
           icon: { f7: '::view-list' },
         },
         draftStatsBulk: {
@@ -219,6 +219,7 @@ module.exports = app => {
           actionModule: moduleInfo.relativeName,
           actionComponent: 'actionBulk',
           bulk: true,
+          select: false,
           icon: { f7: '::visibility' },
           authorize: false,
         },

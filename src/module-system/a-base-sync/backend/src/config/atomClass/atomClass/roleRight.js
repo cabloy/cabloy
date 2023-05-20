@@ -81,6 +81,7 @@ module.exports = app => {
         actionComponent: 'actionRoleRight',
         icon: { f7: ':tools:spreadsheet' },
         bulk: true,
+        select: false,
       },
     },
     validator: {
