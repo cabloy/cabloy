@@ -4,18 +4,20 @@ export default {
       const actionsLeft = [];
       // toolbar
       if (mode === 'toolbar') {
-        //
-        const selectedAtoms = this.bulk.selectedAtoms;
-        actionsLeft.push({
-          key: 'actionsLeftB:select',
-          title: this.bulk.selecting ? this.$text('Deselect') : this.$text('Select'),
-          icon: {
-            f7: '::grading',
-            badge: this.bulk.selecting ? selectedAtoms.length.toString() : 0,
-          },
-          color: 'teal',
-          onPerform: event => this.bulk_onSelectingSwitch(event),
-        });
+        // select
+        if (this.bulk_enableSelect) {
+          const selectedAtoms = this.bulk.selectedAtoms;
+          actionsLeft.push({
+            key: 'actionsLeftB:select',
+            title: this.bulk.selecting ? this.$text('Deselect') : this.$text('Select'),
+            icon: {
+              f7: '::grading',
+              badge: this.bulk.selecting ? selectedAtoms.length.toString() : 0,
+            },
+            color: 'teal',
+            onPerform: event => this.bulk_onSelectingSwitch(event),
+          });
+        }
       }
       // check formal
       if (!item || item.atomStage !== 1) return actionsLeft;

@@ -13,6 +13,15 @@ export default {
       },
     };
   },
+  computed: {
+    bulk_enableSelect() {
+      if (!this.bulk.actions || !this.actionsAll) return false;
+      return this.bulk.actions.some(action => {
+        const actionBase = this.getAction(action);
+        return actionBase.select !== false;
+      });
+    },
+  },
   methods: {
     async bulk_actionsInit() {
       if (this.container.atomClass && this.container.scene !== 'select' && this.container.scene !== 'selecting') {
@@ -116,47 +125,53 @@ export default {
     bulk_renderActionsLeft() {
       const children = [];
       // switch select
-      const items = this.base_getItems();
-      const selectedAtoms = this.bulk.selectedAtoms;
-      if (items.length > 0 || this.bulk.selecting) {
-        children.push(
-          <eb-link
-            key="actionsLeft:select"
-            iconF7="::grading"
-            tooltip={this.$text('Select')}
-            propsOnPerform={this.bulk_onSelectingSwitch}
-          ></eb-link>
-        );
+      if (this.bulk_enableSelect) {
+        const items = this.base_getItems();
+        const selectedAtoms = this.bulk.selectedAtoms;
+        if (items.length > 0 || this.bulk.selecting) {
+          children.push(
+            <eb-link
+              key="actionsLeft:select"
+              iconF7="::grading"
+              tooltip={this.$text('Select')}
+              propsOnPerform={this.bulk_onSelectingSwitch}
+            ></eb-link>
+          );
+        }
+        if (this.bulk.selecting) {
+          children.push(
+            <eb-link
+              key="actionsLeft:selectChecking"
+              iconF7={selectedAtoms.length === 0 ? ':outline:checkbox-outline' : '::checkbox-checked'}
+              iconBadge={selectedAtoms.length.toString()}
+              propsOnPerform={this.bulk_onSelectingChecking}
+            ></eb-link>
+          );
+        }
       }
-      if (this.bulk.selecting) {
-        children.push(
-          <eb-link
-            key="actionsLeft:selectChecking"
-            iconF7={selectedAtoms.length === 0 ? ':outline:checkbox-outline' : '::checkbox-checked'}
-            iconBadge={selectedAtoms.length.toString()}
-            propsOnPerform={this.bulk_onSelectingChecking}
-          ></eb-link>
-        );
-      }
+      // ok
       return children;
     },
     bulk_renderActionsLeftB() {
       const children = [];
       // switch select
-      // not check items.length > 0, so as to avoid splash
-      // const items = this.base_getItems();
-      const selectedAtoms = this.bulk.selectedAtoms;
-      // if (items.length > 0 || this.bulk.selecting) {
-      children.push(
-        <eb-link
-          key="actionsLeftB:select"
-          iconF7="::grading"
-          iconBadge={this.bulk.selecting ? selectedAtoms.length.toString() : 0}
-          tooltip={this.bulk.selecting ? this.$text('Deselect') : this.$text('Select')}
-          propsOnPerform={this.bulk_onSelectingSwitch}
-        ></eb-link>
-      );
-      // }
+      if (this.bulk_enableSelect) {
+        // not check items.length > 0, so as to avoid splash
+        // const items = this.base_getItems();
+        const selectedAtoms = this.bulk.selectedAtoms;
+        // if (items.length > 0 || this.bulk.selecting) {
+        children.push(
+          <eb-link
+            key="actionsLeftB:select"
+            iconF7="::grading"
+            iconBadge={this.bulk.selecting ? selectedAtoms.length.toString() : 0}
+            tooltip={this.bulk.selecting ? this.$text('Deselect') : this.$text('Select')}
+            propsOnPerform={this.bulk_onSelectingSwitch}
+          ></eb-link>
+        );
+        // }
+      }
+      // ok
       return children;
     },
     bulk_renderActionsRight() {
