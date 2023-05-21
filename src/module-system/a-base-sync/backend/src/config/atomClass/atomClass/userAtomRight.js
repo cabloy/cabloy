@@ -20,22 +20,22 @@ const tableNameDefault = function () {
 };
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const roleRightSpread = {
+  const userAtomRight = {
     info: {
-      bean: 'roleRightSpread',
-      title: 'RoleAtomRightSpread',
-      model: 'roleExpand',
-      tableName: 'aRoleExpand',
+      bean: 'userAtomRight',
+      title: 'UserAtomRight',
+      // model: 'roleExpand',
+      // tableName: 'aRoleExpand',
       tableNameModes: {
         default: tableNameDefault,
       },
       inner: true,
       itemOnly: true,
       detail: {
-        atomIdMain: 'roleAtomId',
+        atomIdMain: 'userAtomId',
         atomClassMain: {
           module: moduleInfo.relativeName,
-          atomClassName: 'role',
+          atomClassName: 'user',
         },
       },
       enableRight: false,
@@ -61,5 +61,5 @@ module.exports = app => {
       },
     },
   };
-  return roleRightSpread;
+  return userAtomRight;
 };
