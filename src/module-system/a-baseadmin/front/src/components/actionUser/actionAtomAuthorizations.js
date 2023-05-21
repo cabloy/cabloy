@@ -14,7 +14,7 @@ export default {
       // queries
       const queries = {
         module: 'a-base',
-        atomClassName: 'userRight',
+        atomClassName: 'userAtomRight',
         options: JSON.stringify(options),
         params: JSON.stringify(params),
       };
