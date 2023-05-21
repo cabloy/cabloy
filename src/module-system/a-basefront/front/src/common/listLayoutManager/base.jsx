@@ -37,8 +37,14 @@ export default {
     async base_loadAtomClass() {
       try {
         const atomClass = this.container.atomClass;
-        this.base.atomClass = atomClass;
-        this.base.atomClassBase = atomClass ? this.getAtomClass(atomClass) : null;
+        if (!atomClass) {
+          this.base.atomClass = null;
+          this.base.atomClassBase = null;
+        } else {
+          this.base.atomClass = atomClass;
+          const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
+          this.base.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+        }
         return true;
       } catch (err) {
         return false;

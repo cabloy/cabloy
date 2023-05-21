@@ -49,7 +49,8 @@ export default {
             key: { atomId: this.container.atomId },
           });
         }
-        this.base.atomClassBase = this.getAtomClass(this.base.atomClass);
+        const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
+        this.base.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass: this.base.atomClass });
         // module
         this.base.module = await this.$meta.module.use(this.base.atomClass.module);
         // validateParams
