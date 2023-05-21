@@ -21,8 +21,6 @@ import roleIncludes from './components/role/includes.jsx';
 import roleUsers from './components/role/roleUsers.jsx';
 import userRoles from './components/user/userRoles.jsx';
 import userSelect from './components/user/select.vue';
-import atomRightRights from './components/atomRight/rights.vue';
-import atomRightSpreads from './components/atomRight/spreads.vue';
 import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
 
@@ -50,8 +48,10 @@ export default {
   roleUsers,
   userRoles,
   userSelect,
-  atomRightRights,
-  atomRightSpreads,
   resourceRightRights,
   resourceRightSpreads,
 };
+
+// bak
+// import atomRightRights from './components/atomRight/rights.vue';
+// import atomRightSpreads from './components/atomRight/spreads.vue';
