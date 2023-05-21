@@ -122,6 +122,10 @@ module.exports = ctx => {
           return null;
         }
       }
+      // special check for itemOnly/enableRight=false
+      if (atomClassBase.itemOnly && !atomClassBase.enableRight) {
+        return true;
+      }
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // formal/history

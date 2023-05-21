@@ -252,6 +252,10 @@ module.exports = ctx => {
 
     async _checkRightAction_basic({ atomClass, _atom, action, user }) {
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // special check for itemOnly/enableRight=false
+      if (atomClassBase.itemOnly && !atomClassBase.enableRight) {
+        return true;
+      }
       // forAtomUser
       const forAtomUser = this._checkForAtomUser(atomClass);
       // check formal/history
