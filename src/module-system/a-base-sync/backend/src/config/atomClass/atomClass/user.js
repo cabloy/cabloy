@@ -38,7 +38,7 @@ module.exports = app => {
       },
       atomAuthorizations: {
         code: 103,
-        title: 'Atom Authorizations',
+        title: 'UserAtomRight',
         actionModule: 'a-baseadmin',
         actionComponent: 'actionUser',
         icon: { f7: ':outline:database-lock-outline' },
