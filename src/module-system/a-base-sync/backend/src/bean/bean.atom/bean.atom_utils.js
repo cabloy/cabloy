@@ -35,9 +35,14 @@ module.exports = ctx => {
       const { atomClass, atomClassBase } = res;
       let atom, key;
       if (atomClassBase.itemOnly) {
-        const modelItem = ctx.model.module(atomClass.module)[atomClassBase.model];
-        atom = await modelItem.get({ id: atomId });
         key = { atomId, itemId: atomId };
+        if (atomClassBase.model) {
+          const modelItem = ctx.model.module(atomClass.module)[atomClassBase.model];
+          atom = await modelItem.get({ id: atomId });
+        } else {
+          // not use .read for infinite loop
+          atom = await this._get({ key, atomClass });
+        }
         // pacth atomIdMain of options
         if (atomClassBase.detail) {
           const atomIdMainField = atomClassBase.detail.atomIdMain || 'atomIdMain';
