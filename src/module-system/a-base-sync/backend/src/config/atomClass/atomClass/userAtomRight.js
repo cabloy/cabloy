@@ -26,7 +26,7 @@ module.exports = app => {
       bean: 'userAtomRight',
       title: 'UserAtomRight',
       model: null,
-      // tableName: 'aRoleExpand',
+      tableName: null,
       tableNameModes: {
         default: tableNameDefault,
       },
