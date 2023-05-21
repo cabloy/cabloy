@@ -45,10 +45,6 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 - [官网 && 文档](https://cabloy.com)
 - [在线教程](https://cabloy.com/zh-cn/articles/tutorial-introduce.html)
 
-## API
-
-- [Postman API 集](https://www.postman.com/cabloyjs/workspace/cabloyjs)(持续更新中)
-
 ## 视频课程
 
 - [CabloyJS 全栈框架：从入门到精通(共 48 集)](https://course.cabloy.com/zh-cn/articles/A-001.html)
