@@ -28,7 +28,7 @@ export default {
       return this.base._atomIdMain;
     },
     base_atomMain() {
-      return this.container.options.atomMain || this.base._atomMain;
+      return this.container.options?.atomMain || this.base._atomMain;
     },
   },
   created() {
@@ -104,7 +104,7 @@ export default {
     async base_loadAtomMain() {
       if (!this.base.atomClassBase) return;
       if (!this.base.atomClassBase.detail) return;
-      if (this.container.options.atomMain) return;
+      if (this.container.options?.atomMain) return;
       const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
       const atomIdMain = this.base.item[atomIdMainFieldName];
       this.base._atomIdMain = atomIdMain;

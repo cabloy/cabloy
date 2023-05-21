@@ -18,10 +18,10 @@ export default {
       return this.$store.getters['a/base/userLabels'];
     },
     base_atomIdMain() {
-      return this.container.options.atomIdMain;
+      return this.container.options?.atomIdMain;
     },
     base_atomMain() {
-      return this.container.options.atomMain || this.base._atomMain;
+      return this.container.options?.atomMain || this.base._atomMain;
     },
   },
   created() {
@@ -53,7 +53,7 @@ export default {
     async base_loadAtomMain() {
       if (!this.base.atomClassBase) return;
       if (!this.base.atomClassBase.detail) return;
-      if (this.container.options.atomMain) return;
+      if (this.container.options?.atomMain) return;
       const atomIdMain = this.base_atomIdMain;
       this.base._atomMain = await this.$api.post('/a/base/atom/read', {
         key: { atomId: atomIdMain },
@@ -62,9 +62,9 @@ export default {
       });
     },
     async base_adjustContainerCategory() {
-      const categoryName = this.container.options && this.container.options.category;
+      const categoryName = this.container.options?.category;
       if (!categoryName || typeof categoryName !== 'string') return;
-      const language = this.container.options.language;
+      const language = this.container.options?.language;
       const category = await this.$api.post('/a/base/category/parseCategoryName', {
         atomClass: this.container.atomClass,
         language,
@@ -147,7 +147,7 @@ export default {
     },
     base_getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
-      if (!stage) stage = this.container.options && this.container.options.stage;
+      if (!stage) stage = this.container.options?.stage;
       if (!stage) stage = 'formal';
       return stage;
     },

@@ -5,24 +5,24 @@ export default {
   methods: {
     async filter_onPrepareData() {
       // state: maybe 0
-      let state = this.container.options && this.container.options.state;
+      let state = this.container.options?.state;
       if (state === undefined || state === null) {
         state = null;
       }
       // form
       const form = {
         atomName: null,
-        mine: (this.container.options && this.container.options.mine) || 0,
-        stage: (this.container.options && this.container.options.stage) || 'formal',
+        mine: this.container.options?.mine || 0,
+        stage: this.container.options?.stage || 'formal',
         state,
-        language: (this.container.options && this.container.options.language) || '',
-        category: (this.container.options && this.container.options.category) || 0,
-        tag: (this.container.options && this.container.options.tag) || 0,
-        star: (this.container.options && this.container.options.star) || 0,
-        label: (this.container.options && this.container.options.label) || 0,
-        role: (this.container.options && this.container.options.role) || 0,
-        roleName: (this.container.options && this.container.options.roleName) || null,
-        roleNameLocale: (this.container.options && this.container.options.roleNameLocale) || null,
+        language: this.container.options?.language || '',
+        category: this.container.options?.category || 0,
+        tag: this.container.options?.tag || 0,
+        star: this.container.options?.star || 0,
+        label: this.container.options?.label || 0,
+        role: this.container.options?.role || 0,
+        roleName: this.container.options?.roleName || null,
+        roleNameLocale: this.container.options?.roleNameLocale || null,
         atomClass: this.container.atomClass,
       };
       // formAtomClass
