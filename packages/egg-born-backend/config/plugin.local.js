@@ -2,10 +2,11 @@ module.exports = {
   view: false,
   development: false,
 
-  static: {
-    enable: true,
-    package: 'egg-static',
-  },
+  // need not redefined
+  // static: {
+  //   enable: true,
+  //   package: 'egg-static',
+  // },
 
   mysql: {
     enable: true,
