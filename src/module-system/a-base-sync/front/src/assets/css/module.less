@@ -141,6 +141,27 @@
         white-space: nowrap;
       }
     }
+
+    .item.item-after-display-none {
+      .item-inner::before {
+        display: none;
+      }
+      .item-inner {
+        padding-right: calc(var(--f7-safe-area-right));
+      }
+    }
+
+    .item.item-line-height-compact {
+      .item-media,
+      .item-inner {
+        min-height: auto;
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+      .item-content {
+        min-height: auto;
+      }
+    }
   }
 }
 

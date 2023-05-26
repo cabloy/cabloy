@@ -142,7 +142,7 @@ export default {
           const devResourceKey = this.$meta.config.env === 'development' ? item.atomStaticKey : null;
           domItem = (
             <eb-list-item
-              class="item"
+              class="item item-after-display-none item-line-height-compact"
               key={item.atomId}
               data-dev-resource-key={devResourceKey}
               link="#"
