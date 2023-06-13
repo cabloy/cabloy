@@ -274,6 +274,7 @@ module.exports = appInfo => {
           err.code = 401;
           err.status = 401;
         }
+        if (!ctx.app.meta.isTest) return false;
       }
       return true;
     },
