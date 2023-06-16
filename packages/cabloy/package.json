@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "peerDependencies": {
-    "lerna": "^6.6.1"
+    "lerna": "^7.0.2"
   },
   "dependencies": {
     "egg-born-backend": "^8.0.0",
