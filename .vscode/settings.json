@@ -35,5 +35,6 @@
     "/src/backend/app/**": true,
     "/src/backend/logs/**": true,
     "/src/backend/run/**": true
-  }
+  },
+  "hide-my-secrets.hideSecrets": false
 }
