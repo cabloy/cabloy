@@ -36,9 +36,6 @@
           "a-authsms": {
             "scripts": ["npmPublish"]
           },
-          "a-base-sync": {
-            "scripts": ["npmPublish"]
-          },
           "a-baseaction": {
             "scripts": ["npmPublish"]
           },
@@ -276,6 +273,9 @@
           "cms-themedocs": {
             "scripts": ["npmPublish"]
           },
+          "a-base-sync": {
+            "scripts": ["npmPublish", "gitCommit"]
+          },
           "a-flownodebooster": {
             "scripts": ["gitCommit"]
           },
@@ -332,6 +332,7 @@
     "commands": {
       ":git:commit": {
         "entities": [
+          "a-base-sync",
           "a-flownodebooster",
           "a-flowtask",
           "a-layoutpc",
