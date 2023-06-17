@@ -1,8 +1,0 @@
-#__vconsole .vc-switch {
-  z-index: 30000 !important;
-}
-
-.eb-layout-pc #__vconsole .vc-switch {
-  right: 24px !important;
-  bottom: 24px !important;
-}
