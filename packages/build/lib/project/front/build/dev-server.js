@@ -30,9 +30,9 @@ module.exports = ({ projectPath, frontPath, scene }) => {
 
     context.utils.copyModules();
 
-    // default hostname/port where dev server listens for incoming traffic
-    const hostname = process.env.HOSTNAME || context.config.dev.hostname;
-    const port = process.env.PORT || context.config.dev.port;
+    // X: default hostname/port where dev server listens for incoming traffic
+    const hostname = context.config.dev.hostname;
+    const port = context.config.dev.port;
     // automatically open browser, if not set will be false
     const autoOpenBrowser = !!context.config.dev.autoOpenBrowser;
     // Define HTTP proxies to your custom API backend
