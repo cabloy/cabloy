@@ -334,6 +334,7 @@ function __logModules(context, log) {
   for (const key in context.modulesMonkey) {
     console.log(chalk.cyan('> ' + key));
   }
+  console.log(chalk.keyword('orange')(`\n=== Total Modules: ${context.modulesArray.length} ===`));
   // console.log('\n');
 }
 
@@ -356,6 +357,7 @@ function __logSuites(context, log) {
   for (const key in context.suitesVendor) {
     console.log(chalk.cyan('> ' + key));
   }
+  console.log(chalk.keyword('orange')(`\n=== Total Suites: ${Object.keys(context.suites).length} ===`));
   console.log('\n');
 }
 
