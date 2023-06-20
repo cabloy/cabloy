@@ -10,10 +10,10 @@ git submodule add -f git@github.com:zhennann/egg-born-module-bz-login src/module
 git submodule add -f git@github.com:zhennann/egg-born-module-test-flow src/module/test-flow
 git submodule add -f git@github.com:zhennann/egg-born-module-test-note src/module/test-note
 # suites
-git submodule add -f git@github.com:zhennann/egg-born-module-a-dingtalk src/suite/a-dingtalk
-git submodule add -f git@github.com:zhennann/egg-born-module-a-paypal src/suite/a-paypal
-git submodule add -f git@github.com:zhennann/egg-born-module-a-wechat src/suite/a-wechat
-git submodule add -f git@github.com:zhennann/egg-born-module-a-wxwork src/suite/a-wxwork
-git submodule add -f git@github.com:zhennann/egg-born-module-test-party src/suite/test-party
+git submodule add -f git@github.com:zhennann/egg-born-suite-a-dingtalk src/suite/a-dingtalk
+git submodule add -f git@github.com:zhennann/egg-born-suite-a-paypal src/suite/a-paypal
+git submodule add -f git@github.com:zhennann/egg-born-suite-a-wechat src/suite/a-wechat
+git submodule add -f git@github.com:zhennann/egg-born-suite-a-wxwork src/suite/a-wxwork
+git submodule add -f git@github.com:zhennann/egg-born-suite-test-party src/suite/test-party
 # extra
-git submodule add -f git@github.com:zhennann/egg-born-module-bz-diancai src/suite/bz-diancai
+git submodule add -f git@github.com:zhennann/egg-born-suite-bz-diancai src/suite/bz-diancai

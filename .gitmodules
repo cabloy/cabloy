@@ -27,19 +27,19 @@
 	url = git@github.com:zhennann/egg-born-module-test-note
 [submodule "src/suite/a-dingtalk"]
 	path = src/suite/a-dingtalk
-	url = git@github.com:zhennann/egg-born-module-a-dingtalk
+	url = git@github.com:zhennann/egg-born-suite-a-dingtalk
 [submodule "src/suite/a-paypal"]
 	path = src/suite/a-paypal
-	url = git@github.com:zhennann/egg-born-module-a-paypal
+	url = git@github.com:zhennann/egg-born-suite-a-paypal
 [submodule "src/suite/a-wechat"]
 	path = src/suite/a-wechat
-	url = git@github.com:zhennann/egg-born-module-a-wechat
+	url = git@github.com:zhennann/egg-born-suite-a-wechat
 [submodule "src/suite/a-wxwork"]
 	path = src/suite/a-wxwork
-	url = git@github.com:zhennann/egg-born-module-a-wxwork
+	url = git@github.com:zhennann/egg-born-suite-a-wxwork
 [submodule "src/suite/test-party"]
 	path = src/suite/test-party
-	url = git@github.com:zhennann/egg-born-module-test-party
+	url = git@github.com:zhennann/egg-born-suite-test-party
 [submodule "src/suite/bz-diancai"]
 	path = src/suite/bz-diancai
-	url = git@github.com:zhennann/egg-born-module-bz-diancai
+	url = git@github.com:zhennann/egg-born-suite-bz-diancai
