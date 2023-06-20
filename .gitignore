@@ -40,6 +40,7 @@ miniprogram_npm
 
 /src/module/*
 !/src/module/.gitkeep
+!/src/module/a-base-sync
 
 /src/module-vendor/*
 !/src/module-vendor/.gitkeep
