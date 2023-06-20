@@ -1,0 +1,3 @@
+[submodule "src/module/a-base-sync"]
+	path = src/module/a-base-sync
+	url = git@github.com:zhennann/egg-born-module-a-base-sync
