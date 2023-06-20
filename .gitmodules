@@ -1,3 +1,45 @@
 [submodule "src/module/a-base-sync"]
 	path = src/module/a-base-sync
 	url = git@github.com:zhennann/egg-born-module-a-base-sync
+[submodule "src/module/a-flownodebooster"]
+	path = src/module/a-flownodebooster
+	url = git@github.com:zhennann/egg-born-module-a-flownodebooster
+[submodule "src/module/a-flowtask"]
+	path = src/module/a-flowtask
+	url = git@github.com:zhennann/egg-born-module-a-flowtask
+[submodule "src/module/a-layoutpc"]
+	path = src/module/a-layoutpc
+	url = git@github.com:zhennann/egg-born-module-a-layoutpc
+[submodule "src/module/a-markdown"]
+	path = src/module/a-markdown
+	url = git@github.com:zhennann/egg-born-module-a-markdown
+[submodule "src/module/a-socketio"]
+	path = src/module/a-socketio
+	url = git@github.com:zhennann/egg-born-module-a-socketio
+[submodule "src/module/bz-login"]
+	path = src/module/bz-login
+	url = git@github.com:zhennann/egg-born-module-bz-login
+[submodule "src/module/test-flow"]
+	path = src/module/test-flow
+	url = git@github.com:zhennann/egg-born-module-test-flow
+[submodule "src/module/test-note"]
+	path = src/module/test-note
+	url = git@github.com:zhennann/egg-born-module-test-note
+[submodule "src/suite/a-dingtalk"]
+	path = src/suite/a-dingtalk
+	url = git@github.com:zhennann/egg-born-module-a-dingtalk
+[submodule "src/suite/a-paypal"]
+	path = src/suite/a-paypal
+	url = git@github.com:zhennann/egg-born-module-a-paypal
+[submodule "src/suite/a-wechat"]
+	path = src/suite/a-wechat
+	url = git@github.com:zhennann/egg-born-module-a-wechat
+[submodule "src/suite/a-wxwork"]
+	path = src/suite/a-wxwork
+	url = git@github.com:zhennann/egg-born-module-a-wxwork
+[submodule "src/suite/test-party"]
+	path = src/suite/test-party
+	url = git@github.com:zhennann/egg-born-module-test-party
+[submodule "src/suite/bz-diancai"]
+	path = src/suite/bz-diancai
+	url = git@github.com:zhennann/egg-born-module-bz-diancai
