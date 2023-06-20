@@ -241,7 +241,10 @@ export default function (Vue) {
       // const _component = Object.assign({}, component, options);
       let _component = this.extend({}, component);
       _component = Object.assign(_component, options);
-      return new Vue(_component);
+      const instance = new Vue(_component);
+      instance.$store = Vue.prototype.$meta.store;
+      instance.$pinia = Vue.prototype.$meta.pinia;
+      return instance;
     },
     _combineComponentsProps(parent, component) {
       if (component.mixins) {
