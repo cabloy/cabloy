@@ -1,9 +1,9 @@
 #! /usr/bin/env bash
 ################################################################
 # How to use
-#   $git submodule init
-#   $git submodule update 
-#   $npm install
+#   git submodule init
+#   git submodule update 
+#   npm install
 ################################################################ 
 # modules
 git submodule add -f git@github.com:zhennann/egg-born-module-a-base-sync src/module/a-base-sync
