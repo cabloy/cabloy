@@ -34,6 +34,12 @@ miniprogram_npm
 
 /src/suite/*
 !/src/suite/.gitkeep
+!/src/suite/a-dingtalk
+!/src/suite/a-paypal
+!/src/suite/a-wechat
+!/src/suite/a-wxwork
+!/src/suite/test-party
+!/src/suite/bz-diancai
 
 /src/suite-vendor/*
 !/src/suite-vendor/.gitkeep
@@ -41,6 +47,14 @@ miniprogram_npm
 /src/module/*
 !/src/module/.gitkeep
 !/src/module/a-base-sync
+!/src/module/a-flownodebooster
+!/src/module/a-flowtask
+!/src/module/a-layoutpc
+!/src/module/a-markdown
+!/src/module/a-socketio
+!/src/module/bz-login
+!/src/module/test-flow
+!/src/module/test-note
 
 /src/module-vendor/*
 !/src/module-vendor/.gitkeep
