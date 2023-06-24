@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "vscodevim.vim",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "octref.vetur",
+    "QassimFarid.ejs-language-support",
+    "Atishay-Jain.All-Autocomplete",
+    "jasonnutter.search-node-modules"
+  ],
+  "unwantedRecommendations": ["vscode.typescript-language-features", "vscode.json-language-features"]
+}
