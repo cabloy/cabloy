@@ -36,5 +36,8 @@
     "/src/backend/logs/**": true,
     "/src/backend/run/**": true
   },
+  "typescript.validate.enable": false,
+  "typescript.format.enable": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
   "hide-my-secrets.hideSecrets": false
 }
