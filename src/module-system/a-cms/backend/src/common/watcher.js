@@ -2,7 +2,7 @@ const path = require('path');
 const require3 = require('require3');
 const chokidar = require3('chokidar');
 const debounce = require3('debounce');
-const eggBornUtils = require3('egg-born-utils');
+// const eggBornUtils = require3('egg-born-utils');
 
 module.exports = function (app) {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
@@ -169,16 +169,26 @@ module.exports = function (app) {
 
     // invoked in agent
     _collectDevelopmentWatchDirs() {
+      const __pathes = ['backend/config', 'module', 'module-system', 'module-vendor', 'suite', 'suite-vendor'];
       const pathSrc = path.resolve(app.config.baseDir, '..');
-      let watchDirs = eggBornUtils.tools.globbySync(`${pathSrc}/**/backend/src`, { onlyDirectories: true });
-      watchDirs = [path.join(pathSrc, 'backend/config')].concat(watchDirs);
+      const watchDirs = [];
+      for (const __path of __pathes) {
+        watchDirs.push(path.join(pathSrc, __path));
+      }
       return watchDirs;
+      // const pathSrc = path.resolve(app.config.baseDir, '..');
+      // let watchDirs = eggBornUtils.tools.globbySync(`${pathSrc}/**/backend/src`, { onlyDirectories: true });
+      // watchDirs = [path.join(pathSrc, 'backend/config')].concat(watchDirs);
+      // return watchDirs;
     }
 
     // invoked in agent
     _developmentChange(info) {
-      app.logger.warn(`[agent:development] reload worker because ${info} changed`);
-      this._reloadByApp({ action: 'now' });
+      info = info.replace(/\\/g, '/');
+      if (info.indexOf('/backend/src/') > -1 || info.indexOf('/src/backend/config/') > -1) {
+        app.logger.warn(`[agent:development] reload worker because ${info} changed`);
+        this._reloadByApp({ action: 'now' });
+      }
     }
 
     // invoked in agent
