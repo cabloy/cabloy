@@ -19,6 +19,6 @@
   "author": "zhennann",
   "dependencies": {
     "trek-captcha": "^0.4.0",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }

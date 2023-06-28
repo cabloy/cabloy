@@ -19,6 +19,6 @@
     "ajv-i18n": "^3.5.0",
     "ajv-keywords": "^3.4.1",
     "js-beautify": "^1.10.3",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }

@@ -24,6 +24,6 @@
   "devDependencies": {},
   "dependencies": {
     "vue-lazyload": "^1.3.4",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }

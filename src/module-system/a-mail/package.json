@@ -20,6 +20,6 @@
   "dependencies": {
     "boxen": "^4.2.0",
     "nodemailer": "^6.7.2",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }

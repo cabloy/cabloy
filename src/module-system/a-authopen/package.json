@@ -22,6 +22,6 @@
   "author": "zhennann",
   "dependencies": {
     "randomatic": "^3.1.1",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }

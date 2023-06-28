@@ -27,6 +27,6 @@
     "cli-table3": "^0.6.2",
     "gogocode": "^1.0.53",
     "istextorbinary": "^3.3.0",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }

@@ -20,6 +20,6 @@
   "author": "zhennann",
   "dependencies": {
     "chalk": "^3.0.0",
-    "require3": "./backend/utils/require3.js"
+    "require3": "file:./backend/utils/require3"
   }
 }
