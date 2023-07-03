@@ -180,7 +180,7 @@ module.exports = ctx => {
       if (!value) {
         // expired, send confirmation mail again
         //  1003: passwordResetEmailExpired
-        ctx.throw(1003);
+        ctx.throw.module(moduleInfo.relativeName, 1003);
       }
       // userId
       const userId = value.userId;
