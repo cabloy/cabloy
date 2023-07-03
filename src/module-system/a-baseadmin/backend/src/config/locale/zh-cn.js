@@ -21,4 +21,5 @@ module.exports = {
   Inherits: '继承',
   AddChild: '添加子项',
   Spreads: '展开',
+  AtLeastOneAuthProviderEnabled: '至少有一个已启用',
 };
