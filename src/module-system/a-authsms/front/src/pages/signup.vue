@@ -49,8 +49,10 @@
               ></eb-component>
             </div>
           </eb-list-input>
-          <f7-list-item divider>
-            <eb-button ref="buttonSubmit" :onPerform="signUp">{{ getButtonText() }}</eb-button>
+          <f7-list-item>
+            <div slot="after">
+              <eb-button ref="buttonSubmit" :outline="true" :onPerform="signUp">{{ getButtonText() }}</eb-button>
+            </div>
           </f7-list-item>
         </eb-list>
       </eb-validate>

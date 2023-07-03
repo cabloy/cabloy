@@ -17,7 +17,7 @@
         <eb-list-item :title="$text('Username')">
           <div slot="after">
             <span>{{ user.userName }}</span>
-            <eb-link v-if="user.allowChangeUserName" eb-href="user/changeUserName" eb-target="_self">
+            <eb-link v-if="user.allowChangeUserName" eb-href="/a/user/user/changeUserName" eb-target="_self">
               {{ $text('Change') }}
             </eb-link>
           </div>

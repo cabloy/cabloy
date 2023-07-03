@@ -14,8 +14,12 @@
           <eb-list form inline-labels no-hairlines-md @submit="onSubmit">
             <eb-list-item-validate dataKey="userName"></eb-list-item-validate>
             <eb-list-item-validate dataKey="email"></eb-list-item-validate>
-            <f7-list-item divider>
-              <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{ $text('Send Confirmation Email') }}</eb-button>
+            <f7-list-item>
+              <div slot="after">
+                <eb-button ref="buttonSubmit" :outline="true" :onPerform="onPerformOk">{{
+                  $text('Send Confirmation Email')
+                }}</eb-button>
+              </div>
             </f7-list-item>
           </eb-list>
         </eb-validate>

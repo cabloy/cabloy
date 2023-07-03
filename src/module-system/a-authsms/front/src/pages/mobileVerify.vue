@@ -29,8 +29,12 @@
               ></eb-component>
             </div>
           </eb-list-input>
-          <f7-list-item divider>
-            <eb-button ref="buttonSubmit" :onPerform="onPerformOk">{{ $text('Verify Now') }}</eb-button>
+          <f7-list-item>
+            <div slot="after">
+              <eb-button ref="buttonSubmit" :outline="true" :onPerform="onPerformOk">{{
+                $text('Verify Now')
+              }}</eb-button>
+            </div>
           </f7-list-item>
         </eb-list>
       </eb-validate>
