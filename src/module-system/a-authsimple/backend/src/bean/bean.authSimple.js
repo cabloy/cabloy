@@ -185,8 +185,15 @@ module.exports = ctx => {
       // userId
       const userId = value.userId;
 
-      // save new
-      await this._passwordSaveNew({ passwordNew, userId });
+      // check if exists
+      const authSimple = await this.modelAuthSimple.get({ userId });
+      if (!authSimple) {
+        // create a new one
+        await this.add({ userId, password: passwordNew });
+      } else {
+        // save new
+        await this._passwordSaveNew({ passwordNew, userId });
+      }
       // clear token
       await this.cacheDb.remove(cacheKey);
       // login antomatically
