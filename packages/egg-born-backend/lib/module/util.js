@@ -228,8 +228,10 @@ module.exports = app => {
       ctxParent,
       instance,
     }) {
+      // ctxModule
+      const ctxModule = beanModule || ctxCaller?.module?.info?.relativeName || ctxParent?.module?.info?.relativeName;
       // ctx
-      const ctx = await this.createAnonymousContext({ locale, subdomain, module: beanModule, instance });
+      const ctx = await this.createAnonymousContext({ locale, subdomain, module: ctxModule, instance });
       // innerAccess
       ctx.innerAccess = true;
       // ctxCaller
