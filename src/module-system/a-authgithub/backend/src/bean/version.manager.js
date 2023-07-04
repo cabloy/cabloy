@@ -11,10 +11,11 @@ module.exports = app => {
         for (const instance of instances) {
           await this.ctx.meta.util.executeBean({
             subdomain: instance.name,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: `${moduleInfo.relativeName}.version.manager`,
-            context: options,
-            fn: 'update8Auths',
+            fn: async ({ ctx }) => {
+              const beanFullName = `${moduleInfo.relativeName}.version.manager`;
+              const beanInstance = ctx.bean._newBean(beanFullName);
+              await beanInstance._update8AuthsInstance();
+            },
           });
         }
       }
@@ -26,7 +27,7 @@ module.exports = app => {
       }
     }
 
-    async update8Auths(options) {
+    async _update8AuthsInstance() {
       const provideItem = await this.ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authgithub',
