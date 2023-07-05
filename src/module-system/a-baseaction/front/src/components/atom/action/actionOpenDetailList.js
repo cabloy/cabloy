@@ -12,8 +12,8 @@ export default {
       };
       // queries
       const queries = {
-        module: 'a-base',
-        atomClassName: 'roleRight',
+        module: action.params.atomClass.module,
+        atomClassName: action.params.atomClass.atomClassName,
         options: JSON.stringify(options),
         params: JSON.stringify(params),
       };
