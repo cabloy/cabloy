@@ -218,7 +218,7 @@ export default {
     actions_renderButtonSaveAndReturn() {
       const mode = this.container.mode;
       if (mode !== 'edit') return null;
-      const actionIcon = '::save-and-close';
+      const actionIcon = '::save-and-return';
       const actionName = 'saveAndReturn';
       const actionTitle = 'SaveAndReturn';
       return (

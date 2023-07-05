@@ -108,7 +108,7 @@ export default {
           <eb-link
             key="saveDone"
             ref="buttonSaveDone"
-            iconF7="::save-and-close"
+            iconF7="::save-and-return"
             tooltip={this.$text('SaveAndReturn')}
             propsOnPerform={event => this.actions_onSaveDone(event)}
           ></eb-link>
