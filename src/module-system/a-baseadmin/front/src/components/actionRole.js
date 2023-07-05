@@ -26,21 +26,23 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'delete') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'delete') {
         return await this._onActionDelete();
-      } else if (this.action.name === 'clone') {
+      } else if (actionName === 'clone') {
         return await this._onActionClone();
-      } else if (this.action.name === 'move') {
+      } else if (actionName === 'move') {
         return await this._onActionMove();
-      } else if (this.action.name === 'addChild') {
+      } else if (actionName === 'addChild') {
         return await this._onActionAddChild();
-      } else if (this.action.name === 'roleUsers') {
+      } else if (actionName === 'roleUsers') {
         return await this._onActionRoleUsers();
-      } else if (this.action.name === 'includes') {
+      } else if (actionName === 'includes') {
         return await this._onActionIncludes();
-      } else if (this.action.name === 'resourceAuthorizations') {
+      } else if (actionName === 'resourceAuthorizations') {
         return await this._onActionResourceAuthorizations();
-      } else if (this.action.name === 'atomAuthorizations') {
+      } else if (actionName === 'atomAuthorizations') {
         return await this._onActionAtomAuthorizations();
       }
     },

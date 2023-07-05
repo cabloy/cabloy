@@ -14,9 +14,11 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'hideClientSecret') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'hideClientSecret') {
         return await this._onActionHideClientSecret();
-      } else if (this.action.name === 'resetClientSecret') {
+      } else if (actionName === 'resetClientSecret') {
         return await this._onActionResetClientSecret();
       }
     },

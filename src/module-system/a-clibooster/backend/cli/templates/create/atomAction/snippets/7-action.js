@@ -1,6 +1,6 @@
 const __snippet_declare = `import Action<%=argv.actionNameCapitalize%> from './action/action<%=argv.actionNameCapitalize%>.js';`;
 const __snippet_mixin = `Action<%=argv.actionNameCapitalize%>,`;
-const __snippet_method = `if (this.action.name === '<%=argv.actionName%>') {
+const __snippet_method = `if (actionName === '<%=argv.actionName%>') {
   return await this._onAction<%=argv.actionNameCapitalize%>();
 }`;
 
@@ -19,6 +19,8 @@ module.exports = {
     ],
     methods: {
       async onAction() {
+        const action = this.action;
+        const actionName = action.actionName || action.name;
       },
     },
   };

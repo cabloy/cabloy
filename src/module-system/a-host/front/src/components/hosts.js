@@ -10,8 +10,10 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'register') return this._register();
-      if (this.action.name === 'lookup') return this._lookup();
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'register') return this._register();
+      if (actionName === 'lookup') return this._lookup();
     },
     _register() {
       this.$local.commit('registerHost', this.item);

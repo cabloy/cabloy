@@ -10,7 +10,11 @@ export default {
   ],
   methods: {
     onAction() {
-      if (this.action.name === 'dateRange') return this._renderDateRange();
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'dateRange') {
+        return this._renderDateRange();
+      }
     },
     _renderDateRange() {
       const { ctx, item } = this.$props;

@@ -12,7 +12,9 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'spreadsBulk') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'spreadsBulk') {
         return await this._onActionSpreadsBulk();
       }
     },

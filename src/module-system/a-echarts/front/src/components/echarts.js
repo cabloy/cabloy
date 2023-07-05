@@ -6,7 +6,8 @@ export default {
   },
   methods: {
     onAction({ action }) {
-      if (action.name === 'instance') {
+      const actionName = action.actionName || action.name;
+      if (actionName === 'instance') {
         if (!echarts) throw new Error('echarts should not be null');
         return echarts;
       }

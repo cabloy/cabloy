@@ -7,7 +7,8 @@ export default {
   },
   methods: {
     onAction({ action }) {
-      if (action.name === 'instance') {
+      const actionName = action.actionName || action.name;
+      if (actionName === 'instance') {
         if (!Chart) throw new Error('chart.js should not be null');
         return Chart;
       }

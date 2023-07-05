@@ -9,7 +9,9 @@ export default {
   mixins: [ebActionBase],
   methods: {
     async onAction() {
-      if (this.action.name === 'createTreeviewAdapter') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'createTreeviewAdapter') {
         return await this._onActionCreateTreeviewAdapter();
       }
     },

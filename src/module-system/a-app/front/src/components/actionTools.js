@@ -10,7 +10,9 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'openApp') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'openApp') {
         return await this._onActionopenApp();
       }
     },

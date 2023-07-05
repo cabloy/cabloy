@@ -12,7 +12,9 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'initialize') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'initialize') {
         return await this._onActioninitialize();
       }
     },

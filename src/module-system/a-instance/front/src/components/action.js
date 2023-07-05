@@ -10,7 +10,9 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'preview') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'preview') {
         return await this.onAction_preview();
       }
     },

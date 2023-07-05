@@ -61,22 +61,22 @@ export default {
     },
     async onAction() {
       const action = this.action;
-      // do
-      if (action.name === 'create' || action.action === 'create') {
+      const actionName = action.actionName || action.name;
+      if (actionName === 'create' || action.action === 'create') {
         return await this._onActionCreate();
-      } else if (action.name === 'delete') {
+      } else if (actionName === 'delete') {
         return await this._onActionDelete();
-      } else if (action.name === 'save') {
+      } else if (actionName === 'save') {
         return await this._onActionSave();
-      } else if (action.name === 'read') {
+      } else if (actionName === 'read') {
         return await this._onActionRead();
-      } else if (action.name === 'write') {
+      } else if (actionName === 'write') {
         return await this._onActionWrite();
-      } else if (action.name === 'clone') {
+      } else if (actionName === 'clone') {
         return await this._onActionClone();
-      } else if (action.name === 'moveUp') {
+      } else if (actionName === 'moveUp') {
         return await this._onActionMoveUp();
-      } else if (action.name === 'moveDown') {
+      } else if (actionName === 'moveDown') {
         return await this._onActionMoveDown();
       }
     },

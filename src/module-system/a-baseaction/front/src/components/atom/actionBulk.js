@@ -22,17 +22,19 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'deleteBulk') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'deleteBulk') {
         return await this._onActionBulkDelete();
-      } else if (this.action.name === 'exportBulk') {
+      } else if (actionName === 'exportBulk') {
         return await this._onActionBulkExport();
-      } else if (this.action.name === 'importBulk') {
+      } else if (actionName === 'importBulk') {
         return await this._onActionBulkImport();
-      } else if (this.action.name === 'layoutBulk') {
+      } else if (actionName === 'layoutBulk') {
         return await this._onActionBulkLayout();
-      } else if (this.action.name === 'draftStatsBulk') {
+      } else if (actionName === 'draftStatsBulk') {
         return await this._onActionBulkDraftStats();
-      } else if (this.action.name === 'readBulk') {
+      } else if (actionName === 'readBulk') {
         return await this._onActionBulkRead();
       }
     },

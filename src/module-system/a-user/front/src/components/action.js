@@ -1,10 +1,11 @@
 export default {
   methods: {
     async onAction({ ctx, action /* , item*/ }) {
-      if (action.name === 'appearanceView') {
+      const actionName = action.actionName || action.name;
+      if (actionName === 'appearanceView') {
         const url = ctx.$meta.vueApp.layout === 'pc' ? '/a/user/view/pc' : '/a/user/view/mobile';
         ctx.$view.navigate(url, action.navigateOptions);
-      } else if (action.name === 'appearanceLanguage') {
+      } else if (actionName === 'appearanceLanguage') {
         const _action = {
           actionModule: 'a-base',
           actionComponent: 'action',

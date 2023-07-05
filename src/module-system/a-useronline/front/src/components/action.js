@@ -14,10 +14,12 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'kickOut') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'kickOut') {
         return await this._onActionKickOut();
       }
-      if (this.action.name === 'loginLog') {
+      if (actionName === 'loginLog') {
         return await this._onActionLoginLog();
       }
     },

@@ -10,9 +10,11 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'register') return this._register();
-      if (this.action.name === 'lookup') return this._lookup();
-      if (this.action.name === 'invoke') return await this._invoke();
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'register') return this._register();
+      if (actionName === 'lookup') return this._lookup();
+      if (actionName === 'invoke') return await this._invoke();
     },
     _register() {
       this.$local.commit('registerCapability', this.item);

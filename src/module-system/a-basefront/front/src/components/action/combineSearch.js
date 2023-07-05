@@ -10,9 +10,11 @@ export default {
   ],
   methods: {
     onAction() {
-      if (this.action.name === 'atomName') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'atomName') {
         return this.onAction_atomName();
-      } else if (this.action.name === 'dateRange') {
+      } else if (actionName === 'dateRange') {
         return this.onAction_dateRange();
       }
     },

@@ -4,11 +4,12 @@ export default {
   },
   methods: {
     async onAction({ ctx, action, item }) {
-      if (action.name === 'getAtomClassAndStage') {
+      const actionName = action.actionName || action.name;
+      if (actionName === 'getAtomClassAndStage') {
         return await this.onAction_getAtomClassAndStage({ ctx, item });
-      } else if (action.name === 'getSchemaReference') {
+      } else if (actionName === 'getSchemaReference') {
         return await this.onAction_getSchemaReference({ ctx, item });
-      } else if (action.name === 'schemaReference') {
+      } else if (actionName === 'schemaReference') {
         return await this.onAction_schemaReference({ ctx, action, item });
       }
     },

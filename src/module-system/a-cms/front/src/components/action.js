@@ -10,9 +10,11 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'cms-content-preview') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'cms-content-preview') {
         return await this.onAction_preview_cms_content();
-      } else if (this.action.name === 'preview') {
+      } else if (actionName === 'preview') {
         return await this.onAction_preview();
       }
     },

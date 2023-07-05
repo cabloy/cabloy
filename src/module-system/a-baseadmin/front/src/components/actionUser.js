@@ -16,11 +16,13 @@ export default {
   ],
   methods: {
     async onAction() {
-      if (this.action.name === 'userRoles') {
+      const action = this.action;
+      const actionName = action.actionName || action.name;
+      if (actionName === 'userRoles') {
         return await this._onActionUserRoles();
-      } else if (this.action.name === 'resourceAuthorizations') {
+      } else if (actionName === 'resourceAuthorizations') {
         return await this._onActionResourceAuthorizations();
-      } else if (this.action.name === 'atomAuthorizations') {
+      } else if (actionName === 'atomAuthorizations') {
         return await this._onActionAtomAuthorizations();
       }
     },
