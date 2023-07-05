@@ -2,9 +2,21 @@ export default {
   methods: {
     async _onActionOpenDetailList() {
       const { ctx, action, item } = this.$props;
+      // atomMainFrom
+      let atomIdMain;
+      let atomMain;
+      if (action.params.atomMainFrom === 'dataOptions') {
+        // dataOptions
+        const dataOptions = action.dataOptions || {};
+        atomIdMain = dataOptions.atomIdMain;
+        atomMain = dataOptions.atomMain;
+      } else {
+        atomIdMain = item.atomId;
+        atomMain = item;
+      }
       // options
       const options = {
-        atomIdMain: item.atomId,
+        atomIdMain,
       };
       // params
       const params = {
@@ -26,7 +38,7 @@ export default {
       }
       navigateOptions = Object.assign({}, navigateOptions, {
         context: {
-          params: { atomMain: item },
+          params: { atomMain },
         },
       });
       ctx.$view.navigate(url, navigateOptions);
