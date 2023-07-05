@@ -16,6 +16,7 @@ import ActionDisable from './action/actionDisable.js';
 import ActionWorkflow from './action/actionWorkflow.js';
 import ActionWorkflowFormal from './action/actionWorkflowFormal.js';
 import ActionLayout from './action/actionLayout.js';
+import ActionOpenDetailList from './action/actionOpenDetailList.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -41,6 +42,7 @@ export default {
     ActionWorkflow,
     ActionWorkflowFormal,
     ActionLayout,
+    ActionOpenDetailList,
   ],
   methods: {
     async onAction() {
@@ -80,6 +82,8 @@ export default {
         return await this._onActionWorkflowFormal();
       } else if (actionName === 'layout') {
         return await this._onActionLayout();
+      } else if (actionName === 'openDetailList') {
+        return await this._onActionOpenDetailList();
       }
     },
     async _onActionReadGeneral({ atomId }) {
