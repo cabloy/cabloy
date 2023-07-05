@@ -27,10 +27,7 @@ export default {
       if (action.createDelay && !dataOptions.createContinue) {
         // write
         dataOptions = { ...dataOptions, createDelay: true, createParams: params };
-        const useStoreAtomActions = await ctx.$store.use('a/basestore/atomActions');
-        let actionWrite = await useStoreAtomActions.getActionBase({ atomClass, name: 'write' });
-        actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
-        return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
+        return await this._onActionCreateContinueWrite({ ctx, action, atomClass, dataOptions, item });
       }
       // create
       const { key, atom } = await ctx.$api.post('/a/base/atom/create', params);
@@ -38,15 +35,18 @@ export default {
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom });
       // menu
       if (!dataOptions.noActionWrite) {
-        const itemWrite = ctx.$utils.extend({}, item, key);
         // write
-        const useStoreAtomActions = await ctx.$store.use('a/basestore/atomActions');
-        let actionWrite = await useStoreAtomActions.getActionBase({ atomClass, name: 'write' });
-        actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
-        return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item: itemWrite });
+        const itemWrite = ctx.$utils.extend({}, item, key);
+        return await this._onActionCreateContinueWrite({ ctx, action, atomClass, dataOptions, item: itemWrite });
       }
       // just return key
       return key;
+    },
+    async _onActionCreateContinueWrite({ ctx, action, atomClass, dataOptions, item }) {
+      const useStoreAtomActions = await ctx.$store.use('a/basestore/atomActions');
+      let actionWrite = await useStoreAtomActions.getActionBase({ atomClass, name: 'write' });
+      actionWrite = ctx.$utils.extend({}, actionWrite, { navigateOptions: action.navigateOptions }, { dataOptions });
+      return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
     },
     async _onActionCreatePrepareParams({ atomClass, atomClassBase, dataOptions, item }) {
       // params
