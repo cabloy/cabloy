@@ -125,7 +125,7 @@ export default {
       }
       return validateInstance.perform(event, options);
     },
-    async actions_onActionSaveAndClose(event) {
+    async actions_onActionSaveAndReturn(event) {
       const res = await this.actions_onAction(event, 'save');
       this.$f7router.back();
       return res;
@@ -215,19 +215,19 @@ export default {
       }
       return null;
     },
-    actions_renderButtonSaveAndClose() {
+    actions_renderButtonSaveAndReturn() {
       const mode = this.container.mode;
       if (mode !== 'edit') return null;
       const actionIcon = '::save-and-close';
-      const actionName = 'saveAndClose';
-      const actionTitle = 'SaveAndClose';
+      const actionName = 'saveAndReturn';
+      const actionTitle = 'SaveAndReturn';
       return (
         <eb-link
           key={actionName}
-          ref="buttonSaveAndClose"
+          ref="buttonSaveAndReturn"
           iconF7={actionIcon}
           tooltip={this.$text(actionTitle)}
-          propsOnPerform={event => this.actions_onActionSaveAndClose(event, actionName)}
+          propsOnPerform={event => this.actions_onActionSaveAndReturn(event, actionName)}
         ></eb-link>
       );
     },
@@ -283,8 +283,8 @@ export default {
       const buttonSubmit = this.actions_renderButtonSubmit();
       if (buttonSubmit) children.push(buttonSubmit);
       if (buttonSave && !buttonSubmit) {
-        const buttonSaveAndClose = this.actions_renderButtonSaveAndClose();
-        if (buttonSaveAndClose) children.push(buttonSaveAndClose);
+        const buttonSaveAndReturn = this.actions_renderButtonSaveAndReturn();
+        if (buttonSaveAndReturn) children.push(buttonSaveAndReturn);
       }
       // only show on draft/edit
       const buttonView = this.actions_renderButtonView();
