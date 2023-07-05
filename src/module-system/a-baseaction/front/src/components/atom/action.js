@@ -45,39 +45,40 @@ export default {
   methods: {
     async onAction() {
       const { action } = this.$props;
-      if (action.name === 'create' || action.action === 'create') {
+      const actionName = action.actionName || action.name;
+      if (actionName === 'create' || action.action === 'create') {
         return await this._onActionCreate();
-      } else if (action.name === 'read') {
+      } else if (actionName === 'read') {
         return await this._onActionRead();
-      } else if (action.name === 'delete') {
+      } else if (actionName === 'delete') {
         return await this._onActionDelete();
-      } else if (action.name === 'save') {
+      } else if (actionName === 'save') {
         return await this._onActionSave();
-      } else if (action.name === 'submit') {
+      } else if (actionName === 'submit') {
         return await this._onActionSubmit();
-      } else if (action.name === 'write') {
+      } else if (actionName === 'write') {
         return await this._onActionWrite();
-      } else if (action.name === 'clone') {
+      } else if (actionName === 'clone') {
         return await this._onActionClone();
-      } else if (action.name === 'history') {
+      } else if (actionName === 'history') {
         return await this._onActionHistory();
-      } else if (action.name === 'formal') {
+      } else if (actionName === 'formal') {
         return await this._onActionFormal();
-      } else if (action.name === 'draft') {
+      } else if (actionName === 'draft') {
         return await this._onActionDraft();
-      } else if (action.name === 'selectLocale') {
+      } else if (actionName === 'selectLocale') {
         return await this._onActionSelectLocale();
-      } else if (action.name === 'selectResourceType') {
+      } else if (actionName === 'selectResourceType') {
         return await this._onActionSelectResourceType();
-      } else if (action.name === 'enable') {
+      } else if (actionName === 'enable') {
         return await this._onActionEnable();
-      } else if (action.name === 'disable') {
+      } else if (actionName === 'disable') {
         return await this._onActionDisable();
-      } else if (action.name === 'workflow') {
+      } else if (actionName === 'workflow') {
         return await this._onActionWorkflow();
-      } else if (action.name === 'workflowFormal') {
+      } else if (actionName === 'workflowFormal') {
         return await this._onActionWorkflowFormal();
-      } else if (action.name === 'layout') {
+      } else if (actionName === 'layout') {
         return await this._onActionLayout();
       }
     },
