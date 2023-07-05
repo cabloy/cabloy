@@ -15,7 +15,6 @@ import renderRoleRightAction from './components/roleRight/render/renderRoleRight
 import renderRoleRightScope from './components/roleRight/render/renderRoleRightScope.jsx';
 //
 import actionRole from './components/actionRole.js';
-import actionRoleRight from './components/actionRoleRight.js';
 import actionUser from './components/actionUser.js';
 import roleIncludes from './components/role/includes.jsx';
 import roleUsers from './components/role/roleUsers.jsx';
@@ -42,7 +41,6 @@ export default {
   renderRoleRightScope,
   //
   actionRole,
-  actionRoleRight,
   actionUser,
   roleIncludes,
   roleUsers,
