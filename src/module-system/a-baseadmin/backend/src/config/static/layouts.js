@@ -4,6 +4,7 @@ const layoutAtomListRoleRight = require('./layout/layoutAtomListRoleRight.js');
 const layoutAtomItemUser = require('./layout/layoutAtomItemUser.js');
 const layoutAtomListUser = require('./layout/layoutAtomListUser.js');
 const layoutAtomListResource = require('./layout/layoutAtomListResource.js');
+const layoutAtomListRoleResourceRight = require('./layout/layoutAtomListRoleResourceRight.js');
 
 module.exports = app => {
   const layouts = [
@@ -13,6 +14,7 @@ module.exports = app => {
     layoutAtomItemUser(app),
     layoutAtomListUser(app),
     layoutAtomListResource(app),
+    layoutAtomListRoleResourceRight(app),
   ];
   return layouts;
 };
