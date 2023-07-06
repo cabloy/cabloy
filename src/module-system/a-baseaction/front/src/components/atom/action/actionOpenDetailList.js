@@ -2,6 +2,9 @@ export default {
   methods: {
     async _onActionOpenDetailList() {
       const { ctx, action, item } = this.$props;
+      if (!action.params) {
+        throw new Error(`Should specify action.params of action: ${action.name}`);
+      }
       // atomMainFrom
       let atomIdMain;
       let atomMain;
