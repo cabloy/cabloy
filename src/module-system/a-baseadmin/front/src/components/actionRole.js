@@ -5,7 +5,6 @@ import ActionMove from './actionRole/actionMove.js';
 import ActionAddChild from './actionRole/actionAddChild.js';
 import ActionRoleUsers from './actionRole/actionRoleUsers.js';
 import ActionIncludes from './actionRole/actionIncludes.js';
-import ActionResourceAuthorizations from './actionRole/actionResourceAuthorizations.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -20,7 +19,6 @@ export default {
     ActionAddChild,
     ActionRoleUsers,
     ActionIncludes,
-    ActionResourceAuthorizations,
   ],
   methods: {
     async onAction() {
@@ -38,8 +36,6 @@ export default {
         return await this._onActionRoleUsers();
       } else if (actionName === 'includes') {
         return await this._onActionIncludes();
-      } else if (actionName === 'resourceAuthorizations') {
-        return await this._onActionResourceAuthorizations();
       }
     },
   },
