@@ -34,8 +34,10 @@
     "**/dist/**": true,
     "/src/backend/app/**": true,
     "/src/backend/logs/**": true,
-    "/src/backend/run/**": true
+    "/src/backend/run/**": true,
+    "**/node_modules": false
   },
+  "search.useIgnoreFiles": false,
   "typescript.validate.enable": false,
   "typescript.format.enable": false,
   "typescript.disableAutomaticTypeAcquisition": true,
