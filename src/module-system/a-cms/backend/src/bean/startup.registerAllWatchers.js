@@ -7,6 +7,8 @@ module.exports = app => {
     }
 
     async _registerCms() {
+      // config
+      const configWatchAtomClass = this.ctx.config.watch.atomClass;
       // loop modules
       for (const module of app.meta.modulesArray) {
         // loop atomClasses
@@ -19,8 +21,11 @@ module.exports = app => {
             module: module.info.relativeName,
             atomClassName: key,
           };
-          const build = this.ctx.bean.cms.build({ atomClass });
-          await build.registerWatchers();
+          // check if watch
+          if (this.ctx.bean.util.checkIfSameAtomClass(configWatchAtomClass, atomClass)) {
+            const build = this.ctx.bean.cms.build({ atomClass });
+            await build.registerWatchers();
+          }
         }
       }
     }

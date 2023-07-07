@@ -32,6 +32,11 @@ module.exports = appInfo => {
     },
   };
 
+  // watch
+  config.watch = {
+    atomClass: null,
+  };
+
   // site
   config.cms = {};
   config.cms.site = {
