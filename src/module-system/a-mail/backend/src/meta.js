@@ -17,11 +17,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        mailScene: {
-          schemas: 'mailScene',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

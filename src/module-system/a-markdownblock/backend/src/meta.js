@@ -11,14 +11,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        blockIFrame: {
-          schemas: 'blockIFrame',
-        },
-        blockAudio: {
-          schemas: 'blockAudio',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

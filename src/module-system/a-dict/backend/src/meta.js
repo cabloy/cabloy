@@ -50,14 +50,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        dict: {
-          schemas: 'dict',
-        },
-        dictSearch: {
-          schemas: 'dictSearch',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

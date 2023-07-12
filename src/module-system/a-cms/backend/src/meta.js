@@ -71,19 +71,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        article: {
-          schemas: 'article',
-        },
-        articleSearch: {
-          schemas: 'articleSearch',
-        },
-      },
+      validators: {},
       keywords,
-      schemas: {
-        article: schemas.article,
-        articleSearch: schemas.articleSearch,
-      },
+      schemas,
     },
     settings: {
       instance: {

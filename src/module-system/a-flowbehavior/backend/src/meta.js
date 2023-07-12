@@ -6,12 +6,7 @@ module.exports = app => {
       atoms: {},
     },
     validation: {
-      validators: {
-        // overtime
-        overtime: {
-          schemas: 'overtime',
-        },
-      },
+      validators: {},
       schemas,
     },
     flow: {

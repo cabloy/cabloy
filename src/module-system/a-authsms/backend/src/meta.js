@@ -18,20 +18,7 @@ module.exports = app => {
     },
     auth,
     validation: {
-      validators: {
-        signup: {
-          schemas: 'signup',
-        },
-        signin: {
-          schemas: 'signin',
-        },
-        mobileVerify: {
-          schemas: 'mobileVerify',
-        },
-        aliyun: {
-          schemas: 'aliyun',
-        },
-      },
+      validators: {},
       keywords: {
         'x-exists': keywords.exists,
       },

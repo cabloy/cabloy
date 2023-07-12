@@ -55,19 +55,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        dashboard: {
-          schemas: 'dashboard',
-        },
-        dashboardSearch: {
-          schemas: 'dashboardSearch',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        dashboard: schemas.dashboard,
-        dashboardSearch: schemas.dashboardSearch,
-      },
+      schemas,
     },
   };
   return meta;

@@ -69,14 +69,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        post: {
-          schemas: 'post',
-        },
-        postSearch: {
-          schemas: 'postSearch',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas: {
         post: schemas.post,

@@ -42,14 +42,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        <%=argv.atomClassName%>: {
-          schemas: '<%=argv.atomClassName%>',
-        },
-        <%=argv.atomClassName%>Search: {
-          schemas: '<%=argv.atomClassName%>Search',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

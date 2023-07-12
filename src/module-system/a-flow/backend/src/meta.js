@@ -39,19 +39,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        flowDef: {
-          schemas: 'flowDef',
-        },
-        flowDefSearch: {
-          schemas: 'flowDefSearch',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        flowDef: schemas.flowDef,
-        flowDefSearch: schemas.flowDefSearch,
-      },
+      schemas,
     },
     stats: {
       providers: {

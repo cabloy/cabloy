@@ -94,20 +94,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        userOnline: {
-          schemas: 'userOnline',
-        },
-        userOnlineSearch: {
-          schemas: 'userOnlineSearch',
-        },
-        userOnlineHistory: {
-          schemas: 'userOnlineHistory',
-        },
-        userOnlineHistorySearch: {
-          schemas: 'userOnlineHistorySearch',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

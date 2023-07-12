@@ -71,14 +71,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        authOpen: {
-          schemas: 'authOpen',
-        },
-        authOpenSearch: {
-          schemas: 'authOpenSearch',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

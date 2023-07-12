@@ -57,14 +57,7 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        document: {
-          schemas: 'document',
-        },
-        documentSearch: {
-          schemas: 'documentSearch',
-        },
-      },
+      validators: {},
       keywords: {},
       schemas,
     },

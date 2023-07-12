@@ -21,12 +21,6 @@ const __snippet_atom = `<%=argv.atomClassName%>: {
     validator: '<%=argv.atomClassName%>Search',
   },
 },`;
-const __snippet_validator = `<%=argv.atomClassName%>: {
-  schemas: '<%=argv.atomClassName%>',
-},
-<%=argv.atomClassName%>Search: {
-  schemas: '<%=argv.atomClassName%>Search',
-},`;
 const __snippet_index = `<%=argv.providerId%><%=argv.atomClassNameCapitalize%>: 'createdAt,updatedAt,atomId',`;
 
 module.exports = {
@@ -38,9 +32,6 @@ module.exports = {
       `const meta = { base: { atoms: {$$$0},$$$1 },$$$2 }`,
       `const meta = { base: { atoms: { ${code} \n $$$0},$$$1 },$$$2 }`
     );
-    // validator
-    code = await cli.template.renderContent({ content: __snippet_validator });
-    ast.replace(`validators: {$$$0}`, `validators: { ${code} \n $$$0}`);
     // index
     code = await cli.template.renderContent({ content: __snippet_index });
     ast.replace(`indexes: {$$$0}`, `indexes: { ${code} \n $$$0}`);

@@ -2,15 +2,9 @@ module.exports = app => {
   const schemas = require('./config/validation/schemas.js')(app);
   const meta = {
     validation: {
-      validators: {
-        instance: {
-          schemas: 'instance',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        instance: schemas.instance,
-      },
+      schemas,
     },
     settings: {
       instance: {

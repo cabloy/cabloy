@@ -7,20 +7,7 @@ module.exports = app => {
       atoms: {},
     },
     validation: {
-      validators: {
-        // sequence
-        sequence: {
-          schemas: 'sequence',
-        },
-        // startEventTimer
-        startEventTimer: {
-          schemas: 'startEventTimer',
-        },
-        // activityService
-        activityService: {
-          schemas: 'activityService',
-        },
-      },
+      validators: {},
       schemas,
     },
     flow: {

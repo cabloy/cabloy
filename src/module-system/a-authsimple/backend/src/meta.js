@@ -8,38 +8,12 @@ module.exports = app => {
   return {
     auth,
     validation: {
-      validators: {
-        signup: {
-          schemas: 'signup',
-        },
-        signin: {
-          schemas: 'signin',
-        },
-        passwordChange: {
-          schemas: 'passwordChange',
-        },
-        passwordForgot: {
-          schemas: 'passwordForgot',
-        },
-        passwordReset: {
-          schemas: 'passwordReset',
-        },
-        emailConfirm: {
-          schemas: 'emailConfirm',
-        },
-      },
+      validators: {},
       keywords: {
         'x-exists': keywords.exists,
         'x-passwordForgotEmail': keywords.passwordForgotEmail,
       },
-      schemas: {
-        signup: schemas.signup,
-        signin: schemas.signin,
-        passwordChange: schemas.passwordChange,
-        passwordForgot: schemas.passwordForgot,
-        passwordReset: schemas.passwordReset,
-        emailConfirm: schemas.emailConfirm,
-      },
+      schemas,
     },
     event: {
       implementations: {
