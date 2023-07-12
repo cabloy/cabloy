@@ -24,6 +24,12 @@ module.exports = app => {
         roleRightSearch: {
           schemas: 'roleRightSearch',
         },
+        roleResourceRight: {
+          schemas: 'roleResourceRight',
+        },
+        roleResourceRightSearch: {
+          schemas: 'roleResourceRightSearch',
+        },
       },
       keywords: {},
       schemas,
