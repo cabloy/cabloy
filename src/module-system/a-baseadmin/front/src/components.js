@@ -22,6 +22,9 @@ import userRoles from './components/user/userRoles.jsx';
 import userSelect from './components/user/select.vue';
 import resourceRightRights from './components/resourceRight/rights.vue';
 import resourceRightSpreads from './components/resourceRight/spreads.vue';
+// roleResourceRight: listLayoutList
+import roleResourceRightListLayoutBlockListItems from './components/roleResourceRight/listLayoutList/listLayoutBlockListItems.jsx';
+import roleResourceRightListLayoutBlockListItem from './components/roleResourceRight/listLayoutList/listLayoutBlockListItem.jsx';
 
 export default {
   // role: roleListLayoutTree
@@ -48,6 +51,9 @@ export default {
   userSelect,
   resourceRightRights,
   resourceRightSpreads,
+  //
+  roleResourceRightListLayoutBlockListItems,
+  roleResourceRightListLayoutBlockListItem,
 };
 
 // bak
