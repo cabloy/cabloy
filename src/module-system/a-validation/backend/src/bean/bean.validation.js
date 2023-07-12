@@ -13,7 +13,7 @@ module.exports = ctx => {
       module = module || this.moduleName;
       const meta = ctx.app.meta.modules[module].main.meta;
       if (!schema) {
-        const _validator = ctx.bean.util.getProperty(meta, `validation.validators.${validator}`);
+        const _validator = this.getValidator({ module, validator });
         if (!_validator) throw new Error(`validator not found: ${module}:${validator}`);
         const schemas = this._adjustSchemas(_validator.schemas);
         schema = schemas[0];
@@ -23,6 +23,21 @@ module.exports = ctx => {
         validator,
         schema: ctx.bean.util.getProperty(meta, `validation.schemas.${schema}`),
       };
+    }
+
+    getValidator({ module, validator }) {
+      module = module || this.moduleName;
+      const meta = ctx.app.meta.modules[module].main.meta;
+      let _validator = ctx.bean.util.getProperty(meta, `validation.validators.${validator}`);
+      if (!_validator) {
+        const _schema = ctx.bean.util.getProperty(meta, `validation.schemas.${validator}`);
+        if (!_schema) return null;
+        _validator = {
+          schemas: validator,
+        };
+        ctx.bean.util.setProperty(meta, `validation.validators.${validator}`, _validator);
+      }
+      return _validator;
     }
 
     async validate({ module, validator, schema, data, filterOptions }) {
@@ -78,7 +93,7 @@ module.exports = ctx => {
       // check ajv cache
       module = module || this.moduleName;
       const meta = ctx.app.meta.modules[module].main.meta;
-      const _validator = meta.validation.validators[validator];
+      const _validator = this.getValidator({ module, validator });
       if (!_validator) throw new Error(`validator not found: ${module}:${validator}`);
       if (_validator.ajv) return _validator;
       // create ajv
