@@ -1,12 +1,11 @@
 import Vue from 'vue';
 const ebModules = Vue.prototype.$meta.module.get('a-base').options.mixins.ebModules;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
-const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
 export default {
   meta: {
     global: false,
   },
-  mixins: [ebModules, ebAtomClasses, ebAtomActions],
+  mixins: [ebModules, ebAtomClasses],
   props: {
     layoutManager: {
       type: Object,
@@ -26,7 +25,7 @@ export default {
       return this.layoutManager.data.provider.itemKey;
     },
     ready() {
-      return this.modulesAll && this.atomClassesAll && this.actionsAll;
+      return this.modulesAll && this.atomClassesAll;
     },
     itemGroups() {
       const items = this.layoutManager.data_getItems();
@@ -58,34 +57,6 @@ export default {
             };
           }
           groups.push(group);
-        }
-        // item
-        if (item.actionMode === 1) {
-          item.title = item.actionName;
-          item.titleLocale = item.actionNameLocale;
-        } else {
-          let action;
-          if (item.atomClassIdTarget) {
-            action = this.getAction({
-              module: item.moduleTarget,
-              atomClassName: item.atomClassNameTarget,
-              name: item.actionName,
-            });
-          } else {
-            action = null;
-          }
-          item._action = action;
-          if (!action) {
-            if (item.atomClassIdTarget) {
-              item.title = item.actionName;
-              item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
-            } else {
-              item.titleLocale = item.title = this.$text('Not Specified');
-            }
-          } else {
-            item.title = action.title;
-            item.titleLocale = action.titleLocale;
-          }
         }
         // push
         group.items.push(item);

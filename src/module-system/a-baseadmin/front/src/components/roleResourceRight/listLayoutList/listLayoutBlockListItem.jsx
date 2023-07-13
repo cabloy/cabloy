@@ -23,15 +23,26 @@ export default {
     };
   },
   methods: {
-    onItemClick(event, item) {
+    async onItemClick(event, item) {
       if (this.layoutManager.bulk.selecting) return;
-      return this.layoutManager.item_onActionView(event, item);
+      // view resource info
+      const atomClass = { module: item.moduleTarget, atomClassName: item.atomClassNameTarget };
+      const useStoreAtomActions = await this.$store.use('a/basestore/atomActions');
+      const actionRead = await useStoreAtomActions.getActionBase({ atomClass, name: 'read' });
+      return await this.$meta.util.performAction({
+        ctx: this,
+        action: actionRead,
+        item: { atomId: item.atomIdTarget },
+      });
     },
     onSwipeoutOpened(event, item) {
       this.layoutManager.actions_fetchActions(item);
     },
     onItemChange(event, item) {
       this.layoutManager.bulk_onItemChange(event, item);
+    },
+    _getTypeCategory(item) {
+      return `${item.resourceTypeLocale} / ${item.atomCategoryNameLocale}`;
     },
     _getItemChecked(item) {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
@@ -49,16 +60,8 @@ export default {
     },
     _renderItemAfter(item) {
       const children = [];
-      if (item.actionBulk === 0 && item.scope === 0) {
-        children.push(<f7-badge>{this.$text('Self')}</f7-badge>);
-      } else if (item.scopeRoles) {
-        for (const scopeRole of item.scopeRoles) {
-          children.push(
-            <f7-badge key={scopeRole.id} color="teal" tooltip={this.$text('DataScope')}>
-              {scopeRole.roleNameLocale}
-            </f7-badge>
-          );
-        }
+      if (item.resourceType) {
+        children.push(<f7-badge>{this._getTypeCategory(item)}</f7-badge>);
       }
       return (
         <div slot="after" class="after">
@@ -66,61 +69,17 @@ export default {
         </div>
       );
     },
-    _renderItemSummary(item) {
-      let summary;
-      if (item.actionMode === 1) {
-        summary = `${this.$text('WorkFlow Actions')}: ${item.flowDefNameLocale}`;
-      } else if (item.actionBulk === 1 && item.action !== 1) {
-        summary = this.$text('Bulk');
-      }
-      return (
-        <div slot="root-end" class="summary">
-          {summary}
-        </div>
-      );
-    },
-    _renderItemMedia(item) {
-      // color
-      let color;
-      let icon;
-      if (item.actionMode === 1) {
-        color = 'teal';
-        icon = '::flow-chart';
-      } else if (!item._action) {
-        color = 'gray';
-        icon = '::radio-button-unchecked';
-      } else if (item.actionBulk === 0 || item.actionName === 'create') {
-        color = 'blue';
-        icon = item._action?.icon?.f7;
-      } else {
-        color = 'green';
-        icon = item._action?.icon?.f7;
-      }
-      let domMedia;
-      if (icon) {
-        domMedia = <f7-icon f7={icon} color={color} size="24"></f7-icon>;
-      }
-      return (
-        <div slot="media" class="avatar24-wrapper">
-          {domMedia}
-        </div>
-      );
-    },
     _renderListItem(item) {
-      // domMedia
-      const domMedia = this._renderItemMedia(item);
       // domTitle
       const domTitle = (
         <div slot="title" class="title">
-          <div>{item.titleLocale}</div>
+          <div>{item.atomNameLocale || item.atomName}</div>
         </div>
       );
       // domHeader
       const domHeader = this._renderItemHeader(item);
       // domAfter
       const domAfter = this._renderItemAfter(item);
-      // domSummary
-      const domSummary = this._renderItemSummary(item);
       // ok
       return (
         <eb-list-item
@@ -141,9 +100,7 @@ export default {
           onChange={event => this.onItemChange(event, item)}
         >
           {domHeader}
-          {domMedia}
           {domTitle}
-          {domSummary}
           {domAfter}
           {this._renderListItemContextMenu(item)}
         </eb-list-item>
