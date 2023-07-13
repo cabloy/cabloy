@@ -1,6 +1,12 @@
 <template>
   <eb-page>
-    <eb-navbar large largeTransparent :title="getPageTitle('New Authorizations')" eb-back-link="Back">
+    <eb-navbar eb-back-link="Back">
+      <f7-nav-title>
+        <div>{{ $text('New Authorizations') }}</div>
+        <div class="subtitle">
+          <f7-badge>{{ atomMain.atomNameLocale || atomMain.atomName }}</f7-badge>
+        </div>
+      </f7-nav-title>
       <f7-nav-right>
         <eb-link v-if="!!atoms" ref="buttonSubmit" iconF7="::save" :onPerform="onSave"></eb-link>
       </f7-nav-right>
@@ -24,14 +30,20 @@
   </eb-page>
 </template>
 <script>
-import roleItemBase from '../../components/role/roleItemBase.js';
+import Vue from 'vue';
+const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
-  mixins: [roleItemBase],
+  mixins: [ebPageContext],
   data() {
     return {
       atomClass: null,
       atoms: null,
     };
+  },
+  computed: {
+    atomMain() {
+      return this.contextParams.atomMain;
+    },
   },
   watch: {
     atomClass() {

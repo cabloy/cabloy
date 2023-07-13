@@ -12,7 +12,6 @@ export default [
   { path: 'user/select', component: load('user/select') },
   { path: 'user/userRoles', component: loadjsx('user/userRoles') },
   { path: 'user/resourceRights', component: loadjsx('user/resourceRights') },
-  { path: 'resourceRight/edit', component: loadjsx('resourceRight/edit') },
   { path: 'resourceRight/add', component: load('resourceRight/add') },
   { path: 'auth/list', component: loadjsx('auth/list') },
   { path: 'auth/config', component: loadjsx('auth/config') },
