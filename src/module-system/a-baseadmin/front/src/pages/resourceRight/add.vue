@@ -95,11 +95,32 @@ export default {
     },
     async onSave() {
       if (!this.atoms) return;
+      // key
+      const key = {
+        atomId: this.atomMain.atomId,
+      };
+      // add
       await this.$api.post('resourceRight/add', {
-        key: this.roleKey,
+        key,
         atomIds: this.atoms.map(item => item.atomId),
       });
-      this.$meta.eventHub.$emit('resourceRight:add', { roleId: this.roleId });
+      // event
+      this.$meta.eventHub.$emit('atom:action', {
+        key: null,
+        atomClass: {
+          module: 'a-base',
+          atomClassName: 'roleResourceRight',
+        },
+        action: {
+          name: 'create',
+        },
+        atom: {
+          atomStage: 1,
+          module: 'a-base',
+          atomClassName: 'roleResourceRight',
+        },
+      });
+      // back
       this.$f7router.back();
     },
     getTypeCategory(item) {
