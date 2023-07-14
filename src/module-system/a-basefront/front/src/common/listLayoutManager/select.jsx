@@ -41,9 +41,8 @@ export default {
       const selectedAtomIds = this.container.params?.selectedAtomIds;
       if (selectedAtomIds && selectedAtomIds.length > 0) return;
       // direct selecting
-      window.setTimeout(() => {
-        return this.select_openPageSelecting();
-      }, 1000);
+      await this.$pageContainer.waitPageAfterIn();
+      return this.select_openPageSelecting();
     },
     async select_prepareSelectedAtoms() {
       if (this.container.scene !== 'selecting') return;

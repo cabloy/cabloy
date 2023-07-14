@@ -23,6 +23,7 @@ export default {
       hideToolbarOnScroll: false,
       className: '',
       firstOfPageAfterIn: true,
+      statusOfPageAfterIn: false,
     };
   },
   created() {
@@ -95,6 +96,9 @@ export default {
       this.setState({
         routerPositionClass: 'page-current',
       });
+      if (!this.statusOfPageAfterIn) {
+        this.statusOfPageAfterIn = true;
+      }
       // event
       this.dispatchEvent('page:afterin pageAfterIn', page, this.firstOfPageAfterIn);
       if (this.firstOfPageAfterIn) {
@@ -129,6 +133,12 @@ export default {
     },
     getAbsoluteUrl() {
       return this.$meta.util.combineHash(this.$pageRoute.url);
+    },
+    async waitPageAfterIn() {
+      while (!this.statusOfPageAfterIn) {
+        await this.$meta.util.sleep(100);
+      }
+      return true;
     },
   },
 };
