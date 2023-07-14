@@ -135,7 +135,11 @@ export default {
       return this.$meta.util.combineHash(this.$pageRoute.url);
     },
     async waitPageAfterIn() {
+      let index = 0;
       while (!this.statusOfPageAfterIn) {
+        if (++index === 20) {
+          throw new Error('timeout for pageAfterIn');
+        }
         await this.$meta.util.sleep(100);
       }
       return true;
