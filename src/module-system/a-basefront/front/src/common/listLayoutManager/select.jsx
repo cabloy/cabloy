@@ -41,7 +41,7 @@ export default {
       const selectedAtomIds = this.container.params?.selectedAtomIds;
       if (selectedAtomIds && selectedAtomIds.length > 0) return;
       // direct selecting
-      await this.$pageContainer.waitPageAfterIn();
+      await this.$pageContainer.waitForPageAfterIn();
       return this.select_openPageSelecting();
     },
     async select_prepareSelectedAtoms() {

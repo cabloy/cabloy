@@ -134,7 +134,7 @@ export default {
     getAbsoluteUrl() {
       return this.$meta.util.combineHash(this.$pageRoute.url);
     },
-    async waitPageAfterIn() {
+    async waitForPageAfterIn() {
       let index = 0;
       while (!this.statusOfPageAfterIn) {
         if (++index === 20) {
