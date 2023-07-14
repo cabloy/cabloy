@@ -31,7 +31,7 @@
     "@zhennann/vue": "^2.7.14",
     "array.prototype.group": "^1.1.2",
     "async": "^3.2.0",
-    "axios": "^0.21.1",
+    "axios": "^1.4.0",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mparse": "^2.1.9",
     "js-cookie": "^2.2.1",
