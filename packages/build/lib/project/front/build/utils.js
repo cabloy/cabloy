@@ -41,7 +41,7 @@ module.exports = context => {
         //   return [ MiniCssExtractPlugin.loader ].concat(loaders);
         // }
         const vueStyleLoader = {
-          loader: 'vue-style-loader',
+          loader: '@zhennann/vue-style-loader',
           options: {
             isGlobal: true,
           },
