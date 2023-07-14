@@ -25,7 +25,6 @@
     "@zhennann/babel-helper-wrap-function": "^7.16.8",
     "@zhennann/babel-plugin-transform-async-to-generator": "^7.16.8",
     "autoprefixer": "^9.7.4",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-jsx-v-model": "^2.0.3",
     "babel-plugin-syntax-jsx": "^6.18.0",
