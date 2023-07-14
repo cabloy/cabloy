@@ -40,7 +40,13 @@ module.exports = context => {
         // if (options.extract) {
         //   return [ MiniCssExtractPlugin.loader ].concat(loaders);
         // }
-        return ['vue-style-loader'].concat(loaders);
+        const vueStyleLoader = {
+          loader: 'vue-style-loader',
+          options: {
+            isGlobal: true,
+          },
+        };
+        return [vueStyleLoader].concat(loaders);
       }
 
       // http://vuejs.github.io/vue-loader/en/configurations/extract-css.html
