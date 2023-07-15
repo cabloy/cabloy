@@ -28,6 +28,8 @@ import roleResourceRightListLayoutBlockListItems from './components/roleResource
 import roleResourceRightListLayoutBlockListItem from './components/roleResourceRight/listLayoutList/listLayoutBlockListItem.jsx';
 // combineSearch
 import combineSearch from './components/action/combineSearch.js';
+// render
+import renderResourceType from './components/render/renderResourceType.jsx';
 
 export default {
   // role: roleListLayoutTree
@@ -60,6 +62,8 @@ export default {
   roleResourceRightListLayoutBlockListItem,
   //
   combineSearch,
+  //
+  renderResourceType,
 };
 
 // bak

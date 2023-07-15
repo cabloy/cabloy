@@ -33,7 +33,29 @@ module.exports = app => {
             itemOnly: false,
             resource: true,
           },
+          mapper: {
+            module: 'moduleTarget',
+            atomClassName: 'atomClassNameTarget',
+          },
           optional: true,
+        },
+      },
+      resourceType: {
+        type: 'string',
+        ebType: 'component',
+        ebTitle: 'Resource Type',
+        ebRender: {
+          module: 'a-baseadmin',
+          name: 'renderResourceType',
+        },
+      },
+      atomCategoryId: {
+        type: 'number',
+        ebType: 'component',
+        ebTitle: 'Category',
+        ebRender: {
+          module: 'a-baserender',
+          name: 'renderCategoryResource',
         },
       },
     },
