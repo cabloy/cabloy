@@ -11,6 +11,18 @@ module.exports = app => {
   schemas.roleResourceRightSearch = {
     type: 'object',
     properties: {
+      resourceName: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Resource Name',
+        ebSearch: {
+          combine: {
+            actionModule: 'a-baseadmin',
+            actionComponent: 'combineSearch',
+            name: 'resourceName',
+          },
+        },
+      },
       atomClassIdTarget: {
         type: 'number',
         ebType: 'atomClassId',

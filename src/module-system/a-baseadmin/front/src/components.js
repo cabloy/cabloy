@@ -26,6 +26,8 @@ import resourceRightSpreads from './components/resourceRight/spreads.vue';
 // roleResourceRight: listLayoutList
 import roleResourceRightListLayoutBlockListItems from './components/roleResourceRight/listLayoutList/listLayoutBlockListItems.jsx';
 import roleResourceRightListLayoutBlockListItem from './components/roleResourceRight/listLayoutList/listLayoutBlockListItem.jsx';
+// combineSearch
+import combineSearch from './components/action/combineSearch.js';
 
 export default {
   // role: roleListLayoutTree
@@ -56,6 +58,8 @@ export default {
   //
   roleResourceRightListLayoutBlockListItems,
   roleResourceRightListLayoutBlockListItem,
+  //
+  combineSearch,
 };
 
 // bak
