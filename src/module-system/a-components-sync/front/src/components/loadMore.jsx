@@ -75,7 +75,8 @@ export default {
           this.index = data.index;
           this.finished = data.finished;
         })
-        .catch(() => {
+        .catch(err => {
+          console.error(err);
           this.error = true;
           this.doing = false;
         });
