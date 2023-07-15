@@ -16,7 +16,7 @@ export default {
         return this.onAction_resourceName();
       }
     },
-    resourceName() {
+    onAction_resourceName() {
       const { item } = this.$props;
       const { value, operator } = item;
       if (!value) return null;
