@@ -49,15 +49,16 @@ module.exports = app => {
           name: 'renderResourceType',
         },
       },
-      atomCategoryId: {
-        type: 'number',
-        ebType: 'component',
-        ebTitle: 'Category',
-        ebRender: {
-          module: 'a-baserender',
-          name: 'renderCategoryResource',
-        },
-      },
+      // todo:
+      // atomCategoryId: {
+      //   type: 'number',
+      //   ebType: 'component',
+      //   ebTitle: 'Category',
+      //   ebRender: {
+      //     module: 'a-baserender',
+      //     name: 'renderCategoryResource',
+      //   },
+      // },
     },
   };
   return schemas;
