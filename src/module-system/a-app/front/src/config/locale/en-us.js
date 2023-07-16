@@ -3,6 +3,7 @@ export default {
   AppHiddenTitle: 'Hidden',
   AppLanguageTitle: 'Language',
   AppCmsTitle: 'CMS',
+  AppKey: 'App Key',
   AppUnclassifiedOptionsTip1_Desp:
     'Option 1: Please create an application for your business and put the menu into the application. See: ',
   AppUnclassifiedOptionsTip1_LinkTitle: 'Create Application',

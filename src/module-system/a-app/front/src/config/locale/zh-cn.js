@@ -6,6 +6,7 @@ export default {
   AppHiddenTitle: '隐藏',
   AppLanguageTitle: '支持语言',
   AppCmsTitle: '支持CMS',
+  AppKey: '应用Key',
   AppUnclassifiedOptionsTip1_Desp: '选项1：请为您的业务创建一个应用，并将菜单放入该应用中，请参见：',
   AppUnclassifiedOptionsTip1_LinkTitle: '如何创建App应用',
   AppUnclassifiedOptionsTip1_LinkURL: 'https://cabloy.com/zh-cn/articles/app-create.html',

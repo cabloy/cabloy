@@ -40,7 +40,7 @@ module.exports = app => {
       atomStaticKey: {
         type: 'string',
         ebType: 'text',
-        ebTitle: 'KeyForAtom',
+        ebTitle: 'DictKey',
         ebReadOnly: true,
         notEmpty: true,
       },
