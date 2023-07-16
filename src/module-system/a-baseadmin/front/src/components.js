@@ -21,8 +21,6 @@ import roleIncludes from './components/role/includes.jsx';
 import roleUsers from './components/role/roleUsers.jsx';
 import userRoles from './components/user/userRoles.jsx';
 import userSelect from './components/user/select.vue';
-import resourceRightRights from './components/resourceRight/rights.vue';
-import resourceRightSpreads from './components/resourceRight/spreads.vue';
 // roleResourceRight: listLayoutList
 import roleResourceRightListLayoutBlockListItems from './components/roleResourceRight/listLayoutList/listLayoutBlockListItems.jsx';
 import roleResourceRightListLayoutBlockListItem from './components/roleResourceRight/listLayoutList/listLayoutBlockListItem.jsx';
@@ -55,8 +53,6 @@ export default {
   roleUsers,
   userRoles,
   userSelect,
-  resourceRightRights,
-  resourceRightSpreads,
   //
   roleResourceRightListLayoutBlockListItems,
   roleResourceRightListLayoutBlockListItem,
@@ -69,3 +65,5 @@ export default {
 // bak
 // import atomRightRights from './components/atomRight/rights.vue';
 // import atomRightSpreads from './components/atomRight/spreads.vue';
+// import resourceRightRights from './components/resourceRight/rights.vue';
+// import resourceRightSpreads from './components/resourceRight/spreads.vue';
