@@ -16,6 +16,7 @@ module.exports = {
   RoleAtomRight: '角色数据权限',
   RoleAtomRightSpread: '角色数据权限(展开)',
   RoleResourceRight: '角色资源权限',
+  RoleResourceRightSpread: '角色资源权限(展开)',
   Users: '用户',
   Includes: '聚合',
   Inherits: '继承',
