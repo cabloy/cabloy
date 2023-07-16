@@ -37,6 +37,7 @@ export default {
       } else if (actionName === 'readBulk') {
         return await this._onActionBulkRead();
       }
+      throw new Error(`action handler not found: ${actionName}`);
     },
   },
 };

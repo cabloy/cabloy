@@ -85,6 +85,7 @@ export default {
       } else if (actionName === 'openDetailList') {
         return await this._onActionOpenDetailList();
       }
+      throw new Error(`action handler not found: ${actionName}`);
     },
     async _onActionReadGeneral({ atomId }) {
       const { ctx, item } = this.$props;

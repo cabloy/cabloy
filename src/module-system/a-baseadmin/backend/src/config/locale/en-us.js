@@ -1,5 +1,6 @@
 module.exports = {
   UserAtomRight: 'User Data Right',
+  UserResourceRight: 'User Resource Right',
   RoleAtomRight: 'Role Data Right',
   RoleAtomRightSpread: 'Role Data Right(Spread)',
   RoleResourceRight: 'Role Resource Right',
