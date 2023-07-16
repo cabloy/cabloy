@@ -79,6 +79,9 @@ module.exports = (app, ctx) => {
           beanInstance = new _classOrFn(...args);
         }
       }
+      if (!beanInstance) {
+        throw new Error(`bean class not found: ${beanFullName}`);
+      }
       // log
       beanInstance.__beanFullName = beanFullName;
       // no aop
