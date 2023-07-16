@@ -37,9 +37,9 @@ module.exports = context => {
         // }
         const vueStyleLoader = {
           loader: '@zhennann/vue-style-loader',
-          options: {
-            isGlobal: false,
-          },
+          // options: {
+          //   isGlobal: false,
+          // },
         };
         return [vueStyleLoader].concat(loaders);
       }

@@ -42,9 +42,9 @@ module.exports = context => {
         // }
         const vueStyleLoader = {
           loader: '@zhennann/vue-style-loader',
-          options: {
-            isGlobal: true,
-          },
+          // options: {
+          //   isGlobal: true,
+          // },
         };
         return [vueStyleLoader].concat(loaders);
       }
