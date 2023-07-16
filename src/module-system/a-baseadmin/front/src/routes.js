@@ -11,7 +11,6 @@ export default [
   { path: 'role/includes', component: loadjsx('role/includes') },
   { path: 'user/select', component: load('user/select') },
   { path: 'user/userRoles', component: loadjsx('user/userRoles') },
-  { path: 'user/resourceRights', component: loadjsx('user/resourceRights') },
   { path: 'resourceRight/add', component: load('resourceRight/add') },
   { path: 'auth/list', component: loadjsx('auth/list') },
   { path: 'auth/config', component: loadjsx('auth/config') },
@@ -24,4 +23,5 @@ export default [
   // { path: 'atomRight/edit', component: loadjsx('atomRight/edit') },
   // { path: 'atomRight/add', component: loadjsx('atomRight/add') },
   // { path: 'user/atomRights', component: loadjsx('user/atomRights') },
+  // { path: 'user/resourceRights', component: loadjsx('user/resourceRights') },
 ];
