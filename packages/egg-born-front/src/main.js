@@ -4,6 +4,9 @@ require('regenerator-runtime/runtime');
 // vue
 const Vue = require('./base/vue.js').default;
 
+// vue style loader
+window.__vueStyleLoader_add = require('@zhennann/vue-style-loader/lib/addStylesClient.js').default;
+
 // json
 require('./base/json.js');
 
