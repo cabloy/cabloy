@@ -1,5 +1,8 @@
 // export
 export default {
+  meta: {
+    uses: 'a-basefront',
+  },
   installFactory,
 };
 
@@ -8,9 +11,6 @@ function installFactory(_Vue) {
   const Vue = _Vue;
   const ebListLayoutManager = Vue.prototype.$meta.module.get('a-basefront').options.mixins.ebListLayoutManager;
   return {
-    meta: {
-      uses: 'a-basefront',
-    },
     mixins: [ebListLayoutManager],
     props: {
       context: {
