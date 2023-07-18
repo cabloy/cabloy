@@ -97,6 +97,7 @@ export default {
         // ok
         return true;
       } catch (err) {
+        console.error(err);
         this.base.notfound = true;
         return false;
       }
