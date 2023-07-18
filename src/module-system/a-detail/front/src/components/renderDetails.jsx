@@ -19,16 +19,22 @@ function installFactory(_Vue) {
     },
     data() {
       const { parcel, property, validate } = this.context;
+      const options = {
+        atomIdMain: parcel.data.atomId,
+        atomMain: parcel.data,
+        flowTaskId: (validate.host && validate.host.flowTaskId) || 0,
+      };
+      const params = {
+        pageTitle: this.context.getTitle(true),
+      };
       return {
         container: {
-          title: this.context.getTitle(true),
-          mode: validate.host && validate.host.mode,
-          flowTaskId: (validate.host && validate.host.flowTaskId) || 0,
-          atomId: parcel.data.atomId,
-          atom: parcel.data,
-          detailClass: property.ebParams.detailClass,
-          options: {},
+          atomClass: property.ebParams.detailClass,
+          options,
+          params,
+          scene: null,
           layout: null,
+          mode: validate.host && validate.host.mode,
         },
       };
     },
