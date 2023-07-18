@@ -4,8 +4,8 @@ import atomButtonBaseFn from './common/AtomButtonBase.jsx';
 
 export default function (Vue) {
   return {
-    listLayoutManager,
-    itemLayoutManager,
+    ebListLayoutManager: listLayoutManager,
+    ebItemLayoutManager: itemLayoutManager,
     ebAtomButtonBase: atomButtonBaseFn(Vue),
   };
 }
