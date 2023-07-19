@@ -2,36 +2,37 @@ module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   return {
     detail: {
-      action: {
-        create: 1,
-        read: 2,
-        write: 3,
-        delete: 4,
-        clone: 5,
-        moveUp: 6,
-        moveDown: 7,
+      // action: {
+      //   create: 1,
+      //   read: 2,
+      //   write: 3,
+      //   delete: 4,
+      //   clone: 5,
+      //   moveUp: 6,
+      //   moveDown: 7,
 
-        save: 51,
+      //   save: 51,
 
-        custom: 100, // custom action start from custom
-      },
+      //   custom: 100, // custom action start from custom
+      // },
       actionMeta: {
         create: {
           title: 'Create',
-          actionModule: moduleInfo.relativeName,
+          actionModule: 'a-base',
           actionComponent: 'action',
           bulk: true,
+          select: false,
           icon: { f7: '::add' },
-          inherit: 'write',
+          rightInherit: 'write',
           mode: 'edit',
           stage: 'draft',
         },
         read: {
           title: 'View',
-          actionModule: moduleInfo.relativeName,
+          actionModule: 'a-base',
           actionComponent: 'action',
           icon: { f7: '::visibility' },
-          inherit: 'read',
+          rightInherit: 'read',
           mode: 'view',
           stage: '',
         },
