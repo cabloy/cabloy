@@ -115,7 +115,8 @@ export default {
       }
       // extend 1
       if (this.container.options) {
-        options = this.$utils.extend({}, options, this.container.options);
+        const containerOptions = Object.assign({}, this.container.options, { atomMain: undefined });
+        options = this.$utils.extend({}, options, containerOptions);
       }
       // options
       return options;
@@ -137,7 +138,11 @@ export default {
       // order
       if (setOrder) {
         const atomOrderCurrent = this.order.selected || this.order_default(params);
-        params.options.orders = [[this.order_getKey(atomOrderCurrent), atomOrderCurrent.by]];
+        if (!atomOrderCurrent) {
+          params.options.orders = null;
+        } else {
+          params.options.orders = [[this.order_getKey(atomOrderCurrent), atomOrderCurrent.by]];
+        }
       }
       // ok
       return params;

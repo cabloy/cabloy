@@ -51,6 +51,7 @@ export default {
       return atomOrder;
     },
     _order_default_others() {
+      if (!this.order_list) return null;
       const item = this.order_list.find(item => item.default);
       if (item) return item;
       const atomClassBase = this.base.atomClassBase;
