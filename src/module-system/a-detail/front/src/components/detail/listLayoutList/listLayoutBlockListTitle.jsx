@@ -25,7 +25,7 @@ export default {
       );
     },
     layout_renderTitleLeft() {
-      const title = this.layoutManager.container.params?.title;
+      const title = this.layoutManager.container.params?.pageTitle;
       return <div class="actions-block actions-block-left">{title}</div>;
     },
     layout_renderTitleRight() {
