@@ -4,9 +4,16 @@ module.exports = app => {
     info: {
       layout: {
         viewSize: {
-          small: 'list',
-          medium: 'table',
-          large: 'table',
+          view: {
+            small: 'list',
+            medium: 'table',
+            large: 'table',
+          },
+          edit: {
+            small: 'list',
+            medium: 'table',
+            large: 'table',
+          },
         },
       },
     },
@@ -79,7 +86,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(Details)',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
