@@ -77,7 +77,7 @@ export default {
     },
     base_prepareReadOptions() {
       // options
-      const options = {};
+      let options = {};
       // layout
       options.layout = this.layout.current;
       // resource
@@ -86,24 +86,22 @@ export default {
         options.resourceLocale = this.$meta.util.getLocale();
       }
       // for detail
-      options.containerMode = this.container.mode;
-      // atomIdMain
-      options.atomIdMain = this.base_atomIdMain;
+      if (this.container.mode) {
+        options.containerMode = this.container.mode;
+      }
+      // extend 1
+      if (this.container.options) {
+        const containerOptions = Object.assign({}, this.container.options, { atomMain: undefined });
+        options = this.$utils.extend({}, options, containerOptions);
+      }
       // options
       return options;
     },
     base_prepareSelectOptions() {
-      // options
-      let options = {
-        where: {},
-      };
-      // layout
-      options.layout = this.layout.current;
-      // resource
-      if (this.container.resource) {
-        options.resource = 1;
-        options.resourceLocale = this.$meta.util.getLocale();
-      }
+      // base on base_prepareReadOptions
+      const options = this.base_prepareReadOptions();
+      // where
+      options.where = {};
       // search
       if (this.search.query) {
         options.where['a.atomName'] = { val: this.search.query, op: 'like' };
@@ -112,11 +110,6 @@ export default {
       if (this.container.scene === 'select') {
         const selectedAtomIds = this.container.params?.selectedAtomIds;
         options.where['a.id'] = selectedAtomIds && selectedAtomIds.length > 0 ? selectedAtomIds : null;
-      }
-      // extend 1
-      if (this.container.options) {
-        const containerOptions = Object.assign({}, this.container.options, { atomMain: undefined });
-        options = this.$utils.extend({}, options, containerOptions);
       }
       // options
       return options;
