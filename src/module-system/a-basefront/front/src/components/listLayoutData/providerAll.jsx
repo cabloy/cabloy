@@ -68,6 +68,7 @@ export default {
         this.loading = false;
         return res;
       } catch (err) {
+        console.error(err);
         this.layoutManager.$view.toast.show({ text: err.message });
         this.loading = false;
       }

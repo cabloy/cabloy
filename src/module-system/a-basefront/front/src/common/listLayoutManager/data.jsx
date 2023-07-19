@@ -24,6 +24,10 @@ export default {
       // bulk
       this.bulk_clearSelectedAtoms();
     },
+    async data_provider_onLoadItemsAll() {
+      const params = this.base_prepareSelectParams();
+      return await this.$api.post('/a/base/atom/select', params);
+    },
     async data_provider_onLoadItemsPage({ page }) {
       const params = this.base_prepareSelectParams();
       params.options.page = page;
