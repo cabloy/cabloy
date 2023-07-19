@@ -35,6 +35,7 @@ function installFactory(_Vue) {
           scene: null,
           layout: null,
           mode: validate.host && validate.host.mode,
+          layoutKeyBase: 'a-detail:layoutDetailListBase',
         },
       };
     },
