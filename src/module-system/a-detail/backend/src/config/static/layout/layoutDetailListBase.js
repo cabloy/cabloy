@@ -16,6 +16,7 @@ module.exports = app => {
           },
         },
       },
+      filter: false,
     },
     layouts: {
       base: {

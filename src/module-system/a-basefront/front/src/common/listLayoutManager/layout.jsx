@@ -16,14 +16,22 @@ export default {
       const key = this.order_getKey(atomOrder);
       return key === `a.${columnName}` || key === `f.${columnName}` || key === columnName;
     },
+    layout_onGetLayoutKeyBase() {
+      let layoutKeyBase = this.container.layoutKeyBase;
+      if (!layoutKeyBase) {
+        const atomClassBase = this.base.atomClassBase;
+        layoutKeyBase =
+          atomClassBase && atomClassBase.itemOnly
+            ? 'a-basefront:layoutItemOnlyListBase'
+            : 'a-basefront:layoutAtomListBase';
+      }
+      return layoutKeyBase;
+    },
     async layout_onPrepareConfigFull() {
       const atomClass = this.base.atomClass;
       const atomClassBase = this.base.atomClassBase;
       // atom base
-      const layoutKeyBase =
-        atomClassBase && atomClassBase.itemOnly
-          ? 'a-basefront:layoutItemOnlyListBase'
-          : 'a-basefront:layoutAtomListBase';
+      const layoutKeyBase = this.layout_onGetLayoutKeyBase();
       let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
         layoutKey: layoutKeyBase,
       });
