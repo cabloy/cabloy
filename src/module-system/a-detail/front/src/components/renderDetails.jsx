@@ -29,7 +29,7 @@ function installFactory(_Vue) {
       };
       return {
         container: {
-          atomClass: property.ebParams.detailClass,
+          atomClass: property.ebParams.atomClass,
           options,
           params,
           scene: null,
