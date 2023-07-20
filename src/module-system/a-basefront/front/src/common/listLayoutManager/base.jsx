@@ -149,7 +149,13 @@ export default {
     base_getCurrentStage() {
       let stage = this.$meta.util.getProperty(this.filter.data, 'form.stage');
       if (!stage) stage = this.container.options?.stage;
-      if (!stage) stage = 'formal';
+      if (!stage) {
+        if (this.base.atomClassBase?.detail) {
+          stage = undefined;
+        } else {
+          stage = 'formal';
+        }
+      }
       return stage;
     },
     base_getExportFields() {
