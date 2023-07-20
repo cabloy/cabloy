@@ -59,7 +59,7 @@ module.exports = ctx => {
     }
 
     __getKeyHash(key) {
-      if (!key) {
+      if (key === undefined || key === null) {
         throw new Error('key is required');
       }
       if (Array.isArray(key) || typeof key === 'object') {

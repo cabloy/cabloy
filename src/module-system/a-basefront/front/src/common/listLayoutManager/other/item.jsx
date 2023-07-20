@@ -17,7 +17,7 @@ export default {
       return this.$meta.util.combineAvatarUrl(media, 24);
     },
     item_getMetaMediaLabel(item) {
-      const mediaLabel = (item._meta && item._meta.mediaLabel) || item.userName;
+      const mediaLabel = item._meta?.mediaLabel || item.userName;
       return mediaLabel;
     },
     item_getMetaSummary(item) {
