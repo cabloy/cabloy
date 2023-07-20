@@ -50,7 +50,7 @@ export default {
     // avatar
     let domImg;
     let domUserName;
-    if (userId) {
+    if (userId !== undefined && userId !== null) {
       domImg = <img class="avatar avatar24 eb-vertical-align" src={this.getAvatarUrl(userAvatar, 24)} />;
       domUserName = <span>&nbsp;{userName}</span>;
     }
