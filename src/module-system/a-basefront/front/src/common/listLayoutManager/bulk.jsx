@@ -73,20 +73,30 @@ export default {
       this.bulk.actions = this.bulk_patchActions(actions);
     },
     bulk_patchActions(actions) {
+      actions = this.bulk_patchActions_draftStatsBulk(actions);
+      return actions;
+    },
+    bulk_patchActions_draftStatsBulk(actions) {
       let action;
+      // exists
       const index = actions.findIndex(item => item.name === 'draftStatsBulk');
       if (index > -1) {
         action = actions.splice(index, 1)[0];
+        actions.unshift(action);
       } else {
-        action = {
-          module: this.container.atomClass.module,
-          atomClassName: this.container.atomClass.atomClassName,
-          name: 'draftStatsBulk',
-          bulk: 1,
-          code: 46,
-        };
+        // create one
+        const stageCurrent = this.base_getCurrentStage();
+        if (stageCurrent === 'formal') {
+          action = {
+            module: this.container.atomClass.module,
+            atomClassName: this.container.atomClass.atomClassName,
+            name: 'draftStatsBulk',
+            bulk: 1,
+            code: 71,
+          };
+          actions.unshift(action);
+        }
       }
-      actions.unshift(action);
       return actions;
     },
     bulk_clearSelectedAtoms() {
@@ -217,11 +227,12 @@ export default {
       );
     },
     bulk_renderActionsRight_checkIfRender(actionBase, stageCurrent, selectedAtoms) {
-      // stage
-      if (actionBase.stage) {
-        const stages = actionBase.stage.split(',');
-        if (!stages.some(item => item === stageCurrent)) return false;
-      }
+      // not check stage at front, for maybe not has value
+      // // stage
+      // if (actionBase.stage) {
+      //   const stages = actionBase.stage.split(',');
+      //   if (!stages.some(item => item === stageCurrent)) return false;
+      // }
       // select
       if (
         actionBase.select === undefined ||
