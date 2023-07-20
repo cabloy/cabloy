@@ -5,12 +5,12 @@ export default {
   mixins: [Actions, ContextMenu],
   methods: {
     item_getAtomName(item) {
-      return item.atomNameLocale || item.atomName || item._meta?.atomName;
+      return item._meta?.atomName || item.atomNameLocale || item.atomName;
     },
     item_getMetaMedia(item, avatarFieldName) {
       let media;
       if (!avatarFieldName) {
-        media = (item._meta && item._meta.media) || item.avatar;
+        media = item._meta?.media || item.avatar;
       } else {
         media = item[avatarFieldName];
       }

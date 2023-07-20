@@ -4,7 +4,6 @@ import renderDetailsStat from './components/renderDetailsStat.jsx';
 // listLayoutList
 import listLayoutList from './components/detail/listLayoutList/listLayoutList.jsx';
 import listLayoutBlockListTitle from './components/detail/listLayoutList/listLayoutBlockListTitle.jsx';
-import listLayoutBlockListItems from './components/detail/listLayoutList/listLayoutBlockListItems.jsx';
 // listLayoutTable
 import listLayoutTable from './components/detail/listLayoutTable/listLayoutTable.jsx';
 import listLayoutTableCellDetailLineNo from './components/detail/listLayoutTable/listLayoutTableCellDetailLineNo.jsx';
@@ -17,7 +16,6 @@ export default {
   // listLayoutList
   listLayoutList,
   listLayoutBlockListTitle,
-  listLayoutBlockListItems,
   // listLayoutTable
   listLayoutTable,
   listLayoutTableCellDetailLineNo,

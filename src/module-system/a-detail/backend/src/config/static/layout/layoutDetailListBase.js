@@ -38,8 +38,14 @@ module.exports = app => {
         blocks: {
           items: {
             component: {
-              module: 'a-detail',
-              name: 'listLayoutBlockListItems',
+              module: 'a-baselayout',
+              name: 'baseLayoutBlockListItems',
+            },
+          },
+          item: {
+            component: {
+              module: 'a-baselayout',
+              name: 'listLayoutBlockListItem',
             },
           },
         },
@@ -87,7 +93,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(Details)',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 3,
+    atomRevision: 4,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
