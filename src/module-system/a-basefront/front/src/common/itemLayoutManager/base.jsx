@@ -130,12 +130,7 @@ export default {
     },
     base_getCurrentStage() {
       if (!this.base.item) return null;
-      const stage = this.base.item.atomStage;
-      if (stage === undefined) return undefined;
-      return this.base_stageToString(stage);
-    },
-    base_stageToString(stage) {
-      return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
+      return this.$meta.util.stageToString(this.base.item.atomStage);
     },
     // async base_onOpenDrafted(data) {
     //   const key = data.key;

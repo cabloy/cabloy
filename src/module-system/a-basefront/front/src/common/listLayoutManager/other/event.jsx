@@ -19,7 +19,7 @@ export default {
       const paramsStage = params.options.stage;
 
       // check stage
-      if (!atomClassBase.itemOnly && this.base_stageToString(atom.atomStage) !== paramsStage) {
+      if (!atomClassBase.itemOnly && this.$meta.util.stageToString(atom.atomStage) !== paramsStage) {
         // do nothing
         return;
       }

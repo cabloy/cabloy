@@ -720,6 +720,11 @@ export default function (Vue) {
       }
       return itemDest;
     },
+    stageToString(stage) {
+      if (stage === undefined || stage === null) return stage;
+      if (typeof stage === 'string') return stage;
+      return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
+    },
   };
 
   // moment
