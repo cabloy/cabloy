@@ -78,6 +78,12 @@ export default {
     base_prepareReadOptions() {
       // options
       let options = {};
+      // extend 1
+      if (this.container.options) {
+        const containerOptions = Object.assign({}, this.container.options);
+        delete containerOptions.atomMain;
+        options = this.$utils.extend({}, options, containerOptions);
+      }
       // layout
       options.layout = this.layout.current;
       // resource
@@ -89,11 +95,8 @@ export default {
       if (this.container.mode) {
         options.containerMode = this.container.mode;
       }
-      // extend 1
-      if (this.container.options) {
-        const containerOptions = Object.assign({}, this.container.options, { atomMain: undefined });
-        options = this.$utils.extend({}, options, containerOptions);
-      }
+      // stage
+      options.stage = this.base_getCurrentStage();
       // options
       return options;
     },
@@ -150,6 +153,7 @@ export default {
       return stage;
     },
     base_stageToString(stage) {
+      if (typeof stage === 'string') return stage;
       return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
     },
     base_getExportFields() {
