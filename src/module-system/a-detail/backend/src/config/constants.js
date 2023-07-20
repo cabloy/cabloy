@@ -38,11 +38,11 @@ module.exports = app => {
         },
         write: {
           title: 'Edit',
-          actionModule: moduleInfo.relativeName,
+          actionModule: 'a-base',
           actionComponent: 'action',
           icon: { f7: '::edit' },
           color: 'orange',
-          inherit: 'write',
+          rightInherit: 'write',
           mode: 'edit',
           stage: 'draft',
           directShowOnSwipeout: true,
