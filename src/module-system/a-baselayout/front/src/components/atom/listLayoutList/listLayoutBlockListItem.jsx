@@ -46,9 +46,11 @@ export default {
       if (media === false) return null;
       let domMedia;
       if (media === '_index') {
-        domMedia = <div>{info.index + 1}</div>;
+        const text = `#${info.index + 1}`;
+        domMedia = <div>{text}</div>;
       } else if (media === '_indexTotal') {
-        domMedia = <div>{info.indexTotal + 1}</div>;
+        const text = `#${info.indexTotal + 1}`;
+        domMedia = <div>{text}</div>;
       } else {
         const mediaFieldName = media === true ? undefined : media;
         domMedia = this.layoutManager.item_renderMedia(info.item, null, mediaFieldName);

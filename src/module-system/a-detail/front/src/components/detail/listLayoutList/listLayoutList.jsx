@@ -32,7 +32,7 @@ export default {
   },
   render() {
     return (
-      <div>
+      <div class="detail-list-main-container">
         {this.layoutManager.layout_renderBlock({ blockName: 'title' })}
         {this.layoutManager.layout_renderBlock({ blockName: 'items' })}
       </div>
