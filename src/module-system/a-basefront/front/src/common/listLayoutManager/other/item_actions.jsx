@@ -21,7 +21,11 @@ export default {
     async item_onActionView(event, item) {
       let actionName = this.$meta.util.getProperty(this.container.params, 'actionOnClick');
       if (!actionName) {
-        if (item.atomStage === 0 && item.atomClosed === 0 && item.atomFlowId === 0) {
+        if (this.container.mode === 'edit') {
+          // for detail
+          actionName = 'write';
+        } else if (item.atomStage === 0 && item.atomClosed === 0 && item.atomFlowId === 0) {
+          // for draft
           actionName = 'write';
         } else {
           actionName = 'read';
