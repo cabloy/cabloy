@@ -150,7 +150,7 @@ export default {
         indexTotal = (pageInfo.pageCurrent - 1) * pageInfo.pageSize + index;
       }
       // options
-      let options = {
+      const options = {
         props: {
           layoutManager: this.layoutManager,
           layout: this.layout,
@@ -174,8 +174,9 @@ export default {
         return <eb-component module="a-baserender" name="renderTableCellDefault" options={options}></eb-component>;
       }
       // component
-      if (column.component.options) {
-        options = this.$meta.util.extend({}, column.component.options, options);
+      const componentProps = column.component?.options?.props;
+      if (componentProps) {
+        Object.assign(options.props, componentProps);
       }
       return (
         <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>
