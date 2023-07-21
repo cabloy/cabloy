@@ -115,7 +115,13 @@ export default {
       return this.actions.list.find(item => item.name === actionName);
     },
     actions_onSubmit() {
-      this.$refs.buttonSave.onClick();
+      const buttonSave = this.$refs.buttonSave;
+      if (!buttonSave) {
+        const message = this.$text('CannotSave');
+        this.$view.toast.show({ text: message });
+        throw new Error(message);
+      }
+      buttonSave.onClick();
     },
     actions_submit(event, action) {
       const options = { action };
