@@ -7,12 +7,12 @@ export default {
     item_getAtomName(item) {
       return item._meta?.atomName || item.atomNameLocale || item.atomName;
     },
-    item_getMetaMedia(item, avatarFieldName) {
+    item_getMetaMedia(item, mediaFieldName) {
       let media;
-      if (!avatarFieldName) {
+      if (!mediaFieldName) {
         media = item._meta?.media || item.avatar;
       } else {
-        media = item[avatarFieldName];
+        media = item[mediaFieldName];
       }
       return this.$meta.util.combineAvatarUrl(media, 24);
     },
@@ -54,8 +54,8 @@ export default {
       if (!this.base_userLabels) return null;
       return this.base_userLabels[id];
     },
-    item_renderMedia(item, className, avatarFieldName) {
-      return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item, avatarFieldName)} />;
+    item_renderMedia(item, className, mediaFieldName) {
+      return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item, mediaFieldName)} />;
     },
     item_renderStats(item) {
       const children = [];

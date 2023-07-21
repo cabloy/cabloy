@@ -16,6 +16,9 @@ export default {
     info: {
       type: Object,
     },
+    mapper: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -37,13 +40,29 @@ export default {
       const index = this.layoutManager.bulk.selectedAtoms.findIndex(_item => _item.atomId === item.atomId);
       return index > -1;
     },
-    _renderListItem(item) {
-      // media
-      const domMedia = this.layoutManager.bulk.selecting ? null : (
+    _renderMedia(info) {
+      if (this.layoutManager.bulk.selecting) return null;
+      const media = this.mapper?.media;
+      if (media === false) return null;
+      let domMedia;
+      if (media === '_index') {
+        domMedia = <div>{info.index + 1}</div>;
+      } else if (media === '_indexTotal') {
+        domMedia = <div>{info.indexTotal + 1}</div>;
+      } else {
+        const mediaFieldName = media === true ? undefined : media;
+        domMedia = this.layoutManager.item_renderMedia(info.item, null, mediaFieldName);
+      }
+      return (
         <div slot="media" class="avatar24-wrapper">
-          {this.layoutManager.item_renderMedia(item)}
+          {domMedia}
         </div>
       );
+    },
+    _renderListItem(info) {
+      const item = info.item;
+      // media
+      const domMedia = this._renderMedia(info);
       // domHeader
       const domHeader = (
         <div slot="root-start" class="header">
@@ -113,7 +132,6 @@ export default {
     },
   },
   render() {
-    const { item } = this.info;
-    return this._renderListItem(item);
+    return this._renderListItem(this.info);
   },
 };
