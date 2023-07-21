@@ -46,12 +46,10 @@ module.exports = app => {
             component: {
               module: 'a-baselayout',
               name: 'listLayoutBlockListItem',
-              options: {
-                props: {
-                  mapper: {
-                    media: '_indexTotal', // false/true/_index/_indexTotal/mediaFieldName
-                  },
-                },
+            },
+            options: {
+              mapper: {
+                media: '_indexTotal', // false/true/_index/_indexTotal/mediaFieldName
               },
             },
           },
@@ -100,7 +98,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(Details)',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 5,
+    atomRevision: 7,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),

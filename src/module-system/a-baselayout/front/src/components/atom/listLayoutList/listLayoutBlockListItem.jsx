@@ -16,9 +16,6 @@ export default {
     info: {
       type: Object,
     },
-    mapper: {
-      type: Object,
-    },
   },
   data() {
     return {
@@ -42,7 +39,7 @@ export default {
     },
     _renderMedia(info) {
       if (this.layoutManager.bulk.selecting) return null;
-      const media = this.mapper?.media;
+      const media = this.blockConfig.options?.mapper?.media;
       const domMedia = this.layoutManager.item_renderMedia2(info, null, media);
       if (!domMedia) return null;
       return (
