@@ -43,18 +43,8 @@ export default {
     _renderMedia(info) {
       if (this.layoutManager.bulk.selecting) return null;
       const media = this.mapper?.media;
-      if (media === false) return null;
-      let domMedia;
-      if (media === '_index') {
-        const text = `#${info.index + 1}`;
-        domMedia = <div>{text}</div>;
-      } else if (media === '_indexTotal') {
-        const text = `#${info.indexTotal + 1}`;
-        domMedia = <div>{text}</div>;
-      } else {
-        const mediaFieldName = media === true ? undefined : media;
-        domMedia = this.layoutManager.item_renderMedia(info.item, null, mediaFieldName);
-      }
+      const domMedia = this.layoutManager.item_renderMedia2(info, null, media);
+      if (!domMedia) return null;
       return (
         <div slot="media" class="avatar24-wrapper">
           {domMedia}

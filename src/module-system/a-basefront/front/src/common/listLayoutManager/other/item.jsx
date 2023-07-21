@@ -57,6 +57,21 @@ export default {
     item_renderMedia(item, className, mediaFieldName) {
       return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item, mediaFieldName)} />;
     },
+    item_renderMedia2(info, className, media) {
+      if (media === false) return null;
+      let domMedia;
+      if (media === '_index') {
+        const text = `#${info.index + 1}`;
+        domMedia = <div>{text}</div>;
+      } else if (media === '_indexTotal') {
+        const text = `#${info.indexTotal + 1}`;
+        domMedia = <div>{text}</div>;
+      } else {
+        const mediaFieldName = media === true ? undefined : media;
+        domMedia = this.item_renderMedia(info.item, className, mediaFieldName);
+      }
+      return domMedia;
+    },
     item_renderStats(item) {
       const children = [];
       if (item.star > 0) {
