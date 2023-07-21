@@ -25,12 +25,8 @@ export default {
   created() {},
   methods: {
     _renderMedia() {
-      const avatarFieldName = (this.mapper && this.mapper.avatar) || undefined;
-      return this.layoutManager.item_renderMedia(
-        this.info.record,
-        'avatar avatar24 eb-vertical-align',
-        avatarFieldName
-      );
+      const media = this.mapper?.avatar;
+      return this.layoutManager.item_renderMedia2(this.info, 'avatar avatar24 eb-vertical-align', media);
     },
   },
   render() {

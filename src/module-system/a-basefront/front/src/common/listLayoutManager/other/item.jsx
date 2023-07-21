@@ -58,6 +58,7 @@ export default {
       return <img class={className || 'avatar avatar24'} src={this.item_getMetaMedia(item, mediaFieldName)} />;
     },
     item_renderMedia2(info, className, media) {
+      const item = info.item || info.record;
       if (media === false) return null;
       let domMedia;
       if (media === '_index') {
@@ -68,7 +69,7 @@ export default {
         domMedia = <div>{text}</div>;
       } else {
         const mediaFieldName = media === true ? undefined : media;
-        domMedia = this.item_renderMedia(info.item, className, mediaFieldName);
+        domMedia = this.item_renderMedia(item, className, mediaFieldName);
       }
       return domMedia;
     },

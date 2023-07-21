@@ -28,16 +28,14 @@ export default {
       return this.layoutManager.item_onActionView(event, this.info.record);
     },
     _renderMedia() {
-      let avatarFieldName = this.mapper && this.mapper.avatar;
-      if (!avatarFieldName) return;
-      if (avatarFieldName === true) {
-        avatarFieldName = undefined;
+      // media/avatar
+      let media = this.mapper?.media;
+      if (media === undefined) {
+        media = this.mapper?.avatar;
       }
-      return this.layoutManager.item_renderMedia(
-        this.info.record,
-        'avatar avatar24 eb-vertical-align',
-        avatarFieldName
-      );
+      // default is false
+      if (media === undefined) media = false;
+      return this.layoutManager.item_renderMedia2(this.info, 'avatar avatar24 eb-vertical-align', media);
     },
   },
   render() {
