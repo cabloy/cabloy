@@ -22,14 +22,26 @@ export default {
     },
   },
   methods: {
+    _calcIndexTotal(pageInfo, index) {
+      let indexTotal;
+      if (!pageInfo || pageInfo.pageCurrent === 0) {
+        indexTotal = index;
+      } else {
+        indexTotal = (pageInfo.pageCurrent - 1) * pageInfo.pageSize + index;
+      }
+      return indexTotal;
+    },
     _renderList() {
+      const pageInfo = this.layoutManager.data.adapter.getPageInfo();
       const items = this.layoutManager.data_getItems();
       const children = [];
-      for (const item of items) {
+      for (let index = 0; index < items.length; index++) {
+        const item = items[index];
+        const info = { item, index, indexTotal: this._calcIndexTotal(pageInfo, index) };
         const domListItem = this.layoutManager.layout_renderBlock({
           blockName: 'item',
           key: item[this.itemKey],
-          info: { item },
+          info,
           listItem: true,
         });
         children.push(domListItem);
