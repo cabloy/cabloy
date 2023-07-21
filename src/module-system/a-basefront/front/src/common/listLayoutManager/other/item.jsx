@@ -4,8 +4,14 @@ import ContextMenu from './item_contextMenu.jsx';
 export default {
   mixins: [Actions, ContextMenu],
   methods: {
-    item_getAtomName(item) {
-      return item._meta?.atomName || item.atomNameLocale || item.atomName;
+    item_getAtomName(item, fieldName) {
+      let atomName;
+      if (!fieldName) {
+        atomName = item._meta?.atomName || item.atomNameLocale || item.atomName;
+      } else {
+        atomName = item[fieldName];
+      }
+      return atomName;
     },
     item_getMetaMedia(item, mediaFieldName) {
       let media;

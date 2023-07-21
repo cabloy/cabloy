@@ -48,6 +48,15 @@ export default {
         </div>
       );
     },
+    _renderAtomName(info) {
+      const atomNameFieldName = this.blockConfig.options?.mapper?.atomName;
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{this.layoutManager.item_getAtomName(info.item, atomNameFieldName)}</div>
+        </div>
+      );
+      return domTitle;
+    },
     _renderListItem(info) {
       const item = info.item;
       // media
@@ -65,11 +74,7 @@ export default {
         </div>
       );
       // domTitle
-      const domTitle = (
-        <div slot="title" class="title">
-          <div>{this.layoutManager.item_getAtomName(item)}</div>
-        </div>
-      );
+      const domTitle = this._renderAtomName(info);
       // domSummary
       let domSummary;
       if (this.blockConfig.summary !== false) {
