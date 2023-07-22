@@ -122,10 +122,35 @@ export default {
       } else if (action.name === 'moveNode') {
         // moveNode
         await this.event_onActionChanged_moveNode(data);
+      } else if (action.name === 'moveUp' || action.name === 'moveDown') {
+        // moveUp/moveDown
+        await this.event_onActionChanged_moveLineNo(data);
       } else {
         // others
         await this.event_onActionChanged_others(data);
       }
+    },
+    async event_onActionChanged_moveLineNo(data) {
+      const { action, result } = data;
+      // loop
+      await this.data.adapter._loopProviders(async provider => {
+        if (!result) return;
+        const a = action.name === 'moveUp' ? result.to : result.from;
+        const b = action.name === 'moveUp' ? result.from : result.to;
+        const findA = this.data.adapter.findItemProvier(provider, a);
+        const items = findA.items;
+        const aIndex = findA.index;
+        const findB = this.data.adapter.findItemProvier(provider, b);
+        const bIndex = findB.index;
+        if (aIndex === -1 || bIndex === -1) {
+          // load
+          this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
+          return;
+        }
+        const row = this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: bIndex });
+        this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: aIndex }, 0, row[0]);
+        return;
+      });
     },
     async event_onActionsChanged(data) {
       // const atomClass = data.atomClass;
