@@ -51,10 +51,20 @@ export default {
       return atomOrder;
     },
     _order_default_others() {
-      if (!this.order_list) return null;
+      const atomClassBase = this.base.atomClassBase;
+      if (!this.order_list) {
+        const lineNo = atomClassBase?.fields?.lineNo;
+        if (lineNo) {
+          return {
+            name: lineNo,
+            by: 'asc',
+            tableAlias: 'f',
+          };
+        }
+        return null;
+      }
       const item = this.order_list.find(item => item.default);
       if (item) return item;
-      const atomClassBase = this.base.atomClassBase;
       const orderName = atomClassBase && atomClassBase.itemOnly ? 'updatedAt' : 'atomUpdatedAt';
       return {
         name: orderName,
