@@ -28,13 +28,14 @@ export default {
         const actionBase = this.getAction(action);
         // directShowOnItem
         if (!actionBase.directShowOnItem) {
-          // stage
-          if (actionBase.stage) {
-            const stages = actionBase.stage.split(',');
-            if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) {
-              continue;
-            }
-          }
+          // donot check stage at front, for has no value for detail
+          // // stage
+          // if (actionBase.stage) {
+          //   const stages = actionBase.stage.split(',');
+          //   if (!stages.some(item => this.$meta.config.modules['a-base'].stage[item] === this.base.item.atomStage)) {
+          //     continue;
+          //   }
+          // }
           // ok
           actions.push(action);
         }

@@ -50,11 +50,11 @@ module.exports = app => {
         },
         delete: {
           title: 'Delete',
-          actionModule: moduleInfo.relativeName,
+          actionModule: 'a-base',
           actionComponent: 'action',
           icon: { f7: '::delete' },
           color: 'red',
-          inherit: 'write',
+          rightInherit: 'write',
           mode: 'edit',
           stage: 'draft',
           directShowOnSwipeout: true,
