@@ -93,11 +93,11 @@ module.exports = app => {
         },
         save: {
           title: 'Save',
-          actionModule: moduleInfo.relativeName,
+          actionModule: 'a-base',
           actionComponent: 'action',
           authorize: false,
           icon: { f7: '::save' },
-          inherit: 'write',
+          rightInherit: 'write',
           mode: 'edit',
           stage: 'draft',
         },
