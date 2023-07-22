@@ -17,6 +17,9 @@ import ActionWorkflow from './action/actionWorkflow.js';
 import ActionWorkflowFormal from './action/actionWorkflowFormal.js';
 import ActionLayout from './action/actionLayout.js';
 import ActionOpenDetailList from './action/actionOpenDetailList.js';
+import ActionMoveDown from './action/actionMoveDown.js';
+import ActionMoveUp from './action/actionMoveUp.js';
+
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -43,6 +46,8 @@ export default {
     ActionWorkflowFormal,
     ActionLayout,
     ActionOpenDetailList,
+    ActionMoveDown,
+    ActionMoveUp,
   ],
   methods: {
     async onAction() {
@@ -84,6 +89,10 @@ export default {
         return await this._onActionLayout();
       } else if (actionName === 'openDetailList') {
         return await this._onActionOpenDetailList();
+      } else if (actionName === 'moveDown') {
+        return await this._onActionMoveDown();
+      } else if (actionName === 'moveUp') {
+        return await this._onActionMoveUp();
       }
       throw new Error(`action handler not found: ${actionName}`);
     },

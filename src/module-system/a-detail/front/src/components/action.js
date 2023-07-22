@@ -5,8 +5,6 @@ import ActionDelete from './action/actionDelete.js';
 import ActionSave from './action/actionSave.js';
 import ActionRead from './action/actionRead.js';
 import ActionClone from './action/actionClone.js';
-import ActionMoveUp from './action/actionMoveUp.js';
-import ActionMoveDown from './action/actionMoveDown.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -21,8 +19,6 @@ export default {
     ActionSave,
     ActionRead,
     ActionClone,
-    ActionMoveUp,
-    ActionMoveDown,
   ],
   data() {
     return {
