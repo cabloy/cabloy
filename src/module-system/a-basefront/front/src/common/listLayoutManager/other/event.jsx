@@ -135,8 +135,8 @@ export default {
       // loop
       await this.data.adapter._loopProviders(async provider => {
         if (!result) return;
-        const a = action.name === 'moveUp' ? result.to : result.from;
-        const b = action.name === 'moveUp' ? result.from : result.to;
+        const a = action.name === 'moveUp' ? result.to.atomId : result.from.atomId;
+        const b = action.name === 'moveUp' ? result.from.atomId : result.to.atomId;
         const findA = this.data.adapter.findItemProvier(provider, a);
         const items = findA.items;
         const aIndex = findA.index;
