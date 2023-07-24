@@ -517,6 +517,10 @@ module.exports = ctx => {
         itemId: detailKeyDest.itemId,
         [fieldNameAtomIdMain]: destKeyAtom.atomId,
       };
+      if (target === 'clone') {
+        item.createdAt = new Date();
+        item.updatedAt = new Date();
+      }
       await ctx.bean.atom.write({
         key: detailKeyDest,
         atomClass: atomClassDetail,
