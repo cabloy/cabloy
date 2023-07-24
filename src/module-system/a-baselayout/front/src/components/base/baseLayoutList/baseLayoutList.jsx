@@ -37,7 +37,7 @@ export default {
   render() {
     const blockName = this.layoutConfig.options?.blockItems || 'items';
     return (
-      <div>
+      <div class="eb-atom-list-layout eb-atom-list-layout-list">
         {this.layoutManager.layout_renderBlock({ blockName })}
         {this.layoutManager.data_renderLoadMore()}
       </div>

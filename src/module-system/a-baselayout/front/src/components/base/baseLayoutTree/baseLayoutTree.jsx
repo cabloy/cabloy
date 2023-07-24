@@ -40,6 +40,10 @@ export default {
   },
   render() {
     const blockName = this.layoutConfig.options?.blockItems || 'items';
-    return <div>{this.layoutManager.layout_renderBlock({ blockName })}</div>;
+    return (
+      <div class="eb-atom-list-layout eb-atom-list-layout-tree">
+        {this.layoutManager.layout_renderBlock({ blockName })}
+      </div>
+    );
   },
 };

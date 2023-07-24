@@ -54,6 +54,6 @@ export default {
     },
   },
   render() {
-    return <div class="eb-antdv">{this._renderConfigProvider()}</div>;
+    return <div class="eb-atom-list-layout eb-atom-list-layout-table eb-antdv">{this._renderConfigProvider()}</div>;
   },
 };

@@ -31,6 +31,10 @@ export default {
   },
   render() {
     const blockName = this.layoutConfig.blockMain || 'main';
-    return <div>{this.layoutManager.layout_renderBlock({ blockName })}</div>;
+    return (
+      <div class="eb-atom-item-layout eb-atom-item-layout-default">
+        {this.layoutManager.layout_renderBlock({ blockName })}
+      </div>
+    );
   },
 };
