@@ -56,8 +56,8 @@ module.exports = app => {
             atomStage int(11) DEFAULT '0',
             detailId int(11) DEFAULT '0',
             detailClassId int(11) DEFAULT '0',
-            detailKey varchar(255) DEFAULT NULL
-          PRIMARY KEY (id)
+            detailKey varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id)
           )
         `;
         await this.ctx.model.query(sql);

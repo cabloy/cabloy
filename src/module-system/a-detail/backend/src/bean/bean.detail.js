@@ -291,9 +291,11 @@ module.exports = ctx => {
 
     async _loopDetailClasses({ atomClass, fn }) {
       // all details of atom
-      const _atomClass = await ctx.bean.atomClass.atomClass(atomClass);
-      const detailClassNames = _atomClass.details;
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      const detailClassNames = atomClassBase.details;
+      console.log(detailClassNames);
       if (!detailClassNames) return; // do nothing
+      console.log(detailClassNames);
       // loop
       for (const detailClassName of detailClassNames) {
         let detailClass = this._prepareDetailClassFromName({ atomClass, detailClassName });
