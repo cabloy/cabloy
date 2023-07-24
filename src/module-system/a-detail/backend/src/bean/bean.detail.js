@@ -292,15 +292,13 @@ module.exports = ctx => {
     async _loopDetailClasses({ atomClass, fn }) {
       // all details of atom
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
-      const detailClassNames = atomClassBase.details;
-      console.log(detailClassNames);
-      if (!detailClassNames) return; // do nothing
-      console.log(detailClassNames);
+      const atomClassDetails = atomClassBase.details;
+      if (!atomClassDetails) return; // do nothing
       // loop
-      for (const detailClassName of detailClassNames) {
-        let detailClass = this._prepareDetailClassFromName({ atomClass, detailClassName });
-        detailClass = await this.detailClass.get(detailClass);
-        await fn({ detailClass });
+      for (let atomClassDetail of atomClassDetails) {
+        atomClassDetail = await ctx.bean.atomClass.get(atomClassDetail);
+        const atomClassBaseDetail = await ctx.bean.atomClass.atomClass(atomClassDetail);
+        await fn({ atomClassDetail, atomClassBaseDetail });
       }
     }
 
@@ -332,9 +330,10 @@ module.exports = ctx => {
     async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
       await this._loopDetailClasses({
         atomClass,
-        fn: async ({ detailClass }) => {
+        fn: async ({ atomClassDetail, atomClassBaseDetail }) => {
           await this._copyDetails_Class({
-            detailClass,
+            atomClassDetail,
+            atomClassBaseDetail,
             atomClass,
             target,
             srcKeyAtom,
@@ -347,23 +346,62 @@ module.exports = ctx => {
       });
     }
 
-    async _copyDetails_Class({ detailClass, atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
-      // details dest
-      const detailsDest = await this.modelDetail.select({
-        where: {
-          atomId: destKeyAtom.atomId,
-          detailClassId: detailClass.id,
-        },
-      });
-      // details src
-      const detailsSrc = await this.select({
-        atomKey: { atomId: srcKeyAtom.atomId },
-        detailClass,
+    async _copyDetails_Class({
+      atomClassDetail,
+      atomClassBaseDetail,
+      atomClass,
+      target,
+      srcKeyAtom,
+      destKeyAtom,
+      destAtom,
+      options,
+      user,
+    }) {
+      // select all details src
+      const detailsSrc = await ctx.bean.atom.select({
+        atomClass: atomClassDetail,
         options: {
+          atomIdMain: srcKeyAtom.atomId,
           mode: 'full',
         },
-        user,
+        pageForce: false,
       });
+      // special for clone
+      if (target === 'clone') {
+        for (const detailSrc of detailsSrc) {
+          const detailKey = await ctx.bean.atom.create({
+            atomClass: atomClassDetail,
+            item: null,
+            options: { atomIdMain: destKeyAtom.atomId },
+            user,
+          });
+          const fieldNameAtomIdMain = atomClassBaseDetail.detail.atomIdMain;
+          const item = {
+            ...detailSrc,
+            atomId: detailKey.atomId,
+            itemId: detailKey.itemId,
+            [fieldNameAtomIdMain]: destKeyAtom.atomId,
+          };
+          await ctx.bean.atom.write({
+            key: detailKey,
+            atomClass: atomClassDetail,
+            item,
+            options: { ignoreValidate: true },
+            user,
+          });
+        }
+        return;
+      }
+      // select all details dest
+      const detailsDest = await ctx.bean.atom.select({
+        atomClass: atomClassDetail,
+        options: {
+          atomIdMain: destKeyAtom.atomId,
+          mode: 'full',
+        },
+      });
+      // detailKey
+
       // loop
       for (const detailDest of detailsDest) {
         const indexSrc = detailsSrc.findIndex(item => item.detailStaticKey === detailDest.detailStaticKey);
