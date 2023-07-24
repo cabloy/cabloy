@@ -42,6 +42,26 @@ module.exports = app => {
         `;
         await this.ctx.model.query(sql);
       }
+      if (options.version === 2) {
+        // create table: aDetailBase
+        const sql = `
+          CREATE TABLE aDetailBase (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted int(11) DEFAULT '0',
+            iid int(11) DEFAULT '0',
+            atomIdMain int(11) DEFAULT '0',
+            atomClassIdMain int(11) DEFAULT '0',
+            atomStage int(11) DEFAULT '0',
+            detailId int(11) DEFAULT '0',
+            detailClassId int(11) DEFAULT '0',
+            detailKey varchar(255) DEFAULT NULL
+          PRIMARY KEY (id)
+          )
+        `;
+        await this.ctx.model.query(sql);
+      }
     }
 
     async init(options) {}
