@@ -478,9 +478,9 @@ module.exports = ctx => {
       atomClassBaseDetail,
       atomClass,
       target,
-      srcKeyAtom,
+      /* srcKeyAtom,*/
       destKeyAtom,
-      srcAtom,
+      /* srcAtom,*/
       destAtom,
       options,
       user,
@@ -530,124 +530,15 @@ module.exports = ctx => {
       });
     }
 
-    async _copyDetails_Class_bak({
-      atomClassDetail,
-      atomClassBaseDetail,
-      atomClass,
-      target,
-      srcKeyAtom,
-      destKeyAtom,
-      destAtom,
-      options,
-      user,
-    }) {
-      // select all details src
-      const detailsSrc = await ctx.bean.atom.select({
-        atomClass: atomClassDetail,
-        options: {
-          atomIdMain: srcKeyAtom.atomId,
-          mode: 'full',
-        },
-        pageForce: false,
-      });
-      // special for clone
-      if (target === 'clone') {
-        for (const detailSrc of detailsSrc) {
-          await this._copyDetail({
-            atomClassDetail,
-            atomClassBaseDetail,
-            atomClass,
-            target,
-            srcKeyAtom,
-            destKeyAtom,
-            srcAtom,
-            destAtom,
-            options,
-            user,
-            detailSrc,
-          });
-        }
-        return;
-      }
-      // select all details dest
-      const detailsDest = await ctx.bean.atom.select({
-        atomClass: atomClassDetail,
-        options: {
-          atomIdMain: destKeyAtom.atomId,
-          mode: 'full',
-        },
-      });
-      // detailStaticKey
-      const detailBasesSrc = await this._copyDetails_prepareStaticKey({
-        atomClassDetail,
-        atomClassBaseDetail,
-        atomClass,
-        target,
-        srcKeyAtom,
-        destKeyAtom,
-        destAtom,
-        options,
-        user,
-        detailsSrc,
-      });
-      console.log(detailBasesSrc);
-      throw new Error();
-      // loop
-      for (const detailDest of detailsDest) {
-        const indexSrc = detailsSrc.findIndex(item => item.detailStaticKey === detailDest.detailStaticKey);
-        if (indexSrc === -1) {
-          // delete
-          const key = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
-          await this._delete2({ detailClass, key, target, user });
-        } else {
-          // write
-          const srcItem = detailsSrc[indexSrc];
-          const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
-          const destKey = { detailId: detailDest.id, detailItemId: detailDest.detailItemId };
-          await this._copyDetail({
-            srcKey,
-            srcItem,
-            destKey,
-            detailClass,
-            atomClass,
-            target,
-            srcKeyAtom,
-            destKeyAtom,
-            destAtom,
-            options,
-            user,
-          });
-          // delete src
-          detailsSrc.splice(indexSrc, 1);
-        }
-      }
-      // append the remains
-      for (const srcItem of detailsSrc) {
-        const srcKey = { detailId: srcItem.detailId, detailItemId: srcItem.detailItemId };
-        await this._copyDetail({
-          srcKey,
-          srcItem,
-          detailClass,
-          atomClass,
-          target,
-          srcKeyAtom,
-          destKeyAtom,
-          destAtom,
-          options,
-          user,
-        });
-      }
-    }
-
     async _copyDetails_prepareStaticKey({
       atomClassDetail,
-      atomClassBaseDetail,
+      /* atomClassBaseDetail,*/
       atomClass,
-      target,
+      /* target,*/
       srcKeyAtom,
-      destKeyAtom,
+      /* destKeyAtom,*/
       srcAtom,
-      destAtom,
+      /* destAtom,*/
       options,
       user,
       detailsSrc,
@@ -677,129 +568,6 @@ module.exports = ctx => {
         detailBasesSrc.push(data);
       }
       return detailBasesSrc;
-    }
-
-    // target: draft/formal/history/clone
-    async _copyDetail_({
-      srcKey,
-      srcItem,
-      destKey,
-      detailClass,
-      atomClass,
-      target,
-      srcKeyAtom,
-      destKeyAtom,
-      destAtom,
-      options,
-      user,
-    }) {
-      // detailClass
-      if (!detailClass) {
-        detailClass = await ctx.bean.detailClass.getByDetailId({ detailId: srcKey.detailId });
-      }
-      // detail bean
-      const _moduleInfo = mparse.parseInfo(detailClass.module);
-      const _detailClass = ctx.bean.detailClass.detailClass(detailClass);
-      const beanFullName = `${_moduleInfo.relativeName}.detail.${_detailClass.bean}`;
-      // destKey
-      if (!destKey) {
-        destKey = await this.create({ atomKey: destKeyAtom, detailClass, item: null, user });
-      }
-      // atomStage
-      const atomStage = ctx.constant.module('a-base').atom.stage[target] || 0;
-      // detail
-      let userIdUpdated = srcItem.userIdUpdated;
-      let userIdCreated = srcItem.userIdCreated || userIdUpdated;
-      const detailCodeId = srcItem.detailCodeId;
-      const detailCode = srcItem.detailCode;
-      let detailName = srcItem.detailName;
-      const detailLineNo = srcItem.detailLineNo;
-      let detailStatic = srcItem.detailStatic;
-      let detailStaticKey = srcItem.detailStaticKey;
-      if (target === 'draft') {
-        userIdUpdated = user.id;
-      } else if (target === 'formal') {
-        // do nothing
-      } else if (target === 'history') {
-        // do nothing
-      } else if (target === 'clone') {
-        userIdUpdated = user.id;
-        userIdCreated = user.id;
-        if (srcKeyAtom.atomId === destKeyAtom.atomId) {
-          detailName = `${srcItem.detailName}-${ctx.text('CloneCopyText')}`;
-        } else {
-          detailName = srcItem.detailName;
-        }
-        detailStatic = 0;
-        if (detailStaticKey) {
-          detailStaticKey = ctx.bean.util.uuidv4();
-        }
-      }
-      // destItem
-      const destItem = Object.assign({}, srcItem, {
-        atomId: destKeyAtom.atomId,
-        atomStage,
-        detailId: destKey.detailId,
-        detailItemId: destKey.detailItemId,
-        userIdCreated,
-        userIdUpdated,
-        detailCodeId,
-        detailCode,
-        detailName,
-        detailLineNo,
-        detailStatic,
-        detailStaticKey,
-        createdAt: srcItem.atomCreatedAt,
-        updatedAt: srcItem.atomUpdatedAt,
-      });
-      // update fields
-      const params = {
-        id: destItem.detailId,
-        userIdCreated: destItem.userIdCreated,
-        userIdUpdated: destItem.userIdUpdated,
-        //   see also: detailBase
-        // detailCodeId: destItem.detailCodeId,
-        // detailCode: destItem.detailCode,
-        // detailName: destItem.detailName,
-        // detailStatic: destItem.detailStatic,
-        // detailStaticKey: destItem.detailStaticKey,
-        atomStage: destItem.atomStage,
-        createdAt: destItem.detailCreatedAt,
-        updatedAt: destItem.detailUpdatedAt,
-      };
-      if (target !== 'clone') {
-        params.detailLineNo = destItem.detailLineNo;
-      }
-      await this.modelDetail.update(params);
-      // detail write
-      await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: { detailClass, target, key: destKey, item: destItem, options, user },
-        fn: 'write',
-      });
-      // detail copy
-      await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName,
-        context: {
-          detailClass,
-          target,
-          srcKey,
-          srcItem,
-          destKey,
-          destItem,
-          options,
-          user,
-          atomClass,
-          srcKeyAtom,
-          destKeyAtom,
-          destAtom,
-        },
-        fn: 'copy',
-      });
-      // ok
-      return destKey;
     }
 
     // detail
