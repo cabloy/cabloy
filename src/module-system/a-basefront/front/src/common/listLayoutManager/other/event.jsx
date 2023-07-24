@@ -10,27 +10,9 @@ export default {
     // this.$meta.eventHub.$off('atom:action:ext', this.event_onActionExtChanged);
   },
   methods: {
-    async event_onActionChanged_create(data, atomClassBase) {
+    async event_onActionChanged_create(data) {
       const key = data.key;
       const atom = data.atom;
-      // params
-      const params = this.base_prepareSelectParams({ setOrder: false });
-      const paramsAtomClass = params.atomClass;
-      const paramsStage = params.options.stage;
-
-      // check stage
-      if (!atomClassBase.itemOnly && this.$meta.util.stageToString(atom.atomStage) !== paramsStage) {
-        // do nothing
-        return;
-      }
-      // check atomClass
-      if (
-        paramsAtomClass &&
-        (paramsAtomClass.module !== atom.module || paramsAtomClass.atomClassName !== atom.atomClassName)
-      ) {
-        // do nothing
-        return;
-      }
       // refresh list
       await this.data.adapter._loopProviders(async provider => {
         this.data.adapter._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
@@ -91,28 +73,45 @@ export default {
 
       const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
       const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
-      if (atomClassBase.itemOnly) {
-        if (!this.base.atomClass) return false;
-        if (
-          atomClass.module !== this.base.atomClass.module ||
-          atomClass.atomClassName !== this.base.atomClass.atomClassName
-        ) {
+
+      // params
+      const params = this.base_prepareSelectParams({ setOrder: false });
+      const paramsAtomClass = params.atomClass;
+      const paramsStage = params.options.stage;
+
+      // check stage for create
+      if (data.action?.name === 'create') {
+        if (!atomClassBase.itemOnly && this.$meta.util.stageToString(data.atom.atomStage) !== paramsStage) {
+          // do nothing
+          return false;
+        }
+      }
+      // check atomClass
+      if (paramsAtomClass) {
+        if (paramsAtomClass.module !== atomClass.module || paramsAtomClass.atomClassName !== atomClass.atomClassName) {
+          // do nothing
+          return false;
+        }
+      }
+      if (!paramsAtomClass) {
+        if (atomClassBase.itemOnly) {
+          // do nothing
           return false;
         }
       }
       // ok
-      return atomClassBase;
+      return true;
     },
     async event_onActionChanged(data) {
       // const atomClass = data.atomClass;
       const action = data.action;
-      const atomClassBase = await this.event_checkIfEventActionValid(data);
-      if (!atomClassBase) {
+      const res = await this.event_checkIfEventActionValid(data);
+      if (!res) {
         return;
       }
       if (action.name === 'create') {
         // create
-        await this.event_onActionChanged_create(data, atomClassBase);
+        await this.event_onActionChanged_create(data);
       } else if (action.name === 'delete') {
         // delete
         await this.event_onActionChanged_delete(data);
