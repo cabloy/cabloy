@@ -13,8 +13,8 @@ module.exports = ctx => {
       return ctx.bean.detailClass.module(this.moduleName);
     }
 
-    get modelDetail() {
-      return ctx.model.module(moduleInfo.relativeName).detail;
+    get modelDetailBase() {
+      return ctx.model.module(moduleInfo.relativeName).detailBase;
     }
 
     get sqlProcedure() {
@@ -327,7 +327,7 @@ module.exports = ctx => {
       }
     }
 
-    async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, destAtom, options, user }) {
+    async _copyDetails({ atomClass, target, srcKeyAtom, destKeyAtom, srcAtom, destAtom, options, user }) {
       await this._loopDetailClasses({
         atomClass,
         fn: async ({ atomClassDetail, atomClassBaseDetail }) => {
@@ -338,6 +338,7 @@ module.exports = ctx => {
             target,
             srcKeyAtom,
             destKeyAtom,
+            srcAtom,
             destAtom,
             options,
             user,
@@ -347,6 +348,158 @@ module.exports = ctx => {
     }
 
     async _copyDetails_Class({
+      atomClassDetail,
+      atomClassBaseDetail,
+      atomClass,
+      target,
+      srcKeyAtom,
+      destKeyAtom,
+      srcAtom,
+      destAtom,
+      options,
+      user,
+    }) {
+      // select all details src
+      const detailsSrc = await ctx.bean.atom.select({
+        atomClass: atomClassDetail,
+        options: {
+          atomIdMain: srcKeyAtom.atomId,
+          mode: 'full',
+        },
+        pageForce: false,
+      });
+      // special for clone
+      if (target === 'clone') {
+        await this._copyDetails_clone({ atomClassDetail, atomClassBaseDetail, destKeyAtom, options, user, detailsSrc });
+        return;
+      }
+      // select all details dest
+      const detailsDest = await ctx.bean.atom.select({
+        atomClass: atomClassDetail,
+        options: {
+          atomIdMain: destKeyAtom.atomId,
+          mode: 'full',
+        },
+      });
+      // detailStaticKey
+      const detailBasesSrc = await this._copyDetails_prepareStaticKey({
+        atomClassDetail,
+        atomClassBaseDetail,
+        atomClass,
+        target,
+        srcKeyAtom,
+        destKeyAtom,
+        srcAtom,
+        destAtom,
+        options,
+        user,
+        detailsSrc,
+      });
+      // select all details base dest
+      const detailBasesDest = await this.modelDetailBase.select({
+        where: {
+          atomIdMain: destKeyAtom.atomId,
+          atomClassIdMain: atomClass.id,
+        },
+      });
+      // loop
+      for (const detailBaseDest of detailBasesDest) {
+        const detailDest = detailsDest.find(item => item.atomId === detailBaseDest.detailId);
+        const detailKey = {
+          atomId: detailDest.atomId,
+          itemId: detailDest.itemId,
+        };
+        const detailBaseSrc = detailBasesSrc.find(item => item.detailStaticKey === detailBaseDest.detailStaticKey);
+        if (!detailBaseSrc) {
+          // delete
+          await ctx.bean.atom.delete({
+            key: detailKey,
+            atomClass: atomClassDetail,
+            user,
+          });
+        } else {
+          const detailSrc = detailsSrc.find(item => item.atomId === detailBaseSrc.detailId);
+          // write
+          const fieldNameAtomIdMain = atomClassBaseDetail.detail.atomIdMain;
+          const item = {
+            ...detailSrc,
+            atomId: detailKey.atomId,
+            itemId: detailKey.itemId,
+            [fieldNameAtomIdMain]: destKeyAtom.atomId,
+          };
+          await ctx.bean.atom.write({
+            key: detailKey,
+            atomClass: atomClassDetail,
+            item,
+            options: { ignoreValidate: true },
+            user,
+          });
+          // set flag
+          detailBaseSrc.__copied = true;
+        }
+      }
+      // loop: append the remains
+      for (const detailBaseSrc of detailBasesSrc) {
+        if (detailBaseSrc.__copied) continue;
+        const detailSrc = detailsSrc.find(item => item.atomId === detailBaseSrc.detailId);
+        // create detail
+        const detailKey = await ctx.bean.atom.create({
+          atomClass: atomClassDetail,
+          item: null,
+          options: { atomIdMain: destKeyAtom.atomId },
+          user,
+        });
+        // create detail base
+        const data = {
+          atomIdMain: destKeyAtom.atomId,
+          atomClassIdMain: atomClass.id,
+          atomStage: destAtom.atomStage,
+          detailId: detailKey.atomId,
+          detailClassId: atomClassDetail.id,
+          detailStaticKey: detailBaseSrc.detailStaticKey,
+        };
+        await this.modelDetailBase.insert(data);
+        // write
+        const fieldNameAtomIdMain = atomClassBaseDetail.detail.atomIdMain;
+        const item = {
+          ...detailSrc,
+          atomId: detailKey.atomId,
+          itemId: detailKey.itemId,
+          [fieldNameAtomIdMain]: destKeyAtom.atomId,
+        };
+        await ctx.bean.atom.write({
+          key: detailKey,
+          atomClass: atomClassDetail,
+          item,
+          options: { ignoreValidate: true },
+          user,
+        });
+      }
+    }
+
+    // async _copyDetail({
+    //   atomClassDetail,
+    //   atomClassBaseDetail,
+    //   atomClass,
+    //   target,
+    //   srcKeyAtom,
+    //   destKeyAtom,
+    //   srcAtom,
+    //   destAtom,
+    //   options,
+    //   user,
+    //   detailSrc,
+    // }) {
+    //   // create
+
+    //   // special for clone
+    //   if (target === 'clone') {
+    //     await this._copyDetails_clone({ atomClassDetail, atomClassBaseDetail, destKeyAtom, options, user, detailsSrc });
+    //     return;
+    //   }
+    // }
+
+    async _copyDetails_Class_bak({
       atomClassDetail,
       atomClassBaseDetail,
       atomClass,
@@ -368,28 +521,7 @@ module.exports = ctx => {
       });
       // special for clone
       if (target === 'clone') {
-        for (const detailSrc of detailsSrc) {
-          const detailKey = await ctx.bean.atom.create({
-            atomClass: atomClassDetail,
-            item: null,
-            options: { atomIdMain: destKeyAtom.atomId },
-            user,
-          });
-          const fieldNameAtomIdMain = atomClassBaseDetail.detail.atomIdMain;
-          const item = {
-            ...detailSrc,
-            atomId: detailKey.atomId,
-            itemId: detailKey.itemId,
-            [fieldNameAtomIdMain]: destKeyAtom.atomId,
-          };
-          await ctx.bean.atom.write({
-            key: detailKey,
-            atomClass: atomClassDetail,
-            item,
-            options: { ignoreValidate: true },
-            user,
-          });
-        }
+        await this._copyDetails_clone({ atomClassDetail, atomClassBaseDetail, destKeyAtom, options, user, detailsSrc });
         return;
       }
       // select all details dest
@@ -400,8 +532,21 @@ module.exports = ctx => {
           mode: 'full',
         },
       });
-      // detailKey
-
+      // detailStaticKey
+      const detailBasesSrc = await this._copyDetails_prepareStaticKey({
+        atomClassDetail,
+        atomClassBaseDetail,
+        atomClass,
+        target,
+        srcKeyAtom,
+        destKeyAtom,
+        destAtom,
+        options,
+        user,
+        detailsSrc,
+      });
+      console.log(detailBasesSrc);
+      throw new Error();
       // loop
       for (const detailDest of detailsDest) {
         const indexSrc = detailsSrc.findIndex(item => item.detailStaticKey === detailDest.detailStaticKey);
@@ -449,8 +594,73 @@ module.exports = ctx => {
       }
     }
 
+    async _copyDetails_prepareStaticKey({
+      atomClassDetail,
+      atomClassBaseDetail,
+      atomClass,
+      target,
+      srcKeyAtom,
+      destKeyAtom,
+      srcAtom,
+      destAtom,
+      options,
+      user,
+      detailsSrc,
+    }) {
+      // detailBasesSrc
+      const detailBasesSrc = await this.modelDetailBase.select({
+        where: {
+          atomIdMain: srcKeyAtom.atomId,
+          atomClassIdMain: atomClass.id,
+        },
+      });
+      // find missing detailStaticKey
+      const detailBasesId = detailBasesSrc.map(item => item.detailId);
+      const detailsSrcMissing = detailsSrc.filter(item => !detailBasesId.includes(item.id));
+      // create detail base
+      for (const detailSrcMissing of detailsSrcMissing) {
+        const data = {
+          atomIdMain: srcKeyAtom.atomId,
+          atomClassIdMain: atomClass.id,
+          atomStage: srcAtom.atomStage,
+          detailId: detailSrcMissing.atomId,
+          detailClassId: atomClassDetail.id,
+          detailStaticKey: ctx.bean.util.uuidv4(),
+        };
+        const res = await this.modelDetailBase.insert(data);
+        data.id = res.insertId;
+        detailBasesSrc.push(data);
+      }
+      return detailBasesSrc;
+    }
+
+    async _copyDetails_clone({ atomClassDetail, atomClassBaseDetail, destKeyAtom, options, user, detailsSrc }) {
+      for (const detailSrc of detailsSrc) {
+        const detailKey = await ctx.bean.atom.create({
+          atomClass: atomClassDetail,
+          item: null,
+          options: { atomIdMain: destKeyAtom.atomId },
+          user,
+        });
+        const fieldNameAtomIdMain = atomClassBaseDetail.detail.atomIdMain;
+        const item = {
+          ...detailSrc,
+          atomId: detailKey.atomId,
+          itemId: detailKey.itemId,
+          [fieldNameAtomIdMain]: destKeyAtom.atomId,
+        };
+        await ctx.bean.atom.write({
+          key: detailKey,
+          atomClass: atomClassDetail,
+          item,
+          options: { ignoreValidate: true },
+          user,
+        });
+      }
+    }
+
     // target: draft/formal/history/clone
-    async _copyDetail({
+    async _copyDetail_({
       srcKey,
       srcItem,
       destKey,
