@@ -11,14 +11,18 @@ export default {
   },
   methods: {
     async event_onActionChanged_create(data) {
+      let changed = false;
       const key = data.key;
       const atom = data.atom;
       // refresh list
       await this.data.adapter._loopProviders(async provider => {
         await this.data.adapter._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
+        changed = true;
       });
+      return changed;
     },
     async event_onActionChanged_delete(data) {
+      let changed = false;
       const key = data.key;
       // loop
       await this.data.adapter._loopProviders(async provider => {
@@ -29,9 +33,12 @@ export default {
         if (!item) return;
         // delete
         this.data.adapter._callMethodProvider(provider, 'spliceItem', bundle);
+        changed = true;
       });
+      return changed;
     },
     async event_onActionChanged_others(data) {
+      let changed = false;
       const key = data.key;
       const atomClass = data.atomClass;
       // loop
@@ -49,23 +56,31 @@ export default {
           options,
         });
         this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
+        changed = true;
       });
+      return changed;
     },
     async event_onActionChanged_addChildNode(data) {
+      let changed = false;
       const key = data.key;
       const node = data.node;
       // loop
       await this.data.adapter._loopProviders(async provider => {
         this.data.adapter._callMethodProvider(provider, 'addChildNode', { key, node });
+        changed = true;
       });
+      return changed;
     },
     async event_onActionChanged_moveNode(data) {
+      let changed = false;
       const key = data.key;
       const node = data.node;
       // loop
       await this.data.adapter._loopProviders(async provider => {
         this.data.adapter._callMethodProvider(provider, 'moveNode', { key, node });
+        changed = true;
       });
+      return changed;
     },
     async event_checkIfEventActionValid(data) {
       const atomClass = data.atomClass;
@@ -109,25 +124,25 @@ export default {
       if (!res) {
         return;
       }
-      const changed = false;
+      let changed = false;
       if (action.name === 'create') {
         // create
-        await this.event_onActionChanged_create(data);
+        changed = await this.event_onActionChanged_create(data);
       } else if (action.name === 'delete') {
         // delete
-        await this.event_onActionChanged_delete(data);
+        changed = await this.event_onActionChanged_delete(data);
       } else if (action.name === 'addChildNode') {
         // addChildNode
-        await this.event_onActionChanged_addChildNode(data);
+        changed = await this.event_onActionChanged_addChildNode(data);
       } else if (action.name === 'moveNode') {
         // moveNode
-        await this.event_onActionChanged_moveNode(data);
+        changed = await this.event_onActionChanged_moveNode(data);
       } else if (action.name === 'moveUp' || action.name === 'moveDown') {
         // moveUp/moveDown
-        await this.event_onActionChanged_moveLineNo(data);
+        changed = await this.event_onActionChanged_moveLineNo(data);
       } else {
         // others
-        await this.event_onActionChanged_others(data);
+        changed = await this.event_onActionChanged_others(data);
       }
       // event
       if (changed) {
@@ -138,6 +153,7 @@ export default {
       }
     },
     async event_onActionChanged_moveLineNo(data) {
+      let changed = false;
       const { action, result } = data;
       // loop
       await this.data.adapter._loopProviders(async provider => {
@@ -151,13 +167,15 @@ export default {
         const bIndex = findB.index;
         if (aIndex === -1 || bIndex === -1) {
           // load
-          this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
-          return;
+          await this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
+        } else {
+          // switch
+          const row = this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: bIndex });
+          this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: aIndex }, 0, row[0]);
         }
-        const row = this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: bIndex });
-        this.data.adapter._callMethodProvider(provider, 'spliceItem', { items, index: aIndex }, 0, row[0]);
-        return;
+        changed = true;
       });
+      return changed;
     },
     async event_onActionsChanged(data) {
       // const atomClass = data.atomClass;
