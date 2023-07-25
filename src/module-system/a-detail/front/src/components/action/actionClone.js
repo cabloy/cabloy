@@ -23,7 +23,7 @@ export default {
         const actionsAll = await ctx.$store.dispatch('a/base/getDetailActions');
         let actionWrite = actionsAll[this.detailItem.module][this.detailItem.detailClassName].write;
         actionWrite = ctx.$utils.extend({}, actionWrite);
-        if (ctx.$pageRoute.path === '/a/detail/detail/item') {
+        if (ctx.index?.layoutManagerScene === 'item') {
           actionWrite.navigateOptions = { target: '_self' };
         } else {
           actionWrite.navigateOptions = action.navigateOptions;

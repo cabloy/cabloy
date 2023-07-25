@@ -42,7 +42,12 @@ export default {
     Share,
   ],
   data() {
-    return {};
+    return {
+      index: {
+        layoutManagerScene: 'item',
+        layoutManagerName: 'itemLayoutManager',
+      },
+    };
   },
   created() {
     this.index_load();

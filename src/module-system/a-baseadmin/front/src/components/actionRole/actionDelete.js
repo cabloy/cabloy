@@ -15,7 +15,7 @@ export default {
       await ctx.$view.dialog.progressbar({ progressId, title: this.$text('Build') });
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action });
       // back
-      if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
+      if (ctx.index?.layoutManagerScene === 'item') {
         ctx.$f7router.back();
       }
     },

@@ -30,7 +30,7 @@ export default {
     async _onActionMove_selectRole({ ctx, item }) {
       return new Promise(resolve => {
         let target;
-        if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
+        if (ctx.index?.layoutManagerScene === 'item') {
           target = '_self';
         }
         ctx.$view.navigate('/a/baseadmin/role/select', {

@@ -17,7 +17,7 @@ export default {
         });
       }
       // back
-      if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
+      if (ctx.index?.layoutManagerScene === 'item') {
         ctx.$f7router.back();
       }
     },

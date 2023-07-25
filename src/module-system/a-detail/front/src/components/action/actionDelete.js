@@ -17,7 +17,7 @@ export default {
         action,
       });
       // back
-      if (ctx.$pageRoute.path === '/a/detail/detail/item') {
+      if (ctx.index?.layoutManagerScene === 'item') {
         ctx.$f7router.back();
       }
     },

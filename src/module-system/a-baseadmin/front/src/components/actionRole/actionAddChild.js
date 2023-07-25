@@ -28,7 +28,7 @@ export default {
           atomChild
         );
         let navigateOptions = action.navigateOptions;
-        if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
+        if (ctx.index?.layoutManagerScene === 'item') {
           navigateOptions = { target: '_self' };
         }
         ctx.$view.navigate(url, navigateOptions);

@@ -50,7 +50,12 @@ export default {
     Item,
   ],
   data() {
-    return {};
+    return {
+      index: {
+        layoutManagerScene: 'list',
+        layoutManagerName: 'listLayoutManager',
+      },
+    };
   },
   created() {
     this.$nextTick(() => {

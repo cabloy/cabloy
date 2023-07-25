@@ -36,7 +36,7 @@ export default {
         const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
         // open
         let navigateOptions = action.navigateOptions;
-        if (ctx.$pageRoute.path === '/a/basefront/atom/item') {
+        if (ctx.index?.layoutManagerScene === 'item') {
           navigateOptions = { target: '_self' };
         }
         navigateOptions = Object.assign({}, navigateOptions, {
