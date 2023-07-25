@@ -11,19 +11,21 @@ export default {
     const { validate } = this.context;
     const mode = validate.host && validate.host.mode;
     if (mode === 'edit') {
-      this.$meta.eventHub.$on('details:change', this.onActionChanged);
+      this.$meta.eventHub.$on('atom:listChanged', this.onActionChanged);
     }
   },
   beforeDestroy() {
     const { validate } = this.context;
     const mode = validate.host && validate.host.mode;
     if (mode === 'edit') {
-      this.$meta.eventHub.$off('details:change', this.onActionChanged);
+      this.$meta.eventHub.$off('atom:listChanged', this.onActionChanged);
     }
   },
   methods: {
     onActionChanged(data) {
       const { atomKey, detailClass, details } = data;
+      console.log(data.action.name, data.action?.dataOptions?.atomIdMain);
+      return;
       const { parcel, property, validate } = this.context;
       if (
         atomKey.atomId !== parcel.data.atomId ||
