@@ -37,7 +37,7 @@ export default {
     },
     onPageRefresh() {
       this.onPageClear();
-      this._loadTotal();
+      return this._loadTotal();
     },
     onPageInfinite() {
       // do nothing

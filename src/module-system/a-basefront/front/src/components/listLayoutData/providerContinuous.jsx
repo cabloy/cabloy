@@ -42,7 +42,7 @@ export default {
       this.inited = true;
     },
     onPageRefresh(force) {
-      this.loadMoreComponent.reload(force);
+      return this.loadMoreComponent.reload(force);
     },
     onPageInfinite() {
       this.loadMoreComponent.loadMore();

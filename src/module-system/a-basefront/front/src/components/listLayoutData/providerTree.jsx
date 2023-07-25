@@ -75,7 +75,7 @@ export default {
       return await this.$meta.util.performAction({ ctx: this, action, item });
     },
     onPageRefresh() {
-      this.treeviewData.load(this.treeviewRoot);
+      return this.treeviewData.load(this.treeviewRoot);
     },
     onPageInfinite() {
       // do nothing

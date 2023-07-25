@@ -16,6 +16,7 @@ export default {
       // refresh list
       await this.data.adapter._loopProviders(async provider => {
         this.data.adapter._callMethodProvider(provider, 'onPageRefresh', { key, item: atom });
+        console.log('last');
       });
     },
     async event_onActionChanged_delete(data) {
