@@ -54,7 +54,7 @@ module.exports = appInfo => {
       aDashboardUser: 'createdAt,updatedAt,userId,dashboardAtomId',
     },
     'a-detail': {
-      aDetailBase: 'createdAt,updatedAt,atomIdMain,atomClassIdMain,detailId,detailClassId,detailKey',
+      aDetailBase: 'createdAt,updatedAt,atomIdMain,atomClassIdMain,detailId,detailClassId,detailStaticKey',
     },
     'a-dict': {
       aDict: 'createdAt,updatedAt,atomId',
