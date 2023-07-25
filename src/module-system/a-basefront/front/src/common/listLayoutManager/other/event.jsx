@@ -109,6 +109,7 @@ export default {
       if (!res) {
         return;
       }
+      const changed = false;
       if (action.name === 'create') {
         // create
         await this.event_onActionChanged_create(data);
@@ -127,6 +128,13 @@ export default {
       } else {
         // others
         await this.event_onActionChanged_others(data);
+      }
+      // event
+      if (changed) {
+        this.$meta.eventHub.$emit('atom:listChanged', {
+          ...data,
+          items: this.data_getItemsAll(),
+        });
       }
     },
     async event_onActionChanged_moveLineNo(data) {
