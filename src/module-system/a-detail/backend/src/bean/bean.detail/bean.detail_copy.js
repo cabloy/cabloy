@@ -66,7 +66,7 @@ module.exports = ctx => {
         atomClass: atomClassDetail,
         options: {
           atomIdMain: destKeyAtom.atomId,
-          mode: 'full',
+          // mode: 'full',
         },
       });
       // detailStaticKey

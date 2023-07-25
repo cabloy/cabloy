@@ -4,25 +4,33 @@ module.exports = ctx => {
     async _deleteDetails({ atomClass, atomKey, user }) {
       await this._loopDetailClasses({
         atomClass,
-        fn: async ({ detailClass }) => {
-          await this._deleteDetails_Class({ detailClass, atomClass, atomKey, user });
+        fn: async ({ atomClassDetail, atomClassBaseDetail }) => {
+          await this._deleteDetails_Class({ atomClassDetail, atomClassBaseDetail, atomClass, atomKey, user });
         },
       });
     }
 
-    async _deleteDetails_Class({ detailClass, atomKey, user }) {
-      // details
-      const details = await this.modelDetail.select({
-        where: {
-          atomId: atomKey.atomId,
-          detailClassId: detailClass.id,
+    async _deleteDetails_Class({ atomClassDetail, /* atomClassBaseDetail, atomClass,*/ atomKey, user }) {
+      // select all details
+      const details = await ctx.bean.atom.select({
+        atomClass: atomClassDetail,
+        options: {
+          atomIdMain: atomKey.atomId,
+          // mode: 'full',
         },
       });
       // loop
       for (const detail of details) {
+        const detailKey = {
+          atomId: detail.atomId,
+          itemId: detail.itemId,
+        };
         // delete
-        const key = { detailId: detail.id, detailItemId: detail.detailItemId };
-        await this._delete2({ detailClass, key, user });
+        await ctx.bean.atom.delete({
+          key: detailKey,
+          atomClass: atomClassDetail,
+          user,
+        });
       }
     }
 
