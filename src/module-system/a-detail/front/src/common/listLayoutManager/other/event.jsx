@@ -42,7 +42,7 @@ export default {
       // create
       if (action.name === 'create') {
         // load
-        this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
+        await this.data.adapter._callMethodProvider(provider, 'onPageRefresh');
         return true;
       }
       // move

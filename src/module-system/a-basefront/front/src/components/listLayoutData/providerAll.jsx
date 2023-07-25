@@ -58,7 +58,6 @@ export default {
       this.loading = true;
       try {
         // fetch
-        console.log('fetch begin');
         const res = await this.layoutManager.data_provider_onLoadItemsAll();
         this.items = res.list;
         this.info = {
@@ -66,7 +65,6 @@ export default {
           pageSize: this.items.length,
           total: this.items.length,
         };
-        console.log('fetch end');
         this.loading = false;
         return res;
       } catch (err) {
