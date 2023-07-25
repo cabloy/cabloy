@@ -570,6 +570,13 @@ module.exports = ctx => {
       return detailBasesSrc;
     }
 
+    async _deleteDetailBase({ atomClass, key, options, user }) {
+      await this.modelDetailBase.delete({
+        detailId: key.atomId,
+        detailClassId: atomClass.id,
+      });
+    }
+
     // detail
 
     async _add({
