@@ -1,4 +1,3 @@
-import action from './components/action.js';
 import renderDetails from './components/renderDetails.jsx';
 import renderDetailsStat from './components/renderDetailsStat.jsx';
 // listLayoutList
@@ -10,7 +9,6 @@ import listLayoutTableCellDetailLineNo from './components/detail/listLayoutTable
 import listLayoutTableCellDetailName from './components/detail/listLayoutTable/listLayoutTableCellDetailName.jsx';
 
 export default {
-  action,
   renderDetails,
   renderDetailsStat,
   // listLayoutList
