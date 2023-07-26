@@ -57,7 +57,14 @@ export default {
     async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
       const action = Object.assign({}, this.actions_findAction('write'), { name: actionName });
-      const actionBase = this.getAction(action);
+      let actionBase = this.getAction(action);
+      // dataOptions
+      const dataOptions = {
+        atomIdMain: this.base_atomIdMain,
+        atomMain: this.base_atomMain,
+      };
+      // not use this.$utils.extend
+      actionBase = Object.assign({}, actionBase, { dataOptions });
       if (actionName === 'save') {
         await this.validate_onPerformValidate_createDelay();
       }
@@ -81,8 +88,8 @@ export default {
       });
       // dataOptions
       let dataOptions = this.container.params?.createDelay.dataOptions;
-      dataOptions = this.$utils.extend({}, dataOptions, { createContinue: true, noActionWrite: true });
-      actionCreate = this.$utils.extend({}, actionCreate, { dataOptions });
+      dataOptions = Object.assign({}, dataOptions, { createContinue: true, noActionWrite: true });
+      actionCreate = Object.assign({}, actionCreate, { dataOptions });
       // create
       const key = await this.$meta.util.performAction({ ctx: this, action: actionCreate, item: this.base.item });
       // makeup

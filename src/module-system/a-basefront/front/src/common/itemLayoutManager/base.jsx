@@ -104,7 +104,10 @@ export default {
     async base_loadAtomMain() {
       if (!this.base.atomClassBase) return;
       if (!this.base.atomClassBase.detail) return;
-      if (this.container.options?.atomMain) return;
+      if (this.container.options?.atomMain) {
+        this.base._atomIdMain = this.container.options?.atomMain.atomId;
+        return;
+      }
       const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
       const atomIdMain = this.base.item[atomIdMainFieldName];
       this.base._atomIdMain = atomIdMain;
