@@ -4,7 +4,8 @@ export default function () {
     Object.defineProperty(ctx, '$view', {
       get() {
         const view = ctx.$f7router?.view;
-        return view?.$el[0].__vue__;
+        if (!view) return null;
+        return view.$el[0].__vue__;
       },
     });
     Object.defineProperty(ctx, '$viewAppMethods', {
