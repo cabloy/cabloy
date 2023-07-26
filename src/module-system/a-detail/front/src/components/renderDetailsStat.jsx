@@ -9,34 +9,37 @@ export default {
   },
   mounted() {
     const { validate } = this.context;
-    const mode = validate.host && validate.host.mode;
+    console.log(validate.host);
+    const mode = validate.host?.mode;
     if (mode === 'edit') {
       this.$meta.eventHub.$on('atom:listChanged', this.onActionChanged);
     }
   },
   beforeDestroy() {
     const { validate } = this.context;
-    const mode = validate.host && validate.host.mode;
+    const mode = validate.host?.mode;
     if (mode === 'edit') {
       this.$meta.eventHub.$off('atom:listChanged', this.onActionChanged);
     }
   },
   methods: {
     onActionChanged(data) {
-      const { atomKey, detailClass, details } = data;
-      console.log(data.action.name, data.action?.dataOptions?.atomIdMain);
-      return;
+      // event info
+      const { atomClass: atomClassDetail, action, items } = data;
+      const atomIdMain = action?.dataOptions?.atomIdMain;
+      console.log(atomIdMain, atomClassDetail, items);
+      // this info
       const { parcel, property, validate } = this.context;
       if (
-        atomKey.atomId !== parcel.data.atomId ||
-        detailClass.module !== property.ebParams.detailClass.module ||
-        detailClass.detailClassName !== property.ebParams.detailClass.detailClassName
+        atomIdMain !== parcel.data.atomId ||
+        atomClassDetail.module !== property.ebParams.detailClass.module ||
+        atomClassDetail.atomClassName !== property.ebParams.detailClass.atomClassName
       ) {
         return;
       }
 
       // evaluate
-      const scope = { details };
+      const scope = { items };
       this.onActionChanged_evaluate({ scope, property, validate });
     },
     async onActionChanged_evaluate({ scope, property, validate }) {
