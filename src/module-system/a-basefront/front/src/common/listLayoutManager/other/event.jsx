@@ -83,6 +83,7 @@ export default {
       return changed;
     },
     async event_checkIfEventActionValid(data) {
+      // atomClass
       const atomClass = data.atomClass;
       if (!atomClass) throw new Error('Should specify atom class');
 
@@ -93,6 +94,9 @@ export default {
       const params = this.base_prepareSelectParams({ setOrder: false });
       const paramsAtomClass = params.atomClass;
       const paramsStage = params.options.stage;
+
+      // atomIdMain
+      const atomIdMain = data.action?.dataOptions?.atomIdMain;
 
       // check stage for create
       if (data.action?.name === 'create') {
@@ -113,6 +117,11 @@ export default {
           // do nothing
           return false;
         }
+      }
+      // check atomIdMain
+      if (atomIdMain && atomIdMain !== this.base_atomIdMain) {
+        // do nothing
+        return false;
       }
       // ok
       return true;
