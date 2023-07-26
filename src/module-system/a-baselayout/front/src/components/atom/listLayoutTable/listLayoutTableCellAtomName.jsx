@@ -38,7 +38,11 @@ export default {
       return this.layoutManager.item_renderMedia2(this.info, 'avatar avatar24 eb-vertical-align', media);
     },
     _getAtomName(item) {
-      const atomNameFieldName = this.mapper?.atomName;
+      let atomNameFieldName = this.mapper?.atomName;
+      if (atomNameFieldName === undefined) {
+        const atomClassBase = this.layoutManager.base.atomClassBase;
+        atomNameFieldName = atomClassBase?.fields?.atomName;
+      }
       return this.layoutManager.item_getAtomName(item, atomNameFieldName);
     },
   },
