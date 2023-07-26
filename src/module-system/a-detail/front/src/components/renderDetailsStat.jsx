@@ -22,12 +22,17 @@ export default {
     }
   },
   methods: {
+    // summary: count/sum/min/max
     _doSummary({ scope, property }) {
       const items = scope.items;
       const summaryType = property.ebParams?.summary?.type;
       const summaryField = property.ebParams?.summary?.field;
       if (summaryType === 'count') {
         return items.length;
+      } else if (summaryType === 'sum') {
+        return items.reduce(function (a, b) {
+          return a + b[summaryField];
+        }, 0);
       }
     },
     onActionChanged(data) {
