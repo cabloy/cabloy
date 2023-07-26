@@ -148,7 +148,9 @@ export default {
       if (changed) {
         this.$meta.eventHub.$emit('atom:listChanged', {
           ...data,
-          items: this.data_getItemsAll(),
+          items: this.data_getItems(),
+          // need not handle itemsAll
+          // itemsAll: this.data_getItemsAll(),
         });
       }
     },
