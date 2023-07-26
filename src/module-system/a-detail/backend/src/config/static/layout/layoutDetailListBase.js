@@ -85,8 +85,15 @@ module.exports = app => {
                 title: 'Name',
                 align: 'left',
                 component: {
-                  module: 'a-detail',
-                  name: 'listLayoutTableCellDetailName',
+                  module: 'a-baselayout',
+                  name: 'listLayoutTableCellAtomName',
+                  options: {
+                    props: {
+                      mapper: {
+                        atomName: 'detailName',
+                      },
+                    },
+                  },
                 },
               },
             ],

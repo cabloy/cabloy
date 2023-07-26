@@ -37,6 +37,10 @@ export default {
       if (media === undefined) media = false;
       return this.layoutManager.item_renderMedia2(this.info, 'avatar avatar24 eb-vertical-align', media);
     },
+    _getAtomName(item) {
+      const atomNameFieldName = this.mapper?.atomName;
+      return this.layoutManager.item_getAtomName(item, atomNameFieldName);
+    },
   },
   render() {
     const item = this.info.record;
@@ -48,7 +52,7 @@ export default {
     // domMedia
     const domMedia = this._renderMedia();
     // atomName
-    const atomName = this.layoutManager.item_getAtomName(item);
+    const atomName = this._getAtomName(item);
     return (
       <div class="atom-list-layout-table-cell-atomName">
         <div class="atomName-inner">
