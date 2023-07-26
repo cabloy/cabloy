@@ -1,8 +1,5 @@
 module.exports = app => {
   const routes = [
-    // base
-    { method: 'post', path: 'base/detailClasses', controller: 'base' },
-    { method: 'post', path: 'base/actions', controller: 'base' },
     // detail
     {
       method: 'post',
