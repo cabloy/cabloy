@@ -154,10 +154,16 @@ export default {
       // action
       let actionBase = this.getAction(action);
       if (!actionBase) return;
-      actionBase = this.$utils.extend({}, actionBase, { targetEl: event.currentTarget });
+      // dataOptions
+      const dataOptions = {
+        atomIdMain: this.base_atomIdMain,
+        atomMain: this.base_atomMain,
+      };
+      // not use this.$utils.extend
+      actionBase = Object.assign({}, actionBase, { targetEl: event.currentTarget }, { dataOptions });
       // for write
       if (action.name === 'write') {
-        actionBase = this.$utils.extend({}, actionBase, { navigateOptions: { target: '_self' } });
+        actionBase = Object.assign({}, actionBase, { navigateOptions: { target: '_self' } });
       }
       return this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
     },

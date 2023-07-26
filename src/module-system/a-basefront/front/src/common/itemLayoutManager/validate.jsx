@@ -56,12 +56,12 @@ export default {
     },
     async validate_onPerformValidate(event, options) {
       const actionName = options && options.action;
-      const action = this.$utils.extend({}, this.actions_findAction('write'), { name: actionName });
-      const _action = this.getAction(action);
+      const action = Object.assign({}, this.actions_findAction('write'), { name: actionName });
+      const actionBase = this.getAction(action);
       if (actionName === 'save') {
         await this.validate_onPerformValidate_createDelay();
       }
-      const res = await this.$meta.util.performAction({ ctx: this, action: _action, item: this.base.item });
+      const res = await this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
       // page dirty
       if (actionName === 'save' || actionName === 'submit') {
         this.page_setDirty(false);

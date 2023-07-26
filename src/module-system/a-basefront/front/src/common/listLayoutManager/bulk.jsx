@@ -31,22 +31,22 @@ export default {
     async bulk_onAction(event, action) {
       this.$f7.tooltip.hide(event.currentTarget);
       // action
-      let _action = this.getAction(action);
-      if (!_action) return;
+      let actionBase = this.getAction(action);
+      if (!actionBase) return;
       // dataOptions
       const dataOptions = {
         atomIdMain: this.base_atomIdMain,
         atomMain: this.base_atomMain,
       };
       // not use this.$utils.extend
-      _action = Object.assign({}, _action, { targetEl: event.currentTarget }, { dataOptions });
+      actionBase = Object.assign({}, actionBase, { targetEl: event.currentTarget }, { dataOptions });
       // item
       let item = {
         atomClassId: action.atomClassId,
         module: action.module,
         atomClassName: action.atomClassName,
       };
-      if (_action.name === 'create') {
+      if (actionBase.name === 'create') {
         const createParams = this.$meta.util.getProperty(this.container.params, 'createParams');
         if (createParams) {
           item = this.$utils.extend({}, item, createParams);
@@ -60,7 +60,7 @@ export default {
         }
       }
       // performAction
-      return await this.$meta.util.performAction({ ctx: this, action: _action, item });
+      return await this.$meta.util.performAction({ ctx: this, action: actionBase, item });
     },
     async bulk_loadActions() {
       if (this.bulk.actions) return;
