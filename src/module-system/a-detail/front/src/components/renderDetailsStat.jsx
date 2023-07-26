@@ -30,9 +30,22 @@ export default {
       if (summaryType === 'count') {
         return items.length;
       } else if (summaryType === 'sum') {
+        if (items.length === 0) return 0;
         return items.reduce(function (a, b) {
           return a + b[summaryField];
         }, 0);
+      } else if (summaryType === 'min') {
+        if (items.length === 0) return undefined;
+        if (items.length === 1) return items[0][summaryField];
+        return items.reduce(function (a, b) {
+          return Math.min(a, b[summaryField]);
+        }, items[0][summaryField]);
+      } else if (summaryType === 'max') {
+        if (items.length === 0) return undefined;
+        if (items.length === 1) return items[0][summaryField];
+        return items.reduce(function (a, b) {
+          return Math.max(a, b[summaryField]);
+        }, items[0][summaryField]);
       }
     },
     onActionChanged(data) {
