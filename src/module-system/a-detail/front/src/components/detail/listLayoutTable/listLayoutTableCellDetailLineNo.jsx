@@ -22,7 +22,7 @@ export default {
   created() {},
   methods: {},
   render() {
-    const index = this.info.index;
-    return <span>{index + 1}</span>;
+    const indexTotal = this.info.indexTotal;
+    return <span>{indexTotal + 1}</span>;
   },
 };
