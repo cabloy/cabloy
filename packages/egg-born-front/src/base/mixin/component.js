@@ -3,7 +3,8 @@ export default function () {
   const beforeCreate = function (ctx) {
     Object.defineProperty(ctx, '$view', {
       get() {
-        return ctx.$f7router && ctx.$f7router.view.$el[0].__vue__;
+        const view = ctx.$f7router?.view;
+        return view?.$el[0].__vue__;
       },
     });
     Object.defineProperty(ctx, '$viewAppMethods', {
