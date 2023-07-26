@@ -9,7 +9,6 @@ export default {
   },
   mounted() {
     const { validate } = this.context;
-    console.log(validate.host);
     const mode = validate.host?.mode;
     if (mode === 'edit') {
       this.$meta.eventHub.$on('atom:listChanged', this.onActionChanged);
@@ -23,11 +22,18 @@ export default {
     }
   },
   methods: {
+    _doSummary({ scope, property }) {
+      const items = scope.items;
+      const summaryType = property.ebParams?.summary?.type;
+      const summaryField = property.ebParams?.summary?.field;
+      if (summaryType === 'count') {
+        return items.length;
+      }
+    },
     onActionChanged(data) {
       // event info
       const { atomClass: atomClassDetail, action, items } = data;
       const atomIdMain = action?.dataOptions?.atomIdMain;
-      console.log(atomIdMain, atomClassDetail, items);
       // this info
       const { parcel, property, validate } = this.context;
       if (
@@ -37,14 +43,12 @@ export default {
       ) {
         return;
       }
-
       // evaluate
       const scope = { items };
       this.onActionChanged_evaluate({ scope, property, validate });
     },
     async onActionChanged_evaluate({ scope, property, validate }) {
-      const useStoreSandbox = await this.$meta.store.use('a/sandbox/sandbox');
-      const value = await useStoreSandbox.evaluate(property.ebParams.expression, scope);
+      const value = this._doSummary({ scope, property });
       this.context.setValue(value);
       // submit
       if (property.ebAutoSubmit) {
