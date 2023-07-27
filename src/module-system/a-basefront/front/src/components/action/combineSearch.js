@@ -28,7 +28,7 @@ export default {
         __or__atomNameResource: [{ 'a.atomName': clauseValue }],
       };
       const atomClass = data.atomClass ? ctx.getAtomClass(data.atomClass) : null;
-      if (atomClass && atomClass.resource) {
+      if (atomClass?.resource && !['draft', 'history'].includes(data.stage)) {
         clause.__or__atomNameResource.push({ 'm.atomNameLocale': clauseValue });
       }
       return clause;
