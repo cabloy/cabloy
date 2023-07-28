@@ -1,5 +1,12 @@
 # History
 
+## 2023-07-28, Version 4.33.0（未发布）
+
+- **Feat**
+
+  - Detail：基于 ItemOnly 重构，延用 Atom 的同一套前端页面组件和后端 API 逻辑
+    - test-flow 模块中`采购订单明细`进行重构
+
 ## 2023-05-15, Version 4.32.0（未发布）
 
 - **Feat**
