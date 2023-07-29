@@ -1,38 +1,27 @@
 import Vue from 'vue';
-const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellFormat;
+const ebRenderTableCellBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellBase;
 
 export default {
-  mixins: [ebRenderTableCellFormat],
-  props: {
-    layoutManager: {
-      type: Object,
-    },
-    layout: {
-      type: Object,
-    },
-    layoutItems: {
-      type: Object,
-    },
-    info: {
-      type: Object,
-    },
-    link: {
-      type: Object, // text/href/target/external
-    },
-    links: {
-      type: Array,
-    },
-  },
+  mixins: [ebRenderTableCellBase],
   data() {
     return {};
   },
+  computed: {
+    link() {
+      // text/href/target/external
+      return this.base_getParam({ name: 'link' });
+    },
+    links() {
+      return this.base_getParam({ name: 'links' });
+    },
+  },
   methods: {
     _renderLink(link) {
-      const { text, record, column } = this.info;
+      const { text, record } = this.info;
       const props = {};
       // text
       let _text = this.$meta.util.replaceTemplate(link.text, record) || text || '';
-      _text = this.formatText({ text: _text, column });
+      _text = this.base_formatText({ text: _text });
       // href
       if (link.href) {
         props.ebHref = this.$meta.util.replaceTemplate(link.href, record);
