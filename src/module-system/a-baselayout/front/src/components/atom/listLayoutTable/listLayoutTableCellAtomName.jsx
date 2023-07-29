@@ -6,20 +6,6 @@ export default {
     global: false,
   },
   mixins: [ebRenderTableCellBase],
-  props: {
-    layoutManager: {
-      type: Object,
-    },
-    layout: {
-      type: Object,
-    },
-    layoutItems: {
-      type: Object,
-    },
-    info: {
-      type: Object,
-    },
-  },
   data() {
     return {};
   },
