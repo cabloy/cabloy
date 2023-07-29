@@ -26,8 +26,8 @@ module.exports = app => {
                 title: 'Username',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellAtomName',
                 },
                 options: {
                   mapper: {
@@ -74,7 +74,7 @@ module.exports = app => {
   const layout = {
     atomName: 'User',
     atomStaticKey: 'layoutAtomListUser',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
