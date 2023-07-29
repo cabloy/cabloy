@@ -53,9 +53,12 @@ export default {
       this.evaluate_inner({ scope });
     },
     async evaluate_inner({ scope }) {
+      // const random = Math.random().toString();
+      // console.time(random);
       const useStoreSandbox = await this.$meta.store.use('a/sandbox/sandbox');
       const value = await useStoreSandbox.evaluate(this.expression, scope);
       this.value = this.base_formatText({ text: value });
+      // console.timeEnd(random);
     },
   },
   render() {
