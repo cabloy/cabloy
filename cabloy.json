@@ -54,6 +54,9 @@
           "a-baserender": {
             "scripts": ["npmPublish"]
           },
+          "a-baserendertable": {
+            "scripts": ["npmPublish"]
+          },
           "a-basestore": {
             "scripts": ["npmPublish"]
           },
