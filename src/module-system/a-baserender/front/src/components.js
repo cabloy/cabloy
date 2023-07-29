@@ -7,17 +7,6 @@ import renderCategory from './components/render/renderCategory.jsx';
 import renderCategoryResource from './components/render/renderCategoryResource.jsx';
 import renderTags from './components/render/renderTags.jsx';
 import renderResourceType from './components/render/renderResourceType.jsx';
-import renderTableCellDefault from './components/render/renderTableCellDefault.jsx';
-import renderTableCellDict from './components/render/renderTableCellDict.jsx';
-import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
-import renderTableCellDatetime from './components/render/renderTableCellDatetime.jsx';
-import renderTableCellLink from './components/render/renderTableCellLink.jsx';
-import renderTableCellButton from './components/render/renderTableCellButton.jsx';
-import renderTableCellImage from './components/render/renderTableCellImage.jsx';
-import renderTableCellIcon from './components/render/renderTableCellIcon.jsx';
-import renderTableCellLineNo from './components/render/renderTableCellLineNo.jsx';
-import renderTableCellAtomName from './components/render/renderTableCellAtomName.jsx';
-import renderTableCellUserName from './components/render/renderTableCellUserName.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
 import renderUserName from './components/render/renderUserName.jsx';
 import renderUser from './components/render/renderUser.jsx';
@@ -36,17 +25,6 @@ export default {
   renderCategoryResource,
   renderTags,
   renderResourceType,
-  renderTableCellDefault,
-  renderTableCellDict,
-  renderTableCellComputed,
-  renderTableCellDatetime,
-  renderTableCellLink,
-  renderTableCellButton,
-  renderTableCellImage,
-  renderTableCellIcon,
-  renderTableCellLineNo,
-  renderTableCellAtomName,
-  renderTableCellUserName,
   renderUserLabel,
   renderUserName,
   renderUser,
