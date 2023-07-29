@@ -1,5 +1,6 @@
 import Events from './baseLayoutBlockTableItems/events.js';
 import Scroll from './baseLayoutBlockTableItems/scroll.js';
+import renderTypes from './baseLayoutBlockTableItems/renderTypes.js';
 
 export default {
   meta: {
@@ -158,27 +159,34 @@ export default {
           info: { text, record, index, indexTotal, column },
         },
       };
-      // default
-      if (!column.component) {
-        // computed
-        if (column.params && column.params.computed) {
-          return <eb-component module="a-baserender" name="renderTableCellComputed" options={options}></eb-component>;
-        }
-        // dateFormat
-        if (column.params && column.params.dateFormat && typeof column.params.dateFormat === 'object') {
-          return <eb-component module="a-baserender" name="renderTableCellDatetime" options={options}></eb-component>;
-        }
-        // default
-        return <eb-component module="a-baserender" name="renderTableCellDefault" options={options}></eb-component>;
-      }
       // component
-      const componentProps = column.component?.options?.props;
-      if (componentProps) {
-        Object.assign(options.props, componentProps);
+      const component = {};
+      if (column.component) {
+        component.module = column.component.module;
+        component.name = column.component.name;
+      } else if (column.renderType) {
+        const renderType = renderTypes.find(item => item[0].toUpperCase() === column.renderType.toUpperCase());
+        if (!renderType) {
+          // not support
+          return <div>{`not supported renderType: ${column.renderType}`}</div>;
+        }
+        component.module = 'a-baserendertable';
+        component.name = renderType[1];
+      } else if (column.params?.computed) {
+        // computed
+        component.module = 'a-baserendertable';
+        component.name = 'renderTableCellComputed';
+      } else if (column.params?.dateFormat && typeof column.params?.dateFormat === 'object') {
+        // dateFormat
+        component.module = 'a-baserendertable';
+        component.name = 'renderTableCellDatetime';
+      } else {
+        // default
+        component.module = 'a-baserendertable';
+        component.name = 'renderTableCellDefault';
       }
-      return (
-        <eb-component module={column.component.module} name={column.component.name} options={options}></eb-component>
-      );
+      // render
+      return <eb-component module={component.module} name={component.name} options={options}></eb-component>;
     },
     _customCell(record, index, column, { expandIcon }) {
       if (!record._treeviewNode || !expandIcon) return {};
