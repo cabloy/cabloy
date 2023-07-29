@@ -30,10 +30,9 @@ module.exports = app => {
                 dataIndex: 'isLogin',
                 title: 'LoginType',
                 align: 'left',
-                params: {
-                  computed: {
-                    expression: 'record._isLoginTitleLocale',
-                  },
+                component: {
+                  module: 'a-baserender',
+                  name: 'renderTableCellDict',
                 },
               },
               {
@@ -60,7 +59,7 @@ module.exports = app => {
   const layout = {
     atomName: 'LoginLog',
     atomStaticKey: 'layoutAtomListUserOnlineHistory',
-    atomRevision: 3,
+    atomRevision: 4,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

@@ -30,10 +30,9 @@ module.exports = app => {
                 dataIndex: 'onlineStatus',
                 title: 'Status',
                 align: 'left',
-                params: {
-                  computed: {
-                    expression: 'record._onlineStatusTitleLocale',
-                  },
+                component: {
+                  module: 'a-baserender',
+                  name: 'renderTableCellDict',
                 },
               },
               {
@@ -70,7 +69,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Users Status',
     atomStaticKey: 'layoutAtomListUserOnline',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
