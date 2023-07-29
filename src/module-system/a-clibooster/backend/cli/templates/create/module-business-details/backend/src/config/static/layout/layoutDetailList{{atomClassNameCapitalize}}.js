@@ -12,8 +12,8 @@ module.exports = app => {
                 align: 'center',
                 width: 50,
                 component: {
-                  module: 'a-detail',
-                  name: 'listLayoutTableCellDetailLineNo',
+                  module: 'a-baserender',
+                  name: 'renderTableCellLineNo',
                 },
               },
               {

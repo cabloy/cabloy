@@ -76,8 +76,8 @@ module.exports = app => {
                 align: 'center',
                 width: 50,
                 component: {
-                  module: 'a-detail',
-                  name: 'listLayoutTableCellDetailLineNo',
+                  module: 'a-baserender',
+                  name: 'renderTableCellLineNo',
                 },
               },
             ],
@@ -89,7 +89,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(Details)',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 7,
+    atomRevision: 8,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
