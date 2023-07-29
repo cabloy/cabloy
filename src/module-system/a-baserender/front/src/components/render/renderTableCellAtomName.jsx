@@ -2,16 +2,13 @@ import Vue from 'vue';
 const ebRenderTableCellBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellBase;
 
 export default {
-  meta: {
-    global: false,
-  },
   mixins: [ebRenderTableCellBase],
   data() {
     return {};
   },
   computed: {
     mapper() {
-      return this.base_getOption({ name: 'mapper' });
+      return this.base_getParam({ name: 'mapper' });
     },
   },
   created() {},

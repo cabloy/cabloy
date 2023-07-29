@@ -1,7 +1,4 @@
 export default {
-  meta: {
-    global: false,
-  },
   props: {
     layoutManager: {
       type: Object,

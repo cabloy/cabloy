@@ -3,9 +3,6 @@ const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options
 
 const __watchNames = ['info.record', 'info.index', 'info.indexTotal'];
 export default {
-  meta: {
-    global: false,
-  },
   mixins: [ebRenderTableCellFormat],
   props: {
     layoutManager: {

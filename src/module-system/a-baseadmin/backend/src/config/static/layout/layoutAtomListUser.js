@@ -29,7 +29,7 @@ module.exports = app => {
                   module: 'a-baserender',
                   name: 'renderTableCellAtomName',
                 },
-                options: {
+                params: {
                   mapper: {
                     avatar: true,
                   },
@@ -74,7 +74,7 @@ module.exports = app => {
   const layout = {
     atomName: 'User',
     atomStaticKey: 'layoutAtomListUser',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

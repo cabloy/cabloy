@@ -2,9 +2,6 @@ import Vue from 'vue';
 const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellFormat;
 
 export default {
-  meta: {
-    global: false,
-  },
   mixins: [ebRenderTableCellFormat],
   props: {
     layoutManager: {
