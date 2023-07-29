@@ -54,11 +54,9 @@ module.exports = app => {
                 component: {
                   module: 'a-baserender',
                   name: 'renderTableCellIcon',
-                  options: {
-                    props: {
-                      size: 24,
-                    },
-                  },
+                },
+                params: {
+                  size: 24,
                 },
               },
               {
@@ -99,7 +97,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Resource',
     atomStaticKey: 'layoutAtomListResource',
-    atomRevision: 7,
+    atomRevision: 8,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
