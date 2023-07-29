@@ -166,7 +166,6 @@ export default {
         }
         // dateFormat
         if (column.params && column.params.dateFormat && typeof column.params.dateFormat === 'object') {
-          options.props.dateFormat = column.params.dateFormat;
           return <eb-component module="a-baserender" name="renderTableCellDatetime" options={options}></eb-component>;
         }
         // default
