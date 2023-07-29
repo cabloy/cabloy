@@ -8,6 +8,7 @@ import renderCategoryResource from './components/render/renderCategoryResource.j
 import renderTags from './components/render/renderTags.jsx';
 import renderResourceType from './components/render/renderResourceType.jsx';
 import renderTableCellDefault from './components/render/renderTableCellDefault.jsx';
+import renderTableCellDict from './components/render/renderTableCellDict.jsx';
 import renderTableCellComputed from './components/render/renderTableCellComputed.jsx';
 import renderTableCellDatetime from './components/render/renderTableCellDatetime.jsx';
 import renderTableCellLink from './components/render/renderTableCellLink.jsx';
@@ -36,6 +37,7 @@ export default {
   renderTags,
   renderResourceType,
   renderTableCellDefault,
+  renderTableCellDict,
   renderTableCellComputed,
   renderTableCellDatetime,
   renderTableCellLink,
