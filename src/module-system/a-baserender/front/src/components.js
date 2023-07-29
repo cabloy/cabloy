@@ -14,6 +14,7 @@ import renderTableCellLink from './components/render/renderTableCellLink.jsx';
 import renderTableCellButton from './components/render/renderTableCellButton.jsx';
 import renderTableCellImage from './components/render/renderTableCellImage.jsx';
 import renderTableCellIcon from './components/render/renderTableCellIcon.jsx';
+import renderTableCellLineNo from './components/render/renderTableCellLineNo.jsx';
 import renderTableCellAtomName from './components/render/renderTableCellAtomName.jsx';
 import renderTableCellUserName from './components/render/renderTableCellUserName.jsx';
 import renderUserLabel from './components/render/renderUserLabel.jsx';
@@ -41,6 +42,7 @@ export default {
   renderTableCellButton,
   renderTableCellImage,
   renderTableCellIcon,
+  renderTableCellLineNo,
   renderTableCellAtomName,
   renderTableCellUserName,
   renderUserLabel,
