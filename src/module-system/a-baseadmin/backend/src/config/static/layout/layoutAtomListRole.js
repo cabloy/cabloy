@@ -39,8 +39,8 @@ module.exports = app => {
                 align: 'left',
                 width: 300,
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellAtomName',
                 },
               },
               {
@@ -87,7 +87,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Role',
     atomStaticKey: 'layoutAtomListRole',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

@@ -17,14 +17,12 @@ module.exports = app => {
                 title: 'Username',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
-                  options: {
-                    props: {
-                      mapper: {
-                        avatar: true,
-                      },
-                    },
+                  module: 'a-baserender',
+                  name: 'renderTableCellAtomName',
+                },
+                params: {
+                  mapper: {
+                    avatar: true,
                   },
                 },
               },
@@ -72,7 +70,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Users Status',
     atomStaticKey: 'layoutAtomListUserOnline',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

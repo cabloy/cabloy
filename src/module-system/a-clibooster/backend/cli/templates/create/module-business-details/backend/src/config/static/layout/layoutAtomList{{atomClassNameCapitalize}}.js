@@ -11,8 +11,8 @@ module.exports = app => {
                 title: 'Atom Name',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellAtomName',
                 },
               },
               {

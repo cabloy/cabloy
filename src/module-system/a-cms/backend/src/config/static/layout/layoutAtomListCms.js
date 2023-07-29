@@ -18,8 +18,8 @@ module.exports = app => {
                 title: 'Atom Name',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellAtomName',
                 },
               },
               {
@@ -65,7 +65,7 @@ module.exports = app => {
   const layout = {
     atomName: 'CMS',
     atomStaticKey: 'layoutAtomListCms',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

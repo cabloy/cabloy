@@ -11,8 +11,8 @@ module.exports = app => {
                 title: 'Atom Name',
                 align: 'left',
                 component: {
-                  module: 'a-baselayout',
-                  name: 'listLayoutTableCellAtomName',
+                  module: 'a-baserender',
+                  name: 'renderTableCellAtomName',
                 },
               },
               {
@@ -58,7 +58,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Dict',
     atomStaticKey: 'layoutAtomListDict',
-    atomRevision: 1,
+    atomRevision: 2,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
