@@ -1,30 +1,18 @@
 import Vue from 'vue';
-const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellFormat;
+const ebRenderTableCellBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellBase;
 
 const __watchNames = ['info.record', 'info.index', 'info.indexTotal'];
 export default {
-  mixins: [ebRenderTableCellFormat],
-  props: {
-    layoutManager: {
-      type: Object,
-    },
-    layout: {
-      type: Object,
-    },
-    layoutItems: {
-      type: Object,
-    },
-    info: {
-      type: Object,
-    },
-    expression: {
-      type: String,
-    },
-  },
+  mixins: [ebRenderTableCellBase],
   data() {
     return {
       value: null,
     };
+  },
+  computed: {
+    expression() {
+      return this.base_getParam({ name: 'expression' });
+    },
   },
   created() {
     this.evaluate();
@@ -60,12 +48,12 @@ export default {
         params: column.params,
         options: column.component && column.component.options,
       }; // { text, record, index, indexTotal, column }
-      this.evaluate_inner({ scope, column });
+      this.evaluate_inner({ scope });
     },
-    async evaluate_inner({ scope, column }) {
+    async evaluate_inner({ scope }) {
       const useStoreSandbox = await this.$meta.store.use('a/sandbox/sandbox');
       const value = await useStoreSandbox.evaluate(this.expression, scope);
-      this.value = this.formatText({ text: value, column });
+      this.value = this.base_formatText({ text: value });
     },
   },
   render() {

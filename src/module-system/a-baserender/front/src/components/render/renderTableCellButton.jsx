@@ -1,30 +1,19 @@
 import Vue from 'vue';
-const ebRenderTableCellFormat = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellFormat;
+const ebRenderTableCellBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellBase;
 
 export default {
-  mixins: [ebRenderTableCellFormat],
-  props: {
-    layoutManager: {
-      type: Object,
-    },
-    layout: {
-      type: Object,
-    },
-    layoutItems: {
-      type: Object,
-    },
-    info: {
-      type: Object,
-    },
-    button: {
-      type: Object, // text/onPerform: actionModule/actionComponent/actionPath/name
-    },
-    buttons: {
-      type: Array,
-    },
-  },
+  mixins: [ebRenderTableCellBase],
   data() {
     return {};
+  },
+  computed: {
+    button() {
+      // text/onPerform: actionModule/actionComponent/actionPath/name
+      return this.base_getParam({ name: 'button' });
+    },
+    buttons() {
+      return this.base_getParam({ name: 'buttons' });
+    },
   },
   methods: {
     onPerformClick(event, button) {
@@ -33,10 +22,10 @@ export default {
       return this.$meta.util.performAction({ ctx: this.layoutManager, action: button.onPerform, item: record });
     },
     _renderButton(button) {
-      const { text, record, column } = this.info;
+      const { text, record } = this.info;
       // text
       let _text = this.$meta.util.replaceTemplate(button.text, record) || text || '';
-      _text = this.formatText({ text: _text, column });
+      _text = this.base_formatText({ text: _text });
       // props
       const props = Object.assign({}, button.props);
       // render
