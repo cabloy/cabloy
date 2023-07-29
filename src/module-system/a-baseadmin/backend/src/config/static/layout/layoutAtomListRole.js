@@ -47,10 +47,9 @@ module.exports = app => {
                 dataIndex: 'roleTypeCode',
                 title: 'Role Type',
                 align: 'left',
-                params: {
-                  computed: {
-                    expression: 'record._roleTypeCodeTitleLocale',
-                  },
+                component: {
+                  module: 'a-baserender',
+                  name: 'renderTableCellDict',
                 },
               },
               {
@@ -87,7 +86,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Role',
     atomStaticKey: 'layoutAtomListRole',
-    atomRevision: 5,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
