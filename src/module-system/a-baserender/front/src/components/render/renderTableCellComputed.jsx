@@ -10,8 +10,11 @@ export default {
     };
   },
   computed: {
+    computed() {
+      return this.base_getParam({ name: 'computed' });
+    },
     expression() {
-      return this.base_getParam({ name: 'expression' });
+      return this.computed?.expression;
     },
   },
   created() {
@@ -46,8 +49,7 @@ export default {
         index,
         indexTotal,
         params: column.params,
-        options: column.component && column.component.options,
-      }; // { text, record, index, indexTotal, column }
+      }; // { text, record, index, indexTotal, params }
       this.evaluate_inner({ scope });
     },
     async evaluate_inner({ scope }) {
