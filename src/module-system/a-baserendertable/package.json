@@ -1,0 +1,28 @@
+{
+  "name": "egg-born-module-a-baserendertable",
+  "version": "4.0.0",
+  "title": "a-baserendertable",
+  "eggBornModule": {
+    "fileVersion": 0,
+    "dependencies": {
+      "a-instance": "4.0.0",
+      "a-base": "4.0.0",
+      "a-flow": "4.0.0"
+    }
+  },
+  "description": "",
+  "keywords": [
+    "Cabloy Module"
+  ],
+  "scripts": {
+    "build:front": "node ../../../scripts/egg-born-bin.js front-build-module",
+    "build:backend": "node ../../../scripts/egg-born-bin.js backend-build-module",
+    "build:all": "npm run build:front && npm run build:backend",
+    "preversion": "npm run build:all && git add ."
+  },
+  "author": "zhennann",
+  "devDependencies": {},
+  "dependencies": {
+    "require3": "file:./backend/utils/require3"
+  }
+}
