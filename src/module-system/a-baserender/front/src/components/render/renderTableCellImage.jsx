@@ -1,28 +1,18 @@
+import Vue from 'vue';
+const ebRenderTableCellBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellBase;
+
 export default {
-  props: {
-    layoutManager: {
-      type: Object,
-    },
-    layout: {
-      type: Object,
-    },
-    layoutItems: {
-      type: Object,
-    },
-    info: {
-      type: Object,
-    },
-    size: {
-      type: Object,
-    },
-    target: {
-      type: String,
-    },
-  },
+  mixins: [ebRenderTableCellBase],
   data() {
     return {};
   },
   computed: {
+    size() {
+      return this.base_getParam({ name: 'size' });
+    },
+    target() {
+      return this.base_getParam({ name: 'target' });
+    },
     dataSource() {
       return this.layoutManager.data_getItems();
     },
