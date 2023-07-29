@@ -1,7 +1,11 @@
+import Vue from 'vue';
+const ebRenderTableCellBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebRenderTableCellBase;
+
 export default {
   meta: {
     global: false,
   },
+  mixins: [ebRenderTableCellBase],
   props: {
     layoutManager: {
       type: Object,
@@ -15,12 +19,14 @@ export default {
     info: {
       type: Object,
     },
-    mapper: {
-      type: Object,
-    },
   },
   data() {
     return {};
+  },
+  computed: {
+    mapper() {
+      return this.base_getOption({ name: 'mapper' });
+    },
   },
   created() {},
   methods: {
