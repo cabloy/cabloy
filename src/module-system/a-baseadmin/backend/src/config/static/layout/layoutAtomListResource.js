@@ -48,10 +48,7 @@ module.exports = app => {
                 dataIndex: 'resourceIcon',
                 title: 'Icon',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellIcon',
-                },
+                renderType: 'icon',
                 params: {
                   size: 24,
                 },
@@ -60,10 +57,7 @@ module.exports = app => {
                 dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellUserName',
-                },
+                renderType: 'userName',
               },
               {
                 dataIndex: 'atomCreatedAt',

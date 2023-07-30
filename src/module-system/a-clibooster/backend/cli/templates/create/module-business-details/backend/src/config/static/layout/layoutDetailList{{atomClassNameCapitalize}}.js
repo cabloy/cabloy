@@ -11,10 +11,7 @@ module.exports = app => {
                 title: '#',
                 align: 'center',
                 width: 50,
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellLineNo',
-                },
+                renderType: 'lineNo',
               },
               {
                 dataIndex: 'detailName',

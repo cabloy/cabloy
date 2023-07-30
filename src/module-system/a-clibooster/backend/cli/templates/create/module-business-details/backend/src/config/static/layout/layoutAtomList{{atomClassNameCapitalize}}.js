@@ -21,10 +21,7 @@ module.exports = app => {
                 dataIndex: 'userIdCreated',
                 title: 'Creator',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellUserName',
-                },
+                renderType: 'userName',
               },
               {
                 dataIndex: 'atomCreatedAt',
