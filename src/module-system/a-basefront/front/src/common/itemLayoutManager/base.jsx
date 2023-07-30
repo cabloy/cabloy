@@ -127,6 +127,8 @@ export default {
       options.layout = this.layout.current;
       // for detail
       options.containerMode = this.container.mode;
+      // flowTaskId
+      options.flowTaskId = this.base_flowTaskId;
       // need not atomIdMain
       // // atomIdMain
       // options.atomIdMain = this.base_atomIdMain;
