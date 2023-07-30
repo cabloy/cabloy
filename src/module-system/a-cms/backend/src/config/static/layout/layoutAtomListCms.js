@@ -17,10 +17,7 @@ module.exports = app => {
                 dataIndex: 'atomName',
                 title: 'Atom Name',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellAtomName',
-                },
+                renderType: 'atomName',
               },
               {
                 dataIndex: 'atomCategoryName',
@@ -65,7 +62,7 @@ module.exports = app => {
   const layout = {
     atomName: 'CMS',
     atomStaticKey: 'layoutAtomListCms',
-    atomRevision: 3,
+    atomRevision: 4,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

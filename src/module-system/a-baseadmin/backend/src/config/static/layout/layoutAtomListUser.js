@@ -25,10 +25,7 @@ module.exports = app => {
                 dataIndex: 'atomName',
                 title: 'Username',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellAtomName',
-                },
+                renderType: 'atomName',
                 params: {
                   mapper: {
                     avatar: true,
@@ -74,7 +71,7 @@ module.exports = app => {
   const layout = {
     atomName: 'User',
     atomStaticKey: 'layoutAtomListUser',
-    atomRevision: 3,
+    atomRevision: 4,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

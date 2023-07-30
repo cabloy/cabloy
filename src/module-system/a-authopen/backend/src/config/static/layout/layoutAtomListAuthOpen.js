@@ -10,10 +10,7 @@ module.exports = app => {
                 dataIndex: 'atomName',
                 title: 'Atom Name',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellAtomName',
-                },
+                renderType: 'atomName',
               },
               {
                 dataIndex: 'description',
@@ -48,7 +45,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Open Auth',
     atomStaticKey: 'layoutAtomListAuthOpen',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

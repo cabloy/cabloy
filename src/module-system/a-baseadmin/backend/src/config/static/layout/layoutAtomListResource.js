@@ -17,10 +17,7 @@ module.exports = app => {
                 dataIndex: 'atomName',
                 title: 'Atom Name',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellAtomName',
-                },
+                renderType: 'atomName',
               },
               {
                 dataIndex: 'resourceType',
@@ -97,7 +94,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Resource',
     atomStaticKey: 'layoutAtomListResource',
-    atomRevision: 8,
+    atomRevision: 9,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

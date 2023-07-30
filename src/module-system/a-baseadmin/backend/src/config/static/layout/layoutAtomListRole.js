@@ -38,10 +38,7 @@ module.exports = app => {
                 title: 'Role Name',
                 align: 'left',
                 width: 300,
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellAtomName',
-                },
+                renderType: 'atomName',
               },
               {
                 dataIndex: 'roleTypeCode',
@@ -86,7 +83,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Role',
     atomStaticKey: 'layoutAtomListRole',
-    atomRevision: 6,
+    atomRevision: 7,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
