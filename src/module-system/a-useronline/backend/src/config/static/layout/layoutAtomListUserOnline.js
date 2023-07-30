@@ -27,10 +27,7 @@ module.exports = app => {
                 dataIndex: 'onlineStatus',
                 title: 'Status',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellDict',
-                },
+                renderType: 'dict',
               },
               {
                 dataIndex: 'loginCount',

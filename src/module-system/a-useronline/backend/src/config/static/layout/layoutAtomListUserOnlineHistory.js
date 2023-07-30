@@ -27,10 +27,7 @@ module.exports = app => {
                 dataIndex: 'isLogin',
                 title: 'LoginType',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellDict',
-                },
+                renderType: 'dict',
               },
               {
                 dataIndex: 'onlineIP',

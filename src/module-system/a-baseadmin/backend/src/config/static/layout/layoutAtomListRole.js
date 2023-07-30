@@ -44,10 +44,7 @@ module.exports = app => {
                 dataIndex: 'roleTypeCode',
                 title: 'Role Type',
                 align: 'left',
-                component: {
-                  module: 'a-baserender',
-                  name: 'renderTableCellDict',
-                },
+                renderType: 'dict',
               },
               {
                 dataIndex: 'sorting',
@@ -83,7 +80,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Role',
     atomStaticKey: 'layoutAtomListRole',
-    atomRevision: 7,
+    atomRevision: 9,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
