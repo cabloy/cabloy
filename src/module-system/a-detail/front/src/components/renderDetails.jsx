@@ -22,8 +22,10 @@ function installFactory(_Vue) {
       const options = {
         atomIdMain: parcel.data.atomId,
         atomMain: parcel.data,
-        flowTaskId: (validate.host && validate.host.flowTaskId) || 0,
       };
+      if (validate.host?.flowTaskId) {
+        options.flowTaskId = validate.host?.flowTaskId;
+      }
       const params = {
         pageTitle: this.context.getTitle(true),
       };

@@ -23,6 +23,9 @@ export default {
     base_atomMain() {
       return this.container.options?.atomMain || this.base._atomMain;
     },
+    base_flowTaskId() {
+      return this.container.options?.flowTaskId;
+    },
   },
   created() {
     this.$store.dispatch('a/base/getLabels');

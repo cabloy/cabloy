@@ -17,6 +17,7 @@ export default {
         atomClassBase: this.base.atomClassBase,
         atomIdMain: this.base_atomIdMain,
         atomMain: this.base_atomMain,
+        flowTaskId: this.base_flowTaskId,
       };
     },
   },

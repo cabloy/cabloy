@@ -20,6 +20,10 @@ export default {
     if (atomMain) {
       options.atomMain = atomMain;
     }
+    // flowTaskId
+    if (query.flowTaskId) {
+      options.flowTaskId = parseInt(query.flowTaskId);
+    }
     return {
       container: {
         atomClass,
