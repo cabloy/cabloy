@@ -6,7 +6,14 @@ export default {
       await ctx.$view.dialog.confirm();
       const key = { atomId: item.atomId, itemId: item.itemId };
       const atomClass = { module: item.module, atomClassName: item.atomClassName };
-      await ctx.$api.post('/a/base/atom/delete', { key, atomClass });
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
+      // options
+      const options = {};
+      if (dataOptions.flowTaskId) {
+        options.flowTaskId = dataOptions.flowTaskId;
+      }
+      await ctx.$api.post('/a/base/atom/delete', { key, atomClass, options });
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action });
       // update formal
       if (item.atomStage === 0 && item.atomIdFormal) {
