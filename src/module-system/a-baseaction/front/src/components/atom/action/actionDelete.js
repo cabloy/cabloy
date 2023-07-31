@@ -4,7 +4,9 @@ export default {
       const { ctx, action, item } = this.$props;
       // delete
       await ctx.$view.dialog.confirm();
+      // key
       const key = { atomId: item.atomId, itemId: item.itemId };
+      // atomClass
       const atomClass = { module: item.module, atomClassName: item.atomClassName };
       // dataOptions
       const dataOptions = action.dataOptions || {};
@@ -13,8 +15,17 @@ export default {
       if (dataOptions.flowTaskId) {
         options.flowTaskId = dataOptions.flowTaskId;
       }
-      await ctx.$api.post('/a/base/atom/delete', { key, atomClass, options });
-      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action });
+      // post
+      await ctx.$api.post('/a/base/atom/delete', {
+        key,
+        atomClass,
+        options,
+      });
+      ctx.$meta.eventHub.$emit('atom:action', {
+        key,
+        atomClass,
+        action,
+      });
       // update formal
       if (item.atomStage === 0 && item.atomIdFormal) {
         ctx.$meta.eventHub.$emit('atom:action', {
