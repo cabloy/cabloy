@@ -70,6 +70,10 @@ export default {
       if (dataOptions.atomIdMain) {
         params.options.atomIdMain = dataOptions.atomIdMain;
       }
+      // flowTaskId
+      if (dataOptions.flowTaskId) {
+        params.options.flowTaskId = dataOptions.flowTaskId;
+      }
       // ok
       return params;
     },

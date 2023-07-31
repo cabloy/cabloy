@@ -38,6 +38,9 @@ export default {
         atomIdMain: this.base_atomIdMain,
         atomMain: this.base_atomMain,
       };
+      if (this.base_flowTaskId) {
+        dataOptions.flowTaskId = this.base_flowTaskId;
+      }
       // not use this.$utils.extend
       actionBase = Object.assign({}, actionBase, { targetEl: event.currentTarget }, { dataOptions });
       // item
