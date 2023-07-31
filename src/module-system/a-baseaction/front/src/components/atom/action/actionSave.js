@@ -10,6 +10,8 @@ export default {
       // atomClassBase
       const useStoreAtomClasses = await ctx.$store.use('a/basestore/atomClasses');
       const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
       // onActionSaveBefore: should after createDelay
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSaveBefore) {
@@ -19,6 +21,9 @@ export default {
       const options = {};
       if (!atomClassBase.itemOnly && item.atomStage === 0) {
         options.saveDraftOnly = true;
+      }
+      if (dataOptions.flowTaskId) {
+        options.flowTaskId = dataOptions.flowTaskId;
       }
       // write
       const key = { atomId: item.atomId, itemId: item.itemId };

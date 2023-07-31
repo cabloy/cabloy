@@ -114,10 +114,14 @@ export default {
       const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
       const atomIdMain = this.base.item[atomIdMainFieldName];
       this.base._atomIdMain = atomIdMain;
+      const options = {};
+      if (this.base_flowTaskId) {
+        options.flowTaskId = this.base_flowTaskId;
+      }
       this.base._atomMain = await this.$api.post('/a/base/atom/read', {
         key: { atomId: atomIdMain },
         atomClass: this.base.atomClassBase.detail.atomClassMain,
-        options: {},
+        options,
       });
     },
     base_prepareReadOptions() {
