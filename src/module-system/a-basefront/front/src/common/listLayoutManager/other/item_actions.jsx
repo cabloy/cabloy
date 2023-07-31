@@ -13,6 +13,9 @@ export default {
         atomIdMain: this.base_atomIdMain,
         atomMain: this.base_atomMain,
       };
+      if (this.base_flowTaskId) {
+        dataOptions.flowTaskId = this.base_flowTaskId;
+      }
       // not use this.$utils.extend
       _action = Object.assign({}, _action, { dataOptions });
       await this.$meta.util.performAction({ ctx: this, action: _action, item });

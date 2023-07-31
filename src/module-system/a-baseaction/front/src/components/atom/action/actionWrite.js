@@ -89,6 +89,9 @@ export default {
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
       };
+      if (dataOptions.flowTaskId) {
+        queries.flowTaskId = dataOptions.flowTaskId;
+      }
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });

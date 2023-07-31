@@ -16,6 +16,9 @@ export default {
         itemId: item.itemId,
         ...atomClass,
       };
+      if (dataOptions.flowTaskId) {
+        queries.flowTaskId = dataOptions.flowTaskId;
+      }
       // url
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       // open
