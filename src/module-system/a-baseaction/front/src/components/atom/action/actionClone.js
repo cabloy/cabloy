@@ -13,8 +13,17 @@ export default {
         };
         // dataOptions
         const dataOptions = action.dataOptions || {};
+        // options
+        const options = {};
+        if (dataOptions.flowTaskId) {
+          options.flowTaskId = dataOptions.flowTaskId;
+        }
         // clone
-        const data = await ctx.$api.post('/a/base/atom/clone', { key, atomClass });
+        const data = await ctx.$api.post('/a/base/atom/clone', {
+          key,
+          atomClass,
+          options,
+        });
         const dataRes = data.draft || data.formal;
         const keyDraft = dataRes.key;
         const atomDraft = dataRes.atom;
@@ -32,6 +41,9 @@ export default {
           itemId: atomDraft.itemId,
           ...atomClass,
         };
+        if (dataOptions.flowTaskId) {
+          queries.flowTaskId = dataOptions.flowTaskId;
+        }
         // url
         const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
         // open
