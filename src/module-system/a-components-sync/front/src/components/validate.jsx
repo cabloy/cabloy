@@ -263,7 +263,9 @@ export default {
       const moduleName = this.params.module || this.$page.$module.name;
       this.schemaModuleName = moduleName;
       await this.$meta.module.use(moduleName);
-      const data = await this.$api.post('/a/validation/validation/schema', {
+      // useStore
+      const useStoreSchemas = await this.$store.use('a/validation/schemas');
+      const data = await useStoreSchemas.getSchema({
         module: moduleName,
         validator: this.params.validator,
         schema: this.params.schema,
