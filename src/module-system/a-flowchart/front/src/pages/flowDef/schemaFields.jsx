@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     pageTitle() {
-      return this.$text('FieldRights');
+      return this.$text('FieldsRight');
     },
     context() {
       return this.contextParams.context;
@@ -53,7 +53,14 @@ export default {
       });
     },
     _renderRights() {
-      return <div>ddd</div>;
+      return (
+        <SchemaFieldsCommon
+          context={this.context}
+          readOnly={this.readOnly}
+          valueSchema={this.valueSchema}
+          schemaReference={this.schemaReference}
+        ></SchemaFieldsCommon>
+      );
     },
     _renderAll() {
       return this._renderRights();
