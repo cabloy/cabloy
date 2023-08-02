@@ -50,7 +50,7 @@
 </template>
 <script>
 import Vue from 'vue';
-import schemaFieldsTab from '../../components/schemaFields/schemaFieldsTab.jsx';
+import schemaFieldsTab from '../../components/fields/schemaFieldsTab.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   mixins: [ebPageContext],

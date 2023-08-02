@@ -19,6 +19,7 @@ export default [
   { path: 'category/edit', component: load('category/edit') },
   { path: 'tag/management', component: loadjsx('tag/management') },
   { path: 'tag/list', component: load('tag/list') },
+  { path: 'fields/fieldsRight', component: loadjsx('fields/fieldsRight') },
   // bak
   // { path: 'atomRight/edit', component: loadjsx('atomRight/edit') },
   // { path: 'atomRight/add', component: loadjsx('atomRight/add') },

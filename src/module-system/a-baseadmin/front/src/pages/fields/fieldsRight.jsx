@@ -1,10 +1,10 @@
 import Vue from 'vue';
-import SchemaFieldsCommon from '../../components/schemaFields/schemaFieldsCommon.jsx';
+import FieldsRightCommon from '../../components/fields/fieldsRightCommon.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   mixins: [ebPageContext],
   components: {
-    SchemaFieldsCommon,
+    FieldsRightCommon,
   },
   data() {
     return {
@@ -54,12 +54,12 @@ export default {
     },
     _renderRights() {
       return (
-        <SchemaFieldsCommon
+        <FieldsRightCommon
           context={this.context}
           readOnly={this.readOnly}
           valueSchema={this.valueSchema}
           schemaReference={this.schemaReference}
-        ></SchemaFieldsCommon>
+        ></FieldsRightCommon>
       );
     },
     _renderAll() {

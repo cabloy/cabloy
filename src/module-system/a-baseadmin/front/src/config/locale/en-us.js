@@ -18,4 +18,5 @@ export default {
   DataScopeTitle: 'Data Scope',
   SelectDataScope: 'Select Data Scope',
   AddRoleInherit: 'Add Role Inherit',
+  FieldsRight: 'Fields Right',
 };
