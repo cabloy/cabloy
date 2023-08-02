@@ -57,14 +57,14 @@ export default {
     async _prepareSchema() {
       const metaScene = this._getMetaScene();
       // schema
-      const schema = await this.$api.post('/a/validation/validation/schema', {
+      const useStoreSchemas = await this.$store.use('a/validation/schemas');
+      const schema = await useStoreSchemas.getSchema({
         module: metaScene.validator.module,
         validator: metaScene.validator.validator,
         schema: null,
       });
       // combine schema
-      this._combineSchema(schema);
-      this.schema = schema;
+      this.schema = this._combineSchema(schema);
     },
     _prepareData() {
       const data = this.$meta.util.extend({}, this.item.scenes[this.sceneName]);
@@ -95,6 +95,8 @@ export default {
     _combineSchema(schema) {
       const metaScene = this._getMetaScene();
       if (metaScene.mode !== 'redirect') return;
+      // need copy
+      schema = this.$meta.util.extend({}, schema);
       schema.schema.properties = {
         ...schema.schema.properties,
         __groupUrlInfo: {
@@ -122,6 +124,7 @@ export default {
           },
         },
       };
+      return schema;
     },
     _renderValidate() {
       if (!this.ready) return;
