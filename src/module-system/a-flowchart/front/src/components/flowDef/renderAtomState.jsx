@@ -25,12 +25,8 @@ export default {
       this.atomStage = parseInt(atomClassAndStage.atomStage || 0);
     },
     async getAtomClassAndStage() {
-      const action = {
-        name: 'getAtomClassAndStage',
-        actionModule: 'a-flowchart',
-        actionComponent: 'actionUserTask',
-      };
-      return await this.$meta.util.performAction({ ctx: this, action, item: this.context });
+      const useStoreUserTask = await this.$store.use('a/flowchart/userTask');
+      return await useStoreUserTask.getAtomClassAndStage({ ctx: this, context: this.context });
     },
     getDictKey() {
       if (!this.atomClass) return null;

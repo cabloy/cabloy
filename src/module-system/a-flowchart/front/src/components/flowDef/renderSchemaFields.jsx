@@ -11,12 +11,8 @@ export default {
   created() {},
   methods: {
     async getSchemaReference() {
-      const action = {
-        name: 'getSchemaReference',
-        actionModule: 'a-flowchart',
-        actionComponent: 'actionUserTask',
-      };
-      return await this.$meta.util.performAction({ ctx: this, action, item: this.context });
+      const useStoreUserTask = await this.$store.use('a/flowchart/userTask');
+      return await useStoreUserTask.getSchemaReference({ ctx: this, context: this.context });
     },
     async onChooseSchemaFields() {
       const schemaReference = await this.getSchemaReference();
@@ -33,7 +29,7 @@ export default {
         nodeId: container.id,
       };
       // url
-      const url = this.$meta.util.combineQueries('/a/flowchart/flowDef/schemaFields', queries);
+      const url = this.$meta.util.combineQueries('/a/baseadmin/fields/fieldsRight', queries);
       this.$view.navigate(url, {
         target: '_self',
         context: {
