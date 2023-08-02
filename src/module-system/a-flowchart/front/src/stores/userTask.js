@@ -46,28 +46,28 @@ export default {
       // ok
       return schemaRes;
     },
-  },
-  __findNode_startEventAtom({ diagram, nodeId }) {
-    // maybe this node is startEventAtom
-    let nodePrevious = diagram.contentProcess.nodes.find(item => item.id === nodeId);
-    if (!nodePrevious) return null;
-    // loop
-    const nodeIdCaches = {};
-    while (true) {
-      // check first
-      if (nodePrevious.type.indexOf('startEventAtom') > -1) return nodePrevious;
-      // previous
-      nodeIdCaches[nodeId] = true;
-      nodePrevious = this.__findNode_previous({ diagram, nodeId, nodeIdCaches });
+    __findNode_startEventAtom({ diagram, nodeId }) {
+      // maybe this node is startEventAtom
+      let nodePrevious = diagram.contentProcess.nodes.find(item => item.id === nodeId);
       if (!nodePrevious) return null;
-      nodeId = nodePrevious.id;
-    }
-  },
-  __findNode_previous({ diagram, nodeId, nodeIdCaches }) {
-    const edge = diagram.contentProcess.edges.find(item => {
-      return item.target === nodeId && !nodeIdCaches[item.source];
-    });
-    if (!edge) return null;
-    return diagram.contentProcess.nodes.find(item => item.id === edge.source);
+      // loop
+      const nodeIdCaches = {};
+      while (true) {
+        // check first
+        if (nodePrevious.type.indexOf('startEventAtom') > -1) return nodePrevious;
+        // previous
+        nodeIdCaches[nodeId] = true;
+        nodePrevious = this.__findNode_previous({ diagram, nodeId, nodeIdCaches });
+        if (!nodePrevious) return null;
+        nodeId = nodePrevious.id;
+      }
+    },
+    __findNode_previous({ diagram, nodeId, nodeIdCaches }) {
+      const edge = diagram.contentProcess.edges.find(item => {
+        return item.target === nodeId && !nodeIdCaches[item.source];
+      });
+      if (!edge) return null;
+      return diagram.contentProcess.nodes.find(item => item.id === edge.source);
+    },
   },
 };
