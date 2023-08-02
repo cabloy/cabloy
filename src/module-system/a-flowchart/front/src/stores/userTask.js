@@ -3,6 +3,12 @@ export default {
     return {};
   },
   actions: {
+    async getAtomClass({ ctx, context }) {
+      // atomClass
+      const atomClassAndStage = await this.getAtomClassAndStage({ ctx, context });
+      if (!atomClassAndStage) return null;
+      return atomClassAndStage.atomClass;
+    },
     async getAtomClassAndStage({ ctx, context }) {
       // validate
       const { validate } = context;
