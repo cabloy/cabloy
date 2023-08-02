@@ -1,4 +1,3 @@
-import actionUserTask from './components/action/actionUserTask.js';
 import renderAtomState from './components/flowDef/renderAtomState.jsx';
 import renderAssignees from './components/flowDef/renderAssignees.jsx';
 import renderBeanFlowService from './components/flowDef/renderBeanFlowService.jsx';
@@ -12,7 +11,6 @@ import contentEditSource from './components/flowDef/contentEditSource.jsx';
 import contentEditListener from './components/flowDef/contentEditListener.jsx';
 
 export default {
-  actionUserTask,
   renderAtomState,
   renderAssignees,
   renderBeanFlowService,
