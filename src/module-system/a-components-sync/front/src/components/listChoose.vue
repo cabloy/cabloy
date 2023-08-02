@@ -41,6 +41,8 @@ export default {
       } catch (err) {
         if (err && err.code !== 401 && err.message) {
           this.$view.toast.show({ text: trimMessage(this, err.message) });
+          // should throw error
+          throw err;
         }
       }
     },

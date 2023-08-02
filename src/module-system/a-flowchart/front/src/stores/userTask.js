@@ -39,17 +39,9 @@ export default {
       // atomClass
       const atomClass = await this.getAtomClass({ ctx, context });
       if (!atomClass) return null;
-      // validator
-      const validator = await ctx.$api.post('/a/base/atom/validator', {
-        atomClass,
-      });
-      // schema
-      const schemaRes = await ctx.$api.post('/a/validation/validation/schema', {
-        module: validator.module,
-        validator: validator.validator,
-        schema: null,
-      });
-      // ok
+      // useStore
+      const useStoreSchemas = await ctx.$store.use('a/validation/schemas');
+      const schemaRes = await useStoreSchemas.getSchemaByAtomClass({ atomClass });
       return schemaRes;
     },
     __findNode_startEventAtom({ diagram, nodeId }) {
