@@ -13,5 +13,5 @@ export default [
   { path: 'flowDef/contentProcessView', component: load('flowDef/contentProcessView') },
   { path: 'flowDef/nodes', component: loadjsx('flowDef/nodes') },
   { path: 'flowDef/nodeProperties', component: loadjsx('flowDef/nodeProperties') },
-  { path: 'flowDef/schemaFields', component: load('flowDef/schemaFields') },
+  { path: 'flowDef/schemaFields', component: loadjsx('flowDef/schemaFields') },
 ];

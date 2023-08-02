@@ -13,6 +13,7 @@ export default {
   NotFoundStartEventAtom: '未发现：数据起草开始事件',
   NotSetStartEventAtom: '未设置：数据起草开始事件',
   Gateway: '网关',
+  FieldRights: '字段权限',
   'Flow Chart': '流程图',
   'Start Event': '开始事件',
   'End Event': '结束事件',
