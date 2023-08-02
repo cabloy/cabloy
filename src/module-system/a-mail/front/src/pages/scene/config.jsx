@@ -56,7 +56,8 @@ export default {
     },
     async _prepareSchema() {
       // schema
-      const schema = await this.$api.post('/a/validation/validation/schema', {
+      const useStoreSchemas = await this.$store.use('a/validation/schemas');
+      const schema = await useStoreSchemas.getSchema({
         module: 'a-mail',
         validator: 'mailScene',
         schema: null,

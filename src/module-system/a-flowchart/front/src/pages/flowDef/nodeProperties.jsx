@@ -182,7 +182,8 @@ export default {
       // schemaOptions
       let schemaOptions;
       if (base.validator) {
-        schemaOptions = await this.$api.post('/a/validation/validation/schema', {
+        const useStoreSchemas = await this.$store.use('a/validation/schemas');
+        schemaOptions = await useStoreSchemas.getSchema({
           module: base.validator.module,
           validator: base.validator.validator,
           schema: null,
