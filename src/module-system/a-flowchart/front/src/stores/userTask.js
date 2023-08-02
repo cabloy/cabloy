@@ -3,12 +3,6 @@ export default {
     return {};
   },
   actions: {
-    async getAtomClass({ ctx, context }) {
-      // atomClass
-      const atomClassAndStage = await this.getAtomClassAndStage({ ctx, context });
-      if (!atomClassAndStage) return null;
-      return atomClassAndStage.atomClass;
-    },
     async getAtomClassAndStage({ ctx, context }) {
       // validate
       const { validate } = context;
@@ -35,13 +29,19 @@ export default {
       // ok
       return { atomClass, atomStage };
     },
-    async getSchemaReference({ ctx, context }) {
+    async getAtomClass({ ctx, context }) {
       // atomClass
       const atomClassAndStage = await this.getAtomClassAndStage({ ctx, context });
       if (!atomClassAndStage) return null;
+      return atomClassAndStage.atomClass;
+    },
+    async getSchemaReference({ ctx, context }) {
+      // atomClass
+      const atomClass = await this.getAtomClass({ ctx, context });
+      if (!atomClass) return null;
       // validator
       const validator = await ctx.$api.post('/a/base/atom/validator', {
-        atomClass: atomClassAndStage.atomClass,
+        atomClass,
       });
       // schema
       const schemaRes = await ctx.$api.post('/a/validation/validation/schema', {
