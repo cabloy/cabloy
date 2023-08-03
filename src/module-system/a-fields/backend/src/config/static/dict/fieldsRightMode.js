@@ -1,16 +1,16 @@
 module.exports = app => {
   const dictItems = [
     {
-      code: 'default',
-      title: 'AllowAllFields',
+      code: 'allowAllFieldsRead',
+      title: 'AllowAllFieldsRead',
     },
     {
-      code: 'whitelist',
+      code: 'allowAllFieldsReadWrite',
+      title: 'AllowAllFieldsReadWrite',
+    },
+    {
+      code: 'allowSpecificFields',
       title: 'AllowSpecificFields',
-    },
-    {
-      code: 'blacklist',
-      title: 'ConstraintSpecificFields',
     },
     {
       code: 'custom',
@@ -19,14 +19,14 @@ module.exports = app => {
   ];
   const dictLocales = {
     'en-us': {
-      AllowAllFields: 'Allow All Fields',
-      AllowSpecificFields: 'Allow Specific Fields(Whitelist)',
-      ConstraintSpecificFields: 'Constraint Specific Fields(Blacklist)',
+      AllowAllFieldsRead: 'Allow All Fields(Read)',
+      AllowAllFieldsReadWrite: 'Allow All Fields(Read/Write)',
+      AllowSpecificFields: 'Allow Specific Fields',
     },
     'zh-cn': {
-      AllowAllFields: '允许所有字段',
-      AllowSpecificFields: '允许指定字段(白名单)',
-      ConstraintSpecificFields: '限制指定字段(黑名单)',
+      AllowAllFieldsRead: '允许所有字段(读)',
+      AllowAllFieldsReadWrite: '允许所有字段(读写)',
+      AllowSpecificFields: '允许指定字段',
       Custom: '自定义',
     },
   };

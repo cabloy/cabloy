@@ -1,1 +1,3 @@
-module.exports = {};
+module.exports = {
+  FieldsRightMode: 'Fields Right Mode',
+};
