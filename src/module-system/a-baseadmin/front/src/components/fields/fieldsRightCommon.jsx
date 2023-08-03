@@ -16,6 +16,18 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    async init() {
+      const schemaReference = await this.getSchemaReference();
+      if (!schemaReference) return;
+      // module
+      await this.$meta.module.use(schemaReference.module);
+    },
+    async getSchemaReference() {
+      const useStoreUserTask = await this.$store.use('a/flowchart/userTask');
+      return await useStoreUserTask.getSchemaReference({ ctx: this, context: this.context });
+    },
+  },
   render() {
     return (
       <eb-list form inline-labels no-hairlines-md>
