@@ -5,7 +5,13 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      aa: {
+        user: {
+          name: 'yang',
+        },
+      },
+    };
   },
   computed: {},
   created() {},

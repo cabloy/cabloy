@@ -7,36 +7,33 @@ export default {
     FieldsRightCommon,
   },
   data() {
+    const mode = this.$f7route.query.mode;
+    const module = this.$f7route.query.module;
+    const atomClassName = this.$f7route.query.atomClassName;
     return {
-      flowDefId: parseInt(this.$f7route.query.flowDefId),
-      nodeId: this.$f7route.query.nodeId,
-      valueSchema: null,
+      mode, // view/edit
+      atomClass: {
+        module,
+        atomClassName,
+      },
+      fieldsRightSelf: null,
     };
   },
   computed: {
     pageTitle() {
       return this.$text('FieldsRight');
     },
-    context() {
-      return this.contextParams.context;
-    },
-    readOnly() {
-      return this.contextParams.readOnly;
-    },
-    value() {
-      return this.contextParams.value;
-    },
-    schemaReference() {
-      return this.contextParams.schemaReference;
+    fieldsRight() {
+      return this.contextParams.fieldsRight;
     },
   },
   created() {
-    this.valueSchema = this.value;
+    this.fieldsRightSelf = this.mode === 'view' ? this.fieldsRight : this.$meta.util.extend({}, this.fieldsRight);
   },
   methods: {
     onPerformDone() {
       // ok
-      this.contextCallback(200, this.valueSchema);
+      this.contextCallback(200, this.fieldsRightSelf);
       this.$f7router.back();
     },
     onPerformInfo() {
@@ -55,10 +52,9 @@ export default {
     _renderRights() {
       return (
         <FieldsRightCommon
-          context={this.context}
-          readOnly={this.readOnly}
-          valueSchema={this.valueSchema}
-          schemaReference={this.schemaReference}
+          mode={this.mode}
+          atomClass={this.atomClass}
+          fieldsRight={this.fieldsRightSelf}
         ></FieldsRightCommon>
       );
     },

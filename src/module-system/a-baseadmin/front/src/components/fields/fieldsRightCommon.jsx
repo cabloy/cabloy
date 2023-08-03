@@ -1,31 +1,40 @@
 export default {
   props: {
-    context: {
+    mode: {
+      type: String,
+    },
+    atomClass: {
       type: Object,
     },
-    readOnly: {
-      type: Boolean,
-    },
-    valueSchema: {
-      type: Object,
-    },
-    schemaReference: {
+    fieldsRight: {
       type: Object,
     },
   },
   data() {
-    return {};
+    return {
+      ready: false,
+      schemaBase: null,
+    };
+  },
+  created() {
+    this.init();
   },
   methods: {
     async init() {
-      const schemaReference = await this.getSchemaReference();
-      if (!schemaReference) return;
-      // module
-      await this.$meta.module.use(schemaReference.module);
+      await this.loadSchemaBase();
+      this.ready = true;
     },
-    async getSchemaReference() {
-      const useStoreUserTask = await this.$store.use('a/flowchart/userTask');
-      return await useStoreUserTask.getSchemaReference({ ctx: this, context: this.context });
+    async loadSchemaBase() {
+      // useStore
+      const useStoreSchemas = await this.$store.use('a/validation/schemas');
+      const schemaBase = await useStoreSchemas.getSchemaByAtomClass({ atomClass: this.atomClass });
+      if (!schemaBase) {
+        throw new Error(`schema not found: ${this.atomClass.module}:${this.atomClass.atomClassName}`);
+      }
+      // load module
+      await this.$meta.module.use(schemaBase.module);
+      // ok
+      this.schemaBase = schemaBase;
     },
   },
   render() {
