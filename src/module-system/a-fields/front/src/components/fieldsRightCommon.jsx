@@ -11,31 +11,10 @@ export default {
     },
   },
   data() {
-    return {
-      ready: false,
-      schemaBase: null,
-    };
-  },
-  created() {
-    this.init();
+    return {};
   },
   methods: {
-    async init() {
-      await this.loadSchemaBase();
-      this.ready = true;
-    },
-    async loadSchemaBase() {
-      // useStore
-      const useStoreSchemas = await this.$store.use('a/validation/schemas');
-      const schemaBase = await useStoreSchemas.getSchemaByAtomClass({ atomClass: this.atomClass });
-      if (!schemaBase) {
-        throw new Error(`schema not found: ${this.atomClass.module}:${this.atomClass.atomClassName}`);
-      }
-      // load module
-      await this.$meta.module.use(schemaBase.module);
-      // ok
-      this.schemaBase = schemaBase;
-    },
+    onInputMode(valueMode) {},
   },
   render() {
     return (
