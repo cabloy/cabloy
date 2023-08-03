@@ -4,7 +4,7 @@ import renderBeanFlowService from './components/flowDef/renderBeanFlowService.js
 import renderBehaviors from './components/flowDef/renderBehaviors.jsx';
 import renderFlowDefContent from './components/flowDef/renderFlowDefContent.jsx';
 import renderRejectedNode from './components/flowDef/renderRejectedNode.jsx';
-import renderSchemaFields from './components/flowDef/renderSchemaFields.jsx';
+import renderFieldsRight from './components/flowDef/renderFieldsRight.jsx';
 import renderSelectNode from './components/flowDef/renderSelectNode.jsx';
 import contentEditDiagram from './components/flowDef/contentEditDiagram.jsx';
 import contentEditSource from './components/flowDef/contentEditSource.jsx';
@@ -17,7 +17,7 @@ export default {
   renderBehaviors,
   renderFlowDefContent,
   renderRejectedNode,
-  renderSchemaFields,
+  renderFieldsRight,
   renderSelectNode,
   contentEditDiagram,
   contentEditSource,
