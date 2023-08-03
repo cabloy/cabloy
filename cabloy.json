@@ -108,6 +108,9 @@
           "a-event": {
             "scripts": ["npmPublish"]
           },
+          "a-fields": {
+            "scripts": ["npmPublish"]
+          },
           "a-file": {
             "scripts": ["npmPublish"]
           },

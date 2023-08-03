@@ -64,6 +64,7 @@
     "egg-born-module-a-dictbooster": "^4.8.8",
     "egg-born-module-a-echarts": "^4.8.4",
     "egg-born-module-a-event": "^4.8.4",
+    "egg-born-module-a-fields": "^4.0.0",
     "egg-born-module-a-file": "^4.8.13",
     "egg-born-module-a-flow": "^4.8.10",
     "egg-born-module-a-flowbehavior": "^4.8.4",
