@@ -11,7 +11,15 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      valueMode: 'allowAllFieldsRead',
+      valueModes: [
+        { title: 'AllowAllFieldsRead', value: 'allowAllFieldsRead' },
+        { title: 'AllowAllFieldsReadWrite', value: 'allowAllFieldsReadWrite' },
+        { title: 'AllowSpecificFields', value: 'allowSpecificFields' },
+        { title: 'Custom', value: 'custom' },
+      ],
+    };
   },
   methods: {
     onInputMode(valueMode) {},
@@ -21,12 +29,13 @@ export default {
       <eb-list form inline-labels no-hairlines-md>
         <f7-list-group>
           <f7-list-item
-            smartSelect={!this.readOnly}
+            class="eb-list-group-title"
+            smartSelect={this.mode === 'edit'}
             title={this.$text('Mode')}
             smartSelectParams={{ openIn: 'sheet', closeOnSelect: true }}
           >
             <eb-select
-              readOnly={this.readOnly}
+              readOnly={this.mode !== 'edit'}
               name="mode"
               value={this.valueMode}
               onInput={this.onInputMode}
