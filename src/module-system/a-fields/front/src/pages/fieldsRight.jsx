@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import FieldsRightCommon from '../../components/fields/fieldsRightCommon.jsx';
+import FieldsRightCommon from '../components/fieldsRightCommon.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
 export default {
   mixins: [ebPageContext],

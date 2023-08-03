@@ -29,7 +29,7 @@ export default {
         atomClassName: atomClass.atomClassName,
       };
       // url
-      const url = this.$meta.util.combineQueries('/a/baseadmin/fields/fieldsRight', queries);
+      const url = this.$meta.util.combineQueries('/a/fields/fieldsRight', queries);
       this.$view.navigate(url, {
         target: '_self',
         context: {
