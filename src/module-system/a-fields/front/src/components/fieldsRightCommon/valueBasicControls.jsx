@@ -21,10 +21,7 @@ export default {
         <f7-list-group>
           <f7-list-item class="eb-list-group-title" title={this.$text('FieldsRightBasicControls')}>
             <div slot="after">
-              <eb-checkbox
-                checked={this.basicControlsValue.read}
-                onInput={this.onChangeBasicControlsRead}
-              ></eb-checkbox>
+              <eb-checkbox value={this.basicControlsValue.read} onInput={this.onChangeBasicControlsRead}></eb-checkbox>
               <span>&nbsp;Read</span>
             </div>
           </f7-list-item>
