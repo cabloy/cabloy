@@ -4,4 +4,5 @@ export default {
   AllowAllFieldsReadWrite: 'Allow All Fields(Read/Write)',
   AllowSpecificFields: 'Allow Specific Fields',
   FieldsRightBasicControls: 'Basic Controls(All Fields)',
+  FieldsRightSpecificControls: 'Specific Controls',
 };
