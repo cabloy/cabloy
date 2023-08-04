@@ -9,7 +9,6 @@ export default {
   },
   methods: {
     onChangeBasicControlsRead(value) {
-      value = Boolean(value);
       const basic = this.basicControlsValue;
       basic.read = value;
       this.$set(this.fieldsRight, 'basic', basic);
