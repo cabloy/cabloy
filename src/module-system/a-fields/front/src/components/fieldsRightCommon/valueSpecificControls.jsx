@@ -166,7 +166,7 @@ export default {
       );
     },
     _renderListGroupValueSpecificControls() {
-      // if (!this.showSpecificControls) return null;
+      if (!this.showSpecificControls) return null;
       return (
         <f7-list-group>
           {this._renderListGroupValueSpecificControls_selectFields()}

@@ -18,7 +18,7 @@ export default {
       this.$emit('fieldsRightChange');
     },
     _renderListGroupValueBasicControls() {
-      // if (!this.showBasicControls) return null;
+      if (!this.showBasicControls) return null;
       return (
         <f7-list-group>
           <f7-list-item class="eb-list-group-title" title={'1. ' + this.$text('FieldsRightBasicControls')}>
