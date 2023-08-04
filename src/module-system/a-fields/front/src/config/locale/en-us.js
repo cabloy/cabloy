@@ -6,5 +6,8 @@ export default {
   FieldsRightBasicControls: 'Basic Controls(All Fields)',
   FieldsRightSpecificControls: 'Specific Controls',
   SelectFields: 'Select Fields',
-  FieldsRightPropertyGroup: 'Group',
+  FieldsRightProperty_Group: 'Group',
+  FieldsRightProperty_Field: 'Field',
+  FieldsRightProperty_AllowRead: 'Allow Read',
+  FieldsRightProperty_AllowWrite: 'Allow Write',
 };

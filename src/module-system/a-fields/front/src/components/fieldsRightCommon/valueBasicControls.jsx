@@ -29,7 +29,7 @@ export default {
       // if (!this.showBasicControls) return null;
       return (
         <f7-list-group>
-          <f7-list-item class="eb-list-group-title" title={this.$text('FieldsRightBasicControls')}>
+          <f7-list-item class="eb-list-group-title" title={'1. ' + this.$text('FieldsRightBasicControls')}>
             <div slot="after">
               <eb-checkbox
                 value={this.basicControlsValue.read}

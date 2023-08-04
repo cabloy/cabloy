@@ -76,30 +76,60 @@ export default {
       // emit
       this.$emit('fieldsRightChange');
     },
+    _renderListGroupValueSpecificControls_selectFields() {
+      return (
+        <f7-list-item class="eb-list-group-title" title={'2. ' + this.$text('FieldsRightSpecificControls')}>
+          <div slot="after">
+            <eb-button iconF7="::add" propsOnPerform={this.onPerformSelectFields}>
+              {this.$text('SelectFields')}
+            </eb-button>
+            <a ref="selectFields" class="item-link smart-select">
+              <eb-select
+                name="selectFields"
+                readOnly={this.mode !== 'edit'}
+                value={this.selectFieldsSelected}
+                onInput={this.onInputSelectFields}
+                multiple={true}
+                options={this.selectFieldsOptions}
+                propsOnGetDisplays={() => {
+                  return null;
+                }}
+              ></eb-select>
+            </a>
+          </div>
+        </f7-list-item>
+      );
+    },
+    _renderListGroupValueSpecificControls_fields() {
+      return (
+        <f7-list-item>
+          <div class="data-table data-table-fields-right-fields">
+            <table>
+              <thead>
+                <tr>
+                  <th class="label-cell">{this.$text('FieldsRightProperty_Field')}</th>
+                  <th class="label-cell">{this.$text('FieldsRightProperty_AllowRead')}</th>
+                  <th class="label-cell">{this.$text('FieldsRightProperty_AllowWrite')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th class="label-cell">dddd</th>
+                  <td class="label-cell">ff</td>
+                  <td class="label-cell">ff</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </f7-list-item>
+      );
+    },
     _renderListGroupValueSpecificControls() {
       // if (!this.showSpecificControls) return null;
       return (
         <f7-list-group>
-          <f7-list-item class="eb-list-group-title" title={this.$text('FieldsRightSpecificControls')}>
-            <div slot="after">
-              <eb-button iconF7="::add" propsOnPerform={this.onPerformSelectFields}>
-                {this.$text('SelectFields')}
-              </eb-button>
-              <a ref="selectFields" class="item-link smart-select">
-                <eb-select
-                  name="selectFields"
-                  readOnly={this.mode !== 'edit'}
-                  value={this.selectFieldsSelected}
-                  onInput={this.onInputSelectFields}
-                  multiple={true}
-                  options={this.selectFieldsOptions}
-                  propsOnGetDisplays={() => {
-                    return null;
-                  }}
-                ></eb-select>
-              </a>
-            </div>
-          </f7-list-item>
+          {this._renderListGroupValueSpecificControls_selectFields()}
+          {this._renderListGroupValueSpecificControls_fields()}
         </f7-list-group>
       );
     },

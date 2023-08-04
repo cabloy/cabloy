@@ -26,7 +26,7 @@ export default {
       if (!property.ebTitle) return null;
       let title = this.$text(property.ebTitle);
       if (property.ebType === 'group-flatten' || property.ebType === 'group') {
-        title = `====== ${this.$text('FieldsRightPropertyGroup')}: ${title}`;
+        title = `====== ${this.$text('FieldsRightProperty_Group')}: ${title}`;
       }
       return title;
     },
