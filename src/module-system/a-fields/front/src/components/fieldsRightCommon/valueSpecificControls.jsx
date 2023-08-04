@@ -6,7 +6,13 @@ export default {
     specificControlsValue() {
       return this.fieldsRight.fields || [];
     },
-    selectOptionsFields() {
+    selectFieldsSelected() {
+      const fields = this.specificControlsValue;
+      return fields.map(item => {
+        return typeof item === 'string' ? item : item.name;
+      });
+    },
+    selectFieldsOptions() {
       const options = [];
       const properties = this.schemaBase.schema.properties;
       for (const key in properties) {
@@ -34,7 +40,7 @@ export default {
         const domSelect = this.$refs.selectFields;
         const smartSelectParams = {
           el: domSelect,
-          openIn: 'page',
+          openIn: 'sheet',
           closeOnSelect: false,
           formatValueText: () => {
             return null;
@@ -44,6 +50,31 @@ export default {
         this.f7SmartSelectFields = this.$f7.smartSelect.create(smartSelectParams);
       }
       this.f7SmartSelectFields.open();
+    },
+    onInputSelectFields(fieldNamesSelected) {
+      const fieldsCurrent = this.specificControlsValue;
+      console.log(fieldsCurrent, fieldNamesSelected);
+      const fieldsResult = [];
+      const properties = this.schemaBase.schema.properties;
+      for (const key in properties) {
+        // check in fieldNamesNew
+        const indexSelected = fieldNamesSelected.indexOf(key);
+        if (indexSelected > -1) {
+          const fieldCurrent = fieldsCurrent.find(item => {
+            const _key = typeof item === 'string' ? item : item.name;
+            return _key === key;
+          });
+          if (fieldCurrent) {
+            fieldsResult.push(fieldCurrent);
+          } else {
+            fieldsResult.push(key);
+          }
+        }
+      }
+      // set
+      this.$set(this.fieldsRight, 'fields', fieldsResult);
+      // emit
+      this.$emit('fieldsRightChange');
     },
     _renderListGroupValueSpecificControls() {
       // if (!this.showSpecificControls) return null;
@@ -58,10 +89,10 @@ export default {
                 <eb-select
                   name="selectFields"
                   readOnly={this.mode !== 'edit'}
-                  value={this.valueMode}
-                  onInput={this.onInputMode}
+                  value={this.selectFieldsSelected}
+                  onInput={this.onInputSelectFields}
                   multiple={true}
-                  options={this.selectOptionsFields}
+                  options={this.selectFieldsOptions}
                   propsOnGetDisplays={() => {
                     return null;
                   }}

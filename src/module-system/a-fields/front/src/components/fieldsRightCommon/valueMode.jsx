@@ -15,7 +15,7 @@ export default {
     },
   },
   methods: {
-    onInputMode(valueMode) {
+    onInputValueMode(valueMode) {
       this.$set(this.fieldsRight, 'mode', valueMode);
       this.$emit('fieldsRightChange');
     },
@@ -32,7 +32,7 @@ export default {
               readOnly={this.mode !== 'edit'}
               name="mode"
               value={this.valueMode}
-              onInput={this.onInputMode}
+              onInput={this.onInputValueMode}
               multiple={false}
               options={this.valueModes}
             ></eb-select>
