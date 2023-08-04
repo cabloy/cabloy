@@ -7,22 +7,26 @@ export default {
       return this.fieldsRight.specific || [];
     },
   },
+  beforeDestroy() {
+    if (this.f7SmartSelectFields) {
+      this.f7SmartSelectFields.destroy();
+      this.f7SmartSelectFields = null;
+    }
+  },
   methods: {
     onPerformSelectFields() {
-      const domSelect = this.$refs.selectFields;
-      const ssParams = this.$utils.extend(
-        {
+      if (!this.f7SmartSelectFields) {
+        const domSelect = this.$refs.selectFields;
+        const smartSelectParams = {
           el: domSelect,
-        },
-        {
           openIn: 'page',
           closeOnSelect: false,
           formatValueText: () => {
             return null;
           },
-        }
-      );
-      this.f7SmartSelectFields = this.$f7.smartSelect.create(ssParams);
+        };
+        this.f7SmartSelectFields = this.$f7.smartSelect.create(smartSelectParams);
+      }
       this.f7SmartSelectFields.open();
     },
     _renderListGroupValueSpecificControls() {
