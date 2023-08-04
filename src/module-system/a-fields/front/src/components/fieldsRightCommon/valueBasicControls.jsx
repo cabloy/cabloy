@@ -16,6 +16,10 @@ export default {
       if (action === 'write' && checked) {
         basic.read = true;
       }
+      // special check for read
+      if (action === 'read' && !checked) {
+        basic.write = false;
+      }
       // set
       this.$set(this.fieldsRight, 'basic', basic);
       // emit
