@@ -22,11 +22,14 @@ export default {
     return {};
   },
   methods: {
-    __getPropertyTitle({ property }) {
+    __getPropertyTitle({ property, prefixGroup }) {
       if (!property.ebTitle) return null;
       let title = this.$text(property.ebTitle);
       if (property.ebType === 'group-flatten' || property.ebType === 'group') {
-        title = `====== ${this.$text('FieldsRightProperty_Group')}: ${title}`;
+        title = `${this.$text('FieldsRightProperty_Group')}: ${title}`;
+        if (prefixGroup) {
+          title = `====== ${title}`;
+        }
       }
       return title;
     },

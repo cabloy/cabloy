@@ -17,7 +17,7 @@ export default {
       const properties = this.schemaBase.schema.properties;
       for (const key in properties) {
         const property = properties[key];
-        const title = this.__getPropertyTitle({ property });
+        const title = this.__getPropertyTitle({ property, prefixGroup: true });
         if (title) {
           options.push({
             title,
@@ -101,6 +101,33 @@ export default {
       );
     },
     _renderListGroupValueSpecificControls_fields() {
+      const domRows = [];
+      const fields = this.specificControlsValue;
+      const properties = this.schemaBase.schema.properties;
+      for (const field of fields) {
+        let key;
+        let fieldInfo;
+        if (typeof field === 'string') {
+          key = field;
+          fieldInfo = { name: key, read: false, write: false };
+        } else {
+          key = field.name;
+          fieldInfo = field;
+        }
+        const property = properties[key];
+        const title = this.__getPropertyTitle({ property });
+        domRows.push(
+          <tr>
+            <th class="label-cell">{title}</th>
+            <td class="label-cell">
+              <eb-checkbox value={fieldInfo.read}></eb-checkbox>
+            </td>
+            <td class="label-cell">
+              <eb-checkbox value={fieldInfo.write}></eb-checkbox>
+            </td>
+          </tr>
+        );
+      }
       return (
         <f7-list-item>
           <div class="data-table data-table-fields-right-fields">
@@ -112,13 +139,7 @@ export default {
                   <th class="label-cell">{this.$text('FieldsRightProperty_AllowWrite')}</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <th class="label-cell">dddd</th>
-                  <td class="label-cell">ff</td>
-                  <td class="label-cell">ff</td>
-                </tr>
-              </tbody>
+              <tbody>{domRows}</tbody>
             </table>
           </div>
         </f7-list-item>
