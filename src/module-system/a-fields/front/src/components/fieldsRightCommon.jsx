@@ -12,7 +12,6 @@ export default {
   },
   data() {
     return {
-      valueMode: 'allowAllFieldsRead',
       valueModes: [
         { title: 'AllowAllFieldsRead', value: 'allowAllFieldsRead' },
         { title: 'AllowAllFieldsReadWrite', value: 'allowAllFieldsReadWrite' },
@@ -21,8 +20,19 @@ export default {
       ],
     };
   },
+  computed: {
+    valueMode() {
+      return this.fieldsRight.mode || 'allowAllFieldsRead';
+    },
+  },
+  created() {
+    this.init();
+  },
   methods: {
-    onInputMode(valueMode) {},
+    init() {},
+    onInputMode(valueMode) {
+      console.log(valueMode);
+    },
   },
   render() {
     return (

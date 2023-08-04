@@ -35,7 +35,11 @@ export default {
   methods: {
     async init() {
       // fieldsRight
-      this.fieldsRightSelf = this.mode === 'view' ? this.fieldsRight : this.$meta.util.extend({}, this.fieldsRight);
+      if (this.mode === 'view') {
+        this.fieldsRightSelf = this.fieldsRight || {};
+      } else {
+        this.fieldsRightSelf = this.$meta.util.extend({}, this.fieldsRight);
+      }
       // schemaBase
       await this.loadSchemaBase();
       // ready
