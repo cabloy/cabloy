@@ -8,10 +8,17 @@ export default {
     },
   },
   methods: {
-    onChangeBasicControlsRead(value) {
+    onChangeBasicControls(action, checked) {
       const basic = this.basicControlsValue;
-      basic.read = value;
+      // read/write
+      basic[action] = checked;
+      // special check for write
+      if (action === 'write' && checked) {
+        basic.read = true;
+      }
+      // set
       this.$set(this.fieldsRight, 'basic', basic);
+      // emit
       this.$emit('fieldsRightChange');
     },
     _renderListGroupValueBasicControls() {
@@ -20,8 +27,16 @@ export default {
         <f7-list-group>
           <f7-list-item class="eb-list-group-title" title={this.$text('FieldsRightBasicControls')}>
             <div slot="after">
-              <eb-checkbox value={this.basicControlsValue.read} onInput={this.onChangeBasicControlsRead}></eb-checkbox>
-              <span>&nbsp;Read</span>
+              <eb-checkbox
+                value={this.basicControlsValue.read}
+                onInput={value => this.onChangeBasicControls('read', value)}
+              ></eb-checkbox>
+              <span>&nbsp;{this.$text('Read')}&nbsp;</span>
+              <eb-checkbox
+                value={this.basicControlsValue.write}
+                onInput={value => this.onChangeBasicControls('write', value)}
+              ></eb-checkbox>
+              <span>&nbsp;{this.$text('Write')}</span>
             </div>
           </f7-list-item>
         </f7-list-group>
