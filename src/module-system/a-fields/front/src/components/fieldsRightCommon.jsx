@@ -1,9 +1,10 @@
 import MixinValueMode from './fieldsRightCommon/valueMode.jsx';
 import MixinValueBasicControls from './fieldsRightCommon/valueBasicControls.jsx';
 import MixinValueSpecificControls from './fieldsRightCommon/valueSpecificControls.jsx';
+import MixinValueCustom from './fieldsRightCommon/valueCustom.jsx';
 
 export default {
-  mixins: [MixinValueMode, MixinValueBasicControls, MixinValueSpecificControls],
+  mixins: [MixinValueMode, MixinValueBasicControls, MixinValueSpecificControls, MixinValueCustom],
   props: {
     mode: {
       type: String,
