@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 const f7Radio = Vue.options.components['f7-radio'].extendOptions;
 export default {
@@ -13,5 +12,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
