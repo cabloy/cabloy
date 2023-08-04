@@ -77,11 +77,7 @@ export default {
         },
       });
     },
-    onFieldsRightChange(fieldsRight) {
-      this.fieldsRightSelf = {
-        ...this.fieldsRightSelf,
-        ...fieldsRight,
-      };
+    onFieldsRightChange() {
       this.page_setDirty(true);
     },
     _renderRights() {

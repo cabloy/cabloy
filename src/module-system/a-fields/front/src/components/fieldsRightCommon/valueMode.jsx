@@ -16,7 +16,8 @@ export default {
   },
   methods: {
     onInputMode(valueMode) {
-      this.$emit('fieldsRightChange', { mode: valueMode, value: null });
+      this.$set(this.fieldsRight, 'mode', valueMode);
+      this.$emit('fieldsRightChange');
     },
     _renderListGroupValueMode() {
       return (

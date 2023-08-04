@@ -9,6 +9,7 @@ import component from './components/component.vue';
 import input from './components/input.vue';
 import toggle from './components/toggle.vue';
 import radio from './components/radio.jsx';
+import checkbox from './components/checkbox.jsx';
 import select from './components/select2.jsx';
 import validate from './components/validate.jsx';
 import validateItem from './components/validateItem.jsx';
@@ -47,6 +48,7 @@ export default {
   ebInput: input,
   ebToggle: toggle,
   ebRadio: radio,
+  ebCheckbox: checkbox,
   ebSelect: select,
   ebValidate: validate,
   ebList: list,
