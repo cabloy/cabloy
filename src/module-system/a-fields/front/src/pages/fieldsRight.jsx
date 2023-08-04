@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import FieldsRightCommon from '../components/fieldsRightCommon.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
+const ebPageDirty = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageDirty;
 export default {
-  mixins: [ebPageContext],
+  mixins: [ebPageContext, ebPageDirty],
   components: {
     FieldsRightCommon,
   },
@@ -23,7 +24,7 @@ export default {
   },
   computed: {
     pageTitle() {
-      return this.$text('FieldsRight');
+      return this.page_getDirtyTitle(this.$text('FieldsRight'));
     },
     fieldsRight() {
       return this.contextParams.fieldsRight;
@@ -60,6 +61,7 @@ export default {
     onPerformDone() {
       // ok
       this.contextCallback(200, this.fieldsRightSelf);
+      this.page_setDirty(false);
       this.$f7router.back();
     },
     onPerformHelp() {
@@ -80,6 +82,7 @@ export default {
         ...this.fieldsRightSelf,
         ...fieldsRight,
       };
+      this.page_setDirty(true);
     },
     _renderRights() {
       return (
