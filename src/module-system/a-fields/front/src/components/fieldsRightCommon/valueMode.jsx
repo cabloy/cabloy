@@ -18,7 +18,7 @@ export default {
     onInputMode(valueMode) {
       this.$emit('fieldsRightChange', { mode: valueMode, value: null });
     },
-    _renderListItemMode() {
+    _renderListGroupValueMode() {
       return (
         <f7-list-group>
           <f7-list-item
