@@ -1,8 +1,8 @@
 import MixinValueMode from './fieldsRightCommon/valueMode.jsx';
-import MixinValueBase from './fieldsRightCommon/valueBase.jsx';
+import MixinValueBasicControls from './fieldsRightCommon/valueBasicControls.jsx';
 
 export default {
-  mixins: [MixinValueMode, MixinValueBase],
+  mixins: [MixinValueMode, MixinValueBasicControls],
   props: {
     mode: {
       type: String,
@@ -28,7 +28,7 @@ export default {
     return (
       <eb-list form inline-labels no-hairlines-md>
         {this._renderListGroupValueMode()}
-        {this._renderListGroupValueBase()}
+        {this._renderListGroupValueBasicControls()}
       </eb-list>
     );
   },
