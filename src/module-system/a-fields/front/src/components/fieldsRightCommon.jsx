@@ -14,16 +14,22 @@ export default {
     fieldsRight: {
       type: Object,
     },
+    schemaBase: {
+      type: Object,
+    },
   },
   data() {
     return {};
   },
-  computed: {},
-  created() {
-    this.init();
-  },
   methods: {
-    init() {},
+    __getPropertyTitle({ property }) {
+      if (!property.ebTitle) return null;
+      let title = this.$text(property.ebTitle);
+      if (property.ebType === 'group-flatten' || property.ebType === 'group') {
+        title = `====== ${this.$text('FieldsRightPropertyGroup')}: ${title}`;
+      }
+      return title;
+    },
   },
   render() {
     return (

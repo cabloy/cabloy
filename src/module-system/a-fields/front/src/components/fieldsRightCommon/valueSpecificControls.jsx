@@ -4,7 +4,22 @@ export default {
       return this.valueMode === 'allowSpecificFields';
     },
     specificControlsValue() {
-      return this.fieldsRight.specific || [];
+      return this.fieldsRight.fields || [];
+    },
+    selectOptionsFields() {
+      const options = [];
+      const properties = this.schemaBase.schema.properties;
+      for (const key in properties) {
+        const property = properties[key];
+        const title = this.__getPropertyTitle({ property });
+        if (title) {
+          options.push({
+            title,
+            value: key,
+          });
+        }
+      }
+      return options;
     },
   },
   beforeDestroy() {
@@ -24,6 +39,7 @@ export default {
           formatValueText: () => {
             return null;
           },
+          pageTitle: this.$text('SelectFields'),
         };
         this.f7SmartSelectFields = this.$f7.smartSelect.create(smartSelectParams);
       }
@@ -44,8 +60,11 @@ export default {
                   readOnly={this.mode !== 'edit'}
                   value={this.valueMode}
                   onInput={this.onInputMode}
-                  multiple={false}
-                  options={this.valueModes}
+                  multiple={true}
+                  options={this.selectOptionsFields}
+                  propsOnGetDisplays={() => {
+                    return null;
+                  }}
                 ></eb-select>
               </a>
             </div>

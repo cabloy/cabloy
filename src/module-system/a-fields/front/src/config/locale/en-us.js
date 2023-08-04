@@ -6,4 +6,5 @@ export default {
   FieldsRightBasicControls: 'Basic Controls(All Fields)',
   FieldsRightSpecificControls: 'Specific Controls',
   SelectFields: 'Select Fields',
+  FieldsRightPropertyGroup: 'Group',
 };

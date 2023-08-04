@@ -86,11 +86,13 @@ export default {
           mode={this.mode}
           atomClass={this.atomClass}
           fieldsRight={this.fieldsRightSelf}
+          schemaBase={this.schemaBase}
           onFieldsRightChange={this.onFieldsRightChange}
         ></FieldsRightCommon>
       );
     },
     _renderAll() {
+      if (!this.ready) return null;
       return this._renderRights();
     },
     _renderNavRight() {

@@ -6,4 +6,5 @@ export default {
   FieldsRightBasicControls: '基础控制(所有字段)',
   FieldsRightSpecificControls: '指定控制',
   SelectFields: '选择字段',
+  FieldsRightPropertyGroup: '分组',
 };
