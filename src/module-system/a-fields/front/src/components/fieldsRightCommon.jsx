@@ -33,6 +33,18 @@ export default {
       }
       return title;
     },
+    __switchFieldActionStatus(fieldInfo, action, checked) {
+      // read/write
+      fieldInfo[action] = checked;
+      // special check for write
+      if (action === 'write' && checked) {
+        fieldInfo.read = true;
+      }
+      // special check for read
+      if (action === 'read' && !checked) {
+        fieldInfo.write = false;
+      }
+    },
   },
   render() {
     return (

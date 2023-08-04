@@ -10,16 +10,8 @@ export default {
   methods: {
     onChangeBasicControls(action, checked) {
       const basic = this.basicControlsValue;
-      // read/write
-      basic[action] = checked;
-      // special check for write
-      if (action === 'write' && checked) {
-        basic.read = true;
-      }
-      // special check for read
-      if (action === 'read' && !checked) {
-        basic.write = false;
-      }
+      // switch
+      this.__switchFieldActionStatus(basic, action, checked);
       // set
       this.$set(this.fieldsRight, 'basic', basic);
       // emit

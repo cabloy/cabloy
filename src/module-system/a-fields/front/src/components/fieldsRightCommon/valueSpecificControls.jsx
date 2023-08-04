@@ -53,7 +53,6 @@ export default {
     },
     onInputSelectFields(fieldNamesSelected) {
       const fieldsCurrent = this.specificControlsValue;
-      console.log(fieldsCurrent, fieldNamesSelected);
       const fieldsResult = [];
       const properties = this.schemaBase.schema.properties;
       for (const key in properties) {
@@ -73,6 +72,21 @@ export default {
       }
       // set
       this.$set(this.fieldsRight, 'fields', fieldsResult);
+      // emit
+      this.$emit('fieldsRightChange');
+    },
+    onChangeSpecificControlsField(action, fieldInfo, checked) {
+      // switch
+      this.__switchFieldActionStatus(fieldInfo, action, checked);
+      // change
+      const fields = this.specificControlsValue;
+      const fieldIndex = fields.find(item => {
+        const key = typeof item === 'string' ? item : item.name;
+        return key === fieldInfo.name;
+      });
+      fields.splice(fieldIndex, 1, fieldInfo);
+      // set
+      this.$set(this.fieldsRight, 'fields', fields);
       // emit
       this.$emit('fieldsRightChange');
     },
@@ -105,25 +119,31 @@ export default {
       const fields = this.specificControlsValue;
       const properties = this.schemaBase.schema.properties;
       for (const field of fields) {
-        let key;
+        let fieldName;
         let fieldInfo;
         if (typeof field === 'string') {
-          key = field;
-          fieldInfo = { name: key, read: false, write: false };
+          fieldName = field;
+          fieldInfo = { name: fieldName, read: false, write: false };
         } else {
-          key = field.name;
+          fieldName = field.name;
           fieldInfo = field;
         }
-        const property = properties[key];
+        const property = properties[fieldName];
         const title = this.__getPropertyTitle({ property });
         domRows.push(
           <tr>
             <th class="label-cell">{title}</th>
             <td class="label-cell">
-              <eb-checkbox value={fieldInfo.read}></eb-checkbox>
+              <eb-checkbox
+                value={fieldInfo.read}
+                onInput={value => this.onChangeSpecificControlsField('read', fieldInfo, value)}
+              ></eb-checkbox>
             </td>
             <td class="label-cell">
-              <eb-checkbox value={fieldInfo.write}></eb-checkbox>
+              <eb-checkbox
+                value={fieldInfo.write}
+                onInput={value => this.onChangeSpecificControlsField('write', fieldInfo, value)}
+              ></eb-checkbox>
             </td>
           </tr>
         );
