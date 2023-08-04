@@ -31,7 +31,7 @@ export default {
   methods: {
     init() {},
     onInputMode(valueMode) {
-      console.log(valueMode);
+      this.$emit('fieldsRightChange', { mode: valueMode, value: null });
     },
   },
   render() {

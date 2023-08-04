@@ -75,12 +75,19 @@ export default {
         },
       });
     },
+    onFieldsRightChange(fieldsRight) {
+      this.fieldsRightSelf = {
+        ...this.fieldsRightSelf,
+        ...fieldsRight,
+      };
+    },
     _renderRights() {
       return (
         <FieldsRightCommon
           mode={this.mode}
           atomClass={this.atomClass}
           fieldsRight={this.fieldsRightSelf}
+          onFieldsRightChange={this.onFieldsRightChange}
         ></FieldsRightCommon>
       );
     },
