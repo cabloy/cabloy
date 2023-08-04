@@ -80,7 +80,7 @@ export default {
       this.__switchFieldActionStatus(fieldInfo, action, checked);
       // change
       const fields = this.specificControlsValue;
-      const fieldIndex = fields.find(item => {
+      const fieldIndex = fields.findIndex(item => {
         const key = typeof item === 'string' ? item : item.name;
         return key === fieldInfo.name;
       });
