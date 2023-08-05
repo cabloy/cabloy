@@ -143,12 +143,14 @@ export default {
               <eb-checkbox
                 value={fieldInfo.read}
                 onInput={value => this.onChangeSpecificControlsField('read', fieldInfo, value)}
+                disabled={this.mode === 'view'}
               ></eb-checkbox>
             </td>
             <td class="label-cell">
               <eb-checkbox
                 value={fieldInfo.write}
                 onInput={value => this.onChangeSpecificControlsField('write', fieldInfo, value)}
+                disabled={this.mode === 'view'}
               ></eb-checkbox>
             </td>
           </tr>
