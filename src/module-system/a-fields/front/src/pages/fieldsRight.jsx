@@ -19,7 +19,7 @@ export default {
         atomClassName,
       },
       fieldsRightSelf: null,
-      schemaBase: null,
+      schemaBases: {},
     };
   },
   computed: {
@@ -41,22 +41,32 @@ export default {
       } else {
         this.fieldsRightSelf = this.$meta.util.extend({}, this.fieldsRight);
       }
-      // schemaBase
-      await this.loadSchemaBase();
+      // schemaBases
+      await this.loadAllSchemaBases();
       // ready
       this.ready = true;
     },
-    async loadSchemaBase() {
+    async loadAllSchemaBases() {
+      // main
+      await this.loadSchemaBase({ atomClass: this.atomClass });
+      // details
+    },
+    async loadSchemaBase({ atomClass }) {
+      // atomClass key
+      const atomClassKey = this._getAtomClassKey({ atomClass });
       // useStore
       const useStoreSchemas = await this.$store.use('a/validation/schemas');
-      const schemaBase = await useStoreSchemas.getSchemaByAtomClass({ atomClass: this.atomClass });
+      const schemaBase = await useStoreSchemas.getSchemaByAtomClass({ atomClass });
       if (!schemaBase) {
-        throw new Error(`schema not found: ${this.atomClass.module}:${this.atomClass.atomClassName}`);
+        throw new Error(`schema not found: ${atomClassKey}`);
       }
       // load module
       await this.$meta.module.use(schemaBase.module);
       // ok
-      this.schemaBase = schemaBase;
+      this.schemaBases[atomClassKey] = schemaBase;
+    },
+    _getAtomClassKey({ atomClass }) {
+      return `${atomClass.module}:${atomClass.atomClassName}`;
     },
     onPerformDone() {
       // ok
@@ -64,13 +74,16 @@ export default {
       this.page_setDirty(false);
       this.$f7router.back();
     },
-    onPerformHelp() {
+    onPerformHelp({ atomClass }) {
+      // atomClass key
+      const atomClassKey = this._getAtomClassKey({ atomClass });
+      const schemaBase = this.schemaBases[atomClassKey];
       // navigate
       this.$view.navigate(`/a/jsoneditor/json/editor?t=${Date.now()}`, {
         target: '_self',
         context: {
           params: {
-            value: this.schemaBase.schema,
+            value: schemaBase.schema,
             title: this.$text('ReferenceForHelp'),
             readOnly: true,
           },
@@ -80,20 +93,30 @@ export default {
     onFieldsRightChange() {
       this.page_setDirty(true);
     },
-    _renderRights() {
+    _renderRights({ main, atomClass }) {
+      // atomClass key
+      const atomClassKey = this._getAtomClassKey({ atomClass });
+      const schemaBase = this.schemaBases[atomClassKey];
+      let fieldsRight;
+      if (main) {
+        fieldsRight = this.fieldsRightSelf;
+      } else {
+        const details = this.fieldsRightSelf.details || {};
+        fieldsRight = details[atomClassKey] || {};
+      }
       return (
         <FieldsRightCommon
           mode={this.mode}
-          atomClass={this.atomClass}
-          fieldsRight={this.fieldsRightSelf}
-          schemaBase={this.schemaBase}
+          atomClass={atomClass}
+          fieldsRight={fieldsRight}
+          schemaBase={schemaBase}
           onFieldsRightChange={this.onFieldsRightChange}
         ></FieldsRightCommon>
       );
     },
     _renderAll() {
       if (!this.ready) return null;
-      return this._renderRights();
+      return this._renderRights({ main: true, atomClass: this.atomClass });
     },
     _renderNavRight() {
       if (!this.ready) return null;
