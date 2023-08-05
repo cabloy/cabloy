@@ -11,4 +11,6 @@ export default {
   FieldsRightProperty_Field: '字段',
   FieldsRightProperty_AllowRead: '允许读',
   FieldsRightProperty_AllowWrite: '允许写',
+  MainData: '主数据',
+  DetailData: '明细数据',
 };

@@ -20,7 +20,7 @@ export default {
       },
       fieldsRightSelf: null,
       schemaBases: {},
-      atomClassBase: null,
+      atomClassBases: {},
       atomClassDetails: null,
     };
   },
@@ -49,12 +49,13 @@ export default {
       this.ready = true;
     },
     async loadAllSchemaBases() {
+      // atomClass key
+      const atomClassKey = this._getAtomClassKey({ atomClass: this.atomClass });
       // main
       await this.loadSchemaBase({ atomClass: this.atomClass });
       // details
-      const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
-      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass: this.atomClass });
-      this.atomClassDetails = this.atomClassBase.details;
+      const atomClassBase = this.atomClassBases[atomClassKey];
+      this.atomClassDetails = atomClassBase.details;
       if (!this.atomClassDetails) return;
       for (const atomClassDetail of this.atomClassDetails) {
         await this.loadSchemaBase({ atomClass: atomClassDetail });
@@ -69,10 +70,17 @@ export default {
       if (!schemaBase) {
         throw new Error(`schema not found: ${atomClassKey}`);
       }
+      this.schemaBases[atomClassKey] = schemaBase;
       // load module
       await this.$meta.module.use(schemaBase.module);
-      // ok
-      this.schemaBases[atomClassKey] = schemaBase;
+      // atomClassBase
+      const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
+      const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      this.atomClassBases[atomClassKey] = atomClassBase;
+      // load module
+      if (atomClass.module !== schemaBase.module) {
+        await this.$meta.module.use(atomClass.module);
+      }
     },
     _getAtomClassKey({ atomClass }) {
       return `${atomClass.module}:${atomClass.atomClassName}`;
@@ -102,7 +110,7 @@ export default {
     onFieldsRightChange() {
       this.page_setDirty(true);
     },
-    _renderRights({ main, atomClass }) {
+    _renderFieldsRight({ main, atomClass }) {
       // atomClass key
       const atomClassKey = this._getAtomClassKey({ atomClass });
       const schemaBase = this.schemaBases[atomClassKey];
@@ -123,9 +131,57 @@ export default {
         ></FieldsRightCommon>
       );
     },
+    _renderAccordion({ main, atomClass }) {
+      // atomClass key
+      const atomClassKey = this._getAtomClassKey({ atomClass });
+      const atomClassBase = this.atomClassBases[atomClassKey];
+      console.log(atomClassBase);
+      let title;
+      if (main) {
+        title = `${this.$text('MainData')}: ${atomClassBase.titleLocale}`;
+      } else {
+        title = `${this.$text('DetailData')}: ${atomClassBase.titleLocale}`;
+      }
+      const domTitle = (
+        <div slot="title" class="title">
+          <div>{title}</div>
+        </div>
+      );
+      // domAccordionContent
+      const domGroup = this._renderFieldsRight({ main, atomClass });
+      const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
+      // ok
+      return (
+        <eb-list-item key={atomClassKey} accordion-item accordion-item-opened={!!main}>
+          {domTitle}
+          {domAccordionContent}
+        </eb-list-item>
+      );
+    },
+    _renderAccordions() {
+      const children = [];
+      // main
+      children.push(this._renderAccordion({ main: true, atomClass: this.atomClass }));
+      // more
+      const atomClassDetails = this.atomClassDetails;
+      for (let index = 0; index < atomClassDetails.length; index++) {
+        const atomClassDetail = atomClassDetails[index];
+        children.push(this._renderAccordion({ main: false, atomClass: atomClassDetail }));
+      }
+      return (
+        <eb-list accordion-list class="eb-accordion-list">
+          {children}
+        </eb-list>
+      );
+    },
     _renderAll() {
       if (!this.ready) return null;
-      return this._renderRights({ main: true, atomClass: this.atomClass });
+      // only main
+      if (!this.atomClassDetails) {
+        return this._renderFieldsRight({ main: true, atomClass: this.atomClass });
+      }
+      // main + details
+      return this._renderAccordions();
     },
     _renderButtonHelp({ atomClass }) {
       return (

@@ -11,4 +11,6 @@ export default {
   FieldsRightProperty_Field: 'Field',
   FieldsRightProperty_AllowRead: 'Allow Read',
   FieldsRightProperty_AllowWrite: 'Allow Write',
+  MainData: 'Main Data',
+  DetailData: 'Detail Data',
 };
