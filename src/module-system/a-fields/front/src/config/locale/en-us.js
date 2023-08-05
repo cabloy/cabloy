@@ -5,6 +5,7 @@ export default {
   AllowSpecificFields: 'Allow Specific Fields',
   FieldsRightBasicControls: 'Basic Controls(All Fields)',
   FieldsRightSpecificControls: 'Specific Controls',
+  FieldsRightCustom: 'Custom',
   SelectFields: 'Select Fields',
   FieldsRightProperty_Group: 'Group',
   FieldsRightProperty_Field: 'Field',

@@ -53,6 +53,7 @@ export default {
         {this._renderListGroupValueMode()}
         {this._renderListGroupValueBasicControls()}
         {this._renderListGroupValueSpecificControls()}
+        {this._renderListGroupValueCustom()}
       </eb-list>
     );
   },
