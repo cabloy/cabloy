@@ -9,7 +9,7 @@ module.exports = app => {
       bean: versionManager,
     },
     // global
-    event: {
+    fields: {
       mode: 'ctx',
       bean: beanFields,
       global: true,
