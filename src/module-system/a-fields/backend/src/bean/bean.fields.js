@@ -29,10 +29,49 @@ module.exports = ctx => {
         fieldsRight = details[atomClassKey];
       }
       // prepare fieldsRight
-      fieldsRight = this.__parseSchema_prepareFieldsRight({ fieldsRight });
+      return this.__parseSchema_prepareFieldsRight({ fieldsRight });
     }
 
-    async __parseSchema_prepareFieldsRight({ fieldsRight }) {}
+    async __parseSchema_prepareFieldsRight({ fieldsRight }) {
+      // extend
+      fieldsRight = ctx.bean.util.extend({}, fieldsRight);
+      // mode
+      if (!fieldsRight.mode) {
+        fieldsRight.mode === 'allowAllFieldsRead';
+      }
+      const mode = fieldsRight.mode;
+      // check mode
+      if (mode === 'allowAllFieldsRead') {
+        fieldsRight._mode = 'general';
+        fieldsRight.basic = { read: true, write: false };
+        fieldsRight.fields = [];
+      } else if (mode === 'allowAllFieldsReadWrite') {
+        fieldsRight._mode = 'general';
+        fieldsRight.basic = { read: true, write: true };
+        fieldsRight.fields = [];
+      } else if (mode === 'allowSpecificFields') {
+        fieldsRight._mode = 'general';
+        if (!fieldsRight.basic) {
+          fieldsRight.basic = { read: true, write: false };
+        }
+        if (!fieldsRight.fields) {
+          fieldsRight.fields = [];
+        }
+      } else if (mode === 'custom') {
+        // array/object: do nothing
+      }
+      // adjust fields
+      if (fieldsRight.fields.length > 0) {
+        fieldsRight.fields = fieldsRight.fields.map(field => {
+          if (typeof field === 'string') {
+            return { name: field, read: false, write: false };
+          }
+          return field;
+        });
+      }
+      // ok
+      return fieldsRight;
+    }
 
     __getAtomClassKey({ atomClass }) {
       return `${atomClass.module}:${atomClass.atomClassName}`;
