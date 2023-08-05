@@ -107,7 +107,15 @@ export default {
         },
       });
     },
-    onFieldsRightChange() {
+    onFieldsRightChange({ main, atomClass, fieldsRight }) {
+      if (!main) {
+        if (!this.fieldsRightSelf.details) {
+          this.$set(this.fieldsRightSelf, 'details', {});
+        }
+        const atomClassKey = this._getAtomClassKey({ atomClass });
+        fieldsRight = this.$meta.util.extend({}, fieldsRight);
+        this.$set(this.fieldsRightSelf.details, atomClassKey, fieldsRight);
+      }
       this.page_setDirty(true);
     },
     _renderFieldsRight({ main, atomClass }) {
@@ -127,7 +135,7 @@ export default {
           atomClass={atomClass}
           fieldsRight={fieldsRight}
           schemaBase={schemaBase}
-          onFieldsRightChange={this.onFieldsRightChange}
+          onFieldsRightChange={() => this.onFieldsRightChange({ main, atomClass, fieldsRight })}
         ></FieldsRightCommon>
       );
     },
