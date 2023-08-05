@@ -21,7 +21,12 @@ export default {
       await this.$meta.module.use('a-jsoneditor');
       this.jsonEditorReady = true;
     },
-    async onInputValueCustom() {},
+    async onInputValueCustom(value) {
+      // set
+      this.$set(this.fieldsRight, 'custom', value);
+      // emit
+      this.$emit('fieldsRightChange');
+    },
     _renderListGroupValueCustom_jsonEditor() {
       if (!this.jsonEditorReady) return null;
       return (
@@ -35,7 +40,7 @@ export default {
       );
     },
     _renderListGroupValueCustom() {
-      // if (!this.showCustom) return null;
+      if (!this.showCustom) return null;
       return (
         <f7-list-group>
           <f7-list-item group-title title={this.$text('FieldsRightCustom')}></f7-list-item>
