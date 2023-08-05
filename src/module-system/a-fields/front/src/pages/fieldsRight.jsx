@@ -135,7 +135,6 @@ export default {
       // atomClass key
       const atomClassKey = this._getAtomClassKey({ atomClass });
       const atomClassBase = this.atomClassBases[atomClassKey];
-      console.log(atomClassBase);
       let title;
       if (main) {
         title = `${this.$text('MainData')}: ${atomClassBase.titleLocale}`;
@@ -150,11 +149,14 @@ export default {
       // domAccordionContent
       const domGroup = this._renderFieldsRight({ main, atomClass });
       const domAccordionContent = <f7-accordion-content>{domGroup}</f7-accordion-content>;
+      // domAfter
+      const domAfter = <div slot="after">{this._renderButtonHelp({ atomClass })}</div>;
       // ok
       return (
         <eb-list-item key={atomClassKey} accordion-item accordion-item-opened={!!main}>
           {domTitle}
           {domAccordionContent}
+          {domAfter}
         </eb-list-item>
       );
     },
