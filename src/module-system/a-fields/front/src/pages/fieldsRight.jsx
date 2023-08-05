@@ -20,6 +20,8 @@ export default {
       },
       fieldsRightSelf: null,
       schemaBases: {},
+      atomClassBase: null,
+      atomClassDetails: null,
     };
   },
   computed: {
@@ -50,6 +52,13 @@ export default {
       // main
       await this.loadSchemaBase({ atomClass: this.atomClass });
       // details
+      const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
+      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass: this.atomClass });
+      this.atomClassDetails = this.atomClassBase.details;
+      if (!this.atomClassDetails) return;
+      for (const atomClassDetail of this.atomClassDetails) {
+        await this.loadSchemaBase({ atomClass: atomClassDetail });
+      }
     },
     async loadSchemaBase({ atomClass }) {
       // atomClass key
@@ -118,16 +127,25 @@ export default {
       if (!this.ready) return null;
       return this._renderRights({ main: true, atomClass: this.atomClass });
     },
+    _renderButtonHelp({ atomClass }) {
+      return (
+        <eb-link
+          iconF7="::info-circle"
+          tooltip={this.$text('ReferenceForHelp')}
+          propsOnPerform={() => this.onPerformHelp({ atomClass })}
+        ></eb-link>
+      );
+    },
     _renderNavRight() {
       if (!this.ready) return null;
+      let domHelp;
+      if (!this.atomClassDetails) {
+        domHelp = this._renderButtonHelp({ atomClass: this.atomClass });
+      }
       return (
         <f7-nav-right>
           <eb-link iconF7="::done" tooltip={this.$text('Done')} propsOnPerform={this.onPerformDone}></eb-link>
-          <eb-link
-            iconF7="::info-circle"
-            tooltip={this.$text('ReferenceForHelp')}
-            propsOnPerform={this.onPerformHelp}
-          ></eb-link>
+          {domHelp}
         </f7-nav-right>
       );
     },
