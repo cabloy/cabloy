@@ -35,6 +35,7 @@ export default {
           readOnly={this.mode === 'view'}
           valueType="object"
           value={this.valueCustom}
+          changeDelay={1000}
           onInput={this.onInputValueCustom}
         ></eb-json-editor>
       );

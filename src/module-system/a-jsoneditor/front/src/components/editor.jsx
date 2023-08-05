@@ -15,6 +15,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    changeDelay: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -36,7 +40,13 @@ export default {
       this.cmEditor.setValue(this.content);
     },
   },
-  created() {},
+  created() {
+    if (this.changeDelay > 0) {
+      this._raiseEventInputDelay = this.$meta.util.debounce(() => {
+        this._raiseEventInputDelay_inner();
+      }, this.changeDelay);
+    }
+  },
   mounted() {
     this.mountCodeMirror();
   },
@@ -45,6 +55,7 @@ export default {
       this.cmEditor._handlers = {};
       this.cmEditor = null;
     }
+    this._raiseEventInputDelay = null;
   },
   methods: {
     async mountCodeMirror() {
@@ -105,6 +116,13 @@ export default {
       }
     },
     _raiseEventInput() {
+      if (this.changeDelay === 0) {
+        this._raiseEventInputDelay_inner();
+      } else {
+        this._raiseEventInputDelay();
+      }
+    },
+    _raiseEventInputDelay_inner() {
       try {
         // not raise event if json.parse error
         this.$emit('input', this.getValue());
