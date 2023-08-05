@@ -204,13 +204,17 @@ export default {
     },
     _renderNavRight() {
       if (!this.ready) return null;
+      let domDone;
+      if (this.mode === 'edit') {
+        domDone = <eb-link iconF7="::done" tooltip={this.$text('Done')} propsOnPerform={this.onPerformDone}></eb-link>;
+      }
       let domHelp;
       if (!this.atomClassDetails) {
         domHelp = this._renderButtonHelp({ atomClass: this.atomClass });
       }
       return (
         <f7-nav-right>
-          <eb-link iconF7="::done" tooltip={this.$text('Done')} propsOnPerform={this.onPerformDone}></eb-link>
+          {domDone}
           {domHelp}
         </f7-nav-right>
       );
