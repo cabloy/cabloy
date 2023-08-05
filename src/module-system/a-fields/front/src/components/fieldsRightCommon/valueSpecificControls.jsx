@@ -91,8 +91,9 @@ export default {
       this.$emit('fieldsRightChange');
     },
     _renderListGroupValueSpecificControls_selectFields() {
-      return (
-        <f7-list-item class="eb-list-group-title" title={'2. ' + this.$text('FieldsRightSpecificControls')}>
+      let domAfter;
+      if (this.mode === 'edit') {
+        domAfter = (
           <div slot="after">
             <eb-button iconF7="::add" propsOnPerform={this.onPerformSelectFields}>
               {this.$text('SelectFields')}
@@ -100,7 +101,7 @@ export default {
             <a ref="selectFields" class="item-link smart-select">
               <eb-select
                 name="selectFields"
-                readOnly={this.mode !== 'edit'}
+                readOnly={this.mode === 'view'}
                 value={this.selectFieldsSelected}
                 onInput={this.onInputSelectFields}
                 multiple={true}
@@ -111,6 +112,11 @@ export default {
               ></eb-select>
             </a>
           </div>
+        );
+      }
+      return (
+        <f7-list-item class="eb-list-group-title" title={'2. ' + this.$text('FieldsRightSpecificControls')}>
+          {domAfter}
         </f7-list-item>
       );
     },
