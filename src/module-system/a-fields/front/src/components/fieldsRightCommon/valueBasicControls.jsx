@@ -19,19 +19,27 @@ export default {
     },
     _renderListGroupValueBasicControls() {
       if (!this.showBasicControls) return null;
+      const domCheckboxRead = (
+        <eb-checkbox
+          value={this.basicControlsValue.read}
+          onInput={value => this.onChangeBasicControls('read', value)}
+          disabled={this.mode === 'view'}
+        ></eb-checkbox>
+      );
+      const domCheckboxWrite = (
+        <eb-checkbox
+          value={this.basicControlsValue.write}
+          onInput={value => this.onChangeBasicControls('write', value)}
+          disabled={this.mode === 'view'}
+        ></eb-checkbox>
+      );
       return (
         <f7-list-group>
           <f7-list-item class="eb-list-group-title" title={'1. ' + this.$text('FieldsRightBasicControls')}>
             <div slot="after">
-              <eb-checkbox
-                value={this.basicControlsValue.read}
-                onInput={value => this.onChangeBasicControls('read', value)}
-              ></eb-checkbox>
+              {domCheckboxRead}
               <span>&nbsp;{this.$text('Read')}&nbsp;</span>
-              <eb-checkbox
-                value={this.basicControlsValue.write}
-                onInput={value => this.onChangeBasicControls('write', value)}
-              ></eb-checkbox>
+              {domCheckboxWrite}
               <span>&nbsp;{this.$text('Write')}</span>
             </div>
           </f7-list-item>
