@@ -137,7 +137,7 @@ module.exports = ctx => {
       fieldsRight = ctx.bean.util.extend({}, fieldsRight);
       // mode
       if (!fieldsRight.mode) {
-        fieldsRight.mode === 'allowAllFieldsRead';
+        fieldsRight.mode = 'allowAllFieldsRead';
       }
       const mode = fieldsRight.mode;
       // check mode
