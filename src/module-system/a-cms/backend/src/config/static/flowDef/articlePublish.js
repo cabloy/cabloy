@@ -31,8 +31,8 @@ module.exports = app => {
             },
             confirmation: false,
             bidding: true,
-            schema: {
-              write: true,
+            fieldsRight: {
+              mode: 'allowAllFieldsReadWrite',
             },
           },
         },
@@ -62,7 +62,7 @@ module.exports = app => {
   const definition = {
     atomName: 'CMS Article Publish',
     atomStaticKey: 'flowArticlePublish',
-    atomRevision: 102,
+    atomRevision: 103,
     description: '',
     content: JSON.stringify(content),
   };
