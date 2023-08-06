@@ -45,7 +45,14 @@ module.exports = ctx => {
       };
     }
 
-    async __parseSchema_checkModeCustom_object({ schemaBase, fieldsRight }) {}
+    async __parseSchema_checkModeCustom_object({ /* schemaBase,*/ fieldsRight }) {
+      const schemaParams = {
+        module: fieldsRight.custom.module,
+        validator: fieldsRight.custom.validator,
+        schema: fieldsRight.custom.schema,
+      };
+      return ctx.bean.validation.getSchema(schemaParams);
+    }
 
     async __parseSchema_checkModeGeneral({ schemaBase, fieldsRight }) {
       const schema = schemaBase.schema;
