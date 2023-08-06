@@ -15,10 +15,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    changeDelay: {
-      type: Number,
-      default: 0,
-    },
+    changeDelay: {},
   },
   data() {
     return {
@@ -31,6 +28,12 @@ export default {
       if (type && Array.isArray(type)) return type[0];
       return type || 'string';
     },
+    changeDelay2() {
+      if (this.changeDelay === true) {
+        return this.$config.changeDelay;
+      }
+      return this.changeDelay;
+    },
   },
   watch: {
     value(newValue) {
@@ -41,10 +44,10 @@ export default {
     },
   },
   created() {
-    if (this.changeDelay > 0) {
+    if (this.changeDelay2) {
       this._raiseEventInputDelay = this.$meta.util.debounce(() => {
         this._raiseEventInputDelay_inner();
-      }, this.changeDelay);
+      }, this.changeDelay2);
     }
   },
   mounted() {
@@ -116,10 +119,10 @@ export default {
       }
     },
     _raiseEventInput() {
-      if (this.changeDelay === 0) {
-        this._raiseEventInputDelay_inner();
-      } else {
+      if (this._raiseEventInputDelay) {
         this._raiseEventInputDelay();
+      } else {
+        this._raiseEventInputDelay_inner();
       }
     },
     _raiseEventInputDelay_inner() {
