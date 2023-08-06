@@ -20,7 +20,30 @@ module.exports = ctx => {
       return schemaBase;
     }
 
-    async __parseSchema_checkModeCustom_array({ schemaBase, fieldsRight }) {}
+    async __parseSchema_checkModeCustom_array({ schemaBase, fieldsRight }) {
+      const schema = schemaBase.schema;
+      const properties = schema.properties;
+      const propertiesNew = {};
+      for (const field of fieldsRight.custom) {
+        if (typeof field === 'string') {
+          if (properties[field]) {
+            propertiesNew[field] = properties[field];
+          }
+        } else {
+          // { name, property }
+          propertiesNew[field.name] = field.property;
+        }
+      }
+      // return
+      const schemaNew = {
+        ...schema,
+        properties: propertiesNew,
+      };
+      return {
+        ...schemaBase,
+        schema: schemaNew,
+      };
+    }
 
     async __parseSchema_checkModeCustom_object({ schemaBase, fieldsRight }) {}
 
