@@ -163,7 +163,7 @@ module.exports = ctx => {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
-        if (optionsSchema.validator) {
+        if (optionsSchema.validator && (!optionsSchema.schema || typeof optionsSchema.schema === 'string')) {
           // use validator directly
           await this.validate({
             module: optionsSchema.module,
