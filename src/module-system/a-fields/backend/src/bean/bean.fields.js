@@ -3,10 +3,69 @@ module.exports = ctx => {
   class Fields {
     async parseSchema({ atomClass, fieldsRight }) {
       // schemaBase
-      const schemaBase = await this.__parseSchema_getSchemaBase({ atomClass });
+      let schemaBase = await this.__parseSchema_getSchemaBase({ atomClass });
       // fieldsRight
       fieldsRight = await this.__parseSchema_getFieldsRight({ atomClass, fieldsRight });
-      console.log(fieldsRight);
+      // check
+      if (fieldsRight._mode === 'general') {
+        schemaBase = this.__parseSchema_checkModeGeneral({ schemaBase, fieldsRight });
+      }
+      return schemaBase;
+    }
+
+    async __parseSchema_checkModeGeneral({ schemaBase, fieldsRight }) {
+      const schema = schemaBase.schema;
+      const properties = schema.properties;
+      const propertiesNew = {};
+      for (const key in properties) {
+        const property = properties[key];
+        let propertyNew;
+        // base controls
+        if (!fieldsRight.basic.read) {
+          propertyNew = null;
+        } else if (!fieldsRight.basic.write) {
+          propertyNew = {
+            ...property,
+            ebReadOnly: true,
+          };
+        } else {
+          // if basic.write === true and ebReadOnly:false, then hold current state
+          // the same
+          propertyNew = property;
+        }
+        // specific controls
+        const field = fieldsRight.fields.find(item => item.name === key);
+        if (!field) {
+          // do nothing
+        } else if (!field.read) {
+          // hide
+          propertyNew = null;
+        } else if (!field.write) {
+          propertyNew = {
+            ...propertyNew,
+            ebReadOnly: true,
+          };
+        } else {
+          // read and write
+          propertyNew = {
+            ...propertyNew,
+            ebReadOnly: false,
+          };
+        }
+        // record
+        if (propertyNew) {
+          propertiesNew[key] = propertyNew;
+        }
+      }
+      // return
+      const schemaNew = {
+        ...schema,
+        properties: propertiesNew,
+      };
+      return {
+        ...schemaBase,
+        schema: schemaNew,
+      };
     }
 
     async __parseSchema_getSchemaBase({ atomClass }) {
