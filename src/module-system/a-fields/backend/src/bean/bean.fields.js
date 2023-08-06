@@ -125,7 +125,7 @@ module.exports = ctx => {
       const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
       if (atomClassBase.detail) {
         const atomClassKey = this.__getAtomClassKey({ atomClass });
-        const details = fieldsRight.details || {};
+        const details = fieldsRight?.details || {};
         fieldsRight = details[atomClassKey];
       }
       // prepare fieldsRight
@@ -161,7 +161,7 @@ module.exports = ctx => {
         // array/object: do nothing
       }
       // adjust fields
-      if (fieldsRight.fields.length > 0) {
+      if (fieldsRight.fields && fieldsRight.fields.length > 0) {
         fieldsRight.fields = fieldsRight.fields.map(field => {
           if (typeof field === 'string') {
             return { name: field, read: false, write: false };
