@@ -9,9 +9,20 @@ module.exports = ctx => {
       // check
       if (fieldsRight._mode === 'general') {
         schemaBase = this.__parseSchema_checkModeGeneral({ schemaBase, fieldsRight });
+      } else {
+        // custom: array/object
+        if (Array.isArray(fieldsRight.custom)) {
+          schemaBase = this.__parseSchema_checkModeCustom_array({ schemaBase, fieldsRight });
+        } else {
+          schemaBase = this.__parseSchema_checkModeCustom_object({ schemaBase, fieldsRight });
+        }
       }
       return schemaBase;
     }
+
+    async __parseSchema_checkModeCustom_array({ schemaBase, fieldsRight }) {}
+
+    async __parseSchema_checkModeCustom_object({ schemaBase, fieldsRight }) {}
 
     async __parseSchema_checkModeGeneral({ schemaBase, fieldsRight }) {
       const schema = schemaBase.schema;
