@@ -29,7 +29,7 @@ module.exports = ctx => {
             ebReadOnly: true,
           };
         } else {
-          // if basic.write === true and ebReadOnly:false, then hold current state
+          // if basic.write === true and ebReadOnly:true, then hold current state
           // the same
           propertyNew = property;
         }
