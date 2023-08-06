@@ -42,13 +42,13 @@ module.exports = ctx => {
           propertyNew = null;
         } else if (!field.write) {
           propertyNew = {
-            ...propertyNew,
+            ...property, // not use propertyNew, for maybe null
             ebReadOnly: true,
           };
         } else {
           // read and write
           propertyNew = {
-            ...propertyNew,
+            ...property, // not use propertyNew, for maybe null
             ebReadOnly: false,
           };
         }
