@@ -2,6 +2,8 @@ module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Fields {
     async parseSchema({ atomClass, fieldsRight }) {
+      // atomClass
+      atomClass = await ctx.bean.atomClass.get(atomClass);
       // schemaBase
       let schemaBase = await this.__parseSchema_getSchemaBase({ atomClass });
       // fieldsRight
