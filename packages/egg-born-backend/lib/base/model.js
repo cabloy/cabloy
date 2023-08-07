@@ -13,11 +13,12 @@ module.exports = app => {
         options.disableInstance === undefined ? app.config.model.disableInstance : options.disableInstance;
     }
 
-    async columns() {
-      let columns = __columns[this.table];
+    async columns(tableName) {
+      tableName = tableName || this.table;
+      let columns = __columns[tableName];
       if (!columns) {
-        const list = await this.ctx.db.query(`show columns from ${this.ctx.db.format('??', this.table)}`);
-        columns = __columns[this.table] = {};
+        const list = await this.ctx.db.query(`show columns from ${this.ctx.db.format('??', tableName)}`);
+        columns = __columns[tableName] = {};
         for (const item of list) {
           columns[item.Field] = item;
         }
