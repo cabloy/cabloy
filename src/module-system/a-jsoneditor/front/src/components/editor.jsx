@@ -29,6 +29,7 @@ export default {
       return type || 'string';
     },
     changeDelay2() {
+      if (this.readOnly) return false;
       if (this.changeDelay === true) {
         return this.$config.changeDelay;
       }
