@@ -16,6 +16,7 @@ import renderRoleRightScope from './components/roleRight/render/renderRoleRightS
 // roleFieldsRight: listLayoutList
 import roleFieldsRightListLayoutBlockListItems from './components/roleFieldsRight/listLayoutList/listLayoutBlockListItems.jsx';
 import roleFieldsRightListLayoutBlockListItem from './components/roleFieldsRight/listLayoutList/listLayoutBlockListItem.jsx';
+import renderRoleFieldsRight from './components/roleFieldsRight/render/renderRoleFieldsRight.jsx';
 //
 import actionRole from './components/actionRole.js';
 import actionRoleResource from './components/actionRoleResource.js';
@@ -51,6 +52,7 @@ export default {
   // roleFieldsRight: roleListLayout
   roleFieldsRightListLayoutBlockListItems,
   roleFieldsRightListLayoutBlockListItem,
+  renderRoleFieldsRight,
   //
   actionRole,
   actionRoleResource,
