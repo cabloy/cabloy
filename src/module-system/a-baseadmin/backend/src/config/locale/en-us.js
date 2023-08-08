@@ -1,10 +1,13 @@
 module.exports = {
   UserAtomRight: 'User Data Right',
   UserResourceRight: 'User Resource Right',
+  UserFieldsRight: 'User Fields Right',
   RoleAtomRight: 'Role Data Right',
   RoleAtomRightSpread: 'Role Data Right(Spread)',
   RoleResourceRight: 'Role Resource Right',
   RoleResourceRightSpread: 'Role Resource Right(Spread)',
+  RoleFieldsRight: 'Role Fields Right',
+  RoleFieldsRightSpread: 'Role Fields Right(Spread)',
   'Atom Right': 'Data Right',
   'Atom Right Management': 'Data Right Management',
   AddChild: 'Add Child',
