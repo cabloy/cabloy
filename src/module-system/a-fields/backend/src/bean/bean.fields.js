@@ -22,6 +22,8 @@ module.exports = ctx => {
       return schemaBase;
     }
 
+    async _fieldsRightLocale({ items }) {}
+
     async __parseSchema_checkModeCustom_array({ schemaBase, fieldsRight }) {
       const schema = schemaBase.schema;
       const properties = schema.properties;
