@@ -29,6 +29,20 @@ module.exports = function (loader, modules) {
         };
       }
 
+      const __getLocale = context.__getLocale;
+      context.__getLocale = function () {
+        if (context.__locale) {
+          return context.__locale;
+        }
+        let locale = __getLocale.call(context);
+        const locale2 = locale.replace(/[\\\.*#%'"`;, ]/g, '');
+        if (locale !== locale2) {
+          locale = locale2;
+          context.__setLocale(locale);
+        }
+        return locale;
+      };
+
       return context;
     };
   }
