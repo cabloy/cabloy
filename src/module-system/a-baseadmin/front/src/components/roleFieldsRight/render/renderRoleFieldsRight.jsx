@@ -25,6 +25,10 @@ export default {
     value() {
       return this.context.getValue();
     },
+    readOnly() {
+      const { property, validate } = this.context;
+      return validate.readOnly || property.ebReadOnly;
+    },
   },
   watch: {
     atomClassIdTarget: {
@@ -66,13 +70,53 @@ export default {
     async onInputValue(value) {
       this.context.setValue(value);
     },
-    _renderRoleFieldsRight() {
+    async onPerformViewEdit() {
+      if (!this.atomClass) return;
+      // queries
+      const queries = {
+        mode: this.readOnly ? 'view' : 'edit',
+        module: this.atomClass.module,
+        atomClassName: this.atomClass.atomClassName,
+      };
+      // url
+      const url = this.$meta.util.combineQueries('/a/fields/fieldsRight', queries);
+      this.$view.navigate(url, {
+        target: '_self',
+        context: {
+          params: {
+            fieldsRight: this.value ? JSON.parse(this.value) : this.value,
+          },
+          callback: (code, data) => {
+            if (code === 200) {
+              const value = data ? JSON.stringify(data, null, 2) : null;
+              this.context.setValue(value);
+            }
+          },
+        },
+      });
+    },
+    _renderRoleFieldsRight_title() {
+      const buttonTitle = this.readOnly ? 'View' : 'Edit';
+      let domAfter;
+      if (this.atomClass) {
+        domAfter = (
+          <div slot="after">
+            <eb-button propsOnPerform={this.onPerformViewEdit}>{this.$text(buttonTitle)}</eb-button>
+          </div>
+        );
+      }
+      return (
+        <f7-list-item class="eb-list-group-title" title={this.$text('FieldsRight')}>
+          {domAfter}
+        </f7-list-item>
+      );
+    },
+    _renderRoleFieldsRight_jsonEditor() {
       if (!this.jsonEditorReady) return null;
-      const { property, validate } = this.context;
       return (
         <eb-json-editor
           ref="jsonEditor"
-          readOnly={validate.readOnly || property.ebReadOnly}
+          readOnly={this.readOnly}
           valueType="string"
           value={this.value}
           changeDelay={true}
@@ -101,11 +145,12 @@ export default {
     // },
   },
   render() {
-    const domRoleFieldsRight = this._renderRoleFieldsRight();
+    const domRoleFieldsRight_title = this._renderRoleFieldsRight_title();
+    const domRoleFieldsRight_jsonEditor = this._renderRoleFieldsRight_jsonEditor();
     return (
       <div>
-        <eb-list-item title={this.$text('FieldsRight')} group-title></eb-list-item>
-        {domRoleFieldsRight}
+        {domRoleFieldsRight_title}
+        {domRoleFieldsRight_jsonEditor}
       </div>
     );
   },
