@@ -8,6 +8,7 @@ export default {
     return {
       atomClass: null,
       atomClassBase: null,
+      jsonEditorReady: false,
     };
   },
   computed: {
@@ -34,9 +35,16 @@ export default {
     },
   },
   created() {
-    this.__loadAtomClass();
+    this.init();
   },
   methods: {
+    async init() {
+      // json editor
+      await this.$meta.module.use('a-jsoneditor');
+      this.jsonEditorReady = true;
+      // atomClass
+      await this.__loadAtomClass();
+    },
     async __loadAtomClass() {
       // clear
       this.atomClassBase = null;
@@ -55,8 +63,22 @@ export default {
         atomClassName: this.atomClassBase.atomClassName,
       };
     },
+    async onInputValue(value) {
+      this.context.setValue(value);
+    },
     _renderRoleFieldsRight() {
-      return <div>dddd</div>;
+      if (!this.jsonEditorReady) return null;
+      const { property, validate } = this.context;
+      return (
+        <eb-json-editor
+          ref="jsonEditor"
+          readOnly={validate.readOnly || property.ebReadOnly}
+          valueType="string"
+          value={this.value}
+          changeDelay={true}
+          onInput={this.onInputValue}
+        ></eb-json-editor>
+      );
     },
     // onSelectRoleScopes() {
     //   this.$view.navigate('/a/baseadmin/role/select', {
