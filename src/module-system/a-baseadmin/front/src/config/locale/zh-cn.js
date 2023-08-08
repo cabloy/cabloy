@@ -112,4 +112,5 @@ export default {
   DataScopeSelfTitle: '操作自己数据',
   DataScopeTitle: '数据范围',
   SelectDataScope: '选择数据范围',
+  FieldsRight: '字段权限',
 };
