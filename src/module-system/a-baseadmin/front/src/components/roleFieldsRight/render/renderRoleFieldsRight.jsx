@@ -18,122 +18,72 @@ export default {
       const { validate } = this.context;
       return validate.host.atomMain;
     },
-    isOpenAuthScope() {
-      return this.atomMain && this.atomMain.roleTypeCode === 6;
-    },
-    enableRight() {
-      if (!this.ready) return false;
-      if (this.isOpenAuthScope) return false;
-      return this.atomClassBase.enableRight;
-    },
-    enableRightMine() {
-      if (!this.enableRight) return false;
-      return this.atomClassBase.enableRight.mine;
-    },
-    enableRightScopes() {
-      if (!this.enableRight) return false;
-      return this.atomClassBase.enableRight.role?.scopes;
+    atomClassIdTarget() {
+      return this.context.getValue('atomClassIdTarget');
     },
     value() {
       return this.context.getValue();
     },
-    scopeTitle() {
-      const scopeRoles = this.context.getValue('scopeRoles');
-      if (!scopeRoles) return null;
-      return scopeRoles.map(item => item.atomNameLocale || item.roleNameLocale).join(',');
+  },
+  watch: {
+    atomClassIdTarget: {
+      handler(newValue) {
+        this.__loadAtomClass(newValue);
+      },
+      immediate: false, // true,
     },
   },
-  watch: {},
+  created() {
+    this.__loadAtomClass();
+  },
   methods: {
-    onSelectRoleScopes() {
-      this.$view.navigate('/a/baseadmin/role/select', {
-        target: '_self',
-        context: {
-          params: {
-            roleIdStart: null,
-            multiple: true,
-            roleTypes: [0, 1, 2, 3, 4], // not include roleType: business
-          },
-          callback: (code, roles) => {
-            if (code === 200) {
-              this.context.setValue(roles, 'scopeRoles');
-              const roleIds = roles.map(item => item.itemId);
-              this.context.setValue(roleIds);
-            }
-          },
-        },
+    async __loadAtomClass() {
+      // clear
+      this.atomClassBase = null;
+      this.atomClass = null;
+      // check
+      if (!this.atomClassIdTarget) {
+        return;
+      }
+      // atomClassBase
+      const useStoreAtomClasses = await this.$store.use('a/basestore/atomClasses');
+      this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({
+        atomClass: { id: this.atomClassIdTarget },
       });
-    },
-    _renderRoleRightMine() {
-      if (!this.enableRightMine) return null;
-      const { parcel, property, validate } = this.context;
-      // special check for view mode
-      if (validate.readOnly || property.ebReadOnly) {
-        if (this.value !== 0) {
-          return null;
-        }
-      }
-      const propertyMine = {
-        ebType: 'toggle',
-        ebTitle: 'DataScopeSelfTitle',
+      this.atomClass = {
+        module: this.atomClassBase.module,
+        atomClassName: this.atomClassBase.atomClassName,
       };
-      const meta = {
-        ebPatch: {
-          getValue: () => {
-            return this.value === 0;
-          },
-          setValue: value => {
-            if (value) {
-              this.context.setValue(0);
-            } else {
-              this.context.setValue([]);
-            }
-            return value;
-          },
-        },
-      };
-      return (
-        <eb-list-item-validate
-          parcel={parcel}
-          dataKey="__groupAuthorizationDataScopeMine"
-          property={propertyMine}
-          meta={meta}
-        ></eb-list-item-validate>
-      );
     },
-    _renderRoleRightScopes() {
-      if (!this.enableRightScopes) return null;
-      // adjust
-      if (!this.enableRightMine && this.value === 0) {
-        this.context.setValue([]);
-      }
-      if (this.value === 0) return null;
-      const { property, validate } = this.context;
-      // render for view mode
-      if (validate.readOnly || property.ebReadOnly) {
-        return (
-          <f7-list-item title={this.$text('DataScope')}>
-            <div slot="after">{this.scopeTitle}</div>
-          </f7-list-item>
-        );
-      }
-      // render for edit mode
-      return (
-        <f7-list-item title={this.$text('SelectDataScope')} link="#" onClick={this.onSelectRoleScopes}>
-          <div slot="after">{this.scopeTitle}</div>
-        </f7-list-item>
-      );
+    _renderRoleFieldsRight() {
+      return <div>dddd</div>;
     },
+    // onSelectRoleScopes() {
+    //   this.$view.navigate('/a/baseadmin/role/select', {
+    //     target: '_self',
+    //     context: {
+    //       params: {
+    //         roleIdStart: null,
+    //         multiple: true,
+    //         roleTypes: [0, 1, 2, 3, 4], // not include roleType: business
+    //       },
+    //       callback: (code, roles) => {
+    //         if (code === 200) {
+    //           this.context.setValue(roles, 'scopeRoles');
+    //           const roleIds = roles.map(item => item.itemId);
+    //           this.context.setValue(roleIds);
+    //         }
+    //       },
+    //     },
+    //   });
+    // },
   },
   render() {
-    if (!this.enableRight) return null;
-    const domRoleRightMine = this._renderRoleRightMine();
-    const domRoleRightScopes = this._renderRoleRightScopes();
+    const domRoleFieldsRight = this._renderRoleFieldsRight();
     return (
       <div>
-        <eb-list-item title={this.$text('DataScope')} group-title></eb-list-item>
-        {domRoleRightMine}
-        {domRoleRightScopes}
+        <eb-list-item title={this.$text('FieldsRight')} group-title></eb-list-item>
+        {domRoleFieldsRight}
       </div>
     );
   },
