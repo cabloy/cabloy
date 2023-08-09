@@ -8,16 +8,20 @@ module.exports = ctx => {
     }
 
     async get(keyHash, key, options) {
-      const fnGet = options?.fnGet;
-      if (fnGet) {
-        return await fnGet(key, options, keyHash);
+      const fn_get = options?.fn_get;
+      if (fn_get) {
+        return await fn_get(key, options, keyHash);
       }
       return await this.cacheBean.get(key, options, keyHash);
     }
 
     async mget(keysHash, keys, options) {
       // mget
-      if (this.cacheBean.mget) {
+      const fn_mget = options?.fn_mget;
+      if (fn_mget) {
+        return await fn_mget(keys, options, keysHash);
+      }
+      if (this.cacheBean && this.cacheBean.mget) {
         return await this.cacheBean.mget(keys, options, keysHash);
       }
       // fallback
@@ -46,6 +50,7 @@ module.exports = ctx => {
     }
 
     get cacheBean() {
+      if (!this._cacheBase.beanFullName) return null;
       if (!this._cacheBean) {
         this._cacheBean = ctx.bean._newBean(this._cacheBase.beanFullName, {
           cacheBase: this._cacheBase,
