@@ -69,12 +69,14 @@ module.exports = ctx => {
           const cache = caches[key];
           const fullKey = `${module.info.relativeName}:${key}`;
           // bean
-          const beanName = cache.bean;
           let beanFullName;
-          if (typeof beanName === 'string') {
-            beanFullName = `${module.info.relativeName}.summer.cache.${beanName}`;
-          } else {
-            beanFullName = `${beanName.module || module.info.relativeName}.summer.cache.${beanName.name}`;
+          const beanName = cache.bean;
+          if (beanName) {
+            if (typeof beanName === 'string') {
+              beanFullName = `${module.info.relativeName}.summer.cache.${beanName}`;
+            } else {
+              beanFullName = `${beanName.module || module.info.relativeName}.summer.cache.${beanName.name}`;
+            }
           }
           // ok
           cacheBases[fullKey] = {

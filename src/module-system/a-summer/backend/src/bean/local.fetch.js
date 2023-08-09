@@ -8,6 +8,10 @@ module.exports = ctx => {
     }
 
     async get(keyHash, key, options) {
+      const fnGet = options?.fnGet;
+      if (fnGet) {
+        return await fnGet(key, options, keyHash);
+      }
       return await this.cacheBean.get(key, options, keyHash);
     }
 
