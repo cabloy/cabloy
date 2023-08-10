@@ -39,6 +39,13 @@ module.exports = ctx => {
       const mode = options && options.mode;
       return mode || this._cacheBase.mode || 'all';
     }
+
+    __checkValueEmpty(value) {
+      if (this._cacheBase.ignoreNull) {
+        return value === undefined || value === null;
+      }
+      return value === undefined;
+    }
   }
 
   return CacheBase;
