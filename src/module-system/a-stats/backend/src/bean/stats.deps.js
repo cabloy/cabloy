@@ -11,6 +11,7 @@ module.exports = ctx => {
         const fullName = _keys.join('.');
         const value = await ctx.bean.stats._get({
           module,
+          name,
           fullName,
           user,
         });

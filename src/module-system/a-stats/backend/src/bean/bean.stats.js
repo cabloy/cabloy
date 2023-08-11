@@ -98,6 +98,7 @@ module.exports = ctx => {
       const fullName = this._getFullName({ name, nameSub });
       return await this._get({
         module,
+        name,
         fullName,
         user: provider.user ? user : null,
       });
@@ -107,13 +108,18 @@ module.exports = ctx => {
       return nameSub ? `${name}.${nameSub}` : name;
     }
 
-    async _get({ module, fullName, user }) {
+    async _get({ module, name, fullName, user }) {
       const where = { module, name: fullName };
       if (user) {
         where.userId = user.id;
       }
       const item = await this.modelStats.get(where);
-      return item ? JSON.parse(item.value) : undefined;
+      const value = item ? JSON.parse(item.value) : undefined;
+      // special for modelCache
+      if (!item) {
+        await this._set({ module, name, fullName, value: null, user });
+      }
+      return value;
     }
 
     async _set({ module, name, fullName, value, user }) {
