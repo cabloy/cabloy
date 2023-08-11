@@ -12,7 +12,7 @@ module.exports = appInfo => {
           max: 500,
         },
         redis: {
-          ttl: 4 * 60 * 60 * 1000, // 4 hours
+          ttl: 15 * 60 * 1000, // 15 minutes
         },
       },
     },
