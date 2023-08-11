@@ -22,27 +22,50 @@ module.exports = app => {
 
     async get(where, ...args) {
       if (!this.__checkCacheKeyValid(where)) {
-        return await super.get(where, ...args);
+        return await this.__get_notkey(where, ...args);
       }
-      // cache
-      const cache = this.__getCacheInstance();
-      return await cache.get(where.id, {
-        fn_get: async () => {
-          return await super.get(where, ...args);
-        },
-      });
+      return await this.__get_key(where, ...args);
     }
 
     async update(where, ...args) {
       const res = await super.update(where, ...args);
-      this.__deleteCache(where);
+      this.__deleteCache_key(where);
       return res;
     }
 
     async delete(where, ...args) {
       const res = await super.delete(where, ...args);
-      this.__deleteCache(where);
+      this.__deleteCache_key(where);
       return res;
+    }
+
+    async __get_notkey(where, ...args) {
+      // cache
+      const cache = this.__getCacheInstance();
+      let data = await cache.get(where, {
+        fn_get: async () => {
+          return await super.get(where, ...args);
+        },
+      });
+      // check if exists
+      const data2 = await this.__get_key({ id: data.id }, ...args);
+      if (!data2) {
+        // delete cache
+        await this.__deleteCache_notkey(where);
+        data = null;
+      }
+      return data;
+    }
+
+    async __get_key(where, ...args) {
+      // cache
+      const cache = this.__getCacheInstance();
+      return await cache.get(where.id, {
+        fn_get: async () => {
+          // where: maybe contain aux key
+          return await super.get(where, ...args);
+        },
+      });
     }
 
     __checkCacheKeyValid(where) {
@@ -53,10 +76,15 @@ module.exports = app => {
       return keys.length === 1 && keys[0] === 'id';
     }
 
-    async __deleteCache(where) {
+    async __deleteCache_key(where) {
       if (!where.id) return;
       const cache = this.__getCacheInstance();
       await cache.del(where.id);
+    }
+
+    async __deleteCache_notkey(where) {
+      const cache = this.__getCacheInstance();
+      await cache.del(where);
     }
 
     __getCacheInstance() {
