@@ -45,7 +45,7 @@ module.exports = app => {
       return res;
     }
 
-    async __checkCacheKeyValid(where) {
+    __checkCacheKeyValid(where) {
       let keys = Object.keys(where);
       if (this.__cacheKeyAux) {
         keys = keys.filter(item => item !== this.__cacheKeyAux);
