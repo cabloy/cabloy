@@ -11,7 +11,7 @@ module.exports = ctx => {
       const redisKey = this._getRedisKey(keyHash);
       let value = await this.redisSummer.get(redisKey);
       value = value ? JSON.parse(value) : undefined;
-      if (this.__checkValueEmpty(value)) {
+      if (this.__checkValueEmpty(value, options)) {
         const layered = this.__getLayered(options);
         value = await layered.get(keyHash, key, options);
         await this.redisSummer.set(redisKey, JSON.stringify(value), 'PX', this._cacheBase.redis.ttl);
@@ -29,7 +29,7 @@ module.exports = ctx => {
       const keysMissing = [];
       const indexesMissing = [];
       for (let i = 0; i < values.length; i++) {
-        if (this.__checkValueEmpty(values[i])) {
+        if (this.__checkValueEmpty(values[i], options)) {
           redisKeysMissing.push(redisKeys[i]);
           keysHashMissing.push(keysHash[i]);
           keysMissing.push(keys[i]);
@@ -84,7 +84,7 @@ module.exports = ctx => {
       let value = await this.redisSummer.get(redisKey);
       value = value ? JSON.parse(value) : undefined;
       // need not call layered.peek
-      // if (this.__checkValueEmpty(value)) {
+      // if (this.__checkValueEmpty(value, options)) {
       //   const layered = this.__getLayered(options);
       //   value = await layered.peek(keyHash, key, options);
       // }

@@ -40,8 +40,14 @@ module.exports = ctx => {
       return mode || this._cacheBase.mode || 'all';
     }
 
-    __checkValueEmpty(value) {
-      if (this._cacheBase.ignoreNull) {
+    __checkValueEmpty(value, options) {
+      let ignoreNull;
+      if (options?.ignoreNull !== undefined) {
+        ignoreNull = options?.ignoreNull;
+      } else {
+        ignoreNull = this._cacheBase.ignoreNull;
+      }
+      if (ignoreNull) {
         return value === undefined || value === null;
       }
       return value === undefined;

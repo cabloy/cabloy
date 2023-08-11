@@ -14,7 +14,7 @@ module.exports = ctx => {
 
     async get(keyHash, key, options) {
       let value = this.lruCache.get(keyHash);
-      if (this.__checkValueEmpty(value)) {
+      if (this.__checkValueEmpty(value, options)) {
         const layered = this.__getLayered(options);
         value = await layered.get(keyHash, key, options);
         this.lruCache.set(keyHash, value);
@@ -29,7 +29,7 @@ module.exports = ctx => {
       const keysMissing = [];
       const indexesMissing = [];
       for (let i = 0; i < values.length; i++) {
-        if (this.__checkValueEmpty(values[i])) {
+        if (this.__checkValueEmpty(values[i], options)) {
           keysHashMissing.push(keysHash[i]);
           keysMissing.push(keys[i]);
           indexesMissing.push(i);
@@ -95,7 +95,7 @@ module.exports = ctx => {
 
     async peek(keyHash, key, options) {
       let value = this.lruCache.peek(keyHash);
-      if (this.__checkValueEmpty(value)) {
+      if (this.__checkValueEmpty(value, options)) {
         const layered = this.__getLayered(options);
         value = await layered.peek(keyHash, key, options);
       }

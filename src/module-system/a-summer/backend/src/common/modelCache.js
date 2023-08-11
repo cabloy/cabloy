@@ -46,6 +46,7 @@ module.exports = app => {
         fn_get: async () => {
           return await super.get(where, ...args);
         },
+        ignoreNull: true,
       });
       if (!data) return data;
       // check if exists
