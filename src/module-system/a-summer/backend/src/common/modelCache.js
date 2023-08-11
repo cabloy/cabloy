@@ -3,6 +3,7 @@ module.exports = app => {
     constructor(ctx, { table, options = {} }) {
       super(ctx, { table, options });
       this.__cacheName = options.cacheName;
+      this.__cacheKeyAux = options.cacheKeyAux;
     }
 
     async mget(ids) {
@@ -20,15 +21,14 @@ module.exports = app => {
     }
 
     async get(where, ...args) {
-      const keys = Object.keys(where);
-      if (keys.length !== 1 || keys[0] !== 'id') {
+      if (!this.__checkCacheKeyValid(where)) {
         return await super.get(where, ...args);
       }
       // cache
       const cache = this.__getCacheInstance();
       return await cache.get(where.id, {
-        fn_get: async key => {
-          return await super.get({ id: key }, ...args);
+        fn_get: async () => {
+          return await super.get(where, ...args);
         },
       });
     }
@@ -43,6 +43,14 @@ module.exports = app => {
       const res = await super.delete(where, ...args);
       this.__deleteCache(where);
       return res;
+    }
+
+    async __checkCacheKeyValid(where) {
+      let keys = Object.keys(where);
+      if (this.__cacheKeyAux) {
+        keys = keys.filter(item => item !== this.__cacheKeyAux);
+      }
+      return keys.length === 1 && keys[0] === 'id';
     }
 
     async __deleteCache(where) {
