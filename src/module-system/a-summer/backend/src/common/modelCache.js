@@ -42,19 +42,19 @@ module.exports = app => {
     async __get_notkey(where, ...args) {
       // cache
       const cache = this.__getCacheInstance();
-      let data = await cache.get(where, {
+      const data = await cache.get(where, {
         fn_get: async () => {
           return await super.get(where, ...args);
         },
       });
+      if (!data) return data;
       // check if exists
       const data2 = await this.__get_key({ id: data.id }, ...args);
-      if (!data2) {
-        // delete cache
-        await this.__deleteCache_notkey(where);
-        data = null;
-      }
-      return data;
+      if (data2) return data2;
+      // delete cache
+      await this.__deleteCache_notkey(where);
+      // get again
+      return await this.__get_notkey(where, ...args);
     }
 
     async __get_key(where, ...args) {
