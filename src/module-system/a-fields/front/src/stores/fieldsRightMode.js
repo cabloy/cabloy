@@ -13,5 +13,9 @@ export default {
     getModes() {
       return this.modes;
     },
+    getMode({ value }) {
+      value = value || 'allowAllFieldsRead';
+      return this.modes.find(item => item.value === value);
+    },
   },
 };

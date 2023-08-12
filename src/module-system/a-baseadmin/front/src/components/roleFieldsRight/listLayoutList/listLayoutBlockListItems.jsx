@@ -19,14 +19,16 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      useStoreFieldsRightMode: null,
+    };
   },
   computed: {
     itemKey() {
       return this.layoutManager.data.provider.itemKey;
     },
     ready() {
-      return this.modulesAll && this.atomClassesAll && this.actionsAll;
+      return this.useStoreFieldsRightMode && this.modulesAll && this.atomClassesAll && this.actionsAll;
     },
     itemGroups() {
       const items = this.layoutManager.data_getItems();
@@ -61,41 +63,22 @@ export default {
         }
         // item
         item._fieldsRight = item.fieldsRight ? JSON.parse(item.fieldsRight) : null;
-
-        if (item.actionMode === 1) {
-          item.title = item.actionName;
-          item.titleLocale = item.actionNameLocale;
-        } else {
-          let action;
-          if (item.atomClassIdTarget) {
-            action = this.getAction({
-              module: item.moduleTarget,
-              atomClassName: item.atomClassNameTarget,
-              name: item.actionName,
-            });
-          } else {
-            action = null;
-          }
-          item._action = action;
-          if (!action) {
-            if (item.atomClassIdTarget) {
-              item.title = item.actionName;
-              item.titleLocale = `${item.actionName} - ${this.$text('ActionObsoletedTitle')}`;
-            } else {
-              item.titleLocale = item.title = this.$text('Not Specified');
-            }
-          } else {
-            item.title = action.title;
-            item.titleLocale = action.titleLocale;
-          }
-        }
+        const mode = this.useStoreFieldsRightMode.getMode({ value: item._fieldsRight?.mode });
+        item.title = mode.title;
+        item.titleLocale = this.$text(mode.title);
         // push
         group.items.push(item);
       }
       return groups;
     },
   },
+  created() {
+    this.init();
+  },
   methods: {
+    async init() {
+      this.useStoreFieldsRightMode = await this.$store.use('a/fields/fieldsRightMode');
+    },
     _renderGroup(group) {
       const children = [];
       for (const item of group.items) {
