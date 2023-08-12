@@ -51,6 +51,7 @@ export default {
             roleIdStart: null,
             multiple: false,
             roleIdsDisable: [this.roleId],
+            roleTypes: [0, 1, 2, 3, 4, 5], // exclude: OpenAuthScope
           },
           callback: (code, role) => {
             if (code === 200) {
