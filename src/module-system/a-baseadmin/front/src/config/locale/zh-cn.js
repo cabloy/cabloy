@@ -113,4 +113,5 @@ export default {
   DataScopeTitle: '数据范围',
   SelectDataScope: '选择数据范围',
   FieldsRight: '字段权限',
+  FieldsRightRole_Level: '层级',
 };

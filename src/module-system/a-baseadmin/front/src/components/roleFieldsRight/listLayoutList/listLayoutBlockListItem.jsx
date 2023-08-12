@@ -49,9 +49,8 @@ export default {
     },
     _renderItemAfter(item) {
       const children = [];
-      if (item.actionBulk === 0 && item.scope === 0) {
-        children.push(<f7-badge>{this.$text('Self')}</f7-badge>);
-      }
+      const level = `${this.$text('FieldsRightRole_Level')}: ${item.level}`;
+      children.push(<f7-badge>{level}</f7-badge>);
       return (
         <div slot="after" class="after">
           {children}
