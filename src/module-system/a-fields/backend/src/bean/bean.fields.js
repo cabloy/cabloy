@@ -22,7 +22,14 @@ module.exports = ctx => {
       return schemaBase;
     }
 
-    async _fieldsRightLocale({ items }) {}
+    async _fieldsRightLocale({ items }) {
+      for (const item of items) {
+        // roleNameBase
+        if (item.roleNameBase) {
+          item.roleNameBaseLocale = ctx.text(item.roleNameBase);
+        }
+      }
+    }
 
     async __parseSchema_checkModeCustom_array({ schemaBase, fieldsRight }) {
       const schema = schemaBase.schema;

@@ -51,31 +51,10 @@ export default {
       const children = [];
       if (item.actionBulk === 0 && item.scope === 0) {
         children.push(<f7-badge>{this.$text('Self')}</f7-badge>);
-      } else if (item.scopeRoles) {
-        for (const scopeRole of item.scopeRoles) {
-          children.push(
-            <f7-badge key={scopeRole.id} color="teal" tooltip={this.$text('DataScope')}>
-              {scopeRole.roleNameLocale}
-            </f7-badge>
-          );
-        }
       }
       return (
         <div slot="after" class="after">
           {children}
-        </div>
-      );
-    },
-    _renderItemSummary(item) {
-      let summary;
-      if (item.actionMode === 1) {
-        summary = `${this.$text('WorkFlow Actions')}: ${item.flowDefNameLocale}`;
-      } else if (item.actionBulk === 1 && item.action !== 1) {
-        summary = this.$text('Bulk');
-      }
-      return (
-        <div slot="root-end" class="summary">
-          {summary}
         </div>
       );
     },
@@ -90,8 +69,6 @@ export default {
       const domHeader = this._renderItemHeader(item);
       // domAfter
       const domAfter = this._renderItemAfter(item);
-      // domSummary
-      const domSummary = this._renderItemSummary(item);
       // ok
       return (
         <eb-list-item
@@ -113,7 +90,6 @@ export default {
         >
           {domHeader}
           {domTitle}
-          {domSummary}
           {domAfter}
           {this._renderListItemContextMenu(item)}
         </eb-list-item>
