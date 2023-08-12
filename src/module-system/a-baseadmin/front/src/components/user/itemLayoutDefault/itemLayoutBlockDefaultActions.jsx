@@ -14,7 +14,7 @@ export default {
     info_renderActionsRight() {
       if (!this.layoutManager.base_ready) return;
       const children = [];
-      this._renderActionsGeneral(children, ['resourceAuthorizations', 'atomAuthorizations']);
+      this._renderActionsGeneral(children, ['resourceAuthorizations', 'atomAuthorizations', 'fieldsAuthorizations']);
       // ok
       return children;
     },
