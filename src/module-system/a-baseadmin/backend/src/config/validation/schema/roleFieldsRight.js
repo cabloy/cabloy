@@ -57,7 +57,7 @@ module.exports = app => {
         },
       },
       fieldsRight: {
-        type: 'string',
+        type: ['string', 'null'],
         ebType: 'component',
         ebTitle: 'FieldsRight',
         ebRender: {
