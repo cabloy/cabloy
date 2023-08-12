@@ -1,18 +1,17 @@
 export default {
   data() {
     return {
-      valueModes: [
-        { title: 'AllowAllFieldsRead', value: 'allowAllFieldsRead' },
-        { title: 'AllowAllFieldsReadWrite', value: 'allowAllFieldsReadWrite' },
-        { title: 'AllowSpecificFields', value: 'allowSpecificFields' },
-        { title: 'Custom', value: 'custom' },
-      ],
+      valueModes: null,
     };
   },
   computed: {
     valueMode() {
       return this.fieldsRight.mode || 'allowAllFieldsRead';
     },
+  },
+  created() {
+    const useStoreFieldsRightMode = this.$store.useSync('a/fields/fieldsRightMode');
+    this.valueModes = useStoreFieldsRightMode.getModes();
   },
   methods: {
     onInputValueMode(valueMode) {

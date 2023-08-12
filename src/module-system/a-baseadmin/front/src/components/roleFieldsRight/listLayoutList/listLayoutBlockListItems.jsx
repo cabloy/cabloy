@@ -60,6 +60,8 @@ export default {
           groups.push(group);
         }
         // item
+        item._fieldsRight = item.fieldsRight ? JSON.parse(item.fieldsRight) : null;
+
         if (item.actionMode === 1) {
           item.title = item.actionName;
           item.titleLocale = item.actionNameLocale;
