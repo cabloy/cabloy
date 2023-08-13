@@ -25,6 +25,11 @@ export default {
       if (this.layoutConfig.options?.subnavbar?.policyDefault) {
         this.layoutManager.subnavbar_policyDefault();
       }
+      // provider switch
+      const providerOptions = this.layoutConfig.providerOptions || {
+        providerName: 'item',
+      };
+      await this.layoutManager.data_providerSwitch(providerOptions);
       // instance
       await this.layoutManager.layout_setInstance(this);
     },

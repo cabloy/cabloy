@@ -3,6 +3,9 @@ export default {
     return {};
   },
   methods: {
+    page_ptr() {
+      return true;
+    },
     page_onGetTitle() {
       let title;
       if (this.base.item) {

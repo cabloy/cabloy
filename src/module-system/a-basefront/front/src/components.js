@@ -12,6 +12,7 @@ import listLayoutDataProviderAll from './components/listLayoutData/providerAll.j
 import listLayoutDataProviderContinuous from './components/listLayoutData/providerContinuous.jsx';
 import listLayoutDataProviderPaged from './components/listLayoutData/providerPaged.jsx';
 import listLayoutDataProviderTree from './components/listLayoutData/providerTree.jsx';
+import itemLayoutDataProviderItem from './components/listLayoutData/providerItem.jsx';
 // tools
 import developerTool from './components/tools/developerTool.js';
 
@@ -30,6 +31,7 @@ export default {
   listLayoutDataProviderContinuous,
   listLayoutDataProviderPaged,
   listLayoutDataProviderTree,
+  itemLayoutDataProviderItem,
   // developerTool
   developerTool,
 };
