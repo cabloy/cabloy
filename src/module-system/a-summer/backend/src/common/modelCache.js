@@ -44,7 +44,7 @@ module.exports = app => {
       const cache = this.__getCacheInstance();
       const data = await cache.get(where, {
         fn_get: async () => {
-          return await super.get(where, ...args);
+          return await super.get(where, { columns: ['id'] });
         },
         ignoreNull: true,
       });
