@@ -49,8 +49,10 @@ export default {
     },
     _renderItemAfter(item) {
       const children = [];
-      const level = `${this.$text('FieldsRightRole_Level')}: ${item.level}`;
-      children.push(<f7-badge>{level}</f7-badge>);
+      if (item.level) {
+        const level = `${this.$text('FieldsRightRole_Level')}: ${item.level}`;
+        children.push(<f7-badge>{level}</f7-badge>);
+      }
       return (
         <div slot="after" class="after">
           {children}

@@ -80,7 +80,7 @@ export default {
         <f7-list-group key={group.id}>
           <f7-list-item group-title>
             <div>{group.atomClassTitle}</div>
-            <div class="item-after">{group.id}</div>
+            <div class="item-after">{group.moduleTitle}</div>
           </f7-list-item>
           {children}
         </f7-list-group>
