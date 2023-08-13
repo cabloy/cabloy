@@ -3,6 +3,7 @@ import Base from './base.jsx';
 import Page from './page.jsx';
 import Layout from './layout.jsx';
 import Info from './info.jsx';
+import Data from './data.jsx';
 import Event from './event.jsx';
 import Item from './item.jsx';
 import Subnavbar from './subnavbar.jsx';
@@ -34,6 +35,7 @@ export default {
     Page,
     Layout,
     Info,
+    Data,
     Event,
     Item,
     Subnavbar,

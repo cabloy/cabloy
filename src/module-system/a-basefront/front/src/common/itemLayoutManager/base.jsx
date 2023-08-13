@@ -100,6 +100,7 @@ export default {
         return true;
       } catch (err) {
         console.error(err);
+        this.base.item = null;
         this.base.notfound = true;
         return false;
       }
