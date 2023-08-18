@@ -1,6 +1,8 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Fields {
+    // atomClass: maybe detail
+    // fieldsRight: must belongs to main atomClass
     async parseSchema({ atomClass, fieldsRight }) {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
@@ -121,14 +123,7 @@ module.exports = ctx => {
     }
 
     async __parseSchema_getSchemaBase({ atomClass }) {
-      // validator
-      const validator = await ctx.bean.atom.validator({ atomClass });
-      // schemaBase
-      return ctx.bean.validation.getSchema({
-        module: validator.module,
-        validator: validator.validator,
-        schema: null,
-      });
+      return await ctx.bean.atom.schema({ atomClass, schema: null });
     }
 
     async __parseSchema_getFieldsRight({ atomClass, fieldsRight }) {
