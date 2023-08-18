@@ -12,7 +12,11 @@ module.exports = ctx => {
       fieldsRight = await this.__parseSchema_getFieldsRight({ atomClass, fieldsRight });
       // check
       if (fieldsRight._mode === 'general') {
-        schemaBase = this.__parseSchema_checkModeGeneral({ schemaBase, fieldsRight });
+        if (fieldsRight.mode === 'allowAllFieldsReadWrite') {
+          // schemaBase = schemaBase;
+        } else {
+          schemaBase = this.__parseSchema_checkModeGeneral({ schemaBase, fieldsRight });
+        }
       } else {
         // custom: array/object
         if (Array.isArray(fieldsRight.custom)) {
