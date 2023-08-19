@@ -25,6 +25,14 @@ module.exports = ctx => {
       return fieldsRight;
     }
 
+    async clearSummer_fieldsRightOfAtomClass() {
+      await ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'fieldsRightOfAtomClass' });
+    }
+
+    async clearSummer_fieldsRightOfUser() {
+      await ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'fieldsRightOfUser' });
+    }
+
     async __getFieldsRightOfAtomClassRaw({ atomClassId }) {
       const item = await this.modelRoleRightRef.get({ atomClassId });
       return !!item; // exists: true/false
