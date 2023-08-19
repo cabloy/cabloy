@@ -4,7 +4,7 @@ module.exports = app => {
       super(ctx, { table, options });
       this.__cacheName = options.cacheName;
       this.__cacheKeyAux = options.cacheKeyAux;
-      this.__cacheNotKey = options.cacheNotKey !== false;
+      this.__cacheNotKey = options.cacheNotKey;
     }
 
     async mget(ids) {
