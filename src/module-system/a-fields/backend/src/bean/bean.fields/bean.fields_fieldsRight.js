@@ -26,6 +26,10 @@ module.exports = ctx => {
       return item?.fieldsRight ? JSON.parse(item.fieldsRight) : null;
     }
 
+    async __getFieldsRightOfAtomClassRaw({ atomClassId }) {}
+
+    async __getFieldsRightOfUserRaw({ atomClassId, userId }) {}
+
     async _fieldsRightLocale({ items }) {
       for (const item of items) {
         // roleNameBase

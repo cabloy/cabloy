@@ -4,6 +4,7 @@ module.exports = app => {
       super(ctx, { table, options });
       this.__cacheName = options.cacheName;
       this.__cacheKeyAux = options.cacheKeyAux;
+      this.__cacheNotKey = options.cacheNotKey !== false;
     }
 
     async mget(ids) {
@@ -22,7 +23,10 @@ module.exports = app => {
 
     async get(where, ...args) {
       if (!this.__checkCacheKeyValid(where)) {
-        return await this.__get_notkey(where, ...args);
+        if (this.__cacheNotKey) {
+          return await this.__get_notkey(where, ...args);
+        }
+        return await super.get(where, ...args);
       }
       return await this.__get_key(where, ...args);
     }
@@ -90,6 +94,10 @@ module.exports = app => {
 
     __getCacheInstance() {
       return this.ctx.bean.summer.getCache(this.__cacheName);
+    }
+
+    async clearSummer() {
+      await this.ctx.bean.summer.clear(this.__cacheName);
     }
   }
 
