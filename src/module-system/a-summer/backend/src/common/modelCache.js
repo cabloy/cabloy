@@ -105,7 +105,7 @@ module.exports = app => {
       return this.ctx.bean.summer.getCache(this.__cacheName);
     }
 
-    async clearSummer() {
+    async clearCache() {
       await this.ctx.bean.summer.clear(this.__cacheName);
     }
   }

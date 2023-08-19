@@ -4,31 +4,47 @@ const __atomClass_userFieldsRight = {
 };
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Fields {
     // atomClass: only main (exluding detail)
     async getPreferredFieldsRightOfUser({ atomClass, user }) {
       if (!user || user.id === 0) return null;
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
+      // 1. fieldsRightOfAtomClass
+      const exists = await ctx.bean.summer.get(
+        { module: moduleInfo.relativeName, name: 'fieldsRightOfAtomClass' },
+        { atomClassId: atomClass.id }
+      );
+      if (!exists) return null;
+      // 2. fieldsRightOfUser
+      const fieldsRight = await ctx.bean.summer.get(
+        { module: moduleInfo.relativeName, name: 'fieldsRightOfUser' },
+        { atomClassId: atomClass.id, userId: user.id }
+      );
+      return fieldsRight;
+    }
+
+    async __getFieldsRightOfAtomClassRaw({ atomClassId }) {
+      const item = await this.modelRoleRightRef.get({ atomClassId });
+      return !!item; // exists: true/false
+    }
+
+    async __getFieldsRightOfUserRaw({ atomClassId, userId }) {
       const options = {
         page: { index: 0, size: 1 },
         where: {
-          atomClassIdTarget: atomClass.id,
+          atomClassIdTarget: atomClassId,
         },
       };
       const items = await ctx.bean.atom.select({
         atomClass: __atomClass_userFieldsRight,
         options,
-        user,
+        user: { id: userId },
       });
       const item = items[0];
       return item?.fieldsRight ? JSON.parse(item.fieldsRight) : null;
     }
-
-    async __getFieldsRightOfAtomClassRaw({ atomClassId }) {}
-
-    async __getFieldsRightOfUserRaw({ atomClassId, userId }) {}
 
     async _fieldsRightLocale({ items }) {
       for (const item of items) {
