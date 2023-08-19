@@ -4,7 +4,7 @@ module.exports = app => {
       super(ctx, { table, options });
       this.__cacheName = options.cacheName;
       this.__cacheKeyAux = options.cacheKeyAux;
-      this.__cacheNotKey = options.cacheNotKey;
+      this.__cacheNotKey = options.cacheNotKey !== false;
     }
 
     async mget(ids) {
@@ -53,9 +53,11 @@ module.exports = app => {
         ignoreNull: true,
       });
       if (!data) return data;
-      // check if exists
+      // check if exists and valid
       const data2 = await this.__get_key({ id: data.id }, ...args);
-      if (data2) return data2;
+      if (data2 && this.__checkCacheNotKeyDataValid(where, data2)) {
+        return data2;
+      }
       // delete cache
       await this.__deleteCache_notkey(where);
       // get again
@@ -79,6 +81,13 @@ module.exports = app => {
         keys = keys.filter(item => item !== this.__cacheKeyAux);
       }
       return keys.length === 1 && keys[0] === 'id';
+    }
+
+    __checkCacheNotKeyDataValid(where, data) {
+      for (const key in where) {
+        if (where[key] !== data[key]) return false;
+      }
+      return true;
     }
 
     async __deleteCache_key(where) {
