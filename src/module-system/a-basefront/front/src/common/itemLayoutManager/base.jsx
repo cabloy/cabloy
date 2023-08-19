@@ -10,7 +10,7 @@ export default {
         atomClass: null,
         atomClassBase: null,
         module: null,
-        validateParams: null,
+        validateSchema: null,
         //
         _atomIdMain: null,
         _atomMain: null,
@@ -56,14 +56,6 @@ export default {
         this.base.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass: this.base.atomClass });
         // module
         this.base.module = await this.$meta.module.use(this.base.atomClass.module);
-        // validateParams
-        const res = await this.$api.post('/a/base/atom/validator', {
-          atomClass: this.base.atomClass,
-        });
-        this.base.validateParams = {
-          module: res.module,
-          validator: res.validator,
-        };
         // not set: found
         // this.base.notfound = false;
         // ok
@@ -76,7 +68,7 @@ export default {
     async base_loadItem() {
       try {
         // options
-        const options = this.base_prepareReadOptions();
+        let options = this.base_prepareReadOptions();
         // check create delay
         if (this.container.params?.createDelay) {
           // createDelayGetItem
@@ -86,11 +78,20 @@ export default {
           await this.actions_createDelayActions();
         } else {
           // item
-          this.base.item = await this.$api.post('/a/base/atom/read', {
+          if (!this.base.validateSchema) {
+            options = { ...options, returnSchema: true };
+          }
+          const res = await this.$api.post('/a/base/atom/read', {
             key: { atomId: this.container.atomId },
             atomClass: this.base.atomClass,
             options,
           });
+          if (options.returnSchema) {
+            this.base.item = res.item;
+            this.base.validateSchema = res.schema;
+          } else {
+            this.base.item = res;
+          }
           // actions
           await this.actions_fetchActions();
         }

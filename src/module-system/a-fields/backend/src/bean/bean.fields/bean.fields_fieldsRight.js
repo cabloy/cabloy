@@ -34,7 +34,7 @@ module.exports = ctx => {
     }
 
     async __getFieldsRightOfAtomClassRaw({ atomClassId }) {
-      const item = await this.modelRoleRightRef.get({ atomClassId });
+      const item = await this.modelRoleFieldsRight.get({ atomClassId });
       return !!item; // exists: true/false
     }
 

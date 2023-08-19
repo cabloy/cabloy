@@ -125,6 +125,9 @@ export default {
     validate_render(options) {
       options = options || {};
       if (!this.base_ready) return null;
+      const meta = {
+        schema: this.base.validateSchema,
+      };
       return (
         <eb-validate
           ref="validate"
@@ -132,7 +135,7 @@ export default {
           readOnly={this.container.mode !== 'edit'}
           auto
           data={this.base.item}
-          params={this.base.validateParams}
+          meta={meta}
           errors={this.validate.errors}
           propsOnPerform={this.validate_onPerformValidate}
           onSubmit={options.validate_onSubmit || this.validate_onSubmit}
