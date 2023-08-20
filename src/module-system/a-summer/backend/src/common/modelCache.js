@@ -85,7 +85,15 @@ module.exports = app => {
 
     __checkCacheNotKeyDataValid(where, data) {
       for (const key in where) {
-        if (where[key] !== data[key]) return false;
+        const a = where[key];
+        const b = data[key];
+        if (a && b && typeof a === 'string' && typeof b === 'string') {
+          if (a.toLowerCase() !== b.toLowerCase()) return false;
+        } else if (typeof a === 'boolean' || typeof b === 'boolean') {
+          if (Boolean(a) !== Boolean(b)) return false;
+        } else {
+          if (a !== b) return false;
+        }
       }
       return true;
     }

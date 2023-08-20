@@ -64,7 +64,7 @@ module.exports = app => {
               userIds: 'userId',
               dicts: {
                 isLogin: {
-                  dictKey: 'a-userOnline:dictLoginType',
+                  dictKey: 'a-useronline:dictLoginType',
                 },
               },
             },
