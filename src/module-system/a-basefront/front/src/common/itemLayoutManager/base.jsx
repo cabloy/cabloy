@@ -73,12 +73,13 @@ export default {
         if (this.container.params?.createDelay) {
           // createDelayGetItem
           let createParams = this.container.params?.createDelay.dataOptions.createParams;
+          options = { ...options, ...createParams.options };
           if (!this.base.validateSchema) {
-            const options = { ...createParams.options, returnSchema: true };
-            createParams = { ...createParams, options };
+            options.returnSchema = true;
           }
+          createParams = { ...createParams, options };
           const res = await this.$api.post('/a/base/atom/createDelayGetItem', createParams);
-          if (createParams.options.returnSchema) {
+          if (options.returnSchema) {
             this.base.item = res.item;
             this.base.validateSchema = res.schema;
           } else {
