@@ -72,8 +72,18 @@ export default {
         // check create delay
         if (this.container.params?.createDelay) {
           // createDelayGetItem
-          const createParams = this.container.params?.createDelay.dataOptions.createParams;
-          this.base.item = await this.$api.post('/a/base/atom/createDelayGetItem', createParams);
+          let createParams = this.container.params?.createDelay.dataOptions.createParams;
+          if (!this.base.validateSchema) {
+            const options = { ...createParams.options, returnSchema: true };
+            createParams = { ...createParams, options };
+          }
+          const res = await this.$api.post('/a/base/atom/createDelayGetItem', createParams);
+          if (createParams.options.returnSchema) {
+            this.base.item = res.item;
+            this.base.validateSchema = res.schema;
+          } else {
+            this.base.item = res;
+          }
           // actions
           await this.actions_createDelayActions();
         } else {
