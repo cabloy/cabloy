@@ -50,12 +50,12 @@ module.exports = ctx => {
       return await _validator[cacheKey].v({ ctx, schema, data, filterOptions });
     }
 
-    async ajvFromSchemaAndValidate({ module, schema, options, data, filterOptions }) {
+    async ajvFromSchemaAndValidate({ module, schema, data, filterOptions }) {
       if (typeof schema === 'string') {
         const _schema = this.getSchema({ module, schema });
         schema = _schema.schema;
       }
-      const ajv = this.ajvFromSchema({ module, schema, options, filterOptions });
+      const ajv = this.ajvFromSchema({ module, schema, filterOptions });
       return await this.ajvValidate({ ajv, schema: null, data, filterOptions });
     }
 
@@ -63,12 +63,15 @@ module.exports = ctx => {
       return await ajv.v({ ctx, schema, data, filterOptions });
     }
 
-    ajvFromSchema({ module, schema, options, filterOptions }) {
+    ajvFromSchema({ module, schema, filterOptions }) {
       // ignoreRules
       const ignoreRules = filterOptions && filterOptions.ignoreRules;
       // params
+      let options;
       if (ignoreRules) {
         options = { coerceTypes: false, useDefaults: true }; // not use _validator.options
+      } else {
+        options = {};
       }
       const params = {
         options,
@@ -84,7 +87,11 @@ module.exports = ctx => {
       const schemas = {
         [params.schemaRoot]: { ...schema, $async: true },
       };
-      params.schemas = this._prepareSchemas_ignoreRules({ schemas });
+      if (ignoreRules) {
+        params.schemas = this._prepareSchemas_ignoreRules({ schemas });
+      } else {
+        params.schemas = schemas;
+      }
       // create
       return ctx.app.meta.ajv.create(params);
     }
@@ -159,16 +166,20 @@ module.exports = ctx => {
       return schemas;
     }
 
-    async _validate({ atomClass, detailClass, data, options, filterOptions }) {
+    async _validate({ atomClass, data, options, filterOptions }) {
       // validator
       const optionsSchema = options && options.schema;
       if (optionsSchema) {
-        if (optionsSchema.validator && (!optionsSchema.schema || typeof optionsSchema.schema === 'string')) {
+        if (
+          optionsSchema.validator &&
+          (!optionsSchema.schema || typeof optionsSchema.schema === 'string' || optionsSchema.isSchemaBase)
+        ) {
+          const schema = optionsSchema.isSchemaBase ? null : optionsSchema.schema;
           // use validator directly
           await this.validate({
             module: optionsSchema.module,
             validator: optionsSchema.validator,
-            schema: optionsSchema.schema,
+            schema,
             data,
             filterOptions,
           });
@@ -183,18 +194,6 @@ module.exports = ctx => {
         }
       } else if (atomClass) {
         const validator = await ctx.bean.atom.validator({ atomClass });
-        if (validator) {
-          // if error throw 422
-          await this.validate({
-            module: validator.module,
-            validator: validator.validator,
-            schema: validator.schema,
-            data,
-            filterOptions,
-          });
-        }
-      } else if (detailClass) {
-        const validator = await ctx.bean.detail.validator({ detailClass });
         if (validator) {
           // if error throw 422
           await this.validate({
