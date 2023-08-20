@@ -30,9 +30,9 @@ export default {
         return await this._onActionCreateContinueWrite({ ctx, action, atomClass, dataOptions, item });
       }
       // create
-      const { key, atom } = await ctx.$api.post('/a/base/atom/create', params);
+      const { key, item: itemCreate } = await ctx.$api.post('/a/base/atom/create', params);
       // event
-      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom });
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom: itemCreate });
       // menu
       if (!dataOptions.noActionWrite) {
         // write
@@ -54,7 +54,7 @@ export default {
         atomClass,
         item,
         options: {
-          returnAtom: true,
+          returnItem: true,
         },
       };
       // roleIdOwner
