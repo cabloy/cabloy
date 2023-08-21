@@ -1,7 +1,7 @@
 export default {
   methods: {
     async _onActionSubmit() {
-      const { ctx, item } = this.$props;
+      const { ctx, action, item } = this.$props;
       // onActionSubmitBefore
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSubmitBefore) {
@@ -13,10 +13,15 @@ export default {
         module: item.module,
         atomClassName: item.atomClassName,
       };
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
       // step one: write
       const options = {
         saveDraftOnly: false,
       };
+      if (dataOptions.flowTaskId) {
+        options.flowTaskId = dataOptions.flowTaskId;
+      }
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       // step middle: confirm
       await ctx.$view.dialog.confirm(this.$text('AtomActionSubmitConfirm'));
