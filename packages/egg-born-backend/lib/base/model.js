@@ -156,7 +156,7 @@ module.exports = app => {
     Object.defineProperty(Model.prototype, method, {
       get() {
         return function () {
-          // console.log(this.constructor.name, arguments);
+          console.log(this.constructor.name, arguments);
           const args = [];
           if (this.table) args.push(this.table);
           for (const arg of arguments) args.push(arg);
