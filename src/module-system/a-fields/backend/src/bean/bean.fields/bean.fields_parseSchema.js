@@ -50,6 +50,7 @@ module.exports = ctx => {
       return {
         ...schemaBase,
         schema: schemaNew,
+        isSchemaBase: false,
       };
     }
 
@@ -114,6 +115,7 @@ module.exports = ctx => {
       return {
         ...schemaBase,
         schema: schemaNew,
+        isSchemaBase: false,
       };
     }
 
