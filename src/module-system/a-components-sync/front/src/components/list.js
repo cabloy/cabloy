@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 const f7List = Vue.options.components['f7-list'].extendOptions;
 export default {
@@ -45,5 +44,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
