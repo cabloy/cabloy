@@ -22,7 +22,7 @@ import listInput from './components/listInput.js';
 import listComponent from './components/listComponent.js';
 import fabButton from './components/fabButton.js';
 import swipeoutActions from './components/swipeoutActions.js';
-import swipeoutButton from './components/swipeoutButton.vue';
+import swipeoutButton from './components/swipeoutButton.js';
 import tabPageContent from './components/tabPageContent.jsx';
 import searchPage from './components/searchPage.vue';
 import popover from './components/popover.js';
