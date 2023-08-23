@@ -725,6 +725,17 @@ export default function (Vue) {
       if (typeof stage === 'string') return stage;
       return stage === 0 ? 'draft' : stage === 1 ? 'formal' : 'history';
     },
+    patchF7ExtendOptions(extendOptions, propsRemove) {
+      if (!propsRemove) return extendOptions;
+      if (!Array.isArray(propsRemove)) {
+        propsRemove = propsRemove.split(',');
+      }
+      const props = { ...extendOptions.props };
+      for (const propRemove in propsRemove) {
+        delete props[propRemove];
+      }
+      return { ...extendOptions, props };
+    },
   };
 
   // moment

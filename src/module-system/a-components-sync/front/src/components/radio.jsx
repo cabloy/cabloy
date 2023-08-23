@@ -1,6 +1,6 @@
 import Vue from 'vue';
-const f7Radio = Vue.options.components['f7-radio'].extendOptions;
-delete f7Radio.props.checked;
+let f7Radio = Vue.options.components['f7-radio'].extendOptions;
+f7Radio = Vue.prototype.$meta.util.patchF7ExtendOptions(f7Radio, 'checked');
 export default {
   meta: {
     global: true,
