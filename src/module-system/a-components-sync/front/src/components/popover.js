@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 const f7Popover = Vue.options.components['f7-popover'].extendOptions;
 export default {
@@ -30,5 +29,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>

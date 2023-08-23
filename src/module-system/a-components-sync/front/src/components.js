@@ -25,7 +25,7 @@ import swipeoutActions from './components/swipeoutActions.vue';
 import swipeoutButton from './components/swipeoutButton.vue';
 import tabPageContent from './components/tabPageContent.jsx';
 import searchPage from './components/searchPage.vue';
-import popover from './components/popover.vue';
+import popover from './components/popover.js';
 import contextMenu from './components/contextMenu.js';
 import actionsBar from './components/actionsBar.jsx';
 import box from './components/box.js';
