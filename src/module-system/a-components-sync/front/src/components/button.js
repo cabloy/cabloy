@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import perform from '../common/perform.js';
 import contextMenu from '../common/contextMenu.js';
@@ -11,5 +10,3 @@ export default {
   extends: f7Button,
   mixins: [perform, contextMenu],
 };
-</script>
-<style scoped></style>

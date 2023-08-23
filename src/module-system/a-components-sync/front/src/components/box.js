@@ -1,4 +1,3 @@
-<script>
 import viewSizeChange from '../common/viewSizeChange.jsx';
 export default {
   meta: {
@@ -37,4 +36,3 @@ export default {
     },
   },
 };
-</script>
