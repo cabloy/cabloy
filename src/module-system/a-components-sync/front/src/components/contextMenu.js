@@ -1,4 +1,3 @@
-<script>
 export default {
   meta: {
     global: true,
@@ -76,5 +75,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
