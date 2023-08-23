@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import TreeviewData from './treeviewData.js';
 import TreeviewAdapterFn from './treeviewAdapter.js';
@@ -310,5 +309,3 @@ export default {
     );
   },
 };
-</script>
-<style scoped></style>

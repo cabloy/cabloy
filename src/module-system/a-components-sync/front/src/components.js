@@ -29,7 +29,7 @@ import popover from './components/popover.vue';
 import contextMenu from './components/contextMenu.vue';
 import actionsBar from './components/actionsBar.jsx';
 import box from './components/box.vue';
-import treeview from './components/treeview/treeview.vue';
+import treeview from './components/treeview/treeview.js';
 import treeviewItem from './components/treeview/treeviewItem.js';
 import stats from './components/stats.jsx';
 import statsColor from './components/statsColor.jsx';
