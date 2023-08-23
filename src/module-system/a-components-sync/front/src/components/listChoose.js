@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import validateCheck from '../common/validate/validateCheck.js';
 import trimMessage from '../common/trimMessage.js';
@@ -48,4 +47,3 @@ export default {
     },
   },
 };
-</script>
