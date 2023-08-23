@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import perform from '../../common/perform.js';
 import link from '../../common/link.js';
@@ -32,5 +31,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
