@@ -1,8 +1,6 @@
 import Vue from 'vue';
-const f7Page = Vue.options.components['f7-page'].extendOptions;
-delete f7Page.props.hideNavbarOnScroll;
-delete f7Page.props.hideToolbarOnScroll;
-delete f7Page.props.className;
+let f7Page = Vue.options.components['f7-page'].extendOptions;
+f7Page = Vue.prototype.$meta.util.patchF7ExtendOptions(f7Page, 'hideNavbarOnScroll,hideToolbarOnScroll,className');
 const __prefix = '* ';
 export default {
   meta: {
