@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import validateCheck from '../common/validate/validateCheck.js';
 import validateCheckInput from '../common/validate/validateCheckInput.js';
@@ -11,5 +10,3 @@ export default {
   extends: f7Input,
   mixins: [validateCheck, validateCheckInput],
 };
-</script>
-<style scoped></style>
