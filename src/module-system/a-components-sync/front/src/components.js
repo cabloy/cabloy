@@ -3,7 +3,7 @@ import view from './components/view2.jsx';
 import page from './components/page.jsx';
 import navbar from './components/navbar.vue';
 import link from './components/link.js';
-import linkColor from './components/linkColor.vue';
+import linkColor from './components/linkColor.js';
 import button from './components/button.js';
 import component from './components/component.vue';
 import input from './components/input.vue';
