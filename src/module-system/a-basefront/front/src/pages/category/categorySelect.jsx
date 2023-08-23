@@ -1,24 +1,3 @@
-<template>
-  <eb-page>
-    <eb-navbar large largeTransparent :title="$text('Select Category')" eb-back-link="Back">
-      <f7-nav-right>
-        <eb-link iconF7="::done" :onPerform="onPerformDone"></eb-link>
-      </f7-nav-right>
-    </eb-navbar>
-    <categorySelect
-      ref="tree"
-      :atomClass="atomClass"
-      :language="language"
-      :categoryIdStart="categoryIdStart"
-      :multiple="multiple"
-      :catalogOnly="catalogOnly"
-      :leafOnly="leafOnly"
-      :disabledCategoryIds="disabledCategoryIds"
-      :selectedCategoryIds="selectedCategoryIds"
-    ></categorySelect>
-  </eb-page>
-</template>
-<script>
 import Vue from 'vue';
 import categorySelect from '../../components/category/categorySelect.jsx';
 const ebPageContext = Vue.prototype.$meta.module.get('a-components').options.mixins.ebPageContext;
@@ -75,5 +54,26 @@ export default {
       this.$f7router.back();
     },
   },
+  render() {
+    return (
+      <eb-page>
+        <eb-navbar large largeTransparent title={this.$text('Select Category')} eb-back-link="Back">
+          <f7-nav-right>
+            <eb-link iconF7="::done" propsOnPerform={this.onPerformDone}></eb-link>
+          </f7-nav-right>
+        </eb-navbar>
+        <categorySelect
+          ref="tree"
+          atomClass={this.atomClass}
+          language={this.language}
+          categoryIdStart={this.categoryIdStart}
+          multiple={this.multiple}
+          catalogOnly={this.catalogOnly}
+          leafOnly={this.leafOnly}
+          disabledCategoryIds={this.disabledCategoryIds}
+          selectedCategoryIds={this.selectedCategoryIds}
+        ></categorySelect>
+      </eb-page>
+    );
+  },
 };
-</script>

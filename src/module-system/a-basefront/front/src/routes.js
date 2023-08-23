@@ -24,7 +24,7 @@ export default [
   { path: 'base/alert', component: load('base/alert') },
   { path: 'base/about', component: load('base/about') },
   { path: 'base/openLink', component: load('base/openLink') },
-  { path: 'category/select', component: load('category/categorySelect') },
+  { path: 'category/select', component: loadjsx('category/categorySelect') },
   { path: 'tag/select', component: load('tag/tagSelect') },
   { path: 'resource/authorize', component: load('resource/authorize') },
   { path: 'resource/select', component: load('resource/resourceSelect') },
