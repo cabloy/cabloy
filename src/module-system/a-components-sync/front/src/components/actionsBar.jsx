@@ -90,6 +90,6 @@ export default {
     } else if (mode === 'toolbar') {
       return this._render_toolbar();
     }
-    return <div>sssss</div>;
+    return <div>invalid mode</div>;
   },
 };
