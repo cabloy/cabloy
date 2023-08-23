@@ -2,8 +2,8 @@ import Vue from 'vue';
 import perform from '../../common/perform.js';
 import link from '../../common/link.js';
 import contextMenu from '../../common/contextMenu.js';
-const f7TreeviewItem = Vue.options.components['f7-treeview-item'].extendOptions;
-delete f7TreeviewItem.props.href;
+let f7TreeviewItem = Vue.options.components['f7-treeview-item'].extendOptions;
+f7TreeviewItem = Vue.prototype.$meta.util.patchF7ExtendOptions(f7TreeviewItem, 'href');
 export default {
   meta: {
     global: true,
