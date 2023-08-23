@@ -193,8 +193,6 @@ export default {
             slot: 'content-start',
             props: {
               value: _node.attrs.checked,
-            },
-            attrs: {
               disabled: _node.attrs.disabled,
             },
             on: {
