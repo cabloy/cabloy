@@ -126,10 +126,15 @@ export default {
       return pageTitle;
     },
     _getHideNavbarOnScroll() {
-      return this.ebHideNavbarOnScroll === undefined ? this.$device.hostEnabled : this.ebHideNavbarOnScroll;
+      return this.ebHideNavbarOnScroll === undefined ? this._checkIfAutoScroll() : this.ebHideNavbarOnScroll;
     },
     _getHideToolbarOnScroll() {
-      return this.ebHideToolbarOnScroll === undefined ? this.$device.hostEnabled : this.ebHideToolbarOnScroll;
+      return this.ebHideToolbarOnScroll === undefined ? this._checkIfAutoScroll() : this.ebHideToolbarOnScroll;
+    },
+    _checkIfAutoScroll() {
+      const appLayout = this.$meta.vueApp.layout;
+      if (appLayout === 'mobile') return true;
+      return false;
     },
     getAbsoluteUrl() {
       return this.$meta.util.combineHash(this.$pageRoute.url);
