@@ -16,7 +16,7 @@ import validateItem from './components/validateItem.jsx';
 import list from './components/list.js';
 import listButton from './components/listButton.js';
 import listItem from './components/listItem.js';
-import listPanel from './components/listPanel.vue';
+import listPanel from './components/listPanel.js';
 import listChoose from './components/listChoose.js';
 import listInput from './components/listInput.js';
 import listComponent from './components/listComponent.js';

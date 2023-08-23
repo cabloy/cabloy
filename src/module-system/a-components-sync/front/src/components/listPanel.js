@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 import validateCheck from '../common/validate/validateCheck.js';
 const f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
@@ -20,5 +19,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
