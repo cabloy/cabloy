@@ -7,7 +7,7 @@ import linkColor from './components/linkColor.js';
 import button from './components/button.js';
 import component from './components/component.vue';
 import input from './components/input.vue';
-import toggle from './components/toggle.vue';
+import toggle from './components/toggle.js';
 import radio from './components/radio.js';
 import checkbox from './components/checkbox.js';
 import select from './components/select2.jsx';

@@ -1,8 +1,6 @@
-<script>
 import Vue from 'vue';
-const f7Toggle = Vue.options.components['f7-toggle'].extendOptions;
-delete f7Toggle.props.checked;
-delete f7Toggle.props.value;
+let f7Toggle = Vue.options.components['f7-toggle'].extendOptions;
+f7Toggle = Vue.prototype.$meta.util.patchF7ExtendOptions(f7Toggle, 'checked,value');
 export default {
   meta: {
     global: true,
@@ -31,5 +29,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
