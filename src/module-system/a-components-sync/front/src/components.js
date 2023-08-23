@@ -1,6 +1,6 @@
 import loadMore from './components/loadMore.jsx';
 import view from './components/view2.jsx';
-import page from './components/page.jsx';
+import page from './components/page.js';
 import navbar from './components/navbar.js';
 import link from './components/link.js';
 import linkColor from './components/linkColor.js';

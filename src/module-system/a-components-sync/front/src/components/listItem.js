@@ -3,7 +3,7 @@ import perform from '../common/perform.js';
 import link from '../common/link.js';
 import contextMenu from '../common/contextMenu.js';
 import validateCheck from '../common/validate/validateCheck.js';
-let f7ListItem = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-list-item'].extendOptions);
+let f7ListItem = Vue.options.components['f7-list-item'].extendOptions;
 f7ListItem = Vue.prototype.$meta.util.patchF7ExtendOptions(f7ListItem, 'href');
 export default {
   meta: {

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-let f7Navbar = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-navbar'].extendOptions);
+let f7Navbar = Vue.options.components['f7-navbar'].extendOptions;
 f7Navbar = Vue.prototype.$meta.util.patchF7ExtendOptions(f7Navbar, 'backLink,closeLink,sizeLink');
 export default {
   meta: {
