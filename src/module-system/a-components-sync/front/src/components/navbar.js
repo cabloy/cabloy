@@ -1,9 +1,6 @@
-<script>
 import Vue from 'vue';
-const f7Navbar = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-navbar'].extendOptions);
-delete f7Navbar.props.backLink;
-delete f7Navbar.props.closeLink;
-delete f7Navbar.props.sizeLink;
+let f7Navbar = Vue.prototype.$meta.util.extend({}, Vue.options.components['f7-navbar'].extendOptions);
+f7Navbar = Vue.prototype.$meta.util.patchF7ExtendOptions(f7Navbar, 'backLink,closeLink,sizeLink');
 export default {
   meta: {
     global: true,
@@ -82,5 +79,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>
