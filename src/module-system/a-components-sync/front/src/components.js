@@ -18,7 +18,7 @@ import listButton from './components/listButton.js';
 import listItem from './components/listItem.js';
 import listPanel from './components/listPanel.vue';
 import listChoose from './components/listChoose.js';
-import listInput from './components/listInput.vue';
+import listInput from './components/listInput.js';
 import listComponent from './components/listComponent.js';
 import fabButton from './components/fabButton.js';
 import swipeoutActions from './components/swipeoutActions.vue';
