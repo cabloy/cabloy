@@ -731,10 +731,13 @@ export default function (Vue) {
         propsRemove = propsRemove.split(',');
       }
       const props = { ...extendOptions.props };
-      for (const propRemove in propsRemove) {
+      for (const propRemove of propsRemove) {
         delete props[propRemove];
       }
-      return { ...extendOptions, props };
+      const res = { ...extendOptions, props };
+      delete res._Ctor;
+      delete res.name;
+      return res;
     },
   };
 

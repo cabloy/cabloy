@@ -188,16 +188,18 @@ export default {
       const radio = !this.treeviewData.treeviewRoot.attrs.multiple;
       if (_node.attrs.checkbox && radio) {
         children.push(
-          _h('f7-radio', {
+          _h('eb-radio', {
             key: '__radio',
             slot: 'content-start',
+            props: {
+              value: _node.attrs.checked,
+            },
             attrs: {
-              checked: _node.attrs.checked,
               disabled: _node.attrs.disabled,
             },
             on: {
-              change: e => {
-                this.treeviewData._onNodeChange(node, e.target.checked);
+              input: value => {
+                this.treeviewData._onNodeChange(node, value);
               },
             },
           })
