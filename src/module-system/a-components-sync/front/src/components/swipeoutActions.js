@@ -1,4 +1,3 @@
-<script>
 import Vue from 'vue';
 const f7SwipeoutActions = Vue.options.components['f7-swipeout-actions'].extendOptions;
 export default {
@@ -39,5 +38,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>

@@ -21,7 +21,7 @@ import listChoose from './components/listChoose.js';
 import listInput from './components/listInput.js';
 import listComponent from './components/listComponent.js';
 import fabButton from './components/fabButton.js';
-import swipeoutActions from './components/swipeoutActions.vue';
+import swipeoutActions from './components/swipeoutActions.js';
 import swipeoutButton from './components/swipeoutButton.vue';
 import tabPageContent from './components/tabPageContent.jsx';
 import searchPage from './components/searchPage.vue';
