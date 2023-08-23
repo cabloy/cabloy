@@ -1,6 +1,6 @@
 import Vue from 'vue';
-const f7CheckBox = Vue.options.components['f7-checkbox'].extendOptions;
-delete f7CheckBox.props.checked;
+let f7CheckBox = Vue.options.components['f7-checkbox'].extendOptions;
+f7CheckBox = Vue.prototype.$meta.util.patchF7ExtendOptions(f7CheckBox, 'checked');
 export default {
   meta: {
     global: true,
