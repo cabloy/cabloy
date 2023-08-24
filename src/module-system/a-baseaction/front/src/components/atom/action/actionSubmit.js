@@ -28,27 +28,18 @@ export default {
       // step two: submit
       const data = await ctx.$api.post('/a/base/atom/submit', { key, atomClass });
       if (data.formal) {
-        // delete draft
-        if (item.atomStage === 0) {
-          ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'delete' } });
-          if (item.atomIdFormal > 0) {
-            // update formal
-            ctx.$meta.eventHub.$emit('atom:action', {
-              key: data.formal.key,
-              atomClass,
-              action: { name: 'save' },
-              actionSource: ctx,
-            });
-          } else {
-            // list create
-            ctx.$meta.eventHub.$emit('atom:action', {
-              key: data.formal.key,
-              atomClass,
-              action: { name: 'create' },
-              atom: data.formal.atom,
-            });
-          }
-        } else {
+        await this._onActionSubmit_done_formal({ ctx, item, key, atomClass, data });
+      }
+      // check if flow
+      if (data.flow) {
+        await this._onActionSubmit_done_flow({ ctx, item, key, atomClass, data });
+      }
+    },
+    async _onActionSubmit_done_formal({ ctx, item, key, atomClass, data }) {
+      // delete draft
+      if (item.atomStage === 0) {
+        ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'delete' } });
+        if (item.atomIdFormal > 0) {
           // update formal
           ctx.$meta.eventHub.$emit('atom:action', {
             key: data.formal.key,
@@ -56,27 +47,59 @@ export default {
             action: { name: 'save' },
             actionSource: ctx,
           });
+        } else {
+          // list create
+          ctx.$meta.eventHub.$emit('atom:action', {
+            key: data.formal.key,
+            atomClass,
+            action: { name: 'create' },
+            atom: data.formal.atom,
+          });
         }
-        // back
-        if (!data.flow) {
-          ctx.page_setDirty(false); // should before navigate
-          ctx.$f7router.back();
-        }
-      }
-      // check if flow
-      if (data.flow) {
-        // flow
-        const flow = data.flow;
-        // update draft
-        ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' }, actionSource: ctx });
-        // navigate replace self
-        ctx.page_setDirty(false); // should before navigate
-        const url = `/a/flowtask/flow?flowId=${flow.id}`;
-        ctx.$view.navigate(url, {
-          target: '_self',
-          reloadCurrent: true,
+      } else {
+        // update formal
+        ctx.$meta.eventHub.$emit('atom:action', {
+          key: data.formal.key,
+          atomClass,
+          action: { name: 'save' },
+          actionSource: ctx,
         });
       }
+      // back
+      if (!data.flow) {
+        ctx.page_setDirty(false); // should before navigate
+        ctx.$f7router.back();
+      }
     },
+    async _onActionSubmit_done_flow({ ctx, item, key, atomClass /* , data*/ }) {
+      // update draft
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' }, actionSource: ctx });
+      // navigate replace self
+      ctx.page_setDirty(false); // should before navigate
+      // goto: /a/basefront/atom/item?mode=view
+      const action = {
+        actionModule: 'a-base',
+        actionComponent: 'action',
+        name: 'read',
+        navigateOptions: {
+          target: '_self',
+          reloadCurrent: true,
+        },
+      };
+      await this.$meta.util.performAction({ ctx, action, item });
+    },
+    // async _onActionSubmit_done_flow_old({ ctx, /* item,*/ key, atomClass, data }) {
+    //   // flow
+    //   const flow = data.flow;
+    //   // update draft
+    //   ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' }, actionSource: ctx });
+    //   // navigate replace self
+    //   ctx.page_setDirty(false); // should before navigate
+    //   const url = `/a/flowtask/flow?flowId=${flow.id}`;
+    //   ctx.$view.navigate(url, {
+    //     target: '_self',
+    //     reloadCurrent: true,
+    //   });
+    // },
   },
 };
