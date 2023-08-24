@@ -1,11 +1,8 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-const ModelCacheFn = require('./common/modelCache.js');
 
 module.exports = app => {
-  // modelCache
-  app.meta.ModelCache = ModelCacheFn(app);
   // aops
   const aops = require('./aops.js')(app);
   // beans
