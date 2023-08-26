@@ -13,6 +13,7 @@ const update_11 = require('./version/update_11.js');
 const update_12 = require('./version/update_12.js');
 const init_1 = require('./version/init_1.js');
 const init_12 = require('./version/init_12.js');
+const init_13 = require('./version/init_13.js');
 const test = require('./version/test.js');
 
 module.exports = app => {
@@ -31,6 +32,7 @@ module.exports = app => {
     update_12,
     init_1,
     init_12,
+    init_13,
     test,
   ];
   return app.meta.util.mixinClasses(version_0, classes, app);

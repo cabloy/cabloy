@@ -47,6 +47,9 @@ module.exports = app => {
       if (options.version === 12) {
         await this._init_12(options);
       }
+      if (options.version === 13) {
+        await this._init_13(options);
+      }
     }
 
     async test() {
