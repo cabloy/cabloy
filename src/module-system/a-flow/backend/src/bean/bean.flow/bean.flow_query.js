@@ -21,10 +21,11 @@ module.exports = ctx => {
     async get({ flowId, history, user }) {
       // check viewWorkflow
       if (user && user.id) {
-        const res = await ctx.bean.flowTask._checkViewWorkflow({ flowId, user });
-        if (!res) return null;
+        const res = await ctx.bean.flowTask._checkViewWorkflow_checkRightAction({ flowId, user });
+        if (res) {
+          user = { id: 0 };
+        }
       }
-      user = { id: 0 };
       // where
       const where = {};
       if (history) {
