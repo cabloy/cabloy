@@ -15,13 +15,13 @@ export default {
       // find node
       const nodeStartEventAtom = this.__findNode_startEventAtom({ diagram, nodeId });
       if (!nodeStartEventAtom) {
-        ctx.$view.toast.show({ text: this.$text('NotFoundStartEventAtom') });
+        ctx.$view.toast.show({ text: ctx.$text('NotFoundStartEventAtom') });
         return;
       }
       // atomClass
       const atomClass = nodeStartEventAtom.options && nodeStartEventAtom.options.atom;
       if (!atomClass || !atomClass.module || !atomClass.atomClassName) {
-        ctx.$view.toast.show({ text: this.$text('NotSetStartEventAtom') });
+        ctx.$view.toast.show({ text: ctx.$text('NotSetStartEventAtom') });
         return;
       }
       // atomStage
