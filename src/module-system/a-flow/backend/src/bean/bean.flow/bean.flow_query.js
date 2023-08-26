@@ -21,7 +21,7 @@ module.exports = ctx => {
     async get({ flowId, history, user }) {
       // check viewWorkflow
       if (user && user.id) {
-        const res = await this._checkViewWorkflow({ flowId, user });
+        const res = await ctx.bean.flowTask._checkViewWorkflow({ flowId, user });
         if (!res) return null;
       }
       user = { id: 0 };
@@ -56,21 +56,6 @@ module.exports = ctx => {
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
-    }
-
-    async _checkViewWorkflow({ flowId, user }) {
-      // flow
-      const flowItem = await ctx.bean.flow.modelFlowHistory.get({ flowId });
-      const atomId = flowItem.flowAtomId;
-      if (!atomId) return null;
-      // 1. check atomClass action
-      const res = await ctx.bean.atom.checkRightAction({
-        atom: { id: atomId },
-        action: 'viewWorkflow',
-        user,
-      });
-      if (res) return true;
-      // 2. check task option: allowViewWorkflow
     }
   }
 
