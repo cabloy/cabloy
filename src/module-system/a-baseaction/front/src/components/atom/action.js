@@ -13,8 +13,7 @@ import ActionSelectLocale from './action/actionSelectLocale.js';
 import ActionSelectResourceType from './action/actionSelectResourceType.js';
 import ActionEnable from './action/actionEnable.js';
 import ActionDisable from './action/actionDisable.js';
-import ActionWorkflow from './action/actionWorkflow.js';
-import ActionWorkflowFormal from './action/actionWorkflowFormal.js';
+import ActionViewWorkflow from './action/actionViewWorkflow.js';
 import ActionLayout from './action/actionLayout.js';
 import ActionOpenDetailList from './action/actionOpenDetailList.js';
 import ActionMoveDown from './action/actionMoveDown.js';
@@ -42,8 +41,7 @@ export default {
     ActionSelectResourceType,
     ActionEnable,
     ActionDisable,
-    ActionWorkflow,
-    ActionWorkflowFormal,
+    ActionViewWorkflow,
     ActionLayout,
     ActionOpenDetailList,
     ActionMoveDown,
@@ -81,10 +79,8 @@ export default {
         return await this._onActionEnable();
       } else if (actionName === 'disable') {
         return await this._onActionDisable();
-      } else if (actionName === 'workflow') {
-        return await this._onActionWorkflow();
-      } else if (actionName === 'workflowFormal') {
-        return await this._onActionWorkflowFormal();
+      } else if (actionName === 'viewWorkflow') {
+        return await this._onActionViewWorkflow();
       } else if (actionName === 'layout') {
         return await this._onActionLayout();
       } else if (actionName === 'openDetailList') {
