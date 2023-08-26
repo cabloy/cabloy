@@ -739,6 +739,15 @@ export default function (Vue) {
       delete res.name;
       return res;
     },
+    parseIdSafe(id) {
+      if (!id) return 0;
+      if (!isNaN(id)) return parseInt(id);
+      return this.parseTokenSafe(id);
+    },
+    parseTokenSafe(token) {
+      if (!token) return token;
+      return token.replace(/[\\\.*#%'"`;, ]/g, '');
+    },
   };
 
   // moment

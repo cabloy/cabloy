@@ -35,7 +35,7 @@ module.exports = function (loader, modules) {
           return context.__locale;
         }
         let locale = __getLocale.call(context);
-        const locale2 = locale.replace(/[\\\.*#%'"`;, ]/g, '');
+        const locale2 = context.bean.util.parseTokenSafe(locale);
         if (locale !== locale2) {
           locale = locale2;
           context.__setLocale(locale);

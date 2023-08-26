@@ -7,8 +7,8 @@ export default {
   data() {
     const query = this.$f7route.query;
     const mode = query.mode;
-    const atomId = parseInt(query.atomId || 0);
-    const itemId = parseInt(query.itemId || 0);
+    const atomId = this.$meta.util.parseIdSafe(query.atomId);
+    const itemId = this.$meta.util.parseIdSafe(query.itemId);
     const layout = query.layout;
     const module = query.module;
     const atomClassName = query.atomClassName;
