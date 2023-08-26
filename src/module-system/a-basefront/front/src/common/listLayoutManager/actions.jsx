@@ -21,14 +21,6 @@ export default {
         // filter: view/disableOnList
         return action.code !== 2 && !_action.disableOnList;
       });
-      // workflow
-      if (item.atomStage === 0 && item.atomFlowId > 0) {
-        actions.push({
-          module: item.module,
-          atomClassName: item.atomClassName,
-          name: 'workflow',
-        });
-      }
       // set
       Vue.set(item, '_actions', actions);
       return item._actions;
