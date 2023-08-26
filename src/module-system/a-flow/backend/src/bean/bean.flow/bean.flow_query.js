@@ -19,8 +19,8 @@ module.exports = ctx => {
     }
 
     async get({ flowId, history, user }) {
-      // check workflowFormal
-      const res = await this._checkWorkflowFormal({ flowId, user });
+      // check viewWorkflow
+      const res = await this._checkViewWorkflow({ flowId, user });
       if (res) {
         user = { id: 0 };
       }
@@ -57,13 +57,13 @@ module.exports = ctx => {
       return count ? res[0]._count : res;
     }
 
-    async _checkWorkflowFormal({ flowId, user }) {
+    async _checkViewWorkflow({ flowId, user }) {
       const flowItem = await ctx.bean.flow.modelFlowHistory.get({ flowId });
       const atomId = flowItem.flowAtomId;
       if (!atomId) return null;
       return await ctx.bean.atom.checkRightAction({
         atom: { id: atomId },
-        action: 'workflowFormal',
+        action: 'viewWorkflow',
         user,
       });
     }
