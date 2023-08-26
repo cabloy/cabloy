@@ -70,7 +70,7 @@ module.exports = ctx => {
         user,
       });
       if (res) return true;
-      // 2. check task option: viewWorkflow
+      // 2. check task option: allowViewWorkflow
     }
   }
 

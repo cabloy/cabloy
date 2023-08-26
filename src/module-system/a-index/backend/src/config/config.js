@@ -76,8 +76,9 @@ module.exports = appInfo => {
     },
     'a-flowtask': {
       aFlowNodeStartEventAtomCondition: 'createdAt,updatedAt,flowDefId,atomClassId',
-      aFlowTask: 'createdAt,updatedAt,flowId,flowNodeId,flowTaskStatus,userIdAssignee',
-      aFlowTaskHistory: 'createdAt,updatedAt,flowId,flowTaskId,flowNodeId,flowTaskStatus,userIdAssignee',
+      aFlowTask: 'createdAt,updatedAt,flowId,flowNodeId,flowTaskStatus,userIdAssignee,allowViewWorkflow',
+      aFlowTaskHistory:
+        'createdAt,updatedAt,flowId,flowTaskId,flowNodeId,flowTaskStatus,userIdAssignee,allowViewWorkflow',
     },
     'a-instance': {
       aInstance: 'createdAt,updatedAt,name',
