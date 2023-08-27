@@ -6,6 +6,11 @@ export default {
       },
     };
   },
+  computed: {
+    timeline_flowId() {
+      return this.base.item.atomFlowId;
+    },
+  },
   beforeDestroy() {
     this.timeline_destroyInstance();
   },
@@ -45,11 +50,11 @@ export default {
       return {
         ctx: this,
         layoutManager: this,
+        flowId: this.timeline_flowId,
       };
     },
     async timeline_loadData() {
-      const atomFlowId = this.base.item.atomFlowId;
-      if (!atomFlowId) return;
+      if (!this.timeline_flowId) return;
       // create instance
       if (!this.timeline.instance) {
         await this.timeline_createInstance();

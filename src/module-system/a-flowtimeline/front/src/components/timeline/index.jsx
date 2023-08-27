@@ -2,6 +2,11 @@ import Base from './base.jsx';
 
 export default {
   mixins: [Base],
+  props: {
+    adapter: {
+      type: Object,
+    },
+  },
   methods: {
     async index_load() {
       const res = await this.base_loadData();
