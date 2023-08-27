@@ -71,6 +71,7 @@
     "egg-born-module-a-flowchart": "^4.8.10",
     "egg-born-module-a-flownode": "^4.8.5",
     "egg-born-module-a-flowtask": "^4.8.12",
+    "egg-born-module-a-flowtimeline": "^4.0.0",
     "egg-born-module-a-host": "^4.8.4",
     "egg-born-module-a-icon": "^4.8.7",
     "egg-born-module-a-iconbooster": "^4.8.7",
