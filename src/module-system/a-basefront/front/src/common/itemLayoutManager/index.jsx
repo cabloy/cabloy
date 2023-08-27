@@ -10,6 +10,7 @@ import Subnavbar from './subnavbar.jsx';
 import Actions from './actions.jsx';
 import Validate from './validate.jsx';
 import Share from './share.jsx';
+import Timeline from './timeline.jsx';
 const ebLayoutManagerBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebLayoutManagerBase;
 const ebAtomClasses = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomClasses;
 const ebAtomActions = Vue.prototype.$meta.module.get('a-base').options.mixins.ebAtomActions;
@@ -42,6 +43,7 @@ export default {
     Actions,
     Validate,
     Share,
+    Timeline,
   ],
   data() {
     return {
