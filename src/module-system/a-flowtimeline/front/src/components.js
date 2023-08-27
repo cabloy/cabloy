@@ -1,4 +1,4 @@
-import timeline from './components/timeline.js';
+import timeline from './components/timeline/index.jsx';
 
 export default {
   timeline,

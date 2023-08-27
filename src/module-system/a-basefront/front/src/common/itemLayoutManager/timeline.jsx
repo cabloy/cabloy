@@ -58,7 +58,7 @@ export default {
         return;
       }
       // load data
-      await this.timeline.instance.loadData();
+      await this.timeline.instance.index_load();
     },
   },
 };
