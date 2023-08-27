@@ -2,5 +2,7 @@ export default {
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    async loadData() {},
+  },
 };

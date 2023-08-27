@@ -21,6 +21,12 @@ module.exports = app => {
     },
     layouts: {
       base: {
+        timeline: {
+          component: {
+            module: 'a-flowtimeline',
+            name: 'timeline',
+          },
+        },
         blocks: {
           caption: {
             component: {
@@ -59,7 +65,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomItemBase',
-    atomRevision: 3,
+    atomRevision: 4,
     description: '',
     layoutTypeCode: 4,
     content: JSON.stringify(content),
