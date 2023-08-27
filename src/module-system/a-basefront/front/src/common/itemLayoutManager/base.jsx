@@ -105,6 +105,8 @@ export default {
           }
           // actions
           await this.actions_fetchActions();
+          // timeline, not use await
+          this.timeline_loadData();
         }
         // found
         this.base.notfound = false;

@@ -21,7 +21,7 @@ export default {
       const configComponent = this.$meta.util.getProperty(this.layout.config, 'timeline.component');
       if (!configComponent) {
         this.timeline_destroyInstance();
-        return;
+        return null;
       }
       // load module
       const moduleExtend = await this.$meta.module.use(configComponent.module);
@@ -39,12 +39,26 @@ export default {
       // ready
       this.timeline_destroyInstance();
       this.timeline.instance = instance;
+      return instance;
     },
     timeline_getAdapter() {
       return {
         ctx: this,
         layoutManager: this,
       };
+    },
+    async timeline_loadData() {
+      const atomFlowId = this.base.item.atomFlowId;
+      if (!atomFlowId) return;
+      // create instance
+      if (!this.timeline.instance) {
+        await this.timeline_createInstance();
+      }
+      if (!this.timeline.instance) {
+        return;
+      }
+      // load data
+      await this.timeline.instance.loadData();
     },
   },
 };
