@@ -5,8 +5,9 @@ export default {
   methods: {
     async index_load() {
       const res = await this.base_loadData();
-      if (!res) return;
+      if (!res) return false;
       this.base.ready = true;
+      return true;
     },
   },
 };
