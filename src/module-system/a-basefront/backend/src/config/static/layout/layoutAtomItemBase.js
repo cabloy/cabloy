@@ -34,6 +34,18 @@ module.exports = app => {
               name: 'itemLayoutBlockDefaultCaption',
             },
           },
+          mainBefore: {
+            component: {
+              module: 'a-baselayout',
+              name: 'itemLayoutBlockDefaultMainBefore',
+            },
+          },
+          timeline: {
+            component: {
+              module: 'a-baselayout',
+              name: 'itemLayoutBlockDefaultTimeline',
+            },
+          },
         },
       },
       default: {
@@ -65,7 +77,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomItemBase',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 4,
     content: JSON.stringify(content),

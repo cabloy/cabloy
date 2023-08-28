@@ -35,6 +35,7 @@ import listLayoutBlockTreeTitle from './components/atom/listLayoutTree/listLayou
 import listLayoutBlockTreeItems from './components/atom/listLayoutTree/listLayoutBlockTreeItems.jsx';
 // itemLayoutDefault
 import itemLayoutBlockDefaultCaption from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultCaption.jsx';
+import itemLayoutBlockDefaultMainBefore from './components/atom/itemLayoutDefault/itemLayoutBlockDefaultMainBefore.jsx';
 
 export default {
   // baseLayoutDefault
@@ -74,4 +75,5 @@ export default {
   listLayoutBlockTreeItems,
   // itemLayoutDefault
   itemLayoutBlockDefaultCaption,
+  itemLayoutBlockDefaultMainBefore,
 };
