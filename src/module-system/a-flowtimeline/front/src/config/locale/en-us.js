@@ -1,1 +1,3 @@
-export default {};
+export default {
+  TimeLine_ToDoList: 'To-Do List',
+};

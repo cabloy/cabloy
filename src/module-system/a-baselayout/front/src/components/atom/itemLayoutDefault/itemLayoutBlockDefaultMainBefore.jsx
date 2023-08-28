@@ -20,9 +20,15 @@ export default {
   render() {
     let domTimeline;
     if (this.layoutConfig.blocks.timeline) {
-      domTimeline = this.layoutManager.layout_renderBlock({
-        blockName: 'timeline',
-      });
+      const timelineInstance = this.layoutManager.timeline.instance;
+      if (timelineInstance) {
+        domTimeline = this.layoutManager.layout_renderBlock({
+          blockName: 'timeline',
+          info: {
+            timelineInstance,
+          },
+        });
+      }
     }
     return <div class="eb-atom-item-layout-default-main-before">{domTimeline}</div>;
   },
