@@ -155,17 +155,16 @@ export default {
       if (task && task.flowTaskStatus === 0 && task.specificFlag === 1) return task;
       return null;
     },
-    base_checkOpenAssigneesConfirmation() {
-      window.setTimeout(async () => {
-        const task = this.base_checkAssigneesConfirmation();
-        if (task) {
-          const [actionsBasic] = this._timeline_prepareActions({ task });
-          const actionBase = actionsBasic.find(item => item.name === 'assigneesConfirmation');
-          if (actionBase) {
-            await this.timeline_onPerformTaskAction(null, actionBase, task);
-          }
-        }
-      }, 300);
+    async base_checkOpenAssigneesConfirmation() {
+      // wait for page ready
+      await this.adapter.ctx.$pageContainer.waitForPageAfterIn();
+      // check
+      const task = this.base_checkAssigneesConfirmation();
+      if (!task) return;
+      const [actionsBasic] = this._timeline_prepareActions({ task });
+      const actionBase = actionsBasic.find(item => item.name === 'assigneesConfirmation');
+      if (!actionBase) return;
+      await this.timeline_onPerformTaskAction(null, actionBase, task);
     },
   },
 };
