@@ -42,7 +42,7 @@ module.exports = app => {
           },
           timeline: {
             component: {
-              module: 'a-baselayout',
+              module: 'a-flowtimeline',
               name: 'itemLayoutBlockDefaultTimeline',
             },
           },
@@ -77,7 +77,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomItemBase',
-    atomRevision: 5,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 4,
     content: JSON.stringify(content),
