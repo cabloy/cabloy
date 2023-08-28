@@ -2,6 +2,7 @@ export default {
   data() {
     return {
       base: {
+        ready: false,
         data: null,
         notfound: false,
       },
@@ -32,6 +33,9 @@ export default {
         module: this.base.data.atom.module,
         atomClassName: this.base.data.atom.atomClassName,
       };
+    },
+    base_user() {
+      return this.$store.state.auth.user.op;
     },
     base_tasksGroup() {
       const tasks = this.base_tasks;
@@ -165,6 +169,12 @@ export default {
       const actionBase = actionsBasic.find(item => item.name === 'assigneesConfirmation');
       if (!actionBase) return;
       await this.timeline_onPerformTaskAction(null, actionBase, task);
+    },
+    base_checkFlowNodeShowStatus(flowNode) {
+      if (flowNode.flowNodeStatus === 0) return false;
+      const tasks = this.base_tasks;
+      if (!tasks) return false;
+      return !tasks.some(item => item.flowNodeId === flowNode.flowNodeId && item.handleStatus > 0);
     },
   },
 };

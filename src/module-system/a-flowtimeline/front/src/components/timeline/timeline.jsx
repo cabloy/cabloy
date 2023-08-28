@@ -236,7 +236,7 @@ export default {
     },
     _timeline_renderFlowTask({ task }) {
       // taskCurrentClass
-      const taskCurrentClass = task.id === this.container.flowTaskId ? 'item flowTaskCurrent' : 'item';
+      const taskCurrentClass = task.id === this.adapter.flowTaskId ? 'item flowTaskCurrent' : 'item';
       // media
       const domMedia = (
         <div slot="media">

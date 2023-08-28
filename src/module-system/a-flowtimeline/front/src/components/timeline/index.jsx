@@ -1,8 +1,9 @@
 import Base from './base.jsx';
+import Info from './info.jsx';
 import Timeline from './timeline.jsx';
 
 export default {
-  mixins: [Base, Timeline],
+  mixins: [Base, Info, Timeline],
   props: {
     adapter: {
       type: Object,
