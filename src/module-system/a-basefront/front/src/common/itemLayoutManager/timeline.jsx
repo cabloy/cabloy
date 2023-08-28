@@ -51,6 +51,7 @@ export default {
         ctx: this,
         layoutManager: this,
         flowId: this.timeline_flowId,
+        currentOnly: true,
       };
     },
     async timeline_loadData() {

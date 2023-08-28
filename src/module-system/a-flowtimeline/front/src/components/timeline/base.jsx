@@ -61,6 +61,9 @@ export default {
         const atomOld = this.base_atom;
         this.base.data = await this.$api.post('/a/flowtask/flow/data', {
           flowId: this.adapter.flowId,
+          options: {
+            currentOnly: this.adapter.currentOnly,
+          },
         });
         if (!this.base.data) {
           this.base.notfound = true;
