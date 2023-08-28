@@ -35,10 +35,26 @@ export default {
     },
   },
   render() {
-    const blockName = this.layoutConfig.blockMain || 'main';
+    let domMainBefore;
+    if (this.layoutConfig.blocks.mainBefore) {
+      domMainBefore = this.layoutManager.layout_renderBlock({
+        blockName: 'mainBefore',
+      });
+    }
+    const domMain = this.layoutManager.layout_renderBlock({
+      blockName: 'main',
+    });
+    let domMainAfter;
+    if (this.layoutConfig.blocks.mainAfter) {
+      domMainAfter = this.layoutManager.layout_renderBlock({
+        blockName: 'mainAfter',
+      });
+    }
     return (
       <div class="eb-atom-item-layout eb-atom-item-layout-default">
-        {this.layoutManager.layout_renderBlock({ blockName })}
+        {domMainBefore}
+        {domMain}
+        {domMainAfter}
       </div>
     );
   },
