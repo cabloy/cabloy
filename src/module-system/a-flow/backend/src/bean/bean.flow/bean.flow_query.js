@@ -26,6 +26,10 @@ module.exports = ctx => {
           user = { id: 0 };
         }
       }
+      return await this._get({ flowId, history, user });
+    }
+
+    async _get({ flowId, history, user }) {
       // where
       const where = {};
       if (history) {
