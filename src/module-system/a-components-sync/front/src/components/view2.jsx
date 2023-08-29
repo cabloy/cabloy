@@ -162,8 +162,8 @@ export default {
     });
     const domModals = self.modals.map(modal => {
       return _h('eb-component', {
-        key: id,
-        ref: id,
+        key: modal.id,
+        ref: modal.id,
         props: {
           module: modal.module,
           name: modal.name,

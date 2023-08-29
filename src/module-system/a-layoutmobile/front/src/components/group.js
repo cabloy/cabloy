@@ -1,4 +1,3 @@
-<script>
 export default {
   render(c) {
     // pushStateMain: disabled for ios
@@ -127,5 +126,3 @@ export default {
     },
   },
 };
-</script>
-<style scoped></style>

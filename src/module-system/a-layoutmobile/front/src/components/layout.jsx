@@ -1,5 +1,5 @@
 import TabViews from './tabViews.vue';
-import Group from './group.vue';
+import Group from './group.js';
 import MixinApp from '../common/layout/app.js';
 import MixinTheme from '../common/layout/theme.js';
 

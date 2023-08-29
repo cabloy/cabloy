@@ -188,7 +188,9 @@ export default {
             this.__emitComponentReady();
           }, 50);
         } else {
-          this.$emit('componentReady', componentInstance);
+          this.$nextTick(() => {
+            this.$emit('componentReady', componentInstance);
+          });
         }
       });
     },
