@@ -27,11 +27,19 @@ export default {
   methods: {
     _renderCardHeader() {
       const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
+      const domButtons = [];
+      if (allowViewWorkflow) {
+        domButtons.push(<eb-link iconF7="::timeline"></eb-link>);
+        domButtons.push(<eb-link iconF7="::flow-chart"></eb-link>);
+      }
       return (
         <f7-card-header>
           <f7-block-title>
-            <f7-icon f7="::play-arrow"></f7-icon>
-            {this.$text('TimeLine_ToDoList')}
+            <div>
+              <f7-icon f7="::play-arrow"></f7-icon>
+              {this.$text('TimeLine_ToDoList')}
+            </div>
+            <div class="links">{domButtons}</div>
           </f7-block-title>
         </f7-card-header>
       );
