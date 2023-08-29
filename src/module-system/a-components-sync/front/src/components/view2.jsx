@@ -119,6 +119,43 @@ export default {
     this.toast = null;
     this.dialog = null;
   },
+  render() {
+    const _h = this.$createElement;
+    const self = this;
+    const props = self.props;
+    const { id, style, tab, main, tabActive, className } = props;
+    const classes = this.$vuef7.utils.classNames(
+      className,
+      'view',
+      {
+        'view-main': main,
+        'tab-active': tabActive,
+        tab,
+      },
+      this.$vuef7.mixins.colorClasses(props)
+    );
+    return _h(
+      'div',
+      {
+        ref: 'el',
+        style,
+        class: classes,
+        attrs: {
+          id,
+        },
+      },
+      [
+        this.$slots.default,
+        self.state.pages.map(page => {
+          const PageComponent = page.component;
+          return _h(PageComponent, {
+            key: page.id,
+            props: page.props,
+          });
+        }),
+      ]
+    );
+  },
 };
 
 function noUndefinedProps(obj) {
