@@ -61,6 +61,11 @@ export default {
     },
   },
   methods: {
+    async base_loadData_autoCheck() {
+      const currentOnly = this.adapter.currentOnly;
+      if (currentOnly) return;
+      return await this.base_loadData();
+    },
     async base_loadData() {
       try {
         // flow data
