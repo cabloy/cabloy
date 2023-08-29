@@ -20,9 +20,25 @@ export default {
     const appMethods = AppMethodsFn(this);
     return {
       ...appMethods,
+      modals: [],
     };
   },
   methods: {
+    createModal({ module, name, options }) {
+      return new Promise(resolve => {
+        const id = this.$meta.util.nextId('viewModal');
+        this.modals.push({
+          id,
+          module,
+          name,
+          options,
+          onComponentReady: componentInstance => {
+            resolve(componentInstance);
+          },
+        });
+      });
+    },
+
     getViewDirty() {
       const pages = this.routerData.pages;
       for (const page of pages) {
@@ -137,6 +153,29 @@ export default {
       },
       this.$vuef7.mixins.colorClasses(props)
     );
+    const domPages = self.state.pages.map(page => {
+      const PageComponent = page.component;
+      return _h(PageComponent, {
+        key: page.id,
+        props: page.props,
+      });
+    });
+    const domModals = self.modals.map(modal => {
+      return _h('eb-component', {
+        key: id,
+        ref: id,
+        props: {
+          module: modal.module,
+          name: modal.name,
+          options: modal.options,
+        },
+        on: {
+          componentReady: componentInstance => {
+            modal.onComponentReady(componentInstance);
+          },
+        },
+      });
+    });
     return _h(
       'div',
       {
@@ -147,16 +186,7 @@ export default {
           id,
         },
       },
-      [
-        this.$slots.default,
-        self.state.pages.map(page => {
-          const PageComponent = page.component;
-          return _h(PageComponent, {
-            key: page.id,
-            props: page.props,
-          });
-        }),
-      ]
+      [this.$slots.default, domPages, domModals]
     );
   },
 };
