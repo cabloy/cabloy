@@ -30,7 +30,29 @@ export default {
       const url = `/a/flowtask/flow?flowId=${flowId}`;
       this.$view.navigate(url);
     },
-    onPerformViewFlowChart() {},
+    async onPerformViewFlowChart() {
+      const flowId = this.timelineInstance.adapter.flowId;
+      // flowChartProcess
+      const flowChartProcess = await this.$api.post('/a/flowchart/flow/flowChartProcess', {
+        host: {
+          flowId,
+        },
+      });
+      // flowNodes current
+      const tasks = this.timelineInstance.base_tasks;
+      const flowNodeDefIds = tasks.filter(task => task.flowTaskStatus === 0).map(task => task.flowNodeDefId);
+      // view
+      const url = `/a/flowchart/flowDef/contentProcessView?flowId=${flowId}`;
+      this.$view.navigate(url, {
+        target: undefined,
+        context: {
+          params: {
+            contentProcess: flowChartProcess,
+            flowNodeDefIds,
+          },
+        },
+      });
+    },
     _renderCardHeader() {
       const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
       const domButtons = [];

@@ -28,11 +28,11 @@ module.exports = app => {
 
     async __checkRightFlowChartProcess({ host, user }) {
       const { flowId } = host;
-      // check right
-      let flow = await this.ctx.bean.flow.get({ flowId, history: true, user });
-      if (!flow) return null;
+      // check right: allowViewWorkflow
+      const allowViewWorkflow = await this.ctx.bean.flowTask._checkViewWorkflow({ flowId, user });
+      if (!allowViewWorkflow) return null;
       // get flow
-      flow = await this.ctx.bean.flow.modelFlowHistory.get({ flowId });
+      const flow = await this.ctx.bean.flow.modelFlowHistory.get({ flowId });
       if (!flow) return null;
       // flowDef
       const flowDef = await this.ctx.bean.flowDef.getByKeyAndRevision({
