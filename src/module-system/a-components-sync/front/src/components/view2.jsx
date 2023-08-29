@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import appMethods from '../common/appMethods.js';
+import AppMethodsFn from '../common/appMethods.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
   meta: {
@@ -17,7 +17,10 @@ export default {
     },
   },
   data() {
-    return appMethods(this);
+    const appMethods = AppMethodsFn(this);
+    return {
+      ...appMethods,
+    };
   },
   methods: {
     getViewDirty() {
