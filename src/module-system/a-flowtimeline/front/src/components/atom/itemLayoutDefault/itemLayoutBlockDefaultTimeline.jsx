@@ -25,7 +25,11 @@ export default {
     },
   },
   methods: {
-    onPerformViewWorkFlow() {},
+    onPerformViewWorkFlow() {
+      const flowId = this.timelineInstance.adapter.flowId;
+      const url = `/a/flowtask/flow?flowId=${flowId}`;
+      this.$view.navigate(url);
+    },
     onPerformViewFlowChart() {},
     _renderCardHeader() {
       const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
