@@ -26,6 +26,7 @@ export default {
   },
   methods: {
     _renderCardHeader() {
+      const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
       return (
         <f7-card-header>
           <f7-block-title>
@@ -40,14 +41,7 @@ export default {
       return <f7-card-content padding={false}>{domTimeline}</f7-card-content>;
     },
     _renderCardFooter() {
-      const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
-      if (!allowViewWorkflow) return <f7-card-footer class="eb-card-footer-no-content"></f7-card-footer>;
-      return (
-        <f7-card-footer>
-          <f7-link>Like</f7-link>
-          <f7-link>Read more</f7-link>
-        </f7-card-footer>
-      );
+      return <f7-card-footer class="eb-card-footer-no-content"></f7-card-footer>;
     },
     _renderContainer() {
       const tasks = this.timelineInstance.base_tasks;
