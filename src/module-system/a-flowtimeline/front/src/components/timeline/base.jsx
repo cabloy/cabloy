@@ -21,6 +21,9 @@ export default {
     base_tasks() {
       return this.base.data && this.base.data.tasks;
     },
+    base_allowViewWorkflow() {
+      return this.base.data && this.base.data.allowViewWorkflow;
+    },
     base_flowOld() {
       if (!this.base_ready) return false;
       const atom = this.base_atom;

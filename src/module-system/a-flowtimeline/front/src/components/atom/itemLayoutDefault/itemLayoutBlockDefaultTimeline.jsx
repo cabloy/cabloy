@@ -40,6 +40,8 @@ export default {
       return <f7-card-content padding={false}>{domTimeline}</f7-card-content>;
     },
     _renderCardFooter() {
+      const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
+      if (!allowViewWorkflow) return <f7-card-footer class="eb-card-footer-no-content"></f7-card-footer>;
       return (
         <f7-card-footer>
           <f7-link>Like</f7-link>
