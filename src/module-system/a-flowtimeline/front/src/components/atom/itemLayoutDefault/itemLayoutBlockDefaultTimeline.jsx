@@ -25,12 +25,28 @@ export default {
     },
   },
   methods: {
+    onPerformViewWorkFlow() {},
+    onPerformViewFlowChart() {},
     _renderCardHeader() {
       const allowViewWorkflow = this.timelineInstance.base_allowViewWorkflow;
       const domButtons = [];
       if (allowViewWorkflow) {
-        domButtons.push(<eb-link iconF7="::timeline"></eb-link>);
-        domButtons.push(<eb-link iconF7="::flow-chart"></eb-link>);
+        domButtons.push(
+          <eb-link
+            iconF7="::timeline"
+            iconSize={16}
+            tooltip={this.$text('ViewWorkFlow')}
+            propsOnPerform={this.onPerformViewWorkFlow}
+          ></eb-link>
+        );
+        domButtons.push(
+          <eb-link
+            iconF7="::flow-chart"
+            iconSize={16}
+            tooltip={this.$text('ViewFlowChart')}
+            propsOnPerform={this.onPerformViewFlowChart}
+          ></eb-link>
+        );
       }
       return (
         <f7-card-header>

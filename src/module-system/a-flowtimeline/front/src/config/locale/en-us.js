@@ -23,4 +23,6 @@ export default {
   SubstituteAbbr: 'SUBS',
   AtomStageWorkFlowType: 'Data Stage',
   AllowViewWorkflow: 'Allow View Workflow',
+  ViewWorkFlow: 'View WorkFlow',
+  ViewFlowChart: 'View Flow Chart',
 };

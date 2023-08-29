@@ -42,6 +42,8 @@ export default {
   SubstituteAbbr: '代办',
   AtomStageWorkFlowType: '流程类型',
   AllowViewWorkflow: '允许查看工作流',
+  ViewWorkFlow: '查看工作流',
+  ViewFlowChart: '查看流程图',
   'Assignees Confirmation': '参与人确认',
   'Cancel Flow': '取消流程',
   'Recall Available': '可撤回',
