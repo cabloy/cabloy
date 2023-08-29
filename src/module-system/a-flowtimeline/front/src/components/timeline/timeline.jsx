@@ -208,10 +208,14 @@ export default {
       return children;
     },
     _timeline_renderFlowTaskActionsChildren({ task }) {
+      const currentOnly = this.adapter.currentOnly;
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
       const [actionsBasic, actionsMore] = this._timeline_prepareActions({ task });
       for (const actionBase of actionsBasic) {
+        if (currentOnly && actionBase.name === 'viewAtom') {
+          continue;
+        }
         children.push(
           <eb-link
             key={actionBase.name}
