@@ -28,7 +28,7 @@ export default {
     async onPerformViewWorkFlow() {
       const sheet = await this.$view.createModal({ module: 'a-flowtask', name: 'actionCancelFlow' });
       console.log(sheet);
-      sheet.open();
+      // sheet.open();
       return;
       const flowId = this.timelineInstance.adapter.flowId;
       const url = `/a/flowtask/flow?flowId=${flowId}`;
