@@ -32,7 +32,7 @@ export default {
       const tasks = this.timelineInstance.base_tasks;
       if (!tasks || tasks.length === 0) return null;
       return (
-        <f7-card class="demo-card-header-pic">
+        <f7-card class="workflow-timeline-container">
           <f7-card-header>
             <f7-block-title>
               <f7-icon f7="::play-arrow"></f7-icon>
