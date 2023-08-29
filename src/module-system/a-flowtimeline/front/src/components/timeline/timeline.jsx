@@ -73,15 +73,24 @@ export default {
       }
       return <f7-list medial-list>{children}</f7-list>;
     },
-    _timeline_renderFlowNode({ task, flowNodeGroupIndex }) {
+    _timeline_renderFlowNodeHeader({ task, flowNodeGroupIndex }) {
+      const currentOnly = this.adapter.currentOnly;
       // index
-      const domIndex = (
-        <f7-badge class="flowNodeIndex" color="teal">
-          {flowNodeGroupIndex}
-        </f7-badge>
-      );
+      let domIndex;
+      if (!currentOnly) {
+        domIndex = (
+          <f7-badge class="flowNodeIndex" color="teal">
+            {flowNodeGroupIndex}
+          </f7-badge>
+        );
+      }
       // title
-      const domTitle = <span>{task.flowNodeNameLocale}</span>;
+      let domTitle;
+      if (!currentOnly) {
+        domTitle = <span>{task.flowNodeNameLocale}</span>;
+      } else {
+        domTitle = <span>{`${this.$text('Task')}: ${task.flowNodeNameLocale}`}</span>;
+      }
       // remark
       let domStatuses;
       if (task.__showStatus) {
@@ -89,23 +98,30 @@ export default {
       }
       // current
       let domCurrent;
-      if (task.flowNodeId === this.base_flow.flowNodeIdCurrent) {
+      if (!currentOnly && task.flowNodeId === this.base_flow.flowNodeIdCurrent) {
         domCurrent = <f7-badge color="orange">{this.$text('Current')}</f7-badge>;
       }
+      return (
+        <f7-card-header>
+          <div>
+            {domIndex}
+            {domTitle}
+          </div>
+          <div>
+            {domStatuses}
+            {domCurrent}
+          </div>
+        </f7-card-header>
+      );
+    },
+    _timeline_renderFlowNode({ task, flowNodeGroupIndex }) {
+      // header
+      const domHeader = this._timeline_renderFlowNodeHeader({ task, flowNodeGroupIndex });
       // tasks
       const items = this._timeline_renderFlowNodeItems({ tasks: task.items });
       return (
         <f7-card key={`flowNode:${task.flowNodeId}`} outline>
-          <f7-card-header>
-            <div>
-              {domIndex}
-              {domTitle}
-            </div>
-            <div>
-              {domStatuses}
-              {domCurrent}
-            </div>
-          </f7-card-header>
+          {domHeader}
           <f7-card-content padding={false}>{items}</f7-card-content>
         </f7-card>
       );
