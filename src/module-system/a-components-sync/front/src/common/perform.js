@@ -13,9 +13,25 @@ export default {
     };
   },
   methods: {
-    onClick(event) {
+    async onClick(event) {
       // link
       const $clickedLinkEl = this.getLinkEl && this.getLinkEl();
+      // dev info
+      if ($clickedLinkEl && $clickedLinkEl.length > 0 && this.$meta.config.env === 'development') {
+        const _debugger = $clickedLinkEl.attr('debugger');
+        if (_debugger === '' || _debugger === 'true') {
+          window.__debugger = true;
+        }
+      }
+      if (window.__debugger) {
+        debugger;
+      }
+      // onClick
+      await this._onClick_inner(event, $clickedLinkEl);
+      // dev info
+      window.__debugger = false;
+    },
+    async _onClick_inner(event, $clickedLinkEl) {
       const isLink = $clickedLinkEl && $clickedLinkEl.length > 0;
 
       // only preventDefault for link
@@ -41,9 +57,9 @@ export default {
       if (event && event.preventF7Router) return;
 
       // onPerform
-      this._onPerformInner(event, $clickedLinkEl);
+      await this._onPerformInner(event);
     },
-    async _onPerformInner(event, $clickedLinkEl) {
+    async _onPerformInner(event) {
       // linkClick
       if (!this.onPerform) {
         if (this.onLinkClick) {
@@ -54,21 +70,11 @@ export default {
       // onPerform
       try {
         this._showPreloader();
-        // dev info
-        if ($clickedLinkEl && this.$meta.config.env === 'development') {
-          const _debugger = $clickedLinkEl.attr('debugger');
-          if (_debugger === '' || _debugger === 'true') {
-            window.__debugger = true;
-            debugger;
-          }
-        }
         // onPerform
         const res = await this.onPerform(event, this.context);
         this._hidePreloader();
         this._handleResult(res);
-        window.__debugger = false;
       } catch (err) {
-        window.__debugger = false;
         this._hidePreloader();
         if (err && (err.code === 422 || err.code === -422)) {
           const message = this.$text('Data Validation Error');
