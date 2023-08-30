@@ -18,13 +18,14 @@ export default {
       modalInfo.componentInstance = null;
       this.modals.splice(index, 1);
     },
-    createModal({ module, name, options }) {
+    createModal({ module, name, component, options }) {
       return new Promise(resolve => {
         const id = this.$meta.util.nextId('viewModal');
         const modalInfo = {
           id,
           module,
           name,
+          component,
           options,
           onComponentReady: componentInstance => {
             this.onComponentReady(modalInfo, componentInstance);
@@ -47,22 +48,40 @@ export default {
       }
     },
     _renderModals(_h) {
-      return this.modals.map(modal => {
-        return _h('eb-component', {
-          key: modal.id,
-          ref: modal.id,
-          props: {
-            module: modal.module,
-            name: modal.name,
-            options: modal.options,
-          },
-          on: {
-            componentReady: componentInstance => {
-              modal.onComponentReady(componentInstance);
-            },
-          },
-        });
+      return this.modals.map(modalInfo => {
+        if (modalInfo.component) {
+          return this._renderModalByComponent(_h, modalInfo);
+        }
+        return this._renderModalByName(_h, modalInfo);
       });
+    },
+    _renderModalByName(_h, modalInfo) {
+      return _h('eb-component', {
+        key: modalInfo.id,
+        // ref: modalInfo.id,
+        props: {
+          module: modalInfo.module,
+          name: modalInfo.name,
+          options: modalInfo.options,
+        },
+        on: {
+          componentReady: componentInstance => {
+            modalInfo.onComponentReady(componentInstance);
+          },
+        },
+      });
+    },
+    _renderModalByComponent(_h, modalInfo) {
+      const options = Object.assign({}, modalInfo.options, {
+        key: modalInfo.id,
+        // ref: modalInfo.id,
+        on: {
+          componentMounted: componentInstance => {
+            modalInfo.onComponentReady(componentInstance);
+          },
+        },
+      });
+      return _h(modalInfo.component, options);
     },
   },
 };
