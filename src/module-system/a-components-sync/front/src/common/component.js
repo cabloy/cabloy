@@ -41,6 +41,7 @@ export default {
       errorMessage: null,
       showLoading: false,
       debounceTimerId: 0,
+      componentInstance: null,
     };
   },
   computed: {
@@ -72,6 +73,7 @@ export default {
   },
   beforeDestroy() {
     this.debounceStop();
+    this.componentInstance = null;
   },
   methods: {
     renderSuccess(c) {
@@ -79,7 +81,18 @@ export default {
       const fullName = this.__getFullName();
       if (!this.$options.components[fullName]) return c('template');
       // options: not use this.$meta.util.extend && this.$utils.extend, so as to hold __ob__
-      const options = Object.assign({}, this.options, { ref: 'component', scopedSlots: this.$scopedSlots });
+      const options = Object.assign({}, this.options, {
+        // ref: 'component',
+        scopedSlots: this.$scopedSlots,
+        on: {
+          componentMounted: componentInstance => {
+            this.componentInstance = componentInstance;
+            this.$nextTick(() => {
+              this.$emit('componentReady', componentInstance);
+            });
+          },
+        },
+      });
       const children = [];
       if (this.$slots) {
         for (const key of Object.keys(this.$slots)) {
@@ -162,8 +175,6 @@ export default {
           this.$options.components[fullName] = component;
           this.ready = true;
           this.errorMessage = null;
-          // emit
-          this.__emitComponentReady();
         }
         // debounce
         this.debounceStop();
@@ -175,24 +186,10 @@ export default {
       }
     },
     getComponentInstance() {
-      return this.$refs.component;
+      return this.componentInstance;
     },
     __getFullName() {
       return `${this.module2}:${this.name}`;
-    },
-    __emitComponentReady() {
-      this.$nextTick(() => {
-        const componentInstance = this.getComponentInstance();
-        if (!componentInstance) {
-          window.setTimeout(() => {
-            this.__emitComponentReady();
-          }, 50);
-        } else {
-          this.$nextTick(() => {
-            this.$emit('componentReady', componentInstance);
-          });
-        }
-      });
     },
   },
 };
