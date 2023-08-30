@@ -28,7 +28,7 @@ export default function () {
         const pageEl = ctx.$$(ctx.$el).closest('.page');
         const page = pageEl.length > 0 && pageEl[0].__vue__;
         if (!page) return null;
-        return page;
+        return page.waitForPageAfterIn ? page : page.$children[0];
       },
     });
     Object.defineProperty(ctx, '$pageRoute', {
