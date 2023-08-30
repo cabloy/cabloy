@@ -1,11 +1,13 @@
 import Vue from 'vue';
 import AppMethodsFn from '../common/appMethods.js';
+import ViewModal from '../common/viewModal.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
   meta: {
     global: true,
   },
   name: 'eb-view',
+  mixins: [ViewModal],
   extends: f7View,
   props: {
     size: {
@@ -18,45 +20,9 @@ export default {
   },
   data() {
     const appMethods = AppMethodsFn(this);
-    return {
-      ...appMethods,
-      modals: [],
-    };
+    return appMethods;
   },
   methods: {
-    deleteModal({ modal }) {
-      const index = this.modals.findIndex(item => item.componentInstance === modal);
-      if (index === -1) return;
-      const modalInfo = this.modals[index];
-      modalInfo.componentInstance = null;
-      this.modals.splice(index, 1);
-    },
-    createModal({ module, name, options }) {
-      return new Promise(resolve => {
-        const id = this.$meta.util.nextId('viewModal');
-        const modalInfo = {
-          id,
-          module,
-          name,
-          options,
-          onComponentReady: componentInstance => {
-            modalInfo.componentInstance = componentInstance;
-            const destroyOnClose = options?.destroyOnClose;
-            if (destroyOnClose !== false) {
-              const f7Modal = componentInstance.$el.f7Modal;
-              f7Modal.once('modalClosed', () => {
-                this.$nextTick(() => {
-                  this.deleteModal({ modal: componentInstance });
-                });
-              });
-            }
-            resolve(componentInstance);
-          },
-        };
-        this.modals.push(modalInfo);
-      });
-    },
-
     getViewDirty() {
       const pages = this.routerData.pages;
       for (const page of pages) {
@@ -155,6 +121,7 @@ export default {
     this.calendar = null;
     this.toast = null;
     this.dialog = null;
+    this.actions = null;
   },
   render() {
     const _h = this.$createElement;
@@ -178,22 +145,7 @@ export default {
         props: page.props,
       });
     });
-    const domModals = self.modals.map(modal => {
-      return _h('eb-component', {
-        key: modal.id,
-        ref: modal.id,
-        props: {
-          module: modal.module,
-          name: modal.name,
-          options: modal.options,
-        },
-        on: {
-          componentReady: componentInstance => {
-            modal.onComponentReady(componentInstance);
-          },
-        },
-      });
-    });
+    const domModals = self._renderModals(_h);
     return _h(
       'div',
       {
