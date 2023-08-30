@@ -21,21 +21,24 @@ export default {
           name,
           options,
           onComponentReady: componentInstance => {
-            modalInfo.componentInstance = componentInstance;
-            const destroyOnClose = options?.destroyOnClose;
-            if (destroyOnClose !== false) {
-              const f7Modal = componentInstance.$el.f7Modal;
-              f7Modal.once('modalClosed', () => {
-                this.$nextTick(() => {
-                  this.deleteModal({ modal: componentInstance });
-                });
-              });
-            }
-            resolve(componentInstance);
+            this.onComponentReady(componentInstance);
+            resolve(modalInfo, componentInstance);
           },
         };
         this.modals.push(modalInfo);
       });
+    },
+    onComponentReady(modalInfo, componentInstance) {
+      modalInfo.componentInstance = componentInstance;
+      const destroyOnClose = modalInfo.options?.destroyOnClose;
+      if (destroyOnClose !== false) {
+        const f7Modal = componentInstance.$el.f7Modal;
+        f7Modal.once('modalClosed', () => {
+          this.$nextTick(() => {
+            this.deleteModal({ modal: componentInstance });
+          });
+        });
+      }
     },
     _renderModals(_h) {
       return this.modals.map(modal => {
