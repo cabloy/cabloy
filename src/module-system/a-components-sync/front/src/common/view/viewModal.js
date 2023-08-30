@@ -72,14 +72,15 @@ export default {
       });
     },
     _renderModalByComponent(_h, modalInfo) {
+      const onEvents = Object.assign({}, modalInfo.options?.on, {
+        componentMounted: componentInstance => {
+          modalInfo.onComponentReady(componentInstance);
+        },
+      });
       const options = Object.assign({}, modalInfo.options, {
         key: modalInfo.id,
         // ref: modalInfo.id,
-        on: {
-          componentMounted: componentInstance => {
-            modalInfo.onComponentReady(componentInstance);
-          },
-        },
+        on: onEvents,
       });
       return _h(modalInfo.component, options);
     },
