@@ -45,7 +45,9 @@ export default {
             if (destroyOnClose !== false) {
               const f7Modal = componentInstance.$el.f7Modal;
               f7Modal.once('modalClosed', () => {
-                this.deleteModal({ modal: componentInstance });
+                this.$nextTick(() => {
+                  this.deleteModal({ modal: componentInstance });
+                });
               });
             }
             resolve(componentInstance);
