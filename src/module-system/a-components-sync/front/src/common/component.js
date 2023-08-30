@@ -81,17 +81,18 @@ export default {
       const fullName = this.__getFullName();
       if (!this.$options.components[fullName]) return c('template');
       // options: not use this.$meta.util.extend && this.$utils.extend, so as to hold __ob__
+      const onEvents = Object.assign({}, this.options?.on, {
+        componentMounted: componentInstance => {
+          this.componentInstance = componentInstance;
+          this.$nextTick(() => {
+            this.$emit('componentReady', componentInstance);
+          });
+        },
+      });
       const options = Object.assign({}, this.options, {
         // ref: 'component',
         scopedSlots: this.$scopedSlots,
-        on: {
-          componentMounted: componentInstance => {
-            this.componentInstance = componentInstance;
-            this.$nextTick(() => {
-              this.$emit('componentReady', componentInstance);
-            });
-          },
-        },
+        on: onEvents,
       });
       const children = [];
       if (this.$slots) {
