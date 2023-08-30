@@ -24,18 +24,34 @@ export default {
     };
   },
   methods: {
+    deleteModal({ modal }) {
+      const index = this.modals.findIndex(item => item.componentInstance === modal);
+      if (index === -1) return;
+      const modalInfo = this.modals[index];
+      modalInfo.componentInstance = null;
+      this.modals.splice(index, 1);
+    },
     createModal({ module, name, options }) {
       return new Promise(resolve => {
         const id = this.$meta.util.nextId('viewModal');
-        this.modals.push({
+        const modalInfo = {
           id,
           module,
           name,
           options,
           onComponentReady: componentInstance => {
+            modalInfo.componentInstance = componentInstance;
+            const destroyOnClose = options?.destroyOnClose;
+            if (destroyOnClose !== false) {
+              const f7Modal = componentInstance.$el.f7Modal;
+              f7Modal.once('modalClosed', () => {
+                this.deleteModal({ modal: componentInstance });
+              });
+            }
             resolve(componentInstance);
           },
-        });
+        };
+        this.modals.push(modalInfo);
       });
     },
 
