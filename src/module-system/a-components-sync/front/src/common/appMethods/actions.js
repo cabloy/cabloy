@@ -45,7 +45,6 @@ export default function (ctx) {
         });
         const actions = ctx.$f7.actions.create(_params);
         const onActionsClosed = function () {
-          actions.off('actionsClosed', onActionsClosed).off('popoverClosed', onActionsClosed);
           window.setTimeout(() => {
             actions.destroy();
           }, 0);
@@ -54,7 +53,7 @@ export default function (ctx) {
             reject(new Error());
           }
         };
-        actions.once('actionsClosed', onActionsClosed).once('popoverClosed', onActionsClosed);
+        actions.once('modalClosed', onActionsClosed);
         actions.open();
       });
     },
