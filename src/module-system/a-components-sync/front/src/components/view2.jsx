@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import AppMethodsFn from '../common/appMethods.js';
+import ViewDirty from '../common/view/viewDirty.js';
 import ViewModal from '../common/view/viewModal.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
@@ -7,7 +8,7 @@ export default {
     global: true,
   },
   name: 'eb-view',
-  mixins: [ViewModal],
+  mixins: [ViewDirty, ViewModal],
   extends: f7View,
   props: {
     size: {
@@ -23,25 +24,6 @@ export default {
     return appMethods;
   },
   methods: {
-    getViewDirty() {
-      const pages = this.routerData.pages;
-      for (const page of pages) {
-        const pageVue = page.el.__vue__;
-        if (pageVue && pageVue.getPageDirty && pageVue.getPageDirty()) return true;
-      }
-      return false;
-    },
-    viewDirtyConfirm(cbOk, cbCancel) {
-      const _promise = this.dialog.confirm(this.$text('PageDirtyQuitConfirm'));
-      if (!cbOk) return _promise;
-      _promise
-        .then(() => {
-          cbOk && cbOk();
-        })
-        .catch(() => {
-          cbCancel && cbCancel();
-        });
-    },
     getHostEl() {
       const view = this.$$(this.$el);
       const views = view.parents('.views');
