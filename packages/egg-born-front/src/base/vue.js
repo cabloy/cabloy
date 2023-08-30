@@ -1,6 +1,7 @@
 import * as VueAll from 'vue';
 import DevInfo from './plugin/devInfo.js';
 import Preload from './plugin/preload.js';
+import ComponentMounted from './plugin/componentMounted.js';
 
 // exports
 const Vue = VueAll.default;
@@ -47,5 +48,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 // plugin: Preload
 Vue.use(Preload);
+// plugin: ComponentMounted
+Vue.use(ComponentMounted);
 
 export default Vue;
