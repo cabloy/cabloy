@@ -4,6 +4,12 @@ export default {
       modals: [],
     };
   },
+  beforeDestroy() {
+    for (const modalInfo of this.modals) {
+      modalInfo.componentInstance = null;
+    }
+    this.modals = [];
+  },
   methods: {
     deleteModal({ modal }) {
       const index = this.modals.findIndex(item => item.componentInstance === modal);
@@ -21,8 +27,8 @@ export default {
           name,
           options,
           onComponentReady: componentInstance => {
-            this.onComponentReady(componentInstance);
-            resolve(modalInfo, componentInstance);
+            this.onComponentReady(modalInfo, componentInstance);
+            resolve(componentInstance);
           },
         };
         this.modals.push(modalInfo);
