@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import AppMethodsFn from '../common/appMethods.js';
-import ViewModal from '../common/viewModal.js';
+import ViewModal from '../common/view/viewModal.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
   meta: {
