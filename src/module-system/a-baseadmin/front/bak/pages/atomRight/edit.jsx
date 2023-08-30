@@ -80,7 +80,7 @@ export default {
   },
   render() {
     return (
-      <eb-page page-content={this.tabSingle} tabs={!this.tabSingle} with-subnavbar={!this.tabSingle}>
+      <eb-page page-content={this.tabSingle} tabs={!this.tabSingle}>
         <eb-navbar title={this.getPageTitle('Atom Authorizations')} eb-back-link="Back">
           {this._renderNavRight()}
           {this._renderSubnavbar()}

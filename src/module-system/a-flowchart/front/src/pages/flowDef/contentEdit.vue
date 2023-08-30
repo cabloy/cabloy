@@ -1,5 +1,5 @@
 <template>
-  <eb-page :page-content="false" tabs with-subnavbar>
+  <eb-page :page-content="false" tabs>
     <eb-navbar :title="title" eb-back-link="Back">
       <f7-nav-right>
         <eb-link

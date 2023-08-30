@@ -376,7 +376,7 @@ export default {
   render() {
     const pageContent = this.itemOnly;
     const tabs = !this.itemOnly;
-    const withSubnavbar = !this.itemOnly;
+    // const withSubnavbar = !this.itemOnly; // no need
     const domChildren = [];
     if (this.itemOnly) {
       domChildren.push(this._renderNavbarItemOnly());
@@ -386,7 +386,7 @@ export default {
       domChildren.push(this._renderTabs());
     }
     return (
-      <eb-page page-content={pageContent} tabs={tabs} with-subnavbar={withSubnavbar}>
+      <eb-page page-content={pageContent} tabs={tabs}>
         {domChildren}
       </eb-page>
     );
