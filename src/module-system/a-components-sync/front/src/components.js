@@ -1,5 +1,5 @@
 import loadMore from './components/loadMore.jsx';
-import view from './components/view2.jsx';
+import view from './components/view2.js';
 import page from './components/page.js';
 import navbar from './components/navbar.js';
 import link from './components/link.js';
