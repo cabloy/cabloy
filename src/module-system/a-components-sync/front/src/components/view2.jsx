@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import AppMethodsFn from '../common/appMethods.js';
+import ViewAppMethods from '../common/view/viewAppMethods.js';
 import ViewDirty from '../common/view/viewDirty.js';
 import ViewModal from '../common/view/viewModal.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
@@ -8,7 +8,7 @@ export default {
     global: true,
   },
   name: 'eb-view',
-  mixins: [ViewDirty, ViewModal],
+  mixins: [ViewAppMethods, ViewDirty, ViewModal],
   extends: f7View,
   props: {
     size: {
@@ -18,10 +18,6 @@ export default {
     sizeExtent: {
       type: Object,
     },
-  },
-  data() {
-    const appMethods = AppMethodsFn(this);
-    return appMethods;
   },
   methods: {
     getHostEl() {
@@ -98,12 +94,7 @@ export default {
   },
   beforeDestroy() {
     const self = this;
-    this.$emit('view:destroy', self);
-    //
-    this.calendar = null;
-    this.toast = null;
-    this.dialog = null;
-    this.actions = null;
+    self.$emit('view:destroy', self);
   },
   render() {
     const _h = this.$createElement;
