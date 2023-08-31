@@ -2,23 +2,15 @@ import Vue from 'vue';
 import ViewAppMethods from '../common/view/viewAppMethods.js';
 import ViewDirty from '../common/view/viewDirty.js';
 import ViewModal from '../common/view/viewModal.js';
+import ViewSize from '../common/view/viewSize.js';
 const f7View = Vue.options.components['f7-view'].extendOptions;
 export default {
   meta: {
     global: true,
   },
   name: 'eb-view',
-  mixins: [ViewAppMethods, ViewDirty, ViewModal],
+  mixins: [ViewAppMethods, ViewDirty, ViewModal, ViewSize],
   extends: f7View,
-  props: {
-    size: {
-      type: String,
-      default: 'small',
-    },
-    sizeExtent: {
-      type: Object,
-    },
-  },
   methods: {
     getHostEl() {
       const view = this.$$(this.$el);
@@ -32,16 +24,6 @@ export default {
         _options = Object.assign({}, _options, { ctx: this });
       }
       this.$meta.vueLayout.navigate(url, _options);
-    },
-    getSizeExtent() {
-      return this.sizeExtent;
-      // not valid if the group of views is hidden
-      // const view = this.$$(this.$el);
-      // const size = {
-      //   width: view.width(),
-      //   height: view.height(),
-      // };
-      // return size;
     },
     close() {
       this.$f7router.close();
