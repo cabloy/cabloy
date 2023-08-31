@@ -60,7 +60,7 @@ export default {
         domButtons.push(
           <eb-link
             iconF7="::timeline"
-            iconSize={16}
+            iconSize={24}
             tooltip={this.$text('ViewWorkFlow')}
             propsOnPerform={this.onPerformViewWorkFlow}
           ></eb-link>
@@ -68,7 +68,7 @@ export default {
         domButtons.push(
           <eb-link
             iconF7="::flow-chart"
-            iconSize={16}
+            iconSize={24}
             tooltip={this.$text('ViewFlowChart')}
             propsOnPerform={this.onPerformViewFlowChart}
           ></eb-link>
