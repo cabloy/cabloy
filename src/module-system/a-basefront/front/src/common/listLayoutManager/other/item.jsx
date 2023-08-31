@@ -117,6 +117,17 @@ export default {
     item_getAtomStateColor(item) {
       return item.atomClosed === 0 ? 'orange' : 'gray';
     },
+    item_renderAtomClosed(item) {
+      if (item.atomClosed) {
+        const color = this.item_getAtomStateColor(item);
+        return (
+          <f7-badge key="_atomClosed" color={color}>
+            {this.$text('Closed')}
+          </f7-badge>
+        );
+      }
+      return null;
+    },
     item_renderFlowNodeState(item) {
       if (item._atomStateTitleLocale) {
         const color = this.item_getAtomStateColor(item);
@@ -130,6 +141,11 @@ export default {
     },
     item_renderMetaFlags(item) {
       const domMetaFlags = [];
+      // atomClosed
+      const domAtomClosed = this.item_renderAtomClosed(item);
+      if (domAtomClosed) {
+        domMetaFlags.push(domAtomClosed);
+      }
       // flow
       const domFlowNodeState = this.item_renderFlowNodeState(item);
       if (domFlowNodeState) {

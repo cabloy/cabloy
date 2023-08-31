@@ -211,7 +211,7 @@ export default {
       // atom closed
       if (item.atomStage === 0 && item.atomClosed === 1) {
         children.push(
-          <f7-badge key="atomClosed" color="orange">
+          <f7-badge key="atomClosed" color="gray">
             {this.$text('Closed')}
           </f7-badge>
         );
