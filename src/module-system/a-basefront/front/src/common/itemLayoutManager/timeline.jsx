@@ -52,6 +52,7 @@ export default {
         layoutManager: this,
         flowId: this.timeline_flowId,
         currentOnly: true,
+        inline: true,
       };
     },
     async timeline_loadData() {

@@ -208,12 +208,12 @@ export default {
       return children;
     },
     _timeline_renderFlowTaskActionsChildren({ task }) {
-      const currentOnly = this.adapter.currentOnly;
+      const inline = this.adapter.inline;
       if (task.userIdAssignee !== this.base_user.id || this.base_flowOld) return;
       const children = [];
       const [actionsBasic, actionsMore] = this._timeline_prepareActions({ task });
       for (const actionBase of actionsBasic) {
-        if (currentOnly && actionBase.name === 'viewAtom') {
+        if (inline && actionBase.name === 'viewAtom') {
           continue;
         }
         children.push(

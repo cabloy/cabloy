@@ -62,8 +62,8 @@ export default {
   },
   methods: {
     async base_loadData_autoCheck() {
-      const currentOnly = this.adapter.currentOnly;
-      if (currentOnly) return;
+      const inline = this.adapter.inline;
+      if (inline) return;
       return await this.base_loadData();
     },
     async base_loadData() {
