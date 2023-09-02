@@ -6,7 +6,7 @@ export default {
   PleaseInputText: '请输入文本',
   ShowAllComments: '显示所有评论',
   SharingCompleted: '分享已完成',
-  DraftsFlowingMineTab: '流转(审批)中',
+  DraftsFlowingMineTab: '审批中',
   DraftsDraftingMineTab: '起草中',
   OpenLinkTitleRedirect: '跳转',
   SaveAsDraft: '保存为草稿',
