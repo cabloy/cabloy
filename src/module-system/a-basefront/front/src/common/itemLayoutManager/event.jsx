@@ -56,7 +56,7 @@ export default {
       //    for: delete on atom list but not delete on atom when atomClosed=1
       // delete
       if (action.name === 'delete') {
-        // not delelte if draft
+        // not delete if draft
         // if (this.base.item.atomStage !== 0 || this.base.item.atomIdFormal === 0) {
         if (this.base.item.atomStage !== 0) {
           this.base.item = null;
