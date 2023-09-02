@@ -107,7 +107,9 @@ export default {
       // base on base_prepareReadOptions
       const options = this.base_prepareReadOptions();
       // where
-      options.where = {};
+      if (!options.where) {
+        options.where = {};
+      }
       // search
       if (this.search.query) {
         options.where['a.atomName'] = { val: this.search.query, op: 'like' };
