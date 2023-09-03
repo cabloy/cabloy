@@ -19,10 +19,10 @@ export default {
   },
   data() {
     return {
-      src: null,
+      // src: null,
     };
   },
-  created() {
+  mounted() {
     this.changeSrc();
   },
   methods: {
@@ -46,13 +46,14 @@ export default {
       if (jwt) {
         query['eb-jwt'] = jwt;
       }
-      this.src = this.$meta.util.combineQueries(url, query);
+      const src = this.$meta.util.combineQueries(url, query);
+      this.$refs.img.setAttribute('src', src);
     },
     onClick() {
       this.onContainerRefresh();
     },
   },
   render() {
-    return <img src={this.src} onClick={this.onClick} class="captcha" crossorigin="use-credentials" />;
+    return <img ref="img" onClick={this.onClick} class="captcha" crossorigin="use-credentials" />;
   },
 };
