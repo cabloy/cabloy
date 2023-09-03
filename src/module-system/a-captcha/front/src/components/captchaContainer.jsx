@@ -67,17 +67,15 @@ export default {
             return this.onContainerRefresh();
           },
         },
-        on: {
-          componentReady: componentInstance => {
-            this.captchaComponentInstance = componentInstance;
-          },
-        },
       };
       return (
         <eb-component
           module={this.providerInstance.provider.module}
           name={this.providerInstance.provider.name}
           options={options}
+          onComponentReady={componentInstance => {
+            this.captchaComponentInstance = componentInstance;
+          }}
         ></eb-component>
       );
     },
