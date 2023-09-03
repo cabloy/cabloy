@@ -1,39 +1,6 @@
-<script>
 export default {
   meta: {
     global: false,
-  },
-  render(c) {
-    const children = [];
-    if (this.providerInstance) {
-      children.push(
-        c('eb-component', {
-          ref: 'captcha',
-          props: {
-            module: this.providerInstance.provider.module,
-            name: this.providerInstance.provider.name,
-            options: {
-              props: {
-                module: this.module,
-                sceneName: this.sceneName,
-                context: this.context,
-                providerInstance: this.providerInstance,
-                onRefresh: () => {
-                  return this.onRefresh();
-                },
-              },
-            },
-          },
-        })
-      );
-    }
-    return c(
-      'div',
-      {
-        staticClass: 'captcha-container',
-      },
-      children
-    );
   },
   props: {
     module: {
@@ -47,6 +14,7 @@ export default {
   data() {
     return {
       providerInstance: null,
+      captchaComponentInstance: null,
     };
   },
   created() {
@@ -76,7 +44,7 @@ export default {
         context: this.context,
       });
       // refresh
-      const captchaInstance = this.$refs.captcha && this.$refs.captcha.getComponentInstance();
+      const captchaInstance = this.captchaComponentInstance;
       if (captchaInstance) {
         if (!captchaInstance.refresh) {
           throw new Error('should provide refresh');
@@ -87,7 +55,34 @@ export default {
     onRefresh() {
       return this.refresh();
     },
+    _renderCaptchaComponent() {
+      if (!this.providerInstance) return null;
+      const options = {
+        props: {
+          module: this.module,
+          sceneName: this.sceneName,
+          context: this.context,
+          providerInstance: this.providerInstance,
+          onRefresh: () => {
+            return this.onRefresh();
+          },
+        },
+        on: {
+          componentReady: componentInstance => {
+            this.captchaComponentInstance = componentInstance;
+          },
+        },
+      };
+      return (
+        <eb-component
+          module={this.providerInstance.provider.module}
+          name={this.providerInstance.provider.name}
+          options={options}
+        ></eb-component>
+      );
+    },
+  },
+  render() {
+    return <div class="captcha-container">{this._renderCaptchaComponent()}</div>;
   },
 };
-</script>
-<style scoped></style>
