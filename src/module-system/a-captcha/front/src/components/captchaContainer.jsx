@@ -52,7 +52,7 @@ export default {
         await captchaInstance.refresh();
       }
     },
-    onRefresh() {
+    onContainerRefresh() {
       return this.refresh();
     },
     _renderCaptchaComponent() {
@@ -63,8 +63,8 @@ export default {
           sceneName: this.sceneName,
           context: this.context,
           providerInstance: this.providerInstance,
-          onRefresh: () => {
-            return this.onRefresh();
+          onContainerRefresh: () => {
+            return this.onContainerRefresh();
           },
         },
         on: {

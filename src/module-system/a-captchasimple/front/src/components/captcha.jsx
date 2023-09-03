@@ -13,7 +13,7 @@ export default {
     providerInstance: {
       type: Object,
     },
-    onRefresh: {
+    onContainerRefresh: {
       type: Function,
     },
   },
@@ -49,7 +49,7 @@ export default {
       this.src = this.$meta.util.combineQueries(url, query);
     },
     onClick() {
-      this.onRefresh();
+      this.onContainerRefresh();
     },
   },
   render() {
