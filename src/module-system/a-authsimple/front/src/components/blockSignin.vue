@@ -38,10 +38,10 @@
               <f7-icon slot="media"></f7-icon>
               <div slot="content">
                 <eb-component
-                  ref="captchaContainer"
                   module="a-captcha"
                   name="captchaContainer"
                   :options="captchaContainerOptions"
+                  @componentReady="captchaContainerInstance = $event"
                 ></eb-component>
               </div>
             </eb-list-input>
@@ -119,6 +119,7 @@ export default {
           sceneName: 'signin',
         },
       },
+      captchaContainerInstance: null,
     };
   },
   computed: {
@@ -138,7 +139,7 @@ export default {
       }
     },
     _getCaptchaContainerInstance() {
-      return this.$refs.captchaContainer && this.$refs.captchaContainer.getComponentInstance();
+      return this.captchaContainerInstance;
     },
     async onPerformAfterValidate({ err }) {
       if (!err) return;
