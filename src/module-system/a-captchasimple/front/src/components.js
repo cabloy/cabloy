@@ -1,4 +1,4 @@
-import captcha from './components/captcha.vue';
+import captcha from './components/captcha.jsx';
 
 export default {
   captcha,

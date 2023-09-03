@@ -1,7 +1,3 @@
-<template>
-  <img :src="src" @click="onClick" class="captcha" crossorigin="use-credentials" />
-</template>
-<script>
 export default {
   meta: {
     global: false,
@@ -56,6 +52,7 @@ export default {
       this.onRefresh();
     },
   },
+  render() {
+    return <img src={this.src} onClick={this.onClick} class="captcha" crossorigin="use-credentials" />;
+  },
 };
-</script>
-<style scoped></style>
