@@ -50,9 +50,6 @@ export default {
       this.$emit('tabShow', el);
       this._checkInit();
     },
-    getPage() {
-      return this.$pageContainer.$children[0];
-    },
     _getListInstance() {
       if (this.componentInstance) return this.componentInstance;
       const list = this.$slots.list;
@@ -84,8 +81,7 @@ export default {
     }
   },
   mounted() {
-    const page = this.getPage();
-    if (page.$el.f7PageInitialized) {
+    if (this.$page.$el.f7PageInitialized) {
       // should trigger tabMounted
       this.$f7router.emit('tabMounted', this.$el);
       this.tabMounted = true;
