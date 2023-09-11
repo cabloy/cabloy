@@ -51,7 +51,7 @@ export default {
       this._checkInit();
     },
     getPage() {
-      return this.$page.$children[0];
+      return this.$page2.$children[0];
     },
     _getListInstance() {
       if (this.componentInstance) return this.componentInstance;

@@ -30,9 +30,9 @@ export default {
   },
   mounted() {
     // page
-    const $page = this.$$(this.$el);
+    const $domPage = this.$$(this.$el);
     // navbar
-    const navbar = $page.find('.navbar');
+    const navbar = $domPage.find('.navbar');
     if (navbar.length > 0) {
       this._watchTitle = navbar[0].__vue__.$watch('title', value => {
         this.setPageTitle(value);
@@ -40,7 +40,7 @@ export default {
     }
     // page route
     if (this.$meta.config.env === 'development') {
-      $page.attr('data-dev-page-url', this.$pageRoute.url);
+      $domPage.attr('data-dev-page-url', this.$pageRoute.url);
     }
     // page class
     const pageClassName = 'eb-page' + this.$pageRoute.path.replace(/\//g, '-');
@@ -81,7 +81,7 @@ export default {
       title = this.$$(this.$el).find('.navbar .title').text();
       if (title) return title;
       // page meta
-      const page = this.$page;
+      const page = this.$page2;
       const _title = page && page.$options.meta && page.$options.meta.title;
       if (_title) {
         title = this.$text(_title);

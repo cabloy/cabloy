@@ -13,7 +13,7 @@ export default function () {
         return ctx.$view || ctx.$meta.vueLayout.appMethods;
       },
     });
-    Object.defineProperty(ctx, '$page', {
+    Object.defineProperty(ctx, '$pageContainer', {
       get() {
         let page = ctx.$pageContainer;
         if (!page) return null;
@@ -23,7 +23,7 @@ export default function () {
         return page;
       },
     });
-    Object.defineProperty(ctx, '$pageContainer', {
+    Object.defineProperty(ctx, '$page', {
       get() {
         const pageEl = ctx.$$(ctx.$el).closest('.page');
         const page = pageEl.length > 0 && pageEl[0].__vue__;
@@ -33,7 +33,7 @@ export default function () {
     });
     Object.defineProperty(ctx, '$pageRoute', {
       get() {
-        const page = ctx.$page;
+        const page = ctx.$page2;
         if (!page) {
           return ctx.$f7router.currentRoute;
         }

@@ -38,7 +38,7 @@ export default {
       });
     },
     message_queueTaskScroll(none, cb) {
-      const pageContent = this.$$(this.$page.$el).find('.page-content');
+      const pageContent = this.$$(this.$page2.$el).find('.page-content');
       if (pageContent.scrollTop() === 0) return cb();
       pageContent.scrollTop(0, 300, cb);
     },
