@@ -6,9 +6,12 @@ module.exports = ctx => {
       this.moduleName = moduleName || ctx.module.info.relativeName;
     }
 
+    get modelStatus() {
+      return ctx.model.module(moduleInfo.relativeName).status;
+    }
+
     async get(name) {
-      const status = await ctx.db.get('aStatus', {
-        iid: ctx.instance.id,
+      const status = await this.modelStatus.get({
         module: this.moduleName,
         name,
       });
@@ -20,13 +23,12 @@ module.exports = ctx => {
     }
 
     async _set({ name, value, queue }) {
-      const status = await ctx.db.get('aStatus', {
-        iid: ctx.instance.id,
+      const status = await this.modelStatus.get({
         module: this.moduleName,
         name,
       });
       if (status) {
-        await ctx.db.update('aStatus', {
+        await this.modelStatus.update({
           id: status.id,
           value: JSON.stringify(value),
         });
@@ -44,8 +46,7 @@ module.exports = ctx => {
             },
           });
         } else {
-          await ctx.db.insert('aStatus', {
-            iid: ctx.instance.id,
+          await this.modelStatus.insert({
             module: this.moduleName,
             name,
             value: JSON.stringify(value),
