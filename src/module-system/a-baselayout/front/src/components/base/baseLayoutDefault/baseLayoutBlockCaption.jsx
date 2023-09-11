@@ -33,7 +33,7 @@ export default {
   methods: {
     _changePageTitle() {
       const title = this.layoutManager.page_title;
-      this.$pageContainer.setPageTitle(title);
+      this.$page.setPageTitle(title);
     },
   },
   render() {

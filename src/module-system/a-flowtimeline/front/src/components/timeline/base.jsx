@@ -170,7 +170,7 @@ export default {
     },
     async base_checkOpenAssigneesConfirmation() {
       // wait for page ready
-      await this.adapter.ctx.$pageContainer.waitForPageAfterIn();
+      await this.adapter.ctx.$page.waitForPageAfterIn();
       // check
       const task = this.base_checkAssigneesConfirmation();
       if (!task) return;

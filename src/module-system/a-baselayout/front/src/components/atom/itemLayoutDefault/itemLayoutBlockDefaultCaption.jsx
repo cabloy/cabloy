@@ -44,7 +44,7 @@ export default {
   methods: {
     _changePageTitle() {
       const title = this.layoutManager.page_title;
-      this.$pageContainer.setPageTitle(title);
+      this.$page.setPageTitle(title);
     },
     openUrl(options) {
       const atomClass = this.layoutManager.base.atomClass;

@@ -11,7 +11,7 @@ export default {
     page_setDirty(dirty) {
       if (this.page_dirty === dirty) return;
       this.page_dirty = dirty;
-      this.$pageContainer.setPageDirty(dirty);
+      this.$page.setPageDirty(dirty);
     },
     page_getDirtyTitle(title) {
       if (!this.page_dirty) return title;

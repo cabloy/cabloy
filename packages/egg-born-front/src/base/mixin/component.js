@@ -15,7 +15,7 @@ export default function () {
     });
     Object.defineProperty(ctx, '$pageContainer', {
       get() {
-        let page = ctx.$pageContainer;
+        let page = ctx.$page;
         if (!page) return null;
         while (page.$parent.$options._componentTag !== 'eb-view') {
           page = page.$parent;

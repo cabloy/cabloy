@@ -101,7 +101,7 @@ export default {
       this.page_dirty = dirty;
       if (this.scene !== 'manager') {
         // not for manager
-        this.$pageContainer.setPageDirty(dirty);
+        this.$page.setPageDirty(dirty);
       }
     },
     __setTitle(title) {
@@ -117,7 +117,7 @@ export default {
       }
       this.title = title;
       // force set pageTitle, may be navbar rerendered
-      this.$pageContainer.setPageTitle(this.page_title);
+      this.$page.setPageTitle(this.page_title);
     },
     // actions: save/settings
     renderActionsManager() {
