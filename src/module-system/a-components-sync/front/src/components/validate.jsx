@@ -254,13 +254,13 @@ export default {
     },
     async fetchSchema() {
       if (this.meta && this.meta.schema) {
-        this.schemaModuleName = this.meta.schema.module || this.$page2.$module.name;
+        this.schemaModuleName = this.meta.schema.module || this.$pageContainer.$module.name;
         await this.$meta.module.use(this.schemaModuleName);
         await this.__schemaReady(this.meta.schema.schema, this.schemaModuleName);
         return;
       }
       if (!this.params) return;
-      const moduleName = this.params.module || this.$page2.$module.name;
+      const moduleName = this.params.module || this.$pageContainer.$module.name;
       this.schemaModuleName = moduleName;
       await this.$meta.module.use(moduleName);
       // useStore

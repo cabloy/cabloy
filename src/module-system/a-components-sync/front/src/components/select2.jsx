@@ -146,7 +146,7 @@ export default {
         moduleName = moduleInfo.relativeName;
         fetchUrl = this.optionsUrl;
       } else {
-        moduleName = this.$page2.$module.name;
+        moduleName = this.$pageContainer.$module.name;
         fetchUrl = this.$meta.util.combineApiPath(moduleName, this.optionsUrl);
       }
       this.$meta.module.use(moduleName, () => {

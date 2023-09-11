@@ -33,7 +33,7 @@ export default function () {
     });
     Object.defineProperty(ctx, '$pageRoute', {
       get() {
-        const page = ctx.$page2;
+        const page = ctx.$pageContainer;
         if (!page) {
           return ctx.$f7router.currentRoute;
         }

@@ -81,7 +81,7 @@ export default {
       title = this.$$(this.$el).find('.navbar .title').text();
       if (title) return title;
       // page meta
-      const page = this.$page2;
+      const page = this.$pageContainer;
       const _title = page && page.$options.meta && page.$options.meta.title;
       if (_title) {
         title = this.$text(_title);
