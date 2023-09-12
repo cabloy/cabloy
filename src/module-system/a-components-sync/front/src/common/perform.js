@@ -23,9 +23,6 @@ export default {
           window.__debugger = true;
         }
       }
-      if (window.__debugger) {
-        debugger;
-      }
       // onClick
       await this._onClick_inner(event, $clickedLinkEl);
       // dev info
@@ -70,6 +67,10 @@ export default {
       // onPerform
       try {
         this._showPreloader();
+        // debugger
+        if (window.__debugger && this.$meta.config.env === 'development') {
+          debugger;
+        }
         // onPerform
         const res = await this.onPerform(event, this.context);
         this._hidePreloader();
