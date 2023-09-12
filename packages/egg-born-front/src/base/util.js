@@ -294,7 +294,7 @@ export default function (Vue) {
       // create instance
       const componentInstance = this.createComponentInstance(component, options);
       try {
-        if (window.__debugger) {
+        if (window.__debugger && Vue.prototype.$meta.config.env === 'development') {
           debugger;
         }
         const res = await componentInstance.onAction(args);
@@ -329,7 +329,7 @@ export default function (Vue) {
       // create instance
       const componentInstance = this.createComponentInstance(component, options);
       try {
-        if (window.__debugger) {
+        if (window.__debugger && Vue.prototype.$meta.config.env === 'development') {
           debugger;
         }
         const res = componentInstance.onAction(args);
