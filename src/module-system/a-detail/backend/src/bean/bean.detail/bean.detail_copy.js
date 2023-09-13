@@ -5,6 +5,8 @@ module.exports = ctx => {
       await this._loopDetailClasses({
         atomClass,
         fn: async ({ atomClassDetail, atomClassBaseDetail }) => {
+          // only copy inline details
+          if (!atomClassBaseDetail.detail.inline) return;
           await this._copyDetails_Class({
             atomClassDetail,
             atomClassBaseDetail,
