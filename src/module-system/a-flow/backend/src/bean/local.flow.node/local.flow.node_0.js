@@ -193,6 +193,37 @@ module.exports = ctx => {
       return true;
     }
 
+    _getNodeDefOptionsTask() {
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // options
+      const options = this.getNodeDefOptions();
+      return nodeDef.type.indexOf('startEventAtom') > -1 ? options.task : options;
+    }
+
+    async _getFieldsRight() {
+      // options
+      const options = this._getNodeDefOptionsTask();
+      return options.fieldsRight;
+    }
+
+    async _findFlowNodeHistoryPrevious() {
+      // flowNodeId
+      const flowNodeId = this.contextNode._flowNodeId;
+      return await this.flowInstance._findFlowNodeHistoryPrevious({
+        flowNodeId,
+        cb: ({ /* flowNode*/ nodeDef }) => {
+          return nodeDef.type.indexOf('startEventAtom') > -1 || nodeDef.type.indexOf('activityUserTask') > -1;
+        },
+      });
+    }
+
+    async _loadNodeInstancePrevious() {
+      const flowNode = await this._findFlowNodeHistoryPrevious();
+      const flowNodeInstance = await this.flowInstance._loadNodeInstance({ flowNode, history: true });
+      return flowNodeInstance;
+    }
+
     get nodeBaseBean() {
       if (!this._nodeBaseBean) {
         this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
