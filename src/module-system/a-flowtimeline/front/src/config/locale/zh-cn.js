@@ -20,7 +20,6 @@ export default {
   Assignees: '参与人',
   Confirmation: '确认',
   Bidding: '竞标',
-  DraftingAgain: '再次起草',
   ConfirmationAllowAppend: '允许添加参与人',
   AssigneesConfirmationPrompt: '请确认参与人',
   CancelFlowPrompt: '您确认要取消本流程吗？',
