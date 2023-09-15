@@ -200,11 +200,12 @@ export default {
       const actionWrite = this.actions_findAction('write');
       if (!actionWrite) return null;
       const atomClassBase = this.base.atomClassBase;
-      // only show on draft
-      const atomClosed = this.base.item.atomClosed === 1;
+      // show on draft/formal, even if closed
+      // const atomClosed = this.base.item.atomClosed === 1;
       // support simple
       // if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
-      if (atomClassBase.itemOnly || (this.base.item.atomStage !== 2 && !atomClosed)) {
+      // if (atomClassBase.itemOnly || (this.base.item.atomStage !== 2 && !atomClosed)) {
+      if (atomClassBase.itemOnly || this.base.item.atomStage !== 2) {
         const mode = this.container.mode;
         const actionIconDraft = atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
         const actionIcon = mode === 'edit' ? actionIconDraft : '::edit';
