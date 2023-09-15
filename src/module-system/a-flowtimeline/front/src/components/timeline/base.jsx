@@ -59,6 +59,9 @@ export default {
       }
       return groups;
     },
+    base_actionSource() {
+      return this.adapter.layoutManager;
+    },
   },
   methods: {
     async base_loadData_autoCheck() {
@@ -126,7 +129,7 @@ export default {
           key: keyFormal,
           atomClass,
           action: { name: 'save' },
-          actionSource: this,
+          actionSource: this.base_actionSource,
         });
       }
       // draft delete
@@ -147,7 +150,7 @@ export default {
         key: keyFormal,
         atomClass,
         action: { name: 'save' },
-        actionSource: this,
+        actionSource: this.base_actionSource,
       });
     },
     base_emitAtomActionSave() {
@@ -160,7 +163,7 @@ export default {
         key,
         atomClass,
         action: { name: 'save' },
-        actionSource: this,
+        actionSource: this.base_actionSource,
       });
     },
     base_checkAssigneesConfirmation() {
