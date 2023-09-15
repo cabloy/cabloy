@@ -71,7 +71,7 @@ export default {
         ctx.$f7router.back();
       }
     },
-    async _onActionSubmit_done_flow({ ctx, item, key, atomClass /* , data*/ }) {
+    async _onActionSubmit_done_flow({ ctx, item, key, atomClass, data }) {
       // update draft
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' }, actionSource: ctx });
       // navigate replace self
@@ -86,7 +86,8 @@ export default {
           reloadCurrent: true,
         },
       };
-      await this.$meta.util.performAction({ ctx, action, item });
+      const itemAction = data.formal ? data.formal.atom : item;
+      await this.$meta.util.performAction({ ctx, action, item: itemAction });
     },
     // async _onActionSubmit_done_flow_old({ ctx, /* item,*/ key, atomClass, data }) {
     //   // flow
