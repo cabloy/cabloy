@@ -141,11 +141,11 @@ export default {
     },
     item_renderMetaFlags(item) {
       const domMetaFlags = [];
-      // atomClosed
-      const domAtomClosed = this.item_renderAtomClosed(item);
-      if (domAtomClosed) {
-        domMetaFlags.push(domAtomClosed);
-      }
+      // // atomClosed
+      // const domAtomClosed = this.item_renderAtomClosed(item);
+      // if (domAtomClosed) {
+      //   domMetaFlags.push(domAtomClosed);
+      // }
       // flow
       const domFlowNodeState = this.item_renderFlowNodeState(item);
       if (domFlowNodeState) {
