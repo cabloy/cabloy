@@ -58,7 +58,16 @@ export default {
       if (action.name === 'delete') {
         // not delete if draft
         // if (this.base.item.atomStage !== 0 || this.base.item.atomIdFormal === 0) {
-        if (this.base.item.atomStage !== 0) {
+        if (this.base.item.atomStage === 0) {
+          // maybe deleted/closed
+          if (this.base.item.atomIdFormal === 0) {
+            // means should be deleted
+            this.base.item = null;
+            this.base.notfound = true;
+            this.base.ready = false;
+            return;
+          }
+        } else {
           this.base.item = null;
           this.base.notfound = true;
           this.base.ready = false;
