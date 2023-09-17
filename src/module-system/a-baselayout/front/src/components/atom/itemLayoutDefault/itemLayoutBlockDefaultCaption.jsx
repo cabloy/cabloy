@@ -165,6 +165,7 @@ export default {
       return <f7-badge>{atomName}</f7-badge>;
     },
     _renderStage() {
+      if (!this.item) return null;
       // stage
       const stage = this.getStage();
       if (!stage) return null;
@@ -177,6 +178,7 @@ export default {
     },
     _renderCategory() {
       if (!this.layoutManager.base.ready) return;
+      if (!this.item) return null;
       const categoryName = this.getCategoryName();
       if (!categoryName) return null;
       return (
@@ -187,6 +189,7 @@ export default {
     },
     _renderTags() {
       if (!this.layoutManager.base.ready) return;
+      if (!this.item) return null;
       const tags = this.getTags();
       if (!tags) return null;
       const children = [];
