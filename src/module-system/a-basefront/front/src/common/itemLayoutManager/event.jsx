@@ -35,6 +35,7 @@ export default {
       if (data.action === 'delete') this.base.item.attachmentCount -= 1;
     },
     async event_onActionChanged(data) {
+      console.log(data);
       // const key = data.key;
       // const atomClass = data.atomClass;
       const action = data.action;
@@ -60,7 +61,7 @@ export default {
         // if (this.base.item.atomStage !== 0 || this.base.item.atomIdFormal === 0) {
         if (this.base.item.atomStage === 0) {
           // maybe deleted/closed
-          if (this.base.item.atomIdFormal === 0) {
+          if (this.base.item.atomIdFormal === 0 && this.base.item.atomClosed === 0) {
             // means should be deleted
             this.base.item = null;
             this.base.notfound = true;
