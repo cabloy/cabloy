@@ -6,6 +6,20 @@ export default {
     this.$meta.eventHub.$off('flow:action', this.event_onActionFlow);
   },
   methods: {
+    async base_emitActionReload({ flowId, atomChanged }) {
+      if (atomChanged) {
+        this.base_emitAtomActionSave();
+        await this.base_loadData_autoCheck();
+      } else {
+        await this.base_loadData();
+      }
+      this.$meta.eventHub.$emit('flow:action', {
+        flowId,
+        action: { name: 'reload' },
+        actionSource: this,
+        autoCheck: atomChanged,
+      });
+    },
     async event_onActionFlow(data) {
       const flowId = data.flowId;
       const action = data.action;
@@ -14,7 +28,11 @@ export default {
       if (actionSource === this) return;
       // action
       if (action === 'reload') {
-        await this.base_loadData();
+        if (data.autoCheck) {
+          await this.base_loadData_autoCheck();
+        } else {
+          await this.base_loadData();
+        }
       }
     },
   },
