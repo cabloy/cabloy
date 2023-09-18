@@ -73,8 +73,8 @@ export default {
       try {
         // flow data
         const currentOnly = this.adapter.currentOnly;
-        // const flowOld = this.base_flow;
-        // const atomOld = this.base_atom;
+        const flowOld = this.base_flow;
+        const atomOld = this.base_atom;
         this.base.data = await this.$api.post('/a/flowtask/flow/data', {
           flowId: this.adapter.flowId,
           options: {
@@ -85,16 +85,15 @@ export default {
           this.base.notfound = true;
           return false;
         }
-        // not check data changed here, maybe cause more api calls
-        // const flowNew = this.base_flow;
-        // const atomNew = this.base_atom;
-        // if (atomOld && atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {
-        //   if (atomOld.atomStage === 0) {
-        //     this.base_loadData_checkEmitAtomEvent_draft({ atomNew, atomOld });
-        //   } else if (atomOld.atomStage === 1) {
-        //     this.base_loadData_checkEmitAtomEvent_formal({ atomNew, atomOld });
-        //   }
-        // }
+        const flowNew = this.base_flow;
+        const atomNew = this.base_atom;
+        if (atomOld && atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {
+          if (atomOld.atomStage === 0) {
+            this.base_loadData_checkEmitAtomEvent_draft({ atomNew, atomOld });
+          } else if (atomOld.atomStage === 1) {
+            this.base_loadData_checkEmitAtomEvent_formal({ atomNew, atomOld });
+          }
+        }
         // check AssigneesConfirmation
         this.base_checkOpenAssigneesConfirmation();
         // ok
@@ -105,55 +104,55 @@ export default {
         return false;
       }
     },
-    // base_loadData_checkEmitAtomEvent_draft({ atomNew, atomOld }) {
-    //   const keyDraft = { atomId: atomNew.atomId, itemId: atomNew.itemId };
-    //   const keyFormal = { atomId: atomNew.atomIdFormal };
-    //   const atomClass = {
-    //     module: atomNew.module,
-    //     atomClassName: atomNew.atomClassName,
-    //   };
-    //   if (atomOld.atomIdFormal === 0 && atomNew.atomIdFormal > 0) {
-    //     // list create
-    //     this.$meta.eventHub.$emit('atom:action', {
-    //       key: keyFormal,
-    //       atomClass,
-    //       action: { name: 'create' },
-    //       atom: {
-    //         atomStage: 1,
-    //         module: atomNew.module,
-    //         atomClassName: atomNew.atomClassName,
-    //       },
-    //     });
-    //   } else {
-    //     // update formal
-    //     this.$meta.eventHub.$emit('atom:action', {
-    //       key: keyFormal,
-    //       atomClass,
-    //       action: { name: 'save' },
-    //       actionSource: this.base_actionSource,
-    //     });
-    //   }
-    //   // draft delete
-    //   this.$meta.eventHub.$emit('atom:action', {
-    //     key: keyDraft,
-    //     atomClass,
-    //     action: { name: 'delete' },
-    //   });
-    // },
-    // base_loadData_checkEmitAtomEvent_formal({ atomNew }) {
-    //   const keyFormal = { atomId: atomNew.atomId, itemId: atomNew.itemId };
-    //   const atomClass = {
-    //     module: atomNew.module,
-    //     atomClassName: atomNew.atomClassName,
-    //   };
-    //   // update formal
-    //   this.$meta.eventHub.$emit('atom:action', {
-    //     key: keyFormal,
-    //     atomClass,
-    //     action: { name: 'save' },
-    //     actionSource: this.base_actionSource,
-    //   });
-    // },
+    base_loadData_checkEmitAtomEvent_draft({ atomNew, atomOld }) {
+      const keyDraft = { atomId: atomNew.atomId, itemId: atomNew.itemId };
+      const keyFormal = { atomId: atomNew.atomIdFormal };
+      const atomClass = {
+        module: atomNew.module,
+        atomClassName: atomNew.atomClassName,
+      };
+      if (atomOld.atomIdFormal === 0 && atomNew.atomIdFormal > 0) {
+        // list create
+        this.$meta.eventHub.$emit('atom:action', {
+          key: keyFormal,
+          atomClass,
+          action: { name: 'create' },
+          atom: {
+            atomStage: 1,
+            module: atomNew.module,
+            atomClassName: atomNew.atomClassName,
+          },
+        });
+      } else {
+        // update formal
+        this.$meta.eventHub.$emit('atom:action', {
+          key: keyFormal,
+          atomClass,
+          action: { name: 'save' },
+          actionSource: this.base_actionSource,
+        });
+      }
+      // draft delete
+      this.$meta.eventHub.$emit('atom:action', {
+        key: keyDraft,
+        atomClass,
+        action: { name: 'delete' },
+      });
+    },
+    base_loadData_checkEmitAtomEvent_formal({ atomNew }) {
+      const keyFormal = { atomId: atomNew.atomId, itemId: atomNew.itemId };
+      const atomClass = {
+        module: atomNew.module,
+        atomClassName: atomNew.atomClassName,
+      };
+      // update formal
+      this.$meta.eventHub.$emit('atom:action', {
+        key: keyFormal,
+        atomClass,
+        action: { name: 'save' },
+        actionSource: this.base_actionSource,
+      });
+    },
     base_emitAtomActionSave() {
       const key = { atomId: this.base_atom.atomId, itemId: this.base_atom.itemId };
       const atomClass = {
