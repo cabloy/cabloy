@@ -26,9 +26,16 @@ export default {
       }
     },
     _onActionWrite_navigateOptions({ ctx, action, dataOptions }) {
+      const params = {};
+      if (dataOptions.atomMain) {
+        params.atomMain = dataOptions.atomMain;
+      }
+      if (dataOptions.handleTask) {
+        params.handleTask = dataOptions.handleTask;
+      }
       return Object.assign({}, action.navigateOptions, {
         context: {
-          params: { atomMain: dataOptions.atomMain },
+          params,
         },
       });
     },

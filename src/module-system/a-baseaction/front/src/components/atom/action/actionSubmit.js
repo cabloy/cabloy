@@ -23,9 +23,16 @@ export default {
         options.flowTaskId = dataOptions.flowTaskId;
       }
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
-      // submit
-      await this._onActionSubmit_normal({ ctx, item, key, atomClass });
+      // do
+      if (dataOptions.flowTaskId) {
+        // handle task
+        await this._onActionSubmit_handleTask({ ctx, item, key, atomClass });
+      } else {
+        // submit
+        await this._onActionSubmit_normal({ ctx, item, key, atomClass });
+      }
     },
+    async _onActionSubmit_handleTask({ ctx, item, key, atomClass }) {},
     async _onActionSubmit_normal({ ctx, item, key, atomClass }) {
       // step middle: confirm
       await ctx.$view.dialog.confirm(this.$text('AtomActionSubmitConfirm'));
