@@ -244,17 +244,21 @@ export default {
       );
     },
     actions_renderButtonSubmit() {
+      const mode = this.container.mode;
+      const handleTask = mode === 'edit' && this.base_flowTaskId;
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
       // submit
-      if (actionWrite && this.base.item.atomStage === 0 && !atomClosed) {
+      if (handleTask || (actionWrite && this.base.item.atomStage === 0 && !atomClosed)) {
+        const actionIcon = '::save-and-submit';
         const actionName = 'submit';
+        const actionTitle = 'SaveAndSubmit';
         return (
           <eb-link
             key={actionName}
             ref="buttonSubmit"
-            iconF7="::save-and-submit"
-            tooltip={this.$text('SaveAndSubmit')}
+            iconF7={actionIcon}
+            tooltip={this.$text(actionTitle)}
             propsOnPerform={event => this.actions_onAction(event, actionName)}
           ></eb-link>
         );
