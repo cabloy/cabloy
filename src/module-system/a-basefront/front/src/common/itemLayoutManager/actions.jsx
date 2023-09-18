@@ -261,6 +261,8 @@ export default {
     actions_render() {
       if (!this.base_ready) return null;
       const children = [];
+      // layout
+      this.actions_render_buttonLayout({ children });
       // basic
       this.actions_render_buttonBasic({ children });
       // flow actions / directShowOnItem
@@ -270,7 +272,7 @@ export default {
       //
       return children;
     },
-    actions_render_buttonBasic({ children }) {
+    actions_render_buttonLayout({ children }) {
       // layout button before save
       const actionLayout = this.actions_findAction('layout');
       if (actionLayout) {
@@ -286,6 +288,8 @@ export default {
           ></eb-link>
         );
       }
+    },
+    actions_render_buttonBasic({ children }) {
       // only show on draft
       const buttonSave = this.actions_renderButtonSave();
       if (buttonSave) children.push(buttonSave);
