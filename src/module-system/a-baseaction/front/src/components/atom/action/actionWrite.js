@@ -21,7 +21,7 @@ export default {
         if (atomClassBase.itemOnly) {
           await this._onActionWrite_itemOnly({ ctx, action, key, atomClass, dataOptions });
         } else {
-          await this._onActionWrite_normal({ ctx, action, key, atomClass, dataOptions });
+          await this._onActionWrite_normal({ ctx, action, item, key, atomClass, dataOptions });
         }
       }
     },
@@ -71,21 +71,28 @@ export default {
       const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });
       ctx.$view.navigate(url, navigateOptions);
     },
-    async _onActionWrite_normal({ ctx, action, key, atomClass, dataOptions }) {
-      // openDraft
-      const data = await ctx.$api.post('/a/base/atom/openDraft', { key, atomClass });
-      const dataRes = data.draft || data.formal;
-      const keyWrite = dataRes.key;
-      const atomWrite = dataRes.atom;
-      const changed = data.changed;
-      // emit
-      if (changed) {
-        ctx.$meta.eventHub.$emit('atom:action', {
-          key: keyWrite,
-          atomClass,
-          action: { name: 'create' },
-          atom: atomWrite,
-        });
+    async _onActionWrite_normal({ ctx, action, item, key, atomClass, dataOptions }) {
+      let atomWrite;
+      let changed;
+      if (!dataOptions.flowTaskId) {
+        // openDraft
+        const data = await ctx.$api.post('/a/base/atom/openDraft', { key, atomClass });
+        const dataRes = data.draft || data.formal;
+        const keyWrite = dataRes.key;
+        atomWrite = dataRes.atom;
+        changed = data.changed;
+        // emit
+        if (changed) {
+          ctx.$meta.eventHub.$emit('atom:action', {
+            key: keyWrite,
+            atomClass,
+            action: { name: 'create' },
+            atom: atomWrite,
+          });
+        }
+      } else {
+        atomWrite = item;
+        changed = false;
       }
       // queries
       const queries = {
