@@ -197,6 +197,8 @@ export default {
       return null;
     },
     actions_renderButtonSave() {
+      const mode = this.container.mode;
+      const handleTask = mode === 'edit' && this.base_flowTaskId;
       const actionWrite = this.actions_findAction('write');
       if (!actionWrite) return null;
       const atomClassBase = this.base.atomClassBase;
@@ -206,11 +208,12 @@ export default {
       // if (actionWrite && this.base.item.atomStage === this.base.item.atomSimple && !atomClosed) {
       // if (atomClassBase.itemOnly || (this.base.item.atomStage !== 2 && !atomClosed)) {
       if (atomClassBase.itemOnly || this.base.item.atomStage !== 2) {
-        const mode = this.container.mode;
-        const actionIconDraft = atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
+        const actionIconDraft =
+          handleTask || atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
         const actionIcon = mode === 'edit' ? actionIconDraft : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
-        const actionTitleDraft = atomClassBase.itemOnly || this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
+        const actionTitleDraft =
+          handleTask || atomClassBase.itemOnly || this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
         const actionTitle = mode === 'edit' ? actionTitleDraft : this.actions_getActionTitle(actionWrite);
         return (
           <eb-link
@@ -288,6 +291,12 @@ export default {
           ></eb-link>
         );
       }
+    },
+    actions_render_buttonHandleTask({ children }) {
+      const buttonSave = this.actions_renderButtonSave();
+      if (buttonSave) children.push(buttonSave);
+      const buttonSubmit = this.actions_renderButtonSubmit();
+      if (buttonSubmit) children.push(buttonSubmit);
     },
     actions_render_buttonBasic({ children }) {
       // only show on draft
