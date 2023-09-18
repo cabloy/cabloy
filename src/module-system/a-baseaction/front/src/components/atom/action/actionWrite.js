@@ -30,9 +30,6 @@ export default {
       if (dataOptions.atomMain) {
         params.atomMain = dataOptions.atomMain;
       }
-      if (dataOptions.handleTask) {
-        params.handleTask = dataOptions.handleTask;
-      }
       return Object.assign({}, action.navigateOptions, {
         context: {
           params,
