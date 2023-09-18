@@ -35,7 +35,6 @@ export default {
       if (data.action === 'delete') this.base.item.attachmentCount -= 1;
     },
     async event_onActionChanged(data) {
-      console.log(data);
       // const key = data.key;
       // const atomClass = data.atomClass;
       const action = data.action;
