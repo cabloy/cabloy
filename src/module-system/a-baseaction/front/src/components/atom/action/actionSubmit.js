@@ -26,13 +26,26 @@ export default {
       // do
       if (dataOptions.flowTaskId) {
         // handle task
-        await this._onActionSubmit_handleTask({ ctx, item, key, atomClass });
+        await this._onActionSubmit_handleTask({ ctx, dataOptions });
       } else {
         // submit
         await this._onActionSubmit_normal({ ctx, item, key, atomClass });
       }
     },
-    async _onActionSubmit_handleTask({ ctx, item, key, atomClass }) {},
+    async _onActionSubmit_handleTask({ ctx, dataOptions }) {
+      await ctx.$meta.util.performAction({
+        ctx,
+        action: {
+          actionModule: 'a-flowtask',
+          actionComponent: 'action',
+          name: 'handleTaskPerform',
+        },
+        item: {
+          flowLayoutManager: null,
+          flowTaskId: dataOptions.flowTaskId,
+        },
+      });
+    },
     async _onActionSubmit_normal({ ctx, item, key, atomClass }) {
       // step middle: confirm
       await ctx.$view.dialog.confirm(this.$text('AtomActionSubmitConfirm'));

@@ -20,6 +20,13 @@ const actions = {
     actionComponent: 'action',
     icon: { f7: '::play-arrow' },
   },
+  handleTaskPerform: {
+    basic: false,
+    title: 'Handle',
+    actionModule: 'a-flowtask',
+    actionComponent: 'action',
+    icon: { f7: '::play-arrow' },
+  },
   cancelFlow: {
     basic: true,
     title: 'Cancel Flow',
