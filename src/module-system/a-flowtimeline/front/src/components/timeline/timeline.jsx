@@ -44,7 +44,7 @@ export default {
         targetEl: event.currentTarget,
         buttons,
       };
-      const button = await this.$view.actions.choose(params);
+      const button = await this.adapter.ctx.$view.actions.choose(params);
       const actionBase = button.data;
       await this.timeline_onPerformTaskAction(event, actionBase, task);
     },
