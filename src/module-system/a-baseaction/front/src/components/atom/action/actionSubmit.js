@@ -33,6 +33,8 @@ export default {
       }
     },
     async _onActionSubmit_handleTask({ ctx, dataOptions }) {
+      const timelineInstance = this.layoutManager.timeline.instance;
+      const tasks = this.timelineInstance.base_tasks;
       await ctx.$meta.util.performAction({
         ctx,
         action: {

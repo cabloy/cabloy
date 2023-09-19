@@ -94,6 +94,7 @@ export default {
       return <f7-card-footer class="eb-card-footer-no-content"></f7-card-footer>;
     },
     _renderContainer() {
+      if (this.layoutManager.container.mode === 'edit') return null;
       const tasks = this.timelineInstance.base_tasks;
       if (!tasks || tasks.length === 0) return null;
       const domCardHeader = this._renderCardHeader();

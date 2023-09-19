@@ -58,8 +58,9 @@ export default {
     async timeline_loadData() {
       // check if has flow
       if (!this.timeline_flowId) return;
-      // check if edit mode
-      if (this.container.mode === 'edit') return;
+      // init data but not show timeline for edit mode
+      // // check if edit mode
+      // if (this.container.mode === 'edit') return;
       // create instance
       if (!this.timeline.instance) {
         await this.timeline_createInstance();
