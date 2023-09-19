@@ -230,6 +230,8 @@ export default {
     actions_renderButtonSaveAndReturn() {
       const mode = this.container.mode;
       if (mode !== 'edit') return null;
+      const handleTask = mode === 'edit' && this.base_flowTaskId;
+      if (handleTask) return null;
       const actionIcon = '::save-and-return';
       const actionName = 'saveAndReturn';
       const actionTitle = 'SaveAndReturn';
@@ -246,6 +248,7 @@ export default {
     actions_renderButtonSubmit() {
       const mode = this.container.mode;
       const handleTask = mode === 'edit' && this.base_flowTaskId;
+      if (handleTask && !this.timeline.instance?.base_tasks) return null;
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
       // submit
@@ -295,12 +298,6 @@ export default {
           ></eb-link>
         );
       }
-    },
-    actions_render_buttonHandleTask({ children }) {
-      const buttonSave = this.actions_renderButtonSave();
-      if (buttonSave) children.push(buttonSave);
-      const buttonSubmit = this.actions_renderButtonSubmit();
-      if (buttonSubmit) children.push(buttonSubmit);
     },
     actions_render_buttonBasic({ children }) {
       // only show on draft

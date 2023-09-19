@@ -33,8 +33,9 @@ export default {
       }
     },
     async _onActionSubmit_handleTask({ ctx, dataOptions }) {
-      // const timelineInstance = this.layoutManager.timeline.instance;
-      // const tasks = this.timelineInstance.base_tasks;
+      const flowLayoutManager = ctx.timeline.instance;
+      const tasks = flowLayoutManager.base_tasks;
+      const task = tasks.find(item => item.flowTaskId === dataOptions.flowTaskId);
       await ctx.$meta.util.performAction({
         ctx,
         action: {
@@ -43,8 +44,8 @@ export default {
           name: 'handleTaskPerform',
         },
         item: {
-          flowLayoutManager: null,
-          flowTaskId: dataOptions.flowTaskId,
+          flowLayoutManager,
+          task,
         },
       });
     },
