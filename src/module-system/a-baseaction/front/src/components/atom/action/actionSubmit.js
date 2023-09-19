@@ -36,12 +36,14 @@ export default {
       const flowLayoutManager = ctx.timeline.instance;
       const tasks = flowLayoutManager.base_tasks;
       const task = tasks.find(item => item.flowTaskId === dataOptions.flowTaskId);
+      const action = task._actions.find(item => item.name === 'handleTask');
       await ctx.$meta.util.performAction({
         ctx,
         action: {
           actionModule: 'a-flowtask',
           actionComponent: 'action',
           name: 'handleTaskPerform',
+          options: action.options,
         },
         item: {
           flowLayoutManager,
