@@ -6,12 +6,16 @@ export default {
     this.$meta.eventHub.$off('flow:action', this.event_onActionFlow);
   },
   methods: {
-    async base_emitActionReload({ flowId, atomChanged }) {
+    async base_emitActionReload({ flowId, atomChanged, disableSelf }) {
       if (atomChanged) {
         this.base_emitAtomActionSave();
-        await this.base_loadData_autoCheck();
+        if (!disableSelf) {
+          await this.base_loadData_autoCheck();
+        }
       } else {
-        await this.base_loadData();
+        if (!disableSelf) {
+          await this.base_loadData();
+        }
       }
       this.$meta.eventHub.$emit('flow:action', {
         flowId,
