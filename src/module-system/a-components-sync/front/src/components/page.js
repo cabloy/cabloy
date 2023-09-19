@@ -154,12 +154,18 @@ export default {
     async waitForPageAfterIn() {
       let index = 0;
       while (!this.statusOfPageAfterIn) {
-        if (++index === 20) {
+        if (++index === 10) {
           throw new Error('timeout for pageAfterIn');
         }
         await this.$meta.util.sleep(100);
       }
       return true;
+    },
+    async navigate(url, options) {
+      // wait for page ready
+      await this.waitForPageAfterIn();
+      // navigate
+      this.$view.navigate(url, options);
     },
   },
 };
