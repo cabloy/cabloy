@@ -153,6 +153,24 @@ export default {
         actionSource: this.base_actionSource,
       });
     },
+    async base_emitActionReload({ flowId, atomChanged, disableSelf }) {
+      if (atomChanged) {
+        this.base_emitAtomActionSave();
+        if (!disableSelf) {
+          await this.base_loadData_autoCheck();
+        }
+      } else {
+        if (!disableSelf) {
+          await this.base_loadData();
+        }
+      }
+      this.$meta.eventHub.$emit('flow:action', {
+        flowId,
+        action: { name: 'reload' },
+        actionSource: this,
+        autoCheck: atomChanged,
+      });
+    },
     base_emitAtomActionSave() {
       const key = { atomId: this.base_atom.atomId, itemId: this.base_atom.itemId };
       const atomClass = {
@@ -172,8 +190,6 @@ export default {
       return null;
     },
     async base_checkOpenAssigneesConfirmation() {
-      // wait for page ready
-      await this.adapter.ctx.$page.waitForPageAfterIn();
       // check
       const task = this.base_checkAssigneesConfirmation();
       if (!task) return;

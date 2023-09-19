@@ -89,14 +89,28 @@ export default {
       // ok
       return title;
     },
+    onPageAfterOut(page) {
+      if (this.eventTargetEl !== page.el) return;
+      if (page.to === 'next') {
+        this.setState({
+          routerPositionClass: 'page-next',
+        });
+      }
+      if (page.to === 'previous') {
+        this.setState({
+          routerPositionClass: 'page-previous',
+        });
+      }
+      this.statusOfPageAfterIn = false;
+      // event
+      this.dispatchEvent('page:afterout pageAfterOut', page);
+    },
     onPageAfterIn(page) {
       if (this.eventTargetEl !== page.el) return;
       this.setState({
         routerPositionClass: 'page-current',
       });
-      if (!this.statusOfPageAfterIn) {
-        this.statusOfPageAfterIn = true;
-      }
+      this.statusOfPageAfterIn = true;
       // event
       this.dispatchEvent('page:afterin pageAfterIn', page, this.firstOfPageAfterIn);
       if (this.firstOfPageAfterIn) {
