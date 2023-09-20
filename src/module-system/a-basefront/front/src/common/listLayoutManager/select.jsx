@@ -15,7 +15,7 @@ export default {
         selectedAtoms,
       };
       const url = '/a/basefront/atom/selecting';
-      this.$view.navigate(url, {
+      this.$page.navigate(url, {
         target: '_self',
         context: {
           params: {
@@ -41,7 +41,6 @@ export default {
       const selectedAtomIds = this.container.params?.selectedAtomIds;
       if (selectedAtomIds && selectedAtomIds.length > 0) return;
       // direct selecting
-      await this.$page.waitForPageAfterIn();
       return this.select_openPageSelecting();
     },
     async select_prepareSelectedAtoms() {

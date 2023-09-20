@@ -155,7 +155,11 @@ export default {
       let index = 0;
       while (!this.statusOfPageAfterIn) {
         if (++index === 10) {
-          throw new Error('timeout for pageAfterIn');
+          // throw new Error('timeout for pageAfterIn');
+          if (this.$meta.config.env === 'development') {
+            console.warn('waitForPageAfterIn timeout');
+          }
+          return false;
         }
         await this.$meta.util.sleep(100);
       }
@@ -163,9 +167,11 @@ export default {
     },
     async navigate(url, options) {
       // wait for page ready
-      await this.waitForPageAfterIn();
+      const res = await this.waitForPageAfterIn();
+      if (!res) return false;
       // navigate
       this.$view.navigate(url, options);
+      return true;
     },
   },
 };
