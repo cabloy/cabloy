@@ -309,8 +309,9 @@ export default {
       );
     },
     _timeline_renderTasks() {
-      const children = [];
       const groups = this.base_tasksGroup;
+      if (!groups) return null;
+      const children = [];
       let flowNodeGroupIndex = groups.length;
       for (const group of groups) {
         children.push(this._timeline_renderFlowNode({ task: group, flowNodeGroupIndex }));

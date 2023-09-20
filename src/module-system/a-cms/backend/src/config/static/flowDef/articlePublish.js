@@ -17,6 +17,7 @@ module.exports = app => {
             conditionExpression: null,
             task: {
               atomState: 0, // state: drafting
+              allowViewWorkflow: false,
             },
           },
         },
@@ -62,7 +63,7 @@ module.exports = app => {
   const definition = {
     atomName: 'CMS Article Publish',
     atomStaticKey: 'flowArticlePublish',
-    atomRevision: 103,
+    atomRevision: 110,
     description: '',
     content: JSON.stringify(content),
   };
