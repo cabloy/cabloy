@@ -19,15 +19,16 @@ module.exports = ctx => {
     }
 
     async getArticle({ key, inner }) {
+      // 1. try to get article: maybe not exits
+      const article = await ctx.bean.atom.read({ key, user: { id: 0 } });
+      if (!article) return null;
+      // 2. check right
       if (!inner) {
         // check right
         const roleAnonymous = await ctx.bean.role.getSystemRole({ roleName: 'anonymous' });
         const right = await ctx.bean.atom.checkRoleRightRead({ atom: { id: key.atomId }, roleId: roleAnonymous.id });
         if (!right) return null;
       }
-      // article
-      const article = await ctx.bean.atom.read({ key, user: { id: 0 } });
-      if (!article) return null;
       // maybe site.language is false
       // // check atomLanguage
       // if (!article.atomLanguage) {
