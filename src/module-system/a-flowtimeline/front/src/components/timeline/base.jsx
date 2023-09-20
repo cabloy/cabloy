@@ -73,8 +73,8 @@ export default {
       try {
         // flow data
         const currentOnly = this.adapter.currentOnly;
-        const flowOld = this.base_flow;
-        const atomOld = this.base_atom;
+        // const flowOld = this.base_flow;
+        // const atomOld = this.base_atom;
         this.base.data = await this.$api.post('/a/flowtask/flow/data', {
           flowId: this.adapter.flowId,
           options: {
@@ -85,15 +85,16 @@ export default {
           this.base.notfound = true;
           return false;
         }
-        const flowNew = this.base_flow;
-        const atomNew = this.base_atom;
-        if (atomOld && atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {
-          if (atomOld.atomStage === 0) {
-            this.base_loadData_checkEmitAtomEvent_draft({ atomNew, atomOld });
-          } else if (atomOld.atomStage === 1) {
-            this.base_loadData_checkEmitAtomEvent_formal({ atomNew, atomOld });
-          }
-        }
+        // should not emit event when read behavior, maybe cause more redundance or wrong api calls
+        // const flowNew = this.base_flow;
+        // const atomNew = this.base_atom;
+        // if (atomOld && atomNew && flowOld && flowNew && flowOld.flowStatus === 0 && flowNew.flowStatus === 1) {
+        //   if (atomOld.atomStage === 0) {
+        //     this.base_loadData_checkEmitAtomEvent_draft({ atomNew, atomOld });
+        //   } else if (atomOld.atomStage === 1) {
+        //     this.base_loadData_checkEmitAtomEvent_formal({ atomNew, atomOld });
+        //   }
+        // }
         // check AssigneesConfirmation
         this.base_checkOpenAssigneesConfirmation();
         // ok
