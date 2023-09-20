@@ -34,7 +34,7 @@ export default {
         const flowId = this.base_flow && this.base_flow.flowId;
         if (flowId === content.params.flowId) {
           this.base_emitActionReload({ flowId, atomChanged: true });
-          return true;
+          return false; // break the next callbacks
         }
       }
     },

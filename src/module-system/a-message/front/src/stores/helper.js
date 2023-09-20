@@ -140,8 +140,14 @@ export default function (io) {
       let res = false;
       for (const item of callbacks) {
         const _res = await item.callback({ scene, message, content });
+        if (_res === false) {
+          res = true;
+          break;
+          // break the next callbacks
+        }
         if (_res === true) {
           res = true;
+          // continue the next callbacks
         }
       }
       return res;
