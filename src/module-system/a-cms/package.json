@@ -3,7 +3,7 @@
   "version": "4.8.13",
   "title": "CMS",
   "eggBornModule": {
-    "fileVersion": 13,
+    "fileVersion": 12,
     "icon": ":outline:article-outline",
     "cms": {},
     "dependencies": {
