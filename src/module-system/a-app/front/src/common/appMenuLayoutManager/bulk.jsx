@@ -87,7 +87,7 @@ export default {
       // appDefault
       children.push(this.bulk_renderAppDefault());
       // search
-      children.push(this.bulk_renderSearch());
+      // children.push(this.bulk_renderSearch());
       // language
       children.push(this.bulk_renderLanguage());
       // ok
