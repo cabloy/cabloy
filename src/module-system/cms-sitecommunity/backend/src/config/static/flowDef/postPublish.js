@@ -17,6 +17,7 @@ module.exports = app => {
             conditionExpression: null,
             task: {
               atomState: 0, // state: drafting
+              allowViewWorkflow: false,
             },
           },
         },
@@ -65,7 +66,7 @@ module.exports = app => {
   const definition = {
     atomName: 'Community Post Publish',
     atomStaticKey: 'flowPostPublish',
-    atomRevision: 102,
+    atomRevision: 110,
     description: '',
     content: JSON.stringify(content),
   };
