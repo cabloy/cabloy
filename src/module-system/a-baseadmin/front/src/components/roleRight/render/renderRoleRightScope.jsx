@@ -30,6 +30,7 @@ export default {
     enableRight() {
       if (!this.ready) return false;
       if (this.isOpenAuthScope) return false;
+      if (this.actionBaseCurrent.bulk) return false;
       return this.atomClassBase.enableRight;
     },
     enableRightMine() {
