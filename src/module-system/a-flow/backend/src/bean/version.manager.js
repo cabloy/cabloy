@@ -6,7 +6,7 @@ module.exports = app => {
       if (fileVersionUpdates.includes(options.version)) {
         const VersionUpdateFn = require(`./version.manager/update/update${options.version}.js`);
         const versionUpdate = new (VersionUpdateFn(this.ctx))();
-        await versionUpdate.run();
+        await versionUpdate.run(options);
       }
     }
 
@@ -14,7 +14,7 @@ module.exports = app => {
       if (fileVersionInits.includes(options.version)) {
         const VersionInitFn = require(`./version.manager/init/init${options.version}.js`);
         const versionInit = new (VersionInitFn(this.ctx))();
-        await versionInit.run();
+        await versionInit.run(options);
       }
     }
 
