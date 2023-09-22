@@ -18,6 +18,10 @@ export default {
       });
     },
     async getActionsBase({ atomClass }) {
+      if (atomClass.id && !atomClass.module) {
+        const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
+        atomClass = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      }
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
       if (this.actionsBases[key]) return this.actionsBases[key];
       const actionsBase = await Vue.prototype.$meta.api.post('/a/base/base/getActionsBase', {
