@@ -19,12 +19,9 @@ module.exports = app => {
     }
 
     async test() {
-      // flowHistory
-      let res = await this.ctx.model.flowHistory.insert({});
-      await this.ctx.model.flowHistory.delete({ id: res.insertId });
-      // flowNodeHistory
-      res = await this.ctx.model.flowNodeHistory.insert({});
-      await this.ctx.model.flowNodeHistory.delete({ id: res.insertId });
+      const VersionTestFn = require('./version.manager/test/test.js');
+      const versionTest = new (VersionTestFn(this.ctx))();
+      await versionTest.run();
     }
   }
 
