@@ -149,6 +149,14 @@ module.exports = ctx => {
     }
 
     async _createFlow({ flowName, flowAtomId, flowAtomClassId, flowVars, flowUserId }) {
+      if (flowAtomId === undefined) {
+        flowAtomId = 0;
+        flowAtomClassId = 0;
+      }
+      if (flowAtomId && !flowAtomClassId) {
+        const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: flowAtomId });
+        flowAtomClassId = atomClass.id;
+      }
       // flowName
       if (!flowName && flowAtomId) {
         this.context._atom = await this._contextInit_atom({ atomId: flowAtomId, atomClassId: flowAtomClassId });
@@ -165,6 +173,7 @@ module.exports = ctx => {
         flowStatus: this.constant.flow.status.flowing,
         flowName,
         flowAtomId,
+        flowAtomClassId,
         flowVars: JSON.stringify(flowVars),
         flowUserId,
       };
