@@ -8,25 +8,31 @@ const VersionInit4Fn = require('./version/init/init4.js');
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
-      if (options.version === 1) {
-        const versionUpdate1 = new (VersionUpdate1Fn(this.ctx))();
-        await versionUpdate1.run();
+      const fileVersions = [1, 2, 3, 5];
+      if (fileVersions.includes(options.version)) {
+        const VersionUpdateFn = require(`./version/update/update${options.version}.js`);
+        const versionUpdate = new (VersionUpdateFn(this.ctx))();
+        await versionUpdate.run();
       }
+      // if (options.version === 1) {
+      //   const versionUpdate1 = new (VersionUpdate1Fn(this.ctx))();
+      //   await versionUpdate1.run();
+      // }
 
-      if (options.version === 2) {
-        const versionUpdate2 = new (VersionUpdate2Fn(this.ctx))();
-        await versionUpdate2.run();
-      }
+      // if (options.version === 2) {
+      //   const versionUpdate2 = new (VersionUpdate2Fn(this.ctx))();
+      //   await versionUpdate2.run();
+      // }
 
-      if (options.version === 3) {
-        const versionUpdate3 = new (VersionUpdate3Fn(this.ctx))();
-        await versionUpdate3.run();
-      }
+      // if (options.version === 3) {
+      //   const versionUpdate3 = new (VersionUpdate3Fn(this.ctx))();
+      //   await versionUpdate3.run();
+      // }
 
-      if (options.version === 5) {
-        const versionUpdate5 = new (VersionUpdate5Fn(this.ctx))();
-        await versionUpdate5.run();
-      }
+      // if (options.version === 5) {
+      //   const versionUpdate5 = new (VersionUpdate5Fn(this.ctx))();
+      //   await versionUpdate5.run();
+      // }
     }
 
     async init(options) {

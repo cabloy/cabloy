@@ -1,6 +1,6 @@
 module.exports = function SelfFactory(ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class VersionUpdate3 {
+  class VersionUpdate {
     async run(options) {
       let sql;
 
@@ -9,16 +9,16 @@ module.exports = function SelfFactory(ctx) {
         ALTER TABLE aFlowNode
           ADD COLUMN behaviorDefId varchar(255) DEFAULT '' 
                   `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // alter table: aFlowNodeHistory
       sql = `
         ALTER TABLE aFlowNodeHistory
           ADD COLUMN behaviorDefId varchar(255) DEFAULT ''
                   `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
     }
   }
 
-  return VersionUpdate3;
+  return VersionUpdate;
 };

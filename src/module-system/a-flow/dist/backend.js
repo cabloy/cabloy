@@ -96,16 +96,16 @@ module.exports = app => {
       });
     }
 
-    async enable({ atomClass, key, user }) {
+    async enable({ atomClass, key, options, user }) {
       // super
-      await super.enable({ atomClass, key, user });
+      await super.enable({ atomClass, key, options, user });
       // deploy
       await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId });
     }
 
-    async disable({ atomClass, key, user }) {
+    async disable({ atomClass, key, options, user }) {
       // super
-      await super.disable({ atomClass, key, user });
+      await super.disable({ atomClass, key, options, user });
       // deploy
       await this.ctx.bean.flowDef.deploy({ flowDefId: key.atomId, undeploy: true });
     }
@@ -382,11 +382,17 @@ module.exports = ctx => {
     }
 
     async get({ flowId, history, user }) {
-      // check workflowFormal
-      const res = await this._checkWorkflowFormal({ flowId, user });
-      if (res) {
-        user = { id: 0 };
+      // check viewWorkflow
+      if (user && user.id) {
+        const res = await ctx.bean.flowTask._checkViewWorkflow_checkRightAction({ flowId, user });
+        if (res) {
+          user = { id: 0 };
+        }
       }
+      return await this._get({ flowId, history, user });
+    }
+
+    async _get({ flowId, history, user }) {
       // where
       const where = {};
       if (history) {
@@ -418,17 +424,6 @@ module.exports = ctx => {
       });
       const res = await ctx.model.query(sql);
       return count ? res[0]._count : res;
-    }
-
-    async _checkWorkflowFormal({ flowId, user }) {
-      const flowItem = await ctx.bean.flow.modelFlowHistory.get({ flowId });
-      const atomId = flowItem.flowAtomId;
-      if (!atomId) return null;
-      return await ctx.bean.atom.checkRightAction({
-        atom: { id: atomId },
-        action: 'workflowFormal',
-        user,
-      });
     }
   }
 
@@ -1468,17 +1463,14 @@ module.exports = ctx => {
       });
       const sql = `
           select * from aViewUserRightAtomClassRole
-            where iid=? and atomClassId=? and action=? and roleIdWhom=? and
-      (areaScope is null or ? is null or (areaKey=? and POSITION(areaScope in ?)=1) )
+            where iid=? and atomClassId=? and action=? and roleIdWhom=?
       `;
       const items = await ctx.model.query(sql, [
+        //
         atom.iid,
         atom.atomClassId,
         action.code,
         atom.roleIdOwner,
-        atom.atomAreaValue,
-        atom.atomAreaKey,
-        atom.atomAreaValue,
       ]);
       // ok
       return items.map(item => item.userIdWho);
@@ -1544,9 +1536,16 @@ module.exports = ctx => {
       if (!atomId) return;
       if (options.atom.submit) {
         // submit: _submitDirect
+        const item = this.context._atom;
+        const atomClass = {
+          id: item.atomClassId,
+          module: item.module,
+          atomClassName: item.atomClassName,
+        };
         await ctx.bean.atom._submitDirect({
-          key: { atomId },
-          item: this.context._atom,
+          atomClass,
+          key: { atomId, itemId: item.itemId },
+          item,
           user: { id: this.context._atom.userIdUpdated },
         });
       } else if (options.atom.close) {
@@ -1755,18 +1754,6 @@ module.exports = ctx => {
         if (res) return res;
       }
       return options;
-    }
-
-    async getSchemaRead(contextTask, contextNode, { schemaBase, schema }) {
-      if (this.flowListener && this.flowListener.getSchemaRead) {
-        return await this.flowListener.getSchemaRead(contextTask, contextNode, { schemaBase, schema });
-      }
-    }
-
-    async getSchemaWrite(contextTask, contextNode, { schemaBase, schema }) {
-      if (this.flowListener && this.flowListener.getSchemaWrite) {
-        return await this.flowListener.getSchemaWrite(contextTask, contextNode, { schemaBase, schema });
-      }
     }
   }
 
@@ -1984,6 +1971,37 @@ module.exports = ctx => {
       await this.modelFlowNodeHistory.update(this.contextNode._flowNodeHistory);
       // ok
       return true;
+    }
+
+    _getNodeDefOptionsTask() {
+      // nodeDef
+      const nodeDef = this.contextNode._nodeDef;
+      // options
+      const options = this.getNodeDefOptions();
+      return nodeDef.type.indexOf('startEventAtom') > -1 ? options.task : options;
+    }
+
+    async _getFieldsRight() {
+      // options
+      const options = this._getNodeDefOptionsTask();
+      return options.fieldsRight;
+    }
+
+    async _findFlowNodeHistoryPrevious() {
+      // flowNodeId
+      const flowNodeId = this.contextNode._flowNodeId;
+      return await this.flowInstance._findFlowNodeHistoryPrevious({
+        flowNodeId,
+        cb: ({ /* flowNode*/ nodeDef }) => {
+          return nodeDef.type.indexOf('startEventAtom') > -1 || nodeDef.type.indexOf('activityUserTask') > -1;
+        },
+      });
+    }
+
+    async _loadNodeInstancePrevious() {
+      const flowNode = await this._findFlowNodeHistoryPrevious();
+      const flowNodeInstance = await this.flowInstance._loadNodeInstance({ flowNode, history: true });
+      return flowNodeInstance;
     }
 
     get nodeBaseBean() {
@@ -2365,16 +2383,152 @@ module.exports = ctx => {
 /***/ }),
 
 /***/ 6899:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const VersionUpdate1Fn = __webpack_require__(221);
+const VersionUpdate2Fn = __webpack_require__(9824);
+const VersionUpdate3Fn = __webpack_require__(2349);
+const VersionUpdate5Fn = __webpack_require__(5474);
+const VersionInit1Fn = __webpack_require__(9936);
+const VersionInit4Fn = __webpack_require__(9915);
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
-      if (options.version === 1) {
-        let sql;
+      const fileVersions = [1, 2, 3, 5];
+      if (fileVersions.includes(options.version)) {
+        const VersionUpdateFn = __webpack_require__(6855)(`./update${options.version}.js`);
+        const versionUpdate = new (VersionUpdateFn(this.ctx))();
+        await versionUpdate.run();
+      }
+      // if (options.version === 1) {
+      //   const versionUpdate1 = new (VersionUpdate1Fn(this.ctx))();
+      //   await versionUpdate1.run();
+      // }
 
-        // create table: aFlowDef
-        sql = `
+      // if (options.version === 2) {
+      //   const versionUpdate2 = new (VersionUpdate2Fn(this.ctx))();
+      //   await versionUpdate2.run();
+      // }
+
+      // if (options.version === 3) {
+      //   const versionUpdate3 = new (VersionUpdate3Fn(this.ctx))();
+      //   await versionUpdate3.run();
+      // }
+
+      // if (options.version === 5) {
+      //   const versionUpdate5 = new (VersionUpdate5Fn(this.ctx))();
+      //   await versionUpdate5.run();
+      // }
+    }
+
+    async init(options) {
+      if (options.version === 1) {
+        const versionInit1 = new (VersionInit1Fn(this.ctx))();
+        await versionInit1.run(options);
+      }
+
+      if (options.version === 4) {
+        const versionInit4 = new (VersionInit4Fn(this.ctx))();
+        await versionInit4.run(options);
+      }
+    }
+
+    async test() {
+      // flowHistory
+      let res = await this.ctx.model.flowHistory.insert({});
+      await this.ctx.model.flowHistory.delete({ id: res.insertId });
+      // flowNodeHistory
+      res = await this.ctx.model.flowNodeHistory.insert({});
+      await this.ctx.model.flowNodeHistory.delete({ id: res.insertId });
+    }
+  }
+
+  return Version;
+};
+
+
+/***/ }),
+
+/***/ 9936:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionInit {
+    async run(options) {
+      // // add role rights
+      // const roleRights = [
+      //   { roleName: 'system', action: 'create' },
+      //   { roleName: 'system', action: 'read', scopeNames: 0 },
+      //   { roleName: 'system', action: 'read', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'write', scopeNames: 0 },
+      //   { roleName: 'system', action: 'write', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'delete', scopeNames: 0 },
+      //   { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'clone', scopeNames: 0 },
+      //   { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'enable', scopeNames: 0 },
+      //   { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'disable', scopeNames: 0 },
+      //   { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
+      //   { roleName: 'system', action: 'deleteBulk' },
+      //   { roleName: 'system', action: 'exportBulk' },
+      // ];
+      // await ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
+    }
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+
+/***/ 9915:
+/***/ ((module) => {
+
+module.exports = function (ctx) {
+  class VersionInit {
+    async run(options) {
+      // add role rights
+      const roleRights = [
+        { roleName: 'system', action: 'create' },
+        { roleName: 'system', action: 'read', scopeNames: 0 },
+        { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'write', scopeNames: 0 },
+        { roleName: 'system', action: 'write', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'delete', scopeNames: 0 },
+        { roleName: 'system', action: 'delete', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'clone', scopeNames: 0 },
+        { roleName: 'system', action: 'clone', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'enable', scopeNames: 0 },
+        { roleName: 'system', action: 'enable', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'disable', scopeNames: 0 },
+        { roleName: 'system', action: 'disable', scopeNames: 'authenticated' },
+        { roleName: 'system', action: 'deleteBulk' },
+        { roleName: 'system', action: 'exportBulk' },
+      ];
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
+    }
+  }
+
+  return VersionInit;
+};
+
+
+/***/ }),
+
+/***/ 221:
+/***/ ((module) => {
+
+module.exports = function SelfFactory(ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate {
+    async run(options) {
+      let sql;
+
+      // create table: aFlowDef
+      sql = `
           CREATE TABLE aFlowDef (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2386,10 +2540,10 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
-        // create table: aFlowDefContent
-        sql = `
+      // create table: aFlowDefContent
+      sql = `
           CREATE TABLE aFlowDefContent (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2402,19 +2556,19 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
-        // create view: aFlowDefViewFull
-        sql = `
+      // create view: aFlowDefViewFull
+      sql = `
           CREATE VIEW aFlowDefViewFull as
             select a.*,b.content from aFlowDef a
               left join aFlowDefContent b on a.id=b.itemId
         `;
-        await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
-        // create table: aFlow
-        //  flowStatus: 1/end
-        sql = `
+      // create table: aFlow
+      //  flowStatus: 1/end
+      sql = `
           CREATE TABLE aFlow (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2436,10 +2590,10 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
-        // create table: aFlowNode
-        sql = `
+      // create table: aFlowNode
+      sql = `
           CREATE TABLE aFlowNode (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2455,11 +2609,11 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
-        // create table: aFlowHistory
-        //  flowStatus: 1/end
-        sql = `
+      // create table: aFlowHistory
+      //  flowStatus: 1/end
+      sql = `
           CREATE TABLE aFlowHistory (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2482,10 +2636,10 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
-        // create table: aFlowNodeHistory
-        sql = `
+      // create table: aFlowNodeHistory
+      sql = `
           CREATE TABLE aFlowNodeHistory (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2505,119 +2659,152 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
-      }
-
-      if (options.version === 2) {
-        let sql;
-
-        // alter table: aFlow
-        sql = `
-        ALTER TABLE aFlow
-          ADD COLUMN flowHandleStatus int(11) DEFAULT '0'
-                  `;
-        await this.ctx.model.query(sql);
-
-        // alter table: aFlowHistory
-        sql = `
-        ALTER TABLE aFlowHistory
-          ADD COLUMN flowHandleStatus int(11) DEFAULT '0'
-                  `;
-        await this.ctx.model.query(sql);
-
-        // alter table: aFlowNode
-        sql = `
-        ALTER TABLE aFlowNode
-          ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
-                  `;
-        await this.ctx.model.query(sql);
-
-        // alter table: aFlowNodeHistory
-        sql = `
-        ALTER TABLE aFlowNodeHistory
-          ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
-                  `;
-        await this.ctx.model.query(sql);
-      }
-
-      if (options.version === 3) {
-        let sql;
-
-        // alter table: aFlowNode
-        sql = `
-        ALTER TABLE aFlowNode
-          ADD COLUMN behaviorDefId varchar(255) DEFAULT '' 
-                  `;
-        await this.ctx.model.query(sql);
-
-        // alter table: aFlowNodeHistory
-        sql = `
-        ALTER TABLE aFlowNodeHistory
-          ADD COLUMN behaviorDefId varchar(255) DEFAULT ''
-                  `;
-        await this.ctx.model.query(sql);
-      }
-    }
-
-    async init(options) {
-      if (options.version === 1) {
-        // // add role rights
-        // const roleRights = [
-        //   { roleName: 'system', action: 'create' },
-        //   { roleName: 'system', action: 'read', scopeNames: 0 },
-        //   { roleName: 'system', action: 'read', scopeNames: 'superuser' },
-        //   { roleName: 'system', action: 'write', scopeNames: 0 },
-        //   { roleName: 'system', action: 'write', scopeNames: 'superuser' },
-        //   { roleName: 'system', action: 'delete', scopeNames: 0 },
-        //   { roleName: 'system', action: 'delete', scopeNames: 'superuser' },
-        //   { roleName: 'system', action: 'clone', scopeNames: 0 },
-        //   { roleName: 'system', action: 'clone', scopeNames: 'superuser' },
-        //   { roleName: 'system', action: 'enable', scopeNames: 0 },
-        //   { roleName: 'system', action: 'enable', scopeNames: 'superuser' },
-        //   { roleName: 'system', action: 'disable', scopeNames: 0 },
-        //   { roleName: 'system', action: 'disable', scopeNames: 'superuser' },
-        //   { roleName: 'system', action: 'deleteBulk' },
-        //   { roleName: 'system', action: 'exportBulk' },
-        // ];
-        // await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
-      }
-
-      if (options.version === 4) {
-        // add role rights
-        const roleRights = [
-          { roleName: 'system', action: 'create' },
-          { roleName: 'system', action: 'read', scopeNames: 0 },
-          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'write', scopeNames: 0 },
-          { roleName: 'system', action: 'write', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'delete', scopeNames: 0 },
-          { roleName: 'system', action: 'delete', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'clone', scopeNames: 0 },
-          { roleName: 'system', action: 'clone', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'enable', scopeNames: 0 },
-          { roleName: 'system', action: 'enable', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'disable', scopeNames: 0 },
-          { roleName: 'system', action: 'disable', scopeNames: 'authenticated' },
-          { roleName: 'system', action: 'deleteBulk' },
-          { roleName: 'system', action: 'exportBulk' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
-      }
-    }
-
-    async test() {
-      // flowHistory
-      let res = await this.ctx.model.flowHistory.insert({});
-      await this.ctx.model.flowHistory.delete({ id: res.insertId });
-      // flowNodeHistory
-      res = await this.ctx.model.flowNodeHistory.insert({});
-      await this.ctx.model.flowNodeHistory.delete({ id: res.insertId });
+      await ctx.model.query(sql);
     }
   }
 
-  return Version;
+  return VersionUpdate;
 };
 
+
+/***/ }),
+
+/***/ 9824:
+/***/ ((module) => {
+
+module.exports = function SelfFactory(ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate {
+    async run(options) {
+      let sql;
+
+      // alter table: aFlow
+      sql = `
+        ALTER TABLE aFlow
+          ADD COLUMN flowHandleStatus int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // alter table: aFlowHistory
+      sql = `
+        ALTER TABLE aFlowHistory
+          ADD COLUMN flowHandleStatus int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // alter table: aFlowNode
+      sql = `
+        ALTER TABLE aFlowNode
+          ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // alter table: aFlowNodeHistory
+      sql = `
+        ALTER TABLE aFlowNodeHistory
+          ADD COLUMN flowNodeHandleStatus int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate;
+};
+
+
+/***/ }),
+
+/***/ 2349:
+/***/ ((module) => {
+
+module.exports = function SelfFactory(ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate {
+    async run(options) {
+      let sql;
+
+      // alter table: aFlowNode
+      sql = `
+        ALTER TABLE aFlowNode
+          ADD COLUMN behaviorDefId varchar(255) DEFAULT '' 
+                  `;
+      await ctx.model.query(sql);
+
+      // alter table: aFlowNodeHistory
+      sql = `
+        ALTER TABLE aFlowNodeHistory
+          ADD COLUMN behaviorDefId varchar(255) DEFAULT ''
+                  `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate;
+};
+
+
+/***/ }),
+
+/***/ 5474:
+/***/ ((module) => {
+
+module.exports = function SelfFactory(ctx) {
+  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class VersionUpdate {
+    async run(options) {
+      let sql;
+
+      // alter table: aFlow
+      sql = `
+        ALTER TABLE aFlow
+          ADD COLUMN flowAtomClassId int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+
+      // alter table: aFlowHistory
+      sql = `
+        ALTER TABLE aFlowHistory
+          ADD COLUMN flowAtomClassId int(11) DEFAULT '0'
+                  `;
+      await ctx.model.query(sql);
+    }
+  }
+
+  return VersionUpdate;
+};
+
+
+/***/ }),
+
+/***/ 6855:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var map = {
+	"./update1.js": 221,
+	"./update2.js": 9824,
+	"./update3.js": 2349,
+	"./update5.js": 5474
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	if(!__webpack_require__.o(map, req)) {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return map[req];
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 6855;
 
 /***/ }),
 
@@ -2949,6 +3136,37 @@ module.exports = () => {
 // eslint-disable-next-line
 module.exports = appInfo => {
   const config = {};
+
+  // summer
+  config.summer = {
+    caches: {
+      modelFlow: {
+        mode: 'redis', // only redis
+        redis: {
+          ttl: 2 * 60 * 60 * 1000, // 2 hours
+        },
+      },
+      modelFlowHistory: {
+        mode: 'redis', // only redis
+        redis: {
+          ttl: 2 * 60 * 60 * 1000, // 2 hours
+        },
+      },
+      modelFlowNode: {
+        mode: 'redis', // only redis
+        redis: {
+          ttl: 2 * 60 * 60 * 1000, // 2 hours
+        },
+      },
+      modelFlowNodeHistory: {
+        mode: 'redis', // only redis
+        redis: {
+          ttl: 2 * 60 * 60 * 1000, // 2 hours
+        },
+      },
+    },
+  };
+
   return config;
 };
 
@@ -3429,19 +3647,9 @@ module.exports = app => {
       },
     },
     validation: {
-      validators: {
-        flowDef: {
-          schemas: 'flowDef',
-        },
-        flowDefSearch: {
-          schemas: 'flowDefSearch',
-        },
-      },
+      validators: {},
       keywords: {},
-      schemas: {
-        flowDef: schemas.flowDef,
-        flowDefSearch: schemas.flowDefSearch,
-      },
+      schemas,
     },
     stats: {
       providers: {
@@ -3470,9 +3678,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  class Flow extends app.meta.Model {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Flow extends app.meta.ModelCache {
     constructor(ctx) {
-      super(ctx, { table: 'aFlow', options: { disableDeleted: true } });
+      super(ctx, {
+        table: 'aFlow',
+        options: {
+          disableDeleted: true,
+          cacheName: { module: moduleInfo.relativeName, name: 'modelFlow' },
+        },
+      });
     }
   }
   return Flow;
@@ -3530,9 +3745,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  class FlowHistory extends app.meta.Model {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowHistory extends app.meta.ModelCache {
     constructor(ctx) {
-      super(ctx, { table: 'aFlowHistory', options: { disableDeleted: false } });
+      super(ctx, {
+        table: 'aFlowHistory',
+        options: {
+          disableDeleted: false,
+          cacheName: { module: moduleInfo.relativeName, name: 'modelFlowHistory' },
+        },
+      });
     }
   }
   return FlowHistory;
@@ -3545,9 +3767,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  class FlowNode extends app.meta.Model {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowNode extends app.meta.ModelCache {
     constructor(ctx) {
-      super(ctx, { table: 'aFlowNode', options: { disableDeleted: true } });
+      super(ctx, {
+        table: 'aFlowNode',
+        options: {
+          disableDeleted: true,
+          cacheName: { module: moduleInfo.relativeName, name: 'modelFlowNode' },
+        },
+      });
     }
   }
   return FlowNode;
@@ -3560,9 +3789,16 @@ module.exports = app => {
 /***/ ((module) => {
 
 module.exports = app => {
-  class FlowNodeHistory extends app.meta.Model {
+  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class FlowNodeHistory extends app.meta.ModelCache {
     constructor(ctx) {
-      super(ctx, { table: 'aFlowNodeHistory', options: { disableDeleted: false } });
+      super(ctx, {
+        table: 'aFlowNodeHistory',
+        options: {
+          disableDeleted: false,
+          cacheName: { module: moduleInfo.relativeName, name: 'modelFlowNodeHistory' },
+        },
+      });
     }
   }
   return FlowNodeHistory;
@@ -3714,6 +3950,12 @@ module.exports = require("require3");
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
 /******/ 	
 /************************************************************************/
 /******/ 	

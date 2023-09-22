@@ -1,6 +1,6 @@
 module.exports = function SelfFactory(ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class VersionUpdate1 {
+  class VersionUpdate {
     async run(options) {
       let sql;
 
@@ -17,7 +17,7 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // create table: aFlowDefContent
       sql = `
@@ -33,7 +33,7 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // create view: aFlowDefViewFull
       sql = `
@@ -41,7 +41,7 @@ module.exports = function SelfFactory(ctx) {
             select a.*,b.content from aFlowDef a
               left join aFlowDefContent b on a.id=b.itemId
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // create table: aFlow
       //  flowStatus: 1/end
@@ -67,7 +67,7 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // create table: aFlowNode
       sql = `
@@ -86,7 +86,7 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // create table: aFlowHistory
       //  flowStatus: 1/end
@@ -113,7 +113,7 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
 
       // create table: aFlowNodeHistory
       sql = `
@@ -136,9 +136,9 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
     }
   }
 
-  return VersionUpdate1;
+  return VersionUpdate;
 };

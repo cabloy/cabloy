@@ -19,7 +19,7 @@ module.exports = function (ctx) {
         { roleName: 'system', action: 'deleteBulk' },
         { roleName: 'system', action: 'exportBulk' },
       ];
-      await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
+      await ctx.bean.role.addRoleRightBatch({ atomClassName: 'flowDef', roleRights });
     }
   }
 
