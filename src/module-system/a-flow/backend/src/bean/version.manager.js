@@ -3,7 +3,7 @@ module.exports = app => {
     async update(options) {
       const fileVersions = [1, 2, 3, 5];
       if (fileVersions.includes(options.version)) {
-        const VersionUpdateFn = require(`./version/update/update${options.version}.js`);
+        const VersionUpdateFn = require(`./version.manager/update/update${options.version}.js`);
         const versionUpdate = new (VersionUpdateFn(this.ctx))();
         await versionUpdate.run();
       }
@@ -12,7 +12,7 @@ module.exports = app => {
     async init(options) {
       const fileVersions = [1, 4];
       if (fileVersions.includes(options.version)) {
-        const VersionInitFn = require(`./version/init/init${options.version}.js`);
+        const VersionInitFn = require(`./version.manager/init/init${options.version}.js`);
         const versionInit = new (VersionInitFn(this.ctx))();
         await versionInit.run();
       }
