@@ -18,6 +18,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "require3": "file:./backend/utils/require3"
+    "require3": "file:./utils/require3"
   }
 }

@@ -23,7 +23,7 @@
   "author": "zhennann",
   "devDependencies": {},
   "dependencies": {
-    "require3": "file:./backend/utils/require3",
+    "require3": "file:./utils/require3",
     "sandbox-webworker": "^1.0.4"
   }
 }

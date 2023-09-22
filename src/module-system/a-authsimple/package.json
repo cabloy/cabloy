@@ -21,6 +21,6 @@
   "dependencies": {
     "passport-strategy": "^1.0.0",
     "password-hash-and-salt": "^0.1.4",
-    "require3": "file:./backend/utils/require3"
+    "require3": "file:./utils/require3"
   }
 }

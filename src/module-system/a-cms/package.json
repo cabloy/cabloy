@@ -30,6 +30,6 @@
     "less": "^3.13.0",
     "moment": "^2.24.0",
     "sha.js": "^2.4.11",
-    "require3": "file:./backend/utils/require3"
+    "require3": "file:./utils/require3"
   }
 }

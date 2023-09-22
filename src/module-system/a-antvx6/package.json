@@ -24,6 +24,6 @@
     "@antv/x6": "^1.34.5"
   },
   "dependencies": {
-    "require3": "file:./backend/utils/require3"
+    "require3": "file:./utils/require3"
   }
 }

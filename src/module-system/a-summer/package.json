@@ -23,6 +23,6 @@
   "dependencies": {
     "lru-cache": "^8.0.4",
     "object-hash": "^3.0.0",
-    "require3": "file:./backend/utils/require3"
+    "require3": "file:./utils/require3"
   }
 }
