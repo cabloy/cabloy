@@ -35,11 +35,11 @@ module.exports = ctx => {
       return ctx.constant.module(moduleInfo.relativeName);
     }
 
-    async start({ flowName, flowAtomId, flowVars, flowUserId, startEventId }) {
+    async start({ flowName, flowAtomId, flowAtomClassId, flowVars, flowUserId, startEventId }) {
       if (!flowVars) flowVars = {};
       if (flowUserId === undefined) flowUserId = 0;
       // create flow
-      const flowId = await this._createFlow({ flowName, flowAtomId, flowVars, flowUserId });
+      const flowId = await this._createFlow({ flowName, flowAtomId, flowAtomClassId, flowVars, flowUserId });
       // context init
       await this._contextInit({ flowId });
       // raise event: onFlowStart
@@ -115,7 +115,10 @@ module.exports = ctx => {
         : {};
       // atom
       if (!this.context._atom && this.context._flowHistory.flowAtomId) {
-        this.context._atom = await this._contextInit_atom({ atomId: this.context._flowHistory.flowAtomId });
+        this.context._atom = await this._contextInit_atom({
+          atomId: this.context._flowHistory.flowAtomId,
+          atomClassId: this.context._flowHistory.flowAtomClassId,
+        });
       }
       // utils
       this.context._utils = new (UtilsFn({ ctx, flowInstance: this }))({
@@ -123,8 +126,11 @@ module.exports = ctx => {
       });
     }
 
-    async _contextInit_atom({ atomId }) {
-      return await ctx.bean.atom.read({ key: { atomId } });
+    async _contextInit_atom({ atomId, atomClassId }) {
+      return await ctx.bean.atom.read({
+        key: { atomId },
+        atomClass: { id: atomClassId },
+      });
     }
 
     async _saveFlowVars() {
@@ -142,10 +148,10 @@ module.exports = ctx => {
       this.context._flowVars._dirty = false;
     }
 
-    async _createFlow({ flowName, flowAtomId, flowVars, flowUserId }) {
+    async _createFlow({ flowName, flowAtomId, flowAtomClassId, flowVars, flowUserId }) {
       // flowName
       if (!flowName && flowAtomId) {
-        this.context._atom = await this._contextInit_atom({ atomId: flowAtomId });
+        this.context._atom = await this._contextInit_atom({ atomId: flowAtomId, atomClassId: flowAtomClassId });
         flowName = this.context._atom.atomName;
       }
       if (!flowName) {

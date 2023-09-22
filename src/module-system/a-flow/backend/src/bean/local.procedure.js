@@ -44,7 +44,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
+        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowAtomClassId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
             c.userName,c.avatar
           `;
       }
@@ -106,7 +106,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
+        _selectFields = `a.id,a.id as flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowAtomClassId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,
             c.userName,c.avatar
           `;
       }
@@ -161,7 +161,7 @@ module.exports = ctx => {
       if (count) {
         _selectFields = 'count(*) as _count';
       } else {
-        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,a.timeEnd,a.flowHandleStatus,a.flowRemark,
+        _selectFields = `a.id,a.flowId,a.createdAt,a.updatedAt,a.deleted,a.iid,a.flowName,a.flowStatus,a.flowAtomId,a.flowAtomClassId,a.flowNodeIdCurrent,a.flowNodeNameCurrent,a.flowUserId,a.timeEnd,a.flowHandleStatus,a.flowRemark,
             c.userName,c.avatar
           `;
       }
