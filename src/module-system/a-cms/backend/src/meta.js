@@ -1,55 +1,22 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // atomClasses
+  const atomClasses = require('./config/atomClass/atomClasses.js')(app);
+  // keywords
   const keywords = require('./config/validation/keywords.js')(app);
+  // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // socketio
   const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
+  // static
   const staticApps = require('./config/static/apps.js')(app);
   const staticFlowDefs = require('./config/static/flowDefs.js')(app);
   const staticResources = require('./config/static/resources.js')(app);
   const staticLayouts = require('./config/static/layouts.js')(app);
+  // meta
   const meta = {
     base: {
-      atoms: {
-        article: {
-          info: {
-            bean: 'article',
-            title: 'Article',
-            tableName: '',
-            tableNameModes: {
-              default: '',
-              full: '',
-              search: '',
-            },
-            language: true,
-            category: true,
-            tag: true,
-            cms: true,
-            dict: {
-              states: {
-                draft: {
-                  dictKey: 'a-dictbooster:dictAtomStateDraft',
-                },
-              },
-            },
-          },
-          actions: {
-            preview: {
-              code: 101,
-              title: 'Preview',
-              actionModule: moduleInfo.relativeName,
-              actionComponent: 'action',
-              icon: { f7: '::preview' },
-              enableOnStatic: true,
-              enableOnOpened: true,
-              stage: 'draft,formal',
-            },
-          },
-          validator: 'article',
-          search: {
-            validator: 'articleSearch',
-          },
-        },
-      },
+      atoms: atomClasses,
       resources: {
         block: {
           title: 'CMS Block',
