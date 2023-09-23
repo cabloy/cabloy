@@ -13,7 +13,6 @@ module.exports = app => {
               module: moduleInfo.relativeName,
               atomClassName: 'document',
             },
-            atomStage: 0, // draft
             conditionExpression: null,
             task: {
               atomState: 0, // state: drafting
