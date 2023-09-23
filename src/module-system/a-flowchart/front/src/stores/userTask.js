@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 export default {
   state() {
     return {};
@@ -25,7 +27,9 @@ export default {
         return;
       }
       // atomStage
-      const atomStage = (nodeStartEventAtom.options && nodeStartEventAtom.options.atomStage) || 0;
+      const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
+      const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      const atomStage = atomClassBase.flow?.stage || 'draft';
       // ok
       return { atomClass, atomStage };
     },
