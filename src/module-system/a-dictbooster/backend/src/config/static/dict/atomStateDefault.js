@@ -26,9 +26,9 @@ module.exports = app => {
     },
   };
   const dict = {
-    atomName: 'AtomStateDraft',
-    atomStaticKey: 'dictAtomStateDraft',
-    atomRevision: 2,
+    atomName: 'AtomStateDefault',
+    atomStaticKey: 'dictAtomStateDefault',
+    atomRevision: 0,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),

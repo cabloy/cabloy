@@ -1,4 +1,4 @@
 module.exports = {
-  AtomStateDraft: 'Draft State',
+  AtomStateDefault: 'Date State(Default)',
   AtomDisabledStatus: 'Data Disabled Status',
 };
