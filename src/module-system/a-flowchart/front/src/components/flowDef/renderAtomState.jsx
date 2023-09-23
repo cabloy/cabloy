@@ -22,7 +22,7 @@ export default {
       const atomClassAndStage = await this.getAtomClassAndStage();
       if (!atomClassAndStage) return;
       this.atomClass = atomClassAndStage.atomClass;
-      this.atomStage = parseInt(atomClassAndStage.atomStage || 0);
+      this.atomStage = atomClassAndStage.atomStage;
     },
     async getAtomClassAndStage() {
       const useStoreUserTask = await this.$store.use('a/flowchart/userTask');
@@ -32,7 +32,7 @@ export default {
       if (!this.atomClass) return null;
       const atomClassBase = this.getAtomClass(this.atomClass);
       if (!atomClassBase) return null;
-      const atomStage = this.atomStage === 0 ? 'draft' : this.atomStage === 1 ? 'formal' : null;
+      const atomStage = this.atomStage;
       if (!atomStage) return null;
       const dictKey = this.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
       return dictKey;
