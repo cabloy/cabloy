@@ -1,5 +1,35 @@
 # History
 
+## 2023-09-24, Version 4.35.0（未发布）
+
+- **Feat**
+
+  - 工作流引擎重构
+    - 目标：业务表单与流程表单合二为一
+    - 重构 timeline 组件
+    - 精确控制对流程进度的访问权限
+  - modelCache 机制
+    - 在 summer 二级缓存基础上提供 model 缓存机制，任何 model 都可以非常便利的添加缓存机制
+  - $view.createModal：提供动态创建各类模式框的机制
+    - Sheet, Popover, Dialog, etc.
+  - mobile 页面：当向下滚动时，默认动态隐藏导航栏
+
+- **Enhance**
+
+  - 静态数据启动项：提升性能，提供友好提示信息
+
+- **Fix**
+
+  - 修复在 Safari 中登录验证码图片失效的问题
+
+- **Chore**
+
+  - 调整 require3 目录结构
+  - 调整 version.manager 目录结构
+  - 增强 vm2 沙箱隔离机制
+  - $page与$pageContainer 重构
+  - 增强 subnavbar 组件的动态显示机制
+
 ## 2023-08-29, Version 4.34.0（未发布）
 
 - **Feat**
