@@ -1,15 +1,15 @@
 module.exports = app => {
   const dictItems = [
     {
-      code: 0,
+      code: 1,
       title: 'Drafting',
     },
     {
-      code: 1,
+      code: 2,
       title: 'Reviewing',
     },
     {
-      code: 2,
+      code: -1,
       title: 'Reviewed',
     },
     {
