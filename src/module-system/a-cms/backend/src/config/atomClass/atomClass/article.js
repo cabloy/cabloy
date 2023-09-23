@@ -17,7 +17,7 @@ module.exports = app => {
       dict: {
         states: {
           draft: {
-            dictKey: 'default',
+            dictKey: null,
           },
         },
       },
