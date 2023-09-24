@@ -56,8 +56,14 @@ module.exports = function (loader, modules) {
 
       // module config
       if (module.main.config) {
-        const config = module.main.config(loader.appInfo);
-        loader.app.meta.util.monkeyModule(loader.app.meta.modulesMonkey, 'configLoaded', { module, config });
+        let config = module.main.config(loader.appInfo);
+        const configNew = loader.app.meta.util.monkeyModule(loader.app.meta.modulesMonkey, 'configLoaded', {
+          module,
+          config,
+        });
+        if (configNew) {
+          config = configNew;
+        }
         extend(true, ebConfig, config);
       }
 
