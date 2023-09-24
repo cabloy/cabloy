@@ -1,5 +1,13 @@
 # History
 
+## 2023-xx-xx, Version 4.36.0（未发布）
+
+- **Feat**
+
+  - App Monkey：
+    - 提供应用级别的 monkey 机制，从而可以修改任何模块的任何代码、任何配置
+    - 比如修改 module 的 meta 配置
+
 ## 2023-09-24, Version 4.35.0（未发布）
 
 - **Feat**
