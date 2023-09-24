@@ -1,3 +1,4 @@
+const fse = require('fs-extra');
 const path = require('path');
 const mglob = require('egg-born-mglob');
 
@@ -16,6 +17,14 @@ module.exports = function (loader) {
   const ebModulesArray = (loader.app.meta.modulesArray = modulesArray);
   const ebModulesMonkey = (loader.app.meta.modulesMonkey = modulesMonkey);
 
+  // app monkey
+  const pathAppMonkey = path.resolve(loader.appInfo.baseDir, 'config/monkey.js');
+  let ebAppMonkey;
+  if (fse.existsSync(pathAppMonkey)) {
+    const AppMonkey = require(pathAppMonkey);
+    ebAppMonkey = loader.app.meta.appMonkey = AppMonkey(loader.app);
+  }
+
   return {
     loadModules() {
       for (const module of ebModulesArray) {
@@ -25,7 +34,7 @@ module.exports = function (loader) {
     },
     monkeyModules(monkeyName) {
       for (const module of ebModulesArray) {
-        loader.app.meta.util.monkeyModule(ebModulesMonkey, monkeyName, { module });
+        loader.app.meta.util.monkeyModule(ebAppMonkey, ebModulesMonkey, monkeyName, { module });
       }
     },
   };

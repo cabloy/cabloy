@@ -58,10 +58,15 @@ module.exports = function (loader, modules) {
       if (module.main.config) {
         let config = module.main.config(loader.appInfo);
         // configNew is not used by now
-        const configNew = loader.app.meta.util.monkeyModule(loader.app.meta.modulesMonkey, 'configLoaded', {
-          module,
-          config,
-        });
+        const configNew = loader.app.meta.util.monkeyModule(
+          loader.app.meta.appMonkey,
+          loader.app.meta.modulesMonkey,
+          'configLoaded',
+          {
+            module,
+            config,
+          }
+        );
         if (configNew) {
           config = configNew;
         }

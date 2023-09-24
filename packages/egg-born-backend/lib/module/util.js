@@ -66,7 +66,7 @@ module.exports = app => {
       if (data.sql) error.sql = data.sql;
       return error;
     },
-    monkeyModule(ebModulesMonkey, monkeyName, monkeyData) {
+    monkeyModule(ebAppMonkey, ebModulesMonkey, monkeyName, monkeyData) {
       const module = monkeyData && monkeyData.module;
       if (module) {
         if (module.main.hook && module.main.hook[monkeyName]) {
@@ -79,6 +79,9 @@ module.exports = app => {
           const monkeyData2 = Object.assign({ moduleSelf: moduleMonkey }, monkeyData);
           moduleMonkey.main.monkey[monkeyName](monkeyData2);
         }
+      }
+      if (ebAppMonkey && ebAppMonkey[monkeyName]) {
+        ebAppMonkey[monkeyName](monkeyData);
       }
     },
     getWhiteListCors(ctx) {
