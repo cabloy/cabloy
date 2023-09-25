@@ -37,7 +37,10 @@ export default {
       const { property } = this.context;
       const dictKey = property.ebParams.dictKey;
       if (this.needLoadDict) {
-        this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
+        const useStoreDict = await this.$store.use('a/dict/dict');
+        this.dict = await useStoreDict.getDict({
+          dictKey,
+        });
       }
       // load dict item
       await this._loadDictItem();
@@ -51,7 +54,12 @@ export default {
       } else {
         const code = this.context.getValue();
         const separator = property.ebParams.separator;
-        this.dictItem = await this.$store.dispatch('a/dict/findItem', { dictKey, code, options: { separator } });
+        const useStoreDict = await this.$store.use('a/dict/dict');
+        this.dictItem = await useStoreDict.findItem({
+          dictKey,
+          code,
+          options: { separator },
+        });
         this.dictItemTitle = this.dictItem ? this.dictItem.titleLocaleFull : null;
         this.dictItemOptions = this.dictItem ? this.dictItem.options : null;
       }
