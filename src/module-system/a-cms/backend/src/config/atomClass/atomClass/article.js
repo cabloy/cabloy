@@ -17,7 +17,7 @@ module.exports = app => {
       dict: {
         states: {
           draft: {
-            dictKey: 'a-dictbooster:dictAtomStateDefault', // 'default',
+            dictKey: 'test-flow:dictPurchaseOrderState', // 'a-dictbooster:dictAtomStateDefault', // 'default',
           },
         },
       },

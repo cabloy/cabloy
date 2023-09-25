@@ -5,9 +5,9 @@ export default function (Vue) {
   function __combineDict({ dict, dictDefault }) {
     const dictNew = Vue.prototype.$meta.util.extend({}, dict);
     for (const dictItemDefault of dictDefault._dictItems) {
-      const codeB = dictItemDefault.code < 0 ? dictItemDefault.code + 1000 : dictItemDefault.code;
+      const codeB = dictItemDefault.code < 0 ? 1000 - dictItemDefault.code : dictItemDefault.code;
       const index = dictNew._dictItems.findIndex(item => {
-        const codeA = item.code < 0 ? item.code + 1000 : item.code;
+        const codeA = item.code < 0 ? 1000 - item.code : item.code;
         return codeA >= codeB;
       });
       if (index === -1) {
