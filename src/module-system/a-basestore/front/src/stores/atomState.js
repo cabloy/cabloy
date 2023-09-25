@@ -7,6 +7,7 @@ export default function (Vue) {
     state() {
       return {
         dicts: {},
+        dictKeyDefault: 'a-dictbooster:dictAtomStateDefault',
       };
     },
     created() {
@@ -86,33 +87,29 @@ export default function (Vue) {
           const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
           atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
         }
+        // atomStage
+        const useAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+        atomStage = useAtomStage.toString({ atomStage });
+        if (!atomStage) return null;
+        // useStoreDict
+        const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
         // dictKey
         const dictKey = this._getDictKey({ atomClass, atomClassBase, atomStage });
         if (!dictKey) return null;
         // default
         if (dictKey === 'default') {
-          return await ctx.bean.dict.findItem({
-            dictKey: this.dictKeyDefault,
-            code: atomState,
-          });
+          return await useStoreDict.getDict({ dictKey: this.dictKeyDefault });
         }
-        // dictItem
-        const dictItem = await ctx.bean.dict.findItem({
-          dictKey,
-          code: atomState,
-        });
-        if (dictItem) return dictItem;
+        // dict
+        const dict = await useStoreDict.getDict({ dictKey });
         // check if dictKeyDefault
-        if (dictKey === this.dictKeyDefault) return null;
+        if (dictKey === this.dictKeyDefault) return dict;
         // check flow stage
         const flowStage = atomClassBase.flow?.stage || 'draft';
-        atomStage = ctx.bean.atomStage.toString({ atomStage });
-        if (flowStage !== atomStage) return null;
-        // try default
-        return await ctx.bean.dict.findItem({
-          dictKey: this.dictKeyDefault,
-          code: atomState,
-        });
+        if (flowStage !== atomStage) return dict;
+        // dict default
+        const dictDefault = await useStoreDict.getDict({ dictKey: this.dictKeyDefault });
+        // combine dict/diceDefault
       },
     },
   };
