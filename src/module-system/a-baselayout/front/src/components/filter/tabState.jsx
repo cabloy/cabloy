@@ -31,7 +31,10 @@ export default {
   methods: {
     async _loadDict() {
       const dictKey = this.atomStateDictKey;
-      this.dict = await this.$store.dispatch('a/dict/getDict', { dictKey });
+      const useStoreDict = await this.$store.use('a/dict/dict');
+      this.dict = await useStoreDict.getDict({
+        dictKey,
+      });
     },
     onItemChange(event, item) {
       // eslint-disable-next-line
