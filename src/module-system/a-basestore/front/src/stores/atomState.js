@@ -2,6 +2,7 @@ export default function (Vue) {
   function __combineKey({ atomClass, atomStage }) {
     return `${atomClass.module}:${atomClass.atomClassName}:${atomStage}`;
   }
+  function __combineDict({ dict, dictDefault }) {}
 
   return {
     state() {
@@ -94,7 +95,7 @@ export default function (Vue) {
         // useStoreDict
         const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
         // dictKey
-        const dictKey = this._getDictKey({ atomClass, atomClassBase, atomStage });
+        const dictKey = await this._getDictKey({ atomClass, atomClassBase, atomStage });
         if (!dictKey) return null;
         // default
         if (dictKey === 'default') {
@@ -110,6 +111,7 @@ export default function (Vue) {
         // dict default
         const dictDefault = await useStoreDict.getDict({ dictKey: this.dictKeyDefault });
         // combine dict/diceDefault
+        return __combineDict({ dict, dictDefault });
       },
     },
   };

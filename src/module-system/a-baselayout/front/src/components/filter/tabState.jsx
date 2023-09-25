@@ -30,10 +30,10 @@ export default {
   },
   methods: {
     async _loadDict() {
-      const dictKey = this.atomStateDictKey;
-      const useStoreDict = await this.$store.use('a/dict/dict');
-      this.dict = await useStoreDict.getDict({
-        dictKey,
+      const useStoreAtomState = await this.$store.use('a/basestore/atomState');
+      this.dict = await useStoreAtomState.getDict({
+        atomClass: this.filterContainer.atomClass,
+        atomStage: this.filterContainer.stage,
       });
     },
     onItemChange(event, item) {

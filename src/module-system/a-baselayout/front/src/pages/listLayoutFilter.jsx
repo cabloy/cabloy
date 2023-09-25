@@ -94,12 +94,8 @@ export default {
       return stages;
     },
     atomStateDictKey() {
-      let atomStage;
-      if (typeof this.stage === 'string') {
-        atomStage = this.stage;
-      } else {
-        atomStage = this.stage === 0 ? 'draft' : this.stage === 1 ? 'formal' : 'history';
-      }
+      const useAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+      const atomStage = useAtomStage.toString({ atomStage: this.stage });
       if (atomStage === 'history') return null;
       return this.$meta.util.getProperty(this.atomClassBase, `dict.states.${atomStage}.dictKey`);
     },
