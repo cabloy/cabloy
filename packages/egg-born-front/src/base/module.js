@@ -257,7 +257,10 @@ export default function (Vue) {
       const $store = Vue.prototype.$meta.store;
       const $pinia = Vue.prototype.$meta.pinia;
       for (const key in module.options.stores) {
-        const store = module.options.stores[key];
+        let store = module.options.stores[key];
+        if (typeof store === 'function') {
+          store = store(Vue);
+        }
         const fullKey = `${module.info.url}/${key}`;
         const useStore = $store.defineStore(fullKey, store);
         $store.registerStore(fullKey, useStore($pinia));
