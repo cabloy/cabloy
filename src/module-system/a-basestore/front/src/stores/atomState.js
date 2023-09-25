@@ -2,7 +2,29 @@ export default function (Vue) {
   function __combineKey({ atomClass, atomStage }) {
     return `${atomClass.module}:${atomClass.atomClassName}:${atomStage}`;
   }
-  function __combineDict({ dict, dictDefault }) {}
+  function __combineDict({ dict, dictDefault }) {
+    const dictNew = Vue.prototype.$meta.util.extend({}, dict);
+    for (const dictItemDefault of dictDefault._dictItems) {
+      const codeB = dictItemDefault.code < 0 ? dictItemDefault.code + 1000 : dictItemDefault.code;
+      const index = dictNew._dictItems.findIndex(item => {
+        const codeA = item.code < 0 ? item.code + 1000 : item.code;
+        return codeA >= codeB;
+      });
+      if (index === -1) {
+        dictNew._dictItems.push(dictItemDefault);
+        dictNew._dictItemsMap[dictItemDefault.code] = dictItemDefault;
+      } else {
+        const dictItemNew = dictNew._dictItems[index];
+        if (dictItemNew.code === dictItemDefault.code) {
+          // do nothing if exists
+        } else {
+          dictNew._dictItems.splice(index, 0, dictItemDefault);
+          dictNew._dictItemsMap[dictItemDefault.code] = dictItemDefault;
+        }
+      }
+    }
+    return dictNew;
+  }
 
   return {
     state() {
