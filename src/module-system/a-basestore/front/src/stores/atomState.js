@@ -56,7 +56,7 @@ export default function (Vue) {
         this.setDict({ atomClass, atomStage, dict });
         return dict;
       },
-      async findItem({ atomClass, atomStage, code, options }) {
+      async findDictItem({ atomClass, atomStage, code, options }) {
         // dict
         const dict = await this.getDict({ atomClass, atomStage });
         // findItem
