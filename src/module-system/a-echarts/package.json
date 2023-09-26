@@ -23,7 +23,5 @@
   "devDependencies": {
     "echarts": "^5.2.1"
   },
-  "dependencies": {
-    "require3": "file:./utils/require3"
-  }
+  "dependencies": {}
 }

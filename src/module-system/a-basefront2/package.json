@@ -22,7 +22,5 @@
   },
   "author": "zhennann",
   "devDependencies": {},
-  "dependencies": {
-    "require3": "file:./utils/require3"
-  }
+  "dependencies": {}
 }

@@ -29,7 +29,6 @@
     "fs-extra": "^10.1.0",
     "less": "^3.13.0",
     "moment": "^2.24.0",
-    "sha.js": "^2.4.11",
-    "require3": "file:./utils/require3"
+    "sha.js": "^2.4.11"
   }
 }

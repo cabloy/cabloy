@@ -19,7 +19,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "passport-github": "^1.1.0",
-    "require3": "file:./utils/require3"
+    "passport-github": "^1.1.0"
   }
 }

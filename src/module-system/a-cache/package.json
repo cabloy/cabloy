@@ -14,7 +14,6 @@
   },
   "author": "zhennann",
   "dependencies": {
-    "assert": "^2.0.0",
-    "require3": "file:./utils/require3"
+    "assert": "^2.0.0"
   }
 }

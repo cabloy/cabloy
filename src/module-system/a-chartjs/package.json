@@ -23,7 +23,5 @@
   "devDependencies": {
     "chart.js": "^3.5.1"
   },
-  "dependencies": {
-    "require3": "file:./utils/require3"
-  }
+  "dependencies": {}
 }

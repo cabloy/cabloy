@@ -26,7 +26,6 @@
     "chalk": "^3.0.0",
     "cli-table3": "^0.6.2",
     "gogocode": "^1.0.53",
-    "istextorbinary": "^3.3.0",
-    "require3": "file:./utils/require3"
+    "istextorbinary": "^3.3.0"
   }
 }
