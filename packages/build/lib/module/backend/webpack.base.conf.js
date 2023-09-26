@@ -1,9 +1,15 @@
 const path = require('path');
 
 module.exports = context => {
-  const nodeModules = {
-    require3: 'commonjs2 require3',
-  };
+  function nodeModulesCheck(_context_, request, callback) {
+    if (path.isAbsolute(request)) return callback();
+    if (request[0] === '.') return callback();
+    const externalsExclude = context.config.build.externalsExclude;
+    if (externalsExclude && externalsExclude[request]) {
+      return callback();
+    }
+    return callback(null, `commonjs2 ${request}`);
+  }
 
   const rules = [];
   if (context.config.build.uglify) {
@@ -50,7 +56,7 @@ module.exports = context => {
       filename: '[name].js',
       libraryTarget: 'commonjs2',
     },
-    externals: nodeModules,
+    externals: [nodeModulesCheck],
     resolve: {
       extensions: ['.js', '.json'],
     },

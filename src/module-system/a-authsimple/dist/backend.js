@@ -1,63 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 581:
-/***/ ((module, exports, __webpack_require__) => {
-
-/**
- * Module dependencies.
- */
-var Strategy = __webpack_require__(703);
-
-
-/**
- * Expose `Strategy` directly from package.
- */
-exports = module.exports = Strategy;
-
-/**
- * Export constructors.
- */
-exports.Strategy = Strategy;
-
-
-/***/ }),
-
-/***/ 703:
-/***/ ((module) => {
-
-/**
- * Creates an instance of `Strategy`.
- *
- * @constructor
- * @api public
- */
-function Strategy() {
-}
-
-/**
- * Authenticate request.
- *
- * This function must be overridden by subclasses.  In abstract form, it always
- * throws an exception.
- *
- * @param {Object} req The request to authenticate.
- * @param {Object} [options] Strategy-specific options.
- * @api public
- */
-Strategy.prototype.authenticate = function(req, options) {
-  throw new Error('Strategy#authenticate must be overridden by subclass');
-};
-
-
-/**
- * Expose `Strategy`.
- */
-module.exports = Strategy;
-
-
-/***/ }),
-
 /***/ 907:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -74,7 +17,7 @@ module.exports = __webpack_require__(933);
 "use strict";
 
 
-var crypto = __webpack_require__(113);
+var crypto = __webpack_require__(770);
 
 var iterations = 10000;
 var password = function(password) {
@@ -381,13 +324,20 @@ module.exports = ctx => {
       if (!value) {
         // expired, send confirmation mail again
         //  1003: passwordResetEmailExpired
-        ctx.throw(1003);
+        ctx.throw.module(moduleInfo.relativeName, 1003);
       }
       // userId
       const userId = value.userId;
 
-      // save new
-      await this._passwordSaveNew({ passwordNew, userId });
+      // check if exists
+      const authSimple = await this.modelAuthSimple.get({ userId });
+      if (!authSimple) {
+        // create a new one
+        await this.add({ userId, password: passwordNew });
+      } else {
+        // save new
+        await this._passwordSaveNew({ passwordNew, userId });
+      }
       // clear token
       await this.cacheDb.remove(cacheKey);
       // login antomatically
@@ -550,7 +500,7 @@ module.exports = ctx => {
 /***/ 988:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const util = __webpack_require__(837);
+const util = __webpack_require__(764);
 const passwordFn = __webpack_require__(907); // should compile
 
 module.exports = function (ctx) {
@@ -907,8 +857,8 @@ module.exports = app => {
 /***/ 966:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const passport = __webpack_require__(581);
-const util = __webpack_require__(837);
+const passport = __webpack_require__(708);
+const util = __webpack_require__(764);
 
 function Strategy(options, verify) {
   if (typeof options === 'function') {
@@ -1416,38 +1366,12 @@ module.exports = app => {
   return {
     auth,
     validation: {
-      validators: {
-        signup: {
-          schemas: 'signup',
-        },
-        signin: {
-          schemas: 'signin',
-        },
-        passwordChange: {
-          schemas: 'passwordChange',
-        },
-        passwordForgot: {
-          schemas: 'passwordForgot',
-        },
-        passwordReset: {
-          schemas: 'passwordReset',
-        },
-        emailConfirm: {
-          schemas: 'emailConfirm',
-        },
-      },
+      validators: {},
       keywords: {
         'x-exists': keywords.exists,
         'x-passwordForgotEmail': keywords.passwordForgotEmail,
       },
-      schemas: {
-        signup: schemas.signup,
-        signin: schemas.signin,
-        passwordChange: schemas.passwordChange,
-        passwordForgot: schemas.passwordForgot,
-        passwordReset: schemas.passwordReset,
-        emailConfirm: schemas.emailConfirm,
-      },
+      schemas,
     },
     event: {
       implementations: {
@@ -1612,7 +1536,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 113:
+/***/ 770:
 /***/ ((module) => {
 
 "use strict";
@@ -1620,7 +1544,15 @@ module.exports = require("crypto");
 
 /***/ }),
 
-/***/ 837:
+/***/ 708:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("passport-strategy");
+
+/***/ }),
+
+/***/ 764:
 /***/ ((module) => {
 
 "use strict";
