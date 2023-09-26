@@ -45,6 +45,7 @@ export default {
       },
     },
     groups: [
+      { name: 'atom', title: 'Atom' },
       { name: 'startEvent', title: 'Start Event' },
       { name: 'endEvent', title: 'End Event' },
       { name: 'gateway', title: 'Gateway' },
