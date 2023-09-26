@@ -41,14 +41,14 @@ export default function (Vue) {
     },
     actions: {
       setDict({ atomClass, atomStage, dict }) {
-        const useAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useAtomStage.toString({ atomStage });
+        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+        atomStage = useStoreAtomStage.toString({ atomStage });
         const key = __combineKey({ atomClass, atomStage });
         this.dicts[key] = dict;
       },
       async getDict({ atomClass, atomStage }) {
-        const useAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useAtomStage.toString({ atomStage });
+        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+        atomStage = useStoreAtomStage.toString({ atomStage });
         const key = __combineKey({ atomClass, atomStage });
         // dict maybe null
         if (this.dicts[key] !== undefined) return this.dicts[key];
@@ -70,8 +70,8 @@ export default function (Vue) {
           atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
         }
         // atomStage
-        const useAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useAtomStage.toString({ atomStage });
+        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+        atomStage = useStoreAtomStage.toString({ atomStage });
         if (!atomStage) return null;
         // dictKey
         const dictKey = Vue.prototype.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
@@ -86,8 +86,8 @@ export default function (Vue) {
           atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
         }
         // atomStage
-        const useAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useAtomStage.toString({ atomStage });
+        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+        atomStage = useStoreAtomStage.toString({ atomStage });
         if (!atomStage) return null;
         // useStoreDict
         const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
