@@ -1,9 +1,9 @@
 const path = require('path');
-const require3 = require('require3');
-const fse = require3('fs-extra');
-const eggBornUtils = require3('egg-born-utils');
-const bb = require3('bluebird');
-const xml2js = require3('xml2js');
+
+const fse = require('fs-extra');
+const eggBornUtils = require('egg-born-utils');
+const bb = require('bluebird');
+const xml2js = require('xml2js');
 
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {

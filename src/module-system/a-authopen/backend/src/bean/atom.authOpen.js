@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const randomize = require3('randomatic');
+const randomize = require('randomatic');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);

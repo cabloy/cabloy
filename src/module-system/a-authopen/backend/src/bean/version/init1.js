@@ -1,5 +1,5 @@
 const path = require('path');
-const require3 = require('require3');
+
 const initData = require('./initData1.js');
 
 module.exports = function (ctx) {

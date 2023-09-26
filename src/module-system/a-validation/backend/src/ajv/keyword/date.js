@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const moment = require3('moment');
+const moment = require('moment');
 
 module.exports = {
   errors: true,

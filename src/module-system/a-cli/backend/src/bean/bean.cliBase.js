@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const eggBornUtils = require3('egg-born-utils');
+const eggBornUtils = require('egg-born-utils');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

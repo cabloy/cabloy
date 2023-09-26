@@ -8,6 +8,7 @@
     - 提供应用级别的 monkey 机制，从而可以修改任何模块的任何代码、任何配置
     - 比如修改 module 的 meta 配置
     - 参见/path to project/src/backend/config/monkey.js
+  - 移除 require3 机制
 
 ## 2023-09-24, Version 4.35.0（未发布）
 
@@ -200,8 +201,8 @@ modules: {
 
   - 工作台：在九宫格中每个应用的 DOM 节点增加属性：`data-dev-app-key`，方便快速定位 AppKey
   - Cli 终端命令：创建前端页面组件，支持带目录的名称，比如: `npm run cli :create:pagex student/add`
-  - ctx.bean.util.extend 代替 const extend = require3('@zhennann/extend');
-  - ctx.bean.util.uuid 代替 const uuid = require3('uuid');
+  - ctx.bean.util.extend 代替 const extend = require('@zhennann/extend');
+  - ctx.bean.util.uuid 代替 const uuid = require('uuid');
 
 - **Enhance**
   - 时间字段：在表格中默认采用多行模式：`ebParams.dateFormat.lines=true`

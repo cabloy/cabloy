@@ -1,8 +1,7 @@
-const require3 = require('require3');
-const Ajv = require3('ajv');
-const AjvLocalize = require3('ajv-i18n');
-const AjvKeywords = require3('ajv-keywords');
-const jsBeautify = require3('js-beautify');
+const Ajv = require('ajv');
+const AjvLocalize = require('ajv-i18n');
+const AjvKeywords = require('ajv-keywords');
+const jsBeautify = require('js-beautify');
 const systemKeywords = require('./keywords.js');
 
 module.exports = app => {

@@ -1,8 +1,8 @@
 const path = require('path');
-const require3 = require('require3');
-const babel = require3('@babel/core');
-const UglifyJS = require3('uglify-js');
-const fse = require3('fs-extra');
+
+const babel = require('@babel/core');
+const UglifyJS = require('uglify-js');
+const fse = require('fs-extra');
 
 module.exports = ctx => {
   class Cli extends ctx.app.meta.CliBase(ctx) {

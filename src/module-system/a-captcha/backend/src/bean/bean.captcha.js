@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const mparse = require3('egg-born-mparse').default;
+const mparse = require('egg-born-mparse').default;
 const utils = require('../common/utils.js');
 
 module.exports = ctx => {

@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const require3 = require('require3');
-const eggBornUtils = require3('egg-born-utils');
-const isTextOrBinary = require3('istextorbinary');
-const ejs = require3('@zhennann/ejs');
-const gogocode = require3('gogocode');
+
+const eggBornUtils = require('egg-born-utils');
+const isTextOrBinary = require('istextorbinary');
+const ejs = require('@zhennann/ejs');
+const gogocode = require('gogocode');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

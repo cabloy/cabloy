@@ -1,11 +1,11 @@
 const path = require('path');
 const os = require('os');
-const require3 = require('require3');
-const eggBornUtils = require3('egg-born-utils');
-const AdmZip = require3('adm-zip');
-const semver = require3('semver');
-const fse = require3('fs-extra');
-const rimraf = require3('mz-modules/rimraf');
+
+const eggBornUtils = require('egg-born-utils');
+const AdmZip = require('adm-zip');
+const semver = require('semver');
+const fse = require('fs-extra');
+const rimraf = require('mz-modules/rimraf');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {

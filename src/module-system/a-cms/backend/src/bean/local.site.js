@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const fse = require3('fs-extra');
+const fse = require('fs-extra');
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

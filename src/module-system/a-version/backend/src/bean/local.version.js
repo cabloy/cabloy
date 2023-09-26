@@ -1,6 +1,5 @@
-const require3 = require('require3');
-const moment = require3('moment');
-const chalk = require3('chalk');
+const moment = require('moment');
+const chalk = require('chalk');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);

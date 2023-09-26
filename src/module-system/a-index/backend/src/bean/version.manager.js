@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const chalk = require3('chalk');
+const chalk = require('chalk');
 
 module.exports = app => {
   class Version extends app.meta.BeanBase {

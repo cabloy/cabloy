@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const trimHtml = require3('@zhennann/trim-html');
+const trimHtml = require('@zhennann/trim-html');
 
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);

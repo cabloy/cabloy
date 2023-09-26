@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const objectHash = require3('object-hash');
+const objectHash = require('object-hash');
 const CacheBase = require('../common/cacheBase.js');
 
 module.exports = ctx => {

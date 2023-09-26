@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const LRUCache = require3('lru-cache');
+const LRUCache = require('lru-cache');
 const CacheBase = require('../common/cacheBase.js');
 
 const SUMMERCACHEMEMORY = Symbol('APP#__SUMMERCACHEMEMORY');

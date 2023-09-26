@@ -1,11 +1,11 @@
 const { spawn } = require('child_process');
 const path = require('path');
-const require3 = require('require3');
-const Chalk = require3('chalk');
-const TableClass = require3('cli-table3');
-const Boxen = require3('boxen');
-const fse = require3('fs-extra');
-const mparse = require3('egg-born-mparse').default;
+
+const Chalk = require('chalk');
+const TableClass = require('cli-table3');
+const Boxen = require('boxen');
+const fse = require('fs-extra');
+const mparse = require('egg-born-mparse').default;
 
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

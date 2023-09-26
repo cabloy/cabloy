@@ -1,7 +1,6 @@
-const require3 = require('require3');
-const nodemailer = require3('nodemailer');
-const chalk = require3('chalk');
-const boxen = require3('boxen');
+const nodemailer = require('nodemailer');
+const chalk = require('chalk');
+const boxen = require('boxen');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 

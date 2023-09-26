@@ -1,15 +1,15 @@
 const path = require('path');
-const require3 = require('require3');
-const ejs = require3('@zhennann/ejs');
-const pMap = require3('p-map');
-const fse = require3('fs-extra');
-const moment = require3('moment');
-const eggBornUtils = require3('egg-born-utils');
-const CleanCSS = require3('clean-css');
-const shajs = require3('sha.js');
-const babel = require3('@babel/core');
-const UglifyJS = require3('uglify-js');
-const less = require3('less');
+
+const ejs = require('@zhennann/ejs');
+const pMap = require('p-map');
+const fse = require('fs-extra');
+const moment = require('moment');
+const eggBornUtils = require('egg-born-utils');
+const CleanCSS = require('clean-css');
+const shajs = require('sha.js');
+const babel = require('@babel/core');
+const UglifyJS = require('uglify-js');
+const less = require('less');
 const utils = require('../common/utils.js');
 
 module.exports = app => {

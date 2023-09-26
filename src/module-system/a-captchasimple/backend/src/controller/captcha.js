@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const captcha = require3('trek-captcha');
+const captcha = require('trek-captcha');
 
 module.exports = app => {
   class CaptchaController extends app.Controller {

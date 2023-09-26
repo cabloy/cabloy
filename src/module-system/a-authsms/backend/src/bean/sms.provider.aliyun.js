@@ -1,5 +1,4 @@
-const require3 = require('require3');
-const popCore = require3('@alicloud/pop-core');
+const popCore = require('@alicloud/pop-core');
 
 module.exports = function (ctx) {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

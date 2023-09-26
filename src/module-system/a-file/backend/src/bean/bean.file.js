@@ -1,13 +1,13 @@
 const path = require('path');
 const fs = require('fs');
-const require3 = require('require3');
-const sendToWormhole = require3('stream-wormhole');
-const Jimp = require3('jimp');
-const bb = require3('bluebird');
-const pump = require3('pump');
-const fse = require3('fs-extra');
-const base64url = require3('base64url');
-const Mime = require3('mime');
+
+const sendToWormhole = require('stream-wormhole');
+const Jimp = require('jimp');
+const bb = require('bluebird');
+const pump = require('pump');
+const fse = require('fs-extra');
+const base64url = require('base64url');
+const Mime = require('mime');
 
 const REGEXP_DATA_URL = /^data:([^;]+);[^,]*base64,(.*)/;
 

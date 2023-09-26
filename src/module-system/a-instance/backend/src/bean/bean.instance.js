@@ -1,7 +1,6 @@
-const require3 = require('require3');
-const async = require3('async');
-const chalk = require3('chalk');
-const boxen = require3('boxen');
+const async = require('async');
+const chalk = require('chalk');
+const boxen = require('boxen');
 
 const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yellow', borderStyle: 'round' };
 

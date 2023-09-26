@@ -1,7 +1,6 @@
-const require3 = require('require3');
-const chalk = require3('chalk');
-const Table = require3('cli-table3');
-const eggBornUtils = require3('egg-born-utils');
+const chalk = require('chalk');
+const Table = require('cli-table3');
+const eggBornUtils = require('egg-born-utils');
 
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
