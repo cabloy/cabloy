@@ -11,6 +11,7 @@ export default {
     return {
       atomClass: null,
       atomStage: null,
+      dict: null,
     };
   },
   computed: {},
@@ -19,29 +20,23 @@ export default {
   },
   methods: {
     async init() {
+      // atomClass / atomStage
       const atomClassAndStage = await this.getAtomClassAndStage();
       if (!atomClassAndStage) return;
       this.atomClass = atomClassAndStage.atomClass;
       this.atomStage = atomClassAndStage.atomStage;
+      // dict
+      const useStoreAtomState = await this.$store.use('a/basestore/atomState');
+      this.dict = await useStoreAtomState.getDict({ atomClass: this.atomClass, atomStage: this.atomStage });
     },
     async getAtomClassAndStage() {
       const useStoreUserTask = await this.$store.use('a/flowchart/userTask');
       return await useStoreUserTask.getAtomClassAndStage({ ctx: this, context: this.context });
     },
-    getDictKey() {
-      if (!this.atomClass) return null;
-      const atomClassBase = this.getAtomClass(this.atomClass);
-      if (!atomClassBase) return null;
-      const atomStage = this.atomStage;
-      if (!atomStage) return null;
-      const dictKey = this.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
-      return dictKey;
-    },
   },
   render() {
     const { parcel, key, property } = this.context;
-    const dictKey = this.getDictKey();
-    if (!dictKey) {
+    if (!this.dict) {
       return null;
       // return <f7-list-item>{this.context.renderTitle({ slot: 'title' })}</f7-list-item>;
     }
@@ -49,7 +44,7 @@ export default {
       ebType: 'dict',
       ebOptionsBlankAuto: true,
       ebParams: {
-        dictKey,
+        dict: this.dict,
         mode: 'select',
         forceLoad: true,
       },
