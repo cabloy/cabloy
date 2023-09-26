@@ -1,4 +1,15 @@
 export default function (Vue) {
+  async function __prepareAtomClassBase({ atomClass, atomClassBase }) {
+    if (!atomClassBase) {
+      const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
+      atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+    }
+    return atomClassBase;
+  }
+  function __prepareAtomStageString({ atomStage }) {
+    const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
+    return useStoreAtomStage.toString({ atomStage });
+  }
   function __combineKey({ atomClass, atomStage }) {
     return `${atomClass.module}:${atomClass.atomClassName}:${atomStage}`;
   }
@@ -41,14 +52,12 @@ export default function (Vue) {
     },
     actions: {
       setDict({ atomClass, atomStage, dict }) {
-        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useStoreAtomStage.toString({ atomStage });
+        atomStage = __prepareAtomStageString({ atomStage });
         const key = __combineKey({ atomClass, atomStage });
         this.dicts[key] = dict;
       },
       async getDict({ atomClass, atomStage }) {
-        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useStoreAtomStage.toString({ atomStage });
+        atomStage = __prepareAtomStageString({ atomStage });
         const key = __combineKey({ atomClass, atomStage });
         // dict maybe null
         if (this.dicts[key] !== undefined) return this.dicts[key];
@@ -65,13 +74,9 @@ export default function (Vue) {
       },
       async _getDictKey({ atomClass, atomClassBase, atomStage }) {
         // atomClassBase
-        if (!atomClassBase) {
-          const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
-          atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
-        }
+        atomClassBase = await __prepareAtomClassBase({ atomClass, atomClassBase });
         // atomStage
-        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useStoreAtomStage.toString({ atomStage });
+        atomStage = __prepareAtomStageString({ atomStage });
         if (!atomStage) return null;
         // dictKey
         const dictKey = Vue.prototype.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
@@ -81,13 +86,9 @@ export default function (Vue) {
       },
       async _getDict({ atomClass, atomClassBase, atomStage }) {
         // atomClassBase
-        if (!atomClassBase) {
-          const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
-          atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
-        }
+        atomClassBase = await __prepareAtomClassBase({ atomClass, atomClassBase });
         // atomStage
-        const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-        atomStage = useStoreAtomStage.toString({ atomStage });
+        atomStage = __prepareAtomStageString({ atomStage });
         if (!atomStage) return null;
         // useStoreDict
         const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
