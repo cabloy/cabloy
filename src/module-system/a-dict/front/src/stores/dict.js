@@ -23,14 +23,17 @@ export default function (Vue) {
         this.setDict({ dictKey, dict });
         return dict;
       },
-      async findItem({ dictKey, code, options }) {
+      // dict: support a/basestore/atomState
+      async findItem({ dict, dictKey, code, options }) {
         if (_checkIfEmptyForSelect(code)) return null;
         code = String(code);
         // options
         options = options || { separator: '/' };
         const separator = options.separator;
         // dict
-        const dict = await this.getDict({ dictKey });
+        if (!dict) {
+          dict = await this.getDict({ dictKey });
+        }
         if (!dict._cache) dict._cache = {};
         let dictItemRes = dict._cache[code];
         if (dictItemRes) return dictItemRes;

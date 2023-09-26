@@ -56,37 +56,12 @@ export default function (Vue) {
         this.setDict({ atomClass, atomStage, dict });
         return dict;
       },
-      async findItem({ dictKey, code, options }) {
-        if (_checkIfEmptyForSelect(code)) return null;
-        code = String(code);
-        // options
-        options = options || { separator: '/' };
-        const separator = options.separator;
+      async findItem({ atomClass, atomStage, code, options }) {
         // dict
-        const dict = await this.getDict({ dictKey });
-        if (!dict._cache) dict._cache = {};
-        let dictItemRes = dict._cache[code];
-        if (dictItemRes) return dictItemRes;
-        // find
-        const dictItemsRes = [];
-        const res = _findItem_loop({
-          dictItemsRes,
-          dictItemsMap: dict._dictItemsMap,
-          codes: code.split('/'),
-        });
-        if (!res) return null;
-        const titleFull = dictItemsRes.map(item => item.title).join(separator);
-        const titleLocaleFull = dictItemsRes.map(item => item.titleLocale).join(separator);
-        dictItemRes = {
-          ...dictItemsRes[dictItemsRes.length - 1],
-          codeFull: code,
-          titleFull,
-          titleLocaleFull,
-        };
-        // cache
-        dict._cache[code] = dictItemRes;
-        // ok
-        return dictItemRes;
+        const dict = await this.getDict({ atomClass, atomStage });
+        // findItem
+        const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
+        return await useStoreDict.findItem({ dict, code, options });
       },
       async _getDictKey({ atomClass, atomClassBase, atomStage }) {
         // atomClassBase
