@@ -63,7 +63,7 @@ module.exports = ctx => {
         throw new Error('key is required');
       }
       if (Array.isArray(key) || typeof key === 'object') {
-        key = objectHash(key);
+        key = objectHash(key, { respectType: false });
       } else if (typeof key !== 'string') {
         key = String(key);
       }
