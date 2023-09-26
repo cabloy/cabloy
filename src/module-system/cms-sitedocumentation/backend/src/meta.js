@@ -21,7 +21,7 @@ module.exports = app => {
             dict: {
               states: {
                 draft: {
-                  dictKey: 'a-dictbooster:dictAtomStateDraft',
+                  dictKey: 'default',
                 },
               },
             },
