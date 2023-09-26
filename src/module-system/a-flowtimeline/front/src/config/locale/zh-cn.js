@@ -3,6 +3,7 @@ export default {
   FlowTitle: '流程',
   Task: '任务',
   End: '结束',
+  Ended: '已结束',
   Current: '当前',
   Drafting: '起草',
   Pass: '通过',

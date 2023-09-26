@@ -29,7 +29,7 @@ export default {
   flowNodeHandleStatuses: {
     1: {
       color: 'teal',
-      text: 'End',
+      text: 'Ended',
     },
     2: {
       color: 'gray',
@@ -43,7 +43,7 @@ export default {
   flowHandleStatuses: {
     1: {
       color: 'teal',
-      text: 'End',
+      text: 'Ended',
     },
     2: {
       color: 'gray',

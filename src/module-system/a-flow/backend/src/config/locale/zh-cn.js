@@ -5,6 +5,7 @@ module.exports = {
   WorkFlows: '工作流',
   FlowDefinitions: '工作流定义',
   End: '结束',
+  Ended: '已结束',
   Current: '当前',
   Drafting: '起草',
   Review: '审核',
