@@ -1,5 +1,6 @@
 {
   "name": "require3",
+  "version": "3.0.0",
   "main": "index.js",
   "author": "zhennann",
   "license": "MIT"
