@@ -1,14 +1,14 @@
 const path = require('path');
 
 module.exports = context => {
-  function nodeModulesCheck(_context_, request, callback) {
-    if (path.isAbsolute(request)) return callback();
-    if (request[0] === '.') return callback();
+  function nodeModulesCheck({ /* context,*/ request }, cb) {
+    if (path.isAbsolute(request)) return cb();
+    if (request[0] === '.') return cb();
     const externalsExclude = context.config.build.externalsExclude;
     if (externalsExclude && externalsExclude[request]) {
-      return callback();
+      return cb();
     }
-    return callback(null, `commonjs2 ${request}`);
+    return cb(null, `commonjs2 ${request}`);
   }
 
   const rules = [];

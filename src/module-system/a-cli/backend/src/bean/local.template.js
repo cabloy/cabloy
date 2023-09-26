@@ -172,7 +172,7 @@ module.exports = ctx => {
       // for
       for (const file of files) {
         const snippetTemplatePath = path.join(snippetsDir, file);
-        const snippet = require3(snippetTemplatePath);
+        const snippet = ctx.app.meta.util.requireDynamic(snippetTemplatePath);
         if (!snippet.file) {
           throw new Error(`should provider file path for: ${file}`);
         }

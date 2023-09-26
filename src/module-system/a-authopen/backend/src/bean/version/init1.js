@@ -86,7 +86,7 @@ module.exports = function (ctx) {
       // name
       const name = `clidev@${ctx.app.name}`;
       // host
-      const buildConfig = require3(path.join(process.cwd(), 'build/config.js'));
+      const buildConfig = ctx.app.meta.util.requireDynamic(path.join(process.cwd(), 'build/config.js'));
       const host = `http://127.0.0.1:${buildConfig.backend.port}`;
       // add
       await this.localToken.add({

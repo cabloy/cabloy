@@ -373,6 +373,9 @@ module.exports = app => {
           .concat(newUsage, '` instead')
       );
     },
+    requireDynamic(file) {
+      return require(file);
+    },
   };
 };
 

@@ -812,7 +812,7 @@ var env=${JSON.stringify(env, null, 2)};
         _envs,
         require(fileName) {
           const _path = self.resolvePath('', this._filename, fileName);
-          return require3(_path);
+          return self.ctx.app.meta.util.requireDynamic(_path);
         },
         url(fileName, language) {
           if (fileName && (fileName.indexOf('http://') === 0 || fileName.indexOf('https://') === 0)) {
