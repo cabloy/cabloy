@@ -678,7 +678,8 @@ export default function (Vue) {
       return iconF7.indexOf('/api/static/') === -1 && iconF7.split(':').length < 3;
     },
     async combineIcon({ material, f7, color, size }) {
-      return await Vue.prototype.$meta.store.dispatch('a/icon/combineIcon', { material, icon: f7, color, size });
+      const useStoreIcon = await this.$store.use('a/icon/icon');
+      return await useStoreIcon.combineIcon({ material, icon: f7, color, size });
     },
     getJwtAuthorization() {
       let oauth = window.localStorage['eb-jwt-oauth'];
