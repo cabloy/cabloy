@@ -19,7 +19,5 @@
   },
   "author": "<%=argv.author%>",
   "devDependencies": {},
-  "dependencies": {
-    "require3": "file:./utils/require3"
-  }
+  "dependencies": {}
 }
