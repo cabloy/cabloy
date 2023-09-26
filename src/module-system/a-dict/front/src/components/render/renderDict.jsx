@@ -35,19 +35,24 @@ export default {
   methods: {
     async _loadDict() {
       const { property } = this.context;
+      const dict = property.ebParams.dict;
       const dictKey = property.ebParams.dictKey;
-      if (this.needLoadDict) {
-        const useStoreDict = await this.$store.use('a/dict/dict');
-        this.dict = await useStoreDict.getDict({
-          dictKey,
-        });
+      if (dict) {
+        this.dict = dict;
+      } else {
+        if (this.needLoadDict) {
+          const useStoreDict = await this.$store.use('a/dict/dict');
+          this.dict = await useStoreDict.getDict({
+            dictKey,
+          });
+        }
       }
       // load dict item
       await this._loadDictItem();
     },
     async _loadDictItem() {
       const { key, property } = this.context;
-      const dictKey = property.ebParams.dictKey;
+      // const dictKey = property.ebParams.dictKey;
       if (!this.needLoadDict) {
         this.dictItemTitle = this.context.getValue(`_${key}TitleLocale`);
         this.dictItemOptions = this.context.getValue(`_${key}Options`);
@@ -56,7 +61,8 @@ export default {
         const separator = property.ebParams.separator;
         const useStoreDict = await this.$store.use('a/dict/dict');
         this.dictItem = await useStoreDict.findItem({
-          dictKey,
+          dict: this.dict,
+          // dictKey,
           code,
           options: { separator },
         });
