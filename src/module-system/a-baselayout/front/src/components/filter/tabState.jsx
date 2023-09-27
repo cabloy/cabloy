@@ -55,17 +55,22 @@ export default {
         ></eb-list-item>
       );
       for (const item of this.dict._dictItems) {
-        children.push(
-          <eb-list-item
-            key={item.code}
-            radio
-            checked={stateCurrent === item.code}
-            title={item.titleLocale}
-            onChange={event => this.onItemChange(event, item)}
-          ></eb-list-item>
-        );
+        children.push(this._renderStateSelectItem({ item, stateCurrent }));
       }
       return <eb-list inset>{children}</eb-list>;
+    },
+    _renderStateSelectItem({ item, stateCurrent }) {
+      const isDraft = this.filterContainer.stage === 0 || this.filterContainer.stage === 'draft';
+      if (isDraft && [-1, -3].includes(item.code)) return null;
+      return (
+        <eb-list-item
+          key={item.code}
+          radio
+          checked={stateCurrent === item.code}
+          title={item.titleLocale}
+          onChange={event => this.onItemChange(event, item)}
+        ></eb-list-item>
+      );
     },
   },
   render() {
