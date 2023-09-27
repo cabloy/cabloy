@@ -37,8 +37,8 @@
     "/src/backend/run/**": true,
     "**/node_modules": false
   },
-  "search.useIgnoreFiles": false,
-  "typescript.validate.enable": false,
-  "typescript.format.enable": false,
-  "typescript.disableAutomaticTypeAcquisition": true
+  "search.useIgnoreFiles": false
+  // "typescript.validate.enable": false,
+  // "typescript.format.enable": false,
+  // "typescript.disableAutomaticTypeAcquisition": true
 }
