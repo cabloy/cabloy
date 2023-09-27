@@ -22,10 +22,14 @@ function install(_Vue, cb) {
   config.base.name = process.env.NAME;
   config.base.title = process.env.TITLE;
 
+  // monkey
+  const monkey = require('./config/monkey.js').default(Vue);
+
   // options
   return cb({
     config,
     locales,
+    monkey,
     parameters: {
       framework7: {
         name: config.base.name,

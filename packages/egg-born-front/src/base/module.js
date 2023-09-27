@@ -38,8 +38,12 @@ export default function (Vue) {
     },
     set(relativeName, module) {
       Vue.prototype.$meta.modules[relativeName] = module;
-      if (module.info.monkey) {
-        Vue.prototype.$meta.modulesMonkey[relativeName] = module;
+      // monkey
+      if (module.name === 'main' && module.options.monkey) {
+        Vue.prototype.$meta.modulesMonkey.push(module);
+      } else if (module.info.monkey) {
+        const length = Vue.prototype.$meta.modulesMonkey.length;
+        Vue.prototype.$meta.modulesMonkey.splice(length - 1, 0, module);
       }
     },
     // use
@@ -101,8 +105,13 @@ export default function (Vue) {
       }
     },
     monkeyModule(monkeyName, monkeyData) {
-      for (const key in Vue.prototype.$meta.modulesMonkey) {
-        const moduleMonkey = Vue.prototype.$meta.modulesMonkey[key];
+      const module = monkeyData && monkeyData.module;
+      if (module) {
+        if (module.options.hook && module.options.hook[monkeyName]) {
+          module.options.hook[monkeyName](monkeyData);
+        }
+      }
+      for (const moduleMonkey of Vue.prototype.$meta.modulesMonkey) {
         if (moduleMonkey.options.monkey && moduleMonkey.options.monkey[monkeyName]) {
           const monkeyData2 = Object.assign({ moduleSelf: moduleMonkey }, monkeyData);
           moduleMonkey.options.monkey[monkeyName](monkeyData2);

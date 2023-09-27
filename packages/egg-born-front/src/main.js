@@ -23,7 +23,7 @@ meta.modules = {};
 // modulesWaiting
 meta.modulesWaiting = {};
 // modulesMonkey
-meta.modulesMonkey = {};
+meta.modulesMonkey = [];
 // module
 meta.module = require('./base/module.js').default(Vue);
 // util
