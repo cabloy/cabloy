@@ -170,6 +170,13 @@ export default {
     actions_getActionTitle(action) {
       return this.getActionTitle(action, this.base.item);
     },
+    actions_checkIfHandleTask() {
+      const atomClassBase = this.base.atomClassBase;
+      if (atomClassBase.detail) return false;
+      const mode = this.container.mode;
+      const handleTask = mode === 'edit' && this.base_flowTaskId;
+      return handleTask;
+    },
     actions_renderButtonView() {
       // need not show view button even on edit mode
       const mode = this.container.mode;
@@ -198,7 +205,7 @@ export default {
     },
     actions_renderButtonSave() {
       const mode = this.container.mode;
-      const handleTask = mode === 'edit' && this.base_flowTaskId;
+      const handleTask = this.actions_checkIfHandleTask();
       const actionWrite = this.actions_findAction('write');
       if (!actionWrite) return null;
       const atomClassBase = this.base.atomClassBase;
@@ -230,7 +237,7 @@ export default {
     actions_renderButtonSaveAndReturn() {
       const mode = this.container.mode;
       if (mode !== 'edit') return null;
-      const handleTask = mode === 'edit' && this.base_flowTaskId;
+      const handleTask = this.actions_checkIfHandleTask();
       if (handleTask) return null;
       const actionIcon = '::save-and-return';
       const actionName = 'saveAndReturn';
@@ -246,8 +253,7 @@ export default {
       );
     },
     actions_renderButtonSubmit() {
-      const mode = this.container.mode;
-      const handleTask = mode === 'edit' && this.base_flowTaskId;
+      const handleTask = this.actions_checkIfHandleTask();
       if (handleTask && !this.timeline.instance?.base_tasks) return null;
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
