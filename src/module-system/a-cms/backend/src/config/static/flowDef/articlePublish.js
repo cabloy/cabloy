@@ -15,7 +15,7 @@ module.exports = app => {
             },
             conditionExpression: null,
             task: {
-              atomState: 0, // state: drafting
+              atomState: 1, // state: drafting
               allowViewWorkflow: false,
             },
           },
@@ -25,7 +25,7 @@ module.exports = app => {
           name: 'Review',
           type: 'activityUserTask',
           options: {
-            atomState: 1,
+            atomState: 2,
             assignees: {
               roles: 'superuser',
             },
@@ -40,9 +40,7 @@ module.exports = app => {
           id: 'endEvent_1',
           name: 'End',
           type: 'endEventAtom',
-          options: {
-            atomState: 2,
-          },
+          options: {},
         },
       ],
       edges: [
@@ -62,7 +60,7 @@ module.exports = app => {
   const definition = {
     atomName: 'CMS Article Publish',
     atomStaticKey: 'flowArticlePublish',
-    atomRevision: 110,
+    atomRevision: 120,
     description: '',
     content: JSON.stringify(content),
   };
