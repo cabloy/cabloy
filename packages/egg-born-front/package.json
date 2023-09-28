@@ -27,7 +27,7 @@
     "@zhennann/currency": "^1.0.3",
     "@zhennann/debounce": "^1.0.1",
     "@zhennann/extend": "^3.0.2",
-    "@zhennann/framework7": "^6.1.15",
+    "@zhennann/framework7": "^6.1.16",
     "@zhennann/vue": "^2.7.15",
     "@zhennann/vue-style-loader": "^4.1.4",
     "array.prototype.group": "^1.1.2",
