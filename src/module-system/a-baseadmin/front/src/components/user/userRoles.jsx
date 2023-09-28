@@ -48,7 +48,7 @@ export default {
             roleIdStart: null,
             multiple: false,
             leafOnly: true,
-            roleTypes: [0, 1, 2, 3, 4],
+            roleTypes: [0, 1, 2, 3, 4, 7],
           },
           callback: (code, role) => {
             if (code === 200) {

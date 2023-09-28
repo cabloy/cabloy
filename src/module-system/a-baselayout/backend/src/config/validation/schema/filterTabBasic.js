@@ -29,7 +29,7 @@ module.exports = app => {
           multiple: false,
           catalogOnly: false,
           leafOnly: false,
-          roleTypes: [0, 1, 2, 3, 4],
+          roleTypes: [0, 1, 2, 3, 4, 7],
           mapper: {
             role: 'itemId',
             roleName: 'atomName',

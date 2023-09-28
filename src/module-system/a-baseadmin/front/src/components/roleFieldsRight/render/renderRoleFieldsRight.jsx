@@ -131,7 +131,7 @@ export default {
     //       params: {
     //         roleIdStart: null,
     //         multiple: true,
-    //         roleTypes: [0, 1, 2, 3, 4], // not include roleType: business
+    //         roleTypes: [0, 1, 2, 3, 4], // not include roleType: collaboration
     //       },
     //       callback: (code, roles) => {
     //         if (code === 200) {

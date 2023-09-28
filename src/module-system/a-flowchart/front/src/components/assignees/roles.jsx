@@ -21,7 +21,7 @@ export default {
           params: {
             roleIdStart: null,
             multiple: true,
-            roleTypes: [0, 1, 2, 3, 4],
+            roleTypes: [0, 1, 2, 3, 4, 7],
           },
           callback: (code, roles) => {
             if (code === 200) {
