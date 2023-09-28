@@ -146,10 +146,10 @@ export default {
       });
     },
     async _changeOptions_handle_option(option) {
-      const iconF7 = option.icon?.f7;
+      const icon = this.optionIcon(option);
+      const iconF7 = icon?.f7;
       if (iconF7) {
-        const iconOption = await this.$meta.util.combineIcon({ f7: iconF7 });
-        option.icon = `f7:${iconOption}`;
+        option._iconF7 = await this.$meta.util.combineIcon({ f7: iconF7 });
       }
     },
     async _changeOptions_handle(options) {
@@ -294,7 +294,7 @@ export default {
             selected,
           },
         };
-        const icon = this.optionIcon(opt);
+        const icon = opt._iconF7;
         if (icon) {
           attrs['data-option-icon'] = icon;
         }
