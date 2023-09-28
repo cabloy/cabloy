@@ -43,5 +43,9 @@ export default function (ctx, { layoutManager }) {
       }
       return list;
     }
+    onNodeReplace(node, nodeNew) {
+      node.attrs.iconF7 = nodeNew.data._roleTypeCodeOptions.icon.f7;
+      super.onNodeReplace(node, nodeNew);
+    }
   };
 }
