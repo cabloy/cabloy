@@ -289,10 +289,8 @@ export default {
           }
         }
         const attrs = {
-          attrs: {
-            value: this.optionValue(opt),
-            selected,
-          },
+          value: this.optionValue(opt),
+          selected,
         };
         const icon = opt._iconF7;
         if (icon) {
