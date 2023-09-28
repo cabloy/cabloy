@@ -23,5 +23,9 @@ export default function (ctx) {
       ctx.$emit('node:change', node);
       ctx.$emit('nodeChange', node);
     }
+    onNodeReplace(node, nodeNew) {
+      ctx.$emit('node:replace', node, nodeNew);
+      ctx.$emit('nodeReplace', node, nodeNew);
+    }
   };
 }

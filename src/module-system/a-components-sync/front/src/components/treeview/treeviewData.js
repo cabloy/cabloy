@@ -34,6 +34,7 @@ export default {
     },
     replaceNode(node, nodeNew) {
       node.data = nodeNew.data;
+      this.adapter.onNodeReplace(node, nodeNew);
     },
     async reloadNode(node, nodeNew) {
       // support root
