@@ -48,8 +48,7 @@ export default {
   },
   computed: {
     group() {
-      if (!this.voptions || this.voptions.length === 0) return false;
-      return this.voptions[0].options;
+      return this.checkIfGroup(this.voptions);
     },
   },
   watch: {
@@ -73,6 +72,10 @@ export default {
     this.prepareOptions();
   },
   methods: {
+    checkIfGroup(options) {
+      if (!options || options.length === 0) return false;
+      return options[0].options;
+    },
     setValue() {
       this.valueSetting = true;
       //
@@ -107,7 +110,7 @@ export default {
     async changeOptions(options) {
       // extend
       const _options = this.$meta.util.extend([], options);
-      await this._changeOptions_icon(_options);
+      await this._changeOptions_handle(_options);
       // optionsBlankAuto
       if (this.optionsBlankAuto) {
         const optEmpty = {
@@ -138,7 +141,29 @@ export default {
         this.setValue();
       });
     },
-    async _changeOptions_icon(options) {},
+    async _changeOptions_handle_option(option) {
+      const iconF7 = option.icon?.f7;
+      if (iconF7) {
+        const iconOption = await this.$meta.util.combineIcon({ f7: iconF7 });
+        option.icon = `f7:${iconOption}`;
+      }
+    },
+    async _changeOptions_handle(options) {
+      const isGroup = this.checkIfGroup(options);
+      // not group
+      if (!isGroup) {
+        for (const option of options) {
+          await this._changeOptions_handle_option(option);
+        }
+        return;
+      }
+      // group
+      for (const group of options) {
+        for (const option of group.options) {
+          await this._changeOptions_handle_option(option);
+        }
+      }
+    },
     async fetchOptions() {
       let moduleName;
       let fetchUrl;
