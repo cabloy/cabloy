@@ -31,6 +31,10 @@ export default {
       type: String,
       default: 'value',
     },
+    optionIconKey: {
+      type: String,
+      default: 'icon',
+    },
     multiple: {
       type: Boolean,
       default: false,
@@ -250,6 +254,9 @@ export default {
     optionTitle(opt) {
       return opt[this.optionTitleKey];
     },
+    optionIcon(opt) {
+      return opt[this.optionIconKey];
+    },
     optionDisplay(opt) {
       const text = this.optionTitle(opt) || this.optionValue(opt);
       return text ? this.$text(text) : null;
@@ -281,13 +288,20 @@ export default {
             selected = value.findIndex(item => this.equal(item, this.optionValue(opt))) > -1;
           }
         }
+        const attrs = {
+          attrs: {
+            value: this.optionValue(opt),
+            selected,
+          },
+        };
+        const icon = this.optionIcon(opt);
+        if (icon) {
+          attrs['data-option-icon'] = icon;
+        }
         options.push(
           c('option', {
             key: this.optionValue(opt),
-            attrs: {
-              value: this.optionValue(opt),
-              selected,
-            },
+            attrs,
             domProps: { innerText: this.optionDisplay(opt) },
           })
         );
