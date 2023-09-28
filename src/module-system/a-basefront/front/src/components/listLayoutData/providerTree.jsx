@@ -164,7 +164,8 @@ export default {
         this._reloadNode(node.parent);
       } else {
         // change current
-        node.data = itemNew;
+        const nodeNew = { data: itemNew };
+        this.treeviewData.replaceNode(node, nodeNew);
       }
     },
     renderLoadMore() {

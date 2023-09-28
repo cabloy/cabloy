@@ -32,6 +32,9 @@ export default {
         await this._loadChildren(this.treeviewRoot);
       }
     },
+    replaceNode(node, nodeNew) {
+      node.data = nodeNew.data;
+    },
     async reloadNode(node, nodeNew) {
       // support root
       // if (node.root) return;
