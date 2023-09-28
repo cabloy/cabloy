@@ -6,7 +6,7 @@ module.exports = {
   flow: 'activity-none,activity-service,activity-user-task,end-event-atom,end-event-none,gateway-exclusive,gateway-inclusive,gateway-parallel,start-event-atom,start-event-none,start-event-timer',
   login: 'call-outline,chevron-left,done,lock-outline,person-outline',
   outline: 'add-circle-outline,alert-outline,apps-outline,archive-lock-outline,archive-outline,article-outline,backspace-outline,build-circle-outline,calendar-today-outline,check-circle-outline,checkbox-checked-outline,checkbox-off-outline,checkbox-outline,copy-outline,data-list-outline,database-lock-outline,delete-forever-outline,delete-outline,dict-outline,draft-outline,folder-transfer-outline,group-outline,heart-outline,insert-emoticon-outline,key-reset-outline,label-outline,layout-outline,login-outline,logout-outline,mail-outline,note-outline,software-resource-cluster-outline,software-resource-outline,star-outline,theme-outline,timer-outline,visibility-off-outline,visibility-outline,work-history-outline',
-  role: 'level,organization,position,relation,role,shield-key,template',
+  role: 'collaboration,level,organization,position,relation,role,shield-key,template',
   social: 'facebook,framework7,twitter',
   tools: 'pomotodo,spreadsheet',
 };
