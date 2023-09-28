@@ -97,17 +97,17 @@ export default {
         panel.removeClass('item-panel-invalid');
       }
     },
-    prepareOptions() {
+    async prepareOptions() {
       if (this.optionsUrl) {
-        this.fetchOptions();
+        await this.fetchOptions();
       } else {
-        this.changeOptions(this.options);
+        await this.changeOptions(this.options);
       }
     },
-    changeOptions(options) {
-      // concat
-      const _options = options ? options.concat() : [];
-
+    async changeOptions(options) {
+      // extend
+      const _options = this.$meta.util.extend([], options);
+      await this._changeOptions_icon(_options);
       // optionsBlankAuto
       if (this.optionsBlankAuto) {
         const optEmpty = {
@@ -138,7 +138,8 @@ export default {
         this.setValue();
       });
     },
-    fetchOptions() {
+    async _changeOptions_icon(options) {},
+    async fetchOptions() {
       let moduleName;
       let fetchUrl;
       if (this.optionsUrl.charAt(0) === '/') {
@@ -149,11 +150,9 @@ export default {
         moduleName = this.$pageContainer.$module.name;
         fetchUrl = this.$meta.util.combineApiPath(moduleName, this.optionsUrl);
       }
-      this.$meta.module.use(moduleName, () => {
-        this.$api.post(fetchUrl, this.optionsUrlParams).then(data => {
-          this.changeOptions(data);
-        });
-      });
+      await this.$meta.module.use(moduleName);
+      const data = await this.$api.post(fetchUrl, this.optionsUrlParams);
+      await this.changeOptions(data);
     },
     onChange(event) {
       if (this.valueSetting) return;

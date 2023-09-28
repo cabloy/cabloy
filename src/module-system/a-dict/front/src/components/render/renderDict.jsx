@@ -126,10 +126,15 @@ export default {
     _renderAsSelect() {
       const { parcel, key, property } = this.context;
       const options = this.dict._dictItems.map(item => {
-        return {
+        const option = {
           title: item.titleLocale,
           value: item.code,
         };
+        const icon = item.options?.icon;
+        if (icon) {
+          option.icon = icon;
+        }
+        return option;
       });
       const propertyNew = this.$utils.extend({}, property, {
         ebType: 'select',
