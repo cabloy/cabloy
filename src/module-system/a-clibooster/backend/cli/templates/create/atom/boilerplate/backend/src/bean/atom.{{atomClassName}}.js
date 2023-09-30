@@ -1,6 +1,6 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Atom extends app.meta.AtomBase {
+  class Atom extends ctx.app.meta.AtomBase {
     constructor() {
       super(ctx);
     }
