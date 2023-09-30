@@ -3,15 +3,15 @@ const trimHtml = require('@zhennann/trim-html');
 module.exports = app => {
   const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class AtomCmsBase extends app.meta.AtomBase {
-    get modelArticle() {
+    get modelCMSArticle() {
       return this.ctx.model.module(moduleInfo.relativeName).article;
     }
 
-    get modelContent() {
+    get modelCMSContent() {
       return this.ctx.model.module(moduleInfo.relativeName).content;
     }
 
-    get moduleConfig() {
+    get moduleCMSConfig() {
       return this.ctx.config.module(moduleInfo.relativeName);
     }
 
@@ -42,9 +42,9 @@ module.exports = app => {
       // uuid
       params.uuid = item.uuid || this.ctx.bean.util.uuidv4();
       // insert
-      await this.modelArticle.insert(params);
+      await this.modelCMSArticle.insert(params);
       // add content
-      await this.modelContent.insert({
+      await this.modelCMSContent.insert({
         atomId: key.atomId,
         content: '',
       });
@@ -169,7 +169,7 @@ module.exports = app => {
       const html = await this._renderContent({ item, atomId: key.atomId });
       const summary = this._parseSummary({ item, html });
       // update article
-      await this.modelArticle.update(
+      await this.modelCMSArticle.update(
         {
           sticky: item.sticky,
           keywords: item.keywords,
@@ -245,7 +245,7 @@ module.exports = app => {
       // summary
       let summary;
       if (html) {
-        const res = trimHtml(html, this.moduleConfig.article.trim);
+        const res = trimHtml(html, this.moduleCMSConfig.article.trim);
         summary = res.html.trim();
       }
       if (!summary) {
@@ -272,11 +272,11 @@ module.exports = app => {
       await super.delete({ atomClass, key, options, user });
 
       // delete article
-      await this.modelArticle.delete({
+      await this.modelCMSArticle.delete({
         atomId: key.atomId,
       });
       // delete content
-      await this.modelContent.delete({
+      await this.modelCMSContent.delete({
         atomId: key.atomId,
       });
     }
