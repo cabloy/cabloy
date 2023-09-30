@@ -3,9 +3,17 @@ module.exports = ctx => {
   class CacheBase {
     constructor({ cacheBase }) {
       this._cacheBase = cacheBase;
+      this._configModule = null;
       this._localMem = null;
       this._localRedis = null;
       this._localFetch = null;
+    }
+
+    get configModule() {
+      if (!this._configModule) {
+        this._configModule = ctx.config.module(moduleInfo.relativeName);
+      }
+      return this._configModule;
     }
 
     get localMem() {

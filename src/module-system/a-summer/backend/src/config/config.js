@@ -15,5 +15,10 @@ module.exports = appInfo => {
     },
   };
 
+  // summer
+  config.summer = {
+    enable: true,
+  };
+
   return config;
 };

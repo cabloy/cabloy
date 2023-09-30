@@ -50,6 +50,9 @@ module.exports = ctx => {
     }
 
     __getLayered(options) {
+      if (!this.configModule.summer.enable) {
+        return this.localFetch;
+      }
       const mode = this.__getOptionsMode(options);
       if (mode === 'all' || mode === 'mem') {
         return this.localMem;
