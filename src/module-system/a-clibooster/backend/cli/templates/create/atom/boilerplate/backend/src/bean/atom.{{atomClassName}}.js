@@ -1,10 +1,19 @@
-module.exports = app => {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Atom extends app.meta.AtomBase {
+    constructor() {
+      super(ctx);
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).<%=argv.atomClassName%>;
+    }
+
     async create({ atomClass, item, options, user }) {
       // super
       const key = await super.create({ atomClass, item, options, user });
       // add <%=argv.atomClassName%>
-      const res = await this.ctx.model.<%=argv.atomClassName%>.insert({
+      const res = await this.model.insert({
         atomId: key.atomId,
       });
       // return key
@@ -34,15 +43,15 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update <%=argv.atomClassName%>
-      const data = await this.ctx.model.<%=argv.atomClassName%>.prepareData(item);
-      await this.ctx.model.<%=argv.atomClassName%>.update(data);
+      const data = await this.model.prepareData(item);
+      await this.model.update(data);
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
       // delete <%=argv.atomClassName%>
-      await this.ctx.model.<%=argv.atomClassName%>.delete({
+      await this.model.delete({
         id: key.itemId,
       });
     }
