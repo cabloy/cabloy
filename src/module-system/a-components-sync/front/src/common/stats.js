@@ -44,15 +44,25 @@ export default {
       }
     },
     async stats_loadValue() {
-      const value = await this.$api.post(
-        '/a/stats/stats/get',
-        {
+      if (!this.stats_io) return;
+      const value = await this.stats_io.performAction({
+        method: 'post',
+        url: '/a/stats/stats/get',
+        body: {
           module: this.stats_params.module,
           name: this.stats_params.name,
           nameSub: this.stats_params.nameSub,
         },
-        { debounce: true }
-      );
+      });
+      // const value = await this.$api.post(
+      //   '/a/stats/stats/get',
+      //   {
+      //     module: this.stats_params.module,
+      //     name: this.stats_params.name,
+      //     nameSub: this.stats_params.nameSub,
+      //   },
+      //   { debounce: true }
+      // );
       if (value === undefined) {
         this.stats_setValue(this.stats_default);
       } else {
