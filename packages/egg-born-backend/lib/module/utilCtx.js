@@ -62,6 +62,16 @@ module.exports = ctx => {
       // ok
       return info;
     },
+    async executeBeanAuto({ beanModule, beanFullName, context, fn }) {
+      const _beanClass = beanFullName ? ctx.bean._getBeanClass(beanFullName) : null;
+      if (_beanClass && _beanClass.mode === 'ctx') {
+        // in the same ctx
+        const bean = ctx.bean._getBean(beanFullName);
+        return await ctx.app.meta.util._executeBeanFn({ fn, ctx, bean, context });
+      }
+      // in the new ctx
+      return await this.executeBean({ beanModule, beanFullName, context, fn });
+    },
     async executeBean({ locale, subdomain, beanModule, beanFullName, context, fn, transaction, instance }) {
       return await ctx.app.meta.util.executeBean({
         locale: locale === undefined ? ctx.locale : locale,
