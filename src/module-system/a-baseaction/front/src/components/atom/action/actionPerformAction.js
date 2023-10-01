@@ -2,20 +2,14 @@ export default {
   methods: {
     async _onActionPerformAction() {
       const { ctx, action, item } = this.$props;
+      // action params
       const actionParams = action.params || {};
       // confirm
-      if (actionParams.confirm) {
-        await ctx.$view.dialog.confirm();
-        return;
-      }
+      await this.base_handleConfirm();
+      // key
+      const key = { atomId: item.atomId, itemId: item.itemId };
       // atomClass
-      const atomClass = {
-        module: item.module,
-        atomClassName: item.atomClassName,
-      };
-      // atomClassBase
-      const useStoreAtomClasses = await ctx.$store.use('a/basestore/atomClasses');
-      const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      const atomClass = { module: item.module, atomClassName: item.atomClassName };
       // dataOptions
       const dataOptions = action.dataOptions || {};
       // onActionPerformActionBefore: should after form
@@ -29,12 +23,12 @@ export default {
       if (dataOptions.flowTaskId) {
         options.flowTaskId = dataOptions.flowTaskId;
       }
-      // write
-      const key = { atomId: item.atomId, itemId: item.itemId };
-      await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
-      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, actionSource: ctx });
+      // post
+      await ctx.$api.post('/a/base/atom/performAction', { key, atomClass, action: action.name, item, options });
+      // event
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' } });
       // toast
-      return ctx.$text('Saved');
+      this.base_handleToast();
     },
   },
 };
