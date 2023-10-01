@@ -2,8 +2,6 @@ export default {
   methods: {
     async _onActionPerformAction() {
       const { ctx, action, item } = this.$props;
-      // action params
-      const actionParams = action.params || {};
       // confirm
       await this.base_handleConfirm();
       // key
