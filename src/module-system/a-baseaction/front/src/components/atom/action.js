@@ -18,6 +18,7 @@ import ActionLayout from './action/actionLayout.js';
 import ActionOpenDetailList from './action/actionOpenDetailList.js';
 import ActionMoveDown from './action/actionMoveDown.js';
 import ActionMoveUp from './action/actionMoveUp.js';
+import ActionPerformAction from './action/actionPerformAction.js';
 
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
@@ -46,6 +47,7 @@ export default {
     ActionOpenDetailList,
     ActionMoveDown,
     ActionMoveUp,
+    ActionPerformAction,
   ],
   methods: {
     async onAction() {
@@ -90,7 +92,8 @@ export default {
       } else if (actionName === 'moveUp') {
         return await this._onActionMoveUp();
       }
-      throw new Error(`action handler not found: ${actionName}`);
+      return await this._onActionPerformAction();
+      // throw new Error(`action handler not found: ${actionName}`);
     },
     async _onActionReadGeneral({ atomId }) {
       const { ctx, item } = this.$props;
