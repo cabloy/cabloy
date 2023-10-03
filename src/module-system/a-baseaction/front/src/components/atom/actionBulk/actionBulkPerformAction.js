@@ -35,7 +35,7 @@ export default {
       // action after
       await this.base_handleActionAfterBulk({ keysRes: res.keys, atomClass });
       // toast
-      this.base_handleToast();
+      this.base_handleToastBulk({ keysReq: keys, keysRes: res.keys });
     },
   },
 };

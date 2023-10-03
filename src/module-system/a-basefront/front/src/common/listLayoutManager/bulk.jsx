@@ -101,8 +101,20 @@ export default {
       }
       return actions;
     },
-    bulk_clearSelectedAtoms() {
-      this.bulk.selectedAtoms = [];
+    bulk_clearSelectedAtoms(options) {
+      const keysRemains = options?.keysRemains;
+      const keysClear = options?.keysClear;
+      if (keysRemains) {
+        this.bulk.selectedAtoms = this.bulk.selectedAtoms.filter(item => {
+          return keysRemains.some(key => key.atomId === item.atomId);
+        });
+      } else if (keysClear) {
+        this.bulk.selectedAtoms = this.bulk.selectedAtoms.filter(item => {
+          return !keysClear.some(key => key.atomId === item.atomId);
+        });
+      } else {
+        this.bulk.selectedAtoms = [];
+      }
     },
     bulk_closeSelecting() {
       this.bulk.selecting = false;
