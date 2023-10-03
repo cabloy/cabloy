@@ -17,12 +17,12 @@ export default {
       this.bulk_closeSelecting();
     },
     data_provider_onItemsClear() {
-      // bulk
-      this.bulk_clearSelectedAtoms();
+      // bulk: should not clear selected atoms
+      // this.bulk_clearSelectedAtoms();
     },
     data_provider_onPageCurrentChanged() {
-      // bulk
-      this.bulk_clearSelectedAtoms();
+      // bulk: should not clear selected atoms
+      // this.bulk_clearSelectedAtoms();
     },
     async data_provider_onLoadItemsAll() {
       const params = this.base_prepareSelectParams();
