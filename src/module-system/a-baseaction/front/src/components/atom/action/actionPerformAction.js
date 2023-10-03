@@ -23,8 +23,8 @@ export default {
       }
       // post
       await ctx.$api.post('/a/base/atom/performAction', { key, atomClass, action: action.name, item, options });
-      // event
-      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action: { name: 'save' } });
+      // action after
+      await this.base_handleActionAfter({ key, atomClass });
       // toast
       this.base_handleToast();
     },
