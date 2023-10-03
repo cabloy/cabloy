@@ -5,6 +5,7 @@ import ActionBulkImport from './actionBulk/actionBulkImport.js';
 import ActionBulkLayout from './actionBulk/actionBulkLayout.js';
 import ActionBulkDraftStats from './actionBulk/actionBulkDraftStats.js';
 import ActionBulkRead from './actionBulk/actionBulkRead.js';
+import ActionBulkPerformAction from './actionBulk/actionBulkPerformAction.js';
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -19,6 +20,7 @@ export default {
     ActionBulkLayout,
     ActionBulkDraftStats,
     ActionBulkRead,
+    ActionBulkPerformAction,
   ],
   methods: {
     async onAction() {
@@ -37,7 +39,8 @@ export default {
       } else if (actionName === 'readBulk') {
         return await this._onActionBulkRead();
       }
-      throw new Error(`action handler not found: ${actionName}`);
+      return await this._onActionBulkPerformAction();
+      // throw new Error(`action handler not found: ${actionName}`);
     },
   },
 };

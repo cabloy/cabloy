@@ -1,11 +1,14 @@
 export default {
   methods: {
-    async _onActionPerformAction() {
+    async _onActionBulkPerformAction() {
       const { ctx, action, item } = this.$props;
       // confirm
       await this.base_handleConfirm();
-      // key
-      const key = { atomId: item.atomId, itemId: item.itemId };
+      // keys
+      const selectedAtoms = ctx.bulk.selectedAtoms;
+      const keys = selectedAtoms.map(item => {
+        return { atomId: item.atomId, itemId: item.itemId };
+      });
       // atomClass
       const atomClass = { module: item.module, atomClassName: item.atomClassName };
       // dataOptions
@@ -22,15 +25,15 @@ export default {
         options.flowTaskId = dataOptions.flowTaskId;
       }
       // post
-      await ctx.$api.post('/a/base/atom/performAction', {
-        key,
+      const res = await ctx.$api.post('/a/base/atom/performActionBulk', {
+        keys,
         atomClass,
         action: action.name,
         // item, //form data
         options,
       });
       // action after
-      await this.base_handleActionAfter({ key, atomClass });
+      await this.base_handleActionAfterBulk({ keysRes: res.keys, atomClass });
       // toast
       this.base_handleToast();
     },
