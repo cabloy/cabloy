@@ -26,12 +26,16 @@ export default {
     },
     async data_provider_onLoadItemsAll() {
       const params = this.base_prepareSelectParams();
-      return await this.$api.post('/a/base/atom/select', params);
+      const res = await this.$api.post('/a/base/atom/select', params);
+      this.bulk_patchSelectedAtoms({ items: res.list });
+      return res;
     },
     async data_provider_onLoadItemsPage({ page }) {
       const params = this.base_prepareSelectParams();
       params.options.page = page;
-      return await this.$api.post('/a/base/atom/select', params);
+      const res = await this.$api.post('/a/base/atom/select', params);
+      this.bulk_patchSelectedAtoms({ items: res.list });
+      return res;
     },
     async data_provider_onLoadItemsCount() {
       const params = this.base_prepareSelectParams();
@@ -40,11 +44,13 @@ export default {
     async data_provider_onLoadItem({ itemKey }) {
       const options = this.base_prepareReadOptions();
       const atomClass = this.container.atomClass;
-      return await this.$api.post('/a/base/atom/read', {
+      const res = await this.$api.post('/a/base/atom/read', {
         key: { atomId: itemKey },
         atomClass,
         options,
       });
+      this.bulk_patchSelectedAtoms({ item: res });
+      return res;
     },
   },
 };
