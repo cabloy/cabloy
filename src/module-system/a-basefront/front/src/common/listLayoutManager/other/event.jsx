@@ -40,7 +40,6 @@ export default {
     async event_onActionChanged_others(data) {
       let changed = false;
       const key = data.key;
-      const atomClass = data.atomClass;
       // loop
       await this.data.adapter._loopProviders(async provider => {
         // findItem
@@ -49,12 +48,7 @@ export default {
         const { item } = bundle;
         if (!item) return;
         // fetch new atom
-        const options = this.base_prepareReadOptions();
-        const itemNew = await this.$api.post('/a/base/atom/read', {
-          key,
-          atomClass,
-          options,
-        });
+        const itemNew = await this.data_provider_onLoadItem({ itemKey: key.atomId });
         this.data.adapter._callMethodProvider(provider, 'replaceItem', bundle, itemNew);
         changed = true;
       });

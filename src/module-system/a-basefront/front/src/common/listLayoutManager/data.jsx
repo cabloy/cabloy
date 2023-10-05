@@ -37,5 +37,14 @@ export default {
       const params = this.base_prepareSelectParams();
       return await this.$api.post('/a/base/atom/count', params);
     },
+    async data_provider_onLoadItem({ itemKey }) {
+      const options = this.base_prepareReadOptions();
+      const atomClass = this.container.atomClass;
+      return await this.$api.post('/a/base/atom/read', {
+        key: { atomId: itemKey },
+        atomClass,
+        options,
+      });
+    },
   },
 };
