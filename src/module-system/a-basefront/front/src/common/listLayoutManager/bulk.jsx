@@ -6,7 +6,7 @@ export default {
     return {
       bulk: {
         actions: null,
-        selectedKeys: [],
+        selectedAtoms: [],
         selecting: false,
         activeAtomKey: null,
         hoverAtomKey: null,
@@ -100,6 +100,17 @@ export default {
         }
       }
       return actions;
+    },
+    bulk_patchSelectedAtoms({ items, item }) {
+      if (item) items = [item];
+      if (!items || items.length === 0) return;
+      const selectedAtoms = this.bulk.selectedAtoms;
+      for (const item2 of items) {
+        const index = selectedAtoms.findIndex(_item => _item.atomId === item2.atomId);
+        if (index > -1) {
+          selectedAtoms.splice(index, 1, item2);
+        }
+      }
     },
     bulk_clearSelectedAtoms(options) {
       const keysRemain = options?.keysRemain;
