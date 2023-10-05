@@ -6,7 +6,7 @@ export default {
     return {
       bulk: {
         actions: null,
-        selectedAtoms: [],
+        selectedKeys: [],
         selecting: false,
         activeAtomKey: null,
         hoverAtomKey: null,
@@ -102,11 +102,11 @@ export default {
       return actions;
     },
     bulk_clearSelectedAtoms(options) {
-      const keysRemains = options?.keysRemains;
+      const keysRemain = options?.keysRemain;
       const keysClear = options?.keysClear;
-      if (keysRemains) {
+      if (keysRemain) {
         this.bulk.selectedAtoms = this.bulk.selectedAtoms.filter(item => {
-          return keysRemains.some(key => key.atomId === item.atomId);
+          return keysRemain.some(key => key.atomId === item.atomId);
         });
       } else if (keysClear) {
         this.bulk.selectedAtoms = this.bulk.selectedAtoms.filter(item => {
