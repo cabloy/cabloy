@@ -32,6 +32,12 @@ export default {
         // item, //form data
         options,
       });
+      // progress
+      const progressId = res && res.progressId;
+      if (progressId) {
+        const title = this.base_getDialogTitle();
+        await ctx.$view.dialog.progressbar({ progressId, title });
+      }
       // action after
       await this.base_handleActionAfterBulk({ keysRes: res.keys, atomClass });
       // toast
