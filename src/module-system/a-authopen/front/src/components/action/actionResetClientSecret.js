@@ -2,8 +2,8 @@ export default {
   methods: {
     async _onActionResetClientSecret() {
       const { ctx, item } = this.$props;
-      // hide
-      await ctx.$view.dialog.confirm();
+      // confirm
+      await this.base_handleConfirm();
       const key = { atomId: item.atomId, itemId: item.itemId };
       const atomClass = {
         module: item.module,

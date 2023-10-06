@@ -2,8 +2,8 @@ export default {
   methods: {
     async _onActionDelete() {
       const { ctx, action, item } = this.$props;
-      // delete
-      await ctx.$view.dialog.confirm();
+      // confirm
+      await this.base_handleConfirm();
       // key
       const key = { atomId: item.atomId, itemId: item.itemId };
       // atomClass

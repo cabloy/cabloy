@@ -7,7 +7,8 @@ export default {
         module: item.module,
         atomClassName: item.atomClassName,
       };
-      await ctx.$view.dialog.confirm();
+      // confirm
+      await this.base_handleConfirm();
       const result = await ctx.$api.post('/<%=argv.moduleInfo.url%>/<%=argv.atomClassName%>/<%=argv.actionName%>', { key });
       if (result) {
         // changed

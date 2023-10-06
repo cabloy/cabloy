@@ -2,7 +2,8 @@ export default {
   methods: {
     async _onActionClone() {
       const { ctx, action, item } = this.$props;
-      // await ctx.$view.dialog.confirm();
+      // confirm
+      // await this.base_handleConfirm();
       try {
         // key
         const key = { atomId: item.atomId, itemId: item.itemId };

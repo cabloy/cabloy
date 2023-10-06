@@ -3,7 +3,7 @@ export default {
     async _onActionBulkDelete() {
       const { ctx, action, item } = this.$props;
       // confirm
-      await ctx.$view.dialog.confirm();
+      await this.base_handleConfirm();
       // atomClass
       const atomClass = {
         module: item.module,
