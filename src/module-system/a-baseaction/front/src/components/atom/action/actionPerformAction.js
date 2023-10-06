@@ -22,7 +22,7 @@ export default {
         options.flowTaskId = dataOptions.flowTaskId;
       }
       // post
-      const res = await ctx.$api.post('/a/base/atom/performAction', {
+      let res = await ctx.$api.post('/a/base/atom/performAction', {
         key,
         atomClass,
         action: action.name,
@@ -33,7 +33,7 @@ export default {
       const progressId = res && res.progressId;
       if (progressId) {
         const title = this.base_getDialogTitle();
-        await ctx.$view.dialog.progressbar({ progressId, title });
+        res = await ctx.$view.dialog.progressbar({ progressId, title });
       }
       // action after
       await this.base_handleActionAfter({ key, atomClass });
