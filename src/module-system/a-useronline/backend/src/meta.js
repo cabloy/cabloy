@@ -33,11 +33,16 @@ module.exports = app => {
             kickOut: {
               code: 101,
               title: 'ActionKickOut',
-              actionModule: moduleInfo.relativeName,
+              actionModule: 'a-base',
               actionComponent: 'action',
               icon: { f7: ':outline:logout-outline' },
               // enableOnOpened: true,
               stage: 'formal',
+              params: {
+                actionAfter: {
+                  sameAs: 'write',
+                },
+              },
             },
             loginLog: {
               code: 102,

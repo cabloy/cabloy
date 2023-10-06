@@ -86,6 +86,17 @@ module.exports = app => {
       return null;
     }
 
+    async performAction({ key, atomClass, action, item, options, user }) {
+      // super
+      await super.performAction({ key, atomClass, action, item, options, user });
+      // partyOver
+      if (action === 'kickOut') {
+        const item = await this.ctx.model.userOnline.get({ id: key.itemId });
+        const user = { id: item.userId };
+        await this.ctx.bean.userOnline.kickOut({ user });
+      }
+    }
+
     _getOnlineStatus(item) {
       return item.expireTime <= new Date() ? 1 : 2;
     }
