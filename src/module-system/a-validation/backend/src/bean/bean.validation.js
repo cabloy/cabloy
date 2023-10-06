@@ -141,7 +141,7 @@ module.exports = ctx => {
     }
 
     _prepareProperties_ignoreRules({ propertiesFrom, propertiesTo }) {
-      const __basicRuleNames = ['type', 'ebType', 'ebReadOnly', '$async'];
+      const __basicRuleNames = ['type', 'ebType', 'ebCopy', 'ebReadOnly', '$async'];
       for (const key in propertiesFrom) {
         const propertyFrom = propertiesFrom[key];
         const propertyTo = {};

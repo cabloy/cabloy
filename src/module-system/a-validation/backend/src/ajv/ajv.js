@@ -78,7 +78,7 @@ function createValidate(schemaRoot) {
 
 function _filterResult({ ajv, validate, data, filterOptions }) {
   if (filterOptions === true) {
-    filterOptions = { type: true, ebReadOnly: true };
+    filterOptions = { type: true, ebCopy: true, ebReadOnly: true };
   }
   _filterSchema({ ajv, schema: validate.schema, data, filterOptions });
 }
@@ -97,6 +97,8 @@ function _filterProperties({ ajv, properties, data, filterOptions }) {
       data[key] = null;
     }
     if (filterOptions.type && !property.type) {
+      delete data[key];
+    } else if (filterOptions.ebCopy && property.ebCopy === false) {
       delete data[key];
     } else if (filterOptions.ebReadOnly && property.ebReadOnly === true) {
       delete data[key];
