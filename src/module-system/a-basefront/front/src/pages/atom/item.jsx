@@ -24,6 +24,14 @@ export default {
     if (query.flowTaskId) {
       options.flowTaskId = parseInt(query.flowTaskId);
     }
+    // formAction
+    if (query.formAction) {
+      options.formAction = parseInt(query.formAction);
+    }
+    // formActionMain
+    if (query.formActionMain) {
+      options.formActionMain = parseInt(query.formActionMain);
+    }
     return {
       container: {
         mode,

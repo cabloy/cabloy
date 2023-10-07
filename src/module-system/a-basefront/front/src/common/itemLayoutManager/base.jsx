@@ -33,6 +33,12 @@ export default {
     base_flowTaskId() {
       return this.container.options?.flowTaskId;
     },
+    base_formAction() {
+      return this.container.options?.formAction;
+    },
+    base_formActionMain() {
+      return this.container.options?.formActionMain;
+    },
   },
   created() {
     this.$store.dispatch('a/base/getLabels');
@@ -133,6 +139,9 @@ export default {
       if (this.base_flowTaskId) {
         options.flowTaskId = this.base_flowTaskId;
       }
+      if (this.base_formActionMain) {
+        options.formAction = this.base_formActionMain;
+      }
       this.base._atomMain = await this.$api.post('/a/base/atom/read', {
         key: { atomId: atomIdMain },
         atomClass: this.base.atomClassBase.detail.atomClassMain,
@@ -148,6 +157,9 @@ export default {
       options.containerMode = this.container.mode;
       // flowTaskId
       options.flowTaskId = this.base_flowTaskId;
+      // formAction/formActionMain
+      options.formAction = this.base_formAction;
+      options.formActionMain = this.base_formActionMain;
       // need not atomIdMain
       // // atomIdMain
       // options.atomIdMain = this.base_atomIdMain;

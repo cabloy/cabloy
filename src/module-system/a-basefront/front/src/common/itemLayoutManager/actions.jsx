@@ -154,6 +154,12 @@ export default {
       if (this.base_flowTaskId) {
         dataOptions.flowTaskId = this.base_flowTaskId;
       }
+      if (this.base_formAction) {
+        dataOptions.formAction = this.base_formAction;
+      }
+      if (this.base_formActionMain) {
+        dataOptions.formActionMain = this.base_formActionMain;
+      }
       // not use this.$utils.extend
       actionBase = Object.assign({}, actionBase, { targetEl: event.currentTarget }, { dataOptions });
       // for write
