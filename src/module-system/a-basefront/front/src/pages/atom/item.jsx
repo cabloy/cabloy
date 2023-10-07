@@ -26,11 +26,11 @@ export default {
     }
     // formAction
     if (query.formAction) {
-      options.formAction = parseInt(query.formAction);
+      options.formAction = query.formAction;
     }
     // formActionMain
     if (query.formActionMain) {
-      options.formActionMain = parseInt(query.formActionMain);
+      options.formActionMain = query.formActionMain;
     }
     return {
       container: {

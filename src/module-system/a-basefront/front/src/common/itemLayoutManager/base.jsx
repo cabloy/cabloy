@@ -14,6 +14,8 @@ export default {
         //
         _atomIdMain: null,
         _atomMain: null,
+        //
+        _formActionBase: null,
       },
     };
   },
@@ -124,6 +126,15 @@ export default {
         this.base.notfound = true;
         return false;
       }
+    },
+    async base_loadFormAction() {
+      if (!this.base.atomClassBase) return;
+      if (!this.base_formAction) return;
+      const useStoreAtomActions = await this.$store.use('a/basestore/atomActions');
+      this.base._formActionBase = await useStoreAtomActions.getActionBase({
+        atomClass: this.base.atomClass,
+        name: this.base_formAction,
+      });
     },
     async base_loadAtomMain() {
       if (!this.base.atomClassBase) return;

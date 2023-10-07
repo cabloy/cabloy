@@ -65,6 +65,7 @@ export default {
       res = await this.base_loadItem();
       if (!res) return;
       await this.base_loadAtomMain();
+      await this.base_loadFormAction();
       await this.share_updateLink();
       this.base.ready = true;
     },
