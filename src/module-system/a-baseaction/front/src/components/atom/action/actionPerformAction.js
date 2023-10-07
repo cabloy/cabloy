@@ -1,6 +1,13 @@
 export default {
   methods: {
     async _onActionPerformAction() {
+      // form
+      const formHandle = await this.base_handleActionForm();
+      if (formHandle) return;
+      // perform
+      await this._onActionPerformActionPerform();
+    },
+    async _onActionPerformActionPerform() {
       const { ctx, action, item } = this.$props;
       // confirm
       await this.base_handleConfirm();
