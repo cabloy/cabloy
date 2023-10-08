@@ -22,6 +22,12 @@ export default {
       if (dataOptions.flowTaskId) {
         options.flowTaskId = dataOptions.flowTaskId;
       }
+      if (dataOptions.formAction) {
+        options.formAction = dataOptions.formAction;
+      }
+      if (dataOptions.formActionMain) {
+        options.formActionMain = dataOptions.formActionMain;
+      }
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       // do
       if (dataOptions.flowTaskId) {
