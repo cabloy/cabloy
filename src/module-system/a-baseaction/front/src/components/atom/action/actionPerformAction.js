@@ -1,7 +1,7 @@
 export default {
   methods: {
     async _onActionPerformAction() {
-      const { ctx, action, item } = this.$props;
+      const { action } = this.$props;
       // dataOptions
       const dataOptions = action.dataOptions || {};
       if (dataOptions.formActionContinue) {
