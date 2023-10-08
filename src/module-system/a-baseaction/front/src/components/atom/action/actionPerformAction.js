@@ -1,11 +1,18 @@
 export default {
   methods: {
     async _onActionPerformAction() {
+      const { ctx, action, item } = this.$props;
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
+      if (dataOptions.formActionContinue) {
+        // perform
+        return await this._onActionPerformActionPerform();
+      }
       // form
       const formHandle = await this.base_handleActionForm();
       if (formHandle) return;
       // perform
-      await this._onActionPerformActionPerform();
+      return await this._onActionPerformActionPerform();
     },
     async _onActionPerformActionPerform() {
       const { ctx, action, item } = this.$props;

@@ -30,15 +30,29 @@ export default {
       }
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       // do
-      if (dataOptions.flowTaskId) {
-        // handle task
-        await this._onActionSubmit_handleTask({ ctx, dataOptions });
+      if (dataOptions.formAction) {
+        // handle form action
+        await this._onActionSubmit_handleFormAction({ ctx, item, atomClass, dataOptions });
+      } else if (dataOptions.flowTaskId) {
+        // handle flow task
+        await this._onActionSubmit_handleFlowTask({ ctx, dataOptions });
       } else {
         // submit
         await this._onActionSubmit_normal({ ctx, item, key, atomClass });
       }
     },
-    async _onActionSubmit_handleTask({ ctx, dataOptions }) {
+    async _onActionSubmit_handleFormAction({ ctx, item, atomClass, dataOptions }) {
+      // form action
+      const formAction = dataOptions.formAction;
+      // data options
+      const dataOptionsContinue = Object.assign({}, dataOptions, { formAction: undefined, formActionContinue: true });
+      // action
+      const useStoreAtomActions = await ctx.$store.use('a/basestore/atomActions');
+      let actionBase = await useStoreAtomActions.getActionBase({ atomClass, name: formAction });
+      actionBase = ctx.$utils.extend({}, actionBase, { dataOptions: dataOptionsContinue });
+      return await ctx.$meta.util.performAction({ ctx, action: actionBase, item });
+    },
+    async _onActionSubmit_handleFlowTask({ ctx, dataOptions }) {
       const flowLayoutManager = ctx.timeline.instance;
       const tasks = flowLayoutManager.base_tasks;
       const task = tasks.find(item => item.flowTaskId === dataOptions.flowTaskId);
