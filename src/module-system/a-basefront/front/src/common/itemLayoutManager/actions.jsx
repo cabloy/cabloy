@@ -22,6 +22,8 @@ export default {
         // view
         // if (action.name === 'read' && this.container.mode === 'view') continue;
         if (action.name === 'read') continue;
+        // history
+        if (action.name === 'viewHistory') continue;
         // flow actions
         if (action.actionMode === 1) continue;
         // actionBase
@@ -59,14 +61,13 @@ export default {
         });
       }
       //    history
-      if (this.base.item.atomIdFormal || this.base.item.atomStage === 1) {
-        const atomClassBase = this.getAtomClass(this.base.atomClass);
-        if (atomClassBase.history !== false) {
-          actions.push({
-            module: this.base.atomClass.module,
-            atomClassName: this.base.atomClass.atomClassName,
-            name: 'history',
-          });
+      const actionViewHistory = this.actions_findAction('viewHistory');
+      if (actionViewHistory) {
+        if (this.base.item.atomIdFormal || this.base.item.atomStage === 1) {
+          const atomClassBase = this.getAtomClass(this.base.atomClass);
+          if (atomClassBase.history) {
+            actions.push(actionViewHistory);
+          }
         }
       }
       // ok
