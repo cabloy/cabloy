@@ -9,6 +9,7 @@ const __snippet_atom = `<%=argv.atomClassName%>: {
     tag: false,
     comment: false,
     attachment: false,
+    history: false,
     layout: {
       config: {
         // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
