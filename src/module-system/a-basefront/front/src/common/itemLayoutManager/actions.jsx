@@ -176,12 +176,20 @@ export default {
     actions_getActionTitle(action) {
       return this.getActionTitle(action, this.base.item);
     },
-    actions_checkIfHandleTask() {
+    actions_checkIfHandleFlowTask() {
       const atomClassBase = this.base.atomClassBase;
       if (atomClassBase.detail) return false;
       const mode = this.container.mode;
-      const handleTask = mode === 'edit' && this.base_flowTaskId;
-      return handleTask;
+      const handleFlowTask = mode === 'edit' && this.base_flowTaskId;
+      return handleFlowTask;
+    },
+    actions_checkIfHandleFormAction() {
+      // todo: detail maybe also support formAction
+      const atomClassBase = this.base.atomClassBase;
+      if (atomClassBase.detail) return false;
+      const mode = this.container.mode;
+      const handleFormAction = mode === 'edit' && this.base_formAction;
+      return handleFormAction;
     },
     actions_renderButtonView() {
       // need not show view button even on edit mode
@@ -211,7 +219,7 @@ export default {
     },
     actions_renderButtonSave() {
       const mode = this.container.mode;
-      const handleTask = this.actions_checkIfHandleTask();
+      const handleFlowTask = this.actions_checkIfHandleFlowTask();
       const actionWrite = this.actions_findAction('write');
       if (!actionWrite) return null;
       const atomClassBase = this.base.atomClassBase;
@@ -222,11 +230,11 @@ export default {
       // if (atomClassBase.itemOnly || (this.base.item.atomStage !== 2 && !atomClosed)) {
       if (atomClassBase.itemOnly || this.base.item.atomStage !== 2) {
         const actionIconDraft =
-          handleTask || atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
+          handleFlowTask || atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
         const actionIcon = mode === 'edit' ? actionIconDraft : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
         const actionTitleDraft =
-          handleTask || atomClassBase.itemOnly || this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
+          handleFlowTask || atomClassBase.itemOnly || this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
         const actionTitle = mode === 'edit' ? actionTitleDraft : this.actions_getActionTitle(actionWrite);
         return (
           <eb-link
@@ -243,8 +251,8 @@ export default {
     actions_renderButtonSaveAndReturn() {
       const mode = this.container.mode;
       if (mode !== 'edit') return null;
-      const handleTask = this.actions_checkIfHandleTask();
-      if (handleTask) return null;
+      const handleFlowTask = this.actions_checkIfHandleFlowTask();
+      if (handleFlowTask) return null;
       const actionIcon = '::save-and-return';
       const actionName = 'saveAndReturn';
       const actionTitle = 'SaveAndReturn';
@@ -259,12 +267,12 @@ export default {
       );
     },
     actions_renderButtonSubmit() {
-      const handleTask = this.actions_checkIfHandleTask();
-      if (handleTask && !this.timeline.instance?.base_tasks) return null;
+      const handleFlowTask = this.actions_checkIfHandleFlowTask();
+      if (handleFlowTask && !this.timeline.instance?.base_tasks) return null;
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
       // submit
-      if (handleTask || (actionWrite && this.base.item.atomStage === 0 && !atomClosed)) {
+      if (handleFlowTask || (actionWrite && this.base.item.atomStage === 0 && !atomClosed)) {
         const actionIcon = '::save-and-submit';
         const actionName = 'submit';
         const actionTitle = 'SaveAndSubmit';
