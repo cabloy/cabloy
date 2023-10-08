@@ -219,6 +219,7 @@ export default {
     },
     actions_renderButtonSave() {
       const mode = this.container.mode;
+      const handleFormAction = this.actions_checkIfHandleFormAction();
       const handleFlowTask = this.actions_checkIfHandleFlowTask();
       const actionWrite = this.actions_findAction('write');
       if (!actionWrite) return null;
@@ -230,11 +231,15 @@ export default {
       // if (atomClassBase.itemOnly || (this.base.item.atomStage !== 2 && !atomClosed)) {
       if (atomClassBase.itemOnly || this.base.item.atomStage !== 2) {
         const actionIconDraft =
-          handleFlowTask || atomClassBase.itemOnly || this.base.item.atomSimple ? '::save' : '::save-as-draft';
+          handleFormAction || handleFlowTask || atomClassBase.itemOnly || this.base.item.atomSimple
+            ? '::save'
+            : '::save-as-draft';
         const actionIcon = mode === 'edit' ? actionIconDraft : '::edit';
         const actionName = mode === 'edit' ? 'save' : 'write';
         const actionTitleDraft =
-          handleFlowTask || atomClassBase.itemOnly || this.base.item.atomSimple ? 'Save' : 'SaveAsDraft';
+          handleFormAction || handleFlowTask || atomClassBase.itemOnly || this.base.item.atomSimple
+            ? 'Save'
+            : 'SaveAsDraft';
         const actionTitle = mode === 'edit' ? actionTitleDraft : this.actions_getActionTitle(actionWrite);
         return (
           <eb-link
@@ -251,8 +256,9 @@ export default {
     actions_renderButtonSaveAndReturn() {
       const mode = this.container.mode;
       if (mode !== 'edit') return null;
+      const handleFormAction = this.actions_checkIfHandleFormAction();
       const handleFlowTask = this.actions_checkIfHandleFlowTask();
-      if (handleFlowTask) return null;
+      if (handleFormAction || handleFlowTask) return null;
       const actionIcon = '::save-and-return';
       const actionName = 'saveAndReturn';
       const actionTitle = 'SaveAndReturn';
@@ -267,12 +273,13 @@ export default {
       );
     },
     actions_renderButtonSubmit() {
+      const handleFormAction = this.actions_checkIfHandleFormAction();
       const handleFlowTask = this.actions_checkIfHandleFlowTask();
       if (handleFlowTask && !this.timeline.instance?.base_tasks) return null;
       const atomClosed = this.base.item.atomClosed === 1;
       const actionWrite = this.actions_findAction('write');
       // submit
-      if (handleFlowTask || (actionWrite && this.base.item.atomStage === 0 && !atomClosed)) {
+      if (handleFormAction || handleFlowTask || (actionWrite && this.base.item.atomStage === 0 && !atomClosed)) {
         const actionIcon = '::save-and-submit';
         const actionName = 'submit';
         const actionTitle = 'SaveAndSubmit';
