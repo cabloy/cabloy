@@ -20,6 +20,7 @@ module.exports = app => {
             tag: true,
             comment: false,
             attachment: false,
+            history: true,
           },
           actions: {
             write: {
