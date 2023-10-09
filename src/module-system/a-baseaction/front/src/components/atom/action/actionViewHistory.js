@@ -1,6 +1,6 @@
 export default {
   methods: {
-    async _onActionHistory() {
+    async _onActionViewHistory() {
       const { ctx, item } = this.$props;
       const atomIdFormal = item.atomStage === 1 ? item.atomId : item.atomIdFormal;
       if (!atomIdFormal) return;

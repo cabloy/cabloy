@@ -6,7 +6,6 @@ import ActionSave from './action/actionSave.js';
 import ActionSubmit from './action/actionSubmit.js';
 import ActionWrite from './action/actionWrite.js';
 import ActionClone from './action/actionClone.js';
-import ActionHistory from './action/actionHistory.js';
 import ActionFormal from './action/actionFormal.js';
 import ActionDraft from './action/actionDraft.js';
 import ActionSelectLocale from './action/actionSelectLocale.js';
@@ -14,6 +13,7 @@ import ActionSelectResourceType from './action/actionSelectResourceType.js';
 import ActionEnable from './action/actionEnable.js';
 import ActionDisable from './action/actionDisable.js';
 import ActionViewWorkflow from './action/actionViewWorkflow.js';
+import ActionViewHistory from './action/actionViewHistory.js';
 import ActionLayout from './action/actionLayout.js';
 import ActionOpenDetailList from './action/actionOpenDetailList.js';
 import ActionMoveDown from './action/actionMoveDown.js';
@@ -35,7 +35,6 @@ export default {
     ActionSubmit,
     ActionWrite,
     ActionClone,
-    ActionHistory,
     ActionFormal,
     ActionDraft,
     ActionSelectLocale,
@@ -43,6 +42,7 @@ export default {
     ActionEnable,
     ActionDisable,
     ActionViewWorkflow,
+    ActionViewHistory,
     ActionLayout,
     ActionOpenDetailList,
     ActionMoveDown,
@@ -67,8 +67,6 @@ export default {
         return await this._onActionWrite();
       } else if (actionName === 'clone') {
         return await this._onActionClone();
-      } else if (actionName === 'history') {
-        return await this._onActionHistory();
       } else if (actionName === 'formal') {
         return await this._onActionFormal();
       } else if (actionName === 'draft') {
@@ -83,6 +81,8 @@ export default {
         return await this._onActionDisable();
       } else if (actionName === 'viewWorkflow') {
         return await this._onActionViewWorkflow();
+      } else if (actionName === 'viewHistory') {
+        return await this._onActionViewHistory();
       } else if (actionName === 'layout') {
         return await this._onActionLayout();
       } else if (actionName === 'openDetailList') {
