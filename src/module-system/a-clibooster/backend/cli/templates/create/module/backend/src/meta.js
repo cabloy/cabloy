@@ -3,6 +3,8 @@ module.exports = app => {
   const atomClasses = require('./config/atomClass/atomClasses.js')(app);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
+  // keywords
+  const keywords = require('./config/validation/keywords.js')(app);
   // static
   const staticDicts = require('./config/static/dicts.js')(app);
   const staticLayouts = require('./config/static/layouts.js')(app);
@@ -24,7 +26,7 @@ module.exports = app => {
     },
     validation: {
       validators: {},
-      keywords: {},
+      keywords,
       schemas,
     },
     index: {
