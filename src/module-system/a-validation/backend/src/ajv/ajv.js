@@ -36,8 +36,9 @@ module.exports = app => {
     }
     // keywords
     if (keywords) {
-      for (const _keyword in keywords) {
-        ajv.addKeyword(_keyword, keywords[_keyword]);
+      for (const key in keywords) {
+        const _key = key.indexOf('x-') === 0 ? key : `x-${key}`;
+        ajv.addKeyword(_key, keywords[key]);
       }
     }
     // schemas
