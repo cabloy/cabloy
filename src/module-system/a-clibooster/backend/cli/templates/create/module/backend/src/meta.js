@@ -1,4 +1,6 @@
 module.exports = app => {
+  // atomClasses
+  const atomClasses = require('./config/atomClass/atomClasses.js')(app);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
@@ -6,7 +8,7 @@ module.exports = app => {
   const staticResources = require('./config/static/resources.js')(app);
   const meta = {
     base: {
-      atoms: {},
+      atoms: atomClasses,
       statics: {
         'a-baselayout.layout': {
           items: staticLayouts,
