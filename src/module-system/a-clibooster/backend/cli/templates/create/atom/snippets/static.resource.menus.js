@@ -30,7 +30,7 @@ const __snippet = `{
 },`;
 
 module.exports = {
-  file: 'backend/src/config/static/resources.js',
+  file: 'backend/src/config/static/resource/menus.js',
   async transform({ cli, ast, argv, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
