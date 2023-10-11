@@ -1,93 +1,29 @@
+const fileVersionUpdates = [1, 2];
+const fileVersionInits = [1, 2];
+
 module.exports = app => {
   class Version extends app.meta.BeanBase {
     async update(options) {
-      if (options.version === 1) {
-        // create table: aUserOnline
-        let sql = `
-          CREATE TABLE aUserOnline (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            userId int(11) DEFAULT '0',
-            loginCount int(11) DEFAULT '0',
-            loginIPLast varchar(50) DEFAULT NULL,
-            loginTimeLast timestamp DEFAULT NULL,
-            onlineCount int(11) DEFAULT '0',
-            onlineIPLast varchar(50) DEFAULT NULL,
-            onlineTimeLast timestamp DEFAULT NULL,
-            expireTime timestamp DEFAULT NULL,
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-        // create table: aUserOnlineHistory
-        sql = `
-          CREATE TABLE aUserOnlineHistory (
-            id int(11) NOT NULL AUTO_INCREMENT,
-            createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            deleted int(11) DEFAULT '0',
-            iid int(11) DEFAULT '0',
-            atomId int(11) DEFAULT '0',
-            userId int(11) DEFAULT '0',
-            onlineIP varchar(50) DEFAULT NULL,
-            onlineTime timestamp DEFAULT NULL,
-            isLogin int(11) DEFAULT '0',
-            PRIMARY KEY (id)
-          )
-        `;
-        await this.ctx.model.query(sql);
-      }
-
-      if (options.version === 2) {
-        // aAtom: drop atomId
-        const sql = `
-          ALTER TABLE aUserOnlineHistory
-            DROP COLUMN atomId
-        `;
-        await this.ctx.model.query(sql);
+      if (fileVersionUpdates.includes(options.version)) {
+        const VersionUpdateFn = require(`./version.manager/update/update${options.version}.js`);
+        const versionUpdate = new (VersionUpdateFn(this.ctx))();
+        await versionUpdate.run(options);
       }
     }
 
     async init(options) {
-      if (options.version === 1) {
-        // add role rights
-        let roleRights = [
-          //
-          { roleName: 'system', action: 'read', scopeNames: 'authenticated' },
-          // custom
-          { roleName: 'system', action: 'kickOut', scopeNames: 'authenticated' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnline', roleRights });
-        //
-        roleRights = [
-          //
-          { roleName: 'system', action: 'read' },
-          { roleName: 'system', action: 'delete' },
-          { roleName: 'system', action: 'deleteBulk' },
-          // todo: only for test
-          // { roleName: 'system', action: 'exportBulk' },
-          // { roleName: 'system', action: 'create' },
-          // { roleName: 'system', action: 'write' },
-          // { roleName: 'system', action: 'clone' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnlineHistory', roleRights });
-      }
-
-      if (options.version === 2) {
-        // add role rights
-        const roleRights = [
-          // custom
-          { roleName: 'system', action: 'loginLog', scopeNames: 'authenticated' },
-        ];
-        await this.ctx.bean.role.addRoleRightBatch({ atomClassName: 'userOnline', roleRights });
+      if (fileVersionInits.includes(options.version)) {
+        const VersionInitFn = require(`./version.manager/init/init${options.version}.js`);
+        const versionInit = new (VersionInitFn(this.ctx))();
+        await versionInit.run(options);
       }
     }
 
-    async test() {}
+    async test() {
+      const VersionTestFn = require('./version.manager/test/test.js');
+      const versionTest = new (VersionTestFn(this.ctx))();
+      await versionTest.run();
+    }
   }
 
   return Version;
