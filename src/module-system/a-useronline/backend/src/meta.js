@@ -1,5 +1,6 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // atomClasses
+  const atomClasses = require('./config/atomClass/atomClasses.js')(app);
   // schemas
   const schemas = require('./config/validation/schemas.js')(app);
   // static
@@ -9,83 +10,7 @@ module.exports = app => {
   // meta
   const meta = {
     base: {
-      atoms: {
-        userOnline: {
-          info: {
-            bean: 'userOnline',
-            title: 'Users Status', // 'Online Users',
-            tableName: 'aUserOnline',
-            language: false,
-            category: false,
-            tag: false,
-            simple: true,
-            history: false,
-            inner: true,
-            comment: false,
-            attachment: false,
-            layout: {
-              config: {
-                atomList: 'layoutAtomListUserOnline',
-              },
-            },
-          },
-          actions: {
-            kickOut: {
-              code: 101,
-              title: 'ActionKickOut',
-              actionModule: 'a-base',
-              actionComponent: 'action',
-              icon: { f7: ':outline:logout-outline' },
-              // enableOnOpened: true,
-              stage: 'formal',
-              params: {
-                actionAfter: {
-                  sameAs: 'write',
-                },
-              },
-            },
-            loginLog: {
-              code: 102,
-              title: 'LoginLog',
-              actionModule: moduleInfo.relativeName,
-              actionComponent: 'action',
-              icon: { f7: ':role:shield-key' },
-              // enableOnOpened: true,
-              stage: 'formal',
-            },
-          },
-          validator: 'userOnline',
-          search: {
-            validator: 'userOnlineSearch',
-          },
-        },
-        userOnlineHistory: {
-          info: {
-            bean: 'userOnlineHistory',
-            title: 'LoginLog',
-            tableName: 'aUserOnlineHistory',
-            itemOnly: true,
-            fields: {
-              userIds: 'userId',
-              dicts: {
-                isLogin: {
-                  dictKey: 'a-useronline:dictLoginType',
-                },
-              },
-            },
-            layout: {
-              config: {
-                atomList: 'layoutAtomListUserOnlineHistory',
-              },
-            },
-          },
-          actions: {},
-          validator: 'userOnlineHistory',
-          search: {
-            validator: 'userOnlineHistorySearch',
-          },
-        },
-      },
+      atoms: atomClasses,
       statics: {
         'a-baselayout.layout': {
           items: staticLayouts,
