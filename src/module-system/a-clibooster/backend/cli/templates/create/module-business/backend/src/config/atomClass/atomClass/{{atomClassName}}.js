@@ -22,5 +22,5 @@ module.exports = app => {
       validator: '<%=argv.atomClassName%>Search',
     },
   };
-  return purchaseOrder;
+  return <%=argv.atomClassName%>;
 };
