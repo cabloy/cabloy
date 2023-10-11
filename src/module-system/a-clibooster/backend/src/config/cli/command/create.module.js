@@ -30,10 +30,9 @@ module.exports = app => {
             type: 'select',
             message: 'Specify the module template',
             choices: [
-              { name: 'module', message: 'cabloy module template' },
-              { name: 'module-business', message: 'cabloy business module template' },
-              { name: 'module-business-details', message: 'cabloy business module template with details' },
-              { name: 'module-icon', message: 'cabloy icon module template' },
+              { name: 'module', message: 'cabloy module template (basic)' },
+              { name: 'module-business', message: 'cabloy module template (business)' },
+              { name: 'module-icon', message: 'cabloy module template (icon)' },
             ],
           },
         },
