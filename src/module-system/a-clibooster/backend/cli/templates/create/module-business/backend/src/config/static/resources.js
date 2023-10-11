@@ -1,37 +1,17 @@
+const functions = require('./resource/functions.js');
+const menus = require('./resource/menus.js');
+const mines = require('./resource/mines.js');
+const widgets = require('./resource/widgets.js');
+const blocks = require('./resource/blocks.js');
+const deprecateds = require('./resource/deprecateds.js');
+
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const resources = [
-    // menu
-    {
-      atomName: 'Create <%=argv.atomClassNameCapitalize%>',
-      atomStaticKey: 'create<%=argv.atomClassNameCapitalize%>',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.Create',
-      resourceType: 'a-base:menu',
-      resourceConfig: JSON.stringify({
-        module: moduleInfo.relativeName,
-        atomClassName: '<%=argv.atomClassName%>',
-        atomAction: 'create',
-      }),
-      resourceIcon: '::add',
-      appKey: 'a-appbooster:appUnclassified',
-      resourceRoles: 'authenticated',
-    },
-    {
-      atomName: '<%=argv.atomClassNameCapitalize%> List',
-      atomStaticKey: 'list<%=argv.atomClassNameCapitalize%>',
-      atomRevision: 0,
-      atomCategoryId: 'a-base:menu.List',
-      resourceType: 'a-base:menu',
-      resourceConfig: JSON.stringify({
-        module: moduleInfo.relativeName,
-        atomClassName: '<%=argv.atomClassName%>',
-        atomAction: 'read',
-      }),
-      resourceIcon: ':outline:data-list-outline',
-      appKey: 'a-appbooster:appUnclassified',
-      resourceRoles: 'authenticated',
-    },
-  ];
+  let resources = [];
+  resources = resources.concat(functions(app));
+  resources = resources.concat(menus(app));
+  resources = resources.concat(mines(app));
+  resources = resources.concat(widgets(app));
+  resources = resources.concat(blocks(app));
+  resources = resources.concat(deprecateds(app));
   return resources;
 };
