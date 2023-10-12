@@ -13,7 +13,9 @@ module.exports = ctx => {
       // super
       await super.create({ atomClass, item, options, user });
       // add <%=argv.atomClassName%>
-      const res = await this.model.insert();
+      const res = await this.model.insert({
+        userId: user.id,
+      });
       // return key
       const itemId = res.insertId;
       return { atomId: itemId, itemId };
