@@ -1,10 +1,19 @@
-module.exports = app => {
-  class Atom extends app.meta.AtomBase {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom extends ctx.app.meta.AtomBase {
+    constructor() {
+      super(ctx);
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).userOnlineHistory;
+    }
+
     async create({ atomClass, item, options, user }) {
       // super
       await super.create({ atomClass, item, options, user });
       // add userOnlineHistory
-      const res = await this.ctx.model.userOnlineHistory.insert();
+      const res = await this.model.insert();
       // return key
       const itemId = res.insertId;
       return { atomId: itemId, itemId };
@@ -12,7 +21,7 @@ module.exports = app => {
 
     async read({ atomClass, options, key, user }) {
       // check demo
-      this.ctx.bean.util.checkDemoForAtomRead();
+      ctx.bean.util.checkDemoForAtomRead();
       // super
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
@@ -24,7 +33,7 @@ module.exports = app => {
 
     async select({ atomClass, options, items, user }) {
       // check demo
-      this.ctx.bean.util.checkDemoForAtomSelect();
+      ctx.bean.util.checkDemoForAtomSelect();
       // super
       await super.select({ atomClass, options, items, user });
       // meta
@@ -37,15 +46,15 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update userOnlineHistory
-      const data = await this.ctx.model.userOnlineHistory.prepareData(item);
-      await this.ctx.model.userOnlineHistory.update(data);
+      const data = await this.model.prepareData(item);
+      await this.model.update(data);
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
       // delete userOnlineHistory
-      await this.ctx.model.userOnlineHistory.delete({
+      await this.model.delete({
         id: key.itemId,
       });
     }

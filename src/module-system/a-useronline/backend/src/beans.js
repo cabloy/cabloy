@@ -12,11 +12,11 @@ module.exports = app => {
     },
     // atom
     'atom.userOnline': {
-      mode: 'app',
+      mode: 'ctx',
       bean: atomUserOnline,
     },
     'atom.userOnlineHistory': {
-      mode: 'app',
+      mode: 'ctx',
       bean: atomUserOnlineHistory,
     },
     // global

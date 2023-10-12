@@ -1,10 +1,19 @@
-module.exports = app => {
-  class Atom extends app.meta.AtomBase {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom extends ctx.app.meta.AtomBase {
+    constructor() {
+      super(ctx);
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).userOnline;
+    }
+
     async create({ atomClass, item, options, user }) {
       // super
       const key = await super.create({ atomClass, item, options, user });
       // add userOnline
-      const res = await this.ctx.model.userOnline.insert({
+      const res = await this.model.insert({
         atomId: key.atomId,
         userId: item.userId,
       });
@@ -61,15 +70,15 @@ module.exports = app => {
       // super
       await super.write({ atomClass, target, key, item, options, user });
       // update userOnline
-      const data = await this.ctx.model.userOnline.prepareData(item);
-      await this.ctx.model.userOnline.update(data);
+      const data = await this.model.prepareData(item);
+      await this.model.update(data);
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
       // delete userOnline
-      await this.ctx.model.userOnline.delete({
+      await this.model.delete({
         id: key.itemId,
       });
     }
@@ -81,7 +90,7 @@ module.exports = app => {
       if (atom.atomStage !== 1) return res;
       if (action !== 101) return res;
       // kickOut
-      const item = await this.ctx.model.userOnline.get({ id: atom.itemId });
+      const item = await this.model.get({ id: atom.itemId });
       if (action === 101 && this._getOnlineStatus(item) === 2) return res;
       return null;
     }
@@ -91,9 +100,9 @@ module.exports = app => {
       await super.performAction({ key, atomClass, action, item, options, user });
       // partyOver
       if (action === 'kickOut') {
-        const item = await this.ctx.model.userOnline.get({ id: key.itemId });
+        const item = await this.model.get({ id: key.itemId });
         const user = { id: item.userId };
-        await this.ctx.bean.userOnline.kickOut({ user });
+        await ctx.bean.userOnline.kickOut({ user });
       }
     }
 
@@ -103,7 +112,7 @@ module.exports = app => {
 
     async _translate(item) {
       item.onlineStatus = this._getOnlineStatus(item);
-      const dictItem = await this.ctx.bean.dict.findItem({
+      const dictItem = await ctx.bean.dict.findItem({
         dictKey: 'a-dictbooster:dictOnlineStatus',
         code: item.onlineStatus,
       });
