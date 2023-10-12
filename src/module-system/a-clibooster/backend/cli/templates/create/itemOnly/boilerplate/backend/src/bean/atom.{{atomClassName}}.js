@@ -11,11 +11,10 @@ module.exports = ctx => {
 
     async create({ atomClass, item, options, user }) {
       // super
-      await super.create({ atomClass, item, options, user });
+      let data = await super.create({ atomClass, item, options, user });
       // add <%=argv.atomClassName%>
-      const res = await this.model.insert({
-        userId: user.id,
-      });
+      data = await this.model.prepareData(data);
+      const res = await this.model.insert(data);
       // return key
       const itemId = res.insertId;
       return { atomId: itemId, itemId };
