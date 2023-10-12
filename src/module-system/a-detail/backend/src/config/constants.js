@@ -11,6 +11,7 @@ module.exports = app => {
       rightInherit: 'write',
       rightInheritStage: 'draft',
       mode: 'edit',
+      createDelay: true,
     },
     read: {
       title: 'View',
