@@ -5,6 +5,7 @@ module.exports = app => {
       title: '<%=argv.atomClassNameCapitalize%>',
       model: '<%=argv.atomClassName%>',
       tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',
+      itemOnly: true,
       language: false,
       category: false,
       tag: false,
@@ -16,7 +17,7 @@ module.exports = app => {
           userIdCreated: 'userId',
         },
         role: true,
-      };
+      },
       layout: {
         config: {
           // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
