@@ -71,7 +71,11 @@ module.exports = ctx => {
 
     async _offline({ user }) {
       const userId = user.id;
-      await this.modelUserOnline.update({ expireTime: new Date() }, { where: { userId } });
+      const item = await this.modelUserOnline.get({ userId });
+      await this.modelUserOnline.update({
+        id: item.id,
+        expireTime: new Date(),
+      });
     }
 
     async sendMessageSystemLogout({ user, type, provider }) {
