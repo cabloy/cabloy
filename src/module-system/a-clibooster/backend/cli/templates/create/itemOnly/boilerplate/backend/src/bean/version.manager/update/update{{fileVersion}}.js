@@ -10,7 +10,8 @@ module.exports = function SelfFactory(ctx) {
           updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           deleted int(11) DEFAULT '0',
           iid int(11) DEFAULT '0',
-          atomId int(11) DEFAULT '0',
+          userId int(11) DEFAULT '0',
+          name varchar(50) DEFAULT NULL,
           description varchar(255) DEFAULT NULL,
           PRIMARY KEY (id)
         )

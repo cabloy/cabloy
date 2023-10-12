@@ -11,6 +11,12 @@ module.exports = app => {
       comment: false,
       attachment: false,
       history: false,
+      enableRight: {
+        mine: {
+          userIdCreated: 'userId',
+        },
+        role: true,
+      };
       layout: {
         config: {
           // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',

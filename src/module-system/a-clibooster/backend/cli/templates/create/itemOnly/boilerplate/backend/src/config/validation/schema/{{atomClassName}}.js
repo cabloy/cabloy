@@ -4,7 +4,7 @@ module.exports = app => {
   schemas.<%=argv.atomClassName%> = {
     type: 'object',
     properties: {
-      atomName: {
+      name: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Name',
@@ -21,6 +21,11 @@ module.exports = app => {
   schemas.<%=argv.atomClassName%>Search = {
     type: 'object',
     properties: {
+      name: {
+        type: 'string',
+        ebType: 'text',
+        ebTitle: 'Name',
+      },
       description: {
         type: 'string',
         ebType: 'text',
