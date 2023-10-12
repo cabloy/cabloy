@@ -11,13 +11,12 @@ module.exports = ctx => {
 
     async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, options, user });
+      await super.create({ atomClass, item, options, user });
       // add <%=argv.atomClassName%>
-      const res = await this.model.insert({
-        atomId: key.atomId,
-      });
+      const res = await this.model.insert();
       // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      const itemId = res.insertId;
+      return { atomId: itemId, itemId };
     }
 
     async read({ atomClass, options, key, user }) {
