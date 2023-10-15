@@ -9,8 +9,9 @@ module.exports = ctx => {
     }
 
     getCache({ module, name, fullKey }) {
-      module = module || this.moduleName;
-      const cacheBase = this._findCacheBase({ module, name, fullKey });
+      fullKey = this._prepareFullKey({ module, name, fullKey });
+      const cacheBase = this._findCacheBase({ fullKey });
+      if (!cacheBase) throw new Error(`summer cache not found: ${fullKey}`);
       return ctx.bean._newBean(`${moduleInfo.relativeName}.local.cache`, {
         cacheBase,
       });
@@ -47,16 +48,19 @@ module.exports = ctx => {
     }
 
     _findCacheBase({ module, name, fullKey }) {
-      module = module || this.moduleName;
-      if (!fullKey) {
-        fullKey = `${module}:${name}`;
-      }
+      fullKey = this._prepareFullKey({ module, name, fullKey });
       if (!__cacheBases) {
         __cacheBases = this._collectCacheBases();
       }
-      const cacheBase = __cacheBases[fullKey];
-      if (!cacheBase) throw new Error(`summer cache not found: ${fullKey}`);
-      return cacheBase;
+      return __cacheBases[fullKey];
+    }
+
+    _prepareFullKey({ module, name, fullKey }) {
+      if (!fullKey) {
+        module = module || this.moduleName;
+        fullKey = `${module}:${name}`;
+      }
+      return fullKey;
     }
 
     _collectCacheBases() {
