@@ -10,6 +10,7 @@ const cliCreateModule = require('./bean/cli.create.module.js');
 const cliCreateApp = require('./bean/cli.create.app.js');
 const cliCreateAtom = require('./bean/cli.create.atom.js');
 const cliCreateItemOnly = require('./bean/cli.create.itemOnly.js');
+const cliCreateDetail = require('./bean/cli.create.detail.js');
 const cliCreateAtomAction = require('./bean/cli.create.atomAction.js');
 const cliCreateController = require('./bean/cli.create.controller.js');
 const cliCreatePage = require('./bean/cli.create.page.js');
@@ -70,6 +71,10 @@ module.exports = app => {
     'cli.create.itemOnly': {
       mode: 'ctx',
       bean: cliCreateItemOnly,
+    },
+    'cli.create.detail': {
+      mode: 'ctx',
+      bean: cliCreateDetail,
     },
     'cli.create.atomAction': {
       mode: 'ctx',
