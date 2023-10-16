@@ -19,8 +19,8 @@ module.exports = ctx => {
       await this.template.renderBoilerplateAndSnippets({
         targetDir,
         moduleName: moduleInfo.relativeName,
-        snippetsPath: 'create/itemOnly/snippets',
-        boilerplatePath: 'create/itemOnly/boilerplate',
+        snippetsPath: 'create/atom-itemOnly/snippets',
+        boilerplatePath: 'create/atom-itemOnly/boilerplate',
       });
       // reload
       ctx.app.meta.reload.now();
