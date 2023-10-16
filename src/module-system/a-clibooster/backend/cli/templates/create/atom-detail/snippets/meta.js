@@ -1,4 +1,4 @@
-const __snippet_index = `<%=argv.providerId%><%=argv.atomClassNameCapitalize%>: 'createdAt,updatedAt,userId',`;
+const __snippet_index = `<%=argv.providerId%><%=argv.atomClassNameCapitalize%>: 'createdAt,updatedAt,atomIdMain',`;
 
 module.exports = {
   file: 'backend/src/meta.js',

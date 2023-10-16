@@ -7,12 +7,6 @@ module.exports = {
     } else {
       ast.replace(`const fileVersionUpdates = [$_$]`, `const fileVersionUpdates = [$_$, ${argv.fileVersion}]`);
     }
-    // init
-    if (ast.has(`const fileVersionInits = []`)) {
-      ast.replace(`const fileVersionInits = []`, `const fileVersionInits = [${argv.fileVersion}]`);
-    } else {
-      ast.replace(`const fileVersionInits = [$_$]`, `const fileVersionInits = [$_$, ${argv.fileVersion}]`);
-    }
     // ok
     return ast;
   },
