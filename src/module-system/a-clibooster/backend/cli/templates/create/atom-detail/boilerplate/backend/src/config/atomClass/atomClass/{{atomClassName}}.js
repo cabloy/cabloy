@@ -6,29 +6,31 @@ module.exports = app => {
       model: '<%=argv.atomClassName%>',
       tableName: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',
       itemOnly: true,
-      language: false,
-      category: false,
-      tag: false,
-      comment: false,
-      attachment: false,
-      history: false,
-      enableRight: {
-        mine: {
-          userIdCreated: 'userId',
+      detail: {
+        inline: true,
+        atomIdMain: 'atomIdMain',
+        atomClassMain: {
+          module: '<%=argv.atomClassMain.module%>',
+          atomClassName: '<%=argv.atomClassMain.atomClassName%>',
         },
-        role: true,
       },
+      enableRight: false,
       layout: {
         config: {
           // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
         },
       },
     },
-    actions: {},
-    validator: '<%=argv.atomClassName%>',
-    search: {
-      validator: '<%=argv.atomClassName%>Search',
+    actions: {
+      create: {},
+      read: {},
+      write: {},
+      delete: {},
+      clone: {},
+      moveUp: {},
+      moveDown: {},
     },
+    validator: '<%=argv.atomClassName%>',
   };
   return <%=argv.atomClassName%>;
 };

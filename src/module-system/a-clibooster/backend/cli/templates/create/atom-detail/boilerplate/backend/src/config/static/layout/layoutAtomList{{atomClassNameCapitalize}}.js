@@ -2,13 +2,21 @@ module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   const content = {
     layouts: {
+      list: {},
       table: {
         blocks: {
           items: {
             columns: [
               {
-                dataIndex: 'atomName',
-                title: 'Atom Name',
+                dataIndex: 'detailLineNo',
+                title: '#',
+                align: 'center',
+                width: 50,
+                renderType: 'lineNo',
+              },
+              {
+                dataIndex: 'name',
+                title: 'Name',
                 align: 'left',
                 renderType: 'atomName',
               },
@@ -16,32 +24,6 @@ module.exports = app => {
                 dataIndex: 'description',
                 title: 'Description',
                 align: 'left',
-              },
-              {
-                dataIndex: 'userIdCreated',
-                title: 'Creator',
-                align: 'left',
-                renderType: 'userName',
-              },
-              {
-                dataIndex: 'atomCreatedAt',
-                title: 'Created Time',
-                align: 'center',
-                params: {
-                  dateFormat: {
-                    lines: true,
-                  },
-                },
-              },
-              {
-                dataIndex: 'atomUpdatedAt',
-                title: 'Modification Time',
-                align: 'center',
-                params: {
-                  dateFormat: {
-                    lines: true,
-                  },
-                },
               },
             ],
           },
@@ -54,7 +36,7 @@ module.exports = app => {
     atomStaticKey: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
     atomRevision: 0,
     description: '',
-    layoutTypeCode: 3,
+    layoutTypeCode: 5,
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };

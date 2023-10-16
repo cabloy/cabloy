@@ -17,21 +17,5 @@ module.exports = app => {
       },
     },
   };
-  // <%=argv.atomClassName%> search
-  schemas.<%=argv.atomClassName%>Search = {
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Name',
-      },
-      description: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Description',
-      },
-    },
-  };
   return schemas;
 };
