@@ -176,9 +176,18 @@ module.exports = ctx => {
         if (!snippet.file) {
           throw new Error(`should provider file path for: ${file}`);
         }
-        const fileName = await this.renderContent({ content: snippet.file });
-        const targetFile = path.join(targetDir, fileName);
-        await this.applySnippet({ targetFile, snippet });
+        let fileName;
+        if (typeof snippet.file === 'function') {
+          fileName = snippet.file(this.getEjsData());
+        } else {
+          fileName = await this.renderContent({ content: snippet.file });
+        }
+        if (!fileName) {
+          // means ignore, so do nothing
+        } else {
+          const targetFile = path.join(targetDir, fileName);
+          await this.applySnippet({ targetFile, snippet });
+        }
       }
     }
 
