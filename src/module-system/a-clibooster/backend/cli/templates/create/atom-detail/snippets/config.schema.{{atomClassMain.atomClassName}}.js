@@ -13,7 +13,7 @@ const __snippet_body = `
     ebTitle: 'Details',
     ebParams: {
       atomClass: {
-        module: moduleInfo.relativeName,
+        module: '<%=argv.moduleInfo.relativeName%>',
         atomClassName: '<%=argv.atomClassName%>',
       },
     },
@@ -33,7 +33,7 @@ module.exports = {
     const code = await cli.template.renderContent({ content: __snippet_body });
     ast.replace(
       `schemas.${argv.atomClassMain.atomClassName} = {$$$0, properties: {$$$1}}`,
-      `schemas.${argv.atomClassMain.atomClassName} = {$$$0, properties: {$$$1 \n ${code}}}`
+      `schemas.${argv.atomClassMain.atomClassName} = {$$$0, properties: {$$$1, ${code}}}`
     );
     // ok
     return ast;
