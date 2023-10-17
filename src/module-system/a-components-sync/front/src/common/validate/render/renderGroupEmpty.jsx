@@ -4,9 +4,16 @@ export default {
       return <div class="eb-list-group list-group"></div>;
     },
     _renderGroupCommon(context, children) {
-      const { key, property } = context;
+      const { parcel, key, property } = context;
       // title
-      const titleHidden = property.ebParams && property.ebParams.titleHidden;
+      let titleHidden = property.ebParams && property.ebParams.titleHidden;
+      // patch atomIdMain
+      if (titleHidden) {
+        const atomIdMain = parcel.data.atomId;
+        if (atomIdMain === 0) {
+          titleHidden = false;
+        }
+      }
       if (!titleHidden) {
         const group = (
           <f7-list-item key={key + '_groupTitle'} groupTitle={true} title={this.getTitle(context)}></f7-list-item>

@@ -117,6 +117,8 @@ export default {
       this.base.item.id = key.itemId;
       this.base.item.atomId = key.atomId;
       this.base.item.itemId = key.itemId;
+      //   force validate reactive
+      this.base.item = Object.assign({}, this.base.item);
       // actions
       await this.actions_fetchActions();
     },
