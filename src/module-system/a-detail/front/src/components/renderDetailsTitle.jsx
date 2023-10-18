@@ -73,7 +73,41 @@ function installFactory() {
         }
         return children;
       },
-      bulk_onActionCreate() {},
+      async bulk_onActionCreate_saveAtomMain() {
+        const { validate } = this.context;
+        return await validate.perform(null, { action: 'save' });
+      },
+      async bulk_onActionCreate_createDetail({ event, atomMain }) {
+        // action
+        const useStoreAtomActions = await this.$store.use('a/basestore/atomActions');
+        let actionCreate = await useStoreAtomActions.getActionBase({
+          atomClass: this.container.atomClass,
+          name: 'create',
+        });
+        // dataOptions
+        const dataOptions = {
+          atomIdMain: atomMain.atomId,
+          atomMain,
+        };
+        if (this.container.options.flowTaskId) {
+          dataOptions.flowTaskId = this.container.options.flowTaskId;
+        }
+        // not use this.$utils.extend
+        actionCreate = Object.assign({}, actionCreate, { targetEl: event.currentTarget }, { dataOptions });
+        // item
+        const item = {
+          module: this.container.atomClass.module,
+          atomClassName: this.container.atomClass.atomClassName,
+        };
+        // performAction
+        return await this.$meta.util.performAction({ ctx: this, action: actionCreate, item });
+      },
+      async bulk_onActionCreate(event) {
+        // 1. save
+        const atomMain = await this.bulk_onActionCreate_saveAtomMain();
+        // 2. create detail
+        await this.bulk_onActionCreate_createDetail({ event, atomMain });
+      },
     },
     render() {
       return this.layout_renderTitle();
