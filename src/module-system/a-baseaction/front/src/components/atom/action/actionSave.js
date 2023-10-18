@@ -36,7 +36,9 @@ export default {
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, actionSource: ctx });
       // toast
-      return ctx.$text('Saved');
+      this.base_handleToast();
+      // return item
+      return item;
     },
   },
 };
