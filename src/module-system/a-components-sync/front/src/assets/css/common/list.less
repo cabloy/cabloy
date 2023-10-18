@@ -72,6 +72,7 @@
     &.item-input-clear-button {
       span.input-clear-button {
         visibility: hidden;
+        right: calc(0px - var(--f7-input-clear-button-size));
 
         // override the md size: 48*48
         &:before {
@@ -85,10 +86,12 @@
 
     &.item-input-clear-button.item-input-with-value.item-input-focused {
       input.input-with-value {
-        padding-right: calc(var(--f7-input-clear-button-size) + 16px);
+        // will cause input's width change in list group
+        //padding-right: calc(var(--f7-input-clear-button-size) + 16px);
       }
       span.input-clear-button {
         visibility: visible;
+        right: calc(0px - var(--f7-input-clear-button-size));
       }
     }
   }
