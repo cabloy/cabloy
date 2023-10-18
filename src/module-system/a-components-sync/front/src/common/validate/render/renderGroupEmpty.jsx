@@ -4,7 +4,7 @@ export default {
       return <div class="eb-list-group list-group"></div>;
     },
     _renderGroupCommon(context, children) {
-      const { key, property } = context;
+      const { key, property, parcel } = context;
       // title
       const titleHidden = property.ebParams && property.ebParams.titleHidden;
       if (!titleHidden) {
@@ -15,13 +15,14 @@ export default {
         children.unshift(group);
       }
       // group
-      const className = property.ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
+      const ebGroupWhole = this._renderGroupCommon_patchGroupWhole(context);
+      const className = ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
       const group = (
         <f7-list-group key={key} staticClass={className}>
           {children}
         </f7-list-group>
       );
-      if (!property.ebGroupWhole) {
+      if (!ebGroupWhole) {
         context.groupCount++;
         return group;
       }
@@ -31,6 +32,32 @@ export default {
       }
       context.groupCount += 3;
       return [this.renderGroupEmpty(), group];
+    },
+    _renderGroupCommon_patchGroupWhole(context) {
+      const { property } = context;
+      const ebGroupWhole = property.ebGroupWhole;
+      if (ebGroupWhole || context.groupCount % 2 === 1) {
+        return ebGroupWhole;
+      }
+      // check next group
+      const groupNext = this._renderGroupCommon_getNextGroup(context);
+      return !groupNext || groupNext.property.ebGroupWhole;
+    },
+    _renderGroupCommon_getNextGroup(context) {
+      let { parcel, index } = context;
+      const keys = Object.keys(parcel.properties);
+      while (true) {
+        index++;
+        const key = keys[index];
+        if (!key) break;
+        const property = parcel.properties[key];
+        if (!property) break;
+        if (property.ebType === 'group' || property.ebType === 'group-flatten') {
+          return { key, property };
+        }
+        // next
+      }
+      return null;
     },
   },
 };
