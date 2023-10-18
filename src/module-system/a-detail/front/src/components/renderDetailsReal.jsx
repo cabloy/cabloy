@@ -44,7 +44,7 @@ function installFactory(_Vue) {
     created() {},
     methods: {},
     render() {
-      return this.layout_renderLayout();
+      return <div staticClass="eb-details-container">{this.layout_renderLayout()}</div>;
     },
   };
 }
