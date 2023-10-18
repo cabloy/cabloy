@@ -7,11 +7,8 @@ export default {
 };
 
 // installFactory
-function installFactory(_Vue) {
-  const Vue = _Vue;
-  const ebListLayoutManager = Vue.prototype.$meta.module.get('a-basefront').options.mixins.ebListLayoutManager;
+function installFactory() {
   return {
-    mixins: [ebListLayoutManager],
     props: {
       context: {
         type: Object,
@@ -42,9 +39,44 @@ function installFactory(_Vue) {
       };
     },
     created() {},
-    methods: {},
+    methods: {
+      layout_renderTitle() {
+        return (
+          <f7-list-item groupTitle>
+            <div class="detail-list-title-container">
+              {this.layout_renderTitleLeft()}
+              {this.layout_renderTitleRight()}
+            </div>
+          </f7-list-item>
+        );
+      },
+      layout_renderTitleLeft() {
+        const title = this.container.params?.pageTitle;
+        return <div class="actions-block actions-block-left">{title}</div>;
+      },
+      layout_renderTitleRight() {
+        const children = this.bulk_renderActionsRight();
+        return <div class="actions-block actions-block-right">{children}</div>;
+      },
+      bulk_renderActionsRight() {
+        const children = [];
+        const { property } = this.context;
+        if (!property.ebReadOnly) {
+          children.push(
+            <eb-link
+              key={'actionsRight:create'}
+              iconF7="::add"
+              tooltip={this.$text('Create')}
+              propsOnPerform={event => this.bulk_onActionCreate(event)}
+            ></eb-link>
+          );
+        }
+        return children;
+      },
+      bulk_onActionCreate() {},
+    },
     render() {
-      return this.layout_renderLayout();
+      return this.layout_renderTitle();
     },
   };
 }
