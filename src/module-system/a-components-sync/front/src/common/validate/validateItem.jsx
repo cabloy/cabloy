@@ -8,6 +8,7 @@ import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
 import renderComponentAction from './render/renderComponentAction.jsx';
 import renderGroup from './render/renderGroup.jsx';
+import renderGroupCommon from './render/renderGroupCommon.jsx';
 import renderGroupEmpty from './render/renderGroupEmpty.jsx';
 import renderGroupFlatten from './render/renderGroupFlatten.jsx';
 import renderPanel from './render/renderPanel.jsx';
@@ -91,6 +92,7 @@ export default {
     renderComponent,
     renderComponentAction,
     renderGroup,
+    renderGroupCommon,
     renderGroupEmpty,
     renderGroupFlatten,
     renderPanel,
