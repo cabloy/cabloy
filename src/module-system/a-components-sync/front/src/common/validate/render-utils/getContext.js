@@ -86,6 +86,9 @@ export default {
         }
         return className;
       };
+      context.getReadOnly = () => {
+        return this.validate.readOnly || property.ebReadOnly;
+      };
       return context;
     },
     _getClassNameDefault({ context }) {
@@ -104,6 +107,13 @@ export default {
       scope[this.$meta.vueApp.layout] = true;
       // small/medium/large
       scope[this.$view.size] = true;
+      // readOnly
+      const readOnly = context.getReadOnly();
+      if (readOnly) {
+        scope.read = true;
+      } else {
+        scope.write = true;
+      }
       // ok
       return scope;
     },

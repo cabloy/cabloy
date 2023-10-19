@@ -82,7 +82,6 @@ export default {
       return (
         <eb-list-input
           key={key}
-          staticClass={context.getClassName()}
           {...{ props }}
           onInput={valueNew => {
             if (immediate) {
