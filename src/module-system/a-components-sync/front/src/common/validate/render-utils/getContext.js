@@ -65,14 +65,14 @@ export default {
       };
       context.getParams = () => {
         if (!context._params) {
-          const scope = this._getCascadeScope({ groupWhole });
+          const scope = this._getCascadeScope({ context, groupWhole });
           context._params = this.$meta.util.cascadeExtend({ scope, source: property, name: 'ebParams' }) || {};
         }
         return context._params;
       };
       context.getParamsDefault = () => {
         if (!context._paramsDefault) {
-          const scope = this._getCascadeScope({ groupWhole });
+          const scope = this._getCascadeScope({ context, groupWhole });
           const source = this.$config.validate.cascadeParams.default;
           context._paramsDefault = this.$meta.util.cascadeExtend({ scope, source, name: 'ebParams' }) || {};
         }
@@ -86,6 +86,10 @@ export default {
         }
         return className;
       };
+      context.getCssStyle = () => {
+        const params = context.getParams();
+        return params.cssStyle;
+      };
       context.getReadOnly = () => {
         return this.validate.readOnly || property.ebReadOnly;
       };
@@ -95,7 +99,7 @@ export default {
       const paramsDefault = context.getParamsDefault();
       return paramsDefault.className;
     },
-    _getCascadeScope({ groupWhole }) {
+    _getCascadeScope({ context, groupWhole }) {
       const scope = {};
       // groupWhole
       if (groupWhole) {
@@ -107,15 +111,29 @@ export default {
       scope[this.$meta.vueApp.layout] = true;
       // small/medium/large
       scope[this.$view.size] = true;
-      // readOnly
+      // readOnly: view/edit
       const readOnly = context.getReadOnly();
       if (readOnly) {
-        scope.read = true;
+        scope.view = true;
       } else {
-        scope.write = true;
+        scope.edit = true;
       }
       // ok
       return scope;
+    },
+    _patchItemClassNameStyle({ context, item }) {
+      const { property } = context;
+      if (property.ebType === 'group' || property.ebType === 'group-flatten') return;
+      const className = context.getClassName();
+      const cssStyle = context.getCssStyle();
+      const items = Array.isArray(item) ? item : [item];
+      for (item of items) {
+        if (className) {
+          item.data.staticClass = this.$vuef7.utils.classNames(item.data.staticClass, className);
+        }
+        if (cssStyle) {
+        }
+      }
     },
   },
 };
