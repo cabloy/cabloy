@@ -8,7 +8,6 @@ import renderProperties from './render/renderProperties.jsx';
 import renderComponent from './render/renderComponent.jsx';
 import renderComponentAction from './render/renderComponentAction.jsx';
 import renderGroup from './render/renderGroup.jsx';
-import renderGroupCommon from './render/renderGroupCommon.jsx';
 import renderGroupEmpty from './render/renderGroupEmpty.jsx';
 import renderGroupFlatten from './render/renderGroupFlatten.jsx';
 import renderPanel from './render/renderPanel.jsx';
@@ -40,6 +39,7 @@ import renderUserLabel from './render/renderUserLabel.jsx';
 import renderUserName from './render/renderUserName.jsx';
 import renderUser from './render/renderUser.jsx';
 import renderRole from './render/renderRole.jsx';
+import renderGroupCommon from './render-utils/renderGroupCommon.jsx';
 
 const __renderTypes = [
   ['group', 'renderGroup'],
@@ -82,6 +82,7 @@ const __renderTypes = [
 
 export default {
   mixins: [
+    renderGroupCommon,
     renderSearchStates,
     validateActionModule,
     validateComputedValue,
@@ -92,7 +93,6 @@ export default {
     renderComponent,
     renderComponentAction,
     renderGroup,
-    renderGroupCommon,
     renderGroupEmpty,
     renderGroupFlatten,
     renderPanel,
@@ -318,7 +318,7 @@ export default {
       if (!metaValidateProperty && !meta) return property;
       return this.$meta.util.extend({}, property, metaValidateProperty, meta);
     },
-    getContext({ parcel, key, property, meta, index, groupCount }) {
+    getContext({ parcel, key, property, meta, index, groupCount, groupWhole }) {
       // dataPath
       const dataPath = parcel.pathParent + key;
       // property
@@ -380,6 +380,12 @@ export default {
           const propertyName = name || key;
           this.__componentInstance_remove(parcel, propertyName, componentInstance);
         },
+      };
+      context.getParams = function () {
+        if (!context._params) {
+          context._params = property.ebParams || {};
+        }
+        return context._params;
       };
       return context;
     },
