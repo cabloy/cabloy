@@ -1,7 +1,7 @@
 export default {
   methods: {
     renderProperties(context) {
-      const { parcel } = context;
+      const { parcel, groupWhole } = context;
       // children
       let children = [];
       // index
@@ -33,6 +33,7 @@ export default {
           meta: this.meta,
           index,
           groupCount,
+          groupWhole,
         });
         // render
         const item = this._renderItem(context2);
