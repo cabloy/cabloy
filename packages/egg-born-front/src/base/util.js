@@ -6,6 +6,7 @@ import queue from 'async/queue';
 import debounce from '@zhennann/debounce';
 import currency from '@zhennann/currency';
 import extend from '@zhennann/extend';
+import cascadeExtend from 'cascade-extend';
 import requirejsFn from './requirejs.js';
 // eslint-disable-next-line
 import localeZhcn from 'moment/locale/zh-cn.js';
@@ -776,6 +777,7 @@ export default function (Vue) {
     extend(...args) {
       return extend(true, ...args);
     },
+    cascadeExtend,
     escapeHtml: _escape.escapeHtml,
     escapeURL: _escape.escapeURL,
     hostUtil: hostUtil(Vue, util),
