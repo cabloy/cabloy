@@ -78,22 +78,22 @@ export default {
         }
         return context._paramsDefault;
       };
-      context.getClassName = () => {
-        const params = context.getParams();
-        const className = params.className;
-        if (className === undefined) {
-          return this._getClassNameDefault({ context });
-        }
-        return className;
-      };
-      context.getCssStyle = () => {
-        const params = context.getParams();
-        return params.cssStyle;
-      };
       context.getReadOnly = () => {
         return this.validate.readOnly || property.ebReadOnly;
       };
       return context;
+    },
+    _getCssStyle({ context }) {
+      const params = context.getParams();
+      return params.cssStyle;
+    },
+    _getClassName({ context }) {
+      const params = context.getParams();
+      const className = params.className;
+      if (className === undefined) {
+        return this._getClassNameDefault({ context });
+      }
+      return className;
     },
     _getClassNameDefault({ context }) {
       const paramsDefault = context.getParamsDefault();
@@ -124,8 +124,8 @@ export default {
     _patchItemClassNameStyle({ context, item }) {
       const { property } = context;
       if (property.ebType === 'group' || property.ebType === 'group-flatten') return;
-      const className = context.getClassName();
-      const cssStyle = context.getCssStyle();
+      const className = this._getClassName({ context });
+      const cssStyle = this._getCssStyle({ context });
       const items = Array.isArray(item) ? item : [item];
       for (item of items) {
         if (className) {
