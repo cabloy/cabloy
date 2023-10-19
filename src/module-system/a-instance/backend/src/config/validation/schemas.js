@@ -5,16 +5,38 @@ module.exports = app => {
   schemas.instance = {
     type: 'object',
     properties: {
+      // Basic Info
+      __groupBasicInfo: {
+        ebType: 'group-flatten',
+        ebParams: {
+          titleHidden: true,
+        },
+      },
       name: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Subdomain',
         ebReadOnly: true,
       },
+      // Basic Info
+      __groupBasicInfo2: {
+        ebType: 'group-flatten',
+        ebParams: {
+          titleHidden: true,
+        },
+      },
       title: {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Title',
+      },
+      // Basic Info
+      __groupBasicInfo3: {
+        ebType: 'group-flatten',
+        ebGroupWhole: true,
+        ebParams: {
+          titleHidden: true,
+        },
       },
       config: {
         type: 'string',
