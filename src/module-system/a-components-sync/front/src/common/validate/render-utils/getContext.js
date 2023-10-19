@@ -69,7 +69,32 @@ export default {
         }
         return context._params;
       };
+      context.getClassName = function () {
+        const params = context.getParams();
+        const className = params.className;
+        if (className === undefined) {
+          return this._getClassNameDefault({ context, groupWhole });
+        }
+        return className;
+      };
       return context;
+    },
+    _getClassNameDefault({ context, groupWhole }) {},
+    _getCascadeScope({ groupWhole }) {
+      const scope = {};
+      // groupWhole
+      if (groupWhole) {
+        scope.groupWhole = true;
+      } else {
+        scope.group = true;
+      }
+      // mobile/pc
+      if (this.$meta.vueApp.layout === 'pc') {
+        scope.pc = true;
+      } else {
+        scope.mobile = true;
+      }
+      // small/medium/large
     },
   },
 };
