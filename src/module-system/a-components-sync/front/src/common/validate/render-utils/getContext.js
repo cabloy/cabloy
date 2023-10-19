@@ -63,13 +63,13 @@ export default {
           this.__componentInstance_remove(parcel, propertyName, componentInstance);
         },
       };
-      context.getParams = function () {
+      context.getParams = () => {
         if (!context._params) {
           context._params = property.ebParams || {};
         }
         return context._params;
       };
-      context.getClassName = function () {
+      context.getClassName = () => {
         const params = context.getParams();
         const className = params.className;
         if (className === undefined) {

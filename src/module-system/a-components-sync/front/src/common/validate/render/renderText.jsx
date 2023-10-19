@@ -68,6 +68,7 @@ export default {
       }
       // props
       const props = {
+        staticClass: context.getClassName(),
         floatingLabel: this.$config.form.floatingLabel,
         type,
         inputmode: ebInputMode,
