@@ -132,6 +132,7 @@ export default {
           item.data.staticClass = this.$vuef7.utils.classNames(item.data.staticClass, className);
         }
         if (cssStyle) {
+          item.data.style = this.$meta.util.extend({}, item.data.style, cssStyle);
         }
       }
     },
