@@ -20,13 +20,15 @@ export default {
         });
         // render
         const item = this._renderItem(context2);
-        // patch item classNameStyle
-        this._patchItemClassNameStyle({ context: context2, item });
-        // combine
-        if (Array.isArray(item)) {
-          children = children.concat(item);
-        } else {
-          children.push(item);
+        if (item) {
+          // patch item classNameStyle
+          this._patchItemClassNameStyle({ context: context2, item });
+          // combine
+          if (Array.isArray(item)) {
+            children = children.concat(item);
+          } else {
+            children.push(item);
+          }
         }
         // next
         index++;

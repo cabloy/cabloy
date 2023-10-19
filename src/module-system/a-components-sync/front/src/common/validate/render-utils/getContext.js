@@ -122,6 +122,7 @@ export default {
       return scope;
     },
     _patchItemClassNameStyle({ context, item }) {
+      if (!item) return;
       const { property } = context;
       if (property.ebType === 'group' || property.ebType === 'group-flatten') return;
       const className = this._getClassName({ context });
