@@ -65,21 +65,33 @@ export default {
       };
       context.getParams = () => {
         if (!context._params) {
-          context._params = property.ebParams || {};
+          const scope = this._getCascadeScope({ groupWhole });
+          context._params = this.$meta.util.cascadeExtend({ scope, source: property, name: 'ebParams' }) || {};
         }
         return context._params;
+      };
+      context.getParamsDefault = () => {
+        if (!context._paramsDefault) {
+          const scope = this._getCascadeScope({ groupWhole });
+          const source = this.$config.validate.cascadeParams.default;
+          context._paramsDefault = this.$meta.util.cascadeExtend({ scope, source, name: 'ebParams' }) || {};
+        }
+        return context._paramsDefault;
       };
       context.getClassName = () => {
         const params = context.getParams();
         const className = params.className;
         if (className === undefined) {
-          return this._getClassNameDefault({ context, groupWhole });
+          return this._getClassNameDefault({ context });
         }
         return className;
       };
       return context;
     },
-    _getClassNameDefault({ context, groupWhole }) {},
+    _getClassNameDefault({ context }) {
+      const paramsDefault = context.getParamsDefault();
+      return paramsDefault.className;
+    },
     _getCascadeScope({ groupWhole }) {
       const scope = {};
       // groupWhole
@@ -89,12 +101,11 @@ export default {
         scope.group = true;
       }
       // mobile/pc
-      if (this.$meta.vueApp.layout === 'pc') {
-        scope.pc = true;
-      } else {
-        scope.mobile = true;
-      }
+      scope[this.$meta.vueApp.layout] = true;
       // small/medium/large
+      scope[this.$view.size] = true;
+      // ok
+      return scope;
     },
   },
 };

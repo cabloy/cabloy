@@ -68,7 +68,6 @@ export default {
       }
       // props
       const props = {
-        staticClass: context.getClassName(),
         floatingLabel: this.$config.form.floatingLabel,
         type,
         inputmode: ebInputMode,
@@ -83,6 +82,7 @@ export default {
       return (
         <eb-list-input
           key={key}
+          staticClass={context.getClassName()}
           {...{ props }}
           onInput={valueNew => {
             if (immediate) {
