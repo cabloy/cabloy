@@ -1,6 +1,6 @@
 export default {
   methods: {
-    _renderGroupCommon(context, children) {
+    _renderGroupCommon(context, children, groupWhole) {
       const { key, property } = context;
       // title
       const titleHidden = property.ebParams && property.ebParams.titleHidden;
@@ -12,14 +12,14 @@ export default {
         children.unshift(group);
       }
       // group
-      const ebGroupWhole = this._renderGroupCommon_patchGroupWhole(context);
-      const className = ebGroupWhole ? 'eb-list-group-whole' : 'eb-list-group';
+      // const ebGroupWhole = this._renderGroupCommon_patchGroupWhole(context);
+      const className = groupWhole ? 'eb-list-group-whole' : 'eb-list-group';
       const group = (
         <f7-list-group key={key} staticClass={className}>
           {children}
         </f7-list-group>
       );
-      if (!ebGroupWhole) {
+      if (!groupWhole) {
         context.groupCount++;
         return group;
       }

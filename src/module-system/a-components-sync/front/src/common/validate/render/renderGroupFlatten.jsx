@@ -2,6 +2,8 @@ export default {
   methods: {
     renderGroupFlatten(context) {
       let { parcel, index } = context;
+      // group whole
+      const groupWhole = this._renderGroupCommon_patchGroupWhole(context);
       // children
       let children = [];
       while (true) {
@@ -14,6 +16,7 @@ export default {
           key: flattenItemNext.key,
           property: flattenItemNext.property,
           meta: this.meta,
+          groupWhole,
         });
         // render
         const item = this._renderItem(context2);
@@ -29,7 +32,7 @@ export default {
       // set back index
       context.index = index;
       // group
-      return this._renderGroupCommon(context, children);
+      return this._renderGroupCommon(context, children, groupWhole);
     },
     _getFlattenItemNext(context, index) {
       const { parcel } = context;
