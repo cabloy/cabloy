@@ -15,7 +15,7 @@ export default {
       // const ebGroupWhole = this._renderGroupCommon_patchGroupWhole(context);
       const className = groupWhole ? 'eb-list-group-whole' : 'eb-list-group';
       const group = (
-        <f7-list-group key={key} staticClass={className}>
+        <f7-list-group key={key} class={className}>
           {children}
         </f7-list-group>
       );

@@ -49,7 +49,7 @@ export default {
       if ((this.validate.readOnly || property.ebReadOnly) && !ebTextarea) {
         const valueView = this._formatTextView(value);
         return (
-          <f7-list-item key={key} staticClass="" after={valueView}>
+          <f7-list-item key={key} after={valueView}>
             {context.renderTitle({ slot: 'title' })}
           </f7-list-item>
         );

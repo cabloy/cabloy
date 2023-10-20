@@ -14,7 +14,7 @@ export default {
         inlineLabels: !this.$config.form.floatingLabel,
       };
       return (
-        <eb-list staticClass="eb-list-row" {...{ props }} onSubmit={this.onSubmit}>
+        <eb-list class="eb-list-row" {...{ props }} onSubmit={this.onSubmit}>
           {children}
         </eb-list>
       );

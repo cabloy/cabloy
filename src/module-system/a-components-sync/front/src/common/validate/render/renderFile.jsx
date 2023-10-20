@@ -54,13 +54,13 @@ export default {
           );
         } else {
           children.push(
-            <div key="value" slot="after" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+            <div key="value" slot="after" class={property.ebReadOnly ? 'text-color-gray' : ''}>
               {value}
             </div>
           );
         }
         return (
-          <f7-list-item key={key} staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+          <f7-list-item key={key} class={property.ebReadOnly ? 'text-color-gray' : ''}>
             {children}
           </f7-list-item>
         );
@@ -122,7 +122,7 @@ export default {
       const children = [];
       children.push(context.renderTitle({ key: 'label', slot: 'label' }));
       children.push(
-        <div key="buttons" slot="root-end" staticClass="eb-input-file-upload">
+        <div key="buttons" slot="root-end" class="eb-input-file-upload">
           {buttons}
         </div>
       );

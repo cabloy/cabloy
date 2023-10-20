@@ -27,7 +27,7 @@ export default {
       return (
         <div
           slot="after-title"
-          staticClass={
+          class={
             property.ebReadOnly ? 'after-title after-title-search text-color-gray' : 'after-title after-title-search'
           }
         >
@@ -46,7 +46,7 @@ export default {
       // render
       if (operators.length === 1) {
         return (
-          <div staticClass="single text-color-gray" title={operatorCurrent.title}>
+          <div class="single text-color-gray" title={operatorCurrent.title}>
             {operatorCurrent.text}
           </div>
         );
@@ -59,7 +59,7 @@ export default {
           return this.__searchStates_onPerform(event, context, operatorCurrent, operators);
         },
       };
-      return <eb-button staticClass="more" title={operatorCurrent.title} {...{ props }}></eb-button>;
+      return <eb-button class="more" title={operatorCurrent.title} {...{ props }}></eb-button>;
     },
     async __searchStates_onPerform(event, context, operatorCurrent, operators) {
       const { dataPath } = context;

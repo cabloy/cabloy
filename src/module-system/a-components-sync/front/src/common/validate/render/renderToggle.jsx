@@ -17,16 +17,16 @@ export default {
         value: context.getValue(),
         disabled,
       };
-      // staticClass
-      let staticClass = '';
+      // className
+      let className = '';
       if (property.ebReadOnly) {
-        staticClass = 'text-color-gray';
+        className = 'text-color-gray';
       } else if (!disabled) {
-        staticClass = 'eb-cursor-pointer';
+        className = 'eb-cursor-pointer';
       }
       return (
         <f7-list-item key={key}>
-          <div slot="title" staticClass={staticClass} onClick={event => this._renderToggleOnClick(event, context)}>
+          <div slot="title" class={className} onClick={event => this._renderToggleOnClick(event, context)}>
             {title}
           </div>
           <eb-toggle

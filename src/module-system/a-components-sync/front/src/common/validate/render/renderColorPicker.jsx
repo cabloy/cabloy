@@ -14,7 +14,7 @@ export default {
         const _value = value ? value.hex : '';
         const style = _value ? { color: _value } : null;
         return (
-          <f7-list-item key={key} staticClass="">
+          <f7-list-item key={key}>
             {context.renderTitle({ slot: 'title' })}
             <div slot="after" style={style}>
               {_value}
