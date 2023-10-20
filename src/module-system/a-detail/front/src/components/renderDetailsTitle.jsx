@@ -23,6 +23,9 @@ function installFactory() {
       if (validate.host?.flowTaskId) {
         options.flowTaskId = validate.host?.flowTaskId;
       }
+      if (validate.host?.formAction) {
+        options.formActionMain = validate.host?.formAction;
+      }
       const params = {
         pageTitle: this.context.getTitle(true),
       };
@@ -91,6 +94,9 @@ function installFactory() {
         };
         if (this.container.options.flowTaskId) {
           dataOptions.flowTaskId = this.container.options.flowTaskId;
+        }
+        if (this.container.options.formActionMain) {
+          dataOptions.formActionMain = this.container.options.formActionMain;
         }
         // not use this.$utils.extend
         actionCreate = Object.assign({}, actionCreate, { targetEl: event.currentTarget }, { dataOptions });

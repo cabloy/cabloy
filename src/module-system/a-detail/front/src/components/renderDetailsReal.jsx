@@ -26,6 +26,9 @@ function installFactory(_Vue) {
       if (validate.host?.flowTaskId) {
         options.flowTaskId = validate.host?.flowTaskId;
       }
+      if (validate.host?.formAction) {
+        options.formActionMain = validate.host?.formAction;
+      }
       const params = {
         pageTitle: this.context.getTitle(true),
       };
