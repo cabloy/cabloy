@@ -91,7 +91,8 @@ export default {
       const params = context.getParams();
       const className = params.className;
       if (className !== undefined) return className;
-      if (classNameDefault !== undefined) return classNameDefault;
+      // staticClass maybe undefined/null/''
+      if (classNameDefault) return classNameDefault;
       return this._getClassNameDefault({ context });
     },
     _getClassNameDefault({ context }) {
