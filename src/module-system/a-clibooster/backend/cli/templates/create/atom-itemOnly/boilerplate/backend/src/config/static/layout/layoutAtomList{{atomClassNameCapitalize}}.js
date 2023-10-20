@@ -7,8 +7,8 @@ module.exports = app => {
           items: {
             columns: [
               {
-                dataIndex: 'atomName',
-                title: 'Atom Name',
+                dataIndex: 'name',
+                title: 'Name',
                 align: 'left',
                 renderType: 'atomName',
               },
@@ -18,13 +18,13 @@ module.exports = app => {
                 align: 'left',
               },
               {
-                dataIndex: 'userIdCreated',
-                title: 'Creator',
+                dataIndex: 'userId',
+                title: 'User',
                 align: 'left',
                 renderType: 'userName',
               },
               {
-                dataIndex: 'atomCreatedAt',
+                dataIndex: 'createdAt',
                 title: 'Created Time',
                 align: 'center',
                 params: {
@@ -34,7 +34,7 @@ module.exports = app => {
                 },
               },
               {
-                dataIndex: 'atomUpdatedAt',
+                dataIndex: 'updatedAt',
                 title: 'Modification Time',
                 align: 'center',
                 params: {
