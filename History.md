@@ -9,7 +9,7 @@
     - 比如修改 module 的 meta 配置
     - 参见/path to project/src/backend/config/monkey.js
   - 移除 require3 机制
-  - Form 表单：更加灵活的分栏布局
+  - Form 表单：更加灵活的字段分栏布局
 
 ## 2023-09-24, Version 4.35.0（未发布）
 
