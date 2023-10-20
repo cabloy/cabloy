@@ -32,7 +32,7 @@ export default {
     return (
       <eb-page
         ref="page"
-        staticClass={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}
+        class={`dashboard dashboard-profile-${this.dashboardAtomId} ${this.lock ? '' : 'dashboard-unlock'}`}
       >
         {domNavbar}
         {domGroup}

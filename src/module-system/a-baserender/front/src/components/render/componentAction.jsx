@@ -102,7 +102,7 @@ export default {
             this._renderDateRange_setValue({ ctx, context, mode, value });
           }}
         >
-          <div slot="label" staticClass={property.ebReadOnly ? 'text-color-gray' : ''}>
+          <div slot="label" class={property.ebReadOnly ? 'text-color-gray' : ''}>
             {title}
           </div>
           {ctx.__searchStates_render_list_item(context)}
