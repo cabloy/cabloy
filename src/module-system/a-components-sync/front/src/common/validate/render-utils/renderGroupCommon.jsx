@@ -37,10 +37,10 @@ export default {
         return ebGroupWhole;
       }
       // check next group
-      const groupNext = this._renderGroupCommon_getNextGroup(context);
+      const groupNext = this._renderGroupCommon_getNextGroup({ context, checkDisplay: true });
       return !groupNext || groupNext.property.ebGroupWhole;
     },
-    _renderGroupCommon_getNextGroup(context) {
+    _renderGroupCommon_getNextGroup({ context, checkDisplay }) {
       let { parcel, index } = context;
       const keys = Object.keys(parcel.properties);
       while (true) {
@@ -49,10 +49,14 @@ export default {
         if (!key) break;
         const property = parcel.properties[key];
         if (!property) break;
-        if (property.ebType === 'group' || property.ebType === 'group-flatten') {
-          return { key, property };
+        if (property.ebType !== 'group' && property.ebType !== 'group-flatten') {
+          continue;
         }
-        // next
+        if (checkDisplay && !this._handleComputedDisplay(parcel, key, property)) {
+          continue;
+        }
+        // bingo
+        return { key, property };
       }
       return null;
     },
