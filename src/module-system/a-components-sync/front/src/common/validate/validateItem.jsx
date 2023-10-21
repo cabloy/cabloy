@@ -44,6 +44,7 @@ import renderItem from './render-utils/renderItem.jsx';
 import renderGroupCommon from './render-utils/renderGroupCommon.jsx';
 import renderUtilsGetContext from './render-utils/getContext.js';
 import renderUtilsGetCascadeScope from './render-utils/getCascadeScope.js';
+import renderUtilsPatchItemClassNameStyle from './render-utils/patchItemClassNameStyle.js';
 
 export default {
   mixins: [
@@ -52,6 +53,7 @@ export default {
     renderGroupCommon,
     renderUtilsGetContext,
     renderUtilsGetCascadeScope,
+    renderUtilsPatchItemClassNameStyle,
     renderSearchStates,
     validateActionModule,
     validateComputedValue,
