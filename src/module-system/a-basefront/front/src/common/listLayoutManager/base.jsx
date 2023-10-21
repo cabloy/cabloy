@@ -26,6 +26,13 @@ export default {
     base_flowTaskId() {
       return this.container.options?.flowTaskId;
     },
+    // formAction of list has no means
+    // base_formAction() {
+    //   return this.container.options?.formAction;
+    // },
+    base_formActionMain() {
+      return this.container.options?.formActionMain;
+    },
   },
   created() {
     this.$store.dispatch('a/base/getLabels');
