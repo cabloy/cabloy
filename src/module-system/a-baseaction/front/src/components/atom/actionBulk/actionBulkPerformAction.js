@@ -20,10 +20,7 @@ export default {
       }
       // options
       const options = {};
-      // flowTaskId
-      if (dataOptions.flowTaskId) {
-        options.flowTaskId = dataOptions.flowTaskId;
-      }
+      this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // post
       let res = await ctx.$api.post('/a/base/atom/performActionBulk', {
         keys,

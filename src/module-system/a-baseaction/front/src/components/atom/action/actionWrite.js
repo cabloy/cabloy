@@ -50,12 +50,7 @@ export default {
         atomClassName: atomClass.atomClassName,
         params: JSON.stringify(params),
       };
-      if (dataOptions.flowTaskId) {
-        queries.flowTaskId = dataOptions.flowTaskId;
-      }
-      if (dataOptions.formActionMain) {
-        queries.formActionMain = dataOptions.formActionMain;
-      }
+      this.base_prepareOptionsFromDataOptions(queries, dataOptions);
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });
@@ -70,12 +65,7 @@ export default {
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
       };
-      if (dataOptions.flowTaskId) {
-        queries.flowTaskId = dataOptions.flowTaskId;
-      }
-      if (dataOptions.formActionMain) {
-        queries.formActionMain = dataOptions.formActionMain;
-      }
+      this.base_prepareOptionsFromDataOptions(queries, dataOptions);
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });
@@ -112,12 +102,7 @@ export default {
         module: atomClass.module,
         atomClassName: atomClass.atomClassName,
       };
-      if (dataOptions.flowTaskId) {
-        queries.flowTaskId = dataOptions.flowTaskId;
-      }
-      if (dataOptions.formActionMain) {
-        queries.formActionMain = dataOptions.formActionMain;
-      }
+      this.base_prepareOptionsFromDataOptions(queries, dataOptions);
       // navigate
       const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
       const navigateOptions = this._onActionWrite_navigateOptions({ ctx, action, dataOptions });

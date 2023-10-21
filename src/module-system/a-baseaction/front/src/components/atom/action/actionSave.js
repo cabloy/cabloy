@@ -22,15 +22,7 @@ export default {
       if (!atomClassBase.itemOnly && item.atomStage === 0) {
         options.saveDraftOnly = true;
       }
-      if (dataOptions.flowTaskId) {
-        options.flowTaskId = dataOptions.flowTaskId;
-      }
-      if (dataOptions.formAction) {
-        options.formAction = dataOptions.formAction;
-      }
-      if (dataOptions.formActionMain) {
-        options.formActionMain = dataOptions.formActionMain;
-      }
+      this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // write
       const key = { atomId: item.atomId, itemId: item.itemId };
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });

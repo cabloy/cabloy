@@ -19,15 +19,7 @@ export default {
       const options = {
         saveDraftOnly: false,
       };
-      if (dataOptions.flowTaskId) {
-        options.flowTaskId = dataOptions.flowTaskId;
-      }
-      if (dataOptions.formAction) {
-        options.formAction = dataOptions.formAction;
-      }
-      if (dataOptions.formActionMain) {
-        options.formActionMain = dataOptions.formActionMain;
-      }
+      this.base_prepareOptionsFromDataOptions(options, dataOptions);
       await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       // do
       if (dataOptions.formAction) {
