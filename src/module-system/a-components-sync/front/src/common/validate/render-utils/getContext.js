@@ -65,14 +65,14 @@ export default {
       };
       context.getParams = () => {
         if (!context._params) {
-          const scope = this._getCascadeScope({ context, groupWhole });
+          const scope = this.getCascadeScope({ context, groupWhole });
           context._params = this.$meta.util.cascadeExtend({ scope, source: property, name: 'ebParams' }) || {};
         }
         return context._params;
       };
       context.getParamsDefault = () => {
         if (!context._paramsDefault) {
-          const scope = this._getCascadeScope({ context, groupWhole });
+          const scope = this.getCascadeScope({ context, groupWhole });
           const source = this.$config.validate.cascadeParams.default;
           context._paramsDefault = this.$meta.util.cascadeExtend({ scope, source, name: 'ebParams' }) || {};
         }
@@ -97,28 +97,6 @@ export default {
     _getClassNameDefault({ context }) {
       const paramsDefault = context.getParamsDefault();
       return paramsDefault.className;
-    },
-    _getCascadeScope({ context, groupWhole }) {
-      const scope = {};
-      // groupWhole
-      if (groupWhole) {
-        scope.groupWhole = true;
-      } else {
-        scope.group = true;
-      }
-      // mobile/pc
-      scope[this.$meta.vueApp.layout] = true;
-      // small/medium/large
-      scope[this.$view.size] = true;
-      // readOnly: view/edit
-      const readOnly = context.getReadOnly();
-      if (readOnly) {
-        scope.view = true;
-      } else {
-        scope.edit = true;
-      }
-      // ok
-      return scope;
     },
     _patchItemClassNameStyle({ context, item }) {
       if (!item) return;
