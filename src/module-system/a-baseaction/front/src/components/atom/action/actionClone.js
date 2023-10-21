@@ -16,9 +16,7 @@ export default {
         const dataOptions = action.dataOptions || {};
         // options
         const options = {};
-        if (dataOptions.flowTaskId) {
-          options.flowTaskId = dataOptions.flowTaskId;
-        }
+        this.base_prepareOptionsFromDataOptions(options, dataOptions);
         // clone
         const data = await ctx.$api.post('/a/base/atom/clone', {
           key,
@@ -42,9 +40,7 @@ export default {
           itemId: atomDraft.itemId,
           ...atomClass,
         };
-        if (dataOptions.flowTaskId) {
-          queries.flowTaskId = dataOptions.flowTaskId;
-        }
+        this.base_prepareOptionsFromDataOptions(queries, dataOptions);
         // url
         const url = ctx.$meta.util.combineQueries('/a/basefront/atom/item', queries);
         // open
