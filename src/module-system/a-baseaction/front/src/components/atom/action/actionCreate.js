@@ -74,6 +74,10 @@ export default {
       if (dataOptions.flowTaskId) {
         params.options.flowTaskId = dataOptions.flowTaskId;
       }
+      // formActionMain
+      if (dataOptions.formActionMain) {
+        params.options.formActionMain = dataOptions.formActionMain;
+      }
       // ok
       return params;
     },
