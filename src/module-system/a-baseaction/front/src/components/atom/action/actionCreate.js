@@ -70,14 +70,7 @@ export default {
       if (dataOptions.atomIdMain) {
         params.options.atomIdMain = dataOptions.atomIdMain;
       }
-      // flowTaskId
-      if (dataOptions.flowTaskId) {
-        params.options.flowTaskId = dataOptions.flowTaskId;
-      }
-      // formActionMain
-      if (dataOptions.formActionMain) {
-        params.options.formActionMain = dataOptions.formActionMain;
-      }
+      this.base_prepareOptionsFromDataOptions(params.options, dataOptions);
       // ok
       return params;
     },

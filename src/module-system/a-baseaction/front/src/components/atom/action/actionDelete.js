@@ -12,9 +12,7 @@ export default {
       const dataOptions = action.dataOptions || {};
       // options
       const options = {};
-      if (dataOptions.flowTaskId) {
-        options.flowTaskId = dataOptions.flowTaskId;
-      }
+      this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // post
       await ctx.$api.post('/a/base/atom/delete', {
         key,
