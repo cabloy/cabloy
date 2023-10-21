@@ -126,13 +126,15 @@ export default {
       if (property.ebType === 'group' || property.ebType === 'group-flatten') return;
       // use <tag staticClass="xxx"> as the default value, so as to override the grid-col rules
       //    use <tag class="xxx"> to support extend rules
-      const className = this._getClassName({ context, classNameDefault: item.data.staticClass });
+      const staticClassOriginal = item.data.staticClass;
+      const className = this._getClassName({ context, classNameDefault: staticClassOriginal });
       const cssStyle = this._getCssStyle({ context });
       const items = Array.isArray(item) ? item : [item];
       for (item of items) {
-        if (className) {
-          item.data.staticClass = className;
-          // this.$vuef7.utils.classNames(item.data.staticClass, className);
+        if (className && className !== staticClassOriginal) {
+          // hold the original item.data.staticClass
+          item.data.staticClass = this.$vuef7.utils.classNames(staticClassOriginal, className);
+          // item.data.staticClass = className;
         }
         if (cssStyle) {
           if (item.data.style) {
