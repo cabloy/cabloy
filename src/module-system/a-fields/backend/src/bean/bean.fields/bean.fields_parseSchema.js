@@ -1,15 +1,23 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Fields {
-    // atomClass: maybe detail
-    // fieldsRight: must belongs to main atomClass
-    async parseSchema({ atomClass, fieldsRight }) {
+    // atomClass: maybe main/detail
+    //  atomClass is main only when (!atomClassMain && !atomClass.detail) || atomClass=atomClassMain
+    async parseSchema({ atomClass, atomClassMain, fieldsRight }) {
       // atomClass
       atomClass = await ctx.bean.atomClass.get(atomClass);
+      // atomClassMain
+      if (atomClassMain) {
+        atomClassMain = await ctx.bean.atomClass.get(atomClassMain);
+      }
+      // atomClassBase
+      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+      // isMain
+      const isMain = (!atomClassMain && !atomClassBase.detail) || (atomClassMain && atomClass.id === atomClassMain.id);
       // schemaBase
       let schemaBase = await this.__parseSchema_getSchemaBase({ atomClass });
       // fieldsRight
-      fieldsRight = await this.__parseSchema_getFieldsRight({ atomClass, fieldsRight });
+      fieldsRight = await this.__parseSchema_getFieldsRight({ atomClass, isMain, fieldsRight });
       // check
       if (fieldsRight._mode === 'general') {
         if (fieldsRight.mode === 'allowAllFieldsReadWrite') {
@@ -123,12 +131,14 @@ module.exports = ctx => {
       return await ctx.bean.atom.schema({ atomClass, schema: null });
     }
 
-    async __parseSchema_getFieldsRight({ atomClass, fieldsRight }) {
-      // atomClassBase
-      const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
-      if (atomClassBase.detail) {
+    async __parseSchema_getFieldsRight({ atomClass, isMain, fieldsRight }) {
+      // use default right when null
+      fieldsRight = fieldsRight || {};
+      if (isMain) {
+        fieldsRight = fieldsRight.details ? { ...fieldsRight, details: null } : fieldsRight;
+      } else {
         const atomClassKey = this.__getAtomClassKey({ atomClass });
-        const details = fieldsRight?.details || {};
+        const details = fieldsRight.details || {};
         fieldsRight = details[atomClassKey];
       }
       // prepare fieldsRight
