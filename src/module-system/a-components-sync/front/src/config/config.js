@@ -7,10 +7,10 @@ export default {
     cascadeParams: {
       default: {
         ebParams_group: {
-          className: 'col-100 medium-100 large-50',
+          staticClass: 'col-100 medium-100 large-50',
         },
         ebParams_groupWhole: {
-          className: 'col-100 medium-50 large-25',
+          staticClass: 'col-100 medium-50 large-25',
         },
       },
     },

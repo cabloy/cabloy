@@ -7,13 +7,13 @@ export default {
       // use <tag staticClass="xxx"> as the default value, so as to override the grid-col rules
       //    use <tag class="xxx"> to support extend rules
       const staticClassOriginal = item.data.staticClass;
-      const className = this._getClassName({ context, classNameDefault: staticClassOriginal });
+      const staticClass = this._getStaticClass({ context, staticClassDefault: staticClassOriginal });
       const cssStyle = this._getCssStyle({ context });
       const items = Array.isArray(item) ? item : [item];
       for (item of items) {
-        if (className && className !== staticClassOriginal) {
+        if (staticClass && staticClass !== staticClassOriginal) {
           // hold the original item.data.staticClass
-          item.data.staticClass = this.$vuef7.utils.classNames(staticClassOriginal, className);
+          item.data.staticClass = this.$vuef7.utils.classNames(staticClassOriginal, staticClass);
           // item.data.staticClass = className;
         }
         if (cssStyle) {
@@ -29,16 +29,16 @@ export default {
       const params = context.getParams();
       return params.cssStyle;
     },
-    _getClassName({ context, classNameDefault }) {
+    _getStaticClass({ context, staticClassDefault }) {
       const params = context.getParams();
-      const className = params.className;
-      if (className !== undefined) return className;
-      if (classNameDefault !== undefined) return classNameDefault;
-      return this._getClassNameDefault({ context });
+      const staticClass = params.staticClass;
+      if (staticClass !== undefined) return staticClass;
+      if (staticClassDefault !== undefined) return staticClassDefault;
+      return this._getStaticClassDefault({ context });
     },
-    _getClassNameDefault({ context }) {
+    _getStaticClassDefault({ context }) {
       const paramsDefault = context.getParamsDefault();
-      return paramsDefault.className;
+      return paramsDefault.staticClass;
     },
   },
 };
