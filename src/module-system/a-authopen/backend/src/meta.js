@@ -1,4 +1,4 @@
-const authFn = require('./config/passport/auth.js');
+const authFn = require('./meta/passport/auth.js');
 
 // actionPathListOpenAuthSelf
 const _options = {
@@ -11,10 +11,10 @@ const actionPathListOpenAuthSelf = `/a/basefront/atom/list?module=a-authopen&ato
 
 module.exports = app => {
   // schemas
-  const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js')(app);
   // static
-  const staticLayouts = require('./config/static/layouts.js')(app);
-  const staticResources = require('./config/static/resources.js')(app);
+  const staticLayouts = require('./meta/static/layouts.js')(app);
+  const staticResources = require('./meta/static/resources.js')(app);
   // meta
   const meta = {
     auth: authFn,

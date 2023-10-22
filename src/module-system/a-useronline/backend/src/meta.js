@@ -1,12 +1,12 @@
 module.exports = app => {
   // atomClasses
-  const atomClasses = require('./config/atomClass/atomClasses.js')(app);
+  const atomClasses = require('./meta/atomClass/atomClasses.js')(app);
   // schemas
-  const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js')(app);
   // static
-  const staticLayouts = require('./config/static/layouts.js')(app);
-  const staticResources = require('./config/static/resources.js')(app);
-  const staticDicts = require('./config/static/dicts.js')(app);
+  const staticLayouts = require('./meta/static/layouts.js')(app);
+  const staticResources = require('./meta/static/resources.js')(app);
+  const staticDicts = require('./meta/static/dicts.js')(app);
   // meta
   const meta = {
     base: {

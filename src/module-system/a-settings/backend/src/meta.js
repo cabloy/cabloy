@@ -1,6 +1,6 @@
 module.exports = app => {
   // static
-  const staticResources = require('./config/static/resources.js')(app);
+  const staticResources = require('./meta/static/resources.js')(app);
   const meta = {
     base: {
       statics: {

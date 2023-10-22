@@ -1,10 +1,10 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  const schemas = require('./config/validation/schemas.js')(app);
-  const staticApps = require('./config/static/apps.js')(app);
-  const staticFlowDefs = require('./config/static/flowDefs.js')(app);
-  const staticLayouts = require('./config/static/layouts.js')(app);
-  const staticResources = require('./config/static/resources.js')(app);
+  const schemas = require('./meta/validation/schemas.js')(app);
+  const staticApps = require('./meta/static/apps.js')(app);
+  const staticFlowDefs = require('./meta/static/flowDefs.js')(app);
+  const staticLayouts = require('./meta/static/layouts.js')(app);
+  const staticResources = require('./meta/static/resources.js')(app);
   const meta = {
     base: {
       atoms: {

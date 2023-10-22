@@ -1,4 +1,4 @@
-const Strategy = require('../config/passport/strategy.js');
+const Strategy = require('../meta/passport/strategy.js');
 
 module.exports = function (ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);

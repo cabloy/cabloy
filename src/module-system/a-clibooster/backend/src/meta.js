@@ -1,10 +1,10 @@
 module.exports = app => {
   // schemas
-  const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js')(app);
   // static
-  const staticResources = require('./config/static/resources.js')(app);
+  const staticResources = require('./meta/static/resources.js')(app);
   // cli commands
-  const cliCommands = require('./config/cli/commands.js')(app);
+  const cliCommands = require('./meta/cli/commands.js')(app);
   // meta
   const meta = {
     base: {

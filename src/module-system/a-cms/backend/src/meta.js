@@ -1,18 +1,18 @@
 module.exports = app => {
   // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
   // atomClasses
-  const atomClasses = require('./config/atomClass/atomClasses.js')(app);
+  const atomClasses = require('./meta/atomClass/atomClasses.js')(app);
   // keywords
-  const keywords = require('./config/validation/keywords.js')(app);
+  const keywords = require('./meta/validation/keywords.js')(app);
   // schemas
-  const schemas = require('./config/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js')(app);
   // socketio
-  const socketioHotloadFile = require('./config/socketio/hotloadFile.js')(app);
+  const socketioHotloadFile = require('./meta/socketio/hotloadFile.js')(app);
   // static
-  const staticApps = require('./config/static/apps.js')(app);
-  const staticFlowDefs = require('./config/static/flowDefs.js')(app);
-  const staticResources = require('./config/static/resources.js')(app);
-  const staticLayouts = require('./config/static/layouts.js')(app);
+  const staticApps = require('./meta/static/apps.js')(app);
+  const staticFlowDefs = require('./meta/static/flowDefs.js')(app);
+  const staticResources = require('./meta/static/resources.js')(app);
+  const staticLayouts = require('./meta/static/layouts.js')(app);
   // meta
   const meta = {
     base: {
