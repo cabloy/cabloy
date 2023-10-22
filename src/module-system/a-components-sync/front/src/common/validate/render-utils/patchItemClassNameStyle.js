@@ -8,6 +8,7 @@ export default {
       //    use <tag class="xxx"> to support extend rules
       const staticClassOriginal = item.data.staticClass;
       const staticClass = this._getStaticClass({ context, staticClassDefault: staticClassOriginal });
+      const className = this._getClassName({ context });
       const cssStyle = this._getCssStyle({ context });
       const items = Array.isArray(item) ? item : [item];
       for (item of items) {
@@ -15,6 +16,13 @@ export default {
           // hold the original item.data.staticClass
           item.data.staticClass = this.$vuef7.utils.classNames(staticClassOriginal, staticClass);
           // item.data.staticClass = className;
+        }
+        if (className) {
+          if (item.data.class) {
+            item.data.class = this.$vuef7.utils.classNames(item.data.class, className);
+          } else {
+            item.data.class = className;
+          }
         }
         if (cssStyle) {
           if (item.data.style) {
@@ -24,6 +32,10 @@ export default {
           }
         }
       }
+    },
+    _getClassName({ context }) {
+      const params = context.getParams();
+      return params.className;
     },
     _getCssStyle({ context }) {
       const params = context.getParams();
