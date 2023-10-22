@@ -2,7 +2,7 @@ const __snippet_declare = `// const layoutAtomList<%=argv.atomClassNameCapitaliz
 const __snippet_body = `// layoutAtomList<%=argv.atomClassNameCapitalize%>(app),`;
 
 module.exports = {
-  file: 'backend/src/config/static/layouts.js',
+  file: 'backend/src/meta/static/layouts.js',
   async transform({ cli, ast, argv, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });

@@ -2,7 +2,7 @@ const __snippet_declare = `const <%=argv.atomClassName%> = require('./atomClass/
 const __snippet_body = `<%=argv.atomClassName%>: <%=argv.atomClassName%>(app),`;
 
 module.exports = {
-  file: 'backend/src/config/atomClass/atomClasses.js',
+  file: 'backend/src/meta/atomClass/atomClasses.js',
   async transform({ cli, ast, argv, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });

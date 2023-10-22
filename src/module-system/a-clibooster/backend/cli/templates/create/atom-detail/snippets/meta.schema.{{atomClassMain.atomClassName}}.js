@@ -26,7 +26,7 @@ module.exports = {
       // not in the same module
       return null;
     }
-    return `backend/src/config/validation/schema/${argv.atomClassMain.atomClassName}.js`;
+    return `backend/src/meta/validation/schema/${argv.atomClassMain.atomClassName}.js`;
   },
   async transform({ cli, ast, argv, ctx }) {
     // code

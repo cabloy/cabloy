@@ -3,7 +3,7 @@ const __snippet_body = `// <%=argv.atomClassName%>
 Object.assign(schemas, <%=argv.atomClassName%>(app));`;
 
 module.exports = {
-  file: 'backend/src/config/validation/schemas.js',
+  file: 'backend/src/meta/validation/schemas.js',
   async transform({ cli, ast, argv, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
