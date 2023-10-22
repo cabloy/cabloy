@@ -2,7 +2,7 @@ const __snippet_declare = `const <%=argv.appKey%> = require('./app/<%=argv.appKe
 const __snippet_body = `<%=argv.appKey%>(app),`;
 
 module.exports = {
-  file: 'backend/src/config/static/apps.js',
+  file: 'backend/src/meta/static/apps.js',
   init: `module.exports = app => {
   const apps = [
   ];

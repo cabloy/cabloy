@@ -1,4 +1,4 @@
-const __snippet_staticApps = `const staticApps = require('./config/static/apps.js')(app);`;
+const __snippet_staticApps = `const staticApps = require('./meta/static/apps.js')(app);`;
 const __snippet_staticsApp = `
 'a-app.app': {
   items: staticApps,
