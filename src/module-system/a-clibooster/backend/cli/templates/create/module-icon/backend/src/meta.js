@@ -1,6 +1,6 @@
 module.exports = app => {
-  const schemas = require('./config/validation/schemas.js')(app);
-  const iconGroups = require('./config/icons/groups.js');
+  const schemas = require('./meta/validation/schemas.js')(app);
+  const iconGroups = require('./meta/icons/groups.js');
   const meta = {
     base: {
       atoms: {},
