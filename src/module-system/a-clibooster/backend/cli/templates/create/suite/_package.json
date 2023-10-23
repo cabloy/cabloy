@@ -1,6 +1,6 @@
 {
   "name": "egg-born-suite-<%=argv.name%>",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "title": "<%=argv.suiteInfo.relativeName%>",
   "description": "<%=argv.description%>",
   "author": "<%=argv.author%>"
