@@ -1,14 +1,14 @@
 {
   "name": "egg-born-module-a-cms",
-  "version": "4.8.13",
+  "version": "5.0.0",
   "title": "CMS",
   "eggBornModule": {
     "fileVersion": 12,
     "icon": ":outline:article-outline",
     "cms": {},
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0"
     }
   },
   "description": "",

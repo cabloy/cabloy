@@ -1,12 +1,12 @@
 {
   "name": "egg-born-module-a-flow",
-  "version": "4.8.10",
+  "version": "5.0.0",
   "title": "FlowTitle",
   "eggBornModule": {
     "fileVersion": 5,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0"
     }
   },
   "description": "",

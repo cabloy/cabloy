@@ -1,13 +1,13 @@
 {
   "name": "egg-born-module-a-authsimple",
-  "version": "4.8.7",
+  "version": "5.0.0",
   "title": "Auth-Simple",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0",
-      "a-auth": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0",
+      "a-auth": "5.0.0"
     }
   },
   "description": "",

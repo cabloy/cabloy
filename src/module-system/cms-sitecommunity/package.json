@@ -1,14 +1,14 @@
 {
   "name": "egg-born-module-cms-sitecommunity",
-  "version": "4.8.6",
+  "version": "5.0.0",
   "title": "CMS:Community",
   "eggBornModule": {
     "fileVersion": 2,
     "cms": {},
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0",
-      "a-cms": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0",
+      "a-cms": "5.0.0"
     }
   },
   "description": "",

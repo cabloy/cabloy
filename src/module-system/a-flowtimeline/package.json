@@ -1,13 +1,13 @@
 {
   "name": "egg-born-module-a-flowtimeline",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "title": "a-flowtimeline",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0",
-      "a-flow": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0",
+      "a-flow": "5.0.0"
     }
   },
   "description": "",

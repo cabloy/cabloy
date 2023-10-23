@@ -1,13 +1,13 @@
 {
   "name": "egg-born-module-a-useronline",
-  "version": "4.8.9",
+  "version": "5.0.0",
   "title": "Online Users",
   "eggBornModule": {
     "fileVersion": 2,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0",
-      "a-flow": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0",
+      "a-flow": "5.0.0"
     }
   },
   "description": "",

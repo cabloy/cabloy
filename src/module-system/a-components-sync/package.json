@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-components-sync",
-  "version": "4.8.39",
+  "version": "5.0.0",
   "eggBornModule": {
     "dependencies": {}
   },

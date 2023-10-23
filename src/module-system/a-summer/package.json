@@ -1,11 +1,11 @@
 {
   "name": "egg-born-module-a-summer",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "title": "a-summer",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "4.0.0"
+      "a-instance": "5.0.0"
     }
   },
   "description": "Layered Cache",

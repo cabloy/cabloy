@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-cms-pluginuser",
-  "version": "4.8.4",
+  "version": "5.0.0",
   "title": "cms:plugin:user",
   "eggBornModule": {
     "cms": {
@@ -9,9 +9,9 @@
     },
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0",
-      "cms-pluginbase": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0",
+      "cms-pluginbase": "5.0.0"
     }
   },
   "description": "",

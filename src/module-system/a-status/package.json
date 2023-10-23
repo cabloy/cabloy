@@ -1,10 +1,10 @@
 {
   "name": "egg-born-module-a-status",
-  "version": "4.8.4",
+  "version": "5.0.0",
   "eggBornModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-instance": "4.0.0"
+      "a-instance": "5.0.0"
     }
   },
   "description": "",

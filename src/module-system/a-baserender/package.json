@@ -1,6 +1,6 @@
 {
   "name": "egg-born-module-a-baserender",
-  "version": "4.0.13",
+  "version": "5.0.0",
   "title": "Base Render",
   "eggBornModule": {
     "dependencies": {}

@@ -1,13 +1,13 @@
 {
   "name": "egg-born-module-a-themebrilliant",
-  "version": "4.8.5",
+  "version": "5.0.0",
   "title": "BrilliantThemeTitle",
   "eggBornModule": {
     "fileVersion": 0,
     "theme": true,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0"
     }
   },
   "description": "cabloy theme of brilliant",

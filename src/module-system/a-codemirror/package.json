@@ -1,11 +1,11 @@
 {
   "name": "egg-born-module-a-codemirror",
-  "version": "4.8.4",
+  "version": "5.0.0",
   "title": "codemirror",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "4.0.0"
+      "a-instance": "5.0.0"
     }
   },
   "description": "",

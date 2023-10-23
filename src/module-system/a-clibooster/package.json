@@ -1,13 +1,13 @@
 {
   "name": "egg-born-module-a-clibooster",
-  "version": "4.8.15",
+  "version": "5.0.0",
   "title": "a-clibooster",
   "eggBornModule": {
     "fileVersion": 0,
     "dependencies": {
-      "a-instance": "4.0.0",
-      "a-base": "4.0.0",
-      "a-cli": "4.0.0"
+      "a-instance": "5.0.0",
+      "a-base": "5.0.0",
+      "a-cli": "5.0.0"
     }
   },
   "description": "Cli Booster",
