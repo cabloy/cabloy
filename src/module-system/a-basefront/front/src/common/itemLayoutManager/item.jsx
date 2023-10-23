@@ -4,7 +4,9 @@ export default {
       return item.atomClosed === 0 ? 'orange' : 'gray';
     },
     item_renderFlowNodeState(item) {
-      if (item._atomStateTitleLocale) {
+      // ignore 0/'0'
+      // eslint-disable-next-line
+      if (item.atomState != 0 && item._atomStateTitleLocale) {
         const color = this.item_getAtomStateColor(item);
         return (
           <f7-badge key="_atomStateTitleLocale" color={color}>
