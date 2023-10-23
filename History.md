@@ -1,6 +1,6 @@
 # History
 
-## 2023-xx-xx, Version 4.36.0（未发布）
+## 2023-xx-xx, Version 5.0.5-alpha
 
 - **Feat**
 
@@ -10,8 +10,14 @@
     - 参见/path to project/src/backend/config/monkey.js
   - 移除 require3 机制
   - Form 表单：更加灵活的字段分栏布局
+  - Atom Action：增加表单功能
+  - Atom Action：增加与流程节点类似的 atomState、fieldsRight、fieldsMapping 机制
 
-## 2023-09-24, Version 4.35.0（未发布）
+- **Refactor**
+
+  - 与 meta 相关的文件统一从 config 目录转移至 meta 目录
+
+## 2023-09-24, Version 5.0.4-alpha
 
 - **Feat**
 
@@ -41,7 +47,7 @@
   - $page与$pageContainer 重构
   - 增强 subnavbar 组件的动态显示机制
 
-## 2023-08-29, Version 4.34.0（未发布）
+## 2023-08-29, Version 5.0.3-alpha
 
 - **Feat**
 
@@ -49,14 +55,14 @@
     - 支持在所有业务数据中配置
     - 支持在流程中配置
 
-## 2023-07-28, Version 4.33.0（未发布）
+## 2023-07-28, Version 5.0.2-alpha
 
 - **Feat**
 
   - Detail：基于 ItemOnly 重构，延用 Atom 的同一套前端页面组件和后端 API 逻辑
     - test-flow 模块中`采购订单明细`进行重构
 
-## 2023-05-15, Version 4.32.0（未发布）
+## 2023-05-15, Version 5.0.1-alpha
 
 - **Feat**
 
@@ -77,7 +83,7 @@
   - npm run cli：支持自动启动后端服务，用完自动销毁
   - ebType: atomClass
 
-## 2023-03-24, Version 4.31.0（未发布）
+## 2023-03-24, Version 5.0.0-alpha
 
 - **Feat**
 
