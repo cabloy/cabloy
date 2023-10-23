@@ -1,5 +1,10 @@
 export default {
   methods: {
+    _patchItemsClassNameStyle({ context, items }) {
+      for (const item of items) {
+        this._patchItemClassNameStyle({ context, item });
+      }
+    },
     _patchItemClassNameStyle({ context, item }) {
       if (!item) return;
       const { property } = context;
