@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/zhennann/cabloy#readme",
   "engines": {
-    "node": "^14.15.0 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "cli": "node ./packages/egg-born-bin/bin/egg-born-bin.js cli",
