@@ -98,7 +98,7 @@ module.exports = ctx => {
     async performAction({ key, atomClass, action, item, options, user }) {
       // super
       await super.performAction({ key, atomClass, action, item, options, user });
-      // partyOver
+      // kickOut
       if (action === 'kickOut') {
         const item = await this.model.get({ id: key.itemId });
         const user = { id: item.userId };
