@@ -10,7 +10,7 @@ export default {
         return;
       }
       // form
-      const formHandle = await this.base_handleActionBulkForm();
+      const formHandle = await this.base_handleActionFormBulk();
       if (formHandle) return;
       // perform
       await this._onActionBulkPerformActionPerform();

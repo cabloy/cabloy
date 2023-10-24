@@ -5,4 +5,7 @@ function loadjsx(name) {
   return require(`./pages/${name}.jsx`).default;
 }
 
-export default [];
+export default [
+  //
+  { path: 'formActionBulk', component: loadjsx('formActionBulk') },
+];
