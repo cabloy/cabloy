@@ -63,7 +63,7 @@
     "@babel/register": "^7.8.3",
     "@zhennann/docdash": "^1.2.3",
     "@zhennann/extend": "^3.0.2",
-    "@zhennann/framework7": "^6.1.19",
+    "@zhennann/framework7": "^5.8.0",
     "@zhennann/socketio": "^4.0.2",
     "@zhennann/vue": "^2.7.15",
     "async": "^3.2.0",
