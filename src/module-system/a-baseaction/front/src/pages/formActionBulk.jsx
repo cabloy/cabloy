@@ -8,7 +8,7 @@ export default {
     const atomClassName = query.atomClassName;
     const atomClass = module && atomClassName ? { module, atomClassName } : null;
     const formAction = query.formAction;
-    const schema = JSON.stringify(query.schema);
+    const schema = query.schema ? JSON.parse(query.schema) : null;
     const title = query.title;
     return {
       atomClass,
@@ -25,22 +25,22 @@ export default {
   },
   created() {},
   methods: {
-    async onPerformSave() {
-      // 为什么不直接调用后端api
-      return await this.$refs.validate.perform();
+    async onPerformDone() {
+      // performValidate
+      await this.$refs.validate.perform();
+      this.page_setDirty(false);
     },
     onFormSubmit() {
-      this.$refs.buttonSave.onClick();
+      this.$refs.buttonDone.onClick();
     },
     onValidateItemChange() {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      await this.$api.post('store/saveInfo', {
+      return await this.$api.post('validation/validate', {
+        params: this.schema,
         data: this.formItem,
       });
-      this.page_setDirty(false);
-      return true; // toast on success
     },
   },
   render() {
@@ -48,20 +48,20 @@ export default {
       <eb-page>
         <eb-navbar title={this.page_title} eb-back-link="Back">
           <f7-nav-right>
-            <eb-link iconF7="::save" ref="buttonSave" propsOnPerform={this.onPerformSave}></eb-link>
+            <eb-link iconF7="::done" ref="buttonDone" propsOnPerform={this.onPerformDone}>
+              {this.$text('Submit')}
+            </eb-link>
           </f7-nav-right>
         </eb-navbar>
-        {this.formItem && (
-          <eb-validate
-            ref="validate"
-            auto={true}
-            data={this.formItem}
-            params={this.validateParams}
-            propsOnPerform={this.onPerformValidate}
-            onSubmit={this.onFormSubmit}
-            onValidateItemChange={this.onValidateItemChange}
-          ></eb-validate>
-        )}
+        <eb-validate
+          ref="validate"
+          auto={true}
+          data={this.formItem}
+          params={this.schema}
+          propsOnPerform={this.onPerformValidate}
+          onSubmit={this.onFormSubmit}
+          onValidateItemChange={this.onValidateItemChange}
+        ></eb-validate>
       </eb-page>
     );
   },
