@@ -34,7 +34,7 @@ export default {
     async onPerformDone() {
       // performValidate
       const res = await this.$refs.validate.perform();
-      const item = res.data;
+      const item = Object.assign({}, res.data, this.atomClass);
       // form action
       const formAction = this.formAction;
       // data options
