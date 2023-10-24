@@ -16,6 +16,7 @@ module.exports = app => {
           ebReadOnly: true,
         },
       });
+      return { data };
     }
   }
 

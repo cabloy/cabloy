@@ -27,7 +27,8 @@ export default {
   methods: {
     async onPerformDone() {
       // performValidate
-      await this.$refs.validate.perform();
+      const res = await this.$refs.validate.perform();
+      const item = res.data;
       this.page_setDirty(false);
     },
     onFormSubmit() {
