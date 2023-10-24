@@ -72,7 +72,7 @@ export default {
       this.$refs.buttonSubmit.onClick();
     },
     onPerformValidate() {
-      return this.$api.post('validation/validate', {
+      return this.$api.post('/a/validation/validation/validate', {
         params: this.params,
         data: this.dataLocal,
       });

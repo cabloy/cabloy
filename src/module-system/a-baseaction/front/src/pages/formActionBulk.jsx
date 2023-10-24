@@ -37,7 +37,7 @@ export default {
       this.page_setDirty(true);
     },
     async onPerformValidate() {
-      return await this.$api.post('validation/validate', {
+      return await this.$api.post('/a/validation/validation/validate', {
         params: this.schema,
         data: this.formItem,
       });
