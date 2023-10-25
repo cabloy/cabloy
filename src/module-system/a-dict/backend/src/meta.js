@@ -31,7 +31,7 @@ module.exports = app => {
           },
           actions: {
             write: {
-              enableOnStatic: true,
+              enableOnStatic: null,
             },
           },
           validator: 'dict',

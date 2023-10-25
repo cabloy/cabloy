@@ -33,7 +33,7 @@ module.exports = app => {
               actionModule: 'a-cms',
               actionComponent: 'action',
               icon: { f7: '::preview' },
-              enableOnStatic: true,
+              enableOnStatic: null,
               enableOnOpened: true,
               stage: 'draft,formal',
             },
