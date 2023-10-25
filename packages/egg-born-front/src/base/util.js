@@ -416,20 +416,25 @@ export default function (Vue) {
       if (height) query = `${query ? query + '&' : ''}height=${parseInt(height) * pixelRatio}`;
       return `${url}${url.charAt(url.length - 1) === '?' ? '' : '?'}${query}`;
     },
-    combineQueries(url, queries) {
-      //
-      if (!queries) return url;
-      //
+    combineParams(params) {
+      if (!params) return '';
       let str = '';
-      for (const key of Object.keys(queries)) {
-        const value = queries[key];
+      for (const key of Object.keys(params)) {
+        const value = params[key];
         if (value !== null && value !== undefined) {
           str += `${key}=${encodeURIComponent(value)}&`;
         }
       }
       if (str) {
-        str = str.substr(0, str.length - 1);
+        str = str.substring(0, str.length - 1);
       }
+      return str;
+    },
+    combineQueries(url, queries) {
+      //
+      if (!queries) return url;
+      //
+      const str = this.combineParams(queries);
       if (!str) return url;
       //
       if (!url) return '?' + str;

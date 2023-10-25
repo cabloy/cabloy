@@ -309,6 +309,15 @@ export default {
       this.$emit('schema:ready', this.schema);
       this.$emit('schemaReady', this.schema);
     },
+    __getDevValidateParams() {
+      if (this.$meta.config.env !== 'development') return null;
+      if (!this.params) return null;
+      const data = [];
+      if (this.params.module) data.module = this.params.module;
+      if (this.params.validator) data.validator = this.params.validator;
+      if (this.params.schema) data.schema = this.params.schema;
+      return this.$meta.util.combineParams(data);
+    },
     // async __schemaReady_patchSchema(schema) {
     //   await this.__schemaReady_patchSchema_properties(schema.properties);
     // },
@@ -324,7 +333,17 @@ export default {
     //   }
     // },
     renderSchema() {
-      return <validateItem parcel={this.parcel} dataKey={null} property={null} meta={null} root={true}></validateItem>;
+      const devValidateParams = this.__getDevValidateParams();
+      return (
+        <validateItem
+          data-dev-validate-params={devValidateParams}
+          parcel={this.parcel}
+          dataKey={null}
+          property={null}
+          meta={null}
+          root={true}
+        ></validateItem>
+      );
     },
     onSubmit(event) {
       this.$emit('submit', event);
