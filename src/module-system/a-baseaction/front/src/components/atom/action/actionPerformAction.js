@@ -8,6 +8,7 @@ export default {
         // perform
         await this._onActionPerformActionPerform();
         // back
+        ctx.page_setDirty(false); // should before navigate
         ctx.$f7router.back();
         return;
       }
