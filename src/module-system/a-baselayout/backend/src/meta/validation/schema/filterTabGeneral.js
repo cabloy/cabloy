@@ -34,6 +34,9 @@ module.exports = app => {
         type: 'number',
         ebType: 'toggle',
         ebTitle: 'UserStar',
+        ebDisplay: {
+          expression: '_meta.host.stage==="formal"',
+        },
         ebSearch: {
           tableAlias: null,
           ignoreValue: 0,
@@ -45,6 +48,9 @@ module.exports = app => {
         ebTitle: 'UserLabel',
         ebParams: {
           optional: true,
+        },
+        ebDisplay: {
+          expression: '_meta.host.stage==="formal"',
         },
         ebSearch: {
           tableAlias: null,
