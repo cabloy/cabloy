@@ -26,7 +26,6 @@ module.exports = app => {
         actionModule: 'a-base',
         actionComponent: 'action',
         icon: { f7: ':outline:logout-outline' },
-        // enableOnOpened: true,
         stage: 'formal',
         params: {
           actionAfter: {
@@ -40,7 +39,6 @@ module.exports = app => {
         actionModule: moduleInfo.relativeName,
         actionComponent: 'action',
         icon: { f7: ':role:shield-key' },
-        // enableOnOpened: true,
         stage: 'formal',
       },
     },

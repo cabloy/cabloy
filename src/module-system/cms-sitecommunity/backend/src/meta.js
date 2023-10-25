@@ -43,7 +43,7 @@ module.exports = app => {
               actionComponent: 'action',
               icon: { f7: '::preview' },
               enableOnStatic: null,
-              enableOnOpened: true,
+              enableOnOpened: null,
               stage: 'draft,formal',
             },
           },
