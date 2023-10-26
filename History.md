@@ -6,6 +6,7 @@
 
   - validate 表单
     - 增加 flush/reset 机制
+  - 模块：a-dictarea
 
 ## 2023-10-26, Version 5.0.5-alpha
 

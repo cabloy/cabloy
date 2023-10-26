@@ -99,6 +99,9 @@
           "a-dict": {
             "scripts": ["npmPublish"]
           },
+          "a-dictarea": {
+            "scripts": ["npmPublish"]
+          },
           "a-dictbooster": {
             "scripts": ["npmPublish"]
           },

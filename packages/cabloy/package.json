@@ -61,6 +61,7 @@
     "egg-born-module-a-dashboardbooster": "^5.0.0",
     "egg-born-module-a-detail": "^5.0.0",
     "egg-born-module-a-dict": "^5.0.0",
+    "egg-born-module-a-dictarea": "^5.0.0",
     "egg-born-module-a-dictbooster": "^5.0.0",
     "egg-born-module-a-echarts": "^5.0.0",
     "egg-born-module-a-event": "^5.0.0",
