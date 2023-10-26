@@ -188,6 +188,7 @@ export default {
         const data = await this.onPerform(event, context);
         // perform after
         await this._invokePerformAfter(event, context, null, data);
+        // flush
         await this.flush();
         // ok
         return data;

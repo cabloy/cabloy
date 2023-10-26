@@ -1,6 +1,13 @@
 # History
 
-## 2023-xx-xx, Version 5.0.5-alpha
+## 2023-**-**, Version 5.0.6-alpha
+
+- **Feat**
+
+  - validate 表单
+    - 增加 flush/reset 机制
+
+## 2023-10-26, Version 5.0.5-alpha
 
 - **Feat**
 
@@ -16,6 +23,7 @@
 - **Refactor**
 
   - 与 meta 相关的文件统一从 config 目录转移至 meta 目录
+  - 重构 History 数据的权限机制
 
 ## 2023-09-24, Version 5.0.4-alpha
 
