@@ -1,4 +1,8 @@
+import Vue from 'vue';
+const ebValidateComponentBase = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateComponentBase;
+
 export default {
+  mixins: [ebValidateComponentBase],
   props: {
     context: {
       type: Object,
@@ -33,20 +37,37 @@ export default {
     this._loadDict();
   },
   methods: {
-    async _loadDict() {
+    _prepareDictKey() {
+      const { property } = this.context;
+      // dictKey
+      const dictKey = property.ebParams.dictKey;
+      if (dictKey) return dictKey;
+      // dictKeyFrom
+      const dictKeyFrom = property.ebParams.dictKeyFrom;
+      if (!dictKeyFrom) return null;
+      const fromInstance = this.context.getComponentInstance(dictKeyFrom);
+      return fromInstance?.dictItemOptions?.dictKey;
+    },
+    async _loadDict_inner() {
       const { property } = this.context;
       const dict = property.ebParams.dict;
-      const dictKey = property.ebParams.dictKey;
       if (dict) {
         this.dict = dict;
       } else {
         if (this.needLoadDict) {
-          const useStoreDict = await this.$store.use('a/dict/dict');
-          this.dict = await useStoreDict.getDict({
-            dictKey,
-          });
+          const dictKey = this._prepareDictKey();
+          if (dictKey) {
+            const useStoreDict = await this.$store.use('a/dict/dict');
+            this.dict = await useStoreDict.getDict({
+              dictKey,
+            });
+          }
         }
       }
+    },
+    async _loadDict() {
+      // load dict
+      await this._loadDict_inner();
       // load dict item
       await this._loadDictItem();
     },
@@ -57,17 +78,19 @@ export default {
         this.dictItemTitle = this.context.getValue(`_${key}TitleLocale`);
         this.dictItemOptions = this.context.getValue(`_${key}Options`);
       } else {
-        const code = this.context.getValue();
-        const separator = property.ebParams.separator;
-        const useStoreDict = await this.$store.use('a/dict/dict');
-        this.dictItem = await useStoreDict.findItem({
-          dict: this.dict,
-          // dictKey,
-          code,
-          options: { separator },
-        });
-        this.dictItemTitle = this.dictItem ? this.dictItem.titleLocaleFull : null;
-        this.dictItemOptions = this.dictItem ? this.dictItem.options : null;
+        if (this.dict) {
+          const code = this.context.getValue();
+          const separator = property.ebParams.separator;
+          const useStoreDict = await this.$store.use('a/dict/dict');
+          this.dictItem = await useStoreDict.findItem({
+            dict: this.dict,
+            // dictKey,
+            code,
+            options: { separator },
+          });
+          this.dictItemTitle = this.dictItem ? this.dictItem.titleLocaleFull : null;
+          this.dictItemOptions = this.dictItem ? this.dictItem.options : null;
+        }
       }
     },
     async onChooseDictItem() {
