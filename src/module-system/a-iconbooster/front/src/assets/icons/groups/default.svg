@@ -307,6 +307,9 @@
 <symbol id="reply" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <path fill="currentColor" d="M10 9V5l-7 7l7 7v-4.1c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11z"/>
 </symbol>
+<symbol id="reset" viewBox="0 0 24 24">
+  <path fill="currentColor" d="M6.78 2.72a.75.75 0 0 1 0 1.06L4.56 6h8.69a7.75 7.75 0 1 1-7.75 7.75a.75.75 0 0 1 1.5 0a6.25 6.25 0 1 0 6.25-6.25H4.56l2.22 2.22a.75.75 0 1 1-1.06 1.06l-3.5-3.5a.75.75 0 0 1 0-1.06l3.5-3.5a.75.75 0 0 1 1.06 0Z"/>
+</symbol>
 <symbol id="round-person-add" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
   <circle cx="9" cy="8" r="4" fill="currentColor"/>
   <path fill="currentColor" d="M9 14c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4zm11-4V7h-2v3h-3v2h3v3h2v-3h3v-2z"/>
