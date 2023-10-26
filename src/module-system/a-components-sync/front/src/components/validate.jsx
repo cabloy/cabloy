@@ -161,35 +161,37 @@ export default {
       this.dataCopy = this.$meta.util.extend({}, this.data);
       this.dataInit = this.$meta.util.extend({}, this.data);
     },
-    async reset() {
+    async reset(event, context) {
       if (!this.ready) return;
       this._resetErrors();
       this.$meta.util.replaceItem(this.data, this.dataInit);
       this.dataCopy = this.$meta.util.extend({}, this.data);
       if (this.onReset) {
-        await this.onReset(this.data);
+        await this.onReset(event, context, this.data);
       }
     },
-    async flush() {
+    async flush(event, context) {
       if (!this.ready) return;
       this._resetErrors();
       this.dataInit = this.$meta.util.extend({}, this.data);
       if (this.onFlush) {
-        await this.onFlush(this.data);
+        await this.onFlush(event, context, this.data);
       }
     },
-    async perform(event, context) {
+    async perform(event, context, flush = true) {
       if (this.auto && !this.ready) return null;
       if (!this.onPerform) return null;
       // perform before, need not wrapper error/exception
-      await this._invokePerformBefore(event, context);
+      await this._invokePerformBefore(event, context, this.data);
       // perform
       try {
-        const data = await this.onPerform(event, context);
+        const data = await this.onPerform(event, context, this.data);
         // perform after
         await this._invokePerformAfter(event, context, null, data);
         // flush
-        await this.flush();
+        if (flush) {
+          await this.flush();
+        }
         // ok
         return data;
       } catch (err) {
@@ -207,8 +209,8 @@ export default {
       }
     },
     // not wrapper error/exception
-    async _invokePerformBefore(event, context) {
-      const params = { event, context };
+    async _invokePerformBefore(event, context, data) {
+      const params = { event, context, data };
       // callbacks
       if (this.callbacksPerformBefore && this.callbacksPerformBefore.length > 0) {
         for (const cb of this.callbacksPerformBefore) {
