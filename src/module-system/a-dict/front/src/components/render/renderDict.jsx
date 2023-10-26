@@ -50,20 +50,22 @@ export default {
     },
     async _loadDict_inner() {
       const { property } = this.context;
+      // direct set from outer
       const dict = property.ebParams.dict;
       if (dict) {
         this.dict = dict;
-      } else {
-        if (this.needLoadDict) {
-          const dictKey = this._prepareDictKey();
-          if (dictKey) {
-            const useStoreDict = await this.$store.use('a/dict/dict');
-            this.dict = await useStoreDict.getDict({
-              dictKey,
-            });
-          }
-        }
+        return;
       }
+      // not need load dict
+      if (!this.needLoadDict) return;
+      // dictKey
+      const dictKey = this._prepareDictKey();
+      if (!dictKey) return;
+      // load from store
+      const useStoreDict = await this.$store.use('a/dict/dict');
+      this.dict = await useStoreDict.getDict({
+        dictKey,
+      });
     },
     async _loadDict() {
       // load dict
