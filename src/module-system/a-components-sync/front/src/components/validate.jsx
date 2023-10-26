@@ -190,7 +190,7 @@ export default {
         await this._invokePerformAfter(event, context, null, data);
         // flush
         if (flush) {
-          await this.flush();
+          await this.flush(event, context);
         }
         // ok
         return data;
