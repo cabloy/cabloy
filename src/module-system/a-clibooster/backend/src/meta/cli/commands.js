@@ -10,7 +10,6 @@ const createApp = require('./command/create.app.js');
 const createAtom = require('./command/create.atom.js');
 const createItemOnly = require('./command/create.itemOnly.js');
 const createDetail = require('./command/create.detail.js');
-const createAtomAction = require('./command/create.atomAction.js');
 const createController = require('./command/create.controller.js');
 const createPage = require('./command/create.page.js');
 const createPagex = require('./command/create.pagex.js');
@@ -40,7 +39,6 @@ module.exports = app => {
       atom: createAtom(app),
       itemOnly: createItemOnly(app),
       detail: createDetail(app),
-      atomAction: createAtomAction(app),
       controller: createController(app),
       page: createPage(app),
       pagex: createPagex(app),
