@@ -42,19 +42,35 @@ export default {
   },
   methods: {
     _unwatchDictKeyFrom() {
-      if (this._unwatchDictKeyFromId) {
-        this._unwatchDictKeyFromId();
-        this._unwatchDictKeyFromId = null;
+      if (this._unwatchDictKeyFrom_value) {
+        this._unwatchDictKeyFrom_value();
+        this._unwatchDictKeyFrom_value = null;
+      }
+      if (this._unwatchDictKeyFrom_options) {
+        this._unwatchDictKeyFrom_options();
+        this._unwatchDictKeyFrom_options = null;
       }
     },
     _watchDictKeyFrom() {
+      const { property } = this.context;
+      const dictKeyFrom = property.ebParams.dictKeyFrom;
+      if (!dictKeyFrom) return;
+      // unwatch
       this._unwatchDictKeyFrom();
-      this._unwatchDictKeyFromId = this.$watch(
+      // watch
+      this._unwatchDictKeyFrom_value = this.$watch(
+        () => {
+          return this.context.getValue(dictKeyFrom);
+        },
+        () => {
+          this.context.setValue(null);
+        }
+      );
+      this._unwatchDictKeyFrom_options = this.$watch(
         () => {
           return this._getDictKeyFrom();
         },
         () => {
-          this.context.setValue(null);
           this._loadDict();
         }
       );
