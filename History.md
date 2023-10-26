@@ -6,7 +6,8 @@
 
   - validate 表单
     - 增加 flush/reset 机制
-  - 模块：a-dictarea
+  - 新增模块：a-dictarea：国家字典、中国城市字典、美国城市字典
+  - 实现字典字段联动
 
 ## 2023-10-26, Version 5.0.5-alpha
 
