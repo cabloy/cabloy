@@ -5,7 +5,7 @@ module.exports = app => {
       atomStaticKey: 'cliGit',
     },
     info: {
-      version: '4.0.0',
+      version: '5.0.0',
       title: 'Cli: Git Commit',
       usage: 'npm run cli :git:commit message',
     },

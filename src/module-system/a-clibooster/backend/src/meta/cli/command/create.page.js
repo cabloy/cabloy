@@ -5,7 +5,7 @@ module.exports = app => {
       atomStaticKey: 'cliCreate',
     },
     info: {
-      version: '4.0.0',
+      version: '5.0.0',
       title: 'Cli: Create Page Component',
       usage: 'npm run cli :create:page pageName -- [--module=]',
     },

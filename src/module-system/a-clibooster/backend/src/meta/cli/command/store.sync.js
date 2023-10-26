@@ -5,7 +5,7 @@ module.exports = app => {
       atomStaticKey: 'cliStore',
     },
     info: {
-      version: '4.0.0',
+      version: '5.0.0',
       title: 'Cli: Store: Sync',
       usage: 'npm run cli :store:sync [entity1] [entity2]',
     },

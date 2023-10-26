@@ -5,7 +5,7 @@ module.exports = app => {
       atomStaticKey: 'cliCreate',
     },
     info: {
-      version: '4.0.0',
+      version: '5.0.0',
       title: 'Cli: Render Table Cell',
       usage: 'npm run cli :front:renderTableCell componentName -- [--module=]',
     },

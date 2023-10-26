@@ -5,7 +5,7 @@ module.exports = app => {
       atomStaticKey: 'cliDefaultList',
     },
     info: {
-      version: '4.0.0',
+      version: '5.0.0',
       title: 'Cli: Command List',
     },
     options: {
