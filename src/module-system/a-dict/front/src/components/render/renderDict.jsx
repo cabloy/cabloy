@@ -36,20 +36,51 @@ export default {
   created() {
     this._loadDict();
   },
+  mounted() {},
+  beforeDestroy() {
+    this._unwatchDictKeyFrom();
+  },
   methods: {
-    _prepareDictKey() {
+    _unwatchDictKeyFrom() {
+      if (this._unwatchDictKeyFromId) {
+        this._unwatchDictKeyFromId();
+        this._unwatchDictKeyFromId = null;
+      }
+    },
+    _watchDictKeyFrom() {
+      this._unwatchDictKeyFrom();
+      this._unwatchDictKeyFromId = this.$watch(
+        () => {
+          return this._getDictKeyFrom();
+        },
+        () => {
+          this.context.setValue(null);
+          this._loadDict();
+        }
+      );
+    },
+    _getDictKey() {
       const { property } = this.context;
       // dictKey
-      const dictKey = property.ebParams.dictKey;
+      let dictKey = property.ebParams.dictKey;
       if (dictKey) return dictKey;
       // dictKeyFrom
+      dictKey = this._getDictKeyFrom();
+      this._watchDictKeyFrom();
+      return dictKey;
+    },
+    _getDictKeyFrom() {
+      const { property } = this.context;
       const dictKeyFrom = property.ebParams.dictKeyFrom;
       if (!dictKeyFrom) return null;
       const fromInstance = this.context.getComponentInstance(dictKeyFrom);
-      return fromInstance?.dictItemOptions?.dictKey;
+      const dictKey = fromInstance?.dictItemOptions?.dictKey;
+      return dictKey;
     },
     async _loadDict_inner() {
       const { property } = this.context;
+      // reset dict first, for clear when no dictKey(ready)
+      this.dict = null;
       // direct set from outer
       const dict = property.ebParams.dict;
       if (dict) {
@@ -59,7 +90,7 @@ export default {
       // not need load dict
       if (!this.needLoadDict) return;
       // dictKey
-      const dictKey = this._prepareDictKey();
+      const dictKey = this._getDictKey();
       if (!dictKey) return;
       // load from store
       const useStoreDict = await this.$store.use('a/dict/dict');
