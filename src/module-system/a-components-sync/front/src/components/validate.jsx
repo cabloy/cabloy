@@ -149,9 +149,12 @@ export default {
     initData() {
       this.dataCopy = this.$meta.util.extend({}, this.data);
     },
-    reset() {
+    _resetErrors() {
       this.verrors = null;
       this.$emit('errorsReset');
+    },
+    async reset() {
+      this._resetErrors();
     },
     async perform(event, context) {
       if (this.auto && !this.ready) return null;
@@ -161,9 +164,9 @@ export default {
       // perform
       try {
         const data = await this.onPerform(event, context);
-        this.reset();
         // perform after
         await this._invokePerformAfter(event, context, null, data);
+        await this.reset();
         // ok
         return data;
       } catch (err) {
