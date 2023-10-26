@@ -60,6 +60,12 @@ export default {
     meta: {
       type: Object,
     },
+    onFlush: {
+      type: Function,
+    },
+    onReset: {
+      type: Function,
+    },
     onPerform: {
       type: Function,
     },
@@ -89,6 +95,7 @@ export default {
       schemaModuleName: null,
       renderModuleName: null,
       dataCopy: null,
+      dataInit: null,
       callbacksPerformBefore: [],
       callbacksPerformAfter: [],
     };
@@ -146,15 +153,30 @@ export default {
         this.fetchSchema();
       });
     },
-    initData() {
-      this.dataCopy = this.$meta.util.extend({}, this.data);
-    },
     _resetErrors() {
       this.verrors = null;
       this.$emit('errorsReset');
     },
+    initData() {
+      this.dataCopy = this.$meta.util.extend({}, this.data);
+      this.dataInit = this.$meta.util.extend({}, this.data);
+    },
     async reset() {
+      if (!this.ready) return;
       this._resetErrors();
+      this.$meta.util.replaceItem(this.data, this.dataInit);
+      this.dataCopy = this.$meta.util.extend({}, this.data);
+      if (this.onReset) {
+        await this.onReset(this.data);
+      }
+    },
+    async flush() {
+      if (!this.ready) return;
+      this._resetErrors();
+      this.dataInit = this.$meta.util.extend({}, this.data);
+      if (this.onFlush) {
+        await this.onFlush(this.data);
+      }
     },
     async perform(event, context) {
       if (this.auto && !this.ready) return null;
@@ -166,7 +188,7 @@ export default {
         const data = await this.onPerform(event, context);
         // perform after
         await this._invokePerformAfter(event, context, null, data);
-        await this.reset();
+        await this.flush();
         // ok
         return data;
       } catch (err) {
