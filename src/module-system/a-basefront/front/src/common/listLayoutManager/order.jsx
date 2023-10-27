@@ -53,7 +53,7 @@ export default {
     _order_default_others() {
       const atomClassBase = this.base.atomClassBase;
       if (!this.order_list) {
-        const lineNo = atomClassBase?.fields?.lineNo;
+        const lineNo = atomClassBase?.fields?.mappings?.lineNo;
         if (lineNo) {
           return {
             name: lineNo,

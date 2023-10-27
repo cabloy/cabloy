@@ -17,6 +17,7 @@ module.exports = app => {
       fields: {
         mappings: {
           atomIdMain: 'atomIdMain',
+          lineNo: 'detailLineNo',
         },
       },
       layout: {
