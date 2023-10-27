@@ -196,8 +196,7 @@ export default {
         // emit changed
         if (property && !property.ebReadOnly && !this._checkIfEqual(_valueOld, _value)) {
           this.$emit('change', _value);
-          this.validate.$emit('validateItem:change', key, _value);
-          this.validate.$emit('validateItemChange', key, _value);
+          this.validate._emitValidateItemChange(key, _value);
         }
       }
     },

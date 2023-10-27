@@ -157,6 +157,10 @@ export default {
       this.verrors = null;
       this.$emit('errorsReset');
     },
+    _emitValidateItemChange(key, value) {
+      this.$emit('validateItem:change', key, value);
+      this.$emit('validateItemChange', key, value);
+    },
     initData() {
       this.dataCopy = this.$meta.util.extend({}, this.data);
       this.dataInit = this.$meta.util.extend({}, this.data);
