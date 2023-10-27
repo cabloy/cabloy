@@ -79,7 +79,10 @@ export default function (Vue) {
         atomStage = __prepareAtomStageString({ atomStage });
         if (!atomStage) return null;
         // dictKey
-        const dictKey = Vue.prototype.$meta.util.getProperty(atomClassBase, `dict.states.${atomStage}.dictKey`);
+        const dictKey = Vue.prototype.$meta.util.getProperty(
+          atomClassBase,
+          `fields.dicts.atomState.${atomStage}.dictKey`
+        );
         if (!dictKey) return null;
         // ok
         return dictKey;

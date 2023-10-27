@@ -27,10 +27,12 @@ module.exports = app => {
                 atomList: 'layoutAtomListPost',
               },
             },
-            dict: {
-              states: {
-                draft: {
-                  dictKey: 'default',
+            fields: {
+              dicts: {
+                atomState: {
+                  draft: {
+                    dictKey: 'default',
+                  },
                 },
               },
             },

@@ -18,10 +18,12 @@ module.exports = app => {
             category: true,
             tag: true,
             cms: true,
-            dict: {
-              states: {
-                draft: {
-                  dictKey: 'default',
+            fields: {
+              dicts: {
+                atomState: {
+                  draft: {
+                    dictKey: 'default',
+                  },
                 },
               },
             },

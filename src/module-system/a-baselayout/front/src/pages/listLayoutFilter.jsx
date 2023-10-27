@@ -97,7 +97,7 @@ export default {
       const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
       const atomStage = useStoreAtomStage.toString({ atomStage: this.stage });
       if (atomStage === 'history') return null;
-      return this.$meta.util.getProperty(this.atomClassBase, `dict.states.${atomStage}.dictKey`);
+      return this.$meta.util.getProperty(this.atomClassBase, `fields.dicts.atomState.${atomStage}.dictKey`);
     },
   },
   watch: {
