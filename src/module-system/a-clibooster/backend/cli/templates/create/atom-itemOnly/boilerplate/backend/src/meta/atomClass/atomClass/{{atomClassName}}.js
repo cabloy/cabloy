@@ -20,6 +20,7 @@ module.exports = app => {
         mappings: {
           userIds: 'userId',
           userIdCreated: 'userId',
+          atomName: 'name',
         },
       },
       layout: {
