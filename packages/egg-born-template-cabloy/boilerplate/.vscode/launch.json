@@ -21,6 +21,13 @@
       "skipFiles": ["<node_internals>/**"]
     },
     {
+      "name": "debug:chrome",
+      "type": "chrome",
+      "request": "launch",
+      "webRoot": "${workspaceRoot}",
+      "url": "http://localhost:9092"
+    },
+    {
       "name": "test:backend",
       "type": "node",
       "request": "launch",
