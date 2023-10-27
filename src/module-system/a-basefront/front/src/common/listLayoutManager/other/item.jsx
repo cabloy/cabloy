@@ -5,13 +5,22 @@ export default {
   mixins: [Actions, ContextMenu],
   methods: {
     item_getAtomName(item, fieldName) {
-      let atomName;
-      if (!fieldName) {
-        atomName = item._meta?.atomName || item.atomNameLocale || item.atomName;
-      } else {
-        atomName = item[fieldName];
+      // 1. force the fieldName
+      if (fieldName) {
+        return item[fieldName];
       }
-      return atomName;
+      // 2. _meta.atomName
+      if (item._meta?.atomName) {
+        return item._meta?.atomName;
+      }
+      // 3. fields.mappings.atomName
+      const atomClassBase = this.base.atomClassBase;
+      const atomNameFieldName = atomClassBase?.fields?.mappings?.atomName;
+      if (atomNameFieldName) {
+        return item[atomNameFieldName];
+      }
+      // 4. atomNameLocale/atomName
+      return item.atomNameLocale || item.atomName;
     },
     item_getMetaMedia(item, mediaFieldName) {
       let media;

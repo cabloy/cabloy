@@ -49,11 +49,7 @@ export default {
       );
     },
     _renderAtomName(info) {
-      let atomNameFieldName = this.blockConfig.options?.mapper?.atomName;
-      if (atomNameFieldName === undefined) {
-        const atomClassBase = this.layoutManager.base.atomClassBase;
-        atomNameFieldName = atomClassBase?.fields?.mappings?.atomName;
-      }
+      const atomNameFieldName = this.blockConfig.options?.mapper?.atomName;
       const domTitle = (
         <div slot="title" class="title">
           <div>{this.layoutManager.item_getAtomName(info.item, atomNameFieldName)}</div>
