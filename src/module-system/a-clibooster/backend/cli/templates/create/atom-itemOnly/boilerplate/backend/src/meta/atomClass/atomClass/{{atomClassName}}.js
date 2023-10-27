@@ -18,6 +18,11 @@ module.exports = app => {
         },
         role: true,
       },
+      fields: {
+        mappings: {
+          userIds: 'userId',
+        },
+      },
       layout: {
         config: {
           // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',

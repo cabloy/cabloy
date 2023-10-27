@@ -7,7 +7,9 @@ module.exports = app => {
       tableName: 'aUserOnlineHistory',
       itemOnly: true,
       fields: {
-        userIds: 'userId',
+        mappings: {
+          userIds: 'userId',
+        },
         dicts: {
           isLogin: {
             dictKey: 'a-useronline:dictLoginType',
