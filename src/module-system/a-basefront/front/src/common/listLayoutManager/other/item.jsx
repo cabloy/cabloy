@@ -5,15 +5,6 @@ import CommonItem from '../../common/item.jsx';
 export default {
   mixins: [Actions, ContextMenu, CommonItem],
   methods: {
-    item_getMetaMedia(item, mediaFieldName) {
-      let media;
-      if (!mediaFieldName) {
-        media = item._meta?.media || item.avatar;
-      } else {
-        media = item[mediaFieldName];
-      }
-      return this.$meta.util.combineAvatarUrl(media, 24);
-    },
     item_getMetaMediaLabel(item) {
       const mediaLabel = item._meta?.mediaLabel || item.userName;
       return mediaLabel;

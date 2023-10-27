@@ -6,8 +6,9 @@ export default {
         return item[fieldName];
       }
       // 2. _meta.atomName
-      if (item._meta?.atomName) {
-        return item._meta?.atomName;
+      const atomName = item._meta?.atomName;
+      if (atomName) {
+        return atomName;
       }
       // 3. fields.mappings.atomName
       const atomClassBase = this.base.atomClassBase;
@@ -31,6 +32,29 @@ export default {
       }
       // 3. atomName
       return item.atomName;
+    },
+    item_getMetaMedia(item, fieldName) {
+      const media = this.item_getMetaMedia_inner(item, fieldName);
+      return this.$meta.util.combineAvatarUrl(media, 24);
+    },
+    item_getMetaMedia_inner(item, fieldName) {
+      // 1. force the fieldName
+      if (fieldName) {
+        return item[fieldName];
+      }
+      // 2. _meta.media
+      const media = item._meta?.media;
+      if (media) {
+        return media;
+      }
+      // 3. fields.mappings.atomMedia
+      const atomClassBase = this.base.atomClassBase;
+      const atomMediaFieldName = atomClassBase?.fields?.mappings?.atomMedia;
+      if (atomMediaFieldName) {
+        return item[atomMediaFieldName];
+      }
+      // 4. atomNameLocale/atomName
+      return item.avatar;
     },
   },
 };
