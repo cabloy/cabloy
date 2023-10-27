@@ -30,7 +30,7 @@ export default {
       let atomNameFieldName = this.mapper?.atomName;
       if (atomNameFieldName === undefined) {
         const atomClassBase = this.layoutManager.base.atomClassBase;
-        atomNameFieldName = atomClassBase?.fields?.atomName;
+        atomNameFieldName = atomClassBase?.fields?.mappings?.atomName;
       }
       return this.layoutManager.item_getAtomName(item, atomNameFieldName);
     },
