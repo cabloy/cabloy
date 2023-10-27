@@ -13,14 +13,13 @@ module.exports = app => {
       attachment: false,
       history: false,
       enableRight: {
-        mine: {
-          userIdCreated: 'userId',
-        },
+        mine: true,
         role: true,
       },
       fields: {
         mappings: {
           userIds: 'userId',
+          userIdCreated: 'userId',
         },
       },
       layout: {
