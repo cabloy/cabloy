@@ -53,8 +53,27 @@ export default {
       if (atomMediaFieldName) {
         return item[atomMediaFieldName];
       }
-      // 4. atomNameLocale/atomName
+      // 4. avatar
       return item.avatar;
+    },
+    item_getMetaMediaLabel(item, fieldName) {
+      // 1. force the fieldName
+      if (fieldName) {
+        return item[fieldName];
+      }
+      // 2. _meta.mediaLabel
+      const mediaLabel = item._meta?.mediaLabel;
+      if (mediaLabel) {
+        return mediaLabel;
+      }
+      // 3. fields.mappings.atomMedia
+      const atomClassBase = this.base.atomClassBase;
+      const atomMediaLabelFieldName = atomClassBase?.fields?.mappings?.atomMediaLabel;
+      if (atomMediaLabelFieldName) {
+        return item[atomMediaLabelFieldName];
+      }
+      // 4. userName
+      return item.userName;
     },
   },
 };

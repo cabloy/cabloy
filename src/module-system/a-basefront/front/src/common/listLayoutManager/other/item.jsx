@@ -5,10 +5,6 @@ import CommonItem from '../../common/item.jsx';
 export default {
   mixins: [Actions, ContextMenu, CommonItem],
   methods: {
-    item_getMetaMediaLabel(item) {
-      const mediaLabel = item._meta?.mediaLabel || item.userName;
-      return mediaLabel;
-    },
     item_getMetaSummary(item) {
       const arr = [];
       // atomClass
