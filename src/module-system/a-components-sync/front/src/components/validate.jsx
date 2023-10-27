@@ -98,6 +98,7 @@ export default {
       dataInit: null,
       callbacksPerformBefore: [],
       callbacksPerformAfter: [],
+      isDirty: false,
     };
   },
   computed: {
@@ -123,7 +124,7 @@ export default {
       this.schemaMaybeChanged();
     },
     data() {
-      this.initData();
+      this._initData();
     },
     parcel(newValue) {
       this.$emit('parcelChanged', newValue);
@@ -136,7 +137,7 @@ export default {
     },
   },
   created() {
-    this.initData();
+    this._initData();
     this.vSearchStates = this.searchStates;
   },
   mounted() {
@@ -160,16 +161,34 @@ export default {
     _emitValidateItemChange(key, value) {
       this.$emit('validateItem:change', key, value);
       this.$emit('validateItemChange', key, value);
+      this._emitDataChange();
+      this._emitDataDirtyChange(true);
     },
-    initData() {
+    _emitDataChange() {
+      this.$emit('change', this.data);
+    },
+    _emitDataDirtyChange(isDirty) {
+      if (this.isDirty !== isDirty) {
+        this.isDirty = isDirty;
+        this.$emit('dirtyChange', isDirty);
+        this.$emit('dirty:change', isDirty);
+      }
+    },
+    _initData() {
       this.dataCopy = this.$meta.util.extend({}, this.data);
       this.dataInit = this.$meta.util.extend({}, this.data);
+      this._emitDataDirtyChange(false);
+    },
+    getDirty() {
+      return this.isDirty;
     },
     async reset(event, context) {
       if (!this.ready) return;
       this._resetErrors();
       this.$meta.util.replaceItem(this.data, this.dataInit);
       this.dataCopy = this.$meta.util.extend({}, this.data);
+      this._emitDataChange();
+      this._emitDataDirtyChange(false);
       if (this.onReset) {
         await this.onReset(event, context, this.data);
       }
@@ -178,6 +197,7 @@ export default {
       if (!this.ready) return;
       this._resetErrors();
       this.dataInit = this.$meta.util.extend({}, this.data);
+      this._emitDataDirtyChange(false);
       if (this.onFlush) {
         await this.onFlush(event, context, this.data);
       }
