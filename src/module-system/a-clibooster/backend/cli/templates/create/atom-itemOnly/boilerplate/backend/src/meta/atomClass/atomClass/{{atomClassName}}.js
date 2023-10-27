@@ -22,6 +22,7 @@ module.exports = app => {
           userIdCreated: 'userId',
           atomName: 'name',
           atomMedia: '_userIdAvatar',
+          atomMediaLabel: '_userIdName',
         },
       },
       layout: {
