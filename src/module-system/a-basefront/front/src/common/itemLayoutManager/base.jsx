@@ -143,7 +143,7 @@ export default {
         this.base._atomIdMain = this.container.options?.atomMain.atomId;
         return;
       }
-      const atomIdMainFieldName = this.base.atomClassBase.detail.atomIdMain || 'atomIdMain';
+      const atomIdMainFieldName = this.base.atomClassBase.fields?.mappings?.atomIdMain;
       const atomIdMain = this.base.item[atomIdMainFieldName];
       this.base._atomIdMain = atomIdMain;
       const options = {};

@@ -8,13 +8,17 @@ module.exports = app => {
       itemOnly: true,
       detail: {
         inline: true,
-        atomIdMain: 'atomIdMain',
         atomClassMain: {
           module: '<%=argv.atomClassMain.module%>',
           atomClassName: '<%=argv.atomClassMain.atomClassName%>',
         },
       },
       enableRight: false,
+      fields: {
+        mappings: {
+          atomIdMain: 'atomIdMain',
+        },
+      },
       layout: {
         config: {
           // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',

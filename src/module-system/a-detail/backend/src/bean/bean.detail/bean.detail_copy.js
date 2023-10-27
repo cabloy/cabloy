@@ -186,7 +186,7 @@ module.exports = ctx => {
         await this.modelDetailBase.insert(data);
       }
       // write
-      const fieldNameAtomIdMain = atomClassBaseDetail.detail.atomIdMain;
+      const fieldNameAtomIdMain = atomClassBaseDetail.fields?.mappings?.atomIdMain;
       const item = {
         ...detailSrc,
         atomId: detailKeyDest.atomId,
