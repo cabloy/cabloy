@@ -17,13 +17,13 @@ module.exports = app => {
           tableAlias: null,
         },
       },
-      // need not
       mine: {
         type: 'number',
-        // ebType: 'toggle',
+        ebType: 'toggle',
         ebTitle: 'Mine',
         ebDisplay: {
-          expression: '!_meta.host.container.options || !_meta.host.container.options.mine',
+          expression:
+            '_meta.host.stage==="formal" && (!_meta.host.container.options || !_meta.host.container.options.mine)',
         },
         ebSearch: {
           tableAlias: null,
