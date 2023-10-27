@@ -25,11 +25,8 @@ export default {
       }
       // item
       if (this.base.item) {
-        const atomClassBase = this.base.atomClassBase;
-        const atomNameFieldName = atomClassBase?.fields?.mappings?.atomName;
         if (this.container.mode === 'edit') {
-          if (atomNameFieldName) return this.base.item[atomNameFieldName];
-          return this.base.item.atomName;
+          return this.item_getAtomNameForEdit(this.base.item);
         }
         return this.item_getAtomName(this.base.item);
       }

@@ -18,5 +18,19 @@ export default {
       // 4. atomNameLocale/atomName
       return item.atomNameLocale || item.atomName;
     },
+    item_getAtomNameForEdit(item, fieldName) {
+      // 1. force the fieldName
+      if (fieldName) {
+        return item[fieldName];
+      }
+      // 2. fields.mappings.atomName
+      const atomClassBase = this.base.atomClassBase;
+      const atomNameFieldName = atomClassBase?.fields?.mappings?.atomName;
+      if (atomNameFieldName) {
+        return item[atomNameFieldName];
+      }
+      // 3. atomName
+      return item.atomName;
+    },
   },
 };
