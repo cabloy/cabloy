@@ -1,4 +1,7 @@
+import CommonItem from '../common/item.jsx';
+
 export default {
+  mixins: [CommonItem],
   methods: {
     item_getAtomStateColor(item) {
       return item.atomClosed === 0 ? 'orange' : 'gray';

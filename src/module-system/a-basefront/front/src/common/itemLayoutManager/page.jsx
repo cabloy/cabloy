@@ -7,7 +7,10 @@ export default {
       return true;
     },
     page_onGetTitle() {
-      const title = this.page_onGetTitle_inner();
+      let title = this.page_onGetTitle_inner();
+      if (title === undefined || title === null) {
+        title = '';
+      }
       return this.page_getDirtyTitle(title);
     },
     page_onGetTitle_inner() {
@@ -22,10 +25,13 @@ export default {
       }
       // item
       if (this.base.item) {
+        const atomClassBase = this.base.atomClassBase;
+        const atomNameFieldName = atomClassBase?.fields?.mappings?.atomName;
         if (this.container.mode === 'edit') {
+          if (atomNameFieldName) return this.base.item[atomNameFieldName];
           return this.base.item.atomName;
         }
-        return this.base.item.atomNameLocale || this.base.item.atomName || this.base.item._meta?.atomName;
+        return this.item_getAtomName(this.base.item);
       }
       // atomClass
       return this.base.atomClassBase.titleLocale;
