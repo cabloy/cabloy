@@ -95,8 +95,6 @@ export default {
     },
     async _loadDict_inner() {
       const { property } = this.context;
-      // reset dict first, for clear when no dictKey(ready)
-      this.dict = null;
       // direct set from outer
       const dict = property.ebParams.dict;
       if (dict) {
@@ -104,10 +102,16 @@ export default {
         return;
       }
       // not need load dict
-      if (!this.needLoadDict) return;
+      if (!this.needLoadDict) {
+        this.dict = null;
+        return;
+      }
       // dictKey
       const dictKey = this._getDictKey();
-      if (!dictKey) return;
+      if (!dictKey) {
+        this.dict = null;
+        return;
+      }
       // load from store
       const useStoreDict = await this.$store.use('a/dict/dict');
       this.dict = await useStoreDict.getDict({
