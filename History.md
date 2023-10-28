@@ -9,6 +9,14 @@
   - 新增模块：a-dictarea：国家字典、中国城市字典、美国城市字典
   - 实现字典字段联动
 
+- **Refactor**
+
+  - fields.mappings
+    - userIds/userIdCreated/atomName/atomMedia/atomMediaLabel/lineNo
+  - fields.dicts
+    - atomState
+    - others
+
 ## 2023-10-26, Version 5.0.5-alpha
 
 - **Feat**
