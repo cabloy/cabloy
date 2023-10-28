@@ -92,6 +92,10 @@ export default {
         // do nothing
         return;
       }
+      if (this.base.atomClassBase.itemOnly) {
+        // do nothing
+        return;
+      }
       // create
       const useStoreAtomActions = await this.$store.use('a/basestore/atomActions');
       let actionCreate = await useStoreAtomActions.getActionBase({
