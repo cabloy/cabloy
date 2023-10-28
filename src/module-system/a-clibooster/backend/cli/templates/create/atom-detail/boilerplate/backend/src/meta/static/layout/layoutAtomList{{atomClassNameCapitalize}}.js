@@ -20,11 +20,6 @@ module.exports = app => {
                 align: 'left',
                 renderType: 'atomName',
               },
-              {
-                dataIndex: 'description',
-                title: 'Description',
-                align: 'left',
-              },
             ],
           },
         },

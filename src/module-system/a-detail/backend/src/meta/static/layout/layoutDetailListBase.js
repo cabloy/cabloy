@@ -77,6 +77,12 @@ module.exports = app => {
                 width: 50,
                 renderType: 'lineNo',
               },
+              {
+                dataIndex: 'name',
+                title: 'Name',
+                align: 'left',
+                renderType: 'atomName',
+              },
             ],
           },
         },
@@ -86,7 +92,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(Details)',
     atomStaticKey: 'layoutDetailListBase',
-    atomRevision: 8,
+    atomRevision: 9,
     description: '',
     layoutTypeCode: 5,
     content: JSON.stringify(content),
