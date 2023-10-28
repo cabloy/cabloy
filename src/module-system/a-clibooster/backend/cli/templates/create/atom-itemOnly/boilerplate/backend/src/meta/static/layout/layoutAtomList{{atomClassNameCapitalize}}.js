@@ -13,11 +13,6 @@ module.exports = app => {
                 renderType: 'atomName',
               },
               {
-                dataIndex: 'description',
-                title: 'Description',
-                align: 'left',
-              },
-              {
                 dataIndex: 'userId',
                 title: 'User',
                 align: 'left',

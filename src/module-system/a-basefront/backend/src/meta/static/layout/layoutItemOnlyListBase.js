@@ -140,6 +140,18 @@ module.exports = app => {
             },
             columns: [
               {
+                dataIndex: 'name',
+                title: 'Atom Name',
+                align: 'left',
+                renderType: 'atomName',
+              },
+              {
+                dataIndex: 'userId',
+                title: 'User',
+                align: 'left',
+                renderType: 'userName',
+              },
+              {
                 dataIndex: 'createdAt',
                 title: 'Created Time',
                 align: 'center',
@@ -292,7 +304,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(ItemOnly)',
     atomStaticKey: 'layoutItemOnlyListBase',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
