@@ -20,13 +20,24 @@ export default {
     value() {
       return this.context.getValue();
     },
+    ebParamsDictKey() {
+      const { property } = this.context;
+      return property.ebParams.dictKey;
+    },
+    ebParamsDict() {
+      const { property } = this.context;
+      return property.ebParams.dict;
+    },
     needLoadDict() {
       const { property, validate } = this.context;
       return (!validate.readOnly && !property.ebReadOnly) || property.ebParams.forceLoad;
     },
   },
   watch: {
-    context() {
+    ebParamsDictKey() {
+      this._loadDict();
+    },
+    ebParamsDict() {
       this._loadDict();
     },
     value() {
