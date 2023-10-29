@@ -16,13 +16,13 @@ module.exports = app => {
     }
 
     async create({ atomClass, item, options, user }) {
-      const atomStage = item.atomStage;
       // super
-      const key = await super.create({ atomClass, item, options, user });
+      const data = await super.create({ atomClass, item, options, user });
+      const atomId = data.atomId;
       // article
       let editMode;
       let slug;
-      if (atomStage === 0) {
+      if (item.atomStage === 0) {
         // draft init
         const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
         editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
@@ -35,7 +35,7 @@ module.exports = app => {
       }
       // add article
       const params = {
-        atomId: key.atomId,
+        atomId,
         editMode,
         slug,
       };
@@ -45,10 +45,10 @@ module.exports = app => {
       await this.modelCMSArticle.insert(params);
       // add content
       await this.modelCMSContent.insert({
-        atomId: key.atomId,
+        atomId,
         content: '',
       });
-      return { atomId: key.atomId };
+      return data;
     }
 
     async read({ atomClass, options, key, user }) {

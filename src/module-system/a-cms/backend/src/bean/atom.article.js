@@ -2,8 +2,8 @@ module.exports = app => {
   class Atom extends app.meta.AtomCmsBase {
     async create({ atomClass, item, options, user }) {
       // super
-      const key = await super.create({ atomClass, item, options, user });
-      return { atomId: key.atomId };
+      const data = await super.create({ atomClass, item, options, user });
+      return data;
     }
 
     async read({ atomClass, options, key, user }) {
