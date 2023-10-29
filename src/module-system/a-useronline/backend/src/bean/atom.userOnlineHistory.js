@@ -44,10 +44,14 @@ module.exports = ctx => {
 
     async write({ atomClass, target, key, item, options, user }) {
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      const data = await super.write({ atomClass, target, key, item, options, user });
       // update userOnlineHistory
-      const data = await this.model.prepareData(item);
-      await this.model.update(data);
+      if (key.atomId !== 0) {
+        const data2 = await this.model.prepareData(data);
+        await this.model.update(data2);
+      }
+      // data
+      return data;
     }
 
     async delete({ atomClass, key, options, user }) {
