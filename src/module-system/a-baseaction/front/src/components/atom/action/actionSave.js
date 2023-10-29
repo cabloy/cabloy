@@ -24,14 +24,14 @@ export default {
       }
       this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // write
-      const key = { atomId: item.atomId, itemId: item.itemId };
-      const keyWrited = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
-      // key maybe changed when createDelay
+      let key = { atomId: item.atomId, itemId: item.itemId };
       const isCreateDelay = key.atomId === 0;
+      key = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
+      // key maybe changed when createDelay
       if (isCreateDelay) {
-        item.id = keyWrited.itemId;
-        item.atomId = keyWrited.atomId;
-        item.itemId = keyWrited.itemId;
+        item.id = key.itemId;
+        item.atomId = key.atomId;
+        item.itemId = key.itemId;
       }
       // event: save
       if (!isCreateDelay) {

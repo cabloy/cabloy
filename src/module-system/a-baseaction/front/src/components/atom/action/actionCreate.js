@@ -30,7 +30,16 @@ export default {
         return await this._onActionCreateContinueWrite({ ctx, action, atomClass, dataOptions, item });
       }
       // create
-      const { key, item: itemCreate } = await ctx.$api.post('/a/base/atom/create', params);
+      let key;
+      let itemCreate;
+      if (action.createDelay && dataOptions.createContinue) {
+        itemCreate = dataOptions.itemWrited;
+        key = { atomId: itemCreate.atomId, itemId: itemCreate.itemId };
+      } else {
+        const resCreate = await ctx.$api.post('/a/base/atom/create', params);
+        key = resCreate.key;
+        itemCreate = resCreate.item;
+      }
       // event
       ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom: itemCreate });
       // menu

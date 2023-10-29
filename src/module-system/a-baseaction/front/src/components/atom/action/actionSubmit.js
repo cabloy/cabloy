@@ -8,7 +8,8 @@ export default {
         await ctx.layout.instanceExtend.onActionSubmitBefore(this.$props);
       }
       // key
-      const key = { atomId: item.atomId, itemId: item.itemId };
+      let key = { atomId: item.atomId, itemId: item.itemId };
+      const isCreateDelay = key.atomId === 0;
       const atomClass = {
         module: item.module,
         atomClassName: item.atomClassName,
@@ -20,7 +21,13 @@ export default {
         saveDraftOnly: false,
       };
       this.base_prepareOptionsFromDataOptions(options, dataOptions);
-      await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
+      key = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
+      // key maybe changed when createDelay
+      if (isCreateDelay) {
+        item.id = key.itemId;
+        item.atomId = key.atomId;
+        item.itemId = key.itemId;
+      }
       // do
       if (dataOptions.formAction) {
         // handle form action
@@ -32,6 +39,8 @@ export default {
         // submit
         await this._onActionSubmit_normal({ ctx, item, key, atomClass });
       }
+      // return item
+      return item;
     },
     async _onActionSubmit_handleFormAction({ ctx, item, atomClass, dataOptions }) {
       // form action

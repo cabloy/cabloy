@@ -75,19 +75,20 @@ export default {
       if (this.base_formActionMain) {
         dataOptions.formActionMain = this.base_formActionMain;
       }
-      // not use this.$utils.extend
+      // actionBase: not use this.$utils.extend
       actionBase = Object.assign({}, actionBase, { dataOptions });
-      const dataWrited = await this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
-      if (actionName === 'save') {
-        await this.validate_onPerformValidate_createDelay({ dataWrited });
+      // performAction: save
+      const itemWrited = await this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
+      if (actionName === 'save' || actionName === 'submit') {
+        await this.validate_onPerformValidate_createDelay({ itemWrited });
       }
       // page dirty
       if (actionName === 'save' || actionName === 'submit') {
         this.page_setDirty(false);
       }
-      return dataWrited;
+      return itemWrited;
     },
-    async validate_onPerformValidate_createDelay({ dataWrited }) {
+    async validate_onPerformValidate_createDelay({ itemWrited }) {
       if (!this.container.params?.createDelay) {
         // do nothing
         return;
@@ -100,23 +101,23 @@ export default {
       });
       // dataOptions
       let dataOptions = this.container.params?.createDelay.dataOptions;
-      dataOptions = Object.assign({}, dataOptions, { createContinue: true, noActionWrite: true });
+      dataOptions = Object.assign({}, dataOptions, { createContinue: true, noActionWrite: true, itemWrited });
       actionCreate = Object.assign({}, actionCreate, { dataOptions });
       // create
-      const key = await this.$meta.util.performAction({ ctx: this, action: actionCreate, item: this.base.item });
+      await this.$meta.util.performAction({ ctx: this, action: actionCreate, item: this.base.item });
       // makeup
-      await this.validate_onPerformValidate_createDelay_makeup({ key });
+      await this.validate_onPerformValidate_createDelay_makeup({ itemWrited });
     },
-    async validate_onPerformValidate_createDelay_makeup({ key }) {
+    async validate_onPerformValidate_createDelay_makeup({ itemWrited }) {
       // clear createDelay
       this.container.params.createDelay = null;
       // container
-      this.container.atomId = key.atomId;
-      this.container.itemId = key.itemId;
+      this.container.atomId = itemWrited.atomId;
+      this.container.itemId = itemWrited.itemId;
       // item
-      this.base.item.id = key.itemId;
-      this.base.item.atomId = key.atomId;
-      this.base.item.itemId = key.itemId;
+      this.base.item.id = itemWrited.itemId;
+      this.base.item.atomId = itemWrited.atomId;
+      this.base.item.itemId = itemWrited.itemId;
       //   force validate reactive
       this.base.item = Object.assign({}, this.base.item);
       // actions
