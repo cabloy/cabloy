@@ -39,6 +39,11 @@ module.exports = app => {
       return data;
     }
 
+    async create(...args) {
+      const res = await this.insert(...args);
+      return res.insertId;
+    }
+
     _rowCheck(row) {
       if ((!this.table || !this.disableInstance) && row.iid === undefined) {
         row.iid = this.ctx.instance.id;
