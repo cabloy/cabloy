@@ -77,22 +77,18 @@ export default {
       }
       // not use this.$utils.extend
       actionBase = Object.assign({}, actionBase, { dataOptions });
+      const dataWrited = await this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
       if (actionName === 'save') {
-        await this.validate_onPerformValidate_createDelay();
+        await this.validate_onPerformValidate_createDelay({ dataWrited });
       }
-      const res = await this.$meta.util.performAction({ ctx: this, action: actionBase, item: this.base.item });
       // page dirty
       if (actionName === 'save' || actionName === 'submit') {
         this.page_setDirty(false);
       }
-      return res;
+      return dataWrited;
     },
-    async validate_onPerformValidate_createDelay() {
+    async validate_onPerformValidate_createDelay({ dataWrited }) {
       if (!this.container.params?.createDelay) {
-        // do nothing
-        return;
-      }
-      if (this.base.atomClassBase.itemOnly) {
         // do nothing
         return;
       }

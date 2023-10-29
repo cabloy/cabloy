@@ -25,8 +25,18 @@ export default {
       this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // write
       const key = { atomId: item.atomId, itemId: item.itemId };
-      await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
-      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, actionSource: ctx });
+      const keyWrited = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
+      // key maybe changed when createDelay
+      const isCreateDelay = key.atomId === 0;
+      if (isCreateDelay) {
+        item.id = keyWrited.itemId;
+        item.atomId = keyWrited.atomId;
+        item.itemId = keyWrited.itemId;
+      }
+      // event: save
+      if (!isCreateDelay) {
+        ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, actionSource: ctx });
+      }
       // toast
       this.base_handleToast();
       // return item
