@@ -34,6 +34,19 @@ export default function (Vue) {
         this.setAtomClassBase({ atomClass, atomClassBase });
         return atomClassBase;
       },
+      async getAtomClass({ atomClass }) {
+        const atomClassBase = await this.getAtomClassBase({ atomClass });
+        return {
+          id: atomClassBase.id,
+          module: atomClassBase.module,
+          atomClassName: atomClassBase.atomClassName,
+        };
+      },
+      async getAtomClassId({ atomClass }) {
+        if (atomClass.id) return atomClass.id;
+        atomClass = await this.getAtomClass({ atomClass });
+        return atomClass.id;
+      },
     },
   };
 }

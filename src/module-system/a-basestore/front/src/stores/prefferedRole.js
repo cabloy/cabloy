@@ -12,6 +12,12 @@ export default function (Vue) {
       authLogin() {
         this.userAtomClassRolesPreferred = {};
       },
+      setUserAtomClassRolesPreferred(state, { atomClassId, roleIdOwner }) {
+        state.userAtomClassRolesPreferred = {
+          ...state.userAtomClassRolesPreferred,
+          [atomClassId]: roleIdOwner,
+        };
+      },
     },
   };
 }
