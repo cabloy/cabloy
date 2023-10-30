@@ -8,18 +8,7 @@ module.exports = ctx => {
     get model() {
       return ctx.model.module(moduleInfo.relativeName).<%=argv.atomClassName%>;
     }
-
-    async create({ atomClass, item, options, user }) {
-      // super
-      const key = await super.create({ atomClass, item, options, user });
-      // add <%=argv.atomClassName%>
-      const res = await this.model.insert({
-        atomId: key.atomId,
-      });
-      // return key
-      return { atomId: key.atomId, itemId: res.insertId };
-    }
-
+    
     async read({ atomClass, options, key, user }) {
       // super
       const item = await super.read({ atomClass, options, key, user });
@@ -37,6 +26,17 @@ module.exports = ctx => {
       for (const item of items) {
         this._getMeta(item);
       }
+    }
+
+    async create({ atomClass, item, options, user }) {
+      // super
+      const key = await super.create({ atomClass, item, options, user });
+      // add <%=argv.atomClassName%>
+      const res = await this.model.insert({
+        atomId: key.atomId,
+      });
+      // return key
+      return { atomId: key.atomId, itemId: res.insertId };
     }
 
     async write({ atomClass, target, key, item, options, user }) {
