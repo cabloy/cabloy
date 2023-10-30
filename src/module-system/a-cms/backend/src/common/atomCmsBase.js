@@ -15,6 +15,26 @@ module.exports = app => {
       return this.ctx.config.module(moduleInfo.relativeName);
     }
 
+    async read({ atomClass, options, key, user }) {
+      // super
+      const item = await super.read({ atomClass, options, key, user });
+      if (!item) return null;
+      // read: showSorting=true
+      this._cms_getMeta(options, item, true);
+      // ok
+      return item;
+    }
+
+    async select({ atomClass, options, items, user }) {
+      // super
+      await super.select({ atomClass, options, items, user });
+      // select
+      const showSorting = options && options.category;
+      for (const item of items) {
+        this._cms_getMeta(options, item, showSorting);
+      }
+    }
+
     async create({ atomClass, item, options, user }) {
       // super
       const data = await super.create({ atomClass, item, options, user });
@@ -22,7 +42,7 @@ module.exports = app => {
       // article
       let editMode;
       let slug;
-      if (item.atomStage === 0) {
+      if (data.atomStage === 0) {
         // draft init
         const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
         editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
@@ -48,40 +68,27 @@ module.exports = app => {
         atomId,
         content: '',
       });
+      // data
+      data.editMode = params.editMode;
+      data.slug = params.slug;
+      data.uuid = params.uuid;
       return data;
-    }
-
-    async read({ atomClass, options, key, user }) {
-      // super
-      const item = await super.read({ atomClass, options, key, user });
-      if (!item) return null;
-      // read: showSorting=true
-      this._cms_getMeta(options, item, true);
-      // ok
-      return item;
-    }
-
-    async select({ atomClass, options, items, user }) {
-      // super
-      await super.select({ atomClass, options, items, user });
-      // select
-      const showSorting = options && options.category;
-      for (const item of items) {
-        this._cms_getMeta(options, item, showSorting);
-      }
     }
 
     async write({ atomClass, target, key, item, options, user }) {
       const atomStage = item.atomStage;
       // super
+      let data;
       if (!target) {
-        await super.write({ atomClass, target, key, item, options, user });
+        data = await super.write({ atomClass, target, key, item, options, user });
+      } else {
+        data = Object.assign({}, item);
       }
       // write cms
-      await this._write_cms({ atomStage, target, key, item, options, user });
+      await this._write_cms({ atomStage, target, key, item: data, options, user });
       // super
       if (target) {
-        await super.write({ atomClass, target, key, item, options, user });
+        data = await super.write({ atomClass, target, key, item: data, options, user });
       }
       // render
       const ignoreRender = options && options.ignoreRender;
@@ -96,11 +103,20 @@ module.exports = app => {
           }
         }
       }
+      // data
+      return data;
     }
 
     async _write_cms({ atomStage, target, key, item, options, user }) {
       // get atom for safety
-      const atomOld = await this.ctx.bean.atom.read({ key, user });
+      let atomOld;
+      if (key.atomId === 0) {
+        atomOld = null;
+      } else {
+        atomOld = await this.ctx.bean.atom.read({ key, user: null });
+      }
+      // atomId:  not use key.atomId
+      const atomId = item.atomId;
       // if undefined then old
       const fields = [
         // 'atomLanguage',
@@ -114,8 +130,10 @@ module.exports = app => {
         'flag',
         'extra',
       ];
-      for (const field of fields) {
-        if (item[field] === undefined) item[field] = atomOld[field];
+      if (atomOld) {
+        for (const field of fields) {
+          if (item[field] === undefined) item[field] = atomOld[field];
+        }
       }
       // clone
       if (target === 'clone') {
@@ -123,13 +141,15 @@ module.exports = app => {
       } else if (item.slug) {
         item.slug = item.slug.trim();
       }
+      // uuid
+      const uuid = atomOld ? atomOld.uuid : item.uuid;
       // url
       let url;
       const draftExt = atomStage === 0 ? '.draft' : '';
       if (item.slug) {
         url = `articles/${item.slug}${draftExt}.html`;
       } else {
-        url = `articles/${atomOld.uuid}${draftExt}.html`;
+        url = `articles/${uuid}${draftExt}.html`;
       }
       // image first
       let imageFirst = '';
@@ -166,7 +186,7 @@ module.exports = app => {
         imageFirst = audioCoverFirst;
       }
       // html
-      const html = await this._renderContent({ item, atomId: key.atomId });
+      const html = await this._renderContent({ item, atomId });
       const summary = this._parseSummary({ item, html });
       // update article
       await this.modelCMSArticle.update(
@@ -188,7 +208,7 @@ module.exports = app => {
         },
         {
           where: {
-            atomId: key.atomId,
+            atomId,
           },
         }
       );
@@ -197,7 +217,7 @@ module.exports = app => {
         item.content,
         html,
         this.ctx.instance.id,
-        key.atomId,
+        atomId,
       ]);
     }
 
