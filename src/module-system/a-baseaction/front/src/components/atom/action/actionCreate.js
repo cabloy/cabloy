@@ -65,6 +65,9 @@ export default {
         },
       };
       // roleIdOwner
+      const useStore = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
+
+      // const roleIdOwner
       if (!atomClassBase.itemOnly) {
         const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
         if (enableRightRoleScopes) {

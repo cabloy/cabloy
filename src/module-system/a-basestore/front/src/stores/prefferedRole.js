@@ -15,9 +15,23 @@ export default function (Vue) {
       setPrefferedRole({ atomClassId, prefferedRole }) {
         this.preferredRoles[atomClassId] = prefferedRole;
       },
-      async getPrefferedRole({ ctx, atomClass, options }) {
+      // undefined: not support
+      // null: cancelled by user
+      async getPrefferedRoleAndCheck({ ctx, atomClass, options }) {
         const useStoreAtomClasses = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
-        const atomClassId = await useStoreAtomClasses.getAtomClassId({ atomClass });
+        const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+        // check
+        const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
+        if (!enableRightRoleScopes) {
+          return undefined;
+        }
+        const preferredRole = await this.getPrefferedRole({ ctx, atomClass, options });
+        if (!preferredRole) {
+          return null;
+        }
+        return preferredRole;
+      },
+      async getPrefferedRole({ ctx, atomClassId, options }) {
         if (this.preferredRoles[atomClassId]) return this.preferredRoles[atomClassId];
         // get preferred roles
         const roles = await ctx.$api.post('/a/base/atom/preferredRoles', {
