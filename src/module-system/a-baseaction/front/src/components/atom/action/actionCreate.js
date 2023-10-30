@@ -75,10 +75,7 @@ export default {
           params.roleIdOwner = roleIdOwner;
         }
       }
-      // atomIdMain
-      if (dataOptions.atomIdMain) {
-        params.options.atomIdMain = dataOptions.atomIdMain;
-      }
+      // options
       this.base_prepareOptionsFromDataOptions(params.options, dataOptions);
       // ok
       return params;

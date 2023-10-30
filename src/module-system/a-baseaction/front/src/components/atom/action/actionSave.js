@@ -19,9 +19,11 @@ export default {
       }
       // options
       const options = {};
+      // saveDraftOnly
       if (!atomClassBase.itemOnly && item.atomStage === 0) {
         options.saveDraftOnly = true;
       }
+      // from data options
       this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // write
       let key = { atomId: item.atomId, itemId: item.itemId };
