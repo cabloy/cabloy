@@ -101,14 +101,18 @@ export default {
       });
       // dataOptions
       let dataOptions = this.container.params?.createDelay.dataOptions;
-      dataOptions = Object.assign({}, dataOptions, { createContinue: true, noActionWrite: true, itemWrited });
+      dataOptions = Object.assign({}, dataOptions, { createContinue: true, noActionWrite: true });
       actionCreate = Object.assign({}, actionCreate, { dataOptions });
       // create
-      await this.$meta.util.performAction({ ctx: this, action: actionCreate, item: this.base.item });
+      await this.$meta.util.performAction({ ctx: this, action: actionCreate, item: itemWrited });
       // makeup
       await this.validate_onPerformValidate_createDelay_makeup({ itemWrited });
     },
     async validate_onPerformValidate_createDelay_makeup({ itemWrited }) {
+      if (!this.base.item) {
+        // means will be closed
+        return;
+      }
       // clear createDelay
       this.container.params.createDelay = null;
       // container

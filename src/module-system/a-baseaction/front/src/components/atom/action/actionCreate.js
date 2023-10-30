@@ -1,7 +1,7 @@
 export default {
   methods: {
     async _onActionCreate() {
-      const { ctx, action, item } = this.$props;
+      let { ctx, action, item } = this.$props;
       // atomClass
       const atomClass = {
         module: item.module,
@@ -31,17 +31,15 @@ export default {
       }
       // create
       let key;
-      let itemCreate;
       if (action.createDelay && dataOptions.createContinue) {
-        itemCreate = dataOptions.itemWrited;
-        key = { atomId: itemCreate.atomId, itemId: itemCreate.itemId };
+        key = { atomId: item.atomId, itemId: item.itemId };
       } else {
         const resCreate = await ctx.$api.post('/a/base/atom/create', params);
         key = resCreate.key;
-        itemCreate = resCreate.item;
+        item = resCreate.item;
       }
       // event
-      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom: itemCreate });
+      ctx.$meta.eventHub.$emit('atom:action', { key, atomClass, action, atom: item });
       // menu
       if (!dataOptions.noActionWrite) {
         // write
