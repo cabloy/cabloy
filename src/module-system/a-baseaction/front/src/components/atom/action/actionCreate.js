@@ -56,6 +56,7 @@ export default {
       return await ctx.$meta.util.performAction({ ctx, action: actionWrite, item });
     },
     async _onActionCreatePrepareParams({ atomClass, atomClassBase, dataOptions, item }) {
+      const { ctx, action } = this.$props;
       // params
       const params = {
         atomClass,
@@ -65,16 +66,16 @@ export default {
         },
       };
       // roleIdOwner
-      const useStore = await Vue.prototype.$meta.store.use('a/basestore/atomClasses');
-
-      // const roleIdOwner
-      if (!atomClassBase.itemOnly) {
-        const enableRightRoleScopes = atomClassBase.enableRight?.role?.scopes;
-        if (enableRightRoleScopes) {
-          const roleIdOwner = await this._onActionCreateGetRoleIdOwner();
-          if (!roleIdOwner) return null;
-          params.roleIdOwner = roleIdOwner;
-        }
+      const useStorePreferredRoles = await ctx.$store.use('a/basestore/preferredRoles');
+      const roleIdOwner = await useStorePreferredRoles.getPrefferedRoleAndCheck({
+        ctx,
+        atomClass,
+        options: { targetEl: action.targetEl },
+      });
+      // ignore roleIdOwner===undefined
+      if (roleIdOwner === null) return null;
+      if (roleIdOwner) {
+        params.roleIdOwner = roleIdOwner;
       }
       // options
       this.base_prepareOptionsFromDataOptions(params.options, dataOptions);
