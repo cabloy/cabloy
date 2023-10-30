@@ -67,7 +67,7 @@ export default {
       };
       // roleIdOwner
       const useStorePreferredRoles = await ctx.$store.use('a/basestore/preferredRoles');
-      const roleIdOwner = await useStorePreferredRoles.getPrefferedRoleAndCheck({
+      const roleIdOwner = await useStorePreferredRoles.getPreferredRoleAndCheck({
         ctx,
         atomClass,
         options: { targetEl: action.targetEl },
