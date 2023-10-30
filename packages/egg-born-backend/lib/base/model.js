@@ -39,9 +39,15 @@ module.exports = app => {
       return data;
     }
 
-    async create(...args) {
-      const res = await this.insert(...args);
+    async create(data, ...args) {
+      const data2 = await this.prepareData(data);
+      const res = await this.insert(data2, ...args);
       return res.insertId;
+    }
+
+    async write(data, ...args) {
+      const data2 = await this.prepareData(data);
+      return await this.update(data2, ...args);
     }
 
     _rowCheck(row) {
