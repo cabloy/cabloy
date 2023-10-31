@@ -1,34 +1,14 @@
 export default {
   methods: {
     async _onActionSubmit() {
-      const { ctx, action, item } = this.$props;
-      const atomClass = {
-        module: item.module,
-        atomClassName: item.atomClassName,
-      };
-      // key
-      let key = { atomId: item.atomId, itemId: item.itemId };
-      const isCreateDelay = key.atomId === 0;
-      // dataOptions
-      const dataOptions = action.dataOptions || {};
+      const { ctx } = this.$props;
+      // step one: save
+      const { key, item, atomClass, dataOptions } = await this.base_handleActionSaveSubmit({ actionName: 'submit' });
+      // step two: submit
       // onActionSubmitBefore
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSubmitBefore) {
         await ctx.layout.instanceExtend.onActionSubmitBefore(this.$props);
-      }
-      // step one: write
-      const options = {
-        saveDraftOnly: false,
-      };
-      // from data options
-      this.base_prepareOptionsFromDataOptions(options, dataOptions);
-      // write
-      key = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
-      // key maybe changed when createDelay
-      if (isCreateDelay) {
-        item.id = key.itemId;
-        item.atomId = key.atomId;
-        item.itemId = key.itemId;
       }
       // do
       if (dataOptions.formAction) {
