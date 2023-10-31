@@ -2,25 +2,27 @@ export default {
   methods: {
     async _onActionSubmit() {
       const { ctx, action, item } = this.$props;
+      const atomClass = {
+        module: item.module,
+        atomClassName: item.atomClassName,
+      };
+      // key
+      let key = { atomId: item.atomId, itemId: item.itemId };
+      const isCreateDelay = key.atomId === 0;
+      // dataOptions
+      const dataOptions = action.dataOptions || {};
       // onActionSubmitBefore
       //   ctx maybe not layoutManager
       if (ctx.layout && ctx.layout.instanceExtend && ctx.layout.instanceExtend.onActionSubmitBefore) {
         await ctx.layout.instanceExtend.onActionSubmitBefore(this.$props);
       }
-      // key
-      let key = { atomId: item.atomId, itemId: item.itemId };
-      const isCreateDelay = key.atomId === 0;
-      const atomClass = {
-        module: item.module,
-        atomClassName: item.atomClassName,
-      };
-      // dataOptions
-      const dataOptions = action.dataOptions || {};
       // step one: write
       const options = {
         saveDraftOnly: false,
       };
+      // from data options
       this.base_prepareOptionsFromDataOptions(options, dataOptions);
+      // write
       key = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       // key maybe changed when createDelay
       if (isCreateDelay) {

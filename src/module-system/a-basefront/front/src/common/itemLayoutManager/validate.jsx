@@ -75,6 +75,12 @@ export default {
       if (this.base_formActionMain) {
         dataOptions.formActionMain = this.base_formActionMain;
       }
+      if (this.container.params?.createDelay) {
+        const dataOptionsCreateDelay = this.container.params?.createDelay.dataOptions;
+        dataOptions.createDelay = true;
+        dataOptions.createContinue = true;
+        dataOptions.createParams = dataOptionsCreateDelay.createParams;
+      }
       // actionBase: not use this.$utils.extend
       actionBase = Object.assign({}, actionBase, { dataOptions });
       // performAction: save

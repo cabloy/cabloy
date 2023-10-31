@@ -10,6 +10,9 @@ export default {
       // atomClassBase
       const useStoreAtomClasses = await ctx.$store.use('a/basestore/atomClasses');
       const atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass });
+      // key
+      let key = { atomId: item.atomId, itemId: item.itemId };
+      const isCreateDelay = key.atomId === 0;
       // dataOptions
       const dataOptions = action.dataOptions || {};
       // onActionSaveBefore: should after createDelay
@@ -26,8 +29,6 @@ export default {
       // from data options
       this.base_prepareOptionsFromDataOptions(options, dataOptions);
       // write
-      let key = { atomId: item.atomId, itemId: item.itemId };
-      const isCreateDelay = key.atomId === 0;
       key = await ctx.$api.post('/a/base/atom/write', { key, atomClass, item, options });
       // key maybe changed when createDelay
       if (isCreateDelay) {
