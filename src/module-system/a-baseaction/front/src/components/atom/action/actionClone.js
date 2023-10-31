@@ -14,15 +14,19 @@ export default {
         };
         // dataOptions
         const dataOptions = action.dataOptions || {};
-        // options
-        const options = {};
-        this.base_prepareOptionsFromDataOptions(options, dataOptions);
-        // clone
-        const data = await ctx.$api.post('/a/base/atom/clone', {
+        // params
+        const params = {
           key,
           atomClass,
-          options,
-        });
+          options: {},
+        };
+        // roleIdOwner: ignore roleIdOwner===undefined
+        const roleIdOwner = await this.base_prepareRoleIdOwner({ params, atomClass });
+        if (roleIdOwner === null) return null;
+        // options
+        this.base_prepareOptionsFromDataOptions(params.options, dataOptions);
+        // clone
+        const data = await ctx.$api.post('/a/base/atom/clone', params);
         const dataRes = data.draft || data.formal;
         const keyDraft = dataRes.key;
         const atomDraft = dataRes.atom;
