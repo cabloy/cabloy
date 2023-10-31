@@ -11,8 +11,8 @@ export default {
     async onActionSaveBefore({ item }) {
       await this._onActionCheckContent({ item });
     },
-    async onActionSubmitBefore({ item }) {
-      await this._onActionCheckContent({ item });
+    async onActionSubmitBefore(/* { item }*/) {
+      // do nothing
     },
     async _onActionCheckContent({ item }) {
       const useStoreUtils = await this.$store.use('a/markdown/utils');
