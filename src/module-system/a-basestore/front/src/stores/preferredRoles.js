@@ -25,7 +25,7 @@ export default function (Vue) {
         if (!enableRightRoleScopes) {
           return undefined;
         }
-        const preferredRole = await this.getPreferredRole({ ctx, atomClass, options });
+        const preferredRole = await this.getPreferredRole({ ctx, atomClassId: atomClassBase.id, options });
         if (!preferredRole) {
           return null;
         }
