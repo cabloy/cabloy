@@ -86,7 +86,7 @@ export default {
             options.returnSchema = true;
           }
           createParams = { ...createParams, options };
-          const res = await this.$api.post('/a/base/atom/createDelayGetItem', createParams);
+          const res = await this.$api.post('/a/base/atom/default', createParams);
           if (options.returnSchema) {
             this.base.item = res.item;
             this.base.validateSchema = res.schema;
