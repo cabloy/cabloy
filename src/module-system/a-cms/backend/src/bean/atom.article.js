@@ -1,9 +1,8 @@
 module.exports = app => {
   class Atom extends app.meta.AtomCmsBase {
-    async create({ atomClass, item, options, user }) {
+    async default({ atomClass, item, options, user }) {
       // super
-      const data = await super.create({ atomClass, item, options, user });
-      return data;
+      return await super.default({ atomClass, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -19,9 +18,14 @@ module.exports = app => {
       await super.select({ atomClass, options, items, user });
     }
 
+    async create({ atomClass, item, options, user }) {
+      // super
+      return await super.create({ atomClass, item, options, user });
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      return await super.write({ atomClass, target, key, item, options, user });
     }
 
     async delete({ atomClass, key, options, user }) {

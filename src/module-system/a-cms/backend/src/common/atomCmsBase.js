@@ -15,6 +15,15 @@ module.exports = app => {
       return this.ctx.config.module(moduleInfo.relativeName);
     }
 
+    async default({ atomClass, data, item, options, user }) {
+      // article
+      data = await this.modelCMSArticle.default(data);
+      // article content
+      data = await this.modelCMSContent.default(data);
+      // super
+      return await super.default({ atomClass, data, item, options, user });
+    }
+
     async read({ atomClass, options, key, user }) {
       // super
       const item = await super.read({ atomClass, options, key, user });
