@@ -125,9 +125,7 @@ export default {
       this.container.atomId = itemWrited.atomId;
       this.container.itemId = itemWrited.itemId;
       // item
-      this.base.item.id = itemWrited.itemId;
-      this.base.item.atomId = itemWrited.atomId;
-      this.base.item.itemId = itemWrited.itemId;
+      this.$meta.util.replaceItem(this.base.item, itemWrited);
       //   force validate reactive
       this.base.item = Object.assign({}, this.base.item);
       // actions
