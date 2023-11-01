@@ -44,10 +44,8 @@ module.exports = app => {
       // columns
       const columns = await this.columns();
       for (const columnName in columns) {
-        if (data[columnName] === undefined) {
-          const column = columns[columnName];
-          data[columnName] = this._coerceTypeOfDefault(column);
-        }
+        const column = columns[columnName];
+        data[columnName] = this._coerceTypeOfDefault(column);
       }
       return data;
     }
