@@ -31,12 +31,42 @@ module.exports = app => {
       const columns = await this.columns();
       // data
       const data = {};
-      for (const column in columns) {
-        if (item[column] !== undefined) {
-          data[column] = item[column];
+      for (const columnName in columns) {
+        if (item[columnName] !== undefined) {
+          data[columnName] = item[columnName];
         }
       }
       return data;
+    }
+
+    async default(data) {
+      data = data || {};
+      // columns
+      const columns = await this.columns();
+      for (const columnName in columns) {
+        if (data[columnName] === undefined) {
+          const column = columns[columnName];
+          data[columnName] = this._coerceTypeOfDefault(column);
+        }
+      }
+      return data;
+    }
+
+    _coerceTypeOfDefault(column) {
+      // type
+      let type = column.Type;
+      const pos = type.indexOf('(');
+      if (pos > -1) type = type.substring(0, pos);
+      // default value
+      const value = column.Default;
+      // coerce
+      if (value === null) return value;
+      if (['timestamp'].includes(type) && value === 'CURRENT_TIMESTAMP') return new Date();
+      if (['bit', 'bool'].includes(type)) return Boolean(value);
+      if (['float', 'double'].includes(type)) return Number(value);
+      if (['tinyint', 'smallint', 'mediumint', 'int', 'bigint'].includes(type)) return Number(value);
+      // others
+      return value;
     }
 
     async create(data, ...args) {
