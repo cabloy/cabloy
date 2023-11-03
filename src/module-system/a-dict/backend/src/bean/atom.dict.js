@@ -1,23 +1,25 @@
-module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, options, user }) {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom extends ctx.app.meta.AtomBase {
+    constructor() {
+      super(ctx);
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).dict;
+    }
+
+    get modelDictContent() {
+      return ctx.model.module(moduleInfo.relativeName).dictContent;
+    }
+
+    async default({ atomClass, item, options, user }) {
+      // party default
+      const data = await this.model.default();
+      data.dictItems = '[]';
+      data.dictLocales = '{}';
       // super
-      const key = await super.create({ atomClass, item, options, user });
-      // add dict
-      const res = await this.ctx.model.dict.insert({
-        atomId: key.atomId,
-      });
-      const itemId = res.insertId;
-      // add content
-      await this.ctx.model.dictContent.insert({
-        atomId: key.atomId,
-        itemId,
-        dictItems: '[]',
-        dictLocales: '{}',
-      });
-      // return key
-      return { atomId: key.atomId, itemId };
+      return await super.default({ atomClass, data, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -39,55 +41,75 @@ module.exports = app => {
       }
     }
 
+    async create({ atomClass, item, options, user }) {
+      // super
+      const data = await super.create({ atomClass, item, options, user });
+      // add dict
+      data.itemId = await this.model.create(data);
+      // add content
+      if (!data.dictItems) {
+        data.dictItems = '[]';
+        data.dictLocales = '{}';
+      }
+      await this.modelDictContent.create(data);
+      // data
+      return data;
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // check demo
-      this.ctx.bean.util.checkDemoForAtomWrite();
+      ctx.bean.util.checkDemoForAtomWrite();
       // info
       const atomStaticKey = item.atomStaticKey;
       const atomStage = item.atomStage;
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      const data = await super.write({ atomClass, target, key, item, options, user });
       // update dict
-      const data = await this.ctx.model.dict.prepareData(item);
-      await this.ctx.model.dict.update(data);
-      // update content
-      await this.ctx.model.dictContent.update(
-        {
-          dictItems: item.dictItems,
-          dictLocales: item.dictLocales,
-        },
-        {
-          where: {
-            atomId: key.atomId,
-          },
+      if (key.atomId !== 0) {
+        await this.model.write(data);
+        // update content
+        if (data.dictItems !== undefined) {
+          await this.modelDictContent.update(
+            {
+              dictItems: data.dictItems,
+              dictLocales: data.dictLocales,
+            },
+            {
+              where: {
+                atomId: key.atomId,
+              },
+            }
+          );
         }
-      );
-      // remove dict cache
-      if (atomStage === 1) {
-        this.ctx.tail(() => {
-          this.ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
-        });
+        // remove dict cache
+        if (atomStage === 1) {
+          ctx.tail(() => {
+            ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
+          });
+        }
       }
+      // data
+      return data;
     }
 
     async delete({ atomClass, key, options, user }) {
-      const item = await this.ctx.bean.atom.modelAtom.get({ id: key.atomId });
+      const item = await ctx.bean.atom.modelAtom.get({ id: key.atomId });
       const atomStaticKey = item.atomStaticKey;
       const atomStage = item.atomStage;
       // super
       await super.delete({ atomClass, key, options, user });
       // delete dict
-      await this.ctx.model.dict.delete({
+      await this.model.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.dictContent.delete({
+      await this.modelDictContent.delete({
         itemId: key.itemId,
       });
       // remove dict cache
       if (atomStage === 1) {
-        this.ctx.tail(() => {
-          this.ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
+        ctx.tail(() => {
+          ctx.bean.dict.dictCacheRemove({ dictKey: atomStaticKey });
         });
       }
     }

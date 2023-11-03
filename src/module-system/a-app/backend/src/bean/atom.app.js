@@ -46,6 +46,9 @@ module.exports = ctx => {
       // add app
       data.itemId = await this.model.create(data);
       // add content
+      if (!data.content) {
+        data.content = '{}';
+      }
       await this.modelAppContent.create(data);
       // data
       return data;

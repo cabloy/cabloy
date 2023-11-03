@@ -1,26 +1,30 @@
-module.exports = app => {
-  class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, options, user }) {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const __contentDefault = {
+    root: {
+      id: ctx.bean.util.uuidv4(),
+      widgets: [],
+    },
+  };
+  class Atom extends ctx.app.meta.AtomBase {
+    constructor() {
+      super(ctx);
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).dashboard;
+    }
+
+    get modelDashboardContent() {
+      return ctx.model.module(moduleInfo.relativeName).dashboardContent;
+    }
+
+    async default({ atomClass, item, options, user }) {
+      // party default
+      const data = await this.model.default();
+      data.content = JSON.stringify(__contentDefault);
       // super
-      const key = await super.create({ atomClass, item, options, user });
-      // add dashboard
-      const res = await this.ctx.model.dashboard.insert({
-        atomId: key.atomId,
-      });
-      const itemId = res.insertId;
-      // add content
-      const content = {
-        root: {
-          id: this.ctx.bean.util.uuidv4(),
-          widgets: [],
-        },
-      };
-      await this.ctx.model.dashboardContent.insert({
-        atomId: key.atomId,
-        itemId,
-        content: JSON.stringify(content),
-      });
-      return { atomId: key.atomId, itemId };
+      return await super.default({ atomClass, data, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -42,36 +46,56 @@ module.exports = app => {
       }
     }
 
+    async create({ atomClass, item, options, user }) {
+      // super
+      const data = await super.create({ atomClass, item, options, user });
+      // add dashboard
+      data.itemId = await this.model.create(data);
+      // add content
+      if (!data.content) {
+        data.content = JSON.stringify(__contentDefault);
+      }
+      // add content
+      await this.modelDashboardContent.create(data);
+      // data
+      return data;
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // check demo
-      this.ctx.bean.util.checkDemoForAtomWrite();
+      ctx.bean.util.checkDemoForAtomWrite();
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      const data = await super.write({ atomClass, target, key, item, options, user });
       // update dashboard
-      const data = await this.ctx.model.dashboard.prepareData(item);
-      await this.ctx.model.dashboard.update(data);
-      // update content
-      await this.ctx.model.dashboardContent.update(
-        {
-          content: item.content,
-        },
-        {
-          where: {
-            atomId: key.atomId,
-          },
+      if (key.atomId !== 0) {
+        await this.model.write(data);
+        // update content
+        if (data.content !== undefined) {
+          await this.modelDashboardContent.update(
+            {
+              content: data.content,
+            },
+            {
+              where: {
+                atomId: key.atomId,
+              },
+            }
+          );
         }
-      );
+      }
+      // data
+      return data;
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
       // delete dashboard
-      await this.ctx.model.dashboard.delete({
+      await this.model.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.dashboardContent.delete({
+      await this.modelDashboardContent.delete({
         itemId: key.itemId,
       });
     }

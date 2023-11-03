@@ -11,7 +11,7 @@ module.exports = app => {
     },
     // atom
     'atom.dict': {
-      mode: 'app',
+      mode: 'ctx',
       bean: atomDict,
     },
     // global
