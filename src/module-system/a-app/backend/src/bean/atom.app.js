@@ -1,21 +1,24 @@
-module.exports = app => {
-  class Atom extends app.meta.AtomBase {
-    async create({ atomClass, item, options, user }) {
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom extends ctx.app.meta.AtomBase {
+    constructor() {
+      super(ctx);
+    }
+
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).app;
+    }
+
+    get modelAppContent() {
+      return ctx.model.module(moduleInfo.relativeName).appContent;
+    }
+
+    async default({ atomClass, item, options, user }) {
+      // party default
+      const data = await this.model.default();
+      data.content = '{}';
       // super
-      const key = await super.create({ atomClass, item, options, user });
-      // add app
-      const res = await this.ctx.model.app.insert({
-        atomId: key.atomId,
-      });
-      const itemId = res.insertId;
-      // add content
-      const content = {};
-      await this.ctx.model.appContent.insert({
-        atomId: key.atomId,
-        itemId,
-        content: JSON.stringify(content),
-      });
-      return { atomId: key.atomId, itemId };
+      return await super.default({ atomClass, data, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -37,48 +40,64 @@ module.exports = app => {
       }
     }
 
+    async create({ atomClass, item, options, user }) {
+      // super
+      const data = await super.create({ atomClass, item, options, user });
+      // add app
+      data.itemId = await this.model.create(data);
+      // add content
+      await this.modelAppContent.create(data);
+      // data
+      return data;
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // check demo
-      this.ctx.bean.util.checkDemoForAtomWrite();
+      ctx.bean.util.checkDemoForAtomWrite();
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      const data = await super.write({ atomClass, target, key, item, options, user });
       // update app
-      const data = await this.ctx.model.app.prepareData(item);
-      await this.ctx.model.app.update(data);
-      // update content
-      await this.ctx.model.appContent.update(
-        {
-          content: item.content,
-        },
-        {
-          where: {
-            atomId: key.atomId,
-          },
+      if (key.atomId !== 0) {
+        await this.model.write(data);
+        // update content
+        if (data.content !== undefined) {
+          await this.modelAppContent.update(
+            {
+              content: data.content,
+            },
+            {
+              where: {
+                atomId: key.atomId,
+              },
+            }
+          );
         }
-      );
+      }
+      // data
+      return data;
     }
 
     async delete({ atomClass, key, options, user }) {
       // super
       await super.delete({ atomClass, key, options, user });
       // delete app
-      await this.ctx.model.app.delete({
+      await this.model.delete({
         id: key.itemId,
       });
       // delete content
-      await this.ctx.model.appContent.delete({
+      await this.modelAppContent.delete({
         itemId: key.itemId,
       });
     }
 
     _getMeta(item) {
       // locale of atomCategoryName
-      item.atomCategoryNameLocale = this.ctx.text(item.atomCategoryName);
+      item.atomCategoryNameLocale = ctx.text(item.atomCategoryName);
       // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary
-      meta.summary = this.ctx.text(item.description);
+      meta.summary = ctx.text(item.description);
     }
   }
 
