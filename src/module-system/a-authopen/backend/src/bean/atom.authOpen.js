@@ -1,46 +1,25 @@
 const randomize = require('randomatic');
 
-module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
-  class Atom extends app.meta.AtomBase {
-    get modelAuth() {
-      return this.ctx.model.module('a-base').auth;
+module.exports = ctx => {
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  class Atom extends ctx.app.meta.AtomBase {
+    constructor() {
+      super(ctx);
     }
 
-    async create({ atomClass, item, options, user }) {
-      // check demo
-      this.ctx.bean.util.checkDemoForAtomCreate();
-      // user
-      const userId = user.id;
+    get model() {
+      return ctx.model.module(moduleInfo.relativeName).authOpen;
+    }
+
+    get modelAuth() {
+      return ctx.model.module('a-base').auth;
+    }
+
+    async default({ atomClass, item, options, user }) {
+      // party default
+      const data = await this.model.default();
       // super
-      const key = await super.create({ atomClass, item, options, user });
-      const atomId = key.atomId;
-      // clientID clientSecret
-      const clientID = randomize('0a', 20);
-      const clientSecret = randomize('0a', 40);
-      // add authOpen
-      const res = await this.ctx.model.authOpen.insert({
-        atomId,
-        userId,
-        clientID,
-        clientSecret,
-      });
-      const itemId = res.insertId;
-      // add aAuth record
-      const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
-        module: moduleInfo.relativeName,
-        providerName: 'authopen',
-      });
-      await this.modelAuth.insert({
-        userId,
-        providerId: providerItem.id,
-        profileId: itemId,
-        profile: JSON.stringify({
-          authOpenId: itemId,
-        }),
-      });
-      // return key
-      return { atomId, itemId };
+      return await super.default({ atomClass, data, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -62,12 +41,49 @@ module.exports = app => {
       }
     }
 
+    async create({ atomClass, item, options, user }) {
+      // check demo
+      ctx.bean.util.checkDemoForAtomCreate();
+      // super
+      const data = await super.create({ atomClass, item, options, user });
+      // user
+      if (!data.userId) {
+        data.userId = user.id;
+      }
+      // clientID clientSecret
+      if (!data.clientID) {
+        data.clientID = randomize('0a', 20);
+        data.clientSecret = randomize('0a', 40);
+      }
+      // add authOpen
+      data.itemId = await this.model.create(data);
+      const itemId = data.itemId;
+      // add aAuth record
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
+        module: moduleInfo.relativeName,
+        providerName: 'authopen',
+      });
+      await this.modelAuth.insert({
+        userId: data.userId,
+        providerId: providerItem.id,
+        profileId: itemId,
+        profile: JSON.stringify({
+          authOpenId: itemId,
+        }),
+      });
+      // data
+      return data;
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      const data = await super.write({ atomClass, target, key, item, options, user });
       // update authOpen
-      const data = await this.ctx.model.authOpen.prepareData(item);
-      await this.ctx.model.authOpen.update(data);
+      if (key.atomId !== 0) {
+        await this.model.write(data);
+      }
+      // data
+      return data;
     }
 
     async delete({ atomClass, key, user }) {
@@ -75,7 +91,7 @@ module.exports = app => {
       // super
       await super.delete({ atomClass, key, user });
       // delete aAuth record
-      const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
+      const providerItem = await ctx.bean.authProvider.getAuthProvider({
         module: moduleInfo.relativeName,
         providerName: 'authopen',
       });
@@ -85,7 +101,7 @@ module.exports = app => {
         profileId: itemId,
       });
       // delete authOpen
-      await this.ctx.model.authOpen.delete({
+      await this.model.delete({
         id: itemId,
       });
     }
@@ -98,7 +114,7 @@ module.exports = app => {
       // hideClientSecret
       if (![101].includes(action)) return res;
       // authOpen
-      const item = await this.ctx.model.authOpen.get({ id: atom.itemId });
+      const item = await this.model.get({ id: atom.itemId });
       // delete
       if (action === 101) {
         if (item.clientSecretHidden === 1) return null;
@@ -122,7 +138,7 @@ module.exports = app => {
         item.scopeRoleName = 'Not Specified';
       }
       if (item.scopeRoleName) {
-        item.scopeRoleNameLocale = this.ctx.text(item.scopeRoleName);
+        item.scopeRoleNameLocale = ctx.text(item.scopeRoleName);
       }
     }
   }
