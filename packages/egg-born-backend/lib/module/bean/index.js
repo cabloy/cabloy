@@ -37,7 +37,12 @@ module.exports = function (loader) {
       const beans = module.main.beans;
       if (!beans) continue;
       for (const beanName in beans) {
-        loader.app.bean._register(module.info.relativeName, beanName, beans[beanName]);
+        const moduleName = module.info.relativeName;
+        const beanClass = beans[beanName];
+        if (beanName.indexOf('atom.') === 0 && beanClass.mode === 'app') {
+          throw new Error(`atom bean's mode must be ctx: ${moduleName}:${beanName}`);
+        }
+        loader.app.bean._register(moduleName, beanName, beanClass);
       }
     }
   }
