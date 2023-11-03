@@ -45,7 +45,7 @@ module.exports = app => {
     },
     // atom
     'atom.article': {
-      mode: 'app',
+      mode: 'ctx',
       bean: atomArticle,
     },
     // global
