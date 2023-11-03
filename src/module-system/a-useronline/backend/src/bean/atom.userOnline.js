@@ -9,16 +9,11 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).userOnline;
     }
 
-    async create({ atomClass, item, options, user }) {
+    async default({ atomClass, item, options, user }) {
+      // party default
+      const data = await this.model.default();
       // super
-      const key = await super.create({ atomClass, item, options, user });
-      // add userOnline
-      const res = await this.model.insert({
-        atomId: key.atomId,
-        userId: item.userId,
-      });
-      // return key
-      return { atomId: key.atomId, itemId: res.insertId };
+      return await super.default({ atomClass, data, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -66,12 +61,27 @@ module.exports = ctx => {
       }
     }
 
+    async create({ atomClass, item, options, user }) {
+      // super
+      const data = await super.create({ atomClass, item, options, user });
+      // add userOnline
+      if (!data.userId) {
+        data.userId = item.userId;
+      }
+      data.itemId = await this.model.create(data);
+      // data
+      return data;
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // super
-      await super.write({ atomClass, target, key, item, options, user });
+      const data = await super.write({ atomClass, target, key, item, options, user });
       // update userOnline
-      const data = await this.model.prepareData(item);
-      await this.model.update(data);
+      if (key.atomId !== 0) {
+        await this.model.write(data);
+      }
+      // data
+      return data;
     }
 
     async delete({ atomClass, key, options, user }) {

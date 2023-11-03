@@ -9,14 +9,11 @@ module.exports = ctx => {
       return ctx.model.module(moduleInfo.relativeName).userOnlineHistory;
     }
 
-    async create({ atomClass, item, options, user }) {
+    async default({ atomClass, item, options, user }) {
+      // party default
+      const data = await this.model.default();
       // super
-      await super.create({ atomClass, item, options, user });
-      // add userOnlineHistory
-      const res = await this.model.insert();
-      // return key
-      const itemId = res.insertId;
-      return { atomId: itemId, itemId };
+      return await super.default({ atomClass, data, item, options, user });
     }
 
     async read({ atomClass, options, key, user }) {
@@ -42,13 +39,21 @@ module.exports = ctx => {
       }
     }
 
+    async create({ atomClass, item, options, user }) {
+      // super
+      const data = await super.create({ atomClass, item, options, user });
+      // add userOnlineHistory
+      data.itemId = await this.model.create(data);
+      // data
+      return data;
+    }
+
     async write({ atomClass, target, key, item, options, user }) {
       // super
       const data = await super.write({ atomClass, target, key, item, options, user });
       // update userOnlineHistory
       if (key.atomId !== 0) {
-        const data2 = await this.model.prepareData(data);
-        await this.model.update(data2);
+        await this.model.write(data);
       }
       // data
       return data;
