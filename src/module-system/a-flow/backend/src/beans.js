@@ -22,7 +22,7 @@ module.exports = app => {
     },
     // atom
     'atom.flowDef': {
-      mode: 'app',
+      mode: 'ctx',
       bean: atomFlowDef,
     },
     // flow behavior
