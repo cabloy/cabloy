@@ -20,7 +20,7 @@ module.exports = ctx => {
     }
 
     async default({ atomClass, item, options, user }) {
-      // party default
+      // dashboard default
       const data = await this.model.default();
       data.content = JSON.stringify(__contentDefault);
       // super

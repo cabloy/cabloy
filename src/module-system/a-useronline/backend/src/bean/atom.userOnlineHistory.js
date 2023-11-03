@@ -10,7 +10,7 @@ module.exports = ctx => {
     }
 
     async default({ atomClass, item, options, user }) {
-      // party default
+      // userOnlineHistory default
       const data = await this.model.default();
       // super
       return await super.default({ atomClass, data, item, options, user });

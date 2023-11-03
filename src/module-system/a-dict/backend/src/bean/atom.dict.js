@@ -14,7 +14,7 @@ module.exports = ctx => {
     }
 
     async default({ atomClass, item, options, user }) {
-      // party default
+      // dict default
       const data = await this.model.default();
       data.dictItems = '[]';
       data.dictLocales = '{}';

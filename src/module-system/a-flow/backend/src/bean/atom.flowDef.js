@@ -14,7 +14,7 @@ module.exports = ctx => {
     }
 
     async default({ atomClass, item, options, user }) {
-      // party default
+      // flowDef default
       const data = await this.model.default();
       data.content = '{}';
       // super
