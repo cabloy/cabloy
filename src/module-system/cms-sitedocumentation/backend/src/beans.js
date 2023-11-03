@@ -10,7 +10,7 @@ module.exports = app => {
     },
     // atom
     'atom.document': {
-      mode: 'app',
+      mode: 'ctx',
       bean: atomDocument,
     },
   };
