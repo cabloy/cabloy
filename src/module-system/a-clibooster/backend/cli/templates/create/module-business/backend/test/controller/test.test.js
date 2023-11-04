@@ -4,9 +4,10 @@ describe('[your tests start from here]', () => {
   it('[atom]', async () => {
     app.mockSession({});
 
-    // atomClass info
+    // atomClass
     const atomClassModule = mockInfo().relativeName;
     const atomClassName = '<%=argv.atomClassName%>';
+    const atomClass = { module: atomClassModule, atomClassName };
 
     // login as root
     await app
@@ -24,7 +25,7 @@ describe('[your tests start from here]', () => {
       .httpRequest()
       .post(mockUrl('/a/base/atom/write'))
       .send({
-        atomClass: { module: atomClassModule, atomClassName },
+        atomClass,
         item: {
           atomName: 'test',
           description: 'this is a test',
@@ -34,13 +35,10 @@ describe('[your tests start from here]', () => {
     const keyDraft = result.body.data;
 
     // submit
-    result = await app
-      .httpRequest()
-      .post(mockUrl('/a/base/atom/submit'))
-      .send({
-        key: keyDraft,
-        atomClass: { module: atomClassModule, atomClassName },
-      });
+    result = await app.httpRequest().post(mockUrl('/a/base/atom/submit')).send({
+      key: keyDraft,
+      atomClass,
+    });
     assert(result.body.code === 0);
     const keyFormal = result.body.data.formal.key;
 

@@ -114,26 +114,29 @@ describe.skip('test/controller/test.test.js', () => {
     for (const article of articles) {
       let result;
       // create
-      result = await app.httpRequest().post(mockUrl('/a/base/atom/create')).send({
-        atomClass,
-      });
-      assert(result.body.code === 0);
-      const keyDraft = result.body.data;
-
-      // submit
       result = await app
         .httpRequest()
-        .post(mockUrl('/a/base/atom/writeSubmit'))
+        .post(mockUrl('/a/base/atom/write'))
         .send({
-          key: keyDraft,
+          atomClass,
           item: {
-            atomId: keyDraft.atomId,
             atomName: article.atomName,
             atomLanguage: article.atomLanguage,
             editMode: article.editMode,
             content: article.content,
             slug: article.slug,
           },
+        });
+      assert(result.body.code === 0);
+      const keyDraft = result.body.data;
+
+      // submit
+      result = await app
+        .httpRequest()
+        .post(mockUrl('/a/base/atom/submit'))
+        .send({
+          key: keyDraft,
+          atomClass,
           options: { ignoreFlow: true },
         });
       assert(result.body.code === 0);

@@ -18,23 +18,12 @@ export default {
   methods: {
     async onPageAfterIn() {
       try {
-        let item = JSON.parse(this.$f7route.query.item);
-        const key = await this.$api.post('/a/base/atom/create', {
-          atomClass: {
-            module: item.module,
-            atomClassName: item.atomClassName,
-          },
-          item,
-        });
-        item = {
-          ...item,
-          atomId: key.atomId,
-          itemId: key.itemId,
-        };
+        const item = JSON.parse(this.$f7route.query.item);
         const action = {
           actionModule: 'a-base',
           actionComponent: 'action',
-          name: 'write',
+          name: 'create',
+          createDelay: true,
           navigateOptions: {
             target: '_self',
             reloadCurrent: true,

@@ -24,9 +24,12 @@ describe.skip('test/controller/test.test.js', () => {
     // create
     let result = await app
       .httpRequest()
-      .post(mockUrl('/a/base/atom/create'))
+      .post(mockUrl('/a/base/atom/write'))
       .send({
         atomClass: { module: atomClassModule, atomClassName },
+        item: {
+          atomName: 'test',
+        },
       });
     if (result.body.code !== 0) {
       const sessionNew = JSON.stringify(app.context.session);
@@ -40,12 +43,10 @@ describe.skip('test/controller/test.test.js', () => {
     // submit
     result = await app
       .httpRequest()
-      .post(mockUrl('/a/base/atom/writeSubmit'))
+      .post(mockUrl('/a/base/atom/submit'))
       .send({
         key: keyDraft,
-        item: {
-          atomName: 'test',
-        },
+        atomClass: { module: atomClassModule, atomClassName },
         options: { ignoreFlow: true },
       });
     if (result.body.code !== 0) {
