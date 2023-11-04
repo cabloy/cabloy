@@ -1,6 +1,15 @@
 # History
 
-## 2023-**-**, Version 5.0.6-alpha
+## 2023-xx-xx, Version 5.0.7-alpha
+
+- **Feat**
+
+  - 新增 create delay 机制：将之前的 create 和 write 逻辑合二为一，提升性能
+  - 新增 atom 组件的 default 方法，可以直接获取业务数据的初始值
+  - 将 atom 组件由 app 模式改为 ctx 模式
+  - 系统启动时的静态数据初始化：由之前的 50 秒优化至 15 秒
+
+## 2023-11-04, Version 5.0.6-alpha
 
 - **Feat**
 
