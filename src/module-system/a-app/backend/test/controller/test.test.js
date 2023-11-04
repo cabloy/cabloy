@@ -22,9 +22,13 @@ describe('[your tests start from here]', () => {
     // create
     let result = await app
       .httpRequest()
-      .post(mockUrl('/a/base/atom/create'))
+      .post(mockUrl('/a/base/atom/write'))
       .send({
         atomClass: { module: atomClassModule, atomClassName },
+        item: {
+          atomName: 'test',
+          description: 'this is a test',
+        },
       });
     assert(result.body.code === 0);
     const keyDraft = result.body.data;
@@ -32,13 +36,10 @@ describe('[your tests start from here]', () => {
     // submit
     result = await app
       .httpRequest()
-      .post(mockUrl('/a/base/atom/writeSubmit'))
+      .post(mockUrl('/a/base/atom/submit'))
       .send({
         key: keyDraft,
-        item: {
-          atomName: 'test',
-          description: 'this is a test',
-        },
+        atomClass: { module: atomClassModule, atomClassName },
       });
     assert(result.body.code === 0);
     const keyFormal = result.body.data.formal.key;

@@ -127,9 +127,16 @@ describe('test/controller/test.test.js', () => {
       // create
       result = await app
         .httpRequest()
-        .post(mockUrl('/a/base/atom/create'))
+        .post(mockUrl('/a/base/atom/write'))
         .send({
           atomClass: { module: mockInfo().relativeName, atomClassName: 'article' },
+          item: {
+            atomName: article.atomName,
+            atomLanguage: article.atomLanguage,
+            editMode: article.editMode,
+            content: article.content,
+            slug: article.slug,
+          },
         });
       assert(result.body.code === 0);
       const keyDraft = result.body.data;
@@ -137,17 +144,10 @@ describe('test/controller/test.test.js', () => {
       // submit
       result = await app
         .httpRequest()
-        .post(mockUrl('/a/base/atom/writeSubmit'))
+        .post(mockUrl('/a/base/atom/submit'))
         .send({
           key: keyDraft,
-          item: {
-            atomId: keyDraft.atomId,
-            atomName: article.atomName,
-            atomLanguage: article.atomLanguage,
-            editMode: article.editMode,
-            content: article.content,
-            slug: article.slug,
-          },
+          atomClass: { module: mockInfo().relativeName, atomClassName: 'article' },
           options: { ignoreFlow: true },
         });
       assert(result.body.code === 0);
