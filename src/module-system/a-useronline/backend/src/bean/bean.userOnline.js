@@ -152,13 +152,8 @@ module.exports = ctx => {
 
     async _insertUserOnlineHistory({ user, data, isLogin }) {
       const userId = user.id;
-      //   create
-      const atomKey = await ctx.bean.atom.create({
-        atomClass: __atomClassUserOnlineHistory,
-      });
       //   write
-      await ctx.bean.atom.write({
-        key: atomKey,
+      const atomKey = await ctx.bean.atom.write({
         atomClass: __atomClassUserOnlineHistory,
         item: {
           userId,

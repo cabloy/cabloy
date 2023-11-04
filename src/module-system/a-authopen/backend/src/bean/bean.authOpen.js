@@ -150,10 +150,6 @@ module.exports = ctx => {
 
     // create aAuthOpen record for user
     async createAuthOpen({ item: { atomName, scopeRoleName, neverExpire = 1, expireTime = null }, user }) {
-      const authOpenKey = await ctx.bean.atom.create({
-        atomClass: __atomClassAuthOpen,
-        user,
-      });
       // write
       const scopeRole = await ctx.bean.role.parseRoleName({ roleName: scopeRoleName });
       const item = {
@@ -162,15 +158,9 @@ module.exports = ctx => {
         neverExpire,
         expireTime,
       };
-      await ctx.bean.atom.write({
-        key: authOpenKey,
+      const authOpenKey = await ctx.bean.atom.write({
+        atomClass: __atomClassAuthOpen,
         item,
-        user,
-      });
-      // submit
-      await ctx.bean.atom.submit({
-        key: authOpenKey,
-        options: { ignoreFlow: true },
         user,
       });
       // ok
