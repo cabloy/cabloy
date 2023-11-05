@@ -375,7 +375,24 @@ module.exports = app => {
     },
     requireDynamic(file) {
       if (!file) throw new Error('file should not empty');
-      return require(file);
+      let instance = require(file);
+      const mtime = this._requireDynamic_getFileTime(file);
+      if (instance.__requireDynamic_mtime === undefined) {
+        instance.__requireDynamic_mtime = mtime;
+      } else if (instance.__requireDynamic_mtime !== mtime) {
+        delete require.cache[require.resolve(file)];
+        instance = require(file);
+        instance.__requireDynamic_mtime = mtime;
+      }
+      return instance;
+    },
+    _requireDynamic_getFileTime(file) {
+      if (!path.isAbsolute(file)) return null;
+      const exists = fse.pathExistsSync(file);
+      if (!exists) return null;
+      // stat
+      const stat = fse.statSync(file);
+      return stat.mtime.valueOf();
     },
   };
 };
