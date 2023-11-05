@@ -374,6 +374,7 @@ module.exports = app => {
       );
     },
     requireDynamic(file) {
+      if (!file) throw new Error('file should not empty');
       return require(file);
     },
   };
