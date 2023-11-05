@@ -20,6 +20,7 @@ const cliFrontRenderTableCell = require('./bean/cli.front.renderTableCell.js');
 const cliStoreSync = require('./bean/cli.store.sync.js');
 const cliStorePublish = require('./bean/cli.store.publish.js');
 const cliGitCommit = require('./bean/cli.git.commit.js');
+const localUtils = require('./bean/local.utils.js');
 
 module.exports = app => {
   const beans = {
@@ -112,6 +113,11 @@ module.exports = app => {
     'cli.git.commit': {
       mode: 'ctx',
       bean: cliGitCommit,
+    },
+    // local
+    'local.utils': {
+      mode: 'ctx',
+      bean: localUtils,
     },
   };
   return beans;
