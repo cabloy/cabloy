@@ -4,6 +4,7 @@ const tokenDelete = require('./command/token.delete.js');
 const tokenList = require('./command/token.list.js');
 const toolsBabel = require('./command/tools.babel.js');
 const toolsIcons = require('./command/tools.icons.js');
+const toolsDemo = require('./command/tools.demo.js');
 const createSuite = require('./command/create.suite.js');
 const createModule = require('./command/create.module.js');
 const createApp = require('./command/create.app.js');
@@ -31,6 +32,7 @@ module.exports = app => {
     tools: {
       babel: toolsBabel(app),
       icons: toolsIcons(app),
+      demo: toolsDemo(app),
     },
     create: {
       suite: createSuite(app),

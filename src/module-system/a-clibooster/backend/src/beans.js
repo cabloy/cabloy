@@ -5,6 +5,7 @@ const cliTokenDelete = require('./bean/cli.token.delete.js');
 const cliTokenList = require('./bean/cli.token.list.js');
 const cliToolsBabel = require('./bean/cli.tools.babel.js');
 const cliToolsIcons = require('./bean/cli.tools.icons.js');
+const cliToolsDemo = require('./bean/cli.tools.demo.js');
 const cliCreateSuite = require('./bean/cli.create.suite.js');
 const cliCreateModule = require('./bean/cli.create.module.js');
 const cliCreateApp = require('./bean/cli.create.app.js');
@@ -51,6 +52,10 @@ module.exports = app => {
     'cli.tools.icons': {
       mode: 'ctx',
       bean: cliToolsIcons,
+    },
+    'cli.tools.demo': {
+      mode: 'ctx',
+      bean: cliToolsDemo,
     },
     'cli.create.suite': {
       mode: 'ctx',
