@@ -155,7 +155,11 @@ function wrapMiddleware(item, route) {
     // bean
     const bean = item.bean;
     // execute
-    const beanInstance = ctx.bean._getBean(bean.module, `middleware.${bean.name}`);
+    const beanFullName = `${bean.module}.middleware.${bean.name}`;
+    const beanInstance = ctx.bean._getBean(beanFullName);
+    if (!beanInstance) {
+      throw new Error(`middleware bean not found: ${beanFullName}`);
+    }
     return beanInstance.execute(options, next);
   };
   fn._name = item.name;
