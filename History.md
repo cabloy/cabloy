@@ -1,6 +1,16 @@
 # History
 
-## 2023-xx-xx, Version 5.0.7-alpha
+## 2023-xx-xx, Version 5.0.8-alpha
+
+- **Feat**
+
+- 新增 demo 工具，方便在开发时，随时调试一些临时逻辑
+  - 方式 1: 命令行执行：npm run cli :tools:demo execute
+  - 方式 2: 浏览器直接访问：/api/a/clibooster/tools/demo/execute
+  - 注意事项 1: execute 为默认方法，可以替换为其他方法
+  - 注意事项 2: 自动在 src/backend 追加文件：demo.js
+
+## 2023-11-05, Version 5.0.7-alpha
 
 - **Feat**
 
