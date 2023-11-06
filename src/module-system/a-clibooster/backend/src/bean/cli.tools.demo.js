@@ -19,10 +19,13 @@ module.exports = ctx => {
       // loop
       for (const method of methods) {
         // execute
-        const result = await this.localUtils.demoExecute({ method, argv });
+        const res = await this.localUtils.demoExecute({ method, argv });
         // log
-        await this.console.log(`===> method: ${method}`);
-        await this.console.log({ text: result });
+        await this.console.log(`===> method     : ${method}`);
+        await this.console.log(`===> time begin : ${res.timeBegin}`);
+        await this.console.log(`===> time end   : ${res.timeEnd}`);
+        await this.console.log(`===> duration   : ${res.duration}ms`);
+        await this.console.log({ text: res.result });
       }
     }
   }
