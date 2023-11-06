@@ -39,6 +39,10 @@ module.exports = ctx => {
     get Table() {
       return TableClass;
     }
+    get cwd() {
+      return this.context.cwd;
+    }
+
     newChalk(options) {
       if (!options) {
         options = this.moduleConfig.helper.chalk.options;
@@ -77,7 +81,7 @@ module.exports = ctx => {
       return dir;
     }
     getNpmRegistry() {
-      let registry = this.context.env.npm_config_registry;
+      let registry = this.cli.terminal ? this.context.env.npm_config_registry : null;
       if (!registry) {
         const locale = ctx.locale === 'zh-cn' ? 'zh-cn' : 'en-us';
         registry = this.moduleConfig.helper.lerna.registry.locales[locale];
@@ -119,7 +123,7 @@ module.exports = ctx => {
       }
     }
     async spawnBin({ cmd, args, options }) {
-      cmd = path.join(this.context.cwd, 'node_modules/.bin', cmd);
+      cmd = path.join(this.cwd, 'node_modules/.bin', cmd);
       return await this.spawnCmd({ cmd, args, options });
     }
     async spawnCmd({ cmd, args, options }) {
@@ -136,7 +140,7 @@ module.exports = ctx => {
     }
     async spawn({ cmd, args = [], options = {} }) {
       if (!options.cwd) {
-        options.cwd = this.context.cwd;
+        options.cwd = this.cwd;
       }
       return new Promise((resolve, reject) => {
         const logPrefix = options.logPrefix;
