@@ -19,8 +19,10 @@ module.exports = app => {
         projectPath: process.cwd(),
         ...query,
       };
+      // cli
+      const cli = this.ctx.bean._newBean('cliBase', { command: null, context: null, terminal: false });
       // execute
-      return await this.localUtils.demoExecute({ method, argv });
+      return await this.localUtils.demoExecute({ method, argv, cli });
     }
   }
 

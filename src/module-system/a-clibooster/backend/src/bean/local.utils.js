@@ -4,6 +4,24 @@ const fse = require('fs-extra');
 const __JSContent = `module.exports = ctx => {
   class Demo {
     async execute(/* argv */) {
+      // welcome
+      await this.console.log('\\n==== Welcome to CabloyJS! ====\\n');
+      // chalk
+      let text = this.helper.chalk.keyword('orange')('chalk test');
+      await this.console.log({ text });
+      // boxen
+      text = this.helper.boxen({ text: 'boxen test' });
+      await this.console.log({ text });
+      // table
+      const table = this.helper.newTable({
+        head: ['Name', 'Sex'],
+        colWidths: [20, 20],
+      });
+      table.push(['Tom', 'M']);
+      table.push(['Jane', 'F']);
+      await this.console.log({ text: 'table test' });
+      await this.console.log({ text: table.toString() });
+      // ok
       return 'hello world';
     }
   }

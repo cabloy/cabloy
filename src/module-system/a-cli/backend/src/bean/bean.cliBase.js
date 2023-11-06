@@ -9,6 +9,7 @@ module.exports = ctx => {
       this.helper = ctx.bean._newBean(`${moduleInfo.relativeName}.local.helper`, this);
       this.template = ctx.bean._newBean(`${moduleInfo.relativeName}.local.template`, this);
       this.cabloyConfig = null;
+      this.terminal = options.terminal !== false;
     }
 
     get context() {

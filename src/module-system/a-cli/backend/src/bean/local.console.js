@@ -26,7 +26,7 @@ module.exports = ctx => {
         text = this._adjustText(logPrefix, text);
       }
       // fallback
-      if (!this.cli) {
+      if (!this.cli.terminal) {
         return console.log(text);
       }
       // update
