@@ -3,7 +3,7 @@ const fse = require('fs-extra');
 
 const __JSContent = `module.exports = ctx => {
   class Demo {
-    async execute() {
+    async execute(/* argv */) {
       return 'hello world';
     }
   }
@@ -13,7 +13,7 @@ const __JSContent = `module.exports = ctx => {
 
 module.exports = ctx => {
   class Local {
-    async demoExecute({ method }) {
+    async demoExecute({ method, argv }) {
       // js file
       const jsFile = await this._prepareJSFile();
       // require
@@ -23,7 +23,7 @@ module.exports = ctx => {
       if (!demo[method]) throw new Error(`method not found: ${method}`);
       // execute
       return await ctx.transaction.begin(async () => {
-        return await demo[method]();
+        return await demo[method](argv);
       });
     }
 
