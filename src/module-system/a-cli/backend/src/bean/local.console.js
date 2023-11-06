@@ -25,6 +25,10 @@ module.exports = ctx => {
       if (logPrefix) {
         text = this._adjustText(logPrefix, text);
       }
+      // fallback
+      if (!this.cli) {
+        return console.log(text);
+      }
       // update
       return await ctx.bean.progress.update({
         progressId: this.options.progressId,

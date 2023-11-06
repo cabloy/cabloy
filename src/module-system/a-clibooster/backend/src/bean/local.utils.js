@@ -13,7 +13,7 @@ const __JSContent = `module.exports = ctx => {
 
 module.exports = ctx => {
   class Local {
-    async demoExecute({ method, argv }) {
+    async demoExecute({ method, argv, cli }) {
       // js file
       const jsFile = await this._prepareJSFile();
       // require
@@ -21,6 +21,9 @@ module.exports = ctx => {
       // demo
       const demo = new (DemoFn(ctx))();
       if (!demo[method]) throw new Error(`method not found: ${method}`);
+      // console/helper
+      demo.console = cli.console;
+      demo.helper = cli.helper;
       // execute
       const timeBegin = new Date();
       let result;
