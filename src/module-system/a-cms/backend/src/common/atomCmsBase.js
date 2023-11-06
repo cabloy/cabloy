@@ -59,9 +59,17 @@ module.exports = app => {
         slug = srcItem.slug;
       } else {
         // init
-        const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
-        editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
-        slug = null;
+        if (item.editMode !== undefined) {
+          editMode = item.editMode;
+        } else {
+          const site = await this.ctx.bean.cms.render.combineSiteBase({ atomClass, mergeConfigSite: true });
+          editMode = this.ctx.bean.util.getProperty(site, 'edit.mode') || 0;
+        }
+        if (item.slug !== undefined && target !== 'clone') {
+          slug = item.slug;
+        } else {
+          slug = null;
+        }
       }
       // add article
       const params = {
