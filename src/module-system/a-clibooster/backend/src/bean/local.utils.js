@@ -14,11 +14,17 @@ const __JSContent = `module.exports = ctx => {
 module.exports = ctx => {
   class Local {
     async demoExecute({ method }) {
+      // js file
       const jsFile = await this._prepareJSFile();
+      // require
       const DemoFn = ctx.app.meta.util.requireDynamic(jsFile);
+      // demo
       const demo = new (DemoFn(ctx))();
       if (!demo[method]) throw new Error(`method not found: ${method}`);
-      return await demo[method]();
+      // execute
+      return await ctx.transaction.begin(async () => {
+        return await demo[method]();
+      });
     }
 
     async _prepareJSFile() {
