@@ -47,6 +47,20 @@ export default {
           this.$meta.eventHub.$emit('atom:star', { key, star: data.star, starCount: data.starCount });
         });
     },
+    async info_onComments(event) {
+      if (this.container.params?.createDelay) {
+        await this.$refs.validate.perform(event, { action: 'save' });
+      }
+      const url = `/a/basefront/comment/list?atomId=${this.base.item.atomId}`;
+      this.$view.navigate(url);
+    },
+    async info_onAttachments(event) {
+      if (this.container.params?.createDelay) {
+        await this.$refs.validate.perform(event, { action: 'save' });
+      }
+      const url = `/a/basefront/attachment/list?atomId=${this.base.item.atomId}`;
+      this.$view.navigate(url);
+    },
     info_getLabel(id) {
       return this.base_userLabels[id];
     },
@@ -83,7 +97,7 @@ export default {
             iconF7="::comment-dots"
             iconBadge={item.commentCount}
             tooltip={this.$text('Comments')}
-            eb-href={`/a/basefront/comment/list?atomId=${item.atomId}`}
+            propsOnPerform={this.info_onComments}
           ></eb-link>
         );
       }
@@ -95,7 +109,7 @@ export default {
             iconF7="::attachment-line"
             iconBadge={item.attachmentCount}
             tooltip={this.$text('Attachments')}
-            eb-href={`/a/basefront/attachment/list?atomId=${item.atomId}`}
+            propsOnPerform={this.info_onAttachments}
           ></eb-link>
         );
       }
