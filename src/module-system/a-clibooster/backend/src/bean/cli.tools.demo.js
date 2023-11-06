@@ -11,7 +11,6 @@ module.exports = ctx => {
       await super.execute({ user });
       // check env
       if (!ctx.app.meta.isLocal) ctx.throw(403);
-      console.log(argv);
       // methods
       let methods = argv._;
       if (methods.length === 0) {
