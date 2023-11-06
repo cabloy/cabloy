@@ -1,4 +1,8 @@
+const tools = require('./service/tools.js');
+
 module.exports = app => {
-  const services = {};
+  const services = {
+    tools,
+  };
   return services;
 };
