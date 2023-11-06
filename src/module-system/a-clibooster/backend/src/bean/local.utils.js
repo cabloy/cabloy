@@ -23,9 +23,14 @@ module.exports = ctx => {
       if (!demo[method]) throw new Error(`method not found: ${method}`);
       // execute
       const timeBegin = new Date();
-      const result = await ctx.transaction.begin(async () => {
-        return await demo[method](argv);
-      });
+      let result;
+      if (argv.transaction === false) {
+        result = await demo[method](argv);
+      } else {
+        result = await ctx.transaction.begin(async () => {
+          return await demo[method](argv);
+        });
+      }
       const timeEnd = new Date();
       const duration = timeEnd - timeBegin;
       // ok

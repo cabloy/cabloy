@@ -9,7 +9,12 @@ module.exports = app => {
       title: 'Cli: Tools: Demo',
       usage: 'npm run cli :tools:demo method1 [method2]',
     },
-    // options: null,
+    options: {
+      transaction: {
+        description: 'transaction',
+        type: 'boolean',
+      },
+    },
     // groups: null,
   };
 };
