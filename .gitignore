@@ -26,7 +26,7 @@ miniprogram_npm
 !/docker-compose/output/app/cabloy/.gitkeep
 !/docker-compose/output/app/dist/.gitkeep
 
-/src/backend/demo.js
+/src/backend/demo
 /src/backend/app
 /src/backend/config
 /src/backend/logs

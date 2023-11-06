@@ -59,7 +59,7 @@ module.exports = ctx => {
     }
 
     async _prepareJSFile() {
-      const jsFile = path.join(ctx.app.baseDir, 'demo.js');
+      const jsFile = path.join(ctx.app.baseDir, 'demo/index.js');
       const exists = await fse.exists(jsFile);
       if (!exists) {
         await fse.outputFile(jsFile, __JSContent);
