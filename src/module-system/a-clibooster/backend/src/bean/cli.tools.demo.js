@@ -22,7 +22,7 @@ module.exports = ctx => {
         const result = await this.localUtils.demoExecute({ method });
         // log
         await this.console.log(`===> method: ${method}`);
-        await this.console.log(result);
+        await this.console.log({ text: result });
       }
     }
   }
