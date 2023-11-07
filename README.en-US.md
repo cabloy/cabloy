@@ -11,7 +11,6 @@ Each built-in feature of CabloyJS has been carefully adjusted, which reflects th
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![NPM download][download-image]][download-url]
-[![NPM Mirror download][download-image-mirror]][download-url-mirror]
 [![Lerna][lerna-image]][lerna-url]
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg

@@ -11,7 +11,6 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 [![Unit Test][test-image]][test-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![NPM download][download-image]][download-url]
-[![NPM Mirror download][download-image-mirror]][download-url-mirror]
 [![Lerna][lerna-image]][lerna-url]
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
