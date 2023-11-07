@@ -1,6 +1,6 @@
 const is = require('is-type-of');
 
-const __columns = {};
+let __columns = {};
 
 module.exports = app => {
   class Model extends app.BaseContextClass {
@@ -24,6 +24,19 @@ module.exports = app => {
         }
       }
       return columns;
+    }
+
+    columnsClear(tableName) {
+      tableName = tableName || this.table;
+      const exists = __columns[tableName];
+      delete __columns[tableName];
+      return exists;
+    }
+
+    columnsClearAll() {
+      const exists = Object.keys(__columns).length > 0;
+      __columns = {};
+      return exists;
     }
 
     async prepareData(item) {
