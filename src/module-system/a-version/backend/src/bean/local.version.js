@@ -28,8 +28,7 @@ module.exports = app => {
         // clear columns cache
         this.ctx.model.columnsClearAll();
         // broadcast
-        console.log('------- broadcast:');
-        this.ctx.meta.util.broadcastEmit({
+        app.meta.broadcast.emit({
           module: moduleInfo.relativeName,
           broadcastName: 'columnsClear',
           data: { mode: 'all' },

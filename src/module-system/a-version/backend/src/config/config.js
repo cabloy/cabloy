@@ -25,6 +25,7 @@ module.exports = appInfo => {
   config.broadcasts = {
     columnsClear: {
       bean: 'columnsClear',
+      instance: false,
     },
   };
 
