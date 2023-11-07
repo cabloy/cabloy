@@ -4,6 +4,7 @@ const startupWorkerAlive = require('./bean/startup.workerAlive.js');
 const startupDatabaseInit = require('./bean/startup.databaseInit.js');
 const startupDatabaseName = require('./bean/startup.databaseName.js');
 const startupInstanceInit = require('./bean/startup.instanceInit.js');
+const broadcastColumnsClear = require('./bean/broadcast.columnsClear.js');
 const beanWorker = require('./bean/bean.worker.js');
 
 module.exports = app => {
@@ -34,6 +35,11 @@ module.exports = app => {
     'startup.instanceInit': {
       mode: 'app',
       bean: startupInstanceInit,
+    },
+    // broadcast
+    'broadcast.columnsClear': {
+      mode: 'app',
+      bean: broadcastColumnsClear,
     },
     // global
     worker: {

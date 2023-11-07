@@ -25,6 +25,16 @@ module.exports = app => {
       // update all modules
       try {
         const result = await this.__check({ scene: null });
+        // clear columns cache
+        this.ctx.model.columnsClearAll();
+        // broadcast
+        console.log('------- broadcast:');
+        this.ctx.meta.util.broadcastEmit({
+          module: moduleInfo.relativeName,
+          broadcastName: 'columnsClear',
+          data: { mode: 'all' },
+        });
+        // log
         if (Object.keys(result).length > 0) console.log(result);
         console.log(chalk.cyan('  All modules are checked successfully!'));
       } catch (err) {
@@ -207,6 +217,8 @@ module.exports = app => {
       const beanVersion = _ctx.bean._getBean(`${module.info.relativeName}.version.manager`);
       if (!beanVersion) throw new Error(`version.manager not exists for ${module.info.relativeName}`);
       if (!beanVersion.update) throw new Error(`version.manager.update not exists for ${module.info.relativeName}`);
+      // clear columns cache
+      _ctx.model.columnsClearAll();
       // execute
       await beanVersion.update({ version });
       // insert record

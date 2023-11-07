@@ -21,6 +21,13 @@ module.exports = appInfo => {
     },
   };
 
+  // broadcasts
+  config.broadcasts = {
+    columnsClear: {
+      bean: 'columnsClear',
+    },
+  };
+
   // worker
   config.worker = {
     alive: {
