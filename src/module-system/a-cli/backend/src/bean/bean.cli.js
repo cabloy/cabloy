@@ -56,11 +56,15 @@ module.exports = ctx => {
         await ctx.bean.progress.done({ progressId, message: ctx.text('CliDone') });
       } catch (err) {
         // progress error
+        let msg = err.message;
+        if (msg && typeof msg === 'object') {
+          msg = JSON.stringify(msg, null, 2);
+        }
         let message;
         if (ctx.app.meta.isProd) {
-          message = err.message;
+          message = msg;
         } else {
-          message = err.stack || err.message;
+          message = [msg, err.stack].join('\n');
         }
         await ctx.bean.progress.error({ progressId, message });
         // throw err
