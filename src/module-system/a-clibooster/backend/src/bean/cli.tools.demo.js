@@ -19,7 +19,8 @@ module.exports = ctx => {
       // loop
       for (const method of methods) {
         // log
-        await this.console.log(`===> method     : ${method}`);
+        const log = this.helper.chalk.keyword('yellow')(`\n=== method: ${method} ===\n`);
+        await this.console.log(log);
         // execute
         const res = await this.localUtils.demoExecute({ method, argv, cli: this });
         // log
