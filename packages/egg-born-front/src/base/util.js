@@ -681,7 +681,9 @@ export default function (Vue) {
     },
     _checkIfIconF7Default(iconF7) {
       if (!iconF7) return true;
-      return iconF7.indexOf('/api/static/') === -1 && iconF7.split(':').length < 3;
+      if (iconF7.indexOf('https://') === 0 || iconF7.indexOf('http://') === 0) return false;
+      return iconF7.indexOf('static/') === -1 && iconF7.split(':').length < 3;
+      // return iconF7.indexOf('/api/static/') === -1 && iconF7.split(':').length < 3;
     },
     async combineIcon({ material, f7, color, size }) {
       const useStoreIcon = await Vue.prototype.$meta.store.use('a/icon/icon');

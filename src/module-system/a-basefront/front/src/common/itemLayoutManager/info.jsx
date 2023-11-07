@@ -159,6 +159,14 @@ export default {
         </div>
       );
     },
+    info_renderInfo() {
+      const options = {
+        props: {
+          item: this.base.item,
+        },
+      };
+      return <eb-component module="a-basefront" name="atomInfo" options={options}></eb-component>;
+    },
     info_renderAvatar() {
       if (this.base.atomClassBase.itemOnly) {
         // do nothing
@@ -234,6 +242,11 @@ export default {
       const domFlowNodeState = this.item_renderFlowNodeState(item);
       if (domFlowNodeState) {
         children.push(domFlowNodeState);
+      }
+      // info
+      const domInfo = this.info_renderInfo();
+      if (domInfo) {
+        children.push(domInfo);
       }
       // avatar
       const domAvatar = this.info_renderAvatar();
