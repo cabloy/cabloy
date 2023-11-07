@@ -13,7 +13,6 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 [![NPM download][download-image]][download-url]
 [![NPM Mirror download][download-image-mirror]][download-url-mirror]
 [![Lerna][lerna-image]][lerna-url]
-[![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/cabloyjs)
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: https://github.com/zhennann/cabloy/blob/master/LICENSE
