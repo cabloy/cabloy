@@ -33,7 +33,7 @@ module.exports = ctx => {
   class Local {
     async demoExecute({ method, argv, cli }) {
       // js file
-      const jsFile = await this._prepareJSFile();
+      const jsFile = await this._prepareJSFile({ cli });
       // require
       const DemoFn = ctx.app.meta.util.requireDynamic(jsFile);
       // demo
@@ -58,12 +58,20 @@ module.exports = ctx => {
       return { timeBegin, timeEnd, duration, result };
     }
 
-    async _prepareJSFile() {
+    async _prepareJSFile({ cli }) {
+      // prepare
       const jsFile = path.join(ctx.app.baseDir, 'demo/index.js');
       const exists = await fse.exists(jsFile);
       if (!exists) {
         await fse.outputFile(jsFile, __JSContent);
       }
+      // log
+      let log = cli.helper.chalk.keyword('cyan')('> ./src/backend/demo/index.js');
+      await cli.console.log(log);
+      const url = ctx.bean.base.getAbsoluteUrl('/api/a/clibooster/tools/demo');
+      log = cli.helper.chalk.keyword('cyan')(`> ${url}\n`);
+      await cli.console.log(log);
+      // ok
       return jsFile;
     }
   }
