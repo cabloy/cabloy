@@ -50,6 +50,8 @@ export default {
       const options = {
         props: {
           item: this.item,
+          atomClass: this.atomClass,
+          atomClassBase: this.atomClassBase,
         },
       };
       const dialog = await this.$view.createModal({ module: 'a-basefront', name: 'atomInfoDialog', options });
