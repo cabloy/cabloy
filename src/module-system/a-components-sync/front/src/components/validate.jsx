@@ -117,7 +117,8 @@ export default {
     },
   },
   watch: {
-    params() {
+    params(valueNew, valueOld) {
+      if (JSON.stringify(valueNew) === JSON.stringify(valueOld)) return;
       this.schemaMaybeChanged();
     },
     'meta.schema': function () {
