@@ -21,35 +21,6 @@ export default {
         meta,
         index,
         groupCount,
-        renderTitle: ({ key, slot, notHint }) => {
-          return this.renderTitle(context, { key, slot, notHint });
-        },
-        getTitle: notHint => {
-          return this.getTitle(context, notHint);
-        },
-        getValue: name => {
-          const propertyName = name || key;
-          let value = this.getValue(parcel, propertyName);
-          if (patchGetValue && (!name || name === key)) {
-            // only patch this
-            value = patchGetValue(value);
-          }
-          if (patchGetValueGlobal) {
-            value = patchGetValueGlobal(value, propertyName);
-          }
-          return value;
-        },
-        setValue: (value, name) => {
-          const propertyName = name || key;
-          if (patchSetValueGlobal) {
-            value = patchSetValueGlobal(value, propertyName);
-          }
-          if (patchSetValue && (!name || name === key)) {
-            // only patch this
-            value = patchSetValue(value);
-          }
-          this.setValue(parcel, propertyName, value);
-        },
         getComponentInstance: name => {
           const propertyName = name || key;
           return this.__componentInstance_get(parcel, propertyName);
@@ -62,6 +33,35 @@ export default {
           const propertyName = name || key;
           this.__componentInstance_remove(parcel, propertyName, componentInstance);
         },
+      };
+      context.renderTitle = ({ key, slot, notHint }) => {
+        return this.renderTitle(context, { key, slot, notHint });
+      };
+      context.getTitle = notHint => {
+        return this.getTitle(context, notHint);
+      };
+      context.getValue = name => {
+        const propertyName = name || key;
+        let value = this.getValue(parcel, propertyName);
+        if (patchGetValue && (!name || name === key)) {
+          // only patch this
+          value = patchGetValue(value);
+        }
+        if (patchGetValueGlobal) {
+          value = patchGetValueGlobal(value, propertyName);
+        }
+        return value;
+      };
+      context.setValue = (value, name) => {
+        const propertyName = name || key;
+        if (patchSetValueGlobal) {
+          value = patchSetValueGlobal(value, propertyName);
+        }
+        if (patchSetValue && (!name || name === key)) {
+          // only patch this
+          value = patchSetValue(value);
+        }
+        this.setValue(parcel, propertyName, value);
       };
       context.getParams = () => {
         if (!context._params) {

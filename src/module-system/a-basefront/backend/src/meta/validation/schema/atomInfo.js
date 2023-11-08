@@ -45,5 +45,29 @@ module.exports = app => {
       },
     },
   };
+  // atomInfoItemOnly
+  schemas.atomInfoItemOnly = {
+    type: 'object',
+    properties: {
+      userIdCreated: {
+        ebType: 'userName',
+        ebTitle: 'Username',
+      },
+      createdAt: {
+        ebType: 'text',
+        ebTitle: 'Created Time',
+        ebParams: {
+          dateFormat: true,
+        },
+      },
+      updatedAt: {
+        ebType: 'text',
+        ebTitle: 'Modification Time',
+        ebParams: {
+          dateFormat: true,
+        },
+      },
+    },
+  };
   return schemas;
 };
