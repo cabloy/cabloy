@@ -69,5 +69,25 @@ module.exports = app => {
       },
     },
   };
+  // atomInfoItemOnlySimple
+  schemas.atomInfoItemOnlySimple = {
+    type: 'object',
+    properties: {
+      createdAt: {
+        ebType: 'text',
+        ebTitle: 'Created Time',
+        ebParams: {
+          dateFormat: true,
+        },
+      },
+      updatedAt: {
+        ebType: 'text',
+        ebTitle: 'Modification Time',
+        ebParams: {
+          dateFormat: true,
+        },
+      },
+    },
+  };
   return schemas;
 };

@@ -16,7 +16,7 @@ export default {
       if (userIdCreatedField) {
         return { module: 'a-basefront', schema: 'atomInfoItemOnly' };
       }
-      return null;
+      return { module: 'a-basefront', schema: 'atomInfoItemOnlySimple' };
     },
     validateMeta() {
       return {
