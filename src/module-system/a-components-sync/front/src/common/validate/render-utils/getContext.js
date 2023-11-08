@@ -45,21 +45,21 @@ export default {
         let value = this.getValue(parcel, propertyName);
         if (patchGetValue && (!name || name === key)) {
           // only patch this
-          value = patchGetValue(value);
+          value = patchGetValue(value, context);
         }
         if (patchGetValueGlobal) {
-          value = patchGetValueGlobal(value, propertyName);
+          value = patchGetValueGlobal(value, propertyName, context);
         }
         return value;
       };
       context.setValue = (value, name) => {
         const propertyName = name || key;
         if (patchSetValueGlobal) {
-          value = patchSetValueGlobal(value, propertyName);
+          value = patchSetValueGlobal(value, propertyName, context);
         }
         if (patchSetValue && (!name || name === key)) {
           // only patch this
-          value = patchSetValue(value);
+          value = patchSetValue(value, context);
         }
         this.setValue(parcel, propertyName, value);
       };
