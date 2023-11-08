@@ -11,6 +11,8 @@ export default {
   SaveAndSubmit: 'Save and Submit',
   SaveAndReturn: 'Save and Return',
   CannotSave: 'Cannot Save',
+  CreateInfo: 'Create Info',
+  ModificationInfo: 'Modification Info',
   CabloyAboutTip1: 'CabloyJS - The Ultimate NodeJS Full Stack Business Development Platform',
   CabloyAboutTip2:
     'The frontend of CabloyJS uses VueJS + Framework7 + Webpack, while the backend uses KoaJS + EggJS, and the database uses MySQL',

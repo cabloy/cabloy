@@ -33,16 +33,12 @@ export default {
     },
   },
   render() {
+    const params = { module: 'a-basefront', schema: 'atomInfo' };
     return (
       <div ref="el" class="dialog">
         <div class="dialog-inner">
           <div class="dialog-title"></div>
-          <div>ddd</div>
-          <div>ddd</div>
-          <div>ddd</div>
-          <div>ddd</div>
-          <div>ddd</div>
-          <div>ddd</div>
+          <eb-validate auto={true} readOnly={true} data={this.item} params={params}></eb-validate>
         </div>
       </div>
     );

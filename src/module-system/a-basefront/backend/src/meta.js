@@ -1,4 +1,7 @@
 module.exports = app => {
+  // schemas
+  const schemas = require('./meta/validation/schemas.js')(app);
+  // static
   const staticLayouts = require('./meta/static/layouts.js')(app);
   // meta
   const meta = {
@@ -8,6 +11,10 @@ module.exports = app => {
           items: staticLayouts,
         },
       },
+    },
+    validation: {
+      validators: {},
+      schemas,
     },
   };
   return meta;
