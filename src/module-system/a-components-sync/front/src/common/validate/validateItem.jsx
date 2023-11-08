@@ -157,12 +157,12 @@ export default {
     getDataKey(parcel, key) {
       const property = parcel.properties[key];
       if (!property) return key; // maybe already is dataKey
-      return property.dataKey || property.key;
+      return property.ebDataKey || key;
     },
-    getValue(parcel, key) {
+    getValue(parcel, key, dataKey) {
       if (!parcel.data) return undefined;
       const property = parcel.properties[key];
-      const dataKey = this.getDataKey(parcel, key);
+      dataKey = dataKey || key;
       const _value = parcel.data[dataKey];
       if (!property) {
         return _value;

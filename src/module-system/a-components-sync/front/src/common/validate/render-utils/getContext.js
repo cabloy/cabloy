@@ -5,9 +5,11 @@ export default {
       const dataPath = parcel.pathParent + key;
       // property
       property = this._combinePropertyMeta({ property, meta, dataPath });
-      // patch getValue/setValue
+      // patch getDataKey/getValue/setValue
+      const patchGetDataKey = this.$meta.util.getProperty(property, 'ebPatch.getDataKey');
       const patchGetValue = this.$meta.util.getProperty(property, 'ebPatch.getValue');
       const patchSetValue = this.$meta.util.getProperty(property, 'ebPatch.setValue');
+      const patchGetDataKeyGlobal = this.$meta.util.getProperty(this.validate, 'meta.ebPatch.getDataKey');
       const patchGetValueGlobal = this.$meta.util.getProperty(this.validate, 'meta.ebPatch.getValue');
       const patchSetValueGlobal = this.$meta.util.getProperty(this.validate, 'meta.ebPatch.setValue');
       // context
@@ -40,9 +42,22 @@ export default {
       context.getTitle = notHint => {
         return this.getTitle(context, notHint);
       };
+      context.getDataKey = name => {
+        const propertyName = name || key;
+        let dataKey = this.getDataKey(parcel, propertyName);
+        if (patchGetDataKey && (!name || name === key)) {
+          // only patch this
+          dataKey = patchGetDataKey(dataKey, context);
+        }
+        if (patchGetDataKeyGlobal) {
+          dataKey = patchGetDataKeyGlobal(dataKey, propertyName, context);
+        }
+        return dataKey;
+      };
       context.getValue = name => {
         const propertyName = name || key;
-        let value = this.getValue(parcel, propertyName);
+        const dataKey = context.getDataKey(propertyName);
+        let value = this.getValue(parcel, propertyName, dataKey);
         if (patchGetValue && (!name || name === key)) {
           // only patch this
           value = patchGetValue(value, context);
