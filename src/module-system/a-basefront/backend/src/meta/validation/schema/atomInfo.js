@@ -9,17 +9,39 @@ module.exports = app => {
         ebType: 'group-flatten',
         ebTitle: 'CreateInfo',
       },
-      userId: {
+      userIdCreated: {
         ebType: 'userName',
-        ebTitle: 'Username',
+        ebTitle: 'Creator',
+        ebParams: {
+          displayName: 'userName',
+          displayAvatar: 'avatar',
+        },
       },
-      atomName: {
+      atomCreatedAt: {
         ebType: 'text',
-        ebTitle: 'Username',
+        ebTitle: 'Created Time',
+        ebParams: {
+          dateFormat: true,
+        },
       },
       __groupModificationInfo: {
         ebType: 'group-flatten',
         ebTitle: 'ModificationInfo',
+      },
+      userIdUpdated: {
+        ebType: 'userName',
+        ebTitle: 'Modifier',
+        ebParams: {
+          displayName: 'userNameUpdated',
+          displayAvatar: 'avatarUpdated',
+        },
+      },
+      atomUpdatedAt: {
+        ebType: 'text',
+        ebTitle: 'Modification Time',
+        ebParams: {
+          dateFormat: true,
+        },
       },
     },
   };
