@@ -46,7 +46,15 @@ export default {
     _getItemMetaMedia(avatar) {
       return this.$meta.util.combineAvatarUrl(avatar, 16);
     },
-    onPerformClick() {},
+    async onPerformClick() {
+      const options = {
+        props: {
+          item: this.item,
+        },
+      };
+      const dialog = await this.$view.createModal({ module: 'a-basefront', name: 'atomInfoDialog', options });
+      dialog.open();
+    },
   },
   render() {
     if (!this.ready) return null;

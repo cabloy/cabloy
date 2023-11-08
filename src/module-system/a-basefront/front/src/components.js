@@ -7,6 +7,7 @@ import tagSelect from './components/tag/tagSelect.jsx';
 import atomList from './components/atom/atomList.jsx';
 import atomButton from './components/atom/atomButton.vue';
 import atomInfo from './components/atom/atomInfo.jsx';
+import atomInfoDialog from './components/atom/atomInfoDialog.jsx';
 // listLayoutData
 import listLayoutDataAdapter from './components/listLayoutData/adapter.jsx';
 import listLayoutDataProviderAll from './components/listLayoutData/providerAll.jsx';
@@ -27,6 +28,7 @@ export default {
   atomList,
   atomButton,
   atomInfo,
+  atomInfoDialog,
   // layout
   listLayoutDataAdapter,
   listLayoutDataProviderAll,
