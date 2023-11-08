@@ -159,72 +159,13 @@ export default {
         </div>
       );
     },
-    info_renderInfo() {
+    info_renderAtomInfo() {
       const options = {
         props: {
           item: this.base.item,
         },
       };
       return <eb-component key="atomInfo" module="a-basefront" name="atomInfo" options={options}></eb-component>;
-    },
-    info_renderAvatar() {
-      if (this.base.atomClassBase.itemOnly) {
-        // do nothing
-        return null;
-      }
-      const item = this.base.item;
-      const children = [];
-      let small = false;
-      if (item.userIdCreated !== item.userIdUpdated) {
-        small = true;
-        children.push(
-          <img
-            key="avatar:one"
-            class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
-            src={this.info_getItemMetaMedia(item.avatarUpdated)}
-            title={item.userName}
-          />
-        );
-      }
-      children.push(
-        <img
-          key="avatar:two"
-          class={`avatar ${small ? 'avatar12' : 'avatar24'}`}
-          src={this.info_getItemMetaMedia(item.avatar)}
-          title={item.userName}
-        />
-      );
-      return (
-        <div key="avatar" class="info-avatar">
-          {children}
-        </div>
-      );
-    },
-    info_renderDate() {
-      if (this.base.atomClassBase.itemOnly) {
-        // do nothing
-        return null;
-      }
-      const item = this.base.item;
-      const children = [];
-      const dateCreated = this.$meta.util.formatDateTime(item.atomCreatedAt || item.createdAt);
-      const dateUpdated = this.$meta.util.formatDateTime(item.atomUpdatedAt || item.updatedAt);
-      let small = false;
-      if (dateCreated !== dateUpdated) {
-        small = true;
-        children.push(<div key="date:one">{dateUpdated}</div>);
-      }
-      if (small) {
-        children.push(<div key="date:two">{dateCreated}</div>);
-      } else {
-        children.push(<div key="date:one2">{this.$meta.util.formatDate(item.atomCreatedAt || item.createdAt)}</div>);
-        children.push(<div key="date:two2">{this.$meta.util.formatTime(item.atomCreatedAt || item.createdAt)}</div>);
-      }
-      return (
-        <div key="date" class="info-date">
-          {children}
-        </div>
-      );
     },
     info_renderActionsRight() {
       if (!this.base_ready) return;
@@ -244,22 +185,72 @@ export default {
         children.push(domFlowNodeState);
       }
       // info
-      const domInfo = this.info_renderInfo();
+      const domInfo = this.info_renderAtomInfo();
       if (domInfo) {
         children.push(domInfo);
-      }
-      // avatar
-      const domAvatar = this.info_renderAvatar();
-      if (domAvatar) {
-        children.push(domAvatar);
-      }
-      // date
-      const domDate = this.info_renderDate();
-      if (domDate) {
-        children.push(domDate);
       }
       // ok
       return children;
     },
   },
 };
+
+// info_renderAvatar() {
+//   if (this.base.atomClassBase.itemOnly) {
+//     // do nothing
+//     return null;
+//   }
+//   const item = this.base.item;
+//   const children = [];
+//   let small = false;
+//   if (item.userIdCreated !== item.userIdUpdated) {
+//     small = true;
+//     children.push(
+//       <img
+//         key="avatar:one"
+//         class={`avatar ${small ? 'avatar12' : 'avatar16'}`}
+//         src={this.info_getItemMetaMedia(item.avatarUpdated)}
+//         title={item.userName}
+//       />
+//     );
+//   }
+//   children.push(
+//     <img
+//       key="avatar:two"
+//       class={`avatar ${small ? 'avatar12' : 'avatar24'}`}
+//       src={this.info_getItemMetaMedia(item.avatar)}
+//       title={item.userName}
+//     />
+//   );
+//   return (
+//     <div key="avatar" class="info-avatar">
+//       {children}
+//     </div>
+//   );
+// },
+// info_renderDate() {
+//   if (this.base.atomClassBase.itemOnly) {
+//     // do nothing
+//     return null;
+//   }
+//   const item = this.base.item;
+//   const children = [];
+//   const dateCreated = this.$meta.util.formatDateTime(item.atomCreatedAt || item.createdAt);
+//   const dateUpdated = this.$meta.util.formatDateTime(item.atomUpdatedAt || item.updatedAt);
+//   let small = false;
+//   if (dateCreated !== dateUpdated) {
+//     small = true;
+//     children.push(<div key="date:one">{dateUpdated}</div>);
+//   }
+//   if (small) {
+//     children.push(<div key="date:two">{dateCreated}</div>);
+//   } else {
+//     children.push(<div key="date:one2">{this.$meta.util.formatDate(item.atomCreatedAt || item.createdAt)}</div>);
+//     children.push(<div key="date:two2">{this.$meta.util.formatTime(item.atomCreatedAt || item.createdAt)}</div>);
+//   }
+//   return (
+//     <div key="date" class="info-date">
+//       {children}
+//     </div>
+//   );
+// },
