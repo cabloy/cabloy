@@ -9,14 +9,19 @@ export default {
   },
   created() {},
   methods: {
+    getDataKey() {
+      return this.context.getDataKey();
+    },
     getDisplayName() {
-      const { key, property } = this.context;
-      const displayName = property.ebParams?.displayName || `_${key}Name`;
+      const { property } = this.context;
+      const dataKey = this.getDataKey();
+      const displayName = property.ebParams?.displayName || `_${dataKey}Name`;
       return this.context.getValue(displayName);
     },
     getDisplayAvatar() {
-      const { key, property } = this.context;
-      const displayAvatar = property.ebParams?.displayAvatar || `_${key}Avatar`;
+      const { property } = this.context;
+      const dataKey = this.getDataKey();
+      const displayAvatar = property.ebParams?.displayAvatar || `_${dataKey}Avatar`;
       return this.context.getValue(displayAvatar);
     },
     getAvatarUrl(avatar, size) {
