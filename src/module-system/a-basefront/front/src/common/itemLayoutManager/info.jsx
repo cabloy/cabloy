@@ -165,7 +165,7 @@ export default {
           item: this.base.item,
         },
       };
-      return <eb-component module="a-basefront" name="atomInfo" options={options}></eb-component>;
+      return <eb-component key="atomInfo" module="a-basefront" name="atomInfo" options={options}></eb-component>;
     },
     info_renderAvatar() {
       if (this.base.atomClassBase.itemOnly) {

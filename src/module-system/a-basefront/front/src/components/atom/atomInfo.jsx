@@ -25,6 +25,24 @@ export default {
       this.atomClassBase = await useStoreAtomClasses.getAtomClassBase({ atomClass: this.atomClass });
       this.ready = true;
     },
+    _getMediaInfo() {
+      let media;
+      let mediaLabel;
+      if (!this.atomClassBase.itemOnly) {
+        media = this.item.avatarUpdated;
+        mediaLabel = this.item.userName;
+      } else {
+        const userIdCreatedField = this.atomClassBase.fields?.mappings?.userIdCreated;
+        if (userIdCreatedField) {
+          media = this.item[`_${userIdCreatedField}Avatar`];
+          mediaLabel = this.item[`_${userIdCreatedField}Name`];
+        } else {
+          media = '::information';
+          mediaLabel = this.$text('Information');
+        }
+      }
+      return { media, mediaLabel };
+    },
     _getItemMetaMedia(avatar) {
       return this.$meta.util.combineAvatarUrl(avatar, 16);
     },
@@ -32,14 +50,8 @@ export default {
   },
   render() {
     if (!this.ready) return null;
-    const media = this._getItemMetaMedia(this.item.avatarUpdated);
-    return (
-      <eb-link
-        key="actionsLeft:label"
-        iconF7={media}
-        tooltip={this.$text('UserLabels')}
-        propsOnPerform={this.onPerformClick}
-      ></eb-link>
-    );
+    const { media, mediaLabel } = this._getMediaInfo();
+    const _media = this._getItemMetaMedia(media);
+    return <eb-link iconF7={_media} tooltip={mediaLabel} propsOnPerform={this.onPerformClick}></eb-link>;
   },
 };
