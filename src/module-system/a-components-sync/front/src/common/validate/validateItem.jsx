@@ -154,10 +154,16 @@ export default {
         immediate: ebComputed.immediate,
       });
     },
+    getDataKey(parcel, key) {
+      const property = parcel.properties[key];
+      if (!property) return key; // maybe already is dataKey
+      return property.dataKey || property.key;
+    },
     getValue(parcel, key) {
       if (!parcel.data) return undefined;
       const property = parcel.properties[key];
-      const _value = parcel.data[key];
+      const dataKey = this.getDataKey(parcel, key);
+      const _value = parcel.data[dataKey];
       if (!property) {
         return _value;
       }
@@ -183,15 +189,16 @@ export default {
       // typed value
       const _value = this._convertValueType(property, value);
 
-      const _valueOld = parcel.data[key];
+      const dataKey = this.getDataKey(parcel, key);
+      const _valueOld = parcel.data[dataKey];
 
-      this.$set(parcel.data, key, _value); // always set as maybe Object
+      this.$set(parcel.data, dataKey, _value); // always set as maybe Object
 
       // dataSrc
       //   always set value for !property
       if (!property || property.type) {
         // change src
-        this.$set(parcel.dataSrc, key, _value);
+        this.$set(parcel.dataSrc, dataKey, _value);
         // #2025
         // emit changed
         if (property && !property.ebReadOnly && !this._checkIfEqual(_valueOld, _value)) {
