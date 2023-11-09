@@ -45,6 +45,7 @@ export default {
       el: self.$refs.el,
       backdrop: true,
       closeByBackdropClick: true,
+      closeByOutsideClick: true,
       closeOnEscape: true,
       swipeToClose: true,
     };
