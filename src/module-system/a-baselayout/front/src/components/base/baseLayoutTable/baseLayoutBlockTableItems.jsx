@@ -143,7 +143,12 @@ export default {
       return false;
     },
     _customRender(text, record, index, column) {
+      // text
+      const dataKey = column.dataKey || column.dataIndex;
+      text = record[dataKey];
+      // pageInfo
       const pageInfo = this.layoutManager.data.adapter.getPageInfo();
+      // index
       let indexTotal;
       if (!pageInfo || pageInfo.pageCurrent === 0) {
         indexTotal = index;

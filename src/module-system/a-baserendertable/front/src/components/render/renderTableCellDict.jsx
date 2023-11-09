@@ -9,9 +9,9 @@ export default {
   methods: {
     _renderItemTitle() {
       const { record, column } = this.info;
-      const key = column.dataIndex;
-      const dictItemTitle = record[`_${key}TitleLocale`];
-      const dictItemOptions = record[`_${key}Options`];
+      const dataKey = this.base_getDataKey({ column });
+      const dictItemTitle = record[`_${dataKey}TitleLocale`];
+      const dictItemOptions = record[`_${dataKey}Options`];
       const domTitle = <span>{dictItemTitle}</span>;
       const icon = dictItemOptions?.icon;
       if (!icon) {

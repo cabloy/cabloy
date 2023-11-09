@@ -53,7 +53,8 @@ export default {
       return photos;
     },
     _getImageUrl(fixSize, item) {
-      let url = item ? item[this.info.column.dataIndex] : this.info.text;
+      const dataKey = this.base_getDataKey();
+      let url = item ? item[dataKey] : this.info.text;
       if (!url) return null;
       if (fixSize) {
         const height = this.size && this.size.height;
