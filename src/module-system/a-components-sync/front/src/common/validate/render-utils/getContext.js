@@ -88,7 +88,8 @@ export default {
       context.getParamsDefault = () => {
         if (!context._paramsDefault) {
           const scope = this.getCascadeScope({ context, groupWhole });
-          const source = this.$config.validate.cascadeParams.default;
+          const configCascadeParams = this.__getConfigCascadeParams();
+          const source = configCascadeParams.default;
           context._paramsDefault = this.$meta.util.cascadeExtend({ scope, source, name: 'ebParams' }) || {};
         }
         return context._paramsDefault;

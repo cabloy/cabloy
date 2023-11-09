@@ -2,6 +2,7 @@ import validateActionModule from './validateActionModule.js';
 import validateComputedValue from './validateComputedValue.js';
 import validateComputedDisplay from './validateComputedDisplay.js';
 import validateItemTitle from './validateItemTitle.jsx';
+import validateItemConfig from './validateItemConfig.js';
 import validateComponentInstance from './validateComponentInstance.js';
 import renderSearchStates from './render/renderSearchStates.jsx';
 import renderProperties from './render/renderProperties.jsx';
@@ -59,6 +60,7 @@ export default {
     validateComputedValue,
     validateComputedDisplay,
     validateItemTitle,
+    validateItemConfig,
     validateComponentInstance,
     renderProperties,
     renderComponent,

@@ -55,10 +55,7 @@ export default {
       // hint
       if (!notHint) {
         // config
-        let hint = this.validate.host && this.validate.host.hint;
-        if (!hint && hint !== false) {
-          hint = this.$config.validate.hint;
-        }
+        const hint = this.__getConfigHint();
         if (hint === false) {
           return result;
         }
