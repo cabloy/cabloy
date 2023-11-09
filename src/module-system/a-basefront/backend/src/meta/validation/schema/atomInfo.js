@@ -8,6 +8,7 @@ module.exports = app => {
       __groupCreateInfo: {
         ebType: 'group-flatten',
         ebTitle: 'CreateInfo',
+        ebGroupWhole: true,
       },
       userIdCreated: {
         ebType: 'userName',
@@ -27,6 +28,7 @@ module.exports = app => {
       __groupModificationInfo: {
         ebType: 'group-flatten',
         ebTitle: 'ModificationInfo',
+        ebGroupWhole: true,
       },
       userIdUpdated: {
         ebType: 'userName',

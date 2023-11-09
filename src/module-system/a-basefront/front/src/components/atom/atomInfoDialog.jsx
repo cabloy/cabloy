@@ -8,6 +8,20 @@ export default {
     return {};
   },
   computed: {
+    validateHost() {
+      return {
+        cascadeParams: {
+          default: {
+            ebParams_group: {
+              staticClass: 'col-100 medium-100 large-100',
+            },
+            ebParams_groupWhole: {
+              staticClass: 'col-100 medium-100 large-100',
+            },
+          },
+        },
+      };
+    },
     validateParams() {
       if (!this.atomClassBase.itemOnly) {
         return { module: 'a-basefront', schema: 'atomInfo' };
@@ -72,6 +86,7 @@ export default {
             readOnly={true}
             data={this.item}
             params={this.validateParams}
+            host={this.validateHost}
             meta={this.validateMeta}
           ></eb-validate>
         </div>
