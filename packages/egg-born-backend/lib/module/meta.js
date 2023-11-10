@@ -1,10 +1,10 @@
 const uuid = require('uuid');
 const utilFn = require('../utils/util.js');
+const mockUtilFn = require('../utils/mockUtil.js');
 const ModelClass = require('../base/model.js');
 const BeanBaseClass = require('./bean/beanBase.js');
 const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
 const reloadFn = require('./reload.js');
-const mockUtilFn = require('../utils/mockUtil.js');
 
 module.exports = function (loader) {
   // meta
