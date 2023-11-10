@@ -189,7 +189,7 @@ module.exports = app => {
     },
     async createAnonymousContext({ locale, subdomain, module, instance }) {
       // url
-      const url = this.combineFetchPath(module, '');
+      const url = module ? this.combineFetchPath(module, '') : '/api/a/base/';
       // ctx
       const ctx = app.createAnonymousContext({
         method: 'post',
