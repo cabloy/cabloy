@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const mparse = require('egg-born-mparse').default;
-const utilFn = require('./util.js');
+const utilFn = require('../utils/util.js');
 const ModelClass = require('../base/model.js');
 const BeanBaseClass = require('./bean/beanBase.js');
 const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
