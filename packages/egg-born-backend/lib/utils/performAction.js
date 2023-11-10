@@ -66,6 +66,9 @@ module.exports = async function performAction({
   // cookies
   delegateCookies(ctx, ctxCaller);
 
+  // session
+  delegateSession(ctx, ctxCaller);
+
   // should not delegate session, because session._ctx related to ctx
   for (const property of ['state', 'socket']) {
     delegateProperty(ctx, ctxCaller, property);
@@ -80,6 +83,8 @@ module.exports = async function performAction({
   try {
     // invoke middleware
     await __fnMiddleware(ctx);
+    // session
+    delegateSession(ctxCaller, ctx);
     // handle respond
     respond.call(ctx);
     // check result
@@ -114,6 +119,10 @@ function delegateCookies(ctx, ctxCaller) {
       return ctxCaller.cookies || _cookies;
     },
   });
+}
+
+function delegateSession(ctxTo, ctxFrom) {
+  Object.assign(ctxTo.session, ctxFrom.session.toJSON());
 }
 
 function delegateProperty(ctx, ctxCaller, property) {
