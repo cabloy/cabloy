@@ -1,5 +1,5 @@
 const utilCtxFn = require('../utils/utilCtx.js');
-const mockUtilFn = require('../utils/mockUtil.js');
+const mockUtilCtxFn = require('../utils/mockUtilCtx.js');
 
 module.exports = function (ctx) {
   const meta = {};
@@ -7,7 +7,7 @@ module.exports = function (ctx) {
   meta.util = utilCtxFn(ctx);
 
   // mockUtil
-  meta.mockUtil = mockUtilFn(ctx);
+  meta.mockUtil = mockUtilCtxFn(ctx);
 
   return meta;
 };
