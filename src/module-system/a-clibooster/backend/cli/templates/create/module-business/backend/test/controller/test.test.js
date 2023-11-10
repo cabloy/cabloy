@@ -2,7 +2,8 @@ const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('[your tests start from here]', () => {
   it('[atom]', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // atomClass
     const atomClassModule = mockInfo().relativeName;
@@ -10,48 +11,62 @@ describe('[your tests start from here]', () => {
     const atomClass = { module: atomClassModule, atomClassName };
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
+    await ctx.meta.util.performAction({
+      method: 'post',
+      url: '/a/auth/passport/a-authsimple/authsimple',
+      body: {
         data: {
           auth: 'root',
           password: '123456',
         },
-      });
+      },
+    });
 
     // create
-    let result = await app
-      .httpRequest()
-      .post(mockUrl('/a/base/atom/write'))
-      .send({
+    const keyDraft = await ctx.meta.util.performAction({
+      method: 'post',
+      url: '/a/base/atom/write',
+      body: {
         atomClass,
         item: {
           atomName: 'test',
           description: 'this is a test',
         },
-      });
-    assert(result.body.code === 0);
-    const keyDraft = result.body.data;
+      },
+    });
+    assert(!!keyDraft);
 
     // submit
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/submit')).send({
-      key: keyDraft,
-      atomClass,
+    let result = await ctx.meta.util.performAction({
+      method: 'post',
+      url: '/a/base/atom/submit',
+      body: {
+        key: keyDraft,
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
-    const keyFormal = result.body.data.formal.key;
+    const keyFormal = result.formal.key;
+    assert(!!keyFormal);
 
     // read
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/read')).send({
-      key: keyFormal,
+    result = await ctx.meta.util.performAction({
+      method: 'post',
+      url: '/a/base/atom/read',
+      body: {
+        key: keyFormal,
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
+    assert(!!result);
 
     // delete
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: keyFormal,
+    await ctx.meta.util.performAction({
+      method: 'post',
+      url: '/a/base/atom/delete',
+      body: {
+        key: keyFormal,
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
   });
 });
