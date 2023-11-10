@@ -179,7 +179,7 @@ module.exports = ctx => {
 };
 
 function appCallback() {
-  const fn = compose(this.middleware);
+  const fnMiddleware = compose(this.middleware);
   const self = this;
 
   if (!this.listeners('error').length) this.on('error', this.onerror);
@@ -236,7 +236,7 @@ function appCallback() {
     if (innerAccess !== undefined) ctx.innerAccess = innerAccess;
 
     // call
-    fn(ctx)
+    fnMiddleware(ctx)
       .then(function handleResponse() {
         respond.call(ctx);
         if (ctx.status === 200) {
