@@ -29,7 +29,7 @@ describe('[your tests start from here]', () => {
     assert(!!keyDraft);
 
     // submit
-    let result = await ctx.meta.util.performAction({
+    let data = await ctx.meta.util.performAction({
       innerAccess: false,
       method: 'post',
       url: '/a/base/atom/submit',
@@ -38,11 +38,11 @@ describe('[your tests start from here]', () => {
         atomClass,
       },
     });
-    const keyFormal = result.formal.key;
+    const keyFormal = data.formal.key;
     assert(!!keyFormal);
 
     // read
-    result = await ctx.meta.util.performAction({
+    data = await ctx.meta.util.performAction({
       innerAccess: false,
       method: 'post',
       url: '/a/base/atom/read',
@@ -51,7 +51,7 @@ describe('[your tests start from here]', () => {
         atomClass,
       },
     });
-    assert(!!result);
+    assert(!!data);
 
     // delete
     await ctx.meta.util.performAction({
