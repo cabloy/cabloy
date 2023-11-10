@@ -6,16 +6,6 @@ describe('[your demo tests start from here]', () => {
     const ctx = await app.mockCtx();
 
     // login as root
-    await ctx.meta.util.performAction({
-      innerAccess: false,
-      method: 'post',
-      url: '/a/auth/passport/a-authsimple/authsimple',
-      body: {
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      },
-    });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
   });
 });

@@ -11,17 +11,7 @@ describe('[your tests start from here]', () => {
     const atomClass = { module: atomClassModule, atomClassName };
 
     // login as root
-    await ctx.meta.util.performAction({
-      innerAccess: false,
-      method: 'post',
-      url: '/a/auth/passport/a-authsimple/authsimple',
-      body: {
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      },
-    });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
     // create
     const keyDraft = await ctx.meta.util.performAction({
