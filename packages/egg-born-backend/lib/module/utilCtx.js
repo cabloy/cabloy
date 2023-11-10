@@ -5,6 +5,7 @@ const statuses = require('statuses');
 const isJSON = require('koa-is-json');
 const Stream = require('stream');
 const is = require('is-type-of');
+const performActionFn = require('./performAction.js');
 
 module.exports = ctx => {
   const util = {
@@ -126,7 +127,20 @@ module.exports = ctx => {
      * @param  {json} options.body   body(optional)
      * @return {promise}                response.body.data or throw error
      */
-    performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
+    async performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
+      return await performActionFn({
+        ctxCaller: ctx,
+        innerAccess,
+        subdomain,
+        method,
+        url,
+        query,
+        params,
+        headers,
+        body,
+      });
+    },
+    _performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
       return new Promise((resolve, reject) => {
         const handleRequest = appCallback.call(ctx.app);
         const request = createRequest(
