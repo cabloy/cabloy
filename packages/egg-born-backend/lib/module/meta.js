@@ -50,10 +50,11 @@ module.exports = function (loader) {
 
 function createMockUtil(app) {
   return {
-    parseUrlFromPackage(dir) {
+    parseUrlFromPackage(dir, apiPrefix = true) {
+      apiPrefix = _prepareApiPrefix(apiPrefix);
       const moduleInfo = this.parseInfoFromPackage(dir);
       if (!moduleInfo) return null;
-      return `/api/${moduleInfo.pid}/${moduleInfo.name}`;
+      return `${apiPrefix}/${moduleInfo.pid}/${moduleInfo.name}`;
     },
     parseInfoFromPackage(dir) {
       const file = app.meta.util.lookupPackage(dir);
@@ -61,10 +62,16 @@ function createMockUtil(app) {
       const pkg = require(file);
       return mparse.parseInfo(mparse.parseName(pkg.name));
     },
-    mockUrl(dir, url) {
-      if (url && url.charAt(0) === '/') return `/api${url}`;
-      const prefix = this.parseUrlFromPackage(dir);
+    mockUrl(dir, url, apiPrefix = true) {
+      apiPrefix = _prepareApiPrefix(apiPrefix);
+      if (url && url.charAt(0) === '/') return `${apiPrefix}${url}`;
+      const prefix = this.parseUrlFromPackage(dir, apiPrefix);
       return url ? `${prefix}/${url}` : `${prefix}/`;
     },
   };
+}
+
+function _prepareApiPrefix(apiPrefix) {
+  if (typeof apiPrefix === 'string') return apiPrefix;
+  return apiPrefix ? '/api' : '';
 }

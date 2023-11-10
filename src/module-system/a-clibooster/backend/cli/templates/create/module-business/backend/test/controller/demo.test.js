@@ -7,6 +7,7 @@ describe('[your demo tests start from here]', () => {
 
     // login as root
     await ctx.meta.util.performAction({
+      innerAccess: false,
       method: 'post',
       url: '/a/auth/passport/a-authsimple/authsimple',
       body: {

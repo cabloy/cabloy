@@ -12,6 +12,7 @@ describe('[your tests start from here]', () => {
 
     // login as root
     await ctx.meta.util.performAction({
+      innerAccess: false,
       method: 'post',
       url: '/a/auth/passport/a-authsimple/authsimple',
       body: {
@@ -24,6 +25,7 @@ describe('[your tests start from here]', () => {
 
     // create
     const keyDraft = await ctx.meta.util.performAction({
+      innerAccess: false,
       method: 'post',
       url: '/a/base/atom/write',
       body: {
@@ -38,6 +40,7 @@ describe('[your tests start from here]', () => {
 
     // submit
     let result = await ctx.meta.util.performAction({
+      innerAccess: false,
       method: 'post',
       url: '/a/base/atom/submit',
       body: {
@@ -50,6 +53,7 @@ describe('[your tests start from here]', () => {
 
     // read
     result = await ctx.meta.util.performAction({
+      innerAccess: false,
       method: 'post',
       url: '/a/base/atom/read',
       body: {
@@ -61,6 +65,7 @@ describe('[your tests start from here]', () => {
 
     // delete
     await ctx.meta.util.performAction({
+      innerAccess: false,
       method: 'post',
       url: '/a/base/atom/delete',
       body: {
