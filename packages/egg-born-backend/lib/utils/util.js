@@ -274,9 +274,7 @@ module.exports = app => {
         res = await this._executeBeanFn({ fn, ctx, bean, context });
       }
       // tail done
-      if (!ctxCaller) {
-        await ctx.tailDone();
-      }
+      await ctx.tailDone();
       // ok
       return res;
     },

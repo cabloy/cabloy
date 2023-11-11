@@ -59,8 +59,6 @@ module.exports = function (loader, modules) {
           ctx.meta.middlewares = {};
           // next
           await next();
-          // invoke callbackes
-          await ctx.tailDone();
         };
         fnStart._name = 'start';
         args.push(fnStart);
@@ -69,6 +67,16 @@ module.exports = function (loader, modules) {
         ebMiddlewaresGlobal.forEach(item => {
           args.push(wrapMiddleware(item, route));
         });
+
+        // middlewares: tailDone
+        const fnTailDone = async (ctx, next) => {
+          // next
+          await next();
+          // invoke callbackes
+          await ctx.tailDone();
+        };
+        fnStart._name = 'tailDone';
+        args.push(fnTailDone);
 
         // middlewares: route
         if (route.middlewares) {

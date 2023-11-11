@@ -16,4 +16,9 @@ module.exports = app => {
   if (index > -1) {
     app.config.coreMiddleware.splice(index + 1, 0, 'bodyCrypto');
   }
+  // sessionCaller
+  index = app.config.coreMiddleware.indexOf('session');
+  if (index > -1) {
+    app.config.coreMiddleware.splice(index + 1, 0, 'sessionCaller');
+  }
 };

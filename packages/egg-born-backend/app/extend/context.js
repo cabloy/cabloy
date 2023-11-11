@@ -107,7 +107,7 @@ module.exports = {
     return this.bean.cache;
   },
   tail(cb) {
-    if (this.ctxCaller) {
+    if (!this.dbMeta.master) {
       this.ctxCaller.tail(cb);
     } else {
       this.tailCallbacks.push(cb);
@@ -117,11 +117,12 @@ module.exports = {
     while (true) {
       const cb = this.tailCallbacks.shift();
       if (!cb) break;
-      try {
-        await cb();
-      } catch (err) {
-        this.app.logger.error(err);
-      }
+      await cb();
+      // try {
+      //   await cb();
+      // } catch (err) {
+      //   this.app.logger.error(err);
+      // }
     }
   },
   get tailCallbacks() {
