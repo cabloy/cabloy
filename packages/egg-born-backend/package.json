@@ -25,7 +25,7 @@
     "@zhennann/egg": "^2.37.0",
     "@zhennann/egg-mysql": "^4.0.3",
     "@zhennann/egg-passport": "^2.1.5",
-    "@zhennann/egg-socket.io": "^5.0.4",
+    "@zhennann/egg-socket.io": "^6.0.0",
     "@zhennann/koa-static-cache": "^5.1.8",
     "@zhennann/set": "^1.0.7",
     "async": "^3.2.0",

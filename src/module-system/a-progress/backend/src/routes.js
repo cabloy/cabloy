@@ -7,7 +7,7 @@ module.exports = app => {
       controller: 'progress',
       meta: {
         auth: { user: true },
-        right: { enableAuthOpen: true },
+        authOpen: { enableAuthOpen: true },
       },
     },
     {
@@ -16,7 +16,7 @@ module.exports = app => {
       controller: 'progress',
       meta: {
         auth: { user: true },
-        right: { enableAuthOpen: true },
+        authOpen: { enableAuthOpen: true },
       },
     },
     {
@@ -25,7 +25,7 @@ module.exports = app => {
       controller: 'progress',
       meta: {
         auth: { user: true },
-        right: { enableAuthOpen: true },
+        authOpen: { enableAuthOpen: true },
       },
     },
   ];
