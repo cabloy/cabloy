@@ -57,6 +57,21 @@ module.exports = function (loader, modules) {
           ctx.route = _route;
           // dynamic options
           ctx.meta.middlewares = {};
+          // getMiddlewareOptions
+          ctx.meta.getMiddlewareOptions = function (middlewareName) {
+            const item = ebMiddlewaresNormal[middlewareName];
+            // config options
+            const config = ctx.config.module(item.module);
+            const optionsConfig = config.middlewares ? config.middlewares[item.name] : null;
+            // route options
+            const optionsRoute = route.meta ? route.meta[item.name] : null;
+            // dynamic options
+            const optionsDynamic = ctx.meta.middlewares[item.name];
+            // final options
+            const options = extend(true, {}, optionsConfig, optionsRoute, optionsDynamic);
+            // ok
+            return options;
+          };
           // next
           await next();
           // invoke callbackes: handle secondly
@@ -67,7 +82,7 @@ module.exports = function (loader, modules) {
 
         // middlewares: globals
         ebMiddlewaresGlobal.forEach(item => {
-          args.push(wrapMiddleware(item, route));
+          args.push(wrapMiddleware(item));
         });
 
         // middlewares: tailDone
@@ -88,7 +103,7 @@ module.exports = function (loader, modules) {
             if (is.string(key)) {
               const item = ebMiddlewaresNormal[key];
               if (item) {
-                args.push(wrapMiddleware(item, route));
+                args.push(wrapMiddleware(item));
               } else {
                 args.push(wrapMiddlewareApp(key, route, loader));
               }
@@ -147,16 +162,10 @@ function wrapMiddlewareApp(key, route, loader) {
   }
 }
 
-function wrapMiddleware(item, route) {
-  const optionsRoute = route.meta ? route.meta[item.name] : null;
+function wrapMiddleware(item) {
   const fn = (ctx, next) => {
-    // config options
-    const config = ctx.config.module(item.module);
-    const optionsConfig = config.middlewares ? config.middlewares[item.name] : null;
-    // dynamic options
-    const optionsDynamic = ctx.meta.middlewares[item.name];
-    // final options
-    const options = extend(true, {}, optionsConfig, optionsRoute, optionsDynamic);
+    // options
+    const options = ctx.meta.getMiddlewareOptions(item.name);
     // enable match ignore dependencies
     if (options.enable === false || !middlewareMatch(ctx, options) || !middlewareDeps(ctx, options)) {
       ctx[MWSTATUS][item.name] = false;
