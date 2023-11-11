@@ -176,9 +176,9 @@ module.exports = {
    * @param  {json} options.body   body(optional)
    * @return {promise}                response.body.data or throw error
    */
-  performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
+  performAction({ innerAccess, method, url, query, params, headers, body }) {
     this.app.meta.util.deprecated('ctx.performAction', 'ctx.meta.util.performAction');
-    return this.meta.util.performAction({ innerAccess, subdomain, method, url, query, params, headers, body });
+    return this.meta.util.performAction({ innerAccess, method, url, query, params, headers, body });
   },
 
   getVal(name) {

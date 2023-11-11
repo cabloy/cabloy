@@ -121,11 +121,10 @@ module.exports = ctx => {
      * @param  {json} options.body   body(optional)
      * @return {promise}                response.body.data or throw error
      */
-    async performAction({ innerAccess, subdomain, method, url, query, params, headers, body }) {
+    async performAction({ innerAccess, method, url, query, params, headers, body }) {
       return await performActionFn({
         ctxCaller: ctx,
         innerAccess,
-        subdomain,
         method,
         url,
         query,

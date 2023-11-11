@@ -18,7 +18,7 @@ let __fnMiddleware;
 module.exports = async function performAction({
   ctxCaller,
   innerAccess,
-  subdomain,
+  // subdomain, deprecated
   method,
   url,
   query,
@@ -45,7 +45,7 @@ module.exports = async function performAction({
   onFinished(res, ctx.onerror);
 
   // subdomain
-  ctx.subdomain = typeof subdomain === 'undefined' ? ctxCaller.subdomain : subdomain;
+  ctx.subdomain = ctxCaller.subdomain;
 
   // query params body
   if (query) {
