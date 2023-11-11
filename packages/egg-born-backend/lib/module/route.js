@@ -59,6 +59,8 @@ module.exports = function (loader, modules) {
           ctx.meta.middlewares = {};
           // next
           await next();
+          // invoke callbackes: handle secondly
+          await ctx.tailDone();
         };
         fnStart._name = 'start';
         args.push(fnStart);
@@ -72,7 +74,7 @@ module.exports = function (loader, modules) {
         const fnTailDone = async (ctx, next) => {
           // next
           await next();
-          // invoke callbackes
+          // invoke callbackes: handle firstly
           await ctx.tailDone();
         };
         fnStart._name = 'tailDone';
