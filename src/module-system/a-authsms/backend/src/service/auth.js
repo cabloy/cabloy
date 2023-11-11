@@ -41,7 +41,7 @@ module.exports = app => {
 
       // login now
       //   always no matter login/associate
-      await this.ctx.login(verifyUser);
+      await this.ctx.bean.auth.login(verifyUser);
 
       // ok
       return verifyUser;

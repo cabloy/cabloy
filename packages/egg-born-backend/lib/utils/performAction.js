@@ -30,7 +30,8 @@ module.exports = async function performAction({
   const app = ctxCaller.app;
   // middleware
   if (!__fnMiddleware) {
-    __fnMiddleware = compose(app.middleware);
+    const middleware = app.middleware[app.middleware.length - 1];
+    __fnMiddleware = compose([middleware]);
   }
   // request
   url = app.meta.util.combineFetchPath(ctxCaller.module && ctxCaller.module.info, url);
@@ -56,7 +57,7 @@ module.exports = async function performAction({
   ctx.req.body = ctx.request.body = body || null; // not undefined
 
   // headers
-  if (headers) Object.assign(ctx.headers, headers);
+  delegateHeaders(ctx, ctxCaller, headers);
 
   // multipart
   ctx.multipart = function (options) {
@@ -66,8 +67,9 @@ module.exports = async function performAction({
   // cookies
   delegateCookies(ctx, ctxCaller);
 
-  // should not delegate session, because session._ctx related to ctx
-  for (const property of ['state', 'socket']) {
+  // XX should not delegate session, because session._ctx related to ctx
+  // not delegate ctx.user, because will create req.user by state.user
+  for (const property of ['state', 'socket', 'session', 'instance']) {
     delegateProperty(ctx, ctxCaller, property);
   }
 
@@ -106,6 +108,15 @@ module.exports = async function performAction({
     throw error;
   }
 };
+
+function delegateHeaders(ctx, ctxCaller, headers) {
+  if (ctxCaller && ctxCaller.headers) {
+    Object.assign(ctx.headers, ctxCaller.headers);
+  }
+  if (headers) {
+    Object.assign(ctx.headers, headers);
+  }
+}
 
 function delegateCookies(ctx, ctxCaller) {
   const _cookies = ctx.cookies;

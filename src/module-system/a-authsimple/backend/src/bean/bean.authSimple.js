@@ -63,7 +63,7 @@ module.exports = ctx => {
 
       // login now
       //   always no matter login/associate
-      await ctx.login(verifyUser);
+      await ctx.bean.auth.login(verifyUser);
 
       // ok
       return verifyUser;
@@ -83,6 +83,24 @@ module.exports = ctx => {
       //   body: { data },
       // });
       return res;
+    }
+
+    async signinDirect({ data, state = 'login' }) {
+      // beanProvider
+      const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+        module: moduleInfo.relativeName,
+        providerName: 'authsimple',
+        providerScene: null,
+      });
+      // profileUser
+      const profileUser = await this.ensureAuthUser({ beanProvider, data });
+      // verifyUser
+      const verifyUser = await ctx.bean.user.verify({ state, profileUser });
+      if (!verifyUser) ctx.throw(403);
+      // login
+      await ctx.bean.auth.login(verifyUser);
+      // ok
+      return verifyUser;
     }
 
     async _addAuthSimple({ password }) {
@@ -158,7 +176,7 @@ module.exports = ctx => {
 
       // login now
       //   always no matter login/associate
-      // await ctx.login(verifyUser);
+      // await ctx.bean.auth.login(verifyUser);
     }
 
     async _passwordSaveNew({ passwordNew, userId }) {
@@ -309,6 +327,29 @@ module.exports = ctx => {
       });
       return {
         exists: !!auth,
+      };
+    }
+
+    async ensureAuthUser({ beanProvider, data: { auth, password, rememberMe } }) {
+      // exists
+      const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
+      if (!user) return ctx.throw.module(moduleInfo.relativeName, 1001);
+      // disabled
+      if (user.disabled) return ctx.throw.module(moduleInfo.relativeName, 1002);
+      // verify
+      const authSimple = await this.localSimple.verify({ userId: user.id, password });
+      if (!authSimple) return ctx.throw.module(moduleInfo.relativeName, 1001);
+      return {
+        module: beanProvider.providerModule,
+        provider: beanProvider.providerName,
+        providerScene: beanProvider.providerScene,
+        profileId: authSimple.id,
+        maxAge: rememberMe ? null : 0,
+        authShouldExists: true,
+        profile: {
+          authSimpleId: authSimple.id,
+          rememberMe,
+        },
       };
     }
   }
