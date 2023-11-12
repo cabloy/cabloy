@@ -4,7 +4,8 @@
 
 - **Feat**
 
-- 采用 performAction 重构单元测试用例
+- 重构 ctx.meta.util.performAction
+- 采用 ctx.meta.util.performAction 重构单元测试用例
 
 ## 2023-11-10, Version 5.0.8-alpha
 
