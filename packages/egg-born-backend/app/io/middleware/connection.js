@@ -29,7 +29,9 @@ function wrapMiddleware(item) {
       return next();
     }
     // run
-    const bean = ctx.bean._getBean(item.module, `middleware.${item.name}`);
+    const beanFullName = `${item.bean.module}.middleware.io.${item.bean.name}`;
+    const bean = ctx.bean._getBean(beanFullName);
+    if (!bean) throw new Error(`socketio middleware not found: ${beanFullName}`);
     return bean.execute(item.options, next);
   };
   fn._name = item.name;
