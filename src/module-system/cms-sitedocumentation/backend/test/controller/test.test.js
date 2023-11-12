@@ -2,72 +2,66 @@ const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe.skip('test/controller/test.test.js', () => {
   it('Document', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // atomClass info
     const atomClassModule = mockInfo().relativeName;
     const atomClassName = 'document';
+    const atomClass = { module: atomClassModule, atomClassName };
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
-
-    const sessionOld = JSON.stringify(app.context.session);
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
     // create
-    let result = await app
-      .httpRequest()
-      .post(mockUrl('/a/base/atom/write'))
-      .send({
-        atomClass: { module: atomClassModule, atomClassName },
+    const keyDraft = await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: '/a/base/atom/write',
+      body: {
+        atomClass,
         item: {
           atomName: 'test',
         },
-      });
-    if (result.body.code !== 0) {
-      const sessionNew = JSON.stringify(app.context.session);
-      console.log('sessionOld: ', sessionOld);
-      console.log('sessionNew: ', sessionNew);
-      process.exit(0);
-    }
-    assert(result.body.code === 0);
-    const keyDraft = result.body.data;
+      },
+    });
+    assert(!!keyDraft);
 
     // submit
-    result = await app
-      .httpRequest()
-      .post(mockUrl('/a/base/atom/submit'))
-      .send({
+    let data = await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: '/a/base/atom/submit',
+      body: {
         key: keyDraft,
-        atomClass: { module: atomClassModule, atomClassName },
+        atomClass,
         options: { ignoreFlow: true },
-      });
-    if (result.body.code !== 0) {
-      const sessionNew = JSON.stringify(app.context.session);
-      console.log('sessionOld: ', sessionOld);
-      console.log('sessionNew: ', sessionNew);
-      process.exit(0);
-    }
-    assert(result.body.code === 0);
-    const keyFormal = result.body.data.formal.key;
+      },
+    });
+    const keyFormal = data.formal.key;
+    assert(!!keyFormal);
 
     // read
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/read')).send({
-      key: keyFormal,
+    data = await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: '/a/base/atom/read',
+      body: {
+        key: keyFormal,
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
+    assert(!!data);
 
     // delete
-    result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-      key: keyFormal,
+    await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: '/a/base/atom/delete',
+      body: {
+        key: keyFormal,
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
   });
 });

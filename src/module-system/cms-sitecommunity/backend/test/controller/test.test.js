@@ -8,23 +8,17 @@ describe.skip('test/controller/test.test.js', () => {
   };
 
   it('action:set config', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
-    const result = await app
-      .httpRequest()
-      .post(mockUrl('/a/cms/site/setConfigSite'))
-      .send({
+    await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: mockUrl('/a/cms/site/setConfigSite', false),
+      body: {
         atomClass,
         data: {
           host: {
@@ -40,44 +34,34 @@ describe.skip('test/controller/test.test.js', () => {
             'zh-cn': 'cms-themecommunity',
           },
         },
-      });
-    assert(result.body.code === 0);
+      },
+    });
   });
 
   it('action:build languages', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
-    const result = await app.httpRequest().post(mockUrl('/a/cms/site/buildLanguages')).send({
-      atomClass,
+    const data = await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: mockUrl('/a/cms/site/buildLanguages', false),
+      body: {
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
-    console.log('time used: ', result.body.data.time);
+    console.log('time used: ', data.time);
   });
 
   it('action:render article(cms-sitecommunity)', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
     const articles = [
       {
@@ -112,12 +96,12 @@ describe.skip('test/controller/test.test.js', () => {
       },
     ];
     for (const article of articles) {
-      let result;
       // create
-      result = await app
-        .httpRequest()
-        .post(mockUrl('/a/base/atom/write'))
-        .send({
+      const keyDraft = await ctx.meta.util.performAction({
+        innerAccess: false,
+        method: 'post',
+        url: '/a/base/atom/write',
+        body: {
           atomClass,
           item: {
             atomName: article.atomName,
@@ -126,51 +110,55 @@ describe.skip('test/controller/test.test.js', () => {
             content: article.content,
             slug: article.slug,
           },
-        });
-      assert(result.body.code === 0);
-      const keyDraft = result.body.data;
+        },
+      });
+      assert(!!keyDraft);
 
       // submit
-      result = await app
-        .httpRequest()
-        .post(mockUrl('/a/base/atom/submit'))
-        .send({
+      const data = await ctx.meta.util.performAction({
+        innerAccess: false,
+        method: 'post',
+        url: '/a/base/atom/submit',
+        body: {
           key: keyDraft,
           atomClass,
           options: { ignoreFlow: true },
-        });
-      assert(result.body.code === 0);
-      const keyFormal = result.body.data.formal.key;
+        },
+      });
+      const keyFormal = data.formal.key;
+      assert(!!keyFormal);
 
       // special test
       if (article.special) {
         // delete
-        result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-          key: keyFormal,
+        await ctx.meta.util.performAction({
+          innerAccess: false,
+          method: 'post',
+          url: '/a/base/atom/delete',
+          body: {
+            key: keyFormal,
+            atomClass,
+          },
         });
-        assert(result.body.code === 0);
       }
     }
   });
 
   it('action:build languages', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
-    const result = await app.httpRequest().post(mockUrl('/a/cms/site/buildLanguages')).send({
-      atomClass,
+    const data = await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: mockUrl('/a/cms/site/buildLanguages', false),
+      body: {
+        atomClass,
+      },
     });
-    assert(result.body.code === 0);
-    console.log('time used: ', result.body.data.time);
+    console.log('time used: ', data.time);
   });
 });
