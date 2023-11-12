@@ -39,8 +39,19 @@ module.exports = async function performAction({
   // ctx
   const ctx = app.createContext(req, res);
 
+  // locale
+  Object.defineProperty(ctx, 'locale', {
+    get() {
+      return ctxCaller.locale;
+    },
+  });
+
   // subdomain
-  ctx.subdomain = ctxCaller.subdomain;
+  Object.defineProperty(ctx, 'subdomain', {
+    get() {
+      return ctxCaller.subdomain;
+    },
+  });
 
   // query params body
   if (query) {
