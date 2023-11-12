@@ -85,14 +85,12 @@ module.exports = async function performAction({
     if (ctx.body.code === 0) {
       return ctx.body.data;
     }
-    const error = ctx.createError(ctx.body);
-    throw error;
+    throw ctx.createError(ctx.body);
   } else {
-    const error = ctx.createError({
+    throw ctx.createError({
       code: ctx.status,
       message: ctx.message || ctx.body,
     });
-    throw error;
   }
 };
 
