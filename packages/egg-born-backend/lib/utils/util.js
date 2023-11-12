@@ -55,7 +55,7 @@ module.exports = app => {
     },
     createError(data, returnObject) {
       const error = returnObject ? {} : new Error();
-      error.code = data.code || 500;
+      error.code = data.code !== undefined ? data.code : 500;
       error.message = data.message;
       if (data.stack) error.stack = data.stack;
       if (data.name) error.name = data.name;
