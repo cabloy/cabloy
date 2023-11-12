@@ -1,9 +1,9 @@
 const http = require('http');
 const compose = require('koa-compose');
-const onFinished = require('on-finished');
-const statuses = require('statuses');
-const isJSON = require('koa-is-json');
-const Stream = require('stream');
+// const onFinished = require('on-finished');
+// const statuses = require('statuses');
+// const isJSON = require('koa-is-json');
+// const Stream = require('stream');
 
 let __fnMiddleware;
 
@@ -42,7 +42,6 @@ module.exports = async function performAction({
   res.statusCode = 404;
   // ctx
   const ctx = app.createContext(req, res);
-  onFinished(res, ctx.onerror);
 
   // subdomain
   ctx.subdomain = ctxCaller.subdomain;
@@ -82,8 +81,6 @@ module.exports = async function performAction({
   try {
     // invoke middleware
     await __fnMiddleware(ctx);
-    // handle respond
-    respond.call(ctx);
     // check result
     if (ctx.status === 200) {
       if (!ctx.body || ctx.body.code === undefined) {
@@ -104,7 +101,6 @@ module.exports = async function performAction({
     }
   } catch (err) {
     const error = ctx.createError(err);
-    ctx.onerror(error);
     throw error;
   }
 };
@@ -155,43 +151,43 @@ function createRequest({ method, url }, ctxCaller) {
   return req;
 }
 
-function respond() {
-  // allow bypassing koa
-  if (this.respond === false) return;
+// function respond() {
+//   // allow bypassing koa
+//   if (this.respond === false) return;
 
-  const res = this.res;
-  if (res.headersSent || !this.writable) return;
+//   const res = this.res;
+//   if (res.headersSent || !this.writable) return;
 
-  let body = this.body;
-  const code = this.status;
+//   let body = this.body;
+//   const code = this.status;
 
-  // ignore body
-  if (statuses.empty[code]) {
-    // strip headers
-    this.body = null;
-    return res.end();
-  }
+//   // ignore body
+//   if (statuses.empty[code]) {
+//     // strip headers
+//     this.body = null;
+//     return res.end();
+//   }
 
-  if (this.method === 'HEAD') {
-    if (isJSON(body)) this.length = Buffer.byteLength(JSON.stringify(body));
-    return res.end();
-  }
+//   if (this.method === 'HEAD') {
+//     if (isJSON(body)) this.length = Buffer.byteLength(JSON.stringify(body));
+//     return res.end();
+//   }
 
-  // status body
-  if (body == null) {
-    this.type = 'text';
-    body = this.message || String(code);
-    this.length = Buffer.byteLength(body);
-    return res.end(body);
-  }
+//   // status body
+//   if (body == null) {
+//     this.type = 'text';
+//     body = this.message || String(code);
+//     this.length = Buffer.byteLength(body);
+//     return res.end(body);
+//   }
 
-  // responses
-  if (Buffer.isBuffer(body)) return res.end(body);
-  if (typeof body === 'string') return res.end(body);
-  if (body instanceof Stream) return body.pipe(res);
+//   // responses
+//   if (Buffer.isBuffer(body)) return res.end(body);
+//   if (typeof body === 'string') return res.end(body);
+//   if (body instanceof Stream) return body.pipe(res);
 
-  // body: json
-  body = JSON.stringify(body);
-  this.length = Buffer.byteLength(body);
-  res.end(body);
-}
+//   // body: json
+//   body = JSON.stringify(body);
+//   this.length = Buffer.byteLength(body);
+//   res.end(body);
+// }
