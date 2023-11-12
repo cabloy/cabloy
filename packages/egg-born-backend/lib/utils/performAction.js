@@ -78,29 +78,24 @@ module.exports = async function performAction({
   // innerAccess
   if (innerAccess !== undefined) ctx.innerAccess = innerAccess;
 
-  try {
-    // invoke middleware
-    await __fnMiddleware(ctx);
-    // check result
-    if (ctx.status === 200) {
-      if (!ctx.body || ctx.body.code === undefined) {
-        // not check code, e.g. text/xml
-        return ctx.body;
-      }
-      if (ctx.body.code === 0) {
-        return ctx.body.data;
-      }
-      const error = ctx.createError(ctx.body);
-      throw error;
-    } else {
-      const error = ctx.createError({
-        code: ctx.status,
-        message: ctx.message || ctx.body,
-      });
-      throw error;
+  // invoke middleware
+  await __fnMiddleware(ctx);
+  // check result
+  if (ctx.status === 200) {
+    if (!ctx.body || ctx.body.code === undefined) {
+      // not check code, e.g. text/xml
+      return ctx.body;
     }
-  } catch (err) {
-    const error = ctx.createError(err);
+    if (ctx.body.code === 0) {
+      return ctx.body.data;
+    }
+    const error = ctx.createError(ctx.body);
+    throw error;
+  } else {
+    const error = ctx.createError({
+      code: ctx.status,
+      message: ctx.message || ctx.body,
+    });
     throw error;
   }
 };
