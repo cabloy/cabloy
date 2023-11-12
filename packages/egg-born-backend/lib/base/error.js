@@ -18,13 +18,13 @@ module.exports = ebErrors => {
 
       this.ctx.response.status = 200;
       this.ctx.response.type = 'application/json';
-      this.ctx.response.body = { code: body.code || 1, message: body.message }; // body maybe Error
+      this.ctx.response.body = { code: __combineErrorCode(module, body.code), message: body.message }; // body maybe Error
     }
     // code/message,args
     throw(module, code, ...args) {
       const body = this.parseFail(module, code, ...args);
       const err = new Error();
-      err.code = body.code;
+      err.code = __combineErrorCode(module, body.code);
       err.message = body.message;
       if (body.code < 500) err.status = body.code;
       throw err;
@@ -43,10 +43,12 @@ module.exports = ebErrors => {
       const ebError = ebErrors[module];
       let message = null;
 
-      if (typeof code === 'string') {
+      if (code === undefined || code === null || code === '') {
+        code = codeDefault;
+      } else if (typeof code === 'string') {
         message = this.ctx.text(code, ...args);
         code = codeDefault;
-      } else if (code) {
+      } else {
         message = this.ctx.text(ebError[code], ...args);
       }
 
@@ -59,3 +61,8 @@ module.exports = ebErrors => {
   }
   return ErrorClass;
 };
+
+function __combineErrorCode(module, code) {
+  if (code <= 1000) return code;
+  return module ? `${module}:${code}` : code;
+}
