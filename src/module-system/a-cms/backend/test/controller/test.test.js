@@ -2,23 +2,17 @@ const { app, mockUrl, mockInfo, assert } = require('egg-born-mock')(__dirname);
 
 describe('test/controller/test.test.js', () => {
   it('action:set config', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
-    const result = await app
-      .httpRequest()
-      .post(mockUrl('site/setConfigSite'))
-      .send({
+    await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: mockUrl('site/setConfigSite', false),
+      body: {
         data: {
           host: {
             url: 'http://localhost:9080',
@@ -33,42 +27,31 @@ describe('test/controller/test.test.js', () => {
             'zh-cn': 'cms-themeblog',
           },
         },
-      });
-    assert(result.body.code === 0);
+      },
+    });
   });
 
   it('action:build languages', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
-    const result = await app.httpRequest().post(mockUrl('site/buildLanguages')).send();
-    assert(result.body.code === 0);
-    console.log('time used: ', result.body.data.time);
+    const data = await ctx.meta.util.performAction({
+      innerAccess: false,
+      method: 'post',
+      url: mockUrl('site/buildLanguages', false),
+    });
+    console.log('time used: ', data.time);
   });
 
   it('action:render article(a-cms)', async () => {
-    app.mockSession({});
+    // ctx
+    const ctx = await app.mockCtx();
 
     // login as root
-    await app
-      .httpRequest()
-      .post(mockUrl('/a/auth/passport/a-authsimple/authsimple'))
-      .send({
-        data: {
-          auth: 'root',
-          password: '123456',
-        },
-      });
+    await ctx.meta.mockUtil.login({ auth: 'root' });
 
     const articles = [
       {
@@ -123,12 +106,12 @@ describe('test/controller/test.test.js', () => {
       },
     ];
     for (const article of articles) {
-      let result;
       // create
-      result = await app
-        .httpRequest()
-        .post(mockUrl('/a/base/atom/write'))
-        .send({
+      const keyDraft = await ctx.meta.util.performAction({
+        innerAccess: false,
+        method: 'post',
+        url: '/a/base/atom/write',
+        body: {
           atomClass: { module: mockInfo().relativeName, atomClassName: 'article' },
           item: {
             atomName: article.atomName,
@@ -137,29 +120,35 @@ describe('test/controller/test.test.js', () => {
             content: article.content,
             slug: article.slug,
           },
-        });
-      assert(result.body.code === 0);
-      const keyDraft = result.body.data;
+        },
+      });
+      assert(!!keyDraft);
 
       // submit
-      result = await app
-        .httpRequest()
-        .post(mockUrl('/a/base/atom/submit'))
-        .send({
+      const data = await ctx.meta.util.performAction({
+        innerAccess: false,
+        method: 'post',
+        url: '/a/base/atom/submit',
+        body: {
           key: keyDraft,
           atomClass: { module: mockInfo().relativeName, atomClassName: 'article' },
           options: { ignoreFlow: true },
-        });
-      assert(result.body.code === 0);
-      const keyFormal = result.body.data.formal.key;
+        },
+      });
+      const keyFormal = data.formal.key;
+      assert(!!keyFormal);
 
       // special test
       if (article.special) {
         // delete
-        result = await app.httpRequest().post(mockUrl('/a/base/atom/delete')).send({
-          key: keyFormal,
+        await ctx.meta.util.performAction({
+          innerAccess: false,
+          method: 'post',
+          url: '/a/base/atom/delete',
+          body: {
+            key: keyFormal,
+          },
         });
-        assert(result.body.code === 0);
       }
     }
   });

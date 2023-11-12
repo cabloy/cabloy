@@ -60,7 +60,7 @@ module.exports = async function performAction({
   if (params) {
     ctx.req.params = ctx.request.params = params;
   }
-  ctx.req.body = ctx.request.body = body || null; // not undefined
+  ctx.req.body = ctx.request.body = body !== undefined ? body : {}; // not undefined
 
   // headers
   delegateHeaders(ctx, ctxCaller, headers);
