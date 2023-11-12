@@ -28,11 +28,15 @@ function wrapMiddleware(item) {
     if (item.options.enable === false) {
       return next();
     }
-    // run
-    const beanFullName = `${item.bean.module}.middleware.io.${item.bean.name}`;
-    const bean = context.ctx.bean._getBean(beanFullName);
-    if (!bean) throw new Error(`socketio middleware not found: ${beanFullName}`);
-    return bean.execute(item.options, context.packet, next);
+    // bean
+    const bean = item.bean;
+    // execute
+    const beanFullName = `${bean.module}.middleware.io.${bean.name}`;
+    const beanInstance = context.ctx.bean._getBean(beanFullName);
+    if (!beanInstance) {
+      throw new Error(`socketio middleware bean not found: ${beanFullName}`);
+    }
+    return beanInstance.execute(item.options, context.packet, next);
   };
   fn._name = item.name;
   return fn;
