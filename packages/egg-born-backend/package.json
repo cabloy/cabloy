@@ -35,7 +35,7 @@
     "debug": "^4.3.4",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mglob": "^4.0.1",
-    "egg-born-mock": "^3.0.3",
+    "egg-born-mock": "^3.0.4",
     "egg-born-mparse": "^2.1.9",
     "egg-redis": "^2.4.0",
     "egg-schedule": "^3.6.6",
