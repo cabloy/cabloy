@@ -21,6 +21,7 @@ export default {
       this.$nextTick(() => {
         this.stats_setValue(null);
         this.stats_init();
+        this.stats_setDevInfo();
       });
     },
   },
@@ -32,11 +33,31 @@ export default {
   created() {
     this.stats_init();
   },
+  mounted() {
+    this.stats_setDevInfo();
+  },
   beforeDestroy() {
     // unsubscribe
     this.stats_unsubscribe();
   },
   methods: {
+    stats_setDevInfo() {
+      // el
+      const $domEl = this.$$(this.$el);
+      if (this.$meta.config.env === 'development') {
+        const statsParams = this.stats_params;
+        let devInfo;
+        if (!statsParams) {
+          devInfo = 'null';
+        } else {
+          devInfo = `${statsParams.module}:${statsParams.name}`;
+          if (statsParams.nameSub) {
+            devInfo = `${devInfo}.${statsParams.nameSub}`;
+          }
+        }
+        $domEl.attr('data-dev-stats-params', devInfo);
+      }
+    },
     async stats_init() {
       this.stats_unsubscribe();
       if (this.stats_user && !this.stats_user.anonymous && this.stats_params) {
