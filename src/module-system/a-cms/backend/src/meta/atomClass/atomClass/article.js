@@ -14,11 +14,14 @@ module.exports = app => {
       category: true,
       tag: true,
       cms: true,
+      flow: {
+        stage: 'draft',
+      },
       fields: {
         dicts: {
           atomState: {
             draft: {
-              dictKey: 'default',
+              dictKey: null,
             },
           },
         },

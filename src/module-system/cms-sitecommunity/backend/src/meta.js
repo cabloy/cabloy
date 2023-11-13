@@ -27,11 +27,14 @@ module.exports = app => {
                 atomList: 'layoutAtomListPost',
               },
             },
+            flow: {
+              stage: 'draft',
+            },
             fields: {
               dicts: {
                 atomState: {
                   draft: {
-                    dictKey: 'default',
+                    dictKey: null,
                   },
                 },
               },

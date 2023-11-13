@@ -11,6 +11,21 @@ module.exports = app => {
       comment: false,
       attachment: false,
       history: false,
+      flow: {
+        stage: 'draft',
+      },
+      fields: {
+        dicts: {
+          atomState: {
+            draft: {
+              dictKey: null,
+            },
+            formal: {
+              dictKey: null,
+            },
+          },
+        },
+      },
       layout: {
         config: {
           // atomList: 'layoutAtomList<%=argv.atomClassNameCapitalize%>',
