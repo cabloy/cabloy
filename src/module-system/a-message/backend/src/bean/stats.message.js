@@ -42,8 +42,8 @@ module.exports = ctx => {
           // only level 2
           if (item.name.split('.').length !== 2) continue;
           const value = JSON.parse(item.value);
-          if (value.red !== undefined) stat.red += value.red;
-          if (value.gray !== undefined) stat.gray += value.gray;
+          if (value && value.red !== undefined) stat.red += value.red;
+          if (value && value.gray !== undefined) stat.gray += value.gray;
         }
         // ok
         return stat;
