@@ -52,6 +52,12 @@ module.exports = ctx => {
       }
     }
 
+    async _deploy_atomState({ atomClass }) {
+      const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+      const list = await _nodeBaseBean._getAllConditions({ atomClassId: atomClass.id });
+      console.log(list);
+    }
+
     async _deploy_startEvent({ flowDefId, undeploy, deleting }) {
       // flowDef
       const flowDef = await this._getById({ flowDefId });
