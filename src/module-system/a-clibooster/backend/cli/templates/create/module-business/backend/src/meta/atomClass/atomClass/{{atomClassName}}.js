@@ -19,9 +19,6 @@ module.exports = app => {
             draft: {
               dictKey: null,
             },
-            formal: {
-              dictKey: null,
-            },
           },
         },
       },
