@@ -12,9 +12,32 @@ module.exports = ctx => {
     }
 
     async _deploy_atomState({ atomClass }) {
+      // all flowDefs
       const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
       const list = await _nodeBaseBean._getAllConditions({ atomClassId: atomClass.id });
-      console.log(list);
+      const flowDefs = await ctx.bean.atom.select({
+        atomClass: this.atomClass,
+        options: {
+          stage: 'formal',
+          where: {
+            'a.id': {
+              op: 'in',
+              val: list.map(item => item.flowDefId),
+            },
+          },
+          mode: 'full',
+        },
+        user: null,
+        pageForce: false,
+      });
+      // vars
+      const titleStateStart = null;
+      const titleStateEnd = null;
+      const dictItems = [];
+      // loop
+      for (const flowDef of flowDefs) {
+      }
+      console.log(flowDefs);
     }
 
     async _deploy_startEvent({ flowDefId, undeploy, deleting }) {
