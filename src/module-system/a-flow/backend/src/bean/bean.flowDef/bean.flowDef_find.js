@@ -20,22 +20,29 @@ module.exports = ctx => {
     }
 
     // fn: false is break
-    _findNodes({ content, nodeStart, fn }) {
+    _findNodes({ content, nodeIdStart, fn }) {
       const nodes = [];
       const nodeIdCaches = {};
       // next
-      this._findNodes_next({ content, node: nodeStart, nodes, nodeIdCaches, fn });
+      this._findNodes_next({ content, nodeId: nodeIdStart, nodes, nodeIdCaches, fn });
       // ok
       return nodes;
     }
 
-    _findNodes_next({ content, node, nodes, nodeIdCaches, fn }) {
+    _findNodes_next({ content, nodeId, nodes, nodeIdCaches, fn }) {
       // cache
-      nodeIdCaches[node.id] = true;
+      if (nodeIdCaches[nodeId]) {
+        return;
+      }
+      nodeIdCaches[nodeId] = true;
+      // node
+      const node = this._findNode({ content, nodeDefId: nodeId });
+      if (!node) {
+        throw new Error(`flow node not found: ${nodeId}`);
+      }
       // check node
       const resCheck = fn({ nodes, node });
       if (resCheck === false) {
-        // break;
         return false; // break
       }
       // edges
@@ -44,14 +51,9 @@ module.exports = ctx => {
       });
       // next
       for (const edge of edges) {
-        const nodeTarget = this._findNode({ content, nodeDefId: edge.target });
-        if (!nodeTarget) {
-          throw new Error(`flow node not found: ${edge.target}`);
-        }
         // next
-        const resCheck = this._findNodes_next({ content, node: nodeTarget, nodes, nodeIdCaches, fn });
+        const resCheck = this._findNodes_next({ content, nodeId: edge.target, nodes, nodeIdCaches, fn });
         if (resCheck === false) {
-          // break;
           return false; // break
         }
       }
