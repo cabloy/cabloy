@@ -1,7 +1,7 @@
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Flow {
-    async _loadFlowInstance({ flowId, history }) {
+    async _loadFlowInstance({ flowId, history, throwError = true }) {
       // flow
       let flow;
       if (!history) {
@@ -12,7 +12,13 @@ module.exports = ctx => {
           flow.id = flowId;
         }
       }
-      if (!flow) ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
+      if (!flow) {
+        if (throwError) {
+          ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
+        } else {
+          return null;
+        }
+      }
       // flowDef: by key+revision
       const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({
         flowDefKey: flow.flowDefKey,
@@ -28,7 +34,7 @@ module.exports = ctx => {
       return flowInstance;
     }
 
-    async _loadFlowNodeInstance({ flowNodeId, history }) {
+    async _loadFlowNodeInstance({ flowNodeId, history, throwError = true }) {
       // get
       let flowNode;
       if (!history) {
@@ -39,7 +45,13 @@ module.exports = ctx => {
           flowNode.id = flowNodeId;
         }
       }
-      if (!flowNode) ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
+      if (!flowNode) {
+        if (throwError) {
+          ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
+        } else {
+          return null;
+        }
+      }
       // load flow
       const flowInstance = await this._loadFlowInstance({ flowId: flowNode.flowId, history });
       // load flow node
