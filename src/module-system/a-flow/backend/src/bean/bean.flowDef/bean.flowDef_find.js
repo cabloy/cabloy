@@ -1,11 +1,10 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowDef {
-    _findNodeDef({ content, nodeDefId }) {
-      const nodeDef = content.process.nodes.find(node => {
-        return nodeDefId === node.id;
+    _findNode({ content, nodeDefId }) {
+      return content.process.nodes.find(node => {
+        return node.id === nodeDefId;
       });
-      return nodeDef;
     }
 
     _findEdgesPrevious({ content, behaviorDefId, nodeDefId }) {
@@ -20,34 +19,24 @@ module.exports = ctx => {
       });
     }
 
-    _findNodeTasks({ content, nodeStart }) {
-      const nodeTasks = [];
+    // fn: false is break
+    _findNodes({ content, nodeStart, fn }) {
+      const nodes = [];
       const nodeIdCaches = {};
       // next
-      this._findNodeTasks_next({ content, node: nodeStart, nodeTasks, nodeIdCaches });
-      //
-      return nodeTasks;
+      this._findNodes_next({ content, node: nodeStart, nodes, nodeIdCaches, fn });
+      // ok
+      return nodes;
     }
 
-    _findNodeTasks_next({ content, node, nodeTasks, nodeIdCaches }) {
+    _findNodes_next({ content, node, nodes, nodeIdCaches, fn }) {
       // cache
       nodeIdCaches[node.id] = true;
-      // check if endEvent
-      if (node.type.indexOf('endEvent') > -1) {
-        return;
-      }
-      // check if activityUserTask
-      if (node.type.indexOf('activityUserTask') > -1) {
-        // check if auto
-        let _vars = ctx.bean.util.getProperty(node, 'options.assignees.vars');
-        if (_vars) {
-          if (typeof _vars === 'string') {
-            _vars = _vars.split(',');
-          }
-          if (_vars.includes('auto')) {
-            nodeTasks.push(node);
-          }
-        }
+      // check node
+      const resCheck = fn({ nodes, node });
+      if (resCheck === false) {
+        // break;
+        return false; // break
       }
       // edges
       const edges = content.process.edges.filter(item => {
@@ -55,14 +44,16 @@ module.exports = ctx => {
       });
       // next
       for (const edge of edges) {
-        const nodeTarget = content.process.nodes.find(item => {
-          return item.id === edge.target;
-        });
+        const nodeTarget = this._findNode({ content, nodeDefId: edge.target });
         if (!nodeTarget) {
           throw new Error(`flow node not found: ${edge.target}`);
         }
         // next
-        this._findNodeTasks_next({ content, node: nodeTarget, nodeTasks, nodeIdCaches });
+        const resCheck = this._findNodes_next({ content, node: nodeTarget, nodes, nodeIdCaches, fn });
+        if (resCheck === false) {
+          // break;
+          return false; // break
+        }
       }
     }
   }

@@ -229,7 +229,7 @@ module.exports = ctx => {
     }
 
     _findNodeDef({ nodeDefId }) {
-      return ctx.bean.flowDef._findNodeDef({ content: this.context._flowDefContent, nodeDefId });
+      return ctx.bean.flowDef._findNode({ content: this.context._flowDefContent, nodeDefId });
     }
 
     // contextEdge maybe null
