@@ -20,16 +20,25 @@ module.exports = ctx => {
     }
 
     // fn: false is break
-    async _loopNodes({ content, nodeIdStart, fn }) {
+    async _loopNodes({ content, nodeIdStart, fn, options }) {
+      options = options || {};
+      const checkNodeStart = options.checkNodeStart !== false;
       const nodes = [];
       const nodeIdCaches = {};
+      // check node start
+      if (checkNodeStart) {
+        const resCheck = await this._loopNodes_checkNode({ content, nodeId: nodeIdStart, nodes, nodeIdCaches, fn });
+        if (resCheck === false) {
+          return nodes; // break
+        }
+      }
       // next
       await this._loopNodes_next({ content, nodeId: nodeIdStart, nodes, nodeIdCaches, fn });
       // ok
       return nodes;
     }
 
-    async _loopNodes_next({ content, nodeId, nodes, nodeIdCaches, fn }) {
+    async _loopNodes_checkNode({ content, nodeId, nodes, nodeIdCaches, fn }) {
       // cache
       if (nodeIdCaches[nodeId]) {
         return;
@@ -41,18 +50,24 @@ module.exports = ctx => {
         throw new Error(`flow node not found: ${nodeId}`);
       }
       // check node
-      const resCheck = await fn({ nodes, node });
-      if (resCheck === false) {
-        return false; // break
-      }
+      return await fn({ nodes, node });
+    }
+
+    async _loopNodes_next({ content, nodeId, nodes, nodeIdCaches, fn }) {
       // edges
       const edges = content.process.edges.filter(item => {
-        return item.source === node.id && !nodeIdCaches[item.target];
+        return item.source === nodeId && !nodeIdCaches[item.target];
       });
       // next
       for (const edge of edges) {
+        const nodeIdTarget = edge.target;
+        // check node
+        let resCheck = await this._loopNodes_checkNode({ content, nodeId: nodeIdTarget, nodes, nodeIdCaches, fn });
+        if (resCheck === false) {
+          return false; // break
+        }
         // next
-        const resCheck = await this._loopNodes_next({ content, nodeId: edge.target, nodes, nodeIdCaches, fn });
+        resCheck = await this._loopNodes_next({ content, nodeId: nodeIdTarget, nodes, nodeIdCaches, fn });
         if (resCheck === false) {
           return false; // break
         }
