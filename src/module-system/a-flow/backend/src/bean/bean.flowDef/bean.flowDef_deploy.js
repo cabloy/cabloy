@@ -36,8 +36,13 @@ module.exports = ctx => {
       const dictItems = [];
       // loop
       for (const flowDef of flowDefs) {
+        const dictItems_flowDef = this._deploy_atomState_handleFlowDef({ flowDef });
       }
       console.log(flowDefs);
+    }
+
+    _deploy_atomState_handleFlowDef({ flowDef }) {
+      const dictItems = [];
     }
 
     async _deploy_startEvent({ flowDefId, undeploy, deleting }) {
