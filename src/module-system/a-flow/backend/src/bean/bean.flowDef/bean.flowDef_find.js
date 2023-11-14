@@ -20,16 +20,16 @@ module.exports = ctx => {
     }
 
     // fn: false is break
-    _findNodes({ content, nodeIdStart, fn }) {
+    async _loopNodes({ content, nodeIdStart, fn }) {
       const nodes = [];
       const nodeIdCaches = {};
       // next
-      this._findNodes_next({ content, nodeId: nodeIdStart, nodes, nodeIdCaches, fn });
+      await this._loopNodes_next({ content, nodeId: nodeIdStart, nodes, nodeIdCaches, fn });
       // ok
       return nodes;
     }
 
-    _findNodes_next({ content, nodeId, nodes, nodeIdCaches, fn }) {
+    async _loopNodes_next({ content, nodeId, nodes, nodeIdCaches, fn }) {
       // cache
       if (nodeIdCaches[nodeId]) {
         return;
@@ -41,7 +41,7 @@ module.exports = ctx => {
         throw new Error(`flow node not found: ${nodeId}`);
       }
       // check node
-      const resCheck = fn({ nodes, node });
+      const resCheck = await fn({ nodes, node });
       if (resCheck === false) {
         return false; // break
       }
@@ -52,7 +52,7 @@ module.exports = ctx => {
       // next
       for (const edge of edges) {
         // next
-        const resCheck = this._findNodes_next({ content, nodeId: edge.target, nodes, nodeIdCaches, fn });
+        const resCheck = await this._loopNodes_next({ content, nodeId: edge.target, nodes, nodeIdCaches, fn });
         if (resCheck === false) {
           return false; // break
         }
