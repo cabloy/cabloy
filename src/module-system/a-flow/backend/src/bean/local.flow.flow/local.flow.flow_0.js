@@ -48,9 +48,10 @@ module.exports = ctx => {
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
       if (!nodeInstanceStartEvent) {
-        throw new Error(
-          `startEvent not found: ${this.context._flowDef.atomStaticKey}.${startEventId || 'startEventNone'}`
-        );
+        const message = `startEvent not found: ${this.context._flowDef.atomStaticKey}.${
+          startEventId || 'startEventNone'
+        }`;
+        throw new Error(message);
       }
       // node enter
       const finished = await nodeInstanceStartEvent.enter();
