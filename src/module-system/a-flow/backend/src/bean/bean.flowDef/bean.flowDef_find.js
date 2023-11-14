@@ -1,6 +1,25 @@
 module.exports = ctx => {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowDef {
+    _findNodeDef({ content, nodeDefId }) {
+      const nodeDef = content.process.nodes.find(node => {
+        return nodeDefId === node.id;
+      });
+      return nodeDef;
+    }
+
+    _findEdgesPrevious({ content, behaviorDefId, nodeDefId }) {
+      return content.process.edges.filter(edge => {
+        return edge.target === nodeDefId && (edge.behavior || '') === (behaviorDefId || '');
+      });
+    }
+
+    _findEdgesNext({ content, behaviorDefId, nodeDefId }) {
+      return content.process.edges.filter(edge => {
+        return edge.source === nodeDefId && (edge.behavior || '') === (behaviorDefId || '');
+      });
+    }
+
     _findNodeTasks({ content, nodeStart }) {
       const nodeTasks = [];
       const nodeIdCaches = {};

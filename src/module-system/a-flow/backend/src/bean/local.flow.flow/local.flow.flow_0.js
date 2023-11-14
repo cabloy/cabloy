@@ -228,10 +228,7 @@ module.exports = ctx => {
     }
 
     _findNodeDef({ nodeDefId }) {
-      const nodeDef = this.context._flowDefContent.process.nodes.find(node => {
-        return nodeDefId === node.id;
-      });
-      return nodeDef;
+      return ctx.bean.flowDef._findNodeDef({ content: this.context._flowDefContent, nodeDefId });
     }
 
     // contextEdge maybe null
