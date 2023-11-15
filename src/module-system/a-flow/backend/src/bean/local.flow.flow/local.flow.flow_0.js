@@ -86,9 +86,10 @@ module.exports = ctx => {
           return true;
         }
       }
-      // should throw exception
-      ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
-      // return false;
+      // need not throw exception, should be handled by the admin user
+      return false;
+      // // should throw exception
+      // ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
     }
 
     async nextNode({ contextEdge }) {
