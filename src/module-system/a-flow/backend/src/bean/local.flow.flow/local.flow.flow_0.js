@@ -250,12 +250,15 @@ module.exports = ctx => {
     }
 
     async _findEdgeInstancesNext({ nodeDefId, contextNode, behaviorDefId }) {
+      const edgeDefs = ctx.bean.flowDef._findEdgesNext({
+        content: this.context._flowDefContent,
+        behaviorDefId,
+        nodeDefId,
+      });
       const edges = [];
-      for (const edgeDef of this.context._flowDefContent.process.edges) {
-        if (edgeDef.source === nodeDefId && (edgeDef.behavior || '') === (behaviorDefId || '')) {
-          const edge = await this._createEdgeInstance({ edgeDef, contextNode });
-          edges.push(edge);
-        }
+      for (const edgeDef of edgeDefs) {
+        const edge = await this._createEdgeInstance({ edgeDef, contextNode });
+        edges.push(edge);
       }
       return edges;
     }
