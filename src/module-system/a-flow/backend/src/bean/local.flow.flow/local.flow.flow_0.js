@@ -250,11 +250,23 @@ module.exports = ctx => {
     }
 
     async _findEdgeInstancesNext({ nodeDefId, contextNode, behaviorDefId }) {
+      // edgeDefs
       const edgeDefs = ctx.bean.flowDef._findEdgesNext({
         content: this.context._flowDefContent,
         behaviorDefId,
         nodeDefId,
       });
+      // sort by conditionExpression
+      edgeDefs.sort(function (a, b) {
+        const levelA = ctx.bean.flowDef._calcConditionExpressionLevel({
+          conditionExpression: a.options?.conditionExpression,
+        });
+        const levelB = ctx.bean.flowDef._calcConditionExpressionLevel({
+          conditionExpression: b.options?.conditionExpression,
+        });
+        return levelA - levelB;
+      });
+      // edges
       const edges = [];
       for (const edgeDef of edgeDefs) {
         const edge = await this._createEdgeInstance({ edgeDef, contextNode });
