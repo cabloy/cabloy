@@ -8,6 +8,10 @@
 - 采用 ctx.meta.util.performAction 重构单元测试用例
 - error code：增加模块名称作为前缀，便于排查问题来源
 
+- **Refactor**
+
+- 重构工作流网关实现：排他网关、并行网关、包含网关
+
 ## 2023-11-10, Version 5.0.8-alpha
 
 - **Feat**
