@@ -58,11 +58,16 @@ module.exports = ctx => {
       await this._saveFlowVars();
       // node enter
       const finished = await nodeInstanceStartEvent.enter();
-      if (!finished) {
-        // notify
-        this._notifyFlowInitiateds(flowUserId);
-      }
       debug('flow %s: flowId:%d', finished ? 'finished' : 'break', flowId);
+      // tail
+      ctx.tail(async () => {
+        const flow = await this.modelFlow.get({ id: flowId });
+        if (flow) {
+          // means: not end
+          // notify
+          this._notifyFlowInitiateds(flowUserId);
+        }
+      });
     }
 
     async _load({ flow, history }) {
