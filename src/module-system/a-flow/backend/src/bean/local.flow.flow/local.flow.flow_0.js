@@ -60,14 +60,16 @@ module.exports = ctx => {
       const finished = await nodeInstanceStartEvent.enter();
       debug('flow %s: flowId:%d', finished ? 'finished' : 'break', flowId);
       // tail
-      ctx.tail(async () => {
-        const flow = await this.modelFlow.get({ id: flowId });
-        if (flow) {
-          // means: not end
-          // notify
-          this._notifyFlowInitiateds(flowUserId);
-        }
-      });
+      if (flowAtomId) {
+        ctx.tail(async () => {
+          const flow = await this.modelFlow.get({ id: flowId });
+          if (flow) {
+            // means: not end
+            // notify
+            this._notifyFlowInitiateds(flowUserId);
+          }
+        });
+      }
     }
 
     async _load({ flow, history }) {

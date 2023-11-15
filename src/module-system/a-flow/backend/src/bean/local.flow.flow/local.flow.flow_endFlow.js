@@ -41,7 +41,9 @@ module.exports = ctx => {
         debug('flow end: flowId:%d', flowId);
       });
       // notify
-      this._notifyFlowInitiateds(this.context._flow.flowUserId);
+      if (this.context._flow.flowAtomId) {
+        this._notifyFlowInitiateds(this.context._flow.flowUserId);
+      }
     }
 
     async _endFlow_handleAtom(options) {
