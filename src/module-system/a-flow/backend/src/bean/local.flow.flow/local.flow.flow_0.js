@@ -43,17 +43,19 @@ module.exports = ctx => {
       const flowId = await this._createFlow({ flowName, flowAtomId, flowAtomClassId, flowVars, flowUserId });
       // context init
       await this._contextInit({ flowId });
-      // raise event: onFlowStart
-      await this._flowListener.onFlowStart({ flowVars, flowUserId, startEventId });
-      await this._saveFlowVars();
       // node: startEvent
       const nodeInstanceStartEvent = await this._findNodeInstanceStartEvent({ startEventId });
       if (!nodeInstanceStartEvent) {
-        const message = `startEvent not found: ${this.context._flowDef.atomStaticKey}.${
-          startEventId || 'startEventNone'
-        }`;
+        const atomStaticKey = this.context._flowDef.atomStaticKey;
+        const message = `startEvent not found: ${atomStaticKey}.${startEventId || 'startEventNone'}`;
         throw new Error(message);
       }
+      // real startEventId
+      startEventId = nodeInstanceStartEvent.contextNode._nodeDef.id;
+      // raise event: onFlowStart
+      debug('flow start: flowId:%d, startEventId:%s', flowId, startEventId);
+      await this._flowListener.onFlowStart({ flowVars, flowUserId, startEventId });
+      await this._saveFlowVars();
       // node enter
       const finished = await nodeInstanceStartEvent.enter();
       if (!finished) {
