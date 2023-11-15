@@ -1,3 +1,5 @@
+const debug = require('debug')('flow');
+
 module.exports = ctx => {
   class FlowEdge extends ctx.app.meta.FlowEdgeBase {
     constructor(options) {
@@ -6,7 +8,7 @@ module.exports = ctx => {
 
     async onEdgeEnter() {
       // super
-      let res = await super.onEdgeEnter();
+      const res = await super.onEdgeEnter();
       if (!res) return false;
       // check conditionExpression
       const conditionExpression =
@@ -17,7 +19,7 @@ module.exports = ctx => {
       // contextNodePrevious
       const contextNodePrevious = this.contextNode.contextEdge && this.contextNode.contextEdge.contextNode;
       // evaluateExpression
-      res = ctx.bean.flow.evaluateExpression({
+      const resEnter = ctx.bean.flow.evaluateExpression({
         expression: conditionExpression,
         globals: {
           context: this.context,
@@ -26,7 +28,13 @@ module.exports = ctx => {
           contextNodePrevious,
         },
       });
-      return !!res;
+      debug(
+        'edge %s: edgeRefId:%s, conditionExpression: %s',
+        resEnter ? 'enter' : 'block',
+        this.contextEdge._edgeDef.id,
+        conditionExpression
+      );
+      return !!resEnter;
     }
   }
 

@@ -1,3 +1,4 @@
+const debug = require('debug')('flow');
 const VarsFn = require('../../common/vars.js');
 const UtilsFn = require('../../common/utils.js');
 
@@ -58,8 +59,8 @@ module.exports = ctx => {
       if (!finished) {
         // notify
         this._notifyFlowInitiateds(flowUserId);
-        // console.log(`--------flow break: ${flowId}`);
       }
+      debug('flow %s: flowId:%d', finished ? 'finished' : 'break', flowId);
     }
 
     async _load({ flow, history }) {
