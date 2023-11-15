@@ -10,7 +10,10 @@ module.exports = ctx => {
         contextNode,
         behaviorDefId,
       });
-      if (edgeInstances.length === 0) return false;
+      if (edgeInstances.length === 0) {
+        // means no edges
+        return false;
+      }
       for (const edgeInstance of edgeInstances) {
         // check if end
         if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
@@ -22,10 +25,10 @@ module.exports = ctx => {
           return true;
         }
       }
-      // need not throw exception, should be handled by the admin user
-      return false;
-      // // should throw exception
-      // ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
+      // should throw exception
+      //   should has a default edge(_calcConditionExpressionLevel===3), which is followed by endEventNone
+      ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
+      // return false;
     }
 
     async _findEdgeInstancesNext({ nodeDefId, contextNode, behaviorDefId }) {
