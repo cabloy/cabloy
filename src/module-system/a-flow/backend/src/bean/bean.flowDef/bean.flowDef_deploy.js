@@ -15,12 +15,17 @@ module.exports = ctx => {
       // all flowDefs
       const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
       const conditions = await _nodeBaseBean._getAllConditions({ atomClassId: atomClass.id, needFlowContent: true });
+      if (conditions.length === 0) {
+        // delete dictKey
+        await ctx.bean.atomState.dynamic_deleteDict({ atomClass });
+        return;
+      }
       // vars
       let dictItemStart = null;
       let dictItemEnd = null;
       let dictItems = [];
       const dictLocales = {};
-      const needGroup = conditions.length > 1;
+      const mode = conditions.length > 1 ? 'tree' : 'select';
       // loop
       for (const condition of conditions) {
         const flowDefId = condition.flowDefId;
