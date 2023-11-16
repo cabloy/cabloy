@@ -56,7 +56,11 @@ module.exports = app => {
     createError(data, returnObject) {
       const error = returnObject ? {} : new Error();
       error.code = data.code !== undefined ? data.code : 500;
-      error.message = data.message;
+      if (data.message && typeof data.message === 'object') {
+        error.message = JSON.stringify(data.message, null, 2);
+      } else {
+        error.message = data.message;
+      }
       if (data.stack) error.stack = data.stack;
       if (data.name) error.name = data.name;
       if (data.errno) error.errno = data.errno;
