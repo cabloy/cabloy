@@ -16,7 +16,7 @@ module.exports = ctx => {
       const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
       const conditions = await _nodeBaseBean._getAllConditions({ atomClassId: atomClass.id, needFlowContent: true });
       if (conditions.length === 0) {
-        // delete dictKey
+        // delete dict
         await ctx.bean.atomState.dynamic_deleteDict({ atomClass });
         return;
       }
@@ -37,6 +37,12 @@ module.exports = ctx => {
           startEventId,
           content,
         });
+        // items
+        const dictItemsTask = this._deploy_atomState_combineDictItemsTask({ flowDefId, nodeTasks, dictLocales });
+        if (dictItemsTask.length === 0) {
+          // no tasks
+          continue;
+        }
         // start
         if (!dictItemStart) {
           dictItemStart = this._deploy_atomState_combineDictItem({ flowDefId, node: nodeStart, code: 1, dictLocales });
@@ -45,14 +51,9 @@ module.exports = ctx => {
         if (!dictItemEnd) {
           dictItemEnd = this._deploy_atomState_combineDictItem({ flowDefId, node: nodeEnd, code: -1, dictLocales });
         }
-        // items
-        const dictItemsTask = this._deploy_atomState_combineDictItemsTask({ flowDefId, nodeTasks, dictLocales });
-        if (dictItemsTask.length === 0) {
-          // no tasks
-          continue;
-        }
         // append
-        if (needGroup) {
+        if (mode === 'tree') {
+          // tree
           const nodeGroup = { name: flowName };
           const dictGroup = this._deploy_atomState_combineDictItem({
             flowDefId,
@@ -61,21 +62,21 @@ module.exports = ctx => {
             title: flowName,
             dictLocales,
           });
-          dictGroup.options = {
-            group: true,
-          };
+          dictGroup.children = dictItemsTask;
           dictItems.push(dictGroup);
+        } else {
+          // select
+          dictItems = dictItems.concat(dictItemsTask);
         }
-        dictItems = dictItems.concat(dictItemsTask);
       }
       // append start
       dictItems.unshift(dictItemStart);
       // append end
       dictItems.push(dictItemEnd);
       // save
-      await ctx.bean.atomState.dynamic_saveDict({ atomClass, dictItems, dictLocales });
+      await ctx.bean.atomState.dynamic_saveDict({ atomClass, dictItems, dictLocales, mode });
       // ok
-      console.log(dictItems);
+      console.log(JSON.stringify(dictItems, null, 2));
       console.log(dictLocales);
     }
 
