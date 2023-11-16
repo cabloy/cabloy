@@ -68,13 +68,11 @@ module.exports = ctx => {
       // append end
       dictItems.push(dictItemEnd);
       // save
-      await this._deploy_atomState_save({ atomClass, dictItems, dictLocales });
+      await ctx.bean.atomState.dynamic_saveDict({ atomClass, dictItems, dictLocales });
       // ok
       console.log(dictItems);
       console.log(dictLocales);
     }
-
-    async _deploy_atomState_save({ atomClass, dictItems, dictLocales }) {}
 
     async _deploy_atomState_findNodes({ startEventId, content }) {
       let nodeStart = null;
