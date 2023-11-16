@@ -67,10 +67,14 @@ module.exports = ctx => {
       dictItems.unshift(dictItemStart);
       // append end
       dictItems.push(dictItemEnd);
+      // save
+      await this._deploy_atomState_save({ atomClass, dictItems, dictLocales });
       // ok
       console.log(dictItems);
       console.log(dictLocales);
     }
+
+    async _deploy_atomState_save({ atomClass, dictItems, dictLocales }) {}
 
     async _deploy_atomState_findNodes({ startEventId, content }) {
       let nodeStart = null;
