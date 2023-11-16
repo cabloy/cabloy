@@ -75,9 +75,6 @@ module.exports = ctx => {
       dictItems.push(dictItemEnd);
       // save
       await ctx.bean.atomState.dynamic_saveDict({ atomClass, dictItems, dictLocales, mode });
-      // ok
-      console.log(JSON.stringify(dictItems, null, 2));
-      console.log(dictLocales);
     }
 
     async _deploy_atomState_findNodes({ startEventId, content }) {
