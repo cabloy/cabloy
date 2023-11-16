@@ -32,33 +32,33 @@ module.exports = ctx => {
         const startEventId = condition.startEventId;
         const content = condition.content ? JSON.parse(condition.content) : null;
         const flowName = condition.atomName;
+        const flowKey = condition.atomStaticKey;
         const { nodeStart, nodeEnd, nodeTasks } = await this._deploy_atomState_findNodes({
           flowDefId,
           startEventId,
           content,
         });
         // items
-        const dictItemsTask = this._deploy_atomState_combineDictItemsTask({ flowDefId, nodeTasks, dictLocales });
+        const dictItemsTask = this._deploy_atomState_combineDictItemsTask({ nodeTasks, dictLocales });
         if (dictItemsTask.length === 0) {
           // no tasks
           continue;
         }
         // start
         if (!dictItemStart) {
-          dictItemStart = this._deploy_atomState_combineDictItem({ flowDefId, node: nodeStart, code: 1, dictLocales });
+          dictItemStart = this._deploy_atomState_combineDictItem({ node: nodeStart, code: 1, dictLocales });
         }
         // end
         if (!dictItemEnd) {
-          dictItemEnd = this._deploy_atomState_combineDictItem({ flowDefId, node: nodeEnd, code: -1, dictLocales });
+          dictItemEnd = this._deploy_atomState_combineDictItem({ node: nodeEnd, code: -1, dictLocales });
         }
         // append
         if (mode === 'tree') {
           // tree
           const nodeGroup = { name: flowName };
           const dictGroup = this._deploy_atomState_combineDictItem({
-            flowDefId,
             node: nodeGroup,
-            code: `${flowDefId}:__group__`,
+            code: flowKey,
             title: flowName,
             dictLocales,
           });
@@ -110,11 +110,11 @@ module.exports = ctx => {
       return { nodeStart, nodeEnd, nodeTasks };
     }
 
-    _deploy_atomState_combineDictItemsTask({ flowDefId, nodeTasks, dictLocales }) {
+    _deploy_atomState_combineDictItemsTask({ nodeTasks, dictLocales }) {
       const dictItems = [];
       const codesCache = {};
       for (const nodeTask of nodeTasks) {
-        const dictItem = this._deploy_atomState_combineDictItem({ flowDefId, node: nodeTask, dictLocales, codesCache });
+        const dictItem = this._deploy_atomState_combineDictItem({ node: nodeTask, dictLocales, codesCache });
         if (dictItem) {
           dictItems.push(dictItem);
         }
@@ -122,12 +122,12 @@ module.exports = ctx => {
       return dictItems;
     }
 
-    _deploy_atomState_combineDictItem({ flowDefId, node, code, title, dictLocales, codesCache }) {
+    _deploy_atomState_combineDictItem({ node, code, title, dictLocales, codesCache }) {
       // name
       const name = node.nameState || node.name;
       // code
       if (!code) {
-        code = `${flowDefId}:${name}`;
+        code = name;
       }
       if (codesCache && codesCache[code]) {
         // exists
