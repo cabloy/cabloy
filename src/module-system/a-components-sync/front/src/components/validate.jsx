@@ -225,7 +225,8 @@ export default {
           await this._invokePerformAfter(event, context, err, null);
           // inner handle
           if (err.code !== 422) throw err;
-          this.verrors = err.message;
+          const errMessage = JSON.parse(err.message);
+          this.verrors = errMessage;
           this.$emit('errorsSet', this.verrors);
           const _err = new Error(this.$text('Data Validation Error'));
           _err.code = -422;

@@ -41,7 +41,8 @@ export default {
       } catch (err) {
         if (err.code === 422) {
           // eslint-disable-next-line
-          this.validate.errors = err.message;
+          const errMessage = JSON.parse(err.message);
+          this.validate.errors = errMessage;
           const message = this.$text('Data Validation Error');
           this.$view.toast.show({ text: message });
           // need not switch layout, because saveDraftOnly take effect

@@ -34,7 +34,8 @@ export default {
         ctx.$view.navigate(url, navigateOptions);
       } catch (err) {
         if (err.code === 422) {
-          throw new Error(err.message[0].message);
+          const errMessage = JSON.parse(err.message);
+          throw new Error(errMessage[0].message);
         }
         throw err;
       }

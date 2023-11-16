@@ -143,8 +143,10 @@ export default {
     },
     async onPerformAfterValidate({ err }) {
       if (!err) return;
-      if (err.code === 422 && Array.isArray(err.message)) {
-        const message = this._findErrorMessage(err.message, '/captcha/token');
+      const errMessage = err.message;
+      // const errMessage = err.message ? JSON.parse(err.message) : null;
+      if (err.code === 422 && errMessage && Array.isArray(errMessage)) {
+        const message = this._findErrorMessage(errMessage, '/captcha/token');
         if (message) {
           this.captcha.token = null;
           return;

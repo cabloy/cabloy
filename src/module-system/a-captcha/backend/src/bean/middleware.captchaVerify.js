@@ -50,7 +50,7 @@ function combineCaptchaError({ fieldKey, message }) {
   // error
   const error = new Error();
   error.code = 422;
-  error.message = [
+  const errMessage = [
     {
       keyword: 'x-captcha',
       params: [],
@@ -59,5 +59,6 @@ function combineCaptchaError({ fieldKey, message }) {
       schemaPath: `#/properties/captcha/${fieldKey}/x-captcha`,
     },
   ];
+  error.message = JSON.stringify(errMessage, null, 2);
   return error;
 }
