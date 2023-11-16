@@ -143,13 +143,14 @@ export default {
     },
     async onPerformAfterValidate({ err }) {
       if (!err) return;
-      const errMessage = err.message;
-      // const errMessage = err.message ? JSON.parse(err.message) : null;
-      if (err.code === 422 && errMessage && Array.isArray(errMessage)) {
-        const message = this._findErrorMessage(errMessage, '/captcha/token');
-        if (message) {
-          this.captcha.token = null;
-          return;
+      if (err.code === 422) {
+        const errMessage = JSON.parse(err.message);
+        if (Array.isArray(errMessage)) {
+          const message = this._findErrorMessage(errMessage, '/captcha/token');
+          if (message) {
+            this.captcha.token = null;
+            return;
+          }
         }
       }
       // login error
