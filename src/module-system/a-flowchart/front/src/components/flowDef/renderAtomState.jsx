@@ -36,6 +36,10 @@ export default {
   },
   render() {
     const { parcel, key, property } = this.context;
+    if (this.context.validate.host.node.type === 'startEventAtom') {
+      // use default atomState:1 for startEventAtom
+      return null;
+    }
     if (!this.dict) {
       return null;
       // return <f7-list-item>{this.context.renderTitle({ slot: 'title' })}</f7-list-item>;
