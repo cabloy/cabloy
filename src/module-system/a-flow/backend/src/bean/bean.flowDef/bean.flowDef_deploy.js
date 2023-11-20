@@ -121,7 +121,7 @@ module.exports = ctx => {
 
     _deploy_atomState_combineDictItem({ node, code, title, dictLocales, codesCache }) {
       // name
-      const name = node.atomStateTip || node.name;
+      const name = node.options?.atomStateTip || node.name;
       // code
       if (!code) {
         code = name;
