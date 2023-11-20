@@ -35,7 +35,7 @@ module.exports = (context, cb) => {
   };
 
   // dist
-  const distPath = path.resolve(__dirname, `../dist${sceneValue ? '/' + sceneValue : ''}`);
+  const distPath = path.join(context.projectPath, `src/front/__dist${sceneValue ? '/' + sceneValue : ''}`);
 
   // entry
   const entryDefault = path.join(context.projectPath, 'src/front/config/config.default.js');

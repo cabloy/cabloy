@@ -28,6 +28,7 @@ node_modules
 /src/backend/logs
 /src/backend/run
 /src/front/config
+/src/front/__dist
 /src/front/__runtime
 
 /src/suite-vendor/*
