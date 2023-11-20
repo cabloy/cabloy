@@ -76,6 +76,10 @@ function _progressbar({ helper, ctx, progressId, title, canAbort, resolve, rejec
   }
   //
   function setProgress({ progressNo = 0, total = 0, progress = 0, text = '' }) {
+    if (!dialog.$el) {
+      // maybe closed
+      return;
+    }
     // prepare progressbar
     const progressbars = dialog.$el.find('.progressbar-item');
     const progressbar = ctx.$$(progressbars[progressNo]);
@@ -89,6 +93,10 @@ function _progressbar({ helper, ctx, progressId, title, canAbort, resolve, rejec
   }
   //
   function prepareProgressbars(length) {
+    if (!dialog.$el) {
+      // maybe closed
+      return;
+    }
     const progressbars = dialog.$el.find('.progressbar-item');
     if (progressbars.length > length) {
       // remove
