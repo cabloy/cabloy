@@ -26,7 +26,7 @@ module.exports = context => {
           : context.config.dev.assetsPublicPath,
     },
     resolve: {
-      symlinks: false,
+      symlinks: true,
       extensions: ['.js', '.vue', '.json'],
       alias: {
         vue: vueModulePath,
