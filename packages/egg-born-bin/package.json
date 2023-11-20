@@ -38,7 +38,7 @@
     "cli-table3": "^0.6.2",
     "compressing": "^1.5.1",
     "egg-born-backend": "^8.0.0",
-    "egg-born-front": "^8.7.1",
+    "egg-born-front": "^9.0.0",
     "egg-born-mglob": "^4.0.1",
     "egg-born-utils": "^1.1.7",
     "egg-mock": "^5.10.8",

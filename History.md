@@ -1,6 +1,12 @@
 # History
 
-## 2023-XX-XX, Version 5.0.9-alpha
+## 2023-XX-XX, Version 5.0.10-alpha
+
+- **Feat**
+
+  - 支持 pnpm
+
+## 2023-11-20, Version 5.0.9-alpha
 
 - **Feat**
 
