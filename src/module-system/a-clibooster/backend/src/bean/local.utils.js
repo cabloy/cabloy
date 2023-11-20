@@ -3,7 +3,20 @@ const fse = require('fs-extra');
 
 const __JSContent = `module.exports = ctx => {
   class Demo {
-    async execute(/* argv */) {
+    // npm run cli :tools:demo
+    // npm run cli :tools:demo execute
+    async execute(argv) {
+      await this.argv(argv);
+      await this.print();
+    }
+
+    // npm run cli :tools:demo argv
+    async argv(argv) {
+      await this.console.log({ text: argv });
+    }
+
+    // npm run cli :tools:demo print
+    async print() {
       // welcome
       await this.console.log('\\n==== Welcome to CabloyJS! ====\\n');
       // chalk
