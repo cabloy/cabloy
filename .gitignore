@@ -33,6 +33,7 @@ miniprogram_npm
 /src/backend/logs
 /src/backend/run
 /src/front/config
+/src/front/__runtime
 
 /src/suite/*
 !/src/suite/.gitkeep

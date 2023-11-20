@@ -1,5 +1,4 @@
 import mparse from 'egg-born-mparse';
-import modulesRepo from '../../__runtime/modules.js';
 import nprogressFn from './nprogress.js';
 
 export default function (Vue) {
@@ -22,6 +21,9 @@ export default function (Vue) {
   const nprogress = nprogressFn(Vue);
 
   const module = {
+    _getModulesRepo() {
+      return this._get('main').options.modulesRepo;
+    },
     _get(relativeName) {
       return Vue.prototype.$meta.modules[relativeName || 'main'];
     },
@@ -58,7 +60,7 @@ export default function (Vue) {
         const relativeName = moduleInfo.relativeName;
         const module = this._get(relativeName);
         if (module) return cb(module);
-        const moduleRepo = modulesRepo.modules[relativeName];
+        const moduleRepo = this._getModulesRepo().modules[relativeName];
         if (!moduleRepo) {
           const message = Vue.prototype.$text('ModuleNotExists');
           throw new Error(`${message}: ${relativeName}`);
@@ -152,7 +154,7 @@ export default function (Vue) {
     },
     async _import(relativeName) {
       return new Promise((resolve, reject) => {
-        const moduleRepo = modulesRepo.modules[relativeName];
+        const moduleRepo = this._getModulesRepo().modules[relativeName];
         if (!moduleRepo) {
           return reject(new Error(`Module ${relativeName} not exists`));
         }
@@ -175,19 +177,19 @@ export default function (Vue) {
       });
     },
     requireAllMonkeys() {
-      for (const relativeName in modulesRepo.modulesMonkey) {
-        const moduleRepo = modulesRepo.modules[relativeName];
+      for (const relativeName in this._getModulesRepo().modulesMonkey) {
+        const moduleRepo = this._getModulesRepo().modules[relativeName];
         this._requireJS(moduleRepo);
       }
     },
     requireAllSyncs() {
-      for (const relativeName in modulesRepo.modulesSync) {
-        const moduleRepo = modulesRepo.modules[relativeName];
+      for (const relativeName in this._getModulesRepo().modulesSync) {
+        const moduleRepo = this._getModulesRepo().modules[relativeName];
         this._requireJS(moduleRepo);
       }
     },
     _require(relativeName, cb) {
-      const moduleRepo = modulesRepo.modules[relativeName];
+      const moduleRepo = this._getModulesRepo().modules[relativeName];
       if (!moduleRepo) throw new Error(`Module ${relativeName} not exists`);
       this._requireJS(moduleRepo, cb);
     },

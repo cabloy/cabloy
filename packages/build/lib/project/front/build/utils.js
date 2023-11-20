@@ -75,7 +75,7 @@ module.exports = context => {
     },
     copyModules() {
       // runtime path
-      const runtimePath = path.join(context.config.frontPath, '__runtime');
+      const runtimePath = path.join(context.config.projectPath, 'src/front/__runtime');
       // static path
       // const staticPath = path.join(context.config.build.assetsRoot, context.config.build.assetsSubDirectory);
 

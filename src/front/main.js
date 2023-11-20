@@ -1,3 +1,5 @@
+import modulesRepo from './__runtime/modules.js';
+
 import './assets/css/app.less';
 
 import locales from './locales.js';
@@ -27,6 +29,7 @@ function install(_Vue, cb) {
 
   // options
   return cb({
+    modulesRepo,
     config,
     locales,
     monkey,
