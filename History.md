@@ -4,7 +4,7 @@
 
 - **Feat**
 
-  - 支持 pnpm
+- 支持 pnpm
 
 ## 2023-11-20, Version 5.0.9-alpha
 
