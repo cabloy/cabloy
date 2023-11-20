@@ -26,7 +26,7 @@
   "dependencies": {
     "egg-born-backend": "^8.0.0",
     "egg-born-bin": "^4.3.8",
-    "egg-born-front": "^8.8.0",
+    "egg-born-front": "^9.0.0",
     "egg-born-module-a-antdv": "^5.0.0",
     "egg-born-module-a-antvg6": "^5.0.0",
     "egg-born-module-a-antvlayout": "^5.0.0",
