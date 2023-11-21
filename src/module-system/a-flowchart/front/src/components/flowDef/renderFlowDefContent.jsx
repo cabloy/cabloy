@@ -10,18 +10,27 @@ export default {
   computed: {},
   created() {},
   methods: {
-    onSave() {
+    async onSave() {
       const { validate } = this.context;
-      return validate.perform(null, { action: 'save' });
+      return await validate.perform(null, { action: 'save' });
     },
-    onChooseEditContent() {
+    async onChooseEditContent() {
       const { parcel, validate } = this.context;
+      // item
+      let item;
+      // save when createDelay
+      if (validate.host.container.params?.createDelay) {
+        item = await this.onSave();
+      } else {
+        item = parcel.data;
+      }
+      // navigate
       const url = '/a/flowchart/flowDef/contentEdit';
       this.$view.navigate(url, {
         target: validate.readOnly ? '_self' : undefined,
         context: {
           params: {
-            item: parcel.data,
+            item,
             readOnly: validate.readOnly,
             onSave: () => {
               return this.onSave();
