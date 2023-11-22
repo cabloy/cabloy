@@ -7,6 +7,7 @@ module.exports = app => {
       tableName: 'aDict',
       tableNameModes: {
         full: 'aDictViewFull',
+        search: 'aDict',
       },
       inner: true,
       resource: true,
