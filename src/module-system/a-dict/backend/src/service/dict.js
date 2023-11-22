@@ -10,6 +10,7 @@ module.exports = app => {
       return {
         atomId: dict.atomId,
         description: dict.description,
+        dictMode: dict.dictMode,
         _dictItems: dict._dictItems,
       };
     }
