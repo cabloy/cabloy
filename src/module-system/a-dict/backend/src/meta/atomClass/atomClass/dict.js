@@ -7,7 +7,7 @@ module.exports = app => {
       tableName: 'aDict',
       tableNameModes: {
         full: 'aDictViewFull',
-        search: 'aDict',
+        search: 'aDict', // out of memory for aDictViewFull sort
       },
       inner: true,
       resource: true,
