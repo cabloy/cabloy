@@ -1,7 +1,7 @@
 let __commandsMap;
 let __commandsAll;
 
-module.exports = ctx => {
+module.exports = function SelfFactory(ctx) {
   // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class Cli {
     async meta({ context, user }) {
@@ -32,8 +32,9 @@ module.exports = ctx => {
       // create progress
       await ctx.bean.progress.create({ progressId });
       // background
-      ctx.runInBackground(async () => {
-        await this._progressInBackground({ progressId, context, user });
+      ctx.meta.util.runInBackground(async ({ ctx }) => {
+        const selfInstance = new (SelfFactory(ctx))();
+        await selfInstance._progressInBackground({ progressId, context, user });
       });
       // return progressId
       return { progressId };
