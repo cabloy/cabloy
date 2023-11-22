@@ -12,10 +12,11 @@ module.exports = ctx => {
     }
 
     async _deploy_atomState({ atomClass }) {
+      const atomClassId = await ctx.bean.atomClass.getAtomClassId(atomClass);
       // let db commit
       ctx.tail(async () => {
         await ctx.meta.util.lock({
-          resource: `${moduleInfo.relativeName}.flowDef.deployAtomState.${atomClass.module}:${atomClass.atomClassName}`,
+          resource: `${moduleInfo.relativeName}.flowDef.deployAtomState.${atomClassId}`,
           fn: async () => {
             return await this._deploy_atomState_inner({ atomClass });
           },
@@ -24,9 +25,10 @@ module.exports = ctx => {
     }
 
     async _deploy_atomState_inner({ atomClass }) {
+      const atomClassId = await ctx.bean.atomClass.getAtomClassId(atomClass);
       // all flowDefs
       const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
-      const conditions = await _nodeBaseBean._getAllConditions({ atomClassId: atomClass.id, needFlowContent: true });
+      const conditions = await _nodeBaseBean._getAllConditions({ atomClassId, needFlowContent: true });
       if (conditions.length === 0) {
         // delete dict
         await ctx.bean.atomState.dynamic_deleteDict({ atomClass });
