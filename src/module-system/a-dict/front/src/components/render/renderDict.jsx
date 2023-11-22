@@ -1,6 +1,8 @@
 import Vue from 'vue';
 const ebValidateComponentBase = Vue.prototype.$meta.module.get('a-components').options.mixins.ebValidateComponentBase;
 
+const __DictModes = ['array', 'tree'];
+
 export default {
   mixins: [ebValidateComponentBase],
   props: {
@@ -103,6 +105,20 @@ export default {
       const fromInstance = this.context.getComponentInstance(dictKeyFrom);
       const dictKey = fromInstance?.dictItemOptions?.dictKey;
       return dictKey;
+    },
+    _getDictMode() {
+      const { property } = this.context;
+      let mode = property.ebParams && property.ebParams.mode;
+      if (mode === undefined) {
+        return this.dict.dictMode;
+      }
+      if (typeof mode === 'string') {
+        mode = __DictModes.indexOf(mode);
+        if (mode === -1) {
+          mode = 0; // array is default
+        }
+      }
+      return mode;
     },
     async _loadDict_inner() {
       const { property } = this.context;
@@ -272,8 +288,8 @@ export default {
     }
     // write
     if (!this.dict) return <div></div>;
-    const mode = property.ebParams && property.ebParams.mode;
-    if (!mode || mode === 'select') {
+    const mode = this._getDictMode();
+    if (mode === 0) {
       return this._renderAsSelect();
     }
     return this._renderAsTree();
