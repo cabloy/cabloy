@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowDef {
     async deploy({ flowDefId, undeploy, deleting }) {
       // start event
@@ -12,6 +12,18 @@ module.exports = ctx => {
     }
 
     async _deploy_atomState({ atomClass }) {
+      // let db commit
+      ctx.tail(async () => {
+        await ctx.meta.util.lock({
+          resource: `${moduleInfo.relativeName}.flowDef.deployAtomState.${atomClass.module}:${atomClass.atomClassName}`,
+          fn: async () => {
+            return await this._deploy_atomState_inner({ atomClass });
+          },
+        });
+      });
+    }
+
+    async _deploy_atomState_inner({ atomClass }) {
       // all flowDefs
       const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
       const conditions = await _nodeBaseBean._getAllConditions({ atomClassId: atomClass.id, needFlowContent: true });
