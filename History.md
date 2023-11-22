@@ -7,6 +7,7 @@
 - 支持 pnpm
   - 1. sudo npm install -g pnpm
   - 2. pnpm install
+- 新增：ctx.meta.util.runInBackground
 
 ## 2023-11-20, Version 5.0.9-alpha
 
