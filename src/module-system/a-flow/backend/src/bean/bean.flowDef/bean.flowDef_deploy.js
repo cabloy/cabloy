@@ -39,7 +39,7 @@ module.exports = ctx => {
       let dictItemEnd = null;
       let dictItems = [];
       const dictLocales = {};
-      const mode = conditions.length > 1 ? 'tree' : 'select';
+      const mode = conditions.length > 1 ? 'tree' : 'array';
       // loop
       for (const condition of conditions) {
         const flowDefId = condition.flowDefId;
@@ -79,7 +79,7 @@ module.exports = ctx => {
           dictGroup.children = dictItemsTask;
           dictItems.push(dictGroup);
         } else {
-          // select
+          // array
           dictItems = dictItems.concat(dictItemsTask);
         }
       }

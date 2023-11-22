@@ -7,7 +7,7 @@ module.exports = function SelfFactory(ctx) {
         ALTER TABLE aDict
           Add COLUMN dictMode int(11) DEFAULT '0'
       `;
-      await this.ctx.model.query(sql);
+      await ctx.model.query(sql);
       // alter view: aDictViewFull
       await ctx.model.query('drop view aDictViewFull');
       sql = `
