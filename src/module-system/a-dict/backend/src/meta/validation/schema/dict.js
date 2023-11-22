@@ -20,6 +20,15 @@ module.exports = app => {
         ebType: 'text',
         ebTitle: 'Description',
       },
+      dictMode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Mode',
+        ebParams: {
+          dictKey: 'a-dictbooster:dictMode',
+        },
+        notEmpty: true,
+      },
       dictItems: {
         type: 'string',
         ebType: 'json',
@@ -60,6 +69,14 @@ module.exports = app => {
         type: 'string',
         ebType: 'text',
         ebTitle: 'Description',
+      },
+      dictMode: {
+        type: 'number',
+        ebType: 'dict',
+        ebTitle: 'Mode',
+        ebParams: {
+          dictKey: 'a-dictbooster:dictMode',
+        },
       },
     },
   };
