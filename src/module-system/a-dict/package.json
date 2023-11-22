@@ -3,7 +3,7 @@
   "version": "5.0.0",
   "title": "Dict",
   "eggBornModule": {
-    "fileVersion": 2,
+    "fileVersion": 3,
     "dependencies": {
       "a-instance": "5.0.0",
       "a-base": "5.0.0",
