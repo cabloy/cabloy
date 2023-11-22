@@ -3,6 +3,15 @@ const performActionFn = require('./performAction.js');
 
 module.exports = ctx => {
   const util = {
+    runInBackground(scope) {
+      ctx.runInBackground(async () => {
+        await ctx.meta.util.executeBeanIsolate({
+          fn: async ({ ctx }) => {
+            await scope({ ctx });
+          },
+        });
+      });
+    },
     async lock({ subdomain, resource, fn, options, redlock }) {
       if (subdomain === undefined) subdomain = ctx.subdomain;
       return await ctx.app.meta.util.lock({ subdomain, resource, fn, options, redlock });
