@@ -15,6 +15,14 @@ module.exports = app => {
       tag: false,
       comment: false,
       attachment: false,
+      fields: {
+        dicts: {
+          dictMode: {
+            dictKey: 'a-dictbooster:dictMode',
+            translate: false,
+          },
+        },
+      },
       layout: {
         config: {
           atomList: 'layoutAtomListDict',

@@ -27,7 +27,7 @@ module.exports = ctx => {
       const item = await super.read({ atomClass, options, key, user });
       if (!item) return null;
       // meta
-      this._getMeta(item);
+      await this._getMeta(item, atomClass);
       // ok
       return item;
     }
@@ -37,7 +37,7 @@ module.exports = ctx => {
       await super.select({ atomClass, options, items, user });
       // meta
       for (const item of items) {
-        this._getMeta(item);
+        await this._getMeta(item, atomClass);
       }
     }
 
@@ -114,11 +114,28 @@ module.exports = ctx => {
       }
     }
 
-    _getMeta(item) {
+    async _getMeta(item) {
+      // translate
+      await this._getMetaTranslate(item);
+      // meta
       const meta = this._ensureItemMeta(item);
       // meta.flags
       // meta.summary
       meta.summary = item.description;
+    }
+
+    async _getMetaTranslate(item) {
+      if (item.atomStaticKey === 'a-dictbooster:dictMode') return;
+      const _item = await this._dictTranslateField({
+        fieldName: 'dictMode',
+        code: item.dictMode,
+        field: {
+          dictKey: 'a-dictbooster:dictMode',
+        },
+      });
+      if (_item) {
+        Object.assign(item, _item);
+      }
     }
   }
 
