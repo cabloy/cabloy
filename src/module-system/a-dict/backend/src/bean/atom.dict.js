@@ -130,16 +130,14 @@ module.exports = ctx => {
         item._dictModeTitleLocale = ctx.text('Array');
         return;
       }
-      const _item = await this._dictTranslateField({
+      await this._dictTranslateField({
+        item,
         fieldName: 'dictMode',
         code: item.dictMode,
         field: {
           dictKey: 'a-dictbooster:dictMode',
         },
       });
-      if (_item) {
-        Object.assign(item, _item);
-      }
     }
   }
 
