@@ -93,11 +93,14 @@ export default {
       }
       return stages;
     },
-    atomStateDictKey() {
-      const useStoreAtomStage = Vue.prototype.$meta.store.useSync('a/base/atomStage');
-      const atomStage = useStoreAtomStage.toString({ atomStage: this.stage });
-      if (atomStage === 'history') return null;
-      return this.$meta.util.getProperty(this.atomClassBase, `fields.dicts.atomState.${atomStage}.dictKey`);
+    atomStateDict() {
+      const useStoreAtomState = Vue.prototype.$meta.store.useSync('a/basestore/atomState');
+      if (!useStoreAtomState) return null;
+      const dict = useStoreAtomState.getDictSync({
+        atomClass: this.atomClass,
+        atomStage: this.stage,
+      });
+      return dict;
     },
   },
   watch: {
@@ -280,7 +283,7 @@ export default {
       const domLinkGeneral = this._renderNavbarSubLink('general', 'General');
       // state: not support history
       let domLinkState;
-      if (this.atomStateDictKey) {
+      if (this.atomStateDict) {
         domLinkState = this._renderNavbarSubLink('state', 'State');
       }
       // category
@@ -324,7 +327,7 @@ export default {
       const domTabGeneral = this._renderTab('general', 'tabGeneral');
       // state
       let domTabState;
-      if (this.atomStateDictKey) {
+      if (this.atomStateDict) {
         domTabState = this._renderTab('state', 'tabState');
       }
       // category

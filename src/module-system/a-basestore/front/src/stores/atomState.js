@@ -56,6 +56,14 @@ export default function (Vue) {
         const key = __combineKey({ atomClass, atomStage });
         this.dicts[key] = dict;
       },
+      getDictSync({ atomClass, atomStage }) {
+        atomStage = __prepareAtomStageString({ atomStage });
+        const key = __combineKey({ atomClass, atomStage });
+        return Vue.get(this.dicts, key, () => {
+          // get async
+          return this.getDict({ atomClass, atomStage });
+        });
+      },
       async getDict({ atomClass, atomStage }) {
         atomStage = __prepareAtomStageString({ atomStage });
         const key = __combineKey({ atomClass, atomStage });
@@ -78,14 +86,26 @@ export default function (Vue) {
         // atomStage
         atomStage = __prepareAtomStageString({ atomStage });
         if (!atomStage) return null;
-        // dictKey
-        const dictKey = Vue.prototype.$meta.util.getProperty(
+        // check flow stage: maybe not set
+        const flowStage = atomClassBase.flow?.stage;
+        const flowStageSame = flowStage === atomStage;
+        // dictKey: static
+        let dictKey = Vue.prototype.$meta.util.getProperty(
           atomClassBase,
           `fields.dicts.atomState.${atomStage}.dictKey`
         );
-        if (!dictKey) return null;
+        if (!dictKey) {
+          // dictKey: dynamic
+          if (flowStageSame) {
+            const dictKeyInfo = await this._getDictDynamic({ atomClass });
+            dictKey = dictKeyInfo?.dictKey;
+          }
+        }
         // ok
         return dictKey;
+      },
+      async _getDictDynamic({ atomClass }) {
+        return aa.bb;
       },
       async _getDict({ atomClass, atomClassBase, atomStage }) {
         // atomClassBase
