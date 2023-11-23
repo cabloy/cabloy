@@ -30,7 +30,6 @@ module.exports = app => {
         ebOptionsBlankAuto: true,
         ebParams: {
           dictKey: 'a-dictbooster:dictLayoutType',
-          mode: 'select',
         },
         notEmpty: {
           ignoreZero: true,
@@ -54,7 +53,6 @@ module.exports = app => {
         ebTitle: 'Layout Type',
         ebParams: {
           dictKey: 'a-dictbooster:dictLayoutType',
-          mode: 'select',
         },
         ebOptionsBlankAuto: true,
       },

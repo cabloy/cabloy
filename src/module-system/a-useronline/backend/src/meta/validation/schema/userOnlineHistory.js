@@ -20,7 +20,6 @@ module.exports = app => {
         ebTitle: 'LoginType',
         ebParams: {
           dictKey: 'a-useronline:dictLoginType',
-          mode: 'select',
         },
       },
       // Online Info
@@ -71,7 +70,6 @@ module.exports = app => {
         ebTitle: 'LoginType',
         ebParams: {
           dictKey: 'a-useronline:dictLoginType',
-          mode: 'select',
         },
         ebOptionsBlankAuto: true,
       },

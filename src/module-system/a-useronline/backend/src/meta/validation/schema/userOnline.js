@@ -21,7 +21,6 @@ module.exports = app => {
         ebTitle: 'Status',
         ebParams: {
           dictKey: 'a-dictbooster:dictOnlineStatus',
-          mode: 'select',
         },
       },
       // Online Info
@@ -64,7 +63,6 @@ module.exports = app => {
         ebTitle: 'Status',
         ebParams: {
           dictKey: 'a-dictbooster:dictOnlineStatus',
-          mode: 'select',
         },
         ebOptionsBlankAuto: true,
       },

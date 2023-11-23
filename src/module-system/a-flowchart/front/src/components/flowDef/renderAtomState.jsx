@@ -45,7 +45,6 @@ export default {
       ebOptionsBlankAuto: true,
       ebParams: {
         dict: this.dict,
-        mode: 'select',
         forceLoad: true,
       },
       ebRender: null,
