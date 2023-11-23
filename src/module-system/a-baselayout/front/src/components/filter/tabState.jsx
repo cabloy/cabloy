@@ -61,7 +61,8 @@ export default {
     },
     _renderStateSelectItem({ item, stateCurrent }) {
       const isDraft = this.filterContainer.stage === 0 || this.filterContainer.stage === 'draft';
-      if (isDraft && [-1, -3].includes(item.code)) return null;
+      const code = String(item.code);
+      if (isDraft && ['-1', '-3'].includes(code)) return null;
       return (
         <eb-list-item
           key={item.code}
