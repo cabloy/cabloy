@@ -4,7 +4,10 @@ export default {
   mixins: [CommonItem],
   methods: {
     item_getAtomStateColor(item) {
-      return item.atomClosed === 0 ? 'orange' : 'gray';
+      const atomState = String(item.atomState);
+      if (['-1'].includes(atomState)) return 'teal';
+      if (['-2', '-3'].includes(atomState)) return 'gray';
+      return 'orange';
     },
     item_renderFlowNodeState(item) {
       // ignore 0/'0'
