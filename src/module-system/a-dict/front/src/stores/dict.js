@@ -27,9 +27,8 @@ export default function (Vue) {
       async findItem({ dict, dictKey, code, options }) {
         if (_checkIfEmptyForSelect(code)) return null;
         code = String(code);
-        // options
-        options = options || { separator: '/' };
-        const separator = options.separator;
+        // separator
+        const separator = options?.separator || '/';
         // dict
         if (!dict) {
           dict = await this.getDict({ dictKey });
