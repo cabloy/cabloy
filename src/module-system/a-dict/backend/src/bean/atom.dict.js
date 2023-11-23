@@ -125,7 +125,7 @@ module.exports = ctx => {
     }
 
     async _getMetaTranslate(item) {
-      if (item.atomStaticKey === 'a-dictbooster:dictMode') {
+      if (['a-dictbooster:dictMode', 'a-base:dictRoleType'].includes(item.atomStaticKey)) {
         item._dictModeTitle = 'Array';
         item._dictModeTitleLocale = ctx.text('Array');
         return;
