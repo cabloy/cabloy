@@ -39,7 +39,7 @@ module.exports = ctx => {
       let dictItemEnd = null;
       let dictItems = [];
       const dictLocales = {};
-      const mode = conditions.length > 1 ? 'tree' : 'array';
+      const mode = conditions.length > 1 ? 1 : 0;
       // loop
       for (const condition of conditions) {
         const flowDefId = condition.flowDefId;
@@ -67,7 +67,7 @@ module.exports = ctx => {
           dictItemEnd = this._deploy_atomState_combineDictItem({ node: nodeEnd, code: -1, dictLocales });
         }
         // append
-        if (mode === 'tree') {
+        if (mode === 1) {
           // tree
           const nodeGroup = { name: flowName };
           const dictGroup = this._deploy_atomState_combineDictItem({
