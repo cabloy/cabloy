@@ -4,10 +4,11 @@ module.exports = app => {
       code: 1,
       title: 'Drafting',
     },
-    {
-      code: 2,
-      title: 'Reviewing',
-    },
+    // should specified by user
+    // {
+    //   code: 2,
+    //   title: 'Reviewing',
+    // },
     {
       code: -1,
       title: 'Reviewed',
@@ -20,7 +21,7 @@ module.exports = app => {
   const dictLocales = {
     'zh-cn': {
       Drafting: '起草中',
-      Reviewing: '审核中',
+      // Reviewing: '审核中',
       Reviewed: '已审核',
       Cancelled: '已取消',
     },
@@ -28,7 +29,7 @@ module.exports = app => {
   const dict = {
     atomName: 'AtomStateDefault',
     atomStaticKey: 'dictAtomStateDefault',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     dictItems: JSON.stringify(dictItems),
     dictLocales: JSON.stringify(dictLocales),
