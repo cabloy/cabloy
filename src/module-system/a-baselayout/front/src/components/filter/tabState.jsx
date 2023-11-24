@@ -36,6 +36,12 @@ export default {
         atomStage: this.filterContainer.stage,
       });
     },
+    async onPerformClearState() {
+      const tree = this.getComponentInstance().getInstance();
+      await tree.uncheckNodes(this.filterContainer.form.state);
+      // eslint-disable-next-line
+      this.filterContainer.form.state = null;
+    },
     onItemChange(event, item) {
       // eslint-disable-next-line
       this.filterContainer.form.state = item ? item.code : null;
@@ -61,8 +67,8 @@ export default {
     },
     _renderStateSelectItem({ item, stateCurrent }) {
       const isDraft = this.filterContainer.stage === 0 || this.filterContainer.stage === 'draft';
-      const code = String(item.code);
-      if (isDraft && ['-1', '-3'].includes(code)) return null;
+      const code = item.code;
+      if (isDraft && [-1, -3].includes(code)) return null;
       return (
         <eb-list-item
           key={item.code}
@@ -73,9 +79,22 @@ export default {
         ></eb-list-item>
       );
     },
+    _renderClearState() {
+      return <eb-button propsOnPerform={this.onPerformClearState}>{this.$text('Clear State')}</eb-button>;
+    },
+    _renderStateTree() {
+      return null;
+    },
   },
   render() {
-    const domStateSelect = this._renderStateSelect();
-    return <div>{domStateSelect}</div>;
+    if (!this.dict) return null;
+    const domClearState = this._renderClearState();
+    const domStateTree = this._renderStateTree();
+    return (
+      <div>
+        {domClearState}
+        {domStateTree}
+      </div>
+    );
   },
 };
