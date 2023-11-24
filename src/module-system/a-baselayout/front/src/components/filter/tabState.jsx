@@ -83,7 +83,19 @@ export default {
       return <eb-button propsOnPerform={this.onPerformClearState}>{this.$text('Clear State')}</eb-button>;
     },
     _renderStateTree() {
-      return null;
+      // const selectedCategoryIds = [this.filterContainer.form.category];
+      const options = {
+        props: {
+          dict: this.dict,
+          leafOnly: true,
+          // selectedCodes,
+          // onDictItemClick: this.onDictItemClick,
+        },
+        on: {
+          // nodeChange: this.onNodeChange,
+        },
+      };
+      return <eb-component ref="stateTree" module="a-dict" name="dictSelect" options={options}></eb-component>;
     },
   },
   render() {
