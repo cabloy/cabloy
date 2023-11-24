@@ -2,7 +2,7 @@ export default {
   props: {
     dict: {},
     leafOnly: {},
-    disabledCategoryIds: {},
+    disabledCodes: {},
     selectedCodes: {},
   },
   data() {
@@ -53,41 +53,17 @@ export default {
       }
       return null;
     },
-    _createNodeRoot(children) {
-      const checkbox = !this.leafOnly;
-      const disabled = this.disabledCategoryIds && this.disabledCategoryIds.indexOf(0) > -1;
-      return [
-        {
-          id: 0,
-          attrs: {
-            label: this.$text('Root'),
-            toggle: true,
-            loadChildren: true,
-            checkbox,
-            checkOnLabel: checkbox,
-            selectable: checkbox,
-            itemToggle: !checkbox,
-            disabled,
-          },
-          data: {
-            id: 0,
-            categoryCatalog: 1,
-            children,
-          },
-        },
-      ];
-    },
     _createNodeChildren(children, nodeParent) {
       if (!children) return [];
       const nodes = children.map(item => {
         const isCatalog = !!item.children;
         const checkbox = !this.leafOnly || !isCatalog;
         const folder = !checkbox && isCatalog;
-        const disabled = false;
         let nodeId = item.code;
         if (nodeParent) {
           nodeId = `${nodeParent.id}_${nodeId}`;
         }
+        const disabled = this.disabledCodes && this.disabledCodes.indexOf(this._getCodeFromNodeId(nodeId)) > -1;
         const node = {
           id: nodeId,
           attrs: {
@@ -179,3 +155,27 @@ export default {
     );
   },
 };
+
+// _createNodeRoot(children) {
+//   const checkbox = !this.leafOnly;
+//   return [
+//     {
+//       id: 0,
+//       attrs: {
+//         label: this.$text('Root'),
+//         toggle: true,
+//         loadChildren: true,
+//         checkbox,
+//         checkOnLabel: checkbox,
+//         selectable: checkbox,
+//         itemToggle: !checkbox,
+//         disabled: false,
+//       },
+//       data: {
+//         id: 0,
+//         categoryCatalog: 1,
+//         children,
+//       },
+//     },
+//   ];
+// },
