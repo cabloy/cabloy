@@ -80,7 +80,7 @@ export default function (Vue) {
         const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
         return await useStoreDict.findItem({ dict, code, options });
       },
-      async _getDictKey({ atomClass, atomClassBase, atomStage }) {
+      async _getDict({ atomClass, atomClassBase, atomStage }) {
         // atomClassBase
         atomClassBase = await __prepareAtomClassBase({ atomClass, atomClassBase });
         // atomStage
@@ -89,50 +89,51 @@ export default function (Vue) {
         // check flow stage: maybe not set
         const flowStage = atomClassBase.flow?.stage;
         const flowStageSame = flowStage === atomStage;
-        // dictKey: static
-        let dictKey = Vue.prototype.$meta.util.getProperty(
-          atomClassBase,
-          `fields.dicts.atomState.${atomStage}.dictKey`
-        );
-        if (!dictKey) {
-          // dictKey: dynamic
+        // useStoreDict
+        const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
+        // dict: static
+        let dict = await this.__getDictStatic({ atomClass, atomClassBase, atomStage });
+        if (!dict) {
+          // dict: dynamic
           if (flowStageSame) {
-            const dictKeyInfo = await this._getDictDynamic({ atomClass });
-            dictKey = dictKeyInfo?.dictKey;
+            dict = await this.__getDictDynamic({ atomClass, atomStage });
           }
         }
-        // ok
-        return dictKey;
+        if (!dict) return null;
+        // check flow stage same
+        if (!flowStageSame) {
+          return dict;
+        }
+        // dict default
+        const dictDefault = await useStoreDict.getDict({ dictKey: this.dictKeyDefault });
+        // combine dict/diceDefault
+        return __combineDict({ dict, dictDefault });
       },
-      async _getDictDynamic({ atomClass }) {
-        return aa.bb;
-      },
-      async _getDict({ atomClass, atomClassBase, atomStage }) {
+      async __getDictKeyStatic({ atomClass, atomClassBase, atomStage }) {
         // atomClassBase
         atomClassBase = await __prepareAtomClassBase({ atomClass, atomClassBase });
         // atomStage
         atomStage = __prepareAtomStageString({ atomStage });
         if (!atomStage) return null;
+        // dictKey: static
+        const dictKey = Vue.prototype.$meta.util.getProperty(
+          atomClassBase,
+          `fields.dicts.atomState.${atomStage}.dictKey`
+        );
+        // ok
+        return dictKey;
+      },
+      async __getDictStatic({ atomClass, atomClassBase, atomStage }) {
         // useStoreDict
         const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
         // dictKey
-        const dictKey = await this._getDictKey({ atomClass, atomClassBase, atomStage });
+        const dictKey = await this.__getDictKeyStatic({ atomClass, atomClassBase, atomStage });
         if (!dictKey) return null;
-        // default
-        if (dictKey === 'default') {
-          return await useStoreDict.getDict({ dictKey: this.dictKeyDefault });
-        }
         // dict
-        const dict = await useStoreDict.getDict({ dictKey });
-        // check if dictKeyDefault
-        if (dictKey === this.dictKeyDefault) return dict;
-        // check flow stage
-        const flowStage = atomClassBase.flow?.stage || 'draft';
-        if (flowStage !== atomStage) return dict;
-        // dict default
-        const dictDefault = await useStoreDict.getDict({ dictKey: this.dictKeyDefault });
-        // combine dict/diceDefault
-        return __combineDict({ dict, dictDefault });
+        return await useStoreDict.getDict({ dictKey });
+      },
+      async __getDictDynamic({ atomClass }) {
+        return aa.bb;
       },
     },
   };
