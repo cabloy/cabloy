@@ -4,6 +4,12 @@ export default {
     leafOnly: {},
     disabledCodes: {},
     selectedCodes: {},
+    checkbox: {
+      default: true,
+    },
+    checkOnLabel: {
+      default: false,
+    },
   },
   data() {
     return {
@@ -24,7 +30,7 @@ export default {
           itemToggle: false,
           selectable: false,
           multiple: false,
-          checkbox: true,
+          checkbox: this.checkbox,
           checkOnLabel: true,
         },
       };
@@ -58,6 +64,7 @@ export default {
       const nodes = children.map(item => {
         const isCatalog = !!item.children;
         const checkbox = !this.leafOnly || !isCatalog;
+        const checkboxShow = this.checkbox && checkbox;
         const folder = !checkbox && isCatalog;
         let nodeId = item.code;
         if (nodeParent) {
@@ -70,8 +77,8 @@ export default {
             label: item.titleLocale || item.title,
             toggle: isCatalog,
             loadChildren: isCatalog,
-            checkbox,
-            checkOnLabel: false, // checkbox,
+            checkbox: checkboxShow,
+            checkOnLabel: this.checkOnLabel,
             selectable: checkbox,
             itemToggle: !checkbox,
             folder,

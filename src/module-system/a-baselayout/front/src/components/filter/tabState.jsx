@@ -88,6 +88,7 @@ export default {
         props: {
           dict: this.dict,
           leafOnly: true,
+          checkOnLabel: true,
           // selectedCodes,
           // onDictItemClick: this.onDictItemClick,
         },
