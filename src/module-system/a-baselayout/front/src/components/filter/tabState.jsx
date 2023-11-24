@@ -89,6 +89,7 @@ export default {
           dict: this.dict,
           leafOnly: true,
           checkOnLabel: true,
+          multiple: true,
           // selectedCodes,
           // onDictItemClick: this.onDictItemClick,
         },

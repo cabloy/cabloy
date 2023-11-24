@@ -10,6 +10,7 @@ export default {
     checkOnLabel: {
       default: false,
     },
+    multiple: {},
   },
   data() {
     return {
@@ -29,7 +30,7 @@ export default {
         attrs: {
           itemToggle: false,
           selectable: false,
-          multiple: false,
+          multiple: this.multiple,
           checkbox: this.checkbox,
           checkOnLabel: true,
         },
