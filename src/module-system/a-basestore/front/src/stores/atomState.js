@@ -133,7 +133,16 @@ export default function (Vue) {
         return await useStoreDict.getDict({ dictKey });
       },
       async __getDictDynamic({ atomClass }) {
-        return aa.bb;
+        // useStoreDict
+        const useStoreDict = await Vue.prototype.$meta.store.use('a/dict/dict');
+        // dict
+        const data = await Vue.prototype.$meta.api.post('/a/base/atomState/getDictDynamic', { atomClass });
+        if (!data) return null;
+        // set dict
+        const { dictKey, dict } = data;
+        useStoreDict.setDict({ dictKey, dict });
+        // ok
+        return dict;
       },
     },
   };

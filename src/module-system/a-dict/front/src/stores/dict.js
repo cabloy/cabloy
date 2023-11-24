@@ -13,13 +13,13 @@ export default function (Vue) {
     },
     actions: {
       setDict({ dictKey, dict }) {
+        _adjustDict({ dict });
         this.dicts[dictKey] = dict;
       },
       async getDict({ dictKey }) {
         if (this.dicts[dictKey]) return this.dicts[dictKey];
         const data = await Vue.prototype.$meta.api.post('/a/dict/dict/getDict', { dictKey });
         const dict = data;
-        _adjustDict({ dict });
         this.setDict({ dictKey, dict });
         return dict;
       },
