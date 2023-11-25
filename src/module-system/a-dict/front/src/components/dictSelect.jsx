@@ -11,6 +11,9 @@ export default {
       default: false,
     },
     multiple: {},
+    maxLevelAutoOpened: {
+      default: 0,
+    },
   },
   data() {
     return {
@@ -60,21 +63,27 @@ export default {
       }
       return null;
     },
-    _createNodeChildren(children, nodeParent) {
+    async _createNodeChildren(children, nodeParent, treeviewData) {
       if (!children) return [];
-      const nodes = children.map(item => {
+      // level
+      const levelCurrent = nodeParent.__level || 0;
+      const level = levelCurrent + 1;
+      // nodes
+      const nodes = [];
+      for (const item of children) {
         const isCatalog = !!item.children;
         const checkbox = !this.leafOnly || !isCatalog;
         const checkboxShow = this.checkbox && checkbox;
         const folder = !checkbox && isCatalog;
         let nodeId = item.code;
-        if (nodeParent) {
+        if (!nodeParent.root) {
           nodeId = `${nodeParent.id}_${nodeId}`;
         }
         const disabled = this.disabledCodes && this.disabledCodes.indexOf(this._getCodeFromNodeId(nodeId)) > -1;
         const node = {
           id: nodeId,
           attrs: {
+            id: treeviewData._calcNodeAttrId(nodeParent, item),
             label: item.titleLocale || item.title,
             toggle: isCatalog,
             loadChildren: isCatalog,
@@ -86,20 +95,24 @@ export default {
             disabled,
           },
           data: item,
+          __level: level,
         };
-        return node;
-      });
+        if (isCatalog && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
+          await treeviewData._preloadChildren(node);
+        }
+        nodes.push(node);
+      }
       return nodes;
     },
     _getCodeFromNodeId(nodeId) {
       return String(nodeId).replace(/_/g, '/');
     },
-    async onLoadChildren(node) {
+    async onLoadChildren(node, treeviewData) {
       if (node.root) {
-        return this._createNodeChildren(this.dict._dictItems);
+        return await this._createNodeChildren(this.dict._dictItems, node, treeviewData);
       }
       // children
-      return this._createNodeChildren(node.data.children, node);
+      return await this._createNodeChildren(node.data.children, node, treeviewData);
     },
     onNodeClick(node) {
       this.$emit('dictItemClick', {

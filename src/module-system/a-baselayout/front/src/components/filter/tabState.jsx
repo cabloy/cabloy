@@ -90,6 +90,7 @@ export default {
           leafOnly: true,
           checkOnLabel: true,
           multiple: true,
+          maxLevelAutoOpened: 1,
           // selectedCodes,
           // onDictItemClick: this.onDictItemClick,
         },
