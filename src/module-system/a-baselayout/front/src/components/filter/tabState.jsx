@@ -46,6 +46,9 @@ export default {
       // eslint-disable-next-line
       this.filterContainer.form.state = item ? item.code : null;
     },
+    onDictItemChange(node) {
+      console.log(node.codeFull, node.attrs.checked);
+    },
     _renderClearState() {
       return <eb-button propsOnPerform={this.onPerformClearState}>{this.$text('Clear State')}</eb-button>;
     },
@@ -59,10 +62,9 @@ export default {
           multiple: true,
           maxLevelAutoOpened: 1,
           // selectedCodes,
-          // onDictItemClick: this.onDictItemClick,
         },
         on: {
-          // nodeChange: this.onNodeChange,
+          dictItemChange: this.onDictItemChange,
         },
       };
       return <eb-component ref="stateTree" module="a-dict" name="dictSelect" options={options}></eb-component>;

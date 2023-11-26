@@ -76,10 +76,15 @@ export default {
         const checkboxShow = this.checkbox && checkbox;
         const folder = !checkbox && isCatalog;
         let nodeId = item.code;
+        let codeFull = item.code;
         if (!nodeParent.root) {
           nodeId = `${nodeParent.id}_${nodeId}`;
+          codeFull = `${nodeParent.codeFull}/${codeFull}`;
+          if (isCatalog) {
+            codeFull = `${codeFull}/`;
+          }
         }
-        const disabled = this.disabledCodes && this.disabledCodes.indexOf(this._getCodeFromNodeId(nodeId)) > -1;
+        const disabled = this.disabledCodes && this.disabledCodes.indexOf(codeFull) > -1;
         const node = {
           id: nodeId,
           attrs: {
@@ -96,6 +101,7 @@ export default {
           },
           data: item,
           __level: level,
+          codeFull,
         };
         if (isCatalog && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
           await treeviewData._preloadChildren(node);
@@ -103,9 +109,6 @@ export default {
         nodes.push(node);
       }
       return nodes;
-    },
-    _getCodeFromNodeId(nodeId) {
-      return String(nodeId).replace(/_/g, '/');
     },
     async onLoadChildren(node, treeviewData) {
       if (node.root) {
@@ -115,16 +118,10 @@ export default {
       return await this._createNodeChildren(node.data.children, node, treeviewData);
     },
     onNodeClick(node) {
-      this.$emit('dictItemClick', {
-        ...node,
-        id: this._getCodeFromNodeId(node.id),
-      });
+      this.$emit('dictItemClick', node);
     },
     onNodeChange(node) {
-      this.$emit('dictItemChange', {
-        ...node,
-        id: this._getCodeFromNodeId(node.id),
-      });
+      this.$emit('dictItemChange', node);
     },
     onPerformClearSelected() {
       this.$emit('dictClearSelected', null);
@@ -138,8 +135,8 @@ export default {
         await tree._loadChildren(nodeParent);
         // find
         nodeParent = nodeParent.children.find(item => {
-          const nodeId = this._getCodeFromNodeId(item.id);
-          return nodeId === codes.slice(0, index + 1).join('/');
+          const codeFull = item.codeFull;
+          return codeFull === codes.slice(0, index + 1).join('/');
         });
         if (!nodeParent) break;
       }
