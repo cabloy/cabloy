@@ -46,39 +46,6 @@ export default {
       // eslint-disable-next-line
       this.filterContainer.form.state = item ? item.code : null;
     },
-    _renderStateSelect() {
-      if (!this.dict) return null;
-      // current state
-      const stateCurrent = this.filterContainer.form.state;
-      const children = [];
-      children.push(
-        <eb-list-item
-          key="All"
-          radio
-          checked={stateCurrent === undefined || stateCurrent === null}
-          title={this.$text('All')}
-          onChange={event => this.onItemChange(event, null)}
-        ></eb-list-item>
-      );
-      for (const item of this.dict._dictItems) {
-        children.push(this._renderStateSelectItem({ item, stateCurrent }));
-      }
-      return <eb-list inset>{children}</eb-list>;
-    },
-    _renderStateSelectItem({ item, stateCurrent }) {
-      const isDraft = this.filterContainer.stage === 0 || this.filterContainer.stage === 'draft';
-      const code = item.code;
-      if (isDraft && [-1, -3].includes(code)) return null;
-      return (
-        <eb-list-item
-          key={item.code}
-          radio
-          checked={stateCurrent === item.code}
-          title={item.titleLocale}
-          onChange={event => this.onItemChange(event, item)}
-        ></eb-list-item>
-      );
-    },
     _renderClearState() {
       return <eb-button propsOnPerform={this.onPerformClearState}>{this.$text('Clear State')}</eb-button>;
     },
@@ -113,3 +80,37 @@ export default {
     );
   },
 };
+
+// _renderStateSelect() {
+//   if (!this.dict) return null;
+//   // current state
+//   const stateCurrent = this.filterContainer.form.state;
+//   const children = [];
+//   children.push(
+//     <eb-list-item
+//       key="All"
+//       radio
+//       checked={stateCurrent === undefined || stateCurrent === null}
+//       title={this.$text('All')}
+//       onChange={event => this.onItemChange(event, null)}
+//     ></eb-list-item>
+//   );
+//   for (const item of this.dict._dictItems) {
+//     children.push(this._renderStateSelectItem({ item, stateCurrent }));
+//   }
+//   return <eb-list inset>{children}</eb-list>;
+// },
+// _renderStateSelectItem({ item, stateCurrent }) {
+//   const isDraft = this.filterContainer.stage === 0 || this.filterContainer.stage === 'draft';
+//   const code = item.code;
+//   if (isDraft && [-1, -3].includes(code)) return null;
+//   return (
+//     <eb-list-item
+//       key={item.code}
+//       radio
+//       checked={stateCurrent === item.code}
+//       title={item.titleLocale}
+//       onChange={event => this.onItemChange(event, item)}
+//     ></eb-list-item>
+//   );
+// },

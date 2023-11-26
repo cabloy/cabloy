@@ -120,8 +120,14 @@ export default {
         id: this._getCodeFromNodeId(node.id),
       });
     },
+    onNodeChange(node) {
+      this.$emit('dictItemChange', {
+        ...node,
+        id: this._getCodeFromNodeId(node.id),
+      });
+    },
     onPerformClearSelected() {
-      this.$emit('dictItemClick', null);
+      this.$emit('dictClearSelected', null);
     },
     async selectDictItem(code) {
       const tree = this.getInstance();
@@ -161,6 +167,7 @@ export default {
           auto={false}
           propsOnLoadChildren={this.onLoadChildren}
           onNodeClick={this.onNodeClick}
+          onNodeChange={this.onNodeChange}
         ></eb-treeview>
       );
     },
