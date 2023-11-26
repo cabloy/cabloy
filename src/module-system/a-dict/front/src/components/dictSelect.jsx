@@ -128,10 +128,18 @@ export default {
     },
     async onPerformClearSelected() {
       const tree = this.getInstance();
-      const checkedNodes = tree.checked();
-      const nodeIds = checkedNodes.map(item => item.id);
-      await tree.uncheckNodes(nodeIds);
+      let checkedNodes = tree.checked();
+      if (checkedNodes) {
+        if (!Array.isArray(checkedNodes)) {
+          checkedNodes = [checkedNodes];
+        }
+        const nodeIds = checkedNodes.map(item => item.id);
+        await tree.uncheckNodes(nodeIds);
+      }
       this.$emit('dictClearSelected', null);
+    },
+    async selectDictItem(code) {
+      return await this.selectDictItems([code]);
     },
     async selectDictItems(codes) {
       if (!codes || codes.length === 0) return;

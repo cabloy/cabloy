@@ -36,8 +36,8 @@ export default {
       this.contextCallback(200, node);
       this.$f7router.back();
     },
-    onCodeMatchClick(codeMatch) {
-      this.$refs.tree.selectDictItem(codeMatch.code);
+    async onCodeMatchClick(codeMatch) {
+      await this.$refs.tree.selectDictItem(codeMatch.code);
     },
   },
   render() {
