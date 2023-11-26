@@ -35,6 +35,21 @@ export default {
         atomClass: this.filterContainer.atomClass,
         atomStage: this.filterContainer.stage,
       });
+      // test
+      console.log(this.dict);
+      const useStoreDict = await this.$store.use('a/dict/dict');
+      // let aa = await useStoreDict.findItem({ dict: this.dict, code: 1 });
+      // console.log(aa);
+      // aa = await useStoreDict.findItem({ dict: this.dict, code: 'test-flow:set01_atomAssigneesConfirmation' });
+      // console.log(aa);
+      const aa = await useStoreDict.findItem({ dict: this.dict, code: 'test-flow:set01_atomAssigneesConfirmation/' });
+      console.log(aa);
+      // aa = await useStoreDict.findItem({
+      //   dict: this.dict,
+      //   code: 'test-flow:set01_atomAssigneesConfirmation/Review',
+      // });
+      // console.log(aa);
+      // test
     },
     getComponentInstance() {
       return this.$refs.stateTree.getComponentInstance();
