@@ -136,10 +136,7 @@ export default {
     async selectDictItems(codes) {
       if (!codes || codes.length === 0) return;
       const tree = this.getInstance();
-
-      // const nodeIds = codes.map(code => this._getNodeIdFromCode(code));
-      // await tree.checkNodes(nodeIds, true, true);
-
+      // find nodes
       const nodesRes = [];
       for (const codeFull of codes) {
         const codeFullWant = String(codeFull);
@@ -158,31 +155,21 @@ export default {
           nodesRes.push(node);
         }
       }
-
-      // const codes = String(code).split('/');
-      // let nodeParent = tree.treeviewRoot;
-      // for (let index = 0; index < codes.length; index++) {
-      //   // force load children
-      //   await tree._loadChildren(nodeParent);
-      //   // find
-      //   nodeParent = nodeParent.children.find(item => {
-      //     const codeFull = item.codeFull;
-      //     return codeFull === codes.slice(0, index + 1).join('/');
-      //   });
-      //   if (!nodeParent) break;
-      // }
-      // if (nodeParent) {
-      //   await tree.checkNodes([nodeParent.id], false, true);
-      //   this.$nextTick(() => {
-      //     const $el = tree.getElementByNode(nodeParent);
-      //     if ($el.length > 0) {
-      //       $el[0].scrollIntoView({
-      //         block: 'center',
-      //         behavior: 'smooth',
-      //       });
-      //     }
-      //   });
-      // }
+      if (nodesRes.length > 0) {
+        // check nodes
+        const nodeIds = nodesRes.map(node => this._getNodeIdFromCode(node.data.codeFull));
+        await tree.checkNodes(nodeIds, false, true);
+        // scroll to the first node
+        this.$nextTick(() => {
+          const $el = tree.getElementByNode(nodesRes[0]);
+          if ($el.length > 0) {
+            $el[0].scrollIntoView({
+              block: 'center',
+              behavior: 'smooth',
+            });
+          }
+        });
+      }
     },
     _renderClearSelected() {
       if (!this.selectedCodesArray || this.selectedCodesArray.length === 0) return null;
