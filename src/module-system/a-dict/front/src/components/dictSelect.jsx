@@ -20,14 +20,22 @@ export default {
       inited: false,
     };
   },
+  computed: {
+    selectedCodesArray() {
+      const selectedCodes = this.selectedCodes;
+      if (selectedCodes === undefined || selectedCodes === null) return null;
+      if (Array.isArray(selectedCodes)) return selectedCodes;
+      return [selectedCodes];
+    },
+  },
   mounted() {
-    this.init(this.selectedCodes);
+    this.init(this.selectedCodesArray);
   },
   methods: {
     getInstance() {
       return this.$refs.tree;
     },
-    async init(selectedCodes) {
+    async init(selectedCodesArray) {
       // root
       const root = {
         attrs: {
@@ -42,8 +50,8 @@ export default {
       const tree = this.getInstance();
       await tree.load(root);
       // checkNodes
-      if (selectedCodes && selectedCodes.length > 0) {
-        for (const code of selectedCodes) {
+      if (selectedCodesArray && selectedCodesArray.length > 0) {
+        for (const code of selectedCodesArray) {
           await this.selectDictItem(code);
         }
       }
@@ -121,9 +129,15 @@ export default {
       this.$emit('dictItemClick', node);
     },
     onNodeChange(node) {
-      this.$emit('dictItemChange', node);
+      const tree = this.getInstance();
+      const checkedNodes = tree.checked();
+      this.$emit('dictItemChange', node, checkedNodes);
     },
-    onPerformClearSelected() {
+    async onPerformClearSelected() {
+      const tree = this.getInstance();
+      const checkedNodes = tree.checked();
+      const nodeIds = checkedNodes.map(item => item.id);
+      await tree.uncheckNodes(nodeIds);
       this.$emit('dictClearSelected', null);
     },
     async selectDictItem(code) {
@@ -154,7 +168,7 @@ export default {
       }
     },
     _renderClearSelected() {
-      if (!this.selectedCodes || this.selectedCodes.length === 0) return null;
+      if (!this.selectedCodesArray || this.selectedCodesArray.length === 0) return null;
       return <eb-button propsOnPerform={this.onPerformClearSelected}>{this.$text('Clear Selected')}</eb-button>;
     },
     _renderDictTree() {

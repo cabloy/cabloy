@@ -39,15 +39,16 @@ export default {
     getComponentInstance() {
       return this.$refs.stateTree.getComponentInstance();
     },
-    onDictItemChange() {
-      const tree = this.getComponentInstance().getInstance();
-      const checkedNodes = tree.checked();
+    onDictItemChange(node, checkedNodes) {
       // eslint-disable-next-line
       this.filterContainer.form.state = checkedNodes.map(item => item.codeFull);
     },
+    onDictClearSelected() {
+      // eslint-disable-next-line
+      this.filterContainer.form.state = null;
+    },
     _renderStateTree() {
-      const state = this.filterContainer.form.state;
-      const selectedCodes = Array.isArray(state) ? state : [state];
+      const selectedCodes = this.filterContainer.form.state;
       const options = {
         props: {
           dict: this.dict,
@@ -59,6 +60,7 @@ export default {
         },
         on: {
           dictItemChange: this.onDictItemChange,
+          dictClearSelected: this.onDictClearSelected,
         },
       };
       return <eb-component ref="stateTree" module="a-dict" name="dictSelect" options={options}></eb-component>;
