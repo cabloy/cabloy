@@ -136,7 +136,8 @@ export default {
     async selectDictItems(codes) {
       if (!codes || codes.length === 0) return;
       const tree = this.getInstance();
-      await tree.checkNodes(codes, true, true);
+      const nodeIds = codes.map(code => this._getNodeIdFromCode(code));
+      await tree.checkNodes(nodeIds, true, true);
 
       // const codes = String(code).split('/');
       // let nodeParent = tree.treeviewRoot;
