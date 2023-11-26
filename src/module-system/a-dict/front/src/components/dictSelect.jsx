@@ -92,11 +92,14 @@ export default {
             codeFull = `${codeFull}/`;
           }
         }
+        if (typeof nodeId === 'string') {
+          nodeId = nodeId.replace(/:/g, '_');
+        }
         const disabled = this.disabledCodes && this.disabledCodes.indexOf(codeFull) > -1;
         const node = {
           id: nodeId,
           attrs: {
-            id: treeviewData._calcNodeAttrId(nodeParent, { id: item.code }),
+            id: nodeId,
             label: item.titleLocale || item.title,
             toggle: isCatalog,
             loadChildren: isCatalog,
