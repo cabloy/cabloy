@@ -136,8 +136,28 @@ export default {
     async selectDictItems(codes) {
       if (!codes || codes.length === 0) return;
       const tree = this.getInstance();
-      const nodeIds = codes.map(code => this._getNodeIdFromCode(code));
-      await tree.checkNodes(nodeIds, true, true);
+
+      // const nodeIds = codes.map(code => this._getNodeIdFromCode(code));
+      // await tree.checkNodes(nodeIds, true, true);
+
+      const nodesRes = [];
+      for (const codeFull of codes) {
+        const codeFullWant = String(codeFull);
+        const node = await tree.findAsync(null, true, item => {
+          const codeFullCurrent = String(item.data.codeFull);
+          if (codeFullWant === codeFullCurrent) {
+            return true;
+          }
+          if (codeFullWant.indexOf(codeFullCurrent) === 0) {
+            return false; // step into
+          }
+          // not step into
+          return null;
+        });
+        if (node) {
+          nodesRes.push(node);
+        }
+      }
 
       // const codes = String(code).split('/');
       // let nodeParent = tree.treeviewRoot;

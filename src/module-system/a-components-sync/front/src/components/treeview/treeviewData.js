@@ -92,10 +92,16 @@ export default {
     find(nodeStart, cb) {
       let node = null;
       this.treeDown(nodeStart, item => {
-        if (cb(item)) {
+        const res = cb(item);
+        if (res === true) {
           node = item;
           return false; // break
         }
+        if (res === false) {
+          return null; // step into
+        }
+        // others
+        return true; // continue/not step into
       });
       return node;
     },
