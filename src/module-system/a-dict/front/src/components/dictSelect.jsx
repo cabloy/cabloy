@@ -50,11 +50,7 @@ export default {
       const tree = this.getInstance();
       await tree.load(root);
       // checkNodes
-      if (selectedCodesArray && selectedCodesArray.length > 0) {
-        for (const code of selectedCodesArray) {
-          await this.selectDictItem(code);
-        }
-      }
+      await this.selectDictItems(selectedCodesArray);
       // inited
       this.inited = true;
     },
@@ -83,23 +79,12 @@ export default {
         const checkbox = !this.leafOnly || !isCatalog;
         const checkboxShow = this.checkbox && checkbox;
         const folder = !checkbox && isCatalog;
-        let nodeId = item.code;
-        let codeFull = item.code;
-        if (!nodeParent.root) {
-          nodeId = `${nodeParent.id}_${nodeId}`;
-          codeFull = `${nodeParent.codeFull}/${codeFull}`;
-          if (isCatalog) {
-            codeFull = `${codeFull}/`;
-          }
-        }
-        if (typeof nodeId === 'string') {
-          nodeId = nodeId.replace(/:/g, '_');
-        }
-        const disabled = this.disabledCodes && this.disabledCodes.indexOf(codeFull) > -1;
+        const nodeId = this._getNodeIdFromCode(item.codeFull);
+        const disabled = this.disabledCodes && this.disabledCodes.indexOf(item.codeFull) > -1;
         const node = {
           id: nodeId,
           attrs: {
-            id: nodeId,
+            id: treeviewData._calcNodeAttrId(nodeParent, { id: this._getNodeIdFromCode(item.code) }),
             label: item.titleLocale || item.title,
             toggle: isCatalog,
             loadChildren: isCatalog,
@@ -112,7 +97,6 @@ export default {
           },
           data: item,
           __level: level,
-          codeFull,
         };
         if (isCatalog && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
           await treeviewData._preloadChildren(node);
@@ -120,6 +104,12 @@ export default {
         nodes.push(node);
       }
       return nodes;
+    },
+    _getNodeIdFromCode(code) {
+      if (typeof code === 'string') {
+        code = code.replace(/\/:/g, '_');
+      }
+      return code;
     },
     async onLoadChildren(node, treeviewData) {
       if (node.root) {
@@ -143,32 +133,35 @@ export default {
       await tree.uncheckNodes(nodeIds);
       this.$emit('dictClearSelected', null);
     },
-    async selectDictItem(code) {
+    async selectDictItems(codes) {
+      if (!codes || codes.length === 0) return;
       const tree = this.getInstance();
-      const codes = String(code).split('/');
-      let nodeParent = tree.treeviewRoot;
-      for (let index = 0; index < codes.length; index++) {
-        // force load children
-        await tree._loadChildren(nodeParent);
-        // find
-        nodeParent = nodeParent.children.find(item => {
-          const codeFull = item.codeFull;
-          return codeFull === codes.slice(0, index + 1).join('/');
-        });
-        if (!nodeParent) break;
-      }
-      if (nodeParent) {
-        await tree.checkNodes([nodeParent.id], false, true);
-        this.$nextTick(() => {
-          const $el = tree.getElementByNode(nodeParent);
-          if ($el.length > 0) {
-            $el[0].scrollIntoView({
-              block: 'center',
-              behavior: 'smooth',
-            });
-          }
-        });
-      }
+      await tree.checkNodes(codes, true, true);
+
+      // const codes = String(code).split('/');
+      // let nodeParent = tree.treeviewRoot;
+      // for (let index = 0; index < codes.length; index++) {
+      //   // force load children
+      //   await tree._loadChildren(nodeParent);
+      //   // find
+      //   nodeParent = nodeParent.children.find(item => {
+      //     const codeFull = item.codeFull;
+      //     return codeFull === codes.slice(0, index + 1).join('/');
+      //   });
+      //   if (!nodeParent) break;
+      // }
+      // if (nodeParent) {
+      //   await tree.checkNodes([nodeParent.id], false, true);
+      //   this.$nextTick(() => {
+      //     const $el = tree.getElementByNode(nodeParent);
+      //     if ($el.length > 0) {
+      //       $el[0].scrollIntoView({
+      //         block: 'center',
+      //         behavior: 'smooth',
+      //       });
+      //     }
+      //   });
+      // }
     },
     _renderClearSelected() {
       if (!this.selectedCodesArray || this.selectedCodesArray.length === 0) return null;
