@@ -41,7 +41,7 @@ export default {
     },
     onDictItemChange(node, checkedNodes) {
       // eslint-disable-next-line
-      this.filterContainer.form.state = checkedNodes.map(item => item.codeFull);
+      this.filterContainer.form.state = checkedNodes.map(node => node.data.codeFull);
     },
     onDictClearSelected() {
       // eslint-disable-next-line
