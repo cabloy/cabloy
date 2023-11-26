@@ -104,10 +104,15 @@ export default {
       let node = null;
       await this.treeDownAsync(nodeStart, loadChildren, async item => {
         const res = await cb(item);
-        if (res) {
+        if (res === true) {
           node = item;
           return false; // break
         }
+        if (res === false) {
+          return null; // step into
+        }
+        // others
+        return true; // continue/not step into
       });
       return node;
     },
@@ -265,28 +270,27 @@ export default {
         // current first
         let res = cb(node, nodeParent);
         if (res === false) return false; // return immediately
-        if (res !== true) {
-          // children
-          res = this._treeDown(node, cb);
-          if (res === false) return false; // return immediately
-        }
+        if (res === true) continue;
+        // children
+        res = this._treeDown(node, cb);
+        if (res === false) return false; // return immediately
       }
     },
+    // res: false(break) / true(continue) / undefined/null(step into)
     async _treeDownAsync(nodeParent, loadChildren, cb) {
       // children
       for (const node of nodeParent.children) {
         // current first
         let res = await cb(node, nodeParent);
         if (res === false) return false; // return immediately
-        if (res !== true) {
-          // loadChildren
-          if (loadChildren) {
-            await this._loadChildren(node);
-          }
-          // children
-          res = await this._treeDownAsync(node, loadChildren, cb);
-          if (res === false) return false; // return immediately
+        if (res === true) continue;
+        // loadChildren
+        if (loadChildren) {
+          await this._loadChildren(node);
         }
+        // children
+        res = await this._treeDownAsync(node, loadChildren, cb);
+        if (res === false) return false; // return immediately
       }
     },
     _initRootNode(root) {
