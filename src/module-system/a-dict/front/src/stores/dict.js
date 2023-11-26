@@ -56,7 +56,6 @@ export default function (Vue) {
           titleFull,
           titleLocaleFull,
         };
-        console.log(dictItemRes);
         // cache
         dict._cache[codeFull] = dictItemRes;
         // ok
