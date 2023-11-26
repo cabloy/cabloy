@@ -88,7 +88,7 @@ export default {
         const node = {
           id: nodeId,
           attrs: {
-            id: treeviewData._calcNodeAttrId(nodeParent, item),
+            id: treeviewData._calcNodeAttrId(nodeParent, { id: item.code }),
             label: item.titleLocale || item.title,
             toggle: isCatalog,
             loadChildren: isCatalog,

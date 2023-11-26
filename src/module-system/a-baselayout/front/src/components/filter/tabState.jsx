@@ -36,24 +36,18 @@ export default {
         atomStage: this.filterContainer.stage,
       });
     },
-    async onPerformClearState() {
+    getComponentInstance() {
+      return this.$refs.stateTree.getComponentInstance();
+    },
+    onDictItemChange() {
       const tree = this.getComponentInstance().getInstance();
-      await tree.uncheckNodes(this.filterContainer.form.state);
+      const checkedNodes = tree.checked();
       // eslint-disable-next-line
-      this.filterContainer.form.state = null;
-    },
-    onItemChange(event, item) {
-      // eslint-disable-next-line
-      this.filterContainer.form.state = item ? item.code : null;
-    },
-    onDictItemChange(node) {
-      console.log(node.codeFull, node.attrs.checked);
-    },
-    _renderClearState() {
-      return <eb-button propsOnPerform={this.onPerformClearState}>{this.$text('Clear State')}</eb-button>;
+      this.filterContainer.form.state = checkedNodes.map(item => item.codeFull);
     },
     _renderStateTree() {
-      // const selectedCategoryIds = [this.filterContainer.form.category];
+      const state = this.filterContainer.form.state;
+      const selectedCodes = Array.isArray(state) ? state : [state];
       const options = {
         props: {
           dict: this.dict,
@@ -61,7 +55,7 @@ export default {
           checkOnLabel: true,
           multiple: true,
           maxLevelAutoOpened: 1,
-          // selectedCodes,
+          selectedCodes,
         },
         on: {
           dictItemChange: this.onDictItemChange,
@@ -72,14 +66,8 @@ export default {
   },
   render() {
     if (!this.dict) return null;
-    const domClearState = this._renderClearState();
     const domStateTree = this._renderStateTree();
-    return (
-      <div>
-        {domClearState}
-        {domStateTree}
-      </div>
-    );
+    return <div>{domStateTree}</div>;
   },
 };
 
