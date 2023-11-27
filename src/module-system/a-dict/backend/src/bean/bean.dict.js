@@ -173,11 +173,18 @@ module.exports = ctx => {
         dictItemsMap: dict._dictItemsMap,
         dictItems: dict._dictItems,
         locale,
+        itemParent: null,
       });
     }
 
-    _prepareDict_adjust_loop({ dict, dictItemsMap, dictItems, locale }) {
+    _prepareDict_adjust_loop({ dict, dictItemsMap, dictItems, locale, itemParent }) {
       for (const item of dictItems) {
+        // codeFull
+        let codeFull = itemParent ? `${itemParent.codeFull}${item.code}` : item.code;
+        if (item.children) {
+          codeFull = `${codeFull}/`;
+        }
+        item.codeFull = codeFull;
         // self
         item.titleLocale = this._prepareDict_titleLocale({ dict, title: item.title, locale });
         dictItemsMap[item.code] = item;
@@ -189,6 +196,7 @@ module.exports = ctx => {
             dictItemsMap: item._childrenMap,
             dictItems: item.children,
             locale,
+            itemParent: item,
           });
         }
       }
