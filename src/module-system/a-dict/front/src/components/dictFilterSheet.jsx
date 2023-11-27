@@ -45,7 +45,7 @@ export default {
       if (!dictItems || dictItems.length === 0) return false;
       const query = context.queries.shift();
       for (const dictItem of dictItems) {
-        const codeCurrent = context.codeParent ? `${context.codeParent}/${dictItem.code}` : dictItem.code;
+        const codeCurrent = dictItem.codeFull;
         const titleLocaleCurrent = context.titleLocaleParent
           ? `${context.titleLocaleParent}/${dictItem.titleLocale}`
           : dictItem.titleLocale;
