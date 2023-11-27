@@ -169,7 +169,15 @@ module.exports = function (app) {
 
     // invoked in agent
     _collectDevelopmentWatchDirs() {
-      const __pathes = ['backend/config', 'module', 'module-system', 'module-vendor', 'suite', 'suite-vendor'];
+      const __pathes = [
+        'backend/config',
+        'backend/demo',
+        'module',
+        'module-system',
+        'module-vendor',
+        'suite',
+        'suite-vendor',
+      ];
       const pathSrc = path.resolve(app.config.baseDir, '..');
       const watchDirs = [];
       for (const __path of __pathes) {
@@ -185,7 +193,11 @@ module.exports = function (app) {
     // invoked in agent
     _developmentChange(info) {
       info = info.replace(/\\/g, '/');
-      if (info.indexOf('/backend/src/') > -1 || info.indexOf('/src/backend/config/') > -1) {
+      if (
+        info.indexOf('/backend/src/') > -1 ||
+        info.indexOf('/src/backend/config/') > -1 ||
+        info.indexOf('/src/backend/demo/') > -1
+      ) {
         app.logger.warn(`[agent:development] reload worker because ${info} changed`);
         this._reloadByApp({ action: 'now' });
       }
