@@ -28,10 +28,14 @@ module.exports = ctx => {
 
     // options: separator
     //  find by code or title
-    async findItem({ dictKey, code, title, options }) {
+    async findItem({ dictKey, code: codeFull, title, options }) {
       let findByCode;
-      if (!this._checkIfEmptyForSelect(code)) {
-        code = String(code);
+      if (!this._checkIfEmptyForSelect(codeFull)) {
+        codeFull = String(codeFull);
+        // trim ending /
+        if (codeFull.charAt(codeFull.length - 1) === '/') {
+          codeFull = codeFull.substring(0, codeFull.length - 1);
+        }
         findByCode = true;
       } else if (title) {
         findByCode = false;
@@ -47,7 +51,7 @@ module.exports = ctx => {
       const dict = await this.getDict({ dictKey, locale });
       if (!dict._cacheCode) dict._cacheCode = {};
       if (!dict._cacheTitle) dict._cacheTitle = {};
-      let dictItemRes = findByCode ? dict._cacheCode[code] : dict._cacheTitle[title];
+      let dictItemRes = findByCode ? dict._cacheCode[codeFull] : dict._cacheTitle[title];
       if (dictItemRes) return dictItemRes;
       // find
       const dictItemsRes = [];
@@ -55,23 +59,21 @@ module.exports = ctx => {
         dictItemsRes,
         dictItems: dict._dictItems,
         dictItemsMap: dict._dictItemsMap,
-        codes: findByCode ? code.split(__SeparatorCode) : undefined,
+        codes: findByCode ? codeFull.split(__SeparatorCode) : undefined,
         titles: findByCode ? undefined : title.split(separator),
         findByCode,
       });
       if (!res) return null;
-      const codeFull = findByCode ? code : dictItemsRes.map(item => item.code).join(__SeparatorCode);
       const titleFull = dictItemsRes.map(item => item.title).join(separator);
       const titleLocaleFull = dictItemsRes.map(item => item.titleLocale).join(separator);
       dictItemRes = {
         ...dictItemsRes[dictItemsRes.length - 1],
-        codeFull,
         titleFull,
         titleLocaleFull,
       };
       // cache
       if (findByCode) {
-        dict._cacheCode[code] = dictItemRes;
+        dict._cacheCode[codeFull] = dictItemRes;
       } else {
         dict._cacheTitle[title] = dictItemRes;
       }
