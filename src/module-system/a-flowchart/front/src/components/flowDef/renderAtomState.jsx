@@ -40,6 +40,9 @@ export default {
       return null;
       // return <f7-list-item>{this.context.renderTitle({ slot: 'title' })}</f7-list-item>;
     }
+    if (this.dict.atomStateMode === 'dynamic') {
+      return null;
+    }
     const propertyNew = this.$meta.util.extend({}, property, {
       ebType: 'dict',
       ebOptionsBlankAuto: true,
