@@ -1,4 +1,8 @@
 import Vue from 'vue';
+import ActionActomAtom from './action/actionAtomName.js';
+import ActionDateRange from './action/actionDateRange.js';
+import ActionDict from './action/actionDict.js';
+
 const ebActionBase = Vue.prototype.$meta.module.get('a-base').options.mixins.ebActionBase;
 
 export default {
@@ -7,6 +11,9 @@ export default {
   },
   mixins: [
     ebActionBase, //
+    ActionActomAtom,
+    ActionDateRange,
+    ActionDict,
   ],
   methods: {
     onAction() {
