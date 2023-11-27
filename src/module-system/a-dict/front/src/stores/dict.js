@@ -76,18 +76,11 @@ function _adjustDict({ dict }) {
     dict,
     dictItemsMap: dict._dictItemsMap,
     dictItems: dict._dictItems,
-    itemParent: null,
   });
 }
 
-function _adjustDict_loop({ dict, dictItemsMap, dictItems, itemParent }) {
+function _adjustDict_loop({ dict, dictItemsMap, dictItems }) {
   for (const item of dictItems) {
-    // codeFull
-    let codeFull = itemParent ? `${itemParent.codeFull}${item.code}` : item.code;
-    if (item.children) {
-      codeFull = `${codeFull}/`;
-    }
-    item.codeFull = codeFull;
     // self
     dictItemsMap[item.code] = item;
     // children
@@ -97,7 +90,6 @@ function _adjustDict_loop({ dict, dictItemsMap, dictItems, itemParent }) {
         dict,
         dictItemsMap: item._childrenMap,
         dictItems: item.children,
-        itemParent: item,
       });
     }
   }
