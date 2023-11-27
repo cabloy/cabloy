@@ -49,7 +49,9 @@ function install(_Vue) {
         const self = this;
         try {
           self.renderFreeze(true);
-          await cb.call(self);
+          await cb();
+          // maybe called in another vue component context
+          //await cb.call(self);
         } finally {
           self.renderFreeze(false);
         }
