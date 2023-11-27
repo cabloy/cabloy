@@ -621,12 +621,13 @@ export default function (Vue) {
       const properties = schema.schema.properties;
       for (const key in properties) {
         const property = properties[key];
+        const dataKey = property.ebDataKey || key;
         const ebSearch = property.ebSearch;
         if (ebSearch === false) continue;
         // dataPath
-        const dataPath = key;
+        const dataPath = dataKey;
         // value
-        const value = data[key];
+        const value = data[dataKey];
         // operator
         const operator = this._combineSearchParseOperator({
           property,
@@ -638,10 +639,10 @@ export default function (Vue) {
           res = this.performActionSync({
             ctx,
             action: ebSearch.combine,
-            item: { key, property, dataPath, value, operator, schema, data, searchStates },
+            item: { key, dataKey, property, dataPath, value, operator, schema, data, searchStates },
           });
         } else {
-          res = this._combineSearchClause({ key, property, value, operator });
+          res = this._combineSearchClause({ key, dataKey, property, value, operator });
         }
         if (res) {
           Object.assign(clause, res);
@@ -662,14 +663,14 @@ export default function (Vue) {
       }
       return { op };
     },
-    _combineSearchClause({ key, property, value, operator }) {
+    _combineSearchClause({ key, dataKey, property, value, operator }) {
       const ebSearch = property.ebSearch;
       if (!property.type) return null;
       if (this.checkIfEmptyForSelect(value)) return null;
       if (ebSearch && ebSearch.ignoreValue === value) return null;
       let tableAlias = ebSearch && ebSearch.tableAlias;
       tableAlias = tableAlias === null ? null : tableAlias || 'f';
-      const fieldName = (ebSearch && ebSearch.fieldName) || key;
+      const fieldName = (ebSearch && ebSearch.fieldName) || dataKey;
       const clauseName = tableAlias === null ? fieldName : `${tableAlias}.${fieldName}`;
       const clauseValue = {
         op: operator.op,
