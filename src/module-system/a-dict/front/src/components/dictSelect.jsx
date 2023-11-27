@@ -107,7 +107,7 @@ export default {
     },
     _getNodeIdFromCode(code) {
       if (typeof code === 'string') {
-        code = code.replace(/\/:/g, '_');
+        code = code.replace(/[\/:]/g, '_');
       }
       return code;
     },
