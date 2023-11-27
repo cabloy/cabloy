@@ -1,13 +1,15 @@
 # History
 
-## 2023-XX-XX, Version 5.0.10-alpha
+## 2023-XX-XX, Version 5.0.11-alpha
 
 - **Feat**
 
-- 支持 pnpm
-  - 1. sudo npm install -g pnpm
-  - 2. pnpm install
-- 新增：ctx.meta.util.runInBackground
+## 2023-11-27, Version 5.0.10-alpha
+
+- **Feat**
+
+- atomState 支持两种字典：静态字典、动态字典
+  - 动态字典由绑定的工作流自动生成，方便检索数据
 
 ## 2023-11-20, Version 5.0.9-alpha
 
