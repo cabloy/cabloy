@@ -45,6 +45,15 @@ function install(_Vue) {
           }
         }
       },
+      async renderFreezeBegin(cb) {
+        const self = this;
+        try {
+          self.renderFreeze(true);
+          await cb.call(self);
+        } finally {
+          self.renderFreeze(false);
+        }
+      },
     },
   });
 }

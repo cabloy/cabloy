@@ -83,7 +83,9 @@ export default {
       nodeStart = nodeStart || this.treeviewRoot;
       if (!nodeStart) return;
       // treeDown
-      await this._treeDownAsync(nodeStart, loadChildren, cb);
+      await this.renderFreezeBegin(async () => {
+        await this._treeDownAsync(nodeStart, loadChildren, cb);
+      });
     },
     treeParent(nodeStart, cb) {
       if (!nodeStart) return;
