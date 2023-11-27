@@ -2,6 +2,7 @@ import * as VueAll from 'vue';
 import DevInfo from './plugin/devInfo.js';
 import Preload from './plugin/preload.js';
 import ComponentMounted from './plugin/componentMounted.js';
+import RenderFreeze from './plugin/renderFreeze.js';
 
 // exports
 const Vue = VueAll.default;
@@ -50,5 +51,7 @@ if (process.env.NODE_ENV === 'development') {
 Vue.use(Preload);
 // plugin: ComponentMounted
 Vue.use(ComponentMounted);
+// plugin: renderFreeze
+Vue.use(RenderFreeze);
 
 export default Vue;
