@@ -13,13 +13,13 @@ function install(_Vue) {
     },
     created() {
       const self = this;
-      self.__renderFreeze_createElement = self.$createElement;
-      self.$createElement = function (...argv) {
+      self.__renderFreeze_render = self.$options.render;
+      self.$options.render = function (...argv) {
         if (self.$data.__renderFreeze === 0) {
-          return self.__renderFreeze_createElement(...argv);
+          return self.__renderFreeze_render(...argv);
         }
         if (!self.__renderFreeze_snapshot) {
-          self.__renderFreeze_snapshot = self.__renderFreeze_createElement(...argv);
+          self.__renderFreeze_snapshot = self.__renderFreeze_render(...argv);
         }
         return self.__renderFreeze_snapshot;
       };
