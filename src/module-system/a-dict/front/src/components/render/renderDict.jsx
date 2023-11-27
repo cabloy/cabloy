@@ -195,7 +195,7 @@ export default {
             },
             callback: async (code, node) => {
               if (code === 200) {
-                this._onChangeDictItem(node && node.id);
+                this._onChangeDictItem(node && node.data.codeFull);
                 resolve(true);
               } else if (code === false) {
                 resolve(false);
