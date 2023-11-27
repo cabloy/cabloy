@@ -10,6 +10,7 @@
 
 - atomState 支持两种字典：静态字典、动态字典
   - 动态字典由绑定的工作流自动生成，方便检索数据
+- renderFreeze: render 冻结机制
 
 ## 2023-11-22, Version 5.0.10-alpha
 
