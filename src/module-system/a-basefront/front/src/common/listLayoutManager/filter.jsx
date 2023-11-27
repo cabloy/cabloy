@@ -132,8 +132,23 @@ export default {
           options.tag = form.tag;
         }
         // state
-        if (form.state !== undefined && form.state !== null) {
-          options.where['a.atomState'] = form.state;
+        if (!this.$meta.util.checkIfEmptyForSelect(form.state)) {
+          const _clause = this.$meta.util.combineSearchClauseProperty({
+            ctx: this,
+            dataKey: 'atomState',
+            property: {
+              type: 'string',
+              ebType: 'dict',
+              ebSearch: {
+                tableAlias: 'a',
+              },
+            },
+            operator: null,
+            value: form.state,
+          });
+          if (_clause) {
+            Object.assign(options.where, _clause);
+          }
         }
       }
       // formAtomClass

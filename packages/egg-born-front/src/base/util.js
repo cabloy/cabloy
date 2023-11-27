@@ -615,12 +615,21 @@ export default function (Vue) {
         }
       }
     },
-    combineSearchClauseProperty({ ctx, property, operator, value, key, dataPath, schema, data, searchStates }) {
+    combineSearchClauseProperty({
+      ctx,
+      dataKey,
+      property,
+      operator,
+      value,
+      key,
+      dataPath,
+      schema,
+      data,
+      searchStates,
+    }) {
       // ebSearch
       const ebSearch = property.ebSearch;
       if (ebSearch === false) return null;
-      // dataKey
-      const dataKey = property.ebDataKey || key;
       // combine
       let actionCombine = ebSearch && ebSearch.combine;
       if (!actionCombine && property.ebType === 'dict') {
@@ -655,11 +664,14 @@ export default function (Vue) {
           property,
           operator: searchStates && searchStates[dataPath],
         });
+        // dataKey
+        const dataKey = property.ebDataKey || key;
         // value
         const value = data[dataKey];
         // combine
         const res = this.combineSearchClauseProperty({
           ctx,
+          dataKey,
           property,
           operator,
           value,
