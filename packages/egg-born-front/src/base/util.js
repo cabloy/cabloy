@@ -634,11 +634,19 @@ export default function (Vue) {
           operator: searchStates && searchStates[dataPath],
         });
         // combine
+        let actionCombine = ebSearch && ebSearch.combine;
+        if (!actionCombine && property.ebType === 'dict') {
+          actionCombine = {
+            actionModule: 'a-basefront',
+            actionComponent: 'combineSearch',
+            name: 'dict',
+          };
+        }
         let res;
-        if (ebSearch && ebSearch.combine) {
+        if (actionCombine) {
           res = this.performActionSync({
             ctx,
-            action: ebSearch.combine,
+            action: actionCombine,
             item: { key, dataKey, property, dataPath, value, operator, schema, data, searchStates },
           });
         } else {
