@@ -615,43 +615,60 @@ export default function (Vue) {
         }
       }
     },
+    combineSearchClauseProperty({ ctx, property, operator, value, key, dataPath, schema, data, searchStates }) {
+      // ebSearch
+      const ebSearch = property.ebSearch;
+      if (ebSearch === false) return null;
+      // dataKey
+      const dataKey = property.ebDataKey || key;
+      // combine
+      let actionCombine = ebSearch && ebSearch.combine;
+      if (!actionCombine && property.ebType === 'dict') {
+        actionCombine = {
+          actionModule: 'a-basefront',
+          actionComponent: 'combineSearch',
+          name: 'dict',
+        };
+      }
+      let res;
+      if (actionCombine) {
+        res = this.performActionSync({
+          ctx,
+          action: actionCombine,
+          item: { key, dataKey, property, dataPath, value, operator, schema, data, searchStates },
+        });
+      } else {
+        res = this._combineSearchClause({ key, dataKey, property, value, operator });
+      }
+      return res;
+    },
     combineSearchClause({ ctx, schema, data, searchStates }) {
       if (!schema || !data) return null;
       const clause = {};
       const properties = schema.schema.properties;
       for (const key in properties) {
         const property = properties[key];
-        const dataKey = property.ebDataKey || key;
-        const ebSearch = property.ebSearch;
-        if (ebSearch === false) continue;
         // dataPath
-        const dataPath = dataKey;
-        // value
-        const value = data[dataKey];
+        const dataPath = key;
         // operator
         const operator = this._combineSearchParseOperator({
           property,
           operator: searchStates && searchStates[dataPath],
         });
+        // value
+        const value = data[dataKey];
         // combine
-        let actionCombine = ebSearch && ebSearch.combine;
-        if (!actionCombine && property.ebType === 'dict') {
-          actionCombine = {
-            actionModule: 'a-basefront',
-            actionComponent: 'combineSearch',
-            name: 'dict',
-          };
-        }
-        let res;
-        if (actionCombine) {
-          res = this.performActionSync({
-            ctx,
-            action: actionCombine,
-            item: { key, dataKey, property, dataPath, value, operator, schema, data, searchStates },
-          });
-        } else {
-          res = this._combineSearchClause({ key, dataKey, property, value, operator });
-        }
+        const res = this.combineSearchClauseProperty({
+          ctx,
+          property,
+          operator,
+          value,
+          key,
+          dataPath,
+          schema,
+          data,
+          searchStates,
+        });
         if (res) {
           Object.assign(clause, res);
         }
