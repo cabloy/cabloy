@@ -27,6 +27,7 @@ function install(_Vue) {
     mounted() {
       this.__devInfo_timeoutId = window.setTimeout(() => {
         setDevInfo(this);
+        this.__devInfo_timeoutId = 0;
       }, 2000);
     },
     beforeDestroy() {
