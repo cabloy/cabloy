@@ -41,6 +41,31 @@ export default {
       // expand
       this.$emit('codeMatchClick', codeMatch);
     },
+    _cityMatch(dictItem, query) {
+      // titleLocale
+      let pos = dictItem.titleLocale.toLowerCase().indexOf(query);
+      if (pos > -1) return true;
+      // title
+      if (dictItem.title !== dictItem.titleLocale) {
+        pos = dictItem.title.toLowerCase().indexOf(query);
+        if (pos > -1) return true;
+      }
+      // titleAlias
+      if (dictItem.titleAlias && dictItem.titleAlias !== dictItem.title) {
+        pos = dictItem.titleAlias.toLowerCase().indexOf(query);
+        if (pos > -1) return true;
+      }
+      // titleShort
+      if (
+        dictItem.titleShort &&
+        dictItem.titleShort !== dictItem.title &&
+        dictItem.titleShort !== dictItem.titleAlias
+      ) {
+        pos = dictItem.titleShort.toLowerCase().indexOf(query);
+        if (pos > -1) return true;
+      }
+      return false;
+    },
     _search_loop(dictItems, context) {
       if (!dictItems || dictItems.length === 0) return false;
       const query = context.queries.shift();
@@ -49,12 +74,9 @@ export default {
         const titleLocaleCurrent = context.titleLocaleParent
           ? `${context.titleLocaleParent}/${dictItem.titleLocale}`
           : dictItem.titleLocale;
-        let pos = dictItem.titleLocale.toLowerCase().indexOf(query);
-        if (pos === -1 && dictItem.title !== dictItem.titleLocale) {
-          pos = dictItem.title.toLowerCase().indexOf(query);
-        }
+        const matched = this._cityMatch(dictItem, query);
         // find
-        if (pos > -1) {
+        if (matched) {
           if (context.queries.length === 0) {
             // complete
             context.codesMatched.push({

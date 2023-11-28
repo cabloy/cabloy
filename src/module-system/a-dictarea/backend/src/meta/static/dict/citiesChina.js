@@ -5,7 +5,7 @@ module.exports = app => {
   const dict = {
     atomName: 'Cities China',
     atomStaticKey: 'citiesChina',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     dictMode: 1, // tree
     dictItems: JSON.stringify(dictItems),
