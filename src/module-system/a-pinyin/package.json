@@ -22,5 +22,7 @@
   },
   "author": "zhennann",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "pinyin-pro": "^3.18.2"
+  }
 }
