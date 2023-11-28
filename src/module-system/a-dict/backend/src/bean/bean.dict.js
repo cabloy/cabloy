@@ -96,10 +96,11 @@ module.exports = ctx => {
         dictItemsRes.push(dictItem);
         if (titles.length === 0) return true;
       }
+      const childrenMapKey = `${dictItem.code}:childrenMap`;
       return this._findItem_loop({
         dictItemsRes,
         dictItems: dictItem.children,
-        dictItemsMap: dictItem._childrenMap,
+        dictItemsMap: dictItemsMap[childrenMapKey],
         codes,
         titles,
         findByCode,
