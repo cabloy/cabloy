@@ -91,6 +91,7 @@
     "egg-born-module-a-message": "^5.0.0",
     "egg-born-module-a-oauth": "^5.0.0",
     "egg-born-module-a-photobrowser": "^5.0.0",
+    "egg-born-module-a-pinyin": "^5.0.0",
     "egg-born-module-a-progress": "^5.0.0",
     "egg-born-module-a-sandbox": "^5.0.0",
     "egg-born-module-a-screenfull": "^5.0.0",

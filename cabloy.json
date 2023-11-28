@@ -183,6 +183,9 @@
           "a-photobrowser": {
             "scripts": ["npmPublish"]
           },
+          "a-pinyin": {
+            "scripts": ["npmPublish"]
+          },
           "a-progress": {
             "scripts": ["npmPublish"]
           },
