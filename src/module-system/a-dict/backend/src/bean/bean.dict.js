@@ -192,10 +192,11 @@ module.exports = ctx => {
         dictItemsMap[item.code] = item;
         // children
         if (item.children) {
-          item._childrenMap = {};
+          const childrenMapKey = `${item.code}:childrenMap`;
+          dictItemsMap[childrenMapKey] = {};
           this._prepareDict_adjust_loop({
             dict,
-            dictItemsMap: item._childrenMap,
+            dictItemsMap: dictItemsMap[childrenMapKey],
             dictItems: item.children,
             locale,
             itemParent: item,
