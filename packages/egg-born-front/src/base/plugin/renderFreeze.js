@@ -8,18 +8,19 @@ function install(_Vue) {
   Vue.mixin({
     data() {
       return {
+        // eslint-disable-next-line
         __renderFreeze: 0,
       };
     },
     created() {
       const self = this;
       self.__renderFreeze_render = self.$options.render;
-      self.$options.render = function (...argv) {
+      self.$options.render = function (...args) {
         if (self.$data.__renderFreeze === 0) {
-          return self.__renderFreeze_render(...argv);
+          return self.__renderFreeze_render(...args);
         }
         if (!self.__renderFreeze_snapshot) {
-          self.__renderFreeze_snapshot = self.__renderFreeze_render(...argv);
+          self.__renderFreeze_snapshot = self.__renderFreeze_render(...args);
         }
         return self.__renderFreeze_snapshot;
       };
@@ -51,7 +52,7 @@ function install(_Vue) {
           self.renderFreeze(true);
           await cb();
           // maybe called in another vue component context
-          //await cb.call(self);
+          // await cb.call(self);
         } finally {
           self.renderFreeze(false);
         }
