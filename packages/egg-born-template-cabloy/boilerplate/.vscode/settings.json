@@ -35,6 +35,8 @@
     "/src/backend/app/**": true,
     "/src/backend/logs/**": true,
     "/src/backend/run/**": true,
+    "src/front/__dist,": true,
+    "src/front/__runtime,": true,
     "**/node_modules": false
   },
   "search.useIgnoreFiles": false
