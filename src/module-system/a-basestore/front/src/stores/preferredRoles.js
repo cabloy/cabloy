@@ -60,8 +60,12 @@ export default function (Vue) {
           },
         ];
         for (const role of roles) {
+          let text = role.roleNameWhoLocale;
+          if (role.roleNameWhoLocale !== role.roleNameWho) {
+            text = `${text}(${role.roleNameWho})`;
+          }
           buttons.push({
-            text: role.roleNameWho,
+            text,
             data: role,
           });
         }
