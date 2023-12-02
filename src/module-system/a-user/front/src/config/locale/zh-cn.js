@@ -4,7 +4,6 @@ export default {
   'Sign In': '现在登录',
   'Log Out': '退出登录',
   'Quit Agent': '退出代理',
-  Info: '信息',
   Settings: '设置',
   Username: '用户名',
   Realname: '真实姓名',

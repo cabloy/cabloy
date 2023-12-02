@@ -62,6 +62,10 @@ export default {
     if (!this.ready) return null;
     const { media, mediaLabel } = this._getMediaInfo();
     const _media = this._getItemMetaMedia(media);
-    return <eb-link iconF7={_media} tooltip={mediaLabel} propsOnPerform={this.onPerformClick}></eb-link>;
+    return (
+      <eb-link iconF7={_media} tooltip={this.$text('Info')} propsOnPerform={this.onPerformClick}>
+        {mediaLabel}
+      </eb-link>
+    );
   },
 };
