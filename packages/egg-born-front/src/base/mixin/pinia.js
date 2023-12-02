@@ -10,6 +10,7 @@ export default function (Vue) {
 
   // pinia
   const pinia = new createPinia();
+  pinia._a = new Vue();
 
   // plugin: created
   pinia.use(PiniaPluginCreated);
