@@ -89,7 +89,12 @@ export default {
           });
         },
       });
+      const attrs = Object.assign({}, this.options?.attrs);
+      if (this.$meta.config.env === 'development') {
+        attrs['data-dev-eb-component-name'] = fullName;
+      }
       const options = Object.assign({}, this.options, {
+        attrs,
         // ref: 'component',
         scopedSlots: this.$scopedSlots,
         on: onEvents,
