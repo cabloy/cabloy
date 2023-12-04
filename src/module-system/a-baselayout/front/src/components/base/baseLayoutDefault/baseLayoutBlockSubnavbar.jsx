@@ -19,7 +19,7 @@ export default {
       if (this.layoutManager.info_renderActionsLeft) {
         domInfoActionsLeft = this.layoutManager.info_renderActionsLeft();
       }
-      return <div class="actions-block actions-block-left">{domInfoActionsLeft}</div>;
+      return <div class="actions-block actions-block-left eb-scrollable">{domInfoActionsLeft}</div>;
     },
     _renderActionsRight() {
       let domInfoActionsRight;

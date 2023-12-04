@@ -51,7 +51,7 @@ export default {
               {atomName}
             </eb-link>
           </div>
-          <div class="atomName-right">
+          <div class="atomName-right eb-scrollable">
             <span class="stats">{this.layoutManager.item_renderStats(item)}</span>
             {domAfterMetaFlags}
             {domAfterLabels}
