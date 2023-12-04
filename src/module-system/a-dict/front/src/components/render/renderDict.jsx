@@ -34,6 +34,9 @@ export default {
       const { property, validate } = this.context;
       return (!validate.readOnly && !property.ebReadOnly) || property.ebParams.forceLoad;
     },
+    dictKeyReal() {
+      return this.dict?.dictKey || this.ebParamsDict?.dictKey || this.ebParamsDictKey;
+    },
   },
   watch: {
     ebParamsDictKey() {
@@ -226,6 +229,12 @@ export default {
     _checkIfEmptyForSelect(value) {
       return value === '' || value === undefined || value === null;
     },
+    _getDevInfo() {
+      if (this.$meta.config.env !== 'development') {
+        return null;
+      }
+      return this.dictKeyReal;
+    },
     _renderAsSelect() {
       const { parcel, key, property } = this.context;
       const options = this.dict._dictItems.map(item => {
@@ -244,19 +253,27 @@ export default {
         ebOptions: options,
         ebParams: null,
       });
+      const devDictKey = this._getDevInfo();
       return (
         <eb-list-item-validate
           parcel={parcel}
           dataKey={key}
           property={propertyNew}
+          data-dev-dict-key={devDictKey}
           onChange={this.onSelectChange}
         ></eb-list-item-validate>
       );
     },
     _renderAsTree() {
       const { dataPath } = this.context;
+      const devDictKey = this._getDevInfo();
       return (
-        <eb-list-item-choose link="#" dataPath={dataPath} propsOnChoose={this.onChooseDictItem}>
+        <eb-list-item-choose
+          link="#"
+          dataPath={dataPath}
+          propsOnChoose={this.onChooseDictItem}
+          data-dev-dict-key={devDictKey}
+        >
           {this.context.renderTitle({ slot: 'title' })}
           <div slot="after">{this._renderItemTitle()}</div>
         </eb-list-item-choose>
