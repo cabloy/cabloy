@@ -8,6 +8,7 @@ module.exports = app => {
       const dict = await this.ctx.bean.dict.getDict({ dictKey });
       // short
       return {
+        dictKey,
         atomId: dict.atomId,
         description: dict.description,
         dictMode: dict.dictMode,
