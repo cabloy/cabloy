@@ -93,6 +93,9 @@
           "a-dashboardbooster": {
             "scripts": ["npmPublish"]
           },
+          "a-debug": {
+            "scripts": ["npmPublish"]
+          },
           "a-detail": {
             "scripts": ["npmPublish"]
           },

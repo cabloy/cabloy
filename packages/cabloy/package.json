@@ -59,6 +59,7 @@
     "egg-born-module-a-components-sync": "^5.0.0",
     "egg-born-module-a-dashboard": "^5.0.0",
     "egg-born-module-a-dashboardbooster": "^5.0.0",
+    "egg-born-module-a-debug": "^5.0.0",
     "egg-born-module-a-detail": "^5.0.0",
     "egg-born-module-a-dict": "^5.0.0",
     "egg-born-module-a-dictarea": "^5.0.0",
