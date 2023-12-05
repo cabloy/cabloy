@@ -44,7 +44,7 @@ module.exports = context => {
         sourceMap: context.config.dev.cssSourceMap,
       }),
     },
-    devtool: 'source-map', // 'cheap-module-source-map',
+    devtool: 'eval-source-map', // 'source-map', // 'cheap-module-source-map',
     plugins,
     optimization: {
       emitOnErrors: true,
