@@ -58,8 +58,7 @@ function install(_Vue, cb) {
       };
       return cb({
         routes: require('./routes.js').default,
-        store: require('./store.js').default(Vue),
-        config: require('./config/config.js').default,
+            config: require('./config/config.js').default,
         locales: require('./config/locales.js').default,
         components: require('./components.js').default,
       });
