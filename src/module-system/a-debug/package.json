@@ -22,5 +22,7 @@
   },
   "author": "zhennann",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "debug": "^4.3.4"
+  }
 }
