@@ -22,6 +22,10 @@ export default function (Vue) {
         if (!layoutItem) return null; // maybe no access right
         // content
         layoutItem.content = layoutItem.content ? JSON.parse(layoutItem.content) : null;
+        // layoutKey
+        if (layoutItem.content) {
+          layoutItem.content.layoutKey = layoutKey;
+        }
         // use module
         const parts = layoutKey.split(':');
         if (parts.length === 2) {
