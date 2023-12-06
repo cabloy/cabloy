@@ -34,7 +34,6 @@
     "async": "^3.2.0",
     "axios": "^1.6.2",
     "cascade-extend": "^1.0.1",
-    "debug": "^4.3.4",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mparse": "^2.1.9",
     "js-cookie": "^2.2.1",
@@ -46,6 +45,7 @@
     "regenerator-runtime": "^0.14.0",
     "uuid": "^8.3.2",
     "vue": "^2.7.13",
+    "vue-plugin-debug": "^1.0.0",
     "vuex": "^3.6.2"
   }
 }

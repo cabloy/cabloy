@@ -1,5 +1,5 @@
 import * as VueAll from 'vue';
-import Debug from './plugin/debug.js';
+import VuePluginDebug from './plugin/debug.js';
 import DevInfo from './plugin/devInfo.js';
 import Preload from './plugin/preload.js';
 import ComponentMounted from './plugin/componentMounted.js';
@@ -44,8 +44,8 @@ strats.meta = function (parentVal, childVal /* , vm, key */) {
   return Vue.prototype.$meta.util.extend({}, childVal, parentVal);
 };
 
-// debug
-Vue.use(Debug, { namespaces: process.env.DEBUG });
+// VuePluginDebug
+Vue.use(VuePluginDebug, { namespaces: process.env.DEBUG });
 
 // plugin: DevInfo
 if (process.env.NODE_ENV === 'development') {
