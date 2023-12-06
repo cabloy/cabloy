@@ -1,10 +1,17 @@
 import DebugInstance from 'debug';
 
+const __debug_caches = {};
+
 export default function (Vue) {
   // store
   const debug = {
     instance: DebugInstance,
-    get(namespace) {},
+    get(namespace) {
+      if (!__debug_caches[namespace]) {
+        __debug_caches[namespace] = DebugInstance(namespace);
+      }
+      return __debug_caches[namespace];
+    },
   };
 
   // enable
