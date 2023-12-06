@@ -6,6 +6,7 @@
 
 - atom right aux
 - vue-plugin-debug
+  - 在前端输出调试信息: DEBUG=layout npm run dev:front
 
 ## 2023-11-27, Version 5.0.11-alpha
 
