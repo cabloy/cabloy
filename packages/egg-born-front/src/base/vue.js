@@ -2,7 +2,7 @@ import * as VueAll from 'vue';
 import VuePluginDebug from './plugin/debug.js';
 import DevInfo from './plugin/devInfo.js';
 import Preload from './plugin/preload.js';
-import ComponentMounted from './plugin/componentMounted.js';
+import VuePluginComponentMounted from './plugin/componentMounted.js';
 import RenderFreeze from './plugin/renderFreeze.js';
 
 // exports
@@ -54,7 +54,7 @@ if (process.env.NODE_ENV === 'development') {
 // plugin: Preload
 Vue.use(Preload);
 // plugin: ComponentMounted
-Vue.use(ComponentMounted);
+Vue.use(VuePluginComponentMounted);
 // plugin: renderFreeze
 Vue.use(RenderFreeze);
 
