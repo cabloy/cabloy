@@ -57,9 +57,8 @@ export default {
       this.base.appInfoCurrent = appInfo;
       // configAppMenu
       if (appInfo.appMenuLayout) {
-        const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey: appInfo.appMenuLayout,
-        });
+        const useStoreLayout = await this.$store.use('a/baselayout/layout');
+        const layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: appInfo.appMenuLayout });
         this.base.configAppMenu = layoutItem.content;
       } else {
         this.base.configAppMenu = null;
