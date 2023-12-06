@@ -10,6 +10,13 @@ export default function (Vue) {
         this.layoutItems[layoutKey] = layoutItem;
       },
       async getLayoutItem({ layoutKey }) {
+        const layoutItem = await this._getLayoutItem({ layoutKey });
+        // debug
+        const debug = Vue.prototype.$debug.get('layout');
+        debug('layout key: %s, %o', layoutKey, layoutItem?.content);
+        return layoutItem;
+      },
+      async _getLayoutItem({ layoutKey }) {
         let layoutItem = this.layoutItems[layoutKey];
         if (layoutItem) return layoutItem;
         layoutItem = await __fetchLayoutItem({ Vue, layoutKey });
