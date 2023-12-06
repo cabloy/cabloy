@@ -9,9 +9,8 @@ export default {
     },
     async layout_onPrepareConfigFull() {
       // configMessageBase
-      const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: 'a-message:layoutMessageGroupBase',
-      });
+      const useStoreLayout = await this.$store.use('a/baselayout/layout');
+      const layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: 'a-message:layoutMessageGroupBase' });
       this.base.configMessageBase = layoutItem.content;
       // ok
       return this.base.configMessageBase;

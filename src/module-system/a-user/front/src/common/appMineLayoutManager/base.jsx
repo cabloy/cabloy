@@ -66,9 +66,8 @@ export default {
       // configAppMine
       if (typeof appInfo.appMineLayout === 'string') {
         // mine.layout=layoutKey
-        const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey: appInfo.appMineLayout,
-        });
+        const useStoreLayout = await this.$store.use('a/baselayout/layout');
+        const layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: appInfo.appMineLayout });
         this.base.configAppMine = layoutItem.content;
       } else {
         // mine.layout=true

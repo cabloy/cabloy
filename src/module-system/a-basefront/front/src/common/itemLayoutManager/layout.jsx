@@ -11,24 +11,19 @@ export default {
       const atomClass = this.base.atomClass;
       const atomClassBase = this.getAtomClass(atomClass);
       // atom base
-      let layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-        layoutKey: 'a-basefront:layoutAtomItemBase',
-      });
+      const useStoreLayout = await this.$store.use('a/baselayout/layout');
+      let layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: 'a-basefront:layoutAtomItemBase' });
       this.base.configAtomBase = layoutItem.content;
       // atom cms
       if (atomClassBase.cms) {
-        layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey: 'a-cms:layoutAtomItemCms',
-        });
+        layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: 'a-cms:layoutAtomItemCms' });
         this.base.configAtomCms = layoutItem.content;
       }
       // atom
       let atomLayoutKey = this.$meta.util.getProperty(atomClassBase, 'layout.config.atomItem');
       atomLayoutKey = this.$meta.util.normalizeResourceKey(atomLayoutKey, atomClass.module);
       if (atomLayoutKey) {
-        layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey: atomLayoutKey,
-        });
+        layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: atomLayoutKey });
         this.base.configAtom = layoutItem.content;
       }
       // combine
