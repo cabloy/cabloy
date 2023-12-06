@@ -46,7 +46,7 @@
     "uuid": "^8.3.2",
     "vue": "^2.7.13",
     "vue-plugin-component-mounted": "^1.0.0",
-    "vue-plugin-debug": "^1.0.1",
+    "vue-plugin-debug": "^1.0.2",
     "vue-plugin-render-freeze": "^1.0.0",
     "vuex": "^3.6.2"
   }
