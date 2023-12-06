@@ -274,7 +274,8 @@ export default {
       // layoutDefault
       this.layoutDefault = this.__getLayoutDefault();
       // layoutScene
-      const _layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', { layoutKey });
+      const useStoreLayout = await this.$store.use('a/baselayout/layout');
+      const _layoutItem = await useStoreLayout.getLayoutItem({ layoutKey });
       this.layoutScene = _layoutItem.content;
       // layoutConfig
       const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile');
