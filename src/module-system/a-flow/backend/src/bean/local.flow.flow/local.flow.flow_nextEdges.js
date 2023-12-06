@@ -1,5 +1,3 @@
-const debug = require('debug')('flow');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowInstance {
@@ -36,6 +34,7 @@ module.exports = ctx => {
           }
         }
       }
+      const debug = ctx.app.bean.debug.get('flow');
       debug(
         'nextEdges %s: flowId:%d, flowNodeId:%d',
         resBingo ? 'bingo' : 'invalid',

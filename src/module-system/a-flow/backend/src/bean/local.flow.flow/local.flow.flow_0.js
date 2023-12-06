@@ -1,4 +1,3 @@
-const debug = require('debug')('flow');
 const VarsFn = require('../../common/vars.js');
 const UtilsFn = require('../../common/utils.js');
 
@@ -53,6 +52,7 @@ module.exports = ctx => {
       // real startEventId
       startEventId = nodeInstanceStartEvent.contextNode._nodeDef.id;
       // raise event: onFlowStart
+      const debug = ctx.app.bean.debug.get('flow');
       debug('flow start: flowId:%d, startEventId:%s', flowId, startEventId);
       await this._flowListener.onFlowStart({ flowVars, flowUserId, startEventId });
       await this._saveFlowVars();

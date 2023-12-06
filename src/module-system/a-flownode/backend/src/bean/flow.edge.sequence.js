@@ -1,5 +1,3 @@
-const debug = require('debug')('flow');
-
 module.exports = ctx => {
   class FlowEdge extends ctx.app.meta.FlowEdgeBase {
     constructor(options) {
@@ -28,6 +26,7 @@ module.exports = ctx => {
           contextNodePrevious,
         },
       });
+      const debug = ctx.app.bean.debug.get('flow');
       debug(
         'edge %s: edgeRefId:%s, conditionExpression: %s',
         resEnter ? 'enter' : 'block',

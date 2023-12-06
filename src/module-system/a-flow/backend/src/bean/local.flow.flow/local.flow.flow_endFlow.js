@@ -1,5 +1,3 @@
-const debug = require('debug')('flow');
-
 module.exports = ctx => {
   const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
   class FlowInstance {
@@ -38,6 +36,7 @@ module.exports = ctx => {
         // publish uniform message
         await this._endFlowPublish();
         // log
+        const debug = ctx.app.bean.debug.get('flow');
         debug('flow end: flowId:%d', flowId);
       });
       // notify
