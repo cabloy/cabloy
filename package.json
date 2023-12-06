@@ -68,7 +68,7 @@
     "@zhennann/vue": "^2.7.15",
     "async": "^3.2.0",
     "autoprefixer": "^9.7.4",
-    "axios": "^1.4.0",
+    "axios": "^1.6.2",
     "bagpipe": "^0.3.5",
     "bluebird": "^3.7.2",
     "chalk": "^3.0.0",

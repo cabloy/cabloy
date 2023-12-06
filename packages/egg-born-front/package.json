@@ -32,7 +32,7 @@
     "@zhennann/vue-style-loader": "^4.1.4",
     "array.prototype.group": "^1.1.2",
     "async": "^3.2.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.2",
     "cascade-extend": "^1.0.1",
     "egg-born-localeutil": "^2.1.2",
     "egg-born-mparse": "^2.1.9",
