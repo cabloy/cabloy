@@ -3,7 +3,10 @@ import DebugInstance from 'debug';
 const __debug_caches = {};
 
 export default function (Vue) {
-  // store
+  // log
+  DebugInstance.log = console.log || (() => {});
+
+  // debug
   const debug = {
     instance: DebugInstance,
     get(namespace) {
