@@ -1,8 +1,15 @@
 import DebugInstance from 'debug';
 
-const __debug_caches = {};
+let Vue;
+// install
+function install(_Vue, options) {
+  if (Vue) return console.error('already installed.');
 
-export default function (Vue) {
+  Vue = _Vue;
+
+  // caches
+  const __debug_caches = {};
+
   // log
   DebugInstance.log = console.log || (() => {});
 
@@ -18,12 +25,16 @@ export default function (Vue) {
   };
 
   // enable
-  if (process.env.NODE_ENV === 'development') {
-    DebugInstance.enable(process.env.DEBUG);
-  }
+  const namespaces = options && options.namespaces;
+  DebugInstance.enable(namespaces);
 
   // $debug
   Vue.prototype.$debug = debug;
 
-  return { debug, beforeCreate: null };
+  return debug;
 }
+
+// export
+export default {
+  install,
+};

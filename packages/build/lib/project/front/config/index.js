@@ -23,6 +23,7 @@ module.exports = (context, cb) => {
         SCENE: JSON.stringify(sceneValue),
         PROJECTPATH: JSON.stringify(context.projectPath),
         FRONTPATH: JSON.stringify(context.frontPath),
+        DEBUG: JSON.stringify(process.env.DEBUG),
       },
     },
     dev: {
