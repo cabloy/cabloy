@@ -3,7 +3,7 @@ import VuePluginDebug from './plugin/debug.js';
 import DevInfo from './plugin/devInfo.js';
 import Preload from './plugin/preload.js';
 import VuePluginComponentMounted from './plugin/componentMounted.js';
-import RenderFreeze from './plugin/renderFreeze.js';
+import VuePluginRenderFreeze from './plugin/renderFreeze.js';
 
 // exports
 const Vue = VueAll.default;
@@ -44,9 +44,8 @@ strats.meta = function (parentVal, childVal /* , vm, key */) {
   return Vue.prototype.$meta.util.extend({}, childVal, parentVal);
 };
 
-// VuePluginDebug
+// plugin: debug
 Vue.use(VuePluginDebug, { namespaces: process.env.DEBUG });
-
 // plugin: DevInfo
 if (process.env.NODE_ENV === 'development') {
   Vue.use(DevInfo);
@@ -56,6 +55,6 @@ Vue.use(Preload);
 // plugin: ComponentMounted
 Vue.use(VuePluginComponentMounted);
 // plugin: renderFreeze
-Vue.use(RenderFreeze);
+Vue.use(VuePluginRenderFreeze);
 
 export default Vue;
