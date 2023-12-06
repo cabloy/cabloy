@@ -4,6 +4,9 @@
 
 - **Feat**
 
+- atom right aux
+- vue-plugin-debug
+
 ## 2023-11-27, Version 5.0.11-alpha
 
 - **Feat**
