@@ -1,7 +1,7 @@
 import * as VueAll from 'vue';
 import VuePluginDebug from './plugin/debug.js';
-import DevInfo from './plugin/devInfo.js';
-import Preload from './plugin/preload.js';
+import VuePluginDevInfo from './plugin/devInfo.js';
+import VuePluginPreload from './plugin/preload.js';
 import VuePluginComponentMounted from './plugin/componentMounted.js';
 import VuePluginRenderFreeze from './plugin/renderFreeze.js';
 
@@ -46,15 +46,15 @@ strats.meta = function (parentVal, childVal /* , vm, key */) {
 
 // plugin: debug
 Vue.use(VuePluginDebug, { namespaces: process.env.DEBUG });
-// plugin: DevInfo
-if (process.env.NODE_ENV === 'development') {
-  Vue.use(DevInfo);
-}
-// plugin: Preload
-Vue.use(Preload);
 // plugin: ComponentMounted
 Vue.use(VuePluginComponentMounted);
 // plugin: renderFreeze
 Vue.use(VuePluginRenderFreeze);
+// plugin: Preload
+Vue.use(VuePluginPreload);
+// plugin: DevInfo
+if (process.env.NODE_ENV === 'development') {
+  Vue.use(VuePluginDevInfo);
+}
 
 export default Vue;
