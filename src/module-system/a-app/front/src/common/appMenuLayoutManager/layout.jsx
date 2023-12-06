@@ -13,16 +13,14 @@ export default {
       const appItem = this.base.appInfoCurrent.appItem;
       // configAppMenuBase
       if (!this.base.configAppMenuBase) {
-        const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey: 'a-app:layoutAppMenuBase',
-        });
+        const useStoreLayout = await this.$store.use('a/baselayout/layout');
+        const layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: 'a-app:layoutAppMenuBase' });
         this.base.configAppMenuBase = layoutItem.content;
       }
       // configAppMenuCmsBase
       if (appItem.appCms && !this.base.configAppMenuCmsBase) {
-        const layoutItem = await this.$store.dispatch('a/baselayout/getLayoutItem', {
-          layoutKey: 'a-cms:layoutAppMenuCmsBase',
-        });
+        const useStoreLayout = await this.$store.use('a/baselayout/layout');
+        const layoutItem = await useStoreLayout.getLayoutItem({ layoutKey: 'a-cms:layoutAppMenuCmsBase' });
         this.base.configAppMenuCmsBase = layoutItem.content;
       }
       // combine
