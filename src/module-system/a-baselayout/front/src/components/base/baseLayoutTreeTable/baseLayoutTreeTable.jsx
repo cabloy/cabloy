@@ -31,11 +31,10 @@ export default {
       await this.layoutManager.subnavbar_policyHandle();
       // eslint-disable-next-line
       this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
-      // provider switch
-      const providerOptions = this.layoutConfig.providerOptions || {
+      // provider
+      const res = await this.layoutManager.data_providerInit({
         providerName: 'tree',
-      };
-      const res = await this.layoutManager.data_providerSwitch(providerOptions);
+      });
       this.treeviewData = res.treeviewData;
       // instance
       await this.layoutManager.layout_setInstance(this);

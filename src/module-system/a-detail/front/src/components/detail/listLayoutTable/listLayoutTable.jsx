@@ -24,8 +24,8 @@ export default {
   },
   methods: {
     async init() {
-      // provider switch
-      await this.layoutManager.data_providerSwitch({
+      // provider
+      await this.layoutManager.data_providerInit({
         providerName: 'all',
         autoInit: true,
       });

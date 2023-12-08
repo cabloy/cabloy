@@ -28,11 +28,10 @@ export default {
       await this.layoutManager.subnavbar_policyHandle();
       // eslint-disable-next-line
       this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
-      // provider switch
-      const providerOptions = this.layoutConfig.providerOptions || {
+      // provider
+      await this.layoutManager.data_providerInit({
         providerName: 'paged',
-      };
-      await this.layoutManager.data_providerSwitch(providerOptions);
+      });
       // instance
       await this.layoutManager.layout_setInstance(this);
     },

@@ -23,11 +23,10 @@ export default {
     async init() {
       // subnavbar
       await this.layoutManager.subnavbar_policyHandle();
-      // provider switch
-      const providerOptions = this.layoutConfig.providerOptions || {
+      // provider
+      await this.layoutManager.data_providerInit({
         providerName: 'continuous',
-      };
-      await this.layoutManager.data_providerSwitch(providerOptions);
+      });
       // instance
       await this.layoutManager.layout_setInstance(this);
     },

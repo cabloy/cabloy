@@ -26,11 +26,10 @@ export default {
     async init() {
       // subnavbar
       await this.layoutManager.subnavbar_policyHandle();
-      // provider switch
-      const providerOptions = this.layoutConfig.providerOptions || {
+      // provider
+      const res = await this.layoutManager.data_providerInit({
         providerName: 'tree',
-      };
-      const res = await this.layoutManager.data_providerSwitch(providerOptions);
+      });
       this.treeviewData = res.treeviewData;
       // instance
       await this.layoutManager.layout_setInstance(this);
