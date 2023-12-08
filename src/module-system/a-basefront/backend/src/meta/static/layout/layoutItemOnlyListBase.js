@@ -70,7 +70,7 @@ module.exports = app => {
         },
         options: {
           subnavbar: {
-            policyDefault: true,
+            policy: 'default',
           },
         },
         blocks: {
@@ -103,7 +103,7 @@ module.exports = app => {
         },
         options: {
           subnavbar: {
-            policyDefault: true,
+            policy: 'default',
           },
         },
         blocks: {
@@ -129,7 +129,7 @@ module.exports = app => {
         },
         options: {
           subnavbar: {
-            policyDefault: true,
+            policy: 'default',
           },
         },
         blocks: {
@@ -254,7 +254,7 @@ module.exports = app => {
         },
         options: {
           subnavbar: {
-            policyDefault: true,
+            policy: 'default',
           },
         },
         blocks: {
@@ -279,7 +279,7 @@ module.exports = app => {
         },
         options: {
           subnavbar: {
-            policyDefault: true,
+            policy: 'default',
           },
         },
         blocks: {
@@ -302,7 +302,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(ItemOnly)',
     atomStaticKey: 'layoutItemOnlyListBase',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
