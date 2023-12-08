@@ -26,7 +26,6 @@ module.exports = app => {
           providerName: 'all',
           autoInit: true,
         },
-        subnavbar: false,
         blocks: {
           items: {
             component: {
@@ -41,7 +40,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMenuBase',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),

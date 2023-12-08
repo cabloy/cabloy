@@ -189,7 +189,6 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutTree',
         },
-        subnavbar: false,
         blocks: {
           title: {
             component: {
@@ -211,7 +210,6 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutTreeTable',
         },
-        subnavbar: false,
         blocks: {
           title: {
             component: {
@@ -318,7 +316,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 7,
+    atomRevision: 8,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
