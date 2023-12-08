@@ -17,6 +17,13 @@ export default function (Vue) {
         this.dicts[dictKey] = dict;
       },
       async getDict({ dictKey }) {
+        const dict = await this._getDict_inner({ dictKey });
+        // debug
+        const debug = Vue.prototype.$debug.get('dict');
+        debug('dict key: %s, %o', dictKey, dict);
+        return dict;
+      },
+      async _getDict_inner({ dictKey }) {
         if (this.dicts[dictKey]) return this.dicts[dictKey];
         const data = await Vue.prototype.$meta.api.post('/a/dict/dict/getDict', { dictKey });
         const dict = data;
