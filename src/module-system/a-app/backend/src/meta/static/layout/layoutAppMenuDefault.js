@@ -20,9 +20,11 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        providerOptions: {
-          providerName: 'all',
-          autoInit: true,
+        options: {
+          dataProvider: {
+            providerName: 'all',
+            autoInit: true,
+          },
         },
         blocks: {
           items: {
@@ -38,7 +40,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Default',
     atomStaticKey: 'layoutAppMenuDefault',
-    atomRevision: 2,
+    atomRevision: 3,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),

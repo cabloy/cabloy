@@ -15,9 +15,11 @@ module.exports = app => {
         blocks: {},
       },
       list: {
-        providerOptions: {
-          providerName: 'all',
-          autoInit: true,
+        options: {
+          dataProvider: {
+            providerName: 'all',
+            autoInit: true,
+          },
         },
       },
     },
@@ -25,7 +27,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutMessageGroupBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 7,
     content: JSON.stringify(content),

@@ -22,9 +22,11 @@ module.exports = app => {
         },
       },
       list: {
-        providerOptions: {
-          providerName: 'all',
-          autoInit: false,
+        options: {
+          dataProvider: {
+            providerName: 'all',
+            autoInit: false,
+          },
         },
         blocks: {
           items: {
@@ -64,7 +66,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMineBase',
-    atomRevision: 4,
+    atomRevision: 5,
     description: '',
     layoutTypeCode: 14,
     content: JSON.stringify(content),
