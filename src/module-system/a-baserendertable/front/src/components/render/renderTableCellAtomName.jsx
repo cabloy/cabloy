@@ -44,19 +44,17 @@ export default {
     const atomName = this._getAtomName(item);
     return (
       <div class="atom-list-layout-table-cell-atomName">
-        <div class="atomName-inner">
+        <eb-link class="atomName-inner" propsOnPerform={event => this.onItemClick(event)}>
           <div class="atomName-left" title={atomName}>
-            <eb-link propsOnPerform={event => this.onItemClick(event)}>
-              {domMedia}
-              {atomName}
-            </eb-link>
+            {domMedia}
+            {atomName}
           </div>
           <div class="atomName-right eb-scrollable">
             <span class="stats">{this.layoutManager.item_renderStats(item)}</span>
             {domAfterMetaFlags}
             {domAfterLabels}
           </div>
-        </div>
+        </eb-link>
         {domSummary}
       </div>
     );
