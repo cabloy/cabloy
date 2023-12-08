@@ -28,7 +28,7 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      await this.layoutManager.subnavbar_policyHandle();
+      await this.layoutManager.subnavbar_policyInit();
       // eslint-disable-next-line
       this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
       // provider

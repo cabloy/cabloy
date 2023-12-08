@@ -22,7 +22,7 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      await this.layoutManager.subnavbar_policyHandle();
+      await this.layoutManager.subnavbar_policyInit();
       // provider
       await this.layoutManager.data_providerInit({
         providerName: 'item',

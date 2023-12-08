@@ -25,7 +25,7 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      await this.layoutManager.subnavbar_policyHandle();
+      await this.layoutManager.subnavbar_policyInit();
       // provider
       const res = await this.layoutManager.data_providerInit({
         providerName: 'tree',
