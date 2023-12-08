@@ -22,9 +22,7 @@ export default {
   methods: {
     async init() {
       // subnavbar
-      if (this.layoutConfig.options?.subnavbar?.policyDefault) {
-        this.layoutManager.subnavbar_policyDefault();
-      }
+      await this.layoutManager.subnavbar_policyHandle();
       // provider switch
       const providerOptions = this.layoutConfig.providerOptions || {
         providerName: 'continuous',
