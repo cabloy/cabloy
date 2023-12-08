@@ -29,8 +29,8 @@ export default {
     async init() {
       // subnavbar
       await this.layoutManager.subnavbar_policyInit();
-      // eslint-disable-next-line
-      this.layoutManager.bottombar.enable = !!this.layoutConfig.blocks.bottombar;
+      // bottombar
+      await this.layoutManager.bottombar_policyInit();
       // provider
       const res = await this.layoutManager.data_providerInit({
         providerName: 'tree',
