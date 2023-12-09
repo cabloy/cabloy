@@ -17,7 +17,8 @@ function installFactory(_Vue) {
     },
     computed: {
       base_appCurrent() {
-        return this.$store.getters['a/app/current'];
+        const useStoreApp = this.$store.useSync('a/app/app');
+        return useStoreApp.current;
       },
     },
     watch: {
@@ -51,7 +52,8 @@ function installFactory(_Vue) {
         const appKey = current.appKey;
         if (!appKey) return;
         // app home Info
-        const appInfo = await this.$store.dispatch('a/app/getAppHomeInfo', { appKey, force });
+        const useStoreApp = await this.$store.use('a/app/app');
+        const appInfo = await useStoreApp.getAppHomeInfo({ appKey, force });
         if (!appInfo) return false;
         if (this.app_isCurrentSameFull(this.appInfoCurrent, appInfo)) return false;
         // current

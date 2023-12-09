@@ -48,8 +48,9 @@ export default {
       this.theme.appKey = appKey;
     },
     async theme_init_fromApp() {
+      const useStoreApp = await this.$store.use('a/app/app');
       // sure appItemCurrent exists
-      const appItemCurrent = await this.$store.dispatch('a/app/getAppItemCurrent');
+      const appItemCurrent = await useStoreApp.getAppItemCurrent();
       let theme = this.$meta.util.getProperty(appItemCurrent, 'content.info.theme');
       if (theme) {
         return {
@@ -59,7 +60,7 @@ export default {
       }
       // default app
       if (appItemCurrent.atomStaticKey !== __appKeyDefault) {
-        const appItemDefault = await this.$store.dispatch('a/app/getAppItemDefault');
+        const appItemDefault = await useStoreApp.getAppItemDefault();
         theme = this.$meta.util.getProperty(appItemDefault, 'content.info.theme');
         if (theme) {
           return {

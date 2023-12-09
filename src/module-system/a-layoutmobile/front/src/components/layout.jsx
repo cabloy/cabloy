@@ -252,9 +252,10 @@ export default {
       }
     },
     async __initLayoutKey() {
-      let appPresetConfig = await this.$store.dispatch('a/app/getPresetConfigCurrent');
+      const useStoreApp = await this.$store.use('a/app/app');
+      let appPresetConfig = await useStoreApp.getPresetConfigCurrent();
       if (!appPresetConfig.layout) {
-        appPresetConfig = await this.$store.dispatch('a/app/getPresetConfigDefault');
+        appPresetConfig = await useStoreApp.getPresetConfigDefault();
       }
       this.layoutAtomStaticKey = appPresetConfig.layout;
       return this.layoutAtomStaticKey;

@@ -8,10 +8,11 @@ export default {
   },
   methods: {
     async app_openHome({ view, appKey, appLanguage }) {
+      const useStoreApp = await this.$store.use('a/app/app');
       // set current
-      this.$meta.store.commit('a/app/setCurrent', { appKey, appLanguage });
+      await useStoreApp.setCurrent({ appKey, appLanguage });
       // get current
-      const current = this.$store.getters['a/app/current'];
+      const current = useStoreApp.current;
       // open menu
       await this.app_openAppMenu({ view, current });
     },
@@ -28,11 +29,14 @@ export default {
       });
     },
     async app_openAppHome({ view, current, force = false }) {
-      if (!current) current = this.$store.getters['a/app/current'];
+      const useStoreApp = await this.$store.use('a/app/app');
+      if (!current) {
+        current = useStoreApp.current;
+      }
       const appKey = current.appKey;
       if (!appKey) return;
       // app home Info
-      const appHomeInfo = await this.$store.dispatch('a/app/getAppHomeInfo', { appKey, force });
+      const appHomeInfo = await useStoreApp.getAppHomeInfo({ appKey, force });
       if (!appHomeInfo) return;
       // navigate
       view.navigate(appHomeInfo.url, {
