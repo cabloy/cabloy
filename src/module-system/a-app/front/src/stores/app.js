@@ -69,14 +69,11 @@ export default function (Vue) {
         // save current
         await this.__saveCurrent_inner({ current: this.currentInner });
       },
-      setAppItem(state, { appKey, appItem }) {
-        state.appItems = {
-          ...state.appItems,
-          [appKey]: appItem,
-        };
+      setAppItem({ appKey, appItem }) {
+        this.appItems[appKey] = appItem;
       },
-      setAppItemsAll(state, { appItems }) {
-        state.appItemsAll = appItems;
+      setAppItemsAll({ appItems }) {
+        this.appItemsAll = appItems;
       },
       // setLayoutConfig(state, { layoutConfig }) {
       //   state.layoutConfig = layoutConfig;
@@ -87,13 +84,13 @@ export default function (Vue) {
         // commit('setLayoutConfig', { layoutConfig });
         return layoutConfig;
       },
-      async getCurrent({ state, getters, commit, dispatch }) {
+      async getCurrent() {
         // force exists
-        const layoutConfig = await dispatch('getLayoutConfig');
+        const layoutConfig = await this.getLayoutConfig();
         // current
-        if (state.currentInner.appKey) {
+        if (this.currentInner.appKey) {
           // has inited
-          return getters.current;
+          return this.current;
         }
         // layout config
         const layoutConfigKey = __getLayoutConfigKey({ Vue });
@@ -103,57 +100,57 @@ export default function (Vue) {
         // set current
         const appKey = query.appKey || layoutConfigValueApp || __getDefaultAppKeyFromConfig({ Vue }) || __appKeyDefault;
         const appLanguage = query.appLanguage || layoutConfigValueLanguage || Vue.prototype.$meta.util.getLocale();
-        commit('setCurrent', { appKey, appLanguage });
-        return getters.current;
+        await this.setCurrent({ appKey, appLanguage });
+        return this.current;
       },
-      async getPresetConfigCurrent({ state, getters, commit, dispatch }) {
+      async getPresetConfigCurrent() {
         // force init current
-        await dispatch('getCurrent');
+        await this.getCurrent();
         // force appItem exists
-        const appItem = await dispatch('getAppItemCurrent');
+        const appItem = await this.getAppItemCurrent();
         if (!appItem) {
           // fallback to appDefault
-          commit('setCurrent', { appKey: __appKeyDefault });
-          await dispatch('getAppItemCurrent');
+          await this.setCurrent({ appKey: __appKeyDefault });
+          await this.getAppItemCurrent();
         }
         // current
-        return getters.presetConfigCurrent;
+        return this.presetConfigCurrent;
       },
-      async getPresetConfigDefault({ state, dispatch }) {
-        return await dispatch('getPresetConfig', { appKey: __appKeyDefault });
+      async getPresetConfigDefault() {
+        return await this.getPresetConfig({ appKey: __appKeyDefault });
       },
-      async getPresetConfig({ state, getters, dispatch }, { appKey }) {
+      async getPresetConfig({ appKey }) {
         // force appItem exists
-        const appItem = await dispatch('getAppItem', { appKey });
+        const appItem = await this.getAppItem({ appKey });
         if (!appItem) return null; // maybe no access right
-        return __getPresetConfig({ Vue, appItem, current: getters.current });
+        return __getPresetConfig({ Vue, appItem, current: this.current });
       },
-      async getAppItemCurrent({ state, getters, dispatch }) {
-        return await dispatch('getAppItem', { appKey: getters.current.appKey });
+      async getAppItemCurrent() {
+        return await this.getAppItem({ appKey: this.current.appKey });
       },
-      async getAppItemDefault({ state, dispatch }) {
-        return await dispatch('getAppItem', { appKey: __appKeyDefault });
+      async getAppItemDefault() {
+        return await this.getAppItem({ appKey: __appKeyDefault });
       },
-      async getAppItem({ state, commit, dispatch }, { appKey }) {
-        let appItem = state.appItems[appKey];
+      async getAppItem({ appKey }) {
+        let appItem = this.appItems[appKey];
         if (appItem) return appItem;
         appItem = await __fetchAppItem({ Vue, appKey });
         if (!appItem) return null; // maybe no access right
         appItem.content = appItem.content ? JSON.parse(appItem.content) : null;
         // get base app
         if (appKey !== __appKeyBase) {
-          const appItemBase = await dispatch('getAppItem', { appKey: __appKeyBase });
+          const appItemBase = await this.getAppItem({ appKey: __appKeyBase });
           appItem.content = Vue.prototype.$meta.util.extend({}, appItemBase.content, appItem.content);
           // special for appIsolate
           if (query.appIsolate === 'true') {
             appItem.appIsolate = true;
           }
         }
-        commit('setAppItem', { appKey, appItem });
+        this.setAppItem({ appKey, appItem });
         return appItem;
       },
-      async getAppItemsAll({ state, commit }) {
-        if (state.appItemsAll) return state.appItemsAll;
+      async getAppItemsAll() {
+        if (this.appItemsAll) return this.appItemsAll;
         const res = await Vue.prototype.$meta.api.post('/a/base/resource/select', {
           atomClass: __atomClassApp,
           options: {
@@ -167,13 +164,13 @@ export default function (Vue) {
           },
         });
         const appItems = res.list;
-        commit('setAppItemsAll', { appItems });
+        this.setAppItemsAll({ appItems });
         return appItems;
       },
-      async getAppMenuInfo({ state, dispatch }, { appKey }) {
-        const appItem = await dispatch('getAppItem', { appKey });
+      async getAppMenuInfo({ appKey }) {
+        const appItem = await this.getAppItem({ appKey });
         // configMenu
-        const presetConfig = await dispatch('getPresetConfig', { appKey });
+        const presetConfig = await this.getPresetConfig({ appKey });
         const configMenu = presetConfig.menu;
         // ok
         return {
@@ -183,17 +180,17 @@ export default function (Vue) {
           appMenuLayout: configMenu.layout,
         };
       },
-      async getAppHomeInfo({ state, getters, dispatch }, { appKey, force }) {
-        let appItem = await dispatch('getAppItem', { appKey });
+      async getAppHomeInfo({ appKey, force }) {
+        let appItem = await this.getAppItem({ appKey });
         // configHome
         let configHome;
-        const presetConfig = await dispatch('getPresetConfig', { appKey });
+        const presetConfig = await this.getPresetConfig({ appKey });
         configHome = presetConfig.home;
         if (!configHome.mode && force) {
           appKey = __appKeyDefault;
-          const presetConfigDefault = await dispatch('getPresetConfigDefault');
+          const presetConfigDefault = await this.getPresetConfigDefault();
           configHome = presetConfigDefault.home;
-          appItem = await dispatch('getAppItemDefault');
+          appItem = await this.getAppItemDefault();
         }
         if (!configHome.mode) return null;
         // url
@@ -206,7 +203,7 @@ export default function (Vue) {
         // for unique
         const queries = { appKey };
         if (appItem.appLanguage) {
-          queries.appLanguage = getters.current.appLanguage;
+          queries.appLanguage = this.current.appLanguage;
         }
         url = Vue.prototype.$meta.util.combineQueries(url, queries);
         // ok
@@ -217,17 +214,17 @@ export default function (Vue) {
           url,
         };
       },
-      async getAppMineInfo({ state, dispatch }, { appKey, force }) {
-        let appItem = await dispatch('getAppItem', { appKey });
+      async getAppMineInfo({ appKey, force }) {
+        let appItem = await this.getAppItem({ appKey });
         // current
         let configMine;
-        const presetConfig = await dispatch('getPresetConfig', { appKey });
+        const presetConfig = await this.getPresetConfig({ appKey });
         configMine = presetConfig.mine;
         if (!configMine.layout && force) {
           appKey = __appKeyDefault;
-          const presetConfigDefault = await dispatch('getPresetConfigDefault');
+          const presetConfigDefault = await this.getPresetConfigDefault();
           configMine = presetConfigDefault.mine;
-          appItem = await dispatch('getAppItemDefault');
+          appItem = await this.getAppItemDefault();
         }
         if (!configMine.layout) return null;
         // ok
