@@ -19,7 +19,8 @@ export default {
       };
     },
     base_appCurrent() {
-      return this.$store.getters['a/app/current'];
+      const useStoreApp = this.$store.useSync('a/app/app');
+      return useStoreApp.current;
     },
     base_appLanguageCurrent() {
       return this.base_appCurrent.appLanguage;
@@ -49,8 +50,9 @@ export default {
       await this.layout_prepareConfigLayout(this.layout.current);
     },
     async base_app_prepareAppCurrent() {
+      const useStoreApp = await this.$store.use('a/app/app');
       const appKey = this.container.appKey;
-      const appInfo = await this.$store.dispatch('a/app/getAppMenuInfo', { appKey });
+      const appInfo = await useStoreApp.getAppMenuInfo({ appKey });
       if (!appInfo) return false;
       if (this.base_app_isCurrentSameFull(this.base.appInfoCurrent, appInfo)) return false;
       // current

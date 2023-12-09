@@ -48,12 +48,13 @@ export default {
       if (this.onInit) {
         await this.onInit();
       }
-      this.init_preloadModules();
+      await this.init_preloadModules();
       this.ready = true;
     },
-    init_preloadModules() {
+    async init_preloadModules() {
+      const useStoreApp = await this.$store.use('a/app/app');
       const appKey = this.layoutManager.container.appKey;
-      this.$store.dispatch('a/app/preloadModules', { appKey });
+      useStoreApp.preloadModules({ appKey });
     },
     init_layoutConfig() {
       // accordionItemOpened

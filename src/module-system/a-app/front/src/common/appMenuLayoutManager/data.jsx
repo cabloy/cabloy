@@ -21,8 +21,9 @@ export default {
       return await this.data_provider_onLoadItemsAll_appOther({ appKey });
     },
     async data_provider_onLoadItemsAll_appDefault() {
+      const useStoreApp = await this.$store.use('a/app/app');
       // list
-      const list = await this.$store.dispatch('a/app/getAppItemsAll');
+      const list = await useStoreApp.getAppItemsAll();
       // check appUnclassified/appGeneral
       for (const appName of ['unclassified', 'general']) {
         const appKey = this.$config.appKey[appName];
