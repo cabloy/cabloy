@@ -235,7 +235,7 @@ export default function (Vue) {
           appMineLayout: configMine.layout,
         };
       },
-      preloadModules(store, { appKey }) {
+      preloadModules({ appKey }) {
         const parts = appKey.split(':');
         if (parts.length === 2) {
           Vue.prototype.$meta.util.preloadModules(parts[0]);
