@@ -63,12 +63,13 @@ export default {
     async init_reload() {
       await this.init_categoriesAll();
       await this.init_fetchDataAll();
-      this.init_preloadModules();
+      await this.init_preloadModules();
     },
-    init_preloadModules() {
+    async init_preloadModules() {
+      const useStoreApp = await this.$store.use('a/app/app');
       const appInfoCurrent = this.layoutManager.base.appInfoCurrent;
       const appKey = appInfoCurrent.appKey;
-      this.$store.dispatch('a/app/preloadModules', { appKey });
+      useStoreApp.preloadModules({ appKey });
     },
     init_layoutConfig() {},
     async init_categoriesAll() {

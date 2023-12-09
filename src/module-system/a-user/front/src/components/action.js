@@ -24,7 +24,8 @@ export default {
           // locale
           ctx.$meta.util.setLocale(locale.value);
           // set current app language
-          await this.$meta.store.dispatch('a/app/setCurrent', { appLanguage: locale.value });
+          const useStoreApp = await this.$meta.store.use('a/app/app');
+          await useStoreApp.setCurrent({ appLanguage: locale.value });
           // // confirm
           // let view = ctx.$view;
           // if (!view) {
