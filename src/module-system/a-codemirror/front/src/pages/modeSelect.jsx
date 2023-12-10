@@ -16,7 +16,8 @@ export default {
   methods: {
     async init() {
       // config
-      const layoutConfig = await this.$store.dispatch('a/base/getLayoutConfig', 'a-codemirror');
+      const useStoreLayoutConfig = await this.$store.use('a/basestore/layoutConfig');
+      const layoutConfig = await useStoreLayoutConfig.getLayoutConfig({ module: 'a-codemirror' });
       this.modes = (layoutConfig.modes || ModesDefault).split(',');
     },
     async _saveConfig() {

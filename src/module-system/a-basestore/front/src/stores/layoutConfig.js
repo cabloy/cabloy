@@ -56,7 +56,7 @@ export default function (Vue) {
           });
         });
       },
-      async getLayoutConfig(module) {
+      async getLayoutConfig({ module }) {
         if (this.layoutConfig[module]) return this.layoutConfig[module];
         let data = await Vue.prototype.$meta.api.post('/a/base/layoutConfig/load', { module });
         data = data || {};

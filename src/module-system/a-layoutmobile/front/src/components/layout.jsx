@@ -280,7 +280,8 @@ export default {
       const _layoutItem = await useStoreLayout.getLayoutItem({ layoutKey });
       this.layoutScene = _layoutItem.content;
       // layoutConfig
-      const res = await this.$store.dispatch('a/base/getLayoutConfig', 'a-layoutmobile');
+      const useStoreLayoutConfig = await this.$store.use('a/basestore/layoutConfig');
+      const res = await useStoreLayoutConfig.getLayoutConfig({ module: 'a-layoutmobile' });
       // init layoutConfig
       this.__initLayoutConfig(res[`layout:${layoutKey}`], _layoutItem.atomRevision);
       // init toolbar

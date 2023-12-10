@@ -80,7 +80,8 @@ export default function (Vue) {
       // },
       async getLayoutConfig(/* { state, commit }*/) {
         // if (state.layoutConfig) return state.layoutConfig;
-        const layoutConfig = await Vue.prototype.$meta.store.dispatch('a/base/getLayoutConfig', 'a-basefront');
+        const useStoreLayoutConfig = await Vue.prototype.$meta.store.use('a/basestore/layoutConfig');
+        const layoutConfig = await useStoreLayoutConfig.getLayoutConfig({ module: 'a-basefront' });
         // commit('setLayoutConfig', { layoutConfig });
         return layoutConfig;
       },
