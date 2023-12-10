@@ -82,11 +82,12 @@ export default {
       }
       return this.layoutManager.base_onPerformResource(event, item);
     },
-    onAccordionOpen(event, group) {
+    async onAccordionOpen(event, group) {
       if (this.expandAll) return;
       this.accordionItemOpened = group.id;
       // save
-      this.$store.commit('a/base/setLayoutConfigKey', {
+      const useStoreLayoutConfig = await this.$store.use('a/basestore/layoutConfig');
+      useStoreLayoutConfig.setLayoutConfigKey({
         module: 'a-basefront',
         key: this.layoutConfigKeyOpened,
         value: group.id,

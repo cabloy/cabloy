@@ -218,14 +218,15 @@ export default {
       }
       return Promise.all(promises);
     },
-    __saveLayoutConfigNow() {
+    async __saveLayoutConfigNow() {
       // override
       const value = this.$meta.util.extend({}, this.layoutConfig);
       // remove dynamic resources
       this.__removeDynamicResources(value);
       // save
       if (this.layoutAtomStaticKey) {
-        this.$store.commit('a/base/setLayoutConfigKey', {
+        const useStoreLayoutConfig = await this.$store.use('a/basestore/layoutConfig');
+        useStoreLayoutConfig.setLayoutConfigKey({
           module: 'a-layoutmobile',
           key: `layout:${this.layoutAtomStaticKey}`,
           value,
@@ -294,9 +295,9 @@ export default {
         this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene, { atomRevision });
       }
     },
-    reset() {
+    async reset() {
       this.layoutConfig = this.$meta.util.extend({}, this.layoutDefault, this.layoutScene);
-      this.__saveLayoutConfigNow();
+      await this.__saveLayoutConfigNow();
       this.$meta.vueApp.reload();
     },
     __initToolbar() {

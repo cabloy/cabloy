@@ -5,11 +5,11 @@ export default function (Vue) {
     },
     created() {
       Vue.prototype.$meta.eventHub.$on('auth:login', data => {
-        this.authLogin(data);
+        this.__authLogin(data);
       });
     },
     actions: {
-      authLogin() {
+      __authLogin() {
         this.preferredRoles = {};
       },
       setPreferredRole({ atomClassId, preferredRole }) {
