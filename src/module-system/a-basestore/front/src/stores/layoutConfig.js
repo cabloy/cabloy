@@ -34,16 +34,21 @@ export default function (Vue) {
         await Vue.prototype.$meta.api.post('/a/base/layoutConfig/saveKey', info.data);
       },
       setLayoutConfig({ module, data }) {
-        this.layoutConfig[module] = data;
+        this.layoutConfig = {
+          ...this.layoutConfig,
+          [module]: data,
+        };
       },
       async setLayoutConfigKey({ module, key, value }) {
-        // 新增的属性是否有响应式
-        const layoutConfigModule = this.layoutConfig[module] || {};
-        layoutConfigModule[key] = value;
-        // state.layoutConfig = {
-        //   ...state.layoutConfig,
-        //   [module]: layoutConfigModule,
-        // };
+        let layoutConfigModule = this.layoutConfig[module] || {};
+        layoutConfigModule = {
+          ...layoutConfigModule,
+          [key]: value,
+        };
+        this.layoutConfig = {
+          ...this.layoutConfig,
+          [module]: layoutConfigModule,
+        };
         // try to save
         const user = Vue.prototype.$meta.store.getState('auth/user');
         if (user.op.anonymous) {

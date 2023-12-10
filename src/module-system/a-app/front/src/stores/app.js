@@ -70,7 +70,10 @@ export default function (Vue) {
         await this.__saveCurrent_inner({ current: this.currentInner });
       },
       setAppItem({ appKey, appItem }) {
-        this.appItems[appKey] = appItem;
+        this.appItems = {
+          ...this.appItems,
+          [appKey]: appItem,
+        };
       },
       setAppItemsAll({ appItems }) {
         this.appItemsAll = appItems;
