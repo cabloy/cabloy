@@ -7,7 +7,10 @@ export default function (Vue) {
     },
     actions: {
       setLayoutItem({ layoutKey, layoutItem }) {
-        this.layoutItems[layoutKey] = layoutItem;
+        this.layoutItems = {
+          ...this.layoutItems,
+          [layoutKey]: layoutItem,
+        };
       },
       async getLayoutItem({ layoutKey }) {
         const layoutItem = await this._getLayoutItem_inner({ layoutKey });
