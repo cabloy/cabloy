@@ -28,19 +28,13 @@ export default {
         this.timeline_destroyInstance();
         return null;
       }
-      // load module
-      const moduleExtend = await this.$meta.module.use(configComponent.module);
       // create extend
       const options = {
         propsData: {
           adapter: this.timeline_getAdapter(),
         },
       };
-      const component = moduleExtend.options.components[configComponent.name];
-      if (!component) {
-        throw new Error(`timeline.component not found: ${configComponent.module}:${configComponent.name}`);
-      }
-      const instance = this.$meta.util.createComponentInstance(component, options);
+      const instance = await this.$meta.util.createComponentInstanceByName(configComponent, options);
       // ready
       this.timeline_destroyInstance();
       this.timeline.instance = instance;

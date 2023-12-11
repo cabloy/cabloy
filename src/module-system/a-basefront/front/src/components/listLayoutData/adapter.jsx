@@ -49,8 +49,6 @@ export default {
       const providerConfig = this.getProviderConfig(providerName);
       if (!providerConfig) throw new Error(`adapter provider not found: ${providerName}`);
       const configComponent = providerConfig.component;
-      // load module
-      const moduleProvider = await this.$meta.module.use(configComponent.module);
       // create provider
       const providerOptions = {
         propsData: {
@@ -58,8 +56,7 @@ export default {
           providerConfig,
         },
       };
-      const component = moduleProvider.options.components[configComponent.name];
-      return this.$meta.util.createComponentInstance(component, providerOptions);
+      return await this.$meta.util.createComponentInstanceByName(configComponent, providerOptions);
     },
     getProviderConfig(providerName) {
       return this.$meta.util.getProperty(
