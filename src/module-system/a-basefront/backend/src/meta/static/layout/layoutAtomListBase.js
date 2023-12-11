@@ -77,7 +77,28 @@ module.exports = app => {
               },
               right: {
                 quickFilter: {
-                  enable: 'auto',
+                  enable: false,
+                },
+              },
+            },
+            options_medium: {
+              left: {
+                even: {
+                  min: 4,
+                  max: 6,
+                },
+              },
+            },
+            options_large: {
+              left: {
+                even: {
+                  min: -1,
+                  max: -1,
+                },
+              },
+              right: {
+                quickFilter: {
+                  enable: true,
                 },
               },
             },
@@ -311,7 +332,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 14,
+    atomRevision: 15,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
