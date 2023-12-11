@@ -61,22 +61,24 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'listLayoutBlockListSubnavbar',
             },
-            policy: 'custom',
-            left: {
-              even: {
-                min: 2,
-                max: 4,
-              },
-              tabs: [
-                {
-                  field: 'atomState',
-                  stage: 'auto',
+            options: {
+              policy: 'custom',
+              left: {
+                even: {
+                  min: 2,
+                  max: 4,
                 },
-              ],
-            },
-            right: {
-              quickFilter: {
-                enable: 'auto',
+                tabs: [
+                  {
+                    field: 'atomState',
+                    stage: 'auto',
+                  },
+                ],
+              },
+              right: {
+                quickFilter: {
+                  enable: 'auto',
+                },
               },
             },
           },
@@ -309,7 +311,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 13,
+    atomRevision: 14,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
