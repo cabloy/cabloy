@@ -68,12 +68,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
-        },
-        blocks: {
           items: {
             component: {
               module: 'a-baselayout',
@@ -101,12 +99,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
-        },
-        blocks: {
           items: {
             component: {
               module: 'a-baselayout',
@@ -127,12 +123,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutTable',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
-        },
-        blocks: {
           items: {
             component: {
               module: 'a-baselayout',
@@ -252,12 +246,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
-        },
-        blocks: {
           title: {
             component: {
               module: 'a-baselayout',
@@ -277,12 +269,10 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutList',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
-        },
-        blocks: {
           title: {
             component: {
               module: 'a-baselayout',
@@ -302,7 +292,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base(ItemOnly)',
     atomStaticKey: 'layoutItemOnlyListBase',
-    atomRevision: 5,
+    atomRevision: 6,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),

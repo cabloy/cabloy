@@ -54,7 +54,7 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutDefault',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
@@ -66,7 +66,7 @@ module.exports = app => {
           module: 'a-baselayout',
           name: 'baseLayoutDefault',
         },
-        options: {
+        blocks: {
           subnavbar: {
             policy: 'default',
           },
@@ -77,7 +77,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomItemBase',
-    atomRevision: 7,
+    atomRevision: 8,
     description: '',
     layoutTypeCode: 4,
     content: JSON.stringify(content),
