@@ -15,8 +15,13 @@ export default {
   },
   created() {},
   methods: {
+    _isFull() {
+      const container = this.layoutManager.container;
+      return container.atomClass && container.scene !== 'select' && container.scene !== 'selecting';
+    },
     _renderNavRight() {
-      const isFull = this.layoutManager.subnavbar.render && !this.layoutManager.subnavbar.enable;
+      // const isFull = this.layoutManager.subnavbar.render && !this.layoutManager.subnavbar.enable;
+      const isFull = this._isFull();
       const children = [];
       // full
       if (isFull) {

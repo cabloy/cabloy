@@ -264,7 +264,7 @@ export default function (Vue) {
         const layoutConfigValueApp = layoutConfigValue.appKey;
         const layoutConfigValueLanguage = layoutConfigValue.appLanguage;
         if (layoutConfigValueApp !== current.appKey || layoutConfigValueLanguage !== current.appLanguage) {
-          const useStoreLayoutConfig = await this.$store.use('a/basestore/layoutConfig');
+          const useStoreLayoutConfig = await Vue.prototype.$meta.store.use('a/basestore/layoutConfig');
           await useStoreLayoutConfig.setLayoutConfigKey({
             module: 'a-basefront',
             key: layoutConfigKey,
