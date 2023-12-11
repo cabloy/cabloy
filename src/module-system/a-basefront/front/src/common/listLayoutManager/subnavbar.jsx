@@ -2,5 +2,9 @@ export default {
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    async subnavbar_onPolicyCustomForAtom() {
+      return false;
+    },
+  },
 };
