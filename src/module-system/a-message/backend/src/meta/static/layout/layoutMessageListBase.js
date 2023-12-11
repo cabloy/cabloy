@@ -12,7 +12,9 @@ module.exports = app => {
     },
     layouts: {
       base: {
-        blocks: {},
+        blocks: {
+          subnavbar: false,
+        },
       },
       list: {},
     },
@@ -20,7 +22,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutMessageListBase',
-    atomRevision: 0,
+    atomRevision: 1,
     description: '',
     layoutTypeCode: 8,
     content: JSON.stringify(content),

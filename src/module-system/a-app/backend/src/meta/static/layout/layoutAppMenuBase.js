@@ -19,6 +19,7 @@ module.exports = app => {
               name: 'baseLayoutBlockListTitle',
             },
           },
+          subnavbar: false,
         },
       },
       list: {
@@ -42,7 +43,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAppMenuBase',
-    atomRevision: 6,
+    atomRevision: 7,
     description: '',
     layoutTypeCode: 13,
     content: JSON.stringify(content),
