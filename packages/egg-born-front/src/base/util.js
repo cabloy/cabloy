@@ -237,6 +237,12 @@ export default function (Vue) {
       const moduleInfo = typeof moduleName === 'string' ? mparse.parseInfo(moduleName) : moduleName;
       return `/${moduleInfo.url}/${arg}`;
     },
+    async createComponentInstanceByName(params, options) {
+      const module = await Vue.prototype.$meta.module.use(params.module);
+      const component = module.options.components[params.name];
+      if (!component) throw new Error(`component not found: ${params.module}:${params.name}`);
+      return this.createComponentInstance(component, options);
+    },
     createComponentInstance(component, options) {
       if (!component) throw new Error('component should not be null');
       // const _component = Object.assign({}, component, options);
