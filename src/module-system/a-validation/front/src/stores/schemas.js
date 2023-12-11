@@ -10,7 +10,10 @@ export default {
   actions: {
     setValidator({ atomClass, validator }) {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
-      this.validators[key] = validator;
+      this.validators = {
+        ...this.validators,
+        [key]: validator,
+      };
     },
     async getValidator({ atomClass }) {
       const key = `${atomClass.module}:${atomClass.atomClassName}`;
@@ -23,7 +26,10 @@ export default {
     },
     setSchema({ module, validator, schema, schemaRes }) {
       const key = `${module}:${validator || ''}:${schema || ''}`;
-      this.schemas[key] = schemaRes;
+      this.schemas = {
+        ...this.schemas,
+        [key]: schemaRes,
+      };
     },
     async getSchema({ module, validator, schema }) {
       const key = `${module}:${validator || ''}:${schema || ''}`;

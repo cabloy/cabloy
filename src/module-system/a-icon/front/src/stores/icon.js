@@ -30,7 +30,10 @@ export default function (Vue) {
     },
     actions: {
       setIcon({ icon, iconHref }) {
-        this.icons[icon] = iconHref;
+        this.icons = {
+          ...this.icons,
+          [icon]: iconHref,
+        };
       },
       async getIcon({ icon }) {
         if (!icon) return null;

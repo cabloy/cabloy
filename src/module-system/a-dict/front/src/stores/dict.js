@@ -14,7 +14,10 @@ export default function (Vue) {
     actions: {
       setDict({ dictKey, dict }) {
         _adjustDict({ dict });
-        this.dicts[dictKey] = dict;
+        this.dicts = {
+          ...this.dicts,
+          [dictKey]: dict,
+        };
       },
       async getDict({ dictKey }) {
         const dict = await this._getDict_inner({ dictKey });
