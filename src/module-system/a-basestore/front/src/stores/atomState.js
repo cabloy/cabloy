@@ -59,7 +59,10 @@ export default function (Vue) {
       setDict({ atomClass, atomStage, dict }) {
         atomStage = __prepareAtomStageString({ atomStage });
         const key = __combineKey({ atomClass, atomStage });
-        this.dicts[key] = dict;
+        this.dicts = {
+          ...this.dicts,
+          [key]: dict,
+        };
       },
       getDictSync({ atomClass, atomStage }) {
         atomStage = __prepareAtomStageString({ atomStage });

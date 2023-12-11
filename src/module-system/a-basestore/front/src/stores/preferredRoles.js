@@ -13,7 +13,10 @@ export default function (Vue) {
         this.preferredRoles = {};
       },
       setPreferredRole({ atomClassId, preferredRole }) {
-        this.preferredRoles[atomClassId] = preferredRole;
+        this.preferredRoles = {
+          ...this.preferredRoles,
+          [atomClassId]: preferredRole,
+        };
       },
       // undefined: not support
       // null: cancelled by user

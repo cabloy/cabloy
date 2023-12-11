@@ -6,9 +6,15 @@ export default function (Vue) {
     actions: {
       setAtomClassBase({ atomClass, atomClassBase }) {
         let key = atomClass.id;
-        this.atomClassBases[key] = atomClassBase;
+        this.atomClassBases = {
+          ...this.atomClassBases,
+          [key]: atomClassBase,
+        };
         key = `${atomClass.module}:${atomClass.atomClassName}`;
-        this.atomClassBases[key] = atomClassBase;
+        this.atomClassBases = {
+          ...this.atomClassBases,
+          [key]: atomClassBase,
+        };
       },
       getAtomClassBaseSync({ atomClass }) {
         const key = atomClass.id || `${atomClass.module}:${atomClass.atomClassName}`;

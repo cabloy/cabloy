@@ -7,7 +7,10 @@ export default function (Vue) {
       // actionsBase
       setActionsBase({ atomClass, actionsBase }) {
         const key = `${atomClass.module}:${atomClass.atomClassName}`;
-        this.actionsBases[key] = actionsBase;
+        this.actionsBases = {
+          ...this.actionsBases,
+          [key]: actionsBase,
+        };
       },
       getActionsBaseSync({ atomClass }) {
         const key = `${atomClass.module}:${atomClass.atomClassName}`;
