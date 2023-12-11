@@ -61,6 +61,7 @@ module.exports = app => {
               module: 'a-baselayout',
               name: 'baseLayoutBlockListSubnavbar',
             },
+            policy: 'custom',
           },
         },
       },
@@ -71,9 +72,6 @@ module.exports = app => {
           name: 'baseLayoutList',
         },
         blocks: {
-          subnavbar: {
-            policy: 'default',
-          },
           items: {
             component: {
               module: 'a-baselayout',
@@ -102,9 +100,6 @@ module.exports = app => {
           name: 'baseLayoutList',
         },
         blocks: {
-          subnavbar: {
-            policy: 'default',
-          },
           items: {
             component: {
               module: 'a-baselayout',
@@ -126,9 +121,6 @@ module.exports = app => {
           name: 'baseLayoutTable',
         },
         blocks: {
-          subnavbar: {
-            policy: 'default',
-          },
           items: {
             component: {
               module: 'a-baselayout',
@@ -261,9 +253,6 @@ module.exports = app => {
           name: 'baseLayoutList',
         },
         blocks: {
-          subnavbar: {
-            policy: 'default',
-          },
           title: {
             component: {
               module: 'a-baselayout',
@@ -284,9 +273,6 @@ module.exports = app => {
           name: 'baseLayoutList',
         },
         blocks: {
-          subnavbar: {
-            policy: 'default',
-          },
           title: {
             component: {
               module: 'a-baselayout',
@@ -306,7 +292,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 10,
+    atomRevision: 11,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
