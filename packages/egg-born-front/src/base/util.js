@@ -700,7 +700,7 @@ export default function (Vue) {
       }
       return { op };
     },
-    _combineSearchClause({ key, dataKey, property, value, operator }) {
+    _combineSearchClause({ /* key,*/ dataKey, property, value, operator }) {
       const ebSearch = property.ebSearch;
       if (!property.type) return null;
       if (this.checkIfEmptyForSelect(value)) return null;
