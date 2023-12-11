@@ -15,7 +15,7 @@ export default {
   },
   methods: {
     async onPolicy() {
-      return await this.layoutManager.subnavbar_onPolicyCustomForAtom();
+      return false;
     },
     _renderActionsLeft() {
       let domBulkActionsLeft;
