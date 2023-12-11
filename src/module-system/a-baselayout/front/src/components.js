@@ -24,6 +24,7 @@ import baseLayoutTreeTable from './components/base/baseLayoutTreeTable/baseLayou
 import listLayoutBlockCardItem from './components/atom/listLayoutCard/listLayoutBlockCardItem.jsx';
 // listLayoutList
 import listLayoutBlockListCaption from './components/atom/listLayoutList/listLayoutBlockListCaption.jsx';
+import listLayoutBlockListSubnavbar from './components/atom/listLayoutList/listLayoutBlockListSubnavbar.jsx';
 import listLayoutBlockListItem from './components/atom/listLayoutList/listLayoutBlockListItem.jsx';
 import listLayoutBlockSelectTitle from './components/atom/listLayoutList/listLayoutBlockSelectTitle.jsx';
 import listLayoutBlockSelectItems from './components/atom/listLayoutList/listLayoutBlockSelectItems.jsx';
@@ -64,6 +65,7 @@ export default {
   listLayoutBlockCardItem,
   // listLayoutList
   listLayoutBlockListCaption,
+  listLayoutBlockListSubnavbar,
   listLayoutBlockListItem,
   listLayoutBlockSelectTitle,
   listLayoutBlockSelectItems,

@@ -59,7 +59,7 @@ module.exports = app => {
           subnavbar: {
             component: {
               module: 'a-baselayout',
-              name: 'baseLayoutBlockListSubnavbar',
+              name: 'listLayoutBlockListSubnavbar',
             },
             policy: 'custom',
           },
@@ -292,7 +292,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 11,
+    atomRevision: 12,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
