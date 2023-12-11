@@ -9,6 +9,9 @@ export default {
     blockConfig: {
       type: Object,
     },
+    blockOptions: {
+      type: Object,
+    },
   },
   data() {
     return {};
