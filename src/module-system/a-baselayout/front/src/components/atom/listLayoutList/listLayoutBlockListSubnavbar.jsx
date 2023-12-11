@@ -14,6 +14,12 @@ export default {
     return {};
   },
   methods: {
+    async onPolicy() {
+      return {
+        render: true,
+        enable: true,
+      };
+    },
     _renderActionsLeft() {
       let domBulkActionsLeft;
       if (this.layoutManager.bulk_renderActionsLeft) {
