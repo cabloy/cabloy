@@ -17,31 +17,34 @@ export default {
       if (!dict) return 1; // not ready
       return dict._dictItems.length;
     },
+    _getTabsEven(tabsCount) {
+      const configEven = this.blockOptions.left.even;
+      if (!configEven) return false;
+      // min
+      if (tabsCount < configEven.min) return false;
+      // max
+      if (configEven.max !== -1 && tabsCount > configEven.max) return false;
+      // even
+      return true;
+    },
     _renderTabs() {
+      // tabsCount
       const tabsCount = this._getTabsCount();
-      console.log(tabsCount);
+      // even
+      const tabsEven = this._getTabsEven(tabsCount);
+      // domTabLinks
       const domTabLinks = [];
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(<eb-button class="col">aaa</eb-button>);
-      domTabLinks.push(
-        <f7-col>
-          <eb-button outline>BBB</eb-button>
-        </f7-col>
-      );
-      domTabLinks.push(
-        <f7-col>
-          <eb-button>CCC</eb-button>
-        </f7-col>
-      );
+      // all
+      domTabLinks.push(<eb-link tabLink="#11" tabLinkActive text={this.$text('All')}></eb-link>);
+      domTabLinks.push(<eb-link tabLink="#11" tabLinkActive text={this.$text('All')}></eb-link>);
+      domTabLinks.push(<eb-link tabLink="#11" tabLinkActive text={this.$text('All')}></eb-link>);
 
       return (
-        <div class="actions-block actions-block-left actions-block-left-tabs eb-scrollable row">{domTabLinks}</div>
+        <div class="actions-block actions-block-left actions-block-left-tabs">
+          <f7-toolbar top tabbar scrollable={!tabsEven}>
+            {domTabLinks}
+          </f7-toolbar>
+        </div>
       );
     },
   },

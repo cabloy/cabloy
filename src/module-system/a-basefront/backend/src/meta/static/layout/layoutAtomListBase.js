@@ -91,10 +91,7 @@ module.exports = app => {
             },
             options_large: {
               left: {
-                even: {
-                  min: -1,
-                  max: -1,
-                },
+                even: false,
               },
               right: {
                 quickFilter: {
@@ -332,7 +329,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 18,
+    atomRevision: 19,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
