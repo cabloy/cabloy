@@ -27,12 +27,23 @@ export default {
       // even
       return true;
     },
+    _getTabsSelected() {
+      // no tabs
+      if (this.tabs.length === 0) return null;
+      // tabs
+      const tabsSelected = [];
+      for (const tab of this.tabs) {
+        console.log(tab);
+      }
+    },
     _renderTabs() {
       // tabsCount
       const tabsCount = this._getTabsCount();
       // even
       const tabsEven = this._getTabsEven(tabsCount);
       // const tabsEven = true;
+      // tabsSelected
+      const tabsSelected = this._getTabsSelected();
       // domTabLinks
       const domTabLinks = [];
       // all

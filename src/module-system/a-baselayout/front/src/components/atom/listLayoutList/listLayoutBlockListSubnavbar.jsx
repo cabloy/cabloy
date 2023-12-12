@@ -25,9 +25,14 @@ export default {
     };
   },
   computed: {
+    filterData() {
+      return this.$meta.util.getProperty(this.layoutManager, 'filter.data');
+    },
     form() {
-      const filterData = this.$meta.util.getProperty(this.layoutManager, 'filter.data');
-      return filterData.form;
+      return this.filterData.form;
+    },
+    formAtomClass() {
+      return this.filterData.formAtomClass;
     },
     atomClass() {
       return this.form.atomClass;

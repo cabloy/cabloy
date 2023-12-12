@@ -72,6 +72,8 @@ module.exports = app => {
                 tabs: {
                   atomState: {
                     stage: '',
+                    dataFrom: 'form',
+                    dataKey: 'state',
                   },
                 },
               },
@@ -329,7 +331,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 19,
+    atomRevision: 20,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
