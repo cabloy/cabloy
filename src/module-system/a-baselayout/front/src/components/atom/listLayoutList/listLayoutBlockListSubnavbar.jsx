@@ -37,12 +37,12 @@ export default {
     },
   },
   mounted() {
-    this.__init();
+    this.__init({ initDicts: true });
   },
   methods: {
     async onPolicy() {
       // init
-      await this.__init();
+      await this.__init({ initDicts: false });
       // check tabs
       if (this.tabs.length === 0 && !this.quickFilter) {
         return false;

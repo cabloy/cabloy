@@ -1,8 +1,11 @@
 export default {
   methods: {
-    async __init() {
+    async __init({ initDicts }) {
       await this.__initTabs();
       await this.__initQuickFilter();
+      if (initDicts) {
+        await this.__initTabsDicts();
+      }
     },
     async __initTabs() {
       const stageCurrent = this.layoutManager.base_getCurrentStage();
@@ -15,10 +18,17 @@ export default {
         // dict key
         const dictKey = await this.__initTabDictKey({ tabName, tabOptions });
         if (dictKey) {
-          tabs.push({ tabName, tabOptions, dictKey });
+          tabs.push({ tabName, tabOptions, dictKey, dict: null });
         }
       }
       this.tabs = tabs;
+    },
+    async __initTabsDicts() {
+      const useStoreDict = await this.$store.use('a/dict/dict');
+      for (const tab of this.tabs) {
+        // dict
+        tab.dict = await useStoreDict.getDict({ dictKey: tab.dictKey });
+      }
     },
     async __initQuickFilter() {
       const quickFilter = this.blockOptions.right.quickFilter;

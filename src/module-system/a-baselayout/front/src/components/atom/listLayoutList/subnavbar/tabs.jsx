@@ -1,5 +1,6 @@
 export default {
   methods: {
+    _getTabsCount() {},
     _renderTabs() {
       const domTabLinks = [];
       domTabLinks.push(<eb-button class="col">aaa</eb-button>);
