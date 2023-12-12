@@ -68,12 +68,12 @@ module.exports = app => {
                   min: 2,
                   max: 4,
                 },
-                tabs: [
-                  {
-                    field: 'atomState',
+                tabsUse: ['atomState'],
+                tabs: {
+                  atomState: {
                     stage: 'auto',
                   },
-                ],
+                },
               },
               right: {
                 quickFilter: {
@@ -332,7 +332,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 15,
+    atomRevision: 16,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
