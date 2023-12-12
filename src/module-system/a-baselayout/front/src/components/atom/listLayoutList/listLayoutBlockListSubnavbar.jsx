@@ -18,6 +18,7 @@ export default {
   },
   methods: {
     async onPolicy() {
+      console.log(this.blockOptions);
       return false;
     },
     _renderActionsLeft() {
