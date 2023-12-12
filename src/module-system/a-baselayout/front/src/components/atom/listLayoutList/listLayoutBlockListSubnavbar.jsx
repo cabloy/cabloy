@@ -67,6 +67,7 @@ export default {
       return parts.includes(stageCurrent);
     },
     async __initTabDictKey({ tabName /* , tabOptions*/ }) {
+      if (!this.atomClass) return null;
       // special for atomState
       if (tabName === 'atomState') {
         const useStoreAtomState = await this.$store.use('a/basestore/atomState');
@@ -93,14 +94,11 @@ export default {
         enable: true,
       };
     },
-    _renderActionsLeft() {
-      let domBulkActionsLeft;
-      if (this.layoutManager.bulk_renderActionsLeft) {
-        domBulkActionsLeft = this.layoutManager.bulk_renderActionsLeft();
-      }
-      return <div class="actions-block actions-block-left">{domBulkActionsLeft}</div>;
+    _renderTabs() {
+      const domTabs = [];
+      return <div class="actions-block actions-block-left">{domTabs}</div>;
     },
-    _renderActionsRight() {
+    _renderQuickFilter() {
       let domBulkActionsRight;
       if (this.layoutManager.bulk_renderActionsRight) {
         domBulkActionsRight = this.layoutManager.bulk_renderActionsRight();
@@ -111,10 +109,9 @@ export default {
   render() {
     return (
       <f7-subnavbar>
-        <div>ssss</div>
         <div class="atom-list-subnavbar-container">
-          {this._renderActionsLeft()}
-          {this._renderActionsRight()}
+          {this._renderTabs()}
+          {this._renderQuickFilter()}
         </div>
       </f7-subnavbar>
     );
