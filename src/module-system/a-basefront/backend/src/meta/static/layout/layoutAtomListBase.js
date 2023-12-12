@@ -68,10 +68,10 @@ module.exports = app => {
                   min: 2,
                   max: 4,
                 },
-                tabsUse: ['atomState'],
+                tabsUse: ['state'],
                 tabs: {
-                  atomState: {
-                    stage: 'auto',
+                  state: {
+                    stage: '',
                   },
                 },
               },
@@ -332,7 +332,7 @@ module.exports = app => {
   const layout = {
     atomName: 'Base',
     atomStaticKey: 'layoutAtomListBase',
-    atomRevision: 16,
+    atomRevision: 17,
     description: '',
     layoutTypeCode: 3,
     content: JSON.stringify(content),
