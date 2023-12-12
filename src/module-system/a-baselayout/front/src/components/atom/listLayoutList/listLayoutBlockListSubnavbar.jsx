@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       tabs: [],
+      quickFilter: null,
     };
   },
   computed: {
@@ -36,17 +37,28 @@ export default {
   methods: {
     async __init() {
       await this.__initTabs();
+      await this.__initQuickFilter();
     },
     async __initTabs() {
       const stageCurrent = this.layoutManager.base_getCurrentStage();
       const tabsUse = this.blockOptions.left.tabsUse;
+      const tabs = [];
       for (const tabName of tabsUse) {
         const tabOptions = this.blockOptions.left.tabs[tabName];
         // check stage
         if (!this.__checkStageValid(stageCurrent, tabOptions.stage)) continue;
         // dict key
         const dictKey = await this.__initTabDictKey({ tabName, tabOptions });
-        console.log(dictKey);
+        if (dictKey) {
+          tabs.push({ tabName, tabOptions, dictKey });
+        }
+      }
+      this.tabs = tabs;
+    },
+    async __initQuickFilter() {
+      const quickFilter = this.blockOptions.right.quickFilter;
+      if (quickFilter.enable) {
+        this.quickFilter = quickFilter;
       }
     },
     __checkStageValid(stageCurrent, stage) {
@@ -70,8 +82,16 @@ export default {
       return this.$meta.util.getProperty(atomClassBase, `fields.dicts.${tabName}.dictKey`);
     },
     async onPolicy() {
+      // init
       await this.__init();
-      return false;
+      // check tabs
+      if (this.tabs.length === 0 && !this.quickFilter) {
+        return false;
+      }
+      return {
+        render: true,
+        enable: true,
+      };
     },
     _renderActionsLeft() {
       let domBulkActionsLeft;
