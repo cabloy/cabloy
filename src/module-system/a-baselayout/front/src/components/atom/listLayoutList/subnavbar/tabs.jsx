@@ -1,28 +1,25 @@
 export default {
   methods: {
     _getTabsCount() {
+      return 1 + this._getTabsCount_inner();
+    },
+    _getTabsCount_inner() {
       // no tabs
-      if (this.tabs.length === 0) return 1;
+      if (this.tabs.length === 0) return 0;
       // more tabs
       if (this.tabs.length > 1) {
-        return 1 + this.tabs.length;
+        return this.tabs.length;
       }
       // only one
       const tab = this.tabs[0];
-      console.log(tab);
       // array/tree
       const dict = tab.dict;
-      if (!dict) return 1;
-      const dictMode = dict.dictMode;
-      if (dictMode === 1) {
-        // tree
-      } else {
-        // array
-      }
-      return this.tabs.length;
+      if (!dict) return 1; // not ready
+      return dict._dictItems.length;
     },
     _renderTabs() {
       const tabsCount = this._getTabsCount();
+      console.log(tabsCount);
       const domTabLinks = [];
       domTabLinks.push(<eb-button class="col">aaa</eb-button>);
       domTabLinks.push(<eb-button class="col">aaa</eb-button>);

@@ -1,11 +1,13 @@
 export default {
   methods: {
     async __init({ initDicts }) {
-      await this.__initTabs();
-      await this.__initQuickFilter();
-      if (initDicts) {
-        await this.__initTabsDicts();
-      }
+      await this.renderFreezeBegin(async () => {
+        await this.__initTabs();
+        await this.__initQuickFilter();
+        if (initDicts) {
+          await this.__initTabsDicts();
+        }
+      });
     },
     async __initTabs() {
       const stageCurrent = this.layoutManager.base_getCurrentStage();
