@@ -32,16 +32,16 @@ export default {
       const tabsCount = this._getTabsCount();
       // even
       const tabsEven = this._getTabsEven(tabsCount);
+      // const tabsEven = true;
       // domTabLinks
       const domTabLinks = [];
       // all
-      domTabLinks.push(<eb-link tabLink="#11" tabLinkActive text={this.$text('All')}></eb-link>);
-      domTabLinks.push(<eb-link tabLink="#11" tabLinkActive text={this.$text('All')}></eb-link>);
-      domTabLinks.push(<eb-link tabLink="#11" tabLinkActive text={this.$text('All')}></eb-link>);
+      domTabLinks.push(<eb-link tabLink tabLinkActive text={this.$text('All')}></eb-link>);
+      domTabLinks.push(<eb-link tabLink text={this.$text('All')}></eb-link>);
 
       return (
         <div class="actions-block actions-block-left actions-block-left-tabs">
-          <f7-toolbar top tabbar scrollable={!tabsEven}>
+          <f7-toolbar class={{ even: tabsEven }} top tabbar scrollable={!tabsEven}>
             {domTabLinks}
           </f7-toolbar>
         </div>
