@@ -1,15 +1,12 @@
-module.exports = app => {
-  const moduleInfo = module.info;
-  class FlowNode extends app.meta.ModelCache {
-    constructor(ctx) {
-      super(ctx, {
-        table: 'aFlowNode',
-        options: {
-          disableDeleted: true,
-          cacheName: { module: moduleInfo.relativeName, name: 'modelFlowNode' },
-        },
-      });
-    }
+const moduleInfo = module.info;
+module.exports = class FlowNode extends module.app.meta.ModelCache {
+  constructor() {
+    super({
+      table: 'aFlowNode',
+      options: {
+        disableDeleted: true,
+        cacheName: { module: moduleInfo.relativeName, name: 'modelFlowNode' },
+      },
+    });
   }
-  return FlowNode;
 };
