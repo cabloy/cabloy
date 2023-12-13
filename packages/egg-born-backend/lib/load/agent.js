@@ -1,11 +1,13 @@
 const path = require('path');
 const AgentWorkerLoader = require('egg').AgentWorkerLoader;
 const loadModules = require('../module');
+const ModuleInfoFn = require('../base/moduleInfo.js');
 
 module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
-  // constructor(opt) {
-  //   super(opt);
-  // }
+  constructor(opt) {
+    super(opt);
+    ModuleInfoFn(this.app);
+  }
   loadConfig() {
     super.loadConfig();
     this.app.subdomainOffset = typeof this.config.subdomainOffset === 'undefined' ? 2 : this.config.subdomainOffset;
