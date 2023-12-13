@@ -6,7 +6,9 @@ const ModuleInfoFn = require('../base/moduleInfo.js');
 module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   constructor(opt) {
     super(opt);
-    ModuleInfoFn(this.app);
+    if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'unittest') {
+      ModuleInfoFn(this.app);
+    }
   }
   loadConfig() {
     super.loadConfig();
@@ -15,7 +17,9 @@ module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   load() {
     super.load();
     // load modules
-    loadModules(this);
+    if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'unittest') {
+      loadModules(this);
+    }
   }
   getAppname() {
     if (!this.pkgCabloy) {
