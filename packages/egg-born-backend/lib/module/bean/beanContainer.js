@@ -63,6 +63,8 @@ module.exports = (app, ctx) => {
         } else {
           _classOrFn = bean;
         }
+      } else {
+        _classOrFn = bean;
       }
       // instance
       let beanInstance;
@@ -77,6 +79,10 @@ module.exports = (app, ctx) => {
           beanInstance = new _classOrFn(ctx, ...args);
         } else if (_beanClass.mode === 'ctx') {
           beanInstance = new _classOrFn(...args);
+        } else {
+          beanInstance = new _classOrFn(...args);
+          if (app) beanInstance.app = app;
+          if (ctx) beanInstance.ctx = ctx;
         }
       }
       if (!beanInstance) {
