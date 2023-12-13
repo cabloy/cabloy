@@ -1,5 +1,4 @@
 const path = require('path');
-
 const fse = require('fs-extra');
 const JSZip = require('jszip');
 const shajs = require('sha.js');

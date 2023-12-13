@@ -1,5 +1,5 @@
 const path = require('path');
-
+const fse = require('fs-extra');
 const chokidar = require('chokidar');
 const debounce = require('debounce');
 // const eggBornUtils = require('egg-born-utils');
@@ -183,6 +183,12 @@ module.exports = function (app) {
       for (const __path of __pathes) {
         watchDirs.push(path.join(pathSrc, __path));
       }
+      // egg-born-backend
+      const pathEggBornBackend = path.resolve(pathSrc, '../packages/egg-born-backend');
+      if (fse.existsSync(pathEggBornBackend)) {
+        watchDirs.push(pathEggBornBackend);
+      }
+      // ok
       return watchDirs;
       // const pathSrc = path.resolve(app.config.baseDir, '..');
       // let watchDirs = eggBornUtils.tools.globbySync(`${pathSrc}/**/backend/src`, { onlyDirectories: true });
@@ -196,7 +202,8 @@ module.exports = function (app) {
       if (
         info.indexOf('/backend/src/') > -1 ||
         info.indexOf('/src/backend/config/') > -1 ||
-        info.indexOf('/src/backend/demo/') > -1
+        info.indexOf('/src/backend/demo/') > -1 ||
+        info.indexOf('/packages/egg-born-backend/') > -1
       ) {
         app.logger.warn(`[agent:development] reload worker because ${info} changed`);
         this._reloadByApp({ action: 'now' });
