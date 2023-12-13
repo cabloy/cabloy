@@ -1,4 +1,4 @@
-const mparse = require('egg-born-mparse').default;
+const ModuleInfo = require('@zhennann/module-info');
 
 module.exports = app => {
   return {
@@ -9,10 +9,7 @@ module.exports = app => {
       return `${apiPrefix}/${moduleInfo.pid}/${moduleInfo.name}`;
     },
     parseInfoFromPackage(dir) {
-      const file = app.meta.util.lookupPackage(dir);
-      if (!file) return null;
-      const pkg = require(file);
-      return mparse.parseInfo(mparse.parseName(pkg.name));
+      return ModuleInfo.parseInfoFromPackage(dir);
     },
     mockUrl(dir, url, apiPrefix = true) {
       apiPrefix = _prepareApiPrefix(apiPrefix);

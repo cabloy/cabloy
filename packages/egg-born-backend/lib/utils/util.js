@@ -10,16 +10,6 @@ module.exports = app => {
     instanceStarted(subdomain) {
       return app.meta.appReadyInstances && app.meta.appReadyInstances[subdomain];
     },
-    lookupPackage(dir) {
-      let _dir = dir;
-      // eslint-disable-next-line
-      while (true) {
-        const file = path.join(_dir, 'package.json');
-        if (file === '/package.json') return null;
-        if (fse.existsSync(file)) return file;
-        _dir = path.join(_dir, '../');
-      }
-    },
     combineFetchPath(moduleName, arg) {
       if (arg.substr(0, 2) === '//') return arg.substr(1);
       if (arg.charAt(0) === '/') return `/api${arg}`;
