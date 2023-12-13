@@ -23,9 +23,10 @@ module.exports = function (loader, modules) {
 
   function createModelContainer(context, relativeName) {
     // base
-    const modelContainer = new (ModelClass(loader.app))(context, { table: null });
+    const modelContainer = new (ModelClass(loader.app))({ table: null });
+    // should set modelContainer.ctx;
+    modelContainer.ctx = context;
     // remove app/config/service
-    // delete modelContainer.ctx; // should not remove
     modelContainer.app = undefined;
     modelContainer.config = undefined;
     modelContainer.service = undefined;
