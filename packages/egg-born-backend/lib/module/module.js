@@ -32,7 +32,7 @@ module.exports = function (loader) {
       for (const module of ebModulesArray) {
         module.main = loader.requireFile(module.js.backend);
       }
-      // 2. invoke
+      // 2. load
       for (const module of ebModulesArray) {
         if (is.function(module.main) && !is.class(module.main)) {
           module.main = module.main(loader.app, module);
