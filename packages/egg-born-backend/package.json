@@ -27,6 +27,7 @@
     "@zhennann/egg-passport": "^2.1.5",
     "@zhennann/egg-socket.io": "^6.0.0",
     "@zhennann/koa-static-cache": "^5.1.8",
+    "@zhennann/module-info": "^1.0.1",
     "@zhennann/set": "^1.0.7",
     "async": "^3.2.0",
     "bottleneck": "^2.19.5",

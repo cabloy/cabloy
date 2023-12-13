@@ -1,3 +1,6 @@
+const Module = require('module');
+Module.wrapper[0] = '(function (exports, require, module, __filename, __dirname, __moduleInfo) { ';
+
 require('@zhennann/set');
 require('./lib/base/json.js');
 require('regenerator-runtime/runtime');
