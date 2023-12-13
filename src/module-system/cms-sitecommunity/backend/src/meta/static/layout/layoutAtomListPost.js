@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   const content = {
     info: {
       orders: [{ name: 'sticky', title: 'Sticky', by: 'desc', tableAlias: 'p' }],

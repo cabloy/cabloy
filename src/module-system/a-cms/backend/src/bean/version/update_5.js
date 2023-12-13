@@ -1,7 +1,7 @@
 const utils = require('../../common/utils.js');
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Version {
     async _update_5(options) {
       // alter table: aCmsCategory

@@ -40,7 +40,7 @@ module.exports = {
       ast.replace(`const resources = [$_$]`, `const resources = [$_$, \n ${code}]`);
     }
     // moduleInfo
-    const moduleInfo = 'const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname)';
+    const moduleInfo = 'const moduleInfo = module.info';
     if (!ast.has(moduleInfo)) {
       ast.replace('module.exports = $$$0=>{$$$1}', `module.exports = $$$0=>{ ${moduleInfo} \n $$$1}`);
     }

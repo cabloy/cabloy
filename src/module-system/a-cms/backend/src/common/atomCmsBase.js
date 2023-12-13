@@ -1,7 +1,7 @@
 const trimHtml = require('@zhennann/trim-html');
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class AtomCmsBase extends app.meta.AtomBase {
     get modelCMSArticle() {
       return this.ctx.model.module(moduleInfo.relativeName).article;

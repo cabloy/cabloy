@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class tools extends app.Service {
     get localUtils() {
       return this.ctx.bean.local.module(moduleInfo.relativeName).utils;

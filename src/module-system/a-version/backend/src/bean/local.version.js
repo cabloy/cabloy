@@ -2,7 +2,7 @@ const moment = require('moment');
 const chalk = require('chalk');
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Version extends app.meta.BeanBase {
     async databaseInitStartup() {
       // database

@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   const hook = {
     moduleLoaded(/* { module }*/) {
       if (app.meta.inApp) {

@@ -5,7 +5,7 @@ const debounce = require('debounce');
 // const eggBornUtils = require('egg-born-utils');
 
 module.exports = function (app) {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Watcher {
     constructor() {
       this._watchers = {};

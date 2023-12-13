@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Startup extends app.meta.BeanBase {
     async execute(context) {
       const options = context.options;

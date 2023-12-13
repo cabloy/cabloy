@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class File extends app.Service {
     async all({ atomClass, options, user }) {
       return await this.ctx.bean.file.all({ atomClass, options, user });

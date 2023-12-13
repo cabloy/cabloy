@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Captcha extends app.Service {
     async sendCode({ providerInstanceId, context }) {
       // sms provider

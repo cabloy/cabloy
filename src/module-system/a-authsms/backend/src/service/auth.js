@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Auth extends app.Service {
     async signup({ user, state = 'login', userName, realName, mobile }) {
       // profileUser

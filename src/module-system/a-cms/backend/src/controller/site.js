@@ -1,7 +1,7 @@
 const utils = require('../common/utils.js');
 
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class SiteController extends app.Controller {
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;

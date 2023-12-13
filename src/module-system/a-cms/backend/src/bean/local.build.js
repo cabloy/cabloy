@@ -13,7 +13,7 @@ const less = require('less');
 const utils = require('../common/utils.js');
 
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Build extends app.meta.BeanBase {
     constructor(ctx, atomClass) {
       super(ctx);

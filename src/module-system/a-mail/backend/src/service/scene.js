@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Scene extends app.Service {
     get statusModule() {
       return this.ctx.bean.status.module(moduleInfo.relativeName);

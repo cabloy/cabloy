@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   // atomClasses
   const atomClasses = require('./meta/atomClass/atomClasses.js')(app);
   // keywords

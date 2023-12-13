@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   const content = {
     root: {
       id: 'e341b99ef3bc495db8a8c09e6ad6203f',

@@ -1,5 +1,5 @@
 module.exports = app => {
-  const moduleInfo = app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Version extends app.meta.BeanBase {
     get modelRoleRight() {
       return this.ctx.model.module('a-base').roleRight;
