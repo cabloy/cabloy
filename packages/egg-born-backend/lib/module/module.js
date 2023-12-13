@@ -1,5 +1,6 @@
 const fse = require('fs-extra');
 const path = require('path');
+const is = require('is-type-of');
 const mglob = require('egg-born-mglob');
 
 module.exports = function (loader) {
@@ -27,8 +28,15 @@ module.exports = function (loader) {
 
   return {
     loadModules() {
+      // 1. require
       for (const module of ebModulesArray) {
-        module.main = loader.loadFile(module.js.backend, loader.app, module);
+        module.main = loader.requireFile(module.js.backend);
+      }
+      // 2. invoke
+      for (const module of ebModulesArray) {
+        if (is.function(module.main) && !is.class(module.main)) {
+          module.main = module.main(loader.app, module);
+        }
       }
       return ebModules;
     },
