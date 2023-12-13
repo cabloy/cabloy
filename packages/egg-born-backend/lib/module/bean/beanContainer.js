@@ -81,13 +81,13 @@ module.exports = (app, ctx) => {
           beanInstance = new _classOrFn(...args);
         } else {
           beanInstance = new _classOrFn(...args);
-          if (app) beanInstance.app = app;
-          if (ctx) beanInstance.ctx = ctx;
         }
       }
       if (!beanInstance) {
         throw new Error(`bean class not found: ${beanFullName}`);
       }
+      if (app) beanInstance.app = app;
+      if (ctx) beanInstance.ctx = ctx;
       // log
       beanInstance.__beanFullName = beanFullName;
       // no aop
