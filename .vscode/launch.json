@@ -10,7 +10,8 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev:backend"]
+      "runtimeArgs": ["run", "dev:backend"],
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "name": "dev:backend(attach)",
