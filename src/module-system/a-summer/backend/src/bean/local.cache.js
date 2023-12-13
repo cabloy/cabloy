@@ -2,7 +2,7 @@ const objectHash = require('object-hash');
 const CacheBase = require('../common/cacheBase.js');
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class LocalCache extends CacheBase(ctx) {
     constructor({ cacheBase }) {
       super({ cacheBase });

@@ -2,7 +2,7 @@ let __stats;
 let __statsDeps;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Stats extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'stats');

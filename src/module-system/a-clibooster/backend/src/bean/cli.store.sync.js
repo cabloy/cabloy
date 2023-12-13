@@ -9,7 +9,7 @@ const rimraf = require('mz-modules/rimraf');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Cli extends CliStoreBase(ctx) {
     constructor(options) {
       super(options, 'sync');

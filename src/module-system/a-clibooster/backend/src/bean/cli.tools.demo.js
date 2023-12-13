@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Cli extends ctx.app.meta.CliBase(ctx) {
     get localUtils() {
       return ctx.bean.local.module(moduleInfo.relativeName).utils;

@@ -1,7 +1,7 @@
 const UtilsFn = require('../common/utils.js');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class FlowEdge {
     constructor({ flowInstance, context, contextNode, edgeDef }) {
       this.flowInstance = flowInstance;

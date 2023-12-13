@@ -1,7 +1,7 @@
 const fse = require('fs-extra');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Site {
     async getSite({ atomClass, language, options }) {
       const build = ctx.bean.cms.build({ atomClass });

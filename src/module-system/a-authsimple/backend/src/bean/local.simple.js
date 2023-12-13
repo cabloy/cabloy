@@ -2,7 +2,7 @@ const util = require('util');
 const passwordFn = require('password-hash-and-salt'); // should compile
 
 module.exports = function (ctx) {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Simple {
     get modelAuthSimple() {
       return ctx.model.module(moduleInfo.relativeName).authSimple;

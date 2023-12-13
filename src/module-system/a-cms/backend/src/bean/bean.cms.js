@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Cms {
     get render() {
       return ctx.bean._getBean(moduleInfo.relativeName, 'local.render');

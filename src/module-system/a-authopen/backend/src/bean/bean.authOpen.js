@@ -1,7 +1,7 @@
 const randomize = require('randomatic');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   const __atomClassRole = {
     module: 'a-base',
     atomClassName: 'role',

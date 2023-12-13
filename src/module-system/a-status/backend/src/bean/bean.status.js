@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Status extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'status');

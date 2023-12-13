@@ -2,7 +2,7 @@ const VarsFn = require('../../common/vars.js');
 const UtilsFn = require('../../common/utils.js');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class FlowInstance {
     constructor({ flowDef }) {
       // context

@@ -1,7 +1,7 @@
 const url = require('url');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class LocalTools {
     async submit({ links, config }) {
       for (const target in config.submit) {

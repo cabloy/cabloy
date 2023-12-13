@@ -12,7 +12,7 @@ const Mime = require('mime');
 const REGEXP_DATA_URL = /^data:([^;]+);[^,]*base64,(.*)/;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class File {
     get modelFile() {
       return ctx.model.module(moduleInfo.relativeName).file;

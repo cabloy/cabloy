@@ -1,7 +1,7 @@
 const __smsProvidersConfigCache = {};
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class SmsProviderCache {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);

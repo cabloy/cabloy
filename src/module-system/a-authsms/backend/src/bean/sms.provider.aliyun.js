@@ -1,7 +1,7 @@
 const popCore = require('@alicloud/pop-core');
 
 module.exports = function (ctx) {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Provider {
     async sendCode({ providerInstanceId, context, config }) {
       // get

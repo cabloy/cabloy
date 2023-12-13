@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class AuthProvider {
     get modelAuthProvider() {
       return ctx.model.module(moduleInfo.relativeName).authProvider;

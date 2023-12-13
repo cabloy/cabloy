@@ -1,7 +1,7 @@
 const eggBornUtils = require('egg-born-utils');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class CliBase {
     constructor(options) {
       this.options = options;

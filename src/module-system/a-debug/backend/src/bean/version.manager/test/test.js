@@ -1,5 +1,5 @@
 module.exports = function (ctx) {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class VersionTest {
     async run(options) {}
   }

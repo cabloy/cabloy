@@ -1,7 +1,7 @@
 const __mailScenesConfigCache = {};
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class MailSceneCache {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);

@@ -3,7 +3,7 @@ const __authProvidersConfigCache_login = {};
 const __authProvidersConfigCache_admin = {};
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class AuthProviderCache {
     get configModule() {
       return ctx.config.module(moduleInfo.relativeName);

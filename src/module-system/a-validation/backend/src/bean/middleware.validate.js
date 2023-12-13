@@ -2,7 +2,7 @@
 //   validate: module(optional), validator, schema(optional)
 //   data:
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Middleware {
     async execute(options, next) {
       // must exists

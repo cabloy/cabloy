@@ -7,7 +7,7 @@ const ejs = require('@zhennann/ejs');
 const gogocode = require('gogocode');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Local {
     constructor(cli) {
       this.cli = cli;

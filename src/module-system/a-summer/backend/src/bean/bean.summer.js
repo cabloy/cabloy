@@ -1,7 +1,7 @@
 let __cacheBases;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Summer extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'summer');

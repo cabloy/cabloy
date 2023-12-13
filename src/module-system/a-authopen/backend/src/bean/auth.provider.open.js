@@ -1,7 +1,7 @@
 const Strategy = require('../meta/passport/strategy.js');
 
 module.exports = function (ctx) {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Provider extends ctx.app.meta.IAuthProviderBase(ctx) {
     async getConfigDefault() {
       return null;

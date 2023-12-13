@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   const __SeparatorCode = '/';
   class Dict extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {

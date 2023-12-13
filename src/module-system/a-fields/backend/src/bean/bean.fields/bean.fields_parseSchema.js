@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Fields {
     // atomClass: maybe main/detail
     //  atomClass is main only when (!atomClassMain && !atomClass.detail) || atomClass=atomClassMain

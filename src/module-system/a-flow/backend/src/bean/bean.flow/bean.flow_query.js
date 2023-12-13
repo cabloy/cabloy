@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Flow {
     async count({ options, user }) {
       return await this.select({ options, user, count: 1 });

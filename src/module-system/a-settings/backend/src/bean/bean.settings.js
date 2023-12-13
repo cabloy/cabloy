@@ -1,7 +1,7 @@
 const constants = require('../config/constants.js');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Settings extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'settings');

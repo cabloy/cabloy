@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Fields {
     get modelRoleFieldsRight() {
       return ctx.model.module('a-base').roleFieldsRight;

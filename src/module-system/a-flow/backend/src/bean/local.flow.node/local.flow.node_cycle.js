@@ -6,7 +6,7 @@ const __adapter = (context, chain) => {
 };
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class FlowNode {
     getBehaviorDefOptions({ behaviorDefId }) {
       // nodeDef

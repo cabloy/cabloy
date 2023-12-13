@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Flow {
     evaluateExpression({ expression, globals }) {
       return ctx.bean.util.evaluateExpression({ expression, globals });

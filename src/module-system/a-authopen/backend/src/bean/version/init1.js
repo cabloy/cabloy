@@ -3,7 +3,7 @@ const path = require('path');
 const initData = require('./initData1.js');
 
 module.exports = function (ctx) {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class VersionInit {
     get modelAuthOpen() {
       return ctx.model.module(moduleInfo.relativeName).authOpen;

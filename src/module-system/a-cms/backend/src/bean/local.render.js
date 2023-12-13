@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Render {
     async getArticleUrl({ key: keyOuter, atomClass: atomClassOuter, options: optionsOuter }) {
       // atomClass

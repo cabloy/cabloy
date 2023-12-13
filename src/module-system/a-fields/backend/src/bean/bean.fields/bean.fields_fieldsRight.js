@@ -4,7 +4,7 @@ const __atomClass_userFieldsRight = {
 };
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Fields {
     // atomClass: only main (exluding detail)
     async getPreferredFieldsRightOfUser({ atomClass, user }) {

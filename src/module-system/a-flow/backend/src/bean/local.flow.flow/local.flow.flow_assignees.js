@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class FlowInstance {
     async _parseAssignees({ nodeInstance, assignees }) {
       const { users, roles, vars } = assignees;

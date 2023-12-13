@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
 
   const __adapter = (context, chain) => {
     const eventBean = ctx.bean._getBean(chain);

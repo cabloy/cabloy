@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class FlowDef {
     _calcConditionExpressionLevel({ conditionExpression }) {
       if (!conditionExpression && conditionExpression !== false) return 3;

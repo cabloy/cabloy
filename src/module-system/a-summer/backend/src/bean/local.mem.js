@@ -4,7 +4,7 @@ const CacheBase = require('../common/cacheBase.js');
 const SUMMERCACHEMEMORY = Symbol('APP#__SUMMERCACHEMEMORY');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class LocalMem extends CacheBase(ctx) {
     constructor({ cacheBase }) {
       super({ cacheBase });

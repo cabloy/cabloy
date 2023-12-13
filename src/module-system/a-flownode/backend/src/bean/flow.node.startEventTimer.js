@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class FlowNode extends ctx.app.meta.FlowNodeBase {
     constructor(options) {
       super(ctx, options);

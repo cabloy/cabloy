@@ -2,7 +2,7 @@ const mparse = require('egg-born-mparse').default;
 const utils = require('../common/utils.js');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Captcha extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'captcha');

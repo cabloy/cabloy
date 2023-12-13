@@ -1,7 +1,7 @@
 const _cacheMessageClassesUniform = {};
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Message extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'message');

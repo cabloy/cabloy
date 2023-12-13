@@ -4,7 +4,7 @@ const eggBornUtils = require('egg-born-utils');
 // const __storeTokenHost = 'http://localhost:9192';
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class CliStoreBase extends ctx.app.meta.CliBase(ctx) {
     constructor(options, commandName) {
       super(options);

@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class RedisDb extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.redis`);

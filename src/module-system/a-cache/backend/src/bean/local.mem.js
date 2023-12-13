@@ -1,7 +1,7 @@
 const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class CacheMem extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, `${moduleInfo.relativeName}.local.mem`);

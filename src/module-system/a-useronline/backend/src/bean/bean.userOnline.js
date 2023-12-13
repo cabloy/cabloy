@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   const __atomClassUserOnline = {
     module: moduleInfo.relativeName,
     atomClassName: 'userOnline',

@@ -8,7 +8,7 @@ const fse = require('fs-extra');
 const mparse = require('egg-born-mparse').default;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Local {
     constructor(cli) {
       this.cli = cli;

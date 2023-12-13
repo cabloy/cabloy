@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class FlowInstance {
     // return true, means has one edge to be taken
     async nextEdges({ nodeInstance, behaviorDefId }) {

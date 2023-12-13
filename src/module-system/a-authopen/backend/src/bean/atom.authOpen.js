@@ -1,7 +1,7 @@
 const randomize = require('randomatic');
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Atom extends ctx.app.meta.AtomBase {
     constructor() {
       super(ctx);

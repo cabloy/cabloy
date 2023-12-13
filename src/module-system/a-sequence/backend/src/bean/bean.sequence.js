@@ -1,7 +1,7 @@
 let __sequences;
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Sequence extends ctx.app.meta.BeanModuleBase {
     constructor(moduleName) {
       super(ctx, 'sequence');

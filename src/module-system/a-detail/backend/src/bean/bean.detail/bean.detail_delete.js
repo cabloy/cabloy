@@ -1,5 +1,5 @@
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Detail {
     async _deleteDetails({ atomClass, atomKey, user }) {
       await this._loopDetailClasses({

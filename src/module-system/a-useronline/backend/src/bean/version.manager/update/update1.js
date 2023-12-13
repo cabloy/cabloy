@@ -1,5 +1,5 @@
 module.exports = function SelfFactory(ctx) {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class VersionUpdate {
     async run(options) {
       // create table: aUserOnline

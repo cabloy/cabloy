@@ -1,7 +1,7 @@
 const py = require('pinyin-pro');
 
 module.exports = ctx => {
-  // const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  // const moduleInfo = module.info;
   class Pinyin {
     translate({ text, options }) {
       return py.pinyin(text, options);

@@ -7,7 +7,7 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 const __queueInstanceStartup = {};
 
 module.exports = ctx => {
-  const moduleInfo = ctx.app.meta.mockUtil.parseInfoFromPackage(__dirname);
+  const moduleInfo = module.info;
   class Instance {
     get cacheMem() {
       return ctx.cache.mem.module(moduleInfo.relativeName);
