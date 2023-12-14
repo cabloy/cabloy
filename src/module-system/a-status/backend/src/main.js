@@ -1,5 +1,3 @@
-const services = require('./services.js');
-const models = require('./models.js');
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
@@ -11,7 +9,11 @@ module.exports = app => {
   // routes
   const routes = require('./routes.js')(app);
   // controllers
-  const controllers = require('./controllers.js')(app);
+  const controllers = require('./controllers.js');
+  // services
+  const services = require('./services.js');
+  // models
+  const models = require('./models.js');
 
   return {
     beans,
