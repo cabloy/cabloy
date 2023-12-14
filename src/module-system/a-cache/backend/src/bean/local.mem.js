@@ -1,94 +1,93 @@
 const CACHEMEMORY = Symbol('APP#__CACHEMEMORY');
 
-module.exports = ctx => {
-  const moduleInfo = module.info;
-  class CacheMem extends ctx.app.meta.BeanModuleBase {
-    constructor(moduleName) {
-      super(ctx, `${moduleInfo.relativeName}.local.mem`);
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
+const moduleInfo = module.info;
+module.exports = class CacheMem extends module.meta.class.BeanModuleBase {
+  constructor(moduleName) {
+    super(moduleName, `${moduleInfo.relativeName}.local.mem`);
+  }
 
-    get memory() {
-      if (!ctx.app[CACHEMEMORY]) {
-        ctx.app[CACHEMEMORY] = {};
-      }
-      return ctx.bean.util.getPropertyObject(ctx.app[CACHEMEMORY], `${ctx.subdomain}&&${this.moduleName}`, '&&');
+  get memory() {
+    if (!this.ctx.app[CACHEMEMORY]) {
+      this.ctx.app[CACHEMEMORY] = {};
     }
+    return this.ctx.bean.util.getPropertyObject(
+      this.ctx.app[CACHEMEMORY],
+      `${this.ctx.subdomain}&&${this.moduleName}`,
+      '&&'
+    );
+  }
 
-    get(name) {
-      const res = this.has(name);
-      return res ? res.value : undefined;
-    }
+  get(name) {
+    const res = this.has(name);
+    return res ? res.value : undefined;
+  }
 
-    set(name, value, timeout) {
-      this.memory[name] = {
-        value,
-        timeout: timeout || 0,
-        timestamp: new Date(),
-      };
-    }
+  set(name, value, timeout) {
+    this.memory[name] = {
+      value,
+      timeout: timeout || 0,
+      timestamp: new Date(),
+    };
+  }
 
-    getset(name, value, timeout) {
-      const valueOld = this.get(name);
-      this.memory[name] = {
-        value,
-        timeout: timeout || 0,
-        timestamp: new Date(),
-      };
-      return valueOld;
-    }
+  getset(name, value, timeout) {
+    const valueOld = this.get(name);
+    this.memory[name] = {
+      value,
+      timeout: timeout || 0,
+      timestamp: new Date(),
+    };
+    return valueOld;
+  }
 
-    has(name) {
-      const res = this.memory[name];
-      if (!res) return null;
-      return res.timeout === 0 || new Date() - res.timestamp < res.timeout ? res : null;
-    }
+  has(name) {
+    const res = this.memory[name];
+    if (!res) return null;
+    return res.timeout === 0 || new Date() - res.timestamp < res.timeout ? res : null;
+  }
 
-    remove(name) {
-      // remove this
-      this._remove(name);
-      // broadcast
-      ctx.meta.util.broadcastEmit({
-        module: 'a-cache',
-        broadcastName: 'memRemove',
-        data: { moduleName: this.moduleName, name },
-      });
-    }
+  remove(name) {
+    // remove this
+    this._remove(name);
+    // broadcast
+    this.ctx.meta.util.broadcastEmit({
+      module: 'a-cache',
+      broadcastName: 'memRemove',
+      data: { moduleName: this.moduleName, name },
+    });
+  }
 
-    // by broadcast
-    _remove(name) {
-      delete this.memory[name];
-    }
+  // by broadcast
+  _remove(name) {
+    delete this.memory[name];
+  }
 
-    clear() {
-      // clear this
-      this._clear();
-      // broadcast
-      ctx.meta.util.broadcastEmit({
-        module: 'a-cache',
-        broadcastName: 'memClear',
-        data: { moduleName: this.moduleName },
-      });
-    }
+  clear() {
+    // clear this
+    this._clear();
+    // broadcast
+    this.ctx.meta.util.broadcastEmit({
+      module: 'a-cache',
+      broadcastName: 'memClear',
+      data: { moduleName: this.moduleName },
+    });
+  }
 
-    // by broadcast
-    _clear() {
-      if (
-        ctx.app[CACHEMEMORY] &&
-        ctx.app[CACHEMEMORY][ctx.subdomain] &&
-        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName]
-      ) {
-        ctx.app[CACHEMEMORY][ctx.subdomain][this.moduleName] = {};
-      }
-    }
-
-    _clearAll() {
-      if (ctx.app[CACHEMEMORY] && ctx.app[CACHEMEMORY][ctx.subdomain]) {
-        const aInstance = ctx.app[CACHEMEMORY][ctx.subdomain]['a-instance'];
-        ctx.app[CACHEMEMORY][ctx.subdomain] = { 'a-instance': aInstance };
-      }
+  // by broadcast
+  _clear() {
+    if (
+      this.ctx.app[CACHEMEMORY] &&
+      this.ctx.app[CACHEMEMORY][this.ctx.subdomain] &&
+      this.ctx.app[CACHEMEMORY][this.ctx.subdomain][this.moduleName]
+    ) {
+      this.ctx.app[CACHEMEMORY][this.ctx.subdomain][this.moduleName] = {};
     }
   }
 
-  return CacheMem;
+  _clearAll() {
+    if (this.ctx.app[CACHEMEMORY] && this.ctx.app[CACHEMEMORY][this.ctx.subdomain]) {
+      const aInstance = this.ctx.app[CACHEMEMORY][this.ctx.subdomain]['a-instance'];
+      this.ctx.app[CACHEMEMORY][this.ctx.subdomain] = { 'a-instance': aInstance };
+    }
+  }
 };

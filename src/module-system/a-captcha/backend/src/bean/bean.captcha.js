@@ -1,112 +1,108 @@
 const mparse = require('egg-born-mparse').default;
 const utils = require('../common/utils.js');
 
-module.exports = ctx => {
-  const moduleInfo = module.info;
-  class Captcha extends ctx.app.meta.BeanModuleBase {
-    constructor(moduleName) {
-      super(ctx, 'captcha');
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
-
-    get configModule() {
-      return ctx.config.module(moduleInfo.relativeName);
-    }
-
-    get cacheModule() {
-      return ctx.cache.db.module(moduleInfo.relativeName);
-    }
-
-    async getProvider({ module, sceneName }) {
-      // default scene
-      const sceneDefault = this.configModule.captcha.scenes.default;
-      // module scene
-      const configModuleScene = ctx.config.module(module);
-      const sceneModule = ctx.bean.util.getProperty(configModuleScene, `captcha.scenes.${sceneName}`) || null;
-      return ctx.bean.util.extend({}, sceneDefault, sceneModule);
-    }
-
-    // create provider instance
-    async createProviderInstance({ module, sceneName, context }) {
-      // provider
-      const provider = await this.getProvider({ module, sceneName });
-      // instance id
-      const providerInstanceId = ctx.bean.util.uuidv4();
-      // cache
-      const key = utils.getCacheKey({ ctx, providerInstanceId });
-      await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
-      // ok
-      return { providerInstanceId, provider };
-    }
-
-    // refresh provider instance
-    async refreshProviderInstance({ providerInstanceId, module, sceneName, context }) {
-      // provider
-      const provider = await this.getProvider({ module, sceneName });
-      // cache
-      const key = utils.getCacheKey({ ctx, providerInstanceId });
-      await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
-      // ok
-      return { providerInstanceId, provider };
-    }
-
-    // get
-    async getProviderInstance({ providerInstanceId }) {
-      const key = utils.getCacheKey({ ctx, providerInstanceId });
-      return await this.cacheModule.get(key);
-    }
-
-    // update
-    async update({ providerInstanceId, data, context }) {
-      // key
-      const key = utils.getCacheKey({ ctx, providerInstanceId });
-      // get
-      const providerInstance = await this.getProviderInstance({ providerInstanceId });
-      if (!providerInstance) ctx.throw(403);
-      // provider
-      const provider = await this.getProvider({
-        module: providerInstance.module,
-        sceneName: providerInstance.sceneName,
-      });
-      // update
-      providerInstance.data = data;
-      providerInstance.context = context;
-      await this.cacheModule.set(key, providerInstance, provider.timeout);
-    }
-
-    async verify({ module, sceneName, providerInstanceId, dataInput }) {
-      // key
-      const key = utils.getCacheKey({ ctx, providerInstanceId });
-      // get
-      const providerInstance = await this.getProviderInstance({ providerInstanceId });
-      if (!providerInstance) ctx.throw(403);
-      // check if the same scene
-      if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) ctx.throw(403);
-      // provider
-      const provider = await this.getProvider({
-        module: providerInstance.module,
-        sceneName: providerInstance.sceneName,
-      });
-      // invoke provider verify
-      const _moduleInfo = mparse.parseInfo(provider.module);
-      await ctx.meta.util.executeBean({
-        beanModule: _moduleInfo.relativeName,
-        beanFullName: `${_moduleInfo.relativeName}.captcha.provider.${provider.name}`,
-        context: {
-          providerInstanceId,
-          context: providerInstance.context,
-          data: providerInstance.data,
-          dataInput,
-        },
-        fn: 'verify',
-      });
-      // // clear
-      // await cache.remove(key);
-      // should hold the cache item
-      // update
-      providerInstance.data = null;
-      await this.cacheModule.set(key, providerInstance, provider.timeout);
-    }
+const moduleInfo = module.info;
+module.exports = class Captcha extends module.meta.class.BeanModuleBase {
+  constructor(moduleName) {
+    super(moduleName, 'captcha');
   }
-  return Captcha;
+
+  get configModule() {
+    return this.ctx.config.module(moduleInfo.relativeName);
+  }
+
+  get cacheModule() {
+    return this.ctx.cache.db.module(moduleInfo.relativeName);
+  }
+
+  async getProvider({ module, sceneName }) {
+    // default scene
+    const sceneDefault = this.configModule.captcha.scenes.default;
+    // module scene
+    const configModuleScene = this.ctx.config.module(module);
+    const sceneModule = this.ctx.bean.util.getProperty(configModuleScene, `captcha.scenes.${sceneName}`) || null;
+    return this.ctx.bean.util.extend({}, sceneDefault, sceneModule);
+  }
+
+  // create provider instance
+  async createProviderInstance({ module, sceneName, context }) {
+    // provider
+    const provider = await this.getProvider({ module, sceneName });
+    // instance id
+    const providerInstanceId = this.ctx.bean.util.uuidv4();
+    // cache
+    const key = utils.getCacheKey({ ctx: this.ctx, providerInstanceId });
+    await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+    // ok
+    return { providerInstanceId, provider };
+  }
+
+  // refresh provider instance
+  async refreshProviderInstance({ providerInstanceId, module, sceneName, context }) {
+    // provider
+    const provider = await this.getProvider({ module, sceneName });
+    // cache
+    const key = utils.getCacheKey({ ctx: this.ctx, providerInstanceId });
+    await this.cacheModule.set(key, { providerInstanceId, module, sceneName, context }, provider.timeout);
+    // ok
+    return { providerInstanceId, provider };
+  }
+
+  // get
+  async getProviderInstance({ providerInstanceId }) {
+    const key = utils.getCacheKey({ ctx: this.ctx, providerInstanceId });
+    return await this.cacheModule.get(key);
+  }
+
+  // update
+  async update({ providerInstanceId, data, context }) {
+    // key
+    const key = utils.getCacheKey({ ctx: this.ctx, providerInstanceId });
+    // get
+    const providerInstance = await this.getProviderInstance({ providerInstanceId });
+    if (!providerInstance) this.ctx.throw(403);
+    // provider
+    const provider = await this.getProvider({
+      module: providerInstance.module,
+      sceneName: providerInstance.sceneName,
+    });
+    // update
+    providerInstance.data = data;
+    providerInstance.context = context;
+    await this.cacheModule.set(key, providerInstance, provider.timeout);
+  }
+
+  async verify({ module, sceneName, providerInstanceId, dataInput }) {
+    // key
+    const key = utils.getCacheKey({ ctx: this.ctx, providerInstanceId });
+    // get
+    const providerInstance = await this.getProviderInstance({ providerInstanceId });
+    if (!providerInstance) this.ctx.throw(403);
+    // check if the same scene
+    if (module !== providerInstance.module || sceneName !== providerInstance.sceneName) this.ctx.throw(403);
+    // provider
+    const provider = await this.getProvider({
+      module: providerInstance.module,
+      sceneName: providerInstance.sceneName,
+    });
+    // invoke provider verify
+    const _moduleInfo = mparse.parseInfo(provider.module);
+    await this.ctx.meta.util.executeBean({
+      beanModule: _moduleInfo.relativeName,
+      beanFullName: `${_moduleInfo.relativeName}.captcha.provider.${provider.name}`,
+      context: {
+        providerInstanceId,
+        context: providerInstance.context,
+        data: providerInstance.data,
+        dataInput,
+      },
+      fn: 'verify',
+    });
+    // // clear
+    // await cache.remove(key);
+    // should hold the cache item
+    // update
+    providerInstance.data = null;
+    await this.cacheModule.set(key, providerInstance, provider.timeout);
+  }
 };
