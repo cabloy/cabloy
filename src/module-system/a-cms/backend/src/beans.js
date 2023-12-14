@@ -56,7 +56,6 @@ module.exports = app => {
     },
     // io
     'io.message.hotloadFile': {
-      mode: 'ctx',
       bean: ioMessageHotloadFile,
     },
   };

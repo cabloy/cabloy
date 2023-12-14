@@ -18,7 +18,6 @@ module.exports = app => {
     },
     // io
     'io.message.stats': {
-      mode: 'ctx',
       bean: ioMessageStats,
     },
     // global

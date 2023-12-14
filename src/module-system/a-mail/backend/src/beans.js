@@ -15,11 +15,9 @@ module.exports = app => {
     },
     // io
     'io.message.mail': {
-      mode: 'ctx',
       bean: ioMessageMail,
     },
     'io.channel.mail': {
-      mode: 'ctx',
       bean: ioChannelMail,
     },
     // broadcast
