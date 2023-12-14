@@ -1,6 +1,8 @@
+const ModelClassFn = require('../base/model.js');
+
 module.exports = function () {
-  const classes = {};
-  return new Proxy(classes, {
+  const __classes = {};
+  const classes = new Proxy(__classes, {
     get(target, prop) {
       return target[prop];
     },
@@ -11,4 +13,9 @@ module.exports = function () {
       }
     },
   });
+
+  // model
+  classes.Model = ModelClassFn();
+
+  return classes;
 };

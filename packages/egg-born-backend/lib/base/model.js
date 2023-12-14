@@ -2,14 +2,14 @@ const is = require('is-type-of');
 
 let __columns = {};
 
-module.exports = app => {
+module.exports = () => {
   class Model {
     constructor({ table, options = {} }) {
       this.table = table;
       this.disableDeleted =
-        options.disableDeleted === undefined ? app.config.model.disableDeleted : options.disableDeleted;
+        options.disableDeleted === undefined ? this.app.config.model.disableDeleted : options.disableDeleted;
       this.disableInstance =
-        options.disableInstance === undefined ? app.config.model.disableInstance : options.disableInstance;
+        options.disableInstance === undefined ? this.app.config.model.disableInstance : options.disableInstance;
     }
 
     async columns(tableName) {
