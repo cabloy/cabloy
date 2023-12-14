@@ -10,7 +10,6 @@ module.exports = app => {
     },
     // atom
     'atom.<%=argv.atomClassName%>': {
-      mode: 'ctx',
       bean: atom<%=argv.atomClassNameCapitalize%>,
     },
   };

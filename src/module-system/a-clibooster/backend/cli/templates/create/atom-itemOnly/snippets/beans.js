@@ -1,7 +1,6 @@
 const __snippet_declare = `const atom<%=argv.atomClassNameCapitalize%> = require('./bean/atom.<%=argv.atomClassName%>.js');\n`;
 const __snippet_body = `// atom
 'atom.<%=argv.atomClassName%>': {
-  mode: 'ctx',
   bean: atom<%=argv.atomClassNameCapitalize%>,
 },`;
 

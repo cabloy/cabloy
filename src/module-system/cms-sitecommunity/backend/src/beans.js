@@ -10,7 +10,6 @@ module.exports = app => {
     },
     // atom
     'atom.post': {
-      mode: 'ctx',
       bean: atomPost,
     },
   };

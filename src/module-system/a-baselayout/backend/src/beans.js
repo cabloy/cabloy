@@ -10,7 +10,6 @@ module.exports = app => {
     },
     // atom
     'atom.layout': {
-      mode: 'ctx',
       bean: atomLayout,
     },
   };

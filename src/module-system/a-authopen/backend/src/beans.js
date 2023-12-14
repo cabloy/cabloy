@@ -19,7 +19,6 @@ module.exports = app => {
     },
     // atom
     'atom.authOpen': {
-      mode: 'ctx',
       bean: atomAuthOpen,
     },
     // auth.provider
