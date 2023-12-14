@@ -1,7 +1,7 @@
 const path = require('path');
 const AppWorkerLoader = require('egg').AppWorkerLoader;
-const loadModules = require('../module');
-const ModuleInfoFn = require('../base/moduleInfo.js');
+const loadModules = require('../../module');
+const ModuleInfoFn = require('../../base/moduleInfo.js');
 
 module.exports = class CustomAppWorkerLoader extends AppWorkerLoader {
   constructor(opt) {
