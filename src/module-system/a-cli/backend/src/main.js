@@ -1,12 +1,12 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-const CliBaseFn = require('./bean/bean.cliBase.js');
+const CliBase = require('./bean/bean.cliBase.js');
+
+// base
+module.meta.class.CliBase = CliBase;
 
 module.exports = app => {
-  // base
-  app.meta.CliBase = CliBaseFn;
-
   // aops
   const aops = require('./aops.js')(app);
   // beans

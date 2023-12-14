@@ -27,7 +27,6 @@ module.exports = app => {
     },
     // global
     cliBase: {
-      mode: 'ctx',
       bean: beanCliBase,
       global: true,
     },
