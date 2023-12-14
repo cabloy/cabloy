@@ -1,8 +1,8 @@
 const path = require('path');
 
-module.exports = (ctx, pageMode) => {
-  const moduleInfo = module.info;
-  class Cli extends ctx.app.meta.CliBase(ctx) {
+const moduleInfo = module.info;
+module.exports = pageMode => {
+  class Cli extends module.meta.class.CliBase {
     async execute({ user }) {
       const { argv } = this.context;
       // super
@@ -44,7 +44,7 @@ module.exports = (ctx, pageMode) => {
         boilerplatePath: `create/${pageMode}/boilerplate`,
       });
       // need not reload
-      // ctx.app.meta.reload.now();
+      // this.ctx.app.meta.reload.now();
     }
   }
 
