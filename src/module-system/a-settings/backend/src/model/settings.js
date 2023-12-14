@@ -1,9 +1,5 @@
-module.exports = app => {
-  class Settings extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aSettings', options: { disableDeleted: true } });
-    }
+module.exports = class Settings extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aSettings', options: { disableDeleted: true } });
   }
-
-  return Settings;
 };

@@ -1,8 +1,5 @@
-module.exports = app => {
-  class Share extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aShare', options: { disableDeleted: false } });
-    }
+module.exports = class Share extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aShare', options: { disableDeleted: false } });
   }
-  return Share;
 };

@@ -1,8 +1,5 @@
-module.exports = app => {
-  class ShareRecordUV extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aShareRecordUV', options: { disableDeleted: false } });
-    }
+module.exports = class ShareRecordUV extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aShareRecordUV', options: { disableDeleted: false } });
   }
-  return ShareRecordUV;
 };

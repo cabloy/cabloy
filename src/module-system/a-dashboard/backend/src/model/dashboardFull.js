@@ -1,8 +1,5 @@
-module.exports = app => {
-  class DashboardFull extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aDashboardViewFull', options: { disableDeleted: false } });
-    }
+module.exports = class DashboardFull extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aDashboardViewFull', options: { disableDeleted: false } });
   }
-  return DashboardFull;
 };

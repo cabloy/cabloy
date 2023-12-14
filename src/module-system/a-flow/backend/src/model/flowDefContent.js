@@ -1,8 +1,5 @@
-module.exports = app => {
-  class FlowDefContent extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aFlowDefContent', options: { disableDeleted: false } });
-    }
+module.exports = class FlowDefContent extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aFlowDefContent', options: { disableDeleted: false } });
   }
-  return FlowDefContent;
 };

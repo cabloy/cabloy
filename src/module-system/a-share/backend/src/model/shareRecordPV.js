@@ -1,8 +1,5 @@
-module.exports = app => {
-  class ShareRecordPV extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aShareRecordPV', options: { disableDeleted: false } });
-    }
+module.exports = class ShareRecordPV extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aShareRecordPV', options: { disableDeleted: false } });
   }
-  return ShareRecordPV;
 };

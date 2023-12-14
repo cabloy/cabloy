@@ -1,8 +1,5 @@
-module.exports = app => {
-  class DashboardUser extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aDashboardUser', options: { disableDeleted: false } });
-    }
+module.exports = class DashboardUser extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aDashboardUser', options: { disableDeleted: false } });
   }
-  return DashboardUser;
 };

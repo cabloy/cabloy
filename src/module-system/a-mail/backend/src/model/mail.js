@@ -1,8 +1,5 @@
-module.exports = app => {
-  class Mail extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aMail', options: { disableDeleted: false } });
-    }
+module.exports = class Mail extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aMail', options: { disableDeleted: false } });
   }
-  return Mail;
 };

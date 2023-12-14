@@ -1,8 +1,5 @@
-module.exports = app => {
-  class AppContent extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aAppContent', options: { disableDeleted: false } });
-    }
+module.exports = class AppContent extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aAppContent', options: { disableDeleted: false } });
   }
-  return AppContent;
 };

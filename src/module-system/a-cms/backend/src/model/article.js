@@ -1,8 +1,5 @@
-module.exports = app => {
-  class Article extends app.meta.Model {
-    constructor(ctx) {
-      super(ctx, { table: 'aCmsArticle', options: { disableDeleted: false } });
-    }
+module.exports = class Article extends module.app.meta.Model {
+  constructor() {
+    super({ table: 'aCmsArticle', options: { disableDeleted: false } });
   }
-  return Article;
 };
