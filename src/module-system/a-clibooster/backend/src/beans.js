@@ -31,87 +31,66 @@ module.exports = app => {
     },
     // cli
     'cli.default.list': {
-      mode: 'ctx',
       bean: cliDefaultList,
     },
     'cli.token.add': {
-      mode: 'ctx',
       bean: cliTokenAdd,
     },
     'cli.token.delete': {
-      mode: 'ctx',
       bean: cliTokenDelete,
     },
     'cli.token.list': {
-      mode: 'ctx',
       bean: cliTokenList,
     },
     'cli.tools.babel': {
-      mode: 'ctx',
       bean: cliToolsBabel,
     },
     'cli.tools.icons': {
-      mode: 'ctx',
       bean: cliToolsIcons,
     },
     'cli.tools.demo': {
-      mode: 'ctx',
       bean: cliToolsDemo,
     },
     'cli.create.suite': {
-      mode: 'ctx',
       bean: cliCreateSuite,
     },
     'cli.create.module': {
-      mode: 'ctx',
       bean: cliCreateModule,
     },
     'cli.create.app': {
-      mode: 'ctx',
       bean: cliCreateApp,
     },
     'cli.create.atom': {
-      mode: 'ctx',
       bean: cliCreateAtom,
     },
     'cli.create.itemOnly': {
-      mode: 'ctx',
       bean: cliCreateItemOnly,
     },
     'cli.create.detail': {
-      mode: 'ctx',
       bean: cliCreateDetail,
     },
     'cli.create.atomAction': {
-      mode: 'ctx',
       bean: cliCreateAtomAction,
     },
     'cli.create.controller': {
-      mode: 'ctx',
       bean: cliCreateController,
     },
     'cli.create.page': {
-      mode: 'ctx',
       bean: cliCreatePage,
     },
     'cli.create.pagex': {
-      mode: 'ctx',
       bean: cliCreatePagex,
     },
     'cli.front.renderTableCell': {
-      mode: 'ctx',
       bean: cliFrontRenderTableCell,
     },
     'cli.store.sync': {
-      mode: 'ctx',
       bean: cliStoreSync,
     },
     'cli.store.publish': {
-      mode: 'ctx',
       bean: cliStorePublish,
     },
     'cli.git.commit': {
-      mode: 'ctx',
       bean: cliGitCommit,
     },
     // local
