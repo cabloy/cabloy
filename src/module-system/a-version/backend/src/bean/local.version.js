@@ -81,7 +81,9 @@ module.exports = app => {
       }
 
       // check all modules
+      const debug = this.ctx.app.bean.debug.get('version');
       for (const module of app.meta.modulesArray) {
+        debug('check module: %s, scene:%s', module.info.relativeName, options.scene);
         await this.__checkModule(module.info.relativeName, options);
       }
 
