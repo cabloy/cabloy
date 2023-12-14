@@ -6,9 +6,10 @@ const FlowBehaviorBase = require('./common/flowBehaviorBase.js');
 const FlowNodeBase = require('./common/flowNodeBase.js');
 const FlowEdgeBase = require('./common/flowEdgeBase.js');
 
+// FlowBehaviorBase/FlowNodeBase/FlowEdgeBase
+module.meta.class.FlowBehaviorBase = FlowBehaviorBase;
+
 module.exports = app => {
-  // FlowBehaviorBase/FlowNodeBase/FlowEdgeBase
-  app.meta.FlowBehaviorBase = FlowBehaviorBase;
   app.meta.FlowNodeBase = FlowNodeBase;
   app.meta.FlowEdgeBase = FlowEdgeBase;
 
