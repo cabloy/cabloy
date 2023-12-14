@@ -4,7 +4,7 @@ const path = require('path');
 const URL = require('url').URL;
 const is = require('is-type-of');
 const isSafeDomainUtil = require('egg-security').utils.isSafeDomain;
-const MixinClassesFn = require('./mixinClasses.js');
+const MixinClassesFn = require('mixin-classes');
 
 module.exports = app => {
   return {

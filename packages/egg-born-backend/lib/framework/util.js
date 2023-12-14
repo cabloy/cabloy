@@ -1,4 +1,4 @@
-const MixinClassesFn = require('../utils/mixinClasses.js');
+const MixinClassesFn = require('mixin-classes');
 
 module.exports = function () {
   return {

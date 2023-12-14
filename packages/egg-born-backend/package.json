@@ -44,6 +44,7 @@
     "json5": "^2.1.1",
     "jsonwebtoken": "^8.5.1",
     "koa-jwt2": "^1.0.3",
+    "mixin-classes": "^1.0.1",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
     "passport-oauth2": "^1.6.1",
