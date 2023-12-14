@@ -5,10 +5,19 @@ let __columns = {};
 class Model {
   constructor({ table, options = {} }) {
     this.table = table;
-    this.disableDeleted =
-      options.disableDeleted === undefined ? this.app.config.model.disableDeleted : options.disableDeleted;
-    this.disableInstance =
-      options.disableInstance === undefined ? this.app.config.model.disableInstance : options.disableInstance;
+    this.options = options;
+  }
+
+  get disableDeleted() {
+    return this.options.disableDeleted === undefined
+      ? this.app.config.model.disableDeleted
+      : this.options.disableDeleted;
+  }
+
+  get disableInstance() {
+    return this.options.disableInstance === undefined
+      ? this.app.config.model.disableInstance
+      : this.options.disableInstance;
   }
 
   async columns(tableName) {
