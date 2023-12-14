@@ -1,43 +1,39 @@
 const _cacheMessageClassesUniform = {};
 
-module.exports = ctx => {
-  // const moduleInfo = module.info;
-  class Message extends ctx.app.meta.BeanModuleBase {
-    constructor(moduleName) {
-      super(ctx, 'message');
-      this.moduleName = moduleName || ctx.module.info.relativeName;
-    }
+// const moduleInfo = module.info;
+module.exports = class Message extends module.meta.class.BeanModuleBase {
+  constructor(moduleName) {
+    super(moduleName, 'message');
+  }
 
-    async group(/* {  options, user }*/) {
-      const items = this.messageClassesUniform();
-      return items;
-    }
+  async group(/* {  options, user }*/) {
+    const items = this.messageClassesUniform();
+    return items;
+  }
 
-    messageClassesUniform() {
-      if (!_cacheMessageClassesUniform[ctx.locale]) {
-        _cacheMessageClassesUniform[ctx.locale] = this._prepareMessageClassesUniform();
-      }
-      return _cacheMessageClassesUniform[ctx.locale];
+  messageClassesUniform() {
+    if (!_cacheMessageClassesUniform[this.ctx.locale]) {
+      _cacheMessageClassesUniform[this.ctx.locale] = this._prepareMessageClassesUniform();
     }
+    return _cacheMessageClassesUniform[this.ctx.locale];
+  }
 
-    _prepareMessageClassesUniform() {
-      const messageClasses = ctx.bean.io.messageClass.messageClasses();
-      const items = [];
-      for (const relativeName in messageClasses) {
-        const _module = messageClasses[relativeName];
-        for (const messageClassName in _module) {
-          const messageClass = _module[messageClassName];
-          if (messageClass.info.uniform) {
-            items.push({
-              module: relativeName,
-              messageClassName,
-              messageClass,
-            });
-          }
+  _prepareMessageClassesUniform() {
+    const messageClasses = this.ctx.bean.io.messageClass.messageClasses();
+    const items = [];
+    for (const relativeName in messageClasses) {
+      const _module = messageClasses[relativeName];
+      for (const messageClassName in _module) {
+        const messageClass = _module[messageClassName];
+        if (messageClass.info.uniform) {
+          items.push({
+            module: relativeName,
+            messageClassName,
+            messageClass,
+          });
         }
       }
-      return items;
     }
+    return items;
   }
-  return Message;
 };
