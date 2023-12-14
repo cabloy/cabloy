@@ -174,7 +174,9 @@ module.exports = app => {
           versions.push(version);
         }
         // loop
+        const debug = this.ctx.app.bean.debug.get('version');
         for (const version of versions) {
+          debug('update module: %s, version: %d, scene:%s', module.info.relativeName, version, options.scene);
           await this.__updateModule2(options, module, version);
         }
       }
