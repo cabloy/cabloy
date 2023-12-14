@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const utilFn = require('../utils/util.js');
 const mockUtilFn = require('../utils/mockUtil.js');
 const BeanBaseClass = require('./bean/beanBase.js');
-const BeanModuleBaseClass = require('./bean/beanModuleBase.js');
+
 const reloadFn = require('./reload.js');
 
 module.exports = function (loader) {
@@ -33,9 +33,6 @@ module.exports = function (loader) {
 
   // BeanBase
   meta.BeanBase = BeanBaseClass;
-
-  // BeanModuleBase
-  meta.BeanModuleBase = BeanModuleBaseClass;
 
   // reload
   meta.reload = reloadFn(loader.app);

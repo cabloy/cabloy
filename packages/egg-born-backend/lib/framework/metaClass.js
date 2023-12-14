@@ -1,4 +1,5 @@
 const ModelClass = require('../base/model.js');
+const BeanModuleBaseClass = require('../module/bean/beanModuleBase.js');
 
 module.exports = function () {
   const __classes = {};
@@ -16,6 +17,9 @@ module.exports = function () {
 
   // model
   classes.Model = ModelClass;
+
+  // BeanModuleBase
+  classes.BeanModuleBase = BeanModuleBaseClass;
 
   return classes;
 };
