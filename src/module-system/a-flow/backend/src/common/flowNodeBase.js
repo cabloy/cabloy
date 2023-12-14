@@ -1,6 +1,5 @@
 module.exports = class FlowNodeBase {
-  constructor(ctx, options) {
-    this.ctx = ctx;
+  constructor(options) {
     if (options) {
       this.flowInstance = options.flowInstance;
       this.nodeInstance = options.nodeInstance;

@@ -8,9 +8,9 @@ const FlowEdgeBase = require('./common/flowEdgeBase.js');
 
 // FlowBehaviorBase/FlowNodeBase/FlowEdgeBase
 module.meta.class.FlowBehaviorBase = FlowBehaviorBase;
+module.meta.class.FlowNodeBase = FlowNodeBase;
 
 module.exports = app => {
-  app.meta.FlowNodeBase = FlowNodeBase;
   app.meta.FlowEdgeBase = FlowEdgeBase;
 
   // aops
