@@ -1,7 +1,7 @@
 const path = require('path');
 const AgentWorkerLoader = require('egg').AgentWorkerLoader;
 const loadModules = require('../../module');
-const ModuleInfoFn = require('../../base/moduleInfo.js');
+const ModuleInfoFn = require('../moduleInfo.js');
 
 module.exports = class CustomAgentWorkerLoader extends AgentWorkerLoader {
   constructor(opt) {
