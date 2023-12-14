@@ -1,4 +1,4 @@
-module.exports = class UserOnlineHistory extends module.app.meta.Model {
+module.exports = class UserOnlineHistory extends module.meta.class.Model {
   constructor() {
     super({ table: 'aUserOnlineHistory', options: { disableDeleted: false } });
   }

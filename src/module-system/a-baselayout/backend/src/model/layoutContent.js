@@ -1,4 +1,4 @@
-module.exports = class LayoutContent extends module.app.meta.Model {
+module.exports = class LayoutContent extends module.meta.class.Model {
   constructor() {
     super({ table: 'aLayoutContent', options: { disableDeleted: false } });
   }

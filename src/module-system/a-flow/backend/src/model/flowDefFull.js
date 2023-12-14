@@ -1,4 +1,4 @@
-module.exports = class FlowDefFull extends module.app.meta.Model {
+module.exports = class FlowDefFull extends module.meta.class.Model {
   constructor() {
     super({ table: 'aFlowDefViewFull', options: { disableDeleted: false } });
   }

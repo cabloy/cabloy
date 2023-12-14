@@ -1,4 +1,4 @@
-module.exports = class DashboardUser extends module.app.meta.Model {
+module.exports = class DashboardUser extends module.meta.class.Model {
   constructor() {
     super({ table: 'aDashboardUser', options: { disableDeleted: false } });
   }

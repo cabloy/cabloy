@@ -1,4 +1,4 @@
-module.exports = class DashboardFull extends module.app.meta.Model {
+module.exports = class DashboardFull extends module.meta.class.Model {
   constructor() {
     super({ table: 'aDashboardViewFull', options: { disableDeleted: false } });
   }

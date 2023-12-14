@@ -1,5 +1,5 @@
 const moduleInfo = module.info;
-module.exports = class <%=argv.atomClassNameCapitalize%> extends module.app.meta.ModelCache {
+module.exports = class <%=argv.atomClassNameCapitalize%> extends module.meta.class.ModelCache {
   constructor() {
     super({
       table: '<%=argv.providerId%><%=argv.atomClassNameCapitalize%>',

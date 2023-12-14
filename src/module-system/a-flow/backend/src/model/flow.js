@@ -1,5 +1,5 @@
 const moduleInfo = module.info;
-module.exports = class Flow extends module.app.meta.ModelCache {
+module.exports = class Flow extends module.meta.class.ModelCache {
   constructor() {
     super({
       table: 'aFlow',

@@ -1,5 +1,5 @@
 const moduleInfo = module.info;
-module.exports = class UserOnline extends module.app.meta.ModelCache {
+module.exports = class UserOnline extends module.meta.class.ModelCache {
   constructor() {
     super({
       table: 'aUserOnline',

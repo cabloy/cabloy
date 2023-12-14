@@ -1,4 +1,4 @@
-module.exports = class LayoutFull extends module.app.meta.Model {
+module.exports = class LayoutFull extends module.meta.class.Model {
   constructor() {
     super({ table: 'aLayoutViewFull', options: { disableDeleted: false } });
   }

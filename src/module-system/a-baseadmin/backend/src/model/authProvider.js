@@ -1,4 +1,4 @@
-module.exports = class AuthProvider extends module.app.meta.Model {
+module.exports = class AuthProvider extends module.meta.class.Model {
   constructor() {
     super({ table: 'aAuthProvider', options: { disableDeleted: true } });
   }

@@ -1,4 +1,4 @@
-module.exports = class AppContent extends module.app.meta.Model {
+module.exports = class AppContent extends module.meta.class.Model {
   constructor() {
     super({ table: 'aAppContent', options: { disableDeleted: false } });
   }
