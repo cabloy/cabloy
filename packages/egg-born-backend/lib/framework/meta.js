@@ -1,4 +1,5 @@
 const MetaClassFn = require('./metaClass.js');
+const MetaUtilFn = require('./util.js');
 
 module.exports = function () {
   // meta
@@ -6,6 +7,9 @@ module.exports = function () {
 
   // class
   meta.class = MetaClassFn();
+
+  // util
+  meta.util = MetaUtilFn();
 
   // meta
   return meta;
