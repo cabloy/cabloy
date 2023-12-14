@@ -1,4 +1,1 @@
-module.exports = ctx => {
-  class IOMessage extends ctx.app.meta.IOMessageBase(ctx) {}
-  return IOMessage;
-};
+module.exports = class IOMessage extends module.meta.class.IOMessageBase {};
