@@ -1,4 +1,4 @@
-const ModelClassFn = require('../base/model.js');
+const ModelClass = require('../base/model.js');
 
 module.exports = function () {
   const __classes = {};
@@ -15,7 +15,7 @@ module.exports = function () {
   });
 
   // model
-  classes.Model = ModelClassFn();
+  classes.Model = ModelClass;
 
   return classes;
 };
