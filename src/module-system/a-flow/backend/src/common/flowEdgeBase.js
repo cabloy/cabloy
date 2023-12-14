@@ -1,6 +1,5 @@
 module.exports = class FlowEdgeBase {
-  constructor(ctx, options) {
-    this.ctx = ctx;
+  constructor(options) {
     if (options) {
       this.flowInstance = options.flowInstance;
       this.edgeInstance = options.edgeInstance;
