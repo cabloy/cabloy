@@ -1,6 +1,8 @@
 **/dist/**
 *.min.js
+*.min.*.js
 *.min.css
+*.min.*.css
 miniprogram_npm
 **/assets/lib/**
 src/backend/app
@@ -8,5 +10,6 @@ src/backend/run
 /.assets/**
 /coverage/**
 /docker-compose/**
+**/backend/static/vendor/**
 # /packages/egg-born-template-*/**
-# **/backend/cli/templates/**
+**/backend/cli/templates/**

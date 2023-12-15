@@ -9,7 +9,7 @@ module.exports = function () {
   reload(this, this.options.workers);
 };
 
-/***
+/** *
  * Copyright(c) node-modules and other contributors.
  * MIT Licensed
  *

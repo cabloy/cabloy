@@ -1,4 +1,4 @@
-/***
+/** *
   escapeHtml: based on markdown-it
 */
 
