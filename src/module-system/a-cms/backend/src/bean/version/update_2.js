@@ -1,9 +1,7 @@
-module.exports = app => {
-  // const moduleInfo = module.info;
-  class Version {
-    async _update_2(options) {
-      // create table: aCmsTag
-      let sql = `
+module.exports = class Version {
+  async _update_2(options) {
+    // create table: aCmsTag
+    let sql = `
       CREATE TABLE aCmsTag (
         id int(11) NOT NULL AUTO_INCREMENT,
         createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -16,10 +14,10 @@ module.exports = app => {
         PRIMARY KEY (id)
       )
     `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aCmsArticleTag
-      sql = `
+    // create table: aCmsArticleTag
+    sql = `
       CREATE TABLE aCmsArticleTag (
         id int(11) NOT NULL AUTO_INCREMENT,
         createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -32,10 +30,10 @@ module.exports = app => {
         PRIMARY KEY (id)
       )
     `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aCmsArticleTagRef
-      sql = `
+    // create table: aCmsArticleTagRef
+    sql = `
       CREATE TABLE aCmsArticleTagRef (
         id int(11) NOT NULL AUTO_INCREMENT,
         createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -48,31 +46,31 @@ module.exports = app => {
         PRIMARY KEY (id)
       )
     `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // alter view: aCmsArticleView
-      await this.ctx.model.query('drop view aCmsArticleView');
-      sql = `
+    // alter view: aCmsArticleView
+    await this.ctx.model.query('drop view aCmsArticleView');
+    sql = `
       CREATE VIEW aCmsArticleView as
         select a.*,b.categoryName,e.tags from aCmsArticle a
           left join aCmsCategory b on a.categoryId=b.id
           left join aCmsArticleTag e on a.id=e.itemId
     `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // alter view: aCmsArticleViewFull
-      await this.ctx.model.query('drop view aCmsArticleViewFull');
-      sql = `
+    // alter view: aCmsArticleViewFull
+    await this.ctx.model.query('drop view aCmsArticleViewFull');
+    sql = `
       CREATE VIEW aCmsArticleViewFull as
         select a.*,b.categoryName,e.tags,c.content,c.html from aCmsArticle a
           left join aCmsCategory b on a.categoryId=b.id
           left join aCmsContent c on a.id=c.itemId
           left join aCmsArticleTag e on a.id=e.itemId
     `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create view: aCmsArticleViewSearch
-      sql = `
+    // create view: aCmsArticleViewSearch
+    sql = `
       CREATE VIEW aCmsArticleViewSearch as
         select a.*,b.categoryName,e.tags,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
           left join aCmsCategory b on a.categoryId=b.id
@@ -80,18 +78,16 @@ module.exports = app => {
           left join aAtom d on a.atomId=d.id
           left join aCmsArticleTag e on a.id=e.itemId
     `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create view: aCmsArticleViewTag
-      sql = `
+    // create view: aCmsArticleViewTag
+    sql = `
       CREATE VIEW aCmsArticleViewTag as
         select a.*,b.categoryName,e.tags,f.tagId from aCmsArticle a
           left join aCmsCategory b on a.categoryId=b.id
           left join aCmsArticleTag e on a.id=e.itemId
           left join aCmsArticleTagRef f on a.id=f.itemId
     `;
-      await this.ctx.model.query(sql);
-    }
+    await this.ctx.model.query(sql);
   }
-  return Version;
 };

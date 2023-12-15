@@ -1,9 +1,7 @@
-module.exports = app => {
-  // const moduleInfo = module.info;
-  class Version {
-    async _update_1(options) {
-      // create table: aCmsArticle
-      let sql = `
+module.exports = class Version {
+  async _update_1(options) {
+    // create table: aCmsArticle
+    let sql = `
           CREATE TABLE aCmsArticle (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -27,10 +25,10 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aCmsContent
-      sql = `
+    // create table: aCmsContent
+    sql = `
           CREATE TABLE aCmsContent (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -44,10 +42,10 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aCmsCategory
-      sql = `
+    // create table: aCmsCategory
+    sql = `
           CREATE TABLE aCmsCategory (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -64,26 +62,24 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create view: aCmsArticleView
-      sql = `
+    // create view: aCmsArticleView
+    sql = `
           CREATE VIEW aCmsArticleView as
             select a.*,b.categoryName from aCmsArticle a
               left join aCmsCategory b on a.categoryId=b.id
         `;
-      await this.ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create view: aCmsArticleViewFull
-      sql = `
+    // create view: aCmsArticleViewFull
+    sql = `
           CREATE VIEW aCmsArticleViewFull as
             select a.*,b.categoryName,c.content,c.html,concat(d.atomName,',',c.content) contentSearch from aCmsArticle a
               left join aCmsCategory b on a.categoryId=b.id
               left join aCmsContent c on a.id=c.itemId
               left join aAtom d on a.atomId=d.id
         `;
-      await this.ctx.model.query(sql);
-    }
+    await this.ctx.model.query(sql);
   }
-  return Version;
 };
