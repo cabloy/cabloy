@@ -1,6 +1,7 @@
 const path = require('path');
 const AppWorkerLoader = require('egg').AppWorkerLoader;
-const loadModules = require('../../module');
+const LoadModulesFn = require('../../module');
+const ModuleInfoFn = require('../moduleInfo.js');
 
 module.exports = class CustomAppWorkerLoader extends AppWorkerLoader {
   // constructor(opt) {
@@ -9,11 +10,12 @@ module.exports = class CustomAppWorkerLoader extends AppWorkerLoader {
   loadConfig() {
     super.loadConfig();
     this.app.subdomainOffset = typeof this.config.subdomainOffset === 'undefined' ? 2 : this.config.subdomainOffset;
+    ModuleInfoFn(this.app);
   }
   load() {
     super.load();
     // load modules
-    loadModules(this);
+    LoadModulesFn(this);
   }
   getAppname() {
     if (!this.pkgCabloy) {
