@@ -11,8 +11,7 @@ module.exports = app => {
   // meta
   const meta = require('./meta.js')(app);
   const routes = require('./routes.js');
-  // controllers
-  const controllers = require('./controllers.js')(app);
+  const controllers = require('./controllers.js');
 
   // ajv
   app.meta.ajv = require('./ajv/ajv.js')(app);

@@ -5,14 +5,11 @@ const resourceRight = require('./controller/resourceRight.js');
 const auth = require('./controller/auth.js');
 const authScene = require('./controller/authScene.js');
 
-module.exports = app => {
-  const controllers = {
-    role,
-    user,
-    atomRight,
-    resourceRight,
-    auth,
-    authScene,
-  };
-  return controllers;
+module.exports = {
+  role,
+  user,
+  atomRight,
+  resourceRight,
+  auth,
+  authScene,
 };

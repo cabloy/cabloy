@@ -7,8 +7,7 @@ const errors = require('./config/errors.js');
 // eslint-disable-next-line
 module.exports = app => {
   const beans = require('./beans.js');
-  // controllers
-  const controllers = require('./controllers.js')(app);
+  const controllers = require('./controllers.js');
   // models
   const models = require('./models.js')(app);
   // meta

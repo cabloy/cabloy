@@ -7,8 +7,7 @@ const errors = require('./config/errors.js');
 module.exports = app => {
   const beans = require('./beans.js');
   const routes = require('./routes.js');
-  // controllers
-  const controllers = require('./controllers.js')(app);
+  const controllers = require('./controllers.js');
 
   return {
     beans,

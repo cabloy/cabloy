@@ -11,8 +11,7 @@ module.exports = app => {
   // meta
   const meta = require('./meta.js')(app);
   const routes = require('./routes.js');
-  // controllers
-  const controllers = require('./controllers.js')(app);
+  const controllers = require('./controllers.js');
 
   return {
     beans,
