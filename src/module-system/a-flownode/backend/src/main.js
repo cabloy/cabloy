@@ -2,13 +2,12 @@ const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const FlowServiceBase = require('./common/flowServiceBase.js');
+const aops = require('./aops.js');
 
 // FlowServiceBase
 module.meta.class.FlowServiceBase = FlowServiceBase;
 
 module.exports = app => {
-  // aops
-  const aops = require('./aops.js')(app);
   // beans
   const beans = require('./beans.js')(app);
   // routes

@@ -5,6 +5,7 @@ const constants = require('./config/constants.js');
 const FlowBehaviorBase = require('./common/flowBehaviorBase.js');
 const FlowNodeBase = require('./common/flowNodeBase.js');
 const FlowEdgeBase = require('./common/flowEdgeBase.js');
+const aops = require('./aops.js');
 
 // FlowBehaviorBase/FlowNodeBase/FlowEdgeBase
 module.meta.class.FlowBehaviorBase = FlowBehaviorBase;
@@ -12,8 +13,6 @@ module.meta.class.FlowNodeBase = FlowNodeBase;
 module.meta.class.FlowEdgeBase = FlowEdgeBase;
 
 module.exports = app => {
-  // aops
-  const aops = require('./aops.js')(app);
   // beans
   const beans = require('./beans.js')(app);
   // routes
