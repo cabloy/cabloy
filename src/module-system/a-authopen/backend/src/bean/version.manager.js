@@ -1,20 +1,26 @@
-const VersionUpdate1 = require('./version/update1.js');
-const VersionInit1 = require('./version/init1.js');
+const fileVersionUpdates = [1];
+const fileVersionInits = [1];
 
 module.exports = class Version {
   async update(options) {
-    if (options.version === 1) {
-      const versionUpdate1 = new VersionUpdate1();
-      await versionUpdate1.run();
+    if (fileVersionUpdates.includes(options.version)) {
+      const VersionUpdate = require(`./version.manager/update/update${options.version}.js`);
+      const versionUpdate = this.ctx.bean._newBean(VersionUpdate);
+      await versionUpdate.run(options);
     }
   }
 
   async init(options) {
-    if (options.version === 1) {
-      const versionInit1 = new VersionInit1();
-      await versionInit1.run(options);
+    if (fileVersionInits.includes(options.version)) {
+      const VersionInit = require(`./version.manager/init/init${options.version}.js`);
+      const versionInit = this.ctx.bean._newBean(VersionInit);
+      await versionInit.run(options);
     }
   }
 
-  async test() {}
+  async test() {
+    const VersionTest = require('./version.manager/test/test.js');
+    const versionTest = this.ctx.bean._newBean(VersionTest);
+    await versionTest.run();
+  }
 };
