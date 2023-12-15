@@ -2,9 +2,14 @@ const Module = require('module');
 const ModuleInfo = require('@zhennann/module-info');
 const MetaFn = require('./meta.js');
 
+let __patched = false;
 module.exports = function (app) {
+  // only once
+  if (__patched) return;
+  __patched = true;
+
   // meta
-  const meta = MetaFn();
+  const meta = MetaFn(app);
 
   // compile
   const originalCompile = Module.prototype._compile;

@@ -1,7 +1,8 @@
 const MetaClassFn = require('./metaClass.js');
 const MetaUtilFn = require('./util.js');
+const MetaEnvFn = require('../module/metaEnv.js');
 
-module.exports = function () {
+module.exports = function (app) {
   // meta
   const meta = {};
 
@@ -10,6 +11,9 @@ module.exports = function () {
 
   // util
   meta.util = MetaUtilFn();
+
+  // env
+  MetaEnvFn(app, meta);
 
   // meta
   return meta;

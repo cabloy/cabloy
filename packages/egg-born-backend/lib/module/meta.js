@@ -2,6 +2,7 @@ const uuid = require('uuid');
 const utilFn = require('../utils/util.js');
 const mockUtilFn = require('../utils/mockUtil.js');
 const reloadFn = require('./reload.js');
+const metaEnvFn = require('./metaEnv.js');
 
 module.exports = function (loader) {
   // meta
@@ -15,13 +16,8 @@ module.exports = function (loader) {
   meta.inApp = loader.app.type === 'application';
   meta.inAgent = loader.app.type === 'agent';
 
-  // isProd
-  meta.isProd =
-    loader.app.config.env !== 'local' && loader.app.config.env !== 'unittest' && loader.app.config.env !== 'test';
-  // isTest
-  meta.isTest = loader.app.config.env === 'unittest' || loader.app.config.env === 'test';
-  // isLocal
-  meta.isLocal = loader.app.config.env === 'local';
+  // env
+  metaEnvFn(loader.app, meta);
 
   // util
   meta.util = utilFn(loader.app);
