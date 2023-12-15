@@ -13,8 +13,7 @@ module.meta.class.FlowNodeBase = FlowNodeBase;
 module.meta.class.FlowEdgeBase = FlowEdgeBase;
 
 module.exports = app => {
-  // beans
-  const beans = require('./beans.js')(app);
+  const beans = require('./beans.js');
   // routes
   const routes = require('./routes.js')(app);
   // controllers

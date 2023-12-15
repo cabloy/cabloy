@@ -8,8 +8,7 @@ const aops = require('./aops.js');
 module.meta.class.CliBase = CliBase;
 
 module.exports = app => {
-  // beans
-  const beans = require('./beans.js')(app);
+  const beans = require('./beans.js');
   // routes
   const routes = require('./routes.js')(app);
   // controllers

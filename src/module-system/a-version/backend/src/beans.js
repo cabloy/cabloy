@@ -7,45 +7,42 @@ const startupInstanceInit = require('./bean/startup.instanceInit.js');
 const broadcastColumnsClear = require('./bean/broadcast.columnsClear.js');
 const beanWorker = require('./bean/bean.worker.js');
 
-module.exports = app => {
-  const beans = {
-    // version
-    'version.manager': {
-      mode: 'app',
-      bean: versionManager,
-    },
-    // local
-    'local.version': {
-      bean: localVersion,
-    },
-    // startup
-    'startup.workerAlive': {
-      mode: 'app',
-      bean: startupWorkerAlive,
-    },
-    'startup.databaseInit': {
-      mode: 'app',
-      bean: startupDatabaseInit,
-    },
-    'startup.databaseName': {
-      mode: 'app',
-      bean: startupDatabaseName,
-    },
-    'startup.instanceInit': {
-      mode: 'app',
-      bean: startupInstanceInit,
-    },
-    // broadcast
-    'broadcast.columnsClear': {
-      mode: 'app',
-      bean: broadcastColumnsClear,
-    },
-    // global
-    worker: {
-      mode: 'app',
-      bean: beanWorker,
-      global: true,
-    },
-  };
-  return beans;
+module.exports = {
+  // version
+  'version.manager': {
+    mode: 'app',
+    bean: versionManager,
+  },
+  // local
+  'local.version': {
+    bean: localVersion,
+  },
+  // startup
+  'startup.workerAlive': {
+    mode: 'app',
+    bean: startupWorkerAlive,
+  },
+  'startup.databaseInit': {
+    mode: 'app',
+    bean: startupDatabaseInit,
+  },
+  'startup.databaseName': {
+    mode: 'app',
+    bean: startupDatabaseName,
+  },
+  'startup.instanceInit': {
+    mode: 'app',
+    bean: startupInstanceInit,
+  },
+  // broadcast
+  'broadcast.columnsClear': {
+    mode: 'app',
+    bean: broadcastColumnsClear,
+  },
+  // global
+  worker: {
+    mode: 'app',
+    bean: beanWorker,
+    global: true,
+  },
 };

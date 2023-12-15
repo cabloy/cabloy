@@ -7,8 +7,7 @@ const constants = require('./config/constants.js');
 
 // eslint-disable-next-line
 module.exports = app => {
-  // beans
-  const beans = require('./beans.js')(app);
+  const beans = require('./beans.js');
   // controllers
   const controllers = require('./controllers.js')(app);
 

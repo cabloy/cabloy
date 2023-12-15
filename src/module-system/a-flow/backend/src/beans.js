@@ -13,71 +13,68 @@ const beanFlow = require('./bean/bean.flow.js');
 const beanFlowDef = require('./bean/bean.flowDef.js');
 const statsFlowInitiateds = require('./bean/stats.flowInitiateds.js');
 
-module.exports = app => {
-  const beans = {
-    // version
-    'version.manager': {
-      mode: 'app',
-      bean: versionManager,
-    },
-    // atom
-    'atom.flowDef': {
-      bean: atomFlowDef,
-    },
-    // flow behavior
-    'flow.behavior.base': {
-      mode: 'ctx',
-      bean: flowBehaviorBase,
-    },
-    // local
-    'local.context.flow': {
-      mode: 'ctx',
-      bean: localContextFlow,
-    },
-    'local.context.node': {
-      mode: 'ctx',
-      bean: localContextNode,
-    },
-    'local.context.edge': {
-      mode: 'ctx',
-      bean: localContextEdge,
-    },
-    'local.flow.flow': {
-      mode: 'ctx',
-      bean: localFlowFlow,
-    },
-    'local.flow.node': {
-      mode: 'ctx',
-      bean: localFlowNode,
-    },
-    'local.flow.edge': {
-      mode: 'ctx',
-      bean: localFlowEdge,
-    },
-    'local.flow.listener': {
-      mode: 'ctx',
-      bean: localFlowListener,
-    },
-    'local.procedure': {
-      mode: 'ctx',
-      bean: localProcedure,
-    },
-    // global
-    flow: {
-      mode: 'ctx',
-      bean: beanFlow,
-      global: true,
-    },
-    flowDef: {
-      mode: 'ctx',
-      bean: beanFlowDef,
-      global: true,
-    },
-    // stats
-    'stats.flowInitiateds': {
-      mode: 'ctx',
-      bean: statsFlowInitiateds,
-    },
-  };
-  return beans;
+module.exports = {
+  // version
+  'version.manager': {
+    mode: 'app',
+    bean: versionManager,
+  },
+  // atom
+  'atom.flowDef': {
+    bean: atomFlowDef,
+  },
+  // flow behavior
+  'flow.behavior.base': {
+    mode: 'ctx',
+    bean: flowBehaviorBase,
+  },
+  // local
+  'local.context.flow': {
+    mode: 'ctx',
+    bean: localContextFlow,
+  },
+  'local.context.node': {
+    mode: 'ctx',
+    bean: localContextNode,
+  },
+  'local.context.edge': {
+    mode: 'ctx',
+    bean: localContextEdge,
+  },
+  'local.flow.flow': {
+    mode: 'ctx',
+    bean: localFlowFlow,
+  },
+  'local.flow.node': {
+    mode: 'ctx',
+    bean: localFlowNode,
+  },
+  'local.flow.edge': {
+    mode: 'ctx',
+    bean: localFlowEdge,
+  },
+  'local.flow.listener': {
+    mode: 'ctx',
+    bean: localFlowListener,
+  },
+  'local.procedure': {
+    mode: 'ctx',
+    bean: localProcedure,
+  },
+  // global
+  flow: {
+    mode: 'ctx',
+    bean: beanFlow,
+    global: true,
+  },
+  flowDef: {
+    mode: 'ctx',
+    bean: beanFlowDef,
+    global: true,
+  },
+  // stats
+  'stats.flowInitiateds': {
+    mode: 'ctx',
+    bean: statsFlowInitiateds,
+  },
 };

@@ -13,8 +13,7 @@ module.exports = app => {
     app.meta['a-cms:watcher'] = new (WatcherFn(app))();
   }
 
-  // beans
-  const beans = require('./beans.js')(app);
+  const beans = require('./beans.js');
   // routes
   const routes = require('./routes.js')(app);
   // controllers

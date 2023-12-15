@@ -7,48 +7,45 @@ const broadcastSmsProviderChanged = require('./bean/broadcast.smsProviderChanged
 const startupCacheSmsProviders = require('./bean/startup.cacheSmsProviders.js');
 const beanSmsProviderCache = require('./bean/bean.smsProviderCache.js');
 
-module.exports = app => {
-  const beans = {
-    // event
-    'event.accountMigration': {
-      mode: 'ctx',
-      bean: eventAccountMigration,
-    },
-    // sms.provider
-    'sms.provider.test': {
-      mode: 'ctx',
-      bean: smsProviderTest,
-    },
-    'sms.provider.aliyun': {
-      mode: 'ctx',
-      bean: smsProviderAliyun,
-    },
-    // captcha.provider
-    'captcha.provider.captcha': {
-      mode: 'ctx',
-      bean: captchaProvider,
-    },
-    // auth.provider
-    'auth.provider.sms': {
-      mode: 'ctx',
-      bean: authProviderSms,
-    },
-    // broadcast
-    'broadcast.smsProviderChanged': {
-      mode: 'app',
-      bean: broadcastSmsProviderChanged,
-    },
-    // startup
-    'startup.cacheSmsProviders': {
-      mode: 'app',
-      bean: startupCacheSmsProviders,
-    },
-    // global
-    smsProviderCache: {
-      mode: 'ctx',
-      bean: beanSmsProviderCache,
-      global: true,
-    },
-  };
-  return beans;
+module.exports = {
+  // event
+  'event.accountMigration': {
+    mode: 'ctx',
+    bean: eventAccountMigration,
+  },
+  // sms.provider
+  'sms.provider.test': {
+    mode: 'ctx',
+    bean: smsProviderTest,
+  },
+  'sms.provider.aliyun': {
+    mode: 'ctx',
+    bean: smsProviderAliyun,
+  },
+  // captcha.provider
+  'captcha.provider.captcha': {
+    mode: 'ctx',
+    bean: captchaProvider,
+  },
+  // auth.provider
+  'auth.provider.sms': {
+    mode: 'ctx',
+    bean: authProviderSms,
+  },
+  // broadcast
+  'broadcast.smsProviderChanged': {
+    mode: 'app',
+    bean: broadcastSmsProviderChanged,
+  },
+  // startup
+  'startup.cacheSmsProviders': {
+    mode: 'app',
+    bean: startupCacheSmsProviders,
+  },
+  // global
+  smsProviderCache: {
+    mode: 'ctx',
+    bean: beanSmsProviderCache,
+    global: true,
+  },
 };

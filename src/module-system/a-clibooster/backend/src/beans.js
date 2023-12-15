@@ -22,82 +22,79 @@ const cliStorePublish = require('./bean/cli.store.publish.js');
 const cliGitCommit = require('./bean/cli.git.commit.js');
 const localUtils = require('./bean/local.utils.js');
 
-module.exports = app => {
-  const beans = {
-    // version
-    'version.manager': {
-      mode: 'app',
-      bean: versionManager,
-    },
-    // cli
-    'cli.default.list': {
-      bean: cliDefaultList,
-    },
-    'cli.token.add': {
-      bean: cliTokenAdd,
-    },
-    'cli.token.delete': {
-      bean: cliTokenDelete,
-    },
-    'cli.token.list': {
-      bean: cliTokenList,
-    },
-    'cli.tools.babel': {
-      bean: cliToolsBabel,
-    },
-    'cli.tools.icons': {
-      bean: cliToolsIcons,
-    },
-    'cli.tools.demo': {
-      bean: cliToolsDemo,
-    },
-    'cli.create.suite': {
-      bean: cliCreateSuite,
-    },
-    'cli.create.module': {
-      bean: cliCreateModule,
-    },
-    'cli.create.app': {
-      bean: cliCreateApp,
-    },
-    'cli.create.atom': {
-      bean: cliCreateAtom,
-    },
-    'cli.create.itemOnly': {
-      bean: cliCreateItemOnly,
-    },
-    'cli.create.detail': {
-      bean: cliCreateDetail,
-    },
-    'cli.create.atomAction': {
-      bean: cliCreateAtomAction,
-    },
-    'cli.create.controller': {
-      bean: cliCreateController,
-    },
-    'cli.create.page': {
-      bean: cliCreatePage,
-    },
-    'cli.create.pagex': {
-      bean: cliCreatePagex,
-    },
-    'cli.front.renderTableCell': {
-      bean: cliFrontRenderTableCell,
-    },
-    'cli.store.sync': {
-      bean: cliStoreSync,
-    },
-    'cli.store.publish': {
-      bean: cliStorePublish,
-    },
-    'cli.git.commit': {
-      bean: cliGitCommit,
-    },
-    // local
-    'local.utils': {
-      mode: 'ctx',
-      bean: localUtils,
-    },
-  };
-  return beans;
+module.exports = {
+  // version
+  'version.manager': {
+    mode: 'app',
+    bean: versionManager,
+  },
+  // cli
+  'cli.default.list': {
+    bean: cliDefaultList,
+  },
+  'cli.token.add': {
+    bean: cliTokenAdd,
+  },
+  'cli.token.delete': {
+    bean: cliTokenDelete,
+  },
+  'cli.token.list': {
+    bean: cliTokenList,
+  },
+  'cli.tools.babel': {
+    bean: cliToolsBabel,
+  },
+  'cli.tools.icons': {
+    bean: cliToolsIcons,
+  },
+  'cli.tools.demo': {
+    bean: cliToolsDemo,
+  },
+  'cli.create.suite': {
+    bean: cliCreateSuite,
+  },
+  'cli.create.module': {
+    bean: cliCreateModule,
+  },
+  'cli.create.app': {
+    bean: cliCreateApp,
+  },
+  'cli.create.atom': {
+    bean: cliCreateAtom,
+  },
+  'cli.create.itemOnly': {
+    bean: cliCreateItemOnly,
+  },
+  'cli.create.detail': {
+    bean: cliCreateDetail,
+  },
+  'cli.create.atomAction': {
+    bean: cliCreateAtomAction,
+  },
+  'cli.create.controller': {
+    bean: cliCreateController,
+  },
+  'cli.create.page': {
+    bean: cliCreatePage,
+  },
+  'cli.create.pagex': {
+    bean: cliCreatePagex,
+  },
+  'cli.front.renderTableCell': {
+    bean: cliFrontRenderTableCell,
+  },
+  'cli.store.sync': {
+    bean: cliStoreSync,
+  },
+  'cli.store.publish': {
+    bean: cliStorePublish,
+  },
+  'cli.git.commit': {
+    bean: cliGitCommit,
+  },
+  // local
+  'local.utils': {
+    mode: 'ctx',
+    bean: localUtils,
+  },
 };

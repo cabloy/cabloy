@@ -3,8 +3,7 @@ const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 
 module.exports = app => {
-  // beans
-  const beans = require('./beans.js')(app);
+  const beans = require('./beans.js');
   // routes
   const routes = require('./routes.js')(app);
   // controllers

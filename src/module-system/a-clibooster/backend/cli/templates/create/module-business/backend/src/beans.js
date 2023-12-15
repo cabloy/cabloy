@@ -1,8 +1,7 @@
 const versionManager = require('./bean/version.manager.js');
 const atom<%=argv.atomClassNameCapitalize%> = require('./bean/atom.<%=argv.atomClassName%>.js');
 
-module.exports = app => {
-  const beans = {
+module.exports = {
     // version
     'version.manager': {
       mode: 'app',
@@ -13,5 +12,3 @@ module.exports = app => {
       bean: atom<%=argv.atomClassNameCapitalize%>,
     },
   };
-  return beans;
-};
