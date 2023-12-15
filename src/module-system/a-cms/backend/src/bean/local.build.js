@@ -14,8 +14,7 @@ const utils = require('../common/utils.js');
 
 const moduleInfo = module.info;
 module.exports = class Build {
-  constructor(ctx, atomClass) {
-    super(ctx);
+  constructor(atomClass) {
     this.atomClass = utils.atomClass(atomClass);
     this.default = this.atomClass.module === 'a-cms';
   }

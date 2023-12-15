@@ -18,29 +18,23 @@ module.exports = app => {
     },
     // local
     'local.build': {
-      mode: 'app',
       bean: localBuild,
     },
     'local.render': {
-      mode: 'ctx',
       bean: localRender,
     },
     'local.site': {
-      mode: 'ctx',
       bean: localSite,
     },
     // queue
     'queue.render': {
-      mode: 'app',
       bean: queueRender,
     },
     // startup
     'startup.registerAllWatchers': {
-      mode: 'app',
       bean: startupRegisterAllWatchers,
     },
     'startup.registerDevelopment': {
-      mode: 'app',
       bean: startupRegisterDevelopment,
     },
     // atom
@@ -49,7 +43,6 @@ module.exports = app => {
     },
     // global
     cms: {
-      mode: 'ctx',
       bean: beanCms,
       global: true,
     },

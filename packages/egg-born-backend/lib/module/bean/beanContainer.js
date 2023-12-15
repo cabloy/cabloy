@@ -83,6 +83,10 @@ module.exports = (app, ctx) => {
           beanInstance = _classOrFn(...args);
         }
       } else if (is.class(_classOrFn)) {
+        // if (_beanClass.mode === 'app' || _beanClass.mode === 'ctx') {
+        //   //
+        //   throw new Error(`should not set mode: app/ctx for bean class: $${beanFullName}`);
+        // }
         if (_beanClass.mode === 'app') {
           beanInstance = new _classOrFn(ctx, ...args);
         } else if (_beanClass.mode === 'ctx') {

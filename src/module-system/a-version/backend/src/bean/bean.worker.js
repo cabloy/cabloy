@@ -1,7 +1,6 @@
 const moduleInfo = module.info;
 module.exports = class Worker {
-  constructor(ctx) {
-    super(ctx);
+  constructor() {
     this._redisCache = null;
     // this._redisIO = null;
   }
