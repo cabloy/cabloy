@@ -1,11 +1,9 @@
-module.exports = function SelfFactory(ctx) {
-  // const moduleInfo = module.info;
-  class VersionUpdate {
-    async run(options) {
-      let sql;
+module.exports = class VersionUpdate {
+  async run(options) {
+    let sql;
 
-      // create table: aFlowDef
-      sql = `
+    // create table: aFlowDef
+    sql = `
           CREATE TABLE aFlowDef (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -17,10 +15,10 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aFlowDefContent
-      sql = `
+    // create table: aFlowDefContent
+    sql = `
           CREATE TABLE aFlowDefContent (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -33,19 +31,19 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create view: aFlowDefViewFull
-      sql = `
+    // create view: aFlowDefViewFull
+    sql = `
           CREATE VIEW aFlowDefViewFull as
             select a.*,b.content from aFlowDef a
               left join aFlowDefContent b on a.id=b.itemId
         `;
-      await ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aFlow
-      //  flowStatus: 1/end
-      sql = `
+    // create table: aFlow
+    //  flowStatus: 1/end
+    sql = `
           CREATE TABLE aFlow (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -67,10 +65,10 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aFlowNode
-      sql = `
+    // create table: aFlowNode
+    sql = `
           CREATE TABLE aFlowNode (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -86,11 +84,11 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aFlowHistory
-      //  flowStatus: 1/end
-      sql = `
+    // create table: aFlowHistory
+    //  flowStatus: 1/end
+    sql = `
           CREATE TABLE aFlowHistory (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -113,10 +111,10 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await ctx.model.query(sql);
+    await this.ctx.model.query(sql);
 
-      // create table: aFlowNodeHistory
-      sql = `
+    // create table: aFlowNodeHistory
+    sql = `
           CREATE TABLE aFlowNodeHistory (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -136,9 +134,6 @@ module.exports = function SelfFactory(ctx) {
             PRIMARY KEY (id)
           )
         `;
-      await ctx.model.query(sql);
-    }
+    await this.ctx.model.query(sql);
   }
-
-  return VersionUpdate;
 };

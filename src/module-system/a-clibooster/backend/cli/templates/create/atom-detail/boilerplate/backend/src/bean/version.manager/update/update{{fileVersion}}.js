@@ -1,9 +1,7 @@
-module.exports = function SelfFactory(ctx) {
-  // const moduleInfo = module.info;
-  class VersionUpdate {
-    async run(options) {
-      // create table: <%=argv.providerId%><%=argv.atomClassNameCapitalize%>
-      const sql = `
+module.exports = class VersionUpdate {
+  async run(options) {
+    // create table: <%=argv.providerId%><%=argv.atomClassNameCapitalize%>
+    const sql = `
         CREATE TABLE <%=argv.providerId%><%=argv.atomClassNameCapitalize%> (
           id int(11) NOT NULL AUTO_INCREMENT,
           createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -17,9 +15,6 @@ module.exports = function SelfFactory(ctx) {
           PRIMARY KEY (id)
         )
       `;
-      await ctx.model.query(sql);
-    }
+    await this.ctx.model.query(sql);
   }
-
-  return VersionUpdate;
 };
