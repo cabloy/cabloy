@@ -19,8 +19,8 @@ module.exports = class Version {
   }
 
   async test() {
-    const VersionTestFn = require('./version.manager/test/test.js');
-    const versionTest = new (VersionTestFn(this.ctx))();
+    const VersionTest = require('./version.manager/test/test.js');
+    const versionTest = this.ctx.bean._newBean(VersionTest);
     await versionTest.run();
   }
 };
