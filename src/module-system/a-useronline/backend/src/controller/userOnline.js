@@ -1,5 +1,1 @@
-module.exports = app => {
-  class userOnlineController extends app.Controller {}
-
-  return userOnlineController;
-};
+module.exports = class userOnlineController {};

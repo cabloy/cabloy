@@ -1,6 +1,6 @@
-module.exports = app => {
+module.exports =
   // const moduleInfo = module.info;
-  class RSSController extends app.Controller {
+  class RSSController {
     async feed() {
       // params
       //   module
@@ -203,6 +203,4 @@ module.exports = app => {
       this.ctx.body = feed;
       this.ctx.set('content-type', 'application/rss+xml; charset=UTF-8');
     }
-  }
-  return RSSController;
-};
+  };

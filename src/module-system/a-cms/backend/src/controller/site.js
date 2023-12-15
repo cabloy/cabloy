@@ -1,8 +1,8 @@
 const utils = require('../common/utils.js');
 
-module.exports = app => {
+module.exports =
   // const moduleInfo = module.info;
-  class SiteController extends app.Controller {
+  class SiteController {
     async getConfigSiteBase() {
       const atomClass = this.ctx.request.body.atomClass;
       const data = await this.ctx.service.site.getConfigSiteBase({ atomClass });
@@ -115,6 +115,4 @@ module.exports = app => {
       });
       this.ctx.success(res);
     }
-  }
-  return SiteController;
-};
+  };
