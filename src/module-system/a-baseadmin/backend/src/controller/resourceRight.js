@@ -1,7 +1,7 @@
 module.exports = class ResourceRightController {
   async rights() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.resourceRight.rights({
+    const items = await this.ctx.service.resourceRight.rights({
       roleAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,
@@ -12,7 +12,7 @@ module.exports = class ResourceRightController {
   async add() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.resourceRight.add({
+    const res = await this.ctx.service.resourceRight.add({
       roleAtomId: this.ctx.request.body.key.atomId,
       atomIds: this.ctx.request.body.atomIds,
       user: this.ctx.state.user.op,
@@ -23,7 +23,7 @@ module.exports = class ResourceRightController {
   async delete() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.resourceRight.delete({
+    const res = await this.ctx.service.resourceRight.delete({
       roleAtomId: this.ctx.request.body.key.atomId,
       atomId: this.ctx.request.body.atomId,
       user: this.ctx.state.user.op,
@@ -33,7 +33,7 @@ module.exports = class ResourceRightController {
 
   async spreads() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.resourceRight.spreads({
+    const items = await this.ctx.service.resourceRight.spreads({
       roleAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,

@@ -2,14 +2,14 @@ module.exports = class AuthController {
   async list() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.auth.list();
+    const res = await this.ctx.service.auth.list();
     this.ctx.success(res);
   }
 
   async disable() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.auth.disable({
+    const res = await this.ctx.service.auth.disable({
       id: this.ctx.request.body.id,
       disabled: this.ctx.request.body.disabled,
     });
@@ -19,7 +19,7 @@ module.exports = class AuthController {
   async save() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.auth.save({
+    const res = await this.ctx.service.auth.save({
       id: this.ctx.request.body.id,
       config: this.ctx.request.body.data,
     });

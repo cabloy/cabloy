@@ -1,6 +1,6 @@
 module.exports = class DashboardController {
   async itemByKey() {
-    const res = await this.service.dashboard.itemByKey({
+    const res = await this.ctx.service.dashboard.itemByKey({
       atomStaticKey: this.ctx.request.body.atomStaticKey,
       user: this.ctx.state.user.op,
     });
@@ -8,7 +8,7 @@ module.exports = class DashboardController {
   }
 
   async item() {
-    const res = await this.service.dashboard.item({
+    const res = await this.ctx.service.dashboard.item({
       dashboardAtomId: this.ctx.request.body.key.atomId,
       dashboardUserCheck: this.ctx.request.body.dashboardUserCheck,
       user: this.ctx.state.user.op,
@@ -17,7 +17,7 @@ module.exports = class DashboardController {
   }
 
   async loadItemUser() {
-    const res = await this.service.dashboard.loadItemUser({
+    const res = await this.ctx.service.dashboard.loadItemUser({
       dashboardUserId: this.ctx.request.body.dashboardUserId,
       user: this.ctx.state.user.op,
     });
@@ -25,7 +25,7 @@ module.exports = class DashboardController {
   }
 
   async saveItemUser() {
-    const res = await this.service.dashboard.saveItemUser({
+    const res = await this.ctx.service.dashboard.saveItemUser({
       dashboardUserId: this.ctx.request.body.dashboardUserId,
       content: this.ctx.request.body.content,
       user: this.ctx.state.user.op,
@@ -34,7 +34,7 @@ module.exports = class DashboardController {
   }
 
   async changeItemUserName() {
-    const res = await this.service.dashboard.changeItemUserName({
+    const res = await this.ctx.service.dashboard.changeItemUserName({
       dashboardUserId: this.ctx.request.body.dashboardUserId,
       dashboardName: this.ctx.request.body.dashboardName,
       user: this.ctx.state.user.op,
@@ -43,7 +43,7 @@ module.exports = class DashboardController {
   }
 
   async deleteItemUser() {
-    const res = await this.service.dashboard.deleteItemUser({
+    const res = await this.ctx.service.dashboard.deleteItemUser({
       dashboardUserId: this.ctx.request.body.dashboardUserId,
       user: this.ctx.state.user.op,
     });
@@ -51,7 +51,7 @@ module.exports = class DashboardController {
   }
 
   async createItemUser() {
-    const res = await this.service.dashboard.createItemUser({
+    const res = await this.ctx.service.dashboard.createItemUser({
       dashboardAtomId: this.ctx.request.body.key.atomId,
       user: this.ctx.state.user.op,
     });
@@ -59,7 +59,7 @@ module.exports = class DashboardController {
   }
 
   async itemUsers() {
-    const res = await this.service.dashboard.itemUsers({
+    const res = await this.ctx.service.dashboard.itemUsers({
       dashboardAtomId: this.ctx.request.body.key.atomId,
       user: this.ctx.state.user.op,
     });
@@ -67,7 +67,7 @@ module.exports = class DashboardController {
   }
 
   async changeItemUserDefault() {
-    const res = await this.service.dashboard.changeItemUserDefault({
+    const res = await this.ctx.service.dashboard.changeItemUserDefault({
       dashboardAtomId: this.ctx.request.body.key.atomId,
       dashboardUserId: this.ctx.request.body.dashboardUserId,
       user: this.ctx.state.user.op,

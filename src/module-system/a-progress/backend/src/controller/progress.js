@@ -1,6 +1,6 @@
 module.exports = class ProgressController {
   async check() {
-    const res = await this.service.progress.check({
+    const res = await this.ctx.service.progress.check({
       progressId: this.ctx.request.body.progressId,
       counter: this.ctx.request.body.counter,
       user: this.ctx.state.user.op,
@@ -9,7 +9,7 @@ module.exports = class ProgressController {
   }
 
   async abort() {
-    await this.service.progress.abort({
+    await this.ctx.service.progress.abort({
       progressId: this.ctx.request.body.progressId,
       user: this.ctx.state.user.op,
     });
@@ -17,7 +17,7 @@ module.exports = class ProgressController {
   }
 
   async delete() {
-    await this.service.progress.delete({
+    await this.ctx.service.progress.delete({
       progressId: this.ctx.request.body.progressId,
       user: this.ctx.state.user.op,
     });

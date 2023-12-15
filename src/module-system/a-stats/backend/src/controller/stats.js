@@ -5,7 +5,7 @@ module.exports = class StatsController {
     const provider = this.ctx.bean.stats._findStatsProvider({ module, name });
     if (!provider.user) this.ctx.throw(403);
     // get
-    const res = await this.service.stats.get({
+    const res = await this.ctx.service.stats.get({
       module,
       name,
       nameSub,

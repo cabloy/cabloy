@@ -39,14 +39,14 @@ module.exports = class FileController {
   }
 
   async upload() {
-    const res = await this.service.file.upload({
+    const res = await this.ctx.service.file.upload({
       user: this.ctx.state.user.op,
     });
     this.ctx.success(res);
   }
 
   async uploadDataUrl() {
-    const res = await this.service.file.uploadDataUrl({
+    const res = await this.ctx.service.file.uploadDataUrl({
       data: this.ctx.request.body.data,
       user: this.ctx.state.user.op,
     });
@@ -54,7 +54,7 @@ module.exports = class FileController {
   }
 
   async download() {
-    await this.service.file.download({
+    await this.ctx.service.file.download({
       downloadId: this.ctx.params.downloadId,
       atomId: parseInt(this.ctx.query.atomId || 0),
       width: this.ctx.query.width,

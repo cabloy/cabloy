@@ -1,7 +1,7 @@
 module.exports = class UserController {
   async select() {
     const page = this.ctx.bean.util.page(this.ctx.request.body.page);
-    const items = await this.service.user.select({
+    const items = await this.ctx.service.user.select({
       query: this.ctx.request.body.query,
       page,
       user: this.ctx.state.user.op,
@@ -11,7 +11,7 @@ module.exports = class UserController {
 
   async userRoles() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.user.userRoles({
+    const items = await this.ctx.service.user.userRoles({
       userAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,
@@ -22,7 +22,7 @@ module.exports = class UserController {
   async addUserRole() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.user.addUserRole({
+    const res = await this.ctx.service.user.addUserRole({
       userAtomId: this.ctx.request.body.key.atomId,
       roleId: this.ctx.request.body.roleId,
       user: this.ctx.state.user.op,
@@ -33,7 +33,7 @@ module.exports = class UserController {
   async deleteUserRole() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.user.deleteUserRole({
+    const res = await this.ctx.service.user.deleteUserRole({
       userAtomId: this.ctx.request.body.key.atomId,
       roleId: this.ctx.request.body.roleId,
       user: this.ctx.state.user.op,
@@ -43,7 +43,7 @@ module.exports = class UserController {
 
   async atomRights() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.user.atomRights({
+    const items = await this.ctx.service.user.atomRights({
       userAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,
@@ -53,7 +53,7 @@ module.exports = class UserController {
 
   async resourceRights() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.user.resourceRights({
+    const items = await this.ctx.service.user.resourceRights({
       userAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,

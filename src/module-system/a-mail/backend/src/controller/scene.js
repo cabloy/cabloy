@@ -24,7 +24,7 @@ module.exports = class SceneController {
     };
     delete data2.transport.title;
     // save
-    await this.service.scene.save({
+    await this.ctx.service.scene.save({
       sceneName,
       data: data2,
     });
@@ -37,7 +37,7 @@ module.exports = class SceneController {
   async delete() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    await this.service.scene.delete({
+    await this.ctx.service.scene.delete({
       sceneName: this.ctx.request.body.sceneName,
     });
     const list = await this.ctx.service.scene.list();
@@ -47,7 +47,7 @@ module.exports = class SceneController {
   async add() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    await this.service.scene.add({
+    await this.ctx.service.scene.add({
       sceneName: this.ctx.request.body.sceneName,
       data: this.ctx.request.body.data,
     });

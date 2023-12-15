@@ -1,7 +1,7 @@
 module.exports = class RoleController {
   async childrenTop() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.role.childrenTop({
+    const items = await this.ctx.service.role.childrenTop({
       roleTypes: this.ctx.request.body.roleTypes,
       page,
       user: this.ctx.state.user.op,
@@ -11,7 +11,7 @@ module.exports = class RoleController {
 
   async children() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.role.children({
+    const items = await this.ctx.service.role.children({
       roleTypes: this.ctx.request.body.roleTypes,
       roleId: this.ctx.request.body.roleId,
       page,
@@ -23,7 +23,7 @@ module.exports = class RoleController {
   async delete() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.delete({
+    const res = await this.ctx.service.role.delete({
       roleAtomId: this.ctx.request.body.key.atomId,
       user: this.ctx.state.user.op,
     });
@@ -33,7 +33,7 @@ module.exports = class RoleController {
   async clone() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.clone({
+    const res = await this.ctx.service.role.clone({
       roleAtomId: this.ctx.request.body.key.atomId,
       user: this.ctx.state.user.op,
     });
@@ -43,7 +43,7 @@ module.exports = class RoleController {
   async move() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.move({
+    const res = await this.ctx.service.role.move({
       roleAtomId: this.ctx.request.body.key.atomId,
       roleIdParent: this.ctx.request.body.data.roleIdParent,
       user: this.ctx.state.user.op,
@@ -54,7 +54,7 @@ module.exports = class RoleController {
   async addChild() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.addChild({
+    const res = await this.ctx.service.role.addChild({
       roleAtomId: this.ctx.request.body.key.atomId,
       user: this.ctx.state.user.op,
     });
@@ -63,7 +63,7 @@ module.exports = class RoleController {
 
   async roleUsers() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.role.roleUsers({
+    const items = await this.ctx.service.role.roleUsers({
       roleAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,
@@ -73,7 +73,7 @@ module.exports = class RoleController {
 
   async includes() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.role.includes({
+    const items = await this.ctx.service.role.includes({
       roleAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,
@@ -84,7 +84,7 @@ module.exports = class RoleController {
   async addUserRole() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.addUserRole({
+    const res = await this.ctx.service.role.addUserRole({
       roleAtomId: this.ctx.request.body.key.atomId,
       userId: this.ctx.request.body.userId,
       user: this.ctx.state.user.op,
@@ -95,7 +95,7 @@ module.exports = class RoleController {
   async deleteUserRole() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.deleteUserRole({
+    const res = await this.ctx.service.role.deleteUserRole({
       roleAtomId: this.ctx.request.body.key.atomId,
       userId: this.ctx.request.body.userId,
       user: this.ctx.state.user.op,
@@ -106,7 +106,7 @@ module.exports = class RoleController {
   async addRoleInc() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.addRoleInc({
+    const res = await this.ctx.service.role.addRoleInc({
       roleAtomId: this.ctx.request.body.key.atomId,
       roleIdInc: this.ctx.request.body.roleIdInc,
       user: this.ctx.state.user.op,
@@ -117,7 +117,7 @@ module.exports = class RoleController {
   async removeRoleInc() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.role.removeRoleInc({
+    const res = await this.ctx.service.role.removeRoleInc({
       roleAtomId: this.ctx.request.body.key.atomId,
       roleIdInc: this.ctx.request.body.roleIdInc,
       user: this.ctx.state.user.op,

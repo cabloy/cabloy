@@ -32,7 +32,7 @@ module.exports = class SmsProviderController {
       filterOptions: true,
     });
     // save
-    await this.service.smsProvider.save({
+    await this.ctx.service.smsProvider.save({
       providerName,
       data,
     });

@@ -1,7 +1,7 @@
 module.exports = class AtomRightController {
   async rights() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.atomRight.rights({
+    const items = await this.ctx.service.atomRight.rights({
       roleAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,
@@ -12,7 +12,7 @@ module.exports = class AtomRightController {
   async add() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.atomRight.add({
+    const res = await this.ctx.service.atomRight.add({
       roleAtomId: this.ctx.request.body.key.atomId,
       atomClass: this.ctx.request.body.atomClassTarget,
       actionCode: this.ctx.request.body.actionCode,
@@ -26,7 +26,7 @@ module.exports = class AtomRightController {
   async delete() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.atomRight.delete({
+    const res = await this.ctx.service.atomRight.delete({
       roleAtomId: this.ctx.request.body.key.atomId,
       roleRightId: this.ctx.request.body.roleRightId,
       user: this.ctx.state.user.op,
@@ -36,7 +36,7 @@ module.exports = class AtomRightController {
 
   async spreads() {
     const page = this.ctx.request.body.page;
-    const items = await this.service.atomRight.spreads({
+    const items = await this.ctx.service.atomRight.spreads({
       roleAtomId: this.ctx.request.body.key.atomId,
       page,
       user: this.ctx.state.user.op,

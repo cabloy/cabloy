@@ -2,7 +2,7 @@ module.exports = class authSceneController {
   async disable() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.authScene.disable({
+    const res = await this.ctx.service.authScene.disable({
       id: this.ctx.request.body.id,
       sceneName: this.ctx.request.body.sceneName,
       disabled: this.ctx.request.body.disabled,
@@ -13,7 +13,7 @@ module.exports = class authSceneController {
   async save() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.authScene.save({
+    const res = await this.ctx.service.authScene.save({
       id: this.ctx.request.body.id,
       sceneName: this.ctx.request.body.sceneName,
       data: this.ctx.request.body.data,
@@ -24,7 +24,7 @@ module.exports = class authSceneController {
   async add() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.authScene.add({
+    const res = await this.ctx.service.authScene.add({
       id: this.ctx.request.body.id,
       sceneName: this.ctx.request.body.sceneName,
       data: this.ctx.request.body.data,
@@ -35,7 +35,7 @@ module.exports = class authSceneController {
   async delete() {
     // check demo
     this.ctx.bean.util.checkDemo();
-    const res = await this.service.authScene.delete({
+    const res = await this.ctx.service.authScene.delete({
       id: this.ctx.request.body.id,
       sceneName: this.ctx.request.body.sceneName,
     });

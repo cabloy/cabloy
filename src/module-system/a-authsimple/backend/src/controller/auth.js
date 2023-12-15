@@ -3,14 +3,14 @@ module.exports = class AuthController {
     // data: { auth, password, rememberMe }
     const data = this.ctx.request.body.data;
     const state = this.ctx.request.body.state;
-    const res = await this.service.auth.signin({ data, state });
+    const res = await this.ctx.service.auth.signin({ data, state });
     this.ctx.success(res);
   }
 
   async signup() {
     const { userName, realName, email, mobile, password } = this.ctx.request.body.data;
     const state = this.ctx.request.body.state;
-    const res = await this.service.auth.signup({
+    const res = await this.ctx.service.auth.signup({
       user: this.ctx.state.user.agent,
       state,
       userName,
@@ -26,7 +26,7 @@ module.exports = class AuthController {
     // check demo
     this.ctx.bean.util.checkDemo();
     const { passwordOld, passwordNew } = this.ctx.request.body.data;
-    await this.service.auth.passwordChange({ passwordOld, passwordNew, userId: this.ctx.state.user.agent.id });
+    await this.ctx.service.auth.passwordChange({ passwordOld, passwordNew, userId: this.ctx.state.user.agent.id });
     this.ctx.success();
   }
 
@@ -34,7 +34,7 @@ module.exports = class AuthController {
     // check demo
     this.ctx.bean.util.checkDemo();
     const { email } = this.ctx.request.body.data;
-    await this.service.auth.passwordForgot({ email });
+    await this.ctx.service.auth.passwordForgot({ email });
     this.ctx.success();
   }
 
@@ -43,24 +43,24 @@ module.exports = class AuthController {
     this.ctx.bean.util.checkDemo();
     const { passwordNew } = this.ctx.request.body.data;
     const token = this.ctx.request.body.token;
-    await this.service.auth.passwordReset({ passwordNew, token });
+    await this.ctx.service.auth.passwordReset({ passwordNew, token });
     this.ctx.success();
   }
 
   async emailConfirm() {
     const { email } = this.ctx.request.body.data;
-    await this.service.auth.emailConfirm({ email, user: this.ctx.state.user.agent });
+    await this.ctx.service.auth.emailConfirm({ email, user: this.ctx.state.user.agent });
     this.ctx.success();
   }
 
   async emailConfirmation() {
     const token = this.ctx.request.query.token;
-    await this.service.auth.emailConfirmation({ token });
+    await this.ctx.service.auth.emailConfirmation({ token });
     // this.ctx.success();
   }
 
   async checkStatus() {
-    const res = await this.service.auth.checkStatus({ user: this.ctx.state.user.agent });
+    const res = await this.ctx.service.auth.checkStatus({ user: this.ctx.state.user.agent });
     this.ctx.success(res);
   }
 };

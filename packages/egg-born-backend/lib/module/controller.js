@@ -10,7 +10,6 @@ module.exports = function (loader, modules) {
       for (const controllerName in controllers) {
         const beanName = `controller.${controllerName}`;
         const bean = {
-          mode: 'app',
           bean: controllers[controllerName],
         };
         loader.app.bean._register(module.info.relativeName, beanName, bean);
