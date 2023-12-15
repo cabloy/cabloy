@@ -1,31 +1,28 @@
-module.exports = ctx => {
-  const moduleInfo = module.info;
-  class Middleware {
-    async execute(options, next) {
-      // must exists
-      const scene = options.scene;
-      const scenes = options.scenes;
-      if (!scene && !scenes) ctx.throw.module(moduleInfo.relativeName, 1001);
+const moduleInfo = module.info;
+module.exports = class Middleware {
+  async execute(options, next) {
+    // must exists
+    const scene = options.scene;
+    const scenes = options.scenes;
+    if (!scene && !scenes) this.ctx.throw.module(moduleInfo.relativeName, 1001);
 
-      // local.disabled
-      if (ctx.app.meta.isLocal && ctx.config.module(moduleInfo.relativeName).configFront.local.disabled) {
-        // next
-        return await next();
-      }
-
-      // scene
-      if (scene) {
-        await sceneVerify({ ctx, scene });
-      } else if (scenes) {
-        for (const scene of scenes) {
-          await sceneVerify({ ctx, scene });
-        }
-      }
+    // local.disabled
+    if (this.ctx.app.meta.isLocal && this.ctx.config.module(moduleInfo.relativeName).configFront.local.disabled) {
       // next
-      await next();
+      return await next();
     }
+
+    // scene
+    if (scene) {
+      await sceneVerify({ ctx: this.ctx, scene });
+    } else if (scenes) {
+      for (const scene of scenes) {
+        await sceneVerify({ ctx: this.ctx, scene });
+      }
+    }
+    // next
+    await next();
   }
-  return Middleware;
 };
 
 async function sceneVerify({ ctx, scene }) {
