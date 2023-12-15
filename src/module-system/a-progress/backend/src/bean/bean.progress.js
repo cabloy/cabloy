@@ -1,9 +1,5 @@
 const moduleInfo = module.info;
 module.exports = class Progress extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'progress');
-  }
-
   get configModule() {
     return this.ctx.config.module(moduleInfo.relativeName);
   }

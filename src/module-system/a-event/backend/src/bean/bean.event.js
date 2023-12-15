@@ -8,10 +8,6 @@ const __adapter = (context, chain) => {
   };
 };
 module.exports = class Event extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'event');
-  }
-
   async invoke({ module, name, data, result, next }) {
     const eventArray = this._getEventArray({ module, name });
     const eventBeanArray = eventArray.map(item => {

@@ -1,9 +1,5 @@
 const moduleInfo = module.info;
 module.exports = class Status extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'status');
-  }
-
   get modelStatus() {
     return this.ctx.model.module(moduleInfo.relativeName).status;
   }

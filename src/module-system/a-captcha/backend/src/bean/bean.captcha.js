@@ -3,10 +3,6 @@ const utils = require('../common/utils.js');
 
 const moduleInfo = module.info;
 module.exports = class Captcha extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'captcha');
-  }
-
   get configModule() {
     return this.ctx.config.module(moduleInfo.relativeName);
   }

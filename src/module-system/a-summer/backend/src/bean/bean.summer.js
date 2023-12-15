@@ -2,10 +2,6 @@ let __cacheBases;
 
 const moduleInfo = module.info;
 module.exports = class Summer extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'summer');
-  }
-
   getCache({ module, name, fullKey }) {
     fullKey = this._prepareFullKey({ module, name, fullKey });
     const cacheBase = this._findCacheBase({ fullKey });

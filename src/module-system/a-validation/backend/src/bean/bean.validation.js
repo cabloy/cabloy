@@ -1,8 +1,4 @@
 module.exports = class Validation extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'validation');
-  }
-
   getSchema({ module, validator, schema }) {
     // for flexible
     if (schema && typeof schema === 'object') {

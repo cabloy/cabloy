@@ -2,10 +2,6 @@ const _cacheMessageClassesUniform = {};
 
 // const moduleInfo = module.info;
 module.exports = class Message extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'message');
-  }
-
   async group(/* {  options, user }*/) {
     const items = this.messageClassesUniform();
     return items;

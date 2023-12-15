@@ -2,10 +2,6 @@ let __icons = null;
 
 // const moduleInfo = module.info;
 module.exports = class Icon extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'icon');
-  }
-
   getIcons() {
     if (!__icons) {
       __icons = this._prepareIcons();

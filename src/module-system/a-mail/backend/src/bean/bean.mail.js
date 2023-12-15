@@ -1,9 +1,5 @@
 const moduleInfo = module.info;
 module.exports = class Mail extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'mail');
-  }
-
   get modelMail() {
     return this.ctx.model.module(moduleInfo.relativeName).mail;
   }

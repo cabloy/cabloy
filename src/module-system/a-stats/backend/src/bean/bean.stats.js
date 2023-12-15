@@ -3,10 +3,6 @@ let __statsDeps;
 
 const moduleInfo = module.info;
 module.exports = class Stats extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'stats');
-  }
-
   get modelStats() {
     return this.ctx.model.module(moduleInfo.relativeName).stats;
   }

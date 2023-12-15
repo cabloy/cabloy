@@ -1,9 +1,5 @@
-const moduleInfo = module.info;
+// const moduleInfo = module.info;
 module.exports = class RedisDb extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, `${moduleInfo.relativeName}.local.redis`);
-  }
-
   _getKey(name) {
     return `${this.ctx.instance ? this.ctx.instance.id : 0}:${this.moduleName}:${name}`;
   }

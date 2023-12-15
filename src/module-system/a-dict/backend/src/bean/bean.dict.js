@@ -1,10 +1,6 @@
 const moduleInfo = module.info;
 const __SeparatorCode = '/';
 module.exports = class Dict extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, 'dict');
-  }
-
   get cacheMem() {
     return this.ctx.cache.mem.module(moduleInfo.relativeName);
   }

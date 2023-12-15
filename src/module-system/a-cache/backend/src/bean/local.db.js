@@ -1,9 +1,5 @@
 const moduleInfo = module.info;
 module.exports = class CacheDb extends module.meta.class.BeanModuleBase {
-  constructor(moduleName) {
-    super(moduleName, `${moduleInfo.relativeName}.local.db`);
-  }
-
   async get(name) {
     const res = await this._has(name);
     return res ? JSON.parse(res.value) : undefined;
