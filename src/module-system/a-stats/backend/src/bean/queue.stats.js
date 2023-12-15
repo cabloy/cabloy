@@ -1,10 +1,6 @@
-module.exports = app => {
-  class Queue extends app.meta.BeanBase {
-    async execute(context) {
-      const data = context.data;
-      return await this.ctx.bean.stats._notify_queue(data);
-    }
+module.exports = class Queue {
+  async execute(context) {
+    const data = context.data;
+    return await this.ctx.bean.stats._notify_queue(data);
   }
-
-  return Queue;
 };
