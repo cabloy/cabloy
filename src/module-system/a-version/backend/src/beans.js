@@ -16,7 +16,6 @@ module.exports = app => {
     },
     // local
     'local.version': {
-      mode: 'app',
       bean: localVersion,
     },
     // startup

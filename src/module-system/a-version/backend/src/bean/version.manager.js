@@ -29,7 +29,7 @@ module.exports = class Version {
 
   async _removePublicDir() {
     // only for test/local env
-    if (app.meta.isProd) return;
+    if (this.app.meta.isProd) return;
     // path
     const publicPath = await this.ctx.bean.base.getPath();
     // remove

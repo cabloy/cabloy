@@ -15,23 +15,20 @@ const init_1 = require('./version/init_1.js');
 const init_12 = require('./version/init_12.js');
 const test = require('./version/test.js');
 
-module.exports = app => {
-  const classes = [
-    update_1, //
-    update_2,
-    update_3,
-    update_4,
-    update_5,
-    update_6,
-    update_7,
-    update_8,
-    update_9,
-    update_10,
-    update_11,
-    update_12,
-    init_1,
-    init_12,
-    test,
-  ];
-  return app.meta.util.mixinClasses(version_0, classes, app);
-};
+module.exports = module.meta.util.mixinClasses(version_0, [
+  update_1, //
+  update_2,
+  update_3,
+  update_4,
+  update_5,
+  update_6,
+  update_7,
+  update_8,
+  update_9,
+  update_10,
+  update_11,
+  update_12,
+  init_1,
+  init_12,
+  test,
+]);
