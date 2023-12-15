@@ -14,8 +14,7 @@ module.meta.class.FlowEdgeBase = FlowEdgeBase;
 
 module.exports = app => {
   const beans = require('./beans.js');
-  // routes
-  const routes = require('./routes.js')(app);
+  const routes = require('./routes.js');
   // controllers
   const controllers = require('./controllers.js')(app);
   // services

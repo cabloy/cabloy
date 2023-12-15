@@ -1,4 +1,1 @@
-module.exports = app => {
-  const routes = [];
-  return routes;
-};
+module.exports = [];
