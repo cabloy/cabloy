@@ -89,7 +89,12 @@ module.exports = (app, ctx) => {
       if (app) beanInstance.app = app;
       if (ctx) beanInstance.ctx = ctx;
       // log
-      beanInstance.__beanFullName = beanFullName;
+      Object.defineProperty(beanInstance, '__beanFullName__', {
+        enumerable: false,
+        get() {
+          return beanFullName;
+        },
+      });
       // no aop
       const _aopChains = this._getAopChains(beanFullName);
       if (_aopChains.length === 0) return beanInstance;

@@ -280,7 +280,7 @@ module.exports = app => {
       } else {
         fn = fn || 'execute';
         if (!bean[fn]) {
-          throw new Error(`bean method not found: ${bean.__beanFullName}:${fn}`);
+          throw new Error(`bean method not found: ${bean.__beanFullName__}:${fn}`);
         }
         res = await bean[fn](context);
       }
