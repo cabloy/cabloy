@@ -47,6 +47,14 @@ module.exports = (app, ctx) => {
       return this[beanFullName];
     },
     _newBean(beanFullName, ...args) {
+      // class
+      if (is.class(beanFullName)) {
+        const beanInstance = new beanFullName(...args);
+        if (app) beanInstance.app = app;
+        if (ctx) beanInstance.ctx = ctx;
+        return beanInstance;
+      }
+      // string
       const _beanClass = this._getBeanClass(beanFullName);
       if (!_beanClass) {
         // throw new Error(`bean not found: ${beanFullName}`);
