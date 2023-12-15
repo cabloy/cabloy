@@ -1,9 +1,8 @@
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {
-      if (options.version === 1) {
-        // create table: aFile
-        let sql = `
+module.exports = class Version {
+  async update(options) {
+    if (options.version === 1) {
+      // create table: aFile
+      let sql = `
           CREATE TABLE aFile (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -28,31 +27,28 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
+      await this.ctx.model.query(sql);
 
-        // aViewFile
-        sql = `
+      // aViewFile
+      sql = `
           create view aViewFile as
             select a.*,b.userName,b.avatar from aFile a
               left join aUser b on a.userId=b.id
         `;
-        await this.ctx.model.query(sql);
-      }
+      await this.ctx.model.query(sql);
+    }
 
-      if (options.version === 2) {
-        // aFile: mime
-        const sql = `
+    if (options.version === 2) {
+      // aFile: mime
+      const sql = `
         ALTER TABLE aFile
           CHANGE COLUMN mime mime varchar(255) DEFAULT NULL
         `;
-        await this.ctx.model.query(sql);
-      }
+      await this.ctx.model.query(sql);
     }
-
-    async init(options) {}
-
-    async test() {}
   }
 
-  return Version;
+  async init(options) {}
+
+  async test() {}
 };

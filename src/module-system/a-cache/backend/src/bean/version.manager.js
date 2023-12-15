@@ -1,9 +1,8 @@
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {
-      if (options.version === 1) {
-        // create table: aCache
-        const sql = `
+module.exports = class Version {
+  async update(options) {
+    if (options.version === 1) {
+      // create table: aCache
+      const sql = `
           CREATE TABLE aCache (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -17,34 +16,31 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.db.query(sql);
-      }
+      await this.ctx.db.query(sql);
+    }
 
-      if (options.version === 2) {
-        let sql;
-        // delete
-        sql = `
+    if (options.version === 2) {
+      let sql;
+      // delete
+      sql = `
           delete from aCache
         `;
-        await this.ctx.db.query(sql);
-        // alter table: aCache
-        sql = `
+      await this.ctx.db.query(sql);
+      // alter table: aCache
+      sql = `
           ALTER TABLE aCache
             DROP COLUMN timeout,
             ADD COLUMN expired timestamp DEFAULT NULL
         `;
-        await this.ctx.db.query(sql);
-      }
-    }
-
-    async init(options) {
-      if (options.version === 0) {
-        // cache reset
-        //   : just clear mem cache
-        await this.ctx.cache.mem._clearAll();
-      }
+      await this.ctx.db.query(sql);
     }
   }
 
-  return Version;
+  async init(options) {
+    if (options.version === 0) {
+      // cache reset
+      //   : just clear mem cache
+      await this.ctx.cache.mem._clearAll();
+    }
+  }
 };

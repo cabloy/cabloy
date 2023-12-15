@@ -1,9 +1,8 @@
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {
-      if (options.version === 1) {
-        // aProgress
-        const sql = `
+module.exports = class Version {
+  async update(options) {
+    if (options.version === 1) {
+      // aProgress
+      const sql = `
         CREATE TABLE aProgress (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,28 +17,25 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
                   `;
-        await this.ctx.model.query(sql);
-      }
+      await this.ctx.model.query(sql);
+    }
 
-      if (options.version === 2) {
-        // aProgress: add field userId
-        const sql = `
+    if (options.version === 2) {
+      // aProgress: add field userId
+      const sql = `
         ALTER TABLE aProgress
           ADD COLUMN userId int(11) DEFAULT '0'
                   `;
-        await this.ctx.model.query(sql);
-      }
-
-      if (options.version === 3) {
-        // drop table: aProgress
-        await this.ctx.model.query('drop table if exists aProgress');
-      }
+      await this.ctx.model.query(sql);
     }
 
-    async init(options) {}
-
-    async test() {}
+    if (options.version === 3) {
+      // drop table: aProgress
+      await this.ctx.model.query('drop table if exists aProgress');
+    }
   }
 
-  return Version;
+  async init(options) {}
+
+  async test() {}
 };

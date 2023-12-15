@@ -1,11 +1,7 @@
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {}
+module.exports = class Version {
+  async update(options) {}
 
-    async init(options) {}
+  async init(options) {}
 
-    async test() {}
-  }
-
-  return Version;
+  async test() {}
 };

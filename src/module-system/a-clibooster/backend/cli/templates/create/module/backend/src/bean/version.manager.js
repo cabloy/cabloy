@@ -1,30 +1,26 @@
 const fileVersionUpdates = [];
 const fileVersionInits = [];
 
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {
-      if (fileVersionUpdates.includes(options.version)) {
-        const VersionUpdateFn = require(`./version.manager/update/update${options.version}.js`);
-        const versionUpdate = new (VersionUpdateFn(this.ctx))();
-        await versionUpdate.run(options);
-      }
-    }
-
-    async init(options) {
-      if (fileVersionInits.includes(options.version)) {
-        const VersionInitFn = require(`./version.manager/init/init${options.version}.js`);
-        const versionInit = new (VersionInitFn(this.ctx))();
-        await versionInit.run(options);
-      }
-    }
-
-    async test() {
-      const VersionTestFn = require('./version.manager/test/test.js');
-      const versionTest = new (VersionTestFn(this.ctx))();
-      await versionTest.run();
+module.exports = class Version {
+  async update(options) {
+    if (fileVersionUpdates.includes(options.version)) {
+      const VersionUpdate = require(`./version.manager/update/update${options.version}.js`);
+      const versionUpdate = this.ctx.bean._newBean(VersionUpdate);
+      await versionUpdate.run(options);
     }
   }
 
-  return Version;
+  async init(options) {
+    if (fileVersionInits.includes(options.version)) {
+      const VersionInit = require(`./version.manager/init/init${options.version}.js`);
+      const versionInit = this.ctx.bean._newBean(VersionInit);
+      await versionInit.run(options);
+    }
+  }
+
+  async test() {
+    const VersionTestFn = require('./version.manager/test/test.js');
+    const versionTest = new (VersionTestFn(this.ctx))();
+    await versionTest.run();
+  }
 };

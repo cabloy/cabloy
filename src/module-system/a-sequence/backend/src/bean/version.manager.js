@@ -1,9 +1,8 @@
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {
-      if (options.version === 1) {
-        // create table: aSequence
-        const sql = `
+module.exports = class Version {
+  async update(options) {
+    if (options.version === 1) {
+      // create table: aSequence
+      const sql = `
           CREATE TABLE aSequence (
             id int(11) NOT NULL AUTO_INCREMENT,
             createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -16,10 +15,7 @@ module.exports = app => {
             PRIMARY KEY (id)
           )
         `;
-        await this.ctx.model.query(sql);
-      }
+      await this.ctx.model.query(sql);
     }
   }
-
-  return Version;
 };

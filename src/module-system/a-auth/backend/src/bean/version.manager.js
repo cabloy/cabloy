@@ -1,26 +1,22 @@
-module.exports = app => {
-  class Version extends app.meta.BeanBase {
-    async update(options) {
-      if (options.version === 1) {
-        // aAuthProvider: add scenes
-        let sql = `
+module.exports = class Version {
+  async update(options) {
+    if (options.version === 1) {
+      // aAuthProvider: add scenes
+      let sql = `
       ALTER TABLE aAuthProvider
         ADD COLUMN scenes JSON DEFAULT NULL
                 `;
-        await this.ctx.model.query(sql);
-        // aAuth: add providerScene
-        sql = `
+      await this.ctx.model.query(sql);
+      // aAuth: add providerScene
+      sql = `
       ALTER TABLE aAuth
         ADD COLUMN providerScene varchar(255) DEFAULT NULL
                 `;
-        await this.ctx.model.query(sql);
-      }
+      await this.ctx.model.query(sql);
     }
-
-    async init(options) {}
-
-    async test() {}
   }
 
-  return Version;
+  async init(options) {}
+
+  async test() {}
 };
