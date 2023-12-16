@@ -34,7 +34,11 @@ module.exports = function (loader) {
       }
       // 2. load
       for (const module of ebModulesArray) {
-        if (is.function(module.main) && !is.class(module.main)) {
+        if (is.class(module.main)) {
+          const mainInstance = loader.app.bean._newBean(module.main);
+          module.main = mainInstance.options;
+          module.mainInstance = mainInstance;
+        } else if (is.function(module.main) && !is.class(module.main)) {
           module.main = module.main(loader.app, module);
         }
       }

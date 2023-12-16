@@ -13,16 +13,20 @@ const meta = require('./meta.js');
 // /// hook
 // const hook = require('./hook.js');
 
-module.exports = {
-  aops,
-  beans,
-  routes,
-  controllers,
-  services,
-  models,
-  config,
-  locales,
-  errors,
-  meta,
-  // hook,
+module.exports = class Main {
+  get options() {
+    return {
+      aops,
+      beans,
+      routes,
+      controllers,
+      services,
+      models,
+      config,
+      locales,
+      errors,
+      meta,
+      // hook,
+    };
+  }
 };
