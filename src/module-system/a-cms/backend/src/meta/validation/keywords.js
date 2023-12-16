@@ -1,4 +1,2 @@
-module.exports = app => {
-  const keywords = {};
-  return keywords;
-};
+const keywords = {};
+module.exports = keywords;

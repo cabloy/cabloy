@@ -2,8 +2,7 @@ module.exports = app => {
   const atomClasses = require('./meta/atomClass/atomClasses.js');
   // schemas
   const schemas = require('./meta/validation/schemas.js')(app);
-  // keywords
-  const keywords = require('./meta/validation/keywords.js')(app);
+  const keywords = require('./meta/validation/keywords.js');
   // static
   const staticApps = require('./meta/static/apps.js')(app);
   const staticDicts = require('./meta/static/dicts.js')(app);
