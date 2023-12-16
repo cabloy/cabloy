@@ -42,6 +42,14 @@ module.exports = function (loader) {
           module.main = module.main(loader.app, module);
         }
       }
+      // 3. monkey
+      for (const key in ebModulesMonkey) {
+        const moduleMonkey = ebModulesMonkey[key];
+        if (moduleMonkey.main.monkey) {
+          moduleMonkey.monkeyInstance = loader.app.bean._newBean(moduleMonkey.main.monkey);
+        }
+      }
+      // ok
       return ebModules;
     },
     monkeyModules(monkeyName) {

@@ -70,9 +70,9 @@ module.exports = app => {
       }
       for (const key in ebModulesMonkey) {
         const moduleMonkey = ebModulesMonkey[key];
-        if (moduleMonkey.main.monkey && moduleMonkey.main.monkey[monkeyName]) {
+        if (moduleMonkey.monkeyInstance && moduleMonkey.monkeyInstance[monkeyName]) {
           const monkeyData2 = Object.assign({ moduleSelf: moduleMonkey }, monkeyData);
-          moduleMonkey.main.monkey[monkeyName](monkeyData2);
+          moduleMonkey.monkeyInstance[monkeyName](monkeyData2);
         }
       }
       if (ebAppMonkey && ebAppMonkey[monkeyName]) {
