@@ -5,8 +5,7 @@ const errors = require('./config/errors.js');
 module.exports = app => {
   const routes = require('./routes.js');
   const controllers = require('./controllers.js');
-  // services
-  const services = require('./services.js')(app);
+  const services = require('./services.js');
   // models
   const models = require('./models.js')(app);
   // meta
