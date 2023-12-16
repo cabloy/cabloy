@@ -12,8 +12,8 @@ const meta = require('./meta.js');
 const routes = require('./routes.js');
 const controllers = require('./controllers.js');
 
-// ajv
-app.meta.ajv = require('./ajv/ajv.js');
+// Ajv
+module.meta.class.Ajv = require('./ajv/ajv.js');
 
 module.exports = {
   beans,

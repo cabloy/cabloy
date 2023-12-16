@@ -1,7 +1,7 @@
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-// const Watcher = require('./common/watcher.js');
+const Watcher = require('./common/watcher.js');
 const AtomCmsBase = require('./common/atomCmsBase.js');
 
 // atomCmsBase
@@ -14,14 +14,20 @@ const services = require('./services.js');
 const models = require('./models.js');
 // meta
 const meta = require('./meta.js');
-module.exports = {
-  beans,
-  routes,
-  controllers,
-  services,
-  models,
-  config,
-  locales,
-  errors,
-  meta,
+module.exports = app => {
+  // watcher: only in development
+  if (app.meta.isLocal) {
+    app.meta['a-cms:watcher'] = app.bean._newBean(Watcher);
+  }
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+    meta,
+  };
 };

@@ -1,13 +1,16 @@
 const beanContainerFn = require('./beanContainer.js');
 
-module.exports = function (loader) {
+function loadBeanContainer(loader) {
+  loader.app.bean = beanContainerFn(loader.app, null);
+}
+
+function loadBeans(loader) {
   // use modulesArray
   const ebModulesArray = loader.app.meta.modulesArray;
 
   // all
   loader.app.meta.aops = {};
   loader.app.meta.beans = {};
-  loader.app.bean = beanContainerFn(loader.app, null);
 
   // load beans
   loadBeans();
@@ -57,4 +60,9 @@ module.exports = function (loader) {
       }
     }
   }
+}
+
+module.exports = {
+  loadBeanContainer,
+  loadBeans,
 };

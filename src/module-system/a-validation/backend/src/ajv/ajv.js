@@ -4,53 +4,51 @@ const AjvKeywords = require('ajv-keywords');
 const jsBeautify = require('js-beautify');
 const systemKeywords = require('./keywords.js');
 
-module.exports = app => {
-  Ajv.create = function ({ options, keywords, schemas, schemaRoot }) {
-    // default
-    const _options = {
-      $data: true,
-      allErrors: true,
-      verbose: false,
-      jsonPointers: true,
-      format: 'full',
-      unknownFormats: true,
-      useDefaults: true,
-      coerceTypes: true,
-      transpile: false,
-      passContext: true,
-      removeAdditional: 'all',
-    };
-    // processCode
-    if (app.meta.isTest || app.meta.isLocal) {
-      _options.processCode = jsBeautify.js_beautify;
-    }
-    // override
-    Object.assign(_options, options);
-    // ajv
-    const ajv = new Ajv(_options);
-    AjvKeywords(ajv);
-    ajv.v = createValidate(schemaRoot);
-    // systemKeywords
-    for (const _keyword in systemKeywords) {
-      ajv.addKeyword(_keyword, systemKeywords[_keyword]);
-    }
-    // keywords
-    if (keywords) {
-      for (const key in keywords) {
-        const _key = key.indexOf('x-') === 0 ? key : `x-${key}`;
-        ajv.addKeyword(_key, keywords[key]);
-      }
-    }
-    // schemas
-    if (schemas) {
-      for (const key in schemas) {
-        ajv.addSchema(schemas[key], key);
-      }
-    }
-    return ajv;
+Ajv.create = function ({ options, keywords, schemas, schemaRoot }) {
+  // default
+  const _options = {
+    $data: true,
+    allErrors: true,
+    verbose: false,
+    jsonPointers: true,
+    format: 'full',
+    unknownFormats: true,
+    useDefaults: true,
+    coerceTypes: true,
+    transpile: false,
+    passContext: true,
+    removeAdditional: 'all',
   };
-  return Ajv;
+  // processCode
+  if (module.meta.isTest || module.meta.isLocal) {
+    _options.processCode = jsBeautify.js_beautify;
+  }
+  // override
+  Object.assign(_options, options);
+  // ajv
+  const ajv = new Ajv(_options);
+  AjvKeywords(ajv);
+  ajv.v = createValidate(schemaRoot);
+  // systemKeywords
+  for (const _keyword in systemKeywords) {
+    ajv.addKeyword(_keyword, systemKeywords[_keyword]);
+  }
+  // keywords
+  if (keywords) {
+    for (const key in keywords) {
+      const _key = key.indexOf('x-') === 0 ? key : `x-${key}`;
+      ajv.addKeyword(_key, keywords[key]);
+    }
+  }
+  // schemas
+  if (schemas) {
+    for (const key in schemas) {
+      ajv.addSchema(schemas[key], key);
+    }
+  }
+  return ajv;
 };
+module.exports = Ajv;
 
 function createValidate(schemaRoot) {
   return async function ({ ctx, schema, data, filterOptions }) {

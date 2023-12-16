@@ -1,3 +1,4 @@
+const __module__ = module;
 module.exports = class Validation extends module.meta.class.BeanModuleBase {
   getSchema({ module, validator, schema }) {
     // for flexible
@@ -87,7 +88,7 @@ module.exports = class Validation extends module.meta.class.BeanModuleBase {
       params.schemas = schemas;
     }
     // create
-    return this.ctx.app.meta.ajv.create(params);
+    return __module__.meta.class.Ajv.create(params);
   }
 
   _checkValidator({ module, validator }) {
@@ -105,7 +106,7 @@ module.exports = class Validation extends module.meta.class.BeanModuleBase {
       if (!schemas[_schema]) throw new Error(`schema not found: ${module}:${_schema}`);
       schemas[_schema].$async = true;
     }
-    _validator.ajv = this.ctx.app.meta.ajv.create({
+    _validator.ajv = __module__.meta.class.Ajv.create({
       options: _validator.options,
       keywords: meta.validation.keywords,
       schemas,
@@ -113,7 +114,7 @@ module.exports = class Validation extends module.meta.class.BeanModuleBase {
     });
     // create ajv_ignoreRules
     const schemas2 = this._prepareSchemas_ignoreRules({ schemas });
-    _validator.ajv_ignoreRules = this.ctx.app.meta.ajv.create({
+    _validator.ajv_ignoreRules = __module__.meta.class.Ajv.create({
       options: { coerceTypes: false, useDefaults: true }, // not use _validator.options
       keywords: meta.validation.keywords,
       schemas: schemas2,

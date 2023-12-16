@@ -6,7 +6,8 @@
     "fileVersion": 1,
     "dependencies": {
       "a-instance": "5.0.0",
-      "a-base": "5.0.0"
+      "a-base": "5.0.0",
+      "a-auth": "5.0.0"
     }
   },
   "description": "Open Auth",

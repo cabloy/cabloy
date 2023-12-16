@@ -16,10 +16,9 @@ module.exports = class Watcher {
         this._reloadByAgent();
       }
     }, 1000);
-    this._init();
   }
 
-  _init() {
+  __init__() {
     if (this.app.meta.inApp) {
       // this.app
       this.app.meta.messenger.addProvider({

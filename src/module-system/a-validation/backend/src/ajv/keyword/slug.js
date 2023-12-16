@@ -30,7 +30,7 @@ module.exports = {
       const checkExists = await ctx.bean.util.checkAtomIdExists({ atomId, items });
       if (checkExists) {
         const errors = [{ keyword: 'x-slug', params: [], message: ctx.text('Slug Exists') }];
-        throw new ctx.app.meta.ajv.ValidationError(errors);
+        throw new module.meta.class.Ajv.ValidationError(errors);
       }
       return true;
     };

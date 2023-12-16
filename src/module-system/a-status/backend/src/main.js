@@ -5,20 +5,20 @@ const errors = require('./config/errors.js');
 // eslint-disable-next-line
 const beans = require('./beans.js');
 const routes = require('./routes.js');
-// controllers
 const controllers = require('./controllers.js');
-// services
 const services = require('./services.js');
-// models
-const models = require('./models.js');
 
-module.exports = {
-  beans,
-  routes,
-  controllers,
-  services,
-  models,
-  config,
-  locales,
-  errors,
+module.exports = app => {
+  // models
+  const models = require('./models.js');
+  return {
+    beans,
+    routes,
+    controllers,
+    services,
+    models,
+    config,
+    locales,
+    errors,
+  };
 };

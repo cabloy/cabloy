@@ -30,7 +30,7 @@ module.exports = {
         const _title = ctx.text(schemaProperty.ebTitle || 'Atom Name');
         const message = `${_title} ${ctx.text('ExistsValidation')}`;
         const errors = [{ keyword: 'x-atomName', params: [], message }];
-        throw new ctx.app.meta.ajv.ValidationError(errors);
+        throw new module.meta.class.Ajv.ValidationError(errors);
       }
       return true;
     };

@@ -27,6 +27,9 @@ module.exports = function (loader) {
   // messenger
   loadMessenger(loader);
 
+  // bean
+  loadBeans.loadBeanContainer(loader);
+
   // modules
   const modulesTools = ModulesToolsFn(loader);
   // load modules
@@ -40,7 +43,7 @@ module.exports = function (loader) {
     loadLocales(loader, modules);
     loadErrors(loader, modules);
     loadConstants(loader, modules);
-    loadBeans(loader, modules);
+    loadBeans.loadBeans(loader, modules);
     loadRoutes(loader, modules);
     loadControllers(loader, modules);
     loadServices(loader, modules);

@@ -51,9 +51,7 @@ module.exports = (app, ctx) => {
       // class
       if (is.class(beanFullName)) {
         const beanInstance = new beanFullName(...args);
-        if (app) beanInstance.app = app;
-        if (ctx) beanInstance.ctx = ctx;
-        return beanInstance;
+        return this._patchBeanInstance(beanInstance);
       }
       // string
       const _beanClass = this._getBeanClass(beanFullName);
@@ -99,20 +97,29 @@ module.exports = (app, ctx) => {
       if (!beanInstance) {
         throw new Error(`bean class not found: ${beanFullName}`);
       }
-      if (app) beanInstance.app = app;
-      if (ctx) beanInstance.ctx = ctx;
-      // log
-      Object.defineProperty(beanInstance, '__beanFullName__', {
-        enumerable: false,
-        get() {
-          return beanFullName;
-        },
-      });
+      // patch
+      this._patchBeanInstance(beanInstance, beanFullName);
       // no aop
       const _aopChains = this._getAopChains(beanFullName);
       if (_aopChains.length === 0) return beanInstance;
       // aop
       return this._newBeanProxy(beanFullName, beanInstance);
+    },
+    _patchBeanInstance(beanInstance, beanFullName) {
+      if (app) beanInstance.app = app;
+      if (ctx) beanInstance.ctx = ctx;
+      if (beanInstance.__init__) {
+        beanInstance.__init__();
+      }
+      if (beanFullName) {
+        Object.defineProperty(beanInstance, '__beanFullName__', {
+          enumerable: false,
+          get() {
+            return beanFullName;
+          },
+        });
+      }
+      return beanInstance;
     },
     _newBeanProxy(beanFullName, beanInstance) {
       const self = this;
