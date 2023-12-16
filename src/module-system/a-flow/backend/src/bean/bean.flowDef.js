@@ -4,16 +4,10 @@ const flowDef_prepare = require('./bean.flowDef/bean.flowDef_prepare.js');
 const flowDef_find = require('./bean.flowDef/bean.flowDef_find.js');
 const flowDef_utils = require('./bean.flowDef/bean.flowDef_utils.js');
 
-module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(
-    flowDef_0,
-    [
-      //
-      flowDef_deploy,
-      flowDef_prepare,
-      flowDef_find,
-      flowDef_utils,
-    ],
-    ctx
-  );
-};
+module.exports = module.meta.util.mixinClasses(flowDef_0, [
+  //
+  flowDef_deploy,
+  flowDef_prepare,
+  flowDef_find,
+  flowDef_utils,
+]);

@@ -1,23 +1,20 @@
-module.exports = ctx => {
-  const moduleInfo = module.info;
-  class Flow {
-    get modelFlow() {
-      return ctx.model.module(moduleInfo.relativeName).flow;
-    }
-    get modelFlowHistory() {
-      return ctx.model.module(moduleInfo.relativeName).flowHistory;
-    }
-    get modelFlowNode() {
-      return ctx.model.module(moduleInfo.relativeName).flowNode;
-    }
-    get modelFlowNodeHistory() {
-      return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
-    }
+const moduleInfo = module.info;
 
-    get sqlProcedure() {
-      return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
-    }
+module.exports = class Flow {
+  get modelFlow() {
+    return ctx.model.module(moduleInfo.relativeName).flow;
+  }
+  get modelFlowHistory() {
+    return ctx.model.module(moduleInfo.relativeName).flowHistory;
+  }
+  get modelFlowNode() {
+    return ctx.model.module(moduleInfo.relativeName).flowNode;
+  }
+  get modelFlowNodeHistory() {
+    return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
   }
 
-  return Flow;
+  get sqlProcedure() {
+    return ctx.bean._getBean(moduleInfo.relativeName, 'local.procedure');
+  }
 };

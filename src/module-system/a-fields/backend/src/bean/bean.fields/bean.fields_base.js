@@ -1,10 +1,6 @@
-module.exports = ctx => {
-  // const moduleInfo = module.info;
-  class Fields {
-    get modelRoleFieldsRight() {
-      return ctx.model.module('a-base').roleFieldsRight;
-    }
+// const moduleInfo = module.info;
+module.exports = class Fields {
+  get modelRoleFieldsRight() {
+    return ctx.model.module('a-base').roleFieldsRight;
   }
-
-  return Fields;
 };

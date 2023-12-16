@@ -6,249 +6,247 @@ const boxenOptions = { padding: 1, margin: 1, align: 'center', borderColor: 'yel
 
 const __queueInstanceStartup = {};
 
-module.exports = ctx => {
-  const moduleInfo = module.info;
-  class Instance {
-    get cacheMem() {
-      return ctx.cache.mem.module(moduleInfo.relativeName);
-    }
+const moduleInfo = module.info;
 
-    async list(options) {
-      // options
-      if (!options) options = { where: null, orders: null, page: null };
-      const page = ctx.bean.util.page(options.page, false);
-      const orders = options.orders;
-      const where = options.where || { disabled: 0 }; // allow disabled=undefined
-      // select
-      const _options = { where, orders };
-      if (page.size !== 0) {
-        _options.limit = page.size;
-        _options.offset = page.index;
-      }
-      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
-      return await modelInstance.select(_options);
-    }
+module.exports = class Instance {
+  get cacheMem() {
+    return ctx.cache.mem.module(moduleInfo.relativeName);
+  }
 
-    async get({ subdomain }) {
-      // cache
-      const instance = this.cacheMem.get('instance');
-      if (instance) return instance;
-      return await this.resetCache({ subdomain });
+  async list(options) {
+    // options
+    if (!options) options = { where: null, orders: null, page: null };
+    const page = ctx.bean.util.page(options.page, false);
+    const orders = options.orders;
+    const where = options.where || { disabled: 0 }; // allow disabled=undefined
+    // select
+    const _options = { where, orders };
+    if (page.size !== 0) {
+      _options.limit = page.size;
+      _options.offset = page.index;
     }
+    const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+    return await modelInstance.select(_options);
+  }
 
-    async _get({ subdomain }) {
-      // get
-      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
-      const instance = await modelInstance.get({ name: subdomain });
-      if (instance) return instance;
-      // instance base
-      const instanceBase = this._getInstanceBase({ subdomain });
-      if (!instanceBase) return null;
-      // lock
-      return await ctx.meta.util.lock({
-        subdomain: null,
-        resource: `${moduleInfo.relativeName}.registerInstance.${subdomain}`,
-        fn: async () => {
-          return await ctx.meta.util.executeBeanIsolate({
-            subdomain: null,
-            beanModule: moduleInfo.relativeName,
-            beanFullName: 'instance',
-            context: { instanceBase },
-            fn: '_registerLock',
-          });
-        },
-      });
-    }
+  async get({ subdomain }) {
+    // cache
+    const instance = this.cacheMem.get('instance');
+    if (instance) return instance;
+    return await this.resetCache({ subdomain });
+  }
 
-    async _registerLock({ instanceBase }) {
-      // get again
-      const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
-      let instance = await modelInstance.get({ name: instanceBase.subdomain });
-      if (instance) return instance;
-      // insert
-      instance = {
-        name: instanceBase.subdomain,
-        title: instanceBase.title,
-        config: JSON.stringify(instanceBase.config || {}),
-        disabled: 0,
-      };
-      const res = await modelInstance.insert(instance);
-      instance.id = res.insertId;
-      return instance;
-    }
+  async _get({ subdomain }) {
+    // get
+    const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+    const instance = await modelInstance.get({ name: subdomain });
+    if (instance) return instance;
+    // instance base
+    const instanceBase = this._getInstanceBase({ subdomain });
+    if (!instanceBase) return null;
+    // lock
+    return await ctx.meta.util.lock({
+      subdomain: null,
+      resource: `${moduleInfo.relativeName}.registerInstance.${subdomain}`,
+      fn: async () => {
+        return await ctx.meta.util.executeBeanIsolate({
+          subdomain: null,
+          beanModule: moduleInfo.relativeName,
+          beanFullName: 'instance',
+          context: { instanceBase },
+          fn: '_registerLock',
+        });
+      },
+    });
+  }
 
-    _getInstanceBase({ subdomain }) {
-      const instances = ctx.app.config.instances || [{ subdomain: '', password: '' }];
-      return instances.find(item => item.subdomain === subdomain);
-    }
+  async _registerLock({ instanceBase }) {
+    // get again
+    const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+    let instance = await modelInstance.get({ name: instanceBase.subdomain });
+    if (instance) return instance;
+    // insert
+    instance = {
+      name: instanceBase.subdomain,
+      title: instanceBase.title,
+      config: JSON.stringify(instanceBase.config || {}),
+      disabled: 0,
+    };
+    const res = await modelInstance.insert(instance);
+    instance.id = res.insertId;
+    return instance;
+  }
 
-    async reload() {
+  _getInstanceBase({ subdomain }) {
+    const instances = ctx.app.config.instances || [{ subdomain: '', password: '' }];
+    return instances.find(item => item.subdomain === subdomain);
+  }
+
+  async reload() {
+    // broadcast
+    ctx.meta.util.broadcastEmit({
+      module: 'a-instance',
+      broadcastName: 'reload',
+      data: null,
+    });
+  }
+
+  async instanceChanged(reload = true) {
+    if (reload) {
+      // force to reload instance
+      await this.reload();
+    } else {
       // broadcast
       ctx.meta.util.broadcastEmit({
         module: 'a-instance',
-        broadcastName: 'reload',
+        broadcastName: 'resetCache',
         data: null,
       });
     }
+  }
 
-    async instanceChanged(reload = true) {
-      if (reload) {
-        // force to reload instance
-        await this.reload();
-      } else {
-        // broadcast
-        ctx.meta.util.broadcastEmit({
-          module: 'a-instance',
-          broadcastName: 'resetCache',
-          data: null,
-        });
+  async resetCache({ subdomain }) {
+    // cache
+    const instance = await this._get({ subdomain });
+    if (!instance) return null;
+    // config
+    instance.config = JSON.parse(instance.config) || {};
+    // cache configs
+    const instanceConfigs = ctx.bean.util.extend({}, ctx.app.meta.configs, instance.config);
+    this.cacheMem.set('instanceConfigs', instanceConfigs);
+    // cache configsFront
+    const instanceConfigsFront = this._mergeInstanceConfigFront({ instanceConfigs });
+    this.cacheMem.set('instanceConfigsFront', instanceConfigsFront);
+    // cache instance
+    this.cacheMem.set('instance', instance);
+    return instance;
+  }
+
+  getInstanceConfigs() {
+    return this.cacheMem.get('instanceConfigs');
+  }
+
+  getInstanceConfigsFront() {
+    return this.cacheMem.get('instanceConfigsFront');
+  }
+
+  _mergeInstanceConfigFront({ instanceConfigs }) {
+    const instanceConfigsFront = {};
+    for (const moduleName in instanceConfigs) {
+      const instanceConfig = instanceConfigs[moduleName];
+      if (instanceConfig.configFront) {
+        instanceConfigsFront[moduleName] = instanceConfig.configFront;
       }
     }
+    return instanceConfigsFront;
+  }
 
-    async resetCache({ subdomain }) {
-      // cache
-      const instance = await this._get({ subdomain });
-      if (!instance) return null;
-      // config
-      instance.config = JSON.parse(instance.config) || {};
-      // cache configs
-      const instanceConfigs = ctx.bean.util.extend({}, ctx.app.meta.configs, instance.config);
-      this.cacheMem.set('instanceConfigs', instanceConfigs);
-      // cache configsFront
-      const instanceConfigsFront = this._mergeInstanceConfigFront({ instanceConfigs });
-      this.cacheMem.set('instanceConfigsFront', instanceConfigsFront);
-      // cache instance
-      this.cacheMem.set('instance', instance);
-      return instance;
+  async checkAppReady(options) {
+    if (!options) options = { wait: true };
+    if (!ctx.app.meta.appReady && options.wait === false) return false;
+    while (!ctx.app.meta.appReady) {
+      await ctx.bean.util.sleep(300);
     }
+    return true;
+  }
 
-    getInstanceConfigs() {
-      return this.cacheMem.get('instanceConfigs');
-    }
+  async checkAppReadyInstance(options) {
+    if (!options) options = { startup: true };
+    // chech appReady first
+    const appReady = await ctx.bean.instance.checkAppReady({ wait: options.startup !== false });
+    if (!appReady) return false;
+    // check appReady instance
+    const subdomain = ctx.subdomain;
+    if (subdomain === undefined) throw new Error(`subdomain not valid: ${subdomain}`);
+    if (ctx.app.meta.appReadyInstances[subdomain]) return true;
+    // instance startup
+    if (options.startup === false) return false;
+    await this.instanceStartup({ subdomain });
+    return true;
+  }
 
-    getInstanceConfigsFront() {
-      return this.cacheMem.get('instanceConfigsFront');
-    }
-
-    _mergeInstanceConfigFront({ instanceConfigs }) {
-      const instanceConfigsFront = {};
-      for (const moduleName in instanceConfigs) {
-        const instanceConfig = instanceConfigs[moduleName];
-        if (instanceConfig.configFront) {
-          instanceConfigsFront[moduleName] = instanceConfig.configFront;
+  // options: force/instanceBase
+  async instanceStartup({ subdomain, options }) {
+    // queue within the same worker
+    if (!__queueInstanceStartup[subdomain]) {
+      __queueInstanceStartup[subdomain] = async.queue((info, cb) => {
+        // check again
+        const force = info.options && info.options.force;
+        if (ctx.app.meta.appReadyInstances[info.subdomain] && !force) {
+          info.resolve();
+          cb();
+          return;
         }
-      }
-      return instanceConfigsFront;
-    }
-
-    async checkAppReady(options) {
-      if (!options) options = { wait: true };
-      if (!ctx.app.meta.appReady && options.wait === false) return false;
-      while (!ctx.app.meta.appReady) {
-        await ctx.bean.util.sleep(300);
-      }
-      return true;
-    }
-
-    async checkAppReadyInstance(options) {
-      if (!options) options = { startup: true };
-      // chech appReady first
-      const appReady = await ctx.bean.instance.checkAppReady({ wait: options.startup !== false });
-      if (!appReady) return false;
-      // check appReady instance
-      const subdomain = ctx.subdomain;
-      if (subdomain === undefined) throw new Error(`subdomain not valid: ${subdomain}`);
-      if (ctx.app.meta.appReadyInstances[subdomain]) return true;
-      // instance startup
-      if (options.startup === false) return false;
-      await this.instanceStartup({ subdomain });
-      return true;
-    }
-
-    // options: force/instanceBase
-    async instanceStartup({ subdomain, options }) {
-      // queue within the same worker
-      if (!__queueInstanceStartup[subdomain]) {
-        __queueInstanceStartup[subdomain] = async.queue((info, cb) => {
-          // check again
-          const force = info.options && info.options.force;
-          if (ctx.app.meta.appReadyInstances[info.subdomain] && !force) {
+        // startup
+        ctx.app.meta
+          ._runStartupInstance({ subdomain: info.subdomain, options: info.options })
+          .then(() => {
             info.resolve();
             cb();
-            return;
-          }
-          // startup
-          ctx.app.meta
-            ._runStartupInstance({ subdomain: info.subdomain, options: info.options })
-            .then(() => {
-              info.resolve();
-              cb();
-            })
-            .catch(err => {
-              info.reject(err);
-              cb();
-            });
-        });
-      }
-      // promise
-      return new Promise((resolve, reject) => {
-        // options
-        if (!options) options = { force: false, instanceBase: null };
-        // queue push
-        __queueInstanceStartup[subdomain].push({ resolve, reject, subdomain, options });
+          })
+          .catch(err => {
+            info.reject(err);
+            cb();
+          });
       });
     }
-
-    async initInstance() {
-      // instance
-      const instance = await ctx.bean.instance.get({ subdomain: ctx.subdomain });
-      if (!instance) {
-        // prompt: should for local/prod
-        // if (ctx.app.meta.isLocal) {
-        const urlInfo =
-          ctx.locale === 'zh-cn'
-            ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
-            : 'https://cabloy.com/articles/multi-instance.html';
-        let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.[env].js')}`;
-        message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
-        message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
-        console.log('\n' + boxen(message, boxenOptions));
-        // }
-        return ctx.throw(423); // not ctx.fail(423)
-      }
-      // check if disabled
-      if (instance.disabled) {
-        // locked
-        console.log('instance disabled: ', ctx.subdomain);
-        return ctx.throw(423); // not ctx.fail(423)
-      }
-
-      // check instance startup ready
-      await this.checkAppReadyInstance();
-
-      // try to save host/protocol to config
-      if (ctxHostValid(ctx)) {
-        if (!instance.config['a-base']) instance.config['a-base'] = {};
-        const aBase = instance.config['a-base'];
-        if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
-          aBase.host = ctx.host;
-          aBase.protocol = ctx.protocol;
-          // update
-          const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
-          await modelInstance.update({
-            id: instance.id,
-            config: JSON.stringify(instance.config),
-          });
-          // changed
-          await this.instanceChanged(false);
-        }
-      }
-
-      // ok
-      ctx.instance = instance;
-    }
+    // promise
+    return new Promise((resolve, reject) => {
+      // options
+      if (!options) options = { force: false, instanceBase: null };
+      // queue push
+      __queueInstanceStartup[subdomain].push({ resolve, reject, subdomain, options });
+    });
   }
-  return Instance;
+
+  async initInstance() {
+    // instance
+    const instance = await ctx.bean.instance.get({ subdomain: ctx.subdomain });
+    if (!instance) {
+      // prompt: should for local/prod
+      // if (ctx.app.meta.isLocal) {
+      const urlInfo =
+        ctx.locale === 'zh-cn'
+          ? 'https://cabloy.com/zh-cn/articles/multi-instance.html'
+          : 'https://cabloy.com/articles/multi-instance.html';
+      let message = `Please add instance in ${chalk.keyword('cyan')('src/backend/config/config.[env].js')}`;
+      message += '\n' + chalk.keyword('orange')(`{ subdomain: '${ctx.subdomain}', password: '', title: '' }`);
+      message += `\nMore info: ${chalk.keyword('cyan')(urlInfo)}`;
+      console.log('\n' + boxen(message, boxenOptions));
+      // }
+      return ctx.throw(423); // not ctx.fail(423)
+    }
+    // check if disabled
+    if (instance.disabled) {
+      // locked
+      console.log('instance disabled: ', ctx.subdomain);
+      return ctx.throw(423); // not ctx.fail(423)
+    }
+
+    // check instance startup ready
+    await this.checkAppReadyInstance();
+
+    // try to save host/protocol to config
+    if (ctxHostValid(ctx)) {
+      if (!instance.config['a-base']) instance.config['a-base'] = {};
+      const aBase = instance.config['a-base'];
+      if (aBase.host !== ctx.host || aBase.protocol !== ctx.protocol) {
+        aBase.host = ctx.host;
+        aBase.protocol = ctx.protocol;
+        // update
+        const modelInstance = ctx.model.module(moduleInfo.relativeName).instance;
+        await modelInstance.update({
+          id: instance.id,
+          config: JSON.stringify(instance.config),
+        });
+        // changed
+        await this.instanceChanged(false);
+      }
+    }
+
+    // ok
+    ctx.instance = instance;
+  }
 };
 
 function ctxHostValid(ctx) {

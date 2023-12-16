@@ -1,7 +1,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 
-const __JSContent = `module.exports = ctx => {
+const __JSContent = `
   class Demo {
     // npm run cli :tools:demo
     // npm run cli :tools:demo execute
@@ -43,7 +43,7 @@ const __JSContent = `module.exports = ctx => {
 `;
 
 module.exports = ctx => {
-  class Local {
+   module.exports = class Local {
     async demoExecute({ method, argv, cli }) {
       // js file
       const jsFile = await this._prepareJSFile({ cli });
@@ -88,5 +88,4 @@ module.exports = ctx => {
       return jsFile;
     }
   }
-  return Local;
-};
+  

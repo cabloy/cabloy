@@ -5,17 +5,11 @@ const flow_query = require('./bean.flow/bean.flow_query.js');
 const flow_start = require('./bean.flow/bean.flow_start.js');
 const flow_utils = require('./bean.flow/bean.flow_utils.js');
 
-module.exports = ctx => {
-  return ctx.app.meta.util.mixinClasses(
-    flow_0,
-    [
-      //
-      flow_assignees,
-      flow_load,
-      flow_query,
-      flow_start,
-      flow_utils,
-    ],
-    ctx
-  );
-};
+module.exports = module.meta.util.mixinClasses(flow_0, [
+  //
+  flow_assignees,
+  flow_load,
+  flow_query,
+  flow_start,
+  flow_utils,
+]);

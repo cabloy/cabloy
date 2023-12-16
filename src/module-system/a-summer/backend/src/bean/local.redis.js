@@ -1,111 +1,107 @@
 const CacheBase = require('../common/cacheBase.js');
 
-module.exports = ctx => {
-  class LocalRedis extends CacheBase(ctx) {
-    constructor({ cacheBase }) {
-      super({ cacheBase });
-      this._redisSummer = null;
-    }
+module.exports = class LocalRedis extends CacheBase(ctx) {
+  constructor({ cacheBase }) {
+    super({ cacheBase });
+    this._redisSummer = null;
+  }
 
-    async get(keyHash, key, options) {
-      const redisKey = this._getRedisKey(keyHash);
-      let value = await this.redisSummer.get(redisKey);
-      value = value ? JSON.parse(value) : undefined;
-      if (this.__checkValueEmpty(value, options)) {
-        const layered = this.__getLayered(options);
-        value = await layered.get(keyHash, key, options);
-        await this.redisSummer.set(redisKey, JSON.stringify(value), 'PX', this._cacheBase.redis.ttl);
-      }
-      return value;
+  async get(keyHash, key, options) {
+    const redisKey = this._getRedisKey(keyHash);
+    let value = await this.redisSummer.get(redisKey);
+    value = value ? JSON.parse(value) : undefined;
+    if (this.__checkValueEmpty(value, options)) {
+      const layered = this.__getLayered(options);
+      value = await layered.get(keyHash, key, options);
+      await this.redisSummer.set(redisKey, JSON.stringify(value), 'PX', this._cacheBase.redis.ttl);
     }
+    return value;
+  }
 
-    async mget(keysHash, keys, options) {
-      // peek
-      const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
-      let values = await this.redisSummer.mget(redisKeys);
-      values = values.map(v => (v ? JSON.parse(v) : undefined));
-      const redisKeysMissing = [];
-      const keysHashMissing = [];
-      const keysMissing = [];
-      const indexesMissing = [];
-      for (let i = 0; i < values.length; i++) {
-        if (this.__checkValueEmpty(values[i], options)) {
-          redisKeysMissing.push(redisKeys[i]);
-          keysHashMissing.push(keysHash[i]);
-          keysMissing.push(keys[i]);
-          indexesMissing.push(i);
-        }
-      }
-      // mget
-      if (keysHashMissing.length > 0) {
-        const layered = this.__getLayered(options);
-        const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
-        // console.log('-------redis:', valuesMissing);
-        // set/merge
-        const multi = this.redisSummer.multi();
-        for (let i = 0; i < keysHashMissing.length; i++) {
-          const valueMissing = valuesMissing[i];
-          multi.setex(redisKeysMissing[i], Math.trunc(this._cacheBase.redis.ttl / 1000), JSON.stringify(valueMissing));
-          values[indexesMissing[i]] = valueMissing;
-        }
-        await multi.exec();
-      }
-      // ok
-      return values;
-    }
-
-    async del(keyHash /* , key, options*/) {
-      const redisKey = this._getRedisKey(keyHash);
-      await this.redisSummer.del(redisKey);
-    }
-
-    async mdel(keysHash /* , keys, options*/) {
-      const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
-      await this.redisSummer.del(redisKeys);
-    }
-
-    async clear(/* options*/) {
-      const redisKey = this._getRedisKey('*');
-      const keyPrefix = this.redisSummer.options.keyPrefix;
-      const keyPattern = `${keyPrefix}${redisKey}`;
-      const keys = await this.redisSummer.keys(keyPattern);
-      const keysDel = [];
-      for (const fullKey of keys) {
-        const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
-        keysDel.push(key);
-      }
-      if (keysDel.length > 0) {
-        await this.redisSummer.del(keysDel);
+  async mget(keysHash, keys, options) {
+    // peek
+    const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
+    let values = await this.redisSummer.mget(redisKeys);
+    values = values.map(v => (v ? JSON.parse(v) : undefined));
+    const redisKeysMissing = [];
+    const keysHashMissing = [];
+    const keysMissing = [];
+    const indexesMissing = [];
+    for (let i = 0; i < values.length; i++) {
+      if (this.__checkValueEmpty(values[i], options)) {
+        redisKeysMissing.push(redisKeys[i]);
+        keysHashMissing.push(keysHash[i]);
+        keysMissing.push(keys[i]);
+        indexesMissing.push(i);
       }
     }
-
-    async peek(keyHash /* , key, options*/) {
-      const redisKey = this._getRedisKey(keyHash);
-      let value = await this.redisSummer.get(redisKey);
-      value = value ? JSON.parse(value) : undefined;
-      // need not call layered.peek
-      // if (this.__checkValueEmpty(value, options)) {
-      //   const layered = this.__getLayered(options);
-      //   value = await layered.peek(keyHash, key, options);
-      // }
-      return value;
-    }
-
-    __getLayered(/* options*/) {
-      return this.localFetch;
-    }
-
-    get redisSummer() {
-      if (!this._redisSummer) {
-        this._redisSummer = ctx.app.redis.get('summer');
+    // mget
+    if (keysHashMissing.length > 0) {
+      const layered = this.__getLayered(options);
+      const valuesMissing = await layered.mget(keysHashMissing, keysMissing, options);
+      // console.log('-------redis:', valuesMissing);
+      // set/merge
+      const multi = this.redisSummer.multi();
+      for (let i = 0; i < keysHashMissing.length; i++) {
+        const valueMissing = valuesMissing[i];
+        multi.setex(redisKeysMissing[i], Math.trunc(this._cacheBase.redis.ttl / 1000), JSON.stringify(valueMissing));
+        values[indexesMissing[i]] = valueMissing;
       }
-      return this._redisSummer;
+      await multi.exec();
     }
+    // ok
+    return values;
+  }
 
-    _getRedisKey(key) {
-      return `${ctx.instance.id}!${this._cacheBase.fullKey}!${key}`;
+  async del(keyHash /* , key, options*/) {
+    const redisKey = this._getRedisKey(keyHash);
+    await this.redisSummer.del(redisKey);
+  }
+
+  async mdel(keysHash /* , keys, options*/) {
+    const redisKeys = keysHash.map(keyHash => this._getRedisKey(keyHash));
+    await this.redisSummer.del(redisKeys);
+  }
+
+  async clear(/* options*/) {
+    const redisKey = this._getRedisKey('*');
+    const keyPrefix = this.redisSummer.options.keyPrefix;
+    const keyPattern = `${keyPrefix}${redisKey}`;
+    const keys = await this.redisSummer.keys(keyPattern);
+    const keysDel = [];
+    for (const fullKey of keys) {
+      const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
+      keysDel.push(key);
+    }
+    if (keysDel.length > 0) {
+      await this.redisSummer.del(keysDel);
     }
   }
 
-  return LocalRedis;
+  async peek(keyHash /* , key, options*/) {
+    const redisKey = this._getRedisKey(keyHash);
+    let value = await this.redisSummer.get(redisKey);
+    value = value ? JSON.parse(value) : undefined;
+    // need not call layered.peek
+    // if (this.__checkValueEmpty(value, options)) {
+    //   const layered = this.__getLayered(options);
+    //   value = await layered.peek(keyHash, key, options);
+    // }
+    return value;
+  }
+
+  __getLayered(/* options*/) {
+    return this.localFetch;
+  }
+
+  get redisSummer() {
+    if (!this._redisSummer) {
+      this._redisSummer = ctx.app.redis.get('summer');
+    }
+    return this._redisSummer;
+  }
+
+  _getRedisKey(key) {
+    return `${ctx.instance.id}!${this._cacheBase.fullKey}!${key}`;
+  }
 };
