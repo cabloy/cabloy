@@ -8,8 +8,7 @@ module.exports = app => {
   const routes = require('./routes.js');
   const controllers = require('./controllers.js');
   const services = require('./services.js');
-  // models
-  const models = require('./models.js')(app);
+  const models = require('./models.js');
   // meta
   const meta = require('./meta.js')(app);
 

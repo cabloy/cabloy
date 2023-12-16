@@ -6,15 +6,12 @@ const flowHistory = require('./model/flowHistory.js');
 const flowNode = require('./model/flowNode.js');
 const flowNodeHistory = require('./model/flowNodeHistory.js');
 
-module.exports = app => {
-  const models = {
-    flowDef,
-    flowDefContent,
-    flowDefFull,
-    flow,
-    flowHistory,
-    flowNode,
-    flowNodeHistory,
-  };
-  return models;
+module.exports = {
+  flowDef,
+  flowDefContent,
+  flowDefFull,
+  flow,
+  flowHistory,
+  flowNode,
+  flowNodeHistory,
 };
