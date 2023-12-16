@@ -28,6 +28,7 @@ module.exports = (app, ctx) => {
       return beanFullName;
     },
     _getBeanClass(beanFullName) {
+      // need not support object mode
       return app.meta.beans[beanFullName];
     },
     _getBean(moduleName, beanName) {
