@@ -3,12 +3,9 @@ const __snippet_body = `<%=argv.appKey%>(app),`;
 
 module.exports = {
   file: 'backend/src/meta/static/apps.js',
-  init: `module.exports = app => {
-  const apps = [
-  ];
-  return apps;
-};
-  `,
+  init: `const apps = [];
+module.exports = apps;
+`,
   async transform({ cli, ast, argv, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
