@@ -64,8 +64,8 @@ module.exports = app => {
     monkeyModule(ebAppMonkey, ebModulesMonkey, monkeyName, monkeyData) {
       const module = monkeyData && monkeyData.module;
       if (module) {
-        if (module.main.hook && module.main.hook[monkeyName]) {
-          module.main.hook[monkeyName](monkeyData);
+        if (module.mainInstance && module.mainInstance[monkeyName]) {
+          module.mainInstance[monkeyName](monkeyData);
         }
       }
       for (const key in ebModulesMonkey) {

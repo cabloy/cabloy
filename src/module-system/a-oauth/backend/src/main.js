@@ -10,9 +10,8 @@ const services = require('./services.js');
 const models = require('./models.js');
 // meta
 const meta = require('./meta.js');
-// /// hook
-// const hook = require('./hook.js');
 
+const moduleInfo = module.info;
 module.exports = class Main {
   get options() {
     return {
@@ -28,5 +27,12 @@ module.exports = class Main {
       meta,
       // hook,
     };
+  }
+
+  moduleLoaded(/* { module }*/) {
+    if (this.app.meta.inApp) {
+      // sessionStore
+      // this.app.sessionStore = this.app.bean._getBean(`${moduleInfo.relativeName}.local.sessionStore`);
+    }
   }
 };
