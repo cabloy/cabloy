@@ -19,42 +19,40 @@ const storeSync = require('./command/store.sync.js');
 const storePublish = require('./command/store.publish.js');
 const gitCommit = require('./command/git.commit.js');
 
-module.exports = app => {
-  const commands = {
-    default: {
-      list: defaultList(app),
-    },
-    token: {
-      add: tokenAdd(app),
-      delete: tokenDelete(app),
-      list: tokenList(app),
-    },
-    tools: {
-      babel: toolsBabel(app),
-      icons: toolsIcons(app),
-      demo: toolsDemo(app),
-    },
-    create: {
-      suite: createSuite(app),
-      module: createModule(app),
-      app: createApp(app),
-      atom: createAtom(app),
-      itemOnly: createItemOnly(app),
-      detail: createDetail(app),
-      controller: createController(app),
-      page: createPage(app),
-      pagex: createPagex(app),
-    },
-    front: {
-      renderTableCell: renderTableCell(app),
-    },
-    store: {
-      sync: storeSync(app),
-      publish: storePublish(app),
-    },
-    git: {
-      commit: gitCommit(app),
-    },
-  };
-  return commands;
+const commands = {
+  default: {
+    list: defaultList,
+  },
+  token: {
+    add: tokenAdd,
+    delete: tokenDelete,
+    list: tokenList,
+  },
+  tools: {
+    babel: toolsBabel,
+    icons: toolsIcons,
+    demo: toolsDemo,
+  },
+  create: {
+    suite: createSuite,
+    module: createModule,
+    app: createApp,
+    atom: createAtom,
+    itemOnly: createItemOnly,
+    detail: createDetail,
+    controller: createController,
+    page: createPage,
+    pagex: createPagex,
+  },
+  front: {
+    renderTableCell,
+  },
+  store: {
+    sync: storeSync,
+    publish: storePublish,
+  },
+  git: {
+    commit: gitCommit,
+  },
 };
+module.exports = commands;

@@ -1,10 +1,8 @@
-module.exports = app => {
-  const stats = {
-    info: {
-      bean: 'stats',
-      title: 'Stats',
-      persistence: false,
-    },
-  };
-  return stats;
+const stats = {
+  info: {
+    bean: 'stats',
+    title: 'Stats',
+    persistence: false,
+  },
 };
+module.exports = stats;

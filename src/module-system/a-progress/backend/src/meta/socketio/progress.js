@@ -1,9 +1,7 @@
-module.exports = app => {
-  const progress = {
-    info: {
-      title: 'Progress',
-      persistence: false,
-    },
-  };
-  return progress;
+const progress = {
+  info: {
+    title: 'Progress',
+    persistence: false,
+  },
 };
+module.exports = progress;
