@@ -1,1 +1,2 @@
-module.exports = {};
+const aops = {};
+module.exports = aops;

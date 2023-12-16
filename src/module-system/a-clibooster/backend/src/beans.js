@@ -22,7 +22,7 @@ const cliStorePublish = require('./bean/cli.store.publish.js');
 const cliGitCommit = require('./bean/cli.git.commit.js');
 const localUtils = require('./bean/local.utils.js');
 
-module.exports = {
+const beans = {
   // version
   'version.manager': {
     mode: 'app',
@@ -98,3 +98,4 @@ module.exports = {
     bean: localUtils,
   },
 };
+module.exports = beans;

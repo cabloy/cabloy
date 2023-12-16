@@ -1,2 +1,3 @@
 // error code should start from 1001
-module.exports = {};
+const errors = {};
+module.exports = errors;

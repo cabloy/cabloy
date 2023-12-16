@@ -1,1 +1,2 @@
-module.exports = {};
+const groups = {};
+module.exports = groups;

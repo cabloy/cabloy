@@ -1,1 +1,2 @@
-module.exports = {};
+const controllers = {};
+module.exports = controllers;

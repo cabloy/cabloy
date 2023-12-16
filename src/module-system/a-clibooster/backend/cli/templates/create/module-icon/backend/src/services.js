@@ -1,2 +1,2 @@
-module.exports = {};
-   
+const services = {};
+module.exports = services;
