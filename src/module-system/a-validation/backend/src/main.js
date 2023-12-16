@@ -9,12 +9,12 @@ const constants = require('./config/constants.js');
 module.exports = app => {
   const beans = require('./beans.js');
   // meta
-  const meta = require('./meta.js')(app);
+  const meta = require('./meta.js');
   const routes = require('./routes.js');
   const controllers = require('./controllers.js');
 
   // ajv
-  app.meta.ajv = require('./ajv/ajv.js')(app);
+  app.meta.ajv = require('./ajv/ajv.js');
 
   return {
     beans,

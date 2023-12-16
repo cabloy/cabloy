@@ -9,7 +9,7 @@ const constants = require('./config/constants.js');
 module.exports = app => {
   const beans = require('./beans.js');
   // meta
-  const meta = require('./meta.js')(app);
+  const meta = require('./meta.js');
   const routes = require('./routes.js');
   const controllers = require('./controllers.js');
 

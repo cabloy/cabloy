@@ -1,20 +1,18 @@
-module.exports = app => {
-  const schemas = require('./meta/validation/schemas.js');
-  const meta = {
-    base: {
-      atoms: {},
+const schemas = require('./meta/validation/schemas.js');
+const meta = {
+  base: {
+    atoms: {},
+  },
+  validation: {
+    validators: {},
+    keywords: {},
+    schemas,
+  },
+  event: {
+    declarations: {
+      shareRecordPV: 'Share Record PV',
+      shareRecordUV: 'Share Record UV',
     },
-    validation: {
-      validators: {},
-      keywords: {},
-      schemas,
-    },
-    event: {
-      declarations: {
-        shareRecordPV: 'Share Record PV',
-        shareRecordUV: 'Share Record UV',
-      },
-    },
-  };
-  return meta;
+  },
 };
+module.exports = meta;

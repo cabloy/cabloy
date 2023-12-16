@@ -1,4 +1,2 @@
-module.exports = app => {
-  const meta = {};
-  return meta;
-};
+const meta = {};
+module.exports = meta;

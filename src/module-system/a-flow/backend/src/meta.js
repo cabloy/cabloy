@@ -1,65 +1,63 @@
-module.exports = app => {
-  const schemas = require('./meta/validation/schemas.js');
-  const staticResources = require('./meta/static/resources.js');
-  const socketioWorkflow = require('./meta/socketio/workflow.js');
-  const flowBehaviors = require('./meta/flow/behaviors.js');
-  const meta = {
-    base: {
-      atoms: {
-        flowDef: {
-          info: {
-            bean: 'flowDef',
-            title: 'FlowDefinition',
-            tableName: 'aFlowDef',
-            tableNameModes: {
-              full: 'aFlowDefViewFull',
-            },
-            inner: true,
-            resource: true,
-            category: true,
-            tag: true,
-            comment: false,
-            attachment: false,
-            history: true,
+const schemas = require('./meta/validation/schemas.js');
+const staticResources = require('./meta/static/resources.js');
+const socketioWorkflow = require('./meta/socketio/workflow.js');
+const flowBehaviors = require('./meta/flow/behaviors.js');
+const meta = {
+  base: {
+    atoms: {
+      flowDef: {
+        info: {
+          bean: 'flowDef',
+          title: 'FlowDefinition',
+          tableName: 'aFlowDef',
+          tableNameModes: {
+            full: 'aFlowDefViewFull',
           },
-          actions: {
-            write: {
-              enableOnStatic: null,
-            },
-          },
-          validator: 'flowDef',
-          search: {
-            validator: 'flowDefSearch',
+          inner: true,
+          resource: true,
+          category: true,
+          tag: true,
+          comment: false,
+          attachment: false,
+          history: true,
+        },
+        actions: {
+          write: {
+            enableOnStatic: null,
           },
         },
-      },
-      statics: {
-        'a-base.resource': {
-          items: staticResources,
+        validator: 'flowDef',
+        search: {
+          validator: 'flowDefSearch',
         },
       },
     },
-    validation: {
-      validators: {},
-      keywords: {},
-      schemas,
-    },
-    stats: {
-      providers: {
-        flowInitiateds: {
-          user: true,
-          bean: 'flowInitiateds',
-        },
+    statics: {
+      'a-base.resource': {
+        items: staticResources,
       },
     },
-    socketio: {
-      messages: {
-        workflow: socketioWorkflow,
+  },
+  validation: {
+    validators: {},
+    keywords: {},
+    schemas,
+  },
+  stats: {
+    providers: {
+      flowInitiateds: {
+        user: true,
+        bean: 'flowInitiateds',
       },
     },
-    flow: {
-      behaviors: flowBehaviors,
+  },
+  socketio: {
+    messages: {
+      workflow: socketioWorkflow,
     },
-  };
-  return meta;
+  },
+  flow: {
+    behaviors: flowBehaviors,
+  },
 };
+module.exports = meta;

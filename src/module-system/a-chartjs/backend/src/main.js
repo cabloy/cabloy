@@ -8,7 +8,7 @@ module.exports = app => {
   const services = require('./services.js');
   const models = require('./models.js');
   // meta
-  const meta = require('./meta.js')(app);
+  const meta = require('./meta.js');
 
   return {
     routes,

@@ -9,85 +9,83 @@ const actionPathListOpenAuthSelf = `/a/basefront/atom/list?module=a-authopen&ato
   JSON.stringify(_options)
 )}`;
 
-module.exports = app => {
-  const schemas = require('./meta/validation/schemas.js');
-  const staticLayouts = require('./meta/static/layouts.js');
-  const staticResources = require('./meta/static/resources.js');
-  // meta
-  const meta = {
-    auth: authFn,
-    base: {
-      atoms: {
-        authOpen: {
-          info: {
-            bean: 'authOpen',
-            title: 'Open Auth',
-            tableName: 'aAuthOpen',
-            tableNameModes: {
-              default: 'aAuthOpenView',
-            },
-            simple: true,
-            history: false,
-            inner: true,
-            comment: false,
-            attachment: false,
-            layout: {
-              config: {
-                atomList: 'layoutAtomListAuthOpen',
-              },
-            },
+const schemas = require('./meta/validation/schemas.js');
+const staticLayouts = require('./meta/static/layouts.js');
+const staticResources = require('./meta/static/resources.js');
+// meta
+const meta = {
+  auth: authFn,
+  base: {
+    atoms: {
+      authOpen: {
+        info: {
+          bean: 'authOpen',
+          title: 'Open Auth',
+          tableName: 'aAuthOpen',
+          tableNameModes: {
+            default: 'aAuthOpenView',
           },
-          actions: {
-            hideClientSecret: {
-              code: 101,
-              title: 'Hide Client Secret',
-              actionModule: 'a-authopen',
-              actionComponent: 'action',
-              icon: { f7: ':outline:visibility-off-outline' },
+          simple: true,
+          history: false,
+          inner: true,
+          comment: false,
+          attachment: false,
+          layout: {
+            config: {
+              atomList: 'layoutAtomListAuthOpen',
             },
-            resetClientSecret: {
-              code: 102,
-              title: 'Reset Client Secret',
-              actionModule: 'a-authopen',
-              actionComponent: 'action',
-              icon: { f7: ':outline:key-reset-outline' },
-            },
-          },
-          validator: 'authOpen',
-          search: {
-            validator: 'authOpenSearch',
           },
         },
-      },
-      statics: {
-        'a-baselayout.layout': {
-          items: staticLayouts,
+        actions: {
+          hideClientSecret: {
+            code: 101,
+            title: 'Hide Client Secret',
+            actionModule: 'a-authopen',
+            actionComponent: 'action',
+            icon: { f7: ':outline:visibility-off-outline' },
+          },
+          resetClientSecret: {
+            code: 102,
+            title: 'Reset Client Secret',
+            actionModule: 'a-authopen',
+            actionComponent: 'action',
+            icon: { f7: ':outline:key-reset-outline' },
+          },
         },
-        'a-base.resource': {
-          items: staticResources,
+        validator: 'authOpen',
+        search: {
+          validator: 'authOpenSearch',
         },
       },
     },
-    validation: {
-      validators: {},
-      keywords: {},
-      schemas,
-    },
-    settings: {
-      user: {
-        actionPath: actionPathListOpenAuthSelf,
+    statics: {
+      'a-baselayout.layout': {
+        items: staticLayouts,
+      },
+      'a-base.resource': {
+        items: staticResources,
       },
     },
-    event: {
-      implementations: {
-        'a-base:accountMigration': 'accountMigration',
-      },
+  },
+  validation: {
+    validators: {},
+    keywords: {},
+    schemas,
+  },
+  settings: {
+    user: {
+      actionPath: actionPathListOpenAuthSelf,
     },
-    index: {
-      indexes: {
-        aAuthOpen: 'createdAt,updatedAt,atomId,userId,scopeRoleId',
-      },
+  },
+  event: {
+    implementations: {
+      'a-base:accountMigration': 'accountMigration',
     },
-  };
-  return meta;
+  },
+  index: {
+    indexes: {
+      aAuthOpen: 'createdAt,updatedAt,atomId,userId,scopeRoleId',
+    },
+  },
 };
+module.exports = meta;

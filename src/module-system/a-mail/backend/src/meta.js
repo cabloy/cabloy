@@ -1,33 +1,31 @@
-module.exports = app => {
-  const schemas = require('./meta/validation/schemas.js');
-  // socketio
-  const socketioMessageMail = require('./meta/socketio/messageMail.js');
-  const socketioChannelMail = require('./meta/socketio/channelMail.js');
-  // static
-  const staticResources = require('./meta/static/resources.js');
-  // meta
-  const meta = {
-    base: {
-      atoms: {},
-      statics: {
-        'a-base.resource': {
-          items: staticResources,
-        },
+const schemas = require('./meta/validation/schemas.js');
+// socketio
+const socketioMessageMail = require('./meta/socketio/messageMail.js');
+const socketioChannelMail = require('./meta/socketio/channelMail.js');
+// static
+const staticResources = require('./meta/static/resources.js');
+// meta
+const meta = {
+  base: {
+    atoms: {},
+    statics: {
+      'a-base.resource': {
+        items: staticResources,
       },
     },
-    validation: {
-      validators: {},
-      keywords: {},
-      schemas,
+  },
+  validation: {
+    validators: {},
+    keywords: {},
+    schemas,
+  },
+  socketio: {
+    messages: {
+      mail: socketioMessageMail,
     },
-    socketio: {
-      messages: {
-        mail: socketioMessageMail,
-      },
-      channels: {
-        mail: socketioChannelMail,
-      },
+    channels: {
+      mail: socketioChannelMail,
     },
-  };
-  return meta;
+  },
 };
+module.exports = meta;

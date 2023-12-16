@@ -1,55 +1,53 @@
-module.exports = app => {
-  const staticLayouts = require('./meta/static/layouts.js');
-  // meta
-  const meta = {
-    base: {
-      statics: {
-        'a-baselayout.layout': {
-          items: staticLayouts,
-        },
+const staticLayouts = require('./meta/static/layouts.js');
+// meta
+const meta = {
+  base: {
+    statics: {
+      'a-baselayout.layout': {
+        items: staticLayouts,
       },
     },
-    stats: {
-      providers: {
-        userRed: {
-          user: true,
-          bean: {
-            module: 'a-stats',
-            name: 'deps',
-          },
-          dependencies: ['a-flowtask:taskClaimings', 'a-flowtask:taskHandlings'],
+  },
+  stats: {
+    providers: {
+      userRed: {
+        user: true,
+        bean: {
+          module: 'a-stats',
+          name: 'deps',
         },
-        userOrange: {
-          user: true,
-          bean: {
-            module: 'a-stats',
-            name: 'deps',
-          },
-          dependencies: [
-            'a-base:drafts',
-            // 'a-base:stars',
-            'a-flow:flowInitiateds',
-          ],
+        dependencies: ['a-flowtask:taskClaimings', 'a-flowtask:taskHandlings'],
+      },
+      userOrange: {
+        user: true,
+        bean: {
+          module: 'a-stats',
+          name: 'deps',
         },
-        user: {
-          user: true,
-          bean: {
-            module: 'a-user',
-            name: 'user',
-          },
-          // dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
-          dependencies: ['a-user:userRed', 'a-user:userOrange'],
+        dependencies: [
+          'a-base:drafts',
+          // 'a-base:stars',
+          'a-flow:flowInitiateds',
+        ],
+      },
+      user: {
+        user: true,
+        bean: {
+          module: 'a-user',
+          name: 'user',
         },
-        userAlert: {
-          user: true,
-          bean: {
-            module: 'a-user',
-            name: 'userAlert',
-          },
-          dependencies: ['a-user:user'],
+        // dependencies: ['a-user:userRed', 'a-user:userOrange', 'a-message:message', 'a-base:starsLabels'],
+        dependencies: ['a-user:userRed', 'a-user:userOrange'],
+      },
+      userAlert: {
+        user: true,
+        bean: {
+          module: 'a-user',
+          name: 'userAlert',
         },
+        dependencies: ['a-user:user'],
       },
     },
-  };
-  return meta;
+  },
 };
+module.exports = meta;
