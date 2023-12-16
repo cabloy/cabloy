@@ -1,5 +1,1 @@
-module.exports = app => {
-  class Status extends app.Service {}
-
-  return Status;
-};
+module.exports = class Status {};

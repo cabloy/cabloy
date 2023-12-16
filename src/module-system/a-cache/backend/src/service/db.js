@@ -1,5 +1,1 @@
-module.exports = app => {
-  class Db extends app.Service {}
-
-  return Db;
-};
+module.exports = class Db {};

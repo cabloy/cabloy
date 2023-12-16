@@ -1,6 +1,6 @@
-module.exports = app => {
-  const moduleInfo = module.info;
-  class Captcha extends app.Service {
+const moduleInfo = module.info;
+module.exports =
+  class Captcha {
     async sendCode({ providerInstanceId, context }) {
       // sms provider
       const bean = this.ctx.bean._getBean(`${moduleInfo.relativeName}.captcha.provider.captcha`);
@@ -14,7 +14,4 @@ module.exports = app => {
         context,
       });
     }
-  }
-
-  return Captcha;
-};
+  };

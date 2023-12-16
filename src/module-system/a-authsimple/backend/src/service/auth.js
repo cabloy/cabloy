@@ -1,6 +1,6 @@
-module.exports = app => {
+module.exports =
   // const moduleInfo = module.info;
-  class Auth extends app.Service {
+  class Auth {
     // mobile: not use
     async signup({ user, state = 'login', userName, realName, email, /* mobile,*/ password }) {
       return await this.ctx.bean.authSimple.signup({ user, state, userName, realName, email, /* mobile,*/ password });
@@ -39,7 +39,4 @@ module.exports = app => {
     async checkStatus({ user }) {
       return await this.ctx.bean.authSimple.checkStatus({ user });
     }
-  }
-
-  return Auth;
-};
+  };
