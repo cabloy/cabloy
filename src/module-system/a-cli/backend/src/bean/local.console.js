@@ -29,7 +29,7 @@ module.exports = class Local {
       return console.log(text);
     }
     // update
-    return await ctx.bean.progress.update({
+    return await this.ctx.bean.progress.update({
       progressId: this.options.progressId,
       progressNo,
       total,

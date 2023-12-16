@@ -1,29 +1,28 @@
 const __smsProvidersConfigCache = {};
 
 const moduleInfo = module.info;
-
 module.exports = class SmsProviderCache {
   get configModule() {
-    return ctx.config.module(moduleInfo.relativeName);
+    return this.ctx.config.module(moduleInfo.relativeName);
   }
   get statusModule() {
-    return ctx.bean.status.module(moduleInfo.relativeName);
+    return this.ctx.bean.status.module(moduleInfo.relativeName);
   }
 
   getSmsProvidersConfigCache() {
-    return __smsProvidersConfigCache[ctx.subdomain];
+    return __smsProvidersConfigCache[this.ctx.subdomain];
   }
 
   getSmsProviderConfigCache(providerName) {
-    return __smsProvidersConfigCache[ctx.subdomain][providerName];
+    return __smsProvidersConfigCache[this.ctx.subdomain][providerName];
   }
 
   getSmsProvidersConfigForAdmin() {
     let providers = this.getSmsProvidersConfigCache();
-    providers = ctx.bean.util.extend({}, providers);
+    providers = this.ctx.bean.util.extend({}, providers);
     for (const providerName in providers) {
       const provider = providers[providerName];
-      provider.titleLocale = ctx.text(provider.title);
+      provider.titleLocale = this.ctx.text(provider.title);
     }
     return providers;
   }
@@ -32,7 +31,7 @@ module.exports = class SmsProviderCache {
     // change self
     await this._cacheSmsProvidersConfig();
     // broadcast
-    ctx.meta.util.broadcastEmit({
+    this.ctx.meta.util.broadcastEmit({
       module: 'a-mail',
       broadcastName: 'smsProviderChanged',
       data: null,
@@ -40,7 +39,7 @@ module.exports = class SmsProviderCache {
   }
 
   purgeProvider(provider) {
-    const res = ctx.bean.util.extend({}, provider);
+    const res = this.ctx.bean.util.extend({}, provider);
     delete res.titleLocale;
     return res;
   }
@@ -50,8 +49,8 @@ module.exports = class SmsProviderCache {
     const configDefault = this.configModule.sms.providers;
     // configProviders
     let configProviders = await this.statusModule.get('smsProviders');
-    configProviders = ctx.bean.util.extend({}, configDefault, configProviders);
+    configProviders = this.ctx.bean.util.extend({}, configDefault, configProviders);
     // cache
-    __smsProvidersConfigCache[ctx.subdomain] = configProviders;
+    __smsProvidersConfigCache[this.ctx.subdomain] = configProviders;
   }
 };

@@ -47,9 +47,9 @@ module.exports = class Local {
     // js file
     const jsFile = await this._prepareJSFile({ cli });
     // require
-    const DemoFn = ctx.app.meta.util.requireDynamic(jsFile);
+    const DemoClass = this.ctx.app.meta.util.requireDynamic(jsFile);
     // demo
-    const demo = new (DemoFn(ctx))();
+    const demo = this.ctx.bean._newBean(DemoClass);
     if (!demo[method]) throw new Error(`method not found: ${method}`);
     // console/helper
     demo.console = cli.console;
@@ -60,7 +60,7 @@ module.exports = class Local {
     if (argv.transaction === false) {
       result = await demo[method](argv);
     } else {
-      result = await ctx.transaction.begin(async () => {
+      result = await this.ctx.transaction.begin(async () => {
         return await demo[method](argv);
       });
     }
@@ -72,7 +72,7 @@ module.exports = class Local {
 
   async _prepareJSFile({ cli }) {
     // prepare
-    const jsFile = path.join(ctx.app.baseDir, 'demo/index.js');
+    const jsFile = path.join(this.ctx.app.baseDir, 'demo/index.js');
     const exists = await fse.exists(jsFile);
     if (!exists) {
       await fse.outputFile(jsFile, __JSContent);
@@ -80,7 +80,7 @@ module.exports = class Local {
     // log
     let log = cli.helper.chalk.keyword('cyan')('> ./src/backend/demo/index.js');
     await cli.console.log(log);
-    const url = ctx.bean.base.getAbsoluteUrl('/api/a/clibooster/tools/demo');
+    const url = this.ctx.bean.base.getAbsoluteUrl('/api/a/clibooster/tools/demo');
     log = cli.helper.chalk.keyword('cyan')(`> ${url}\n`);
     await cli.console.log(log);
     // ok

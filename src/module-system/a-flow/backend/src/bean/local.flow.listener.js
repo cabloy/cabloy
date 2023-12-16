@@ -26,7 +26,7 @@ module.exports = class FlowListener {
       },
     };
     // new class
-    this._flowListener = ctx.bean.util.evaluateExpression({ expression, globals, wrapper: true });
+    this._flowListener = this.ctx.bean.util.evaluateExpression({ expression, globals, wrapper: true });
     return this._flowListener;
   }
 

@@ -32,17 +32,17 @@ module.exports = class FlowInstance {
 
   async _parseAssignees_users(str) {
     if (!str) return null;
-    return await ctx.bean.flow._adjustAssignees_userIds(str);
+    return await this.ctx.bean.flow._adjustAssignees_userIds(str);
   }
 
   async _parseAssignees_roles(str) {
     if (!str) return null;
     // roleIds
-    const roleIds = await ctx.bean.flow._adjustAssignees_roleIds(str);
+    const roleIds = await this.ctx.bean.flow._adjustAssignees_roleIds(str);
     // users
     let users = [];
     for (const roleId of roleIds) {
-      const list = await ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
+      const list = await this.ctx.bean.role.usersOfRoleParent({ roleId, disabled: 0, removePrivacy: true });
       users = users.concat(list.map(item => item.id));
     }
     // ok
@@ -52,7 +52,7 @@ module.exports = class FlowInstance {
   async _parseAssignees_vars({ nodeInstance, vars }) {
     if (!vars) return null;
     // vars
-    const _vars = await ctx.bean.flow._adjustAssignees_vars(vars);
+    const _vars = await this.ctx.bean.flow._adjustAssignees_vars(vars);
     // users
     let users = [];
     for (const _var of _vars) {
@@ -90,7 +90,7 @@ module.exports = class FlowInstance {
     const nodeDefName = nodeInstance.contextNode._nodeDef.name;
     const atom = this.context.atom;
     // get action
-    const action = await ctx.bean.atomAction.getByModeFlow({
+    const action = await this.ctx.bean.atomAction.getByModeFlow({
       atomClassId: atom.atomClassId,
       flowKey,
       nodeDefId,
@@ -100,7 +100,7 @@ module.exports = class FlowInstance {
           select * from aViewUserRightAtomClassRole
             where iid=? and atomClassId=? and action=? and roleIdWhom=?
       `;
-    const items = await ctx.model.query(sql, [
+    const items = await this.ctx.model.query(sql, [
       //
       atom.iid,
       atom.atomClassId,

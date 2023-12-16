@@ -10,7 +10,7 @@ const CliStoreBase = require('../common/cliStoreBase.js');
 
 const moduleInfo = module.info;
 
-module.exports = class Cli extends CliStoreBase(ctx) {
+module.exports = class Cli extends CliStoreBase {
   constructor(options) {
     super(options, 'sync');
   }
@@ -43,11 +43,11 @@ module.exports = class Cli extends CliStoreBase(ctx) {
     if (!res) return licenseMeta;
     // combine message
     const args = res.args || [];
-    const message1 = ctx.parseSuccess.module(moduleInfo.relativeName, res.code, ...args).message;
+    const message1 = this.ctx.parseSuccess.module(moduleInfo.relativeName, res.code, ...args).message;
     let message2 = '';
     if (licenseMeta.code) {
       const args = licenseMeta.args || [];
-      message2 = ctx.parseSuccess.module(moduleInfo.relativeName, licenseMeta.code, ...args).message;
+      message2 = this.ctx.parseSuccess.module(moduleInfo.relativeName, licenseMeta.code, ...args).message;
     }
     // ok
     return {

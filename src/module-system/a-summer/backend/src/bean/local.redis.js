@@ -1,6 +1,6 @@
 const CacheBase = require('../common/cacheBase.js');
 
-module.exports = class LocalRedis extends CacheBase(ctx) {
+module.exports = class LocalRedis extends CacheBase {
   constructor({ cacheBase }) {
     super({ cacheBase });
     this._redisSummer = null;
@@ -96,12 +96,12 @@ module.exports = class LocalRedis extends CacheBase(ctx) {
 
   get redisSummer() {
     if (!this._redisSummer) {
-      this._redisSummer = ctx.app.redis.get('summer');
+      this._redisSummer = this.ctx.app.redis.get('summer');
     }
     return this._redisSummer;
   }
 
   _getRedisKey(key) {
-    return `${ctx.instance.id}!${this._cacheBase.fullKey}!${key}`;
+    return `${this.ctx.instance.id}!${this._cacheBase.fullKey}!${key}`;
   }
 };

@@ -1,5 +1,4 @@
 const moduleInfo = module.info;
-
 module.exports = class FlowInstance {
   // return true, means has one edge to be taken
   async nextEdges({ nodeInstance, behaviorDefId }) {
@@ -22,7 +21,7 @@ module.exports = class FlowInstance {
     for (const edgeInstance of edgeInstances) {
       // check if end
       if (this.context._flow.flowStatus !== this.constant.flow.status.flowing) {
-        ctx.throw.module(moduleInfo.relativeName, 1008, this.context._flowId);
+        this.ctx.throw.module(moduleInfo.relativeName, 1008, this.context._flowId);
       }
       // enter
       const resEnter = await edgeInstance.enter();
@@ -34,7 +33,7 @@ module.exports = class FlowInstance {
         }
       }
     }
-    const debug = ctx.app.bean.debug.get('flow');
+    const debug = this.ctx.app.bean.debug.get('flow');
     debug(
       'nextEdges %s: flowId:%d, flowNodeId:%d',
       resBingo ? 'bingo' : 'invalid',
@@ -45,23 +44,23 @@ module.exports = class FlowInstance {
     if (resBingo) return true;
     // should throw exception
     //   should has a default edge(_calcConditionExpressionLevel===3), which is followed by endEventNone
-    ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
+    this.ctx.throw.module(moduleInfo.relativeName, 1010, contextNode._flowNodeId);
     // return false;
   }
 
   async _findEdgeInstancesNext({ nodeDefId, contextNode, behaviorDefId }) {
     // edgeDefs
-    const edgeDefs = ctx.bean.flowDef._findEdgesNext({
+    const edgeDefs = this.ctx.bean.flowDef._findEdgesNext({
       content: this.context._flowDefContent,
       behaviorDefId,
       nodeDefId,
     });
     // sort by conditionExpression
-    edgeDefs.sort(function (a, b) {
-      const levelA = ctx.bean.flowDef._calcConditionExpressionLevel({
+    edgeDefs.sort((a, b) => {
+      const levelA = this.ctx.bean.flowDef._calcConditionExpressionLevel({
         conditionExpression: a.options?.conditionExpression,
       });
-      const levelB = ctx.bean.flowDef._calcConditionExpressionLevel({
+      const levelB = this.ctx.bean.flowDef._calcConditionExpressionLevel({
         conditionExpression: b.options?.conditionExpression,
       });
       return levelA - levelB;

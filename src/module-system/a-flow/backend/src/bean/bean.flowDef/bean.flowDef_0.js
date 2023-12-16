@@ -1,14 +1,13 @@
 const moduleInfo = module.info;
-
 module.exports = class FlowDef {
   get modelFlowDef() {
-    return ctx.model.module(moduleInfo.relativeName).flowDef;
+    return this.ctx.model.module(moduleInfo.relativeName).flowDef;
   }
   get modelFlowDefContent() {
-    return ctx.model.module(moduleInfo.relativeName).flowDefContent;
+    return this.ctx.model.module(moduleInfo.relativeName).flowDefContent;
   }
   get modelFlowDefFull() {
-    return ctx.model.module(moduleInfo.relativeName).flowDefFull;
+    return this.ctx.model.module(moduleInfo.relativeName).flowDefFull;
   }
   get atomClass() {
     return {
@@ -38,14 +37,14 @@ module.exports = class FlowDef {
   }
 
   async _getById({ flowDefId }) {
-    return await ctx.bean.atom.read({ key: { atomId: flowDefId } });
+    return await this.ctx.bean.atom.read({ key: { atomId: flowDefId } });
   }
 
   async _getByKey({ flowDefKey, flowDefRevision, atomStage }) {
     // fullKey
     const { fullKey } = this._combineFullKey({ flowDefKey });
     // from db
-    return await ctx.bean.atom.readByStaticKey({
+    return await this.ctx.bean.atom.readByStaticKey({
       atomClass: this.atomClass,
       atomStaticKey: fullKey,
       atomRevision: flowDefRevision,

@@ -4,13 +4,13 @@ module.exports = class Fields {
   //  atomClass is main only when (!atomClassMain && !atomClass.detail) || atomClass=atomClassMain
   async parseSchema({ atomClass, atomClassMain, fieldsRight }) {
     // atomClass
-    atomClass = await ctx.bean.atomClass.get(atomClass);
+    atomClass = await this.ctx.bean.atomClass.get(atomClass);
     // atomClassMain
     if (atomClassMain) {
-      atomClassMain = await ctx.bean.atomClass.get(atomClassMain);
+      atomClassMain = await this.ctx.bean.atomClass.get(atomClassMain);
     }
     // atomClassBase
-    const atomClassBase = await ctx.bean.atomClass.atomClass(atomClass);
+    const atomClassBase = await this.ctx.bean.atomClass.atomClass(atomClass);
     // isMain
     const isMain = (!atomClassMain && !atomClassBase.detail) || (atomClassMain && atomClass.id === atomClassMain.id);
     // schemaBase
@@ -67,7 +67,7 @@ module.exports = class Fields {
       validator: fieldsRight.custom.validator,
       schema: fieldsRight.custom.schema,
     };
-    return ctx.bean.validation.getSchema(schemaParams);
+    return this.ctx.bean.validation.getSchema(schemaParams);
   }
 
   async __parseSchema_checkModeGeneral({ schemaBase, fieldsRight }) {
@@ -127,7 +127,7 @@ module.exports = class Fields {
   }
 
   async __parseSchema_getSchemaBase({ atomClass }) {
-    return await ctx.bean.atom.schema({ atomClass, schema: null });
+    return await this.ctx.bean.atom.schema({ atomClass, schema: null });
   }
 
   async __parseSchema_getFieldsRight({ atomClass, isMain, fieldsRight }) {
@@ -146,7 +146,7 @@ module.exports = class Fields {
 
   async __parseSchema_prepareFieldsRight({ fieldsRight }) {
     // extend
-    fieldsRight = ctx.bean.util.extend({}, fieldsRight);
+    fieldsRight = this.ctx.bean.util.extend({}, fieldsRight);
     // mode
     if (!fieldsRight.mode) {
       fieldsRight.mode = 'allowAllFieldsRead';

@@ -1,7 +1,6 @@
 const url = require('url');
 
 const moduleInfo = module.info;
-
 module.exports = class LocalTools {
   async submit({ links, config }) {
     for (const target in config.submit) {
@@ -20,8 +19,8 @@ module.exports = class LocalTools {
       return;
     }
     // queue
-    ctx.tail(() => {
-      ctx.meta.util.queuePush({
+    this.ctx.tail(() => {
+      this.ctx.meta.util.queuePush({
         module: moduleInfo.relativeName,
         queueName: 'submit',
         data: {

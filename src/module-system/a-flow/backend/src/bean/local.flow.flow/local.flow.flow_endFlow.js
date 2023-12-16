@@ -1,5 +1,4 @@
 const moduleInfo = module.info;
-
 module.exports = class FlowInstance {
   async _endFlow(options) {
     options = options || {};
@@ -10,12 +9,12 @@ module.exports = class FlowInstance {
     const timeEnd = new Date();
     // check if end
     if (this.context._flow.flowStatus === flowStatus) {
-      ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
+      this.ctx.throw.module(moduleInfo.relativeName, 1008, flowId);
     }
     // handle atom
     await this._endFlow_handleAtom(options);
     // tail
-    ctx.tail(async () => {
+    this.ctx.tail(async () => {
       // need not in transaction
       // flow: update fields for onFlowEnd
       this.context._flow.flowStatus = flowStatus;
@@ -36,7 +35,7 @@ module.exports = class FlowInstance {
       // publish uniform message
       await this._endFlowPublish();
       // log
-      const debug = ctx.app.bean.debug.get('flow');
+      const debug = this.ctx.app.bean.debug.get('flow');
       debug('flow end: flowId:%d', flowId);
     });
     // notify
@@ -57,7 +56,7 @@ module.exports = class FlowInstance {
         module: item.module,
         atomClassName: item.atomClassName,
       };
-      await ctx.bean.atom._submitDirect({
+      await this.ctx.bean.atom._submitDirect({
         atomClass,
         key: { atomId, itemId: item.itemId },
         item,
@@ -67,11 +66,11 @@ module.exports = class FlowInstance {
       // close draft/formal
       const atomStage = this.context._atom.atomStage;
       if (atomStage === 0) {
-        await ctx.bean.atom.closeDraft({
+        await this.ctx.bean.atom.closeDraft({
           key: { atomId },
         });
       } else if (atomStage === 1) {
-        await ctx.bean.atom.closeFormal({
+        await this.ctx.bean.atom.closeFormal({
           key: { atomId },
         });
       }

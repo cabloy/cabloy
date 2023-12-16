@@ -2,7 +2,7 @@ const moduleInfo = module.info;
 
 module.exports = class Cache {
   get db() {
-    const config = ctx.config.module(moduleInfo.relativeName);
+    const config = this.ctx.config.module(moduleInfo.relativeName);
     if (config.db.redis) {
       return this.redis;
     }
@@ -10,14 +10,14 @@ module.exports = class Cache {
   }
 
   get _db() {
-    return ctx.bean._getBean(moduleInfo, 'local.db');
+    return this.ctx.bean._getBean(moduleInfo, 'local.db');
   }
 
   get mem() {
-    return ctx.bean._getBean(moduleInfo, 'local.mem');
+    return this.ctx.bean._getBean(moduleInfo, 'local.mem');
   }
 
   get redis() {
-    return ctx.bean._getBean(moduleInfo, 'local.redis');
+    return this.ctx.bean._getBean(moduleInfo, 'local.redis');
   }
 };

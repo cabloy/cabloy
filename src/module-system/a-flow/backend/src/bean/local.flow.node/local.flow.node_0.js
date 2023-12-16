@@ -7,18 +7,20 @@ const __behaviorBaseDef = {
   type: 'base',
 };
 const moduleInfo = module.info;
-
 module.exports = class FlowNode {
   // contextEdge maybe null
-  constructor({ flowInstance, context, contextEdge, nodeDef }) {
+  constructor({ flowInstance, context, contextEdge }) {
     this.flowInstance = flowInstance;
     this.context = context;
     this.contextEdge = contextEdge;
     this._nodeBase = null;
     this._nodeBaseBean = null;
     this._behaviors = null;
+  }
+
+  __init__({ context, contextEdge, nodeDef }) {
     // context
-    this.contextNode = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
+    this.contextNode = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.node`, {
       context,
       contextEdge,
       nodeDef,
@@ -26,16 +28,16 @@ module.exports = class FlowNode {
   }
 
   get modelFlow() {
-    return ctx.model.module(moduleInfo.relativeName).flow;
+    return this.ctx.model.module(moduleInfo.relativeName).flow;
   }
   get modelFlowHistory() {
-    return ctx.model.module(moduleInfo.relativeName).flowHistory;
+    return this.ctx.model.module(moduleInfo.relativeName).flowHistory;
   }
   get modelFlowNode() {
-    return ctx.model.module(moduleInfo.relativeName).flowNode;
+    return this.ctx.model.module(moduleInfo.relativeName).flowNode;
   }
   get modelFlowNodeHistory() {
-    return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
+    return this.ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
   }
   get behaviors() {
     if (!this._behaviors) {
@@ -92,7 +94,7 @@ module.exports = class FlowNode {
       ? JSON.parse(this.contextNode._flowNodeHistory.nodeVars)
       : {};
     // utils
-    this.contextNode._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
+    this.contextNode._utils = new (UtilsFn({ ctx: this.ctx, flowInstance: this.flowInstance }))({
       context: this.context,
       contextNode: this.contextNode,
       contextEdge: this.contextEdge,
@@ -113,8 +115,8 @@ module.exports = class FlowNode {
   }
 
   _prepareBehavior(behaviorDef) {
-    const behaviorBase = ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
-    const behaviorBean = ctx.bean._newBean(behaviorBase.beanFullName, {
+    const behaviorBase = this.ctx.bean.flowDef._getFlowBehaviorBase(behaviorDef.type);
+    const behaviorBean = this.ctx.bean._newBean(behaviorBase.beanFullName, {
       flowInstance: this.flowInstance,
       nodeInstance: this,
       context: this.context,
@@ -226,7 +228,7 @@ module.exports = class FlowNode {
 
   get nodeBaseBean() {
     if (!this._nodeBaseBean) {
-      this._nodeBaseBean = ctx.bean._newBean(this.nodeBase.beanFullName, {
+      this._nodeBaseBean = this.ctx.bean._newBean(this.nodeBase.beanFullName, {
         flowInstance: this.flowInstance,
         nodeInstance: this,
         context: this.context,
@@ -239,7 +241,7 @@ module.exports = class FlowNode {
 
   get nodeBase() {
     if (!this._nodeBase) {
-      this._nodeBase = ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeDef.type);
+      this._nodeBase = this.ctx.bean.flowDef._getFlowNodeBase(this.contextNode._nodeDef.type);
       if (!this._nodeBase) throw new Error(`flow node not found: ${this.contextNode._nodeDef.type}`);
     }
     return this._nodeBase;

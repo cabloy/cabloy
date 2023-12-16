@@ -4,8 +4,7 @@ const CacheBase = require('../common/cacheBase.js');
 const SUMMERCACHEMEMORY = Symbol('APP#__SUMMERCACHEMEMORY');
 
 const moduleInfo = module.info;
-
-module.exports = class LocalMem extends CacheBase(ctx) {
+module.exports = class LocalMem extends CacheBase {
   constructor({ cacheBase }) {
     super({ cacheBase });
     this._lruCache = null;
@@ -54,7 +53,7 @@ module.exports = class LocalMem extends CacheBase(ctx) {
     // del on this worker
     this.lruCache.delete(keyHash);
     // del on other workers by broadcast
-    ctx.meta.util.broadcastEmit({
+    this.ctx.meta.util.broadcastEmit({
       module: moduleInfo.relativeName,
       broadcastName: 'memDel',
       data: { fullKey: this._cacheBase.fullKey, keyHash, key, options },
@@ -68,7 +67,7 @@ module.exports = class LocalMem extends CacheBase(ctx) {
     // del on this worker
     keysHash.forEach(keyHash => this.lruCache.delete(keyHash));
     // del on other workers by broadcast
-    ctx.meta.util.broadcastEmit({
+    this.ctx.meta.util.broadcastEmit({
       module: moduleInfo.relativeName,
       broadcastName: 'memMultiDel',
       data: { fullKey: this._cacheBase.fullKey, keysHash, keys, options },
@@ -82,7 +81,7 @@ module.exports = class LocalMem extends CacheBase(ctx) {
     // clear on this worker
     this.lruCache.clear();
     // clear on other workers by broadcast
-    ctx.meta.util.broadcastEmit({
+    this.ctx.meta.util.broadcastEmit({
       module: moduleInfo.relativeName,
       broadcastName: 'memClear',
       data: { fullKey: this._cacheBase.fullKey, options },
@@ -132,12 +131,12 @@ module.exports = class LocalMem extends CacheBase(ctx) {
   }
 
   get memoryInstance() {
-    if (!ctx.app[SUMMERCACHEMEMORY]) {
-      ctx.app[SUMMERCACHEMEMORY] = {};
+    if (!this.ctx.app[SUMMERCACHEMEMORY]) {
+      this.ctx.app[SUMMERCACHEMEMORY] = {};
     }
-    if (!ctx.app[SUMMERCACHEMEMORY][ctx.subdomain]) {
-      ctx.app[SUMMERCACHEMEMORY][ctx.subdomain] = {};
+    if (!this.ctx.app[SUMMERCACHEMEMORY][this.ctx.subdomain]) {
+      this.ctx.app[SUMMERCACHEMEMORY][this.ctx.subdomain] = {};
     }
-    return ctx.app[SUMMERCACHEMEMORY][ctx.subdomain];
+    return this.ctx.app[SUMMERCACHEMEMORY][this.ctx.subdomain];
   }
 };

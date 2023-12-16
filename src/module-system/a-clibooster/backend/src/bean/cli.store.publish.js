@@ -7,7 +7,7 @@ const utility = require('utility');
 const eggBornUtils = require('egg-born-utils');
 const CliStoreBase = require('../common/cliStoreBase.js');
 
-module.exports = class Cli extends CliStoreBase(ctx) {
+module.exports = class Cli extends CliStoreBase {
   constructor(options) {
     super(options, 'publish');
   }

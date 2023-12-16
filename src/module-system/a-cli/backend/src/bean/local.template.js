@@ -7,7 +7,6 @@ const ejs = require('@zhennann/ejs');
 const gogocode = require('gogocode');
 
 const moduleInfo = module.info;
-
 module.exports = class Local {
   constructor(cli) {
     this.cli = cli;
@@ -30,7 +29,7 @@ module.exports = class Local {
   }
 
   get moduleConfig() {
-    return ctx.config.module(moduleInfo.relativeName);
+    return this.ctx.config.module(moduleInfo.relativeName);
   }
 
   get fileMapping() {
@@ -81,7 +80,7 @@ module.exports = class Local {
       const templateFile = path.join(templateDir, file);
       const fileName = this.fileMapping[basename] || basename;
       const parentPath = path.join(targetDir, dirname);
-      const targetFile = path.join(parentPath, ctx.bean.util.replaceTemplate(fileName, argv));
+      const targetFile = path.join(parentPath, this.ctx.bean.util.replaceTemplate(fileName, argv));
       await this.renderFile({ targetFile, templateFile });
       if (fileName !== '.gitkeep') {
         const gitkeep = path.join(parentPath, '.gitkeep');
@@ -136,7 +135,7 @@ module.exports = class Local {
     return {
       async: true,
       cache: false,
-      compileDebug: ctx.app.meta.isTest || ctx.app.meta.isLocal,
+      compileDebug: this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal,
       outputFunctionName: 'echo',
       rmWhitespace: false,
     };
@@ -145,7 +144,7 @@ module.exports = class Local {
   getEjsData() {
     return {
       ...this.context,
-      ctx,
+      ctx: this.ctx,
     };
   }
 
@@ -155,7 +154,7 @@ module.exports = class Local {
       ast,
       snippet,
       ...this.context,
-      ctx,
+      ctx: this.ctx,
     };
   }
 
@@ -172,7 +171,7 @@ module.exports = class Local {
     // for
     for (const file of files) {
       const snippetTemplatePath = path.join(snippetsDir, file);
-      const snippet = ctx.app.meta.util.requireDynamic(snippetTemplatePath);
+      const snippet = this.ctx.app.meta.util.requireDynamic(snippetTemplatePath);
       if (!snippet.file) {
         throw new Error(`should provider file path for: ${file}`);
       }

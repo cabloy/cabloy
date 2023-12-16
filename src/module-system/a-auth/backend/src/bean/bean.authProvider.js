@@ -1,30 +1,29 @@
 const moduleInfo = module.info;
-
 module.exports = class AuthProvider {
   get modelAuthProvider() {
-    return ctx.model.module(moduleInfo.relativeName).authProvider;
+    return this.ctx.model.module(moduleInfo.relativeName).authProvider;
   }
   get localPassport() {
-    return ctx.bean.local.module(moduleInfo.relativeName).passport;
+    return this.ctx.bean.local.module(moduleInfo.relativeName).passport;
   }
 
   getAuthProviderBase({ module, providerName }) {
     const providerFullName = `${module}:${providerName}`;
-    const authProviders = ctx.bean.base.authProviders();
+    const authProviders = this.ctx.bean.base.authProviders();
     return authProviders[providerFullName];
   }
 
   async getAuthProvider({ id, module, providerName }) {
-    // ctx.instance maybe not exists
+    // this.ctx.instance maybe not exists
     const data = id ? { id } : { module, providerName };
     const res = await this.modelAuthProvider.get(data);
     if (res) return res;
     if (!module || !providerName) throw new Error('Invalid arguments');
     // lock
-    return await ctx.meta.util.lock({
+    return await this.ctx.meta.util.lock({
       resource: `${moduleInfo.relativeName}.authProvider.register`,
       fn: async () => {
-        return await ctx.meta.util.executeBeanIsolate({
+        return await this.ctx.meta.util.executeBeanIsolate({
           beanModule: moduleInfo.relativeName,
           beanFullName: 'authProvider',
           context: { module, providerName },
@@ -39,7 +38,7 @@ module.exports = class AuthProvider {
     const authProvider = this.getAuthProviderBase({ module, providerName });
     const beanName = authProvider.meta.bean;
     if (!beanName) throw new Error(`auth provider bean not specified: ${providerFullName}`);
-    return ctx.bean._newBean(`${beanName.module}.auth.provider.${beanName.name}`, {
+    return this.ctx.bean._newBean(`${beanName.module}.auth.provider.${beanName.name}`, {
       authProvider,
       providerModule: module,
       providerName,
@@ -48,17 +47,17 @@ module.exports = class AuthProvider {
   }
 
   async authenticateDirect({ module, providerName, providerScene, query, body }) {
-    return await ctx.meta.util.executeBeanIsolate({
+    return await this.ctx.meta.util.executeBeanIsolate({
       beanModule: moduleInfo.relativeName,
       beanFullName: `${moduleInfo.relativeName}.local.passport`,
       context: { module, providerName, providerScene },
       fn: 'authenticate',
       ctxParent: {
-        session: ctx.session,
-        cookies: ctx.cookies,
-        user: ctx.user,
-        state: ctx.state,
-        request: { headers: ctx.headers, query, body },
+        session: this.ctx.session,
+        cookies: this.ctx.cookies,
+        user: this.ctx.user,
+        state: this.ctx.state,
+        request: { headers: this.ctx.headers, query, body },
       },
     });
   }
@@ -77,7 +76,7 @@ module.exports = class AuthProvider {
     const res = await this.modelAuthProvider.get({ module, providerName });
     if (res) return res;
     // data
-    // const _authProviders = ctx.bean.base.authProviders();
+    // const _authProviders = this.ctx.bean.base.authProviders();
     // const _provider = _authProviders[`${module}:${providerName}`];
     // if (!_provider) throw new Error(`authProvider ${module}:${providerName} not found!`);
     const data = {
@@ -100,7 +99,7 @@ module.exports = class AuthProvider {
     // middlewares
     const middlewaresPost = [];
     const middlewaresGet = [];
-    if (!ctx.app.meta.isTest) middlewaresPost.push('inner');
+    if (!this.ctx.app.meta.isTest) middlewaresPost.push('inner');
     middlewaresPost.push(authenticate);
     middlewaresGet.push(authenticate);
     // mount routes
@@ -121,8 +120,8 @@ module.exports = class AuthProvider {
       },
     ];
     for (const route of routes) {
-      ctx.app.meta.router.unRegister(route.name);
-      ctx.app.meta.router.register(moduleInfo, route);
+      this.ctx.app.meta.router.unRegister(route.name);
+      this.ctx.app.meta.router.register(moduleInfo, route);
     }
   }
 };

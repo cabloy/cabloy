@@ -19,8 +19,8 @@ module.exports = class Provider {
   }
 
   async verify({ data, dataInput }) {
-    if (!data) ctx.throw.module(moduleInfo.relativeName, 1002);
-    if (data.token !== dataInput.token) ctx.throw.module(moduleInfo.relativeName, 1003);
+    if (!data) this.ctx.throw.module(moduleInfo.relativeName, 1002);
+    if (data.token !== dataInput.token) this.ctx.throw.module(moduleInfo.relativeName, 1003);
   }
 
   __prefix0(num, length) {

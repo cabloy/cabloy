@@ -1,8 +1,7 @@
 const moduleInfo = module.info;
-
 module.exports = class eventBean {
   get modelAuthOpen() {
-    return ctx.model.module(moduleInfo.relativeName).authOpen;
+    return this.ctx.model.module(moduleInfo.relativeName).authOpen;
   }
   async execute(context, next) {
     const data = context.data;
@@ -11,7 +10,7 @@ module.exports = class eventBean {
       where: { userId: data.userIdFrom },
     });
     for (const item of items) {
-      await ctx.bean.atom.delete({ key: { atomId: item.atomId } });
+      await this.ctx.bean.atom.delete({ key: { atomId: item.atomId } });
     }
     // next
     await next();

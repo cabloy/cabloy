@@ -15,25 +15,25 @@ module.exports = class Captcha {
   }
 
   __createSMSProvider(options) {
-    const providers = ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
+    const providers = this.ctx.bean.smsProviderCache.getSmsProvidersConfigCache();
     // provider name
     let providerName = options && options.providerName;
     if (!providerName) {
       // current
       providerName = Object.keys(providers).find(providerName => providers[providerName].current);
       // test
-      if (!providerName && (ctx.app.meta.isTest || ctx.app.meta.isLocal)) {
+      if (!providerName && (this.ctx.app.meta.isTest || this.ctx.app.meta.isLocal)) {
         providerName = 'test';
       }
       if (!providerName) {
         // prompt
-        const message = chalk.keyword('orange')(ctx.text('smsProviderNonePrompt'));
+        const message = chalk.keyword('orange')(this.ctx.text('smsProviderNonePrompt'));
         console.log('\n' + boxen(message, boxenOptions));
-        ctx.throw.module(moduleInfo.relativeName, 1001);
+        this.ctx.throw.module(moduleInfo.relativeName, 1001);
       }
     }
     // provider
-    const provider = ctx.bean._getBean(moduleInfo.relativeName, `sms.provider.${providerName}`);
+    const provider = this.ctx.bean._getBean(moduleInfo.relativeName, `sms.provider.${providerName}`);
     const config = providers[providerName];
     return { provider, config };
   }

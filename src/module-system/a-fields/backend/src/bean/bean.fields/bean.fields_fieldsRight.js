@@ -10,15 +10,15 @@ module.exports = class Fields {
   async getPreferredFieldsRightOfUser({ atomClass, user }) {
     if (!user || user.id === 0) return null;
     // atomClass
-    atomClass = await ctx.bean.atomClass.get(atomClass);
+    atomClass = await this.ctx.bean.atomClass.get(atomClass);
     // 1. fieldsRightOfAtomClass
-    const exists = await ctx.bean.summer.get(
+    const exists = await this.ctx.bean.summer.get(
       { module: moduleInfo.relativeName, name: 'fieldsRightOfAtomClass' },
       { atomClassId: atomClass.id }
     );
     if (!exists) return null;
     // 2. fieldsRightOfUser
-    const fieldsRight = await ctx.bean.summer.get(
+    const fieldsRight = await this.ctx.bean.summer.get(
       { module: moduleInfo.relativeName, name: 'fieldsRightOfUser' },
       { atomClassId: atomClass.id, userId: user.id }
     );
@@ -26,11 +26,11 @@ module.exports = class Fields {
   }
 
   async clearSummer_fieldsRightOfAtomClass() {
-    await ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'fieldsRightOfAtomClass' });
+    await this.ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'fieldsRightOfAtomClass' });
   }
 
   async clearSummer_fieldsRightOfUser() {
-    await ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'fieldsRightOfUser' });
+    await this.ctx.bean.summer.clear({ module: moduleInfo.relativeName, name: 'fieldsRightOfUser' });
   }
 
   async __getFieldsRightOfAtomClassRaw({ atomClassId }) {
@@ -45,7 +45,7 @@ module.exports = class Fields {
         atomClassIdTarget: atomClassId,
       },
     };
-    const items = await ctx.bean.atom.select({
+    const items = await this.ctx.bean.atom.select({
       atomClass: __atomClass_userFieldsRight,
       options,
       user: { id: userId },
@@ -58,7 +58,7 @@ module.exports = class Fields {
     for (const item of items) {
       // roleNameBase
       if (item.roleNameBase) {
-        item.roleNameBaseLocale = ctx.text(item.roleNameBase);
+        item.roleNameBaseLocale = this.ctx.text(item.roleNameBase);
       }
     }
   }

@@ -8,10 +8,10 @@ module.exports = class Flow {
     const items = await this._list({ options, user, pageForce, count });
     for (const item of items) {
       if (item.flowNodeNameCurrent) {
-        item.flowNodeNameCurrentLocale = ctx.text(item.flowNodeNameCurrent);
+        item.flowNodeNameCurrentLocale = this.ctx.text(item.flowNodeNameCurrent);
       }
       if (item.flowRemark) {
-        item.flowRemarkLocale = ctx.text(item.flowRemark);
+        item.flowRemarkLocale = this.ctx.text(item.flowRemark);
       }
     }
     return items;
@@ -20,7 +20,7 @@ module.exports = class Flow {
   async get({ flowId, history, user }) {
     // check viewWorkflow
     if (user && user.id) {
-      const res = await ctx.bean.flowTask._checkViewWorkflow_checkRightAction({ flowId, user });
+      const res = await this.ctx.bean.flowTask._checkViewWorkflow_checkRightAction({ flowId, user });
       if (res) {
         user = { id: 0 };
       }
@@ -48,9 +48,9 @@ module.exports = class Flow {
 
   // mode: mine/others/flowing/history
   async _list({ options: { where, orders, page, mode }, user, pageForce = true, count = 0 }) {
-    page = ctx.bean.util.page(page, pageForce);
+    page = this.ctx.bean.util.page(page, pageForce);
     const sql = this.sqlProcedure.selectFlows({
-      iid: ctx.instance.id,
+      iid: this.ctx.instance.id,
       userIdWho: user ? user.id : 0,
       where,
       orders,
@@ -58,7 +58,7 @@ module.exports = class Flow {
       count,
       mode,
     });
-    const res = await ctx.model.query(sql);
+    const res = await this.ctx.model.query(sql);
     return count ? res[0]._count : res;
   }
 };

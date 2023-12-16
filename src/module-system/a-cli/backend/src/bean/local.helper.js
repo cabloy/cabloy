@@ -8,7 +8,6 @@ const fse = require('fs-extra');
 const mparse = require('egg-born-mparse').default;
 
 const moduleInfo = module.info;
-
 module.exports = class Local {
   constructor(cli) {
     this.cli = cli;
@@ -31,7 +30,7 @@ module.exports = class Local {
   }
 
   get moduleConfig() {
-    return ctx.config.module(moduleInfo.relativeName);
+    return this.ctx.config.module(moduleInfo.relativeName);
   }
   get chalk() {
     return this.newChalk();
@@ -65,7 +64,7 @@ module.exports = class Local {
   }
   findModule(moduleName) {
     const moduleInfo = this.parseModuleInfo(moduleName);
-    return ctx.app.meta.modules[moduleInfo.relativeName];
+    return this.ctx.app.meta.modules[moduleInfo.relativeName];
   }
   parseSuiteInfo(suiteName) {
     const suiteInfo = mparse.parseInfo(suiteName, 'suite');
@@ -74,7 +73,7 @@ module.exports = class Local {
   }
   findSuite(suiteName) {
     const suiteInfo = this.parseSuiteInfo(suiteName);
-    return ctx.app.meta.suites[suiteInfo.relativeName];
+    return this.ctx.app.meta.suites[suiteInfo.relativeName];
   }
   async ensureDir(dir) {
     await fse.ensureDir(dir);
@@ -83,7 +82,7 @@ module.exports = class Local {
   getNpmRegistry() {
     let registry = this.cli.terminal ? this.context.env.npm_config_registry : null;
     if (!registry) {
-      const locale = ctx.locale === 'zh-cn' ? 'zh-cn' : 'en-us';
+      const locale = this.ctx.locale === 'zh-cn' ? 'zh-cn' : 'en-us';
       registry = this.moduleConfig.helper.lerna.registry.locales[locale];
     }
     return registry;

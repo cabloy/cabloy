@@ -4,7 +4,7 @@ const passwordFn = require('password-hash-and-salt'); // should compile
 const moduleInfo = module.info;
 module.exports = class Simple {
   get modelAuthSimple() {
-    return ctx.model.module(moduleInfo.relativeName).authSimple;
+    return this.ctx.model.module(moduleInfo.relativeName).authSimple;
   }
 
   async verify({ userId, password }) {

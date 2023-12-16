@@ -4,7 +4,6 @@ const __VARTITLES = {
 };
 
 const moduleInfo = module.info;
-
 module.exports = class Flow {
   async normalizeAssignees({ users, roles, vars }) {
     const assignees = {};
@@ -20,7 +19,7 @@ module.exports = class Flow {
     const userIds = await this._adjustAssignees_userIds(str);
     if (userIds.length === 0) return [];
     // select
-    return await ctx.bean.user.select({
+    return await this.ctx.bean.user.select({
       options: {
         where: {
           'f.disabled': 0,
@@ -38,7 +37,7 @@ module.exports = class Flow {
     const roleIds = await this._adjustAssignees_roleIds(str);
     if (roleIds.length === 0) return [];
     // select
-    return await ctx.bean.role.model.select({
+    return await this.ctx.bean.role.model.select({
       where: {
         id: roleIds,
       },
@@ -56,7 +55,7 @@ module.exports = class Flow {
       return {
         name: item,
         title,
-        titleLocale: ctx.text(title),
+        titleLocale: this.ctx.text(title),
       };
     });
   }
@@ -83,8 +82,8 @@ module.exports = class Flow {
         arr.push(item.id);
       } else if (isNaN(item)) {
         // string
-        const role = await ctx.bean.role.parseRoleName({ roleName: item });
-        if (!role) ctx.throw.module(moduleInfo.relativeName, 1007, item);
+        const role = await this.ctx.bean.role.parseRoleName({ roleName: item });
+        if (!role) this.ctx.throw.module(moduleInfo.relativeName, 1007, item);
         arr.push(role.id);
       } else {
         // number

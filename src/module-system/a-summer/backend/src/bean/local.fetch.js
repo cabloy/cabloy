@@ -1,6 +1,6 @@
 const CacheBase = require('../common/cacheBase.js');
 
-module.exports = class LocalFetch extends CacheBase(ctx) {
+module.exports = class LocalFetch extends CacheBase {
   constructor({ cacheBase }) {
     super({ cacheBase });
     this._cacheBean = null;
@@ -51,7 +51,7 @@ module.exports = class LocalFetch extends CacheBase(ctx) {
   get cacheBean() {
     if (!this._cacheBase.beanFullName) return null;
     if (!this._cacheBean) {
-      this._cacheBean = ctx.bean._newBean(this._cacheBase.beanFullName, {
+      this._cacheBean = this.ctx.bean._newBean(this._cacheBase.beanFullName, {
         cacheBase: this._cacheBase,
       });
     }

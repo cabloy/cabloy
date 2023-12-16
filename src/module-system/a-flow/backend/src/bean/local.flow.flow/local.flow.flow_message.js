@@ -10,8 +10,8 @@ module.exports = class FlowInstance {
       return;
     }
     // publish uniform message
-    const userFlow = await ctx.bean.user.get({ id: flowUserId });
-    const title = `${ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${ctx.text.locale(
+    const userFlow = await this.ctx.bean.user.get({ id: flowUserId });
+    const title = `${this.ctx.text.locale(userFlow.locale, 'FlowTitle')} - ${this.ctx.text.locale(
       userFlow.locale,
       this.context._flow.flowRemark || 'End'
     )}`;
@@ -31,8 +31,8 @@ module.exports = class FlowInstance {
       },
     };
     // jump out of the transaction
-    ctx.tail(async () => {
-      await ctx.bean.io.publish({
+    this.ctx.tail(async () => {
+      await this.ctx.bean.io.publish({
         message,
         messageClass: {
           module: 'a-flow',

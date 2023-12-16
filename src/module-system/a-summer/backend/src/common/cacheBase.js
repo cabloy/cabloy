@@ -1,5 +1,4 @@
 const moduleInfo = module.info;
-
 module.exports = class CacheBase {
   constructor({ cacheBase }) {
     this._cacheBase = cacheBase;
@@ -11,14 +10,14 @@ module.exports = class CacheBase {
 
   get configModule() {
     if (!this._configModule) {
-      this._configModule = ctx.config.module(moduleInfo.relativeName);
+      this._configModule = this.ctx.config.module(moduleInfo.relativeName);
     }
     return this._configModule;
   }
 
   get localMem() {
     if (!this._localMem) {
-      this._localMem = ctx.bean._newBean(`${moduleInfo.relativeName}.local.mem`, {
+      this._localMem = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.mem`, {
         cacheBase: this._cacheBase,
       });
     }
@@ -27,7 +26,7 @@ module.exports = class CacheBase {
 
   get localRedis() {
     if (!this._localRedis) {
-      this._localRedis = ctx.bean._newBean(`${moduleInfo.relativeName}.local.redis`, {
+      this._localRedis = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.redis`, {
         cacheBase: this._cacheBase,
       });
     }
@@ -36,7 +35,7 @@ module.exports = class CacheBase {
 
   get localFetch() {
     if (!this._localFetch) {
-      this._localFetch = ctx.bean._newBean(`${moduleInfo.relativeName}.local.fetch`, {
+      this._localFetch = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.fetch`, {
         cacheBase: this._cacheBase,
       });
     }

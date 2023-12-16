@@ -1,5 +1,4 @@
 const moduleInfo = module.info;
-
 module.exports = class Flow {
   async _loadFlowInstance({ flowId, history, throwError = true }) {
     // flow
@@ -14,17 +13,17 @@ module.exports = class Flow {
     }
     if (!flow) {
       if (throwError) {
-        ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
+        this.ctx.throw.module(moduleInfo.relativeName, 1003, flowId);
       } else {
         return null;
       }
     }
     // flowDef: by key+revision
-    const flowDef = await ctx.bean.flowDef.getByKeyAndRevision({
+    const flowDef = await this.ctx.bean.flowDef.getByKeyAndRevision({
       flowDefKey: flow.flowDefKey,
       flowDefRevision: flow.flowDefRevision,
     });
-    if (!flowDef) ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
+    if (!flowDef) this.ctx.throw.module(moduleInfo.relativeName, 1001, flow.flowDefId);
     // not check atomDisabled
     // flowInstance
     const flowInstance = this._createFlowInstance({ flowDef });
@@ -47,7 +46,7 @@ module.exports = class Flow {
     }
     if (!flowNode) {
       if (throwError) {
-        ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
+        this.ctx.throw.module(moduleInfo.relativeName, 1004, flowNodeId);
       } else {
         return null;
       }

@@ -1,48 +1,48 @@
 module.exports = class Passport {
   async authenticate({ module, providerName, providerScene, next }) {
     const providerFullName = `${module}:${providerName}`;
-    const authProvider = ctx.bean.authProvider.getAuthProviderBase({ module, providerName });
+    const authProvider = this.ctx.bean.authProvider.getAuthProviderBase({ module, providerName });
     // provider scene
     if (authProvider.meta.scene && !providerScene) {
       throw new Error(`should set provider scene on callback url: ${providerFullName}`);
     }
     // bean
-    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+    const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
       module,
       providerName,
       providerScene,
     });
-    if (!beanProvider.providerSceneValid) ctx.throw.module('a-base', 1015);
+    if (!beanProvider.providerSceneValid) this.ctx.throw.module('a-base', 1015);
     // urls
-    const { loginURL, callbackURL } = ctx.bean.authProvider._combineAuthenticateUrls({
+    const { loginURL, callbackURL } = this.ctx.bean.authProvider._combineAuthenticateUrls({
       module,
       providerName,
       providerScene,
     });
     // returnTo
-    if (ctx.url.indexOf(callbackURL) === -1) {
-      if (ctx.request.query && ctx.request.query.returnTo) {
-        ctx.session.returnTo = ctx.request.query.returnTo;
-        ctx.session['x-scene'] = ctx.bean.util.getFrontScene();
+    if (this.ctx.url.indexOf(callbackURL) === -1) {
+      if (this.ctx.request.query && this.ctx.request.query.returnTo) {
+        this.ctx.session.returnTo = this.ctx.request.query.returnTo;
+        this.ctx.session['x-scene'] = this.ctx.bean.util.getFrontScene();
       } else {
-        delete ctx.session.returnTo; // force to delete
-        delete ctx.session['x-scene'];
+        delete this.ctx.session.returnTo; // force to delete
+        delete this.ctx.session['x-scene'];
       }
     }
     // config
     const config = {};
     config.passReqToCallback = true;
     config.failWithError = false;
-    config.loginURL = ctx.bean.base.getAbsoluteUrl(loginURL);
-    config.callbackURL = ctx.bean.base.getAbsoluteUrl(callbackURL);
-    config.state = ctx.request.query.state;
+    config.loginURL = this.ctx.bean.base.getAbsoluteUrl(loginURL);
+    config.callbackURL = this.ctx.bean.base.getAbsoluteUrl(callbackURL);
+    config.state = this.ctx.request.query.state;
     config.successRedirect = config.successReturnToOrRedirect =
       beanProvider.metaScene.mode === 'redirect' ? '/' : false;
     // strategy
-    const strategy = await _createProviderStrategy(ctx, authProvider, beanProvider);
+    const strategy = await _createProviderStrategy(this.ctx, authProvider, beanProvider);
     // invoke authenticate
-    const authenticate = ctx.app.passport.authenticate(strategy, config);
-    await authenticate(ctx, next || function () {});
+    const authenticate = this.ctx.app.passport.authenticate(strategy, config);
+    await authenticate(this.ctx, next || function () {});
   }
 };
 

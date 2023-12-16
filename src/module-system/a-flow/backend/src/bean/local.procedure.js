@@ -19,9 +19,9 @@ module.exports = class Procedure {
     // -- c: aUser
 
     // for safe
-    where = where ? ctx.model._where(where) : null;
-    orders = orders ? ctx.model._orders(orders) : null;
-    const limit = page ? ctx.model._limit(page.size, page.index) : null;
+    where = where ? this.ctx.model._where(where) : null;
+    orders = orders ? this.ctx.model._orders(orders) : null;
+    const limit = page ? this.ctx.model._limit(page.size, page.index) : null;
 
     // vars
     let _userWhere;
@@ -73,9 +73,9 @@ module.exports = class Procedure {
     // -- d: aFlowTaskHistory
 
     // for safe
-    where = where ? ctx.model._where(where) : null;
-    orders = orders ? ctx.model._orders(orders) : null;
-    const limit = page ? ctx.model._limit(page.size, page.index) : null;
+    where = where ? this.ctx.model._where(where) : null;
+    orders = orders ? this.ctx.model._orders(orders) : null;
+    const limit = page ? this.ctx.model._limit(page.size, page.index) : null;
 
     // vars
     let _userWhere;
@@ -136,9 +136,9 @@ module.exports = class Procedure {
     // -- d: aFlowTaskHistory
 
     // for safe
-    where = where ? ctx.model._where(where) : null;
-    orders = orders ? ctx.model._orders(orders) : null;
-    const limit = page ? ctx.model._limit(page.size, page.index) : null;
+    where = where ? this.ctx.model._where(where) : null;
+    orders = orders ? this.ctx.model._orders(orders) : null;
+    const limit = page ? this.ctx.model._limit(page.size, page.index) : null;
 
     // vars
     let _userWhere;

@@ -1,5 +1,4 @@
 const moduleInfo = module.info;
-
 module.exports = class FlowDef {
   async deploy({ flowDefId, undeploy, deleting }) {
     // start event
@@ -12,10 +11,10 @@ module.exports = class FlowDef {
   }
 
   async _deploy_atomState({ atomClass }) {
-    const atomClassId = await ctx.bean.atomClass.getAtomClassId(atomClass);
+    const atomClassId = await this.ctx.bean.atomClass.getAtomClassId(atomClass);
     // let db commit
-    ctx.tail(async () => {
-      await ctx.meta.util.lock({
+    this.ctx.tail(async () => {
+      await this.ctx.meta.util.lock({
         resource: `${moduleInfo.relativeName}.flowDef.deployAtomState.${atomClassId}`,
         fn: async () => {
           return await this._deploy_atomState_inner({ atomClass });
@@ -25,13 +24,13 @@ module.exports = class FlowDef {
   }
 
   async _deploy_atomState_inner({ atomClass }) {
-    const atomClassId = await ctx.bean.atomClass.getAtomClassId(atomClass);
+    const atomClassId = await this.ctx.bean.atomClass.getAtomClassId(atomClass);
     // all flowDefs
-    const _nodeBaseBean = ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
+    const _nodeBaseBean = this.ctx.bean._newBean('a-flowtask.flow.node.startEventAtom');
     const conditions = await _nodeBaseBean._getAllConditions({ atomClassId, needFlowContent: true });
     if (conditions.length === 0) {
       // delete dict
-      await ctx.bean.atomState.dynamic_deleteDict({ atomClass });
+      await this.ctx.bean.atomState.dynamic_deleteDict({ atomClass });
       return;
     }
     // vars
@@ -88,13 +87,13 @@ module.exports = class FlowDef {
     // append end
     dictItems.push(dictItemEnd);
     // save
-    await ctx.bean.atomState.dynamic_saveDict({ atomClass, dictItems, dictLocales, mode });
+    await this.ctx.bean.atomState.dynamic_saveDict({ atomClass, dictItems, dictLocales, mode });
   }
 
   async _deploy_atomState_findNodes({ startEventId, content }) {
     let nodeStart = null;
     let nodeEnd = null;
-    const nodeTasks = await ctx.bean.flowDef._loopNodes({
+    const nodeTasks = await this.ctx.bean.flowDef._loopNodes({
       content,
       nodeIdStart: startEventId,
       fn: async ({ nodes, node }) => {
@@ -154,10 +153,10 @@ module.exports = class FlowDef {
       title,
     };
     // dict locales
-    const locales = ctx.bean.base.locales();
+    const locales = this.ctx.bean.base.locales();
     for (const locale of locales) {
       const language = locale.value;
-      const text = ctx.text.locale(language, title);
+      const text = this.ctx.text.locale(language, title);
       if (text !== title) {
         if (!dictLocales[language]) {
           dictLocales[language] = {};
@@ -182,7 +181,7 @@ module.exports = class FlowDef {
       const nodeType = node.type;
       if (nodeType.indexOf('startEvent') === -1) continue;
       const _nodeBase = this._getFlowNodeBase(nodeType);
-      const _nodeBaseBean = ctx.bean._newBean(_nodeBase.beanFullName);
+      const _nodeBaseBean = this.ctx.bean._newBean(_nodeBase.beanFullName);
       if (_nodeBaseBean.deploy) {
         const res = await _nodeBaseBean.deploy({
           deploy: !undeploy && flowDef.atomDisabled === 0,

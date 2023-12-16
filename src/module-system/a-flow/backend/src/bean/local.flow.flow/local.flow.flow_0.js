@@ -4,35 +4,35 @@ const UtilsFn = require('../../common/utils.js');
 const moduleInfo = module.info;
 
 module.exports = class FlowInstance {
-  constructor({ flowDef }) {
+  __init__({ flowDef }) {
     // context
-    this.context = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.flow`, {
+    this.context = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.flow`, {
       flowDef,
     });
     // listener
-    this._flowListener = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.listener`, {
+    this._flowListener = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.listener`, {
       flowInstance: this,
       context: this.context,
     });
   }
 
   get modelAtom() {
-    return ctx.model.module('a-base').atom;
+    return this.ctx.model.module('a-base').atom;
   }
   get modelFlow() {
-    return ctx.model.module(moduleInfo.relativeName).flow;
+    return this.ctx.model.module(moduleInfo.relativeName).flow;
   }
   get modelFlowHistory() {
-    return ctx.model.module(moduleInfo.relativeName).flowHistory;
+    return this.ctx.model.module(moduleInfo.relativeName).flowHistory;
   }
   get modelFlowNode() {
-    return ctx.model.module(moduleInfo.relativeName).flowNode;
+    return this.ctx.model.module(moduleInfo.relativeName).flowNode;
   }
   get modelFlowNodeHistory() {
-    return ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
+    return this.ctx.model.module(moduleInfo.relativeName).flowNodeHistory;
   }
   get constant() {
-    return ctx.constant.module(moduleInfo.relativeName);
+    return this.ctx.constant.module(moduleInfo.relativeName);
   }
 
   async start({ flowName, flowAtomId, flowAtomClassId, flowVars, flowUserId, startEventId }) {
@@ -52,7 +52,7 @@ module.exports = class FlowInstance {
     // real startEventId
     startEventId = nodeInstanceStartEvent.contextNode._nodeDef.id;
     // raise event: onFlowStart
-    const debug = ctx.app.bean.debug.get('flow');
+    const debug = this.ctx.app.bean.debug.get('flow');
     debug('flow start: flowId:%d, startEventId:%s', flowId, startEventId);
     await this._flowListener.onFlowStart({ flowVars, flowUserId, startEventId });
     await this._saveFlowVars();
@@ -61,7 +61,7 @@ module.exports = class FlowInstance {
     debug('flow %s: flowId:%d', finished ? 'finished' : 'break', flowId);
     // tail
     if (flowAtomId) {
-      ctx.tail(async () => {
+      this.ctx.tail(async () => {
         const flow = await this.modelFlow.get({ id: flowId });
         if (flow) {
           // means: not end
@@ -108,13 +108,13 @@ module.exports = class FlowInstance {
       });
     }
     // utils
-    this.context._utils = new (UtilsFn({ ctx, flowInstance: this }))({
+    this.context._utils = new (UtilsFn({ ctx: this.ctx, flowInstance: this }))({
       context: this.context,
     });
   }
 
   async _contextInit_atom({ atomId, atomClassId }) {
-    return await ctx.bean.atom.read({
+    return await this.ctx.bean.atom.read({
       key: { atomId },
       atomClass: { id: atomClassId },
     });
@@ -141,7 +141,7 @@ module.exports = class FlowInstance {
       flowAtomClassId = 0;
     }
     if (flowAtomId && !flowAtomClassId) {
-      const atomClass = await ctx.bean.atomClass.getByAtomId({ atomId: flowAtomId });
+      const atomClass = await this.ctx.bean.atomClass.getByAtomId({ atomId: flowAtomId });
       flowAtomClassId = atomClass.id;
     }
     // flowName
@@ -179,7 +179,7 @@ module.exports = class FlowInstance {
   }
 
   _createNodeInstance2({ nodeDef, contextEdge }) {
-    const node = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
+    const node = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.node`, {
       flowInstance: this,
       context: this.context,
       contextEdge,
@@ -190,7 +190,7 @@ module.exports = class FlowInstance {
 
   async _loadNodeInstance({ flowNode, history }) {
     const nodeDef = this._findNodeDef({ nodeDefId: flowNode.flowNodeDefId });
-    if (!nodeDef) ctx.throw.module(moduleInfo.relativeName, 1005, flowNode.flowNodeDefId);
+    if (!nodeDef) this.ctx.throw.module(moduleInfo.relativeName, 1005, flowNode.flowNodeDefId);
     const node = this._createNodeInstance2({ nodeDef });
     await node._load({ flowNode, history });
     return node;
@@ -204,7 +204,7 @@ module.exports = class FlowInstance {
   }
 
   async _createEdgeInstance({ edgeDef, contextNode }) {
-    const edge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
+    const edge = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.flow.edge`, {
       flowInstance: this,
       context: this.context,
       contextNode,
@@ -215,7 +215,7 @@ module.exports = class FlowInstance {
   }
 
   _findNodeDef({ nodeDefId }) {
-    return ctx.bean.flowDef._findNode({ content: this.context._flowDefContent, nodeDefId });
+    return this.ctx.bean.flowDef._findNode({ content: this.context._flowDefContent, nodeDefId });
   }
 
   // contextEdge maybe null
@@ -248,7 +248,7 @@ module.exports = class FlowInstance {
   }
 
   _getOpUser() {
-    let user = ctx.state.user && ctx.state.user.op;
+    let user = this.ctx.state.user && this.ctx.state.user.op;
     if (!user || user.anonymous === 1) {
       user = { id: 0 };
       // user = { id: this.context._flow.flowUserId };
@@ -258,7 +258,7 @@ module.exports = class FlowInstance {
 
   _notifyFlowInitiateds(flowUserId) {
     if (flowUserId) {
-      ctx.bean.stats.notify({
+      this.ctx.bean.stats.notify({
         module: moduleInfo.relativeName,
         name: 'flowInitiateds',
         user: { id: flowUserId },

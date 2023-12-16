@@ -1,20 +1,19 @@
 const moduleInfo = module.info;
-
 module.exports = class AuthSimple {
   get modelAuthSimple() {
-    return ctx.model.module(moduleInfo.relativeName).authSimple;
+    return this.ctx.model.module(moduleInfo.relativeName).authSimple;
   }
   get modelAuth() {
-    return ctx.model.module('a-base').auth;
+    return this.ctx.model.module('a-base').auth;
   }
   get localSimple() {
-    return ctx.bean.local.module(moduleInfo.relativeName).simple;
+    return this.ctx.bean.local.module(moduleInfo.relativeName).simple;
   }
   get configModule() {
-    return ctx.config.module(moduleInfo.relativeName);
+    return this.ctx.config.module(moduleInfo.relativeName);
   }
   get cacheDb() {
-    return ctx.cache.db.module(moduleInfo.relativeName);
+    return this.ctx.cache.db.module(moduleInfo.relativeName);
   }
 
   // mobile: not use
@@ -35,8 +34,8 @@ module.exports = class AuthSimple {
     };
 
     // verify
-    const verifyUser = await ctx.bean.user.verify({ state, profileUser });
-    if (!verifyUser) ctx.throw(403);
+    const verifyUser = await this.ctx.bean.user.verify({ state, profileUser });
+    if (!verifyUser) this.ctx.throw(403);
 
     // userId
     const userId = verifyUser.agent.id;
@@ -50,19 +49,19 @@ module.exports = class AuthSimple {
     if (state === 'login' || !user.userName || user.userName.indexOf('__') > -1) {
       userNew.userName = userName;
     }
-    await ctx.bean.user.save({
+    await this.ctx.bean.user.save({
       user: userNew,
     });
     // save email
     if (email !== verifyUser.agent.email) {
-      await ctx.bean.user.setActivated({
+      await this.ctx.bean.user.setActivated({
         user: { id: userId, email, emailConfirmed: 0 },
       });
     }
 
     // login now
     //   always no matter login/associate
-    await ctx.bean.auth.login(verifyUser);
+    await this.ctx.bean.auth.login(verifyUser);
 
     // ok
     return verifyUser;
@@ -70,13 +69,13 @@ module.exports = class AuthSimple {
 
   // data: { auth, password, rememberMe }
   async signin({ data, state = 'login' }) {
-    const res = await ctx.bean.authProvider.authenticateDirect({
+    const res = await this.ctx.bean.authProvider.authenticateDirect({
       module: moduleInfo.relativeName,
       providerName: 'authsimple',
       query: { state },
       body: { data },
     });
-    // const res = await ctx.meta.util.performAction({
+    // const res = await this.ctx.meta.util.performAction({
     //   method: 'post',
     //   url: `/a/auth/passport/a-authsimple/authsimple?state=${state}`,
     //   body: { data },
@@ -86,7 +85,7 @@ module.exports = class AuthSimple {
 
   async signinDirect({ data, state = 'login' }) {
     // beanProvider
-    const beanProvider = ctx.bean.authProvider.createAuthProviderBean({
+    const beanProvider = this.ctx.bean.authProvider.createAuthProviderBean({
       module: moduleInfo.relativeName,
       providerName: 'authsimple',
       providerScene: null,
@@ -94,10 +93,10 @@ module.exports = class AuthSimple {
     // profileUser
     const profileUser = await this.ensureAuthUser({ beanProvider, data });
     // verifyUser
-    const verifyUser = await ctx.bean.user.verify({ state, profileUser });
-    if (!verifyUser) ctx.throw(403);
+    const verifyUser = await this.ctx.bean.user.verify({ state, profileUser });
+    if (!verifyUser) this.ctx.throw(403);
     // login
-    await ctx.bean.auth.login(verifyUser);
+    await this.ctx.bean.auth.login(verifyUser);
     // ok
     return verifyUser;
   }
@@ -121,7 +120,7 @@ module.exports = class AuthSimple {
     await this.modelAuthSimple.update({ id: authSimpleId, userId });
 
     // auth
-    const providerItem = await ctx.bean.authProvider.getAuthProvider({
+    const providerItem = await this.ctx.bean.authProvider.getAuthProvider({
       module: moduleInfo.relativeName,
       providerName: 'authsimple',
     });
@@ -147,7 +146,7 @@ module.exports = class AuthSimple {
     } else {
       // verify old one
       const authSimple = await this.localSimple.verify({ userId, password: passwordOld });
-      if (!authSimple) ctx.throw(403);
+      if (!authSimple) this.ctx.throw(403);
       authSimpleId = authSimple.id;
     }
 
@@ -167,15 +166,15 @@ module.exports = class AuthSimple {
     };
 
     // verify
-    const verifyUser = await ctx.bean.user.verify({ state: 'associate', profileUser });
-    if (!verifyUser) ctx.throw(403);
+    const verifyUser = await this.ctx.bean.user.verify({ state: 'associate', profileUser });
+    if (!verifyUser) this.ctx.throw(403);
 
     // force kickout all login records
-    await ctx.bean.userOnline.kickOut({ user: { id: userId } });
+    await this.ctx.bean.userOnline.kickOut({ user: { id: userId } });
 
     // login now
     //   always no matter login/associate
-    // await ctx.bean.auth.login(verifyUser);
+    // await this.ctx.bean.auth.login(verifyUser);
   }
 
   async _passwordSaveNew({ passwordNew, userId }) {
@@ -197,7 +196,7 @@ module.exports = class AuthSimple {
     if (!value) {
       // expired, send confirmation mail again
       //  1003: passwordResetEmailExpired
-      ctx.throw.module(moduleInfo.relativeName, 1003);
+      this.ctx.throw.module(moduleInfo.relativeName, 1003);
     }
     // userId
     const userId = value.userId;
@@ -214,7 +213,7 @@ module.exports = class AuthSimple {
     // clear token
     await this.cacheDb.remove(cacheKey);
     // login antomatically
-    const user = await ctx.bean.user.get({ id: userId });
+    const user = await this.ctx.bean.user.get({ id: userId });
     const data = { auth: user.email, password: passwordNew, rememberMe: false };
     const user2 = await this.signin({ data, state: 'login' });
     // ok
@@ -223,24 +222,24 @@ module.exports = class AuthSimple {
 
   async passwordForgot({ email }) {
     // user by email
-    const user = await ctx.bean.user.exists({ email });
+    const user = await this.ctx.bean.user.exists({ email });
     // link
-    const token = ctx.bean.util.uuidv4();
-    const link = ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
+    const token = this.ctx.bean.util.uuidv4();
+    const link = this.ctx.bean.base.getAbsoluteUrl(`/#!/a/authsimple/passwordReset?token=${token}`);
     // config
     const configTemplate = this.configModule.email.templates.passwordReset;
     // email subject
-    let subject = ctx.text(configTemplate.subject);
-    subject = ctx.bean.util.replaceTemplate(subject, { siteName: ctx.instance.title });
+    let subject = this.ctx.text(configTemplate.subject);
+    subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
     // email body
-    let body = ctx.text(configTemplate.body);
-    body = ctx.bean.util.replaceTemplate(body, {
+    let body = this.ctx.text(configTemplate.body);
+    body = this.ctx.bean.util.replaceTemplate(body, {
       userName: user.userName,
       link,
-      siteName: ctx.instance.title,
+      siteName: this.ctx.instance.title,
     });
     // send
-    await ctx.bean.mail.send({
+    await this.ctx.bean.mail.send({
       scene: null, // use default
       message: {
         to: email,
@@ -254,26 +253,26 @@ module.exports = class AuthSimple {
 
   async emailConfirm({ email, user }) {
     // save email
-    await ctx.bean.user.setActivated({
+    await this.ctx.bean.user.setActivated({
       user: { id: user.id, email, emailConfirmed: 0 },
     });
     // link
-    const token = ctx.bean.util.uuidv4();
-    const link = ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
+    const token = this.ctx.bean.util.uuidv4();
+    const link = this.ctx.bean.base.getAbsoluteUrl(`/api/a/authsimple/auth/emailConfirmation?token=${token}`);
     // config
     const configTemplate = this.configModule.email.templates.confirmation;
     // email subject
-    let subject = ctx.text(configTemplate.subject);
-    subject = ctx.bean.util.replaceTemplate(subject, { siteName: ctx.instance.title });
+    let subject = this.ctx.text(configTemplate.subject);
+    subject = this.ctx.bean.util.replaceTemplate(subject, { siteName: this.ctx.instance.title });
     // email body
-    let body = ctx.text(configTemplate.body);
-    body = ctx.bean.util.replaceTemplate(body, {
+    let body = this.ctx.text(configTemplate.body);
+    body = this.ctx.bean.util.replaceTemplate(body, {
       userName: user.userName,
       link,
-      siteName: ctx.instance.title,
+      siteName: this.ctx.instance.title,
     });
     // send
-    await ctx.bean.mail.send({
+    await this.ctx.bean.mail.send({
       scene: null, // use default
       message: {
         to: email,
@@ -293,17 +292,17 @@ module.exports = class AuthSimple {
     if (!value) {
       // expired, send confirmation mail again
       const data = {
-        message: ctx.text('confirmationEmailExpired'),
+        message: this.ctx.text('confirmationEmailExpired'),
         link: '/a/authsimple/emailConfirm',
-        linkText: ctx.text('Resend Confirmation Email'),
+        linkText: this.ctx.text('Resend Confirmation Email'),
       };
-      const url = ctx.bean.base.getAlertUrl({ data });
-      return ctx.redirect(url);
+      const url = this.ctx.bean.base.getAlertUrl({ data });
+      return this.ctx.redirect(url);
     }
     // userId
     const userId = value.userId;
     // activated
-    await ctx.bean.user.setActivated({
+    await this.ctx.bean.user.setActivated({
       user: { id: userId, emailConfirmed: 1 },
     });
     // clear token
@@ -311,12 +310,12 @@ module.exports = class AuthSimple {
     // not: login antomatically
     // ok
     const data = {
-      message: ctx.text('confirmationEmailSucceeded'),
+      message: this.ctx.text('confirmationEmailSucceeded'),
       link: '#back',
-      linkText: ctx.text('Close'),
+      linkText: this.ctx.text('Close'),
     };
-    const url = ctx.bean.base.getAlertUrl({ data });
-    return ctx.redirect(url);
+    const url = this.ctx.bean.base.getAlertUrl({ data });
+    return this.ctx.redirect(url);
   }
 
   async checkStatus({ user }) {
@@ -331,13 +330,13 @@ module.exports = class AuthSimple {
 
   async ensureAuthUser({ beanProvider, data: { auth, password, rememberMe } }) {
     // exists
-    const user = await ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
-    if (!user) return ctx.throw.module(moduleInfo.relativeName, 1001);
+    const user = await this.ctx.bean.user.exists({ userName: auth, email: auth, mobile: auth });
+    if (!user) return this.ctx.throw.module(moduleInfo.relativeName, 1001);
     // disabled
-    if (user.disabled) return ctx.throw.module(moduleInfo.relativeName, 1002);
+    if (user.disabled) return this.ctx.throw.module(moduleInfo.relativeName, 1002);
     // verify
     const authSimple = await this.localSimple.verify({ userId: user.id, password });
-    if (!authSimple) return ctx.throw.module(moduleInfo.relativeName, 1001);
+    if (!authSimple) return this.ctx.throw.module(moduleInfo.relativeName, 1001);
     return {
       module: beanProvider.providerModule,
       provider: beanProvider.providerName,

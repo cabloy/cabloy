@@ -4,8 +4,8 @@ const moduleInfo = module.info;
 module.exports = class Provider {
   async sendCode({ providerInstanceId, context, config }) {
     // get
-    const providerInstance = await ctx.bean.captcha.getProviderInstance({ providerInstanceId });
-    if (!providerInstance) ctx.throw(403);
+    const providerInstance = await this.ctx.bean.captcha.getProviderInstance({ providerInstanceId });
+    if (!providerInstance) this.ctx.throw(403);
     // token
     const token = this.__prefix0(parseInt(Math.random() * 10000), 4);
     const templateParam = { code: token };
@@ -23,8 +23,8 @@ module.exports = class Provider {
   }
 
   async verify({ data, dataInput }) {
-    if (!data) ctx.throw.module(moduleInfo.relativeName, 1002);
-    if (data.token !== dataInput.token) ctx.throw.module(moduleInfo.relativeName, 1003);
+    if (!data) this.ctx.throw.module(moduleInfo.relativeName, 1002);
+    if (data.token !== dataInput.token) this.ctx.throw.module(moduleInfo.relativeName, 1003);
   }
 
   async __sendSms({ params, config }) {

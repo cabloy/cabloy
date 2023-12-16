@@ -21,7 +21,7 @@ module.exports = class FlowNode {
     const behavior = this.behaviors.find(item => item.behaviorDef.id === behaviorDefId);
     const optionsDefault = behavior.behaviorBase.options.default;
     if (optionsDefault) {
-      options = ctx.bean.util.extend({}, optionsDefault, options);
+      options = this.ctx.bean.util.extend({}, optionsDefault, options);
     }
     // invoke
     return this._behaviorsInvoke({
@@ -39,7 +39,7 @@ module.exports = class FlowNode {
     // default
     const optionsDefault = this.nodeBase.options.default;
     if (optionsDefault) {
-      options = ctx.bean.util.extend({}, optionsDefault, options);
+      options = this.ctx.bean.util.extend({}, optionsDefault, options);
     }
     // invoke
     return this._behaviorsInvoke({
@@ -114,10 +114,10 @@ module.exports = class FlowNode {
   }
 
   _behaviorsInvoke(context) {
-    return ctx.app.meta.util.compose(this.behaviors, __adapter)(context);
+    return this.ctx.app.meta.util.compose(this.behaviors, __adapter)(context);
   }
 
   async _behaviorsInvokeAsync(context) {
-    return await ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
+    return await this.ctx.app.meta.util.composeAsync(this.behaviors, __adapter)(context);
   }
 };

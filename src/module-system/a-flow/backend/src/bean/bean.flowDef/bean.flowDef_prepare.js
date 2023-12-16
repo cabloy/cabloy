@@ -22,17 +22,17 @@ module.exports = class FlowDef {
   }
 
   _getFlowServiceBases() {
-    if (!__flowServiceBases[ctx.locale]) {
-      __flowServiceBases[ctx.locale] = this._prepareFlowServiceBases();
+    if (!__flowServiceBases[this.ctx.locale]) {
+      __flowServiceBases[this.ctx.locale] = this._prepareFlowServiceBases();
     }
-    return __flowServiceBases[ctx.locale];
+    return __flowServiceBases[this.ctx.locale];
   }
 
   _getFlowBehaviorBases() {
-    if (!__flowBehaviorBases[ctx.locale]) {
-      __flowBehaviorBases[ctx.locale] = this._prepareFlowBehaviorBases();
+    if (!__flowBehaviorBases[this.ctx.locale]) {
+      __flowBehaviorBases[this.ctx.locale] = this._prepareFlowBehaviorBases();
     }
-    return __flowBehaviorBases[ctx.locale];
+    return __flowBehaviorBases[this.ctx.locale];
   }
 
   _getFlowBehaviorBase(behaviorType) {
@@ -40,10 +40,10 @@ module.exports = class FlowDef {
   }
 
   _getFlowNodeBases() {
-    if (!__flowNodeBases[ctx.locale]) {
-      __flowNodeBases[ctx.locale] = this._prepareFlowNodeBases();
+    if (!__flowNodeBases[this.ctx.locale]) {
+      __flowNodeBases[this.ctx.locale] = this._prepareFlowNodeBases();
     }
-    return __flowNodeBases[ctx.locale];
+    return __flowNodeBases[this.ctx.locale];
   }
 
   _getFlowNodeBase(nodeType) {
@@ -52,7 +52,7 @@ module.exports = class FlowDef {
 
   _prepareFlowServiceBases() {
     const flowServiceBases = {};
-    for (const module of ctx.app.meta.modulesArray) {
+    for (const module of this.ctx.app.meta.modulesArray) {
       const relativeName = module.info.relativeName;
       const beans = module.main.beans;
       if (!beans) continue;
@@ -74,10 +74,10 @@ module.exports = class FlowDef {
         title: bean.title,
       };
       if (bean.title) {
-        serviceBase.titleLocale = ctx.text(bean.title);
+        serviceBase.titleLocale = this.ctx.text(bean.title);
       } else {
         // prompt
-        ctx.logger.info('title of flow service bean should not be empty: ', `${relativeName}:${beanName}`);
+        this.ctx.logger.info('title of flow service bean should not be empty: ', `${relativeName}:${beanName}`);
       }
       // ok
       const beanNameShort = beanName.substr('flow.service.'.length);
@@ -88,7 +88,7 @@ module.exports = class FlowDef {
 
   _prepareFlowBehaviorBases() {
     const flowBehaviorBases = {};
-    for (const module of ctx.app.meta.modulesArray) {
+    for (const module of this.ctx.app.meta.modulesArray) {
       const behaviors = module.main.meta && module.main.meta.flow && module.main.meta.flow.behaviors;
       if (!behaviors) continue;
       for (const key in behaviors) {
@@ -105,7 +105,7 @@ module.exports = class FlowDef {
         flowBehaviorBases[fullKey] = flowBehaviorBases[key] = {
           ...behavior,
           beanFullName,
-          titleLocale: ctx.text(behavior.title),
+          titleLocale: this.ctx.text(behavior.title),
         };
       }
     }
@@ -114,7 +114,7 @@ module.exports = class FlowDef {
 
   _prepareFlowNodeBases() {
     const flowNodeBases = {};
-    for (const module of ctx.app.meta.modulesArray) {
+    for (const module of this.ctx.app.meta.modulesArray) {
       const nodes = module.main.meta && module.main.meta.flow && module.main.meta.flow.nodes;
       if (!nodes) continue;
       for (const key in nodes) {
@@ -131,7 +131,7 @@ module.exports = class FlowDef {
         flowNodeBases[fullKey] = flowNodeBases[key] = {
           ...node,
           beanFullName,
-          titleLocale: ctx.text(node.title),
+          titleLocale: this.ctx.text(node.title),
         };
       }
     }
@@ -139,10 +139,10 @@ module.exports = class FlowDef {
   }
 
   _getFlowEdgeBases() {
-    if (!__flowEdgeBases[ctx.locale]) {
-      __flowEdgeBases[ctx.locale] = this._prepareFlowEdgeBases();
+    if (!__flowEdgeBases[this.ctx.locale]) {
+      __flowEdgeBases[this.ctx.locale] = this._prepareFlowEdgeBases();
     }
-    return __flowEdgeBases[ctx.locale];
+    return __flowEdgeBases[this.ctx.locale];
   }
 
   _getFlowEdgeBase(edgeType = 'sequence') {
@@ -151,7 +151,7 @@ module.exports = class FlowDef {
 
   _prepareFlowEdgeBases() {
     const flowEdgeBases = {};
-    for (const module of ctx.app.meta.modulesArray) {
+    for (const module of this.ctx.app.meta.modulesArray) {
       const edges = module.main.meta && module.main.meta.flow && module.main.meta.flow.edges;
       if (!edges) continue;
       for (const key in edges) {
@@ -168,7 +168,7 @@ module.exports = class FlowDef {
         flowEdgeBases[fullKey] = flowEdgeBases[key] = {
           ...edge,
           beanFullName,
-          titleLocale: ctx.text(edge.title),
+          titleLocale: this.ctx.text(edge.title),
         };
       }
     }

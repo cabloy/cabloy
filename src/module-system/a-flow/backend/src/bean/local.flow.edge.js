@@ -1,16 +1,18 @@
 const UtilsFn = require('../common/utils.js');
 
 const moduleInfo = module.info;
-
 module.exports = class FlowEdge {
-  constructor({ flowInstance, context, contextNode, edgeDef }) {
+  constructor({ flowInstance, context, contextNode }) {
     this.flowInstance = flowInstance;
     this.context = context;
     this.contextNode = contextNode;
     this._edgeBase = null;
     this._edgeBaseBean = null;
+  }
+
+  __init__({ context, contextNode, edgeDef }) {
     // context
-    this.contextEdge = ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.edge`, {
+    this.contextEdge = this.ctx.bean._newBean(`${moduleInfo.relativeName}.local.context.edge`, {
       context,
       contextNode,
       edgeDef,
@@ -24,7 +26,7 @@ module.exports = class FlowEdge {
 
   async _contextInit() {
     // utils
-    this.contextEdge._utils = new (UtilsFn({ ctx, flowInstance: this.flowInstance }))({
+    this.contextEdge._utils = new (UtilsFn({ ctx: this.ctx, flowInstance: this.flowInstance }))({
       context: this.context,
       contextNode: this.contextNode,
       contextEdge: this.contextEdge,
@@ -65,7 +67,7 @@ module.exports = class FlowEdge {
 
   get edgeBaseBean() {
     if (!this._edgeBaseBean) {
-      this._edgeBaseBean = ctx.bean._newBean(this.edgeBase.beanFullName, {
+      this._edgeBaseBean = this.ctx.bean._newBean(this.edgeBase.beanFullName, {
         flowInstance: this.flowInstance,
         edgeInstance: this,
         context: this.context,
@@ -77,7 +79,7 @@ module.exports = class FlowEdge {
   }
 
   get edgeBase() {
-    if (!this._edgeBase) this._edgeBase = ctx.bean.flowDef._getFlowEdgeBase(this.contextEdge._edgeDef.type);
+    if (!this._edgeBase) this._edgeBase = this.ctx.bean.flowDef._getFlowEdgeBase(this.contextEdge._edgeDef.type);
     return this._edgeBase;
   }
 };

@@ -1,16 +1,15 @@
 const moduleInfo = module.info;
-
 module.exports = class Share {
   get modelShare() {
-    return ctx.model.module(moduleInfo.relativeName).share;
+    return this.ctx.model.module(moduleInfo.relativeName).share;
   }
 
   get modelShareRecordPV() {
-    return ctx.model.module(moduleInfo.relativeName).shareRecordPV;
+    return this.ctx.model.module(moduleInfo.relativeName).shareRecordPV;
   }
 
   get modelShareRecordUV() {
-    return ctx.model.module(moduleInfo.relativeName).shareRecordUV;
+    return this.ctx.model.module(moduleInfo.relativeName).shareRecordUV;
   }
 
   async generate({ host, atomId, url, user }) {
@@ -25,7 +24,7 @@ module.exports = class Share {
     // insert
     if (!item) {
       item = {
-        uuid: ctx.bean.util.uuidv4(),
+        uuid: this.ctx.bean.util.uuidv4(),
         atomId,
         userId,
         host,
@@ -44,13 +43,13 @@ module.exports = class Share {
     const userId = user.id;
     // get share
     const item = await this.modelShare.get({ uuid });
-    if (!item) ctx.throw(404);
+    if (!item) this.ctx.throw(404);
     // anonymous
     if (user.anonymous) {
       // redirect to login
       const shareLink = this._combine_shareLink(uuid);
-      const url = ctx.bean.base.getAbsoluteUrl(`/#!${shareLink}`);
-      ctx.redirect(url);
+      const url = this.ctx.bean.base.getAbsoluteUrl(`/#!${shareLink}`);
+      this.ctx.redirect(url);
       return;
     }
     // not self
@@ -58,19 +57,19 @@ module.exports = class Share {
       await this._share_record({ item, user });
     }
     // redirect to original url
-    const url = item.url.indexOf('http') === 0 ? item.url : ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
+    const url = item.url.indexOf('http') === 0 ? item.url : this.ctx.bean.base.getAbsoluteUrl(`/#!${item.url}`);
     // redirect
-    ctx.redirect(url);
+    this.ctx.redirect(url);
   }
 
   _combine_shareLink(uuid) {
-    return ctx.bean.base.getAbsoluteUrl(`/api/a/share/go/${uuid}`);
+    return this.ctx.bean.base.getAbsoluteUrl(`/api/a/share/go/${uuid}`);
   }
 
   async _share_record({ item, user }) {
     const userId = user.id;
     // aShareRecordPV
-    await ctx.bean.event.invoke({
+    await this.ctx.bean.event.invoke({
       module: moduleInfo.relativeName,
       name: 'shareRecordPV',
       data: { share: item, user },
@@ -95,7 +94,7 @@ module.exports = class Share {
     };
     const uv = await this.modelShareRecordUV.get(uvData);
     if (!uv) {
-      await ctx.bean.event.invoke({
+      await this.ctx.bean.event.invoke({
         module: moduleInfo.relativeName,
         name: 'shareRecordUV',
         data: { share: item, user },
