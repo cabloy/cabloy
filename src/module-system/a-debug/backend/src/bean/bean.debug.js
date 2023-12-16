@@ -2,8 +2,8 @@ const DebugInstance = require('debug');
 
 const __debug_caches = {};
 
+// const moduleInfo = module.info;
 module.exports = app => {
-  // const moduleInfo = module.info;
   class Debug {
     get instance() {
       return DebugInstance;

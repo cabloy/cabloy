@@ -1,5 +1,4 @@
 module.exports = app => {
-  // const moduleInfo = module.info;
   const schemas = require('./meta/validation/schemas.js')(app);
   const staticApps = require('./meta/static/apps.js')(app);
   const staticFlowDefs = require('./meta/static/flowDefs.js')(app);

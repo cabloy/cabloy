@@ -1,7 +1,7 @@
 const defaults = require('./defaults.js');
 
+const moduleInfo = module.info;
 module.exports = app => {
-  const moduleInfo = module.info;
   const behaviors = {
     // Overtime
     overtime: {

@@ -1,5 +1,5 @@
+const moduleInfo = module.info;
 module.exports = app => {
-  const moduleInfo = module.info;
   const hook = {
     moduleLoaded(/* { module }*/) {
       if (app.meta.inApp) {
