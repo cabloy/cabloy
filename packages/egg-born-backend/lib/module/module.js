@@ -23,7 +23,7 @@ module.exports = function (loader) {
   let ebAppMonkey;
   if (fse.existsSync(pathAppMonkey)) {
     const AppMonkey = require(pathAppMonkey);
-    ebAppMonkey = loader.app.meta.appMonkey = AppMonkey(loader.app);
+    ebAppMonkey = loader.app.meta.appMonkey = loader.app.bean._newBean(AppMonkey);
   }
 
   return {
