@@ -1,5 +1,4 @@
-module.exports = app => {
-  const <%=argv.atomClassName%> = {
+module.exports = {
     info: {
       bean: '<%=argv.atomClassName%>',
       title: '<%=argv.atomClassNameCapitalize%>',
@@ -34,5 +33,3 @@ module.exports = app => {
       validator: '<%=argv.atomClassName%>Search',
     },
   };
-  return <%=argv.atomClassName%>;
-};

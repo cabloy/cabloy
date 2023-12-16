@@ -1,32 +1,29 @@
-module.exports = app => {
-  // const moduleInfo = module.info;
-  const userOnlineHistory = {
-    info: {
-      bean: 'userOnlineHistory',
-      title: 'LoginLog',
-      tableName: 'aUserOnlineHistory',
-      itemOnly: true,
-      fields: {
-        mappings: {
-          userIds: 'userId',
-        },
-        dicts: {
-          isLogin: {
-            dictKey: 'a-useronline:dictLoginType',
-          },
-        },
+// const moduleInfo = module.info;
+module.exports = {
+  info: {
+    bean: 'userOnlineHistory',
+    title: 'LoginLog',
+    tableName: 'aUserOnlineHistory',
+    itemOnly: true,
+    fields: {
+      mappings: {
+        userIds: 'userId',
       },
-      layout: {
-        config: {
-          atomList: 'layoutAtomListUserOnlineHistory',
+      dicts: {
+        isLogin: {
+          dictKey: 'a-useronline:dictLoginType',
         },
       },
     },
-    actions: {},
-    validator: 'userOnlineHistory',
-    search: {
-      validator: 'userOnlineHistorySearch',
+    layout: {
+      config: {
+        atomList: 'layoutAtomListUserOnlineHistory',
+      },
     },
-  };
-  return userOnlineHistory;
+  },
+  actions: {},
+  validator: 'userOnlineHistory',
+  search: {
+    validator: 'userOnlineHistorySearch',
+  },
 };

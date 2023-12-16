@@ -1,8 +1,6 @@
 const <%=argv.atomClassName%> = require('./atomClass/<%=argv.atomClassName%>.js');
 
-module.exports = app => {
-  const atomClasses = {
-    <%=argv.atomClassName%>: <%=argv.atomClassName%>(app),
+module.exports = {
+    <%=argv.atomClassName%>: <%=argv.atomClassName%> ,
   };
-  return atomClasses;
-};
+   

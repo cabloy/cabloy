@@ -1,7 +1,6 @@
 module.exports = app => {
   // const moduleInfo = module.info;
-  // atomClasses
-  const atomClasses = require('./meta/atomClass/atomClasses.js')(app);
+  const atomClasses = require('./meta/atomClass/atomClasses.js');
   // keywords
   const keywords = require('./meta/validation/keywords.js')(app);
   // schemas

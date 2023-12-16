@@ -1,44 +1,41 @@
-module.exports = app => {
-  // const moduleInfo = module.info;
-  const dict = {
-    info: {
-      bean: 'dict',
-      title: 'Dict',
-      tableName: 'aDict',
-      tableNameModes: {
-        full: 'aDictViewFull',
-        search: 'aDict', // out of memory for aDictViewFull sort
-      },
-      inner: true,
-      resource: true,
-      language: false,
-      category: false,
-      tag: false,
-      comment: false,
-      attachment: false,
-      fields: {
-        dicts: {
-          dictMode: {
-            dictKey: 'a-dictbooster:dictMode',
-            translate: false,
-          },
-        },
-      },
-      layout: {
-        config: {
-          atomList: 'layoutAtomListDict',
+// const moduleInfo = module.info;
+module.exports = {
+  info: {
+    bean: 'dict',
+    title: 'Dict',
+    tableName: 'aDict',
+    tableNameModes: {
+      full: 'aDictViewFull',
+      search: 'aDict', // out of memory for aDictViewFull sort
+    },
+    inner: true,
+    resource: true,
+    language: false,
+    category: false,
+    tag: false,
+    comment: false,
+    attachment: false,
+    fields: {
+      dicts: {
+        dictMode: {
+          dictKey: 'a-dictbooster:dictMode',
+          translate: false,
         },
       },
     },
-    actions: {
-      write: {
-        enableOnStatic: null,
+    layout: {
+      config: {
+        atomList: 'layoutAtomListDict',
       },
     },
-    validator: 'dict',
-    search: {
-      validator: 'dictSearch',
+  },
+  actions: {
+    write: {
+      enableOnStatic: null,
     },
-  };
-  return dict;
+  },
+  validator: 'dict',
+  search: {
+    validator: 'dictSearch',
+  },
 };
