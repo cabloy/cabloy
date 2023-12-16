@@ -1,5 +1,5 @@
 // const moduleInfo = module.info;
-module.exports = app => {
+
   const info = {
     menu: {},
     home: {},
@@ -29,5 +29,4 @@ module.exports = app => {
     resourceRoles: 'authenticated',
     appSorting: 0,
   };
-  return _app;
-};
+   module.exports = _app;

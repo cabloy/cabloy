@@ -1,10 +1,10 @@
 module.exports = app => {
   const schemas = require('./meta/validation/schemas.js');
   // socketio
-  const socketioMessageMail = require('./meta/socketio/messageMail.js')(app);
-  const socketioChannelMail = require('./meta/socketio/channelMail.js')(app);
+  const socketioMessageMail = require('./meta/socketio/messageMail.js');
+  const socketioChannelMail = require('./meta/socketio/channelMail.js');
   // static
-  const staticResources = require('./meta/static/resources.js')(app);
+  const staticResources = require('./meta/static/resources.js');
   // meta
   const meta = {
     base: {

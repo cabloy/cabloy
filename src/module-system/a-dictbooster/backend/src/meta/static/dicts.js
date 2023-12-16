@@ -4,13 +4,11 @@ const atomStateDefault = require('./dict/atomStateDefault.js');
 const atomDisabled = require('./dict/atomDisabled.js');
 const dictMode = require('./dict/dictMode.js');
 
-module.exports = app => {
-  const dicts = [
-    onlineStatus(app), //
-    layoutType(app),
-    atomStateDefault(app),
-    atomDisabled(app),
-    dictMode(app),
-  ];
-  return dicts;
-};
+const dicts = [
+  onlineStatus, //
+  layoutType,
+  atomStateDefault,
+  atomDisabled,
+  dictMode,
+];
+module.exports = dicts;

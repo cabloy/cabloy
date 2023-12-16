@@ -1,7 +1,6 @@
 module.exports = app => {
   const schemas = require('./meta/validation/schemas.js');
-  // static
-  const staticLayouts = require('./meta/static/layouts.js')(app);
+  const staticLayouts = require('./meta/static/layouts.js');
   // meta
   const meta = {
     base: {

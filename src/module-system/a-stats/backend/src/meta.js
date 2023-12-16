@@ -1,5 +1,5 @@
 module.exports = app => {
-  const socketioStats = require('./meta/socketio/stats.js')(app);
+  const socketioStats = require('./meta/socketio/stats.js');
   const meta = {
     socketio: {
       messages: {

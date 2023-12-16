@@ -1,5 +1,4 @@
 // const moduleInfo = module.info;
-module.exports = app => {
-  const resources = [];
-  return resources;
-};
+
+const resources = [];
+module.exports = resources;

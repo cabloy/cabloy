@@ -1,4 +1,3 @@
-module.exports = app => {
+
   const layouts = [];
-  return layouts;
-};
+   module.exports = layouts;

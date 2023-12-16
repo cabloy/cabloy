@@ -1,65 +1,64 @@
 // const moduleInfo = module.info;
-module.exports = app => {
-  const content = {
-    info: {
-      layout: {
-        viewSize: {
-          view: {
-            small: 'content,default',
-            medium: 'content,default',
-            large: 'content,default',
-          },
-          edit: {
-            small: 'default,content',
-            medium: 'default,content',
-            large: 'default,content',
-          },
+
+const content = {
+  info: {
+    layout: {
+      viewSize: {
+        view: {
+          small: 'content,default',
+          medium: 'content,default',
+          large: 'content,default',
+        },
+        edit: {
+          small: 'default,content',
+          medium: 'default,content',
+          large: 'default,content',
         },
       },
     },
-    layouts: {
-      base: {
-        extend: {
+  },
+  layouts: {
+    base: {
+      extend: {
+        component: {
+          module: 'a-cms',
+          name: 'itemLayoutExtend',
+        },
+      },
+    },
+    default: {
+      title: 'LayoutInfo',
+      blocks: {
+        main: {
           component: {
             module: 'a-cms',
-            name: 'itemLayoutExtend',
+            name: 'itemLayoutBlockMobileMain',
           },
-        },
-      },
-      default: {
-        title: 'LayoutInfo',
-        blocks: {
-          main: {
-            component: {
-              module: 'a-cms',
-              name: 'itemLayoutBlockMobileMain',
-            },
-            info: true,
-          },
-        },
-      },
-      content: {
-        title: 'LayoutContent',
-        blocks: {
-          main: {
-            component: {
-              module: 'a-cms',
-              name: 'itemLayoutBlockMobileMain',
-            },
-            markdown: true,
-          },
+          info: true,
         },
       },
     },
-  };
-  const layout = {
-    atomName: 'CMS',
-    atomStaticKey: 'layoutAtomItemCms',
-    atomRevision: 0,
-    description: '',
-    layoutTypeCode: 4,
-    content: JSON.stringify(content),
-    resourceRoles: 'root',
-  };
-  return layout;
+    content: {
+      title: 'LayoutContent',
+      blocks: {
+        main: {
+          component: {
+            module: 'a-cms',
+            name: 'itemLayoutBlockMobileMain',
+          },
+          markdown: true,
+        },
+      },
+    },
+  },
 };
+const layout = {
+  atomName: 'CMS',
+  atomStaticKey: 'layoutAtomItemCms',
+  atomRevision: 0,
+  description: '',
+  layoutTypeCode: 4,
+  content: JSON.stringify(content),
+  resourceRoles: 'root',
+};
+module.exports = layout;

@@ -5,13 +5,12 @@ const widgets = require('./resource/widgets.js');
 const blocks = require('./resource/blocks.js');
 const deprecateds = require('./resource/deprecateds.js');
 
-module.exports = app => {
+
   let resources = [];
-  resources = resources.concat(functions(app));
-  resources = resources.concat(menus(app));
-  resources = resources.concat(mines(app));
-  resources = resources.concat(widgets(app));
-  resources = resources.concat(blocks(app));
-  resources = resources.concat(deprecateds(app));
-  return resources;
-};
+  resources = resources.concat(functions );
+  resources = resources.concat(menus );
+  resources = resources.concat(mines );
+  resources = resources.concat(widgets );
+  resources = resources.concat(blocks );
+  resources = resources.concat(deprecateds );
+   module.exports = resources;

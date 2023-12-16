@@ -1,5 +1,5 @@
 const moduleInfo = module.info;
-module.exports = app => {
+
   const resources = [
     {
       atomName: 'Create <%=argv.atomClassNameCapitalize%>',
@@ -32,5 +32,4 @@ module.exports = app => {
       resourceRoles: 'authenticated',
     },
   ];
-  return resources;
-};
+   module.exports = resources;

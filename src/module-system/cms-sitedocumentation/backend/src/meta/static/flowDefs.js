@@ -1,6 +1,4 @@
 const documentPublish = require('./flowDef/documentPublish.js');
 
-module.exports = app => {
-  const flowDefs = [documentPublish(app)];
-  return flowDefs;
-};
+const flowDefs = [documentPublish];
+module.exports = flowDefs;

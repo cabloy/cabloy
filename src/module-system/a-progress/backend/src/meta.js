@@ -1,7 +1,7 @@
 module.exports = app => {
   // const schemas = require('./meta/validation/schemas.js');
   // socketio
-  const socketioProgress = require('./meta/socketio/progress.js')(app);
+  const socketioProgress = require('./meta/socketio/progress.js');
   const meta = {
     base: {
       atoms: {},

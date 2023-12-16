@@ -7,16 +7,14 @@ const layoutAtomListResource = require('./layout/layoutAtomListResource.js');
 const layoutAtomListRoleResourceRight = require('./layout/layoutAtomListRoleResourceRight.js');
 const layoutAtomListRoleFieldsRight = require('./layout/layoutAtomListRoleFieldsRight.js');
 
-module.exports = app => {
-  const layouts = [
-    layoutAtomItemRole(app), //
-    layoutAtomListRole(app),
-    layoutAtomListRoleRight(app),
-    layoutAtomItemUser(app),
-    layoutAtomListUser(app),
-    layoutAtomListResource(app),
-    layoutAtomListRoleResourceRight(app),
-    layoutAtomListRoleFieldsRight(app),
-  ];
-  return layouts;
-};
+const layouts = [
+  layoutAtomItemRole, //
+  layoutAtomListRole,
+  layoutAtomListRoleRight,
+  layoutAtomItemUser,
+  layoutAtomListUser,
+  layoutAtomListResource,
+  layoutAtomListRoleResourceRight,
+  layoutAtomListRoleFieldsRight,
+];
+module.exports = layouts;

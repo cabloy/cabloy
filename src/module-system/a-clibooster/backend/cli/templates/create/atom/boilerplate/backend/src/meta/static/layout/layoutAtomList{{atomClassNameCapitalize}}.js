@@ -1,5 +1,5 @@
 // const moduleInfo = module.info;
-module.exports = app => {
+
   const content = {
     layouts: {
       table: {
@@ -58,5 +58,4 @@ module.exports = app => {
     content: JSON.stringify(content),
     resourceRoles: 'root',
   };
-  return layout;
-};
+   module.exports = layout;

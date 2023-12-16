@@ -1,8 +1,7 @@
 // const layoutAtomList<%=argv.atomClassNameCapitalize%> = require('./layout/layoutAtomList<%=argv.atomClassNameCapitalize%>.js');
 
-module.exports = app => {
+
   const layouts = [
-    // layoutAtomList<%=argv.atomClassNameCapitalize%>(app),
+    // layoutAtomList<%=argv.atomClassNameCapitalize%>,
   ];
-  return layouts;
-};
+   module.exports = layouts;

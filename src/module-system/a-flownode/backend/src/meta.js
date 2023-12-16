@@ -1,7 +1,7 @@
 module.exports = app => {
   const schemas = require('./meta/validation/schemas.js');
-  const flowNodes = require('./meta/flow/nodes.js')(app);
-  const flowEdges = require('./meta/flow/edges.js')(app);
+  const flowNodes = require('./meta/flow/nodes.js');
+  const flowEdges = require('./meta/flow/edges.js');
   const meta = {
     base: {
       atoms: {},

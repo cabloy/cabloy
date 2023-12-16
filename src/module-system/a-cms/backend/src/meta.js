@@ -3,12 +3,12 @@ module.exports = app => {
   const keywords = require('./meta/validation/keywords.js');
   const schemas = require('./meta/validation/schemas.js');
   // socketio
-  const socketioHotloadFile = require('./meta/socketio/hotloadFile.js')(app);
+  const socketioHotloadFile = require('./meta/socketio/hotloadFile.js');
   // static
-  const staticApps = require('./meta/static/apps.js')(app);
-  const staticFlowDefs = require('./meta/static/flowDefs.js')(app);
-  const staticResources = require('./meta/static/resources.js')(app);
-  const staticLayouts = require('./meta/static/layouts.js')(app);
+  const staticApps = require('./meta/static/apps.js');
+  const staticFlowDefs = require('./meta/static/flowDefs.js');
+  const staticResources = require('./meta/static/resources.js');
+  const staticLayouts = require('./meta/static/layouts.js');
   // meta
   const meta = {
     base: {

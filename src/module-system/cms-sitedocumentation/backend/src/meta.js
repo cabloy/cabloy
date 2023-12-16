@@ -1,9 +1,9 @@
 module.exports = app => {
   const schemas = require('./meta/validation/schemas.js');
   // static
-  const staticApps = require('./meta/static/apps.js')(app);
-  const staticFlowDefs = require('./meta/static/flowDefs.js')(app);
-  const staticResources = require('./meta/static/resources.js')(app);
+  const staticApps = require('./meta/static/apps.js');
+  const staticFlowDefs = require('./meta/static/flowDefs.js');
+  const staticResources = require('./meta/static/resources.js');
   // meta
   const meta = {
     base: {

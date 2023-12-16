@@ -1,6 +1,4 @@
 const layoutAtomListAuthOpen = require('./layout/layoutAtomListAuthOpen.js');
 
-module.exports = app => {
-  const layouts = [layoutAtomListAuthOpen(app)];
-  return layouts;
-};
+const layouts = [layoutAtomListAuthOpen];
+module.exports = layouts;

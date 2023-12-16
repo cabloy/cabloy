@@ -1,4 +1,2 @@
-module.exports = app => {
-  const apps = [];
-  return apps;
-};
+const apps = [];
+module.exports = apps;

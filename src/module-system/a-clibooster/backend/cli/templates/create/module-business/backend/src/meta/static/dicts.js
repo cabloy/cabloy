@@ -1,4 +1,3 @@
-module.exports = app => {
+
   const dicts = [];
-  return dicts;
-};
+   module.exports = dicts;

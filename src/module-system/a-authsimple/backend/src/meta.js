@@ -1,6 +1,6 @@
 module.exports = app => {
   // auth
-  const auth = require('./meta/passport/auth.js')(app);
+  const auth = require('./meta/passport/auth.js');
   const keywords = require('./meta/validation/keywords.js');
   const schemas = require('./meta/validation/schemas.js');
   return {

@@ -1,6 +1,5 @@
 module.exports = app => {
-  // static
-  const staticLayouts = require('./meta/static/layouts.js')(app);
+  const staticLayouts = require('./meta/static/layouts.js');
   // meta
   const meta = {
     base: {

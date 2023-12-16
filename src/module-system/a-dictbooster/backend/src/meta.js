@@ -1,7 +1,6 @@
 module.exports = app => {
   const schemas = require('./meta/validation/schemas.js');
-  // static
-  const staticDicts = require('./meta/static/dicts.js')(app);
+  const staticDicts = require('./meta/static/dicts.js');
   const meta = {
     base: {
       atoms: {},

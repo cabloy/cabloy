@@ -1,9 +1,8 @@
 module.exports = app => {
   const schemas = require('./meta/validation/schemas.js');
-  // static
-  const staticDicts = require('./meta/static/dicts.js')(app);
-  const staticLayouts = require('./meta/static/layouts.js')(app);
-  const staticResources = require('./meta/static/resources.js')(app);
+  const staticDicts = require('./meta/static/dicts.js');
+  const staticLayouts = require('./meta/static/layouts.js');
+  const staticResources = require('./meta/static/resources.js');
   const meta = {
     base: {
       atoms: {},
