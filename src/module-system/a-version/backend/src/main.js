@@ -6,18 +6,16 @@ const errors = require('./config/errors.js');
 const constants = require('./config/constants.js');
 
 // eslint-disable-next-line
-module.exports = app => {
-  const beans = require('./beans.js');
-  const controllers = require('./controllers.js');
+const beans = require('./beans.js');
+const controllers = require('./controllers.js');
 
-  return {
-    beans,
-    routes,
-    controllers,
-    services,
-    config,
-    locales,
-    errors,
-    constants,
-  };
+module.exports = {
+  beans,
+  routes,
+  controllers,
+  services,
+  config,
+  locales,
+  errors,
+  constants,
 };

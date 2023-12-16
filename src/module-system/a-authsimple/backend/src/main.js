@@ -4,20 +4,18 @@ const models = require('./models.js');
 const config = require('./config/config.js');
 const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
-const metaFn = require('./meta.js');
+const meta = require('./meta.js');
 
-module.exports = app => {
-  const beans = require('./beans.js');
-  const controllers = require('./controllers.js');
-  return {
-    beans,
-    routes,
-    controllers,
-    services,
-    models,
-    config,
-    locales,
-    errors,
-    meta: metaFn(app),
-  };
+const beans = require('./beans.js');
+const controllers = require('./controllers.js');
+module.exports = {
+  beans,
+  routes,
+  controllers,
+  services,
+  models,
+  config,
+  locales,
+  errors,
+  meta,
 };

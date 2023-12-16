@@ -1,4 +1,4 @@
-const authFn = require('./meta/passport/auth.js');
+const auth = require('./meta/passport/auth.js');
 
 // actionPathListOpenAuthSelf
 const _options = {
@@ -14,7 +14,7 @@ const staticLayouts = require('./meta/static/layouts.js');
 const staticResources = require('./meta/static/resources.js');
 // meta
 const meta = {
-  auth: authFn,
+  auth,
   base: {
     atoms: {
       authOpen: {

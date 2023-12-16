@@ -3,28 +3,26 @@ const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 const aops = require('./aops.js');
 
-module.exports = app => {
-  const beans = require('./beans.js');
-  const routes = require('./routes.js');
-  const controllers = require('./controllers.js');
-  const services = require('./services.js');
-  const models = require('./models.js');
-  // meta
-  const meta = require('./meta.js');
-  // /// hook
-  // const hook = require('./hook.js');
+const beans = require('./beans.js');
+const routes = require('./routes.js');
+const controllers = require('./controllers.js');
+const services = require('./services.js');
+const models = require('./models.js');
+// meta
+const meta = require('./meta.js');
+// /// hook
+// const hook = require('./hook.js');
 
-  return {
-    aops,
-    beans,
-    routes,
-    controllers,
-    services,
-    models,
-    config,
-    locales,
-    errors,
-    meta,
-    // hook,
-  };
+module.exports = {
+  aops,
+  beans,
+  routes,
+  controllers,
+  services,
+  models,
+  config,
+  locales,
+  errors,
+  meta,
+  // hook,
 };

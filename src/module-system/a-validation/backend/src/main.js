@@ -6,26 +6,24 @@ const errors = require('./config/errors.js');
 const constants = require('./config/constants.js');
 
 // eslint-disable-next-line
-module.exports = app => {
-  const beans = require('./beans.js');
-  // meta
-  const meta = require('./meta.js');
-  const routes = require('./routes.js');
-  const controllers = require('./controllers.js');
+const beans = require('./beans.js');
+// meta
+const meta = require('./meta.js');
+const routes = require('./routes.js');
+const controllers = require('./controllers.js');
 
-  // ajv
-  app.meta.ajv = require('./ajv/ajv.js');
+// ajv
+app.meta.ajv = require('./ajv/ajv.js');
 
-  return {
-    beans,
-    routes,
-    controllers,
-    services,
-    models,
-    config,
-    locales,
-    errors,
-    constants,
-    meta,
-  };
+module.exports = {
+  beans,
+  routes,
+  controllers,
+  services,
+  models,
+  config,
+  locales,
+  errors,
+  constants,
+  meta,
 };

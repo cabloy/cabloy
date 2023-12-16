@@ -5,14 +5,12 @@ const locales = require('./config/locales.js');
 const errors = require('./config/errors.js');
 
 // eslint-disable-next-line
-module.exports = app => {
-  const controllers = require('./controllers.js');
-  return {
-    routes,
-    controllers,
-    services,
-    config,
-    locales,
-    errors,
-  };
+const controllers = require('./controllers.js');
+module.exports = {
+  routes,
+  controllers,
+  services,
+  config,
+  locales,
+  errors,
 };
