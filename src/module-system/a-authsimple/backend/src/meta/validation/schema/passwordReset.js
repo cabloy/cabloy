@@ -1,29 +1,27 @@
-module.exports = app => {
-  const schemas = {};
-  schemas.passwordReset = {
-    type: 'object',
-    properties: {
-      passwordNew: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'New Password',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        minLength: 6,
+const schemas = {};
+schemas.passwordReset = {
+  type: 'object',
+  properties: {
+    passwordNew: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'New Password',
+      ebParams: {
+        secure: true,
       },
-      passwordNewAgain: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'New Password Again',
-        ebParams: {
-          secure: true,
-        },
-        notEmpty: true,
-        const: { $data: '1/passwordNew' },
-      },
+      notEmpty: true,
+      minLength: 6,
     },
-  };
-  return schemas;
+    passwordNewAgain: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'New Password Again',
+      ebParams: {
+        secure: true,
+      },
+      notEmpty: true,
+      const: { $data: '1/passwordNew' },
+    },
+  },
 };
+module.exports = schemas;

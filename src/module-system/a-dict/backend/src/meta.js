@@ -1,7 +1,6 @@
 module.exports = app => {
   const atomClasses = require('./meta/atomClass/atomClasses.js');
-  // schemas
-  const schemas = require('./meta/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js');
   // static
   const staticLayouts = require('./meta/static/layouts.js')(app);
   const staticResources = require('./meta/static/resources.js')(app);

@@ -10,8 +10,7 @@ const actionPathListOpenAuthSelf = `/a/basefront/atom/list?module=a-authopen&ato
 )}`;
 
 module.exports = app => {
-  // schemas
-  const schemas = require('./meta/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js');
   // static
   const staticLayouts = require('./meta/static/layouts.js')(app);
   const staticResources = require('./meta/static/resources.js')(app);

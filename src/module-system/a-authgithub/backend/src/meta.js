@@ -1,7 +1,6 @@
 const authFn = require('./meta/passport/auth.js');
 module.exports = app => {
-  // schemas
-  const schemas = require('./meta/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js');
   return {
     auth: authFn,
     validation: {

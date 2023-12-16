@@ -1,6 +1,5 @@
 module.exports = app => {
-  // schemas
-  const schemas = require('./meta/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js');
   // socketio
   const socketioMessageMail = require('./meta/socketio/messageMail.js')(app);
   const socketioChannelMail = require('./meta/socketio/channelMail.js')(app);

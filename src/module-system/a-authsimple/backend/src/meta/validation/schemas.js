@@ -5,14 +5,12 @@ const passwordReset = require('./schema/passwordReset.js');
 const signin = require('./schema/signin.js');
 const signup = require('./schema/signup.js');
 
-module.exports = app => {
-  const schemas = {};
-  Object.assign(schemas, emailConfirm(app));
-  Object.assign(schemas, passwordChange(app));
-  Object.assign(schemas, passwordForgot(app));
-  Object.assign(schemas, passwordReset(app));
-  Object.assign(schemas, signin(app));
-  Object.assign(schemas, signup(app));
-  // ok
-  return schemas;
-};
+const schemas = {};
+Object.assign(schemas, emailConfirm);
+Object.assign(schemas, passwordChange);
+Object.assign(schemas, passwordForgot);
+Object.assign(schemas, passwordReset);
+Object.assign(schemas, signin);
+Object.assign(schemas, signup);
+// ok
+module.exports = schemas;

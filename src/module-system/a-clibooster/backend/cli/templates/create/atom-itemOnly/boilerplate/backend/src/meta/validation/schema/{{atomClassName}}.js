@@ -1,4 +1,4 @@
-module.exports = app => {
+
   const schemas = {};
   // <%=argv.atomClassName%>
   schemas.<%=argv.atomClassName%> = {
@@ -33,5 +33,4 @@ module.exports = app => {
       },
     },
   };
-  return schemas;
-};
+   module.exports = schemas;

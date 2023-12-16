@@ -1,23 +1,21 @@
-module.exports = app => {
-  const schemas = {};
-  schemas.emailConfirm = {
-    type: 'object',
-    properties: {
-      userName: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Username',
-        ebReadOnly: true,
-      },
-      email: {
-        type: 'string',
-        ebType: 'text',
-        ebTitle: 'Email',
-        notEmpty: true,
-        format: 'email',
-        'x-exists': true,
-      },
+const schemas = {};
+schemas.emailConfirm = {
+  type: 'object',
+  properties: {
+    userName: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Username',
+      ebReadOnly: true,
     },
-  };
-  return schemas;
+    email: {
+      type: 'string',
+      ebType: 'text',
+      ebTitle: 'Email',
+      notEmpty: true,
+      format: 'email',
+      'x-exists': true,
+    },
+  },
 };
+module.exports = schemas;

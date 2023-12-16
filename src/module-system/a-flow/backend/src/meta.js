@@ -1,5 +1,5 @@
 module.exports = app => {
-  const schemas = require('./meta/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js');
   const staticResources = require('./meta/static/resources.js')(app);
   const socketioWorkflow = require('./meta/socketio/workflow.js')(app);
   const flowBehaviors = require('./meta/flow/behaviors.js')(app);

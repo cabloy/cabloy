@@ -1,5 +1,5 @@
 module.exports = app => {
-  const schemas = require('./meta/validation/schemas.js')(app);
+  const schemas = require('./meta/validation/schemas.js');
   const meta = {
     validation: {
       validators: {},

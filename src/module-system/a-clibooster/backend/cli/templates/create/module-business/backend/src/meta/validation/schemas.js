@@ -1,9 +1,8 @@
 const <%=argv.atomClassName%> = require('./schema/<%=argv.atomClassName%>.js');
 
-module.exports = app => {
+
   const schemas = {};
   // <%=argv.atomClassName%>
-  Object.assign(schemas, <%=argv.atomClassName%>(app));
+  Object.assign(schemas, <%=argv.atomClassName%>);
   // ok
-  return schemas;
-};
+   module.exports = schemas;

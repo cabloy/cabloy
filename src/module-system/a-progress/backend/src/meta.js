@@ -1,5 +1,5 @@
 module.exports = app => {
-  // const schemas = require('./meta/validation/schemas.js')(app);
+  // const schemas = require('./meta/validation/schemas.js');
   // socketio
   const socketioProgress = require('./meta/socketio/progress.js')(app);
   const meta = {

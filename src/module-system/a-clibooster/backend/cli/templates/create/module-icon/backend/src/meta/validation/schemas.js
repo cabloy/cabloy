@@ -1,4 +1,3 @@
-module.exports = app => {
+
   const schemas = {};
-  return schemas;
-};
+   module.exports = schemas;
