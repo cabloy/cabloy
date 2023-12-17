@@ -53,7 +53,7 @@ module.exports = (app, ctx) => {
       // class
       if (is.class(beanFullName)) {
         const beanInstance = new beanFullName(...args);
-        return this._patchBeanInstance(beanInstance, args, beanFullName);
+        return this._patchBeanInstance(beanInstance, args, beanFullName, beanFullName, false);
       }
       // string
       const _beanClass = this._getBeanClass(beanFullName);
@@ -100,9 +100,9 @@ module.exports = (app, ctx) => {
         throw new Error(`bean class not found: ${beanFullName}`);
       }
       // patch
-      return this._patchBeanInstance(beanInstance, args, beanFullName, _beanClass.aop);
+      return this._patchBeanInstance(beanInstance, args, beanFullName, _beanClass, _beanClass.aop);
     },
-    _patchBeanInstance(beanInstance, args, beanFullName, isAop) {
+    _patchBeanInstance(beanInstance, args, beanFullName, _beanClass, isAop) {
       if (app) {
         __setPropertyValue(beanInstance, 'app', app);
       }
@@ -123,16 +123,16 @@ module.exports = (app, ctx) => {
       // no aop
       if (_aopChains.length === 0) return beanInstance;
       // aop
-      return this._newBeanProxy(beanFullName, beanInstance);
+      return this._newBeanProxy(beanFullName, beanInstance, _beanClass);
     },
-    _newBeanProxy(beanFullName, beanInstance) {
+    _newBeanProxy(beanFullName, beanInstance, _beanClass) {
       const self = this;
       return new Proxy(beanInstance, {
         get(target, prop, receiver) {
           if (typeof prop === 'symbol') {
             return target[prop];
           }
-          const descriptorInfo = __getPropertyDescriptor(target, prop);
+          const descriptorInfo = __getPropertyDescriptor(target, prop, _beanClass);
           if (descriptorInfo && descriptorInfo.dynamic) return target[prop];
           const methodType = __methodTypeOfDescriptor(descriptorInfo);
           // get prop
@@ -170,7 +170,7 @@ module.exports = (app, ctx) => {
             target[prop] = value;
             return true;
           }
-          const descriptorInfo = __getPropertyDescriptor(target, prop);
+          const descriptorInfo = __getPropertyDescriptor(target, prop, _beanClass);
           if (descriptorInfo && descriptorInfo.dynamic) {
             target[prop] = value;
             return true;
@@ -341,9 +341,19 @@ module.exports = (app, ctx) => {
   });
 };
 
-function __getPropertyDescriptor(obj, prop) {
+function __getPropertyDescriptor(obj, prop, _beanClass) {
+  // dynamic
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
   if (descriptor) return { descriptor, dynamic: true };
+  // static
+  const propKey = `__aopPropertyDescriptor_${prop}__`;
+  if (_beanClass[propKey] === undefined) {
+    _beanClass[propKey] = __getPropertyDescriptorStatic(obj, prop);
+  }
+  return _beanClass[propKey];
+}
+
+function __getPropertyDescriptorStatic(obj, prop) {
   let proto = Object.getPrototypeOf(obj);
   while (proto) {
     const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
