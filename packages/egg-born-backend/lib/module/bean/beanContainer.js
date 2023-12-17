@@ -158,7 +158,8 @@ module.exports = (app, ctx) => {
             return true;
           }
           const methodName = `__set_${prop}__`;
-          const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
+          const methodNameMagic = '__set__';
+          const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName, methodNameMagic);
           if (_aopChainsProp.length === 0) {
             target[prop] = value;
             return true;
@@ -267,9 +268,9 @@ module.exports = (app, ctx) => {
   };
 
   const __composeForPropAdapter = (context, chain) => {
-    const aop = beanContainer._getBean(chain);
+    const [key, methodName] = chain;
+    const aop = beanContainer._getBean(key);
     if (!aop) throw new Error(`aop not found: ${chain}`);
-    const methodName = context.method || context.prop;
     if (!aop[methodName]) return null;
     return {
       receiver: aop,
