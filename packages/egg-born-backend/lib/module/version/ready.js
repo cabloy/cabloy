@@ -51,7 +51,7 @@ module.exports = function (app) {
 
 async function _versionReady(app) {
   // clear keys
-  clearFn(app);
+  await clearFn(app);
 
   // run startups: not after
   for (const startup of app.meta.startupsArray) {

@@ -1,7 +1,9 @@
+const path = require('path');
+const fse = require('fs-extra');
+
 module.exports = async function (app) {
   if (!app.meta.isTest) return;
   // clear keys
-
   await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
   await _clearRedisKeys(app.redis.get('queue'), `bull_${app.name}:*`);
   // broadcast channel has subscribed
@@ -14,6 +16,8 @@ module.exports = async function (app) {
   for (const clientName of app.config.queue.redlock.clients) {
     await _clearRedisKeys(app.redis.get(clientName), `redlock_${app.name}:*`);
   }
+  // src/backend/app/public
+  await fse.remove(path.join(app.config.baseDir, 'app/public/1'));
 };
 
 async function _clearRedisKeys(redis, pattern) {
