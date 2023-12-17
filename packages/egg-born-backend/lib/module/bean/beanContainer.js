@@ -126,7 +126,7 @@ module.exports = (app, ctx) => {
             if (typeof prop === 'symbol') {
               return target[prop];
             }
-            const methodName = descriptor ? `get__${prop}` : 'get__magic__';
+            const methodName = descriptor ? `__get_${prop}__` : '__get__';
             const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
             if (_aopChainsProp.length === 0) return target[prop];
             // context
@@ -156,7 +156,7 @@ module.exports = (app, ctx) => {
             target[prop] = value;
             return true;
           }
-          const methodName = `set__${prop}`;
+          const methodName = `__set_${prop}__`;
           const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
           if (_aopChainsProp.length === 0) {
             target[prop] = value;
