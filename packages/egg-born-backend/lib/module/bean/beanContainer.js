@@ -112,12 +112,7 @@ module.exports = (app, ctx) => {
         beanInstance.__init__(...args);
       }
       if (beanFullName) {
-        Object.defineProperty(beanInstance, '__beanFullName__', {
-          enumerable: false,
-          get() {
-            return beanFullName;
-          },
-        });
+        __setPropertyValue(beanInstance, '__beanFullName__', beanFullName);
       }
       return beanInstance;
     },
@@ -189,9 +184,9 @@ module.exports = (app, ctx) => {
       const _aopChainsProp = this._getAopChainsProp(beanFullName, beanInstance, prop);
       if (_aopChainsProp.length === 0) return beanInstance[prop];
       // proxy
-      const methodProxyKey = `_aopproxy_method_${prop}`;
+      const methodProxyKey = `__aopproxy_method_${prop}__`;
       if (beanInstance[methodProxyKey]) return beanInstance[methodProxyKey];
-      beanInstance[methodProxyKey] = new Proxy(beanInstance[prop], {
+      const methodProxy = new Proxy(beanInstance[prop], {
         apply(target, thisArg, args) {
           // context
           const context = {
@@ -230,11 +225,12 @@ module.exports = (app, ctx) => {
           }
         },
       });
-      return beanInstance[methodProxyKey];
+      __setPropertyValue(beanInstance, methodProxyKey, methodProxy);
+      return methodProxy;
     },
     _getAopChains(beanFullName) {
       const _beanClass = this._getBeanClass(beanFullName);
-      if (_beanClass._aopChains) return _beanClass._aopChains;
+      if (_beanClass.__aopChains__) return _beanClass.__aopChains__;
       const chains = [];
       for (const key in app.meta.aops) {
         const aop = app.meta.aops[key];
@@ -247,11 +243,11 @@ module.exports = (app, ctx) => {
           chains.push(key);
         }
       }
-      _beanClass._aopChains = chains;
+      __setPropertyValue(_beanClass, '__aopChains__', chains);
       return chains;
     },
     _getAopChainsProp(beanFullName, beanInstance, methodName) {
-      const chainsKey = `_aopChains_${methodName}`;
+      const chainsKey = `__aopChains_${methodName}__`;
       const _beanClass = this._getBeanClass(beanFullName);
       if (_beanClass[chainsKey]) return _beanClass[chainsKey];
       const _aopChains = this._getAopChains(beanFullName);
@@ -262,7 +258,7 @@ module.exports = (app, ctx) => {
           chains.push(key);
         }
       }
-      _beanClass[chainsKey] = chains;
+      __setPropertyValue(_beanClass, chainsKey, chains);
       return chains;
     },
   };
@@ -309,4 +305,13 @@ function __aopMatch(match, beanFullName) {
     return (typeof match === 'string' && match === beanFullName) || (is.regExp(match) && match.test(beanFullName));
   }
   return match.some(item => __aopMatch(item, beanFullName));
+}
+
+function __setPropertyValue(obj, prop, value) {
+  Object.defineProperty(obj, prop, {
+    enumerable: false,
+    get() {
+      return value;
+    },
+  });
 }
