@@ -111,13 +111,7 @@ module.exports = (app, ctx) => {
         __setPropertyValue(beanInstance, '__beanFullName__', beanFullName);
       }
       // aop chains
-      let _aopChains;
-      if (is.class(beanFullName)) {
-        _aopChains = [];
-      } else {
-        _aopChains = this._getAopChains(beanFullName);
-      }
-      // magic self
+      const _aopChains = this._getAopChains(beanFullName);
       // no aop
       if (_aopChains.length === 0) return beanInstance;
       // aop
