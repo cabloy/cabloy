@@ -132,9 +132,11 @@ module.exports = (app, ctx) => {
           if (typeof prop === 'symbol') {
             return target[prop];
           }
-          const descriptor = __getPropertyDescriptor(target, prop);
+          const descriptorInfo = __getPropertyDescriptor(target, prop);
+          if (descriptorInfo && descriptorInfo.dynamic) return target[prop];
+          const methodType = __methodTypeOfDescriptor(descriptorInfo);
           // get prop
-          if (!descriptor || descriptor.get) {
+          if (!methodType) {
             const methodName = `__get_${prop}__`;
             const methodNameMagic = '__get__';
             const _aopChainsProp = self._getAopChainsProp(beanFullName, methodName, methodNameMagic);
@@ -149,10 +151,9 @@ module.exports = (app, ctx) => {
             // aop
             __composeForProp(_aopChainsProp)(context, (context, next) => {
               if (context.value === undefined) {
-                if (!descriptor && target.__get__) {
+                if (!descriptorInfo && target.__get__) {
                   context.value = target.__get__(prop);
-                }
-                if (context.value === undefined) {
+                } else {
                   context.value = target[prop];
                 }
               }
@@ -162,11 +163,15 @@ module.exports = (app, ctx) => {
             return context.value;
           }
           // method
-          const methodType = descriptor.value && descriptor.value.constructor && descriptor.value.constructor.name;
           return self._getInstanceMethodProxy(beanFullName, target, prop, methodType);
         },
         set(target, prop, value, receiver) {
           if (typeof prop === 'symbol') {
+            target[prop] = value;
+            return true;
+          }
+          const descriptorInfo = __getPropertyDescriptor(target, prop);
+          if (descriptorInfo && descriptorInfo.dynamic) {
             target[prop] = value;
             return true;
           }
@@ -186,8 +191,7 @@ module.exports = (app, ctx) => {
           };
           // aop
           __composeForProp(_aopChainsProp)(context, (context, next) => {
-            const descriptor = __getPropertyDescriptor(target, prop);
-            if (!descriptor && target.__set__) {
+            if (!descriptorInfo && target.__set__) {
               target.__set__(prop, context.value);
             } else {
               target[prop] = context.value;
@@ -339,11 +343,11 @@ module.exports = (app, ctx) => {
 
 function __getPropertyDescriptor(obj, prop) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
-  if (descriptor) return descriptor;
+  if (descriptor) return { descriptor, dynamic: true };
   let proto = Object.getPrototypeOf(obj);
   while (proto) {
     const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
-    if (descriptor) return descriptor;
+    if (descriptor) return { descriptor, dynamic: false };
     proto = Object.getPrototypeOf(proto);
   }
   return null;
@@ -367,4 +371,16 @@ function __setPropertyValue(obj, prop, value) {
 
 function __hasMagicMothod(instance) {
   return !!instance.__get__ || !!instance.__set__;
+}
+
+function __methodTypeOfDescriptor(descriptorInfo) {
+  if (!descriptorInfo) return null;
+  const { descriptor, dynamic } = descriptorInfo;
+  if (dynamic) return null;
+  if (descriptor.get) return null;
+  const methodType = descriptor.value?.constructor?.name;
+  if (['Function', 'AsyncFunction'].includes(methodType)) {
+    return methodType;
+  }
+  return null;
 }
