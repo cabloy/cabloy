@@ -103,8 +103,12 @@ module.exports = (app, ctx) => {
       return this._patchBeanInstance(beanInstance, args, beanFullName, _beanClass.aop);
     },
     _patchBeanInstance(beanInstance, args, beanFullName, isAop) {
-      if (app) beanInstance.app = app;
-      if (ctx) beanInstance.ctx = ctx;
+      if (app) {
+        __setPropertyValue(beanInstance, 'app', app);
+      }
+      if (ctx) {
+        __setPropertyValue(beanInstance, 'ctx', ctx);
+      }
       if (beanInstance.__init__) {
         beanInstance.__init__(...args);
       }
@@ -125,12 +129,12 @@ module.exports = (app, ctx) => {
       const self = this;
       return new Proxy(beanInstance, {
         get(target, prop, receiver) {
+          if (typeof prop === 'symbol') {
+            return target[prop];
+          }
           const descriptor = __getPropertyDescriptor(target, prop);
           // get prop
           if (!descriptor || descriptor.get) {
-            if (typeof prop === 'symbol') {
-              return target[prop];
-            }
             const methodName = `__get_${prop}__`;
             const methodNameMagic = '__get__';
             const _aopChainsProp = self._getAopChainsProp(beanFullName, methodName, methodNameMagic);
@@ -334,6 +338,8 @@ module.exports = (app, ctx) => {
 };
 
 function __getPropertyDescriptor(obj, prop) {
+  const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+  if (descriptor) return descriptor;
   let proto = Object.getPrototypeOf(obj);
   while (proto) {
     const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
