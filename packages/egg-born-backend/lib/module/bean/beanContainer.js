@@ -100,9 +100,9 @@ module.exports = (app, ctx) => {
         throw new Error(`bean class not found: ${beanFullName}`);
       }
       // patch
-      return this._patchBeanInstance(beanInstance, args, beanFullName);
+      return this._patchBeanInstance(beanInstance, args, beanFullName, _beanClass.aop);
     },
-    _patchBeanInstance(beanInstance, args, beanFullName) {
+    _patchBeanInstance(beanInstance, args, beanFullName, isAop) {
       if (app) beanInstance.app = app;
       if (ctx) beanInstance.ctx = ctx;
       if (beanInstance.__init__) {
@@ -112,6 +112,8 @@ module.exports = (app, ctx) => {
       if (!is.class(beanFullName)) {
         __setPropertyValue(beanInstance, '__beanFullName__', beanFullName);
       }
+      // not aop on aop
+      if (isAop) return beanInstance;
       // aop chains
       const _aopChains = this._prepareAopChains(beanFullName, beanInstance);
       // no aop
@@ -129,9 +131,9 @@ module.exports = (app, ctx) => {
             if (typeof prop === 'symbol') {
               return target[prop];
             }
-            const methodName = descriptor ? `__get_${prop}__` : '__get__';
-            const methodNameMagic = descriptor ? '__get__' : null;
-            const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName, methodNameMagic);
+            const methodName = `__get_${prop}__`;
+            const methodNameMagic = '__get__';
+            const _aopChainsProp = self._getAopChainsProp(beanFullName, methodName, methodNameMagic);
             if (_aopChainsProp.length === 0) return target[prop];
             // context
             const context = {
@@ -143,7 +145,11 @@ module.exports = (app, ctx) => {
             // aop
             __composeForProp(_aopChainsProp)(context, (context, next) => {
               if (context.value === undefined) {
-                context.value = target[prop];
+                if (descriptor) {
+                  context.value = target[prop];
+                } // else if (target.__get__) {
+                // context.value = target.__get__(prop);
+                // }
               }
               next();
             });
@@ -161,7 +167,7 @@ module.exports = (app, ctx) => {
           }
           const methodName = `__set_${prop}__`;
           const methodNameMagic = '__set__';
-          const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName, methodNameMagic);
+          const _aopChainsProp = self._getAopChainsProp(beanFullName, methodName, methodNameMagic);
           if (_aopChainsProp.length === 0) {
             target[prop] = value;
             return true;
@@ -184,7 +190,12 @@ module.exports = (app, ctx) => {
       });
     },
     _getInstanceMethodProxy(beanFullName, beanInstance, prop, methodType) {
-      const _aopChainsProp = this._getAopChainsProp(beanFullName, beanInstance, prop);
+      // not aop magic methods
+      if (['__get__', '__set__'].includes(prop)) {
+        return beanInstance[prop];
+      }
+      // aop chains
+      const _aopChainsProp = this._getAopChainsProp(beanFullName, prop);
       if (_aopChainsProp.length === 0) return beanInstance[prop];
       // proxy
       const methodProxyKey = `__aopproxy_method_${prop}__`;
@@ -263,7 +274,7 @@ module.exports = (app, ctx) => {
       const _beanClass = this._getBeanClass(beanFullName);
       return _beanClass.__aopChains__;
     },
-    _getAopChainsProp(beanFullName, beanInstance, methodName, methodNameMagic) {
+    _getAopChainsProp(beanFullName, methodName, methodNameMagic) {
       const chainsKey = `__aopChains_${methodName}__`;
       const _beanClass = this._getBeanClass(beanFullName);
       if (_beanClass[chainsKey]) return _beanClass[chainsKey];
