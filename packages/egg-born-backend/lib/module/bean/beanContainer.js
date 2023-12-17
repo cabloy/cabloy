@@ -1,4 +1,5 @@
 const is = require('is-type-of');
+const ProxyMagic = require('./proxyMagic.js');
 
 module.exports = (app, ctx) => {
   const beanContainer = {
@@ -28,6 +29,7 @@ module.exports = (app, ctx) => {
       return beanFullName;
     },
     _getBeanClass(beanFullName) {
+      if (is.class(beanFullName)) return beanFullName;
       // need not support object mode
       return app.meta.beans[beanFullName];
     },
@@ -111,7 +113,7 @@ module.exports = (app, ctx) => {
         __setPropertyValue(beanInstance, '__beanFullName__', beanFullName);
       }
       // aop chains
-      const _aopChains = this._getAopChains(beanFullName);
+      const _aopChains = this._prepareAopChains(beanFullName, beanInstance);
       // no aop
       if (_aopChains.length === 0) return beanInstance;
       // aop
@@ -229,23 +231,37 @@ module.exports = (app, ctx) => {
       __setPropertyValue(beanInstance, methodProxyKey, methodProxy);
       return methodProxy;
     },
-    _getAopChains(beanFullName) {
+    _prepareAopChains(beanFullName, beanInstance) {
+      // beanFullName maybe class
       const _beanClass = this._getBeanClass(beanFullName);
       if (_beanClass.__aopChains__) return _beanClass.__aopChains__;
+      // chains
       const chains = [];
-      for (const key in app.meta.aops) {
-        const aop = app.meta.aops[key];
-        // not self
-        if (key === beanFullName) continue;
-        // check if match aop
-        if (_beanClass.aop && !aop.matchAop) continue;
-        // match
-        if (__aopMatch(aop.match, beanFullName)) {
-          chains.push(key);
+      if (!is.class(beanFullName)) {
+        for (const key in app.meta.aops) {
+          const aop = app.meta.aops[key];
+          // not self
+          if (key === beanFullName) continue;
+          // check if match aop
+          if (_beanClass.aop && !aop.matchAop) continue;
+          // match
+          if (__aopMatch(aop.match, beanFullName)) {
+            chains.push(key);
+          }
         }
       }
+      // magic self
+      if (__hasMagicMothod(beanInstance)) {
+        chains.push(ProxyMagic);
+      }
+      // hold
       __setPropertyValue(_beanClass, '__aopChains__', chains);
       return chains;
+    },
+    _getAopChains(beanFullName) {
+      // beanFullName maybe class
+      const _beanClass = this._getBeanClass(beanFullName);
+      return _beanClass.__aopChains__;
     },
     _getAopChainsProp(beanFullName, beanInstance, methodName, methodNameMagic) {
       const chainsKey = `__aopChains_${methodName}__`;
@@ -317,4 +333,8 @@ function __setPropertyValue(obj, prop, value) {
       return value;
     },
   });
+}
+
+function __hasMagicMothod(instance) {
+  return !!instance.__get__ || !!instance.__set__;
 }
