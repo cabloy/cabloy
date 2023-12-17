@@ -145,11 +145,11 @@ module.exports = (app, ctx) => {
             // aop
             __composeForProp(_aopChainsProp)(context, (context, next) => {
               if (context.value === undefined) {
-                if (descriptor) {
+                if (!descriptor && target.__get__) {
+                  context.value = target.__get__(prop);
+                } else {
                   context.value = target[prop];
-                } // else if (target.__get__) {
-                // context.value = target.__get__(prop);
-                // }
+                }
               }
               next();
             });
@@ -181,7 +181,12 @@ module.exports = (app, ctx) => {
           };
           // aop
           __composeForProp(_aopChainsProp)(context, (context, next) => {
-            target[prop] = context.value;
+            const descriptor = __getPropertyDescriptor(target, prop);
+            if (!descriptor && target.__set__) {
+              target.__set__(prop, context.value);
+            } else {
+              target[prop] = context.value;
+            }
             next();
           });
           // ok
