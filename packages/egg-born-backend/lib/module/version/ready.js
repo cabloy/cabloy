@@ -1,4 +1,5 @@
 const constant = require('../../base/constants.js');
+const clearFn = require('./clear.js');
 
 module.exports = function (app) {
   return {
@@ -50,20 +51,7 @@ module.exports = function (app) {
 
 async function _versionReady(app) {
   // clear keys
-  if (app.meta.isTest) {
-    await _clearRedisKeys(app.redis.get('limiter'), `b_${app.name}:*`);
-    await _clearRedisKeys(app.redis.get('queue'), `bull_${app.name}:*`);
-    // broadcast channel has subscribed
-    // await _clearRedisKeys(app.redis.get('broadcast'), `broadcast_${app.name}:*`);
-    await _clearRedisKeys(app.redis.get('cache'), `cache_${app.name}:*`);
-    await _clearRedisKeys(app.redis.get('io'), `io_${app.name}:*`);
-    await _clearRedisKeys(app.redis.get('auth'), `auth_${app.name}:*`);
-    await _clearRedisKeys(app.redis.get('summer'), `summer_${app.name}:*`);
-    // redlock
-    for (const clientName of app.config.queue.redlock.clients) {
-      await _clearRedisKeys(app.redis.get(clientName), `redlock_${app.name}:*`);
-    }
-  }
+  clearFn(app);
 
   // run startups: not after
   for (const startup of app.meta.startupsArray) {
@@ -111,19 +99,5 @@ async function _versionReady(app) {
       context: subdomain,
       fn: '__instanceTest',
     });
-  }
-}
-
-async function _clearRedisKeys(redis, pattern) {
-  if (!redis) return;
-  const keyPrefix = redis.options.keyPrefix;
-  const keys = await redis.keys(pattern);
-  const keysDel = [];
-  for (const fullKey of keys) {
-    const key = keyPrefix ? fullKey.substr(keyPrefix.length) : fullKey;
-    keysDel.push(key);
-  }
-  if (keysDel.length > 0) {
-    await redis.del(keysDel);
   }
 }
