@@ -270,11 +270,15 @@ module.exports = (app, ctx) => {
       const _aopChains = this._getAopChains(beanFullName);
       const chains = [];
       for (const key of _aopChains) {
-        const aop = this._getBean(key);
-        if (aop[methodName]) {
-          chains.push([key, methodName]);
-        } else if (methodNameMagic && aop[methodNameMagic]) {
-          chains.push([key, methodNameMagic]);
+        if (key === ProxyMagic) {
+          chains.push(ProxyMagic);
+        } else {
+          const aop = this._getBean(key);
+          if (aop[methodName]) {
+            chains.push([key, methodName]);
+          } else if (methodNameMagic && aop[methodNameMagic]) {
+            chains.push([key, methodNameMagic]);
+          }
         }
       }
       __setPropertyValue(_beanClass, chainsKey, chains);
@@ -283,6 +287,9 @@ module.exports = (app, ctx) => {
   };
 
   const __composeForPropAdapter = (context, chain) => {
+    // ProxyMagic
+    if (chain === ProxyMagic) return null;
+    // chain
     const [key, methodName] = chain;
     const aop = beanContainer._getBean(key);
     if (!aop) throw new Error(`aop not found: ${chain}`);
