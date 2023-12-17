@@ -147,7 +147,8 @@ module.exports = (app, ctx) => {
               if (context.value === undefined) {
                 if (!descriptor && target.__get__) {
                   context.value = target.__get__(prop);
-                } else {
+                }
+                if (context.value === undefined) {
                   context.value = target[prop];
                 }
               }
