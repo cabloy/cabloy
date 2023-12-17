@@ -127,7 +127,8 @@ module.exports = (app, ctx) => {
               return target[prop];
             }
             const methodName = descriptor ? `__get_${prop}__` : '__get__';
-            const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName);
+            const methodNameMagic = descriptor ? '__get__' : null;
+            const _aopChainsProp = self._getAopChainsProp(beanFullName, target, methodName, methodNameMagic);
             if (_aopChainsProp.length === 0) return target[prop];
             // context
             const context = {
@@ -246,7 +247,7 @@ module.exports = (app, ctx) => {
       __setPropertyValue(_beanClass, '__aopChains__', chains);
       return chains;
     },
-    _getAopChainsProp(beanFullName, beanInstance, methodName) {
+    _getAopChainsProp(beanFullName, beanInstance, methodName, methodNameMagic) {
       const chainsKey = `__aopChains_${methodName}__`;
       const _beanClass = this._getBeanClass(beanFullName);
       if (_beanClass[chainsKey]) return _beanClass[chainsKey];
@@ -255,7 +256,9 @@ module.exports = (app, ctx) => {
       for (const key of _aopChains) {
         const aop = this._getBean(key);
         if (aop[methodName]) {
-          chains.push(key);
+          chains.push([key, methodName]);
+        } else if (methodNameMagic && aop[methodNameMagic]) {
+          chains.push([key, methodNameMagic]);
         }
       }
       __setPropertyValue(_beanClass, chainsKey, chains);
