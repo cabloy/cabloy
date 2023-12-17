@@ -135,7 +135,6 @@ module.exports = (app, ctx) => {
               target,
               receiver,
               prop,
-              method: methodName,
               value: undefined,
             };
             // aop
@@ -169,7 +168,6 @@ module.exports = (app, ctx) => {
             target,
             receiver,
             prop,
-            method: methodName,
             value,
           };
           // aop
