@@ -1,4 +1,3 @@
-
 const schemas = require('./meta/validation/schemas.js');
 const iconGroups = require('./meta/icons/groups.js');
 const meta = {

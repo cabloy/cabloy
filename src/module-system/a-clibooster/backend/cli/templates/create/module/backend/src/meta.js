@@ -1,4 +1,3 @@
-
 const atomClasses = require('./meta/atomClass/atomClasses.js');
 const schemas = require('./meta/validation/schemas.js');
 const keywords = require('./meta/validation/keywords.js');

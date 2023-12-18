@@ -5,7 +5,6 @@ const widgets = require('./resource/widgets.js');
 const blocks = require('./resource/blocks.js');
 const deprecateds = require('./resource/deprecateds.js');
 
-
 let resources = [];
 resources = resources.concat(functions);
 resources = resources.concat(menus);
