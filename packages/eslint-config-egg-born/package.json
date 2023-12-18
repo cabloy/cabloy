@@ -4,6 +4,6 @@
   "description": "Node Style Guide for EggBorn/Cabloy.",
   "main": "index",
   "dependencies": {
-    "eslint-config-egg": "^13.0.0"
+    "eslint-config-egg": "^13.1.0"
   }
 }
