@@ -5,7 +5,6 @@ const staticApps = require('./meta/static/apps.js');
 const staticDicts = require('./meta/static/dicts.js');
 const staticLayouts = require('./meta/static/layouts.js');
 const staticResources = require('./meta/static/resources.js');
-
 const meta = {
   base: {
     atoms: atomClasses,
