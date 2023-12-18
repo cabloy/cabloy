@@ -77,7 +77,7 @@
     "copy-webpack-plugin": "^7.0.0",
     "egg-born-utils": "^1.1.7",
     "eslint": "^8.27.0",
-    "eslint-config-egg": "^12.1.0",
+    "eslint-config-egg": "^13.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jsdoc": "^46.9.1",
     "eslint-plugin-node": "^11.1.0",
