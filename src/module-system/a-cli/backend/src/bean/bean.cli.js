@@ -56,15 +56,20 @@ module.exports = class Cli {
       await this.ctx.bean.progress.done({ progressId, message: this.ctx.text('CliDone') });
     } catch (err) {
       // progress error
-      let msg = err.message;
+      const msg = err.message;
+      let msgObject;
       if (msg && typeof msg === 'object') {
-        msg = JSON.stringify(msg, null, 2);
+        msgObject = JSON.stringify(msg, null, 2);
       }
       let message;
       if (this.ctx.app.meta.isProd) {
-        message = msg;
+        message = msgObject || msg;
       } else {
-        message = [msg, err.stack].join('\n');
+        if (msgObject) {
+          message = [msgObject, err.stack].join('\n');
+        } else {
+          message = err.stack;
+        }
       }
       await this.ctx.bean.progress.error({ progressId, message });
       // throw err
