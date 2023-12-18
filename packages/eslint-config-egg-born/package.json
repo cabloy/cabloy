@@ -1,9 +1,9 @@
 {
   "name": "eslint-config-egg-born",
-  "version": "1.1.5",
+  "version": "2.0.0",
   "description": "Node Style Guide for EggBorn/Cabloy.",
   "main": "index",
   "dependencies": {
-    "eslint-config-egg": "^12.1.0"
+    "eslint-config-egg": "^13.0.0"
   }
 }
