@@ -78,7 +78,7 @@ module.exports = class Local {
       const { dir: dirname, base: basename } = path.parse(file);
       if (this.filesIgnore.includes(basename)) continue;
       const templateFile = path.join(templateDir, file);
-      const fileName = this.fileMapping[basename] || basename;
+      const fileName = this.parseFileBaseName(basename);
       const parentPath = path.join(targetDir, dirname);
       const targetFile = path.join(parentPath, this.ctx.bean.util.replaceTemplate(fileName, argv));
       await this.renderFile({ targetFile, templateFile });
@@ -90,6 +90,14 @@ module.exports = class Local {
       }
     }
     return files;
+  }
+
+  parseFileBaseName(basename) {
+    let fileName = this.fileMapping[basename] || basename;
+    if (fileName.lastIndexOf('_') === fileName.length - 1) {
+      fileName = fileName.substring(0, fileName.length - 1);
+    }
+    return fileName;
   }
 
   async renderFile({ targetFile, templateFile }) {

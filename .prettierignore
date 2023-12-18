@@ -12,4 +12,4 @@ src/backend/run
 /docker-compose/**
 **/backend/static/vendor/**
 # /packages/egg-born-template-*/**
-**/backend/cli/templates/**
+# **/backend/cli/templates/**
