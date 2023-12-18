@@ -1,5 +1,5 @@
 const __snippet_declare = "const <%=argv.atomClassName%> = require('./atomClass/<%=argv.atomClassName%>.js');\n";
-const __snippet_body = '<%=argv.atomClassName%>: <%=argv.atomClassName%>(app),';
+const __snippet_body = '<%=argv.atomClassName%>,';
 
 module.exports = {
   file: 'backend/src/meta/atomClass/atomClasses.js',

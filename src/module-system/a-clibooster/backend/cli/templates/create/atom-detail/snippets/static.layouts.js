@@ -1,6 +1,6 @@
 const __snippet_declare =
   "// const layoutAtomList<%=argv.atomClassNameCapitalize%> = require('./layout/layoutAtomList<%=argv.atomClassNameCapitalize%>.js');\n";
-const __snippet_body = '// layoutAtomList<%=argv.atomClassNameCapitalize%>(app),';
+const __snippet_body = '// layoutAtomList<%=argv.atomClassNameCapitalize%>,';
 
 module.exports = {
   file: 'backend/src/meta/static/layouts.js',
