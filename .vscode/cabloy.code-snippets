@@ -1,7 +1,7 @@
 /**
 * supported code snippets as follows:
 *   controller service model route
-*   atom broadcast event local
+*   broadcast event local
 *   middleware queue schedule sequence
 *   startup stats test
 **/
