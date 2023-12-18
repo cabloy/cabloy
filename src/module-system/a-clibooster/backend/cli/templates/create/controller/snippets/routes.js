@@ -3,7 +3,7 @@ const __snippet = `// <%=argv.controllerName%>
 
 module.exports = {
   file: 'backend/src/routes.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
     if (!ast.has('const routes = [$_$]')) {

@@ -1,4 +1,4 @@
-const __snippet_declare = 'const <%=argv.appKey%> = require(\'./app/<%=argv.appKey%>.js\');\n';
+const __snippet_declare = "const <%=argv.appKey%> = require('./app/<%=argv.appKey%>.js');\n";
 const __snippet_body = '<%=argv.appKey%>(app),';
 
 module.exports = {
@@ -6,7 +6,7 @@ module.exports = {
   init: `const apps = [];
 module.exports = apps;
 `,
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
     ast.before(code);

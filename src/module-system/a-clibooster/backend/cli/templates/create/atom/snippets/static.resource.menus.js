@@ -31,7 +31,7 @@ const __snippet = `{
 
 module.exports = {
   file: 'backend/src/meta/static/resource/menus.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
     if (!ast.has('const resources = [$_$]')) {

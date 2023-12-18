@@ -1,9 +1,10 @@
-const __snippet_declare = '// const layoutAtomList<%=argv.atomClassNameCapitalize%> = require(\'./layout/layoutAtomList<%=argv.atomClassNameCapitalize%>.js\');\n';
+const __snippet_declare =
+  "// const layoutAtomList<%=argv.atomClassNameCapitalize%> = require('./layout/layoutAtomList<%=argv.atomClassNameCapitalize%>.js');\n";
 const __snippet_body = '// layoutAtomList<%=argv.atomClassNameCapitalize%>(app),';
 
 module.exports = {
   file: 'backend/src/meta/static/layouts.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
     ast.before(code);

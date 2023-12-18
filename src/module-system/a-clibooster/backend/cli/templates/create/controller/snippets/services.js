@@ -1,9 +1,9 @@
-const __snippet_declare = 'const <%=argv.controllerName%> = require(\'./service/<%=argv.controllerName%>.js\');';
+const __snippet_declare = "const <%=argv.controllerName%> = require('./service/<%=argv.controllerName%>.js');";
 const __snippet_body = '<%=argv.controllerName%>,';
 
 module.exports = {
   file: 'backend/src/services.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
     ast.before(code);

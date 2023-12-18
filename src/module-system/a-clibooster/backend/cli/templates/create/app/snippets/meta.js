@@ -1,4 +1,4 @@
-const __snippet_staticApps = 'const staticApps = require(\'./meta/static/apps.js\');';
+const __snippet_staticApps = "const staticApps = require('./meta/static/apps.js');";
 const __snippet_staticsApp = `
 'a-app.app': {
   items: staticApps,
@@ -6,7 +6,7 @@ const __snippet_staticsApp = `
 
 module.exports = {
   file: 'backend/src/meta.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // staticApps
     if (!ast.has(__snippet_staticApps)) {
       // insert

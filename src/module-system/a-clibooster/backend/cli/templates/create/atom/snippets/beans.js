@@ -1,4 +1,5 @@
-const __snippet_declare = 'const atom<%=argv.atomClassNameCapitalize%> = require(\'./bean/atom.<%=argv.atomClassName%>.js\');\n';
+const __snippet_declare =
+  "const atom<%=argv.atomClassNameCapitalize%> = require('./bean/atom.<%=argv.atomClassName%>.js');\n";
 const __snippet_body = `// atom
 'atom.<%=argv.atomClassName%>': {
   bean: atom<%=argv.atomClassNameCapitalize%>,
@@ -6,7 +7,7 @@ const __snippet_body = `// atom
 
 module.exports = {
   file: 'backend/src/beans.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     let code = await cli.template.renderContent({ content: __snippet_declare });
     ast.before(code);

@@ -1,8 +1,8 @@
-const __snippet = '{ path: \'<%=argv.pageName%>\', component: load(\'<%=argv.pageName%>\') },';
+const __snippet = "{ path: '<%=argv.pageName%>', component: load('<%=argv.pageName%>') },";
 
 module.exports = {
   file: 'front/src/routes.js',
-  async transform({ cli, ast, argv, ctx }) {
+  async transform({ cli, ast, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
     if (!ast.has('export default [$_$]')) {
