@@ -1,2 +1,1 @@
-const atomClasses = {};
-module.exports = atomClasses;
+module.exports = {};
