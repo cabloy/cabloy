@@ -8,5 +8,3 @@ src/backend/run
 /.assets/**
 /coverage/**
 /docker-compose/**
-/packages/egg-born-template-*/**
-**/backend/cli/templates/**

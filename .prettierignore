@@ -11,5 +11,3 @@ src/backend/run
 /coverage/**
 /docker-compose/**
 **/backend/static/vendor/**
-# /packages/egg-born-template-*/**
-# **/backend/cli/templates/**

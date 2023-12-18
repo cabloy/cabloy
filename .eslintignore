@@ -10,7 +10,5 @@ src/backend/run
 /.assets/**
 /coverage/**
 /docker-compose/**
-# /packages/egg-born-template-*/**
-# **/backend/cli/templates/**
 **/backend/static/vendor/**
 /src/module-system/a-codemirror/backend/static/lib/codemirror
