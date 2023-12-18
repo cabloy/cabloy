@@ -16,7 +16,7 @@ const content = {
     },
   },
 };
-const _app = {
+const app = {
   atomName: '<%=argv.appNameCapitalize%>',
   atomStaticKey: '<%=argv.appKey%>',
   atomRevision: 0,
@@ -28,4 +28,4 @@ const _app = {
   resourceRoles: 'authenticated',
   appSorting: 0,
 };
-module.exports = _app;
+module.exports = app;

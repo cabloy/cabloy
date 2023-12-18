@@ -5,7 +5,9 @@ module.exports = {
   async transform({ cli, ast, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet_body });
-    ast.replace('export default {$$$0}', `export default {${code} \n $$$0}`);
+    if (!ast.has(code)) {
+      ast.replace('export default {$$$0}', `export default {${code} \n $$$0}`);
+    }
     // ok
     return ast;
   },
