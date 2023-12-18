@@ -34,10 +34,10 @@ module.exports = {
   async transform({ cli, ast, argv, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
-    if (!ast.has(`const resources = [$_$]`)) {
-      ast.replace(`const resources = []`, `const resources = [${code}]`);
+    if (!ast.has('const resources = [$_$]')) {
+      ast.replace('const resources = []', `const resources = [${code}]`);
     } else {
-      ast.replace(`const resources = [$_$]`, `const resources = [$_$, \n ${code}]`);
+      ast.replace('const resources = [$_$]', `const resources = [$_$, \n ${code}]`);
     }
     // moduleInfo
     const moduleInfo = 'const moduleInfo = module.info';

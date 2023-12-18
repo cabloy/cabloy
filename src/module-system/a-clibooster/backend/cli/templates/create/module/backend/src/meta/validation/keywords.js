@@ -1,3 +1,3 @@
 
-  const keywords = {};
-    module.exports = keywords;
+const keywords = {};
+module.exports = keywords;

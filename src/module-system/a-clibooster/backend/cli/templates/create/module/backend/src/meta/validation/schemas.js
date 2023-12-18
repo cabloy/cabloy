@@ -1,4 +1,4 @@
 
-  const schemas = {};
-  // ok
-   module.exports = schemas;
+const schemas = {};
+// ok
+module.exports = schemas;

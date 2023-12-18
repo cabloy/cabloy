@@ -1,3 +1,3 @@
 
-  const layouts = [];
-   module.exports = layouts;
+const layouts = [];
+module.exports = layouts;

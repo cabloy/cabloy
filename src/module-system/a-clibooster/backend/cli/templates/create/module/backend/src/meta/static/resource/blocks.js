@@ -1,4 +1,4 @@
 // const moduleInfo = module.info;
 
-  const resources = [];
-   module.exports = resources;
+const resources = [];
+module.exports = resources;

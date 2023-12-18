@@ -1,4 +1,4 @@
-const __snippet_declare = `const <%=argv.atomClassName%> = require('./schema/<%=argv.atomClassName%>.js');\n`;
+const __snippet_declare = 'const <%=argv.atomClassName%> = require(\'./schema/<%=argv.atomClassName%>.js\');\n';
 const __snippet_body = `// <%=argv.atomClassName%>
 Object.assign(schemas, <%=argv.atomClassName%>(app));`;
 

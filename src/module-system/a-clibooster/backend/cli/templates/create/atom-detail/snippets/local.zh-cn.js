@@ -6,7 +6,7 @@ module.exports = {
   async transform({ cli, ast, argv, ctx }) {
     // code
     const code = await cli.template.renderContent({ content: __snippet });
-    ast.replace(`module.exports = {$$$0}`, `module.exports = {$$$0, ${code}}`);
+    ast.replace('module.exports = {$$$0}', `module.exports = {$$$0, ${code}}`);
     // ok
     return ast;
   },

@@ -1,3 +1,3 @@
 
-  const dicts = [];
-   module.exports = dicts;
+const dicts = [];
+module.exports = dicts;

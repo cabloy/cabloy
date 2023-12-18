@@ -6,11 +6,11 @@ const blocks = require('./resource/blocks.js');
 const deprecateds = require('./resource/deprecateds.js');
 
 
-  let resources = [];
-  resources = resources.concat(functions );
-  resources = resources.concat(menus );
-  resources = resources.concat(mines );
-  resources = resources.concat(widgets );
-  resources = resources.concat(blocks );
-  resources = resources.concat(deprecateds );
-   module.exports = resources;
+let resources = [];
+resources = resources.concat(functions);
+resources = resources.concat(menus);
+resources = resources.concat(mines);
+resources = resources.concat(widgets);
+resources = resources.concat(blocks);
+resources = resources.concat(deprecateds);
+module.exports = resources;
