@@ -25,7 +25,6 @@ const localUtils = require('./bean/local.utils.js');
 const beans = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // cli
@@ -94,7 +93,6 @@ const beans = {
   },
   // local
   'local.utils': {
-    mode: 'ctx',
     bean: localUtils,
   },
 };

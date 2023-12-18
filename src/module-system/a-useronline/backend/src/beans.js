@@ -6,7 +6,6 @@ const beanUserOnline = require('./bean/bean.userOnline.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // atom
@@ -18,7 +17,6 @@ module.exports = {
   },
   // global
   userOnline: {
-    mode: 'ctx',
     bean: beanUserOnline,
     global: true,
   },

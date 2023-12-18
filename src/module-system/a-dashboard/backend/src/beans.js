@@ -4,7 +4,6 @@ const atomDashboard = require('./bean/atom.dashboard.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // atom

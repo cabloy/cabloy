@@ -5,17 +5,14 @@ const beanSequence = require('./bean/bean.sequence.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // sequence
   'sequence.simple': {
-    mode: 'ctx',
     bean: sequenceSimple,
   },
   // global
   sequence: {
-    mode: 'ctx',
     bean: beanSequence,
     global: true,
   },

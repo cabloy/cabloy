@@ -12,7 +12,6 @@ const ioMessageHotloadFile = require('./bean/io.message.hotloadFile.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // local

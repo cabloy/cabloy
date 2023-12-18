@@ -11,42 +11,33 @@ const broadcastMemClear = require('./bean/broadcast.memClear.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // local
   'local.cache': {
-    mode: 'ctx',
     bean: localCache,
   },
   'local.mem': {
-    mode: 'ctx',
     bean: localMem,
   },
   'local.redis': {
-    mode: 'ctx',
     bean: localRedis,
   },
   'local.fetch': {
-    mode: 'ctx',
     bean: localFetch,
   },
   // broadcast
   'broadcast.memDel': {
-    mode: 'app',
     bean: broadcastMemDel,
   },
   'broadcast.memMultiDel': {
-    mode: 'app',
     bean: broadcastMemMultiDel,
   },
   'broadcast.memClear': {
-    mode: 'app',
     bean: broadcastMemClear,
   },
   // summer
   summer: {
-    mode: 'ctx',
     bean: beanSummer,
     global: true,
   },

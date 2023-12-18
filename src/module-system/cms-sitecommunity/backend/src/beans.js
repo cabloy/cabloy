@@ -4,7 +4,6 @@ const atomPost = require('./bean/atom.post.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // atom

@@ -4,7 +4,6 @@ const atom<%=argv.atomClassNameCapitalize%> = require('./bean/atom.<%=argv.atomC
 const beans = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // atom

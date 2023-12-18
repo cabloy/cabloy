@@ -7,12 +7,10 @@ const statsDeps = require('./bean/stats.deps.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // queue
   'queue.stats': {
-    mode: 'app',
     bean: queueStats,
   },
   // io
@@ -21,13 +19,11 @@ module.exports = {
   },
   // global
   stats: {
-    mode: 'ctx',
     bean: beanStats,
     global: true,
   },
   // stats
   'stats.deps': {
-    mode: 'ctx',
     bean: statsDeps,
   },
 };

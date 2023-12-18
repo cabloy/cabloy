@@ -9,7 +9,6 @@ const beanMailSceneCache = require('./bean/bean.mailSceneCache.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // io
@@ -21,22 +20,18 @@ module.exports = {
   },
   // broadcast
   'broadcast.mailSceneChanged': {
-    mode: 'app',
     bean: broadcastMailSceneChanged,
   },
   // startup
   'startup.cacheMailScenes': {
-    mode: 'app',
     bean: startupCacheMailScenes,
   },
   // global
   mail: {
-    mode: 'ctx',
     bean: beanMail,
     global: true,
   },
   mailSceneCache: {
-    mode: 'ctx',
     bean: beanMailSceneCache,
     global: true,
   },

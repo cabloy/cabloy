@@ -4,7 +4,6 @@ const atomDocument = require('./bean/atom.document.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // atom

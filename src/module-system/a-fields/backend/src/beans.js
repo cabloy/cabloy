@@ -6,22 +6,18 @@ const summerCacheFieldsRightOfUser = require('./bean/summer.cache.fieldsRightOfU
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // global
   fields: {
-    mode: 'ctx',
     bean: beanFields,
     global: true,
   },
   // summer
   'summer.cache.fieldsRightOfAtomClass': {
-    mode: 'ctx',
     bean: summerCacheFieldsRightOfAtomClass,
   },
   'summer.cache.fieldsRightOfUser': {
-    mode: 'ctx',
     bean: summerCacheFieldsRightOfUser,
   },
 };

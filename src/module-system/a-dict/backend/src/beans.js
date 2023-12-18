@@ -5,7 +5,6 @@ const beanDict = require('./bean/bean.dict.js');
 module.exports = {
   // version
   'version.manager': {
-    mode: 'app',
     bean: versionManager,
   },
   // atom
@@ -14,7 +13,6 @@ module.exports = {
   },
   // global
   dict: {
-    mode: 'ctx',
     bean: beanDict,
     global: true,
   },
