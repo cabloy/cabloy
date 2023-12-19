@@ -207,7 +207,8 @@ export default function (Vue) {
     },
     _registerRoutes(module) {
       if (!module.options.routes) return null;
-      const routes = module.options.routes.map(route => {
+      const routes = [];
+      for (const route of module.options.routes) {
         Vue.prototype.$meta.util._setComponentModule(route.component, route.module || module);
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
@@ -246,8 +247,8 @@ export default function (Vue) {
             route.component = null;
           }
         }
-        return route;
-      });
+        routes.push(route);
+      }
       Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);
     },
     _registerResources(module) {
