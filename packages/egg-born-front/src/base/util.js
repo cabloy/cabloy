@@ -14,6 +14,7 @@ import _escape from './escape.js';
 import hostUtil from './hostUtil.js';
 
 const __ViewSizes = ['small', 'medium', 'large'];
+const __ComponentInstallFactoryProps = ['render', 'staticRenderFns', '__ebModuleRelativeName', '__file', '_compiled'];
 
 export default function (Vue) {
   const _ids = {};
@@ -65,7 +66,11 @@ export default function (Vue) {
       if (!component.installFactory) return component;
       // installFactory
       const componentNew = component.installFactory(Vue);
-      componentNew.__ebModuleRelativeName = component.__ebModuleRelativeName;
+      for (const prop of __ComponentInstallFactoryProps) {
+        if (component[prop]) {
+          componentNew[prop] = component[prop];
+        }
+      }
       this._setComponentGlobal(componentNew);
       return componentNew;
     },
