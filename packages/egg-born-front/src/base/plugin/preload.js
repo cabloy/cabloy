@@ -8,7 +8,7 @@ function install(_Vue) {
   Vue.mixin({
     mounted() {
       const meta = this.$options.meta;
-      this.$meta.util.preloadModules(meta && meta.preloads);
+      this.$meta.module.preloadModules(meta && meta.preloads);
     },
   });
 }

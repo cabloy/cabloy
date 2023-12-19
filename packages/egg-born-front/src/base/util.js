@@ -14,7 +14,6 @@ import _escape from './escape.js';
 import hostUtil from './hostUtil.js';
 
 const __ViewSizes = ['small', 'medium', 'large'];
-const __ComponentInstallFactoryProps = ['render', 'staticRenderFns', '__ebModuleRelativeName', '__file', '_compiled'];
 
 export default function (Vue) {
   const _ids = {};
@@ -46,50 +45,6 @@ export default function (Vue) {
       Object.keys(window.localStorage).forEach(key => {
         if (key.indexOf('f7router-') === 0) window.localStorage.removeItem(key);
       });
-    },
-    async preloadModules(modules, options) {
-      options = options || {};
-      const delay = options.delay || Vue.prototype.$meta.config.preload.delay;
-      window.setTimeout(() => {
-        this.useModules(modules);
-      }, delay);
-    },
-    async useModules(modules) {
-      if (!modules) return;
-      if (!Array.isArray(modules)) modules = modules.split(',');
-      modules = modules.filter(module => !Vue.prototype.$meta.module.get(module));
-      if (modules.length === 0) return;
-      const promises = modules.map(module => Vue.prototype.$meta.module.use(module));
-      await Promise.all(promises);
-    },
-    createComponentOptions(component) {
-      if (!component.installFactory) return component;
-      // installFactory
-      const componentNew = component.installFactory(Vue);
-      for (const prop of __ComponentInstallFactoryProps) {
-        if (component[prop]) {
-          componentNew[prop] = component[prop];
-        }
-      }
-      this._setComponentGlobal(componentNew);
-      return componentNew;
-    },
-    _setComponentGlobal(component) {
-      // register
-      if (component.meta && component.meta.global === true) {
-        if (!Vue.options.components[component.name]) {
-          Vue.component(component.name, component);
-        }
-      }
-      return component;
-    },
-    _setComponentModule(component, module) {
-      if (!component) return;
-      component.__ebModuleRelativeName = module.info.relativeName;
-    },
-    _setComponentLoadForInstallFactory(component) {
-      if (!component || !component.installFactory) return;
-      return this.createComponentOptions(component);
     },
     _locationFullPathName() {
       return location.origin + location.pathname;

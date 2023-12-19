@@ -1,6 +1,8 @@
 import mparse from 'egg-born-mparse';
 import nprogressFn from './nprogress.js';
 
+const __ComponentInstallFactoryProps = ['render', 'staticRenderFns', '__ebModuleRelativeName', '__file', '_compiled'];
+
 export default function (Vue) {
   const loadingQueue = {
     _queue: {},
@@ -209,8 +211,8 @@ export default function (Vue) {
       if (!module.options.routes) return null;
       const routes = [];
       for (const route of module.options.routes) {
-        Vue.prototype.$meta.util._setComponentModule(route.component, route.module || module);
-        Vue.prototype.$meta.util._setComponentLoadForInstallFactory(route.component);
+        this._setComponentModule(route.component, route.module || module);
+        this._setComponentLoadForInstallFactory(route.component);
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
         // meta.modal
@@ -262,8 +264,8 @@ export default function (Vue) {
     _registerComponents(module) {
       for (const key in module.options.components) {
         const component = module.options.components[key];
-        Vue.prototype.$meta.util._setComponentModule(component, component.module || module);
-        Vue.prototype.$meta.util._setComponentGlobal(component);
+        this._setComponentModule(component, component.module || module);
+        this._setComponentGlobal(component);
       }
     },
     _registerStores(module) {
@@ -323,16 +325,65 @@ export default function (Vue) {
       const module = await this.use(moduleName);
       const component = module.options.components[componentName];
       if (!component) return null;
-      // uses
-      await Vue.prototype.$meta.util.useModules(component.meta?.uses);
       // create
-      const componentNew = Vue.prototype.$meta.util.createComponentOptions(component);
+      const componentNew = await this._createComponentOptions(component);
       // hold
       if (componentNew !== component) {
         module.options.components[componentName] = componentNew;
       }
       // ok
       return componentNew;
+    },
+    async _createComponentOptions(component) {
+      if (!component.installFactory) return component;
+      // uses
+      await this.useModules(component.meta?.uses);
+      // installFactory
+      const componentNew = component.installFactory(Vue);
+      // merge render etc.
+      for (const prop of __ComponentInstallFactoryProps) {
+        if (component[prop]) {
+          componentNew[prop] = component[prop];
+        }
+      }
+      // global
+      this._setComponentGlobal(componentNew);
+      // ok
+      return componentNew;
+    },
+    _setComponentLoadForInstallFactory(component) {
+      if (!component || !component.installFactory) return;
+      return async () => {
+        return await this.useComponent();
+      };
+    },
+    _setComponentGlobal(component) {
+      // register
+      if (component.meta?.global === true) {
+        if (!Vue.options.components[component.name]) {
+          Vue.component(component.name, component);
+        }
+      }
+      return component;
+    },
+    _setComponentModule(component, module) {
+      if (!component) return;
+      component.__ebModuleRelativeName = module.info.relativeName;
+    },
+    async preloadModules(modules, options) {
+      options = options || {};
+      const delay = options.delay || Vue.prototype.$meta.config.preload.delay;
+      window.setTimeout(() => {
+        this.useModules(modules);
+      }, delay);
+    },
+    async useModules(modules) {
+      if (!modules) return;
+      if (!Array.isArray(modules)) modules = modules.split(',');
+      modules = modules.filter(module => !this.get(module));
+      if (modules.length === 0) return;
+      const promises = modules.map(module => this.use(module));
+      await Promise.all(promises);
     },
   };
 
