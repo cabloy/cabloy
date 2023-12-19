@@ -210,6 +210,7 @@ export default function (Vue) {
       const routes = [];
       for (const route of module.options.routes) {
         Vue.prototype.$meta.util._setComponentModule(route.component, route.module || module);
+        Vue.prototype.$meta.util._setComponentLoadForInstallFactory(route.component);
         // path
         route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
         // meta.modal

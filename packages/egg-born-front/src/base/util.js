@@ -85,9 +85,12 @@ export default function (Vue) {
       return component;
     },
     _setComponentModule(component, module) {
-      if (component) {
-        component.__ebModuleRelativeName = module.info.relativeName;
-      }
+      if (!component) return;
+      component.__ebModuleRelativeName = module.info.relativeName;
+    },
+    _setComponentLoadForInstallFactory(component) {
+      if (!component || !component.installFactory) return;
+      return this.createComponentOptions(component);
     },
     _locationFullPathName() {
       return location.origin + location.pathname;
