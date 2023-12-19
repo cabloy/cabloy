@@ -211,15 +211,16 @@ export default function (Vue) {
       if (!module.options.routes) return null;
       const routes = [];
       for (const route of module.options.routes) {
-        this._registerRoute(route);
+        this._registerRoute(module, route);
         routes.push(route);
       }
       Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);
     },
-    _registerRoute(route) {
+    _registerRoute(module, route) {
       // module info
       this._setComponentModule(route.component, route.module || module);
-      this._setComponentLoadForInstallFactory(route.component);
+      // installFactory
+      route.component = this._setComponentLoadForInstallFactory(route.component);
       // path
       route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
       // meta.modal
@@ -355,9 +356,9 @@ export default function (Vue) {
       return componentNew;
     },
     _setComponentLoadForInstallFactory(component) {
-      if (!component || !component.installFactory) return;
+      if (!component || !component.installFactory) return component;
       return async () => {
-        return await this.useComponent();
+        return await this._handleInstallFactory(component);
       };
     },
     _setComponentGlobal(component) {
