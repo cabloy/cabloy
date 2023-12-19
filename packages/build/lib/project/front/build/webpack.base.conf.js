@@ -1,14 +1,8 @@
 const path = require('path');
-const fse = require('fs-extra');
 const toolsFn = require('../../../common/tools.js');
 
 module.exports = context => {
   const tools = toolsFn(context);
-  // vue module path
-  let vueModulePath = path.join(context.config.projectPath, 'node_modules/@zhennann/vue/dist/vue.esm.js');
-  if (!fse.existsSync(vueModulePath)) {
-    vueModulePath = path.join(context.config.frontPath, 'node_modules/@zhennann/vue/dist/vue.esm.js');
-  }
   // loaderRulesResource
   const loaderRulesResource = tools.loaderRulesResource();
 
@@ -28,9 +22,7 @@ module.exports = context => {
     resolve: {
       symlinks: true,
       extensions: ['.js', '.vue', '.json'],
-      alias: {
-        vue: vueModulePath,
-      },
+      alias: {},
     },
     module: {
       parser: {
