@@ -173,16 +173,11 @@ export default {
       // component
       const moduleName = this.resource.resourceConfig.module;
       const componentName = this.resource.resourceConfig.component;
-      const module = await this.$meta.module.use(moduleName);
-      let component = module.options.components[componentName];
+      const component = await this.$meta.module.useComponent(moduleName, componentName);
       if (!component) {
         this.__setErrorMessage(fullName);
         this.ready = false;
       } else {
-        // uses
-        await this.$meta.util.createComponentOptionsUses(component);
-        // create
-        component = this.$meta.util.createComponentOptions(component);
         this.$options.components[fullName] = component;
         this.__setErrorMessage(null);
         this.ready = true;

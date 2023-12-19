@@ -62,17 +62,12 @@ export default {
   },
   methods: {
     async __init() {
-      const module = await this.$meta.module.use(this.renderParams.module);
       const fullName = this._buttonFullName();
-      let component = module.options.components[this.renderParams.name];
+      const component = await this.$meta.module.useComponent(this.renderParams.module, this.renderParams.name);
       if (!component) {
         this.errorMessage = `${this.$text('Button Not Found')}: ${fullName}`;
         this.ready = false;
       } else {
-        // uses
-        await this.$meta.util.createComponentOptionsUses(component);
-        // create
-        component = this.$meta.util.createComponentOptions(component);
         this.$options.components[fullName] = component;
         this.ready = true;
         this.errorMessage = null;

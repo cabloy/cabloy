@@ -62,12 +62,12 @@ export default function (Vue) {
       await Promise.all(promises);
     },
     createComponentOptions(component) {
+      if (!component.installFactory) return component;
       // installFactory
-      if (component.installFactory) {
-        component = component.installFactory(Vue);
-        this._setComponentGlobal(component);
-      }
-      return component;
+      const componentNew = component.installFactory(Vue);
+      componentNew.__ebModuleRelativeName = component.__ebModuleRelativeName;
+      this._setComponentGlobal(componentNew);
+      return componentNew;
     },
     _setComponentGlobal(component) {
       // register

@@ -169,15 +169,11 @@ export default {
         this.moduleInstance = moduleInstance;
         // component
         const fullName = this.__getFullName();
-        let component = moduleInstance.options.components[this.name];
+        const component = await this.$meta.module.useComponent(this.module2, this.name);
         if (!component) {
           this.errorMessage = `${this.$text('Component Not Found')}: ${fullName}`;
           this.ready = false;
         } else {
-          // uses
-          await this.$meta.util.createComponentOptionsUses(component);
-          // create
-          component = this.$meta.util.createComponentOptions(component);
           this.$options.components[fullName] = component;
           this.ready = true;
           this.errorMessage = null;

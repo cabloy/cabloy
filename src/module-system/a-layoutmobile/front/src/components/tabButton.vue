@@ -80,17 +80,15 @@ export default {
         this.hide();
         return;
       }
-      const module = await this.$meta.module.use(this.options.resourceConfig.module);
       const fullName = this.buttonFullName;
-      let component = module.options.components[this.options.resourceConfig.component];
+      const component = await this.$meta.module.useComponent(
+        this.options.resourceConfig.module,
+        this.options.resourceConfig.component
+      );
       if (!component) {
         this.errorMessage = `${this.$text('Button Not Found')}: ${fullName}`;
         this.ready = false;
       } else {
-        // uses
-        await this.$meta.util.createComponentOptionsUses(component);
-        // create
-        component = this.$meta.util.createComponentOptions(component);
         this.$options.components[fullName] = component;
         this.ready = true;
         this.errorMessage = null;
