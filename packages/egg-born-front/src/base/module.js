@@ -318,6 +318,20 @@ export default function (Vue) {
         );
       });
     },
+    async useComponent(moduleName, componentName) {
+      // use module
+      const module = await this.use(moduleName);
+      const component = module.options.components[componentName];
+      if (!component) return null;
+      // uses
+      await Vue.prototype.$meta.util.useModules(component.meta?.uses);
+      // create
+      const componentNew = Vue.prototype.$meta.util.createComponentOptions(component);
+      // hold
+      module.options.components[componentName] = componentNew;
+      // ok
+      return componentNew;
+    },
   };
 
   return module;

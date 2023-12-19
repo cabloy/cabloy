@@ -102,15 +102,15 @@ export default {
     hide() {
       this.showing = false;
     },
-    onDragStart({ $el, context, dragElement }) {
-      const [button, buttonIndexDrag] = this.group._getButtonAndIndex(context.button);
+    onDragStart({ /* $el,*/ context /* , dragElement */ }) {
+      const [button] = this.group._getButtonAndIndex(context.button);
       const tooltip = this.__getButtonTitle(button);
       return { tooltip };
     },
-    onDropElement({ $el, context, dragElement, dragContext }) {
+    onDropElement({ $el, context /* , dragElement*/, dragContext }) {
       const [buttonDrop, buttonIndexDrop] = this.group._getButtonAndIndex(context.button);
-      const [buttonDrag, buttonIndexDrag] = this.group._getButtonAndIndex(dragContext.button);
-      if (buttonIndexDrop === buttonIndexDrag || buttonIndexDrop == buttonIndexDrag + 1) return null;
+      const [, /* buttonDrag*/ buttonIndexDrag] = this.group._getButtonAndIndex(dragContext.button);
+      if (buttonIndexDrop === buttonIndexDrag || buttonIndexDrop === buttonIndexDrag + 1) return null;
       // dropElement
       const dropElement = $el;
       // tooltip
@@ -118,10 +118,12 @@ export default {
       // ok
       return { dropElement, tooltip };
     },
-    onDragDone({ $el, context, dragElement, dropElement, dropContext }) {
+    onDragDone({ /* $el,*/ context /* , dragElement, dropElement*/, dropContext }) {
       const buttonIndexDrag = this.group._getButtonIndex(context.button);
+      // eslint-disable-next-line
       this.group.buttons.splice(buttonIndexDrag, 1);
       const buttonIndexDrop = this.group._getButtonIndex(dropContext.button);
+      // eslint-disable-next-line
       this.group.buttons.splice(buttonIndexDrop, 0, context.button);
       // save
       this.layout.__saveLayoutConfig();
@@ -131,10 +133,12 @@ export default {
     },
     __onButtonRealReady(buttonReal) {
       const fullName = this.buttonFullName;
+      // eslint-disable-next-line
       this.group.buttonsReal[fullName] = buttonReal;
     },
-    __onButtonRealDestroy(buttonReal) {
+    __onButtonRealDestroy(/* buttonReal*/) {
       const fullName = this.buttonFullName;
+      // eslint-disable-next-line
       delete this.group.buttonsReal[fullName];
     },
   },

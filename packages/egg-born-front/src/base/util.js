@@ -46,9 +46,6 @@ export default function (Vue) {
         if (key.indexOf('f7router-') === 0) window.localStorage.removeItem(key);
       });
     },
-    async createComponentOptionsUses(component) {
-      return await this.useModules(component.meta && component.meta.uses);
-    },
     async preloadModules(modules, options) {
       options = options || {};
       const delay = options.delay || Vue.prototype.$meta.config.preload.delay;
@@ -67,10 +64,7 @@ export default function (Vue) {
     createComponentOptions(component) {
       // installFactory
       if (component.installFactory) {
-        component = Vue.util.mergeOptions(component, component.installFactory(Vue));
-        component._Ctor = {};
-        delete component.installFactory;
-        Vue.extend(component);
+        component = component.installFactory(Vue);
         this._setComponentGlobal(component);
       }
       return component;
