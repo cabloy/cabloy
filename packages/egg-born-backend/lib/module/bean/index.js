@@ -42,8 +42,8 @@ function loadBeans(loader) {
       for (const beanName in beans) {
         const moduleName = module.info.relativeName;
         const beanClass = beans[beanName];
-        if (beanName.indexOf('atom.') === 0 && beanClass.mode === 'app') {
-          throw new Error(`atom bean's mode must be ctx: ${moduleName}:${beanName}`);
+        if (['app', 'ctx'].includes(beanClass.mode)) {
+          throw new Error(`bean: ${moduleName}:${beanName}, mode: ${beanClass.mode} is deprecated, use Class instead.`);
         }
         loader.app.bean._register(moduleName, beanName, beanClass);
       }
