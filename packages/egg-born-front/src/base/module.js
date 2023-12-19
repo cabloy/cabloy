@@ -211,48 +211,52 @@ export default function (Vue) {
       if (!module.options.routes) return null;
       const routes = [];
       for (const route of module.options.routes) {
-        this._setComponentModule(route.component, route.module || module);
-        this._setComponentLoadForInstallFactory(route.component);
-        // path
-        route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
-        // meta.modal
-        if (route.meta && route.meta.modal) {
-          route[route.meta.modal] = {
-            component: route.component,
-          };
-          route.component = null;
-        }
-        // meta.auth
-        if (route.meta && route.meta.auth) {
-          route.async = function (routeTo, routeFrom, resolve, reject) {
-            if (Vue.prototype.$meta.store.state.auth.loggedIn) {
-              const _component = {};
-              if (route.meta.modal) {
-                _component[route.meta.modal] = route.async[route.meta.modal];
-              } else {
-                _component.component = route.async.component;
-              }
-              resolve(_component);
-            } else {
-              // login
-              Vue.prototype.$meta.vueLayout.openLogin({
-                view: this.view,
-                url: routeTo,
-              });
-              reject();
-            }
-          };
-          if (route.meta.modal) {
-            route.async[route.meta.modal] = route[route.meta.modal];
-            route[route.meta.modal] = null;
-          } else {
-            route.async.component = route.component;
-            route.component = null;
-          }
-        }
+        this._registerRoute(route);
         routes.push(route);
       }
       Vue.prototype.$f7.routes = Vue.prototype.$f7.routes.concat(routes);
+    },
+    _registerRoute(route) {
+      // module info
+      this._setComponentModule(route.component, route.module || module);
+      this._setComponentLoadForInstallFactory(route.component);
+      // path
+      route.path = `/${module.info.pid}/${module.info.name}/${route.path}`;
+      // meta.modal
+      if (route.meta && route.meta.modal) {
+        route[route.meta.modal] = {
+          component: route.component,
+        };
+        route.component = null;
+      }
+      // meta.auth
+      if (route.meta && route.meta.auth) {
+        route.async = function (routeTo, routeFrom, resolve, reject) {
+          if (Vue.prototype.$meta.store.state.auth.loggedIn) {
+            const _component = {};
+            if (route.meta.modal) {
+              _component[route.meta.modal] = route.async[route.meta.modal];
+            } else {
+              _component.component = route.async.component;
+            }
+            resolve(_component);
+          } else {
+            // login
+            Vue.prototype.$meta.vueLayout.openLogin({
+              view: this.view,
+              url: routeTo,
+            });
+            reject();
+          }
+        };
+        if (route.meta.modal) {
+          route.async[route.meta.modal] = route[route.meta.modal];
+          route[route.meta.modal] = null;
+        } else {
+          route.async.component = route.component;
+          route.component = null;
+        }
+      }
     },
     _registerResources(module) {
       module.options.components && this._registerComponents(module);
