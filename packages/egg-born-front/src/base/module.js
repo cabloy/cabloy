@@ -328,7 +328,9 @@ export default function (Vue) {
       // create
       const componentNew = Vue.prototype.$meta.util.createComponentOptions(component);
       // hold
-      module.options.components[componentName] = componentNew;
+      if (componentNew !== component) {
+        module.options.components[componentName] = componentNew;
+      }
       // ok
       return componentNew;
     },
