@@ -323,19 +323,18 @@ export default function (Vue) {
     async useComponent(moduleName, componentName) {
       // use module
       const module = await this.use(moduleName);
-      const component = module.options.components[componentName];
+      let component = module.options.components[componentName];
       if (!component) return null;
-      // create
-      const componentNew = await this._createComponentOptions(component);
-      // hold
-      if (componentNew !== component) {
-        module.options.components[componentName] = componentNew;
+      // installFactory
+      if (component.installFactory) {
+        component = await this._handleInstallFactory(component);
+        // hold
+        module.options.components[componentName] = component;
       }
       // ok
-      return componentNew;
+      return component;
     },
-    async _createComponentOptions(component) {
-      if (!component.installFactory) return component;
+    async _handleInstallFactory(component) {
       // uses
       await this.useModules(component.meta?.uses);
       // installFactory
