@@ -44,7 +44,6 @@ miniprogram_npm
 !/src/suite/a-wxwork
 !/src/suite/test-party
 !/src/suite/bz-diancai
-!/src/suite/bz-study
 
 /src/suite-vendor/*
 !/src/suite-vendor/.gitkeep
