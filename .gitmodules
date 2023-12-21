@@ -43,4 +43,3 @@
 [submodule "src/suite/bz-diancai"]
 	path = src/suite/bz-diancai
 	url = git@github.com:cabloy/egg-born-suite-bz-diancai
-
