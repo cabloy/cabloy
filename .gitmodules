@@ -43,3 +43,6 @@
 [submodule "src/suite/bz-diancai"]
 	path = src/suite/bz-diancai
 	url = git@github.com:cabloy/egg-born-suite-bz-diancai
+[submodule "src/suite/bz-study"]
+	path = src/suite/bz-study
+	url = git@github.com:cabloy/egg-born-suite-bz-study
