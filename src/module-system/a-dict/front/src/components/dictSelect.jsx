@@ -69,9 +69,6 @@ export default {
     },
     async _createNodeChildren(children, nodeParent, treeviewData) {
       if (!children) return [];
-      // level
-      const levelCurrent = nodeParent.__level || 0;
-      const level = levelCurrent + 1;
       // nodes
       const nodes = [];
       for (const item of children) {
@@ -96,11 +93,7 @@ export default {
             disabled,
           },
           data: item,
-          __level: level,
         };
-        if (isCatalog && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
-          await treeviewData._preloadChildren(node);
-        }
         nodes.push(node);
       }
       return nodes;

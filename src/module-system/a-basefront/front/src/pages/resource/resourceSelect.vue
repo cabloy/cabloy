@@ -49,6 +49,7 @@ export default {
           itemToggle: false,
           selectable: false,
           multiple: this.multiple,
+          maxLevelAutoOpened: this.maxLevelAutoOpened,
         },
       };
     },
@@ -74,10 +75,7 @@ export default {
       }
       return queries;
     },
-    async _loadNodeCategories(node, treeviewData) {
-      //
-      const levelCurrent = node.__level || 0;
-      const level = levelCurrent + 1;
+    async _loadNodeCategories(node) {
       let treeChildren;
       if (node.root) {
         treeChildren = this.treeData;
@@ -90,7 +88,6 @@ export default {
         const nodeChild = {
           id: item.id,
           attrs: {
-            id: treeviewData._calcNodeAttrId(node, item),
             // link: '#',
             label: item.categoryNameLocale,
             toggle: true,
@@ -101,11 +98,7 @@ export default {
             selectable: checkbox,
           },
           data: item,
-          __level: level,
         };
-        if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
-          await treeviewData._preloadChildren(nodeChild);
-        }
         list.push(nodeChild);
       }
       return list;

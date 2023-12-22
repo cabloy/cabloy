@@ -326,7 +326,9 @@ export default {
       const nodeChildren = node.children;
       for (const item of children) {
         // attrs id
-        item.attrs.id = this._calcNodeAttrId(node, item);
+        if (!item.attrs.id) {
+          item.attrs.id = this._calcNodeAttrId(node, item);
+        }
         // children
         if (!item.children) item.children = [];
         // checked
