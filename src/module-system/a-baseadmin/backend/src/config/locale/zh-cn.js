@@ -9,7 +9,7 @@ module.exports = {
   'Function Right Management': '功能权限管理',
   'Auth Management': '认证管理',
   'Menu Management': '菜单管理',
-  'Category Management': '目录管理',
+  'Category Management': '分类管理',
   'Tag Management': '标签管理',
   'Select Users': '选择用户',
   UserAtomRight: '用户数据权限',

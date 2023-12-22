@@ -61,13 +61,13 @@ module.exports = class Version {
       { categoryName: 'testHidden', language: 'en-us', categoryIdParent: 0, categoryHidden: 1 },
       { categoryName: 'testFlag', language: 'en-us', categoryIdParent: 0, categoryFlag: 'Flag' },
       // zh-cn
-      { categoryName: '目录1', language: 'zh-cn', categoryIdParent: 0 },
-      { categoryName: '目录2', language: 'zh-cn', categoryIdParent: 0 },
-      { categoryName: '目录2-1', language: 'zh-cn', categoryIdParent: '目录2' },
-      { categoryName: '目录2-2', language: 'zh-cn', categoryIdParent: '目录2' },
-      { categoryName: '目录3', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
-      { categoryName: '隐藏目录', language: 'zh-cn', categoryIdParent: 0, categoryHidden: 1 },
-      { categoryName: '加标记的目录', language: 'zh-cn', categoryIdParent: 0, categoryFlag: 'Flag' },
+      { categoryName: '分类1', language: 'zh-cn', categoryIdParent: 0 },
+      { categoryName: '分类2', language: 'zh-cn', categoryIdParent: 0 },
+      { categoryName: '分类2-1', language: 'zh-cn', categoryIdParent: '分类2' },
+      { categoryName: '分类2-2', language: 'zh-cn', categoryIdParent: '分类2' },
+      { categoryName: '分类3', language: 'zh-cn', categoryIdParent: 0, categorySorting: 1 },
+      { categoryName: '隐藏分类', language: 'zh-cn', categoryIdParent: 0, categoryHidden: 1 },
+      { categoryName: '加标记的分类', language: 'zh-cn', categoryIdParent: 0, categoryFlag: 'Flag' },
     ];
     const categoryIds = {};
     for (const item of categories) {
