@@ -25,6 +25,9 @@ export default {
       if (!this.language) return title;
       return `${title}: ${this.languageTitle}`;
     },
+    maxLevelAutoOpened() {
+      return this.$meta.config.modules['a-baseadmin'].category.select.maxLevelAutoOpened;
+    },
   },
   mounted() {
     this.$meta.eventHub.$on('category:save', this.onCategorySave);
@@ -43,24 +46,31 @@ export default {
       }
       return queries;
     },
-    async onLoadChildren(node) {
+    async onLoadChildren(node, treeviewData) {
+      //
+      const levelCurrent = node.__level || 0;
+      const level = levelCurrent + 1;
       // root
       if (node.root) {
-        return [
-          {
-            id: 0,
-            attrs: {
-              link: '#',
-              label: this.$text('All'),
-              toggle: true,
-              loadChildren: true,
-            },
-            data: {
-              id: 0,
-              categoryCatalog: 1,
-            },
+        const nodeAll = {
+          id: 0,
+          attrs: {
+            id: treeviewData._calcNodeAttrId(node, { id: 0 }),
+            link: '#',
+            label: this.$text('All'),
+            toggle: true,
+            loadChildren: true,
           },
-        ];
+          data: {
+            id: 0,
+            categoryCatalog: 1,
+          },
+          __level: level,
+        };
+        if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
+          await treeviewData._preloadChildren(nodeAll);
+        }
+        return [nodeAll];
       }
       // children
       const data = await this.$api.post('/a/base/category/children', {
@@ -68,10 +78,12 @@ export default {
         language: this.language,
         categoryId: node.id,
       });
-      const list = data.list.map(item => {
-        const node = {
+      const list = [];
+      for (const item of data.list) {
+        const nodeChild = {
           id: item.id,
           attrs: {
+            id: treeviewData._calcNodeAttrId(node, item),
             link: '#',
             label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
             toggle: item.categoryCatalog === 1,
@@ -79,8 +91,11 @@ export default {
           },
           data: item,
         };
-        return node;
-      });
+        if (item.categoryCatalog === 1 && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
+          await treeviewData._preloadChildren(nodeChild);
+        }
+        list.push(nodeChild);
+      }
       return list;
     },
     onNodePerformClick(event, context, node) {
