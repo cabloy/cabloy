@@ -49,6 +49,11 @@ export default {
       this.treeviewData = this.$meta.util.createComponentInstance(ebTreeviewData, componentOptions);
       // treeviewRoot
       this.treeviewRoot = this.providerConfig.treeviewRoot;
+      // maxLevelAutoOpened
+      const maxLevelAutoOpened = this.layoutManager.container.maxLevelAutoOpened;
+      if (maxLevelAutoOpened !== undefined) {
+        this.treeviewRoot.attrs.maxLevelAutoOpened = maxLevelAutoOpened;
+      }
       // adapter
       const treeviewAdapter = await this._createTreeviewAdapter();
       this.treeviewData.setAdapter(treeviewAdapter);

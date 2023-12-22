@@ -4,16 +4,10 @@ const ebTreeviewAdapterBase = Vue.prototype.$meta.module.get('a-components').opt
 export default function (ctx, { layoutManager }) {
   // roleIdStart
   const roleIdStart = layoutManager.container.roleIdStart || 0;
-  // maxLevelAutoOpened
-  let maxLevelAutoOpened = layoutManager.container.maxLevelAutoOpened;
-  if (maxLevelAutoOpened === undefined) maxLevelAutoOpened = 2;
   // adapter
   return class Adapter extends ebTreeviewAdapterBase(ctx) {
     async onLoadChildren(node) {
       const treeviewData = this.treeviewData;
-      //
-      const levelCurrent = node.__level || 0;
-      const level = levelCurrent + 1;
       //
       let data;
       const roleId = node.root ? roleIdStart : node.id;
@@ -34,11 +28,7 @@ export default function (ctx, { layoutManager }) {
             iconF7: item._roleTypeCodeOptions.icon.f7,
           },
           data: item,
-          __level: level,
         };
-        if (item.catalog === 1 && (level <= maxLevelAutoOpened || maxLevelAutoOpened === -1)) {
-          await treeviewData._preloadChildren(nodeChild);
-        }
         list.push(nodeChild);
       }
       return list;
