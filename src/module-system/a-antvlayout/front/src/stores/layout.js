@@ -3,11 +3,16 @@ import * as layout from '@antv/layout';
 
 export default {
   state() {
-    return {};
+    return {
+      layout: null,
+    };
   },
   actions: {
     getInstance() {
-      return Vue.exports.shallowReactive(layout);
+      if (!this.layout) {
+        this.layout = Vue.exports.markRaw(layout);
+      }
+      return this.layout;
     },
   },
 };

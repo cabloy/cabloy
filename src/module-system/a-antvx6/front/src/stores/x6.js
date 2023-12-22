@@ -3,11 +3,16 @@ import * as x6 from '@antv/x6';
 
 export default {
   state() {
-    return {};
+    return {
+      x6: null,
+    };
   },
   actions: {
     getInstance() {
-      return Vue.exports.shallowReactive(x6);
+      if (!this.x6) {
+        this.x6 = Vue.exports.markRaw(x6);
+      }
+      return this.x6;
     },
   },
 };
