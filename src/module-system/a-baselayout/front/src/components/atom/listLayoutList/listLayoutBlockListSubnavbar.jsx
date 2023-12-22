@@ -46,6 +46,7 @@ export default {
   },
   methods: {
     async onPolicy() {
+      return false;
       // init
       await this.__init({ initDicts: false });
       // check tabs
