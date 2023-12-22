@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import { markRaw } from 'vue';
 import * as layout from '@antv/layout';
 
 export default {
@@ -10,7 +10,7 @@ export default {
   actions: {
     getInstance() {
       if (!this.layout) {
-        this.layout = Vue.exports.markRaw(layout);
+        this.layout = markRaw(layout);
       }
       return this.layout;
     },

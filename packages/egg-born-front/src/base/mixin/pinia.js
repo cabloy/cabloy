@@ -1,3 +1,4 @@
+import { reactive } from 'vue';
 import { createPinia, PiniaVuePlugin, defineStore } from 'pinia';
 import { PiniaPluginCreated } from 'pinia-plugin-created';
 
@@ -6,7 +7,7 @@ export default function (Vue) {
   Vue.use(PiniaVuePlugin);
 
   // stores
-  const __stores = Vue.exports.reactive({});
+  const __stores = reactive({});
 
   // pinia
   const pinia = new createPinia();

@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import { markRaw } from 'vue';
 import * as x6 from '@antv/x6';
 
 export default {
@@ -10,7 +10,7 @@ export default {
   actions: {
     getInstance() {
       if (!this.x6) {
-        this.x6 = Vue.exports.markRaw(x6);
+        this.x6 = markRaw(x6);
       }
       return this.x6;
     },

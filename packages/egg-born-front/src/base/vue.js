@@ -7,7 +7,6 @@ import VuePluginRenderFreeze from './plugin/renderFreeze.js';
 
 // exports
 const Vue = VueAll.default;
-Vue.exports = VueAll;
 
 // Vue.get
 async function __get_initializer_invoke(target, key, initializer) {
