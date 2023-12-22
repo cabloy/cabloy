@@ -66,7 +66,7 @@ export default {
     },
     _renderNodeLabelStart(node) {
       // root
-      if (node.id === 0) return this.$text('Root');
+      if (node.id === 0) return this.$text('All');
       // others
       const item = node.data;
       return item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`;
@@ -79,7 +79,7 @@ export default {
         {
           id: 0,
           attrs: {
-            // label: this.$text('Root'),
+            // label: this.$text('All'),
             toggle: true,
             loadChildren: true,
             checkbox: checkboxShow,

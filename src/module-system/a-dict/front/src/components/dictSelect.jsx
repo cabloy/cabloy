@@ -217,7 +217,7 @@ export default {
 //     {
 //       id: 0,
 //       attrs: {
-//         label: this.$text('Root'),
+//         label: this.$text('All'),
 //         toggle: true,
 //         loadChildren: true,
 //         checkbox,

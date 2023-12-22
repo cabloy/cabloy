@@ -51,7 +51,7 @@ export default {
             id: 0,
             attrs: {
               link: '#',
-              label: this.$text('Root'),
+              label: this.$text('All'),
               toggle: true,
               loadChildren: true,
             },
