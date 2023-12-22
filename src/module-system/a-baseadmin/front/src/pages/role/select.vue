@@ -60,6 +60,7 @@ export default {
           multiple: this.multiple,
           checkbox: true,
           checkOnLabel: true,
+          maxLevelAutoOpened: this.maxLevelAutoOpened,
         },
       };
     },
@@ -78,11 +79,8 @@ export default {
     },
   },
   methods: {
-    async _loadNodeRoles(node, treeviewData) {
+    async _loadNodeRoles(node) {
       try {
-        //
-        const levelCurrent = node.__level || 0;
-        const level = levelCurrent + 1;
         // roleId
         const roleId = node.root ? this.roleIdStart : node.id;
         // promise
@@ -112,7 +110,6 @@ export default {
           const nodeChild = {
             id: item.id,
             attrs: {
-              id: treeviewData._calcNodeAttrId(node, item),
               // label: item.atomNameLocale || item.roleName,
               toggle: item.catalog === 1,
               loadChildren: item.catalog === 1,
@@ -124,11 +121,7 @@ export default {
               disabled,
             },
             data: item,
-            __level: level,
           };
-          if (item.catalog === 1 && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
-            await treeviewData._preloadChildren(nodeChild);
-          }
           list.push(nodeChild);
         }
         // filter

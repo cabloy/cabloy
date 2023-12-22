@@ -11,12 +11,6 @@ export default {
       atomClass,
       language,
       languageTitle,
-      root: {
-        attrs: {
-          itemToggle: false,
-          selectable: true,
-        },
-      },
     };
   },
   computed: {
@@ -27,6 +21,15 @@ export default {
     },
     maxLevelAutoOpened() {
       return this.$meta.config.modules['a-baseadmin'].category.select.maxLevelAutoOpened;
+    },
+    root() {
+      return {
+        attrs: {
+          itemToggle: false,
+          selectable: true,
+          maxLevelAutoOpened: this.maxLevelAutoOpened,
+        },
+      };
     },
   },
   mounted() {
@@ -46,16 +49,12 @@ export default {
       }
       return queries;
     },
-    async onLoadChildren(node, treeviewData) {
-      //
-      const levelCurrent = node.__level || 0;
-      const level = levelCurrent + 1;
+    async onLoadChildren(node) {
       // root
       if (node.root) {
         const nodeAll = {
           id: 0,
           attrs: {
-            id: treeviewData._calcNodeAttrId(node, { id: 0 }),
             link: '#',
             label: this.$text('All'),
             toggle: true,
@@ -65,11 +64,7 @@ export default {
             id: 0,
             categoryCatalog: 1,
           },
-          __level: level,
         };
-        if (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1) {
-          await treeviewData._preloadChildren(nodeAll);
-        }
         return [nodeAll];
       }
       // children
@@ -83,7 +78,6 @@ export default {
         const nodeChild = {
           id: item.id,
           attrs: {
-            id: treeviewData._calcNodeAttrId(node, item),
             link: '#',
             label: item.categoryNameLocale || item.categoryName || `[${this.$text('New Category')}]`,
             toggle: item.categoryCatalog === 1,
@@ -91,9 +85,6 @@ export default {
           },
           data: item,
         };
-        if (item.categoryCatalog === 1 && (level <= this.maxLevelAutoOpened || this.maxLevelAutoOpened === -1)) {
-          await treeviewData._preloadChildren(nodeChild);
-        }
         list.push(nodeChild);
       }
       return list;
