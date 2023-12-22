@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Vue
 // eslint-disable-next-line
-window.Vue = Vue;
+window.Vue = VueAll;
 
 // meta
 const strats = Vue.config.optionMergeStrategies;
