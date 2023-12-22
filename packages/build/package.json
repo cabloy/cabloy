@@ -67,7 +67,7 @@
     "vue-eslint-parser": "^9.1.1",
     "vue-loader": "^15.10.1",
     "vue-template-compiler": "^2.7.13",
-    "webpack": "^5.80.0",
+    "webpack": "^5.89.0",
     "webpack-alioss-plugin": "^2.4.2",
     "webpack-bundle-analyzer": "^4.7.0",
     "webpack-dev-middleware": "^4.3.0",
