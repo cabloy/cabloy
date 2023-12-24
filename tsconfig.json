@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2017"
+    "target": "es2017",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [
     "src/module/**/*", //
