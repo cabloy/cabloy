@@ -1,6 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
+  "files.eol": "\n",
   // eslint
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
@@ -40,7 +41,4 @@
     "**/node_modules": false
   },
   "search.useIgnoreFiles": false
-  // "typescript.validate.enable": false,
-  // "typescript.format.enable": false,
-  // "typescript.disableAutomaticTypeAcquisition": true
 }
