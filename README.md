@@ -28,7 +28,7 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 [download-image-mirror]: https://npmmirror.com/badge/d/cabloy.svg
 [download-url-mirror]: https://npmmirror.com/package/cabloy
 
-## Cabloy5.0内测预告
+## Cabloy5.0内测预告 🚀🚀🚀
 
 Cabloy5.0采用Typescript对整个全栈框架进行了脱胎换骨般的大重构，详细信息请参见：
 
