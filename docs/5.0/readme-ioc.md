@@ -21,7 +21,7 @@ Cabloy5.0采用TS对整个全栈框架进行了脱胎换骨般的大重构，并
 1. Service服务
 2. Config配置
 3. 多语言
-4. 错误消息
+4. 错误异常
 
 ## 三、Service服务
 
@@ -184,7 +184,7 @@ export class LocalHome extends BeanBase<ScopeModule> {
 
 ![依赖查找-多语言](./images/lookup-locale.gif)
 
-## 六、错误消息
+## 六、错误异常
 
 ### 1. 定义错误码
 
@@ -218,7 +218,7 @@ export default {
 ```
 
 
-### 3. 使用错误消息
+### 3. 抛出错误异常
 
 可以在LocalHome中直接使用刚才定义的错误枚举值，并抛出异常
 
@@ -239,7 +239,7 @@ export class LocalHome extends BeanBase<ScopeModule> {
 
 看一下动画演示，提供了完整的类型智能提示：
 
-![依赖查找-错误消息](./images/lookup-error.gif)
+![依赖查找-错误异常](./images/lookup-error.gif)
 
 ## 六、后记
 
