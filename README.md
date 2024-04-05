@@ -28,6 +28,20 @@ CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱�
 [download-image-mirror]: https://npmmirror.com/badge/d/cabloy.svg
 [download-url-mirror]: https://npmmirror.com/package/cabloy
 
+## Cabloy5.0内测预告
+
+Cabloy5.0采用Typescript对整个全栈框架进行了脱胎换骨般的大重构，详细信息请参见：
+
+- [Cabloy5.0内测预告，暨比nestjs更优雅的ts控制反转策略](./docs/5.0/readme-ioc.md)
+
+### 新旧技术栈对比：
+
+|    | 后端 | 前端 |
+|----|----|----|
+| 旧版 | js、egg2.0、mysql | js、vue2、framework7 |
+| 新版 | ts、egg3.0、多数据库兼容（支持mysql、postgresql） | ts、vue3、quasar |
+
+
 ## 技术栈
 
 | 场景                     | 技术栈                   |
