@@ -9,7 +9,7 @@ Cabloy5.0 has undergone a complete restructuring of the entire full-stack framew
 | old | js, egg2, mysql | js, vue2, framework7 |
 | new | ts, egg3, multi-database compatibility（mysql、postgresql） | ts, vue3, quasar |
 
-### 2. 框架开发两大趋势
+### 2. Two major trends in framework development
 
 1. TS: This is an obvious trend, so there is no need to elaborate
 
