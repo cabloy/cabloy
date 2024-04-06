@@ -6,14 +6,14 @@ Cabloy5.0采用TS对整个全栈框架进行了脱胎换骨般的大重构，并
 
 |    | 后端 | 前端 |
 |----|----|----|
-| 旧版 | js、egg2.0、mysql | js、vue2、framework7 |
-| 新版 | ts、egg3.0、多数据库兼容（支持mysql、postgresql） | ts、vue3、quasar |
+| 旧版 | js、egg2、mysql | js、vue2、framework7 |
+| 新版 | ts、egg3、多数据库兼容（支持mysql、postgresql） | ts、vue3、quasar |
 
 ### 2\. 框架开发两大趋势
 
 1. TS化：这是显而易见的趋势，不必赘言
 
-2. ESM化：从目前趋势看，前端框架已经全链路ESM化了，但是，大多数后端框架仍然是Commonjs。即便是egg3.0也仍然是Commonjs。由于egg的定位仍然是元框架，CabloyJS5.0在egg基础上仍然开发出了全量ESM化的业务模块化系统（在Commonjs之上进行ESM化的具体机制是什么，另有文章阐述）
+2. ESM化：从目前趋势看，前端框架已经全链路ESM化了，但是，大多数后端框架仍然是Commonjs。即便是egg3也仍然是Commonjs。由于egg的定位仍然是元框架，CabloyJS5.0在egg基础上仍然开发出了全量ESM化的业务模块化系统（在Commonjs之上进行ESM化的具体机制是什么，另有文章阐述）
 
 ## 二、比nestjs更优雅的ts控制反转策略
 
@@ -72,7 +72,7 @@ export class ControllerHome extends BeanBase<ScopeModule> {
 
 ### 3\. Service的依赖查找
 
-接下来，在Controller中采用依赖查找的方式来使用LocalHome
+然后，在Controller中采用依赖查找的方式来使用LocalHome
 
 ``` javascript
 import { BeanBase, Controller } from '@cabloy/core';
@@ -241,7 +241,7 @@ export class LocalHome extends BeanBase<ScopeModule> {
 
 ![依赖查找-错误异常](./images/lookup-error.gif)
 
-## 六、后记
+## 七、后记
 
 Cabloy4.0中就已经提供了大量业务能力，比如：工作流引擎、表单引擎、权限引擎、字段权限、多级缓存、模块化体系、分布式架构、多租户引擎，等等。随着Cabloy5.0 Typescript的赋能，这些业务能力也随之有了全新的表现
 
