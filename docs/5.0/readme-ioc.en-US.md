@@ -15,7 +15,7 @@ Cabloy5.0 has undergone a complete restructuring of the entire full-stack framew
 
 2. ESM: From the current trend, front frameworks have been ESM-enabled throughout the entire chain, but most backend frameworks are still Commonjs. Even egg3 is still Commonjs. Because egg's positioning is still a meta-framework, CabolyJS5.0 has developed a fully ESM-enabled business modularization system on the basis of egg (the specific mechanism of ESM on top of Commonjs is described in another article)
 
-## II. A more elegant ts inversion of control strategy than nestjs
+## II. A more elegant ts ioc strategy than nestjs
 
 TS-based backend frameworks typically provide dependency containers to achieve inversion of control. There are two strategies for inversion of control: dependency injection and dependency lookup. CabloyJS5.0 supports both of them, and with the help of module scoping, makes the code for dependency lookup more concise and efficient. Here are a few examples of features:
 
