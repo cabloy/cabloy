@@ -33,7 +33,7 @@ Each built-in feature of CabloyJS has been carefully adjusted, which reflects th
 Cabloy5.0 uses Typescript to carry out a complete restructuring of the entire full-stack framework. For more information, please refer to:
  - [A more elegant ts ioc strategy than nestjs](./docs/5.0/readme-ioc.en-US.md)
  - [YouTube Channel](https://www.youtube.com/@cabloyjs)
- - To obtain qualifications for internal testing, please visit: [Cabloy5.0 Internal Testing Access](https://store.cabloy.com/articles/Cabloy5.0%20Internal%20Testing%20Access.html)
+ - To obtain qualifications for internal testing, please visit: [Cabloy5.0 Internal Testing Access](https://store.cabloy.com/articles/Cabloy5-Internal-Testing-Access.html)
 
 ## Technology Stack
 

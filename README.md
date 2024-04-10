@@ -34,7 +34,7 @@ Cabloy5.0采用Typescript对整个全栈框架进行了脱胎换骨般的大重�
 
 - [Cabloy5.0内测预告，暨比nestjs更优雅的ts控制反转策略](./docs/5.0/readme-ioc.md)
 - 了解更多，请关注每晚8点B站直播：[濮水代码](https://space.bilibili.com/454737998)
-- 获取内测资格，请访问：[Cabloy5.0全新框架内测资格](https://store.cabloy.com/zh-cn/articles/Cabloy5.0%E5%85%A8%E6%96%B0%E6%A1%86%E6%9E%B6%E5%86%85%E6%B5%8B%E8%B5%84%E6%A0%BC.html)
+- 获取内测资格，请访问：[Cabloy5.0全新框架内测资格](https://store.cabloy.com/zh-cn/articles/Cabloy5-Internal-Testing-Access.html)
 
 ### 新旧技术栈对比：
 
