@@ -29,15 +29,15 @@ cabloy api:create:controller work
 
 接下来，我们在刚才新建的Service当中，访问模块test-home的Service服务
 
-``` typescript
+``` diff
 import { BeanBase, Local } from '@cabloy/core';
 import { ScopeModule } from '../resource/this.js';
 
 @Local()
 export class LocalWork extends BeanBase<ScopeModule> {
   async action({ user }) {
-    const scopeHome = this.getScope('test-home');
-    return scopeHome.local.home.action({ user });
++   const scopeHome = this.getScope('test-home');
++   return scopeHome.local.home.action({ user });
     // return user;
   }
 }
