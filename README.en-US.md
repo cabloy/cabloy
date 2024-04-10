@@ -40,7 +40,7 @@ Cabloy5.0 uses Typescript to carry out a complete restructuring of the entire fu
 |    | backend | frontend |
 |----|----|----|
 | old | js, egg2.0, mysql | js, vue2, framework7 |
-| new | ts, egg3.0, Multi database compatibility(mysql、postgresql) | ts, vue3, quasar |
+| new | ts, egg3.0, multi database compatibility(mysql、postgresql) | ts, vue3, quasar |
 
 ## ============================== The following is Cabloy4
 
