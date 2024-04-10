@@ -35,6 +35,15 @@ Cabloy5.0 uses Typescript to carry out a complete restructuring of the entire fu
  - [YouTube Channel](https://www.youtube.com/@cabloyjs)
  - To obtain qualifications for internal testing, please visit: [Cabloy5.0 Internal Testing Access](https://store.cabloy.com/articles/Cabloy5-Internal-Testing-Access.html)
 
+### Comparison of old and new technology stacks:
+
+|    | backend | frontend |
+|----|----|----|
+| old | js, egg2.0, mysql | js, vue2, framework7 |
+| new | ts, egg3.0, Multi database compatibility(mysql、postgresql) | ts, vue3, quasar |
+
+## ============================== The following is Cabloy4
+
 ## Technology Stack
 
 | **Scene**                                    | Technology Stack         |
