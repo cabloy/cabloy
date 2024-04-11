@@ -19,11 +19,15 @@ cabloy api:create:module test-work
 
 ## 2. 新建API
 
-通过一个命令同时创建一组文件：Route、Controller、Service
+通过一个命令同时创建一组文件
 
 ``` bash
 cabloy api:create:controller work
 ```
+
+* Route: `src/module/test-work/src/routes.ts`
+* Controller: `src/module/test-work/src/controller/work.ts`
+* Service: `src/module/test-work/src/local/work.ts`
 
 ## 3. 跨模块访问Service服务
 
