@@ -28,5 +28,112 @@ cabloy api:create:controller work
 * Controller: `src/module/test-work/src/controller/work.ts`
 * Service: `src/module/test-work/src/local/work.ts`
 
-## 3.
+## 3. Access Services across modules
+
+Next, we access the Service of the module `test-home` in the newly created Service
+
+``` diff
+import { BeanBase, Local } from '@cabloy/core';
+import { ScopeModule } from '../resource/this.js';
+
+@Local()
+export class LocalWork extends BeanBase<ScopeModule> {
+  async action({ user }) {
++   const scopeHome = this.getScope('test-home');
++   return scopeHome.local.home.action({ user });
+    // return user;
+  }
+}
+```
+
+1. Obtain the scope object of the module `test-home` through the `getScope` method
+2. Directly access the Service `home` through the scope object
+
+Take a look at the animation demo, which provides complete type intelligent prompts:
+
+![cross-module: Service](./images/cross-module-localbean.gif)
+
+## 4. Access Config across modules
+
+Access the Config configuration of the module `test-home`
+
+``` diff
+import { BeanBase, Local } from '@cabloy/core';
+import { ScopeModule } from '../resource/this.js';
+
+@Local()
+export class LocalWork extends BeanBase<ScopeModule> {
+  async action({ user }) {
+    const scopeHome = this.getScope('test-home');
++   const prompt = scopeHome.config.prompt;
+    return scopeHome.local.home.action({ user });
+    // return user;
+  }
+}
+```
+
+1. Obtain the `prompt` value of config directly through `scopeHome`
+
+Take a look at the animation demo, which provides complete type intelligent prompts:
+
+![cross-module: config](./images/cross-module-config.gif)
+
+## 5. Access I18n across modules
+
+Access the I18n resources of the module `test-home`
+
+``` diff
+import { BeanBase, Local } from '@cabloy/core';
+import { ScopeModule } from '../resource/this.js';
+
+@Local()
+export class LocalWork extends BeanBase<ScopeModule> {
+  async action({ user }) {
+    const scopeHome = this.getScope('test-home');
++   const message = scopeHome.locale.HelloWorld();
++   const message1 = scopeHome.locale.HelloWorld.locale('en-us');
++   const message2 = scopeHome.locale.HelloWorld.locale('zh-cn');
+    return scopeHome.local.home.action({ user });
+    // return user;
+  }
+}
+```
+
+Take a look at the animation demo, which provides complete type intelligent prompts:
+
+![cross-module: i18n](./images/cross-module-locale.gif)
+
+## 6. Access Error Exception across modules
+
+Access and throw the Error exception of the module `test-home`
+
+``` diff
+import { BeanBase, Local } from '@cabloy/core';
+import { ScopeModule } from '../resource/this.js';
+
+@Local()
+export class LocalWork extends BeanBase<ScopeModule> {
+  async action({ user }) {
+    const scopeHome = this.getScope('test-home');
++   scopeHome.error.Error001.throw();
+    return scopeHome.local.home.action({ user });
+    // return user;
+  }
+}
+```
+
+1. Throw error exception `Error001` directly through `scopeHome`
+
+Take a look at the animation demo, which provides complete type intelligent prompts:
+
+![cross-module: error exception](./images/cross-module-error.gif)
+
+## Postscript
+
+CabloyJS uses `ioc` and `dependency lookup` mechanisms to reduce type annotations and achieve the effect of `making types invisible`, thus keeping our code elegant and concise, which in turn can significantly improve development efficiency and ensure code quality
+
+For more information, please goto:
+ - [YouTube Channel](https://www.youtube.com/@cabloyjs)
+ - [Twitter](twitter.com/zhennann2024)
+ - zhen.nann@icloud.com
 
