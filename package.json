@@ -15,6 +15,10 @@
     "type": "git",
     "url": "git+https://github.com/zhennann/cabloy.git"
   },
+  "homepage": "https://github.com/zhennann/cabloy#readme",
+  "bugs": {
+    "url": "https://github.com/zhennann/cabloy/issues"
+  },
   "author": "zhennann",
   "license": "MIT",
   "keywords": [
@@ -25,10 +29,6 @@
     "framework7",
     "cabloy"
   ],
-  "bugs": {
-    "url": "https://github.com/zhennann/cabloy/issues"
-  },
-  "homepage": "https://github.com/zhennann/cabloy#readme",
   "engines": {
     "node": ">=16.0.0"
   },
