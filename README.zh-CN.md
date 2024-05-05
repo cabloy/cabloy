@@ -33,10 +33,10 @@ Cabloy-Pro4 采用 Javascript 开发，具备完善的功能和文档，请参�
 
 Cabloy-Pro5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的大重构：
 
-|      | 技术栈                                          |
-| ---- | ----------------------------------------------- |
-| 前端 | TS、Vue3、TSX、IOC、Quasar                      |
-| 后端 | TS、Egg3、多数据库兼容（支持Mysql、Postgresql） |
+|      | 技术栈                                          ||
+| ---- | ----------------------------------------------- |--|
+| 前端 | TS、Vue3、TSX、IOC、Quasar                      |[Github](https://github.com/cabloy/cabloy-front) [文档](https://cabloy.github.io/cabloy-front/)|
+| 后端 | TS、Egg3、多数据库兼容（支持Mysql、Postgresql） ||
 
 - 获取Cabloy-Pro5内测版，请访问：[Cabloy-Pro5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy-Pro5-Internal-Testing.html)
 
