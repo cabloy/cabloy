@@ -36,10 +36,10 @@ Cabloy-Pro4 is developed using Javascript and has comprehensive features and doc
 
 Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire full-stack framework:
 
-|          | Technology Stacks                                         |
-| -------- | --------------------------------------------------------- |
-| Frontend | TS, Vue3, TSX, IOC, Quasar                                |
-| Backend  | TS, Egg3, Multi database compatibility(Mysql, Postgresql) |
+|          | Technology Stacks                                         ||
+| -------- | --------------------------------------------------------- |--|
+| Frontend | TS, Vue3, TSX, IOC, Quasar                                |[Github](https://github.com/cabloy/cabloy-front) [Docs](https://cabloy.github.io/cabloy-front/)|
+| Backend  | TS, Egg3, Multi database compatibility(Mysql, Postgresql) ||
 
 - To obtain Cabloy-Pro5 Internal Testing, please visit: [Cabloy-Pro5-Internal-Testing](https://store.cabloy.com/articles/Cabloy-Pro5-Internal-Testing.html)
 
