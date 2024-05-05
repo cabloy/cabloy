@@ -45,12 +45,12 @@ Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire 
 
 ### Videos
 
-- [Videos](../resources/videos.md)
+- [Videos](https://cabloy.github.io/cabloy-front/cabloy-pro/resources/videos.html)
 
 ### Articles
 
-- [A more elegant ioc than nestjs: Basics](../resources/articles/ioc-basic.md)
-- [A more elegant ioc than nestjs: Cross Module Access](../resources/articles/ioc-cross-module.md)
+- [A more elegant ioc than nestjs: Basics](https://cabloy.github.io/cabloy-front/cabloy-pro/resources/articles/ioc-basic.html)
+- [A more elegant ioc than nestjs: Cross Module Access](https://cabloy.github.io/cabloy-front/cabloy-pro/resources/articles/ioc-cross-module.html)
 
 ## Stay In Touch
 

@@ -44,12 +44,12 @@ Cabloy-Pro5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的�
 
 ### 视频
 
-- [视频](../resources/videos.md)
+- [视频](https://cabloy.github.io/cabloy-front/zh/cabloy-pro/resources/videos.html)
 
 ### 文章
 
-- [比nestjs更优雅的ioc: 基础篇](../resources/articles/ioc-basic.md)
-- [比nestjs更优雅的ioc: 跨模块访问资源](../resources/articles/ioc-cross-module.md)
+- [比nestjs更优雅的ioc: 基础篇](https://cabloy.github.io/cabloy-front/zh/cabloy-pro/resources/articles/ioc-basic.html)
+- [比nestjs更优雅的ioc: 跨模块访问资源](https://cabloy.github.io/cabloy-front/zh/cabloy-pro/resources/articles/ioc-cross-module.html)
 
 ### 直播
 
