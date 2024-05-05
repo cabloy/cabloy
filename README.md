@@ -39,7 +39,7 @@ Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire 
 | Frontend | TS, Vue3, TSX, IOC, Quasar                                |
 | Backend  | TS, Egg3, Multi database compatibility(Mysql, Postgresql) |
 
-- To obtain qualifications for internal testing, please visit: [Cabloy-Pro5 Internal Testing Access](https://store.cabloy.com/articles/Cabloy5-Internal-Testing-Access.html)
+- To obtain Cabloy-Pro5 Internal Testing, please visit: [Cabloy-Pro5-Internal-Testing](https://store.cabloy.com/articles/Cabloy-Pro5-Internal-Testing.html)
 
 ## Resources
 

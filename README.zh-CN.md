@@ -38,7 +38,7 @@ Cabloy-Pro5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的�
 | 前端 | TS、Vue3、TSX、IOC、Quasar                      |
 | 后端 | TS、Egg3、多数据库兼容（支持Mysql、Postgresql） |
 
-- 获取内测资格，请访问：[Cabloy-Pro5内测资格](https://store.cabloy.com/zh-cn/articles/Cabloy5-Internal-Testing-Access.html)
+- 获取Cabloy-Pro5内测版，请访问：[Cabloy-Pro5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy-Pro5-Internal-Testing.html)
 
 ## 资源
 
