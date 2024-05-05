@@ -28,7 +28,9 @@ Each built-in feature of Cabloy-Pro has been carefully adjusted, which reflects 
 
 ## Cabloy-Pro4
 
-Cabloy-Pro4 is developed using Javascript and has comprehensive features and documentation. Please refer to: [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
+Cabloy-Pro4 is developed using Javascript and has comprehensive features and documentation
+
+- Please refer to: [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
 
 ## Cabloy-Pro5 Internal Testing 🚀🚀🚀
 
