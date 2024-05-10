@@ -45,7 +45,7 @@ Cabloy-Pro5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的�
 
 ## Cabloy-Front
 
-Cabloy-Front 是一款支持 IOC 容器的 Vue3 框架。没有`ref/reactive`，没有`ref.value`，没有`pinia`
+Cabloy-Front 是一款支持 IOC 容器的 Vue3 框架。不用`ref/reactive`，不用`ref.value`，不用`pinia`
 
 - 文档：[快速开始](https://front.cabloy.com/zh/guide/start/introduction.html)
 
