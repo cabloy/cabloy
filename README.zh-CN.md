@@ -27,7 +27,9 @@ Cabloy-Pro 内置的每一项特性都做到精心调校，均体现了从`开�
 
 ## Cabloy-Pro4
 
-Cabloy-Pro4 采用 Javascript 开发，具备完善的功能和文档，请参见：[快速开始](https://cabloy.com/zh-cn/articles/guide-quick-start.html)
+Cabloy-Pro4 采用 Javascript 开发，具备完善的功能和文档
+
+- 文档：[快速开始](https://cabloy.com/zh-cn/articles/guide-quick-start.html)
 
 ## Cabloy-Pro5内测版 🚀🚀🚀
 
@@ -38,18 +40,10 @@ Cabloy-Pro5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的�
 | 前端 | TS、Vue3、TSX、IOC、Quasar                      |[Github](https://github.com/cabloy/cabloy-front) [文档](https://cabloy.github.io/cabloy-front/)|
 | 后端 | TS、Egg3、多数据库兼容（支持Mysql、Postgresql） ||
 
+- 文档：[简介](https://front.cabloy.com/zh/cabloy-pro/start/introduction.html)
 - 获取Cabloy-Pro5内测版，请访问：[Cabloy-Pro5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy-Pro5-Internal-Testing.html)
 
-## 资源
-
-### 视频
-
-- [视频](https://cabloy.github.io/cabloy-front/zh/cabloy-pro/resources/videos.html)
-
-### 文章
-
-- [比nestjs更优雅的ioc: 基础篇](https://cabloy.github.io/cabloy-front/zh/cabloy-pro/resources/articles/ioc-basic.html)
-- [比nestjs更优雅的ioc: 跨模块访问资源](https://cabloy.github.io/cabloy-front/zh/cabloy-pro/resources/articles/ioc-cross-module.html)
+-
 
 ### 直播
 

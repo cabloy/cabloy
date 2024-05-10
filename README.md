@@ -30,7 +30,7 @@ Each built-in feature of Cabloy-Pro has been carefully adjusted, which reflects 
 
 Cabloy-Pro4 is developed using Javascript and has comprehensive features and documentation
 
-- Please refer to: [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
+- Documentation can be found at [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
 
 ## Cabloy-Pro5 Internal Testing 🚀🚀🚀
 
@@ -41,18 +41,8 @@ Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire 
 | Frontend | TS, Vue3, TSX, IOC, Quasar                                |[Github](https://github.com/cabloy/cabloy-front) [Docs](https://cabloy.github.io/cabloy-front/)|
 | Backend  | TS, Egg3, Multi database compatibility(Mysql, Postgresql) ||
 
+- Documentation can be found at [Introduction](https://front.cabloy.com/cabloy-pro/start/introduction.html)
 - To obtain Cabloy-Pro5 Internal Testing, please visit: [Cabloy-Pro5-Internal-Testing](https://store.cabloy.com/articles/Cabloy-Pro5-Internal-Testing.html)
-
-## Resources
-
-### Videos
-
-- [Videos](https://cabloy.github.io/cabloy-front/cabloy-pro/resources/videos.html)
-
-### Articles
-
-- [A more elegant ioc than nestjs: Basics](https://cabloy.github.io/cabloy-front/cabloy-pro/resources/articles/ioc-basic.html)
-- [A more elegant ioc than nestjs: Cross Module Access](https://cabloy.github.io/cabloy-front/cabloy-pro/resources/articles/ioc-cross-module.html)
 
 ## Stay In Touch
 
