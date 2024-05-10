@@ -30,7 +30,7 @@ Each built-in feature of Cabloy-Pro has been carefully adjusted, which reflects 
 
 Cabloy-Pro4 is developed using Javascript and has comprehensive features and documentation
 
-- Documentation can be found at [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
+- Documentation: [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
 
 ## Cabloy-Pro5 Internal Testing 🚀🚀🚀
 
@@ -41,14 +41,14 @@ Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire 
 | Frontend | TS, Vue3, TSX, IOC, Quasar                                |[Github](https://github.com/cabloy/cabloy-front) [Docs](https://cabloy.github.io/cabloy-front/)|
 | Backend  | TS, Egg3, Multi database compatibility(Mysql, Postgresql) ||
 
-- Documentation can be found at [Introduction](https://front.cabloy.com/cabloy-pro/start/introduction.html)
+- Documentation: [Introduction](https://front.cabloy.com/cabloy-pro/start/introduction.html)
 - To obtain Cabloy-Pro5 Internal Testing, please visit: [Cabloy-Pro5-Internal-Testing](https://store.cabloy.com/articles/Cabloy-Pro5-Internal-Testing.html)
 
 ## Cabloy-Front
 
 Cabloy-Front is a vue3 framework with ioc container. No `ref/reactive`, no `ref.value`, no `pinia`
 
-- Documentation can be found at [Quick Start](https://front.cabloy.com/guide/start/introduction.html)
+- Documentation: [Quick Start](https://front.cabloy.com/guide/start/introduction.html)
 
 ## Stay In Touch
 
