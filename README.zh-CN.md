@@ -41,13 +41,13 @@ Cabloy-Pro5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的�
 | 后端 | TS、Egg3、多数据库兼容（支持Mysql、Postgresql） ||
 
 - 文档：[简介](https://front.cabloy.com/zh/cabloy-pro/start/introduction.html)
-- 获取Cabloy-Pro5内测版，请访问：[Cabloy-Pro5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy-Pro5-Internal-Testing.html)
+- 获取 Cabloy-Pro5 内测版，请访问：[Cabloy-Pro5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy-Pro5-Internal-Testing.html)
 
--
+## Cabloy-Front
 
-### 直播
+Cabloy-Front 是一款支持 IOC 容器的 Vue3 框架。没有`ref/reactive`，没有`ref.value`，没有`pinia`
 
-了解更多，请关注每晚 8 点 B 站直播：[濮水代码](https://space.bilibili.com/454737998)
+- 文档：[快速开始](https://front.cabloy.com/zh/guide/start/introduction.html)
 
 ## 保持联系
 

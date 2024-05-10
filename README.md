@@ -44,6 +44,12 @@ Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire 
 - Documentation can be found at [Introduction](https://front.cabloy.com/cabloy-pro/start/introduction.html)
 - To obtain Cabloy-Pro5 Internal Testing, please visit: [Cabloy-Pro5-Internal-Testing](https://store.cabloy.com/articles/Cabloy-Pro5-Internal-Testing.html)
 
+## Cabloy-Front
+
+Cabloy-Front is a vue3 framework with ioc container. No `ref/reactive`, no `ref.value`, no `pinia`
+
+- Documentation can be found at [Quick Start](https://front.cabloy.com/guide/start/introduction.html)
+
 ## Stay In Touch
 
 - [Twitter](https://twitter.com/zhennann2024)

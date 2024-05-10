@@ -43,5 +43,6 @@
   // "typescript.validate.enable": false,
   // "typescript.format.enable": false,
   // "typescript.disableAutomaticTypeAcquisition": true,
-  "hide-my-secrets.hideSecrets": false
+  "hide-my-secrets.hideSecrets": false,
+  "textlint.autoFixOnSave": true
 }
