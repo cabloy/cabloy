@@ -26,15 +26,15 @@ CabloyJS is a NodeJS full-stack framework with `workflow engine`, a low-code dev
 
 Each built-in feature of Cabloy-Pro has been carefully adjusted, which reflects the seamless connection of `flexible-customization` from `out-of-the-box`, including role system, user authentication, menu permission, data permission, form rendering, form verification, workflow engine, dictionary, dashboard, online push, page theme, multilingual internationalization and CMS rendering engine, etc.
 
-## Cabloy-Pro4
+## Cabloy-Pro v4
 
-Cabloy-Pro4 is developed using Javascript and has comprehensive features and documentation
+Cabloy-Pro v4 is developed using Javascript and has comprehensive features and documentation
 
 - Documentation: [Quick Start](https://cabloy.com/articles/guide-quick-start.html)
 
-## Cabloy-Pro5 Internal Testing 🚀🚀🚀
+## Cabloy-Pro v5 Internal Testing 🚀🚀🚀
 
-Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire full-stack framework:
+Cabloy-Pro v5 uses Typescript to carry out a complete restructuring of the entire full-stack framework:
 
 |          | Technology Stacks                                         |
 | -------- | --------------------------------------------------------- |
@@ -44,11 +44,12 @@ Cabloy-Pro5 uses Typescript to carry out a complete restructuring of the entire 
 - Documentation: [Introduction](https://front.cabloy.com/cabloy-pro/start/introduction.html)
 - To obtain Cabloy-Pro5 Internal Testing, please visit: [Cabloy-Pro5-Internal-Testing](https://store.cabloy.com/articles/Cabloy-Pro5-Internal-Testing.html)
 
-## Cabloy-Front
+## Cabloy-Front v5
 
-Cabloy-Front is a vue3 framework with ioc container. No `ref/reactive`, no `ref.value`, no `pinia`
+Cabloy-Front v5 is a vue3 framework with ioc container. With the support of ioc container, defining reactive states no longer needs `ref/reactive`, nor `ref.value`
 
 - Documentation: [Quick Start](https://front.cabloy.com/guide/start/introduction.html)
+- Documentation: [Why Vue3+IOC?](https://front.cabloy.com/guide/start/why.html)
 
 ## Stay In Touch
 
