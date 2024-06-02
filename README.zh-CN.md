@@ -43,9 +43,11 @@ Cabloy5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的大重
 - 文档：[简介](https://zova.cabloy.com/zh/cabloy/start/introduction.html)
 - 获取 Cabloy5 内测版，请访问：[Cabloy5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy5-Internal-Testing.html)
 
-## Cabloy-Front v5
+## Zova
 
-Cabloy-Front v5 是一款支持 IOC 容器的 Vue3 框架。有了 IOC 容器的加持，定义响应式状态不再需要`ref/reactive`，也不再需要`ref.value`
+Zova 是一款支持 IOC 容器的 Vue3 框架。有了 IOC 容器的加持，定义响应式状态不再需要`ref/reactive`，也不再需要`ref.value`
+
+Zova 是在开发 Cabloy5 的过程中孵化出的独立的前端框架，采用 Typescript，采用通用设计，可搭配任何 UI 库使用
 
 - 文档：[快速开始](https://zova.cabloy.com/zh/guide/start/introduction.html)
 - 文档：[为什么需要Vue3+IOC?](https://zova.cabloy.com/zh/guide/start/why.html)
@@ -59,4 +61,4 @@ Cabloy-Front v5 是一款支持 IOC 容器的 Vue3 框架。有了 IOC 容器的
 
 [MIT](./LICENSE)
 
-Copyright (c) 2016-present, zhennann
+Copyright (c) 2016-present, Cabloy

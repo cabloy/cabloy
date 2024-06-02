@@ -44,9 +44,11 @@ Cabloy5 uses Typescript to carry out a complete restructuring of the entire full
 - Documentation: [Introduction](https://zova.cabloy.com/cabloy/start/introduction.html)
 - To obtain Cabloy5 Internal Testing, please visit: [Cabloy5-Internal-Testing](https://store.cabloy.com/articles/Cabloy5-Internal-Testing.html)
 
-## Cabloy-Front v5
+## Zova
 
-Cabloy-Front v5 is a vue3 framework with ioc container. With the support of ioc container, defining reactive states no longer needs `ref/reactive`, nor `ref.value`
+Zova is a vue3 framework with ioc container. With the support of ioc container, defining reactive states no longer needs `ref/reactive`, nor `ref.value`
+
+Zova is an independent front-end framework hatched in the process of developing Cabloy5. It uses TypeScript, using universal design, and can be used with any UI library
 
 - Documentation: [Quick Start](https://zova.cabloy.com/guide/start/introduction.html)
 - Documentation: [Why Vue3+IOC?](https://zova.cabloy.com/guide/start/why.html)
@@ -60,4 +62,4 @@ Cabloy-Front v5 is a vue3 framework with ioc container. With the support of ioc 
 
 [MIT](./LICENSE)
 
-Copyright (c) 2016-present, zhennann
+Copyright (c) 2016-present, Cabloy
