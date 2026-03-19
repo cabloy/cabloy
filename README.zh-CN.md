@@ -25,7 +25,7 @@ CabloyJS 是一款自带`工作流引擎`的 Node.js 全栈框架，面向开发
 
 1. [VonaJS](https://github.com/vonajs/vona): 提供后端底层架构，及 SSR 适配层
 2. [ZovaJS](https://github.com/zovajs/zova): 提供前端底层架构，及 SSR 渲染能力
-3. `CabloyJS`: 提供更多开箱即用的能力，加速全栈项目的开发
+3. [CabloyJS](https://vona.js.org/cabloy/introduction.html): 提供更多开箱即用的能力，加速全栈项目的开发
 
 ## 研发历程
 
