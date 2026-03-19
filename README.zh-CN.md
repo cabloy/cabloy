@@ -21,44 +21,34 @@ CabloyJS 是一款自带`工作流引擎`的 Node.js 全栈框架，面向开发
 [download-image]: https://img.shields.io/npm/dm/cabloy?color=orange&label=npm%20downloads
 [download-url]: https://npmjs.com/package/cabloy
 
-## 特性
+## Vona、Zova和Cabloy的关系
 
-CabloyJS 内置的每一项特性都做到精心调校，均体现了从`开箱即用`到`灵活定制`的无缝衔接，包括：角色系统、用户认证、菜单权限、数据权限、表单渲染、表单验证、工作流引擎、字典、仪表板、在线推送、页面主题、多语言国际化、CMS 渲染引擎、微信接口、企业微信接口、钉钉接口，等等
+1. `VonaJS`: 提供后端底层架构，及 SSR 适配层
+2. `ZovaJS`: 提供前端底层架构，及 SSR 渲染能力
+3. `CabloyJS`: 提供更多开箱即用的能力，加速全栈项目的开发
 
-## Cabloy4
+## 研发历程
 
-Cabloy4 采用 Javascript 开发，具备完善的功能和文档
+### 1. 2016年：V1-V4
 
-- 文档：[快速开始](https://cabloy.com/zh-cn/articles/guide-quick-start.html)
+2016 年启动 CabloyJS 开发。CabloyJS 是基于 Javascript 的全栈 NodeJS 框架，历经 V1、V2、V3、V4 等大版本的演进
 
-## Cabloy5内测版 🚀🚀🚀
+- 有网友说: `CabloyJS是教科书式的框架`
+- 也有网友说: `如果CabloyJS支持Typescript，并且前后端分离，就更完美了`
 
-Cabloy5 采用 Typescript 对整个全栈框架进行了脱胎换骨般的大重构：
+### 2. 2023年: V5研发
 
-|      | 技术栈                                          |
-| ---- | ----------------------------------------------- |
-| 前端 | TS、Vue3、TSX、IOC、Quasar                      |
-| 后端 | TS、Egg3、多数据库兼容（支持Mysql、Postgresql） |
+2023 年，在经过充分的评估和验证之后，CabloyJS V5 采用全新的架构理念进行彻底的重构。基于 Typescript 开发，采用前后端分离，于是孵化出两个全新的底层框架：
 
-- 文档：[简介](https://zova.cabloy.com/zh/cabloy/start/introduction.html)
-- 获取 Cabloy5 内测版，请访问：[Cabloy5内测版](https://store.cabloy.com/zh-cn/articles/Cabloy5-Internal-Testing.html)
+- `ZovaJS`: 一款更直观的前端框架，汲取 Vue3、React 和 Angular 的精华，用于开发优雅、快速、可靠的系统
+- `VonaJS`: 一款直观、优雅、强大的 Node.js Web 框架，用于快速开发任何规模的企业级应用。首创 DTO 动态推断与生成能力，从而显著提升开发效率和开发体验
 
-## Zova
+### 3. 2026年：V5发布
 
-Zova 是一款支持 IOC 容器的 Vue3 框架。有了 IOC 容器的加持，定义响应式状态不再需要`ref/reactive`，也不再需要`ref.value`
-
-Zova 是在开发 Cabloy5 的过程中孵化出的独立的前端框架，采用 Typescript，采用通用设计，可搭配任何 UI 库使用
-
-- 文档：[快速开始](https://zova.cabloy.com/zh/guide/start/introduction.html)
-- 文档：[为什么需要Vue3+IOC?](https://zova.cabloy.com/zh/guide/start/why.html)
-
-## 保持联系
-
-- [Twitter](https://twitter.com/zhennann2024)
-- [Wechat](./cabloy-docs/zh/assets/img/wx-zhennann.jpg)
+2026 年，ZovaJS V5 和 VonaJS V5 正式发布，CabloyJS V5 在全新的底层框架之上，不断提供更多高级能力，进一步提升开发体验和开发效率，践行`教科书式框架`的愿景和使命
 
 ## License
 
-[MIT](./LICENSE)
+MIT License
 
-Copyright (c) 2016-present, Cabloy
+Copyright (c) 2016-present, Vona/Zova/Cabloy
