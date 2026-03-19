@@ -23,8 +23,8 @@ CabloyJS is a NodeJS full-stack framework with `workflow engine`, a low-code dev
 
 ## The relationship between Vona, Zova, and Cabloy
 
-1. `VonaJS`: Provides backend underlying architecture and SSR adaptation layer
-2. `ZovaJS`: Provides frontend underlying architecture and SSR rendering capabilities
+1. [VonaJS](https://github.com/vonajs/vona): Provides backend underlying architecture and SSR adaptation layer
+2. [ZovaJS](https://github.com/zovajs/zova): Provides frontend underlying architecture and SSR rendering capabilities
 3. `CabloyJS`: Provides more out-of-the-box capabilities to accelerate fullstack project development
 
 ## Development History
