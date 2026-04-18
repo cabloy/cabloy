@@ -1,6 +1,0 @@
-const <%=argv.atomClassName%> = require('./model/<%=argv.atomClassName%>.js');
-
-const models = {
-  <%=argv.atomClassName%>,
-};
-module.exports = models;

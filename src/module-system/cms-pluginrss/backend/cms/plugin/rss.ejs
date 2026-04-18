@@ -1,5 +1,0 @@
-<link rel="alternate" type="application/rss+xml" title="<%=site.base.title%> - Feed" href="<%=`${site.serverUrl}/api/a/cms/rss/feed/${site.atomClass.module}/${site.atomClass.atomClassName}/${site.language.current}`%>" />
-<link rel="alternate" type="application/rss+xml" title="<%=site.base.title%> - Comments Feed" href="<%=`${site.serverUrl}/api/a/cms/rss/feed/comments/${site.atomClass.module}/${site.atomClass.atomClassName}/${site.language.current}`%>" />
-<%if(typeof article!=='undefined'){%>
-<link rel="alternate" type="application/rss+xml" title="<%=site.base.title%> - <%=article.atomName%> Comments Feed" href="<%=`${site.serverUrl}/api/a/cms/rss/feed/article/comments/${article.atomId}`%>" />
-<%}%>
