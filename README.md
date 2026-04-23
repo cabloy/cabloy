@@ -18,21 +18,21 @@ CabloyJS is a NodeJS full-stack framework. V5 has undergone an architecture-leve
 
 ### 1. 2016: V1-V4
 
-Development of CabloyJS began in 2016. CabloyJS is a fullstack NodeJS framework based on JavaScript, and has evolved through major versions, including V1, V2, V3, and V4
+CabloyJS development started in 2016. CabloyJS was initially a fullstack NodeJS framework based on JavaScript, and has evolved through major versions including V1, V2, V3, and V4, continuously improving its architecture
 
-- Some say: `CabloyJS is just like a textbook`
-- Others say: `If CabloyJS supported TypeScript and had a decoupled frontend and backend architecture, it would be even better`
+- Some say: `CabloyJS is a textbook-like framework`
+- Others suggest: `If CabloyJS supported TypeScript and adopted a frontend/backend separation architecture, it would bring a brand new fullstack development experience`
 
 ### 2. 2023: V5 Development
 
-In 2023, after thorough evaluation and verification, CabloyJS V5 will undergo a complete redesign, adopting a completely new architectural philosophy. Developed in TypeScript and utilizing a frontend/backend separation, it has spawned two new underlying frameworks:
+In 2023, after thorough evaluation and verification, CabloyJS V5 underwent a complete redesign adopting a completely new architectural philosophy. Developed in TypeScript with a frontend/backend separation architecture, it spawned two underlying frameworks:
 
-- `ZovaJS`: A more intuitive framework with the pros of Vue3, React and Angular, empowers developers to build elegant, fast and reliable applications
-- `VonaJS`: An intuitive, elegant and powerful Node.js web framework for rapidly developing enterprise applications of any size. It pioneers dynamic DTO inference and generation capabilities, significantly improving development efficiency and experience
+- **ZovaJS**: An intuitive frontend framework = Vue3 Reactivity + React TSX + Angular IOC
+- **VonaJS**: A fullstack framework supporting building `SSR/SPA/Website/Admin Dashboard` in a single codebase, with built-in frontend/backend type sharing capabilities
 
 ### 3. 2026: V5 Release
 
-In 2026, ZovaJS V5 and VonaJS V5 have been released. CabloyJS V5, building on the new underlying framework, continues to provide more advanced capabilities to further enhance the development experience and efficiency, fulfilling its vision and mission of being a `textbook-like framework`
+On 2026-04-13, ZovaJS V5 and VonaJS V5 were officially released. CabloyJS V5, building on the new underlying frameworks, continues to provide more advanced capabilities, further enhancing development experience and efficiency, practicing the vision and mission of being a `textbook-like framework`
 
 ## License
 
