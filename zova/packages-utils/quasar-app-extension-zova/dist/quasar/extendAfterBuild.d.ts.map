@@ -1,0 +1,1 @@
+{"version":3,"file":"extendAfterBuild.d.ts","sourceRoot":"","sources":["../../src/quasar/extendAfterBuild.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,kBAAkB,CAAC;AAMjD,OAAO,KAAK,EAAE,aAAa,EAAE,UAAU,EAAE,MAAM,YAAY,CAAC;AAE5D,wBAAgB,gBAAgB,CAAC,OAAO,EAAE,aAAa,EAAE,OAAO,EAAE,MAAM,IAC/B,OAAO,UAAU,EAAE,MAAM,QAAQ,mBAezE"}

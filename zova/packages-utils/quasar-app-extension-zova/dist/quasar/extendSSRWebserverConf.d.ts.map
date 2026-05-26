@@ -1,0 +1,1 @@
+{"version":3,"file":"extendSSRWebserverConf.d.ts","sourceRoot":"","sources":["../../src/quasar/extendSSRWebserverConf.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,kBAAkB,CAAC;AACjD,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,SAAS,CAAC;AAI5C,OAAO,KAAK,EAAE,aAAa,EAAE,MAAM,YAAY,CAAC;AAEhD,wBAAgB,sBAAsB,CAAC,OAAO,EAAE,aAAa,IACpB,MAAM,YAAY,EAAE,KAAK,QAAQ,UA2BzE"}

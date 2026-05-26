@@ -73,7 +73,7 @@ zova/package.json
 !/vona/docker-compose/output/app/dist/.gitkeep
 
 /vona/src/backend/play
-!/packages-utils/quasar-app-extension-zova/dist
+!/zova/packages-utils/quasar-app-extension-zova/dist
 
 /vona/src/module/demo-student
 /zova/src/module/demo-student

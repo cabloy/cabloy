@@ -161561,9 +161561,9 @@ var init_src_DHmmsXRM = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/app-D0klxOdo.js
-var app_D0klxOdo_exports = {};
-__export(app_D0klxOdo_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/app-Bm7XCFKy.js
+var app_Bm7XCFKy_exports = {};
+__export(app_Bm7XCFKy_exports, {
   default: () => app_default
 });
 async function app_default(createAppFn, ssrContext) {
@@ -161575,8 +161575,8 @@ async function app_default(createAppFn, ssrContext) {
   return { app };
 }
 var init_tailwind, init_settings, main_default, init_main2, ControllerPageApp, init_controller26, app_default$1, init_app$1;
-var init_app_D0klxOdo = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/app-D0klxOdo.js"() {
+var init_app_Bm7XCFKy = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/app-Bm7XCFKy.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
@@ -161819,13 +161819,13 @@ var init_server_entry = __esm({
     init_env2 = __esmMin((() => {
       envNormal = {
         "NODE_ENV": "production",
-        "BUILD_COPY_RELEASE": "/Volumes/my-data/cabloy-multirepo/cabloy-basic/vona-dev/src/suite/cabloy-basic/modules/basic-siteadmin/assets/site",
-        "BUILD_REST_COPY_DIST": "/Volumes/my-data/cabloy-multirepo/cabloy-basic/vona-dev/src/suite/cabloy-basic/modules/basic-siteadmin/zovaRest",
-        "MOCK_ENABLED": "false",
         "BUILD_SOURCEMAP": "false",
         "BUILD_MINIFY": "false",
         "PROJECT_DISABLED_MODULES": "",
         "MOCK_BUILD": "true",
+        "BUILD_COPY_RELEASE": "/Volumes/my-data/cabloy-multirepo/cabloy-basic/vona/src/suite/cabloy-basic/modules/basic-siteadmin/assets/site",
+        "BUILD_REST_COPY_DIST": "/Volumes/my-data/cabloy-multirepo/cabloy-basic/vona/src/suite/cabloy-basic/modules/basic-siteadmin/zovaRest",
+        "MOCK_ENABLED": "false",
         "PROJECT_DISABLED_SUITES": "a-demo",
         "SSR_COOKIE": "true",
         "SSR_BODYREADYOBSERVER": "true",
@@ -162761,7 +162761,7 @@ var init_server_entry = __esm({
       init_utils17();
       init_vue();
       server_entry_default = /* @__PURE__ */ __name(async (ssrContext) => {
-        const { default: createQuasarApp } = await Promise.resolve().then(() => (init_app_D0klxOdo(), app_D0klxOdo_exports));
+        const { default: createQuasarApp } = await Promise.resolve().then(() => (init_app_Bm7XCFKy(), app_Bm7XCFKy_exports));
         const { app } = await createQuasarApp(vue_exports.createApp, ssrContext);
         const bootFunctions = await Promise.all([Promise.resolve().then(() => (init_zova_DCovkUB7(), zova_DCovkUB7_exports))]).then((bootFiles) => bootFiles.map((entry) => entry.default).filter((entry) => typeof entry === "function"));
         for (let i = 0; i < bootFunctions.length; i++) await bootFunctions[i]({
@@ -162781,7 +162781,7 @@ init_server_entry();
 // .quasar/prod-ssr/render-template.js
 function render_template_default(ssrContext) {
   var __t, __p = "";
-  __p += "<!doctype html><html " + ((__t = ssrContext._meta.htmlAttrs) == null ? "" : __t) + "><head>" + ((__t = ssrContext._meta.headTags) == null ? "" : __t) + ' <meta charset=utf-8><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><link rel=icon type=image/ico href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/favicon.ico"><script type=module crossorigin src="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-B0_FKDcu.js"></script><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/rolldown-runtime-lkMnaVCm.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CvF_GLFp.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CeNp4lbs.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-t5FcxkD3.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-B9B_nSUQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CmE1HVn9.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/fecha-DmopMB3M.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-6Abekb1F.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-BE4e4PxD.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-k6QiZ1ov.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-C4pGJxwQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-DNf1Cx1D.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-CWGd8DOC.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-B0_FKDcu.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/-zova-config-cXidgpAt.js"><link rel=stylesheet crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-iElrn65e.css"> ' + ((__t = ssrContext._meta.endingHeadTags || "") == null ? "" : __t) + '</head><body class="' + ((__t = ssrContext._meta.bodyClasses) == null ? "" : __t) + '" ' + ((__t = ssrContext._meta.bodyAttrs) == null ? "" : __t) + ">" + ((__t = ssrContext._meta.bodyTags) == null ? "" : __t) + " <div id=q-app>" + ((__t = ssrContext._meta.runtimePageContent) == null ? "" : __t) + "</div> " + ((__t = ssrContext._meta.endingBodyTags || "") == null ? "" : __t) + "</body></html>";
+  __p += "<!doctype html><html " + ((__t = ssrContext._meta.htmlAttrs) == null ? "" : __t) + "><head>" + ((__t = ssrContext._meta.headTags) == null ? "" : __t) + ' <meta charset=utf-8><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><link rel=icon type=image/ico href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/favicon.ico"><script type=module crossorigin src="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-BEt5mW8u.js"></script><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/rolldown-runtime-lkMnaVCm.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CvF_GLFp.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CeNp4lbs.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-t5FcxkD3.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-B9B_nSUQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CmE1HVn9.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/fecha-DmopMB3M.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-6Abekb1F.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-BE4e4PxD.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-k6QiZ1ov.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-C4pGJxwQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-DNf1Cx1D.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-CWGd8DOC.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-BEt5mW8u.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/-zova-config-WGajsovE.js"><link rel=stylesheet crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-B5HTgis_.css"> ' + ((__t = ssrContext._meta.endingHeadTags || "") == null ? "" : __t) + '</head><body class="' + ((__t = ssrContext._meta.bodyClasses) == null ? "" : __t) + '" ' + ((__t = ssrContext._meta.bodyAttrs) == null ? "" : __t) + ">" + ((__t = ssrContext._meta.bodyTags) == null ? "" : __t) + " <div id=q-app>" + ((__t = ssrContext._meta.runtimePageContent) == null ? "" : __t) + "</div> " + ((__t = ssrContext._meta.endingBodyTags || "") == null ? "" : __t) + "</body></html>";
   return __p;
 }
 __name(render_template_default, "default");
