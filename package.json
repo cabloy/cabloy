@@ -1,10 +1,10 @@
 {
   "name": "cabloy",
   "version": "5.1.5",
-  "description": "A fullstack framework",
+  "description": "A Node.js fullstack framework",
   "keywords": [
-    "fullstack",
     "cabloy",
+    "fullstack",
     "vona",
     "zova"
   ],

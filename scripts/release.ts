@@ -1,15 +1,15 @@
+import minimist from 'minimist';
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import minimist from 'minimist';
 
 // --- Constants ---
 const TAG_PREFIX = 'cabloy@';
 const GITHUB_REPO = 'cabloy/cabloy';
 const PACKAGE_JSON_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json');
 const CHANGELOG_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'CHANGELOG.md');
-const COMMIT_CAP = 5;
+const COMMIT_CAP = 200;
 
 // --- Utility functions ---
 function exec(cmd: string, dryRun?: boolean): string {
@@ -30,7 +30,9 @@ function writePackageJson(pkg: Record<string, any>): void {
 
 function getLastTag(): string | null {
   try {
-    const result = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, { encoding: 'utf-8' }).trim();
+    const result = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, {
+      encoding: 'utf-8',
+    }).trim();
     const tags = result.split('\n').filter(Boolean);
     return tags.length > 0 ? tags[0] : null;
   } catch {
@@ -75,7 +77,10 @@ function getToday(): string {
 }
 
 // --- Step 1: Version Bump ---
-async function versionBump(bumpType: 'patch' | 'minor' | 'major', dryRun?: boolean): Promise<string> {
+async function versionBump(
+  bumpType: 'patch' | 'minor' | 'major',
+  dryRun?: boolean,
+): Promise<string> {
   const pkg = readPackageJson();
   const currentVersion = pkg.version;
   const lastTag = getLastTag();
@@ -83,7 +88,10 @@ async function versionBump(bumpType: 'patch' | 'minor' | 'major', dryRun?: boole
   // Check for changes since last tag
   if (lastTag) {
     const diffCmd = `git -c diff.renameLimit=10000 diff --name-only ${lastTag}..HEAD`;
-    const changedFiles = execSync(diffCmd, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+    const changedFiles = execSync(diffCmd, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
     if (!changedFiles) {
       console.log('No changes since last release. Skipping version bump.');
       return currentVersion;
@@ -152,7 +160,10 @@ Respond with ONLY the changelog content in markdown, starting with ## ${version}
     throw new Error(`Anthropic API error: ${response.status} ${errorText}`);
   }
 
-  const data = (await response.json()) as { content?: Array<{ type: string; text?: string }>; error?: { message: string } };
+  const data = (await response.json()) as {
+    content?: Array<{ type: string; text?: string }>;
+    error?: { message: string };
+  };
   if (data.error) {
     throw new Error(`Anthropic API error: ${data.error.message}`);
   }
@@ -171,9 +182,15 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   // After version bump, the current tag (e.g. cabloy@5.1.4) points to HEAD,
   // so we need the tag BEFORE that to get the commit range
   const currentTag = `${TAG_PREFIX}${version}`;
-  const allTags = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, { encoding: 'utf-8' }).trim().split('\n').filter(Boolean);
+  const allTags = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, { encoding: 'utf-8' })
+    .trim()
+    .split('\n')
+    .filter(Boolean);
   const currentTagIndex = allTags.indexOf(currentTag);
-  const previousTag = currentTagIndex >= 0 && currentTagIndex < allTags.length - 1 ? allTags[currentTagIndex + 1] : null;
+  const previousTag =
+    currentTagIndex >= 0 && currentTagIndex < allTags.length - 1
+      ? allTags[currentTagIndex + 1]
+      : null;
   const commits = getCommitsSinceTag(previousTag);
 
   if (commits.length === 0) {
@@ -244,16 +261,19 @@ async function githubRelease(version: string, dryRun?: boolean): Promise<void> {
     const startIdx = content.indexOf(versionHeader);
     if (startIdx !== -1) {
       const nextSectionIdx = content.indexOf('\n## ', startIdx + versionHeader.length);
-      notes = nextSectionIdx !== -1
-        ? content.substring(startIdx, nextSectionIdx).trim()
-        : content.substring(startIdx).trim();
+      notes =
+        nextSectionIdx !== -1
+          ? content.substring(startIdx, nextSectionIdx).trim()
+          : content.substring(startIdx).trim();
     }
   }
 
   const tag = `${TAG_PREFIX}${version}`;
 
   if (dryRun) {
-    console.log(`  [dry-run] gh release create ${tag} --repo ${GITHUB_REPO} --title "v${version}" --notes-file <changelog-section>`);
+    console.log(
+      `  [dry-run] gh release create ${tag} --repo ${GITHUB_REPO} --title "v${version}" --notes-file <changelog-section>`,
+    );
     return;
   }
 
@@ -261,10 +281,13 @@ async function githubRelease(version: string, dryRun?: boolean): Promise<void> {
   const tmpFile = resolve(dirname(fileURLToPath(import.meta.url)), '..', '.release-notes.tmp.md');
   writeFileSync(tmpFile, notes);
   try {
-    execSync(`gh release create ${tag} --repo ${GITHUB_REPO} --title "v${version}" --notes-file "${tmpFile}"`, {
-      encoding: 'utf-8',
-      stdio: 'inherit',
-    });
+    execSync(
+      `gh release create ${tag} --repo ${GITHUB_REPO} --title "v${version}" --notes-file "${tmpFile}"`,
+      {
+        encoding: 'utf-8',
+        stdio: 'inherit',
+      },
+    );
   } finally {
     if (existsSync(tmpFile)) {
       execSync(`rm -f "${tmpFile}"`);
@@ -333,7 +356,16 @@ async function release(options: ReleaseOptions): Promise<void> {
 
 // --- Entry point ---
 const args = minimist(process.argv.slice(2), {
-  boolean: ['dry-run', 'changelog-only', 'publish-only', 'release-only', 'skip-changelog', 'skip-publish', 'skip-release', 'no-ai'],
+  boolean: [
+    'dry-run',
+    'changelog-only',
+    'publish-only',
+    'release-only',
+    'skip-changelog',
+    'skip-publish',
+    'skip-release',
+    'no-ai',
+  ],
   default: {
     'dry-run': false,
     'changelog-only': false,
