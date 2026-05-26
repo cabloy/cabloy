@@ -1,0 +1,37 @@
+name: actions-test-mysql
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24]
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_PASSWORD: 'root'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.19.0
+      - run: cp package.original.json package.json
+      - run: npm run init
+      - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run test
+      - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run build -- --flavor=ci
+      - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run play -- --mode=prod --flavor=ci
