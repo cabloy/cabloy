@@ -5,7 +5,7 @@ import { BeanRouter, BeanRouterGuardsBase, IRouteViewRouteItem, ModelPageData, T
 import z$1, { z } from "zod";
 import { BeanApiBase, IApiActionOptions, IApiSchemaOptions } from "zova-module-a-api";
 import * as _$zova_module_a_openapi0 from "zova-module-a-openapi";
-import { ICaptchaData, ICaptchaSceneRecord, IFormMeta, IFormProvider, IJsxRenderContextBase, IJsxRenderContextPage, IJsxRenderContextPageEntry, IPageEntryScope, IPageScope, IPermissionHintGeneral, IResourceBlockOptionsBase, IResourceBlockRecord, IResourceFormActionRowNameRecord, IResourceFormActionRowOptionsBase, IResourceFormActionRowRecord, IResourceFormFieldLayoutOptions, IResourceFormFieldOptionsBase, IResourceFormFieldRecord, IResourceRenderBlockOptionsBlock, IResourceRenderFormActionRowOptionsAction, IResourceRenderTableActionBulkOptionsAction, IResourceRenderTableActionRowOptionsAction, IResourceTableActionBulkOptionsBase, IResourceTableActionBulkRecord, IResourceTableActionNameRecord, IResourceTableActionRowOptionsBase, IResourceTableActionRowRecord, IResourceTableCellOptionsBase, IResourceTableCellRecord, ISchemaRenderComponentLayoutOptions, ITablePaged, ITableQuery, ITableResPaged, TypeFormScene, TypeFormSchemaScene, TypeOpenapiPermissions, TypeSchemaOrderLevel, TypeSchemaScene } from "zova-module-a-openapi";
+import { ICaptchaData, ICaptchaSceneRecord, IFormMeta, IFormProvider, IJsxRenderContextBase, IJsxRenderContextPage, IJsxRenderContextPageEntry, IPageEntryScope, IPageScope, IPermissionHintGeneral, IResourceBlockOptionsBase, IResourceBlockRecord, IResourceFormActionRowNameRecord, IResourceFormActionRowOptionsBase, IResourceFormActionRowRecord, IResourceFormFieldLayoutOptions, IResourceFormFieldOptionsBase, IResourceFormFieldRecord, IResourceRenderBlockOptionsBlock, IResourceRenderFormActionRowOptionsAction, IResourceRenderTableActionBulkOptionsAction, IResourceRenderTableActionRowOptionsAction, IResourceTableActionBulkOptionsBase, IResourceTableActionBulkRecord, IResourceTableActionNameRecord, IResourceTableActionRowOptionsBase, IResourceTableActionRowRecord, IResourceTableCellOptionsBase, IResourceTableCellRecord, ITablePaged, ITableQuery, ITableResPaged, TypeFormScene, TypeFormSchemaScene, TypeOpenapiPermissions, TypeSchemaOrderLevel, TypeSchemaScene } from "zova-module-a-openapi";
 import { IJwtAdapter, IJwtInfo } from "zova-module-a-interceptor";
 import { AopActionDispose, AopActionInit, AopActionRender, IDecoratorAopOptions, IVonaComponentRecord, TypeComponentOptions } from "zova-module-a-bean";
 import * as _$_tanstack_vue_query0 from "@tanstack/vue-query";
@@ -9072,7 +9072,7 @@ declare function schemaRenderBlockJsx(renderComponentJsx: TypeRenderComponentJsx
 };
 //#endregion
 //#region .zova-rest/rest.d.ts
-declare function schemaRenderLayout<T extends z$1.ZodType>(layoutOptions: ISchemaRenderComponentLayoutOptions, scene?: TypeFormSchemaScene): (schema: T) => T;
+declare function schemaRenderLayout<T extends z$1.ZodType>(layoutOptions: IResourceFormFieldLayoutOptions, scene?: TypeFormSchemaScene): (schema: T) => T;
 declare function schemaRenderVisible<T extends z$1.ZodType>(visible?: boolean, scene?: TypeSchemaScene): (schema: T) => T;
 declare function schemaRenderReadonly<T extends z$1.ZodType>(readonly?: boolean, scene?: TypeSchemaScene): (schema: T) => T;
 declare function schemaRenderDisableNotifyChanged<T extends z$1.ZodType>(disableNotifyChanged?: boolean, scene?: TypeSchemaScene): (schema: T) => T;

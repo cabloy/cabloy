@@ -1,0 +1,51 @@
+{
+  "name": "cabloy-basic",
+  "private": true,
+  "description": "A fullstack framework",
+  "keywords": [
+    "fullstack",
+    "cabloy",
+    "vona",
+    "zova"
+  ],
+  "homepage": "https://github.com/cabloy/cabloy#readme",
+  "bugs": {
+    "url": "https://github.com/cabloy/cabloy/issues"
+  },
+  "license": "MIT",
+  "author": "zhennann",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cabloy/cabloy.git"
+  },
+  "type": "module",
+  "scripts": {
+    "init": "pnpm install --no-frozen-lockfile && npm run init:vona && npm run init:zova",
+    "init:vona":"cp ./vona/package.original.json ./vona/package.json && pnpm --dir './vona' run init",
+    "init:zova":"cp ./zova/package.original.json ./zova/package.json && pnpm --dir './zova' run init",
+    "docs:fix": "textlint --fix ./cabloy-docs/**/*.md",
+    "release-patch": "./scripts/release.sh patch",
+    "release-minor": "./scripts/release.sh minor"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@cabloy/lint": "^5.1.15",
+    "@cabloy/process-helper": "^3.1.3",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.19.17",
+    "lerna": "^9.0.7",
+    "minimist": "^1.2.8",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.65.0",
+    "textlint": "^15.7.0",
+    "textlint-rule-en-no-mixed-period": "^3.0.2",
+    "textlint-rule-ja-no-mixed-period": "^3.0.2",
+    "textlint-rule-ja-space-between-half-and-full-width": "^2.4.2",
+    "textlint-rule-period-in-list-item": "^1.0.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=24.4.0"
+  },
+  "packageManager": "pnpm@10.19.0"
+}

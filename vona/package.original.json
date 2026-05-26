@@ -1,6 +1,5 @@
 {
   "name": "vona",
-  "title": "Vona",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.19.0",
