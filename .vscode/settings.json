@@ -1,6 +1,8 @@
 {
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
+  // tailwindCSS
+  "tailwindCSS.experimental.classRegex": [["classes\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
   // typescript
   // "js/ts.experimental.useTsgo": true,
   "js/ts.tsserver.automaticTypeAcquisition.enabled": true,
@@ -29,24 +31,13 @@
   },
   // associations
   "files.associations": {
-    "*.js.ejs": "javascript",
-    "*.css.ejs": "css",
-    "*.less.ejs": "less",
+    "*.ejs": "html",
     "*.code-snippets": "text",
     "docker-compose-dockerfile-app": "dockerfile"
   },
-  // search
-  "search.exclude": {
-    "/.vscode/**": true,
-    "/coverage/**": true,
-    "/docs/**": true,
-    "**/dist/**": true,
-    "/src/backend/app/**": true,
-    "/src/backend/logs/**": true,
-    "/src/backend/run/**": true,
-    "**/node_modules": true
+  // watcher
+  "files.watcherExclude": {
+    "node_modules": true
   },
-  "search.useIgnoreFiles": false,
-  "textlint.autoFixOnSave": true,
-  "hide-my-secrets.hideSecrets": false
+  "textlint.autoFixOnSave": true
 }
