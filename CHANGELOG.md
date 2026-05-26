@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.6
+
+### Features
+- Add Claude release command and local settings
+- Add oxfmt and oxlint configuration files
+- Update package description and reformat release script
+
+### Bug Fixes
+- Extract text block from API response with thinking blocks
+
 ## 5.1.5
 
 ### Bug Fixes
