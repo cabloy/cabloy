@@ -24,8 +24,14 @@
     "init:vona":"cp ./vona/package.original.json ./vona/package.json && pnpm --dir './vona' run init",
     "init:zova":"cp ./zova/package.original.json ./zova/package.json && pnpm --dir './zova' run init",
     "docs:fix": "textlint --fix ./cabloy-docs/**/*.md",
-    "release-patch": "./scripts/release.sh patch",
-    "release-minor": "./scripts/release.sh minor"
+    "release-patch": "node scripts/release.ts patch",
+    "release-minor": "node scripts/release.ts minor",
+    "release-major": "node scripts/release.ts major",
+    "release": "node scripts/release.ts",
+    "release:dry-run": "node scripts/release.ts --dry-run",
+    "release:changelog": "node scripts/release.ts --changelog-only",
+    "release:publish": "node scripts/release.ts --publish-only",
+    "release:github": "node scripts/release.ts --release-only"
   },
   "dependencies": {},
   "devDependencies": {
