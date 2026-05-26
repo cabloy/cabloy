@@ -1,0 +1,89 @@
+version: '3.7'
+
+services:
+  app:
+    depends_on:
+      - pg
+      - mysql
+      - redis
+    build:
+      context: .
+      dockerfile: docker-compose-dockerfile-app
+    restart: always
+    ports:
+      - '7202:7102'
+    volumes:
+      - ./docker-compose/output/dist/docker:/opt/node/app/dist/docker
+      - ./docker-compose/output/app/vona:/root/vona
+      - ./docker-compose/logs/app:/root/logs
+    command:
+      [
+        ./scripts/wait-for-it.sh,
+        'pg:5432',
+        'mysql:3306',
+        'redis:6379',
+        -s,
+        --,
+        ./scripts/app-init.sh,
+      ]
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - app
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - ./docker-compose/output/app/vona:/usr/share/nginx/app/vona
+      - ./docker-compose/logs/nginx:/var/log/nginx
+      - ./docker-compose/config/nginx/conf.d:/etc/nginx/conf.d
+
+  pg:
+    image: postgres:17
+    restart: always
+    ports:
+      - '35432:5432'
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    volumes:
+      - ./docker-compose/data/pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: vona
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '!%{9avv.Tw2LmcYP'
+
+  mysql:
+    image: mysql:8.1
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --skip-host-cache
+      - --skip-name-resolve
+      - --slow_query_log=1
+      - --long_query_time=0.5
+      - --log-queries-not-using-indexes=1
+      - --lower_case_table_names=1
+    restart: always
+    ports:
+      - '33306:3306'
+    volumes:
+      - ./docker-compose/data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'CDf#lV+q5I1RB2KR'
+      MYSQL_DATABASE: vona
+      MYSQL_USER: web_user
+      MYSQL_PASSWORD: '!%{9mov.Tw3LmcYP'
+    security_opt:
+      - seccomp:unconfined
+
+  redis:
+    image: redis:latest
+    command: [redis-server, --appendonly, yes]
+    restart: always
+    ports:
+      - '36379:6379'
+    volumes:
+      - ./docker-compose/data/redis:/data

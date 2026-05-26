@@ -1,0 +1,12 @@
+FROM node:24
+
+RUN mkdir -p /opt/node/app/dist
+WORKDIR /opt/node/app
+
+COPY ./scripts /opt/node/app/scripts
+
+RUN chmod +x /opt/node/app/scripts/*.sh
+
+# start
+
+CMD node ./dist/docker/bootstrap.js

@@ -1,0 +1,65 @@
+{
+  "name": "vona",
+  "title": "Vona",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.19.0",
+  "description": "Vona is an intuitive, elegant and powerful Node.js framework for rapidly developing enterprise applications of any size",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vonajs/vona.git"
+  },
+  "author": "zhennann",
+  "keywords": ["nodejs", "vona", "cabloy"],
+  "bugs": {
+    "url": "https://github.com/vonajs/vona/issues"
+  },
+  "homepage": "https://github.com/vonajs/vona#readme",
+  "engines": {
+    "node": ">=24.4.0"
+  },
+  "scripts": {
+    "init": "pnpm install --no-frozen-lockfile && npm run prerun",
+    "vona": "node ./packages-cli/cli/src/bin/vona.ts",
+    "play": "npm run vona :bin:play -- --flavor=play --dummy",
+    "db:reset": "npm run prerun && npm run vona :bin:dbReset -- --flavor=normal",
+    "dev": "npm run prerun && npm run vona :bin:dev -- --workers=2 --flavor=normal",
+    "dev:one": "npm run prerun && npm run vona :bin:dev -- --workers=1 --flavor=normal",
+    "test": "npm run prerun && npm run vona :bin:test -- --flavor=normal",
+    "cov": "npm run prerun && npm run vona :bin:test -- --coverage --flavor=normal",
+    "tsc": "npm run prerun && npm run vona :bin:tsc",
+    "build": "npm run prerun && npm run vona :bin:build -- --flavor=normal",
+    "build:docker": "npm run prerun && npm run vona :bin:build -- --flavor=docker",
+    "start": "node ./dist/normal/bootstrap.js",
+    "start:one": "cross-env SERVER_WORKERS=1 node ./dist/normal/bootstrap.js",
+    "start:docker": "cross-env SERVER_WORKERS=1 node ./dist/docker/bootstrap.js",
+    "prerun": "npm run vona :tools:deps",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt --write",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "update": "pnpm update && npm run vona :tools:deps",
+    "docs:fix": "textlint --fix ./packages-docs/**/*.md",
+    "release-patch": "./scripts/release.sh patch",
+    "release-minor": "./scripts/release.sh minor"
+  },
+  "dependencies": {
+    "vona": "workspace:^"
+  },
+  "devDependencies": {
+    "@cabloy/lint": "workspace:^",
+    "lerna": "^9.0.7",
+    "textlint": "^15.7.0",
+    "textlint-rule-en-no-mixed-period": "^3.0.2",
+    "textlint-rule-ja-no-mixed-period": "^3.0.2",
+    "textlint-rule-ja-space-between-half-and-full-width": "^2.4.2",
+    "textlint-rule-period-in-list-item": "^1.0.1",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.65.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "zod": "npm:@cabloy/zod@4.3.6"
+    }
+  }
+}
