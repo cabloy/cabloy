@@ -1,0 +1,40 @@
+packages:
+  - 'packages-cli/*'
+  - 'packages-docs'
+  - 'packages-utils/*'
+  - 'packages-zova/*'
+  - 'src/module/*'
+  - 'src/module-vendor/*'
+  - 'src/suite/*'
+  - 'src/suite/*/modules/*'
+  - 'src/suite-vendor/*'
+  - 'src/suite-vendor/*/modules/*'
+
+# shamefullyHoist: true
+strictPeerDependencies: false
+# to get the latest compatible packages when creating the project https://github.com/pnpm/pnpm/issues/6463
+resolutionMode: 'highest'
+hoist: true
+hoistWorkspacePackages: true
+linkWorkspacePackages: 'deep'
+preferWorkspacePackages: true
+autoInstallPeers: true
+publicHoistPattern:
+  - '*terser*'
+  - '*babel*'
+  - '*@babel*'
+  - '*eslint*'
+  - '*types*'
+  - 'lerna'
+  - 'cabloy'
+  - '@cabloy'
+  - '*cabloy*'
+  - '*@cabloy*'
+  - '*zova*'
+  - '*vue*'
+  - '*@vue*'
+  - '*vite*'
+  - '*@vitejs*'
+  - '*zod*'
+  - '*@tanstack*'
+  - 'zod'

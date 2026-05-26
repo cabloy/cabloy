@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+ul.menu details > ul {
+  z-index: 1;
+}
+
+.router-link-active {
+  color: orange;
+}
+
+.zova-icon__img {
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.zova-icon__svg {
+  fill: currentColor;
+  width: 100%;
+  height: 100%;
+}

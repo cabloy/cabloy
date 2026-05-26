@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.base.esm",
+  "compilerOptions": {
+    "composite": false,
+    "allowImportingTsExtensions": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rewriteRelativeImportExtensions": false,
+    "verbatimModuleSyntax": false
+  },
+  "references": [],
+  "exclude": [
+    "**/cli/**",
+    "**/dist/**",
+    "./dist",
+    "./dist-releases",
+    "./dist-mock",
+    "./.quasar",
+    "./.zova",
+    "./.zova-rest",
+    "./node_modules",
+    "./src-capacitor",
+    "./src-cordova",
+    "./quasar.config.*.temporary.compiled*",
+    "./src/boot/app",
+    "./packages-utils",
+    "./packages-zova"
+  ]
+}
