@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "A fullstack framework",
   "keywords": [
     "fullstack",
@@ -21,8 +21,8 @@
   "type": "module",
   "scripts": {
     "init": "pnpm install --no-frozen-lockfile && npm run init:vona && npm run init:zova",
-    "init:vona":"cp ./vona/package.original.json ./vona/package.json && pnpm --dir './vona' run init",
-    "init:zova":"cp ./zova/package.original.json ./zova/package.json && pnpm --dir './zova' run init",
+    "init:vona": "cp ./vona/package.original.json ./vona/package.json && pnpm --dir './vona' run init",
+    "init:zova": "cp ./zova/package.original.json ./zova/package.json && pnpm --dir './zova' run init",
     "docs:fix": "textlint --fix ./cabloy-docs/**/*.md",
     "release-patch": "node scripts/release.ts patch",
     "release-minor": "node scripts/release.ts minor",
