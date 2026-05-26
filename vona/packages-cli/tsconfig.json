@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.base.esm.json",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "cabloy-cli"
+    },
+    {
+      "path": "cli"
+    },
+    {
+      "path": "cli-set-api"
+    }
+  ],
+  "include": []
+}

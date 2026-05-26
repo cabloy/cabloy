@@ -1,0 +1,12 @@
+{
+  "name": "vona-cli",
+  "private": true,
+  "description": "vona cli",
+  "keywords": [
+    "vona"
+  ],
+  "license": "MIT",
+  "author": "zhennann",
+  "type": "module",
+  "title": "vona cli"
+}

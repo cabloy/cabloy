@@ -1,0 +1,35 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { Api, v } from 'vona-module-a-openapiutils';
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+import { ZovaRender } from 'zova-rest-cabloy-start-admin';
+
+import { $locale } from '../.metadata/locales.ts';
+import { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+
+export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectResItem extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=argv.resourceNameCapitalize%>SelectResItem>({
+  blocks: [
+    ZovaRender.block('start-page:blockPage', {
+      blocks: [
+        ZovaRender.block('start-page:blockFilter'),
+        ZovaRender.block('start-page:blockToolbarBulk', {
+          actions: [ZovaRender.tableActionBulk('start-table:actionCreate')],
+        }),
+        ZovaRender.block('start-page:blockTable'),
+      ],
+    }),
+  ],
+})
+export class Dto<%=argv.resourceNameCapitalize%>SelectResItem extends $Dto.get(() => Model<%=argv.resourceNameCapitalize%>) {
+  @Api.field(
+    v.title($locale('Operations')),
+    ZovaRender.order(1, 'max'),
+    ZovaRender.cell('start-table:actionOperationsRow', {
+      actions: [ZovaRender.tableActionRow('start-table:actionUpdate'), ZovaRender.tableActionRow('start-table:actionDelete')],
+    }),
+  )
+  _operationsRow?: unknown;
+}

@@ -1,0 +1,27 @@
+import type { IDecoratorSsrMenuOptions } from 'vona-module-a-ssr';
+import type { ISsrSiteOptionsAdmin } from '<%=argv.ssrSiteModuleName%>';
+import { BeanBase } from 'vona';
+import { $order } from 'vona-module-a-openapiutils';
+import { SsrMenu } from 'vona-module-a-ssr';
+import { $locale } from '../.metadata/locales.ts';
+
+export interface ISsrMenuOptions<%=argv.resourceNameCapitalize%> extends IDecoratorSsrMenuOptions<ISsrSiteOptionsAdmin> {}
+
+@SsrMenu<ISsrMenuOptions<%=argv.resourceNameCapitalize%>>({
+  items: {
+    <%=argv.resourceName%>: {
+      title: $locale('<%=argv.resourceNameCapitalize%>'),
+      order: $order(1),
+      icon: undefined,
+      link: 'presetResource',
+      meta: {
+        params: {
+          resource: '<%=argv.module%>:<%=argv.resourceName%>',
+        },
+      },
+      group: '<%=argv.ssrSiteGroupName%>',
+    },
+  },
+  site: ['<%=argv.ssrSiteOnionName%>'],
+})
+export class SsrMenu<%=argv.resourceNameCapitalize%> extends BeanBase {}

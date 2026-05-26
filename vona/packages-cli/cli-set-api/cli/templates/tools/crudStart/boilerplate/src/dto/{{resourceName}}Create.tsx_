@@ -1,0 +1,28 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+import { ZovaRender } from 'zova-rest-cabloy-start-admin';
+
+import { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+
+export interface IDtoOptions<%=argv.resourceNameCapitalize%>Create extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=argv.resourceNameCapitalize%>Create>({
+  blocks: [
+    ZovaRender.block('start-pageentry:blockPageEntry', {
+      blocks: [
+        ZovaRender.block('start-pageentry:blockForm'),
+        ZovaRender.block('start-pageentry:blockToolbarRow', {
+          actions: [
+            ZovaRender.formActionRow('start-form:actionSubmit', {
+              permission: { actionInherit: 'update', formScene: ['create', 'edit'] },
+            }),
+            ZovaRender.formActionRow('start-form:actionBack', { permission: { public: true } }),
+          ],
+        }),
+      ],
+    }),
+  ],
+})
+export class Dto<%=argv.resourceNameCapitalize%>Create extends $Dto.create(() => Model<%=argv.resourceNameCapitalize%>) {}

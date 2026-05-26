@@ -1,0 +1,11 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+
+import { Dto<%=argv.resourceNameCapitalize%>SelectResItem } from './<%=argv.resourceName%>SelectResItem.tsx';
+
+export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectRes extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=argv.resourceNameCapitalize%>SelectRes>()
+export class Dto<%=argv.resourceNameCapitalize%>SelectRes extends $Dto.listAndCount(Dto<%=argv.resourceNameCapitalize%>SelectResItem) {}

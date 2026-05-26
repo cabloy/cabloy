@@ -1,0 +1,39 @@
+{
+  "name": "vona-module-<%=argv.name%>",
+  "type": "module",
+  "version": "5.0.0",
+  "title": "<%=argv.moduleInfo.relativeName%>",
+  "vonaModule": {
+    "dependencies": {
+      "a-vona": "5.0.0"
+    }
+  },
+  "exports": {
+    ".": {
+      "types": ["./src/index.ts", "./dist/index.d.ts"],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "description": "",
+  "keywords": ["Vona Module"],
+  "author": "",
+  "files": ["assets", "dist", "src"],
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "tsc:publish": "npm run clean && vona :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore && npm run clean"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": ["clean-package", "devDependencies", "exports.\\..import"]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  }
+}

@@ -1,0 +1,25 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { $makeSchema, v } from 'vona-module-a-openapiutils';
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+import z from 'zod';
+import { ZovaRender } from 'zova-rest-cabloy-start-admin';
+
+import { Entity<%=argv.resourceNameCapitalize%> } from '../entity/<%=argv.resourceName%>.tsx';
+
+export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq>({
+  openapi: { filter: { table: '<%=argv.moduleResourceName%>' } },
+  fields: {
+    name: $makeSchema(v.optional(), z.string()),
+    createdAt: $makeSchema(
+      ZovaRender.field('start-date:formFieldDateRange'),
+      v.filterTransform('a-web:dateRange'),
+      v.optional(),
+      z.string(),
+    ),
+  },
+})
+export class Dto<%=argv.resourceNameCapitalize%>SelectReq extends $Dto.queryPage(Entity<%=argv.resourceNameCapitalize%>, ['name', 'createdAt']) {}

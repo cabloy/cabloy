@@ -1,0 +1,360 @@
+/**
+ * supported code snippets as follows:
+ *   __init__
+ **/
+{
+  "__init__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "init",
+    "body": ["protected __init__() {", "  $0", "}"],
+    "description": "__init__",
+  },
+  "__dispose__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "dispose",
+    "body": ["protected async __dispose__() {", "  $0", "}"],
+    "description": "__dispose__",
+  },
+  "aop.__init__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopinit",
+    "body": [
+      "protected __init__: AopActionInit<ClassSome> = (_args, next, _receiver) => {",
+      "  next();",
+      "  $0",
+      "}"
+    ],
+    "description": "aop.__init__"
+  },
+  "aop.__dispose__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopdispose",
+    "body": [
+      "protected __dispose__: AopActionDispose<ClassSome> = async (_args, next, _receiver) => {",
+      "  $0",
+      "  await next();",
+      "}"
+    ],
+    "description": "aop.__dispose__"
+  },
+  "aop.__get__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopget",
+    "body": [
+      "protected __get__: AopActionGet<ClassSome> = (_prop, next, _receiver) => {",
+      "  const value = next();",
+      "  return value;",
+      "}"
+    ],
+    "description": "aop.__get__"
+  },
+  "aop.__set__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopset",
+    "body": [
+      "protected __set__: AopActionSet<ClassSome> = (_prop, value, next, _receiver) => {",
+      "  return next(value);",
+      "}"
+    ],
+    "description": "aop.__set__"
+  },
+  "aop.__method__": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopmethod",
+    "body": [
+      "protected __method__: AopActionMethod<ClassSome> = (_method, _args, next, _receiver) => {",
+      "  $0",
+      "  return next();",
+      "}"
+    ],
+    "description": "aop.__method__"
+  },
+  "aop.getter": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopgetter",
+    "body": [
+      "protected __get_xxx__: AopActionGetter<ClassSome, 'xxx'> = function (next, _receiver) {",
+      "  const value = next();",
+      "  return value;",
+      "}"
+    ],
+    "description": "aop.getter"
+  },
+  "aop.setter": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopsetter",
+    "body": [
+      "protected __set_xxx__: AopActionSetter<ClassSome, 'xxx'> = function (value, next, _receiver) {",
+      "  return next(value);",
+      "}"
+    ],
+    "description": "aop.setter"
+  },
+  "aop.action": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopaction",
+    "body": [
+      "action: AopAction<ClassSome, 'action'> = async (_args, next, _receiver) => {",
+      "  $0",
+      "  return await next();",
+      "}"
+    ],
+    "description": "aop.action"
+  },
+  "aop.actionsync": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopactionsync",
+    "body": [
+      "action: AopAction<ClassSome, 'action'> = (_args, next, _receiver) => {",
+      "  $0",
+      "  return next();",
+      "}"
+    ],
+    "description": "aop.actionsync"
+  },
+  "aopmethod.get": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopmethodget",
+    "body": [
+      "get(_options: IDecoratorAopMethodOptions, next: NextSync, _receiver: any, _prop: string) {",
+      "  return next();",
+      "}"
+    ],
+    "description": "aopmethod.get"
+  },
+  "aopmethod.set": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopmethodset",
+    "body": [
+      "set(_options: IDecoratorAopMethodOptions, value: any, next: NextSync, _receiver: any, _prop: string): boolean {",
+      "  return next(value);",
+      "}"
+    ],
+    "description": "aopmethod.set"
+  },
+  "aopmagic.get": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopmagicget",
+    "body": [
+      "protected __get__(prop: string) {",
+      "  $0",
+      "}"
+    ],
+    "description": "aopmagic.get"
+  },
+  "aopmagic.set": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "aopmagicset",
+    "body": [
+      "protected __set__(prop: string, value: any): boolean {",
+      "  $0",
+      "  return false;",
+      "}"
+    ],
+    "description": "aopmagic.set"
+  },
+  "record.flavor": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordflavor",
+    "body": [
+      "declare module '@cabloy/module-info' {",
+      "  export interface VonaMetaFlavorExtend {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.flavor"
+  },
+  "record.loggerclient": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordloggerclient",
+    "body": [
+      "declare module 'vona' {",
+      "  export interface ILoggerClientRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.loggerclient"
+  },
+  "record.loggerchild": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordloggerchild",
+    "body": [
+      "declare module 'vona' {",
+      "  export interface ILoggerChildRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.loggerchild"
+  },
+  "record.redisclient": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordredisclient",
+    "body": [
+      "declare module 'vona-module-a-redis' {",
+      "  export interface IRedisClientRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.redisclient"
+  },
+  "record.databaseclient": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recorddatabaseclient",
+    "body": [
+      "declare module 'vona-module-a-orm' {",
+      "  export interface IDatabaseClientRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.databaseclient"
+  },
+  "record.username": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordusername",
+    "body": [
+      "declare module 'vona-module-a-user' {",
+      "  export interface IUserNameRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.username"
+  },
+  "record.rolename": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordrolename",
+    "body": [
+      "declare module 'vona-module-a-user' {",
+      "  export interface IRoleNameRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.rolename"
+  },
+  "record.instance": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordinstance",
+    "body": [
+      "declare module 'vona' {",
+      "  export interface IInstanceRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.instance"
+  },
+  "record.host": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordhost",
+    "body": [
+      "declare module 'vona' {",
+      "  export interface IHostRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.host"
+  },
+  "record.menuItemLink": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordmenuItemLink",
+    "body": [
+      "declare module 'vona-module-a-menu' {",
+      "  export interface IMenuItemLinkRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.menuItemLink"
+  },
+  "record.authclient": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordauthclient",
+    "body": [
+      "declare module 'vona-module-x-x' {",
+      "  export interface IAuthProvider_xxx_ClientRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.authclient"
+  },
+  "record.locale": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordlocale",
+    "body": [
+      "declare module 'vona' {",
+      "  export interface ILocaleRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.locale"
+  },
+  "record.mailclient": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordmailclient",
+    "body": [
+      "declare module 'vona-module-a-mail' {",
+      "  export interface IMailClientRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.mailclient"
+  },
+  "record.jwtclient": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordjwtclient",
+    "body": [
+      "declare module 'vona-module-a-jwt' {",
+      "  export interface IJwtClientRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.jwtclient"
+  },
+  "record.socketnamespace": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordsocketnamespace",
+    "body": [
+      "declare module 'vona-module-a-socket' {",
+      "  export interface ISocketNamespaceRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.socketnamespace"
+  },
+  "record.socketevent": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordsocketevent",
+    "body": [
+      "declare module 'vona-module-a-socket' {",
+      "  export interface ISocketEventRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.socketevent"
+  },
+  "record.ssrsitepublicpath": {
+    "scope": "typescript,typescriptreact",
+    "prefix": "recordssrsitepublicpath",
+    "body": [
+      "declare module 'vona-module-a-ssr' {",
+      "  export interface ISsrSitePublicPathRecord {",
+      "    $0: never;",
+      "  }",
+      "}"
+    ],
+    "description": "record.ssrsitepublicpath"
+  }
+}

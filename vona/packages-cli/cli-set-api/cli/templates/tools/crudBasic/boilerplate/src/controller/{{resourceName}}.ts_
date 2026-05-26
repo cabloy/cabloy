@@ -1,0 +1,49 @@
+import type { TableIdentity } from 'table-identity';
+import type { IQueryParams } from 'vona-module-a-orm';
+import type { IDecoratorControllerOptions } from 'vona-module-a-web';
+
+import { BeanBase } from 'vona';
+import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { Arg, Controller, Web } from 'vona-module-a-web';
+
+import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+
+import { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>SelectReq } from '../dto/<%=argv.resourceName%>SelectReq.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>Update } from '../dto/<%=argv.resourceName%>Update.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>View } from '../dto/<%=argv.resourceName%>View.tsx';
+
+export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDecoratorControllerOptions {}
+
+@Controller<IControllerOptions<%=argv.resourceNameCapitalize%>>('<%=argv.resourceName%>')
+@Resource()
+export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
+  @Web.post()
+  @Api.body(v.tableIdentity())
+  async create(@Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<TableIdentity> {
+    return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
+  }
+
+  @Web.get()
+  @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
+  async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
+    return await this.scope.service.<%=argv.resourceName%>.select(params);
+  }
+
+  @Web.get(':id')
+  @Api.body(v.optional(), v.object(Dto<%=argv.resourceNameCapitalize%>View))
+  async view(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
+    return await this.scope.service.<%=argv.resourceName%>.view(id);
+  }
+
+  @Web.patch(':id')
+  async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update) {
+    return await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
+  }
+
+  @Web.delete(':id')
+  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
+    return await this.scope.service.<%=argv.resourceName%>.delete(id);
+  }
+}

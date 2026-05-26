@@ -1,0 +1,13 @@
+import { createApp } from 'vona';
+import env from './env.ts';
+<%=appMonkey?"import { AppMonkey } from '../src/backend/config/monkey.ts';":''%>
+
+export async function createSingleApp() {
+  return await createApp({
+    modulesMeta: () => import('./modules-meta.ts'),
+    locales: () => import('../src/backend/config/locales.ts'),
+    config: () => import('./config.ts'),
+    env,
+    <%=appMonkey?'AppMonkey,':''%>
+  });
+}

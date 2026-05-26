@@ -1,0 +1,35 @@
+import type { TableIdentity } from 'table-identity';
+import type { IQueryParams } from 'vona-module-a-orm';
+
+import { BeanBase } from 'vona';
+import { Service } from 'vona-module-a-bean';
+
+import type { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
+import type { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
+import type { Dto<%=argv.resourceNameCapitalize%>Update } from '../dto/<%=argv.resourceName%>Update.tsx';
+import type { Dto<%=argv.resourceNameCapitalize%>View } from '../dto/<%=argv.resourceName%>View.tsx';
+import type { Entity<%=argv.resourceNameCapitalize%> } from '../entity/<%=argv.resourceName%>.tsx';
+import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+
+@Service()
+export class Service<%=argv.resourceNameCapitalize%> extends BeanBase {
+  async create(<%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<Entity<%=argv.resourceNameCapitalize%>> {
+    return await this.scope.model.<%=argv.resourceName%>.insert(<%=argv.resourceName%>);
+  }
+
+  async select(params?: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
+    return await this.scope.model.<%=argv.resourceName%>.selectAndCount(params);
+  }
+
+  async view(id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
+    return await this.scope.model.<%=argv.resourceName%>.getById(id);
+  }
+
+  async update(id: TableIdentity, <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update) {
+    return await this.scope.model.<%=argv.resourceName%>.updateById(id, <%=argv.resourceName%>);
+  }
+
+  async delete(id: TableIdentity) {
+    return await this.scope.model.<%=argv.resourceName%>.deleteById(id);
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    ".vona/**/*.ts",
+    "src/backend/package.json",
+    "src/backend/config",
+    "src/backend/play",
+    "src/backend/typing"
+  ],
+  "exclude": [],
+  "ts-node": {
+    "swc": true
+  },
+  "references": [
+    {
+      "path": "packages-utils/compose"
+    },
+    {
+      "path": "packages-utils/deps"
+    },
+    {
+      "path": "packages-utils/json5"
+    },
+    {
+      "path": "packages-utils/localeutil"
+    },
+    {
+      "path": "packages-vona/vona-shared"
+    },
+    {
+      "path": "packages-vona/vona-core"
+    },
+    {
+      "path": "packages-vona/vona"
+    },
+    {
+      "path": "packages-vona/vona-mock"
+    }
+  ]
+}

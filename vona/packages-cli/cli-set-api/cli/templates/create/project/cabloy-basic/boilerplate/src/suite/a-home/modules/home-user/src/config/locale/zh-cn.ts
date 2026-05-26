@@ -1,0 +1,18 @@
+export default {
+  ConfirmationEmailExpired: '确认邮件链接已经过期',
+  ConfirmationEmailSucceeded: '您的邮件地址已经确认',
+  PasswordResetEmailExpired: '重置密码链接已经过期',
+  Role: '角色',
+  RoleName: '角色名',
+  User: '用户',
+  UserName: '用户名',
+  UserAvatar: '头像',
+  UserEmail: '电子邮件',
+  UserMobile: '手机号',
+  UserActivated: '已激活',
+  UserLocale: '语言',
+  UserTz: '时区',
+  UsernameExists: '用户名已存在',
+  EmailExists: '电子邮件已存在',
+  PasswordsNotMatch: '密码不一致',
+};

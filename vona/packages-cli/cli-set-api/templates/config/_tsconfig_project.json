@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    ".vona/**/*.ts",
+    "src/backend/package.json",
+    "src/backend/config",
+    "src/backend/play",
+    "src/backend/typing"
+  ],
+  "exclude": [],
+  "ts-node": {
+    "swc": true
+  },
+  "references": []
+}
