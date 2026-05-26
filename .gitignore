@@ -1,92 +1,81 @@
 node_modules
 miniprogram_npm
-/typings/core
-/coverage
+**/vite.config.ts.timestamp-*
+**/coverage
 **/dist/
 **/dist-toolsIsolate/
 **/dist-cli/
-/dist-releases
-/docs-api
-/run
+**/dist-releases
+**/dist-mock
+**/run/
 
-.claude/settings.local.json
+**/.claude/settings.local.json
 
-.idea
-.DS_Store
-.nx
+**/.idea
+**/.DS_Store
+**/.nx
 
-*.tsbuildinfo
+**/*.tsbuildinfo
 
-*.log
-*.logs
-*.swp
-*.tmp
-*.rdb
+**/*.log
+**/*.logs
+**/*.swp
+**/*.tmp
+**/*.rdb
+
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
 
 # vona core related directories
-.vona
-.app
-.zova-rest
+**/.vona
+**/.app
+**/.zova-rest
+
+**/.temp-dynamic-*
+**/.zova
+**/.quasar
+**/quasar.config.*.temporary.compiled*
+
+**/src-cordova/node_modules
+**/src-cordova/platforms
+**/src-cordova/plugins
+**/src-cordova/www
+
+**/src-capacitor/www
+**/src-capacitor/node_modules
 
 # local .env files
-env/.env*.local
-/src/backend/config/config/config*.local.ts
-/src/backend/config/config/config*.local.tsx
-/src/backend/typing/modules.d.ts
+**/env/.env*.local
+**/src/backend/config/config/config*.local.ts
+**/src/backend/config/config/config*.local.tsx
+**/src/backend/typing/modules.d.ts
 **/.metadata/modules.d.ts
-src/backend/typing/mine.d.ts
+**/src/backend/typing/mine.d.ts
+
+**/src/front/config/config/config*.local.ts
+**/src/front/typing/modules.d.ts
 
 # auto created
-.rollup.cache
-.temp-dynamic-*
-/package.json
+**/.rollup.cache
+**/.temp-dynamic-*
+vona/package.json
+zova/package.json
 
-/docker-compose
-!/docker-compose/config
-!/docker-compose/data/mysql/.gitkeep
-!/docker-compose/data/pg/.gitkeep
-!/docker-compose/data/redis/.gitkeep
-!/docker-compose/logs/app/.gitkeep
-!/docker-compose/logs/nginx/.gitkeep
-!/docker-compose/output/app/vona/.gitkeep
-!/docker-compose/output/app/dist/.gitkeep
+/vona/docker-compose
+!/vona/docker-compose/config
+!/vona/docker-compose/data/mysql/.gitkeep
+!/vona/docker-compose/data/pg/.gitkeep
+!/vona/docker-compose/data/redis/.gitkeep
+!/vona/docker-compose/logs/app/.gitkeep
+!/vona/docker-compose/logs/nginx/.gitkeep
+!/vona/docker-compose/output/app/vona/.gitkeep
+!/vona/docker-compose/output/app/dist/.gitkeep
 
-/src/backend/play
-/src/backend/app
-/src/backend/logs
-/src/backend/run
+/vona/src/backend/play
+!/packages-utils/quasar-app-extension-zova/dist
 
-/src/suite/*
-!/src/suite/.gitkeep
-!/src/suite/a-home
-!/src/suite/cabloy-basic
-!/src/suite/cabloy-start
-/src/suite/cabloy-start/modules/start-siteadmin/zovaRest
-/src/suite/cabloy-start/modules/start-siteadmin/assets
-/src/suite/cabloy-start/modules/start-siteweb/zovaRest
-/src/suite/cabloy-start/modules/start-siteweb/assets
+/vona/src/module/demo-student
+/zova/src/module/demo-student
 
-/src/suite-vendor/*
-!/src/suite-vendor/.gitkeep
-!/src/suite-vendor/a-auth
-!/src/suite-vendor/a-cabloy
-!/src/suite-vendor/a-captcha
-!/src/suite-vendor/a-paypal
-!/src/suite-vendor/a-vona
-
-/src/module/*
-!/src/module/.gitkeep
-
-/src/module-vendor/*
-!/src/module-vendor/.gitkeep
-
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-.vscode/sftp.json
-.sync-config.cson
-sftp-config.json
-sftp-config-.json
-/.assets
-packages-docs/.vitepress/cache
+**/.vitepress/cache
