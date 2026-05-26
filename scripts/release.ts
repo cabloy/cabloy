@@ -104,7 +104,7 @@ async function versionBump(bumpType: 'patch' | 'minor' | 'major', dryRun?: boole
   exec(`git commit -m "chore: release v${newVersion}"`, dryRun);
   exec(`git tag ${tag}`, dryRun);
   exec(`git push`, dryRun);
-  exec(`git push --tags`, dryRun);
+  exec(`git push origin ${tag}`, dryRun);
 
   return newVersion;
 }
