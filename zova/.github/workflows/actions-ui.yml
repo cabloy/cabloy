@@ -1,0 +1,45 @@
+name: actions-ui
+on:
+  push:
+    branches:
+      - main
+jobs:
+  unittest:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24]
+        project-template: ['empty', 'quasar', 'vuetify']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.19.0
+      - run: pnpm install --force --no-frozen-lockfile
+      - run: pnpm add -g zova-cli
+      - run: zova :create:project ${{ matrix.project-template }}-${{ matrix.node-version }} --template=${{ matrix.project-template }}
+      - name: pnpm install
+        run: pnpm install --force --no-frozen-lockfile
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}
+      - name: suite
+        run: zova :create:suite test-demo
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}
+      - name: module
+        run: zova :create:module test-demo --suite=test-demo --ci
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}
+      - name: pnpm install --force
+        run: pnpm install --force --no-frozen-lockfile
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}
+      - name: page
+        run: zova :create:page first --module=test-demo
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}
+      - name: component
+        run: zova :create:component child --module=test-demo
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}
+      - name: npm run build
+        run: npm run build
+        working-directory: ${{ matrix.project-template }}-${{ matrix.node-version }}

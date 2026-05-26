@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "cabloy.zova-vscode",
+    "oxc.oxc-vscode",
+    "csstools.postcss",
+    "bradlc.vscode-tailwindcss"
+  ],
+  "unwantedRecommendations": []
+}
