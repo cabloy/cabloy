@@ -3,7 +3,6 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import minimist from 'minimist';
-import { ProcessHelper } from '@cabloy/process-helper';
 
 // --- Constants ---
 const TAG_PREFIX = 'cabloy@';
@@ -167,8 +166,14 @@ Respond with ONLY the changelog content in markdown, starting with ## ${version}
 async function generateChangelog(version: string, dryRun?: boolean, noAi?: boolean): Promise<void> {
   console.log(`\n📝 Generating changelog for v${version}...`);
 
-  const lastTag = getLastTag();
-  const commits = getCommitsSinceTag(lastTag);
+  // Use the tag for the current version to find the previous tag
+  // After version bump, the current tag (e.g. cabloy@5.1.4) points to HEAD,
+  // so we need the tag BEFORE that to get the commit range
+  const currentTag = `${TAG_PREFIX}${version}`;
+  const allTags = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, { encoding: 'utf-8' }).trim().split('\n').filter(Boolean);
+  const currentTagIndex = allTags.indexOf(currentTag);
+  const previousTag = currentTagIndex >= 0 && currentTagIndex < allTags.length - 1 ? allTags[currentTagIndex + 1] : null;
+  const commits = getCommitsSinceTag(previousTag);
 
   if (commits.length === 0) {
     console.log('No commits found. Skipping changelog generation.');
@@ -223,8 +228,7 @@ async function npmPublish(dryRun?: boolean): Promise<void> {
     return;
   }
 
-  const processHelper = new ProcessHelper(process.cwd());
-  await processHelper.npmPublish();
+  execSync('npm publish', { encoding: 'utf-8', stdio: 'inherit' });
 }
 
 // --- Step 4: GitHub Release ---
