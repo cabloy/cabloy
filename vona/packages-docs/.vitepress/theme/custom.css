@@ -1,0 +1,31 @@
+:root {
+  --vp-c-brand-1: #646cff;
+  --vp-c-brand-2: #747bff;
+
+  .VPHomeHero {
+    .container {
+      .text {
+        max-width: 900px;
+      }
+      .tagline {
+        max-width: 800px;
+      }
+    }
+  }
+
+  .vp-doc :not(pre, h1, h2, h3, h4, h5, h6) > code {
+    font-size: var(--vp-code-font-size);
+    color: var(--vp-code-color);
+    /* color: var(--vp-c-text-1); */
+    /* border: solid 1px var(--vp-c-border); */
+  }
+}
+
+:root {
+  /* --vp-font-family-base: monospace; */
+  --vp-sidebar-width: 320px;
+}
+
+:root:where(:lang(zh)) {
+  /* --vp-font-family-base: monospace; */
+}

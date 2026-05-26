@@ -1,0 +1,37 @@
+{
+  "name": "@cabloy/lint",
+  "version": "5.1.15",
+  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "description": "Node Style Guide for Cabloy.",
+  "files": [
+    "api",
+    "common",
+    "front",
+    "oxc"
+  ],
+  "type": "module",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@e18e/eslint-plugin": "^0.2.0",
+    "@eslint/json": "^1.2.0",
+    "@eslint/markdown": "^7.5.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^8.58.1",
+    "eslint-plugin-antfu": "^3.2.3",
+    "eslint-plugin-command": "^3.5.2",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jsonc": "^3.1.2",
+    "eslint-plugin-perfectionist": "^5.9.0",
+    "eslint-plugin-pnpm": "^1.6.0",
+    "eslint-plugin-regexp": "^3.1.0",
+    "eslint-plugin-toml": "^1.3.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "eslint-plugin-vue": "^10.8.0",
+    "eslint-plugin-yml": "^3.3.2",
+    "globals": "^17.4.0",
+    "typescript-eslint": "^8.58.1"
+  }
+}

@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="50%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="50%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#bg)"/>
+
+  <!-- Decorative grid dots -->
+  <g opacity="0.06">
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#8b5cf6"/>
+    </pattern>
+    <rect width="1280" height="720" fill="url(#dots)"/>
+  </g>
+
+  <!-- Decorative circles -->
+  <circle cx="200" cy="150" r="200" fill="#6366f1" opacity="0.04"/>
+  <circle cx="1100" cy="580" r="250" fill="#8b5cf6" opacity="0.04"/>
+  <circle cx="640" cy="360" r="350" fill="#a78bfa" opacity="0.02"/>
+
+  <!-- Top accent line -->
+  <rect x="80" y="40" width="120" height="4" rx="2" fill="url(#accent)" filter="url(#glow)"/>
+
+  <!-- Main title -->
+  <text x="640" y="155" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="52" font-weight="800" fill="#f1f5f9" letter-spacing="2">
+    告别 Django Admin！
+  </text>
+
+  <!-- Subtitle -->
+  <text x="640" y="215" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="26" font-weight="400" fill="#94a3b8" letter-spacing="1">
+    在 DTO 中直接配置 Table / Form 渲染
+  </text>
+
+  <!-- Divider -->
+  <rect x="580" y="245" width="120" height="3" rx="1.5" fill="url(#accent)" opacity="0.6"/>
+
+  <!-- Three cards: Entity → DTO → Page -->
+
+  <!-- Card 1: Entity -->
+  <g filter="url(#shadow)">
+    <rect x="120" y="310" width="300" height="260" rx="16" fill="url(#cardBg)" stroke="#334155" stroke-width="1"/>
+    <rect x="120" y="310" width="300" height="4" rx="2" fill="#6366f1"/>
+  </g>
+  <text x="270" y="360" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="20" font-weight="700" fill="#c7d2fe">
+    Entity
+  </text>
+  <text x="270" y="388" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="13" fill="#64748b">
+    字段渲染元数据
+  </text>
+  <!-- Code snippet mock -->
+  <rect x="145" y="410" width="250" height="22" rx="4" fill="#0f172a" opacity="0.8"/>
+  <text x="155" y="426" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#818cf8">ZovaRender</text>
+  <text x="240" y="426" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">.cell(</text>
+  <text x="280" y="426" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#a78bfa">'table'</text>
+  <text x="330" y="426" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">)</text>
+
+  <rect x="145" y="438" width="250" height="22" rx="4" fill="#0f172a" opacity="0.8"/>
+  <text x="155" y="454" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#818cf8">ZovaRender</text>
+  <text x="240" y="454" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">.field(</text>
+  <text x="286" y="454" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#a78bfa">'select'</text>
+  <text x="345" y="454" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">)</text>
+
+  <rect x="145" y="466" width="250" height="22" rx="4" fill="#0f172a" opacity="0.8"/>
+  <text x="155" y="482" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#818cf8">ZovaRender</text>
+  <text x="240" y="482" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">.order(</text>
+  <text x="300" y="482" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#fbbf24">1</text>
+  <text x="312" y="482" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">)</text>
+
+  <!-- Tags -->
+  <rect x="155" y="505" width="56" height="24" rx="12" fill="#6366f1" opacity="0.2"/>
+  <text x="183" y="521" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#a5b4fc">cell</text>
+  <rect x="220" y="505" width="56" height="24" rx="12" fill="#8b5cf6" opacity="0.2"/>
+  <text x="248" y="521" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#c4b5fd">field</text>
+  <rect x="285" y="505" width="56" height="24" rx="12" fill="#a78bfa" opacity="0.2"/>
+  <text x="313" y="521" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#ddd6fe">order</text>
+
+  <!-- Arrow 1 -->
+  <g opacity="0.8">
+    <line x1="430" y1="440" x2="478" y2="440" stroke="url(#accent)" stroke-width="2" stroke-dasharray="6,4"/>
+    <polygon points="478,434 492,440 478,446" fill="#8b5cf6"/>
+  </g>
+
+  <!-- Card 2: DTO -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="310" width="280" height="260" rx="16" fill="url(#cardBg)" stroke="#334155" stroke-width="1"/>
+    <rect x="500" y="310" width="280" height="4" rx="2" fill="#8b5cf6"/>
+  </g>
+  <text x="640" y="360" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="20" font-weight="700" fill="#ddd6fe">
+    DTO
+  </text>
+  <text x="640" y="388" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="13" fill="#64748b">
+    页面结构组装
+  </text>
+  <!-- Blocks structure -->
+  <rect x="530" y="410" width="220" height="30" rx="6" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+  <text x="640" y="430" text-anchor="middle" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="#94a3b8">blockPage</text>
+
+  <rect x="550" y="448" width="180" height="26" rx="6" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+  <text x="640" y="466" text-anchor="middle" font-family="'SF Mono','Fira Code',monospace" font-size="11" fill="#64748b">blockFilter</text>
+
+  <rect x="550" y="480" width="180" height="26" rx="6" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+  <text x="640" y="498" text-anchor="middle" font-family="'SF Mono','Fira Code',monospace" font-size="11" fill="#64748b">blockTable</text>
+
+  <rect x="550" y="512" width="180" height="26" rx="6" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+  <text x="640" y="530" text-anchor="middle" font-family="'SF Mono','Fira Code',monospace" font-size="11" fill="#64748b">blockPager</text>
+
+  <!-- Arrow 2 -->
+  <g opacity="0.8">
+    <line x1="790" y1="440" x2="838" y2="440" stroke="url(#accent)" stroke-width="2" stroke-dasharray="6,4"/>
+    <polygon points="838,434 852,440 838,446" fill="#a78bfa"/>
+  </g>
+
+  <!-- Card 3: Page -->
+  <g filter="url(#shadow)">
+    <rect x="860" y="310" width="300" height="260" rx="16" fill="url(#cardBg)" stroke="#334155" stroke-width="1"/>
+    <rect x="860" y="310" width="300" height="4" rx="2" fill="#a78bfa"/>
+  </g>
+  <text x="1010" y="360" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="20" font-weight="700" fill="#e0e7ff">
+    CRUD Page
+  </text>
+  <text x="1010" y="388" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="13" fill="#64748b">
+    自动渲染输出
+  </text>
+
+  <!-- Mini table mock -->
+  <!-- Header -->
+  <rect x="890" y="408" width="240" height="28" rx="4" fill="#6366f1" opacity="0.15"/>
+  <text x="920" y="427" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#a5b4fc">Name</text>
+  <text x="1010" y="427" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#a5b4fc">Desc</text>
+  <text x="1090" y="427" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="11" fill="#a5b4fc">Ops</text>
+
+  <!-- Row 1 -->
+  <rect x="890" y="440" width="240" height="26" rx="4" fill="#0f172a" opacity="0.6"/>
+  <text x="920" y="458" font-family="system-ui,sans-serif" font-size="11" fill="#94a3b8">Tom</text>
+  <text x="1010" y="458" font-family="system-ui,sans-serif" font-size="11" fill="#94a3b8">Male</text>
+  <text x="1086" y="458" font-family="system-ui,sans-serif" font-size="10" fill="#818cf8">Edit</text>
+  <text x="1112" y="458" font-family="system-ui,sans-serif" font-size="10" fill="#f87171">Del</text>
+
+  <!-- Row 2 -->
+  <rect x="890" y="470" width="240" height="26" rx="4" fill="#0f172a" opacity="0.4"/>
+  <text x="920" y="488" font-family="system-ui,sans-serif" font-size="11" fill="#94a3b8">Jerry</text>
+  <text x="1010" y="488" font-family="system-ui,sans-serif" font-size="11" fill="#94a3b8">Female</text>
+  <text x="1086" y="488" font-family="system-ui,sans-serif" font-size="10" fill="#818cf8">Edit</text>
+  <text x="1112" y="488" font-family="system-ui,sans-serif" font-size="10" fill="#f87171">Del</text>
+
+  <!-- Row 3 -->
+  <rect x="890" y="500" width="240" height="26" rx="4" fill="#0f172a" opacity="0.2"/>
+  <text x="920" y="518" font-family="system-ui,sans-serif" font-size="11" fill="#64748b">...</text>
+
+  <!-- Pager dots -->
+  <circle cx="990" cy="545" r="4" fill="#6366f1"/>
+  <circle cx="1010" cy="545" r="4" fill="#475569"/>
+  <circle cx="1030" cy="545" r="4" fill="#475569"/>
+
+  <!-- Bottom section: VonaJS branding -->
+  <text x="640" y="640" text-anchor="middle" font-family="'SF Mono','Fira Code',monospace" font-size="28" font-weight="700" fill="#818cf8" filter="url(#glow)" letter-spacing="4">
+    VonaJS
+  </text>
+  <text x="640" y="670" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',system-ui,sans-serif" font-size="14" fill="#475569" letter-spacing="6">
+    DTO 驱动 · 全栈框架 · CRUD 动态渲染
+  </text>
+
+  <!-- Bottom accent line -->
+  <rect x="1080" y="676" width="120" height="4" rx="2" fill="url(#accent)" filter="url(#glow)"/>
+</svg>

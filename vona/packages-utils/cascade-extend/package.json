@@ -1,0 +1,60 @@
+{
+  "name": "cascade-extend",
+  "version": "2.2.5",
+  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "description": "cascade-extend",
+  "keywords": [
+    "cabloy",
+    "cascade-extend"
+  ],
+  "homepage": "https://github.com/zhennann/cascade-extend#readme",
+  "bugs": {
+    "url": "https://github.com/zhennann/cascade-extend/issues"
+  },
+  "license": "MIT",
+  "author": "zhennann",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhennann/cascade-extend.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "tsc:publish": "npm run clean && vona :bin:buildGeneral && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@cabloy/extend": "workspace:^"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  }
+}

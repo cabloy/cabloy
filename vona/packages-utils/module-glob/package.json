@@ -1,0 +1,57 @@
+{
+  "name": "@cabloy/module-glob",
+  "version": "5.3.10",
+  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "description": "cabloy module-glob",
+  "keywords": [
+    "cabloy",
+    "framework"
+  ],
+  "author": "zhennann",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "tsc:publish": "npm run clean && vona :bin:buildGeneral && tsc",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@cabloy/module-info": "^2.0.0",
+    "@cabloy/utils": "workspace:^",
+    "boxen": "^4.2.0",
+    "chalk": "^3.0.0",
+    "fs-extra": "^11.3.4",
+    "globby": "^16.2.0",
+    "semver": "^7.7.4"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  }
+}

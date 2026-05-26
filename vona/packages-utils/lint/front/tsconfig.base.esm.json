@@ -1,0 +1,9 @@
+{
+  "extends": "../api/tsconfig.base.esm",
+  "compilerOptions": {
+    // "jsx": "preserve",
+    // "jsxImportSource": "vue",
+    // "lib": ["esnext", "dom"],
+    // "types": ["vite/client", "node"]
+  }
+}
