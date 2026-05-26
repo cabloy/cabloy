@@ -83,8 +83,8 @@ async function versionBump(bumpType: 'patch' | 'minor' | 'major', dryRun?: boole
 
   // Check for changes since last tag
   if (lastTag) {
-    const diffCmd = `git diff --name-only ${lastTag}..HEAD`;
-    const changedFiles = execSync(diffCmd, { encoding: 'utf-8' }).trim();
+    const diffCmd = `git -c diff.renameLimit=10000 diff --name-only ${lastTag}..HEAD`;
+    const changedFiles = execSync(diffCmd, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
     if (!changedFiles) {
       console.log('No changes since last release. Skipping version bump.');
       return currentVersion;
