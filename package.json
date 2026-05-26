@@ -1,6 +1,6 @@
 {
-  "name": "cabloy-basic",
-  "private": true,
+  "name": "cabloy",
+  "version": "5.1.0",
   "description": "A fullstack framework",
   "keywords": [
     "fullstack",
@@ -33,7 +33,6 @@
     "@cabloy/process-helper": "^3.1.3",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.19.17",
-    "lerna": "^9.0.7",
     "minimist": "^1.2.8",
     "oxfmt": "^0.45.0",
     "oxlint": "^1.65.0",
