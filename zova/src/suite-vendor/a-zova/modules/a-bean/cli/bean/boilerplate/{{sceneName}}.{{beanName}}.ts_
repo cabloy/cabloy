@@ -1,0 +1,7 @@
+import { BeanBase } from 'zova';
+import { Bean } from 'zova-module-a-bean';
+
+@Bean()
+export class Bean<%=argv.beanNameCapitalize%> extends BeanBase {
+  protected async __init__() {}
+}

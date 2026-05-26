@@ -1,0 +1,14 @@
+import type { IDecoratorThemeOptions, IThemeApplyParams, IThemeApplyResult, IThemeBase, ThemeToken } from 'zova-module-a-style';
+import { BeanThemeBase, Theme } from 'zova-module-a-style';
+
+export interface IThemeOptions<%=argv.beanNameCapitalize%> extends IDecoratorThemeOptions {}
+
+@Theme<IThemeOptions<%=argv.beanNameCapitalize%>>()
+export class Theme<%=argv.beanNameCapitalize%> extends BeanThemeBase implements IThemeBase {
+  async apply({ name, dark }: IThemeApplyParams): Promise<IThemeApplyResult> {
+    const token: ThemeToken = {};
+    return {
+      token: this.mergeOptionsToken({ name, dark }, token),
+    };
+  }
+}

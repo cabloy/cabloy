@@ -1,0 +1,5 @@
+import { BeanAopBase } from 'zova';
+import { Aop } from 'zova-module-a-bean';
+
+@Aop({ match: 'some-bean-name' })
+export class Aop<%=argv.beanNameCapitalize%> extends BeanAopBase {}

@@ -1,0 +1,12 @@
+import { Api, BeanApiBase } from 'zova-module-a-api';
+
+export interface Api<%=argv.beanNameCapitalize%>EchoResult {
+  message: string;
+}
+
+@Api()
+export class Api<%=argv.beanNameCapitalize%> extends BeanApiBase {
+  echo() {
+    return this.$fetch.get<any, Api<%=argv.beanNameCapitalize%>EchoResult>('/<%=argv.beanName%>/echo');
+  }
+}

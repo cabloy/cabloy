@@ -1,0 +1,26 @@
+{
+  "name": "zova-suite-cabloy-basic",
+  "version": "5.0.7",
+  "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
+  "description": "",
+  "author": "",
+  "files": [],
+  "type": "module",
+  "dependencies": {
+    "zova-module-basic-adapter": "^5.0.2",
+    "zova-module-basic-captcha": "^5.0.5",
+    "zova-module-basic-commands": "^5.1.13",
+    "zova-module-basic-commandssync": "^5.0.2",
+    "zova-module-basic-currency": "^5.1.13",
+    "zova-module-basic-date": "^5.0.3",
+    "zova-module-basic-form": "^5.0.4",
+    "zova-module-basic-input": "^5.0.4",
+    "zova-module-basic-page": "^5.0.4",
+    "zova-module-basic-pageentry": "^5.0.4",
+    "zova-module-basic-select": "^5.0.2",
+    "zova-module-basic-table": "^5.0.3",
+    "zova-module-basic-text": "^5.0.1",
+    "zova-suite-a-cabloy": "^5.1.23"
+  },
+  "title": "cabloy-basic"
+}

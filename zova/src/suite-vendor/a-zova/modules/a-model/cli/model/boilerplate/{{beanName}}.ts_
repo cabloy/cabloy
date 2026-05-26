@@ -1,0 +1,9 @@
+import type { IDecoratorModelOptions } from 'zova-module-a-model';
+import { BeanModelBase, Model } from 'zova-module-a-model';
+
+export interface IModelOptions<%=argv.beanNameCapitalize%> extends IDecoratorModelOptions {}
+
+@Model<IModelOptions<%=argv.beanNameCapitalize%>>()
+export class Model<%=argv.beanNameCapitalize%> extends BeanModelBase {
+  protected async __init__() {}
+}

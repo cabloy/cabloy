@@ -1,0 +1,20 @@
+import type { VNode } from 'vue';
+import type { IDecoratorBehaviorOptions, NextBehavior } from 'zova-module-a-behavior';
+import { BeanBehaviorBase, Behavior } from 'zova-module-a-behavior';
+
+export interface IBehaviorPropsInput<%=argv.beanNameCapitalize%> {}
+
+export interface IBehaviorPropsOutput<%=argv.beanNameCapitalize%> extends IBehaviorPropsInput<%=argv.beanNameCapitalize%> {}
+
+export interface IBehaviorOptions<%=argv.beanNameCapitalize%> extends IDecoratorBehaviorOptions {}
+
+@Behavior<IBehaviorOptions<%=argv.beanNameCapitalize%>>()
+export class Behavior<%=argv.beanNameCapitalize%> extends BeanBehaviorBase<
+  IBehaviorOptions<%=argv.beanNameCapitalize%>,
+  IBehaviorPropsInput<%=argv.beanNameCapitalize%>,
+  IBehaviorPropsOutput<%=argv.beanNameCapitalize%>
+> {
+  protected render(_props: IBehaviorPropsInput<%=argv.beanNameCapitalize%>, next: NextBehavior<IBehaviorPropsOutput<%=argv.beanNameCapitalize%>>): VNode {
+    return next();
+  }
+}

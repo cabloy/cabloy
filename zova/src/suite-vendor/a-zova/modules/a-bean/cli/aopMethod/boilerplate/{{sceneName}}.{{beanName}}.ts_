@@ -1,0 +1,14 @@
+import type { Next, NextSync } from 'zova';
+import type { IAopMethodExecute, IDecoratorAopMethodOptions } from 'zova-module-a-bean';
+import { BeanAopMethodBase } from 'zova';
+import { AopMethod } from 'zova-module-a-bean';
+
+export interface IAopMethodOptions<%=argv.beanNameCapitalize%> extends IDecoratorAopMethodOptions {}
+
+@AopMethod<IAopMethodOptions<%=argv.beanNameCapitalize%>>()
+export class AopMethod<%=argv.beanNameCapitalize%> extends BeanAopMethodBase implements IAopMethodExecute {
+  execute(_options: IAopMethodOptions<%=argv.beanNameCapitalize%>, _args: [], next: Next | NextSync, _receiver: any, _prop: string): Promise<any> | any {
+    // next
+    return next();
+  }
+}

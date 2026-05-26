@@ -1,0 +1,117 @@
+{
+  "name": "zova-module-a-bean",
+  "version": "5.1.21",
+  "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
+  "description": "",
+  "keywords": [
+    "Zova Module"
+  ],
+  "author": "",
+  "files": [
+    "cli",
+    "dist",
+    "mock",
+    "src",
+    "icons",
+    "assets",
+    "dist-cli"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": "./*"
+  },
+  "scripts": {
+    "clean": "rimraf dist dist-cli tsconfig.build.tsbuildinfo tsconfig.cli.tsbuildinfo",
+    "tsc:publish": "npm run clean && zova :bin:buildModule --sourcemap && tsc -p tsconfig.build.json && tsc -p tsconfig.cli.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore && npm run clean"
+  },
+  "dependencies": {
+    "globby": "^14.1.0"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "replace": {
+      "exports.\\..types": "./dist/index.d.ts"
+    },
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  },
+  "title": "a-bean",
+  "zovaModule": {
+    "capabilities": {
+      "preload": true,
+      "monkey": true
+    },
+    "onions": {
+      "sys": {
+        "beanGeneral": true,
+        "optionsNone": true,
+        "boilerplate": "sys/boilerplate"
+      },
+      "bean": {
+        "beanGeneral": true,
+        "optionsNone": true,
+        "boilerplate": "bean/boilerplate"
+      },
+      "data": {
+        "beanGeneral": true,
+        "optionsNone": true,
+        "boilerplate": "data/boilerplate"
+      },
+      "service": {
+        "sceneIsolate": true,
+        "beanGeneral": true,
+        "optionsNone": false,
+        "optionsGlobalInterfaceFrom": "zova-module-a-bean",
+        "boilerplate": "service/boilerplate"
+      },
+      "tool": {
+        "beanGeneral": true,
+        "optionsNone": true,
+        "boilerplate": "tool/boilerplate"
+      },
+      "controller": {
+        "beanGeneral": false,
+        "optionsNone": true,
+        "metadataCustom": "controller/metadata/generate.ts"
+      },
+      "render": {
+        "beanGeneral": false,
+        "optionsNone": true
+      },
+      "style": {
+        "beanGeneral": false,
+        "optionsNone": true
+      },
+      "aop": {
+        "optionsPackage": true,
+        "optionsGlobalInterfaceName": "IDecoratorAopOptions",
+        "optionsGlobalInterfaceFrom": "zova-module-a-bean",
+        "boilerplate": "aop/boilerplate"
+      },
+      "aopMethod": {
+        "optionsGlobalInterfaceName": "IDecoratorAopMethodOptions",
+        "optionsGlobalInterfaceFrom": "zova-module-a-bean",
+        "boilerplate": "aopMethod/boilerplate"
+      }
+    },
+    "dependencies": {}
+  }
+}

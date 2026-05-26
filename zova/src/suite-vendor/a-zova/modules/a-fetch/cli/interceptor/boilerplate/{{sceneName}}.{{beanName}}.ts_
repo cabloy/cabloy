@@ -1,0 +1,7 @@
+import type { IDecoratorInterceptorOptions } from 'zova-module-a-fetch';
+import { BeanInterceptorBase, Interceptor } from 'zova-module-a-fetch';
+
+export interface IInterceptorOptions<%=argv.beanNameCapitalize%> extends IDecoratorInterceptorOptions {}
+
+@Interceptor<IInterceptorOptions<%=argv.beanNameCapitalize%>>()
+export class Interceptor<%=argv.beanNameCapitalize%> extends BeanInterceptorBase<IInterceptorOptions<%=argv.beanNameCapitalize%>> {}

@@ -1,0 +1,10 @@
+import type { IDecoratorCssOptions } from 'zova-module-a-style';
+import { BeanBase, useComputed } from 'zova';
+import { Css } from 'zova-module-a-style';
+
+export interface ICssOptions<%=argv.beanNameCapitalize%> extends IDecoratorCssOptions {}
+
+@Css<ICssOptions<%=argv.beanNameCapitalize%>>()
+export class Css<%=argv.beanNameCapitalize%> extends BeanBase {
+  protected async __init__() {}
+}
