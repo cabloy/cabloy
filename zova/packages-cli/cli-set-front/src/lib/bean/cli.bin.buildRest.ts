@@ -188,15 +188,16 @@ export class CliBinBuildRest extends BeanCliBase {
     const outReleasesDir = path.join(projectPath, 'dist-releases', `rest-${flavor}-${process.env.APP_VERSION}`);
     await fse.copy(outDir, outReleasesDir);
     // copy
-    _copyToTarget(outDir, process.env.BUILD_REST_COPY_DIST, bundleNameCopy);
+    _copyToTarget(outDir, process.env.BUILD_REST_COPY_DIST, bundleNameCopy, projectPath);
   }
 }
 
-function _copyToTarget(outDir: string, target: string | undefined, bundleNameCopy: string) {
+function _copyToTarget(outDir: string, target: string | undefined, bundleNameCopy: string, projectPath: string) {
   if (!target) return;
   const dirs = target.split(',');
   for (const dir of dirs) {
-    const outReleasesDirCopy = path.join(dir, bundleNameCopy);
+    const dir2 = path.isAbsolute(dir) ? dir : path.join(projectPath, dir);
+    const outReleasesDirCopy = path.join(dir2, bundleNameCopy);
     fse.removeSync(outReleasesDirCopy);
     fse.copySync(outDir, outReleasesDirCopy, { preserveTimestamps: true });
   }
