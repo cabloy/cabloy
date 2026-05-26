@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "cabloy.vona-vscode",
+    "oxc.oxc-vscode",
+    "cabloy.zova-vscode",
+    "csstools.postcss",
+    "bradlc.vscode-tailwindcss"
+  ],
+  "unwantedRecommendations": []
+}
