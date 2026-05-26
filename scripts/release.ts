@@ -156,7 +156,8 @@ Respond with ONLY the changelog content in markdown, starting with ## ${version}
   if (data.error) {
     throw new Error(`Anthropic API error: ${data.error.message}`);
   }
-  const text = data.content?.[0]?.text;
+  const textBlock = data.content?.find(c => c.type === 'text');
+  const text = textBlock?.text;
   if (!text) {
     throw new Error(`Unexpected Anthropic API response: ${JSON.stringify(data)}`);
   }
