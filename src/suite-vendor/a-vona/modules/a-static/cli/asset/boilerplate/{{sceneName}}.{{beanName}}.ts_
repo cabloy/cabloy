@@ -1,7 +1,0 @@
-import { Meta } from 'vona-module-a-meta';
-import { BeanAssetBase } from 'vona-module-a-static';
-
-export interface I<%=argv.beanNameCapitalize%>GetPath {}
-
-@Meta()
-export class Meta<%=argv.beanNameCapitalize%> extends BeanAssetBase<I<%=argv.beanNameCapitalize%>GetPath> {}

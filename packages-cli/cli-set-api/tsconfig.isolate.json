@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.base.esm.json",
-  "compilerOptions": {
-    "rootDir": "toolsIsolate",
-    "outDir": "dist-toolsIsolate"
-  },
-  "include": ["toolsIsolate"]
-}

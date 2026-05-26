@@ -1,7 +1,0 @@
-{
-  "extends": "../../tsconfig.base.esm.json",
-  "compilerOptions": {
-    "noEmit": true
-  },
-  "include": ["src/**/*", "toolsIsolate"]
-}

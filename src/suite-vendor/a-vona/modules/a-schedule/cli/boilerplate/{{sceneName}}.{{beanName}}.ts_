@@ -1,8 +1,0 @@
-import type { IScheduleExecute } from 'vona-module-a-schedule';
-import { BeanBase } from 'vona';
-import { Schedule } from 'vona-module-a-schedule';
-
-@Schedule({ repeat: { every: 3000 } })
-export class Schedule<%=argv.beanNameCapitalize%> extends BeanBase implements IScheduleExecute {
-  async execute() {}
-}

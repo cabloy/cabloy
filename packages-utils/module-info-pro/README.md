@@ -1,1 +1,0 @@
-# @cabloy/module-info-pro

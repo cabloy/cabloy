@@ -1,8 +1,0 @@
-import type { IDecoratorControllerOptions } from 'vona-module-a-web';
-import { BeanBase } from 'vona';
-import { Controller } from 'vona-module-a-web';
-
-export interface IControllerOptions<%=argv.beanNameCapitalize%> extends IDecoratorControllerOptions {}
-
-@Controller<IControllerOptions<%=argv.beanNameCapitalize%>>('<%=argv.beanName%>')
-export class Controller<%=argv.beanNameCapitalize%> extends BeanBase {}

@@ -1,4 +1,0 @@
-{
-  "extends": "../../tsconfig.base.esm.json",
-  "include": ["src/**/*", "test/**/*"]
-}

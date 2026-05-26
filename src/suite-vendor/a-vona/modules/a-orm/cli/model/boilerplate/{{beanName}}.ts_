@@ -1,8 +1,0 @@
-import type { IDecoratorModelOptions } from 'vona-module-a-orm';
-import { BeanModelBase, Model } from 'vona-module-a-orm';
-import { Entity<%=argv.beanNameCapitalize%> } from '../entity/<%=argv.beanName%>.tsx';
-
-export interface IModelOptions<%=argv.beanNameCapitalize%> extends IDecoratorModelOptions<Entity<%=argv.beanNameCapitalize%>> {}
-
-@Model<IModelOptions<%=argv.beanNameCapitalize%>>({ entity: Entity<%=argv.beanNameCapitalize%> })
-export class Model<%=argv.beanNameCapitalize%> extends BeanModelBase<Entity<%=argv.beanNameCapitalize%>> {}

@@ -1,5 +1,0 @@
-import { BeanBase } from 'vona';
-import { Service } from 'vona-module-a-bean';
-
-@Service()
-export class Service<%=argv.beanNameCapitalize%> extends BeanBase {}

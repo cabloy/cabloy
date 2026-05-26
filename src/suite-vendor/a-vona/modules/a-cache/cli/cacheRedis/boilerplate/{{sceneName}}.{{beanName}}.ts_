@@ -1,8 +1,0 @@
-import { BeanCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
-
-export type TCacheRedis<%=argv.beanNameCapitalize%>Key = any;
-export type TCacheRedis<%=argv.beanNameCapitalize%>Data = any;
-
-@CacheRedis()
-export class CacheRedis<%=argv.beanNameCapitalize%>
-  extends BeanCacheRedisBase<TCacheRedis<%=argv.beanNameCapitalize%>Key, TCacheRedis<%=argv.beanNameCapitalize%>Data> {}

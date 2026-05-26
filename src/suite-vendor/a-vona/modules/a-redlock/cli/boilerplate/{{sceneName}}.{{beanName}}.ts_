@@ -1,8 +1,0 @@
-import { Meta } from 'vona-module-a-meta';
-import { BeanRedlockBase } from 'vona-module-a-redlock';
-
-export type Type<%=argv.beanNameCapitalize%>LockResource = never;
-export type Type<%=argv.beanNameCapitalize%>LockIsolateResource = never;
-
-@Meta()
-export class Meta<%=argv.beanNameCapitalize%> extends BeanRedlockBase<Type<%=argv.beanNameCapitalize%>LockResource, Type<%=argv.beanNameCapitalize%>LockIsolateResource> {}
