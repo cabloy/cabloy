@@ -1,0 +1,12 @@
+{
+  "name": "<%=argv.Name%>",
+  "version": "<%=argv.Version%>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": ["./index.d.mts"],
+      "import": "./index.mjs"
+    },
+    "./package.json": "./package.json"
+  }
+}

@@ -1,0 +1,33 @@
+import { App, getCurrentInstance } from 'vue';
+import { BeanControllerPageBase, PluginZova, ZovaApplication } from 'zova';
+import { getPluginZovaOptions } from './utils.js';
+
+export class ControllerPageApp extends BeanControllerPageBase {
+  protected async __init__() {
+    // app
+    const instance = getCurrentInstance();
+    const app = instance!.appContext.app!;
+    if (!app.zova) {
+      await this.initApp(app);
+    } else {
+      await this.updateApp(app.zova);
+    }
+  }
+
+  protected render() {
+    const ComponentApp = this.$zovaComponent(this.sys.config.layout.app.component);
+    return <ComponentApp />;
+  }
+
+  protected async initApp(app: App) {
+    // install
+    const appZova = await PluginZova.install(app, this.ctx, getPluginZovaOptions());
+    // monkey: beanInit
+    await appZova.meta.module._monkeyModule(true, 'beanInit', undefined, appZova.bean, this);
+  }
+
+  protected async updateApp(app: ZovaApplication) {
+    // update
+    await PluginZova.update(app, this.ctx);
+  }
+}

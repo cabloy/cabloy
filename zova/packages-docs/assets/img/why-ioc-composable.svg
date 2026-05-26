@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="220 187 448 180" width="448" height="180">
+  <defs/>
+  <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill="none" fill-opacity="1" stroke-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <path d="M 231 188 L 657 188 C 662.52285 188 667 192.47715 667 198 L 667 356.5 C 667 362.02285 662.52285 366.5 657 366.5 L 231 366.5 C 225.47715 366.5 221 362.02285 221 356.5 L 221 198 C 221 192.47715 225.47715 188 231 188 Z" fill="#303640"/>
+        <path d="M 231 188 L 657 188 C 662.52285 188 667 192.47715 667 198 L 667 356.5 C 667 362.02285 662.52285 366.5 657 366.5 L 231 366.5 C 225.47715 366.5 221 362.02285 221 356.5 L 221 198 C 221 192.47715 225.47715 188 231 188 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(226 193)" fill="#ff9300">
+          <tspan font-family="Helvetica Neue" font-size="20" fill="#ff9300" x="0" y="19" xml:space="preserve">Vue Component</tspan>
+        </text>
+      </g>
+      <g id="Group_19">
+        <g id="Group_13">
+          <g id="Graphic_4">
+            <path d="M 254.5 231.5 L 425 231.5 C 430.52285 231.5 435 235.97715 435 241.5 L 435 336.5 C 435 342.02285 430.52285 346.5 425 346.5 L 254.5 346.5 C 248.97715 346.5 244.5 342.02285 244.5 336.5 L 244.5 241.5 C 244.5 235.97715 248.97715 231.5 254.5 231.5 Z" fill="#c4e98c"/>
+            <path d="M 254.5 231.5 L 425 231.5 C 430.52285 231.5 435 235.97715 435 241.5 L 435 336.5 C 435 342.02285 430.52285 346.5 425 346.5 L 254.5 346.5 C 248.97715 346.5 244.5 342.02285 244.5 336.5 L 244.5 241.5 C 244.5 235.97715 248.97715 231.5 254.5 231.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(249.5 236.5)" fill="#283450">
+              <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="0" y="17" xml:space="preserve">composable</tspan>
+              <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">A</tspan>
+            </text>
+          </g>
+          <g id="Graphic_11">
+            <path d="M 286.95 269.776 L 392.55 269.776 C 398.07285 269.776 402.55 274.25315 402.55 279.776 L 402.55 288.224 C 402.55 293.74685 398.07285 298.224 392.55 298.224 L 286.95 298.224 C 281.42715 298.224 276.95 293.74685 276.95 288.224 L 276.95 279.776 C 276.95 274.25315 281.42715 269.776 286.95 269.776 Z" fill="#4ec08d"/>
+            <path d="M 286.95 269.776 L 392.55 269.776 C 398.07285 269.776 402.55 274.25315 402.55 279.776 L 402.55 288.224 C 402.55 293.74685 398.07285 298.224 392.55 298.224 L 286.95 298.224 C 281.42715 298.224 276.95 293.74685 276.95 288.224 L 276.95 279.776 C 276.95 274.25315 281.42715 269.776 286.95 269.776 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(281.95 273)" fill="#283450">
+              <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="0" y="17" xml:space="preserve">composable</tspan>
+              <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">A1</tspan>
+            </text>
+          </g>
+        </g>
+        <g id="Graphic_18">
+          <path d="M 286.95 306 L 392.55 306 C 398.07285 306 402.55 310.47715 402.55 316 L 402.55 324.448 C 402.55 329.97085 398.07285 334.448 392.55 334.448 L 286.95 334.448 C 281.42715 334.448 276.95 329.97085 276.95 324.448 L 276.95 316 C 276.95 310.47715 281.42715 306 286.95 306 Z" fill="#4ec08d"/>
+          <path d="M 286.95 306 L 392.55 306 C 398.07285 306 402.55 310.47715 402.55 316 L 402.55 324.448 C 402.55 329.97085 398.07285 334.448 392.55 334.448 L 286.95 334.448 C 281.42715 334.448 276.95 329.97085 276.95 324.448 L 276.95 316 C 276.95 310.47715 281.42715 306 286.95 306 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(281.95 309.224)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="0" y="17" xml:space="preserve">composable</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">A2</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Group_20">
+        <g id="Group_22">
+          <g id="Graphic_24">
+            <path d="M 463 231.5 L 633.5 231.5 C 639.02285 231.5 643.5 235.97715 643.5 241.5 L 643.5 336.5 C 643.5 342.02285 639.02285 346.5 633.5 346.5 L 463 346.5 C 457.47715 346.5 453 342.02285 453 336.5 L 453 241.5 C 453 235.97715 457.47715 231.5 463 231.5 Z" fill="#c4e98c"/>
+            <path d="M 463 231.5 L 633.5 231.5 C 639.02285 231.5 643.5 235.97715 643.5 241.5 L 643.5 336.5 C 643.5 342.02285 639.02285 346.5 633.5 346.5 L 463 346.5 C 457.47715 346.5 453 342.02285 453 336.5 L 453 241.5 C 453 235.97715 457.47715 231.5 463 231.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(458 236.5)" fill="#283450">
+              <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="0" y="17" xml:space="preserve">composable</tspan>
+              <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">B</tspan>
+            </text>
+          </g>
+          <g id="Graphic_23">
+            <path d="M 495.45 269.776 L 601.05 269.776 C 606.57285 269.776 611.05 274.25315 611.05 279.776 L 611.05 288.224 C 611.05 293.74685 606.57285 298.224 601.05 298.224 L 495.45 298.224 C 489.92715 298.224 485.45 293.74685 485.45 288.224 L 485.45 279.776 C 485.45 274.25315 489.92715 269.776 495.45 269.776 Z" fill="#4ec08d"/>
+            <path d="M 495.45 269.776 L 601.05 269.776 C 606.57285 269.776 611.05 274.25315 611.05 279.776 L 611.05 288.224 C 611.05 293.74685 606.57285 298.224 601.05 298.224 L 495.45 298.224 C 489.92715 298.224 485.45 293.74685 485.45 288.224 L 485.45 279.776 C 485.45 274.25315 489.92715 269.776 495.45 269.776 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+            <text transform="translate(490.45 273)" fill="#283450">
+              <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="0" y="17" xml:space="preserve">composable</tspan>
+              <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">B1</tspan>
+            </text>
+          </g>
+        </g>
+        <g id="Graphic_21">
+          <path d="M 495.45 306 L 601.05 306 C 606.57285 306 611.05 310.47715 611.05 316 L 611.05 324.448 C 611.05 329.97085 606.57285 334.448 601.05 334.448 L 495.45 334.448 C 489.92715 334.448 485.45 329.97085 485.45 324.448 L 485.45 316 C 485.45 310.47715 489.92715 306 495.45 306 Z" fill="#4ec08d"/>
+          <path d="M 495.45 306 L 601.05 306 C 606.57285 306 611.05 310.47715 611.05 316 L 611.05 324.448 C 611.05 329.97085 606.57285 334.448 601.05 334.448 L 495.45 334.448 C 489.92715 334.448 485.45 329.97085 485.45 324.448 L 485.45 316 C 485.45 310.47715 489.92715 306 495.45 306 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(490.45 309.224)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="0" y="17" xml:space="preserve">composable</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">B2</tspan>
+          </text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

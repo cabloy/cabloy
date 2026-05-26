@@ -1,0 +1,7 @@
+import { BeanRenderBase } from 'zova';
+import { Render } from 'zova-module-a-bean';
+
+@Render()
+export class <%=argv.renderClassName%> extends BeanRenderBase {
+  public render() {}
+}

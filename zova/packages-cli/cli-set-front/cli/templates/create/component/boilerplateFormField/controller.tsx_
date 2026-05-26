@@ -1,0 +1,34 @@
+import type { IComponentOptions } from 'zova';
+import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
+
+import { BeanControllerBase } from 'zova';
+import { Controller } from 'zova-module-a-bean';
+import { ZFormField, type IFormFieldComponentOptions } from 'zova-module-a-form';
+
+declare module 'zova-module-a-openapi' {
+  export interface IResourceFormFieldRecord {
+    '<%=argv.module%>:<%=argv.nameMeta.full%>'?: IResource<%=argv.nameMeta.fullCapitalize%>Options;
+  }
+}
+
+export interface IResource<%=argv.nameMeta.fullCapitalize%>Options extends IResourceFormFieldOptionsBase {}
+
+export interface Controller<%=argv.nameMeta.fullCapitalize%>Props extends IFormFieldComponentOptions {
+  options?: IResource<%=argv.nameMeta.fullCapitalize%>Options;
+}
+
+@Controller()
+export class Controller<%=argv.nameMeta.fullCapitalize%> extends BeanControllerBase {
+  static $propsDefault = {};
+  static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
+
+  protected async __init__() {}
+
+  protected render() {
+    return (
+      <ZFormField
+        {...this.$props}
+      ></ZFormField>
+    );
+  }
+}

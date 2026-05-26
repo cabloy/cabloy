@@ -1,0 +1,12 @@
+{
+  "name": "zova-cli",
+  "private": true,
+  "description": "zova cli",
+  "keywords": [
+    "zova"
+  ],
+  "license": "MIT",
+  "author": "zhennann",
+  "type": "module",
+  "title": "zova cli"
+}

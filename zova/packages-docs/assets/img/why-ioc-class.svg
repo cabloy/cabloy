@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="227.5 128.5 471.5 270" width="471.5" height="270">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-9 -4 10 8" markerWidth="10" markerHeight="8" color="#ff9300">
+      <g>
+        <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-9 -4 10 8" markerWidth="10" markerHeight="8" color="#ff9300">
+      <g>
+        <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <path d="M 238 129 L 688.5 129 C 694.02285 129 698.5 133.47715 698.5 139 L 698.5 388 C 698.5 393.52285 694.02285 398 688.5 398 L 238 398 C 232.47715 398 228 393.52285 228 388 L 228 139 C 228 133.47715 232.47715 129 238 129 Z" fill="#303640"/>
+        <path d="M 238 129 L 688.5 129 C 694.02285 129 698.5 133.47715 698.5 139 L 698.5 388 C 698.5 393.52285 694.02285 398 688.5 398 L 238 398 C 232.47715 398 228 393.52285 228 388 L 228 139 C 228 133.47715 232.47715 129 238 129 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(233 134)" fill="#ff9300">
+          <tspan font-family="Helvetica Neue" font-size="20" fill="#ff9300" x="0" y="21" xml:space="preserve">Vue Component</tspan>
+          <tspan font-family="PingFang SC" font-size="20" fill="#ff9300" y="21" xml:space="preserve"> (IOC Container)</tspan>
+        </text>
+      </g>
+      <g id="Group_36">
+        <g id="Graphic_4">
+          <path d="M 267 197.5 L 412 197.5 C 417.52285 197.5 422 201.97715 422 207.5 L 422 241 C 422 246.52285 417.52285 251 412 251 L 267 251 C 261.47715 251 257 246.52285 257 241 L 257 207.5 C 257 201.97715 261.47715 197.5 267 197.5 Z" fill="#c4e98c"/>
+          <path d="M 267 197.5 L 412 197.5 C 417.52285 197.5 422 201.97715 422 207.5 L 422 241 C 422 246.52285 417.52285 251 412 251 L 267 251 C 261.47715 251 257 246.52285 257 241 L 257 207.5 C 257 201.97715 261.47715 197.5 267 197.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(262 213.25)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="49.324" y="17" xml:space="preserve">Class A</tspan>
+          </text>
+        </g>
+        <g id="Graphic_11">
+          <path d="M 546 184.5 L 651.6 184.5 C 657.12285 184.5 661.6 188.97715 661.6 194.5 L 661.6 202.948 C 661.6 208.47085 657.12285 212.948 651.6 212.948 L 546 212.948 C 540.47715 212.948 536 208.47085 536 202.948 L 536 194.5 C 536 188.97715 540.47715 184.5 546 184.5 Z" fill="#4ec08d"/>
+          <path d="M 546 184.5 L 651.6 184.5 C 657.12285 184.5 661.6 188.97715 661.6 194.5 L 661.6 202.948 C 661.6 208.47085 657.12285 212.948 651.6 212.948 L 546 212.948 C 540.47715 212.948 536 208.47085 536 202.948 L 536 194.5 C 536 188.97715 540.47715 184.5 546 184.5 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(541 187.724)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="25.248" y="17" xml:space="preserve">Class </tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">A1</tspan>
+          </text>
+        </g>
+        <g id="Graphic_25">
+          <path d="M 546 233.5 L 651.6 233.5 C 657.12285 233.5 661.6 237.97715 661.6 243.5 L 661.6 251.948 C 661.6 257.47085 657.12285 261.948 651.6 261.948 L 546 261.948 C 540.47715 261.948 536 257.47085 536 251.948 L 536 243.5 C 536 237.97715 540.47715 233.5 546 233.5 Z" fill="#4ec08d"/>
+          <path d="M 546 233.5 L 651.6 233.5 C 657.12285 233.5 661.6 237.97715 661.6 243.5 L 661.6 251.948 C 661.6 257.47085 657.12285 261.948 651.6 261.948 L 546 261.948 C 540.47715 261.948 536 257.47085 536 251.948 L 536 243.5 C 536 237.97715 540.47715 233.5 546 233.5 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(541 236.724)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="25.248" y="17" xml:space="preserve">Class </tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">A2</tspan>
+          </text>
+        </g>
+        <g id="Line_26">
+          <line x1="526.3356" y1="205.85754" x2="422" y2="216.12854" marker-start="url(#FilledArrow_Marker)" stroke="#ff9300" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_28">
+          <line x1="526.2449" y1="241.1557" x2="422" y2="231.7186" marker-start="url(#FilledArrow_Marker_2)" stroke="#ff9300" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+      </g>
+      <g id="Group_37">
+        <g id="Graphic_42">
+          <path d="M 267 302 L 412 302 C 417.52285 302 422 306.47715 422 312 L 422 345.5 C 422 351.02285 417.52285 355.5 412 355.5 L 267 355.5 C 261.47715 355.5 257 351.02285 257 345.5 L 257 312 C 257 306.47715 261.47715 302 267 302 Z" fill="#c4e98c"/>
+          <path d="M 267 302 L 412 302 C 417.52285 302 422 306.47715 422 312 L 422 345.5 C 422 351.02285 417.52285 355.5 412 355.5 L 267 355.5 C 261.47715 355.5 257 351.02285 257 345.5 L 257 312 C 257 306.47715 261.47715 302 267 302 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(262 317.75)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="49.164" y="17" xml:space="preserve">Class B</tspan>
+          </text>
+        </g>
+        <g id="Graphic_41">
+          <path d="M 546 289 L 651.6 289 C 657.12285 289 661.6 293.47715 661.6 299 L 661.6 307.448 C 661.6 312.97085 657.12285 317.448 651.6 317.448 L 546 317.448 C 540.47715 317.448 536 312.97085 536 307.448 L 536 299 C 536 293.47715 540.47715 289 546 289 Z" fill="#4ec08d"/>
+          <path d="M 546 289 L 651.6 289 C 657.12285 289 661.6 293.47715 661.6 299 L 661.6 307.448 C 661.6 312.97085 657.12285 317.448 651.6 317.448 L 546 317.448 C 540.47715 317.448 536 312.97085 536 307.448 L 536 299 C 536 293.47715 540.47715 289 546 289 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(541 292.224)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="24.952" y="17" xml:space="preserve">Class </tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">B1</tspan>
+          </text>
+        </g>
+        <g id="Graphic_40">
+          <path d="M 546 338 L 651.6 338 C 657.12285 338 661.6 342.47715 661.6 348 L 661.6 356.448 C 661.6 361.97085 657.12285 366.448 651.6 366.448 L 546 366.448 C 540.47715 366.448 536 361.97085 536 356.448 L 536 348 C 536 342.47715 540.47715 338 546 338 Z" fill="#4ec08d"/>
+          <path d="M 546 338 L 651.6 338 C 657.12285 338 661.6 342.47715 661.6 348 L 661.6 356.448 C 661.6 361.97085 657.12285 366.448 651.6 366.448 L 546 366.448 C 540.47715 366.448 536 361.97085 536 356.448 L 536 348 C 536 342.47715 540.47715 338 546 338 Z" stroke="#009051" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(541 341.224)" fill="#283450">
+            <tspan font-family="PingFang SC" font-size="16" fill="#283450" x="24.952" y="17" xml:space="preserve">Class </tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="#283450" y="17" xml:space="preserve">B2</tspan>
+          </text>
+        </g>
+        <g id="Line_39">
+          <line x1="526.3356" y1="310.35754" x2="422" y2="320.62854" marker-start="url(#FilledArrow_Marker_2)" stroke="#ff9300" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_38">
+          <line x1="526.2449" y1="345.6557" x2="422" y2="336.2186" marker-start="url(#FilledArrow_Marker_2)" stroke="#ff9300" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

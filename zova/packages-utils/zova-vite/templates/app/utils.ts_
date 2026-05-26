@@ -1,0 +1,20 @@
+import { locales } from '../../src/front/config/locales.js';
+<%=sysMonkey?"import { SysMonkey } from '../../src/front/config/monkeySys.js';":''%>
+<%=appMonkey?"import { AppMonkey } from '../../src/front/config/monkey.js';":''%>
+import config from '../config.js';
+import { env } from '../env.js';
+import { modulesMeta } from '../modules-meta.js';
+
+const options = {
+  modulesMeta,
+  locales,
+  config,
+  env,
+  viteHot: import.meta.hot,
+  <%=sysMonkey?'SysMonkey,':''%>
+  <%=appMonkey?'AppMonkey,':''%>
+};
+
+export function getPluginZovaOptions() {
+  return options;
+}

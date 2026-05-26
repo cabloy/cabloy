@@ -1,0 +1,123 @@
+/* eslint-disable */
+/**
+ * THIS FILE IS GENERATED AUTOMATICALLY.
+ * DO NOT EDIT.
+ **/
+
+import { join, isAbsolute } from 'node:path'
+import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url'
+<% if (metaConf.hasStore && ssr.manualStoreSerialization !== true) { %>
+import serialize from 'serialize-javascript'
+<% } %>
+
+import { create, listen, serveStaticContent } from 'app/src-ssr/server'
+import injectMiddlewares from './ssr-middlewares'
+
+const port = process.env.SSR_PROD_PORT || <%= ssr.prodPort %>
+
+const doubleSlashRE = /\/\//g
+const publicPath = `<%= build.publicPath %>`
+const resolveUrlPath = publicPath === '/'
+  ? url => url || '/'
+  : url => url ? (publicPath + url).replace(doubleSlashRE, '/') : publicPath
+
+const rootFolder = fileURLToPath(new URL('.', import.meta.url))
+const publicFolder = join(rootFolder, 'client')
+
+function resolvePublicFolder () {
+  const dir = join(...arguments)
+  return isAbsolute(dir) === true
+    ? dir
+    : join(publicFolder, dir)
+}
+
+<% if (metaConf.hasStore && ssr.manualStoreSerialization !== true) { %>
+const autoRemove = 'document.currentScript.remove()'
+
+function renderStoreState (ssrContext) {
+  const nonce = ssrContext.nonce !== void 0
+    ? ' nonce="' + ssrContext.nonce + '"'
+    : ''
+
+  const state = serialize(ssrContext.state, { isJSON: true })
+  return '<script' + nonce + '>window.__INITIAL_STATE__=' + state + ';' + autoRemove + '</script>'
+}
+<% } %>
+
+let _handlerPromise;
+let _ssrHandler;
+async function ensureReady() {
+  if (!_ssrHandler) {
+    if (!_handlerPromise) {
+      _handlerPromise = _prepareHandler();
+    }
+    _ssrHandler = await _handlerPromise;
+  }
+  return _ssrHandler;
+}
+
+async function _prepareHandler() {
+  // handler
+  const fileHandler = join(rootFolder, 'handler.js');
+  const handlerInstance = await import(pathToHref(fileHandler));
+  // initialize
+  const zovaSys = await handlerInstance.initialize(process.env);
+  // ssr handler
+  const ssrHandler = await zovaSys.meta.$getSsrHandler(rootFolder);
+  await ssrHandler.ensureReady();
+  // ok
+  return ssrHandler;
+}
+
+function pathToHref(fileName) {
+  return pathToFileURL(fileName).href;
+  // return Path.sep === '\\' ? pathToFileURL(fileName).href : fileName;
+}
+
+async function render ({req, res}) {
+  const ssrHandler = await ensureReady();
+  const html = await ssrHandler.render({req, res});
+  if(!html) {
+    const err = new Error('not found');
+    err.code = err.status = 404;
+    throw err;
+  }
+  return html;
+}
+
+const middlewareParams = {
+  port,
+  resolve: {
+    urlPath: resolveUrlPath,
+    root () { return join(rootFolder, ...arguments) },
+    public: resolvePublicFolder
+  },
+  publicPath,
+  folders: {
+    root: rootFolder,
+    public: publicFolder
+  },
+  render
+}
+
+export const app = await create(middlewareParams)
+
+// fill in "app" for next calls
+middlewareParams.app = app
+
+const serveStatic = await serveStaticContent(middlewareParams)
+middlewareParams.serve = { static: serveStatic }
+
+<% if (ssr.pwa) { %>
+// serve the service worker with no cache
+await serveStatic({ urlPath: '/<%= pwa.swFilename %>', pathToServe: '<%= pwa.swFilename %>', opts: { maxAge: 0 } })
+<% } %>
+
+// serve "client" folder (includes the "public" folder)
+await serveStatic({ urlPath: '/', pathToServe: '.' })
+
+await injectMiddlewares(middlewareParams)
+
+export const listenResult = await listen(middlewareParams)
+export const handler = listenResult?.handler
