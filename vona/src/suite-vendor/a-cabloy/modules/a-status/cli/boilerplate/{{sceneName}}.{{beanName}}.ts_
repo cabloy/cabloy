@@ -1,0 +1,7 @@
+import { Meta } from 'vona-module-a-meta';
+import { BeanStatusBase } from 'vona-module-a-status';
+
+export interface I<%=argv.beanNameCapitalize%>Record {}
+
+@Meta()
+export class Meta<%=argv.beanNameCapitalize%> extends BeanStatusBase<I<%=argv.beanNameCapitalize%>Record> {}

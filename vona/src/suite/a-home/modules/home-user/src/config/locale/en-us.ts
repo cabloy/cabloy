@@ -1,0 +1,18 @@
+export default {
+  ConfirmationEmailExpired: 'This email confirmation link has expired',
+  ConfirmationEmailSucceeded: 'Your email address has been confirmed',
+  PasswordResetEmailExpired: 'This password reset link has expired',
+  Role: 'Role',
+  RoleName: 'Role Name',
+  User: 'User',
+  UserName: 'User Name',
+  UserAvatar: 'Avatar',
+  UserEmail: 'Email',
+  UserMobile: 'Mobile',
+  UserActivated: 'Activated',
+  UserLocale: 'Language',
+  UserTz: 'Timezone',
+  UsernameExists: 'Username Exists',
+  EmailExists: 'Email Exists',
+  PasswordsNotMatch: 'Passwords do not match',
+};

@@ -1,0 +1,11 @@
+import { BeanEventBase, Event } from 'vona-module-a-event';
+
+export type TypeEvent<%=argv.beanNameCapitalize%>Data = unknown;
+
+export type TypeEvent<%=argv.beanNameCapitalize%>Result = void;
+
+@Event()
+export class Event<%=argv.beanNameCapitalize%> extends BeanEventBase<
+  TypeEvent<%=argv.beanNameCapitalize%>Data,
+  TypeEvent<%=argv.beanNameCapitalize%>Result
+> {}

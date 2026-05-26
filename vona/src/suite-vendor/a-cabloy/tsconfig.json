@@ -1,0 +1,37 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/a-cabloy/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-status/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-socket/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-ssr/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-datasource/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-datasharding/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-cabloy/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-ssr/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-rest/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-ssrhmr/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}

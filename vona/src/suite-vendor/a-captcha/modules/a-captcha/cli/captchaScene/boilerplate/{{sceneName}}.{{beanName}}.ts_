@@ -1,0 +1,7 @@
+import { BeanBase } from 'vona';
+import { CaptchaScene } from 'vona-module-a-captcha';
+
+@CaptchaScene({
+  providers: {},
+})
+export class CaptchaScene<%=argv.beanNameCapitalize%> extends BeanBase {}

@@ -1,0 +1,15 @@
+import type { Next } from 'vona';
+import type { IDecoratorMiddlewareOptionsGlobal, IMiddlewareExecute } from 'vona-module-a-aspect';
+import { BeanBase, Global } from 'vona';
+import { Middleware } from 'vona-module-a-aspect';
+
+export interface IMiddlewareOptions<%=argv.beanNameCapitalize%> extends IDecoratorMiddlewareOptionsGlobal {}
+
+@Middleware<IMiddlewareOptions<%=argv.beanNameCapitalize%>>()
+@Global()
+export class Middleware<%=argv.beanNameCapitalize%> extends BeanBase implements IMiddlewareExecute {
+  async execute(_options: IMiddlewareOptions<%=argv.beanNameCapitalize%>, next: Next) {
+    // next
+    return next();
+  }
+}

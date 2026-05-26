@@ -1,0 +1,15 @@
+{
+  "name": "vona-suite-a-auth",
+  "version": "5.1.12",
+  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "description": "",
+  "author": "",
+  "files": [],
+  "type": "module",
+  "dependencies": {
+    "vona-module-a-auth": "workspace:^",
+    "vona-module-auth-oauth": "^5.0.3",
+    "vona-module-auth-simple": "workspace:^"
+  },
+  "title": "a-auth"
+}

@@ -1,0 +1,5 @@
+import { BeanAopBase } from 'vona';
+import { Aop } from 'vona-module-a-aspect';
+
+@Aop({ match: 'some-bean-name' })
+export class Aop<%=argv.beanNameCapitalize%> extends BeanAopBase {}

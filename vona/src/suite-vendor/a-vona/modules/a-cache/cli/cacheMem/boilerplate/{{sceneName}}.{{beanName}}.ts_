@@ -1,0 +1,8 @@
+import { BeanCacheMemBase, CacheMem } from 'vona-module-a-cache';
+
+export type TCacheMem<%=argv.beanNameCapitalize%>Key = any;
+export type TCacheMem<%=argv.beanNameCapitalize%>Data = any;
+
+@CacheMem()
+export class CacheMem<%=argv.beanNameCapitalize%>
+  extends BeanCacheMemBase<TCacheMem<%=argv.beanNameCapitalize%>Key, TCacheMem<%=argv.beanNameCapitalize%>Data> {}

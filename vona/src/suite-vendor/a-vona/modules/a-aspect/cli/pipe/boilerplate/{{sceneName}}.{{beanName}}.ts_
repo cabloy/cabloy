@@ -1,0 +1,17 @@
+import type { IDecoratorPipeOptions, IPipeTransform } from 'vona-module-a-aspect';
+import type { RouteHandlerArgumentMeta } from 'vona-module-a-openapi';
+import { BeanBase } from 'vona';
+import { Pipe } from 'vona-module-a-aspect';
+
+export type TypePipe<%=argv.beanNameCapitalize%>Data = unknown;
+
+export type TypePipe<%=argv.beanNameCapitalize%>Result = TypePipe<%=argv.beanNameCapitalize%>Data;
+
+export interface IPipeOptions<%=argv.beanNameCapitalize%> extends IDecoratorPipeOptions {}
+
+@Pipe<IPipeOptions<%=argv.beanNameCapitalize%>>()
+export class Pipe<%=argv.beanNameCapitalize%> extends BeanBase implements IPipeTransform<TypePipe<%=argv.beanNameCapitalize%>Data,TypePipe<%=argv.beanNameCapitalize%>Result> {
+  async transform(value: TypePipe<%=argv.beanNameCapitalize%>Data, _metadata: RouteHandlerArgumentMeta, _options: IPipeOptions<%=argv.beanNameCapitalize%>): Promise<TypePipe<%=argv.beanNameCapitalize%>Result> {
+    return value;
+  }
+}

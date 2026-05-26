@@ -1,0 +1,7 @@
+import { BeanElectionBase } from 'vona-module-a-election';
+import { Meta } from 'vona-module-a-meta';
+
+export type Type<%=argv.beanNameCapitalize%>ObtainResource = never;
+
+@Meta()
+export class Meta<%=argv.beanNameCapitalize%> extends BeanElectionBase<Type<%=argv.beanNameCapitalize%>ObtainResource> {}

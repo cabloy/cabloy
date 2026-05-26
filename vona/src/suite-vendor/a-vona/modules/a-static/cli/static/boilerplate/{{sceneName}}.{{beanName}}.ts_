@@ -1,0 +1,7 @@
+import { Meta } from 'vona-module-a-meta';
+import { BeanStaticBase } from 'vona-module-a-static';
+
+export type Type<%=argv.beanNameCapitalize%>GetPath = never;
+
+@Meta()
+export class Meta<%=argv.beanNameCapitalize%> extends BeanStaticBase<Type<%=argv.beanNameCapitalize%>GetPath> {}

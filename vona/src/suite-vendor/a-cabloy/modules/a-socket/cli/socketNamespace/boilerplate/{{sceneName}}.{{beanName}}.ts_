@@ -1,0 +1,17 @@
+import type { IDecoratorSocketNamespaceOptions } from 'vona-module-a-socket';
+import { BeanSocketNamespaceBase, SocketNamespace } from 'vona-module-a-socket';
+
+declare module 'vona-module-a-socket' {
+  export interface ISocketNamespaceRecord {
+    '/some': never;
+  }
+}
+
+export interface ISocketNamespaceOptions<%=argv.beanNameCapitalize%>Events {}
+
+export interface ISocketNamespaceOptions<%=argv.beanNameCapitalize%> extends IDecoratorSocketNamespaceOptions<ISocketNamespaceOptions<%=argv.beanNameCapitalize%>Events> {}
+
+@SocketNamespace<ISocketNamespaceOptions<%=argv.beanNameCapitalize%>>({
+  namespace: '/some',
+})
+export class SocketNamespace<%=argv.beanNameCapitalize%> extends BeanSocketNamespaceBase<ISocketNamespaceOptions<%=argv.beanNameCapitalize%>Events> {}

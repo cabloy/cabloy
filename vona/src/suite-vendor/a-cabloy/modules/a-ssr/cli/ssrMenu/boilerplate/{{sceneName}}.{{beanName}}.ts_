@@ -1,0 +1,20 @@
+import type { IDecoratorSsrMenuOptions } from 'vona-module-a-ssr';
+import type { ISsrSiteOptionsAdmin } from '<%=argv.ssrSiteModuleName%>';
+
+import { BeanBase } from 'vona';
+import { $order } from 'vona-module-a-openapiutils';
+import { SsrMenu } from 'vona-module-a-ssr';
+
+export interface ISsrMenuOptions<%=argv.beanNameCapitalize%> extends IDecoratorSsrMenuOptions<ISsrSiteOptionsAdmin> {}
+
+@SsrMenu<ISsrMenuOptions<%=argv.beanNameCapitalize%>>({
+  item: {
+    title: '<%=argv.beanNameCapitalize%>',
+    order: $order(1),
+    icon: undefined,
+    link: undefined,
+    group: '<%=argv.ssrSiteGroupName%>',
+  },
+  site: ['<%=argv.ssrSiteOnionName%>'],
+})
+export class SsrMenu<%=argv.beanNameCapitalize%> extends BeanBase {}

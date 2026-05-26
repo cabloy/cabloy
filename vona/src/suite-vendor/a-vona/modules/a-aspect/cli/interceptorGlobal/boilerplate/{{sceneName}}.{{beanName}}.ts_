@@ -1,0 +1,15 @@
+import type { Next } from 'vona';
+import type { IDecoratorInterceptorOptionsGlobal, IInterceptorExecute } from 'vona-module-a-aspect';
+import { BeanBase, Global } from 'vona';
+import { Interceptor } from 'vona-module-a-aspect';
+
+export interface IInterceptorOptions<%=argv.beanNameCapitalize%> extends IDecoratorInterceptorOptionsGlobal {}
+
+@Interceptor<IInterceptorOptions<%=argv.beanNameCapitalize%>>()
+@Global()
+export class Interceptor<%=argv.beanNameCapitalize%> extends BeanBase implements IInterceptorExecute {
+  async execute(_options: IInterceptorOptions<%=argv.beanNameCapitalize%>, next: Next) {
+    // next
+    return next();
+  }
+}

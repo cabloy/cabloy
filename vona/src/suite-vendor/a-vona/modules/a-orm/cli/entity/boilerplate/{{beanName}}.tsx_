@@ -1,0 +1,7 @@
+import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
+import { Entity, EntityBase } from 'vona-module-a-orm';
+
+export interface IEntityOptions<%=argv.beanNameCapitalize%> extends IDecoratorEntityOptions {}
+
+@Entity<IEntityOptions<%=argv.beanNameCapitalize%>>('<%=argv.moduleResourceName%>')
+export class Entity<%=argv.beanNameCapitalize%> extends EntityBase {}

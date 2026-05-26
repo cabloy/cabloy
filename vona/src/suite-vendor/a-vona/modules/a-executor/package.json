@@ -1,0 +1,52 @@
+{
+  "name": "vona-module-a-executor",
+  "version": "5.1.5",
+  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "description": "",
+  "keywords": [
+    "Vona Module"
+  ],
+  "author": "",
+  "files": [
+    "assets",
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "tsc:publish": "npm run clean && vona :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore && npm run clean"
+  },
+  "dependencies": {
+    "koa-compose": "^4.1.0"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "exports.\\..import"
+    ]
+  },
+  "title": "a-executor",
+  "vonaModule": {
+    "dependencies": {}
+  }
+}

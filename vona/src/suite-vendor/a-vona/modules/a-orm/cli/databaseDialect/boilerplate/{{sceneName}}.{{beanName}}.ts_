@@ -1,0 +1,7 @@
+import type { IDecoratorDatabaseDialectOptions } from 'vona-module-a-orm';
+import { BeanDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
+
+export interface IDatabaseDialectOptions<%=argv.beanNameCapitalize%> extends IDecoratorDatabaseDialectOptions {}
+
+@DatabaseDialect<IDatabaseDialectOptions<%=argv.beanNameCapitalize%>>()
+export class DatabaseDialect<%=argv.beanNameCapitalize%> extends BeanDatabaseDialectBase {}
