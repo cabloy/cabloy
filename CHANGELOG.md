@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.7
+
+### Features
+- Rename app to Cabloy Basic, add build/start scripts, and update oxfmt excludes
+- Generate passwords dynamically at init instead of hardcoding in docker-compose.yml
+- Apply various feature updates
+
+### Improvements
+- Update initialization script
+- Update settings configuration
+
 ## 5.1.6
 
 ### Features
