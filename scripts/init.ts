@@ -86,10 +86,7 @@ function initVona(): void {
   console.log('[init] Initializing vona...');
   const pkgPath = resolve(ROOT_DIR, 'vona/package.json');
   if (!existsSync(pkgPath)) {
-    copyFileSync(
-      resolve(ROOT_DIR, 'vona/package.original.json'),
-      pkgPath,
-    );
+    copyFileSync(resolve(ROOT_DIR, 'vona/package.original.json'), pkgPath);
   }
   exec("pnpm --dir './vona' run init");
 }
@@ -100,10 +97,7 @@ function initZova(): void {
   console.log('[init] Initializing zova...');
   const pkgPath = resolve(ROOT_DIR, 'zova/package.json');
   if (!existsSync(pkgPath)) {
-    copyFileSync(
-      resolve(ROOT_DIR, 'zova/package.original.json'),
-      pkgPath,
-    );
+    copyFileSync(resolve(ROOT_DIR, 'zova/package.original.json'), pkgPath);
   }
   exec("pnpm --dir './zova' run init");
 }
