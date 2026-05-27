@@ -3,6 +3,6 @@ import { defineConfig } from 'oxfmt';
 
 export default defineConfig(
   oxcFormatConfig({
-    ignorePatterns: ['vona', 'zova', '.claude', '.vscode', 'CHANGELOG.md'],
+    ignorePatterns: ['.claude', '.vscode', 'CHANGELOG.md'],
   }),
 );

@@ -3,6 +3,6 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig(
   oxcLintConfigVue({
-    ignorePatterns: ['vona', 'zova', '.claude', '.vscode'],
+    ignorePatterns: ['.claude', '.vscode'],
   }),
 );

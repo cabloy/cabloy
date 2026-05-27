@@ -18,7 +18,6 @@
   "js/ts.preferences.importModuleSpecifierEnding": "js",
   "js/ts.preferences.includePackageJsonAutoImports": "on",
   // oxfmt
-  "oxc.fmt.configPath": "oxfmt.config.ts",
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   // oxlint
