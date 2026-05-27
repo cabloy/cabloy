@@ -25,7 +25,7 @@ function readPackageJson(): Record<string, any> {
 }
 
 function writePackageJson(pkg: Record<string, any>): void {
-  writeFileSync(PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)  }\n`);
+  writeFileSync(PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
 function getLastTag(): string | null {
@@ -221,9 +221,9 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   const header = '# Changelog\n\n';
   let changelog: string;
   if (existingContent.startsWith('# Changelog')) {
-    changelog = existingContent.replace('# Changelog\n\n', `${header + newSection  }\n\n`);
+    changelog = existingContent.replace('# Changelog\n\n', `${header + newSection}\n\n`);
   } else {
-    changelog = `${header + newSection  }\n\n${  existingContent}`;
+    changelog = `${header + newSection}\n\n${existingContent}`;
   }
 
   if (dryRun) {
