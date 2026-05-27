@@ -11,7 +11,10 @@ class ControllerStudent {
   @Web.get('login')
   @Passport.public()
   async login() {
-    await this.bean.auth.authenticate('auth-oauth:oauth', { clientName: 'github', state: { redirect: '/' } });
+    await this.bean.auth.authenticate('auth-oauth:oauth', {
+      clientName: 'github',
+      state: { redirect: '/' },
+    });
   }
 }
 ```

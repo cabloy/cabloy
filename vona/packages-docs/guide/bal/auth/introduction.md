@@ -38,7 +38,10 @@ class ControllerStudent {
   @Web.get('login')
   @Passport.public()
   async login() {
-    await this.bean.auth.authenticate('auth-oauth:oauth', { clientName: 'github', state: { redirect: '/' } });
+    await this.bean.auth.authenticate('auth-oauth:oauth', {
+      clientName: 'github',
+      state: { redirect: '/' },
+    });
   }
 }
 ```
@@ -192,15 +195,15 @@ The `home-user` module provides a set of `out-of-the-box` Passport API. The API 
 
 `src/suite/a-home/modules/home-user/src/controller/passport.ts`
 
-| Name                           | Description                                                     |
-| ------------------------------ | --------------------------------------------------------------- |
-| current                        | Get the current Passport                                        |
-| logout                         | Logout                                                          |
-| register                       | Register new user                                               |
-| login                          | Login                                                           |
-| loginOauth                     | OAuth authentication                                            |
-| associate                      | Associate authentication                                        |
-| migrate                        | Migrate authentication                                          |
+| Name                           | Description                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| current                        | Get the current Passport                                                      |
+| logout                         | Logout                                                                        |
+| register                       | Register new user                                                             |
+| login                          | Login                                                                         |
+| loginOauth                     | OAuth authentication                                                          |
+| associate                      | Associate authentication                                                      |
+| migrate                        | Migrate authentication                                                        |
 | createPassportJwtFromOauthCode | Exchange the code returned by OAuth authentication for jwt token and Passport |
-| refreshAuthToken               | Refresh authToken using refreshToken                            |
-| createTempAuthToken             | Create a temporary authToken                                    |
+| refreshAuthToken               | Refresh authToken using refreshToken                                          |
+| createTempAuthToken            | Create a temporary authToken                                                  |
