@@ -71,7 +71,6 @@ export const rules = {
   'newline-per-chained-call': [0],
   'prefer-rest-params': 'off',
   // 'no-setter-return': 'off', // no effect for typescript check
-  '@typescript-eslint/method-signature-style': 'off',
   '@typescript-eslint/no-redeclare': 'off',
   '@typescript-eslint/consistent-type-imports': [
     'error',

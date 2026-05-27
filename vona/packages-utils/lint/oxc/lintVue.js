@@ -1341,7 +1341,6 @@ export const _configDefault = {
           },
         ],
         'prefer-rest-params': 'off',
-        'method-signature-style': 'off',
         'no-redeclare': 'off',
         'consistent-type-imports': [
           'error',
