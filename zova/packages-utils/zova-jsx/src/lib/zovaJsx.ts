@@ -515,8 +515,10 @@ export class ZovaJsx extends BeanSimple {
             const name = cast(props).name;
             const message = cast(props).message;
             if (isNil(name)) {
+              // eslint-disable-next-line
               console.log(message);
             } else {
+              // eslint-disable-next-line
               console.log(name, message);
             }
           }

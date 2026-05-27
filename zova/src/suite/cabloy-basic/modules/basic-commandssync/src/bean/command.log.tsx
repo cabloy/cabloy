@@ -28,8 +28,10 @@ export class CommandLog extends BeanBase implements ICommandExecute {
       const name = options.name;
       const message = options.message;
       if (isNil(name)) {
+        // eslint-disable-next-line
         console.log(message);
       } else {
+        // eslint-disable-next-line
         console.log(name, message);
       }
     }
