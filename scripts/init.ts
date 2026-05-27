@@ -32,12 +32,14 @@ function exec(cmd: string): void {
 function generateEnvProdLocal(): void {
   const filePath = resolve(ROOT_DIR, 'vona/env/.env.prod.local');
   if (existsSync(filePath)) {
+    // eslint-disable-next-line
     console.log('[init] vona/env/.env.prod.local already exists, skipping');
     return;
   }
   const serverKeys = `vona_${randomUUID()}_${Date.now()}_${randomInt(100, 10000)}`;
   const content = `SERVER_KEYS = ${serverKeys}\n`;
   writeFileSync(filePath, content);
+  // eslint-disable-next-line
   console.log('[init] Generated vona/env/.env.prod.local');
 }
 
@@ -47,6 +49,7 @@ function generateEnvProdDockerLocal(): void {
   const envFilePath = resolve(ROOT_DIR, 'vona/env/.env.prod.docker.local');
   const composeFilePath = resolve(ROOT_DIR, 'vona/docker-compose.yml');
   if (existsSync(envFilePath)) {
+    // eslint-disable-next-line
     console.log('[init] vona/env/.env.prod.docker.local already exists, skipping');
     return;
   }
@@ -59,6 +62,7 @@ function generateEnvProdDockerLocal(): void {
   // Write .env.prod.docker.local
   const envContent = `DATABASE_CLIENT_PG_PASSWORD = ${pgPassword}\nDATABASE_CLIENT_MYSQL_PASSWORD = ${mysqlPassword}\n`;
   writeFileSync(envFilePath, envContent);
+  // eslint-disable-next-line
   console.log('[init] Generated vona/env/.env.prod.docker.local');
 
   // Generate docker-compose.yml from original
@@ -77,12 +81,14 @@ function generateEnvProdDockerLocal(): void {
     `MYSQL_PASSWORD: '${mysqlPassword}'`,
   );
   writeFileSync(composeFilePath, composeContent);
+  // eslint-disable-next-line
   console.log('[init] Generated vona/docker-compose.yml');
 }
 
 // --- Step C: init:vona ---
 
 function initVona(): void {
+  // eslint-disable-next-line
   console.log('[init] Initializing vona...');
   const pkgPath = resolve(ROOT_DIR, 'vona/package.json');
   if (!existsSync(pkgPath)) {
@@ -94,6 +100,7 @@ function initVona(): void {
 // --- Step D: init:zova ---
 
 function initZova(): void {
+  // eslint-disable-next-line
   console.log('[init] Initializing zova...');
   const pkgPath = resolve(ROOT_DIR, 'zova/package.json');
   if (!existsSync(pkgPath)) {
@@ -108,4 +115,5 @@ generateEnvProdLocal();
 generateEnvProdDockerLocal();
 initVona();
 initZova();
+// eslint-disable-next-line
 console.log('[init] Done!');

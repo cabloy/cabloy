@@ -14,6 +14,7 @@ const COMMIT_CAP = 200;
 // --- Utility functions ---
 function exec(cmd: string, dryRun?: boolean): string {
   if (dryRun) {
+    // eslint-disable-next-line
     console.log(`  [dry-run] ${cmd}`);
     return '';
   }
@@ -93,12 +94,14 @@ async function versionBump(
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
     if (!changedFiles) {
+      // eslint-disable-next-line
       console.log('No changes since last release. Skipping version bump.');
       return currentVersion;
     }
   }
 
   const newVersion = bumpVersion(currentVersion, bumpType);
+  // eslint-disable-next-line
   console.log(`\n📦 Version bump: ${currentVersion} → ${newVersion}`);
 
   pkg.version = newVersion;
@@ -176,6 +179,7 @@ Respond with ONLY the changelog content in markdown, starting with ## ${version}
 }
 
 async function generateChangelog(version: string, dryRun?: boolean, noAi?: boolean): Promise<void> {
+  // eslint-disable-next-line
   console.log(`\n📝 Generating changelog for v${version}...`);
 
   // Use the tag for the current version to find the previous tag
@@ -194,6 +198,7 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   const commits = getCommitsSinceTag(previousTag);
 
   if (commits.length === 0) {
+    // eslint-disable-next-line
     console.log('No commits found. Skipping changelog generation.');
     return;
   }
@@ -227,6 +232,7 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   }
 
   if (dryRun) {
+    // eslint-disable-next-line
     console.log(`  [dry-run] Write to CHANGELOG.md:\n${newSection}\n`);
   } else {
     writeFileSync(CHANGELOG_PATH, changelog);
@@ -239,9 +245,11 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
 
 // --- Step 3: npm Publish ---
 async function npmPublish(dryRun?: boolean): Promise<void> {
+  // eslint-disable-next-line
   console.log('\n🚀 Publishing to npm...');
 
   if (dryRun) {
+    // eslint-disable-next-line
     console.log('  [dry-run] npm publish');
     return;
   }
@@ -251,6 +259,7 @@ async function npmPublish(dryRun?: boolean): Promise<void> {
 
 // --- Step 4: GitHub Release ---
 async function githubRelease(version: string, dryRun?: boolean): Promise<void> {
+  // eslint-disable-next-line
   console.log(`\n🏷️  Creating GitHub release for v${version}...`);
 
   // Extract changelog section for this version
@@ -271,6 +280,7 @@ async function githubRelease(version: string, dryRun?: boolean): Promise<void> {
   const tag = `${TAG_PREFIX}${version}`;
 
   if (dryRun) {
+    // eslint-disable-next-line
     console.log(
       `  [dry-run] gh release create ${tag} --repo ${GITHUB_REPO} --title "v${version}" --notes-file <changelog-section>`,
     );
@@ -309,18 +319,21 @@ interface ReleaseOptions {
 }
 
 async function release(options: ReleaseOptions): Promise<void> {
+  // eslint-disable-next-line
   console.log('🔧 Cabloy Release\n');
 
   // Pre-flight checks
   try {
     execSync('git rev-parse --is-inside-work-tree', { encoding: 'utf-8', stdio: 'pipe' });
   } catch {
+    // eslint-disable-next-line
     console.error('Error: Not in a git repository');
     process.exit(1);
   }
 
   const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim();
   if (status && !options.dryRun) {
+    // eslint-disable-next-line
     console.error('Error: Working tree is not clean. Commit or stash your changes first.');
     process.exit(1);
   }
@@ -331,6 +344,7 @@ async function release(options: ReleaseOptions): Promise<void> {
   if (options.changelogOnly || options.publishOnly || options.releaseOnly) {
     const pkg = readPackageJson();
     version = pkg.version;
+    // eslint-disable-next-line
     console.log(`Using current version: ${version}`);
   } else {
     version = await versionBump(options.bumpType, options.dryRun);
@@ -351,6 +365,7 @@ async function release(options: ReleaseOptions): Promise<void> {
     await githubRelease(version, options.dryRun);
   }
 
+  // eslint-disable-next-line
   console.log('\n✅ Release complete!');
 }
 
@@ -380,6 +395,7 @@ const args = minimist(process.argv.slice(2), {
 
 const bumpType = (args._[0] || 'patch') as 'patch' | 'minor' | 'major';
 if (!['patch', 'minor', 'major'].includes(bumpType)) {
+  // eslint-disable-next-line
   console.error(`Invalid bump type: ${bumpType}. Use patch, minor, or major.`);
   process.exit(1);
 }
@@ -395,6 +411,7 @@ release({
   skipRelease: args['skip-release'],
   noAi: args['no-ai'],
 }).catch(err => {
+  // eslint-disable-next-line
   console.error(`\n❌ Release failed: ${err.message}`);
   process.exit(1);
 });
