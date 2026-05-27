@@ -386,17 +386,6 @@ export const _configDefault = {
     '@stylistic/no-trailing-spaces': 'error',
     '@stylistic/no-whitespace-before-property': 'error',
     '@stylistic/object-curly-spacing': ['error', 'always'],
-    '@stylistic/operator-linebreak': [
-      'error',
-      'after',
-      {
-        overrides: {
-          '?': 'before',
-          ':': 'before',
-          '|': 'before',
-        },
-      },
-    ],
     '@stylistic/padded-blocks': [
       'error',
       {
@@ -520,7 +509,6 @@ export const _configDefault = {
       },
     ],
     'antfu/consistent-list-newline': 'off',
-    'antfu/consistent-chaining': 'error',
     'antfu/curly': 'error',
     'antfu/if-newline': 'off',
     'antfu/top-level-function': 'error',
