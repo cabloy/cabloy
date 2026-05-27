@@ -120,8 +120,9 @@ export function extendViteConf(context) {
                 if (msg.includes('Failed to load source map'))
                     return;
             }
-            if (msg.includes('Arbitrary module namespace identifier names are not available in the configured target environment'))
+            if (msg.includes('Arbitrary module namespace identifier names are not available in the configured target environment')) {
                 return;
+            }
             if (msg.includes('Big integer literals are not available in the configured target environment'))
                 return;
             loggerWarn(msg, options);
