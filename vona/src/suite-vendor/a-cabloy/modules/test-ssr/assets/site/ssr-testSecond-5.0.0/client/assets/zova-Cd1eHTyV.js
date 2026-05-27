@@ -3,7 +3,7 @@ import { ot as defineBoot, st as init_wrappers } from "./zova-BYPEGx1T.js";
 import { m as init_asyncToGenerator, p as _asyncToGenerator } from "./fecha-DvkbkxAQ.js";
 import { d as bootstrap } from "./zova-CuGjC1Av.js";
 import { t as init_src } from "./zova-CnSodz5l.js";
-import { n as init_utils, t as getPluginZovaOptions } from "./index-C_oPD53r.js";
+import { n as init_utils, t as getPluginZovaOptions } from "./index-DQe3oMYV.js";
 //#region src/boot/zova.ts
 var zova_default;
 //#endregion
