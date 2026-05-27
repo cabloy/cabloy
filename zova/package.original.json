@@ -71,7 +71,7 @@
     "zova": "workspace:^"
   },
   "devDependencies": {
-    "@cabloy/lint": "^5.1.17",
+    "@cabloy/lint": "^5.1.18",
     "@cabloy/openapi-typescript": "^7.9.2",
     "@quasar/app-vite": "npm:@cabloy/quasar-app-vite@^2.5.9",
     "@types/node": "^22.19.17",
