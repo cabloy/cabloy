@@ -1,11 +1,11 @@
 import type { IComponentOptions } from 'zova';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
-import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 
 import { ZSelect, ZSelectProps } from '../../.metadata/component/select.js';
 

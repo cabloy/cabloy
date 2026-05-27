@@ -1,4 +1,5 @@
 import type { IComponentOptions, TypeEventOff } from 'zova';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 import type {
   ICaptchaData,
   ICaptchaSceneRecord,
@@ -9,7 +10,6 @@ import { classes } from 'typestyle';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ControllerForm, ZFormField } from 'zova-module-a-form';
-import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 import { IResourceFormFieldInputOptions } from 'zova-module-basic-input';
 
 declare module 'zova-module-a-openapi' {

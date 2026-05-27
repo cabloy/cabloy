@@ -1,3 +1,4 @@
+import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPage,
   IResourceBlockOptionsBase,
@@ -6,7 +7,6 @@ import type {
 
 import { VNode } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
-import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
 declare module 'zova-module-a-openapi' {

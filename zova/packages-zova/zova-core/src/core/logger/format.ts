@@ -16,7 +16,7 @@ export const formatLoggerFilter = format((info, opts: any) => {
     (opts.silly && info.level === 'silly')
   ) {
     return __formatLoggerFilterCheckInfo(info);
-}
+  }
   return false;
 });
 

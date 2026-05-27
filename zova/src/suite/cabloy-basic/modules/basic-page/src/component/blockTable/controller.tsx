@@ -1,7 +1,7 @@
+import type { IComponentOptions } from 'zova';
 import type { IJsxRenderContextPage, IResourceBlockOptionsBase } from 'zova-module-a-openapi';
 
 import { BeanControllerBase, Use } from 'zova';
-import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanControllerTableBase, ZTable } from 'zova-module-a-table';
 

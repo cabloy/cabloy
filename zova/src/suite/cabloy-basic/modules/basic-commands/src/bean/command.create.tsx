@@ -1,7 +1,11 @@
+import type {
+  ICommandBulkOptionsBase,
+  ICommandExecute,
+  NextCommandExecute,
+} from 'zova-module-a-command';
 import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
 import { BeanCommandBulkBase, Command } from 'zova-module-a-command';
-import type { ICommandBulkOptionsBase, ICommandExecute, NextCommandExecute } from 'zova-module-a-command';
 
 export type TypeCommandCreateResult = unknown;
 

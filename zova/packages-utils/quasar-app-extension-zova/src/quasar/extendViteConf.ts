@@ -131,7 +131,7 @@ export function extendViteConf(context: ConfigContext) {
         )
       ) {
         return;
-}
+      }
       if (
         msg.includes('Big integer literals are not available in the configured target environment')
       )

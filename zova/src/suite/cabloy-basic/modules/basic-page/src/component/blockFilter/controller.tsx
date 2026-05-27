@@ -1,3 +1,4 @@
+import type { IComponentOptions } from 'zova';
 import type {
   IFormMeta,
   IJsxRenderContextPage,
@@ -7,7 +8,6 @@ import type {
 
 import { isNilOrEmptyString } from '@cabloy/utils';
 import { BeanControllerBase, Use } from 'zova';
-import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { TypeFormOnSubmitData, ZForm } from 'zova-module-a-form';
 

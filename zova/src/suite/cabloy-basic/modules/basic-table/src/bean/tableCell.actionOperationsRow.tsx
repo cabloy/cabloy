@@ -3,11 +3,15 @@ import type {
   IResourceTableActionRowOptionsBase,
   TypeTableCellRenderComponent,
 } from 'zova-module-a-openapi';
+import type {
+  IJsxRenderContextTableCell,
+  ITableCellRender,
+  NextTableCellRender,
+} from 'zova-module-a-table';
 
 import { VNode } from 'vue';
 import { BeanBase } from 'zova';
 import { IJsxRenderContextTableColumn, TableCell } from 'zova-module-a-table';
-import type { IJsxRenderContextTableCell, ITableCellRender, NextTableCellRender } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {

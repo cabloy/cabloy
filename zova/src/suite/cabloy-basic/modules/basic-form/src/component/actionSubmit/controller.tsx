@@ -1,3 +1,4 @@
+import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPageEntry,
   IResourceFormActionRowOptionsBase,
@@ -6,7 +7,6 @@ import type {
 import { isNil } from '@cabloy/utils';
 import { classes } from 'typestyle';
 import { BeanControllerBase, cast, Use } from 'zova';
-import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanControllerFormBase } from 'zova-module-a-form';
 

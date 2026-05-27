@@ -32,10 +32,17 @@ import type {
   IJsxRenderContextTableCell,
   ITableCellRender,
 } from '../../types/tableCell.js';
+import type {
+  IJsxRenderContextTableColumn,
+  ITableCellRenderColumnProps,
+  ITableCellScope,
+  ITableColumnScope,
+  ITableScope,
+  TypeTableCellRender,
+} from '../../types/tableColumn.js';
 
 import { BeanControllerTableBase } from '../../lib/beanControllerTableBase.js';
 import { ITableCellRenderColumnOptions } from '../../types/tableColumn.js';
-import type { IJsxRenderContextTableColumn, ITableCellRenderColumnProps, ITableCellScope, ITableColumnScope, ITableScope, TypeTableCellRender } from '../../types/tableColumn.js';
 
 export interface ControllerTableProps<TData extends {} = {}> {
   data?: TData[];
@@ -263,7 +270,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
         !(await beanInstance.checkVisible(columnProps as any, renderContext))
       ) {
         return;
-}
+      }
     }
     return cellContext => {
       if (!cellContext) return;

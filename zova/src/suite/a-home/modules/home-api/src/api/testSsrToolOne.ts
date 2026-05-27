@@ -1,7 +1,8 @@
 import { Api, BeanApiBase, IApiActionOptions } from 'zova-module-a-api';
 
-import { OpenApiBaseURL } from './openapi/index.js';
 import type { components, paths } from './openapi/index.js';
+
+import { OpenApiBaseURL } from './openapi/index.js';
 
 /** TestSsrToolOne_testGet */
 export const ApiApiTestSsrToolOnetestGetPath = '/api/test/ssr/toolOne/test/{id?}';

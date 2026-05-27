@@ -1,8 +1,12 @@
 import type { IResourceTableCellOptionsBase } from 'zova-module-a-openapi';
+import type {
+  IJsxRenderContextTableCell,
+  ITableCellRender,
+  NextTableCellRender,
+} from 'zova-module-a-table';
 
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
-import type { IJsxRenderContextTableCell, ITableCellRender, NextTableCellRender } from 'zova-module-a-table';
 
 import { ZSelectProps } from '../.metadata/index.js';
 

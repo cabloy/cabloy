@@ -222,14 +222,14 @@ export class ModelPassport extends BeanModelBase {
       permissions.roleIds.some(roleId => this.roles?.some(role => role.id === roleId))
     ) {
       return true;
-}
+    }
     // roleNames
     if (
       permissions.roleNames &&
       permissions.roleNames.some(roleName => this.roles?.some(role => role.name === roleName))
     ) {
       return true;
-}
+    }
     // actions
     if (permissions.actions && !!permissions.actions[permissionAction]) return true;
     // others

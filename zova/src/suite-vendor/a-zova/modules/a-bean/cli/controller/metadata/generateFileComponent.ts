@@ -50,7 +50,7 @@ export async function generateFileComponent(
       'TypePropUpdateFromModel',
       'TypePropValueFromModel',
     );
-}
+  }
   if (hasProps) _contentImportTypeZova.push('TypeControllerInnerProps');
   if (_contentImportTypeZova.length > 0) {
     contentImports.push(`import type { ${_contentImportTypeZova.join(', ')} } from 'zova';`);

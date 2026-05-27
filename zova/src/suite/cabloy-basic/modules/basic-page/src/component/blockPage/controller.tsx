@@ -1,3 +1,4 @@
+import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextPage,
   IPageScope,
@@ -11,7 +12,6 @@ import type {
 import { celEnvBase } from '@cabloy/utils';
 import { VNode } from 'vue';
 import { BeanControllerBase, deepEqual } from 'zova';
-import type { IComponentOptions } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { $QueriesAutoLoad } from 'zova-module-a-model';
