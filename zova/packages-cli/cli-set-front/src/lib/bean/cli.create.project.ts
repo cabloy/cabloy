@@ -48,7 +48,10 @@ export class CliCreateProject extends BeanCliBase {
     // remove LICENSE
     fse.removeSync(path.join(targetDir, 'LICENSE'));
     // copy package.json
-    fse.copyFileSync(path.join(targetDir, 'package.original.json'), path.join(targetDir, 'package.json'));
+    fse.copyFileSync(
+      path.join(targetDir, 'package.original.json'),
+      path.join(targetDir, 'package.json'),
+    );
     // npm run init
     await this.helper.spawnCmd({
       cmd: 'npm',

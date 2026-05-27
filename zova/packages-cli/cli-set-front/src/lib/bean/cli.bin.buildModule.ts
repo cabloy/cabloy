@@ -84,10 +84,22 @@ export class CliBinBuildModule extends BeanCliBase {
     const babelPluginZovaBehavior = getAbsolutePathOfModule('babel-plugin-zova-behavior', '');
     const babelPluginZovaBeanModule = getAbsolutePathOfModule('babel-plugin-zova-bean-module', '');
     const babelPluginZovaBeanUse = getAbsolutePathOfModule('babel-plugin-zova-bean-use', '');
-    const babelPluginTransformTypescriptMetadata = getAbsolutePathOfModule('babel-plugin-transform-typescript-metadata', '');
-    const babelPluginProposalDecorators = getAbsolutePathOfModule('@babel/plugin-proposal-decorators', '');
-    const babelPluginTransformClassProperties = getAbsolutePathOfModule('@babel/plugin-transform-class-properties', '');
-    const babelPluginTransformTypescript = getAbsolutePathOfModule('@babel/plugin-transform-typescript', '');
+    const babelPluginTransformTypescriptMetadata = getAbsolutePathOfModule(
+      'babel-plugin-transform-typescript-metadata',
+      '',
+    );
+    const babelPluginProposalDecorators = getAbsolutePathOfModule(
+      '@babel/plugin-proposal-decorators',
+      '',
+    );
+    const babelPluginTransformClassProperties = getAbsolutePathOfModule(
+      '@babel/plugin-transform-class-properties',
+      '',
+    );
+    const babelPluginTransformTypescript = getAbsolutePathOfModule(
+      '@babel/plugin-transform-typescript',
+      '',
+    );
 
     const plugins = [
       babelPlugin({

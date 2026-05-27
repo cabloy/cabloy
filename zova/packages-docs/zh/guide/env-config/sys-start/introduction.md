@@ -92,7 +92,15 @@ $ zova :init:monkeySys demo-student
 ### Module Monkey定义
 
 ```typescript
-export class MonkeySys extends BeanSimple implements IMonkeyModuleSys, IMonkeySysInitialize, IMonkeySysInitialized, IMonkeySysReady, IMonkeySysClose {
+export class MonkeySys
+  extends BeanSimple
+  implements
+    IMonkeyModuleSys,
+    IMonkeySysInitialize,
+    IMonkeySysInitialized,
+    IMonkeySysReady,
+    IMonkeySysClose
+{
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
   async configLoaded(_module: IModule, _config: any) {}
@@ -122,7 +130,15 @@ $ zova :init:sysMonkey
 `src/front/config/monkeySys.ts`
 
 ```typescript
-export class SysMonkey extends BeanSimple implements IMonkeyModuleSys, IMonkeySysInitialize, IMonkeySysInitialized, IMonkeySysReady, IMonkeySysClose {
+export class SysMonkey
+  extends BeanSimple
+  implements
+    IMonkeyModuleSys,
+    IMonkeySysInitialize,
+    IMonkeySysInitialized,
+    IMonkeySysReady,
+    IMonkeySysClose
+{
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
   async configLoaded(_module: IModule, _config: any) {}

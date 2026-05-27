@@ -63,7 +63,10 @@ export class CliCreateBean extends BeanCliBase {
     }
     argv.beanNameCapitalize = this.helper.firstCharToUpperCase(beanName);
     // moduleResourceName
-    argv.moduleResourceName = this.helper.combineModuleNameAndResource(argv.moduleInfo.relativeName, argv.beanName);
+    argv.moduleResourceName = this.helper.combineModuleNameAndResource(
+      argv.moduleInfo.relativeName,
+      argv.beanName,
+    );
     // file
     const beanFile = path.join(beanDir, `${argv.fileName}.ts`);
     if (fs.existsSync(beanFile)) {
@@ -75,7 +78,8 @@ export class CliCreateBean extends BeanCliBase {
     const snippets = this._getBoilerplatesOrSnippets('snippets');
     const boilerplates = this._getBoilerplatesOrSnippets('boilerplate', argv.boilerplate);
     const snippetsName = snippets[`${sceneName}:${argv.beanName}`] || snippets[sceneName];
-    const boilerplateName = boilerplates[`${sceneName}:${argv.beanName}`] || boilerplates[sceneName];
+    const boilerplateName =
+      boilerplates[`${sceneName}:${argv.beanName}`] || boilerplates[sceneName];
     // render boilerplate
     await this.template.renderBoilerplateAndSnippets({
       targetDir: beanDir,
@@ -97,7 +101,11 @@ export class CliCreateBean extends BeanCliBase {
       const onionSceneMeta = onionScenesMeta[sceneName];
       const scenePath = onionSceneMeta[type2];
       if (scenePath) {
-        result[sceneName] = this._combineBoilerplatesOrSnippetsPath(type, onionSceneMeta.module!.root, scenePath);
+        result[sceneName] = this._combineBoilerplatesOrSnippetsPath(
+          type,
+          onionSceneMeta.module!.root,
+          scenePath,
+        );
       }
     }
     // metas
@@ -106,13 +114,21 @@ export class CliCreateBean extends BeanCliBase {
       const onionMetaMeta = onionMetasMeta[sceneName];
       const scenePath = onionMetaMeta[type2];
       if (scenePath) {
-        result[`meta:${sceneName}`] = this._combineBoilerplatesOrSnippetsPath(type, onionMetaMeta.module!.root, scenePath);
+        result[`meta:${sceneName}`] = this._combineBoilerplatesOrSnippetsPath(
+          type,
+          onionMetaMeta.module!.root,
+          scenePath,
+        );
       }
     }
     return result;
   }
 
-  private _combineBoilerplatesOrSnippetsPath(type: 'boilerplate' | 'snippets', moduleRoot: string, scenePath: string) {
+  private _combineBoilerplatesOrSnippetsPath(
+    type: 'boilerplate' | 'snippets',
+    moduleRoot: string,
+    scenePath: string,
+  ) {
     // boilerplate
     if (type === 'boilerplate') {
       return path.join(moduleRoot, 'cli', scenePath);

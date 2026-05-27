@@ -67,7 +67,12 @@ export class CliRefactorRenameComponent extends BeanCliBase {
     const restDir = path.join(targetDir, 'rest');
     await fse.remove(restDir);
     // rename
-    const componentDirNew = path.join(targetDir, 'src', argv.nameMeta.directory === 'page' ? 'page' : 'component', argv.componentNameNew);
+    const componentDirNew = path.join(
+      targetDir,
+      'src',
+      argv.nameMeta.directory === 'page' ? 'page' : 'component',
+      argv.componentNameNew,
+    );
     await fse.rename(componentDir, componentDirNew);
   }
 
@@ -87,7 +92,10 @@ export class CliRefactorRenameComponent extends BeanCliBase {
     const astMatches = astNode.match[0];
     const astMatch = astMatches.find(item => {
       return (item.node as any).properties.some(prop => {
-        return prop.key.name === 'component' && prop.value.name === `ZPage${argv.nameMeta.shortCapitalize}`;
+        return (
+          prop.key.name === 'component' &&
+          prop.value.name === `ZPage${argv.nameMeta.shortCapitalize}`
+        );
       });
     });
     if (!astMatch) {
@@ -101,7 +109,10 @@ export class CliRefactorRenameComponent extends BeanCliBase {
       return prop.key.name === 'path';
     });
     if (astPropPath && astPropPath.value.value) {
-      astPropPath.value.value = astPropPath.value.value.replace(argv.nameMeta.short, argv.componentNameNew);
+      astPropPath.value.value = astPropPath.value.value.replace(
+        argv.nameMeta.short,
+        argv.componentNameNew,
+      );
     }
     content = ast.root().generate();
     await fse.writeFile(routesFile, content);
@@ -115,9 +126,18 @@ export class CliRefactorRenameComponent extends BeanCliBase {
     const typeMiddleFix = argv.nameMeta.directory === 'page' ? 'Page' : '';
     //
     const replaces: Array<[string, string]> = [];
-    replaces.push([`Controller${typeMiddleFix}${argv.nameMeta.shortCapitalize}`, `Controller${typeMiddleFix}${argv.componentNameNewCapitalize}`]);
-    replaces.push([`Render${typeMiddleFix}${argv.nameMeta.shortCapitalize}`, `Render${typeMiddleFix}${argv.componentNameNewCapitalize}`]);
-    replaces.push([`Style${typeMiddleFix}${argv.nameMeta.shortCapitalize}`, `Style${typeMiddleFix}${argv.componentNameNewCapitalize}`]);
+    replaces.push([
+      `Controller${typeMiddleFix}${argv.nameMeta.shortCapitalize}`,
+      `Controller${typeMiddleFix}${argv.componentNameNewCapitalize}`,
+    ]);
+    replaces.push([
+      `Render${typeMiddleFix}${argv.nameMeta.shortCapitalize}`,
+      `Render${typeMiddleFix}${argv.componentNameNewCapitalize}`,
+    ]);
+    replaces.push([
+      `Style${typeMiddleFix}${argv.nameMeta.shortCapitalize}`,
+      `Style${typeMiddleFix}${argv.componentNameNewCapitalize}`,
+    ]);
     //
     const files = globbySync('*', {
       cwd: componentDir,

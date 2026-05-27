@@ -59,7 +59,10 @@ class ControllerPageSome extends BeanBase {
 
       // CSS tags
       link: {
-        material: { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
+        material: {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
+        },
       },
 
       // JS tags

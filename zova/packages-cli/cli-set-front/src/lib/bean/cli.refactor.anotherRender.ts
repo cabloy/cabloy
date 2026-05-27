@@ -52,9 +52,12 @@ export class CliRefactorAnotherRender extends BeanCliBase {
     // render file must exists
     const renderFileFirst = path.join(componentDir, 'render.tsx');
     if (!fs.existsSync(renderFileFirst)) {
-      await this.helper.invokeCli([':refactor:firstRender', argv.componentName, `--module=${moduleName}`], {
-        cwd: argv.projectPath,
-      });
+      await this.helper.invokeCli(
+        [':refactor:firstRender', argv.componentName, `--module=${moduleName}`],
+        {
+          cwd: argv.projectPath,
+        },
+      );
     }
     // render boilerplate
     await this.template.renderBoilerplateAndSnippets({

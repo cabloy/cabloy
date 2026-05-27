@@ -24,7 +24,12 @@ export function extendAfterBuild(context: ConfigContext, _flavor: string) {
   };
 }
 
-function _copyToTarget(outDir: string, target: string | undefined, basename: string, appDir: string) {
+function _copyToTarget(
+  outDir: string,
+  target: string | undefined,
+  basename: string,
+  appDir: string,
+) {
   if (!target) return;
   const dirs = target.split(',');
   for (const dir of dirs) {

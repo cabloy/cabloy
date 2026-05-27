@@ -65,7 +65,12 @@ async function _resolveGroups(iconsSrc: string) {
   });
 }
 
-async function _generateIconsGroup(modulePath: string, iconsSrc: string, moduleName: string, groupName: string) {
+async function _generateIconsGroup(
+  modulePath: string,
+  iconsSrc: string,
+  moduleName: string,
+  groupName: string,
+) {
   // icons
   const files = await globby(`${groupName}/*.svg`, { cwd: iconsSrc });
   files.sort();

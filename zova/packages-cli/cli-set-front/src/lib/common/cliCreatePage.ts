@@ -74,7 +74,10 @@ export class CliCreatePageBase extends BeanCliBase {
 
   async logUrl(argv) {
     const env = await this.loadEnvs();
-    const host = !env.DEV_SERVER_HOSTNAME || env.DEV_SERVER_HOSTNAME === 'true' ? 'localhost' : env.DEV_SERVER_HOSTNAME;
+    const host =
+      !env.DEV_SERVER_HOSTNAME || env.DEV_SERVER_HOSTNAME === 'true'
+        ? 'localhost'
+        : env.DEV_SERVER_HOSTNAME;
     const port = env.DEV_SERVER_PORT;
     const url = `http://${host}:${port}/${argv.moduleInfo.pid}/${argv.moduleInfo.name}/${argv.pageName}`;
     const message = `Page URL: ${url}`;

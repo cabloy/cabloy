@@ -90,7 +90,15 @@ Context Menu - [Module Path]: `Zova Init/Monkey`
 ### Module Monkey Definition
 
 ```typescript
-export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyAppInitialize, IMonkeyAppInitialized, IMonkeyAppReady, IMonkeyAppClose {
+export class Monkey
+  extends BeanSimple
+  implements
+    IMonkeyModule,
+    IMonkeyAppInitialize,
+    IMonkeyAppInitialized,
+    IMonkeyAppReady,
+    IMonkeyAppClose
+{
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
   async appInitialize() {}
@@ -119,7 +127,15 @@ Context Menu - [Project Path/src]: `Zova Init/Monkey`
 `src/front/config/monkey.ts`
 
 ```typescript
-export class AppMonkey extends BeanSimple implements IMonkeyModule, IMonkeyAppInitialize, IMonkeyAppInitialized, IMonkeyAppReady, IMonkeyAppClose {
+export class AppMonkey
+  extends BeanSimple
+  implements
+    IMonkeyModule,
+    IMonkeyAppInitialize,
+    IMonkeyAppInitialized,
+    IMonkeyAppReady,
+    IMonkeyAppClose
+{
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
   async appInitialize() {}

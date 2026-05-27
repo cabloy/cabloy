@@ -1,5 +1,9 @@
 import type { IModule, IModuleInfo } from '@cabloy/module-info';
-import type { OpenAPITSOptions, SchemaObject, TransformNodeOptions } from '@cabloy/openapi-typescript';
+import type {
+  OpenAPITSOptions,
+  SchemaObject,
+  TransformNodeOptions,
+} from '@cabloy/openapi-typescript';
 import type { ZovaOpenapiConfig, ZovaOpenapiConfigModule } from 'zova-openapi';
 
 import { BeanCliBase } from '@cabloy/cli';
@@ -96,13 +100,27 @@ export class CliOpenapiGenerate extends BeanCliBase {
     }
     const configInstance = await this.helper.importDynamic(configFile);
     const moduleConfigCli = (await configInstance.default()) as ZovaOpenapiConfigModule;
-    const moduleConfig = extend(true, { apiMeta: false, apiSchema: true }, config.default, moduleConfigCli, config.modules[moduleInfo.relativeName]);
-    const cache = await this._outputFiles(openapiTypescript, moduleConfig, moduleInfo, module, __caches);
+    const moduleConfig = extend(
+      true,
+      { apiMeta: false, apiSchema: true },
+      config.default,
+      moduleConfigCli,
+      config.modules[moduleInfo.relativeName],
+    );
+    const cache = await this._outputFiles(
+      openapiTypescript,
+      moduleConfig,
+      moduleInfo,
+      module,
+      __caches,
+    );
     // generate
     await this._generateApis(openapiTypescript, cache.ast, moduleConfig, moduleInfo, module);
     // tools.metadata
     if (!argv.nometadata || total > 1) {
-      await this.helper.invokeCli([':tools:metadata', moduleInfo.relativeName], { cwd: argv.projectPath });
+      await this.helper.invokeCli([':tools:metadata', moduleInfo.relativeName], {
+        cwd: argv.projectPath,
+      });
     }
   }
 
@@ -118,7 +136,10 @@ export class CliOpenapiGenerate extends BeanCliBase {
     let cache = __caches[moduleConfig.source];
     if (!cache) {
       const [ast, error] = await catchError(() => {
-        return openapiTypescript.default(moduleConfig.source!, _patchOpenapiTSOptions(moduleConfig.options));
+        return openapiTypescript.default(
+          moduleConfig.source!,
+          _patchOpenapiTSOptions(moduleConfig.options),
+        );
       });
       if (error) {
         error.message = `${error.message}: ${moduleConfig.source}`;
@@ -156,15 +177,18 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     await this.helper.formatFile({ fileName: baseURLFile });
     // output: openapi/index.ts
     const indexFile = path.join(module.root, 'src/api/openapi/index.ts');
-    await fse.outputFile(indexFile, "export * from './baseURL.js';\nexport * from './schemas.js';\nexport * from './types.js';");
+    await fse.outputFile(
+      indexFile,
+      "export * from './baseURL.js';\nexport * from './schemas.js';\nexport * from './types.js';",
+    );
     await this.helper.formatFile({ fileName: indexFile });
     return cache;
   }
 
   _generateSchemas(ast: ts.Node[]) {
-    const nodeComponents = ast.find(node => ts.isInterfaceDeclaration(node) && node.name.text === 'components') as
-      | ts.InterfaceDeclaration
-      | undefined;
+    const nodeComponents = ast.find(
+      node => ts.isInterfaceDeclaration(node) && node.name.text === 'components',
+    ) as ts.InterfaceDeclaration | undefined;
     if (!nodeComponents) return '';
     const nodeTypeInfoComponents = _parseNodeType(nodeComponents)!;
     if (!nodeTypeInfoComponents.schemas) return '';
@@ -187,13 +211,24 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     return contentSchemas;
   }
 
-  async _generateApis(openapiTypescript: any, ast: ts.Node[], moduleConfig: ZovaOpenapiConfigModule, _moduleInfo: IModuleInfo, module: IModule) {
+  async _generateApis(
+    openapiTypescript: any,
+    ast: ts.Node[],
+    moduleConfig: ZovaOpenapiConfigModule,
+    _moduleInfo: IModuleInfo,
+    module: IModule,
+  ) {
     const nodeApis = this._getNodeApis(ast, moduleConfig);
     if (!nodeApis) return;
     for (const apiName in nodeApis) {
       const apiNameLower = toLowerCaseFirstChar(apiName);
       const nodeApi = nodeApis[apiName];
-      const { apiContent, apiMetaContent, apiSchemaContent } = this._generateApi(openapiTypescript, ast, apiName, nodeApi);
+      const { apiContent, apiMetaContent, apiSchemaContent } = this._generateApi(
+        openapiTypescript,
+        ast,
+        apiName,
+        nodeApi,
+      );
       // api
       const apiFile = path.join(module.root, `src/api/${apiNameLower}.ts`);
       await fse.outputFile(apiFile, apiContent);
@@ -248,7 +283,9 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
         question: nodeTypeInfoParameters[key].question,
       };
       parametersInfo[key2] = info;
-      contentTypes.push(`export type ${info.name} = paths[${nameRequestPath}][${nameRequestMethod}]['parameters']['${key}'];`);
+      contentTypes.push(
+        `export type ${info.name} = paths[${nameRequestPath}][${nameRequestMethod}]['parameters']['${key}'];`,
+      );
     }
     // name: request body
     let nameRequestBody = '';
@@ -259,9 +296,13 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
       nameRequestBodyQuestion = nodeActionInfo.nodeTypeInfo.requestBody.question;
       const nodeRequestBodyInfo = _parseNodeType(nodeActionInfo.nodeTypeInfo.requestBody.nodeType)!;
       const nodeRequestBodyContentInfo = _parseNodeType(nodeRequestBodyInfo.content.nodeType)!;
-      const nodeRequestBodyApplicationJson = nodeRequestBodyContentInfo['application/json'] ?? nodeRequestBodyContentInfo['multipart/form-data'];
+      const nodeRequestBodyApplicationJson =
+        nodeRequestBodyContentInfo['application/json'] ??
+        nodeRequestBodyContentInfo['multipart/form-data'];
       isUpload = !!nodeRequestBodyContentInfo['multipart/form-data'];
-      const typeRequestBody = openapiTypescript.astToString(nodeRequestBodyApplicationJson.nodeType);
+      const typeRequestBody = openapiTypescript.astToString(
+        nodeRequestBodyApplicationJson.nodeType,
+      );
       contentTypes.push(`export type ${nameRequestBody} = ${typeRequestBody};`);
     }
     // name: response body
@@ -300,7 +341,8 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
       ? `this.$pathTranslate(${nameRequestPath}, options${_q(contentOptionsQuestion)}.params),`
       : `${nameRequestPath},`;
     // content: comment
-    const contentComments = pathInfo.comments && pathInfo.comments.length > 0 ? `/*${pathInfo.comments.join()}*/\n` : '';
+    const contentComments =
+      pathInfo.comments && pathInfo.comments.length > 0 ? `/*${pathInfo.comments.join()}*/\n` : '';
     // content: body
     const contentBodyParams = isUpload ? 'this.$formData(body)' : 'body';
     // content: signature
@@ -313,10 +355,21 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
         this.$configPrepare(OpenApiBaseURL(this.sys), options${contentAuthToken}),
       );
     }\n`;
-    return [contentTypes.join('\n'), contentSignature, nodeActionInfo.action, nameRequestPath, pathInfo.method];
+    return [
+      contentTypes.join('\n'),
+      contentSignature,
+      nodeActionInfo.action,
+      nameRequestPath,
+      pathInfo.method,
+    ];
   }
 
-  _generateApi(openapiTypescript: any, ast: ts.Node[], apiName: string, nodeApi: Record<string, INodeActionInfo>) {
+  _generateApi(
+    openapiTypescript: any,
+    ast: ts.Node[],
+    apiName: string,
+    nodeApi: Record<string, INodeActionInfo>,
+  ) {
     const apiNameLower = toLowerCaseFirstChar(apiName);
     const contentTypes: string[] = [];
     const contentSignatures: string[] = [];
@@ -339,7 +392,10 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     if (contentSignatures.length > 0) importsType.push('OpenApiBaseURL');
     if (contentTypes2.includes('components["schemas"]')) importsType.push('type components');
     if (contentTypes2.includes('paths[')) importsType.push('type paths');
-    const contentImportsType = importsType.length > 0 ? `import { ${importsType.join(', ')} } from './openapi/index.js';` : '';
+    const contentImportsType =
+      importsType.length > 0
+        ? `import { ${importsType.join(', ')} } from './openapi/index.js';`
+        : '';
     // apiContent
     const apiContent = `import { Api, BeanApiBase, IApiActionOptions } from 'zova-module-a-api';
 ${contentImportsType}
@@ -366,7 +422,10 @@ export class Api${apiName} extends BeanApiBase {
   }
 `);
     }
-    const contentImportsApiPath = importsApiPath.length > 0 ? `import { ${importsApiPath.join(', ')} } from '../api/${apiNameLower}.js';` : '';
+    const contentImportsApiPath =
+      importsApiPath.length > 0
+        ? `import { ${importsApiPath.join(', ')} } from '../api/${apiNameLower}.js';`
+        : '';
     const apiMetaContent = `import { BeanBase } from 'zova';
 import { ApiMeta } from 'zova-module-a-api';
 ${contentImportsApiPath}
@@ -389,9 +448,9 @@ export class ApiSchema${apiName} extends BeanBase {
   }
 
   _getNodeApis(ast: ts.Node[], moduleConfig: ZovaOpenapiConfigModule) {
-    const nodeOperations = ast.find(node => ts.isInterfaceDeclaration(node) && node.name.text === 'operations') as
-      | ts.InterfaceDeclaration
-      | undefined;
+    const nodeOperations = ast.find(
+      node => ts.isInterfaceDeclaration(node) && node.name.text === 'operations',
+    ) as ts.InterfaceDeclaration | undefined;
     if (!nodeOperations) return;
     const apis: Record<string, Record<string, INodeActionInfo>> = {};
     for (let index = 0; index < nodeOperations.members.length; index++) {
@@ -421,7 +480,9 @@ export class ApiSchema${apiName} extends BeanBase {
 }
 
 function _getRequestPathInfo(ast: ts.Node[], nodeActionInfo: INodeActionInfo) {
-  const nodePaths = ast.find(node => ts.isInterfaceDeclaration(node) && node.name.text === 'paths') as ts.InterfaceDeclaration | undefined;
+  const nodePaths = ast.find(
+    node => ts.isInterfaceDeclaration(node) && node.name.text === 'paths',
+  ) as ts.InterfaceDeclaration | undefined;
   if (!nodePaths) throw new Error('paths not found');
   let path;
   let method;
@@ -433,7 +494,8 @@ function _getRequestPathInfo(ast: ts.Node[], nodeActionInfo: INodeActionInfo) {
     const nodeMethod = node.type.members.find(item => {
       if (!ts.isPropertySignature(item)) return false;
       if (!item.type || !ts.isIndexedAccessTypeNode(item.type)) return false;
-      const operationId = ((item.type.indexType as ts.LiteralTypeNode).literal as ts.StringLiteral).text;
+      const operationId = ((item.type.indexType as ts.LiteralTypeNode).literal as ts.StringLiteral)
+        .text;
       if (operationId !== nodeActionInfo.operationId) return false;
       method = (item.name as ts.Identifier).text;
       // comment
@@ -506,7 +568,10 @@ function _patchOpenapiTSOptions(options?: OpenAPITSOptions) {
         }
         // multipart
         if (schemaObject.format === 'binary') {
-          if (options.path?.includes('multipart~1form-data') || options.path?.includes('application~1octet-stream')) {
+          if (
+            options.path?.includes('multipart~1form-data') ||
+            options.path?.includes('application~1octet-stream')
+          ) {
             return {
               // schema: schemaObject.nullable
               //   ? ts.factory.createUnionTypeNode([BLOB, NULL])

@@ -1,6 +1,7 @@
 {
   "name": "zova-suite-a-home",
   "version": "5.0.8",
+  "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
   "description": "",
   "author": "zhennann",
   "type": "module",
@@ -15,6 +16,5 @@
     "zova-module-home-passport": "^5.0.4",
     "zova-module-home-theme": "^5.0.3"
   },
-  "title": "Home",
-  "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc"
+  "title": "Home"
 }

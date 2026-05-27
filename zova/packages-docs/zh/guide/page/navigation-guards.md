@@ -12,7 +12,11 @@ Zova 提供了一个模块`home-base`，可以在这个模块中添加`导航守
 class ServiceRouterGuards {
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
-      if (!this.sys.config.ssr.ignoreCookieOnServer && to.meta.requiresAuth !== false && !this.$passport.isAuthenticated) {
+      if (
+        !this.sys.config.ssr.ignoreCookieOnServer &&
+        to.meta.requiresAuth !== false &&
+        !this.$passport.isAuthenticated
+      ) {
         const [_res, err] = await catchError(() => {
           return this.$passport.ensurePassport();
         });

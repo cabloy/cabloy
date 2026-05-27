@@ -22,7 +22,8 @@ export async function generateOnions(
   const contentRecordsLocal: string[] = [];
   let needImportOptionsGlobalInterface;
   for (const globFile of globFiles) {
-    const { fileContent, fileNameJSRelative, className, beanNameFull, isIgnore, isVirtual } = globFile;
+    const { fileContent, fileNameJSRelative, className, beanNameFull, isIgnore, isVirtual } =
+      globFile;
     // const beanFullName = `${moduleName}.${sceneName}.${beanName}`;
     contentExports.push(`export * from '${fileNameJSRelative}';`);
     if (isIgnore) continue; // get scope() also can be ignored
@@ -33,7 +34,9 @@ export async function generateOnions(
       const fileInfo = extractBeanInfo(sceneName, fileContent, sceneMeta);
       // import options
       if (fileInfo.optionsCustomInterface) {
-        contentImports.push(`import { ${fileInfo.optionsCustomInterface} } from '${fileInfo.optionsCustomInterfaceFrom || fileNameJSRelative}';`);
+        contentImports.push(
+          `import { ${fileInfo.optionsCustomInterface} } from '${fileInfo.optionsCustomInterfaceFrom || fileNameJSRelative}';`,
+        );
       }
       // valueOptionsCustomInterface
       let valueOptionsCustomInterface = fileInfo.optionsCustomInterface;
@@ -50,7 +53,9 @@ export async function generateOnions(
         } else {
           if (sceneMeta.optionsGlobalInterfaceName) {
             onionOptions = sceneMeta.optionsGlobalInterfaceName;
-            contentRecordsGlobal.push(`'${beanNameFull}': ${sceneMeta.optionsGlobalInterfaceName};`);
+            contentRecordsGlobal.push(
+              `'${beanNameFull}': ${sceneMeta.optionsGlobalInterfaceName};`,
+            );
             needImportOptionsGlobalInterface = true;
           } else {
             contentRecordsGlobal.push(`'${beanNameFull}': never;`);

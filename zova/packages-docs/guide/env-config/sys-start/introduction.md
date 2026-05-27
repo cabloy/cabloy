@@ -92,7 +92,15 @@ Context Menu - [Module Path]: `Zova Init/Monkey Sys`
 ### Module Monkey Definition
 
 ```typescript
-export class MonkeySys extends BeanSimple implements IMonkeyModuleSys, IMonkeySysInitialize, IMonkeySysInitialized, IMonkeySysReady, IMonkeySysClose {
+export class MonkeySys
+  extends BeanSimple
+  implements
+    IMonkeyModuleSys,
+    IMonkeySysInitialize,
+    IMonkeySysInitialized,
+    IMonkeySysReady,
+    IMonkeySysClose
+{
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
   async configLoaded(_module: IModule, _config: any) {}
@@ -122,7 +130,15 @@ Context Menu - [Project Path/src]: `Zova Init/Monkey Sys`
 `src/front/config/monkeySys.ts`
 
 ```typescript
-export class SysMonkey extends BeanSimple implements IMonkeyModuleSys, IMonkeySysInitialize, IMonkeySysInitialized, IMonkeySysReady, IMonkeySysClose {
+export class SysMonkey
+  extends BeanSimple
+  implements
+    IMonkeyModuleSys,
+    IMonkeySysInitialize,
+    IMonkeySysInitialized,
+    IMonkeySysReady,
+    IMonkeySysClose
+{
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
   async configLoaded(_module: IModule, _config: any) {}

@@ -2,8 +2,9 @@ import type { BeanCliBase } from '@cabloy/cli';
 import type { IGlobBeanFile, OnionScenesMeta } from '@cabloy/module-info';
 
 import { evaluateSimple, getPropertyObject, StringPrefixRegexp } from '@cabloy/utils';
-import { escapeRegExp } from './utils.ts';
 import path from 'node:path';
+
+import { escapeRegExp } from './utils.ts';
 
 export async function generateOptionsPackage(
   cli: BeanCliBase,
@@ -28,7 +29,9 @@ export async function generateOptionsPackage(
     if (!sceneMeta) throw new Error(`sceneMeta not exists: ${sceneName}`);
     if (!sceneMeta.optionsPackage) continue;
     changed = true;
-    const matches = fileContent.match(new RegExp(`@${escapeRegExp(sceneNameCapitalize)}[\\S]*?\\(([\\s\\S]*?)\\)\\s*?export class`));
+    const matches = fileContent.match(
+      new RegExp(`@${escapeRegExp(sceneNameCapitalize)}[\\S]*?\\(([\\s\\S]*?)\\)\\s*?export class`),
+    );
     if (!matches) throw new Error(`${sceneName} options parser error: ${beanNameFull}`);
     const onionOptionsStr = matches[1];
     const onionOptions = onionOptionsStr ? evaluateSimple(matches[1]) : {};

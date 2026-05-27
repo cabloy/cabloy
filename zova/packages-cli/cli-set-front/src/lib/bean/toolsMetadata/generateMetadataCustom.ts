@@ -16,7 +16,11 @@ export async function generateMetadataCustom(
   const sceneNameCapitalize = toUpperCaseFirstChar(sceneName);
   if (globFiles.length === 0) return '';
   // custom
-  let jsFile = path.join(sceneMeta.module!.root, 'dist-cli', sceneMeta.metadataCustom!.replace('.ts', '.js'));
+  let jsFile = path.join(
+    sceneMeta.module!.root,
+    'dist-cli',
+    sceneMeta.metadataCustom!.replace('.ts', '.js'),
+  );
   if (!(await fse.pathExists(jsFile))) {
     jsFile = path.join(sceneMeta.module!.root, 'cli', sceneMeta.metadataCustom!);
   }

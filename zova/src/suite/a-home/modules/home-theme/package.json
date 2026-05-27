@@ -1,6 +1,7 @@
 {
   "name": "zova-module-home-theme",
   "version": "5.0.3",
+  "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
   "description": "",
   "keywords": [
     "Zova Module"
@@ -48,6 +49,5 @@
       "exports.\\..import"
     ]
   },
-  "title": "home-theme",
-  "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc"
+  "title": "home-theme"
 }
