@@ -57,6 +57,7 @@ export default defineConfig(
       'src-capacitor',
       'src-cordova',
       '.zova',
+      'packages-cli/cli-set-front/cli/templates/rest',
     ],
   }),
 );
