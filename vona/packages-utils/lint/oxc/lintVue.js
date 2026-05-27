@@ -1395,19 +1395,6 @@ export const _configDefault = {
             functions: false,
           },
         ],
-        'max-len': [
-          'error',
-          {
-            code: 150,
-            tabWidth: 2,
-            ignoreComments: true,
-            ignoreTrailingComments: true,
-            ignoreUrls: true,
-            ignoreStrings: true,
-            ignoreTemplateLiterals: true,
-            ignoreRegExpLiterals: true,
-          },
-        ],
       },
       jsPlugins: [
         '@e18e/eslint-plugin',
