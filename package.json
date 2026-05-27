@@ -21,6 +21,11 @@
   "type": "module",
   "scripts": {
     "init": "pnpm install --no-frozen-lockfile && node scripts/init.ts",
+    "build": "pnpm --dir zova run build:ssr:cabloyBasicBatch && pnpm --dir vona run build",
+    "build:docker": "pnpm --dir zova run build:ssr:cabloyBasicBatch && pnpm --dir vona run build:docker",
+    "start": "cd vona && npm run start",
+    "start:one": "cd vona && npm run start:one",
+    "format": "oxfmt --check",
     "docs:fix": "textlint --fix ./cabloy-docs/**/*.md",
     "release-patch": "node scripts/release.ts patch",
     "release-minor": "node scripts/release.ts minor",

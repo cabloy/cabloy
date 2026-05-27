@@ -17,6 +17,12 @@ export default defineConfig(
       'scripts',
       'zovaRest',
       'assets',
+      '.app',
+      '.claude',
+      '.zova-rest',
+      'dist-releases',
+      'packages-cli/cli-set-api/cli/templates',
+      '**/.vitepress/cache',
     ],
   }),
 );
