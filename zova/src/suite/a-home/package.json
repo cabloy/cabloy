@@ -1,20 +1,20 @@
 {
   "name": "zova-suite-a-home",
-  "version": "5.0.8",
+  "version": "5.0.9",
   "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
   "description": "",
   "author": "zhennann",
   "type": "module",
   "dependencies": {
-    "zova-module-home-api": "^5.0.3",
-    "zova-module-home-base": "^5.0.5",
-    "zova-module-home-icon": "^5.0.3",
-    "zova-module-home-index": "^5.0.3",
-    "zova-module-home-layoutempty": "^5.0.4",
-    "zova-module-home-layouttabs": "^5.0.4",
-    "zova-module-home-login": "^5.0.6",
-    "zova-module-home-passport": "^5.0.4",
-    "zova-module-home-theme": "^5.0.3"
+    "zova-module-home-api": "^5.0.4",
+    "zova-module-home-base": "^5.0.6",
+    "zova-module-home-icon": "^5.0.4",
+    "zova-module-home-index": "^5.0.4",
+    "zova-module-home-layoutempty": "^5.0.5",
+    "zova-module-home-layouttabs": "^5.0.5",
+    "zova-module-home-login": "^5.0.7",
+    "zova-module-home-passport": "^5.0.5",
+    "zova-module-home-theme": "^5.0.4"
   },
   "title": "Home"
 }
