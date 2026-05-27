@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.8
+
+### Features
+- Add zova/vona sub-project release to cabloy release workflow
+
+### Bug Fixes
+- Use lerna `--no-push` to avoid pushing stale tags
+- Fix test-ssr TypeScript error
+
+### Improvements
+- Update release script
+- Update Oxlint configuration
+- Update Vue linting script
+
 ## 5.1.7
 
 ### Features
