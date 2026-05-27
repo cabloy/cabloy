@@ -102033,7 +102033,7 @@ var init_zova_WcMH8E6u = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/zova-DdmXvaV8.js
+// dist/ssr-cabloyBasicAdmin/server/assets/zova-DR-NpQBg.js
 function cast(source2) {
   return source2;
 }
@@ -102516,9 +102516,9 @@ function __formatLoggerFilterCheckInfo(info) {
 function $protocolKey(key3) {
   return key3;
 }
-var init_cast, AppMetadata, appMetadata, init_metadata, SymbolMappedClassMetadataKeys, init_type$9, init_utils$2, _sys, init_sysFake, BeanSimple, init_beanSimple, hexBytes, init_uuid, import_deep_equal, SysUtil, init_util$2, DecoratorBeanFullName, SymbolDecoratorBeanInfo, SymbolDecoratorProxyDisable, SymbolDecoratorPreload, SymbolDecoratorVirtual, SymbolDecoratorUse, AppResource, appResource, init_resource$1, SymbolWaitPromise, __counter, StateLock, init_stateLock, SymbolBeanFullName, SymbolBeanInstanceKey, SymbolModuleBelong, SymbolModuleName, SymbolInited, BeanBaseSimple, init_beanBaseSimple, init_type$8, init_component$6, init_type$7, init_config$1, init_type$6, init_constant$1, BeanModuleScope$2, BeanScopeError, init_beanScopeError, errorsInternal, init_errorInternal, ErrorClass, init_errorClass, init_errorGlobal, init_errorObject, SymbolErrorInstanceInfo, init_type$5, init_error$2, BeanModuleScope$1, BeanScopeLocale, init_beanScopeLocale, init_type$4, init_locale$3, init_type$3, init_page, init_resource, SymbolText, SymbolLogger, SymbolLoggerChildren, BeanBase, init_beanBase, BeanAopBase, init_beanAopBase, BeanAopMethodBase, init_beanAopMethodBase, init_beanInfo, init_createBeanDecorator, init_preload, init_proxyDisable, init_use, init_useScope, init_virtual, init_class, init_beanOptions, init_useOptions, init_interface$1, init_constructable, init_containerScope, init_functionable, init_injectionScope, init_type$2, init_types$2, init_createVueDecorator, init_model, init_vueExtra$1, init_decorator, init_computed, SymbolBeanContainerParent, SymbolProxyMagic, SymbolProxyAopMethod, SymbolCacheAopChains, SymbolCacheAopChainsKey, SymbolGetBeanSelectorInnerPromises, SymbolBeanContainerInstances, BeanContainer, init_beanContainer, import_reactivity_cjs_prod$1, import_shared_cjs_prod, init_useModel, BeanControllerBase, init_beanControllerBase, SymbolControllerRefDisable, init_type$1, SymbolController, BeanControllerLike, init_beanControllerLike, BeanControllerPageBase, init_beanControllerPageBase, SymbolStyle, BeanRenderLike, init_beanRenderLike, BeanRenderBase, init_beanRenderBase, BeanStyleBase, init_beanStyleBase, BeanModuleScope, BeanScopeUtil, init_beanScopeUtil, BeanModuleError, BeanModuleLocale, BeanModuleConfig, BeanModuleConstant, BeanModuleApi, BeanModuleApiSchema, BeanModuleUtil, BeanScopeBase, init_beanScopeBase, init_scope, init_bean$1, init_zod_enhance, init_config, constantDefault, init_constant, init_component$5, init_cookie$1, init_event$1, init_inject, SymbolInstalled, init_module$2, init_monkey, init_pluginZova, init_window, init_interface, init_auth, init_env, init_omitNever, init_powerPartial, init_requiredSome, init_type, init_utils$1, init_types$1, AppCookie, init_cookie, __adapter, AppEvent, init_event, SymbolLoggerInstances, SysLogger, init_logger$1, init_useSys, init_createZovaComponentAsync, SymbolZovaComponents, SysComponent, init_component$4, SysError, init_error$1, SymbolLocaleCurrent, SymbolTzCurrent, AppLocale, init_locale$2, SysLocale, init_locale$1, SysModule, init_module$1, SysMeta, init_meta$2, SymbolSysInitializePromise, SymbolSysClose, ZovaSys, sys, init_sys$1, PluginBean, init_bean, init_bootstrap, ClientOnly, init_clientOnly, CtxComponent, init_component$3, SymbolHooksFns, SymbolHooksState, CtxHooks, init_hooks, __id, CtxState, init_state, CtxMeta, init_meta$1, import_runtime_core_cjs_prod, import_reactivity_cjs_prod, CtxUtil, init_util$1, ZovaContext, init_context$1, init_context, init_useController, init_component$2, init_components, init_useApp, init_useContext, init_composables, AppComponent, init_component$1, AppError, init_error, AppModule, init_module, AppMeta, init_meta, AppUtil, init_util2, SymbolAppClose, ZovaApplication, init_application, init_locale, init_app, init_component, SymbolLoggerMessage, formatLoggerFilter, formatLoggerConsole, init_format2, init_types2, init_logger2, init_sys, init_core2, init_mixinClass, init_omitClass, init_partialClass, init_pickClass, init_mappedClass, PluginZova, init_zova, init_plugins, init_protocolKey, init_prefixKeys, init_utils, init_composable, init_watch, init_vueExtra, init_src3;
-var init_zova_DdmXvaV8 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/zova-DdmXvaV8.js"() {
+var init_cast, AppMetadata, appMetadata, init_metadata, SymbolMappedClassMetadataKeys, init_type$9, init_utils$2, _sys, init_sysFake, BeanSimple, init_beanSimple, hexBytes, init_uuid, import_deep_equal, SysUtil, init_util$2, DecoratorBeanFullName, SymbolDecoratorBeanInfo, SymbolDecoratorProxyDisable, SymbolDecoratorPreload, SymbolDecoratorVirtual, SymbolDecoratorUse, AppResource, appResource, init_resource$1, SymbolWaitPromise, __counter, StateLock, init_stateLock, SymbolBeanFullName, SymbolBeanInstanceKey, SymbolModuleBelong, SymbolModuleName, SymbolInited, BeanBaseSimple, init_beanBaseSimple, init_type$8, init_component$6, init_type$7, init_config$1, init_type$6, init_constant$1, BeanModuleScope$2, BeanScopeError, init_beanScopeError, errorsInternal, init_errorInternal, ErrorClass, init_errorClass, init_errorGlobal, init_errorObject, SymbolErrorInstanceInfo, init_type$5, init_error$2, BeanModuleScope$1, BeanScopeLocale, init_beanScopeLocale, init_type$4, init_locale$3, init_type$3, init_page, init_resource, SymbolText, SymbolLogger, SymbolLoggerChildren, BeanBase, init_beanBase, BeanAopBase, init_beanAopBase, BeanAopMethodBase, init_beanAopMethodBase, init_beanInfo, init_createBeanDecorator, init_preload, init_proxyDisable, init_use, init_useScope, init_virtual, init_class, init_beanOptions, init_useOptions, init_interface$1, init_constructable, init_containerScope, init_functionable, init_injectionScope, init_type$2, init_types$2, init_createVueDecorator, init_model, init_vueExtra$1, init_decorator, init_computed, SymbolBeanContainerParent, SymbolProxyMagic, SymbolProxyAopMethod, SymbolCacheAopChains, SymbolCacheAopChainsKey, SymbolGetBeanSelectorInnerPromises, SymbolBeanContainerInstances, BeanContainer, init_beanContainer, import_reactivity_cjs_prod$1, import_shared_cjs_prod, init_useModel, BeanControllerBase, init_beanControllerBase, SymbolControllerRefDisable, init_type$1, SymbolController, BeanControllerLike, init_beanControllerLike, BeanControllerPageBase, init_beanControllerPageBase, SymbolStyle, BeanRenderLike, init_beanRenderLike, BeanRenderBase, init_beanRenderBase, BeanStyleBase, init_beanStyleBase, BeanModuleScope, BeanScopeUtil, init_beanScopeUtil, BeanModuleError, BeanModuleLocale, BeanModuleConfig, BeanModuleConstant, BeanModuleApi, BeanModuleApiSchema, BeanModuleUtil, BeanScopeBase, init_beanScopeBase, init_scope, init_bean$1, init_zod_enhance, init_config, constantDefault, init_constant, init_component$5, init_cookie$1, init_event$1, init_inject, SymbolInstalled, init_module$2, init_monkey, init_pluginZova, init_window, init_interface, init_auth, init_env, init_omitNever, init_powerPartial, init_requiredSome, init_type, init_utils$1, init_types$1, AppCookie, init_cookie, __adapter, AppEvent, init_event, SymbolLoggerInstances, SysLogger, init_logger$1, init_useSys, init_createZovaComponentAsync, SymbolZovaComponents, SysComponent, init_component$4, SysError, init_error$1, SymbolLocaleCurrent, SymbolTzCurrent, AppLocale, init_locale$2, SysLocale, init_locale$1, SysModule, init_module$1, SysMeta, init_meta$2, SymbolSysInitializePromise, SymbolSysClose, ZovaSys, sys, init_sys$1, PluginBean, init_bean, init_bootstrap, ClientOnly, init_clientOnly, CtxComponent, init_component$3, SymbolHooksFns, SymbolHooksState, CtxHooks, init_hooks, __id, CtxState, init_state, CtxMeta, init_meta$1, import_runtime_core_cjs_prod, import_reactivity_cjs_prod, CtxUtil, init_util$1, ZovaContext, init_context$1, init_context, init_useController, init_component$2, init_components, init_useApp, init_useContext, init_composables, AppComponent, init_component$1, AppError, init_error, AppModule, init_module, AppMeta, init_meta, AppUtil, init_util2, SymbolAppClose, ZovaApplication, init_application, init_locale, init_app, init_component, SymbolLoggerMessage, formatLoggerFilter, formatLoggerConsole, init_format2, init_types2, init_logger2, init_sys, init_core2, init_mixinClass, init_omitClass, init_partialClass, init_pickClass, init_mappedClass, PluginZova, init_zova, init_plugins, init_prefixKeys, init_protocolKey, init_utils, init_composable, init_watch, init_vueExtra, init_src3;
+var init_zova_DR_NpQBg = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/zova-DR-NpQBg.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_fecha_fQQQkm1q();
@@ -105688,15 +105688,15 @@ ${stack2}` : ""}`];
       init_bean();
       init_zova();
     }));
+    init_prefixKeys = __esmMin((() => {
+    }));
     __name($protocolKey, "$protocolKey");
     init_protocolKey = __esmMin((() => {
     }));
-    init_prefixKeys = __esmMin((() => {
-    }));
     init_utils = __esmMin((() => {
+      init_prefixKeys();
       init_protocolKey();
       init_stateLock();
-      init_prefixKeys();
     }));
     init_composable = __esmMin((() => {
     }));
@@ -105704,8 +105704,8 @@ ${stack2}` : ""}`];
     }));
     init_vueExtra = __esmMin((() => {
       init_composable();
-      init_watch();
       init_computed();
+      init_watch();
     }));
     init_src3 = __esmMin((() => {
       init_dist$11();
@@ -105724,13 +105724,13 @@ ${stack2}` : ""}`];
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/zova-BwnLfske.js
+// dist/ssr-cabloyBasicAdmin/server/assets/zova-B4_PadJz.js
 var init_src4;
-var init_zova_BwnLfske = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/zova-BwnLfske.js"() {
+var init_zova_B4_PadJz = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/zova-B4_PadJz.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
+    init_zova_DR_NpQBg();
     init_src4 = __esmMin((() => {
       init_src3();
     }));
@@ -105752,9 +105752,9 @@ var init_zova_config_CNEEC3zm = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-bean-Yjl5RFn9.js
-var a_bean_Yjl5RFn9_exports = {};
-__export(a_bean_Yjl5RFn9_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-bean-DyfOSKn7.js
+var a_bean_DyfOSKn7_exports = {};
+__export(a_bean_DyfOSKn7_exports, {
   a: () => AopMethod,
   c: () => Render,
   d: () => Sys,
@@ -105832,14 +105832,14 @@ function UseAopMethod(aopMethodName, options2) {
     return descriptor;
   };
 }
-var init_bean$12, _dec$3, _dec2$3, _dec3$2, _class$3, ServiceOnion, init_onion_, _dec$2, _dec2$2, _dec3$1, _class$2, SysOnion2, init_sys_onion, SymbolDecoratorUseAopMethod, init_aopMethod, _dec$1, _dec2$1, _dec3, _dec4, _dec5, _class$1, _class2, _descriptor, ServiceAop, init_aop$1, MonkeySys, init_monkeySys, init_scope2, _dec, _dec2, _class, ScopeModuleABean, init__metadata, init_useAopMethod, init_utils2, init_lib2, init_aop, init_bean2, SymbolUseOnionLocal, SymbolUseOnionOptions, init_onion, init_service, init_component2, init_types3, src_exports, init_src5;
-var init_a_bean_Yjl5RFn9 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-bean-Yjl5RFn9.js"() {
+var init_bean$12, _dec$3, _dec2$3, _dec3$2, _class$3, ServiceOnion, init_onion_, _dec$2, _dec2$2, _dec3$1, _class$2, SysOnion2, init_sys_onion, SymbolDecoratorUseAopMethod, init_aopMethod, _dec$1, _dec2$1, _dec3, _dec4, _dec5, _class$1, _class2, _descriptor, ServiceAop, init_aop$1, MonkeySys, init_monkeySys, init_scope2, _dec, _dec2, _class, ScopeModuleABean, init__metadata, init_useAopMethod, init_utils2, init_lib2, init_aop, init_bean2, init_component2, SymbolUseOnionLocal, SymbolUseOnionOptions, init_onion, init_service, init_types3, src_exports, init_src5;
+var init_a_bean_DyfOSKn7 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-bean-DyfOSKn7.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
     __name(Sys, "Sys");
     __name(Bean, "Bean");
     __name(Service, "Service");
@@ -106101,21 +106101,21 @@ var init_a_bean_Yjl5RFn9 = __esm({
     }));
     init_bean2 = __esmMin((() => {
     }));
+    init_component2 = __esmMin((() => {
+    }));
     init_onion = __esmMin((() => {
       SymbolUseOnionLocal = /* @__PURE__ */ Symbol("SymbolUseOnionLocal");
       SymbolUseOnionOptions = /* @__PURE__ */ Symbol("SymbolUseOnionOptions");
     }));
     init_service = __esmMin((() => {
     }));
-    init_component2 = __esmMin((() => {
-    }));
     init_types3 = __esmMin((() => {
       init_aop();
       init_aopMethod();
       init_bean2();
+      init_component2();
       init_onion();
       init_service();
-      init_component2();
     }));
     src_exports = /* @__PURE__ */ __exportAll({
       Aop: /* @__PURE__ */ __name(() => Aop, "Aop"),
@@ -106147,20 +106147,20 @@ var init_a_bean_Yjl5RFn9 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/demo-student-CUSxMbJ9.js
-var demo_student_CUSxMbJ9_exports = {};
-__export(demo_student_CUSxMbJ9_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/demo-student-BDHQoeBz.js
+var demo_student_BDHQoeBz_exports = {};
+__export(demo_student_BDHQoeBz_exports, {
   n: () => src_exports2,
   t: () => init_src6
 });
 var _dec$12, _dec2$12, _class$12, ControllerPageTest, init_controller, ZPageTest, init_test, routes, init_routes, _dec6, _dec22, _class3, pagePathSchemas, pageNameSchemas, ScopeModuleDemoStudent, init__metadata2, src_exports2, init_src6;
-var init_demo_student_CUSxMbJ9 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/demo-student-CUSxMbJ9.js"() {
+var init_demo_student_BDHQoeBz = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/demo-student-BDHQoeBz.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_controller = __esmMin((() => {
       init_src4();
       init_src5();
@@ -119332,9 +119332,9 @@ var init_axios_W52PMG17 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-fetch-B7b7sdSg.js
-var a_fetch_B7b7sdSg_exports = {};
-__export(a_fetch_B7b7sdSg_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-fetch-CcDfi6df.js
+var a_fetch_CcDfi6df_exports = {};
+__export(a_fetch_CcDfi6df_exports, {
   a: () => BeanInterceptorBase,
   i: () => SymbolInterceptorBodyResponseFlag,
   n: () => src_exports3,
@@ -119374,14 +119374,14 @@ function Interceptor(options2) {
   return createBeanDecorator("interceptor", "new", true, options2);
 }
 var _dec$32, _dec2$32, _dec3$12, _dec4$1, _class$32, _class22, _descriptor2, ServiceComposer, init_composer, _dec$22, _dec2$22, _class$22, SymbolFetch, BeanFetch$1, init_bean_fetch, _dec$13, _dec2$13, _dec32, _dec42, _dec52, _class$13, BeanInterceptorBase, init_bean_interceptorBase, config2, init_config4, Monkey, init_monkey2, _dec7, _dec23, _class4, ScopeModuleAFetch, init__metadata3, SymbolInterceptorBodyResponseFlag, init_const, init_interceptor$1, init_lib3, init_interceptor, init_types4, src_exports3, init_src7;
-var init_a_fetch_B7b7sdSg = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-fetch-B7b7sdSg.js"() {
+var init_a_fetch_CcDfi6df = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-fetch-CcDfi6df.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_axios_W52PMG17();
     __name(_initializerDefineProperty2, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor2, "_applyDecoratedDescriptor");
@@ -124455,9 +124455,9 @@ var init_tanstack_query_DxwFgKIH = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-model-DuDRXYdw.js
-var a_model_DuDRXYdw_exports = {};
-__export(a_model_DuDRXYdw_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-model-DRMCpadc.js
+var a_model_DRMCpadc_exports = {};
+__export(a_model_DRMCpadc_exports, {
   a: () => Model,
   i: () => $QueryAutoLoad,
   n: () => src_exports4,
@@ -124495,15 +124495,15 @@ async function _QueryAutoLoadInner(fn) {
   return query;
 }
 var init_model$1, init_query2, init_types6, __ThisModule__, init_this, CookieWrapper, init_cookieWrapper, BeanModelLast, init_bean_model_last, BeanModelPersister, init_bean_model_persister, BeanModelLocal, init_bean_model_local, BeanModelCookie, init_bean_model_cookie, import_localforage, BeanModelQuery, init_bean_model_query, BeanModelUseQuery, init_bean_model_useQuery, SymbolUseQueries, SymbolUseComputeds, BeanModelUseState, init_bean_model_useState, BeanModelUseStateGeneral, init_bean_model_useStateGeneral, SymbolUseMutations, BeanModelUseMutation, init_bean_model_useMutation, BeanModelFirst, init_bean_model_first, _dec$23, _dec2$23, _dec33, _class$23, BeanModelBase, init_bean_modelBase, _dec$14, _dec2$14, _class$14, ServiceStorage, init_storage, defaultOptions, config3, init_config5, Monkey2, init_monkey3, _dec8, _dec24, _class5, ScopeModuleAModel, init__metadata4, init_model2, init_utils6, init_lib5, src_exports4, init_src8;
-var init_a_model_DuDRXYdw = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-model-DuDRXYdw.js"() {
+var init_a_model_DRMCpadc = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-model-DRMCpadc.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_tanstack_query_BqXmmPmZ();
     init_tanstack_query_Bpp_8OwF();
     init_localforage_CDaIu7uz();
@@ -131736,9 +131736,9 @@ var init_openapi3_Do3_puu1 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-openapi-DLhBU89_.js
-var a_openapi_DLhBU89_exports = {};
-__export(a_openapi_DLhBU89_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-openapi-QKVejZED.js
+var a_openapi_QKVejZED_exports = {};
+__export(a_openapi_QKVejZED_exports, {
   i: () => SymbolOpenapiSchemaName,
   n: () => src_exports5,
   r: () => renderFormFieldTopPropsSystem,
@@ -131838,17 +131838,17 @@ function _applyDecoratedDescriptor3(i, e, r, n2, l2) {
     return n3(i, e, r2) || r2;
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
-var OrderBusinessBase, OrderUnknownBase, OrderMaxBase, init_database, __FilterColumnsIgnore, init_schema$1, _dec$24, _dec2$24, _dec34, _dec43, _dec53, _class$24, _class23, __schemaRefPrefix, ModelSdk, init_sdk$1, SymbolOpenapiSchemaName, init_sdk, _dec$15, _dec2$15, _class$15, SysSdk, init_sys_sdk, config4, init_config6, Monkey3, init_monkey4, _dec9, _dec25, _class6, ScopeModuleAOpenapi2, init__metadata5, init_lib6, init_action, init_permissions, renderFormFieldTopPropsSystem, renderTableColumnTopPropsSystem, init_rest, init_schema, init_table, init_formMeta, init_formProvider, init_order, init_captcha, init_tableCell, init_tableActionRow, init_tableActionBulk, init_formField, init_formActionRow, init_block, init_formFieldLayout, init_tableAction, init_resource2, init_types7, src_exports5, init_src9;
-var init_a_openapi_DLhBU89 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-openapi-DLhBU89_.js"() {
+var OrderBusinessBase, OrderUnknownBase, OrderMaxBase, init_database, __FilterColumnsIgnore, init_schema$1, _dec$24, _dec2$24, _dec34, _dec43, _dec53, _class$24, _class23, __schemaRefPrefix, ModelSdk, init_sdk$1, SymbolOpenapiSchemaName, init_sdk, _dec$15, _dec2$15, _class$15, SysSdk, init_sys_sdk, config4, init_config6, Monkey3, init_monkey4, _dec9, _dec25, _class6, ScopeModuleAOpenapi2, init__metadata5, init_lib6, init_action, init_captcha, init_formMeta, init_formProvider, init_order, init_permissions, init_block, init_formActionRow, init_formField, init_formFieldLayout, init_tableAction, init_tableActionBulk, init_tableActionRow, init_tableCell, init_resource2, renderFormFieldTopPropsSystem, renderTableColumnTopPropsSystem, init_rest, init_schema, init_table, init_types7, src_exports5, init_src9;
+var init_a_openapi_QKVejZED = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-openapi-QKVejZED.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
     init_openapi3_Do3_puu1();
     init_database = __esmMin((() => {
       OrderBusinessBase = 1e3;
@@ -132201,7 +132201,41 @@ var init_a_openapi_DLhBU89 = __esm({
     }));
     init_action = __esmMin((() => {
     }));
+    init_captcha = __esmMin((() => {
+    }));
+    init_formMeta = __esmMin((() => {
+    }));
+    init_formProvider = __esmMin((() => {
+    }));
+    init_order = __esmMin((() => {
+    }));
     init_permissions = __esmMin((() => {
+    }));
+    init_block = __esmMin((() => {
+    }));
+    init_formActionRow = __esmMin((() => {
+    }));
+    init_formField = __esmMin((() => {
+    }));
+    init_formFieldLayout = __esmMin((() => {
+    }));
+    init_tableAction = __esmMin((() => {
+    }));
+    init_tableActionBulk = __esmMin((() => {
+    }));
+    init_tableActionRow = __esmMin((() => {
+    }));
+    init_tableCell = __esmMin((() => {
+    }));
+    init_resource2 = __esmMin((() => {
+      init_block();
+      init_formActionRow();
+      init_formField();
+      init_formFieldLayout();
+      init_tableAction();
+      init_tableActionBulk();
+      init_tableActionRow();
+      init_tableCell();
     }));
     init_rest = __esmMin((() => {
       init_oas30();
@@ -132227,53 +132261,19 @@ var init_a_openapi_DLhBU89 = __esm({
     }));
     init_table = __esmMin((() => {
     }));
-    init_formMeta = __esmMin((() => {
-    }));
-    init_formProvider = __esmMin((() => {
-    }));
-    init_order = __esmMin((() => {
-    }));
-    init_captcha = __esmMin((() => {
-    }));
-    init_tableCell = __esmMin((() => {
-    }));
-    init_tableActionRow = __esmMin((() => {
-    }));
-    init_tableActionBulk = __esmMin((() => {
-    }));
-    init_formField = __esmMin((() => {
-    }));
-    init_formActionRow = __esmMin((() => {
-    }));
-    init_block = __esmMin((() => {
-    }));
-    init_formFieldLayout = __esmMin((() => {
-    }));
-    init_tableAction = __esmMin((() => {
-    }));
-    init_resource2 = __esmMin((() => {
-      init_tableCell();
-      init_tableActionRow();
-      init_tableActionBulk();
-      init_formField();
-      init_formActionRow();
-      init_block();
-      init_formFieldLayout();
-      init_tableAction();
-    }));
     init_types7 = __esmMin((() => {
       init_action();
+      init_captcha();
       init_database();
+      init_formMeta();
+      init_formProvider();
+      init_order();
       init_permissions();
+      init_resource2();
       init_rest();
       init_schema();
       init_sdk();
       init_table();
-      init_formMeta();
-      init_formProvider();
-      init_order();
-      init_captcha();
-      init_resource2();
     }));
     src_exports5 = /* @__PURE__ */ __exportAll({
       ModelSdk: /* @__PURE__ */ __name(() => ModelSdk, "ModelSdk"),
@@ -132303,9 +132303,9 @@ var init_a_openapi_DLhBU89 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-api-aORiRWVk.js
-var a_api_aORiRWVk_exports = {};
-__export(a_api_aORiRWVk_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-api-BVJIlg2r.js
+var a_api_BVJIlg2r_exports = {};
+__export(a_api_BVJIlg2r_exports, {
   a: () => BeanApiBase,
   i: () => ApiSchema,
   n: () => src_exports6,
@@ -132322,13 +132322,13 @@ function ApiSchema() {
   return createBeanDecorator("apiSchema", "app");
 }
 var _dec$16, _dec2$16, _dec35, _class$16, BeanApiBase, init_bean_apiBase, config5, init_config7, __ThisModule__2, init_this2, Monkey4, init_monkey5, _dec10, _dec26, _class7, ScopeModuleAApi, init__metadata6, init_api$1, init_lib7, init_api2, init_apiMeta, init_apiSchema, init_types8, src_exports6, init_src10;
-var init_a_api_aORiRWVk = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-api-aORiRWVk.js"() {
+var init_a_api_BVJIlg2r = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-api-BVJIlg2r.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_bean_apiBase = __esmMin((() => {
       init_src4();
       init_src5();
@@ -133925,9 +133925,9 @@ var init_vue_router_CF2_9fiG = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-app-ByX3Zfy5.js
-var a_app_ByX3Zfy5_exports = {};
-__export(a_app_ByX3Zfy5_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-app-DPKoL-Eh.js
+var a_app_DPKoL_Eh_exports = {};
+__export(a_app_DPKoL_Eh_exports, {
   n: () => src_exports7,
   t: () => init_src11
 });
@@ -133948,14 +133948,14 @@ function _applyDecoratedDescriptor4(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$17, _dec2$17, _dec36, _dec44, _class$17, _class24, _descriptor3, _ControllerApp, ControllerApp, init_controller2, ZApp, init_app2, config6, init_config8, _dec11, _dec27, _class8, components, ScopeModuleAApp, init__metadata7, src_exports7, init_src11;
-var init_a_app_ByX3Zfy5 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-app-ByX3Zfy5.js"() {
+var init_a_app_DPKoL_Eh = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-app-DPKoL-Eh.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_vue_router_CF2_9fiG();
     __name(_initializerDefineProperty3, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor4, "_applyDecoratedDescriptor");
@@ -134059,9 +134059,9 @@ var init_a_app_ByX3Zfy5 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-logger-M8vlPNB3.js
-var a_logger_M8vlPNB3_exports = {};
-__export(a_logger_M8vlPNB3_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-logger-CrY0s9ZA.js
+var a_logger_CrY0s9ZA_exports = {};
+__export(a_logger_CrY0s9ZA_exports, {
   n: () => src_exports8,
   r: () => Log,
   t: () => init_src12
@@ -134070,14 +134070,14 @@ function Log(options2) {
   return UseAopMethod("a-logger:log", options2);
 }
 var _dec$18, _dec2$18, _class$18, AopMethodLog, init_aopMethod_log, _dec12, _dec28, _class9, ScopeModuleALogger, init__metadata8, init_log, init_lib8, src_exports8, init_src12;
-var init_a_logger_M8vlPNB3 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-logger-M8vlPNB3.js"() {
+var init_a_logger_CrY0s9ZA = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-logger-CrY0s9ZA.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_aopMethod_log = __esmMin((() => {
       init_src4();
       init_dist$10();
@@ -134208,9 +134208,9 @@ var init_a_logger_M8vlPNB3 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-behavior-BtT1ClQi.js
-var a_behavior_BtT1ClQi_exports = {};
-__export(a_behavior_BtT1ClQi_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-behavior-8zq1kOzY.js
+var a_behavior_8zq1kOzY_exports = {};
+__export(a_behavior_8zq1kOzY_exports, {
   i: () => BeanBehaviorBase,
   n: () => src_exports9,
   r: () => Behavior,
@@ -134293,15 +134293,15 @@ function Behavior(options2) {
   return createBeanDecorator("behavior", "new", true, options2);
 }
 var _dec$6, _dec2$6, _dec3$3, _dec4$3, _class$6, _class2$3, _descriptor$3, SymbolSliceOptionsOriginal, ServiceComposer2, init_composer2, _dec$5, _dec2$5, _class$5, BeanBehavior$1, init_bean_behavior, _dec$4, _dec2$4, _dec3$22, _dec4$2, _dec5$1, _dec6$1, _dec7$1, _dec82, _dec92, _class$4, _class2$2, _descriptor$2, _descriptor22, BeanBehaviorBase, init_bean_behaviorBase, init_useBehavior, _dec$33, _dec2$33, _dec3$13, _dec4$12, _dec54, _dec62, _dec72, _class$33, _class2$1, _descriptor$1, BeanBehaviorsHolder2, init_bean_behaviorsHolder, _dec$25, _dec2$25, _dec37, _dec45, _class$25, _class25, _descriptor4, _ControllerBehavior, ControllerBehavior, init_controller3, ZBehavior, init_behavior$2, init_behavior$1, _dec$19, _dec2$19, _class$19, BehaviorRoot, init_behavior_root_, _dec13, _dec29, _class10, components2, ScopeModuleABehavior, init__metadata9, init_lib9, init_behavior, init_types9, src_exports9, init_src13;
-var init_a_behavior_BtT1ClQi = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-behavior-BtT1ClQi.js"() {
+var init_a_behavior_8zq1kOzY = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-behavior-8zq1kOzY.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_logger_M8vlPNB3();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_logger_CrY0s9ZA();
     __name(_initializerDefineProperty$3, "_initializerDefineProperty$3");
     __name(_applyDecoratedDescriptor$3, "_applyDecoratedDescriptor$3");
     init_composer2 = __esmMin((() => {
@@ -134627,20 +134627,20 @@ var init_a_behavior_BtT1ClQi = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-boundary-BJmFZjPe.js
-var a_boundary_BJmFZjPe_exports = {};
-__export(a_boundary_BJmFZjPe_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-boundary-DVHeo3kN.js
+var a_boundary_DVHeo3kN_exports = {};
+__export(a_boundary_DVHeo3kN_exports, {
   n: () => src_exports10,
   t: () => init_src14
 });
 var _dec14, _dec210, _class11, ScopeModuleABoundary, init__metadata10, src_exports10, init_src14;
-var init_a_boundary_BJmFZjPe = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-boundary-BJmFZjPe.js"() {
+var init_a_boundary_DVHeo3kN = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-boundary-DVHeo3kN.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init__metadata10 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -137430,7 +137430,7 @@ var init_tanstack_form_DmEtAGiZ = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/zova-BqDMBpyl.js
+// dist/ssr-cabloyBasicAdmin/server/assets/zova-CCYAcmVc.js
 function isNativeElement(Component) {
   return typeof Component === "string" && !Component.includes(":") && Component.charAt(0) >= "a" && Component.charAt(0) <= "z";
 }
@@ -137451,13 +137451,13 @@ function normalizePropName(name) {
   return __propsMapper[name] ?? name;
 }
 var renderFieldJsxPropsSystem, init_const2, __propsMapper, init_utils8, ZovaJsx, init_zovaJsx, init_lib10, init_rest2, init_types10, init_src15;
-var init_zova_BqDMBpyl = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/zova-BqDMBpyl.js"() {
+var init_zova_CCYAcmVc = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/zova-CCYAcmVc.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
+    init_zova_DR_NpQBg();
     init_zova_DO24_8vr();
     init_const2 = __esmMin((() => {
       renderFieldJsxPropsSystem = [
@@ -137782,9 +137782,9 @@ var init_zova_BqDMBpyl = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-form-WeQEjepz.js
-var a_form_WeQEjepz_exports = {};
-__export(a_form_WeQEjepz_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-form-DVcvVQzL.js
+var a_form_DVcvVQzL_exports = {};
+__export(a_form_DVcvVQzL_exports, {
   i: () => formSceneFromFormMeta,
   n: () => src_exports11,
   r: () => formMetaFromFormScene,
@@ -137919,19 +137919,19 @@ function formSceneFromFormMeta(formMeta) {
   if (formMeta.formMode === "edit" && formMeta.editMode === void 0) return "edit";
 }
 var BeanControllerFormBase, init_beanControllerFormBase, constFieldProps, init_formField$1, _dec$62, _dec2$62, _dec3$32, _dec4$32, _class$62, _class2$32, _descriptor$32, _ControllerForm, ControllerForm$1, init_controller$3, _dec$52, _dec2$52, _dec3$23, _dec4$22, _dec55, _dec63, _class$52, _class2$22, _descriptor$22, _descriptor23, _ControllerFormField, ControllerFormField2, init_controller$2, _dec$42, _dec2$42, _dec3$14, _dec4$13, _class$42, _class2$12, _descriptor$12, _ControllerFormFieldBlank, ControllerFormFieldBlank, init_controller$1, _dec$34, _dec2$34, _dec38, _dec46, _class$34, _class26, _descriptor5, _ControllerFormFieldPreset, ControllerFormFieldPreset, init_controller4, _dec$26, _dec2$26, _class$26, RenderForm, init_render$1, ZForm, init_form$1, _dec$110, _dec2$110, _class$110, RenderFormField, init_render, ZFormField, init_formField2, ZFormFieldBlank, init_formFieldBlank, ZFormFieldPreset, init_formFieldPreset, config7, init_config9, _dec15, _dec211, _class12, components3, ScopeModuleAForm, init__metadata11, BeanControllerPageFormBase, init_beanControllerPageFormBase, init_utils9, init_lib11, init_form, init_types11, src_exports11, init_src16;
-var init_a_form_WeQEjepz = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-form-WeQEjepz.js"() {
+var init_a_form_DVcvVQzL = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-form-DVcvVQzL.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_esm_CXcIiAl();
     init_tanstack_form_DmEtAGiZ();
-    init_zova_BqDMBpyl();
-    init_a_openapi_DLhBU89();
+    init_zova_CCYAcmVc();
+    init_a_openapi_QKVejZED();
     init_beanControllerFormBase = __esmMin((() => {
       init_esm3();
       init_vue();
@@ -138466,7 +138466,7 @@ var init_a_form_WeQEjepz = __esm({
         }
         render() {
           const name = this.$props.name;
-          if (!name) throw new Error(`should specify field name`);
+          if (!name) throw new Error("should specify field name");
           return this.$$form.renderField(name, this.$props);
         }
       }, _ControllerFormFieldPreset.$propsDefault = {}, _ControllerFormFieldPreset.$componentOptions = {
@@ -138701,9 +138701,9 @@ var init_a_form_WeQEjepz = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-icon-4nXMCLPu.js
-var a_icon_4nXMCLPu_exports = {};
-__export(a_icon_4nXMCLPu_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-icon-DJjA-BDJ.js
+var a_icon_DJjA_BDJ_exports = {};
+__export(a_icon_DJjA_BDJ_exports, {
   i: () => $iconName,
   n: () => src_exports12,
   r: () => $icon,
@@ -138763,14 +138763,14 @@ function $iconName(name) {
   return name;
 }
 var IconGroup, init_iconGroup, _dec$35, _dec2$35, _class$35, SysIcon, init_sys_icon, _dec$27, _dec2$27, _dec3$15, _dec4$14, _class$27, _class2$13, _descriptor$13, ToolIcon, init_tool_icon, init_useZovaIcon, _dec$111, _dec2$111, _dec39, _dec47, _class$111, _class27, _descriptor6, _ControllerIcon, ControllerIcon, init_controller5, ZIcon, init_icon$1, config8, init_config10, MonkeySys2, init_monkeySys2, _dec16, _dec212, _class13, components4, ScopeModuleAIcon, init__metadata12, init_utils10, init_lib12, init_icon, init_types12, src_exports12, init_src17;
-var init_a_icon_4nXMCLPu = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-icon-4nXMCLPu.js"() {
+var init_a_icon_DJjA_BDJ = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-icon-DJjA-BDJ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_iconGroup = __esmMin((() => {
       init_src4();
       IconGroup = class {
@@ -139122,22 +139122,22 @@ var init_a_icon_4nXMCLPu = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-interceptor-DJ-WUAM9.js
-var a_interceptor_DJ_WUAM9_exports = {};
-__export(a_interceptor_DJ_WUAM9_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-interceptor-ChJFmQId.js
+var a_interceptor_ChJFmQId_exports = {};
+__export(a_interceptor_ChJFmQId_exports, {
   n: () => src_exports13,
   t: () => init_src18
 });
 var _dec$53, _dec2$53, _class$53, InterceptorBody, init_interceptor_body, _dec$43, _dec2$43, _class$43, InterceptorHeaders, init_interceptor_headers, _dec$36, _dec2$36, _class$36, InterceptorJwt, init_interceptor_jwt, _dec$28, _dec2$28, _class$28, __ErrorsShouldBeMocked, InterceptorMock, init_interceptor_mock, _dec$112, _dec2$112, _class$112, InterceptorPerformAction, init_interceptor_performAction, config9, init_config11, _dec17, _dec213, _class14, ScopeModuleAInterceptor, init__metadata13, init_jwt, init_types13, src_exports13, init_src18;
-var init_a_interceptor_DJ_WUAM9 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-interceptor-DJ-WUAM9.js"() {
+var init_a_interceptor_ChJFmQId = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-interceptor-ChJFmQId.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_fetch_B7b7sdSg();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_fetch_CcDfi6df();
     init_interceptor_body = __esmMin((() => {
       init_src4();
       init_src7();
@@ -139354,9 +139354,9 @@ var init_a_interceptor_DJ_WUAM9 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-meta-DSD_iwMS.js
-var a_meta_DSD_iwMS_exports = {};
-__export(a_meta_DSD_iwMS_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-meta-CpO8ZMWk.js
+var a_meta_CpO8ZMWk_exports = {};
+__export(a_meta_CpO8ZMWk_exports, {
   n: () => src_exports14,
   r: () => Meta,
   t: () => init_src19
@@ -139365,13 +139365,13 @@ function Meta(options2) {
   return createBeanDecorator("meta", "app", void 0, options2);
 }
 var _dec18, _dec214, _class15, ScopeModuleAMeta, init__metadata14, init_meta$12, init_lib13, init_meta2, init_types14, src_exports14, init_src19;
-var init_a_meta_DSD_iwMS = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-meta-DSD_iwMS.js"() {
+var init_a_meta_CpO8ZMWk = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-meta-CpO8ZMWk.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init__metadata14 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -139405,7 +139405,7 @@ var init_a_meta_DSD_iwMS = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-ssr-CmR75wTN.js
+// dist/ssr-cabloyBasicAdmin/server/assets/a-ssr-C5SZPMW6.js
 function _normalizeExpires(expires) {
   if (!expires) return 0;
   if (!Number.isNaN(Number(expires))) return Number(expires);
@@ -139544,18 +139544,18 @@ function getHead(meta2) {
   return output;
 }
 var _dec$113, _dec2$113, _class$113, SymbolSSRState$1, SymbolSSRStateDefer, SysSsrState, init_sys_ssrState, config10, init_config$12, init_useMeta, Monkey5, init_monkey6, init_utils11, CtxSSRMetaStore, init_ssrMetaStore, import_shared_cjs_prod2, SymbolIsRuntimeSsrPreHydration, SymbolSSRContext, SymbolSSRState, SymbolOnHydrateds, SymbolOnHydratePropHasMismatches, SymbolInstanceUpdates, SymbolHydratingCounter, CtxSSR, init_ssr$1, MonkeySys3, init_monkeySys3, _dec19, _dec215, _class16, ScopeModuleASsr2, init__metadata15, init_lib14, init_config12, init_ssr, init_types15, init_src20;
-var init_a_ssr_CmR75wTN = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-ssr-CmR75wTN.js"() {
+var init_a_ssr_C5SZPMW6 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-ssr-C5SZPMW6.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_DHQu4kcG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_vue_router_CF2_9fiG();
-    init_src_Di17We9u();
+    init_src_BpJZtRvx();
     init_sys_ssrState = __esmMin((() => {
       init_src4();
       init_src5();
@@ -140076,9 +140076,9 @@ var init_a_ssr_CmR75wTN = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/src-Di17We9u.js
-var src_Di17We9u_exports = {};
-__export(src_Di17We9u_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/src-BpJZtRvx.js
+var src_BpJZtRvx_exports = {};
+__export(src_BpJZtRvx_exports, {
   CtxSSR: () => CtxSSR,
   CtxSSRMetaStore: () => CtxSSRMetaStore,
   Monkey: () => Monkey5,
@@ -140510,11 +140510,11 @@ function stringify_primitive(thing) {
   return str;
 }
 var defu, init_defu, MAX_ARRAY_LEN, MAX_ARRAY_INDEX, init_constants, escaped, DevalueError, object_proto_names, is_identifier, init_utils12, chars, unsafe_chars, reserved, init_uneval, init_devalue;
-var init_src_Di17We9u = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/src-Di17We9u.js"() {
+var init_src_BpJZtRvx = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/src-BpJZtRvx.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_a_ssr_CmR75wTN();
+    init_a_ssr_C5SZPMW6();
     __name(isPlainObject5, "isPlainObject");
     __name(_defu, "_defu");
     __name(createDefu, "createDefu");
@@ -140591,9 +140591,9 @@ var init_src_Di17We9u = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-router-CMG3rAYH.js
-var a_router_CMG3rAYH_exports = {};
-__export(a_router_CMG3rAYH_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-router-BUSNfGvg.js
+var a_router_BUSNfGvg_exports = {};
+__export(a_router_BUSNfGvg_exports, {
   i: () => BeanRouterGuardsBase,
   n: () => src_exports15,
   r: () => BeanRouterViewBase,
@@ -140639,16 +140639,16 @@ function _applyDecoratedDescriptor8(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$63, _dec2$63, _class$63, ModelPageData, init_pageData, pageRouteKey, routerViewKey, init_const3, scrollBehavior, init_utils$13, SymbolRouterHistory, init_utils13, _dec$54, _dec2$54, _class$54, SysRouter2, init_sys_router, _dec$44, _dec2$44, _dec3$16, _dec48, _dec56, _dec64, _class$44, _class28, _descriptor7, _descriptor24, BeanRouter, init_bean_router, _dec$37, _dec2$37, _dec310, _class$37, BeanRouterGuardsBase, init_bean_routerGuardsBase, NavigationType2, NavigationDirection2, init_router, _dec$29, _dec2$29, _class$29, ServiceRouterGuards, init_routerGuards, BeanRouterViewBase, init_routerViewBase, _dec$114, _dec2$114, _class$114, ControllerRouterViewEmpty, init_controller6, ZRouterViewEmpty, init_routerViewEmpty, config11, init_config13, Monkey6, init_monkey7, MonkeySys4, init_monkeySys4, _dec20, _dec216, _class17, components5, ScopeModuleARouter, init__metadata16, init_lib15, init_pageMeta, init_routerView, init_types16, src_exports15, init_src21;
-var init_a_router_CMG3rAYH = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-router-CMG3rAYH.js"() {
+var init_a_router_BUSNfGvg = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-router-BUSNfGvg.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
     init_vue_router_CF2_9fiG();
     init_pageData = __esmMin((() => {
       init_src4();
@@ -141488,17 +141488,17 @@ var init_a_router_CMG3rAYH = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-ssrhmr-Dx5Z1vmU.js
+// dist/ssr-cabloyBasicAdmin/server/assets/a-ssrhmr-CscL2N83.js
 var config12, init_config14, MonkeySys5, init_monkeySys5, _dec21, _dec217, _class18, ScopeModuleASsrhmr, init__metadata17, init_types17, init_src22;
-var init_a_ssrhmr_Dx5Z1vmU = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-ssrhmr-Dx5Z1vmU.js"() {
+var init_a_ssrhmr_CscL2N83 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-ssrhmr-CscL2N83.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_src_mZzVE6eL();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_src_WX2uQeGA();
     init_config14 = __esmMin((() => {
       config12 = /* @__PURE__ */ __name((_sys2) => {
         return { change: { debounce: 100 } };
@@ -141573,9 +141573,9 @@ var init_a_ssrhmr_Dx5Z1vmU = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/src-mZzVE6eL.js
-var src_mZzVE6eL_exports = {};
-__export(src_mZzVE6eL_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/src-WX2uQeGA.js
+var src_WX2uQeGA_exports = {};
+__export(src_WX2uQeGA_exports, {
   MonkeySys: () => MonkeySys5,
   ScopeModuleASsrhmr: () => ScopeModuleASsrhmr,
   config: () => config12,
@@ -141643,11 +141643,11 @@ function debounce(function_, wait = 100, options2 = {}) {
   return debounced;
 }
 var init_debounce;
-var init_src_mZzVE6eL = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/src-mZzVE6eL.js"() {
+var init_src_WX2uQeGA = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/src-WX2uQeGA.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_a_ssrhmr_Dx5Z1vmU();
+    init_a_ssrhmr_CscL2N83();
     __name(debounce, "debounce");
     init_debounce = __esmMin((() => {
     }));
@@ -142212,9 +142212,9 @@ var init_typestyle_B2DHz8Iv = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-style-CYLjkJCW.js
-var a_style_CYLjkJCW_exports = {};
-__export(a_style_CYLjkJCW_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-style-WuJtUJN3.js
+var a_style_WuJtUJN3_exports = {};
+__export(a_style_WuJtUJN3_exports, {
   a: () => Theme,
   i: () => Css,
   n: () => src_exports16,
@@ -142247,14 +142247,14 @@ function $getThemeName(themeName) {
   return themeName;
 }
 var _dec$115, _dec2$115, _dec311, _dec49, _class$115, _class29, _descriptor8, BeanTheme, init_bean_theme, config13, init_config15, __ThisModule__3, init_this3, Monkey7, init_monkey8, _dec30, _dec218, _class19, ScopeModuleAStyle, init__metadata18, init_style$1, init_theme$1, BeanThemeBase, init_themeBase, init_lib16, init_css, init_style, init_theme, init_types18, src_exports16, init_src23;
-var init_a_style_CYLjkJCW = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-style-CYLjkJCW.js"() {
+var init_a_style_WuJtUJN3 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-style-WuJtUJN3.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
     init_typestyle_B2DHz8Iv();
     __name(_initializerDefineProperty8, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor9, "_applyDecoratedDescriptor");
@@ -145051,9 +145051,9 @@ var init_tanstack_table_BvgDl6M7 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-table-DiecBYb2.js
-var a_table_DiecBYb2_exports = {};
-__export(a_table_DiecBYb2_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-table-kEdbxgfI.js
+var a_table_kEdbxgfI_exports = {};
+__export(a_table_kEdbxgfI_exports, {
   n: () => src_exports17,
   r: () => TableCell,
   t: () => init_src24
@@ -145062,16 +145062,16 @@ function TableCell(options2) {
   return createBeanDecorator("tableCell", "sys", true, options2);
 }
 var BeanControllerTableBase, init_beanControllerTableBase, _dec$210, _dec2$210, _class$210, _ControllerTable, ControllerTable, init_controller7, _dec$116, _dec2$116, _class$116, RenderTable, init_render2, ZTable, init_table$1, config14, init_config16, _dec31, _dec219, _class20, components6, ScopeModuleATable, init__metadata19, BeanControllerPageTableBase, init_beanControllerPageTableBase, init_tableCell$1, init_lib19, init_table2, init_tableCell2, init_tableColumn, init_types19, src_exports17, init_src24;
-var init_a_table_DiecBYb2 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-table-DiecBYb2.js"() {
+var init_a_table_kEdbxgfI = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-table-kEdbxgfI.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_zova_BqDMBpyl();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_zova_CCYAcmVc();
     init_tanstack_table_BmG9h9f3();
     init_tanstack_table_BvgDl6M7();
     init_beanControllerTableBase = __esmMin((() => {
@@ -145463,9 +145463,9 @@ var init_a_table_DiecBYb2 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-zod-D1d4T7Jn.js
-var a_zod_D1d4T7Jn_exports = {};
-__export(a_zod_D1d4T7Jn_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-zod-Yz4d9s4g.js
+var a_zod_Yz4d9s4g_exports = {};
+__export(a_zod_Yz4d9s4g_exports, {
   n: () => src_exports18,
   t: () => init_src25
 });
@@ -145480,14 +145480,14 @@ function $useLocale(key3, ...args) {
   });
 }
 var _dec$117, _dec2$117, _class$117, ToolV, init_tool_v, _dec40, _dec220, _class21, ScopeModuleAZod, init__metadata20, en_us_default, init_en_us, zh_cn_default, init_zh_cn, locales, init_locales2, src_exports18, init_src25;
-var init_a_zod_D1d4T7Jn = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-zod-D1d4T7Jn.js"() {
+var init_a_zod_Yz4d9s4g = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-zod-Yz4d9s4g.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_tool_v = __esmMin((() => {
       init_src4();
       init_zod();
@@ -145546,20 +145546,20 @@ var init_a_zod_D1d4T7Jn = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-zova-OGbDGfVb.js
-var a_zova_OGbDGfVb_exports = {};
-__export(a_zova_OGbDGfVb_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-zova-Bb0f3N67.js
+var a_zova_Bb0f3N67_exports = {};
+__export(a_zova_Bb0f3N67_exports, {
   n: () => src_exports19,
   t: () => init_src26
 });
 var _dec41, _dec221, _class30, ScopeModuleAZova, init__metadata21, src_exports19, init_src26;
-var init_a_zova_OGbDGfVb = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-zova-OGbDGfVb.js"() {
+var init_a_zova_Bb0f3N67 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-zova-Bb0f3N67.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init__metadata21 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -145576,9 +145576,9 @@ var init_a_zova_OGbDGfVb = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/devui-adapter-Caxap4A4.js
-var devui_adapter_Caxap4A4_exports = {};
-__export(devui_adapter_Caxap4A4_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/devui-adapter-BSSwwfOx.js
+var devui_adapter_BSSwwfOx_exports = {};
+__export(devui_adapter_BSSwwfOx_exports, {
   n: () => src_exports20,
   t: () => init_src27
 });
@@ -145599,14 +145599,14 @@ function _applyDecoratedDescriptor10(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$118, _dec2$118, _dec312, _dec410, _class$118, _class210, _descriptor9, MetaThemeHandler, init_meta_themeHandler, MonkeySys6, init_monkeySys6, _dec50, _dec222, _class31, ScopeModuleDevuiAdapter, init__metadata22, src_exports20, init_src27;
-var init_devui_adapter_Caxap4A4 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/devui-adapter-Caxap4A4.js"() {
+var init_devui_adapter_BSSwwfOx = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/devui-adapter-BSSwwfOx.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_meta_DSD_iwMS();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_meta_CpO8ZMWk();
     __name(_initializerDefineProperty9, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor10, "_applyDecoratedDescriptor");
     init_meta_themeHandler = __esmMin((() => {
@@ -145671,23 +145671,23 @@ var init_devui_adapter_Caxap4A4 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-api-C60u7qUW.js
-var home_api_C60u7qUW_exports = {};
-__export(home_api_C60u7qUW_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-api-W6JEyUss.js
+var home_api_W6JEyUss_exports = {};
+__export(home_api_W6JEyUss_exports, {
   i: () => OpenApiBaseURL,
   n: () => src_exports21,
   r: () => ApiApiHomeUserPassportloginOauthPath,
   t: () => init_src28
 });
 var OpenApiBaseURL, init_baseURL, init_schemas2, init_types$12, init_openapi, _dec$132, _dec2$132, _class$132, ApiApiCaptchacreatePath, ApiApiCaptcharefreshPath, ApiApiCaptchaverifyImmediatePath, ApiCaptcha, init_captcha$1, _dec$122, _dec2$122, _class$122, ApiHome, init_home$1, _dec$11, _dec2$11, _class$11, ApiApiHomeBaseMenuretrieveMenusPath, ApiHomeBaseMenu, init_homeBaseMenu$1, _dec$10, _dec2$10, _class$10, ApiApiHomeBasePermissionretrievePermissionsPath, ApiHomeBasePermission, init_homeBasePermission$1, _dec$9, _dec2$9, _class$9, ApiApiHomeUserPassportcurrentPath, ApiApiHomeUserPassportlogoutPath, ApiApiHomeUserPassportregisterPath, ApiApiHomeUserPassportloginPath, ApiApiHomeUserPassportloginOauthPath, ApiApiHomeUserPassportassociatePath, ApiApiHomeUserPassportmigratePath, ApiApiHomeUserPassportrefreshAuthTokenPath, ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath, ApiApiHomeUserPassportcreateTempAuthTokenPath, ApiHomeUserPassport, init_homeUserPassport$1, _dec$8, _dec2$8, _class$8, ApiApiTestSsrToolOnetestGetPath, ApiApiTestSsrToolOnetestPath, ApiTestSsrToolOne, init_testSsrToolOne$1, _dec$7, _dec2$7, _class$7, ApiSchemaCaptcha, init_captcha2, _dec$64, _dec2$64, _class$64, ApiSchemaHome, init_home, _dec$55, _dec2$55, _class$55, ApiSchemaHomeBaseMenu, init_homeBaseMenu, _dec$45, _dec2$45, _class$45, ApiSchemaHomeBasePermission, init_homeBasePermission, _dec$38, _dec2$38, _class$38, ApiSchemaHomeUserPassport, init_homeUserPassport, _dec$211, _dec2$211, _class$211, ApiSchemaTestSsrToolOne, init_testSsrToolOne, _dec$119, _dec2$119, _class$119, ServiceJwtAdapter2, init_jwtAdapter, _dec51, _dec223, _class32, ScopeModuleHomeApi, init__metadata23, init_api3, init_types20, src_exports21, init_src28;
-var init_home_api_C60u7qUW = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-api-C60u7qUW.js"() {
+var init_home_api_W6JEyUss = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-api-W6JEyUss.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_api_aORiRWVk();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_api_BVJIlg2r();
     init_baseURL = __esmMin((() => {
       OpenApiBaseURL = /* @__PURE__ */ __name((sys2) => {
         return sys2.util.getOpenApiBaseURL("OPENAPI_BASE_URL_HOME_API");
@@ -146035,9 +146035,9 @@ var init_home_api_C60u7qUW = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-base-Cf4rN4Mr.js
-var home_base_Cf4rN4Mr_exports = {};
-__export(home_base_Cf4rN4Mr_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-base-C4a-kbkE.js
+var home_base_C4a_kbkE_exports = {};
+__export(home_base_C4a_kbkE_exports, {
   n: () => src_exports22,
   t: () => init_src29
 });
@@ -146096,17 +146096,17 @@ function $useLocale2(key3, ...args) {
   });
 }
 var _dec$82, _dec2$82, _class$82, ServiceRouterGuards2, init_routerGuards2, _dec$72, _dec2$72, _class$72, ServiceSsr, init_ssr2, _dec$65, _dec2$65, _dec3$17, _dec4$15, _class$65, _class2$14, _descriptor$14, ServiceSsrLayout2, init_ssrLayout, _dec$56, _dec2$56, _class$56, _ControllerItemLink, ZIcon2, ControllerItemLink, init_controller$4, _dec$46, _dec2$46, _class$46, _ControllerPage, ControllerPage, init_controller$32, _dec$39, _dec2$39, _class$39, ControllerPageAuthCallbackSchemaQuery, ControllerPageAuthCallback, init_controller$22, _dec$212, _dec2$212, _dec313, _dec411, _class$212, _class211, _descriptor10, ControllerPageErrorExpiredSchemaQuery, ControllerPageErrorExpired, init_controller$12, _dec$120, _dec2$120, _class$120, ControllerPageErrorNotFound, init_controller8, NSControllerPageAuthCallback, ZPageAuthCallback, init_authCallback, NSControllerPageErrorExpired, ZPageErrorExpired, init_errorExpired, ZPageErrorNotFound, init_errorNotFound, routes2, init_routes2, ZItemLink, init_itemLink, ZPage, init_page2, config15, init_config17, __ThisModule__4, init_this4, init_utils14, Monkey8, init_monkey9, MonkeySys7, init_monkeySys7, Main, init_main, _dec57, _dec224, _class33, pagePathSchemas2, pageNameSchemas2, components7, ScopeModuleHomeBase, init__metadata24, en_us_default2, init_en_us2, zh_cn_default2, init_zh_cn2, locales2, init_locales3, init_lib20, init_scopeBase, init_types21, src_exports22, init_src29;
-var init_home_base_Cf4rN4Mr = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-base-Cf4rN4Mr.js"() {
+var init_home_base_C4a_kbkE = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-base-C4a-kbkE.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_vue_router_CF2_9fiG();
-    init_a_router_CMG3rAYH();
+    init_a_router_BUSNfGvg();
     init_typestyle_B2DHz8Iv();
     init_routerGuards2 = __esmMin((() => {
       init_src4();
@@ -146644,21 +146644,21 @@ var init_home_base_Cf4rN4Mr = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-icon-BAN6Ep_C.js
-var home_icon_BAN6Ep_C_exports = {};
-__export(home_icon_BAN6Ep_C_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-icon-Bfl0s-ZM.js
+var home_icon_Bfl0s_ZM_exports = {};
+__export(home_icon_Bfl0s_ZM_exports, {
   n: () => src_exports23,
   t: () => init_src30
 });
 var auth_default, init_auth2, business_default, init_business, daisy_default, init_daisy, default_default, init_default, editor_default, init_editor, emoji_default, init_emoji, flow_default, init_flow, login_default, init_login, outline_default, init_outline, role_default, init_role, social_default, init_social, tools_default, init_tools, _dec58, _dec225, _class34, icons, ScopeModuleHomeIcon, init__metadata25, src_exports23, init_src30;
-var init_home_icon_BAN6Ep_C = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-icon-BAN6Ep_C.js"() {
+var init_home_icon_Bfl0s_ZM = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-icon-Bfl0s-ZM.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_icon_4nXMCLPu();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_icon_DJjA_BDJ();
     init_auth2 = __esmMin((() => {
       auth_default = "/assets/auth-Bjup4K84.svg";
     }));
@@ -146741,21 +146741,21 @@ var init_home_icon_BAN6Ep_C = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-index-BBgTWSoH.js
-var home_index_BBgTWSoH_exports = {};
-__export(home_index_BBgTWSoH_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-index-CC3-bhUE.js
+var home_index_CC3_bhUE_exports = {};
+__export(home_index_CC3_bhUE_exports, {
   n: () => src_exports24,
   t: () => init_src31
 });
 var _dec$121, _dec2$121, _class$121, ControllerPageHome, init_controller9, ZPageHome, init_home2, routes3, init_routes3, _dec59, _dec226, _class35, pagePathSchemas3, pageNameSchemas3, ScopeModuleHomeIndex, init__metadata26, src_exports24, init_src31;
-var init_home_index_BBgTWSoH = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-index-BBgTWSoH.js"() {
+var init_home_index_CC3_bhUE = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-index-CC3-bhUE.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_controller9 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -146816,9 +146816,9 @@ var init_home_index_BBgTWSoH = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-layoutempty-BmpfNz8l.js
-var home_layoutempty_BmpfNz8l_exports = {};
-__export(home_layoutempty_BmpfNz8l_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-layoutempty-Bbv3prV-.js
+var home_layoutempty_Bbv3prV_exports = {};
+__export(home_layoutempty_Bbv3prV_exports, {
   n: () => src_exports25,
   t: () => init_src32
 });
@@ -146839,14 +146839,14 @@ function _applyDecoratedDescriptor12(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$123, _dec2$123, _dec314, _dec412, _class$123, _class212, _descriptor11, _ControllerLayoutEmpty, ZRouterViewEmpty2, ControllerLayoutEmpty, init_controller10, ZLayoutEmpty, init_layoutEmpty, _dec60, _dec227, _class36, components8, ScopeModuleHomeLayoutempty, init__metadata27, src_exports25, init_src32;
-var init_home_layoutempty_BmpfNz8l = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-layoutempty-BmpfNz8l.js"() {
+var init_home_layoutempty_Bbv3prV = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-layoutempty-Bbv3prV-.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     __name(_initializerDefineProperty11, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor12, "_applyDecoratedDescriptor");
     init_controller10 = __esmMin((() => {
@@ -146910,9 +146910,9 @@ var init_home_layoutempty_BmpfNz8l = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-layouttabs-BapiRbsm.js
-var home_layouttabs_BapiRbsm_exports = {};
-__export(home_layouttabs_BapiRbsm_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-layouttabs-DQPfHvX2.js
+var home_layouttabs_DQPfHvX2_exports = {};
+__export(home_layouttabs_DQPfHvX2_exports, {
   n: () => src_exports26,
   t: () => init_src33
 });
@@ -147026,16 +147026,16 @@ function $useLocale3(key3, ...args) {
   });
 }
 var _dec$133, _dec2$133, _dec3$5, _dec4$5, _class$133, _class2$5, _descriptor$5, ModelLayout, init_layout, _dec$124, _dec2$124, _class$124, ModelMenu, init_menu, _dec$1110, _dec2$1110, _dec3$4, _dec4$4, _dec5$12, _dec6$12, _dec7$12, _dec8$1, _class$1110, _class2$4, _descriptor$4, _descriptor2$1, _descriptor3$1, _ControllerLayoutTabs, ControllerLayoutTabs, init_controller11, _dec$102, _dec2$102, _dec3$33, _dec4$33, _class$102, _class2$33, _descriptor$33, RenderContent, init_render_content, _dec$92, _dec2$92, _dec3$24, _dec4$23, _class$92, _class2$23, _descriptor$23, RenderHeader, init_render_header, _dec$83, _dec2$83, _class$83, RenderLocale, init_render_locale, _dec$73, _dec2$73, _class$73, ZItemLink2, RenderMenu, init_render_menu, _dec$66, _dec2$66, _dec3$18, _dec4$16, _class$66, _class2$15, _descriptor$15, RenderSidebar, init_render_sidebar, _dec$57, _dec2$57, _class$57, ZRouterViewTabs, ZIcon3, RenderTabs, init_render_tabs, _dec$47, _dec2$47, _class$47, RenderTheme, init_render_theme, _dec$310, _dec2$310, _class$310, RenderUser, init_render_user, _dec$213, _dec2$213, _dec315, _dec413, _dec510, _dec65, _dec73, _dec83, _dec93, _dec0, _dec1, _dec102, _dec112, _dec122, _dec132, _dec142, _dec152, _dec162, _class$213, _class213, _descriptor12, _descriptor25, _descriptor32, _descriptor42, _descriptor52, _descriptor62, _descriptor72, _descriptor82, RenderLayoutTabs$1, init_render3, _dec$125, _dec2$125, _class$125, StyleLayoutTabs, init_style2, ZLayoutTabs, init_layoutTabs, config16, init_config18, _dec61, _dec228, _class37, components9, ScopeModuleHomeLayouttabs, init__metadata28, en_us_default3, init_en_us3, zh_cn_default3, init_zh_cn3, locales3, init_locales4, src_exports26, init_src33;
-var init_home_layouttabs_BapiRbsm = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-layouttabs-BapiRbsm.js"() {
+var init_home_layouttabs_DQPfHvX2 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-layouttabs-DQPfHvX2.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
-    init_a_icon_4nXMCLPu();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
+    init_a_icon_DJjA_BDJ();
     init_typestyle_B2DHz8Iv();
     __name(_initializerDefineProperty$5, "_initializerDefineProperty$5");
     __name(_applyDecoratedDescriptor$5, "_applyDecoratedDescriptor$5");
@@ -147396,7 +147396,7 @@ var init_home_layouttabs_BapiRbsm = __esm({
         render() {
           return (0, vue_exports.createVNode)("div", {
             "class": "drawer-side",
-            "style": { width: this.$scopeBase.config.layout.sidebar.width + "px" }
+            "style": { width: `${this.$scopeBase.config.layout.sidebar.width}px` }
           }, [(0, vue_exports.createVNode)("label", {
             "htmlFor": "my-drawer-2",
             "aria-label": "close sidebar",
@@ -147848,9 +147848,9 @@ var init_home_layouttabs_BapiRbsm = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-login-Vvg8Oz4c.js
-var home_login_Vvg8Oz4c_exports = {};
-__export(home_login_Vvg8Oz4c_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-login-BL0Swr4N.js
+var home_login_BL0Swr4N_exports = {};
+__export(home_login_BL0Swr4N_exports, {
   n: () => src_exports27,
   t: () => init_src34
 });
@@ -147881,16 +147881,16 @@ function $useLocale4(key3, ...args) {
   });
 }
 var _dec$311, _dec2$311, _class$311, ControllerPageLogin, init_controller12, _dec$214, _dec2$214, _class$214, ZIcon$1, ZFormFieldPreset2, ZFormFieldBlank2, ZForm2, RenderPageLogin, init_render4, ZPageLogin, init_login2, routes4, init_routes4, _dec$126, _dec2$126, _dec316, _dec414, _class$126, _class214, _descriptor13, ZIcon4, BehaviorFormFieldLayoutLogin, init_behavior_formFieldLayoutLogin, _dec66, _dec229, _class38, pagePathSchemas4, pageNameSchemas4, ScopeModuleHomeLogin, init__metadata29, en_us_default4, init_en_us4, zh_cn_default4, init_zh_cn4, locales4, init_locales5, src_exports27, init_src34;
-var init_home_login_Vvg8Oz4c = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-login-Vvg8Oz4c.js"() {
+var init_home_login_BL0Swr4N = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-login-BL0Swr4N.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
-    init_a_behavior_BtT1ClQi();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
+    init_a_behavior_8zq1kOzY();
     init_controller12 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -148133,23 +148133,23 @@ var init_home_login_Vvg8Oz4c = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-passport-C79V8Zi4.js
-var home_passport_C79V8Zi4_exports = {};
-__export(home_passport_C79V8Zi4_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-passport-enVNCSZG.js
+var home_passport_enVNCSZG_exports = {};
+__export(home_passport_enVNCSZG_exports, {
   n: () => src_exports28,
   t: () => init_src35
 });
 var _dec$127, _dec2$127, _class$127, ModelPassport, init_passport$1, config17, init_config19, Monkey9, init_monkey10, _dec67, _dec230, _class39, ScopeModuleHomePassport, init__metadata30, init_passport, init_types22, src_exports28, init_src35;
-var init_home_passport_C79V8Zi4 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-passport-C79V8Zi4.js"() {
+var init_home_passport_enVNCSZG = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-passport-enVNCSZG.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
-    init_home_api_C60u7qUW();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
+    init_home_api_W6JEyUss();
     init_passport$1 = __esmMin((() => {
       init_src4();
       init_dist$10();
@@ -148371,31 +148371,21 @@ var init_home_passport_C79V8Zi4 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/home-theme-RHY4Qc3v.js
-var home_theme_RHY4Qc3v_exports = {};
-__export(home_theme_RHY4Qc3v_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/home-theme-hSeomuh5.js
+var home_theme_hSeomuh5_exports = {};
+__export(home_theme_hSeomuh5_exports, {
   n: () => src_exports29,
   t: () => init_src36
 });
-var init_style3, init_themeToken, init_types23, _dec$312, _dec2$312, _class$312, CssBase, init_css_base, _dec$215, _dec2$215, _class$215, ThemeDefault, init_theme_default, _dec$128, _dec2$128, _class$128, ThemeOrange, init_theme_orange, _dec68, _dec231, _class40, ScopeModuleHomeTheme, init__metadata31, src_exports29, init_src36;
-var init_home_theme_RHY4Qc3v = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/home-theme-RHY4Qc3v.js"() {
+var _dec$312, _dec2$312, _class$312, CssBase, init_css_base, _dec$215, _dec2$215, _class$215, ThemeDefault, init_theme_default, _dec$128, _dec2$128, _class$128, ThemeOrange, init_theme_orange, _dec68, _dec231, _class40, ScopeModuleHomeTheme, init__metadata31, init_style3, init_themeToken, init_types23, src_exports29, init_src36;
+var init_home_theme_hSeomuh5 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/home-theme-hSeomuh5.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_style_CYLjkJCW();
-    init_style3 = __esmMin((() => {
-      init_src4();
-    }));
-    init_themeToken = __esmMin((() => {
-      init_src23();
-    }));
-    init_types23 = __esmMin((() => {
-      init_style3();
-      init_themeToken();
-    }));
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_style_WuJtUJN3();
     init_css_base = __esmMin((() => {
       init_src4();
       init_src23();
@@ -148478,6 +148468,16 @@ var init_home_theme_RHY4Qc3v = __esm({
         }
       }) || _class40) || _class40);
     }));
+    init_style3 = __esmMin((() => {
+      init_src4();
+    }));
+    init_themeToken = __esmMin((() => {
+      init_src23();
+    }));
+    init_types23 = __esmMin((() => {
+      init_style3();
+      init_themeToken();
+    }));
     src_exports29 = /* @__PURE__ */ __exportAll({
       CssBase: /* @__PURE__ */ __name(() => CssBase, "CssBase"),
       ScopeModuleHomeTheme: /* @__PURE__ */ __name(() => ScopeModuleHomeTheme, "ScopeModuleHomeTheme"),
@@ -148485,26 +148485,26 @@ var init_home_theme_RHY4Qc3v = __esm({
       ThemeOrange: /* @__PURE__ */ __name(() => ThemeOrange, "ThemeOrange")
     });
     init_src36 = __esmMin((() => {
-      init_types23();
       init__metadata31();
+      init_types23();
     }));
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-adapter-C2YYcWu1.js
-var basic_adapter_C2YYcWu1_exports = {};
-__export(basic_adapter_C2YYcWu1_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-adapter-BPAyeQ2Z.js
+var basic_adapter_BPAyeQ2Z_exports = {};
+__export(basic_adapter_BPAyeQ2Z_exports, {
   n: () => src_exports30,
   t: () => init_src37
 });
 var config18, init_config20, __ThisModule__5, init_this5, MonkeySys8, init_monkeySys8, _dec69, _dec232, _class41, ScopeModuleBasicAdapter, init__metadata32, src_exports30, init_src37;
-var init_basic_adapter_C2YYcWu1 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-adapter-C2YYcWu1.js"() {
+var init_basic_adapter_BPAyeQ2Z = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-adapter-BPAyeQ2Z.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_config20 = __esmMin((() => {
       config18 = /* @__PURE__ */ __name((_sys2) => {
         return { formProvider: {
@@ -148556,19 +148556,12 @@ var init_basic_adapter_C2YYcWu1 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-captcha-C3M6Pzj4.js
-var basic_captcha_C3M6Pzj4_exports = {};
-__export(basic_captcha_C3M6Pzj4_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-captcha-ijYFuUZb.js
+var basic_captcha_ijYFuUZb_exports = {};
+__export(basic_captcha_ijYFuUZb_exports, {
   n: () => src_exports31,
   t: () => init_src38
 });
-function $useLocale5(key3, ...args) {
-  const app = useApp();
-  const str = `basic-captcha::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty14(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -148588,32 +148581,23 @@ function _applyDecoratedDescriptor15(i, e, r, n2, l2) {
 function locale5(key3) {
   return `basic-captcha::${key3}`;
 }
-var en_us_default5, init_en_us5, zh_cn_default5, init_zh_cn5, locales5, init_locales6, _dec$129, _dec2$129, _dec317, _dec415, _class$129, _class215, _descriptor14, _ControllerFormFieldCaptcha, ZFormField2, ControllerFormFieldCaptcha, init_controller13, ZFormFieldCaptcha, init_formFieldCaptcha, _dec70, _dec233, _class42, components10, ScopeModuleBasicCaptcha, init__metadata33, src_exports31, init_src38;
-var init_basic_captcha_C3M6Pzj4 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-captcha-C3M6Pzj4.js"() {
+function $useLocale5(key3, ...args) {
+  const app = useApp();
+  const str = `basic-captcha::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$129, _dec2$129, _dec317, _dec415, _class$129, _class215, _descriptor14, _ControllerFormFieldCaptcha, ZFormField2, ControllerFormFieldCaptcha, init_controller13, ZFormFieldCaptcha, init_formFieldCaptcha, _dec70, _dec233, _class42, components10, ScopeModuleBasicCaptcha, init__metadata33, en_us_default5, init_en_us5, zh_cn_default5, init_zh_cn5, locales5, init_locales6, src_exports31, init_src38;
+var init_basic_captcha_ijYFuUZb = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-captcha-ijYFuUZb.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_typestyle_B2DHz8Iv();
-    init_en_us5 = __esmMin((() => {
-      en_us_default5 = { InputCaptcha: "Please input captcha" };
-    }));
-    init_zh_cn5 = __esmMin((() => {
-      zh_cn_default5 = { InputCaptcha: "\u8BF7\u8F93\u5165\u9A8C\u8BC1\u7801" };
-    }));
-    __name($useLocale5, "$useLocale");
-    init_locales6 = __esmMin((() => {
-      init_src4();
-      init_en_us5();
-      init_zh_cn5();
-      locales5 = {
-        "en-us": en_us_default5,
-        "zh-cn": zh_cn_default5
-      };
-    }));
     __name(_initializerDefineProperty14, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor15, "_applyDecoratedDescriptor");
     init_controller13 = __esmMin((() => {
@@ -148726,6 +148710,22 @@ var init_basic_captcha_C3M6Pzj4 = __esm({
         }
       }) || _class42) || _class42);
     }));
+    init_en_us5 = __esmMin((() => {
+      en_us_default5 = { InputCaptcha: "Please input captcha" };
+    }));
+    init_zh_cn5 = __esmMin((() => {
+      zh_cn_default5 = { InputCaptcha: "\u8BF7\u8F93\u5165\u9A8C\u8BC1\u7801" };
+    }));
+    __name($useLocale5, "$useLocale");
+    init_locales6 = __esmMin((() => {
+      init_src4();
+      init_en_us5();
+      init_zh_cn5();
+      locales5 = {
+        "en-us": en_us_default5,
+        "zh-cn": zh_cn_default5
+      };
+    }));
     src_exports31 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale5, "$useLocale"),
       ControllerFormFieldCaptcha: /* @__PURE__ */ __name(() => ControllerFormFieldCaptcha, "ControllerFormFieldCaptcha"),
@@ -148736,19 +148736,19 @@ var init_basic_captcha_C3M6Pzj4 = __esm({
       locales: /* @__PURE__ */ __name(() => locales5, "locales")
     });
     init_src38 = __esmMin((() => {
-      init_locales6();
       init__metadata33();
+      init_locales6();
     }));
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-command-CxhLYJQW.js
-var a_command_CxhLYJQW_exports = {};
-__export(a_command_CxhLYJQW_exports, {
-  a: () => Command,
-  i: () => BeanCommandBulkBase,
+// dist/ssr-cabloyBasicAdmin/server/assets/a-command-Ca2QuSEO.js
+var a_command_Ca2QuSEO_exports = {};
+__export(a_command_Ca2QuSEO_exports, {
+  a: () => BeanCommandBulkBase,
+  i: () => BeanCommandRowBase,
   n: () => src_exports32,
-  r: () => BeanCommandRowBase,
+  r: () => Command,
   t: () => init_src39
 });
 function $performCommand(sys2, commandName, options2, renderContext, next) {
@@ -148770,15 +148770,15 @@ function _renderEventCommandNormal_inner(beanInstance, options2, renderContext, 
 function Command(options2) {
   return createBeanDecorator("command", "sys", true, options2);
 }
-var init_performCommand$1, Monkey10, init_monkey11, _dec71, _dec234, _class43, ScopeModuleACommand, init__metadata34, init_command$1, BeanCommandBulkBase, init_beanCommandBulkBase, BeanCommandRowBase, init_beanCommandRowBase, init_lib21, SymbolCommandResult, init_command, init_performCommand, init_commandJsx, init_types24, src_exports32, init_src39;
-var init_a_command_CxhLYJQW = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-command-CxhLYJQW.js"() {
+var init_performCommand$1, Monkey10, init_monkey11, _dec71, _dec234, _class43, ScopeModuleACommand, init__metadata34, BeanCommandBulkBase, init_beanCommandBulkBase, BeanCommandRowBase, init_beanCommandRowBase, init_command$1, init_lib21, SymbolCommandResult, init_command, init_commandJsx, init_performCommand, init_types24, src_exports32, init_src39;
+var init_a_command_Ca2QuSEO = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-command-Ca2QuSEO.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     __name($performCommand, "$performCommand");
     __name(_renderEventCommandNormal_inner, "_renderEventCommandNormal_inner");
     init_performCommand$1 = __esmMin((() => {
@@ -148820,10 +148820,6 @@ var init_a_command_CxhLYJQW = __esm({
         }
       }) || _class43) || _class43);
     }));
-    __name(Command, "Command");
-    init_command$1 = __esmMin((() => {
-      init_src4();
-    }));
     init_beanCommandBulkBase = __esmMin((() => {
       init_src4();
       BeanCommandBulkBase = class extends BeanBase {
@@ -148864,24 +148860,28 @@ var init_a_command_CxhLYJQW = __esm({
         }
       };
     }));
+    __name(Command, "Command");
+    init_command$1 = __esmMin((() => {
+      init_src4();
+    }));
     init_lib21 = __esmMin((() => {
-      init_command$1();
-      init_performCommand$1();
       init_beanCommandBulkBase();
       init_beanCommandRowBase();
+      init_command$1();
+      init_performCommand$1();
     }));
     init_command = __esmMin((() => {
       SymbolCommandResult = /* @__PURE__ */ Symbol("SymbolCommandResult");
     }));
+    init_commandJsx = __esmMin((() => {
+    }));
     init_performCommand = __esmMin((() => {
       init_src4();
     }));
-    init_commandJsx = __esmMin((() => {
-    }));
     init_types24 = __esmMin((() => {
       init_command();
-      init_performCommand();
       init_commandJsx();
+      init_performCommand();
     }));
     src_exports32 = /* @__PURE__ */ __exportAll({
       $performCommand: /* @__PURE__ */ __name(() => $performCommand, "$performCommand"),
@@ -148900,21 +148900,21 @@ var init_a_command_CxhLYJQW = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-commands-fawW2oUh.js
-var basic_commands_fawW2oUh_exports = {};
-__export(basic_commands_fawW2oUh_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-commands-DbrmX5F9.js
+var basic_commands_DbrmX5F9_exports = {};
+__export(basic_commands_DbrmX5F9_exports, {
   n: () => src_exports33,
   t: () => init_src40
 });
 var _dec$84, _dec2$84, _class$84, CommandAlert, init_command_alert, _dec$74, _dec2$74, _class$74, CommandConfirm, init_command_confirm, _dec$67, _dec2$67, _class$67, CommandCopy, init_command_copy, _dec$58, _dec2$58, _class$58, CommandCreate, init_command_create, _dec$48, _dec2$48, _class$48, CommandDelete, init_command_delete, _dec$313, _dec2$313, _class$313, CommandEdit, init_command_edit, _dec$216, _dec2$216, _class$216, CommandSetValue, init_command_setValue, _dec$130, _dec2$130, _class$130, CommandView, init_command_view, _dec74, _dec235, _class44, ScopeModuleBasicCommands, init__metadata35, src_exports33, init_src40;
-var init_basic_commands_fawW2oUh = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-commands-fawW2oUh.js"() {
+var init_basic_commands_DbrmX5F9 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-commands-DbrmX5F9.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_command_CxhLYJQW();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_command_Ca2QuSEO();
     init_command_alert = __esmMin((() => {
       init_src4();
       init_src39();
@@ -149081,22 +149081,22 @@ var init_basic_commands_fawW2oUh = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-commandssync-CFTcG4jj.js
-var basic_commandssync_CFTcG4jj_exports = {};
-__export(basic_commandssync_CFTcG4jj_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-commandssync-DRsHxqEg.js
+var basic_commandssync_DRsHxqEg_exports = {};
+__export(basic_commandssync_DRsHxqEg_exports, {
   n: () => src_exports34,
   t: () => init_src41
 });
 var _dec$217, _dec2$217, _dec3$19, _class$217, CommandExpr, init_command_expr, _dec$131, _dec2$131, _dec318, _class$131, CommandLog, init_command_log, _dec75, _dec236, _class45, ScopeModuleBasicCommandssync, init__metadata36, src_exports34, init_src41;
-var init_basic_commandssync_CFTcG4jj = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-commandssync-CFTcG4jj.js"() {
+var init_basic_commandssync_DRsHxqEg = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-commandssync-DRsHxqEg.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_command_CxhLYJQW();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_command_Ca2QuSEO();
     init_command_expr = __esmMin((() => {
       init_src4();
       init_src39();
@@ -149145,7 +149145,7 @@ var init_basic_commandssync_CFTcG4jj = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-currency-CWG1gElX.js
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-currency-kzR5c2DQ.js
 function currencyFormat(value, options2) {
   if (!value || typeof value !== "number" && typeof value !== "string") return value;
   return new Currency(options2).format(value);
@@ -149170,16 +149170,16 @@ function _applyDecoratedDescriptor16(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var init_utils15, _dec$218, _dec2$218, _dec319, _dec416, _class$218, _class216, _descriptor15, _ControllerFormFieldCurrency, ZFormFieldPreset3, ControllerFormFieldCurrency, init_controller14, ZFormFieldCurrency, init_formFieldCurrency, _dec$134, _dec2$134, _class$134, TableCellCurrency, init_tableCell_currency, _dec76, _dec237, _class46, components11, ScopeModuleBasicCurrency, init__metadata37, init_lib22, init_src42;
-var init_basic_currency_CWG1gElX = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-currency-CWG1gElX.js"() {
+var init_basic_currency_kzR5c2DQ = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-currency-kzR5c2DQ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_table_DiecBYb2();
-    init_src_Yf3Zg4_A();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_table_kEdbxgfI();
+    init_src_DAaiMjTY();
     __name(currencyFormat, "currencyFormat");
     __name(currencyUpdate, "currencyUpdate");
     init_utils15 = __esmMin((() => {
@@ -149301,9 +149301,9 @@ var init_basic_currency_CWG1gElX = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/src-Yf3Zg4_A.js
-var src_Yf3Zg4_A_exports = {};
-__export(src_Yf3Zg4_A_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/src-DAaiMjTY.js
+var src_DAaiMjTY_exports = {};
+__export(src_DAaiMjTY_exports, {
   ControllerFormFieldCurrency: () => ControllerFormFieldCurrency,
   ScopeModuleBasicCurrency: () => ScopeModuleBasicCurrency,
   TableCellCurrency: () => TableCellCurrency,
@@ -149323,11 +149323,11 @@ function _trimZero(str, zero) {
   return str;
 }
 var Currency, init_dist4;
-var init_src_Yf3Zg4_A = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/src-Yf3Zg4_A.js"() {
+var init_src_DAaiMjTY = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/src-DAaiMjTY.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_basic_currency_CWG1gElX();
+    init_basic_currency_kzR5c2DQ();
     __name(_trimZero, "_trimZero");
     init_dist4 = __esmMin((() => {
       Currency = class {
@@ -149362,7 +149362,7 @@ var init_src_Yf3Zg4_A = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-date-D0lYFZLn.js
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-date-Cxei0zA8.js
 function dateFormatUtil(value, options2) {
   if (!value) return;
   if (!options2) return value;
@@ -149371,29 +149371,17 @@ function dateFormatUtil(value, options2) {
   else if (options2.preset) return datetime3.toLocaleString(DateTime[options2.preset]);
   return value;
 }
-var init_date, init_types25, init_utils16, init_lib23, _dec$49, _dec2$49, _class$49, _ControllerDateRange, ControllerDateRange, init_controller$23, _dec$314, _dec2$314, _class$314, _ControllerFormFieldDate, ZFormFieldPreset4, ControllerFormFieldDate, init_controller$13, ZDateRange, init_dateRange, _dec$219, _dec2$219, _class$219, _ControllerFormFieldDateRange, ZFormField3, ControllerFormFieldDateRange, init_controller15, ZFormFieldDate, init_formFieldDate, ZFormFieldDateRange, init_formFieldDateRange, _dec$135, _dec2$135, _class$135, TableCellDate, init_tableCell_date, _dec77, _dec238, _class47, components12, ScopeModuleBasicDate, init__metadata38, init_src43;
-var init_basic_date_D0lYFZLn = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-date-D0lYFZLn.js"() {
+var _dec$49, _dec2$49, _class$49, _ControllerDateRange, ControllerDateRange, init_controller$23, init_utils16, _dec$314, _dec2$314, _class$314, _ControllerFormFieldDate, ZFormFieldPreset4, ControllerFormFieldDate, init_controller$13, ZDateRange, init_dateRange, _dec$219, _dec2$219, _class$219, _ControllerFormFieldDateRange, ZFormField3, ControllerFormFieldDateRange, init_controller15, ZFormFieldDate, init_formFieldDate, ZFormFieldDateRange, init_formFieldDateRange, _dec$135, _dec2$135, _class$135, TableCellDate, init_tableCell_date, _dec77, _dec238, _class47, components12, ScopeModuleBasicDate, init__metadata38, init_lib23, init_date, init_types25, init_src43;
+var init_basic_date_Cxei0zA8 = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-date-Cxei0zA8.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_table_DiecBYb2();
-    init_src_DSrYvi2l();
-    init_date = __esmMin((() => {
-    }));
-    init_types25 = __esmMin((() => {
-      init_date();
-    }));
-    __name(dateFormatUtil, "dateFormatUtil");
-    init_utils16 = __esmMin((() => {
-      init_luxon();
-    }));
-    init_lib23 = __esmMin((() => {
-      init_utils16();
-    }));
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_table_kEdbxgfI();
+    init_src_CfND0OyL();
     init_controller$23 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -149448,6 +149436,10 @@ var init_basic_date_D0lYFZLn = __esm({
           return `${dateStartStr ?? ""}${this.$props.separator}${dateEndStr ?? ""}`;
         }
       }, _ControllerDateRange.$propsDefault = { separator: "~" }, _ControllerDateRange)) || _class$49) || _class$49);
+    }));
+    __name(dateFormatUtil, "dateFormatUtil");
+    init_utils16 = __esmMin((() => {
+      init_luxon();
     }));
     init_controller$13 = __esmMin((() => {
       init_vue();
@@ -149583,17 +149575,25 @@ var init_basic_date_D0lYFZLn = __esm({
         }
       }) || _class47) || _class47);
     }));
+    init_lib23 = __esmMin((() => {
+      init_utils16();
+    }));
+    init_date = __esmMin((() => {
+    }));
+    init_types25 = __esmMin((() => {
+      init_date();
+    }));
     init_src43 = __esmMin((() => {
-      init_types25();
-      init_lib23();
       init__metadata38();
+      init_lib23();
+      init_types25();
     }));
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/src-DSrYvi2l.js
-var src_DSrYvi2l_exports = {};
-__export(src_DSrYvi2l_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/src-CfND0OyL.js
+var src_CfND0OyL_exports = {};
+__export(src_CfND0OyL_exports, {
   ControllerDateRange: () => ControllerDateRange,
   ControllerFormFieldDate: () => ControllerFormFieldDate,
   ControllerFormFieldDateRange: () => ControllerFormFieldDateRange,
@@ -151071,11 +151071,11 @@ function friendlyDateTime(dateTimeish) {
   else throw new InvalidArgumentError(`Unknown datetime argument: ${dateTimeish}, of type ${typeof dateTimeish}`);
 }
 var LuxonError, InvalidDateTimeError, InvalidIntervalError, InvalidDurationError, ConflictingSpecificationError, InvalidUnitError, InvalidArgumentError, ZoneIsAbstractError, n, s, l, DATE_SHORT, DATE_MED, DATE_MED_WITH_WEEKDAY, DATE_FULL, DATE_HUGE, TIME_SIMPLE, TIME_WITH_SECONDS, TIME_WITH_SHORT_OFFSET, TIME_WITH_LONG_OFFSET, TIME_24_SIMPLE, TIME_24_WITH_SECONDS, TIME_24_WITH_SHORT_OFFSET, TIME_24_WITH_LONG_OFFSET, DATETIME_SHORT, DATETIME_SHORT_WITH_SECONDS, DATETIME_MED, DATETIME_MED_WITH_SECONDS, DATETIME_MED_WITH_WEEKDAY, DATETIME_FULL, DATETIME_FULL_WITH_SECONDS, DATETIME_HUGE, DATETIME_HUGE_WITH_SECONDS, Zone, singleton$1, SystemZone, dtfCache, typeToPos, ianaZoneCache, IANAZone, intlLFCache, intlDTCache, intlNumCache, intlRelCache, sysLocaleCache, intlResolvedOptionsCache, weekInfoCache, PolyNumberFormatter, PolyDateFormatter, PolyRelFormatter, fallbackWeekSettings, Locale, singleton, FixedOffsetZone, InvalidZone, numberingSystems, numberingSystemsUTF16, hanidecChars, digitRegexCache, now, defaultZone, defaultLocale, defaultNumberingSystem, defaultOutputCalendar, twoDigitCutoffYear, throwOnInvalid, defaultWeekSettings, Settings, Invalid, nonLeapLadder, leapLadder, monthsLong, monthsShort, monthsNarrow, weekdaysLong, weekdaysShort, weekdaysNarrow, meridiems, erasLong, erasShort, erasNarrow, macroTokenToFormatOpts, Formatter, ianaRegex, offsetRegex, isoExtendedZone, isoTimeBaseRegex, isoTimeRegex, isoTimeExtensionRegex, isoYmdRegex, isoWeekRegex, isoOrdinalRegex, extractISOWeekData, extractISOOrdinalData, sqlYmdRegex, sqlTimeRegex, sqlTimeExtensionRegex, isoTimeOnly, isoDuration, obsOffsets, rfc2822, rfc1123, rfc850, ascii, isoYmdWithTimeExtensionRegex, isoWeekWithTimeExtensionRegex, isoOrdinalWithTimeExtensionRegex, isoTimeCombinedRegex, extractISOYmdTimeAndOffset, extractISOWeekTimeAndOffset, extractISOOrdinalDateAndTime, extractISOTimeAndOffset, extractISOTimeOnly, sqlYmdWithTimeExtensionRegex, sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone, INVALID$2, lowOrderMatrix, casualMatrix, daysInYearAccurate, daysInMonthAccurate, accurateMatrix, orderedUnits$1, reverseUnits, Duration2, INVALID$1, Interval, Info, MISSING_FTP, spaceOrNBSP, spaceOrNBSPRegExp, partTypeStyleToTokenVal, dummyDateTimeCache, TokenParser, INVALID, MAX_DATE, defaultUnitValues, defaultWeekUnitValues, defaultOrdinalUnitValues, orderedUnits, orderedWeekUnits, orderedOrdinalUnits, zoneOffsetTs, zoneOffsetGuessCache, DateTime, init_luxon;
-var init_src_DSrYvi2l = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/src-DSrYvi2l.js"() {
+var init_src_CfND0OyL = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/src-CfND0OyL.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_basic_date_D0lYFZLn();
+    init_basic_date_Cxei0zA8();
     __name(makeDTF, "makeDTF");
     __name(hackyOffset, "hackyOffset");
     __name(partsOffset, "partsOffset");
@@ -155959,19 +155959,12 @@ var init_src_DSrYvi2l = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-form-BCqrnxwP.js
-var basic_form_BCqrnxwP_exports = {};
-__export(basic_form_BCqrnxwP_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-form-PjnGAcW_.js
+var basic_form_PjnGAcW_exports = {};
+__export(basic_form_PjnGAcW_exports, {
   n: () => src_exports35,
   t: () => init_src44
 });
-function $useLocale6(key3, ...args) {
-  const app = useApp();
-  const str = `basic-form::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty$34(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -156039,41 +156032,26 @@ function _applyDecoratedDescriptor17(i, e, r, n2, l2) {
 function locale6(key3) {
   return `basic-form::${key3}`;
 }
-var en_us_default6, init_en_us6, zh_cn_default6, init_zh_cn6, locales6, init_locales7, _dec$410, _dec2$410, _dec3$34, _dec4$34, _class$410, _class2$34, _descriptor$34, _ControllerActionBack, ControllerActionBack, init_controller$14, _dec$315, _dec2$315, _dec3$25, _dec4$24, _class$315, _class2$24, _descriptor$24, _ControllerActionSubmit, ControllerActionSubmit, init_controller16, ZActionBack, init_actionBack, ZActionSubmit, init_actionSubmit, _dec$220, _dec2$220, _dec3$110, _dec4$17, _class$220, _class2$16, _descriptor$16, BehaviorFormField, init_behavior_formField, _dec$136, _dec2$136, _dec320, _dec417, _class$136, _class217, _descriptor16, BehaviorFormFieldLayout, init_behavior_formFieldLayout, _dec78, _dec239, _class48, components13, ScopeModuleBasicForm, init__metadata39, src_exports35, init_src44;
-var init_basic_form_BCqrnxwP = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-form-BCqrnxwP.js"() {
+function $useLocale6(key3, ...args) {
+  const app = useApp();
+  const str = `basic-form::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$410, _dec2$410, _dec3$34, _dec4$34, _class$410, _class2$34, _descriptor$34, _ControllerActionBack, ControllerActionBack, init_controller$14, _dec$315, _dec2$315, _dec3$25, _dec4$24, _class$315, _class2$24, _descriptor$24, _ControllerActionSubmit, ControllerActionSubmit, init_controller16, ZActionBack, init_actionBack, ZActionSubmit, init_actionSubmit, _dec$220, _dec2$220, _dec3$110, _dec4$17, _class$220, _class2$16, _descriptor$16, BehaviorFormField, init_behavior_formField, _dec$136, _dec2$136, _dec320, _dec417, _class$136, _class217, _descriptor16, BehaviorFormFieldLayout, init_behavior_formFieldLayout, _dec78, _dec239, _class48, components13, ScopeModuleBasicForm, init__metadata39, en_us_default6, init_en_us6, zh_cn_default6, init_zh_cn6, locales6, init_locales7, src_exports35, init_src44;
+var init_basic_form_PjnGAcW = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-form-PjnGAcW_.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_zova_BqDMBpyl();
-    init_a_behavior_BtT1ClQi();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_zova_CCYAcmVc();
+    init_a_behavior_8zq1kOzY();
     init_typestyle_B2DHz8Iv();
-    init_en_us6 = __esmMin((() => {
-      en_us_default6 = {
-        Back: "Back",
-        Submit: "Submit"
-      };
-    }));
-    init_zh_cn6 = __esmMin((() => {
-      zh_cn_default6 = {
-        Back: "\u56DE\u9000",
-        Submit: "\u63D0\u4EA4"
-      };
-    }));
-    __name($useLocale6, "$useLocale");
-    init_locales7 = __esmMin((() => {
-      init_src4();
-      init_en_us6();
-      init_zh_cn6();
-      locales6 = {
-        "en-us": en_us_default6,
-        "zh-cn": zh_cn_default6
-      };
-    }));
     __name(_initializerDefineProperty$34, "_initializerDefineProperty$3");
     __name(_applyDecoratedDescriptor$34, "_applyDecoratedDescriptor$3");
     init_controller$14 = __esmMin((() => {
@@ -156297,6 +156275,28 @@ var init_basic_form_BCqrnxwP = __esm({
         }
       }) || _class48) || _class48);
     }));
+    init_en_us6 = __esmMin((() => {
+      en_us_default6 = {
+        Back: "Back",
+        Submit: "Submit"
+      };
+    }));
+    init_zh_cn6 = __esmMin((() => {
+      zh_cn_default6 = {
+        Back: "\u56DE\u9000",
+        Submit: "\u63D0\u4EA4"
+      };
+    }));
+    __name($useLocale6, "$useLocale");
+    init_locales7 = __esmMin((() => {
+      init_src4();
+      init_en_us6();
+      init_zh_cn6();
+      locales6 = {
+        "en-us": en_us_default6,
+        "zh-cn": zh_cn_default6
+      };
+    }));
     src_exports35 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale6, "$useLocale"),
       BehaviorFormField: /* @__PURE__ */ __name(() => BehaviorFormField, "BehaviorFormField"),
@@ -156311,27 +156311,27 @@ var init_basic_form_BCqrnxwP = __esm({
       locales: /* @__PURE__ */ __name(() => locales6, "locales")
     });
     init_src44 = __esmMin((() => {
-      init_locales7();
       init__metadata39();
+      init_locales7();
     }));
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-input-PMvoUARP.js
-var basic_input_PMvoUARP_exports = {};
-__export(basic_input_PMvoUARP_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-input-Lf9so3Ft.js
+var basic_input_Lf9so3Ft_exports = {};
+__export(basic_input_Lf9so3Ft_exports, {
   n: () => src_exports36,
   t: () => init_src45
 });
 var _dec$137, _dec2$137, _class$137, _ControllerFormFieldInput, ZFormField4, ControllerFormFieldInput, init_controller17, ZFormFieldInput, init_formFieldInput, _dec79, _dec240, _class49, components14, ScopeModuleBasicInput, init__metadata40, src_exports36, init_src45;
-var init_basic_input_PMvoUARP = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-input-PMvoUARP.js"() {
+var init_basic_input_Lf9so3Ft = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-input-Lf9so3Ft.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_typestyle_B2DHz8Iv();
     init_controller17 = __esmMin((() => {
       init_vue();
@@ -156404,19 +156404,12 @@ var init_basic_input_PMvoUARP = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-page-Ci0XKDaz.js
-var basic_page_Ci0XKDaz_exports = {};
-__export(basic_page_Ci0XKDaz_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-page-CFQ25Tpd.js
+var basic_page_CFQ25Tpd_exports = {};
+__export(basic_page_CFQ25Tpd_exports, {
   n: () => src_exports37,
   t: () => init_src46
 });
-function $useLocale7(key3, ...args) {
-  const app = useApp();
-  const str = `basic-page::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty$35(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -156484,53 +156477,27 @@ function _applyDecoratedDescriptor18(i, e, r, n2, l2) {
 function locale7(key3) {
   return `basic-page::${key3}`;
 }
-var en_us_default7, init_en_us7, zh_cn_default7, init_zh_cn7, locales7, init_locales8, init_page3, init_types26, _dec$59, _dec2$59, _dec3$35, _dec4$35, _class$59, _class2$35, _descriptor$35, _ControllerBlockFilter, ZForm3, ControllerBlockFilter, init_controller$42, _dec$411, _dec2$411, _class$411, _ControllerBlockPage, ControllerBlockPage, init_controller$33, _dec$316, _dec2$316, _dec3$26, _dec4$25, _class$316, _class2$25, _descriptor$25, _ControllerBlockPager, ControllerBlockPager, init_controller$24, _dec$221, _dec2$221, _dec3$111, _dec4$18, _class$221, _class2$17, _descriptor$17, _ControllerBlockTable, ZTable2, ControllerBlockTable, init_controller$15, _dec$138, _dec2$138, _dec321, _dec418, _class$138, _class218, _descriptor17, _ControllerBlockToolbarBulk, ControllerBlockToolbarBulk, init_controller18, ZBlockFilter, init_blockFilter, ZBlockPage, init_blockPage, ZBlockPager, init_blockPager, ZBlockTable, init_blockTable, ZBlockToolbarBulk, init_blockToolbarBulk, _dec80, _dec241, _class50, components15, ScopeModuleBasicPage, init__metadata41, src_exports37, init_src46;
-var init_basic_page_Ci0XKDaz = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-page-Ci0XKDaz.js"() {
+function $useLocale7(key3, ...args) {
+  const app = useApp();
+  const str = `basic-page::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$59, _dec2$59, _dec3$35, _dec4$35, _class$59, _class2$35, _descriptor$35, _ControllerBlockFilter, ZForm3, ControllerBlockFilter, init_controller$42, _dec$411, _dec2$411, _class$411, _ControllerBlockPage, ControllerBlockPage, init_controller$33, _dec$316, _dec2$316, _dec3$26, _dec4$25, _class$316, _class2$25, _descriptor$25, _ControllerBlockPager, ControllerBlockPager, init_controller$24, _dec$221, _dec2$221, _dec3$111, _dec4$18, _class$221, _class2$17, _descriptor$17, _ControllerBlockTable, ZTable2, ControllerBlockTable, init_controller$15, _dec$138, _dec2$138, _dec321, _dec418, _class$138, _class218, _descriptor17, _ControllerBlockToolbarBulk, ControllerBlockToolbarBulk, init_controller18, ZBlockFilter, init_blockFilter, ZBlockPage, init_blockPage, ZBlockPager, init_blockPager, ZBlockTable, init_blockTable, ZBlockToolbarBulk, init_blockToolbarBulk, _dec80, _dec241, _class50, components15, ScopeModuleBasicPage, init__metadata41, en_us_default7, init_en_us7, zh_cn_default7, init_zh_cn7, locales7, init_locales8, init_page3, init_types26, src_exports37, init_src46;
+var init_basic_page_CFQ25Tpd = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-page-CFQ25Tpd.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_zova_BqDMBpyl();
-    init_a_model_DuDRXYdw();
-    init_a_openapi_DLhBU89();
-    init_a_table_DiecBYb2();
-    init_en_us7 = __esmMin((() => {
-      en_us_default7 = {
-        Search: "Search",
-        Reset: "Reset",
-        PagedTotalItems: "Total",
-        PagedTotalPages: "Pages"
-      };
-    }));
-    init_zh_cn7 = __esmMin((() => {
-      zh_cn_default7 = {
-        Search: "\u641C\u7D22",
-        Reset: "\u91CD\u7F6E",
-        PagedTotalItems: "\u603B\u6761\u6570",
-        PagedTotalPages: "\u603B\u9875\u6570"
-      };
-    }));
-    __name($useLocale7, "$useLocale");
-    init_locales8 = __esmMin((() => {
-      init_src4();
-      init_en_us7();
-      init_zh_cn7();
-      locales7 = {
-        "en-us": en_us_default7,
-        "zh-cn": zh_cn_default7
-      };
-    }));
-    init_page3 = __esmMin((() => {
-      init_src24();
-      init_src9();
-    }));
-    init_types26 = __esmMin((() => {
-      init_page3();
-    }));
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_zova_CCYAcmVc();
+    init_a_model_DRMCpadc();
+    init_a_openapi_QKVejZED();
+    init_a_table_kEdbxgfI();
     __name(_initializerDefineProperty$35, "_initializerDefineProperty$3");
     __name(_applyDecoratedDescriptor$35, "_applyDecoratedDescriptor$3");
     init_controller$42 = __esmMin((() => {
@@ -156714,7 +156681,7 @@ var init_basic_page_Ci0XKDaz = __esm({
         _renderBlocks() {
           const blocks = this.$props.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = Object.assign({ key: index }, block.options);
             const domBlock = this.jsxZova.render(block.render, options2, this.jsxCelScope, this.jsxRenderContext);
@@ -156959,6 +156926,39 @@ var init_basic_page_Ci0XKDaz = __esm({
         }
       }) || _class50) || _class50);
     }));
+    init_en_us7 = __esmMin((() => {
+      en_us_default7 = {
+        Search: "Search",
+        Reset: "Reset",
+        PagedTotalItems: "Total",
+        PagedTotalPages: "Pages"
+      };
+    }));
+    init_zh_cn7 = __esmMin((() => {
+      zh_cn_default7 = {
+        Search: "\u641C\u7D22",
+        Reset: "\u91CD\u7F6E",
+        PagedTotalItems: "\u603B\u6761\u6570",
+        PagedTotalPages: "\u603B\u9875\u6570"
+      };
+    }));
+    __name($useLocale7, "$useLocale");
+    init_locales8 = __esmMin((() => {
+      init_src4();
+      init_en_us7();
+      init_zh_cn7();
+      locales7 = {
+        "en-us": en_us_default7,
+        "zh-cn": zh_cn_default7
+      };
+    }));
+    init_page3 = __esmMin((() => {
+      init_src24();
+      init_src9();
+    }));
+    init_types26 = __esmMin((() => {
+      init_page3();
+    }));
     src_exports37 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale7, "$useLocale"),
       ControllerBlockFilter: /* @__PURE__ */ __name(() => ControllerBlockFilter, "ControllerBlockFilter"),
@@ -156977,26 +156977,19 @@ var init_basic_page_Ci0XKDaz = __esm({
       locales: /* @__PURE__ */ __name(() => locales7, "locales")
     });
     init_src46 = __esmMin((() => {
+      init__metadata41();
       init_locales8();
       init_types26();
-      init__metadata41();
     }));
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-pageentry-CPPQA7R7.js
-var basic_pageentry_CPPQA7R7_exports = {};
-__export(basic_pageentry_CPPQA7R7_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-pageentry-B3b1zKEO.js
+var basic_pageentry_B3b1zKEO_exports = {};
+__export(basic_pageentry_B3b1zKEO_exports, {
   n: () => src_exports38,
   t: () => init_src47
 });
-function $useLocale8(key3, ...args) {
-  const app = useApp();
-  const str = `basic-pageentry::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty$18(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -157032,43 +157025,27 @@ function _applyDecoratedDescriptor19(i, e, r, n2, l2) {
 function locale8(key3) {
   return `basic-pageentry::${key3}`;
 }
-var en_us_default8, init_en_us8, zh_cn_default8, init_zh_cn8, locales8, init_locales9, init_pageEntry, init_types27, _dec$317, _dec2$317, _dec3$112, _dec4$19, _class$317, _class2$18, _descriptor$18, _ControllerBlockForm, ZForm4, ControllerBlockForm, init_controller$25, _dec$222, _dec2$222, _class$222, _ControllerBlockPageEntry, ControllerBlockPageEntry, init_controller$16, _dec$139, _dec2$139, _dec322, _dec419, _class$139, _class219, _descriptor18, _ControllerBlockToolbarRow, ControllerBlockToolbarRow, init_controller19, ZBlockForm, init_blockForm, ZBlockPageEntry, init_blockPageEntry, ZBlockToolbarRow, init_blockToolbarRow, _dec81, _dec242, _class51, components16, ScopeModuleBasicPageentry, init__metadata42, src_exports38, init_src47;
-var init_basic_pageentry_CPPQA7R7 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-pageentry-CPPQA7R7.js"() {
+function $useLocale8(key3, ...args) {
+  const app = useApp();
+  const str = `basic-pageentry::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$317, _dec2$317, _dec3$112, _dec4$19, _class$317, _class2$18, _descriptor$18, _ControllerBlockForm, ZForm4, ControllerBlockForm, init_controller$25, _dec$222, _dec2$222, _class$222, _ControllerBlockPageEntry, ControllerBlockPageEntry, init_controller$16, _dec$139, _dec2$139, _dec322, _dec419, _class$139, _class219, _descriptor18, _ControllerBlockToolbarRow, ControllerBlockToolbarRow, init_controller19, ZBlockForm, init_blockForm, ZBlockPageEntry, init_blockPageEntry, ZBlockToolbarRow, init_blockToolbarRow, _dec81, _dec242, _class51, components16, ScopeModuleBasicPageentry, init__metadata42, en_us_default8, init_en_us8, zh_cn_default8, init_zh_cn8, locales8, init_locales9, init_pageEntry, init_types27, src_exports38, init_src47;
+var init_basic_pageentry_B3b1zKEO = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-pageentry-B3b1zKEO.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_zova_BqDMBpyl();
-    init_a_model_DuDRXYdw();
-    init_a_openapi_DLhBU89();
-    init_a_form_WeQEjepz();
-    init_en_us8 = __esmMin((() => {
-      en_us_default8 = { EntryNotExist: "The entry does not exist" };
-    }));
-    init_zh_cn8 = __esmMin((() => {
-      zh_cn_default8 = { EntryNotExist: "\u8BE5\u6761\u76EE\u4E0D\u5B58\u5728" };
-    }));
-    __name($useLocale8, "$useLocale");
-    init_locales9 = __esmMin((() => {
-      init_src4();
-      init_en_us8();
-      init_zh_cn8();
-      locales8 = {
-        "en-us": en_us_default8,
-        "zh-cn": zh_cn_default8
-      };
-    }));
-    init_pageEntry = __esmMin((() => {
-      init_src16();
-      init_src9();
-    }));
-    init_types27 = __esmMin((() => {
-      init_pageEntry();
-    }));
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_zova_CCYAcmVc();
+    init_a_model_DRMCpadc();
+    init_a_openapi_QKVejZED();
+    init_a_form_DVcvVQzL();
     __name(_initializerDefineProperty$18, "_initializerDefineProperty$1");
     __name(_applyDecoratedDescriptor$18, "_applyDecoratedDescriptor$1");
     init_controller$25 = __esmMin((() => {
@@ -157252,7 +157229,7 @@ var init_basic_pageentry_CPPQA7R7 = __esm({
         _renderBlocks() {
           const blocks = this.$props.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = Object.assign({ key: index }, block.options);
             const domBlock = this.jsxZova.render(block.render, options2, this.jsxCelScope, this.jsxRenderContext);
@@ -157382,6 +157359,29 @@ var init_basic_pageentry_CPPQA7R7 = __esm({
         }
       }) || _class51) || _class51);
     }));
+    init_en_us8 = __esmMin((() => {
+      en_us_default8 = { EntryNotExist: "The entry does not exist" };
+    }));
+    init_zh_cn8 = __esmMin((() => {
+      zh_cn_default8 = { EntryNotExist: "\u8BE5\u6761\u76EE\u4E0D\u5B58\u5728" };
+    }));
+    __name($useLocale8, "$useLocale");
+    init_locales9 = __esmMin((() => {
+      init_src4();
+      init_en_us8();
+      init_zh_cn8();
+      locales8 = {
+        "en-us": en_us_default8,
+        "zh-cn": zh_cn_default8
+      };
+    }));
+    init_pageEntry = __esmMin((() => {
+      init_src16();
+      init_src9();
+    }));
+    init_types27 = __esmMin((() => {
+      init_pageEntry();
+    }));
     src_exports38 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale8, "$useLocale"),
       ControllerBlockForm: /* @__PURE__ */ __name(() => ControllerBlockForm, "ControllerBlockForm"),
@@ -157396,31 +157396,31 @@ var init_basic_pageentry_CPPQA7R7 = __esm({
       locales: /* @__PURE__ */ __name(() => locales8, "locales")
     });
     init_src47 = __esmMin((() => {
+      init__metadata42();
       init_locales9();
       init_types27();
-      init__metadata42();
     }));
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-select-BVZXDhyb.js
-var basic_select_BVZXDhyb_exports = {};
-__export(basic_select_BVZXDhyb_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-select-DFNPdeWn.js
+var basic_select_DFNPdeWn_exports = {};
+__export(basic_select_DFNPdeWn_exports, {
   n: () => src_exports39,
   t: () => init_src48
 });
 var _dec$318, _dec2$318, _class$318, _ControllerSelect, ControllerSelect, init_controller$17, ZSelect, init_select, _dec$223, _dec2$223, _class$223, _ControllerFormFieldSelect, ZFormFieldPreset5, ZFormField5, ControllerFormFieldSelect, init_controller20, ZFormFieldSelect, init_formFieldSelect, _dec$140, _dec2$140, _class$140, TableCellSelect, init_tableCell_select, _dec84, _dec243, _class52, components17, ScopeModuleBasicSelect, init__metadata43, src_exports39, init_src48;
-var init_basic_select_BVZXDhyb = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-select-BVZXDhyb.js"() {
+var init_basic_select_DFNPdeWn = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-select-DFNPdeWn.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_typestyle_B2DHz8Iv();
-    init_a_table_DiecBYb2();
+    init_a_table_kEdbxgfI();
     init_controller$17 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -157582,9 +157582,9 @@ var init_basic_select_BVZXDhyb = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-table-DiVvYc5d.js
-var basic_table_DiVvYc5d_exports = {};
-__export(basic_table_DiVvYc5d_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-table-vs8d7FQt.js
+var basic_table_vs8d7FQt_exports = {};
+__export(basic_table_vs8d7FQt_exports, {
   n: () => src_exports40,
   t: () => init_src49
 });
@@ -157615,16 +157615,16 @@ function $useLocale9(key3, ...args) {
   });
 }
 var _dec$75, _dec2$75, _dec323, _dec420, _class$75, _class220, _descriptor19, _ControllerActionCreate, ControllerActionCreate, init_controller$18, _dec$68, _dec2$68, _class$68, _ControllerTable2, ControllerTable2, init_controller21, ZActionCreate, init_actionCreate, _dec$510, _dec2$510, _class$510, ZTable$1, RenderTable2, init_render5, ZTable3, init_table3, _dec$412, _dec2$412, _class$412, ZIcon$12, TableCellActionDelete, init_tableCell_actionDelete, _dec$319, _dec2$319, _class$319, TableCellActionOperationsRow, init_tableCell_actionOperationsRow, _dec$224, _dec2$224, _class$224, ZIcon5, TableCellActionUpdate, init_tableCell_actionUpdate, _dec$141, _dec2$141, _class$141, TableCellActionView, init_tableCell_actionView, _dec85, _dec244, _class53, components18, ScopeModuleBasicTable, init__metadata44, en_us_default9, init_en_us9, zh_cn_default9, init_zh_cn9, locales9, init_locales10, src_exports40, init_src49;
-var init_basic_table_DiVvYc5d = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-table-DiVvYc5d.js"() {
+var init_basic_table_vs8d7FQt = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-table-vs8d7FQt.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_tanstack_table_BvgDl6M7();
-    init_a_table_DiecBYb2();
+    init_a_table_kEdbxgfI();
     __name(_initializerDefineProperty19, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor20, "_applyDecoratedDescriptor");
     init_controller$18 = __esmMin((() => {
@@ -157761,7 +157761,7 @@ var init_basic_table_DiVvYc5d = __esm({
         async checkVisible(options2, renderContext) {
           const { $celScope, $host, $$table } = renderContext;
           const permissions = $celScope.permissions;
-          let actions = options2.actions;
+          const actions = options2.actions;
           if (!actions || actions.length === 0) return false;
           const renders = [];
           for (const action of actions) {
@@ -157911,23 +157911,23 @@ var init_basic_table_DiVvYc5d = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/basic-text-B7oXlX9C.js
-var basic_text_B7oXlX9C_exports = {};
-__export(basic_text_B7oXlX9C_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/basic-text-Boo7CRXk.js
+var basic_text_Boo7CRXk_exports = {};
+__export(basic_text_Boo7CRXk_exports, {
   n: () => src_exports41,
   t: () => init_src50
 });
 var _dec$320, _dec2$320, _class$320, _ControllerFormFieldTextarea, ZFormField6, ControllerFormFieldTextarea, init_controller22, ZFormFieldTextarea, init_formFieldTextarea, _dec$225, _dec2$225, _class$225, TableCellText, init_tableCell_text, _dec$142, _dec2$142, _class$142, TableCellTextarea, init_tableCell_textarea, _dec86, _dec245, _class54, components19, ScopeModuleBasicText, init__metadata45, src_exports41, init_src50;
-var init_basic_text_B7oXlX9C = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/basic-text-B7oXlX9C.js"() {
+var init_basic_text_Boo7CRXk = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/basic-text-Boo7CRXk.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_typestyle_B2DHz8Iv();
-    init_a_table_DiecBYb2();
+    init_a_table_kEdbxgfI();
     init_controller22 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -158033,9 +158033,9 @@ var init_basic_text_B7oXlX9C = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/rest-resource-D0APOiIp.js
-var rest_resource_D0APOiIp_exports = {};
-__export(rest_resource_D0APOiIp_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/rest-resource-Dt2OtwhQ.js
+var rest_resource_Dt2OtwhQ_exports = {};
+__export(rest_resource_Dt2OtwhQ_exports, {
   n: () => src_exports42,
   t: () => init_src51
 });
@@ -158081,19 +158081,19 @@ function tabKey(route) {
   return `/rest/resource/${encodeURIComponent(route.params.resource)}`;
 }
 var _dec$413, _dec2$413, _dec3$36, _dec4$26, _class$413, _class2$26, _descriptor20, ModelResource, init_resource$2, _dec$321, _dec2$321, _dec3$27, _dec4$110, _dec5$13, _class$321, _class2$19, ZPage$1, ControllerPageEntrySchemaParams, ControllerPageEntry, init_controller$26, _dec$226, _dec2$226, _dec3$113, _class$226, ControllerPageEntryCreateSchemaParams, ControllerPageEntryCreate, init_controller$19, _dec$143, _dec2$143, _dec324, _dec421, _dec511, _class$143, _class221, ZPage2, ControllerPageResourceSchemaParams, ControllerPageResource, init_controller23, NSControllerPageEntry, ZPageEntry, init_entry, NSControllerPageEntryCreate, ZPageEntryCreate, init_entryCreate, NSControllerPageResource, ZPageResource, init_resource$12, routes5, init_routes5, _dec87, _dec246, _class55, pagePathSchemas5, pageNameSchemas5, ScopeModuleRestResource, init__metadata46, init_pageEntryWrapper, init_pageWrapper, init_resource3, init_types28, src_exports42, init_src51;
-var init_rest_resource_D0APOiIp = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/rest-resource-D0APOiIp.js"() {
+var init_rest_resource_Dt2OtwhQ = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/rest-resource-Dt2OtwhQ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_zova_BqDMBpyl();
-    init_a_model_DuDRXYdw();
-    init_a_openapi_DLhBU89();
-    init_a_form_WeQEjepz();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_zova_CCYAcmVc();
+    init_a_model_DRMCpadc();
+    init_a_openapi_QKVejZED();
+    init_a_form_DVcvVQzL();
     __name(_initializerDefineProperty20, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor$26, "_applyDecoratedDescriptor$2");
     init_resource$2 = __esmMin((() => {
@@ -158326,7 +158326,7 @@ var init_rest_resource_D0APOiIp = __esm({
         render() {
           const blocks = this.formSchema?.rest?.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = deepExtend({ key: index }, {
               resource: this.resource,
@@ -158396,7 +158396,7 @@ var init_rest_resource_D0APOiIp = __esm({
         render() {
           const blocks = this.schemaRow?.rest?.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = deepExtend({ key: index }, { resource: this.resource }, block.options);
             const domBlock = this.jsxZova.render(block.render, options2);
@@ -158528,22 +158528,22 @@ var init_rest_resource_D0APOiIp = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-behaviors-UbX4ay_C.js
-var a_behaviors_UbX4ay_C_exports = {};
-__export(a_behaviors_UbX4ay_C_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-behaviors-UToLNL3g.js
+var a_behaviors_UToLNL3g_exports = {};
+__export(a_behaviors_UToLNL3g_exports, {
   n: () => src_exports43,
   t: () => init_src52
 });
 var _dec$144, _dec2$144, _class$144, BehaviorFocus, init_behavior_focus, _dec88, _dec247, _class56, ScopeModuleABehaviors, init__metadata47, src_exports43, init_src52;
-var init_a_behaviors_UbX4ay_C = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-behaviors-UbX4ay_C.js"() {
+var init_a_behaviors_UToLNL3g = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-behaviors-UToLNL3g.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_behavior_BtT1ClQi();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_behavior_8zq1kOzY();
     init_behavior_focus = __esmMin((() => {
       init_src4();
       init_src13();
@@ -158610,9 +158610,9 @@ var init_zova_BeIS0rUT = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-routerstack-7C8ka5PQ.js
-var a_routerstack_7C8ka5PQ_exports = {};
-__export(a_routerstack_7C8ka5PQ_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-routerstack-BanvYELS.js
+var a_routerstack_BanvYELS_exports = {};
+__export(a_routerstack_BanvYELS_exports, {
   n: () => src_exports44,
   t: () => init_src54
 });
@@ -158633,16 +158633,16 @@ function _applyDecoratedDescriptor22(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$227, _dec2$227, _class$227, ModelStack$1, init_stack$1, _dec$145, _dec2$145, _dec325, _dec422, _class$145, _class222, _descriptor21, _ControllerRouterViewStack, ControllerRouterViewStack, init_controller24, ZRouterViewStack, init_routerViewStack, _dec89, _dec248, _class57, components20, ScopeModuleARouterstack, init__metadata48, init_stack, init_types29, src_exports44, init_src54;
-var init_a_routerstack_7C8ka5PQ = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-routerstack-7C8ka5PQ.js"() {
+var init_a_routerstack_BanvYELS = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-routerstack-BanvYELS.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
-    init_a_router_CMG3rAYH();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
+    init_a_router_BUSNfGvg();
     init_zova_BeIS0rUT();
     init_stack$1 = __esmMin((() => {
       init_src4();
@@ -158842,9 +158842,9 @@ var init_a_routerstack_7C8ka5PQ = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-routertabs-QIB_JV8D.js
-var a_routertabs_QIB_JV8D_exports = {};
-__export(a_routertabs_QIB_JV8D_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/a-routertabs-Bq5I-3Pr.js
+var a_routertabs_Bq5I_3Pr_exports = {};
+__export(a_routertabs_Bq5I_3Pr_exports, {
   n: () => src_exports45,
   t: () => init_src55
 });
@@ -158865,16 +158865,16 @@ function _applyDecoratedDescriptor23(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$228, _dec2$228, _class$228, ModelTabs$1, init_tabs$1, _dec$146, _dec2$146, _dec326, _dec423, _class$146, _class223, _descriptor26, _ControllerRouterViewTabs, ControllerRouterViewTabs, init_controller25, ZRouterViewTabs2, init_routerViewTabs, _dec90, _dec249, _class58, components21, ScopeModuleARoutertabs, init__metadata49, init_tabs, init_types30, src_exports45, init_src55;
-var init_a_routertabs_QIB_JV8D = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-routertabs-QIB_JV8D.js"() {
+var init_a_routertabs_Bq5I_3Pr = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-routertabs-Bq5I-3Pr.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
-    init_a_model_DuDRXYdw();
-    init_a_router_CMG3rAYH();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
+    init_a_model_DRMCpadc();
+    init_a_router_BUSNfGvg();
     init_zova_BeIS0rUT();
     init_tabs$1 = __esmMin((() => {
       init_src4();
@@ -159336,7 +159336,7 @@ var init_a_routertabs_QIB_JV8D = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/a-ssrserver-xrRYRfC1.js
+// dist/ssr-cabloyBasicAdmin/server/assets/a-ssrserver-5_Ds9WEU.js
 import path, { basename } from "node:path";
 import { pathToFileURL } from "node:url";
 function _initializerDefineProperty23(e, i, r, l2) {
@@ -159359,16 +159359,16 @@ function pathToHref(fileName) {
   return pathToFileURL(fileName).href;
 }
 var import_lib, import_ms, _dec$147, _dec2$147, _dec327, _dec424, _dec512, _dec610, _class$147, _class224, _descriptor27, _descriptor28, jsRE, cssRE, woffRE, woff2RE, gifRE, jpgRE, pngRE, ServiceSsrHandler, init_ssrHandler, MonkeySys9, init_monkeySys9, _dec91, _dec250, _class59, ScopeModuleASsrserver, init__metadata50, init_ssr3, init_types31, init_src56;
-var init_a_ssrserver_xrRYRfC1 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/a-ssrserver-xrRYRfC1.js"() {
+var init_a_ssrserver_5_Ds9WEU = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/a-ssrserver-5_Ds9WEU.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
-    init_a_bean_Yjl5RFn9();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
+    init_a_bean_DyfOSKn7();
     init_ms_CmhnBZmi();
-    init_src_DHmmsXRM();
+    init_src_Dj2iy7ku();
     __name(_initializerDefineProperty23, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor24, "_applyDecoratedDescriptor");
     __name(pathToHref, "pathToHref");
@@ -159582,9 +159582,9 @@ var init_a_ssrserver_xrRYRfC1 = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/src-DHmmsXRM.js
-var src_DHmmsXRM_exports = {};
-__export(src_DHmmsXRM_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/src-Dj2iy7ku.js
+var src_Dj2iy7ku_exports = {};
+__export(src_Dj2iy7ku_exports, {
   MonkeySys: () => MonkeySys9,
   ScopeModuleASsrserver: () => ScopeModuleASsrserver,
   ServiceSsrHandler: () => ServiceSsrHandler,
@@ -159592,11 +159592,11 @@ __export(src_DHmmsXRM_exports, {
   t: () => require_lib3
 });
 var require_universalify, require_polyfills, require_legacy_streams, require_clone, require_graceful_fs, require_fs, require_utils$1, require_make_dir, require_mkdirs, require_path_exists, require_utimes, require_stat, require_async2, require_copy$1, require_copy_sync, require_copy, require_remove, require_empty, require_file, require_link, require_symlink_paths, require_symlink_type, require_symlink, require_ensure, require_utils, require_jsonfile$1, require_jsonfile, require_output_file, require_output_json, require_output_json_sync, require_json, require_move$1, require_move_sync, require_move, require_lib3;
-var init_src_DHmmsXRM = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/src-DHmmsXRM.js"() {
+var init_src_Dj2iy7ku = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/src-Dj2iy7ku.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_a_ssrserver_xrRYRfC1();
+    init_a_ssrserver_5_Ds9WEU();
     require_universalify = /* @__PURE__ */ __commonJSMin(((exports) => {
       exports.fromCallback = function(fn) {
         return Object.defineProperty(function(...args) {
@@ -161561,9 +161561,9 @@ var init_src_DHmmsXRM = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/app-Bm7XCFKy.js
-var app_Bm7XCFKy_exports = {};
-__export(app_Bm7XCFKy_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/app-DeZoXU9m.js
+var app_DeZoXU9m_exports = {};
+__export(app_DeZoXU9m_exports, {
   default: () => app_default
 });
 async function app_default(createAppFn, ssrContext) {
@@ -161575,14 +161575,14 @@ async function app_default(createAppFn, ssrContext) {
   return { app };
 }
 var init_tailwind, init_settings, main_default, init_main2, ControllerPageApp, init_controller26, app_default$1, init_app$1;
-var init_app_Bm7XCFKy = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/app-Bm7XCFKy.js"() {
+var init_app_DeZoXU9m = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/app-DeZoXU9m.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
     init_server_entry();
     init_tailwind = __esmMin((() => {
     }));
@@ -161634,19 +161634,19 @@ var init_app_Bm7XCFKy = __esm({
   }
 });
 
-// dist/ssr-cabloyBasicAdmin/server/assets/zova-DCovkUB7.js
-var zova_DCovkUB7_exports = {};
-__export(zova_DCovkUB7_exports, {
+// dist/ssr-cabloyBasicAdmin/server/assets/zova-Bk-O0FZu.js
+var zova_Bk_O0FZu_exports = {};
+__export(zova_Bk_O0FZu_exports, {
   default: () => zova_default
 });
 var zova_default;
-var init_zova_DCovkUB7 = __esm({
-  "dist/ssr-cabloyBasicAdmin/server/assets/zova-DCovkUB7.js"() {
+var init_zova_Bk_O0FZu = __esm({
+  "dist/ssr-cabloyBasicAdmin/server/assets/zova-Bk-O0FZu.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_jg5YI6t2();
-    init_zova_DdmXvaV8();
-    init_zova_BwnLfske();
+    init_zova_DR_NpQBg();
+    init_zova_B4_PadJz();
     init_server_entry();
     __esmMin((() => {
       init_wrappers();
@@ -161748,9 +161748,9 @@ var init_server_entry = __esm({
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_DdmXvaV8();
+    init_zova_DR_NpQBg();
     init_zova_WcMH8E6u();
-    init_zova_BwnLfske();
+    init_zova_B4_PadJz();
     init_zova_config_CNEEC3zm();
     init_en_us10 = __esmMin((() => {
       en_us_default10 = { modules: {} };
@@ -161886,7 +161886,7 @@ var init_server_entry = __esm({
     init_modules_meta = __esmMin((() => {
       modules = {};
       modules["demo-student"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_student_CUSxMbJ9(), demo_student_CUSxMbJ9_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_student_BDHQoeBz(), demo_student_BDHQoeBz_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "demo",
           "name": "student",
@@ -161899,7 +161899,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-fetch"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_fetch_B7b7sdSg(), a_fetch_B7b7sdSg_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_fetch_CcDfi6df(), a_fetch_CcDfi6df_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "fetch",
@@ -161918,7 +161918,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-model"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_model_DuDRXYdw(), a_model_DuDRXYdw_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_model_DRMCpadc(), a_model_DRMCpadc_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "model",
@@ -161938,7 +161938,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-openapi"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_openapi_DLhBU89(), a_openapi_DLhBU89_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_openapi_QKVejZED(), a_openapi_QKVejZED_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "openapi",
@@ -161952,7 +161952,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-api"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_api_aORiRWVk(), a_api_aORiRWVk_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_api_BVJIlg2r(), a_api_BVJIlg2r_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "api",
@@ -161987,7 +161987,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-app"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_app_ByX3Zfy5(), a_app_ByX3Zfy5_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_app_DPKoL_Eh(), a_app_DPKoL_Eh_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "app",
@@ -162000,7 +162000,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-bean"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_bean_Yjl5RFn9(), a_bean_Yjl5RFn9_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_bean_DyfOSKn7(), a_bean_DyfOSKn7_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "bean",
@@ -162069,7 +162069,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-behavior"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behavior_BtT1ClQi(), a_behavior_BtT1ClQi_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behavior_8zq1kOzY(), a_behavior_8zq1kOzY_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "behavior",
@@ -162087,7 +162087,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-boundary"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_boundary_BJmFZjPe(), a_boundary_BJmFZjPe_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_boundary_DVHeo3kN(), a_boundary_DVHeo3kN_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "boundary",
@@ -162100,7 +162100,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-form"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_form_WeQEjepz(), a_form_WeQEjepz_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_form_DVcvVQzL(), a_form_DVcvVQzL_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "form",
@@ -162113,7 +162113,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-icon"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_icon_4nXMCLPu(), a_icon_4nXMCLPu_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_icon_DJjA_BDJ(), a_icon_DJjA_BDJ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "icon",
@@ -162127,7 +162127,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-interceptor"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_interceptor_DJ_WUAM9(), a_interceptor_DJ_WUAM9_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_interceptor_ChJFmQId(), a_interceptor_ChJFmQId_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "interceptor",
@@ -162146,7 +162146,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-logger"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_logger_M8vlPNB3(), a_logger_M8vlPNB3_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_logger_CrY0s9ZA(), a_logger_CrY0s9ZA_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "logger",
@@ -162159,7 +162159,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-meta"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_meta_DSD_iwMS(), a_meta_DSD_iwMS_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_meta_CpO8ZMWk(), a_meta_CpO8ZMWk_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "meta",
@@ -162172,7 +162172,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-ssr"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_Di17We9u(), src_Di17We9u_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_BpJZtRvx(), src_BpJZtRvx_exports)), "resource"),
         info: {
           "pid": "a",
           "name": "ssr",
@@ -162186,7 +162186,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-router"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_router_CMG3rAYH(), a_router_CMG3rAYH_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_router_BUSNfGvg(), a_router_BUSNfGvg_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "router",
@@ -162200,7 +162200,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-ssrhmr"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_mZzVE6eL(), src_mZzVE6eL_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_WX2uQeGA(), src_WX2uQeGA_exports)), "resource"),
         info: {
           "pid": "a",
           "name": "ssrhmr",
@@ -162214,7 +162214,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-style"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_style_CYLjkJCW(), a_style_CYLjkJCW_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_style_WuJtUJN3(), a_style_WuJtUJN3_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "style",
@@ -162242,7 +162242,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-table"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_table_DiecBYb2(), a_table_DiecBYb2_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_table_kEdbxgfI(), a_table_kEdbxgfI_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "table",
@@ -162261,7 +162261,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-zod"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zod_D1d4T7Jn(), a_zod_D1d4T7Jn_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zod_Yz4d9s4g(), a_zod_Yz4d9s4g_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "zod",
@@ -162274,7 +162274,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-zova"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zova_OGbDGfVb(), a_zova_OGbDGfVb_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zova_Bb0f3N67(), a_zova_Bb0f3N67_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "zova",
@@ -162287,7 +162287,7 @@ var init_server_entry = __esm({
         }
       };
       modules["devui-adapter"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_devui_adapter_Caxap4A4(), devui_adapter_Caxap4A4_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_devui_adapter_BSSwwfOx(), devui_adapter_BSSwwfOx_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "devui",
           "name": "adapter",
@@ -162301,7 +162301,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-api"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_api_C60u7qUW(), home_api_C60u7qUW_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_api_W6JEyUss(), home_api_W6JEyUss_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "api",
@@ -162314,7 +162314,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-base"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_base_Cf4rN4Mr(), home_base_Cf4rN4Mr_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_base_C4a_kbkE(), home_base_C4a_kbkE_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "base",
@@ -162328,7 +162328,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-icon"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_icon_BAN6Ep_C(), home_icon_BAN6Ep_C_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_icon_Bfl0s_ZM(), home_icon_Bfl0s_ZM_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "icon",
@@ -162342,7 +162342,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-index"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_index_BBgTWSoH(), home_index_BBgTWSoH_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_index_CC3_bhUE(), home_index_CC3_bhUE_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "index",
@@ -162355,7 +162355,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-layoutempty"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layoutempty_BmpfNz8l(), home_layoutempty_BmpfNz8l_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layoutempty_Bbv3prV(), home_layoutempty_Bbv3prV_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "layoutempty",
@@ -162368,7 +162368,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-layouttabs"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layouttabs_BapiRbsm(), home_layouttabs_BapiRbsm_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layouttabs_DQPfHvX2(), home_layouttabs_DQPfHvX2_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "layouttabs",
@@ -162381,7 +162381,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-login"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_login_Vvg8Oz4c(), home_login_Vvg8Oz4c_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_login_BL0Swr4N(), home_login_BL0Swr4N_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "login",
@@ -162394,7 +162394,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-passport"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_passport_C79V8Zi4(), home_passport_C79V8Zi4_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_passport_enVNCSZG(), home_passport_enVNCSZG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "passport",
@@ -162408,7 +162408,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-theme"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_theme_RHY4Qc3v(), home_theme_RHY4Qc3v_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_theme_hSeomuh5(), home_theme_hSeomuh5_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "theme",
@@ -162421,7 +162421,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-adapter"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_adapter_C2YYcWu1(), basic_adapter_C2YYcWu1_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_adapter_BPAyeQ2Z(), basic_adapter_BPAyeQ2Z_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "adapter",
@@ -162435,7 +162435,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-captcha"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_captcha_C3M6Pzj4(), basic_captcha_C3M6Pzj4_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_captcha_ijYFuUZb(), basic_captcha_ijYFuUZb_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "captcha",
@@ -162448,7 +162448,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-commands"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commands_fawW2oUh(), basic_commands_fawW2oUh_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commands_DbrmX5F9(), basic_commands_DbrmX5F9_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "commands",
@@ -162461,7 +162461,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-commandssync"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commandssync_CFTcG4jj(), basic_commandssync_CFTcG4jj_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commandssync_DRsHxqEg(), basic_commandssync_DRsHxqEg_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "commandssync",
@@ -162474,7 +162474,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-currency"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_Yf3Zg4_A(), src_Yf3Zg4_A_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DAaiMjTY(), src_DAaiMjTY_exports)), "resource"),
         info: {
           "pid": "basic",
           "name": "currency",
@@ -162487,7 +162487,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-date"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DSrYvi2l(), src_DSrYvi2l_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_CfND0OyL(), src_CfND0OyL_exports)), "resource"),
         info: {
           "pid": "basic",
           "name": "date",
@@ -162500,7 +162500,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-form"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_form_BCqrnxwP(), basic_form_BCqrnxwP_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_form_PjnGAcW(), basic_form_PjnGAcW_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "form",
@@ -162513,7 +162513,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-input"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_input_PMvoUARP(), basic_input_PMvoUARP_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_input_Lf9so3Ft(), basic_input_Lf9so3Ft_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "input",
@@ -162526,7 +162526,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-page"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_page_Ci0XKDaz(), basic_page_Ci0XKDaz_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_page_CFQ25Tpd(), basic_page_CFQ25Tpd_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "page",
@@ -162539,7 +162539,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-pageentry"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_pageentry_CPPQA7R7(), basic_pageentry_CPPQA7R7_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_pageentry_B3b1zKEO(), basic_pageentry_B3b1zKEO_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "pageentry",
@@ -162552,7 +162552,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-select"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_select_BVZXDhyb(), basic_select_BVZXDhyb_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_select_DFNPdeWn(), basic_select_DFNPdeWn_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "select",
@@ -162565,7 +162565,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-table"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_table_DiVvYc5d(), basic_table_DiVvYc5d_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_table_vs8d7FQt(), basic_table_vs8d7FQt_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "table",
@@ -162578,7 +162578,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-text"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_text_B7oXlX9C(), basic_text_B7oXlX9C_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_text_Boo7CRXk(), basic_text_Boo7CRXk_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "text",
@@ -162591,7 +162591,7 @@ var init_server_entry = __esm({
         }
       };
       modules["rest-resource"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_rest_resource_D0APOiIp(), rest_resource_D0APOiIp_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_rest_resource_Dt2OtwhQ(), rest_resource_Dt2OtwhQ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "rest",
           "name": "resource",
@@ -162604,7 +162604,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-behaviors"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behaviors_UbX4ay_C(), a_behaviors_UbX4ay_C_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behaviors_UToLNL3g(), a_behaviors_UToLNL3g_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "behaviors",
@@ -162617,7 +162617,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-command"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_command_CxhLYJQW(), a_command_CxhLYJQW_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_command_Ca2QuSEO(), a_command_Ca2QuSEO_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "command",
@@ -162638,7 +162638,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-routerstack"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routerstack_7C8ka5PQ(), a_routerstack_7C8ka5PQ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routerstack_BanvYELS(), a_routerstack_BanvYELS_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "routerstack",
@@ -162651,7 +162651,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-routertabs"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routertabs_QIB_JV8D(), a_routertabs_QIB_JV8D_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routertabs_Bq5I_3Pr(), a_routertabs_Bq5I_3Pr_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "routertabs",
@@ -162664,7 +162664,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-ssrserver"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DHmmsXRM(), src_DHmmsXRM_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_Dj2iy7ku(), src_Dj2iy7ku_exports)), "resource"),
         info: {
           "pid": "a",
           "name": "ssrserver",
@@ -162761,9 +162761,9 @@ var init_server_entry = __esm({
       init_utils17();
       init_vue();
       server_entry_default = /* @__PURE__ */ __name(async (ssrContext) => {
-        const { default: createQuasarApp } = await Promise.resolve().then(() => (init_app_Bm7XCFKy(), app_Bm7XCFKy_exports));
+        const { default: createQuasarApp } = await Promise.resolve().then(() => (init_app_DeZoXU9m(), app_DeZoXU9m_exports));
         const { app } = await createQuasarApp(vue_exports.createApp, ssrContext);
-        const bootFunctions = await Promise.all([Promise.resolve().then(() => (init_zova_DCovkUB7(), zova_DCovkUB7_exports))]).then((bootFiles) => bootFiles.map((entry) => entry.default).filter((entry) => typeof entry === "function"));
+        const bootFunctions = await Promise.all([Promise.resolve().then(() => (init_zova_Bk_O0FZu(), zova_Bk_O0FZu_exports))]).then((bootFiles) => bootFiles.map((entry) => entry.default).filter((entry) => typeof entry === "function"));
         for (let i = 0; i < bootFunctions.length; i++) await bootFunctions[i]({
           app,
           ssrContext
@@ -162781,7 +162781,7 @@ init_server_entry();
 // .quasar/prod-ssr/render-template.js
 function render_template_default(ssrContext) {
   var __t, __p = "";
-  __p += "<!doctype html><html " + ((__t = ssrContext._meta.htmlAttrs) == null ? "" : __t) + "><head>" + ((__t = ssrContext._meta.headTags) == null ? "" : __t) + ' <meta charset=utf-8><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><link rel=icon type=image/ico href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/favicon.ico"><script type=module crossorigin src="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-DjE6eVdG.js"></script><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/rolldown-runtime-lkMnaVCm.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CvF_GLFp.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CeNp4lbs.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-t5FcxkD3.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-B9B_nSUQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CmE1HVn9.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/fecha-DmopMB3M.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-6Abekb1F.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-BE4e4PxD.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-k6QiZ1ov.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-C4pGJxwQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-DNf1Cx1D.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-CWGd8DOC.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-DjE6eVdG.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/-zova-config-C3K9oEHh.js"><link rel=stylesheet crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-B5HTgis_.css"> ' + ((__t = ssrContext._meta.endingHeadTags || "") == null ? "" : __t) + '</head><body class="' + ((__t = ssrContext._meta.bodyClasses) == null ? "" : __t) + '" ' + ((__t = ssrContext._meta.bodyAttrs) == null ? "" : __t) + ">" + ((__t = ssrContext._meta.bodyTags) == null ? "" : __t) + " <div id=q-app>" + ((__t = ssrContext._meta.runtimePageContent) == null ? "" : __t) + "</div> " + ((__t = ssrContext._meta.endingBodyTags || "") == null ? "" : __t) + "</body></html>";
+  __p += "<!doctype html><html " + ((__t = ssrContext._meta.htmlAttrs) == null ? "" : __t) + "><head>" + ((__t = ssrContext._meta.headTags) == null ? "" : __t) + ' <meta charset=utf-8><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><link rel=icon type=image/ico href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/favicon.ico"><script type=module crossorigin src="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-DWMlGttT.js"></script><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/rolldown-runtime-lkMnaVCm.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CvF_GLFp.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CeNp4lbs.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-t5FcxkD3.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-B9B_nSUQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/vue-CmE1HVn9.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/fecha-DmopMB3M.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-6Abekb1F.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-BE4e4PxD.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-k6QiZ1ov.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-C4pGJxwQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-DKg_vesx.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/zova-DpLHNA1Z.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-DWMlGttT.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/-zova-config-4IZsMPtZ.js"><link rel=stylesheet crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/assets/index-B5HTgis_.css"> ' + ((__t = ssrContext._meta.endingHeadTags || "") == null ? "" : __t) + '</head><body class="' + ((__t = ssrContext._meta.bodyClasses) == null ? "" : __t) + '" ' + ((__t = ssrContext._meta.bodyAttrs) == null ? "" : __t) + ">" + ((__t = ssrContext._meta.bodyTags) == null ? "" : __t) + " <div id=q-app>" + ((__t = ssrContext._meta.runtimePageContent) == null ? "" : __t) + "</div> " + ((__t = ssrContext._meta.endingBodyTags || "") == null ? "" : __t) + "</body></html>";
   return __p;
 }
 __name(render_template_default, "default");

@@ -102033,7 +102033,7 @@ var init_zova_BbVaRumt = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/zova-dHNiir4f.js
+// dist/ssr-testSecond/server/assets/zova-5WxrFAZd.js
 function cast(source2) {
   return source2;
 }
@@ -102534,9 +102534,9 @@ function __formatLoggerFilterCheckInfo(info) {
 function $protocolKey(key3) {
   return key3;
 }
-var init_cast, AppMetadata, appMetadata, init_metadata, SymbolMappedClassMetadataKeys, init_type$9, init_utils$2, _sys, init_sysFake, BeanSimple, init_beanSimple, buf, bufIdx, hexBytes, randomBytes, BUFFER_SIZE, init_uuid, import_deep_equal, SysUtil, init_util$2, DecoratorBeanFullName, SymbolDecoratorBeanInfo, SymbolDecoratorProxyDisable, SymbolDecoratorPreload, SymbolDecoratorVirtual, SymbolDecoratorUse, AppResource, appResource, init_resource$1, SymbolWaitPromise, __counter, StateLock, init_stateLock, SymbolBeanFullName, SymbolBeanInstanceKey, SymbolModuleBelong, SymbolModuleName, SymbolInited, BeanBaseSimple, init_beanBaseSimple, init_type$8, init_component$6, init_type$7, init_config$1, init_type$6, init_constant$1, BeanModuleScope$2, BeanScopeError, init_beanScopeError, errorsInternal, init_errorInternal, ErrorClass, init_errorClass, init_errorGlobal, init_errorObject, SymbolErrorInstanceInfo, init_type$5, init_error$2, BeanModuleScope$1, BeanScopeLocale, init_beanScopeLocale, init_type$4, init_locale$3, init_type$3, init_page, init_resource, SymbolText, SymbolLogger, SymbolLoggerChildren, BeanBase, init_beanBase, BeanAopBase, init_beanAopBase, BeanAopMethodBase, init_beanAopMethodBase, init_beanInfo, init_createBeanDecorator, init_preload, init_proxyDisable, init_use, init_useScope, init_virtual, init_class, init_beanOptions, init_useOptions, init_interface$1, init_constructable, init_containerScope, init_functionable, init_injectionScope, init_type$2, init_types$2, init_createVueDecorator, init_model, init_vueExtra$1, init_decorator, init_computed, SymbolBeanContainerParent, SymbolProxyMagic, SymbolProxyAopMethod, SymbolCacheAopChains, SymbolCacheAopChainsKey, SymbolGetBeanSelectorInnerPromises, SymbolBeanContainerInstances, BeanContainer, init_beanContainer, import_reactivity_cjs_prod$1, import_shared_cjs_prod, init_useModel, BeanControllerBase, init_beanControllerBase, SymbolControllerRefDisable, init_type$1, SymbolController, BeanControllerLike, init_beanControllerLike, BeanControllerPageBase, init_beanControllerPageBase, SymbolStyle, BeanRenderLike, init_beanRenderLike, BeanRenderBase, init_beanRenderBase, BeanStyleBase, init_beanStyleBase, BeanModuleScope, BeanScopeUtil, init_beanScopeUtil, BeanModuleError, BeanModuleLocale, BeanModuleConfig, BeanModuleConstant, BeanModuleApi, BeanModuleApiSchema, BeanModuleUtil, BeanScopeBase, init_beanScopeBase, init_scope, init_bean$1, init_zod_enhance, init_config, constantDefault, init_constant, init_component$5, init_cookie$1, init_event$1, init_inject, SymbolInstalled, init_module$2, init_monkey, init_pluginZova, init_window, init_interface, init_auth, init_env, init_omitNever, init_powerPartial, init_requiredSome, init_type, init_utils$1, init_types$1, AppCookie, init_cookie, __adapter, AppEvent, init_event, SymbolLoggerInstances, SysLogger, init_logger$1, init_useSys, init_createZovaComponentAsync, SymbolZovaComponents, SysComponent, init_component$4, SysError, init_error$1, SymbolLocaleCurrent, SymbolTzCurrent, AppLocale, init_locale$2, SysLocale, init_locale$1, SysModule, init_module$1, SysMeta, init_meta$2, SymbolSysInitializePromise, SymbolSysClose, ZovaSys, sys, init_sys$1, PluginBean, init_bean, init_bootstrap, ClientOnly, init_clientOnly, CtxComponent, init_component$3, SymbolHooksFns, SymbolHooksState, CtxHooks, init_hooks, __id, CtxState, init_state, CtxMeta, init_meta$1, import_runtime_core_cjs_prod, import_reactivity_cjs_prod, CtxUtil, init_util$1, ZovaContext, init_context$1, init_context, init_useController, init_component$2, init_components, init_useApp, init_useContext, init_composables, AppComponent, init_component$1, AppError, init_error, AppModule, init_module, AppMeta, init_meta, AppUtil, init_util2, SymbolAppClose, ZovaApplication, init_application, init_locale, init_app, init_component, SymbolLoggerMessage, formatLoggerFilter, formatLoggerConsole, init_format2, init_types2, init_logger2, init_sys, init_core2, init_mixinClass, init_omitClass, init_partialClass, init_pickClass, init_mappedClass, PluginZova, init_zova, init_plugins, init_protocolKey, init_prefixKeys, init_utils, init_composable, init_watch, init_vueExtra, init_src3;
-var init_zova_dHNiir4f = __esm({
-  "dist/ssr-testSecond/server/assets/zova-dHNiir4f.js"() {
+var init_cast, AppMetadata, appMetadata, init_metadata, SymbolMappedClassMetadataKeys, init_type$9, init_utils$2, _sys, init_sysFake, BeanSimple, init_beanSimple, buf, bufIdx, hexBytes, randomBytes, BUFFER_SIZE, init_uuid, import_deep_equal, SysUtil, init_util$2, DecoratorBeanFullName, SymbolDecoratorBeanInfo, SymbolDecoratorProxyDisable, SymbolDecoratorPreload, SymbolDecoratorVirtual, SymbolDecoratorUse, AppResource, appResource, init_resource$1, SymbolWaitPromise, __counter, StateLock, init_stateLock, SymbolBeanFullName, SymbolBeanInstanceKey, SymbolModuleBelong, SymbolModuleName, SymbolInited, BeanBaseSimple, init_beanBaseSimple, init_type$8, init_component$6, init_type$7, init_config$1, init_type$6, init_constant$1, BeanModuleScope$2, BeanScopeError, init_beanScopeError, errorsInternal, init_errorInternal, ErrorClass, init_errorClass, init_errorGlobal, init_errorObject, SymbolErrorInstanceInfo, init_type$5, init_error$2, BeanModuleScope$1, BeanScopeLocale, init_beanScopeLocale, init_type$4, init_locale$3, init_type$3, init_page, init_resource, SymbolText, SymbolLogger, SymbolLoggerChildren, BeanBase, init_beanBase, BeanAopBase, init_beanAopBase, BeanAopMethodBase, init_beanAopMethodBase, init_beanInfo, init_createBeanDecorator, init_preload, init_proxyDisable, init_use, init_useScope, init_virtual, init_class, init_beanOptions, init_useOptions, init_interface$1, init_constructable, init_containerScope, init_functionable, init_injectionScope, init_type$2, init_types$2, init_createVueDecorator, init_model, init_vueExtra$1, init_decorator, init_computed, SymbolBeanContainerParent, SymbolProxyMagic, SymbolProxyAopMethod, SymbolCacheAopChains, SymbolCacheAopChainsKey, SymbolGetBeanSelectorInnerPromises, SymbolBeanContainerInstances, BeanContainer, init_beanContainer, import_reactivity_cjs_prod$1, import_shared_cjs_prod, init_useModel, BeanControllerBase, init_beanControllerBase, SymbolControllerRefDisable, init_type$1, SymbolController, BeanControllerLike, init_beanControllerLike, BeanControllerPageBase, init_beanControllerPageBase, SymbolStyle, BeanRenderLike, init_beanRenderLike, BeanRenderBase, init_beanRenderBase, BeanStyleBase, init_beanStyleBase, BeanModuleScope, BeanScopeUtil, init_beanScopeUtil, BeanModuleError, BeanModuleLocale, BeanModuleConfig, BeanModuleConstant, BeanModuleApi, BeanModuleApiSchema, BeanModuleUtil, BeanScopeBase, init_beanScopeBase, init_scope, init_bean$1, init_zod_enhance, init_config, constantDefault, init_constant, init_component$5, init_cookie$1, init_event$1, init_inject, SymbolInstalled, init_module$2, init_monkey, init_pluginZova, init_window, init_interface, init_auth, init_env, init_omitNever, init_powerPartial, init_requiredSome, init_type, init_utils$1, init_types$1, AppCookie, init_cookie, __adapter, AppEvent, init_event, SymbolLoggerInstances, SysLogger, init_logger$1, init_useSys, init_createZovaComponentAsync, SymbolZovaComponents, SysComponent, init_component$4, SysError, init_error$1, SymbolLocaleCurrent, SymbolTzCurrent, AppLocale, init_locale$2, SysLocale, init_locale$1, SysModule, init_module$1, SysMeta, init_meta$2, SymbolSysInitializePromise, SymbolSysClose, ZovaSys, sys, init_sys$1, PluginBean, init_bean, init_bootstrap, ClientOnly, init_clientOnly, CtxComponent, init_component$3, SymbolHooksFns, SymbolHooksState, CtxHooks, init_hooks, __id, CtxState, init_state, CtxMeta, init_meta$1, import_runtime_core_cjs_prod, import_reactivity_cjs_prod, CtxUtil, init_util$1, ZovaContext, init_context$1, init_context, init_useController, init_component$2, init_components, init_useApp, init_useContext, init_composables, AppComponent, init_component$1, AppError, init_error, AppModule, init_module, AppMeta, init_meta, AppUtil, init_util2, SymbolAppClose, ZovaApplication, init_application, init_locale, init_app, init_component, SymbolLoggerMessage, formatLoggerFilter, formatLoggerConsole, init_format2, init_types2, init_logger2, init_sys, init_core2, init_mixinClass, init_omitClass, init_partialClass, init_pickClass, init_mappedClass, PluginZova, init_zova, init_plugins, init_prefixKeys, init_protocolKey, init_utils, init_composable, init_watch, init_vueExtra, init_src3;
+var init_zova_5WxrFAZd = __esm({
+  "dist/ssr-testSecond/server/assets/zova-5WxrFAZd.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_fecha_fQQQkm1q();
@@ -105711,15 +105711,15 @@ ${stack2}` : ""}`];
       init_bean();
       init_zova();
     }));
+    init_prefixKeys = __esmMin((() => {
+    }));
     __name($protocolKey, "$protocolKey");
     init_protocolKey = __esmMin((() => {
     }));
-    init_prefixKeys = __esmMin((() => {
-    }));
     init_utils = __esmMin((() => {
+      init_prefixKeys();
       init_protocolKey();
       init_stateLock();
-      init_prefixKeys();
     }));
     init_composable = __esmMin((() => {
     }));
@@ -105727,8 +105727,8 @@ ${stack2}` : ""}`];
     }));
     init_vueExtra = __esmMin((() => {
       init_composable();
-      init_watch();
       init_computed();
+      init_watch();
     }));
     init_src3 = __esmMin((() => {
       init_dist$11();
@@ -105747,13 +105747,13 @@ ${stack2}` : ""}`];
   }
 });
 
-// dist/ssr-testSecond/server/assets/zova-DUQcTQBY.js
+// dist/ssr-testSecond/server/assets/zova-BcAMQQE_.js
 var init_src4;
-var init_zova_DUQcTQBY = __esm({
-  "dist/ssr-testSecond/server/assets/zova-DUQcTQBY.js"() {
+var init_zova_BcAMQQE = __esm({
+  "dist/ssr-testSecond/server/assets/zova-BcAMQQE_.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
+    init_zova_5WxrFAZd();
     init_src4 = __esmMin((() => {
       init_src3();
     }));
@@ -105775,9 +105775,9 @@ var init_zova_config_CNEEC3zm = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-bean--ITu1GOO.js
-var a_bean_ITu1GOO_exports = {};
-__export(a_bean_ITu1GOO_exports, {
+// dist/ssr-testSecond/server/assets/a-bean-BRcH8rSu.js
+var a_bean_BRcH8rSu_exports = {};
+__export(a_bean_BRcH8rSu_exports, {
   a: () => Aop,
   c: () => Controller,
   d: () => Style,
@@ -105856,14 +105856,14 @@ function UseAopMethod(aopMethodName, options2) {
     return descriptor;
   };
 }
-var init_bean$12, _dec$3, _dec2$3, _dec3$2, _class$3, ServiceOnion, init_onion_, _dec$2, _dec2$2, _dec3$1, _class$2, SysOnion2, init_sys_onion, SymbolDecoratorUseAopMethod, init_aopMethod, _dec$1, _dec2$1, _dec3, _dec4, _dec5, _class$1, _class2, _descriptor, ServiceAop, init_aop$1, MonkeySys, init_monkeySys, init_scope2, _dec, _dec2, _class, ScopeModuleABean, init__metadata, init_useAopMethod, init_utils2, init_lib2, init_aop, init_bean2, SymbolUseOnionLocal, SymbolUseOnionOptions, init_onion, init_service, init_component2, init_types3, src_exports, init_src5;
-var init_a_bean_ITu1GOO = __esm({
-  "dist/ssr-testSecond/server/assets/a-bean--ITu1GOO.js"() {
+var init_bean$12, _dec$3, _dec2$3, _dec3$2, _class$3, ServiceOnion, init_onion_, _dec$2, _dec2$2, _dec3$1, _class$2, SysOnion2, init_sys_onion, SymbolDecoratorUseAopMethod, init_aopMethod, _dec$1, _dec2$1, _dec3, _dec4, _dec5, _class$1, _class2, _descriptor, ServiceAop, init_aop$1, MonkeySys, init_monkeySys, init_scope2, _dec, _dec2, _class, ScopeModuleABean, init__metadata, init_useAopMethod, init_utils2, init_lib2, init_aop, init_bean2, init_component2, SymbolUseOnionLocal, SymbolUseOnionOptions, init_onion, init_service, init_types3, src_exports, init_src5;
+var init_a_bean_BRcH8rSu = __esm({
+  "dist/ssr-testSecond/server/assets/a-bean-BRcH8rSu.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
     __name(Sys, "Sys");
     __name(Bean, "Bean");
     __name(Service, "Service");
@@ -106125,21 +106125,21 @@ var init_a_bean_ITu1GOO = __esm({
     }));
     init_bean2 = __esmMin((() => {
     }));
+    init_component2 = __esmMin((() => {
+    }));
     init_onion = __esmMin((() => {
       SymbolUseOnionLocal = /* @__PURE__ */ Symbol("SymbolUseOnionLocal");
       SymbolUseOnionOptions = /* @__PURE__ */ Symbol("SymbolUseOnionOptions");
     }));
     init_service = __esmMin((() => {
     }));
-    init_component2 = __esmMin((() => {
-    }));
     init_types3 = __esmMin((() => {
       init_aop();
       init_aopMethod();
       init_bean2();
+      init_component2();
       init_onion();
       init_service();
-      init_component2();
     }));
     src_exports = /* @__PURE__ */ __exportAll({
       Aop: /* @__PURE__ */ __name(() => Aop, "Aop"),
@@ -106171,20 +106171,20 @@ var init_a_bean_ITu1GOO = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/demo-student-GzJmZEiv.js
-var demo_student_GzJmZEiv_exports = {};
-__export(demo_student_GzJmZEiv_exports, {
+// dist/ssr-testSecond/server/assets/demo-student-CAENM6Q0.js
+var demo_student_CAENM6Q0_exports = {};
+__export(demo_student_CAENM6Q0_exports, {
   n: () => src_exports2,
   t: () => init_src6
 });
 var _dec$12, _dec2$12, _class$12, ControllerPageTest, init_controller, ZPageTest, init_test, routes, init_routes, _dec6, _dec22, _class3, pagePathSchemas, pageNameSchemas, ScopeModuleDemoStudent, init__metadata2, src_exports2, init_src6;
-var init_demo_student_GzJmZEiv = __esm({
-  "dist/ssr-testSecond/server/assets/demo-student-GzJmZEiv.js"() {
+var init_demo_student_CAENM6Q0 = __esm({
+  "dist/ssr-testSecond/server/assets/demo-student-CAENM6Q0.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_controller = __esmMin((() => {
       init_src4();
       init_src5();
@@ -111087,9 +111087,9 @@ var init_tanstack_query_DxwFgKIH = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-model-Duxw1V1k.js
-var a_model_Duxw1V1k_exports = {};
-__export(a_model_Duxw1V1k_exports, {
+// dist/ssr-testSecond/server/assets/a-model-D8H5dSfJ.js
+var a_model_D8H5dSfJ_exports = {};
+__export(a_model_D8H5dSfJ_exports, {
   a: () => Model,
   i: () => $QueryAutoLoad,
   n: () => src_exports3,
@@ -111127,15 +111127,15 @@ async function _QueryAutoLoadInner(fn) {
   return query;
 }
 var init_model$1, init_query2, init_types5, __ThisModule__, init_this, CookieWrapper, init_cookieWrapper, BeanModelLast, init_bean_model_last, BeanModelPersister, init_bean_model_persister, BeanModelLocal, init_bean_model_local, BeanModelCookie, init_bean_model_cookie, import_localforage, BeanModelQuery, init_bean_model_query, BeanModelUseQuery, init_bean_model_useQuery, SymbolUseQueries, SymbolUseComputeds, BeanModelUseState, init_bean_model_useState, BeanModelUseStateGeneral, init_bean_model_useStateGeneral, SymbolUseMutations, BeanModelUseMutation, init_bean_model_useMutation, BeanModelFirst, init_bean_model_first, _dec$22, _dec2$22, _dec32, _class$22, BeanModelBase, init_bean_modelBase, _dec$13, _dec2$13, _class$13, ServiceStorage, init_storage, defaultOptions, config2, init_config4, Monkey, init_monkey2, _dec7, _dec23, _class4, ScopeModuleAModel, init__metadata3, init_model2, init_utils5, init_lib4, src_exports3, init_src7;
-var init_a_model_Duxw1V1k = __esm({
-  "dist/ssr-testSecond/server/assets/a-model-Duxw1V1k.js"() {
+var init_a_model_D8H5dSfJ = __esm({
+  "dist/ssr-testSecond/server/assets/a-model-D8H5dSfJ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_tanstack_query_BqXmmPmZ();
     init_tanstack_query_Bpp_8OwF();
     init_localforage_CDaIu7uz();
@@ -114684,7 +114684,7 @@ var init_tanstack_form_DmEtAGiZ = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/zova-B6BL7lA7.js
+// dist/ssr-testSecond/server/assets/zova-BUNo4L_l.js
 function isNativeElement(Component) {
   return typeof Component === "string" && !Component.includes(":") && Component.charAt(0) >= "a" && Component.charAt(0) <= "z";
 }
@@ -114705,13 +114705,13 @@ function normalizePropName(name) {
   return __propsMapper[name] ?? name;
 }
 var renderFieldJsxPropsSystem, init_const, __propsMapper, init_utils7, ZovaJsx, init_zovaJsx, init_lib5, init_rest, init_types6, init_src8;
-var init_zova_B6BL7lA7 = __esm({
-  "dist/ssr-testSecond/server/assets/zova-B6BL7lA7.js"() {
+var init_zova_BUNo4L_l = __esm({
+  "dist/ssr-testSecond/server/assets/zova-BUNo4L_l.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
+    init_zova_5WxrFAZd();
     init_zova_DO24_8vr();
     init_const = __esmMin((() => {
       renderFieldJsxPropsSystem = [
@@ -121493,9 +121493,9 @@ var init_openapi3_Do3_puu1 = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-openapi-BSwImoKm.js
-var a_openapi_BSwImoKm_exports = {};
-__export(a_openapi_BSwImoKm_exports, {
+// dist/ssr-testSecond/server/assets/a-openapi-BF0XkNFl.js
+var a_openapi_BF0XkNFl_exports = {};
+__export(a_openapi_BF0XkNFl_exports, {
   i: () => SymbolOpenapiSchemaName,
   n: () => src_exports4,
   r: () => renderFormFieldTopPropsSystem,
@@ -121595,17 +121595,17 @@ function _applyDecoratedDescriptor2(i, e, r, n2, l2) {
     return n3(i, e, r2) || r2;
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
-var OrderBusinessBase, OrderUnknownBase, OrderMaxBase, init_database, __FilterColumnsIgnore, init_schema$1, _dec$23, _dec2$23, _dec33, _dec42, _dec52, _class$23, _class22, __schemaRefPrefix, ModelSdk, init_sdk$1, SymbolOpenapiSchemaName, init_sdk, _dec$14, _dec2$14, _class$14, SysSdk, init_sys_sdk, config3, init_config5, Monkey2, init_monkey3, _dec8, _dec24, _class5, ScopeModuleAOpenapi2, init__metadata4, init_lib6, init_action, init_permissions, renderFormFieldTopPropsSystem, renderTableColumnTopPropsSystem, init_rest2, init_schema, init_table, init_formMeta, init_formProvider, init_order, init_captcha, init_tableCell, init_tableActionRow, init_tableActionBulk, init_formField, init_formActionRow, init_block, init_formFieldLayout, init_tableAction, init_resource2, init_types7, src_exports4, init_src9;
-var init_a_openapi_BSwImoKm = __esm({
-  "dist/ssr-testSecond/server/assets/a-openapi-BSwImoKm.js"() {
+var OrderBusinessBase, OrderUnknownBase, OrderMaxBase, init_database, __FilterColumnsIgnore, init_schema$1, _dec$23, _dec2$23, _dec33, _dec42, _dec52, _class$23, _class22, __schemaRefPrefix, ModelSdk, init_sdk$1, SymbolOpenapiSchemaName, init_sdk, _dec$14, _dec2$14, _class$14, SysSdk, init_sys_sdk, config3, init_config5, Monkey2, init_monkey3, _dec8, _dec24, _class5, ScopeModuleAOpenapi2, init__metadata4, init_lib6, init_action, init_captcha, init_formMeta, init_formProvider, init_order, init_permissions, init_block, init_formActionRow, init_formField, init_formFieldLayout, init_tableAction, init_tableActionBulk, init_tableActionRow, init_tableCell, init_resource2, renderFormFieldTopPropsSystem, renderTableColumnTopPropsSystem, init_rest2, init_schema, init_table, init_types7, src_exports4, init_src9;
+var init_a_openapi_BF0XkNFl = __esm({
+  "dist/ssr-testSecond/server/assets/a-openapi-BF0XkNFl.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
     init_openapi3_Do3_puu1();
     init_database = __esmMin((() => {
       OrderBusinessBase = 1e3;
@@ -121958,7 +121958,41 @@ var init_a_openapi_BSwImoKm = __esm({
     }));
     init_action = __esmMin((() => {
     }));
+    init_captcha = __esmMin((() => {
+    }));
+    init_formMeta = __esmMin((() => {
+    }));
+    init_formProvider = __esmMin((() => {
+    }));
+    init_order = __esmMin((() => {
+    }));
     init_permissions = __esmMin((() => {
+    }));
+    init_block = __esmMin((() => {
+    }));
+    init_formActionRow = __esmMin((() => {
+    }));
+    init_formField = __esmMin((() => {
+    }));
+    init_formFieldLayout = __esmMin((() => {
+    }));
+    init_tableAction = __esmMin((() => {
+    }));
+    init_tableActionBulk = __esmMin((() => {
+    }));
+    init_tableActionRow = __esmMin((() => {
+    }));
+    init_tableCell = __esmMin((() => {
+    }));
+    init_resource2 = __esmMin((() => {
+      init_block();
+      init_formActionRow();
+      init_formField();
+      init_formFieldLayout();
+      init_tableAction();
+      init_tableActionBulk();
+      init_tableActionRow();
+      init_tableCell();
     }));
     init_rest2 = __esmMin((() => {
       init_oas30();
@@ -121984,53 +122018,19 @@ var init_a_openapi_BSwImoKm = __esm({
     }));
     init_table = __esmMin((() => {
     }));
-    init_formMeta = __esmMin((() => {
-    }));
-    init_formProvider = __esmMin((() => {
-    }));
-    init_order = __esmMin((() => {
-    }));
-    init_captcha = __esmMin((() => {
-    }));
-    init_tableCell = __esmMin((() => {
-    }));
-    init_tableActionRow = __esmMin((() => {
-    }));
-    init_tableActionBulk = __esmMin((() => {
-    }));
-    init_formField = __esmMin((() => {
-    }));
-    init_formActionRow = __esmMin((() => {
-    }));
-    init_block = __esmMin((() => {
-    }));
-    init_formFieldLayout = __esmMin((() => {
-    }));
-    init_tableAction = __esmMin((() => {
-    }));
-    init_resource2 = __esmMin((() => {
-      init_tableCell();
-      init_tableActionRow();
-      init_tableActionBulk();
-      init_formField();
-      init_formActionRow();
-      init_block();
-      init_formFieldLayout();
-      init_tableAction();
-    }));
     init_types7 = __esmMin((() => {
       init_action();
+      init_captcha();
       init_database();
+      init_formMeta();
+      init_formProvider();
+      init_order();
       init_permissions();
+      init_resource2();
       init_rest2();
       init_schema();
       init_sdk();
       init_table();
-      init_formMeta();
-      init_formProvider();
-      init_order();
-      init_captcha();
-      init_resource2();
     }));
     src_exports4 = /* @__PURE__ */ __exportAll({
       ModelSdk: /* @__PURE__ */ __name(() => ModelSdk, "ModelSdk"),
@@ -122060,9 +122060,9 @@ var init_a_openapi_BSwImoKm = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-form-BedfZEcX.js
-var a_form_BedfZEcX_exports = {};
-__export(a_form_BedfZEcX_exports, {
+// dist/ssr-testSecond/server/assets/a-form-BkMpprmu.js
+var a_form_BkMpprmu_exports = {};
+__export(a_form_BkMpprmu_exports, {
   a: () => BeanControllerPageFormBase,
   i: () => formSceneFromFormMeta,
   n: () => src_exports5,
@@ -122198,19 +122198,19 @@ function formSceneFromFormMeta(formMeta) {
   if (formMeta.formMode === "edit" && formMeta.editMode === void 0) return "edit";
 }
 var BeanControllerFormBase, init_beanControllerFormBase, constFieldProps, init_formField$1, _dec$6, _dec2$6, _dec3$3, _dec4$3, _class$6, _class2$3, _descriptor$3, _ControllerForm, ControllerForm$1, init_controller$3, _dec$5, _dec2$5, _dec3$22, _dec4$2, _dec53, _dec62, _class$5, _class2$2, _descriptor$2, _descriptor2, _ControllerFormField, ControllerFormField2, init_controller$2, _dec$4, _dec2$4, _dec3$12, _dec4$1, _class$4, _class2$1, _descriptor$1, _ControllerFormFieldBlank, ControllerFormFieldBlank, init_controller$1, _dec$32, _dec2$32, _dec34, _dec43, _class$32, _class23, _descriptor3, _ControllerFormFieldPreset, ControllerFormFieldPreset, init_controller2, _dec$24, _dec2$24, _class$24, RenderForm, init_render$1, ZForm, init_form$1, _dec$15, _dec2$15, _class$15, RenderFormField, init_render, ZFormField, init_formField2, ZFormFieldBlank, init_formFieldBlank, ZFormFieldPreset, init_formFieldPreset, config4, init_config6, _dec9, _dec25, _class6, components, ScopeModuleAForm, init__metadata5, BeanControllerPageFormBase, init_beanControllerPageFormBase, init_utils8, init_lib7, init_form, init_types8, src_exports5, init_src10;
-var init_a_form_BedfZEcX = __esm({
-  "dist/ssr-testSecond/server/assets/a-form-BedfZEcX.js"() {
+var init_a_form_BkMpprmu = __esm({
+  "dist/ssr-testSecond/server/assets/a-form-BkMpprmu.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_esm_CXcIiAl();
     init_tanstack_form_DmEtAGiZ();
-    init_zova_B6BL7lA7();
-    init_a_openapi_BSwImoKm();
+    init_zova_BUNo4L_l();
+    init_a_openapi_BF0XkNFl();
     init_beanControllerFormBase = __esmMin((() => {
       init_esm3();
       init_vue();
@@ -122745,7 +122745,7 @@ var init_a_form_BedfZEcX = __esm({
         }
         render() {
           const name = this.$props.name;
-          if (!name) throw new Error(`should specify field name`);
+          if (!name) throw new Error("should specify field name");
           return this.$$form.renderField(name, this.$props);
         }
       }, _ControllerFormFieldPreset.$propsDefault = {}, _ControllerFormFieldPreset.$componentOptions = {
@@ -124441,9 +124441,9 @@ var init_vue_router_CF2_9fiG = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-logger-C2QzSmrG.js
-var a_logger_C2QzSmrG_exports = {};
-__export(a_logger_C2QzSmrG_exports, {
+// dist/ssr-testSecond/server/assets/a-logger-DvFRxrn-.js
+var a_logger_DvFRxrn_exports = {};
+__export(a_logger_DvFRxrn_exports, {
   n: () => src_exports6,
   r: () => Log,
   t: () => init_src11
@@ -124452,14 +124452,14 @@ function Log(options2) {
   return UseAopMethod("a-logger:log", options2);
 }
 var _dec$16, _dec2$16, _class$16, AopMethodLog, init_aopMethod_log, _dec10, _dec26, _class7, ScopeModuleALogger, init__metadata6, init_log, init_lib8, src_exports6, init_src11;
-var init_a_logger_C2QzSmrG = __esm({
-  "dist/ssr-testSecond/server/assets/a-logger-C2QzSmrG.js"() {
+var init_a_logger_DvFRxrn = __esm({
+  "dist/ssr-testSecond/server/assets/a-logger-DvFRxrn-.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_aopMethod_log = __esmMin((() => {
       init_src4();
       init_dist$10();
@@ -124590,9 +124590,9 @@ var init_a_logger_C2QzSmrG = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-behavior-szrMpIV6.js
-var a_behavior_szrMpIV6_exports = {};
-__export(a_behavior_szrMpIV6_exports, {
+// dist/ssr-testSecond/server/assets/a-behavior-BslL80bb.js
+var a_behavior_BslL80bb_exports = {};
+__export(a_behavior_BslL80bb_exports, {
   a: () => BeanBehaviorBase,
   i: () => ZBehavior,
   n: () => src_exports7,
@@ -124676,15 +124676,15 @@ function Behavior(options2) {
   return createBeanDecorator("behavior", "new", true, options2);
 }
 var _dec$62, _dec2$62, _dec3$32, _dec4$32, _class$62, _class2$32, _descriptor$32, SymbolSliceOptionsOriginal, ServiceComposer, init_composer, _dec$52, _dec2$52, _class$52, BeanBehavior$1, init_bean_behavior, _dec$42, _dec2$42, _dec3$23, _dec4$22, _dec5$1, _dec6$1, _dec7$1, _dec82, _dec92, _class$42, _class2$22, _descriptor$22, _descriptor22, BeanBehaviorBase, init_bean_behaviorBase, init_useBehavior, _dec$33, _dec2$33, _dec3$13, _dec4$12, _dec54, _dec63, _dec72, _class$33, _class2$12, _descriptor$12, BeanBehaviorsHolder2, init_bean_behaviorsHolder, _dec$25, _dec2$25, _dec35, _dec44, _class$25, _class24, _descriptor4, _ControllerBehavior, ControllerBehavior, init_controller3, ZBehavior, init_behavior$2, init_behavior$1, _dec$17, _dec2$17, _class$17, BehaviorRoot, init_behavior_root_, _dec11, _dec27, _class8, components2, ScopeModuleABehavior, init__metadata7, init_lib9, init_behavior, init_types9, src_exports7, init_src12;
-var init_a_behavior_szrMpIV6 = __esm({
-  "dist/ssr-testSecond/server/assets/a-behavior-szrMpIV6.js"() {
+var init_a_behavior_BslL80bb = __esm({
+  "dist/ssr-testSecond/server/assets/a-behavior-BslL80bb.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_logger_C2QzSmrG();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_logger_DvFRxrn();
     __name(_initializerDefineProperty$32, "_initializerDefineProperty$3");
     __name(_applyDecoratedDescriptor$32, "_applyDecoratedDescriptor$3");
     init_composer = __esmMin((() => {
@@ -125567,9 +125567,9 @@ var init_typestyle_B2DHz8Iv = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-style-BSOpmtDf.js
-var a_style_BSOpmtDf_exports = {};
-__export(a_style_BSOpmtDf_exports, {
+// dist/ssr-testSecond/server/assets/a-style-BI2zWfdn.js
+var a_style_BI2zWfdn_exports = {};
+__export(a_style_BI2zWfdn_exports, {
   a: () => Css,
   i: () => $getThemeName,
   n: () => src_exports8,
@@ -125603,14 +125603,14 @@ function $getThemeName(themeName) {
   return themeName;
 }
 var _dec$18, _dec2$18, _dec36, _dec45, _class$18, _class25, _descriptor5, BeanTheme, init_bean_theme, config5, init_config7, __ThisModule__2, init_this2, Monkey3, init_monkey4, _dec12, _dec28, _class9, ScopeModuleAStyle, init__metadata8, init_style$1, init_theme$1, BeanThemeBase, init_themeBase, init_lib10, init_css, init_style, init_theme, init_types10, src_exports8, init_src13;
-var init_a_style_BSOpmtDf = __esm({
-  "dist/ssr-testSecond/server/assets/a-style-BSOpmtDf.js"() {
+var init_a_style_BI2zWfdn = __esm({
+  "dist/ssr-testSecond/server/assets/a-style-BI2zWfdn.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
     init_typestyle_B2DHz8Iv();
     __name(_initializerDefineProperty4, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor5, "_applyDecoratedDescriptor");
@@ -128407,9 +128407,9 @@ var init_tanstack_table_BvgDl6M7 = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-table-DC-ncTJp.js
-var a_table_DC_ncTJp_exports = {};
-__export(a_table_DC_ncTJp_exports, {
+// dist/ssr-testSecond/server/assets/a-table-BAFRN-f-.js
+var a_table_BAFRN_f_exports = {};
+__export(a_table_BAFRN_f_exports, {
   n: () => src_exports9,
   r: () => TableCell,
   t: () => init_src14
@@ -128418,16 +128418,16 @@ function TableCell(options2) {
   return createBeanDecorator("tableCell", "sys", true, options2);
 }
 var BeanControllerTableBase, init_beanControllerTableBase, _dec$26, _dec2$26, _class$26, _ControllerTable, ControllerTable, init_controller4, _dec$19, _dec2$19, _class$19, RenderTable, init_render2, ZTable, init_table$1, config6, init_config8, _dec13, _dec29, _class10, components3, ScopeModuleATable, init__metadata9, BeanControllerPageTableBase, init_beanControllerPageTableBase, init_tableCell$1, init_lib13, init_table2, init_tableCell2, init_tableColumn, init_types11, src_exports9, init_src14;
-var init_a_table_DC_ncTJp = __esm({
-  "dist/ssr-testSecond/server/assets/a-table-DC-ncTJp.js"() {
+var init_a_table_BAFRN_f = __esm({
+  "dist/ssr-testSecond/server/assets/a-table-BAFRN-f-.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_zova_B6BL7lA7();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_zova_BUNo4L_l();
     init_tanstack_table_BmG9h9f3();
     init_tanstack_table_BvgDl6M7();
     init_beanControllerTableBase = __esmMin((() => {
@@ -128819,9 +128819,9 @@ var init_a_table_DC_ncTJp = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/demo-basic-BdBTXWNu.js
-var demo_basic_BdBTXWNu_exports = {};
-__export(demo_basic_BdBTXWNu_exports, {
+// dist/ssr-testSecond/server/assets/demo-basic-B7nPQPEJ.js
+var demo_basic_B7nPQPEJ_exports = {};
+__export(demo_basic_B7nPQPEJ_exports, {
   n: () => src_exports10,
   t: () => init_src15
 });
@@ -128916,22 +128916,22 @@ function $useLocale(key3, ...args) {
   });
 }
 var _dec$192, _dec2$192, _class$192, ModelTest, init_test2, _dec$182, _dec2$182, _dec3$4, _dec4$4, _class$182, _class2$4, _descriptor$4, _ControllerActionView, ControllerActionView, init_controller$12, _dec$172, _dec2$172, _class$172, _ControllerCard, ControllerCard, init_controller$11, _dec$162, _dec2$162, _class$162, _ControllerFormFieldTest, ZFormFieldPreset$1, ControllerFormFieldTest, init_controller$10, _dec$152, _dec2$152, _dec3$33, _dec4$33, _class$152, _class2$33, _descriptor$33, _ControllerTableCellTest, ControllerTableCellTest, init_controller$9, _dec$142, _dec2$142, _class$142, ZPage$6, ControllerPageComponent, init_controller$8, _dec$132, _dec2$132, _class$132, ZPage$5, ControllerPageLocale, init_controller$7, _dec$122, _dec2$122, _class$122, ZPage$4, ControllerPageRouteParamsSchemaParams, ControllerPageRouteParamsSchemaQuery, ControllerPageRouteParams, init_controller$6, _dec$11, _dec2$11, _class$11, ZPage$3, ControllerPageRouteQuerySchemaParams, ControllerPageRouteQuerySchemaQuery, ControllerPageRouteQuery, init_controller$5, _dec$10, _dec2$10, _class$10, ZPage$2, ControllerPageRouteQueryBSchemaParams, ControllerPageRouteQueryBSchemaQuery, ControllerPageRouteQueryB, init_controller$4, _dec$9, _dec2$9, _class$9, ZPage$1, ControllerPageState, init_controller$32, _dec$8, _dec2$8, _class$8, ZPage, ControllerPageStyle, init_controller$22, _dec$7, _dec2$7, _dec3$24, _dec4$23, _class$7, _class2$23, _descriptor$23, ControllerPageToolOneSchemaParams, ControllerPageToolOneSchemaQuery, ControllerPageToolOne, init_controller$13, _dec$63, _dec2$63, _dec3$14, _dec4$13, _class$63, _class2$13, _descriptor$13, ControllerPageToolTwoSchemaParams, ControllerPageToolTwoSchemaQuery, ControllerPageToolTwo, init_controller5, ZPageComponent, init_component3, ZPageLocale, init_locale2, NSControllerPageRouteParams, ZPageRouteParams, init_routeParams, NSControllerPageRouteQuery, ZPageRouteQuery, init_routeQuery, NSControllerPageRouteQueryB, ZPageRouteQueryB, init_routeQueryB, ZPageState, init_state2, ZPageStyle, init_style2, _dec$53, _dec2$53, _class$53, ZFormFieldPreset2, ZFormFieldBlank2, ZFormField2, ZForm2, RenderPageToolOne, init_render3, NSControllerPageToolOne, ZPageToolOne, init_toolOne, NSControllerPageToolTwo, ZPageToolTwo, init_toolTwo, routes2, init_routes2, ZActionView, init_actionView, ZCard, init_card, ZFormFieldTest, init_formFieldTest, ZTableCellTest, init_tableCellTest, _dec$43, _dec2$43, _class$43, AopHome, init_aop_home, _dec$34, _dec2$34, _class$34, AopHome3, init_aop_home3, _dec$27, _dec2$27, _dec37, _dec46, _class$27, _class26, _descriptor6, BehaviorFormFieldLayout, init_behavior_formFieldLayout, _dec$110, _dec2$110, _class$110, ZIcon, TableCellTest, init_tableCell_test, _dec14, _dec210, _class11, pagePathSchemas2, pageNameSchemas2, components4, ScopeModuleDemoBasic, init__metadata10, en_us_default, init_en_us, zh_cn_default, init_zh_cn, locales, init_locales2, src_exports10, init_src15;
-var init_demo_basic_BdBTXWNu = __esm({
-  "dist/ssr-testSecond/server/assets/demo-basic-BdBTXWNu.js"() {
+var init_demo_basic_B7nPQPEJ = __esm({
+  "dist/ssr-testSecond/server/assets/demo-basic-B7nPQPEJ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_a_form_BedfZEcX();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_a_form_BkMpprmu();
     init_vue_router_CF2_9fiG();
-    init_a_behavior_szrMpIV6();
-    init_a_style_BSOpmtDf();
+    init_a_behavior_BslL80bb();
+    init_a_style_BI2zWfdn();
     init_typestyle_B2DHz8Iv();
-    init_a_table_DC_ncTJp();
+    init_a_table_BAFRN_f();
     init_test2 = __esmMin((() => {
       init_src4();
       init_src7();
@@ -130139,9 +130139,9 @@ var init_demo_basic_BdBTXWNu = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-api-GuqjuURG.js
-var a_api_GuqjuURG_exports = {};
-__export(a_api_GuqjuURG_exports, {
+// dist/ssr-testSecond/server/assets/a-api-vQ1vikZn.js
+var a_api_vQ1vikZn_exports = {};
+__export(a_api_vQ1vikZn_exports, {
   a: () => BeanApiBase,
   i: () => ApiSchema,
   n: () => src_exports11,
@@ -130158,13 +130158,13 @@ function ApiSchema() {
   return createBeanDecorator("apiSchema", "app");
 }
 var _dec$111, _dec2$111, _dec38, _class$111, BeanApiBase, init_bean_apiBase, config7, init_config9, __ThisModule__3, init_this3, Monkey4, init_monkey5, _dec15, _dec211, _class12, ScopeModuleAApi, init__metadata11, init_api$1, init_lib14, init_api2, init_apiMeta, init_apiSchema, init_types12, src_exports11, init_src16;
-var init_a_api_GuqjuURG = __esm({
-  "dist/ssr-testSecond/server/assets/a-api-GuqjuURG.js"() {
+var init_a_api_vQ1vikZn = __esm({
+  "dist/ssr-testSecond/server/assets/a-api-vQ1vikZn.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_bean_apiBase = __esmMin((() => {
       init_src4();
       init_src5();
@@ -130300,9 +130300,9 @@ var init_a_api_GuqjuURG = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/demo-todo-CN8GsnYd.js
-var demo_todo_CN8GsnYd_exports = {};
-__export(demo_todo_CN8GsnYd_exports, {
+// dist/ssr-testSecond/server/assets/demo-todo-BzmjaUC7.js
+var demo_todo_BzmjaUC7_exports = {};
+__export(demo_todo_BzmjaUC7_exports, {
   n: () => src_exports12,
   t: () => init_src17
 });
@@ -130339,17 +130339,17 @@ function _applyDecoratedDescriptor7(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$44, _dec2$44, _class$44, ModelTodo, init_todo$2, _dec$35, _dec2$35, _class$35, ApiTodo, init_todo$1, _dec$28, _dec2$28, _dec3$15, _dec4$14, _class$28, _class2$14, _descriptor$14, ZPage$12, ControllerPageItemSchemaParams, ControllerPageItemSchemaQuery, ControllerPageItem, init_controller$14, _dec$112, _dec2$112, _dec39, _dec47, _class$112, _class27, _descriptor7, ZPage2, ControllerPageTodo, init_controller6, NSControllerPageItem, ZPageItem, init_item, ZPageTodo, init_todo, routes3, init_routes3, _dec16, _dec212, _class13, pagePathSchemas3, pageNameSchemas3, ScopeModuleDemoTodo, init__metadata12, init_types13, src_exports12, init_src17;
-var init_demo_todo_CN8GsnYd = __esm({
-  "dist/ssr-testSecond/server/assets/demo-todo-CN8GsnYd.js"() {
+var init_demo_todo_BzmjaUC7 = __esm({
+  "dist/ssr-testSecond/server/assets/demo-todo-BzmjaUC7.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_a_api_GuqjuURG();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_a_api_vQ1vikZn();
     init_vue_router_CF2_9fiG();
     init_todo$2 = __esmMin((() => {
       init_src4();
@@ -143784,9 +143784,9 @@ var init_axios_W52PMG17 = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-fetch-xab_ZTI_.js
-var a_fetch_xab_ZTI_exports = {};
-__export(a_fetch_xab_ZTI_exports, {
+// dist/ssr-testSecond/server/assets/a-fetch-I-aWqu4m.js
+var a_fetch_I_aWqu4m_exports = {};
+__export(a_fetch_I_aWqu4m_exports, {
   a: () => BeanInterceptorBase,
   i: () => SymbolInterceptorBodyResponseFlag,
   n: () => src_exports13,
@@ -143826,14 +143826,14 @@ function Interceptor(options2) {
   return createBeanDecorator("interceptor", "new", true, options2);
 }
 var _dec$36, _dec2$36, _dec3$16, _dec4$15, _class$36, _class28, _descriptor8, ServiceComposer2, init_composer2, _dec$29, _dec2$29, _class$29, SymbolFetch, BeanFetch$1, init_bean_fetch, _dec$113, _dec2$113, _dec310, _dec48, _dec55, _class$113, BeanInterceptorBase, init_bean_interceptorBase, config8, init_config10, Monkey5, init_monkey6, _dec17, _dec213, _class14, ScopeModuleAFetch, init__metadata13, SymbolInterceptorBodyResponseFlag, init_const2, init_interceptor$1, init_lib15, init_interceptor, init_types14, src_exports13, init_src18;
-var init_a_fetch_xab_ZTI = __esm({
-  "dist/ssr-testSecond/server/assets/a-fetch-xab_ZTI_.js"() {
+var init_a_fetch_I_aWqu4m = __esm({
+  "dist/ssr-testSecond/server/assets/a-fetch-I-aWqu4m.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_axios_W52PMG17();
     __name(_initializerDefineProperty7, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor8, "_applyDecoratedDescriptor");
@@ -144059,9 +144059,9 @@ var init_a_fetch_xab_ZTI = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-app-DPeb0aRm.js
-var a_app_DPeb0aRm_exports = {};
-__export(a_app_DPeb0aRm_exports, {
+// dist/ssr-testSecond/server/assets/a-app-D1Nb57YB.js
+var a_app_D1Nb57YB_exports = {};
+__export(a_app_D1Nb57YB_exports, {
   n: () => src_exports14,
   t: () => init_src19
 });
@@ -144082,14 +144082,14 @@ function _applyDecoratedDescriptor9(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$114, _dec2$114, _dec311, _dec49, _class$114, _class29, _descriptor9, _ControllerApp, ControllerApp, init_controller7, ZApp, init_app2, config9, init_config11, _dec18, _dec214, _class15, components5, ScopeModuleAApp, init__metadata14, src_exports14, init_src19;
-var init_a_app_DPeb0aRm = __esm({
-  "dist/ssr-testSecond/server/assets/a-app-DPeb0aRm.js"() {
+var init_a_app_D1Nb57YB = __esm({
+  "dist/ssr-testSecond/server/assets/a-app-D1Nb57YB.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_vue_router_CF2_9fiG();
     __name(_initializerDefineProperty8, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor9, "_applyDecoratedDescriptor");
@@ -144193,20 +144193,20 @@ var init_a_app_DPeb0aRm = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-boundary-B_wYK0Fx.js
-var a_boundary_B_wYK0Fx_exports = {};
-__export(a_boundary_B_wYK0Fx_exports, {
+// dist/ssr-testSecond/server/assets/a-boundary-B8QU8hD3.js
+var a_boundary_B8QU8hD3_exports = {};
+__export(a_boundary_B8QU8hD3_exports, {
   n: () => src_exports15,
   t: () => init_src20
 });
 var _dec19, _dec215, _class16, ScopeModuleABoundary, init__metadata15, src_exports15, init_src20;
-var init_a_boundary_B_wYK0Fx = __esm({
-  "dist/ssr-testSecond/server/assets/a-boundary-B_wYK0Fx.js"() {
+var init_a_boundary_B8QU8hD3 = __esm({
+  "dist/ssr-testSecond/server/assets/a-boundary-B8QU8hD3.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init__metadata15 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -144223,9 +144223,9 @@ var init_a_boundary_B_wYK0Fx = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-icon-o-ewoHeR.js
-var a_icon_o_ewoHeR_exports = {};
-__export(a_icon_o_ewoHeR_exports, {
+// dist/ssr-testSecond/server/assets/a-icon-Dl_nwJCe.js
+var a_icon_Dl_nwJCe_exports = {};
+__export(a_icon_Dl_nwJCe_exports, {
   i: () => $iconName,
   n: () => src_exports16,
   r: () => $icon,
@@ -144285,14 +144285,14 @@ function $iconName(name) {
   return name;
 }
 var IconGroup, init_iconGroup, _dec$37, _dec2$37, _class$37, SysIcon, init_sys_icon, _dec$210, _dec2$210, _dec3$17, _dec4$16, _class$210, _class2$15, _descriptor$15, ToolIcon, init_tool_icon, init_useZovaIcon, _dec$115, _dec2$115, _dec312, _dec410, _class$115, _class210, _descriptor10, _ControllerIcon, ControllerIcon, init_controller8, ZIcon2, init_icon$1, config10, init_config12, MonkeySys2, init_monkeySys2, _dec20, _dec216, _class17, components6, ScopeModuleAIcon, init__metadata16, init_utils10, init_lib16, init_icon, init_types15, src_exports16, init_src21;
-var init_a_icon_o_ewoHeR = __esm({
-  "dist/ssr-testSecond/server/assets/a-icon-o-ewoHeR.js"() {
+var init_a_icon_Dl_nwJCe = __esm({
+  "dist/ssr-testSecond/server/assets/a-icon-Dl_nwJCe.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_iconGroup = __esmMin((() => {
       init_src4();
       IconGroup = class {
@@ -144644,22 +144644,22 @@ var init_a_icon_o_ewoHeR = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-interceptor-DQHM53s8.js
-var a_interceptor_DQHM53s8_exports = {};
-__export(a_interceptor_DQHM53s8_exports, {
+// dist/ssr-testSecond/server/assets/a-interceptor-DDANX16s.js
+var a_interceptor_DDANX16s_exports = {};
+__export(a_interceptor_DDANX16s_exports, {
   n: () => src_exports17,
   t: () => init_src22
 });
 var _dec$54, _dec2$54, _class$54, InterceptorBody, init_interceptor_body, _dec$45, _dec2$45, _class$45, InterceptorHeaders, init_interceptor_headers, _dec$38, _dec2$38, _class$38, InterceptorJwt, init_interceptor_jwt, _dec$211, _dec2$211, _class$211, __ErrorsShouldBeMocked, InterceptorMock, init_interceptor_mock, _dec$116, _dec2$116, _class$116, InterceptorPerformAction, init_interceptor_performAction, config11, init_config13, _dec21, _dec217, _class18, ScopeModuleAInterceptor, init__metadata17, init_jwt, init_types16, src_exports17, init_src22;
-var init_a_interceptor_DQHM53s8 = __esm({
-  "dist/ssr-testSecond/server/assets/a-interceptor-DQHM53s8.js"() {
+var init_a_interceptor_DDANX16s = __esm({
+  "dist/ssr-testSecond/server/assets/a-interceptor-DDANX16s.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_fetch_xab_ZTI();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_fetch_I_aWqu4m();
     init_interceptor_body = __esmMin((() => {
       init_src4();
       init_src18();
@@ -144876,9 +144876,9 @@ var init_a_interceptor_DQHM53s8 = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-meta-DUlnqJSt.js
-var a_meta_DUlnqJSt_exports = {};
-__export(a_meta_DUlnqJSt_exports, {
+// dist/ssr-testSecond/server/assets/a-meta-CbrPQrJb.js
+var a_meta_CbrPQrJb_exports = {};
+__export(a_meta_CbrPQrJb_exports, {
   n: () => src_exports18,
   r: () => Meta,
   t: () => init_src23
@@ -144887,13 +144887,13 @@ function Meta(options2) {
   return createBeanDecorator("meta", "app", void 0, options2);
 }
 var _dec30, _dec218, _class19, ScopeModuleAMeta, init__metadata18, init_meta$12, init_lib17, init_meta2, init_types17, src_exports18, init_src23;
-var init_a_meta_DUlnqJSt = __esm({
-  "dist/ssr-testSecond/server/assets/a-meta-DUlnqJSt.js"() {
+var init_a_meta_CbrPQrJb = __esm({
+  "dist/ssr-testSecond/server/assets/a-meta-CbrPQrJb.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init__metadata18 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -144927,7 +144927,7 @@ var init_a_meta_DUlnqJSt = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-ssr-DOXgulA_.js
+// dist/ssr-testSecond/server/assets/a-ssr-Ckll9mAx.js
 function _normalizeExpires(expires) {
   if (!expires) return 0;
   if (!Number.isNaN(Number(expires))) return Number(expires);
@@ -145066,18 +145066,18 @@ function getHead(meta2) {
   return output;
 }
 var _dec$117, _dec2$117, _class$117, SymbolSSRState$1, SymbolSSRStateDefer, SysSsrState, init_sys_ssrState, config12, init_config$12, init_useMeta, Monkey6, init_monkey7, init_utils11, CtxSSRMetaStore, init_ssrMetaStore, import_shared_cjs_prod2, SymbolIsRuntimeSsrPreHydration, SymbolSSRContext, SymbolSSRState, SymbolOnHydrateds, SymbolOnHydratePropHasMismatches, SymbolInstanceUpdates, SymbolHydratingCounter, CtxSSR, init_ssr$1, MonkeySys3, init_monkeySys3, _dec31, _dec219, _class20, ScopeModuleASsr2, init__metadata19, init_lib18, init_config14, init_ssr, init_types18, init_src24;
-var init_a_ssr_DOXgulA = __esm({
-  "dist/ssr-testSecond/server/assets/a-ssr-DOXgulA_.js"() {
+var init_a_ssr_Ckll9mAx = __esm({
+  "dist/ssr-testSecond/server/assets/a-ssr-Ckll9mAx.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_DHQu4kcG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_vue_router_CF2_9fiG();
-    init_src_CsIONf2J();
+    init_src_Cr_olFZv();
     init_sys_ssrState = __esmMin((() => {
       init_src4();
       init_src5();
@@ -145598,9 +145598,9 @@ var init_a_ssr_DOXgulA = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/src-CsIONf2J.js
-var src_CsIONf2J_exports = {};
-__export(src_CsIONf2J_exports, {
+// dist/ssr-testSecond/server/assets/src-Cr_olFZv.js
+var src_Cr_olFZv_exports = {};
+__export(src_Cr_olFZv_exports, {
   CtxSSR: () => CtxSSR,
   CtxSSRMetaStore: () => CtxSSRMetaStore,
   Monkey: () => Monkey6,
@@ -146032,11 +146032,11 @@ function stringify_primitive(thing) {
   return str;
 }
 var defu, init_defu, MAX_ARRAY_LEN, MAX_ARRAY_INDEX, init_constants, escaped, DevalueError, object_proto_names, is_identifier, init_utils12, chars, unsafe_chars, reserved, init_uneval, init_devalue;
-var init_src_CsIONf2J = __esm({
-  "dist/ssr-testSecond/server/assets/src-CsIONf2J.js"() {
+var init_src_Cr_olFZv = __esm({
+  "dist/ssr-testSecond/server/assets/src-Cr_olFZv.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_a_ssr_DOXgulA();
+    init_a_ssr_Ckll9mAx();
     __name(isPlainObject5, "isPlainObject");
     __name(_defu, "_defu");
     __name(createDefu, "createDefu");
@@ -146113,9 +146113,9 @@ var init_src_CsIONf2J = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-router-DuTeE0-5.js
-var a_router_DuTeE0_5_exports = {};
-__export(a_router_DuTeE0_5_exports, {
+// dist/ssr-testSecond/server/assets/a-router-BR9YCyAa.js
+var a_router_BR9YCyAa_exports = {};
+__export(a_router_BR9YCyAa_exports, {
   i: () => BeanRouterGuardsBase,
   n: () => src_exports19,
   r: () => BeanRouterViewBase,
@@ -146161,16 +146161,16 @@ function _applyDecoratedDescriptor11(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$64, _dec2$64, _class$64, ModelPageData2, init_pageData, pageRouteKey, routerViewKey, init_const3, scrollBehavior, init_utils$13, SymbolRouterHistory, init_utils13, _dec$55, _dec2$55, _class$55, SysRouter2, init_sys_router, _dec$46, _dec2$46, _dec3$18, _dec411, _dec56, _dec64, _class$46, _class211, _descriptor11, _descriptor23, BeanRouter, init_bean_router, _dec$39, _dec2$39, _dec313, _class$39, BeanRouterGuardsBase, init_bean_routerGuardsBase, NavigationType2, NavigationDirection2, init_router, _dec$212, _dec2$212, _class$212, ServiceRouterGuards, init_routerGuards, BeanRouterViewBase, init_routerViewBase, _dec$118, _dec2$118, _class$118, ControllerRouterViewEmpty, init_controller9, ZRouterViewEmpty, init_routerViewEmpty, config13, init_config15, Monkey7, init_monkey8, MonkeySys4, init_monkeySys4, _dec40, _dec220, _class21, components7, ScopeModuleARouter, init__metadata20, init_lib19, init_pageMeta, init_routerView, init_types19, src_exports19, init_src25;
-var init_a_router_DuTeE0_5 = __esm({
-  "dist/ssr-testSecond/server/assets/a-router-DuTeE0-5.js"() {
+var init_a_router_BR9YCyAa = __esm({
+  "dist/ssr-testSecond/server/assets/a-router-BR9YCyAa.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
     init_vue_router_CF2_9fiG();
     init_pageData = __esmMin((() => {
       init_src4();
@@ -147010,17 +147010,17 @@ var init_a_router_DuTeE0_5 = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-ssrhmr-BbbraPYf.js
+// dist/ssr-testSecond/server/assets/a-ssrhmr-DvGHYEtz.js
 var config14, init_config16, MonkeySys5, init_monkeySys5, _dec41, _dec221, _class30, ScopeModuleASsrhmr, init__metadata21, init_types20, init_src26;
-var init_a_ssrhmr_BbbraPYf = __esm({
-  "dist/ssr-testSecond/server/assets/a-ssrhmr-BbbraPYf.js"() {
+var init_a_ssrhmr_DvGHYEtz = __esm({
+  "dist/ssr-testSecond/server/assets/a-ssrhmr-DvGHYEtz.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_src_DhcgXlnp();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_src_drD69oCu();
     init_config16 = __esmMin((() => {
       config14 = /* @__PURE__ */ __name((_sys2) => {
         return { change: { debounce: 100 } };
@@ -147095,9 +147095,9 @@ var init_a_ssrhmr_BbbraPYf = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/src-DhcgXlnp.js
-var src_DhcgXlnp_exports = {};
-__export(src_DhcgXlnp_exports, {
+// dist/ssr-testSecond/server/assets/src-drD69oCu.js
+var src_drD69oCu_exports = {};
+__export(src_drD69oCu_exports, {
   MonkeySys: () => MonkeySys5,
   ScopeModuleASsrhmr: () => ScopeModuleASsrhmr,
   config: () => config14,
@@ -147165,11 +147165,11 @@ function debounce(function_, wait = 100, options2 = {}) {
   return debounced;
 }
 var init_debounce;
-var init_src_DhcgXlnp = __esm({
-  "dist/ssr-testSecond/server/assets/src-DhcgXlnp.js"() {
+var init_src_drD69oCu = __esm({
+  "dist/ssr-testSecond/server/assets/src-drD69oCu.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_a_ssrhmr_BbbraPYf();
+    init_a_ssrhmr_DvGHYEtz();
     __name(debounce, "debounce");
     init_debounce = __esmMin((() => {
     }));
@@ -147177,9 +147177,9 @@ var init_src_DhcgXlnp = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-zod-Bg7l6bAa.js
-var a_zod_Bg7l6bAa_exports = {};
-__export(a_zod_Bg7l6bAa_exports, {
+// dist/ssr-testSecond/server/assets/a-zod-7InJ6JiK.js
+var a_zod_7InJ6JiK_exports = {};
+__export(a_zod_7InJ6JiK_exports, {
   n: () => src_exports20,
   t: () => init_src27
 });
@@ -147194,14 +147194,14 @@ function $useLocale2(key3, ...args) {
   });
 }
 var _dec$119, _dec2$119, _class$119, ToolV, init_tool_v, _dec50, _dec222, _class31, ScopeModuleAZod, init__metadata22, en_us_default2, init_en_us2, zh_cn_default2, init_zh_cn2, locales2, init_locales3, src_exports20, init_src27;
-var init_a_zod_Bg7l6bAa = __esm({
-  "dist/ssr-testSecond/server/assets/a-zod-Bg7l6bAa.js"() {
+var init_a_zod_7InJ6JiK = __esm({
+  "dist/ssr-testSecond/server/assets/a-zod-7InJ6JiK.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_tool_v = __esmMin((() => {
       init_src4();
       init_zod();
@@ -147260,20 +147260,20 @@ var init_a_zod_Bg7l6bAa = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-zova-DXJBu7Ah.js
-var a_zova_DXJBu7Ah_exports = {};
-__export(a_zova_DXJBu7Ah_exports, {
+// dist/ssr-testSecond/server/assets/a-zova-FQbVL6OA.js
+var a_zova_FQbVL6OA_exports = {};
+__export(a_zova_FQbVL6OA_exports, {
   n: () => src_exports21,
   t: () => init_src28
 });
 var _dec51, _dec223, _class32, ScopeModuleAZova, init__metadata23, src_exports21, init_src28;
-var init_a_zova_DXJBu7Ah = __esm({
-  "dist/ssr-testSecond/server/assets/a-zova-DXJBu7Ah.js"() {
+var init_a_zova_FQbVL6OA = __esm({
+  "dist/ssr-testSecond/server/assets/a-zova-FQbVL6OA.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init__metadata23 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -147290,9 +147290,9 @@ var init_a_zova_DXJBu7Ah = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/devui-adapter-Dg1o3ISW.js
-var devui_adapter_Dg1o3ISW_exports = {};
-__export(devui_adapter_Dg1o3ISW_exports, {
+// dist/ssr-testSecond/server/assets/devui-adapter-DJEr4SF0.js
+var devui_adapter_DJEr4SF0_exports = {};
+__export(devui_adapter_DJEr4SF0_exports, {
   n: () => src_exports22,
   t: () => init_src29
 });
@@ -147313,14 +147313,14 @@ function _applyDecoratedDescriptor12(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$120, _dec2$120, _dec314, _dec412, _class$120, _class212, _descriptor12, MetaThemeHandler, init_meta_themeHandler, MonkeySys6, init_monkeySys6, _dec57, _dec224, _class33, ScopeModuleDevuiAdapter, init__metadata24, src_exports22, init_src29;
-var init_devui_adapter_Dg1o3ISW = __esm({
-  "dist/ssr-testSecond/server/assets/devui-adapter-Dg1o3ISW.js"() {
+var init_devui_adapter_DJEr4SF0 = __esm({
+  "dist/ssr-testSecond/server/assets/devui-adapter-DJEr4SF0.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_meta_DUlnqJSt();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_meta_CbrPQrJb();
     __name(_initializerDefineProperty11, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor12, "_applyDecoratedDescriptor");
     init_meta_themeHandler = __esmMin((() => {
@@ -147385,23 +147385,23 @@ var init_devui_adapter_Dg1o3ISW = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-api-CGubmXDy.js
-var home_api_CGubmXDy_exports = {};
-__export(home_api_CGubmXDy_exports, {
+// dist/ssr-testSecond/server/assets/home-api-1IqAV_s6.js
+var home_api_1IqAV_s6_exports = {};
+__export(home_api_1IqAV_s6_exports, {
   i: () => OpenApiBaseURL,
   n: () => src_exports23,
   r: () => ApiApiHomeUserPassportloginOauthPath,
   t: () => init_src30
 });
 var OpenApiBaseURL, init_baseURL, init_schemas2, init_types$12, init_openapi, _dec$133, _dec2$133, _class$133, ApiApiCaptchacreatePath, ApiApiCaptcharefreshPath, ApiApiCaptchaverifyImmediatePath, ApiCaptcha, init_captcha$1, _dec$123, _dec2$123, _class$123, ApiHome, init_home$1, _dec$1110, _dec2$1110, _class$1110, ApiApiHomeBaseMenuretrieveMenusPath, ApiHomeBaseMenu, init_homeBaseMenu$1, _dec$102, _dec2$102, _class$102, ApiApiHomeBasePermissionretrievePermissionsPath, ApiHomeBasePermission, init_homeBasePermission$1, _dec$92, _dec2$92, _class$92, ApiApiHomeUserPassportcurrentPath, ApiApiHomeUserPassportlogoutPath, ApiApiHomeUserPassportregisterPath, ApiApiHomeUserPassportloginPath, ApiApiHomeUserPassportloginOauthPath, ApiApiHomeUserPassportassociatePath, ApiApiHomeUserPassportmigratePath, ApiApiHomeUserPassportrefreshAuthTokenPath, ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath, ApiApiHomeUserPassportcreateTempAuthTokenPath, ApiHomeUserPassport, init_homeUserPassport$1, _dec$82, _dec2$82, _class$82, ApiApiTestSsrToolOnetestGetPath, ApiApiTestSsrToolOnetestPath, ApiTestSsrToolOne, init_testSsrToolOne$1, _dec$72, _dec2$72, _class$72, ApiSchemaCaptcha, init_captcha2, _dec$65, _dec2$65, _class$65, ApiSchemaHome, init_home, _dec$56, _dec2$56, _class$56, ApiSchemaHomeBaseMenu, init_homeBaseMenu, _dec$47, _dec2$47, _class$47, ApiSchemaHomeBasePermission, init_homeBasePermission, _dec$310, _dec2$310, _class$310, ApiSchemaHomeUserPassport, init_homeUserPassport, _dec$213, _dec2$213, _class$213, ApiSchemaTestSsrToolOne, init_testSsrToolOne, _dec$121, _dec2$121, _class$121, ServiceJwtAdapter2, init_jwtAdapter, _dec58, _dec225, _class34, ScopeModuleHomeApi, init__metadata25, init_api3, init_types21, src_exports23, init_src30;
-var init_home_api_CGubmXDy = __esm({
-  "dist/ssr-testSecond/server/assets/home-api-CGubmXDy.js"() {
+var init_home_api_1IqAV_s6 = __esm({
+  "dist/ssr-testSecond/server/assets/home-api-1IqAV_s6.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_api_GuqjuURG();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_api_vQ1vikZn();
     init_baseURL = __esmMin((() => {
       OpenApiBaseURL = /* @__PURE__ */ __name((sys2) => {
         return sys2.util.getOpenApiBaseURL("OPENAPI_BASE_URL_HOME_API");
@@ -147749,9 +147749,9 @@ var init_home_api_CGubmXDy = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-base-WfUmdE-m.js
-var home_base_WfUmdE_m_exports = {};
-__export(home_base_WfUmdE_m_exports, {
+// dist/ssr-testSecond/server/assets/home-base-DkdYA1ve.js
+var home_base_DkdYA1ve_exports = {};
+__export(home_base_DkdYA1ve_exports, {
   n: () => src_exports24,
   t: () => init_src31
 });
@@ -147810,17 +147810,17 @@ function $useLocale3(key3, ...args) {
   });
 }
 var _dec$83, _dec2$83, _class$83, ServiceRouterGuards2, init_routerGuards2, _dec$73, _dec2$73, _class$73, ServiceSsr, init_ssr2, _dec$66, _dec2$66, _dec3$19, _dec4$17, _class$66, _class2$16, _descriptor$16, ServiceSsrLayout2, init_ssrLayout, _dec$57, _dec2$57, _class$57, _ControllerItemLink, ZIcon3, ControllerItemLink, init_controller$42, _dec$48, _dec2$48, _class$48, _ControllerPage, ControllerPage, init_controller$33, _dec$311, _dec2$311, _class$311, ControllerPageAuthCallbackSchemaQuery, ControllerPageAuthCallback, init_controller$23, _dec$214, _dec2$214, _dec315, _dec413, _class$214, _class213, _descriptor13, ControllerPageErrorExpiredSchemaQuery, ControllerPageErrorExpired, init_controller$15, _dec$124, _dec2$124, _class$124, ControllerPageErrorNotFound, init_controller10, NSControllerPageAuthCallback, ZPageAuthCallback, init_authCallback, NSControllerPageErrorExpired, ZPageErrorExpired, init_errorExpired, ZPageErrorNotFound, init_errorNotFound, routes4, init_routes4, ZItemLink, init_itemLink, ZPage3, init_page2, config15, init_config17, __ThisModule__4, init_this4, init_utils14, Monkey8, init_monkey9, MonkeySys7, init_monkeySys7, Main, init_main, _dec59, _dec226, _class35, pagePathSchemas4, pageNameSchemas4, components8, ScopeModuleHomeBase, init__metadata26, en_us_default3, init_en_us3, zh_cn_default3, init_zh_cn3, locales3, init_locales4, init_lib20, init_scopeBase, init_types22, src_exports24, init_src31;
-var init_home_base_WfUmdE_m = __esm({
-  "dist/ssr-testSecond/server/assets/home-base-WfUmdE-m.js"() {
+var init_home_base_DkdYA1ve = __esm({
+  "dist/ssr-testSecond/server/assets/home-base-DkdYA1ve.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_vue_router_CF2_9fiG();
-    init_a_router_DuTeE0_5();
+    init_a_router_BR9YCyAa();
     init_typestyle_B2DHz8Iv();
     init_routerGuards2 = __esmMin((() => {
       init_src4();
@@ -148358,21 +148358,21 @@ var init_home_base_WfUmdE_m = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-icon-C-2F1oWj.js
-var home_icon_C_2F1oWj_exports = {};
-__export(home_icon_C_2F1oWj_exports, {
+// dist/ssr-testSecond/server/assets/home-icon-qbngfFn7.js
+var home_icon_qbngfFn7_exports = {};
+__export(home_icon_qbngfFn7_exports, {
   n: () => src_exports25,
   t: () => init_src32
 });
 var auth_default, init_auth2, business_default, init_business, daisy_default, init_daisy, default_default, init_default, editor_default, init_editor, emoji_default, init_emoji, flow_default, init_flow, login_default, init_login, outline_default, init_outline, role_default, init_role, social_default, init_social, tools_default, init_tools, _dec60, _dec227, _class36, icons, ScopeModuleHomeIcon, init__metadata27, src_exports25, init_src32;
-var init_home_icon_C_2F1oWj = __esm({
-  "dist/ssr-testSecond/server/assets/home-icon-C-2F1oWj.js"() {
+var init_home_icon_qbngfFn7 = __esm({
+  "dist/ssr-testSecond/server/assets/home-icon-qbngfFn7.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_icon_o_ewoHeR();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_icon_Dl_nwJCe();
     init_auth2 = __esmMin((() => {
       auth_default = "/second/assets/auth-Bjup4K84.svg";
     }));
@@ -148455,21 +148455,21 @@ var init_home_icon_C_2F1oWj = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-index-CfK-WnyI.js
-var home_index_CfK_WnyI_exports = {};
-__export(home_index_CfK_WnyI_exports, {
+// dist/ssr-testSecond/server/assets/home-index-Dq8394yi.js
+var home_index_Dq8394yi_exports = {};
+__export(home_index_Dq8394yi_exports, {
   n: () => src_exports26,
   t: () => init_src33
 });
 var _dec$125, _dec2$125, _class$125, ControllerPageHome, init_controller11, ZPageHome, init_home2, routes5, init_routes5, _dec61, _dec228, _class37, pagePathSchemas5, pageNameSchemas5, ScopeModuleHomeIndex, init__metadata28, src_exports26, init_src33;
-var init_home_index_CfK_WnyI = __esm({
-  "dist/ssr-testSecond/server/assets/home-index-CfK-WnyI.js"() {
+var init_home_index_Dq8394yi = __esm({
+  "dist/ssr-testSecond/server/assets/home-index-Dq8394yi.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_controller11 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -148530,9 +148530,9 @@ var init_home_index_CfK_WnyI = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-layoutempty-BZDDZ8Tq.js
-var home_layoutempty_BZDDZ8Tq_exports = {};
-__export(home_layoutempty_BZDDZ8Tq_exports, {
+// dist/ssr-testSecond/server/assets/home-layoutempty-DExQ__aL.js
+var home_layoutempty_DExQ_aL_exports = {};
+__export(home_layoutempty_DExQ_aL_exports, {
   n: () => src_exports27,
   t: () => init_src34
 });
@@ -148553,14 +148553,14 @@ function _applyDecoratedDescriptor14(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$126, _dec2$126, _dec316, _dec414, _class$126, _class214, _descriptor14, _ControllerLayoutEmpty, ZRouterViewEmpty2, ControllerLayoutEmpty, init_controller12, ZLayoutEmpty, init_layoutEmpty, _dec65, _dec229, _class38, components9, ScopeModuleHomeLayoutempty, init__metadata29, src_exports27, init_src34;
-var init_home_layoutempty_BZDDZ8Tq = __esm({
-  "dist/ssr-testSecond/server/assets/home-layoutempty-BZDDZ8Tq.js"() {
+var init_home_layoutempty_DExQ_aL = __esm({
+  "dist/ssr-testSecond/server/assets/home-layoutempty-DExQ__aL.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     __name(_initializerDefineProperty13, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor14, "_applyDecoratedDescriptor");
     init_controller12 = __esmMin((() => {
@@ -148624,9 +148624,9 @@ var init_home_layoutempty_BZDDZ8Tq = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-layouttabs-3IJv7SnH.js
-var home_layouttabs_3IJv7SnH_exports = {};
-__export(home_layouttabs_3IJv7SnH_exports, {
+// dist/ssr-testSecond/server/assets/home-layouttabs-CR0DtK2c.js
+var home_layouttabs_CR0DtK2c_exports = {};
+__export(home_layouttabs_CR0DtK2c_exports, {
   n: () => src_exports28,
   t: () => init_src35
 });
@@ -148740,16 +148740,16 @@ function $useLocale4(key3, ...args) {
   });
 }
 var _dec$134, _dec2$134, _dec3$5, _dec4$5, _class$134, _class2$5, _descriptor$5, ModelLayout, init_layout, _dec$127, _dec2$127, _class$127, ModelMenu, init_menu, _dec$1111, _dec2$1111, _dec3$42, _dec4$42, _dec5$12, _dec6$12, _dec7$12, _dec8$1, _class$1111, _class2$42, _descriptor$42, _descriptor2$1, _descriptor3$1, _ControllerLayoutTabs, ControllerLayoutTabs, init_controller13, _dec$103, _dec2$103, _dec3$34, _dec4$34, _class$103, _class2$34, _descriptor$34, RenderContent, init_render_content, _dec$93, _dec2$93, _dec3$25, _dec4$24, _class$93, _class2$24, _descriptor$24, RenderHeader, init_render_header, _dec$84, _dec2$84, _class$84, RenderLocale, init_render_locale, _dec$74, _dec2$74, _class$74, ZItemLink2, RenderMenu, init_render_menu, _dec$67, _dec2$67, _dec3$110, _dec4$18, _class$67, _class2$17, _descriptor$17, RenderSidebar, init_render_sidebar, _dec$58, _dec2$58, _class$58, ZRouterViewTabs, ZIcon4, RenderTabs, init_render_tabs, _dec$49, _dec2$49, _class$49, RenderTheme, init_render_theme, _dec$312, _dec2$312, _class$312, RenderUser, init_render_user, _dec$215, _dec2$215, _dec317, _dec415, _dec510, _dec66, _dec73, _dec83, _dec93, _dec0, _dec1, _dec102, _dec112, _dec122, _dec132, _dec142, _dec152, _dec162, _class$215, _class215, _descriptor15, _descriptor24, _descriptor32, _descriptor42, _descriptor52, _descriptor62, _descriptor72, _descriptor82, RenderLayoutTabs$1, init_render4, _dec$128, _dec2$128, _class$128, StyleLayoutTabs, init_style3, ZLayoutTabs, init_layoutTabs, config16, init_config18, _dec67, _dec230, _class39, components10, ScopeModuleHomeLayouttabs, init__metadata30, en_us_default4, init_en_us4, zh_cn_default4, init_zh_cn4, locales4, init_locales5, src_exports28, init_src35;
-var init_home_layouttabs_3IJv7SnH = __esm({
-  "dist/ssr-testSecond/server/assets/home-layouttabs-3IJv7SnH.js"() {
+var init_home_layouttabs_CR0DtK2c = __esm({
+  "dist/ssr-testSecond/server/assets/home-layouttabs-CR0DtK2c.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_a_icon_o_ewoHeR();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_a_icon_Dl_nwJCe();
     init_typestyle_B2DHz8Iv();
     __name(_initializerDefineProperty$5, "_initializerDefineProperty$5");
     __name(_applyDecoratedDescriptor$5, "_applyDecoratedDescriptor$5");
@@ -149110,7 +149110,7 @@ var init_home_layouttabs_3IJv7SnH = __esm({
         render() {
           return (0, vue_exports.createVNode)("div", {
             "class": "drawer-side",
-            "style": { width: this.$scopeBase.config.layout.sidebar.width + "px" }
+            "style": { width: `${this.$scopeBase.config.layout.sidebar.width}px` }
           }, [(0, vue_exports.createVNode)("label", {
             "htmlFor": "my-drawer-2",
             "aria-label": "close sidebar",
@@ -149562,9 +149562,9 @@ var init_home_layouttabs_3IJv7SnH = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-login-B9ZMn8nq.js
-var home_login_B9ZMn8nq_exports = {};
-__export(home_login_B9ZMn8nq_exports, {
+// dist/ssr-testSecond/server/assets/home-login-Bxu37SIG.js
+var home_login_Bxu37SIG_exports = {};
+__export(home_login_Bxu37SIG_exports, {
   n: () => src_exports29,
   t: () => init_src36
 });
@@ -149595,16 +149595,16 @@ function $useLocale5(key3, ...args) {
   });
 }
 var _dec$313, _dec2$313, _class$313, ControllerPageLogin, init_controller14, _dec$216, _dec2$216, _class$216, ZIcon$1, ZFormFieldPreset3, ZFormFieldBlank3, ZForm3, RenderPageLogin, init_render5, ZPageLogin, init_login2, routes6, init_routes6, _dec$129, _dec2$129, _dec318, _dec416, _class$129, _class216, _descriptor16, ZIcon5, BehaviorFormFieldLayoutLogin, init_behavior_formFieldLayoutLogin, _dec68, _dec231, _class40, pagePathSchemas6, pageNameSchemas6, ScopeModuleHomeLogin, init__metadata31, en_us_default5, init_en_us5, zh_cn_default5, init_zh_cn5, locales5, init_locales6, src_exports29, init_src36;
-var init_home_login_B9ZMn8nq = __esm({
-  "dist/ssr-testSecond/server/assets/home-login-B9ZMn8nq.js"() {
+var init_home_login_Bxu37SIG = __esm({
+  "dist/ssr-testSecond/server/assets/home-login-Bxu37SIG.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_a_behavior_szrMpIV6();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_a_behavior_BslL80bb();
     init_controller14 = __esmMin((() => {
       init_src4();
       init_src5();
@@ -149847,23 +149847,23 @@ var init_home_login_B9ZMn8nq = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-passport-_dlOfZhM.js
-var home_passport_dlOfZhM_exports = {};
-__export(home_passport_dlOfZhM_exports, {
+// dist/ssr-testSecond/server/assets/home-passport-CeLVMuSL.js
+var home_passport_CeLVMuSL_exports = {};
+__export(home_passport_CeLVMuSL_exports, {
   n: () => src_exports30,
   t: () => init_src37
 });
 var _dec$130, _dec2$130, _class$130, ModelPassport, init_passport$1, config17, init_config19, Monkey9, init_monkey10, _dec69, _dec232, _class41, ScopeModuleHomePassport, init__metadata32, init_passport, init_types23, src_exports30, init_src37;
-var init_home_passport_dlOfZhM = __esm({
-  "dist/ssr-testSecond/server/assets/home-passport-_dlOfZhM.js"() {
+var init_home_passport_CeLVMuSL = __esm({
+  "dist/ssr-testSecond/server/assets/home-passport-CeLVMuSL.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_home_api_CGubmXDy();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_home_api_1IqAV_s6();
     init_passport$1 = __esmMin((() => {
       init_src4();
       init_dist$10();
@@ -150085,31 +150085,21 @@ var init_home_passport_dlOfZhM = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/home-theme-HCFUZJlQ.js
-var home_theme_HCFUZJlQ_exports = {};
-__export(home_theme_HCFUZJlQ_exports, {
+// dist/ssr-testSecond/server/assets/home-theme-BI3gpGSF.js
+var home_theme_BI3gpGSF_exports = {};
+__export(home_theme_BI3gpGSF_exports, {
   n: () => src_exports31,
   t: () => init_src38
 });
-var init_style4, init_themeToken, init_types24, _dec$314, _dec2$314, _class$314, CssBase, init_css_base, _dec$217, _dec2$217, _class$217, ThemeDefault, init_theme_default, _dec$131, _dec2$131, _class$131, ThemeOrange, init_theme_orange, _dec70, _dec233, _class42, ScopeModuleHomeTheme, init__metadata33, src_exports31, init_src38;
-var init_home_theme_HCFUZJlQ = __esm({
-  "dist/ssr-testSecond/server/assets/home-theme-HCFUZJlQ.js"() {
+var _dec$314, _dec2$314, _class$314, CssBase, init_css_base, _dec$217, _dec2$217, _class$217, ThemeDefault, init_theme_default, _dec$131, _dec2$131, _class$131, ThemeOrange, init_theme_orange, _dec70, _dec233, _class42, ScopeModuleHomeTheme, init__metadata33, init_style4, init_themeToken, init_types24, src_exports31, init_src38;
+var init_home_theme_BI3gpGSF = __esm({
+  "dist/ssr-testSecond/server/assets/home-theme-BI3gpGSF.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_style_BSOpmtDf();
-    init_style4 = __esmMin((() => {
-      init_src4();
-    }));
-    init_themeToken = __esmMin((() => {
-      init_src13();
-    }));
-    init_types24 = __esmMin((() => {
-      init_style4();
-      init_themeToken();
-    }));
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_style_BI2zWfdn();
     init_css_base = __esmMin((() => {
       init_src4();
       init_src13();
@@ -150192,6 +150182,16 @@ var init_home_theme_HCFUZJlQ = __esm({
         }
       }) || _class42) || _class42);
     }));
+    init_style4 = __esmMin((() => {
+      init_src4();
+    }));
+    init_themeToken = __esmMin((() => {
+      init_src13();
+    }));
+    init_types24 = __esmMin((() => {
+      init_style4();
+      init_themeToken();
+    }));
     src_exports31 = /* @__PURE__ */ __exportAll({
       CssBase: /* @__PURE__ */ __name(() => CssBase, "CssBase"),
       ScopeModuleHomeTheme: /* @__PURE__ */ __name(() => ScopeModuleHomeTheme, "ScopeModuleHomeTheme"),
@@ -150199,26 +150199,26 @@ var init_home_theme_HCFUZJlQ = __esm({
       ThemeOrange: /* @__PURE__ */ __name(() => ThemeOrange, "ThemeOrange")
     });
     init_src38 = __esmMin((() => {
-      init_types24();
       init__metadata33();
+      init_types24();
     }));
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-adapter-DHiGxOrO.js
-var basic_adapter_DHiGxOrO_exports = {};
-__export(basic_adapter_DHiGxOrO_exports, {
+// dist/ssr-testSecond/server/assets/basic-adapter-DslK9Mw6.js
+var basic_adapter_DslK9Mw6_exports = {};
+__export(basic_adapter_DslK9Mw6_exports, {
   n: () => src_exports32,
   t: () => init_src39
 });
 var config18, init_config20, __ThisModule__5, init_this5, MonkeySys8, init_monkeySys8, _dec71, _dec234, _class43, ScopeModuleBasicAdapter, init__metadata34, src_exports32, init_src39;
-var init_basic_adapter_DHiGxOrO = __esm({
-  "dist/ssr-testSecond/server/assets/basic-adapter-DHiGxOrO.js"() {
+var init_basic_adapter_DslK9Mw6 = __esm({
+  "dist/ssr-testSecond/server/assets/basic-adapter-DslK9Mw6.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_config20 = __esmMin((() => {
       config18 = /* @__PURE__ */ __name((_sys2) => {
         return { formProvider: {
@@ -150270,19 +150270,12 @@ var init_basic_adapter_DHiGxOrO = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-captcha-Da1A7uey.js
-var basic_captcha_Da1A7uey_exports = {};
-__export(basic_captcha_Da1A7uey_exports, {
+// dist/ssr-testSecond/server/assets/basic-captcha-BdQj_47M.js
+var basic_captcha_BdQj_47M_exports = {};
+__export(basic_captcha_BdQj_47M_exports, {
   n: () => src_exports33,
   t: () => init_src40
 });
-function $useLocale6(key3, ...args) {
-  const app = useApp();
-  const str = `basic-captcha::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty16(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -150302,32 +150295,23 @@ function _applyDecoratedDescriptor17(i, e, r, n2, l2) {
 function locale6(key3) {
   return `basic-captcha::${key3}`;
 }
-var en_us_default6, init_en_us6, zh_cn_default6, init_zh_cn6, locales6, init_locales7, _dec$135, _dec2$135, _dec319, _dec417, _class$135, _class217, _descriptor17, _ControllerFormFieldCaptcha, ZFormField3, ControllerFormFieldCaptcha, init_controller15, ZFormFieldCaptcha, init_formFieldCaptcha, _dec74, _dec235, _class44, components11, ScopeModuleBasicCaptcha, init__metadata35, src_exports33, init_src40;
-var init_basic_captcha_Da1A7uey = __esm({
-  "dist/ssr-testSecond/server/assets/basic-captcha-Da1A7uey.js"() {
+function $useLocale6(key3, ...args) {
+  const app = useApp();
+  const str = `basic-captcha::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$135, _dec2$135, _dec319, _dec417, _class$135, _class217, _descriptor17, _ControllerFormFieldCaptcha, ZFormField3, ControllerFormFieldCaptcha, init_controller15, ZFormFieldCaptcha, init_formFieldCaptcha, _dec74, _dec235, _class44, components11, ScopeModuleBasicCaptcha, init__metadata35, en_us_default6, init_en_us6, zh_cn_default6, init_zh_cn6, locales6, init_locales7, src_exports33, init_src40;
+var init_basic_captcha_BdQj_47M = __esm({
+  "dist/ssr-testSecond/server/assets/basic-captcha-BdQj_47M.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_typestyle_B2DHz8Iv();
-    init_en_us6 = __esmMin((() => {
-      en_us_default6 = { InputCaptcha: "Please input captcha" };
-    }));
-    init_zh_cn6 = __esmMin((() => {
-      zh_cn_default6 = { InputCaptcha: "\u8BF7\u8F93\u5165\u9A8C\u8BC1\u7801" };
-    }));
-    __name($useLocale6, "$useLocale");
-    init_locales7 = __esmMin((() => {
-      init_src4();
-      init_en_us6();
-      init_zh_cn6();
-      locales6 = {
-        "en-us": en_us_default6,
-        "zh-cn": zh_cn_default6
-      };
-    }));
     __name(_initializerDefineProperty16, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor17, "_applyDecoratedDescriptor");
     init_controller15 = __esmMin((() => {
@@ -150440,6 +150424,22 @@ var init_basic_captcha_Da1A7uey = __esm({
         }
       }) || _class44) || _class44);
     }));
+    init_en_us6 = __esmMin((() => {
+      en_us_default6 = { InputCaptcha: "Please input captcha" };
+    }));
+    init_zh_cn6 = __esmMin((() => {
+      zh_cn_default6 = { InputCaptcha: "\u8BF7\u8F93\u5165\u9A8C\u8BC1\u7801" };
+    }));
+    __name($useLocale6, "$useLocale");
+    init_locales7 = __esmMin((() => {
+      init_src4();
+      init_en_us6();
+      init_zh_cn6();
+      locales6 = {
+        "en-us": en_us_default6,
+        "zh-cn": zh_cn_default6
+      };
+    }));
     src_exports33 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale6, "$useLocale"),
       ControllerFormFieldCaptcha: /* @__PURE__ */ __name(() => ControllerFormFieldCaptcha, "ControllerFormFieldCaptcha"),
@@ -150450,19 +150450,19 @@ var init_basic_captcha_Da1A7uey = __esm({
       locales: /* @__PURE__ */ __name(() => locales6, "locales")
     });
     init_src40 = __esmMin((() => {
-      init_locales7();
       init__metadata35();
+      init_locales7();
     }));
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-command-CrcZC9yO.js
-var a_command_CrcZC9yO_exports = {};
-__export(a_command_CrcZC9yO_exports, {
-  a: () => Command,
-  i: () => BeanCommandBulkBase,
+// dist/ssr-testSecond/server/assets/a-command-CdDnMXTf.js
+var a_command_CdDnMXTf_exports = {};
+__export(a_command_CdDnMXTf_exports, {
+  a: () => BeanCommandBulkBase,
+  i: () => BeanCommandRowBase,
   n: () => src_exports34,
-  r: () => BeanCommandRowBase,
+  r: () => Command,
   t: () => init_src41
 });
 function $performCommand(sys2, commandName, options2, renderContext, next) {
@@ -150484,15 +150484,15 @@ function _renderEventCommandNormal_inner(beanInstance, options2, renderContext, 
 function Command(options2) {
   return createBeanDecorator("command", "sys", true, options2);
 }
-var init_performCommand$1, Monkey10, init_monkey11, _dec75, _dec236, _class45, ScopeModuleACommand, init__metadata36, init_command$1, BeanCommandBulkBase, init_beanCommandBulkBase, BeanCommandRowBase, init_beanCommandRowBase, init_lib21, SymbolCommandResult, init_command, init_performCommand, init_commandJsx, init_types25, src_exports34, init_src41;
-var init_a_command_CrcZC9yO = __esm({
-  "dist/ssr-testSecond/server/assets/a-command-CrcZC9yO.js"() {
+var init_performCommand$1, Monkey10, init_monkey11, _dec75, _dec236, _class45, ScopeModuleACommand, init__metadata36, BeanCommandBulkBase, init_beanCommandBulkBase, BeanCommandRowBase, init_beanCommandRowBase, init_command$1, init_lib21, SymbolCommandResult, init_command, init_commandJsx, init_performCommand, init_types25, src_exports34, init_src41;
+var init_a_command_CdDnMXTf = __esm({
+  "dist/ssr-testSecond/server/assets/a-command-CdDnMXTf.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     __name($performCommand, "$performCommand");
     __name(_renderEventCommandNormal_inner, "_renderEventCommandNormal_inner");
     init_performCommand$1 = __esmMin((() => {
@@ -150534,10 +150534,6 @@ var init_a_command_CrcZC9yO = __esm({
         }
       }) || _class45) || _class45);
     }));
-    __name(Command, "Command");
-    init_command$1 = __esmMin((() => {
-      init_src4();
-    }));
     init_beanCommandBulkBase = __esmMin((() => {
       init_src4();
       BeanCommandBulkBase = class extends BeanBase {
@@ -150578,24 +150574,28 @@ var init_a_command_CrcZC9yO = __esm({
         }
       };
     }));
+    __name(Command, "Command");
+    init_command$1 = __esmMin((() => {
+      init_src4();
+    }));
     init_lib21 = __esmMin((() => {
-      init_command$1();
-      init_performCommand$1();
       init_beanCommandBulkBase();
       init_beanCommandRowBase();
+      init_command$1();
+      init_performCommand$1();
     }));
     init_command = __esmMin((() => {
       SymbolCommandResult = /* @__PURE__ */ Symbol("SymbolCommandResult");
     }));
+    init_commandJsx = __esmMin((() => {
+    }));
     init_performCommand = __esmMin((() => {
       init_src4();
     }));
-    init_commandJsx = __esmMin((() => {
-    }));
     init_types25 = __esmMin((() => {
       init_command();
-      init_performCommand();
       init_commandJsx();
+      init_performCommand();
     }));
     src_exports34 = /* @__PURE__ */ __exportAll({
       $performCommand: /* @__PURE__ */ __name(() => $performCommand, "$performCommand"),
@@ -150614,21 +150614,21 @@ var init_a_command_CrcZC9yO = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-commands-DAgYHxLi.js
-var basic_commands_DAgYHxLi_exports = {};
-__export(basic_commands_DAgYHxLi_exports, {
+// dist/ssr-testSecond/server/assets/basic-commands-CVErzjCG.js
+var basic_commands_CVErzjCG_exports = {};
+__export(basic_commands_CVErzjCG_exports, {
   n: () => src_exports35,
   t: () => init_src42
 });
 var _dec$85, _dec2$85, _class$85, CommandAlert, init_command_alert, _dec$75, _dec2$75, _class$75, CommandConfirm, init_command_confirm, _dec$68, _dec2$68, _class$68, CommandCopy, init_command_copy, _dec$59, _dec2$59, _class$59, CommandCreate, init_command_create, _dec$410, _dec2$410, _class$410, CommandDelete, init_command_delete, _dec$315, _dec2$315, _class$315, CommandEdit, init_command_edit, _dec$218, _dec2$218, _class$218, CommandSetValue, init_command_setValue, _dec$136, _dec2$136, _class$136, CommandView, init_command_view, _dec76, _dec237, _class46, ScopeModuleBasicCommands, init__metadata37, src_exports35, init_src42;
-var init_basic_commands_DAgYHxLi = __esm({
-  "dist/ssr-testSecond/server/assets/basic-commands-DAgYHxLi.js"() {
+var init_basic_commands_CVErzjCG = __esm({
+  "dist/ssr-testSecond/server/assets/basic-commands-CVErzjCG.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_command_CrcZC9yO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_command_CdDnMXTf();
     init_command_alert = __esmMin((() => {
       init_src4();
       init_src41();
@@ -150795,22 +150795,22 @@ var init_basic_commands_DAgYHxLi = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-commandssync-Bcph82ME.js
-var basic_commandssync_Bcph82ME_exports = {};
-__export(basic_commandssync_Bcph82ME_exports, {
+// dist/ssr-testSecond/server/assets/basic-commandssync-tq2eVLTA.js
+var basic_commandssync_tq2eVLTA_exports = {};
+__export(basic_commandssync_tq2eVLTA_exports, {
   n: () => src_exports36,
   t: () => init_src43
 });
 var _dec$219, _dec2$219, _dec3$111, _class$219, CommandExpr, init_command_expr, _dec$137, _dec2$137, _dec320, _class$137, CommandLog, init_command_log, _dec77, _dec238, _class47, ScopeModuleBasicCommandssync, init__metadata38, src_exports36, init_src43;
-var init_basic_commandssync_Bcph82ME = __esm({
-  "dist/ssr-testSecond/server/assets/basic-commandssync-Bcph82ME.js"() {
+var init_basic_commandssync_tq2eVLTA = __esm({
+  "dist/ssr-testSecond/server/assets/basic-commandssync-tq2eVLTA.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_command_CrcZC9yO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_command_CdDnMXTf();
     init_command_expr = __esmMin((() => {
       init_src4();
       init_src41();
@@ -150859,7 +150859,7 @@ var init_basic_commandssync_Bcph82ME = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-currency-C7v9ja1G.js
+// dist/ssr-testSecond/server/assets/basic-currency-b4q8N2RX.js
 function currencyFormat(value, options2) {
   if (!value || typeof value !== "number" && typeof value !== "string") return value;
   return new Currency(options2).format(value);
@@ -150884,16 +150884,16 @@ function _applyDecoratedDescriptor18(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var init_utils15, _dec$220, _dec2$220, _dec321, _dec418, _class$220, _class218, _descriptor18, _ControllerFormFieldCurrency, ZFormFieldPreset4, ControllerFormFieldCurrency, init_controller16, ZFormFieldCurrency, init_formFieldCurrency, _dec$138, _dec2$138, _class$138, TableCellCurrency, init_tableCell_currency, _dec78, _dec239, _class48, components12, ScopeModuleBasicCurrency, init__metadata39, init_lib22, init_src44;
-var init_basic_currency_C7v9ja1G = __esm({
-  "dist/ssr-testSecond/server/assets/basic-currency-C7v9ja1G.js"() {
+var init_basic_currency_b4q8N2RX = __esm({
+  "dist/ssr-testSecond/server/assets/basic-currency-b4q8N2RX.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_table_DC_ncTJp();
-    init_src_961pYHWM();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_table_BAFRN_f();
+    init_src_ByDXmtXZ();
     __name(currencyFormat, "currencyFormat");
     __name(currencyUpdate, "currencyUpdate");
     init_utils15 = __esmMin((() => {
@@ -151015,9 +151015,9 @@ var init_basic_currency_C7v9ja1G = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/src-961pYHWM.js
-var src_961pYHWM_exports = {};
-__export(src_961pYHWM_exports, {
+// dist/ssr-testSecond/server/assets/src-ByDXmtXZ.js
+var src_ByDXmtXZ_exports = {};
+__export(src_ByDXmtXZ_exports, {
   ControllerFormFieldCurrency: () => ControllerFormFieldCurrency,
   ScopeModuleBasicCurrency: () => ScopeModuleBasicCurrency,
   TableCellCurrency: () => TableCellCurrency,
@@ -151037,11 +151037,11 @@ function _trimZero(str, zero) {
   return str;
 }
 var Currency, init_dist4;
-var init_src_961pYHWM = __esm({
-  "dist/ssr-testSecond/server/assets/src-961pYHWM.js"() {
+var init_src_ByDXmtXZ = __esm({
+  "dist/ssr-testSecond/server/assets/src-ByDXmtXZ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_basic_currency_C7v9ja1G();
+    init_basic_currency_b4q8N2RX();
     __name(_trimZero, "_trimZero");
     init_dist4 = __esmMin((() => {
       Currency = class {
@@ -151076,7 +151076,7 @@ var init_src_961pYHWM = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-date-KH_QgmLX.js
+// dist/ssr-testSecond/server/assets/basic-date-DHGt0Wfc.js
 function dateFormatUtil(value, options2) {
   if (!value) return;
   if (!options2) return value;
@@ -151085,29 +151085,17 @@ function dateFormatUtil(value, options2) {
   else if (options2.preset) return datetime3.toLocaleString(DateTime[options2.preset]);
   return value;
 }
-var init_date, init_types26, init_utils16, init_lib23, _dec$411, _dec2$411, _class$411, _ControllerDateRange, ControllerDateRange, init_controller$24, _dec$316, _dec2$316, _class$316, _ControllerFormFieldDate, ZFormFieldPreset5, ControllerFormFieldDate, init_controller$16, ZDateRange, init_dateRange, _dec$221, _dec2$221, _class$221, _ControllerFormFieldDateRange, ZFormField4, ControllerFormFieldDateRange, init_controller17, ZFormFieldDate, init_formFieldDate, ZFormFieldDateRange, init_formFieldDateRange, _dec$139, _dec2$139, _class$139, TableCellDate, init_tableCell_date, _dec79, _dec240, _class49, components13, ScopeModuleBasicDate, init__metadata40, init_src45;
-var init_basic_date_KH_QgmLX = __esm({
-  "dist/ssr-testSecond/server/assets/basic-date-KH_QgmLX.js"() {
+var _dec$411, _dec2$411, _class$411, _ControllerDateRange, ControllerDateRange, init_controller$24, init_utils16, _dec$316, _dec2$316, _class$316, _ControllerFormFieldDate, ZFormFieldPreset5, ControllerFormFieldDate, init_controller$16, ZDateRange, init_dateRange, _dec$221, _dec2$221, _class$221, _ControllerFormFieldDateRange, ZFormField4, ControllerFormFieldDateRange, init_controller17, ZFormFieldDate, init_formFieldDate, ZFormFieldDateRange, init_formFieldDateRange, _dec$139, _dec2$139, _class$139, TableCellDate, init_tableCell_date, _dec79, _dec240, _class49, components13, ScopeModuleBasicDate, init__metadata40, init_lib23, init_date, init_types26, init_src45;
+var init_basic_date_DHGt0Wfc = __esm({
+  "dist/ssr-testSecond/server/assets/basic-date-DHGt0Wfc.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_table_DC_ncTJp();
-    init_src_Dm0GE_II();
-    init_date = __esmMin((() => {
-    }));
-    init_types26 = __esmMin((() => {
-      init_date();
-    }));
-    __name(dateFormatUtil, "dateFormatUtil");
-    init_utils16 = __esmMin((() => {
-      init_luxon();
-    }));
-    init_lib23 = __esmMin((() => {
-      init_utils16();
-    }));
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_table_BAFRN_f();
+    init_src_DYGl77oI();
     init_controller$24 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -151162,6 +151150,10 @@ var init_basic_date_KH_QgmLX = __esm({
           return `${dateStartStr ?? ""}${this.$props.separator}${dateEndStr ?? ""}`;
         }
       }, _ControllerDateRange.$propsDefault = { separator: "~" }, _ControllerDateRange)) || _class$411) || _class$411);
+    }));
+    __name(dateFormatUtil, "dateFormatUtil");
+    init_utils16 = __esmMin((() => {
+      init_luxon();
     }));
     init_controller$16 = __esmMin((() => {
       init_vue();
@@ -151297,17 +151289,25 @@ var init_basic_date_KH_QgmLX = __esm({
         }
       }) || _class49) || _class49);
     }));
+    init_lib23 = __esmMin((() => {
+      init_utils16();
+    }));
+    init_date = __esmMin((() => {
+    }));
+    init_types26 = __esmMin((() => {
+      init_date();
+    }));
     init_src45 = __esmMin((() => {
-      init_types26();
-      init_lib23();
       init__metadata40();
+      init_lib23();
+      init_types26();
     }));
   }
 });
 
-// dist/ssr-testSecond/server/assets/src-Dm0GE_II.js
-var src_Dm0GE_II_exports = {};
-__export(src_Dm0GE_II_exports, {
+// dist/ssr-testSecond/server/assets/src-DYGl77oI.js
+var src_DYGl77oI_exports = {};
+__export(src_DYGl77oI_exports, {
   ControllerDateRange: () => ControllerDateRange,
   ControllerFormFieldDate: () => ControllerFormFieldDate,
   ControllerFormFieldDateRange: () => ControllerFormFieldDateRange,
@@ -152785,11 +152785,11 @@ function friendlyDateTime(dateTimeish) {
   else throw new InvalidArgumentError(`Unknown datetime argument: ${dateTimeish}, of type ${typeof dateTimeish}`);
 }
 var LuxonError, InvalidDateTimeError, InvalidIntervalError, InvalidDurationError, ConflictingSpecificationError, InvalidUnitError, InvalidArgumentError, ZoneIsAbstractError, n, s, l, DATE_SHORT, DATE_MED, DATE_MED_WITH_WEEKDAY, DATE_FULL, DATE_HUGE, TIME_SIMPLE, TIME_WITH_SECONDS, TIME_WITH_SHORT_OFFSET, TIME_WITH_LONG_OFFSET, TIME_24_SIMPLE, TIME_24_WITH_SECONDS, TIME_24_WITH_SHORT_OFFSET, TIME_24_WITH_LONG_OFFSET, DATETIME_SHORT, DATETIME_SHORT_WITH_SECONDS, DATETIME_MED, DATETIME_MED_WITH_SECONDS, DATETIME_MED_WITH_WEEKDAY, DATETIME_FULL, DATETIME_FULL_WITH_SECONDS, DATETIME_HUGE, DATETIME_HUGE_WITH_SECONDS, Zone, singleton$1, SystemZone, dtfCache, typeToPos, ianaZoneCache, IANAZone, intlLFCache, intlDTCache, intlNumCache, intlRelCache, sysLocaleCache, intlResolvedOptionsCache, weekInfoCache, PolyNumberFormatter, PolyDateFormatter, PolyRelFormatter, fallbackWeekSettings, Locale, singleton, FixedOffsetZone, InvalidZone, numberingSystems, numberingSystemsUTF16, hanidecChars, digitRegexCache, now, defaultZone, defaultLocale, defaultNumberingSystem, defaultOutputCalendar, twoDigitCutoffYear, throwOnInvalid, defaultWeekSettings, Settings, Invalid, nonLeapLadder, leapLadder, monthsLong, monthsShort, monthsNarrow, weekdaysLong, weekdaysShort, weekdaysNarrow, meridiems, erasLong, erasShort, erasNarrow, macroTokenToFormatOpts, Formatter, ianaRegex, offsetRegex, isoExtendedZone, isoTimeBaseRegex, isoTimeRegex, isoTimeExtensionRegex, isoYmdRegex, isoWeekRegex, isoOrdinalRegex, extractISOWeekData, extractISOOrdinalData, sqlYmdRegex, sqlTimeRegex, sqlTimeExtensionRegex, isoTimeOnly, isoDuration, obsOffsets, rfc2822, rfc1123, rfc850, ascii, isoYmdWithTimeExtensionRegex, isoWeekWithTimeExtensionRegex, isoOrdinalWithTimeExtensionRegex, isoTimeCombinedRegex, extractISOYmdTimeAndOffset, extractISOWeekTimeAndOffset, extractISOOrdinalDateAndTime, extractISOTimeAndOffset, extractISOTimeOnly, sqlYmdWithTimeExtensionRegex, sqlTimeCombinedRegex, extractISOTimeOffsetAndIANAZone, INVALID$2, lowOrderMatrix, casualMatrix, daysInYearAccurate, daysInMonthAccurate, accurateMatrix, orderedUnits$1, reverseUnits, Duration2, INVALID$1, Interval, Info, MISSING_FTP, spaceOrNBSP, spaceOrNBSPRegExp, partTypeStyleToTokenVal, dummyDateTimeCache, TokenParser, INVALID, MAX_DATE, defaultUnitValues, defaultWeekUnitValues, defaultOrdinalUnitValues, orderedUnits, orderedWeekUnits, orderedOrdinalUnits, zoneOffsetTs, zoneOffsetGuessCache, DateTime, init_luxon;
-var init_src_Dm0GE_II = __esm({
-  "dist/ssr-testSecond/server/assets/src-Dm0GE_II.js"() {
+var init_src_DYGl77oI = __esm({
+  "dist/ssr-testSecond/server/assets/src-DYGl77oI.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_basic_date_KH_QgmLX();
+    init_basic_date_DHGt0Wfc();
     __name(makeDTF, "makeDTF");
     __name(hackyOffset, "hackyOffset");
     __name(partsOffset, "partsOffset");
@@ -157673,19 +157673,12 @@ var init_src_Dm0GE_II = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-form-CBu8O2fl.js
-var basic_form_CBu8O2fl_exports = {};
-__export(basic_form_CBu8O2fl_exports, {
+// dist/ssr-testSecond/server/assets/basic-form-Mkx7kyV4.js
+var basic_form_Mkx7kyV4_exports = {};
+__export(basic_form_Mkx7kyV4_exports, {
   n: () => src_exports37,
   t: () => init_src46
 });
-function $useLocale7(key3, ...args) {
-  const app = useApp();
-  const str = `basic-form::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty$35(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -157753,41 +157746,26 @@ function _applyDecoratedDescriptor19(i, e, r, n2, l2) {
 function locale7(key3) {
   return `basic-form::${key3}`;
 }
-var en_us_default7, init_en_us7, zh_cn_default7, init_zh_cn7, locales7, init_locales8, _dec$412, _dec2$412, _dec3$35, _dec4$35, _class$412, _class2$35, _descriptor$35, _ControllerActionBack, ControllerActionBack, init_controller$17, _dec$317, _dec2$317, _dec3$26, _dec4$25, _class$317, _class2$25, _descriptor$25, _ControllerActionSubmit, ControllerActionSubmit, init_controller18, ZActionBack, init_actionBack, ZActionSubmit, init_actionSubmit, _dec$222, _dec2$222, _dec3$112, _dec4$19, _class$222, _class2$18, _descriptor$18, BehaviorFormField, init_behavior_formField, _dec$140, _dec2$140, _dec322, _dec419, _class$140, _class219, _descriptor19, BehaviorFormFieldLayout2, init_behavior_formFieldLayout2, _dec80, _dec241, _class50, components14, ScopeModuleBasicForm, init__metadata41, src_exports37, init_src46;
-var init_basic_form_CBu8O2fl = __esm({
-  "dist/ssr-testSecond/server/assets/basic-form-CBu8O2fl.js"() {
+function $useLocale7(key3, ...args) {
+  const app = useApp();
+  const str = `basic-form::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$412, _dec2$412, _dec3$35, _dec4$35, _class$412, _class2$35, _descriptor$35, _ControllerActionBack, ControllerActionBack, init_controller$17, _dec$317, _dec2$317, _dec3$26, _dec4$25, _class$317, _class2$25, _descriptor$25, _ControllerActionSubmit, ControllerActionSubmit, init_controller18, ZActionBack, init_actionBack, ZActionSubmit, init_actionSubmit, _dec$222, _dec2$222, _dec3$112, _dec4$19, _class$222, _class2$18, _descriptor$18, BehaviorFormField, init_behavior_formField, _dec$140, _dec2$140, _dec322, _dec419, _class$140, _class219, _descriptor19, BehaviorFormFieldLayout2, init_behavior_formFieldLayout2, _dec80, _dec241, _class50, components14, ScopeModuleBasicForm, init__metadata41, en_us_default7, init_en_us7, zh_cn_default7, init_zh_cn7, locales7, init_locales8, src_exports37, init_src46;
+var init_basic_form_Mkx7kyV4 = __esm({
+  "dist/ssr-testSecond/server/assets/basic-form-Mkx7kyV4.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_zova_B6BL7lA7();
-    init_a_behavior_szrMpIV6();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_zova_BUNo4L_l();
+    init_a_behavior_BslL80bb();
     init_typestyle_B2DHz8Iv();
-    init_en_us7 = __esmMin((() => {
-      en_us_default7 = {
-        Back: "Back",
-        Submit: "Submit"
-      };
-    }));
-    init_zh_cn7 = __esmMin((() => {
-      zh_cn_default7 = {
-        Back: "\u56DE\u9000",
-        Submit: "\u63D0\u4EA4"
-      };
-    }));
-    __name($useLocale7, "$useLocale");
-    init_locales8 = __esmMin((() => {
-      init_src4();
-      init_en_us7();
-      init_zh_cn7();
-      locales7 = {
-        "en-us": en_us_default7,
-        "zh-cn": zh_cn_default7
-      };
-    }));
     __name(_initializerDefineProperty$35, "_initializerDefineProperty$3");
     __name(_applyDecoratedDescriptor$35, "_applyDecoratedDescriptor$3");
     init_controller$17 = __esmMin((() => {
@@ -158011,6 +157989,28 @@ var init_basic_form_CBu8O2fl = __esm({
         }
       }) || _class50) || _class50);
     }));
+    init_en_us7 = __esmMin((() => {
+      en_us_default7 = {
+        Back: "Back",
+        Submit: "Submit"
+      };
+    }));
+    init_zh_cn7 = __esmMin((() => {
+      zh_cn_default7 = {
+        Back: "\u56DE\u9000",
+        Submit: "\u63D0\u4EA4"
+      };
+    }));
+    __name($useLocale7, "$useLocale");
+    init_locales8 = __esmMin((() => {
+      init_src4();
+      init_en_us7();
+      init_zh_cn7();
+      locales7 = {
+        "en-us": en_us_default7,
+        "zh-cn": zh_cn_default7
+      };
+    }));
     src_exports37 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale7, "$useLocale"),
       BehaviorFormField: /* @__PURE__ */ __name(() => BehaviorFormField, "BehaviorFormField"),
@@ -158025,27 +158025,27 @@ var init_basic_form_CBu8O2fl = __esm({
       locales: /* @__PURE__ */ __name(() => locales7, "locales")
     });
     init_src46 = __esmMin((() => {
-      init_locales8();
       init__metadata41();
+      init_locales8();
     }));
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-input-IYrAjcHo.js
-var basic_input_IYrAjcHo_exports = {};
-__export(basic_input_IYrAjcHo_exports, {
+// dist/ssr-testSecond/server/assets/basic-input-DvtSGXAm.js
+var basic_input_DvtSGXAm_exports = {};
+__export(basic_input_DvtSGXAm_exports, {
   n: () => src_exports38,
   t: () => init_src47
 });
 var _dec$141, _dec2$141, _class$141, _ControllerFormFieldInput, ZFormField5, ControllerFormFieldInput, init_controller19, ZFormFieldInput, init_formFieldInput, _dec81, _dec242, _class51, components15, ScopeModuleBasicInput, init__metadata42, src_exports38, init_src47;
-var init_basic_input_IYrAjcHo = __esm({
-  "dist/ssr-testSecond/server/assets/basic-input-IYrAjcHo.js"() {
+var init_basic_input_DvtSGXAm = __esm({
+  "dist/ssr-testSecond/server/assets/basic-input-DvtSGXAm.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_typestyle_B2DHz8Iv();
     init_controller19 = __esmMin((() => {
       init_vue();
@@ -158118,19 +158118,12 @@ var init_basic_input_IYrAjcHo = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-page-DIy84Lwq.js
-var basic_page_DIy84Lwq_exports = {};
-__export(basic_page_DIy84Lwq_exports, {
+// dist/ssr-testSecond/server/assets/basic-page-DRUL1s67.js
+var basic_page_DRUL1s67_exports = {};
+__export(basic_page_DRUL1s67_exports, {
   n: () => src_exports39,
   t: () => init_src48
 });
-function $useLocale8(key3, ...args) {
-  const app = useApp();
-  const str = `basic-page::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty$36(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -158198,53 +158191,27 @@ function _applyDecoratedDescriptor20(i, e, r, n2, l2) {
 function locale8(key3) {
   return `basic-page::${key3}`;
 }
-var en_us_default8, init_en_us8, zh_cn_default8, init_zh_cn8, locales8, init_locales9, init_page3, init_types27, _dec$510, _dec2$510, _dec3$36, _dec4$36, _class$510, _class2$36, _descriptor$36, _ControllerBlockFilter, ZForm4, ControllerBlockFilter, init_controller$43, _dec$413, _dec2$413, _class$413, _ControllerBlockPage, ControllerBlockPage, init_controller$34, _dec$318, _dec2$318, _dec3$27, _dec4$26, _class$318, _class2$26, _descriptor$26, _ControllerBlockPager, ControllerBlockPager, init_controller$25, _dec$223, _dec2$223, _dec3$113, _dec4$110, _class$223, _class2$19, _descriptor$19, _ControllerBlockTable, ZTable2, ControllerBlockTable, init_controller$18, _dec$143, _dec2$143, _dec323, _dec420, _class$143, _class220, _descriptor20, _ControllerBlockToolbarBulk, ControllerBlockToolbarBulk, init_controller20, ZBlockFilter, init_blockFilter, ZBlockPage, init_blockPage, ZBlockPager, init_blockPager, ZBlockTable, init_blockTable, ZBlockToolbarBulk, init_blockToolbarBulk, _dec84, _dec243, _class52, components16, ScopeModuleBasicPage, init__metadata43, src_exports39, init_src48;
-var init_basic_page_DIy84Lwq = __esm({
-  "dist/ssr-testSecond/server/assets/basic-page-DIy84Lwq.js"() {
+function $useLocale8(key3, ...args) {
+  const app = useApp();
+  const str = `basic-page::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$510, _dec2$510, _dec3$36, _dec4$36, _class$510, _class2$36, _descriptor$36, _ControllerBlockFilter, ZForm4, ControllerBlockFilter, init_controller$43, _dec$413, _dec2$413, _class$413, _ControllerBlockPage, ControllerBlockPage, init_controller$34, _dec$318, _dec2$318, _dec3$27, _dec4$26, _class$318, _class2$26, _descriptor$26, _ControllerBlockPager, ControllerBlockPager, init_controller$25, _dec$223, _dec2$223, _dec3$113, _dec4$110, _class$223, _class2$19, _descriptor$19, _ControllerBlockTable, ZTable2, ControllerBlockTable, init_controller$18, _dec$143, _dec2$143, _dec323, _dec420, _class$143, _class220, _descriptor20, _ControllerBlockToolbarBulk, ControllerBlockToolbarBulk, init_controller20, ZBlockFilter, init_blockFilter, ZBlockPage, init_blockPage, ZBlockPager, init_blockPager, ZBlockTable, init_blockTable, ZBlockToolbarBulk, init_blockToolbarBulk, _dec84, _dec243, _class52, components16, ScopeModuleBasicPage, init__metadata43, en_us_default8, init_en_us8, zh_cn_default8, init_zh_cn8, locales8, init_locales9, init_page3, init_types27, src_exports39, init_src48;
+var init_basic_page_DRUL1s67 = __esm({
+  "dist/ssr-testSecond/server/assets/basic-page-DRUL1s67.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_zova_B6BL7lA7();
-    init_a_model_Duxw1V1k();
-    init_a_openapi_BSwImoKm();
-    init_a_table_DC_ncTJp();
-    init_en_us8 = __esmMin((() => {
-      en_us_default8 = {
-        Search: "Search",
-        Reset: "Reset",
-        PagedTotalItems: "Total",
-        PagedTotalPages: "Pages"
-      };
-    }));
-    init_zh_cn8 = __esmMin((() => {
-      zh_cn_default8 = {
-        Search: "\u641C\u7D22",
-        Reset: "\u91CD\u7F6E",
-        PagedTotalItems: "\u603B\u6761\u6570",
-        PagedTotalPages: "\u603B\u9875\u6570"
-      };
-    }));
-    __name($useLocale8, "$useLocale");
-    init_locales9 = __esmMin((() => {
-      init_src4();
-      init_en_us8();
-      init_zh_cn8();
-      locales8 = {
-        "en-us": en_us_default8,
-        "zh-cn": zh_cn_default8
-      };
-    }));
-    init_page3 = __esmMin((() => {
-      init_src14();
-      init_src9();
-    }));
-    init_types27 = __esmMin((() => {
-      init_page3();
-    }));
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_zova_BUNo4L_l();
+    init_a_model_D8H5dSfJ();
+    init_a_openapi_BF0XkNFl();
+    init_a_table_BAFRN_f();
     __name(_initializerDefineProperty$36, "_initializerDefineProperty$3");
     __name(_applyDecoratedDescriptor$36, "_applyDecoratedDescriptor$3");
     init_controller$43 = __esmMin((() => {
@@ -158428,7 +158395,7 @@ var init_basic_page_DIy84Lwq = __esm({
         _renderBlocks() {
           const blocks = this.$props.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = Object.assign({ key: index }, block.options);
             const domBlock = this.jsxZova.render(block.render, options2, this.jsxCelScope, this.jsxRenderContext);
@@ -158673,6 +158640,39 @@ var init_basic_page_DIy84Lwq = __esm({
         }
       }) || _class52) || _class52);
     }));
+    init_en_us8 = __esmMin((() => {
+      en_us_default8 = {
+        Search: "Search",
+        Reset: "Reset",
+        PagedTotalItems: "Total",
+        PagedTotalPages: "Pages"
+      };
+    }));
+    init_zh_cn8 = __esmMin((() => {
+      zh_cn_default8 = {
+        Search: "\u641C\u7D22",
+        Reset: "\u91CD\u7F6E",
+        PagedTotalItems: "\u603B\u6761\u6570",
+        PagedTotalPages: "\u603B\u9875\u6570"
+      };
+    }));
+    __name($useLocale8, "$useLocale");
+    init_locales9 = __esmMin((() => {
+      init_src4();
+      init_en_us8();
+      init_zh_cn8();
+      locales8 = {
+        "en-us": en_us_default8,
+        "zh-cn": zh_cn_default8
+      };
+    }));
+    init_page3 = __esmMin((() => {
+      init_src14();
+      init_src9();
+    }));
+    init_types27 = __esmMin((() => {
+      init_page3();
+    }));
     src_exports39 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale8, "$useLocale"),
       ControllerBlockFilter: /* @__PURE__ */ __name(() => ControllerBlockFilter, "ControllerBlockFilter"),
@@ -158691,26 +158691,19 @@ var init_basic_page_DIy84Lwq = __esm({
       locales: /* @__PURE__ */ __name(() => locales8, "locales")
     });
     init_src48 = __esmMin((() => {
+      init__metadata43();
       init_locales9();
       init_types27();
-      init__metadata43();
     }));
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-pageentry-BX_i2TDZ.js
-var basic_pageentry_BX_i2TDZ_exports = {};
-__export(basic_pageentry_BX_i2TDZ_exports, {
+// dist/ssr-testSecond/server/assets/basic-pageentry-ChPMKGEb.js
+var basic_pageentry_ChPMKGEb_exports = {};
+__export(basic_pageentry_ChPMKGEb_exports, {
   n: () => src_exports40,
   t: () => init_src49
 });
-function $useLocale9(key3, ...args) {
-  const app = useApp();
-  const str = `basic-pageentry::${key3}`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 function _initializerDefineProperty$110(e, i, r, l2) {
   r && Object.defineProperty(e, i, {
     enumerable: r.enumerable,
@@ -158746,43 +158739,27 @@ function _applyDecoratedDescriptor21(i, e, r, n2, l2) {
 function locale9(key3) {
   return `basic-pageentry::${key3}`;
 }
-var en_us_default9, init_en_us9, zh_cn_default9, init_zh_cn9, locales9, init_locales10, init_pageEntry, init_types28, _dec$319, _dec2$319, _dec3$114, _dec4$111, _class$319, _class2$110, _descriptor$110, _ControllerBlockForm, ZForm5, ControllerBlockForm, init_controller$26, _dec$224, _dec2$224, _class$224, _ControllerBlockPageEntry, ControllerBlockPageEntry, init_controller$19, _dec$144, _dec2$144, _dec324, _dec421, _class$144, _class221, _descriptor21, _ControllerBlockToolbarRow, ControllerBlockToolbarRow, init_controller21, ZBlockForm, init_blockForm, ZBlockPageEntry, init_blockPageEntry, ZBlockToolbarRow, init_blockToolbarRow, _dec85, _dec244, _class53, components17, ScopeModuleBasicPageentry, init__metadata44, src_exports40, init_src49;
-var init_basic_pageentry_BX_i2TDZ = __esm({
-  "dist/ssr-testSecond/server/assets/basic-pageentry-BX_i2TDZ.js"() {
+function $useLocale9(key3, ...args) {
+  const app = useApp();
+  const str = `basic-pageentry::${key3}`;
+  return useComputed(() => {
+    return app.meta.text(str, ...args);
+  });
+}
+var _dec$319, _dec2$319, _dec3$114, _dec4$111, _class$319, _class2$110, _descriptor$110, _ControllerBlockForm, ZForm5, ControllerBlockForm, init_controller$26, _dec$224, _dec2$224, _class$224, _ControllerBlockPageEntry, ControllerBlockPageEntry, init_controller$19, _dec$144, _dec2$144, _dec324, _dec421, _class$144, _class221, _descriptor21, _ControllerBlockToolbarRow, ControllerBlockToolbarRow, init_controller21, ZBlockForm, init_blockForm, ZBlockPageEntry, init_blockPageEntry, ZBlockToolbarRow, init_blockToolbarRow, _dec85, _dec244, _class53, components17, ScopeModuleBasicPageentry, init__metadata44, en_us_default9, init_en_us9, zh_cn_default9, init_zh_cn9, locales9, init_locales10, init_pageEntry, init_types28, src_exports40, init_src49;
+var init_basic_pageentry_ChPMKGEb = __esm({
+  "dist/ssr-testSecond/server/assets/basic-pageentry-ChPMKGEb.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_zova_B6BL7lA7();
-    init_a_model_Duxw1V1k();
-    init_a_openapi_BSwImoKm();
-    init_a_form_BedfZEcX();
-    init_en_us9 = __esmMin((() => {
-      en_us_default9 = { EntryNotExist: "The entry does not exist" };
-    }));
-    init_zh_cn9 = __esmMin((() => {
-      zh_cn_default9 = { EntryNotExist: "\u8BE5\u6761\u76EE\u4E0D\u5B58\u5728" };
-    }));
-    __name($useLocale9, "$useLocale");
-    init_locales10 = __esmMin((() => {
-      init_src4();
-      init_en_us9();
-      init_zh_cn9();
-      locales9 = {
-        "en-us": en_us_default9,
-        "zh-cn": zh_cn_default9
-      };
-    }));
-    init_pageEntry = __esmMin((() => {
-      init_src10();
-      init_src9();
-    }));
-    init_types28 = __esmMin((() => {
-      init_pageEntry();
-    }));
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_zova_BUNo4L_l();
+    init_a_model_D8H5dSfJ();
+    init_a_openapi_BF0XkNFl();
+    init_a_form_BkMpprmu();
     __name(_initializerDefineProperty$110, "_initializerDefineProperty$1");
     __name(_applyDecoratedDescriptor$110, "_applyDecoratedDescriptor$1");
     init_controller$26 = __esmMin((() => {
@@ -158966,7 +158943,7 @@ var init_basic_pageentry_BX_i2TDZ = __esm({
         _renderBlocks() {
           const blocks = this.$props.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = Object.assign({ key: index }, block.options);
             const domBlock = this.jsxZova.render(block.render, options2, this.jsxCelScope, this.jsxRenderContext);
@@ -159096,6 +159073,29 @@ var init_basic_pageentry_BX_i2TDZ = __esm({
         }
       }) || _class53) || _class53);
     }));
+    init_en_us9 = __esmMin((() => {
+      en_us_default9 = { EntryNotExist: "The entry does not exist" };
+    }));
+    init_zh_cn9 = __esmMin((() => {
+      zh_cn_default9 = { EntryNotExist: "\u8BE5\u6761\u76EE\u4E0D\u5B58\u5728" };
+    }));
+    __name($useLocale9, "$useLocale");
+    init_locales10 = __esmMin((() => {
+      init_src4();
+      init_en_us9();
+      init_zh_cn9();
+      locales9 = {
+        "en-us": en_us_default9,
+        "zh-cn": zh_cn_default9
+      };
+    }));
+    init_pageEntry = __esmMin((() => {
+      init_src10();
+      init_src9();
+    }));
+    init_types28 = __esmMin((() => {
+      init_pageEntry();
+    }));
     src_exports40 = /* @__PURE__ */ __exportAll({
       $useLocale: /* @__PURE__ */ __name(() => $useLocale9, "$useLocale"),
       ControllerBlockForm: /* @__PURE__ */ __name(() => ControllerBlockForm, "ControllerBlockForm"),
@@ -159110,31 +159110,31 @@ var init_basic_pageentry_BX_i2TDZ = __esm({
       locales: /* @__PURE__ */ __name(() => locales9, "locales")
     });
     init_src49 = __esmMin((() => {
+      init__metadata44();
       init_locales10();
       init_types28();
-      init__metadata44();
     }));
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-select-B2CKIHvJ.js
-var basic_select_B2CKIHvJ_exports = {};
-__export(basic_select_B2CKIHvJ_exports, {
+// dist/ssr-testSecond/server/assets/basic-select-RtWNhd-e.js
+var basic_select_RtWNhd_e_exports = {};
+__export(basic_select_RtWNhd_e_exports, {
   n: () => src_exports41,
   t: () => init_src50
 });
 var _dec$320, _dec2$320, _class$320, _ControllerSelect, ControllerSelect, init_controller$110, ZSelect, init_select, _dec$225, _dec2$225, _class$225, _ControllerFormFieldSelect, ZFormFieldPreset6, ZFormField6, ControllerFormFieldSelect, init_controller22, ZFormFieldSelect, init_formFieldSelect, _dec$145, _dec2$145, _class$145, TableCellSelect, init_tableCell_select, _dec86, _dec245, _class54, components18, ScopeModuleBasicSelect, init__metadata45, src_exports41, init_src50;
-var init_basic_select_B2CKIHvJ = __esm({
-  "dist/ssr-testSecond/server/assets/basic-select-B2CKIHvJ.js"() {
+var init_basic_select_RtWNhd_e = __esm({
+  "dist/ssr-testSecond/server/assets/basic-select-RtWNhd-e.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_typestyle_B2DHz8Iv();
-    init_a_table_DC_ncTJp();
+    init_a_table_BAFRN_f();
     init_controller$110 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -159296,9 +159296,9 @@ var init_basic_select_B2CKIHvJ = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-table-DOnTi3wR.js
-var basic_table_DOnTi3wR_exports = {};
-__export(basic_table_DOnTi3wR_exports, {
+// dist/ssr-testSecond/server/assets/basic-table-DUPA6hQ6.js
+var basic_table_DUPA6hQ6_exports = {};
+__export(basic_table_DUPA6hQ6_exports, {
   n: () => src_exports42,
   t: () => init_src51
 });
@@ -159329,16 +159329,16 @@ function $useLocale10(key3, ...args) {
   });
 }
 var _dec$76, _dec2$76, _dec325, _dec422, _class$76, _class222, _descriptor25, _ControllerActionCreate, ControllerActionCreate, init_controller$111, _dec$69, _dec2$69, _class$69, _ControllerTable2, ControllerTable2, init_controller23, ZActionCreate, init_actionCreate, _dec$511, _dec2$511, _class$511, ZTable$1, RenderTable2, init_render6, ZTable3, init_table3, _dec$414, _dec2$414, _class$414, ZIcon$12, TableCellActionDelete, init_tableCell_actionDelete, _dec$321, _dec2$321, _class$321, TableCellActionOperationsRow, init_tableCell_actionOperationsRow, _dec$226, _dec2$226, _class$226, ZIcon6, TableCellActionUpdate, init_tableCell_actionUpdate, _dec$146, _dec2$146, _class$146, TableCellActionView, init_tableCell_actionView, _dec87, _dec246, _class55, components19, ScopeModuleBasicTable, init__metadata46, en_us_default10, init_en_us10, zh_cn_default10, init_zh_cn10, locales10, init_locales11, src_exports42, init_src51;
-var init_basic_table_DOnTi3wR = __esm({
-  "dist/ssr-testSecond/server/assets/basic-table-DOnTi3wR.js"() {
+var init_basic_table_DUPA6hQ6 = __esm({
+  "dist/ssr-testSecond/server/assets/basic-table-DUPA6hQ6.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_tanstack_table_BvgDl6M7();
-    init_a_table_DC_ncTJp();
+    init_a_table_BAFRN_f();
     __name(_initializerDefineProperty21, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor22, "_applyDecoratedDescriptor");
     init_controller$111 = __esmMin((() => {
@@ -159475,7 +159475,7 @@ var init_basic_table_DOnTi3wR = __esm({
         async checkVisible(options2, renderContext) {
           const { $celScope, $host, $$table } = renderContext;
           const permissions = $celScope.permissions;
-          let actions = options2.actions;
+          const actions = options2.actions;
           if (!actions || actions.length === 0) return false;
           const renders = [];
           for (const action of actions) {
@@ -159625,23 +159625,23 @@ var init_basic_table_DOnTi3wR = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/basic-text-Bxt22-nG.js
-var basic_text_Bxt22_nG_exports = {};
-__export(basic_text_Bxt22_nG_exports, {
+// dist/ssr-testSecond/server/assets/basic-text-DU1xxiJZ.js
+var basic_text_DU1xxiJZ_exports = {};
+__export(basic_text_DU1xxiJZ_exports, {
   n: () => src_exports43,
   t: () => init_src52
 });
 var _dec$322, _dec2$322, _class$322, _ControllerFormFieldTextarea, ZFormField7, ControllerFormFieldTextarea, init_controller24, ZFormFieldTextarea, init_formFieldTextarea, _dec$227, _dec2$227, _class$227, TableCellText, init_tableCell_text, _dec$147, _dec2$147, _class$147, TableCellTextarea, init_tableCell_textarea, _dec88, _dec247, _class56, components20, ScopeModuleBasicText, init__metadata47, src_exports43, init_src52;
-var init_basic_text_Bxt22_nG = __esm({
-  "dist/ssr-testSecond/server/assets/basic-text-Bxt22-nG.js"() {
+var init_basic_text_DU1xxiJZ = __esm({
+  "dist/ssr-testSecond/server/assets/basic-text-DU1xxiJZ.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_typestyle_B2DHz8Iv();
-    init_a_table_DC_ncTJp();
+    init_a_table_BAFRN_f();
     init_controller24 = __esmMin((() => {
       init_vue();
       init_src4();
@@ -159747,9 +159747,9 @@ var init_basic_text_Bxt22_nG = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/rest-resource-CJDNvCue.js
-var rest_resource_CJDNvCue_exports = {};
-__export(rest_resource_CJDNvCue_exports, {
+// dist/ssr-testSecond/server/assets/rest-resource-D1PnkBMA.js
+var rest_resource_D1PnkBMA_exports = {};
+__export(rest_resource_D1PnkBMA_exports, {
   n: () => src_exports44,
   t: () => init_src53
 });
@@ -159795,19 +159795,19 @@ function tabKey(route) {
   return `/rest/resource/${encodeURIComponent(route.params.resource)}`;
 }
 var _dec$415, _dec2$415, _dec3$37, _dec4$27, _class$415, _class2$27, _descriptor26, ModelResource, init_resource$2, _dec$323, _dec2$323, _dec3$28, _dec4$112, _dec5$13, _class$323, _class2$111, ZPage$13, ControllerPageEntrySchemaParams, ControllerPageEntry, init_controller$27, _dec$228, _dec2$228, _dec3$115, _class$228, ControllerPageEntryCreateSchemaParams, ControllerPageEntryCreate, init_controller$112, _dec$148, _dec2$148, _dec326, _dec423, _dec511, _class$148, _class223, ZPage4, ControllerPageResourceSchemaParams, ControllerPageResource, init_controller25, NSControllerPageEntry, ZPageEntry, init_entry, NSControllerPageEntryCreate, ZPageEntryCreate, init_entryCreate, NSControllerPageResource, ZPageResource, init_resource$12, routes7, init_routes7, _dec89, _dec248, _class57, pagePathSchemas7, pageNameSchemas7, ScopeModuleRestResource, init__metadata48, init_pageEntryWrapper, init_pageWrapper, init_resource3, init_types29, src_exports44, init_src53;
-var init_rest_resource_CJDNvCue = __esm({
-  "dist/ssr-testSecond/server/assets/rest-resource-CJDNvCue.js"() {
+var init_rest_resource_D1PnkBMA = __esm({
+  "dist/ssr-testSecond/server/assets/rest-resource-D1PnkBMA.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_zova_B6BL7lA7();
-    init_a_model_Duxw1V1k();
-    init_a_openapi_BSwImoKm();
-    init_a_form_BedfZEcX();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_zova_BUNo4L_l();
+    init_a_model_D8H5dSfJ();
+    init_a_openapi_BF0XkNFl();
+    init_a_form_BkMpprmu();
     __name(_initializerDefineProperty22, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor$27, "_applyDecoratedDescriptor$2");
     init_resource$2 = __esmMin((() => {
@@ -160040,7 +160040,7 @@ var init_rest_resource_CJDNvCue = __esm({
         render() {
           const blocks = this.formSchema?.rest?.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = deepExtend({ key: index }, {
               resource: this.resource,
@@ -160110,7 +160110,7 @@ var init_rest_resource_CJDNvCue = __esm({
         render() {
           const blocks = this.schemaRow?.rest?.blocks;
           if (!blocks || blocks.length === 0) return;
-          let domBlocks = [];
+          const domBlocks = [];
           blocks.forEach((block, index) => {
             const options2 = deepExtend({ key: index }, { resource: this.resource }, block.options);
             const domBlock = this.jsxZova.render(block.render, options2);
@@ -160242,22 +160242,22 @@ var init_rest_resource_CJDNvCue = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-behaviors-BadjSWyU.js
-var a_behaviors_BadjSWyU_exports = {};
-__export(a_behaviors_BadjSWyU_exports, {
+// dist/ssr-testSecond/server/assets/a-behaviors-6tdPmfhk.js
+var a_behaviors_6tdPmfhk_exports = {};
+__export(a_behaviors_6tdPmfhk_exports, {
   n: () => src_exports45,
   t: () => init_src54
 });
 var _dec$149, _dec2$149, _class$149, BehaviorFocus, init_behavior_focus, _dec90, _dec249, _class58, ScopeModuleABehaviors, init__metadata49, src_exports45, init_src54;
-var init_a_behaviors_BadjSWyU = __esm({
-  "dist/ssr-testSecond/server/assets/a-behaviors-BadjSWyU.js"() {
+var init_a_behaviors_6tdPmfhk = __esm({
+  "dist/ssr-testSecond/server/assets/a-behaviors-6tdPmfhk.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_behavior_szrMpIV6();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_behavior_BslL80bb();
     init_behavior_focus = __esmMin((() => {
       init_src4();
       init_src12();
@@ -160324,9 +160324,9 @@ var init_zova_BeIS0rUT = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-routerstack-QvCo1RKX.js
-var a_routerstack_QvCo1RKX_exports = {};
-__export(a_routerstack_QvCo1RKX_exports, {
+// dist/ssr-testSecond/server/assets/a-routerstack-BY6BiyRX.js
+var a_routerstack_BY6BiyRX_exports = {};
+__export(a_routerstack_BY6BiyRX_exports, {
   n: () => src_exports46,
   t: () => init_src56
 });
@@ -160347,16 +160347,16 @@ function _applyDecoratedDescriptor24(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$229, _dec2$229, _class$229, ModelStack$1, init_stack$1, _dec$150, _dec2$150, _dec327, _dec424, _class$150, _class224, _descriptor27, _ControllerRouterViewStack, ControllerRouterViewStack, init_controller26, ZRouterViewStack, init_routerViewStack, _dec91, _dec250, _class59, components21, ScopeModuleARouterstack, init__metadata50, init_stack, init_types30, src_exports46, init_src56;
-var init_a_routerstack_QvCo1RKX = __esm({
-  "dist/ssr-testSecond/server/assets/a-routerstack-QvCo1RKX.js"() {
+var init_a_routerstack_BY6BiyRX = __esm({
+  "dist/ssr-testSecond/server/assets/a-routerstack-BY6BiyRX.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_a_router_DuTeE0_5();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_a_router_BR9YCyAa();
     init_zova_BeIS0rUT();
     init_stack$1 = __esmMin((() => {
       init_src4();
@@ -160556,9 +160556,9 @@ var init_a_routerstack_QvCo1RKX = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-routertabs-D39IKAiG.js
-var a_routertabs_D39IKAiG_exports = {};
-__export(a_routertabs_D39IKAiG_exports, {
+// dist/ssr-testSecond/server/assets/a-routertabs-DnKL9rxM.js
+var a_routertabs_DnKL9rxM_exports = {};
+__export(a_routertabs_DnKL9rxM_exports, {
   n: () => src_exports47,
   t: () => init_src57
 });
@@ -160579,16 +160579,16 @@ function _applyDecoratedDescriptor25(i, e, r, n2, l2) {
   }, a), l2 && void 0 !== a.initializer && (a.value = a.initializer ? a.initializer.call(l2) : void 0, a.initializer = void 0), void 0 === a.initializer ? (Object.defineProperty(i, e, a), null) : a;
 }
 var _dec$230, _dec2$230, _class$230, ModelTabs$1, init_tabs$1, _dec$151, _dec2$151, _dec328, _dec425, _class$151, _class225, _descriptor28, _ControllerRouterViewTabs, ControllerRouterViewTabs, init_controller27, ZRouterViewTabs2, init_routerViewTabs, _dec94, _dec251, _class60, components22, ScopeModuleARoutertabs, init__metadata51, init_tabs, init_types31, src_exports47, init_src57;
-var init_a_routertabs_D39IKAiG = __esm({
-  "dist/ssr-testSecond/server/assets/a-routertabs-D39IKAiG.js"() {
+var init_a_routertabs_DnKL9rxM = __esm({
+  "dist/ssr-testSecond/server/assets/a-routertabs-DnKL9rxM.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
-    init_a_model_Duxw1V1k();
-    init_a_router_DuTeE0_5();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
+    init_a_model_D8H5dSfJ();
+    init_a_router_BR9YCyAa();
     init_zova_BeIS0rUT();
     init_tabs$1 = __esmMin((() => {
       init_src4();
@@ -161050,7 +161050,7 @@ var init_a_routertabs_D39IKAiG = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/a-ssrserver-DeNrB29f.js
+// dist/ssr-testSecond/server/assets/a-ssrserver-BWpoE3vB.js
 import path, { basename } from "node:path";
 import { pathToFileURL } from "node:url";
 function _initializerDefineProperty25(e, i, r, l2) {
@@ -161073,16 +161073,16 @@ function pathToHref(fileName) {
   return pathToFileURL(fileName).href;
 }
 var import_lib, import_ms, _dec$153, _dec2$153, _dec329, _dec426, _dec512, _dec610, _class$153, _class226, _descriptor29, _descriptor210, jsRE, cssRE, woffRE, woff2RE, gifRE, jpgRE, pngRE, ServiceSsrHandler, init_ssrHandler, MonkeySys9, init_monkeySys9, _dec95, _dec252, _class61, ScopeModuleASsrserver, init__metadata52, init_ssr3, init_types32, init_src58;
-var init_a_ssrserver_DeNrB29f = __esm({
-  "dist/ssr-testSecond/server/assets/a-ssrserver-DeNrB29f.js"() {
+var init_a_ssrserver_BWpoE3vB = __esm({
+  "dist/ssr-testSecond/server/assets/a-ssrserver-BWpoE3vB.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
-    init_a_bean_ITu1GOO();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
+    init_a_bean_BRcH8rSu();
     init_ms_CmhnBZmi();
-    init_src_DcS2wSPV();
+    init_src_DFrpLeHK();
     __name(_initializerDefineProperty25, "_initializerDefineProperty");
     __name(_applyDecoratedDescriptor26, "_applyDecoratedDescriptor");
     __name(pathToHref, "pathToHref");
@@ -161296,9 +161296,9 @@ var init_a_ssrserver_DeNrB29f = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/src-DcS2wSPV.js
-var src_DcS2wSPV_exports = {};
-__export(src_DcS2wSPV_exports, {
+// dist/ssr-testSecond/server/assets/src-DFrpLeHK.js
+var src_DFrpLeHK_exports = {};
+__export(src_DFrpLeHK_exports, {
   MonkeySys: () => MonkeySys9,
   ScopeModuleASsrserver: () => ScopeModuleASsrserver,
   ServiceSsrHandler: () => ServiceSsrHandler,
@@ -161306,11 +161306,11 @@ __export(src_DcS2wSPV_exports, {
   t: () => require_lib3
 });
 var require_universalify, require_polyfills, require_legacy_streams, require_clone, require_graceful_fs, require_fs, require_utils$1, require_make_dir, require_mkdirs, require_path_exists, require_utimes, require_stat, require_async2, require_copy$1, require_copy_sync, require_copy, require_remove, require_empty, require_file, require_link, require_symlink_paths, require_symlink_type, require_symlink, require_ensure, require_utils, require_jsonfile$1, require_jsonfile, require_output_file, require_output_json, require_output_json_sync, require_json, require_move$1, require_move_sync, require_move, require_lib3;
-var init_src_DcS2wSPV = __esm({
-  "dist/ssr-testSecond/server/assets/src-DcS2wSPV.js"() {
+var init_src_DFrpLeHK = __esm({
+  "dist/ssr-testSecond/server/assets/src-DFrpLeHK.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
-    init_a_ssrserver_DeNrB29f();
+    init_a_ssrserver_BWpoE3vB();
     require_universalify = /* @__PURE__ */ __commonJSMin(((exports) => {
       exports.fromCallback = function(fn) {
         return Object.defineProperty(function(...args) {
@@ -163275,9 +163275,9 @@ var init_src_DcS2wSPV = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/app-Dzxf875B.js
-var app_Dzxf875B_exports = {};
-__export(app_Dzxf875B_exports, {
+// dist/ssr-testSecond/server/assets/app-BQdi2iKX.js
+var app_BQdi2iKX_exports = {};
+__export(app_BQdi2iKX_exports, {
   default: () => app_default
 });
 async function app_default(createAppFn, ssrContext) {
@@ -163289,14 +163289,14 @@ async function app_default(createAppFn, ssrContext) {
   return { app };
 }
 var init_tailwind, init_settings, main_default, init_main2, ControllerPageApp, init_controller28, app_default$1, init_app$1;
-var init_app_Dzxf875B = __esm({
-  "dist/ssr-testSecond/server/assets/app-Dzxf875B.js"() {
+var init_app_BQdi2iKX = __esm({
+  "dist/ssr-testSecond/server/assets/app-BQdi2iKX.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
     init_server_entry();
     init_tailwind = __esmMin((() => {
     }));
@@ -163348,19 +163348,19 @@ var init_app_Dzxf875B = __esm({
   }
 });
 
-// dist/ssr-testSecond/server/assets/zova-NhxCUcTJ.js
-var zova_NhxCUcTJ_exports = {};
-__export(zova_NhxCUcTJ_exports, {
+// dist/ssr-testSecond/server/assets/zova-CPkDwrAr.js
+var zova_CPkDwrAr_exports = {};
+__export(zova_CPkDwrAr_exports, {
   default: () => zova_default
 });
 var zova_default;
-var init_zova_NhxCUcTJ = __esm({
-  "dist/ssr-testSecond/server/assets/zova-NhxCUcTJ.js"() {
+var init_zova_CPkDwrAr = __esm({
+  "dist/ssr-testSecond/server/assets/zova-CPkDwrAr.js"() {
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_zova_ZVL1gGJ5();
-    init_zova_dHNiir4f();
-    init_zova_DUQcTQBY();
+    init_zova_5WxrFAZd();
+    init_zova_BcAMQQE();
     init_server_entry();
     __esmMin((() => {
       init_wrappers();
@@ -163462,9 +163462,9 @@ var init_server_entry = __esm({
     "use strict";
     init_rolldown_runtime_oFiVB3iG();
     init_vue_QcHsBsMc();
-    init_zova_dHNiir4f();
+    init_zova_5WxrFAZd();
     init_zova_BbVaRumt();
-    init_zova_DUQcTQBY();
+    init_zova_BcAMQQE();
     init_zova_config_CNEEC3zm();
     init_en_us11 = __esmMin((() => {
       en_us_default11 = { modules: {} };
@@ -163600,7 +163600,7 @@ var init_server_entry = __esm({
     init_modules_meta = __esmMin((() => {
       modules = {};
       modules["demo-student"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_student_GzJmZEiv(), demo_student_GzJmZEiv_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_student_CAENM6Q0(), demo_student_CAENM6Q0_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "demo",
           "name": "student",
@@ -163613,7 +163613,7 @@ var init_server_entry = __esm({
         }
       };
       modules["demo-basic"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_basic_BdBTXWNu(), demo_basic_BdBTXWNu_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_basic_B7nPQPEJ(), demo_basic_B7nPQPEJ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "demo",
           "name": "basic",
@@ -163632,7 +163632,7 @@ var init_server_entry = __esm({
         }
       };
       modules["demo-todo"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_todo_CN8GsnYd(), demo_todo_CN8GsnYd_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_demo_todo_BzmjaUC7(), demo_todo_BzmjaUC7_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "demo",
           "name": "todo",
@@ -163645,7 +163645,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-fetch"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_fetch_xab_ZTI(), a_fetch_xab_ZTI_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_fetch_I_aWqu4m(), a_fetch_I_aWqu4m_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "fetch",
@@ -163664,7 +163664,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-model"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_model_Duxw1V1k(), a_model_Duxw1V1k_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_model_D8H5dSfJ(), a_model_D8H5dSfJ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "model",
@@ -163684,7 +163684,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-openapi"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_openapi_BSwImoKm(), a_openapi_BSwImoKm_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_openapi_BF0XkNFl(), a_openapi_BF0XkNFl_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "openapi",
@@ -163698,7 +163698,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-api"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_api_GuqjuURG(), a_api_GuqjuURG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_api_vQ1vikZn(), a_api_vQ1vikZn_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "api",
@@ -163733,7 +163733,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-app"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_app_DPeb0aRm(), a_app_DPeb0aRm_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_app_D1Nb57YB(), a_app_D1Nb57YB_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "app",
@@ -163746,7 +163746,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-bean"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_bean_ITu1GOO(), a_bean_ITu1GOO_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_bean_BRcH8rSu(), a_bean_BRcH8rSu_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "bean",
@@ -163815,7 +163815,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-behavior"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behavior_szrMpIV6(), a_behavior_szrMpIV6_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behavior_BslL80bb(), a_behavior_BslL80bb_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "behavior",
@@ -163833,7 +163833,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-boundary"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_boundary_B_wYK0Fx(), a_boundary_B_wYK0Fx_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_boundary_B8QU8hD3(), a_boundary_B8QU8hD3_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "boundary",
@@ -163846,7 +163846,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-form"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_form_BedfZEcX(), a_form_BedfZEcX_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_form_BkMpprmu(), a_form_BkMpprmu_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "form",
@@ -163859,7 +163859,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-icon"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_icon_o_ewoHeR(), a_icon_o_ewoHeR_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_icon_Dl_nwJCe(), a_icon_Dl_nwJCe_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "icon",
@@ -163873,7 +163873,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-interceptor"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_interceptor_DQHM53s8(), a_interceptor_DQHM53s8_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_interceptor_DDANX16s(), a_interceptor_DDANX16s_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "interceptor",
@@ -163892,7 +163892,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-logger"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_logger_C2QzSmrG(), a_logger_C2QzSmrG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_logger_DvFRxrn(), a_logger_DvFRxrn_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "logger",
@@ -163905,7 +163905,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-meta"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_meta_DUlnqJSt(), a_meta_DUlnqJSt_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_meta_CbrPQrJb(), a_meta_CbrPQrJb_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "meta",
@@ -163918,7 +163918,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-ssr"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_CsIONf2J(), src_CsIONf2J_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_Cr_olFZv(), src_Cr_olFZv_exports)), "resource"),
         info: {
           "pid": "a",
           "name": "ssr",
@@ -163932,7 +163932,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-router"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_router_DuTeE0_5(), a_router_DuTeE0_5_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_router_BR9YCyAa(), a_router_BR9YCyAa_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "router",
@@ -163946,7 +163946,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-ssrhmr"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DhcgXlnp(), src_DhcgXlnp_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_drD69oCu(), src_drD69oCu_exports)), "resource"),
         info: {
           "pid": "a",
           "name": "ssrhmr",
@@ -163960,7 +163960,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-style"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_style_BSOpmtDf(), a_style_BSOpmtDf_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_style_BI2zWfdn(), a_style_BI2zWfdn_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "style",
@@ -163988,7 +163988,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-table"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_table_DC_ncTJp(), a_table_DC_ncTJp_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_table_BAFRN_f(), a_table_BAFRN_f_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "table",
@@ -164007,7 +164007,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-zod"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zod_Bg7l6bAa(), a_zod_Bg7l6bAa_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zod_7InJ6JiK(), a_zod_7InJ6JiK_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "zod",
@@ -164020,7 +164020,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-zova"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zova_DXJBu7Ah(), a_zova_DXJBu7Ah_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_zova_FQbVL6OA(), a_zova_FQbVL6OA_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "zova",
@@ -164033,7 +164033,7 @@ var init_server_entry = __esm({
         }
       };
       modules["devui-adapter"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_devui_adapter_Dg1o3ISW(), devui_adapter_Dg1o3ISW_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_devui_adapter_DJEr4SF0(), devui_adapter_DJEr4SF0_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "devui",
           "name": "adapter",
@@ -164047,7 +164047,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-api"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_api_CGubmXDy(), home_api_CGubmXDy_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_api_1IqAV_s6(), home_api_1IqAV_s6_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "api",
@@ -164060,7 +164060,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-base"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_base_WfUmdE_m(), home_base_WfUmdE_m_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_base_DkdYA1ve(), home_base_DkdYA1ve_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "base",
@@ -164074,7 +164074,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-icon"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_icon_C_2F1oWj(), home_icon_C_2F1oWj_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_icon_qbngfFn7(), home_icon_qbngfFn7_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "icon",
@@ -164088,7 +164088,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-index"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_index_CfK_WnyI(), home_index_CfK_WnyI_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_index_Dq8394yi(), home_index_Dq8394yi_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "index",
@@ -164101,7 +164101,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-layoutempty"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layoutempty_BZDDZ8Tq(), home_layoutempty_BZDDZ8Tq_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layoutempty_DExQ_aL(), home_layoutempty_DExQ_aL_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "layoutempty",
@@ -164114,7 +164114,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-layouttabs"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layouttabs_3IJv7SnH(), home_layouttabs_3IJv7SnH_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_layouttabs_CR0DtK2c(), home_layouttabs_CR0DtK2c_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "layouttabs",
@@ -164127,7 +164127,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-login"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_login_B9ZMn8nq(), home_login_B9ZMn8nq_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_login_Bxu37SIG(), home_login_Bxu37SIG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "login",
@@ -164140,7 +164140,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-passport"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_passport_dlOfZhM(), home_passport_dlOfZhM_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_passport_CeLVMuSL(), home_passport_CeLVMuSL_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "passport",
@@ -164154,7 +164154,7 @@ var init_server_entry = __esm({
         }
       };
       modules["home-theme"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_theme_HCFUZJlQ(), home_theme_HCFUZJlQ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_home_theme_BI3gpGSF(), home_theme_BI3gpGSF_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "home",
           "name": "theme",
@@ -164167,7 +164167,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-adapter"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_adapter_DHiGxOrO(), basic_adapter_DHiGxOrO_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_adapter_DslK9Mw6(), basic_adapter_DslK9Mw6_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "adapter",
@@ -164181,7 +164181,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-captcha"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_captcha_Da1A7uey(), basic_captcha_Da1A7uey_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_captcha_BdQj_47M(), basic_captcha_BdQj_47M_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "captcha",
@@ -164194,7 +164194,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-commands"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commands_DAgYHxLi(), basic_commands_DAgYHxLi_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commands_CVErzjCG(), basic_commands_CVErzjCG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "commands",
@@ -164207,7 +164207,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-commandssync"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commandssync_Bcph82ME(), basic_commandssync_Bcph82ME_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_commandssync_tq2eVLTA(), basic_commandssync_tq2eVLTA_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "commandssync",
@@ -164220,7 +164220,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-currency"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_961pYHWM(), src_961pYHWM_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_ByDXmtXZ(), src_ByDXmtXZ_exports)), "resource"),
         info: {
           "pid": "basic",
           "name": "currency",
@@ -164233,7 +164233,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-date"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_Dm0GE_II(), src_Dm0GE_II_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DYGl77oI(), src_DYGl77oI_exports)), "resource"),
         info: {
           "pid": "basic",
           "name": "date",
@@ -164246,7 +164246,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-form"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_form_CBu8O2fl(), basic_form_CBu8O2fl_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_form_Mkx7kyV4(), basic_form_Mkx7kyV4_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "form",
@@ -164259,7 +164259,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-input"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_input_IYrAjcHo(), basic_input_IYrAjcHo_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_input_DvtSGXAm(), basic_input_DvtSGXAm_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "input",
@@ -164272,7 +164272,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-page"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_page_DIy84Lwq(), basic_page_DIy84Lwq_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_page_DRUL1s67(), basic_page_DRUL1s67_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "page",
@@ -164285,7 +164285,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-pageentry"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_pageentry_BX_i2TDZ(), basic_pageentry_BX_i2TDZ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_pageentry_ChPMKGEb(), basic_pageentry_ChPMKGEb_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "pageentry",
@@ -164298,7 +164298,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-select"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_select_B2CKIHvJ(), basic_select_B2CKIHvJ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_select_RtWNhd_e(), basic_select_RtWNhd_e_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "select",
@@ -164311,7 +164311,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-table"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_table_DOnTi3wR(), basic_table_DOnTi3wR_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_table_DUPA6hQ6(), basic_table_DUPA6hQ6_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "table",
@@ -164324,7 +164324,7 @@ var init_server_entry = __esm({
         }
       };
       modules["basic-text"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_text_Bxt22_nG(), basic_text_Bxt22_nG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_basic_text_DU1xxiJZ(), basic_text_DU1xxiJZ_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "basic",
           "name": "text",
@@ -164337,7 +164337,7 @@ var init_server_entry = __esm({
         }
       };
       modules["rest-resource"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_rest_resource_CJDNvCue(), rest_resource_CJDNvCue_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_rest_resource_D1PnkBMA(), rest_resource_D1PnkBMA_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "rest",
           "name": "resource",
@@ -164350,7 +164350,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-behaviors"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behaviors_BadjSWyU(), a_behaviors_BadjSWyU_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_behaviors_6tdPmfhk(), a_behaviors_6tdPmfhk_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "behaviors",
@@ -164363,7 +164363,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-command"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_command_CrcZC9yO(), a_command_CrcZC9yO_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_command_CdDnMXTf(), a_command_CdDnMXTf_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "command",
@@ -164384,7 +164384,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-routerstack"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routerstack_QvCo1RKX(), a_routerstack_QvCo1RKX_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routerstack_BY6BiyRX(), a_routerstack_BY6BiyRX_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "routerstack",
@@ -164397,7 +164397,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-routertabs"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routertabs_D39IKAiG(), a_routertabs_D39IKAiG_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_a_routertabs_DnKL9rxM(), a_routertabs_DnKL9rxM_exports)).then((n2) => (n2.t(), n2.n)), "resource"),
         info: {
           "pid": "a",
           "name": "routertabs",
@@ -164410,7 +164410,7 @@ var init_server_entry = __esm({
         }
       };
       modules["a-ssrserver"] = {
-        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DcS2wSPV(), src_DcS2wSPV_exports)), "resource"),
+        resource: /* @__PURE__ */ __name(() => Promise.resolve().then(() => (init_src_DFrpLeHK(), src_DFrpLeHK_exports)), "resource"),
         info: {
           "pid": "a",
           "name": "ssrserver",
@@ -164509,9 +164509,9 @@ var init_server_entry = __esm({
       init_utils17();
       init_vue();
       server_entry_default = /* @__PURE__ */ __name(async (ssrContext) => {
-        const { default: createQuasarApp } = await Promise.resolve().then(() => (init_app_Dzxf875B(), app_Dzxf875B_exports));
+        const { default: createQuasarApp } = await Promise.resolve().then(() => (init_app_BQdi2iKX(), app_BQdi2iKX_exports));
         const { app } = await createQuasarApp(vue_exports.createApp, ssrContext);
-        const bootFunctions = await Promise.all([Promise.resolve().then(() => (init_zova_NhxCUcTJ(), zova_NhxCUcTJ_exports))]).then((bootFiles) => bootFiles.map((entry) => entry.default).filter((entry) => typeof entry === "function"));
+        const bootFunctions = await Promise.all([Promise.resolve().then(() => (init_zova_CPkDwrAr(), zova_CPkDwrAr_exports))]).then((bootFiles) => bootFiles.map((entry) => entry.default).filter((entry) => typeof entry === "function"));
         for (let i = 0; i < bootFunctions.length; i++) await bootFunctions[i]({
           app,
           ssrContext
@@ -164529,7 +164529,7 @@ init_server_entry();
 // .quasar/prod-ssr/render-template.js
 function render_template_default(ssrContext) {
   var __t, __p = "";
-  __p += "<!doctype html><html " + ((__t = ssrContext._meta.htmlAttrs) == null ? "" : __t) + "><head>" + ((__t = ssrContext._meta.headTags) == null ? "" : __t) + ' <meta charset=utf-8><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><link rel=icon type=image/ico href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/favicon.ico"><script type=module crossorigin src="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/index-DQe3oMYV.js"></script><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/rolldown-runtime-lkMnaVCm.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-CvF_GLFp.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-DHzalQTI.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-1Y5FbPzj.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-ChEE2n-Y.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-C-LVj1DU.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/fecha-DvkbkxAQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-6Abekb1F.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-BYPEGx1T.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-hmnYQoyt.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-C4pGJxwQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-CuGjC1Av.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-CnSodz5l.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/index-DQe3oMYV.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/-zova-config-DUIwjgN9.js"><link rel=stylesheet crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/index-B5HTgis_.css"> ' + ((__t = ssrContext._meta.endingHeadTags || "") == null ? "" : __t) + '</head><body class="' + ((__t = ssrContext._meta.bodyClasses) == null ? "" : __t) + '" ' + ((__t = ssrContext._meta.bodyAttrs) == null ? "" : __t) + ">" + ((__t = ssrContext._meta.bodyTags) == null ? "" : __t) + " <div id=q-app>" + ((__t = ssrContext._meta.runtimePageContent) == null ? "" : __t) + "</div> " + ((__t = ssrContext._meta.endingBodyTags || "") == null ? "" : __t) + "</body></html>";
+  __p += "<!doctype html><html " + ((__t = ssrContext._meta.htmlAttrs) == null ? "" : __t) + "><head>" + ((__t = ssrContext._meta.headTags) == null ? "" : __t) + ' <meta charset=utf-8><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><link rel=icon type=image/ico href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/favicon.ico"><script type=module crossorigin src="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/index-Cd4EYYtZ.js"></script><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/rolldown-runtime-lkMnaVCm.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-CvF_GLFp.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-DHzalQTI.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-1Y5FbPzj.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-ChEE2n-Y.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/vue-C-LVj1DU.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/fecha-DvkbkxAQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-6Abekb1F.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-BYPEGx1T.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-hmnYQoyt.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-C4pGJxwQ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-DQbBsEtS.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/zova-CoRfsquu.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/index-Cd4EYYtZ.js"><link rel=modulepreload crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/-zova-config-CoKN49wO.js"><link rel=stylesheet crossorigin href="' + ((__t = ssrContext._meta.baseUrl) == null ? "" : __t) + '/second/assets/index-B5HTgis_.css"> ' + ((__t = ssrContext._meta.endingHeadTags || "") == null ? "" : __t) + '</head><body class="' + ((__t = ssrContext._meta.bodyClasses) == null ? "" : __t) + '" ' + ((__t = ssrContext._meta.bodyAttrs) == null ? "" : __t) + ">" + ((__t = ssrContext._meta.bodyTags) == null ? "" : __t) + " <div id=q-app>" + ((__t = ssrContext._meta.runtimePageContent) == null ? "" : __t) + "</div> " + ((__t = ssrContext._meta.endingBodyTags || "") == null ? "" : __t) + "</body></html>";
   return __p;
 }
 __name(render_template_default, "default");
