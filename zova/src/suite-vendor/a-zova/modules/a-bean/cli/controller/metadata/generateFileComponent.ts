@@ -44,12 +44,13 @@ export async function generateFileComponent(
     : '';
   // import
   const _contentImportTypeZova: string[] = [];
-  if (hasModels)
+  if (hasModels) {
     _contentImportTypeZova.push(
       'DefineModelOptions',
       'TypePropUpdateFromModel',
       'TypePropValueFromModel',
     );
+}
   if (hasProps) _contentImportTypeZova.push('TypeControllerInnerProps');
   if (_contentImportTypeZova.length > 0) {
     contentImports.push(`import type { ${_contentImportTypeZova.join(', ')} } from 'zova';`);

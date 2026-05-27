@@ -3,7 +3,8 @@ import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormField, type IFormFieldComponentOptions } from 'zova-module-a-form';
+import { ZFormField } from 'zova-module-a-form';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 
 import { ZDateRange } from '../../.metadata/component/dateRange.js';
 

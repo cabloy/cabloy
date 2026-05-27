@@ -1,6 +1,7 @@
 import { Api, BeanApiBase, IApiActionOptions } from 'zova-module-a-api';
 
-import { OpenApiBaseURL, type components, type paths } from './openapi/index.js';
+import { OpenApiBaseURL } from './openapi/index.js';
+import type { components, paths } from './openapi/index.js';
 
 /** HomeUserPassport_current */
 export const ApiApiHomeUserPassportcurrentPath = '/api/home/user/passport/current';

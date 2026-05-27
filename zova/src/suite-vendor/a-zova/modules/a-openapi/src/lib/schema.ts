@@ -88,8 +88,7 @@ function _normalizeSchema(
 export function getSchemaOfRequestBody(
   operationObject?: OperationObject,
 ): SchemaObject | undefined {
-  return cast<RequestBodyObject>(operationObject?.requestBody)?.content?.['application/json']
-    ?.schema as any;
+  return cast<RequestBodyObject>(operationObject?.requestBody)?.content?.['application/json']?.schema as any;
 }
 
 export function getSchemaOfResponseBody(

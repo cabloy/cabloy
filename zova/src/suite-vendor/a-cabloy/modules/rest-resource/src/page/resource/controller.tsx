@@ -43,7 +43,7 @@ export class ControllerPageResource extends BeanControllerPageBase {
   public render() {
     const blocks = this.schemaRow?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
-    let domBlocks: VNode[] = [];
+    const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = deepExtend(
         { key: index },

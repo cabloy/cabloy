@@ -50,6 +50,7 @@ export default defineConfig(
       'scripts',
       'zovaRest',
       'assets',
+      'packages-cli/cli-set-api/cli/templates',
     ],
   }),
 );

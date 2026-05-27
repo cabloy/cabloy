@@ -4,7 +4,8 @@ import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 import { classes } from 'typestyle';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormField, ZFormFieldPreset, type IFormFieldComponentOptions } from 'zova-module-a-form';
+import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 
 import { ZSelect, ZSelectProps } from '../../.metadata/component/select.js';
 
@@ -29,6 +30,7 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
       itemTitle: 'title',
     },
   };
+
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   protected async __init__() {}
@@ -38,7 +40,7 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
       return (
         <ZFormFieldPreset
           {...this.$props}
-          render={'basic-input:formFieldInput'}
+          render="basic-input:formFieldInput"
           options={{ value: this._getValueByItems() }}
         ></ZFormFieldPreset>
       );

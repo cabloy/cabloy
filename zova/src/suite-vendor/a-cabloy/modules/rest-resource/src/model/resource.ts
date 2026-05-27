@@ -14,7 +14,7 @@ import { SchemaObject } from 'openapi3-ts/oas31';
 import { UseScope } from 'zova';
 import { formSceneFromFormMeta } from 'zova-module-a-form';
 import { $QueryAutoLoad, BeanModelBase, Model } from 'zova-module-a-model';
-import { SymbolOpenapiSchemaName, ScopeModuleAOpenapi } from 'zova-module-a-openapi';
+import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-openapi';
 
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
 

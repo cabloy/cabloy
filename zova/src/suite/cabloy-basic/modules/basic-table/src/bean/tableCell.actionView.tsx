@@ -1,12 +1,8 @@
 import type { IResourceTableActionRowOptionsBase } from 'zova-module-a-openapi';
 
 import { BeanBase } from 'zova';
-import {
-  type IJsxRenderContextTableCell,
-  type ITableCellRender,
-  type NextTableCellRender,
-  TableCell,
-} from 'zova-module-a-table';
+import { TableCell } from 'zova-module-a-table';
+import type { IJsxRenderContextTableCell, ITableCellRender, NextTableCellRender } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {

@@ -6,13 +6,8 @@ import type {
 
 import { VNode } from 'vue';
 import { BeanBase } from 'zova';
-import {
-  type IJsxRenderContextTableCell,
-  IJsxRenderContextTableColumn,
-  type ITableCellRender,
-  type NextTableCellRender,
-  TableCell,
-} from 'zova-module-a-table';
+import { IJsxRenderContextTableColumn, TableCell } from 'zova-module-a-table';
+import type { IJsxRenderContextTableCell, ITableCellRender, NextTableCellRender } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {
@@ -34,7 +29,7 @@ export class TableCellActionOperationsRow extends BeanBase implements ITableCell
   ): Promise<boolean> {
     const { $celScope, $host, $$table } = renderContext;
     const permissions = $celScope.permissions;
-    let actions = options.actions;
+    const actions = options.actions;
     if (!actions || actions.length === 0) return false;
     // renders
     const renders: TypeTableCellRenderComponent[] = [];

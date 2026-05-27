@@ -1,11 +1,11 @@
 import type {
-  IResourceBlockOptionsBase,
-  IJsxRenderContextPageEntry,
-  IResourceRenderBlockOptionsBlock,
-  TypeFormScene,
   IFormMeta,
   IFormProvider,
+  IJsxRenderContextPageEntry,
   IPageEntryScope,
+  IResourceBlockOptionsBase,
+  IResourceRenderBlockOptionsBlock,
+  TypeFormScene,
   TypeFormSchemaScene,
 } from 'zova-module-a-openapi';
 
@@ -13,7 +13,8 @@ import { celEnvBase, isNil } from '@cabloy/utils';
 import { SchemaObject } from 'openapi3-ts/oas31';
 import { TableIdentity } from 'table-identity';
 import { VNode } from 'vue';
-import { BeanControllerBase, deepEqual, type IComponentOptions } from 'zova';
+import { BeanControllerBase, deepEqual } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import {
@@ -195,7 +196,7 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
   private _renderBlocks() {
     const blocks = this.$props.blocks;
     if (!blocks || blocks.length === 0) return;
-    let domBlocks: VNode[] = [];
+    const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = Object.assign({ key: index }, block.options);
       const domBlock = this.jsxZova.render(

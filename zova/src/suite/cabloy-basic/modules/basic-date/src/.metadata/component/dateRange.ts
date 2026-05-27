@@ -1,8 +1,8 @@
 import type {
   DefineModelOptions,
+  TypeControllerInnerProps,
   TypePropUpdateFromModel,
   TypePropValueFromModel,
-  TypeControllerInnerProps,
 } from 'zova';
 
 import { defineComponent } from 'vue';

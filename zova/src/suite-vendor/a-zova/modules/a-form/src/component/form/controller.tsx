@@ -22,12 +22,12 @@ import {
   IFormMeta,
   IFormProvider,
   IResourceFormFieldLayoutOptions,
+  ISchemaObjectExtensionField,
   renderFormFieldTopPropsSystem,
+  ScopeModuleAOpenapi,
   TypeFormFieldRenderComponent,
   TypeFormFieldRenderComponentProvider,
   TypeFormSchemaScene,
-  ScopeModuleAOpenapi,
-  ISchemaObjectExtensionField,
 } from 'zova-module-a-openapi';
 
 import { BeanControllerFormBase } from '../../lib/beanControllerFormBase.js';

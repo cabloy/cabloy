@@ -69,7 +69,7 @@ export class RenderPageLogin extends BeanRenderBase {
         ></ZFormFieldPreset>
         <ZFormFieldPreset
           name="captcha"
-          render={'basic-captcha:formFieldCaptcha'}
+          render="basic-captcha:formFieldCaptcha"
           layout={{ iconPrefix: ':editor:code-block' }}
         ></ZFormFieldPreset>
         <ZFormFieldBlank

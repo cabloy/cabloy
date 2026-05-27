@@ -1,12 +1,8 @@
 import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
 import { BeanBase, Preload } from 'zova';
-import {
-  Command,
-  type ICommandExecute,
-  type ICommandOptionsBase,
-  type NextCommandExecute,
-} from 'zova-module-a-command';
+import { Command } from 'zova-module-a-command';
+import type { ICommandExecute, ICommandOptionsBase, NextCommandExecute } from 'zova-module-a-command';
 
 export type TypeCommandExprResult = unknown;
 

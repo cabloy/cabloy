@@ -8,7 +8,8 @@ import type {
 import { classes } from 'typestyle';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ControllerForm, ZFormField, type IFormFieldComponentOptions } from 'zova-module-a-form';
+import { ControllerForm, ZFormField } from 'zova-module-a-form';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 import { IResourceFormFieldInputOptions } from 'zova-module-basic-input';
 
 declare module 'zova-module-a-openapi' {
@@ -36,6 +37,7 @@ export class ControllerFormFieldCaptcha extends BeanControllerBase {
       scene: 'captcha-simple:simple',
     },
   };
+
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   eventFormSubmission: TypeEventOff;

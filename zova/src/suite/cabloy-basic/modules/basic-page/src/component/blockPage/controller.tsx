@@ -1,8 +1,8 @@
 import type {
-  IResourceBlockOptionsBase,
   IJsxRenderContextPage,
-  IResourceRenderBlockOptionsBlock,
   IPageScope,
+  IResourceBlockOptionsBase,
+  IResourceRenderBlockOptionsBlock,
   ITablePaged,
   ITableQuery,
   ITableResPaged,
@@ -10,7 +10,8 @@ import type {
 
 import { celEnvBase } from '@cabloy/utils';
 import { VNode } from 'vue';
-import { BeanControllerBase, deepEqual, type IComponentOptions } from 'zova';
+import { BeanControllerBase, deepEqual } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { $QueriesAutoLoad } from 'zova-module-a-model';
@@ -34,6 +35,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   static $propsDefault = {
     pageSize: 20,
   };
+
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   tableRef: BeanControllerTableBase<TData>;
@@ -160,7 +162,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   private _renderBlocks() {
     const blocks = this.$props.blocks;
     if (!blocks || blocks.length === 0) return;
-    let domBlocks: VNode[] = [];
+    const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = Object.assign({ key: index }, block.options);
       const domBlock = this.jsxZova.render(

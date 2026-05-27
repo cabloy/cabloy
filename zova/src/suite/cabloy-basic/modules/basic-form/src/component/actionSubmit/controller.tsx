@@ -5,7 +5,8 @@ import type {
 
 import { isNil } from '@cabloy/utils';
 import { classes } from 'typestyle';
-import { BeanControllerBase, cast, type IComponentOptions, Use } from 'zova';
+import { BeanControllerBase, cast, Use } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanControllerFormBase } from 'zova-module-a-form';
 

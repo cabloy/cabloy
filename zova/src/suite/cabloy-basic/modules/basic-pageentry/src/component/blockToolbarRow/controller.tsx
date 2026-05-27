@@ -1,12 +1,13 @@
 import type {
-  IResourceBlockOptionsBase,
   IJsxRenderContextPageEntry,
-  IResourceRenderFormActionRowOptionsAction,
   IPermissionHintTableActionRow,
+  IResourceBlockOptionsBase,
+  IResourceRenderFormActionRowOptionsAction,
 } from 'zova-module-a-openapi';
 
 import { VNode } from 'vue';
-import { BeanControllerBase, type IComponentOptions, Use } from 'zova';
+import { BeanControllerBase, Use } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
 declare module 'zova-module-a-openapi' {

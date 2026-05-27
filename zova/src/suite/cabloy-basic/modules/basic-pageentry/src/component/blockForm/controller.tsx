@@ -1,6 +1,7 @@
-import type { IResourceBlockOptionsBase, IJsxRenderContextPageEntry } from 'zova-module-a-openapi';
+import type { IJsxRenderContextPageEntry, IResourceBlockOptionsBase } from 'zova-module-a-openapi';
 
-import { BeanControllerBase, type IComponentOptions, Use } from 'zova';
+import { BeanControllerBase, Use } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanControllerFormBase, ZForm } from 'zova-module-a-form';
 

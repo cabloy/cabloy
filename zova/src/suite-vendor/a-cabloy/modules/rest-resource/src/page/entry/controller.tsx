@@ -74,7 +74,7 @@ export class ControllerPageEntry extends BeanControllerPageBase {
   protected render() {
     const blocks = this.formSchema?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
-    let domBlocks: VNode[] = [];
+    const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = deepExtend(
         { key: index },

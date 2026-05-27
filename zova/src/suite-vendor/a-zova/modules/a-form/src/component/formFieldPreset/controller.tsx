@@ -22,7 +22,7 @@ export class ControllerFormFieldPreset extends BeanControllerBase {
 
   protected render() {
     const name = this.$props.name;
-    if (!name) throw new Error(`should specify field name`);
+    if (!name) throw new Error('should specify field name');
     return this.$$form.renderField(name, this.$props as any);
   }
 }

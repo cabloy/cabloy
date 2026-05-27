@@ -129,8 +129,9 @@ export function extendViteConf(context: ConfigContext) {
         msg.includes(
           'Arbitrary module namespace identifier names are not available in the configured target environment',
         )
-      )
+      ) {
         return;
+}
       if (
         msg.includes('Big integer literals are not available in the configured target environment')
       )

@@ -1,12 +1,13 @@
 import type {
-  IResourceBlockOptionsBase,
-  IJsxRenderContextPage,
   IFormMeta,
+  IJsxRenderContextPage,
+  IResourceBlockOptionsBase,
   IResourceFormFieldLayoutOptions,
 } from 'zova-module-a-openapi';
 
 import { isNilOrEmptyString } from '@cabloy/utils';
-import { BeanControllerBase, type IComponentOptions, Use } from 'zova';
+import { BeanControllerBase, Use } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { TypeFormOnSubmitData, ZForm } from 'zova-module-a-form';
 

@@ -4,11 +4,8 @@ import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 import { CurrencyOptions } from '@zhennann/currency';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import {
-  ControllerForm,
-  ZFormFieldPreset,
-  type IFormFieldComponentOptions,
-} from 'zova-module-a-form';
+import { ControllerForm, ZFormFieldPreset } from 'zova-module-a-form';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 
 import { currencyFormat, currencyUpdate } from '../../lib/utils.js';
 

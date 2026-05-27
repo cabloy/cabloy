@@ -4,7 +4,8 @@ import type {
 } from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
-import { BeanControllerBase, type IComponentOptions, Use } from 'zova';
+import { BeanControllerBase, Use } from 'zova';
+import type { IComponentOptions } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { BeanControllerFormBase } from 'zova-module-a-form';
 

@@ -3,7 +3,8 @@ import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormFieldPreset, type IFormFieldComponentOptions } from 'zova-module-a-form';
+import { ZFormFieldPreset } from 'zova-module-a-form';
+import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 
 import { dateFormatUtil } from '../../lib/utils.js';
 import { TypeDateFormatPreset } from '../../types/date.js';
@@ -30,6 +31,7 @@ export class ControllerFormFieldDate extends BeanControllerBase {
       preset: 'DATETIME_SHORT',
     },
   };
+
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   protected async __init__() {}

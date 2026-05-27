@@ -814,7 +814,7 @@ export class BeanContainer {
   ) {
     let beanContainerParent;
     if (!useOptions.injectionScope || useOptions.injectionScope === 'host') {
-      //eslint-disable-next-line
+      // eslint-disable-next-line
       beanContainerParent = this;
     } else if (useOptions.injectionScope === 'skipSelf') {
       beanContainerParent = this.parent;
