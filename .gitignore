@@ -61,6 +61,7 @@ miniprogram_npm
 **/.temp-dynamic-*
 vona/package.json
 zova/package.json
+vona/docker-compose.yml
 
 /vona/docker-compose
 !/vona/docker-compose/config

@@ -20,9 +20,7 @@
   },
   "type": "module",
   "scripts": {
-    "init": "pnpm install --no-frozen-lockfile && npm run init:vona && npm run init:zova",
-    "init:vona": "cp ./vona/package.original.json ./vona/package.json && pnpm --dir './vona' run init",
-    "init:zova": "cp ./zova/package.original.json ./zova/package.json && pnpm --dir './zova' run init",
+    "init": "pnpm install --no-frozen-lockfile && node scripts/init.ts",
     "docs:fix": "textlint --fix ./cabloy-docs/**/*.md",
     "release-patch": "node scripts/release.ts patch",
     "release-minor": "node scripts/release.ts minor",

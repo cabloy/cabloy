@@ -14,8 +14,7 @@ services:
       - '7202:7102'
     volumes:
       - ./docker-compose/output/dist/docker:/opt/node/app/dist/docker
-      - ./docker-compose/output/app/vona:/root/vona
-      - ./docker-compose/logs/app:/root/logs
+      - ./docker-compose/output/app/.vona:/root/.vona
     command:
       [
         ./scripts/wait-for-it.sh,
@@ -52,7 +51,7 @@ services:
     environment:
       POSTGRES_DB: vona
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: '!%{9avv.Tw2LmcYP'
+      POSTGRES_PASSWORD: '<placeholder>'
 
   mysql:
     image: mysql:8.1
@@ -72,10 +71,10 @@ services:
     volumes:
       - ./docker-compose/data/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 'CDf#lV+q5I1RB2KR'
+      MYSQL_ROOT_PASSWORD: '<placeholder>'
       MYSQL_DATABASE: vona
       MYSQL_USER: web_user
-      MYSQL_PASSWORD: '!%{9mov.Tw3LmcYP'
+      MYSQL_PASSWORD: '<placeholder>'
     security_opt:
       - seccomp:unconfined
 
