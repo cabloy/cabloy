@@ -1,7 +1,7 @@
 import minimist from 'minimist';
 import { execSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // --- Constants ---
@@ -25,7 +25,7 @@ function readPackageJson(): Record<string, any> {
 }
 
 function writePackageJson(pkg: Record<string, any>): void {
-  writeFileSync(PACKAGE_JSON_PATH, JSON.stringify(pkg, null, 2) + '\n');
+  writeFileSync(PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)  }\n`);
 }
 
 function getLastTag(): string | null {
@@ -107,10 +107,10 @@ async function versionBump(
   }
 
   const tag = `${TAG_PREFIX}${newVersion}`;
-  exec(`git add package.json`, dryRun);
+  exec('git add package.json', dryRun);
   exec(`git commit -m "chore: release v${newVersion}"`, dryRun);
   exec(`git tag ${tag}`, dryRun);
-  exec(`git push`, dryRun);
+  exec('git push', dryRun);
   exec(`git push origin ${tag}`, dryRun);
 
   return newVersion;
@@ -221,9 +221,9 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   const header = '# Changelog\n\n';
   let changelog: string;
   if (existingContent.startsWith('# Changelog')) {
-    changelog = existingContent.replace('# Changelog\n\n', header + newSection + '\n\n');
+    changelog = existingContent.replace('# Changelog\n\n', `${header + newSection  }\n\n`);
   } else {
-    changelog = header + newSection + '\n\n' + existingContent;
+    changelog = `${header + newSection  }\n\n${  existingContent}`;
   }
 
   if (dryRun) {
@@ -232,9 +232,9 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
     writeFileSync(CHANGELOG_PATH, changelog);
   }
 
-  exec(`git add CHANGELOG.md`, dryRun);
+  exec('git add CHANGELOG.md', dryRun);
   exec(`git commit -m "chore: update CHANGELOG.md for v${version}"`, dryRun);
-  exec(`git push`, dryRun);
+  exec('git push', dryRun);
 }
 
 // --- Step 3: npm Publish ---

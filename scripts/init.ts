@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process';
-import { randomUUID, randomBytes, randomInt } from 'node:crypto';
-import { existsSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { randomBytes, randomInt, randomUUID } from 'node:crypto';
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
