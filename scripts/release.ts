@@ -10,6 +10,8 @@ const GITHUB_REPO = 'cabloy/cabloy';
 const PACKAGE_JSON_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json');
 const CHANGELOG_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'CHANGELOG.md');
 const COMMIT_CAP = 200;
+const ZOVA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'zova');
+const VONA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'vona');
 
 // --- Utility functions ---
 function exec(cmd: string, dryRun?: boolean): string {
@@ -75,6 +77,30 @@ function bumpVersion(current: string, bumpType: 'patch' | 'minor' | 'major'): st
 
 function getToday(): string {
   return new Date().toISOString().split('T')[0];
+}
+
+// --- Pre-step: Commit pending changes ---
+function commitPendingChanges(dryRun?: boolean): void {
+  const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim();
+  if (!status) return;
+  // eslint-disable-next-line
+  console.log('\n📁 Committing pending changes...');
+  exec('git add .', dryRun);
+  exec('git commit -m "chore: pre-release commit"', dryRun);
+  exec('git push', dryRun);
+}
+
+// --- Pre-step: Sub-project release ---
+function subProjectRelease(dir: string, bumpType: 'patch' | 'minor' | 'major', dryRun?: boolean): void {
+  const name = dir.split('/').pop()!;
+  // eslint-disable-next-line
+  console.log(`\n🔧 Running ${name} release (${bumpType})...`);
+  if (dryRun) {
+    // eslint-disable-next-line
+    console.log(`  [dry-run] cd ${dir} && npm run release-${bumpType}`);
+    return;
+  }
+  execSync(`cd ${dir} && npm run release-${bumpType}`, { encoding: 'utf-8', stdio: 'inherit' });
 }
 
 // --- Step 1: Version Bump ---
@@ -347,6 +373,13 @@ async function release(options: ReleaseOptions): Promise<void> {
     // eslint-disable-next-line
     console.log(`Using current version: ${version}`);
   } else {
+    // Pre-steps: commit pending, release sub-projects, then commit again
+    commitPendingChanges(options.dryRun);
+    subProjectRelease(ZOVA_DIR, options.bumpType, options.dryRun);
+    commitPendingChanges(options.dryRun);
+    subProjectRelease(VONA_DIR, options.bumpType, options.dryRun);
+    commitPendingChanges(options.dryRun);
+
     version = await versionBump(options.bumpType, options.dryRun);
   }
 
