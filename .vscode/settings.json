@@ -2,7 +2,9 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   // tailwindCSS
-  "tailwindCSS.experimental.classRegex": [["classes\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
+  "tailwindCSS.experimental.classRegex": [
+    ["classes\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
   // typescript
   // "js/ts.experimental.useTsgo": true,
   "js/ts.tsserver.automaticTypeAcquisition.enabled": true,
