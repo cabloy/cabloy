@@ -5,6 +5,9 @@
   "command": {
     "publish": {
       "ignoreChanges": ["src/module/**", "src/suite/**"]
+    },
+    "version": {
+      "ignoreChanges": ["src/module/**", "src/suite/**"]
     }
   }
 }
