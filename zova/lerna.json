@@ -4,10 +4,10 @@
   "npmClient": "pnpm",
   "command": {
     "publish": {
-      "ignoreChanges": ["src/module/**", "src/suite/**"]
+      "ignoreChanges": ["zova/src/module/**", "zova/src/suite/**"]
     },
     "version": {
-      "ignoreChanges": ["src/module/**", "src/suite/**"]
+      "ignoreChanges": ["zova/src/module/**", "zova/src/suite/**"]
     }
   }
 }
