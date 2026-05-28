@@ -1,4 +1,4 @@
 #! /usr/bin/env bash
 
-lerna version $1 --yes
-lerna publish from-git
+lerna publish $1 --yes
+git checkout -- "**/package.json"
