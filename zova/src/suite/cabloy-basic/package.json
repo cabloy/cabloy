@@ -1,6 +1,6 @@
 {
   "name": "zova-suite-cabloy-basic",
-  "version": "5.0.15",
+  "version": "5.0.16",
   "gitHead": "4dece229b6d3f4735930e833afcb4b95ec51bf86",
   "description": "",
   "author": "",
@@ -20,7 +20,7 @@
     "zova-module-basic-select": "^5.0.4",
     "zova-module-basic-table": "^5.0.6",
     "zova-module-basic-text": "^5.0.3",
-    "zova-suite-a-cabloy": "^5.1.32"
+    "zova-suite-a-cabloy": "^5.1.33"
   },
   "title": "cabloy-basic"
 }
