@@ -4,7 +4,10 @@
   "npmClient": "pnpm",
   "command": {
     "publish": {
-      "ignoreChanges": ["src/module/**"]
+      "ignoreChanges": ["vona/src/module/**", "vona/src/suite/**"]
+    },
+    "version": {
+      "ignoreChanges": ["vona/src/module/**", "vona/src/suite/**"]
     }
   }
 }
