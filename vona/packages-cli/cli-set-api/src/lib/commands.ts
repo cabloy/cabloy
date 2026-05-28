@@ -8,7 +8,6 @@ import binTest from './command/bin.test.ts';
 import binTsc from './command/bin.tsc.ts';
 import createBean from './command/create.bean.ts';
 import createModule from './command/create.module.ts';
-import createProject from './command/create.project.ts';
 import createSuite from './command/create.suite.ts';
 import createTest from './command/create.test.ts';
 import defaultList from './command/default.list.ts';
@@ -46,7 +45,6 @@ export const commands = {
   create: {
     suite: createSuite,
     module: createModule,
-    project: createProject,
     bean: createBean,
     test: createTest,
   },

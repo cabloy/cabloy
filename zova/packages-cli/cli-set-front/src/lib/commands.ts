@@ -5,7 +5,6 @@ import createComponent from './command/create.component.ts';
 import createMock from './command/create.mock.ts';
 import createModule from './command/create.module.ts';
 import createPage from './command/create.page.ts';
-import createProject from './command/create.project.ts';
 import createSuite from './command/create.suite.ts';
 import defaultList from './command/default.list.ts';
 import initAppMonkey from './command/init.appMonkey.ts';
@@ -48,7 +47,6 @@ export const commands = {
     buildRest: binBuildRest,
   },
   create: {
-    project: createProject,
     suite: createSuite,
     module: createModule,
     page: createPage,

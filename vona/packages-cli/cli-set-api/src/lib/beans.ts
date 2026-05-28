@@ -8,7 +8,6 @@ import { CliBinTest } from './bean/cli.bin.test.ts';
 import { CliBinTsc } from './bean/cli.bin.tsc.ts';
 import { CliCreateBean } from './bean/cli.create.bean.ts';
 import { CliCreateModule } from './bean/cli.create.module.ts';
-import { CliCreateProject } from './bean/cli.create.project.ts';
 import { CliCreateSuite } from './bean/cli.create.suite.ts';
 import { CliCreateTest } from './bean/cli.create.test.ts';
 import { CliDefaultList } from './bean/cli.default.list.ts';
@@ -42,7 +41,6 @@ export const beans = {
   'create.suite': CliCreateSuite,
   'create.bean': CliCreateBean,
   'create.module': CliCreateModule,
-  'create.project': CliCreateProject,
   'create.test': CliCreateTest,
   'init.config': CliInitConfig,
   'init.constant': CliInitConstant,

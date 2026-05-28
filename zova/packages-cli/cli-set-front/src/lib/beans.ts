@@ -5,7 +5,6 @@ import { CliCreateComponent } from './bean/cli.create.component.ts';
 import { CliCreateMock } from './bean/cli.create.mock.ts';
 import { CliCreateModule } from './bean/cli.create.module.ts';
 import { CliCreatePage } from './bean/cli.create.page.ts';
-import { CliCreateProject } from './bean/cli.create.project.ts';
 import { CliCreateSuite } from './bean/cli.create.suite.ts';
 import { CliDefaultList } from './bean/cli.default.list.ts';
 import { CliInitAppMonkey } from './bean/cli.init.appMonkey.ts';
@@ -44,7 +43,6 @@ export const beans = {
   'default.list': CliDefaultList,
   'bin.buildModule': CliBinBuildModule,
   'bin.buildRest': CliBinBuildRest,
-  'create.project': CliCreateProject,
   'create.suite': CliCreateSuite,
   'create.module': CliCreateModule,
   'create.page': CliCreatePage,
