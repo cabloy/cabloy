@@ -1,17 +1,35 @@
 # Changelog
 
+## 5.1.10
+
+### Features
+
+- Add `create-cabloy` CLI package and remove pre-built SSR assets
+- Remove `cli.create.project` from vona and zova CLI packages
+- Update project scaffolding and core features
+
+### Improvements
+
+- Add husky and lint-staged for pre-commit lint/format
+- Consolidate ignore patterns and apply oxfmt formatting
+- Update initialization scripts and .gitignore
+- Update package, lerna, and release script configurations
+
 ## 5.1.9
 
 ## 5.1.8
 
 ### Features
+
 - Add zova/vona sub-project release to cabloy release workflow
 
 ### Bug Fixes
+
 - Use lerna `--no-push` to avoid pushing stale tags
 - Fix test-ssr TypeScript error
 
 ### Improvements
+
 - Update release script
 - Update Oxlint configuration
 - Update Vue linting script
@@ -19,29 +37,34 @@
 ## 5.1.7
 
 ### Features
+
 - Rename app to Cabloy Basic, add build/start scripts, and update oxfmt excludes
 - Generate passwords dynamically at init instead of hardcoding in docker-compose.yml
 - Apply various feature updates
 
 ### Improvements
+
 - Update initialization script
 - Update settings configuration
 
 ## 5.1.6
 
 ### Features
+
 - Add Claude release command and local settings
 - Add oxfmt and oxlint configuration files
 - Update package description and reformat release script
 
 ### Bug Fixes
+
 - Extract text block from API response with thinking blocks
 
 ## 5.1.5
 
 ### Bug Fixes
+
 - Extract text block from API response with thinking blocks
 
 ### Improvements
-- Improve changelog commit range and remove process-helper dependency
 
+- Improve changelog commit range and remove process-helper dependency
