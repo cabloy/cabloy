@@ -1,0 +1,45 @@
+{
+  "name": "create-cabloy",
+  "version": "5.0.0",
+  "description": "Create a new Cabloy project - npm create cabloy",
+  "keywords": [
+    "cabloy",
+    "create-cabloy",
+    "fullstack",
+    "scaffold"
+  ],
+  "license": "MIT",
+  "author": "zhennann",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cabloy/cabloy.git"
+  },
+  "bin": {
+    "create-cabloy": "dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "unbuild --stub",
+    "build": "unbuild",
+    "release-patch": "npm version patch && npm publish && git push --follow-tags",
+    "release-minor": "npm version minor && npm publish && git push --follow-tags"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "cross-spawn": "^7.0.6",
+    "mri": "^1.2.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/node": "^22.19.17",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.5.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

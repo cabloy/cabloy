@@ -109,10 +109,32 @@ function initZova(): void {
   exec("pnpm --dir './zova' run init");
 }
 
+// --- Step E: cleanupWorkspaceYaml ---
+
+function cleanupWorkspaceYaml(): void {
+  const subProjects = ['vona', 'zova'];
+  for (const sub of subProjects) {
+    const yamlPath = resolve(ROOT_DIR, sub, 'pnpm-workspace.yaml');
+    if (!existsSync(yamlPath)) continue;
+    let content = readFileSync(yamlPath, 'utf-8');
+    const lines = content.split('\n');
+    const filtered = lines.filter(line => {
+      const trimmed = line.trim();
+      if (trimmed === "'packages-docs'" || trimmed === 'packages-docs') return false;
+      return true;
+    });
+    content = filtered.join('\n');
+    writeFileSync(yamlPath, content);
+    // eslint-disable-next-line
+    console.log(`[init] Cleaned up ${sub}/pnpm-workspace.yaml`);
+  }
+}
+
 // --- Main ---
 
 generateEnvProdLocal();
 generateEnvProdDockerLocal();
+cleanupWorkspaceYaml();
 initVona();
 initZova();
 // eslint-disable-next-line

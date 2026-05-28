@@ -1,0 +1,11 @@
+{
+  "name": "packages-cabloy",
+  "private": true,
+  "license": "MIT",
+  "author": "zhennann",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@10.19.0"
+}
