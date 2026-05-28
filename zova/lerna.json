@@ -4,7 +4,7 @@
   "npmClient": "pnpm",
   "command": {
     "publish": {
-      "ignoreChanges": ["src/module/**"]
+      "ignoreChanges": ["src/module/**", "src/suite/**"]
     }
   }
 }
