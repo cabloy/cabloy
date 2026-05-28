@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { randomBytes, randomInt, randomUUID } from 'node:crypto';
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -64,6 +64,21 @@ function generateEnvProdDockerLocal(): void {
   writeFileSync(envFilePath, envContent);
   // eslint-disable-next-line
   console.log('[init] Generated vona/env/.env.prod.docker.local');
+
+  // Copy docker-compose-original directory to docker-compose
+  const composeDirOriginal = resolve(ROOT_DIR, 'vona/docker-compose-original');
+  const composeDirTarget = resolve(ROOT_DIR, 'vona/docker-compose');
+  if (!existsSync(composeDirTarget)) {
+    cpSync(composeDirOriginal, composeDirTarget, {
+      recursive: true,
+      filter: src => !src.includes('.DS_Store'),
+    });
+    // eslint-disable-next-line
+    console.log('[init] Generated vona/docker-compose directory');
+  } else {
+    // eslint-disable-next-line
+    console.log('[init] vona/docker-compose directory already exists, skipping');
+  }
 
   // Generate docker-compose.yml from original
   const composeOriginalPath = resolve(ROOT_DIR, 'vona/docker-compose.original.yml');
