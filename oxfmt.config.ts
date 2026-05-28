@@ -7,7 +7,6 @@ export default defineConfig(
       // root original
       '**/.claude',
       '**/.vscode',
-      'CHANGELOG.md',
       // file type patterns (from vona & zova)
       '*.min.js',
       '*.code-snippets',
