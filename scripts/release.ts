@@ -91,7 +91,11 @@ function commitPendingChanges(dryRun?: boolean): void {
 }
 
 // --- Pre-step: Sub-project release ---
-function subProjectRelease(dir: string, bumpType: 'patch' | 'minor' | 'major', dryRun?: boolean): void {
+function subProjectRelease(
+  dir: string,
+  bumpType: 'patch' | 'minor' | 'major',
+  dryRun?: boolean,
+): void {
   const name = dir.split('/').pop()!;
   // eslint-disable-next-line
   console.log(`\n🔧 Running ${name} release (${bumpType})...`);

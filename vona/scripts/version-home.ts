@@ -5,11 +5,14 @@ import { fileURLToPath } from 'node:url';
 
 import { removeSpecialFiles } from './utils.ts';
 
-const __replaceFiles = ['modules/home-user/src/dto/login.ts', 'modules/home-user/src/dto/register.ts'];
+const __replaceFiles = [
+  'modules/home-user/src/dto/login.ts',
+  'modules/home-user/src/dto/register.ts',
+];
 const __replaceContents = [
   { from: 'zova-rest-cabloy-basic-admin', to: 'zova-rest-cabloy-start-admin' },
-  { from: 'basic-captcha:formFieldCaptcha', to: 'start-captcha:formFieldCaptcha' }
-]
+  { from: 'basic-captcha:formFieldCaptcha', to: 'start-captcha:formFieldCaptcha' },
+];
 
 async function _versionTemplate(templateName: string) {
   // cp a-home
