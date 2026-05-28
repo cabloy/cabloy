@@ -946,7 +946,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-rest-resource:
-        specifier: ^5.1.28
+        specifier: ^5.1.30
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
@@ -1589,7 +1589,7 @@ importers:
         specifier: ^5.0.3
         version: link:modules/basic-text
       zova-suite-a-cabloy:
-        specifier: ^5.1.31
+        specifier: ^5.1.32
         version: link:../../suite-vendor/a-cabloy
 
   src/suite/cabloy-basic/modules/basic-adapter:
