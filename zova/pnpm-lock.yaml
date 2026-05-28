@@ -1589,7 +1589,7 @@ importers:
         specifier: ^5.0.3
         version: link:modules/basic-text
       zova-suite-a-cabloy:
-        specifier: ^5.1.27
+        specifier: ^5.1.29
         version: link:../../suite-vendor/a-cabloy
 
   src/suite/cabloy-basic/modules/basic-adapter:
