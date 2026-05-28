@@ -1,4 +1,4 @@
 #! /usr/bin/env bash
 
 lerna version $1 --yes
-lerna publish
+lerna publish from-git
