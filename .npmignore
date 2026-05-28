@@ -58,6 +58,7 @@ zova/.quasar
 **/src/front/typing/modules.d.ts
 
 # auto created
+**/.vitepress/cache
 **/.rollup.cache
 **/.temp-dynamic-*
 vona/package.json
@@ -69,10 +70,13 @@ vona/docker-compose.yml
 /vona/src/backend/play
 !/zova/packages-utils/quasar-app-extension-zova/dist
 
+vona/src/suite/cabloy-basic/modules/basic-siteadmin/assets/site
+vona/src/suite/cabloy-basic/modules/basic-siteadmin/zovaRest
+vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site
+vona/src/suite/cabloy-basic/modules/basic-siteweb/zovaRest
+
 /vona/src/module/demo-student
 /zova/src/module/demo-student
-
-**/.vitepress/cache
 
 # --- Additional npm-only exclusions ---
 
