@@ -64,14 +64,6 @@ zova/package.json
 vona/docker-compose.yml
 
 /vona/docker-compose
-!/vona/docker-compose/config
-!/vona/docker-compose/data/mysql/.gitkeep
-!/vona/docker-compose/data/pg/.gitkeep
-!/vona/docker-compose/data/redis/.gitkeep
-!/vona/docker-compose/logs/app/.gitkeep
-!/vona/docker-compose/logs/nginx/.gitkeep
-!/vona/docker-compose/output/app/vona/.gitkeep
-!/vona/docker-compose/output/app/dist/.gitkeep
 
 /vona/src/backend/play
 !/zova/packages-utils/quasar-app-extension-zova/dist
