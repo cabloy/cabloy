@@ -1,5 +1,4 @@
 #! /usr/bin/env bash
 
-lerna version $1 --yes --no-push
-git push
+lerna version $1
 pnpm publish -r
