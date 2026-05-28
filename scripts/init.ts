@@ -124,7 +124,15 @@ function initZova(): void {
   exec("pnpm --dir './zova' run init");
 }
 
-// --- Step E: cleanupWorkspaceYaml ---
+// --- Step E: buildSsrCabloyBasicBatch ---
+
+function buildSsrCabloyBasicBatch(): void {
+  // eslint-disable-next-line
+  console.log('[init] Building zova SSR cabloyBasicBatch...');
+  exec("pnpm --dir './zova' run build:ssr:cabloyBasicBatch");
+}
+
+// --- Step F: cleanupWorkspaceYaml ---
 
 function cleanupWorkspaceYaml(): void {
   const subProjects = ['vona', 'zova'];
@@ -152,5 +160,6 @@ generateEnvProdDockerLocal();
 cleanupWorkspaceYaml();
 initVona();
 initZova();
+buildSsrCabloyBasicBatch();
 // eslint-disable-next-line
 console.log('[init] Done!');
