@@ -59,11 +59,11 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue,mjs,cjs}": [
-      "oxfmt --write",
-      "oxlint --fix"
+      "npm run lint:fix",
+      "npm run format:fix"
     ],
     "*.{json,yaml,yml,md,css,scss,html}": [
-      "oxfmt --write"
+      "npm run format:fix"
     ]
   },
   "engines": {

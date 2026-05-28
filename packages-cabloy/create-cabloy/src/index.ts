@@ -107,10 +107,9 @@ async function main() {
   }
 
   p.outro(
-    `${pc.green(' Done! ') 
-      }Next steps:\n${ 
-      result.projectName ? pc.dim(`  cd ${result.projectName}\n`) : '' 
-      }${pc.dim('  npm run dev\n')}`,
+    `${pc.green(' Done! ')}Next steps:\n${
+      result.projectName ? pc.dim(`  cd ${result.projectName}\n`) : ''
+    }${pc.dim('  npm run dev\n')}`,
   );
 }
 
