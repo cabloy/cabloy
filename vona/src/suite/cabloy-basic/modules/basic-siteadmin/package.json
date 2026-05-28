@@ -30,8 +30,7 @@
     "tsc:publish": "npm run clean && vona :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",
-    "postpack": "clean-package restore && npm run clean",
-    "version": "node ../../../../../scripts/version-cabloy-basic.ts"
+    "postpack": "clean-package restore && npm run clean"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
