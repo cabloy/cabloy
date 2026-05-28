@@ -34,7 +34,7 @@ services:
     ports:
       - '80:80'
     volumes:
-      - ./docker-compose/output/app/vona:/usr/share/nginx/app/vona
+      - ./docker-compose/output/app/.vona:/usr/share/nginx/app/.vona
       - ./docker-compose/logs/nginx:/var/log/nginx
       - ./docker-compose/config/nginx/conf.d:/etc/nginx/conf.d
 

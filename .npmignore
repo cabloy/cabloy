@@ -29,14 +29,14 @@ miniprogram_npm
 **/yarn-error.log*
 
 # vona core related directories
-**/.vona
-**/.app
-**/.zova-rest
+vona/.vona
+vona/.app
+vona/.zova-rest
 
 **/.temp-dynamic-*
-**/.zova
-**/.quasar
 **/quasar.config.*.temporary.compiled*
+zova/.zova
+zova/.quasar
 
 **/src-cordova/node_modules
 **/src-cordova/platforms
