@@ -37,14 +37,16 @@
     "release:dry-run": "node scripts/release.ts --dry-run",
     "release:changelog": "node scripts/release.ts --changelog-only",
     "release:publish": "node scripts/release.ts --publish-only",
-    "release:github": "node scripts/release.ts --release-only"
+    "release:github": "node scripts/release.ts --release-only",
+    "prepare": "husky"
   },
-  "dependencies": {},
   "devDependencies": {
     "@cabloy/lint": "^5.1.18",
     "@cabloy/process-helper": "^3.1.3",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.19.17",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
     "minimist": "^1.2.8",
     "oxfmt": "^0.45.0",
     "oxlint": "^1.65.0",
@@ -54,6 +56,15 @@
     "textlint-rule-ja-space-between-half-and-full-width": "^2.4.2",
     "textlint-rule-period-in-list-item": "^1.0.1",
     "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue,mjs,cjs}": [
+      "oxfmt --write",
+      "oxlint --fix"
+    ],
+    "*.{json,yaml,yml,md,css,scss,html}": [
+      "oxfmt --write"
+    ]
   },
   "engines": {
     "node": ">=24.4.0"
