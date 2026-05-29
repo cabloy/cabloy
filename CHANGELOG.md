@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.14
+
+### Features
+
+- Require project name in create-cabloy and set APP_NAME during init
+
+### Improvements
+
+- Update dependencies
+
 ## 5.1.13
 
 ### Features
