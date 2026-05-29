@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.1.16 (2026-05-29)
+
+## 5.1.18
+
+### Bug Fixes
+
+- Correct extractTarball exit code check in upgrade script
+
 ## 5.1.15
 
 ### Features
