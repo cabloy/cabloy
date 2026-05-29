@@ -123,7 +123,6 @@ async function downloadTarball(tarballUrl: string): Promise<string> {
   }
   mkdirSync(dirname(tmpFile), { recursive: true });
   const fileStream = createWriteStream(tmpFile);
-  // @ts-expect-error Node.js ReadableStream vs Web ReadableStream
   await pipeline(res.body, fileStream);
   return tmpFile;
 }
@@ -133,6 +132,7 @@ async function extractTarball(tarballPath: string, targetDir: string): Promise<v
   const exitCode = execSync(`tar --strip-components=1 -xzf "${tarballPath}" -C "${targetDir}"`, {
     stdio: 'pipe',
   });
+  // @ts-ignore
   if (exitCode !== 0) {
     throw new Error('Failed to extract tarball');
   }
