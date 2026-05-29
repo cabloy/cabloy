@@ -95,4 +95,4 @@ $ sudo COMPOSE_BAKE=true docker-compose build
 $ sudo docker-compose up
 ```
 
-- http://localhost:7102
+- http://localhost
