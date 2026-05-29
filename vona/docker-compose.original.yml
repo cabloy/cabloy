@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   app:
     depends_on:
@@ -11,7 +9,7 @@ services:
       dockerfile: docker-compose-dockerfile-app
     restart: always
     ports:
-      - '7202:7102'
+      - '7102:7102'
     volumes:
       - ./docker-compose/output/dist/docker:/opt/node/app/dist/docker
       - ./docker-compose/output/app/.vona:/root/.vona

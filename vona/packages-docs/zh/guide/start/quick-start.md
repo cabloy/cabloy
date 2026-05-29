@@ -94,3 +94,5 @@ $ npm run build:docker
 $ sudo docker-compose build
 $ sudo docker-compose up
 ```
+
+- http://localhost:7102
