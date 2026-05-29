@@ -1,0 +1,14 @@
+{
+  "extends": "./api/tsconfig.base.esm",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "target": "esnext",
+    "module": "nodenext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true
+  },
+  "include": ["src/**/*"]
+}

@@ -1,18 +1,35 @@
 {
   "name": "@cabloy/lint",
-  "version": "5.1.18",
+  "version": "5.1.21",
   "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
   "description": "Node Style Guide for Cabloy.",
   "files": [
     "api",
-    "common",
-    "front",
-    "oxc"
+    "src",
+    "dist"
   ],
   "type": "module",
-  "main": "index.js",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./api/tsconfig.base.esm": "./api/tsconfig.base.esm.json",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "tsc:publish": "npm run clean && tsc",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
   },
   "dependencies": {
     "@e18e/eslint-plugin": "^0.2.0",
@@ -33,5 +50,23 @@
     "eslint-plugin-yml": "^3.3.2",
     "globals": "^17.4.0",
     "typescript-eslint": "^8.58.1"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.65.0",
+    "rimraf": "^6.1.3"
+  },
+  "peerDependencies": {
+    "oxfmt": ">=0.45.0",
+    "oxlint": ">=1.65.0"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
   }
 }

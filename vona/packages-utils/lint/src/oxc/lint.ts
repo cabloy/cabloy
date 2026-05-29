@@ -1,4 +1,8 @@
-export const _configDefault = {
+import type { OxlintConfig } from 'oxlint';
+
+export type { OxlintConfig as LintConfig };
+
+const _configDefault: OxlintConfig = {
   plugins: ['import', 'unicorn'],
   jsPlugins: [
     'eslint-plugin-antfu',
@@ -261,7 +265,6 @@ export const _configDefault = {
     'e18e/prefer-date-now': 'error',
     'e18e/prefer-regex-test': 'error',
     'e18e/prefer-array-some': 'error',
-    'e18e/prefer-static-regex': 'error',
     'unicorn/consistent-empty-array-spread': 'error',
     'unicorn/error-message': 'error',
     'unicorn/escape-case': 'error',
@@ -595,7 +598,7 @@ export const _configDefault = {
       plugins: ['node', 'jsdoc'],
     },
     {
-      files: ['**/*.?([cm])ts', '**/*.?([cm])tsx', '**/*.vue'],
+      files: ['**/*.?([cm])ts', '**/*.?([cm])tsx'],
       rules: {
         'constructor-super': 'off',
         'no-class-assign': 'off',
@@ -708,32 +711,11 @@ export const _configDefault = {
         'vitest/prefer-hooks-in-order': 'error',
         'vitest/prefer-lowercase-title': 'error',
         'antfu/no-top-level-await': 'off',
-        'e18e/prefer-static-regex': 'off',
         'no-unused-expressions': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
       },
       jsPlugins: ['eslint-plugin-antfu', '@e18e/eslint-plugin'],
       plugins: ['vitest', 'typescript'],
-    },
-    {
-      files: ['**/*.vue'],
-      rules: {
-        'vue/no-arrow-functions-in-watch': 'error',
-        'vue/no-deprecated-destroyed-lifecycle': 'error',
-        'vue/no-export-in-script-setup': 'error',
-        'vue/no-lifecycle-after-await': 'error',
-        'vue/prefer-import-from-vue': 'error',
-        'vue/valid-define-emits': 'error',
-        'vue/valid-define-props': 'error',
-        'vue/no-multiple-slot-args': 'warn',
-        'antfu/no-top-level-await': 'off',
-        '@typescript-eslint/explicit-function-return-type': 'off',
-        '@stylistic/no-multiple-empty-lines': 'off',
-        'unused-imports/no-unused-imports': 'off',
-        'unused-imports/no-unused-vars': 'off',
-      },
-      jsPlugins: ['eslint-plugin-antfu'],
-      plugins: ['vue', 'typescript'],
     },
     {
       files: ['**/*.json', '**/*.json5', '**/*.jsonc'],
@@ -1180,7 +1162,6 @@ export const _configDefault = {
       files: ['**/*.md/**/*.?([cm])[jt]s?(x)', '**/*.md/**/*.vue'],
       rules: {
         'antfu/no-top-level-await': 'off',
-        'e18e/prefer-static-regex': 'off',
         'no-alert': 'off',
         'no-console': 'off',
         'no-labels': 'off',
@@ -1264,7 +1245,6 @@ export const _configDefault = {
       files: ['**/*.ts', '**/*.tsx'],
       rules: {
         'e18e/prefer-object-has-own': 'off',
-        'e18e/prefer-static-regex': 'off',
         'e18e/prefer-array-at': 'off',
         'e18e/prefer-regex-test': 'off',
         'regexp/no-unused-capturing-group': 'off',
@@ -1401,6 +1381,6 @@ export const _configDefault = {
   ],
 };
 
-export function oxcLintConfigVue(configCustom) {
+export function oxcLintConfig(configCustom: OxlintConfig = {}): OxlintConfig {
   return Object.assign({}, _configDefault, configCustom);
 }

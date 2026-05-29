@@ -37,7 +37,7 @@
     "zova-vite": "^1.1.31"
   },
   "devDependencies": {
-    "@cabloy/lint": "^5.1.18",
+    "@cabloy/lint": "^5.1.21",
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
   },

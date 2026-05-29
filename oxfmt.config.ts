@@ -12,6 +12,10 @@ export default defineConfig(
       '*.code-snippets',
       // glob patterns (from vona & zova, already work from root)
       '**/dist/**',
+      '**/package-lock.json',
+      '**/yarn.lock',
+      '**/pnpm-lock.yaml',
+      '**/bun.lockb',
       '**/static/**',
       '**/.rollup.cache/**',
       '**/.metadata/index.ts',

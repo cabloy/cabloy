@@ -41,7 +41,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@cabloy/lint": "^5.1.18",
+    "@cabloy/lint": "^5.1.21",
     "@cabloy/process-helper": "^3.1.3",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.19.17",
@@ -56,15 +56,6 @@
     "textlint-rule-ja-space-between-half-and-full-width": "^2.4.2",
     "textlint-rule-period-in-list-item": "^1.0.1",
     "typescript": "^5.9.3"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue,mjs,cjs}": [
-      "npm run lint:fix",
-      "npm run format:fix"
-    ],
-    "*.{json,yaml,yml,md,css,scss,html}": [
-      "npm run format:fix"
-    ]
   },
   "engines": {
     "node": ">=24.4.0"

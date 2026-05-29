@@ -1,4 +1,6 @@
-export const _configDefault = {
+import type { OxfmtConfig } from 'oxfmt';
+
+const _configDefault: OxfmtConfig = {
   printWidth: 100,
   tabWidth: 2,
   useTabs: false,
@@ -32,6 +34,6 @@ export const _configDefault = {
   ],
 };
 
-export function oxcFormatConfig(configCustom) {
+export function oxcFormatConfig(configCustom: OxfmtConfig = {}): OxfmtConfig {
   return Object.assign({}, _configDefault, configCustom);
 }
