@@ -129,11 +129,11 @@ async function downloadTarball(tarballUrl: string): Promise<string> {
 
 async function extractTarball(tarballPath: string, targetDir: string): Promise<void> {
   mkdirSync(targetDir, { recursive: true });
-  const exitCode = execSync(`tar --strip-components=1 -xzf "${tarballPath}" -C "${targetDir}"`, {
-    stdio: 'pipe',
-  });
-  // @ts-ignore
-  if (exitCode !== 0) {
+  try {
+    execSync(`tar --strip-components=1 -xzf "${tarballPath}" -C "${targetDir}"`, {
+      stdio: 'pipe',
+    });
+  } catch {
     throw new Error('Failed to extract tarball');
   }
 }
