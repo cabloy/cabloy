@@ -17,7 +17,9 @@ export class ControllerToolOne extends BeanBase {
   // http://localhost:7102/api/test/ssr/toolOne/test/12
   // for dev: http://localhost:9000/demo/basic/toolOne/12?api=/api/test/ssr/toolOne/test/:id?&apiMethod=post
   @Web.get('test/:id?')
-  @Ssr.redirect('test-ssr:second', '/demo/basic/toolOne/:id?', undefined, { redirectOnly: true })
+  @Ssr.redirect('basic-siteadmin:admin', '/demo/basic/toolOne/:id?', undefined, {
+    redirectOnly: true,
+  })
   async testGet(
     @Arg.param(v.object(DtoTestParams)) _params: DtoTestParams,
     @Arg.query(v.object(DtoTestQuery)) _query: DtoTestQuery,

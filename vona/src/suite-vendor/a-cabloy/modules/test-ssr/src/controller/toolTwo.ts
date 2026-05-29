@@ -19,7 +19,9 @@ export class ControllerToolTwo extends BeanBase {
   @Web.get('test/:id?')
   @Api.body(v.object(DtoTestResult))
   @Passport.public()
-  @Ssr.render('test-ssr:second', '/demo/basic/toolTwo/:id?', undefined, { renderType: 'auto' })
+  @Ssr.render('basic-siteadmin:admin', '/demo/basic/toolTwo/:id?', undefined, {
+    renderType: 'auto',
+  })
   async test(
     @Arg.param(v.object(DtoTestParams)) params: DtoTestParams,
     @Arg.query(v.object(DtoTestQuery)) query: DtoTestQuery,
