@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.11
+
+### Features
+
+- Remove `testSecond` flavor scripts from `package.original.json`
+- Apply general updates
+
+### Improvements
+
+- Update `oxfmt` configuration
+
 ## 5.1.10
 
 ### Features
