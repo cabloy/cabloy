@@ -381,7 +381,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.0
       zova-cli-set-front:
-        specifier: ^1.2.65
+        specifier: ^1.2.66
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -424,7 +424,7 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(@babel/core@7.29.0)
       '@cabloy/word-utils':
-        specifier: ^2.1.13
+        specifier: ^2.1.14
         version: link:../../packages-utils/word-utils
       '@typescript/native-preview':
         specifier: ^7.0.0-dev.20260320.1
@@ -436,16 +436,16 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(@babel/core@7.29.0)
       babel-plugin-zova-bean-module:
-        specifier: ^1.2.13
+        specifier: ^1.2.14
         version: link:../../packages-utils/babel-plugin-zova-bean-module
       babel-plugin-zova-bean-use:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../../packages-utils/babel-plugin-zova-bean-use
       babel-plugin-zova-behavior:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../../packages-utils/babel-plugin-zova-behavior
       babel-plugin-zova-component:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../../packages-utils/babel-plugin-zova-component
       compressing:
         specifier: ^1.10.0
@@ -487,10 +487,10 @@ importers:
         specifier: ^2.8.3
         version: 2.9.0
       zova-openapi:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.31
+        specifier: ^1.1.32
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
@@ -515,7 +515,7 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@cabloy/word-utils':
-        specifier: ^2.1.13
+        specifier: ^2.1.14
         version: link:../word-utils
     devDependencies:
       '@types/babel__core':
@@ -655,7 +655,7 @@ importers:
         specifier: ^8.0.8
         version: 8.0.13(@types/node@22.19.19)(esbuild@0.25.12)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(yaml@2.9.0)
       zova-vite:
-        specifier: ^1.1.31
+        specifier: ^1.1.32
         version: link:../zova-vite
     devDependencies:
       '@cabloy/lint':
@@ -686,7 +686,7 @@ importers:
         specifier: ^2.1.19
         version: 2.1.19
       '@cabloy/word-utils':
-        specifier: ^2.1.13
+        specifier: ^2.1.14
         version: link:../word-utils
       typestyle:
         specifier: ^2.4.0
@@ -695,7 +695,7 @@ importers:
         specifier: ^3.5.32
         version: 3.5.34(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.41
+        specifier: ^5.1.42
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -778,16 +778,16 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(@babel/core@7.29.0)
       babel-plugin-zova-bean-module:
-        specifier: ^1.2.13
+        specifier: ^1.2.14
         version: link:../babel-plugin-zova-bean-module
       babel-plugin-zova-bean-use:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../babel-plugin-zova-bean-use
       babel-plugin-zova-behavior:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../babel-plugin-zova-behavior
       babel-plugin-zova-component:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../babel-plugin-zova-component
       chalk:
         specifier: ^3.0.0
@@ -836,10 +836,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.41
+        specifier: ^5.1.42
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.80
+        specifier: ^5.1.81
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -864,7 +864,7 @@ importers:
         specifier: ^2.1.3
         version: 2.1.5
       '@cabloy/logger':
-        specifier: ^1.1.14
+        specifier: ^1.1.15
         version: link:../../packages-utils/logger
       '@cabloy/module-info':
         specifier: ^2.0.0
@@ -891,7 +891,7 @@ importers:
         specifier: ^3.5.18
         version: 3.5.18(vue@3.5.34(typescript@5.9.3))
       '@cabloy/word-utils':
-        specifier: ^2.1.13
+        specifier: ^2.1.14
         version: link:../../packages-utils/word-utils
       '@cabloy/zod-errors-custom':
         specifier: ^2.1.3
@@ -961,79 +961,79 @@ importers:
   src/suite-vendor/a-zova:
     dependencies:
       zova-module-a-api:
-        specifier: ^5.1.14
+        specifier: ^5.1.15
         version: link:modules/a-api
       zova-module-a-app:
-        specifier: ^5.1.17
+        specifier: ^5.1.18
         version: link:modules/a-app
       zova-module-a-bean:
-        specifier: ^5.1.23
+        specifier: ^5.1.24
         version: link:modules/a-bean
       zova-module-a-behavior:
-        specifier: ^5.1.18
+        specifier: ^5.1.19
         version: link:modules/a-behavior
       zova-module-a-behaviors:
-        specifier: ^5.1.14
+        specifier: ^5.1.15
         version: link:modules/a-behaviors
       zova-module-a-boundary:
-        specifier: ^5.1.14
+        specifier: ^5.1.15
         version: link:modules/a-boundary
       zova-module-a-command:
-        specifier: ^5.1.25
+        specifier: ^5.1.26
         version: link:modules/a-command
       zova-module-a-fetch:
-        specifier: ^5.1.16
+        specifier: ^5.1.17
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.31
+        specifier: ^5.1.32
         version: link:modules/a-form
       zova-module-a-icon:
-        specifier: ^5.1.19
+        specifier: ^5.1.20
         version: link:modules/a-icon
       zova-module-a-interceptor:
-        specifier: ^5.1.21
+        specifier: ^5.1.22
         version: link:modules/a-interceptor
       zova-module-a-logger:
-        specifier: ^5.1.15
+        specifier: ^5.1.16
         version: link:modules/a-logger
       zova-module-a-meta:
-        specifier: ^5.1.14
+        specifier: ^5.1.15
         version: link:modules/a-meta
       zova-module-a-model:
-        specifier: ^5.1.22
+        specifier: ^5.1.23
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.28
+        specifier: ^5.1.29
         version: link:modules/a-openapi
       zova-module-a-router:
-        specifier: ^5.1.20
+        specifier: ^5.1.21
         version: link:modules/a-router
       zova-module-a-routerstack:
-        specifier: ^5.1.19
+        specifier: ^5.1.20
         version: link:modules/a-routerstack
       zova-module-a-routertabs:
-        specifier: ^5.1.23
+        specifier: ^5.1.24
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.17
+        specifier: ^5.1.18
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
-        specifier: ^5.1.15
+        specifier: ^5.1.16
         version: link:modules/a-ssrhmr
       zova-module-a-ssrserver:
-        specifier: ^5.1.14
+        specifier: ^5.1.15
         version: link:modules/a-ssrserver
       zova-module-a-style:
-        specifier: ^5.1.24
+        specifier: ^5.1.25
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.26
+        specifier: ^5.1.27
         version: link:modules/a-table
       zova-module-a-zod:
-        specifier: ^5.1.20
+        specifier: ^5.1.21
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.52
+        specifier: ^5.1.53
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1150,7 +1150,7 @@ importers:
   src/suite-vendor/a-zova/modules/a-logger:
     dependencies:
       '@cabloy/logger':
-        specifier: ^1.1.14
+        specifier: ^1.1.15
         version: link:../../../../../packages-utils/logger
     devDependencies:
       clean-package:
@@ -1184,7 +1184,7 @@ importers:
         specifier: ^1.10.0
         version: 1.10.0
       mutate-on-copy:
-        specifier: ^1.1.12
+        specifier: ^1.1.13
         version: link:../../../../../packages-utils/mutate-on-copy
       table-identity:
         specifier: ^1.1.4
@@ -1363,7 +1363,7 @@ importers:
         specifier: ^4.4.16
         version: 4.4.16(vue@3.5.34(typescript@5.9.3))
       '@cabloy/word-utils':
-        specifier: ^2.1.13
+        specifier: ^2.1.14
         version: link:../../../../../packages-utils/word-utils
       defu:
         specifier: ^6.1.7
@@ -1372,7 +1372,7 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.47
+        specifier: ^1.1.48
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
@@ -1391,7 +1391,7 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
       zova-openapi:
-        specifier: ^1.1.13
+        specifier: ^1.1.14
         version: link:../../../../../packages-utils/zova-openapi
 
   src/suite/a-demo:

@@ -1,6 +1,6 @@
 {
   "name": "zova-module-a-model",
-  "version": "5.1.22",
+  "version": "5.1.23",
   "gitHead": "09d901d17140a80ee0764211b441cda72fd94663",
   "description": "core",
   "keywords": [
@@ -39,7 +39,7 @@
     "@tanstack/query-persist-client-core": "^5.97.0",
     "@tanstack/vue-query": "^5.100.10",
     "localforage": "^1.10.0",
-    "mutate-on-copy": "^1.1.12",
+    "mutate-on-copy": "^1.1.13",
     "table-identity": "^1.1.4"
   },
   "devDependencies": {
