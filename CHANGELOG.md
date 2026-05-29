@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.13
+
+### Features
+
+- Add upgrade script and remove testSecond flavor env files
+
+### Improvements
+
+- Switch tsconfig base from front to api and update dependencies
+
 ## 5.1.12
 
 ## 5.1.11
