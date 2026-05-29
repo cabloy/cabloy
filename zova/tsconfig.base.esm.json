@@ -1,5 +1,5 @@
 {
-  "extends": "@cabloy/lint/front/tsconfig.base.esm",
+  "extends": "@cabloy/lint/api/tsconfig.base.esm",
   "compilerOptions": {
     "target": "ESNext",
     "jsx": "preserve",
