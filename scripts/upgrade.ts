@@ -181,22 +181,7 @@ function selectiveOverwrite(dryRun?: boolean): void {
   }
 }
 
-// --- Step 4: Delete generated package.json files ---
-
-function deleteGeneratedPackageJsons(dryRun?: boolean): void {
-  const files = ['vona/package.json', 'zova/package.json'];
-  for (const file of files) {
-    const filePath = resolve(ROOT_DIR, file);
-    if (!existsSync(filePath)) continue;
-    if (dryRun) {
-      log(`  [dry-run] Delete: ${file}`);
-      continue;
-    }
-    rmSync(filePath);
-  }
-}
-
-// --- Step 5: Run init ---
+// --- Step 4: Run init ---
 
 function runInit(dryRun?: boolean): void {
   if (dryRun) {
@@ -206,7 +191,7 @@ function runInit(dryRun?: boolean): void {
   exec('npm run init');
 }
 
-// --- Step 6: Cleanup ---
+// --- Step 5: Cleanup ---
 
 function cleanup(dryRun?: boolean): void {
   if (dryRun) {
@@ -238,17 +223,12 @@ async function main(): Promise<void> {
   selectiveOverwrite(dryRun);
   log('');
 
-  // 4. Delete generated package.json
-  log('Removing generated package.json files...');
-  deleteGeneratedPackageJsons(dryRun);
-  log('');
-
-  // 5. Run init
+  // 4. Run init
   log('Running npm run init...');
   runInit(dryRun);
   log('');
 
-  // 6. Cleanup
+  // 5. Cleanup
   cleanup(dryRun);
 
   log('Upgrade complete!');

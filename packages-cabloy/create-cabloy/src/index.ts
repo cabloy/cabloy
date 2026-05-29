@@ -15,9 +15,9 @@ function printHelp() {
   ${pc.bold('create-cabloy')} - Create a new Cabloy project
 
   ${pc.bold('Usage:')}
-    ${pc.cyan('npm create cabloy')} ${pc.dim('[project-name]')}
-    ${pc.cyan('pnpm create cabloy')} ${pc.dim('[project-name]')}
-    ${pc.cyan('yarn create cabloy')} ${pc.dim('[project-name]')}
+    ${pc.cyan('npm create cabloy')} ${pc.dim('<project-name>')}
+    ${pc.cyan('pnpm create cabloy')} ${pc.dim('<project-name>')}
+    ${pc.cyan('yarn create cabloy')} ${pc.dim('<project-name>')}
 
   ${pc.bold('Options:')}
     --force             Overwrite existing directory
@@ -54,15 +54,10 @@ async function main() {
   }
 
   // Determine target directory
-  let targetDir: string;
-  if (result.projectName) {
-    targetDir = resolve(process.cwd(), result.projectName);
-  } else {
-    targetDir = process.cwd();
-  }
+  const targetDir = resolve(process.cwd(), result.projectName);
 
   // Check if target directory exists and is not empty
-  if (existsSync(targetDir) && result.projectName) {
+  if (existsSync(targetDir)) {
     const files = await import('node:fs/promises').then(fs => fs.readdir(targetDir));
     if (files.length > 0 && !result.force) {
       p.log.error(
@@ -74,9 +69,7 @@ async function main() {
     }
   }
 
-  if (result.projectName) {
-    await mkdir(targetDir, { recursive: true });
-  }
+  await mkdir(targetDir, { recursive: true });
 
   // Download and extract
   const s = p.spinner();
@@ -107,9 +100,7 @@ async function main() {
   }
 
   p.outro(
-    `${pc.green(' Done! ')}Next steps:\n${
-      result.projectName ? pc.dim(`  cd ${result.projectName}\n`) : ''
-    }${pc.dim('  npm run dev\n')}`,
+    `${pc.green(' Done! ')}Next steps:\n${pc.dim(`  cd ${result.projectName}\n`)}${pc.dim('  npm run dev\n')}`,
   );
 }
 

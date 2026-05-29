@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { randomBytes, randomInt, randomUUID } from 'node:crypto';
 import { copyFileSync, cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { basename } from 'node:path';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -25,6 +26,21 @@ function generatePassword(length: number, exclude: string): string {
 
 function exec(cmd: string): void {
   execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
+}
+
+// --- Step 0: Set APP_NAME in .env files ---
+
+function setAppName(): void {
+  const projectName = basename(ROOT_DIR);
+  const envFiles = [resolve(ROOT_DIR, 'vona/env/.env'), resolve(ROOT_DIR, 'zova/env/.env')];
+  for (const filePath of envFiles) {
+    if (!existsSync(filePath)) continue;
+    let content = readFileSync(filePath, 'utf-8');
+    content = content.replace(/^APP_NAME.*/m, `APP_NAME = ${projectName}`);
+    writeFileSync(filePath, content);
+    // eslint-disable-next-line
+    console.log(`[init] Set APP_NAME = ${projectName} in ${filePath}`);
+  }
 }
 
 // --- Step A: Generate vona/env/.env.prod.local ---
@@ -155,6 +171,7 @@ function cleanupWorkspaceYaml(): void {
 
 // --- Main ---
 
+setAppName();
 generateEnvProdLocal();
 generateEnvProdDockerLocal();
 cleanupWorkspaceYaml();

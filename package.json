@@ -28,6 +28,7 @@
     "build:docker": "pnpm --dir zova run build:ssr:cabloyBasicBatch && pnpm --dir vona run build:docker",
     "start": "cd vona && npm run start",
     "start:one": "cd vona && npm run start:one",
+    "test": "cd vona && npm run test",
     "format": "oxfmt --check",
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
