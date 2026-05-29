@@ -91,7 +91,7 @@ $ npm run start
 
 ```bash
 $ npm run build:docker
-$ sudo docker-compose build
+$ sudo COMPOSE_BAKE=true docker-compose build
 $ sudo docker-compose up
 ```
 
