@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.15
+
+### Features
+
+- Force include .gitignore in npm package
+
 ## 5.1.14
 
 ### Features
