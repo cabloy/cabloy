@@ -1,6 +1,14 @@
 import { execSync } from 'node:child_process';
 import { randomBytes, randomInt, randomUUID } from 'node:crypto';
-import { copyFileSync, cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  cpSync,
+  existsSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { basename } from 'node:path';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,6 +34,17 @@ function generatePassword(length: number, exclude: string): string {
 
 function exec(cmd: string): void {
   execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
+}
+
+function deleteGitkeepFiles(dir: string): void {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = resolve(dir, entry.name);
+    if (entry.isDirectory()) {
+      deleteGitkeepFiles(fullPath);
+    } else if (entry.name === '.gitkeep') {
+      rmSync(fullPath);
+    }
+  }
 }
 
 // --- Step 0: Set APP_NAME in .env files ---
@@ -89,6 +108,7 @@ function generateEnvProdDockerLocal(): void {
       recursive: true,
       filter: src => !src.includes('.DS_Store'),
     });
+    deleteGitkeepFiles(composeDirTarget);
     // eslint-disable-next-line
     console.log('[init] Generated vona/docker-compose directory');
   } else {
