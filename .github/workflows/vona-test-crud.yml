@@ -1,4 +1,4 @@
-name: project-test
+name: vona-test-crud
 on:
   push:
     branches:

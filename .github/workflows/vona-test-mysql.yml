@@ -1,4 +1,4 @@
-name: actions-test-mysql
+name: vona-test-mysql
 on:
   push:
     branches:

@@ -1,4 +1,4 @@
-name: actions-cov-pg
+name: vona-cov-pg
 on:
   push:
     branches:

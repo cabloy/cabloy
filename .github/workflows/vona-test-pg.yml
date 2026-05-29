@@ -1,4 +1,4 @@
-name: actions-test-sqlite3
+name: vona-test-pg
 on:
   push:
     branches:
@@ -15,6 +15,13 @@ jobs:
         image: redis:latest
         ports:
           - 6379:6379
+      pg:
+        image: postgres:17
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -25,6 +32,6 @@ jobs:
           version: 10.19.0
       - run: cp package.original.json package.json
       - run: npm run init
-      - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run test
-      - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run build -- --flavor=ci
-      - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run play -- --mode=prod --flavor=ci
+      - run: DATABASE_DEFAULT_CLIENT=pg npm run test
+      - run: DATABASE_DEFAULT_CLIENT=pg npm run build -- --flavor=ci
+      - run: DATABASE_DEFAULT_CLIENT=pg npm run play -- --mode=prod --flavor=ci
