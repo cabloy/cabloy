@@ -37,6 +37,11 @@ const WHITELIST_DIRS: string[] = [
   'zova/scripts',
 ];
 
+const BLACKLIST_DIRS: string[] = [
+  // vona
+  'vona/src/suite-vendor/a-test',
+];
+
 const WHITELIST_FILES: string[] = [
   // root
   'package.json',
@@ -56,9 +61,6 @@ const WHITELIST_FILES: string[] = [
   'vona/tsconfig.base.esm.json',
   'vona/oxfmt.config.ts',
   'vona/oxlint.config.ts',
-  'vona/nginx.conf',
-  'vona/docker-compose.original.yml',
-  'vona/docker-compose-dockerfile-app',
   'vona/codecov.yml',
   // zova
   'zova/package.original.json',
@@ -166,6 +168,14 @@ function selectiveOverwrite(dryRun?: boolean): void {
       rmSync(dest, { recursive: true, force: true });
     }
     cpSync(src, dest, { recursive: true, filter: src => !src.includes('.DS_Store') });
+  }
+
+  // Delete directories
+  for (const dir of BLACKLIST_DIRS) {
+    const dest = resolve(ROOT_DIR, dir);
+    if (existsSync(dest)) {
+      rmSync(dest, { recursive: true, force: true });
+    }
   }
 
   // Overwrite files
