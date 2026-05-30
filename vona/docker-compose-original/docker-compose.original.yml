@@ -4,14 +4,14 @@ services:
       - pg
       - redis
     build:
-      context: .
-      dockerfile: docker-compose-dockerfile-app
+      context: ..
+      dockerfile: docker-compose/docker-compose-dockerfile-app
     restart: always
     ports:
       - '7202:7102'
     volumes:
-      - ./docker-compose/output/dist/docker:/opt/node/app/dist/docker
-      - ./docker-compose/output/app/.vona:/root/.vona
+      - ./output/dist/docker:/opt/node/app/dist/docker
+      - ./output/app/.vona:/root/.vona
     command: [./scripts/wait-for-it.sh, 'pg:5432', 'redis:6379', -s, --, ./scripts/app-init.sh]
 
   nginx:
@@ -22,9 +22,9 @@ services:
     ports:
       - '80:80'
     volumes:
-      - ./docker-compose/output/app/.vona:/usr/share/nginx/app/.vona
-      - ./docker-compose/logs/nginx:/var/log/nginx
-      - ./docker-compose/config/nginx/conf.d:/etc/nginx/conf.d
+      - ./output/app/.vona:/usr/share/nginx/app/.vona
+      - ./logs/nginx:/var/log/nginx
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
 
   pg:
     image: postgres:17
@@ -35,7 +35,7 @@ services:
     shm_size: 128mb
     # or set shared memory limit when deploy via swarm stack
     volumes:
-      - ./docker-compose/data/pg:/var/lib/postgresql/data
+      - ./data/pg:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: vona
       POSTGRES_USER: postgres
@@ -48,4 +48,4 @@ services:
     ports:
       - '36379:6379'
     volumes:
-      - ./docker-compose/data/redis:/data
+      - ./data/redis:/data

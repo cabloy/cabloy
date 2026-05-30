@@ -82,7 +82,6 @@ function generateEnvProdLocal(): void {
 
 function generateEnvProdDockerLocal(): void {
   const envFilePath = resolve(ROOT_DIR, 'vona/env/.env.prod.docker.local');
-  const composeFilePath = resolve(ROOT_DIR, 'vona/docker-compose.yml');
   if (existsSync(envFilePath)) {
     // eslint-disable-next-line
     console.log('[init] vona/env/.env.prod.docker.local already exists, skipping');
@@ -106,7 +105,7 @@ function generateEnvProdDockerLocal(): void {
   if (!existsSync(composeDirTarget)) {
     cpSync(composeDirOriginal, composeDirTarget, {
       recursive: true,
-      filter: src => !src.includes('.DS_Store'),
+      filter: src => !src.includes('.DS_Store') && !src.endsWith('docker-compose.original.yml'),
     });
     deleteGitkeepFiles(composeDirTarget);
     // eslint-disable-next-line
@@ -116,8 +115,12 @@ function generateEnvProdDockerLocal(): void {
     console.log('[init] vona/docker-compose directory already exists, skipping');
   }
 
-  // Generate docker-compose.yml from original
-  const composeOriginalPath = resolve(ROOT_DIR, 'vona/docker-compose.original.yml');
+  // Generate docker-compose.yml from template
+  const composeOriginalPath = resolve(
+    ROOT_DIR,
+    'vona/docker-compose-original/docker-compose.original.yml',
+  );
+  const composeFilePath = resolve(ROOT_DIR, 'vona/docker-compose/docker-compose.yml');
   let composeContent = readFileSync(composeOriginalPath, 'utf-8');
   composeContent = composeContent.replace(
     /POSTGRES_PASSWORD:\s*'<placeholder>'/,
@@ -133,7 +136,7 @@ function generateEnvProdDockerLocal(): void {
   );
   writeFileSync(composeFilePath, composeContent);
   // eslint-disable-next-line
-  console.log('[init] Generated vona/docker-compose.yml');
+  console.log('[init] Generated vona/docker-compose/docker-compose.yml');
 }
 
 // --- Step C: init:vona ---
