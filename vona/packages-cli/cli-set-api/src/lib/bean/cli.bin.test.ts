@@ -50,7 +50,16 @@ export class CliBinTest extends BeanCliBase {
   async _run(projectPath: string, modulesMeta: Awaited<ReturnType<typeof glob>>) {
     const { argv } = this.context;
     // globs
-    const patterns = this._combineTestPatterns(projectPath, modulesMeta);
+    let patterns;
+    if (argv._.length > 0) {
+      patterns = argv._.map(item => {
+        if (item.startsWith('src/')) return item;
+        if (item.startsWith('vona/src/')) return item.substring('vona/'.length);
+        return `src/**/test/**/${item}`;
+      });
+    } else {
+      patterns = this._combineTestPatterns(projectPath, modulesMeta);
+    }
     // testFile
     let testFile = path.join(import.meta.dirname, '../../../toolsIsolate/test.ts');
     if (!fse.existsSync(testFile)) {
