@@ -319,22 +319,22 @@ importers:
         version: link:src/suite/a-home/modules/home-user
       vona-module-test-auth:
         specifier: workspace:^
-        version: link:src/suite-vendor/a-auth/modules/test-auth
+        version: link:src/suite-vendor/a-test/modules/test-auth
       vona-module-test-cabloy:
         specifier: workspace:^
-        version: link:src/suite-vendor/a-cabloy/modules/test-cabloy
+        version: link:src/suite-vendor/a-test/modules/test-cabloy
       vona-module-test-captcha:
         specifier: workspace:^
-        version: link:src/suite-vendor/a-captcha/modules/test-captcha
+        version: link:src/suite-vendor/a-test/modules/test-captcha
       vona-module-test-rest:
         specifier: workspace:^
-        version: link:src/suite-vendor/a-cabloy/modules/test-rest
+        version: link:src/suite-vendor/a-test/modules/test-rest
       vona-module-test-ssr:
         specifier: workspace:^
-        version: link:src/suite-vendor/a-cabloy/modules/test-ssr
+        version: link:src/suite-vendor/a-test/modules/test-ssr
       vona-module-test-vona:
         specifier: workspace:^
-        version: link:src/suite-vendor/a-vona/modules/test-vona
+        version: link:src/suite-vendor/a-test/modules/test-vona
       vona-shared:
         specifier: workspace:^
         version: link:packages-vona/vona-shared
@@ -1196,15 +1196,6 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  src/suite-vendor/a-auth/modules/test-auth:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
   src/suite-vendor/a-cabloy:
     dependencies:
       vona-module-a-cabloy:
@@ -1303,37 +1294,6 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  src/suite-vendor/a-cabloy/modules/test-cabloy:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
-  src/suite-vendor/a-cabloy/modules/test-rest:
-    dependencies:
-      '@faker-js/faker':
-        specifier: ^10.4.0
-        version: 10.4.0
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
-  src/suite-vendor/a-cabloy/modules/test-ssr:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
   src/suite-vendor/a-captcha:
     dependencies:
       vona-module-a-captcha:
@@ -1371,15 +1331,6 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  src/suite-vendor/a-captcha/modules/test-captcha:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
   src/suite-vendor/a-paypal:
     dependencies:
       vona-module-a-paypal:
@@ -1391,6 +1342,66 @@ importers:
       '@cabloy/paypal-server-sdk':
         specifier: ^2.2.0
         version: 2.2.0
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test: {}
+
+  src/suite-vendor/a-test/modules/test-auth:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test/modules/test-cabloy:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test/modules/test-captcha:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test/modules/test-rest:
+    dependencies:
+      '@faker-js/faker':
+        specifier: ^10.4.0
+        version: 10.4.0
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test/modules/test-ssr:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite-vendor/a-test/modules/test-vona:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2315,15 +2326,6 @@ importers:
         version: 6.1.3
 
   src/suite-vendor/a-vona/modules/a-zod:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
-  src/suite-vendor/a-vona/modules/test-vona:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
