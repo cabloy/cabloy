@@ -7,7 +7,7 @@ For example, we create a Dto `studentCreate` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean dto studentCreate --module=demo-student
+$ vona :create:bean dto studentCreate -- --module=demo-student
 ```
 
 ### 2. Menu command

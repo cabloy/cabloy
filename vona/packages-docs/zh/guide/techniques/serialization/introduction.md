@@ -11,7 +11,7 @@ VonaJS 提供了`序列化`能力，可以对 API 的响应数据进行转换，
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean serializerTransform upper --module=demo-student
+$ vona :create:bean serializerTransform upper -- --module=demo-student
 ```
 
 ### 2. 菜单命令

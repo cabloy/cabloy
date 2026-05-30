@@ -9,7 +9,7 @@ VonaJS 基于[BullMQ](https://github.com/taskforcesh/bullmq)提供了直观、�
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean schedule log --module=demo-student
+$ vona :create:bean schedule log -- --module=demo-student
 ```
 
 ### 2. 菜单命令

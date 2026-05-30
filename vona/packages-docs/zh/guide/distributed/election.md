@@ -18,7 +18,7 @@ VonaJS 针对此场景提供了`Election`，工作原理如下：
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta election --module=demo-student
+$ vona :create:bean meta election -- --module=demo-student
 ```
 
 ### 2. 菜单命令

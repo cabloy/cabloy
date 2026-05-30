@@ -35,7 +35,7 @@ Vona 使用 Bean `meta.version`统一管理模块的迁移代码。
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta version --module=demo-student
+$ vona :create:bean meta version -- --module=demo-student
 ```
 
 ### 2. 菜单命令

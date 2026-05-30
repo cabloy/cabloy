@@ -9,7 +9,7 @@ Vona 使用 Bean `meta.index`统一配置模块的字段索引。
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta index --module=demo-student
+$ vona :create:bean meta index -- --module=demo-student
 ```
 
 ### 2. 菜单命令

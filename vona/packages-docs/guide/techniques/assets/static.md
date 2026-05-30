@@ -45,7 +45,7 @@ For example, create `meta.static` in the module demo-student.
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta static --module=demo-student
+$ vona :create:bean meta static -- --module=demo-student
 ```
 
 ### 2. Menu Command

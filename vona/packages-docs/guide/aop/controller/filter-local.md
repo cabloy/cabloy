@@ -7,7 +7,7 @@ For example, create a local filter: `test` in the module demo-student to customi
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean filter test --module=demo-student
+$ vona :create:bean filter test -- --module=demo-student
 ```
 
 ### 2. Menu command

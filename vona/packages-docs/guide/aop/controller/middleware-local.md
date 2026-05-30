@@ -7,7 +7,7 @@ For example, we create a Local Middleware `logger` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean middleware logger --module=demo-student
+$ vona :create:bean middleware logger -- --module=demo-student
 ```
 
 ### 2. Menu command

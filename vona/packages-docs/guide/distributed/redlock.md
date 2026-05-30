@@ -9,7 +9,7 @@ For example, create redlock in the module `demo-student`
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta redlock --module=demo-student
+$ vona :create:bean meta redlock -- --module=demo-student
 ```
 
 ### 2. Menu Command

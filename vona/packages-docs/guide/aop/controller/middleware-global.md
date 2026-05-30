@@ -7,7 +7,7 @@ For example, we create a Global Middleware `logger` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean middleware logger --module=demo-student --boilerplate=global
+$ vona :create:bean middleware logger -- --module=demo-student --boilerplate=global
 ```
 
 ### 2. Menu command

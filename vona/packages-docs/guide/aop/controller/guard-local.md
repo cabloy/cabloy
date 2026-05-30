@@ -7,7 +7,7 @@ For example, create a local guard `admin` in the module demo-student to check wh
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean guard admin --module=demo-student
+$ vona :create:bean guard admin -- --module=demo-student
 ```
 
 ### 2. Menu command

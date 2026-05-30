@@ -40,7 +40,7 @@ Vona uses Bean `meta.version` to uniformly manage module migration codes.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean meta version --module=demo-student
+$ vona :create:bean meta version -- --module=demo-student
 ```
 
 ### 2. Menu command

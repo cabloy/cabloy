@@ -7,7 +7,7 @@ Here, we create a Vona project and a Zova project and combine them to create a c
 Create a Vona project using the `cabloy-start` template.
 
 ```bash
-$ vona :create:project projectName --template=cabloy-start
+$ vona :create:project projectName -- --template=cabloy-start
 $ cd projectName
 ```
 

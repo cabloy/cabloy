@@ -9,7 +9,7 @@ Create a Service Bean `student` in module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean service student --module=demo-student
+$ vona :create:bean service student -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -25,7 +25,7 @@ Create a Global Service Bean `test` in module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean bean test --module=demo-student
+$ vona :create:bean bean test -- --module=demo-student
 ```
 
 ### 2. Menu command

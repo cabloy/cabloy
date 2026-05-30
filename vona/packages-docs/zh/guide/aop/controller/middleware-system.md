@@ -12,7 +12,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean middlewareSystem logger --module=demo-student
+$ vona :create:bean middlewareSystem logger -- --module=demo-student
 ```
 
 ### 2. 菜单命令

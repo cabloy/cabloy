@@ -9,7 +9,7 @@
 ### 1. Cli 命令
 
 ```bash
-$ vona :create:module demo-student --suite=
+$ vona :create:module demo-student -- --suite=
 ```
 
 ### 2. 菜单命令
@@ -31,7 +31,7 @@ $ vona :create:module demo-student --suite=
 ### 1. Cli命令
 
 ```bash
-$ vona :tools:crud student --module=demo-student
+$ vona :tools:crud student -- --module=demo-student
 ```
 
 ### 2. 菜单命令

@@ -9,7 +9,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean eventListener echo --module=demo-student
+$ vona :create:bean eventListener echo -- --module=demo-student
 ```
 
 ### 2. 菜单命令

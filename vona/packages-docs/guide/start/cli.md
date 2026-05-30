@@ -7,7 +7,7 @@ Vona provides a large number of Cli commands for generating code skeletons for v
 Create a Service: `student` in the module demo-student, the command is as follows:
 
 ```bash
-$ vona :create:bean service student --module=demo-student
+$ vona :create:bean service student -- --module=demo-student
 ```
 
 ## Command usage

@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean interceptor logger --module=demo-student
+$ vona :create:bean interceptor logger -- --module=demo-student
 ```
 
 ### 2. 菜单命令

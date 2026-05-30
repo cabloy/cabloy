@@ -9,7 +9,7 @@ For example, create a Redis Cache `student` in the module `demo-student`, to cac
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean cacheRedis student --module=demo-student
+$ vona :create:bean cacheRedis student -- --module=demo-student
 ```
 
 ### 2. Menu Command

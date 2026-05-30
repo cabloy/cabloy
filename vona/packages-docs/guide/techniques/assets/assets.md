@@ -11,7 +11,7 @@ For example, creating a new scenario `templates` containing multiple template fi
 ### 1. Cli Command
 
 ```bash
-$ vona :init:asset templates --module=demo-student
+$ vona :init:asset templates -- --module=demo-student
 ```
 
 ### 2. Menu Command
@@ -56,7 +56,7 @@ For example, create `meta.asset` in the module demo-student.
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta asset --module=demo-student
+$ vona :create:bean meta asset -- --module=demo-student
 ```
 
 ### 2. Menu Command

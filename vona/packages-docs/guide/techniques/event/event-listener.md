@@ -9,7 +9,7 @@ For example, create an Event Listener `echo` in the module `demo-student`. When 
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean eventListener echo --module=demo-student
+$ vona :create:bean eventListener echo -- --module=demo-student
 ```
 
 ### 2. Menu command

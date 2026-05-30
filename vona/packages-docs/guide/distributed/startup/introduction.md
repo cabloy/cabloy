@@ -16,7 +16,7 @@ For example, create a startup `log` in the module `demo-student` to output the c
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean startup log --module=demo-student
+$ vona :create:bean startup log -- --module=demo-student
 ```
 
 ### 2. Menu Command

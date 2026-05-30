@@ -7,7 +7,7 @@
 ## Cli命令
 
 ```bash
-$ vona :tools:crud student --module=demo-student
+$ vona :tools:crud student -- --module=demo-student
 ```
 
 ## 菜单命令

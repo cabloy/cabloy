@@ -7,7 +7,7 @@ For example, create a global pipe `number` in the module demo-student to convert
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean pipe number --module=demo-student --boilerplate=global
+$ vona :create:bean pipe number -- --module=demo-student --boilerplate=global
 ```
 
 ### 2. Menu command

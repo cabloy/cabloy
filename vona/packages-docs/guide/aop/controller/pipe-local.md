@@ -7,7 +7,7 @@ For example, create a local pipe `number` in the module demo-student to convert 
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean pipe number --module=demo-student
+$ vona :create:bean pipe number -- --module=demo-student
 ```
 
 ### 2. Menu command

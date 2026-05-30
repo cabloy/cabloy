@@ -9,7 +9,7 @@
 ### 1. Cli 命令
 
 ```bash
-$ vona :create:bean service student --module=demo-student
+$ vona :create:bean service student -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -25,7 +25,7 @@ $ vona :create:bean service student --module=demo-student
 ### 1. Cli 命令
 
 ```bash
-$ vona :create:bean bean test --module=demo-student
+$ vona :create:bean bean test -- --module=demo-student
 ```
 
 ### 2. 菜单命令

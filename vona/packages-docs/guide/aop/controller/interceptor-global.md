@@ -7,7 +7,7 @@ For example, we create a Global Interceptor `logger` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean interceptor logger --module=demo-student --boilerplate=global
+$ vona :create:bean interceptor logger -- --module=demo-student --boilerplate=global
 ```
 
 ### 2. Menu command

@@ -9,7 +9,7 @@ For example, create a schedule `log` in the module `demo-student`, which will ou
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean schedule log --module=demo-student
+$ vona :create:bean schedule log -- --module=demo-student
 ```
 
 ### 2. Menu Command

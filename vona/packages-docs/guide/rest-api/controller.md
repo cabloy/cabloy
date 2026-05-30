@@ -7,7 +7,7 @@ For example, we create a Controller `student` in the module demo-student:
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean controller student --module=demo-student
+$ vona :create:bean controller student -- --module=demo-student
 ```
 
 ### 2. Menu command

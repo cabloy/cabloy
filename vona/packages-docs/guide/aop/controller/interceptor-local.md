@@ -7,7 +7,7 @@ For example, we create a Local Interceptor `logger` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean interceptor logger --module=demo-student
+$ vona :create:bean interceptor logger -- --module=demo-student
 ```
 
 ### 2. Menu command

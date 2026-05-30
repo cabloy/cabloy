@@ -13,7 +13,7 @@ For example, create `meta.printTip` in the module demo-student. Output `=== Hell
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta printTip --module=demo-student
+$ vona :create:bean meta printTip -- --module=demo-student
 ```
 
 ### 2. Menu Command

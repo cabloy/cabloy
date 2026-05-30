@@ -7,7 +7,7 @@ For example, create a global filter `test` in the module demo-student to customi
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean filter test --module=demo-student --boilerplate=global
+$ vona :create:bean filter test -- --module=demo-student --boilerplate=global
 ```
 
 ### 2. Menu command

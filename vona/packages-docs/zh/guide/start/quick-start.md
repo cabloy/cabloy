@@ -32,7 +32,7 @@ $ pnpm add -g vona-cli@latest
 1. 创建项目
 
 ```bash
-$ vona :create:project projectName --template=cabloy-basic
+$ vona :create:project projectName -- --template=cabloy-basic
 $ cd projectName
 ```
 

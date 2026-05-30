@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean filter test --module=demo-student
+$ vona :create:bean filter test -- --module=demo-student
 ```
 
 ### 2. 菜单命令

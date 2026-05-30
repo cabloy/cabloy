@@ -9,7 +9,7 @@ Vona uses Bean `meta.index` to uniformly configure the field indexes of the modu
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean meta index --module=demo-student
+$ vona :create:bean meta index -- --module=demo-student
 ```
 
 ### 2. Menu command

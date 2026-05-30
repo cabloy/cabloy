@@ -7,7 +7,7 @@
 使用`cabloy-start`模版创建 Vona 项目。
 
 ```bash
-$ vona :create:project projectName --template=cabloy-start
+$ vona :create:project projectName -- --template=cabloy-start
 $ cd projectName
 ```
 

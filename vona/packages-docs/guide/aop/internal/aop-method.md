@@ -9,7 +9,7 @@ For example, we create a AOP Method `log` in the module demo-student to output t
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean aopMethod log --module=demo-student
+$ vona :create:bean aopMethod log -- --module=demo-student
 ```
 
 ### 2. Menu command

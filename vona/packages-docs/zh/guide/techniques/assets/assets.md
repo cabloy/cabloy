@@ -11,7 +11,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :init:asset templates --module=demo-student
+$ vona :init:asset templates -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -56,7 +56,7 @@ src/module/demo-student/assets/templates/list.ejs
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta asset --module=demo-student
+$ vona :create:bean meta asset -- --module=demo-student
 ```
 
 ### 2. 菜单命令

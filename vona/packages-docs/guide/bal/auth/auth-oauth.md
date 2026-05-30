@@ -138,7 +138,7 @@ For example, creating an Auth Provider: `oauth` in the module `auth-oauth`
 ### 1. CLI Command
 
 ```bash
-$ vona :create:bean authProvider oauth --module=auth-oauth
+$ vona :create:bean authProvider oauth -- --module=auth-oauth
 ```
 
 ### 2. Menu Command
