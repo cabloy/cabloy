@@ -44,7 +44,6 @@ const BLACKLIST_DIRS: string[] = [
 
 const WHITELIST_FILES: string[] = [
   // root
-  'package.json',
   'tsconfig.json',
   'tsconfig.base.json',
   'tsconfig.base.esm.json',
