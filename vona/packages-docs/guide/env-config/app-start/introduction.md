@@ -59,7 +59,7 @@ For different scenarios, corresponding interface definitions are provided for di
 ### 1. Cli command
 
 ```bash
-$ vona :init:main demo-student
+$ npm run vona :init:main demo-student
 ```
 
 ### 2. Menu command
@@ -83,7 +83,7 @@ export class Main extends BeanSimple implements IModuleMain {
 ### 1. Cli command
 
 ```bash
-$ vona :init:monkey demo-student
+$ npm run vona :init:monkey demo-student
 ```
 
 ### 2. Menu command
@@ -112,7 +112,7 @@ export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeySystem {
 ### 1. Cli command
 
 ```bash
-$ vona :init:appMonkey
+$ npm run vona :init:appMonkey
 ```
 
 ### 2. Menu command

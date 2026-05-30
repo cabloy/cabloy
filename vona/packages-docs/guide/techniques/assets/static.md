@@ -7,7 +7,7 @@ In VonaJS, each module can provide static resources, accessible via a URL.
 ### 1. Cli Command
 
 ```bash
-$ vona :init:static demo-student
+$ npm run vona :init:static demo-student
 ```
 
 ### 2. Menu Command
@@ -45,7 +45,7 @@ For example, create `meta.static` in the module demo-student.
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta static -- --module=demo-student
+$ npm run vona :create:bean meta static -- --module=demo-student
 ```
 
 ### 2. Menu Command

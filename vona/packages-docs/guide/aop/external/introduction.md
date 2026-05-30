@@ -44,7 +44,7 @@ Next, create an external aspect `log` to provide extension logic for the propert
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean aop log -- --module=demo-student
+$ npm run vona :create:bean aop log -- --module=demo-student
 ```
 
 ### 2. Menu command

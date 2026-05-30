@@ -12,7 +12,7 @@ For example, we create a System Middleware `logger` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean middlewareSystem logger -- --module=demo-student
+$ npm run vona :create:bean middlewareSystem logger -- --module=demo-student
 ```
 
 ### 2. Menu command

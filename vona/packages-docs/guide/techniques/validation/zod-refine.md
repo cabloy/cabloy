@@ -9,7 +9,7 @@ For example, create a Zod Refine `nameExists` in the module demo-student to chec
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean zodRefine nameExists -- --module=demo-student
+$ npm run vona :create:bean zodRefine nameExists -- --module=demo-student
 ```
 
 ### 2. Menu command

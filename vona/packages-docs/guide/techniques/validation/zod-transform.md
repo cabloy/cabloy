@@ -9,7 +9,7 @@ For example, create a Zod Transform `nameCapitalize` in the module demo-student 
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean zodTransform nameCapitalize -- --module=demo-student
+$ npm run vona :create:bean zodTransform nameCapitalize -- --module=demo-student
 ```
 
 ### 2. Menu command

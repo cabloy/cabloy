@@ -7,7 +7,7 @@ For example, create a global guard `admin` in the module demo-student to check w
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean guard admin -- --module=demo-student --boilerplate=global
+$ npm run vona :create:bean guard admin -- --module=demo-student --boilerplate=global
 ```
 
 ### 2. Menu command

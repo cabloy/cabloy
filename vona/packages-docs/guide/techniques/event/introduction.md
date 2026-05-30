@@ -11,7 +11,7 @@ For example, create an event: `echo` in the module `demo-student`, passing the e
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean event echo -- --module=demo-student
+$ npm run vona :create:bean event echo -- --module=demo-student
 ```
 
 ### 2. Menu command
