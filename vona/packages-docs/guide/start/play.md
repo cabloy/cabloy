@@ -9,7 +9,7 @@ Vona provides a Playground, which allows us to test the code and verify the idea
 We need to create a new source code file: `src/backend/play/index.ts`. However, we do not need to create this file manually, but execute the following command to automatically create the file:
 
 ```bash
-$ vona play
+$ npm run vona play
 ```
 
 ### 2. Write test code
@@ -25,7 +25,7 @@ export async function main(app: VonaApplication, _argv: IArgv) {
 ### 3. Execute play file
 
 ```bash
-$ vona play
+$ npm run vona play
 ```
 
 ## Attach Mode
@@ -35,8 +35,8 @@ To improve performance, VonaJS also provides an Attach mode.
 If the dev server is already running, you can use Attach mode to execute the play file directly within the dev server.
 
 ```bash
-$ vona play --attach
-$ vona play -a
+$ npm run vona play --attach
+$ npm run vona play -a
 ```
 
 ## Example

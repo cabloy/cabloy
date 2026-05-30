@@ -33,7 +33,7 @@ $ npm run db:reset
 ```bash
 $ npm run dev
 $ npm run dev:one
-$ vona play
+$ npm run vona play
 ```
 
 - 在`开发环境`也可以人为指定具体的数据库名称，那么系统就会忽略默认行为

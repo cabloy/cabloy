@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :init:static demo-student
+$ npm run vona :init:static demo-student
 ```
 
 ### 2. 菜单命令
@@ -45,7 +45,7 @@ http://localhost:7102/api/static/demo/student/img/vona.svg
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta static -- --module=demo-student
+$ npm run vona :create:bean meta static -- --module=demo-student
 ```
 
 ### 2. 菜单命令

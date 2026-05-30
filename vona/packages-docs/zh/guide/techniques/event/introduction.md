@@ -11,7 +11,7 @@ VonaJS 提供了事件机制，由`事件`和`事件监听器`组成。
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean event echo -- --module=demo-student
+$ npm run vona :create:bean event echo -- --module=demo-student
 ```
 
 ### 2. 菜单命令

@@ -11,7 +11,7 @@ For example, create a Serializer Transform: `upper` in the module demo-student t
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean serializerTransform upper -- --module=demo-student
+$ npm run vona :create:bean serializerTransform upper -- --module=demo-student
 ```
 
 ### 2. Menu command

@@ -13,7 +13,7 @@ VonaJS 在系统启动时在控制台`统一`输出提示信息。如下图所�
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta printTip -- --module=demo-student
+$ npm run vona :create:bean meta printTip -- --module=demo-student
 ```
 
 ### 2. 菜单命令

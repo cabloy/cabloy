@@ -18,7 +18,7 @@ For example, create `meta.election` in the module demo-student. Start a timer in
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta election -- --module=demo-student
+$ npm run vona :create:bean meta election -- --module=demo-student
 ```
 
 ### 2. Menu Command

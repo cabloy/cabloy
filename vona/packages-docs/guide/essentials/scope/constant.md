@@ -7,7 +7,7 @@ Modules can individually provide their own `Constant`
 ### 1. Cli command
 
 ```bash
-$ vona :init:constant demo-student
+$ npm run vona :init:constant demo-student
 ```
 
 ### 2. Menu command

@@ -131,7 +131,7 @@ config.onions = {
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean authProvider oauth -- --module=auth-oauth
+$ npm run vona :create:bean authProvider oauth -- --module=auth-oauth
 ```
 
 ### 2. 菜单命令

@@ -20,7 +20,7 @@ createdAt >= '2025-11-30T15:00:00.000Z' and createdAt < '2025-12-02T15:00:00.000
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean filterTransform dateRange -- --module=demo-student
+$ npm run vona :create:bean filterTransform dateRange -- --module=demo-student
 ```
 
 ### 2. 菜单命令

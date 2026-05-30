@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean middleware logger -- --module=demo-student
+$ npm run vona :create:bean middleware logger -- --module=demo-student
 ```
 
 ### 2. 菜单命令

@@ -51,8 +51,8 @@ $ npm run tsc
 自动运行 Playground 源码文件，如果文件不存在则自动创建。
 
 ```bash
-$ vona play
-$ vona play -a
+$ npm run vona play
+$ npm run vona play -a
 ```
 
 ## db:reset

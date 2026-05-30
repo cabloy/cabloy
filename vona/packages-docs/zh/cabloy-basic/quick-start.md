@@ -7,7 +7,7 @@
 使用`cabloy-basic`模版创建 Vona 项目。
 
 ```bash
-$ vona :create:project projectName -- --template=cabloy-basic
+$ npm run vona :create:project projectName -- --template=cabloy-basic
 $ cd projectName
 ```
 

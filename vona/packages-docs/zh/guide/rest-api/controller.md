@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean controller student -- --module=demo-student
+$ npm run vona :create:bean controller student -- --module=demo-student
 ```
 
 ### 2. 菜单命令

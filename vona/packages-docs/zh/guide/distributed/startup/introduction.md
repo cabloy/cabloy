@@ -16,7 +16,7 @@ VonaJS 提供了两类启动项：
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean startup log -- --module=demo-student
+$ npm run vona :create:bean startup log -- --module=demo-student
 ```
 
 ### 2. 菜单命令

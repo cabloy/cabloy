@@ -7,7 +7,7 @@ Modules can individually provide their own `Error` exceptions.
 ### 1. Cli command
 
 ```bash
-$ vona :init:error demo-student
+$ npm run vona :init:error demo-student
 ```
 
 ### 2. Menu command

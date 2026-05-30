@@ -19,7 +19,7 @@ For example, create `meta.runtime` in the module demo-student. Output `accessTok
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean meta runtime -- --module=demo-student
+$ npm run vona :create:bean meta runtime -- --module=demo-student
 ```
 
 ### 2. Menu Command

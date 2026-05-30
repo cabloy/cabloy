@@ -13,7 +13,7 @@ Vona uses a `parallel mechanism` to run test files, thereby significantly improv
 ### 1. Cli command
 
 ```bash
-$ vona :create:test student -- --module=demo-student
+$ npm run vona :create:test student -- --module=demo-student
 ```
 
 ### 2. Menu command

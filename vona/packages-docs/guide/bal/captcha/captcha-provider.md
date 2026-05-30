@@ -9,7 +9,7 @@ For example, creating a Captcha Provider: `imageText` within the module `captcha
 ### 1. CLI Command
 
 ```bash
-$ vona :create:bean captchaProvider imageText -- --module=captcha-simple
+$ npm run vona :create:bean captchaProvider imageText -- --module=captcha-simple
 ```
 
 ### 2. Menu Command

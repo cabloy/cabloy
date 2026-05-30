@@ -9,7 +9,7 @@ Vona 提供了一个练习场的功能，允许我们非常方便、快捷的对
 我们需要新建源码文件：`src/backend/play/index.ts`。当然，并不需要手工创建此文件，而是执行以下命令，自动创建该文件：
 
 ```bash
-$ vona play
+$ npm run vona play
 ```
 
 ### 2. 编写测试代码
@@ -25,7 +25,7 @@ export async function main(app: VonaApplication, _argv: IArgv) {
 ### 3. 执行play文件
 
 ```bash
-$ vona play
+$ npm run vona play
 ```
 
 ## Attach模式
@@ -35,8 +35,8 @@ $ vona play
 如果已经启动了开发服务，可以使用 Attach 模式，直接在开发服务中执行 play 文件。
 
 ```bash
-$ vona play --attach
-$ vona play -a
+$ npm run vona play --attach
+$ npm run vona play -a
 ```
 
 ## 举例

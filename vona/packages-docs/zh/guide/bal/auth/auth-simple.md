@@ -74,7 +74,7 @@ config.modules = {
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean authProvider simple -- --module=auth-simple
+$ npm run vona :create:bean authProvider simple -- --module=auth-simple
 ```
 
 ### 2. 菜单命令

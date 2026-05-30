@@ -59,7 +59,7 @@ VonaJS 提供了`Hook/Monkey`机制，可以在应用启动时对系统进行深
 ### 1. Cli命令
 
 ```bash
-$ vona :init:main demo-student
+$ npm run vona :init:main demo-student
 ```
 
 ### 2. 菜单命令
@@ -83,7 +83,7 @@ export class Main extends BeanSimple implements IModuleMain {
 ### 1. Cli命令
 
 ```bash
-$ vona :init:monkey demo-student
+$ npm run vona :init:monkey demo-student
 ```
 
 ### 2. 菜单命令
@@ -112,7 +112,7 @@ export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeySystem {
 ### 1. Cli命令
 
 ```bash
-$ vona :init:appMonkey
+$ npm run vona :init:appMonkey
 ```
 
 ### 2. 菜单命令

@@ -9,7 +9,7 @@ For example, create a broadcast `echo` in the module `demo-student`, so that eac
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean broadcast echo -- --module=demo-student
+$ npm run vona :create:bean broadcast echo -- --module=demo-student
 ```
 
 ### 2. Menu Command

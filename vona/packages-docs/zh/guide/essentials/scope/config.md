@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :init:config demo-student
+$ npm run vona :init:config demo-student
 ```
 
 ### 2. 菜单命令

@@ -51,8 +51,8 @@ $ npm run tsc
 Automatically run the Playground source code file and automatically create it if it does not exist.
 
 ```bash
-$ vona play
-$ vona play -a
+$ npm run vona play
+$ npm run vona play -a
 ```
 
 ## db:reset

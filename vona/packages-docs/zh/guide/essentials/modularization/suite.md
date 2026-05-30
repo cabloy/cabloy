@@ -37,7 +37,7 @@ a-home
 ### 1. Cli 命令
 
 ```bash
-$ vona :create:suite suiteName
+$ npm run vona :create:suite suiteName
 ```
 
 | 名称      | 说明     |

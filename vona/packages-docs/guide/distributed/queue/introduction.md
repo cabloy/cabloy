@@ -9,7 +9,7 @@ For example, create a queue `add` in the module `demo-student`, which performs a
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean queue add -- --module=demo-student
+$ npm run vona :create:bean queue add -- --module=demo-student
 ```
 
 ### 2. Menu Command

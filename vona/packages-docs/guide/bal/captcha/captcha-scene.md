@@ -11,7 +11,7 @@ For example, creating a Captcha Scene in the module `captcha-simple`: `simple`
 ### 1. CLI Command
 
 ```bash
-$ vona :create:bean captchaScene simple -- --module=captcha-simple
+$ npm run vona :create:bean captchaScene simple -- --module=captcha-simple
 ```
 
 ### 2. Menu Command

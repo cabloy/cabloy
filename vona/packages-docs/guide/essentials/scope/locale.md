@@ -7,7 +7,7 @@ Modules can individually provide their own `I18n` language resources.
 ### 1. Cli command
 
 ```bash
-$ vona :init:locale demo-student
+$ npm run vona :init:locale demo-student
 ```
 
 ### 2. Menu command

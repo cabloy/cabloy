@@ -37,7 +37,7 @@ a-home
 ### 1. Cli command
 
 ```bash
-$ vona :create:suite suiteName
+$ npm run vona :create:suite suiteName
 ```
 
 | Name      | Description |

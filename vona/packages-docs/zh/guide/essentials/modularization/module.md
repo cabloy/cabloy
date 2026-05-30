@@ -37,7 +37,7 @@
 ### 1. Cli 命令
 
 ```bash
-$ vona :create:module moduleName [--suite=]
+$ npm run vona :create:module moduleName [--suite=]
 ```
 
 | 名称       | 说明               |

@@ -18,7 +18,7 @@ VonaJS 在系统启动时将一些动态运行数据`统一`输出到`Runtime`�
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta runtime -- --module=demo-student
+$ npm run vona :create:bean meta runtime -- --module=demo-student
 ```
 
 ### 2. 菜单命令

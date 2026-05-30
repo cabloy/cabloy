@@ -13,7 +13,7 @@ Vona 采用`并行机制`运行测试文件，从而显著提升测试效率。
 ### 1. Cli命令
 
 ```bash
-$ vona :create:test student -- --module=demo-student
+$ npm run vona :create:test student -- --module=demo-student
 ```
 
 ### 2. 菜单命令

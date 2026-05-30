@@ -37,7 +37,7 @@ ShortName: {providerId}-{moduleName}
 ### 1. Cli command
 
 ```bash
-$ vona :create:module moduleName [--suite=]
+$ npm run vona :create:module moduleName [--suite=]
 ```
 
 | Name       | Description          |

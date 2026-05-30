@@ -9,7 +9,7 @@ For example, create a Summer Cache `student` in the module `demo-student`, to ca
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean summerCache student -- --module=demo-student
+$ npm run vona :create:bean summerCache student -- --module=demo-student
 ```
 
 ### 2. Menu Command

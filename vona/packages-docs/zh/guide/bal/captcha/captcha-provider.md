@@ -9,7 +9,7 @@
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean captchaProvider imageText -- --module=captcha-simple
+$ npm run vona :create:bean captchaProvider imageText -- --module=captcha-simple
 ```
 
 ### 2. 菜单命令

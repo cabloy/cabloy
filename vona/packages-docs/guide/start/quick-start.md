@@ -32,7 +32,7 @@ This extension provides a large number of menus for quickly creating code skelet
 1. Create Project
 
 ```bash
-$ vona :create:project projectName -- --template=cabloy-basic
+$ npm run vona :create:project projectName -- --template=cabloy-basic
 $ cd projectName
 ```
 

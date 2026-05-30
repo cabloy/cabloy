@@ -9,7 +9,7 @@ For example, create a Mem Cache `student` in the module `demo-student`, to cache
 ### 1. Cli Command
 
 ```bash
-$ vona :create:bean cacheMem student -- --module=demo-student
+$ npm run vona :create:bean cacheMem student -- --module=demo-student
 ```
 
 ### 2. Menu Command

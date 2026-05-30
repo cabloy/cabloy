@@ -9,7 +9,7 @@ VonaJS 基于[Redlock](https://github.com/sesamecare/redlock/)提供了直观、
 ### 1. Cli命令
 
 ```bash
-$ vona :create:bean meta redlock -- --module=demo-student
+$ npm run vona :create:bean meta redlock -- --module=demo-student
 ```
 
 ### 2. 菜单命令

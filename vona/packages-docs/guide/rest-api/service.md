@@ -7,7 +7,7 @@ For example, we create a Service `student` in the module demo-student.
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean service student -- --module=demo-student
+$ npm run vona :create:bean service student -- --module=demo-student
 ```
 
 ### 2. Menu command

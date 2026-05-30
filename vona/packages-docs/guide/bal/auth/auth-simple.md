@@ -74,7 +74,7 @@ For example, create an Auth Provider in the module `auth-simple`: `simple`
 ### 1. CLI Command
 
 ```bash
-$ vona :create:bean authProvider simple -- --module=auth-simple
+$ npm run vona :create:bean authProvider simple -- --module=auth-simple
 ```
 
 ### 2. Menu Command

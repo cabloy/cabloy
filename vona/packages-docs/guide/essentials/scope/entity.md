@@ -7,7 +7,7 @@ Modules can individually provide their own `Entities`
 ### 1. Cli command
 
 ```bash
-$ vona :create:bean entity student -- --module=demo-student
+$ npm run vona :create:bean entity student -- --module=demo-student
 ```
 
 ### 2. Menu command
