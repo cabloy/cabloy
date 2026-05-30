@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
+import { parseProjectPath } from '@cabloy/cli';
 import { ProcessHelper } from '@cabloy/process-helper';
+import mri from 'mri';
 import semver from 'semver';
 
 import { playAttach } from '../play.ts';
@@ -30,22 +32,31 @@ async function checkPnpm() {
 }
 
 async function main() {
+  const rawArgv = process.argv.slice(2);
+  const _args = mri(rawArgv, {
+    boolean: ['force', 'help', 'version'],
+    alias: { h: 'help', v: 'version' },
+  });
+  const projectPath = parseProjectPath(_args.projectPath);
   // args
   let args: string[] = [];
-  const rawArgv = process.argv.slice(2);
-  const isPlay = rawArgv[0] === 'play';
+  const isPlay = _args._[0] === 'play';
   const isPlayAttach = isPlay && (rawArgv.includes('-a') || rawArgv.includes('--attach'));
   if (isPlay) {
     if (!isPlayAttach) {
       args = args.concat([':bin:play']);
     }
-    args = args.concat(rawArgv.slice(1)).concat(['--dummy']);
+    const indexPlay = rawArgv.indexOf('play');
+    args = args.concat(rawArgv.slice(indexPlay + 1)).concat(['--dummy']);
+    if (_args.projectPath) {
+      args = [`--projectPath=${_args.projectPath}`].concat(args);
+    }
   } else {
     args = rawArgv;
   }
   // run
   if (isPlayAttach) {
-    await playAttach(process.cwd(), args);
+    await playAttach(projectPath, args);
   } else {
     if (!isPlay) {
       await checkPnpm();

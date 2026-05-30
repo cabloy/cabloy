@@ -38,6 +38,7 @@
     "@cabloy/cli": "workspace:^",
     "@cabloy/process-helper": "workspace:^",
     "fs-extra": "^11.3.4",
+    "mri": "^1.2.0",
     "semver": "^7.7.4",
     "vona-cli-set-api": "workspace:^"
   },
