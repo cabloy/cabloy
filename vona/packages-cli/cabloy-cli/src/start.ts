@@ -46,21 +46,17 @@ export class CabloyCommand extends CommonBin {
       projectPath: parseProjectPath(parsed.projectPath),
     } as ICommandArgv;
     // indexBrandName
-    const indexBrandName = this.rawArgv.indexOf(this.brandName);
+    const indexBrandName = parsed._.indexOf(this.brandName);
     // cli
-    const indexCommand = indexBrandName > -1 ? indexBrandName + 1 : 0;
-    Object.assign(argv, this._prepareCliFullName(parsed._[indexCommand]));
+    const commandName = parsed._[indexBrandName + 1];
+    const indexCommand = this.rawArgv.indexOf(commandName);
+    Object.assign(argv, this._prepareCliFullName(commandName));
     // cli meta
     const context = { brandName: this.brandName, argv };
     const beanCli = new BeanCli();
     const meta = await beanCli.meta({ context });
     // cli run
-    const rawArgv = this.rawArgv.slice();
-    if (indexBrandName > -1) {
-      rawArgv.splice(0, indexBrandName + 2);
-    } else {
-      rawArgv.splice(0, 1);
-    }
+    const rawArgv = this.rawArgv.slice(indexCommand + 1);
     const command = new CliCommand(rawArgv, { meta, argv });
     await command[DISPATCH]();
     // should not force exit, let app shutdown gracefully
