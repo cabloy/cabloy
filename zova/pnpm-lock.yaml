@@ -250,6 +250,9 @@ importers:
       zova-module-demo-basic:
         specifier: workspace:^
         version: link:src/suite/a-demo/modules/demo-basic
+      zova-module-demo-student:
+        specifier: workspace:^
+        version: link:src/module/demo-student
       zova-module-demo-todo:
         specifier: workspace:^
         version: link:src/suite/a-demo/modules/demo-todo
@@ -930,6 +933,15 @@ importers:
       vite:
         specifier: ^8.0.8
         version: 8.0.13(@types/node@22.19.19)(esbuild@0.27.7)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(yaml@2.9.0)
+
+  src/module/demo-student:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
 
   src/suite-vendor/a-cabloy:
     dependencies:
