@@ -9,7 +9,7 @@
 ### 1. Cli 命令
 
 ```bash
-$ zova :create:module demo-student --suite=
+$ zova :create:module demo-student -- --suite=
 ```
 
 ### 2. 菜单命令
@@ -31,7 +31,7 @@ $ zova :create:module demo-student --suite=
 ### 1. Cli命令
 
 ```bash
-$ zova :create:page counter --module=demo-student
+$ zova :create:page counter -- --module=demo-student
 ```
 
 ### 2. 菜单命令

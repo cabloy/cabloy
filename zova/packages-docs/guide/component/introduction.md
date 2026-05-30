@@ -15,7 +15,7 @@ Taking the module `demo-student` as an example, create a component `card`
 ### 1. CLI Command
 
 ```bash
-$ zova :create:component card --module=demo-student
+$ zova :create:component card -- --module=demo-student
 ```
 
 ### 2. Menu Command

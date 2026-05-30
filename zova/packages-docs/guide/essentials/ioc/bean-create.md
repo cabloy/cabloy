@@ -9,7 +9,7 @@ Create a Model Bean `test` in module demo-student.
 ### 1. Cli command
 
 ```bash
-$ zova :create:bean model test --module=demo-student
+$ zova :create:bean model test -- --module=demo-student
 ```
 
 ### 2. Menu command

@@ -9,7 +9,7 @@ Add Query code skeleton for page `counter`
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:pageQuery counter --module=demo-student
+$ zova :refactor:pageQuery counter -- --module=demo-student
 ```
 
 ### 2. Menu command

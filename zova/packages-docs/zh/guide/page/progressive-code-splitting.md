@@ -58,7 +58,7 @@ class ControllerPageCounter {
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:firstRender page/counter --module=demo-student
+$ zova :refactor:firstRender page/counter -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -89,7 +89,7 @@ class RenderPageCounter extends BeanRenderBase {
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:firstStyle page/counter --module=demo-student
+$ zova :refactor:firstStyle page/counter -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -120,7 +120,7 @@ class StylePageCounter extends BeanStyleBase {
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:anotherRender page/counter another --module=demo-student
+$ zova :refactor:anotherRender page/counter another -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -134,7 +134,7 @@ $ zova :refactor:anotherRender page/counter another --module=demo-student
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:anotherStyle page/counter another --module=demo-student
+$ zova :refactor:anotherStyle page/counter another -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -150,7 +150,7 @@ $ zova :refactor:anotherStyle page/counter another --module=demo-student
 ### 1. Cli命令
 
 ```bash
-$ zova :create:bean service page/counter/counter --module=demo-student
+$ zova :create:bean service page/counter/counter -- --module=demo-student
 ```
 
 ### 2. 菜单命令

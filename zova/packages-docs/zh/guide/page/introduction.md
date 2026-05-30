@@ -15,7 +15,7 @@ Zova 提供更直观、更优雅、更强大的代码风格，融合 Vue3、Reac
 ### 1. Cli命令
 
 ```bash
-$ zova :create:page counter --module=demo-student
+$ zova :create:page counter -- --module=demo-student
 ```
 
 ### 2. 菜单命令

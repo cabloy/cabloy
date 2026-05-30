@@ -11,7 +11,7 @@
 ### 1. Cli命令
 
 ```bash
-$ zova :create:bean model menu --module=demo-student
+$ zova :create:bean model menu -- --module=demo-student
 ```
 
 ### 2. 菜单命令

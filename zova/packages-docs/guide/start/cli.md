@@ -7,7 +7,7 @@ Zova provides a large number of Cli commands for generating code skeletons for v
 Create a Component: `test` in the module demo-student, the command is as follows:
 
 ```bash
-$ zova :create:component test --module=demo-student
+$ zova :create:component test -- --module=demo-student
 ```
 
 ## Command usage

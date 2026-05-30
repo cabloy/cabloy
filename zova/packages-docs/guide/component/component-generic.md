@@ -5,7 +5,7 @@ Zova supports generic components. You only need to convert the created component
 ## 1. CLI Command
 
 ```bash
-$ zova :refactor:componentGeneric card --module=demo-student
+$ zova :refactor:componentGeneric card -- --module=demo-student
 ```
 
 ## 2. Menu Command

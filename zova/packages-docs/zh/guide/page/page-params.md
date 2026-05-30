@@ -9,7 +9,7 @@ Zova 对页面`Params`进行了强化，提供了 Typescript 类型化支持。
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:pageParams counter --module=demo-student
+$ zova :refactor:pageParams counter -- --module=demo-student
 ```
 
 ### 2. 菜单命令

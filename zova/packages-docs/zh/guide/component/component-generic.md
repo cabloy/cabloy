@@ -5,7 +5,7 @@ Zova 支持泛型组件。只需将已创建的组件转换为泛型组件即可
 ## 1. Cli命令
 
 ```bash
-$ zova :refactor:componentGeneric card --module=demo-student
+$ zova :refactor:componentGeneric card -- --module=demo-student
 ```
 
 ## 2. 菜单命令

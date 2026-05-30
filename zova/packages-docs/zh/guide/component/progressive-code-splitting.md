@@ -35,7 +35,7 @@ class ControllerCard {
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:firstRender component/card --module=demo-student
+$ zova :refactor:firstRender component/card -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -51,7 +51,7 @@ $ zova :refactor:firstRender component/card --module=demo-student
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:firstStyle component/card --module=demo-student
+$ zova :refactor:firstStyle component/card -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -69,7 +69,7 @@ $ zova :refactor:firstStyle component/card --module=demo-student
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:anotherRender component/card another --module=demo-student
+$ zova :refactor:anotherRender component/card another -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -83,7 +83,7 @@ $ zova :refactor:anotherRender component/card another --module=demo-student
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:anotherStyle component/card another --module=demo-student
+$ zova :refactor:anotherStyle component/card another -- --module=demo-student
 ```
 
 ### 2. 菜单命令
@@ -99,7 +99,7 @@ $ zova :refactor:anotherStyle component/card another --module=demo-student
 ### 1. Cli命令
 
 ```bash
-$ zova :create:bean service component/card/another --module=demo-student
+$ zova :create:bean service component/card/another -- --module=demo-student
 ```
 
 ### 2. 菜单命令
