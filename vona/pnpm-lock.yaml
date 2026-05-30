@@ -305,9 +305,6 @@ importers:
       vona-module-captcha-simple:
         specifier: workspace:^
         version: link:src/suite-vendor/a-captcha/modules/captcha-simple
-      vona-module-demo-student:
-        specifier: workspace:^
-        version: link:src/module/demo-student
       vona-module-home-base:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-base
@@ -1125,15 +1122,6 @@ importers:
         version: 6.1.3
 
   packages-vona/vona-shared:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
-  src/module/demo-student:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
