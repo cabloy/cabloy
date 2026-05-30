@@ -30,16 +30,14 @@ jobs:
       - uses: pnpm/action-setup@v5
         with:
           version: 10.19.0
-      - run: cp package.original.json package.json
-      - run: npm run init
-      - uses: nick-fields/retry@v4
-        with:
-          timeout_minutes: 5
-          max_attempts: 10
-          command: |
-            DATABASE_DEFAULT_CLIENT=pg npm run cov -- --ci
+      - name: init
+        run: npm run init
+      - name: cov
+        run: DATABASE_DEFAULT_CLIENT=pg npm run cov -- --ci
+        working-directory: vona
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          directory: vona
           verbose: true
