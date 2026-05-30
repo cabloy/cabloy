@@ -50,7 +50,6 @@ const WHITELIST_FILES: string[] = [
   'oxfmt.config.ts',
   'oxlint.config.ts',
   'lint-staged.config.mjs',
-  'LICENSE',
   // vona
   'vona/package.original.json',
   'vona/pnpm-workspace.yaml',

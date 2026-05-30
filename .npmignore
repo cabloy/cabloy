@@ -90,6 +90,10 @@ zova/packages-docs/
 # Test suite
 vona/src/suite-vendor/a-test
 
+# pnpm-lock
+vona/pnpm-lock.yaml
+zova/pnpm-lock.yaml
+
 # CLI templates (replaced by create-cabloy)
 vona/packages-cli/cli-set-api/cli/templates/create/project
 zova/packages-cli/cli-set-front/cli/templates/create/project
