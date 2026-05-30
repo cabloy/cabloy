@@ -7,6 +7,7 @@ import type { ICommandArgv } from './types/argv.ts';
 import { BeanCli } from './lib/bean.cli.ts';
 import { CliCommand } from './lib/cli.ts';
 import { collectCommands } from './lib/commands.ts';
+import { parseProjectPath } from './utils.ts';
 
 const DISPATCH = Symbol.for('eb:Command#dispatch');
 const PARSE = Symbol.for('eb:Command#parse');
@@ -42,7 +43,7 @@ export class CabloyCommand extends CommonBin {
     const parsed = await this[PARSE](this.rawArgv);
     // argv
     const argv = {
-      projectPath: process.cwd(),
+      projectPath: parseProjectPath(parsed.projectPath),
     } as ICommandArgv;
     // indexBrandName
     const indexBrandName = this.rawArgv.indexOf(this.brandName);

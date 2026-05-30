@@ -3,6 +3,7 @@ import type { VonaMetaFlavor } from '@cabloy/module-info';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import semver from 'semver';
 import urllib from 'urllib';
 
@@ -58,4 +59,11 @@ export function patchFlavor(
   flavor?: VonaMetaFlavor | VonaMetaFlavor[],
 ): VonaMetaFlavor | undefined {
   return Array.isArray(flavor) ? flavor[flavor.length - 1] : flavor;
+}
+
+export function parseProjectPath(projectPath?: string) {
+  const projectPathDefault = process.cwd();
+  if (!projectPath) return projectPathDefault;
+  if (path.isAbsolute(projectPath)) return projectPath;
+  return path.join(projectPathDefault, projectPath);
 }
