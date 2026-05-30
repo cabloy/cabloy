@@ -1,6 +1,25 @@
 {
   "extends": "./tsconfig.base",
   "compilerOptions": {},
-  "references": [],
+  "references": [
+    {
+      "path": "modules/test-auth/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-cabloy/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-ssr/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-rest/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-captcha/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-vona/tsconfig.build.json"
+    }
+  ],
   "exclude": ["modules"]
 }

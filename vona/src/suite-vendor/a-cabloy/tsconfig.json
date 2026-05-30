@@ -21,15 +21,6 @@
       "path": "modules/a-datasharding/tsconfig.build.json"
     },
     {
-      "path": "modules/test-cabloy/tsconfig.build.json"
-    },
-    {
-      "path": "modules/test-ssr/tsconfig.build.json"
-    },
-    {
-      "path": "modules/test-rest/tsconfig.build.json"
-    },
-    {
       "path": "modules/a-ssrhmr/tsconfig.build.json"
     }
   ],
