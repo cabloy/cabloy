@@ -11,7 +11,7 @@
 - Cli 命令
 
 ```bash
-$ zova :refactor:componentModel card modelValue -- --module=demo-student
+$ npm run zova :refactor:componentModel card modelValue -- --module=demo-student
 ```
 
 - 菜单命令
@@ -93,7 +93,7 @@ class ControllerOther {
 - Cli 命令
 
 ```bash
-$ zova :refactor:componentModel card title -- --module=demo-student
+$ npm run zova :refactor:componentModel card title -- --module=demo-student
 ```
 
 - 菜单命令

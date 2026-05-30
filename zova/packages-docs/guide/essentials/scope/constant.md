@@ -7,7 +7,7 @@ Modules can individually provide their own `Constant`
 ### 1. Cli command
 
 ```bash
-$ zova :init:constant demo-student
+$ npm run zova :init:constant demo-student
 ```
 
 ### 2. Menu command

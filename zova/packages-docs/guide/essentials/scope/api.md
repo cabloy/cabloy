@@ -7,7 +7,7 @@ Modules can centrally manage backend Api calls and package Api calls as `api` re
 ### 1. Cli command
 
 ```bash
-$ zova :create:bean api test -- --module=demo-student
+$ npm run zova :create:bean api test -- --module=demo-student
 ```
 
 ### 2. Menu command

@@ -9,7 +9,7 @@ Zova 在`$fetch`基础上提供面向业务的 API 服务。
 ### 1. Cli命令
 
 ```bash
-$ zova :create:bean api menu -- --module=demo-student
+$ npm run zova :create:bean api menu -- --module=demo-student
 ```
 
 ### 2. 菜单命令

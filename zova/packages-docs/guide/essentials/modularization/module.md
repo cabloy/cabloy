@@ -38,7 +38,7 @@ ShortName: {providerId}-{moduleName}
 ### 1. Cli command
 
 ```bash
-$ zova :create:module moduleName [--suite=]
+$ npm run zova :create:module moduleName [--suite=]
 ```
 
 | Name       | Description          |

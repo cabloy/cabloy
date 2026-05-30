@@ -7,7 +7,7 @@ Modules can individually provide their own `Error` exceptions.
 ### 1. Cli command
 
 ```bash
-$ zova :init:error demo-student
+$ npm run zova :init:error demo-student
 ```
 
 ### 2. Menu command

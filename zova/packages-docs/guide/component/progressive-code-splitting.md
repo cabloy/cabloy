@@ -35,7 +35,7 @@ First, separate out the Render.
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:firstRender component/card -- --module=demo-student
+$ npm run zova :refactor:firstRender component/card -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -51,7 +51,7 @@ Then separate out the Style.
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:firstStyle component/card -- --module=demo-student
+$ npm run zova :refactor:firstStyle component/card -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -69,7 +69,7 @@ As the code continues to grow, you can continue to adjust the file structure, cr
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:anotherRender component/card another -- --module=demo-student
+$ npm run zova :refactor:anotherRender component/card another -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -83,7 +83,7 @@ Context Menu - [Module Path/src/component/componentName]: `Zova Refactor/Create 
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:anotherStyle component/card another -- --module=demo-student
+$ npm run zova :refactor:anotherStyle component/card another -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -99,7 +99,7 @@ Create a Service `another` to separate state management.
 ### 1. CLI command
 
 ```bash
-$ zova :create:bean service component/card/another -- --module=demo-student
+$ npm run zova :create:bean service component/card/another -- --module=demo-student
 ```
 
 ### 2. Menu command

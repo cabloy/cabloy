@@ -7,7 +7,7 @@ Modules can individually provide their own `Config` configuration.
 ### 1. Cli command
 
 ```bash
-$ zova :init:config demo-student
+$ npm run zova :init:config demo-student
 ```
 
 ### 2. Menu command

@@ -11,7 +11,7 @@ Create a model `menu` in the `demo-student` module.
 ### 1. CLI Command
 
 ```bash
-$ zova :create:bean model menu -- --module=demo-student
+$ npm run zova :create:bean model menu -- --module=demo-student
 ```
 
 ### 2. Menu Command

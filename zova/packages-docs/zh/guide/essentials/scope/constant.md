@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ zova :init:constant demo-student
+$ npm run zova :init:constant demo-student
 ```
 
 ### 2. 菜单命令

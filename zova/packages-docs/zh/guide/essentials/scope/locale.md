@@ -7,7 +7,7 @@
 ### 1. Cli命令
 
 ```bash
-$ zova :init:locale demo-student
+$ npm run zova :init:locale demo-student
 ```
 
 ### 2. 菜单命令

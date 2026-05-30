@@ -11,7 +11,7 @@ Zova 采用模块化体系，因此可以根据业务需求将后端提供的 Sw
 ### 1. Cli命令
 
 ```bash
-$ zova :openapi:config demo-student
+$ npm run zova :openapi:config demo-student
 ```
 
 ### 2. 菜单命令
@@ -62,7 +62,7 @@ export default function (): ZovaOpenapiConfig {
 ### 1. Cli命令
 
 ```bash
-$ zova :openapi:generate demo-student
+$ npm run zova :openapi:generate demo-student
 ```
 
 ### 2. 菜单命令

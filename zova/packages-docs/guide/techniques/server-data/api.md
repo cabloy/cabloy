@@ -9,7 +9,7 @@ Create an API service `menu` in the `demo-student` module to encapsulate API cal
 ### 1. CLI Command
 
 ```bash
-$ zova :create:bean api menu -- --module=demo-student
+$ npm run zova :create:bean api menu -- --module=demo-student
 ```
 
 ### 2. Menu Command

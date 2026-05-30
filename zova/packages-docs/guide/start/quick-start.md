@@ -24,7 +24,7 @@ This extension provides a large number of menus for quickly creating code skelet
 ### 1. Create Project
 
 ```bash
-$ zova :create:project projectName -- --template=vuetify
+$ npm run zova :create:project projectName -- --template=vuetify
 $ cd projectName
 ```
 

@@ -7,7 +7,7 @@ Zova 提供了大量的 Cli 命令，用于生成各类资源的代码骨架。
 在模块 demo-student 中创建一个组件：`test`，命令如下：
 
 ```bash
-$ zova :create:component test -- --module=demo-student
+$ npm run zova :create:component test -- --module=demo-student
 ```
 
 ## 命令的用法
@@ -17,17 +17,17 @@ Zova 的 Cli 命令有统一的格式，只要掌握了以下几个命令运行�
 1. 列出所有命令
 
 ```bash
-$ zova :
+$ npm run zova :
 ```
 
 2. 列出指定分组的命令
 
 ```bash
-$ zova :create
+$ npm run zova :create
 ```
 
 3. 查看指定命令的 help 信息
 
 ```bash
-$ zova :create:component --help
+$ npm run zova :create:component --help
 ```

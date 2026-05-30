@@ -11,7 +11,7 @@ First, initialize the Openapi config in the module demo-student.
 ### 1. CLI command
 
 ```bash
-$ zova :openapi:config demo-student
+$ npm run zova :openapi:config demo-student
 ```
 
 ### 2. Menu command
@@ -62,7 +62,7 @@ Now you can automatically download Swagger/Openapi and then generate the specifi
 ### 1. CLI command
 
 ```bash
-$ zova :openapi:generate demo-student
+$ npm run zova :openapi:generate demo-student
 ```
 
 ### 2. Menu commands

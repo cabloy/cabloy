@@ -24,7 +24,7 @@ $ pnpm add -g zova-cli@latest
 ### 1. 创建项目
 
 ```bash
-$ zova :create:project projectName -- --template=vuetify
+$ npm run zova :create:project projectName -- --template=vuetify
 $ cd projectName
 ```
 

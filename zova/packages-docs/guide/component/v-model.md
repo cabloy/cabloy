@@ -11,7 +11,7 @@ Add `modelValue` to component `card`
 - Cli command
 
 ```bash
-$ zova :refactor:componentModel card modelValue -- --module=demo-student
+$ npm run zova :refactor:componentModel card modelValue -- --module=demo-student
 ```
 
 - Menu command
@@ -93,7 +93,7 @@ Add v-model `title` to component card.
 - Cli command
 
 ```bash
-$ zova :refactor:componentModel card title -- --module=demo-student
+$ npm run zova :refactor:componentModel card title -- --module=demo-student
 ```
 
 - Menu command

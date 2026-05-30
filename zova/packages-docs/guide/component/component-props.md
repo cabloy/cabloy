@@ -9,7 +9,7 @@ Add a Props code skeleton for the `card` component.
 ### 1. CLI Command
 
 ```bash
-$ zova :refactor:componentProps card -- --module=demo-student
+$ npm run zova :refactor:componentProps card -- --module=demo-student
 ```
 
 ### 2. Menu Command

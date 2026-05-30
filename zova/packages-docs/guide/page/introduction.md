@@ -15,7 +15,7 @@ Taking the module `demo-student` as an example, create a page `counter`
 ### 1. CLI Command
 
 ```bash
-$ zova :create:page counter -- --module=demo-student
+$ npm run zova :create:page counter -- --module=demo-student
 ```
 
 ### 2. Menu Command

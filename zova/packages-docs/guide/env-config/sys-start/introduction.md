@@ -56,7 +56,7 @@ For different scenarios, corresponding interface definitions are provided for di
 ### 1. Cli command
 
 ```bash
-$ zova :init:mainSys demo-student
+$ npm run zova :init:mainSys demo-student
 ```
 
 ### 2. Menu command
@@ -80,7 +80,7 @@ export class MainSys extends BeanSimple implements IModuleMainSys {
 ### 1. Cli command
 
 ```bash
-$ zova :init:monkeySys demo-student
+$ npm run zova :init:monkeySys demo-student
 ```
 
 ### 2. Menu command
@@ -116,7 +116,7 @@ export class MonkeySys
 ### 1. Cli command
 
 ```bash
-$ zova :init:sysMonkey
+$ npm run zova :init:sysMonkey
 ```
 
 ### 2. Menu command

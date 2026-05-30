@@ -9,7 +9,7 @@ Add Params code skeleton for page `counter`
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:pageParams counter -- --module=demo-student
+$ npm run zova :refactor:pageParams counter -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -54,7 +54,7 @@ The module's .metadata needs to be regenerated so that changes to the routing re
 - CLI command
 
 ```bash
-$ zova :tools:metadata demo-student
+$ npm run zova :tools:metadata demo-student
 ```
 
 - Menu command

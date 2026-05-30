@@ -38,7 +38,7 @@ a-home
 ### 1. Cli command
 
 ```bash
-$ zova :create:suite suiteName
+$ npm run zova :create:suite suiteName
 ```
 
 | Name      | Description |

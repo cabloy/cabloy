@@ -9,7 +9,7 @@ Zova 中的组件不再区分`Props`、`Emits` 和 `Slots`，而是只需提供`
 ### 1. Cli命令
 
 ```bash
-$ zova :refactor:componentProps card -- --module=demo-student
+$ npm run zova :refactor:componentProps card -- --module=demo-student
 ```
 
 ### 2. 菜单命令

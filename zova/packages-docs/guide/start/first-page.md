@@ -9,7 +9,7 @@ First, create a module named `demo-student`. There are two ways to create a modu
 ### 1. Cli Command
 
 ```bash
-$ zova :create:module demo-student -- --suite=
+$ npm run zova :create:module demo-student -- --suite=
 ```
 
 ### 2. Menu Command
@@ -31,7 +31,7 @@ Next, we'll use Zova's built-in code generator to create the Page code skeleton.
 ### 1. Cli Command
 
 ```bash
-$ zova :create:page counter -- --module=demo-student
+$ npm run zova :create:page counter -- --module=demo-student
 ```
 
 ### 2. Menu Command

@@ -58,7 +58,7 @@ First, separate out the Render.
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:firstRender page/counter -- --module=demo-student
+$ npm run zova :refactor:firstRender page/counter -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -89,7 +89,7 @@ Then separate out the Style.
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:firstStyle page/counter -- --module=demo-student
+$ npm run zova :refactor:firstStyle page/counter -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -120,7 +120,7 @@ As the code continues to grow, you can continue to adjust the file structure, cr
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:anotherRender page/counter another -- --module=demo-student
+$ npm run zova :refactor:anotherRender page/counter another -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -134,7 +134,7 @@ Context Menu - [Module Path/src/page/pageName]: `Zova Refactor/Create Another Re
 ### 1. CLI command
 
 ```bash
-$ zova :refactor:anotherStyle page/counter another -- --module=demo-student
+$ npm run zova :refactor:anotherStyle page/counter another -- --module=demo-student
 ```
 
 ### 2. Menu command
@@ -150,7 +150,7 @@ Create a Service `counter` to separate state management.
 ### 1. CLI command
 
 ```bash
-$ zova :create:bean service page/counter/counter -- --module=demo-student
+$ npm run zova :create:bean service page/counter/counter -- --module=demo-student
 ```
 
 ### 2. Menu command

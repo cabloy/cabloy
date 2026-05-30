@@ -38,7 +38,7 @@ a-home
 ### 1. Cli 命令
 
 ```bash
-$ zova :create:suite suiteName
+$ npm run zova :create:suite suiteName
 ```
 
 | 名称      | 说明     |

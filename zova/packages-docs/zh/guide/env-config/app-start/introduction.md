@@ -55,7 +55,7 @@ ZovaJS 提供了`Hook/Monkey`机制，可以在应用启动时对系统进行深
 ### 1. Cli命令
 
 ```bash
-$ zova :init:main demo-student
+$ npm run zova :init:main demo-student
 ```
 
 ### 2. 菜单命令
@@ -78,7 +78,7 @@ export class Main extends BeanSimple implements IModuleMain {
 ### 1. Cli命令
 
 ```bash
-$ zova :init:monkey demo-student
+$ npm run zova :init:monkey demo-student
 ```
 
 ### 2. 菜单命令
@@ -113,7 +113,7 @@ export class Monkey
 ### 1. Cli命令
 
 ```bash
-$ zova :init:appMonkey
+$ npm run zova :init:appMonkey
 ```
 
 ### 2. 菜单命令

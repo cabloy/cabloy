@@ -9,7 +9,7 @@
 ### 1. Cli 命令
 
 ```bash
-$ zova :create:bean model test -- --module=demo-student
+$ npm run zova :create:bean model test -- --module=demo-student
 ```
 
 ### 2. 菜单命令

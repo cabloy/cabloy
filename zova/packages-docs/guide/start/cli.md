@@ -7,7 +7,7 @@ Zova provides a large number of Cli commands for generating code skeletons for v
 Create a Component: `test` in the module demo-student, the command is as follows:
 
 ```bash
-$ zova :create:component test -- --module=demo-student
+$ npm run zova :create:component test -- --module=demo-student
 ```
 
 ## Command usage
@@ -17,17 +17,17 @@ Zova's Cli commands have a unified format. As long as we master the ideas of run
 1. List all commands
 
 ```bash
-$ zova :
+$ npm run zova :
 ```
 
 2. List commands for a specified group
 
 ```bash
-$ zova :create
+$ npm run zova :create
 ```
 
 3. View the help information of a specified command
 
 ```bash
-$ zova :create:component --help
+$ npm run zova :create:component --help
 ```

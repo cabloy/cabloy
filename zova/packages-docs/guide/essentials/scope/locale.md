@@ -7,7 +7,7 @@ Modules can individually provide their own `I18n` language resources.
 ### 1. Cli command
 
 ```bash
-$ zova :init:locale demo-student
+$ npm run zova :init:locale demo-student
 ```
 
 ### 2. Menu command

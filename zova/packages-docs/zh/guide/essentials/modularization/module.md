@@ -38,7 +38,7 @@
 ### 1. Cli 命令
 
 ```bash
-$ zova :create:module moduleName [--suite=]
+$ npm run zova :create:module moduleName [--suite=]
 ```
 
 | 名称       | 说明               |
