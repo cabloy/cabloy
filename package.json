@@ -24,6 +24,7 @@
     "upgrade": "node scripts/upgrade.ts",
     "upgrade:dry-run": "node scripts/upgrade.ts --dry-run",
     "vona": "node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona",
+    "zova": "node ./zova/packages-cli/cli/src/bin/zova.ts --projectPath=zova",
     "dev": "cd vona && npm run dev",
     "build": "pnpm --dir zova run build:ssr:cabloyBasicBatch && pnpm --dir vona run build",
     "build:docker": "pnpm --dir zova run build:ssr:cabloyBasicBatch && pnpm --dir vona run build:docker",
