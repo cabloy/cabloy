@@ -87,6 +87,9 @@ vona/src/suite/cabloy-basic/modules/basic-siteweb/zovaRest
 vona/packages-docs/
 zova/packages-docs/
 
+# Test suite
+vona/src/suite-vendor/a-test
+
 # CLI templates (replaced by create-cabloy)
 vona/packages-cli/cli-set-api/cli/templates/create/project
 zova/packages-cli/cli-set-front/cli/templates/create/project
