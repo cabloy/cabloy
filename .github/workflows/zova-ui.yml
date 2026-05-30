@@ -1,0 +1,39 @@
+name: zova-ui
+on:
+  push:
+    branches:
+      - main
+jobs:
+  unittest:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.19.0
+      - name: init
+        run: npm run init
+      - name: suite
+        run: npm run zova :create:suite test-demo
+        working-directory: zova
+      - name: module
+        run: npm run zova :create:module test-demo -- --suite=test-demo --ci
+        working-directory: zova
+      - run: npm run zova :tools:deps
+        working-directory: zova
+      - name: page
+        run: npm run zova :create:page first -- --module=test-demo
+        working-directory: zova
+      - name: component
+        run: npm run zova :create:component child -- --module=test-demo
+        working-directory: zova
+      - name: npm run build
+        run: npm run build
+        working-directory: zova
