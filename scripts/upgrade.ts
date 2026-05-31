@@ -50,9 +50,7 @@ const WHITELIST_FILES: string[] = [
   'oxlint.config.ts',
   'lint-staged.config.mjs',
   // vona
-  'vona/package.original.json',
   'vona/pnpm-workspace.yaml',
-  'vona/lerna.json',
   'vona/tsconfig.json',
   'vona/tsconfig.base.json',
   'vona/tsconfig.base.esm.json',
@@ -60,9 +58,7 @@ const WHITELIST_FILES: string[] = [
   'vona/oxlint.config.ts',
   'vona/codecov.yml',
   // zova
-  'zova/package.original.json',
   'zova/pnpm-workspace.yaml',
-  'zova/lerna.json',
   'zova/tsconfig.json',
   'zova/tsconfig.base.json',
   'zova/tsconfig.base.esm.json',
