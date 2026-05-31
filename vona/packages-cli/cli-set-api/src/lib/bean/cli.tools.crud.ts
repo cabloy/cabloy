@@ -23,8 +23,6 @@ export class CliToolsCrud extends BeanCliBase {
     const { argv } = this.context;
     // super
     await super.execute();
-    // noformat
-    // argv.noformat = true;
     // ssrSiteModuleName
     const isCabloyStart = fs.existsSync(path.join(argv.projectPath, '__CABLOY_START__'));
     argv.ssrSiteModuleName = isCabloyStart

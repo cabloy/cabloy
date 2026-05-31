@@ -18,7 +18,7 @@ export default metadataCustomSnippet({
   init: async ({ cli, argv, targetFile }) => {
     await catchError(() => {
       return cli.helper.invokeCli(
-        [':create:bean', 'meta', 'index', `--module=${argv.module}`, '--nometadata', '--noformat'],
+        [':create:bean', 'meta', 'index', `--module=${argv.module}`, '--nometadata'],
         {
           cwd: argv.projectPath,
         },

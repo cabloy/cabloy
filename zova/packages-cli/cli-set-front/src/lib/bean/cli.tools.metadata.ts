@@ -39,8 +39,6 @@ export class CliToolsMetadata extends BeanCliBase {
     const { argv } = this.context;
     // super
     await super.execute();
-    // noformat: src/index.ts need format
-    // argv.noformat = true;
     // moduleNames
     let moduleNames = argv._;
     const force = argv.force ?? moduleNames.length > 0;

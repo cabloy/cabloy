@@ -18,8 +18,6 @@ export class CliCreateSuite extends BeanCliBase {
     const { argv } = this.context;
     // super
     await super.execute();
-    // noformat
-    // argv.noformat = true;
     // nameMeta
     const nameMeta = this.helper.parseNameMeta(argv.name);
     const suiteDir = nameMeta.directory || 'suite';

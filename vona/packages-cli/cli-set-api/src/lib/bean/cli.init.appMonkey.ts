@@ -13,8 +13,6 @@ export class CliInitAppMonkey extends BeanCliBase {
     const { argv } = this.context;
     // super
     await super.execute();
-    // noformat
-    // argv.noformat = true;
     // target dir
     const targetDir = path.join(argv.projectPath, 'src/backend/config');
     const monkeyFile = path.join(targetDir, 'monkey.ts');

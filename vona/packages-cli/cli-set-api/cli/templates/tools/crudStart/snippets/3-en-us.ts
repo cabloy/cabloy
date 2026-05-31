@@ -18,7 +18,7 @@ export default metadataCustomSnippet({
   language: 'plain',
   init: async ({ cli, argv, targetFile }) => {
     await catchError(() => {
-      return cli.helper.invokeCli([':init:locale', argv.module, '--nometadata', '--noformat'], {
+      return cli.helper.invokeCli([':init:locale', argv.module, '--nometadata'], {
         cwd: argv.projectPath,
       });
     });

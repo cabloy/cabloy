@@ -32,7 +32,6 @@ export default metadataCustomSnippet({
           'version',
           `--module=${argv.module}`,
           '--nometadata',
-          '--noformat',
         ],
         {
           cwd: argv.projectPath,

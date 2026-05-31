@@ -23,8 +23,6 @@ export class CliToolsCrudStart extends BeanCliBase {
     const { argv } = this.context;
     // super
     await super.execute();
-    // noformat
-    // argv.noformat = true;
     // module name/info
     const moduleName = argv.module;
     argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
