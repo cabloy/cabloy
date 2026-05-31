@@ -8,7 +8,6 @@ export interface ICommandArgv {
   dummy: boolean;
   ci: boolean;
   nometadata: boolean;
-  noformat: boolean;
   _: string[];
 }
 
