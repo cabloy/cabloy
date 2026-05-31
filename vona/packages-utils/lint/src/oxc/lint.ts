@@ -9,7 +9,6 @@ const _configDefault: OxlintConfig = {
     'eslint-plugin-unused-imports',
     'eslint-plugin-eslint-comments',
     'eslint-plugin-command',
-    'eslint-plugin-perfectionist',
     '@e18e/eslint-plugin',
     '@stylistic/eslint-plugin',
     'eslint-plugin-regexp',
@@ -221,27 +220,6 @@ const _configDefault: OxlintConfig = {
     'eslint-comments/no-unlimited-disable': 'error',
     'eslint-comments/no-unused-enable': 'error',
     'command/command': 'error',
-    'perfectionist/sort-exports': [
-      'error',
-      {
-        order: 'asc',
-        type: 'natural',
-      },
-    ],
-    'perfectionist/sort-named-exports': [
-      'error',
-      {
-        order: 'asc',
-        type: 'natural',
-      },
-    ],
-    'perfectionist/sort-named-imports': [
-      'error',
-      {
-        order: 'asc',
-        type: 'natural',
-      },
-    ],
     'antfu/import-dedupe': 'error',
     'antfu/no-import-dist': 'error',
     'antfu/no-import-node-modules-by-path': 'error',
