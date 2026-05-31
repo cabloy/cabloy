@@ -30,8 +30,6 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "docs:fix": "textlint --fix ./packages-docs/**/*.md",
-    "release-patch": "./scripts/release.sh patch",
-    "release-minor": "./scripts/release.sh minor",
     "dev:ssr:admin": "npm run prerun && quasar dev --mode ssr --flavor admin",
     "build:ssr:admin": "npm run prerun && quasar build --mode ssr --flavor admin",
     "preview:ssr:admin": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-admin/index.js\"",

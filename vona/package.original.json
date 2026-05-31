@@ -36,9 +36,7 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "docs:fix": "textlint --fix ./packages-docs/**/*.md",
-    "release-patch": "./scripts/release.sh patch",
-    "release-minor": "./scripts/release.sh minor"
+    "docs:fix": "textlint --fix ./packages-docs/**/*.md"
   },
   "dependencies": {
     "vona": "workspace:^"
