@@ -32,7 +32,6 @@ const WHITELIST_DIRS: string[] = [
   'zova/packages-utils',
   'zova/src/suite-vendor',
   'zova/src/module-vendor',
-  'zova/src/boot',
   'zova/src-ssr',
   'zova/scripts',
 ];
