@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "version": "independent",
+  "packages": [
+    "packages-cabloy/*",
+    "vona/packages-cli/*",
+    "vona/packages-utils/*",
+    "vona/packages-vona/*",
+    "vona/src/module-vendor/*",
+    "vona/src/suite-vendor/*",
+    "vona/src/suite-vendor/*/modules/*",
+    "zova/packages-cli/*",
+    "zova/packages-utils/*",
+    "zova/packages-zova/*",
+    "zova/src/module-vendor/*",
+    "zova/src/suite-vendor/*",
+    "zova/src/suite-vendor/*/modules/*"
+  ],
+  "command": {
+    "publish": {},
+    "version": {}
+  }
+}
