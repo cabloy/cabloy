@@ -23,7 +23,6 @@
     "dev:spa": "npm run prerun && quasar dev --mode spa --flavor admin",
     "build:spa": "npm run prerun && quasar build --mode spa --flavor admin",
     "preview:spa": "vite preview --outDir=dist/spa-admin",
-    "build:githubpages": "npm run prerun && quasar build --mode spa --flavor githubpages",
     "prerun": "npm run zova :tools:deps && npm run tsc",
     "tsc": "tsc --noEmit --project tsconfig.vue-tsc.json",
     "format": "oxfmt --check",
