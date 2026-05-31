@@ -67,7 +67,7 @@
     "tsdown": "^0.21.7",
     "typescript": "^5.9.3",
     "urllib": "^4.6.11",
-    "vite": "^8.0.2",
+    "vite": "^8.0.14",
     "yaml": "^2.8.3",
     "zova-openapi": "^1.1.14",
     "zova-vite": "^1.1.32"

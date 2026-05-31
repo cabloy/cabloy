@@ -67,7 +67,7 @@
     "minimist": "^1.2.8",
     "terser": "^5.46.1",
     "tmp": "^0.2.5",
-    "vite": "^8.0.8",
+    "vite": "^8.0.14",
     "vite-plugin-devtools-json": "^1.0.0",
     "vite-plugin-fake-server-turbo": "^3.0.18"
   },

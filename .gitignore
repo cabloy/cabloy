@@ -1,5 +1,6 @@
 node_modules
 miniprogram_npm
+.assets/
 **/vite.config.ts.timestamp-*
 **/coverage
 **/dist/
