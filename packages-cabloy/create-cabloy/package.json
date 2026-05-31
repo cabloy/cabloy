@@ -24,8 +24,7 @@
   "scripts": {
     "dev": "unbuild --stub",
     "build": "unbuild",
-    "release-patch": "npm version patch && npm publish && git push --follow-tags",
-    "release-minor": "npm version minor && npm publish && git push --follow-tags"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@clack/prompts": "^0.9.1",
