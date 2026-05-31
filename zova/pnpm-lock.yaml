@@ -294,8 +294,8 @@ importers:
         specifier: ^3.1.14
         version: 3.1.14(vue@3.5.34(typescript@5.9.3))
       '@cabloy/lint':
-        specifier: ^5.1.21
-        version: 5.1.21(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@5.9.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.65.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0(jiti@2.7.0)))
+        specifier: ^5.1.27
+        version: 5.1.27(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@5.9.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.65.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0(jiti@2.7.0)))
       '@cabloy/openapi-typescript':
         specifier: ^7.9.2
         version: 7.9.2(typescript@5.9.3)
@@ -327,8 +327,8 @@ importers:
         specifier: ^1.65.0
         version: 1.65.0
       quasar-app-extension-zova:
-        specifier: workspace:^
-        version: link:packages-utils/quasar-app-extension-zova
+        specifier: ^1.3.0
+        version: 1.3.0(@cabloy/vue-router@4.4.16(vue@3.5.34(typescript@5.9.3)))(@types/node@22.19.19)(eslint@10.4.0(jiti@2.7.0))(jiti@2.7.0)(quasar@2.19.3)(rolldown@1.0.1)(rollup@4.60.4)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))(yaml@2.9.0)
       sass:
         specifier: ^1.99.0
         version: 1.99.0
@@ -637,37 +637,6 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  packages-utils/quasar-app-extension-zova:
-    dependencies:
-      '@quasar/app-vite':
-        specifier: npm:@cabloy/quasar-app-vite@^2.5.9
-        version: '@cabloy/quasar-app-vite@2.5.9(@cabloy/vue-router@4.4.16(vue@3.5.34(typescript@5.9.3)))(@types/node@22.19.19)(eslint@10.4.0(jiti@2.7.0))(jiti@2.7.0)(quasar@2.19.3)(rolldown@1.0.1)(rollup@4.60.4)(sass@1.99.0)(terser@5.47.1)(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))(yaml@2.9.0)'
-      chalk:
-        specifier: ^3.0.0
-        version: 3.0.0
-      esbuild:
-        specifier: ^0.25.12
-        version: 0.25.12
-      fs-extra:
-        specifier: ^11.3.5
-        version: 11.3.5
-      vite:
-        specifier: ^8.0.8
-        version: 8.0.13(@types/node@22.19.19)(esbuild@0.25.12)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(yaml@2.9.0)
-      zova-vite:
-        specifier: ^1.1.32
-        version: link:../zova-vite
-    devDependencies:
-      '@cabloy/lint':
-        specifier: ^5.1.21
-        version: 5.1.21(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@5.9.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.65.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0(jiti@2.7.0)))
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
-
   packages-utils/word-utils:
     devDependencies:
       clean-package:
@@ -695,7 +664,7 @@ importers:
         specifier: ^3.5.32
         version: 3.5.34(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.42
+        specifier: ^5.1.46
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -836,10 +805,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.42
+        specifier: ^5.1.46
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.83
+        specifier: ^5.1.87
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -864,7 +833,7 @@ importers:
         specifier: ^2.1.3
         version: 2.1.5
       '@cabloy/logger':
-        specifier: ^1.1.15
+        specifier: ^1.1.21
         version: link:../../packages-utils/logger
       '@cabloy/module-info':
         specifier: ^2.0.0
@@ -994,7 +963,7 @@ importers:
         specifier: ^5.1.22
         version: link:modules/a-interceptor
       zova-module-a-logger:
-        specifier: ^5.1.16
+        specifier: ^5.1.20
         version: link:modules/a-logger
       zova-module-a-meta:
         specifier: ^5.1.15
@@ -1033,7 +1002,7 @@ importers:
         specifier: ^5.1.23
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.54
+        specifier: ^5.1.58
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1150,7 +1119,7 @@ importers:
   src/suite-vendor/a-zova/modules/a-logger:
     dependencies:
       '@cabloy/logger':
-        specifier: ^1.1.15
+        specifier: ^1.1.21
         version: link:../../../../../packages-utils/logger
     devDependencies:
       clean-package:
@@ -1372,7 +1341,7 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.48
+        specifier: ^1.1.52
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
@@ -2003,8 +1972,8 @@ packages:
   '@cabloy/json5@1.1.6':
     resolution: {integrity: sha512-wZjerM56Icm3PjVO+fKDc2uwe4ewv7w7/jPWEOVRSdQlQe1+fISdYTSxxe9C8iNxyvxsFYrekxyNtC9yRoPpDg==}
 
-  '@cabloy/lint@5.1.21':
-    resolution: {integrity: sha512-JynZrLbVXRw/Xu+RZNaqKDrvx5JxdwyjnByVNWzqi9oJjB1cXDrFTHr0P1j4T5TZf800eV5AMDXLyQzfXUoKPA==}
+  '@cabloy/lint@5.1.27':
+    resolution: {integrity: sha512-YrRcvXVGdImHL2sz+cyfwkfk7Ach8imvF+MaB9OejdsLRNCgj2ohvlbGwc/SH3nHQG/ksy0oPSHR2fcvFS/hjQ==}
     peerDependencies:
       oxfmt: '>=0.45.0'
       oxlint: '>=1.65.0'
@@ -6233,12 +6202,6 @@ packages:
     peerDependencies:
       eslint: '>=9.38.0'
 
-  eslint-plugin-perfectionist@5.9.0:
-    resolution: {integrity: sha512-8TWzg02zmnBdZwCkWLi8jhzqXI+fE7Z/RwV8SL6xD45tJ8Bp3wGuYL2XtQgfe/Wd0eBqOUX+s6ey73IyszvKTA==}
-    engines: {node: ^20.0.0 || >=22.0.0}
-    peerDependencies:
-      eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
-
   eslint-plugin-pnpm@1.6.0:
     resolution: {integrity: sha512-dxmt9r3zvPaft6IugS4i0k16xag3fTbOvm/road5uV9Y8qUCQT0xzheSh3gMlYAlC6vXRpfArBDsTZ7H7JKCbg==}
     peerDependencies:
@@ -7881,10 +7844,6 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  natural-orderby@5.0.0:
-    resolution: {integrity: sha512-kKHJhxwpR/Okycz4HhQKKlhWe4ASEfPgkSWNmKFHd7+ezuQlxkA5cM3+XkBPvm1gmHen3w53qsYAv+8GwRrBlg==}
-    engines: {node: '>=18'}
-
   negotiator@0.6.4:
     resolution: {integrity: sha512-myRT3DiWPHqho5PrJaIRyaMv2kgYf0mUVgBNOYMuCH5Ki1yEiQaf/ZJuQ62nvpc44wL5WDbTX7yGJi1Neevw8w==}
     engines: {node: '>= 0.6'}
@@ -8459,6 +8418,9 @@ packages:
 
   quansync@1.0.0:
     resolution: {integrity: sha512-5xZacEEufv3HSTPQuchrvV6soaiACMFnq1H8wkVioctoH3TRha9Sz66lOxRwPK/qZj7HPiSveih9yAyh98gvqA==}
+
+  quasar-app-extension-zova@1.3.0:
+    resolution: {integrity: sha512-09jtmh3fLl3RcHZ/7wtbNL/YpkNvCsl+9GeeSc4aGZQL0W4fKWoYO7E2usL79n93ciBigVFjM1/erPmOAqGBuw==}
 
   quasar@2.19.3:
     resolution: {integrity: sha512-z9uEiZfpkkwUGedgVfARRoF7h30qWSZwUfUTLOo/jXCiGL5KYQt5N39XpKVOW0Y7lGF9kSAZuFHvYoPZoMUpfg==}
@@ -10378,7 +10340,7 @@ snapshots:
     dependencies:
       json5: 2.2.3
 
-  '@cabloy/lint@5.1.21(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@5.9.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.65.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0(jiti@2.7.0)))':
+  '@cabloy/lint@5.1.27(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@5.9.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.65.0)(typescript@5.9.3)(vue-eslint-parser@10.4.0(eslint@10.4.0(jiti@2.7.0)))':
     dependencies:
       '@e18e/eslint-plugin': 0.2.0(eslint@10.4.0(jiti@2.7.0))(oxlint@1.65.0)
       '@eslint/json': 1.2.0
@@ -10389,7 +10351,6 @@ snapshots:
       eslint-plugin-command: 3.5.2(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@5.9.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@10.4.0(jiti@2.7.0))
       eslint-plugin-jsonc: 3.1.2(@eslint/json@1.2.0)(eslint@10.4.0(jiti@2.7.0))
-      eslint-plugin-perfectionist: 5.9.0(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)
       eslint-plugin-pnpm: 1.6.0(eslint@10.4.0(jiti@2.7.0))
       eslint-plugin-regexp: 3.1.0(eslint@10.4.0(jiti@2.7.0))
       eslint-plugin-toml: 1.3.1(eslint@10.4.0(jiti@2.7.0))
@@ -14410,15 +14371,6 @@ snapshots:
     transitivePeerDependencies:
       - '@eslint/json'
 
-  eslint-plugin-perfectionist@5.9.0(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3):
-    dependencies:
-      '@typescript-eslint/utils': 8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)
-      eslint: 10.4.0(jiti@2.7.0)
-      natural-orderby: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-
   eslint-plugin-pnpm@1.6.0(eslint@10.4.0(jiti@2.7.0)):
     dependencies:
       empathic: 2.0.1
@@ -16434,8 +16386,6 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  natural-orderby@5.0.0: {}
-
   negotiator@0.6.4: {}
 
   negotiator@1.0.0: {}
@@ -17205,6 +17155,43 @@ snapshots:
       side-channel: 1.1.0
 
   quansync@1.0.0: {}
+
+  quasar-app-extension-zova@1.3.0(@cabloy/vue-router@4.4.16(vue@3.5.34(typescript@5.9.3)))(@types/node@22.19.19)(eslint@10.4.0(jiti@2.7.0))(jiti@2.7.0)(quasar@2.19.3)(rolldown@1.0.1)(rollup@4.60.4)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))(yaml@2.9.0):
+    dependencies:
+      '@cabloy/module-info': 2.0.0
+      '@quasar/app-vite': '@cabloy/quasar-app-vite@2.5.9(@cabloy/vue-router@4.4.16(vue@3.5.34(typescript@5.9.3)))(@types/node@22.19.19)(eslint@10.4.0(jiti@2.7.0))(jiti@2.7.0)(quasar@2.19.3)(rolldown@1.0.1)(rollup@4.60.4)(sass@1.99.0)(terser@5.47.1)(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))(yaml@2.9.0)'
+      chalk: 3.0.0
+      esbuild: 0.25.12
+      fs-extra: 11.3.5
+      vite: 8.0.13(@types/node@22.19.19)(esbuild@0.25.12)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(yaml@2.9.0)
+      zova-vite: link:packages-utils/zova-vite
+    transitivePeerDependencies:
+      - '@electron/packager'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - bare-abort-controller
+      - bare-buffer
+      - electron-builder
+      - eslint
+      - jiti
+      - less
+      - pinia
+      - quasar
+      - react-native-b4a
+      - rolldown
+      - rollup
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - vue
+      - vue-router
+      - workbox-build
+      - yaml
 
   quasar@2.19.3: {}
 
