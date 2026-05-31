@@ -16,7 +16,6 @@
   "type": "module",
   "packageManager": "pnpm@10.19.0",
   "scripts": {
-    "init": "pnpm install --no-frozen-lockfile && npm run zova :tools:deps",
     "zova": "node ./packages-cli/cli/src/bin/zova.ts",
     "dev": "npm run dev:ssr:admin",
     "build": "npm run build:ssr:admin",
@@ -31,7 +30,6 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "update": "pnpm update && npm run zova :tools:deps",
     "docs:fix": "textlint --fix ./packages-docs/**/*.md",
     "release-patch": "./scripts/release.sh patch",
     "release-minor": "./scripts/release.sh minor",

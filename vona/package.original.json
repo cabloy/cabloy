@@ -18,7 +18,6 @@
     "node": ">=24.4.0"
   },
   "scripts": {
-    "init": "pnpm install --no-frozen-lockfile && npm run prerun",
     "vona": "node ./packages-cli/cli/src/bin/vona.ts",
     "play": "npm run vona :bin:play -- --flavor=play --dummy",
     "db:reset": "npm run prerun && npm run vona :bin:dbReset -- --flavor=normal",
@@ -37,7 +36,6 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "update": "pnpm update && npm run vona :tools:deps",
     "docs:fix": "textlint --fix ./packages-docs/**/*.md",
     "release-patch": "./scripts/release.sh patch",
     "release-minor": "./scripts/release.sh minor"

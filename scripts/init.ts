@@ -147,8 +147,9 @@ function initVona(): void {
   const pkgPath = resolve(ROOT_DIR, 'vona/package.json');
   if (!existsSync(pkgPath)) {
     copyFileSync(resolve(ROOT_DIR, 'vona/package.original.json'), pkgPath);
+    exec("pnpm --dir './vona' install --no-frozen-lockfile");
   }
-  exec("pnpm --dir './vona' run init");
+  exec('npm run vona :tools:deps');
 }
 
 // --- Step D: init:zova ---
@@ -159,8 +160,9 @@ function initZova(): void {
   const pkgPath = resolve(ROOT_DIR, 'zova/package.json');
   if (!existsSync(pkgPath)) {
     copyFileSync(resolve(ROOT_DIR, 'zova/package.original.json'), pkgPath);
+    exec("pnpm --dir './zova' install --no-frozen-lockfile");
   }
-  exec("pnpm --dir './zova' run init");
+  exec('npm run zova :tools:deps');
 }
 
 // --- Step E: buildSsrCabloyBasicBatch ---
