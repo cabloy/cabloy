@@ -66,9 +66,6 @@ const WHITELIST_FILES: string[] = [
   'zova/tsconfig.vue-tsc.json',
   'zova/oxfmt.config.ts',
   'zova/oxlint.config.ts',
-  'zova/quasar.config.ts',
-  'zova/quasar.extensions.json',
-  'zova/postcss.config.js',
   'zova/index.html',
   'zova/openapi.config.ts',
 ];
