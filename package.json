@@ -1,6 +1,7 @@
 {
   "name": "cabloy",
   "version": "5.1.25",
+  "gitHead": "22cb8e3613d617a21cd5d964847a36462d98c212",
   "description": "A Node.js fullstack framework",
   "keywords": [
     "cabloy",

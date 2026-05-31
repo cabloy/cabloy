@@ -1,7 +1,7 @@
 {
   "name": "@cabloy/lint",
   "version": "5.1.25",
-  "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
+  "gitHead": "22cb8e3613d617a21cd5d964847a36462d98c212",
   "description": "Node Style Guide for Cabloy.",
   "files": [
     "api",

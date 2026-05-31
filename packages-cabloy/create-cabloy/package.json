@@ -1,6 +1,7 @@
 {
   "name": "create-cabloy",
   "version": "5.0.5",
+  "gitHead": "22cb8e3613d617a21cd5d964847a36462d98c212",
   "description": "Create a new Cabloy project - npm create cabloy",
   "keywords": [
     "cabloy",
