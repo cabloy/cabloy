@@ -1,6 +1,6 @@
 {
   "name": "zova-jsx",
-  "version": "1.1.50",
+  "version": "1.1.51",
   "gitHead": "22cb8e3613d617a21cd5d964847a36462d98c212",
   "description": "Zova JSX",
   "keywords": [
@@ -50,7 +50,7 @@
     "@cabloy/word-utils": "^2.1.14",
     "typestyle": "^2.4.0",
     "vue": "^3.5.32",
-    "zova-core": "^5.1.44"
+    "zova-core": "^5.1.45"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
