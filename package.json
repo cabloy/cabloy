@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "5.1.23",
+  "version": "5.1.24",
   "description": "A Node.js fullstack framework",
   "keywords": [
     "cabloy",
@@ -49,7 +49,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@cabloy/lint": "^5.1.21",
+    "@cabloy/lint": "^5.1.23",
     "@cabloy/process-helper": "^3.1.3",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.19.17",
