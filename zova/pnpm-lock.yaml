@@ -29,7 +29,7 @@ importers:
         specifier: ^1.1.6
         version: 1.1.6
       '@cabloy/logger':
-        specifier: ^1.1.15
+        specifier: ^1.1.21
         version: link:packages-utils/logger
       '@cabloy/module-info':
         specifier: ^2.0.0
@@ -131,7 +131,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.48
+        specifier: ^1.1.52
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
