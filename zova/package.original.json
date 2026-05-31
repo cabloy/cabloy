@@ -75,7 +75,6 @@
     "vite-plugin-fake-server-turbo": "^3.0.18",
     "vue-tsc": "^3.2.6",
     "zova-vite": "workspace:^",
-    "lerna": "^9.0.7",
     "textlint": "^15.7.0",
     "textlint-rule-en-no-mixed-period": "^3.0.2",
     "textlint-rule-ja-no-mixed-period": "^3.0.2",
