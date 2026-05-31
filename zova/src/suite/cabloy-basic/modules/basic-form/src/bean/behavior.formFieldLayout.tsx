@@ -4,7 +4,7 @@ import type {
   TypeFormField,
 } from 'zova-module-a-form';
 
-import { classes, types } from 'typestyle';
+import { classes } from 'typestyle';
 import { VNode } from 'vue';
 import { z } from 'zod';
 import { Use } from 'zova';
@@ -22,9 +22,6 @@ declare module 'zova-module-a-openapi' {
 }
 
 export interface IBehaviorResourceFormFieldLayoutOptions {
-  disable?: boolean;
-  class?: any;
-  style?: types.NestedCSSProperties;
   label?: string | false;
   inline?: boolean;
   bordered?: boolean;
