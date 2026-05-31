@@ -1,6 +1,6 @@
 {
   "name": "zova-cli-set-front",
-  "version": "1.2.69",
+  "version": "1.2.70",
   "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
   "description": "zova cli-set-front",
   "keywords": [
@@ -70,7 +70,7 @@
     "vite": "^8.0.14",
     "yaml": "^2.8.3",
     "zova-openapi": "^1.1.14",
-    "zova-vite": "^1.1.32"
+    "zova-vite": "^1.1.33"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
