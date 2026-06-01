@@ -271,12 +271,18 @@ importers:
       zova-module-home-indexadmin:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-indexadmin
+      zova-module-home-indexweb:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-indexweb
       zova-module-home-layoutadmin:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-layoutadmin
       zova-module-home-layoutempty:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-layoutempty
+      zova-module-home-layoutweb:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-layoutweb
       zova-module-home-login:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-login
@@ -1416,12 +1422,18 @@ importers:
       zova-module-home-indexadmin:
         specifier: ^5.0.5
         version: link:modules/home-indexadmin
+      zova-module-home-indexweb:
+        specifier: ^5.0.0
+        version: link:modules/home-indexweb
       zova-module-home-layoutadmin:
         specifier: ^5.0.6
         version: link:modules/home-layoutadmin
       zova-module-home-layoutempty:
         specifier: ^5.0.6
         version: link:modules/home-layoutempty
+      zova-module-home-layoutweb:
+        specifier: ^5.0.0
+        version: link:modules/home-layoutweb
       zova-module-home-login:
         specifier: ^5.0.8
         version: link:modules/home-login
@@ -1468,6 +1480,15 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
+  src/suite/a-home/modules/home-indexweb:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
   src/suite/a-home/modules/home-layoutadmin:
     devDependencies:
       clean-package:
@@ -1478,6 +1499,15 @@ importers:
         version: 6.1.3
 
   src/suite/a-home/modules/home-layoutempty:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-home/modules/home-layoutweb:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
