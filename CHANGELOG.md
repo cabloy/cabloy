@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.39
+
+### Features
+
+- Update
+
+### Improvements
+
+- Replace arrow function model references with string-based module references in ORM relations and cache config
+- Update CLI usage strings to use npm run prefix
+
 ## 5.1.38
 
 ### Features
