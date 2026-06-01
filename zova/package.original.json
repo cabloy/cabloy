@@ -41,7 +41,12 @@
     "build:rest:cabloyBasicAdmin": "npm run prerun && npm run zova :bin:buildRest -- --flavor cabloyBasicAdmin",
     "preview:ssr:cabloyBasicAdmin": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-cabloyBasicAdmin/index.js\"",
     "dev:spa:cabloyBasicAdmin": "npm run prerun && quasar dev --mode spa --flavor cabloyBasicAdmin",
-    "build:ssr:cabloyBasicBatch": "npm run build:ssr:cabloyBasicAdmin && npm run build:rest:cabloyBasicAdmin"
+    "dev:ssr:cabloyBasicWeb": "npm run prerun && quasar dev --mode ssr --flavor cabloyBasicWeb",
+    "build:ssr:cabloyBasicWeb": "npm run prerun && quasar build --mode ssr --flavor cabloyBasicWeb",
+    "build:rest:cabloyBasicWeb": "npm run prerun && zova :bin:buildRest --flavor cabloyBasicWeb",
+    "preview:ssr:cabloyBasicWeb": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-cabloyBasicWeb/index.js\"",
+    "dev:spa:cabloyBasicWeb": "npm run prerun && quasar dev --mode spa --flavor cabloyBasicWeb",
+    "build:ssr:cabloyBasicBatch": "npm run build:ssr:cabloyBasicAdmin && npm run build:ssr:cabloyBasicWeb && npm run build:rest:cabloyBasicAdmin && npm run build:rest:cabloyBasicWeb"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.2",
