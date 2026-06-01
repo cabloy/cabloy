@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.41
+
+### Improvements
+
+- Update `init.ts`.
+
 ## 5.1.40
 
 ### Improvements
