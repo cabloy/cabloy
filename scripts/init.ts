@@ -145,10 +145,10 @@ function initVona(): void {
   // eslint-disable-next-line
   console.log('[init] Initializing vona...');
   const pkgPath = resolve(ROOT_DIR, 'vona/package.json');
-  if (!existsSync(pkgPath)) {
-    copyFileSync(resolve(ROOT_DIR, 'vona/package.original.json'), pkgPath);
-    exec("pnpm --dir './vona' install --no-frozen-lockfile");
-  }
+  // if (!existsSync(pkgPath)) {
+  copyFileSync(resolve(ROOT_DIR, 'vona/package.original.json'), pkgPath);
+  exec("pnpm --dir './vona' install --no-frozen-lockfile");
+  // }
   exec('npm run vona :tools:deps');
 }
 
@@ -158,10 +158,10 @@ function initZova(): void {
   // eslint-disable-next-line
   console.log('[init] Initializing zova...');
   const pkgPath = resolve(ROOT_DIR, 'zova/package.json');
-  if (!existsSync(pkgPath)) {
-    copyFileSync(resolve(ROOT_DIR, 'zova/package.original.json'), pkgPath);
-    exec("pnpm --dir './zova' install --no-frozen-lockfile");
-  }
+  // if (!existsSync(pkgPath)) {
+  copyFileSync(resolve(ROOT_DIR, 'zova/package.original.json'), pkgPath);
+  exec("pnpm --dir './zova' install --no-frozen-lockfile");
+  // }
   exec('npm run zova :tools:deps');
 }
 
