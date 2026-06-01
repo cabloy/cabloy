@@ -32,7 +32,7 @@ First define a `1:n` relation between Model `Order` and Model `Product`
 @Model({
   entity: EntityOrder,
   relations: {
-    products: $relation.hasMany(() => ModelProduct, 'orderId', {
+    products: $relation.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -55,7 +55,7 @@ $Dto.get(() => ModelOrder, {
 ```typescript
 $Dto.get(() => ModelOrder, {
   with: {
-    products: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    products: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -100,7 +100,7 @@ $Dto.get(() => ModelOrderStats, {
 ```typescript
 $Dto.get(() => ModelOrder, {
   with: {
-    productStats: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    productStats: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       aggrs: {
         count: '*',
         sum: 'amount',
@@ -149,7 +149,7 @@ $Dto.get(() => ModelOrderStats, {
 ```typescript
 $Dto.get(() => ModelOrder, {
   with: {
-    productsGroups: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    productsGroups: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       groups: 'id',
       aggrs: {
         count: '*',

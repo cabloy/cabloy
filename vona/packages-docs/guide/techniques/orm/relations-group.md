@@ -11,7 +11,7 @@ class ServiceUser {
   async relationGroup() {
     const users = await this.scope.model.user.select({
       with: {
-        posts: $relationDynamic.hasMany(() => ModelPost, 'userId', {
+        posts: $relationDynamic.hasMany('test-vona:post', 'userId', {
           groups: 'id',
           aggrs: {
             count: '*',
@@ -33,7 +33,7 @@ Vona ORM automatically infers the type of `users`
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | with.posts               | Relation Name                                                                                                        |
 | $relationDynamic.hasMany | `1:n`                                                                                                                |
-| ModelPost                | Target Model                                                                                                         |
+| 'test-vona:post'         | Target Model                                                                                                         |
 | 'userId'                 | Foreign key                                                                                                          |
 | groups                   | The groups to be grouped: `string`/`string[]`                                                                        |
 | columns                  | The group columns to be displayed. If it is empty, the columns specified by the `groups` parameter will be displayed |
@@ -49,7 +49,7 @@ For demonstration purposes, create a new Model `UserStatsGroup` and define a sta
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
       groups: 'id',
       aggrs: {
         count: '*',
@@ -90,7 +90,7 @@ You can also set the static relation to `autoload: true` to achieve automatic lo
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
 +     autoload: true,
       groups: 'id',
       aggrs: {

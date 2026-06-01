@@ -32,7 +32,7 @@ First define a `1:n` relation between Model `Order` and Model `Product`
 @Model({
   entity: EntityOrder,
   relations: {
-    products: $relation.hasMany(() => ModelProduct, 'orderId', {
+    products: $relation.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -57,7 +57,7 @@ $Dto.update(() => ModelOrder, {
 $Dto.update(() => ModelOrder, {
   columns: ['orderNo', 'remark'],
   with: {
-    products: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    products: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       columns: ['name', 'price', 'quantity', 'amount'],
     }),
   },

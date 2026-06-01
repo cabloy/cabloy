@@ -11,7 +11,7 @@ class ServiceUser {
   async relationAggregate() {
     const users = await this.scope.model.user.select({
       with: {
-        posts: $relationDynamic.hasMany(() => ModelPost, 'userId', {
+        posts: $relationDynamic.hasMany('test-vona:post', 'userId', {
           aggrs: {
             count: '*',
             sum: 'stars',
@@ -32,7 +32,7 @@ Vona ORM automatically infers the type of `users`
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | with.posts               | Relation Name                                                                                                        |
 | $relationDynamic.hasMany | `1:n`                                                                                                                |
-| ModelPost                | Target Model                                                                                                         |
+| 'test-vona:post'         | Target Model                                                                                                         |
 | 'userId'                 | Foreign key                                                                                                          |
 | aggrs                    | The functions and columns to be aggregated. Functions: `count`/`sum`/`avg`/`min`/`max`. Columns: `string`/`string[]` |
 
@@ -46,7 +46,7 @@ For demonstration purposes, create a new Model `UserStats` and define a static r
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
       aggrs: {
         count: '*',
         sum: 'stars',
@@ -86,7 +86,7 @@ You can also set the static relation to `autoload: true` to achieve automatic lo
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
 +     autoload: true,
       aggrs: {
         count: '*',

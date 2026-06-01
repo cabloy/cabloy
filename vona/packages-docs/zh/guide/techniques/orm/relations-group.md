@@ -11,7 +11,7 @@ class ServiceUser {
   async relationGroup() {
     const users = await this.scope.model.user.select({
       with: {
-        posts: $relationDynamic.hasMany(() => ModelPost, 'userId', {
+        posts: $relationDynamic.hasMany('test-vona:post', 'userId', {
           groups: 'id',
           aggrs: {
             count: '*',
@@ -33,7 +33,7 @@ Vona ORM 自动推断出`users`的类型。
 | ------------------------ | -------------------------------------------------------------------------------------- |
 | with.posts               | 关系名                                                                                 |
 | $relationDynamic.hasMany | 定义`1:n`关系                                                                          |
-| ModelPost                | 目标Model                                                                              |
+| 'test-vona:post'         | 目标Model                                                                              |
 | 'userId'                 | 外键                                                                                   |
 | groups                   | 需要分组的字段：`string`/`string[]`                                                    |
 | columns                  | 需要显示的分组字段。如果为空，则显示参数`groups`指定的字段                             |
@@ -49,7 +49,7 @@ Vona ORM 自动推断出`users`的类型。
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
       groups: 'id',
       aggrs: {
         count: '*',
@@ -90,7 +90,7 @@ Vona ORM 自动推断出`users`的类型。
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
 +     autoload: true,
       groups: 'id',
       aggrs: {

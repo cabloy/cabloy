@@ -31,7 +31,7 @@ First, define a `1:n` relation between the `Order` model and the `Product` model
 @Model({
   entity: EntityOrder,
   relations: {
-    products: $relation.hasMany(() => ModelProduct, 'orderId', {
+    products: $relation.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },

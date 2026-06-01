@@ -18,24 +18,24 @@ Vona ORM provides 4 kinds of relations:
 ### 1. Define the relation
 
 ```typescript
-import { ModelPostContent } from './postContent.ts';
-
 @Model({
   entity: EntityPost,
   relations: {
-    postContent: $relation.hasOne(ModelPostContent, 'postId', { columns: ['id', 'content'] }),
+    postContent: $relation.hasOne('test-vona:postContent', 'postId', {
+      columns: ['id', 'content'],
+    }),
   },
 })
 class ModelPost {}
 ```
 
-| Name                  | Description             |
-| --------------------- | ----------------------- |
-| relations.postContent | Relation Name           |
-| $relation.hasOne      | `1:1`                   |
-| ModelPostContent      | Taget Model             |
-| 'postId'              | Foreign key             |
-| columns               | List of fields to query |
+| Name                    | Description             |
+| ----------------------- | ----------------------- |
+| relations.postContent   | Relation Name           |
+| $relation.hasOne        | `1:1`                   |
+| 'test-vona:postContent' | Taget Model             |
+| 'postId'                | Foreign key             |
+| columns                 | List of fields to query |
 
 ::: warning
 Any changes to the `relations` node require executing `Vona Tools: Generate .metadata` to generate the corresponding type definition
@@ -111,25 +111,22 @@ class ServicePost {
 @Model({
   entity: EntityPostContent,
   relations: {
-    post: $relation.belongsTo(
-      () => ModelPostContent,
-      () => ModelPost,
-      'postId',
-      { columns: '*' },
-    ),
+    post: $relation.belongsTo('test-vona:postContent', 'test-vona:post', 'postId', {
+      columns: '*',
+    }),
   },
 })
 class ModelPostContent {}
 ```
 
-| Name                | Description             |
-| ------------------- | ----------------------- |
-| relations.post      | Relation Name           |
-| $relation.belongsTo | `1:1`/`n:1`             |
-| ModelPostContent    | Source Model            |
-| ModelPost           | Target Model            |
-| 'postId'            | Foreign key             |
-| columns             | List of fields to query |
+| Name                    | Description             |
+| ----------------------- | ----------------------- |
+| relations.post          | Relation Name           |
+| $relation.belongsTo     | `1:1`/`n:1`             |
+| 'test-vona:postContent' | Source Model            |
+| 'test-vona:post'        | Target Model            |
+| 'postId'                | Foreign key             |
+| columns                 | List of fields to query |
 
 ### 2. Using relations
 
@@ -153,12 +150,10 @@ class ServicePost {
 ### 1. Define the relation
 
 ```typescript
-import { ModelProduct } from './product.ts';
-
 @Model({
   entity: EntityOrder,
   relations: {
-    products: $relation.hasMany(() => ModelProduct, 'orderId', {
+    products: $relation.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -166,13 +161,13 @@ import { ModelProduct } from './product.ts';
 class ModelOrder {}
 ```
 
-| Name               | Description             |
-| ------------------ | ----------------------- |
-| relations.products | Relation Name           |
-| $relation.hasMany  | `1:n`                   |
-| ModelProduct       | Target Model            |
-| 'orderId'          | Foreign key             |
-| columns            | List of fields to query |
+| Name                | Description             |
+| ------------------- | ----------------------- |
+| relations.products  | Relation Name           |
+| $relation.hasMany   | `1:n`                   |
+| 'test-vona:product' | Target Model            |
+| 'orderId'           | Foreign key             |
+| columns             | List of fields to query |
 
 ### 2. Using relations
 
@@ -359,7 +354,7 @@ Next, we implement a directory tree to demonstrate how to use `autoload` to impl
 @Model({
   entity: EntityCategory,
   relations: {
-    children: $relation.hasMany(() => ModelCategory, 'categoryIdParent', {
+    children: $relation.hasMany('test-vona:category', 'categoryIdParent', {
       autoload: true,
       columns: ['id', 'name'],
     }),
@@ -368,14 +363,14 @@ Next, we implement a directory tree to demonstrate how to use `autoload` to impl
 class ModelCategory {}
 ```
 
-| Name               | Description             |
-| ------------------ | ----------------------- |
-| relations.children | Relation Name           |
-| $relation.hasMany  | `1:n`                   |
-| ModelCategory      | Target Model            |
-| 'categoryIdParent' | Foreign key             |
-| autoload           | Autoload                |
-| columns            | List of fields to query |
+| Name                 | Description             |
+| -------------------- | ----------------------- |
+| relations.children   | Relation Name           |
+| $relation.hasMany    | `1:n`                   |
+| 'test-vona:category' | Target Model            |
+| 'categoryIdParent'   | Foreign key             |
+| autoload             | Autoload                |
+| columns              | List of fields to query |
 
 ### 2. Using relations
 
@@ -436,8 +431,8 @@ The previous demonstration shows how to query a directory tree from the parent t
   entity: EntityCategory,
   relations: {
     parent: $relation.belongsTo(
-      () => ModelCategoryChain,
-      () => ModelCategoryChain,
+      'test-vona:categoryChain',
+      'test-vona:categoryChain',
       'categoryIdParent',
       {
         autoload: true,
@@ -449,15 +444,15 @@ The previous demonstration shows how to query a directory tree from the parent t
 class ModelCategoryChain {}
 ```
 
-| Name                | Description             |
-| ------------------- | ----------------------- |
-| relations.parent    | Relation Name           |
-| $relation.belongsTo | `n:1`                   |
-| ModelCategoryChain  | Source Model            |
-| ModelCategoryChain  | Target Model            |
-| 'categoryIdParent'  | Foreign key             |
-| autoload            | Autoload                |
-| columns             | List of fields to query |
+| Name                      | Description             |
+| ------------------------- | ----------------------- |
+| relations.parent          | Relation Name           |
+| $relation.belongsTo       | `n:1`                   |
+| 'test-vona:categoryChain' | Source Model            |
+| 'test-vona:categoryChain' | Target Model            |
+| 'categoryIdParent'        | Foreign key             |
+| autoload                  | Autoload                |
+| columns                   | List of fields to query |
 
 ### 2. Using relations
 
@@ -521,10 +516,8 @@ class ServiceCategory {
 
 ## Parameter: Model
 
-When defining a relation, you need to provide the following parameters: `Source Model`, `Target Model`, and `Intermediate Model`. The following types are supported:
+When defining a relation, you need to provide the following parameters: `Source Model`, `Target Model`, and `Intermediate Model`. The following type is supported:
 
-| Name             | Description                                                             |
-| ---------------- | ----------------------------------------------------------------------- |
-| ModelPost        | Model Class                                                             |
-| () => ModelPost  | Use a function to delay loading to avoid circular dependency errors     |
-| 'test-vona:post' | When using models across modules, typically use the model name directly |
+| Name             | Description                 |
+| ---------------- | --------------------------- |
+| 'test-vona:post' | Use the model name directly |

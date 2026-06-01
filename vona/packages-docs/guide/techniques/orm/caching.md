@@ -206,13 +206,10 @@ config.onions = {
 For example, the `UserStats` and `UserStatsGroup` models are related to the `User` model and are specifically used to query aggregated and grouped data for users, respectively. When we `Create/Update/Delete` user data, we need to clear not only the `Query cache` of Model `User`, but also the `Query cache` of Model `UserStats` and Model `UserStatsGroup`. Then, you can configure it as follows:
 
 ```typescript
-import { ModelUserStats } from './userStats.ts';
-import { ModelUserStatsGroup } from './userStatsGroup.ts';
-
 @Model({
   entity: EntityUser,
   cache: {
-    modelsClear: [() => ModelUserStats, () => ModelUserStatsGroup],
+    modelsClear: ['test-vona:userStats', 'test-vona:userStatsGroup'],
   },
 })
 class ModelUser {}

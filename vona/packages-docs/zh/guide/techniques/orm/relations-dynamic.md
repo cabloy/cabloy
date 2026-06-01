@@ -32,7 +32,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId'),
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId'),
         },
       },
     );
@@ -43,7 +43,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId', {
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId', {
             columns: ['id', 'content'],
           }),
         },
@@ -60,7 +60,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId'),
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId'),
         },
       },
     );
@@ -71,7 +71,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId'),
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId'),
         },
       },
     );
@@ -83,7 +83,7 @@ class ServicePost {
 | ----------------------- | ---------------- |
 | with.postContent        | 关系名           |
 | $relationDynamic.hasOne | 定义`1:1`关系    |
-| ModelPostContent        | 目标Model        |
+| 'test-vona:postContent' | 目标Model        |
 | 'postId'                | 外键             |
 | columns                 | 要查询的字段列表 |
 
@@ -96,14 +96,9 @@ class ServicePost {
   async relationBelongsTo() {
     const postContent = await this.scope.model.postContent.select({
       with: {
-        post: $relationDynamic.belongsTo(
-          () => ModelPostContent,
-          () => ModelPost,
-          'postId',
-          {
-            columns: ['id', 'title'],
-          },
-        ),
+        post: $relationDynamic.belongsTo('test-vona:postContent', 'test-vona:post', 'postId', {
+          columns: ['id', 'title'],
+        }),
       },
     });
     console.log(postContent[0]?.post?.title);
@@ -115,8 +110,8 @@ class ServicePost {
 | -------------------------- | ------------------- |
 | with.post                  | 关系名              |
 | $relationDynamic.belongsTo | 定义`1:1`/`n:1`关系 |
-| ModelPostContent           | 源Model             |
-| ModelPost                  | 目标Model           |
+| 'test-vona:postContent'    | 源Model             |
+| 'test-vona:post'           | 目标Model           |
 | 'postId'                   | 外键                |
 | columns                    | 要查询的字段列表    |
 
@@ -135,7 +130,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId'),
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId'),
         },
       },
     );
@@ -146,7 +141,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId', {
             columns: ['id', 'name', 'price', 'quantity', 'amount'],
           }),
         },
@@ -168,7 +163,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId'),
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId'),
         },
       },
     );
@@ -179,7 +174,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId'),
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId'),
         },
       },
     );
@@ -194,7 +189,7 @@ class ServiceOrder {
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | with.products2           | 关系名。由于`test-vona`模块已经定义了静态关系`products`，并且是自动加载的。为了演示起见，使用不同的关系名`products2` |
 | $relationDynamic.hasMany | 定义`1:n`关系                                                                                                        |
-| ModelProduct             | 目标Model                                                                                                            |
+| 'test-vona:product'      | 目标Model                                                                                                            |
 | 'orderId'                | 外键                                                                                                                 |
 | columns                  | 要查询的字段列表                                                                                                     |
 
@@ -225,8 +220,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
           ),
@@ -241,8 +236,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
             {
@@ -266,8 +261,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
             {
@@ -285,8 +280,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
           ),
@@ -301,8 +296,8 @@ class ServiceUser {
 | ------------------------------ | ---------------- |
 | with.roles                     | 关系名           |
 | $relationDynamic.belongsToMany | 定义`n:n`关系    |
-| ModelRoleUser                  | 中间Model        |
-| ModelRole                      | 目标Model        |
+| 'test-vona:roleUser'           | 中间Model        |
+| 'test-vona:role'               | 目标Model        |
 | 'userId'                       | 外键             |
 | 'roleId'                       | 外键             |
 | columns                        | 要查询的字段列表 |
@@ -332,9 +327,9 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
             with: {
-              children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {}),
+              children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {}),
             },
           }),
         },
@@ -347,10 +342,10 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
             columns: ['id', 'name'],
             with: {
-              children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+              children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
                 columns: ['id', 'name'],
               }),
             },
@@ -376,7 +371,7 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent'),
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent'),
         },
       },
     );
@@ -387,9 +382,9 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
             with: {
-              children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {}),
+              children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {}),
             },
           }),
         },
@@ -403,7 +398,7 @@ class ServiceCategory {
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | with.children2           | 关系名。由于`test-vona`模块已经定义了静态关系`children`，并且是自动加载的。为了演示起见，使用不同的关系名`children2` |
 | $relationDynamic.hasMany | 定义`1:n`关系                                                                                                        |
-| ModelCategory            | 目标Model                                                                                                            |
+| 'test-vona:category'     | 目标Model                                                                                                            |
 | 'categoryIdParent'       | 外键                                                                                                                 |
 | columns                  | 要查询的字段列表                                                                                                     |
 
@@ -441,8 +436,6 @@ class ServiceCategory {
 
 在定义关系时需要提供参数：`源Model`/`目标Model`/`中间Model`，支持以下类型：
 
-| 名称             | 说明                                         |
-| ---------------- | -------------------------------------------- |
-| ModelPost        | Model Class                                  |
-| () => ModelPost  | 通过函数延迟加载，从而避免触发循环依赖的错误 |
-| 'test-vona:post' | 当跨模块使用Model时，一般直接使用Model名     |
+| 名称             | 说明            |
+| ---------------- | --------------- |
+| 'test-vona:post' | 直接使用Model名 |

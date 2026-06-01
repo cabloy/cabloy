@@ -3,28 +3,23 @@ import type { IDecoratorModelOptions } from 'vona-module-a-orm';
 import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';
 
 import { EntityUser } from '../entity/user.ts';
-import { ModelOrder } from './order.ts';
-import { ModelPost } from './post.ts';
-import { ModelPostContent } from './postContent.ts';
-import { ModelUserStats } from './userStats.ts';
-import { ModelUserStatsGroup } from './userStatsGroup.ts';
 
 export interface IModelOptionsUser extends IDecoratorModelOptions<EntityUser> {}
 
 @Model<IModelOptionsUser>({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', { columns: ['id', 'title'] }, [
+    posts: $relation.hasMany('test-vona:post', 'userId', { columns: ['id', 'title'] }, [
       'test-vona:user',
-      ModelPostContent,
+      'test-vona:postContent',
     ]),
     roles: $relation.belongsToMany('test-vona:roleUser', 'test-vona:role', 'userId', 'roleId', {
       columns: ['id', 'name'],
     }),
-    orders: $relation.hasMany(() => ModelOrder, 'userId'),
+    orders: $relation.hasMany('test-vona:order', 'userId'),
   },
   cache: {
-    modelsClear: [() => ModelUserStats, () => ModelUserStatsGroup],
+    modelsClear: ['test-vona:userStats', 'test-vona:userStatsGroup'],
   },
 })
 export class ModelUser extends BeanModelBase<EntityUser> {}

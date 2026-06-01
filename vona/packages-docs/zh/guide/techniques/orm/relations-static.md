@@ -18,24 +18,24 @@ Vona ORM 提供了 4 种关系：
 ### 1. 定义关系
 
 ```typescript
-import { ModelPostContent } from './postContent.ts';
-
 @Model({
   entity: EntityPost,
   relations: {
-    postContent: $relation.hasOne(ModelPostContent, 'postId', { columns: ['id', 'content'] }),
+    postContent: $relation.hasOne('test-vona:postContent', 'postId', {
+      columns: ['id', 'content'],
+    }),
   },
 })
 class ModelPost {}
 ```
 
-| 名称                  | 说明             |
-| --------------------- | ---------------- |
-| relations.postContent | 关系名           |
-| $relation.hasOne      | 定义`1:1`关系    |
-| ModelPostContent      | 目标Model        |
-| 'postId'              | 外键             |
-| columns               | 要查询的字段列表 |
+| 名称                    | 说明             |
+| ----------------------- | ---------------- |
+| relations.postContent   | 关系名           |
+| $relation.hasOne        | 定义`1:1`关系    |
+| 'test-vona:postContent' | 目标Model        |
+| 'postId'                | 外键             |
+| columns                 | 要查询的字段列表 |
 
 ::: warning
 `relations`节点有任何变更，都需要执行菜单：`Vona Tools: Generate .metadata`，从而同步生成对应的类型定义
@@ -111,25 +111,22 @@ class ServicePost {
 @Model({
   entity: EntityPostContent,
   relations: {
-    post: $relation.belongsTo(
-      () => ModelPostContent,
-      () => ModelPost,
-      'postId',
-      { columns: '*' },
-    ),
+    post: $relation.belongsTo('test-vona:postContent', 'test-vona:post', 'postId', {
+      columns: '*',
+    }),
   },
 })
 class ModelPostContent {}
 ```
 
-| 名称                | 说明                |
-| ------------------- | ------------------- |
-| relations.post      | 关系名              |
-| $relation.belongsTo | 定义`1:1`/`n:1`关系 |
-| ModelPostContent    | 源Model             |
-| ModelPost           | 目标Model           |
-| 'postId'            | 外键                |
-| columns             | 要查询的字段列表    |
+| 名称                    | 说明                |
+| ----------------------- | ------------------- |
+| relations.post          | 关系名              |
+| $relation.belongsTo     | 定义`1:1`/`n:1`关系 |
+| 'test-vona:postContent' | 源Model             |
+| 'test-vona:post'        | 目标Model           |
+| 'postId'                | 外键                |
+| columns                 | 要查询的字段列表    |
 
 ### 2. 使用关系
 
@@ -153,12 +150,10 @@ class ServicePost {
 ### 1. 定义关系
 
 ```typescript
-import { ModelProduct } from './product.ts';
-
 @Model({
   entity: EntityOrder,
   relations: {
-    products: $relation.hasMany(() => ModelProduct, 'orderId', {
+    products: $relation.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -166,13 +161,13 @@ import { ModelProduct } from './product.ts';
 class ModelOrder {}
 ```
 
-| 名称               | 说明             |
-| ------------------ | ---------------- |
-| relations.products | 关系名           |
-| $relation.hasMany  | 定义`1:n`关系    |
-| ModelProduct       | 目标Model        |
-| 'orderId'          | 外键             |
-| columns            | 要查询的字段列表 |
+| 名称                | 说明             |
+| ------------------- | ---------------- |
+| relations.products  | 关系名           |
+| $relation.hasMany   | 定义`1:n`关系    |
+| 'test-vona:product' | 目标Model        |
+| 'orderId'           | 外键             |
+| columns             | 要查询的字段列表 |
 
 ### 2. 使用关系
 
@@ -359,7 +354,7 @@ class ServiceUser {
 @Model({
   entity: EntityCategory,
   relations: {
-    children: $relation.hasMany(() => ModelCategory, 'categoryIdParent', {
+    children: $relation.hasMany('test-vona:category', 'categoryIdParent', {
       autoload: true,
       columns: ['id', 'name'],
     }),
@@ -368,14 +363,14 @@ class ServiceUser {
 class ModelCategory {}
 ```
 
-| 名称               | 说明             |
-| ------------------ | ---------------- |
-| relations.children | 关系名           |
-| $relation.hasMany  | 定义`1:n`关系    |
-| ModelCategory      | 目标Model        |
-| 'categoryIdParent' | 外键             |
-| autoload           | 自动加载         |
-| columns            | 要查询的字段列表 |
+| 名称                 | 说明             |
+| -------------------- | ---------------- |
+| relations.children   | 关系名           |
+| $relation.hasMany    | 定义`1:n`关系    |
+| 'test-vona:category' | 目标Model        |
+| 'categoryIdParent'   | 外键             |
+| autoload             | 自动加载         |
+| columns              | 要查询的字段列表 |
 
 ### 2. 使用关系
 
@@ -436,8 +431,8 @@ class ServiceCategory {
   entity: EntityCategory,
   relations: {
     parent: $relation.belongsTo(
-      () => ModelCategoryChain,
-      () => ModelCategoryChain,
+      'test-vona:categoryChain',
+      'test-vona:categoryChain',
       'categoryIdParent',
       {
         autoload: true,
@@ -449,15 +444,15 @@ class ServiceCategory {
 class ModelCategoryChain {}
 ```
 
-| 名称                | 说明             |
-| ------------------- | ---------------- |
-| relations.parent    | 关系名           |
-| $relation.belongsTo | 定义`n:1`关系    |
-| ModelCategoryChain  | 源Model          |
-| ModelCategoryChain  | 目标Model        |
-| 'categoryIdParent'  | 外键             |
-| autoload            | 自动加载         |
-| columns             | 要查询的字段列表 |
+| 名称                      | 说明             |
+| ------------------------- | ---------------- |
+| relations.parent          | 关系名           |
+| $relation.belongsTo       | 定义`n:1`关系    |
+| 'test-vona:categoryChain' | 源Model          |
+| 'test-vona:categoryChain' | 目标Model        |
+| 'categoryIdParent'        | 外键             |
+| autoload                  | 自动加载         |
+| columns                   | 要查询的字段列表 |
 
 ### 2. 使用关系
 
@@ -523,8 +518,6 @@ class ServiceCategory {
 
 在定义关系时需要提供参数：`源Model`/`目标Model`/`中间Model`，支持以下类型：
 
-| 名称             | 说明                                         |
-| ---------------- | -------------------------------------------- |
-| ModelPost        | Model Class                                  |
-| () => ModelPost  | 通过函数延迟加载，从而避免触发循环依赖的错误 |
-| 'test-vona:post' | 当跨模块使用Model时，一般直接使用Model名     |
+| 名称             | 说明            |
+| ---------------- | --------------- |
+| 'test-vona:post' | 直接使用Model名 |

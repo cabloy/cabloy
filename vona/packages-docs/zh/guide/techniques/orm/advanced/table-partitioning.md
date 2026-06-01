@@ -29,7 +29,7 @@ class ModelOrder {}
 @Model({
   entity: EntityUser,
   relations: {
-    orders: $relation.hasMany(() => ModelOrder, 'userId'),
+    orders: $relation.hasMany('test-vona:order', 'userId'),
   },
 })
 class ModelUser {}
@@ -213,7 +213,7 @@ config.onions = {
 @Model({
   entity: EntityUser,
   relations: {
-    orders: $relation.hasMany(() => ModelOrder, 'userId', {
+    orders: $relation.hasMany('test-vona:order', 'userId', {
 +     meta: {
 +       table(_ctx: VonaContext, where: EntityOrder | undefined, defaultTable: keyof ITableRecord) {
 +         const userId = where?.userId;

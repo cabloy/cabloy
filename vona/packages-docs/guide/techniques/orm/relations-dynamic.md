@@ -32,7 +32,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId'),
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId'),
         },
       },
     );
@@ -43,7 +43,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId', {
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId', {
             columns: ['id', 'content'],
           }),
         },
@@ -60,7 +60,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId'),
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId'),
         },
       },
     );
@@ -71,7 +71,7 @@ class ServicePost {
       },
       {
         with: {
-          postContent: $relationDynamic.hasOne(() => ModelPostContent, 'postId'),
+          postContent: $relationDynamic.hasOne('test-vona:postContent', 'postId'),
         },
       },
     );
@@ -83,7 +83,7 @@ class ServicePost {
 | ----------------------- | ----------------------- |
 | with.postContent        | Relation Name           |
 | $relationDynamic.hasOne | `1:1`                   |
-| ModelPostContent        | Taget Model             |
+| 'test-vona:postContent' | Taget Model             |
 | 'postId'                | Foreign key             |
 | columns                 | List of fields to query |
 
@@ -96,14 +96,9 @@ class ServicePost {
   async relationBelongsTo() {
     const postContent = await this.scope.model.postContent.select({
       with: {
-        post: $relationDynamic.belongsTo(
-          () => ModelPostContent,
-          () => ModelPost,
-          'postId',
-          {
-            columns: ['id', 'title'],
-          },
-        ),
+        post: $relationDynamic.belongsTo('test-vona:postContent', 'test-vona:post', 'postId', {
+          columns: ['id', 'title'],
+        }),
       },
     });
     console.log(postContent[0]?.post?.title);
@@ -115,8 +110,8 @@ class ServicePost {
 | -------------------------- | ----------------------- |
 | with.post                  | Relation Name           |
 | $relationDynamic.belongsTo | `1:1`/`n:1`             |
-| ModelPostContent           | Source Model            |
-| ModelPost                  | Target Model            |
+| 'test-vona:postContent'    | Source Model            |
+| 'test-vona:post'           | Target Model            |
 | 'postId'                   | Foreign key             |
 | columns                    | List of fields to query |
 
@@ -135,7 +130,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId'),
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId'),
         },
       },
     );
@@ -146,7 +141,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId', {
             columns: ['id', 'name', 'price', 'quantity', 'amount'],
           }),
         },
@@ -168,7 +163,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId'),
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId'),
         },
       },
     );
@@ -179,7 +174,7 @@ class ServiceOrder {
       },
       {
         with: {
-          products2: $relationDynamic.hasMany(() => ModelProduct, 'orderId'),
+          products2: $relationDynamic.hasMany('test-vona:product', 'orderId'),
         },
       },
     );
@@ -194,7 +189,7 @@ class ServiceOrder {
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | with.products2           | Relation Name. Since `test-vona` module already defines the static relation `products` which `autoload` be set `true`. For demonstration purposes, a different relation name `products2` is used |
 | $relationDynamic.hasMany | `1:n`                                                                                                                                                                                            |
-| ModelProduct             | Target Model                                                                                                                                                                                     |
+| 'test-vona:product'      | Target Model                                                                                                                                                                                     |
 | 'orderId'                | Foreign key                                                                                                                                                                                      |
 | columns                  | List of fields to query                                                                                                                                                                          |
 
@@ -225,8 +220,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
           ),
@@ -241,8 +236,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
             {
@@ -266,8 +261,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
             {
@@ -285,8 +280,8 @@ class ServiceUser {
       {
         with: {
           roles: $relationDynamic.belongsToMany(
-            () => ModelRoleUser,
-            () => ModelRole,
+            'test-vona:roleUser',
+            'test-vona:role',
             'userId',
             'roleId',
           ),
@@ -301,8 +296,8 @@ class ServiceUser {
 | ------------------------------ | ----------------------- |
 | with.roles                     | Relation Name           |
 | $relationDynamic.belongsToMany | `n:n`                   |
-| ModelRoleUser                  | Middle Model            |
-| ModelRole                      | Target Model            |
+| 'test-vona:roleUser'           | Middle Model            |
+| 'test-vona:role'               | Target Model            |
 | 'userId'                       | Foreign key             |
 | 'roleId'                       | Foreign key             |
 | columns                        | List of fields to query |
@@ -332,9 +327,9 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
             with: {
-              children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {}),
+              children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {}),
             },
           }),
         },
@@ -347,10 +342,10 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
             columns: ['id', 'name'],
             with: {
-              children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+              children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
                 columns: ['id', 'name'],
               }),
             },
@@ -376,7 +371,7 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent'),
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent'),
         },
       },
     );
@@ -387,9 +382,9 @@ class ServiceCategory {
       },
       {
         with: {
-          children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {
+          children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {
             with: {
-              children2: $relationDynamic.hasMany(() => ModelCategory, 'categoryIdParent', {}),
+              children2: $relationDynamic.hasMany('test-vona:category', 'categoryIdParent', {}),
             },
           }),
         },
@@ -403,7 +398,7 @@ class ServiceCategory {
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | with.children2           | Relation Name. Since `test-vona` module already defines the static relation `children` which `autoload` be set `true`. For demonstration purposes, a different relation name `children2` is used |
 | $relationDynamic.hasMany | `1:n`                                                                                                                                                                                            |
-| ModelCategory            | Target Model                                                                                                                                                                                     |
+| 'test-vona:category'     | Target Model                                                                                                                                                                                     |
 | 'categoryIdParent'       | Foreign key                                                                                                                                                                                      |
 | columns                  | List of fields to query                                                                                                                                                                          |
 
@@ -439,10 +434,8 @@ class ServiceCategory {
 
 ## Parameter: Model
 
-When defining a relation, you need to provide the following parameters: `Source Model`, `Target Model`, and `Intermediate Model`. The following types are supported:
+When defining a relation, you need to provide the following parameters: `Source Model`, `Target Model`, and `Intermediate Model`. The following type is supported:
 
-| Name             | Description                                                             |
-| ---------------- | ----------------------------------------------------------------------- |
-| ModelPost        | Model Class                                                             |
-| () => ModelPost  | Use a function to delay loading to avoid circular dependency errors     |
-| 'test-vona:post' | When using models across modules, typically use the model name directly |
+| Name             | Description                 |
+| ---------------- | --------------------------- |
+| 'test-vona:post' | Use the model name directly |

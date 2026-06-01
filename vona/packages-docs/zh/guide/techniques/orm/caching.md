@@ -206,13 +206,10 @@ config.onions = {
 比如，Model `UserStats`和 Model `UserStatsGroup`分别是与 Model `User`相关的 Model，专门用于查询 User 的聚合和分组数据。当我们`Create/Update/Delete`用户数据时，不仅要清除 Model `User`的`Query缓存`，还要清除 Model `UserStats`和 Model `UserStatsGroup`的`Query缓存`。那么，可以如下配置：
 
 ```typescript
-import { ModelUserStats } from './userStats.ts';
-import { ModelUserStatsGroup } from './userStatsGroup.ts';
-
 @Model({
   entity: EntityUser,
   cache: {
-    modelsClear: [() => ModelUserStats, () => ModelUserStatsGroup],
+    modelsClear: ['test-vona:userStats', 'test-vona:userStatsGroup'],
   },
 })
 class ModelUser {}

@@ -1,7 +1,6 @@
 import type { IDecoratorModelOptions } from 'vona-module-a-orm';
 
 import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';
-import { ModelCategoryChain } from 'vona-module-test-vona';
 
 import { EntityCategory } from '../entity/category.ts';
 
@@ -10,13 +9,13 @@ export interface IModelOptionsCategory extends IDecoratorModelOptions<EntityCate
 @Model<IModelOptionsCategory>({
   entity: EntityCategory,
   relations: {
-    children: $relation.hasMany(() => ModelCategory, 'categoryIdParent', {
+    children: $relation.hasMany('test-vona:category', 'categoryIdParent', {
       autoload: true,
       columns: ['id', 'name'],
     }),
   },
   cache: {
-    modelsClear: () => ModelCategoryChain,
+    modelsClear: 'test-vona:categoryChain',
   },
 })
 export class ModelCategory extends BeanModelBase<EntityCategory> {}

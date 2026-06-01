@@ -32,7 +32,7 @@ $Dto.get(() => ModelOrder, { columns: ['id', 'orderNo', 'remark'] });
 @Model({
   entity: EntityOrder,
   relations: {
-    products: $relation.hasMany(() => ModelProduct, 'orderId', {
+    products: $relation.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -55,7 +55,7 @@ $Dto.get(() => ModelOrder, {
 ```typescript
 $Dto.get(() => ModelOrder, {
   with: {
-    products: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    products: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       columns: ['id', 'name', 'price', 'quantity', 'amount'],
     }),
   },
@@ -74,7 +74,7 @@ $Dto.get(() => ModelOrder, {
 @Model({
   entity: EntityOrder,
   relations: {
-    productStats: $relation.hasMany(() => ModelProduct, 'orderId', {
+    productStats: $relation.hasMany('test-vona:product', 'orderId', {
       aggrs: {
         count: '*',
         sum: 'amount',
@@ -100,7 +100,7 @@ $Dto.get(() => ModelOrderStats, {
 ```typescript
 $Dto.get(() => ModelOrder, {
   with: {
-    productStats: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    productStats: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       aggrs: {
         count: '*',
         sum: 'amount',
@@ -122,7 +122,7 @@ $Dto.get(() => ModelOrder, {
 @Model({
   entity: EntityOrder,
   relations: {
-    productsGroups: $relation.hasMany(() => ModelProduct, 'orderId', {
+    productsGroups: $relation.hasMany('test-vona:product', 'orderId', {
       groups: 'id',
       aggrs: {
         count: '*',
@@ -149,7 +149,7 @@ $Dto.get(() => ModelOrderStats, {
 ```typescript
 $Dto.get(() => ModelOrder, {
   with: {
-    productsGroups: $relationDynamic.hasMany(() => ModelProduct, 'orderId', {
+    productsGroups: $relationDynamic.hasMany('test-vona:product', 'orderId', {
       groups: 'id',
       aggrs: {
         count: '*',

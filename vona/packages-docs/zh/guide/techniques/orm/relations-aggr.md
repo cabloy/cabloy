@@ -11,7 +11,7 @@ class ServiceUser {
   async relationAggregate() {
     const users = await this.scope.model.user.select({
       with: {
-        posts: $relationDynamic.hasMany(() => ModelPost, 'userId', {
+        posts: $relationDynamic.hasMany('test-vona:post', 'userId', {
           aggrs: {
             count: '*',
             sum: 'stars',
@@ -32,7 +32,7 @@ Vona ORM 自动推断出`users`的类型。
 | ------------------------ | -------------------------------------------------------------------------------------- |
 | with.posts               | 关系名                                                                                 |
 | $relationDynamic.hasMany | 定义`1:n`关系                                                                          |
-| ModelPost                | 目标Model                                                                              |
+| 'test-vona:post'         | 目标Model                                                                              |
 | 'userId'                 | 外键                                                                                   |
 | aggrs                    | 需要聚合的函数和字段。函数：`count`/`sum`/`avg`/`min`/`max`。字段：`string`/`string[]` |
 
@@ -46,7 +46,7 @@ Vona ORM 自动推断出`users`的类型。
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
       aggrs: {
         count: '*',
         sum: 'stars',
@@ -86,7 +86,7 @@ Vona ORM 自动推断出`users`的类型。
 @Model({
   entity: EntityUser,
   relations: {
-    posts: $relation.hasMany(() => ModelPost, 'userId', {
+    posts: $relation.hasMany('test-vona:post', 'userId', {
 +     autoload: true,
       aggrs: {
         count: '*',

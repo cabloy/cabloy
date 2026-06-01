@@ -10,8 +10,8 @@ export interface IModelOptionsCategoryChain extends IDecoratorModelOptions<Entit
   entity: EntityCategory,
   relations: {
     parent: $relation.belongsTo(
-      () => ModelCategoryChain,
-      () => ModelCategoryChain,
+      'test-vona:categoryChain',
+      'test-vona:categoryChain',
       'categoryIdParent',
       {
         autoload: true,
