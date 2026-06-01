@@ -2,7 +2,7 @@ import { BeanStyleBase } from 'zova';
 import { Style } from 'zova-module-a-bean';
 
 @Style()
-export class StyleLayoutTabs extends BeanStyleBase {
+export class StyleLayoutAdmin extends BeanStyleBase {
   cTab: string;
 
   protected async __init__() {

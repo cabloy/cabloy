@@ -271,12 +271,12 @@ importers:
       zova-module-home-index:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-index
+      zova-module-home-layoutadmin:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-layoutadmin
       zova-module-home-layoutempty:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-layoutempty
-      zova-module-home-layouttabs:
-        specifier: workspace:^
-        version: link:src/suite/a-home/modules/home-layouttabs
       zova-module-home-login:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-login
@@ -378,7 +378,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.0
       zova-cli-set-front:
-        specifier: ^1.2.70
+        specifier: ^1.2.71
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -1416,12 +1416,12 @@ importers:
       zova-module-home-index:
         specifier: ^5.0.5
         version: link:modules/home-index
+      zova-module-home-layoutadmin:
+        specifier: ^5.0.6
+        version: link:modules/home-layoutadmin
       zova-module-home-layoutempty:
         specifier: ^5.0.6
         version: link:modules/home-layoutempty
-      zova-module-home-layouttabs:
-        specifier: ^5.0.6
-        version: link:modules/home-layouttabs
       zova-module-home-login:
         specifier: ^5.0.8
         version: link:modules/home-login
@@ -1468,7 +1468,7 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  src/suite/a-home/modules/home-layoutempty:
+  src/suite/a-home/modules/home-layoutadmin:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1477,7 +1477,7 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  src/suite/a-home/modules/home-layouttabs:
+  src/suite/a-home/modules/home-layoutempty:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

@@ -51,7 +51,7 @@ declare module 'zova' {
 }
 /** model: end */
 /** controller: begin */
-export * from '../component/layoutTabs/controller.jsx';
+export * from '../component/layoutAdmin/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
@@ -60,48 +60,48 @@ declare module 'zova' {
 }
 declare module 'zova-module-home-layoutadmin' {
   
-        export interface ControllerLayoutTabs {
+        export interface ControllerLayoutAdmin {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
         } 
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerLayoutTabs } from '../component/layoutTabs/controller.jsx';
+import { ControllerLayoutAdmin } from '../component/layoutAdmin/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-layoutadmin.controller.layoutTabs': ControllerLayoutTabs;
+    'home-layoutadmin.controller.layoutAdmin': ControllerLayoutAdmin;
   }
 }
 /** controller: end */
 
 /** components: begin */
-export * from './component/layoutTabs.js';
-import { ZLayoutTabs } from './component/layoutTabs.js';
+export * from './component/layoutAdmin.js';
+import { ZLayoutAdmin } from './component/layoutAdmin.js';
 export const components = {
-  'layoutTabs': ZLayoutTabs,
+  'layoutAdmin': ZLayoutAdmin,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'home-layoutadmin:layoutTabs': ControllerLayoutTabs;
+  'home-layoutadmin:layoutAdmin': ControllerLayoutAdmin;
 }
 export interface IZovaComponentRecord {
-  'home-layoutadmin:layoutTabs': typeof ZLayoutTabs;
+  'home-layoutadmin:layoutAdmin': typeof ZLayoutAdmin;
 }
 }
 /** components: end */
 /** render: begin */
-export * from '../component/layoutTabs/render.content.jsx';
-export * from '../component/layoutTabs/render.header.jsx';
-export * from '../component/layoutTabs/render.locale.jsx';
-export * from '../component/layoutTabs/render.menu.jsx';
-export * from '../component/layoutTabs/render.sidebar.jsx';
-export * from '../component/layoutTabs/render.tabs.jsx';
-export * from '../component/layoutTabs/render.theme.jsx';
-export * from '../component/layoutTabs/render.jsx';
-export * from '../component/layoutTabs/render.user.jsx';
+export * from '../component/layoutAdmin/render.content.jsx';
+export * from '../component/layoutAdmin/render.header.jsx';
+export * from '../component/layoutAdmin/render.locale.jsx';
+export * from '../component/layoutAdmin/render.menu.jsx';
+export * from '../component/layoutAdmin/render.sidebar.jsx';
+export * from '../component/layoutAdmin/render.tabs.jsx';
+export * from '../component/layoutAdmin/render.theme.jsx';
+export * from '../component/layoutAdmin/render.jsx';
+export * from '../component/layoutAdmin/render.user.jsx';
 
 import 'zova';
 declare module 'zova' {
@@ -145,7 +145,7 @@ declare module 'zova-module-home-layoutadmin' {
           get scope(): ScopeModuleHomeLayoutadmin;
         }
 
-        export interface RenderLayoutTabs {
+        export interface RenderLayoutAdmin {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
         }
@@ -157,15 +157,15 @@ declare module 'zova-module-home-layoutadmin' {
 }
 /** render: end */
 /** render: begin */
-import { RenderContent } from '../component/layoutTabs/render.content.jsx';
-import { RenderHeader } from '../component/layoutTabs/render.header.jsx';
-import { RenderLocale } from '../component/layoutTabs/render.locale.jsx';
-import { RenderMenu } from '../component/layoutTabs/render.menu.jsx';
-import { RenderSidebar } from '../component/layoutTabs/render.sidebar.jsx';
-import { RenderTabs } from '../component/layoutTabs/render.tabs.jsx';
-import { RenderTheme } from '../component/layoutTabs/render.theme.jsx';
-import { RenderLayoutTabs } from '../component/layoutTabs/render.jsx';
-import { RenderUser } from '../component/layoutTabs/render.user.jsx';
+import { RenderContent } from '../component/layoutAdmin/render.content.jsx';
+import { RenderHeader } from '../component/layoutAdmin/render.header.jsx';
+import { RenderLocale } from '../component/layoutAdmin/render.locale.jsx';
+import { RenderMenu } from '../component/layoutAdmin/render.menu.jsx';
+import { RenderSidebar } from '../component/layoutAdmin/render.sidebar.jsx';
+import { RenderTabs } from '../component/layoutAdmin/render.tabs.jsx';
+import { RenderTheme } from '../component/layoutAdmin/render.theme.jsx';
+import { RenderLayoutAdmin } from '../component/layoutAdmin/render.jsx';
+import { RenderUser } from '../component/layoutAdmin/render.user.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
@@ -176,13 +176,13 @@ declare module 'zova' {
 'home-layoutadmin.render.sidebar': RenderSidebar;
 'home-layoutadmin.render.tabs': RenderTabs;
 'home-layoutadmin.render.theme': RenderTheme;
-'home-layoutadmin.render.layoutTabs': RenderLayoutTabs;
+'home-layoutadmin.render.layoutAdmin': RenderLayoutAdmin;
 'home-layoutadmin.render.user': RenderUser;
   }
 }
 /** render: end */
 /** style: begin */
-export * from '../component/layoutTabs/style.js';
+export * from '../component/layoutAdmin/style.js';
 
 import 'zova';
 declare module 'zova' {
@@ -191,18 +191,18 @@ declare module 'zova' {
 }
 declare module 'zova-module-home-layoutadmin' {
   
-        export interface StyleLayoutTabs {
+        export interface StyleLayoutAdmin {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutadmin;
         } 
 }
 /** style: end */
 /** style: begin */
-import { StyleLayoutTabs } from '../component/layoutTabs/style.js';
+import { StyleLayoutAdmin } from '../component/layoutAdmin/style.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-layoutadmin.style.layoutTabs': StyleLayoutTabs;
+    'home-layoutadmin.style.layoutAdmin': StyleLayoutAdmin;
   }
 }
 /** style: end */
