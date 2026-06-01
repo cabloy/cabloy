@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Init: Legacy',
-    usage: 'zova :init:legacy',
+    usage: 'npm run zova :init:legacy',
   },
   // options: null,
   // groups: null,

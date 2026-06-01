@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Tools: Bin',
-    usage: 'vona :bin:buildModule [--minify] [--sourcemap]',
+    usage: 'npm run vona :bin:buildModule -- [--minify] [--sourcemap]',
   },
   options: {
     minify: {

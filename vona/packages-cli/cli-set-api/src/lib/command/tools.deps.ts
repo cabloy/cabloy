@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Tools: Deps',
-    usage: 'vona :tools:deps',
+    usage: 'npm run vona :tools:deps',
   },
   options: {},
 };

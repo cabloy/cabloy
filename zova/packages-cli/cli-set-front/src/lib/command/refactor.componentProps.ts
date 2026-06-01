@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: ComponentProps',
-    usage: 'zova :refactor:componentProps componentName [--module=]',
+    usage: 'npm run zova :refactor:componentProps componentName -- [--module=]',
   },
   options: {
     module: {

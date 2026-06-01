@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Init: App Monkey',
-    usage: 'zova :init:appMonkey',
+    usage: 'npm run zova :init:appMonkey',
   },
   // options: null,
   // groups: null,

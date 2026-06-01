@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Bin: Tsc',
-    usage: 'vona :bin:tsc [--force]',
+    usage: 'npm run vona :bin:tsc -- [--force]',
   },
   options: {
     force: {

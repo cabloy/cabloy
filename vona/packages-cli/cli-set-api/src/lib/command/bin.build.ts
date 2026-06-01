@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Tools: Bin',
-    usage: 'vona :bin:build [--workers=] [--flavor=] [--sourcemap=]',
+    usage: 'npm run vona :bin:build -- [--workers=] [--flavor=] [--sourcemap=]',
   },
   options: {
     workers: {

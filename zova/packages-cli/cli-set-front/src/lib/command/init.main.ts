@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Init: Main',
-    usage: 'zova :init:main module',
+    usage: 'npm run zova :init:main module',
   },
   // options: null,
   // groups: null,

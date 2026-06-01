@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Init: Asset Resources',
-    usage: 'zova :init:asset scene [--module=]',
+    usage: 'npm run zova :init:asset scene -- [--module=]',
   },
   options: {
     module: {

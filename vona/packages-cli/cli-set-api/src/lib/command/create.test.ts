@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Test',
-    usage: 'vona :create:test name [--module=]',
+    usage: 'npm run vona :create:test name -- [--module=]',
   },
   options: {
     module: {

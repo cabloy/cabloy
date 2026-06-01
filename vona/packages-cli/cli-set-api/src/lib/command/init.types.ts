@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Init: Types',
-    usage: 'vona :init:types module',
+    usage: 'npm run vona :init:types module',
   },
   // options: null,
   // groups: null,

@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: ComponentEmits',
-    usage: 'zova :refactor:componentEmits componentName [--module=]',
+    usage: 'npm run zova :refactor:componentEmits componentName -- [--module=]',
   },
   options: {
     module: {

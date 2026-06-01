@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Suite',
-    usage: 'zova :create:suite suiteName',
+    usage: 'npm run zova :create:suite suiteName',
   },
   options: {},
   groups: {

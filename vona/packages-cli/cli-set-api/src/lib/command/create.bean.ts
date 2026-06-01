@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Bean',
-    usage: 'vona :create:bean sceneName beanName [--module=] [--boilerplate=]',
+    usage: 'npm run vona :create:bean sceneName beanName -- [--module=] [--boilerplate=]',
   },
   options: {
     module: {

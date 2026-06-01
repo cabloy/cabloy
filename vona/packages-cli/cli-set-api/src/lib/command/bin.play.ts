@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Bin: Play',
-    usage: 'vona :bin:play [index.ts] [--flavor=] [--retainRuntime=] [--attach]',
+    usage: 'npm run vona :bin:play [index.ts] -- [--flavor=] [--retainRuntime=] [--attach]',
   },
   options: {
     mode: {

@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Module',
-    usage: 'vona :create:module moduleName [--suite=] [--force]',
+    usage: 'npm run vona :create:module moduleName -- [--suite=] [--force]',
   },
   options: {
     suite: {

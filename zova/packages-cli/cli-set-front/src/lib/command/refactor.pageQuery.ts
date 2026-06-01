@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: PageQuery',
-    usage: 'zova :refactor:pageQuery pageName [--module=]',
+    usage: 'npm run zova :refactor:pageQuery pageName -- [--module=]',
   },
   options: {
     module: {

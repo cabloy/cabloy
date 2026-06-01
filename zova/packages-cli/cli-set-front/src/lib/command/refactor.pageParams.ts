@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: PageParams',
-    usage: 'zova :refactor:pageParams pageName [--module=]',
+    usage: 'npm run zova :refactor:pageParams pageName -- [--module=]',
   },
   options: {
     module: {

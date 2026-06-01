@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: Rename Component',
-    usage: 'zova :refactor:renameComponent componentName componentNameNew [--module=]',
+    usage: 'npm run zova :refactor:renameComponent componentName componentNameNew -- [--module=]',
   },
   options: {
     module: {

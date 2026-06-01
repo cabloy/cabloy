@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: First Style',
-    usage: 'zova :refactor:firstStyle componentName [--module=]',
+    usage: 'npm run zova :refactor:firstStyle componentName -- [--module=]',
   },
   options: {
     module: {

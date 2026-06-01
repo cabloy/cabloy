@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Tools: Bin',
-    usage: 'zova :bin:buildRest [--flavor=]',
+    usage: 'npm run zova :bin:buildRest -- [--flavor=]',
   },
   options: {
     flavor: {

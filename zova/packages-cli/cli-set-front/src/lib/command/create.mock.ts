@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Mock',
-    usage: 'zova :create:mock mockName [--module=]',
+    usage: 'npm run zova :create:mock mockName -- [--module=]',
   },
   options: {
     module: {

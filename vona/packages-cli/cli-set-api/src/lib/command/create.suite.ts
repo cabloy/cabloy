@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Suite',
-    usage: 'vona :create:suite suiteName',
+    usage: 'npm run vona :create:suite suiteName',
   },
   options: {},
   groups: {

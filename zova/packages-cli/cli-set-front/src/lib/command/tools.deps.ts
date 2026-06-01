@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Tools: Deps',
-    usage: 'zova :tools:deps [--force]',
+    usage: 'npm run zova :tools:deps -- [--force]',
   },
   options: {
     force: {

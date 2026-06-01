@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Component',
-    usage: 'zova :create:component componentName [--module=] [--boilerplate=]',
+    usage: 'npm run zova :create:component componentName -- [--module=] [--boilerplate=]',
   },
   options: {
     module: {

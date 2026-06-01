@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: Another Render',
-    usage: 'zova :refactor:anotherRender componentName renderName [--module=]',
+    usage: 'npm run zova :refactor:anotherRender componentName renderName -- [--module=]',
   },
   options: {
     module: {

@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Refactor: ComponentSlots',
-    usage: 'zova :refactor:componentSlots componentName [--module=]',
+    usage: 'npm run zova :refactor:componentSlots componentName -- [--module=]',
   },
   options: {
     module: {

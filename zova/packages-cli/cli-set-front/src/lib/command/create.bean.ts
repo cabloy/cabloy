@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Create Bean',
-    usage: 'zova :create:bean sceneName beanName [--module=]',
+    usage: 'npm run zova :create:bean sceneName beanName -- [--module=]',
   },
   options: {
     module: {

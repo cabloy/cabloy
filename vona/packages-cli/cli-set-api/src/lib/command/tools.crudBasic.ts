@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Tools: Crud Basic',
-    usage: 'vona :tools:crudBasic resourceName [--module=]',
+    usage: 'npm run vona :tools:crudBasic resourceName -- [--module=]',
   },
   options: {
     module: {
