@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.40
+
+### Improvements
+
+- Prepare the v5.1.40 release.
+- Update `CHANGELOG.md` for v5.1.39.
+
 ## 5.1.39
 
 ### Features
