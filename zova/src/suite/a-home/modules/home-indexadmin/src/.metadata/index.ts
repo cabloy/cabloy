@@ -1,6 +1,6 @@
 // eslint-disable
 /** controller: begin */
-export * from '../page/home/controller.jsx';
+export * from '../page/dashboard/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
@@ -9,29 +9,29 @@ declare module 'zova' {
 }
 declare module 'zova-module-home-indexadmin' {
   
-        export interface ControllerPageHome {
+        export interface ControllerPageDashboard {
           /** @internal */
           get scope(): ScopeModuleHomeIndexadmin;
         } 
 }
 /** controller: end */
 /** controller: begin */
-import { ControllerPageHome } from '../page/home/controller.jsx';
+import { ControllerPageDashboard } from '../page/dashboard/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-indexadmin.controller.pageHome': ControllerPageHome;
+    'home-indexadmin.controller.pageDashboard': ControllerPageDashboard;
   }
 }
 /** controller: end */
 /** pages: begin */
-export * from './page/home.js';
+export * from './page/dashboard.js';
 export * from '../routes.js';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
-  '/home/indexadmin': TypePagePathSchema<undefined,undefined>;
+  '/home/indexadmin/dashboard': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
   

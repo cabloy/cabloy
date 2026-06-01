@@ -268,9 +268,9 @@ importers:
       zova-module-home-icon:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-icon
-      zova-module-home-index:
+      zova-module-home-indexadmin:
         specifier: workspace:^
-        version: link:src/suite/a-home/modules/home-index
+        version: link:src/suite/a-home/modules/home-indexadmin
       zova-module-home-layoutadmin:
         specifier: workspace:^
         version: link:src/suite/a-home/modules/home-layoutadmin
@@ -1413,9 +1413,9 @@ importers:
       zova-module-home-icon:
         specifier: ^5.0.5
         version: link:modules/home-icon
-      zova-module-home-index:
+      zova-module-home-indexadmin:
         specifier: ^5.0.5
-        version: link:modules/home-index
+        version: link:modules/home-indexadmin
       zova-module-home-layoutadmin:
         specifier: ^5.0.6
         version: link:modules/home-layoutadmin
@@ -1459,7 +1459,7 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
-  src/suite/a-home/modules/home-index:
+  src/suite/a-home/modules/home-indexadmin:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

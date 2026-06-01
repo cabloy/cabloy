@@ -1,8 +1,8 @@
 import type { IModuleRoute } from 'zova-module-a-router';
 
-import { ZPageHome } from './.metadata/page/home.js';
+import { ZPageDashboard } from './.metadata/page/dashboard.js';
 
 export const routes: IModuleRoute[] = [
   //
-  { path: '', component: ZPageHome },
+  { path: 'dashboard', component: ZPageDashboard },
 ];

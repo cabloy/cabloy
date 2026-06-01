@@ -11,7 +11,7 @@ export default function (sys: ZovaSys) {
   // routes
   config.routes = {
     path: {
-      '/home/index': { alias: '/' },
+      '/home/indexadmin/dashboard': { alias: '/' },
       '/home/login': { alias: '/login' },
       '/demo/todo/todo': { alias: '/todo' },
     },

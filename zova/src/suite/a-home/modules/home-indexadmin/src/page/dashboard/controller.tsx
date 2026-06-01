@@ -2,7 +2,7 @@ import { BeanControllerPageBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 
 @Controller()
-export class ControllerPageHome extends BeanControllerPageBase {
+export class ControllerPageDashboard extends BeanControllerPageBase {
   public message: string;
 
   protected async __init__() {
@@ -15,6 +15,7 @@ export class ControllerPageHome extends BeanControllerPageBase {
         <div>
           <div style="font-size: 36px;">{this.message}</div>
           <div style="font-size: 24px;opacity:.4;">Less is more, while more is less</div>
+          <div>Dashboard</div>
         </div>
       </div>
     );
