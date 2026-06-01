@@ -15,7 +15,7 @@ export function $useLocale<K extends keyof (typeof locales)[TypeLocaleBase]>(
   ...args: any[]
 ) {
   const app = useApp();
-  const str = `home-layouttabs::${key}`;
+  const str = `home-layoutadmin::${key}`;
   return useComputed(() => {
     return app.meta.text(str, ...args);
   });

@@ -113,7 +113,7 @@ export class ModelPassport extends BeanModelBase {
         this._setPassportJwt();
         // page: login
         await this.app.$gotoLogin();
-        // clear: should after goto login page, avoid home-layouttabs use some cache data
+        // clear: should after goto login page, avoid home-layoutadmin use some cache data
         this.$clear(); // not await
       },
     });

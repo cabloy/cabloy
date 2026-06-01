@@ -8,33 +8,33 @@ import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
   
     export interface IModelRecord {
-      'home-layouttabs:layout': IModelOptionsLayout;
-'home-layouttabs:menu': IModelOptionsMenu;
+      'home-layoutadmin:layout': IModelOptionsLayout;
+'home-layoutadmin:menu': IModelOptionsMenu;
     }
 
   
 }
-declare module 'zova-module-home-layouttabs' {
+declare module 'zova-module-home-layoutadmin' {
   
         export interface ModelLayout {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface ModelLayout {
-          get $beanFullName(): 'home-layouttabs.model.layout';
-          get $onionName(): 'home-layouttabs:layout';
+          get $beanFullName(): 'home-layoutadmin.model.layout';
+          get $onionName(): 'home-layoutadmin:layout';
           get $onionOptions(): IModelOptionsLayout;
         }
 
         export interface ModelMenu {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface ModelMenu {
-          get $beanFullName(): 'home-layouttabs.model.menu';
-          get $onionName(): 'home-layouttabs:menu';
+          get $beanFullName(): 'home-layoutadmin.model.menu';
+          get $onionName(): 'home-layoutadmin:menu';
           get $onionOptions(): IModelOptionsMenu;
         } 
 }
@@ -45,8 +45,8 @@ import { ModelMenu } from '../model/menu.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
-    'home-layouttabs.model.layout': ModelLayout;
-'home-layouttabs.model.menu': ModelMenu;
+    'home-layoutadmin.model.layout': ModelLayout;
+'home-layoutadmin.model.menu': ModelMenu;
   }
 }
 /** model: end */
@@ -58,11 +58,11 @@ declare module 'zova' {
   
   
 }
-declare module 'zova-module-home-layouttabs' {
+declare module 'zova-module-home-layoutadmin' {
   
         export interface ControllerLayoutTabs {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         } 
 }
 /** controller: end */
@@ -71,7 +71,7 @@ import { ControllerLayoutTabs } from '../component/layoutTabs/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-layouttabs.controller.layoutTabs': ControllerLayoutTabs;
+    'home-layoutadmin.controller.layoutTabs': ControllerLayoutTabs;
   }
 }
 /** controller: end */
@@ -85,10 +85,10 @@ export const components = {
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'home-layouttabs:layoutTabs': ControllerLayoutTabs;
+  'home-layoutadmin:layoutTabs': ControllerLayoutTabs;
 }
 export interface IZovaComponentRecord {
-  'home-layouttabs:layoutTabs': typeof ZLayoutTabs;
+  'home-layoutadmin:layoutTabs': typeof ZLayoutTabs;
 }
 }
 /** components: end */
@@ -108,51 +108,51 @@ declare module 'zova' {
   
   
 }
-declare module 'zova-module-home-layouttabs' {
+declare module 'zova-module-home-layoutadmin' {
   
         export interface RenderContent {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderHeader {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderLocale {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderMenu {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderSidebar {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderTabs {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderTheme {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderLayoutTabs {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         }
 
         export interface RenderUser {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         } 
 }
 /** render: end */
@@ -169,15 +169,15 @@ import { RenderUser } from '../component/layoutTabs/render.user.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-layouttabs.render.content': RenderContent;
-'home-layouttabs.render.header': RenderHeader;
-'home-layouttabs.render.locale': RenderLocale;
-'home-layouttabs.render.menu': RenderMenu;
-'home-layouttabs.render.sidebar': RenderSidebar;
-'home-layouttabs.render.tabs': RenderTabs;
-'home-layouttabs.render.theme': RenderTheme;
-'home-layouttabs.render.layoutTabs': RenderLayoutTabs;
-'home-layouttabs.render.user': RenderUser;
+    'home-layoutadmin.render.content': RenderContent;
+'home-layoutadmin.render.header': RenderHeader;
+'home-layoutadmin.render.locale': RenderLocale;
+'home-layoutadmin.render.menu': RenderMenu;
+'home-layoutadmin.render.sidebar': RenderSidebar;
+'home-layoutadmin.render.tabs': RenderTabs;
+'home-layoutadmin.render.theme': RenderTheme;
+'home-layoutadmin.render.layoutTabs': RenderLayoutTabs;
+'home-layoutadmin.render.user': RenderUser;
   }
 }
 /** render: end */
@@ -189,11 +189,11 @@ declare module 'zova' {
   
   
 }
-declare module 'zova-module-home-layouttabs' {
+declare module 'zova-module-home-layoutadmin' {
   
         export interface StyleLayoutTabs {
           /** @internal */
-          get scope(): ScopeModuleHomeLayouttabs;
+          get scope(): ScopeModuleHomeLayoutadmin;
         } 
 }
 /** style: end */
@@ -202,7 +202,7 @@ import { StyleLayoutTabs } from '../component/layoutTabs/style.js';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-layouttabs.style.layoutTabs': StyleLayoutTabs;
+    'home-layoutadmin.style.layoutTabs': StyleLayoutTabs;
   }
 }
 /** style: end */
@@ -218,9 +218,9 @@ import { BeanScopeBase, type BeanScopeUtil, TypeModuleConfig, TypeModuleLocales,
 import { Scope } from 'zova-module-a-bean';
 
 @Scope()
-export class ScopeModuleHomeLayouttabs extends BeanScopeBase {}
+export class ScopeModuleHomeLayoutadmin extends BeanScopeBase {}
 
-export interface ScopeModuleHomeLayouttabs {
+export interface ScopeModuleHomeLayoutadmin {
   util: BeanScopeUtil;
 config: TypeModuleConfig<typeof config>;
 locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
@@ -229,21 +229,21 @@ locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 import 'zova';
 declare module 'zova' {
   export interface IBeanScopeRecord {
-    'home-layouttabs': ScopeModuleHomeLayouttabs;
+    'home-layoutadmin': ScopeModuleHomeLayoutadmin;
   }
   
   export interface IBeanScopeConfig {
-    'home-layouttabs': ReturnType<typeof config>;
+    'home-layoutadmin': ReturnType<typeof config>;
   }
 
   export interface IBeanScopeLocale {
-    'home-layouttabs': (typeof locales)[TypeLocaleBase];
+    'home-layoutadmin': (typeof locales)[TypeLocaleBase];
   }
 
   
 }
 
-export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `home-layouttabs::${K}` {
-  return `home-layouttabs::${key}`;
+export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `home-layoutadmin::${K}` {
+  return `home-layoutadmin::${key}`;
 }  
 /** scope: end */
