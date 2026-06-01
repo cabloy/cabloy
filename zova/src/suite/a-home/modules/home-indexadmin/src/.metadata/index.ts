@@ -7,11 +7,11 @@ declare module 'zova' {
   
   
 }
-declare module 'zova-module-home-index' {
+declare module 'zova-module-home-indexadmin' {
   
         export interface ControllerPageHome {
           /** @internal */
-          get scope(): ScopeModuleHomeIndex;
+          get scope(): ScopeModuleHomeIndexadmin;
         } 
 }
 /** controller: end */
@@ -20,7 +20,7 @@ import { ControllerPageHome } from '../page/home/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'home-index.controller.pageHome': ControllerPageHome;
+    'home-indexadmin.controller.pageHome': ControllerPageHome;
   }
 }
 /** controller: end */
@@ -31,7 +31,7 @@ import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
-  '/home/index': TypePagePathSchema<undefined,undefined>;
+  '/home/indexadmin': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {
   
@@ -43,7 +43,7 @@ export const pagePathSchemas = {
 export const pageNameSchemas = {
 
 };
-declare module 'zova-module-home-index' {
+declare module 'zova-module-home-indexadmin' {
   
 }
 /** pages: end */
@@ -53,16 +53,16 @@ import { BeanScopeBase, type BeanScopeUtil } from 'zova';
 import { Scope } from 'zova-module-a-bean';
 
 @Scope()
-export class ScopeModuleHomeIndex extends BeanScopeBase {}
+export class ScopeModuleHomeIndexadmin extends BeanScopeBase {}
 
-export interface ScopeModuleHomeIndex {
+export interface ScopeModuleHomeIndexadmin {
   util: BeanScopeUtil;
 }
 
 import 'zova';
 declare module 'zova' {
   export interface IBeanScopeRecord {
-    'home-index': ScopeModuleHomeIndex;
+    'home-indexadmin': ScopeModuleHomeIndexadmin;
   }
   
   

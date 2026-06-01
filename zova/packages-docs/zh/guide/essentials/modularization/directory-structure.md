@@ -18,8 +18,8 @@ project
 │  │    ├── modules
 │  │    │  ├── home-base
 │  │    │  ├── home-icon
-│  │    │  ├── home-index
-│  │    │  └── home-layout
+│  │    │  ├── home-indexadmin
+│  │    │  └── home-layoutadmin
 │  └── suite-vendor
 ```
 
@@ -42,13 +42,13 @@ Zova 对模块/套件进行了规划，方便我们在约定的目录立即开�
 
 ## 目录说明
 
-| 名称                                 | 说明                                               |
-| ------------------------------------ | -------------------------------------------------- |
-| env                                  | [Env](../../env-config/env/introduction.md)        |
-| src/front/config/config              | [Config](../../env-config/config/introduction.md)  |
-| src/front/config/locales.ts          | [I18n国际化](../scope/locale.md)                   |
-| src/suite/a-home/modules/home-api    | [API](../../techniques/server-data/api.md)         |
-| src/suite/a-home/modules/home-base   | [导航守卫](../../page/navigation-guards.md)        |
-| src/suite/a-home/modules/home-icon   | [图标](../../techniques/icon/icon-engine.md)       |
-| src/suite/a-home/modules/home-index  | [路由别名](../../page/route-alias.md)              |
-| src/suite/a-home/modules/home-layout | [路由字段: meta.layout](../../page/page-layout.md) |
+| 名称                                      | 说明                                               |
+| ----------------------------------------- | -------------------------------------------------- |
+| env                                       | [Env](../../env-config/env/introduction.md)        |
+| src/front/config/config                   | [Config](../../env-config/config/introduction.md)  |
+| src/front/config/locales.ts               | [I18n国际化](../scope/locale.md)                   |
+| src/suite/a-home/modules/home-api         | [API](../../techniques/server-data/api.md)         |
+| src/suite/a-home/modules/home-base        | [导航守卫](../../page/navigation-guards.md)        |
+| src/suite/a-home/modules/home-icon        | [图标](../../techniques/icon/icon-engine.md)       |
+| src/suite/a-home/modules/home-indexadmin  | [路由别名](../../page/route-alias.md)              |
+| src/suite/a-home/modules/home-layoutadmin | [路由字段: meta.layout](../../page/page-layout.md) |

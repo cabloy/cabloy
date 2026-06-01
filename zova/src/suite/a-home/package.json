@@ -9,7 +9,7 @@
     "zova-module-home-api": "^5.0.5",
     "zova-module-home-base": "^5.0.7",
     "zova-module-home-icon": "^5.0.5",
-    "zova-module-home-index": "^5.0.5",
+    "zova-module-home-indexadmin": "^5.0.5",
     "zova-module-home-layoutadmin": "^5.0.6",
     "zova-module-home-layoutempty": "^5.0.6",
     "zova-module-home-login": "^5.0.8",

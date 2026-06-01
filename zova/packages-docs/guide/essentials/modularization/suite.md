@@ -27,8 +27,8 @@ a-home
 ├── modules
 │   ├── home-base
 │   ├── home-icon
-│   ├── home-index
-│   ├── home-layout
+│   ├── home-indexadmin
+│   ├── home-layoutadmin
 │   └── ...
 └── package.json
 ```

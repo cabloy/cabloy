@@ -293,56 +293,6 @@ declare module 'zova' {
   }
 }
 /** render: end */
-/** aop: begin */
-export * from '../bean/aop.home.jsx';
-export * from '../bean/aop.home3.jsx';
-
-import { IDecoratorAopOptions } from 'zova-module-a-bean';
-declare module 'zova-module-a-bean' {
-  
-    export interface IAopRecord {
-      'demo-basic:home': IDecoratorAopOptions;
-'demo-basic:home3': IDecoratorAopOptions;
-    }
-
-  
-}
-declare module 'zova-module-demo-basic' {
-  
-        export interface AopHome {
-          /** @internal */
-          get scope(): ScopeModuleDemoBasic;
-        }
-
-        export interface AopHome {
-          get $beanFullName(): 'demo-basic.aop.home';
-          get $onionName(): 'demo-basic:home';
-          get $onionOptions(): IDecoratorAopOptions;
-        }
-
-        export interface AopHome3 {
-          /** @internal */
-          get scope(): ScopeModuleDemoBasic;
-        }
-
-        export interface AopHome3 {
-          get $beanFullName(): 'demo-basic.aop.home3';
-          get $onionName(): 'demo-basic:home3';
-          get $onionOptions(): IDecoratorAopOptions;
-        } 
-}
-/** aop: end */
-/** aop: begin */
-import { AopHome } from '../bean/aop.home.jsx';
-import { AopHome3 } from '../bean/aop.home3.jsx';
-import 'zova';
-declare module 'zova' {
-  export interface IBeanRecordLocal {
-    'demo-basic.aop.home': AopHome;
-'demo-basic.aop.home3': AopHome3;
-  }
-}
-/** aop: end */
 /** behavior: begin */
 export * from '../bean/behavior.formFieldLayout.jsx';
 import { IBehaviorOptionsFormFieldLayout } from '../bean/behavior.formFieldLayout.jsx';

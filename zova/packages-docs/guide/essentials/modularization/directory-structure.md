@@ -18,8 +18,8 @@ project
 │  │    ├── modules
 │  │    │  ├── home-base
 │  │    │  ├── home-icon
-│  │    │  ├── home-index
-│  │    │  └── home-layout
+│  │    │  ├── home-indexadmin
+│  │    │  └── home-layoutadmin
 │  └── suite-vendor
 ```
 
@@ -42,13 +42,13 @@ Zova has planned the modules/suites so that we can start business development im
 
 ## Directory cheat sheet
 
-| Name                                 | Description                                            |
-| ------------------------------------ | ------------------------------------------------------ |
-| env                                  | [Env](../../env-config/env/introduction.md)            |
-| src/front/config/config              | [Config](../../env-config/config/introduction.md)      |
-| src/front/config/locales.ts          | [I18n](../scope/locale.md)                             |
-| src/suite/a-home/modules/home-api    | [API](../../techniques/server-data/api.md)             |
-| src/suite/a-home/modules/home-base   | [Navigation Guards](../../page/navigation-guards.md)   |
-| src/suite/a-home/modules/home-icon   | [Icon](../../techniques/icon/icon-engine.md)           |
-| src/suite/a-home/modules/home-index  | [Route Alias](../../page/route-alias.md)               |
-| src/suite/a-home/modules/home-layout | [Route Fields: meta.layout](../../page/page-layout.md) |
+| Name                                      | Description                                            |
+| ----------------------------------------- | ------------------------------------------------------ |
+| env                                       | [Env](../../env-config/env/introduction.md)            |
+| src/front/config/config                   | [Config](../../env-config/config/introduction.md)      |
+| src/front/config/locales.ts               | [I18n](../scope/locale.md)                             |
+| src/suite/a-home/modules/home-api         | [API](../../techniques/server-data/api.md)             |
+| src/suite/a-home/modules/home-base        | [Navigation Guards](../../page/navigation-guards.md)   |
+| src/suite/a-home/modules/home-icon        | [Icon](../../techniques/icon/icon-engine.md)           |
+| src/suite/a-home/modules/home-indexadmin  | [Route Alias](../../page/route-alias.md)               |
+| src/suite/a-home/modules/home-layoutadmin | [Route Fields: meta.layout](../../page/page-layout.md) |

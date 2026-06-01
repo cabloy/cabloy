@@ -48,18 +48,5 @@
       "exports.\\..import"
     ]
   },
-  "title": "demo-basic",
-  "zovaModule": {
-    "onionsConfig": {
-      "aop": {
-        "home": {
-          "match": "home-index.controller.pageHome"
-        },
-        "home3": {
-          "dependencies": "demo-basic:home",
-          "match": "regexp:///home-index\\.controller\\.pageHome/"
-        }
-      }
-    }
-  }
+  "title": "demo-basic"
 }
