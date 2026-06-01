@@ -35,6 +35,8 @@
     "start": "cd vona && npm run start",
     "start:one": "cd vona && npm run start:one",
     "test": "cd vona && npm run test",
+    "tsc": "npm run tsc:zova && pnpm --dir vona run tsc",
+    "tsc:zova": "pnpm --dir zova run tsc",
     "format": "oxfmt --check",
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
