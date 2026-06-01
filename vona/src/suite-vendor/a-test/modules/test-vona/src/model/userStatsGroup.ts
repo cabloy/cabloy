@@ -3,7 +3,6 @@ import type { IDecoratorModelOptions } from 'vona-module-a-orm';
 import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';
 
 import { EntityUser } from '../entity/user.ts';
-import { ModelPost } from './post.ts';
 
 export interface IModelOptionsUserStatsGroup extends IDecoratorModelOptions<EntityUser> {}
 
@@ -11,7 +10,7 @@ export interface IModelOptionsUserStatsGroup extends IDecoratorModelOptions<Enti
   entity: EntityUser,
   relations: {
     posts: $relation.hasMany(
-      () => ModelPost,
+      'test-vona:post',
       'userId',
       {
         autoload: true,
