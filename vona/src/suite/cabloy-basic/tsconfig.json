@@ -4,6 +4,9 @@
   "references": [
     {
       "path": "modules/basic-siteadmin/tsconfig.build.json"
+    },
+    {
+      "path": "modules/basic-siteweb/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

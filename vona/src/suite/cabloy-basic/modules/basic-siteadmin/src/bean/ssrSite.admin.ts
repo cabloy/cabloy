@@ -5,7 +5,7 @@ import { BeanSsrSiteBase, SsrSite } from 'vona-module-a-ssr';
 
 declare module 'vona-module-a-ssr' {
   export interface ISsrSitePublicPathRecord {
-    '': never;
+    admin: never;
   }
 }
 
@@ -20,7 +20,7 @@ export interface ISsrSiteOptionsAdmin extends IDecoratorSsrSiteOptions<
 > {}
 
 @SsrSite<ISsrSiteOptionsAdmin>({
-  publicPath: '',
+  publicPath: 'admin',
   bundlePath: 'ssr-cabloyBasicAdmin-5.0.0',
 })
 export class SsrSiteAdmin extends BeanSsrSiteBase<ISsrSiteOptionsAdmin> {}

@@ -8,6 +8,7 @@
   "type": "module",
   "dependencies": {
     "vona-module-basic-siteadmin": "workspace:^",
+    "vona-module-basic-siteweb": "^5.0.0",
     "vona-suite-a-cabloy": "^5.1.25"
   },
   "title": "cabloy-basic"
