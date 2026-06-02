@@ -1,5 +1,31 @@
 # Changelog
 
+## 5.1.42
+
+### Features
+
+- Add the Cabloy basic site web module.
+- Add home web modules.
+- Add the home layout web structure.
+- Add locale handling for home routes.
+- Add basic site web locale menu support.
+
+### Bug Fixes
+
+- Use the locale service for the layout web switcher.
+- Localize language switcher labels.
+
+### Improvements
+
+- Improve init and upgrade scripts.
+- Share the details dropdown close helper.
+- Update basic site web SSR paths.
+- Update the home layout web header button.
+- Update home layout theming and web rendering.
+- Update home layout web rendering.
+- Rename the home index admin dashboard.
+- Rename home layout tabs to layout admin.
+
 ## 5.1.41
 
 ### Improvements
