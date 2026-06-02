@@ -38,6 +38,9 @@ importers:
       oxlint:
         specifier: ^1.65.0
         version: 1.67.0
+      tar:
+        specifier: ^7.5.11
+        version: 7.5.11
       textlint:
         specifier: ^15.7.0
         version: 15.7.1
