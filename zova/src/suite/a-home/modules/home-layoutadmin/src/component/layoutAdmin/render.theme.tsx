@@ -52,16 +52,7 @@ export class RenderTheme extends BeanRenderBase {
   }
 
   renderThemeName() {
-    const themes = [
-      {
-        name: 'home-theme:default' satisfies keyof IThemeRecord,
-        title: this.scope.locale.ThemeDefault(),
-      },
-      {
-        name: 'home-theme:orange' satisfies keyof IThemeRecord,
-        title: this.scope.locale.ThemeOrange(),
-      },
-    ];
+    const themes = this.getThemeNames();
     return (
       <li>
         <details>
@@ -87,5 +78,18 @@ export class RenderTheme extends BeanRenderBase {
         </details>
       </li>
     );
+  }
+
+  getThemeNames() {
+    return [
+      {
+        name: 'home-theme:orange' satisfies keyof IThemeRecord,
+        title: this.scope.locale.ThemeOrange(),
+      },
+      {
+        name: 'home-theme:default' satisfies keyof IThemeRecord,
+        title: this.scope.locale.ThemeBlue(),
+      },
+    ];
   }
 }

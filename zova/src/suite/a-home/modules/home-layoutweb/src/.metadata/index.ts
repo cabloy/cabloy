@@ -94,7 +94,6 @@ export interface IZovaComponentRecord {
 /** components: end */
 /** render: begin */
 export * from '../component/layoutWeb/render.content.jsx';
-export * from '../component/layoutWeb/render.footer.jsx';
 export * from '../component/layoutWeb/render.header.jsx';
 export * from '../component/layoutWeb/render.locale.jsx';
 export * from '../component/layoutWeb/render.tabs.jsx';
@@ -109,11 +108,6 @@ declare module 'zova' {
 declare module 'zova-module-home-layoutweb' {
   
         export interface RenderContent {
-          /** @internal */
-          get scope(): ScopeModuleHomeLayoutweb;
-        }
-
-        export interface RenderFooter {
           /** @internal */
           get scope(): ScopeModuleHomeLayoutweb;
         }
@@ -146,7 +140,6 @@ declare module 'zova-module-home-layoutweb' {
 /** render: end */
 /** render: begin */
 import { RenderContent } from '../component/layoutWeb/render.content.jsx';
-import { RenderFooter } from '../component/layoutWeb/render.footer.jsx';
 import { RenderHeader } from '../component/layoutWeb/render.header.jsx';
 import { RenderLocale } from '../component/layoutWeb/render.locale.jsx';
 import { RenderTabs } from '../component/layoutWeb/render.tabs.jsx';
@@ -156,7 +149,6 @@ import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'home-layoutweb.render.content': RenderContent;
-'home-layoutweb.render.footer': RenderFooter;
 'home-layoutweb.render.header': RenderHeader;
 'home-layoutweb.render.locale': RenderLocale;
 'home-layoutweb.render.tabs': RenderTabs;

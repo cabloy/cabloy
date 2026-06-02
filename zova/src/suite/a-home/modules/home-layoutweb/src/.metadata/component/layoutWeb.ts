@@ -23,7 +23,6 @@ declare module 'zova-module-home-layoutweb' {
 declare module 'zova-module-home-layoutweb' {
   export interface RenderLayoutWeb extends ControllerLayoutWeb {}
   export interface RenderContent extends ControllerLayoutWeb {}
-  export interface RenderFooter extends ControllerLayoutWeb {}
   export interface RenderHeader extends ControllerLayoutWeb {}
   export interface RenderLocale extends ControllerLayoutWeb {}
   export interface RenderTabs extends ControllerLayoutWeb {}

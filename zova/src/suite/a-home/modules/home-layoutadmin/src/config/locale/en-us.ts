@@ -8,6 +8,7 @@ export default {
   'ThemeAuto': 'Auto',
   'ThemeDefault': 'Default',
   'ThemeOrange': 'Orange',
+  'ThemeBlue': 'Blue',
   'Basic': 'Basic',
   'Business': 'Business',
   'State': 'State',

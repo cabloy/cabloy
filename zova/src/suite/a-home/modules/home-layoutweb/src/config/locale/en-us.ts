@@ -6,4 +6,5 @@ export default {
   ThemeAuto: 'Auto',
   ThemeDefault: 'Default',
   ThemeOrange: 'Orange',
+  ThemeBlue: 'Blue',
 };

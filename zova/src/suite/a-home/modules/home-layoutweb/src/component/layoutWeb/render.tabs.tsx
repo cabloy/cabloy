@@ -1,8 +1,7 @@
 import { VNode } from 'vue';
-import { VBtn, VList, VMenu, VTab } from 'vuetify/components';
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
-import { $iconName } from 'zova-module-a-icon';
+import { $iconName, ZIcon } from 'zova-module-a-icon';
 import { RouteTab, ZRouterViewTabs } from 'zova-module-a-routertabs';
 import { ZItemLink } from 'zova-module-home-base';
 
@@ -28,52 +27,52 @@ export class RenderTabs extends BeanRenderBase {
     const $$modelTabs = this.$$modelTabs;
     const { tabKey, info } = tab;
     const titleLocale = this.$text(info?.title || '');
+    const tabIcon = this.getTabIcon(tab);
     if (info.folder) {
-      const slots = {
-        activator: ({ props }) => {
-          return (
-            <VBtn
-              style={{ height: 'calc(var(--v-tabs-height))' }}
-              icon={info.icon}
-              variant="text"
-              {...props}
-              text={titleLocale}
-            ></VBtn>
-          );
-        },
-      };
       return (
-        <VMenu key={tab.tabKey} v-slots={slots}>
-          <VList>
-            {info.children?.map(item => {
-              return (
-                <ZItemLink
-                  key={item.link}
-                  title={item.title!}
-                  icon={(item.icon as any) ?? $iconName('::none')}
-                  href={item.link && item.external ? item.link : undefined}
-                  to={item.link && !item.external ? item.link : undefined}
-                ></ZItemLink>
-              );
-            })}
-          </VList>
-        </VMenu>
+        <li>
+          <details>
+            <summary>
+              {!!tabIcon && <ZIcon name={tabIcon as any} width="24"></ZIcon>}
+              {titleLocale}
+            </summary>
+            <ClientOnly>
+              <ul class="bg-base-100 rounded-t-none p-2 w-48">
+                {info.children?.map(item => {
+                  return (
+                    <li key={item.link}>
+                      <ZItemLink
+                        key={item.link}
+                        title={item.title!}
+                        icon={(item.icon as any) ?? $iconName('::none')}
+                        href={item.link && item.external ? item.link : undefined}
+                        to={item.link && !item.external ? item.link : undefined}
+                      ></ZItemLink>
+                    </li>
+                  );
+                })}
+              </ul>
+            </ClientOnly>
+          </details>
+        </li>
       );
     }
     // not external
     if (!info.external) {
       const className = tabKey === $$modelTabs.tabKeyCurrent ? 'text-primary' : '';
+
       return (
-        <VTab
+        <a
           key={tabKey}
-          value={tabKey}
-          class={`${className}`}
-          href={info.link && info.external ? info.link : undefined}
-          to={info.link && !info.external ? info.link : undefined}
-          prependIcon={this.getTabIcon(tab)}
+          role="tab"
+          class={`tab ${className}`}
+          onClick={() => {
+            $$modelTabs.activeTab(tabKey);
+          }}
         >
+          {!!tabIcon && <ZIcon name={tabIcon as any} width="24"></ZIcon>}
           {titleLocale}
-        </VTab>
+        </a>
       );
     }
     // external

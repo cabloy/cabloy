@@ -8,6 +8,7 @@ export default {
   'ThemeAuto': '自动',
   'ThemeDefault': '默认',
   'ThemeOrange': '橘色',
+  'ThemeBlue': '蓝色',
   'Basic': '基础',
   'Business': '业务',
   'State': '状态',

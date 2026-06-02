@@ -1,4 +1,4 @@
-import { VApp, VMain } from 'vuetify/components';
+import { classes } from 'typestyle';
 import { BeanRenderBase, Use } from 'zova';
 import { Render } from 'zova-module-a-bean';
 
@@ -27,13 +27,13 @@ export class RenderLayoutWeb extends BeanRenderBase {
 
   public render() {
     return (
-      <VApp>
-        {this.$$renderHeader.render()}
-        <VMain style={{ transition: 'none', marginBottom: '56px' }}>
+      <div class={classes('drawer', this.leftDrawerOpen ? 'drawer-open' : false)}>
+        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content">
+          {this.$$renderHeader.render()}
           {this.$$renderContent.render()}
-        </VMain>
-        {this.$$renderFooter.render()}
-      </VApp>
+        </div>
+      </div>
     );
   }
 }
