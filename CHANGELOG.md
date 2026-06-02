@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.44
+
+### Features
+
+- Add the `a-demo` suite workspace package.
+
 ## 5.1.43
 
 ### Improvements
