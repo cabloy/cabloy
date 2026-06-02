@@ -1,10 +1,10 @@
 import { execSync } from 'node:child_process';
-import { createWriteStream } from 'node:fs';
-import { cpSync, existsSync, mkdirSync, rmSync, unlinkSync } from 'node:fs';
+import { cpSync, createWriteStream, existsSync, mkdirSync, rmSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
+import { x as extractTar } from 'tar';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(__dirname, '..');
@@ -79,6 +79,16 @@ function exec(cmd: string): void {
   execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
 }
 
+async function extractTarball(tarballPath: string, targetDir: string): Promise<void> {
+  rmSync(targetDir, { recursive: true, force: true });
+  mkdirSync(targetDir, { recursive: true });
+  try {
+    await extractTar({ file: tarballPath, cwd: targetDir, strip: 1 });
+  } catch {
+    throw new Error('Failed to extract tarball');
+  }
+}
+
 // --- Step 1: Pre-flight ---
 
 function preflight(): void {
@@ -117,17 +127,6 @@ async function downloadTarball(tarballUrl: string): Promise<string> {
   const fileStream = createWriteStream(tmpFile);
   await pipeline(res.body, fileStream);
   return tmpFile;
-}
-
-async function extractTarball(tarballPath: string, targetDir: string): Promise<void> {
-  mkdirSync(targetDir, { recursive: true });
-  try {
-    execSync(`tar --strip-components=1 -xzf "${tarballPath}" -C "${targetDir}"`, {
-      stdio: 'pipe',
-    });
-  } catch {
-    throw new Error('Failed to extract tarball');
-  }
 }
 
 async function downloadAndExtract(): Promise<void> {

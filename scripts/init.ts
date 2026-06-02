@@ -15,6 +15,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(__dirname, '..');
+const VONA_DIR = resolve(ROOT_DIR, 'vona');
+const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
 
 // --- Helpers ---
 
@@ -32,8 +34,8 @@ function generatePassword(length: number, exclude: string): string {
   return result;
 }
 
-function exec(cmd: string): void {
-  execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
+function exec(cmd: string, cwd = ROOT_DIR): void {
+  execSync(cmd, { stdio: 'inherit', cwd });
 }
 
 function deleteGitkeepFiles(dir: string): void {
@@ -144,10 +146,10 @@ function generateEnvProdDockerLocal(): void {
 function initVona(): void {
   // eslint-disable-next-line
   console.log('[init] Initializing vona...');
-  const pkgPath = resolve(ROOT_DIR, 'vona/package.json');
+  const pkgPath = resolve(VONA_DIR, 'package.json');
   // if (!existsSync(pkgPath)) {
-  copyFileSync(resolve(ROOT_DIR, 'vona/package.original.json'), pkgPath);
-  exec("pnpm --dir './vona' install --no-frozen-lockfile");
+  copyFileSync(resolve(VONA_DIR, 'package.original.json'), pkgPath);
+  exec('pnpm install --no-frozen-lockfile', VONA_DIR);
   // }
   exec('npm run vona :tools:deps');
 }
@@ -157,10 +159,10 @@ function initVona(): void {
 function initZova(): void {
   // eslint-disable-next-line
   console.log('[init] Initializing zova...');
-  const pkgPath = resolve(ROOT_DIR, 'zova/package.json');
+  const pkgPath = resolve(ZOVA_DIR, 'package.json');
   // if (!existsSync(pkgPath)) {
-  copyFileSync(resolve(ROOT_DIR, 'zova/package.original.json'), pkgPath);
-  exec("pnpm --dir './zova' install --no-frozen-lockfile");
+  copyFileSync(resolve(ZOVA_DIR, 'package.original.json'), pkgPath);
+  exec('pnpm install --no-frozen-lockfile', ZOVA_DIR);
   // }
   exec('npm run zova :tools:deps');
 }
@@ -171,11 +173,11 @@ function buildSsrCabloyBasicStartBatch(): void {
   if (existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'))) {
     // eslint-disable-next-line
     console.log('[init] Building zova SSR cabloyBasicBatch...');
-    exec("pnpm --dir './zova' run build:ssr:cabloyBasicBatch");
+    exec('pnpm run build:ssr:cabloyBasicBatch', ZOVA_DIR);
   } else if (existsSync(resolve(ROOT_DIR, '__CABLOY_START__'))) {
     // eslint-disable-next-line
     console.log('[init] Building zova SSR cabloyStartBatch...');
-    exec("pnpm --dir './zova' run build:ssr:cabloyStartBatch");
+    exec('pnpm run build:ssr:cabloyStartBatch', ZOVA_DIR);
   }
 }
 

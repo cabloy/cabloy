@@ -63,6 +63,7 @@
     "minimist": "^1.2.8",
     "oxfmt": "^0.45.0",
     "oxlint": "^1.65.0",
+    "tar": "^7.5.11",
     "textlint": "^15.7.0",
     "textlint-rule-en-no-mixed-period": "^3.0.2",
     "textlint-rule-ja-no-mixed-period": "^3.0.2",
