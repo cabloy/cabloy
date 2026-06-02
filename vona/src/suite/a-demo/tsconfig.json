@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/demo-basic/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}
