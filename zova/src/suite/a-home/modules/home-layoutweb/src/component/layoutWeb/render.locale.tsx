@@ -1,6 +1,7 @@
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { $icon } from 'zova-module-a-icon';
+import { closeNearestDetails } from 'zova-module-home-base';
 
 @Render()
 export class RenderLocale extends BeanRenderBase {
@@ -31,10 +32,7 @@ export class RenderLocale extends BeanRenderBase {
                         } else {
                           this.$$serviceLocale.setLocale(key as any);
                         }
-                        const details = (event.currentTarget as HTMLElement | null)?.closest(
-                          'details',
-                        ) as HTMLDetailsElement | null;
-                        if (details) details.open = false;
+                        closeNearestDetails(event);
                       }}
                     >
                       {$icon(this.app.meta.locale.current === key ? '::done' : '::none', 24)}

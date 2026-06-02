@@ -3,6 +3,7 @@ import type { IThemeRecord } from 'zova-module-a-style';
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { $icon } from 'zova-module-a-icon';
+import { closeNearestDetails } from 'zova-module-home-base';
 
 @Render()
 export class RenderTheme extends BeanRenderBase {
@@ -34,8 +35,9 @@ export class RenderTheme extends BeanRenderBase {
                     class={this.$theme.darkMode === item.mode ? 'disabled' : ''}
                   >
                     <a
-                      onClick={() => {
+                      onClick={event => {
                         this.$theme.darkMode = item.mode as any;
+                        closeNearestDetails(event);
                       }}
                     >
                       {$icon(this.$theme.darkMode === item.mode ? '::done' : '::none', 24)}
@@ -63,8 +65,9 @@ export class RenderTheme extends BeanRenderBase {
                 return (
                   <li key={item.name} class={this.$theme.name === item.name ? 'disabled' : ''}>
                     <a
-                      onClick={() => {
+                      onClick={event => {
                         this.$theme.name = item.name as keyof IThemeRecord;
+                        closeNearestDetails(event);
                       }}
                     >
                       {$icon(this.$theme.name === item.name ? '::done' : '::none', 24)}

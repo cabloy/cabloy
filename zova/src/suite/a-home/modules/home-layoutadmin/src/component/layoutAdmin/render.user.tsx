@@ -1,6 +1,7 @@
 import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { $icon } from 'zova-module-a-icon';
+import { closeNearestDetails } from 'zova-module-home-base';
 
 @Render()
 export class RenderUser extends BeanRenderBase {
@@ -15,8 +16,9 @@ export class RenderUser extends BeanRenderBase {
           <ul class="bg-base-100 rounded-t-none p-2 w-32">
             <li>
               <a
-                onClick={() => {
+                onClick={event => {
                   this.$passport.logout().mutate();
+                  closeNearestDetails(event);
                 }}
               >
                 {this.scope.locale.Logout()}
