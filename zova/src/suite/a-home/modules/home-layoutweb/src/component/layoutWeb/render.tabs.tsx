@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { VBtn, VList, VMenu, VTab, VTabs } from 'vuetify/components';
+import { VBtn, VList, VMenu, VTab } from 'vuetify/components';
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { $iconName } from 'zova-module-a-icon';
@@ -16,9 +16,9 @@ export class RenderTabs extends BeanRenderBase {
       domTabs.push(this._renderTab(tab));
     }
     const domWrapper = (
-      <VTabs centerActive modelValue={$$modelTabs.tabKeyCurrent} mandatory={false}>
+      <div role="tablist" class="tabs tabs-lifted">
         {domTabs}
-      </VTabs>
+      </div>
     );
     if (!this.$$modelTabs.cache) return domWrapper;
     return <ClientOnly>{domWrapper}</ClientOnly>;

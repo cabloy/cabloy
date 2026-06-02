@@ -1,11 +1,9 @@
-import { provide, ref } from 'vue';
 import { BeanControllerBase, Use, useComputed, UseScope } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryAutoLoad } from 'zova-module-a-model';
 import { ModelTabs, ModelTabsOptions, RouteTabInitial } from 'zova-module-a-routertabs';
 import { ScopeModuleASsr } from 'zova-module-a-ssr';
-import { IServiceSsrLayoutOptions, ServiceLocale, ServiceSsrLayout } from 'zova-module-home-base';
-import { ILayoutConfig } from 'zova-module-vuetify-adapter';
+import { IServiceSsrLayoutOptions, ServiceSsrLayout } from 'zova-module-home-base';
 
 import { ModelLayout } from '../../model/layout.js';
 import { ModelMenu } from '../../model/menu.js';
@@ -29,12 +27,6 @@ export class ControllerLayoutWeb extends BeanControllerBase {
 
   @Use({ init: { arg: { sidebarLeftOpenPC: false } as IServiceSsrLayoutOptions } })
   $$serviceSsrLayout: ServiceSsrLayout;
-
-  @Use()
-  $$serviceLocale: ServiceLocale;
-
-  layoutConfig: ILayoutConfig;
-  layoutConfigTimeout: number = 0;
 
   leftDrawerOpen: boolean;
   leftDrawerOpenMobile: boolean = false;
@@ -69,16 +61,10 @@ export class ControllerLayoutWeb extends BeanControllerBase {
         },
       };
     });
-    // layoutConfig
-    this.__initLayoutConfig();
     // menu
     await $QueryAutoLoad(() => this.$$modelMenu.retrieveMenus());
     // tabs
     await this._initTabs();
-  }
-
-  toggleLeftDrawer() {
-    this.leftDrawerOpen = !this.leftDrawerOpen;
   }
 
   private async _initTabs() {
@@ -108,22 +94,6 @@ export class ControllerLayoutWeb extends BeanControllerBase {
     );
   }
 
-  private __initLayoutConfig() {
-    this.layoutConfig = this.scope.config.layout;
-    this.layoutConfig.leftDrawerOpen = this.leftDrawerOpen;
-    if (process.env.SSR) {
-      const layoutConfigRef = ref<ILayoutConfig | undefined>(this.layoutConfig);
-      provide('VuetifyLayoutConfig', layoutConfigRef);
-      if (process.env.CLIENT) {
-        if (!this.layoutConfigTimeout) {
-          this.layoutConfigTimeout = window.setTimeout(() => {
-            layoutConfigRef.value = undefined;
-          }, 100);
-        }
-      }
-    }
-  }
-
   private _getInitialTabs() {
     return this.$$modelMenu.menuTree?.map(item => {
       return {
@@ -131,5 +101,9 @@ export class ControllerLayoutWeb extends BeanControllerBase {
         info: item,
       } as RouteTabInitial;
     });
+  }
+
+  toggleLeftDrawer() {
+    this.leftDrawerOpen = !this.leftDrawerOpen;
   }
 }

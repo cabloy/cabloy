@@ -14,35 +14,7 @@ export class RenderTabs extends BeanRenderBase {
     if (!$$modelTabs) return;
     const domTabs: VNode[] = [];
     for (const tab of $$modelTabs.tabs) {
-      const { tabKey, info } = tab;
-      const className = tabKey === $$modelTabs.tabKeyCurrent ? 'tab-active text-primary' : '';
-      const titleLocale = this.$text(info?.title || '');
-      const tabIcon = this.getTabIcon(tab);
-      const domTab = (
-        <a
-          key={tabKey}
-          role="tab"
-          class={`tab ${className} ${this.cTab}`}
-          onClick={() => {
-            $$modelTabs.activeTab(tabKey);
-          }}
-        >
-          {!!tabIcon && <ZIcon name={tabIcon as any} width="24" height="24"></ZIcon>}
-          {titleLocale}
-          {!tab.affix && (
-            <ZIcon
-              class="tab-close hidden hover:bg-slate-400 rounded-sm"
-              name="::close"
-              width="16"
-              height="16"
-              nativeOnClick={withModifiers(() => {
-                $$modelTabs.deleteTab(tabKey);
-              }, ['stop'])}
-            ></ZIcon>
-          )}
-        </a>
-      );
-      domTabs.push(domTab);
+      domTabs.push(this._renderTab(tab));
     }
     const domWrapper = (
       <div role="tablist" class="tabs tabs-lifted">
@@ -51,6 +23,38 @@ export class RenderTabs extends BeanRenderBase {
     );
     if (!this.$$modelTabs.cache) return domWrapper;
     return <ClientOnly>{domWrapper}</ClientOnly>;
+  }
+
+  private _renderTab(tab: RouteTab) {
+    const $$modelTabs = this.$$modelTabs;
+    const { tabKey, info } = tab;
+    const className = tabKey === $$modelTabs.tabKeyCurrent ? 'tab-active text-primary' : '';
+    const titleLocale = this.$text(info?.title || '');
+    const tabIcon = this.getTabIcon(tab);
+    return (
+      <a
+        key={tabKey}
+        role="tab"
+        class={`tab ${className} ${this.cTab}`}
+        onClick={() => {
+          $$modelTabs.activeTab(tabKey);
+        }}
+      >
+        {!!tabIcon && <ZIcon name={tabIcon as any} width="24" height="24"></ZIcon>}
+        {titleLocale}
+        {!tab.affix && (
+          <ZIcon
+            class="tab-close hidden hover:bg-slate-400 rounded-sm"
+            name="::close"
+            width="16"
+            height="16"
+            nativeOnClick={withModifiers(() => {
+              $$modelTabs.deleteTab(tabKey);
+            }, ['stop'])}
+          ></ZIcon>
+        )}
+      </a>
+    );
   }
 
   public renderTabItems() {
