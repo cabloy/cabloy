@@ -25,8 +25,37 @@ declare module 'vona-module-basic-siteweb' {
           } 
 }
 /** ssrSite: end */
+/** ssrMenu: begin */
+export * from '../bean/ssrMenu.home.ts';
+import type { ISsrMenuOptionsHome } from '../bean/ssrMenu.home.ts';
+import 'vona-module-a-ssr';
+declare module 'vona-module-a-ssr' {
+  
+    export interface ISsrMenuRecord {
+      'basic-siteweb:home': ISsrMenuOptionsHome;
+    }
+
+  
+}
+declare module 'vona-module-basic-siteweb' {
+  
+        export interface SsrMenuHome {
+          /** @internal */
+          get scope(): ScopeModuleBasicSiteweb;
+        }
+
+          export interface SsrMenuHome {
+            get $beanFullName(): 'basic-siteweb.ssrMenu.home';
+            get $onionName(): 'basic-siteweb:home';
+            get $onionOptions(): ISsrMenuOptionsHome;
+          } 
+}
+/** ssrMenu: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -34,6 +63,7 @@ export class ScopeModuleBasicSiteweb extends BeanScopeBase {}
 
 export interface ScopeModuleBasicSiteweb {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 }
 
 import 'vona';
@@ -48,7 +78,9 @@ declare module 'vona' {
   
   
 
-  
+  export interface IBeanScopeLocale {
+    'basic-siteweb': (typeof locales)[TypeLocaleBase];
+  }
 
   
 }

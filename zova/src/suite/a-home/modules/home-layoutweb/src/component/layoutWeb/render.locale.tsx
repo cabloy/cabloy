@@ -19,7 +19,7 @@ export class RenderLocale extends BeanRenderBase {
                 return (
                   <li key={key} class={this.app.meta.locale.current === key ? 'disabled' : ''}>
                     <a
-                      onClick={() => {
+                      onClick={event => {
                         if (metaLocale) {
                           const fullPath = this.$router.resolveName(currentRoute.name as any, {
                             params: Object.assign({}, currentRoute.params, {
@@ -31,6 +31,10 @@ export class RenderLocale extends BeanRenderBase {
                         } else {
                           this.$$serviceLocale.setLocale(key as any);
                         }
+                        const details = (event.currentTarget as HTMLElement | null)?.closest(
+                          'details',
+                        ) as HTMLDetailsElement | null;
+                        if (details) details.open = false;
                       }}
                     >
                       {$icon(this.app.meta.locale.current === key ? '::done' : '::none', 24)}

@@ -40,7 +40,15 @@ export class RenderTabs extends BeanRenderBase {
               <ul class="bg-base-100 rounded-t-none p-2 w-48">
                 {info.children?.map(item => {
                   return (
-                    <li key={item.link}>
+                    <li
+                      key={item.link}
+                      onClick={event => {
+                        const details = (event.currentTarget as HTMLElement | null)?.closest(
+                          'details',
+                        ) as HTMLDetailsElement | null;
+                        if (details) details.open = false;
+                      }}
+                    >
                       <ZItemLink
                         key={item.link}
                         title={item.title!}

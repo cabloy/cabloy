@@ -34,8 +34,12 @@ export class RenderTheme extends BeanRenderBase {
                     class={this.$theme.darkMode === item.mode ? 'disabled' : ''}
                   >
                     <a
-                      onClick={() => {
+                      onClick={event => {
                         this.$theme.darkMode = item.mode as any;
+                        const details = (event.currentTarget as HTMLElement | null)?.closest(
+                          'details',
+                        ) as HTMLDetailsElement | null;
+                        if (details) details.open = false;
                       }}
                     >
                       {$icon(this.$theme.darkMode === item.mode ? '::done' : '::none', 24)}
@@ -63,8 +67,12 @@ export class RenderTheme extends BeanRenderBase {
                 return (
                   <li key={item.name} class={this.$theme.name === item.name ? 'disabled' : ''}>
                     <a
-                      onClick={() => {
+                      onClick={event => {
                         this.$theme.name = item.name as keyof IThemeRecord;
+                        const details = (event.currentTarget as HTMLElement | null)?.closest(
+                          'details',
+                        ) as HTMLDetailsElement | null;
+                        if (details) details.open = false;
                       }}
                     >
                       {$icon(this.$theme.name === item.name ? '::done' : '::none', 24)}

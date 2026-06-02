@@ -1,12 +1,22 @@
 import type { ILocaleMagic } from 'vona';
+import type { IResourceRecord } from 'vona-module-a-openapi';
+import type { TypeRequestMethod } from 'vona-module-a-web';
 
 export interface IMenus<Pages extends {} = any, Icons extends {} = any> {
   menus?: IMenuItem<Pages, Icons>[];
   groups?: IMenuGroup<Icons>[];
 }
 
-export interface IMenuItemMetaParams {}
-export interface IMenuItemMetaQuery {}
+export interface IMenuItemMetaParams {
+  resource?: keyof IResourceRecord;
+  locale?: true | string;
+}
+
+export interface IMenuItemMetaQuery {
+  api?: string;
+  apiMethod?: TypeRequestMethod;
+}
+
 export interface IMenuItemMeta {
   params?: IMenuItemMetaParams;
   query?: IMenuItemMetaQuery;

@@ -1,8 +1,6 @@
 import type { ILocaleRecord, OmitNever } from 'vona';
 import type { IMenuItem } from 'vona-module-a-menu';
 import type { IOnionOptionsEnable, ServiceOnion } from 'vona-module-a-onion';
-import type { IResourceRecord } from 'vona-module-a-openapi';
-import type { TypeRequestMethod } from 'vona-module-a-web';
 
 import type { ISsrMenuGroupRecord } from './ssrMenuGroup.ts';
 import type { IDecoratorSsrSiteOptions, ISsrSiteRecord } from './ssrSite.ts';
@@ -39,16 +37,5 @@ declare module 'vona' {
 
   export interface IBeanSceneRecord {
     ssrMenu: never;
-  }
-}
-
-declare module 'vona-module-a-menu' {
-  export interface IMenuItemMetaParams {
-    resource?: keyof IResourceRecord;
-  }
-
-  export interface IMenuItemMetaQuery {
-    api?: string;
-    apiMethod?: TypeRequestMethod;
   }
 }
