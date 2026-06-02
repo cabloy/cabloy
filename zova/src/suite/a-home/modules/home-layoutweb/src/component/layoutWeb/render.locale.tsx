@@ -29,7 +29,7 @@ export class RenderLocale extends BeanRenderBase {
                           });
                           this.$router.push(fullPath);
                         } else {
-                          this.app.meta.locale.current = key as any;
+                          this.$$serviceLocale.setLocale(key as any);
                         }
                       }}
                     >
