@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.43
+
+### Improvements
+
+- Update `package.original.json`.
+
 ## 5.1.42
 
 ### Features
