@@ -1,5 +1,6 @@
 import { BeanRenderBase, Use } from 'zova';
 import { Render } from 'zova-module-a-bean';
+import { ZIcon } from 'zova-module-a-icon';
 
 import type { RenderLayoutWeb } from './render.jsx';
 
@@ -16,22 +17,10 @@ export class RenderHeader extends BeanRenderBase {
             <button
               class="btn btn-square btn-ghost"
               onClick={() => {
-                this.toggleLeftDrawer();
+                this.app.$gotoHome();
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                class="inline-block h-5 w-5 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>
+              <ZIcon name=":social:cabloy" width={24}></ZIcon>
             </button>
           </div>
           <div class="text-xl px-4">{this.sys.env.APP_TITLE}</div>
