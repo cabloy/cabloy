@@ -1,11 +1,17 @@
 import type { BeanRouter } from 'zova-module-a-router';
 
 import { catchError } from '@cabloy/utils';
+import { cast, Use } from 'zova';
 import { Service } from 'zova-module-a-bean';
 import { BeanRouterGuardsBase } from 'zova-module-a-router';
 
+import { ServiceLocale } from './locale.js';
+
 @Service()
 export class ServiceRouterGuards extends BeanRouterGuardsBase {
+  @Use()
+  $$serviceLocale: ServiceLocale;
+
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
       if (
@@ -28,6 +34,13 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
           }
           return false;
         }
+      }
+    });
+    router.beforeResolve(async to => {
+      const locale = to.meta?.locale;
+      if (locale) {
+        const localeCurrent = cast(to.params)?.locale ?? this.sys.config.locale.default;
+        this.$$serviceLocale.setLocale(localeCurrent);
       }
     });
   }
