@@ -3,7 +3,7 @@ import type { ModelTabs, ModelTabsOptions } from 'zova-module-a-routertabs';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryAutoLoad } from 'zova-module-a-model';
-import { IServiceSsrLayoutOptions, ServiceSsrLayout } from 'zova-module-home-base';
+import { IServiceSsrLayoutOptions, ServiceLocale, ServiceSsrLayout } from 'zova-module-home-base';
 
 import { ModelLayout } from '../../model/layout.js';
 import { ModelMenu } from '../../model/menu.js';
@@ -24,6 +24,9 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
 
   @Use({ init: { arg: { sidebarLeftOpenPC: true } as IServiceSsrLayoutOptions } })
   $$serviceSsrLayout: ServiceSsrLayout;
+
+  @Use()
+  $$serviceLocale: ServiceLocale;
 
   leftDrawerOpen: boolean;
   leftDrawerOpenMobile: boolean = false;

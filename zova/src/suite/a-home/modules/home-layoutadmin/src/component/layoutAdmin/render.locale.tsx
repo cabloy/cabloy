@@ -5,35 +5,24 @@ import { $icon } from 'zova-module-a-icon';
 @Render()
 export class RenderLocale extends BeanRenderBase {
   public render() {
-    const locales = [
-      {
-        name: 'en-us',
-        title: this.scope.locale.LanguageEnglish(),
-      },
-      {
-        name: 'zh-cn',
-        title: this.scope.locale.LanguageChinese(),
-      },
-    ];
+    const locales = this.sys.config.locale.items;
     return (
       <li>
         <details>
           <summary>{$icon('::language', 24)}</summary>
           <ClientOnly>
             <ul class="bg-base-100 rounded-t-none p-2 w-48">
-              {locales.map(item => {
+              {Object.keys(locales).map(key => {
+                const title = this.$scopeBase.locale[locales[key]]();
                 return (
-                  <li
-                    key={item.name}
-                    class={this.app.meta.locale.current === item.name ? 'disabled' : ''}
-                  >
+                  <li key={key} class={this.app.meta.locale.current === key ? 'disabled' : ''}>
                     <a
                       onClick={() => {
-                        this.app.meta.locale.current = item.name as any;
+                        this.$$serviceLocale.setLocale(key as any);
                       }}
                     >
-                      {$icon(this.app.meta.locale.current === item.name ? '::done' : '::none', 24)}
-                      {item.title}
+                      {$icon(this.app.meta.locale.current === key ? '::done' : '::none', 24)}
+                      {title}
                     </a>
                   </li>
                 );

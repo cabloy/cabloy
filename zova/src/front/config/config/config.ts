@@ -54,8 +54,8 @@ export default function (sys: ZovaSys) {
     default: env.APP_LOCALE_DEFAULT as keyof ILocaleRecord,
     storeKey: 'locale',
     items: {
-      'en-us': 'English',
-      'zh-cn': 'Chinese',
+      'en-us': 'LanguageEnglish',
+      'zh-cn': 'LanguageChinese',
     },
   };
 
