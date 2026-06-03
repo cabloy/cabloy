@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.45
+
+### Features
+
+- Add SSR menu boilerplates for demo applications.
+- Add SSR menu boilerplates for web applications.
+- Add SSR menu boilerplates for admin applications.
+
+### Bug Fixes
+
+- Remove redundant locale menu refetch watchers.
+- Improve menu query key scoping and prevent circular group recursion.
+
 ## 5.1.44
 
 ### Features
