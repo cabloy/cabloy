@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.47
+
+### Bug Fixes
+
+- Fix web header navigation rendering.
+- Prevent web header dropdown menus from being clipped.
+
+### Improvements
+
+- Update internal project dependencies and maintenance changes.
+
 ## 5.1.46
 
 ### Improvements
