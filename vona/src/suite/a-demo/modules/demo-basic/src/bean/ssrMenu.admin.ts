@@ -15,7 +15,6 @@ export interface ISsrMenuOptionsAdmin extends IDecoratorSsrMenuOptions<ISsrSiteO
     link: 'http://localhost:7102/admin' as any,
     external: true,
     target: '_self',
-    group: undefined,
   },
   site: ['basic-siteweb:web'],
 })

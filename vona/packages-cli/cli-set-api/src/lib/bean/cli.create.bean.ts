@@ -20,9 +20,12 @@ declare module '@cabloy/cli' {
     moduleResourceName: string;
     boilerplate: string;
     ssrSiteModuleName: string;
+    ssrSiteModuleNameWeb: string;
     ssrSiteOnionName: string;
+    ssrSiteOnionNameWeb: string;
     ssrSiteGroupName: string;
     ssrSiteRestNpm: string;
+    ssrSiteRestNpmWeb: string;
   }
 }
 
@@ -37,15 +40,24 @@ export class CliCreateBean extends BeanCliBase {
     argv.ssrSiteModuleName = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
       ? 'vona-module-start-siteadmin'
       : 'vona-module-basic-siteadmin';
+    argv.ssrSiteModuleNameWeb = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
+      ? 'vona-module-start-siteweb'
+      : 'vona-module-basic-siteweb';
     argv.ssrSiteOnionName = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
       ? 'start-siteadmin:admin'
       : 'basic-siteadmin:admin';
+    argv.ssrSiteOnionNameWeb = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
+      ? 'start-siteweb:web'
+      : 'basic-siteweb:web';
     argv.ssrSiteGroupName = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
       ? 'start-siteadmin:management'
       : 'basic-siteadmin:management';
     argv.ssrSiteRestNpm = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
       ? 'zova-rest-cabloy-start-admin'
       : 'zova-rest-cabloy-basic-admin';
+    argv.ssrSiteRestNpmWeb = fs.existsSync(path.join(argv.projectPath, 'src/suite/cabloy-start'))
+      ? 'zova-rest-cabloy-start-web'
+      : 'zova-rest-cabloy-basic-web';
     // module name/info
     const moduleName = argv.module;
     argv.moduleInfo = this.helper.parseModuleInfo(moduleName);

@@ -63,12 +63,14 @@
       "ssrMenu": {
         "optionsGlobalInterfaceName": "IDecoratorSsrMenuOptions",
         "optionsGlobalInterfaceFrom": "vona-module-a-ssr",
-        "boilerplate": "ssrMenuAdmin/boilerplate"
+        "boilerplate": "ssrMenuAdmin/boilerplate",
+        "boilerplateWeb": "ssrMenuWeb/boilerplate"
       },
       "ssrMenuGroup": {
         "optionsGlobalInterfaceName": "IDecoratorSsrMenuGroupOptions",
         "optionsGlobalInterfaceFrom": "vona-module-a-ssr",
-        "boilerplate": "ssrMenuGroupAdmin/boilerplate"
+        "boilerplate": "ssrMenuGroupAdmin/boilerplate",
+        "boilerplateWeb": "ssrMenuGroupWeb/boilerplate"
       }
     },
     "capabilities": {
