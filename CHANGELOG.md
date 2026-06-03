@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.48
+
+### Bug Fixes
+
+- Prevent crashes caused by disposed modules during SSR history navigation.
+
+### Improvements
+
+- Update the `ssrMenuGroup` demo.
+
 ## 5.1.47
 
 ### Bug Fixes
