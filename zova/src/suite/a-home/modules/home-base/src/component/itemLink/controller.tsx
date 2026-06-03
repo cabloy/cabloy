@@ -9,6 +9,7 @@ export interface ControllerItemLinkProps {
   icon?: keyof IIconRecord;
   href?: string;
   to?: string | object;
+  target?: string;
 }
 
 @Controller()
@@ -16,6 +17,7 @@ export class ControllerItemLink extends BeanControllerBase {
   static $propsDefault = {
     description: '',
     icon: '',
+    target: '_blank',
   };
 
   _renderLink() {
@@ -28,7 +30,7 @@ export class ControllerItemLink extends BeanControllerBase {
     ];
     if (this.$props.href) {
       return (
-        <a href={this.$props.href} target="_blank">
+        <a href={this.$props.href} target={this.$props.target}>
           {domContent}
         </a>
       );

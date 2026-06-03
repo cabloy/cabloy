@@ -81,6 +81,7 @@ export class RenderTabs extends BeanRenderBase {
         title={titleLocale}
         icon={info.icon as any}
         href={info.link}
+        target={info.target}
       ></ZItemLink>
     );
   }
