@@ -209,6 +209,12 @@ export class BeanSsrSiteBase<
         headers.accept = headers.Accept;
         delete headers.Accept;
       }
+      for (const headerKey of ['x-vona-locale', 'x-vona-tz']) {
+        const headerValue = headers[headerKey];
+        if (headerValue !== undefined) {
+          this.ctx.request.headers[headerKey] = headerValue;
+        }
+      }
       // passport
       if (!ctxInited) {
         // init instance
