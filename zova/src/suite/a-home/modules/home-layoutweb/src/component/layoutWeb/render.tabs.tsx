@@ -21,9 +21,7 @@ export class RenderTabs extends BeanRenderBase {
       return this._renderMenuItem(tab.info as TypeMenuItem, true, tab.tabKey);
     });
     const domWrapper = (
-      <div class="overflow-x-auto">
-        <ul class="menu menu-horizontal w-max min-w-full flex-nowrap gap-1 px-0">{domTabs}</ul>
-      </div>
+      <ul class="menu menu-horizontal w-max min-w-full flex-nowrap gap-1 px-0">{domTabs}</ul>
     );
     if (!$$modelTabs.cache) return domWrapper;
     return <ClientOnly>{domWrapper}</ClientOnly>;
