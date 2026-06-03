@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.46
+
+### Improvements
+
+- Refine SSR site base handling in `beanSsrSiteBase.ts`.
+- Improve executor behavior in `executor.ts`.
+- Update tab rendering logic in `render.tabs.tsx`.
+- Adjust route configuration in `routes.ts`.
+
 ## 5.1.45
 
 ### Features
