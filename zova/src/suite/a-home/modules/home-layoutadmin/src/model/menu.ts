@@ -32,15 +32,6 @@ export class ModelMenu extends BeanModelBase {
         return next();
       });
     }
-    // locale
-    this.$watch(
-      () => {
-        return this.app.meta.locale.current;
-      },
-      async () => {
-        await this._refetchRetrieveMenus();
-      },
-    );
   }
 
   protected __dispose__() {
