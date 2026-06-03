@@ -72,7 +72,10 @@ export class ServiceExecutor extends BeanBase {
           }
         }
       },
-      { innerAccess: options?.innerAccess, extraData: options?.extraData },
+      {
+        innerAccess: options?.innerAccess,
+        extraData: options?.extraData,
+      },
     );
   }
 
