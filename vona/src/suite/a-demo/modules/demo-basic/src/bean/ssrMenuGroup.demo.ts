@@ -13,7 +13,7 @@ export interface ISsrMenuGroupOptionsDemo extends IDecoratorSsrMenuGroupOptions<
   item: {
     title: $locale('Demo'),
     order: $order(2),
-    icon: ':editor:code-block',
+    icon: undefined,
   },
   site: ['basic-siteweb:web'],
 })
