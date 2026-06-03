@@ -11,24 +11,26 @@ import { ZPageToolOne } from './.metadata/page/toolOne.js';
 import { ZPageToolTwo } from './.metadata/page/toolTwo.js';
 
 export const routes: IModuleRoute[] = [
-  { path: 'state', component: ZPageState },
-  { path: 'component', component: ZPageComponent },
-  { path: 'locale', component: ZPageLocale },
-  { path: 'style', component: ZPageStyle },
-  { path: 'routeQuery', component: ZPageRouteQuery },
+  { path: 'state', component: ZPageState, meta: { requiresAuth: false } },
+  { path: 'component', component: ZPageComponent, meta: { requiresAuth: false } },
+  { path: 'locale', component: ZPageLocale, meta: { requiresAuth: false } },
+  { path: 'style', component: ZPageStyle, meta: { requiresAuth: false } },
+  { path: 'routeQuery', component: ZPageRouteQuery, meta: { requiresAuth: false } },
   {
     name: 'routeParams',
     path: 'routeParams/:id?',
     component: ZPageRouteParams,
     meta: {
       componentKeyMode: 'nameOnly',
+      requiresAuth: false,
     },
   },
-  { path: 'routeQueryB', component: ZPageRouteQueryB },
+  { path: 'routeQueryB', component: ZPageRouteQueryB, meta: { requiresAuth: false } },
   {
     name: 'toolOne',
     path: 'toolOne/:id?',
     component: ZPageToolOne,
+    meta: { requiresAuth: false },
   },
   {
     name: 'toolTwo',
