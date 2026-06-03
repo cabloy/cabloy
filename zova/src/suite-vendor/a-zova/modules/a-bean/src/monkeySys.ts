@@ -4,9 +4,13 @@ import { BeanSimple } from 'zova';
 
 export class MonkeySys extends BeanSimple implements IMonkeySysInitialize {
   async sysInitialize() {
+    const modulesMeta = this.sys.meta.module.getModulesMeta();
+    if (!modulesMeta) {
+      throw new Error('module registry has been disposed');
+    }
     let beansPreload: string[] = [];
-    for (const moduleName in this.sys.meta.module.modulesMeta.modules) {
-      const module = this.sys.meta.module.modulesMeta.modules[moduleName];
+    for (const moduleName in modulesMeta.modules) {
+      const module = modulesMeta.modules[moduleName];
       if (!module.info.onionsMeta?.beansPreload) continue;
       beansPreload = beansPreload.concat(module.info.onionsMeta?.beansPreload);
     }

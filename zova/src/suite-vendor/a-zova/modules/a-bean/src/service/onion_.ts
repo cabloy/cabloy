@@ -1,5 +1,6 @@
 import type { ISwapDepsItem } from '@cabloy/deps';
 import type { OnionSceneMeta } from '@cabloy/module-info';
+import type { PluginZovaModulesMeta } from 'zova';
 import type { Next } from 'zova';
 
 import { compose as _compose } from '@cabloy/compose';
@@ -39,19 +40,23 @@ export class ServiceOnion<OPTIONS, ONIONNAME extends string> extends BeanSimple 
     if (process.env.DEV && this.bean.containerType !== 'sys') {
       throw new Error('should in sys container');
     }
+    const modulesMeta = this.sys.meta.module.getModulesMeta();
+    if (!modulesMeta) {
+      throw new Error('module registry has been disposed');
+    }
     this.sysOnion = sysOnion;
     this.sceneName = sceneName;
-    this.sceneMeta = getOnionScenesMeta(this.sys.meta.module.modulesMeta.modules)[this.sceneName];
+    this.sceneMeta = getOnionScenesMeta(modulesMeta.modules)[this.sceneName];
     if (this.sceneMeta.optionsPackage) {
-      this._initOnionsAll();
+      this._initOnionsAll(modulesMeta);
       this._swapOnions(this.onionsAll);
     }
   }
 
-  private _initOnionsAll() {
+  private _initOnionsAll(modulesMeta: PluginZovaModulesMeta) {
     this.onionsAll = [];
-    for (const moduleName in this.sys.meta.module.modulesMeta.modules) {
-      const module = this.sys.meta.module.modulesMeta.modules[moduleName];
+    for (const moduleName in modulesMeta.modules) {
+      const module = modulesMeta.modules[moduleName];
       const nodeItems = module.info.onionsMeta?.onionsConfig?.[this.sceneName];
       if (!nodeItems) continue;
       for (const itemName in nodeItems) {

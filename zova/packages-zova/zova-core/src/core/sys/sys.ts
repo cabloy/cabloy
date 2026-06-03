@@ -96,11 +96,12 @@ export class ZovaSys {
       viteHot.on('vite:beforeFullReload', hook);
     }
     if (process.env.CLIENT && typeof window !== 'undefined') {
-      const hook = () => {
+      const hook = (event: PageTransitionEvent) => {
+        if (event.persisted) return;
         this.close();
-        window.removeEventListener('beforeunload', hook);
+        window.removeEventListener('pagehide', hook);
       };
-      window.addEventListener('beforeunload', hook);
+      window.addEventListener('pagehide', hook);
     }
   }
 

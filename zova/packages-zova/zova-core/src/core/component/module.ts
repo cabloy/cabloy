@@ -11,6 +11,7 @@ import type {
   IMonkeyApp,
   IMonkeyController,
   IMonkeyModule,
+  PluginZovaModulesMeta,
   TypeMonkeyName,
 } from '../../types/index.ts';
 
@@ -23,6 +24,14 @@ export class AppModule extends BeanSimple {
   private mainInstances: Record<string, IModuleMain> = {};
   private monkeyInstances: Record<string, IMonkeyModule & IMonkeyApp & IMonkeyController> = {};
 
+  private _ensureModulesMeta(): PluginZovaModulesMeta {
+    const modulesMeta = this.sys.meta.module.getModulesMeta();
+    if (!modulesMeta) {
+      throw new Error('module registry has been disposed');
+    }
+    return modulesMeta;
+  }
+
   /** @internal */
   public async initialize() {
     await this._requireAllSpecifics('preload');
@@ -34,6 +43,7 @@ export class AppModule extends BeanSimple {
   get(moduleName: string, forceLoad?: boolean): IModule | undefined;
   get(moduleName: IModuleInfo, forceLoad?: boolean): IModule | undefined;
   get(moduleName: string | IModuleInfo, forceLoad?: boolean): IModule | undefined {
+    if (!this.sys.meta.module.getModulesMeta()) return undefined;
     // module info
     if (!moduleName) return undefined;
     const moduleInfo =
@@ -67,8 +77,9 @@ export class AppModule extends BeanSimple {
     // should not try check get directly
     // const module = this.getOnly(relativeName);
     // if (module) return module;
+    const modulesMeta = this._ensureModulesMeta();
     // module
-    const moduleRepo = this.sys.meta.module.modulesMeta.modules[relativeName];
+    const moduleRepo = modulesMeta.modules[relativeName];
     if (!moduleRepo) throw new Error(`module not exists: ${relativeName}`);
     // install
     await this._install(relativeName, moduleRepo);
@@ -84,15 +95,16 @@ export class AppModule extends BeanSimple {
   }
 
   private async _requireAllSpecifics(capabilityName: 'preload' | 'monkey' | 'sync') {
-    const moduleNames = this.sys.meta.module.modulesMeta.moduleNames.filter(moduleName => {
-      const module = this.sys.meta.module.modulesMeta.modules[moduleName];
+    const modulesMeta = this._ensureModulesMeta();
+    const moduleNames = modulesMeta.moduleNames.filter(moduleName => {
+      const module = modulesMeta.modules[moduleName];
       return module.info.capabilities?.[capabilityName];
     });
     // if (moduleNames.length > 0) {
     //   this.sys.meta.logger.child('module', 'default').debug(`app modules: ${capabilityName}: ${moduleNames.join(',')}`);
     // }
     for (const moduleName of moduleNames) {
-      const module = this.sys.meta.module.modulesMeta.modules[moduleName];
+      const module = modulesMeta.modules[moduleName];
       await this._install(moduleName, module);
     }
   }
@@ -167,6 +179,8 @@ export class AppModule extends BeanSimple {
     moduleTarget?: IModule,
     ...monkeyData: any[]
   ) {
+    const modulesMeta = this.sys.meta.module.getModulesMeta();
+    if (!modulesMeta) return;
     // self: main
     if (moduleTarget) {
       const mainInstance = this.mainInstances[moduleTarget.info.relativeName];
@@ -178,8 +192,8 @@ export class AppModule extends BeanSimple {
       }
     }
     // module monkey
-    await forEach(this.sys.meta.module.modulesMeta.moduleNames, order, async key => {
-      const moduleMonkey: IModule = this.sys.meta.module.modulesMeta.modules[key];
+    await forEach(modulesMeta.moduleNames, order, async key => {
+      const moduleMonkey: IModule = modulesMeta.modules[key];
       if (moduleMonkey.info.capabilities?.monkey) {
         const monkeyInstance = this.monkeyInstances[key];
         if (monkeyInstance && monkeyInstance[monkeyName]) {
@@ -217,6 +231,8 @@ export class AppModule extends BeanSimple {
     moduleTarget?: IModule,
     ...monkeyData: any[]
   ) {
+    const modulesMeta = this.sys.meta.module.getModulesMeta();
+    if (!modulesMeta) return;
     // self: main
     if (moduleTarget) {
       const mainInstance = this.mainInstances[moduleTarget.info.relativeName];
@@ -228,8 +244,8 @@ export class AppModule extends BeanSimple {
       }
     }
     // module monkey
-    forEachSync(this.sys.meta.module.modulesMeta.moduleNames, order, key => {
-      const moduleMonkey: IModule = this.sys.meta.module.modulesMeta.modules[key];
+    forEachSync(modulesMeta.moduleNames, order, key => {
+      const moduleMonkey: IModule = modulesMeta.modules[key];
       if (moduleMonkey.info.capabilities?.monkey) {
         const monkeyInstance = this.monkeyInstances[key];
         if (monkeyInstance && monkeyInstance[monkeyName]) {
