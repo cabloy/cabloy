@@ -28,7 +28,7 @@ export class ModelMenu extends BeanModelBase {
     // event
     if (process.env.CLIENT && this.sys.config.ssr.hmr) {
       this._eventSsrHmrReload = this.sys.meta.event.on('a-ssrhmr:reload', async (_data, next) => {
-        await this.$refetchQueries({ queryKey: ['retrieveMenus'] });
+        await this._refetchRetrieveMenus();
         return next();
       });
     }
@@ -38,7 +38,7 @@ export class ModelMenu extends BeanModelBase {
         return this.app.meta.locale.current;
       },
       async () => {
-        await this.$refetchQueries({ queryKey: ['retrieveMenus'] });
+        await this._refetchRetrieveMenus();
       },
     );
   }
@@ -51,7 +51,7 @@ export class ModelMenu extends BeanModelBase {
 
   retrieveMenus() {
     return this.$useStateData({
-      queryKey: ['retrieveMenus'],
+      queryKey: this._getQueryKeyRetrieveMenus(),
       queryFn: async () => {
         const data = await this.$api.homeBaseMenu.retrieveMenus({
           params: { publicPath: this.sys.env.APP_PUBLIC_PATH },
@@ -65,7 +65,7 @@ export class ModelMenu extends BeanModelBase {
             return item;
           })
           ?.filter(item => {
-            return !item.external || this.$router.checkPathValid(item.link);
+            return item.external || !item.link || this.$router.checkPathValid(item.link);
           });
         return { ...data, menus };
       },
@@ -75,12 +75,27 @@ export class ModelMenu extends BeanModelBase {
   findMenuItem(search: { name?: string; link?: string }): ApiSchemaAMenuDtoMenuItem | undefined {
     const menus = this.retrieveMenus().data;
     if (!menus || !menus.menus) return;
-    return menus.menus.find(
-      item => (item.name && search.name && item.name === search.name) || item.link === search.link,
-    );
+    const hasName = search.name !== undefined;
+    const hasLink = search.link !== undefined;
+    if (!hasName && !hasLink) return;
+    return menus.menus.find(item => {
+      return (hasName && item.name === search.name) || (hasLink && item.link === search.link);
+    });
   }
 
-  private _prepareMenuTree(menus: ApiSchemaAMenuDtoMenus, groupName?: string): TypeMenuTree {
+  private _refetchRetrieveMenus(): Promise<void> {
+    return this.$refetchQueries({ queryKey: this._getQueryKeyRetrieveMenus() });
+  }
+
+  private _getQueryKeyRetrieveMenus(): [string, string | undefined, string | undefined] {
+    return ['retrieveMenus', this.sys.env.APP_PUBLIC_PATH, this.app.meta.locale.current];
+  }
+
+  private _prepareMenuTree(
+    menus: ApiSchemaAMenuDtoMenus,
+    groupName?: string,
+    groupNames?: Set<string>,
+  ): TypeMenuTree {
     let children: TypeMenuItem[] = [];
     if (menus.menus) {
       children = children.concat(
@@ -99,15 +114,23 @@ export class ModelMenu extends BeanModelBase {
       const groups = menus.groups
         .filter(
           item =>
-            item.group === groupName ||
-            (Array.isArray(item.group) && item.group.includes(groupName!)),
+            !groupNames?.has(item.name) &&
+            (item.group === groupName ||
+              (Array.isArray(item.group) && item.group.includes(groupName!))),
         )
         .map(menuGroup => {
+          const children = this._prepareMenuTree(
+            menus,
+            menuGroup.name,
+            new Set([...(groupNames || []), menuGroup.name]),
+          );
+          if (children.length === 0) return undefined;
           return Object.assign({}, menuGroup, {
             folder: true,
-            children: this._prepareMenuTree(menus, menuGroup.name),
+            children,
           });
-        });
+        })
+        .filter(group => !!group);
       children = children.concat(groups);
     }
     return children.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));

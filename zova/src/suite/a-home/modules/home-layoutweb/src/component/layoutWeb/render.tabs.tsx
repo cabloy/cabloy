@@ -39,16 +39,18 @@ export class RenderTabs extends BeanRenderBase {
             </summary>
             <ClientOnly>
               <ul class="bg-base-100 rounded-t-none p-2 w-48">
-                {info.children?.map(item => (
-                  <li key={item.link} onClick={closeNearestDetails}>
-                    <ZItemLink
-                      title={item.title!}
-                      icon={(item.icon as any) ?? $iconName('::none')}
-                      href={item.link && item.external ? item.link : undefined}
-                      to={item.link && !item.external ? item.link : undefined}
-                    ></ZItemLink>
-                  </li>
-                ))}
+                {info.children
+                  ?.filter(item => !item.folder)
+                  .map(item => (
+                    <li key={item.link} onClick={closeNearestDetails}>
+                      <ZItemLink
+                        title={item.title!}
+                        icon={(item.icon as any) ?? $iconName('::none')}
+                        href={item.link && item.external ? item.link : undefined}
+                        to={item.link && !item.external ? item.link : undefined}
+                      ></ZItemLink>
+                    </li>
+                  ))}
               </ul>
             </ClientOnly>
           </details>
