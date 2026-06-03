@@ -1,18 +1,20 @@
 import type { IDecoratorSsrMenuGroupOptions } from 'vona-module-a-ssr';
-import type { ISsrSiteOptionsAdmin } from 'vona-module-basic-siteadmin';
+import type { ISsrSiteOptionsWeb } from 'vona-module-basic-siteweb';
 
 import { BeanBase } from 'vona';
 import { $order } from 'vona-module-a-openapiutils';
 import { SsrMenuGroup } from 'vona-module-a-ssr';
 
-export interface ISsrMenuGroupOptionsDemo extends IDecoratorSsrMenuGroupOptions<ISsrSiteOptionsAdmin> {}
+import { $locale } from '../.metadata/locales.ts';
+
+export interface ISsrMenuGroupOptionsDemo extends IDecoratorSsrMenuGroupOptions<ISsrSiteOptionsWeb> {}
 
 @SsrMenuGroup<ISsrMenuGroupOptionsDemo>({
   item: {
-    title: 'Demo',
+    title: $locale('Demo'),
     order: $order(2),
-    icon: undefined,
+    icon: ':editor:code-block',
   },
-  site: ['basic-siteadmin:admin'],
+  site: ['basic-siteweb:web'],
 })
 export class SsrMenuGroupDemo extends BeanBase {}

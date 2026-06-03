@@ -27,7 +27,7 @@ export class RenderTabs extends BeanRenderBase {
   private _renderTab(tab: RouteTab): VNode {
     const $$modelTabs = this.$$modelTabs;
     const { tabKey, info } = tab;
-    const titleLocale = this.$text(info?.title || '');
+    const titleLocale = info?.title || '';
     const tabIcon = this.getTabIcon(tab);
     if (info.folder) {
       return (

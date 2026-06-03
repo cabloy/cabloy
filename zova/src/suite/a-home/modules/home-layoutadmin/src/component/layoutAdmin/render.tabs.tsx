@@ -29,7 +29,7 @@ export class RenderTabs extends BeanRenderBase {
     const $$modelTabs = this.$$modelTabs;
     const { tabKey, info } = tab;
     const className = tabKey === $$modelTabs.tabKeyCurrent ? 'tab-active text-primary' : '';
-    const titleLocale = this.$text(info?.title || '');
+    const titleLocale = info?.title || '';
     const tabIcon = this.getTabIcon(tab);
     return (
       <a
