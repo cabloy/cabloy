@@ -1,6 +1,6 @@
 {
   "name": "zova-suite-a-zova",
-  "version": "5.1.89",
+  "version": "5.1.90",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "zova",
   "license": "MIT",
@@ -10,7 +10,7 @@
   "dependencies": {
     "zova-module-a-api": "^5.1.15",
     "zova-module-a-app": "^5.1.18",
-    "zova-module-a-bean": "^5.1.24",
+    "zova-module-a-bean": "^5.1.25",
     "zova-module-a-behavior": "^5.1.19",
     "zova-module-a-behaviors": "^5.1.15",
     "zova-module-a-boundary": "^5.1.15",
@@ -32,7 +32,7 @@
     "zova-module-a-style": "^5.1.25",
     "zova-module-a-table": "^5.1.27",
     "zova-module-a-zod": "^5.1.23",
-    "zova-module-a-zova": "^5.1.59"
+    "zova-module-a-zova": "^5.1.60"
   },
   "title": "a-zova"
 }
