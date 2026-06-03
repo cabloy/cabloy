@@ -25,6 +25,32 @@ declare module 'vona-module-demo-basic' {
           } 
 }
 /** ssrMenu: end */
+/** ssrMenuGroup: begin */
+export * from '../bean/ssrMenuGroup.demo.ts';
+import type { ISsrMenuGroupOptionsDemo } from '../bean/ssrMenuGroup.demo.ts';
+import 'vona-module-a-ssr';
+declare module 'vona-module-a-ssr' {
+  
+    export interface ISsrMenuGroupRecord {
+      'demo-basic:demo': ISsrMenuGroupOptionsDemo;
+    }
+
+  
+}
+declare module 'vona-module-demo-basic' {
+  
+        export interface SsrMenuGroupDemo {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
+          export interface SsrMenuGroupDemo {
+            get $beanFullName(): 'demo-basic.ssrMenuGroup.demo';
+            get $onionName(): 'demo-basic:demo';
+            get $onionOptions(): ISsrMenuGroupOptionsDemo;
+          } 
+}
+/** ssrMenuGroup: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
