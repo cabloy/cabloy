@@ -20,7 +20,6 @@ export class RenderTabs extends BeanRenderBase {
       </div>
     );
     if (!$$modelTabs.cache) return domWrapper;
-
     return <ClientOnly>{domWrapper}</ClientOnly>;
   }
 
