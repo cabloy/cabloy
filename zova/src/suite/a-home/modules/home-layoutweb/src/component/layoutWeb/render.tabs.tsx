@@ -16,7 +16,6 @@ export class RenderTabs extends BeanRenderBase {
   public renderTabs(): VNode | undefined {
     const $$modelTabs = this.$$modelTabs;
     if (!$$modelTabs) return;
-
     const domTabs = $$modelTabs.tabs.map(tab => {
       return this._renderMenuItem(tab.info as TypeMenuItem, true, tab.tabKey);
     });
