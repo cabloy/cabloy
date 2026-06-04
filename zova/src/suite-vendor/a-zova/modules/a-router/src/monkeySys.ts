@@ -2,7 +2,6 @@ import type { IModule } from '@cabloy/module-info';
 import type { IMonkeyModuleSys, IMonkeySysApplicationInitialize, ZovaApplication } from 'zova';
 import type { ErrorSSR } from 'zova-module-a-ssr';
 
-import { combineParamsAndQuery } from '@cabloy/utils';
 import { BeanSimple, cast, isHttpUrl } from 'zova';
 
 import type { SysRouter } from './bean/sys.router.js';
@@ -63,7 +62,13 @@ export class MonkeySys
         }
       }
       // combineParamsAndQuery
-      pagePath = combineParamsAndQuery(pagePath, { params: options?.params, query });
+      pagePath = app.meta.$router.getPagePath(
+        pagePath as never,
+        {
+          params: options?.params,
+          query,
+        } as never,
+      );
       // redirect
       if (process.env.SERVER || options?.forceRedirect) {
         return app.$redirect(pagePath);

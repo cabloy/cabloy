@@ -49,8 +49,12 @@ export class ModelMenu extends BeanModelBase {
         });
         const menus = data.menus
           ?.map(item => {
-            if (item.link && !this.$router.isRouterName(item.link) && item.meta?.params) {
-              const link = this.app.util.apiActionPathTranslate(item.link, item.meta?.params);
+            if (item.external || !item.link) return item;
+            if (this.$router.isRouterName(item.link)) {
+              const link = this.$router.resolveName(item.link as never, item.meta as never);
+              return { ...item, link };
+            } else if (item.meta?.params || item.meta?.query) {
+              const link = this.$router.getPagePath(item.link as never, item.meta as never);
               return { ...item, link };
             }
             return item;

@@ -96,10 +96,16 @@ export class SysRouter extends BeanBase {
     options?: IPagePathRecord[K],
     absolute?: boolean,
   ) {
-    const pagePath = combineParamsAndQuery(path, {
-      params: options?.params,
-      query: options?.query,
-    });
+    const query = options?.query;
+    let params = options?.params;
+    if (cast(params)?.locale === true) {
+      const locale =
+        this.app.meta.locale.current === this.sys.config.locale.default
+          ? undefined
+          : this.app.meta.locale.current;
+      params = Object.assign({}, params, { locale });
+    }
+    const pagePath = combineParamsAndQuery(path, { params, query });
     return absolute ? this.sys.util.getAbsoluteUrlFromPagePath(pagePath) : pagePath;
   }
 
@@ -204,15 +210,6 @@ export class SysRouter extends BeanBase {
     const query = cast(options)?.query;
     return this._resolveNameOrPath(query, query => {
       const route = this.router.resolve({ name, params, query });
-      return route.fullPath;
-    });
-  }
-
-  resolvePath<K extends keyof IPagePathRecord>(path: K, options?: IPagePathRecord[K]): string {
-    const params = cast(options)?.params;
-    const query = cast(options)?.query;
-    return this._resolveNameOrPath(query, query => {
-      const route = this.router.resolve({ path, params, query });
       return route.fullPath;
     });
   }
