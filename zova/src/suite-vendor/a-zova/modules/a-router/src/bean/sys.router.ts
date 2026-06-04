@@ -1,6 +1,7 @@
 import type {
   RouteLocationMatched,
   RouteLocationNormalizedLoaded,
+  RouteLocationNormalizedLoadedGeneric,
   RouteLocationResolvedGeneric,
   Router,
   RouterOptions,
@@ -142,6 +143,25 @@ export class SysRouter extends BeanBase {
     const moduleName = ModuleInfo.parseName(_path);
     if (!moduleName) return true;
     return this.sys.meta.module.exists(moduleName);
+  }
+
+  public checkIfSameOfFullPath(
+    fullPath: string,
+    route?: RouteLocationNormalizedLoadedGeneric,
+  ): boolean {
+    if (!route) return false;
+    if (route.fullPath === fullPath) return true;
+    if (!route.matched || route.matched.length === 0) return false;
+    return route.matched.some(routeAlias => {
+      const fullPathAlias = this.getPagePath(
+        routeAlias.path as never,
+        {
+          params: route.params,
+          query: route.query,
+        } as never,
+      );
+      return fullPathAlias === fullPath;
+    });
   }
 
   public async ensureRoute(pagePath: string) {

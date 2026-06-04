@@ -146,7 +146,7 @@ export class RenderTabs extends BeanRenderBase {
     if (item.external || !item.link) return false;
     const currentRoute = this.$currentRoute;
     if (!currentRoute) return false;
-    return currentRoute.fullPath === item.link;
+    return this.$router.checkIfSameOfFullPath(item.link, currentRoute);
   }
 
   private _getMenuItemKey(item: TypeMenuItem): string {
