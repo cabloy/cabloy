@@ -55,6 +55,7 @@ declare module 'zova' {
     $gotoReturnTo(returnTo?: string): TypeGotoPageResult;
     $getReturnTo(returnTo?: string): string;
     $getCurrentPagePath(): string | undefined;
+    $getPagePathHome(options?: IGotoPageOptions): string;
   }
 
   export interface AppMeta {

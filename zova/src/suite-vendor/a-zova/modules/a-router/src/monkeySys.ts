@@ -57,7 +57,7 @@ export class MonkeySys
       if (options?.returnTo) {
         const returnTo =
           typeof options?.returnTo === 'string' ? options?.returnTo : app.$getCurrentPagePath();
-        if (returnTo !== app.sys.env.ROUTER_PAGE_HOME) {
+        if (returnTo !== app.$getPagePathHome()) {
           query[app.sys.env.ROUTER_KEY_RETURNTO] = returnTo;
         }
       }
@@ -81,7 +81,8 @@ export class MonkeySys
       }
     };
     app.$gotoHome = (options?: IGotoPageOptions) => {
-      return app.$gotoPage(app.sys.env.ROUTER_PAGE_HOME, options);
+      const pagePath = app.$getPagePathHome(options);
+      return app.$gotoPage(pagePath, { ...options, params: undefined });
     };
     app.$gotoLogin = (returnTo?: string, cause?: string) => {
       if (!returnTo && cast(app.meta.$router.currentRoute)?.path === app.sys.env.ROUTER_PAGE_LOGIN)
@@ -102,7 +103,7 @@ export class MonkeySys
       const pagePath =
         returnTo ||
         cast(app.meta.$router.currentRoute)?.query?.[app.sys.env.ROUTER_KEY_RETURNTO] ||
-        app.sys.env.ROUTER_PAGE_HOME;
+        app.$getPagePathHome();
       return pagePath;
     };
     app.$getCurrentPagePath = (): string | undefined => {
@@ -113,6 +114,17 @@ export class MonkeySys
         );
       }
       return cast(app.meta.$router.currentRoute)?.fullPath;
+    };
+    app.$getPagePathHome = (options?: IGotoPageOptions): string => {
+      let params = options?.params;
+      if (params?.locale === undefined) {
+        params = Object.assign({}, params, { locale: true });
+      }
+      // not handle options?.query
+      return app.meta.$router.getPagePath(
+        app.sys.env.ROUTER_PAGE_HOME as never,
+        { params } as never,
+      );
     };
   }
 }

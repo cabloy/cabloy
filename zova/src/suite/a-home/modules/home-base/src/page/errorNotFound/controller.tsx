@@ -1,4 +1,3 @@
-import { RouterLink } from '@cabloy/vue-router';
 import { classes } from 'typestyle';
 import { BeanControllerPageBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
@@ -26,7 +25,14 @@ export class ControllerPageErrorNotFound extends BeanControllerPageBase {
         <div>
           <div class={this.cTitle}>404</div>
           <div class={this.cDescription}>Oops. Nothing here...</div>
-          <RouterLink to={this.sys.env.ROUTER_PAGE_HOME}>Go Home</RouterLink>
+          <button
+            class="btn btn-primary"
+            onClick={() => {
+              this.app.$gotoHome();
+            }}
+          >
+            {this.scope.locale.GoHome()}
+          </button>
         </div>
       </div>
     );
