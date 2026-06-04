@@ -85,6 +85,7 @@ vona/src/suite/cabloy-basic/modules/basic-siteweb/zovaRest
 # --- Additional npm-only exclusions ---
 
 # Documentation source (not needed in user projects)
+.docs-internal/
 vona/packages-docs/
 zova/packages-docs/
 
