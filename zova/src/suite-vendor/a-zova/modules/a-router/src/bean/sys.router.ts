@@ -99,11 +99,10 @@ export class SysRouter extends BeanBase {
   ) {
     const query = options?.query;
     let params = options?.params;
-    if (cast(params)?.locale === true) {
-      const locale =
-        this.app.meta.locale.current === this.sys.config.locale.default
-          ? undefined
-          : this.app.meta.locale.current;
+    const paramsLocale = cast(params)?.locale;
+    if (paramsLocale !== undefined) {
+      const localeCurrent = paramsLocale === true ? this.app.meta.locale.current : paramsLocale;
+      const locale = localeCurrent === this.sys.config.locale.default ? undefined : localeCurrent;
       params = Object.assign({}, params, { locale });
     }
     const pagePath = combineParamsAndQuery(path, { params, query });

@@ -22,13 +22,10 @@ export class RenderLocale extends BeanRenderBase {
                     <a
                       onClick={event => {
                         if (metaLocale) {
-                          const fullPath = this.$router.resolveName(currentRoute.name as any, {
-                            params: Object.assign({}, currentRoute.params, {
-                              locale: key === this.sys.config.locale.default ? '' : key,
-                            }),
+                          this.app.$gotoPage(currentRoute.matched[0].path, {
+                            params: { ...currentRoute.params, locale: key },
                             query: currentRoute.query,
                           });
-                          this.$router.push(fullPath);
                         } else {
                           this.$$serviceLocale.setLocale(key as any);
                         }
