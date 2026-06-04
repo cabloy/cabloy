@@ -50,4 +50,5 @@ Those concerns should live elsewhere.
 
 ## Current documents
 
-- [ADR 0001: Guard-Based Default API Permission Projection](./decisions/0001-guard-permission-projection.md)
+- [ADR 0001: Establish the Internal Engineering Documentation Home](./decisions/0001-internal-docs-home.md)
+- [ADR 0002: Guard-Based Default API Permission Projection](./decisions/0002-guard-permission-projection.md)

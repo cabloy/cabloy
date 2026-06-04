@@ -1,4 +1,4 @@
-# ADR 0001: Guard-Based Default API Permission Projection
+# ADR 0002: Guard-Based Default API Permission Projection
 
 ## Status
 
