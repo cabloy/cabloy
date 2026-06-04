@@ -1,5 +1,10 @@
+import { z } from 'zod';
 import { BeanControllerPageBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+
+export const ControllerPageHomeSchemaParams = z.object({
+  locale: z.string().optional(),
+});
 
 @Controller()
 export class ControllerPageHome extends BeanControllerPageBase {

@@ -26,12 +26,13 @@ declare module 'zova' {
 /** controller: end */
 /** pages: begin */
 export * from './page/home.js';
+import { NSControllerPageHome } from './page/home.js';
 export * from '../routes.js';
 import { TypePagePathSchema } from 'zova-module-a-router';
 import 'zova';
 declare module 'zova-module-a-router' {
 export interface IPagePathRecord {
-  '/home/indexweb/home/:locale?': TypePagePathSchema<undefined,undefined>;
+  '/home/indexweb/home/:locale?': TypePagePathSchema<NSControllerPageHome.ParamsInput,undefined>;
 }
 export interface IPageNameRecord {
   'home-indexweb:home': undefined;
@@ -41,10 +42,15 @@ export const pagePathSchemas = {
 
 };
 export const pageNameSchemas = {
-
+'home-indexweb:home': {
+          params: NSControllerPageHome.paramsSchema,
+          
+        },
 };
 declare module 'zova-module-home-indexweb' {
-  
+  export interface ControllerPageHome {
+        $params: NSControllerPageHome.ParamsOutput;
+      }
 }
 /** pages: end */
 
