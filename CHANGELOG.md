@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.50
+
+### Features
+
+- Update tab-related behavior and rendering.
+
+### Bug Fixes
+
+- Reset tabs when the layout refreshes.
+- Improve active tab route matching.
+- Handle alias routes correctly for active tabs.
+- Improve navigation for localized home routes.
+
+### Improvements
+
+- Refine tab rendering logic.
+
 ## 5.1.49
 
 ### Features
