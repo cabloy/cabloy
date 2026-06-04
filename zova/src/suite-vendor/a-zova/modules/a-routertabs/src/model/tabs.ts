@@ -183,6 +183,10 @@ export class ModelTabs extends BeanModelBase {
     return true;
   }
 
+  resetAllTabInfos() {
+    this.tabs = this._getInitialTabs() as RouteTab[];
+  }
+
   updateAllTabInfos(tabInitials?: RouteTabInitial[]) {
     for (const tab of this.tabs) {
       const tabInitial = tabInitials?.find(item => item.tabKey === tab.tabKey);
