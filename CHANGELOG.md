@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.49
+
+### Features
+
+- Add typed locale parameters for the home page.
+- Support route parameters in router navigation.
+
+### Bug Fixes
+
+- Resolve localized menu page paths.
+
+### Improvements
+
+- Update `render.tabs.tsx`.
+
 ## 5.1.48
 
 ### Bug Fixes
