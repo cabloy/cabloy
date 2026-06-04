@@ -154,7 +154,7 @@ export class RenderTabs extends BeanRenderBase {
             query: item.meta?.query,
           } as never,
         )
-      : this.$router.resolvePath(item.link as never, item.meta?.query as never);
+      : this.$router.resolvePath(item.link as never, item.meta as never);
     return currentRoute.fullPath === fullPath;
   }
 
