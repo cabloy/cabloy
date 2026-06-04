@@ -19,7 +19,7 @@ import {
 import { BeanBase, cast, deepExtend } from 'zova';
 import { Sys } from 'zova-module-a-bean';
 
-import { getRealRouteName, getRouteMatched, isRouterName } from '../lib/utils.js';
+import { getCurrentRoute, getRealRouteName, getRouteMatched, isRouterName } from '../lib/utils.js';
 import {
   IModuleRoute,
   IModuleRouteComponent,
@@ -145,19 +145,22 @@ export class SysRouter extends BeanBase {
     return this.sys.meta.module.exists(moduleName);
   }
 
-  public checkIfSameOfFullPath(
+  public checkActiveOfFullPath(
     fullPath: string,
-    route?: RouteLocationNormalizedLoadedGeneric,
+    currentRoute?: RouteLocationNormalizedLoadedGeneric,
   ): boolean {
-    if (!route) return false;
-    if (route.fullPath === fullPath) return true;
-    if (!route.matched || route.matched.length === 0) return false;
-    return route.matched.some(routeAlias => {
+    if (!currentRoute) {
+      currentRoute = getCurrentRoute(this.ctx)?.value;
+    }
+    if (!currentRoute) return false;
+    if (currentRoute.fullPath === fullPath) return true;
+    if (!currentRoute.matched || currentRoute.matched.length === 0) return false;
+    return currentRoute.matched.some(routeAlias => {
       const fullPathAlias = this.getPagePath(
         routeAlias.path as never,
         {
-          params: route.params,
-          query: route.query,
+          params: currentRoute.params,
+          query: currentRoute.query,
         } as never,
       );
       return fullPathAlias === fullPath;
