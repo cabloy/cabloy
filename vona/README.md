@@ -2,7 +2,7 @@ English | [简体中文](./README.zh-CN.md)
 
 # Vona
 
-Vona is a fullstack framework for building SSR/SPA/Website/Admin in one codebase, featuring frontend and backend separation and native type sharing
+Vona is a fullstack framework for building SSR/SPA/Web/Admin in one codebase, featuring frontend and backend separation and native type sharing
 
 - Supports dual-layer tabs navigation, enabling efficient page switching while maintaining page state
 - Dynamically render CRUD list pages, entry pages, and search forms, while demonstrating best practices for Tanstack Table, Tanstack Form, and Tanstack Query
@@ -37,9 +37,9 @@ Frontend-backend type sharing mechanism:
 
 ## Demo Online
 
-The Website and Admin of Cabloy Store are built by one codebase
+The Web and Admin of Cabloy Store are built by one codebase
 
-- Website: [https://cabloy.com](https://cabloy.com)
+- Web: [https://cabloy.com](https://cabloy.com)
 - Admin: [https://cabloy.com/admin](https://cabloy.com/admin)
 
 ## GIF Demo

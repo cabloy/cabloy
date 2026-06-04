@@ -21,7 +21,7 @@ features:
   - title: Vue3 + React + Angular
     details: 提供更直观、更优雅、更强大的代码风格，融合 Vue3、React、Angular 的核心设计
   - title: SSR
-    details: 内置开箱即用的SSR解决方案，可在同一个代码库中实现`SSR/SPA/Web网站/Admin中后台`
+    details: 内置开箱即用的SSR解决方案，可在同一个代码库中实现`SSR/SPA/Web/Admin`
   - title: 双层页签导航
     details: 支持双层页签导航，实现高效页面切换，并保持页面状态
   - title: CRUD动态渲染

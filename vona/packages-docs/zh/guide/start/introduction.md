@@ -2,7 +2,7 @@
 
 ## 什么是Vona？
 
-Vona 是一款全栈框架，支持单代码库构建`SSR/SPA/Web网站/Admin中后台`，采用前后端分离架构，并内置前后端类型共享能力。
+Vona 是一款全栈框架，支持单代码库构建`SSR/SPA/Web/Admin`，采用前后端分离架构，并内置前后端类型共享能力。
 
 - 提供 DTO 动态推断与生成能力，减少重复的类型定义工作，提升开发效率
 - 支持双层页签导航，实现高效页面切换，并保持页面状态
@@ -19,10 +19,10 @@ Vona 采用前后端分离的架构。前端使用 Zova 框架，将构建生成
 
 ## 在线演示
 
-使用同一套代码实现 Cabloy Store 的`Web网站`和`Admin中后台`
+使用同一套代码实现 Cabloy Store 的`Web`和`Admin`
 
-- Web 网站：[https://cabloy.com](https://cabloy.com)
-- Admin 中后台：[https://cabloy.com/admin](https://cabloy.com/admin)
+- Web：[https://cabloy.com](https://cabloy.com)
+- Admin：[https://cabloy.com/admin](https://cabloy.com/admin)
 
 ## 动图演示
 
@@ -32,8 +32,8 @@ Vona 采用前后端分离的架构。前端使用 Zova 框架，将构建生成
 
 ## 特性
 
-- `全栈能力`: 可在同一个代码库中实现`SSR/SPA/Web网站/Admin中后台`
-- `Admin中后台支持SSR`: 为`Admin中后台`提供完整的 SSR 支持，刷新页面时侧边栏不会闪烁跳动
+- `全栈能力`: 可在同一个代码库中实现`SSR/SPA/Web/Admin`
+- `Admin支持SSR`: 为`Admin`提供完整的 SSR 支持，刷新页面时侧边栏不会闪烁跳动
 - `CRUD动态渲染`: 可动态渲染 CRUD 的列表页、条目页、搜索表单，并且提供了`Tanstack Table/Tanstack Form/Tanstack Query`的最佳实践
 - `DTO动态推断与生成`: 提供 DTO 动态推断与生成能力，减少重复的类型定义工作，提升开发效率
 - `双层页签导航`: 支持双层页签导航，实现高效页面切换，并保持页面状态

@@ -4,7 +4,7 @@
 
 Zova: 直观的前端框架 = Vue3 响应式 + React TSX + Angular IOC
 
-- 内置开箱即用的 SSR 解决方案，可在同一个代码库中实现`SSR/SPA/Web网站/Admin中后台`
+- 内置开箱即用的 SSR 解决方案，可在同一个代码库中实现`SSR/SPA/Web/Admin`
 - 支持双层页签导航，实现高效页面切换，并保持页面状态
 - 可动态渲染 CRUD 的列表页、条目页、搜索表单，并且提供了`Tanstack Table/Tanstack Form/Tanstack Query`的最佳实践
 - 提供强大的 IOC + AOP 能力，让系统具有无与伦比的可扩展性和可维护性
@@ -40,10 +40,10 @@ Zova 可以搭配任何 UI 库使用，并且内置了几款 UI 库的项目模�
 
 ## 在线演示2
 
-使用同一套代码实现 Cabloy Store 的`Web网站`和`Admin中后台`
+使用同一套代码实现 Cabloy Store 的`Web`和`Admin`
 
-- Web 网站：[https://cabloy.com](https://cabloy.com)
-- Admin 中后台：[https://cabloy.com/admin](https://cabloy.com/admin)
+- Web：[https://cabloy.com](https://cabloy.com)
+- Admin：[https://cabloy.com/admin](https://cabloy.com/admin)
 
 ## 动图演示
 

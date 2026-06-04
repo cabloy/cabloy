@@ -21,7 +21,7 @@ features:
   - title: Vue3 + React + Angular
     details: Delivers an intuitive, elegant, and powerful code style by combining the core design strengths of Vue3, React, and Angular
   - title: SSR
-    details: Built-in out-of-the-box SSR solution, building `SSR/SPA/Website/Admin-Dashboard` in one codebase
+    details: Built-in out-of-the-box SSR solution, building `SSR/SPA/Web/Admin` in one codebase
   - title: Dual-layer Tabs Navigation
     details: Supports dual-layer tabs navigation, enabling efficient page switching while maintaining page state
   - title: CRUD Dynamic Rendering
