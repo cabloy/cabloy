@@ -1,12 +1,14 @@
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
+import { Resource } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Controller, Web } from 'vona-module-a-web';
 
 export interface IControllerOptionsGuardPassport extends IDecoratorControllerOptions {}
 
 @Controller<IControllerOptionsGuardPassport>('guardPassport')
+@Resource()
 export class ControllerGuardPassport extends BeanBase {
   @Web.get('testUserName')
   @Passport.userName({ name: 'admin' })
