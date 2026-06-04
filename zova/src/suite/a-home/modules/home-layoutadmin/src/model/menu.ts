@@ -50,7 +50,7 @@ export class ModelMenu extends BeanModelBase {
         const menus = data.menus
           ?.map(item => {
             if (item.link && !this.$router.isRouterName(item.link) && item.meta?.params) {
-              const link = this.sys.util.apiActionPathTranslate(item.link, item.meta?.params);
+              const link = this.app.util.apiActionPathTranslate(item.link, item.meta?.params);
               return { ...item, link };
             }
             return item;

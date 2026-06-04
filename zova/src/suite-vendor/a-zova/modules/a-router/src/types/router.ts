@@ -50,7 +50,7 @@ declare module 'zova' {
   export interface ZovaApplication {
     $redirect(pagePath: string, status?: 301 | 302): never;
     $gotoPage(pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult;
-    $gotoHome(): TypeGotoPageResult;
+    $gotoHome(options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoLogin(returnTo?: string, cause?: string): TypeGotoPageResult;
     $gotoReturnTo(returnTo?: string): TypeGotoPageResult;
     $getReturnTo(returnTo?: string): string;

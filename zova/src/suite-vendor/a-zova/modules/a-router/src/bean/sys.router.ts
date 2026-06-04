@@ -208,9 +208,11 @@ export class SysRouter extends BeanBase {
     });
   }
 
-  resolvePath<K extends keyof IPagePathRecord>(path: K, query?: IPagePathRecord[K]): string {
+  resolvePath<K extends keyof IPagePathRecord>(path: K, options?: IPagePathRecord[K]): string {
+    const params = cast(options)?.params;
+    const query = cast(options)?.query;
     return this._resolveNameOrPath(query, query => {
-      const route = this.router.resolve({ path, query });
+      const route = this.router.resolve({ path, params, query });
       return route.fullPath;
     });
   }

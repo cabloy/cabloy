@@ -17,7 +17,7 @@ export class RenderHeader extends BeanRenderBase {
             <button
               class="btn btn-square btn-ghost"
               onClick={() => {
-                this.app.$gotoHome();
+                this.app.$gotoHome({ params: { locale: true } });
               }}
             >
               <ZIcon name=":social:cabloy" width={24}></ZIcon>
