@@ -1,0 +1,16 @@
+{
+  "name": "cabloy-docs",
+  "private": true,
+  "description": "Unified Cabloy monorepo docs",
+  "license": "MIT",
+  "author": "zhennann",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev .",
+    "docs:build": "vitepress build .",
+    "docs:preview": "vitepress preview ."
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

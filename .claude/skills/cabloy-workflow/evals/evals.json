@@ -1,0 +1,35 @@
+{
+  "skill_name": "cabloy-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I am in the cabloy-basic repo and want to add a new backend bean plus the related frontend page for an admin workflow. Please tell me the right Cabloy workflow and what command families I should inspect first.",
+      "expected_output": "Detects Cabloy Basic, classifies the work as cross-stack, recommends root package.json plus Vona/Zova CLI families instead of manual scaffolding, and mentions verification.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We are working in cabloy-start and I need to create a new page with Vuetify-specific assumptions. Which repo checks should Claude do before recommending code changes?",
+      "expected_output": "Detects Cabloy Start, highlights the edition marker, treats the task as frontend-sensitive, and avoids reusing Cabloy Basic assumptions blindly.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Please help me decide whether this new AI guidance belongs in public docs, .docs-internal, CLAUDE.md, or a skill. The guidance is about when to use npm run zova instead of hand-written scaffolding.",
+      "expected_output": "Routes the request to the right knowledge homes, prefers public docs plus Claude rules/skills as appropriate, and reinforces the CLI-first principle.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I found a Cabloy-like repo without __CABLOY_BASIC__ or __CABLOY_START__. Before I scaffold a frontend page, what should Claude verify so it does not assume the wrong edition?",
+      "expected_output": "Does not force an edition, inspects the owning package scripts and nearby repo structure, and asks before making a strong edition-specific assumption.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "I want to update the public guidance for Cabloy contributors about using CLI generators first, but I also think Claude should follow the same rule automatically. Where should each part of that knowledge live?",
+      "expected_output": "Splits the guidance across public docs and Claude rules/skills appropriately, keeping maintainer rationale out of public docs unless needed.",
+      "files": []
+    }
+  ]
+}

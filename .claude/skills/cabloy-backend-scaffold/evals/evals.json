@@ -1,0 +1,29 @@
+{
+  "skill_name": "cabloy-backend-scaffold",
+  "evals": [
+    {
+      "id": 11,
+      "prompt": "I want to add an invoice backend feature in Cabloy. Please do not give me a generic architecture essay — tell me exactly whether I should start with create:bean commands or the CRUD generator, and what backend layers are mandatory to review after generation.",
+      "expected_output": "Must explicitly choose the CRUD generator or the precise Vona generator path first, must state that backend follow-up review is mandatory, and must mention at least migration/version plus DTO/OpenAPI or tests.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "I already changed a Vona DTO and controller response for an admin endpoint. I am not asking for frontend implementation help yet. Give me backend-first closure guidance and only mention frontend if it is truly just a contract reminder.",
+      "expected_output": "Must remain backend-first, must not turn into a full frontend workflow, must include backend contract checks, and any frontend mention must be clearly framed as a limited reminder only.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "I need to add order settlement in Cabloy Start. I care about the Vona backend thread first. Please tell me the exact generation path and the non-optional backend follow-up checklist after scaffolding.",
+      "expected_output": "Must detect Start-sensitivity, still lead with the Vona backend generation path, and explicitly frame migration/index/DTO/OpenAPI/tests as non-optional backend review items.",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "I changed a model relation and some entity fields in Cabloy Basic. Before you tell me anything else, I want the Cabloy backend done-checklist, not a broad explanation of ORM theory.",
+      "expected_output": "Must give a concrete backend completion checklist, must include relation-aware follow-up and metadata or migration review, and must stay practical rather than drifting into generic ORM explanation.",
+      "files": []
+    }
+  ]
+}

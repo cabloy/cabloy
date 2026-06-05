@@ -1,0 +1,64 @@
+:root {
+  --vp-c-brand-1: #2563eb;
+  --vp-c-brand-2: #1d4ed8;
+  --vp-c-brand-3: #1e40af;
+  --vp-sidebar-width: 320px;
+}
+
+.VPHomeHero .container .name,
+.VPHomeHero .container .text,
+.VPHomeHero .container .tagline {
+  max-width: 900px;
+}
+
+.vp-doc :not(pre, h1, h2, h3, h4, h5, h6) > code {
+  font-size: var(--vp-code-font-size);
+  color: var(--vp-code-color);
+}
+
+.cabloy-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.cabloy-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.cabloy-badge--common {
+  background: color-mix(in srgb, var(--vp-c-brand-1) 12%, white);
+  color: var(--vp-c-brand-3);
+}
+
+.dark .cabloy-badge--common {
+  background: color-mix(in srgb, var(--vp-c-brand-1) 20%, black);
+  color: #bfdbfe;
+}
+
+.cabloy-badge--basic {
+  background: #ecfeff;
+  color: #155e75;
+}
+
+.dark .cabloy-badge--basic {
+  background: #083344;
+  color: #a5f3fc;
+}
+
+.cabloy-badge--start {
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.dark .cabloy-badge--start {
+  background: #431407;
+  color: #fdba74;
+}

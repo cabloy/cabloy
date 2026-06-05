@@ -1,0 +1,35 @@
+{
+  "skill_name": "cabloy-frontend-scaffold",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to add a new frontend page for invoice management in Cabloy. Please tell me the right Zova workflow and what I should generate first.",
+      "expected_output": "Chooses a frontend scaffolding path, prefers Zova page generation or closely related CLI generation, and mentions follow-up layers like route/query/params, model/API, metadata, or verification.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Please help me add page params and page query support to an existing Zova page. I do not want generic Vue Router advice; I want the Cabloy way.",
+      "expected_output": "Routes to the Zova frontend refactor thread, recommends the right refactor path, and includes metadata or route follow-up instead of generic framework advice.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I changed a route and component structure in Cabloy Basic and now I am not sure what else I should update. What should Claude check before saying the frontend work is done?",
+      "expected_output": "Identifies likely frontend follow-up such as metadata regeneration, page/component/API/model or SSR impact, and verification commands.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I updated a Zova page and component contract, but I do not want backend implementation help yet. Keep this frontend-first and only mention backend if it is truly a contract reminder.",
+      "expected_output": "Stays frontend-first, covers page/component/metadata or model follow-up, and only adds a light backend-contract reminder if frontend work depends on backend OpenAPI or SDK output.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Help me add a new frontend page thread in Cabloy Start. I want the Zova way first, including what frontend follow-up review is mandatory after generation.",
+      "expected_output": "Detects Start or Start-sensitive edition handling, recommends Zova scaffolding first, and treats metadata, routing, API/model or SSR checks, and verification as mandatory frontend follow-up rather than optional extras.",
+      "files": []
+    }
+  ]
+}

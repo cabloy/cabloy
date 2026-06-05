@@ -1,0 +1,74 @@
+# Page Query Guide
+
+This page migrates the highest-value ideas from the legacy Zova page-query documentation.
+
+## Why page query support matters
+
+Zova enhances page query handling with type-aware support so routing data can be read and passed in a more structured way.
+
+That is important because query values are part of page behavior, not just incidental URL text.
+
+## Add query support to a page
+
+Example: add query support for page `counter`.
+
+```bash
+npm run zova :refactor:pageQuery counter -- --module=demo-student
+```
+
+## Add query schema
+
+The legacy docs showed that query support becomes explicit through a Zod schema.
+
+Representative pattern:
+
+```typescript
+export const ControllerPageCounterSchemaQuery = z.object({
+  name: z.string().optional(),
+  age: z.number().optional(),
+});
+```
+
+This matters because query parsing becomes typed and framework-aware instead of stringly-typed ad hoc access.
+
+## Use query values
+
+Representative pattern:
+
+```typescript
+class ControllerPageCounter {
+  render() {
+    return (
+      <div>
+        <div>{this.$query.name}</div>
+        <div>{this.$query.age}</div>
+      </div>
+    );
+  }
+}
+```
+
+## Pass query values during navigation
+
+Representative pattern:
+
+```typescript
+const url = this.$router.getPagePath('/demo/student/counter', {
+  query: {
+    name: 'tom',
+    age: 18,
+  },
+});
+this.$router.push(url);
+```
+
+## Why this matters for AI workflows
+
+When AI adds page query behavior, it should not fall back to raw string parsing.
+
+A better default is:
+
+1. add the query skeleton with the Zova refactor command
+2. define the schema explicitly
+3. use `this.$query` and typed navigation helpers
+4. keep query behavior aligned with the page controller model

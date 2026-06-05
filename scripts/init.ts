@@ -17,6 +17,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(__dirname, '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
+const CABLOY_DOCS_DIR = resolve(ROOT_DIR, 'cabloy-docs');
 
 // --- Helpers ---
 
@@ -202,6 +203,16 @@ function cleanupWorkspaceYaml(): void {
   }
 }
 
+// --- Step G: init:cabloy-docs ---
+
+function initCabloyDocs(): void {
+  const pkgPath = resolve(CABLOY_DOCS_DIR, 'package.json');
+  if (!existsSync(pkgPath)) return;
+  // eslint-disable-next-line
+  console.log('[init] Initializing cabloy-docs...');
+  exec('pnpm install --no-frozen-lockfile', CABLOY_DOCS_DIR);
+}
+
 // --- Main ---
 
 setAppName();
@@ -210,6 +221,7 @@ generateEnvProdDockerLocal();
 cleanupWorkspaceYaml();
 initVona();
 initZova();
+initCabloyDocs();
 buildSsrCabloyBasicStartBatch();
 // eslint-disable-next-line
 console.log('[init] Done!');
