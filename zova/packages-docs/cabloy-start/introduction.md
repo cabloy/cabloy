@@ -1,6 +1,6 @@
 # Cabloy Start
 
-This suite `zova-suite-cabloy-start` uses the `VuetifyJS` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Websites` and `Admin-Dashboards`
+This suite `zova-suite-cabloy-start` uses the `VuetifyJS` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Web` and `Admin`
 
 ## Module List
 
@@ -8,8 +8,8 @@ This suite `zova-suite-cabloy-start` uses the `VuetifyJS` UI library and provide
 
 | Name              | Description                                                                                                                                                 |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| start-layoutadmin | Layout component for `Admin-Dashboard`, supports dual-layer tabs navigation                                                                                 |
-| start-layoutfront | Layout component for `Website`                                                                                                                              |
+| start-layoutadmin | Layout component for `Admin`, supports dual-layer tabs navigation                                                                                           |
+| start-layoutfront | Layout component for `Web`                                                                                                                                  |
 | start-adapter     | UI component adapter: defines commonly used UI components for rendering `Table/Form`                                                                        |
 | start-restpage    | Dynamically render CRUD list pages, entry pages, and search forms, while demonstrating best practices for Tanstack Table, Tanstack Form, and Tanstack Query |
 | start-paypal      | Frontend rendering component for interfacing with the backend Paypal API                                                                                    |

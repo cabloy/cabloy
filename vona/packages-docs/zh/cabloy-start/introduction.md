@@ -1,6 +1,6 @@
 # Cabloy Start
 
-`Cabloy Start`包含一组开箱即用的 Vona/Zova 套件，加速开发`Web网站`和`Admin中后台`等全栈系统。
+`Cabloy Start`包含一组开箱即用的 Vona/Zova 套件，加速开发`Web`和`Admin`等全栈系统。
 
 | 类型     | 名称                    | 说明                                                                                  |
 | -------- | ----------------------- | ------------------------------------------------------------------------------------- |
@@ -9,18 +9,18 @@
 
 ## 特性
 
-- 可在同一个代码库中实现`SSR/SPA/Web网站/Admin中后台`
-- 为`Admin中后台`提供完整的 SSR 支持，刷新页面时侧边栏不会闪烁跳动
+- 可在同一个代码库中实现`SSR/SPA/Web/Admin`
+- 为`Admin`提供完整的 SSR 支持，刷新页面时侧边栏不会闪烁跳动
 - 提供了全新的 CRUD 开发范式，沉淀出`Tanstack Table`/`Tanstack Form`/`Tanstack Query`的最佳实践
 - 支持双层页签导航，实现高效页面切换，并保持页面状态
 - UI 库采用最新版 VuetifyJS
 
 ## 在线演示
 
-使用同一套代码实现 Cabloy Store 的`Web网站`和`Admin中后台`
+使用同一套代码实现 Cabloy Store 的`Web`和`Admin`
 
-- Web 网站：[https://cabloy.com](https://cabloy.com)
-- Admin 中后台：[https://cabloy.com/admin](https://cabloy.com/admin)
+- Web：[https://cabloy.com](https://cabloy.com)
+- Admin：[https://cabloy.com/admin](https://cabloy.com/admin)
 
 ## 动图演示
 

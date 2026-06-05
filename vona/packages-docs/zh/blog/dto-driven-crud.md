@@ -12,7 +12,7 @@ VonaJS 做的就是这件事。
 
 ## 二、VonaJS 是什么
 
-VonaJS 是一款全栈框架，支持在同一个代码库中构建 SSR/SPA/Web 网站/Admin 中后台。它的核心能力有两点：
+VonaJS 是一款全栈框架，支持在同一个代码库中构建 SSR/SPA/Web/Admin。它的核心能力有两点：
 
 - **DTO 动态推断与生成**：基于 Zod4 的统一 Schema，一份定义同时用于参数校验、OpenAPI 文档生成、Table/Form 渲染、数据序列化与脱敏
 - **CRUD 动态渲染**：根据 DTO 中声明的渲染元数据，自动生成列表页、条目页、搜索表单，底层基于 Tanstack Table / Tanstack Form / Tanstack Query 的最佳实践
@@ -213,7 +213,7 @@ export class DtoStudentView extends $Dto.get(() => ModelStudent) {}
 
 Django Admin 的核心问题是：它用服务端模板渲染页面，前端技术栈停留在传统 HTML/CSS/JS 时代。想定制一个下拉框的样式、加一个自定义交互，就得去覆盖模板文件，维护成本随业务复杂度急剧上升。
 
-VonaJS 采用前后端分离架构，前端是完整的 Vue3 应用，渲染配置通过 DTO 声明、组件按需替换，定制一个字段控件只需要换一个 `ZovaRender.field()` 的组件名。同时，Admin 中后台也支持 SSR，刷新页面时侧边栏不会闪烁跳动。
+VonaJS 采用前后端分离架构，前端是完整的 Vue3 应用，渲染配置通过 DTO 声明、组件按需替换，定制一个字段控件只需要换一个 `ZovaRender.field()` 的组件名。同时，Admin 也支持 SSR，刷新页面时侧边栏不会闪烁跳动。
 
 ## 六、与 NestJS 对比：DTO 不再只是校验
 

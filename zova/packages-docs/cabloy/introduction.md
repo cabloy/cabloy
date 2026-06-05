@@ -12,22 +12,22 @@ This suite includes the following modules:
 
 ## 2. Zova Suite: zova-suite-cabloy-basic (MIT)
 
-This suite uses the `Daisyui + Tailwindcss` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Admin-Dashboards`.
+This suite uses the `Daisyui + Tailwindcss` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Admin`.
 
 ## 3. Zova Suite：zova-suite-cabloy-start
 
-This suite uses the `VuetifyJS` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Websites` and `Admin-Dashboards`.
+This suite uses the `VuetifyJS` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Web` and `Admin`.
 
 ## Suite Comparison
 
-|                                                                  | cabloy-basic                                                                                     | cabloy-start                                            |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
-| Fullstack Capabilities                                           | Provides out-of-the-box `Admin-Dashboard`. Website capabilities can be added by self-development | Provides out-of-the-box `Website` and `Admin-Dashboard` |
-| UI Library                                                       | Daisyui + Tailwindcss                                                                            | VuetifyJS                                               |
-| Dynamic Form/Table Rendering                                     | Provides UI components based on Daisyui                                                          | Provides UI components based on VuetifyJS               |
-| Admin-Dashboard SSR Support                                      | ✅                                                                                               | ✅                                                      |
-| Dual-layer Tabs Navigation                                       | ✅                                                                                               | ✅                                                      |
-| Best Practices for `Tanstack Table/Tanstack Form/Tanstack Query` | ✅                                                                                               | ✅                                                      |
+|                                                                  | cabloy-basic                                                                       | cabloy-start                              |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------- |
+| Fullstack Capabilities                                           | Provides out-of-the-box `Admin`. Web capabilities can be added by self-development | Provides out-of-the-box `Web` and `Admin` |
+| UI Library                                                       | Daisyui + Tailwindcss                                                              | VuetifyJS                                 |
+| Dynamic Form/Table Rendering                                     | Provides UI components based on Daisyui                                            | Provides UI components based on VuetifyJS |
+| Admin SSR Support                                                | ✅                                                                                 | ✅                                        |
+| Dual-layer Tabs Navigation                                       | ✅                                                                                 | ✅                                        |
+| Best Practices for `Tanstack Table/Tanstack Form/Tanstack Query` | ✅                                                                                 | ✅                                        |
 
 ## Development History
 
@@ -43,7 +43,7 @@ CabloyJS development started in 2016. CabloyJS was initially a fullstack NodeJS 
 In 2023, after thorough evaluation and verification, CabloyJS V5 underwent a complete redesign adopting a completely new architectural philosophy. Developed in TypeScript with a frontend/backend separation architecture, it spawned two underlying frameworks:
 
 - **ZovaJS**: An intuitive frontend framework = Vue3 Reactivity + React TSX + Angular IOC
-- **VonaJS**: A fullstack framework supporting building `SSR/SPA/Website/Admin Dashboard` in a single codebase, with built-in frontend/backend type sharing capabilities
+- **VonaJS**: A fullstack framework supporting building `SSR/SPA/Web/Admin` in a single codebase, with built-in frontend/backend type sharing capabilities
 
 ### 3. 2026: V5 Release
 

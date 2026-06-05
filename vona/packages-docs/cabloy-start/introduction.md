@@ -1,6 +1,6 @@
 # Cabloy Start
 
-`Cabloy Start` includes a set of out-of-the-box Vona/Zova suites to accelerate the development of fullstack projects such as `Websites` and `Admins`
+`Cabloy Start` includes a set of out-of-the-box Vona/Zova suites to accelerate the development of fullstack projects such as `Web` and `Admin`
 
 | Type       | Name                    | Description                                                                                                       |
 | ---------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -9,7 +9,7 @@
 
 ## Features
 
-- Building `SSR/SPA/Website/Admin` in one codebase
+- Building `SSR/SPA/Web/Admin` in one codebase
 - Provides full SSR support for Admin applications, preventing sidebar flickering on page refresh
 - Dynamically render CRUD list pages, entry pages, and search forms, while demonstrating best practices for Tanstack Table, Tanstack Form, and Tanstack Query
 - Supports dual-layer tabs navigation, enabling efficient page switching while maintaining page state
@@ -17,9 +17,9 @@
 
 ## Online Demo
 
-Uses the same codebase to implement Cabloy Store's `Website` and `Admin`
+Uses the same codebase to implement Cabloy Store's `Web` and `Admin`
 
-- Website: [https://cabloy.com](https://cabloy.com)
+- Web: [https://cabloy.com](https://cabloy.com)
 - Admin: [https://cabloy.com/admin](https://cabloy.com/admin)
 
 ## GIF Demo

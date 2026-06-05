@@ -13,9 +13,9 @@ $ cd projectName
 
 `cabloy-basic`模版内置一个套件`vona-suite-cabloy-basic`。该套件包含如下模块：
 
-| 名称            | 说明                  |
-| --------------- | --------------------- |
-| basic-siteadmin | 用于实现`Admin中后台` |
+| 名称            | 说明            |
+| --------------- | --------------- |
+| basic-siteadmin | 用于实现`Admin` |
 
 ## 创建Zova项目
 
@@ -74,9 +74,9 @@ $ npm run build:rest:cabloyBasicAdmin
 $ npm run dev
 ```
 
-| URL                   | 说明        |
-| --------------------- | ----------- |
-| http://localhost:7102 | Admin中后台 |
+| URL                   | 说明  |
+| --------------------- | ----- |
+| http://localhost:7102 | Admin |
 
 ### 2. 启动Zova开发服务
 
@@ -86,6 +86,6 @@ $ npm run dev
 $ npm run dev:ssr:cabloyBasicAdmin
 ```
 
-| URL                   | 说明        |
-| --------------------- | ----------- |
-| http://localhost:9000 | Admin中后台 |
+| URL                   | 说明  |
+| --------------------- | ----- |
+| http://localhost:9000 | Admin |

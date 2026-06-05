@@ -38,10 +38,10 @@ $ cd projectName
 
 Vona provides two project templates:
 
-| Name         | UI                    | Description                                   |
-| ------------ | --------------------- | --------------------------------------------- |
-| cabloy-basic | Daisyui + Tailwindcss | Provides out-of-the-box `Admin`               |
-| cabloy-start | VuetifyJS             | Provides out-of-the-box `Website` and `Admin` |
+| Name         | UI                    | Description                               |
+| ------------ | --------------------- | ----------------------------------------- |
+| cabloy-basic | Daisyui + Tailwindcss | Provides out-of-the-box `Admin`           |
+| cabloy-start | VuetifyJS             | Provides out-of-the-box `Web` and `Admin` |
 
 > See: [Cabloy: Project Templates](../../cabloy/introduction.md#templates)
 

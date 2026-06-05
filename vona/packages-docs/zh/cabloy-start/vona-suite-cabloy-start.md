@@ -2,10 +2,10 @@
 
 该套件包含两个模块：
 
-| 名称            | 说明                  |
-| --------------- | --------------------- |
-| start-siteadmin | 用于实现`Admin中后台` |
-| start-siteweb   | 用于实现`Web网站`     |
+| 名称            | 说明            |
+| --------------- | --------------- |
+| start-siteadmin | 用于实现`Admin` |
+| start-siteweb   | 用于实现`Web`   |
 
 ## start-siteadmin
 

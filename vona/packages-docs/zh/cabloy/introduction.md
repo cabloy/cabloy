@@ -27,21 +27,21 @@ CabloyJS 不是独立的框架，而是基于`Vona/Zova套件`的形式提供一
 
 针对不同 UI 库，CabloyJS 分别提供了两个项目模版。
 
-| 模版名称                                        | UI库                  | 说明                                   | 演示                                                                   |
-| ----------------------------------------------- | --------------------- | -------------------------------------- | ---------------------------------------------------------------------- |
-| [cabloy-basic](../cabloy-basic/introduction.md) | Daisyui + Tailwindcss | 提供开箱即用的`Admin中后台`            |                                                                        |
-| [cabloy-start](../cabloy-start/introduction.md) | VuetifyJS             | 提供开箱即用的`Web网站`和`Admin中后台` | [Web网站](https://cabloy.com), [Admin中后台](https://cabloy.com/admin) |
+| 模版名称                                        | UI库                  | 说明                         | 演示                                                         |
+| ----------------------------------------------- | --------------------- | ---------------------------- | ------------------------------------------------------------ |
+| [cabloy-basic](../cabloy-basic/introduction.md) | Daisyui + Tailwindcss | 提供开箱即用的`Admin`        |                                                              |
+| [cabloy-start](../cabloy-start/introduction.md) | VuetifyJS             | 提供开箱即用的`Web`和`Admin` | [Web](https://cabloy.com), [Admin](https://cabloy.com/admin) |
 
 ## 模版对比
 
-|                                                         | cabloy-basic                                             | cabloy-start                           |
-| ------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------- |
-| 全栈能力                                                | 提供开箱即用的`Admin中后台`。可自行补充开发`Web网站`能力 | 提供开箱即用的`Web网站`和`Admin中后台` |
-| UI库                                                    | Daisyui + Tailwindcss                                    | VuetifyJS                              |
-| Form/Table动态渲染                                      | 提供基于Daisyui的UI组件                                  | 提供基于VuetifyJS的UI组件              |
-| Admin中后台支持 SSR                                     | ✅                                                       | ✅                                     |
-| 双层页签导航                                            | ✅                                                       | ✅                                     |
-| `Tanstack Table/Tanstack Form/Tanstack Query`的最佳实践 | ✅                                                       | ✅                                     |
+|                                                         | cabloy-basic                                   | cabloy-start                 |
+| ------------------------------------------------------- | ---------------------------------------------- | ---------------------------- |
+| 全栈能力                                                | 提供开箱即用的`Admin`。可自行补充开发`Web`能力 | 提供开箱即用的`Web`和`Admin` |
+| UI库                                                    | Daisyui + Tailwindcss                          | VuetifyJS                    |
+| Form/Table动态渲染                                      | 提供基于Daisyui的UI组件                        | 提供基于VuetifyJS的UI组件    |
+| Admin支持 SSR                                           | ✅                                             | ✅                           |
+| 双层页签导航                                            | ✅                                             | ✅                           |
+| `Tanstack Table/Tanstack Form/Tanstack Query`的最佳实践 | ✅                                             | ✅                           |
 
 ## 研发历程
 
@@ -57,7 +57,7 @@ CabloyJS 不是独立的框架，而是基于`Vona/Zova套件`的形式提供一
 2023 年，经过充分评估和验证，CabloyJS V5 采用全新架构理念进行彻底重构。基于 TypeScript 开发，采用前后端分离架构，孵化出两个底层框架：
 
 - **ZovaJS**：直观的前端框架 = Vue3 响应式 + React TSX + Angular IOC
-- **VonaJS**：全栈框架，支持单代码库构建`SSR/SPA/Web网站/Admin中后台`，内置前后端类型共享能力
+- **VonaJS**：全栈框架，支持单代码库构建`SSR/SPA/Web/Admin`，内置前后端类型共享能力
 
 ### 3. 2026年：V5发布
 

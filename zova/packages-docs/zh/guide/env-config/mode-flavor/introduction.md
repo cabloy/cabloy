@@ -102,13 +102,13 @@ sys.config.meta.appMode === 'spa';
 
 为了开箱即用，Zova 提供了几个内置 Flavor：
 
-| 名称             | 说明                            |
-| ---------------- | ------------------------------- |
-| admin            | 用于Admin中后台                 |
-| web              | 用于Web网站                     |
-| cabloyBasicAdmin | 用于Cabloy Basic的`Admin中后台` |
-| cabloyStartAdmin | 用于Cabloy Start的`Admin中后台` |
-| cabloyStartWeb   | 用于Cabloy Start的`Web网站`     |
+| 名称             | 说明                      |
+| ---------------- | ------------------------- |
+| admin            | 用于Admin                 |
+| web              | 用于Web                   |
+| cabloyBasicAdmin | 用于Cabloy Basic的`Admin` |
+| cabloyStartAdmin | 用于Cabloy Start的`Admin` |
+| cabloyStartWeb   | 用于Cabloy Start的`Web`   |
 
 ### 2. 启用Flavor
 

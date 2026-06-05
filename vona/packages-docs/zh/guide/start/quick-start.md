@@ -38,10 +38,10 @@ $ cd projectName
 
 Vona 提供了两个项目模版:
 
-| 名称         | UI                    | 说明                                   |
-| ------------ | --------------------- | -------------------------------------- |
-| cabloy-basic | Daisyui + Tailwindcss | 提供开箱即用的`Admin中后台`            |
-| cabloy-start | VuetifyJS             | 提供开箱即用的`Web网站`和`Admin中后台` |
+| 名称         | UI                    | 说明                         |
+| ------------ | --------------------- | ---------------------------- |
+| cabloy-basic | Daisyui + Tailwindcss | 提供开箱即用的`Admin`        |
+| cabloy-start | VuetifyJS             | 提供开箱即用的`Web`和`Admin` |
 
 > 参见: [Cabloy: 项目模版](../../cabloy/introduction.md#templates)
 

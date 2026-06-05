@@ -1,6 +1,6 @@
 # Cabloy Start
 
-套件 zova-suite-cabloy-start 采用`VuetifyJS` UI 库，提供了一组开箱即用的前端模块，加速开发`Web网站`和`Admin中后台`等全栈系统。
+套件 zova-suite-cabloy-start 采用`VuetifyJS` UI 库，提供了一组开箱即用的前端模块，加速开发`Web`和`Admin`等全栈系统。
 
 ## 模块清单
 
@@ -8,8 +8,8 @@
 
 | 名称              | 说明                                                                                                            |
 | ----------------- | --------------------------------------------------------------------------------------------------------------- |
-| start-layoutadmin | 用于`Admin中后台`的布局组件，支持双层页签导航                                                                   |
-| start-layoutfront | 用于`Web网站`的布局组件                                                                                         |
+| start-layoutadmin | 用于`Admin`的布局组件，支持双层页签导航                                                                         |
+| start-layoutfront | 用于`Web`的布局组件                                                                                             |
 | start-adapter     | UI组件适配器：为`Table/Form`渲染定义常用的UI组件                                                                |
 | start-restpage    | 可动态渲染CRUD的列表页、条目页、搜索表单，并且提供了`Tanstack Table`/`Tanstack Form`/`Tanstack Query`的最佳实践 |
 | start-paypal      | 与后端Paypal API进行对接的前端渲染组件                                                                          |

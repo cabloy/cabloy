@@ -2,10 +2,10 @@
 
 This suite includes two modules:
 
-| Name            | Description                 |
-| --------------- | --------------------------- |
-| start-siteadmin | Used to implement `Admin`   |
-| start-siteweb   | Used to implement `Website` |
+| Name            | Description               |
+| --------------- | ------------------------- |
+| start-siteadmin | Used to implement `Admin` |
+| start-siteweb   | Used to implement `Web`   |
 
 ## start-siteadmin
 

@@ -13,10 +13,10 @@ $ cd projectName
 
 `cabloy-start`模版内置一个套件`vona-suite-cabloy-start`。该套件包含两个模块：
 
-| 名称            | 说明                  |
-| --------------- | --------------------- |
-| start-siteadmin | 用于实现`Admin中后台` |
-| start-siteweb   | 用于实现`Web网站`     |
+| 名称            | 说明            |
+| --------------- | --------------- |
+| start-siteadmin | 用于实现`Admin` |
+| start-siteweb   | 用于实现`Web`   |
 
 ## 创建Zova项目
 
@@ -39,7 +39,7 @@ $ git clone git@github.com:cabloy/zova-suite-cabloy-start.git src/suite/cabloy-s
 
 ### 3. 修改.env 文件
 
-分别修改`Web网站`和`Admin中后台`两个 Flavor 的环境参数配置。
+分别修改`Web`和`Admin`两个 Flavor 的环境参数配置。
 
 - `env/.env.ssr.cabloyStartAdmin`:
 
@@ -84,10 +84,10 @@ $ npm run build:rest:cabloyStartWeb
 $ npm run dev
 ```
 
-| URL                         | 说明        |
-| --------------------------- | ----------- |
-| http://localhost:7102       | Web网站     |
-| http://localhost:7102/admin | Admin中后台 |
+| URL                         | 说明  |
+| --------------------------- | ----- |
+| http://localhost:7102       | Web   |
+| http://localhost:7102/admin | Admin |
 
 ### 2. 启动Zova开发服务
 
@@ -98,7 +98,7 @@ $ npm run dev:ssr:cabloyStartWeb
 $ npm run dev:ssr:cabloyStartAdmin
 ```
 
-| URL                          | 说明        |
-| ---------------------------- | ----------- |
-| http://localhost:9000        | Web网站     |
-| http://localhost:9000/admin/ | Admin中后台 |
+| URL                          | 说明  |
+| ---------------------------- | ----- |
+| http://localhost:9000        | Web   |
+| http://localhost:9000/admin/ | Admin |

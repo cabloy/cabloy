@@ -1,6 +1,6 @@
 # Cabloy Basic
 
-This suite `zova-suite-cabloy-basic` uses the `Daisyui + Tailwindcss` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Admin-Dashboards`
+This suite `zova-suite-cabloy-basic` uses the `Daisyui + Tailwindcss` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Admin`
 
 ## Module List
 

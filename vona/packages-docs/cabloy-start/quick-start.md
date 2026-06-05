@@ -13,10 +13,10 @@ $ cd projectName
 
 The `cabloy-start` template has a built-in suite `vona-suite-cabloy-start`, which contains two modules:
 
-| name            | description                 |
-| --------------- | --------------------------- |
-| start-siteadmin | Used to implement `Admin`   |
-| start-siteweb   | Used to implement `Website` |
+| name            | description               |
+| --------------- | ------------------------- |
+| start-siteadmin | Used to implement `Admin` |
+| start-siteweb   | Used to implement `Web`   |
 
 ## Create a Zova project
 
@@ -39,7 +39,7 @@ $ git clone git@github.com:cabloy/zova-suite-cabloy-start.git src/suite/cabloy-s
 
 ### 3. Modify the .env file
 
-Modify the environment parameter configuration of the two flavors of `Website` and `Admin` respectively.
+Modify the environment parameter configuration of the two flavors of `Web` and `Admin` respectively.
 
 - `env/.env.ssr.cabloyStartAdmin`:
 
@@ -86,7 +86,7 @@ $ npm run dev
 
 | URL                         | Description |
 | --------------------------- | ----------- |
-| http://localhost:7102       | Website     |
+| http://localhost:7102       | Web         |
 | http://localhost:7102/admin | Admin       |
 
 ### 2. Start Zova development server
@@ -100,5 +100,5 @@ $ npm run dev:ssr:cabloyStartAdmin
 
 | URL                          | Description |
 | ---------------------------- | ----------- |
-| http://localhost:9000        | Website     |
+| http://localhost:9000        | Web         |
 | http://localhost:9000/admin/ | Admin       |

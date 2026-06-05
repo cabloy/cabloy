@@ -1,6 +1,6 @@
 # Scripts
 
-Zova can build `SSR/SPA/Website/Admin-Dashboard` in one codebase, and both `Website/Admin-Dashboard` can support SSR. Therefore, Zova loads environment files based on multi-dimensional variables, providing a more flexible configuration mechanism and supporting more complex business scenarios. Corresponding to the multi-dimensional variables, the command line script is also divided into three parts, such as:
+Zova can build `SSR/SPA/Web/Admin` in one codebase, and both `Web/Admin` can support SSR. Therefore, Zova loads environment files based on multi-dimensional variables, providing a more flexible configuration mechanism and supporting more complex business scenarios. Corresponding to the multi-dimensional variables, the command line script is also divided into three parts, such as:
 
 ```bash
 $ npm run dev:ssr:admin
@@ -10,9 +10,9 @@ $ npm run dev:ssr:admin
 
 ## ssr + admin
 
-| appMode | flavor | Description     |
-| ------- | ------ | --------------- |
-| ssr     | admin  | Admin-Dashboard |
+| appMode | flavor | Description |
+| ------- | ------ | ----------- |
+| ssr     | admin  | Admin       |
 
 ```bash
 $ npm run dev:ssr:admin
@@ -32,7 +32,7 @@ $ npm run preview
 
 | appMode | flavor | Description |
 | ------- | ------ | ----------- |
-| ssr     | web    | Website     |
+| ssr     | web    | Web         |
 
 ```bash
 $ npm run dev:ssr:web
@@ -54,7 +54,7 @@ $ npm run preview:spa
 
 ## Cabloy Basic
 
-This suite `Cabloy Basic` uses the `Daisyui + Tailwindcss` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Admin-Dashboards`
+This suite `Cabloy Basic` uses the `Daisyui + Tailwindcss` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Admin`
 
 - See: [Cabloy Basic](../../cabloy-basic/introduction.md)
 
@@ -72,11 +72,11 @@ npm run build:rest:cabloyBasicAdmin
 
 ## Cabloy Start
 
-This suite `Cabloy Start` uses the `VuetifyJS` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Websites` and `Admin-Dashboards`
+This suite `Cabloy Start` uses the `VuetifyJS` UI library and provides a set of out-of-the-box frontend modules to accelerate the development of fullstack projects such as `Web` and `Admin`
 
 - See: [Cabloy Start](../../cabloy-start/introduction.md)
 
-### 1. Admin-Dashboard
+### 1. Admin
 
 ```bash
 $ npm run dev:ssr:cabloyStartAdmin
@@ -90,7 +90,7 @@ $ npm run preview:ssr:cabloyStartAdmin
 npm run build:rest:cabloyStartAdmin
 ```
 
-### 2. Website
+### 2. Web
 
 ```bash
 $ npm run dev:ssr:cabloyStartWeb

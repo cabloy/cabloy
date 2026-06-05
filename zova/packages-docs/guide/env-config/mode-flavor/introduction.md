@@ -102,13 +102,13 @@ For more complex business scenarios, we often need to provide configuration capa
 
 For out-of-the-box, Zova provides several built-in flavors:
 
-| Name             | Description                         |
-| ---------------- | ----------------------------------- |
-| admin            | For Admin-Dashboard                 |
-| web              | For Website                         |
-| cabloyBasicAdmin | For Admin-Dashboard of Cabloy Basic |
-| cabloyStartAdmin | For Admin-Dashboard of Cabloy Start |
-| cabloyStartWeb   | For Website of Cabloy Start         |
+| Name             | Description               |
+| ---------------- | ------------------------- |
+| admin            | For Admin                 |
+| web              | For Web                   |
+| cabloyBasicAdmin | For Admin of Cabloy Basic |
+| cabloyStartAdmin | For Admin of Cabloy Start |
+| cabloyStartWeb   | For Web of Cabloy Start   |
 
 ### 2. Enabling a Flavor
 
