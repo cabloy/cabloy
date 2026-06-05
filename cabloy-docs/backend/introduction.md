@@ -1,0 +1,26 @@
+# Backend (Vona)
+
+Vona is the backend half of the Cabloy fullstack architecture.
+
+## What Vona is responsible for
+
+- application startup and runtime composition
+- IOC and AOP infrastructure
+- controller, service, model, entity, and DTO workflows
+- ORM, caching, queues, workers, schedules, and other backend infrastructure
+- OpenAPI output used by frontend SDK-related workflows
+
+## How to approach backend work
+
+When documenting or automating backend tasks, prefer this order:
+
+1. inspect the root `package.json` and `npm run vona` entrypoint
+2. inspect Vona CLI command families such as `create:*`, `init:*`, `tools:*`, and `bin:*`
+3. inspect the current module or suite layout before creating new files manually
+4. use public docs for user-facing guidance and `.docs-internal/` for maintainer rationale
+
+## Edition impact
+
+Most Vona concepts are shared between Cabloy Basic and Cabloy Start.
+
+Differences usually appear when backend modules integrate with edition-specific frontend modules, assets, routes, or generated outputs. When that happens, explain the backend concept once and annotate the edition-specific integration points explicitly.

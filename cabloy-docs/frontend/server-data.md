@@ -1,0 +1,66 @@
+# Server Data
+
+This page migrates the high-value overview from the legacy Zova server-data docs.
+
+## Why this layer exists
+
+Zova provides several levels of abstraction for accessing server data.
+
+The point is not to force one access style for every problem. The point is to let developers choose the right level of abstraction for the current business need while still staying within a coherent framework model.
+
+## The abstraction ladder
+
+The legacy docs outlined these layers:
+
+| Name | Description |
+| --- | --- |
+| `$fetch` | low-level request wrapper |
+| `$api` | business-oriented API services on top of `$fetch` |
+| `Model` | remote-data state and caching patterns on top of service access |
+| `OpenAPI SDK` | generated client SDK based on backend Swagger/OpenAPI metadata |
+| `$apiSchema` | direct access to API schema metadata |
+| `$sdk` | more generalized schema-driven access using model patterns |
+
+## How to think about the layers
+
+### `$fetch`
+
+Use `$fetch` when you need a relatively direct HTTP-oriented access path.
+
+### `$api`
+
+Use `$api` when you want business-oriented service access rather than scattering request details across pages and components.
+
+### `Model`
+
+Use model-based patterns when caching, shared remote state, and a more unified usage model matter.
+
+### `OpenAPI SDK`
+
+Use OpenAPI SDK generation when you want backend-generated API contracts to drive frontend calling patterns more directly.
+
+### `$apiSchema` and `$sdk`
+
+Use schema-driven layers when metadata itself needs to participate in higher-level frontend behavior such as validation or automatic rendering.
+
+## Why this matters for Cabloy
+
+This abstraction ladder is one of the key links between Zova and Vona.
+
+Vona emits backend-side metadata and OpenAPI information.
+Zova can consume that information through SDK and schema-driven layers.
+
+That makes server data a core fullstack integration topic, not just a frontend utility topic.
+
+## Why this matters for AI workflows
+
+When an AI system needs to add frontend data access, it should avoid jumping straight to ad hoc request logic.
+
+Instead, it should ask:
+
+1. is `$fetch` enough?
+2. should this be a business-oriented `$api` service?
+3. should this become model-managed state?
+4. is there already an OpenAPI or schema-driven route for this integration?
+
+That decision usually produces cleaner, more Cabloy-native code.

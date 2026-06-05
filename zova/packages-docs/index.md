@@ -37,3 +37,6 @@ features:
   - title: IOC + AOP
     details: Offers powerful IOC + AOP capabilities, making the system more extensible and maintainable
 ---
+
+> [!WARNING]
+> This Zova docs site is now a **legacy documentation source** kept mainly for migration reference. New unified documentation is being built in the root-level `cabloy-docs/` project of the Cabloy monorepo. Prefer the new docs for current monorepo guidance, edition-aware workflows, and AI-development guidance.

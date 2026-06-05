@@ -1,5 +1,8 @@
 # Introduction
 
+> [!WARNING]
+> This page belongs to the **legacy Vona docs**. It is kept as migration reference while the new unified Cabloy docs are being built in the root-level `cabloy-docs/` project. When this page conflicts with current monorepo workflows, prefer the new docs and current source code.
+
 ## What is Vona?
 
 Vona is a fullstack framework for building SSR/SPA/Web/Admin in one codebase, featuring frontend and backend separation and native type sharing.

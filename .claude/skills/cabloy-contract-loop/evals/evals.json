@@ -1,0 +1,29 @@
+{
+  "skill_name": "cabloy-contract-loop",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I changed a Vona DTO and controller response for an admin API in Cabloy Basic. What is the correct fullstack contract loop to get the frontend back in sync?",
+      "expected_output": "Treats the task as a contract-loop workflow, changes the backend contract first, verifies OpenAPI output, then recommends the correct frontend regeneration path and verification.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our frontend SDK types look stale after a backend entity and validation change. I do not want hand-patched frontend types. Tell me the Cabloy way to fix the contract loop.",
+      "expected_output": "Rejects hand-patching as the primary fix, identifies backend contract source-of-truth, recommends regeneration, and includes both backend and frontend verification.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We are working in Cabloy Start and changed an API shape that affects the admin frontend. What should Claude do so the backend and frontend contracts stay aligned?",
+      "expected_output": "Detects Start sensitivity, keeps the backend-first contract path clear, then gives Start-aware frontend regeneration and verification guidance.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "The frontend model and generated SDK in Cabloy Basic look stale after a backend response change, but I am not sure whether the real bug is in backend OpenAPI output or in skipped frontend regeneration. Diagnose the contract loop the Cabloy way.",
+      "expected_output": "Handles reverse stale-consumer detection, checks backend source-of-truth first, avoids hand-patching frontend types as the primary fix, and proposes regeneration or backend correction based on the contract path.",
+      "files": []
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # Introduction
 
+> [!WARNING]
+> This page belongs to the **legacy Zova docs**. It is kept as migration reference while the new unified Cabloy docs are being built in the root-level `cabloy-docs/` project. When this page conflicts with current monorepo workflows, prefer the new docs and current source code.
+
 ## What is Zova?
 
 Zova: The Intuitive Frontend Framework = Vue3 Reactive + React TSX + Angular IOC.
