@@ -7,7 +7,7 @@ Vona is the backend half of the Cabloy fullstack architecture.
 - application startup and runtime composition
 - IOC and AOP infrastructure
 - controller, service, model, entity, DTO, and AOP workflows
-- authentication, captcha, user access, menus, events, logging, upload, mail, serialization, ORM, caching, queues, workers, schedules, and other backend infrastructure
+- authentication, captcha, user access, menus, events, logging, upload, mail, serialization, ORM, caching, startup, election, queues, workers, schedules, broadcast, redlock, and other backend infrastructure
 - OpenAPI output used by frontend SDK-related workflows
 
 ## How to approach backend work
@@ -24,3 +24,16 @@ When documenting or automating backend tasks, prefer this order:
 Most Vona concepts are shared between Cabloy Basic and Cabloy Start.
 
 Differences usually appear when backend modules integrate with edition-specific frontend modules, assets, routes, or generated outputs. When that happens, explain the backend concept once and annotate the edition-specific integration points explicitly.
+
+## Suggested next runtime topics
+
+For backend runtime and distributed coordination, read these guides together:
+
+- [Runtime and Flavors](/backend/runtime-and-flavors)
+- [Backend Startup Guide](/backend/startup-guide)
+- [Election Guide](/backend/election-guide)
+- [Queue Guide](/backend/queue-guide)
+- [Broadcast Guide](/backend/broadcast-guide)
+- [Worker Guide](/backend/worker-guide)
+- [Schedule Guide](/backend/schedule-guide)
+- [Redlock Guide](/backend/redlock-guide)

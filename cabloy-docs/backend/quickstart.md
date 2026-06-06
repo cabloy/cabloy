@@ -24,7 +24,7 @@ Use this page when you want to understand the backend side of Cabloy quickly:
 
 Notes:
 
-- Redis underpins capabilities such as queue, schedule, startup, broadcast, caching, two-layer cache, and redlock.
+- Redis underpins capabilities such as queue, startup, election-adjacent distributed coordination, schedule, broadcast, caching, two-layer cache, and redlock.
 - If you use Sqlite3, make sure the node-gyp toolchain is ready so native dependencies can compile correctly.
 
 ## Monorepo-first start
@@ -80,4 +80,9 @@ Backend setup may still require editing `.env` values for database and Redis sel
 
 - [Backend CLI](/backend/cli)
 - [Backend Scripts](/backend/scripts)
+- [Runtime and Flavors](/backend/runtime-and-flavors)
+- [Backend Startup Guide](/backend/startup-guide)
+- [Election Guide](/backend/election-guide)
+- [Queue Guide](/backend/queue-guide)
+- [Broadcast Guide](/backend/broadcast-guide)
 - [Fullstack Vona + Zova Integration](/fullstack/vona-zova-integration)

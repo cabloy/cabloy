@@ -2,6 +2,18 @@
 
 This guide explains how DTOs work in Vona within the Cabloy monorepo.
 
+## Why DTOs matter
+
+DTOs are not only transport classes. In Vona, they are part of one contract system shared across:
+
+- validation
+- OpenAPI metadata
+- serializer-facing response shape
+- model-aware DTO inference
+- frontend-facing generated contracts
+
+That is why DTO design should be treated as a framework concern instead of only a controller-local convenience.
+
 ## Create a DTO
 
 Example: create a DTO named `studentCreate` in module `demo-student`.
@@ -54,6 +66,12 @@ Three especially important DTO option areas are:
 
 These options make DTOs configurable as reusable schema objects, not just local TypeScript classes.
 
+A useful ownership rule is:
+
+- DTO metadata defines the contract shape close to the class
+- app config can still override broader DTO behavior
+- inference tools can reduce how much hand-authored DTO code is needed
+
 ## App-config override support
 
 DTO options can also be configured through app config.
@@ -73,11 +91,45 @@ Representative tools include:
 
 These let you derive DTOs from existing entities or DTOs instead of re-declaring the same field sets repeatedly.
 
-## DTO infer and generation
+## Operation-specific DTO thinking
 
-The DTO layer is also closely connected to a broader Vona value proposition: DTO inference and generation.
+A practical way to think about DTO families is by operation shape.
 
-This is especially important for AI-assisted development, because it reduces redundant type-definition work and gives the agent a stronger source of truth.
+Common operation families include:
+
+- create DTOs
+- update DTOs
+- get DTOs
+- list-and-count DTOs
+- query DTOs
+- query-page DTOs
+- aggregate DTOs
+- group DTOs
+
+Some of these are hand-authored DTO classes. Others are better expressed through Vona’s inference helpers.
+
+The important point is not to force every operation shape into one generic DTO when the framework already distinguishes them more precisely.
+
+## DTOs vs inferred DTOs
+
+A practical split is:
+
+- use explicit DTO classes when the contract needs a stable named artifact
+- use inferred DTOs when the contract closely follows model structure or query shape
+- wrap inferred DTOs in a named DTO class when reuse or discoverability becomes more important
+
+For the inference side, see [DTO Infer and Generation](/backend/dto-infer-generation).
+
+## Relationship to ORM and controller contracts
+
+DTOs sit between backend data structure and backend API contracts.
+
+That means DTO design should often be read together with:
+
+- [Model Guide](/backend/model-guide)
+- [Relations Guide](/backend/relations-guide)
+- [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide)
+- [OpenAPI Guide](/backend/openapi-guide)
 
 ## Why this matters for AI workflows
 
@@ -85,5 +137,8 @@ When AI creates DTOs, it should:
 
 1. prefer reuse through mapped-class helpers when the shape is derived from existing classes
 2. keep DTO validation and OpenAPI concerns aligned through `@Api.field`
-3. avoid re-declaring fields manually if Vona’s DTO-generation or class-derivation tools already solve the problem
-4. treat DTO design as part of the contract between backend handlers, models, and frontend integration
+3. decide whether the contract should be an explicit DTO class or an inferred DTO
+4. avoid re-declaring fields manually if Vona’s DTO-generation or class-derivation tools already solve the problem
+5. treat DTO design as part of the contract between backend handlers, models, and frontend integration
+
+That helps keep backend contracts consistent and less redundant.

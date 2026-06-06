@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This note is the **final closure snapshot** for the English-only migration from legacy Vona/Zova docs into `cabloy-docs/`.
+This note is the **current closure snapshot** for the English-only migration from legacy Vona/Zova docs into `cabloy-docs/`, including the later second-stage deepening pass for heavy legacy topic families.
 
 Scope rules:
 
@@ -31,6 +31,10 @@ The previously targeted active framework topic families now have unified public 
 - `techniques/mail/` → `backend/mail-guide.md`
 - `techniques/serialization/` → `backend/serialization-guide.md`
 - `techniques/upload/` → `backend/upload-guide.md`
+- `guide/distributed/startup/` → `backend/startup-guide.md`
+- `guide/distributed/election.md` → `backend/election-guide.md`
+- `guide/techniques/orm/config-orm.md` → `backend/orm-configuration-guide.md`
+- `guide/techniques/orm/aggr-group.md`, `guide/techniques/orm/relations-aggr.md`, `guide/techniques/orm/relations-group.md` → `backend/orm-aggregate-group-guide.md`
 
 #### Zova
 
@@ -55,6 +59,14 @@ The main false-completion risk was JWT. That gap is now closed because:
 - JWT is wired into `cabloy-docs/.vitepress/config.mjs`
 - JWT is now tracked consistently in this inventory
 
+A later second-stage deepening pass also closed the clearest heavy-family underrepresentation risks by adding or strengthening:
+
+- `backend/startup-guide.md`
+- `backend/election-guide.md`
+- `backend/orm-configuration-guide.md`
+- `backend/orm-aggregate-group-guide.md`
+- deeper ORM/distributed coverage in `backend/queue-guide.md`, `backend/broadcast-guide.md`, `backend/orm-select-guide.md`, `backend/orm-mutation-guide.md`, `backend/relations-guide.md`, `backend/dto-guide.md`, `backend/dto-infer-generation.md`, `backend/multi-database-datasource.md`, `backend/dynamic-datasource-guide.md`, and `backend/sharding-guide.md`
+
 ## What is still partial, but optional rather than blocking
 
 These areas are no longer “missing migration topics.” They are **conceptual consolidation opportunities**.
@@ -77,6 +89,24 @@ Assessment:
 - not a blocking migration gap
 - suitable only if we later want a cleaner backend conceptual guide set
 
+### Vona ORM heavy family
+
+Legacy source families:
+
+- `vona/packages-docs/guide/techniques/orm/`
+
+Current state:
+
+- core ORM concepts already lived across `backend/orm-guide.md`, `backend/orm-select-guide.md`, `backend/orm-mutation-guide.md`, `backend/relations-guide.md`, `backend/dto-guide.md`, `backend/dto-infer-generation.md`, `backend/multi-database-datasource.md`, `backend/dynamic-datasource-guide.md`, and `backend/sharding-guide.md`
+- the second-stage deepening pass added `backend/orm-configuration-guide.md` and `backend/orm-aggregate-group-guide.md`
+- the ORM family now has materially stronger public coverage for config, aggregate/group, relation depth, DTO depth, and topology framing
+
+Assessment:
+
+- no longer a missing migration family
+- no longer only a thin overview-level family
+- any remaining work is optional leaf-parity or example-depth work such as further `crud-magic` extraction or more advanced topology examples
+
 ### Vona backend env/runtime/config family
 
 Legacy source families:
@@ -90,11 +120,12 @@ Legacy source families:
 
 Current state:
 
-- reframed across `backend/runtime-and-flavors.md`, `backend/multi-database-datasource.md`, `backend/dynamic-datasource-guide.md`, `backend/quickstart.md`, and reference pages
+- reframed across `backend/runtime-and-flavors.md`, `backend/startup-guide.md`, `backend/multi-database-datasource.md`, `backend/dynamic-datasource-guide.md`, `backend/quickstart.md`, and reference pages
 
 Assessment:
 
 - still conceptually distributed
+- no longer missing the most obvious backend startup treatment
 - not a missing active-topic migration blocker
 
 ### Distributed startup / election
@@ -106,12 +137,13 @@ Legacy source families:
 
 Current state:
 
-- broader distributed runtime concerns are covered across queue, worker, broadcast, redis, schedule, and redlock docs
+- now directly represented by `backend/startup-guide.md` and `backend/election-guide.md`
+- broader distributed runtime concerns are also connected across queue, worker, broadcast, redis, schedule, and redlock docs
 
 Assessment:
 
-- still underrepresented directly
-- may deserve future dedicated treatment, but not required to close this migration phase
+- no longer underrepresented directly
+- second-stage deepening materially closed this family as a public unified-docs gap
 
 ## What should be treated as archive-only or reframed
 
@@ -137,7 +169,7 @@ Likely archive-only or already reframed sufficiently:
 
 ## Final corrections captured by this inventory
 
-This file now reflects the corrected post-migration state.
+This file now reflects the corrected post-migration state, including the later second-stage depth pass.
 
 ### Corrected from earlier stale versions
 
@@ -147,6 +179,8 @@ This file now reflects the corrected post-migration state.
 4. frontend env/startup is no longer tracked as only partial in the original migration sense
 5. frontend page subtopics (`page-layout`, `progressive-code-splitting`, `zod`) are no longer tracked as missing
 6. migrated Vona active technique families are no longer tracked as missing
+7. distributed startup and election are no longer tracked as underrepresented conceptual leftovers
+8. heavy ORM subtopics now have stronger public coverage through dedicated config and aggregate/group pages plus deeper ORM family guides
 
 ## Closure judgment
 
@@ -169,7 +203,7 @@ If follow-up work continues, it should be framed as one of these, not as unfinis
 1. **conceptual consolidation**
    - backend essentials family
    - backend env/runtime/config family
-   - distributed startup/election
+   - optional remaining ORM/distributed leaf-depth refinements
 
 2. **legacy archive positioning**
    - tighten wording on legacy entry pages so they read as archives rather than active doc homes

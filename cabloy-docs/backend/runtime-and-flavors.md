@@ -157,6 +157,24 @@ declare module '@cabloy/module-info' {
 }
 ```
 
+## Relationship to distributed runtime features
+
+Runtime environment and flavor are not only configuration concerns. They also shape which distributed backend capabilities should be active.
+
+This especially affects topics such as:
+
+- startup enable/disable rules
+- queue enable/disable rules
+- whether a backend capability should run in `dev`, `test`, `prod`, or a specific flavor only
+- Docker-, CI-, or playground-specific distributed behavior
+
+Read this guide together with:
+
+- [Backend Startup Guide](/backend/startup-guide)
+- [Queue Guide](/backend/queue-guide)
+- [Schedule Guide](/backend/schedule-guide)
+- [Broadcast Guide](/backend/broadcast-guide)
+
 ## Why this matters for AI workflows
 
 When an AI system suggests configuration or runtime guidance, it should never assume that `dev/test/prod` is the whole story.
@@ -169,4 +187,4 @@ It should also inspect whether the active workflow depends on flavor, especially
 - edition-sensitive integrations
 - customer- or project-specific deployment behavior
 
-These environment differences also matter for operational concerns such as log directories, log levels, and log rotation; see [Logger Guide](/backend/logger-guide).
+These environment differences also matter for distributed backend capabilities and operational concerns such as log directories, log levels, and log rotation; see [Logger Guide](/backend/logger-guide).
