@@ -42,9 +42,11 @@ The most important enduring Vona capabilities include:
 - modular architecture for suites and modules
 - IOC container and dependency lookup
 - AOP support across controller, internal, and external aspects
+- a structured request-path model for middleware, guards, interceptors, pipes, and filters
 - DTO inference and generation
 - CRUD-oriented workflows
 - multi-tenancy
+- authentication, captcha, and user-access infrastructure
 - multi-database and multi-datasource support
 - transaction support
 - caching, including two-layer cache

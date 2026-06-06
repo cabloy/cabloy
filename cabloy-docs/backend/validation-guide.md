@@ -20,6 +20,8 @@ Representative cases:
 
 This matters because Vona tries to keep the contract surface concise while still producing strong runtime validation.
 
+In controller AOP terms, this usually means built-in argument handling is enough for many request parameters without creating a custom pipe or argument pipe first.
+
 ## Explicit schema rules
 
 You can also pass explicit schema rules when automatic inference is not enough.
@@ -71,3 +73,5 @@ When AI changes request contracts, it should ask:
 4. is the validation logic better expressed at the controller, DTO, or entity layer?
 
 That produces more consistent backend contracts.
+
+For the broader request-path model around pipes, guards, middleware, interceptors, and filters, see [Controller AOP Guide](/backend/controller-aop-guide). Captcha verification flows commonly intersect with this request-path layer through a local interceptor; see [Captcha Guide](/backend/captcha-guide).

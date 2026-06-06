@@ -100,14 +100,17 @@ Representative parameter decorators include:
 
 This lets controller signatures express request shape directly in a consistent way.
 
-## Validation and OpenAPI
+## Validation, OpenAPI, and Controller AOP
 
-Controllers are strongly connected to two related capabilities:
+Controllers are strongly connected to three related capabilities:
 
 - parameter validation based on Zod-oriented patterns
 - Swagger/OpenAPI generation
+- middleware, guards, interceptors, pipes, and filters around the request path
 
-In practice, that means controllers are not only request handlers. They are also a key place where request and response shape become machine-readable for tooling and frontend integration.
+In practice, that means controllers are not only request handlers. They are also a key place where request and response shape become machine-readable for tooling and frontend integration, and where request-path policies are composed through controller AOP.
+
+For a dedicated explanation of middleware, guards, interceptors, pipes, and filters, see [Controller AOP Guide](/backend/controller-aop-guide).
 
 ## Why this matters for AI workflows
 
