@@ -66,6 +66,31 @@ The route meta surface includes important behavior such as:
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
+### Layout selection
+
+If a page route does not specify a layout, Zova uses the default layout.
+
+Representative route shape:
+
+```typescript
+export const routes: IModuleRoute[] = [
+  {
+    path: 'counter',
+    component: ZPageCounter,
+    meta: {
+      layout: 'default',
+    },
+  },
+];
+```
+
+The system also distinguishes common built-in layout placeholders such as:
+
+- `empty`
+- `default`
+
+These names act as logical layout choices, while the actual layout component mapping can be configured through environment and project configuration.
+
 ## Why this matters for AI workflows
 
 When AI edits page routing, it should not only change the URL string.

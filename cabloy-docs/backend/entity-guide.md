@@ -42,6 +42,9 @@ A key Vona idea is that entity fields can simultaneously express:
 - field type
 - validation rules
 - OpenAPI metadata
+- serializer-oriented response metadata
+
+For response-shaping behavior built on the same field metadata surface, see [Serialization Guide](/backend/serialization-guide).
 
 That is why entity fields are centered around `@Api.field`.
 
@@ -66,7 +69,7 @@ Representative examples include:
 
 OpenAPI-facing field metadata can also be localized.
 
-That means entities are not only persistence definitions. They can also participate in developer-facing and API-facing metadata generation.
+That means entities are not only persistence definitions. They can also participate in developer-facing and API-facing metadata generation. For the broader locale and metadata model, see [I18n Guide](/backend/i18n-guide).
 
 ## Why this matters for AI workflows
 

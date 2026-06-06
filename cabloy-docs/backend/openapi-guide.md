@@ -10,6 +10,8 @@ The backend exposes machine-readable contract metadata, and the frontend can con
 
 That is why OpenAPI belongs in the core Cabloy knowledge graph rather than in an isolated backend appendix.
 
+The same field metadata surface also connects naturally to response serialization; see [Serialization Guide](/backend/serialization-guide).
+
 ## Built-in endpoints
 
 Several built-in endpoints are available, including:
@@ -50,7 +52,7 @@ This tight linkage is one of the reasons the Cabloy contract story can stay prod
 
 OpenAPI metadata can also participate in i18n.
 
-That is useful because contract descriptions and titles are not only for machines. They are also developer-facing assets.
+That is useful because contract descriptions and titles are not only for machines. They are also developer-facing assets. For the broader locale/timezone and localization model behind this, see [I18n Guide](/backend/i18n-guide).
 
 ## Configuration
 
@@ -68,3 +70,5 @@ When AI changes backend contracts, it should ask:
 4. is this a place where validation and OpenAPI should be edited together rather than separately?
 
 That helps keep the backend/frontend contract loop coherent.
+
+Upload-oriented endpoints often combine multipart request handling with explicit response metadata such as `@Api.contentType('application/json')`; see [Upload Guide](/backend/upload-guide).

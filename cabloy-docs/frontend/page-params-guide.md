@@ -46,6 +46,8 @@ When the route definition changes, regenerate module metadata so the frameworkâ€
 npm run zova :tools:metadata demo-student
 ```
 
+For the broader schema model behind `z`, coercion, defaults, and nested structures, see [Zod Guide](/frontend/zod-guide).
+
 ## Use params in a page
 
 Representative pattern:

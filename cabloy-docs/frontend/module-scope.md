@@ -1,0 +1,109 @@
+# Module Scope
+
+## Why module scope matters in Zova
+
+Zova uses module scope as the unified resource facade for frontend modules.
+
+That matters because business code needs a consistent way to access module resources such as config, locale, errors, APIs, and related metadata without scattering unrelated access patterns through every page or component.
+
+## What scope is
+
+A `Scope` instance is the module-facing object that exposes the resources of a module in one place.
+
+This is one of the main reasons Zova can keep dependency lookup concise while still preserving strong structure.
+
+## `this.scope`
+
+All beans inherit from `BeanBase`, so the current module scope is directly available through:
+
+```typescript
+this.scope
+```
+
+This gives the current bean a natural way to access the resources of its own module.
+
+## Main scope resource categories
+
+Representative scope members include:
+
+- `config`
+- `constant`
+- `locale`
+- `error`
+- `api`
+- `apiSchema`
+
+These categories make module resources discoverable and consistently organized.
+
+## `config`
+
+Module config belongs in the scope model so business logic can read feature-specific configuration in a structured way.
+
+## `constant`
+
+Module constants can live in scope so feature-level constant values remain namespaced and easy to access.
+
+## `locale`
+
+Module locale resources are exposed through scope so frontend code can retrieve localized text in a module-aware way.
+
+## `error`
+
+Module-specific errors are exposed through scope so business code can throw namespaced error definitions without inventing ad hoc exception patterns.
+
+## `api`
+
+Backend API calls can be wrapped as module `api` resources and accessed through scope.
+
+This is one of the most practical scope categories because it keeps request logic close to the module boundary instead of scattering raw request paths through page code.
+
+## `apiSchema`
+
+Schema-oriented API metadata can also be exposed through scope when higher-level frontend behavior depends on API metadata directly.
+
+## Cross-module scope access
+
+Zova also supports cross-module scope access through `@UseScope()`.
+
+Representative pattern:
+
+```typescript
+@UseScope()
+$$scopeDemoStudent: ScopeModuleDemoStudent;
+```
+
+This allows one module to consume another module’s scoped resources explicitly without flattening everything into one shared global namespace.
+
+## Why this matters for architecture
+
+Module scope is a key bridge between:
+
+- modularization
+- IoC and bean lookup
+- API access
+- locale and error handling
+- project-level override behavior
+
+That makes scope one of the most important frontend concepts to understand before extending a larger Zova application.
+
+## Relationship to other frontend guides
+
+Read this together with:
+
+- [IoC and Beans](/frontend/ioc-and-beans)
+- [Modules and Suites](/frontend/modules-and-suites)
+- [API Guide](/frontend/api-guide)
+- [Server Data](/frontend/server-data)
+
+These guides explain how scope fits into bean architecture, module boundaries, and data-access design.
+
+## Why this matters for AI workflows
+
+When AI edits Zova frontend code, it should ask:
+
+1. should this resource be accessed through `this.scope` instead of a direct ad hoc import?
+2. does the logic belong to the current module or another module’s scope?
+3. should cross-module access use `@UseScope()`?
+4. is this concern best modeled as config, constant, locale, error, api, or apiSchema?
+
+That helps AI keep frontend resource access aligned with Zova’s intended module architecture.

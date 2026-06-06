@@ -28,6 +28,9 @@ That means DTOs can express:
 - validation rules
 - field metadata
 - OpenAPI-facing schema information
+- serializer-oriented response metadata when needed
+
+For response-shaping behavior built on the same field metadata surface, see [Serialization Guide](/backend/serialization-guide).
 
 Representative pattern:
 

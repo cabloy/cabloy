@@ -17,34 +17,62 @@ The current public docs source of truth is `cabloy-docs/`, supported by the root
 
 ## Summary
 
+### Recently completed unified-docs additions
+
+The following legacy English families now have dedicated unified documentation homes in `cabloy-docs/`:
+
+#### Vona
+
+- `aop/` → `backend/aop-overview.md`, `backend/controller-aop-guide.md`, `backend/internal-aop-guide.md`, `backend/external-aop-guide.md`
+- `bal/` → `backend/auth-guide.md`, `backend/captcha-guide.md`, `backend/user-access-guide.md`, `backend/menu-guide.md`
+- `techniques/event/` → `backend/event-guide.md`
+- `techniques/i18n/` → `backend/i18n-guide.md`
+- `techniques/jwt/` → `backend/jwt-guide.md`
+- `techniques/logger/` → `backend/logger-guide.md`
+- `techniques/mail/` → `backend/mail-guide.md`
+- `techniques/serialization/` → `backend/serialization-guide.md`
+- `techniques/upload/` → `backend/upload-guide.md`
+
+#### Zova
+
+- `techniques/mock/` → `frontend/mock-guide.md`
+
 ### Highest-priority English themes still missing from `cabloy-docs/`
 
 #### Vona
 
-1. **AOP as a first-class guide family**
-   - legacy source: `vona/packages-docs/guide/aop/`
-   - current state: only scattered mentions in `cabloy-docs/backend/foundation.md`
-   - why it matters: controller filters, guards, interceptors, middleware, pipes, and internal/external AOP are a major backend concept family
-
-2. **BAL / auth / user / menu / captcha**
-   - legacy source: `vona/packages-docs/guide/bal/`
-   - current state: no dedicated unified home
-   - why it matters: these are framework-level business access / authentication / user-flow topics, not minor edge cases
-
-3. **Backend platform techniques not yet documented directly**
+1. **Core backend architecture families still scattered rather than documented directly**
    - legacy source families:
-     - `vona/packages-docs/guide/techniques/event/`
-     - `vona/packages-docs/guide/techniques/i18n/`
-     - `vona/packages-docs/guide/techniques/jwt/`
-     - `vona/packages-docs/guide/techniques/logger/`
-     - `vona/packages-docs/guide/techniques/mail/`
+     - `vona/packages-docs/guide/essentials/ioc/`
+     - `vona/packages-docs/guide/essentials/modularization/`
+     - `vona/packages-docs/guide/essentials/scope/`
+   - current state: these concepts are spread across `cabloy-docs/backend/foundation.md`, `backend/service-guide.md`, `backend/model-guide.md`, `backend/entity-guide.md`, `backend/dto-guide.md`, and `reference/package-map.md`
+   - why it matters: these are foundational framework concepts and still do not have a dedicated unified conceptual guide family
+
+2. **Environment/configuration families still partially reframed rather than fully consolidated**
+   - legacy source families:
+     - `vona/packages-docs/guide/env-config/app-start/`
+     - `vona/packages-docs/guide/env-config/config/`
+     - `vona/packages-docs/guide/env-config/db-strategy/`
+     - `vona/packages-docs/guide/env-config/env/`
+     - `vona/packages-docs/guide/env-config/instance/`
+     - `vona/packages-docs/guide/env-config/mode-flavor/`
+   - current state: partially covered by `backend/runtime-and-flavors.md`, `backend/multi-database-datasource.md`, `backend/dynamic-datasource-guide.md`, `backend/quickstart.md`, and reference pages
+   - why it matters: backend runtime / instance / db-strategy / environment resolution still lacks one coherent unified family
+
+3. **A few distributed/system topics still remain without direct unified homes**
+   - legacy source families:
+     - `vona/packages-docs/guide/distributed/startup/`
+     - `vona/packages-docs/guide/distributed/election.md`
+   - current state: distributed concerns are broadly covered across queue, worker, broadcast, redis, schedule, and redlock guides, but startup/election still lack dedicated treatment
+   - why it matters: these are still framework-level runtime concerns rather than minor implementation details
+
+4. **A few backend technique pages are still undecided and may be archive-only**
+   - legacy source families:
      - `vona/packages-docs/guide/techniques/mock/`
      - `vona/packages-docs/guide/techniques/printTip/`
-     - `vona/packages-docs/guide/techniques/runtime/`
-     - `vona/packages-docs/guide/techniques/serialization/`
-     - `vona/packages-docs/guide/techniques/upload/`
    - current state: no dedicated unified pages
-   - why it matters: several of these are still likely active framework capabilities and should either be migrated or explicitly marked archive-only
+   - why it matters: these may not justify public migration and likely need an explicit archive-only decision
 
 #### Zova
 
@@ -61,10 +89,15 @@ The current public docs source of truth is `cabloy-docs/`, supported by the root
      - `page/zod.md`
    - current state: core page guides exist, but these subtopics do not have direct unified coverage
 
-3. **Frontend mock guidance**
-   - legacy source: `zova/packages-docs/guide/techniques/mock/`
-   - current state: no direct unified page
-   - why it matters: this looks like a reusable frontend workflow topic rather than obsolete historical content
+3. **Frontend boot / env / flavor setup still lacks one coherent unified family**
+   - legacy source families:
+     - `zova/packages-docs/guide/env-config/app-start/`
+     - `zova/packages-docs/guide/env-config/config/`
+     - `zova/packages-docs/guide/env-config/env/`
+     - `zova/packages-docs/guide/env-config/mode-flavor/`
+     - `zova/packages-docs/guide/env-config/sys-start/`
+   - current state: partially covered by `frontend/quickstart.md`, `frontend/scripts.md`, `frontend/ssr-env.md`, and edition docs
+   - why it matters: frontend boot/config/runtime setup still feels distributed rather than consolidated
 
 ## Detailed inventory
 

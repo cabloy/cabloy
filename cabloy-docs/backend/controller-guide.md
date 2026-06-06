@@ -98,6 +98,8 @@ Representative parameter decorators include:
 - `@Arg.file`
 - `@Arg.user`
 
+These decorators are also the main request-parameter surface for multipart upload flows; see [Upload Guide](/backend/upload-guide).
+
 This lets controller signatures express request shape directly in a consistent way.
 
 ## Validation, OpenAPI, and Controller AOP

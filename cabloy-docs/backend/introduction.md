@@ -7,7 +7,7 @@ Vona is the backend half of the Cabloy fullstack architecture.
 - application startup and runtime composition
 - IOC and AOP infrastructure
 - controller, service, model, entity, DTO, and AOP workflows
-- authentication, captcha, user access, menus, ORM, caching, queues, workers, schedules, and other backend infrastructure
+- authentication, captcha, user access, menus, events, logging, upload, mail, serialization, ORM, caching, queues, workers, schedules, and other backend infrastructure
 - OpenAPI output used by frontend SDK-related workflows
 
 ## How to approach backend work

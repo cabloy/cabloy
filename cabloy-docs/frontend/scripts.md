@@ -68,3 +68,5 @@ When documenting or automating frontend scripts:
 - start from root wrappers for normal Cabloy Basic workflows
 - verify the exact flavor before writing edition-specific examples
 - use REST/type generation commands deliberately when backend integration depends on them
+- understand the mode/appMode/flavor model before changing script families; see [Environment and Config Guide](/frontend/environment-config-guide)
+- enable or package frontend mock support deliberately when development depends on fake-server behavior; see [Mock Guide](/frontend/mock-guide)

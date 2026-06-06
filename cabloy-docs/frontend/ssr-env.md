@@ -47,3 +47,5 @@ It should explicitly consider whether the code path depends on:
 - SSR-specific environment configuration
 
 That is often the difference between code that “works locally once” and code that fits the actual Zova SSR model.
+
+For the broader mode/appMode/flavor and env/config loading model, see [Environment and Config Guide](/frontend/environment-config-guide).

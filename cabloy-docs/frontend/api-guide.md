@@ -39,6 +39,8 @@ This shows the intended layering clearly:
 - `$fetch` handles the lower-level request
 - the API service exposes a business-oriented method such as `retrieveMenus()`
 
+API is also one of the core module-scope resource categories; see [Module Scope](/frontend/module-scope).
+
 ## Using the API through module scope
 
 Typical pattern:
@@ -87,3 +89,5 @@ A better default is:
 3. let pages, components, or models consume the API service instead of duplicating request details
 
 That keeps the frontend code more business-oriented and easier to evolve.
+
+When the backend contract is not ready yet, a temporary frontend-side mock route may be the right bridge; see [Mock Guide](/frontend/mock-guide).

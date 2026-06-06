@@ -24,6 +24,8 @@ This monorepo is organized around a small set of stable top-level areas.
 - `zova/packages-zova/` — framework packages
 - `zova/src/` — modules, suites, and vendor source
 
+For the frontend architectural meaning of modules, suites, scope-driven resources, and runtime/startup structure, see `/frontend/modules-and-suites`, `/frontend/module-scope`, `/frontend/ioc-and-beans`, `/frontend/environment-config-guide`, `/frontend/app-startup-guide`, and `/frontend/system-startup-guide`.
+
 ## Sibling edition
 
 - `cabloy-start` is a separate sibling repository, not a subdirectory of this monorepo. Its docs, skills, and rules should still align conceptually with the system documented here.

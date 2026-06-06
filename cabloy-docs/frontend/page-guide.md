@@ -102,6 +102,29 @@ class ControllerPageCounter {
 }
 ```
 
+## Progressive code splitting
+
+As page complexity grows, Zova supports progressively splitting page logic into more files instead of forcing everything to remain in one controller file forever.
+
+A useful progression is:
+
+- **single-file** page structure for early-stage pages
+- **three-file** structure with controller, render, and style split out
+- **more-file** structure when additional render, style, or service beans are needed
+
+This matters because Zova encourages pages to start simple and then evolve into richer structures only when the business complexity justifies it.
+
+### Representative refactor steps
+
+When a page grows, typical refactor steps include:
+
+- create the first render bean
+- create the first style bean
+- create additional render/style beans when needed
+- create dedicated service beans when state management should move out of the page controller
+
+These refactors are supported by Zova CLI commands rather than requiring a fully manual restructuring from scratch.
+
 ## Why this matters for AI workflows
 
 When AI generates or edits a Zova page, it should preserve the page/controller mental model instead of rewriting the code into a generic Vue single-file-component pattern.

@@ -72,3 +72,5 @@ A better default is:
 2. define the schema explicitly
 3. use `this.$query` and typed navigation helpers
 4. keep query behavior aligned with the page controller model
+
+For the broader schema model behind `z`, coercion, nested objects, and array support, see [Zod Guide](/frontend/zod-guide).

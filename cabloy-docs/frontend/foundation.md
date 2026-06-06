@@ -43,6 +43,8 @@ The highest-value Zova capabilities to preserve in the unified docs are:
 - IOC + AOP extensibility
 - compatibility with multiple UI-library strategies
 
+For the deeper architectural concepts behind IoC, module boundaries, and scope-based resources, see [IoC and Beans](/frontend/ioc-and-beans), [Modules and Suites](/frontend/modules-and-suites), and [Module Scope](/frontend/module-scope). For the runtime-variant and startup model, see [Environment and Config Guide](/frontend/environment-config-guide), [App Startup Guide](/frontend/app-startup-guide), and [System Startup Guide](/frontend/system-startup-guide).
+
 ## Why this matters for AI development
 
 AI systems should not treat Zova as generic Vue with a few utilities.

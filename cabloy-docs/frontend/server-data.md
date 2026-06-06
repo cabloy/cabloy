@@ -64,3 +64,5 @@ Instead, it should ask:
 4. is there already an OpenAPI or schema-driven route for this integration?
 
 That decision usually produces cleaner, more Cabloy-native code.
+
+When the real backend contract is temporarily unavailable, frontend-side mocks can provide a short-lived bridge for page, API, or model development; see [Mock Guide](/frontend/mock-guide).

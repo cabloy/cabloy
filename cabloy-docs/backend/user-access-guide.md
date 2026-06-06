@@ -29,6 +29,8 @@ Representative fields include:
 - `locale`
 - `anonymous`
 
+The `locale` field matters because current-locale resolution can fall back to the user locale in request context handling; see [I18n Guide](/backend/i18n-guide).
+
 ## `bean.user`
 
 Vona exposes `bean.user` as the general business-facing API for user operations.
@@ -117,7 +119,9 @@ Representative flows include:
 - assigning default roles
 - sending email confirmation or similar follow-up logic
 
-The framework-level user APIs stay stable while project-specific modules can customize what happens before or after those core steps.
+Those follow-up email behaviors often connect directly to queue-backed mail delivery; see [Mail Guide](/backend/mail-guide).
+
+The framework-level user APIs stay stable while project-specific modules can customize what happens before or after those core steps through event-driven hooks and related extension logic.
 
 ## Relationship to auth and controller AOP
 
@@ -127,6 +131,7 @@ Read it together with:
 
 - [Auth Guide](/backend/auth-guide) for provider-driven authentication
 - [Controller AOP Guide](/backend/controller-aop-guide) for `@Passport.*` and guard-based request-path behavior
+- [Event Guide](/backend/event-guide) for event-driven customization around registration, activation, and related lifecycle hooks
 
 ## Why this matters for AI workflows
 

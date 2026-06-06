@@ -79,6 +79,8 @@ These built-ins also expose shorthand decorators such as:
 @Caching.get({ cacheName: 'module-name:xxx' })
 ```
 
+For the broader logger-client, rotation, and level model behind `@Core.log(...)`, see [Logger Guide](/backend/logger-guide).
+
 ## Magic Method
 
 Magic Method provides dynamic behavior through conventional method names such as:

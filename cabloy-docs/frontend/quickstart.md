@@ -66,4 +66,8 @@ Always confirm the active edition before giving page-level or component-level ad
 
 - [Frontend CLI](/frontend/cli)
 - [Frontend Scripts](/frontend/scripts)
+- [Environment and Config Guide](/frontend/environment-config-guide)
+- [App Startup Guide](/frontend/app-startup-guide)
+- [System Startup Guide](/frontend/system-startup-guide)
+- [Mock Guide](/frontend/mock-guide)
 - [Frontend Design Principles](/frontend/design-principles)

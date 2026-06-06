@@ -58,6 +58,8 @@ These helper tools fall into groups such as:
 - OpenAPI tools
 - serializer tools
 - Zod tools
+
+For response-side shaping with those serializer helpers, see [Serialization Guide](/backend/serialization-guide).
 - query filter tools
 - special tools like `v.tableIdentity`
 

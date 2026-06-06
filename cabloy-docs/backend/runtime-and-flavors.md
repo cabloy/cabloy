@@ -168,3 +168,5 @@ It should also inspect whether the active workflow depends on flavor, especially
 - Playground
 - edition-sensitive integrations
 - customer- or project-specific deployment behavior
+
+These environment differences also matter for operational concerns such as log directories, log levels, and log rotation; see [Logger Guide](/backend/logger-guide).
