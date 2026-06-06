@@ -23,6 +23,15 @@ That is the context in which `$sdk` matters.
 - `$apiSchema` → direct schema access
 - `$sdk` → a more generalized schema-driven integration layer
 
+## Read together with
+
+Use this page together with:
+
+- [Server Data](/frontend/server-data)
+- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
+- [API Schema Guide](/frontend/api-schema-guide)
+- [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
+
 ## Why this matters for AI workflows
 
 When AI is asked to build metadata-driven frontend behavior, it should not stop at “can I call the API?”

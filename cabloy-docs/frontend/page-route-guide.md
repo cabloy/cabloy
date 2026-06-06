@@ -6,7 +6,7 @@ This guide explains how page route records work in Zova within the Cabloy monore
 
 When a page is created, Zova automatically creates a route record.
 
-That route record is the framework-level description of how the page is reached, loaded, authenticated, and rendered within the broader application model.
+That route record is the framework-level description of how the page is reached, loaded, authenticated, and rendered within the broader application model and app shell.
 
 ## Representative route record
 
@@ -66,6 +66,17 @@ The route meta surface includes important behavior such as:
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
+## Route -> shell -> routed page
+
+A useful frontend mental model is:
+
+1. the route record identifies the page
+2. route metadata chooses the logical shell/layout
+3. the resolved shell hosts the routed page
+4. guards and aliases can still affect how the page is reached
+
+That is why routing in Zova is not only about URLs. It is also about how the app shell and navigation policy shape the visible screen.
+
 ### Layout selection
 
 If a page route does not specify a layout, Zova uses the default layout.
@@ -101,7 +112,26 @@ LAYOUT_COMPONENT_DEFAULT = home-layout:layoutTabs
 
 That means route metadata chooses the logical layout, while env/config decides which actual layout component should back that choice for the active runtime variant.
 
+This is the practical app-shell boundary in Zova: routed pages do not appear alone. They appear inside the resolved layout shell for the current runtime variant.
+
+In the current Basic source, that shell is represented concretely by admin-style, web-style, and empty/minimal layout implementations.
+
 For the broader runtime-selection model behind env and flavor-aware configuration, see [Environment and Config Guide](/frontend/environment-config-guide).
+For the onboarding path that leads into shell selection, also see [Frontend Quickstart](/frontend/quickstart).
+
+## Relationship to guards and aliases
+
+Layout selection, navigation guards, and aliases are closely related but they solve different problems:
+
+- route metadata chooses the logical shell and route behavior
+- guards decide whether navigation should continue, redirect, or enrich route state
+- aliases provide alternate entry paths without changing the main route identity model
+
+Read together with:
+
+- [Navigation Guards Guide](/frontend/navigation-guards-guide)
+- [Route Alias Guide](/frontend/route-alias-guide)
+- [Frontend Quickstart](/frontend/quickstart)
 
 ## Why this matters for AI workflows
 

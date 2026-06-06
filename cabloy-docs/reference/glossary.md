@@ -27,3 +27,12 @@ The process of identifying whether the current repo is Cabloy Basic or Cabloy St
 ## CLI-first
 
 The practice of using existing Vona and Zova command families before attempting manual scaffolding or refactor work.
+
+## Read next
+
+Use the glossary together with:
+
+- [Fullstack Introduction](/fullstack/introduction)
+- [Backend (Vona)](/backend/introduction)
+- [Frontend (Zova)](/frontend/introduction)
+- [Package Map](/reference/package-map)

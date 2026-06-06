@@ -16,6 +16,17 @@ Several important characteristics define this migration system:
 
 This makes migration in Vona more than a one-off schema script. It is part of the framework’s modular lifecycle.
 
+## Migration in the backend contract loop
+
+A useful backend-contract-loop lifecycle mental model is:
+
+- entity and model define the current structural contract
+- DTOs and controllers define the API contract on top of that structure
+- `meta.version` manages schema evolution and initialization data
+- tests verify that the migrated backend still satisfies the intended contract
+
+That is why migration should be understood as part of the same backend thread, not as a separate maintenance topic.
+
 ## Define data version
 
 Each module declares its current data version in its own `package.json`.
@@ -34,6 +45,8 @@ Representative pattern:
 The key rule is:
 
 - increment `fileVersion` when a released module introduces a new schema change that must be applied in sequence
+
+In the scaffolded CRUD workflow, this is not an isolated maintenance step. The generator-driven thread treats `fileVersion` as part of the same backend evolution path that also touches entity/model/controller/test resources.
 
 ## `meta.version`
 
@@ -67,6 +80,12 @@ This split is one of the most important Vona migration ideas because it separate
 - structural change
 - initialization logic
 - test data setup
+
+A practical generated-thread interpretation is:
+
+- `update` follows schema and entity/model evolution
+- `init` follows instance-aware initialization needs introduced by the backend feature
+- `test` keeps the generated or refined contract easy to verify under the test lifecycle
 
 ## Update: schema migration
 
@@ -127,6 +146,20 @@ export class MetaVersion extends BeanBase implements IMetaVersionTest {
 
 This is valuable because test data becomes part of the structured migration lifecycle instead of being scattered across unrelated setup code.
 
+## Version changes across the generated backend thread
+
+When the generated CRUD thread evolves, migration should evolve with it.
+
+A practical sequence is:
+
+1. increment `fileVersion`
+2. add or adjust entity/model structure
+3. update `meta.version` logic
+4. rerun migration locally
+5. verify the contract through tests and controller actions
+
+This keeps schema change, backend contract change, and verification tightly connected.
+
 ## Local development workflow
 
 One important distinction for local development is:
@@ -140,6 +173,11 @@ npm run test
 cd vona && npm run db:reset
 ```
 
+A practical decision rule is:
+
+- use `db:reset` when you mainly need to replay migration/database setup locally
+- use `test` when you need to verify that migration, controller behavior, and the broader generated contract thread still work together
+
 ## Why this matters for AI workflows
 
 When AI changes backend schema or module initialization behavior, it should not only edit entities and models.
@@ -149,5 +187,6 @@ It should also ask:
 1. does this change require a `fileVersion` increment?
 2. does `meta.version` need an `update`, `init`, or `test` branch?
 3. should the local verification path include `test` or `db:reset`?
+4. does the change affect the CRUD-generated thread or frontend-facing API contract as well?
 
 That prevents schema changes from being documented in code but never integrated into the module lifecycle.

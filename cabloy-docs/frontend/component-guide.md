@@ -12,6 +12,9 @@ That means component design is closely tied to:
 - TSX rendering
 - IOC-friendly instance access
 - async-friendly module loading
+- CSS-in-JS styling through the same controller-oriented architecture
+
+For the practical styling decision map around local `$style`, dedicated style beans, shared/global styles, and token/theme surfaces, also see [CSS-in-JS Guide](/frontend/css-in-js-guide).
 
 ## Create a component
 

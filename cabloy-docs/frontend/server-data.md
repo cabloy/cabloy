@@ -52,6 +52,12 @@ Zova can consume that information through SDK and schema-driven layers.
 
 That makes server data a core fullstack integration topic, not just a frontend utility topic.
 
+A practical contract-consumption reading is:
+
+- [OpenAPI Guide](/backend/openapi-guide) explains backend contract emission
+- [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) explains the fullstack contract bridge
+- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide), [API Schema Guide](/frontend/api-schema-guide), and [SDK Guide](/frontend/sdk-guide) explain different frontend consumption layers
+
 ## Why this matters for AI workflows
 
 When an AI system needs to add frontend data access, it should avoid jumping straight to ad hoc request logic.

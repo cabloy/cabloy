@@ -88,6 +88,8 @@ class ControllerPageCounter {
 
 Zova pages can also attach style through built-in CSS-in-JS support.
 
+For choosing among local `$style`, dedicated style beans, shared/global styles, and token/theme surfaces, also see [CSS-in-JS Guide](/frontend/css-in-js-guide).
+
 Representative pattern:
 
 ```typescript

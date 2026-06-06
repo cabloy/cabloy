@@ -6,6 +6,8 @@ This page documents the reverse direction of Cabloy’s fullstack collaboration 
 
 The fullstack collaboration loop in Cabloy is not one-way.
 
+For the forward contract-bridge direction from backend OpenAPI to frontend consumption, also see [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
+
 The backend does not only feed the frontend through OpenAPI. The frontend also generates information that can improve backend-side type hints and integration confidence.
 
 This is one of the unusual strengths of the Cabloy monorepo model.

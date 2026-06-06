@@ -4,14 +4,39 @@ This guide explains the fastest way to get oriented on the frontend side of the 
 
 ## When to use this page
 
-Use this page when you want to understand the frontend side of Cabloy quickly:
+Use this page when you want to move from the repo root to the first visible routed screen in Zova with the right edition and script assumptions.
 
-- what Zova is responsible for
-- how frontend development starts from the monorepo root
-- how editions affect UI assumptions
-- how older project-template guidance maps into the current Cabloy structure
+This page is the frontend narrative hub for:
 
-## Monorepo-first start
+- detecting the active edition
+- choosing the right root scripts and frontend flavors
+- understanding how startup and routing make the app routable
+- understanding the app shell around routed pages
+- reaching the first routed page and knowing what to read next
+
+## Step 1: detect the edition first
+
+Before choosing frontend examples, scripts, or shell assumptions, detect whether you are working in:
+
+- **Cabloy Basic**
+- **Cabloy Start**
+
+In this public repository, the active edition is **Cabloy Basic**.
+
+That matters because edition choice affects:
+
+- frontend flavor names
+- UI-library assumptions
+- available modules and layouts
+- which examples in the docs match the current repo directly
+
+Read together with:
+
+- [Edition Detection](/editions/detection)
+- [Cabloy Basic](/editions/cabloy-basic)
+- [Cabloy Start](/editions/cabloy-start)
+
+## Step 2: start from root scripts
 
 In Cabloy, begin from the root repository scripts whenever possible.
 
@@ -39,35 +64,134 @@ These root wrappers currently map to the Basic flavors:
 npm run build:zova
 ```
 
-## UI library context
+Use the root wrappers as the normal entrypoint, then read the deeper script guide when you need appMode/flavor detail.
 
-Legacy Zova docs emphasized standalone project templates such as:
+Read together with:
 
-- `quasar`
-- `vuetify`
-- `empty`
+- [Repo Scripts](/reference/repo-scripts)
+- [Frontend Scripts](/frontend/scripts)
 
-That historical explanation is still useful, but in the Cabloy monorepo the more important question is usually:
+## Step 3: understand runtime selection
 
-- am I working in **Cabloy Basic**?
-- or am I working in **Cabloy Start**?
+Frontend behavior is not chosen by one flag only. It is shaped by:
 
-### Cabloy Basic
+- `mode`
+- `appMode`
+- `flavor`
 
-Current public examples in this repository align with a DaisyUI + TailwindCSS oriented frontend story.
+Those runtime choices affect:
 
-### Cabloy Start
+- which config and env values are active
+- which shell/layout components are resolved
+- how startup and routing behave in the current frontend variant
+- which edition-specific script examples apply
 
-The sibling private `cabloy-start` repository uses Vuetify-oriented frontend modules and different flavor names.
+Read next:
 
-Always confirm the active edition before giving page-level or component-level advice.
+- [Environment and Config Guide](/frontend/environment-config-guide)
 
-## Recommended next pages
+## Step 4: understand how the app becomes routable
+
+A practical startup split is:
+
+- **system startup** registers routes and loads system-level config before the app can really become routable
+- **app startup** makes router, guards, and first-navigation behavior operational for the running app instance
+
+That means the first visible screen is not only a page concern. It depends on the startup sequence that prepares routing and navigation behavior first.
+
+Read in sequence:
+
+1. [System Startup Guide](/frontend/system-startup-guide)
+2. [App Startup Guide](/frontend/app-startup-guide)
+
+## Step 5: understand the app shell
+
+A routed page does not appear alone. It appears inside an app shell.
+
+In practice, the shell is the layout layer around the routed page. Route metadata chooses a logical layout such as `default` or `empty`, and env/config resolves that logical choice into the actual layout component for the active runtime variant.
+
+In the current Basic source, the most important shell shapes are represented by:
+
+- admin-style layout behavior
+- web-style layout behavior
+- empty/minimal layout behavior
+
+This is why route metadata, guards, aliases, and theme/header/menu behavior should be understood together rather than as unrelated features.
+
+Read together with:
+
+- [Page Route Guide](/frontend/page-route-guide)
+- [Navigation Guards Guide](/frontend/navigation-guards-guide)
+- [Route Alias Guide](/frontend/route-alias-guide)
+- [Theme Guide](/frontend/theme-guide)
+
+## Step 6: reach the first routed page
+
+Once the edition and runtime path are clear, the fastest practical next step is to create a page and understand where it appears.
+
+A useful frontend-first sequence is:
+
+1. create or choose a module
+2. create a page in that module
+3. let Zova generate the route record and page path
+4. confirm which shell/layout the route should use
+5. run the matching frontend flavor and inspect the result
+
+The generated route path follows Zova’s module-oriented naming conventions, so the first page is part of the broader routing and shell model rather than a free-form standalone screen.
+
+Read next:
 
 - [Frontend CLI](/frontend/cli)
+- [Page Guide](/frontend/page-guide)
+- [Page Route Guide](/frontend/page-route-guide)
+
+## Step 7: understand menu and CLI ergonomics
+
+Zova supports both command-line and editor-driven workflows.
+
+A practical distinction is:
+
+- **CLI** is the canonical automation and scriptable workflow surface
+- **editor menus** improve discoverability and ergonomics for the same underlying workflows
+
+That means frontend onboarding should not force a choice between the two. Use menus when they help you discover commands quickly, and use the CLI when you need reproducible automation or explicit command history.
+
+Read next:
+
+- [Frontend CLI](/frontend/cli)
+
+## Recommended next paths
+
+### I want to run and inspect the frontend shell
+
 - [Frontend Scripts](/frontend/scripts)
 - [Environment and Config Guide](/frontend/environment-config-guide)
-- [App Startup Guide](/frontend/app-startup-guide)
+- [Page Route Guide](/frontend/page-route-guide)
+- [Theme Guide](/frontend/theme-guide)
+
+### I want to understand startup and routing
+
 - [System Startup Guide](/frontend/system-startup-guide)
-- [Mock Guide](/frontend/mock-guide)
-- [Frontend Design Principles](/frontend/design-principles)
+- [App Startup Guide](/frontend/app-startup-guide)
+- [Page Route Guide](/frontend/page-route-guide)
+- [Navigation Guards Guide](/frontend/navigation-guards-guide)
+- [Route Alias Guide](/frontend/route-alias-guide)
+
+### I want to create my first page
+
+- [Frontend CLI](/frontend/cli)
+- [Page Guide](/frontend/page-guide)
+- [Page Route Guide](/frontend/page-route-guide)
+
+### I need edition-sensitive guidance
+
+- [Edition Detection](/editions/detection)
+- [Cabloy Basic](/editions/cabloy-basic)
+- [Cabloy Start](/editions/cabloy-start)
+- [Frontend Scripts](/frontend/scripts)
+
+### I want the broader frontend architecture story
+
+- [Frontend (Zova)](/frontend/introduction)
+- [Frontend Foundation](/frontend/foundation)
+- [Design Principles](/frontend/design-principles)

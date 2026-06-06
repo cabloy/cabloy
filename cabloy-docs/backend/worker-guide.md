@@ -30,6 +30,23 @@ Representative idea:
 - development often uses multiple workers to expose distributed-environment issues earlier
 - single-worker modes still matter for Docker or simpler execution scenarios
 
+A practical runtime reading in the current repo is:
+
+- `SERVER_WORKERS` becomes part of backend server config
+- `npm run dev` and `cd vona && npm run dev` normally exercise multi-worker behavior
+- `dev:one`, `start:one`, and Docker-oriented single-worker flows remain important when you want simpler runtime shape or one-worker debugging
+
+## Worker control behavior
+
+At a high level:
+
+- `reload()` targets the current worker
+- `reloadAll()` broadcasts reload intent across workers
+- `exit()` closes the current app process and exits
+- `exitAll()` broadcasts a process-exit intent across workers
+
+This matters because worker control belongs to runtime behavior, not only to deployment tooling.
+
 ## Why this matters for AI workflows
 
 When AI touches runtime or operational backend behavior, it should ask:

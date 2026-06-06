@@ -133,7 +133,35 @@ A practical distinction is:
 - use `include` when operating on a declared static relation
 - use `with` when declaring a dynamic relation inline for the current operation
 
+| Relation-loading style | Best for | Typical source of truth |
+| --- | --- | --- |
+| `include` | stable business relations reused across operations | model metadata |
+| `with` | situational, dynamic, or cross-module relations | usage-site query or mutation |
+
 Dynamic relations are especially useful when a model cannot reasonably declare every cross-module or situational relation in advance.
+
+Representative static pattern:
+
+```typescript
+return this.scope.model.order.select({
+  ...params,
+  include: {
+    products: true,
+  },
+});
+```
+
+Representative dynamic pattern:
+
+```typescript
+const postContent = await this.scope.model.postContent.select({
+  with: {
+    post: $relationDynamic.belongsTo(() => ModelPostContent, () => ModelPost, 'postId', {
+      columns: ['id', 'title'],
+    }),
+  },
+});
+```
 
 ## Autoload and tree-shaped relations
 
@@ -145,6 +173,8 @@ Representative idea:
 
 - a self-referential `hasMany` relation with `autoload: true` can express parent-to-children trees
 - a self-referential `belongsTo` relation with `autoload: true` can express reverse traversal from child to parent
+
+A practical example is a category model whose `children` relation autoloads and only exposes the tree-oriented fields that usually matter for navigation, such as `id` and `name`.
 
 This keeps tree-shaped domain structures inside the ORM relation model instead of hand-authoring traversal logic everywhere.
 

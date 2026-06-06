@@ -47,6 +47,7 @@ A useful mental model is:
 
 - `aggrs` declares which aggregate functions should run
 - Vona infers the returned shape from the aggregate declaration
+- `aggregate` returns one summary object rather than grouped rows
 
 Representative parameter areas include:
 
@@ -86,6 +87,11 @@ Representative parameter areas include:
 
 This matters because grouped results are still part of the structured ORM query language, not a separate unmanaged SQL world.
 
+A practical result-shape distinction is:
+
+- `aggregate` returns one summary object
+- `group` returns grouped rows keyed by the chosen group columns and aggregate aliases
+
 ## `having` and grouped ordering
 
 Grouped queries often need filtering and ordering on derived fields.
@@ -113,6 +119,12 @@ const result = await this.scope.model.post.group({
 ```
 
 This is one of the reasons aggregate/group deserves dedicated documentation instead of being hidden inside a basic select page.
+
+A practical alias rule is:
+
+- aggregate aliases such as `count_all` and `sum_stars` become the names used in `having` and grouped ordering
+
+That is also why grouped or summary outputs often deserve explicit DTO treatment once they become stable API contracts.
 
 ## Aggregate and group on relations
 

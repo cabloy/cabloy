@@ -8,13 +8,15 @@ Vona provides a large number of CLI commands for generating code skeletons and r
 
 For AI-assisted development, the CLI is especially important because it encodes framework conventions directly. If a command already exists, use it before writing backend scaffolding manually.
 
-## Example
+## Entry from repo root
 
-Create a `service` bean named `student` in module `demo-student`:
+The current monorepo entrypoint is defined at the repo root:
 
 ```bash
-npm run vona :create:bean service student -- --module=demo-student
+npm run vona :
 ```
+
+That wrapper points to the Vona CLI under `vona/packages-cli/` while preserving the monorepo project path.
 
 ## Command discovery pattern
 
@@ -38,6 +40,8 @@ npm run vona :create
 npm run vona :create:bean --help
 ```
 
+This discovery pattern should be the default contributor workflow before inventing manual scaffolding steps.
+
 ## High-value command families
 
 From the current source tree, the most useful Vona command families for day-to-day development are:
@@ -54,6 +58,108 @@ Typical use cases include:
 - generate CRUD-oriented resources
 - refresh metadata and dependency-related output
 - run build, dev, test, typecheck, playground, and database reset flows
+
+## Generator-first workflow
+
+A practical backend workflow is:
+
+1. inspect the command family
+2. run the generator or initializer
+3. inspect the generated suite/module/bean structure
+4. only then add the minimal manual logic the task actually needs
+
+This matters because backend modularization, naming, and bean scenes are part of the framework architecture, not only coding style.
+
+## Representative generation examples
+
+### Create a suite
+
+```bash
+npm run vona :create:suite suiteName
+```
+
+### Create a module
+
+```bash
+npm run vona :create:module moduleName -- [--suite=]
+```
+
+### Create a service bean
+
+```bash
+npm run vona :create:bean service student -- --module=demo-student
+```
+
+### Create a model bean
+
+```bash
+npm run vona :create:bean model student -- --module=demo-student
+```
+
+### Create an entity bean
+
+```bash
+npm run vona :create:bean entity student -- --module=demo-student
+```
+
+### Create a DTO bean
+
+```bash
+npm run vona :create:bean dto studentCreate -- --module=demo-student
+```
+
+### Create a startup bean
+
+```bash
+npm run vona :create:bean startup log -- --module=demo-student
+```
+
+These examples show that the CLI is tightly connected to module boundaries and bean scenes such as service, model, entity, DTO, and startup.
+
+A practical bean-scene reading is:
+
+- `service`, `model`, `entity`, `dto`, and `startup` are representative bean scenes
+- `:create:bean sceneName beanName -- --module=...` uses `sceneName` as the operational family slot inside the bean identifier
+- this is why generated bean names later appear in forms such as `module.scene.bean`
+
+## Initializer-family examples
+
+Not every backend resource is created through bean scenes.
+
+Representative initializer commands include:
+
+```bash
+npm run vona :init:constant demo-student
+npm run vona :init:types demo-student
+npm run vona :init:asset static -- --module=demo-student
+```
+
+A practical distinction is:
+
+- `:create:bean` creates scene-based backend beans
+- `:init:*` commands create module-scope resources such as constants, typings, or asset-resource structure
+
+## Relationship to modules, suites, and package metadata
+
+The backend CLI is not only a code generator. It is also one of the clearest expressions of Vona’s modular architecture.
+
+CLI generation decisions affect:
+
+- where files live
+- which suite or module owns the resource
+- how bean identifiers and onion names are derived
+- how package metadata and dependencies should be interpreted later
+
+For the current repo structure, also see [Package Map](/reference/package-map).
+
+## CLI vs scripts
+
+A practical distinction is:
+
+- use [Backend Scripts](/backend/scripts) for root dev/build/start/test workflows
+- use the Vona CLI when you are discovering commands, generating backend resources, or running backend-specific tool flows
+
+This keeps contributor workflows clear instead of mixing runtime scripts with generator commands.
 
 ## Guidance for AI workflows
 

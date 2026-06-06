@@ -193,6 +193,7 @@ That allows fields such as `title`, `description`, or other metadata to stay mac
 Read this guide together with:
 
 - [Entity Guide](/backend/entity-guide)
+- [Error Guide](/backend/error-guide)
 - [OpenAPI Guide](/backend/openapi-guide)
 - [User Access Guide](/backend/user-access-guide)
 

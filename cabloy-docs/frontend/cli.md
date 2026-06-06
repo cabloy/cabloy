@@ -57,6 +57,20 @@ Typical use cases include:
 - generate OpenAPI-related output
 - refresh metadata and dependency-related output
 
+## VS Code menus and the CLI
+
+In practice, Zova workflows can be reached from two surfaces:
+
+- VS Code menus for discovery and ergonomics
+- the CLI for explicit, scriptable command execution
+
+A practical rule is:
+
+- use menus when you want to discover the available workflow quickly in the editor
+- use the CLI when you want reproducible automation, explicit command history, or terminal-first documentation
+
+These are not competing workflow systems. They are two entrypoints to the same underlying Zova command families.
+
 ## Guidance for AI workflows
 
 When an agent is about to create or refactor frontend code:

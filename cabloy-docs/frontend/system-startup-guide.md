@@ -151,9 +151,9 @@ Read this guide together with [Environment and Config Guide](/frontend/environme
 
 ## Relationship to app startup
 
-This guide is the system-level companion to [App Startup Guide](/frontend/app-startup-guide).
+This guide is the first half of the frontend startup story, and the system-level companion to [App Startup Guide](/frontend/app-startup-guide).
 
-Use the app guide for request- or app-instance-facing startup behavior, and this guide for long-lived runtime setup.
+Use this guide for long-lived runtime setup such as route-table and config wiring, then read the app guide for the router-readiness and first-screen behavior that runs after that system wiring is in place.
 
 The legacy system-start docs used route registration as the clearest example boundary:
 
@@ -161,6 +161,13 @@ The legacy system-start docs used route registration as the clearest example bou
 - app startup only after that lower-level system wiring is in place
 
 That distinction is especially important in SSR-capable systems, where app lifecycles can repeat while system-level route and config wiring should not.
+
+A practical reading sequence is:
+
+1. [Environment and Config Guide](/frontend/environment-config-guide)
+2. this page for system wiring
+3. [App Startup Guide](/frontend/app-startup-guide) for router/guard readiness
+4. [Page Route Guide](/frontend/page-route-guide) for shell/layout behavior
 
 ## Why this matters for AI workflows
 

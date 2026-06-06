@@ -27,6 +27,15 @@ Use `$apiSchema` when the frontend needs to inspect what the backend contract sa
 
 That usually means the problem is shifting from “fetch data” to “use metadata to drive behavior.”
 
+## Read together with
+
+Use this page together with:
+
+- [Server Data](/frontend/server-data)
+- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
+- [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
+- [SDK Guide](/frontend/sdk-guide)
+
 ## Why this matters for AI workflows
 
 When AI is asked to build dynamic forms, metadata-driven UI, or schema-aware validation, it should consider whether the right source is `$apiSchema` rather than hand-authored frontend-only field definitions.

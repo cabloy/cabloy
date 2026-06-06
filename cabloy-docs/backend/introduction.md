@@ -19,6 +19,58 @@ When documenting or automating backend tasks, prefer this order:
 3. inspect the current module or suite layout before creating new files manually
 4. use public docs for user-facing guidance and `.docs-internal/` for maintainer rationale
 
+## Backend reading paths
+
+Use this page as the main backend hub, then choose the family that matches your task.
+
+### Architecture spine
+
+Start here when you need the core backend mental model first:
+
+- [Backend Foundation](/backend/foundation)
+- [Backend Essentials](/backend/backend-essentials)
+- [Backend CLI](/backend/cli)
+- [Service Guide](/backend/service-guide)
+- [Package Map](/reference/package-map)
+
+This gives the architectural vocabulary for concepts such as bean, scope, suite, module, package, and backend access patterns.
+
+### Contract and data family
+
+Use this path when the task is about the backend contract loop or ORM-backed backend data design:
+
+- [Controller Guide](/backend/controller-guide)
+- [Validation Guide](/backend/validation-guide)
+- [DTO Guide](/backend/dto-guide)
+- [Entity Guide](/backend/entity-guide)
+- [Model Guide](/backend/model-guide)
+- [OpenAPI Guide](/backend/openapi-guide)
+- [ORM Guide](/backend/orm-guide)
+
+### Runtime and distributed family
+
+Use this path when the task is about runtime shape, startup, instances, workers, or distributed execution:
+
+- [Runtime and Flavors](/backend/runtime-and-flavors)
+- [Config Guide](/backend/config-guide)
+- [Backend Startup Guide](/backend/startup-guide)
+- [Multi-Instance and Instance Resolution](/backend/multi-instance-and-instance-resolution)
+- [Worker Guide](/backend/worker-guide)
+- [Election Guide](/backend/election-guide)
+- [Queue Guide](/backend/queue-guide)
+- [Broadcast Guide](/backend/broadcast-guide)
+- [Schedule Guide](/backend/schedule-guide)
+- [Redlock Guide](/backend/redlock-guide)
+
+### Reference and support pages
+
+Use these when you need repo structure, scripts, or command context around the backend families:
+
+- [Backend Quickstart](/backend/quickstart)
+- [Backend Scripts](/backend/scripts)
+- [Package Map](/reference/package-map)
+- [Backend Directory Structure](/reference/backend-directory-structure)
+
 ## Edition impact
 
 Most Vona concepts are shared between Cabloy Basic and Cabloy Start.
@@ -27,13 +79,15 @@ Differences usually appear when backend modules integrate with edition-specific 
 
 ## Suggested next runtime topics
 
-For backend runtime and distributed coordination, read these guides together:
+If your task is already inside the runtime and distributed family, read these guides together in roughly this order:
 
 - [Runtime and Flavors](/backend/runtime-and-flavors)
+- [Config Guide](/backend/config-guide)
 - [Backend Startup Guide](/backend/startup-guide)
+- [Multi-Instance and Instance Resolution](/backend/multi-instance-and-instance-resolution)
+- [Worker Guide](/backend/worker-guide)
 - [Election Guide](/backend/election-guide)
 - [Queue Guide](/backend/queue-guide)
 - [Broadcast Guide](/backend/broadcast-guide)
-- [Worker Guide](/backend/worker-guide)
 - [Schedule Guide](/backend/schedule-guide)
 - [Redlock Guide](/backend/redlock-guide)

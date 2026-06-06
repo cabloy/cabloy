@@ -11,6 +11,21 @@ That matters because distributed backend systems need a predictable way to run i
 - before or after the main runtime becomes ready
 - with explicit ordering and environment scoping
 
+## Startup is part of a larger lifecycle
+
+In the current Vona runtime, backend startup sits inside a broader application lifecycle.
+
+A practical sequence is:
+
+1. app config is loaded and merged
+2. modules are loaded
+3. `appStart` hooks run
+4. `appReady` hooks run
+5. `appStarted` hooks run
+6. shutdown hooks such as `appClose` and `appClosed` are available for teardown-sensitive logic
+
+This is important because startup beans are not the only lifecycle surface in the backend.
+
 ## Two startup types
 
 Vona supports two startup types:
@@ -79,6 +94,8 @@ A practical interpretation is:
 ## Configure startups in app config
 
 Startup options can also be overridden through app config.
+
+In the backend essentials model, startup is one bean scene, so startup configuration also follows the broader bean/onion naming and override conventions used across backend infrastructure.
 
 Representative pattern:
 
@@ -154,6 +171,90 @@ This matters because backend initialization often differs by environment, flavor
 
 For the underlying runtime dimensions, also see [Runtime and Flavors](/backend/runtime-and-flavors).
 
+## Main hooks, monkey hooks, and startup beans are different surfaces
+
+One of the most important lifecycle distinctions in the current Vona backend is that there are several different hook surfaces.
+
+### Module main hooks
+
+A module main can participate in module-level lifecycle hooks such as:
+
+- `moduleLoading`
+- `configLoaded`
+- `moduleLoaded`
+
+These are the right tools when a module needs to customize its own loading or config-processing behavior.
+
+### Monkey hooks
+
+Monkey hooks can participate in broader system lifecycle stages such as:
+
+- `appStart`
+- `appReady`
+- `appStarted`
+- `appClose`
+- `appClosed`
+
+Module monkey files can also receive module-oriented hook callbacks, and the app-level monkey file can coordinate app-wide lifecycle behavior.
+
+Representative CLI workflow:
+
+```bash
+npm run vona :init:monkey demo-student
+```
+
+### Startup beans
+
+Startup beans are the preferred lifecycle surface when the real goal is to run backend initialization work as part of the startup onion with ordering, metadata gating, transaction, and debounce support.
+
+A practical rule is:
+
+- use **main hooks** for module bootstrap customization
+- use **monkey hooks** for deeper lifecycle interception
+- use **startup beans** for normal backend initialization logic that should participate in startup ordering and runtime policy
+
+## Hook surface matrix
+
+| Surface | Best for | Ordering / policy support | Teardown fit |
+| --- | --- | --- | --- |
+| Startup bean | normal backend initialization work | strong support through `dependencies`, `dependents`, `meta`, `debounce`, and `transaction` | not the main teardown surface |
+| Module main hook | module bootstrap customization | tied to module load phases | usually not the main teardown surface |
+| Monkey hook | deeper lifecycle interception across app phases | follows lifecycle stage rather than startup-onion ordering | strongest fit for `appClose` / `appClosed` cleanup |
+
+This matrix is useful because the same backend task can look like “startup code” while actually belonging to different lifecycle surfaces.
+
+## App startup and instance startup in practice
+
+In the current runtime behavior:
+
+- non-instance startups run during app startup / app ready phases according to `after`
+- instance startups run when the app is ready for instances
+- in `test` and `dev`, the default instance is started eagerly
+- in production-style flows, configured static instances are started from `config.instance.instances`
+
+A practical timeline is:
+
+1. run non-instance startups with `after !== true` during app start
+2. run non-instance startups with `after === true` during app ready
+3. trigger instance startup for the relevant instance
+4. run instance startups with `after !== true`
+5. mark `appReadyInstances[instanceName] = true`
+6. run instance startups with `after === true`
+
+This is why startup should be read together with the instance and datasource story rather than as a purely global boot topic.
+
+## Teardown-oriented monkey examples
+
+Lifecycle hooks also matter when the backend is shutting down.
+
+Representative current-runtime examples include:
+
+- queue uses `appClose` to clear workers and `appClosed` to clear queues
+- broadcast uses `appClose` to dispose the subscriber side and `appClosed` to dispose the publisher side
+- SSR uses `appClose` to remove recorded SSR bean instances from the container
+
+These are good examples of when shutdown-sensitive logic belongs to monkey hooks rather than startup beans.
+
 ## Inspect the effective startup list
 
 You can inspect the currently effective startup list:
@@ -166,7 +267,7 @@ This is useful when you need to debug which startup beans are active after confi
 
 ## Built-in startup roles
 
-Some built-in startup behaviors are especially important to understand:
+Some built-in startup behaviors are especially important to understand.
 
 ### App-startup examples
 
@@ -189,11 +290,14 @@ Representative built-in instance startup roles include:
 
 This is the key architectural point: startup is the lifecycle layer that activates other distributed capabilities such as queues and schedules.
 
-## Relationship to election, queue, and schedule
+## Relationship to config, instance, and datasource behavior
 
-Read this guide together with:
+Startup should be read together with:
 
+- [Config Guide](/backend/config-guide)
 - [Runtime and Flavors](/backend/runtime-and-flavors)
+- [Model Guide](/backend/model-guide)
+- [Multi-Database and Datasource Guide](/backend/multi-database-datasource)
 - [Election Guide](/backend/election-guide)
 - [Queue Guide](/backend/queue-guide)
 - [Schedule Guide](/backend/schedule-guide)
@@ -203,17 +307,20 @@ Read this guide together with:
 A practical split is:
 
 - startup decides *when backend capabilities are initialized*
-- election decides *which worker should own a standalone responsibility*
-- queue decides *how background point-to-point jobs run*
-- schedule decides *when recurring jobs run once the runtime is ready*
+- config decides *which startup behavior is enabled or overridden*
+- instance config decides *which instance-specific startup flows exist*
+- datasource behavior decides *which database context those startup flows run against*
+
+For a practical distributed-runtime reading path, move from [Runtime and Flavors](/backend/runtime-and-flavors) and [Config Guide](/backend/config-guide) into this page, then continue to [Worker Guide](/backend/worker-guide), [Election Guide](/backend/election-guide), [Queue Guide](/backend/queue-guide), and [Schedule Guide](/backend/schedule-guide).
 
 ## Why this matters for AI workflows
 
 When AI edits backend startup-sensitive code, it should ask:
 
 1. is this initialization logic app-wide or instance-specific?
-2. does the logic need to run before or after the ready phase?
-3. should ordering be expressed through `dependencies` or `dependents`?
-4. should the startup be gated by `mode`, `flavor`, or app-config overrides?
+2. should this be a startup bean, a module main hook, or a monkey hook?
+3. does the logic need to run before or after the ready phase?
+4. should ordering be expressed through `dependencies` or `dependents`?
+5. should the startup be gated by `mode`, `flavor`, instance config, or app-config overrides?
 
-That helps AI keep backend initialization aligned with Vona’s distributed runtime model.
+That helps AI keep backend initialization aligned with Vona’s current runtime lifecycle rather than scattering boot logic across unrelated files.

@@ -33,7 +33,7 @@ Its core ORM capabilities include:
 
 ## Recommended ORM reading path
 
-Read the ORM family in roughly this order:
+Use this page as the ORM overview, then move into the deeper leaves in roughly this order:
 
 1. [Model Guide](/backend/model-guide)
 2. [Entity Guide](/backend/entity-guide)
@@ -49,6 +49,8 @@ Read the ORM family in roughly this order:
 12. [Multi-Database and Datasource Guide](/backend/multi-database-datasource)
 13. [Dynamic Datasource Guide](/backend/dynamic-datasource-guide)
 14. [Sharding Guide](/backend/sharding-guide)
+
+Use [Dynamic Datasource Guide](/backend/dynamic-datasource-guide) as a backend-facing pointer page into deeper Cabloy datasource architecture, not as a parallel full ORM tutorial.
 
 This keeps the overview page focused while pushing depth into the pages that own each concern.
 

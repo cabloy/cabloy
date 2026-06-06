@@ -38,6 +38,11 @@ Two main repeat modes are supported:
 - interval-based repetition with `every`
 - cron-style repetition with `pattern`
 
+A practical distinction is:
+
+- use `every` when the schedule should repeat by a fixed interval
+- use `pattern` when the schedule should follow a cron-style calendar expression
+
 That gives schedules a flexible operational model without leaving the framework abstraction.
 
 ## Queue and transaction interaction
@@ -45,6 +50,8 @@ That gives schedules a flexible operational model without leaving the framework 
 Schedule parameters can also include:
 
 - which queue to use
+- repeat options
+- template options
 - datasource context
 - whether to enable transaction behavior
 
@@ -56,7 +63,9 @@ Like queues, schedules can be enabled or disabled and scoped to flavor or mode.
 
 That is important in Cabloy because recurring behavior is often environment-sensitive.
 
-## Inspection
+## Load behavior and inspection
+
+Enabled schedules are loaded through the broader runtime/onion startup flow, and changed or disabled schedule definitions should be understood through that effective runtime context rather than as isolated timer state.
 
 The effective schedule list can be inspected, which helps operational debugging and understanding of what is actually active.
 

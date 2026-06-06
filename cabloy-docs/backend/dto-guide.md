@@ -31,6 +31,23 @@ Representative pattern:
 export class DtoStudentCreate {}
 ```
 
+## DTOs in the backend contract loop
+
+DTOs are the most explicit named contracts in the backend contract loop.
+
+A useful split is:
+
+- entities define reusable field/data structure close to persistence
+- DTOs define explicit request/response contract artifacts
+- inferred DTOs reduce duplication when the model/query shape is already strong enough
+
+Read this guide together with:
+
+- [Entity Guide](/backend/entity-guide)
+- [DTO Infer and Generation](/backend/dto-infer-generation)
+- [Validation Guide](/backend/validation-guide)
+- [OpenAPI Guide](/backend/openapi-guide)
+
 ## `@Api.field`
 
 DTO field definitions use the same `@Api.field` mental model as entities.
@@ -110,7 +127,7 @@ Some of these are hand-authored DTO classes. Others are better expressed through
 
 The important point is not to force every operation shape into one generic DTO when the framework already distinguishes them more precisely.
 
-## DTOs vs inferred DTOs
+## Explicit DTOs vs inferred DTOs
 
 A practical split is:
 
@@ -130,6 +147,7 @@ That means DTO design should often be read together with:
 - [Relations Guide](/backend/relations-guide)
 - [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide)
 - [OpenAPI Guide](/backend/openapi-guide)
+- [Controller Guide](/backend/controller-guide)
 
 ## Why this matters for AI workflows
 
@@ -140,5 +158,4 @@ When AI creates DTOs, it should:
 3. decide whether the contract should be an explicit DTO class or an inferred DTO
 4. avoid re-declaring fields manually if Vona’s DTO-generation or class-derivation tools already solve the problem
 5. treat DTO design as part of the contract between backend handlers, models, and frontend integration
-
-That helps keep backend contracts consistent and less redundant.
+6. choose explicit DTOs when named long-lived contracts matter, and inferred DTOs when the model/query shape already expresses the contract clearly

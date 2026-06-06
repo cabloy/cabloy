@@ -12,7 +12,7 @@ App startup is not the same as system startup.
 
 In SSR scenarios especially, app startup can be request-scoped, while system startup is not.
 
-This guide focuses on the application lifecycle. For system-level lifecycle hooks, see [System Startup Guide](/frontend/system-startup-guide).
+This guide focuses on the application lifecycle after the lower-level system wiring is already in place. For system-level lifecycle hooks such as route registration and config loading, see [System Startup Guide](/frontend/system-startup-guide).
 
 ## App startup timings
 
@@ -142,6 +142,8 @@ A representative lifecycle interpretation is:
 
 ## Relationship to routing and guards
 
+This page is the second half of the startup story: once system startup has registered routes and loaded config, app startup makes router services, guards, and first-screen navigation operational.
+
 Startup timing is closely related to frontend routing and guards, because route services and route-guard behavior often need to be initialized before the app is considered ready.
 
 The legacy startup docs explicitly used the router module as the core example:
@@ -152,6 +154,13 @@ The legacy startup docs explicitly used the router module as the core example:
 - `appClose` as the teardown point for route-guard listeners
 
 Read this guide together with [Navigation Guards Guide](/frontend/navigation-guards-guide) when route lifecycle is involved.
+
+A practical reading sequence is:
+
+1. [System Startup Guide](/frontend/system-startup-guide)
+2. this page for router/guard readiness
+3. [Page Route Guide](/frontend/page-route-guide)
+4. [Navigation Guards Guide](/frontend/navigation-guards-guide)
 
 ## Relationship to environment/config selection
 

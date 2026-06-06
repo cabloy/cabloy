@@ -6,6 +6,15 @@ This guide explains the main Vona script workflows in the Cabloy monorepo.
 
 Even though the underlying backend scripts still live in `vona/package.json`, contributors should usually start from the root scripts in the monorepo because they are the shared workflow surface.
 
+## Root scripts vs Vona CLI
+
+A practical distinction is:
+
+- use root scripts for normal runtime workflows such as install, dev, build, start, test, and typecheck
+- use `npm run vona ...` when you need backend command discovery, generation, initialization, or backend-specific tool flows
+
+That means [Backend CLI](/backend/cli) and this page are complementary, not redundant.
+
 ## Development
 
 Start the backend in the root repository:
@@ -85,6 +94,18 @@ npm run vona :bin:play -- --flavor=play --dummy
 ```bash
 cd vona && npm run db:reset
 ```
+
+## Relationship to backend essentials
+
+These scripts are part of the backend essentials workflow because they define how contributors actually enter the backend runtime.
+
+A useful split is:
+
+- scripts answer how the monorepo runs backend workflows
+- the CLI answers how backend resources are discovered and generated
+- modules and suites answer where generated resources belong
+
+For the structural side of that story, also see [Backend Essentials](/backend/backend-essentials) and [Package Map](/reference/package-map).
 
 ## Guidance
 

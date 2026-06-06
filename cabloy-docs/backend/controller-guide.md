@@ -2,6 +2,20 @@
 
 This guide explains how controllers work in Vona within the Cabloy monorepo.
 
+## Why controllers matter
+
+Controllers are the HTTP-facing contract surface of the backend.
+
+They define how routes, request parameters, validation, response typing, and OpenAPI metadata meet the rest of the backend thread.
+
+A useful contract-loop mental model is:
+
+- controller defines the route and request/response surface
+- service owns orchestration
+- model and entity shape persistence behavior
+- DTOs and validation shape explicit request/response contracts
+- OpenAPI emits the machine-readable contract that frontend SDK generation can consume
+
 ## Create a controller
 
 Example: create a controller named `student` in module `demo-student`.
@@ -66,7 +80,7 @@ If the controller path or action path starts with `/`, the module URL is removed
 
 If the controller path or action path starts with `//`, both the global prefix and module URL are removed.
 
-This is useful for special routes such as the project homepage.
+This is useful for special routes such as the project homepage or a shared non-module-prefixed API path.
 
 ## Request methods
 
@@ -100,7 +114,61 @@ Representative parameter decorators include:
 
 These decorators are also the main request-parameter surface for multipart upload flows; see [Upload Guide](/backend/upload-guide).
 
-This lets controller signatures express request shape directly in a consistent way.
+## Parameter extraction patterns
+
+A useful distinction is:
+
+- specify a field name when you want one parameter only
+- omit the field name when you want the whole structured object
+
+Representative patterns:
+
+```typescript
+findOne(@Arg.query('id') id: number) {}
+```
+
+```typescript
+class DtoStudentInfo {
+  id: number;
+  name: string;
+}
+
+findOne(@Arg.query() query: DtoStudentInfo) {
+  console.log(query.id, query.name);
+}
+```
+
+This matters because controller signatures can express both simple and structured request shapes without leaving the framework’s contract surface.
+
+## Compact action-signature patterns
+
+A practical controller signature often combines route params, request body typing, and response metadata in one place.
+
+Representative pattern:
+
+```typescript
+@Web.patch('updateUser/:id')
+updateUser(
+  @Arg.param('id') id: TableIdentity,
+  @Arg.body(v.object(DtoUserUpdate)) user: DtoUserUpdate,
+) {
+  return this.scope.model.user.update(user, { where: { id } });
+}
+```
+
+When the response contract should follow inferred DTO shape directly, a pattern like this is also common:
+
+```typescript
+@Web.get('getUserDynamic')
+@Api.body($Dto.get('test-vona:post'))
+getPostDynamic() {}
+```
+
+A practical rule is:
+
+- use `@Arg.param(...)` and `@Arg.body(...)` together when the action mixes route identity and structured payload input
+- use return-type inference when the response contract is obvious
+- use `@Api.body(...)` when the response should expose a more specific inferred or customized contract shape
 
 ## Validation, OpenAPI, and Controller AOP
 
@@ -114,6 +182,158 @@ In practice, that means controllers are not only request handlers. They are also
 
 For a dedicated explanation of middleware, guards, interceptors, pipes, and filters, see [Controller AOP Guide](/backend/controller-aop-guide).
 
+## Response body typing and schema declaration
+
+Vona can often infer response schema from the declared return type.
+
+Representative automatically inferred cases include:
+
+- basic types such as `string`, `number`, and `boolean`
+- DTO classes
+- Entity classes
+
+When inference is not enough, use explicit schema declaration.
+
+Representative pattern:
+
+```typescript
+@Api.body(v.array(String))
+findOne(): string[] {
+  return ['Tom'];
+}
+```
+
+A practical rule is:
+
+- use return-type inference when the contract is obvious and simple
+- use explicit `@Api.body(...)` when the response shape needs more control or the inference boundary becomes unclear
+
+## Response wrapper behavior
+
+By default, Vona wraps the response body in a standard wrapper object.
+
+That means a plain response value conceptually becomes a response shape like:
+
+```typescript
+{
+  code: string;
+  message: string;
+  data: string;
+}
+```
+
+### Disable the wrapper
+
+Use `@Api.bodyCustom(false)` when the endpoint should return the body directly.
+
+Representative pattern:
+
+```typescript
+@Api.bodyCustom(false)
+findOne(): string {
+  return 'Tom';
+}
+```
+
+### Provide a custom wrapper
+
+Use `@Api.bodyCustom(...)` with a wrapper function when the project needs a different response envelope.
+
+Representative pattern:
+
+```typescript
+@Api.bodyCustom(bodySchemaWrapperCustom)
+findOne(): string {
+  return 'Tom';
+}
+```
+
+This is one of the most important response-contract choices because it affects backend OpenAPI output and frontend SDK consumption.
+
+Other response/action metadata patterns can also be expressed at the controller surface, including representative cases such as:
+
+- `contentType`
+- `httpCode`
+- `headers`
+- `setHeaders`
+- `exclude`
+- `tags`
+
+Use those when the runtime behavior and the machine-readable contract should stay aligned in one place.
+
+## Action options
+
+Vona actions can carry additional metadata directly in `@Web.*` options.
+
+Representative pattern:
+
+```typescript
+@Web.get(':id', {
+  tags: ['Student'],
+  description: 'Find a student',
+})
+findOne(@Arg.param('id') id: number): EntityStudent {}
+```
+
+Representative action-option areas include:
+
+- `description`
+- `summary`
+- `httpCode`
+- `contentType`
+- `bodySchema`
+- `bodySchemaWrapper`
+- `exclude`
+- `tags`
+- `operationId`
+- `headers`
+- `setHeaders`
+
+This matters because controller actions are one of the main places where runtime behavior and machine-readable API description meet.
+
+## Controller options
+
+Controllers can also carry higher-level options.
+
+Representative pattern:
+
+```typescript
+@Controller('student', {
+  exclude: false,
+  tags: ['Student'],
+})
+class ControllerStudent {}
+```
+
+Representative controller-option areas include:
+
+- `exclude`
+- `tags`
+- `actions`
+- `enable`
+- `meta`
+
+This is especially important because the controller surface can also be tuned from app config through onion/config override patterns.
+
+## Relationship to the backend contract loop
+
+Read this guide together with:
+
+- [Validation Guide](/backend/validation-guide)
+- [DTO Guide](/backend/dto-guide)
+- [OpenAPI Guide](/backend/openapi-guide)
+- [CRUD Workflow](/backend/crud-workflow)
+- [Unit Testing](/backend/unit-testing)
+- [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
+
+A practical split is:
+
+- controllers define the route and contract surface
+- validation and DTOs define the request/response schema language
+- OpenAPI emits the machine-readable contract
+- CRUD generation instantiates the thread quickly
+- tests verify the contract through action execution
+
 ## Why this matters for AI workflows
 
 When an AI system creates or edits a controller, it should preserve the Vona controller model instead of rewriting it into a generic framework style.
@@ -123,4 +343,5 @@ The safest workflow is:
 1. use the Vona CLI to create the controller skeleton
 2. inspect the generated module-specific patterns
 3. add `@Web`, `@Arg`, validation, and OpenAPI metadata in the same style
-4. verify the resulting routes and response conventions
+4. choose deliberately whether response wrapper defaults should stay in place
+5. verify the resulting routes and response conventions

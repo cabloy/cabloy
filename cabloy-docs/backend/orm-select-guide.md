@@ -114,6 +114,15 @@ The operator model is broad and includes examples like:
 
 That operator vocabulary is part of the Cabloy data language and should be reused consistently.
 
+A practical operator-family reading is:
+
+- comparison: `_eq_`, `_notEq_`, `_gt_`, `_gte_`, `_lt_`, `_lte_`
+- membership/range: `_in_`, `_notIn_`, `_between_`, `_notBetween_`
+- null checks: `_is_`, `_isNot_`
+- string matching: `_startsWith_`, `_endsWith_`, `_includes_`, and case-insensitive variants
+- composition/subquery: `_and_`, `_or_`, `_not_`, `_exists_`, `_notExists_`
+- identifier or composition helpers: `_ref_`, `_skip_`
+
 ### `_skip_`
 
 `_skip_` is especially useful when building query objects compositionally.
@@ -192,6 +201,20 @@ A practical rule is:
 - start with structured operators first
 - use `ref` when comparisons need identifier semantics
 - use `raw` only when the structured surface is not sufficient
+
+## `selectAndCount` and pagination-shaped results
+
+`selectAndCount` is especially useful when one backend query should return both rows and pagination metadata together.
+
+A practical result shape includes:
+
+- `list`
+- `total`
+- `pageCount`
+- `pageSize`
+- `pageNo`
+
+This matters because page-query contracts often need more than a plain row array. They need a stable list-plus-metadata response shape that can map directly into DTOs and controller response contracts.
 
 ## Relationship to aggregate/group and DTOs
 

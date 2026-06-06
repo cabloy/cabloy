@@ -72,6 +72,19 @@ Representative option areas include:
 
 This matters because a queue push can propagate more than business payload alone. It can also carry runtime context that affects how the worker executes the job.
 
+A practical push-context reading is:
+
+| Field | Typical purpose |
+| --- | --- |
+| `data` | business payload |
+| `queueNameSub` | refine queue routing |
+| `jobName` | identify the job kind |
+| `jobOptions` | pass BullMQ job options |
+| `dbInfo` | control datasource/runtime database context |
+| `locale` / `tz` | preserve request-oriented locale/timezone context |
+| `instanceName` | preserve instance-aware execution context |
+| `extraData` | pass selected request metadata or auxiliary context |
+
 ## Datasource-level isolation and deadlock avoidance
 
 One of the most important distributed queue details is datasource-level isolation.
@@ -107,6 +120,11 @@ await this.scope.queue.add.pushAsync(data, {
 ```
 
 So queue behavior is not only “run later.” It also participates in connection-pool isolation and distributed consistency design.
+
+A practical refinement is:
+
+- queue push helpers prepare and carry runtime context explicitly before execution
+- that is why queue jobs can preserve datasource, locale, and instance-aware behavior without forcing the business payload itself to hold every context field
 
 For the surrounding datasource architecture, also see [Multi-Database and Datasource Guide](/backend/multi-database-datasource) and [Dynamic Datasource Guide](/backend/dynamic-datasource-guide).
 
