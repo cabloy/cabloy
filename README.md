@@ -6,9 +6,11 @@
 [![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com)
 
-Cabloy is a unified fullstack framework for building **SSR**, **SPA**, **Web**, and **Admin** applications with one architecture.
+Cabloy is a Node.js fullstack framework for AI vibe coding.
 
-It is built around **Vona** for the backend and **Zova** for the frontend, with CLI-first workflows, monorepo-native tooling, and shared development conventions across the full stack.
+Use one framework system instead of stitching together separate backend and frontend stacks.
+
+With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
 
 [Documentation](https://github.com/cabloy/cabloy/tree/main/cabloy-docs) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
@@ -20,20 +22,23 @@ Create a new Cabloy project:
 npm create cabloy
 ```
 
-Then continue with the framework documentation:
+Then continue with the framework docs:
 
 - [Documentation](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
 - [Fullstack Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/introduction.md)
+- [Backend Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/backend/introduction.md)
+- [Frontend Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/frontend/introduction.md)
 - [Editions Overview](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/editions/overview.md)
 
-If you are working with the repository layout directly, use the [Fullstack Quickstart](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/quickstart.md).
+If you are working in this repository directly, use the [Fullstack Quickstart](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/quickstart.md).
 
-## Why Cabloy
+## Highlights
 
-- **Unified fullstack architecture** — develop backend and frontend in one framework system
-- **Vona + Zova** — combine backend and frontend capabilities without splitting the developer experience
-- **CLI-first automation** — use generators, metadata, refactors, and verification through existing command families
-- **Monorepo-native workflows** — keep framework source, docs, and tooling aligned in one repository model
+- **One framework system** — build backend and frontend in one Node.js fullstack architecture
+- **Vona + Zova** — use aligned backend and frontend frameworks instead of stitching together separate stacks
+- **Multiple delivery modes** — support SSR, SPA, Web, and Admin applications with shared conventions
+- **CLI-first workflows for AI coding** — turn scaffolding, metadata, refactors, and verification into explicit commands so AI can stay more accurate, use fewer tokens, and move faster
+- **Monorepo-native development** — keep framework source, docs, and tooling aligned in one repository model
 
 ## Ecosystem
 
@@ -116,7 +121,9 @@ npm run build
 
 ### CLI-first workflows
 
-Prefer the existing CLI entrypoints before writing framework scaffolding by hand:
+Prefer the existing CLI entrypoints before writing framework scaffolding by hand.
+
+For AI coding, this matters because scaffolding, metadata operations, refactors, and verification can be expressed as explicit commands instead of long natural-language instructions, which helps reduce token usage, improve accuracy, and speed up iteration.
 
 ```bash
 npm run vona :create
