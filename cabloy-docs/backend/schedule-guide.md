@@ -1,6 +1,6 @@
 # Schedule Guide
 
-This page migrates the highest-value ideas from the legacy Vona schedule documentation.
+This guide explains how schedules work in Vona within the Cabloy monorepo.
 
 ## Why schedules matter
 
@@ -33,7 +33,7 @@ The important point is that recurring execution is declared explicitly through s
 
 ## Repeat configuration
 
-The legacy docs highlight two main repeat modes:
+Two main repeat modes are supported:
 
 - interval-based repetition with `every`
 - cron-style repetition with `pattern`

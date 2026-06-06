@@ -1,6 +1,6 @@
 # Backend Foundation
 
-This page migrates the most important architectural ideas from the legacy Vona introduction into the new unified docs site.
+This guide explains the core architectural role of Vona in the Cabloy monorepo.
 
 ## What Vona is in Cabloy
 
@@ -24,9 +24,9 @@ Important integration channels include:
 
 ## Why Vona matters for AI development
 
-The legacy Vona introduction emphasized productivity, DTO generation, CRUD dynamic rendering, multi-tenancy, and broad infrastructure support. In the new monorepo docs, the most important translation is this:
+Vona combines backend productivity, DTO generation, CRUD-oriented workflows, multi-tenancy, and broad infrastructure support. In the monorepo docs, the key point is this:
 
-Vona is not only a backend framework. It is a framework whose backend conventions already encode a large amount of fullstack knowledge that AI should reuse instead of re-deriving manually.
+Vona is not only a backend framework. Its conventions already encode a large amount of fullstack knowledge that AI should reuse instead of re-deriving manually.
 
 That is why the docs, skills, and rules in this repo prefer:
 
@@ -37,7 +37,7 @@ That is why the docs, skills, and rules in this repo prefer:
 
 ## High-value backend capabilities
 
-From the legacy introduction, the most important enduring Vona capabilities include:
+The most important enduring Vona capabilities include:
 
 - modular architecture for suites and modules
 - IOC container and dependency lookup

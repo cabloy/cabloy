@@ -1,12 +1,12 @@
 # Model State Guide
 
-This page migrates the highest-value parts of the legacy Zova model/state-management documentation for server data.
+This guide explains how model-based server-data state works in Zova within the Cabloy monorepo.
 
 ## Why the model layer exists
 
 Zova uses model-based state management on top of API access so remote data can participate in a more unified caching and usage model.
 
-The legacy docs emphasized that this improves runtime performance and developer experience by building on top of TanStack Query rather than exposing only raw request flows.
+This improves runtime performance and developer experience by building on top of TanStack Query rather than exposing only raw request flows.
 
 ## Create a model
 

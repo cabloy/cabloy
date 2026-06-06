@@ -1,10 +1,10 @@
 # Dynamic Datasource Guide
 
-This page bridges the legacy Vona ORM advanced dynamic-datasource page into the new unified docs site.
+This guide points from the backend docs to the deeper Cabloy dynamic-datasource architecture.
 
 ## Current source of truth
 
-The legacy ORM page for dynamic datasource is intentionally brief because the deeper capability is provided by the `a-cabloy` suite.
+The older ORM page for dynamic datasource is intentionally brief because the deeper capability is provided by the `a-cabloy` suite.
 
 In the new docs structure, treat dynamic datasource as a Cabloy-level capability with strong backend implications.
 

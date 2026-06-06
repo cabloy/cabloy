@@ -1,6 +1,6 @@
 # Server Data
 
-This page migrates the high-value overview from the legacy Zova server-data docs.
+This guide explains the server-data abstraction layers in Zova within the Cabloy monorepo.
 
 ## Why this layer exists
 
@@ -10,7 +10,7 @@ The point is not to force one access style for every problem. The point is to le
 
 ## The abstraction ladder
 
-The legacy docs outlined these layers:
+These layers define the server-data abstraction ladder:
 
 | Name | Description |
 | --- | --- |

@@ -1,6 +1,6 @@
 # Multi-Database and Datasource Guide
 
-This page migrates the highest-value ideas from the legacy Vona multi-database and multi-datasource documentation.
+This guide explains how multi-database and multi-datasource support works in Vona within the Cabloy monorepo.
 
 ## Why this matters
 
@@ -14,13 +14,13 @@ This is an important part of the framework’s large-system positioning.
 
 ## Core model
 
-The legacy docs illustrate this with related models such as `User` and `Order`.
+A representative example uses related models such as `User` and `Order`.
 
 The key idea is that model relations can remain meaningful even when the participating data lives on different datasources.
 
 ## Datasource setup
 
-The legacy docs show three important pieces:
+Three important pieces define the datasource setup:
 
 1. datasource type definitions
 2. datasource configuration in app config
@@ -36,7 +36,7 @@ This is useful when the decision depends on runtime context.
 
 ## Relation-level datasource selection
 
-The legacy docs also show that relation options can specify datasource metadata.
+Relation options can also specify datasource metadata.
 
 That matters because different parts of a related object graph may need different datasource bindings.
 

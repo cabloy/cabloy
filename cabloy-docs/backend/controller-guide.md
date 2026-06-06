@@ -1,6 +1,6 @@
 # Controller Guide
 
-This page migrates the highest-value parts of the legacy Vona controller documentation into the new docs site.
+This guide explains how controllers work in Vona within the Cabloy monorepo.
 
 ## Create a controller
 
@@ -52,7 +52,7 @@ Important pieces:
 
 ## Route simplification rules
 
-The legacy docs highlighted three useful simplification rules.
+Three useful simplification rules apply here.
 
 ### 1. Remove duplicate module path fragments
 
@@ -102,7 +102,7 @@ This lets controller signatures express request shape directly in a consistent w
 
 ## Validation and OpenAPI
 
-The legacy controller docs strongly connected controllers to two related capabilities:
+Controllers are strongly connected to two related capabilities:
 
 - parameter validation based on Zod-oriented patterns
 - Swagger/OpenAPI generation

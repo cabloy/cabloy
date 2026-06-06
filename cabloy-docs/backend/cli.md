@@ -1,6 +1,6 @@
 # Backend CLI
 
-This page migrates the core Vona CLI usage guidance into the unified docs site.
+This guide explains how to use the Vona CLI in the Cabloy monorepo.
 
 ## Why the CLI matters
 

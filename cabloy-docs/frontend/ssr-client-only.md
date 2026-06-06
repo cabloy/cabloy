@@ -1,6 +1,6 @@
 # SSR ClientOnly
 
-This page migrates the essential idea from the legacy `ClientOnly` SSR documentation.
+This guide explains when to use `ClientOnly` in Zova SSR within the Cabloy monorepo.
 
 ## When to use `ClientOnly`
 

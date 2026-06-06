@@ -1,12 +1,12 @@
 # Migration and Changes
 
-This page migrates the highest-value ideas from the legacy Vona migration documentation.
+This guide explains how migration and change management work in Vona within the Cabloy monorepo.
 
 ## Why this system exists
 
 Vona provides a migration mechanism designed for long-lived modular projects.
 
-The legacy docs highlighted several important characteristics that still matter in the unified Cabloy docs:
+Several important characteristics define this migration system:
 
 - module-aware migration
 - multi-tenant initialization support
@@ -54,7 +54,7 @@ export class MetaVersion extends BeanBase {}
 
 ## Three change scenarios
 
-The legacy docs define three migration scenarios:
+Three migration scenarios are defined:
 
 | Scenario | Purpose |
 | --- | --- |
@@ -87,7 +87,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
 }
 ```
 
-The legacy docs also showed a typed style based on entity metadata, which is a better long-term default when possible.
+A typed style based on entity metadata is also supported, and it is usually the better long-term default when possible.
 
 ## Init: tenant-aware initialization
 
@@ -129,7 +129,7 @@ This is valuable because test data becomes part of the structured migration life
 
 ## Local development workflow
 
-The legacy docs also made an important distinction for local development:
+One important distinction for local development is:
 
 - when iterating locally, you often want to recreate the database and re-run migration logic without bumping `fileVersion`
 

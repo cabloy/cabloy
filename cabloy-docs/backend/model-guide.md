@@ -1,6 +1,6 @@
 # Model Guide
 
-This page migrates the high-value parts of the legacy Vona model documentation.
+This guide explains how models work in Vona within the Cabloy monorepo.
 
 ## Create a model
 
@@ -26,7 +26,7 @@ The key relationship is that a model is bound to an entity and exposes ORM-orien
 
 ## Recommended usage style
 
-The legacy docs recommend dependency lookup over heavier wiring because it keeps the code more concise.
+Dependency lookup is usually better than heavier wiring because it keeps the code more concise.
 
 Typical pattern:
 
@@ -85,7 +85,7 @@ this.scope.model.student.query('select * from demoStudent');
 
 ## Important model options
 
-The legacy docs highlighted several important model options, including:
+Several important model options include:
 
 - `entity`
 - `table`

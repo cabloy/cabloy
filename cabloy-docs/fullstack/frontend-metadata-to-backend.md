@@ -12,7 +12,7 @@ This is one of the unusual strengths of the Cabloy monorepo model.
 
 ## What the frontend can generate
 
-The legacy docs and current script surface imply that Zova can generate metadata and type information for areas such as:
+The current script surface shows that Zova can generate metadata and type information for areas such as:
 
 - routes
 - components

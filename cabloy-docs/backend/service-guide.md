@@ -1,6 +1,6 @@
 # Service Guide
 
-This page migrates the most important ideas from the legacy Vona service documentation.
+This guide explains how services work in Vona within the Cabloy monorepo.
 
 ## Create a service
 
@@ -28,7 +28,7 @@ Vona supports both:
 - dependency injection
 - dependency lookup
 
-The legacy docs recommend dependency lookup for concision, and that remains a good default in the Cabloy docs.
+Dependency lookup is usually the best default because it keeps the code concise.
 
 ## Dependency injection
 
@@ -78,7 +78,7 @@ class ControllerStudent {
 
 ## IOC container access
 
-The legacy docs also highlighted direct bean access patterns.
+Direct bean access patterns are also available.
 
 ### `_getBean`
 

@@ -1,6 +1,6 @@
 # OpenAPI SDK Guide
 
-This page migrates the highest-value ideas from the legacy Zova OpenAPI SDK documentation.
+This guide explains how the Zova OpenAPI SDK workflow fits into the Cabloy monorepo.
 
 ## Why OpenAPI SDK matters
 
@@ -18,7 +18,7 @@ npm run zova :openapi:config demo-student
 
 ## Module-level config
 
-The legacy docs showed that each module can control which backend operations belong to it.
+Each module can control which backend operations belong to it.
 
 Representative idea:
 
@@ -46,7 +46,7 @@ npm run zova :openapi:generate demo-student
 
 ## Important convention
 
-The legacy docs called out an important rule: a module should usually standardize on one API-service creation style.
+One important rule is that a module should usually standardize on one API-service creation style.
 
 That means a module should generally choose between:
 

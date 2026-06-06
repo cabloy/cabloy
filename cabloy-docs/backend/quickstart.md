@@ -1,6 +1,6 @@
 # Backend Quickstart
 
-This page migrates the most valuable parts of the legacy Vona quickstart into the new monorepo docs.
+This guide explains the fastest way to get oriented on the backend side of the Cabloy monorepo.
 
 ## When to use this page
 
@@ -74,7 +74,7 @@ In the current monorepo docs, do not treat these as just template names. Treat t
 
 ## Backend configuration reminder
 
-The legacy quickstart also required editing `.env` values for database and Redis selection. That is still conceptually true, but in the monorepo the exact values should always be taken from the current repo files under `vona/env/` rather than copied from older docs blindly.
+Backend setup may still require editing `.env` values for database and Redis selection. In the monorepo, the exact values should always be taken from the current repo files under `vona/env/` rather than copied from archived guidance blindly.
 
 ## Recommended next pages
 

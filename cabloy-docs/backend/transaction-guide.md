@@ -1,12 +1,12 @@
 # Transaction Guide
 
-This page migrates the highest-value ideas from the legacy Vona transaction documentation.
+This guide explains how Vona transactions work in the Cabloy monorepo.
 
 ## Why transactions matter in Vona
 
 Vona treats transactions as a framework-level capability, not just as a raw database primitive.
 
-The legacy docs emphasize four especially important areas:
+Four especially important areas define the transaction model:
 
 - decorator-based transaction entry
 - transaction propagation
@@ -31,7 +31,7 @@ This matters because it makes transaction behavior explicit at the business-meth
 
 ## Manual transactions
 
-The legacy docs also show manual transaction control using either:
+Vona also supports manual transaction control using either:
 
 - the current datasource
 - a specified datasource
@@ -58,7 +58,7 @@ This is important because multi-layer business logic often depends on how nested
 
 ## Compensation hooks
 
-The legacy docs also highlight success and failure compensation hooks.
+Vona also provides success and failure compensation hooks.
 
 That means Vona transactions can coordinate follow-up behavior explicitly, not only database commit/rollback.
 

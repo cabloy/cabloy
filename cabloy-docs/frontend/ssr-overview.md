@@ -1,6 +1,6 @@
 # SSR Overview
 
-This page migrates the highest-value ideas from the legacy Zova SSR introduction.
+This guide explains the overall SSR model in Zova within the Cabloy monorepo.
 
 ## What Zova SSR provides
 
@@ -10,7 +10,7 @@ The important point for the new docs is not the implementation detail alone. It 
 
 SSR should feel like a normal part of the application model rather than a separate, awkward mode that forces unrelated coding patterns.
 
-## Key SSR capabilities highlighted in the legacy docs
+## Key SSR capabilities
 
 ### Support for multiple UI-library strategies
 

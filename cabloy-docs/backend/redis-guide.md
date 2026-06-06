@@ -1,12 +1,12 @@
 # Redis Guide
 
-This page migrates the highest-value ideas from the legacy Vona Redis documentation.
+This guide explains how Redis fits into Vona within the Cabloy monorepo.
 
 ## Why Redis matters in Vona
 
 Redis is not a niche optional integration in Vona. It underpins several distributed capabilities across the framework.
 
-The legacy docs show that Redis supports a broad set of roles such as:
+Redis supports a broad set of roles such as:
 
 - cache
 - queue and schedule
@@ -18,7 +18,7 @@ That makes Redis part of the Cabloy backend foundation rather than just an exter
 
 ## Config model
 
-The legacy docs organize Redis configuration around:
+Redis configuration is organized around:
 
 - `base`
 - `clients`
@@ -38,7 +38,7 @@ Representative built-in client roles include:
 
 ## Key-prefix isolation
 
-The legacy docs also highlight `keyPrefix` support.
+Redis also supports `keyPrefix`.
 
 This matters because multiple projects or components may share Redis infrastructure, and keyspace isolation is a practical requirement rather than an afterthought.
 
@@ -50,7 +50,7 @@ That is important because queue, broadcast, locking, and caching may have differ
 
 ## Adding a new Redis client
 
-The legacy docs describe a typed extension model:
+The framework uses a typed extension model for adding clients:
 
 1. add client type definition
 2. add client config

@@ -1,6 +1,6 @@
 # Backend Scripts
 
-This page migrates the most important Vona script guidance into the new monorepo docs.
+This guide explains the main Vona script workflows in the Cabloy monorepo.
 
 ## Shared rule
 
@@ -68,7 +68,7 @@ The backend-specific script surface also includes:
 
 ## Playground
 
-The legacy docs surfaced the Playground as a fast verification path. That remains a high-value capability.
+The Playground remains a high-value verification path for fast backend checks.
 
 ```bash
 cd vona && npm run play

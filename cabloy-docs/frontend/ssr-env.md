@@ -1,6 +1,6 @@
 # SSR Environment Variables
 
-This page migrates the high-value ideas from the legacy Zova SSR env documentation.
+This guide explains SSR-related environment variables in Zova within the Cabloy monorepo.
 
 ## Why SSR env configuration matters
 
@@ -10,7 +10,7 @@ Zova exposes SSR-related environment variables so the framework can configure ke
 
 ## Representative configurable variables
 
-The legacy docs highlighted variables such as:
+Representative variables include:
 
 - `SSR_COOKIE`
 - `SSR_COOKIE_THEMEDARK_DEFAULT`

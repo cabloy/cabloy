@@ -1,12 +1,12 @@
 # ORM Mutation Guide
 
-This page migrates the highest-value ideas from the legacy Vona ORM insert/update/delete documentation.
+This guide explains how ORM mutation operations work in Vona within the Cabloy monorepo.
 
 ## Why mutation operations matter
 
 Mutation is where data shape, persistence behavior, soft deletion, and business rules intersect.
 
-The legacy docs show that Vona ORM provides a structured mutation surface rather than forcing every change through raw SQL or hand-written branching.
+Vona ORM provides a structured mutation surface rather than forcing every change through raw SQL or hand-written branching.
 
 ## Basic mutation operations
 
@@ -29,7 +29,7 @@ await this.scope.model.post.delete({ id: 1 });
 
 ## `mutate` and `mutateBulk`
 
-One of the most interesting legacy ideas is the `mutate` model.
+One of the most interesting Vona ideas is the `mutate` model.
 
 Instead of forcing callers to choose insert/update/delete up front, Vona can infer the mutation kind from data characteristics.
 

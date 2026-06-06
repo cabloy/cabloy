@@ -1,6 +1,6 @@
 # SSR Init Data
 
-This page migrates the highest-value ideas from the legacy Zova SSR init-data documentation.
+This guide explains how SSR init data works in Zova within the Cabloy monorepo.
 
 ## Why init data matters
 
@@ -10,7 +10,7 @@ Zova’s SSR model makes this feel natural by letting controllers prepare the ne
 
 ## Representative pattern
 
-The legacy docs showed this shape:
+A representative pattern looks like this:
 
 ```typescript
 @Controller()

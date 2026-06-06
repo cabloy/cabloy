@@ -1,6 +1,6 @@
 # Worker Guide
 
-This page migrates the highest-value ideas from the legacy Vona worker documentation.
+This guide explains how workers fit into Vona within the Cabloy monorepo.
 
 ## Why workers matter
 
@@ -10,7 +10,7 @@ This matters because operational behavior, reload behavior, queue execution, bro
 
 ## `bean.worker`
 
-The legacy docs highlight a global worker-management bean with capabilities such as:
+A global worker-management bean provides capabilities such as:
 
 - get current worker id
 - exit current worker

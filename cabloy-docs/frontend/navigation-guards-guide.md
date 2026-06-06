@@ -1,6 +1,6 @@
 # Navigation Guards Guide
 
-This page migrates the highest-value ideas from the legacy Zova navigation-guards documentation.
+This guide explains how navigation guards work in Zova within the Cabloy monorepo.
 
 ## Why navigation guards matter
 
@@ -14,7 +14,7 @@ Typical uses include:
 
 ## Home-base guard entrypoint
 
-The legacy docs highlighted that the `home-base` module provides a router-guard service hook where custom logic can be added.
+The `home-base` module provides a router-guard service hook where custom logic can be added.
 
 Representative shape:
 
@@ -52,7 +52,7 @@ That means route configuration and guard behavior should be read together, not a
 
 ## SSR-sensitive detail
 
-The legacy example also references SSR-related configuration such as cookie handling on the server side.
+The example also references SSR-related configuration such as cookie handling on the server side.
 
 So guards are not purely a client-side router concern. In Cabloy/Zova, they can also intersect with SSR behavior.
 

@@ -1,6 +1,6 @@
 # Relations Guide
 
-This page migrates the highest-value ideas from the legacy Vona ORM relations documentation.
+This guide explains how ORM relations work in Vona within the Cabloy monorepo.
 
 ## Why relations matter
 
@@ -16,7 +16,7 @@ That makes relations one of the most important bridges between persistence struc
 
 ## Four relation kinds
 
-The legacy docs highlight four main relation types:
+Four main relation types are supported:
 
 - `hasOne`
 - `belongsTo`
@@ -36,7 +36,7 @@ This is important because nested insert/update/delete behavior can be expressed 
 
 ## `belongsTo`
 
-The legacy docs frame `belongsTo` mainly as a query-time relationship.
+`belongsTo` is mainly a query-time relationship.
 
 That means it is especially useful for retrieving related parent-side data through model-aware query operations.
 
@@ -54,7 +54,7 @@ This matters because many real business systems depend on explicit join-table st
 
 ## Metadata regeneration
 
-The legacy docs warn that relation changes require regenerating metadata.
+Relation changes require regenerating metadata.
 
 That is important for AI workflows because relation changes are not purely local edits. They can affect type generation and downstream framework behavior.
 

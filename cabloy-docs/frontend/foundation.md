@@ -1,18 +1,18 @@
 # Frontend Foundation
 
-This page migrates the most important architectural ideas from the legacy Zova introduction into the new unified docs site.
+This guide explains the core architectural role of Zova in the Cabloy monorepo.
 
 ## What Zova is in Cabloy
 
 Zova is the frontend half of the Cabloy fullstack architecture.
 
-Its legacy positioning remains useful: an intuitive frontend framework that combines strengths associated with Vue3 reactivity, React-style TSX rendering, and Angular-style IOC.
+It is an intuitive frontend framework that combines strengths associated with Vue3 reactivity, React-style TSX rendering, and Angular-style IOC.
 
 ## Why that matters in practice
 
 The point of this combination is not branding. The point is to make large business systems feel more natural to write and maintain.
 
-The legacy docs repeatedly emphasized three enduring ideas:
+Three enduring ideas define this design:
 
 - intuitive reactive code
 - elegant structure for complex systems
@@ -20,7 +20,7 @@ The legacy docs repeatedly emphasized three enduring ideas:
 
 ## UI-library flexibility
 
-The legacy introduction also made an important point that still matters in the new monorepo docs:
+One point still matters throughout the monorepo docs:
 
 Zova is not tied to one UI library.
 
@@ -33,7 +33,7 @@ So docs and skills must separate shared Zova principles from edition-specific UI
 
 ## Enduring frontend capabilities
 
-From the legacy introduction, the highest-value Zova capabilities to preserve in the new docs are:
+The highest-value Zova capabilities to preserve in the unified docs are:
 
 - SSR support across `SSR`, `SPA`, `Web`, and `Admin` flows
 - dual-layer tabs navigation

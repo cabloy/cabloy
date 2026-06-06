@@ -1,6 +1,6 @@
 # Page Guide
 
-This page migrates the highest-value ideas from the legacy Zova page introduction.
+This guide explains how pages work in Zova within the Cabloy monorepo.
 
 ## What a page means in Zova
 
@@ -25,7 +25,7 @@ npm run zova :create:page counter -- --module=demo-student
 
 ## Route path generation
 
-The legacy docs highlighted that Zova automatically derives the page path from the module and page names.
+Zova automatically derives the page path from the module and page names.
 
 Representative example:
 
@@ -86,7 +86,7 @@ class ControllerPageCounter {
 
 ## Add style
 
-The legacy docs also showed that Zova pages can attach style through built-in CSS-in-JS support.
+Zova pages can also attach style through built-in CSS-in-JS support.
 
 Representative pattern:
 

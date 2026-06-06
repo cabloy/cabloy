@@ -1,12 +1,12 @@
 # Component Props Guide
 
-This page migrates the highest-value ideas from the legacy Zova component-props documentation.
+This guide explains how component props work in Zova within the Cabloy monorepo.
 
 ## Why Zova props feel different
 
 In Zova, component design does not force a hard separation between `Props`, `Emits`, and `Slots` in the same way many Vue codebases do.
 
-The legacy docs highlight a more unified approach centered on component props, which makes the programming model more concise and TypeScript-friendly.
+Zova uses a more unified approach centered on component props, which makes the programming model more concise and TypeScript-friendly.
 
 ## Add props support
 
@@ -47,7 +47,7 @@ class ControllerCard {
 
 ## Use props in the controller
 
-The legacy docs show that Zova injects `$props` into the controller base class.
+Zova injects `$props` into the controller base class.
 
 Representative pattern:
 

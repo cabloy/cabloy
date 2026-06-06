@@ -1,10 +1,10 @@
 # ORM Guide
 
-This page migrates the highest-value ideas from the legacy Vona ORM introduction.
+This guide explains the role of Vona ORM in the Cabloy monorepo.
 
 ## Why Vona ORM matters
 
-The legacy docs position Vona ORM as an intuitive and powerful ORM engine built around TypeScript, strong typing, and dynamic DTO inference.
+Vona ORM is an intuitive and powerful ORM engine built around TypeScript, strong typing, and dynamic DTO inference.
 
 For the new Cabloy docs, the most important takeaway is that Vona ORM is not just a thin query wrapper. It is a framework-level data system that connects:
 
@@ -18,7 +18,7 @@ For the new Cabloy docs, the most important takeaway is that Vona ORM is not jus
 
 ## Core capabilities
 
-The legacy docs highlight a number of enduring ORM capabilities:
+Its core ORM capabilities include:
 
 - multiple databases and multiple datasources
 - dynamic datasource support

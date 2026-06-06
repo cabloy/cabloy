@@ -1,6 +1,6 @@
 # Model Architecture
 
-This page migrates the highest-value architectural ideas from the legacy Zova model introduction.
+This guide explains the overall model architecture in Zova within the Cabloy monorepo.
 
 ## Why Zova models matter
 
@@ -10,7 +10,7 @@ This is one of the most important architectural ideas in Zova.
 
 ## Four kinds of global state
 
-The legacy docs framed the problem in terms of four common data categories:
+The model architecture can be understood through four common data categories:
 
 - asynchronous data, usually from the server
 - local storage data
@@ -21,13 +21,13 @@ In Zova, these can all participate in one broader model-centered system instead 
 
 ## Relationship to TanStack Query
 
-The legacy docs made this explicit: the base of Zova Model is TanStack Query.
+One key point is explicit: the base of Zova Model is TanStack Query.
 
 That matters because Zova is not discarding the strengths of TanStack Query. It is building a more unified and framework-friendly usage model on top of it.
 
 ## Key model capabilities
 
-The legacy docs highlighted several important capabilities that remain central in the new docs:
+Several important capabilities remain central in the unified docs:
 
 ### 1. Support for async and sync data
 
@@ -47,7 +47,7 @@ When multiple parts of the app need the same data, the framework avoids unnecess
 
 ### 5. Memory optimization
 
-The legacy docs emphasized that model-managed data does not need to occupy memory forever. Cache lifecycle and release behavior matter, especially for large long-running applications.
+Model-managed data does not need to occupy memory forever. Cache lifecycle and release behavior matter, especially for large long-running applications.
 
 ### 6. Persistence
 
@@ -63,7 +63,7 @@ Because data is managed through model beans, the bean identity itself helps prov
 
 ## Create a model bean
 
-Representative legacy pattern:
+Representative pattern:
 
 ```typescript
 import { Model } from 'zova';

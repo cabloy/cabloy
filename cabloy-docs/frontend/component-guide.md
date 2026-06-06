@@ -1,6 +1,6 @@
 # Component Guide
 
-This page migrates the highest-value ideas from the legacy Zova component introduction.
+This guide explains how components work in Zova within the Cabloy monorepo.
 
 ## What a component means in Zova
 
@@ -36,7 +36,7 @@ class ControllerCard extends BeanControllerBase {
 
 ## Component wrapper
 
-The legacy docs emphasized that Zova automatically creates a wrapper component for each component.
+Zova automatically creates a wrapper component for each component.
 
 Representative example:
 
@@ -61,7 +61,7 @@ class RenderPageCounter {
 
 ## Async loading behavior
 
-The legacy docs also highlighted that component wrappers can participate in asynchronous loading behavior automatically.
+Component wrappers can also participate in asynchronous loading behavior automatically.
 
 This matters because the wrapper is not just a naming convenience. It is part of how Zova turns modular code into practical runtime behavior.
 

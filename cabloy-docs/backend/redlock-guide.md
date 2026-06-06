@@ -1,6 +1,6 @@
 # Redlock Guide
 
-This page migrates the highest-value ideas from the legacy Vona redlock documentation.
+This guide explains how Redlock works in Vona within the Cabloy monorepo.
 
 ## Why redlock matters
 
@@ -18,7 +18,7 @@ npm run vona :create:bean meta redlock -- --module=demo-student
 
 ## Lock resource types
 
-The legacy docs make an important design point: lock resources should be typed.
+One important design point is that lock resources should be typed.
 
 Representative areas include:
 
@@ -29,7 +29,7 @@ This is valuable because lock identity becomes part of the typed contract rather
 
 ## `lock` vs `lockIsolate`
 
-The legacy docs distinguish two lock methods:
+Two lock methods are supported:
 
 - `lock`
 - `lockIsolate`
@@ -40,7 +40,7 @@ That is a very important Vona-specific detail.
 
 ## Template-literal resource names
 
-The legacy docs also highlight that lock-resource types can use template literal patterns such as per-user lock names.
+Lock-resource types can also use template literal patterns such as per-user lock names.
 
 This is important because it lets the code remain both flexible and typed.
 

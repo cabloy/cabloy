@@ -1,6 +1,6 @@
 # Broadcast Guide
 
-This page migrates the highest-value ideas from the legacy Vona broadcast documentation.
+This guide explains how broadcast works in Vona within the Cabloy monorepo.
 
 ## Why broadcast matters
 
@@ -46,7 +46,7 @@ this.scope.broadcast.echo.emit({ message: 'Hello world' });
 
 ## Broadcast options
 
-The legacy docs highlight options such as:
+Broadcast options include:
 
 - `instance`
 - `transaction`

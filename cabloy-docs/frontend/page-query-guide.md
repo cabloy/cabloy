@@ -1,6 +1,6 @@
 # Page Query Guide
 
-This page migrates the highest-value ideas from the legacy Zova page-query documentation.
+This guide explains how typed page query handling works in Zova within the Cabloy monorepo.
 
 ## Why page query support matters
 
@@ -18,7 +18,7 @@ npm run zova :refactor:pageQuery counter -- --module=demo-student
 
 ## Add query schema
 
-The legacy docs showed that query support becomes explicit through a Zod schema.
+Query support becomes explicit through a Zod schema.
 
 Representative pattern:
 

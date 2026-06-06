@@ -1,6 +1,6 @@
 # Frontend Scripts
 
-This page migrates the most important Zova script guidance into the new monorepo docs.
+This guide explains the main Zova script workflows in the Cabloy monorepo.
 
 ## Shared rule
 

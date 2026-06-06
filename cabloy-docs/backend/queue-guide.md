@@ -1,6 +1,6 @@
 # Queue Guide
 
-This page migrates the highest-value ideas from the legacy Vona queue documentation.
+This guide explains how queues work in Vona within the Cabloy monorepo.
 
 ## Why queues matter
 
@@ -36,7 +36,7 @@ The important point is that queue jobs are strongly typed at both input and outp
 
 ## Push jobs
 
-The legacy docs distinguish two main modes:
+Two main modes are supported:
 
 - `push` for fire-and-forget jobs
 - `pushAsync` for jobs where the caller awaits a result
@@ -56,7 +56,7 @@ That means queue behavior is not only “run later.” It also participates in c
 
 ## Enable/disable and environment scoping
 
-The legacy docs also show that queues can be enabled or limited by environment metadata such as flavor or mode.
+Queues can also be enabled or limited by environment metadata such as flavor or mode.
 
 This is especially important in Cabloy because runtime environment and flavor are first-class concepts.
 

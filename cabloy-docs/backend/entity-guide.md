@@ -1,6 +1,6 @@
 # Entity Guide
 
-This page migrates the most important ideas from the legacy Vona entity documentation.
+This guide explains how entities work in Vona within the Cabloy monorepo.
 
 ## Create an entity
 
@@ -23,7 +23,7 @@ The entity defines the table-oriented data shape that the model layer works with
 
 ## Table-name convention
 
-The legacy docs emphasized that Vona’s modular system needs a safe table-naming convention to reduce conflicts.
+Vona’s modular system needs a safe table-naming convention to reduce conflicts.
 
 General pattern:
 
@@ -43,7 +43,7 @@ A key Vona idea is that entity fields can simultaneously express:
 - validation rules
 - OpenAPI metadata
 
-That is why the legacy docs centered entity fields around `@Api.field`.
+That is why entity fields are centered around `@Api.field`.
 
 Representative pattern:
 
@@ -56,7 +56,7 @@ class EntityStudent {
 
 You can also extend the field definition with richer schema and metadata.
 
-Examples from the legacy docs included:
+Representative examples include:
 
 - explicit schema rules such as `z.number().min(18)`
 - helpers such as `v.default`, `v.optional`, `v.array`
@@ -64,7 +64,7 @@ Examples from the legacy docs included:
 
 ## I18n-aware metadata
 
-The old docs also highlighted that OpenAPI-facing field metadata can be localized.
+OpenAPI-facing field metadata can also be localized.
 
 That means entities are not only persistence definitions. They can also participate in developer-facing and API-facing metadata generation.
 

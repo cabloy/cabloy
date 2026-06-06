@@ -1,10 +1,10 @@
 # Cache Guide
 
-This page migrates the highest-value ideas from the legacy Vona ORM caching documentation.
+This guide explains how ORM caching works in Vona within the Cabloy monorepo.
 
 ## Why caching is first-class in Vona
 
-The legacy docs argue that large business systems often fail not because performance is impossible, but because performance strategy is bolted on too late and too inconsistently.
+Large business systems often fail not because performance is impossible, but because performance strategy is bolted on too late and too inconsistently.
 
 Vona responds by moving caching into the framework core.
 
@@ -12,7 +12,7 @@ That means cache behavior is not only an optimization technique. It is part of t
 
 ## Out-of-the-box behavior
 
-A major legacy point is that Vona ORM offers out-of-the-box caching.
+One major point is that Vona ORM offers out-of-the-box caching.
 
 In practice, that means ordinary ORM operations can benefit from framework-managed cache behavior without forcing the developer to hand-maintain every cache path.
 
@@ -40,7 +40,7 @@ This is one of the key Vona ideas: query cache and entity cache cooperate instea
 
 ## Cache configuration
 
-The legacy docs show configuration at both:
+Cache configuration exists at both:
 
 - model options
 - app config
@@ -54,7 +54,7 @@ Representative areas include:
 
 ## Consistency strategy
 
-The legacy docs also emphasize that Vona clears or compensates cache automatically when model mutation occurs.
+Vona also clears or compensates cache automatically when model mutation occurs.
 
 That matters because a useful cache is not only about hits. It is about correctness under change.
 

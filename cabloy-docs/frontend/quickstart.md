@@ -1,6 +1,6 @@
 # Frontend Quickstart
 
-This page migrates the highest-value ideas from the legacy Zova quickstart into the monorepo docs.
+This guide explains the fastest way to get oriented on the frontend side of the Cabloy monorepo.
 
 ## When to use this page
 
@@ -9,7 +9,7 @@ Use this page when you want to understand the frontend side of Cabloy quickly:
 - what Zova is responsible for
 - how frontend development starts from the monorepo root
 - how editions affect UI assumptions
-- how legacy project-template guidance maps into the current Cabloy structure
+- how older project-template guidance maps into the current Cabloy structure
 
 ## Monorepo-first start
 

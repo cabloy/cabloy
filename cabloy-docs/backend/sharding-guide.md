@@ -1,10 +1,10 @@
 # Sharding Guide
 
-This page bridges the legacy Vona ORM advanced sharding page into the new unified docs site.
+This guide points from the backend docs to the deeper Cabloy sharding architecture.
 
 ## Current source of truth
 
-The legacy ORM page for sharding is intentionally thin because the actual sharding capability is provided by the `a-cabloy` suite.
+The older ORM page for sharding is intentionally thin because the actual sharding capability is provided by the `a-cabloy` suite.
 
 In the new docs structure, treat sharding as a Cabloy-level capability that affects backend data architecture.
 

@@ -1,16 +1,16 @@
 # DTO Infer and Generation
 
-This page migrates the highest-value ideas from the legacy Vona ORM DTO inference documentation.
+This guide explains how DTO inference and generation work in Vona within the Cabloy monorepo.
 
 ## Why DTO inference matters
 
-The legacy docs identify a real large-system problem: DTOs are essential for validation and OpenAPI metadata, but manually maintaining them becomes expensive and error-prone as models and relationships grow more complex.
+DTOs are essential for validation and OpenAPI metadata, but manually maintaining them becomes expensive and error-prone as models and relationships grow more complex.
 
 Vona addresses that by dynamically inferring and generating DTOs from model structure and query shape.
 
 ## DTO tools
 
-The legacy docs highlight several DTO-oriented tools, including:
+Several DTO-oriented tools are available, including:
 
 - `$Dto.get`
 - `$Dto.listAndCount`
@@ -25,7 +25,7 @@ These tools let DTOs emerge from model-aware structure instead of always being h
 
 ## Main-details example
 
-The legacy docs illustrate this with an `Order -> Product` relation.
+A representative example uses an `Order -> Product` relation.
 
 The key lesson is that when the return shape is richer than a simple entity array, an inferred DTO can capture the actual result shape more accurately than a hand-waved entity annotation.
 
@@ -39,7 +39,7 @@ This shows the dynamic DTO layer participating directly in controller return con
 
 ## Encapsulating inferred DTOs
 
-The legacy docs also show that inferred DTO logic can be wrapped inside an explicit DTO class for reuse.
+Inferred DTO logic can also be wrapped inside an explicit DTO class for reuse.
 
 That is useful because it gives teams a spectrum of options:
 

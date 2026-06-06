@@ -1,6 +1,6 @@
 # Frontend Design Principles
 
-This page distills the highest-value ideas from the legacy Zova "How intuitive, elegant, and powerful?" document into the new unified docs site.
+This guide explains the core design principles behind Zova in the Cabloy monorepo.
 
 ## Intuitive reactivity
 
@@ -12,7 +12,7 @@ The practical design goal is not just shorter syntax. It is to keep business cod
 
 A major Zova idea is that multiple state categories can be handled through one model-centered mental model instead of unrelated mechanisms.
 
-The legacy explanation highlighted four common categories:
+Four common categories help explain this model:
 
 - asynchronous server-side data
 - local storage data
@@ -23,7 +23,7 @@ In Zova, these are intentionally brought under a more unified `Model` abstractio
 
 ## IOC as the sharing model
 
-The legacy docs also emphasized that state and behavior sharing across several scopes can be expressed through IOC rather than a pile of unrelated patterns.
+State and behavior sharing across several scopes can be expressed through IOC rather than a pile of unrelated patterns.
 
 Representative scopes include:
 

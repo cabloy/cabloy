@@ -1,6 +1,6 @@
 # DTO Guide
 
-This page migrates the high-value parts of the legacy Vona DTO documentation.
+This guide explains how DTOs work in Vona within the Cabloy monorepo.
 
 ## Create a DTO
 
@@ -43,7 +43,7 @@ class DtoStudentCreate {
 
 ## DTO options
 
-The legacy docs highlighted three especially important DTO option areas:
+Three especially important DTO option areas are:
 
 - `independent`
 - `openapi`
@@ -59,7 +59,7 @@ That matters because the DTO layer participates in the broader framework configu
 
 ## Mapped class tools
 
-One of the most valuable legacy DTO topics was reuse through mapped-class helpers.
+One of the most valuable DTO topics is reuse through mapped-class helpers.
 
 Representative tools include:
 

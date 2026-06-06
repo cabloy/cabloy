@@ -1,6 +1,6 @@
 # Theme Guide
 
-This page migrates the highest-value ideas from the legacy Zova `$theme` documentation.
+This guide explains how themes work in Zova within the Cabloy monorepo.
 
 ## Why Zova themes matter
 
@@ -10,7 +10,7 @@ This matters because Cabloy needs a frontend architecture that can survive acros
 
 ## Two theme dimensions
 
-The legacy docs highlight two major dimensions of theme switching:
+Two major dimensions of theme switching are:
 
 - **light/dark mode** with `light`, `dark`, and `auto`
 - **brand style** changes, often centered on brand colors but not limited to them
@@ -34,7 +34,7 @@ Representative method:
 
 ## Theme beans
 
-The legacy docs explain that each UI library provides a default theme bean, and theme beans are responsible for returning token values and deeper theme customizations.
+Each UI library provides a default theme bean, and theme beans are responsible for returning token values and deeper theme customizations.
 
 Representative pattern:
 
@@ -63,7 +63,7 @@ export class ThemeDefault implements IThemeBase {
 
 ## Custom themes
 
-The legacy docs also show that custom theme beans can be created by following the same pattern.
+Custom theme beans can also be created by following the same pattern.
 
 That makes the theme system programmable rather than locked to a small fixed set of predefined skins.
 

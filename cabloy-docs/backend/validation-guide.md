@@ -1,6 +1,6 @@
 # Validation Guide
 
-This page migrates the highest-value ideas from the legacy Vona validation documentation.
+This guide explains how validation works in Vona within the Cabloy monorepo.
 
 ## Why validation matters in Vona
 
@@ -10,7 +10,7 @@ That means validation is not an isolated input-checking step. It is part of the 
 
 ## Automatic schema inference
 
-The legacy docs emphasize a very important convenience: if a parameter type is a basic type, DTO, or entity, Vona can automatically infer the corresponding Zod schema.
+One very important convenience is that if a parameter type is a basic type, DTO, or entity, Vona can automatically infer the corresponding Zod schema.
 
 Representative cases:
 
@@ -32,7 +32,7 @@ findOne(@Arg.query('id', z.number().min(6)) id: number) {}
 
 ## Extending the inferred schema
 
-The legacy docs also show that inferred schemas can be extended through helper tools like:
+Inferred schemas can also be extended through helper tools like:
 
 - `v.optional`
 - `v.default`
@@ -49,7 +49,7 @@ This is a good example of validation being connected to higher-level query seman
 
 ## Tool groups
 
-The legacy docs organize helper tools into groups such as:
+These helper tools fall into groups such as:
 
 - basic tools
 - string tools

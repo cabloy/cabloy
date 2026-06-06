@@ -1,6 +1,6 @@
 # Runtime Environments and Flavors
 
-This page migrates the high-value configuration model from the legacy Vona environment docs.
+This guide explains how runtime environments and flavors work in Vona within the Cabloy monorepo.
 
 ## Why this model exists
 
@@ -145,7 +145,7 @@ app.config.meta.flavor === 'customA';
 
 ## Type support for custom flavors
 
-The legacy docs also highlighted that custom flavor names can be added to type definitions for better editor support.
+Custom flavor names can also be added to type definitions for better editor support.
 
 Representative pattern:
 

@@ -1,6 +1,6 @@
 # SSR SEO Meta
 
-This page migrates the highest-value ideas from the legacy Zova SEO-meta SSR documentation.
+This guide explains how SSR SEO metadata works in Zova within the Cabloy monorepo.
 
 ## What SEO meta covers
 
@@ -32,7 +32,7 @@ this.$useMeta({
 
 ## Static and reactive metadata
 
-The legacy docs highlighted two useful modes:
+Two useful modes are supported:
 
 - **static meta** for values known at initialization time
 - **reactive meta** for values that should update when bound state changes

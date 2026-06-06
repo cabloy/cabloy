@@ -1,12 +1,12 @@
 # ORM Select Guide
 
-This page migrates the highest-value ideas from the legacy Vona ORM select documentation.
+This guide explains how ORM select operations work in Vona within the Cabloy monorepo.
 
 ## Why select operations matter
 
 Select operations are where model definitions, relationships, filters, ordering, pagination, and caching behavior begin to interact.
 
-The legacy docs show that Vona does not treat queries as untyped string fragments. It provides a richer model-aware query surface.
+Vona does not treat queries as untyped string fragments. It provides a richer model-aware query surface.
 
 ## Basic select operations
 
@@ -24,7 +24,7 @@ These operations show the basic query vocabulary that services can build on.
 
 ## Rich select parameters
 
-The legacy docs show that `select` can combine:
+`select` can combine:
 
 - `columns`
 - `where`
@@ -39,7 +39,7 @@ This matters because Vona ORM encourages structured query building rather than a
 
 ## `where` operators
 
-The legacy docs also define a broad operator model, including examples like:
+The operator model is broad and includes examples like:
 
 - `_eq_`
 - `_gt_`
@@ -54,7 +54,7 @@ That operator vocabulary is part of the Cabloy data language and should be reuse
 
 ## `joins` and relationships
 
-A key legacy insight is that joinable tables often come from the relationships already declared on the model.
+A key insight is that joinable tables often come from the relationships already declared on the model.
 
 That means joins are not floating SQL trivia. They are downstream from model relationship design.
 

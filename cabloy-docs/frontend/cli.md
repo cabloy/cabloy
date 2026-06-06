@@ -1,6 +1,6 @@
 # Frontend CLI
 
-This page migrates the core Zova CLI usage guidance into the unified docs site.
+This guide explains how to use the Zova CLI in the Cabloy monorepo.
 
 ## Why the CLI matters
 

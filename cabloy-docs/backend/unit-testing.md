@@ -1,10 +1,10 @@
 # Unit Testing
 
-This page migrates the highest-value ideas from the legacy Vona unit-test documentation.
+This guide explains the most important Vona testing workflows in the Cabloy monorepo.
 
 ## Why testing is emphasized
 
-The legacy docs strongly recommend test-driven development, and that recommendation still makes sense in the Cabloy monorepo.
+Test-driven development remains a strong default in the Cabloy monorepo.
 
 Vona’s testing story is valuable because it is closely integrated with:
 
@@ -32,7 +32,7 @@ From the root repository:
 npm run test
 ```
 
-The legacy docs describe the test flow as including:
+A typical Vona test flow includes:
 
 1. create a global `app` object
 2. clean Redis data
@@ -70,7 +70,7 @@ await app.bean.executor.mockCtx(async () => {
 });
 ```
 
-The legacy docs also showed locale-sensitive variants and additional request-context helpers.
+Locale-sensitive variants and additional request-context helpers are also available.
 
 ## Working with module scope in tests
 
@@ -101,7 +101,7 @@ This is especially useful because it exercises the controller path more realisti
 
 ## Authentication simulation
 
-The legacy docs also showed that tests can simulate signin and signout behavior.
+Tests can also simulate signin and signout behavior.
 
 Representative patterns include:
 
@@ -113,7 +113,7 @@ This is important for testing permission-sensitive flows.
 
 ## Assertion and error-handling helpers
 
-The legacy docs highlighted two practical testing helpers:
+Two practical testing helpers are:
 
 - Node’s built-in `assert`
 - `catchError` from `@cabloy/utils`

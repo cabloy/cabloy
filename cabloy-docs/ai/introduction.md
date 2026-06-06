@@ -5,7 +5,7 @@ The Cabloy monorepo is a good fit for AI-assisted development because the source
 - root scripts for shared workflows
 - Vona CLI source and command groups
 - Zova CLI source and command groups
-- legacy docs that still capture valuable concepts
+- archived docs that still capture valuable concepts
 - internal engineering docs for maintainers
 - Claude commands and skills
 

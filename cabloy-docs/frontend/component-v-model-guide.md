@@ -1,6 +1,6 @@
 # Component v-model Guide
 
-This page migrates the highest-value ideas from the legacy Zova `v-model` component documentation.
+This guide explains how component `v-model` works in Zova within the Cabloy monorepo.
 
 ## Why Zova `v-model` matters
 
@@ -78,7 +78,7 @@ class ControllerOther {
 
 ## Named `v-model` parameters
 
-The legacy docs also show that `modelValue` is only the default binding name. Other binding names can be added, for example `title`.
+`modelValue` is only the default binding name. Other binding names can be added, for example `title`.
 
 Representative generation command:
 
@@ -96,7 +96,7 @@ Representative usage pattern:
 
 Zova also supports modifiers through the same broader binding model.
 
-The legacy example used a custom `capitalize` modifier, implemented by passing a setter transformation into `$useModel`.
+One representative example uses a custom `capitalize` modifier, implemented by passing a setter transformation into `$useModel`.
 
 That is useful because it shows `v-model` behavior in Zova is programmable and explicit, not just a fixed syntax feature.
 

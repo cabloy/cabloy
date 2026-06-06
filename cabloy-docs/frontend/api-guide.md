@@ -1,6 +1,6 @@
 # API Guide
 
-This page migrates the highest-value ideas from the legacy Zova `$api` documentation.
+This guide explains how `$api` works in Zova within the Cabloy monorepo.
 
 ## What `$api` is for
 
@@ -53,7 +53,7 @@ class ControllerTest {
 
 ## Cross-module API access
 
-The legacy docs also showed cross-module usage through scope injection.
+Cross-module usage is also supported through scope injection.
 
 Representative pattern:
 

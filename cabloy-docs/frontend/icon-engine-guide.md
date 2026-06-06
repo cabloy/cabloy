@@ -1,16 +1,16 @@
 # Icon Engine Guide
 
-This page migrates the highest-value ideas from the legacy Zova icon-engine documentation.
+This guide explains how the icon engine works in Zova within the Cabloy monorepo.
 
 ## Why the icon engine exists
 
-The legacy docs make a practical point: in large systems, no fixed built-in icon set is ever enough.
+In large systems, no fixed built-in icon set is ever enough.
 
 Zova’s icon engine solves that problem by treating icons as a modular, asynchronous, UI-library-independent resource system.
 
 ## Core advantages
 
-The legacy docs highlight several important advantages:
+Several important advantages stand out:
 
 - easy icon maintenance
 - performance-conscious loading behavior
@@ -33,7 +33,7 @@ An icon module can contain multiple groups, and a system can contain multiple ic
 
 ## Naming convention
 
-The legacy docs define a clear naming convention:
+The naming convention is:
 
 ```text
 {moduleName}:{groupName}:{iconName}
@@ -53,7 +53,7 @@ This matters because icon use is part of the framework’s typed, discoverable r
 
 ## Access helpers
 
-The legacy docs highlight two important helpers:
+Two important helpers are:
 
 - `icon` for typed icon-name access and completion
 - `iconh` for directly generating the icon vnode
@@ -66,7 +66,7 @@ This is one of the clearest places where Zova’s architecture deliberately prot
 
 ## Create and build icons
 
-The legacy docs describe a simple process:
+A simple process looks like this:
 
 1. initialize the icon skeleton
 2. place SVG icons into the module/group directory

@@ -1,12 +1,12 @@
 # Fullstack Vona + Zova Integration
 
-This page replaces the legacy standalone-repo integration guidance with a monorepo-native workflow.
+This guide explains the current monorepo-native workflow for integrating Vona and Zova.
 
-## What changed from the old docs
+## Why the workflow looks different in the monorepo
 
-The old Vona docs described integrating Zova by cloning a separate `zova` repository and copying its built output into Vona manually.
+Earlier standalone-repo workflows often described integrating Zova by cloning a separate repository and copying its built output into Vona manually.
 
-That is no longer the preferred explanation for Cabloy.
+That is not the preferred Cabloy workflow.
 
 In the current monorepo:
 
@@ -75,7 +75,7 @@ Use the root `package.json` as the first workflow surface.
 
 ### 3. Use Zova build and REST generation deliberately
 
-For frontend builds and type generation, inspect the relevant Zova flavor scripts instead of hardcoding copy paths from legacy docs.
+For frontend builds and type generation, inspect the relevant Zova flavor scripts instead of hardcoding copy paths or ad hoc integration steps.
 
 ### 4. Verify both sides together
 

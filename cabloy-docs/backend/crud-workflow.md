@@ -1,6 +1,6 @@
 # CRUD Workflow
 
-This page migrates the highest-value ideas from the legacy Vona CRUD generator documentation.
+This guide explains the Vona CRUD generator workflow in the Cabloy monorepo.
 
 ## Why this page matters
 
@@ -18,7 +18,7 @@ npm run vona :tools:crud student -- --module=demo-student
 
 ## Generated structure
 
-The legacy docs highlighted that the generator creates a connected set of files, typically including:
+The generator creates a connected set of files, typically including:
 
 - controller
 - service

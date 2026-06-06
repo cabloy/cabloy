@@ -24,7 +24,7 @@ The editions exist to support different product and distribution goals.
 
 - public repository
 - baseline fullstack reference implementation
-- current default examples and legacy docs source
+- current default examples in this public monorepo
 
 ### Cabloy Start
 

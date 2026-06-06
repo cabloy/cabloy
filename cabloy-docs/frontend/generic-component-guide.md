@@ -1,6 +1,6 @@
 # Generic Component Guide
 
-This page migrates the highest-value idea from the legacy Zova generic-component documentation.
+This guide explains how generic components work in Zova within the Cabloy monorepo.
 
 ## Why generic components matter
 
@@ -18,7 +18,7 @@ npm run zova :refactor:componentGeneric card -- --module=demo-student
 
 ## Why the CLI matters here
 
-The legacy docs keep this topic intentionally short, but the implication is important: generic-component conversion is not treated as an ad hoc manual rewrite. It is part of the framework’s supported refactor surface.
+This topic is intentionally short, but the implication is important: generic-component conversion is not treated as an ad hoc manual rewrite. It is part of the framework’s supported refactor surface.
 
 That means the safest default is to let the Zova refactor command establish the skeleton first, then refine the typing and behavior.
 

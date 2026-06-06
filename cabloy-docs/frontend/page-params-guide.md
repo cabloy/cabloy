@@ -1,6 +1,6 @@
 # Page Params Guide
 
-This page migrates the highest-value ideas from the legacy Zova page-params documentation.
+This guide explains how typed page params work in Zova within the Cabloy monorepo.
 
 ## Why page params support matters
 
@@ -26,7 +26,7 @@ export const ControllerPageCounterSchemaParams = z.object({
 
 ## Route record requirements
 
-The legacy docs highlighted an important rule: if a page supports params, the route should expose the proper route structure and route name.
+One important rule is that if a page supports params, the route should expose the proper route structure and route name.
 
 Representative route idea:
 

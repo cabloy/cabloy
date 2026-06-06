@@ -1,6 +1,6 @@
 # Page Route Guide
 
-This page migrates the highest-value ideas from the legacy Zova page-route documentation.
+This guide explains how page route records work in Zova within the Cabloy monorepo.
 
 ## Why route records matter
 
@@ -24,7 +24,7 @@ export const routes: IModuleRoute[] = [
 
 ## Core route fields
 
-The legacy docs highlighted these route fields:
+These route fields are the most important:
 
 - `path`
 - `name`
@@ -50,7 +50,7 @@ If a page uses params, the route name becomes especially important because typed
 
 ## `alias`
 
-Aliases are supported, but the legacy docs note that alias handling belongs in the broader routing configuration rather than being treated as an isolated route-local trick.
+Aliases are supported, but alias handling belongs in the broader routing configuration rather than being treated as an isolated route-local trick.
 
 ## `meta`
 

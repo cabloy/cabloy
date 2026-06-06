@@ -1,16 +1,16 @@
 # CSS-in-JS Guide
 
-This page migrates the highest-value ideas from the legacy Zova CSS-in-JS introduction.
+This guide explains the role of CSS-in-JS in Zova within the Cabloy monorepo.
 
 ## Why CSS-in-JS matters in Zova
 
 Zova uses a built-in CSS-in-JS approach so styling can stay close to component and page logic without collapsing into uncontrolled global CSS.
 
-The legacy docs explain this through TypeStyle and emphasize that the goal is not novelty. The goal is a styling system that stays flexible, scoped, and framework-friendly in larger applications.
+This is often explained through TypeStyle, but the main point is not novelty. The goal is a styling system that stays flexible, scoped, and framework-friendly in larger applications.
 
 ## Core benefits
 
-The legacy docs highlighted several enduring benefits:
+Several enduring benefits stand out:
 
 - scoped styles that reduce conflicts
 - dynamic style generation from reactive state

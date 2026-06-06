@@ -1,6 +1,6 @@
 # OpenAPI Guide
 
-This page migrates the highest-value ideas from the legacy Vona Swagger/OpenAPI documentation.
+This guide explains how OpenAPI works in Vona within the Cabloy monorepo.
 
 ## Why OpenAPI matters in Cabloy
 
@@ -12,7 +12,7 @@ That is why OpenAPI belongs in the core Cabloy knowledge graph rather than in an
 
 ## Built-in endpoints
 
-The legacy docs highlight several built-in endpoints, including:
+Several built-in endpoints are available, including:
 
 - Swagger UI
 - OpenAPI JSON output
@@ -36,7 +36,7 @@ This is important because OpenAPI is treated as a first-class framework service,
 
 ## Validation and OpenAPI are linked
 
-A major legacy theme is that the same validation-oriented declaration surface also drives OpenAPI metadata generation.
+A major theme is that the same validation-oriented declaration surface also drives OpenAPI metadata generation.
 
 That means:
 
@@ -48,7 +48,7 @@ This tight linkage is one of the reasons the Cabloy contract story can stay prod
 
 ## I18n support
 
-The legacy docs also highlight that OpenAPI metadata can participate in i18n.
+OpenAPI metadata can also participate in i18n.
 
 That is useful because contract descriptions and titles are not only for machines. They are also developer-facing assets.
 

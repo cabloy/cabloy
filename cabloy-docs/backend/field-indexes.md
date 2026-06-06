@@ -1,6 +1,6 @@
 # Field Indexes
 
-This page migrates the highest-value ideas from the legacy Vona field-index documentation.
+This guide explains how field indexes work in Vona within the Cabloy monorepo.
 
 ## Why field indexes are a first-class concept
 
@@ -45,7 +45,7 @@ This expresses:
 
 ## Configure indexes: typed style
 
-The legacy docs also showed a typed style:
+A typed style is also supported:
 
 ```typescript
 import { $tableColumns } from 'vona-module-a-ormutils';
