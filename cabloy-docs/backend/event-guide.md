@@ -26,6 +26,12 @@ That means listeners can:
 
 An event is defined as a typed bean.
 
+Representative generation workflow:
+
+```bash
+npm run vona :create:bean event echo -- --module=demo-student
+```
+
 Representative pattern:
 
 ```typescript
@@ -70,6 +76,12 @@ The default method receives the latest event data after listener processing, whi
 
 Event listeners attach through `@EventListener({ match: ... })`.
 
+Representative generation workflow:
+
+```bash
+npm run vona :create:bean eventListener echo -- --module=demo-student
+```
+
 Representative pattern:
 
 ```typescript
@@ -88,6 +100,8 @@ This pattern shows the key ideas:
 - listeners can transform event data
 - listeners pass control onward through `next(...)`
 
+A practical typing rule is to import the event’s data/result types into the listener instead of redefining them independently, so the event contract stays coupled at the type level while remaining decoupled at the execution level.
+
 ## Event ordering
 
 Multiple listeners can attach to the same event.
@@ -98,6 +112,11 @@ Vona supports execution ordering through:
 - `dependents`
 
 That allows event listener chains to stay explicit instead of relying on accidental load order.
+
+A useful rule of thumb is:
+
+- use `dependencies` when another listener must run before the current one
+- use `dependents` when the current listener must run before another named listener
 
 ## Enable/disable and runtime scope
 
@@ -120,6 +139,8 @@ this.bean.onion.eventListener.inspectEventListener('demo-student:echo');
 ```
 
 This is useful for debugging event composition and verifying which listeners are active.
+
+That inspect step is especially valuable before changing ordering metadata, because it lets you confirm the effective chain first instead of guessing from module load order.
 
 ## Relationship to user-access workflows
 
@@ -147,6 +168,8 @@ Use events when:
 Use direct calls when:
 
 - the behavior is tightly bound to the core logic and should not be extensible as a chain
+
+A practical example from the user-access layer is registration and activation: the core user flow can stay small, while follow-up concerns such as mail confirmation or role assignment move into listeners.
 
 ## Why this matters for AI workflows
 

@@ -41,6 +41,19 @@ Other controller AOP families participate in more specialized stages:
 - **pipe** transforms or validates request values
 - **filter** handles exceptions and logging behavior
 
+A practical controller-path mental model is:
+
+1. system middleware runs before route matching
+2. route matching happens
+3. global and local middleware wrap the matched route
+4. guards enforce access preconditions
+5. pipes transform and validate incoming values
+6. interceptors wrap controller execution
+7. the controller action runs
+8. filters handle thrown exceptions and logging customization when failures occur
+
+That model is the fastest way to decide which aspect family should own a change.
+
 ## System, global, and local scope
 
 Controller AOP also varies by scope:
@@ -50,6 +63,18 @@ Controller AOP also varies by scope:
 - **local** aspects are attached directly to a controller class or action
 
 Built-in aspects and shorthand decorators sit on top of the same general model.
+
+Across controller, internal, and external AOP, the same operational ideas appear repeatedly:
+
+- default options in the aspect definition
+- per-usage option overrides
+- app-config overrides through `config.onions`
+- enable/disable switches
+- runtime targeting through `mode` and `flavor`
+- ordering through `dependencies` and `dependents`
+- inspection of the effective chains at runtime
+
+That consistency is one of the biggest reasons the Vona AOP surface stays learnable even though it covers many different extension points.
 
 ## Validation, OpenAPI, and AOP
 
@@ -75,6 +100,12 @@ These mechanisms help keep code concise while still making transactions, logging
 External AOP uses `@Aop({ match: ... })` to attach behavior to another class by bean name.
 
 This is useful when the desired extension logic should live outside the target class, for example when layering timing, logging, lifecycle hooks, or dynamic method interception onto an existing service or bean.
+
+A simple ownership rule is:
+
+- choose **controller AOP** when the concern belongs to the HTTP request path
+- choose **internal AOP** when the behavior belongs naturally to the class that owns the method
+- choose **external AOP** when the behavior should remain decoupled from the target class source
 
 ## Recommended reading path
 

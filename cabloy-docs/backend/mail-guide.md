@@ -67,6 +67,38 @@ Projects can add additional clients for different email responsibilities, such a
 
 This is useful when different workflows need different senders, transports, or message defaults.
 
+Representative type extension:
+
+```typescript
+declare module 'vona-module-a-mail' {
+  export interface IMailClientRecord {
+    order: never;
+  }
+}
+```
+
+In the VSCode workflow, the `recordmailclient` snippet can generate the augmentation skeleton.
+
+A representative config expansion is:
+
+```typescript
+config.modules = {
+  'a-mail': {
+    defaultClient: 'system',
+    clients: {
+      system: {
+        transport: { service: 'test' },
+        defaults: { from: 'no.reply@cabloy.com' },
+      },
+      order: {
+        transport: { service: 'test' },
+        defaults: { from: 'order@cabloy.com' },
+      },
+    },
+  },
+};
+```
+
 ## `bean.mail`
 
 Vona exposes a global bean `bean.mail` for sending emails.
@@ -96,6 +128,28 @@ This is one of the most important architectural points of the mail system, becau
 
 Queue behavior can be tuned through queue config, for example worker concurrency.
 
+Representative config pattern:
+
+```typescript
+config.onions = {
+  queue: {
+    'a-mail:mail': {
+      options: {
+        worker: {
+          concurrency: 10,
+        },
+      },
+    },
+  },
+};
+```
+
+A useful ownership rule is:
+
+- request or business logic decides *that* a mail should be sent
+- `bean.mail` decides which client to use
+- the queue owns *when* the actual delivery work runs
+
 ## Relationship to user-access and event workflows
 
 Mail is commonly part of broader backend lifecycle behavior such as:
@@ -110,6 +164,8 @@ Read this guide together with:
 - [Event Guide](/backend/event-guide)
 
 Those guides explain the flows where mail often becomes a downstream effect rather than the initiating business action.
+
+In the current repo, the `a-mailconfirm` flow is a representative example: user-access events can trigger mail-confirm behavior, and that bean ultimately delegates delivery through `bean.mail.send(...)` instead of embedding transport details directly into the user workflow.
 
 ## When to use a dedicated mail client
 

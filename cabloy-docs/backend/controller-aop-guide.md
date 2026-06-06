@@ -20,6 +20,16 @@ Vona provides five main controller-facing aspect families:
 
 Middleware is used for request-path behavior that wraps execution before and after the controller action.
 
+Representative CLI generation patterns from the legacy workflow include:
+
+```bash
+npm run vona :create:bean middlewareSystem logger -- --module=demo-student
+npm run vona :create:bean middleware logger -- --module=demo-student --boilerplate=global
+npm run vona :create:bean middleware logger -- --module=demo-student
+```
+
+These commands all go through the shared `:create:bean` entrypoint, but they target different middleware scopes and boilerplates.
+
 ### Scope variants
 
 - **system middleware** runs before route matching
@@ -163,6 +173,8 @@ async findOne(@Arg.param('id') id: number) {}
 async findOne(@Arg.param('id', z.number().min(1)) id: number) {}
 ```
 
+This is why custom argument pipes are now the exception rather than the default. Reach for a custom argument pipe when the transformation itself is reusable business behavior. Reach for typed `@Arg.*` plus Zod when ordinary parameter coercion and validation are enough.
+
 For broader validation guidance, see [Validation Guide](/backend/validation-guide).
 
 ## Filter
@@ -206,6 +218,29 @@ Most controller aspect families support the same configuration ideas:
 - inspection of the effective aspect list
 
 That consistency is one of the most important reasons controller AOP stays scalable in Vona.
+
+### Representative precedence model
+
+A representative precedence pattern is:
+
+- usage-site override
+- then app-config override in `config.onions`
+- then decorator default values
+
+For example, global middleware can define defaults in the bean, be overridden in app config, and then be overridden again at a specific controller action.
+
+### Representative inspect patterns
+
+Runtime inspection is especially useful when several global aspects combine on one route.
+
+Representative examples include:
+
+```typescript
+this.bean.onion.middlewareSystem.inspect();
+this.bean.onion.middleware.inspect();
+```
+
+Those inspection helpers help explain why a route is behaving a certain way before you start rewriting aspect definitions.
 
 ## How to choose the right aspect family
 

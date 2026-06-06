@@ -60,6 +60,17 @@ FullName: zova-suite-{providerId}-{suiteName}
 ShortName: {providerId}-{suiteName}
 ```
 
+## Create modules and suites
+
+Representative CLI entrypoints are:
+
+```bash
+npm run zova :create:module moduleName -- [--suite=]
+npm run zova :create:suite suiteName
+```
+
+That matters because the CLI already knows the intended source-tree conventions and should be preferred over ad hoc manual scaffolding.
+
 ## Directory structure
 
 The project directory structure expresses this modular architecture directly.
@@ -72,6 +83,29 @@ Representative areas include:
 - `src/suite-vendor`
 
 This makes frontend architecture visible in the source tree rather than hiding it behind build-only conventions.
+
+### Representative source tree
+
+```text
+project
+├── env
+├── src
+│  ├── front
+│  │  └── config
+│  ├── module
+│  ├── module-vendor
+│  ├── suite
+│  │  ├── a-demo
+│  │  └── a-home
+│  │     └── modules
+│  │        ├── home-base
+│  │        ├── home-icon
+│  │        ├── home-indexadmin
+│  │        └── home-layoutadmin
+│  └── suite-vendor
+```
+
+A practical convention from the legacy guidance is that `a-demo` can host demo or disposable exploratory code, while suites such as `a-home` act as the normal starting point for real application growth.
 
 ## Module and suite boundaries in practice
 
@@ -86,6 +120,41 @@ A practical mental model is:
 A module is also a natural async bundle boundary.
 
 That means modularization is not only about code organization. It also affects how frontend output is built, loaded, and maintained.
+
+### Package-level module metadata
+
+A module package can also declare metadata in `package.json` through `zovaModule`, for example to describe inter-module dependencies or bundle behavior.
+
+Representative patterns include:
+
+```json
+{
+  "name": "zova-module-demo-student",
+  "zovaModule": {
+    "dependencies": {
+      "a-zova": "5.0.0"
+    }
+  }
+}
+```
+
+```json
+{
+  "name": "zova-module-a-model",
+  "zovaModule": {
+    "bundle": {
+      "vendors": [
+        {
+          "match": ["@tanstack/query-core", "@tanstack/vue-query"],
+          "output": "tanstack-query"
+        }
+      ]
+    }
+  }
+}
+```
+
+This reinforces that modules are not merely folders. They are explicit package, dependency, and bundle boundaries.
 
 ## Relationship to other frontend guides
 

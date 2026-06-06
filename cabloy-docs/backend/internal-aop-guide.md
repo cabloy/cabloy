@@ -25,6 +25,14 @@ AOP Method extends class methods through decorators.
 
 It can be used on controller methods, service methods, and other class methods that should participate in reusable around-execution behavior.
 
+Representative CLI generation pattern:
+
+```bash
+npm run vona :create:bean aopMethod log -- --module=demo-student
+```
+
+That generator-backed workflow matters because AOP Method beans participate in the same onion metadata system as other Vona extension points.
+
 ### Representative custom AOP Method
 
 ```typescript
@@ -58,6 +66,14 @@ AOP Method supports:
 - `mode` and `flavor`
 - ordering through `dependencies` and `dependents`
 
+A representative precedence model is:
+
+- usage-site override
+- then `config.onions.aopMethod`
+- then decorator default values
+
+That makes AOP Method practical for both framework-wide defaults and one-off method specialization.
+
 ## Built-in internal AOP helpers
 
 Several built-in AOP Method helpers already exist.
@@ -90,6 +106,8 @@ Magic Method provides dynamic behavior through conventional method names such as
 - `__method__`
 - `__init__`
 - `__dispose__`
+
+A useful ownership rule is that Magic Method is about changing how the class itself exposes properties, lookup, or lifecycle behavior, while AOP Method is about wrapping a named method call with reusable around-execution logic.
 
 ### Why this matters
 
@@ -130,6 +148,8 @@ protected __set__(prop: string, value: any): boolean {
 ```
 
 Type merging can then expose those dynamic properties more safely.
+
+That is the key discipline when using Magic Method: keep the runtime shortcut and the type surface aligned, so dynamic behavior still reads like a deliberate framework abstraction rather than an untyped trick.
 
 ## Choosing between AOP Method and Magic Method
 

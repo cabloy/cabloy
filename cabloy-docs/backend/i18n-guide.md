@@ -17,6 +17,12 @@ In the backend docs, i18n is best understood through two related dimensions:
 
 Each module can provide its own locale resources.
 
+Representative initialization workflow:
+
+```bash
+npm run vona :init:locale demo-student
+```
+
 Representative files include:
 
 - `src/module/demo-student/src/config/locale/en-us.ts`
@@ -54,6 +60,12 @@ Representative override files include:
 - `src/backend/config/locale/zh-cn.ts`
 
 That means modules can provide defaults while the project still controls final wording when needed.
+
+A useful ownership rule is:
+
+- module locale files define reusable defaults close to the module
+- project locale files adjust wording for the current application
+- request context decides which locale is active for the current call
 
 ## Current locale in request context
 
@@ -103,6 +115,18 @@ Vona ships with default locales such as `en-us` and `zh-cn`, and additional lang
 
 That means locale support is extensible at the type level as well as the resource-file level.
 
+Representative type extension:
+
+```typescript
+declare module 'vona' {
+  export interface ILocaleRecord {
+    'zh-tw': never;
+  }
+}
+```
+
+In the VSCode workflow, the `recordlocale` snippet can generate the augmentation skeleton.
+
 ## Plural support
 
 Locale resources can express plural-aware strings through naming conventions such as:
@@ -129,6 +153,12 @@ const tz = this.ctx.tz;
 
 ```typescript
 this.ctx.tz = 'America/New_York';
+```
+
+A representative use case is parsing request-driven date filters with the current timezone instead of assuming server-local time:
+
+```typescript
+const dateStart = DateTime.fromISO(dateStartStr, { zone: this.ctx.tz });
 ```
 
 The `a-locale` module exposes timezone settings such as:

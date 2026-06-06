@@ -31,6 +31,13 @@ A scene can:
 
 Vona exposes a global bean `bean.captcha` so backend code can work with captcha through one unified entrypoint.
 
+Representative generation workflow:
+
+```bash
+npm run vona :create:bean captchaProvider imageText -- --module=captcha-simple
+npm run vona :create:bean captchaScene simple -- --module=captcha-simple
+```
+
 The main operations are:
 
 - `create`
@@ -82,6 +89,8 @@ A representative provider can implement image-text captcha with fields such as:
 
 That makes captcha providers extensible rather than hardcoded to one built-in shape.
 
+The image-text example is a good mental model: provider code decides how to create and verify one captcha mechanism, while scene code decides when and why that mechanism should be chosen.
+
 ## Scene model
 
 A scene defines:
@@ -91,6 +100,8 @@ A scene defines:
 - how provider-level options can be configured or overridden
 
 That means business policy can be expressed at the scene layer while implementation details remain in the provider layer.
+
+A representative scene can choose one provider statically, rotate among several providers, or vary difficulty and provider options by request context or user state.
 
 ## Captcha verify interceptor
 
@@ -126,6 +137,12 @@ Captcha behavior can be configured through app config, including:
 - secondary-token TTL
 - provider-specific options
 - scene-specific provider setup
+
+A useful separation rule is:
+
+- module config for broad captcha defaults such as `showToken`
+- `config.onions.captchaProvider` for provider-level TTL and option tuning
+- `config.onions.captchaScene` for scene-level provider selection and overrides
 
 ## Relationship to auth flows
 

@@ -62,6 +62,26 @@ const url = this.$router.getPagePath('/demo/student/counter', {
 this.$router.push(url);
 ```
 
+## More complex query shapes
+
+Query schemas do not have to stop at flat primitives.
+
+Representative patterns include nested objects and arrays:
+
+```typescript
+export const ControllerPageCounterSchemaQuery = z.object({
+  user: z
+    .object({
+      name: z.string(),
+      age: z.number(),
+    })
+    .optional(),
+  colors: z.array(z.string()).optional(),
+});
+```
+
+That lets page code consume richer route-driven state such as filter collections or nested search payloads without dropping back to manual string parsing.
+
 ## Why this matters for AI workflows
 
 When AI adds page query behavior, it should not fall back to raw string parsing.

@@ -102,6 +102,44 @@ export const QuerySchema = z.object({
 
 This is especially useful for filter-like or multi-select page behavior.
 
+## Representative page-oriented schemas
+
+A page can combine param and query schemas so route-driven input stays typed end to end.
+
+Representative patterns:
+
+```typescript
+export const ControllerPageCounterSchemaParams = z.object({
+  id: z.number().optional().default(0),
+});
+
+export const ControllerPageCounterSchemaQuery = z.object({
+  user: z
+    .object({
+      name: z.string(),
+      age: z.number(),
+    })
+    .optional(),
+  colors: z.array(z.string()).optional(),
+});
+```
+
+Representative page access pattern:
+
+```typescript
+class ControllerPageCounter {
+  render() {
+    return (
+      <div>
+        <div>id: {this.$params.id}</div>
+        <div>name: {this.$query.user?.name}</div>
+        <div>colors: {this.$query.colors?.join(',')}</div>
+      </div>
+    );
+  }
+}
+```
+
 ## Relationship to page params and query
 
 Zod is most often encountered in the frontend docs through:

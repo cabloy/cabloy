@@ -114,17 +114,100 @@ A useful progression is:
 
 This matters because Zova encourages pages to start simple and then evolve into richer structures only when the business complexity justifies it.
 
-### Representative refactor steps
+### Single-file to three-file
 
-When a page grows, typical refactor steps include:
+A typical first step is keeping the page controller responsible for state while moving render and style into dedicated beans.
 
-- create the first render bean
-- create the first style bean
-- create additional render/style beans when needed
-- create dedicated service beans when state management should move out of the page controller
+#### Create the first render bean
+
+```bash
+npm run zova :refactor:firstRender page/counter -- --module=demo-student
+```
+
+Representative render bean shape:
+
+```typescript
+@Render()
+class RenderPageCounter extends BeanRenderBase {
+  public render() {
+    return (
+      <div class={this.cTextCenter}>
+        <div>count: {this.count}</div>
+        <button onClick={() => this.increment()}>Increment</button>
+        <button onClick={() => this.decrement()}>Decrement</button>
+      </div>
+    );
+  }
+}
+```
+
+#### Create the first style bean
+
+```bash
+npm run zova :refactor:firstStyle page/counter -- --module=demo-student
+```
+
+Representative style bean shape:
+
+```typescript
+@Style()
+class StylePageCounter extends BeanStyleBase {
+  cTextCenter: string;
+
+  protected async __init__() {
+    this.cTextCenter = this.$style({
+      textAlign: 'center',
+    });
+  }
+}
+```
+
+### More-file growth
+
+When the page continues to grow, you can keep splitting responsibilities instead of forcing one large controller or render bean to absorb everything.
+
+Representative refactors include:
+
+- additional render beans for larger UI regions
+- additional style beans for more isolated styling concerns
+- dedicated service beans when business state and behavior should move out of the page controller
+
+#### Create another render bean
+
+```bash
+npm run zova :refactor:anotherRender page/counter another -- --module=demo-student
+```
+
+#### Create another style bean
+
+```bash
+npm run zova :refactor:anotherStyle page/counter another -- --module=demo-student
+```
+
+#### Create a service bean for state management
+
+```bash
+npm run zova :create:bean service page/counter/counter -- --module=demo-student
+```
+
+Representative service bean shape:
+
+```typescript
+@Service()
+class ServiceCounter extends BeanBase {
+  count: number = 0;
+
+  increment() {
+    this.count++;
+  }
+
+  decrement() {
+    this.count--;
+  }
+}
+```
 
 These refactors are supported by Zova CLI commands rather than requiring a fully manual restructuring from scratch.
-
 ## Why this matters for AI workflows
 
 When AI generates or edits a Zova page, it should preserve the page/controller mental model instead of rewriting the code into a generic Vue single-file-component pattern.

@@ -35,6 +35,8 @@ The `locale` field matters because current-locale resolution can fall back to th
 
 Vona exposes `bean.user` as the general business-facing API for user operations.
 
+Behind that unified API, the `home-user` module customizes behavior through `ServiceUserAdapter`, which is why business code can keep calling `bean.user` while the project still retains control over how users are created, looked up, updated, or removed.
+
 Representative capabilities include:
 
 - register a user
@@ -49,6 +51,8 @@ This gives business logic a stable entrypoint even when deeper adapter behavior 
 ## `IRole` and `bean.role`
 
 The `a-user` module also provides `IRole` and a global bean `bean.role`.
+
+As with users, the stable business-facing surface is backed by a project-customizable adapter layer, here via `ServiceRoleAdapter` in `home-user`.
 
 Representative capabilities include:
 
@@ -66,6 +70,8 @@ When a request successfully authenticates, Vona creates a passport containing ac
 - current roles
 
 `bean.passport` provides a unified calling surface for passport behavior.
+
+In the default `home-user` implementation, `ServicePassportAdapter` is what decides how passport state is serialized into JWT payloads and deserialized back into user/auth/role context on later requests.
 
 Representative capabilities include:
 
@@ -122,6 +128,12 @@ Representative flows include:
 Those follow-up email behaviors often connect directly to queue-backed mail delivery; see [Mail Guide](/backend/mail-guide).
 
 The framework-level user APIs stay stable while project-specific modules can customize what happens before or after those core steps through event-driven hooks and related extension logic.
+
+The legacy user docs showed this especially clearly:
+
+- registration can trigger follow-up mail-confirm flows
+- activation can assign default roles such as `admin`
+- `autoActivate` can suppress the extra activation step when the business flow allows it
 
 ## Relationship to auth and controller AOP
 

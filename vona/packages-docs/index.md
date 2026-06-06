@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: 'Vona'
-  text: 'A fullstack framework'
-  tagline: Building SSR/SPA/Web/Admin in one codebase
+  text: 'Legacy Docs Archive'
+  tagline: Historical reference for pre-unified Vona documentation
   actions:
     - theme: brand
       text: Get Started
@@ -39,4 +39,8 @@ features:
 ---
 
 > [!WARNING]
-> This Vona docs site is now a **legacy documentation source** kept mainly for migration reference. New unified documentation is being built in the root-level `cabloy-docs/` project of the Cabloy monorepo. Prefer the new docs for current monorepo guidance, edition-aware workflows, and AI-development guidance.
+> This Vona site is now a **historical archive**, not the current documentation source of truth.
+>
+> Use the root-level `cabloy-docs/` project in the Cabloy monorepo for current public documentation, monorepo workflows, edition-aware guidance, and AI-development guidance.
+>
+> Use this legacy site only when you need historical lookup, migration comparison, or details that have not yet been reframed in the unified docs.

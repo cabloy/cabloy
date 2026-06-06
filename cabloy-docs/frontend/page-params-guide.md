@@ -24,6 +24,10 @@ export const ControllerPageCounterSchemaParams = z.object({
 });
 ```
 
+This is more than a type annotation.
+
+Because route params arrive as strings at the URL level, the schema is also where Zova’s `z` wrapper can coerce the route value into the typed value that the page controller wants to consume.
+
 ## Route record requirements
 
 One important rule is that if a page supports params, the route should expose the proper route structure and route name.

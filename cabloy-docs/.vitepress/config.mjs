@@ -79,6 +79,7 @@ export default defineConfig({
             { text: 'User Access Guide', link: '/backend/user-access-guide' },
             { text: 'Menu Guide', link: '/backend/menu-guide' },
             { text: 'I18n Guide', link: '/backend/i18n-guide' },
+            { text: 'JWT Guide', link: '/backend/jwt-guide' },
             { text: 'Event Guide', link: '/backend/event-guide' },
             { text: 'Logger Guide', link: '/backend/logger-guide' },
             { text: 'Upload Guide', link: '/backend/upload-guide' },

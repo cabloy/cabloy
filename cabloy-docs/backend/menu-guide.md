@@ -27,6 +27,8 @@ This allows a module-level menu service to:
 1. ask the shared SSR menu system for the effective menu set
 2. fall back to default local menus when needed
 
+The current `home-base` implementation in this repo follows exactly that pattern in its menu service, which keeps this guide grounded in the real out-of-the-box SSR path.
+
 ## Fallback strategy
 
 A practical menu service can:
@@ -43,6 +45,7 @@ A backend controller can expose the menu retrieval path directly:
 ```typescript
 @Web.get(':publicPath?')
 @Api.body(v.object(DtoMenus))
+@Passport.public()
 async retrieveMenus(@Arg.param('publicPath', v.optional()) publicPath?: string) {
   return await this.scope.service.menu.retrieveMenus(publicPath);
 }
@@ -50,11 +53,20 @@ async retrieveMenus(@Arg.param('publicPath', v.optional()) publicPath?: string) 
 
 This makes menu retrieval part of the broader backend contract surface.
 
+In the current repo implementation, the out-of-the-box menu controller is public and delegates directly to `this.scope.service.menu.retrieveMenus(publicPath)`.
+
 ## Relationship to frontend integration
 
 Menu retrieval is especially relevant in SSR-sensitive frontend flows.
 
 The backend menu contract should be read together with frontend routing, SSR, and page-loading behavior, especially when different editions expose different module or menu structures.
+
+A practical boundary is:
+
+- backend decides how menus are retrieved, merged, and defaulted
+- frontend decides how those menu DTOs are rendered into route or navigation state
+
+That split helps avoid re-implementing menu policy independently on both sides.
 
 ## Why this matters for AI workflows
 

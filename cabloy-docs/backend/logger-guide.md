@@ -63,6 +63,32 @@ For example, a project can add an `order` client to separate order-related logs.
 
 A client can define its own transports while still inheriting common logger behavior.
 
+Representative type extension and client configuration patterns include:
+
+```typescript
+declare module 'vona' {
+  export interface ILoggerClientRecord {
+    order: never;
+  }
+}
+```
+
+```typescript
+config.logger = {
+  clients: {
+    order(this: VonaApplication, clientInfo) {
+      const transports = [
+        this.bean.logger.makeTransportFile(clientInfo, 'order'),
+        this.bean.logger.makeTransportConsole(clientInfo),
+      ];
+      return { transports };
+    },
+  },
+};
+```
+
+In the VSCode workflow, the `recordloggerclient` snippet can generate the client-type augmentation skeleton.
+
 ## Getting a logger client
 
 There are two common access styles.
@@ -96,6 +122,8 @@ this.$loggerChild('pay', 'order').info('$50');
 
 That keeps business-specific log context explicit without requiring a whole new logger client every time.
 
+As with clients, child names can also be formalized through interface merging so logger usage stays type-safe at the project level.
+
 ## Log levels
 
 Vona uses standard npm/RFC5424-style levels such as:
@@ -127,6 +155,14 @@ Representative patterns include:
 - a second file transport for a more verbose level such as `debug`
 - console transport behavior for operational visibility
 
+Representative transport patterns:
+
+```typescript
+this.bean.logger.makeTransportFile(clientInfo, 'order');
+this.bean.logger.makeTransportFile(clientInfo, 'order-debug', 'debug');
+this.bean.logger.makeTransportConsole(clientInfo);
+```
+
 Default level behavior can also be configured through environment variables such as:
 
 - `LOGGER_CLIENT_DEFAULT`
@@ -140,6 +176,17 @@ Representative methods include:
 
 - `getFilterLevel()`
 - `setFilterLevel(...)`
+
+Representative patterns:
+
+```typescript
+const levelDefault = this.bean.logger.getFilterLevel();
+const levelOrder = this.bean.logger.getFilterLevel('order');
+
+this.bean.logger.setFilterLevel('debug');
+this.bean.logger.setFilterLevel(false);
+this.bean.logger.setFilterLevel(true);
+```
 
 When level changes are applied, Vona can propagate them across workers, which is especially useful for live diagnostics.
 

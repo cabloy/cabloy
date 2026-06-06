@@ -55,9 +55,21 @@ Different hooks correspond to different interfaces depending on where they are i
 
 The important architectural point is not the exact interface matrix alone, but that startup behavior is typed and structured rather than improvised.
 
+A compact mental model is:
+
+- **Module Main** handles a module’s own loading lifecycle
+- **Module Monkey** lets a module participate in app-wide hook timings
+- **App Monkey** lets the project frontend config layer participate in the same hook system
+
 ## Module Main
 
 A module can provide its own main lifecycle entrypoints.
+
+Representative creation command:
+
+```bash
+npm run zova :init:main demo-student
+```
 
 Representative pattern:
 
@@ -71,6 +83,12 @@ export class Main extends BeanSimple implements IModuleMain {
 ## Module Monkey
 
 A module can also provide broader app hook behavior through a monkey entry.
+
+Representative creation command:
+
+```bash
+npm run zova :init:monkey demo-student
+```
 
 Representative pattern:
 
@@ -94,6 +112,18 @@ Project-level app lifecycle customization can be placed in the frontend config a
 
 This is useful when startup behavior belongs to the application as a whole rather than to one module.
 
+Representative creation command:
+
+```bash
+npm run zova :init:appMonkey
+```
+
+Representative file location:
+
+```text
+src/front/config/monkey.ts
+```
+
 ## Practical interpretation of the phases
 
 A useful rule of thumb is:
@@ -103,9 +133,23 @@ A useful rule of thumb is:
 
 That keeps initialization extensible without creating unnecessary ordering coupling.
 
+A representative lifecycle interpretation is:
+
+- `appInitialize` for the earliest app-level service setup
+- `appInitialized` when other modules should be able to react to the initialized state
+- `appReady` for behavior that depends on the app becoming operational, such as final router-facing readiness
+- `appClose` for teardown and listener cleanup
+
 ## Relationship to routing and guards
 
 Startup timing is closely related to frontend routing and guards, because route services and route-guard behavior often need to be initialized before the app is considered ready.
+
+The legacy startup docs explicitly used the router module as the core example:
+
+- `appInitialize` as an early route-guard service setup point
+- `appInitialized` as the point where route-guard events can begin involving other business modules
+- `appReady` as the point where Vue Router can be injected and initial navigation can run
+- `appClose` as the teardown point for route-guard listeners
 
 Read this guide together with [Navigation Guards Guide](/frontend/navigation-guards-guide) when route lifecycle is involved.
 

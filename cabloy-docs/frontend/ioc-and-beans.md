@@ -77,6 +77,49 @@ A bean can be resolved by:
 
 The most important design point is that cross-module access should prefer bean identifiers over hardwired file-path coupling.
 
+### Representative `@Use` patterns
+
+Same-module injection can stay class-oriented and concise:
+
+```typescript
+import { ModelTodo } from '../../bean/model.todo.js';
+
+class ControllerTodo {
+  @Use()
+  $$modelTodo: ModelTodo;
+}
+```
+
+Cross-module injection should usually prefer a bean identifier so the consuming module does not depend on the provider’s internal file path layout:
+
+```typescript
+import type { ModelTabs } from 'zova-module-a-routertabs';
+
+class ControllerLayout {
+  @Use('a-routertabs.model.tabs')
+  $$modelTabs: ModelTabs;
+}
+```
+
+In practice, Zova can still preserve the ergonomic class-based development experience while compiling cross-module usage back toward bean-identifier-based resolution.
+
+### Hierarchical injection patterns
+
+Hierarchical injection replaces many cases where a generic Vue app would fall back to `provide/inject`.
+
+Representative child lookup pattern:
+
+```typescript
+import type { ModelTabs } from 'zova-module-a-routertabs';
+
+class Child {
+  @Use({ injectionScope: 'host' })
+  $$modelTabs: ModelTabs;
+}
+```
+
+That keeps parent/child sharing aligned with the same IoC model instead of introducing a separate state-sharing mechanism.
+
 ## Injection scopes
 
 Zova supports several injection scopes:
@@ -113,6 +156,30 @@ Representative uses include:
 - watchers
 - derived state wiring
 - resource cleanup
+
+Representative initialization pattern:
+
+```typescript
+export class Counter {
+  count: number = 0;
+  count2: string;
+
+  protected async __init__() {
+    this.count2 = this.$computed(() => {
+      return `=== ${this.count} ===`;
+    });
+
+    this.$watch(
+      () => this.count,
+      () => {
+        console.log('changed: ', this.count);
+      },
+    );
+  }
+}
+```
+
+That gives a bean one consistent place to wire reactive behavior instead of scattering setup logic through unrelated hooks.
 
 ## Bean identifiers and loose coupling
 

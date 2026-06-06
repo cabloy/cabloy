@@ -84,6 +84,21 @@ The practical rule is:
 
 This lets projects combine shared defaults with scenario-specific and local overrides cleanly.
 
+A representative SSR admin development stack looks like:
+
+```txt
+.env
+.env.ssr
+.env.ssr.admin
+.env.ssr.admin.development
+.env.local
+.env.ssr.local
+.env.ssr.admin.local
+.env.ssr.admin.development.local
+```
+
+The config side follows the same merge pattern with `config.ts`, `config.[meta].ts`, and `.local` variants.
+
 ## Scripts and runtime variants
 
 Frontend scripts map directly onto the same runtime dimensions.
@@ -92,8 +107,25 @@ Representative commands include variants such as:
 
 - `dev:ssr:admin`
 - `build:ssr:admin`
+- `preview:ssr:admin`
+- `dev:ssr:web`
+- `build:ssr:web`
+- `dev:spa`
 - `dev:ssr:cabloyBasicAdmin`
 - `build:ssr:cabloyBasicWeb`
+
+Representative current-repo script shapes include:
+
+```json
+{
+  "dev": "npm run dev:ssr:admin",
+  "build": "npm run build:ssr:admin",
+  "preview": "npm run preview:ssr:admin",
+  "dev:ssr:admin": "npm run prerun && quasar dev --mode ssr --flavor admin",
+  "dev:ssr:web": "npm run prerun && quasar dev --mode ssr --flavor web",
+  "dev:spa": "npm run prerun && quasar dev --mode spa --flavor admin"
+}
+```
 
 That means scripts are not just convenience aliases. They are the operational surface for selecting mode, appMode, and flavor.
 
@@ -125,6 +157,18 @@ Use the right access path for the right kind of value:
 - `sys.env` for runtime env values that are not tree-shaken
 - `sys.config` for the merged frontend config model
 
+Representative patterns:
+
+```typescript
+if (process.env.DEV) {
+  console.log('for development');
+}
+
+const publicPath = this.sys.env.APP_PUBLIC_PATH;
+const apiBaseURL = this.sys.config.api.baseURL;
+const flavor = this.sys.config.meta.flavor;
+```
+
 This distinction is central to writing Zova code that behaves correctly across builds and runtime variants.
 
 ## Built-in env variables
@@ -152,6 +196,36 @@ This usually requires:
 - using `META_FLAVOR` or `sys.config.meta.flavor` in code
 - optionally augmenting type definitions for better autocomplete
 
+Representative flavor type extension:
+
+```typescript
+declare module '@cabloy/module-info' {
+  export interface ZovaMetaFlavorExtend {
+    customA: never;
+  }
+}
+```
+
+In the VSCode workflow, the `recordflavor` snippet can generate this augmentation skeleton.
+
+## Async config loading
+
+Frontend config files can also load asynchronously when configuration must be derived from a remote or generated source.
+
+Representative pattern:
+
+```typescript
+export default async function (_sys: ZovaSys) {
+  const config: ZovaConfigOptional = {};
+
+  // async load remote config
+
+  return config;
+}
+```
+
+That should be used deliberately, because asynchronous config still participates in the same startup and merge model.
+
 ## Relationship to other frontend guides
 
 Read this guide together with:
@@ -159,6 +233,8 @@ Read this guide together with:
 - [Frontend Scripts](/frontend/scripts)
 - [SSR Environment Variables](/frontend/ssr-env)
 - [Frontend Quickstart](/frontend/quickstart)
+- [App Startup Guide](/frontend/app-startup-guide)
+- [System Startup Guide](/frontend/system-startup-guide)
 
 These guides explain the operational script surface, SSR-specific environment concerns, and the monorepo-first starting path.
 

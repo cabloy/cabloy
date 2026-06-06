@@ -35,27 +35,77 @@ Representative scope members include:
 
 These categories make module resources discoverable and consistently organized.
 
+## Initialize scope-backed resources
+
+Representative CLI entrypoints include:
+
+```bash
+npm run zova :init:config demo-student
+npm run zova :init:constant demo-student
+npm run zova :init:locale demo-student
+npm run zova :init:error demo-student
+npm run zova :create:bean api test -- --module=demo-student
+```
+
+This matters because scope is not just a read surface. It is the organized destination for resources generated or initialized through the standard Zova workflow.
+
 ## `config`
 
 Module config belongs in the scope model so business logic can read feature-specific configuration in a structured way.
+
+Representative access pattern:
+
+```typescript
+console.log(this.scope.config.title);
+```
+
+Projects can also override module-level config through project-level frontend config, which makes scope a bridge between reusable module defaults and app-specific customization.
 
 ## `constant`
 
 Module constants can live in scope so feature-level constant values remain namespaced and easy to access.
 
+Representative access pattern:
+
+```typescript
+console.log(this.scope.constant.gender.male);
+console.log(this.scope.constant.gender.female);
+```
+
 ## `locale`
 
 Module locale resources are exposed through scope so frontend code can retrieve localized text in a module-aware way.
 
+Representative access patterns:
+
+```typescript
+const message1 = this.scope.locale.HelloWorld();
+const message2 = this.scope.locale.HelloWorld.locale('en-us');
+```
+
+Project-level locale resources can override module-level locale values, which is one of the key reasons scope stays useful even when the final app wants customized wording.
+
 ## `error`
 
 Module-specific errors are exposed through scope so business code can throw namespaced error definitions without inventing ad hoc exception patterns.
+
+Representative access pattern:
+
+```typescript
+this.scope.error.ErrorTest.throw();
+```
 
 ## `api`
 
 Backend API calls can be wrapped as module `api` resources and accessed through scope.
 
 This is one of the most practical scope categories because it keeps request logic close to the module boundary instead of scattering raw request paths through page code.
+
+Representative access pattern:
+
+```typescript
+const res = await this.scope.api.test.echo();
+```
 
 ## `apiSchema`
 
@@ -72,7 +122,16 @@ Representative pattern:
 $$scopeDemoStudent: ScopeModuleDemoStudent;
 ```
 
+A common follow-up access pattern is:
+
+```typescript
+const res = await this.$$scopeDemoStudent.api.test.echo();
+console.log(this.$$scopeDemoStudent.locale.HelloWorld());
+```
+
 This allows one module to consume another module’s scoped resources explicitly without flattening everything into one shared global namespace.
+
+Compiler support also lets `@UseScope()` participate in async module loading behavior, which fits naturally with Zova’s module-level bundle boundaries.
 
 ## Why this matters for architecture
 

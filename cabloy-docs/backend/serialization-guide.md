@@ -45,6 +45,12 @@ This makes serialization an explicit request-path capability rather than an invi
 
 Vona supports custom serializer transforms through `@SerializerTransform(...)`.
 
+Representative generation workflow:
+
+```bash
+npm run vona :create:bean serializerTransform upper -- --module=demo-student
+```
+
 Representative pattern:
 
 ```typescript
@@ -94,6 +100,12 @@ Serializer transforms can define options with:
 
 This lets projects tune serializer behavior without rewriting the transform implementation each time.
 
+A representative precedence model is:
+
+- usage-site override in `v.serializerTransform(...)`
+- then `config.onions.serializerTransform`
+- then decorator default values
+
 ## Serializer helper tools
 
 Vona also provides a set of serializer-oriented helpers under the `v` helper surface.
@@ -134,6 +146,13 @@ Serializer metadata can also be adjusted through app config, including field-lev
 
 That means serialization participates in the broader backend metadata and schema configuration system instead of being locked into only one code location.
 
+Representative patterns include:
+
+- direct metadata replacement with `$makeMetadata(...)`
+- schema reconstruction with `$makeSchema(...)`
+
+That choice matters because sometimes you only want to swap serialization metadata, while other times you want to rebuild the field schema surface more explicitly.
+
 ## Relationship to DTOs, entities, validation, and OpenAPI
 
 Serialization should be read together with:
@@ -154,6 +173,12 @@ Use serialization when:
 - the transformation belongs to response presentation or exposure policy
 
 Use service- or model-layer mutation when the underlying business data itself should change.
+
+A useful rule of thumb is:
+
+- choose a named serializer transform when the rule should be reusable across fields or entities
+- choose `v.serializerCustom(...)` when the rule is local to one field and does not deserve its own bean
+- choose `v.serializerExclude`, `v.serializerReplace`, or `v.serializerGetter` when the intent is one of those standard output policies
 
 ## Why this matters for AI workflows
 

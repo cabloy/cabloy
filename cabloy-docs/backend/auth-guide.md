@@ -21,6 +21,15 @@ This model supports:
 
 Vona exposes a global bean `bean.auth` so backend code can use all registered auth providers through one unified entrypoint.
 
+Representative provider-generation workflow:
+
+```bash
+npm run vona :create:bean authProvider simple -- --module=auth-simple
+npm run vona :create:bean authProvider oauth -- --module=auth-oauth
+```
+
+Those providers still plug into the shared `:create:bean` command surface, which keeps auth extension aligned with the rest of Vona’s bean architecture.
+
 ### Username/password example
 
 ```typescript
@@ -92,6 +101,8 @@ That profile is then consumed by the broader user and passport system.
 
 This separation helps Vona keep provider logic, user logic, and business customization decoupled.
 
+A practical rule is that the provider should prove identity and return a stable profile, while user creation and passport assembly remain downstream responsibilities handled by the user/passport layers.
+
 ## OAuth credentials and callback flow
 
 OAuth credentials are configured through app config under the relevant auth provider client entry.
@@ -102,6 +113,8 @@ The typical flow is:
 2. receive the OAuth callback code
 3. exchange the code for a JWT token
 4. continue through the passport and user flow
+
+The out-of-the-box Passport controller in `home-user` exposes that exchange as `createPassportJwtFromOauthCode`, which is why frontend OAuth flows usually stay thin: the provider redirect happens first, and the frontend then asks the Passport API to finish JWT creation.
 
 ## Passport API relationship
 
@@ -115,6 +128,8 @@ The `home-user` module exposes out-of-the-box Passport APIs for common account f
 - associate / migrate auth methods
 - token refresh
 - temporary auth token creation
+
+In the current repo implementation, these flows live in `home-user/src/controller/passport.ts`, where register/login call `bean.auth.authenticate(...)`, OAuth login uses provider/module path parameters, and token-oriented follow-up endpoints stay concentrated in one controller surface.
 
 This guide focuses on the framework-level auth model. For the user/passport side, see [User Access Guide](/backend/user-access-guide).
 

@@ -79,9 +79,26 @@ Vona supports both:
 
 Use this when the frontend sends one field value directly, or a serialized array-like value under a single form entry.
 
+Representative frontend shape:
+
+```typescript
+const formData = new FormData();
+formData.append('name', 'vona');
+formData.append('tags', ['node', 'typescript']);
+```
+
 ### `@Arg.fields(...)`
 
 Use this when the frontend appends the same field key multiple times, for example multiple `tags` entries in `FormData`.
+
+Representative frontend shape:
+
+```typescript
+const formData = new FormData();
+formData.append('name', 'vona');
+formData.append('tags', 'node');
+formData.append('tags', 'typescript');
+```
 
 This distinction matters because frontend upload construction style affects how the backend should read field values.
 
@@ -107,6 +124,12 @@ Read this guide together with:
 
 These guides explain the broader request-decorator, validation, and contract-generation model that upload participates in.
 
+A useful boundary is:
+
+- the upload interceptor owns multipart parsing and temporary-file lifecycle
+- controller decorators own request-shape declaration
+- business logic should focus on what to do with the uploaded content once those two layers have normalized the input
+
 ## Typical backend workflow
 
 A practical upload flow often looks like this:
@@ -116,6 +139,14 @@ A practical upload flow often looks like this:
 3. apply titles or validation-oriented helpers where useful
 4. process the temporary files inside the controller or delegated service logic
 5. return the desired result while letting the interceptor handle cleanup
+
+In the current repo, test upload controllers also demonstrate a broader shape with mixed usage such as:
+
+- raw `@Arg.fields()` access to all parsed fields
+- named `@Arg.field(...)` extraction
+- named `@Arg.file(...)` and `@Arg.files(...)` extraction in the same endpoint
+
+That is a good reminder that upload endpoints can stay declarative even when multipart payloads become fairly rich.
 
 ## Why this matters for AI workflows
 

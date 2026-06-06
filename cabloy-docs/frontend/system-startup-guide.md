@@ -51,9 +51,21 @@ System startup hooks can be implemented in several places:
 
 This allows both module-level and project-level system initialization logic to participate in a structured way.
 
+A compact mental model is:
+
+- **Module Main Sys** handles a module’s own system-facing load/config lifecycle
+- **Module Monkey Sys** lets a module participate in broader system-level hook timings
+- **Sys Monkey** lets the project frontend config layer participate in the same system hook system
+
 ## Module Main Sys
 
 A module can provide system-level main lifecycle entrypoints.
+
+Representative creation command:
+
+```bash
+npm run zova :init:mainSys demo-student
+```
 
 Representative pattern:
 
@@ -68,6 +80,12 @@ export class MainSys extends BeanSimple implements IModuleMainSys {
 ## Module Monkey Sys
 
 A module can also attach richer system lifecycle behavior through monkey-based hooks.
+
+Representative creation command:
+
+```bash
+npm run zova :init:monkeySys demo-student
+```
 
 Representative pattern:
 
@@ -92,6 +110,30 @@ Project-level system lifecycle customization can be placed in the frontend confi
 
 This is useful when the behavior belongs to the frontend runtime as a whole rather than to one module.
 
+Representative creation command:
+
+```bash
+npm run zova :init:sysMonkey
+```
+
+Representative file location:
+
+```text
+src/front/config/monkeySys.ts
+```
+
+## Practical interpretation of the phases
+
+A representative lifecycle interpretation is:
+
+- `moduleLoading` for early module registration work such as route-table contribution
+- `moduleLoaded` once the module is available to the broader system
+- `configLoaded` when module or project config still needs inspection or mutation before readiness
+- `sysInitialize` for the earliest system-wide initialization
+- `sysInitialized` when other modules should be able to react to initialized system state
+- `sysReady` for long-lived runtime behavior that depends on the system being fully operational
+- `sysClose` for teardown of system-level resources
+
 ## When to use system startup
 
 Use system startup when:
@@ -112,6 +154,13 @@ Read this guide together with [Environment and Config Guide](/frontend/environme
 This guide is the system-level companion to [App Startup Guide](/frontend/app-startup-guide).
 
 Use the app guide for request- or app-instance-facing startup behavior, and this guide for long-lived runtime setup.
+
+The legacy system-start docs used route registration as the clearest example boundary:
+
+- `moduleLoading` as an early point for registering module routes into the system routing table
+- app startup only after that lower-level system wiring is in place
+
+That distinction is especially important in SSR-capable systems, where app lifecycles can repeat while system-level route and config wiring should not.
 
 ## Why this matters for AI workflows
 

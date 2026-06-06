@@ -89,7 +89,19 @@ The system also distinguishes common built-in layout placeholders such as:
 - `empty`
 - `default`
 
-These names act as logical layout choices, while the actual layout component mapping can be configured through environment and project configuration.
+These names act as logical layout choices rather than hard-coded component filenames.
+
+A representative env mapping looks like this:
+
+```txt
+env/.env
+LAYOUT_COMPONENT_EMPTY = home-layout:layoutEmpty
+LAYOUT_COMPONENT_DEFAULT = home-layout:layoutTabs
+```
+
+That means route metadata chooses the logical layout, while env/config decides which actual layout component should back that choice for the active runtime variant.
+
+For the broader runtime-selection model behind env and flavor-aware configuration, see [Environment and Config Guide](/frontend/environment-config-guide).
 
 ## Why this matters for AI workflows
 
