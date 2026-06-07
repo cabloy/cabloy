@@ -44,10 +44,12 @@ declare module 'vona-module-a-orm' {
 /** bean: end */
 /** bean: begin */
 import type { BeanDatabase } from '../bean/bean.database.ts';
-import 'vona';  
+import type { BeanModel } from '../bean/bean.model.ts';
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'database': BeanDatabase;
+    'model': BeanModel;
   }
 }
 /** bean: end */

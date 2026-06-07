@@ -206,6 +206,17 @@ Prefer a normal `src/service/*.ts` file when the service-scene class itself shou
 
 Do not apply this mechanically to all concrete beans or all abstract classes. Judge by runtime role and registration surface.
 
+### Bean-scene and global shorthand
+
+Treat `src/bean` as the structural definition of the global shorthand surface.
+
+For these requests:
+
+- do not treat `@Virtual()` as a reason to exclude a bean-scene class from `IBeanRecordGlobal`
+- if a class in `src/bean` should not be global shorthand, re-evaluate placement first
+- prefer B1/B2 relocation over metadata exceptions or manual `IBeanRecordGlobal` patching
+- use `IBeanRecordGlobal` as the static authoring-surface registry for global shorthand, not as a full runtime-container inventory
+
 ## Step 6: Apply edition-aware branching
 
 When the task is frontend-sensitive or examples differ between editions, branch explicitly.

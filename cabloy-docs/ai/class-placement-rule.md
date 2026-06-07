@@ -82,6 +82,21 @@ Examples:
 
 Do not choose the underscore form only because a class is abstract or uses `@Virtual()`. The deciding factor is the runtime role and registration surface.
 
+## Bean-scene and global shorthand
+
+For backend classes, `src/bean` defines the global shorthand surface.
+
+A bean-scene class should be expected to participate in `IBeanRecordGlobal`, even when it uses `@Virtual()` for a real business meaning.
+
+Do not use `@Virtual()` as a reason to suppress a bean-scene class from `IBeanRecordGlobal`.
+
+If a class should not appear on the global shorthand surface, fix placement instead:
+
+- move pure helper or subclass-only bases to `src/lib`
+- move runtime-anchor bases to `src/service`, often `src/service/*_.ts`
+
+Do not keep non-global classes in `src/bean` and compensate with metadata-generation exceptions or manual type patches.
+
 ## Fast classification checklist
 
 Ask these questions in order:

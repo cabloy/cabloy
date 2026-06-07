@@ -173,6 +173,23 @@ This rule applies primarily to bases and runtime-anchor classes. Do not extend i
 
 `@Virtual()` remains orthogonal to placement. If a class had meaningful `@Virtual()` semantics before moving into `src/service/*_.ts`, keep `@Virtual()` unless there is a specific semantic reason to remove it.
 
+## Bean-scene and `IBeanRecordGlobal`
+
+In this repository, `src/bean` is the structural definition of the global shorthand authoring surface.
+
+That means:
+
+- a class that remains in `src/bean` should normally participate in `IBeanRecordGlobal`
+- `IBeanRecordGlobal` should be treated as the authoring-surface registry for global shorthand, not as a full runtime-container inventory
+- `@Virtual()` should keep only its business or runtime meaning and should not be reused as a metadata filter for global registration
+
+If a class should not appear in `IBeanRecordGlobal`, the preferred fix is to move it out of bean-scene:
+
+- B1-style or helper bases should move to `src/lib` when appropriate
+- B2 runtime-anchor bases should move to `src/service`, often `src/service/*_.ts`
+
+Do not preserve a misplaced bean-scene class and compensate with metadata-generation exceptions or manual `IBeanRecordGlobal` patches. Placement should carry the meaning.
+
 ## Invariants future work should preserve
 
 Future refactors should preserve these boundaries:

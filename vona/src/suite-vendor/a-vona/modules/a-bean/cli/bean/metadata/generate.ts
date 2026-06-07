@@ -5,20 +5,19 @@ export default async function (options: IMetadataCustomGenerateOptions): Promise
   const contentImports: string[] = [];
   const contentRecordsGlobal: string[] = [];
   for (const globFile of globFiles) {
-    const { className, beanName, fileNameJSRelative, isIgnore, isVirtual } = globFile;
-    if (isIgnore || isVirtual) continue;
-    const beanFullName = beanName;
+    const { className, beanName, fileNameJSRelative, isIgnore } = globFile;
+    if (isIgnore) continue;
     contentImports.push(`import type { ${className} } from '${fileNameJSRelative}';`);
-    contentRecordsGlobal.push(`'${beanFullName}': ${className};`);
+    contentRecordsGlobal.push(`    '${beanName}': ${className};`);
   }
   if (contentImports.length === 0) return '';
   // combine
   const content = `/** ${sceneName}: begin */
 ${contentImports.join('\n')}
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
-    ${contentRecordsGlobal.join('\n')}
+${contentRecordsGlobal.join('\n')}
   }
 }
 /** ${sceneName}: end */

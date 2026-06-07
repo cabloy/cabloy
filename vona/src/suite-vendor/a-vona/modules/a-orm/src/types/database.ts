@@ -1,6 +1,5 @@
 import type { FunctionAny } from 'vona';
 
-import type { BeanModel } from '../bean/bean.model.ts';
 import type { ServiceDb } from '../service/db_.ts';
 import type { ConfigDatabase } from './config.ts';
 
@@ -28,10 +27,6 @@ export interface IDatabaseSwitchOptions {
 }
 
 declare module 'vona' {
-  export interface IBeanRecordGlobal {
-    model: BeanModel;
-  }
-
   export interface VonaConfig {
     database: ConfigDatabase;
   }
