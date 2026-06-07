@@ -85,9 +85,9 @@ Representative pattern:
 />
 ```
 
-## Why this matters for AI workflows
+## Practical implications for component API design
 
-When AI creates or refactors Zova components, it should not automatically impose a generic Vue component API style.
+When creating or refactoring Zova components, do not automatically impose a generic Vue component API style.
 
 A better default is:
 

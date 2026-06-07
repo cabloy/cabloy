@@ -50,9 +50,9 @@ The distinction matters:
 - use `routes.path` for normal path-based aliases
 - use `routes.name` when the route depends on params-aware naming
 
-## Why this matters for AI workflows
+## Implementation checks for route-alias changes
 
-When AI changes user-facing routes, it should ask:
+When changing user-facing routes, ask:
 
 1. is this a real route change or just an alias change?
 2. does the alias belong in global config?

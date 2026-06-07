@@ -150,9 +150,9 @@ Read this guide together with:
 - [Entity Guide](/backend/entity-guide)
 - [Backend Startup Guide](/backend/startup-guide)
 
-## Why this matters for AI workflows
+## Practical implications for service-layer implementation
 
-When AI creates business logic in Vona, it should avoid flattening everything into controllers.
+When creating business logic in Vona, avoid flattening everything into controllers.
 
 A better default is:
 

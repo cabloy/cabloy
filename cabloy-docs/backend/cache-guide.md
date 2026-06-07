@@ -58,9 +58,9 @@ Vona also clears or compensates cache automatically when model mutation occurs.
 
 That matters because a useful cache is not only about hits. It is about correctness under change.
 
-## Why this matters for AI workflows
+## Implementation checks for cache-sensitive data-access changes
 
-When AI changes data-access behavior, it should ask:
+When changing data-access behavior, ask:
 
 1. is this path already covered by Vona’s built-in cache model?
 2. does the model cache config need to be updated?

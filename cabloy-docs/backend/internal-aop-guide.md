@@ -116,7 +116,7 @@ Magic Method is one of the reasons Vona can keep dependency lookup and scope-dri
 A representative example is module scope lookup:
 
 ```typescript
-this.scope.model.student.selectAndCount(params)
+this.scope.model.student.selectAndCount(params);
 ```
 
 Instead of requiring verbose injection or manual bean lookup, Vona can resolve the target dynamically through magic-method conventions.
@@ -126,7 +126,7 @@ Instead of requiring verbose injection or manual bean lookup, Vona can resolve t
 Magic Method can also simplify ORM usage:
 
 ```typescript
-this.scope.model.student.getById(id)
+this.scope.model.student.getById(id);
 ```
 
 This reads more naturally than always spelling out lower-level query objects manually.
@@ -169,9 +169,9 @@ Internal AOP connects directly to:
 
 These guides often show the business-facing results of internal AOP, while this page explains the underlying extension model.
 
-## Why this matters for AI workflows
+## Questions for internal AOP changes
 
-When AI edits backend classes, it should ask:
+When editing backend classes, ask:
 
 1. is there already an AOP Method or shorthand for this behavior?
 2. is a magic-method pattern already part of the framework abstraction here?

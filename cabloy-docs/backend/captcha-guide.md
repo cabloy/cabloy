@@ -150,9 +150,9 @@ Captcha is often used in login, registration, or other user-facing flows, but it
 
 That makes it easier to reuse the same captcha capability across different account-related APIs.
 
-## Why this matters for AI workflows
+## Implementation checks for captcha-sensitive changes
 
-When AI edits captcha-sensitive flows, it should ask:
+When editing captcha-sensitive flows, ask:
 
 1. is the right layer the provider, the scene, or the request interceptor?
 2. does the flow need immediate verification, form verification, or both?

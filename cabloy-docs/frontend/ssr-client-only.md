@@ -33,8 +33,8 @@ This is one of the simplest but most important SSR boundary tools.
 
 It makes the server/client split explicit and keeps browser-only behavior from leaking into the server render path.
 
-## Why this matters for AI workflows
+## Implementation checks for client-only SSR boundaries
 
-When AI adds or edits SSR-sensitive UI, it should ask whether the component depends on client-only behavior such as browser APIs, client-only rendering expectations, or interactions that should not appear in the server render.
+When adding or editing SSR-sensitive UI, ask whether the component depends on client-only behavior such as browser APIs, client-only rendering expectations, or interactions that should not appear in the server render.
 
 If yes, `ClientOnly` may be the right boundary.

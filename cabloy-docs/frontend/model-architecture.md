@@ -73,9 +73,9 @@ import { BeanModelBase } from 'zova-module-a-model';
 export class ModelTodo extends BeanModelBase {}
 ```
 
-## Why this matters for AI workflows
+## Practical implications for frontend state design
 
-When AI is asked to add frontend state, it should not immediately assume a generic Vue/Pinia-style answer.
+When asked to add frontend state, do not immediately assume a generic Vue/Pinia-style answer.
 
 A better default is to ask:
 

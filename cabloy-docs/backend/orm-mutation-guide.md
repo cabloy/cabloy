@@ -63,10 +63,7 @@ That matters because the mutation layer still participates in the same structure
 Representative bulk patterns:
 
 ```typescript
-await this.scope.model.post.insertBulk([
-  { title: 'Post001' },
-  { title: 'Post002' },
-]);
+await this.scope.model.post.insertBulk([{ title: 'Post001' }, { title: 'Post002' }]);
 ```
 
 ```typescript
@@ -185,9 +182,9 @@ The important rule is:
 
 That means mutation should stay conceptually grounded in the standard model methods even when convenience wrappers are present.
 
-## Why this matters for AI workflows
+## Implementation checks for ORM mutation changes
 
-When AI writes mutation logic, it should ask:
+When writing mutation logic, ask:
 
 1. is this best expressed as explicit insert/update/delete?
 2. or is `mutate` a cleaner fit for the business flow?

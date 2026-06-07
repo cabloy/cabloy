@@ -37,7 +37,7 @@ The generator creates a connected set of files, typically including:
 - locale files
 - tests
 
-This is exactly why AI systems should prefer this generator. It gives a consistent starting shape across the backend thread.
+This is exactly why this generator should be the default starting point. It gives a consistent starting shape across the backend thread.
 
 A practical generated-output checklist usually includes:
 

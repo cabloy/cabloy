@@ -97,9 +97,9 @@ Use mock when:
 
 Do not treat mock as the final source of truth for the contract when a real backend/OpenAPI path already exists.
 
-## Why this matters for AI workflows
+## Implementation checks for mock-versus-contract decisions
 
-When AI edits frontend integration paths, it should ask:
+When editing frontend integration paths, ask:
 
 1. is the real backend contract available yet?
 2. should this flow use a temporary mock route or a real `$api`/OpenAPI path?

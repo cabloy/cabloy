@@ -74,16 +74,16 @@ This matters because a queue push can propagate more than business payload alone
 
 A practical push-context reading is:
 
-| Field | Typical purpose |
-| --- | --- |
-| `data` | business payload |
-| `queueNameSub` | refine queue routing |
-| `jobName` | identify the job kind |
-| `jobOptions` | pass BullMQ job options |
-| `dbInfo` | control datasource/runtime database context |
-| `locale` / `tz` | preserve request-oriented locale/timezone context |
-| `instanceName` | preserve instance-aware execution context |
-| `extraData` | pass selected request metadata or auxiliary context |
+| Field           | Typical purpose                                     |
+| --------------- | --------------------------------------------------- |
+| `data`          | business payload                                    |
+| `queueNameSub`  | refine queue routing                                |
+| `jobName`       | identify the job kind                               |
+| `jobOptions`    | pass BullMQ job options                             |
+| `dbInfo`        | control datasource/runtime database context         |
+| `locale` / `tz` | preserve request-oriented locale/timezone context   |
+| `instanceName`  | preserve instance-aware execution context           |
+| `extraData`     | pass selected request metadata or auxiliary context |
 
 ## Datasource-level isolation and deadlock avoidance
 
@@ -258,9 +258,9 @@ Representative pattern:
 this.bean.onion.queue.inspect();
 ```
 
-## Why this matters for AI workflows
+## Implementation checks for background-job changes
 
-When AI is asked to move work into the background, it should ask:
+When asked to move work into the background, ask:
 
 1. is this a queue job instead of an inline request-path operation?
 2. should the caller use `push` or `pushAsync`?

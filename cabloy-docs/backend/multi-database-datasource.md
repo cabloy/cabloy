@@ -157,9 +157,9 @@ A practical split is:
 - the dynamic datasource guide points to deeper routing architecture
 - the sharding guide points to deeper data-distribution architecture
 
-## Why this matters for AI workflows
+## Implementation checks for multi-datasource changes
 
-When AI changes backend data flow in a multi-datasource system, it should ask:
+When changing backend data flow in a multi-datasource system, ask:
 
 1. is the model using an explicit datasource, a model default, or the current effective default datasource?
 2. does the active instance change that default through `isolateClient`?

@@ -36,9 +36,9 @@ These are important because SSR-aware code often needs to distinguish:
 - development versus production behavior
 - SSR mode versus non-SSR mode
 
-## Why this matters for AI workflows
+## Implementation checks for SSR environment-sensitive changes
 
-When AI edits SSR-sensitive code, it should not assume one execution environment.
+When editing SSR-sensitive code, do not assume one execution environment.
 
 It should explicitly consider whether the code path depends on:
 

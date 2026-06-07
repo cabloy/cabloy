@@ -6,7 +6,7 @@ This guide explains how to use the Vona CLI in the Cabloy monorepo.
 
 Vona provides a large number of CLI commands for generating code skeletons and running backend workflows.
 
-For AI-assisted development, the CLI is especially important because it encodes framework conventions directly. If a command already exists, use it before writing backend scaffolding manually.
+For implementation work, the CLI is especially important because it encodes framework conventions directly. If a command already exists, use it before writing backend scaffolding manually.
 
 ## Entry from repo root
 
@@ -170,4 +170,4 @@ When creating backend code:
 3. inspect the generated output
 4. only then make minimal follow-up edits
 
-This reduces token use and keeps the implementation aligned with Vona conventions.
+This reduces unnecessary manual scaffolding and keeps the implementation aligned with Vona conventions.

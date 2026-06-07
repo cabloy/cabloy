@@ -127,11 +127,11 @@ That means a common pattern is:
 3. the winning worker starts the protected service or loop
 4. ownership can fail over to another worker if the current owner exits
 
-So startup answers *when lifecycle hooks fire*, while election answers *which worker should own a singleton-like responsibility*.
+So startup answers _when lifecycle hooks fire_, while election answers _which worker should own a singleton-like responsibility_.
 
-## Why this matters for AI workflows
+## Implementation checks for distributed-election changes
 
-When AI edits distributed backend coordination, it should ask:
+When editing distributed backend coordination, ask:
 
 1. is this really a singleton-like ownership problem?
 2. should one worker own the responsibility, or should there be multiple tickets?

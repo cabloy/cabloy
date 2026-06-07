@@ -23,13 +23,13 @@ Several enduring benefits stand out:
 
 A practical decision map is:
 
-| Use this | When it fits best |
-| --- | --- |
-| `this.$style(...)` | local scoped styles near one controller, render bean, or style bean |
-| dedicated style bean with `BeanStyleBase` | the page or component has enough styling logic to deserve its own file or boundary |
-| `@Css()` and `$cssBase` | shared/global style vocabulary should be reused across many pages or components |
-| `$token` | style values should come from theme-defined design values instead of hardcoded literals |
-| `$theme` | runtime behavior needs to read or switch the active theme or dark-mode state |
+| Use this                                  | When it fits best                                                                       |
+| ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| `this.$style(...)`                        | local scoped styles near one controller, render bean, or style bean                     |
+| dedicated style bean with `BeanStyleBase` | the page or component has enough styling logic to deserve its own file or boundary      |
+| `@Css()` and `$cssBase`                   | shared/global style vocabulary should be reused across many pages or components         |
+| `$token`                                  | style values should come from theme-defined design values instead of hardcoded literals |
+| `$theme`                                  | runtime behavior needs to read or switch the active theme or dark-mode state            |
 
 The important point is that these are not competing styling systems. They are connected surfaces inside one Zova styling architecture.
 
@@ -76,7 +76,7 @@ When a value represents design meaning rather than a one-off literal, prefer `$t
 That is especially useful for:
 
 - colors
-n- spacing or sizing conventions owned by the theme
+  n- spacing or sizing conventions owned by the theme
 - component-surface values that should change with dark mode or brand theme
 
 This keeps style logic flexible across themes and editions without changing the underlying styling architecture.
@@ -139,9 +139,9 @@ What may still vary by edition or UI library is:
 
 That means edition differences usually change the surrounding UI stack, not the core styling architecture.
 
-## Why this matters for AI workflows
+## Implementation checks for frontend styling changes
 
-When AI changes frontend styling in Zova, it should ask:
+When changing frontend styling in Zova, ask:
 
 1. should this use the built-in CSS-in-JS path instead of ad hoc external CSS?
 2. does the style depend on reactive or runtime state?

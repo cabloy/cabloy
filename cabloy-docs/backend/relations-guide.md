@@ -133,10 +133,10 @@ A practical distinction is:
 - use `include` when operating on a declared static relation
 - use `with` when declaring a dynamic relation inline for the current operation
 
-| Relation-loading style | Best for | Typical source of truth |
-| --- | --- | --- |
-| `include` | stable business relations reused across operations | model metadata |
-| `with` | situational, dynamic, or cross-module relations | usage-site query or mutation |
+| Relation-loading style | Best for                                           | Typical source of truth      |
+| ---------------------- | -------------------------------------------------- | ---------------------------- |
+| `include`              | stable business relations reused across operations | model metadata               |
+| `with`                 | situational, dynamic, or cross-module relations    | usage-site query or mutation |
 
 Dynamic relations are especially useful when a model cannot reasonably declare every cross-module or situational relation in advance.
 
@@ -156,9 +156,14 @@ Representative dynamic pattern:
 ```typescript
 const postContent = await this.scope.model.postContent.select({
   with: {
-    post: $relationDynamic.belongsTo(() => ModelPostContent, () => ModelPost, 'postId', {
-      columns: ['id', 'title'],
-    }),
+    post: $relationDynamic.belongsTo(
+      () => ModelPostContent,
+      () => ModelPost,
+      'postId',
+      {
+        columns: ['id', 'title'],
+      },
+    ),
   },
 });
 ```
@@ -231,9 +236,9 @@ Read this guide together with:
 - [Multi-Database and Datasource Guide](/backend/multi-database-datasource)
 - [DTO Infer and Generation](/backend/dto-infer-generation)
 
-## Why this matters for AI workflows
+## Implementation checks for model-relationship changes
 
-When AI adds or edits model relationships, it should ask:
+When adding or editing model relationships, ask:
 
 1. which relation kind actually matches the business structure?
 2. should the relation be static metadata or a dynamic usage-site relation?

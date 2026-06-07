@@ -262,9 +262,9 @@ Read this guide together with:
 - [CRUD Workflow](/backend/crud-workflow)
 - [Migration and Changes](/backend/migration-and-changes)
 
-## Why this matters for AI workflows
+## Implementation checks for model-layer changes
 
-When AI creates backend persistence logic, it should:
+When creating backend persistence logic:
 
 1. start from the model and entity pairing
 2. prefer model methods and model-aware query paths

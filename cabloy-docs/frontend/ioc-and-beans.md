@@ -199,9 +199,9 @@ Read this together with:
 
 Those pages explain how beans fit into module boundaries, scope-based resources, and the broader Zova architectural model.
 
-## Why this matters for AI workflows
+## Implementation checks for frontend bean-architecture changes
 
-When AI edits Zova frontend code, it should ask:
+When editing Zova frontend code, ask:
 
 1. should this behavior live in a bean instead of a framework-neutral helper?
 2. is the right sharing scope `ctx`, `app`, or `sys`?

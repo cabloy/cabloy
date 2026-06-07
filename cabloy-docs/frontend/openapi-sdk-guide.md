@@ -90,9 +90,9 @@ If the backend contract itself changes, first inspect or update the backend cont
 
 Then return to this page for the frontend regeneration step.
 
-## Why this matters for AI workflows
+## Implementation checks for SDK regeneration decisions
 
-When AI sees a request that depends on backend contracts, it should ask:
+When evaluating a request that depends on backend contracts, ask:
 
 1. is this module already using generated OpenAPI services?
 2. should the SDK be regenerated instead of hand-writing a new frontend service?

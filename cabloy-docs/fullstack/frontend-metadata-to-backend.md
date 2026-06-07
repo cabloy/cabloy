@@ -52,9 +52,9 @@ So when AI reasons about frontend-generated metadata, it should verify:
 - which flavor is active
 - which generated output belongs to that edition
 
-## Why this matters for AI workflows
+## Implementation checks for frontend-metadata changes
 
-When AI changes frontend structural resources such as routes or components, it should ask:
+When changing frontend structural resources such as routes or components, ask:
 
 1. does metadata need regeneration?
 2. does backend-side tooling or fullstack integration rely on that metadata?

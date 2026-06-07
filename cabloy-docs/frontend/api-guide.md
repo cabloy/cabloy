@@ -78,9 +78,9 @@ const menus = await this.$api.homeBaseMenu.retrieveMenus({
 });
 ```
 
-## Why this matters for AI workflows
+## Implementation checks for frontend data-access changes
 
-When AI adds frontend data access, it should avoid jumping straight from UI code to ad hoc request logic.
+When adding frontend data access, avoid jumping straight from UI code to ad hoc request logic.
 
 A better default is:
 

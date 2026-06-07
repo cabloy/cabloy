@@ -82,9 +82,9 @@ export const ControllerPageCounterSchemaQuery = z.object({
 
 That lets page code consume richer route-driven state such as filter collections or nested search payloads without dropping back to manual string parsing.
 
-## Why this matters for AI workflows
+## Implementation checks for page-query changes
 
-When AI adds page query behavior, it should not fall back to raw string parsing.
+When adding page query behavior, do not fall back to raw string parsing.
 
 A better default is:
 

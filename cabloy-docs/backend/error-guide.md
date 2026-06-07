@@ -96,9 +96,9 @@ Read this guide together with:
 - [Backend Foundation](/backend/foundation)
 - [I18n Guide](/backend/i18n-guide)
 
-## Why this matters for AI workflows
+## Implementation checks for backend error-handling changes
 
-When AI edits backend error behavior, it should ask:
+When editing backend error behavior, ask:
 
 1. should this error be defined as a module-scoped error instead of an inline throw?
 2. does the error need localized wording in locale resources?

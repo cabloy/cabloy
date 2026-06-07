@@ -103,9 +103,9 @@ A practical split is:
 - the fullstack page explains the bridge from emitted OpenAPI to generated frontend SDK
 - the frontend page explains how Zova consumes that contract in its own workflows
 
-## Why this matters for AI workflows
+## Implementation checks for backend contract changes
 
-When AI changes backend contracts, it should ask:
+When changing backend contracts, ask:
 
 1. does this change affect Swagger/OpenAPI output?
 2. do the controller, DTO, entity, and validation layers still agree on the contract?

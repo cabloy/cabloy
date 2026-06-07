@@ -145,9 +145,9 @@ Read it together with:
 - [Controller AOP Guide](/backend/controller-aop-guide) for `@Passport.*` and guard-based request-path behavior
 - [Event Guide](/backend/event-guide) for event-driven customization around registration, activation, and related lifecycle hooks
 
-## Why this matters for AI workflows
+## Implementation checks for user-access changes
 
-When AI edits user or access logic, it should ask:
+When editing user or access logic, ask:
 
 1. is the right layer `bean.user`, `bean.role`, `bean.passport`, or an auth provider?
 2. does the flow depend on current user, current roles, or current passport state?

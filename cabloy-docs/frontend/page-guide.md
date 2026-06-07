@@ -210,9 +210,10 @@ class ServiceCounter extends BeanBase {
 ```
 
 These refactors are supported by Zova CLI commands rather than requiring a fully manual restructuring from scratch.
-## Why this matters for AI workflows
 
-When AI generates or edits a Zova page, it should preserve the page/controller mental model instead of rewriting the code into a generic Vue single-file-component pattern.
+## Practical implications for page implementation
+
+When generating or editing a Zova page, preserve the page/controller mental model instead of rewriting the code into a generic Vue single-file-component pattern.
 
 A better default is:
 

@@ -149,9 +149,9 @@ That means DTO design should often be read together with:
 - [OpenAPI Guide](/backend/openapi-guide)
 - [Controller Guide](/backend/controller-guide)
 
-## Why this matters for AI workflows
+## Implementation checks for DTO changes
 
-When AI creates DTOs, it should:
+When creating DTOs:
 
 1. prefer reuse through mapped-class helpers when the shape is derived from existing classes
 2. keep DTO validation and OpenAPI concerns aligned through `@Api.field`

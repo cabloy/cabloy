@@ -92,7 +92,12 @@ Representative pattern:
 ```typescript
 export class MonkeySys
   extends BeanSimple
-  implements IMonkeyModuleSys, IMonkeySysInitialize, IMonkeySysInitialized, IMonkeySysReady, IMonkeySysClose
+  implements
+    IMonkeyModuleSys,
+    IMonkeySysInitialize,
+    IMonkeySysInitialized,
+    IMonkeySysReady,
+    IMonkeySysClose
 {
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
@@ -169,9 +174,9 @@ A practical reading sequence is:
 3. [App Startup Guide](/frontend/app-startup-guide) for router/guard readiness
 4. [Page Route Guide](/frontend/page-route-guide) for shell/layout behavior
 
-## Why this matters for AI workflows
+## Implementation checks for system-startup changes
 
-When AI edits frontend lifecycle behavior, it should ask:
+When editing frontend lifecycle behavior, ask:
 
 1. is this a system concern or an app concern?
 2. does it need `configLoaded`, `moduleLoading`, or one of the `sys*` phases?

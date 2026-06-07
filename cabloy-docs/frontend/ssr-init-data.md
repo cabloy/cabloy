@@ -33,9 +33,9 @@ export class ControllerPageTodo {
 3. `__init__` prepares the data on the server
 4. model-based SSR support synchronizes that data to the client and completes hydration automatically
 
-## Why this matters for AI workflows
+## Implementation checks for SSR data-loading changes
 
-When AI changes SSR pages, it should avoid inventing parallel data-loading patterns unless there is a real reason.
+When changing SSR pages, avoid inventing parallel data-loading patterns unless there is a real reason.
 
 A better default is:
 

@@ -334,9 +334,9 @@ A practical split is:
 - CRUD generation instantiates the thread quickly
 - tests verify the contract through action execution
 
-## Why this matters for AI workflows
+## Practical implications for controller implementation
 
-When an AI system creates or edits a controller, it should preserve the Vona controller model instead of rewriting it into a generic framework style.
+When creating or editing a controller, preserve the Vona controller model instead of rewriting it into a generic framework style.
 
 The safest workflow is:
 

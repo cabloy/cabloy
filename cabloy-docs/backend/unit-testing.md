@@ -194,9 +194,9 @@ A practical split is:
 - migration keeps that thread structurally valid over time
 - tests verify the resulting contract through realistic execution
 
-## Why this matters for AI workflows
+## Implementation checks for backend testing changes
 
-When AI adds or changes backend behavior, it should not stop at code generation.
+When adding or changing backend behavior, do not stop at code generation.
 
 It should also ask:
 

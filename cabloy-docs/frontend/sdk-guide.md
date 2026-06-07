@@ -32,9 +32,9 @@ Use this page together with:
 - [API Schema Guide](/frontend/api-schema-guide)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 
-## Why this matters for AI workflows
+## Implementation checks for metadata-driven frontend integration
 
-When AI is asked to build metadata-driven frontend behavior, it should not stop at “can I call the API?”
+When asked to build metadata-driven frontend behavior, do not stop at “can I call the API?”
 
 It should also ask:
 

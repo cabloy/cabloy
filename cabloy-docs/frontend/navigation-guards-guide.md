@@ -56,9 +56,9 @@ The example also references SSR-related configuration such as cookie handling on
 
 So guards are not purely a client-side router concern. In Cabloy/Zova, they can also intersect with SSR behavior.
 
-## Why this matters for AI workflows
+## Implementation checks for navigation-guard changes
 
-When AI changes auth-sensitive routing behavior, it should ask:
+When changing auth-sensitive routing behavior, ask:
 
 1. does the route meta need to change?
 2. does the guard logic need to change?

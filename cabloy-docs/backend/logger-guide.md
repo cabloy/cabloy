@@ -211,9 +211,9 @@ Logging is closely connected to:
 - [Internal AOP Guide](/backend/internal-aop-guide) through built-in AOP helpers such as `@Core.log(...)`
 - [Runtime and Flavors](/backend/runtime-and-flavors) because log location, level, and operational behavior often vary by environment
 
-## Why this matters for AI workflows
+## Implementation checks for backend logging changes
 
-When AI edits backend logging behavior, it should ask:
+When editing backend logging behavior, ask:
 
 1. does this belong in the default client, a dedicated client, or a child logger?
 2. should the behavior be implemented through normal logger usage or an AOP-style logging decorator?

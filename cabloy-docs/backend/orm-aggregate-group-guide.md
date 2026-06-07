@@ -198,9 +198,9 @@ A practical split is:
 - use this guide when the result shape is aggregate- or group-oriented
 - use the relations guide when the summary is attached through relation metadata or dynamic relations
 
-## Why this matters for AI workflows
+## Implementation checks for aggregate and grouped query changes
 
-When AI edits summary-oriented backend queries, it should ask:
+When editing summary-oriented backend queries, ask:
 
 1. is this a row-oriented select, a one-object aggregate, or a grouped result set?
 2. should the summary live at the top level or inside a relation?

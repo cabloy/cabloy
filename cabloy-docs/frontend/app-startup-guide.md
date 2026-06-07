@@ -95,7 +95,12 @@ Representative pattern:
 ```typescript
 export class Monkey
   extends BeanSimple
-  implements IMonkeyModule, IMonkeyAppInitialize, IMonkeyAppInitialized, IMonkeyAppReady, IMonkeyAppClose
+  implements
+    IMonkeyModule,
+    IMonkeyAppInitialize,
+    IMonkeyAppInitialized,
+    IMonkeyAppReady,
+    IMonkeyAppClose
 {
   async moduleLoading(_module: IModule) {}
   async moduleLoaded(_module: IModule) {}
@@ -168,9 +173,9 @@ The chosen scripts, mode, appMode, and flavor determine which config and env val
 
 Read this guide together with [Environment and Config Guide](/frontend/environment-config-guide).
 
-## Why this matters for AI workflows
+## Implementation checks for app-startup changes
 
-When AI edits frontend startup behavior, it should ask:
+When editing frontend startup behavior, ask:
 
 1. does this logic belong to app startup or system startup?
 2. what is the earliest safe hook timing for this behavior?

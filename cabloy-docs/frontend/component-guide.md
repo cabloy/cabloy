@@ -93,9 +93,9 @@ class RenderPageCounter {
 }
 ```
 
-## Why this matters for AI workflows
+## Practical implications for component implementation
 
-When AI works on Zova components, it should not automatically fall back to generic Vue component habits.
+When working on Zova components, do not automatically fall back to generic Vue component habits.
 
 A better default is:
 

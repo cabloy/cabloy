@@ -258,9 +258,9 @@ Controller AOP should be read together with [Controller Guide](/backend/controll
 
 The controller guide explains routing, `@Web.*`, and `@Arg.*`, while this guide explains the cross-cutting behavior that surrounds controller execution.
 
-## Why this matters for AI workflows
+## Questions for controller-AOP-sensitive changes
 
-When AI changes controller behavior, it should ask:
+When changing controller behavior, ask:
 
 1. is this concern really controller AOP rather than ordinary business logic?
 2. should it be local, global, or system-level?

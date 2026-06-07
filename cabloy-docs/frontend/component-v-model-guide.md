@@ -100,9 +100,9 @@ One representative example uses a custom `capitalize` modifier, implemented by p
 
 That is useful because it shows `v-model` behavior in Zova is programmable and explicit, not just a fixed syntax feature.
 
-## Why this matters for AI workflows
+## Implementation checks for component binding changes
 
-When AI adds two-way binding to a Zova component, it should:
+When adding two-way binding to a Zova component:
 
 1. use the Zova refactor command to create the skeleton
 2. keep the binding visible through `Controller*Models` and `$useModel`

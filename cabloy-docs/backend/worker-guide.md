@@ -47,9 +47,9 @@ At a high level:
 
 This matters because worker control belongs to runtime behavior, not only to deployment tooling.
 
-## Why this matters for AI workflows
+## Implementation checks for worker-sensitive runtime changes
 
-When AI touches runtime or operational backend behavior, it should ask:
+When touching runtime or operational backend behavior, ask:
 
 1. does this assume a single-process runtime incorrectly?
 2. does the behavior change across worker count or worker lifecycle?

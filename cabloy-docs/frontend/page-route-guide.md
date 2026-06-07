@@ -133,9 +133,9 @@ Read together with:
 - [Route Alias Guide](/frontend/route-alias-guide)
 - [Frontend Quickstart](/frontend/quickstart)
 
-## Why this matters for AI workflows
+## Implementation checks for page-routing changes
 
-When AI edits page routing, it should not only change the URL string.
+When editing page routing, do not only change the URL string.
 
 It should also check whether the route change affects:
 

@@ -139,9 +139,9 @@ The `id` field uses `TableIdentity`, which supports both string and number repre
 
 That matters because contract types should not assume a narrower identity shape than the backend actually supports.
 
-## Why this matters for AI workflows
+## Implementation checks for entity changes
 
-When AI creates or updates entities, it should:
+When creating or updates entities:
 
 1. preserve Vona table-naming conventions unless there is a deliberate reason to override them
 2. use `@Api.field` rather than scattering schema and metadata concerns inconsistently

@@ -68,9 +68,9 @@ A practical boundary is:
 
 That split helps avoid re-implementing menu policy independently on both sides.
 
-## Why this matters for AI workflows
+## Implementation checks for SSR menu changes
 
-When AI edits SSR menu behavior, it should ask:
+When editing SSR menu behavior, ask:
 
 1. should the logic use `bean.ssr.retrieveMenus(...)` instead of inventing a parallel retrieval path?
 2. is there a default fallback menu that should remain available?

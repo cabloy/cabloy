@@ -69,9 +69,9 @@ Enabled schedules are loaded through the broader runtime/onion startup flow, and
 
 The effective schedule list can be inspected, which helps operational debugging and understanding of what is actually active.
 
-## Why this matters for AI workflows
+## Implementation checks for scheduled backend changes
 
-When AI is asked to add recurring backend behavior, it should ask:
+When asked to add recurring backend behavior, ask:
 
 1. is this better modeled as a schedule rather than an ad hoc loop?
 2. should it repeat by interval or by cron pattern?

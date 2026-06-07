@@ -77,9 +77,9 @@ const url = this.$router.getPagePath('/demo/student/counter/:id?', {
 this.$router.push(url);
 ```
 
-## Why this matters for AI workflows
+## Implementation checks for param-driven page changes
 
-When AI adds or edits param-driven page behavior, it should:
+When adding or editing param-driven page behavior:
 
 1. use the Zova refactor command when possible
 2. update the route record and route name deliberately

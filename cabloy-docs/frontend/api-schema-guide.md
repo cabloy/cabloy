@@ -36,8 +36,8 @@ Use this page together with:
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [SDK Guide](/frontend/sdk-guide)
 
-## Why this matters for AI workflows
+## Implementation checks for schema-driven UI changes
 
-When AI is asked to build dynamic forms, metadata-driven UI, or schema-aware validation, it should consider whether the right source is `$apiSchema` rather than hand-authored frontend-only field definitions.
+When asked to build dynamic forms, metadata-driven UI, or schema-aware validation, consider whether the right source is `$apiSchema` rather than hand-authored frontend-only field definitions.
 
 That keeps the frontend closer to backend truth and reduces duplicate configuration.

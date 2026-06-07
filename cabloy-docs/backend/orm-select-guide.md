@@ -43,7 +43,7 @@ await this.scope.model.post.select(
   {
     columns: ['id', 'title', 'userId'],
     where: {
-      id: { _gt_: 1 },
+      'id': { _gt_: 1 },
       'testVonaUser.id': 1,
     },
     joins: [['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']]],
@@ -230,9 +230,9 @@ A practical split is:
 - use the aggregate/group guide when the result shape is summary-oriented
 - use DTO guidance when query shape must become an explicit API contract
 
-## Why this matters for AI workflows
+## Implementation checks for ORM select changes
 
-When AI writes or edits select logic, it should:
+When writing or editing select logic:
 
 1. start from model relationships and typed query structure
 2. choose deliberately among `joins`, `include`, and `with`

@@ -63,8 +63,8 @@ In the new docs, think about the layers like this:
 
 That makes the model layer one of the most important bridges between backend contracts and frontend rendering.
 
-## Why this matters for AI workflows
+## Implementation checks for model-based state changes
 
-When AI sees repeated frontend data usage, caching concerns, or UI state that depends on remote data, it should ask whether the right abstraction is a model instead of a direct API call in the page.
+When you see repeated frontend data usage, caching concerns, or UI state that depends on remote data, ask whether the right abstraction is a model instead of a direct API call in the page.
 
 That usually leads to cleaner SSR behavior, cleaner reuse, and a more Cabloy-native structure.

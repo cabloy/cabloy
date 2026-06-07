@@ -22,9 +22,9 @@ This topic is intentionally short, but the implication is important: generic-com
 
 That means the safest default is to let the Zova refactor command establish the skeleton first, then refine the typing and behavior.
 
-## Why this matters for AI workflows
+## Implementation checks for reusable component design
 
-When AI sees a component that is reused across multiple typed data shapes, it should ask whether the right answer is a generic component instead of copying the component into several near-duplicate variants.
+When you see a component that is reused across multiple typed data shapes, ask whether the right answer is a generic component instead of copying the component into several near-duplicate variants.
 
 A better default is:
 

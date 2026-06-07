@@ -125,9 +125,9 @@ Representative pattern:
 this.bean.onion.broadcast.inspect();
 ```
 
-## Why this matters for AI workflows
+## Implementation checks for multi-worker broadcast changes
 
-When AI sees multi-worker coordination needs, it should ask:
+When evaluating multi-worker coordination needs, ask:
 
 1. is this really a queue job, or is it a broadcast?
 2. should the emitter worker also execute the business logic?

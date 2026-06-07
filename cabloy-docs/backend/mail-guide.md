@@ -146,9 +146,9 @@ config.onions = {
 
 A useful ownership rule is:
 
-- request or business logic decides *that* a mail should be sent
+- request or business logic decides _that_ a mail should be sent
 - `bean.mail` decides which client to use
-- the queue owns *when* the actual delivery work runs
+- the queue owns _when_ the actual delivery work runs
 
 ## Relationship to user-access and event workflows
 
@@ -177,9 +177,9 @@ Use a dedicated client when:
 
 Use the default client when the mail path belongs to the general system mail flow.
 
-## Why this matters for AI workflows
+## Implementation checks for backend mail changes
 
-When AI edits backend mail behavior, it should ask:
+When editing backend mail behavior, ask:
 
 1. should this email be sent through the default client or a dedicated client?
 2. does the flow belong in the immediate request path or in a queue-backed asynchronous path?

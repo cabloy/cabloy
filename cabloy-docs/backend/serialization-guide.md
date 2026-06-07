@@ -180,9 +180,9 @@ A useful rule of thumb is:
 - choose `v.serializerCustom(...)` when the rule is local to one field and does not deserve its own bean
 - choose `v.serializerExclude`, `v.serializerReplace`, or `v.serializerGetter` when the intent is one of those standard output policies
 
-## Why this matters for AI workflows
+## Implementation checks for backend serialization changes
 
-When AI changes backend response behavior, it should ask:
+When changing backend response behavior, ask:
 
 1. should this be a serialization concern instead of modifying the underlying entity or service result?
 2. is a reusable named serializer transform better than an inline custom transform?

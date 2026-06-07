@@ -70,9 +70,9 @@ That means if the transaction fails, cache compensation can run so database and 
 
 This is a major part of Vona’s large-system story.
 
-## Why this matters for AI workflows
+## Implementation checks for transactional write changes
 
-When AI changes write-path business logic, it should ask:
+When changing write-path business logic, ask:
 
 1. should this operation be transactional?
 2. does propagation behavior matter because the method is called from other transactional methods?

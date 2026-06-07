@@ -36,8 +36,8 @@ config.instance = {
   headerField: $protocolKey('x-vona-instance-name'),
   instances: {
     '': { password: '', title: '' },
-    shareTest: { password: '', title: '' },
-    isolateTest: {
+    'shareTest': { password: '', title: '' },
+    'isolateTest': {
       password: '',
       title: '',
       id: 1000,
@@ -183,9 +183,9 @@ Read this guide together with:
 - [Model Guide](/backend/model-guide)
 - [Multi-Database and Datasource Guide](/backend/multi-database-datasource)
 
-## Why this matters for AI workflows
+## Implementation checks for instance-resolution changes
 
-When AI edits backend runtime, datasource, or tenant-like behavior, it should ask:
+When editing backend runtime, datasource, or tenant-like behavior, ask:
 
 1. how is the current instance name resolved?
 2. is the task about shared-instance behavior or isolated-instance behavior?

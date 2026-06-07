@@ -48,9 +48,9 @@ This is important because it lets the code remain both flexible and typed.
 
 The effective redlock list can be inspected, which is useful for debugging and operational understanding.
 
-## Why this matters for AI workflows
+## Implementation checks for distributed-lock changes
 
-When AI is asked to protect a distributed critical section, it should ask:
+When asked to protect a distributed critical section, ask:
 
 1. does this need a distributed lock at all?
 2. should it use `lock` or `lockIsolate`?

@@ -116,9 +116,7 @@ Representative usage pattern:
 
 ```typescript
 this.$theme.name =
-  this.$theme.name === 'home-theme:default'
-    ? 'home-theme:orange'
-    : 'home-theme:default';
+  this.$theme.name === 'home-theme:default' ? 'home-theme:orange' : 'home-theme:default';
 ```
 
 This illustrates that theme switching is an ordinary part of the application model and can be driven directly from code.
@@ -144,9 +142,9 @@ What may still vary by edition or UI library is:
 - concrete default token values
 - integration details for a specific component library or visual system
 
-## Why this matters for AI workflows
+## Implementation checks for theme-related changes
 
-When AI changes theme behavior, it should ask:
+When changing theme behavior, ask:
 
 1. should this change live in a theme bean instead of inlining colors into components?
 2. is the change about dark mode, brand style, or both?

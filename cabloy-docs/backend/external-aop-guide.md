@@ -137,9 +137,9 @@ External AOP and internal AOP solve similar extension problems, but with differe
 
 Read this page together with [Internal AOP Guide](/backend/internal-aop-guide).
 
-## Why this matters for AI workflows
+## Questions for external AOP changes
 
-When AI needs to extend a backend class, it should ask:
+When extending a backend class, ask:
 
 1. should this behavior live in the class source or outside it?
 2. is the target identified more naturally by bean name matching?

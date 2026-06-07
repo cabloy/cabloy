@@ -51,7 +51,7 @@ This matters because route params and query values often arrive as strings, whil
 That is why schemas such as:
 
 ```typescript
-z.number()
+z.number();
 ```
 
 can still support route-driven values more naturally than raw parsing code.
@@ -149,9 +149,9 @@ Zod is most often encountered in the frontend docs through:
 
 Those guides explain how the schemas are attached to routing behavior, while this guide focuses on the schema model itself.
 
-## Why this matters for AI workflows
+## Implementation checks for schema-driven route-state changes
 
-When AI edits Zova route-driven page behavior, it should ask:
+When editing Zova route-driven page behavior, ask:
 
 1. should this page value be expressed through a Zod schema instead of manual parsing?
 2. does the schema need coercion, default values, nested objects, or arrays?

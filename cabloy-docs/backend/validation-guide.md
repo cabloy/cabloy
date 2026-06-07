@@ -60,14 +60,15 @@ These helper tools fall into groups such as:
 - Zod tools
 
 For response-side shaping with those serializer helpers, see [Serialization Guide](/backend/serialization-guide).
+
 - query filter tools
 - special tools like `v.tableIdentity`
 
-This matters for AI because the right answer is often “use the existing helper vocabulary” instead of hand-writing a one-off schema pattern.
+This matters because the right answer is often “use the existing helper vocabulary” instead of hand-writing a one-off schema pattern.
 
-## Why this matters for AI workflows
+## Implementation checks for request-validation changes
 
-When AI changes request contracts, it should ask:
+When changing request contracts, ask:
 
 1. can Vona infer the schema automatically?
 2. does the contract need explicit extension through the `v` helpers?

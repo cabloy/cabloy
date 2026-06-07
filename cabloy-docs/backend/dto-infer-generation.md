@@ -139,9 +139,9 @@ Read this guide together with:
 - [OpenAPI Guide](/backend/openapi-guide)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 
-## Why this matters for AI workflows
+## Implementation checks for DTO inference and generation changes
 
-When AI sees a return shape or input contract that closely follows model structure, it should ask:
+When evaluating a return shape or input contract that closely follows model structure, ask:
 
 1. should this DTO be inferred instead of handwritten?
 2. does model relationship structure already contain enough information?

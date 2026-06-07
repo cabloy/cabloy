@@ -17,7 +17,7 @@ This is one of the main reasons Zova can keep dependency lookup concise while st
 All beans inherit from `BeanBase`, so the current module scope is directly available through:
 
 ```typescript
-this.scope
+this.scope;
 ```
 
 This gives the current bean a natural way to access the resources of its own module.
@@ -156,9 +156,9 @@ Read this together with:
 
 These guides explain how scope fits into bean architecture, module boundaries, and data-access design.
 
-## Why this matters for AI workflows
+## Implementation checks for module-scope changes
 
-When AI edits Zova frontend code, it should ask:
+When editing Zova frontend code, ask:
 
 1. should this resource be accessed through `this.scope` instead of a direct ad hoc import?
 2. does the logic belong to the current module or another module’s scope?

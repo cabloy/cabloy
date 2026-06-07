@@ -148,9 +148,9 @@ In the current repo, test upload controllers also demonstrate a broader shape wi
 
 That is a good reminder that upload endpoints can stay declarative even when multipart payloads become fairly rich.
 
-## Why this matters for AI workflows
+## Implementation checks for backend upload changes
 
-When AI edits backend upload behavior, it should ask:
+When editing backend upload behavior, ask:
 
 1. is the request-path correctly using `@Core.fileUpload()`?
 2. should this parameter use `@Arg.file`, `@Arg.files`, `@Arg.field`, or `@Arg.fields`?

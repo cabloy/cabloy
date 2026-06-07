@@ -77,12 +77,12 @@ A practical split is:
 - [Package Map](/reference/package-map) explains architecture boundaries and package metadata
 - this page explains the practical directory tree contributors navigate
 
-## Maintainer note for AI-assisted changes
+## Implementation checks for backend file-location changes
 
-If you are maintaining AI-assisted workflows that edit backend code, ask:
+When changing backend code, ask:
 
 1. does this change belong to a standalone module, a suite-contained module, or project-level backend config?
 2. is the task about generation behavior under `packages-cli/` or runtime behavior under `src/`?
 3. should the example use a module path, a suite path, or a project-level backend path?
 
-That helps AI keep backend file references aligned with the actual monorepo layout.
+That helps keep backend file references aligned with the actual monorepo layout.

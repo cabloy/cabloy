@@ -171,9 +171,9 @@ Use direct calls when:
 
 A practical example from the user-access layer is registration and activation: the core user flow can stay small, while follow-up concerns such as mail confirmation or role assignment move into listeners.
 
-## Why this matters for AI workflows
+## Implementation checks for event-driven backend changes
 
-When AI edits event-driven backend behavior, it should ask:
+When editing event-driven backend behavior, ask:
 
 1. should this be an event instead of a direct call chain?
 2. is the payload/result shape already captured by an existing typed event?

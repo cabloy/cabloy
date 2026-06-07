@@ -103,9 +103,9 @@ Before documenting or automating this path for Start, confirm:
 2. the Start repo’s `package.json`
 3. the exact frontend flavor names and generated output paths
 
-## Why this matters for AI workflows
+## Implementation checks for backend-to-frontend contract changes
 
-When AI changes a backend API contract, it should ask:
+When changing a backend API contract, ask:
 
 1. does OpenAPI output change?
 2. does the frontend SDK or schema layer need regeneration?

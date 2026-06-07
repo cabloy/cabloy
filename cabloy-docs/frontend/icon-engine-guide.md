@@ -74,9 +74,9 @@ A simple process looks like this:
 
 The metadata generation step matters because icons are part of the framework’s typed resource graph.
 
-## Why this matters for AI workflows
+## Implementation checks for icon-related changes
 
-When AI adds icons, it should not hardcode one-off icon usage patterns too quickly.
+When adding icons, do not hardcode one-off icon usage patterns too quickly.
 
 A better default is to ask:
 

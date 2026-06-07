@@ -199,9 +199,9 @@ Read this guide together with:
 
 These guides show how i18n affects entity metadata, API contracts, and user-scoped request behavior.
 
-## Why this matters for AI workflows
+## Implementation checks for backend localization changes
 
-When AI edits backend localization-sensitive behavior, it should ask:
+When editing backend localization-sensitive behavior, ask:
 
 1. does this text belong in module locale resources instead of inline strings?
 2. should the value respect current locale, current timezone, or both?

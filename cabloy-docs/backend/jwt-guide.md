@@ -264,9 +264,9 @@ Use `bean.passport` when:
 - refresh-token behavior should reuse framework defaults
 - token handling should remain tied to current passport lifecycle behavior
 
-## Why this matters for AI workflows
+## Implementation checks for JWT-sensitive changes
 
-When AI edits JWT-sensitive backend behavior, it should ask:
+When editing JWT-sensitive backend behavior, ask:
 
 1. is this really a raw JWT concern, or should it stay at the passport/auth layer?
 2. does the flow need `access`, `refresh`, `oauth`, `code`, or a custom client?

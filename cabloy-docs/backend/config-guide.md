@@ -155,12 +155,12 @@ A practical interpretation is:
 
 ## Config access surfaces at a glance
 
-| Access surface | Typical meaning |
-| --- | --- |
-| `app.config` | app-wide baseline config |
-| `ctx.config` | effective config for the active instance-aware context |
-| `this.scope.config` | current-module config resource |
-| `this.$scope.<module>.config` | another module’s config resource |
+| Access surface                | Typical meaning                                        |
+| ----------------------------- | ------------------------------------------------------ |
+| `app.config`                  | app-wide baseline config                               |
+| `ctx.config`                  | effective config for the active instance-aware context |
+| `this.scope.config`           | current-module config resource                         |
+| `this.$scope.<module>.config` | another module’s config resource                       |
 
 A practical rule is:
 
@@ -192,7 +192,7 @@ config.instance = {
   headerField: $protocolKey('x-vona-instance-name'),
   instances: {
     '': { password: '', title: '' },
-    isolateTest: {
+    'isolateTest': {
       password: '',
       title: '',
       id: 1000,
@@ -236,9 +236,9 @@ Read this guide together with:
 - [Model Guide](/backend/model-guide)
 - [Multi-Database and Datasource Guide](/backend/multi-database-datasource)
 
-## Why this matters for AI workflows
+## Implementation checks for backend configuration changes
 
-When AI edits backend configuration behavior, it should ask:
+When editing backend configuration behavior, ask:
 
 1. should this value live in env files, project config, or module config?
 2. is the value consumed through current-module scope, cross-module scope, `app.config`, or `ctx.config`?

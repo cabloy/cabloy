@@ -58,9 +58,9 @@ The framework uses a typed extension model for adding clients:
 
 This is valuable because Redis usage remains part of the typed application model.
 
-## Why this matters for AI workflows
+## Implementation checks for Redis-related backend changes
 
-When AI touches distributed or cache-heavy backend code, it should ask:
+When touching distributed or cache-heavy backend code, ask:
 
 1. which Redis client role is the right one for this behavior?
 2. does the existing config already define the needed client?

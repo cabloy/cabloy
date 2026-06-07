@@ -12,14 +12,14 @@ The point is not to force one access style for every problem. The point is to le
 
 These layers define the server-data abstraction ladder:
 
-| Name | Description |
-| --- | --- |
-| `$fetch` | low-level request wrapper |
-| `$api` | business-oriented API services on top of `$fetch` |
-| `Model` | remote-data state and caching patterns on top of service access |
-| `OpenAPI SDK` | generated client SDK based on backend Swagger/OpenAPI metadata |
-| `$apiSchema` | direct access to API schema metadata |
-| `$sdk` | more generalized schema-driven access using model patterns |
+| Name          | Description                                                     |
+| ------------- | --------------------------------------------------------------- |
+| `$fetch`      | low-level request wrapper                                       |
+| `$api`        | business-oriented API services on top of `$fetch`               |
+| `Model`       | remote-data state and caching patterns on top of service access |
+| `OpenAPI SDK` | generated client SDK based on backend Swagger/OpenAPI metadata  |
+| `$apiSchema`  | direct access to API schema metadata                            |
+| `$sdk`        | more generalized schema-driven access using model patterns      |
 
 ## How to think about the layers
 
@@ -58,9 +58,9 @@ A practical contract-consumption reading is:
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) explains the fullstack contract bridge
 - [OpenAPI SDK Guide](/frontend/openapi-sdk-guide), [API Schema Guide](/frontend/api-schema-guide), and [SDK Guide](/frontend/sdk-guide) explain different frontend consumption layers
 
-## Why this matters for AI workflows
+## Implementation checks for frontend data-loading changes
 
-When an AI system needs to add frontend data access, it should avoid jumping straight to ad hoc request logic.
+When adding frontend data access, avoid jumping straight to ad hoc request logic.
 
 Instead, it should ask:
 

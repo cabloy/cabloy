@@ -51,7 +51,7 @@ When documenting or automating a fullstack collaboration flow:
 3. branch only where the workflow actually diverges
 4. verify flavor names and generated output paths in the active repo
 
-## Why this matters for AI workflows
+## Practical implications for edition-aware workflow decisions
 
 This rule prevents a common failure mode:
 

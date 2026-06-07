@@ -139,9 +139,9 @@ Auth behavior is closely connected to controller AOP, especially guards.
 
 Built-in passport-oriented guard shorthands such as `@Passport.public()` are documented from the request-path perspective in [Controller AOP Guide](/backend/controller-aop-guide).
 
-## Why this matters for AI workflows
+## Implementation checks for authentication changes
 
-When AI edits authentication behavior, it should ask:
+When editing authentication behavior, ask:
 
 1. is the right layer `bean.auth`, `bean.passport`, or controller guard configuration?
 2. does this flow belong to username/password auth, OAuth auth, or both?

@@ -153,9 +153,9 @@ A practical split is:
 - model metadata defines model-local behavior
 - select/mutation calls decide the per-operation query and write shape
 
-## Why this matters for AI workflows
+## Implementation checks for ORM configuration changes
 
-When AI edits ORM-sensitive backend code, it should ask:
+When editing ORM-sensitive backend code, ask:
 
 1. is this behavior controlled by app-level ORM config, model metadata, or a usage-site option?
 2. does the change affect identity type, soft deletion, or timestamp behavior?

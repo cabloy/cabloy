@@ -167,9 +167,9 @@ Read this together with:
 
 These guides explain how modules connect to bean identity, scope-based resources, and monorepo layout.
 
-## Why this matters for AI workflows
+## Implementation checks for module and suite changes
 
-When AI edits or creates frontend code, it should ask:
+When editing or creates frontend code, ask:
 
 1. does this belong in an existing module or a new one?
 2. is this really one feature unit, or should it become part of a suite?
