@@ -28,6 +28,40 @@ The monorepo makes it possible to answer cross-stack questions from source rathe
 - how edition-specific scripts differ between Cabloy Basic and Cabloy Start
 - how Vona and Zova CLI commands can be reused instead of writing scaffolding manually
 
+## Technology Stack
+
+### General
+
+| Package    | Version   |
+| ---------- | --------- |
+| TypeScript | `^5.9.3`  |
+| Zod        | `^4.3.6`  |
+
+### Backend (Vona)
+
+| Package                            | Version   |
+| ---------------------------------- | --------- |
+| Koa                                | `^3.2.0`  |
+| Knex                               | `^3.2.9`  |
+| Redis Client (`ioredis`)           | `^5.10.1` |
+| SQLite Driver (`better-sqlite3`)   | `^12.9.0` |
+
+### Frontend (Zova)
+
+| Package          | Version     |
+| ---------------- | ----------- |
+| Vue              | `^3.5.32`   |
+| Vite             | `^8.0.14`   |
+| Quasar           | `^2.19.3`   |
+| TanStack Query   | `^5.100.10` |
+| TanStack Form    | `^1.32.0`   |
+| TanStack Table   | `^8.21.3`   |
+
+### Edition-specific UI Stack
+
+- **Cabloy Basic**: DaisyUI + Tailwind CSS
+- **Cabloy Start**: Vuetify
+
 ## Common-first, edition-aware
 
 Most framework concepts are shared across Cabloy Basic and Cabloy Start. The new documentation prefers a common-first explanation, then adds edition-specific notes only where the repos intentionally diverge.

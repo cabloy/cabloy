@@ -16,6 +16,22 @@ With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows 
 
 ## Get Started
 
+### Prerequisites
+
+Before creating a new Cabloy project, make sure your environment has:
+
+| Name         | Version     |
+| ------------ | ----------- |
+| pnpm         | `>=10.19.0` |
+| Node.js      | `>=24.4.0`  |
+| Redis        | `>=7.2.6`   |
+| SQLite3      | `Built-in`  |
+| MySQL        | `>=8`       |
+| PostgreSQL   | `>=16`      |
+
+- `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
+- `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies
+
 Create a new Cabloy project:
 
 ```bash
@@ -45,99 +61,62 @@ npm run upgrade
 - **CLI-first workflows for AI coding** — turn scaffolding, metadata, refactors, and verification into explicit commands so AI can stay more accurate, use fewer tokens, and move faster
 - **Monorepo-native development** — keep framework source, docs, and tooling aligned in one repository model
 
-## Ecosystem
+## Technology Stack
 
-- [create-cabloy](https://www.npmjs.com/package/create-cabloy) — create a new Cabloy project with `npm create cabloy`
-- [Vona](https://github.com/cabloy/cabloy/tree/main/vona) — backend framework, modules, suites, and the Vona CLI
-- [Zova](https://github.com/cabloy/cabloy/tree/main/zova) — frontend framework, modules, suites, and the Zova CLI
-- [Cabloy Docs](https://github.com/cabloy/cabloy/tree/main/cabloy-docs) — unified public documentation for Cabloy, Vona, Zova, and AI-assisted workflows
+### General
 
-## Repository Layout
+| Package    | Version   |
+| ---------- | --------- |
+| TypeScript | `^5.9.3`  |
+| Zod        | `^4.3.6`  |
 
-Cabloy uses a monorepo layout so framework development and Cabloy workspace development can share the same structure and workflows.
+### Backend (Vona)
 
-Core areas:
+| Package                     | Version   |
+| --------------------------- | --------- |
+| Koa                         | `^3.2.0`  |
+| Knex                        | `^3.2.9`  |
+| Redis Client (`ioredis`)    | `^5.10.1` |
+| SQLite Driver (`better-sqlite3`) | `^12.9.0` |
 
-- [vona/](https://github.com/cabloy/cabloy/tree/main/vona) — backend framework, modules, suites, and the Vona CLI
-- [zova/](https://github.com/cabloy/cabloy/tree/main/zova) — frontend framework, modules, suites, and the Zova CLI
-- [cabloy-docs/](https://github.com/cabloy/cabloy/tree/main/cabloy-docs) — unified public documentation
+### Frontend (Zova)
 
-Additional references:
+| Package          | Version     |
+| ---------------- | ----------- |
+| Vue              | `^3.5.32`   |
+| Vite             | `^8.0.14`   |
+| Quasar           | `^2.19.3`   |
+| TanStack Query   | `^5.100.10` |
+| TanStack Form    | `^1.32.0`   |
+| TanStack Table   | `^8.21.3`   |
 
-- [Repo Scripts](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/reference/repo-scripts.md)
-- [Package Map](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/reference/package-map.md)
-- [AI Development Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/ai/introduction.md)
+### Edition-specific UI Stack
 
-## Development
-
-If you want to contribute to the framework repository, the root [package.json](https://github.com/cabloy/cabloy/blob/main/package.json) is the shared workflow entrypoint.
-
-### Requirements
-
-- Node.js `>=24.4.0`
-- `pnpm@10.19.0`
-
-### Install
-
-```bash
-npm run init
-```
-
-### Run
-
-Start the backend:
-
-```bash
-npm run dev
-```
-
-Start the frontend verification surfaces used in this workspace:
-
-```bash
-npm run dev:zova:admin
-npm run dev:zova:web
-```
-
-### Verify
-
-```bash
-npm run tsc
-npm run test
-npm run build
-```
-
-### Common scripts
-
-| Command                  | Purpose                                                      |
-| ------------------------ | ------------------------------------------------------------ |
-| `npm run init`           | Install dependencies and initialize the workspace            |
-| `npm run upgrade`        | Upgrade an existing Cabloy project                           |
-| `npm run vona`           | Enter the Vona CLI command family                            |
-| `npm run zova`           | Enter the Zova CLI command family                            |
-| `npm run dev`            | Start the backend development workflow                       |
-| `npm run dev:zova:admin` | Start the admin verification frontend used in this workspace |
-| `npm run dev:zova:web`   | Start the web verification frontend used in this workspace   |
-| `npm run build`          | Run the shared production build workflow                     |
-| `npm run start`          | Start the backend production workflow                        |
-| `npm run test`           | Run backend tests from the shared root entrypoint            |
-| `npm run tsc`            | Run shared type checking                                     |
-
-### CLI-first workflows
-
-Prefer the existing CLI entrypoints before writing framework scaffolding by hand.
-
-For AI coding, this matters because scaffolding, metadata operations, refactors, and verification can be expressed as explicit commands instead of long natural-language instructions, which helps reduce token usage, improve accuracy, and speed up iteration.
-
-```bash
-npm run vona :create
-npm run zova :create
-```
+- **Cabloy Basic**: DaisyUI + Tailwind CSS
+- **Cabloy Start**: Vuetify
 
 ## Contributing
 
 Contributions to the Cabloy framework, docs, and tooling are welcome.
 
-- use the root [package.json](https://github.com/cabloy/cabloy/blob/main/package.json) as the shared workflow entrypoint
+Use the root [package.json](https://github.com/cabloy/cabloy/blob/main/package.json) as the shared workflow entrypoint:
+
+```bash
+npm run init
+npm run dev
+npm run tsc
+npm run test
+npm run build
+```
+
+For more details, see:
+
+- [Repo Scripts](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/reference/repo-scripts.md)
+- [Package Map](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/reference/package-map.md)
+- [AI Development Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/ai/introduction.md)
+
+Contribution guidelines:
+
 - prefer CLI-backed workflows with `npm run vona` and `npm run zova`
 - put user-facing and agent-facing guidance in [cabloy-docs/](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
 - put maintainer rationale, architecture notes, and ADRs in [.docs-internal/](https://github.com/cabloy/cabloy/tree/main/.docs-internal)
