@@ -1,5 +1,34 @@
 # Changelog
 
+## 5.1.51
+
+### Features
+
+- Add unified Cabloy documentation and root skills.
+- Update the project with new capabilities.
+
+### Bug Fixes
+
+- Precompute default permissions from route metadata to ensure permission projection behaves correctly.
+
+### Improvements
+
+- Refresh documentation entry points and add a pages workflow.
+- Update the quickstart and clarify onboarding and upgrade workflow guidance.
+- Clarify documentation audiences, contributor scope, and implementation guidance across backend and reference docs.
+- Separate project and contributor documentation entry points and improve root README positioning and overview.
+- Expand unified migration, backend, frontend, auth, and AOP guides.
+- Align Web/Admin terminology across English and Chinese documentation.
+- Add architecture notes and internal engineering documentation structure for permission projection.
+- Exclude internal engineering docs and Claude worktrees from published npm packages.
+- Align global bean typing with metadata.
+- Rename the database dialect base to match service naming.
+- Move the model base chain into the library layer.
+- Align service underscore registration semantics.
+- Move the database dialect base into the service scene.
+- Align B2 runtime anchors with the service scene.
+- Add project site publishing support, including CNAME and publish workflow updates.
+
 ## 5.1.50
 
 ### Features
