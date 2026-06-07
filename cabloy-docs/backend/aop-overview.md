@@ -116,9 +116,9 @@ For the unified docs, use this progression:
 3. [Internal AOP Guide](/backend/internal-aop-guide)
 4. [External AOP Guide](/backend/external-aop-guide)
 
-## Why this matters for AI workflows
+## Maintainer note for AI-assisted changes
 
-When AI edits backend behavior in Vona, it should ask:
+If you are maintaining AI-assisted workflows that edit backend behavior in Vona, ask:
 
 1. is this concern already represented by middleware, guard, interceptor, pipe, or filter?
 2. should this logic be expressed through an internal AOP decorator instead of manual repetition?

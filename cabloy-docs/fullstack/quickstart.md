@@ -39,7 +39,9 @@ If you are not sure which edition you are using, read:
 npm run upgrade
 ```
 
-## 5. Prefer CLI-backed generation over manual scaffolding
+## 5. Next steps for framework-aware development
+
+If you are contributing to framework-aware workflows or using Cabloy CLI generation directly, prefer CLI-backed generation over manual scaffolding.
 
 Instead of creating framework files by hand, start with:
 
@@ -50,9 +52,9 @@ npm run zova :create
 
 Then narrow into the specific command family you need.
 
-## 6. Verify with shared scripts
+## 6. Shared verification commands for deeper workflow checks
 
-Use the shared project scripts before declaring a workflow correct:
+If you are validating framework-aware changes or a broader workflow, use the shared project scripts before declaring a workflow correct:
 
 ```bash
 npm run tsc

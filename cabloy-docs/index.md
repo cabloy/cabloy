@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /fullstack/introduction
+      link: /fullstack/quickstart
     - theme: alt
       text: Editions
       link: /editions/overview
@@ -59,9 +59,15 @@ Use these labels throughout the site:
 
 ## First reading path
 
-If you are new to the repo, start here:
+### For project users
+
+1. [Fullstack Quickstart](/fullstack/quickstart)
+2. [Editions Overview](/editions/overview)
+3. [Fullstack Introduction](/fullstack/introduction)
+
+### For framework contributors and AI workflows
 
 1. [Fullstack Introduction](/fullstack/introduction)
-2. [Editions Overview](/editions/overview)
-3. [AI Development Introduction](/ai/introduction)
-4. [Repo Scripts Reference](/reference/repo-scripts)
+2. [AI Development Introduction](/ai/introduction)
+3. [Repo Scripts Reference](/reference/repo-scripts)
+4. [Editions Overview](/editions/overview)

@@ -36,9 +36,9 @@ SSR also supports flexible SEO metadata handling.
 
 SSR behavior can depend on environment variables and configuration choices, so SSR docs should be read together with the runtime/flavor model and frontend script model.
 
-## Why this matters for AI workflows
+## Maintainer note for AI-assisted changes
 
-When an AI system changes SSR-sensitive code, it should ask:
+If you are maintaining AI-assisted workflows that change SSR-sensitive code, ask:
 
 1. does this logic run on the server, the client, or both?
 2. does this affect initialization or hydration?
