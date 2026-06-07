@@ -190,6 +190,47 @@ If a class should not appear in `IBeanRecordGlobal`, the preferred fix is to mov
 
 Do not preserve a misplaced bean-scene class and compensate with metadata-generation exceptions or manual `IBeanRecordGlobal` patches. Placement should carry the meaning.
 
+## Why `IBeanRecordGlobal` is the first AI lookup surface
+
+Once `src/bean` is treated as the structural definition of the global shorthand surface, `IBeanRecordGlobal` becomes the most efficient first static lookup surface for many AI-assisted backend tasks.
+
+This is especially true when code references:
+
+- `this.bean.xxx`
+- `ctx.bean.xxx`
+- `app.bean.xxx`
+
+For maintainers, the important point is not only that `IBeanRecordGlobal` is useful. It is that it is useful **because placement carries meaning**:
+
+- bean-scene means global shorthand authoring surface
+- service-scene means service or runtime-anchor lookup surface
+- lib means helper or superclass logic, not shorthand lookup
+
+That allows AI to search by surface first instead of searching the whole container model or raw file tree.
+
+### What this should optimize
+
+Future maintenance should preserve this lookup order:
+
+1. `IBeanRecordGlobal` for shorthand lookup
+2. module `src/.metadata/index.ts` to map shorthand names to generated types
+3. `src/bean` for the shorthand source file
+4. only then a fallback to `IBeanRecordGeneral`, `src/service`, or `src/lib` depending on the actual target
+
+This reduces token waste, avoids false positives in `src/service` or `src/lib`, and keeps AI lookup aligned with the same placement rule that humans are expected to follow.
+
+### What this should not become
+
+Maintainers should not let `IBeanRecordGlobal` drift into a pseudo container inventory.
+
+It should remain:
+
+- a static authoring-surface registry for global shorthand
+- clean enough that AI can trust it as a first lookup step
+- structurally maintained through placement, not hand patches or special-case metadata filters
+
+If AI repeatedly fails to find the right backend shorthand through `IBeanRecordGlobal`, the first maintenance question should be whether the class is misplaced, not whether another metadata exception should be added.
+
 ## Invariants future work should preserve
 
 Future refactors should preserve these boundaries:

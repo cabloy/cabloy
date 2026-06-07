@@ -18,6 +18,7 @@ const OVERWRITE_DIRS: string[] = [
   // root
   'scripts',
   '.husky',
+  'cabloy-docs',
   // vona
   'vona/packages-vona',
   'vona/packages-cli',
