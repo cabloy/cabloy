@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: 'Cabloy'
-  text: 'Unified fullstack framework documentation'
-  tagline: Build SSR, SPA, Web, and Admin applications with monorepo-native guidance for Cabloy, Vona, Zova, and AI-assisted development.
+  text: 'Node.js fullstack framework for AI vibe coding'
+  tagline: Use one framework system instead of stitching together separate backend and frontend stacks. Build with Vona on the backend, Zova on the frontend, and CLI-first workflows across the stack.
   actions:
     - theme: brand
       text: Get Started
@@ -17,14 +17,14 @@ hero:
       link: /ai/introduction
 
 features:
-  - title: Fullstack by design
-    details: Understand how Cabloy combines the Vona backend and the Zova frontend in one source tree so humans and AI agents can work from the same ground truth.
-  - title: Edition-aware workflows
-    details: Distinguish what is common across Cabloy Basic and Cabloy Start, and what changes because of UI library, module composition, or private value-add features.
-  - title: CLI-first automation
-    details: Reuse Vona and Zova CLI capabilities for scaffolding, refactoring, metadata, and verification instead of re-deriving framework conventions from scratch.
-  - title: AI-ready knowledge system
-    details: Connect public docs, internal architecture notes, Claude rules, and skills so AI-assisted development stays accurate, efficient, and maintainable.
+  - title: One framework system
+    details: Build backend and frontend in one Node.js fullstack architecture instead of stitching together separate stacks.
+  - title: Vona + Zova
+    details: Use aligned backend and frontend frameworks that stay close enough for code sharing, workflow reuse, and AI-assisted implementation.
+  - title: Multiple delivery modes
+    details: Support SSR, SPA, Web, and Admin applications with shared conventions across the Cabloy ecosystem.
+  - title: CLI-first workflows for AI coding
+    details: Turn scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
 ---
 
 # Cabloy Documentation
