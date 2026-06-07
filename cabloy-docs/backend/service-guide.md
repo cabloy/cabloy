@@ -142,6 +142,8 @@ That means service access should be understood together with:
 - local module scope vs cross-module scope
 - other scope resource categories such as model and entity
 
+For deciding whether a backend base class should stay a helper, move into service-scene, or remain part of the global bean shorthand surface, also see [Class Placement Rule](/ai/class-placement-rule).
+
 Read this guide together with:
 
 - [Backend Foundation](/backend/foundation)

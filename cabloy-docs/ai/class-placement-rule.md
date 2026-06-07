@@ -52,10 +52,12 @@ Typical signals:
 - used in `_getBean(...)` or `_getBeanSelector(...)`
 - participates in selector-aware resolution or instance caching
 - depends on bean lifecycle or other container-managed behavior
+- already uses `@Virtual()` for an intentional business meaning that should survive the move
 
 Recommended placement:
 
 - `src/service` with `@Service()`
+- if the original class was virtual, keep `@Virtual()` after the move
 
 ## Fast classification checklist
 
@@ -75,6 +77,18 @@ B2 is about runtime semantics, not business naming.
 The point is not that the class suddenly becomes a business-oriented service. The point is that it still needs container-managed behavior while no longer belonging on the global bean shorthand surface.
 
 That is why `src/service` with `@Service()` is usually the better fit than moving it directly to `src/lib`.
+
+If the original class already used `@Virtual()`, preserve `@Virtual()` after the move. Virtuality and service-scene placement describe different concerns and should not be conflated.
+
+## Validated B2 examples
+
+The cache and summer runtime-anchor bases validated this rule in practice.
+
+That validation also confirmed an important constraint:
+
+- if a B2 base already used `@Virtual()`, keep `@Virtual()` after moving it to `src/service`
+
+The next separate step after placement validation is naming consistency for the public base-class surface.
 
 ## Related guidance
 

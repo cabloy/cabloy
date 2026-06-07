@@ -163,6 +163,8 @@ A practical naming rule is:
 - onion name uses the shorter `module:bean` form such as `demo-student:student`
 - bean scene is the middle grouping layer that turns one module into operational families like `service`, `model`, `entity`, `dto`, or `startup`
 
+For deciding whether backend base classes belong in `src/lib`, `src/service`, or the global bean shorthand surface, also see [Class Placement Rule](/ai/class-placement-rule).
+
 ## BeanBase built-ins
 
 A large part of the backend essentials model is that ordinary backend beans already inherit a useful working surface from `BeanBase`.

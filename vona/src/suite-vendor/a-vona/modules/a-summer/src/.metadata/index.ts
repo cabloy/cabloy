@@ -1,7 +1,6 @@
 // eslint-disable
 /** bean: begin */
 export * from '../bean/bean.summer.ts';
-export * from '../bean/bean.summerCacheBase.ts';
 
 import 'vona';
 declare module 'vona' {
@@ -29,6 +28,7 @@ declare module 'vona' {
 export * from '../service/localFetch_.ts';
 export * from '../service/localMem_.ts';
 export * from '../service/localRedis_.ts';
+export * from '../service/summerCacheBase_.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {

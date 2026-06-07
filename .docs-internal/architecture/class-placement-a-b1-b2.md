@@ -64,6 +64,7 @@ Typical properties:
 - participates in selector-aware instance resolution or caching
 - relies on container lifecycle or framework-managed context
 - should remain container-managed even when it is not a business-facing global bean shorthand
+- may already carry `@Virtual()` with a deliberate business meaning that must be preserved during scene migration
 
 Default placement:
 
@@ -86,6 +87,7 @@ Use this sequence when classifying a base class.
 2. Is the class mainly a runtime anchor rather than a public global bean?
    - if yes, it is usually B2
    - prefer `src/service` with `@Service()`
+   - if the original class used `@Virtual()`, preserve `@Virtual()` after the move
 
 3. Is the class only a superclass for concrete subclasses, with no real need for its own runtime identity?
    - if yes, it is usually B1
@@ -132,7 +134,21 @@ Avoid these mistakes:
 - assuming historical bean registration automatically means current registration is necessary
 - keeping internal runtime-anchor bases in bean-scene only because they were once there
 - exposing internal framework bases as global bean shorthand when callers really use them only through class-token or selector-based workflows
-- using `@Service()` only as a naming change without checking the resulting scene, identifier, and metadata consequences
+- using `@Service()` only as a naming change without checking the resulting scene, identifier, metadata, and virtuality consequences
+- dropping `@Virtual()` during migration just because the class moved out of `src/bean`
+
+## Pilot result: cache and summer B2 validation
+
+The cache and summer runtime-anchor bases validated the B2 rule in real framework code.
+
+The validated shape is:
+
+- move the runtime-anchor base into `src/service`
+- keep container-managed behavior with `@Service()`
+- preserve `@Virtual()` when it already carries business meaning
+- keep explicit full-name routing and class-token selector lookup intact
+
+The pilot intentionally preserved the old `Bean*Base` names during the first round so that placement semantics could be validated before public naming changes. The next explicit step is the second-round naming-consistency refactor.
 
 ## Invariants future work should preserve
 

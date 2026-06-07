@@ -1,13 +1,13 @@
 import type { ISummerCacheGet, TSummerCacheActionOptions } from 'vona-module-a-summer';
 
-import { BeanSummerCacheBase, SummerCache } from 'vona-module-a-summer';
+import { ServiceSummerCacheBase, SummerCache } from 'vona-module-a-summer';
 
 export type TSummerCacheSwaggerKey = any;
 export type TSummerCacheSwaggerData = any;
 
 @SummerCache({ preset: 'mem' })
 export class SummerCacheSwagger
-  extends BeanSummerCacheBase<TSummerCacheSwaggerKey, TSummerCacheSwaggerData>
+  extends ServiceSummerCacheBase<TSummerCacheSwaggerKey, TSummerCacheSwaggerData>
   implements ISummerCacheGet<TSummerCacheSwaggerKey, TSummerCacheSwaggerData>
 {
   async getNative(

@@ -29,7 +29,7 @@ export interface TSummerCacheStudentData {
 
 @SummerCache()
 export class SummerCacheStudent
-  extends BeanSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
+  extends ServiceSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
   implements ISummerCacheGet<TSummerCacheStudentKey, TSummerCacheStudentData>
 {
   async getNative(
@@ -63,7 +63,7 @@ export class SummerCacheStudent
 
 ```diff
 export class SummerCacheStudent
-  extends BeanSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
+  extends ServiceSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
   implements
     ISummerCacheGet<TSummerCacheStudentKey, TSummerCacheStudentData>,
 +   ISummerCacheMGet<TSummerCacheStudentKey, TSummerCacheStudentData> {

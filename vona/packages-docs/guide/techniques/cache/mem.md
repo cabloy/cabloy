@@ -31,7 +31,7 @@ export interface TCacheMemStudentData {
   max: 500,
   ttl: 2 * 3600 * 1000,
 })
-export class CacheMemStudent extends BeanCacheMemBase<TCacheMemStudentKey, TCacheMemStudentData> {}
+export class CacheMemStudent extends ServiceCacheMemBase<TCacheMemStudentKey, TCacheMemStudentData> {}
 ```
 
 - `TCacheMemStudentKey`: Defines the type of the cache key

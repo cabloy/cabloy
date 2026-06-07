@@ -29,7 +29,7 @@ export interface TSummerCacheStudentData {
 
 @SummerCache()
 export class SummerCacheStudent
-  extends BeanSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
+  extends ServiceSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
   implements ISummerCacheGet<TSummerCacheStudentKey, TSummerCacheStudentData>
 {
   async getNative(
@@ -64,7 +64,7 @@ If the `mgetNative` method is not provided, the system will automatically loop t
 
 ```diff
 export class SummerCacheStudent
-  extends BeanSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
+  extends ServiceSummerCacheBase<TSummerCacheStudentKey, TSummerCacheStudentData>
   implements
     ISummerCacheGet<TSummerCacheStudentKey, TSummerCacheStudentData>,
 +   ISummerCacheMGet<TSummerCacheStudentKey, TSummerCacheStudentData> {

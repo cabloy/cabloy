@@ -35,6 +35,7 @@ Read next:
 
 - [Backend Foundation](/backend/foundation)
 - [Service Guide](/backend/service-guide)
+- [Class Placement Rule](/ai/class-placement-rule)
 - [Backend Startup Guide](/backend/startup-guide)
 
 ### 2. Scope and module resource access

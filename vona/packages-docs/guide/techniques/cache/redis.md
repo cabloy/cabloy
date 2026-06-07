@@ -30,7 +30,7 @@ export interface TCacheRedisStudentData {
 @CacheRedis({
   ttl: 2 * 3600 * 1000,
 })
-export class CacheRedisStudent extends BeanCacheRedisBase<
+export class CacheRedisStudent extends ServiceCacheRedisBase<
   TCacheRedisStudentKey,
   TCacheRedisStudentData
 > {}

@@ -1,13 +1,13 @@
 import type { ISummerCacheGet, TSummerCacheActionOptions } from 'vona-module-a-summer';
 
-import { BeanSummerCacheBase, SummerCache } from 'vona-module-a-summer';
+import { ServiceSummerCacheBase, SummerCache } from 'vona-module-a-summer';
 
 export type TSummerCachePermissionKey = any;
 export type TSummerCachePermissionData = any;
 
 @SummerCache({ preset: 'mem' })
 export class SummerCachePermission
-  extends BeanSummerCacheBase<TSummerCachePermissionKey, TSummerCachePermissionData>
+  extends ServiceSummerCacheBase<TSummerCachePermissionKey, TSummerCachePermissionData>
   implements ISummerCacheGet<TSummerCachePermissionKey, TSummerCachePermissionData>
 {
   async getNative(

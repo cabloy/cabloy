@@ -1,4 +1,4 @@
-import { BeanCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
+import { ServiceCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
 
 export type TCacheRedisAuthTokenKey = string;
 export type TCacheRedisAuthTokenData = string;
@@ -7,7 +7,7 @@ export type TCacheRedisAuthTokenData = string;
   ttl: 30 * 24 * 60 * 60 * 1000,
   disableTransactionCompensate: true,
 })
-export class CacheRedisAuthToken extends BeanCacheRedisBase<
+export class CacheRedisAuthToken extends ServiceCacheRedisBase<
   TCacheRedisAuthTokenKey,
   TCacheRedisAuthTokenData
 > {}

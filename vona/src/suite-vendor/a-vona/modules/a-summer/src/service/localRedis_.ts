@@ -1,4 +1,4 @@
-import type { BeanCacheRedisBase } from 'vona-module-a-cache';
+import type { ServiceCacheRedisBase } from 'vona-module-a-cache';
 
 import { Service } from 'vona-module-a-bean';
 
@@ -12,7 +12,7 @@ export class ServiceLocalRedis<KEY = any, DATA = any>
   extends CacheBase<KEY, DATA>
   implements ICacheLayeredBase<KEY, DATA>
 {
-  private _cacheRedisInstance: BeanCacheRedisBase<KEY, DATA> | undefined;
+  private _cacheRedisInstance: ServiceCacheRedisBase<KEY, DATA> | undefined;
 
   protected async __dispose__() {
     if (this._cacheRedisInstance) {
@@ -21,7 +21,7 @@ export class ServiceLocalRedis<KEY = any, DATA = any>
     }
   }
 
-  get cacheRedis(): BeanCacheRedisBase<KEY, DATA> {
+  get cacheRedis(): ServiceCacheRedisBase<KEY, DATA> {
     if (!this._cacheRedisInstance) {
       this._cacheRedisInstance = this.app.bean.cache.redis(
         this._cacheName,

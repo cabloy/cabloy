@@ -1,4 +1,4 @@
-import { BeanCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
+import { ServiceCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
 
 export type TCacheRedisWorkerAliveKey = string;
 export type TCacheRedisWorkerAliveData = boolean;
@@ -8,7 +8,7 @@ export type TCacheRedisWorkerAliveData = boolean;
   disableTransactionCompensate: true,
   client: 'worker',
 })
-export class CacheRedisWorkerAlive extends BeanCacheRedisBase<
+export class CacheRedisWorkerAlive extends ServiceCacheRedisBase<
   TCacheRedisWorkerAliveKey,
   TCacheRedisWorkerAliveData
 > {}

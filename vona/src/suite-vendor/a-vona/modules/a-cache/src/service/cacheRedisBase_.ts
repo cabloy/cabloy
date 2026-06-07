@@ -1,16 +1,16 @@
 import type { Redis } from 'ioredis';
 
 import { Virtual } from 'vona';
-import { Bean } from 'vona-module-a-bean';
+import { Service } from 'vona-module-a-bean';
 
 import type { ICacheRedisGetOptions, ICacheRedisSetOptions } from '../types/cache.ts';
 import type { IDecoratorCacheRedisOptions } from '../types/cacheRedis.ts';
 
 import { CacheBase } from '../common/cacheBase.ts';
 
-@Bean()
+@Service()
 @Virtual()
-export class BeanCacheRedisBase<KEY = any, DATA = any> extends CacheBase<
+export class ServiceCacheRedisBase<KEY = any, DATA = any> extends CacheBase<
   IDecoratorCacheRedisOptions,
   KEY
 > {

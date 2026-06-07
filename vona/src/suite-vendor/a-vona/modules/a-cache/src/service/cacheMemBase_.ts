@@ -1,6 +1,6 @@
 import { LRUCache } from 'lru-cache';
 import { Virtual } from 'vona';
-import { Bean } from 'vona-module-a-bean';
+import { Service } from 'vona-module-a-bean';
 
 import type { ICacheMemGetOptions, ICacheMemSetOptions } from '../types/cache.ts';
 import type { IDecoratorCacheMemOptions } from '../types/cacheMem.ts';
@@ -8,9 +8,9 @@ import type { IDecoratorCacheMemOptions } from '../types/cacheMem.ts';
 import { CacheBase } from '../common/cacheBase.ts';
 import { getCacheMemories } from '../lib/const.ts';
 
-@Bean()
+@Service()
 @Virtual()
-export class BeanCacheMemBase<KEY = any, DATA = any> extends CacheBase<
+export class ServiceCacheMemBase<KEY = any, DATA = any> extends CacheBase<
   IDecoratorCacheMemOptions,
   KEY
 > {

@@ -1,4 +1,4 @@
-import { BeanCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
+import { ServiceCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
 
 export type TCacheRedisStartupDebounceKey = `startupDebounce:${string}`;
 export type TCacheRedisStartupDebounceData = boolean;
@@ -8,7 +8,7 @@ export type TCacheRedisStartupDebounceData = boolean;
   disableTransactionCompensate: true,
   client: 'worker',
 })
-export class CacheRedisStartupDebounce extends BeanCacheRedisBase<
+export class CacheRedisStartupDebounce extends ServiceCacheRedisBase<
   TCacheRedisStartupDebounceKey,
   TCacheRedisStartupDebounceData
 > {}

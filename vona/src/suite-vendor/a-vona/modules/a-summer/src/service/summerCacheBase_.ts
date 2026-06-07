@@ -1,5 +1,5 @@
 import { deepExtend, Virtual } from 'vona';
-import { Bean } from 'vona-module-a-bean';
+import { Service } from 'vona-module-a-bean';
 
 import type {
   IDecoratorSummerCacheOptions,
@@ -8,9 +8,9 @@ import type {
 
 import { CacheBase } from '../common/cacheBase.ts';
 
-@Bean()
+@Service()
 @Virtual()
-export class BeanSummerCacheBase<KEY = any, DATA = any> extends CacheBase<KEY, DATA> {
+export class ServiceSummerCacheBase<KEY = any, DATA = any> extends CacheBase<KEY, DATA> {
   protected __init__(cacheName?: string, cacheOptions?: IDecoratorSummerCacheOptions) {
     let _cacheName: string;
     let _cacheOptions: IDecoratorSummerCacheOptions;

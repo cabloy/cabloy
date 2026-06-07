@@ -1,6 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
-import { BeanCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
+import { ServiceCacheRedisBase, CacheRedis } from 'vona-module-a-cache';
 
 export type TCacheRedisEmailConfirmKey = string;
 export interface TCacheRedisEmailConfirmData {
@@ -11,7 +11,7 @@ export interface TCacheRedisEmailConfirmData {
 @CacheRedis({
   ttl: 30 * 60 * 1000, // 30 minutes
 })
-export class CacheRedisEmailConfirm extends BeanCacheRedisBase<
+export class CacheRedisEmailConfirm extends ServiceCacheRedisBase<
   TCacheRedisEmailConfirmKey,
   TCacheRedisEmailConfirmData
 > {}

@@ -1,4 +1,4 @@
-import type { BeanCacheMemBase } from 'vona-module-a-cache';
+import type { ServiceCacheMemBase } from 'vona-module-a-cache';
 
 import { Service } from 'vona-module-a-bean';
 
@@ -12,7 +12,7 @@ export class ServiceLocalMem<KEY = any, DATA = any>
   extends CacheBase<KEY, DATA>
   implements ICacheLayeredBase<KEY, DATA>
 {
-  private _cacheMemInstance: BeanCacheMemBase<KEY, DATA> | undefined;
+  private _cacheMemInstance: ServiceCacheMemBase<KEY, DATA> | undefined;
 
   protected async __dispose__() {
     if (this._cacheMemInstance) {
@@ -21,7 +21,7 @@ export class ServiceLocalMem<KEY = any, DATA = any>
     }
   }
 
-  get cacheMem(): BeanCacheMemBase<KEY, DATA> {
+  get cacheMem(): ServiceCacheMemBase<KEY, DATA> {
     if (!this._cacheMemInstance) {
       this._cacheMemInstance = this.app.bean.cache.mem(this._cacheName, this._cacheOptions.mem);
     }

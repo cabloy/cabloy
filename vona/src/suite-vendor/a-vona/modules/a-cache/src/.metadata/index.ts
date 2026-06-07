@@ -1,8 +1,6 @@
 // eslint-disable
 /** bean: begin */
 export * from '../bean/bean.cache.ts';
-export * from '../bean/bean.cacheMemBase.ts';
-export * from '../bean/bean.cacheRedisBase.ts';
 
 import 'vona';
 declare module 'vona' {
@@ -26,6 +24,19 @@ declare module 'vona' {
   }
 }
 /** bean: end */
+/** service: begin */
+export * from '../service/cacheMemBase_.ts';
+export * from '../service/cacheRedisBase_.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+  
+  
+}
+declare module 'vona-module-a-cache' {
+   
+}
+/** service: end */
 /** broadcast: begin */
 export * from '../bean/broadcast.memClear.ts';
 export * from '../bean/broadcast.memDel.ts';

@@ -1,7 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDatabaseClientRecord } from 'vona-module-a-orm';
 
-import { BeanSummerCacheBase, SummerCache } from 'vona-module-a-summer';
+import { ServiceSummerCacheBase, SummerCache } from 'vona-module-a-summer';
 
 export type TSummerCacheDatasourceWriteKey = TableIdentity;
 export type TSummerCacheDatasourceWriteData = keyof IDatabaseClientRecord;
@@ -14,7 +14,7 @@ export type TSummerCacheDatasourceWriteData = keyof IDatabaseClientRecord;
     ttl: 3 * 1000, // 3s
   },
 })
-export class SummerCacheDatasourceWrite extends BeanSummerCacheBase<
+export class SummerCacheDatasourceWrite extends ServiceSummerCacheBase<
   TSummerCacheDatasourceWriteKey,
   TSummerCacheDatasourceWriteData
 > {}

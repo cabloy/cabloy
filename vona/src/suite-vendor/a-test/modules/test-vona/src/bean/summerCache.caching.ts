@@ -1,6 +1,6 @@
 import type { ISummerCacheGet, TSummerCacheActionOptions } from 'vona-module-a-summer';
 
-import { BeanSummerCacheBase, SummerCache } from 'vona-module-a-summer';
+import { ServiceSummerCacheBase, SummerCache } from 'vona-module-a-summer';
 
 export interface TSummerCacheCachingKey {
   id: number;
@@ -21,7 +21,7 @@ export interface TSummerCacheCachingData {
   },
 })
 export class SummerCacheCaching
-  extends BeanSummerCacheBase<TSummerCacheCachingKey, TSummerCacheCachingData>
+  extends ServiceSummerCacheBase<TSummerCacheCachingKey, TSummerCacheCachingData>
   implements ISummerCacheGet<TSummerCacheCachingKey, TSummerCacheCachingData>
 {
   async getNative(
