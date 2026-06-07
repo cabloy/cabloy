@@ -6,14 +6,14 @@ This guide explains the fastest way to start a Cabloy fullstack project.
 
 Before creating a new Cabloy project, make sure your environment has:
 
-| Name       | Version     |
-| ---------- | ----------- |
-| `pnpm`     | `>=10.19.0` |
-| `Node.js`  | `>=24.4.0`  |
-| `Redis`    | `>=7.2.6`   |
-| `SQLite3`  | `Built-in`  |
-| `MySQL`    | `>=8`       |
-| `PostgreSQL` | `>=16`    |
+| Name         | Version     |
+| ------------ | ----------- |
+| `pnpm`       | `>=10.19.0` |
+| `Node.js`    | `>=24.4.0`  |
+| `Redis`      | `>=7.2.6`   |
+| `SQLite3`    | `Built-in`  |
+| `MySQL`      | `>=8`       |
+| `PostgreSQL` | `>=16`      |
 
 - `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
 - `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies
@@ -30,13 +30,16 @@ npm create cabloy
 npm run dev
 ```
 
+- Web: http://localhost:7102/
+- Admin: http://localhost:7102/admin/
+
 ## 4. Start the frontend for your edition
 
 ### Cabloy Basic
 
 ```bash
-npm run dev:zova:admin
-npm run dev:zova:web
+npm run dev:zova:admin # http://localhost:9000/admin/
+npm run dev:zova:web   # http://localhost:9000/
 ```
 
 ### Cabloy Start
