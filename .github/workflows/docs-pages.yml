@@ -1,0 +1,54 @@
+name: docs-pages
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cabloy-docs/**'
+      - 'README.md'
+      - '.github/workflows/docs-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docs-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.19.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: cabloy-docs/pnpm-lock.yaml
+      - name: install docs dependencies
+        run: pnpm --dir cabloy-docs install --frozen-lockfile
+      - name: build docs
+        run: pnpm --dir cabloy-docs docs:build
+      - name: setup pages
+        uses: actions/configure-pages@v5
+      - name: upload pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: cabloy-docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: deploy to github pages
+        id: deployment
+        uses: actions/deploy-pages@v4

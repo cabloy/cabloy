@@ -2,19 +2,35 @@
 
 This guide explains the fastest way to start a Cabloy fullstack project.
 
-## 1. Create a new project
+## 1. Prerequisites
+
+Before creating a new Cabloy project, make sure your environment has:
+
+| Name       | Version     |
+| ---------- | ----------- |
+| `pnpm`     | `>=10.19.0` |
+| `Node.js`  | `>=24.4.0`  |
+| `Redis`    | `>=7.2.6`   |
+| `SQLite3`  | `Built-in`  |
+| `MySQL`    | `>=8`       |
+| `PostgreSQL` | `>=16`    |
+
+- `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
+- `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies
+
+## 2. Create a new project
 
 ```bash
 npm create cabloy
 ```
 
-## 2. Start the backend
+## 3. Start the backend
 
 ```bash
 npm run dev
 ```
 
-## 3. Start the frontend for your edition
+## 4. Start the frontend for your edition
 
 ### Cabloy Basic
 
@@ -33,13 +49,13 @@ If you are not sure which edition you are using, read:
 - [Cabloy Basic](/editions/cabloy-basic)
 - [Cabloy Start](/editions/cabloy-start)
 
-## 4. Upgrade an existing project
+## 5. Upgrade an existing project
 
 ```bash
 npm run upgrade
 ```
 
-## 5. Next steps for framework-aware development
+## 6. Next steps for framework-aware development
 
 If you are contributing to framework-aware workflows or using Cabloy CLI generation directly, prefer CLI-backed generation over manual scaffolding.
 
@@ -52,7 +68,7 @@ npm run zova :create
 
 Then narrow into the specific command family you need.
 
-## 6. Shared verification commands for deeper workflow checks
+## 7. Shared verification commands for deeper workflow checks
 
 If you are validating framework-aware changes or a broader workflow, use the shared project scripts before declaring a workflow correct:
 
