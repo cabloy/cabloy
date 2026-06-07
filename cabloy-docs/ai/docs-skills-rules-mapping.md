@@ -1,5 +1,7 @@
 # Docs, Skills, Rules, and CLI Mapping
 
+This page is for docs, skills, and workflow authors who need to decide where Cabloy AI guidance should live.
+
 This page explains how the Cabloy AI knowledge system is divided across public docs, skills, rules, and CLI capabilities.
 
 ## Why this mapping matters
@@ -98,7 +100,7 @@ Skills answer questions like:
 - when should it branch between Basic and Start?
 - what is the right verification path after generation or refactor work?
 
-## Decision rule: where should a new piece of knowledge go?
+## Decision rule for authors: where should a new piece of knowledge go?
 
 Use this quick rule:
 

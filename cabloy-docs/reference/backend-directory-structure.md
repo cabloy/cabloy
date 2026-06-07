@@ -6,7 +6,7 @@ This page gives a compact reference view of the backend tree under `vona/`.
 
 The package map explains the architectural meaning of package, module, and suite boundaries.
 
-This page complements that by showing the practical tree layout contributors actually navigate when working on backend code.
+This page complements that by showing the practical backend tree layout used in the Cabloy repository.
 
 ## Simplified backend tree
 
@@ -26,26 +26,26 @@ vona/
 
 ## Meaning of the main directories
 
-| Path | Meaning |
-| --- | --- |
-| `vona/packages-cli/` | Vona CLI entrypoints and command sets |
-| `vona/packages-utils/` | shared backend-side utilities |
-| `vona/packages-vona/` | framework packages |
-| `vona/src/module/` | first-party standalone modules |
-| `vona/src/module-vendor/` | vendor-provided standalone modules |
-| `vona/src/suite/` | first-party suites and their modules |
-| `vona/src/suite-vendor/` | vendor-provided suites and their modules |
+| Path                      | Meaning                                  |
+| ------------------------- | ---------------------------------------- |
+| `vona/packages-cli/`      | Vona CLI entrypoints and command sets    |
+| `vona/packages-utils/`    | shared backend-side utilities            |
+| `vona/packages-vona/`     | framework packages                       |
+| `vona/src/module/`        | first-party standalone modules           |
+| `vona/src/module-vendor/` | vendor-provided standalone modules       |
+| `vona/src/suite/`         | first-party suites and their modules     |
+| `vona/src/suite-vendor/`  | vendor-provided suites and their modules |
 
 ## Project-level backend areas
 
 Within the backend application layer, contributors should also know these practical areas:
 
-| Path | Meaning |
-| --- | --- |
-| `vona/env/` | backend env files and runtime configuration inputs |
-| `vona/src/backend/config/` | project-level backend config and locale overrides |
-| `vona/src/backend/typing/` | project-level backend type definitions |
-| `vona/src/backend/play/` | backend playground-oriented verification assets |
+| Path                       | Meaning                                            |
+| -------------------------- | -------------------------------------------------- |
+| `vona/env/`                | backend env files and runtime configuration inputs |
+| `vona/src/backend/config/` | project-level backend config and locale overrides  |
+| `vona/src/backend/typing/` | project-level backend type definitions             |
+| `vona/src/backend/play/`   | backend playground-oriented verification assets    |
 
 ## Practical development reading of the tree
 
@@ -77,9 +77,9 @@ A practical split is:
 - [Package Map](/reference/package-map) explains architecture boundaries and package metadata
 - this page explains the practical directory tree contributors navigate
 
-## Why this matters for AI workflows
+## Maintainer note for AI-assisted changes
 
-When AI edits backend code, it should ask:
+If you are maintaining AI-assisted workflows that edit backend code, ask:
 
 1. does this change belong to a standalone module, a suite-contained module, or project-level backend config?
 2. is the task about generation behavior under `packages-cli/` or runtime behavior under `src/`?

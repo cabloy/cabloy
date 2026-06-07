@@ -1,5 +1,7 @@
 # AI Development Introduction
 
+This page is the entrypoint for contributors who are designing, reviewing, or maintaining AI-assisted workflows in the Cabloy repository.
+
 The Cabloy monorepo is a good fit for AI-assisted development because the source tree already contains most of the framework knowledge an agent needs:
 
 - root scripts for shared workflows
@@ -26,6 +28,8 @@ The goal is to make AI **reuse the repo’s existing conventions directly**, esp
 ### Public docs
 
 Use `cabloy-docs/` for user-facing and agent-facing guidance that should remain durable and source-aligned.
+
+For normal project usage, prefer the user-facing entry docs such as [Fullstack Quickstart](/fullstack/quickstart). This AI section focuses on repository workflows and AI-assisted development.
 
 ### Internal engineering docs
 

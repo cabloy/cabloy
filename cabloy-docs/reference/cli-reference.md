@@ -38,7 +38,7 @@ Primary command families:
 - `tools:*`
 - `openapi:*`
 
-## Guidance
+## Maintainer note for docs, skills, and rules
 
 When creating docs, skills, or rules, use the CLI family names as the public mental model first. Only drop to file-level implementation details when the command surface is insufficient.
 
