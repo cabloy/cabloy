@@ -1,12 +1,14 @@
 # Frontend Quickstart
 
-This guide explains the fastest way to get oriented on the frontend side of the Cabloy monorepo.
+This guide explains the fastest way to get oriented on the frontend side of the Cabloy framework repository.
+
+If you want to create and use a Cabloy project, start with [Fullstack Quickstart](/fullstack/quickstart).
 
 ## When to use this page
 
-Use this page when you want to move from the repo root to the first visible routed screen in Zova with the right edition and script assumptions.
+Use this page when you want to move from the framework repository root to the first visible routed screen in Zova with the right edition and script assumptions.
 
-This page is the frontend narrative hub for:
+This page is the frontend narrative hub for framework-repository work such as:
 
 - detecting the active edition
 - choosing the right root scripts and frontend flavors
@@ -21,7 +23,7 @@ Before choosing frontend examples, scripts, or shell assumptions, detect whether
 - **Cabloy Basic**
 - **Cabloy Start**
 
-In this public repository, the active edition is **Cabloy Basic**.
+When working in this framework repository, the active edition is **Cabloy Basic**.
 
 That matters because edition choice affects:
 
@@ -38,9 +40,11 @@ Read together with:
 
 ## Step 2: start from root scripts
 
-In Cabloy, begin from the root repository scripts whenever possible.
+When working in the framework repository, begin from the root repository scripts.
 
-### Install and initialize
+These commands are repository-root workflows for framework development and verification, not the default bootstrap path for a normal Cabloy project.
+
+### Install and initialize the framework workspace
 
 ```bash
 npm run init
@@ -64,7 +68,7 @@ These root wrappers currently map to the Basic flavors:
 npm run build:zova
 ```
 
-Use the root wrappers as the normal entrypoint, then read the deeper script guide when you need appMode/flavor detail.
+Use the root wrappers as the normal entrypoint for this framework repository, then read the deeper script guide when you need appMode/flavor detail.
 
 Read together with:
 

@@ -8,21 +8,13 @@ This guide explains the fastest way to start a Cabloy fullstack project.
 npm create cabloy
 ```
 
-## 2. Install dependencies
-
-After entering the project directory:
-
-```bash
-npm run init
-```
-
-## 3. Start the backend
+## 2. Start the backend
 
 ```bash
 npm run dev
 ```
 
-## 4. Start the frontend for your edition
+## 3. Start the frontend for your edition
 
 ### Cabloy Basic
 
@@ -41,13 +33,13 @@ If you are not sure which edition you are using, read:
 - [Cabloy Basic](/editions/cabloy-basic)
 - [Cabloy Start](/editions/cabloy-start)
 
-## 5. Upgrade an existing project
+## 4. Upgrade an existing project
 
 ```bash
 npm run upgrade
 ```
 
-## 6. Prefer CLI-backed generation over manual scaffolding
+## 5. Prefer CLI-backed generation over manual scaffolding
 
 Instead of creating framework files by hand, start with:
 
@@ -58,7 +50,7 @@ npm run zova :create
 
 Then narrow into the specific command family you need.
 
-## 7. Verify with shared scripts
+## 6. Verify with shared scripts
 
 Use the shared project scripts before declaring a workflow correct:
 

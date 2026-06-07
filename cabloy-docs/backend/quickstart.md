@@ -1,10 +1,12 @@
 # Backend Quickstart
 
-This guide explains the fastest way to get oriented on the backend side of the Cabloy monorepo.
+This guide explains the fastest way to get oriented on the backend side of the Cabloy framework repository.
+
+If you want to create and use a Cabloy project, start with [Fullstack Quickstart](/fullstack/quickstart).
 
 ## When to use this page
 
-Use this page when you want to understand the backend side of Cabloy quickly:
+Use this page when you are contributing backend work in the framework repository and want to understand Cabloy quickly:
 
 - required runtime dependencies
 - how backend development starts in the monorepo
@@ -14,23 +16,25 @@ Use this page when you want to understand the backend side of Cabloy quickly:
 
 ## Prerequisites
 
-| Name | Version |
-| --- | --- |
-| pnpm | >=10.19.0 |
-| Node.js | >=24.8.0 |
-| Redis | >=7.2.6 |
-| Sqlite3 | Built-in |
-| MySQL | >=8 |
-| Postgresql | >=16 |
+| Name       | Version   |
+| ---------- | --------- |
+| pnpm       | >=10.19.0 |
+| Node.js    | >=24.8.0  |
+| Redis      | >=7.2.6   |
+| Sqlite3    | Built-in  |
+| MySQL      | >=8       |
+| Postgresql | >=16      |
 
 Notes:
 
 - Redis underpins capabilities such as queue, startup, election-adjacent distributed coordination, schedule, broadcast, caching, two-layer cache, and redlock.
 - If you use Sqlite3, make sure the node-gyp toolchain is ready so native dependencies can compile correctly.
 
-## Monorepo-first start
+## Framework repository entrypoint
 
-In this repository, start from the root scripts instead of thinking in terms of a standalone Vona repo.
+In the Cabloy framework repository, start from the root scripts instead of thinking in terms of a standalone Vona repo.
+
+These commands are repository-root workflows for framework development, not the default bootstrap path for a normal Cabloy project.
 
 ### Install and initialize
 
