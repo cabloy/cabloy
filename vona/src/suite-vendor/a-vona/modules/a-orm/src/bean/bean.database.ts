@@ -9,7 +9,7 @@ import type {
   IDatabaseClientRecord,
   IDbInfo,
 } from '../types/database.ts';
-import type { BeanDatabaseDialectBase } from '../service/databaseDialectBase_.ts';
+import type { ServiceDatabaseDialectBase } from '../service/databaseDialectBase_.ts';
 
 import { ServiceDatabaseAsyncLocalStorage } from '../service/databaseAsyncLocalStorage_.ts';
 import { ServiceDatabaseClient } from '../service/databaseClient_.ts';
@@ -44,13 +44,13 @@ export class BeanDatabase extends BeanBase {
     return this.getClient(dbInfoOrClientName, clientConfig).db;
   }
 
-  getDialect(client: keyof IDatabaseClientDialectRecord): BeanDatabaseDialectBase {
+  getDialect(client: keyof IDatabaseClientDialectRecord): ServiceDatabaseDialectBase {
     if (!client) throw new Error('database dialect not specified');
     const beanFullName = beanFullNameFromOnionName(
       this.scope.config.dialects[client],
       'databaseDialect',
     );
-    const dialect = this.app.bean._getBean(beanFullName) as BeanDatabaseDialectBase;
+    const dialect = this.app.bean._getBean(beanFullName) as ServiceDatabaseDialectBase;
     if (!dialect) throw new Error(`database dialect not found: ${client}`);
     return dialect;
   }

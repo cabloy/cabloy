@@ -8,12 +8,12 @@ import type {
   IFetchIndexesResultItem,
 } from 'vona-module-a-orm';
 
-import { BeanDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
+import { ServiceDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
 
 export interface IDatabaseDialectOptionsPg extends IDecoratorDatabaseDialectOptions {}
 
 @DatabaseDialect<IDatabaseDialectOptionsPg>()
-export class DatabaseDialectPg extends BeanDatabaseDialectBase {
+export class DatabaseDialectPg extends ServiceDatabaseDialectBase {
   protected _capabilities: IDatabaseDialectCapabilities = {
     like: true,
     ilike: true,

@@ -29,7 +29,7 @@ const INTEGER_COLUMN_TYPE_PREFIXES = [
 
 @Service()
 @Virtual()
-export class BeanDatabaseDialectBase extends BeanBase {
+export class ServiceDatabaseDialectBase extends BeanBase {
   protected _capabilities?: IDatabaseDialectCapabilities;
   protected _configBase?: Partial<ConfigDatabaseClient>;
 

@@ -9,12 +9,12 @@ import type {
 } from 'vona-module-a-orm';
 
 import { promisify } from 'node:util';
-import { BeanDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
+import { ServiceDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
 
 export interface IDatabaseDialectOptionsMysql extends IDecoratorDatabaseDialectOptions {}
 
 @DatabaseDialect<IDatabaseDialectOptionsMysql>()
-export class DatabaseDialectMysql extends BeanDatabaseDialectBase {
+export class DatabaseDialectMysql extends ServiceDatabaseDialectBase {
   protected _capabilities: IDatabaseDialectCapabilities = {
     like: false,
     ilike: true,

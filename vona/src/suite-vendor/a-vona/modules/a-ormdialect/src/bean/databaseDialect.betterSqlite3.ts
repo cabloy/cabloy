@@ -12,12 +12,12 @@ import type {
 import { ensureDir, remove } from 'fs-extra';
 import { globby } from 'globby';
 import path from 'node:path';
-import { BeanDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
+import { ServiceDatabaseDialectBase, DatabaseDialect } from 'vona-module-a-orm';
 
 export interface IDatabaseDialectOptionsBetterSqlite3 extends IDecoratorDatabaseDialectOptions {}
 
 @DatabaseDialect<IDatabaseDialectOptionsBetterSqlite3>()
-export class DatabaseDialectBetterSqlite3 extends BeanDatabaseDialectBase {
+export class DatabaseDialectBetterSqlite3 extends ServiceDatabaseDialectBase {
   protected _capabilities: IDatabaseDialectCapabilities = {
     like: true,
     ilike: false,

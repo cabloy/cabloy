@@ -3,7 +3,7 @@ import type { FunctionAny } from 'vona';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
-import type { BeanDatabaseDialectBase } from './databaseDialectBase_.ts';
+import type { ServiceDatabaseDialectBase } from './databaseDialectBase_.ts';
 import type { IDatabaseClientDialectRecord, IDbInfo } from '../types/database.ts';
 import type { ITransactionConsistencyCommitOptions } from '../types/transaction.ts';
 import type { ServiceDatabaseClient } from './databaseClient_.ts';
@@ -63,7 +63,7 @@ export class ServiceDb extends BeanBase {
     return this.client.clientConfig.client;
   }
 
-  get dialect(): BeanDatabaseDialectBase {
+  get dialect(): ServiceDatabaseDialectBase {
     return this.bean.database.getDialect(this.dialectName);
   }
 
