@@ -71,13 +71,8 @@ A practical rule is:
 
 These are not competing workflow systems. They are two entrypoints to the same underlying Zova command families.
 
-## Guidance for AI workflows
+## Practical workflow rule
 
-When an agent is about to create or refactor frontend code:
+When creating or refactoring frontend code, inspect `npm run zova :` or the relevant command family first, prefer the matching generator or refactor command, inspect the generated or transformed output, and only then make minimal follow-up edits.
 
-1. inspect `npm run zova :` or the relevant command family
-2. prefer the matching generator or refactor command
-3. inspect the generated or transformed output
-4. only then make minimal follow-up edits
-
-This keeps frontend work aligned with Zova conventions and avoids wasting tokens on avoidable manual scaffolding.
+This keeps frontend work aligned with Zova conventions and avoids avoidable manual scaffolding.

@@ -23,7 +23,7 @@ The root `package.json` is the first reference point for shared monorepo workflo
 
 Cabloy Start keeps the same high-level pattern while using different frontend flavors such as `cabloyStartAdmin` and `cabloyStartWeb`.
 
-### Maintainer note for docs and automation
+### Documentation and automation guidance
 
 When documenting or automating flavor-specific commands, always confirm the active repo first.
 

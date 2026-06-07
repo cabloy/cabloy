@@ -73,7 +73,7 @@ The sibling `cabloy-start` repository uses Start-specific flavors such as:
 
 Those commands are not driven by the current Basic repo root wrappers, so verify the Start repo’s `package.json` before documenting or automating them.
 
-## Guidance
+## Workflow guidance
 
 When documenting or automating frontend scripts:
 

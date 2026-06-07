@@ -45,10 +45,9 @@ That is especially valuable for:
 - internal and external extension points
 - large-scale maintainability
 
-## Why this matters for AI work
+## Practical implications for implementation
 
-These design principles should influence how AI systems work in Zova. For the deeper structural model behind these principles, see [IoC and Beans](/frontend/ioc-and-beans), [Modules and Suites](/frontend/modules-and-suites), and [Module Scope](/frontend/module-scope).
-
+These design principles should influence how code is extended in Zova. For the deeper structural model behind these principles, see [IoC and Beans](/frontend/ioc-and-beans), [Modules and Suites](/frontend/modules-and-suites), and [Module Scope](/frontend/module-scope).
 
 - do not rewrite Zova code toward generic Vue habits automatically
 - do not assume `ref.value`-style patterns are the desired end state

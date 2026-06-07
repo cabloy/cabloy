@@ -66,11 +66,11 @@ Field indexes can also be configured through app config.
 
 That means index behavior participates in the broader configuration system rather than being locked into one metadata file only.
 
-## Why this matters for AI workflows
+## Implementation checks for persistence changes
 
-When AI changes persistence design, it should not stop at entity fields and model methods.
+When changing persistence design, do not stop at entity fields and model methods.
 
-It should also ask:
+Also ask:
 
 1. does this access pattern need an index?
 2. should the index belong in `meta.index`?

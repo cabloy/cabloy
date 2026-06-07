@@ -215,11 +215,11 @@ A practical rule is:
 
 ## Hook surface matrix
 
-| Surface | Best for | Ordering / policy support | Teardown fit |
-| --- | --- | --- | --- |
-| Startup bean | normal backend initialization work | strong support through `dependencies`, `dependents`, `meta`, `debounce`, and `transaction` | not the main teardown surface |
-| Module main hook | module bootstrap customization | tied to module load phases | usually not the main teardown surface |
-| Monkey hook | deeper lifecycle interception across app phases | follows lifecycle stage rather than startup-onion ordering | strongest fit for `appClose` / `appClosed` cleanup |
+| Surface          | Best for                                        | Ordering / policy support                                                                  | Teardown fit                                       |
+| ---------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Startup bean     | normal backend initialization work              | strong support through `dependencies`, `dependents`, `meta`, `debounce`, and `transaction` | not the main teardown surface                      |
+| Module main hook | module bootstrap customization                  | tied to module load phases                                                                 | usually not the main teardown surface              |
+| Monkey hook      | deeper lifecycle interception across app phases | follows lifecycle stage rather than startup-onion ordering                                 | strongest fit for `appClose` / `appClosed` cleanup |
 
 This matrix is useful because the same backend task can look like “startup code” while actually belonging to different lifecycle surfaces.
 
@@ -306,16 +306,16 @@ Startup should be read together with:
 
 A practical split is:
 
-- startup decides *when backend capabilities are initialized*
-- config decides *which startup behavior is enabled or overridden*
-- instance config decides *which instance-specific startup flows exist*
-- datasource behavior decides *which database context those startup flows run against*
+- startup decides _when backend capabilities are initialized_
+- config decides _which startup behavior is enabled or overridden_
+- instance config decides _which instance-specific startup flows exist_
+- datasource behavior decides _which database context those startup flows run against_
 
 For a practical distributed-runtime reading path, move from [Runtime and Flavors](/backend/runtime-and-flavors) and [Config Guide](/backend/config-guide) into this page, then continue to [Worker Guide](/backend/worker-guide), [Election Guide](/backend/election-guide), [Queue Guide](/backend/queue-guide), and [Schedule Guide](/backend/schedule-guide).
 
-## Why this matters for AI workflows
+## Implementation checks for startup-sensitive changes
 
-When AI edits backend startup-sensitive code, it should ask:
+When changing backend startup-sensitive code, ask:
 
 1. is this initialization logic app-wide or instance-specific?
 2. should this be a startup bean, a module main hook, or a monkey hook?

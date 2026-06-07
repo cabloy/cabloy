@@ -238,9 +238,9 @@ Read this guide together with:
 
 These guides explain the operational script surface, SSR-specific environment concerns, and the monorepo-first starting path.
 
-## Why this matters for AI workflows
+## Implementation checks for runtime-sensitive changes
 
-When AI edits frontend runtime-sensitive code, it should ask:
+When changing frontend runtime-sensitive code, ask:
 
 1. does this behavior depend on mode, appMode, flavor, or more than one of them?
 2. should this logic read from `process.env`, `sys.env`, or `sys.config`?
