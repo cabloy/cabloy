@@ -12,6 +12,7 @@ const aiItems = [
   { text: 'Repo Guidance', link: '/ai/repo-guidance' },
   { text: 'Skills', link: '/ai/skills' },
   { text: 'Class Placement Rule', link: '/ai/class-placement-rule' },
+  { text: 'Global Bean Lookup', link: '/ai/global-bean-lookup' },
   { text: 'Docs / Skills Mapping', link: '/ai/docs-skills-rules-mapping' },
   { text: 'CLI to Skill Map', link: '/ai/cli-to-skill-map' },
   { text: 'Future Skill Roadmap', link: '/ai/future-skill-roadmap' },

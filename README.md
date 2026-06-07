@@ -20,14 +20,14 @@ With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows 
 
 Before creating a new Cabloy project, make sure your environment has:
 
-| Name         | Version     |
-| ------------ | ----------- |
-| pnpm         | `>=10.19.0` |
-| Node.js      | `>=24.4.0`  |
-| Redis        | `>=7.2.6`   |
-| SQLite3      | `Built-in`  |
-| MySQL        | `>=8`       |
-| PostgreSQL   | `>=16`      |
+| Name       | Version     |
+| ---------- | ----------- |
+| pnpm       | `>=10.19.0` |
+| Node.js    | `>=24.4.0`  |
+| Redis      | `>=7.2.6`   |
+| SQLite3    | `Built-in`  |
+| MySQL      | `>=8`       |
+| PostgreSQL | `>=16`      |
 
 - `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
 - `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies
@@ -37,6 +37,8 @@ Create a new Cabloy project:
 ```bash
 npm create cabloy
 ```
+
+The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. Open this project in Claude Code and start coding immediately with project-specific guidance.
 
 Then continue with the framework docs:
 
@@ -65,30 +67,30 @@ npm run upgrade
 
 ### General
 
-| Package    | Version   |
-| ---------- | --------- |
-| TypeScript | `^5.9.3`  |
-| Zod        | `^4.3.6`  |
+| Package    | Version  |
+| ---------- | -------- |
+| TypeScript | `^5.9.3` |
+| Zod        | `^4.3.6` |
 
 ### Backend (Vona)
 
-| Package                     | Version   |
-| --------------------------- | --------- |
-| Koa                         | `^3.2.0`  |
-| Knex                        | `^3.2.9`  |
-| Redis Client (`ioredis`)    | `^5.10.1` |
+| Package                          | Version   |
+| -------------------------------- | --------- |
+| Koa                              | `^3.2.0`  |
+| Knex                             | `^3.2.9`  |
+| Redis Client (`ioredis`)         | `^5.10.1` |
 | SQLite Driver (`better-sqlite3`) | `^12.9.0` |
 
 ### Frontend (Zova)
 
-| Package          | Version     |
-| ---------------- | ----------- |
-| Vue              | `^3.5.32`   |
-| Vite             | `^8.0.14`   |
-| Quasar           | `^2.19.3`   |
-| TanStack Query   | `^5.100.10` |
-| TanStack Form    | `^1.32.0`   |
-| TanStack Table   | `^8.21.3`   |
+| Package        | Version     |
+| -------------- | ----------- |
+| Vue            | `^3.5.32`   |
+| Vite           | `^8.0.14`   |
+| Quasar         | `^2.19.3`   |
+| TanStack Query | `^5.100.10` |
+| TanStack Form  | `^1.32.0`   |
+| TanStack Table | `^8.21.3`   |
 
 ### Edition-specific UI Stack
 

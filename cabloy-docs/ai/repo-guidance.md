@@ -42,6 +42,17 @@ Edition detection is especially important when the work touches:
 - frontend flavor scripts
 - edition-specific modules or assets
 
-## 5. Verify before claiming success
+## 5. Use the right lookup surface before searching broadly
+
+For backend lookup work, choose the surface before choosing the files:
+
+- if code references `this.bean.xxx`, `ctx.bean.xxx`, or `app.bean.xxx`, start from `IBeanRecordGlobal` and module `src/.metadata/index.ts`
+- if code references a full bean name, inspect `IBeanRecordGeneral`
+- if the target is a runtime-anchor or selector/class-token service, inspect `src/service` and service metadata
+- if the target is only a helper or superclass chain, inspect `src/lib`
+
+This reduces wasted search and keeps bean lookup aligned with class placement.
+
+## 6. Verify before claiming success
 
 Whenever a workflow recommendation is made, verify it against current scripts or command definitions before presenting it as guidance.

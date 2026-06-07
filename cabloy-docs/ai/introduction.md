@@ -43,6 +43,17 @@ Use root `CLAUDE.md` and `.claude/commands/` for concise operational behavior an
 
 Use `.claude/skills/` for procedural workflows that benefit from reusable instructions, bundled references, or future deterministic scripts.
 
+## Recommended AI lookup rules
+
+For backend shorthand lookup, prefer these surfaces in order:
+
+1. `IBeanRecordGlobal` for `this.bean.xxx`, `ctx.bean.xxx`, and `app.bean.xxx`
+2. module `src/.metadata/index.ts` to map shorthand names to generated bean types
+3. `src/bean` for the shorthand source file itself
+4. only then re-evaluate whether the target is really a general full-name bean, a service-scene runtime-anchor, or a lib/helper class
+
+For the full lookup workflow, read [Global Bean Lookup](/ai/global-bean-lookup).
+
 ## Common AI mistakes to avoid
 
 - assuming Cabloy Basic and Cabloy Start are identical

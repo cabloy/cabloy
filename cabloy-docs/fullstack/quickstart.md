@@ -24,6 +24,8 @@ Before creating a new Cabloy project, make sure your environment has:
 npm create cabloy
 ```
 
+The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. Open this project in Claude Code and start coding immediately with project-specific guidance.
+
 ## 3. Start the backend
 
 ```bash

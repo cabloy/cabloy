@@ -14,7 +14,7 @@ const TEMP_DIR = resolve(ROOT_DIR, 'node_modules/.cabloy-upgrade');
 
 // --- Whitelist ---
 
-const WHITELIST_DIRS: string[] = [
+const OVERWRITE_DIRS: string[] = [
   // root
   'scripts',
   '.husky',
@@ -36,6 +36,12 @@ const WHITELIST_DIRS: string[] = [
   'zova/scripts',
 ];
 
+const MERGE_DIRS: string[] = [
+  // Claude project assets
+  '.claude/commands',
+  '.claude/skills',
+];
+
 const BLACKLIST_DIRS: string[] = [
   // vona
   'vona/src/suite-vendor/a-test',
@@ -43,6 +49,7 @@ const BLACKLIST_DIRS: string[] = [
 
 const WHITELIST_FILES: string[] = [
   // root
+  'CLAUDE.md',
   'tsconfig.json',
   'tsconfig.base.json',
   'tsconfig.base.esm.json',
@@ -77,6 +84,14 @@ const log = console.log; // eslint-disable-line no-console
 
 function exec(cmd: string): void {
   execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
+}
+
+function shouldCopyPath(path: string): boolean {
+  return !path.includes('.DS_Store');
+}
+
+function copyDirectory(src: string, dest: string): void {
+  cpSync(src, dest, { recursive: true, filter: shouldCopyPath });
 }
 
 async function extractTarball(tarballPath: string, targetDir: string): Promise<void> {
@@ -145,7 +160,7 @@ async function downloadAndExtract(): Promise<void> {
 
 function selectiveOverwrite(dryRun?: boolean): void {
   // Overwrite directories
-  for (const dir of WHITELIST_DIRS) {
+  for (const dir of OVERWRITE_DIRS) {
     const src = resolve(TEMP_DIR, dir);
     const dest = resolve(ROOT_DIR, dir);
     if (!existsSync(src)) continue;
@@ -156,7 +171,19 @@ function selectiveOverwrite(dryRun?: boolean): void {
     if (existsSync(dest)) {
       rmSync(dest, { recursive: true, force: true });
     }
-    cpSync(src, dest, { recursive: true, filter: src => !src.includes('.DS_Store') });
+    copyDirectory(src, dest);
+  }
+
+  // Merge directories
+  for (const dir of MERGE_DIRS) {
+    const src = resolve(TEMP_DIR, dir);
+    const dest = resolve(ROOT_DIR, dir);
+    if (!existsSync(src)) continue;
+    if (dryRun) {
+      log(`  [dry-run] Merge directory: ${dir}`);
+      continue;
+    }
+    copyDirectory(src, dest);
   }
 
   // Delete directories

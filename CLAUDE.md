@@ -50,6 +50,7 @@ Before inventing a custom implementation path:
 - Runtime-anchor bases that still require container-managed or selector/class-token behavior but should not be global beans should prefer `src/service` with `@Service()`.
 - Service-scene runtime-anchor bases that should not register in `IBeanRecordGeneral` should prefer the `src/service/*_.ts` form.
 - `src/bean` defines the global shorthand surface; classes that should not appear in `IBeanRecordGlobal` should move to `src/lib` or `src/service` rather than being filtered by `@Virtual()`.
+- When backend code references `this.bean.xxx`, `ctx.bean.xxx`, or `app.bean.xxx`, use `IBeanRecordGlobal` and module `src/.metadata/index.ts` as the first static lookup surface; use `IBeanRecordGeneral` or `src/service` only when the target is not a global shorthand.
 
 ## Verification expectations
 

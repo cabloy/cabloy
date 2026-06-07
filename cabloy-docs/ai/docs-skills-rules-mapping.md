@@ -131,6 +131,12 @@ Use this quick rule:
 - default repo-wide behavior → `CLAUDE.md`
 - procedural decision workflow → `cabloy-workflow` skill
 
+### Example: “How should AI look up a backend global bean?”
+
+- public lookup explanation → [Global Bean Lookup](/ai/global-bean-lookup)
+- default repo-wide behavior → `CLAUDE.md`
+- procedural lookup sequence → `cabloy-workflow` skill
+
 ### Example: “How backend OpenAPI becomes frontend SDK”
 
 - full explanation → [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)

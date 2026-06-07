@@ -217,6 +217,17 @@ For these requests:
 - prefer B1/B2 relocation over metadata exceptions or manual `IBeanRecordGlobal` patching
 - use `IBeanRecordGlobal` as the static authoring-surface registry for global shorthand, not as a full runtime-container inventory
 
+### Global bean lookup workflow
+
+When backend code references `this.bean.xxx`, `ctx.bean.xxx`, or `app.bean.xxx`, prefer this lookup sequence:
+
+1. check `IBeanRecordGlobal` in the relevant module `src/.metadata/index.ts`
+2. map the shorthand name to the generated bean type
+3. jump from the generated type to the source file in `src/bean`
+4. only if the shorthand is not found, re-evaluate whether the target is actually a general full-name bean, a service-scene runtime-anchor, or a lib/helper class
+
+Use `IBeanRecordGeneral` for general full-name beans and `src/service` or service metadata for runtime-anchor/service-scene lookup. Do not treat `IBeanRecordGlobal` as a full container inventory.
+
 ## Step 6: Apply edition-aware branching
 
 When the task is frontend-sensitive or examples differ between editions, branch explicitly.
