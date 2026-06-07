@@ -28,7 +28,6 @@ declare module 'vona-module-a-orm' {
 /** bean: begin */
 export * from '../bean/bean.database.ts';
 export * from '../bean/bean.model.ts';
-export * from '../bean/bean.modelBase.ts';
 
 import 'vona';
 declare module 'vona' {

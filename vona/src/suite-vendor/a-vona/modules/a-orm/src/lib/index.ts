@@ -3,6 +3,7 @@ export * from './databaseDialect.ts';
 export * from './dto/index.ts';
 export * from './entity.ts';
 export * from './model.ts';
+export * from './bean.modelBase.ts';
 export * from './relations.ts';
 export * from './relationsDynamic.ts';
 export * from './relationsMutate.ts';

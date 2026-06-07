@@ -1,4 +1,4 @@
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from './bean.model/bean.model_meta.ts';
 import type { TypeModelsClassLikeGeneral } from '../types/relations.ts';
 import type {
   IModelRelationOptionsManyDynamic,

@@ -31,7 +31,7 @@ import type {
   TypeModelsClassLikeGeneral,
   TypeModelWhere,
 } from '../../types/index.ts';
-import type { TypeQueueDoubleDeleteJobData } from '../queue.doubleDelete.ts';
+import type { TypeQueueDoubleDeleteJobData } from '../../bean/queue.doubleDelete.ts';
 
 import { getTargetColumnName } from '../../common/utils.ts';
 import { getCacheModelsClear } from '../../lib/const.ts';

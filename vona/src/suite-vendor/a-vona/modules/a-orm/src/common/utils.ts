@@ -3,7 +3,7 @@ import type { Constructable } from 'vona';
 import { appResource, beanFullNameFromOnionName } from 'vona';
 import { prepareClassType } from 'vona-module-a-openapiutils';
 
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type { TypeModelColumn, TypeModelColumns } from '../types/modelWhere.ts';
 import type { IDecoratorModelOptions, IModelClassRecord } from '../types/onion/model.ts';
 

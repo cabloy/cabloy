@@ -2,7 +2,7 @@ import type { ServiceSummerCacheBase, IDecoratorSummerCacheOptions } from 'vona-
 
 import { BeanBase, deepExtend } from 'vona';
 
-import type { BeanModelCache } from '../bean/bean.model/bean.model_cache.ts';
+import type { BeanModelCache } from './bean.model/bean.model_cache.ts';
 import type { TypeModelCacheType } from '../types/model.ts';
 import type { ITableRecord } from '../types/onion/table.ts';
 

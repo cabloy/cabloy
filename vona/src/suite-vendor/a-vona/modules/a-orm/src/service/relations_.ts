@@ -4,9 +4,9 @@ import { isNil } from '@cabloy/utils';
 import { BeanBase, cast, deepExtend } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
-import type { BeanModelCache } from '../bean/bean.model/bean.model_cache.ts';
-import type { BeanModelCrud } from '../bean/bean.model/bean.model_crud.ts';
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelCache } from '../lib/bean.model/bean.model_cache.ts';
+import type { BeanModelCrud } from '../lib/bean.model/bean.model_crud.ts';
+import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type { IModelMethodOptions, IModelRelationIncludeWrapper } from '../types/model.ts';
 import type { IModelClassRecord } from '../types/onion/model.ts';
 import type { TypeModelClassLike } from '../types/relations.ts';

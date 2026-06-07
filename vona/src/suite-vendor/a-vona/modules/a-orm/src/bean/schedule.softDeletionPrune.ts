@@ -5,7 +5,7 @@ import { BeanBase } from 'vona';
 import { Schedule } from 'vona-module-a-schedule';
 
 import type { IModelRecord, ISoftDeletionPrune } from '../types/onion/model.ts';
-import type { BeanModelCache } from './bean.model/bean.model_cache.ts';
+import type { BeanModelCache } from '../lib/bean.model/bean.model_cache.ts';
 
 @Schedule({ repeat: { every: 24 * 3600 * 1000 } })
 export class ScheduleSoftDeletionPrune extends BeanBase implements IScheduleExecute {

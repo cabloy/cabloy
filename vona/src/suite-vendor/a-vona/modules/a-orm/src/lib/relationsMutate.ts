@@ -1,4 +1,4 @@
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from './bean.model/bean.model_meta.ts';
 import type { IModelClassRecord } from '../types/onion/model.ts';
 import type {
   TypeModelClassLike,

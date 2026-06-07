@@ -1,7 +1,7 @@
 import type { Knex } from 'knex';
 import type { TSummerCacheActionOptions } from 'vona-module-a-summer';
 
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type {
   TypeModelColumn,
   TypeModelColumns,

@@ -1,7 +1,7 @@
 import { Virtual } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
-import { BeanModelCrudTable } from './bean.model/bean.model_crud_table.ts';
+import { BeanModelCrudTable } from '../lib/bean.model/bean.model_crud_table.ts';
 
 @Bean()
 @Virtual()

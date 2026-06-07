@@ -1,7 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { OmitNever, TypeOmitStringUnion } from 'vona';
 
-import type { BeanModelMeta } from '../../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../../lib/bean.model/bean.model_meta.ts';
 import type { IModelRelationIncludeWrapper } from '../model.ts';
 import type { TypeModelColumnsStrict } from '../modelWhere.ts';
 import type { IDecoratorModelOptions, IModelClassRecord } from '../onion/model.ts';

@@ -1,4 +1,4 @@
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type { IModelSelectParamsJoin } from './model.ts';
 import type { TypeModelColumn, TypeModelWhere } from './modelWhere.ts';
 import type { TypeModelsClassLikeGeneral } from './relations.ts';

@@ -1,4 +1,4 @@
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type { ServiceDb } from '../service/db_.ts';
 import type { IDatabaseClientRecord } from './database.ts';
 import type { TypeModelSelectAggrParamsAggrs } from './modelAggr.ts';

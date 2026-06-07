@@ -3,7 +3,7 @@ import type { Constructable } from 'vona';
 import { mutate } from 'mutate-on-copy';
 import { $Class } from 'vona';
 
-import type { BeanModelMeta } from '../../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type {
   IDtoMutateParams,
   TypeDtoMutateResult,

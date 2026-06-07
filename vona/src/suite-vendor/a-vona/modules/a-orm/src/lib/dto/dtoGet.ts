@@ -12,7 +12,7 @@ import {
 } from 'vona-module-a-openapiutils';
 import z from 'zod';
 
-import type { BeanModelMeta } from '../../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type { IDtoGetParams, TypeDtoGetResult } from '../../types/dto/dtoGet.ts';
 import type { TypeDtoMutateType } from '../../types/dto/dtoMutate.ts';
 import type { IModelRelationIncludeWrapper } from '../../types/model.ts';

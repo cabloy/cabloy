@@ -1,6 +1,6 @@
 import type { Constructable, OmitNever } from 'vona';
 
-import type { BeanModelMeta } from '../bean/bean.model/bean.model_meta.ts';
+import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type { TypeDepthPrev, TypeDepthPrevMax } from './depth.ts';
 import type { IDecoratorModelOptions, IModelClassRecord } from './onion/model.ts';
 import type {
