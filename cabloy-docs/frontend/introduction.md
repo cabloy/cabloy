@@ -29,4 +29,4 @@ Frontend work is where Cabloy Basic and Cabloy Start differ most clearly.
 - **Cabloy Basic** uses a frontend stack centered on DaisyUI and TailwindCSS in the current docs and examples.
 - **Cabloy Start** uses Vuetify and ships different frontend modules as a private value-add project.
 
-Because of this, AI skills and docs should always detect the active edition before recommending page-level, component-level, or UI-library-specific work.
+Because of this, automation and docs should always detect the active edition before recommending page-level, component-level, or UI-library-specific work.

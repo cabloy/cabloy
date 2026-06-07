@@ -115,9 +115,9 @@ A practical split is:
 - [Backend CLI](/backend/cli) and [Backend Scripts](/backend/scripts) explain workflow entrypoints
 - [Package Map](/reference/package-map) grounds the structure in the real monorepo
 
-## Why this matters for AI workflows
+## Implementation checks for backend-architecture changes
 
-When AI edits backend code, it should ask:
+When changing backend code, ask:
 
 1. is this capability best reached through local module scope, cross-module scope, injection, or direct bean access?
 2. does the change belong to a module, a suite, or a shared package boundary?

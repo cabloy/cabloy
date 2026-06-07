@@ -22,11 +22,11 @@ Important integration channels include:
 - frontend-generated route, icon, and component types that can feed backend-side usage and tooling
 - shared monorepo scripts that make both sides visible to humans and AI systems
 
-## Why Vona matters for AI development
+## Why Vona matters for backend and fullstack development
 
 Vona combines backend productivity, DTO generation, CRUD-oriented workflows, multi-tenancy, and broad infrastructure support. In the monorepo docs, the key point is this:
 
-Vona is not only a backend framework. Its conventions already encode a large amount of fullstack knowledge that AI should reuse instead of re-deriving manually.
+Vona is not only a backend framework. Its conventions already encode a large amount of fullstack knowledge that contributors and automation should reuse instead of re-deriving manually.
 
 That is why the docs, skills, and rules in this repo prefer:
 
@@ -87,12 +87,12 @@ A practical rule is:
 
 ## Access-style comparison
 
-| Access style | Best for | Representative shape |
-| --- | --- | --- |
-| Dependency injection | explicit wiring in the current class | `@Use('demo-student.service.student')` |
-| Dependency lookup | ordinary module-oriented business code | `this.scope.service.student` |
-| Direct bean access | container-aware control or request-scoped lookup | `this.bean._getBean(...)`, `this.ctx.bean._getBean(...)` |
-| Fresh bean creation | workflows that should not reuse the ordinary resolved bean instance | `this.bean._newBean(...)` |
+| Access style         | Best for                                                            | Representative shape                                     |
+| -------------------- | ------------------------------------------------------------------- | -------------------------------------------------------- |
+| Dependency injection | explicit wiring in the current class                                | `@Use('demo-student.service.student')`                   |
+| Dependency lookup    | ordinary module-oriented business code                              | `this.scope.service.student`                             |
+| Direct bean access   | container-aware control or request-scoped lookup                    | `this.bean._getBean(...)`, `this.ctx.bean._getBean(...)` |
+| Fresh bean creation  | workflows that should not reuse the ordinary resolved bean instance | `this.bean._newBean(...)`                                |
 
 ## Dependency injection vs dependency lookup vs direct bean access
 

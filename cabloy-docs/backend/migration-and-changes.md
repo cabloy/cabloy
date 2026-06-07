@@ -69,11 +69,11 @@ export class MetaVersion extends BeanBase {}
 
 Three migration scenarios are defined:
 
-| Scenario | Purpose |
-| --- | --- |
-| `update` | schema evolution such as tables and fields |
-| `init` | instance- or tenant-specific initialization data |
-| `test` | test-only data for the test environment |
+| Scenario | Purpose                                          |
+| -------- | ------------------------------------------------ |
+| `update` | schema evolution such as tables and fields       |
+| `init`   | instance- or tenant-specific initialization data |
+| `test`   | test-only data for the test environment          |
 
 This split is one of the most important Vona migration ideas because it separates:
 
@@ -178,11 +178,11 @@ A practical decision rule is:
 - use `db:reset` when you mainly need to replay migration/database setup locally
 - use `test` when you need to verify that migration, controller behavior, and the broader generated contract thread still work together
 
-## Why this matters for AI workflows
+## Implementation checks for migration-sensitive changes
 
-When AI changes backend schema or module initialization behavior, it should not only edit entities and models.
+When changing backend schema or module initialization behavior, do not only edit entities and models.
 
-It should also ask:
+Also ask:
 
 1. does this change require a `fileVersion` increment?
 2. does `meta.version` need an `update`, `init`, or `test` branch?
