@@ -3,7 +3,7 @@
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cabloy/cabloy/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/cabloy.svg?style=flat-square&label=cabloy)](https://www.npmjs.com/package/cabloy)
 [![npm downloads](https://img.shields.io/npm/dm/cabloy?color=orange&label=downloads)](https://www.npmjs.com/package/cabloy)
-[![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
+[![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://docs.cabloy.com)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com)
 
 Cabloy is a Node.js fullstack framework for AI vibe coding.
@@ -12,7 +12,7 @@ Use one framework system instead of stitching together separate backend and fron
 
 With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
 
-[Documentation](https://github.com/cabloy/cabloy/tree/main/cabloy-docs) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
+[Documentation](https://docs.cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
 ## Get Started
 
@@ -42,12 +42,12 @@ The generated project already includes `CLAUDE.md` and the `.claude/` workspace 
 
 Then continue with the framework docs:
 
-- [Fullstack Quickstart](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/quickstart.md)
-- [Documentation](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
-- [Fullstack Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/introduction.md)
-- [Backend Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/backend/introduction.md)
-- [Frontend Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/frontend/introduction.md)
-- [Editions Overview](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/editions/overview.md)
+- [Fullstack Quickstart](https://docs.cabloy.com/fullstack/quickstart)
+- [Documentation](https://docs.cabloy.com)
+- [Fullstack Introduction](https://docs.cabloy.com/fullstack/introduction)
+- [Backend Introduction](https://docs.cabloy.com/backend/introduction)
+- [Frontend Introduction](https://docs.cabloy.com/frontend/introduction)
+- [Editions Overview](https://docs.cabloy.com/editions/overview)
 
 To upgrade an existing Cabloy project:
 
@@ -113,14 +113,14 @@ npm run build
 
 For more details, see:
 
-- [Repo Scripts](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/reference/repo-scripts.md)
-- [Package Map](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/reference/package-map.md)
-- [AI Development Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/ai/introduction.md)
+- [Repo Scripts](https://docs.cabloy.com/reference/repo-scripts)
+- [Package Map](https://docs.cabloy.com/reference/package-map)
+- [AI Development Introduction](https://docs.cabloy.com/ai/introduction)
 
 Contribution guidelines:
 
 - prefer CLI-backed workflows with `npm run vona` and `npm run zova`
-- put user-facing and agent-facing guidance in [cabloy-docs/](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
+- put user-facing and agent-facing guidance in [docs.cabloy.com](https://docs.cabloy.com)
 - put maintainer rationale, architecture notes, and ADRs in [.docs-internal/](https://github.com/cabloy/cabloy/tree/main/.docs-internal)
 - verify framework changes with the narrowest meaningful checks first, then shared root scripts when broader confidence is needed
 
