@@ -150,6 +150,29 @@ The validated shape is:
 
 The pilot intentionally preserved the old `Bean*Base` names during the first round so that placement semantics could be validated before public naming changes. The next explicit step is the second-round naming-consistency refactor.
 
+## Underscore suffix and registration semantics
+
+In this repository, a trailing underscore in a service-scene file name carries registration meaning, not only naming style.
+
+The `src/service/*_.ts` form is used for classes that should remain container-managed but should not enter the general full-name registration surface during metadata generation.
+
+In practice, this means:
+
+- they do **not** register into `IBeanRecordGeneral`
+- they are therefore not intended to be created through the general full-name path such as `bean._getBean(beanFullName)`
+- they may still participate in container behavior through class-token resolution such as `bean._getBean(class)`
+
+This makes `src/service/*_.ts` the preferred placement for many B2 runtime-anchor bases:
+
+- they are not pure helpers, so `src/lib` is too weak
+- they still require container-managed behavior
+- they should not automatically become general full-name beans
+- they often serve as runtime-anchor bases, selector anchors, or class-token contracts
+
+This rule applies primarily to bases and runtime-anchor classes. Do not extend it mechanically to every concrete bean. Concrete beans should keep or drop general/full-name exposure according to their actual runtime role.
+
+`@Virtual()` remains orthogonal to placement. If a class had meaningful `@Virtual()` semantics before moving into `src/service/*_.ts`, keep `@Virtual()` unless there is a specific semantic reason to remove it.
+
 ## Invariants future work should preserve
 
 Future refactors should preserve these boundaries:

@@ -59,6 +59,29 @@ Recommended placement:
 - `src/service` with `@Service()`
 - if the original class was virtual, keep `@Virtual()` after the move
 
+## Service underscore files
+
+For service-scene classes, a trailing underscore in the file name is not only a naming style.
+
+Prefer the `src/service/*_.ts` form when a class should remain container-managed but should **not** participate in the general full-name registration surface.
+
+This usually fits classes that are:
+
+- runtime-anchor bases
+- selector or class-token anchors
+- virtual bases with real runtime meaning
+- not intended to be exposed as general full-name beans
+
+Prefer a normal `src/service/*.ts` file when the service-scene class itself should remain part of the general full-name surface.
+
+Examples:
+
+- `cacheMemBase_.ts`
+- `cacheRedisBase_.ts`
+- `summerCacheBase_.ts`
+
+Do not choose the underscore form only because a class is abstract or uses `@Virtual()`. The deciding factor is the runtime role and registration surface.
+
 ## Fast classification checklist
 
 Ask these questions in order:

@@ -191,6 +191,21 @@ For these requests:
 - keep `CLAUDE.md` short and behavioral
 - do not treat `@Service()` as a business-layer naming decision only; for B2 it is a runtime-anchor placement choice
 
+### Service underscore files
+
+When a backend base class should move into `src/service`, do not treat the file name as a cosmetic choice.
+
+Prefer `src/service/*_.ts` when the class:
+
+- should remain container-managed
+- mainly acts as a runtime-anchor base, selector anchor, or class-token contract
+- should not participate in the general full-name registration surface
+- may need to keep meaningful `@Virtual()` semantics
+
+Prefer a normal `src/service/*.ts` file when the service-scene class itself should remain part of the general full-name surface.
+
+Do not apply this mechanically to all concrete beans or all abstract classes. Judge by runtime role and registration surface.
+
 ## Step 6: Apply edition-aware branching
 
 When the task is frontend-sensitive or examples differ between editions, branch explicitly.
