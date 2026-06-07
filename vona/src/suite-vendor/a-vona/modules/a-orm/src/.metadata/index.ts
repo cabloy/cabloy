@@ -27,7 +27,6 @@ declare module 'vona-module-a-orm' {
 /** aopMethod: end */
 /** bean: begin */
 export * from '../bean/bean.database.ts';
-export * from '../bean/bean.databaseDialectBase.ts';
 export * from '../bean/bean.model.ts';
 export * from '../bean/bean.modelBase.ts';
 
@@ -61,6 +60,7 @@ export * from '../service/columns_.ts';
 export * from '../service/database.ts';
 export * from '../service/databaseAsyncLocalStorage_.ts';
 export * from '../service/databaseClient_.ts';
+export * from '../service/databaseDialectBase_.ts';
 export * from '../service/db_.ts';
 export * from '../service/entityResolver_.ts';
 export * from '../service/modelResolver_.ts';

@@ -9,7 +9,7 @@ import type {
   IDatabaseClientRecord,
   IDbInfo,
 } from '../types/database.ts';
-import type { BeanDatabaseDialectBase } from './bean.databaseDialectBase.ts';
+import type { BeanDatabaseDialectBase } from '../service/databaseDialectBase_.ts';
 
 import { ServiceDatabaseAsyncLocalStorage } from '../service/databaseAsyncLocalStorage_.ts';
 import { ServiceDatabaseClient } from '../service/databaseClient_.ts';

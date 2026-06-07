@@ -3,7 +3,7 @@ import type { TableIdentity } from 'table-identity';
 
 import { isNil, safeBoolean } from '@cabloy/utils';
 import { BeanBase, Virtual } from 'vona';
-import { Bean } from 'vona-module-a-bean';
+import { Service } from 'vona-module-a-bean';
 
 import type { ITableColumn } from '../types/columns.ts';
 import type { ConfigDatabaseClient } from '../types/config.ts';
@@ -14,7 +14,20 @@ import type {
   TypeDatabaseDialectTableColumnsFn,
 } from '../types/dialect.ts';
 
-@Bean()
+const BOOLEAN_COLUMN_TYPES = ['bit', 'bool', 'boolean'];
+const NUMBER_COLUMN_TYPES = ['int'];
+const TIMESTAMP_COLUMN_TYPE_PREFIXES = ['timestamp'];
+const FLOAT_COLUMN_TYPE_PREFIXES = ['float', 'double'];
+const INTEGER_COLUMN_TYPE_PREFIXES = [
+  'tinyint',
+  'smallint',
+  'mediumint',
+  'bigint',
+  'numeric',
+  'integer',
+];
+
+@Service()
 @Virtual()
 export class BeanDatabaseDialectBase extends BeanBase {
   protected _capabilities?: IDatabaseDialectCapabilities;
@@ -75,11 +88,8 @@ export class BeanDatabaseDialectBase extends BeanBase {
   }
 
   coerceColumn(column: Knex.ColumnInfo): ITableColumn {
-    // result
     const result = { type: column.type } as ITableColumn;
-    // coerce
     result.default = this._coerceColumnValue(column.type, column.defaultValue);
-    // ok
     return result;
   }
 
@@ -111,22 +121,22 @@ export class BeanDatabaseDialectBase extends BeanBase {
     datas: any[],
   ): Promise<[TableIdentity[], Knex.QueryBuilder]> {
     if (datas.length === 0) return [[], builder];
-    if (isNil(datas[0].id)) {
-      let builderFirst: Knex.QueryBuilder | undefined = undefined;
-      const ids: TableIdentity[] = [];
-      for (const data of datas) {
-        const builder2 = builder.clone();
-        builder2.insert(data);
-        const items = await builder2;
-        ids.push(items[0]);
-        if (!builderFirst) builderFirst = builder2;
-      }
-      return [ids, builderFirst ?? builder];
-    } else {
+    if (!isNil(datas[0].id)) {
       builder.insert(datas);
       await builder;
       return [datas.map(item => item.id), builder];
     }
+
+    let builderFirst: Knex.QueryBuilder | undefined = undefined;
+    const ids: TableIdentity[] = [];
+    for (const data of datas) {
+      const builder2 = builder.clone();
+      builder2.insert(data);
+      const items = await builder2;
+      ids.push(items[0]);
+      if (!builderFirst) builderFirst = builder2;
+    }
+    return [ids, builderFirst ?? builder];
   }
 
   protected async insertAsPg(
@@ -134,41 +144,28 @@ export class BeanDatabaseDialectBase extends BeanBase {
     datas: any[],
   ): Promise<[TableIdentity[], Knex.QueryBuilder]> {
     if (datas.length === 0) return [[], builder];
-    if (isNil(datas[0].id)) {
-      builder.insert(datas).returning('id');
-      const items = await builder;
-      return [items.map(item => item.id), builder];
-    } else {
+    if (!isNil(datas[0].id)) {
       builder.insert(datas);
       await builder;
       return [datas.map(item => item.id), builder];
     }
+
+    builder.insert(datas).returning('id');
+    const items = await builder;
+    return [items.map(item => item.id), builder];
   }
 
   protected _coerceColumnValue(type: string, value) {
-    // null
     if (isNil(value)) return undefined;
-    // type
-    if (['bit', 'bool', 'boolean'].includes(type)) return safeBoolean(value);
-    if (['int'].includes(type)) return this._safeNumber(value);
-    if (this._columnTypePrefixes(type, ['timestamp']) && value === 'CURRENT_TIMESTAMP')
+    if (BOOLEAN_COLUMN_TYPES.includes(type)) return safeBoolean(value);
+    if (NUMBER_COLUMN_TYPES.includes(type)) return this._safeNumber(value);
+    if (this._columnTypePrefixes(type, TIMESTAMP_COLUMN_TYPE_PREFIXES) && value === 'CURRENT_TIMESTAMP') {
       return undefined; // new Date();
-    if (this._columnTypePrefixes(type, ['float', 'double'])) return this._safeNumber(value);
-    if (
-      this._columnTypePrefixes(type, [
-        'tinyint',
-        'smallint',
-        'mediumint',
-        'bigint',
-        'numeric',
-        'integer',
-      ])
-    ) {
-      return this._safeNumber(value);
     }
+    if (this._columnTypePrefixes(type, FLOAT_COLUMN_TYPE_PREFIXES)) return this._safeNumber(value);
+    if (this._columnTypePrefixes(type, INTEGER_COLUMN_TYPE_PREFIXES)) return this._safeNumber(value);
     // pg: NULL::character varying
     if (value.indexOf('NULL::') === 0) return undefined;
-    // others
     return value;
   }
 

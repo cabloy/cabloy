@@ -2,7 +2,7 @@ import { isNil } from '@cabloy/utils';
 import { appResource, BeanBase, deepExtend } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
-import type { BeanDatabaseDialectBase } from '../bean/bean.databaseDialectBase.ts';
+import type { BeanDatabaseDialectBase } from './databaseDialectBase_.ts';
 import type { ConfigDatabaseClient } from '../types/config.ts';
 import type {
   IDatabaseClientDialectRecord,
