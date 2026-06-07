@@ -10,7 +10,7 @@ Cabloy is a Node.js fullstack framework for AI vibe coding.
 
 Use one framework system instead of stitching together separate backend and frontend stacks.
 
-With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
+With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
 
 [Documentation](https://docs.cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
@@ -58,9 +58,9 @@ npm run upgrade
 ## Highlights
 
 - **One framework system** — build backend and frontend in one Node.js fullstack architecture
-- **Vona + Zova** — use aligned backend and frontend frameworks instead of stitching together separate stacks
+- **Vona + Zova** — use aligned backend and frontend frameworks instead of stitching together separate backend and frontend stacks
 - **Multiple delivery modes** — support SSR, SPA, Web, and Admin applications with shared conventions
-- **CLI-first workflows for AI coding** — turn scaffolding, metadata, refactors, and verification into explicit commands so AI can stay more accurate, use fewer tokens, and move faster
+- **CLI-first workflows for AI coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster
 - **Monorepo-native development** — keep framework source, docs, and tooling aligned in one repository model
 
 ## Technology Stack

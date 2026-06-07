@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Cabloy'
   text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: Use one framework system instead of stitching together separate backend and frontend stacks. Build with Vona on the backend, Zova on the frontend, and CLI-first workflows across the stack.
+  tagline: Use one framework system instead of stitching together separate backend and frontend stacks. With Vona on the backend, Zova on the frontend, and CLI-first workflows across the stack, Cabloy helps AI coding stay more accurate, use fewer tokens, and move faster.
   actions:
     - theme: brand
       text: Get Started
@@ -18,34 +18,30 @@ hero:
 
 features:
   - title: One framework system
-    details: Build backend and frontend in one Node.js fullstack architecture instead of stitching together separate stacks.
+    details: Build backend and frontend in one Node.js fullstack architecture instead of stitching together separate backend and frontend stacks.
   - title: Vona + Zova
     details: Use aligned backend and frontend frameworks that stay close enough for code sharing, workflow reuse, and AI-assisted implementation.
   - title: Multiple delivery modes
     details: Support SSR, SPA, Web, and Admin applications with shared conventions across the Cabloy ecosystem.
   - title: CLI-first workflows for AI coding
-    details: Turn scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
+    details: Turn common scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
+  - title: Monorepo-native development
+    details: Keep framework source, docs, and tooling aligned in one repository model.
 ---
 
 # Cabloy Documentation
 
-This site is the new documentation home for the Cabloy monorepo.
+Cabloy is a Node.js fullstack framework for AI vibe coding. This documentation helps you build with one framework system instead of stitching together separate backend and frontend stacks.
 
-It is designed around four practical goals:
+Start here to understand the shared Cabloy architecture, learn how Vona and Zova work together, see where Cabloy Basic and Cabloy Start differ, and follow CLI-first workflows grounded in the current source tree.
 
-1. explain the shared architecture across Cabloy, Vona, and Zova
-2. document the real monorepo workflows used in current source code
-3. distinguish Cabloy Basic and Cabloy Start clearly
-4. provide durable guidance for AI-assisted development
+## What you can do here
 
-## What is covered here
-
-- **Fullstack**: monorepo setup, shared workflows, and cross-stack architecture
-- **Backend (Vona)**: backend concepts, infrastructure, and CLI-backed workflows
-- **Frontend (Zova)**: frontend concepts, SSR, UI-stack considerations, and CLI-backed workflows
-- **Editions**: how Cabloy Basic and Cabloy Start relate and where they differ
-- **AI Development**: how docs, skills, rules, commands, and internal engineering notes work together
-- **Reference**: scripts, CLI command families, package layout, and terminology
+- **Get started quickly** with the fullstack quickstart and the main Cabloy concepts
+- **Learn the shared fullstack architecture** across Cabloy, Vona, and Zova
+- **Go deeper into backend and frontend workflows** without losing the cross-stack picture
+- **See where Cabloy Basic and Cabloy Start differ** when edition-specific guidance matters
+- **Follow AI development guidance grounded in the current source tree** for prompting, workflow selection, and verification
 
 ## Documentation scope labels
 
@@ -59,13 +55,13 @@ Use these labels throughout the site:
 
 ## First reading path
 
-### For project users
+### For getting started
 
 1. [Fullstack Quickstart](/fullstack/quickstart)
 2. [Editions Overview](/editions/overview)
 3. [Fullstack Introduction](/fullstack/introduction)
 
-### For framework contributors and AI workflows
+### For contributors and AI-assisted development
 
 1. [Fullstack Introduction](/fullstack/introduction)
 2. [AI Development Introduction](/ai/introduction)

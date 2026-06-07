@@ -1,8 +1,8 @@
 # Backend (Vona)
 
-This page is the backend hub for contributors who are documenting, designing, or extending backend work in the Cabloy repository.
+This page is the backend hub for Cabloy users, contributors, and AI-assisted workflows that need the backend side of the framework.
 
-Vona is the backend half of the Cabloy fullstack architecture.
+Vona is the backend half of Cabloy’s one-framework-system fullstack architecture.
 
 ## What Vona is responsible for
 
