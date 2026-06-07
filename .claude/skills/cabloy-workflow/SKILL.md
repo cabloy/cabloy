@@ -176,6 +176,21 @@ Use `.claude/skills/` for:
 - CLI-first orchestration paths
 - future bundled references or deterministic helper scripts
 
+### Class-placement questions
+
+When the request is about whether a backend base class belongs in `src/lib`, `src/service`, or the global bean shorthand surface, apply the A / B1 / B2 rule.
+
+- **A**: pure helper base -> `src/lib`
+- **B1**: subclass-only base -> evaluate case by case, often `src/lib`
+- **B2**: runtime-anchor base that still needs container-managed or selector/class-token behavior but should not be a global bean -> prefer `src/service` with `@Service()`
+
+For these requests:
+
+- put the durable operational explanation in `cabloy-docs/`
+- put rationale and invariants in `.docs-internal/`
+- keep `CLAUDE.md` short and behavioral
+- do not treat `@Service()` as a business-layer naming decision only; for B2 it is a runtime-anchor placement choice
+
 ## Step 6: Apply edition-aware branching
 
 When the task is frontend-sensitive or examples differ between editions, branch explicitly.

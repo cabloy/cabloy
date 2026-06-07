@@ -12,6 +12,10 @@ Use it when future contributors need to understand how a subsystem works, what i
 - state, caching, or lifecycle invariants
 - technical constraints that should remain stable over time
 
+Representative example:
+
+- `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
+
 ## What should go elsewhere
 
 - major design or refactor decisions with explicit rationale should go in `../decisions/`

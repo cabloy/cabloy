@@ -45,6 +45,9 @@ Before inventing a custom implementation path:
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
 - For frontend work, assume Cabloy Basic and Cabloy Start may diverge in UI library, frontend flavors, module availability, and generated outputs.
 - Reuse existing repo terminology: Cabloy, Vona, Zova, suite, module, bean, SSR, SPA, Web, Admin.
+- For backend base-class placement, use the A / B1 / B2 rule from `cabloy-docs/ai/class-placement-rule.md`.
+- Pure helper bases belong in `src/lib`; subclass-only bases should be evaluated case by case and often belong in `src/lib`.
+- Runtime-anchor bases that still require container-managed or selector/class-token behavior but should not be global beans should prefer `src/service` with `@Service()`.
 
 ## Verification expectations
 

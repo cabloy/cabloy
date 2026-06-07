@@ -124,6 +124,13 @@ Use this quick rule:
 - default agent behavior → `CLAUDE.md`
 - step-by-step orchestration → `cabloy-workflow` skill or future specialized skills
 
+### Example: “How should a backend base class be placed?”
+
+- public operational explanation → [Class Placement Rule](/ai/class-placement-rule)
+- maintainer rationale and invariants → `.docs-internal/architecture/class-placement-a-b1-b2.md`
+- default repo-wide behavior → `CLAUDE.md`
+- procedural decision workflow → `cabloy-workflow` skill
+
 ### Example: “How backend OpenAPI becomes frontend SDK”
 
 - full explanation → [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)

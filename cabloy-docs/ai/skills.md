@@ -31,3 +31,5 @@ A strong Cabloy skill usually includes:
 3. minimal manual fallback guidance
 4. verification guidance
 5. references to durable source-of-truth files
+
+When a skill needs to apply an architectural rule such as backend class placement, prefer a branching decision tree that points back to durable docs instead of embedding the full architecture rationale inside the skill itself.
