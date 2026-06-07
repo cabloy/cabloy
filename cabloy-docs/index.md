@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Cabloy'
   text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: Use one framework system instead of stitching together separate backend and frontend stacks. With Vona on the backend, Zova on the frontend, and CLI-first workflows across the stack, Cabloy helps AI coding stay more accurate, use fewer tokens, and move faster.
+  tagline: Use one framework system instead of stitching together separate backend and frontend stacks. With Vona on the backend, Zova on the frontend, and CLI-first workflows across the stack, Cabloy helps AI vibe coding stay more accurate, use fewer tokens, and move faster.
   actions:
     - theme: brand
       text: Get Started
@@ -20,11 +20,11 @@ features:
   - title: One framework system
     details: Build backend and frontend in one Node.js fullstack architecture instead of stitching together separate backend and frontend stacks.
   - title: Vona + Zova
-    details: Use aligned backend and frontend frameworks that stay close enough for code sharing, workflow reuse, and AI-assisted implementation.
+    details: Use aligned backend and frontend frameworks that stay close enough for code sharing, workflow reuse, and AI vibe coding workflows.
   - title: Multiple delivery modes
     details: Support SSR, SPA, Web, and Admin applications with shared conventions across the Cabloy ecosystem.
-  - title: CLI-first workflows for AI coding
-    details: Turn common scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
+  - title: CLI-first workflows for AI vibe coding
+    details: Turn common scaffolding, metadata, refactors, and verification into explicit commands so AI vibe coding can stay more accurate, use fewer tokens, and move faster.
   - title: Monorepo-native development
     details: Keep framework source, docs, and tooling aligned in one repository model.
 ---
@@ -41,7 +41,7 @@ Start here to understand the shared Cabloy architecture, learn how Vona and Zova
 - **Learn the shared fullstack architecture** across Cabloy, Vona, and Zova
 - **Go deeper into backend and frontend workflows** without losing the cross-stack picture
 - **See where Cabloy Basic and Cabloy Start differ** when edition-specific guidance matters
-- **Follow AI development guidance grounded in the current source tree** for prompting, workflow selection, and verification
+- **Follow AI vibe coding guidance grounded in the current source tree** for prompting, workflow selection, and verification
 
 ## Documentation scope labels
 
@@ -61,7 +61,7 @@ Use these labels throughout the site:
 2. [Editions Overview](/editions/overview)
 3. [Fullstack Introduction](/fullstack/introduction)
 
-### For contributors and AI-assisted development
+### For contributors and AI vibe coding workflows
 
 1. [Fullstack Introduction](/fullstack/introduction)
 2. [AI Development Introduction](/ai/introduction)

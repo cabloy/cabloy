@@ -1,6 +1,6 @@
 # Frontend (Zova)
 
-This page is the frontend hub for Cabloy users, contributors, and AI-assisted workflows that need the frontend side of the framework.
+This page is the frontend hub for Cabloy users, contributors, and AI vibe coding workflows that need the frontend side of the framework.
 
 Zova is the frontend half of Cabloy’s one-framework-system fullstack architecture.
 

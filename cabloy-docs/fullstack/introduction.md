@@ -4,14 +4,14 @@ Cabloy is a Node.js fullstack framework for AI vibe coding.
 
 Use one framework system instead of stitching together separate backend and frontend stacks.
 
-With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster.
+With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands so AI vibe coding can stay more accurate, use fewer tokens, and move faster.
 
 ## What Cabloy emphasizes
 
 - **One framework system** — build backend and frontend in one Node.js fullstack architecture
 - **Vona + Zova** — use aligned backend and frontend frameworks instead of stitching together separate backend and frontend stacks
 - **Multiple delivery modes** — support SSR, SPA, Web, and Admin applications with shared conventions
-- **CLI-first workflows for AI coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands so AI coding can stay more accurate, use fewer tokens, and move faster
+- **CLI-first workflows for AI vibe coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands so AI vibe coding can stay more accurate, use fewer tokens, and move faster
 - **Monorepo-native development** — keep framework source, docs, and tooling aligned in one repository model
 
 ## Shared architecture
@@ -20,7 +20,7 @@ With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows 
 - **Zova** provides the frontend framework capabilities.
 - The root repository coordinates the two through shared scripts, shared terminology, and a shared release story.
 
-This combination keeps backend and frontend development close enough for code sharing, workflow reuse, and AI-assisted implementation.
+This combination keeps backend and frontend development close enough for code sharing, workflow reuse, and AI vibe coding workflows.
 
 ## Root workflow entrypoints
 
