@@ -19,7 +19,7 @@ In the current monorepo root, the main command entrypoints are:
 
 These are defined in the root `package.json` and should be the first place an agent or contributor checks before inventing a custom workflow.
 
-## Why the monorepo matters for AI development
+## Why the monorepo matters for workflow selection
 
 The monorepo makes it possible to answer cross-stack questions from source rather than memory, for example:
 

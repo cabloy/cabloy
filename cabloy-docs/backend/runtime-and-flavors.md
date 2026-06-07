@@ -17,11 +17,11 @@ That gives Cabloy enough room for development, testing, Playground, Docker, CI, 
 
 Vona provides three main runtime environments:
 
-| Name | Description |
-| --- | --- |
-| `test` | testing environment |
-| `dev` | development environment |
-| `prod` | production environment |
+| Name   | Description             |
+| ------ | ----------------------- |
+| `test` | testing environment     |
+| `dev`  | development environment |
+| `prod` | production environment  |
 
 ## How runtime environment is activated in the current repo
 
@@ -69,12 +69,12 @@ The combination of runtime environment and flavor lets the framework support mor
 
 ### Built-in flavors used in this repo
 
-| Name | Description |
-| --- | --- |
-| `normal` | default contributor/runtime flavor |
-| `play` | used by the Playground workflow |
+| Name     | Description                                   |
+| -------- | --------------------------------------------- |
+| `normal` | default contributor/runtime flavor            |
+| `play`   | used by the Playground workflow               |
 | `docker` | used for Docker-oriented build/runtime output |
-| `ci` | used for CI-oriented production variants |
+| `ci`     | used for CI-oriented production variants      |
 
 Representative current scripts include:
 
@@ -115,14 +115,14 @@ In the current CLI behavior:
 
 The current repo uses many env variables, but these are the most important ones for understanding the runtime/config family.
 
-| Variable family | Representative variables | Why it matters |
-| --- | --- | --- |
-| Runtime meta | `META_MODE`, `META_FLAVOR`, `NODE_ENV` | chooses the active runtime and flavor shape |
-| Worker/runtime process | `SERVER_WORKERS` | controls worker count and is normalized by the CLI/bootstrap path |
-| HTTP server | `SERVER_LISTEN_HOSTNAME`, `SERVER_LISTEN_PORT`, `SERVER_LISTEN_DISABLE`, `SERVER_SERVE_PROTOCOL`, `SERVER_SERVE_HOST`, `SERVER_GLOBALPREFIX` | controls listen/serve behavior and URL shaping |
-| Database | `DATABASE_DEFAULT_CLIENT`, `DATABASE_CLIENT_SQLITE3_FILENAME`, `DATABASE_CLIENT_PG_*`, `DATABASE_CLIENT_MYSQL_*` | controls datasource defaults and concrete client connection settings |
-| Redis | `REDIS_DEFAULT_HOST`, `REDIS_DEFAULT_PORT`, `REDIS_DEFAULT_DB` | controls the backend Redis baseline used by queue, cache, broadcast, and related capabilities |
-| Logger | `LOGGER_DIR`, `LOGGER_ROTATE_*` | controls log path and rotation behavior |
+| Variable family        | Representative variables                                                                                                                     | Why it matters                                                                                |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Runtime meta           | `META_MODE`, `META_FLAVOR`, `NODE_ENV`                                                                                                       | chooses the active runtime and flavor shape                                                   |
+| Worker/runtime process | `SERVER_WORKERS`                                                                                                                             | controls worker count and is normalized by the CLI/bootstrap path                             |
+| HTTP server            | `SERVER_LISTEN_HOSTNAME`, `SERVER_LISTEN_PORT`, `SERVER_LISTEN_DISABLE`, `SERVER_SERVE_PROTOCOL`, `SERVER_SERVE_HOST`, `SERVER_GLOBALPREFIX` | controls listen/serve behavior and URL shaping                                                |
+| Database               | `DATABASE_DEFAULT_CLIENT`, `DATABASE_CLIENT_SQLITE3_FILENAME`, `DATABASE_CLIENT_PG_*`, `DATABASE_CLIENT_MYSQL_*`                             | controls datasource defaults and concrete client connection settings                          |
+| Redis                  | `REDIS_DEFAULT_HOST`, `REDIS_DEFAULT_PORT`, `REDIS_DEFAULT_DB`                                                                               | controls the backend Redis baseline used by queue, cache, broadcast, and related capabilities |
+| Logger                 | `LOGGER_DIR`, `LOGGER_ROTATE_*`                                                                                                              | controls log path and rotation behavior                                                       |
 
 Use this page as the runtime-facing overview, then inspect the current app config when you need to see how those values are translated into backend config.
 
@@ -289,11 +289,11 @@ Read this guide together with:
 - [Schedule Guide](/backend/schedule-guide)
 - [Broadcast Guide](/backend/broadcast-guide)
 
-## Why this matters for AI workflows
+## Implementation checks for runtime and flavor changes
 
-When AI suggests backend runtime or configuration guidance, it should not assume that `dev/test/prod` is the whole story.
+When evaluating backend runtime or configuration guidance, do not assume that `dev/test/prod` is the whole story.
 
-It should also inspect:
+Also inspect:
 
 1. which repo command actually drives the workflow
 2. whether the active behavior depends on flavor

@@ -161,9 +161,9 @@ A practical distinction is:
 
 This keeps contributor workflows clear instead of mixing runtime scripts with generator commands.
 
-## Guidance for AI workflows
+## Generator-first workflow checklist
 
-When an agent is about to create backend code:
+When creating backend code:
 
 1. inspect `npm run vona :` or the relevant command family
 2. prefer the matching generator or initializer

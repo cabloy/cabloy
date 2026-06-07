@@ -94,11 +94,11 @@ That means backend data modeling is not an isolated persistence concern. It also
 - relation-aware DTOs
 - aggregate/group result contracts
 
-## Why this matters for Cabloy AI workflows
+## Implementation checks for ORM changes
 
-For AI-assisted development, Vona ORM should be treated as a knowledge hub rather than as an implementation detail.
+Vona ORM should be treated as a knowledge hub rather than as an implementation detail.
 
-When AI touches backend data logic, it should ask:
+When changing backend data logic, ask:
 
 1. is this a model/entity/DTO problem rather than a raw SQL problem?
 2. does the change affect query shape, mutation semantics, relation behavior, or summary shape?

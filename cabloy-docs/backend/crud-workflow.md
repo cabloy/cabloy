@@ -108,9 +108,9 @@ That means generated entity, DTO, controller, and validation structure can feed:
 
 For the cross-stack side of this loop, also see [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
 
-## Why this matters for AI workflows
+## Generated workflow checklist
 
-When an AI system sees a request like “create a student CRUD” or “scaffold backend resources,” the correct default should be:
+When you see a request like “create a student CRUD” or “scaffold backend resources,” the correct default should be:
 
 1. inspect the Vona CLI
 2. use `:tools:crud` or `:tools:crudBasic` if one matches the need
