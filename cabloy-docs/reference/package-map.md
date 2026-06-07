@@ -58,11 +58,11 @@ This matters because Vona modularization is not just folder layout. Package meta
 
 ## Practical modularization edge table
 
-| Unit | Main role | Where dependency intent is usually expressed |
-| --- | --- | --- |
-| Package | metadata and publication unit | package-level `dependencies`, scripts, exports, and release metadata |
-| Module | main backend capability unit | `vonaModule.dependencies` for framework/module dependency intent |
-| Suite | composition unit for multiple modules | normal package `dependencies` that compose module packages |
+| Unit    | Main role                             | Where dependency intent is usually expressed                         |
+| ------- | ------------------------------------- | -------------------------------------------------------------------- |
+| Package | metadata and publication unit         | package-level `dependencies`, scripts, exports, and release metadata |
+| Module  | main backend capability unit          | `vonaModule.dependencies` for framework/module dependency intent     |
+| Suite   | composition unit for multiple modules | normal package `dependencies` that compose module packages           |
 
 A practical comparison is:
 
@@ -98,4 +98,8 @@ For the frontend architectural meaning of modules, suites, scope-driven resource
 
 ## Sibling edition
 
-- `cabloy-start` is a separate sibling repository, not a subdirectory of this monorepo. Its docs, skills, and rules should still align conceptually with the system documented here.
+- `cabloy-start` is a separate sibling repository, not a subdirectory of this monorepo.
+
+### Maintainer note for cross-repo guidance
+
+When maintaining docs, skills, or rules that refer to Cabloy Start, keep the cross-repo guidance conceptually aligned with the system documented here.

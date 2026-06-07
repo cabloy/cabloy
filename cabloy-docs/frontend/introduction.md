@@ -1,5 +1,7 @@
 # Frontend (Zova)
 
+This page is the frontend hub for contributors who are documenting, designing, or extending frontend work in the Cabloy repository.
+
 Zova is the frontend half of the Cabloy fullstack architecture.
 
 ## What Zova is responsible for
@@ -13,7 +15,7 @@ Zova is the frontend half of the Cabloy fullstack architecture.
 
 ## How to approach frontend work
 
-When documenting or automating frontend tasks, prefer this order:
+For contributor and automation workflows in this repository, prefer this order:
 
 1. inspect the root `package.json` and `npm run zova` entrypoint
 2. inspect Zova CLI command families such as `create:*`, `init:*`, `refactor:*`, `tools:*`, and `openapi:*`

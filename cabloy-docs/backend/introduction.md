@@ -1,5 +1,7 @@
 # Backend (Vona)
 
+This page is the backend hub for contributors who are documenting, designing, or extending backend work in the Cabloy repository.
+
 Vona is the backend half of the Cabloy fullstack architecture.
 
 ## What Vona is responsible for
@@ -12,7 +14,7 @@ Vona is the backend half of the Cabloy fullstack architecture.
 
 ## How to approach backend work
 
-When documenting or automating backend tasks, prefer this order:
+For contributor and automation workflows in this repository, prefer this order:
 
 1. inspect the root `package.json` and `npm run vona` entrypoint
 2. inspect Vona CLI command families such as `create:*`, `init:*`, `tools:*`, and `bin:*`
