@@ -15,6 +15,7 @@ miniprogram_npm
 **/run/
 
 **/.claude/settings.local.json
+**/.claude/worktrees
 
 **/.idea
 **/.DS_Store
