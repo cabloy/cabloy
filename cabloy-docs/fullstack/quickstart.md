@@ -1,22 +1,28 @@
 # Fullstack Quickstart
 
-This quickstart is intentionally monorepo-native.
+This guide explains the fastest way to start a Cabloy fullstack project.
 
-## 1. Install dependencies
+## 1. Create a new project
 
-At the repository root:
+```bash
+npm create cabloy
+```
+
+## 2. Install dependencies
+
+After entering the project directory:
 
 ```bash
 npm run init
 ```
 
-## 2. Start the backend
+## 3. Start the backend
 
 ```bash
 npm run dev
 ```
 
-## 3. Start the frontend for the edition you are working with
+## 4. Start the frontend for your edition
 
 ### Cabloy Basic
 
@@ -27,15 +33,21 @@ npm run dev:zova:web
 
 ### Cabloy Start
 
-The sibling `cabloy-start` repository uses different Zova flavors such as `cabloyStartAdmin` and `cabloyStartWeb`.
+Use the frontend commands provided by your project edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
 
-Do not copy Cabloy Basic examples blindly. Instead:
+If you are not sure which edition you are using, read:
 
-1. confirm the `__CABLOY_START__` marker
-2. inspect that repo’s `package.json`
-3. use the exact Start-specific flavor names found there before documenting or automating the workflow
+- [Edition Detection](/editions/detection)
+- [Cabloy Basic](/editions/cabloy-basic)
+- [Cabloy Start](/editions/cabloy-start)
 
-## 4. Prefer CLI-backed generation over manual scaffolding
+## 5. Upgrade an existing project
+
+```bash
+npm run upgrade
+```
+
+## 6. Prefer CLI-backed generation over manual scaffolding
 
 Instead of creating framework files by hand, start with:
 
@@ -46,9 +58,9 @@ npm run zova :create
 
 Then narrow into the specific command family you need.
 
-## 5. Verify with root scripts
+## 7. Verify with shared scripts
 
-Use the root scripts before declaring a workflow correct:
+Use the shared project scripts before declaring a workflow correct:
 
 ```bash
 npm run tsc
@@ -56,4 +68,4 @@ npm run test
 npm run build
 ```
 
-Choose more targeted checks when only one area is affected, but treat the root scripts as the shared reference surface.
+Choose more targeted checks when only one area is affected, but treat these scripts as the shared reference surface.

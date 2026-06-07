@@ -24,13 +24,18 @@ npm create cabloy
 
 Then continue with the framework docs:
 
+- [Fullstack Quickstart](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/quickstart.md)
 - [Documentation](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
 - [Fullstack Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/introduction.md)
 - [Backend Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/backend/introduction.md)
 - [Frontend Introduction](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/frontend/introduction.md)
 - [Editions Overview](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/editions/overview.md)
 
-If you are working in this repository directly, use the [Fullstack Quickstart](https://github.com/cabloy/cabloy/blob/main/cabloy-docs/fullstack/quickstart.md).
+To upgrade an existing Cabloy project:
+
+```bash
+npm run upgrade
+```
 
 ## Highlights
 
@@ -65,7 +70,7 @@ Additional references:
 
 ## Development
 
-If you are working in a Cabloy workspace directly, the root [package.json](https://github.com/cabloy/cabloy/blob/main/package.json) is the shared workflow entrypoint.
+If you want to contribute to the framework repository, the root [package.json](https://github.com/cabloy/cabloy/blob/main/package.json) is the shared workflow entrypoint.
 
 ### Requirements
 
@@ -106,6 +111,7 @@ npm run build
 | Command                  | Purpose                                                      |
 | ------------------------ | ------------------------------------------------------------ |
 | `npm run init`           | Install dependencies and initialize the workspace            |
+| `npm run upgrade`        | Upgrade an existing Cabloy project                           |
 | `npm run vona`           | Enter the Vona CLI command family                            |
 | `npm run zova`           | Enter the Zova CLI command family                            |
 | `npm run dev`            | Start the backend development workflow                       |
@@ -115,9 +121,6 @@ npm run build
 | `npm run start`          | Start the backend production workflow                        |
 | `npm run test`           | Run backend tests from the shared root entrypoint            |
 | `npm run tsc`            | Run shared type checking                                     |
-| `npm run docs:dev`       | Start the docs development server                            |
-| `npm run docs:build`     | Build the docs site                                          |
-| `npm run docs:preview`   | Preview the built docs site                                  |
 
 ### CLI-first workflows
 
@@ -138,7 +141,6 @@ Contributions to the Cabloy framework, docs, and tooling are welcome.
 - prefer CLI-backed workflows with `npm run vona` and `npm run zova`
 - put user-facing and agent-facing guidance in [cabloy-docs/](https://github.com/cabloy/cabloy/tree/main/cabloy-docs)
 - put maintainer rationale, architecture notes, and ADRs in [.docs-internal/](https://github.com/cabloy/cabloy/tree/main/.docs-internal)
-- verify documentation changes with `npm run docs:build`
 - verify framework changes with the narrowest meaningful checks first, then shared root scripts when broader confidence is needed
 
 To report bugs or propose changes, use [GitHub Issues](https://github.com/cabloy/cabloy/issues) or open a pull request in [github.com/cabloy/cabloy](https://github.com/cabloy/cabloy).
