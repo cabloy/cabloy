@@ -45,14 +45,6 @@ Start here to learn the shared Cabloy architecture, see how Vona and Zova fit to
 - **See where Cabloy Basic and Cabloy Start differ** when edition-specific guidance matters
 - **Follow source-grounded AI vibe coding guidance** for prompting, workflow selection, and verification
 
-## Documentation scope labels
-
-Use these labels throughout the site:
-
-- <Badge type="tip" text="Common" /> applies to both Cabloy Basic and Cabloy Start.
-- <Badge type="info" text="Basic" /> applies only to Cabloy Basic.
-- <Badge type="warning" text="Start" /> applies only to Cabloy Start.
-
 ## First reading path
 
 ### For getting started
@@ -67,3 +59,11 @@ Use these labels throughout the site:
 2. [AI Development Introduction](/ai/introduction)
 3. [Repo Scripts Reference](/reference/repo-scripts)
 4. [Editions Overview](/editions/overview)
+
+## Documentation scope labels
+
+Use these labels throughout the site:
+
+- <Badge type="tip" text="Common" /> applies to both Cabloy Basic and Cabloy Start.
+- <Badge type="info" text="Basic" /> applies only to Cabloy Basic.
+- <Badge type="warning" text="Start" /> applies only to Cabloy Start.

@@ -29,7 +29,7 @@ The goal is to make AI **reuse the repo’s existing conventions directly**, esp
 
 Use `cabloy-docs/` for user-facing and agent-facing guidance that should remain durable and source-aligned.
 
-For normal project usage, prefer the user-facing entry docs such as [Fullstack Quickstart](/fullstack/quickstart). This AI section focuses on repository workflows and AI-assisted development.
+For normal project usage, prefer the user-facing entry docs such as [Fullstack Quickstart](/fullstack/quickstart). This AI section focuses on repository workflows and AI vibe coding.
 
 ### Internal engineering docs
 
