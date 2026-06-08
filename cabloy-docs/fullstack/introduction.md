@@ -22,22 +22,13 @@ With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows 
 
 This combination keeps backend and frontend development close enough for code sharing, workflow reuse, and AI vibe coding workflows.
 
-## Root workflow entrypoints
+## How the fullstack workflow connects
 
-In the current monorepo root, the main command entrypoints are:
+At the repository level, Cabloy uses shared root scripts and CLI-first workflows to coordinate Vona and Zova across the stack.
 
-- `npm run vona`
-- `npm run zova`
-- `npm run dev`
-- `npm run build`
-- `npm run test`
-- `npm run tsc`
+## Why the monorepo matters
 
-These are defined in the root `package.json` and should be the first place an agent or contributor checks before inventing a custom workflow.
-
-## Why the monorepo matters for workflow selection
-
-The monorepo makes it possible to answer cross-stack questions from source rather than memory, for example:
+The monorepo makes it possible to keep backend and frontend concepts, tooling, and generated outputs aligned from source rather than memory, for example:
 
 - how frontend routes and components are reflected back into backend type hints
 - how backend OpenAPI and DTO output feeds frontend SDK generation
