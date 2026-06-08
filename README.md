@@ -38,7 +38,7 @@ Create a new Cabloy project:
 npm create cabloy
 ```
 
-The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. Open this project in Claude Code and start coding immediately with project-specific guidance.
+The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
 
 Then continue with the framework docs:
 
@@ -93,7 +93,16 @@ npm run upgrade
 | TanStack Form  | `^1.32.0`   |
 | TanStack Table | `^8.21.3`   |
 
-### Edition-specific UI Stack
+### Shared Frontend Engineering Layer
+
+- Vue
+- Vite
+- Quasar tooling such as `quasar dev` and `quasar build`
+- TanStack libraries where applicable
+
+Quasar is used here for engineering tooling rather than as the edition UI component library.
+
+### Edition-specific UI Layer
 
 - **Cabloy Basic**: DaisyUI + Tailwind CSS
 - **Cabloy Start**: Vuetify
@@ -114,6 +123,7 @@ npm run build
 
 For more details, see:
 
+- [Editions Overview](https://docs.cabloy.com/editions/overview)
 - [Repo Scripts](https://docs.cabloy.com/reference/repo-scripts)
 - [Package Map](https://docs.cabloy.com/reference/package-map)
 - [AI Development Introduction](https://docs.cabloy.com/ai/introduction)

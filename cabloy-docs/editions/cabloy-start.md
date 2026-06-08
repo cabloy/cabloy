@@ -1,6 +1,6 @@
 # Cabloy Start
 
-Cabloy Start is a sibling private repository that shares the Cabloy fullstack direction while intentionally differing from Cabloy Basic.
+Cabloy Start is the private commercial edition. It is a sibling private repository that shares the Cabloy fullstack direction while intentionally differing from Cabloy Basic.
 
 ## Repository marker
 
@@ -14,10 +14,12 @@ Use that marker before choosing examples, UI assumptions, or automation behavior
 
 Use Cabloy Start as the edition-aware target when work depends on:
 
+- direct use of the licensed private repository source
 - Vuetify-specific frontend workflows
 - Cabloy Start flavor names in frontend scripts
 - modules that exist in the private Start repository but not in Basic
 - private value-add project composition
+- Start-specific SSR site baselines and project assets
 
 ## Relationship to this docs site
 
