@@ -1,8 +1,8 @@
 # AI Development Introduction
 
-This page is the entrypoint for contributors who are designing, reviewing, or maintaining AI-assisted workflows in the Cabloy repository.
+This page is the entrypoint for contributors who are designing, reviewing, or maintaining AI vibe coding workflows in the Cabloy repository.
 
-The Cabloy monorepo is a good fit for AI-assisted development because the source tree already contains most of the framework knowledge an agent needs:
+The Cabloy monorepo is a good fit for AI vibe coding because the source tree already contains most of the framework knowledge an agent needs:
 
 - root scripts for shared workflows
 - Vona CLI source and command groups

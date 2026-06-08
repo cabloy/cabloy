@@ -1,11 +1,11 @@
 # Editions Overview
 
-Cabloy currently needs to support two related but distinct repositories:
+Cabloy currently supports two related but distinct editions:
 
 - **Cabloy Basic**
 - **Cabloy Start**
 
-They share the same core architectural direction, but they are not interchangeable.
+They share the same modular fullstack direction, but they are not interchangeable.
 
 ## Shared core
 
@@ -13,6 +13,7 @@ Both editions use the Cabloy fullstack model built around:
 
 - Vona as the backend framework
 - Zova as the frontend framework
+- suite-based modules across the stack
 - root-level `npm run vona` and `npm run zova` entrypoints
 - CLI-backed workflows for generation, refactoring, metadata, and verification
 
