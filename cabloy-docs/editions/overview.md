@@ -7,6 +7,8 @@ Cabloy currently supports two related but distinct editions:
 
 They share one Cabloy fullstack architecture, but they are distributed, composed, and optimized differently.
 
+If you need a recommendation path, start with [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start).
+
 ## Shared fullstack core
 
 Both editions are built around the same core direction:

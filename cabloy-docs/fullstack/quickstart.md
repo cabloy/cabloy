@@ -48,8 +48,9 @@ npm run dev:zova:web   # http://localhost:9000/
 
 Cabloy Start is the private commercial edition. Instead of `npm create cabloy`, obtain access to the licensed private repository and clone that source directly. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
 
-If you are not sure which edition you are using, read:
+If you are not sure which edition you are using or which one to choose, read:
 
+- [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
 - [Edition Detection](/editions/detection)
 - [Cabloy Basic](/editions/cabloy-basic)
 - [Cabloy Start](/editions/cabloy-start)

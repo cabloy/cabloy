@@ -2,6 +2,10 @@ import { defineConfig } from 'vitepress';
 
 const editionsItems = [
   { text: 'Overview', link: '/editions/overview' },
+  {
+    text: 'Choosing Basic vs Start',
+    link: '/editions/choosing-between-basic-and-start',
+  },
   { text: 'Cabloy Basic', link: '/editions/cabloy-basic' },
   { text: 'Cabloy Start', link: '/editions/cabloy-start' },
   { text: 'Edition Detection', link: '/editions/detection' },

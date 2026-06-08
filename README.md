@@ -48,6 +48,7 @@ Then continue with the framework docs:
 - [Backend Introduction](https://docs.cabloy.com/backend/introduction)
 - [Frontend Introduction](https://docs.cabloy.com/frontend/introduction)
 - [Editions Overview](https://docs.cabloy.com/editions/overview)
+- [Choosing Between Cabloy Basic and Cabloy Start](https://docs.cabloy.com/editions/choosing-between-basic-and-start)
 
 To upgrade an existing Cabloy project:
 
@@ -124,6 +125,7 @@ npm run build
 For more details, see:
 
 - [Editions Overview](https://docs.cabloy.com/editions/overview)
+- [Choosing Between Cabloy Basic and Cabloy Start](https://docs.cabloy.com/editions/choosing-between-basic-and-start)
 - [Repo Scripts](https://docs.cabloy.com/reference/repo-scripts)
 - [Package Map](https://docs.cabloy.com/reference/package-map)
 - [AI Development Introduction](https://docs.cabloy.com/ai/introduction)
