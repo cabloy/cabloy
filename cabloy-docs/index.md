@@ -47,11 +47,9 @@ Start here to understand the shared Cabloy architecture, learn how Vona and Zova
 
 Use these labels throughout the site:
 
-<Badge type="tip" text="Common" /> applies to both Cabloy Basic and Cabloy Start.
-
-<Badge type="info" text="Basic" /> applies only to Cabloy Basic.
-
-<Badge type="warning" text="Start" /> applies only to Cabloy Start.
+- <Badge type="tip" text="Common" /> applies to both Cabloy Basic and Cabloy Start.
+- <Badge type="info" text="Basic" /> applies only to Cabloy Basic.
+- <Badge type="warning" text="Start" /> applies only to Cabloy Start.
 
 ## First reading path
 
