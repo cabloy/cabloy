@@ -34,12 +34,34 @@ const referenceItems = [
   { text: 'Glossary', link: '/reference/glossary' },
 ];
 
+const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID;
+const gaHead = GA_MEASUREMENT_ID
+  ? [
+      [
+        'script',
+        {
+          async: '',
+          src: `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
+        },
+      ],
+      [
+        'script',
+        {},
+        `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`,
+      ],
+    ]
+  : [];
+
 export default defineConfig({
   title: 'Cabloy',
   description: 'Unified fullstack and AI-development documentation for the Cabloy monorepo',
   lang: 'en-US',
   base: '/',
   ignoreDeadLinks: [/^https?:\/\/localhost/],
+  head: gaHead,
   markdown: {
     lineNumbers: true,
   },
