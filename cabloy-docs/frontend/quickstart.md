@@ -28,8 +28,9 @@ When working in this framework repository, the active edition is **Cabloy Basic*
 That matters because edition choice affects:
 
 - frontend flavor names
-- UI-library assumptions
-- available modules and layouts
+- UI-layer assumptions
+- available modules, layouts, and SSR site baselines
+- project assets and examples
 - which examples in the docs match the current repo directly
 
 Read together with:

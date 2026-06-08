@@ -49,14 +49,14 @@ cd zova && npm run build:rest:cabloyBasicWeb
 
 ## Cabloy Start
 
-Cabloy Start is a sibling private repository rather than a subdirectory here, but the same integration idea applies.
+Cabloy Start is the private commercial edition. It lives in a licensed sibling repository rather than a subdirectory here, but the same integration idea applies.
 
 Its root script surface uses Start-specific flavors such as:
 
 - `cabloyStartAdmin`
 - `cabloyStartWeb`
 
-Because Start differs in UI stack and module composition, do not reuse Basic integration examples without first confirming:
+Because Start differs in UI layer, module composition, SSR site baselines, and project assets, do not reuse Basic integration examples without first confirming:
 
 1. the `__CABLOY_START__` marker
 2. the Start repo’s `package.json`

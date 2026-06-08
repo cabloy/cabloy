@@ -22,10 +22,11 @@ Both editions share the same broad collaboration loop:
 
 The most important differences show up in:
 
-- frontend UI stack assumptions
+- frontend UI layer assumptions
 - frontend flavor names
 - frontend module composition
-- private value-add content in Cabloy Start
+- admin/web SSR site baselines
+- private value-add content and project assets in Cabloy Start
 - potentially different generated output paths or integration details
 
 ## Cabloy Basic

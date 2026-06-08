@@ -24,7 +24,7 @@ Before creating a new Cabloy project, make sure your environment has:
 npm create cabloy
 ```
 
-The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. Open this project in Claude Code and start coding immediately with project-specific guidance.
+The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
 
 ## 3. Start the backend
 
@@ -46,7 +46,7 @@ npm run dev:zova:web   # http://localhost:9000/
 
 ### Cabloy Start
 
-Use the frontend commands provided by your project edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
+Cabloy Start is the private commercial edition. Instead of `npm create cabloy`, obtain access to the licensed private repository and clone that source directly. Then use the frontend commands provided by that edition. Do not assume the Cabloy Basic flavor names apply to Cabloy Start.
 
 If you are not sure which edition you are using, read:
 

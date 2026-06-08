@@ -66,12 +66,12 @@ cd zova && npm run build:rest:cabloyBasicAdmin
 
 ## Cabloy Start
 
-The sibling `cabloy-start` repository uses Start-specific flavors such as:
+The sibling `cabloy-start` repository is the private commercial edition and uses Start-specific flavors such as:
 
 - `cabloyStartAdmin`
 - `cabloyStartWeb`
 
-Those commands are not driven by the current Basic repo root wrappers, so verify the Start repo’s `package.json` before documenting or automating them.
+Those commands are not driven by the current Basic repo root wrappers, so verify the Start repo’s `package.json`, suites, SSR site baselines, and project assets before documenting or automating them.
 
 ## Workflow guidance
 

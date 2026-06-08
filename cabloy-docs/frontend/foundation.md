@@ -26,8 +26,9 @@ Zova is not tied to one UI library.
 
 That flexibility matters directly for Cabloy’s edition model:
 
-- **Cabloy Basic** currently aligns with DaisyUI + TailwindCSS oriented examples
-- **Cabloy Start** aligns with Vuetify-oriented frontend modules and workflows
+- **Shared frontend engineering layer**: both editions follow the same Zova-centered frontend direction, with Vue, Vite, Quasar tooling, and related libraries
+- **Cabloy Basic UI layer**: current public docs and examples align with DaisyUI + Tailwind CSS
+- **Cabloy Start UI layer**: the private commercial edition aligns with Vuetify-oriented frontend modules, workflows, and SSR site baselines
 
 So docs and skills must separate shared Zova principles from edition-specific UI assumptions.
 
