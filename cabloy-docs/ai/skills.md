@@ -33,3 +33,5 @@ A strong Cabloy skill usually includes:
 5. references to durable source-of-truth files
 
 When a skill needs to apply an architectural rule such as backend class placement, prefer a branching decision tree that points back to durable docs instead of embedding the full architecture rationale inside the skill itself.
+
+For edition-aware skills, use [Edition Detection for AI Workflows](/ai/edition-detection) and [Edition Consistency Checklist](/ai/edition-consistency-checklist) as the durable review surfaces before expanding edition-specific branches.

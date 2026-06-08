@@ -27,6 +27,7 @@ const aiItems = [
   { text: 'CLI for Agents', link: '/ai/cli-for-agents' },
   { text: 'Rules and Config', link: '/ai/rules-and-config' },
   { text: 'Edition Detection', link: '/ai/edition-detection' },
+  { text: 'Edition Consistency Checklist', link: '/ai/edition-consistency-checklist' },
   { text: 'Verification', link: '/ai/verification' },
 ];
 
