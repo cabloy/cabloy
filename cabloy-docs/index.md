@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Cabloy'
   text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: Use one modular framework system instead of stitching together separate backend and frontend stacks. With Vona on the backend, Zova on the frontend, suite-based modules across the stack, and CLI-first workflows, Cabloy helps AI vibe coding stay more accurate, use fewer tokens, and move faster.
+  tagline: Use one modular fullstack framework instead of stitching together separate backend and frontend stacks. With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy helps AI vibe coding stay accurate, use fewer tokens, and move faster.
   actions:
     - theme: brand
       text: Get Started
@@ -18,15 +18,15 @@ hero:
 
 features:
   - title: One framework system
-    details: Build backend and frontend in one Node.js fullstack architecture instead of stitching together separate backend and frontend stacks.
+    details: Build backend and frontend in one modular Node.js fullstack architecture.
   - title: Vona + Zova
     details: Use aligned backend and frontend frameworks for code sharing, workflow reuse, and cross-stack consistency.
   - title: Suite-based modular system
-    details: Organize capabilities as suites and modules so backend services, frontend features, metadata, and tooling can evolve in composable units.
+    details: Organize capabilities as suites and modules so services, features, metadata, and tooling evolve in composable units.
   - title: Multiple delivery modes
-    details: Deliver SSR, SPA, Web, and Admin applications with shared conventions across the Cabloy ecosystem.
+    details: Deliver SSR, SPA, Web, and Admin applications with shared conventions across the stack.
   - title: CLI-first workflows for AI vibe coding
-    details: Turn scaffolding, metadata, refactors, and verification into explicit commands so AI vibe coding can stay more accurate, use fewer tokens, and move faster.
+    details: Turn scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
   - title: Monorepo-native development
     details: Keep framework source, docs, and tooling aligned in one monorepo workflow.
 ---
