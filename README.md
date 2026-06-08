@@ -6,11 +6,11 @@
 [![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://docs.cabloy.com)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com)
 
-Cabloy is a Node.js fullstack framework for AI vibe coding.
+Cabloy is a modular Node.js fullstack framework for AI vibe coding.
 
-Use one framework system instead of stitching together separate backend and frontend stacks.
+Use one modular fullstack framework instead of stitching together separate backend and frontend stacks.
 
-With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows across the stack, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands so AI vibe coding can stay more accurate, use fewer tokens, and move faster.
+With **Vona** on the backend, **Zova** on the frontend, suite-based modules, and CLI-first workflows across the stack, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
 
 [Documentation](https://docs.cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
@@ -57,11 +57,12 @@ npm run upgrade
 
 ## Highlights
 
-- **One framework system** — build backend and frontend in one Node.js fullstack architecture
-- **Vona + Zova** — use aligned backend and frontend frameworks instead of stitching together separate backend and frontend stacks
-- **Multiple delivery modes** — support SSR, SPA, Web, and Admin applications with shared conventions
-- **CLI-first workflows for AI vibe coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands so AI vibe coding can stay more accurate, use fewer tokens, and move faster
-- **Monorepo-native development** — keep framework source, docs, and tooling aligned in one repository model
+- **One framework system** — build backend and frontend in one modular Node.js fullstack architecture
+- **Vona + Zova** — use aligned backend and frontend frameworks for code sharing, workflow reuse, and cross-stack consistency
+- **Suite-based modular system** — organize capabilities as suites and modules so services, features, metadata, and tooling evolve in composable units
+- **Multiple delivery modes** — deliver SSR, SPA, Web, and Admin applications with shared conventions across the stack
+- **CLI-first workflows for AI vibe coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding
+- **Monorepo-native development** — keep framework source, docs, and tooling aligned in one monorepo workflow
 
 ## Technology Stack
 
