@@ -15,7 +15,7 @@ Different log directories are used by default for different runtime environments
 
 - `Test/Development`: `{project path}/.app/logs`
 
-- `Production`: `{home}/vona/{project name}/logs`
+- `Production`: `{home}/.vona/{project name}/logs`
 
 Configuration can be modified in the App Config or .env file.
 

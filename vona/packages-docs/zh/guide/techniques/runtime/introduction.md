@@ -7,7 +7,7 @@ VonaJS 在系统启动时将一些动态运行数据`统一`输出到`Runtime`�
 针对不同的运行环境使用不同的 Runtime 目录:
 
 - `测试环境/开发环境`: `{project path}/.app/runtime`
-- `生产环境`: `{home}/vona/{project name}/runtime`
+- `生产环境`: `{home}/.vona/{project name}/runtime`
 
 ## 创建meta.runtime
 

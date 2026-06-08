@@ -14,7 +14,7 @@ VonaJS 基于[winston](https://github.com/winstonjs/winston)提供了强大而�
 针对不同的运行环境默认使用不同的日志目录:
 
 - `测试环境/开发环境`: `{project path}/.app/logs`
-- `生产环境`: `{home}/vona/{project name}/logs`
+- `生产环境`: `{home}/.vona/{project name}/logs`
 
 可以在 App Config 或者.env 文件中修改配置。
 

@@ -8,7 +8,7 @@ Different Runtime directories are used for different runtime environments:
 
 - `Test/Dev Environment`: `{project path}/.app/runtime`
 
-- `Production Environment`: `{home}/vona/{project name}/runtime`
+- `Production Environment`: `{home}/.vona/{project name}/runtime`
 
 ## Create meta.runtime
 
