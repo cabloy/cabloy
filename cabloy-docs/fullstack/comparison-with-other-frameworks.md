@@ -1,6 +1,6 @@
 # Comparison with Other Frameworks
 
-This page compares **Cabloy** with several common framework choices so readers can understand the architectural differences, where Cabloy fits well, and which strengths come from the fullstack system as a whole versus the backend layer provided by **Vona**.
+This page shows how **Cabloy** differs from several common framework choices, so readers can quickly see where Cabloy stands out as a Node.js fullstack framework system and which strengths come from the fullstack system as a whole versus the backend layer provided by **Vona**.
 
 ## What is being compared
 
@@ -37,7 +37,7 @@ The sections below use the same comparison lens each time:
 
 Cabloy and Next.js both target fullstack application development, but they organize the stack differently.
 
-Cabloy keeps the backend and frontend as **separate but coordinated framework layers**. That makes it a stronger fit when a team wants a dedicated backend system and a dedicated frontend system without stitching together unrelated tools by hand.
+Cabloy keeps the backend and frontend as **separate but coordinated framework layers**. That makes it a strong fit when a team wants one framework system with a dedicated backend layer and a dedicated frontend layer, without stitching together unrelated tools by hand.
 
 Representative Cabloy strengths in this comparison include:
 
@@ -88,9 +88,9 @@ In the Python ecosystem, **Django Admin** has long been one of the strongest cho
 
 Cabloy is designed to fill that gap in the Node.js ecosystem.
 
-That is why this comparison matters: it is not only comparing features, but also explaining Cabloy’s **ecosystem role**. For teams that want Django-Admin-like development speed for admin systems but want to stay in Node.js, Cabloy is intended to provide that missing fullstack option.
+That is why this comparison matters: it is not only comparing features, but also explaining Cabloy’s **ecosystem role**. For teams that want Django-Admin-like development speed for admin systems but want to stay in Node.js, Cabloy aims to provide that missing fullstack option.
 
-At the same time, Cabloy does not stop at reproducing the server-centered admin model. With Vona on the backend and Zova on the frontend, Cabloy also gives teams:
+At the same time, Cabloy does not stop at reproducing the server-centered admin model. With Vona on the backend and Zova on the frontend, Cabloy gives teams:
 
 - a typed modern frontend layer instead of relying only on server-rendered templates
 - richer interaction patterns for Admin and Web applications
@@ -114,4 +114,4 @@ These comparisons are most useful when your decision depends on questions like:
 - do you need shared conventions across SSR, SPA, Web, and Admin delivery modes?
 - do you want Django-Admin-like rapid admin development inside the Node.js ecosystem, but with a more modern frontend and interaction model?
 
-If those questions matter, Cabloy’s main value is not just one isolated feature. It is the way **Vona**, **Zova**, shared scripts, and cross-stack workflows stay aligned as one framework system.
+If those questions matter, Cabloy’s value is not just one isolated feature. It is the way **Vona**, **Zova**, shared scripts, and cross-stack workflows stay aligned as one framework system.
