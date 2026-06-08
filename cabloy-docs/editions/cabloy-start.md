@@ -18,8 +18,37 @@ Use Cabloy Start as the edition-aware target when work depends on:
 - Vuetify-specific frontend workflows
 - Cabloy Start flavor names in frontend scripts
 - modules that exist in the private Start repository but not in Basic
-- private value-add project composition
+- licensed private-repo structure and Start-specific project composition
 - Start-specific SSR site baselines and project assets
+
+## Get access and initialize
+
+Cabloy Start is the private commercial edition. It does not use the default `npm create cabloy` project route.
+
+To use Cabloy Start:
+
+1. purchase a license and obtain repository access
+2. clone the private repository source directly
+3. run the edition initialization flow in the cloned project
+
+Access surfaces:
+
+- Purchase page: `https://cabloy.com/module/cabloy-start`
+- Repository: `https://github.com/cabloy/cabloy-start`
+
+Clone the repository:
+
+```bash
+git clone git@github.com:cabloy/cabloy-start.git
+```
+
+After cloning, run:
+
+```bash
+npm run init
+```
+
+This initializes the project and installs dependencies.
 
 ## Relationship to this docs site
 
