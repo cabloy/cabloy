@@ -40,6 +40,8 @@ npm create cabloy
 
 The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
 
+For **Cabloy Start**, purchase access to the licensed private repository, clone `git@github.com:cabloy/cabloy-start.git`, and run `npm run init`. For the complete Start onboarding flow, read the [Cabloy Start](https://docs.cabloy.com/editions/cabloy-start) page.
+
 Then continue with the framework docs:
 
 - [Fullstack Quickstart](https://docs.cabloy.com/fullstack/quickstart)

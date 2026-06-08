@@ -36,7 +36,8 @@ Cabloy Basic is the open-source community edition and is optimized for public re
 Cabloy Start is the private commercial edition.
 
 - the private repository is marked with `__CABLOY_START__`
-- access is granted through licensing, after which users clone the private repository source directly
+- users first purchase a license and obtain repository access, then clone the private repository source directly
+- after cloning, the project is initialized through the Start edition workflow
 - Start provides its own suites, flavors, SSR sites, and project assets for that edition
 
 Cabloy Start is optimized as a commercial baseline for more complex business systems while staying on the same Cabloy fullstack direction.
@@ -69,11 +70,11 @@ This difference affects not only UI code, but also module composition, frontend 
 
 The editions intentionally diverge in several surfaces:
 
-- UI library assumptions
+- UI layer assumptions
 - frontend flavor names
 - suite and module composition
 - admin/web SSR site baselines
-- private-value project structure and assets
+- licensed private-repo structure and Start-specific project assets
 - rules, skills, and docs used for AI vibe coding
 
 For example:
