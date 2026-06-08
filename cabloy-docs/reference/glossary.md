@@ -14,11 +14,11 @@ The frontend framework in the Cabloy ecosystem.
 
 ## Cabloy Basic
 
-The public reference repository for the shared Cabloy architecture.
+The public framework/reference edition for the shared Cabloy architecture.
 
 ## Cabloy Start
 
-A private sibling repository with different UI and module choices, provided as a value-add edition.
+The private commercial edition, provided as a licensed sibling repository with different UI, module, and project-baseline choices.
 
 ## Edition detection
 
