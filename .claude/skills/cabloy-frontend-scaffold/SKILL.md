@@ -154,7 +154,7 @@ Check whether the feature needs:
 - build
 - metadata regeneration verification
 - SSR or route-path verification
-- edition-specific flavor verification
+- edition-specific flavor, SSR site baseline, and project-asset verification
 
 ### Optional backend-contract reminder
 

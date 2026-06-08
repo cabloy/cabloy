@@ -139,7 +139,7 @@ Typical examples in Cabloy Basic include:
 - `cd zova && npm run build:rest:cabloyBasicAdmin`
 - `cd zova && npm run build:rest:cabloyBasicWeb`
 
-For Cabloy Start, verify the exact Start-specific flavor names and paths in the Start repo.
+For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the licensed Start repo.
 
 ### Path C: Downstream frontend alignment
 

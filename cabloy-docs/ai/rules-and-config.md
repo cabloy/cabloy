@@ -10,7 +10,7 @@ Use the root `CLAUDE.md` for concise, durable operational guidance such as:
 - where public docs live
 - where internal docs live
 - which command entrypoints are preferred
-- why edition detection is mandatory before UI-sensitive guidance
+- why edition detection is mandatory before UI-sensitive guidance or project-creation assumptions
 
 ## `.claude/commands/`
 

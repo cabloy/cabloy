@@ -8,10 +8,10 @@ Edition detection should happen before any AI workflow that assumes a frontend s
 
 If an agent skips edition detection, it can:
 
-- scaffold against the wrong UI assumptions
+- scaffold against the wrong UI-layer assumptions
 - suggest the wrong frontend flavors
-- cite modules that do not exist in the active repo
-- generate docs or skills that accidentally hardcode Basic-only behavior into Start workflows
+- cite suites, modules, SSR site baselines, or project assets that do not exist in the active repo
+- generate docs or skills that accidentally hardcode Basic-only behavior or `npm create cabloy` assumptions into Start workflows
 
 ## Operational rule
 

@@ -38,9 +38,9 @@ Edition detection is especially important when the work touches:
 
 - page creation
 - component generation
-- UI library usage
+- UI-layer usage
 - frontend flavor scripts
-- edition-specific modules or assets
+- edition-specific suites, modules, SSR site baselines, or project assets
 
 ## 5. Use the right lookup surface before searching broadly
 

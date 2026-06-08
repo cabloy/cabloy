@@ -28,7 +28,7 @@ Interpretation:
 - `__CABLOY_START__` present → this is Cabloy Start
 - neither present → inspect the repo scripts and ask the user before making a strong edition-specific assumption
 
-This matters most for frontend work, UI-library assumptions, flavor names, and edition-specific modules.
+This matters most for frontend work, UI-layer assumptions, flavor names, suite/module availability, SSR site baselines, project assets, and edition-specific AI guidance.
 
 ## Step 2: Identify the task layer
 
@@ -236,19 +236,23 @@ When the task is frontend-sensitive or examples differ between editions, branch 
 
 Bias toward:
 
+- the public framework/reference edition
 - current public monorepo source
+- the default `npm create cabloy` project route
 - public docs examples
 - the Basic repo marker
-- current Basic frontend flavors and module layout
+- current Basic frontend flavors, module layout, and DaisyUI + Tailwind CSS UI assumptions
 
 ### Cabloy Start
 
 Bias toward:
 
+- the private commercial edition
 - the Start repo marker
+- the licensed private repository source
 - Vuetify-sensitive examples
 - Start-specific frontend flavor names
-- Start-specific modules and private-value repo structure
+- Start-specific modules, SSR site baselines, project assets, and private-value repo structure
 
 Do not silently reuse Basic examples when Start-specific assumptions matter.
 

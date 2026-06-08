@@ -53,4 +53,4 @@ Typical use cases:
 
 ## Edition-aware CLI usage
 
-The command families are shared, but examples and generated targets may differ between Cabloy Basic and Cabloy Start. Detect the edition before recommending a frontend-specific example.
+The command families are shared, but examples and generated targets may differ between Cabloy Basic and Cabloy Start because the editions can diverge in UI layer, frontend flavors, suites/modules, SSR site baselines, and project assets. Detect the edition before recommending a frontend-specific example.

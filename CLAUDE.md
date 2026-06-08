@@ -2,15 +2,15 @@
 
 ## Repository identity
 
-This repository is **Cabloy Basic**, identified by the root marker file:
+This repository is **Cabloy Basic**, the public framework/reference edition, identified by the root marker file:
 
 - `__CABLOY_BASIC__`
 
-A sibling repository named `cabloy-start` is a separate source repository and is identified by:
+A sibling repository named `cabloy-start` is the private commercial edition, delivered as a licensed separate source repository and identified by:
 
 - `__CABLOY_START__`
 
-Always detect the active edition before making UI-sensitive assumptions, choosing frontend examples, or recommending module-specific workflows.
+Always detect the active edition before making UI-sensitive assumptions, choosing frontend examples, recommending module-specific workflows, or assuming the project creation path.
 
 ## Monorepo layout
 
@@ -43,7 +43,7 @@ Before inventing a custom implementation path:
 
 - Prefer CLI-backed workflows over manual scaffolding whenever Vona or Zova already provides a generator, refactor, metadata, or verification command.
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
-- For frontend work, assume Cabloy Basic and Cabloy Start may diverge in UI library, frontend flavors, module availability, and generated outputs.
+- For frontend work, assume Cabloy Basic and Cabloy Start share a frontend engineering layer but may diverge in UI layer, frontend flavors, suite/module availability, SSR site baselines, project assets, and generated outputs.
 - Reuse existing repo terminology: Cabloy, Vona, Zova, suite, module, bean, SSR, SPA, Web, Admin.
 - For backend base-class placement, use the A / B1 / B2 rule from `cabloy-docs/ai/class-placement-rule.md`.
 - Pure helper bases belong in `src/lib`; subclass-only bases should be evaluated case by case and often belong in `src/lib`.

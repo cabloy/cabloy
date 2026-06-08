@@ -13,10 +13,11 @@ They prevent the most common category error in Cabloy AI work: assuming Cabloy B
 
 That assumption is especially dangerous for:
 
-- UI-library-sensitive examples
+- UI-layer-sensitive examples
 - frontend flavor names
 - page/component workflows
-- module availability
+- suite/module availability
+- SSR site baselines and project assets
 - docs and skills that try to support both repos
 
 ## Secondary checks
