@@ -34,6 +34,8 @@ jobs:
       - name: install docs dependencies
         run: pnpm --dir cabloy-docs install --frozen-lockfile
       - name: build docs
+        env:
+          GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
         run: pnpm --dir cabloy-docs docs:build
       - name: setup pages
         uses: actions/configure-pages@v5
