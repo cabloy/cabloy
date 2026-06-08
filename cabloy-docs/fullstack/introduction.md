@@ -22,9 +22,9 @@ With **Vona** on the backend, **Zova** on the frontend, and CLI-first workflows 
 
 This combination keeps backend and frontend development close enough for code sharing, workflow reuse, and AI vibe coding workflows.
 
-## How the fullstack workflow connects
+## How the fullstack system stays connected
 
-At the repository level, Cabloy uses shared root scripts and CLI-first workflows to coordinate Vona and Zova across the stack.
+At the repository level, shared scripts, shared terminology, and CLI-first workflows keep Vona and Zova aligned as one framework system.
 
 ## Why the monorepo matters
 
@@ -32,8 +32,8 @@ The monorepo makes it possible to keep backend and frontend concepts, tooling, a
 
 - how frontend routes and components are reflected back into backend type hints
 - how backend OpenAPI and DTO output feeds frontend SDK generation
-- how edition-specific scripts differ between Cabloy Basic and Cabloy Start
-- how Vona and Zova CLI commands can be reused instead of writing scaffolding manually
+- how common concepts can be documented once before edition-specific notes branch out
+- how Vona and Zova CLI capabilities can be reused instead of rebuilding scaffolding by hand
 
 ## Technology Stack
 
