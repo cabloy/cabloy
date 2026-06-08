@@ -61,7 +61,7 @@ Use the frontend path when the task is about:
 
 - page, component, mock, bean
 - SSR, Web, Admin, SPA
-- UI-library-sensitive work
+- UI-layer-sensitive work
 - OpenAPI SDK generation
 - frontend refactors such as page params, page query, component props, or model helpers
 
@@ -252,7 +252,7 @@ Bias toward:
 - the licensed private repository source
 - Vuetify-sensitive examples
 - Start-specific frontend flavor names
-- Start-specific modules, SSR site baselines, project assets, and private-value repo structure
+- Start-specific suites/modules, SSR site baselines, project assets, and licensed private-repo structure
 
 Do not silently reuse Basic examples when Start-specific assumptions matter.
 
