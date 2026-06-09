@@ -91,6 +91,7 @@ export default defineConfig({
               link: '/fullstack/comparison-with-other-frameworks',
             },
             { text: 'Quickstart', link: '/fullstack/quickstart' },
+            { text: 'VS Code Extensions', link: '/fullstack/vscode-extensions' },
             { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
             { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
             {
