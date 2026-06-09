@@ -186,8 +186,8 @@ export class AppModule extends BeanSimple {
       const mainInstance = this.mainInstances[moduleTarget.info.relativeName];
       if (mainInstance && mainInstance[monkeyName]) {
         // @ts-ignore ignore
-        await this.app.vue.runWithContext(async () => {
-          await mainInstance[monkeyName](...monkeyData);
+        await this.app.vue.runWithContext(() => {
+          return mainInstance[monkeyName](...monkeyData);
         });
       }
     }
@@ -197,13 +197,13 @@ export class AppModule extends BeanSimple {
       if (moduleMonkey.info.capabilities?.monkey) {
         const monkeyInstance = this.monkeyInstances[key];
         if (monkeyInstance && monkeyInstance[monkeyName]) {
-          await this.app.vue.runWithContext(async () => {
+          await this.app.vue.runWithContext(() => {
             if (moduleTarget === undefined) {
               // @ts-ignore ignore
-              await monkeyInstance[monkeyName](...monkeyData);
+              return monkeyInstance[monkeyName](...monkeyData);
             } else {
               // @ts-ignore ignore
-              await monkeyInstance[monkeyName](moduleTarget, ...monkeyData);
+              return monkeyInstance[monkeyName](moduleTarget, ...monkeyData);
             }
           });
         }
@@ -212,13 +212,13 @@ export class AppModule extends BeanSimple {
     // app monkey
     const appMonkey = this.app.meta.appMonkey;
     if (appMonkey && appMonkey[monkeyName]) {
-      await this.app.vue.runWithContext(async () => {
+      await this.app.vue.runWithContext(() => {
         if (moduleTarget === undefined) {
           // @ts-ignore ignore
-          await appMonkey[monkeyName](...monkeyData);
+          return appMonkey[monkeyName](...monkeyData);
         } else {
           // @ts-ignore ignore
-          await appMonkey[monkeyName](moduleTarget, ...monkeyData);
+          return appMonkey[monkeyName](moduleTarget, ...monkeyData);
         }
       });
     }
@@ -238,8 +238,8 @@ export class AppModule extends BeanSimple {
       const mainInstance = this.mainInstances[moduleTarget.info.relativeName];
       if (mainInstance && mainInstance[monkeyName]) {
         // @ts-ignore ignore
-        this.app.vue.runWithContext(async () => {
-          mainInstance[monkeyName](...monkeyData);
+        this.app.vue.runWithContext(() => {
+          return mainInstance[monkeyName](...monkeyData);
         });
       }
     }
@@ -249,13 +249,13 @@ export class AppModule extends BeanSimple {
       if (moduleMonkey.info.capabilities?.monkey) {
         const monkeyInstance = this.monkeyInstances[key];
         if (monkeyInstance && monkeyInstance[monkeyName]) {
-          this.app.vue.runWithContext(async () => {
+          this.app.vue.runWithContext(() => {
             if (moduleTarget === undefined) {
               // @ts-ignore ignore
-              monkeyInstance[monkeyName](...monkeyData);
+              return monkeyInstance[monkeyName](...monkeyData);
             } else {
               // @ts-ignore ignore
-              monkeyInstance[monkeyName](moduleTarget, ...monkeyData);
+              return monkeyInstance[monkeyName](moduleTarget, ...monkeyData);
             }
           });
         }
@@ -264,13 +264,13 @@ export class AppModule extends BeanSimple {
     // app monkey
     const appMonkey = this.app.meta.appMonkey;
     if (appMonkey && appMonkey[monkeyName]) {
-      this.app.vue.runWithContext(async () => {
+      this.app.vue.runWithContext(() => {
         if (moduleTarget === undefined) {
           // @ts-ignore ignore
-          appMonkey[monkeyName](...monkeyData);
+          return appMonkey[monkeyName](...monkeyData);
         } else {
           // @ts-ignore ignore
-          appMonkey[monkeyName](moduleTarget, ...monkeyData);
+          return appMonkey[monkeyName](moduleTarget, ...monkeyData);
         }
       });
     }
