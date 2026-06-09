@@ -27,12 +27,12 @@ npm run zova
 
 Use them as the shared terminal-first entrypoints for framework-aware workflows.
 
-At the same time, the repo root also exposes shared scripts for broader development tasks such as dev, build, test, typecheck, and docs workflows.
+At the same time, the repo root also exposes shared scripts for broader development tasks such as dev, build, test, and typecheck.
 
 Use this distinction consistently:
 
 - use the CLI when you are discovering commands, generating framework resources, running framework-specific tooling, or inspecting workflow families
-- use root scripts when you are running broader repository workflows such as development, builds, verification, or documentation tasks
+- use root scripts when you are running broader repository workflows such as development, builds, or verification
 
 For the compact root-script lookup surface, see [Repo Scripts](/reference/repo-scripts).
 
@@ -69,7 +69,7 @@ A practical rule is:
 
 - start with `npm run vona` when the task is backend-oriented
 - start with `npm run zova` when the task is frontend-oriented
-- start with root scripts when the task is about repo-wide development, build, verification, or docs workflows
+- start with root scripts when the task is about repo-wide development, build, or verification
 
 In practice, that usually means:
 
