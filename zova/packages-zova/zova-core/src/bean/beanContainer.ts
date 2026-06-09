@@ -103,7 +103,7 @@ export class BeanContainer {
             beanInstance,
           );
           this.runWithInstanceScopeOrAppContext(() => {
-            beanInstance.__dispose__();
+            return beanInstance.__dispose__();
           });
           this.app.meta.module._monkeyModuleSync(
             false,
@@ -630,8 +630,8 @@ export class BeanContainer {
       await this.app?.meta.module._monkeyModule(true, 'beanInit', undefined, this, beanInstance);
     }
     if (!(beanInstance instanceof BeanAopBase) && beanInstance.__init__) {
-      await this.runWithInstanceScopeOrAppContext(async () => {
-        await beanInstance.__init__(...args);
+      await this.runWithInstanceScopeOrAppContext(() => {
+        return beanInstance.__init__(...args);
       });
     }
     if (this.containerType === 'sys') {
