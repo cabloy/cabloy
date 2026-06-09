@@ -67,7 +67,7 @@ npm run upgrade
 
 If you are contributing to framework-aware workflows or using Cabloy CLI generation directly, prefer CLI-backed generation over manual scaffolding.
 
-Instead of creating framework files by hand, start with:
+Read [Fullstack CLI](/fullstack/cli) for the shared cross-stack workflow model, then start with:
 
 ```bash
 npm run vona :create

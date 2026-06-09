@@ -71,6 +71,8 @@ npm run zova :
 
 These are not competing workflow systems. They are two entrypoints to the same underlying framework workflows.
 
+For the shared terminal-first workflow model behind these menus, see [Fullstack CLI](/fullstack/cli).
+
 ## What Vona emphasizes
 
 The Vona extension is backend-oriented.

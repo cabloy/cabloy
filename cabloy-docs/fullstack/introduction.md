@@ -27,6 +27,8 @@ This combination keeps backend and frontend development close enough for code sh
 
 At the repository level, shared scripts, shared terminology, and CLI-first workflows keep Vona and Zova aligned as one framework system.
 
+For the shared terminal-first workflow model, see [Fullstack CLI](/fullstack/cli).
+
 ## Why the monorepo matters
 
 The monorepo makes it possible to keep backend and frontend concepts, tooling, and generated outputs aligned from source rather than memory, for example:
