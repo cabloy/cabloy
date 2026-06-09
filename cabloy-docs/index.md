@@ -57,9 +57,10 @@ Start here to learn the shared Cabloy architecture, see how Vona and Zova fit to
 ### For contributors and AI vibe coding workflows
 
 1. [Fullstack Introduction](/fullstack/introduction)
-2. [AI Development Introduction](/ai/introduction)
-3. [Repo Scripts Reference](/reference/repo-scripts)
-4. [Editions Overview](/editions/overview)
+2. [VS Code Extensions](/fullstack/vscode-extensions)
+3. [AI Development Introduction](/ai/introduction)
+4. [Repo Scripts Reference](/reference/repo-scripts)
+5. [Editions Overview](/editions/overview)
 
 ## Documentation scope labels
 
