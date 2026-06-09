@@ -135,4 +135,5 @@ Read these pages together:
 - [Backend Foundation](/backend/foundation)
 - [Service Guide](/backend/service-guide)
 - [Global Bean Lookup](/ai/global-bean-lookup)
+- [Virtual Decorator Guidance](/ai/virtual-decorator-guidance)
 - [Docs, Skills, Rules, and CLI Mapping](/ai/docs-skills-rules-mapping)

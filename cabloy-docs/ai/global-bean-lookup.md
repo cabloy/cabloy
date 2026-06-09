@@ -152,6 +152,7 @@ Avoid these mistakes:
 Read these pages together:
 
 - [Class Placement Rule](/ai/class-placement-rule)
+- [Virtual Decorator Guidance](/ai/virtual-decorator-guidance)
 - [Repo Guidance](/ai/repo-guidance)
 - [Rules and Config](/ai/rules-and-config)
 - [Verification](/ai/verification)

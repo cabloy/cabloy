@@ -239,3 +239,12 @@ Future refactors should preserve these boundaries:
 - runtime-anchor classes must keep the container-managed behavior they rely on
 - pure helper logic should not stay in the registry without a runtime reason
 - the same A / B1 / B2 terminology should be reused across docs, skills, and repo rules so that humans and agents make the same classification decisions
+
+## Related guidance
+
+Read these materials together:
+
+- `cabloy-docs/ai/class-placement-rule.md`
+- `cabloy-docs/ai/global-bean-lookup.md`
+- `cabloy-docs/ai/virtual-decorator-guidance.md`
+- `.docs-internal/architecture/virtual-decorator-runtime-semantics.md`
