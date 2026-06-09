@@ -67,7 +67,7 @@
   "devDependencies": {
     "@cabloy/lint": "^5.1.27",
     "@cabloy/openapi-typescript": "^7.9.2",
-    "@quasar/app-vite": "npm:@cabloy/quasar-app-vite@^2.5.9",
+    "@quasar/app-vite": "npm:@cabloy/quasar-app-vite@^2.5.10",
     "@types/node": "^22.19.17",
     "@vitejs/plugin-vue": "^6.0.7",
     "concurrently": "^8.2.2",
@@ -91,10 +91,10 @@
   },
   "pnpm": {
     "overrides": {
-      "@quasar/app-vite": "npm:@cabloy/quasar-app-vite@^2.5.9",
+      "@quasar/app-vite": "npm:@cabloy/quasar-app-vite@^2.5.10",
       "@vue/babel-plugin-jsx": "npm:@cabloy/vue-babel-plugin-jsx@^2.0.1",
       "@vue/compiler-sfc": "npm:@cabloy/vue-compiler-sfc@^3.5.14",
-      "@vue/runtime-core": "npm:@cabloy/vue-runtime-core@^3.5.53",
+      "@vue/runtime-core": "npm:@cabloy/vue-runtime-core@^3.5.54",
       "@vue/runtime-dom": "npm:@cabloy/vue-runtime-dom@^3.5.13",
       "@vue/reactivity": "npm:@cabloy/vue-reactivity@^3.5.16",
       "@vue/server-renderer": "npm:@cabloy/vue-server-renderer@^3.5.18",
