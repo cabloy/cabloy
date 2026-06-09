@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'Cabloy'
   text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: Use one modular fullstack framework instead of stitching together separate backend and frontend stacks. With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
+  tagline: Build backend and frontend with one fullstack framework. Vona, Zova, suites, and CLI-first workflows make AI vibe coding faster and more accurate.
   actions:
     - theme: brand
       text: Get Started
