@@ -83,6 +83,16 @@ For side-specific depth, see:
 - [Frontend CLI](/frontend/cli)
 - [CLI Reference](/reference/cli-reference)
 
+## Scripts, CLI, and VS Code extensions
+
+Use these three surfaces for different jobs:
+
+| Surface | Best for | Typical examples |
+| --- | --- | --- |
+| Root scripts | Repo-wide development, build, and verification workflows | `npm run dev`, `npm run build`, `npm run test` |
+| CLI | Framework-aware generation, refactors, initialization, and tooling | `npm run vona :create`, `npm run zova :refactor`, `npm run zova :openapi` |
+| VS Code extensions | In-editor discovery of the same framework workflow families | Explorer right-click menus for `Create`, `Init`, `Refactor`, `Tools`, and related groups |
+
 ## CLI and VS Code extensions
 
 The CLI is the authoritative workflow surface.
