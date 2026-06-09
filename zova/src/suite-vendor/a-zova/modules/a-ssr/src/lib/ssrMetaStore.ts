@@ -32,13 +32,18 @@ export class CtxSSRMetaStore extends BeanSimple {
   }
 
   private _onRenderedLast(err?: Error) {
-    if (!err) {
+    const app = this.app;
+    try {
+      if (err) return;
+
       const ssrContext = this.ctx.meta.$ssr.context;
       this._injectContextState(ssrContext);
       this._injectContextStateDefer(ssrContext);
       this._injectServerMeta(ssrContext);
+    } finally {
+      this.ctx.meta.$ssr._disposeServerContexts();
+      app?.close();
     }
-    this.app.close();
   }
 
   addMetaOptions(metaOptionsWrapper: SSRMetaOptionsWrapper) {
