@@ -4,7 +4,7 @@ Cabloy is a Node.js fullstack framework for AI vibe coding.
 
 Use one fullstack framework instead of stitching together separate backend and frontend stacks.
 
-With **Vona**, **Zova**, suite-based modules, and CLI-first workflows across the stack, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
+With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding.
 
 ## What Cabloy emphasizes
 
