@@ -4,15 +4,21 @@ import { BeanSimple } from '../../bean/beanSimple.ts';
 import { BeanControllerIdentifier, BeanRenderIdentifier } from '../../bean/type.ts';
 import { cast } from '../../types/utils/cast.ts';
 
+const SymbolTypeSSRRenderOriginal = Symbol('SymbolTypeSSRRenderOriginal');
+const SymbolTypeSSRRenderResetCount = Symbol('SymbolTypeSSRRenderResetCount');
+
 export class CtxComponent extends BeanSimple {
   private _bean_render_original: any;
+  private _instance_ssrRender_original: any;
+  private _renderPatched = false;
+  private _ssrRenderReset = false;
 
   activate() {
     if (this.ctx.disposed) return;
     const renderMethod = 'render';
-    const self = this;
     const instance = cast(this.ctx.instance);
     this._bean_render_original = instance[renderMethod];
+    const self = this;
     instance[renderMethod] = function (this, ...args) {
       if (instance.isUnmounted) return;
       if (!self.ctx.meta.state.inited.state) {
@@ -33,16 +39,42 @@ export class CtxComponent extends BeanSimple {
       //   return render.render();
       // }
     };
-    instance.type.ssrRender = null;
+    this._renderPatched = true;
+    const componentType = cast(instance.type);
+    const ssrRenderResetCount = componentType[SymbolTypeSSRRenderResetCount] ?? 0;
+    if (ssrRenderResetCount === 0) {
+      componentType[SymbolTypeSSRRenderOriginal] = componentType.ssrRender;
+      componentType.ssrRender = null;
+    }
+    componentType[SymbolTypeSSRRenderResetCount] = ssrRenderResetCount + 1;
+    this._instance_ssrRender_original = instance.ssrRender;
     instance.ssrRender = null;
+    this._ssrRenderReset = true;
   }
 
   /** @internal */
   public dispose() {
     const renderMethod = 'render';
     const instance = cast(this.ctx.instance);
-    instance[renderMethod] = this._bean_render_original;
+    if (this._renderPatched) {
+      instance[renderMethod] = this._bean_render_original;
+    }
+    if (this._ssrRenderReset) {
+      instance.ssrRender = this._instance_ssrRender_original;
+      const componentType = cast(instance.type);
+      const ssrRenderResetCount = componentType[SymbolTypeSSRRenderResetCount] ?? 0;
+      if (ssrRenderResetCount <= 1) {
+        componentType.ssrRender = componentType[SymbolTypeSSRRenderOriginal];
+        componentType[SymbolTypeSSRRenderOriginal] = undefined;
+        componentType[SymbolTypeSSRRenderResetCount] = 0;
+      } else {
+        componentType[SymbolTypeSSRRenderResetCount] = ssrRenderResetCount - 1;
+      }
+    }
     this._bean_render_original = null;
+    this._instance_ssrRender_original = null;
+    this._renderPatched = false;
+    this._ssrRenderReset = false;
   }
 
   private _getRender(): any {
