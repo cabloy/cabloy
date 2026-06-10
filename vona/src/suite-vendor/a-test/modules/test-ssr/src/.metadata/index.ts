@@ -59,22 +59,36 @@ declare module 'vona-module-test-ssr' {
 }
 /** dto: end */
 /** controller: begin */
+export * from '../controller/toolMinimal.ts';
 export * from '../controller/toolOne.ts';
 export * from '../controller/toolTwo.ts';
+import type { IControllerOptionsToolMinimal } from '../controller/toolMinimal.ts';
 import type { IControllerOptionsToolOne } from '../controller/toolOne.ts';
 import type { IControllerOptionsToolTwo } from '../controller/toolTwo.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
-      'test-ssr:toolOne': IControllerOptionsToolOne;
+      'test-ssr:toolMinimal': IControllerOptionsToolMinimal;
+'test-ssr:toolOne': IControllerOptionsToolOne;
 'test-ssr:toolTwo': IControllerOptionsToolTwo;
     }
 
-  
+
 }
 declare module 'vona-module-test-ssr' {
-  
+
+        export interface ControllerToolMinimal {
+          /** @internal */
+          get scope(): ScopeModuleTestSsr;
+        }
+
+          export interface ControllerToolMinimal {
+            get $beanFullName(): 'test-ssr.controller.toolMinimal';
+            get $onionName(): 'test-ssr:toolMinimal';
+            get $onionOptions(): IControllerOptionsToolMinimal;
+          }
+
         export interface ControllerToolOne {
           /** @internal */
           get scope(): ScopeModuleTestSsr;
@@ -95,16 +109,22 @@ declare module 'vona-module-test-ssr' {
             get $beanFullName(): 'test-ssr.controller.toolTwo';
             get $onionName(): 'test-ssr:toolTwo';
             get $onionOptions(): IControllerOptionsToolTwo;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
+// @ts-ignore ignore
+import type { ControllerToolMinimal } from '../controller/toolMinimal.ts';
 // @ts-ignore ignore
 import type { ControllerToolOne } from '../controller/toolOne.ts';
 // @ts-ignore ignore
 import type { ControllerToolTwo } from '../controller/toolTwo.ts';
 declare module 'vona-module-test-ssr' {
-  
+
+    export interface IControllerOptionsToolMinimal {
+      actions?: TypeControllerOptionsActions<ControllerToolMinimal>;
+    }
+
     export interface IControllerOptionsToolOne {
       actions?: TypeControllerOptionsActions<ControllerToolOne>;
     }
@@ -115,7 +135,8 @@ declare module 'vona-module-test-ssr' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
-        '/test/ssr/toolOne/test/:id?': undefined;
+        '/test/ssr/toolMinimal/test': undefined;
+'/test/ssr/toolOne/test/:id?': undefined;
 '/test/ssr/toolTwo/test/:id?': undefined;
     }
 export interface IApiPathPostRecord{
