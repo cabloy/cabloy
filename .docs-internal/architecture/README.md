@@ -16,7 +16,8 @@ Representative examples:
 
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
 - `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, and the residual-runtime findings that future memory investigations should reuse
-- `ssr-leak-experiment-flags-inventory.md` records which in-tree `SSR_LEAK_EXPERIMENT_*` flags are still useful as diagnostics and which should be removed after the investigation
+- `ssr-leak-experiment-flags-inventory.md` records which `SSR_LEAK_EXPERIMENT_*` flags still remain in source after cleanup and which were intentionally removed
+- `ssr-leak-experiment-cleanup-checklist.md` records the execution order, retained subset, and verification steps for removing old SSR leak investigation flags
 
 ## What should go elsewhere
 

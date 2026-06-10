@@ -60,3 +60,4 @@ Those concerns should live elsewhere.
 
 - [SSR Memory Leak Investigation Guide](./architecture/ssr-memory-leak-investigation-guide.md)
 - [SSR Leak Experiment Flags Inventory](./architecture/ssr-leak-experiment-flags-inventory.md)
+- [SSR Leak Experiment Cleanup Checklist](./architecture/ssr-leak-experiment-cleanup-checklist.md)
