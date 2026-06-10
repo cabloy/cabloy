@@ -72,42 +72,83 @@ export class ServiceSsrHandler extends BeanBase {
         onRenderedList.push(fn);
       },
     };
-    // render
-    const renderFn = await serverEntry(ssrContext);
-    const [runtimePageContent, err] = await catchError(() => {
-      return renderToString(renderFn, ssrContext);
-    });
+    let renderFn;
+    let runtimePageContent = '';
+    let renderedError;
+    let onRenderedFlushed = false;
+    let renderedFinalized = false;
+    try {
+      // render
+      renderFn = await serverEntry(ssrContext);
+      const [runtimePageContentInner, err] = await catchError(() => {
+        return renderToString(renderFn, ssrContext);
+      });
+      if (runtimePageContentInner) {
+        runtimePageContent = runtimePageContentInner as string;
+      }
 
-    const error = ssrContext._meta.renderError ?? err;
-    onRenderedList.forEach(fn => {
-      fn(error);
-    });
-    cast(ssrContext).rendered(error);
-    if (error) {
-      if (error instanceof Error) throw error;
-      return error;
+      const error = ssrContext._meta.renderError ?? err;
+      renderedError = error;
+      onRenderedList.forEach(fn => {
+        fn(error);
+      });
+      onRenderedFlushed = true;
+      cast(ssrContext).rendered(error);
+      renderedFinalized = true;
+      if (error) {
+        if (error instanceof Error) throw error;
+        return error;
+      }
+
+      ssrContext._meta.runtimePageContent = runtimePageContent;
+
+      // @vitejs/plugin-vue injects code into a component's setup() that registers
+      // itself on ctx.modules. After the render, ctx.modules would contain all the
+      // components that have been instantiated during this render call.
+      const modules = cast(ssrContext).modules;
+      if (modules) {
+        ssrContext._meta.endingHeadTags += this._renderModulesPreload_zova(modules, {
+          ssrContext,
+        });
+        ssrContext._meta.endingHeadTags += this._renderModulesPreload(modules, {
+          ssrContext,
+        });
+      }
+
+      const html = renderTemplate(ssrContext);
+
+      // transferCache
+      await this._renderTransferCache(options, route);
+
+      // todo: ssg
+
+      return html;
+    } finally {
+      const context = cast(ssrContext);
+      if (!onRenderedFlushed) {
+        onRenderedList.forEach(fn => {
+          fn(renderedError);
+        });
+      }
+      if (!renderedFinalized && typeof context.rendered === 'function') {
+        context.rendered(renderedError);
+      }
+      onRenderedList.length = 0;
+      this._clearSsrContext(context);
+      renderFn = undefined;
     }
+  }
 
-    ssrContext._meta.runtimePageContent = runtimePageContent;
-
-    // @vitejs/plugin-vue injects code into a component's setup() that registers
-    // itself on ctx.modules. After the render, ctx.modules would contain all the
-    // components that have been instantiated during this render call.
-    ssrContext._meta.endingHeadTags += this._renderModulesPreload_zova(cast(ssrContext).modules, {
-      ssrContext,
-    });
-    ssrContext._meta.endingHeadTags += this._renderModulesPreload(cast(ssrContext).modules, {
-      ssrContext,
-    });
-
-    const html = renderTemplate(ssrContext);
-
-    // transferCache
-    await this._renderTransferCache(options, route);
-
-    // todo: ssg
-
-    return html;
+  private _clearSsrContext(context): void {
+    context.modules?.clear?.();
+    if (context.__qMetaList?.length) {
+      context.__qMetaList.length = 0;
+    }
+    context.state = undefined;
+    context.stateDefer = undefined;
+    context.performAction = undefined;
+    context.rendered = undefined;
+    context._meta = undefined;
   }
 
   public async ensureReady(handlerNonce: number) {
