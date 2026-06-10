@@ -12,9 +12,10 @@ Use it when future contributors need to understand how a subsystem works, what i
 - state, caching, or lifecycle invariants
 - technical constraints that should remain stable over time
 
-Representative example:
+Representative examples:
 
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
+- `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, and the residual-runtime findings that future memory investigations should reuse
 
 ## What should go elsewhere
 
