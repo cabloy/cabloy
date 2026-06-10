@@ -1,95 +1,47 @@
 # SSR Leak Experiment Flags Inventory
 
-This note records the SSR leak investigation flags that were introduced during the investigation, which ones still remain in source after cleanup, and which ones were intentionally removed.
+This note records the SSR leak investigation flags that were introduced during the investigation and confirms that they were later fully removed from active source.
 
-Use it when deciding whether a future SSR debugging switch should be kept in-tree, or when checking whether an old leak-investigation branch is still supposed to exist.
+Use it when checking historical investigation branches, deciding whether an old diagnostic switch is still supposed to exist, or planning a future leak investigation without reintroducing stale product-code scaffolding by accident.
 
 ## Current status
 
-A cleanup pass removed the one-off binary-search and narrow render/controller experiment flags.
+A follow-up cleanup pass removed the remaining retained diagnostic flags.
 
-After that cleanup, only this temporary diagnostic subset remains in active source:
+Current source state:
 
-- `SSR_LEAK_EXPERIMENT_USE_EMPTY_ROOT_COMPONENT`
-- `SSR_LEAK_EXPERIMENT_SKIP_SERVER_ENTRY`
-- `SSR_LEAK_EXPERIMENT_SKIP_RENDER_TO_STRING`
-- `SSR_LEAK_EXPERIMENT_FORCE_ON_RENDERED_CLEANUP`
-- `SSR_LEAK_EXPERIMENT_SEVER_SSR_CONTEXT_FIELDS`
-- `SSR_LEAK_EXPERIMENT_SEVER_VUE_APP_GRAPH`
-- `SSR_LEAK_EXPERIMENT_SEVER_ZOVA_APP_REFS`
-- `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
+- no `SSR_LEAK_EXPERIMENT_*` flags remain in active source
 
-## Why these flags remain
+This is the intended steady state.
 
-These are the only flags still broad and reusable enough to justify temporary retention.
+The accepted product fix remains:
 
-They help isolate:
+- `withCurrentInstanceScopeSSR(instance, fn)`
 
-- top-of-tree root-page participation
-- server-entry vs render-time behavior
-- SSR handler cleanup/finalization boundaries
-- model/query effect-scope behavior on the server
+The investigation-specific flags were useful during diagnosis, but they are no longer carried in the main runtime code paths.
 
-They should still be treated as diagnostic tools, not as accepted production defaults.
+## Why full removal was chosen
 
-## Remaining flags in source
+The final decision was to prefer:
 
-### Root-app isolation
+- a clean product runtime surface
+- durable investigation documentation
+- temporary reintroduction of probes only when a future regression truly requires them
 
-#### `SSR_LEAK_EXPERIMENT_USE_EMPTY_ROOT_COMPONENT`
+instead of permanently keeping investigation-only branches in framework code.
 
-Source:
+That trade-off was chosen because:
 
-- `zova/src/boot/app/index.ts`
+- the main SSR leak had already been fixed at the runtime-core boundary
+- the residual-tail investigation did not justify a second permanent product-side fix
+- the remaining flags were diagnostic aids, not accepted product behavior
+- keeping them in-tree would continue to add runtime branching and reader confusion in sensitive code paths
 
-Why it remains:
+## Historical flag families that were removed
 
-- useful as a coarse root-component isolation switch
-- broad enough to justify temporary retention
+The following groups were intentionally removed from active source.
 
-### SSR handler pipeline and cleanup boundaries
-
-#### `SSR_LEAK_EXPERIMENT_SKIP_SERVER_ENTRY`
-#### `SSR_LEAK_EXPERIMENT_SKIP_RENDER_TO_STRING`
-#### `SSR_LEAK_EXPERIMENT_FORCE_ON_RENDERED_CLEANUP`
-#### `SSR_LEAK_EXPERIMENT_SEVER_SSR_CONTEXT_FIELDS`
-#### `SSR_LEAK_EXPERIMENT_SEVER_VUE_APP_GRAPH`
-#### `SSR_LEAK_EXPERIMENT_SEVER_ZOVA_APP_REFS`
-
-Source:
-
-- `zova/src/suite-vendor/a-zova/modules/a-ssrserver/src/service/ssrHandler.ts`
-
-Why they remain:
-
-- they isolate broad SSR lifecycle and teardown boundaries
-- they were still useful during the post-fix second-cause analysis
-- they are better reusable diagnostics than dozens of fine-grained skip flags spread across app/module/controller code
-
-Caveat:
-
-- none of these flags were promoted to normal product behavior
-
-### Model/query effect-scope diagnostic
-
-#### `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
-
-Sources:
-
-- `zova/src/suite-vendor/a-zova/modules/a-model/src/bean/bean.model/bean.model.useQuery.ts`
-- `zova/src/suite-vendor/a-zova/modules/a-model/src/bean/bean.model/bean.model.useMutation.ts`
-- `zova/src/suite-vendor/a-zova/modules/a-model/src/service/storage.ts`
-
-Why it remains:
-
-- it captures a reusable SSR hypothesis family around effect ownership and disposal
-- it is more durable than the other a-model binary-search switches
-
-## Removed in the cleanup pass
-
-The following flag families were intentionally removed from active source.
-
-### Removed component/controller one-offs
+### Component and controller one-offs
 
 - `SSR_LEAK_EXPERIMENT_USE_SHARED_COMPONENT_RENDER_PATCH`
 - `SSR_LEAK_EXPERIMENT_SKIP_COMPONENT_RENDER_PATCH`
@@ -99,12 +51,12 @@ The following flag families were intentionally removed from active source.
 - `SSR_LEAK_EXPERIMENT_SKIP_CONTROLLER_LOAD`
 - `SSR_LEAK_EXPERIMENT_SKIP_CONTROLLER_DATA_UPDATE`
 
-Reason:
+Why they were removed:
 
-- these were narrow, one-off search tools around highly sensitive component and controller paths
-- the accepted product fix did not depend on them
+- they were narrow search tools around highly sensitive component and controller behavior
+- the accepted repair did not depend on them
 
-### Removed app/bootstrap/module/router skip grids
+### App, bootstrap, module, and router binary-search grids
 
 - `SSR_LEAK_EXPERIMENT_SKIP_BOOT_ZOVA`
 - `SSR_LEAK_EXPERIMENT_SKIP_SYS_INITIALIZE`
@@ -137,12 +89,12 @@ Reason:
 - `SSR_LEAK_EXPERIMENT_SKIP_ROUTER_FORCE_LOAD_MODULE`
 - `SSR_LEAK_EXPERIMENT_SKIP_ROUTER_AFTER_EACH`
 
-Reason:
+Why they were removed:
 
-- these were broad but investigation-specific binary-search grids
-- keeping them permanently would leave too much scaffolding in the normal runtime path
+- they were broad but investigation-specific binary-search scaffolding
+- leaving them in-tree would keep too much non-product branching in standard execution paths
 
-### Removed model-stack binary-search flags
+### Model-stack binary-search and effect-scope diagnostics
 
 - `SSR_LEAK_EXPERIMENT_SKIP_A_MODEL_VUE_QUERY_PLUGIN_INSTALL`
 - `SSR_LEAK_EXPERIMENT_SKIP_A_MODEL_QUERY_DEHYDRATE`
@@ -151,23 +103,50 @@ Reason:
 - `SSR_LEAK_EXPERIMENT_SKIP_MODEL_QUERY_CACHE`
 - `SSR_LEAK_EXPERIMENT_SKIP_QUERY_PERSISTER`
 - `SSR_LEAK_EXPERIMENT_SKIP_A_MODEL_MODULE_LOADED`
+- `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
 
-Reason:
+Why they were removed:
 
-- the runtime-core fix did not depend on them
-- the residual-tail work did not isolate a second model-specific leak root cause
-- `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE` was the only durable diagnostic worth keeping
+- none of them became part of the accepted repair path
+- the residual-tail work did not prove a model-specific second root cause
+- keeping even the last reusable diagnostic would still preserve an investigation-only alternate path in product code
+
+### Final retained diagnostic flags that were also removed later
+
+These were temporarily retained after the first cleanup pass, then removed in the final cleanup:
+
+- `SSR_LEAK_EXPERIMENT_USE_EMPTY_ROOT_COMPONENT`
+- `SSR_LEAK_EXPERIMENT_SKIP_SERVER_ENTRY`
+- `SSR_LEAK_EXPERIMENT_SKIP_RENDER_TO_STRING`
+- `SSR_LEAK_EXPERIMENT_FORCE_ON_RENDERED_CLEANUP`
+- `SSR_LEAK_EXPERIMENT_SEVER_SSR_CONTEXT_FIELDS`
+- `SSR_LEAK_EXPERIMENT_SEVER_VUE_APP_GRAPH`
+- `SSR_LEAK_EXPERIMENT_SEVER_ZOVA_APP_REFS`
+- `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
+
+Why they were ultimately removed too:
+
+- they still represented diagnostic-only behavior rather than accepted runtime behavior
+- the repo now has enough durable documentation to reconstruct the investigation without keeping those branches live in source
 
 ## Guidance for future contributors
 
-Do not treat the existence of a remaining flag as proof that its guarded branch is a valid production fix.
+Do not treat the absence of these flags as loss of investigation history.
 
-In this investigation:
+The durable artifacts are now:
 
-- many flags were only search tools
-- the cleanup removed those one-off branches
-- only a small temporary diagnostic toolkit remains in source
-- the accepted product fix is still the runtime-core helper, not the surviving flags
+- the runtime-core fix itself
+- the investigation guide
+- the ADR explaining why product fixes stop at the runtime-core boundary
+- the cleanup records in this documentation set
+
+If a future regression needs similar diagnostics again, prefer:
+
+1. reproducing the issue from the documented workflow
+2. adding temporary focused probes for that investigation
+3. deleting them again after conclusions are recorded
+
+Do not rebuild a permanent `SSR_LEAK_EXPERIMENT_*` surface unless a recurring operational need is proven.
 
 ## Related records
 

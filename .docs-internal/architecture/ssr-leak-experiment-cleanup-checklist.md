@@ -1,37 +1,36 @@
 # SSR Leak Experiment Cleanup Checklist
 
-This note turns the SSR leak flag inventory into an executable cleanup checklist and records the cleanup boundary that should be preserved in source.
+This note records the execution order and verification path that were used to fully remove the SSR leak investigation flags from active source.
 
-Use it when removing old investigation gates, reviewing whether a future debug switch still belongs in-tree, or repeating a similar cleanup after another memory investigation.
+Use it when reviewing how the cleanup was performed, or when planning a future temporary instrumentation pass that should also be cleaned back out after the investigation ends.
 
-## Current goal
+## Final outcome
 
-The runtime-core helper fix is already the accepted product repair:
+The cleanup is complete.
+
+Current source state:
+
+- no `SSR_LEAK_EXPERIMENT_*` flags remain in active source
+
+The accepted product repair remains:
 
 - `withCurrentInstanceScopeSSR(instance, fn)`
 
-This cleanup is therefore **not** about changing the accepted fix path.
+## Cleanup objective
 
-It is about removing one-off SSR investigation switches that were only used to localize the original leak, while preserving the small diagnostic subset that still provides durable value.
+The objective was to remove all investigation-only runtime branches after the proven fix and the residual-tail analysis had already been documented.
 
-## Keep in source for now
+This cleanup was **not** intended to change the accepted repair path.
 
-Keep only these flags after the cleanup pass:
+It was intended to:
 
-- `SSR_LEAK_EXPERIMENT_USE_EMPTY_ROOT_COMPONENT`
-- `SSR_LEAK_EXPERIMENT_SKIP_SERVER_ENTRY`
-- `SSR_LEAK_EXPERIMENT_SKIP_RENDER_TO_STRING`
-- `SSR_LEAK_EXPERIMENT_FORCE_ON_RENDERED_CLEANUP`
-- `SSR_LEAK_EXPERIMENT_SEVER_SSR_CONTEXT_FIELDS`
-- `SSR_LEAK_EXPERIMENT_SEVER_VUE_APP_GRAPH`
-- `SSR_LEAK_EXPERIMENT_SEVER_ZOVA_APP_REFS`
-- `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
+- remove one-off investigation scaffolding
+- restore single normal execution paths where possible
+- keep the investigation knowledge in docs instead of in long-lived env gates
 
-These are the only flags still broad and reusable enough to justify temporary retention.
+## Execution order that was used
 
-## Remove in this cleanup pass
-
-### Phase 1: remove the narrowest component/controller one-offs first
+### Phase 1: remove component/controller one-offs
 
 Files:
 
@@ -41,7 +40,7 @@ Files:
 - `zova/packages-zova/zova-core/src/bean/beanControllerBase.ts`
 - `zova/packages-zova/zova-core/src/bean/beanControllerPageBase.ts`
 
-Flags to remove:
+Removed flags:
 
 - `SSR_LEAK_EXPERIMENT_USE_SHARED_COMPONENT_RENDER_PATCH`
 - `SSR_LEAK_EXPERIMENT_SKIP_COMPONENT_RENDER_PATCH`
@@ -51,13 +50,12 @@ Flags to remove:
 - `SSR_LEAK_EXPERIMENT_SKIP_CONTROLLER_LOAD`
 - `SSR_LEAK_EXPERIMENT_SKIP_CONTROLLER_DATA_UPDATE`
 
-Expected result:
+Result:
 
-- component render patching returns to a single normal path
-- SSR render reset is always applied again
-- controller/page load and data update always run
+- controller/page load paths returned to normal execution
+- component render patching returned to a single standard path
 
-### Phase 2: remove root-app, bootstrap, module, and router binary-search grids
+### Phase 2: remove app/bootstrap/module/router binary-search grids
 
 Files:
 
@@ -71,93 +69,83 @@ Files:
 - `zova/src/suite-vendor/a-zova/modules/a-router/src/monkey.ts`
 - `zova/src/suite-vendor/a-zova/modules/a-router/src/service/routerGuards.ts`
 
-Flags to remove:
+Removed flags:
 
-- `SSR_LEAK_EXPERIMENT_SKIP_BOOT_ZOVA`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_PLUGIN_BEAN`
-- `SSR_LEAK_EXPERIMENT_SKIP_PLUGIN_FREEZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_INIT`
-- `SSR_LEAK_EXPERIMENT_SKIP_ROOT_APP_BEAN_INIT`
-- `SSR_LEAK_EXPERIMENT_SKIP_ZOVA_APP_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_APPLICATION_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_META_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_COMPONENT_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_LOCALE_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_ERROR_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MODULE_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MONKEY_APP_INITIALIZE`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MONKEY_APP_INITIALIZED`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MONKEY_APP_READY`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MODULE_PRELOADS`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MODULE_MONKEYS`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MODULE_SYNCS`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MODULE_MONKEY_MODULE_LOADING`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_MODULE_MONKEY_MODULE_LOADED`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_MODULE_LOAD_ALL`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_MODULE_PRELOADS`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_MODULE_MONKEYS`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_MODULE_SYNCS`
-- `SSR_LEAK_EXPERIMENT_SKIP_SYS_MODULE_OTHERS`
-- `SSR_LEAK_EXPERIMENT_SKIP_APP_INITIALIZED_ROUTER_GUARDS`
-- `SSR_LEAK_EXPERIMENT_SKIP_ROUTER_PREPARE_CHECK`
-- `SSR_LEAK_EXPERIMENT_SKIP_ROUTER_FORCE_LOAD_MODULE`
-- `SSR_LEAK_EXPERIMENT_SKIP_ROUTER_AFTER_EACH`
+- the app/bootstrap/module/router `SKIP_*` investigation grid introduced during binary search
 
-Expected result:
+Result:
 
-- normal bootstrap and app initialization paths always run again
-- module lifecycle hooks return to a single standard path
-- router guard registration and force-load checks return to normal behavior
-- the generated app template no longer carries investigation-only bypass logic
+- bootstrap and initialization returned to standard execution
+- module lifecycle hooks returned to standard execution
+- router guard registration and route force-load logic returned to standard execution
 
-### Phase 3: remove model-stack binary-search switches but keep effect-scope diagnostics
+### Phase 3: remove model-stack binary-search flags
 
 Files:
 
 - `zova/src/suite-vendor/a-zova/modules/a-model/src/service/storage.ts`
 - `zova/src/suite-vendor/a-zova/modules/a-model/src/monkey.ts`
 - `zova/src/suite-vendor/a-zova/modules/a-model/src/bean/bean.model/bean.model.useState.ts`
+- `zova/src/suite-vendor/a-zova/modules/a-model/src/bean/bean.model/bean.model.useMutation.ts`
+- `zova/src/suite-vendor/a-zova/modules/a-model/src/bean/bean.model/bean.model.useQuery.ts`
 - `zova/src/suite-vendor/a-zova/modules/a-model/src/bean/bean.model/bean.model.persister.ts`
 
-Flags to remove:
+Removed flags:
 
-- `SSR_LEAK_EXPERIMENT_SKIP_A_MODEL_VUE_QUERY_PLUGIN_INSTALL`
-- `SSR_LEAK_EXPERIMENT_SKIP_A_MODEL_QUERY_DEHYDRATE`
-- `SSR_LEAK_EXPERIMENT_CLEAR_A_MODEL_QUERY_CACHES`
-- `SSR_LEAK_EXPERIMENT_CLEAR_A_MODEL_MUTATION_CACHES`
-- `SSR_LEAK_EXPERIMENT_SKIP_MODEL_QUERY_CACHE`
-- `SSR_LEAK_EXPERIMENT_SKIP_QUERY_PERSISTER`
-- `SSR_LEAK_EXPERIMENT_SKIP_A_MODEL_MODULE_LOADED`
-
-Flag to keep:
-
+- the a-model investigation skip/clear flags
 - `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
 
-Expected result:
+Result:
 
-- standard Vue Query plugin install/dehydrate/cache behavior becomes unconditional again
-- persister creation returns to the normal product path
-- only the reusable server effect-scope diagnostic remains available
+- query/mutation/state/persister logic returned to standard execution
+- no alternate SSR effect-scope branch remains in product code
 
-## Execution notes
+### Phase 4: remove the last retained diagnostic flags
 
-1. Remove the source gates first.
-2. Re-run a source search for `SSR_LEAK_EXPERIMENT_`.
-3. Confirm only the retained eight flags remain in non-doc source.
-4. Keep the docs consistent with the resulting source state.
+Files:
 
-## Verification
+- `zova/src/boot/app/index.ts`
+- `zova/src/suite-vendor/a-zova/modules/a-ssrserver/src/service/ssrHandler.ts`
+- a-model files that still referenced `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
+
+Removed flags:
+
+- `SSR_LEAK_EXPERIMENT_USE_EMPTY_ROOT_COMPONENT`
+- `SSR_LEAK_EXPERIMENT_SKIP_SERVER_ENTRY`
+- `SSR_LEAK_EXPERIMENT_SKIP_RENDER_TO_STRING`
+- `SSR_LEAK_EXPERIMENT_FORCE_ON_RENDERED_CLEANUP`
+- `SSR_LEAK_EXPERIMENT_SEVER_SSR_CONTEXT_FIELDS`
+- `SSR_LEAK_EXPERIMENT_SEVER_VUE_APP_GRAPH`
+- `SSR_LEAK_EXPERIMENT_SEVER_ZOVA_APP_REFS`
+- `SSR_LEAK_EXPERIMENT_USE_MODEL_EFFECT_SCOPE`
+
+Result:
+
+- all remaining investigation-only env gates were removed from active source
+
+## Verification path used
 
 ### Source verification
 
-Use a source-only search excluding generated assets and dist output.
+Run a source-only search excluding generated output.
 
 Success condition:
 
-- only the retained eight flags remain in active source files
+- no `SSR_LEAK_EXPERIMENT_*` matches remain in active source files
 
-### Build verification
+### Type verification
+
+Run:
+
+```bash
+pnpm --dir zova run tsc
+```
+
+Success condition:
+
+- typecheck passes after removing the final investigation branches
+
+### Repository build verification
 
 Run:
 
@@ -165,14 +153,33 @@ Run:
 npm run build
 ```
 
-This is the preferred repository-level verification because it rebuilds the frontend and backend outputs together.
+Success condition:
 
-### Runtime sanity verification
+- frontend and backend outputs rebuild successfully after the full cleanup
 
-After build, validate that representative SSR pages still render:
+### Diff sanity verification
 
-- `/demo/basic/toolMinimal`
-- `/demo/basic/toolTwo`
+Run:
+
+```bash
+git diff --check
+```
+
+Success condition:
+
+- no whitespace or patch-format issues remain
+
+## Practical rule for future investigations
+
+If a future SSR memory investigation needs new env-gated probes, treat them as temporary instrumentation.
+
+The intended lifecycle is:
+
+1. add the smallest useful probe surface
+2. record findings in `.docs-internal`
+3. remove the probes once conclusions are stable
+
+Do not let the framework accumulate a permanent `SSR_LEAK_EXPERIMENT_*` layer without clear recurring operational need.
 
 ## Related records
 

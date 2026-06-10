@@ -10,11 +10,10 @@ export class ServiceStorage extends BeanBase {
 
   async moduleLoaded() {
     // options
-    let options = this.scope.config.queryClientConfig.defaultOptions;
+    const options = deepExtend({}, this.scope.config.queryClientConfig.defaultOptions);
     if (process.env.SERVER) {
-      options = deepExtend({}, options, {
-        queries: { gcTime: Infinity },
-      });
+      options.queries ??= {};
+      options.queries.gcTime = Infinity;
     }
     // queryCache
     const queryCache = new QueryCache();
@@ -39,7 +38,7 @@ export class ServiceStorage extends BeanBase {
             },
           });
         }
-        this._queryClient.clear();
+        this._queryClient?.clear();
       });
     }
     // client
