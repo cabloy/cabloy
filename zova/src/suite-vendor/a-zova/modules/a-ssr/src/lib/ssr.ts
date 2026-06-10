@@ -1,5 +1,5 @@
 import type { ComponentInternalInstance, Ref, VNode } from 'vue';
-import type { Functionable } from 'zova';
+import type { Functionable, ZovaContext } from 'zova';
 
 import { includeBooleanAttr, isBooleanAttr, isString, stringifyStyle } from '@vue/shared';
 import { defu } from 'defu';
@@ -23,6 +23,7 @@ const SymbolOnHydrateds = Symbol('SymbolOnHydrateds');
 const SymbolOnHydratePropHasMismatches = Symbol('SymbolOnHydratePropHasMismatches');
 const SymbolInstanceUpdates = Symbol('SymbolInstanceUpdates');
 const SymbolHydratingCounter = Symbol('SymbolHydratingCounter');
+const SymbolServerContexts = Symbol('SymbolServerContexts');
 
 export class CtxSSR extends BeanSimple {
   private [SymbolIsRuntimeSsrPreHydration]: Ref<boolean> = ref(false);
@@ -33,11 +34,15 @@ export class CtxSSR extends BeanSimple {
   private [SymbolInstanceUpdates]: ComponentInternalInstance[] = [];
 
   private [SymbolHydratingCounter]: number = 0;
+  private [SymbolServerContexts]: Set<ZovaContext> = new Set();
 
   public metaStore: CtxSSRMetaStore;
 
   /** @internal */
   public initialize() {
+    if (process.env.SERVER) {
+      this._serverContextRegister();
+    }
     // ssr state
     this[SymbolSSRState] = this.sys.bean._getBeanSyncOnly('a-ssr.sys.ssrState');
     // SymbolIsRuntimeSsrPreHydration
@@ -61,6 +66,26 @@ export class CtxSSR extends BeanSimple {
         document.querySelectorAll('style[vite-css-module-id]').forEach(node => node.remove());
       });
     }
+  }
+
+  private _serverContextRegister(currentContext: ZovaContext = this.ctx) {
+    const serverContexts = this[SymbolServerContexts];
+    serverContexts.add(currentContext);
+    this.context.onRendered(() => {
+      serverContexts.delete(currentContext);
+    });
+  }
+
+  private _serverContextsDispose() {
+    const serverContexts = this[SymbolServerContexts];
+    for (const serverContext of serverContexts) {
+      if (serverContext.disposed) continue;
+      if (serverContext.bean && serverContext.bean !== serverContext.app?.bean) {
+        serverContext.bean.dispose();
+      }
+      serverContext.dispose();
+    }
+    serverContexts.clear();
   }
 
   get isRuntimeSsrPreHydration() {
@@ -264,5 +289,15 @@ export class CtxSSR extends BeanSimple {
       return true;
     }
     return false;
+  }
+
+  /** @internal */
+  public _registerServerContext(currentContext: ZovaContext) {
+    this._serverContextRegister(currentContext);
+  }
+
+  /** @internal */
+  public _disposeServerContexts() {
+    this._serverContextsDispose();
   }
 }
