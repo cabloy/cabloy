@@ -22,6 +22,9 @@ export class Monkey
 {
   appContextInitialize(ctx: ZovaContext): void {
     ctx.meta.$ssr = ctx.app.ctx.meta.$ssr;
+    if (process.env.SERVER) {
+      ctx.meta.$ssr._registerServerContext(ctx);
+    }
   }
 
   async appInitialize() {
