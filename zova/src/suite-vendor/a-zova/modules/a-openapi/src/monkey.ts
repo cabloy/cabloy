@@ -22,7 +22,7 @@ export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit
     if (this._moduleSelf === module) {
       await this._loadSdk();
       this.ctx.util.instanceScope(() => {
-        return watch(
+        watch(
           () => {
             return this.app.meta.locale.current;
           },
