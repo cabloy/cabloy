@@ -7,11 +7,11 @@ export class ControllerPageApp extends BeanControllerPageBase {
     // app
     const instance = getCurrentInstance();
     const app = instance!.appContext.app!;
-    if (!app.zova) {
-      await this.initApp(app);
-    } else {
+    if (app.zova) {
       await this.updateApp(app.zova);
+      return;
     }
+    await this.initApp(app);
   }
 
   protected render() {
