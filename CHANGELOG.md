@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.1.52
+
+### Features
+
+- Add SSR memory diagnostic endpoints.
+- Expand framework capabilities across SSR, controller, module, component, utility, and runtime integration areas.
+- Add virtual decorator guidance to the AI documentation.
+
+### Bug Fixes
+
+- Correct runtime home paths in the documentation.
+- Fix homepage scope badge layout in the documentation.
+
+### Improvements
+
+- Refine SSR internals and metadata handling.
+- Polish controller and page base implementation details.
+- Update monkey patching and runtime support code.
+- Improve package metadata and lockfile consistency.
+- Pass the GA measurement ID into the docs build pipeline.
+- Add GA4 tracking support for the documentation site.
+- Improve CLI, index, glossary, skill, and README documentation.
+- Add and refine the Cabloy framework comparison and fullstack introduction content.
+- Polish branding, wording, and AI vibe coding terminology across the docs.
+
 ## 5.1.51
 
 ### Features
