@@ -1,4 +1,4 @@
-import { withCurrentInstanceScope } from '@cabloy/vue-runtime-core';
+import { withCurrentInstanceScope, withCurrentInstanceScopeSSR } from '@cabloy/vue-runtime-core';
 import { pauseTracking, resetTracking } from '@vue/reactivity';
 
 import { BeanSimple } from '../../bean/beanSimple.ts';
@@ -10,7 +10,8 @@ export class CtxUtil extends BeanSimple {
       throwErrorComponentUnmounted();
     }
     const instance = this.ctx.instance as any;
-    const result = withCurrentInstanceScope(instance, () => {
+    const runner = process.env.SERVER ? withCurrentInstanceScopeSSR : withCurrentInstanceScope;
+    const result = runner(instance, () => {
       if (!tracking) {
         pauseTracking();
       }
