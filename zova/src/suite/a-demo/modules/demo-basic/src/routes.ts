@@ -7,6 +7,7 @@ import { ZPageRouteQuery } from './.metadata/page/routeQuery.js';
 import { ZPageRouteQueryB } from './.metadata/page/routeQueryB.js';
 import { ZPageState } from './.metadata/page/state.js';
 import { ZPageStyle } from './.metadata/page/style.js';
+import { ZPageToolMinimal } from './.metadata/page/toolMinimal.js';
 import { ZPageToolOne } from './.metadata/page/toolOne.js';
 import { ZPageToolTwo } from './.metadata/page/toolTwo.js';
 
@@ -26,6 +27,15 @@ export const routes: IModuleRoute[] = [
     },
   },
   { path: 'routeQueryB', component: ZPageRouteQueryB, meta: { requiresAuth: false } },
+  {
+    name: 'toolMinimal',
+    path: 'toolMinimal',
+    component: ZPageToolMinimal,
+    meta: {
+      layout: 'empty',
+      requiresAuth: false,
+    },
+  },
   {
     name: 'toolOne',
     path: 'toolOne/:id?',

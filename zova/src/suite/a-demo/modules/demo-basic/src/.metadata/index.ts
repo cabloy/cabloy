@@ -46,6 +46,7 @@ export * from '../page/routeQuery/controller.jsx';
 export * from '../page/routeQueryB/controller.jsx';
 export * from '../page/state/controller.jsx';
 export * from '../page/style/controller.jsx';
+export * from '../page/toolMinimal/controller.jsx';
 export * from '../page/toolOne/controller.jsx';
 export * from '../page/toolTwo/controller.jsx';
 
@@ -111,6 +112,11 @@ declare module 'zova-module-demo-basic' {
           get scope(): ScopeModuleDemoBasic;
         }
 
+        export interface ControllerPageToolMinimal {
+          /** @internal */
+          get scope(): ScopeModuleDemoBasic;
+        }
+
         export interface ControllerPageToolOne {
           /** @internal */
           get scope(): ScopeModuleDemoBasic;
@@ -134,6 +140,7 @@ import { ControllerPageRouteQuery } from '../page/routeQuery/controller.jsx';
 import { ControllerPageRouteQueryB } from '../page/routeQueryB/controller.jsx';
 import { ControllerPageState } from '../page/state/controller.jsx';
 import { ControllerPageStyle } from '../page/style/controller.jsx';
+import { ControllerPageToolMinimal } from '../page/toolMinimal/controller.jsx';
 import { ControllerPageToolOne } from '../page/toolOne/controller.jsx';
 import { ControllerPageToolTwo } from '../page/toolTwo/controller.jsx';
 import 'zova';
@@ -150,6 +157,7 @@ declare module 'zova' {
 'demo-basic.controller.pageRouteQueryB': ControllerPageRouteQueryB;
 'demo-basic.controller.pageState': ControllerPageState;
 'demo-basic.controller.pageStyle': ControllerPageStyle;
+'demo-basic.controller.pageToolMinimal': ControllerPageToolMinimal;
 'demo-basic.controller.pageToolOne': ControllerPageToolOne;
 'demo-basic.controller.pageToolTwo': ControllerPageToolTwo;
   }
@@ -166,6 +174,7 @@ export * from './page/routeQueryB.js';
 import { NSControllerPageRouteQueryB } from './page/routeQueryB.js';
 export * from './page/state.js';
 export * from './page/style.js';
+export * from './page/toolMinimal.js';
 export * from './page/toolOne.js';
 import { NSControllerPageToolOne } from './page/toolOne.js';
 export * from './page/toolTwo.js';
@@ -182,11 +191,13 @@ export interface IPagePathRecord {
 '/demo/basic/routeQueryB': TypePagePathSchema<NSControllerPageRouteQueryB.ParamsInput,NSControllerPageRouteQueryB.QueryInput>;
 '/demo/basic/state': TypePagePathSchema<undefined,undefined>;
 '/demo/basic/style': TypePagePathSchema<undefined,undefined>;
+'/demo/basic/toolMinimal': TypePagePathSchema<undefined,undefined>;
 '/demo/basic/toolOne/:id?': TypePagePathSchema<NSControllerPageToolOne.ParamsInput,NSControllerPageToolOne.QueryInput>;
 '/demo/basic/toolTwo/:id?': TypePagePathSchema<NSControllerPageToolTwo.ParamsInput,NSControllerPageToolTwo.QueryInput>;
 }
 export interface IPageNameRecord {
   'demo-basic:routeParams': undefined;
+'demo-basic:toolMinimal': undefined;
 'demo-basic:toolOne': undefined;
 'demo-basic:toolTwo': undefined;
 }
