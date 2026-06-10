@@ -139,6 +139,108 @@ These were the important categories:
 - SSR `$useMeta(...)`
 - model `useQuery` / `useMutation` wrappers
 
+## Why `CtxComponent` patches `render` and `ssrRender`
+
+A separate but closely related boundary in this investigation was:
+
+- `zova/packages-zova/zova-core/src/core/context/component.ts`
+
+This file matters because Zova pages and components do **not** treat the outer Vue component as the final business render source.
+
+Representative source:
+
+- `zova/packages-zova/zova-core/src/components/component.ts`
+
+That outer component mainly:
+
+1. runs `useControllerPage(...)`
+2. creates a `ZovaContext`
+3. loads controller/render/style beans
+4. returns a minimal outer render shell
+
+The real business UI is then produced by either:
+
+- the controller bean's `render()`
+- or a separate render bean's `render()`
+
+### Why patch `instance.render`
+
+`CtxComponent.activate()` replaces the instance's `render` function so that, once the bean graph is initialized, the component render path is redirected to the bean-side render chain.
+
+In practice that means:
+
+- before `ctx.meta.state.inited` is ready, it falls back to the original Vue render
+- after initialization, it calls the controller/render bean path instead
+
+This is the runtime bridge that lets Zova use controller/render beans as the real render authority while still mounting through normal Vue components.
+
+### Why clear `instance.ssrRender` and `type.ssrRender`
+
+Vue SSR prefers `ssrRender` when it exists.
+
+The relevant runtime behavior is:
+
+1. server-renderer checks `instance.ssrRender || comp.ssrRender`
+2. if an SSR render function exists, Vue executes that path directly
+3. otherwise, if `instance.render` exists, Vue falls back to `renderComponentRoot(instance)`
+4. `renderComponentRoot(instance)` then executes `instance.render(...)`
+
+This matters because if the compiled `ssrRender` path remains active, SSR can bypass Zova's patched `instance.render` and therefore bypass the controller/render bean chain.
+
+By temporarily setting both of these to `null` during the component lifetime:
+
+- `instance.ssrRender`
+- `instance.type.ssrRender`
+
+Zova forces Vue SSR to use the fallback branch that ultimately executes the patched `instance.render`.
+
+That is how SSR output is kept aligned with the same controller/render-bean business path that Zova wants to own on the client.
+
+### Why both levels must be reset
+
+Resetting only one level is not enough.
+
+Because Vue SSR reads:
+
+- `instance.ssrRender || comp.ssrRender`
+
+any surviving SSR render function can still short-circuit the fallback.
+
+So Zova clears:
+
+- the instance-level `ssrRender`
+- and the shared component-type `ssrRender`
+
+before rendering, then restores both during disposal.
+
+### Why the component-type reset uses a reference count
+
+`instance.type` is shared across concurrent SSR requests.
+
+Without a reference count, one request could:
+
+1. clear `type.ssrRender`
+2. finish first
+3. restore `type.ssrRender`
+4. while another in-flight request still needs the fallback-to-`instance.render` behavior
+
+That would re-enable the compiled SSR path too early for the still-running request.
+
+The `SymbolTypeSSRRenderResetCount` tracking in `CtxComponent` prevents that by restoring the shared `type.ssrRender` only when the last active reset scope exits.
+
+### Why this matters for leak investigation
+
+This render-patch boundary is not just a correctness detail.
+
+It sits at the intersection of:
+
+- component-instance lifecycle
+- shared component-type mutation during SSR
+- controller/render bean ownership
+- per-request cleanup timing
+
+That is why it became an important place to audit while checking whether SSR retained graphs were caused by business render ownership problems or by lower-level runtime behavior.
+
 ## Build and run workflow used during investigation
 
 When frontend code changed, the safest alignment step was:
