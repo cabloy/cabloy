@@ -1,5 +1,7 @@
 # Editions Overview
 
+This page is the editions hub for deciding which Cabloy baseline you are working with and which assumptions should follow from that choice.
+
 Cabloy currently supports two related but distinct editions:
 
 - **Cabloy Basic**
@@ -8,6 +10,35 @@ Cabloy currently supports two related but distinct editions:
 They share one Cabloy fullstack architecture, but they are distributed, composed, and optimized differently.
 
 If you need a recommendation path, start with [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start).
+
+## How to approach editions work
+
+For contributor and automation workflows in this repository, prefer this order:
+
+1. identify the active edition before making UI-sensitive, flavor-sensitive, module-sensitive, or asset-sensitive assumptions
+2. explain the shared Cabloy architecture once before branching into edition-specific notes
+3. split documentation or workflow guidance only where the editions intentionally diverge
+4. use explicit edition markers and flavor names instead of treating the editions as interchangeable
+
+## Editions reading paths
+
+Use this page as the main editions hub, then choose the path that matches your task.
+
+### Selection path
+
+Start here when the task is about choosing the right edition baseline or understanding distribution differences:
+
+- [Choosing Basic vs Start](/editions/choosing-between-basic-and-start)
+- [Cabloy Basic](/editions/cabloy-basic)
+- [Cabloy Start](/editions/cabloy-start)
+
+### Detection and workflow path
+
+Use this path when the task is about repo-aware automation, flavor assumptions, or edition-safe workflow choices:
+
+- [Edition Detection](/editions/detection)
+- [Fullstack Introduction](/fullstack/introduction)
+- [AI Development Introduction](/ai/introduction)
 
 ## Shared fullstack core
 

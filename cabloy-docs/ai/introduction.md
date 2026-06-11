@@ -23,6 +23,15 @@ The goal is to make AI **reuse the repo’s existing conventions directly**, esp
 - internal architecture notes
 - shared public documentation
 
+## How to approach AI work
+
+For contributor and automation workflows in this repository, prefer this order:
+
+1. inspect the active edition and repo markers before making UI-sensitive or workflow-sensitive assumptions
+2. inspect root scripts, Vona CLI, and Zova CLI before inventing manual scaffolding or custom workflow steps
+3. use public docs for durable user-facing guidance and `.docs-internal/` for maintainer rationale
+4. encode repeatable behavior in Claude rules, commands, or skills instead of relying on unstated habits
+
 ## The knowledge layers
 
 ### Public docs
@@ -42,6 +51,41 @@ Use root `CLAUDE.md` and `.claude/commands/` for concise operational behavior an
 ### Skills
 
 Use `.claude/skills/` for procedural workflows that benefit from reusable instructions, bundled references, or future deterministic scripts.
+
+## AI reading paths
+
+Use this page as the main AI-development hub, then choose the path that matches your task.
+
+### Repo workflow path
+
+Start here when the task is about choosing the right repo surface, docs location, or automation boundary:
+
+- [Repo Guidance](/ai/repo-guidance)
+- [Docs / Skills Mapping](/ai/docs-skills-rules-mapping)
+- [CLI to Skill Map](/ai/cli-to-skill-map)
+- [Skills](/ai/skills)
+- [Rules and Config](/ai/rules-and-config)
+
+### Framework implementation path
+
+Use this path when the task is about implementing or reviewing Cabloy code with repo-aware rules:
+
+- [Class Placement Rule](/ai/class-placement-rule)
+- [Global Bean Lookup](/ai/global-bean-lookup)
+- [Playbook: Backend Module](/ai/playbook-backend-module)
+- [Playbook: Frontend Page](/ai/playbook-frontend-page)
+- [Playbook: Contract Regeneration](/ai/playbook-contract-regeneration)
+- [Playbook: Metadata Refresh](/ai/playbook-metadata-refresh)
+
+### Verification and roadmap path
+
+Use this path when the task is about consistency checks, verification, or future workflow planning:
+
+- [Edition Detection](/ai/edition-detection)
+- [Edition Consistency Checklist](/ai/edition-consistency-checklist)
+- [Verification](/ai/verification)
+- [Future Skill Roadmap](/ai/future-skill-roadmap)
+- [CLI for Agents](/ai/cli-for-agents)
 
 ## Recommended AI lookup rules
 
