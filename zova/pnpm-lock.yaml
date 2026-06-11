@@ -131,7 +131,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.54
+        specifier: ^1.1.55
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^

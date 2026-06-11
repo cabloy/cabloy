@@ -34,7 +34,7 @@ Use this distinction consistently:
 - use the CLI when you are discovering commands, generating framework resources, running framework-specific tooling, or inspecting workflow families
 - use root scripts when you are running broader repository workflows such as development, builds, or verification
 
-For the compact root-script lookup surface, see [Repo Scripts](/reference/repo-scripts).
+For the broader Reference landing page, see [Reference Introduction](/reference/introduction). For the compact root-script lookup surface, see [Repo Scripts](/reference/repo-scripts).
 
 ## Shared discovery pattern
 
@@ -87,11 +87,11 @@ For side-specific depth, see:
 
 Use these three surfaces for different jobs:
 
-| Surface | Best for | Typical examples |
-| --- | --- | --- |
-| Root scripts | Repo-wide development, build, and verification workflows | `npm run dev`, `npm run build`, `npm run test` |
-| CLI | Framework-aware generation, refactors, initialization, and tooling | `npm run vona :create`, `npm run zova :refactor`, `npm run zova :openapi` |
-| VS Code extensions | In-editor discovery of the same framework workflow families | Explorer right-click menus for `Create`, `Init`, `Refactor`, `Tools`, and related groups |
+| Surface            | Best for                                                           | Typical examples                                                                         |
+| ------------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Root scripts       | Repo-wide development, build, and verification workflows           | `npm run dev`, `npm run build`, `npm run test`                                           |
+| CLI                | Framework-aware generation, refactors, initialization, and tooling | `npm run vona :create`, `npm run zova :refactor`, `npm run zova :openapi`                |
+| VS Code extensions | In-editor discovery of the same framework workflow families        | Explorer right-click menus for `Create`, `Init`, `Refactor`, `Tools`, and related groups |
 
 ## CLI and VS Code extensions
 

@@ -73,6 +73,7 @@ Use the root wrappers as the normal entrypoint for this framework repository, th
 
 Read together with:
 
+- [Reference Introduction](/reference/introduction)
 - [Repo Scripts](/reference/repo-scripts)
 - [Frontend Scripts](/frontend/scripts)
 

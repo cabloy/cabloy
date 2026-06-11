@@ -60,7 +60,7 @@ Start here to learn the shared Cabloy architecture, see how Vona and Zova fit to
 2. [Fullstack CLI](/fullstack/cli)
 3. [VS Code Extensions](/fullstack/vscode-extensions)
 4. [AI Development Introduction](/ai/introduction)
-5. [Repo Scripts Reference](/reference/repo-scripts)
+5. [Reference Introduction](/reference/introduction)
 6. [Editions Overview](/editions/overview)
 
 ## Documentation scope labels
