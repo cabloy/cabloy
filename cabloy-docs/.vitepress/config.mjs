@@ -108,12 +108,17 @@ export default defineConfig({
       ],
       '/backend/': [
         {
-          text: 'Backend (Vona)',
+          text: 'Backend (Vona) / Getting Started',
           items: [
             { text: 'Introduction', link: '/backend/introduction' },
             { text: 'Foundation', link: '/backend/foundation' },
             { text: 'Backend Essentials', link: '/backend/backend-essentials' },
             { text: 'Quickstart', link: '/backend/quickstart' },
+          ],
+        },
+        {
+          text: 'Tooling & Runtime',
+          items: [
             { text: 'CLI', link: '/backend/cli' },
             { text: 'Scripts', link: '/backend/scripts' },
             { text: 'Runtime and Flavors', link: '/backend/runtime-and-flavors' },
@@ -123,18 +128,34 @@ export default defineConfig({
               text: 'Multi-Instance and Instance Resolution',
               link: '/backend/multi-instance-and-instance-resolution',
             },
+          ],
+        },
+        {
+          text: 'Security & Access',
+          items: [
             { text: 'Auth Guide', link: '/backend/auth-guide' },
             { text: 'Captcha Guide', link: '/backend/captcha-guide' },
             { text: 'User Access Guide', link: '/backend/user-access-guide' },
+            { text: 'JWT Guide', link: '/backend/jwt-guide' },
+            { text: 'Validation Guide', link: '/backend/validation-guide' },
+          ],
+        },
+        {
+          text: 'Application Basics',
+          items: [
             { text: 'Menu Guide', link: '/backend/menu-guide' },
             { text: 'I18n Guide', link: '/backend/i18n-guide' },
             { text: 'Error Guide', link: '/backend/error-guide' },
-            { text: 'JWT Guide', link: '/backend/jwt-guide' },
             { text: 'Event Guide', link: '/backend/event-guide' },
             { text: 'Logger Guide', link: '/backend/logger-guide' },
             { text: 'Upload Guide', link: '/backend/upload-guide' },
             { text: 'Mail Guide', link: '/backend/mail-guide' },
             { text: 'Serialization Guide', link: '/backend/serialization-guide' },
+          ],
+        },
+        {
+          text: 'Core Programming Model',
+          items: [
             { text: 'AOP Overview', link: '/backend/aop-overview' },
             { text: 'Controller Guide', link: '/backend/controller-guide' },
             { text: 'Controller AOP Guide', link: '/backend/controller-aop-guide' },
@@ -144,10 +165,14 @@ export default defineConfig({
             { text: 'Model Guide', link: '/backend/model-guide' },
             { text: 'Entity Guide', link: '/backend/entity-guide' },
             { text: 'DTO Guide', link: '/backend/dto-guide' },
+          ],
+        },
+        {
+          text: 'Data & CRUD',
+          items: [
             { text: 'CRUD Workflow', link: '/backend/crud-workflow' },
             { text: 'Migration and Changes', link: '/backend/migration-and-changes' },
             { text: 'Field Indexes', link: '/backend/field-indexes' },
-            { text: 'Unit Testing', link: '/backend/unit-testing' },
             { text: 'ORM Guide', link: '/backend/orm-guide' },
             { text: 'ORM Configuration Guide', link: '/backend/orm-configuration-guide' },
             { text: 'ORM Select Guide', link: '/backend/orm-select-guide' },
@@ -155,6 +180,11 @@ export default defineConfig({
             { text: 'ORM Aggregate and Group Guide', link: '/backend/orm-aggregate-group-guide' },
             { text: 'Relations Guide', link: '/backend/relations-guide' },
             { text: 'Transaction Guide', link: '/backend/transaction-guide' },
+          ],
+        },
+        {
+          text: 'Infrastructure & Distributed',
+          items: [
             { text: 'Cache Guide', link: '/backend/cache-guide' },
             {
               text: 'Multi-Database and Datasource Guide',
@@ -169,55 +199,100 @@ export default defineConfig({
             { text: 'Worker Guide', link: '/backend/worker-guide' },
             { text: 'Broadcast Guide', link: '/backend/broadcast-guide' },
             { text: 'Redlock Guide', link: '/backend/redlock-guide' },
-            { text: 'Validation Guide', link: '/backend/validation-guide' },
+          ],
+        },
+        {
+          text: 'API & Testing',
+          items: [
             { text: 'OpenAPI Guide', link: '/backend/openapi-guide' },
             { text: 'DTO Infer and Generation', link: '/backend/dto-infer-generation' },
+            { text: 'Unit Testing', link: '/backend/unit-testing' },
           ],
         },
       ],
       '/frontend/': [
         {
-          text: 'Frontend (Zova)',
+          text: 'Frontend (Zova) / Getting Started',
           items: [
             { text: 'Introduction', link: '/frontend/introduction' },
             { text: 'Quickstart', link: '/frontend/quickstart' },
             { text: 'Foundation', link: '/frontend/foundation' },
+          ],
+        },
+        {
+          text: 'Architecture & Modules',
+          items: [
             { text: 'IoC and Beans', link: '/frontend/ioc-and-beans' },
             { text: 'Modules and Suites', link: '/frontend/modules-and-suites' },
             { text: 'Module Scope', link: '/frontend/module-scope' },
+            { text: 'Design Principles', link: '/frontend/design-principles' },
+          ],
+        },
+        {
+          text: 'Environment & Startup',
+          items: [
             { text: 'Environment and Config Guide', link: '/frontend/environment-config-guide' },
             { text: 'App Startup Guide', link: '/frontend/app-startup-guide' },
             { text: 'System Startup Guide', link: '/frontend/system-startup-guide' },
+          ],
+        },
+        {
+          text: 'Tooling',
+          items: [
+            { text: 'CLI', link: '/frontend/cli' },
+            { text: 'Scripts', link: '/frontend/scripts' },
+            { text: 'Mock Guide', link: '/frontend/mock-guide' },
+          ],
+        },
+        {
+          text: 'Pages & Routing',
+          items: [
             { text: 'Page Guide', link: '/frontend/page-guide' },
             { text: 'Page Query Guide', link: '/frontend/page-query-guide' },
             { text: 'Page Params Guide', link: '/frontend/page-params-guide' },
-            { text: 'Page Route Guide', link: '/frontend/page-route-guide' },
             { text: 'Zod Guide', link: '/frontend/zod-guide' },
+            { text: 'Page Route Guide', link: '/frontend/page-route-guide' },
             { text: 'Route Alias Guide', link: '/frontend/route-alias-guide' },
             { text: 'Navigation Guards Guide', link: '/frontend/navigation-guards-guide' },
+          ],
+        },
+        {
+          text: 'Components & UI',
+          items: [
             { text: 'Component Guide', link: '/frontend/component-guide' },
             { text: 'Component Props Guide', link: '/frontend/component-props-guide' },
             { text: 'Component v-model Guide', link: '/frontend/component-v-model-guide' },
             { text: 'Generic Component Guide', link: '/frontend/generic-component-guide' },
-            { text: 'CLI', link: '/frontend/cli' },
-            { text: 'Scripts', link: '/frontend/scripts' },
-            { text: 'Mock Guide', link: '/frontend/mock-guide' },
             { text: 'CSS-in-JS Guide', link: '/frontend/css-in-js-guide' },
             { text: 'Theme Guide', link: '/frontend/theme-guide' },
             { text: 'Icon Engine Guide', link: '/frontend/icon-engine-guide' },
+          ],
+        },
+        {
+          text: 'Data & State',
+          items: [
             { text: 'Server Data', link: '/frontend/server-data' },
             { text: 'API Guide', link: '/frontend/api-guide' },
             { text: 'Model Architecture', link: '/frontend/model-architecture' },
             { text: 'Model State Guide', link: '/frontend/model-state-guide' },
+          ],
+        },
+        {
+          text: 'API Contract & SDK',
+          items: [
             { text: 'OpenAPI SDK Guide', link: '/frontend/openapi-sdk-guide' },
             { text: 'API Schema Guide', link: '/frontend/api-schema-guide' },
             { text: 'SDK Guide', link: '/frontend/sdk-guide' },
+          ],
+        },
+        {
+          text: 'SSR',
+          items: [
             { text: 'SSR Overview', link: '/frontend/ssr-overview' },
             { text: 'SSR Init Data', link: '/frontend/ssr-init-data' },
             { text: 'SSR ClientOnly', link: '/frontend/ssr-client-only' },
             { text: 'SSR SEO Meta', link: '/frontend/ssr-seo-meta' },
             { text: 'SSR Env', link: '/frontend/ssr-env' },
-            { text: 'Design Principles', link: '/frontend/design-principles' },
           ],
         },
       ],
