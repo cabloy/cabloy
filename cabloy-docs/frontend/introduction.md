@@ -39,6 +39,7 @@ Start here when you need the shortest route to the frontend mental model and sta
 - [Environment and Config Guide](/frontend/environment-config-guide)
 - [App Startup Guide](/frontend/app-startup-guide)
 - [System Startup Guide](/frontend/system-startup-guide)
+- [Frontend Directory Structure](/reference/frontend-directory-structure)
 
 ### Page and routing flow
 

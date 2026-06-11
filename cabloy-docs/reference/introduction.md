@@ -7,7 +7,7 @@ This page is the reference hub for shared monorepo commands, package lookup, dir
 - shared monorepo command entrypoints
 - CLI lookup and command-surface discovery
 - package lookup across the repository
-- backend directory lookup
+- backend and frontend directory lookup
 - shared terminology and glossary support
 
 ## How to approach reference work
@@ -33,10 +33,11 @@ Start here when you first need the shared monorepo command surface:
 
 ### Structure and lookup path
 
-Use this path when you need to find where packages, backend directories, or shared terms live:
+Use this path when you need to find where packages, backend directories, frontend directories, or shared terms live:
 
 - [Package Map](/reference/package-map)
 - [Backend Directory Structure](/reference/backend-directory-structure)
+- [Frontend Directory Structure](/reference/frontend-directory-structure)
 - [Glossary](/reference/glossary)
 
 ## Edition impact

@@ -96,6 +96,8 @@ For the broader backend entry path, also see [Backend (Vona)](/backend/introduct
 
 For the frontend architectural meaning of modules, suites, scope-driven resources, and runtime/startup structure, see `/frontend/modules-and-suites`, `/frontend/module-scope`, `/frontend/ioc-and-beans`, `/frontend/environment-config-guide`, `/frontend/app-startup-guide`, and `/frontend/system-startup-guide`.
 
+For the practical frontend directory tree contributors navigate, also see [Frontend Directory Structure](/reference/frontend-directory-structure).
+
 ## Sibling edition
 
 - `cabloy-start` is a separate sibling repository, not a subdirectory of this monorepo.

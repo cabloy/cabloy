@@ -81,6 +81,7 @@ const referenceGroups = [
     items: [
       { text: 'Package Map', link: '/reference/package-map' },
       { text: 'Backend Directory Structure', link: '/reference/backend-directory-structure' },
+      { text: 'Frontend Directory Structure', link: '/reference/frontend-directory-structure' },
       { text: 'Glossary', link: '/reference/glossary' },
     ],
   },
