@@ -66,7 +66,7 @@ export class BeanTheme extends BeanModelBase {
     }
 
     // not use watch.immediate for await done
-    await this._applyThemeWrapper();
+    await this._applyInitialThemeAndSsrDualOutput();
   }
 
   protected __dispose__() {
@@ -77,7 +77,7 @@ export class BeanTheme extends BeanModelBase {
     this._dark = this._getDarkFromDarkMode(this.darkMode);
   }
 
-  async _applyThemeWrapper() {
+  async _applyInitialThemeAndSsrDualOutput() {
     // When server-side theme cookies are disabled, apply twice during SSR initialization so the
     // server emits both data-ssr-theme-dark-false/true markers and the browser can resolve the
     // final data-theme during bootstrap.
