@@ -127,35 +127,18 @@ A useful distinction is:
 - brand-theme switching changes which named theme provides the token set
 - both still work through the same `$theme` and token architecture
 
-## SSR theme capability contract
+## Edition and UI-library decision gate
 
-Web SSR and Admin SSR do not provide the same theme guarantees.
+Before applying SSR theme rules, identify the active edition and UI library first.
 
-In the current Cabloy Basic frontend setup:
+In the current Cabloy monorepo context:
 
-- Web SSR runs with `SSR_COOKIE=false`
-- Admin SSR runs with `SSR_COOKIE=true`
+- Cabloy Basic currently means DaisyUI + Tailwind CSS assumptions
+- Cabloy Start currently means Vuetify assumptions
 
-That difference matters because cookie-backed SSR can resolve theme state on the server, while cookie-disabled SSR cannot know the browser's final theme choice during render.
+The shared Zova theme architecture stays the same, but token shape, SSR output strategy, and hydration integration can vary by adapter.
 
-The practical contract is:
-
-- **Web SSR is the lower-capability path for theme-sensitive SSR output**
-- **Admin SSR is the higher-capability path for theme-sensitive SSR output**
-
-In Web SSR, server-rendered reads of `$theme.dark`, `$theme.darkMode`, and theme-derived `$token` values should be treated as non-authoritative for the browser's final theme.
-
-That means Web SSR code should prefer one of these patterns:
-
-- render fallback-safe theme-sensitive output
-- keep theme-sensitive SSR branching hydration-tolerant
-- defer final theme-sensitive decisions to the client when an exact browser theme match is required
-
-In Admin SSR, cookie-backed SSR theme resolution provides a stronger guarantee that theme-sensitive SSR output matches the hydrated client state.
-
-So if a feature requires SSR-stable theme branching, prefer the Admin SSR contract rather than assuming Web SSR can provide the same guarantee.
-
-For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env). For the flavor/runtime selection model, see [Environment and Config Guide](/frontend/environment-config-guide).
+That means a rule that is safe for one edition or UI library is not automatically portable to another.
 
 ## What stays shared across editions
 
@@ -170,15 +153,120 @@ What may still vary by edition or UI library is:
 
 - the exact token shape
 - concrete default token values
+- SSR server output strategy
+- client hydration and theme-finalization behavior
 - integration details for a specific component library or visual system
 
-## Implementation checks for theme-related changes
+## SSR flavor capability gate
 
-When changing theme behavior, ask:
+After identifying the edition and UI library, identify the SSR flavor capability level.
 
-1. should this change live in a theme bean instead of inlining colors into components?
-2. is the change about dark mode, brand style, or both?
-3. should the change be token-driven instead of component-specific?
-4. does the active edition change the UI component library while preserving the same theme architecture?
+A practical split is:
 
-That helps keep theme work scalable and edition-aware.
+- Web SSR is usually the lower-authority path for final browser theme when cookie-backed SSR resolution is unavailable
+- Admin SSR is the stronger path for SSR-stable theme-sensitive rendering when cookie-backed SSR resolution is available
+
+In practice, always check `SSR_COOKIE` and the active adapter behavior before assuming that server-rendered theme-sensitive output can exactly match the hydrated client state.
+
+With `SSR_COOKIE=false`, server reads of `$theme.dark`, `$theme.darkMode`, and `$token` should be treated as non-authoritative for the browser's final theme unless the active adapter explicitly documents a stronger guarantee.
+
+With `SSR_COOKIE=true`, SSR theme-sensitive branching can rely on a stronger server/client match guarantee, but should still stay inside the established theme handler and hydration pipeline.
+
+For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env). For the flavor/runtime selection model, see [Environment and Config Guide](/frontend/environment-config-guide).
+
+## Shared development rules
+
+Apply these rules before writing adapter-specific logic:
+
+1. keep concrete theme values in theme beans instead of scattering them across pages or components
+2. use `$token` when code consumes theme-defined design values
+3. use `$theme` when code needs to inspect or switch theme state itself
+4. keep adapter-specific DOM/theme application inside the active theme handler or client boot path rather than duplicating it in feature code
+5. do not assume token fields are portable across UI libraries without checking the active adapter contract
+
+## Cabloy Basic checklist: DaisyUI + Tailwind CSS
+
+In the current `__CABLOY_BASIC__` frontend setup:
+
+- DaisyUI + Tailwind CSS is the active UI layer
+- theme beans and `$token` remain the shared architectural contract
+- Web SSR emits dual dark/light SSR markers and the browser selects the final theme during bootstrap
+- the active theme handler owns `data-theme` and CSS variable application
+
+Apply these rules:
+
+- In Web SSR, treat server-rendered reads of `$theme.dark`, `$theme.darkMode`, and theme-derived `$token` values as non-authoritative for the browser's final theme.
+- Keep theme-sensitive SSR output fallback-safe or hydration-tolerant when exact browser theme matching matters.
+- Defer final theme-sensitive decisions to the client when an exact browser theme match is required.
+- Let the theme handler own `data-theme` and CSS variable application instead of duplicating that logic in pages or components.
+- In Admin SSR, cookie-backed theme resolution is the stronger path for SSR-stable theme-sensitive branching.
+
+## Cabloy Start comparison checklist: Vuetify
+
+In `__CABLOY_START__`, the theme architecture is still shared, but the adapter behavior is deeper:
+
+- Vuetify-oriented token payloads are part of the active theme contract
+- the SSR adapter writes theme name, dark-variant theme data, and token payloads for hydration
+- client boot reconstructs the active Vuetify theme from SSR state
+
+Apply these comparison rules:
+
+- Do not collapse Cabloy Start behavior into the simpler Cabloy Basic `data-theme` mental model.
+- Treat Vuetify adapter state handoff and client boot hydration as part of the theme contract.
+- When documenting or changing SSR theme rules, verify both the server handoff payload and the client reconstruction path.
+- Web SSR still needs lower-authority assumptions when cookie-backed SSR resolution is unavailable, even though the adapter handoff is richer than in Cabloy Basic.
+
+## Quick comparison table
+
+| Edition      | UI library             | SSR server handoff                                                                   | Client hydration/finalization                                       | Safe Web SSR rule                                                                                                                     |
+| ------------ | ---------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Cabloy Basic | DaisyUI + Tailwind CSS | Dual dark/light SSR markers plus handler-owned DOM theme output                      | Browser bootstrap resolves the final theme and applies `data-theme` | Do not treat server theme-sensitive reads as final browser truth                                                                      |
+| Cabloy Start | Vuetify                | Adapter-driven SSR state including theme name, dark variant data, and token payloads | Client boot reconstructs the active Vuetify theme from SSR state    | Do not reduce Start to a Basic-style `data-theme`-only model; still treat Web SSR as lower-authority without cookie-backed resolution |
+
+## SSR theme review checklist
+
+Use this short review checklist when editing SSR theme behavior or reviewing AI-generated changes.
+
+Do:
+
+- identify the active edition marker before applying SSR theme rules
+- identify the active UI library before assuming token shape or hydration behavior
+- keep concrete theme values in theme beans and consume them through `$token`
+- use `$theme` for theme-state control and `$token` for theme-value consumption
+- verify whether the active flavor provides cookie-backed SSR theme resolution before trusting server theme reads
+- keep adapter-specific theme finalization inside the existing theme handler or client boot path
+- verify both server handoff and client hydration behavior when documenting or changing adapter-specific SSR theme logic
+- treat Web SSR as the stricter path unless the active adapter and cookie capability clearly provide a stronger guarantee
+
+Don't:
+
+- do not assume Cabloy Basic and Cabloy Start use the same adapter-level SSR theme handoff
+- do not assume a Basic `data-theme` pattern fully describes Vuetify-based Start behavior
+- do not treat server reads of `$theme.dark`, `$theme.darkMode`, or `$token` as final browser truth in cookie-disabled Web SSR
+- do not duplicate theme-finalization logic in pages or components when the active adapter already owns that responsibility
+
+## Reviewer template
+
+Use this short template in PR review, code review, or AI review when a change touches SSR theme behavior.
+
+- [ ] I identified the active edition marker before reviewing SSR theme behavior.
+- [ ] I identified the active UI library before assuming token shape or hydration behavior.
+- [ ] I verified whether the active flavor provides cookie-backed SSR theme resolution.
+- [ ] I checked whether the change treats server reads of `$theme.dark`, `$theme.darkMode`, or `$token` as lower-authority in cookie-disabled Web SSR.
+- [ ] I verified that adapter-specific theme finalization stays inside the existing theme handler or client boot path.
+- [ ] I checked whether the rule or behavior is shared across editions or adapter-specific.
+- [ ] For Cabloy Basic, I verified the change does not over-assume a final browser theme from server-side theme-sensitive reads.
+- [ ] For Cabloy Start, I verified the change respects Vuetify SSR state handoff and client reconstruction rather than reducing it to a Basic-style `data-theme`-only model.
+- [ ] I verified both server handoff and client hydration behavior for the active adapter.
+
+## Verification checklist
+
+When changing theme behavior or writing theme-sensitive SSR code, ask:
+
+1. which edition marker is active, and which UI library contract does that imply?
+2. is the change about token design, theme state control, SSR output, or client hydration?
+3. does the active flavor provide cookie-backed SSR theme resolution?
+4. is this rule shared across editions, or adapter-specific?
+5. does the implementation follow the existing handler and hydration path for the active UI library?
+
+That keeps theme work scalable, edition-aware, and aligned with the real SSR capability boundary.

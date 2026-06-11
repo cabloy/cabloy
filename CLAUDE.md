@@ -44,6 +44,9 @@ Before inventing a custom implementation path:
 - Prefer CLI-backed workflows over manual scaffolding whenever Vona or Zova already provides a generator, refactor, metadata, or verification command.
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
 - For frontend work, assume Cabloy Basic and Cabloy Start share a frontend engineering layer but may diverge in UI layer, frontend flavors, suite/module availability, SSR site baselines, project assets, and generated outputs.
+- For SSR theme-sensitive frontend work, detect the active edition marker and UI library before making assumptions. Cabloy Basic currently means DaisyUI + Tailwind CSS assumptions; Cabloy Start currently means Vuetify assumptions.
+- In Web SSR without cookie-backed theme resolution, do not treat server reads of `$theme.dark`, `$theme.darkMode`, or `$token` as final browser truth. Keep theme-sensitive SSR branching hydration-tolerant or defer final theme-sensitive decisions to the client.
+- Do not assume Cabloy Basic and Cabloy Start use the same adapter-level SSR theme handoff. Verify the active theme handler and client hydration path before changing SSR theme behavior.
 - Reuse existing repo terminology: Cabloy, Vona, Zova, suite, module, bean, SSR, SPA, Web, Admin.
 - For backend base-class placement, use the A / B1 / B2 rule from `cabloy-docs/ai/class-placement-rule.md`.
 - Pure helper bases belong in `src/lib`; subclass-only bases should be evaluated case by case and often belong in `src/lib`.

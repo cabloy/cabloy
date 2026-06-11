@@ -156,6 +156,16 @@ Check whether the feature needs:
 - SSR or route-path verification
 - edition-specific flavor, SSR site baseline, and project-asset verification
 
+### SSR theme review reminder
+
+If the frontend change is SSR theme-sensitive, apply this short review before finishing:
+
+- detect the active edition marker and UI library before assuming SSR theme behavior
+- do not assume Cabloy Basic and Cabloy Start use the same adapter-level SSR theme handoff
+- in Web SSR without cookie-backed theme resolution, do not treat server reads of `$theme.dark`, `$theme.darkMode`, or `$token` as final browser truth
+- keep theme-finalization logic inside the active theme handler or client boot path instead of duplicating it in page or component code
+- verify both server handoff and client hydration behavior for the active adapter
+
 ### Optional backend-contract reminder
 
 Stay frontend-first, but if the frontend task clearly depends on backend contract output, add a reminder such as:

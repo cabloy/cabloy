@@ -117,7 +117,15 @@ In practice:
 
 This is exactly why flavor selection is not only a packaging choice. It can also define the supported capability boundary for runtime-sensitive behavior.
 
-For the theme-side contract, see [Theme Guide](/frontend/theme-guide). For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env).
+A second practical rule is that flavor alone is not the full story. Contributors should combine:
+
+- flavor and `SSR_COOKIE` capability
+- edition marker
+- active UI-library adapter
+
+before assuming how SSR theme state is handed off and finalized.
+
+For the theme-side contract and edition-aware checklist, see [Theme Guide](/frontend/theme-guide). For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env).
 
 ## Scripts and runtime variants
 

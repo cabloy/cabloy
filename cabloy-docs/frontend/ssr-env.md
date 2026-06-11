@@ -34,7 +34,14 @@ In practice, this means Web SSR and Admin SSR can intentionally expose different
 - In a cookie-capable SSR path, theme-sensitive server rendering can rely on a stronger server/client match guarantee.
 - In a cookie-disabled SSR path, SSR should treat theme-sensitive reads as non-authoritative for the browser's final theme and prefer hydration-tolerant or client-finalized decisions when exact matching matters.
 
-For the broader theme usage contract, see [Theme Guide](/frontend/theme-guide). For the runtime/flavor selection model behind these env choices, see [Environment and Config Guide](/frontend/environment-config-guide).
+A practical development rule is:
+
+- use `SSR_COOKIE` to determine the capability level
+- use the active edition and UI library to determine how that capability is implemented
+
+That matters because Cabloy Basic and Cabloy Start share the same theme architecture but do not use the same adapter-level SSR handoff strategy.
+
+For the broader theme usage contract and edition-aware checklist, see [Theme Guide](/frontend/theme-guide). For the runtime/flavor selection model behind these env choices, see [Environment and Config Guide](/frontend/environment-config-guide).
 
 ## Dynamic environment variables
 
