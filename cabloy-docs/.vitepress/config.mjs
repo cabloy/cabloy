@@ -121,8 +121,8 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Fullstack', link: '/fullstack/introduction', activeMatch: '^/fullstack/' },
-      { text: 'Backend', link: '/backend/introduction', activeMatch: '^/backend/' },
-      { text: 'Frontend', link: '/frontend/introduction', activeMatch: '^/frontend/' },
+      { text: 'Backend (Vona)', link: '/backend/introduction', activeMatch: '^/backend/' },
+      { text: 'Frontend (Zova)', link: '/frontend/introduction', activeMatch: '^/frontend/' },
       { text: 'Editions', link: '/editions/overview', activeMatch: '^/editions/' },
       { text: 'AI Development', link: '/ai/introduction', activeMatch: '^/ai/' },
       { text: 'Reference', link: '/reference/introduction', activeMatch: '^/reference/' },
