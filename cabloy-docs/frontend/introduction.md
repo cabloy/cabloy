@@ -22,6 +22,73 @@ For contributor and automation workflows in this repository, prefer this order:
 3. inspect the active edition before assuming a UI stack
 4. document shared concepts once, then isolate edition-specific notes where the module set or UI library differs
 
+## Frontend reading paths
+
+Use this page as the main frontend hub, then choose the path that matches your task.
+
+### Getting started and architecture spine
+
+Start here when you need the shortest route to the frontend mental model and startup context:
+
+- [Quickstart](/frontend/quickstart)
+- [Foundation](/frontend/foundation)
+- [IoC and Beans](/frontend/ioc-and-beans)
+- [Modules and Suites](/frontend/modules-and-suites)
+- [Module Scope](/frontend/module-scope)
+- [Design Principles](/frontend/design-principles)
+- [Environment and Config Guide](/frontend/environment-config-guide)
+- [App Startup Guide](/frontend/app-startup-guide)
+- [System Startup Guide](/frontend/system-startup-guide)
+
+### Page and routing flow
+
+Use this path when the task is page-oriented, route-oriented, or the first time you need Zod in frontend params and query work:
+
+- [Page Guide](/frontend/page-guide)
+- [Page Query Guide](/frontend/page-query-guide)
+- [Page Params Guide](/frontend/page-params-guide)
+- [Zod Guide](/frontend/zod-guide)
+- [Page Route Guide](/frontend/page-route-guide)
+- [Route Alias Guide](/frontend/route-alias-guide)
+- [Navigation Guards Guide](/frontend/navigation-guards-guide)
+
+### Components and UI flow
+
+Use this path when the task is about UI composition, component contracts, or theme work:
+
+- [Component Guide](/frontend/component-guide)
+- [Component Props Guide](/frontend/component-props-guide)
+- [Component v-model Guide](/frontend/component-v-model-guide)
+- [Generic Component Guide](/frontend/generic-component-guide)
+- [CSS-in-JS Guide](/frontend/css-in-js-guide)
+- [Theme Guide](/frontend/theme-guide)
+- [Icon Engine Guide](/frontend/icon-engine-guide)
+
+### Data, contract, and SSR flow
+
+Use this path when the task is about data loading, API contracts, generated SDKs, or SSR behavior:
+
+- [Server Data](/frontend/server-data)
+- [API Guide](/frontend/api-guide)
+- [Model Architecture](/frontend/model-architecture)
+- [Model State Guide](/frontend/model-state-guide)
+- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
+- [API Schema Guide](/frontend/api-schema-guide)
+- [SDK Guide](/frontend/sdk-guide)
+- [SSR Overview](/frontend/ssr-overview)
+- [SSR Init Data](/frontend/ssr-init-data)
+- [SSR ClientOnly](/frontend/ssr-client-only)
+- [SSR SEO Meta](/frontend/ssr-seo-meta)
+- [SSR Env](/frontend/ssr-env)
+
+### Tooling support
+
+Use these pages when the work is about commands, scripts, or mock-driven iteration:
+
+- [CLI](/frontend/cli)
+- [Scripts](/frontend/scripts)
+- [Mock Guide](/frontend/mock-guide)
+
 ## Edition impact
 
 Frontend work is where Cabloy Basic and Cabloy Start differ most clearly.

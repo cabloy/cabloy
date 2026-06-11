@@ -31,12 +31,59 @@ const aiItems = [
   { text: 'Verification', link: '/ai/verification' },
 ];
 
-const referenceItems = [
-  { text: 'Repo Scripts', link: '/reference/repo-scripts' },
-  { text: 'CLI Reference', link: '/reference/cli-reference' },
-  { text: 'Package Map', link: '/reference/package-map' },
-  { text: 'Backend Directory Structure', link: '/reference/backend-directory-structure' },
-  { text: 'Glossary', link: '/reference/glossary' },
+const fullstackGroups = [
+  {
+    text: 'Fullstack / Getting Started',
+    items: [
+      { text: 'Introduction', link: '/fullstack/introduction' },
+      { text: 'Quickstart', link: '/fullstack/quickstart' },
+    ],
+  },
+  {
+    text: 'Tooling & Workflow',
+    items: [
+      { text: 'CLI', link: '/fullstack/cli' },
+      { text: 'VS Code Extensions', link: '/fullstack/vscode-extensions' },
+    ],
+  },
+  {
+    text: 'Architecture & Integration',
+    items: [
+      {
+        text: 'Comparison with Other Frameworks',
+        link: '/fullstack/comparison-with-other-frameworks',
+      },
+      { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
+      { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
+      {
+        text: 'Frontend Metadata Back to Backend',
+        link: '/fullstack/frontend-metadata-to-backend',
+      },
+      {
+        text: 'Edition Collaboration Differences',
+        link: '/fullstack/edition-collaboration-differences',
+      },
+    ],
+  },
+];
+
+const referenceGroups = [
+  {
+    text: 'Reference / Workflow Entry',
+    items: [
+      { text: 'Introduction', link: '/reference/introduction' },
+      { text: 'Repo Scripts', link: '/reference/repo-scripts' },
+      { text: 'CLI Reference', link: '/reference/cli-reference' },
+    ],
+  },
+  {
+    text: 'Structure & Lookup',
+    items: [
+      { text: 'Package Map', link: '/reference/package-map' },
+      { text: 'Backend Directory Structure', link: '/reference/backend-directory-structure' },
+      { text: 'Glossary', link: '/reference/glossary' },
+    ],
+  },
 ];
 
 const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID;
@@ -78,34 +125,10 @@ export default defineConfig({
       { text: 'Frontend', link: '/frontend/introduction', activeMatch: '^/frontend/' },
       { text: 'Editions', link: '/editions/overview', activeMatch: '^/editions/' },
       { text: 'AI Development', link: '/ai/introduction', activeMatch: '^/ai/' },
-      { text: 'Reference', link: '/reference/repo-scripts', activeMatch: '^/reference/' },
+      { text: 'Reference', link: '/reference/introduction', activeMatch: '^/reference/' },
     ],
     sidebar: {
-      '/fullstack/': [
-        {
-          text: 'Fullstack',
-          items: [
-            { text: 'Introduction', link: '/fullstack/introduction' },
-            {
-              text: 'Comparison with Other Frameworks',
-              link: '/fullstack/comparison-with-other-frameworks',
-            },
-            { text: 'Quickstart', link: '/fullstack/quickstart' },
-            { text: 'CLI', link: '/fullstack/cli' },
-            { text: 'VS Code Extensions', link: '/fullstack/vscode-extensions' },
-            { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
-            { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
-            {
-              text: 'Frontend Metadata Back to Backend',
-              link: '/fullstack/frontend-metadata-to-backend',
-            },
-            {
-              text: 'Edition Collaboration Differences',
-              link: '/fullstack/edition-collaboration-differences',
-            },
-          ],
-        },
-      ],
+      '/fullstack/': fullstackGroups,
       '/backend/': [
         {
           text: 'Backend (Vona) / Getting Started',
@@ -308,12 +331,7 @@ export default defineConfig({
           items: aiItems,
         },
       ],
-      '/reference/': [
-        {
-          text: 'Reference',
-          items: referenceItems,
-        },
-      ],
+      '/reference/': referenceGroups,
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/cabloy/cabloy' }],
     search: {

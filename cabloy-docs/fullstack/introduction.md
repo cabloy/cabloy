@@ -15,6 +15,44 @@ With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns comm
 - **CLI-first workflows for AI vibe coding** — turn common scaffolding, metadata, refactors, and verification into explicit commands for faster, more accurate AI vibe coding
 - **Monorepo-native development** — keep framework source, docs, and tooling aligned in one monorepo workflow
 
+## How to approach fullstack work
+
+For contributor and automation workflows in this repository, prefer this order:
+
+1. inspect the root `package.json` and shared monorepo scripts first
+2. inspect `npm run vona`, `npm run zova`, and the shared fullstack CLI workflow before inventing custom steps
+3. detect the active edition before making UI-sensitive or flavor-sensitive assumptions
+4. explain shared cross-stack concepts once, then isolate edition-specific notes only where the editions intentionally diverge
+
+## Fullstack reading paths
+
+Use this page as the main fullstack hub, then choose the path that matches your task.
+
+### Getting started path
+
+Start here when you want the shortest route to a working monorepo mental model:
+
+- [Quickstart](/fullstack/quickstart)
+- [CLI](/fullstack/cli)
+- [VS Code Extensions](/fullstack/vscode-extensions)
+
+### Architecture and integration path
+
+Use this path when the task is about how backend and frontend stay aligned inside one framework system:
+
+- [Comparison with Other Frameworks](/fullstack/comparison-with-other-frameworks)
+- [Vona + Zova Integration](/fullstack/vona-zova-integration)
+- [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
+- [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)
+
+### Edition-aware collaboration path
+
+Use this path when the task depends on edition boundaries, UI assumptions, or cross-repo delivery differences:
+
+- [Edition Collaboration Differences](/fullstack/edition-collaboration-differences)
+- [Editions Overview](/editions/overview)
+- [Choosing Basic vs Start](/editions/choosing-between-basic-and-start)
+
 ## Shared architecture
 
 - **Vona** provides the backend framework capabilities.
@@ -72,7 +110,7 @@ The monorepo makes it possible to keep backend and frontend concepts, tooling, a
 - **Cabloy Basic**: DaisyUI + Tailwind CSS
 - **Cabloy Start**: Vuetify
 
-## Common-first, edition-aware
+## Edition impact
 
 Most framework concepts are shared across Cabloy Basic and Cabloy Start because both editions follow the same Cabloy fullstack core. The documentation prefers a common-first explanation, then adds edition-specific notes only where the editions intentionally diverge.
 

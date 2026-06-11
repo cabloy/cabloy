@@ -1,5 +1,9 @@
 # Repo Scripts
 
+Use this page when you need the compact lookup surface for the shared root scripts exposed by the Cabloy Basic monorepo.
+
+For the broader Reference landing page, see [Reference Introduction](/reference/introduction).
+
 The root `package.json` is the first reference point for shared monorepo workflows.
 
 ## Current shared entrypoints in Cabloy Basic
@@ -22,8 +26,6 @@ The root `package.json` is the first reference point for shared monorepo workflo
 ## Edition-sensitive note
 
 Cabloy Start keeps the same high-level pattern while using different frontend flavors such as `cabloyStartAdmin` and `cabloyStartWeb`, plus its own Start-specific suites, SSR site baselines, and project assets in the licensed private repository.
-
-### Documentation and automation guidance
 
 When documenting or automating flavor-specific commands, always confirm the active repo first.
 
