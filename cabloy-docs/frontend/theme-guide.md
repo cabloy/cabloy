@@ -127,6 +127,36 @@ A useful distinction is:
 - brand-theme switching changes which named theme provides the token set
 - both still work through the same `$theme` and token architecture
 
+## SSR theme capability contract
+
+Web SSR and Admin SSR do not provide the same theme guarantees.
+
+In the current Cabloy Basic frontend setup:
+
+- Web SSR runs with `SSR_COOKIE=false`
+- Admin SSR runs with `SSR_COOKIE=true`
+
+That difference matters because cookie-backed SSR can resolve theme state on the server, while cookie-disabled SSR cannot know the browser's final theme choice during render.
+
+The practical contract is:
+
+- **Web SSR is the lower-capability path for theme-sensitive SSR output**
+- **Admin SSR is the higher-capability path for theme-sensitive SSR output**
+
+In Web SSR, server-rendered reads of `$theme.dark`, `$theme.darkMode`, and theme-derived `$token` values should be treated as non-authoritative for the browser's final theme.
+
+That means Web SSR code should prefer one of these patterns:
+
+- render fallback-safe theme-sensitive output
+- keep theme-sensitive SSR branching hydration-tolerant
+- defer final theme-sensitive decisions to the client when an exact browser theme match is required
+
+In Admin SSR, cookie-backed SSR theme resolution provides a stronger guarantee that theme-sensitive SSR output matches the hydrated client state.
+
+So if a feature requires SSR-stable theme branching, prefer the Admin SSR contract rather than assuming Web SSR can provide the same guarantee.
+
+For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env). For the flavor/runtime selection model, see [Environment and Config Guide](/frontend/environment-config-guide).
+
 ## What stays shared across editions
 
 Across Cabloy Basic and Cabloy Start, the core theme architecture remains shared:

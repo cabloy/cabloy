@@ -99,6 +99,26 @@ A representative SSR admin development stack looks like:
 
 The config side follows the same merge pattern with `config.ts`, `config.[meta].ts`, and `.local` variants.
 
+## Flavor-aware capability differences
+
+Different SSR flavors can intentionally expose different runtime capabilities rather than behaving identically.
+
+A concrete example in the current Cabloy Basic frontend setup is SSR theme resolution:
+
+- Web SSR uses a cookie-disabled path
+- Admin SSR uses a cookie-capable path
+
+That means the two flavors should not be treated as providing the same guarantee for theme-sensitive SSR output.
+
+In practice:
+
+- Web SSR is the stricter path and should treat theme-sensitive SSR reads as lower-authority
+- Admin SSR can provide a stronger server/client theme match guarantee
+
+This is exactly why flavor selection is not only a packaging choice. It can also define the supported capability boundary for runtime-sensitive behavior.
+
+For the theme-side contract, see [Theme Guide](/frontend/theme-guide). For the env-side explanation of `SSR_COOKIE`, see [SSR Environment Variables](/frontend/ssr-env).
+
 ## Scripts and runtime variants
 
 Frontend scripts map directly onto the same runtime dimensions.
