@@ -87,7 +87,7 @@ Legacy Vona docs described creating projects from templates such as `cabloy-basi
 That history still matters, because it explains why the Cabloy ecosystem now supports two editions:
 
 - **Cabloy Basic**: the public framework/reference edition, including the project route created by `npm create cabloy`, with a shared frontend engineering layer and a DaisyUI + Tailwind CSS oriented UI layer in the current public examples
-- **Cabloy Start**: the private commercial edition, accessed by cloning the licensed private repository source, with public Start guidance aligned to Vuetify plus edition-specific SSR site baselines and project assets
+- **Cabloy Start**: the private commercial edition, accessed by cloning the licensed private repository source, with a Vuetify-oriented UI layer plus edition-specific SSR site baselines and project assets
 
 In the current monorepo docs, do not treat these as just template names. Treat them as edition boundaries that affect frontend integration, scripts, UI assumptions, and examples.
 

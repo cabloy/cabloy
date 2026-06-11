@@ -96,6 +96,6 @@ Frontend work is where Cabloy Basic and Cabloy Start differ most clearly.
 
 - **Shared frontend engineering layer**: both editions follow the same Zova-centered frontend direction, with Vue, Vite, Quasar tooling, and related libraries.
 - **Cabloy Basic UI layer**: current public docs and examples align with DaisyUI + Tailwind CSS.
-- **Cabloy Start UI layer**: public Start guidance aligns with Vuetify and may use different frontend modules, SSR site baselines, and project assets from the licensed private repository.
+- **Cabloy Start UI layer**: the private commercial edition aligns with Vuetify and may use different frontend modules, SSR site baselines, and project assets.
 
 Because of this, automation and docs should always detect the active edition before recommending page-level, component-level, or UI-library-specific work.

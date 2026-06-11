@@ -74,8 +74,7 @@ A practical rule is:
 - use the shared tree as the structural reference
 - treat suite names and UI-layer examples as edition-sensitive details
 - in Cabloy Basic, public examples may include suites such as `cabloy-basic` and `a-devui`
-- in Cabloy Start, public examples may include suites such as `cabloy-start` and `a-vuetify`
-- do not mention private or internal Start suites in public documentation
+- in Cabloy Start, examples may include suites such as `cabloy-start` and `a-vuetify`
 
 Cabloy Start is a sibling repository, not a subdirectory of this monorepo.
 

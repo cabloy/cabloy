@@ -17,7 +17,7 @@ Use Cabloy Start as the edition-aware target when work depends on:
 - direct use of the licensed private repository source
 - Vuetify-specific frontend workflows
 - Cabloy Start flavor names in frontend scripts
-- edition-specific module composition verified in the licensed Start repository
+- edition-specific module composition in the licensed Start repository
 - licensed private-repo structure and edition-specific project composition
 - edition-specific SSR site baselines and project assets
 

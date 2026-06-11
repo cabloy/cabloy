@@ -114,6 +114,6 @@ The monorepo makes it possible to keep backend and frontend concepts, tooling, a
 
 Most framework concepts are shared across Cabloy Basic and Cabloy Start because both editions follow the same Cabloy fullstack core. The documentation prefers a common-first explanation, then adds edition-specific notes only where the editions intentionally diverge.
 
-Across editions, the frontend engineering layer stays mostly shared through Zova, Vue, Vite, Quasar tooling, and related libraries. The edition-specific UI layer then diverges between DaisyUI + Tailwind CSS for Cabloy Basic and public Start guidance that aligns with Vuetify.
+Across editions, the frontend engineering layer stays mostly shared through Zova, Vue, Vite, Quasar tooling, and related libraries. The edition-specific UI layer then diverges between DaisyUI + Tailwind CSS for Cabloy Basic and Vuetify for Cabloy Start.
 
 Use the [Editions Overview](/editions/overview) page whenever a task depends on UI library assumptions, flavor names, module composition, SSR site baselines, distribution boundaries, or AI workflow guidance.

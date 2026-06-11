@@ -63,7 +63,7 @@ Cabloy Start is usually the better fit when you want:
 ### AI workflow assumptions
 
 - **Cabloy Basic**: use Basic-specific examples, flavors, modules, and UI assumptions
-- **Cabloy Start**: use Start-specific examples, flavors, SSR site baselines, and UI assumptions verified in the licensed repo
+- **Cabloy Start**: use Start-specific examples, flavors, SSR site baselines, and UI assumptions
 
 This is why edition detection matters so much for AI vibe coding.
 

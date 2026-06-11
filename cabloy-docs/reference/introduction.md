@@ -42,6 +42,6 @@ Use this path when you need to find where packages, backend directories, fronten
 
 ## Edition impact
 
-Cabloy Start keeps the same high-level workflow pattern, but public Start guidance may use different frontend flavors such as `cabloyStartAdmin` and `cabloyStartWeb`, along with its own edition-specific SSR site baselines and project assets in the licensed private repository.
+Cabloy Start keeps the same high-level workflow pattern while using different frontend flavors such as `cabloyStartAdmin` and `cabloyStartWeb`, plus its own SSR site baselines and project assets in the licensed private repository.
 
 When documenting or automating flavor-specific commands, always confirm the active repo first.

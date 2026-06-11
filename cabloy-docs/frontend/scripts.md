@@ -71,7 +71,7 @@ The sibling `cabloy-start` repository is the private commercial edition and uses
 - `cabloyStartAdmin`
 - `cabloyStartWeb`
 
-Those commands are not driven by the current Basic repo root wrappers, so verify the Start repo’s `package.json`, public flavor names, SSR site baselines, and project assets before documenting or automating them.
+Those commands are not driven by the current Basic repo root wrappers, so verify the Start repo’s `package.json`, flavor names, SSR site baselines, and project assets before documenting or automating them.
 
 ## Workflow guidance
 
