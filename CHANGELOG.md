@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.53
+
+### Features
+
+- Update application functionality across core feature areas.
+- Update configuration behavior and related integration points.
+- Update theme configuration and controller handling.
+
+### Improvements
+
+- Remove the generated `$useLocale` helper.
+- Refresh project configuration files and internal implementation details.
+
+### Breaking Changes
+
+- Rename the SSR cookie-disabled server flag and update related documentation.
+
 ## 5.1.52
 
 ### Features
