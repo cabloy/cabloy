@@ -69,7 +69,7 @@ Cabloy Start is the private commercial edition.
 - the private repository is marked with `__CABLOY_START__`
 - users first purchase a license and obtain repository access, then clone the private repository source directly
 - after cloning, the project is initialized through the Start edition workflow
-- Start provides its own suites, flavors, SSR sites, and project assets for that edition
+- Start uses its own edition-specific flavors, SSR site baselines, and project assets for that edition
 
 Cabloy Start is optimized as a commercial baseline for more complex business systems while staying on the same Cabloy fullstack direction.
 
@@ -105,13 +105,13 @@ The editions intentionally diverge in several surfaces:
 - frontend flavor names
 - suite and module composition
 - admin/web SSR site baselines
-- licensed private-repo structure and Start-specific project assets
+- licensed private-repo structure and edition-specific project assets
 - rules, skills, and docs used for AI vibe coding
 
 For example:
 
 - **Cabloy Basic** provides the `cabloy-basic` suites and the `cabloyBasicAdmin` / `cabloyBasicWeb` Zova flavors
-- **Cabloy Start** provides the `cabloy-start` suites and the `cabloyStartAdmin` / `cabloyStartWeb` Zova flavors
+- **Cabloy Start** uses public flavors such as `cabloyStartAdmin` and `cabloyStartWeb`
 
 ## Why the repo markers matter
 

@@ -109,7 +109,7 @@ A practical rule is:
 This is especially important in Cabloy because the two editions diverge in frontend stack choices:
 
 - **Cabloy Basic** aligns with DaisyUI + TailwindCSS oriented examples
-- **Cabloy Start** aligns with Vuetify-oriented modules
+- **Cabloy Start** aligns with public Start guidance that is Vuetify-oriented
 
 A UI-library-independent styling layer makes it easier for the same architectural ideas to survive across both editions.
 

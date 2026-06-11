@@ -56,7 +56,7 @@ Its root script surface uses Start-specific flavors such as:
 - `cabloyStartAdmin`
 - `cabloyStartWeb`
 
-Because Start differs in UI layer, module composition, SSR site baselines, and project assets, do not reuse Basic integration examples without first confirming:
+Because Start can differ in UI layer, module composition, SSR site baselines, and project assets, do not reuse Basic integration examples without first confirming:
 
 1. the `__CABLOY_START__` marker
 2. the Start repo’s `package.json`

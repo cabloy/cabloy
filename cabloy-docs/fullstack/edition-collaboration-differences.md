@@ -26,7 +26,7 @@ The most important differences show up in:
 - frontend flavor names
 - frontend module composition
 - admin/web SSR site baselines
-- private value-add content and project assets in Cabloy Start
+- edition-specific private value-add content and project assets in Cabloy Start
 - potentially different generated output paths or integration details
 
 ## Cabloy Basic
