@@ -26,7 +26,7 @@ import { constants } from '../config/constants.js';
   return content;
 }
 
-export async function generateLocale1(modulePath: string, moduleName: string) {
+export async function generateLocale1(modulePath: string) {
   const files = await globby('src/config/locale/*.ts', { cwd: modulePath });
   if (files.length === 0) return '';
   files.sort();
@@ -39,21 +39,11 @@ export async function generateLocale1(modulePath: string, moduleName: string) {
     contentLocales.push(`  '${localeName}': ${className},`);
   }
   // combine
-  const content = `import type { TypeLocaleBase } from 'zova';
-import { useApp, useComputed } from 'zova';
-${contentImports.join('\n')}
+  const content = `${contentImports.join('\n')}
 
 export const locales = {
 ${contentLocales.join('\n')}
 };
-
-export function $useLocale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K, ...args: any[]) {
-  const app = useApp();
-  const str = \`${moduleName}::\${key}\`;
-  return useComputed(() => {
-    return app.meta.text(str, ...args);
-  });
-}
 `;
   return content;
 }

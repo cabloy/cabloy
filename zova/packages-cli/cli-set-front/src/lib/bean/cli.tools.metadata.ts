@@ -168,7 +168,7 @@ export class CliToolsMetadata extends BeanCliBase {
     const contentConstants = await generateConstant(modulePath);
     content += contentConstants;
     // locale
-    const contentLocales1 = await generateLocale1(modulePath, moduleName);
+    const contentLocales1 = await generateLocale1(modulePath);
     const contentLocales2 = await generateLocale2(contentLocales1);
     content += contentLocales2;
     // error
