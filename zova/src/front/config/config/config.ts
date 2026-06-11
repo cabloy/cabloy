@@ -39,7 +39,7 @@ export default function (sys: ZovaSys) {
   config.ssr = {
     cookie: env.SSR_COOKIE === 'true',
     withVona: env.SSR_WITH_VONA === 'true',
-    ignoreCookieOnServer: process.env.SERVER && env.SSR_COOKIE === 'false',
+    cookieDisabledOnServer: process.env.SERVER && env.SSR_COOKIE === 'false',
     hmr: env.SSR_WITH_VONA === 'true' && env.META_MODE === 'development',
   };
 

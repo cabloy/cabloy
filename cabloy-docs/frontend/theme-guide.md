@@ -259,6 +259,21 @@ Use this short template in PR review, code review, or AI review when a change to
 - [ ] For Cabloy Start, I verified the change respects Vuetify SSR state handoff and client reconstruction rather than reducing it to a Basic-style `data-theme`-only model.
 - [ ] I verified both server handoff and client hydration behavior for the active adapter.
 
+## Prompt-ready reviewer snippet
+
+Use this block directly in a reviewer-agent or code-review prompt when a change touches SSR theme behavior:
+
+```text
+Review this change with the Cabloy SSR theme rules in mind.
+
+1. Detect the active edition marker and UI library before assuming SSR theme behavior.
+2. Do not assume Cabloy Basic and Cabloy Start use the same adapter-level SSR theme handoff.
+3. In cookie-disabled Web SSR, do not treat server reads of $theme.dark, $theme.darkMode, or $token as final browser truth.
+4. Verify that adapter-specific theme finalization stays inside the existing theme handler or client boot path.
+5. Verify both server handoff and client hydration behavior for the active adapter.
+6. Flag any change that collapses Vuetify-based Start behavior into a Basic-style data-theme-only mental model.
+```
+
 ## Verification checklist
 
 When changing theme behavior or writing theme-sensitive SSR code, ask:

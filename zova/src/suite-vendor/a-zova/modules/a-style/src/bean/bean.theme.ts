@@ -82,7 +82,7 @@ export class BeanTheme extends BeanModelBase {
     // server emits both data-ssr-theme-dark-false/true markers and the browser can resolve the
     // final data-theme during bootstrap.
     await this._applyTheme();
-    if (this.sys.config.ssr.ignoreCookieOnServer) {
+    if (this.sys.config.ssr.cookieDisabledOnServer) {
       this.toggleDark();
       await this._applyTheme();
     }

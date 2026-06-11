@@ -39,7 +39,7 @@ export interface ZovaConfig {
   ssr: {
     cookie: boolean;
     withVona: boolean;
-    ignoreCookieOnServer: boolean;
+    cookieDisabledOnServer: boolean;
     hmr: boolean;
   };
   ws: {
