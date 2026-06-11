@@ -164,6 +164,7 @@ export class CtxSSRMetaStore extends BeanSimple {
           ssr_local_themedark=window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
         window.ssr_themedark=window.ssr_local_themedark=ssr_local_themedark;`;
+    // Resolve the final browser theme from the SSR dual markers emitted before page render.
     ssr_local_themedark += `Object.defineProperty(window, 'ssr_themedark_data', {
           get: () => {
             let _data=document.body.getAttribute('data-ssr-theme-dark-'+window.ssr_themedark);

@@ -78,6 +78,9 @@ export class BeanTheme extends BeanModelBase {
   }
 
   async _applyThemeWrapper() {
+    // When server-side theme cookies are disabled, apply twice during SSR initialization so the
+    // server emits both data-ssr-theme-dark-false/true markers and the browser can resolve the
+    // final data-theme during bootstrap.
     await this._applyTheme();
     if (this.sys.config.ssr.ignoreCookieOnServer) {
       this.toggleDark();

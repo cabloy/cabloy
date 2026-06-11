@@ -26,6 +26,7 @@ export class MetaThemeHandler extends BeanBase implements IThemeHandler {
     } else {
       // server
       if (!this.sys.config.ssr.cookie) {
+        // BeanTheme applies twice in SSR Web mode so both dark/light markers are available here.
         this.$useMeta({ bodyAttr: { [`data-ssr-theme-dark-${dark}`]: themeName } });
       } else {
         this.$useMeta({

@@ -20,6 +20,7 @@ export class ServiceSsrLayout extends BeanBase {
       this.ctx.meta.$ssr.context.onRendered((err?: Error) => {
         if (err) return;
         if (!this.sys.config.ssr.cookie) {
+          // Apply the final browser-selected theme from the SSR dual markers as early as possible.
           this.ctx.meta.$ssr.context._meta.bodyTags += `<script id="__prefersColorSchemeDarkJS">
             document.body.setAttribute('data-theme', window.ssr_themedark_data);
             if(window.ssr_local_themename==='home-theme:orange'){
