@@ -1,4 +1,4 @@
-import { BeanControllerBase, Use, useComputed, UseScope } from 'zova';
+import { BeanControllerBase, Use, UseScope } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { $QueryAutoLoad } from 'zova-module-a-model';
 import { ModelTabs, ModelTabsOptions, RouteTabInitial } from 'zova-module-a-routertabs';
@@ -37,7 +37,7 @@ export class ControllerLayoutWeb extends BeanControllerBase {
 
   protected async __init__() {
     // belowBreakpoint
-    this.belowBreakpoint = useComputed(() => {
+    this.belowBreakpoint = this.$computed(() => {
       let width;
       if (process.env.SERVER) {
         width = 0;
