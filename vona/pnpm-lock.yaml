@@ -19,13 +19,397 @@ importers:
 
   .:
     dependencies:
+      '@babel/core':
+        specifier: ^7.29.0
+        version: 7.29.7
+      '@babel/traverse':
+        specifier: ^7.29.0
+        version: 7.29.7
+      '@cabloy/deps':
+        specifier: workspace:^
+        version: link:packages-utils/deps
+      '@cabloy/json5':
+        specifier: workspace:^
+        version: link:packages-utils/json5
+      '@cabloy/module-info':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@cabloy/socket':
+        specifier: workspace:^
+        version: link:packages-utils/socket
+      '@cabloy/type-fest':
+        specifier: ^5.3.1
+        version: 5.3.1
+      '@cabloy/utils':
+        specifier: workspace:^
+        version: link:packages-utils/utils
+      '@cabloy/word-utils':
+        specifier: ^2.1.8
+        version: 2.1.14
+      '@cabloy/zod-openapi':
+        specifier: workspace:^
+        version: link:packages-utils/zod-openapi
+      '@cabloy/zod-to-openapi':
+        specifier: ^8.1.6
+        version: 8.1.6
+      '@sesamecare-oss/redlock':
+        specifier: ^1.4.0
+        version: 1.4.0(ioredis@5.11.1)
+      better-sqlite3:
+        specifier: ^12.9.0
+        version: 12.10.0
+      bignumber.js:
+        specifier: ^9.3.1
+        version: 9.3.1
+      boxen:
+        specifier: ^8.0.1
+        version: 8.0.1
+      bullmq:
+        specifier: ^5.74.1
+        version: 5.78.0
+      chalk:
+        specifier: ^5.6.2
+        version: 5.6.2
+      cli-table3:
+        specifier: ^0.6.5
+        version: 0.6.5
+      fs-extra:
+        specifier: ^11.3.4
+        version: 11.3.5
+      ioredis:
+        specifier: ^5.10.1
+        version: 5.11.1
+      knex:
+        specifier: ^3.2.9
+        version: 3.2.10(better-sqlite3@12.10.0)
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
+      mutate-on-copy:
+        specifier: ^1.1.8
+        version: 1.1.13
+      openapi3-ts:
+        specifier: ^4.5.0
+        version: 4.6.0
+      passport-oauth2:
+        specifier: ^1.8.0
+        version: 1.8.0
+      react:
+        specifier: ^19.2.5
+        version: 19.2.7
+      retry:
+        specifier: ^0.13.1
+        version: 0.13.1
+      table-identity:
+        specifier: workspace:^
+        version: link:packages-utils/table-identity
+      typestyle:
+        specifier: ^2.4.0
+        version: 2.4.0
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.1
       vona:
         specifier: workspace:^
         version: link:packages-vona/vona
+      vona-module-a-aspect:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-aspect
+      vona-module-a-aspectutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-aspectutils
+      vona-module-a-auth:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-auth/modules/a-auth
+      vona-module-a-bean:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-bean
+      vona-module-a-beanmutate:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-beanmutate
+      vona-module-a-body:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-body
+      vona-module-a-broadcast:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-broadcast
+      vona-module-a-cabloy:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-cabloy
+      vona-module-a-cache:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-cache
+      vona-module-a-caching:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-caching
+      vona-module-a-captcha:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-captcha/modules/a-captcha
+      vona-module-a-core:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-core
+      vona-module-a-datasharding:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-datasharding
+      vona-module-a-datasource:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-datasource
+      vona-module-a-election:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-election
+      vona-module-a-error:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-error
+      vona-module-a-event:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-event
+      vona-module-a-executor:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-executor
+      vona-module-a-hmr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-hmr
+      vona-module-a-hmrbase:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-hmrbase
+      vona-module-a-index:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-index
+      vona-module-a-instance:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-instance
+      vona-module-a-jwt:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-jwt
+      vona-module-a-locale:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-locale
+      vona-module-a-logger:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-logger
+      vona-module-a-mail:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-mail
+      vona-module-a-mailconfirm:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-mailconfirm
+      vona-module-a-menu:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-menu
+      vona-module-a-meta:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-meta
+      vona-module-a-onion:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-onion
+      vona-module-a-openapi:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-openapi
+      vona-module-a-openapischema:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-openapischema
+      vona-module-a-openapiutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-openapiutils
+      vona-module-a-orm:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-orm
+      vona-module-a-ormdialect:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-ormdialect
+      vona-module-a-ormutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-ormutils
+      vona-module-a-paypal:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-paypal/modules/a-paypal
+      vona-module-a-permission:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-permission
+      vona-module-a-play:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-play
+      vona-module-a-printtip:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-printtip
+      vona-module-a-queue:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-queue
+      vona-module-a-redis:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-redis
+      vona-module-a-redlock:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-redlock
+      vona-module-a-runtime:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-runtime
+      vona-module-a-schedule:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-schedule
+      vona-module-a-security:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-security
+      vona-module-a-serialization:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-serialization
+      vona-module-a-socket:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-socket
+      vona-module-a-ssr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-ssr
+      vona-module-a-ssrhmr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-ssrhmr
+      vona-module-a-startup:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-startup
+      vona-module-a-static:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-static
+      vona-module-a-status:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/a-status
+      vona-module-a-summer:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-summer
+      vona-module-a-swagger:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-swagger
+      vona-module-a-upload:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-upload
+      vona-module-a-user:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-user
+      vona-module-a-validation:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-validation
+      vona-module-a-version:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-version
+      vona-module-a-vona:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-vona
+      vona-module-a-web:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-web
+      vona-module-a-worker:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-worker
+      vona-module-a-zod:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-zod
+      vona-module-auth-oauth:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-auth/modules/auth-oauth
+      vona-module-auth-simple:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-auth/modules/auth-simple
+      vona-module-basic-siteadmin:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-siteadmin
+      vona-module-basic-siteweb:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-siteweb
+      vona-module-captcha-simple:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-captcha/modules/captcha-simple
+      vona-module-demo-basic:
+        specifier: workspace:^
+        version: link:src/suite/a-demo/modules/demo-basic
+      vona-module-demo-student:
+        specifier: workspace:^
+        version: link:src/module/demo-student
+      vona-module-home-base:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-base
+      vona-module-home-index:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-index
+      vona-module-home-user:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-user
+      vona-module-test-auth:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-auth
+      vona-module-test-cabloy:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-cabloy
+      vona-module-test-captcha:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-captcha
+      vona-module-test-rest:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-rest
+      vona-module-test-ssr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-ssr
+      vona-module-test-vona:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-test/modules/test-vona
+      vona-shared:
+        specifier: workspace:^
+        version: link:packages-vona/vona-shared
+      winston:
+        specifier: ^3.19.0
+        version: 3.19.0
+      winston-transport:
+        specifier: ^4.9.0
+        version: 4.9.0
+      zod:
+        specifier: npm:@cabloy/zod@4.3.6
+        version: '@cabloy/zod@4.3.6'
+      zova-rest-cabloy-basic-admin:
+        specifier: file:./.zova-rest/cabloy-basic-admin
+        version: file:.zova-rest/cabloy-basic-admin(typescript@5.9.3)
+      zova-rest-cabloy-basic-web:
+        specifier: file:./.zova-rest/cabloy-basic-web
+        version: file:.zova-rest/cabloy-basic-web(typescript@5.9.3)
+      zova-rest-test-second:
+        specifier: file:./.zova-rest/test-second
+        version: file:.zova-rest/test-second(typescript@5.9.3)
     devDependencies:
+      '@cabloy/cli':
+        specifier: workspace:^
+        version: link:packages-cli/cabloy-cli
       '@cabloy/lint':
         specifier: workspace:^
         version: link:packages-utils/lint
+      '@swc/core':
+        specifier: ^1.15.26
+        version: 1.15.41(@swc/helpers@0.5.23)
+      '@swc/helpers':
+        specifier: ^0.5.21
+        version: 0.5.23
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
+      '@types/babel__traverse':
+        specifier: ^7.28.0
+        version: 7.28.0
+      '@types/koa':
+        specifier: ^3.0.2
+        version: 3.0.3
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.1
+      '@types/node':
+        specifier: ^22.19.17
+        version: 22.19.21
+      '@types/react':
+        specifier: npm:@cabloy/types-react@^19.2.16
+        version: '@cabloy/types-react@19.2.16'
+      '@types/retry':
+        specifier: ^0.12.5
+        version: 0.12.5
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      gogocode:
+        specifier: ^1.0.55
+        version: 1.0.55(vue@3.5.38(typescript@5.9.3))
       oxfmt:
         specifier: ^0.45.0
         version: 0.45.0
@@ -47,6 +431,21 @@ importers:
       textlint-rule-period-in-list-item:
         specifier: ^1.0.1
         version: 1.0.1
+      ts-node-maintained:
+        specifier: ^10.9.6
+        version: 10.9.6(@swc/core@1.15.41(@swc/helpers@0.5.23))(@types/node@22.19.21)(typescript@5.9.3)
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vona-mock:
+        specifier: workspace:^
+        version: link:packages-vona/vona-mock
+      why-is-node-running:
+        specifier: ^3.2.2
+        version: 3.2.2
 
   packages-cli/cabloy-cli:
     dependencies:
@@ -280,7 +679,7 @@ importers:
     devDependencies:
       vitepress:
         specifier: ^1.6.4
-        version: 1.6.4(@algolia/client-search@5.53.0)(@types/node@22.19.21)(axios@1.17.0)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3)
+        version: 1.6.4(@algolia/client-search@5.53.0)(@cabloy/types-react@19.2.16)(@types/node@22.19.21)(axios@1.17.0)(postcss@8.5.15)(react@19.2.7)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3)
 
   packages-utils/babel-plugin-vona-bean-module:
     dependencies:
@@ -1727,7 +2126,7 @@ importers:
     dependencies:
       bullmq:
         specifier: ^5.74.1
-        version: 5.78.0(supports-color@5.5.0)
+        version: 5.78.0
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1740,7 +2139,7 @@ importers:
     dependencies:
       ioredis:
         specifier: ^5.10.1
-        version: 5.11.1(supports-color@5.5.0)
+        version: 5.11.1
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2290,9 +2689,16 @@ packages:
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
 
+  '@cabloy/json-schema-to-zod@2.6.4':
+    resolution: {integrity: sha512-7CcifAN5S+29zqvDTvBB/QQH9vwNno8AVKG/hcZPveaiYWtbQO6e7OeYtbor5KccAZUr5j/SUoNmsXr3DYprFw==}
+    hasBin: true
+
   '@cabloy/koa-static-cache@6.0.1':
     resolution: {integrity: sha512-B7dF43O1gE5Whwn+MwNanjXZUTqpv/e2TmKIyyzdcVjH6o7ENesebxiDXJAAjkX6dpg3Bijpq6acBE38VKGJSQ==}
     engines: {node: '>= 7.6.0'}
+
+  '@cabloy/logger@1.1.21':
+    resolution: {integrity: sha512-jjP4LQgnwbbWYznXTfmg+QMVJ+HzKIXPlM4n0erm/vjwKZbkk6D3aO7RquaRb9BzdBMUmhx8h2ePdmL4JVSgQw==}
 
   '@cabloy/module-info@2.0.0':
     resolution: {integrity: sha512-ArN0/Ei4LH2LklWB2fy4+DVvli56A0m4mZPnKnQYoXEfkMtXChxbNDm6DZScY57lfTSyx7ZfGTgNVEbxF6VwYg==}
@@ -2307,6 +2713,31 @@ packages:
 
   '@cabloy/types-react@19.2.16':
     resolution: {integrity: sha512-S1zDQ3LTbZGX2Vy3q+ZEcsbr0XYvIW9hcZjxX/fw0W7sG2+zBIBqfWOlMooFtkC8FZ2WVWk/8I1YmlM2axcRyQ==}
+
+  '@cabloy/vue-compiler-sfc@3.5.14':
+    resolution: {integrity: sha512-NI5Okgmwl3BoG3Y2P3OiWXdmZedU1yQsVnCdg7WgtUUCXRzQ3b0ztQW2JQUZJXPF4CplKD41id3h/2vk+5jkXQ==}
+
+  '@cabloy/vue-reactivity@3.5.16':
+    resolution: {integrity: sha512-ayPU0OlQgfnLvc60+cXtwNmlgH+mQo/MMZF/EE35lDayl+IGPiG3uvfTjQzcPg4HwHy3sYzA+BuiuDs+kWWEug==}
+
+  '@cabloy/vue-router@4.4.16':
+    resolution: {integrity: sha512-IMYKjiNQFhLasA6rO/fDbM0zEhY37/noTJVpEo5t9I2CiMlQx8QB58wCrqtXhItzJT9cSpsv+DChwuJKJnjBNQ==}
+    peerDependencies:
+      vue: ^3.2.0
+
+  '@cabloy/vue-runtime-core@3.5.17':
+    resolution: {integrity: sha512-w39bfYpGkIRQSQmwX2sHHw/p1JvwbThfZUN6VqY1juyoNNGCzvIHzBJzgp8vRgzDYnb9FhDQR+Yw27SQN7Ts7A==}
+
+  '@cabloy/vue-runtime-core@3.5.57':
+    resolution: {integrity: sha512-1I/bhSEBE1DRL5OUaU8meV0yl602O0zGJSMbtd2SCRwUmOwXc7BN3VuUrZhERckUjcdCd2pdhPvVzB0cRe94VA==}
+
+  '@cabloy/vue-runtime-dom@3.5.13':
+    resolution: {integrity: sha512-Wn66YnEk3ySzYe8iuFF9Nx7lt0Qeaks4HkgpC3AzUzOnBgqCvuf9+gxLvUe9o2YNPG3ViwV0K8IW69i2Llvo2g==}
+
+  '@cabloy/vue-server-renderer@3.5.18':
+    resolution: {integrity: sha512-9cvaMJ/xNlylgQjvE9CD+g+gJFXPrxBnpykqD9RHR64Mhx7yDJp9331NR9FbzmZbZkezJckKJblXwEeJbFv2Vg==}
+    peerDependencies:
+      vue: 3.5.13
 
   '@cabloy/word-utils@2.1.14':
     resolution: {integrity: sha512-ZS6ox9WimK8jZ8vaiiZAI1jLWgr5lRpeLRdbkh6+MR70ktf6hdyKx+Ny0On4F+CTP+rzYioqNwlWL1NmFKZ3eg==}
@@ -3253,6 +3684,10 @@ packages:
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
 
+  '@sindresorhus/merge-streams@2.3.0':
+    resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
+    engines: {node: '>=18'}
+
   '@sindresorhus/merge-streams@4.0.0':
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
@@ -3361,6 +3796,64 @@ packages:
 
   '@swc/types@0.1.26':
     resolution: {integrity: sha512-lyMwd7WGgG79RS7EERZV3T8wMdmPq3xwyg+1nmAM64kIhx5yl+juO2PYIHb7vTiPgPCj8LYjsNV2T5wiQHUEaw==}
+
+  '@tanstack/devtools-event-client@0.4.3':
+    resolution: {integrity: sha512-OZI6QyULw0FI0wjgmeYzCIfbgPsOEzwJtCpa69XrfLMtNXLGnz3d/dIabk7frg0TmHo+Ah49w5I4KC7Tufwsvw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@tanstack/form-core@1.33.0':
+    resolution: {integrity: sha512-AV4Pw9Dk4orFsuPBcDssfWMJFs+yMYBae7zZ4oTqrCf4ftNGQKxvrQRZeqKHG6A4TkiLeSvf2kzIjcVkrW7E6w==}
+
+  '@tanstack/match-sorter-utils@8.19.4':
+    resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
+    engines: {node: '>=12'}
+
+  '@tanstack/pacer-lite@0.1.1':
+    resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
+    engines: {node: '>=18'}
+
+  '@tanstack/query-core@5.101.0':
+    resolution: {integrity: sha512-cQetA74EB+seWySv1TTKr828TnP0u39m6LykwDXIo84SNortpDkp30TMEjkqtYCNP9c40uT/iwl6MLiufEt0Ow==}
+
+  '@tanstack/query-persist-client-core@5.101.0':
+    resolution: {integrity: sha512-LH99WepGVLwlLfuOcQcPK7f3Xg/Gf+xlMMIj9xWu/8oQ3egnDzjr+a4HvEmi6PGob5SmGXvmDKZaH5+In9dzjw==}
+
+  '@tanstack/store@0.11.0':
+    resolution: {integrity: sha512-WlzzCt3xi0G6pCAJu1U+2jiECwabETDpQDi3hfkFZvJii9AuZqEKbOiVarX1/bWhTNjU486yQtJCCasi/0q+Cw==}
+
+  '@tanstack/table-core@8.21.3':
+    resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
+    engines: {node: '>=12'}
+
+  '@tanstack/vue-form@1.33.0':
+    resolution: {integrity: sha512-ZdVDo4W2ohL27bCjsuNy/eQ8PHm9mOzCFNfI7d6GfhS5KHqehZ8TiR/y1eRJR/c1y3nucgSi6RfY6iLHBMVhAQ==}
+    peerDependencies:
+      vue: ^3.4.0
+
+  '@tanstack/vue-query@5.101.0':
+    resolution: {integrity: sha512-sZeW0RvfEZ9QRiaXirE/HQZsFT5saMlPZVfeYvjPX6lqSBS9lkD7wfnCfzOBns6HD2f34Gx9cazkuU3Xj6hl/A==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@tanstack/vue-store@0.11.0':
+    resolution: {integrity: sha512-w1lE4D7oo6nIUhTQvL/RoTgcvoYJw+KvttWPNJd/Xu+MvNxMnjxFF/LgFp9vwmbNbiGhGCg3ZoPJptwjrfwNYw==}
+    peerDependencies:
+      '@vue/composition-api': ^1.2.1
+      vue: ^2.5.0 || ^3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@tanstack/vue-table@8.21.3':
+    resolution: {integrity: sha512-rusRyd77c5tDPloPskctMyPLFEQUeBzxdQ+2Eow4F7gDPlPOB1UnnhzfpdvqZ8ZyX2rRNGmqNnQWm87OI2OQPw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      vue: '>=3.2'
 
   '@textlint/ast-node-types@15.7.1':
     resolution: {integrity: sha512-Wii5UgUKFEh9Uv6wbq1zr4/Kf+dtjiUuzPrrXzKp8H+ifkvKNzi23V4Nz+6wVyHQn5T28AFuc8VH8OtzvGYecA==}
@@ -3487,6 +3980,9 @@ packages:
 
   '@types/http-proxy@1.17.17':
     resolution: {integrity: sha512-ED6LB+Z1AVylNTu7hdzuBqOgMnvG/ld6wGCG8wFnAzKX5uyW2K3WD52v0gnLCTK/VLpXtKckgWuyScYK6cSPaw==}
+
+  '@types/js-cookie@3.0.6':
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -3648,6 +4144,9 @@ packages:
   '@vue/compiler-core@3.0.11':
     resolution: {integrity: sha512-6sFj6TBac1y2cWCvYCA8YzHJEbsVkX7zdRs/3yK/n1ilvRqcn983XvpBbnN3v4mZ1UiQycTvOiajJmOgN9EVgw==}
 
+  '@vue/compiler-core@3.5.13':
+    resolution: {integrity: sha512-oOdAkwqUfW1WqpwSYJce06wvt6HljgY3fGeM9NcVA1HaYOij3mZG9Rkysn0OHuyUAGMbEbARIpsG+LPVlBJ5/Q==}
+
   '@vue/compiler-core@3.5.36':
     resolution: {integrity: sha512-Rg/em6SGNTiModVh1PZOZ9d5xoPlr7zU2oQIAdDFtf6RM8paLYnpm9K0oSuu9JGeDJXDUbU3zXTeuJ14b+TXdQ==}
 
@@ -3659,6 +4158,9 @@ packages:
 
   '@vue/compiler-ssr@3.5.36':
     resolution: {integrity: sha512-XhbkQT99n2xS1N8dboXS/w8ku8h9gUaSor/WnxZs46iH4vtVcuKVuWi3njC8AYrqb8YUT3M4VMFcaDUb9eSTEg==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/devtools-api@7.7.9':
     resolution: {integrity: sha512-kIE8wvwlcZ6TJTbNeU2HQNtaxLx3a84aotTITUuL/4bzfPxzajGBOoqjMhwZJ8L9qFYDU/lAYMEEm11dnZOD6g==}
@@ -4277,11 +4779,17 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
+  csstype@2.6.21:
+    resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
+
   csstype@3.0.10:
     resolution: {integrity: sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==}
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
+
+  csx@10.0.2:
+    resolution: {integrity: sha512-u4Ay+Q7yXQvMtaevcxO9AQ24AP9L4Poym9bLt1gUI1VMJ9czKcfmog+X4j4wSfVHaD0GsXcxpYK7FgH637d5UQ==}
 
   dargs@7.0.0:
     resolution: {integrity: sha512-2iy1EkLdlBzQGvbweYRFxmFath8+K7+AKB0TlhHWkNuH+TmovaMH/Wp7V7R4u7f4SnX3OgLsU9t1NI9ioDnUpg==}
@@ -4354,6 +4862,9 @@ packages:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
     engines: {node: '>= 0.4'}
 
+  defu@6.1.7:
+    resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
+
   delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
@@ -4390,6 +4901,9 @@ packages:
 
   detect-node@2.1.0:
     resolution: {integrity: sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==}
+
+  devalue@5.8.1:
+    resolution: {integrity: sha512-4CXDYRBGqN+57wVJkuXBYmpAVUSg3L6JAQa/DFqm238G73E1wuyc/JhGQJzN7vUf/CMphYau2zXbfWzDR5aTEw==}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -4470,6 +4984,10 @@ packages:
   enquirer@2.4.1:
     resolution: {integrity: sha512-rRqJg/6gd538VHvR3PSrdRBb/1Vy2YfzHqzvbhGIQpDRKIa4FgV/54b5Q1xYSxOOwKvjXweS26E0Q+nAMwp2pQ==}
     engines: {node: '>=8.6'}
+
+  entities@4.5.0:
+    resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
+    engines: {node: '>=0.12'}
 
   entities@7.0.1:
     resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
@@ -4937,6 +5455,10 @@ packages:
     resolution: {integrity: sha512-sepffkT8stwnIYbsMBpoCHJuJM5l98FUF2AnE07hfvE0m/qp3R586hw4jF4uadbhvg1ooIdzuu7CsfD2jzCaNA==}
     engines: {node: '>=18'}
 
+  globby@14.1.0:
+    resolution: {integrity: sha512-0Ia46fDOaT7k4og1PDW4YbodWWr3scS2vAr2lTbsplOt2WkKp0vQbkI9wKis/T5LV/dqPjO3bpS/z6GTJB82LA==}
+    engines: {node: '>=18'}
+
   globby@16.2.0:
     resolution: {integrity: sha512-QrJia2qDf5BB/V6HYlDTs0I0lBahyjLzpGQg3KT7FnCdTonAyPy2RtY802m2k4ALx6Dp752f82WsOczEVr3l6Q==}
     engines: {node: '>=20'}
@@ -5084,6 +5606,9 @@ packages:
   ignore@7.0.5:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
+
+  immediate@3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
 
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
@@ -5453,9 +5978,15 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
+  lie@3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+
   loader-utils@1.4.2:
     resolution: {integrity: sha512-I5d00Pd/jwMD2QCduo657+YM/6L3KZu++pmX9VFncxaxvHcru9jx1lBaFft+r4Mt2jK0Yhp41XlRAihzPxHNCg==}
     engines: {node: '>=4.0.0'}
+
+  localforage@1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
 
   locate-path@3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
@@ -6137,6 +6668,10 @@ packages:
   path-to-regexp@8.4.2:
     resolution: {integrity: sha512-qRcuIdP69NPm4qbACK+aDogI5CBDMi1jKe0ry5rSQJz8JVLsC7jV8XpiJjGRLLol3N+R5ihGYcrPLTno6pAdBA==}
 
+  path-type@6.0.0:
+    resolution: {integrity: sha512-Vj7sf++t5pBD637NSfkxpHSMfWaeig5+DKWLhcqIYx6mWQz5hdJTGDVMQiJcw1ZYkhs7AazKDGpRVji1LJCZUQ==}
+    engines: {node: '>=18'}
+
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
 
@@ -6462,6 +6997,9 @@ packages:
 
   remark-parse@9.0.0:
     resolution: {integrity: sha512-geKatMwSzEXKHuzBNU1z676sGcDcFoChMK38TgdHJNAYfFtsfHDQG7MoJAjs6sgYMqyLduCYWDIWZIxiPeafEw==}
+
+  remove-accents@0.5.0:
+    resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
   repeat-string@1.6.1:
     resolution: {integrity: sha512-PV0dzCYDNfRi1jCDbJzpW7jNNDRuCOG/jI5ctQcGKt/clZD+YcPS3yIlWuTJMmESC8aevCFmWJy5wjAFgNqN6w==}
@@ -7007,6 +7545,10 @@ packages:
     resolution: {integrity: sha512-lRfVq8fE8gz6QMBuDM6a+LO3IAzTi05H6gCVaUpir2E1Rwpo4ZUog45KpNXKC/Mn3Yb9UDuHumeFTo9iV/D9FQ==}
     engines: {node: '>=18'}
 
+  unicorn-magic@0.3.0:
+    resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
+    engines: {node: '>=18'}
+
   unicorn-magic@0.4.0:
     resolution: {integrity: sha512-wH590V9VNgYH9g3lH9wWjTrUoKsjLF6sGLjhR4sH1LWpLmCOH0Zf7PukhDA8BiS7KHe4oPNkcTHqYkj7SOGUOw==}
     engines: {node: '>=20'}
@@ -7154,11 +7696,27 @@ packages:
       postcss:
         optional: true
 
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@10.4.1:
     resolution: {integrity: sha512-Gk6gRDj0n/fkRa3C3l0bBheoBckUq/Rs0F/TvMWIS6nzzx67amAViMe9CkNgsP2tXyQONvGiHQESHwFtZ3aYDA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+
+  vue-plugin-render-freeze@2.0.4:
+    resolution: {integrity: sha512-XFkSsG+Ur5XGNQe7rCOqiqDRChhs2lD+QJxQu5dbt9mcOt9A/x0SpQN96MBhaiQ4Mq+Ie2AM9epnBFW7Z4vo9A==}
+    peerDependencies:
+      vue: ^3.5.13
 
   vue3-browser-compiler-yx@1.0.4:
     resolution: {integrity: sha512-F42+9OGvZT83zOPCp0jycA76ZEozv7DTaYkVVGdpf+Syjh/S/8xj/GRnJ+P8/AkfpHoCOR2WAZupDJS6/qS4OQ==}
@@ -7316,6 +7874,105 @@ packages:
     resolution: {integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==}
     peerDependencies:
       zod: ^3.25.28 || ^4
+
+  zova-core@5.1.50:
+    resolution: {integrity: sha512-a8NxrTnJANAH0CcxcnehCidcdj7ne4SNqyCM1FaYIUUUOellt6oogZC+qvwXJJzdObM7S7dUpqtcgnIkbyGoJw==}
+
+  zova-jsx@1.1.56:
+    resolution: {integrity: sha512-N72THj7U6Nh/CLeTq4M5cTyMz6AuJhFSRwHFmzOQloG2WHgtj+6L1DfSGkfuATrPJ58KKRFTD1Lf3xVtu34Lvw==}
+
+  zova-module-a-api@5.1.15:
+    resolution: {integrity: sha512-eFgC1VVH7hUsOOWfpVg7IkV+yetWesOcSCW5ud7dddBnlr09Ip+/FmVrfpBU/qRVNjQB7maMElzmQpCjMlewIQ==}
+
+  zova-module-a-app@5.1.18:
+    resolution: {integrity: sha512-WVD+bjV68pFG4CHf5LKvjeN6jxCm+C3maSbHXZEJVhxt5AuQecAatfV99tDBAJ8AHvnswMbmkVXbBxBXHGPRHA==}
+
+  zova-module-a-bean@5.1.25:
+    resolution: {integrity: sha512-YtGx0R6+MwwvcTcmlrjo+BZXrDntWtBzxe0Qms4hM55RjPdLgh7QINi99swwsc+HwCIpsPdBYdebh9Rr+HIjew==}
+
+  zova-module-a-behavior@5.1.19:
+    resolution: {integrity: sha512-oEQ/pjNEvmSp1NFk2tfrAwcKa80MXQ0X7o33583mTimCJff4AWCWcCk8h/6z638KIABPD45GtvihvJwYFqzCHA==}
+
+  zova-module-a-behaviors@5.1.15:
+    resolution: {integrity: sha512-qR7UG2lxcjX7Mfoj63VX4lxuDprUGdTu0u0GYLI02ci3LHAr0ix5Hf8rP6dIU7IMDqwccbDtnngX6MStWvzBVQ==}
+
+  zova-module-a-boundary@5.1.15:
+    resolution: {integrity: sha512-BoV9ARu+wXIYAgsvTUSilMgWjqveeS97pVLhPXTh3Dlvv+WRxQ3Sf+2eTjYmuFPT7KXTuiRfcctFzuasC0LK9A==}
+
+  zova-module-a-command@5.1.26:
+    resolution: {integrity: sha512-uJww5s+kXlUUmQXdhuM+mMs+ZfteH0sKqR05wnMelqnGfL2Q9tq7GmC+V9/U9S9ZFCHbFcN2YKTG9RWFxqzltQ==}
+
+  zova-module-a-fetch@5.1.17:
+    resolution: {integrity: sha512-9HmYNpA8m93BP32iUhWwxxYc9el4fx5Y/vNB4j+siA+O4h4A5YRYDoV8nxACLiItfBgzNLPa+6ZkwI5OLstFqA==}
+
+  zova-module-a-form@5.1.32:
+    resolution: {integrity: sha512-X/o2WJ7gjwLiLsFCBxGhq9kMXAH18PLvn9WACPdnZLrAFlZwW+7du8ns7QaHnZCZKMqTVNA8IhNzR4y2yOZ6+Q==}
+
+  zova-module-a-icon@5.1.20:
+    resolution: {integrity: sha512-roNmo1qc0F2Tg6brKLUtozZYlXtidAaDSt5AzUy0/OtPBxL1ysCFjKQKp48NQjjV5Y0r/bsmqjX7357fX8IoSQ==}
+
+  zova-module-a-interceptor@5.1.23:
+    resolution: {integrity: sha512-CI7SZWI8Hbq8IIPEnFPdeF5GtL8o03uv2qwoxEBMX2RHtd+ZaRSLzcwu7WRg4ZX6ue+TJM8Y1jpM/pZ/tn4Kwg==}
+
+  zova-module-a-logger@5.1.20:
+    resolution: {integrity: sha512-fh9Gsb6FjuDO1UwWRbI1WQ2/KyhevkgKfh0x7fHfFWWwU0eA02N1HieRKa9wmRzQprMGXQadq2IX/sOu2UVpjQ==}
+
+  zova-module-a-meta@5.1.15:
+    resolution: {integrity: sha512-CIs5TYr33YgHxXDbkNsj7uUY1nq3moX9YmLtA9Kwd996P/bXu0eTxoFHHUgMWZhksAqSHccxFOH/JVSSOENYPg==}
+
+  zova-module-a-model@5.1.24:
+    resolution: {integrity: sha512-7vhwsl8ur7RtBOZT9Q2nWWdW4fIFmBW3sDKvJo+R3qWcqAWyUNZJUTwchz4go/BJPYc1hr4tFyXDmYQhoJswaQ==}
+
+  zova-module-a-openapi@5.1.31:
+    resolution: {integrity: sha512-CWHTwavRescWI4OsjypWEeoE/o4QRgqRX5eb55WVVAIiUkTxN+mrOZcqFqYSLeVILhNnOK5AroOyQoRfeoQstw==}
+
+  zova-module-a-router@5.1.23:
+    resolution: {integrity: sha512-CUI/vG1vILko8FIQiMvRFG5pXNyTh+SjUHVq4OJaN2YKkS6mIsxZRc02fM0D7t2vuQzfu2T5LWRHl9LJpruYOg==}
+
+  zova-module-a-routerstack@5.1.20:
+    resolution: {integrity: sha512-KPOu+wflcFywuvI0IsvAu6rkqih72wNDk5UOY8JO7e+45nwxL5nk3T7WPllkGDEvxDCenh4ScDk+6SELrhDt9Q==}
+
+  zova-module-a-routertabs@5.1.25:
+    resolution: {integrity: sha512-nzQRIL1M+fFO6CUsLeyIbVW/tkqXqhhg7dAJ0+wPyKonXS+5m496F4YsfUIsduPQ1JXOvlHCv1jemjc9ZyHWAg==}
+
+  zova-module-a-ssr@5.1.20:
+    resolution: {integrity: sha512-ER8aS3LRR/MCn3zw3/P3p9F0w0lI4vpX3SSDkuMlOaZzr0dmEnB8jBJG8exkubtN55F4CRhCdSYyPdOYEfe6qA==}
+
+  zova-module-a-ssrhmr@5.1.16:
+    resolution: {integrity: sha512-HeJm3IUoWKa6x0SFkhBwYzVEtNGFZjPjmkL2TA+J05pfYTxbrMui+QR/wmPiYEub2ERm4aARSZuRe7zx1aCXkg==}
+
+  zova-module-a-ssrserver@5.1.16:
+    resolution: {integrity: sha512-6eciDPwdNTbMFJFKoNMW9fhYAtbkPjw5TojFNWNU/3/I3Wq+PbQlQgbBVSX6bObST7VI0ZOn0X2gZcZHmWrrGg==}
+
+  zova-module-a-style@5.1.26:
+    resolution: {integrity: sha512-G/uYbRPqZ/ZdJeABPlcAyKn+SkG9Qm3h6N7gLjGkvTKaSRFaD2SndIVJIrRW9lDQBfLpJzCQHwdwcZtBBW4Pag==}
+
+  zova-module-a-table@5.1.27:
+    resolution: {integrity: sha512-AvEBRtmvkyTNZOwNHXagu32HI0tZQgf9XIw0E7xZWkUPcmp1aFGX6P+9jKr2tcLSMWa4X7Y4SLDx8J9ums4LMA==}
+
+  zova-module-a-zod@5.1.24:
+    resolution: {integrity: sha512-8Xrl2QO3QQESZdDWFn6vkJcpTlsh1tGHth9WOqfHvtEp/x/uafPV+lrTfhE48Go6JoMdk1/eB4/gmLmahYwvmw==}
+
+  zova-module-a-zova@5.1.62:
+    resolution: {integrity: sha512-ObbpgKQWbMClgGho6S7E58waRVXiPLb5pZUAsJoarLpuqKJg/aGG/T4qbs7/YNg0Mu/ThzO4bzgADmJmqe+JyQ==}
+
+  zova-module-rest-resource@5.1.32:
+    resolution: {integrity: sha512-cB9/44Q1/HhG4ved4bTgXGLNnOVGU5BDIj59ZCSvXMCZpTZPKd2zSd4rIBM1ovKvMmTAcFP5yfNQeqDlBZuNTw==}
+
+  zova-rest-cabloy-basic-admin@file:.zova-rest/cabloy-basic-admin:
+    resolution: {directory: .zova-rest/cabloy-basic-admin, type: directory}
+
+  zova-rest-cabloy-basic-web@file:.zova-rest/cabloy-basic-web:
+    resolution: {directory: .zova-rest/cabloy-basic-web, type: directory}
+
+  zova-rest-test-second@file:.zova-rest/test-second:
+    resolution: {directory: .zova-rest/test-second, type: directory}
+
+  zova-suite-a-zova@5.1.94:
+    resolution: {integrity: sha512-+RYJv6viW+EbSX2YUGDr3ZWOsv0RTJuCm4c1eTCivinZkse2VOqLpBKtaNcC+KuUvLqd+EvKauhPthMBHZ6abw==}
+
+  zova@5.1.95:
+    resolution: {integrity: sha512-Zc2pELSrxgMRB/lEraHJff8PJVIjAyLY0kPBIwzO6ZHR4+GmI594XPpHz7XpyulysFT15fkFWfx7rl6NO4XM9A==}
 
   zwitch@1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
@@ -7715,6 +8372,8 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
+  '@cabloy/json-schema-to-zod@2.6.4': {}
+
   '@cabloy/koa-static-cache@6.0.1':
     dependencies:
       compressible: 2.0.18
@@ -7724,6 +8383,11 @@ snapshots:
       mz: 2.7.0
     transitivePeerDependencies:
       - supports-color
+
+  '@cabloy/logger@1.1.21':
+    dependencies:
+      '@cabloy/localeutil': link:packages-utils/localeutil
+      fecha: 4.2.3
 
   '@cabloy/module-info@2.0.0': {}
 
@@ -7745,6 +8409,50 @@ snapshots:
   '@cabloy/types-react@19.2.16':
     dependencies:
       csstype: 3.2.3
+
+  '@cabloy/vue-compiler-sfc@3.5.14':
+    dependencies:
+      '@babel/parser': 7.29.7
+      '@vue/compiler-core': 3.5.13
+      '@vue/compiler-dom': 3.5.36
+      '@vue/compiler-ssr': 3.5.36
+      '@vue/shared': 3.5.36
+      estree-walker: 2.0.2
+      magic-string: 0.30.21
+      postcss: 8.5.15
+      source-map-js: 1.2.1
+
+  '@cabloy/vue-reactivity@3.5.16':
+    dependencies:
+      '@vue/shared': 3.5.36
+
+  '@cabloy/vue-router@4.4.16(vue@3.5.38(typescript@5.9.3))':
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.38(typescript@5.9.3)
+
+  '@cabloy/vue-runtime-core@3.5.17':
+    dependencies:
+      '@vue/reactivity': '@cabloy/vue-reactivity@3.5.16'
+      '@vue/shared': 3.5.36
+
+  '@cabloy/vue-runtime-core@3.5.57':
+    dependencies:
+      '@vue/reactivity': '@cabloy/vue-reactivity@3.5.16'
+      '@vue/shared': 3.5.36
+
+  '@cabloy/vue-runtime-dom@3.5.13':
+    dependencies:
+      '@vue/reactivity': '@cabloy/vue-reactivity@3.5.16'
+      '@vue/runtime-core': '@cabloy/vue-runtime-core@3.5.17'
+      '@vue/shared': 3.5.36
+      csstype: 3.2.3
+
+  '@cabloy/vue-server-renderer@3.5.18(vue@3.5.38(typescript@5.9.3))':
+    dependencies:
+      '@vue/compiler-ssr': 3.5.36
+      '@vue/shared': 3.5.36
+      vue: 3.5.38(typescript@5.9.3)
 
   '@cabloy/word-utils@2.1.14': {}
 
@@ -7783,9 +8491,9 @@ snapshots:
 
   '@docsearch/css@3.8.2': {}
 
-  '@docsearch/js@3.8.2(@algolia/client-search@5.53.0)(search-insights@2.17.3)':
+  '@docsearch/js@3.8.2(@algolia/client-search@5.53.0)(@cabloy/types-react@19.2.16)(react@19.2.7)(search-insights@2.17.3)':
     dependencies:
-      '@docsearch/react': 3.8.2(@algolia/client-search@5.53.0)(search-insights@2.17.3)
+      '@docsearch/react': 3.8.2(@algolia/client-search@5.53.0)(@cabloy/types-react@19.2.16)(react@19.2.7)(search-insights@2.17.3)
       preact: 10.29.2
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -7794,13 +8502,15 @@ snapshots:
       - react-dom
       - search-insights
 
-  '@docsearch/react@3.8.2(@algolia/client-search@5.53.0)(search-insights@2.17.3)':
+  '@docsearch/react@3.8.2(@algolia/client-search@5.53.0)(@cabloy/types-react@19.2.16)(react@19.2.7)(search-insights@2.17.3)':
     dependencies:
       '@algolia/autocomplete-core': 1.17.7(@algolia/client-search@5.53.0)(algoliasearch@5.53.0)(search-insights@2.17.3)
       '@algolia/autocomplete-preset-algolia': 1.17.7(@algolia/client-search@5.53.0)(algoliasearch@5.53.0)
       '@docsearch/css': 3.8.2
       algoliasearch: 5.53.0
     optionalDependencies:
+      '@types/react': '@cabloy/types-react@19.2.16'
+      react: 19.2.7
       search-insights: 2.17.3
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -8413,7 +9123,7 @@ snapshots:
 
   '@sesamecare-oss/redlock@1.4.0(ioredis@5.11.1)':
     dependencies:
-      ioredis: 5.11.1(supports-color@5.5.0)
+      ioredis: 5.11.1
 
   '@shikijs/core@2.5.0':
     dependencies:
@@ -8454,6 +9164,8 @@ snapshots:
       '@types/hast': 3.0.4
 
   '@shikijs/vscode-textmate@10.0.2': {}
+
+  '@sindresorhus/merge-streams@2.3.0': {}
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
@@ -8536,6 +9248,57 @@ snapshots:
   '@swc/types@0.1.26':
     dependencies:
       '@swc/counter': 0.1.3
+
+  '@tanstack/devtools-event-client@0.4.3': {}
+
+  '@tanstack/form-core@1.33.0':
+    dependencies:
+      '@tanstack/devtools-event-client': 0.4.3
+      '@tanstack/pacer-lite': 0.1.1
+      '@tanstack/store': 0.11.0
+
+  '@tanstack/match-sorter-utils@8.19.4':
+    dependencies:
+      remove-accents: 0.5.0
+
+  '@tanstack/pacer-lite@0.1.1': {}
+
+  '@tanstack/query-core@5.101.0': {}
+
+  '@tanstack/query-persist-client-core@5.101.0':
+    dependencies:
+      '@tanstack/query-core': 5.101.0
+
+  '@tanstack/store@0.11.0': {}
+
+  '@tanstack/table-core@8.21.3': {}
+
+  '@tanstack/vue-form@1.33.0(vue@3.5.38(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/form-core': 1.33.0
+      '@tanstack/vue-store': 0.11.0(vue@3.5.38(typescript@5.9.3))
+      vue: 3.5.38(typescript@5.9.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
+  '@tanstack/vue-query@5.101.0(vue@3.5.38(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.19.4
+      '@tanstack/query-core': 5.101.0
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.38(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.38(typescript@5.9.3))
+
+  '@tanstack/vue-store@0.11.0(vue@3.5.38(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/store': 0.11.0
+      vue: 3.5.38(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.38(typescript@5.9.3))
+
+  '@tanstack/vue-table@8.21.3(vue@3.5.38(typescript@5.9.3))':
+    dependencies:
+      '@tanstack/table-core': 8.21.3
+      vue: 3.5.38(typescript@5.9.3)
 
   '@textlint/ast-node-types@15.7.1': {}
 
@@ -8760,6 +9523,8 @@ snapshots:
     dependencies:
       '@types/node': 22.19.21
 
+  '@types/js-cookie@3.0.6': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/jsonfile@6.1.4':
@@ -8968,6 +9733,14 @@ snapshots:
       estree-walker: 2.0.2
       source-map: 0.6.1
 
+  '@vue/compiler-core@3.5.13':
+    dependencies:
+      '@babel/parser': 7.29.7
+      '@vue/shared': 3.5.36
+      entities: 4.5.0
+      estree-walker: 2.0.2
+      source-map-js: 1.2.1
+
   '@vue/compiler-core@3.5.36':
     dependencies:
       '@babel/parser': 7.29.7
@@ -8997,6 +9770,8 @@ snapshots:
     dependencies:
       '@vue/compiler-dom': 3.5.36
       '@vue/shared': 3.5.36
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/devtools-api@7.7.9':
     dependencies:
@@ -9051,7 +9826,7 @@ snapshots:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 12.8.2
       '@vueuse/shared': 12.8.2(typescript@5.9.3)
-      vue: 3.5.36(typescript@5.9.3)
+      vue: 3.5.38(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -9059,7 +9834,7 @@ snapshots:
     dependencies:
       '@vueuse/core': 12.8.2(typescript@5.9.3)
       '@vueuse/shared': 12.8.2(typescript@5.9.3)
-      vue: 3.5.36(typescript@5.9.3)
+      vue: 3.5.38(typescript@5.9.3)
     optionalDependencies:
       axios: 1.17.0
       focus-trap: 7.8.0
@@ -9070,7 +9845,7 @@ snapshots:
 
   '@vueuse/shared@12.8.2(typescript@5.9.3)':
     dependencies:
-      vue: 3.5.36(typescript@5.9.3)
+      vue: 3.5.38(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -9352,10 +10127,10 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  bullmq@5.78.0(supports-color@5.5.0):
+  bullmq@5.78.0:
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.10.1(supports-color@5.5.0)
+      ioredis: 5.10.1
       msgpackr: 2.0.2
       node-abort-controller: 3.1.1
       semver: 7.8.0
@@ -9637,9 +10412,15 @@ snapshots:
 
   cssesc@3.0.0: {}
 
+  csstype@2.6.21: {}
+
   csstype@3.0.10: {}
 
   csstype@3.2.3: {}
+
+  csx@10.0.2:
+    dependencies:
+      csstype: 2.6.21
 
   dargs@7.0.0: {}
 
@@ -9710,6 +10491,8 @@ snapshots:
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
 
+  defu@6.1.7: {}
+
   delayed-stream@1.0.0: {}
 
   delegates@1.0.0: {}
@@ -9729,6 +10512,8 @@ snapshots:
   detect-libc@2.1.2: {}
 
   detect-node@2.1.0: {}
+
+  devalue@5.8.1: {}
 
   devlop@1.1.0:
     dependencies:
@@ -9797,6 +10582,8 @@ snapshots:
     dependencies:
       ansi-colors: 4.1.3
       strip-ansi: 6.0.1
+
+  entities@4.5.0: {}
 
   entities@7.0.1: {}
 
@@ -10343,6 +11130,15 @@ snapshots:
 
   globals@17.6.0: {}
 
+  globby@14.1.0:
+    dependencies:
+      '@sindresorhus/merge-streams': 2.3.0
+      fast-glob: 3.3.3
+      ignore: 7.0.5
+      path-type: 6.0.0
+      slash: 5.1.0
+      unicorn-magic: 0.3.0
+
   globby@16.2.0:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
@@ -10512,6 +11308,8 @@ snapshots:
 
   ignore@7.0.5: {}
 
+  immediate@3.0.6: {}
+
   imurmurhash@0.1.4: {}
 
   indent-string@4.0.0: {}
@@ -10541,7 +11339,7 @@ snapshots:
 
   interpret@2.2.0: {}
 
-  ioredis@5.10.1(supports-color@5.5.0):
+  ioredis@5.10.1:
     dependencies:
       '@ioredis/commands': 1.5.1
       cluster-key-slot: 1.1.2
@@ -10555,7 +11353,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ioredis@5.11.1(supports-color@5.5.0):
+  ioredis@5.11.1:
     dependencies:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
@@ -10861,11 +11659,19 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
+  lie@3.1.1:
+    dependencies:
+      immediate: 3.0.6
+
   loader-utils@1.4.2:
     dependencies:
       big.js: 5.2.2
       emojis-list: 3.0.0
       json5: 1.0.2
+
+  localforage@1.10.0:
+    dependencies:
+      lie: 3.1.1
 
   locate-path@3.0.0:
     dependencies:
@@ -11807,6 +12613,8 @@ snapshots:
 
   path-to-regexp@8.4.2: {}
 
+  path-type@6.0.0: {}
+
   pathe@2.0.3: {}
 
   pause-stream@0.0.11:
@@ -12166,6 +12974,8 @@ snapshots:
       mdast-util-from-markdown: 0.8.5
     transitivePeerDependencies:
       - supports-color
+
+  remove-accents@0.5.0: {}
 
   repeat-string@1.6.1: {}
 
@@ -12779,6 +13589,8 @@ snapshots:
 
   unicorn-magic@0.1.0: {}
 
+  unicorn-magic@0.3.0: {}
+
   unicorn-magic@0.4.0: {}
 
   unified@9.2.2:
@@ -12916,10 +13728,10 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.48.0
 
-  vitepress@1.6.4(@algolia/client-search@5.53.0)(@types/node@22.19.21)(axios@1.17.0)(postcss@8.5.15)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3):
+  vitepress@1.6.4(@algolia/client-search@5.53.0)(@cabloy/types-react@19.2.16)(@types/node@22.19.21)(axios@1.17.0)(postcss@8.5.15)(react@19.2.7)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 3.8.2
-      '@docsearch/js': 3.8.2(@algolia/client-search@5.53.0)(search-insights@2.17.3)
+      '@docsearch/js': 3.8.2(@algolia/client-search@5.53.0)(@cabloy/types-react@19.2.16)(react@19.2.7)(search-insights@2.17.3)
       '@iconify-json/simple-icons': 1.2.86
       '@shikijs/core': 2.5.0
       '@shikijs/transformers': 2.5.0
@@ -12965,6 +13777,10 @@ snapshots:
       - typescript
       - universal-cookie
 
+  vue-demi@0.14.10(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.38(typescript@5.9.3)
+
   vue-eslint-parser@10.4.1(eslint@10.4.1):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
@@ -12976,6 +13792,10 @@ snapshots:
       semver: 7.8.4
     transitivePeerDependencies:
       - supports-color
+
+  vue-plugin-render-freeze@2.0.4(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.38(typescript@5.9.3)
 
   vue3-browser-compiler-yx@1.0.4(vue@3.5.38(typescript@5.9.3)):
     dependencies:
@@ -13157,6 +13977,300 @@ snapshots:
   zod-to-json-schema@3.25.2(@cabloy/zod@4.3.6):
     dependencies:
       zod: '@cabloy/zod@4.3.6'
+
+  zova-core@5.1.50(typescript@5.9.3):
+    dependencies:
+      '@cabloy/compose': link:packages-utils/compose
+      '@cabloy/extend': link:packages-utils/extend
+      '@cabloy/json5': link:packages-utils/json5
+      '@cabloy/localeutil': link:packages-utils/localeutil
+      '@cabloy/logger': 1.1.21
+      '@cabloy/module-info': 2.0.0
+      '@cabloy/utils': link:packages-utils/utils
+      '@cabloy/vue-compiler-sfc': 3.5.14
+      '@cabloy/vue-reactivity': 3.5.16
+      '@cabloy/vue-router': 4.4.16(vue@3.5.38(typescript@5.9.3))
+      '@cabloy/vue-runtime-core': 3.5.57
+      '@cabloy/vue-runtime-dom': 3.5.13
+      '@cabloy/vue-server-renderer': 3.5.18(vue@3.5.38(typescript@5.9.3))
+      '@cabloy/word-utils': 2.1.14
+      '@cabloy/zod-errors-custom': link:packages-utils/zod-errors-custom
+      '@cabloy/zod-openapi': link:packages-utils/zod-openapi
+      '@cabloy/zod-query': link:packages-utils/zod-query
+      '@types/js-cookie': 3.0.6
+      '@vue/shared': 3.5.36
+      deep-equal: 2.2.3
+      reflect-metadata: 0.2.2
+      vue: 3.5.38(typescript@5.9.3)
+      vue-plugin-render-freeze: 2.0.4(vue@3.5.38(typescript@5.9.3))
+      zod: '@cabloy/zod@4.3.6'
+    transitivePeerDependencies:
+      - typescript
+
+  zova-jsx@1.1.56(typescript@5.9.3):
+    dependencies:
+      '@cabloy/compose': link:packages-utils/compose
+      '@cabloy/utils': link:packages-utils/utils
+      '@cabloy/word-utils': 2.1.14
+      typestyle: 2.4.0
+      vue: 3.5.38(typescript@5.9.3)
+      zova-core: 5.1.50(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
+
+  zova-module-a-api@5.1.15: {}
+
+  zova-module-a-app@5.1.18: {}
+
+  zova-module-a-bean@5.1.25:
+    dependencies:
+      globby: 14.1.0
+
+  zova-module-a-behavior@5.1.19: {}
+
+  zova-module-a-behaviors@5.1.15: {}
+
+  zova-module-a-boundary@5.1.15: {}
+
+  zova-module-a-command@5.1.26: {}
+
+  zova-module-a-fetch@5.1.17:
+    dependencies:
+      axios: 1.17.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
+  zova-module-a-form@5.1.32(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      '@tanstack/vue-form': 1.33.0(vue@3.5.38(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  zova-module-a-icon@5.1.20: {}
+
+  zova-module-a-interceptor@5.1.23: {}
+
+  zova-module-a-logger@5.1.20:
+    dependencies:
+      '@cabloy/logger': 1.1.21
+
+  zova-module-a-meta@5.1.15: {}
+
+  zova-module-a-model@5.1.24(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      '@tanstack/query-core': 5.101.0
+      '@tanstack/query-persist-client-core': 5.101.0
+      '@tanstack/vue-query': 5.101.0(vue@3.5.38(typescript@5.9.3))
+      localforage: 1.10.0
+      mutate-on-copy: 1.1.13
+      table-identity: link:packages-utils/table-identity
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  zova-module-a-openapi@5.1.31:
+    dependencies:
+      '@cabloy/json-schema-to-zod': 2.6.4
+      openapi3-ts: 4.6.0
+      typestyle: 2.4.0
+
+  zova-module-a-router@5.1.23: {}
+
+  zova-module-a-routerstack@5.1.20: {}
+
+  zova-module-a-routertabs@5.1.25: {}
+
+  zova-module-a-ssr@5.1.20:
+    dependencies:
+      devalue: 5.8.1
+      ms: 2.1.3
+
+  zova-module-a-ssrhmr@5.1.16:
+    dependencies:
+      '@cabloy/socket': link:packages-utils/socket
+      debounce: 3.0.0
+
+  zova-module-a-ssrserver@5.1.16:
+    dependencies:
+      ms: 2.1.3
+
+  zova-module-a-style@5.1.26:
+    dependencies:
+      csx: 10.0.2
+      typestyle: 2.4.0
+
+  zova-module-a-table@5.1.27(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      '@tanstack/table-core': 8.21.3
+      '@tanstack/vue-table': 8.21.3(vue@3.5.38(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
+  zova-module-a-zod@5.1.24:
+    dependencies:
+      '@cabloy/zod-errors-custom': link:packages-utils/zod-errors-custom
+      '@cabloy/zod-openapi': link:packages-utils/zod-openapi
+      '@cabloy/zod-query': link:packages-utils/zod-query
+      zod: '@cabloy/zod@4.3.6'
+
+  zova-module-a-zova@5.1.62(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      '@cabloy/compose': link:packages-utils/compose
+      '@cabloy/deps': link:packages-utils/deps
+      '@cabloy/json5': link:packages-utils/json5
+      '@cabloy/module-info': 2.0.0
+      '@cabloy/utils': link:packages-utils/utils
+      '@cabloy/vue-router': 4.4.16(vue@3.5.38(typescript@5.9.3))
+      '@cabloy/word-utils': 2.1.14
+      defu: 6.1.7
+      luxon: 3.7.2
+      zova-jsx: 1.1.56(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
+      - vue
+
+  zova-module-rest-resource@5.1.32: {}
+
+  zova-rest-cabloy-basic-admin@file:.zova-rest/cabloy-basic-admin(typescript@5.9.3):
+    dependencies:
+      '@tanstack/query-core': 5.101.0
+      '@tanstack/vue-query': 5.101.0(vue@3.5.38(typescript@5.9.3))
+      openapi3-ts: 4.6.0
+      table-identity: link:packages-utils/table-identity
+      vue: 3.5.38(typescript@5.9.3)
+      zod: '@cabloy/zod@4.3.6'
+      zova: 5.1.95(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))
+      zova-jsx: 1.1.56(typescript@5.9.3)
+      zova-module-a-api: 5.1.15
+      zova-module-a-bean: 5.1.25
+      zova-module-a-behavior: 5.1.19
+      zova-module-a-command: 5.1.26
+      zova-module-a-form: 5.1.32(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-icon: 5.1.20
+      zova-module-a-interceptor: 5.1.23
+      zova-module-a-model: 5.1.24(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.31
+      zova-module-a-router: 5.1.23
+      zova-module-a-routertabs: 5.1.25
+      zova-module-a-ssr: 5.1.20
+      zova-module-a-style: 5.1.26
+      zova-module-a-table: 5.1.27(vue@3.5.38(typescript@5.9.3))
+      zova-module-rest-resource: 5.1.32
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+
+  zova-rest-cabloy-basic-web@file:.zova-rest/cabloy-basic-web(typescript@5.9.3):
+    dependencies:
+      '@tanstack/query-core': 5.101.0
+      '@tanstack/vue-query': 5.101.0(vue@3.5.38(typescript@5.9.3))
+      openapi3-ts: 4.6.0
+      table-identity: link:packages-utils/table-identity
+      vue: 3.5.38(typescript@5.9.3)
+      zod: '@cabloy/zod@4.3.6'
+      zova: 5.1.95(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))
+      zova-jsx: 1.1.56(typescript@5.9.3)
+      zova-module-a-api: 5.1.15
+      zova-module-a-bean: 5.1.25
+      zova-module-a-behavior: 5.1.19
+      zova-module-a-command: 5.1.26
+      zova-module-a-form: 5.1.32(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-icon: 5.1.20
+      zova-module-a-interceptor: 5.1.23
+      zova-module-a-model: 5.1.24(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.31
+      zova-module-a-router: 5.1.23
+      zova-module-a-routertabs: 5.1.25
+      zova-module-a-ssr: 5.1.20
+      zova-module-a-style: 5.1.26
+      zova-module-a-table: 5.1.27(vue@3.5.38(typescript@5.9.3))
+      zova-module-rest-resource: 5.1.32
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+
+  zova-rest-test-second@file:.zova-rest/test-second(typescript@5.9.3):
+    dependencies:
+      '@tanstack/query-core': 5.101.0
+      '@tanstack/vue-query': 5.101.0(vue@3.5.38(typescript@5.9.3))
+      openapi3-ts: 4.6.0
+      table-identity: link:packages-utils/table-identity
+      typestyle: 2.4.0
+      vue: 3.5.38(typescript@5.9.3)
+      zod: '@cabloy/zod@4.3.6'
+      zova: 5.1.95(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))
+      zova-jsx: 1.1.56(typescript@5.9.3)
+      zova-module-a-api: 5.1.15
+      zova-module-a-bean: 5.1.25
+      zova-module-a-behavior: 5.1.19
+      zova-module-a-command: 5.1.26
+      zova-module-a-form: 5.1.32(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-icon: 5.1.20
+      zova-module-a-interceptor: 5.1.23
+      zova-module-a-model: 5.1.24(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.31
+      zova-module-a-router: 5.1.23
+      zova-module-a-routertabs: 5.1.25
+      zova-module-a-ssr: 5.1.20
+      zova-module-a-style: 5.1.26
+      zova-module-a-table: 5.1.27(vue@3.5.38(typescript@5.9.3))
+      zova-module-rest-resource: 5.1.32
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+
+  zova-suite-a-zova@5.1.94(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      zova-module-a-api: 5.1.15
+      zova-module-a-app: 5.1.18
+      zova-module-a-bean: 5.1.25
+      zova-module-a-behavior: 5.1.19
+      zova-module-a-behaviors: 5.1.15
+      zova-module-a-boundary: 5.1.15
+      zova-module-a-command: 5.1.26
+      zova-module-a-fetch: 5.1.17
+      zova-module-a-form: 5.1.32(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-icon: 5.1.20
+      zova-module-a-interceptor: 5.1.23
+      zova-module-a-logger: 5.1.20
+      zova-module-a-meta: 5.1.15
+      zova-module-a-model: 5.1.24(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.31
+      zova-module-a-router: 5.1.23
+      zova-module-a-routerstack: 5.1.20
+      zova-module-a-routertabs: 5.1.25
+      zova-module-a-ssr: 5.1.20
+      zova-module-a-ssrhmr: 5.1.16
+      zova-module-a-ssrserver: 5.1.16
+      zova-module-a-style: 5.1.26
+      zova-module-a-table: 5.1.27(vue@3.5.38(typescript@5.9.3))
+      zova-module-a-zod: 5.1.24
+      zova-module-a-zova: 5.1.62(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
+  zova@5.1.95(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3)):
+    dependencies:
+      zova-core: 5.1.50(typescript@5.9.3)
+      zova-suite-a-zova: 5.1.94(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
 
   zwitch@1.0.5: {}
 

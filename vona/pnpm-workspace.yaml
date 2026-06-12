@@ -31,13 +31,6 @@ publicHoistPattern:
   - '*why-is-node-running*'
   - '*ts-node*'
   - zod
-onlyBuiltDependencies:
-  - better-sqlite3
-  - '@swc/core'
-  - '@zhennann/ejs'
-  - esbuild
-  - msgpackr-extract
-  - nx
 
 overrides:
   '@types/mime': '3.0.4'
@@ -64,9 +57,9 @@ minimumReleaseAgeExclude:
   - zova@5.1.95
 
 allowBuilds:
-  '@swc/core': set this to true or false
-  '@zhennann/ejs': set this to true or false
-  better-sqlite3: set this to true or false
-  esbuild: set this to true or false
-  msgpackr-extract: set this to true or false
-  vue-demi: set this to true or false
+  '@swc/core': true
+  '@zhennann/ejs': true
+  better-sqlite3: true
+  esbuild: true
+  msgpackr-extract: true
+  vue-demi: false
