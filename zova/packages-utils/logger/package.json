@@ -1,6 +1,6 @@
 {
   "name": "@cabloy/logger",
-  "version": "1.1.23",
+  "version": "1.1.24",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "logger",
   "keywords": [
@@ -36,7 +36,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@cabloy/localeutil": "^2.1.6",
+    "@cabloy/localeutil": "^2.1.8",
     "fecha": "^4.2.3"
   },
   "devDependencies": {

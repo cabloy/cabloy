@@ -1,6 +1,6 @@
 {
   "name": "zova-module-a-ssrhmr",
-  "version": "5.1.18",
+  "version": "5.1.19",
   "gitHead": "09d901d17140a80ee0764211b441cda72fd94663",
   "description": "",
   "keywords": [
@@ -34,7 +34,7 @@
     "postpack": "clean-package restore && npm run clean"
   },
   "dependencies": {
-    "@cabloy/socket": "^2.1.7",
+    "@cabloy/socket": "^2.1.9",
     "debounce": "^3.0.0"
   },
   "devDependencies": {

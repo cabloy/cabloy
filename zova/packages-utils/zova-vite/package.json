@@ -1,6 +1,6 @@
 {
   "name": "zova-vite",
-  "version": "1.1.37",
+  "version": "1.1.38",
   "gitHead": "09d901d17140a80ee0764211b441cda72fd94663",
   "description": "zova vite",
   "keywords": [
@@ -40,9 +40,9 @@
     "@babel/plugin-proposal-decorators": "^7.29.0",
     "@babel/plugin-transform-class-properties": "^7.28.6",
     "@babel/plugin-transform-typescript": "^7.28.6",
-    "@cabloy/dotenv": "^1.2.6",
-    "@cabloy/extend": "^3.2.6",
-    "@cabloy/module-glob": "^5.3.11",
+    "@cabloy/dotenv": "^1.2.8",
+    "@cabloy/extend": "^3.2.8",
+    "@cabloy/module-glob": "^5.3.13",
     "@cabloy/module-info": "^2.0.0",
     "@cabloy/vite-plugin-babel": "^1.3.3",
     "@cabloy/vue-babel-plugin-jsx": "^2.0.1",
