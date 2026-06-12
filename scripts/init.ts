@@ -44,6 +44,10 @@ function execQuiet(cmd: string, cwd = ROOT_DIR): string {
   return execSync(cmd, { stdio: 'pipe', cwd }).toString();
 }
 
+function pnpmInstall(cwd = ROOT_DIR): void {
+  exec('pnpm install --config.confirmModulesPurge=false --no-frozen-lockfile', cwd);
+}
+
 function checkPnpm(): void {
   const version = execQuiet('pnpm --version').trimEnd();
   const [major, minor, patch] = version.split('.').map(item => Number.parseInt(item, 10) || 0);
@@ -166,7 +170,7 @@ function initVona(): void {
   const pkgPath = resolve(VONA_DIR, 'package.json');
   // if (!existsSync(pkgPath)) {
   copyFileSync(resolve(VONA_DIR, 'package.original.json'), pkgPath);
-  exec('pnpm install --no-frozen-lockfile', VONA_DIR);
+  pnpmInstall(VONA_DIR);
   // }
   exec('npm run vona :tools:deps');
 }
@@ -179,7 +183,7 @@ function initZova(): void {
   const pkgPath = resolve(ZOVA_DIR, 'package.json');
   // if (!existsSync(pkgPath)) {
   copyFileSync(resolve(ZOVA_DIR, 'package.original.json'), pkgPath);
-  exec('pnpm install --no-frozen-lockfile', ZOVA_DIR);
+  pnpmInstall(ZOVA_DIR);
   // }
   exec('npm run zova :tools:deps');
 }
@@ -226,13 +230,13 @@ function initCabloyDocs(): void {
   if (!existsSync(pkgPath)) return;
   // eslint-disable-next-line
   console.log('[init] Initializing cabloy-docs...');
-  exec('pnpm install --no-frozen-lockfile', CABLOY_DOCS_DIR);
+  pnpmInstall(CABLOY_DOCS_DIR);
 }
 
 // --- Main ---
 
 checkPnpm();
-exec('pnpm install --no-frozen-lockfile');
+pnpmInstall();
 setAppName();
 generateEnvProdLocal();
 generateEnvProdDockerLocal();
