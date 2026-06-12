@@ -62,4 +62,4 @@ allowBuilds:
   better-sqlite3: true
   esbuild: true
   msgpackr-extract: true
-  vue-demi: false
+  vue-demi: true
