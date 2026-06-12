@@ -131,7 +131,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.55
+        specifier: ^1.1.56
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -384,7 +384,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.4
       zova-cli-set-front:
-        specifier: ^1.2.72
+        specifier: ^1.2.73
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -493,7 +493,7 @@ importers:
         specifier: ^1.1.14
         version: link:../../packages-utils/zova-openapi
       zova-vite:
-        specifier: ^1.1.34
+        specifier: ^1.1.35
         version: link:../../packages-utils/zova-vite
     devDependencies:
       clean-package:
@@ -667,7 +667,7 @@ importers:
         specifier: ^3.5.32
         version: 3.5.37(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.49
+        specifier: ^5.1.50
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -808,10 +808,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.49
+        specifier: ^5.1.50
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.93
+        specifier: ^5.1.94
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -963,7 +963,7 @@ importers:
         specifier: ^5.1.20
         version: link:modules/a-icon
       zova-module-a-interceptor:
-        specifier: ^5.1.22
+        specifier: ^5.1.23
         version: link:modules/a-interceptor
       zova-module-a-logger:
         specifier: ^5.1.20
@@ -987,7 +987,7 @@ importers:
         specifier: ^5.1.25
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.19
+        specifier: ^5.1.20
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
         specifier: ^5.1.16
@@ -996,16 +996,16 @@ importers:
         specifier: ^5.1.16
         version: link:modules/a-ssrserver
       zova-module-a-style:
-        specifier: ^5.1.25
+        specifier: ^5.1.26
         version: link:modules/a-style
       zova-module-a-table:
         specifier: ^5.1.27
         version: link:modules/a-table
       zova-module-a-zod:
-        specifier: ^5.1.23
+        specifier: ^5.1.24
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.61
+        specifier: ^5.1.62
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1344,7 +1344,7 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.55
+        specifier: ^1.1.56
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':

@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: pnpm/action-setup@v5
         with:
-          version: 10.19.0
+          version: 11.5.2
       - name: init
         run: npm run init
       - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run test

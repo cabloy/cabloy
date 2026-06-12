@@ -2,7 +2,7 @@
   "name": "vona",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@11.5.2",
   "description": "Vona is an intuitive, elegant and powerful Node.js framework for rapidly developing enterprise applications of any size",
   "repository": {
     "type": "git",
@@ -50,10 +50,5 @@
     "textlint-rule-period-in-list-item": "^1.0.1",
     "oxfmt": "^0.45.0",
     "oxlint": "^1.65.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "zod": "npm:@cabloy/zod@4.3.6"
-    }
   }
 }

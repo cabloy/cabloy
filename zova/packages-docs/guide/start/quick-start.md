@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-| Name   | Version   |
-| ------ | --------- |
-| pnpm   | >=10.19.0 |
-| Nodejs | >=24.8.0  |
+| Name   | Version  |
+| ------ | -------- |
+| pnpm   | >=11.5.2 |
+| Nodejs | >=24.8.0 |
 
 ## Preparation
 

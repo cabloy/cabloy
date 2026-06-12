@@ -16,14 +16,14 @@ Use this page when you are contributing backend work in the framework repository
 
 ## Prerequisites
 
-| Name       | Version   |
-| ---------- | --------- |
-| pnpm       | >=10.19.0 |
-| Node.js    | >=24.8.0  |
-| Redis      | >=7.2.6   |
-| Sqlite3    | Built-in  |
-| MySQL      | >=8       |
-| Postgresql | >=16      |
+| Name       | Version  |
+| ---------- | -------- |
+| pnpm       | >=11.5.2 |
+| Node.js    | >=24.8.0 |
+| Redis      | >=7.2.6  |
+| Sqlite3    | Built-in |
+| MySQL      | >=8      |
+| Postgresql | >=16     |
 
 Notes:
 

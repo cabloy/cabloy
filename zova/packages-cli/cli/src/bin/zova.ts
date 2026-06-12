@@ -5,7 +5,7 @@ import semver from 'semver';
 
 import { ZovaCommand } from '../start.ts';
 
-const pnpm_version = '10.19.0';
+const pnpm_version = '11.5.2';
 
 const processHelper = new ProcessHelper(process.cwd());
 

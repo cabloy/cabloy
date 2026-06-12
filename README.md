@@ -20,14 +20,14 @@ With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns comm
 
 Before creating a new Cabloy project, make sure your environment has:
 
-| Name       | Version     |
-| ---------- | ----------- |
-| pnpm       | `>=10.19.0` |
-| Node.js    | `>=24.4.0`  |
-| Redis      | `>=7.2.6`   |
-| SQLite3    | `Built-in`  |
-| MySQL      | `>=8`       |
-| PostgreSQL | `>=16`      |
+| Name       | Version    |
+| ---------- | ---------- |
+| pnpm       | `>=11.5.2` |
+| Node.js    | `>=24.4.0` |
+| Redis      | `>=7.2.6`  |
+| SQLite3    | `Built-in` |
+| MySQL      | `>=8`      |
+| PostgreSQL | `>=16`     |
 
 - `Redis`: powers queue, schedule, startup, broadcast, caching, two-layer cache, and redlock
 - `SQLite3`: if you use `better-sqlite3`, set up `node-gyp` before installing dependencies

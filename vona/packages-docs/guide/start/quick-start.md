@@ -2,14 +2,14 @@
 
 ## Prerequisites
 
-| Name       | Version   |
-| ---------- | --------- |
-| pnpm       | >=10.19.0 |
-| Nodejs     | >=24.8.0  |
-| Redis      | >=7.2.6   |
-| Sqlite3    | Built-in  |
-| MySQL      | >=8       |
-| Postgresql | >=16      |
+| Name       | Version  |
+| ---------- | -------- |
+| pnpm       | >=11.5.2 |
+| Nodejs     | >=24.8.0 |
+| Redis      | >=7.2.6  |
+| Sqlite3    | Built-in |
+| MySQL      | >=8      |
+| Postgresql | >=16     |
 
 - `Redis`: VonaJS provides the following capabilities based on Redis:
   - `Queue, Schedule, Startup, Broadcast, Caching, Two-layer cache, and Redlock`

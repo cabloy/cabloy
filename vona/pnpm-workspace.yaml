@@ -42,3 +42,4 @@ onlyBuiltDependencies:
 overrides:
   '@types/mime': '3.0.4'
   '@types/react': 'npm:@cabloy/types-react@^19.2.16'
+  zod: 'npm:@cabloy/zod@4.3.6'

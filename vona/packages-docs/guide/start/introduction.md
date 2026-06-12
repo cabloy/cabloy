@@ -60,11 +60,11 @@ The Web and Admin of Cabloy Store are built by one codebase.
 
 ### General
 
-| Name       | Version   |
-| ---------- | --------- |
-| pnpm       | >=10.19.0 |
-| Nodejs     | >=24.8.0  |
-| Typescript | >=5.9.3   |
+| Name       | Version  |
+| ---------- | -------- |
+| pnpm       | >=11.5.2 |
+| Nodejs     | >=24.8.0 |
+| Typescript | >=5.9.3  |
 
 ### Backend(Vona)
 

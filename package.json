@@ -77,5 +77,5 @@
   "engines": {
     "node": ">=24.4.0"
   },
-  "packageManager": "pnpm@10.19.0"
+  "packageManager": "pnpm@11.5.2"
 }

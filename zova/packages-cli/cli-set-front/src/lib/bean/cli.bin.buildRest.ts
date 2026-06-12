@@ -246,35 +246,94 @@ async function _extractDeps(filePath: string): Promise<string[]> {
   return Array.from(packageNames).sort() as string[];
 }
 
-async function _extractDepsVersion(projectPath: string, deps: string[]) {
+async function _extractDepsVersion(
+  projectPath: string,
+  deps: string[],
+): Promise<Record<string, string>> {
   const lockfilePath = path.join(projectPath, 'pnpm-lock.yaml');
   const lockfileContent = (await fse.readFile(lockfilePath)).toString();
   const parsedLockfile = yaml.parse(lockfileContent);
-  const depsVersion = {};
+  const lockfilePackageVersions = createLockfilePackageVersions(parsedLockfile);
+  const depsVersion: Record<string, string> = {};
   for (const dep of deps) {
-    let version = getPackageVersionFromLock(parsedLockfile, dep);
-    if (!version) {
-      version = await getPackageVersionFromNodeModules(projectPath, dep);
+    let dependencyRange = getPackageDependencyRangeFromLock(
+      parsedLockfile,
+      lockfilePackageVersions,
+      dep,
+    );
+    if (!dependencyRange) {
+      const version = await getPackageVersionFromNodeModules(projectPath, dep);
+      dependencyRange = version ? `^${version}` : null;
     }
-    if (!version) {
+    if (!dependencyRange) {
       console.warn('dep version not found: ', dep);
       continue;
     }
-    depsVersion[dep] = `^${version}`;
+    depsVersion[dep] = dependencyRange;
   }
   return depsVersion;
 }
 
-function getPackageVersionFromLock(parsedLockfile: any, packageName: string) {
+function createLockfilePackageVersions(parsedLockfile: any): Record<string, string> {
+  const packageVersions: Record<string, string> = {};
   const packages = parsedLockfile.packages || {};
-
   for (const key in packages) {
-    if (key.startsWith(`${packageName}@`)) {
-      return key.substring(`${packageName}@`.length);
-    }
+    const packageName = getPackageNameFromLockfileKey(key);
+    const version = normalizeLockfileVersion(key.substring(packageName.length + 1));
+    if (version && !packageVersions[packageName]) packageVersions[packageName] = version;
+  }
+  return packageVersions;
+}
+
+function getPackageNameFromLockfileKey(key: string): string {
+  if (!key.startsWith('@')) return key.split('@')[0];
+  const aliasSeparator = key.indexOf('@', 1);
+  return key.substring(0, aliasSeparator);
+}
+
+function getPackageDependencyRangeFromLock(
+  parsedLockfile: any,
+  lockfilePackageVersions: Record<string, string>,
+  packageName: string,
+): string | null {
+  const importer = parsedLockfile.importers?.['.'];
+  const sections = ['dependencies', 'devDependencies', 'optionalDependencies'];
+  for (const section of sections) {
+    const dependencyRange = getImporterDependencyRange(importer?.[section]?.[packageName]);
+    if (dependencyRange) return dependencyRange;
   }
 
-  return null;
+  const version = lockfilePackageVersions[packageName];
+  return version ? `^${version}` : null;
+}
+
+function getImporterDependencyRange(
+  importerDependency: { specifier?: string; version?: string } | undefined,
+): string | null {
+  if (!importerDependency) return null;
+
+  const specifier = importerDependency.specifier;
+  if (specifier?.startsWith('npm:')) return specifier;
+
+  const version = normalizeLockfileVersion(importerDependency.version);
+  if (!version) return null;
+  return `^${version}`;
+}
+
+function normalizeLockfileVersion(version: string | undefined): string | null {
+  if (!version) return null;
+  if (version.startsWith('link:') || version.startsWith('file:')) return null;
+
+  const versionWithoutPeers = version.split('(')[0];
+  if (!versionWithoutPeers) return null;
+  if (/^\d/.test(versionWithoutPeers)) return versionWithoutPeers;
+
+  const aliasSeparator = versionWithoutPeers.lastIndexOf('@');
+  if (aliasSeparator === -1) return null;
+
+  const aliasedVersion = versionWithoutPeers.slice(aliasSeparator + 1);
+  if (!aliasedVersion || !/^\d/.test(aliasedVersion)) return null;
+  return aliasedVersion;
 }
 
 async function getPackageVersionFromNodeModules(projectPath: string, packageName: string) {
