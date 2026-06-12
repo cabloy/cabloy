@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.55
+
+### Features
+
+- Add update-related functionality.
+
+### Improvements
+
+- Create the `pnpm-workspace.yaml` workspace configuration.
+- Update the `pnpm-workspace.yaml` workspace configuration.
+
 ## 5.1.54
 
 ### Features
