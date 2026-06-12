@@ -33,7 +33,7 @@ export const OpNormal = {
   ref: '_ref_',
 } as const;
 export const Op = {
-  skip: '_skip_',
+  omit: undefined,
   ...OpJoint,
   ...OpNormal,
 } as const;
@@ -57,7 +57,7 @@ export type TypeModelColumnValue<TRecord, Column> =
   | Column
   | Column[]
   | null
-  | '_skip_';
+  | typeof Op.omit;
 
 export type TypeModelWhere<TRecord, Columns extends {} | undefined = undefined> = Columns extends {}
   ? TypeModelWhereInner<Columns>
