@@ -9,7 +9,7 @@ declare module 'vue' {
     };
   }
 
-  export interface AllowedComponentProps {}
+  export interface AllowedComponentProps extends IComponentIntrinsicAttributes {}
 }
 
 export interface IComponentIntrinsicAttributes {
@@ -40,7 +40,7 @@ export interface IComponentIntrinsicAttributes {
 declare module 'vue/jsx-runtime' {
   namespace JSX {
     // need define class/style in IntrinsicAttributes
-    export interface IntrinsicAttributes extends IComponentIntrinsicAttributes {}
+    export interface IntrinsicAttributes {}
   }
 }
 
