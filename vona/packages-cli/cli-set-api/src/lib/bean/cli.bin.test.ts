@@ -106,7 +106,7 @@ export class CliBinTest extends BeanCliBase {
   }
 
   _normalizeTestPatterns(items: string[]) {
-    return items.map(item => this._normalizeTestPattern(item));
+    return items.flatMap(item => this._normalizeTestPattern(item));
   }
 
   _normalizeTestPattern(item: string) {
@@ -114,7 +114,9 @@ export class CliBinTest extends BeanCliBase {
     if (item.startsWith('./')) item = item.substring(2);
     if (item.startsWith('src/')) return item;
     if (item.startsWith('vona/src/')) return item.substring('vona/'.length);
-    if (item.includes('/test/')) return `src/**/modules/${item}`;
+    if (item.includes('/test/')) {
+      return [`src/module/${item}`, `src/**/modules/${item}`];
+    }
     return `src/**/test/**/${item}`;
   }
 
