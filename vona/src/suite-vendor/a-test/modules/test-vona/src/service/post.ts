@@ -4,7 +4,7 @@ import type { IQueryParams } from 'vona-module-a-orm';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
-import { $relationDynamic } from 'vona-module-a-orm';
+import { $relationDynamic, Op } from 'vona-module-a-orm';
 
 import { ModelPost } from '../model/post.ts';
 import { ModelPostContent } from '../model/postContent.ts';
@@ -241,7 +241,7 @@ export class ServicePost extends BeanBase {
   async select() {
     return await this.scope.model.post.select({
       where: {
-        stars: '_skip_',
+        stars: Op.omit,
       },
     });
   }
