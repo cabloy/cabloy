@@ -52,11 +52,7 @@ export class CliBinTest extends BeanCliBase {
     // globs
     let patterns;
     if (argv._.length > 0) {
-      patterns = argv._.map(item => {
-        if (item.startsWith('src/')) return item;
-        if (item.startsWith('vona/src/')) return item.substring('vona/'.length);
-        return `src/**/test/**/${item}`;
-      });
+      patterns = this._normalizeTestPatterns(argv._);
     } else {
       patterns = this._combineTestPatterns(projectPath, modulesMeta);
     }
@@ -107,6 +103,19 @@ export class CliBinTest extends BeanCliBase {
         },
       });
     });
+  }
+
+  _normalizeTestPatterns(items: string[]) {
+    return items.map(item => this._normalizeTestPattern(item));
+  }
+
+  _normalizeTestPattern(item: string) {
+    item = item.replaceAll('\\', '/');
+    if (item.startsWith('./')) item = item.substring(2);
+    if (item.startsWith('src/')) return item;
+    if (item.startsWith('vona/src/')) return item.substring('vona/'.length);
+    if (item.includes('/test/')) return `src/**/modules/${item}`;
+    return `src/**/test/**/${item}`;
   }
 
   _combineTestPatterns(projectPath: string, modulesMeta: Awaited<ReturnType<typeof glob>>) {
