@@ -19,6 +19,7 @@ const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
 const CABLOY_DOCS_DIR = resolve(ROOT_DIR, 'cabloy-docs');
 const PNPM_VERSION = '11.5.2';
+const VERSION_MARKER_FILE = '.cabloy-version';
 
 // --- Helpers ---
 
@@ -68,6 +69,50 @@ function deleteGitkeepFiles(dir: string): void {
       rmSync(fullPath);
     }
   }
+}
+
+function isValidVersion(version: string): boolean {
+  return /^\d+\.\d+\.\d+$/.test(version);
+}
+
+function readPackageVersion(): string {
+  const filePath = resolve(ROOT_DIR, 'package.json');
+  const packageContent = JSON.parse(readFileSync(filePath, 'utf-8')) as { version?: string };
+  const version = packageContent.version?.trim();
+  if (!version || !isValidVersion(version)) {
+    throw new Error(`Invalid Cabloy version in package.json: ${version ?? '<missing>'}`);
+  }
+  return version;
+}
+
+function readVersionMarker(): string | undefined {
+  const filePath = resolve(ROOT_DIR, VERSION_MARKER_FILE);
+  if (!existsSync(filePath)) return undefined;
+  const version = readFileSync(filePath, 'utf-8').trim();
+  if (!version) return undefined;
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid Cabloy version marker: ${version}`);
+  }
+  return version;
+}
+
+function resolveVersionMarker(): string {
+  const versionFromEnv = process.env.CABLOY_VERSION?.trim();
+  if (versionFromEnv) {
+    if (!isValidVersion(versionFromEnv)) {
+      throw new Error(`Invalid CABLOY_VERSION: ${versionFromEnv}`);
+    }
+    return versionFromEnv;
+  }
+  return readVersionMarker() ?? readPackageVersion();
+}
+
+function writeVersionMarker(): void {
+  const version = resolveVersionMarker();
+  const filePath = resolve(ROOT_DIR, VERSION_MARKER_FILE);
+  writeFileSync(filePath, `${version}\n`);
+  // eslint-disable-next-line
+  console.log(`[init] Marked Cabloy version: ${version}`);
 }
 
 // --- Step 0: Set APP_NAME in .env files ---
@@ -245,5 +290,6 @@ initVona();
 initZova();
 initCabloyDocs();
 buildSsrCabloyBasicStartBatch();
+writeVersionMarker();
 // eslint-disable-next-line
 console.log('[init] Done!');

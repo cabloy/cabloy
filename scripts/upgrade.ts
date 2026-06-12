@@ -1,5 +1,13 @@
 import { execSync } from 'node:child_process';
-import { cpSync, createWriteStream, existsSync, mkdirSync, rmSync, unlinkSync } from 'node:fs';
+import {
+  cpSync,
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  unlinkSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pipeline } from 'node:stream/promises';
@@ -11,6 +19,7 @@ const ROOT_DIR = resolve(__dirname, '..');
 const NPM_REGISTRY = 'https://registry.npmjs.org';
 const PACKAGE_NAME = 'cabloy';
 const TEMP_DIR = resolve(ROOT_DIR, 'node_modules/.cabloy-upgrade');
+const VERSION_MARKER_FILE = '.cabloy-version';
 
 // --- Whitelist ---
 
@@ -78,13 +87,22 @@ const WHITELIST_FILES: string[] = [
   'zova/openapi.config.ts',
 ];
 
+type LatestPackageInfo = {
+  version: string;
+  tarballUrl: string;
+};
+
 // --- Helpers ---
 
 // oxlint-disable no-console
 const log = console.log; // eslint-disable-line no-console
 
-function exec(cmd: string): void {
-  execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
+function exec(cmd: string, env?: NodeJS.ProcessEnv): void {
+  execSync(cmd, {
+    stdio: 'inherit',
+    cwd: ROOT_DIR,
+    env: env ? { ...process.env, ...env } : process.env,
+  });
 }
 
 function shouldCopyPath(path: string): boolean {
@@ -93,6 +111,54 @@ function shouldCopyPath(path: string): boolean {
 
 function copyDirectory(src: string, dest: string): void {
   cpSync(src, dest, { recursive: true, filter: shouldCopyPath });
+}
+
+function isValidVersion(version: string): boolean {
+  return /^\d+\.\d+\.\d+$/.test(version);
+}
+
+function parseVersion(version: string): [number, number, number] {
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid Cabloy version: ${version}`);
+  }
+  const [major, minor, patch] = version.split('.').map(item => Number.parseInt(item, 10));
+  return [major, minor, patch];
+}
+
+function compareVersions(left: string, right: string): number {
+  const leftParts = parseVersion(left);
+  const rightParts = parseVersion(right);
+  for (let i = 0; i < leftParts.length; i++) {
+    if (leftParts[i] > rightParts[i]) return 1;
+    if (leftParts[i] < rightParts[i]) return -1;
+  }
+  return 0;
+}
+
+function readVersionMarker(): string | undefined {
+  const filePath = resolve(ROOT_DIR, VERSION_MARKER_FILE);
+  if (!existsSync(filePath)) return undefined;
+  const version = readFileSync(filePath, 'utf-8').trim();
+  if (!version) {
+    throw new Error(`Invalid Cabloy version marker in ${VERSION_MARKER_FILE}: <empty>`);
+  }
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid Cabloy version marker in ${VERSION_MARKER_FILE}: ${version}`);
+  }
+  return version;
+}
+
+function readRequiredVersionMarker(expectedVersion: string): string {
+  const version = readVersionMarker();
+  if (!version) {
+    throw new Error(`Expected ${VERSION_MARKER_FILE} to be created after upgrade`);
+  }
+  if (version !== expectedVersion) {
+    throw new Error(
+      `Expected ${VERSION_MARKER_FILE} to be ${expectedVersion} after upgrade, received ${version}`,
+    );
+  }
+  return version;
 }
 
 async function extractTarball(tarballPath: string, targetDir: string): Promise<void> {
@@ -120,14 +186,22 @@ function preflight(): void {
 
 // --- Step 2: Download & extract ---
 
-async function fetchLatestTarballUrl(): Promise<string> {
+async function fetchLatestPackageInfo(): Promise<LatestPackageInfo> {
   const url = `${NPM_REGISTRY}/${PACKAGE_NAME}/latest`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Failed to fetch package info: ${res.status} ${res.statusText}`);
   }
-  const data = (await res.json()) as { dist: { tarball: string } };
-  return data.dist.tarball;
+  const data = (await res.json()) as { version?: string; dist?: { tarball?: string } };
+  const version = data.version?.trim();
+  const tarballUrl = data.dist?.tarball?.trim();
+  if (!version || !isValidVersion(version)) {
+    throw new Error(`Invalid latest Cabloy version from npm: ${version ?? '<missing>'}`);
+  }
+  if (!tarballUrl) {
+    throw new Error('Missing tarball URL in npm latest metadata');
+  }
+  return { version, tarballUrl };
 }
 
 async function downloadTarball(tarballUrl: string): Promise<string> {
@@ -145,8 +219,7 @@ async function downloadTarball(tarballUrl: string): Promise<string> {
   return tmpFile;
 }
 
-async function downloadAndExtract(): Promise<void> {
-  const tarballUrl = await fetchLatestTarballUrl();
+async function downloadAndExtract(tarballUrl: string): Promise<void> {
   const tarballPath = await downloadTarball(tarballUrl);
   try {
     await extractTarball(tarballPath, TEMP_DIR);
@@ -190,9 +263,12 @@ function selectiveOverwrite(dryRun?: boolean): void {
   // Delete directories
   for (const dir of BLACKLIST_DIRS) {
     const dest = resolve(ROOT_DIR, dir);
-    if (existsSync(dest)) {
-      rmSync(dest, { recursive: true, force: true });
+    if (!existsSync(dest)) continue;
+    if (dryRun) {
+      log(`  [dry-run] Delete directory: ${dir}`);
+      continue;
     }
+    rmSync(dest, { recursive: true, force: true });
   }
 
   // Overwrite files
@@ -210,12 +286,12 @@ function selectiveOverwrite(dryRun?: boolean): void {
 
 // --- Step 4: Run init ---
 
-function runInit(dryRun?: boolean): void {
+function runInit(dryRun: boolean, version: string): void {
   if (dryRun) {
     log('  [dry-run] Run: npm run init');
     return;
   }
-  exec('npm run init');
+  exec('npm run init', { CABLOY_VERSION: version } as any);
 }
 
 // --- Step 5: Cleanup ---
@@ -240,25 +316,61 @@ async function main(): Promise<void> {
   // 1. Pre-flight
   preflight();
 
-  // 2. Download & extract
-  log('Downloading latest cabloy from npm registry...');
-  await downloadAndExtract();
-  log('Downloaded and extracted successfully!\n');
+  const latestPackageInfo = await fetchLatestPackageInfo();
+  const currentVersion = readVersionMarker();
 
-  // 3. Selective overwrite
-  log('Overwriting framework-owned files...');
-  selectiveOverwrite(dryRun);
-  log('');
+  if (currentVersion) {
+    log(`Current project Cabloy version: ${currentVersion}`);
+  } else {
+    log(
+      `Warning: Missing ${VERSION_MARKER_FILE}, continuing with upgrade for backward compatibility.`,
+    );
+  }
+  log(`Latest Cabloy version: ${latestPackageInfo.version}`);
 
-  // 4. Run init
-  log('Running npm run init...');
-  runInit(dryRun);
-  log('');
+  if (currentVersion) {
+    const comparison = compareVersions(currentVersion, latestPackageInfo.version);
+    if (comparison === 0) {
+      log(`Cabloy is already up to date (current: ${currentVersion}). Skipping upgrade.`);
+      return;
+    }
+    if (comparison > 0) {
+      throw new Error(
+        `Project Cabloy version ${currentVersion} is newer than npm latest ${latestPackageInfo.version}. Aborting upgrade.`,
+      );
+    }
+    log(`Upgrading Cabloy from ${currentVersion} to ${latestPackageInfo.version}...\n`);
+  } else {
+    log(`Upgrading Cabloy to ${latestPackageInfo.version}...\n`);
+  }
 
-  // 5. Cleanup
-  cleanup(dryRun);
+  try {
+    // 2. Download & extract
+    log('Downloading latest cabloy from npm registry...');
+    await downloadAndExtract(latestPackageInfo.tarballUrl);
+    log('Downloaded and extracted successfully!\n');
 
-  log('Upgrade complete!');
+    // 3. Selective overwrite
+    log('Overwriting framework-owned files...');
+    selectiveOverwrite(dryRun);
+    log('');
+
+    // 4. Run init
+    log('Running npm run init...');
+    runInit(dryRun, latestPackageInfo.version);
+    log('');
+
+    if (dryRun) {
+      log(`[dry-run] Current Cabloy version would become: ${latestPackageInfo.version}`);
+    } else {
+      log(`Current Cabloy version: ${readRequiredVersionMarker(latestPackageInfo.version)}`);
+    }
+
+    log('Upgrade complete!');
+  } finally {
+    // 5. Cleanup
+    cleanup(dryRun);
+  }
 }
 
 main().catch(err => {
