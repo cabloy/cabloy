@@ -57,5 +57,7 @@ minimumReleaseAgeExclude:
   - vue@3.5.38
 
 allowBuilds:
+  '@parcel/watcher': true
+  '@zhennann/ejs': true
   esbuild: true
   vue-demi: true
