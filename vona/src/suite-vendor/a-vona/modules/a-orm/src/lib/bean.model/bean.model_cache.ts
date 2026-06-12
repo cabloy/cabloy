@@ -5,6 +5,7 @@ import { parseFirstWord, toLowerCaseFirstChar } from '@cabloy/word-utils';
 import BigNumber from 'bignumber.js';
 import { cast, deepExtend, disposeInstance } from 'vona';
 
+import type { TypeQueueDoubleDeleteJobData } from '../../bean/queue.doubleDelete.ts';
 import type { ServiceDb } from '../../service/db_.ts';
 import type {
   IDatabaseClientRecord,
@@ -31,7 +32,6 @@ import type {
   TypeModelsClassLikeGeneral,
   TypeModelWhere,
 } from '../../types/index.ts';
-import type { TypeQueueDoubleDeleteJobData } from '../../bean/queue.doubleDelete.ts';
 
 import { getTargetColumnName } from '../../common/utils.ts';
 import { getCacheModelsClear } from '../../lib/const.ts';
@@ -860,7 +860,7 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
       if (!fieldName) throw new Error(`invalid magic method: ${prop}`);
       return (fieldValue: any, data: any, options?: any) => {
         const where = __combineMagicWhere(fieldName, op!, fieldValue);
-        if (fieldName === 'id') {
+        if (fieldName === 'id' && where.id !== null) {
           data = Object.assign({}, data, where);
         } else {
           options = deepExtend({}, options, { where });
@@ -879,15 +879,21 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
 }
 
 function __combineMagicWhere(fieldName: string, op: string, fieldValue?: any) {
+  if (fieldValue === undefined) {
+    if (op === 'eq') {
+      return {
+        [fieldName]: null,
+      };
+    }
+    throw new Error(`should specify the value for magic method: ${fieldName}/${op}`);
+  }
   return {
     [fieldName]:
-      fieldValue === undefined
-        ? undefined
-        : op === 'eq'
-          ? fieldValue
-          : {
-              [`_${op}_`]: fieldValue,
-            },
+      op === 'eq'
+        ? fieldValue
+        : {
+            [`_${op}_`]: fieldValue,
+          },
   };
 }
 
