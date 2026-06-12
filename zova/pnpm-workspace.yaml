@@ -52,10 +52,6 @@ overrides:
   vue-router: 'npm:@cabloy/vue-router@^4.4.16'
   zod: 'npm:@cabloy/zod@4.3.6'
 
-minimumReleaseAgeExclude:
-  - '@cabloy/vue-runtime-core@3.5.57'
-  - vue@3.5.38
-
 allowBuilds:
   '@parcel/watcher': true
   '@zhennann/ejs': true
