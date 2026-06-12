@@ -105,6 +105,13 @@ return await this.scope.model.student.deleteById(id);
 
 These methods are also part of the generated CRUD thread; see [CRUD Workflow](/backend/crud-workflow).
 
+When using magic methods, keep one semantic detail in mind:
+
+- default `eq` methods can treat an omitted argument as `null`
+- non-`eq` methods require an explicit argument
+
+For omission inside structured `where` objects, prefer `Op.omit`; for SQL null checks, use `null`.
+
 ## Query-builder support
 
 Vona models are built on Knex, so the model layer also supports lower-level query builder access when needed.

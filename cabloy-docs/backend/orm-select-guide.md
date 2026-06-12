@@ -110,7 +110,6 @@ The operator model is broad and includes examples like:
 - `_includes_`
 - case-insensitive variants
 - `_ref_`
-- `_skip_`
 
 That operator vocabulary is part of the Cabloy data language and should be reused consistently.
 
@@ -121,15 +120,17 @@ A practical operator-family reading is:
 - null checks: `_is_`, `_isNot_`
 - string matching: `_startsWith_`, `_endsWith_`, `_includes_`, and case-insensitive variants
 - composition/subquery: `_and_`, `_or_`, `_not_`, `_exists_`, `_notExists_`
-- identifier or composition helpers: `_ref_`, `_skip_`
+- identifier helper: `_ref_`
 
-### `_skip_`
+### Omitting a condition with `Op.omit`
 
-`_skip_` is especially useful when building query objects compositionally.
+Use `Op.omit` when you want to express omission explicitly at the call site. `Op.omit` is defined as `undefined`, but using the named constant makes the business meaning of the query object clearer.
 
 Representative pattern:
 
 ```typescript
+import { Op } from 'vona-module-a-orm';
+
 const where = {
   title: { _includes_: 'ai' },
   stars: { _gt_: 20 },
@@ -138,12 +139,12 @@ const where = {
 await this.scope.model.post.select({
   where: {
     ...where,
-    stars: '_skip_' as const,
+    stars: Op.omit,
   },
 });
 ```
 
-This lets a query builder remove one condition cleanly without rebuilding the whole `where` object by hand.
+This lets a query builder remove one condition cleanly without rebuilding the whole `where` object by hand, while `null` remains available for SQL `IS NULL` semantics.
 
 ## Joint operators and subqueries
 

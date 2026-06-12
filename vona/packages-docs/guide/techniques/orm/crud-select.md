@@ -217,28 +217,27 @@ class ServicePost {
 
 ### 2. List of Normal Operators
 
-| Name            | Description                                                |
-| --------------- | ---------------------------------------------------------- |
-| \_eq\_          |                                                            |
-| \_notEq\_       |                                                            |
-| \_gt\_          |                                                            |
-| \_gte\_         |                                                            |
-| \_lt\_          |                                                            |
-| \_lte\_         |                                                            |
-| \_in\_          |                                                            |
-| \_notIn\_       |                                                            |
-| \_is\_          | value值为`null`或`undefined`                               |
-| \_isNot\_       | value值为`null`或`undefined`                               |
-| \_between\_     |                                                            |
-| \_notBetween\_  |                                                            |
-| \_startsWith\_  |                                                            |
-| \_endsWith\_    |                                                            |
-| \_includes\_    |                                                            |
-| \_startsWithI\_ | Insensitive string operator                                |
-| \_endsWithI\_   | Insensitive string operator                                |
-| \_includesI\_   | Insensitive string operator                                |
-| \_ref\_         | value is an identifier                                     |
-| \_skip\_        | If value is equal to `_skip`, ignore the current contition |
+| Name            | Description                 |
+| --------------- | --------------------------- |
+| \_eq\_          |                             |
+| \_notEq\_       |                             |
+| \_gt\_          |                             |
+| \_gte\_         |                             |
+| \_lt\_          |                             |
+| \_lte\_         |                             |
+| \_in\_          |                             |
+| \_notIn\_       |                             |
+| \_is\_          | value is `null`             |
+| \_isNot\_       | value is `null`             |
+| \_between\_     |                             |
+| \_notBetween\_  |                             |
+| \_startsWith\_  |                             |
+| \_endsWith\_    |                             |
+| \_includes\_    |                             |
+| \_startsWithI\_ | Insensitive string operator |
+| \_endsWithI\_   | Insensitive string operator |
+| \_includesI\_   | Insensitive string operator |
+| \_ref\_         | value is an identifier      |
 
 ### 3. Examples
 
@@ -274,7 +273,7 @@ class ServicePost {
 
 `select * from "testVonaPost" where "title" in ('ai', 'web')`
 
-- Check if empty
+- Check for `null`
 
 ```typescript
 class ServicePost {
@@ -305,6 +304,24 @@ class ServicePost {
 ```
 
 `select * from "testVonaPost" where "title" is null`
+
+- Omit a single field condition with `Op.omit`
+
+```typescript
+import { Op } from 'vona-module-a-orm';
+
+class ServicePost {
+  async select() {
+    return await this.scope.model.post.select({
+      where: {
+        title: Op.omit,
+      },
+    });
+  }
+}
+```
+
+`select * from "testVonaPost"`
 
 - \_ref\_
 
@@ -340,9 +357,11 @@ class ServicePost {
 
 `select * from "testVonaPost" where ("title" = "testVonaPost"."title")`
 
-- \_skip\_
+- Omit one condition from a composed `where`
 
 ```typescript
+import { Op } from 'vona-module-a-orm';
+
 class ServicePost {
   async select() {
     const where = {
@@ -352,7 +371,7 @@ class ServicePost {
     return await this.scope.model.post.select({
       where: {
         ...where,
-        stars: '_skip_' as const,
+        stars: Op.omit,
       },
     });
   }

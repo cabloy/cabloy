@@ -55,6 +55,18 @@ this.scope.model.student.selectByName(name);
 this.scope.model.student.selectByNameEqI(name);
 ```
 
+## 省略参数
+
+魔术方法对省略参数的处理会根据操作符不同而不同：
+
+- 默认 `eq` 方法，比如 `getByName()` / `selectByName()`，会将省略参数视为 `null`
+- 非 `eq` 方法，比如 `getByNameEqI()`，必须显式传值；如果省略参数会直接抛错
+
+这与 ORM `where` 的语义保持一致：
+
+- `Op.omit` 用于省略条件（`Op.omit === undefined`）
+- `null` 用于表达 SQL `IS NULL` 语义
+
 ## 自定义方法
 
 如果需要对其他字段实现类似魔术方法的风格，可以直接在 Model 中定义相应的方法。

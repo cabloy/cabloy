@@ -55,6 +55,18 @@ this.scope.model.student.selectByName(name);
 this.scope.model.student.selectByNameEqI(name);
 ```
 
+## Omitted arguments
+
+Magic methods treat omitted arguments differently depending on the operator:
+
+- default `eq` methods such as `getByName()` / `selectByName()` treat an omitted argument as `null`
+- non-`eq` methods such as `getByNameEqI()` require an explicit value and throw if the argument is omitted
+
+This keeps omitted-argument behavior aligned with ORM `where` semantics:
+
+- `Op.omit` omits a condition in a `where` object (`Op.omit === undefined`)
+- `null` expresses SQL `IS NULL` semantics
+
 ## Custom Methods
 
 If you need to implement a magic method-like style for other fields, you can define the corresponding methods directly in the model.

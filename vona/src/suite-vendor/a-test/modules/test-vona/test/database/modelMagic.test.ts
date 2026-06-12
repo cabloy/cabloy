@@ -26,6 +26,21 @@ describe('modelMagic.test.ts', () => {
         columns: ['age', 'name'],
       });
       assert.equal(users2[0].name, name);
+      // omitted eq => null
+      const usersNullByMagic = await scopeTest.model.user.selectByName(undefined, {
+        columns: ['id'],
+        orders: [['id', 'asc']],
+      });
+      const usersNullByWhere = await scopeTest.model.user.select({
+        columns: ['id'],
+        orders: [['id', 'asc']],
+        where: { name: null },
+      });
+      assert.deepEqual(usersNullByMagic, usersNullByWhere);
+      // omitted non-eq => throw
+      await assert.rejects(async () => {
+        await scopeTest.model.user.getByNameEqI(undefined);
+      });
       // updateById
       await scopeTest.model.user.updateById(item.id, { age: 18 });
       user = await scopeTest.model.user.getById(item.id);

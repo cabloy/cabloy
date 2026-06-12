@@ -180,6 +180,16 @@ The important rule is:
 - the underlying write semantics still come from the standard ORM mutation surface
 - custom model methods take precedence when business-specific behavior is needed
 
+There is also a useful argument-handling rule to remember:
+
+- default `eq` magic methods such as `getByName()` or `selectByName()` treat an omitted argument as `null`
+- non-`eq` magic methods such as `getByNameEqI()` require an explicit value and throw if the argument is omitted
+
+This aligns magic-method behavior with the current ORM `where` semantics:
+
+- `Op.omit` means omit a condition explicitly
+- `null` means SQL `IS NULL`
+
 That means mutation should stay conceptually grounded in the standard model methods even when convenience wrappers are present.
 
 ## Implementation checks for ORM mutation changes

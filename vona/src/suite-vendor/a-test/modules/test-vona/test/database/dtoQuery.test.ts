@@ -47,6 +47,21 @@ describe('dtoQuery.test.ts', () => {
       assert.deepEqual(resEcho.orders, [['testVonaPost.createdAt', 'desc']]);
       assert.equal(resEcho.offset, 30);
       assert.equal(resEcho.limit, 30);
+      // findManyEcho: null in where
+      const resEchoNull: IQueryParams = await app.bean.executor.performAction(
+        'get',
+        '/test/vona/post/findManyEcho',
+        {
+          query: {
+            where: {
+              title: null,
+            },
+          },
+        },
+      );
+      assert.deepEqual(resEchoNull.where, {
+        title: null,
+      });
       // findMany
       const res = await app.bean.executor.performAction('get', '/test/vona/post/findMany', {
         query: {

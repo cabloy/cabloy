@@ -3,6 +3,7 @@ import type { Knex } from 'knex';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { Op } from 'vona-module-a-orm';
 
 describe('modelWhere.test.ts', () => {
   it('action:modelWhere', async () => {
@@ -38,10 +39,26 @@ describe('modelWhere.test.ts', () => {
       scopeTest.model.post.buildWhere(builder, { id: { _or_: { _eq_: 3, _gt_: 4 } } });
       sql = builder.toQuery();
       assert.equal(sql, 'select * from "testVonaPost" where ((("id" = 3) or ("id" > 4)))');
+      // undefined / Op.omit: omit
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, { id: 1, iid: undefined });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost" where "id" = 1');
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, { id: 1, iid: Op.omit });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost" where "id" = 1');
       // op: and
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
         _and_: { iid: 1, id: 2 },
+      });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost" where (("iid" = 1) and ("id" = 2))');
+      // op: and: omit
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, {
+        _and_: Op.omit,
       });
       sql = builder.toQuery();
       assert.equal(sql, 'select * from "testVonaPost" where (("iid" = 1) and ("id" = 2))');
@@ -56,6 +73,13 @@ describe('modelWhere.test.ts', () => {
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
         _or_: { iid: 1, id: 2 },
+      });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost" where (("iid" = 1) or ("id" = 2))');
+      // op: or: omit
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, {
+        _or_: Op.omit,
       });
       sql = builder.toQuery();
       assert.equal(sql, 'select * from "testVonaPost" where (("iid" = 1) or ("id" = 2))');
@@ -79,7 +103,20 @@ describe('modelWhere.test.ts', () => {
       });
       sql = builder.toQuery();
       assert.equal(sql, 'select * from "testVonaPost" where not ("iid" = 1 and "id" = 2)');
+      // op: not: omit
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, {
+        _not_: Op.omit,
+      });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost" where not ("iid" = 1 and "id" = 2)');
       // op: exists
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, {
+        _exists_: Op.omit,
+      });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost"');
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
         _exists_: function (this: Knex.QueryBuilder) {
@@ -94,6 +131,12 @@ describe('modelWhere.test.ts', () => {
         'select * from "testVonaPost" where exists (select "id" from "testVonaUser" where "testVonaUser"."id" = "userId")',
       );
       // op: notExists
+      builder = scopeTest.model.post.builder();
+      scopeTest.model.post.buildWhere(builder, {
+        _notExists_: Op.omit,
+      });
+      sql = builder.toQuery();
+      assert.equal(sql, 'select * from "testVonaPost"');
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
         _notExists_: function (this: Knex.QueryBuilder) {
@@ -123,7 +166,7 @@ describe('modelWhere.test.ts', () => {
       builder = scopeTest.model.post.builder();
       scopeTest.model.post.buildWhere(builder, {
         id: { _is_: null },
-        iid: { _isNot_: undefined },
+        iid: { _isNot_: null },
       });
       sql = builder.toQuery();
       assert.equal(
