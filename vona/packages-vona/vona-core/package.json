@@ -29,7 +29,7 @@
   },
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "tsc:publish": "npm run clean && vona :bin:buildGeneral --sourcemap && tsc",
+    "tsc:publish": "npm run clean && node ../../packages-cli/cli/src/bin/vona.ts :bin:buildGeneral --sourcemap && tsc",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",
     "postpack": "clean-package restore"
