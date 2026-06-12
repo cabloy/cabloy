@@ -33,10 +33,10 @@ $ npm run build:docker
 
 ```json
 "scripts": {
-  "test": "vona :bin:test --flavor=normal",
-  "dev": "vona :bin:dev --flavor=normal",
-  "build": "vona :bin:build --flavor=normal",
-  "build:docker": "vona :bin:build --flavor=docker",
+  "test": "npm run prerun && npm run vona :bin:test -- --flavor=normal",
+  "dev": "npm run prerun && npm run vona :bin:dev -- --workers=2 --flavor=normal",
+  "build": "npm run prerun && npm run vona :bin:build -- --flavor=normal",
+  "build:docker": "npm run prerun && npm run vona :bin:build -- --flavor=docker",
 }
 ```
 
