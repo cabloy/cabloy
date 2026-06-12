@@ -2,7 +2,7 @@ export default {
   bean: 'bin.buildModule',
   info: {
     version: '5.0.0',
-    title: 'Cli: Tools: Bin',
+    title: 'Cli: Bin: Build Module',
     usage: 'npm run vona :bin:buildModule -- [--minify] [--sourcemap]',
   },
   options: {
