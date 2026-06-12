@@ -42,4 +42,31 @@ onlyBuiltDependencies:
 overrides:
   '@types/mime': '3.0.4'
   '@types/react': 'npm:@cabloy/types-react@^19.2.16'
+  '@vue/compiler-dom': '3.5.36'
+  '@vue/compiler-sfc': '3.5.36'
+  '@vue/compiler-ssr': '3.5.36'
+  '@vue/runtime-dom': '3.5.36'
+  '@vue/server-renderer': '3.5.36'
+  '@vue/shared': '3.5.36'
   zod: 'npm:@cabloy/zod@4.3.6'
+
+minimumReleaseAgeExclude:
+  - '@cabloy/vue-runtime-core@3.5.57'
+  - vue@3.5.38
+  - zova-core@5.1.50
+  - zova-jsx@1.1.56
+  - zova-module-a-interceptor@5.1.23
+  - zova-module-a-ssr@5.1.20
+  - zova-module-a-style@5.1.26
+  - zova-module-a-zod@5.1.24
+  - zova-module-a-zova@5.1.62
+  - zova-suite-a-zova@5.1.94
+  - zova@5.1.95
+
+allowBuilds:
+  '@swc/core': set this to true or false
+  '@zhennann/ejs': set this to true or false
+  better-sqlite3: set this to true or false
+  esbuild: set this to true or false
+  msgpackr-extract: set this to true or false
+  vue-demi: set this to true or false
