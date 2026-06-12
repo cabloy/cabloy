@@ -26,11 +26,9 @@ import { CliOpenapiConfig } from './bean/cli.openapi.config.ts';
 import { CliOpenapiGenerate } from './bean/cli.openapi.generate.ts';
 import { CliRefactorAnotherRender } from './bean/cli.refactor.anotherRender.ts';
 import { CliRefactorAnotherStyle } from './bean/cli.refactor.anotherStyle.ts';
-import { CliRefactorComponentEmits } from './bean/cli.refactor.componentEmits.ts';
 import { CliRefactorComponentGeneric } from './bean/cli.refactor.componentGeneric.ts';
 import { CliRefactorComponentModel } from './bean/cli.refactor.componentModel.ts';
 import { CliRefactorComponentProps } from './bean/cli.refactor.componentProps.ts';
-import { CliRefactorComponentSlots } from './bean/cli.refactor.componentSlots.ts';
 import { CliRefactorFirstRender } from './bean/cli.refactor.firstRender.ts';
 import { CliRefactorFirstStyle } from './bean/cli.refactor.firstStyle.ts';
 import { CliRefactorPageParams } from './bean/cli.refactor.pageParams.ts';
@@ -72,8 +70,6 @@ export const beans = {
   'refactor.anotherRender': CliRefactorAnotherRender,
   'refactor.anotherStyle': CliRefactorAnotherStyle,
   'refactor.componentProps': CliRefactorComponentProps,
-  'refactor.componentEmits': CliRefactorComponentEmits,
-  'refactor.componentSlots': CliRefactorComponentSlots,
   'refactor.componentModel': CliRefactorComponentModel,
   'refactor.renameComponent': CliRefactorRenameComponent,
   'tools.metadata': CliToolsMetadata,

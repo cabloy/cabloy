@@ -3,7 +3,7 @@ export default {
   info: {
     version: '5.0.0',
     title: 'Cli: Bin: Test',
-    usage: 'npm run vona :bin:test -- [--coverage=] [--flavor=]',
+    usage: 'npm run vona :bin:test -- [--coverage] [--flavor=]',
   },
   options: {
     coverage: {
