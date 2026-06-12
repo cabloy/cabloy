@@ -21,15 +21,60 @@ importers:
 
   .:
     dependencies:
+      '@cabloy/compose':
+        specifier: ^2.1.5
+        version: 2.1.5
+      '@cabloy/deps':
+        specifier: ^1.1.5
+        version: 1.1.5
+      '@cabloy/json5':
+        specifier: ^1.1.6
+        version: 1.1.6
+      '@cabloy/logger':
+        specifier: ^1.1.21
+        version: link:packages-utils/logger
+      '@cabloy/module-info':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@cabloy/utils':
+        specifier: ^2.1.19
+        version: 2.1.19
+      '@cabloy/vue-router':
+        specifier: ^4.4.16
+        version: 4.4.16(vue@3.5.38(typescript@5.9.3))
+      '@cabloy/word-utils':
+        specifier: ^2.1.14
+        version: link:packages-utils/word-utils
+      '@cabloy/zod-openapi':
+        specifier: ^1.1.6
+        version: 1.1.6
       '@tailwindcss/postcss':
         specifier: ^4.2.2
         version: 4.3.0
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.20(tailwindcss@4.3.0)
+      '@tanstack/query-core':
+        specifier: ^5.100.10
+        version: 5.101.0
+      '@tanstack/table-core':
+        specifier: ^8.21.3
+        version: 8.21.3
+      '@tanstack/vue-form':
+        specifier: ^1.32.0
+        version: 1.33.0(vue@3.5.38(typescript@5.9.3))
+      '@tanstack/vue-query':
+        specifier: ^5.100.10
+        version: 5.101.0(vue@3.5.38(typescript@5.9.3))
+      '@tanstack/vue-table':
+        specifier: ^8.21.3
+        version: 8.21.3(vue@3.5.38(typescript@5.9.3))
       autoprefixer:
         specifier: ^10.4.27
         version: 10.5.0(postcss@8.5.15)
+      axios:
+        specifier: ^1.16.1
+        version: 1.17.0
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -39,40 +84,235 @@ importers:
       cors:
         specifier: ^2.8.6
         version: 2.8.6
+      csx:
+        specifier: ^10.0.2
+        version: 10.0.2
       daisyui:
         specifier: ^5.5.19
         version: 5.5.23
+      defu:
+        specifier: ^6.1.7
+        version: 6.1.7
       express:
         specifier: ^5.2.1
-        version: 5.2.1
+        version: 5.2.1(supports-color@10.2.2)
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
+      mutate-on-copy:
+        specifier: ^1.1.13
+        version: link:packages-utils/mutate-on-copy
+      openapi3-ts:
+        specifier: ^4.5.0
+        version: 4.6.0
       postcss:
         specifier: ^8.5.15
         version: 8.5.15
       quasar:
         specifier: ^2.19.3
         version: 2.19.3
+      table-identity:
+        specifier: ^1.1.4
+        version: 1.1.4
       tailwindcss:
         specifier: ^4.2.2
         version: 4.3.0
+      typestyle:
+        specifier: ^2.4.0
+        version: 2.4.0
       vue:
         specifier: ^3.5.38
         version: 3.5.38(typescript@5.9.3)
       vue-router:
         specifier: npm:@cabloy/vue-router@^4.4.16
         version: '@cabloy/vue-router@4.4.16(vue@3.5.38(typescript@5.9.3))'
+      zod:
+        specifier: npm:@cabloy/zod@4.3.6
+        version: '@cabloy/zod@4.3.6'
       zova:
         specifier: workspace:^
         version: link:packages-zova/zova
+      zova-jsx:
+        specifier: ^1.1.56
+        version: link:packages-utils/zova-jsx
+      zova-module-a-api:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-api
+      zova-module-a-app:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-app
+      zova-module-a-bean:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-bean
+      zova-module-a-behavior:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-behavior
+      zova-module-a-behaviors:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-behaviors
+      zova-module-a-boundary:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-boundary
+      zova-module-a-command:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-command
+      zova-module-a-fetch:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-fetch
+      zova-module-a-form:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-form
+      zova-module-a-icon:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-icon
+      zova-module-a-interceptor:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-interceptor
+      zova-module-a-logger:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-logger
+      zova-module-a-meta:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-meta
+      zova-module-a-model:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-model
+      zova-module-a-openapi:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-openapi
+      zova-module-a-router:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-router
+      zova-module-a-routerstack:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-routerstack
+      zova-module-a-routertabs:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-routertabs
+      zova-module-a-ssr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-ssr
+      zova-module-a-ssrhmr:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-ssrhmr
+      zova-module-a-ssrserver:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-ssrserver
+      zova-module-a-style:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-style
+      zova-module-a-table:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-table
+      zova-module-a-zod:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-zod
+      zova-module-a-zova:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-zova/modules/a-zova
+      zova-module-basic-adapter:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-adapter
+      zova-module-basic-captcha:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-captcha
+      zova-module-basic-commands:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-commands
+      zova-module-basic-commandssync:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-commandssync
+      zova-module-basic-currency:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-currency
+      zova-module-basic-date:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-date
+      zova-module-basic-form:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-form
+      zova-module-basic-input:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-input
+      zova-module-basic-page:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-page
+      zova-module-basic-pageentry:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-pageentry
+      zova-module-basic-select:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-select
+      zova-module-basic-table:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-table
+      zova-module-basic-text:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-text
+      zova-module-demo-basic:
+        specifier: workspace:^
+        version: link:src/suite/a-demo/modules/demo-basic
+      zova-module-demo-student:
+        specifier: workspace:^
+        version: link:src/module/demo-student
+      zova-module-demo-todo:
+        specifier: workspace:^
+        version: link:src/suite/a-demo/modules/demo-todo
+      zova-module-devui-adapter:
+        specifier: workspace:^
+        version: link:src/suite/a-devui/modules/devui-adapter
+      zova-module-home-api:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-api
+      zova-module-home-base:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-base
+      zova-module-home-icon:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-icon
+      zova-module-home-indexadmin:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-indexadmin
+      zova-module-home-indexweb:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-indexweb
+      zova-module-home-layoutadmin:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-layoutadmin
+      zova-module-home-layoutempty:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-layoutempty
+      zova-module-home-layoutweb:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-layoutweb
+      zova-module-home-login:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-login
+      zova-module-home-passport:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-passport
+      zova-module-home-theme:
+        specifier: workspace:^
+        version: link:src/suite/a-home/modules/home-theme
+      zova-module-rest-resource:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-cabloy/modules/rest-resource
     devDependencies:
+      '@cabloy/cli':
+        specifier: ^3.1.14
+        version: 3.1.14(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.27
-        version: 5.1.27(@typescript-eslint/eslint-plugin@8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.61.0(typescript@5.9.3))(@typescript-eslint/utils@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.69.0)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.4.1(jiti@2.7.0)))
+        version: 5.1.27(@typescript-eslint/eslint-plugin@8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.61.0(typescript@5.9.3))(@typescript-eslint/utils@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.69.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.4.1(jiti@2.7.0)))
       '@cabloy/openapi-typescript':
         specifier: ^7.9.2
         version: 7.9.2(typescript@5.9.3)
       '@quasar/app-vite':
         specifier: npm:@cabloy/quasar-app-vite@^2.5.10
         version: '@cabloy/quasar-app-vite@2.5.10(@cabloy/vue-router@4.4.16(vue@3.5.38(typescript@5.9.3)))(@types/node@22.19.21)(eslint@10.4.1(jiti@2.7.0))(jiti@2.7.0)(quasar@2.19.3)(rolldown@1.1.0)(rollup@4.61.1)(sass@1.100.0)(terser@5.48.0)(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))(yaml@2.9.0)'
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.1
       '@types/node':
         specifier: ^22.19.17
         version: 22.19.21
@@ -82,6 +322,9 @@ importers:
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
+      fs-extra:
+        specifier: ^11.3.5
+        version: 11.3.5
       oxfmt:
         specifier: ^0.45.0
         version: 0.45.0
@@ -96,7 +339,7 @@ importers:
         version: 1.100.0
       textlint:
         specifier: ^15.7.0
-        version: 15.7.1
+        version: 15.7.1(supports-color@10.2.2)
       textlint-rule-en-no-mixed-period:
         specifier: ^3.0.2
         version: 3.0.2
@@ -121,6 +364,9 @@ importers:
       vue-tsc:
         specifier: ^3.3.1
         version: 3.3.4(typescript@5.9.3)
+      zova-openapi:
+        specifier: ^1.1.14
+        version: link:packages-utils/zova-openapi
       zova-vite:
         specifier: workspace:^
         version: link:packages-utils/zova-vite
@@ -8533,7 +8779,7 @@ snapshots:
 
   '@babel/generator@8.0.0-rc.2':
     dependencies:
-      '@babel/parser': 8.0.0-rc.2
+      '@babel/parser': 8.0.0-rc.3
       '@babel/types': 8.0.0-rc.2
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
@@ -8777,20 +9023,20 @@ snapshots:
     dependencies:
       json5: 2.2.3
 
-  '@cabloy/lint@5.1.27(@typescript-eslint/eslint-plugin@8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.61.0(typescript@5.9.3))(@typescript-eslint/utils@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.69.0)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.4.1(jiti@2.7.0)))':
+  '@cabloy/lint@5.1.27(@typescript-eslint/eslint-plugin@8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.61.0(typescript@5.9.3))(@typescript-eslint/utils@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.69.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.4.1(jiti@2.7.0)))':
     dependencies:
       '@e18e/eslint-plugin': 0.2.0(eslint@10.4.1(jiti@2.7.0))(oxlint@1.69.0)
       '@eslint/json': 1.2.0
       '@eslint/markdown': 7.5.1
       '@stylistic/eslint-plugin': 5.10.0(eslint@10.4.1(jiti@2.7.0))
-      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)(typescript@5.9.3)
       eslint-plugin-antfu: 3.2.3(eslint@10.4.1(jiti@2.7.0))
       eslint-plugin-command: 3.5.2(@typescript-eslint/rule-tester@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.61.0(typescript@5.9.3))(@typescript-eslint/utils@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))
       eslint-plugin-eslint-comments: 3.2.0(eslint@10.4.1(jiti@2.7.0))
       eslint-plugin-jsonc: 3.2.0(@eslint/json@1.2.0)(eslint@10.4.1(jiti@2.7.0))
       eslint-plugin-pnpm: 1.6.1(eslint@10.4.1(jiti@2.7.0))
       eslint-plugin-regexp: 3.1.0(eslint@10.4.1(jiti@2.7.0))
-      eslint-plugin-toml: 1.4.0(eslint@10.4.1(jiti@2.7.0))
+      eslint-plugin-toml: 1.4.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)
       eslint-plugin-unused-imports: 4.4.1(@typescript-eslint/eslint-plugin@8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))
       eslint-plugin-vue: 10.9.2(@stylistic/eslint-plugin@5.10.0(eslint@10.4.1(jiti@2.7.0)))(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(vue-eslint-parser@10.4.1(eslint@10.4.1(jiti@2.7.0)))
       eslint-plugin-yml: 3.4.0(eslint@10.4.1(jiti@2.7.0))
@@ -8855,7 +9101,7 @@ snapshots:
       dotenv-expand: 12.0.3
       elementtree: 0.1.7
       esbuild: 0.27.7
-      express: 5.2.1
+      express: 5.2.1(supports-color@10.2.2)
       fs-extra: 11.3.5
       html-minifier-terser: 7.2.0
       inquirer: 13.4.3(@types/node@22.19.21)
@@ -9791,8 +10037,8 @@ snapshots:
       cross-spawn: 7.0.6
       eventsource: 3.0.7
       eventsource-parser: 3.1.0
-      express: 5.2.1
-      express-rate-limit: 8.5.2(express@5.2.1)
+      express: 5.2.1(supports-color@10.2.2)
+      express-rate-limit: 8.5.2(express@5.2.1(supports-color@10.2.2))
       hono: 4.12.25
       jose: 6.2.3
       json-schema-typed: 8.0.2
@@ -10509,7 +10755,7 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.7.1
 
-  '@textlint/config-loader@15.7.1':
+  '@textlint/config-loader@15.7.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/kernel': 15.7.1
       '@textlint/module-interop': 15.7.1
@@ -10523,7 +10769,7 @@ snapshots:
 
   '@textlint/feature-flag@15.7.1': {}
 
-  '@textlint/fixer-formatter@15.7.1':
+  '@textlint/fixer-formatter@15.7.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/module-interop': 15.7.1
       '@textlint/resolver': 15.7.1
@@ -10552,7 +10798,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@textlint/linter-formatter@15.7.1':
+  '@textlint/linter-formatter@15.7.1(supports-color@10.2.2)':
     dependencies:
       '@azu/format-text': 1.0.2
       '@azu/style-format': 1.0.1
@@ -10571,11 +10817,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@textlint/markdown-to-ast@15.7.1':
+  '@textlint/markdown-to-ast@15.7.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/ast-node-types': 15.7.1
       debug: 4.4.3(supports-color@10.2.2)
-      mdast-util-gfm-autolink-literal: 0.1.3
+      mdast-util-gfm-autolink-literal: 0.1.3(supports-color@10.2.2)
       neotraverse: 0.6.18
       remark-footnotes: 3.0.0
       remark-frontmatter: 3.0.0
@@ -10608,9 +10854,9 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.7.1
 
-  '@textlint/textlint-plugin-markdown@15.7.1':
+  '@textlint/textlint-plugin-markdown@15.7.1(supports-color@10.2.2)':
     dependencies:
-      '@textlint/markdown-to-ast': 15.7.1
+      '@textlint/markdown-to-ast': 15.7.1(supports-color@10.2.2)
       '@textlint/types': 15.7.1
     transitivePeerDependencies:
       - supports-color
@@ -10778,7 +11024,7 @@ snapshots:
   '@typescript-eslint/eslint-plugin@8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/scope-manager': 8.61.0
       '@typescript-eslint/type-utils': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
       '@typescript-eslint/utils': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
@@ -10791,11 +11037,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)':
+  '@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.61.0
       '@typescript-eslint/types': 8.61.0
-      '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/visitor-keys': 8.61.0
       debug: 4.4.3(supports-color@10.2.2)
       eslint: 10.4.1(jiti@2.7.0)
@@ -10803,7 +11049,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/project-service@8.61.0(typescript@5.9.3)':
+  '@typescript-eslint/project-service@8.61.0(supports-color@10.2.2)(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.61.0(typescript@5.9.3)
       '@typescript-eslint/types': 8.61.0
@@ -10814,8 +11060,8 @@ snapshots:
 
   '@typescript-eslint/rule-tester@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
-      '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/utils': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
       ajv: 6.15.0
       eslint: 10.4.1(jiti@2.7.0)
@@ -10838,7 +11084,7 @@ snapshots:
   '@typescript-eslint/type-utils@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/types': 8.61.0
-      '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/utils': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
       debug: 4.4.3(supports-color@10.2.2)
       eslint: 10.4.1(jiti@2.7.0)
@@ -10849,9 +11095,9 @@ snapshots:
 
   '@typescript-eslint/types@8.61.0': {}
 
-  '@typescript-eslint/typescript-estree@8.61.0(typescript@5.9.3)':
+  '@typescript-eslint/typescript-estree@8.61.0(supports-color@10.2.2)(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/project-service': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/project-service': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/tsconfig-utils': 8.61.0(typescript@5.9.3)
       '@typescript-eslint/types': 8.61.0
       '@typescript-eslint/visitor-keys': 8.61.0
@@ -10869,7 +11115,7 @@ snapshots:
       '@eslint-community/eslint-utils': 4.9.1(eslint@10.4.1(jiti@2.7.0))
       '@typescript-eslint/scope-manager': 8.61.0
       '@typescript-eslint/types': 8.61.0
-      '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       eslint: 10.4.1(jiti@2.7.0)
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -11201,7 +11447,7 @@ snapshots:
 
   ast-kit@3.0.0-beta.1:
     dependencies:
-      '@babel/parser': 8.0.0-rc.2
+      '@babel/parser': 8.0.0-rc.3
       estree-walker: 3.0.3
       pathe: 2.0.3
 
@@ -11300,7 +11546,7 @@ snapshots:
       readable-stream: 2.3.8
       safe-buffer: 5.2.1
 
-  body-parser@2.2.2:
+  body-parser@2.2.2(supports-color@10.2.2):
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
@@ -12115,7 +12361,7 @@ snapshots:
     dependencies:
       '@es-joy/jsdoccomment': 0.84.0
       '@typescript-eslint/rule-tester': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
-      '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/utils': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
       eslint: 10.4.1(jiti@2.7.0)
 
@@ -12169,7 +12415,7 @@ snapshots:
       regexp-ast-analysis: 0.7.1
       scslre: 0.3.0
 
-  eslint-plugin-toml@1.4.0(eslint@10.4.1(jiti@2.7.0)):
+  eslint-plugin-toml@1.4.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2):
     dependencies:
       '@eslint/core': 1.2.1
       '@eslint/plugin-kit': 0.7.2
@@ -12198,7 +12444,7 @@ snapshots:
       xml-name-validator: 4.0.0
     optionalDependencies:
       '@stylistic/eslint-plugin': 5.10.0(eslint@10.4.1(jiti@2.7.0))
-      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)(typescript@5.9.3)
 
   eslint-plugin-yml@3.4.0(eslint@10.4.1(jiti@2.7.0)):
     dependencies:
@@ -12311,15 +12557,15 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.0
 
-  express-rate-limit@8.5.2(express@5.2.1):
+  express-rate-limit@8.5.2(express@5.2.1(supports-color@10.2.2)):
     dependencies:
-      express: 5.2.1
+      express: 5.2.1(supports-color@10.2.2)
       ip-address: 10.2.0
 
-  express@5.2.1:
+  express@5.2.1(supports-color@10.2.2):
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.2.2
+      body-parser: 2.2.2(supports-color@10.2.2)
       content-disposition: 1.1.0
       content-type: 1.0.5
       cookie: 0.7.2
@@ -12329,7 +12575,7 @@ snapshots:
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
-      finalhandler: 2.1.1
+      finalhandler: 2.1.1(supports-color@10.2.2)
       fresh: 2.0.0
       http-errors: 2.0.1
       merge-descriptors: 2.0.0
@@ -12340,8 +12586,8 @@ snapshots:
       proxy-addr: 2.0.7
       qs: 6.15.2
       range-parser: 1.2.1
-      router: 2.2.0
-      send: 1.2.1
+      router: 2.2.0(supports-color@10.2.2)
+      send: 1.2.1(supports-color@10.2.2)
       serve-static: 2.2.1
       statuses: 2.0.2
       type-is: 2.1.0
@@ -12427,7 +12673,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  finalhandler@2.1.1:
+  finalhandler@2.1.1(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       encodeurl: 2.0.0
@@ -13181,7 +13427,7 @@ snapshots:
   mdast-util-footnote@0.1.7:
     dependencies:
       mdast-util-to-markdown: 0.6.5
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13189,7 +13435,7 @@ snapshots:
     dependencies:
       '@types/mdast': 3.0.15
       mdast-util-to-string: 2.0.0
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
       parse-entities: 2.0.0
       unist-util-stringify-position: 2.0.3
     transitivePeerDependencies:
@@ -13227,11 +13473,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-autolink-literal@0.1.3:
+  mdast-util-gfm-autolink-literal@0.1.3(supports-color@10.2.2):
     dependencies:
       ccount: 1.1.0
       mdast-util-find-and-replace: 1.1.1
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13295,7 +13541,7 @@ snapshots:
 
   mdast-util-gfm@0.1.2:
     dependencies:
-      mdast-util-gfm-autolink-literal: 0.1.3
+      mdast-util-gfm-autolink-literal: 0.1.3(supports-color@10.2.2)
       mdast-util-gfm-strikethrough: 0.2.3
       mdast-util-gfm-table: 0.1.6
       mdast-util-gfm-task-list-item: 0.1.6
@@ -13394,7 +13640,7 @@ snapshots:
 
   micromark-extension-footnote@0.3.2:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13411,7 +13657,7 @@ snapshots:
 
   micromark-extension-gfm-autolink-literal@0.5.7:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13435,7 +13681,7 @@ snapshots:
 
   micromark-extension-gfm-strikethrough@0.6.5:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13450,7 +13696,7 @@ snapshots:
 
   micromark-extension-gfm-table@0.4.3:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13470,7 +13716,7 @@ snapshots:
 
   micromark-extension-gfm-task-list-item@0.3.3:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -13484,7 +13730,7 @@ snapshots:
 
   micromark-extension-gfm@0.3.3:
     dependencies:
-      micromark: 2.11.4
+      micromark: 2.11.4(supports-color@10.2.2)
       micromark-extension-gfm-autolink-literal: 0.5.7
       micromark-extension-gfm-strikethrough: 0.6.5
       micromark-extension-gfm-table: 0.4.3
@@ -13596,7 +13842,7 @@ snapshots:
 
   micromark-util-types@2.0.2: {}
 
-  micromark@2.11.4:
+  micromark@2.11.4(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       parse-entities: 2.0.0
@@ -14409,7 +14655,7 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.61.1
       fsevents: 2.3.3
 
-  router@2.2.0:
+  router@2.2.0(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       depd: 2.0.0
@@ -14559,7 +14805,7 @@ snapshots:
 
   semver@7.8.4: {}
 
-  send@1.2.1:
+  send@1.2.1(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       encodeurl: 2.0.0
@@ -14588,7 +14834,7 @@ snapshots:
       encodeurl: 2.0.0
       escape-html: 1.0.3
       parseurl: 1.3.3
-      send: 1.2.1
+      send: 1.2.1(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -14920,19 +15166,19 @@ snapshots:
     dependencies:
       check-ends-with-period: 3.0.2
 
-  textlint@15.7.1:
+  textlint@15.7.1(supports-color@10.2.2):
     dependencies:
       '@modelcontextprotocol/sdk': 1.29.0(@cabloy/zod@4.3.6)
       '@textlint/ast-node-types': 15.7.1
       '@textlint/ast-traverse': 15.7.1
-      '@textlint/config-loader': 15.7.1
+      '@textlint/config-loader': 15.7.1(supports-color@10.2.2)
       '@textlint/feature-flag': 15.7.1
-      '@textlint/fixer-formatter': 15.7.1
+      '@textlint/fixer-formatter': 15.7.1(supports-color@10.2.2)
       '@textlint/kernel': 15.7.1
-      '@textlint/linter-formatter': 15.7.1
+      '@textlint/linter-formatter': 15.7.1(supports-color@10.2.2)
       '@textlint/module-interop': 15.7.1
       '@textlint/resolver': 15.7.1
-      '@textlint/textlint-plugin-markdown': 15.7.1
+      '@textlint/textlint-plugin-markdown': 15.7.1(supports-color@10.2.2)
       '@textlint/textlint-plugin-text': 15.7.1
       '@textlint/types': 15.7.1
       '@textlint/utils': 15.7.1
@@ -15049,8 +15295,8 @@ snapshots:
   typescript-eslint@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/eslint-plugin': 8.61.0(@typescript-eslint/parser@8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
-      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
-      '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.61.0(eslint@10.4.1(jiti@2.7.0))(supports-color@10.2.2)(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.61.0(supports-color@10.2.2)(typescript@5.9.3)
       '@typescript-eslint/utils': 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
       eslint: 10.4.1(jiti@2.7.0)
       typescript: 5.9.3
