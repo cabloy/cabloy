@@ -21,7 +21,7 @@
   },
   "type": "module",
   "scripts": {
-    "init": "pnpm install --no-frozen-lockfile && node scripts/init.ts",
+    "init": "node scripts/init.ts",
     "upgrade": "node scripts/upgrade.ts",
     "upgrade:dry-run": "node scripts/upgrade.ts --dry-run",
     "vona": "node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona",

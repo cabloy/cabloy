@@ -253,14 +253,9 @@ async function _extractDepsVersion(
   const lockfilePath = path.join(projectPath, 'pnpm-lock.yaml');
   const lockfileContent = (await fse.readFile(lockfilePath)).toString();
   const parsedLockfile = yaml.parse(lockfileContent);
-  const lockfilePackageVersions = createLockfilePackageVersions(parsedLockfile);
   const depsVersion: Record<string, string> = {};
   for (const dep of deps) {
-    let dependencyRange = getPackageDependencyRangeFromLock(
-      parsedLockfile,
-      lockfilePackageVersions,
-      dep,
-    );
+    let dependencyRange = getPackageDependencyRangeFromLock(parsedLockfile, dep);
     if (!dependencyRange) {
       const version = await getPackageVersionFromNodeModules(projectPath, dep);
       dependencyRange = version ? `^${version}` : null;
@@ -274,26 +269,8 @@ async function _extractDepsVersion(
   return depsVersion;
 }
 
-function createLockfilePackageVersions(parsedLockfile: any): Record<string, string> {
-  const packageVersions: Record<string, string> = {};
-  const packages = parsedLockfile.packages || {};
-  for (const key in packages) {
-    const packageName = getPackageNameFromLockfileKey(key);
-    const version = normalizeLockfileVersion(key.substring(packageName.length + 1));
-    if (version && !packageVersions[packageName]) packageVersions[packageName] = version;
-  }
-  return packageVersions;
-}
-
-function getPackageNameFromLockfileKey(key: string): string {
-  if (!key.startsWith('@')) return key.split('@')[0];
-  const aliasSeparator = key.indexOf('@', 1);
-  return key.substring(0, aliasSeparator);
-}
-
 function getPackageDependencyRangeFromLock(
   parsedLockfile: any,
-  lockfilePackageVersions: Record<string, string>,
   packageName: string,
 ): string | null {
   const importer = parsedLockfile.importers?.['.'];
@@ -302,9 +279,7 @@ function getPackageDependencyRangeFromLock(
     const dependencyRange = getImporterDependencyRange(importer?.[section]?.[packageName]);
     if (dependencyRange) return dependencyRange;
   }
-
-  const version = lockfilePackageVersions[packageName];
-  return version ? `^${version}` : null;
+  return null;
 }
 
 function getImporterDependencyRange(

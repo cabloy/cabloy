@@ -18,6 +18,7 @@ const ROOT_DIR = resolve(__dirname, '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
 const CABLOY_DOCS_DIR = resolve(ROOT_DIR, 'cabloy-docs');
+const PNPM_VERSION = '11.5.2';
 
 // --- Helpers ---
 
@@ -37,6 +38,21 @@ function generatePassword(length: number, exclude: string): string {
 
 function exec(cmd: string, cwd = ROOT_DIR): void {
   execSync(cmd, { stdio: 'inherit', cwd });
+}
+
+function execQuiet(cmd: string, cwd = ROOT_DIR): string {
+  return execSync(cmd, { stdio: 'pipe', cwd }).toString();
+}
+
+function checkPnpm(): void {
+  const version = execQuiet('pnpm --version').trimEnd();
+  const [major, minor, patch] = version.split('.').map(item => Number.parseInt(item, 10) || 0);
+  const lowerMajor = major < 11;
+  const lowerMinor = major === 11 && minor < 5;
+  const lowerPatch = major === 11 && minor === 5 && patch < 2;
+  if (lowerMajor || lowerMinor || lowerPatch) {
+    throw new Error(`pnpm should >= ${PNPM_VERSION}, current: ${version}`);
+  }
 }
 
 function deleteGitkeepFiles(dir: string): void {
@@ -215,6 +231,8 @@ function initCabloyDocs(): void {
 
 // --- Main ---
 
+checkPnpm();
+exec('pnpm install --no-frozen-lockfile');
 setAppName();
 generateEnvProdLocal();
 generateEnvProdDockerLocal();
