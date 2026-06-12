@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.1.54
+
+### Features
+
+- Add a set of incremental feature updates across the codebase to expand supported functionality and behavior.
+
+### Bug Fixes
+
+- Support `src/module` test targets.
+- Support module-relative test targets.
+
+### Improvements
+
+- Clarify ORM omit semantics in tests and documentation.
+- Refine query and model-related internals, including updates to post handling, `where` building, and model cache behavior.
+
 ## 5.1.53
 
 ### Features
