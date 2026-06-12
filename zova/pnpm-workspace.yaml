@@ -55,3 +55,7 @@ overrides:
 minimumReleaseAgeExclude:
   - '@cabloy/vue-runtime-core@3.5.57'
   - vue@3.5.38
+
+allowBuilds:
+  esbuild: true
+  vue-demi: true
