@@ -1,6 +1,5 @@
 import type { Knex } from 'knex';
 
-import { isNil } from '@cabloy/utils';
 import { cast } from 'vona';
 
 import type { ServiceDb } from '../service/db_.ts';
@@ -31,8 +30,8 @@ function _buildWhereInner<TRecord>(
   wheres: TypeModelWhere<TRecord>,
   column?: keyof TRecord,
 ) {
-  // skip
-  if (wheres === Op.skip) {
+  // omit
+  if (wheres === Op.omit) {
     return;
   }
   // raw
@@ -73,8 +72,8 @@ function _buildWhereOpJoint<TRecord>(
   wheres: TypeModelWhere<TRecord>,
   op: TypeOpsJoint,
 ) {
-  // skip
-  if (wheres === Op.skip) {
+  // omit
+  if (wheres === Op.omit) {
     return;
   }
   // and/or
@@ -127,8 +126,8 @@ function _buildWhereColumn<TRecord>(
     | TypeModelWhereFieldAll<TRecord, TRecord[keyof TRecord]>,
   op?: TypeOpsNormal,
 ) {
-  // skip
-  if (value === Op.skip) {
+  // omit condition
+  if (value === Op.omit) {
     return;
   }
   // raw
@@ -136,8 +135,8 @@ function _buildWhereColumn<TRecord>(
     _buildWhereColumnOpNormal(having, db, builder, column, value, op ?? Op.eq);
     return;
   }
-  // null/undefined
-  if (isNil(value)) {
+  // null
+  if (value === null) {
     _buildWhereColumnOpNormal(having, db, builder, column, value, op ?? Op.is);
     return;
   }
