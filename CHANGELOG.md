@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.57
+
+### Features
+
+- Track the Cabloy version during initialization and upgrade.
+
 ## 5.1.56
 
 ### Features
