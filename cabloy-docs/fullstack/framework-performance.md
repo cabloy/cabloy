@@ -1,6 +1,6 @@
 # Framework Performance
 
-Cabloy’s performance story is not only about looking fast in simplified demos. It is about keeping a real business system maintainable, expressive, and performant as the system grows in size and complexity.
+Cabloy’s performance story is not only about looking fast in simplified demos. It is about keeping real business systems maintainable, expressive, and performant as they grow in size and complexity.
 
 This page explains that philosophy first, then shows a concrete runtime example from an internally generated project.
 
@@ -38,20 +38,19 @@ For the current public explanation of this backend capability, see [Cache Guide]
 
 ## Runtime example
 
-Here is one concrete example from an internally generated project that continued running continuously for **33 hours**.
+One internally generated project was kept running continuously for **33 hours**. At one representative PM2 snapshot, the process looked like this:
 
-At the captured PM2 snapshot, the process showed:
+```text
+┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ cabloy_store    │ default     │ N/A     │ cluster │ 226947   │ 33h    │ 17   │ online    │ 0%       │ 401.9mb  │ ubuntu   │ disabled │
+└────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+```
 
-| Metric | Value |
-| --- | --- |
-| Mode | `cluster` |
-| Status | `online` |
-| Uptime | `33h` |
-| Memory | `401.9mb` |
+For this 33-hour continuous run, the observed result was **0 memory leak**.
 
-In this runtime example, the project showed **0 memory leak** during that 33-hour continuous run.
-
-This is useful because it reflects a real long-running project process rather than a one-shot micro-benchmark.
+The value of this example is not that it is a synthetic micro-benchmark. The value is that it reflects a real long-running project process with a clear, inspectable runtime footprint.
 
 ## How to read this example
 
