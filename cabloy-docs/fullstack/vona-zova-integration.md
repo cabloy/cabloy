@@ -23,6 +23,8 @@ Cabloy uses a frontend-backend separation architecture:
 - generated or built frontend output is consumed by the backend-side fullstack flow
 - type sharing is coordinated through OpenAPI, generated SDKs, and frontend-generated route/component typing
 
+For the framework-level performance philosophy behind this fullstack model, see [Framework Performance](/fullstack/framework-performance).
+
 ## Cabloy Basic
 
 In Cabloy Basic, the root repository already exposes these shared entrypoints:

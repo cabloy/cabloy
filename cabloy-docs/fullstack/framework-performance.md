@@ -1,6 +1,8 @@
 # Framework Performance
 
-Cabloy’s performance story is not only about looking fast in simplified demos. It is about keeping real business systems maintainable, expressive, and performant as they grow in size and complexity.
+Cabloy is designed to stay fast where real systems usually become fragile: under growing business complexity.
+
+Its performance story is not only about looking fast in simplified demos. It is about keeping real business systems maintainable, expressive, and performant as they grow in size and complexity.
 
 This page explains that philosophy first, then shows a concrete runtime example from an internally generated project.
 

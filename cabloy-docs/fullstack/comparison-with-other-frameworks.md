@@ -11,6 +11,7 @@ That means the comparison is not only about a backend runtime or only about a fr
 For the broader Cabloy model, start with these pages:
 
 - [Fullstack Introduction](/fullstack/introduction)
+- [Framework Performance](/fullstack/framework-performance)
 - [Vona + Zova Integration](/fullstack/vona-zova-integration)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)
