@@ -45,7 +45,7 @@ export class BeanPermission extends BeanBase {
   }
 
   protected retrievePermissionsDefaultCacheKey(info: ICachingActionKeyInfo): string {
-    return `default:${this._buildPermissionProfileKey(info.args[0])}`;
+    return `default:${this._buildPermissionProfileKey(info.args[0] as never)}`;
   }
 
   @Caching.get({ cacheName: 'a-permission:permission', cacheKeyFn: 'retrievePermissionsCacheKey' })
