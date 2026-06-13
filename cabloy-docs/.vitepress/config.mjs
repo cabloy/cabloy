@@ -280,6 +280,17 @@ export default defineConfig({
             { text: 'Page Params Guide', link: '/frontend/page-params-guide' },
             { text: 'Zod Guide', link: '/frontend/zod-guide' },
             { text: 'Page Route Guide', link: '/frontend/page-route-guide' },
+            { text: 'Router Tabs Introduction', link: '/frontend/router-tabs-introduction' },
+            { text: 'Router Tabs Overview', link: '/frontend/router-tabs-overview' },
+            { text: 'Router Tabs Mechanism', link: '/frontend/router-tabs-mechanism' },
+            {
+              text: 'Router Tabs Route Meta Cookbook',
+              link: '/frontend/router-tabs-route-meta-cookbook',
+            },
+            {
+              text: 'Router Tabs Admin and Web Comparison',
+              link: '/frontend/router-tabs-admin-web-comparison',
+            },
             { text: 'Route Alias Guide', link: '/frontend/route-alias-guide' },
             { text: 'Navigation Guards Guide', link: '/frontend/navigation-guards-guide' },
           ],

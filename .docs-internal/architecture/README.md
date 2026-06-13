@@ -15,6 +15,7 @@ Use it when future contributors need to understand how a subsystem works, what i
 Representative examples:
 
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
+- `router-tabs-design-boundaries.md` records the design intent, workspace-vs-instance identity split, anchor-item role, layout boundary, cache boundary, and refactor safety rules for the router-tabs workbench mechanism
 - `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, the SSR `ssrRender -> instance.render` fallback bridge used by Zova, and the residual-runtime findings that future memory investigations should reuse
 - `ssr-leak-experiment-flags-inventory.md` records the historical `SSR_LEAK_EXPERIMENT_*` surface and confirms that those investigation flags were ultimately removed from active source
 - `ssr-leak-experiment-cleanup-checklist.md` records the execution order and verification path used to fully remove the old SSR leak investigation flags from source
