@@ -145,6 +145,7 @@ VonaJS puts all the utility methods for extending Zod Schema into the group `v`,
 | -------------- | ------------------------------------------------------------------------------------------ |
 | v.required     | Provide a custom error message for `required`; otherwise, use Zod's built-in error message |
 | v.optional     | optional                                                                                   |
+| v.nullable     | nullable                                                                                   |
 | v.default      | default                                                                                    |
 | v.object       | object                                                                                     |
 | v.strictObject | Same as `z.strictObject(schema.shape)`                                                     |

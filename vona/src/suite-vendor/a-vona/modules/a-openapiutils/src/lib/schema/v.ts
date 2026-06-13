@@ -28,6 +28,7 @@ import {
   schemaDefault,
   schemaLazy,
   schemaLooseObject,
+  schemaNullable,
   schemaObject,
   schemaOptional,
   schemaRequired,
@@ -38,6 +39,7 @@ import { schemaZodRefine, schemaZodTransform } from './v/zod.ts';
 export const v = {
   required: schemaRequired,
   optional: schemaOptional,
+  nullable: schemaNullable,
   default: schemaDefault,
   object: schemaObject,
   strictObject: schemaStrictObject,

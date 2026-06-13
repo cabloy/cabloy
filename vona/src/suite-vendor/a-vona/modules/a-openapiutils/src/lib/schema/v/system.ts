@@ -22,6 +22,12 @@ export function schemaOptional() {
   return schemaRequired(false);
 }
 
+export function schemaNullable() {
+  return function (schema: z.ZodType): z.ZodType {
+    return schema.nullable();
+  };
+}
+
 export function schemaRequired(
   required: boolean = true,
   params?: string | ILocaleMagic | z.core.$ZodStringParams,

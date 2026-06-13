@@ -146,6 +146,8 @@ await this.scope.model.post.select({
 
 This lets a query builder remove one condition cleanly without rebuilding the whole `where` object by hand, while `null` remains available for SQL `IS NULL` semantics.
 
+That distinction also matters at the request-contract layer: omitting a nullable filter and passing a real `null` are different operations. When a query DTO needs `IS NULL` behavior from frontend query params, the parsing contract must explicitly preserve `null` instead of collapsing it to omission.
+
 ## Joint operators and subqueries
 
 The query language also supports joint operators such as:

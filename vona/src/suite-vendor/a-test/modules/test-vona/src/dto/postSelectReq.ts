@@ -13,11 +13,12 @@ export interface IDtoOptionsPostSelectReq extends IDecoratorDtoOptions {}
 @Dto<IDtoOptionsPostSelectReq>({
   openapi: { filter: { table: 'testVonaPost' } },
   fields: {
-    title: $makeSchema(v.optional(), z.string()),
+    title: $makeSchema(v.optional(), v.nullable(), z.string()),
     createdAt: $makeSchema(
       ZovaRender.field('basic-date:formFieldDateRange'),
       v.filterTransform('a-web:dateRange'),
       v.optional(),
+      v.nullable(),
       z.string(),
     ),
   },

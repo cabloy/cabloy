@@ -27,6 +27,12 @@ export class FilterTransformBase extends BeanBase implements IFilterTransformWhe
         op = '_eq_';
       }
     }
+    if (value === null) {
+      if (op === '_is_' || op === '_isNot_') {
+        return { [op]: null };
+      }
+      return null;
+    }
     let where;
     if (op === '_eq_') {
       where = value;

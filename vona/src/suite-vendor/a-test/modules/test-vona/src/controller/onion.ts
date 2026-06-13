@@ -100,4 +100,17 @@ export class ControllerOnion extends BeanBase {
   echo6() {
     return this.bean.passport.isAuthenticated;
   }
+
+  @Web.get('echo7')
+  @Passport.public()
+  echo7(
+    @Arg.query('age', v.optional(), z.number()) age?: number,
+    @Arg.query('nullableAge', v.optional(), v.nullable(), z.number()) nullableAge?: number | null,
+  ) {
+    return {
+      age: age === undefined ? 'undefined' : age === null ? 'null' : String(age),
+      nullableAge:
+        nullableAge === undefined ? 'undefined' : nullableAge === null ? 'null' : String(nullableAge),
+    };
+  }
 }

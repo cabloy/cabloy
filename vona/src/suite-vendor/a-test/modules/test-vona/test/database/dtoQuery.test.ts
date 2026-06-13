@@ -62,6 +62,32 @@ describe('dtoQuery.test.ts', () => {
       assert.deepEqual(resEchoNull.where, {
         title: null,
       });
+      // findManyEcho: null in field
+      const resEchoFieldNull: IQueryParams = await app.bean.executor.performAction(
+        'get',
+        '/test/vona/post/findManyEcho',
+        {
+          query: {
+            title: 'null',
+          },
+        },
+      );
+      assert.deepEqual(resEchoFieldNull.where, {
+        title: null,
+      });
+      // findManyEcho: null in custom transform field
+      const resEchoDateNull: IQueryParams = await app.bean.executor.performAction(
+        'get',
+        '/test/vona/post/findManyEcho',
+        {
+          query: {
+            createdAt: 'null',
+          },
+        },
+      );
+      assert.deepEqual(resEchoDateNull.where, {
+        createdAt: null,
+      });
       // findMany
       const res = await app.bean.executor.performAction('get', '/test/vona/post/findMany', {
         query: {
