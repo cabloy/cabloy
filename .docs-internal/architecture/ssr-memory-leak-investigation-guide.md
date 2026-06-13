@@ -559,6 +559,8 @@ Diagnostic templates already in the repo:
 - `vona/.claude/skills/detect-ssr-leak/scripts/inline-heap.mjs`
 - `vona/.claude/skills/detect-ssr-leak/scripts/cdp-heap-analyze.mjs`
 
+The skill stays under `vona/.claude/skills/detect-ssr-leak` for now because the current diagnostic workflow and controller template are still Vona-specific rather than repo-wide Cabloy workflows.
+
 ## Practical takeaway
 
 If future work asks "is the SSR leak back?", start by verifying whether the system has regressed back across the main helper boundary.

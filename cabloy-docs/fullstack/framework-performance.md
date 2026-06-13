@@ -74,6 +74,10 @@ Actual memory usage still depends on factors such as:
 - deployment topology
 - operational configuration
 
+If you want to check your own SSR workload, you can use the `detect-ssr-leak` Claude skill in the Vona workspace to investigate long-running memory behavior and verify whether the system shows leak signals.
+
+This is a diagnostic workflow, not a universal guarantee that every deployment is leak-free.
+
 So the point of the example is not that one PM2 snapshot explains everything. The point is that Cabloy’s framework design is intended to support long-running, real business systems without forcing teams into constant performance firefighting.
 
 ## Where to go next
