@@ -91,7 +91,7 @@ A practical rule is:
 | -------------------- | ------------------------------------------------------------------- | -------------------------------------------------------- |
 | Dependency injection | explicit wiring in the current class                                | `@Use('demo-student.service.student')`                   |
 | Dependency lookup    | ordinary module-oriented business code                              | `this.scope.service.student`                             |
-| Direct bean access   | container-aware control or request-scoped lookup                    | `this.bean._getBean(...)`, `this.ctx.bean._getBean(...)` |
+| Direct bean access   | container-aware control through the app container or request scope  | `this.bean._getBean(...)`, `this.ctx.bean._getBean(...)` |
 | Fresh bean creation  | workflows that should not reuse the ordinary resolved bean instance | `this.bean._newBean(...)`                                |
 
 ## Dependency injection vs dependency lookup vs direct bean access
@@ -134,6 +134,12 @@ this.ctx.bean._getBean('demo-student.service.student');
 this.bean._newBean('demo-student.service.student');
 ```
 
+A practical distinction is:
+
+- `this.bean._getBean(...)` uses app-level container access
+- `this.ctx.bean._getBean(...)` uses request-scoped container access
+- `this.bean._newBean(...)` creates a fresh bean instance instead of reusing the ordinary resolved one
+
 The important conceptual split is:
 
 - injection wires a dependency into the current class
@@ -146,7 +152,7 @@ Legacy Vona essentials docs made bean identity more explicit, and that identity 
 
 The most important terms are:
 
-- **bean identifier**: a dotted identity such as `{moduleName}.{sceneName}.{beanName}`
+- **bean identifier**: for most scene-based beans, a dotted identity such as `{moduleName}.{sceneName}.{beanName}`
 - **onion name**: a colon-based framework name such as `{moduleName}:{beanName}`
 - **bean scene**: the operational family a bean belongs to, such as service, model, startup, queue, or broadcast
 
@@ -159,9 +165,12 @@ This matters because naming is not cosmetic. It affects:
 
 A practical naming rule is:
 
-- bean identifier uses the fully qualified `module.scene.bean` form such as `demo-student.service.student`
+- most scene-based beans use the fully qualified `module.scene.bean` form such as `demo-student.service.student`
 - onion name uses the shorter `module:bean` form such as `demo-student:student`
 - bean scene is the middle grouping layer that turns one module into operational families like `service`, `model`, `entity`, `dto`, or `startup`
+- the built-in global `bean` scene is an intentional exception and uses the plain bean name in the global shorthand surface
+
+If you need to create a **new backend bean scene** rather than only adding another bean to an existing scene, see [Backend Bean Scene Authoring](/backend/bean-scene-authoring).
 
 For deciding whether backend base classes belong in `src/lib`, `src/service`, or the global bean shorthand surface, also see [Class Placement Rule](/ai/class-placement-rule).
 

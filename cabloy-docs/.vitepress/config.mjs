@@ -182,6 +182,7 @@ export default defineConfig({
           text: 'Core Programming Model',
           items: [
             { text: 'AOP Overview', link: '/backend/aop-overview' },
+            { text: 'Bean Scene Authoring', link: '/backend/bean-scene-authoring' },
             { text: 'Controller Guide', link: '/backend/controller-guide' },
             { text: 'Controller AOP Guide', link: '/backend/controller-aop-guide' },
             { text: 'Internal AOP Guide', link: '/backend/internal-aop-guide' },
@@ -248,6 +249,7 @@ export default defineConfig({
           text: 'Architecture & Modules',
           items: [
             { text: 'IoC and Beans', link: '/frontend/ioc-and-beans' },
+            { text: 'Bean Scene Authoring', link: '/frontend/bean-scene-authoring' },
             { text: 'Modules and Suites', link: '/frontend/modules-and-suites' },
             { text: 'Module Scope', link: '/frontend/module-scope' },
             { text: 'Design Principles', link: '/frontend/design-principles' },

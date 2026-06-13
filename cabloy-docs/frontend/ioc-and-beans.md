@@ -35,9 +35,9 @@ All beans inherit from `BeanBase`, which exposes common framework capabilities a
 
 ## `BeanBase`
 
-`BeanBase` provides built-in members and is also a host for extended members injected by modules and adapters.
+`BeanBase` sits on top of the simpler core bean surface and is also a host for members extended by modules and adapters.
 
-Representative members include:
+Core inherited members include:
 
 - `sys`
 - `app`
@@ -46,14 +46,13 @@ Representative members include:
 - `scope`
 - `$el`
 - `$event`
-- `$ssr`
-- `$useMeta`
 
-Page and component beans also get frontend-specific members such as:
+Module and adapter layers can extend that surface further. For example, SSR-related modules can add members such as `$ssr` and `$useMeta`.
 
-- `$params`
-- `$query`
-- `$props`
+More specialized controller bases can also add frontend-specific members:
+
+- component-style controller bases expose `$props`
+- page-controller bases expose `$params` and `$query`
 
 Module and UI adapters can further extend the base surface.
 
@@ -193,6 +192,7 @@ This matters especially in large systems, where business modules should remain r
 
 Read this together with:
 
+- [Frontend Bean Scene Authoring](/frontend/bean-scene-authoring) when you need to create a **new bean scene** rather than only adding a bean inside an existing scene
 - [Modules and Suites](/frontend/modules-and-suites)
 - [Module Scope](/frontend/module-scope)
 - [Frontend Design Principles](/frontend/design-principles)
