@@ -41,6 +41,7 @@ Start here when you want the shortest route to a working monorepo mental model:
 Use this path when the task is about how backend and frontend stay aligned inside one framework system:
 
 - [Comparison with Other Frameworks](/fullstack/comparison-with-other-frameworks)
+- [Framework Performance](/fullstack/framework-performance)
 - [Vona + Zova Integration](/fullstack/vona-zova-integration)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)

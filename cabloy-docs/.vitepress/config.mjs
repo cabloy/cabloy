@@ -53,6 +53,7 @@ const fullstackGroups = [
         text: 'Comparison with Other Frameworks',
         link: '/fullstack/comparison-with-other-frameworks',
       },
+      { text: 'Framework Performance', link: '/fullstack/framework-performance' },
       { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
       { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
       {
