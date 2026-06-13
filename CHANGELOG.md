@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.59
+
+### Features
+
+- Update functionality.
+
+### Improvements
+
+- Update `upgrade.ts`.
+- Publish the latest package changes.
+
 ## 5.1.58
 
 ### Features
