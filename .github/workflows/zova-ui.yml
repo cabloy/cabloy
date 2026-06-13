@@ -11,7 +11,7 @@ jobs:
         node-version: [24]
     runs-on: ubuntu-latest
     env:
-      PNPM_MINIMUM_RELEASE_AGE: 0
+      PNPM_CONFIG_MINIMUM_RELEASE_AGE: 0
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
