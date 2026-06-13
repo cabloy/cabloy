@@ -66,6 +66,7 @@ zova/.quasar
 **/.vitepress/cache
 **/.rollup.cache
 **/.temp-dynamic-*
+/.cabloy-version
 vona/package.json
 zova/package.json
 vona/docker-compose.yml
