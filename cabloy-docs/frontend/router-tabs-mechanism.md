@@ -196,7 +196,8 @@ Inside `addTab`, the mechanism:
 - finds the existing level-1 tab by `tabKey`
 - resolves the display info for that tab
 - creates a new tab if needed
-- otherwise updates the tab and its items
+- inserts a newly created level-1 tab near the current context while keeping affixed tabs as a contiguous prefix
+- otherwise updates the tab and its items without reordering an already existing level-1 tab
 
 Representative implementation:
 
@@ -217,6 +218,12 @@ In the Admin layout, level-2 rendering intentionally skips that first anchor ite
 - the level-2 row only shows the additional work items
 
 This is an important part of the mechanism.
+
+The shared model also preserves these ordering rules:
+
+- the anchor item stays first within the workspace item list
+- new level-2 items open near the current active item when they belong to the current workspace
+- revisiting an already open level-2 item updates it in place instead of moving it
 
 Representative implementation:
 

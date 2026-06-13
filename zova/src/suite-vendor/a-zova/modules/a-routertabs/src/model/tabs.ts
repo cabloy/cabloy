@@ -156,15 +156,10 @@ export class ModelTabs extends BeanModelBase {
         updatedAt: Date.now(),
         info: tabInfo,
       };
-      if (this.tabCurrentIndex === -1) {
-        this.tabs = mutate(this.tabs, copyState => {
-          copyState.push(tabNew);
-        });
-      } else {
-        this.tabs = mutate(this.tabs, copyState => {
-          copyState.splice(this.tabCurrentIndex + 1, 0, tabNew);
-        });
-      }
+      const insertIndex = this._getInsertIndexForNewTab(tabNew);
+      this.tabs = mutate(this.tabs, copyState => {
+        copyState.splice(insertIndex, 0, tabNew);
+      });
       // need not await
       this.pruneTabs();
     } else {
@@ -324,17 +319,15 @@ export class ModelTabs extends BeanModelBase {
         keepAlive: tab.keepAlive,
         updatedAt: Date.now(),
       };
-      const index = items.findIndex(item => item.componentKey === tab.componentKey);
-      if (index === -1) {
-        items.push(tabItem);
+      const itemIndex = this._findTabItemIndex(items, tab.componentKey);
+      if (itemIndex === -1) {
+        const insertIndex = this._getInsertIndexForNewTabItem(tabOld, items);
+        items.splice(insertIndex, 0, tabItem);
       } else {
-        const tabItemNew: IRouteViewRouteItem = { ...items[index], ...tabItem };
-        items.splice(index, 1, tabItemNew);
+        const tabItemNew: IRouteViewRouteItem = { ...items[itemIndex], ...tabItem };
+        items.splice(itemIndex, 1, tabItemNew);
       }
-      // not use fullPath, because fullPath has query string
-      items.sort(
-        (a, b) => (a.componentKey === tabKey ? 0 : 1) - (b.componentKey === tabKey ? 0 : 1),
-      );
+      this._moveAnchorItemFirst(items, tabKey);
     }
     const tabNew: RouteTab = {
       ...tabOld,
@@ -377,6 +370,55 @@ export class ModelTabs extends BeanModelBase {
     const index = this.tabs.findIndex(item => item.tabKey === tabKey);
     if (index === -1) return [index, undefined];
     return [index, this.tabs[index]];
+  }
+
+  private _getInsertIndexForNewTab(tabNew: RouteTab) {
+    const lastAffixTabIndex = this._getLastAffixTabIndex();
+    if (this.tabCurrentIndex === -1) {
+      return lastAffixTabIndex + 1;
+    }
+    if (tabNew.affix) {
+      return lastAffixTabIndex + 1;
+    }
+    const tabCurrent = this.tabs[this.tabCurrentIndex];
+    if (tabCurrent?.affix) {
+      return lastAffixTabIndex + 1;
+    }
+    return this.tabCurrentIndex + 1;
+  }
+
+  private _getLastAffixTabIndex() {
+    let lastAffixTabIndex = -1;
+    for (let index = 0; index < this.tabs.length; index++) {
+      if (!this.tabs[index].affix) break;
+      lastAffixTabIndex = index;
+    }
+    return lastAffixTabIndex;
+  }
+
+  private _findTabItemIndex(items: IRouteViewRouteItem[], componentKey?: string) {
+    if (!componentKey) return -1;
+    return items.findIndex(item => item.componentKey === componentKey);
+  }
+
+  private _getCurrentTabItemIndex(tab: RouteTab, items: IRouteViewRouteItem[]) {
+    if (this.tabKeyCurrent !== tab.tabKey) return -1;
+    return this._findTabItemIndex(items, this.componentKeyCurrent);
+  }
+
+  private _getInsertIndexForNewTabItem(tab: RouteTab, items: IRouteViewRouteItem[]) {
+    const indexCurrentTabItem = this._getCurrentTabItemIndex(tab, items);
+    if (indexCurrentTabItem > -1) {
+      return indexCurrentTabItem + 1;
+    }
+    return items.length;
+  }
+
+  private _moveAnchorItemFirst(items: IRouteViewRouteItem[], tabKey: string) {
+    const indexAnchor = items.findIndex(item => item.componentKey === tabKey);
+    if (indexAnchor <= 0) return;
+    const [anchorItem] = items.splice(indexAnchor, 1);
+    items.unshift(anchorItem);
   }
 
   async pruneTabs() {

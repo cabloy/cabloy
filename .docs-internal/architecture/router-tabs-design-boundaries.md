@@ -234,6 +234,9 @@ Future refactors should preserve these boundaries:
 
 - `tabKey` remains the workspace grouping key
 - `componentKey` remains the page-instance key
+- newly created workspaces open near the current context without breaking the affix prefix
+- newly created work items open near the current active item in the same workspace
+- revisiting an existing workspace or work item updates it in place rather than moving it
 - workspace re-entry remains stable
 - cached state restoration does not overclaim dirty state truth
 - the shared mechanism remains distinguishable from any one layout’s rendering
