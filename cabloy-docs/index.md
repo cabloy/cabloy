@@ -64,6 +64,13 @@ Start here to learn the shared Cabloy architecture, see how Vona and Zova fit to
 5. [Reference Introduction](/reference/introduction)
 6. [Editions Overview](/editions/overview)
 
+### For performance-oriented reading
+
+1. [Fullstack Introduction](/fullstack/introduction)
+2. [Framework Performance](/fullstack/framework-performance)
+3. [Cache Guide](/backend/cache-guide)
+4. [Vona + Zova Integration](/fullstack/vona-zova-integration)
+
 ## Documentation scope labels
 
 Use these labels throughout the site:

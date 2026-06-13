@@ -73,3 +73,11 @@ Actual memory usage still depends on factors such as:
 - operational configuration
 
 So the point of the example is not that one PM2 snapshot explains everything. The point is that Cabloy’s framework design is intended to support long-running, real business systems without forcing teams into constant performance firefighting.
+
+## Where to go next
+
+If you want to continue from the performance philosophy into the concrete framework mechanisms behind it, these pages are the best next stops:
+
+- [Cache Guide](/backend/cache-guide) — how Vona makes caching first-class in the backend model
+- [Vona + Zova Integration](/fullstack/vona-zova-integration) — how the backend and frontend stay aligned as one framework system
+- [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) — one example of how Cabloy reduces repetitive cross-stack work at scale
