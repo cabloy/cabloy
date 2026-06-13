@@ -57,13 +57,29 @@ If you are not sure which edition you are using or which one to choose, read:
 - [Cabloy Basic](/editions/cabloy-basic)
 - [Cabloy Start](/editions/cabloy-start)
 
-## 5. Upgrade an existing project
+## 5. Run with Docker Compose
+
+Both Cabloy Basic and Cabloy Start support the same Docker Compose command flow. Run these commands from the repository for the edition you are using:
+
+```bash
+npm run build:docker
+cd docker-compose
+sudo COMPOSE_BAKE=true docker-compose build
+sudo docker-compose up
+```
+
+- Web: http://localhost/
+- Admin: http://localhost/admin/
+
+These commands build the edition-specific frontend flavors from the repository you are using.
+
+## 6. Upgrade an existing project
 
 ```bash
 npm run upgrade
 ```
 
-## 6. Next steps for framework-aware development
+## 7. Next steps for framework-aware development
 
 If you are contributing to framework-aware workflows or using Cabloy CLI generation directly, prefer CLI-backed generation over manual scaffolding.
 
@@ -76,7 +92,7 @@ npm run zova :create
 
 Then narrow into the specific command family you need.
 
-## 7. Shared verification commands for deeper workflow checks
+## 8. Shared verification commands for deeper workflow checks
 
 If you are validating framework-aware changes or a broader workflow, use the shared project scripts before declaring a workflow correct:
 
