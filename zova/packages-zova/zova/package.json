@@ -1,6 +1,6 @@
 {
   "name": "zova",
-  "version": "5.1.100",
+  "version": "5.1.101",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "A vue3 framework with ioc",
   "keywords": [

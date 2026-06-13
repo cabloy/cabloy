@@ -1,6 +1,6 @@
 {
   "name": "@cabloy/zod-query",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "gitHead": "a79189b882c17af5911573896a781bbb0046d37d",
   "description": "zod-query",
   "keywords": [
