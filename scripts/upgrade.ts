@@ -50,6 +50,12 @@ const MERGE_DIRS: string[] = [
   // Claude project assets
   '.claude/commands',
   '.claude/skills',
+  // Vona Claude project assets
+  'vona/.claude/commands',
+  'vona/.claude/skills',
+  // Zova Claude project assets
+  'zova/.claude/commands',
+  'zova/.claude/skills',
 ];
 
 const BLACKLIST_DIRS: string[] = [
