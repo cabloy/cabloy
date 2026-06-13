@@ -75,6 +75,7 @@ const referenceGroups = [
       { text: 'Introduction', link: '/reference/introduction' },
       { text: 'Repo Scripts', link: '/reference/repo-scripts' },
       { text: 'CLI Reference', link: '/reference/cli-reference' },
+      { text: 'Bean Scene Boilerplate Variants', link: '/reference/bean-scene-boilerplates' },
     ],
   },
   {

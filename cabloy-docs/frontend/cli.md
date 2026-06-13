@@ -71,6 +71,18 @@ A practical rule is:
 
 These are not competing workflow systems. They are two entrypoints to the same underlying Zova command families.
 
+## Bean boilerplate variants
+
+Some frontend bean scenes also expose named boilerplate variants.
+
+A practical rule is:
+
+- the default scene template comes from the scene metadata `boilerplate`
+- a named variant such as `--boilerplate=commandRow` maps to a metadata key such as `boilerplateCommandRow`
+- supported variants are scene-defined, so do not assume every scene exposes them
+
+For the current cross-stack lookup table, see [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates).
+
 ## Practical workflow rule
 
 When creating or refactoring frontend code, inspect `npm run zova :` or the relevant command family first, prefer the matching generator or refactor command, inspect the generated or transformed output, and only then make minimal follow-up edits.

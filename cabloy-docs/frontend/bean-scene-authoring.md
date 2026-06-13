@@ -201,6 +201,20 @@ This is especially useful when the scene’s options must be visible beyond one 
 
 Use this to tell the CLI which template should be used when a bean of the scene is created.
 
+### Multiple boilerplate variants
+
+A frontend scene can also expose more than one named template.
+
+A practical rule is:
+
+- `boilerplate` provides the default template
+- `--boilerplate=commandRow` maps to `boilerplateCommandRow`
+- more generally, `--boilerplate=name` maps to `boilerplateName`
+
+This is useful when one scene needs multiple scaffold shapes for distinct frontend authoring paths.
+
+Representative built-in examples include the `command` scene, which exposes `commandBulk` and `commandRow` variants, and the `tableCell` scene, which exposes a `tableActionRow` variant in module metadata.
+
 ### `metadataCustom`
 
 Use this only when the scene needs additional generated output beyond the standard metadata passes.

@@ -122,6 +122,24 @@ A practical bean-scene reading is:
 - `:create:bean sceneName beanName -- --module=...` uses `sceneName` as the operational family slot inside the bean identifier
 - this is why generated bean names later appear in forms such as `module.scene.bean`
 
+## Bean boilerplate variants
+
+Some backend bean scenes expose more than one scaffold template.
+
+In those cases, use `--boilerplate=...` to select a named variant:
+
+```bash
+npm run vona :create:bean ssrMenu menuTest -- --module=demo-student --boilerplate=web
+```
+
+A practical rule is:
+
+- the default scene template comes from the scene metadata `boilerplate`
+- a named variant such as `--boilerplate=web` maps to a metadata key such as `boilerplateWeb`
+- supported variants are scene-defined, so do not assume every scene exposes them
+
+For the current cross-stack lookup table, see [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates).
+
 ## Initializer-family examples
 
 Not every backend resource is created through bean scenes.

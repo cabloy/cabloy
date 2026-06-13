@@ -194,6 +194,20 @@ This matters for container-oriented lookup and the broader typed bean surface.
 
 Use this to tell the CLI which template should be used when a bean of the scene is created.
 
+### Multiple boilerplate variants
+
+A backend scene can expose more than one named template.
+
+A practical rule is:
+
+- `boilerplate` provides the default template
+- `--boilerplate=web` maps to `boilerplateWeb`
+- more generally, `--boilerplate=name` maps to `boilerplateName`
+
+This is useful when one scene needs multiple scaffold shapes for distinct runtime targets or authoring paths.
+
+Representative built-in examples include `ssrMenu` and `ssrMenuGroup`, which expose both the default template and a `web` variant in module metadata.
+
 ### `metadataCustom`
 
 Use this only when the scene needs additional generated output that is not covered by the standard metadata passes.

@@ -81,6 +81,8 @@ Representative command modules:
 - `vona/packages-cli/cli-set-api/src/lib/command/bin.play.ts`
 - `zova/packages-cli/cli-set-front/src/lib/command/tools.metadata.ts`
 
+When a `:create:bean` workflow depends on scene-specific boilerplate variants, also see [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates).
+
 This is the preferred path for both humans and AI agents because it follows the real registration flow instead of relying on scattered examples.
 
 ## Related guides
