@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.58
+
+### Features
+
+- Support nullable query filters.
+- Deliver several feature updates across the library.
+
+### Improvements
+
+- Add a Docker Compose quickstart flow to the documentation.
+- Refresh the framework performance documentation.
+
 ## 5.1.57
 
 ### Features
