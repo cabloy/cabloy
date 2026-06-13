@@ -1,6 +1,6 @@
 {
   "name": "zova-module-a-zod",
-  "version": "5.1.29",
+  "version": "5.1.30",
   "gitHead": "09d901d17140a80ee0764211b441cda72fd94663",
   "description": "",
   "keywords": [
@@ -36,7 +36,7 @@
   "dependencies": {
     "@cabloy/zod-errors-custom": "^2.1.9",
     "@cabloy/zod-openapi": "^1.1.9",
-    "@cabloy/zod-query": "^2.1.9",
+    "@cabloy/zod-query": "^2.1.11",
     "zod": "^4.4.3"
   },
   "devDependencies": {
