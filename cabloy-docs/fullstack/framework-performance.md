@@ -38,6 +38,8 @@ For the current public explanation of this backend capability, see [Cache Guide]
 
 ## Runtime example
 
+This is the kind of result Cabloy is designed to support: a framework that stays operationally calm even when the system keeps running for long periods.
+
 One internally generated project was kept running continuously for **33 hours**. At one representative PM2 snapshot, the process looked like this:
 
 ```text

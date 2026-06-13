@@ -42,6 +42,7 @@ Start here to learn the shared Cabloy architecture, see how Vona and Zova fit to
 - **Get started quickly** with the fullstack quickstart and core Cabloy concepts
 - **Learn the shared fullstack architecture** across Cabloy, Vona, and Zova
 - **Explore backend and frontend workflows** without losing the cross-stack picture
+- **Understand Cabloy’s performance philosophy and runtime stability story** with [Framework Performance](/fullstack/framework-performance)
 - **See how Cabloy Basic and Cabloy Start differ by edition** when UI assumptions, flavors, modules, SSR sites, or AI workflow guidance matter
 - **Follow source-grounded AI vibe coding guidance** for prompting, workflow selection, and verification
 
