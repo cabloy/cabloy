@@ -1,6 +1,5 @@
 packages:
   - 'packages-cli/*'
-  - 'packages-docs'
   - 'packages-utils/*'
   - 'packages-vona/*'
   - 'src/module/*'
