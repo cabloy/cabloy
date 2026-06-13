@@ -14,6 +14,21 @@ With Vona, Zova, suite-based modules, and CLI-first workflows, Cabloy turns comm
 
 [Documentation](https://docs.cabloy.com) · [npm](https://www.npmjs.com/package/cabloy) · [Web Demo](https://cabloy.com) · [Admin Demo](https://cabloy.com/admin) · [GitHub](https://github.com/cabloy/cabloy)
 
+## Fullstack Principles
+
+Cabloy’s fullstack model is built around two core principles:
+
+1. **Frontend build output participates directly in backend SSR**
+   - Zova owns the frontend application source
+   - the generated frontend bundle and SSR-related artifacts are consumed by the Vona-side SSR flow
+   - backend rendering and frontend hydration stay on one coordinated delivery path
+
+2. **Type information flows in both directions**
+   - **Backend -> Frontend**: Vona emits Swagger/OpenAPI contracts that Zova can use to generate SDKs and related schema-aware helpers
+   - **Frontend -> Backend**: Zova generates structural metadata and typing surfaces such as routes, components, and icons that can improve backend-side tooling and type hints
+
+For the complete explanation, see [Fullstack Introduction](https://docs.cabloy.com/fullstack/introduction), [Vona + Zova Integration](https://docs.cabloy.com/fullstack/vona-zova-integration), [Backend OpenAPI to Frontend SDK](https://docs.cabloy.com/fullstack/openapi-to-sdk), and [Frontend Metadata Back to Backend](https://docs.cabloy.com/fullstack/frontend-metadata-to-backend).
+
 ## Get Started
 
 ### Prerequisites

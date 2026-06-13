@@ -55,6 +55,7 @@ Those concerns should live elsewhere.
 - [ADR 0001: Establish the Internal Engineering Documentation Home](./decisions/0001-internal-docs-home.md)
 - [ADR 0002: Guard-Based Default API Permission Projection](./decisions/0002-guard-permission-projection.md)
 - [ADR 0003: Stop SSR Leak Fixes at the Runtime-Core Boundary](./decisions/0003-stop-ssr-leak-fixes-at-runtime-core-boundary.md)
+- [ADR 0004: Preserve Fullstack SSR and Bidirectional Type-Flow Principles](./decisions/0004-fullstack-ssr-and-bidirectional-type-flow.md)
 
 ### Architecture notes
 
