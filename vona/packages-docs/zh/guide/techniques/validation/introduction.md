@@ -145,6 +145,7 @@ VonaJS 将用于扩展 Zod Schema 的工具方法都放入分组`v`中，从而�
 | -------------- | ----------------------------------------------------------- |
 | v.required     | 为`不允许为空`提供自定义错误消息，否则使用Zod内置的错误消息 |
 | v.optional     | optional                                                    |
+| v.nullable     | nullable                                                    |
 | v.default      | default                                                     |
 | v.object       | object                                                      |
 | v.strictObject | Same as `z.strictObject(schema.shape)`                      |

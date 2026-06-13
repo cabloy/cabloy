@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { Metadata } from './metadata.ts';
 import { isNil } from './utils.ts';
-import { isZodType } from './zod-is-type.ts';
+import { isNullableSchema, isZodType } from './zod-is-type.ts';
 
 interface IParsePayload {
   value: any;
@@ -33,6 +33,8 @@ function __parseAdapter(inst: z.ZodType, parse) {
         return __parseObject(inst, parse, payload, _);
       case 'array':
         return __parseArray(inst, parse, payload, _);
+      case 'nullable':
+        return __parseNullable(inst, parse, payload, _);
       case 'optional':
         return __parseOptional(inst, parse, payload, _);
       case 'default':
@@ -171,14 +173,24 @@ function __parseArray(_inst, parse, payload: IParsePayload, _) {
 ///////////////////////////////////////////
 
 function __parseOptional(_inst, parse, payload: IParsePayload, _) {
-  if (isZodType(Metadata.unwrapUntil(_inst), 'ZodString')) {
-    _coerceString(payload);
-  } else {
-    _coerceWithNil(payload);
-  }
-  if (payload.value === null) {
+  const nullable = isNullableSchema(_inst);
+  _coerceNullable(_inst, payload, nullable);
+  if (payload.value === null && !nullable) {
     payload.value = undefined;
   }
+  return parse(payload, _);
+}
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+/// ///////                       //////////
+/// ///////      ZodNullable      /////////
+/// ///////                       //////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+
+function __parseNullable(_inst, parse, payload: IParsePayload, _) {
+  _coerceNullable(_inst, payload, true);
   return parse(payload, _);
 }
 
@@ -191,11 +203,7 @@ function __parseOptional(_inst, parse, payload: IParsePayload, _) {
 ////////////////////////////////////////////
 
 function __parseDefault(_inst, parse, payload: IParsePayload, _) {
-  if (isZodType(Metadata.unwrapUntil(_inst), 'ZodString')) {
-    _coerceString(payload);
-  } else {
-    _coerceWithNil(payload);
-  }
+  _coerceNullable(_inst, payload, isNullableSchema(_inst));
   return parse(payload, _);
 }
 
@@ -222,6 +230,17 @@ function _coerceString(payload: IParsePayload, fn?: Function) {
     } else {
       fn?.(payload);
     }
+  }
+}
+
+function _coerceNullable(inst: z.ZodType, payload: IParsePayload, nullable: boolean) {
+  if (isZodType(Metadata.unwrapUntil(inst), 'ZodString')) {
+    _coerceString(payload);
+    if (nullable && payload.value === 'null') {
+      payload.value = null;
+    }
+  } else {
+    _coerceWithNil(payload);
   }
 }
 

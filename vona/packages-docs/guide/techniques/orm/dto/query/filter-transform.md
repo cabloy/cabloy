@@ -78,6 +78,24 @@ class DtoStudentQuery {
 - `v.filterTransform`: This function is used to use Filter Transform. Simply pass the Filter Transform name
   - The `dateRange` Filter Transform belongs to the `demo-student` module, so the full name is `demo-student:dateRange`
 
+## Nullable query filters
+
+If a DTO query field needs to express SQL `IS NULL` semantics from frontend query params, declare the field with `v.optional(), v.nullable()`.
+
+```typescript
+class DtoPostQuery {
+  @Api.field(v.optional(), v.nullable())
+  title?: string | null;
+}
+```
+
+Behavior:
+- `v.optional()` still means the field may be omitted
+- `v.nullable()` additionally allows a real `null` value to survive query parsing
+- the built-in base Filter Transform maps that nullable `null` to ORM `where.title = null`, which then becomes SQL `IS NULL`
+
+Use `v.optional(), v.nullable()` in that order so the top-level query contract remains optional while explicitly opting into nullable transport semantics.
+
 ### 2. App Config
 
 `createdAt` parameters can be configured in App Config.

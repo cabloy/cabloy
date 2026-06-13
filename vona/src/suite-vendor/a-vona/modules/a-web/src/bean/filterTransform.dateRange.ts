@@ -22,6 +22,7 @@ export class FilterTransformDateRange extends BeanBase implements IFilterTransfo
     options: IFilterTransformOptionsDateRange,
   ): Promise<any | undefined> {
     const { value } = info;
+    if (value === null) return null;
     const [dateStartStr, dateEndStr] = value.split(options.separator);
     if (!dateStartStr && !dateEndStr) return;
     //

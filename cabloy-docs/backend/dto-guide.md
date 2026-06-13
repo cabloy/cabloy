@@ -73,6 +73,13 @@ class DtoStudentCreate {
 }
 ```
 
+For query-oriented DTOs, another important distinction is optional vs nullable:
+
+- `v.optional()` means the field may be omitted
+- `v.nullable()` means the field may carry a real `null`
+
+That becomes especially important for DTO query filters. A field declared with `v.optional(), v.nullable()` can preserve real `null` through query parsing so the downstream ORM filter can express SQL `IS NULL` instead of silently treating the value as omitted.
+
 ## DTO options
 
 Three especially important DTO option areas are:

@@ -78,6 +78,24 @@ class DtoStudentQuery {
 - `v.filterTransform`: 此工具函数用于使用 Filter Transform，只需传入 Filter Transform 的名称
   - `dateRange` Filter Transform 属于模块`demo-student`，因此完整的名称是`demo-student:dateRange`
 
+## Nullable Query Filters
+
+如果某个 DTO Query 字段需要通过前端 query params 表达 SQL `IS NULL` 语义，可以把该字段声明为 `v.optional(), v.nullable()`。
+
+```typescript
+class DtoPostQuery {
+  @Api.field(v.optional(), v.nullable())
+  title?: string | null;
+}
+```
+
+行为说明：
+- `v.optional()` 仍然表示该字段可以省略
+- `v.nullable()` 额外允许真实的 `null` 值在 query parsing 之后保留下来
+- 内置的 base Filter Transform 会把这个 nullable `null` 转换为 ORM `where.title = null`，最终生成 SQL `IS NULL`
+
+建议按 `v.optional(), v.nullable()` 的顺序使用，这样顶层 query contract 仍然是 optional，同时又显式开启 nullable transport 语义。
+
 ### 2. App Config
 
 可以在 App Config 中配置 createdAt 参数。

@@ -12,6 +12,7 @@ import type { ValidatorOptions } from 'vona-module-a-validation';
 
 import { isNil, isNilOrEmptyString } from '@cabloy/utils';
 import { ZodMetadata } from '@cabloy/zod-openapi';
+import { isNullableSchema } from '@cabloy/zod-query';
 import { BeanBase, beanFullNameFromOnionName, cast } from 'vona';
 import { createArgumentPipe, Pipe } from 'vona-module-a-aspect';
 
@@ -139,7 +140,6 @@ export class PipeFilter
     value: any,
     options: IPipeOptionsFilter,
   ) {
-    if (isNilOrEmptyString(fieldValue)) return;
     if (__FieldsSystem.includes(key)) return;
     const fieldSchema = ZodMetadata.getFieldSchema(options.schema, key);
     if (!fieldSchema) return;
@@ -148,6 +148,9 @@ export class PipeFilter
     const openapi: ISchemaObjectExtensionField | undefined = ZodMetadata.getOpenapiMetadata(
       fieldSchema,
     ) as ISchemaObjectExtensionField | undefined;
+    const [transformName] = openapi?.filter?.transform ?? ['a-web:base', undefined];
+    const fieldNullable = fieldValue === null && isNullableSchema(fieldSchema);
+    if (isNilOrEmptyString(fieldValue) && !fieldNullable) return;
     // name
     const originalName = openapi?.filter?.originalName ?? key;
     let fullName: string;
@@ -165,10 +168,7 @@ export class PipeFilter
     // check where
     if (Object.prototype.hasOwnProperty.call(params.where, fullName)) return;
     // filter transform
-    const [transformName, transformOptions] = openapi?.filter?.transform ?? [
-      'a-web:base',
-      undefined,
-    ];
+    const [, transformOptions] = openapi?.filter?.transform ?? ['a-web:base', undefined];
     const transformOptions2 = this.bean.onion.filterTransform.getOnionOptionsDynamic(
       transformName as keyof IFilterTransformRecord,
       transformOptions,

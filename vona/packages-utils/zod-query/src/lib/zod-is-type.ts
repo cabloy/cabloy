@@ -90,17 +90,59 @@ export function isAnyZodType(schema: object): schema is z.ZodType {
 }
 
 /**
- * The schema.isNullable() is deprecated. This is the suggested replacement
- * as this was how isNullable operated beforehand.
+ * The schema.isNullable() is deprecated. This is the suggested replacement.
  */
 export function isNullableSchema(schema: z.ZodType) {
-  return schema.safeParse(null).success;
+  return _isNullableSchema(schema);
 }
 
 /**
- * The schema.isOptional() is deprecated. This is the suggested replacement
- * as this was how isOptional operated beforehand.
+ * The schema.isOptional() is deprecated. This is the suggested replacement.
  */
 export function isOptionalSchema(schema: z.ZodType) {
-  return schema.safeParse(undefined).success;
+  return _isOptionalSchema(schema);
+}
+
+function _isNullableSchema(schema: z.ZodType): boolean {
+  if (isZodType(schema, 'ZodNullable')) return true;
+  if (isZodType(schema, 'ZodNonOptional')) return false;
+  if (
+    isZodType(schema, ['ZodOptional', 'ZodDefault', 'ZodReadonly']) &&
+    isAnyZodType(schema._zod.def.innerType)
+  ) {
+    return _isNullableSchema(schema._zod.def.innerType);
+  }
+  if (isZodType(schema, 'ZodPipe')) {
+    const inSchema = schema._zod.def.in;
+    const outSchema = schema._zod.def.out;
+    if (isZodType(inSchema, 'ZodTransform') && isAnyZodType(outSchema)) {
+      return _isNullableSchema(outSchema);
+    }
+    if (isAnyZodType(inSchema)) {
+      return _isNullableSchema(inSchema);
+    }
+  }
+  return false;
+}
+
+function _isOptionalSchema(schema: z.ZodType): boolean {
+  if (isZodType(schema, ['ZodOptional', 'ZodDefault'])) return true;
+  if (isZodType(schema, 'ZodNonOptional')) return false;
+  if (
+    isZodType(schema, ['ZodNullable', 'ZodReadonly']) &&
+    isAnyZodType(schema._zod.def.innerType)
+  ) {
+    return _isOptionalSchema(schema._zod.def.innerType);
+  }
+  if (isZodType(schema, 'ZodPipe')) {
+    const inSchema = schema._zod.def.in;
+    const outSchema = schema._zod.def.out;
+    if (isZodType(inSchema, 'ZodTransform') && isAnyZodType(outSchema)) {
+      return _isOptionalSchema(outSchema);
+    }
+    if (isAnyZodType(inSchema)) {
+      return _isOptionalSchema(inSchema);
+    }
+  }
+  return false;
 }

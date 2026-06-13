@@ -37,11 +37,19 @@ findOne(@Arg.query('id', z.number().min(6)) id: number) {}
 Inferred schemas can also be extended through helper tools like:
 
 - `v.optional`
+- `v.nullable`
 - `v.default`
 - `v.array`
 - `v.lazy`
 
 That is important because many real validation cases need augmentation rather than total replacement.
+
+A useful distinction is:
+
+- `v.optional` means the field may be omitted
+- `v.nullable` means the field may carry a real `null`
+
+For query parameters, that distinction matters because plain optional values still collapse `null` to omission, while `v.optional(), v.nullable()` allows a real `null` to survive parsing when the contract needs SQL `IS NULL` semantics downstream.
 
 ## `@Arg.filter`
 
