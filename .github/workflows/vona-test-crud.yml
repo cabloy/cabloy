@@ -27,11 +27,11 @@ jobs:
           version: 11.5.2
       - name: init
         run: npm run init
-      - run: npm run vona :create:module demo-student -- --suite --ci
+      - run: npm run vona :create:module demo-student2 -- --suite --ci
         working-directory: vona
       - run: npm run vona :tools:deps
         working-directory: vona
-      - run: npm run vona :tools:crud student -- --module=demo-student
+      - run: npm run vona :tools:crud student2 -- --module=demo-student2
         working-directory: vona
       - run: npm run test
         working-directory: vona
