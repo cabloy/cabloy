@@ -106,7 +106,17 @@ npm run zova :create:module demo-student -- --suite=
 
 If you want the module to belong to a specific suite, pass that suite name instead. On the frontend side, projects often care more explicitly about suite placement, so your repo may ask for or prefer a `suite` value.
 
-## Step 4: Inspect the generated structure before editing
+## Step 4: Restart the dev workflow
+
+After creating a new module, rerun the local development command so the workspace picks up the new module cleanly:
+
+```bash
+npm run dev
+```
+
+A good beginner rule is: after generator-driven module creation, restart the dev workflow first, then continue inspecting or editing files.
+
+## Step 5: Inspect the generated structure before editing
 
 After both generators run, inspect the generated structure before making heavy changes.
 
@@ -153,7 +163,7 @@ In the current public repo, the frontend Student example uses this minimal start
 
 That minimal shape is enough for Tutorial 2, where the backend CRUD thread becomes the first rich business surface.
 
-## Step 5: Compare the result with the existing Student example
+## Step 6: Compare the result with the existing Student example
 
 If you want a concrete reference after generation, compare your result with the existing Student example in this repo.
 
