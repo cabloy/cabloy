@@ -51,9 +51,10 @@ Start here to learn the shared Cabloy architecture, see how Vona and Zova fit to
 ### For getting started
 
 1. [Fullstack Quickstart](/fullstack/quickstart)
-2. [Editions Overview](/editions/overview)
-3. [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
-4. [Fullstack Introduction](/fullstack/introduction)
+2. [Fullstack Quick Start Tutorials](/fullstack/tutorials-overview)
+3. [Editions Overview](/editions/overview)
+4. [Choosing Between Cabloy Basic and Cabloy Start](/editions/choosing-between-basic-and-start)
+5. [Fullstack Introduction](/fullstack/introduction)
 
 ### For contributors and AI vibe coding workflows
 

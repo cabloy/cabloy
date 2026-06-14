@@ -40,6 +40,26 @@ const fullstackGroups = [
     ],
   },
   {
+    text: 'Fullstack / Tutorials',
+    items: [
+      { text: 'Tutorials Overview', link: '/fullstack/tutorials-overview' },
+      { text: 'Tutorial 1: First Module', link: '/fullstack/tutorial-1-first-module' },
+      { text: 'Tutorial 2: First CRUD', link: '/fullstack/tutorial-2-first-crud' },
+      {
+        text: 'Tutorial 3: Frontend Metadata Sharing',
+        link: '/fullstack/tutorial-3-frontend-metadata-sharing',
+      },
+      {
+        text: 'Tutorial 4: Backend Contract Sharing',
+        link: '/fullstack/tutorial-4-backend-contract-sharing',
+      },
+      {
+        text: 'Tutorial 5: One Contract Surface, Four Uses',
+        link: '/fullstack/tutorial-5-one-contract-four-uses',
+      },
+    ],
+  },
+  {
     text: 'Tooling & Workflow',
     items: [
       { text: 'CLI', link: '/fullstack/cli' },
