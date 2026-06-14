@@ -5,8 +5,10 @@ import type {
   EntityStudent,
 } from 'vona-module-demo-student';
 
+import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
+import { cast } from 'vona';
 import { app } from 'vona-mock';
 
 describe('student.test.ts', () => {
@@ -33,7 +35,7 @@ describe('student.test.ts', () => {
       assert.ok(studentId);
 
       const selectRes: DtoStudentSelectRes = await app.bean.executor.performAction('get', routeStudent);
-      assert.ok(selectRes.list.some(item => item.name === data.name));
+      assert.ok(selectRes.list.some(item => item.name === data.name && item.level === data.level));
 
       await app.bean.executor.performAction('patch', routeStudentId, {
         params: { id: studentId },
@@ -45,6 +47,18 @@ describe('student.test.ts', () => {
       });
       assert.equal(updatedStudent.name, dataUpdate.name);
       assert.equal(updatedStudent.level, dataUpdate.level);
+
+      const [, err] = await catchError(async () => {
+        return await app.bean.executor.performAction('post', routeStudent, {
+          body: {
+            ...data,
+            name: '__TomInvalid__',
+            level: 4,
+          },
+        });
+      });
+      assert.ok(err);
+      assert.equal(cast(err.message)[0]?.path?.[0], 'level');
 
       await app.bean.executor.performAction('delete', routeStudentId, {
         params: { id: studentId },

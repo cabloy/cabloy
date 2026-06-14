@@ -14,6 +14,7 @@ Use it when future contributors need to understand how a subsystem works, what i
 
 Representative examples:
 
+- `backend-resource-field-workflow.md` records the preferred AI-assisted workflow for adding or refining fields on existing Vona backend resources, including fileVersion decisions, migration safety, shared renderer reuse, locale updates, and verification
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
 - `router-tabs-design-boundaries.md` records the design intent, workspace-vs-instance identity split, anchor-item role, layout boundary, cache boundary, and refactor safety rules for the router-tabs workbench mechanism
 - `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, the SSR `ssrRender -> instance.render` fallback bridge used by Zova, and the residual-runtime findings that future memory investigations should reuse
