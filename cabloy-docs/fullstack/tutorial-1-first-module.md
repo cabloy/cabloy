@@ -27,6 +27,13 @@ npm run vona :create:module demo-student
 npm run zova :create:module demo-student
 ```
 
+If you want to create an independent module that does not belong to any suite, pass an empty `--suite=` option:
+
+```bash
+npm run vona :create:module demo-student -- --suite=
+npm run zova :create:module demo-student -- --suite=
+```
+
 Then inspect these files first:
 
 - `vona/src/module/demo-student/src/index.ts`
@@ -75,8 +82,13 @@ Example:
 npm run vona :create:module demo-student
 ```
 
-If your workflow needs a specific suite, pass `--suite=...`.
-If you are not sure which suite to use yet, start with the simplest command and let the CLI prompt or command help guide you.
+If you want the backend module to be created as an independent module that does not belong to any suite, use an empty `--suite=` explicitly:
+
+```bash
+npm run vona :create:module demo-student -- --suite=
+```
+
+If you want the module to belong to a specific suite, pass that suite name instead. If you are not sure which suite to use yet, start with the simplest command and let the CLI prompt or command help guide you.
 
 ## Step 3: Create the frontend module with Zova
 
@@ -86,7 +98,13 @@ Example:
 npm run zova :create:module demo-student
 ```
 
-On the frontend side, projects often care more explicitly about suite placement, so your repo may ask for or prefer a `suite` value.
+If you want the frontend module to be created as an independent module that does not belong to any suite, use an empty `--suite=` explicitly:
+
+```bash
+npm run zova :create:module demo-student -- --suite=
+```
+
+If you want the module to belong to a specific suite, pass that suite name instead. On the frontend side, projects often care more explicitly about suite placement, so your repo may ask for or prefer a `suite` value.
 
 ## Step 4: Inspect the generated structure before editing
 
