@@ -81,5 +81,9 @@ export class CliCreateModule extends BeanCliBase {
     if (!argv.vscode && !argv.ci) {
       await this.helper.pnpmInstall();
     }
+    // tools.metadata
+    if (!argv.nometadata) {
+      await this.helper.invokeCli([':tools:metadata', moduleName], { cwd: argv.projectPath });
+    }
   }
 }
