@@ -8,11 +8,11 @@ This tutorial shows the reverse direction of Cabloy’s fullstack contract loop:
 
 By the end of this tutorial, you will understand:
 
-- why Cabloy fullstack type sharing is bidirectional
-- how a frontend render resource can participate in backend DTO and entity metadata
-- how schema-driven form and table rendering stays close to the backend field contract
+- why Cabloy fullstack sharing is bidirectional
+- how a frontend render resource can participate in backend entity and DTO metadata
+- how schema-driven table rendering stays close to the backend field contract
 
-## What “frontend metadata sharing” means here
+## Why this step matters
 
 This tutorial does **not** mean that backend and frontend literally share arbitrary component code.
 
@@ -20,33 +20,21 @@ Instead, the frontend defines render resources, and the backend field contract r
 
 That is why this is better described as **frontend metadata sharing** than only “frontend type sharing.”
 
-## Copy-first command block
+## Before you run commands
 
-If you want the shortest possible start, copy and run this command from the repo root:
+Before starting this tutorial, make sure Tutorial 2 is already complete.
 
-```bash
-npm run zova :create:bean tableCell studentLevel -- --module=demo-student
-```
+Work from the repo root and keep these source facts in mind:
 
-Then inspect these files first:
+- the current public `demo-student` example already has `name` and `description`
+- the current public `demo-student` example does **not** already contain `student.level`
+- the current frontend module does **not** already contain a custom `studentLevel` render resource
 
-- `zova/src/module/demo-student/src/bean/`
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
+So this tutorial must first create the missing business field and then wire a new frontend render resource back into that contract.
 
-## The teaching field: `student.level`
+## Step 1: Inspect the current starting state
 
-Use `level` as the teaching field for this tutorial.
-
-It is a natural example because beginners can immediately understand why the field might want:
-
-- a custom form field rendering style
-- a custom table cell display style
-- shared metadata instead of repeated UI decisions in many places
-
-## Step 1: Inspect the existing render contract pattern
-
-Before creating anything new, inspect the current pattern in the Student example.
+Before creating anything new, inspect the current Student example.
 
 Representative source anchors:
 
@@ -54,76 +42,117 @@ Representative source anchors:
 - `vona/src/module/demo-student/src/dto/studentCreate.tsx`
 - `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
 - `vona/src/module/demo-student/src/dto/studentView.tsx`
+- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
 - `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
 
-Notice how these files already use metadata such as:
+A useful beginner observation is:
 
-- `ZovaRender.order(...)`
-- `ZovaRender.field(...)`
-- `ZovaRender.cell(...)`
-- `ZovaRender.block(...)`
+- the entity already shows `ZovaRender.order(...)`, `ZovaRender.field(...)`, and `ZovaRender.cell(...)` patterns
+- `studentSelectReq.tsx` already shows filter-side `ZovaRender.field(...)` usage
+- `studentSelectResItem.tsx` already shows list-page blocks and row-action composition
 
-This is the key idea: backend field and page metadata can point at frontend render resources.
+That is the real starting point.
 
-## Step 2: Inspect the frontend generation surfaces
+## Step 2: Add `student.level` to the backend contract surface first
 
-When you need a new render resource, create it on the frontend side first.
+Use `level` as the teaching field for this tutorial.
 
-That usually means using the Zova CLI rather than inventing file placement manually.
+A simple business meaning is enough, for example:
+
+- student level
+- training stage
+- level code such as `primary`, `intermediate`, or `advanced`
+
+Start in the entity:
+
+- `vona/src/module/demo-student/src/entity/student.tsx`
+
+A representative direction is to add a small field such as:
+
+```typescript
+@Api.field(
+  v.title($locale('Level')),
+  v.required(),
+  ZovaRender.order(3),
+)
+level: string;
+```
+
+In the current Student example, the create, update, and view DTO classes are already thin page-entry wrappers around the model-driven contract surface. That means the first important change belongs in the entity.
+
+Then inspect the related DTO surfaces and only add follow-up metadata where the workflow really needs it:
+
+- `vona/src/module/demo-student/src/dto/studentCreate.tsx`
+- `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
+- `vona/src/module/demo-student/src/dto/studentView.tsx`
+- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
+- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
+
+A practical beginner rule is: without a real backend field first, there is nothing for frontend metadata to target.
+
+## Step 3: Inspect the frontend CLI and bean scene first
+
+When you need a new render resource, create it on the frontend side with the existing Zova CLI surface instead of inventing file placement manually.
 
 Start by discovering the relevant create surface:
 
 ```bash
 npm run zova :create
-npm run zova :create:component --help
 npm run zova :create:bean --help
 ```
 
-Authoritative command shapes in this repo include:
+Authoritative command shape in this repo:
 
 ```bash
-npm run zova :create:component componentName -- [--module=] [--boilerplate=]
 npm run zova :create:bean sceneName beanName -- [--module=] [--boilerplate=]
 ```
 
-Then choose the narrowest generator that matches the resource you want to add.
+For this tutorial, the important scene is `tableCell`.
 
-- if your team models the new render as a standard component, start with `:create:component`
-- if the render belongs to an existing bean scene such as a table-cell workflow, start with `:create:bean`
+If you want to inspect current scene and boilerplate guidance first, use:
 
-## Step 3: Create the frontend render resource first
+- [Frontend CLI](/frontend/cli)
+- [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates)
 
-For example, a table-cell-oriented path may look like:
+## Step 4: Generate the frontend `tableCell` resource
+
+Create the new render resource from the repo root:
 
 ```bash
 npm run zova :create:bean tableCell studentLevel -- --module=demo-student
 ```
 
-If the scene exposes multiple boilerplates, inspect them before deciding which one matches your use case.
+Then inspect the generated file. In the current module layout, a beginner should expect a bean path like:
 
-The current built-in examples are summarized in:
+- `zova/src/module/demo-student/src/bean/tableCell.studentLevel.tsx`
 
-- [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates)
+The default generated table-cell bean is intentionally small. It gives you a valid frontend render resource that the backend contract can reference.
 
-A good beginner rule is: create the render resource first, then reference it from backend metadata. Do not start by hard-coding frontend rendering in a page if your goal is shared contract behavior.
+A useful comparison anchor is the current built-in table-cell boilerplate and examples:
 
-## Step 4: Attach the render resource from backend metadata
+- `zova/src/suite-vendor/a-zova/modules/a-table/cli/tableCell/boilerplate/{{sceneName}}.{{beanName}}.tsx_`
+- `zova/src/suite/a-demo/modules/demo-basic/src/bean/tableCell.test.tsx`
+- `zova/src/suite/cabloy-basic/modules/basic-select/src/bean/tableCell.select.tsx`
 
-Once the frontend resource exists, reference it from the backend field contract.
+## Step 5: Reference the generated resource from backend metadata
 
-A representative entity pattern already looks like this:
+Once the frontend resource exists, wire it back into the backend field contract.
+
+That means returning to:
+
+- `vona/src/module/demo-student/src/entity/student.tsx`
+
+and attaching the generated table-cell resource to the new `level` field:
 
 ```typescript
 @Api.field(
-  v.title($locale('Name')),
+  v.title($locale('Level')),
   v.required(),
-  ZovaRender.order(1),
-  ZovaRender.cell('basic-table:actionView'),
+  ZovaRender.order(3),
+  ZovaRender.cell('demo-student:studentLevel'),
 )
-name: string;
+level: string;
 ```
-
-For the `level` field, the goal is the same pattern with a field-specific render and, if useful, a matching table-cell render.
 
 This is the important mental model:
 
@@ -131,78 +160,33 @@ This is the important mental model:
 - backend owns the business field contract
 - metadata connects the two
 
-A representative field-level snippet from the current Student entity looks like this:
+If you want a current source example where a field already uses both field and cell render metadata, inspect:
 
-```typescript
-@Api.field(
-  v.title($locale('Name')),
-  v.required(),
-  v.min(2),
-  ZovaRender.order(1),
-  ZovaRender.cell('basic-table:actionView'),
-)
-name: string;
-```
+- `vona/src/suite-vendor/a-test/modules/test-rest/src/entity/product.tsx`
 
-A representative list-page snippet from the current Student DTO looks like this:
-
-```typescript
-@Dto({
-  blocks: [
-    ZovaRender.block('basic-page:blockPage', {
-      blocks: [
-        ZovaRender.block('basic-page:blockFilter'),
-        ZovaRender.block('basic-page:blockToolbarBulk', {
-          actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
-        }),
-        ZovaRender.block('basic-page:blockTable'),
-        ZovaRender.block('basic-page:blockPager'),
-      ],
-    }),
-  ],
-})
-```
-
-These two snippets show the same idea at two levels:
-
-- field metadata can reuse frontend render resources
-- page and table structure can also be driven by the same render-oriented contract system
-
-## Step 5: Check the DTO surface too
+## Step 6: Inspect the DTO surfaces and keep deeper form customization optional
 
 Do not stop at the entity.
 
-In this repo, DTOs also participate in render-aware metadata and page-block composition.
+A good beginner follow-up is to inspect whether the related DTO surfaces need extra work for your teaching goal:
 
-A good example is the Student list-response item:
+- `studentCreate.tsx`
+- `studentUpdate.tsx`
+- `studentView.tsx`
+- `studentSelectReq.tsx`
+- `studentSelectResItem.tsx`
 
-- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
+In the current Student example, the first real win is the shared table-cell path.
 
-That file shows that the frontend render conversation is not only about a single field. It also reaches page blocks, toolbars, table rows, and row actions.
+If you want filter-side behavior later, inspect the existing `ZovaRender.field(...)` usage in:
 
-## Expected result after this tutorial
+- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
 
-At the end of this tutorial, you should have both of these results:
+If you want deeper custom form-field rendering later, treat that as a follow-up extension, not as the primary promised outcome of this tutorial.
 
-1. a new frontend render resource in the `demo-student` frontend module
-2. a backend field contract that references that resource through `ZovaRender.field(...)` or `ZovaRender.cell(...)`
+## Step 7: Verify the visible result from the admin UI
 
-Depending on the generator and scene you used, the new frontend file will typically appear under one of these shapes:
-
-- `zova/src/module/demo-student/src/component/...`
-- `zova/src/module/demo-student/src/bean/...`
-- `zova/src/module/demo-student/src/<sceneName>/...`
-
-And the backend metadata anchor will typically be in:
-
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- and sometimes related DTO files too
-
-## Step 6: Let schema-driven UI consume the contract
-
-After the backend metadata references the frontend render resource, the frontend schema-driven layers can use that contract for rendering.
-
-A practical beginner verification step is to reopen the Student UI in the admin app and check the visible result there. Use this shared verification rhythm:
+After the backend metadata references the frontend render resource, use the same shared verification rhythm to confirm the visible result.
 
 1. make sure the local dev workflow is running:
 
@@ -211,28 +195,30 @@ npm run dev
 ```
 
 2. open `http://localhost:7102/admin/`
-3. enter the **Student** list page or related Student form page
-4. navigate to the table or form surface where the `level` field should appear
-5. verify that the `level` field is now rendered through the shared metadata path you updated
+3. enter the **Student** list page from the **Student** menu
+4. navigate to the table surface where the `level` field should appear
+5. verify that the `level` column is now rendered through the shared metadata path you added
 
-That is where pages, forms, and tables benefit from the same field-oriented definition instead of duplicating UI decisions manually.
+That is where the reverse fullstack direction becomes visible: the backend field contract is now pointing at a frontend render resource instead of hard-coding UI behavior page by page.
 
-Read that together with the schema-driven frontend surfaces:
+## Expected result
 
-- `$apiSchema`
-- `$sdk`
-- form-field render resources
-- table-cell render resources
+At the end of this tutorial, you should have all of these results:
+
+1. a real `student.level` field in the backend contract surface
+2. a generated frontend table-cell resource in the `demo-student` module
+3. backend metadata that references that resource through `ZovaRender.cell('demo-student:studentLevel')`
+4. a visible Student list-page result that proves the shared metadata path is working
 
 ## Checkpoint
 
 Before moving to the next tutorial, make sure you can answer these questions:
 
-1. have you reopened `http://localhost:7102/admin/`, returned to the relevant **Student** page, and verified that the `level` field now shows the visible rendering effect you expected?
-2. which side creates the render resource first?
-3. which backend file references that render resource through metadata?
-4. why is this workflow better than duplicating render choices page by page?
-5. which existing Student DTO shows that render metadata can participate in larger page structure too?
+1. did you start by adding a real backend `level` field before trying to reference any frontend resource?
+2. which command created the frontend `tableCell` resource for `student.level`?
+3. which backend file now points to `demo-student:studentLevel`?
+4. which Student DTO already shows that render metadata can also participate in larger page structure?
+5. if you want deeper form-specific behavior later, which surface should you inspect next?
 
 ## Why this is a Cabloy-specific strength
 

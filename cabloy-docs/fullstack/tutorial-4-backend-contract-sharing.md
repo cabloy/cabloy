@@ -12,34 +12,26 @@ By the end of this tutorial, you will understand:
 - why SDK regeneration is usually better than hand-writing duplicate request types
 - how OpenAPI and module-level SDK ownership fit into one workflow
 
-## Copy-first command block
+## Why this step matters
 
-If you want the shortest possible start, copy and run these commands from the repo root:
+This workflow reduces duplicated type work across backend and frontend.
 
-```bash
-npm run zova :openapi:config demo-student
-npm run zova :openapi:generate demo-student
-```
+Instead of manually keeping request and response shapes synchronized in two places, you let the backend contract remain the source truth and regenerate the frontend artifacts from it.
 
-Then inspect these files first:
+That is one of the clearest fullstack productivity wins in Cabloy.
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `zova/src/module/demo-student/cli/openapi.config.ts`
-- `zova/src/module/demo-student/src/api/`
-- `zova/src/module/demo-student/src/api/openapi/`
+## Before you run commands
 
-## The teaching endpoint
+Make sure the Student module and CRUD thread already exist.
 
-Add one small business endpoint to the Student Training Center story.
+Work from the repo root and choose one small endpoint that fits the Student Training Center story.
 
 Good beginner examples include:
 
 - `GET /student/:id/summary`
 - `GET /student/lookup`
 
-Choose the one that best matches the page or component you plan to build next.
-
-The important teaching point is not the exact route name. The important teaching point is that a backend contract change should flow into generated frontend artifacts.
+The important point is not the exact route name. It is that a backend contract change should flow into generated frontend artifacts.
 
 ## Step 1: Change the backend contract first
 
@@ -118,6 +110,8 @@ cd zova && npm run build:rest:cabloyBasicWeb
 
 These commands matter because the generated SDK and the rest-contract build are related but not identical steps.
 
+Treat this as a Basic-specific follow-up when your workflow needs refreshed rest-contract output as well as regenerated SDK artifacts.
+
 ## Step 6: Inspect the frontend consumption layer
 
 After regeneration, inspect how the frontend consumes the generated contract.
@@ -154,7 +148,9 @@ export class ApiHome extends BeanApiBase {
 
 This is the practical takeaway for beginners: after backend contract generation, the frontend does not need to guess response types from memory. It can consume generated contract types directly.
 
-A practical beginner verification step is to use the same shared verification rhythm:
+## Step 7: Verify the regenerated contract from the admin UI
+
+Use the same shared verification rhythm:
 
 1. make sure the local dev workflow is running:
 
@@ -175,7 +171,7 @@ Read this together with the server-data abstraction ladder:
 
 The goal is not only to generate files. The goal is to let frontend code consume backend truth through the right Cabloy abstraction layer.
 
-## Expected result after this tutorial
+## Expected result
 
 At the end of this tutorial, you should have all of these results:
 
@@ -199,14 +195,6 @@ Before moving to the next tutorial, make sure you can answer these questions:
 3. which command regenerates the frontend SDK for `demo-student`?
 4. when should you regenerate instead of hand-writing a new frontend service?
 5. why are rest-build commands related to, but not the same as, OpenAPI SDK generation?
-
-## Why this matters
-
-This workflow reduces duplicated type work across backend and frontend.
-
-Instead of manually keeping request and response shapes synchronized in two places, you let the backend contract remain the source truth and regenerate the frontend artifacts from it.
-
-That is one of the clearest fullstack productivity wins in Cabloy.
 
 ## Read together with
 

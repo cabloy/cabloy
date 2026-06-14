@@ -26,16 +26,18 @@ Many frameworks force developers to repeat the same field knowledge in many plac
 
 Cabloy tries to reduce that duplication through a field-oriented contract and metadata model.
 
-## Copy-first command block
+## Before you continue
 
-If you want the shortest possible start, inspect and refine these files first:
+This page works best after Tutorials 2, 3, and 4 are complete.
 
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/studentCreate.tsx`
-- `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
-- `vona/src/module/demo-student/src/controller/student.ts`
+Before using it as the capstone tutorial, make sure:
 
-A practical follow-up verification step is:
+- the Student CRUD thread already exists
+- `student.level` is available for render-oriented work
+- `student.mobile` is available or ready to be added for validation and serialization work
+- when backend contract changes affect frontend artifacts, you regenerate them as needed
+
+A practical follow-up command is:
 
 ```bash
 npm run zova :openapi:generate demo-student
@@ -170,7 +172,7 @@ For this tutorial series, a good mental walkthrough is:
 5. decide whether serialized output should show the raw mobile value, a masked value, or no value at all
 6. separately let `student.level` demonstrate form and table rendering reuse
 
-## Expected result after this tutorial
+## Expected result
 
 At the end of this tutorial, a beginner should be able to point to four different reuse surfaces for the same business thread:
 

@@ -2,13 +2,11 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial series gives new Cabloy users one connected onboarding path instead of five isolated reference pages.
+This tutorial series gives new Cabloy users one connected onboarding path.
 
 ## Why this series exists
 
-Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. What many beginners still need is one practical storyline that connects those capabilities in the order they usually discover them.
-
-This series fills that gap.
+Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series connects those capabilities in the order beginners usually meet them.
 
 It uses one small business scenario and teaches the Cabloy workflow in the order that is usually most helpful for a first project:
 
@@ -92,6 +90,21 @@ npm run zova :openapi
 ```
 
 This is one of the most important Cabloy habits to learn early.
+
+## How the tutorials are organized
+
+Tutorials 1-4 follow one shared execution rhythm:
+
+1. `Goal`
+2. `Why this step matters`
+3. `Before you run commands`
+4. `Step 1 ... Step N`
+5. `Expected result`
+6. `Checkpoint`
+
+That makes the series easier to scan and execute one page at a time.
+
+Tutorial 5 is intentionally different. It closes the series as a capstone page that summarizes how validation, rendering, OpenAPI, and serialization meet on the same field-oriented contract surface.
 
 ## Suggested reading rhythm
 

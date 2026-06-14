@@ -12,34 +12,11 @@ By the end of this tutorial, you will understand:
 - how to discover the right CLI family before creating files
 - how a Cabloy business capability starts as a module on both sides of the stack
 
-## Why start with a module
+## Why this step matters
 
 In Cabloy, a module is the natural unit for evolving business code, metadata, generated assets, and docs.
 
 Before you create CRUD, API contracts, field rendering, or schema-driven UI, first create the module boundary that will own that work.
-
-## Copy-first command block
-
-If you want the shortest possible start, copy and run these commands from the repo root:
-
-```bash
-npm run vona :create:module demo-student
-npm run zova :create:module demo-student
-```
-
-If you want to create an independent module that does not belong to any suite, pass an empty `--suite=` option:
-
-```bash
-npm run vona :create:module demo-student -- --suite=
-npm run zova :create:module demo-student -- --suite=
-```
-
-Then inspect these files first:
-
-- `vona/src/module/demo-student/src/index.ts`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
-- `zova/src/module/demo-student/src/index.ts`
-- `zova/src/module/demo-student/src/.metadata/index.ts`
 
 ## Before you run commands
 
@@ -88,7 +65,7 @@ If you want the backend module to be created as an independent module that does 
 npm run vona :create:module demo-student -- --suite=
 ```
 
-If you want the module to belong to a specific suite, pass that suite name instead. If you are not sure which suite to use yet, start with the simplest command and let the CLI prompt or command help guide you.
+If you want the module to belong to a specific suite, pass that suite name instead. If you are not sure yet, start with the simplest command and follow the CLI prompt or help output.
 
 ## Step 3: Create the frontend module with Zova
 
@@ -131,24 +108,23 @@ The current public Student example uses:
 - `vona/src/module/demo-student/`
 - `zova/src/module/demo-student/`
 
-A newly created backend module will later grow into the business thread used in the next tutorials.
-A newly created frontend module may start much smaller, which is normal.
-
-Typical backend concerns include:
-
-- module entry surface
-- metadata and locale assets
-- package and index surfaces
-
-Typical frontend concerns include:
-
-- module entry surface
-- generated metadata and exports
-- module ownership and package surface
+A newly created backend module will later grow into the business thread used in the next tutorials. A newly created frontend module may start much smaller, which is normal.
 
 A good beginner rule is: do not rush into editing business logic until you can explain which files were created and why.
 
-## Expected result after this tutorial
+## Step 6: Compare the result with the existing Student example
+
+If you want a concrete reference after generation, compare your result with the existing Student example in this repo.
+
+Representative source anchors:
+
+- `vona/src/module/demo-student/`
+- `zova/src/module/demo-student/`
+- `zova/src/suite/a-home/modules/home-api/`
+
+Do not copy those folders blindly. Use them to understand the expected module shape, suite placement, and naming.
+
+## Expected result
 
 At the end of this tutorial, you should at least be able to point to two module roots:
 
@@ -163,18 +139,6 @@ In the current public repo, the frontend Student example uses this minimal start
 
 That minimal shape is enough for Tutorial 2, where the backend CRUD thread becomes the first rich business surface.
 
-## Step 6: Compare the result with the existing Student example
-
-If you want a concrete reference after generation, compare your result with the existing Student example in this repo.
-
-Representative source anchors:
-
-- `vona/src/module/demo-student/`
-- `zova/src/module/demo-student/`
-- `zova/src/suite/a-home/modules/home-api/`
-
-Do not copy those folders blindly. Use them to understand the expected module shape, suite placement, and naming style.
-
 ## Checkpoint
 
 Before moving to the next tutorial, make sure you can answer these questions:
@@ -183,17 +147,6 @@ Before moving to the next tutorial, make sure you can answer these questions:
 2. which side owns frontend module generation?
 3. what module name are you using for the Student Training Center example?
 4. which generated module roots will later hold CRUD, render resources, and SDK-related work?
-
-## Why this matters for the next tutorials
-
-These module skeletons give you the ownership boundary for everything else in the series:
-
-- the `student` CRUD thread
-- the `level` field render resource
-- the `mobile` field contract story
-- the generated frontend SDK slice for student-facing APIs
-
-Without the module boundary, the rest of the tutorial series becomes less realistic.
 
 ## Read together with
 

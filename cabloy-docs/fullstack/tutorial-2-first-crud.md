@@ -12,26 +12,11 @@ By the end of this tutorial, you will understand:
 - what the generated backend thread usually includes
 - how the generated entity and DTO surface becomes the contract foundation for later tutorials
 
-## Why CRUD comes next
+## Why this step matters
 
 Once the module exists, the next useful step is not to hand-build controller, service, model, entity, DTO, metadata, locale, and tests one by one.
 
 Cabloy already provides a CRUD generator for that thread.
-
-## Copy-first command block
-
-If you want the shortest possible start, copy and run this command from the repo root:
-
-```bash
-npm run vona :tools:crud student -- --module=demo-student
-```
-
-Then inspect these files first:
-
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/studentCreate.tsx`
-- `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
 
 ## Before you run commands
 
@@ -54,7 +39,7 @@ npm run vona :tools:crud --help
 npm run vona :tools:crudBasic --help
 ```
 
-In the current Cabloy Basic repo, `:tools:crud` is the public entrypoint and routes to the Basic-specific CRUD path. That means beginners can start with `:tools:crud`, while advanced readers can still inspect `:tools:crudBasic` directly.
+In the current Cabloy Basic repo, `:tools:crud` is the public entrypoint and routes to the Basic-specific CRUD path. Beginners can start with `:tools:crud`, while advanced readers can still inspect `:tools:crudBasic` directly.
 
 ## Step 2: Generate the `student` CRUD thread
 
@@ -111,7 +96,7 @@ There is also a test anchor at:
 
 - `vona/src/module/demo-student/test/student.test.ts`
 
-The exact generated file set can evolve. The point of this step is to understand the thread, not memorize one frozen list forever.
+The exact generated file set can evolve. The point is to understand the thread, not memorize a frozen list.
 
 ## Step 5: Refine the first business fields
 
@@ -133,7 +118,7 @@ Keep the first refinement small.
 A good beginner rule is:
 
 - let the generator create the architecture thread
-- manually refine only the fields and behaviors that the teaching scenario really needs
+- manually refine only the fields and behaviors the teaching scenario actually needs
 
 ## Step 6: Compare with the existing Student example
 
@@ -156,7 +141,7 @@ Use these files to understand the current Cabloy style for:
 - controller route declaration through `@Web.get()`, `@Web.post()`, `@Web.patch()`, and `@Web.delete()`
 - table and list page block composition through `ZovaRender.block(...)`
 
-## What to notice in the generated contract thread
+## Step 7: Understand the generated contract thread
 
 As you inspect the generated files, pay attention to the division of responsibility:
 
@@ -166,9 +151,9 @@ As you inspect the generated files, pay attention to the division of responsibil
 4. entity defines the field-oriented contract surface
 5. DTOs define operation-specific request and response contracts
 
-That architecture is the base for all later fullstack sharing work in this series.
+That architecture is the base for the later fullstack sharing work in this series.
 
-## Expected result after this tutorial
+## Expected result
 
 At the end of this tutorial, you should have one working backend resource thread for `student`.
 
@@ -191,14 +176,6 @@ Before moving to the next tutorial, make sure you can answer these questions:
 3. where will the `mobile` field validation rules live?
 4. which file exposes the HTTP endpoints for the `student` resource?
 5. which DTOs will later feed OpenAPI and frontend SDK generation?
-
-## Why this tutorial matters for the next steps
-
-Tutorial 3 will add frontend render metadata for `level`.
-Tutorial 4 will add a new backend API contract and regenerate the frontend SDK.
-Tutorial 5 will show that the same field-oriented contract surface also drives validation, OpenAPI, rendering, and serialization.
-
-So this CRUD thread is not a disposable demo. It is the foundation for the entire series.
 
 ## Read together with
 
