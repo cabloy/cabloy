@@ -54,9 +54,11 @@ Before inventing a custom implementation path:
 - Service-scene runtime-anchor bases that should not register in `IBeanRecordGeneral` should prefer the `src/service/*_.ts` form.
 - `src/bean` defines the global shorthand surface; classes that should not appear in `IBeanRecordGlobal` should move to `src/lib` or `src/service` rather than being filtered by `@Virtual()`.
 - When backend code references `this.bean.xxx`, `ctx.bean.xxx`, or `app.bean.xxx`, use `IBeanRecordGlobal` and module `src/.metadata/index.ts` as the first static lookup surface; use `IBeanRecordGeneral` or `src/service` only when the target is not a global shorthand.
+- When adding a persisted field to an existing backend resource, ask the user whether `vonaModule.fileVersion` should be incremented before changing `meta.version.ts` or the module schema path. If yes, add a new migration version and bump `fileVersion`. If no, keep the current `fileVersion` and fold the schema change into the current version path. Do not assume the versioning strategy without confirmation.
 
 ## Verification expectations
 
 - For docs changes: run the docs build and verify links/navigation where practical.
 - For code-generation or workflow guidance changes: verify that the referenced scripts and command families still exist.
 - For code changes: prefer the narrowest meaningful verification first, then use shared root scripts when broader confidence is needed.
+- Any change to `meta.version.ts` requires running `npm run test` so the test database is reinitialized and schema/data consistency issues surface early.
