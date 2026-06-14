@@ -146,6 +146,19 @@ This example is intentionally small, but it demonstrates the key teaching point 
 
 This means response shaping can stay close to the field contract instead of becoming ad hoc controller or service post-processing.
 
+A practical beginner verification step is to use the same shared verification rhythm and check both the UI-visible result and the returned data behavior after your contract changes:
+
+1. make sure the local dev workflow is running:
+
+```bash
+npm run dev
+```
+
+2. open `http://localhost:7102/admin/`
+3. return to the **Student** list page or related Student form
+4. verify that `student.level` shows the expected render-driven behavior
+5. verify that any `student.mobile` exposure now follows the validation and serialization policy you defined
+
 ## A practical beginner walkthrough
 
 For this tutorial series, a good mental walkthrough is:
@@ -194,10 +207,11 @@ That is the main beginner mental model this series is designed to teach.
 
 After finishing the series, make sure you can answer these questions:
 
-1. where would you add a new validation rule for `student.mobile`?
-2. where would you attach a custom render choice for `student.level`?
-3. which workflow regenerates frontend contract artifacts after backend contract changes?
-4. when is serialization a better fit than changing the service result directly?
+1. have you reopened `http://localhost:7102/admin/`, returned to the relevant **Student** page, and verified both the visible `level` rendering result and the exposed `mobile` output behavior?
+2. where would you add a new validation rule for `student.mobile`?
+3. where would you attach a custom render choice for `student.level`?
+4. which workflow regenerates frontend contract artifacts after backend contract changes?
+5. when is serialization a better fit than changing the service result directly?
 
 ## Read together with
 

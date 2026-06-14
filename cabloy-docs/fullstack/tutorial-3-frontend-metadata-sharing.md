@@ -202,6 +202,19 @@ And the backend metadata anchor will typically be in:
 
 After the backend metadata references the frontend render resource, the frontend schema-driven layers can use that contract for rendering.
 
+A practical beginner verification step is to reopen the Student UI in the admin app and check the visible result there. Use this shared verification rhythm:
+
+1. make sure the local dev workflow is running:
+
+```bash
+npm run dev
+```
+
+2. open `http://localhost:7102/admin/`
+3. enter the **Student** list page or related Student form page
+4. navigate to the table or form surface where the `level` field should appear
+5. verify that the `level` field is now rendered through the shared metadata path you updated
+
 That is where pages, forms, and tables benefit from the same field-oriented definition instead of duplicating UI decisions manually.
 
 Read that together with the schema-driven frontend surfaces:
@@ -215,10 +228,11 @@ Read that together with the schema-driven frontend surfaces:
 
 Before moving to the next tutorial, make sure you can answer these questions:
 
-1. which side creates the render resource first?
-2. which backend file references that render resource through metadata?
-3. why is this workflow better than duplicating render choices page by page?
-4. which existing Student DTO shows that render metadata can participate in larger page structure too?
+1. have you reopened `http://localhost:7102/admin/`, returned to the relevant **Student** page, and verified that the `level` field now shows the visible rendering effect you expected?
+2. which side creates the render resource first?
+3. which backend file references that render resource through metadata?
+4. why is this workflow better than duplicating render choices page by page?
+5. which existing Student DTO shows that render metadata can participate in larger page structure too?
 
 ## Why this is a Cabloy-specific strength
 

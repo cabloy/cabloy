@@ -154,6 +154,19 @@ export class ApiHome extends BeanApiBase {
 
 This is the practical takeaway for beginners: after backend contract generation, the frontend does not need to guess response types from memory. It can consume generated contract types directly.
 
+A practical beginner verification step is to use the same shared verification rhythm:
+
+1. make sure the local dev workflow is running:
+
+```bash
+npm run dev
+```
+
+2. open `http://localhost:7102/admin/`
+3. enter the relevant **Student** page that consumes the refreshed endpoint or contract
+4. trigger the page behavior that depends on the regenerated SDK or refreshed contract
+5. verify that the page can consume the refreshed backend contract successfully without hand-written duplicate request typing
+
 Read this together with the server-data abstraction ladder:
 
 - `OpenAPI SDK`
@@ -181,10 +194,11 @@ Depending on your module setup, the generated frontend output will often include
 
 Before moving to the next tutorial, make sure you can answer these questions:
 
-1. which backend files changed when you added the new endpoint?
-2. which command regenerates the frontend SDK for `demo-student`?
-3. when should you regenerate instead of hand-writing a new frontend service?
-4. why are rest-build commands related to, but not the same as, OpenAPI SDK generation?
+1. after regenerating the SDK, have you reopened `http://localhost:7102/admin/`, returned to the relevant **Student** page, and confirmed that the frontend can consume the refreshed contract successfully?
+2. which backend files changed when you added the new endpoint?
+3. which command regenerates the frontend SDK for `demo-student`?
+4. when should you regenerate instead of hand-writing a new frontend service?
+5. why are rest-build commands related to, but not the same as, OpenAPI SDK generation?
 
 ## Why this matters
 

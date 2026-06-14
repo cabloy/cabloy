@@ -99,7 +99,7 @@ A good beginner rhythm for this series is:
 
 1. read one tutorial page completely
 2. run only the commands from that page
-3. if the tutorial creates a new module, rerun `npm run dev` before continuing
+3. if the tutorial creates a new module, rerun `npm run dev` so the local dev workflow picks up the new module before continuing
 4. inspect the generated or modified files before moving on
 5. keep the previous tutorial result, because the next tutorial builds on it
 

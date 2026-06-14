@@ -76,21 +76,18 @@ This is the preferred Cabloy path because it keeps the framework-managed thread 
 
 After the CLI command finishes, do not stop at file inspection. Use the generated UI to verify that the CRUD thread is already usable.
 
-1. first confirm that the backend development service is running:
+1. make sure the local dev workflow is running:
 
 ```bash
 npm run dev
 ```
 
-2. then open the admin UI:
+2. open `http://localhost:7102/admin/`
+3. enter the **Student** list page from the **Student** menu
+4. trigger create, read, update, and delete operations from the page
+5. verify that the generated Student business thread is already usable from the admin UI
 
-- `http://localhost:7102/admin/`
-
-3. in the admin UI, find the **Student** menu
-4. click the menu to enter the **Student** list page
-5. use the page to perform create, read, update, and delete operations
-
-This is an important beginner checkpoint: after generator-driven CRUD creation, you should be able to verify the Student business thread from the user interface, not only from source files.
+This is an important beginner checkpoint: after generator-driven CRUD creation, you should be able to verify the Student business thread from the admin UI, not only from source files.
 
 ## Step 4: Inspect the generated files immediately
 
@@ -183,13 +180,13 @@ At minimum, you should be able to point to:
 - a test file for the generated CRUD flow
 - a working **Student** list page in the admin UI where you can perform create, read, update, and delete operations
 
-If you cannot clearly identify those surfaces yet, stop here and inspect the generated files and the generated admin UI before moving on.
+If you cannot clearly identify those surfaces yet, stop here and inspect the generated files and verify the Student page again in the admin UI before moving on.
 
 ## Checkpoint
 
 Before moving to the next tutorial, make sure you can answer these questions:
 
-1. have you already opened `/admin/` and completed create, read, update, and delete operations on the **Student** page?
+1. have you already opened `http://localhost:7102/admin/`, entered the **Student** list page, and completed create, read, update, and delete operations there?
 2. where will the `level` field be defined first?
 3. where will the `mobile` field validation rules live?
 4. which file exposes the HTTP endpoints for the `student` resource?
