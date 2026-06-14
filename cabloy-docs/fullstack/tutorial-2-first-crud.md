@@ -72,7 +72,27 @@ npm run vona :tools:crudBasic student -- --module=demo-student
 
 This is the preferred Cabloy path because it keeps the framework-managed thread consistent from the start.
 
-## Step 3: Inspect the generated files immediately
+## Step 3: Verify the generated CRUD from the admin UI
+
+After the CLI command finishes, do not stop at file inspection. Use the generated UI to verify that the CRUD thread is already usable.
+
+1. first confirm that the backend development service is running:
+
+```bash
+npm run dev
+```
+
+2. then open the admin UI:
+
+- `http://localhost:7102/admin/`
+
+3. in the admin UI, find the **Student** menu
+4. click the menu to enter the **Student** list page
+5. use the page to perform create, read, update, and delete operations
+
+This is an important beginner checkpoint: after generator-driven CRUD creation, you should be able to verify the Student business thread from the user interface, not only from source files.
+
+## Step 4: Inspect the generated files immediately
 
 After generation, inspect the resulting backend thread before changing it.
 
@@ -96,7 +116,7 @@ There is also a test anchor at:
 
 The exact generated file set can evolve. The point of this step is to understand the thread, not memorize one frozen list forever.
 
-## Step 4: Refine the first business fields
+## Step 5: Refine the first business fields
 
 For this tutorial series, refine the generated `student` resource around these fields:
 
@@ -118,7 +138,7 @@ A good beginner rule is:
 - let the generator create the architecture thread
 - manually refine only the fields and behaviors that the teaching scenario really needs
 
-## Step 5: Compare with the existing Student example
+## Step 6: Compare with the existing Student example
 
 This repo already contains a useful Student reference thread.
 
@@ -161,17 +181,19 @@ At minimum, you should be able to point to:
 - an entity for the field contract
 - DTOs for create, update, and view behavior
 - a test file for the generated CRUD flow
+- a working **Student** list page in the admin UI where you can perform create, read, update, and delete operations
 
-If you cannot clearly identify those four surfaces yet, stop here and inspect the generated files before moving on.
+If you cannot clearly identify those surfaces yet, stop here and inspect the generated files and the generated admin UI before moving on.
 
 ## Checkpoint
 
 Before moving to the next tutorial, make sure you can answer these questions:
 
-1. where will the `level` field be defined first?
-2. where will the `mobile` field validation rules live?
-3. which file exposes the HTTP endpoints for the `student` resource?
-4. which DTOs will later feed OpenAPI and frontend SDK generation?
+1. have you already opened `/admin/` and completed create, read, update, and delete operations on the **Student** page?
+2. where will the `level` field be defined first?
+3. where will the `mobile` field validation rules live?
+4. which file exposes the HTTP endpoints for the `student` resource?
+5. which DTOs will later feed OpenAPI and frontend SDK generation?
 
 ## Why this tutorial matters for the next steps
 
