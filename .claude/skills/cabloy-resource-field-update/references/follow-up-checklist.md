@@ -72,7 +72,7 @@ Apply when the user explicitly wants to demonstrate custom renderer development:
 - `cd vona && npm run tsc`
 - `cd vona && npm test -- <resource-test>.test.ts`
 
-## Recovery rule
+## Common recovery rule
 
 If generated `.zova-rest` output already contains the new renderer keys but Vona still behaves as if old types are installed:
 

@@ -78,7 +78,7 @@ Confirm:
 - generated `.zova-rest` or related type surfaces contain the new renderer keys
 - backend `ZovaRender.field(...)` / `ZovaRender.cell(...)` references pass typecheck
 
-## 5. Recovery rule for stale local file dependencies
+## 5. Common recovery rule for stale local file dependencies
 
 If all of these are true:
 

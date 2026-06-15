@@ -6,6 +6,7 @@ import { Service } from 'vona-module-a-bean';
 
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
+import type { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import type { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { DtoStudentView } from '../dto/studentView.tsx';
 import type { EntityStudent } from '../entity/student.tsx';
@@ -21,6 +22,17 @@ export class ServiceStudent extends BeanBase {
     return await this.scope.model.student.selectAndCount(params);
   }
 
+  async summary(id: TableIdentity): Promise<DtoStudentSummary | undefined> {
+    const student = await this.scope.model.student.getById(id);
+    if (!student) return undefined;
+    return {
+      id: student.id,
+      name: student.name,
+      description: student.description,
+      level: student.level,
+    };
+  }
+
   async view(id: TableIdentity): Promise<DtoStudentView | undefined> {
     return await this.scope.model.student.getById(id);
   }
@@ -31,5 +43,9 @@ export class ServiceStudent extends BeanBase {
 
   async delete(id: TableIdentity) {
     return await this.scope.model.student.deleteById(id);
+  }
+
+  async deleteForce(id: TableIdentity) {
+    return await this.scope.model.student.deleteById(id, { disableDeleted: true });
   }
 }

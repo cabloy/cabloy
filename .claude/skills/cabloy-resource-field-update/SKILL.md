@@ -7,6 +7,17 @@ description: Use this skill whenever the user wants to update a field on an exis
 
 Use this skill when the user wants to change a field on an existing Vona backend resource.
 
+## Important recovery note for stale generated consumers
+
+When generated `.zova-rest` output already contains the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local file-dependency installation problem rather than a source-editing problem.
+
+In that situation:
+
+1. run the normal sync flow such as `deps:vona`
+2. if the stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
+
+Keep this recovery rule visible during renderer-aware or contract-loop follow-up work. Do not keep debugging source-level renderer registrations until the local file-package installation state is known to be healthy.
+
 ## Goals
 
 1. detect whether the active repository is Cabloy Basic or Cabloy Start

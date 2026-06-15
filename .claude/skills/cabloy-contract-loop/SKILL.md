@@ -7,6 +7,17 @@ description: Use this skill whenever a Cabloy task crosses the Vona-to-Zova cont
 
 Use this skill when a backend contract change needs to be reflected in frontend consumers, or when frontend consumers appear stale and you need to diagnose whether the backend contract loop is the real source of drift.
 
+## Important recovery note for stale local file consumers
+
+When generated `.zova-rest` output or other generated consumer artifacts already contain the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local file-dependency installation problem rather than a source-editing problem.
+
+In that situation:
+
+1. run the normal sync or regeneration flow first
+2. if stale behavior remains after `deps:vona`, rebuild `vona/node_modules` and reinstall dependencies
+
+Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
+
 ## Goals
 
 1. detect whether the active repository is Cabloy Basic or Cabloy Start

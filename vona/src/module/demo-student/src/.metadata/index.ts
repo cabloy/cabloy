@@ -206,12 +206,14 @@ export * from '../dto/studentCreate.tsx';
 export * from '../dto/studentSelectReq.tsx';
 export * from '../dto/studentSelectRes.tsx';
 export * from '../dto/studentSelectResItem.tsx';
+export * from '../dto/studentSummary.tsx';
 export * from '../dto/studentUpdate.tsx';
 export * from '../dto/studentView.tsx';
 import type { IDtoOptionsStudentCreate } from '../dto/studentCreate.tsx';
 import type { IDtoOptionsStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import type { IDtoOptionsStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import type { IDtoOptionsStudentSelectResItem } from '../dto/studentSelectResItem.tsx';
+import type { IDtoOptionsStudentSummary } from '../dto/studentSummary.tsx';
 import type { IDtoOptionsStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { IDtoOptionsStudentView } from '../dto/studentView.tsx';
 import 'vona-module-a-web';
@@ -222,6 +224,7 @@ declare module 'vona-module-a-web' {
 'demo-student:studentSelectReq': IDtoOptionsStudentSelectReq;
 'demo-student:studentSelectRes': IDtoOptionsStudentSelectRes;
 'demo-student:studentSelectResItem': IDtoOptionsStudentSelectResItem;
+'demo-student:studentSummary': IDtoOptionsStudentSummary;
 'demo-student:studentUpdate': IDtoOptionsStudentUpdate;
 'demo-student:studentView': IDtoOptionsStudentView;
     }
@@ -237,6 +240,7 @@ import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import type { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import type { DtoStudentSelectResItem } from '../dto/studentSelectResItem.tsx';
+import type { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import type { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { DtoStudentView } from '../dto/studentView.tsx';
 declare module 'vona-module-demo-student' {
@@ -255,6 +259,10 @@ declare module 'vona-module-demo-student' {
 
     export interface IDtoOptionsStudentSelectResItem {
       fields?: TypeEntityOptionsFields<DtoStudentSelectResItem, IDtoOptionsStudentSelectResItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsStudentSummary {
+      fields?: TypeEntityOptionsFields<DtoStudentSummary, IDtoOptionsStudentSummary[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsStudentUpdate {
@@ -307,13 +315,15 @@ declare module 'vona-module-a-web' {
     }
 export interface IApiPathGetRecord{
         '/demo/student': undefined;
+'/demo/student/summary/:id': undefined;
 '/demo/student/:id': undefined;
     }
 export interface IApiPathPatchRecord{
         '/demo/student/:id': undefined;
     }
 export interface IApiPathDeleteRecord{
-        '/demo/student/:id': undefined;
+        '/demo/student/deleteForce/:id': undefined;
+'/demo/student/:id': undefined;
     }
 
 }
