@@ -30,7 +30,7 @@ The durable rule is:
 Avoid this shape:
 
 1. `rest-resource.model.resource` owns `select`, `view`, `create`, `update`, `delete`
-2. a local model such as `demo-student.model.student` also owns custom query and mutation state with its own keys
+2. a local semantic model, for example a module-local wrapper bean, also owns custom query and mutation state with its own keys
 3. custom mutation success only invalidates the local model keys
 
 That split creates drift because the resource pages and commands do not consume the same owner.
@@ -117,7 +117,7 @@ A module-local model may still be useful when the task needs to demonstrate or p
 
 Preferred pattern:
 
-1. keep the local model bean, for example `demo-student.model.student`
+1. keep the local semantic facade model bean when the module still benefits from a business-local API surface
 2. resolve the selector-backed `rest-resource.model.resource` for the resource
 3. expose semantic methods such as:
    - `summary(id)`
@@ -137,8 +137,8 @@ Prefer this split:
 
 That means the module-local facade passes typed closures into the generic helpers, for example conceptually:
 
-- `queryItem({ id, action: 'summary', queryFn: () => this.scope.api.demoStudent.summary(...) })`
-- `mutationItem({ id, action: 'deleteForce', mutationFn: () => this.scope.api.demoStudent.deleteForce(...) })`
+- `queryItem({ id, action: 'summary', queryFn: () => api.summary(...) })`
+- `mutationItem({ id, action: 'deleteForce', mutationFn: () => api.deleteForce(...) })`
 
 This gives typed request and response handling without duplicating state ownership.
 
@@ -214,10 +214,15 @@ If Vona consumes the generated rest surface for related typing, also verify:
 
 ## Representative implementation references
 
+Use the framework-level files as the primary anchors for this pattern:
+
 - `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
-- `zova/src/module/demo-student/src/model/student.ts`
-- `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
-- `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`
 - `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
 - `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx`
 - `zova/src/suite/cabloy-basic/modules/basic-commands/src/bean/command.delete.tsx`
+
+A module-level demo such as `demo-student` may remain a representative example, but the rule should not depend on that module continuing to exist:
+
+- `zova/src/module/demo-student/src/model/student.ts`
+- `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
+- `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`

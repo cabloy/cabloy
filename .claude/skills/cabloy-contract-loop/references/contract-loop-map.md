@@ -48,8 +48,10 @@ Reason:
 
 Representative example:
 
-- `zova/src/module/demo-student/cli/openapi.config.ts`
-- narrow the generated surface with a matcher such as `operations.match: [/^DemoStudent_*/]`
+- a module-level OpenAPI config such as `zova/src/module/demo-student/cli/openapi.config.ts`
+- narrow the generated surface with a module-specific matcher such as `operations.match: [/^DemoStudent_*/]`
+
+Treat that module path as an example, not as a durable dependency of the rule. The durable rule is to align `operations.match` with the module’s true API ownership boundary.
 
 Practical check after generation:
 

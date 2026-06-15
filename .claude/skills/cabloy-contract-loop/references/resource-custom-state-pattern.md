@@ -29,7 +29,7 @@ Avoid this pattern:
 3. custom mutation success invalidates only the local model keys
 4. the generic resource pages keep reading stale row or list state
 
-This usually happens when a task starts with a module-local generated SDK wrapper and stops there.
+This usually happens when a task starts with a module-local generated SDK wrapper and stops there. The pattern is generic and should not depend on any one demo module continuing to exist.
 
 ## Preferred pattern
 
