@@ -5,6 +5,7 @@ export default {
   LevelBeginner: '初级',
   LevelPlaceholder: '请选择学生等级',
   LevelIntermediate: '中级',
+  Mobile: '手机号',
   Name: '名称',
   Operations: '操作',
   Student: 'Student',

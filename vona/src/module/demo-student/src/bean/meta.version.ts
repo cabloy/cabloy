@@ -17,6 +17,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
     } else if (options.version === 2) {
       await this.bean.model.alterTable(entityStudent.$table, table => {
         table.integer(entityStudent.level).comment(entityStudent.$comment.level);
+        table.string(entityStudent.mobile, 50).comment(entityStudent.$comment.mobile);
       });
     }
   }

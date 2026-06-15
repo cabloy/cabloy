@@ -6,6 +6,7 @@ import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { studentMobileSerializer } from '../lib/index.ts';
 
 const levelSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
@@ -60,4 +61,13 @@ export class EntityStudent extends EntityBase {
     levelSchema,
   )
   level: number;
+
+  @Api.field(
+    v.title($locale('Mobile')),
+    v.required(),
+    v.min(11),
+    studentMobileSerializer(),
+    ZovaRender.order(4),
+  )
+  mobile: string;
 }

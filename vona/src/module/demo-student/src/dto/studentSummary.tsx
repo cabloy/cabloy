@@ -5,6 +5,7 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 
 import { $locale } from '../.metadata/locales.ts';
+import { studentMobileSerializer } from '../lib/index.ts';
 
 export interface IDtoOptionsStudentSummary extends IDecoratorDtoOptions {}
 
@@ -18,6 +19,9 @@ export class DtoStudentSummary {
 
   @Api.field(v.title($locale('Description')), v.optional())
   description?: string;
+
+  @Api.field(v.title($locale('Mobile')), studentMobileSerializer())
+  mobile: string;
 
   @Api.field(v.title($locale('Level')))
   level: number;

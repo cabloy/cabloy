@@ -5,6 +5,7 @@ export default {
   LevelBeginner: 'beginner',
   LevelPlaceholder: 'Choose the student level',
   LevelIntermediate: 'intermediate',
+  Mobile: 'Mobile',
   Name: 'Name',
   Operations: 'Operations',
   Student: 'Student',
