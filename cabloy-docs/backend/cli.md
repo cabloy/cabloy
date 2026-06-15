@@ -149,13 +149,20 @@ Representative initializer commands include:
 ```bash
 npm run vona :init:constant demo-student
 npm run vona :init:types demo-student
+npm run vona :init:lib demo-student
 npm run vona :init:asset static -- --module=demo-student
 ```
 
 A practical distinction is:
 
 - `:create:bean` creates scene-based backend beans
-- `:init:*` commands create module-scope resources such as constants, typings, or asset-resource structure
+- `:init:*` commands create module-scope resources such as constants, typings, helper directories, or asset-resource structure
+
+A practical helper-placement rule is:
+
+- if a backend module needs reusable pure helper functions, initialize `src/lib` with `npm run vona :init:lib demo-student`
+- place those shared helpers under `src/lib` and export shared entrypoints from `src/lib/index.ts`
+- if the logic needs container-managed runtime behavior, do not force it into `src/lib`; re-evaluate `src/service` or another bean scene instead
 
 ## Relationship to modules, suites, and package metadata
 

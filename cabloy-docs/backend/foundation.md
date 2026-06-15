@@ -174,6 +174,22 @@ If you need to create a **new backend bean scene** rather than only adding anoth
 
 For deciding whether backend base classes belong in `src/lib`, `src/service`, or the global bean shorthand surface, also see [Class Placement Rule](/ai/class-placement-rule).
 
+## Module-local helper functions
+
+When you extract reusable helper functions for one backend module, initialize the module `src/lib` directory and place those helpers there.
+
+A practical rule is:
+
+- keep shared pure helpers in `src/lib`
+- export them from `src/lib/index.ts` when multiple module files should reuse them
+- avoid leaving reusable helper logic duplicated or buried inside `entity`, `dto`, `service`, or `controller` files
+- if the logic needs bean lifecycle, injection, selector lookup, or other container-managed behavior, do not treat it as a plain helper; re-evaluate `src/service` or another bean scene instead
+
+This complements the class placement rule:
+
+- `src/lib` is the normal home for pure reusable helper logic
+- `src/service` or other bean scenes remain the fit for container-managed runtime behavior
+
 ## BeanBase built-ins
 
 A large part of the backend essentials model is that ordinary backend beans already inherit a useful working surface from `BeanBase`.

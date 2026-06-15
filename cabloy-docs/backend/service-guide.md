@@ -144,6 +144,8 @@ That means service access should be understood together with:
 
 For deciding whether a backend base class should stay a helper, move into service-scene, or remain part of the global bean shorthand surface, also see [Class Placement Rule](/ai/class-placement-rule).
 
+For reusable module-local helper functions, prefer the module `src/lib` directory. If the logic needs container-managed runtime behavior rather than plain helper placement, re-evaluate whether it belongs in service-scene instead. For the fuller rule, also see [Backend Foundation](/backend/foundation).
+
 Read this guide together with:
 
 - [Backend Foundation](/backend/foundation)

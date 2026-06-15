@@ -27,6 +27,8 @@ Recommended placement:
 
 - `src/lib`
 
+For reusable module-local helper functions that are not classes, follow the same structural idea: initialize the module `src/lib` directory and place shared pure helper functions there. For the fuller backend placement context around module-local helpers, also see [Backend Foundation](/backend/foundation).
+
 ### B1: subclass-only base
 
 Use B1 when the class mainly exists as a superclass for concrete subclasses.
