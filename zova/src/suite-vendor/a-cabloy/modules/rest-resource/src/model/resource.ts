@@ -120,7 +120,7 @@ export class ModelResource<
   view(id: TableIdentity) {
     return this.queryItem<Entity | null>({
       id,
-      action: 'get',
+      action: 'view',
       queryFn: async () => {
         const res = await this.$fetch.get<any, Entity>(
           this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id }),
