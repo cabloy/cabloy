@@ -3,6 +3,7 @@ export default {
   Level: 'Level',
   LevelAdvanced: 'advanced',
   LevelBeginner: 'beginner',
+  LevelPlaceholder: 'Choose the student level',
   LevelIntermediate: 'intermediate',
   Name: 'Name',
   Operations: 'Operations',

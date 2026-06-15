@@ -145,6 +145,13 @@ Typical skill role:
 - likely CLI path: Zova `openapi:*` or REST build flows
 - skill then verifies the right edition-specific flavor path
 
+### Example: “Update a field on an existing backend resource”
+
+- skill decides this is an existing-resource field-update task
+- skill classifies persisted-field vs metadata-only refinement
+- likely CLI path: Vona persistence verification plus Zova metadata/build flows only if renderer follow-up is required
+- skill then verifies entity, locale, tests, `fileVersion` logic, and renderer/build/deps follow-up when applicable
+
 ## Anti-patterns
 
 Avoid these mistakes in skills:

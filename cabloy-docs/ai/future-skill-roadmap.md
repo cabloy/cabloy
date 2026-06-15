@@ -67,7 +67,22 @@ Primary dependencies:
 - Zova OpenAPI SDK and server-data docs
 - fullstack collaboration docs
 
-### 4. Metadata refresh skill
+### 4. Resource field update skill
+
+Purpose:
+
+- handle updates to fields on existing backend resources
+- force the right `fileVersion` decision for new persisted fields
+- branch correctly between shared renderer reuse and custom renderer demo follow-up
+- verify entity, locale, migration, test, metadata, build, and dependency-sync implications
+
+Primary dependencies:
+
+- Vona entity / migration / DTO workflow knowledge
+- Zova metadata/build flows when renderer follow-up is involved
+- the backend resource field workflow note in `.docs-internal/`
+
+### 5. Metadata refresh skill
 
 Purpose:
 
@@ -81,7 +96,7 @@ Primary dependencies:
 - CLI-to-skill mapping
 - edition detection docs
 
-### 5. Distributed backend workflow skill
+### 6. Distributed backend workflow skill
 
 Purpose:
 

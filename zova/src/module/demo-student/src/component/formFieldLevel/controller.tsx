@@ -6,24 +6,24 @@ import { classes } from 'typestyle';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
+import { ZSelect, type ZSelectProps } from 'zova-module-basic-select';
 
-import { ZSelect, ZSelectProps } from '../../.metadata/component/select.js';
+export interface IResourceFormFieldLevelOptions extends IResourceFormFieldOptionsBase, ZSelectProps {
+  helper?: string;
+}
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
-    'basic-select:formFieldSelect'?: IResourceFormFieldSelectOptions;
+    'demo-student:formFieldLevel'?: IResourceFormFieldLevelOptions;
   }
 }
 
-export interface IResourceFormFieldSelectOptions
-  extends IResourceFormFieldOptionsBase, ZSelectProps {}
-
-export interface ControllerFormFieldSelectProps extends IFormFieldComponentOptions {
-  options?: IResourceFormFieldSelectOptions;
+export interface ControllerFormFieldLevelProps extends IFormFieldComponentOptions {
+  options?: IResourceFormFieldLevelOptions;
 }
 
 @Controller()
-export class ControllerFormFieldSelect extends BeanControllerBase {
+export class ControllerFormFieldLevel extends BeanControllerBase {
   static $propsDefault = {
     options: {
       itemValue: 'value',
@@ -50,25 +50,41 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
         {...this.$props}
         slotDefault={({ propsBucket, props }, $$formField) => {
           const className = !propsBucket.needHandleBorder
-            ? classes(props.class, 'select select-ghost')
+            ? classes(props.class, 'select select-ghost bg-info/10 font-medium')
             : classes(
                 props.class,
-                'select',
+                'select bg-info/10 font-medium',
                 !$$formField.field.state.meta.isValid && 'select-error',
               );
           const propsNew: ZSelectProps = {
-            'modelValue': propsBucket.value,
+            modelValue: propsBucket.value,
             'onUpdate:modelValue': (value: any) => {
               $$formField.setValue(value, propsBucket.disableNotifyChanged);
             },
             ...propsBucket.options,
             ...props,
-            'class': className,
+            class: className,
           };
-          return <ZSelect {...propsNew}></ZSelect>;
+          propsNew.items = this._ensureEmptyItem(propsNew.items);
+          const domSelect = <ZSelect {...propsNew}></ZSelect>;
+          if (!this.$props.options.helper) return domSelect;
+          return (
+            <div class="flex flex-col gap-1">
+              {domSelect}
+              <div class="text-xs text-info">{this.$props.options.helper}</div>
+            </div>
+          );
         }}
       ></ZFormField>
     );
+  }
+
+  private _ensureEmptyItem(items: any[] | undefined) {
+    if (!items?.length) return items;
+    const valueKey = String(this.$props.options.itemValue);
+    const titleKey = String(this.$props.options.itemTitle);
+    if (items[0]?.[valueKey] === undefined) return items;
+    return [{ [valueKey]: undefined, [titleKey]: '' }, ...items];
   }
 
   private _getValueByItems() {

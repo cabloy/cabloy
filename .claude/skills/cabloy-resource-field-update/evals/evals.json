@@ -1,0 +1,41 @@
+{
+  "skill_name": "cabloy-resource-field-update",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Please add a new persisted level field to the existing student resource in Cabloy Basic. Before doing anything else, tell me whether fileVersion needs a decision and what layers must be updated.",
+      "expected_output": "Must classify the task as a new persisted field on an existing resource, must require a fileVersion decision before migration edits, and must mention entity, meta.version, package.json, locale, and tests as relevant follow-up layers.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I want to add a new persisted field to an existing Cabloy resource, but do not bump fileVersion — fold it into the current version path. What workflow should Claude follow?",
+      "expected_output": "Must recognize the no-bump branch, keep the current fileVersion, avoid creating a new migration version branch, and still mention schema-path, entity, locale, and tests as required follow-up surfaces.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The level field already exists in storage. I only want to tighten it to an enum-like 1/2/3 field and attach select-style render metadata. Keep this as a field refinement workflow, not a migration plan.",
+      "expected_output": "Must classify the task as metadata-only or validation/render-only refinement, must avoid unnecessary fileVersion escalation, and must mention explicit validation, renderer metadata, locale, and invalid-value testing.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Please update the existing student resource field so it uses the best existing shared renderer first. I want the Cabloy way, not a custom component unless it is really needed.",
+      "expected_output": "Must prefer shared renderer reuse first, should mention basic-select as the default select-style baseline for enum-like fields, and should not jump straight into custom renderer creation.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "I know the shared renderer would work, but I explicitly want a custom renderer demo for this existing backend field so future AI can learn the workflow. What should Claude do?",
+      "expected_output": "Must branch into the custom renderer demo workflow, must mention a module-local FormField component plus a module-local @TableCell bean, and must include metadata generation, frontend build, deps:vona, and Vona verification steps.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Create a brand new CRUD resource for courses in Cabloy and tell me the best generation path.",
+      "expected_output": "Must not treat this as an existing-resource field-update workflow. It should indicate that initial CRUD/resource creation belongs to the backend scaffold or a broader workflow, not this skill.",
+      "files": []
+    }
+  ]
+}

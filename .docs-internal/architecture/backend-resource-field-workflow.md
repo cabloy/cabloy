@@ -156,6 +156,36 @@ For enum-like values, the current best default is:
 
 This is usually enough for simple labeled choices.
 
+### 4A. When a task explicitly needs a custom renderer demo
+
+Sometimes the goal is not just to solve the field-rendering need, but to demonstrate the full custom-renderer workflow for future AI or maintainer use.
+
+In that case, keep the normal preference for shared renderers conceptually, but intentionally implement a module-local custom renderer pair so the workflow is preserved as a concrete example.
+
+Recommended structure:
+
+- custom FormField component in the frontend module, for example:
+  - `zova/src/module/<module-name>/src/component/formFieldX/controller.tsx`
+- custom backend-usable TableCell renderer as a `@TableCell(...)` bean, for example:
+  - `zova/src/module/<module-name>/src/bean/tableCell.x.tsx`
+
+Important distinction:
+
+- `ZovaRender.field(...)` can target a custom component key
+- `ZovaRender.cell(...)` should target a registered table-cell key backed by a `@TableCell(...)` bean
+- a plain frontend component alone is not enough for a backend table-cell render key
+
+Recommended implementation style:
+
+- keep option shapes compatible with the shared renderer being mimicked
+- reuse the existing data contract such as `items`, `itemValue`, and `itemTitle`
+- copy behavior from the closest shared renderer first, then add only the minimum module-local customization needed for the demo
+
+For a select-like field, the best baseline references are:
+
+- `zova/src/suite/cabloy-basic/modules/basic-select/src/component/formFieldSelect/controller.tsx`
+- `zova/src/suite/cabloy-basic/modules/basic-select/src/bean/tableCell.select.tsx`
+
 ### 5. Update locale entries together with the field
 
 If a field title or enum labels are user-visible, update locale files in the same change.
@@ -224,6 +254,33 @@ cd vona && npm run tsc
 
 Then widen only if the scope or failures justify it.
 
+### If the task introduces a new custom frontend renderer used by backend field metadata
+
+Recommended verification order:
+
+1. regenerate frontend module metadata
+2. build the relevant frontend SSR/rest target so both bundle output and type surface are refreshed
+3. run `deps:vona` so the Vona-side file dependencies are synchronized
+4. run Vona typecheck
+5. run the narrow backend test that exercises the resource contract
+
+For the current Cabloy Basic admin flow, the representative commands are:
+
+```bash
+npm run zova :tools:metadata <module-name>
+npm run build:zova:admin
+npm run deps:vona
+cd vona && npm run tsc
+cd vona && npm test -- <resource-test>.test.ts
+```
+
+If the same renderer path must also be available for web SSR, add the corresponding web build and then repeat the dependency-sync step.
+
+Practical recovery rule:
+
+- if `.zova-rest/*` has been regenerated correctly but Vona still behaves as if the old renderer types are installed, suspect a stale or unhealthy `vona/node_modules` installation state
+- in that case, after normal `deps:vona`, the most reliable recovery is to rebuild `vona/node_modules` and reinstall dependencies so the local file packages are relinked cleanly
+
 ## Checklist for enum-like field refinements
 
 Use this quick list when the field already exists but now needs discrete allowed values and UI rendering metadata.
@@ -236,6 +293,22 @@ Use this quick list when the field already exists but now needs discrete allowed
 - update locale labels for both the field title and enum item text
 - add an invalid-value test
 - rerun the narrow resource test and typecheck
+
+## Checklist for custom renderer demos
+
+Use this quick list when the task explicitly wants to demonstrate how to build and register a custom renderer, even though an existing shared renderer would already work.
+
+- confirm whether the task is instructional/demo-oriented rather than a pure reuse task
+- keep the existing field business semantics unchanged where possible
+- add a module-local FormField component
+- add a module-local `@TableCell(...)` bean for backend cell rendering
+- keep renderer option shapes compatible with the shared renderer baseline when practical
+- regenerate frontend module metadata
+- run the relevant frontend SSR/rest build
+- run `deps:vona`
+- if Vona still sees stale renderer types, rebuild `vona/node_modules` and reinstall
+- rerun Vona typecheck
+- rerun the narrow backend resource test
 
 ## Checklist for new persisted fields
 
@@ -251,18 +324,39 @@ Use this quick list when the field does not yet exist in storage.
 - update CRUD tests
 - run `npm run test`
 
-## Demo-student lesson worth preserving
+## Demo-student lessons worth preserving
 
-The `demo-student.level` work exposed an easy migration mistake:
+The `demo-student.level` work exposed two easy mistakes.
 
-- adding the new column into the older `createTable(...)` path
-- and also adding it again in the new `alterTable(...)` migration branch
+### Migration/versioning lesson
+
+A persisted-field addition can fail if you:
+
+- add the new column into the older `createTable(...)` path
+- and also add it again in the new `alterTable(...)` migration branch
 
 Because fresh install can run version branches sequentially, that produced a duplicate-column failure.
 
 Preserve this invariant for future field additions:
 
 - one schema introduction path per persisted field change for the chosen versioning strategy
+
+### Custom renderer integration lesson
+
+A custom renderer task can appear finished too early if you stop after adding source files and metadata.
+
+For backend `ZovaRender.field(...)` / `ZovaRender.cell(...)` usage, the actual end-to-end chain is:
+
+1. create the frontend component / tableCell bean
+2. regenerate frontend metadata
+3. build the relevant frontend SSR/rest target
+4. run `deps:vona`
+5. confirm the regenerated local `zova-rest-*` package is actually visible from Vona’s installed dependency surface
+6. only then trust Vona typecheck results
+
+A further practical lesson from this task:
+
+- if the generated `.zova-rest` files already contain the new renderer keys but Vona still fails to resolve them, the issue may be the local installation state rather than the renderer implementation itself
 
 ## Related guidance
 
