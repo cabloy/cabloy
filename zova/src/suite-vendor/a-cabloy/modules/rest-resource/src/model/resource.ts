@@ -18,6 +18,23 @@ import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-open
 
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
 
+interface IModelResourceQueryItemOptions<TData> {
+  id: TableIdentity;
+  action: string;
+  queryFn: () => Promise<TData>;
+  meta?: {
+    disableSuspenseOnInit?: boolean;
+  };
+}
+
+interface IModelResourceMutationItemOptions<TData = void, TVariables = void> {
+  id: TableIdentity;
+  action: string;
+  mutationFn: (params: TVariables) => Promise<TData>;
+  onSuccess?: (data: TData, variables: TVariables, context: unknown) => void | Promise<void>;
+  invalidateSelect?: boolean;
+}
+
 @Model<IModelOptionsResource>({
   enableSelector: true,
 })
@@ -74,9 +91,8 @@ export class ModelResource<
   }
 
   selectGeneral(actionPath?: string, query?: ITableQuery) {
-    const queryHash = hashkey(query);
     return this.$useStateData({
-      queryKey: ['select', actionPath ?? '', queryHash],
+      queryKey: this.keySelect(actionPath, query),
       queryFn: async () => {
         const apiPath = actionPath ? `${this.resourceApi}/${actionPath}` : this.resourceApi;
         return this.$fetch.get<any, ITableRes<Entity>>(
@@ -91,10 +107,20 @@ export class ModelResource<
     return this.selectGeneral(undefined, query);
   }
 
-  view(id: TableIdentity) {
+  queryItem<TData>(options: IModelResourceQueryItemOptions<TData>) {
+    const { id, action, queryFn, meta } = options;
     if (isNil(id)) throw new Error('row id cannot empty');
     return this.$useStateData({
-      queryKey: ['get', id],
+      queryKey: this.keyItem(id, action),
+      queryFn,
+      meta,
+    });
+  }
+
+  view(id: TableIdentity) {
+    return this.queryItem<Entity | null>({
+      id,
+      action: 'get',
       queryFn: async () => {
         const res = await this.$fetch.get<any, Entity>(
           this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id }),
@@ -121,9 +147,26 @@ export class ModelResource<
     });
   }
 
+  mutationItem<TData = void, TVariables = void>(options: IModelResourceMutationItemOptions<TData, TVariables>) {
+    const { id, action, mutationFn, onSuccess, invalidateSelect = true } = options;
+    if (isNil(id)) throw new Error('row id cannot empty');
+    return this.$useMutationData<TData, TVariables>({
+      mutationKey: [...this.keyItem(id, action), 'mutation'],
+      mutationFn,
+      onSuccess: async (data, variables, context) => {
+        if (invalidateSelect) {
+          this.$invalidateQueries({ queryKey: ['select'] });
+        }
+        this.$invalidateQueries({ queryKey: this.keyItemRoot(id) });
+        await onSuccess?.(data, variables, context);
+      },
+    });
+  }
+
   update(id: TableIdentity) {
-    return this.$useMutationData<void, EntityUpdate>({
-      mutationKey: ['update', id],
+    return this.mutationItem<void, EntityUpdate>({
+      id,
+      action: 'update',
       mutationFn: async params => {
         return this.$fetch.patch<any, void, EntityUpdate>(
           this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id }),
@@ -131,25 +174,18 @@ export class ModelResource<
           this.sys.util.apiActionConfigPrepare(),
         );
       },
-      onSuccess: () => {
-        this.$invalidateQueries({ queryKey: ['select'] });
-        this.$invalidateQueries({ queryKey: ['get', id] });
-      },
     });
   }
 
   delete(id: TableIdentity) {
-    return this.$useMutationData<void, void>({
-      mutationKey: ['delete', id],
+    return this.mutationItem<void, void>({
+      id,
+      action: 'delete',
       mutationFn: async () => {
         return this.$fetch.delete<any, void, void>(
           this.sys.util.apiActionPathTranslate(`${this.resourceApi}/:id`, { id }),
           this.sys.util.apiActionConfigPrepare(),
         );
-      },
-      onSuccess: () => {
-        this.$invalidateQueries({ queryKey: ['select'] });
-        this.$invalidateQueries({ queryKey: ['get', id] });
       },
     });
   }
@@ -211,6 +247,20 @@ export class ModelResource<
       schemaName = schemaName[SymbolOpenapiSchemaName] as string;
     }
     return this.$sdk.getSchemaDefaultValue(schemaName) as EntityCreate | undefined;
+  }
+
+  protected keySelect(actionPath?: string, query?: ITableQuery) {
+    return ['select', actionPath ?? '', hashkey(query)] as const;
+  }
+
+  protected keyItemRoot(id: TableIdentity) {
+    if (isNil(id)) throw new Error('row id cannot empty');
+    return ['item', id] as const;
+  }
+
+  protected keyItem(id: TableIdentity, action: string) {
+    if (isNil(id)) throw new Error('row id cannot empty');
+    return ['item', id, action] as const;
   }
 
   private async _bootstrap() {

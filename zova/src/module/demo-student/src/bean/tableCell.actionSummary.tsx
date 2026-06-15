@@ -28,18 +28,16 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
     renderContext: IJsxRenderContextTableCell,
     _next: NextTableCellRender,
   ) {
-    const { $host, cellContext } = renderContext;
+    const { $host, cellContext, ctx } = renderContext;
     return (
       <button
         class={options.class}
         type="button"
         onClick={async () => {
           const id = cellContext.row.id as TableIdentity;
-          const modelStudent = (await this.bean._getBean(
-            'demo-student.model.student',
-            true,
-          )) as ModelStudent;
-          const summary = await modelStudent.summary(id);
+          const modelStudent = (await ctx.bean._getBean('demo-student.model.student', true)) as ModelStudent;
+          const querySummary = modelStudent.summary(id);
+          const { data: summary } = await querySummary.refetch();
           const message = [
             `ID: ${summary?.id ?? '-'}`,
             `Name: ${summary?.name ?? '-'}`,

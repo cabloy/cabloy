@@ -28,7 +28,7 @@ export class TableCellActionDeleteForce extends BeanBase implements ITableCellRe
     renderContext: IJsxRenderContextTableCell,
     _next: NextTableCellRender,
   ) {
-    const { cellContext } = renderContext;
+    const { cellContext, ctx } = renderContext;
     return (
       <button
         class={options.class}
@@ -37,11 +37,8 @@ export class TableCellActionDeleteForce extends BeanBase implements ITableCellRe
           // eslint-disable-next-line no-alert
           if (!window.confirm('Force delete this student permanently?')) return;
           const id = cellContext.row.id as TableIdentity;
-          const modelStudent = (await this.bean._getBean(
-            'demo-student.model.student',
-            true,
-          )) as ModelStudent;
-          await modelStudent.deleteForce(id);
+          const modelStudent = (await ctx.bean._getBean('demo-student.model.student', true)) as ModelStudent;
+          await modelStudent.deleteForce(id).mutateAsync();
         }}
       >
         Force Delete
