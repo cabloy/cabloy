@@ -21,8 +21,8 @@
     },
     {
       "id": 4,
-      "prompt": "Please update the existing student resource field so it uses the best existing shared renderer first. I want the Cabloy way, not a custom component unless it is really needed.",
-      "expected_output": "Must prefer shared renderer reuse first, should mention basic-select as the default select-style baseline for enum-like fields, and should not jump straight into custom renderer creation.",
+      "prompt": "In Cabloy Basic, please update the existing student resource field so it uses the best existing shared renderer first. I want the Cabloy way, not a custom component unless it is really needed.",
+      "expected_output": "Must prefer shared renderer reuse first, should mention basic-select as the default Cabloy Basic select-style baseline for enum-like fields, and should not jump straight into custom renderer creation.",
       "files": []
     },
     {
@@ -35,6 +35,18 @@
       "id": 6,
       "prompt": "Create a brand new CRUD resource for courses in Cabloy and tell me the best generation path.",
       "expected_output": "Must not treat this as an existing-resource field-update workflow. It should indicate that initial CRUD/resource creation belongs to the backend scaffold or a broader workflow, not this skill.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "In Cabloy Basic, the level field already exists and I want select-style field rendering for it. Claude should use the shared renderer path, and unless the UX truly requires a preselected value, I want the field to start unchosen with a visible hint. What guidance should Claude follow?",
+      "expected_output": "Must classify this as an existing-field refinement, prefer the shared Cabloy Basic select renderer path, default to providing a user-visible placeholder for the field-rendering select component unless the UX clearly requires a preselected value, and prefer placeholder over artificial empty-item injection for Cabloy Basic rather than assuming the same behavior in Cabloy Start.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "In Cabloy Start, the level field already exists and now needs select-style field rendering. I want Claude to reuse the right shared renderer path if possible, and I also care about how an initially unchosen state should work. What guidance should Claude follow?",
+      "expected_output": "Must classify this as an existing-field refinement, must detect that this is Cabloy Start, must still prefer shared renderer reuse first rather than jumping straight to a custom renderer, must not jump straight to Cabloy Basic renderer keys such as basic-select, and must say to inspect the Start-side select wrapper and underlying component semantics before deciding renderer keys or copying Cabloy Basic placeholder or empty-item behavior.",
       "files": []
     }
   ]

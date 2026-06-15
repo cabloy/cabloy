@@ -39,6 +39,9 @@ Best practice:
 
 - reuse the option shape of the closest shared renderer
 - copy the data flow from the shared baseline first
+- default to providing a user-visible `placeholder` for field-rendering select components unless the UX clearly requires an always-preselected value
+- in Cabloy Basic, keep placeholder handling aligned with `basic-select` semantics instead of adding artificial empty items by default
+- in Cabloy Start, verify the `start-select` wrapper behavior before copying Basic-specific placeholder or empty-item logic
 - keep customizations minimal and clearly demo-oriented
 
 ### TableCell
@@ -54,10 +57,17 @@ Important:
 
 ## 4. Use the best existing baseline
 
-For select-like enum fields, start from:
+For select-like enum fields, start from an edition-correct baseline.
+
+In Cabloy Basic, start from:
 
 - `basic-select` FormField behavior
 - `basic-select` table-cell bean behavior
+
+In Cabloy Start:
+
+- identify the Start-side select baseline first rather than reusing Basic components by name
+- verify placeholder and empty-state behavior before copying Basic-specific logic
 
 The goal is to demonstrate module-local customization, not to reinvent field-state handling.
 

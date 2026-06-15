@@ -65,15 +65,15 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
             ...props,
             'class': className,
           };
-          propsNew.items = this._ensureEmptyItem(propsNew.items);
+          propsNew.items = this._ensureEmptyItemFallback(propsNew.items, propsNew.placeholder);
           return <ZSelect {...propsNew}></ZSelect>;
         }}
       ></ZFormField>
     );
   }
 
-  private _ensureEmptyItem(items: any[] | undefined) {
-    if (!items?.length) return items;
+  private _ensureEmptyItemFallback(items: any[] | undefined, placeholder: unknown): any[] | undefined {
+    if (!!placeholder || !items?.length) return items;
     const valueKey = String(this.$props.options.itemValue);
     const titleKey = String(this.$props.options.itemTitle);
     if (items[0]?.[valueKey] === undefined) return items;

@@ -149,12 +149,24 @@ Default preference order:
 2. configure it with field-level options
 3. only create a new custom renderer if the shared surface cannot express the needed behavior
 
-For enum-like values, the current best default is:
+For enum-like values, apply an edition-aware default.
 
-- `ZovaRender.field('basic-select:formFieldSelect', { items })`
+In Cabloy Basic, the usual default is:
+
+- `ZovaRender.field('basic-select:formFieldSelect', { items, placeholder })`
 - `ZovaRender.cell('basic-select:select', { items })`
 
 This is usually enough for simple labeled choices.
+
+In Cabloy Start:
+
+- do not assume the same renderer keys or empty-item behavior from the Basic component family
+- verify the `start-select` wrapper and its underlying component semantics before copying Basic-specific select logic
+
+Important AI-facing nuance:
+
+- when using a field-rendering select component, default to providing a user-visible `placeholder` unless the UX clearly requires an always-preselected value
+- in Cabloy Basic, `basic-select:formFieldSelect` should prefer `placeholder` rather than an artificial empty item when the goal is to keep the field initially unchosen
 
 ### 4A. When a task explicitly needs a custom renderer demo
 

@@ -75,10 +75,16 @@ Prefer:
 
 Default to shared reuse first, especially for enum-like fields.
 
-Typical select-style pair:
+Typical Cabloy Basic select-style pair:
 
 - `basic-select:formFieldSelect`
 - `basic-select:select`
+
+Default AI behavior:
+
+- provide a user-visible `placeholder` for field-rendering select components unless the UX clearly requires an always-preselected value
+- in Cabloy Basic, prefer `placeholder` over artificial empty-item injection when the goal is to keep the field initially unchosen
+- in Cabloy Start, do not assume the same placeholder or empty-item behavior from `start-select`; verify the wrapper and underlying component semantics before reusing the Basic pattern
 
 ### Custom renderer demo
 
