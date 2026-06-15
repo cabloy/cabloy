@@ -1,13 +1,13 @@
 import type { IResourceTableCellOptionsBase } from 'zova-module-a-openapi';
+import type {
+  IJsxRenderContextTableCell,
+  ITableCellRender,
+  NextTableCellRender,
+} from 'zova-module-a-table';
 import type { ZSelectProps } from 'zova-module-basic-select';
 
 import { BeanBase } from 'zova';
-import {
-  TableCell,
-  type IJsxRenderContextTableCell,
-  type ITableCellRender,
-  type NextTableCellRender,
-} from 'zova-module-a-table';
+import { TableCell } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {
