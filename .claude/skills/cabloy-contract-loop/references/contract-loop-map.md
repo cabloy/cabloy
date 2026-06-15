@@ -32,6 +32,30 @@ Likely next step:
 - confirm whether backend contract really changed
 - regenerate instead of hand-patching
 
+## Module-local OpenAPI generation boundary
+
+When generating a module-local OpenAPI SDK, do not leave the module config effectively unconstrained if the module should only own a narrow resource surface.
+
+Preferred rule:
+
+- set `operations.match` in `openapi.config.ts` so the module generates only the intended API operations
+
+Reason:
+
+- an unconstrained or overly broad generation pass can pull unrelated APIs into the module
+- that expands generated SDK files, metadata exports, and downstream type surfaces far beyond the module’s real ownership boundary
+- the result may still compile, but it weakens module boundaries and makes maintenance harder
+
+Representative example:
+
+- `zova/src/module/demo-student/cli/openapi.config.ts`
+- narrow the generated surface with a matcher such as `operations.match: [/^DemoStudent_*/]`
+
+Practical check after generation:
+
+- confirm the generated API files only contain the intended resource operations
+- confirm the module metadata and exports were not polluted by unrelated APIs
+
 ## Shared rule
 
 The sequence is usually:

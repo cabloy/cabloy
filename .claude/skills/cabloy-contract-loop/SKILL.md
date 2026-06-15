@@ -82,6 +82,7 @@ For deeper reference material, read:
 
 - `references/contract-loop-map.md`
 - `references/verification-checklist.md`
+- `references/resource-custom-state-pattern.md`
 
 ## Step 3: Identify the contract source of truth deliberately
 
@@ -141,6 +142,8 @@ Typical Zova commands include:
 - `npm run zova :openapi:config ...`
 - `npm run zova :openapi:generate ...`
 
+When the target is a module-local SDK, constrain `openapi.config.ts` with `operations.match` unless the module intentionally owns a broad API surface. This prevents unrelated APIs from being generated into the module.
+
 ### Path B: REST/type generation by flavor
 
 Use the edition-specific Zova REST/type build path when the workflow depends on the built flavor outputs.
@@ -160,6 +163,8 @@ After generation, inspect whether the frontend still needs follow-up in:
 - model-managed remote state
 - schema-driven UI
 - page or component assumptions
+
+If a custom endpoint still belongs to an existing resource, prefer one resource-state owner instead of letting a module-local model create a second cache tree. Reuse the resource-owned custom state pattern in `references/resource-custom-state-pattern.md`.
 
 ## Step 6: Keep edition-aware differences explicit
 
