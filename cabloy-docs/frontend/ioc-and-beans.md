@@ -192,12 +192,13 @@ This matters especially in large systems, where business modules should remain r
 
 Read this together with:
 
+- [Behavior Guide](/frontend/behavior-guide) when the task is about render-time interception, behavior composition, or authoring beans inside the existing Behavior scene
 - [Frontend Bean Scene Authoring](/frontend/bean-scene-authoring) when you need to create a **new bean scene** rather than only adding a bean inside an existing scene
 - [Modules and Suites](/frontend/modules-and-suites)
 - [Module Scope](/frontend/module-scope)
 - [Frontend Design Principles](/frontend/design-principles)
 
-Those pages explain how beans fit into module boundaries, scope-based resources, and the broader Zova architectural model.
+Those pages explain how beans fit into module boundaries, scope-based resources, the existing Behavior scene, and the broader Zova architectural model.
 
 ## Implementation checks for frontend bean-architecture changes
 

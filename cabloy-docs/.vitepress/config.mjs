@@ -271,6 +271,7 @@ export default defineConfig({
           items: [
             { text: 'IoC and Beans', link: '/frontend/ioc-and-beans' },
             { text: 'Bean Scene Authoring', link: '/frontend/bean-scene-authoring' },
+            { text: 'Behavior Guide', link: '/frontend/behavior-guide' },
             { text: 'Modules and Suites', link: '/frontend/modules-and-suites' },
             { text: 'Module Scope', link: '/frontend/module-scope' },
             { text: 'Design Principles', link: '/frontend/design-principles' },
