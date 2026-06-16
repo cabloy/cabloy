@@ -142,6 +142,8 @@ Do **not** lead with statements like:
 
 Those translations can erase the actual Zova architecture.
 
+For component-wrapper questions specifically, remember that `controllerRef` exposes the controller instance, not a generic DOM ref, and should not be treated as a generic Vue component-ref substitute without checking the current wrapper/controller source path.
+
 ## Step 6: Distinguish source-confirmed behavior from interpretive comparison
 
 Always make the boundary explicit.
