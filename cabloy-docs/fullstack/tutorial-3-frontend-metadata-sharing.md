@@ -19,7 +19,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I already built the demo-student CRUD thread. Help me extend the student resource by adding a level field. It should be a number field with these enum values:
+I've already built the Student CRUD flow. Please add a level field to the Student resource. It should be a number field with these enum values:
 
 - 1: beginner
 - 2: intermediate
@@ -28,7 +28,7 @@ I already built the demo-student CRUD thread. Help me extend the student resourc
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Do not jump into custom level UI yet. In this tutorial, first make the new level field work correctly in the existing schema-driven UI.
+Don't jump into custom level UI yet. First make the new level field work in the existing schema-driven UI.
 ```
 
 ## Why this step matters

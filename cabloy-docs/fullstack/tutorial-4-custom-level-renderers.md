@@ -17,12 +17,12 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I already added the level field to the demo-student student resource. Help me upgrade the level UI so it becomes more business-specific in both the Student list page and the Student form.
+I've already added the level field to the Student resource. Please make the UI more business-specific in the Student list page and form.
 ```
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Do not restart the level field design. Build on the existing level field and replace only the UI layer needed for the list and form experience.
+Don't redesign the level field. Build on the existing field and change only the UI layer for the list and form.
 ```
 
 ## Why this step matters

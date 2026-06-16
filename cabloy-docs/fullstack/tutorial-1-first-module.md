@@ -17,7 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Create the first module for a Student Training Center example named demo-student. Create both the backend and frontend module roots.
+I'm building a Student Training Center project. Please create a demo-student module for both the backend and frontend.
 ```
 Optional follow-up prompt if you need to correct the result:
 

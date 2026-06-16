@@ -20,19 +20,19 @@ By the end of this tutorial, you will understand how one business field thread c
 Give AI a prompt like this:
 
 ```text
-I already built the demo-student module through the previous tutorials. Help me refine and explain the Student mobile field as one complete business contract thread.
+I've already built the demo-student module. Please refine and explain how the Student mobile field works across the whole contract.
 
-The result should make it clear how the same field shows up in:
+Show how the same field appears in:
 - validation
 - API contract exposure
 - response masking or serialization
 
-You can use level only as the supporting example for form and table rendering.
+Use level only as a supporting example for form and table rendering.
 ```
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Keep the explanation concrete. Show how the Student mobile field behaves across validation, contract exposure, and masking, and use level only where rendering needs a supporting example.
+Keep it concrete. Show how the Student mobile field behaves across validation, contract exposure, and masking, and use level only as a supporting rendering example.
 ```
 
 ## Why this step matters

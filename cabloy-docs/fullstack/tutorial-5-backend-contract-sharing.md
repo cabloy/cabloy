@@ -22,17 +22,17 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I already built the demo-student CRUD thread and the level UI work. Add two custom actions to the Student list workflow:
+I've already built the Student CRUD flow and the level UI. Please add two custom actions to the Student list:
 
 - Summary: return or display a student summary for the selected row
 - Force Delete: permanently delete the selected student through a dedicated row action
 
-Make both actions work end to end from the backend contract to the Student list page.
+Make both actions work end to end, from the backend contract to the Student list page.
 ```
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Do not hand-write duplicate frontend request layers if the project already has a generated contract workflow. Update the Student action contract first, then refresh the frontend side that depends on it.
+Don't hand-write duplicate frontend request layers. Update the Student action contract first, then refresh the generated frontend side.
 ```
 
 ## Why this step matters
