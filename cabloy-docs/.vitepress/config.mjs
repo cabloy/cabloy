@@ -243,6 +243,7 @@ export default defineConfig({
             { text: 'Queue Guide', link: '/backend/queue-guide' },
             { text: 'Election Guide', link: '/backend/election-guide' },
             { text: 'Schedule Guide', link: '/backend/schedule-guide' },
+            { text: 'Status Guide', link: '/backend/status-guide' },
             { text: 'Worker Guide', link: '/backend/worker-guide' },
             { text: 'Broadcast Guide', link: '/backend/broadcast-guide' },
             { text: 'Web Socket Guide', link: '/backend/websocket-guide' },
