@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial turns the new module into the first real business thread by generating a `student` CRUD workflow.
+In this tutorial, you ask AI to turn the new module into its first real business thread by generating a `student` CRUD workflow.
 
 ## Goal
 
@@ -45,9 +45,9 @@ Inspect npm run vona :tools first, then use the CRUD generator command instead o
 
 ## Why this step matters
 
-Once the module exists, the next useful step is not to hand-build controller, service, model, entity, DTO, metadata, locale, and tests one by one.
+Once the module exists, this is the next useful AI-assisted step because you can ask AI to drive the CRUD generator instead of hand-building controller, service, model, entity, DTO, metadata, locale, and tests one by one.
 
-Cabloy already provides a CRUD generator for that thread.
+That keeps the conversation focused on the generated business thread rather than on repetitive scaffolding details.
 
 ## CLI commands to inspect/use
 

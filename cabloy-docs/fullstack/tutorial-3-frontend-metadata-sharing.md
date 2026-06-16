@@ -2,9 +2,9 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial shows the reverse direction of Cabloy’s fullstack contract loop: backend field metadata can reference frontend render resources.
+In this tutorial, you ask AI to show the reverse direction of Cabloy’s fullstack contract loop: backend field metadata can reference frontend render resources.
 
-This page starts with the simplest path first: reuse the existing built-in rendering resources for the `level` field.
+You start with the simplest path first: reuse the existing built-in rendering resources for the `level` field.
 
 ## Goal
 
@@ -48,11 +48,11 @@ Do not create a custom renderer yet. First implement level with built-in ZovaRen
 
 ## Why this step matters
 
-This tutorial does **not** mean that backend and frontend literally share arbitrary component code.
+This is the right AI-assisted step because it teaches you how to guide AI through a very specific Cabloy distinction.
 
-Instead, the frontend provides render resources, and the backend field contract references those resources through metadata.
+You are not asking AI to make backend and frontend share arbitrary component code. You are asking AI to keep the backend field contract in charge while letting that contract reference frontend render resources through metadata.
 
-That is why this is better described as **frontend metadata sharing** than only “frontend type sharing.”
+That is why this step is better described as **frontend metadata sharing** than only “frontend type sharing.”
 
 ## CLI commands to inspect/use
 

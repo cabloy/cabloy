@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial closes the series by showing Cabloy’s core fullstack idea: one field-oriented contract surface can drive several behaviors across backend and frontend.
+In this tutorial, you ask AI to close the series by showing Cabloy’s core fullstack idea: one field-oriented contract surface can drive several behaviors across backend and frontend.
 
 This time the main teaching field is `mobile`, while `level` stays as the supporting example for table and form rendering.
 
@@ -50,7 +50,7 @@ Keep this tutorial concrete. Anchor the explanation in demo-student entity metad
 
 ## Why this step matters
 
-Many frameworks force developers to repeat the same field knowledge in many places:
+This is the right AI-assisted capstone step because many frameworks force you and AI to repeat the same field knowledge in many places:
 
 - validation rules
 - backend DTOs
@@ -59,7 +59,7 @@ Many frameworks force developers to repeat the same field knowledge in many plac
 - frontend tables
 - response masking logic
 
-Cabloy tries to reduce that duplication through a field-oriented contract and metadata model.
+Cabloy tries to reduce that duplication through a field-oriented contract and metadata model, and this tutorial lets you inspect that reduction through one concrete field story.
 
 ## CLI commands to inspect/use
 

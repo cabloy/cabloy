@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial upgrades the `level` field from built-in render resources to custom frontend renderers owned by the `demo-student` module.
+In this tutorial, you ask AI to upgrade the `level` field from built-in render resources to custom frontend renderers owned by the `demo-student` module.
 
 ## Goal
 
@@ -46,14 +46,14 @@ Inspect npm run zova :create first. I need custom frontend renderer resources fo
 
 ## Why this step matters
 
-Built-in render resources are the right starting point, but some business fields eventually need module-specific behavior.
+This is the right AI-assisted follow-up step because built-in render resources are a good starting point, but some business fields eventually need module-specific behavior.
 
-The `level` field is a good teaching example because it can benefit from:
+The `level` field is a good teaching example because you can ask AI to deepen the UI in two concrete ways:
 
 - a custom table cell that renders a more business-specific badge style
 - a custom form field that adds helper text, readonly behavior, or module-specific select styling
 
-This is where Cabloy’s contract model becomes more practical: the backend field still owns the business contract, while the frontend module can progressively deepen the UI behavior behind that contract.
+This is where Cabloy’s contract model becomes more practical: the backend field still owns the business contract, while the frontend module progressively deepens the UI behavior behind that contract.
 
 ## CLI commands to inspect/use
 

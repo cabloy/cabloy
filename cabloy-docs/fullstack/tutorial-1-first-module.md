@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial starts the **Student Training Center** story by creating the first backend and frontend module skeleton through an AI-assisted, CLI-first workflow.
+In this tutorial, you ask AI to help you create the first backend and frontend module skeleton for the **Student Training Center** story through a CLI-first workflow.
 
 ## Goal
 
@@ -47,9 +47,9 @@ Do not scaffold the module manually. Inspect npm run vona :create and npm run zo
 
 ## Why this step matters
 
-In Cabloy, a module is the natural unit for evolving business code, metadata, generated assets, and docs.
+This is the right first AI-assisted step because Cabloy treats the module as the unit that owns business code, metadata, generated assets, and docs.
 
-Before you create CRUD, API contracts, field rendering, or schema-driven UI, first create the module boundary that will own that work.
+If you ask AI to jump directly into CRUD, contracts, or rendering before the module boundary exists, the work loses its natural owner. This step keeps you and AI aligned on where the rest of the Student Training Center story should live.
 
 ## CLI commands to inspect/use
 

@@ -2,11 +2,11 @@
 
 <Badge type="info" text="Basic" />
 
-This six-part tutorial series gives new Cabloy users one connected onboarding path for **AI vibe coding**.
+This six-part tutorial series gives you one connected, AI-guided path into Cabloy fullstack development.
 
 ## Why this series exists
 
-Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series reorganizes those capabilities into one execution path that beginners can follow with AI step by step.
+Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series turns those capabilities into one guided execution path: you give AI the next focused task, inspect the result together, and then use that result to understand the framework model behind it.
 
 The core rhythm is:
 
@@ -17,7 +17,7 @@ The core rhythm is:
 5. verify the visible result
 6. continue into deeper reference docs when needed
 
-That makes the series practical for users who want to build a real module while also learning the framework model behind the generated output.
+That makes the series practical as a guided, interactive workflow: you give AI one focused task at a time, inspect the result together, and learn the framework model behind each generated step.
 
 ## The business scenario
 
@@ -39,7 +39,7 @@ This keeps the storyline small enough for beginners while still showing Cabloyâ€
 
 ## The source truth used in this series
 
-This series is aligned with the existing public `demo-student` implementation in Cabloy Basic.
+This guided workflow is aligned with the existing public `demo-student` implementation in Cabloy Basic.
 
 Representative source anchors:
 
@@ -50,7 +50,7 @@ Representative source anchors:
 - backend row-action DTO: `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
 - frontend generated API: `zova/src/module/demo-student/src/api/demoStudent.ts`
 
-Do not copy those files blindly. Use them as the reference result that your AI-assisted workflow should gradually approach.
+Do not copy those files blindly. Use them as the reference result that you and AI should gradually approach as each tutorial step becomes concrete.
 
 ## What you should prepare first
 
@@ -66,7 +66,7 @@ Read these pages first:
 - [Fullstack CLI](/fullstack/cli)
 - [CLI Reference](/reference/cli-reference)
 
-Those pages explain the repo entrypoints and the CLI-first workflow model that this series builds on.
+Those pages explain the repo entrypoints and the CLI-first workflow model that you and AI will reuse throughout this series.
 
 ## The learning path
 
@@ -102,7 +102,7 @@ All six tutorials in this series follow the same learning structure:
 8. `Read more`
 9. `Next step`
 
-This makes the series easier to execute one page at a time while still teaching the architectural meaning of the generated output.
+This makes the series easier to execute one page at a time while keeping the interaction clear: you ask AI for the next increment, inspect the result, and learn why that output fits the Cabloy architecture.
 
 ## How to use this series with AI
 
@@ -146,7 +146,7 @@ npm run zova :create
 npm run zova :openapi
 ```
 
-This is one of the most important Cabloy habits to learn early.
+This is one of the most important Cabloy habits to practice early with AI.
 
 ## Suggested reading rhythm
 
@@ -186,4 +186,4 @@ Use this series together with the deeper reference guides:
 - [API Schema Guide](/frontend/api-schema-guide)
 - [Serialization Guide](/backend/serialization-guide)
 
-This series is not meant to replace those guides. It is meant to give you one practical path through them.
+This series is not meant to replace those guides. It is meant to help you and AI move through them in one practical, task-driven order.
