@@ -10,11 +10,11 @@ Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity con
 
 The core rhythm is:
 
-1. copy the prompt from the current page
+1. each page provides one focused prompt
 2. AI completes the tutorial-sized increment
-3. inspect the generated or affected files
-4. verify the visible result
-5. continue into deeper reference docs when needed
+3. the generated or affected files become the next teaching surface
+4. the result is verified in the running app or generated contract output
+5. deeper reference docs remain available when more background is needed
 
 That makes the series practical as a guided, interactive workflow: each tutorial reduces the user action to one prompt, while the generated result becomes the teaching material for the next step.
 
@@ -113,9 +113,9 @@ So for the user, the workflow is intentionally lightweight:
 
 ## CLI-first rule
 
-This series always prefers the existing Cabloy CLI surface before manual scaffolding.
+This series assumes that AI should follow Cabloy’s CLI-first workflow before attempting manual scaffolding.
 
-Use this default workflow in every tutorial:
+In practice, the tutorial prompt should push AI to follow this rule:
 
 1. inspect the existing CLI family
 2. run the matching generator or tooling command
@@ -134,23 +134,25 @@ npm run zova :create
 npm run zova :openapi
 ```
 
-This is one of the most important Cabloy habits to practice early with AI.
+This is one of the most important Cabloy rules for AI-driven development in this series.
 
 ## Suggested reading rhythm
 
-A good beginner rhythm for this series is:
+This series is designed to progress one prompt at a time.
 
-1. read one tutorial page completely
-2. run only the prompt and commands from that page
-3. if the tutorial creates a new module, rerun `npm run dev` so the local dev workflow picks up the new module before continuing
-4. inspect the generated or modified files before moving on
-5. keep the previous tutorial result, because the next tutorial builds on it
+Each tutorial assumes that the previous result remains in place, so the workflow should stay incremental:
+
+1. complete the current tutorial prompt
+2. keep the generated result
+3. continue to the next tutorial on top of that result
+
+If a tutorial creates a new module, the local dev workflow may need `npm run dev` again so the new module is picked up before the next step.
 
 Do not jump directly to SDK generation or custom renderers before the module and CRUD thread are in place.
 
 ## What you will understand by the end
 
-After the six tutorials, you should be able to explain:
+After the six tutorials, the completed workflow should make these Cabloy ideas clear:
 
 - when to use Vona and when to use Zova
 - why CRUD generation usually comes before hand-written backend boilerplate
@@ -161,7 +163,7 @@ After the six tutorials, you should be able to explain:
 
 ## Read together with
 
-Use this series together with the deeper reference guides:
+The deeper reference guides behind this workflow include:
 
 - [CRUD Workflow](/backend/crud-workflow)
 - [Entity Guide](/backend/entity-guide)
