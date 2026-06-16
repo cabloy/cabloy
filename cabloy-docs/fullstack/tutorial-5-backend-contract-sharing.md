@@ -25,7 +25,7 @@ Give AI a prompt like this:
 Act as my Cabloy Basic pair programmer.
 
 Task:
-I already have the demo-student CRUD thread and the level rendering work in this monorepo. Help me implement backend contract sharing for two custom Student actions: summary/:id and deleteForce/:id.
+I already built the demo-student CRUD thread and the level rendering work in the previous tutorials. Help me implement backend contract sharing for two custom Student actions: summary/:id and deleteForce/:id.
 
 Working rules:
 1. Work from the repo root.
@@ -33,7 +33,7 @@ Working rules:
 3. Use summary/:id and deleteForce/:id as the custom action thread.
 4. Regenerate the frontend OpenAPI-based contract output for the demo-student module instead of hand-writing duplicate request types.
 5. Show how the generated frontend API, the frontend model wrapper, and the table row-action cells connect to those backend contracts.
-6. Keep the result aligned with the public demo-student implementation.
+6. Keep the result aligned with the module you built in the previous tutorials.
 
 When you finish, return your answer in this format:
 - Commands used
@@ -88,7 +88,7 @@ The backend contract anchors are:
 - `vona/src/module/demo-student/src/dto/studentSummary.tsx`
 - `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
 
-The current public `demo-student` controller exposes:
+By the end of this tutorial, your `demo-student` controller should expose:
 
 ```typescript
 @Web.get('summary/:id')
@@ -110,7 +110,7 @@ The frontend contract and consumption anchors are:
   - `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
   - `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`
 
-In the current public implementation, `src/api/demoStudent.ts` already contains generated methods such as:
+After regeneration, `src/api/demoStudent.ts` should contain generated methods such as:
 
 - `summary(...)`
 - `deleteForce(...)`

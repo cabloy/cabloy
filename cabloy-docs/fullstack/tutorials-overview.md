@@ -37,20 +37,7 @@ Why these fields?
 
 This keeps the storyline small enough for beginners while still showing Cabloy’s fullstack contract model.
 
-## The source truth used in this series
-
-This guided workflow is aligned with the existing public `demo-student` implementation in Cabloy Basic.
-
-Representative source anchors:
-
-- backend module: `vona/src/module/demo-student/`
-- frontend module: `zova/src/module/demo-student/`
-- backend field contract: `vona/src/module/demo-student/src/entity/student.tsx`
-- backend controller contract: `vona/src/module/demo-student/src/controller/student.ts`
-- backend row-action DTO: `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-- frontend generated API: `zova/src/module/demo-student/src/api/demoStudent.ts`
-
-Do not copy those files blindly. Use them as the reference result that you and AI should gradually approach as each tutorial step becomes concrete.
+At the beginning of the series, the `demo-student` module does not exist yet. The tutorials guide you and AI to build it step by step.
 
 ## What you should prepare first
 
@@ -113,7 +100,7 @@ Use the same workflow in every tutorial:
 3. let AI perform only the tutorial-sized increment
 4. ask AI to summarize which commands it used and why
 5. inspect the generated or modified files before moving on
-6. compare the result with the existing `demo-student` source anchors when helpful
+6. compare the result with the target architecture described in the tutorial and keep the implementation aligned from step to step
 7. verify the result from the admin UI or generated contract output before continuing
 
 A useful prompt habit is to tell AI explicitly:

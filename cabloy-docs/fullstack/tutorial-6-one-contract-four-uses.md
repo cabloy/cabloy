@@ -23,14 +23,14 @@ Give AI a prompt like this:
 Act as my Cabloy Basic pair programmer.
 
 Task:
-I already completed the demo-student tutorials in this monorepo. Help me explain and refine one contract surface through the mobile field, while borrowing level as the supporting example for form and table rendering.
+I already built the demo-student module through the previous tutorials in this monorepo. Help me explain and refine one contract surface through the mobile field, while borrowing level as the supporting example for form and table rendering.
 
 Working rules:
 1. Work from the repo root.
 2. Start from the backend entity, DTO, and serializer surfaces first.
 3. Use mobile as the main field for validation, OpenAPI exposure, and serialization or masking.
 4. Use level only as the supporting example for form and table rendering.
-5. Keep the result aligned with the public demo-student implementation.
+5. Keep the result aligned with the module you built in the previous tutorials.
 6. Keep the explanation concrete and source-anchored rather than abstract.
 
 When you finish, return your answer in this format:
@@ -84,7 +84,7 @@ The key backend field contract anchor is:
 
 - `vona/src/module/demo-student/src/entity/student.tsx`
 
-In the current public implementation, the `mobile` field already shows the main capstone pattern:
+By the end of this tutorial, the `mobile` field should show the main capstone pattern:
 
 ```typescript
 @Api.field(

@@ -26,7 +26,7 @@ Working rules:
 1. Work from the repo root.
 2. Inspect the Vona CRUD-related CLI first.
 3. Use the Cabloy CRUD generator instead of hand-writing controller, service, model, entity, DTO, and test files manually.
-4. Keep the result aligned with the existing public demo-student module shape.
+4. Keep the result aligned with Cabloy Basic CRUD conventions so later tutorials can extend it.
 5. Treat this tutorial as the point where the backend contract thread is established for later tutorials.
 
 When you finish, return your answer in this format:
@@ -81,7 +81,7 @@ Usage notes:
 
 After generation, inspect the resulting backend thread before refining anything.
 
-The current public `demo-student` example shows a representative shape under `vona/src/module/demo-student/src/`:
+By the end of this tutorial, your `demo-student` backend thread should have a representative shape under `vona/src/module/demo-student/src/`:
 
 - `controller/student.ts`
 - `service/student.ts`
@@ -124,7 +124,7 @@ npm run dev
 2. open `http://localhost:7102/admin/`
 3. enter the **Student** list page from the **Student** menu
 4. trigger create, read, update, and delete operations from the page
-5. inspect the generated backend files and compare them with the current public Student example when helpful:
+5. inspect the generated backend files and confirm that the CRUD layers are present:
    - `vona/src/module/demo-student/src/entity/student.tsx`
    - `vona/src/module/demo-student/src/controller/student.ts`
    - `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`

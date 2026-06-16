@@ -29,7 +29,7 @@ Working rules:
 4. Use the proper Vona command to create the backend module.
 5. Use the proper Zova command to create the frontend module.
 6. Prefer generated output over manual scaffolding.
-7. Keep the result aligned with Cabloy Basic conventions and the existing public demo-student module shape.
+7. Keep the result aligned with Cabloy Basic conventions so later tutorials can continue on top of it.
 
 When you finish, return your answer in this format:
 - Commands used
@@ -89,7 +89,7 @@ Typical paths in this repo are:
 - frontend module root without suite placement: `zova/src/module/<module>/`
 - frontend module root with suite placement: `zova/src/suite/<suite>/modules/<module>/`
 
-The current public Student example uses:
+In this series, the target module roots are:
 
 - `vona/src/module/demo-student/`
 - `zova/src/module/demo-student/`
@@ -120,7 +120,7 @@ npm run dev
 
 2. confirm that both module roots now exist
 3. inspect the generated files before editing them
-4. compare the result with the existing Student example when helpful:
+4. confirm that the generated module roots match the target paths for this series:
    - `vona/src/module/demo-student/`
    - `zova/src/module/demo-student/`
 

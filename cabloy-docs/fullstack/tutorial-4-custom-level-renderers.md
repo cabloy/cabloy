@@ -27,7 +27,7 @@ Working rules:
 2. Inspect the existing Zova CLI surfaces before creating files manually.
 3. Generate or refine the frontend table-cell bean and frontend form-field component in the demo-student module.
 4. Wire the backend level field metadata to those custom frontend resources.
-5. Keep the result aligned with the public demo-student implementation.
+5. Keep the result aligned with the module you built in the previous tutorials.
 6. Treat this as an upgrade of the previous tutorial, not a restart from scratch.
 
 When you finish, return your answer in this format:
@@ -81,7 +81,7 @@ Usage notes:
 
 ## Generated or affected files
 
-The current public `demo-student` implementation provides these teaching anchors:
+By the end of this tutorial, your module should provide these teaching anchors:
 
 - custom table cell bean:
   - `zova/src/module/demo-student/src/bean/tableCell.level.tsx`
