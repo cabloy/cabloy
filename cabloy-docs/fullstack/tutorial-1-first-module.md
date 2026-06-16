@@ -20,11 +20,7 @@ Give AI a prompt like this:
 Act as my Cabloy Project pair programmer.
 
 Task:
-Create the first module for a Student Training Center example named demo-student in this monorepo.
-
-Focus for this tutorial:
-- create both the backend and frontend module roots for `demo-student`
-- keep the result ready for later tutorials to continue on top of it
+Create the first module for a Student Training Center example named demo-student in this monorepo. Create both the backend and frontend module roots.
 
 When you finish, return your answer in this format:
 - Commands used

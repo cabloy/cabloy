@@ -32,11 +32,6 @@ The result should make it clear how the same field shows up in:
 
 You can use level only as the supporting example for form and table rendering.
 
-Focus for this tutorial:
-- keep the explanation concrete and source-anchored
-- use mobile as the main capstone field
-- keep level only as the supporting rendering example
-
 When you finish, return your answer in this format:
 - Files inspected or changed
 - Validation surface

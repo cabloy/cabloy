@@ -32,11 +32,6 @@ I already built the demo-student CRUD thread and the level UI work in this monor
 
 Make both actions work end to end from the backend contract to the Student list page.
 
-Focus for this tutorial:
-- keep the result aligned with the existing Student list and row-action workflow
-- make Summary and Force Delete available as real row actions
-- keep the result ready for later tutorials to continue on top of it
-
 When you finish, return your answer in this format:
 - Commands used
 - Backend files changed

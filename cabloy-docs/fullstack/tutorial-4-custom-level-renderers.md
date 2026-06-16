@@ -22,12 +22,6 @@ Act as my Cabloy Project pair programmer.
 Task:
 I already added the level field to the demo-student student resource in this monorepo. Help me upgrade the level UI so it becomes more business-specific in both the Student list page and the Student form.
 
-Focus for this tutorial:
-- keep the existing `level` field and enum thread
-- make the Student list use a custom level presentation
-- make the Student form use a custom level field experience
-- keep the result ready for later tutorials to continue on top of it
-
 When you finish, return your answer in this format:
 - Commands used
 - Files generated or changed

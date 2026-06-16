@@ -23,10 +23,6 @@ Act as my Cabloy Project pair programmer.
 Task:
 I already created the demo-student module in this monorepo. Help me generate the first CRUD thread for a student resource.
 
-Focus for this tutorial:
-- generate the first `student` CRUD thread
-- treat this result as the backend contract thread that later tutorials will extend
-
 When you finish, return your answer in this format:
 - Commands used
 - Files generated

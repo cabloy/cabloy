@@ -28,8 +28,6 @@ I already built the demo-student CRUD thread in this monorepo. Help me extend th
 - 2: intermediate
 - 3: advanced
 
-Keep the result ready for the next tutorial to further customize the level UI.
-
 When you finish, return your answer in this format:
 - Commands used
 - Files changed
