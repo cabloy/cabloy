@@ -17,18 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Project pair programmer.
-
-Task:
-I already added the level field to the demo-student student resource in this monorepo. Help me upgrade the level UI so it becomes more business-specific in both the Student list page and the Student form.
-
-When you finish, return your answer in this format:
-- Commands used
-- Files generated or changed
-- Custom table renderer path
-- Custom form renderer path
-- Backend metadata targets
-- What I should verify next
+I already added the level field to the demo-student student resource. Help me upgrade the level UI so it becomes more business-specific in both the Student list page and the Student form.
 ```
 Optional follow-up prompt if you need to correct the result:
 

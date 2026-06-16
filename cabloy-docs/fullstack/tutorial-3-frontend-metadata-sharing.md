@@ -19,22 +19,11 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Project pair programmer.
-
-Task:
-I already built the demo-student CRUD thread in this monorepo. Help me extend the student resource by adding a level field. It should be a number field with these enum values:
+I already built the demo-student CRUD thread. Help me extend the student resource by adding a level field. It should be a number field with these enum values:
 
 - 1: beginner
 - 2: intermediate
 - 3: advanced
-
-When you finish, return your answer in this format:
-- Commands used
-- Files changed
-- How level was added to the contract
-- How level appears in the schema-driven UI
-- Why this is frontend metadata sharing
-- What I should verify next
 ```
 Optional follow-up prompt if you need to correct the result:
 

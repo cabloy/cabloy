@@ -18,18 +18,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Project pair programmer.
-
-Task:
-I already created the demo-student module in this monorepo. Help me generate the first CRUD thread for a student resource.
-
-When you finish, return your answer in this format:
-- Commands used
-- Files generated
-- What each backend layer does
-- Which file is the main field contract anchor
-- Which files later tutorials will extend
-- What I should verify next
+I already created the demo-student module. Help me generate the first CRUD thread for a student resource.
 ```
 Optional follow-up prompt if you need to correct the result:
 

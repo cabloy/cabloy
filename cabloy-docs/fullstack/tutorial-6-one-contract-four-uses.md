@@ -20,10 +20,7 @@ By the end of this tutorial, you will understand how one business field thread c
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Project pair programmer.
-
-Task:
-I already built the demo-student module through the previous tutorials in this monorepo. Help me refine and explain the Student mobile field as one complete business contract thread.
+I already built the demo-student module through the previous tutorials. Help me refine and explain the Student mobile field as one complete business contract thread.
 
 The result should make it clear how the same field shows up in:
 - validation
@@ -31,15 +28,6 @@ The result should make it clear how the same field shows up in:
 - response masking or serialization
 
 You can use level only as the supporting example for form and table rendering.
-
-When you finish, return your answer in this format:
-- Files inspected or changed
-- Validation surface
-- OpenAPI surface
-- Rendering surface
-- Serialization surface
-- Why mobile is the main capstone field
-- What I should verify next
 ```
 Optional follow-up prompt if you need to correct the result:
 

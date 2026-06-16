@@ -17,18 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Project pair programmer.
-
-Task:
-Create the first module for a Student Training Center example named demo-student in this monorepo. Create both the backend and frontend module roots.
-
-When you finish, return your answer in this format:
-- Commands used
-- Backend module root created
-- Frontend module root created
-- Key generated files
-- Why each key file matters
-- What I should verify next
+Create the first module for a Student Training Center example named demo-student. Create both the backend and frontend module roots.
 ```
 Optional follow-up prompt if you need to correct the result:
 

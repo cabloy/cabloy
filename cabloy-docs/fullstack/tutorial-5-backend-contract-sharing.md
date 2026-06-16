@@ -22,23 +22,12 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Project pair programmer.
-
-Task:
-I already built the demo-student CRUD thread and the level UI work in this monorepo. Add two custom actions to the Student list workflow:
+I already built the demo-student CRUD thread and the level UI work. Add two custom actions to the Student list workflow:
 
 - Summary: return or display a student summary for the selected row
 - Force Delete: permanently delete the selected student through a dedicated row action
 
 Make both actions work end to end from the backend contract to the Student list page.
-
-When you finish, return your answer in this format:
-- Commands used
-- Backend files changed
-- Frontend files generated or changed
-- How the Summary action works end to end
-- How the Force Delete action works end to end
-- What I should verify next
 ```
 Optional follow-up prompt if you need to correct the result:
 
