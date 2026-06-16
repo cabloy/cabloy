@@ -19,11 +19,6 @@ Give AI a prompt like this:
 ```text
 I've already added the level field to the Student resource. Please make the UI more business-specific in the Student list page and form.
 ```
-Optional follow-up prompt if you need to correct the result:
-
-```text
-Don't redesign the level field. Build on the existing field and change only the UI layer for the list and form.
-```
 
 ## Why this step matters
 

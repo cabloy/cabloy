@@ -19,11 +19,6 @@ Give AI a prompt like this:
 ```text
 I'm building a Student Training Center project. Please create a demo-student module for both the backend and frontend.
 ```
-Optional follow-up prompt if you need to correct the result:
-
-```text
-Do not scaffold the module manually. Inspect npm run vona :create and npm run zova :create first, then use the matching module generator commands.
-```
 
 ## Why this step matters
 

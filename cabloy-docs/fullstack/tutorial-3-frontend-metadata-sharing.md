@@ -25,11 +25,6 @@ I've already built the Student CRUD flow. Please add a level field to the Studen
 - 2: intermediate
 - 3: advanced
 ```
-Optional follow-up prompt if you need to correct the result:
-
-```text
-Don't jump into custom level UI yet. First make the new level field work in the existing schema-driven UI.
-```
 
 ## Why this step matters
 

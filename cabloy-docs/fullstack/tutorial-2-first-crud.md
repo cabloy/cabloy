@@ -20,11 +20,6 @@ Give AI a prompt like this:
 ```text
 I've already created the demo-student module. Please generate the first CRUD flow for the Student resource.
 ```
-Optional follow-up prompt if you need to correct the result:
-
-```text
-Please inspect npm run vona :tools first, then use the CRUD generator instead of scaffolding files manually.
-```
 
 ## Why this step matters
 

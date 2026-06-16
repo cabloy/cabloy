@@ -29,11 +29,6 @@ Show how the same field appears in:
 
 Use level only as a supporting example for form and table rendering.
 ```
-Optional follow-up prompt if you need to correct the result:
-
-```text
-Keep it concrete. Show how the Student mobile field behaves across validation, contract exposure, and masking, and use level only as a supporting rendering example.
-```
 
 ## Why this step matters
 

@@ -29,11 +29,6 @@ I've already built the Student CRUD flow and the level UI. Please add two custom
 
 Make both actions work end to end, from the backend contract to the Student list page.
 ```
-Optional follow-up prompt if you need to correct the result:
-
-```text
-Don't hand-write duplicate frontend request layers. Update the Student action contract first, then refresh the generated frontend side.
-```
 
 ## Why this step matters
 
