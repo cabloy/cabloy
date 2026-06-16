@@ -1,6 +1,6 @@
 {
   "name": "zova-suite-a-zova",
-  "version": "5.1.101",
+  "version": "5.1.102",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "zova",
   "license": "MIT",
@@ -25,14 +25,14 @@
     "zova-module-a-openapi": "^5.1.34",
     "zova-module-a-router": "^5.1.26",
     "zova-module-a-routerstack": "^5.1.23",
-    "zova-module-a-routertabs": "^5.1.28",
+    "zova-module-a-routertabs": "^5.1.29",
     "zova-module-a-ssr": "^5.1.23",
     "zova-module-a-ssrhmr": "^5.1.19",
     "zova-module-a-ssrserver": "^5.1.19",
     "zova-module-a-style": "^5.1.29",
-    "zova-module-a-table": "^5.1.30",
+    "zova-module-a-table": "^5.1.31",
     "zova-module-a-zod": "^5.1.30",
-    "zova-module-a-zova": "^5.1.69"
+    "zova-module-a-zova": "^5.1.70"
   },
   "title": "a-zova"
 }
