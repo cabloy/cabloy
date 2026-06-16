@@ -19,7 +19,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I've already built the Student CRUD flow. Please add a level field to the Student resource. It should be a number field with these enum values:
+Please add a level field to the Student resource. It should be a number field with these enum values:
 
 - 1: beginner
 - 2: intermediate

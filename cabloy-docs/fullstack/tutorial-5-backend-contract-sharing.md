@@ -22,7 +22,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I've already built the Student CRUD flow and the level UI. Please add two custom actions to the Student list:
+Please add two custom actions to the Student list:
 
 - Summary: return or display a student summary for the selected row
 - Force Delete: permanently delete the selected student through a dedicated row action

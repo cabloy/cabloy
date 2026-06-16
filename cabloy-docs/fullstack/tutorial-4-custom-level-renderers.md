@@ -17,7 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I've already added the level field to the Student resource. Please make the UI more business-specific in the Student list page and form.
+Please make the level UI more business-specific in the Student list page and form.
 ```
 
 ## Why this step matters

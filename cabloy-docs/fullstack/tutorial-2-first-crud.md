@@ -18,7 +18,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I've already created the demo-student module. Please generate the first CRUD flow for the Student resource.
+Please generate the first CRUD flow for the Student resource.
 ```
 
 ## Why this step matters
