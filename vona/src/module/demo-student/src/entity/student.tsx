@@ -48,6 +48,7 @@ export class EntityStudent extends EntityBase {
 
   @Api.field(
     v.openapi({ title: $locale('Level'), enum: [1, 2, 3] }),
+    v.required(),
     ZovaRender.order(3),
     ZovaRender.field('basic-select:formFieldSelect', { items: StudentLevelItems }),
     ZovaRender.cell('basic-select:select', { items: StudentLevelItems }),
