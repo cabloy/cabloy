@@ -2,15 +2,48 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial starts the **Student Training Center** story by creating the first backend and frontend module skeleton.
+This tutorial starts the **Student Training Center** story by creating the first backend and frontend module skeleton through an AI-assisted, CLI-first workflow.
 
 ## Goal
 
 By the end of this tutorial, you will understand:
 
 - when to use Vona and when to use Zova
-- how to discover the right CLI family before creating files
+- how to inspect the CLI before creating files
 - how a Cabloy business capability starts as a module on both sides of the stack
+
+## AI Prompt
+
+Give AI a prompt like this:
+
+```text
+Act as my Cabloy Basic pair programmer.
+
+Task:
+Create the first module for a Student Training Center example named demo-student in this monorepo.
+
+Working rules:
+1. Work from the repo root.
+2. Confirm that this is Cabloy Basic before making frontend assumptions.
+3. Inspect the existing Cabloy CLI first instead of inventing file placement manually.
+4. Use the proper Vona command to create the backend module.
+5. Use the proper Zova command to create the frontend module.
+6. Prefer generated output over manual scaffolding.
+7. Keep the result aligned with Cabloy Basic conventions and the existing public demo-student module shape.
+
+When you finish, return your answer in this format:
+- Commands used
+- Backend module root created
+- Frontend module root created
+- Key generated files
+- Why each key file matters
+- What I should verify next
+```
+If AI drifts, redirect it with a smaller prompt like this:
+
+```text
+Do not scaffold the module manually. Inspect npm run vona :create and npm run zova :create first, then use the matching module generator commands.
+```
 
 ## Why this step matters
 
@@ -18,137 +51,80 @@ In Cabloy, a module is the natural unit for evolving business code, metadata, ge
 
 Before you create CRUD, API contracts, field rendering, or schema-driven UI, first create the module boundary that will own that work.
 
-## Before you run commands
+## CLI commands to inspect/use
 
 Work from the repo root, not from `vona/` or `zova/` directly.
 
-If you want the shortest discovery pass first, run:
+Inspect the CLI surface first:
 
 ```bash
 npm run vona :
 npm run zova :
-```
 
-Then narrow into the `create` family.
-
-## Step 1: Inspect the CLI surface first
-
-Run these commands from the repo root:
-
-```bash
 npm run vona :create
 npm run zova :create
 ```
 
-This confirms that Cabloy already has generator families for both sides of the stack.
-
-If you want the exact command shape before running it, inspect help or the command registry.
-
-Authoritative command shapes in this repo:
-
-```bash
-npm run vona :create:module moduleName -- [--suite=] [--force]
-npm run zova :create:module moduleName -- [--suite=] [--force]
-```
-
-## Step 2: Create the backend module with Vona
-
-Example:
-
-```bash
-npm run vona :create:module demo-student
-```
-
-If you want the backend module to be created as an independent module that does not belong to any suite, use an empty `--suite=` explicitly:
+Representative module-generation commands:
 
 ```bash
 npm run vona :create:module demo-student -- --suite=
-```
-
-If you want the module to belong to a specific suite, pass that suite name instead. If you are not sure yet, start with the simplest command and follow the CLI prompt or help output.
-
-## Step 3: Create the frontend module with Zova
-
-Example:
-
-```bash
-npm run zova :create:module demo-student
-```
-
-If you want the frontend module to be created as an independent module that does not belong to any suite, use an empty `--suite=` explicitly:
-
-```bash
 npm run zova :create:module demo-student -- --suite=
 ```
 
-If you want the module to belong to a specific suite, pass that suite name instead. On the frontend side, projects often care more explicitly about suite placement, so your repo may ask for or prefer a `suite` value.
+Usage notes:
 
-## Step 4: Restart the dev workflow
+- use `npm run vona :create:module` for the backend module boundary
+- use `npm run zova :create:module` for the frontend module boundary
+- use an empty `--suite=` when you want an independent module rather than a suite-owned module
+- rerun `npm run dev` after module creation so the local workflow picks up the new modules cleanly
 
-After creating a new module, rerun the local development command so the workspace picks up the new module cleanly:
+## Generated or affected files
 
-```bash
-npm run dev
-```
+After both generators run, inspect the generated module roots before editing anything else.
 
-A good beginner rule is: after generator-driven module creation, restart the dev workflow first, then continue inspecting or editing files.
+Typical paths in this repo are:
 
-## Step 5: Inspect the generated structure before editing
-
-After both generators run, inspect the generated structure before making heavy changes.
-
-In this repo, the matching example module roots can take one of two common shapes:
-
-- backend: `vona/src/module/<module>/`
-- frontend without suite placement: `zova/src/module/<module>/`
-- frontend with suite placement: `zova/src/suite/<suite>/modules/<module>/`
+- backend module root: `vona/src/module/<module>/`
+- frontend module root without suite placement: `zova/src/module/<module>/`
+- frontend module root with suite placement: `zova/src/suite/<suite>/modules/<module>/`
 
 The current public Student example uses:
 
 - `vona/src/module/demo-student/`
 - `zova/src/module/demo-student/`
 
-A newly created backend module will later grow into the business thread used in the next tutorials. A newly created frontend module may start much smaller, which is normal.
-
-A good beginner rule is: do not rush into editing business logic until you can explain which files were created and why.
-
-## Step 6: Compare the result with the existing Student example
-
-If you want a concrete reference after generation, compare your result with the existing Student example in this repo.
-
-Representative source anchors:
-
-- `vona/src/module/demo-student/`
-- `zova/src/module/demo-student/`
-- `zova/src/suite/a-home/modules/home-api/`
-
-Do not copy those folders blindly. Use them to understand the expected module shape, suite placement, and naming.
-
-## Expected result
-
-At the end of this tutorial, you should at least be able to point to two module roots:
-
-- backend module root, usually `vona/src/module/<module>/`
-- frontend module root, either `zova/src/module/<module>/` or `zova/src/suite/<suite>/modules/<module>/`
-
-In the current public repo, the frontend Student example uses this minimal starter shape:
+A minimal frontend module usually starts with files like:
 
 - `zova/src/module/demo-student/package.json`
 - `zova/src/module/demo-student/src/index.ts`
 - `zova/src/module/demo-student/src/.metadata/index.ts`
 
-That minimal shape is enough for Tutorial 2, where the backend CRUD thread becomes the first rich business surface.
+## What those files mean in the business thread
 
-## Checkpoint
+At this stage, the key idea is ownership, not business logic yet.
 
-Before moving to the next tutorial, make sure you can answer these questions:
+- the backend module root is where the Student resource, entity, DTOs, controller, tests, and backend metadata will live later
+- the frontend module root is where generated OpenAPI output, model helpers, render resources, and frontend metadata will live later
+- the frontend `.metadata` entrypoint is part of how the module exposes its local registration surface
 
-1. which side of the stack owns backend module generation?
-2. which side owns frontend module generation?
-3. what module name are you using for the Student Training Center example?
-4. which generated module roots will later hold CRUD, render resources, and SDK-related work?
+A good beginner rule is: do not rush into editing business logic until you can explain which module roots were created and why they will own the next tutorials.
 
-## Read together with
+## Verification
+
+1. make sure the local dev workflow is running:
+
+```bash
+npm run dev
+```
+
+2. confirm that both module roots now exist
+3. inspect the generated files before editing them
+4. compare the result with the existing Student example when helpful:
+   - `vona/src/module/demo-student/`
+   - `zova/src/module/demo-student/`
+
+## Read more
 
 - [Fullstack CLI](/fullstack/cli)
 - [CLI Reference](/reference/cli-reference)

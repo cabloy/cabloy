@@ -2,23 +2,26 @@
 
 <Badge type="info" text="Basic" />
 
-This tutorial series gives new Cabloy users one connected onboarding path.
+This six-part tutorial series gives new Cabloy users one connected onboarding path for **AI vibe coding**.
 
 ## Why this series exists
 
-Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series connects those capabilities in the order beginners usually meet them.
+Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series reorganizes those capabilities into one execution path that beginners can follow with AI step by step.
 
-It uses one small business scenario and teaches the Cabloy workflow in the order that is usually most helpful for a first project:
+The core rhythm is:
 
-1. create a module
-2. create a CRUD thread
-3. share frontend render metadata back into backend contracts
-4. share backend API contracts forward into the frontend SDK
-5. understand how one field-oriented contract surface can drive multiple behaviors
+1. give AI a focused prompt
+2. let AI inspect the Cabloy CLI first
+3. let AI generate or refine the next increment
+4. inspect the generated or affected files
+5. verify the visible result
+6. continue into deeper reference docs when needed
+
+That makes the series practical for users who want to build a real module while also learning the framework model behind the generated output.
 
 ## The business scenario
 
-Throughout the series, you will build a small **Student Training Center** example.
+Throughout the series, you will build and refine a small **Student Training Center** example.
 
 The main business object is `student`, and the teaching fields are:
 
@@ -29,10 +32,25 @@ The main business object is `student`, and the teaching fields are:
 
 Why these fields?
 
-- `level` is a natural field for custom form and table rendering
-- `mobile` is a natural field for validation, OpenAPI output, and serialization or masking
+- `level` is a good field for schema-driven form and table rendering
+- `mobile` is a good field for validation, OpenAPI output, and serialization or masking
 
-This keeps the storyline simple enough for beginners while still showing Cabloy’s fullstack strengths.
+This keeps the storyline small enough for beginners while still showing Cabloy’s fullstack contract model.
+
+## The source truth used in this series
+
+This series is aligned with the existing public `demo-student` implementation in Cabloy Basic.
+
+Representative source anchors:
+
+- backend module: `vona/src/module/demo-student/`
+- frontend module: `zova/src/module/demo-student/`
+- backend field contract: `vona/src/module/demo-student/src/entity/student.tsx`
+- backend controller contract: `vona/src/module/demo-student/src/controller/student.ts`
+- backend row-action DTO: `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
+- frontend generated API: `zova/src/module/demo-student/src/api/demoStudent.ts`
+
+Do not copy those files blindly. Use them as the reference result that your AI-assisted workflow should gradually approach.
 
 ## What you should prepare first
 
@@ -52,19 +70,58 @@ Those pages explain the repo entrypoints and the CLI-first workflow model that t
 
 ## The learning path
 
-### Phase 1: Scaffold the business thread
+### Phase 1: Create the module and CRUD thread
 
 - [Tutorial 1: Create Your First Module](/fullstack/tutorial-1-first-module)
 - [Tutorial 2: Create Your First CRUD](/fullstack/tutorial-2-first-crud)
 
-### Phase 2: Learn bidirectional fullstack sharing
+### Phase 2: Share frontend rendering metadata through the backend contract
 
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing)
-- [Tutorial 4: Backend Contract Sharing](/fullstack/tutorial-4-backend-contract-sharing)
+- [Tutorial 4: Custom Form/Table Renderers for Level](/fullstack/tutorial-4-custom-level-renderers)
 
-### Phase 3: Understand the Cabloy contract model
+### Phase 3: Share backend contracts forward into frontend consumption
 
-- [Tutorial 5: One Contract Surface, Four Uses](/fullstack/tutorial-5-one-contract-four-uses)
+- [Tutorial 5: Backend Contract Sharing](/fullstack/tutorial-5-backend-contract-sharing)
+
+### Phase 4: Understand one contract surface through one field story
+
+- [Tutorial 6: One Contract Surface, Four Uses](/fullstack/tutorial-6-one-contract-four-uses)
+
+## The standard tutorial structure
+
+All six tutorials in this series follow the same learning structure:
+
+1. `Goal`
+2. `AI Prompt`
+3. `Why this step matters`
+4. `CLI commands to inspect/use`
+5. `Generated or affected files`
+6. `What those files mean in the business thread`
+7. `Verification`
+8. `Read more`
+9. `Next step`
+
+This makes the series easier to execute one page at a time while still teaching the architectural meaning of the generated output.
+
+## How to use this series with AI
+
+Use the same workflow in every tutorial:
+
+1. give AI the prompt from the page
+2. require AI to inspect the existing Cabloy CLI before creating files manually
+3. let AI perform only the tutorial-sized increment
+4. ask AI to summarize which commands it used and why
+5. inspect the generated or modified files before moving on
+6. compare the result with the existing `demo-student` source anchors when helpful
+7. verify the result from the admin UI or generated contract output before continuing
+
+A useful prompt habit is to tell AI explicitly:
+
+- work from the repo root
+- prefer `npm run vona ...` and `npm run zova ...` workflows
+- avoid hand-written scaffolding when the CLI already provides it
+- explain the business meaning of each changed file
 
 ## CLI-first rule
 
@@ -91,41 +148,27 @@ npm run zova :openapi
 
 This is one of the most important Cabloy habits to learn early.
 
-## How the tutorials are organized
-
-Tutorials 1-4 follow one shared execution rhythm:
-
-1. `Goal`
-2. `Why this step matters`
-3. `Before you run commands`
-4. `Step 1 ... Step N`
-5. `Expected result`
-6. `Checkpoint`
-
-That makes the series easier to scan and execute one page at a time.
-
-Tutorial 5 is intentionally different. It closes the series as a capstone page that summarizes how validation, rendering, OpenAPI, and serialization meet on the same field-oriented contract surface.
-
 ## Suggested reading rhythm
 
 A good beginner rhythm for this series is:
 
 1. read one tutorial page completely
-2. run only the commands from that page
+2. run only the prompt and commands from that page
 3. if the tutorial creates a new module, rerun `npm run dev` so the local dev workflow picks up the new module before continuing
 4. inspect the generated or modified files before moving on
 5. keep the previous tutorial result, because the next tutorial builds on it
 
-Do not jump directly to SDK generation or schema-driven UI before the module and CRUD thread are in place.
+Do not jump directly to SDK generation or custom renderers before the module and CRUD thread are in place.
 
 ## What you will understand by the end
 
-After the five tutorials, you should be able to explain:
+After the six tutorials, you should be able to explain:
 
 - when to use Vona and when to use Zova
 - why CRUD generation usually comes before hand-written backend boilerplate
-- how frontend render resources can participate in backend field contracts
-- how backend OpenAPI contracts can regenerate frontend SDKs
+- how backend field metadata can reuse frontend render resources
+- how to evolve from built-in renderers to custom renderers
+- how backend OpenAPI contracts regenerate frontend SDKs and model helpers
 - how validation, rendering, OpenAPI, and serialization fit into one field-oriented contract model
 
 ## Read together with
@@ -143,4 +186,4 @@ Use this series together with the deeper reference guides:
 - [API Schema Guide](/frontend/api-schema-guide)
 - [Serialization Guide](/backend/serialization-guide)
 
-This series is not meant to replace those guides. It is meant to give you a practical path through them.
+This series is not meant to replace those guides. It is meant to give you one practical path through them.

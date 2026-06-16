@@ -12,73 +12,76 @@ By the end of this tutorial, you will understand:
 - what the generated backend thread usually includes
 - how the generated entity and DTO surface becomes the contract foundation for later tutorials
 
+## AI Prompt
+
+Give AI a prompt like this:
+
+```text
+Act as my Cabloy Basic pair programmer.
+
+Task:
+I already created the demo-student module in this monorepo. Help me generate the first CRUD thread for a student resource.
+
+Working rules:
+1. Work from the repo root.
+2. Inspect the Vona CRUD-related CLI first.
+3. Use the Cabloy CRUD generator instead of hand-writing controller, service, model, entity, DTO, and test files manually.
+4. Keep the result aligned with the existing public demo-student module shape.
+5. Treat this tutorial as the point where the backend contract thread is established for later tutorials.
+
+When you finish, return your answer in this format:
+- Commands used
+- Files generated
+- What each backend layer does
+- Which file is the main field contract anchor
+- Which files later tutorials will extend
+- What I should verify next
+```
+If AI drifts, redirect it with:
+
+```text
+Inspect npm run vona :tools first, then use the CRUD generator command instead of scaffolding files manually.
+```
+
 ## Why this step matters
 
 Once the module exists, the next useful step is not to hand-build controller, service, model, entity, DTO, metadata, locale, and tests one by one.
 
 Cabloy already provides a CRUD generator for that thread.
 
-## Before you run commands
+## CLI commands to inspect/use
 
-Make sure the module from Tutorial 1 already exists.
-
-Work from the repo root and keep the module name ready. In this series, the examples assume `demo-student`.
-
-## Step 1: Inspect the CRUD family
-
-Run from the repo root:
+Inspect the CRUD family first:
 
 ```bash
 npm run vona :tools
-```
-
-Then inspect the command surfaces you care about:
-
-```bash
 npm run vona :tools:crud --help
 npm run vona :tools:crudBasic --help
 ```
 
-In the current Cabloy Basic repo, `:tools:crud` is the public entrypoint and routes to the Basic-specific CRUD path. Beginners can start with `:tools:crud`, while advanced readers can still inspect `:tools:crudBasic` directly.
-
-## Step 2: Generate the `student` CRUD thread
-
-Example:
+Generate the `student` CRUD thread:
 
 ```bash
 npm run vona :tools:crud student -- --module=demo-student
 ```
 
-Equivalent Basic-oriented surface:
+Equivalent Basic-specific entrypoint:
 
 ```bash
 npm run vona :tools:crudBasic student -- --module=demo-student
 ```
 
-This is the preferred Cabloy path because it keeps the framework-managed thread consistent from the start.
+Usage notes:
 
-## Step 3: Verify the generated CRUD from the admin UI
+- `:tools:crud` is the public entrypoint beginners should prefer
+- `:tools:crudBasic` is useful when you want to inspect the Basic-specific underlying path directly
+- after generation, verify the result from the admin UI instead of stopping at file inspection
 
-After the CLI command finishes, do not stop at file inspection. Use the generated UI to verify that the CRUD thread is already usable.
+## Generated or affected files
 
-1. make sure the local dev workflow is running:
+After generation, inspect the resulting backend thread before refining anything.
 
-```bash
-npm run dev
-```
-
-2. open `http://localhost:7102/admin/`
-3. enter the **Student** list page from the **Student** menu
-4. trigger create, read, update, and delete operations from the page
-5. verify that the generated Student business thread is already usable from the admin UI
-
-This is an important beginner checkpoint: after generator-driven CRUD creation, you should be able to verify the Student business thread from the admin UI, not only from source files.
-
-## Step 4: Inspect the generated files immediately
-
-After generation, inspect the resulting backend thread before changing it.
-
-The current public Student example shows a representative generated shape under `vona/src/module/demo-student/src/`:
+The current public `demo-student` example shows a representative shape under `vona/src/module/demo-student/src/`:
 
 - `controller/student.ts`
 - `service/student.ts`
@@ -96,88 +99,37 @@ There is also a test anchor at:
 
 - `vona/src/module/demo-student/test/student.test.ts`
 
-The exact generated file set can evolve. The point is to understand the thread, not memorize a frozen list.
-
-## Step 5: Refine the first business fields
-
-For this tutorial series, refine the generated `student` resource around these fields:
-
-- `name`
-- `description`
-- `level`
-- `mobile`
-
-A practical beginner sequence is:
-
-1. keep `name` and `description` first
-2. add `level` for render-oriented work in Tutorial 3
-3. add `mobile` for validation and serialization work in Tutorial 5
-
-Keep the first refinement small.
-
-A good beginner rule is:
-
-- let the generator create the architecture thread
-- manually refine only the fields and behaviors the teaching scenario actually needs
-
-## Step 6: Compare with the existing Student example
-
-This repo already contains a useful Student reference thread.
-
-Representative source anchors:
-
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/studentCreate.tsx`
-- `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
-- `vona/src/module/demo-student/src/dto/studentView.tsx`
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-
-Use these files to understand the current Cabloy style for:
-
-- `@Api.field(...)`
-- validation helpers such as `v.required()` and `v.optional()`
-- DTO creation through `$Dto.create(...)`, `$Dto.update(...)`, and `$Dto.get(...)`
-- controller route declaration through `@Web.get()`, `@Web.post()`, `@Web.patch()`, and `@Web.delete()`
-- table and list page block composition through `ZovaRender.block(...)`
-
-## Step 7: Understand the generated contract thread
+## What those files mean in the business thread
 
 As you inspect the generated files, pay attention to the division of responsibility:
 
-1. controller exposes the HTTP contract
-2. service owns orchestration
-3. model owns persistence behavior
-4. entity defines the field-oriented contract surface
-5. DTOs define operation-specific request and response contracts
+1. `controller/student.ts` exposes the HTTP contract
+2. `service/student.ts` owns orchestration
+3. `model/student.ts` owns persistence behavior
+4. `entity/student.tsx` defines the field-oriented contract surface
+5. the DTO files define operation-specific request and response contracts
+6. `bean/meta.version.ts` anchors the module schema/version thread
+7. `test/student.test.ts` gives you a verification anchor for the generated backend flow
 
-That architecture is the base for the later fullstack sharing work in this series.
+This is the backend contract thread that later tutorials will extend with `level`, `mobile`, render metadata, OpenAPI output, and row actions.
 
-## Expected result
+## Verification
 
-At the end of this tutorial, you should have one working backend resource thread for `student`.
+1. make sure the local dev workflow is running:
 
-At minimum, you should be able to point to:
+```bash
+npm run dev
+```
 
-- a controller for the HTTP contract
-- an entity for the field contract
-- DTOs for create, update, and view behavior
-- a test file for the generated CRUD flow
-- a working **Student** list page in the admin UI where you can perform create, read, update, and delete operations
+2. open `http://localhost:7102/admin/`
+3. enter the **Student** list page from the **Student** menu
+4. trigger create, read, update, and delete operations from the page
+5. inspect the generated backend files and compare them with the current public Student example when helpful:
+   - `vona/src/module/demo-student/src/entity/student.tsx`
+   - `vona/src/module/demo-student/src/controller/student.ts`
+   - `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
 
-If you cannot clearly identify those surfaces yet, stop here and inspect the generated files and verify the Student page again in the admin UI before moving on.
-
-## Checkpoint
-
-Before moving to the next tutorial, make sure you can answer these questions:
-
-1. have you already opened `http://localhost:7102/admin/`, entered the **Student** list page, and completed create, read, update, and delete operations there?
-2. where will the `level` field be defined first?
-3. where will the `mobile` field validation rules live?
-4. which file exposes the HTTP endpoints for the `student` resource?
-5. which DTOs will later feed OpenAPI and frontend SDK generation?
-
-## Read together with
+## Read more
 
 - [CRUD Workflow](/backend/crud-workflow)
 - [Controller Guide](/backend/controller-guide)
