@@ -112,23 +112,17 @@ That is the practical contract-sharing loop: backend controller and DTO truth fl
 
 ## Verification
 
-1. regenerate the frontend contract output:
-
-```bash
-npm run zova :openapi:generate demo-student
-```
-
-2. make sure the local dev workflow is running:
+1. make sure the local dev workflow is running:
 
 ```bash
 npm run dev
 ```
 
-3. open `http://localhost:7102/admin/`
-4. enter the **Student** list page
-5. trigger the **Summary** row action and verify that it uses the regenerated frontend API and returns the expected Student summary data
-6. trigger the **Force Delete** row action and verify that it reaches the custom backend deleteForce contract path
-7. inspect the source chain and confirm that each layer is present:
+2. open `http://localhost:7102/admin/`
+3. enter the **Student** list page
+4. trigger the **Summary** row action and verify that it uses the regenerated frontend API and returns the expected Student summary data
+5. trigger the **Force Delete** row action and verify that it reaches the custom backend deleteForce contract path
+6. inspect the source chain and confirm that each layer is present:
    - `controller/student.ts`
    - `dto/studentSummary.tsx`
    - `dto/studentSelectResItem.tsx`
