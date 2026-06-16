@@ -17,7 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Basic pair programmer.
+Act as my Cabloy Project pair programmer.
 
 Task:
 I already implemented the demo-student level field with built-in rendering metadata in this monorepo. Help me upgrade it to custom form and table renderers owned by the demo-student frontend module.

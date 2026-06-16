@@ -17,7 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Basic pair programmer.
+Act as my Cabloy Project pair programmer.
 
 Task:
 Create the first module for a Student Training Center example named demo-student in this monorepo.

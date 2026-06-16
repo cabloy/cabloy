@@ -19,7 +19,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Basic pair programmer.
+Act as my Cabloy Project pair programmer.
 
 Task:
 I already built the demo-student CRUD thread in the previous tutorials. Help me add and refine a level field so it uses built-in frontend rendering metadata through the backend contract.

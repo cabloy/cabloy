@@ -11,13 +11,14 @@ By the end of this tutorial, you will understand:
 - why Cabloy prefers CRUD generation over hand-written boilerplate
 - what the generated backend thread usually includes
 - how the generated entity and DTO surface becomes the contract foundation for later tutorials
+- why this step does not generate any frontend code, but already gives you a complete CRUD admin page through Cabloy’s existing schema-driven surface
 
 ## AI Prompt
 
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Basic pair programmer.
+Act as my Cabloy Project pair programmer.
 
 Task:
 I already created the demo-student module in this monorepo. Help me generate the first CRUD thread for a student resource.

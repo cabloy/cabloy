@@ -20,7 +20,7 @@ By the end of this tutorial, you will understand how one business field thread c
 Give AI a prompt like this:
 
 ```text
-Act as my Cabloy Basic pair programmer.
+Act as my Cabloy Project pair programmer.
 
 Task:
 I already built the demo-student module through the previous tutorials in this monorepo. Help me explain and refine one contract surface through the mobile field, while borrowing level as the supporting example for form and table rendering.
