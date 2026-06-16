@@ -6,18 +6,17 @@ This six-part tutorial series gives you one connected, AI-guided path into Cablo
 
 ## Why this series exists
 
-Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series turns those capabilities into one guided execution path: you give AI the next focused task, inspect the result together, and then use that result to understand the framework model behind it.
+Cabloy already has strong reference guides for CRUD, OpenAPI, DTO and entity contracts, schema-driven frontend rendering, and serialization. This series packages those capabilities into one simple workflow: each page gives you one focused prompt, AI completes the next increment, and you use the result to understand the framework model behind it.
 
 The core rhythm is:
 
-1. give AI a focused prompt
-2. let AI inspect the Cabloy CLI first
-3. let AI generate or refine the next increment
-4. inspect the generated or affected files
-5. verify the visible result
-6. continue into deeper reference docs when needed
+1. copy the prompt from the current page
+2. AI completes the tutorial-sized increment
+3. inspect the generated or affected files
+4. verify the visible result
+5. continue into deeper reference docs when needed
 
-That makes the series practical as a guided, interactive workflow: you give AI one focused task at a time, inspect the result together, and learn the framework model behind each generated step.
+That makes the series practical as a guided, interactive workflow: each tutorial reduces the user action to one prompt, while the generated result becomes the teaching material for the next step.
 
 ## The business scenario
 
@@ -37,7 +36,7 @@ Why these fields?
 
 This keeps the storyline small enough for beginners while still showing Cabloy’s fullstack contract model.
 
-At the beginning of the series, the `demo-student` module does not exist yet. The tutorials guide you and AI to build it step by step.
+At the beginning of the series, the `demo-student` module does not exist yet. The tutorials build it step by step.
 
 ## What you should prepare first
 
@@ -53,7 +52,7 @@ Read these pages first:
 - [Fullstack CLI](/fullstack/cli)
 - [CLI Reference](/reference/cli-reference)
 
-Those pages explain the repo entrypoints and the CLI-first workflow model that you and AI will reuse throughout this series.
+Those pages explain the repo entrypoints and the CLI-first workflow model that the tutorial prompts will reuse throughout this series.
 
 ## The learning path
 
@@ -89,26 +88,28 @@ All six tutorials in this series follow the same learning structure:
 8. `Read more`
 9. `Next step`
 
-This makes the series easier to execute one page at a time while keeping the interaction clear: you ask AI for the next increment, inspect the result, and learn why that output fits the Cabloy architecture.
+This makes the series easier to execute one page at a time: each page gives AI one clear increment, and the resulting output teaches why that step fits the Cabloy architecture.
 
 ## How to use this series with AI
 
-Use the same workflow in every tutorial:
+Keep this series simple.
 
-1. give AI the prompt from the page
-2. require AI to inspect the existing Cabloy CLI before creating files manually
-3. let AI perform only the tutorial-sized increment
-4. ask AI to summarize which commands it used and why
-5. inspect the generated or modified files before moving on
-6. compare the result with the target architecture described in the tutorial and keep the implementation aligned from step to step
-7. verify the result from the admin UI or generated contract output before continuing
+In each tutorial, your main job is to copy the prompt from the page and give it to AI.
 
-A useful prompt habit is to tell AI explicitly:
+That prompt already tells AI how to work in the Cabloy way, including things like:
 
-- work from the repo root
-- prefer `npm run vona ...` and `npm run zova ...` workflows
-- avoid hand-written scaffolding when the CLI already provides it
-- explain the business meaning of each changed file
+- inspect the CLI first
+- perform only the current tutorial increment
+- explain the commands it used
+- explain the business meaning of the generated or changed files
+- tell you what to verify next
+
+So for the user, the workflow is intentionally lightweight:
+
+1. open the current tutorial
+2. copy the prompt
+3. send it to AI
+4. review the result and continue to the next tutorial when ready
 
 ## CLI-first rule
 
@@ -173,4 +174,4 @@ Use this series together with the deeper reference guides:
 - [API Schema Guide](/frontend/api-schema-guide)
 - [Serialization Guide](/backend/serialization-guide)
 
-This series is not meant to replace those guides. It is meant to help you and AI move through them in one practical, task-driven order.
+This series is not meant to replace those guides. It is meant to help you move through them in one practical, task-driven order.

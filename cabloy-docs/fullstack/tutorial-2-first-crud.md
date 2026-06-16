@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, you ask AI to turn the new module into its first real business thread by generating a `student` CRUD workflow.
+In this tutorial, one prompt lets AI turn the new module into its first real business thread by generating a `student` CRUD workflow.
 
 ## Goal
 
@@ -37,7 +37,7 @@ When you finish, return your answer in this format:
 - Which files later tutorials will extend
 - What I should verify next
 ```
-If AI drifts, redirect it with:
+Optional follow-up prompt if you need to correct the result:
 
 ```text
 Inspect npm run vona :tools first, then use the CRUD generator command instead of scaffolding files manually.
@@ -45,7 +45,7 @@ Inspect npm run vona :tools first, then use the CRUD generator command instead o
 
 ## Why this step matters
 
-Once the module exists, this is the next useful AI-assisted step because you can ask AI to drive the CRUD generator instead of hand-building controller, service, model, entity, DTO, metadata, locale, and tests one by one.
+Once the module exists, this is the next useful step because the prompt can drive the CRUD generator instead of hand-building controller, service, model, entity, DTO, metadata, locale, and tests one by one.
 
 That keeps the conversation focused on the generated business thread rather than on repetitive scaffolding details.
 

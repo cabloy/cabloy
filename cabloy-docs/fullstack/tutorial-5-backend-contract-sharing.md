@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, you ask AI to show the forward direction of Cabloy’s fullstack contract loop: backend API contracts that generate and refresh the frontend consumption surface.
+In this tutorial, one prompt lets AI show the forward direction of Cabloy’s fullstack contract loop: backend API contracts that generate and refresh the frontend consumption surface.
 
 The teaching thread in this page is the pair of Student actions:
 
@@ -43,7 +43,7 @@ When you finish, return your answer in this format:
 - End-to-end contract chain
 - What I should verify next
 ```
-If AI drifts, redirect it with:
+Optional follow-up prompt if you need to correct the result:
 
 ```text
 Do not create ad hoc frontend request types first. Update the backend contract, then regenerate the frontend OpenAPI surface for demo-student.
@@ -51,9 +51,9 @@ Do not create ad hoc frontend request types first. Update the backend contract, 
 
 ## Why this step matters
 
-This is the right AI-assisted step because it reduces duplicated type work across backend and frontend.
+This is the right step because it reduces duplicated type work across backend and frontend.
 
-Instead of asking AI to manually synchronize request and response shapes in two places, you ask it to keep the backend as the source of truth and regenerate the frontend artifacts from that contract.
+Instead of manually synchronizing request and response shapes in two places, this workflow keeps the backend as the source of truth and regenerates the frontend artifacts from that contract.
 
 This step also shows that contract sharing is not only about API methods. It also affects how backend row-action metadata becomes frontend table behavior.
 

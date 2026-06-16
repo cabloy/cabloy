@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, you ask AI to upgrade the `level` field from built-in render resources to custom frontend renderers owned by the `demo-student` module.
+In this tutorial, one prompt lets AI upgrade the `level` field from built-in render resources to custom frontend renderers owned by the `demo-student` module.
 
 ## Goal
 
@@ -38,7 +38,7 @@ When you finish, return your answer in this format:
 - Backend metadata targets
 - What I should verify next
 ```
-If AI drifts, redirect it with:
+Optional follow-up prompt if you need to correct the result:
 
 ```text
 Inspect npm run zova :create first. I need custom frontend renderer resources for level before wiring the backend metadata to them.
@@ -46,9 +46,9 @@ Inspect npm run zova :create first. I need custom frontend renderer resources fo
 
 ## Why this step matters
 
-This is the right AI-assisted follow-up step because built-in render resources are a good starting point, but some business fields eventually need module-specific behavior.
+This is the right follow-up step because built-in render resources are a good starting point, but some business fields eventually need module-specific behavior.
 
-The `level` field is a good teaching example because you can ask AI to deepen the UI in two concrete ways:
+The `level` field is a good teaching example because this step deepens the UI in two concrete ways:
 
 - a custom table cell that renders a more business-specific badge style
 - a custom form field that adds helper text, readonly behavior, or module-specific select styling

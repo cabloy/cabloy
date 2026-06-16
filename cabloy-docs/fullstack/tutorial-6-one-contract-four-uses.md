@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, you ask AI to close the series by showing Cabloy’s core fullstack idea: one field-oriented contract surface can drive several behaviors across backend and frontend.
+In this tutorial, one prompt lets AI close the series by showing Cabloy’s core fullstack idea: one field-oriented contract surface can drive several behaviors across backend and frontend.
 
 This time the main teaching field is `mobile`, while `level` stays as the supporting example for table and form rendering.
 
@@ -42,7 +42,7 @@ When you finish, return your answer in this format:
 - Why mobile is the main capstone field
 - What I should verify next
 ```
-If AI drifts, redirect it with:
+Optional follow-up prompt if you need to correct the result:
 
 ```text
 Keep this tutorial concrete. Anchor the explanation in demo-student entity metadata, the mobile serializer helper, and the existing level rendering metadata.
@@ -50,7 +50,7 @@ Keep this tutorial concrete. Anchor the explanation in demo-student entity metad
 
 ## Why this step matters
 
-This is the right AI-assisted capstone step because many frameworks force you and AI to repeat the same field knowledge in many places:
+This is the right capstone step because many frameworks force the same field knowledge to be repeated in many places:
 
 - validation rules
 - backend DTOs
