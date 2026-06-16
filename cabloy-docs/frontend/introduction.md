@@ -33,6 +33,7 @@ Start here when you need the shortest route to the frontend mental model and sta
 - [Quickstart](/frontend/quickstart)
 - [Foundation](/frontend/foundation)
 - [IoC and Beans](/frontend/ioc-and-beans)
+- [Behavior Guide](/frontend/behavior-guide)
 - [Modules and Suites](/frontend/modules-and-suites)
 - [Module Scope](/frontend/module-scope)
 - [Design Principles](/frontend/design-principles)
