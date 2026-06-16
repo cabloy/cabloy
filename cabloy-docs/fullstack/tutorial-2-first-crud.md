@@ -22,12 +22,9 @@ Act as my Cabloy Basic pair programmer.
 Task:
 I already created the demo-student module in this monorepo. Help me generate the first CRUD thread for a student resource.
 
-Working rules:
-1. Work from the repo root.
-2. Inspect the Vona CRUD-related CLI first.
-3. Use the Cabloy CRUD generator instead of hand-writing controller, service, model, entity, DTO, and test files manually.
-4. Keep the result aligned with Cabloy Basic CRUD conventions so later tutorials can extend it.
-5. Treat this tutorial as the point where the backend contract thread is established for later tutorials.
+Focus for this tutorial:
+- generate the first `student` CRUD thread
+- treat this result as the backend contract thread that later tutorials will extend
 
 When you finish, return your answer in this format:
 - Commands used

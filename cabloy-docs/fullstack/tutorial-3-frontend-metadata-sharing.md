@@ -24,13 +24,9 @@ Act as my Cabloy Basic pair programmer.
 Task:
 I already built the demo-student CRUD thread in the previous tutorials. Help me add and refine a level field so it uses built-in frontend rendering metadata through the backend contract.
 
-Working rules:
-1. Work from the repo root.
-2. Inspect the existing backend entity and DTO surfaces first.
-3. Prefer existing built-in Cabloy render resources before creating any custom frontend component.
-4. Use level as the field that demonstrates both form and table rendering metadata.
-5. Keep the result aligned with the module you built in the previous tutorials.
-6. Do not introduce custom level renderers yet.
+Focus for this tutorial:
+- use `level` as the field for built-in form and table rendering metadata
+- do not introduce custom level renderers yet
 
 When you finish, return your answer in this format:
 - Commands used

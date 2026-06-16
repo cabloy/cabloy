@@ -22,14 +22,9 @@ Act as my Cabloy Basic pair programmer.
 Task:
 Create the first module for a Student Training Center example named demo-student in this monorepo.
 
-Working rules:
-1. Work from the repo root.
-2. Confirm that this is Cabloy Basic before making frontend assumptions.
-3. Inspect the existing Cabloy CLI first instead of inventing file placement manually.
-4. Use the proper Vona command to create the backend module.
-5. Use the proper Zova command to create the frontend module.
-6. Prefer generated output over manual scaffolding.
-7. Keep the result aligned with Cabloy Basic conventions so later tutorials can continue on top of it.
+Focus for this tutorial:
+- create both the backend and frontend module roots for `demo-student`
+- keep the result ready for later tutorials to continue on top of it
 
 When you finish, return your answer in this format:
 - Commands used

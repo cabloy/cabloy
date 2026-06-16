@@ -27,13 +27,10 @@ Act as my Cabloy Basic pair programmer.
 Task:
 I already built the demo-student CRUD thread and the level rendering work in the previous tutorials. Help me implement backend contract sharing for two custom Student actions: summary/:id and deleteForce/:id.
 
-Working rules:
-1. Work from the repo root.
-2. Start from the backend contract surfaces first.
-3. Use summary/:id and deleteForce/:id as the custom action thread.
-4. Regenerate the frontend OpenAPI-based contract output for the demo-student module instead of hand-writing duplicate request types.
-5. Show how the generated frontend API, the frontend model wrapper, and the table row-action cells connect to those backend contracts.
-6. Keep the result aligned with the module you built in the previous tutorials.
+Focus for this tutorial:
+- use `summary/:id` and `deleteForce/:id` as the custom action thread
+- regenerate the frontend OpenAPI-based contract output instead of hand-writing duplicate request types
+- show how the generated frontend API, the frontend model wrapper, and the table row-action cells connect to those backend contracts
 
 When you finish, return your answer in this format:
 - Commands used

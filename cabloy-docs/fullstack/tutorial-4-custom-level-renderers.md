@@ -22,13 +22,9 @@ Act as my Cabloy Basic pair programmer.
 Task:
 I already implemented the demo-student level field with built-in rendering metadata in this monorepo. Help me upgrade it to custom form and table renderers owned by the demo-student frontend module.
 
-Working rules:
-1. Work from the repo root.
-2. Inspect the existing Zova CLI surfaces before creating files manually.
-3. Generate or refine the frontend table-cell bean and frontend form-field component in the demo-student module.
-4. Wire the backend level field metadata to those custom frontend resources.
-5. Keep the result aligned with the module you built in the previous tutorials.
-6. Treat this as an upgrade of the previous tutorial, not a restart from scratch.
+Focus for this tutorial:
+- upgrade the previous `level` rendering result instead of restarting from scratch
+- connect backend `level` metadata to custom frontend renderer resources
 
 When you finish, return your answer in this format:
 - Commands used
