@@ -1,5 +1,35 @@
 # Changelog
 
+## 5.1.60
+
+### Features
+
+- Add a mobile field to the demo-student example.
+- Add demo-student summary and force-delete flows.
+- Add a level renderer workflow to the demo-student example.
+- Initialize test data automatically after setup.
+- Refine router tab insertion order.
+
+### Improvements
+
+- Add SSR architecture and workflow guides.
+- Add a Web Socket documentation set.
+- Add a Zova Behavior guide.
+- Add router tabs documentation.
+- Add advanced bean scene authoring guides and document boilerplate variants.
+- Add a fullstack quick start tutorial series and document core fullstack principles.
+- Refactor the fullstack AI tutorial series and streamline quick start guidance.
+- Clarify helper placement and strengthen contract loop examples with reusable patterns.
+- Simplify and polish tutorial prompts, verification steps, and user workflow guidance.
+- Unify resource-owned custom item state handling.
+- Update `tmp` to `0.2.7` and `tar` to `7.5.16`.
+- Disable `pnpm` `minimumReleaseAge` in CI workflows.
+
+### Bug Fixes
+
+- Make contract loop examples more resilient.
+- Refine select placeholder guidance.
+
 ## 5.1.59
 
 ### Features
