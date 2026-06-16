@@ -49,6 +49,12 @@ That is especially valuable for:
 
 These design principles should influence how code is extended in Zova. For the deeper structural model behind these principles, see [IoC and Beans](/frontend/ioc-and-beans), [Modules and Suites](/frontend/modules-and-suites), and [Module Scope](/frontend/module-scope).
 
+If you are approaching Zova from a Vue-first background, also read:
+
+- [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
+- [Zova Source Reading Map](/frontend/zova-source-reading-map)
+
 - do not rewrite Zova code toward generic Vue habits automatically
 - do not assume `ref.value`-style patterns are the desired end state
 - prefer existing model, IOC, and AOP conventions when extending code

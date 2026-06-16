@@ -46,6 +46,21 @@ The highest-value Zova capabilities to preserve in the unified docs are:
 
 For the deeper architectural concepts behind IoC, module boundaries, and scope-based resources, see [IoC and Beans](/frontend/ioc-and-beans), [Modules and Suites](/frontend/modules-and-suites), and [Module Scope](/frontend/module-scope). For the runtime-variant and startup model, see [Environment and Config Guide](/frontend/environment-config-guide), [App Startup Guide](/frontend/app-startup-guide), and [System Startup Guide](/frontend/system-startup-guide).
 
+## Recommended reading path for architectural source reading
+
+If you want a compact path from public architecture to source-level understanding, use this order:
+
+1. [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+2. [Zova vs Vue 3 Comparison](/frontend/zova-vs-vue3-comparison)
+3. [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
+4. [Zova Source Reading Map](/frontend/zova-source-reading-map)
+5. [IoC and Beans](/frontend/ioc-and-beans)
+6. [Page Guide](/frontend/page-guide)
+7. [Component Guide](/frontend/component-guide)
+8. [Model Architecture](/frontend/model-architecture)
+
+Use this order when you want to understand both the public mental model and the shortest source-reading routes without collapsing Zova back into generic Vue habits.
+
 ## Why this matters for AI development
 
 AI systems should not treat Zova as generic Vue with a few utilities.

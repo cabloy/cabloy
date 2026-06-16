@@ -32,6 +32,10 @@ Start here when you need the shortest route to the frontend mental model and sta
 
 - [Quickstart](/frontend/quickstart)
 - [Foundation](/frontend/foundation)
+- [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [Zova vs Vue 3 Comparison](/frontend/zova-vs-vue3-comparison)
+- [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
+- [Zova Source Reading Map](/frontend/zova-source-reading-map)
 - [IoC and Beans](/frontend/ioc-and-beans)
 - [Behavior Guide](/frontend/behavior-guide)
 - [Modules and Suites](/frontend/modules-and-suites)

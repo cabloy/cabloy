@@ -215,6 +215,12 @@ These refactors are supported by Zova CLI commands rather than requiring a fully
 
 When generating or editing a Zova page, preserve the page/controller mental model instead of rewriting the code into a generic Vue single-file-component pattern.
 
+If you want a stronger reading bridge from Vue habits into page-controller source code, also read:
+
+- [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
+- [Zova Source Reading Map](/frontend/zova-source-reading-map)
+
 A better default is:
 
 1. use the Zova page generator

@@ -269,6 +269,22 @@ export default defineConfig({
             { text: 'Introduction', link: '/frontend/introduction' },
             { text: 'Quickstart', link: '/frontend/quickstart' },
             { text: 'Foundation', link: '/frontend/foundation' },
+            {
+              text: 'Reading Zova for Vue Developers',
+              link: '/frontend/reading-zova-for-vue-developers',
+            },
+            {
+              text: 'Zova vs Vue 3 Comparison',
+              link: '/frontend/zova-vs-vue3-comparison',
+            },
+            {
+              text: 'Zova Reactivity Under the Hood',
+              link: '/frontend/zova-reactivity-under-the-hood',
+            },
+            {
+              text: 'Zova Source Reading Map',
+              link: '/frontend/zova-source-reading-map',
+            },
           ],
         },
         {

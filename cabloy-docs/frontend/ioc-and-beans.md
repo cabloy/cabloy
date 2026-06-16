@@ -200,6 +200,12 @@ Read this together with:
 
 Those pages explain how beans fit into module boundaries, scope-based resources, the existing Behavior scene, and the broader Zova architectural model.
 
+If you want a Vue-to-Zova reading bridge or a deeper runtime/source explanation, also read:
+
+- [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
+- [Zova Source Reading Map](/frontend/zova-source-reading-map)
+
 ## Implementation checks for frontend bean-architecture changes
 
 When editing Zova frontend code, ask:
