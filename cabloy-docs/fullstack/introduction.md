@@ -91,6 +91,8 @@ This two-way contract loop reduces duplicate declarations and lets backend and f
 
 For the two directions in more detail, see [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) and [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).
 
+When the reverse direction involves newly added frontend resources that backend tooling or backend metadata will consume, treat that as an operational handoff rather than a conceptual one: refresh generated frontend output, run the relevant flavor build, run `npm run deps:vona`, and if Vona still sees stale shared types, rebuild `vona/node_modules` and reinstall dependencies.
+
 ## How the fullstack system stays connected
 
 At the repository level, shared scripts, shared terminology, and CLI-first workflows keep Vona and Zova aligned as one framework system.

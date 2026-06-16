@@ -11,10 +11,14 @@ Use this skill when a backend contract change needs to be reflected in frontend 
 
 When generated `.zova-rest` output or other generated consumer artifacts already contain the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local file-dependency installation problem rather than a source-editing problem.
 
+This includes the reverse fullstack direction where newly added frontend resources such as custom renderers are later consumed by backend metadata.
+
 In that situation:
 
 1. run the normal sync or regeneration flow first
-2. if stale behavior remains after `deps:vona`, rebuild `vona/node_modules` and reinstall dependencies
+2. if the change affects flavor-built REST/type output, rebuild the relevant Zova flavor output first
+3. run `deps:vona`
+4. if stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
 
 Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
 

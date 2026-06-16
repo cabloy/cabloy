@@ -33,6 +33,8 @@ If all of these are true:
 
 - generated `.zova-rest` or related generated consumer artifacts already contain the expected new keys or types
 - the normal regeneration or sync flow already ran
+- when relevant, the affected Zova flavor build already ran
+- `deps:vona` already ran
 - Vona still behaves as if old consumer types are installed
 
 Then suspect a stale or unhealthy local installation state in `vona/node_modules`.

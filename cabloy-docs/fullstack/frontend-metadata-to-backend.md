@@ -62,3 +62,41 @@ When changing frontend structural resources such as routes or components, ask:
 4. should the next action be generation and verification rather than only source edits?
 
 That keeps the reverse contract loop visible instead of accidental.
+
+## When backend consumes newly added frontend resources
+
+This reverse handoff matters most when you create or change frontend resources that backend-side workflows will later consume, such as:
+
+- custom form-field renderers
+- custom table-cell renderers
+- other generated frontend metadata that backend `ZovaRender.*(...)` references depend on
+
+In that case, do not stop after source edits alone. Use this representative sequence:
+
+1. regenerate frontend metadata when applicable
+2. build the relevant frontend flavor output so the shared REST/type surface is refreshed
+3. run `npm run deps:vona` so Vona re-syncs its local file dependencies
+4. if generated `.zova-rest` output already contains the expected new keys or types but backend-side consumers still look stale, rebuild `vona/node_modules` and reinstall dependencies
+
+For the current Cabloy Basic admin flow, the representative commands are:
+
+```bash
+npm run zova :tools:metadata <module-name>
+npm run build:zova:admin
+npm run deps:vona
+```
+
+If the same resource path must also be available for Web, add:
+
+```bash
+npm run build:zova:web
+npm run deps:vona
+```
+
+If Vona still cannot see the refreshed shared types after the normal sync flow, use this recovery path:
+
+```bash
+cd vona && rm -rf node_modules && pnpm install
+```
+
+The key rule is simple: if frontend-generated resources are later consumed by backend tooling or backend metadata, treat the work as a reverse fullstack handoff, not as frontend-only cleanup.

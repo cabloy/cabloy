@@ -15,6 +15,8 @@ After generating or extending a frontend thread, check which follow-up layers ap
 - SSR init-data needs
 - OpenAPI SDK or schema-driven layer impact
 - backend contract reminder if frontend depends on generated backend contract output
+- if backend metadata will consume newly added frontend render resources, run the relevant Zova build and then `deps:vona`
+- if generated `.zova-rest` output is updated but backend still sees stale shared types, rebuild `vona/node_modules` and reinstall
 
 ## Interaction and UI follow-up
 

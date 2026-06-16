@@ -66,6 +66,14 @@ Those pages explain the repo entrypoints and the CLI-first workflow model that t
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing)
 - [Tutorial 4: Custom Form/Table Renderers for Level](/fullstack/tutorial-4-custom-level-renderers)
 
+Important handoff note for this phase:
+
+- once a frontend resource created in these tutorials is later consumed by backend metadata, do not stop at frontend source edits alone
+- refresh the generated frontend output, run the relevant flavor build, then run `npm run deps:vona`
+- if backend-side shared types still look stale after that normal sync flow, rebuild `vona/node_modules` and reinstall dependencies
+
+See [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the full reverse-handoff explanation.
+
 ### Phase 3: Share backend contracts forward into frontend consumption
 
 - [Tutorial 5: Backend Contract Sharing](/fullstack/tutorial-5-backend-contract-sharing)

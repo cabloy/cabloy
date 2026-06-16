@@ -134,6 +134,16 @@ Check whether the feature needs:
 - SSR init-data updates
 - OpenAPI SDK regeneration
 - schema-driven UI or `$apiSchema` review
+- reverse fullstack handoff when newly added frontend resources will later be consumed by backend metadata or backend tooling
+
+If the frontend change introduces resources such as a custom form-field renderer, table-cell renderer, or other generated metadata that backend `ZovaRender.field(...)` / `ZovaRender.cell(...)` will consume, do not treat the task as frontend-only cleanup.
+
+In that case, surface this operational sequence:
+
+1. refresh metadata when needed
+2. build the affected flavor output
+3. run `deps:vona`
+4. if backend-side shared types still look stale, escalate to the contract-loop recovery path instead of continuing source-level debugging
 
 ### Component and interaction follow-up
 
@@ -173,6 +183,7 @@ Stay frontend-first, but if the frontend task clearly depends on backend contrac
 - backend OpenAPI output may need refresh or inspection
 - backend DTO/controller response shape may be the real source of truth
 - frontend SDK or schema-driven layers should be regenerated from contract output rather than hand-patched
+- newly added frontend resources that backend metadata will consume may require a reverse handoff through frontend build output and `deps:vona`
 
 Do not turn the skill into a backend workflow. Only surface the reminder when the contract boundary is clearly involved.
 
