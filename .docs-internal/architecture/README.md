@@ -18,6 +18,8 @@ Representative examples:
 - `resource-custom-api-state-ownership.md` records the preferred Zova state-ownership pattern for resource-bound custom APIs, including `ModelResource` as the single owner, row-grouped cache keys, thin semantic facade models, and invalidation rules
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
 - `router-tabs-design-boundaries.md` records the design intent, workspace-vs-instance identity split, anchor-item role, layout boundary, cache boundary, and refactor safety rules for the router-tabs workbench mechanism
+- `a-ssr-module-architecture.md` records the Vona-side `a-ssr` module boundaries, request-resolution flow, handler-loading bridge, render/redirect integration, cache/HMR rules, and diagnostics surface
+- `ssr-vona-zova-boundary-and-call-chain.md` records the fullstack SSR call chain from Vona request resolution into the generated Zova bundle, clarifies the Vona/Zova ownership split, and preserves the hydration handoff boundary
 - `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, the SSR `ssrRender -> instance.render` fallback bridge used by Zova, and the residual-runtime findings that future memory investigations should reuse
 - `ssr-leak-experiment-flags-inventory.md` records the historical `SSR_LEAK_EXPERIMENT_*` surface and confirms that those investigation flags were ultimately removed from active source
 - `ssr-leak-experiment-cleanup-checklist.md` records the execution order and verification path used to fully remove the old SSR leak investigation flags from source

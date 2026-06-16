@@ -352,6 +352,10 @@ export default defineConfig({
         {
           text: 'SSR',
           items: [
+            { text: 'SSR Architecture Overview', link: '/frontend/ssr-architecture-overview' },
+            { text: 'SSR Build and Deploy Guide', link: '/frontend/ssr-build-deploy-guide' },
+            { text: 'SSR Troubleshooting Guide', link: '/frontend/ssr-troubleshooting-guide' },
+            { text: 'SSR Review Checklist', link: '/frontend/ssr-review-checklist' },
             { text: 'SSR Overview', link: '/frontend/ssr-overview' },
             { text: 'SSR Init Data', link: '/frontend/ssr-init-data' },
             { text: 'SSR ClientOnly', link: '/frontend/ssr-client-only' },
