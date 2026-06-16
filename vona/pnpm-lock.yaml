@@ -507,7 +507,7 @@ importers:
         specifier: ^7.7.4
         version: 7.8.4
       tmp:
-        specifier: ^0.2.5
+        specifier: ^0.2.7
         version: 0.2.7
       urllib:
         specifier: ^4.9.0
@@ -2250,7 +2250,7 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0
       tmp:
-        specifier: ^0.2.5
+        specifier: ^0.2.7
         version: 0.2.7
     devDependencies:
       clean-package:

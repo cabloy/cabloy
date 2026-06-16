@@ -773,7 +773,7 @@ importers:
         specifier: ^5.46.1
         version: 5.48.0
       tmp:
-        specifier: ^0.2.5
+        specifier: ^0.2.7
         version: 0.2.7
       vite:
         specifier: ^8.0.14

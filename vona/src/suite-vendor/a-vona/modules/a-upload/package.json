@@ -34,7 +34,7 @@
   "dependencies": {
     "@types/busboy": "^1.5.4",
     "busboy": "^1.6.0",
-    "tmp": "^0.2.5"
+    "tmp": "^0.2.7"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
