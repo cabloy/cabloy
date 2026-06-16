@@ -23,12 +23,19 @@ Give AI a prompt like this:
 Act as my Cabloy Project pair programmer.
 
 Task:
-I already built the demo-student module through the previous tutorials in this monorepo. Help me explain and refine one contract surface through the mobile field, while borrowing level as the supporting example for form and table rendering.
+I already built the demo-student module through the previous tutorials in this monorepo. Help me refine and explain the Student mobile field as one complete business contract thread.
+
+The result should make it clear how the same field shows up in:
+- validation
+- API contract exposure
+- response masking or serialization
+
+You can use level only as the supporting example for form and table rendering.
 
 Focus for this tutorial:
-- use `mobile` as the main field for validation, OpenAPI exposure, and serialization or masking
-- use `level` only as the supporting example for form and table rendering
-- keep the explanation concrete and source-anchored rather than abstract
+- keep the explanation concrete and source-anchored
+- use mobile as the main capstone field
+- keep level only as the supporting rendering example
 
 When you finish, return your answer in this format:
 - Files inspected or changed
@@ -42,7 +49,7 @@ When you finish, return your answer in this format:
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Keep this tutorial concrete. Anchor the explanation in demo-student entity metadata, the mobile serializer helper, and the existing level rendering metadata.
+Keep the explanation concrete. Show how the Student mobile field behaves across validation, contract exposure, and masking, and use level only where rendering needs a supporting example.
 ```
 
 ## Why this step matters

@@ -22,24 +22,26 @@ Give AI a prompt like this:
 Act as my Cabloy Project pair programmer.
 
 Task:
-I already built the demo-student CRUD thread in the previous tutorials. Help me add and refine a level field so it uses built-in frontend rendering metadata through the backend contract.
+I already built the demo-student CRUD thread in this monorepo. Help me extend the student resource by adding a level field. It should be a number field with these enum values:
 
-Focus for this tutorial:
-- use `level` as the field for built-in form and table rendering metadata
-- do not introduce custom level renderers yet
+- 1: beginner
+- 2: intermediate
+- 3: advanced
+
+Keep the result ready for the next tutorial to further customize the level UI.
 
 When you finish, return your answer in this format:
 - Commands used
 - Files changed
-- Field metadata added or refined
-- Which frontend render resources are being reused
+- How level was added to the contract
+- How level appears in the schema-driven UI
 - Why this is frontend metadata sharing
 - What I should verify next
 ```
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Do not create a custom renderer yet. First implement level with built-in ZovaRender.field(...) and ZovaRender.cell(...) metadata.
+Do not jump into custom level UI yet. In this tutorial, first make the new level field work correctly in the existing schema-driven UI.
 ```
 
 ## Why this step matters
@@ -48,7 +50,7 @@ This is the right step because it teaches one very specific Cabloy distinction.
 
 The goal is not to make backend and frontend share arbitrary component code. The goal is to keep the backend field contract in charge while letting that contract reference frontend render resources through metadata.
 
-That is why this step is better described as **frontend metadata sharing** than only “frontend type sharing.”
+In other words, this step is about **frontend metadata sharing**: the backend field contract references frontend render resources through metadata.
 
 ## CLI commands to inspect/use
 

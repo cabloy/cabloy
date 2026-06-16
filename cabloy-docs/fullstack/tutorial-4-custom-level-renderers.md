@@ -20,11 +20,13 @@ Give AI a prompt like this:
 Act as my Cabloy Project pair programmer.
 
 Task:
-I already implemented the demo-student level field with built-in rendering metadata in this monorepo. Help me upgrade it to custom form and table renderers owned by the demo-student frontend module.
+I already added the level field to the demo-student student resource in this monorepo. Help me upgrade the level UI so it becomes more business-specific in both the Student list page and the Student form.
 
 Focus for this tutorial:
-- upgrade the previous `level` rendering result instead of restarting from scratch
-- connect backend `level` metadata to custom frontend renderer resources
+- keep the existing `level` field and enum thread
+- make the Student list use a custom level presentation
+- make the Student form use a custom level field experience
+- keep the result ready for later tutorials to continue on top of it
 
 When you finish, return your answer in this format:
 - Commands used
@@ -37,7 +39,7 @@ When you finish, return your answer in this format:
 Optional follow-up prompt if you need to correct the result:
 
 ```text
-Inspect npm run zova :create first. I need custom frontend renderer resources for level before wiring the backend metadata to them.
+Do not restart the level field design. Build on the existing level field and replace only the UI layer needed for the list and form experience.
 ```
 
 ## Why this step matters
