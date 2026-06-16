@@ -20,14 +20,7 @@ By the end of this tutorial, you will understand how one business field thread c
 Give AI a prompt like this:
 
 ```text
-I've already built the demo-student module. Please refine and explain how the Student mobile field works across the whole contract.
-
-Show how the same field appears in:
-- validation
-- API contract exposure
-- response masking or serialization
-
-Use level only as a supporting example for form and table rendering.
+Please add a mobile field to the Student resource. It should be required, be at least 11 characters long, and show the middle 4 digits as asterisks in returned data.
 ```
 
 ## Why this step matters
@@ -141,23 +134,17 @@ That keeps the masking rule close to the field contract ecosystem instead of sca
 
 ## Verification
 
-1. regenerate the frontend contract if needed:
-
-```bash
-npm run zova :openapi:generate demo-student
-```
-
-2. make sure the local dev workflow is running:
+1. make sure the local dev workflow is running:
 
 ```bash
 npm run dev
 ```
 
-3. open `http://localhost:7102/admin/`
-4. enter the relevant **Student** page
-5. verify that `level` still shows the expected render-driven behavior
-6. verify that `mobile` follows the validation and serialization policy you defined
-7. inspect these anchors and confirm that the four-use story is concrete rather than abstract:
+2. open `http://localhost:7102/admin/`
+3. enter the relevant **Student** page
+4. verify that `level` still shows the expected render-driven behavior
+5. verify that `mobile` follows the validation and serialization policy you defined
+6. inspect these anchors and confirm that the four-use story is concrete rather than abstract:
    - `vona/src/module/demo-student/src/entity/student.tsx`
    - `vona/src/module/demo-student/src/lib/studentMobile.ts`
    - `vona/src/module/demo-student/src/dto/studentSummary.tsx`
