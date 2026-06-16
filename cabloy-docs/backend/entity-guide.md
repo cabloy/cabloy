@@ -103,6 +103,24 @@ Representative examples include:
 - helpers such as `v.default`, `v.optional`, `v.array`
 - OpenAPI metadata such as `v.title`, `v.description`, `v.example`, `v.openapi`
 
+When mixing helper metadata and an explicit zod schema in `@Api.field(...)`, keep a small but important ordering rule:
+
+- `z.xxx(...)` returns the zod schema instance, so place it as the **last argument**
+- put helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
+- otherwise helpers written after the zod schema may stop taking effect
+
+Representative pattern:
+
+```typescript
+@Api.field(
+  v.title($locale('Level')),
+  ZovaRender.order(3),
+  ZovaRender.field('basic-select:formFieldSelect', { items: levelItems }),
+  z.number().int().min(1).max(3),
+)
+level: number;
+```
+
 A practical rule is:
 
 - use inference for straightforward fields

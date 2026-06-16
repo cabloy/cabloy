@@ -73,6 +73,12 @@ class DtoStudentCreate {
 }
 ```
 
+When mixing helper metadata and an explicit zod schema in `@Api.field(...)`, apply the same ordering rule used by entities:
+
+- place `z.xxx(...)` as the **last argument** because it returns the zod schema instance
+- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
+- otherwise helpers written after the zod schema may stop taking effect
+
 For query-oriented DTOs, another important distinction is optional vs nullable:
 
 - `v.optional()` means the field may be omitted

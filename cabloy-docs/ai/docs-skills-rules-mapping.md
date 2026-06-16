@@ -143,6 +143,13 @@ Use this quick rule:
 - full explanation → [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - workflow steering → skill and rules can point to the docs and choose the right CLI path
 
+### Example: “What `@Api.field(...)` ordering rule should AI preserve when mixing helpers and zod?”
+
+- full explanation → [Entity Guide](/backend/entity-guide) and [DTO Guide](/backend/dto-guide)
+- AI workflow reminder → [Playbook: Add a Backend Module](/ai/playbook-backend-module)
+- procedural checklist reminder → backend scaffold skill references
+- avoid putting the full explanation only in `CLAUDE.md` because this is a framework-specific authoring rule, not a short global behavior rule
+
 ## Anti-patterns to avoid
 
 Avoid these mistakes:

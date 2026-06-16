@@ -66,6 +66,12 @@ Depending on the feature, extend the generated code with the right framework-lev
 - migration and changes
 - field indexes
 
+When refining entity or DTO fields that use `@Api.field(...)`, apply this framework-specific guardrail:
+
+- if you include an explicit zod schema such as `z.number().int().min(1)`, place it as the **last argument**
+- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
+- otherwise helpers written after the zod schema may stop taking effect
+
 Relevant docs:
 
 - [Controller Guide](/backend/controller-guide)

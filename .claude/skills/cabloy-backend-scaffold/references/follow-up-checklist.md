@@ -15,6 +15,7 @@ After generating or extending a backend thread, check which follow-up layers app
 - OpenAPI metadata
 - inferred DTO opportunities
 - frontend contract impact
+- `@Api.field(...)` ordering when explicit zod schema is present: put `z.xxx(...)` last so later helpers do not get ignored
 
 ## Persistence follow-up
 
