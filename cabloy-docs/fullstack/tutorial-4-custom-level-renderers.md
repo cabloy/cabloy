@@ -136,6 +136,7 @@ npm run dev
 - [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend)
 - [Frontend CLI](/frontend/cli)
 - [Component Guide](/frontend/component-guide)
+- [Zova Form Under the Hood](/frontend/zova-form-under-the-hood)
 - [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates)
 
 ## Next step
