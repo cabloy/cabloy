@@ -4,7 +4,11 @@ import type {
   SchemaObject,
   TransformNodeOptions,
 } from '@cabloy/openapi-typescript';
-import type { ZovaOpenapiConfig, ZovaOpenapiConfigModule } from 'zova-openapi';
+import type {
+  TypeOpenapiConfigMatchRule,
+  ZovaOpenapiConfig,
+  ZovaOpenapiConfigModule,
+} from 'zova-openapi';
 
 import { BeanCliBase } from '@cabloy/cli';
 import { extend } from '@cabloy/extend';
@@ -107,6 +111,7 @@ export class CliOpenapiGenerate extends BeanCliBase {
       moduleConfigCli,
       config.modules[moduleInfo.relativeName],
     );
+    _validateOperations(moduleConfig, moduleInfo.relativeName, configFile);
     const cache = await this._outputFiles(
       openapiTypescript,
       moduleConfig,
@@ -534,12 +539,37 @@ function _q(question: boolean) {
   return question ? '?' : '';
 }
 
+function _hasOperationRule(rule?: TypeOpenapiConfigMatchRule) {
+  if (!rule) return false;
+  return !Array.isArray(rule) || rule.length > 0;
+}
+
+function _validateOperations(
+  moduleConfig: ZovaOpenapiConfigModule,
+  moduleName: string,
+  configFile: string,
+) {
+  if (
+    _hasOperationRule(moduleConfig.operations?.match) ||
+    _hasOperationRule(moduleConfig.operations?.ignore)
+  ) {
+    return;
+  }
+  throw new Error(
+    `Please specify operations.match or operations.ignore in ${configFile} to avoid generating a large number of API SDKs unrelated to module "${moduleName}".`,
+  );
+}
+
 function _checkOperationIdEnabled(moduleConfig: ZovaOpenapiConfigModule, selector?: string) {
   if (!selector) return false;
-  if (!moduleConfig.operations?.match && !moduleConfig.operations?.ignore) return true;
+  const match = moduleConfig.operations?.match;
+  const ignore = moduleConfig.operations?.ignore;
+  const hasMatch = _hasOperationRule(match);
+  const hasIgnore = _hasOperationRule(ignore);
+  if (!hasMatch && !hasIgnore) return false;
   return (
-    (moduleConfig.operations?.match && matchSelector(moduleConfig.operations?.match, selector)) ||
-    (moduleConfig.operations?.ignore && !matchSelector(moduleConfig.operations?.ignore, selector))
+    (hasMatch && matchSelector(match!, selector)) ||
+    (hasIgnore && !matchSelector(ignore!, selector))
   );
 }
 

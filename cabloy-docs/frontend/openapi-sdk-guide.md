@@ -30,12 +30,15 @@ npm run zova :openapi:config demo-student
 
 ## Module-level config
 
-Each module can control which backend operations belong to it.
+Each module must explicitly declare which backend operations belong to it.
 
 Representative idea:
 
-- configure matching rules in the module OpenAPI config
+- configure `operations.match` or `operations.ignore` in the module OpenAPI config
 - keep API ownership aligned with the module boundary
+- avoid generating large amounts of unrelated SDK output for the current module
+
+If both `operations.match` and `operations.ignore` are left empty, `:openapi:generate` should fail fast and ask you to define one of them explicitly. This fail-fast feedback helps both developers and AI agents notice the missing ownership rule immediately and correct it before unrelated SDK output is generated.
 
 This modular split matters because Cabloy does not treat the frontend as one flat API client surface.
 

@@ -88,6 +88,9 @@ A practical responsibility split is:
 
 - project-level OpenAPI config decides where the backend Swagger/OpenAPI source comes from
 - module-level OpenAPI config decides which generated contract slice belongs to which frontend module
+- module-level ownership should be declared explicitly with `operations.match` or `operations.ignore`
+
+If both `operations.match` and `operations.ignore` are empty, frontend SDK generation should fail fast instead of generating a large unrelated contract surface for the module. That fail-fast behavior helps both developers and AI agents notice the missing ownership boundary immediately and repair the config before the wrong SDK slice is generated.
 
 A practical regeneration rule is:
 
