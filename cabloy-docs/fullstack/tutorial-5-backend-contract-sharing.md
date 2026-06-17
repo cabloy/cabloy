@@ -26,8 +26,6 @@ Please add two custom actions to the Student list:
 
 - Summary: return or display a student summary for the selected row
 - Force Delete: permanently delete the selected student through a dedicated row action
-
-Make both actions work end to end, from the backend contract to the Student list page.
 ```
 
 ## Why this step matters
