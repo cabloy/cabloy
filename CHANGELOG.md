@@ -1,5 +1,27 @@
 # Changelog
 
+## 5.1.61
+
+### Features
+
+- Enforce explicit OpenAPI operation filters.
+- Remove the demo-student module and document the module-removal workflow.
+- Add a mobile field to students and document serializer guidance.
+
+### Bug Fixes
+
+- Decouple test data initialization from application initialization.
+- Refresh the student summary after updates.
+
+### Improvements
+
+- Migrate the contract-loop hook to TypeScript.
+- Harden and simplify contract-loop guidance and gate behavior.
+- Add Zova Form documentation and navigation.
+- Refine ModelResource guidance and examples.
+- Add Zova command scene, fetch interceptor, frontend reading, and Status architecture guides.
+- Update backend contract-sharing tutorial and related skill documentation.
+
 ## 5.1.60
 
 ### Features
