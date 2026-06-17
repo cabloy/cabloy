@@ -7,6 +7,7 @@ export default {
   LevelIntermediate: 'Intermediate',
   LevelPlaceholder: 'Select training level',
   Name: 'Name',
+  Mobile: 'Mobile',
   Operations: 'Operations',
   Student: 'Student',
 };

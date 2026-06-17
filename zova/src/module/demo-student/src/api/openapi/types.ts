@@ -1157,6 +1157,8 @@ export interface components {
     'demo-student.dto.studentCreate': {
       /** @description Name */
       name: string;
+      /** @description Mobile */
+      mobile: string;
       /** @description Description */
       description?: string | undefined;
       /**
@@ -1197,6 +1199,8 @@ export interface components {
       id: number | string;
       /** @description Name */
       name: string;
+      /** @description Mobile */
+      mobile: string;
       /** @description Description */
       description?: string | undefined;
       /**
@@ -1233,6 +1237,8 @@ export interface components {
           id: number | string;
           /** @description Name */
           name: string;
+          /** @description Mobile */
+          mobile: string;
           /** @description Description */
           description?: string | undefined;
           /**
@@ -1245,6 +1251,8 @@ export interface components {
     'demo-student.dto.studentUpdate': {
       /** @description Name */
       name: string;
+      /** @description Mobile */
+      mobile: string;
       /** @description Description */
       description?: string | undefined;
       /**
@@ -1258,6 +1266,8 @@ export interface components {
           id: number | string;
           /** @description Name */
           name: string;
+          /** @description Mobile */
+          mobile: string;
           /** @description Description */
           description?: string | undefined;
           /**

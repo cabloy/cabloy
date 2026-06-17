@@ -164,6 +164,12 @@ Then check whether DTOs are already inferred through patterns such as:
 
 If the DTOs are inferred from the entity/model chain, let the entity change propagate. Do not hand-edit DTO field lists unless the source clearly requires it.
 
+Important serialization reminder:
+
+- if the returned field behavior depends on `v.serializerTransform(...)`, `v.serializerExclude()`, `v.serializerReplace(...)`, `v.serializerGetter(...)`, or `v.serializerCustom(...)`, do not assume those transforms run by default
+- for performance reasons, Vona response serialization is opt-in per API action
+- verify that the target controller action explicitly uses `@Core.serializer()` before concluding that serializer metadata is broken
+
 ## Step 6: Apply the renderer branch deliberately
 
 ### Default rule: prefer shared renderer reuse
@@ -251,6 +257,7 @@ Typical checks include:
 - `npm run tsc`
 - `npm run build`
 - narrow resource test runs
+- when returned-field masking or exclusion uses `v.serializer*`, verify the action-level `@Core.serializer()` path with an API test, not only static field metadata inspection
 - renderer/build/deps synchronization when custom frontend renderers are involved
 
 ## Response pattern

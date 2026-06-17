@@ -36,6 +36,7 @@ export class ServiceStudent extends BeanBase {
     return {
       id: student.id,
       name: student.name,
+      mobile: student.mobile,
       description: student.description,
       level: student.level,
     };

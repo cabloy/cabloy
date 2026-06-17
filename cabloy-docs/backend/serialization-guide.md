@@ -41,6 +41,16 @@ async findOne(id) {
 
 This makes serialization an explicit request-path capability rather than an invisible response-side convention.
 
+Important operational rule:
+
+- for performance reasons, serialization is **not enabled by default**
+- `v.serializerTransform(...)`, `v.serializerExclude()`, `v.serializerReplace(...)`, `v.serializerGetter(...)`, and `v.serializerCustom(...)` only declare field-level transform metadata
+- those transforms do **not** run unless the target API explicitly enables serialization with `@Core.serializer()`
+
+A practical debugging rule is:
+
+- if a field-level serializer appears correct but the response still returns the raw value, first check whether the controller action uses `@Core.serializer()`
+
 ## Serializer transforms
 
 Vona supports custom serializer transforms through `@SerializerTransform(...)`.

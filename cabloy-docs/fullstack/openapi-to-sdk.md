@@ -76,12 +76,13 @@ A practical forward-chain sequence is:
 
 1. author or change the backend contract
 2. emit or inspect backend OpenAPI output
-3. configure frontend module ownership if needed
-4. generate module-level OpenAPI SDK output
-5. run the rest build for the active flavor when needed
-6. consume the generated contract from frontend code instead of re-declaring it manually
-7. keep frontend follow-up thin by wrapping generated consumers with semantic facades instead of re-declaring the contract
-8. when the custom API still belongs to an existing resource, reuse the existing resource-owner instead of creating a competing cache owner
+3. if the frontend generator reads from a local Swagger endpoint, start the backend service first so the endpoint is reachable — in this repo, `npm run dev` is the normal path and exposes Swagger at `http://localhost:7102/swagger/json?version=V31`
+4. configure frontend module ownership if needed
+5. generate module-level OpenAPI SDK output
+6. run the rest build for the active flavor when needed
+7. consume the generated contract from frontend code instead of re-declaring it manually
+8. keep frontend follow-up thin by wrapping generated consumers with semantic facades instead of re-declaring the contract
+9. when the custom API still belongs to an existing resource, reuse the existing resource-owner instead of creating a competing cache owner
 
 A practical responsibility split is:
 
@@ -91,6 +92,7 @@ A practical responsibility split is:
 A practical regeneration rule is:
 
 - if the backend contract changed, prefer regenerating the SDK/rest layer before hand-editing frontend request code
+- if `npm run zova :openapi:generate ...` fails because the local Swagger source is unavailable, first start the backend service and confirm `http://localhost:7102/swagger/json?version=V31` is reachable before treating generation as broken
 - if the generated consumer path is already correct, but frontend behavior still looks stale, stop patching generated files and diagnose consumer drift or local dependency drift instead
 
 ## Cabloy Start workflow

@@ -1,8 +1,9 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { Api, v } from 'vona-module-a-openapiutils';
+import { Api, $makeSchema, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
+import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -11,6 +12,15 @@ import { ModelStudent } from '../model/student.ts';
 export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsStudentSelectResItem>({
+  fields: {
+    mobile: $makeSchema(
+      v.serializerReplace({
+        patternFrom: /^(.{3}).{4}(.*)$/,
+        patternTo: '$1****$2',
+      }),
+      z.string(),
+    ),
+  },
   blocks: [
     ZovaRender.block('basic-page:blockPage', {
       blocks: [

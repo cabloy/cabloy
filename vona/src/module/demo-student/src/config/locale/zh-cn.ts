@@ -7,6 +7,7 @@ export default {
   LevelIntermediate: '中级',
   LevelPlaceholder: '请选择训练级别',
   Name: '名称',
+  Mobile: '手机号',
   Operations: '操作',
   Student: 'Student',
 };

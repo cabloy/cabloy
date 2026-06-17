@@ -179,6 +179,7 @@ That may include:
 - confirming DTO and validation alignment
 - checking Swagger/OpenAPI output
 - confirming that the changed endpoint or schema now reflects the intended contract
+- if local OpenAPI generation depends on a running Swagger source, starting the backend service first — in Cabloy Basic, `npm run dev` is the normal path and exposes `http://localhost:7102/swagger/json?version=V31`
 
 If the backend contract output is wrong, frontend regeneration will only spread the mistake.
 
@@ -194,6 +195,11 @@ Typical Zova commands include:
 
 - `npm run zova :openapi:config ...`
 - `npm run zova :openapi:generate ...`
+
+Preflight reminder:
+
+- if `:openapi:generate` reads from a local Swagger endpoint, do not assume the generator itself is broken when fetch fails
+- first start the backend service, typically with `npm run dev`, and confirm `http://localhost:7102/swagger/json?version=V31` is reachable
 
 When the target is a module-local SDK, constrain `openapi.config.ts` with `operations.match` unless the module intentionally owns a broad API surface. This prevents unrelated APIs from being generated into the module.
 
