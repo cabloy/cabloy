@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/hooks/contract-loop-gate.py",
+            "command": "node .claude/hooks/contract-loop-gate.ts",
             "statusMessage": "Checking contract-loop gate"
           }
         ]
