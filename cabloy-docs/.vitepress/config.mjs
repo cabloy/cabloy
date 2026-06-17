@@ -362,6 +362,19 @@ export default defineConfig({
             { text: 'API Guide', link: '/frontend/api-guide' },
             { text: 'Model Architecture', link: '/frontend/model-architecture' },
             { text: 'Model State Guide', link: '/frontend/model-state-guide' },
+            { text: 'Model Resource Owner Pattern', link: '/frontend/model-resource-owner-pattern' },
+            {
+              text: 'Using ModelResource in Your Module',
+              link: '/frontend/model-resource-usage-guide',
+            },
+            {
+              text: 'Resource Model Best Practices',
+              link: '/frontend/model-resource-best-practices',
+            },
+            {
+              text: 'Resource Model Cookbook',
+              link: '/frontend/model-resource-cookbook',
+            },
           ],
         },
         {
