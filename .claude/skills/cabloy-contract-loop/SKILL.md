@@ -16,9 +16,10 @@ This includes the reverse fullstack direction where newly added frontend resourc
 In that situation:
 
 1. run the normal sync or regeneration flow first
-2. if the change affects flavor-built REST/type output, rebuild the relevant Zova flavor output first
-3. run `deps:vona`
-4. if stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
+2. if Vona consumes newly added or changed Zova Admin render/action/metadata in Cabloy Basic, run `npm run build:zova:admin` from the repo root before anything else
+3. otherwise, if the change only affects flavor-built REST/type output, rebuild the relevant Zova flavor output first
+4. run `deps:vona`
+5. if stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
 
 Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
 
@@ -156,6 +157,12 @@ Typical examples in Cabloy Basic include:
 
 - `cd zova && npm run build:rest:cabloyBasicAdmin`
 - `cd zova && npm run build:rest:cabloyBasicWeb`
+
+Important Cabloy Basic reverse-sync rule:
+
+- if Vona consumes newly added or changed Zova Admin render/action/metadata, do **not** stop at `build:rest:cabloyBasicAdmin`
+- run `npm run build:zova:admin` from the repo root instead, then run `npm run deps:vona`
+- treat this as a JS-bundle-plus-rest-output handoff, not a rest-types-only refresh
 
 For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the licensed Start repo.
 

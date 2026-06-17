@@ -32,6 +32,12 @@ export class DtoStudentSelectResItem extends $Dto.get(() => ModelStudent) {
       actions: [
         ZovaRender.tableActionRow('basic-table:actionUpdate'),
         ZovaRender.tableActionRow('basic-table:actionDelete'),
+        ZovaRender.tableActionRow('demo-student:actionSummary' as any, {
+          permission: { actionInherit: 'view' },
+        }),
+        ZovaRender.tableActionRow('demo-student:actionDeleteForce' as any, {
+          permission: { actionInherit: 'delete' },
+        }),
       ],
     }),
   )

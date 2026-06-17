@@ -42,6 +42,7 @@ Before inventing a custom implementation path:
 ## AI development rules
 
 - Prefer CLI-backed workflows over manual scaffolding whenever Vona or Zova already provides a generator, refactor, metadata, or verification command.
+- When Vona consumes newly added or changed Zova Admin render/action/metadata, always run `npm run build:zova:admin` before `npm run deps:vona`. Do not treat `build:rest:cabloyBasicAdmin` alone as sufficient, because the Admin JS bundle and rest output must move together.
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
 - For frontend work, assume Cabloy Basic and Cabloy Start share a frontend engineering layer but may diverge in UI layer, frontend flavors, suite/module availability, SSR site baselines, project assets, and generated outputs.
 - For Zova frontend analysis, do not default to generic Vue reinterpretation first. Read the code through Zova’s controller / bean / IoC architecture before mapping it to Vue concepts.

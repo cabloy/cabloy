@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/hooks/reverse-sync-gate.py",
+            "statusMessage": "Checking reverse-sync requirements"
+          }
+        ]
+      }
+    ]
+  }
+}
