@@ -39,7 +39,7 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
             true,
           )) as ModelStudent;
           const query = modelStudent.summary(cellContext.row.id);
-          const summary = query.data ?? (await query.refetch()).data ?? null;
+          const summary = (await query.refetch()).data ?? null;
           const message = summary
             ? [
                 `Name: ${summary.name}`,
