@@ -61,24 +61,29 @@ Those pages explain the repo entrypoints and the CLI-first workflow model that t
 - [Tutorial 1: Create Your First Module](/fullstack/tutorial-1-first-module)
 - [Tutorial 2: Create Your First CRUD](/fullstack/tutorial-2-first-crud)
 
-### Phase 2: Share frontend rendering metadata through the backend contract
+### Phase 2: Reverse chain — share frontend rendering metadata through the backend contract
 
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing)
 - [Tutorial 4: Custom Form/Table Renderers for Level](/fullstack/tutorial-4-custom-level-renderers)
 
 Important handoff note for this phase:
 
+- this phase teaches the **reverse chain** of the Cabloy contract loop
+- Tutorial 3 uses the built-in metadata branch
+- Tutorial 4 uses the custom resource handoff branch
 - once a frontend resource created in these tutorials is later consumed by backend metadata, do not stop at frontend source edits alone
 - refresh the generated frontend output, run the relevant flavor build, then run `npm run deps:vona`
 - if backend-side shared types still look stale after that normal sync flow, rebuild `vona/node_modules` and reinstall dependencies
 
-See [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the full reverse-handoff explanation.
+See [Contract Loop Playbook](/fullstack/contract-loop-playbook) and [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the full reverse-chain explanation.
 
-### Phase 3: Share backend contracts forward into frontend consumption
+### Phase 3: Forward chain — share backend contracts into frontend consumption
 
 - [Tutorial 5: Backend Contract Sharing](/fullstack/tutorial-5-backend-contract-sharing)
 
-### Phase 4: Understand one contract surface through one field story
+This phase teaches the **forward chain** of the contract loop: backend contract truth changes first, generated frontend consumers are refreshed second, and frontend follow-up stays thin and resource-owner-aware.
+
+### Phase 4: One field story across multiple contract surfaces
 
 - [Tutorial 6: One Contract Surface, Four Uses](/fullstack/tutorial-6-one-contract-four-uses)
 

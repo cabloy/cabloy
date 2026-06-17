@@ -2,6 +2,8 @@
 
 Use this reference when a contract-loop task adds or refactors a custom API that still belongs to an existing resource.
 
+This is a downstream consumer-alignment pattern for the forward chain. It applies after contract regeneration, not instead of contract generation.
+
 Typical examples:
 
 - `summary/:id`
@@ -38,6 +40,8 @@ Use this shape instead:
 1. keep `ModelResource` as the single owner of resource-bound server state
 2. add reusable resource-owned helpers for custom query and mutation state
 3. keep module-local models only as thin semantic facades when the task still benefits from a business-local API surface
+
+This is the forward-chain downstream rule in practice: regenerate the contract first, then keep the frontend follow-up thin and resource-owner-aware.
 
 A good semantic facade may still expose methods such as:
 

@@ -42,7 +42,13 @@ Before inventing a custom implementation path:
 ## AI development rules
 
 - Prefer CLI-backed workflows over manual scaffolding whenever Vona or Zova already provides a generator, refactor, metadata, or verification command.
-- When Vona consumes newly added or changed Zova Admin render/action/metadata, always run `npm run build:zova:admin` before `npm run deps:vona`. Do not treat `build:rest:cabloyBasicAdmin` alone as sufficient, because the Admin JS bundle and rest output must move together.
+- The Cabloy contract-loop model applies to both Cabloy Basic and Cabloy Start; detect the edition to choose commands and output paths, not to redefine the workflow model.
+- Treat contract-loop work as one of four branches: forward chain, reverse chain, consumer drift, or local dependency drift.
+- For the forward chain, change backend contract truth first and regenerate frontend consumers rather than hand-patching them.
+- After forward regeneration, keep frontend follow-up thin: prefer semantic model facades and reuse the existing resource-owner when the custom API still belongs to the same resource.
+- For the reverse chain, when Vona consumes newly added or changed Zova Admin render/action/metadata, always run `npm run build:zova:admin` before `npm run deps:vona`. Do not treat `build:rest:cabloyBasicAdmin` alone as sufficient, because the Admin JS bundle and rest output must move together.
+- If generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before making more source edits.
+- For Cabloy Start, apply the same reverse-chain logic but resolve the Start-specific flavor names and generated-output paths from the active Start repo before recommending commands.
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
 - For frontend work, assume Cabloy Basic and Cabloy Start share a frontend engineering layer but may diverge in UI layer, frontend flavors, suite/module availability, SSR site baselines, project assets, and generated outputs.
 - For Zova frontend analysis, do not default to generic Vue reinterpretation first. Read the code through Zova’s controller / bean / IoC architecture before mapping it to Vue concepts.

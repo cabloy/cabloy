@@ -4,6 +4,8 @@
 
 In this tutorial, one prompt lets AI close the series by showing Cabloy’s core fullstack idea: one field-oriented contract surface can drive several behaviors across backend and frontend.
 
+This capstone sits on top of both the forward chain and the reverse chain rather than replacing either one.
+
 This time the main teaching field is `mobile`, while `level` stays as the supporting example for table and form rendering.
 
 ## Goal

@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, one prompt lets AI show the reverse direction of Cabloy’s fullstack contract loop: backend field metadata can reference frontend render resources.
+In this tutorial, one prompt lets AI show the **reverse chain** of Cabloy’s fullstack contract loop: backend field metadata can reference frontend render resources.
 
 You start with the simplest path first: reuse the existing built-in rendering resources for the `level` field.
 

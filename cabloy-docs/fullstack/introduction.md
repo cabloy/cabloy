@@ -89,7 +89,16 @@ Cabloy does not treat type sharing as backend-to-frontend only. The collaboratio
 
 This two-way contract loop reduces duplicate declarations and lets backend and frontend evolve from generated source truth instead of hand-maintained memory.
 
-For the two directions in more detail, see [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) and [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).
+Start with the canonical [Contract Loop Playbook](/fullstack/contract-loop-playbook), then use the directional deep dives [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) and [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).
+
+Use the playbook to distinguish four cases clearly:
+
+- forward chain
+- reverse chain
+- consumer drift
+- local dependency drift
+
+The contract-loop model is shared across Cabloy Basic and Cabloy Start. Detect the edition to choose concrete flavor commands and generated-output paths, not to redefine the workflow model.
 
 When the reverse direction involves newly added frontend resources that backend tooling or backend metadata will consume, treat that as an operational handoff rather than a conceptual one: refresh generated frontend output, run the relevant flavor build, run `npm run deps:vona`, and if Vona still sees stale shared types, rebuild `vona/node_modules` and reinstall dependencies.
 

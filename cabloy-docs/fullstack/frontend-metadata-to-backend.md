@@ -1,10 +1,12 @@
 # Frontend Metadata Back to Backend
 
-This page documents the reverse direction of Cabloy’s fullstack collaboration loop: frontend-generated metadata that improves backend-side development and tooling.
+This page is the **reverse chain** deep dive for Cabloy’s bidirectional contract loop: frontend-generated metadata that improves backend-side development and tooling.
 
 ## Why this path matters
 
 The fullstack collaboration loop in Cabloy is not one-way.
+
+In the bidirectional [Contract Loop Playbook](/fullstack/contract-loop-playbook), this page covers the **reverse chain**.
 
 For the forward contract-bridge direction from backend OpenAPI to frontend consumption, also see [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
 
@@ -44,6 +46,8 @@ A practical collaboration loop often looks like this:
 
 ## Edition awareness
 
+The reverse-chain mental model applies to both Cabloy Basic and Cabloy Start.
+
 This path is especially sensitive to edition differences because Basic and Start do not expose the same frontend module and UI shape.
 
 So when AI reasons about frontend-generated metadata, it should verify:
@@ -51,6 +55,7 @@ So when AI reasons about frontend-generated metadata, it should verify:
 - which repo is active
 - which flavor is active
 - which generated output belongs to that edition
+- which concrete build and sync commands belong to that edition
 
 ## Implementation checks for frontend-metadata changes
 

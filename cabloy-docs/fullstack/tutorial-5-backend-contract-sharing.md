@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, one prompt lets AI show the forward direction of Cabloy’s fullstack contract loop: backend API contracts that generate and refresh the frontend consumption surface.
+In this tutorial, one prompt lets AI show the **forward chain** of Cabloy’s fullstack contract loop: backend API contracts that generate and refresh the frontend consumption surface.
 
 The teaching thread in this page is the pair of Student actions:
 
@@ -15,7 +15,8 @@ By the end of this tutorial, you will understand:
 
 - how a backend controller and DTO change becomes frontend generated API output
 - how backend row-action metadata can drive frontend table actions
-- how generated API, frontend model helpers, and row-action beans fit into one contract-sharing workflow
+- how generated API, thin frontend model helpers, and row-action beans fit into one forward-chain workflow
+- why custom resource endpoints that still belong to the same resource should reuse the existing resource-owner instead of creating a competing cache owner
 
 ## AI Prompt
 
@@ -58,6 +59,8 @@ Usage notes:
 - use the backend controller and DTOs as the starting point
 - inspect the module OpenAPI config before generation
 - prefer regeneration over hand-written duplicate API layers when the module already owns an OpenAPI contract surface
+- keep frontend follow-up thin: treat the module model as a semantic facade over generated API consumers rather than a second contract-definition layer
+- if the custom endpoint still belongs to the existing resource, reuse the existing resource-owner for server-state ownership
 
 ## Generated or affected files
 
@@ -103,10 +106,11 @@ This tutorial is easiest to understand as one contract chain:
 3. `dto/studentSelectResItem.tsx` defines the row-action metadata that exposes those actions in the Student list page
 4. `cli/openapi.config.ts` tells the frontend module which backend operations it owns
 5. `src/api/demoStudent.ts` is the generated typed API surface created from that backend contract
-6. `src/model/student.ts` wraps the generated API in frontend business-facing helper methods
-7. `tableCell.actionSummary.tsx` and `tableCell.actionDeleteForce.tsx` turn those model methods into visible row actions
+6. `src/model/student.ts` wraps the generated API in a thin frontend semantic facade
+7. the model should reuse the existing resource-owner for server-state ownership when the new API still belongs to the Student resource
+8. `tableCell.actionSummary.tsx` and `tableCell.actionDeleteForce.tsx` turn those model methods into visible row actions
 
-That is the practical contract-sharing loop: backend controller and DTO truth flows into generated frontend API output, then into frontend model helpers, and finally into visible table actions.
+That is the practical forward chain: backend controller and DTO truth flows into generated frontend API output, then into thin frontend model helpers, and finally into visible table actions.
 
 ## Verification
 

@@ -50,12 +50,16 @@ const fullstackGroups = [
         link: '/fullstack/tutorial-3-frontend-metadata-sharing',
       },
       {
-        text: 'Tutorial 4: Backend Contract Sharing',
-        link: '/fullstack/tutorial-4-backend-contract-sharing',
+        text: 'Tutorial 4: Custom Form/Table Renderers for Level',
+        link: '/fullstack/tutorial-4-custom-level-renderers',
       },
       {
-        text: 'Tutorial 5: One Contract Surface, Four Uses',
-        link: '/fullstack/tutorial-5-one-contract-four-uses',
+        text: 'Tutorial 5: Backend Contract Sharing',
+        link: '/fullstack/tutorial-5-backend-contract-sharing',
+      },
+      {
+        text: 'Tutorial 6: One Contract Surface, Four Uses',
+        link: '/fullstack/tutorial-6-one-contract-four-uses',
       },
     ],
   },
@@ -75,6 +79,7 @@ const fullstackGroups = [
       },
       { text: 'Framework Performance', link: '/fullstack/framework-performance' },
       { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
+      { text: 'Contract Loop Playbook', link: '/fullstack/contract-loop-playbook' },
       { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
       {
         text: 'Frontend Metadata Back to Backend',

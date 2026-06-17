@@ -1,31 +1,44 @@
 # Verification Checklist
 
-After a contract-loop change, check both sides.
-
-## Backend verification
-
-- controller action contract is correct
-- DTO and validation align
-- OpenAPI output reflects the intended shape
-- backend tests pass
-- `npm run test`
-- `npm run tsc`
-- `npm run build`
-
-## Frontend verification
-
-- regeneration commands completed successfully
-- generated SDK/schema outputs are updated
-- API/model/page/component consumers still typecheck
-- `npm run tsc:zova`
-- `npm run build:zova`
-- relevant flavor-specific or route-specific checks
+After a contract-loop change, verify the branch that actually applies.
 
 ## Edition verification
 
 - Basic or Start marker confirmed
 - affected flavor confirmed
 - generation path matches the active edition
+
+## Forward chain verification
+
+- backend contract source is correct
+- controller action contract is correct
+- DTO and validation align
+- OpenAPI output reflects the intended shape
+- module ownership is constrained
+- regeneration commands completed successfully
+- generated SDK or schema outputs are updated
+- thin model facades and downstream consumers still align with the regenerated contract
+- `npm run tsc`
+- `npm run build`
+
+## Reverse chain verification
+
+- frontend-owned source is correct
+- metadata generation completed when applicable
+- the relevant flavor build completed successfully
+- `deps:vona` completed
+- backend consumers can resolve the refreshed frontend-generated handoff
+- prefer visible proof under `zova/src/**/.metadata/**` when it is available
+- if the real handoff only appears in `.zova-rest`, treat commit-time gate failures as conservative reminders and verify the reverse sync flow manually before using the explicit bypass
+- `npm run tsc:zova`
+- relevant flavor-specific or route-specific checks
+
+## Consumer drift verification
+
+- source truth already looks correct
+- generated output already looks correct
+- the next consumer layer is the place that still looks stale
+- do not patch source or generated artifacts again until the stale consumer path is identified
 
 ## Recovery rule for stale local file consumers
 

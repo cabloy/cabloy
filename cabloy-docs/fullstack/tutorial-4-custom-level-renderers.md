@@ -4,6 +4,8 @@
 
 In this tutorial, one prompt lets AI upgrade the `level` field from built-in render resources to custom frontend renderers owned by the `demo-student` module.
 
+This is the **reverse chain** custom-resource handoff branch of the contract loop.
+
 ## Goal
 
 By the end of this tutorial, you will understand:
