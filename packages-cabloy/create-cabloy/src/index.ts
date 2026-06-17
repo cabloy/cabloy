@@ -88,15 +88,27 @@ async function main() {
   const s2 = p.spinner();
   s2.start('Running npm run init...');
 
-  const exitCode = await spawnAsync('npm', ['run', 'init'], {
+  const initExitCode = await spawnAsync('npm', ['run', 'init'], {
     cwd: targetDir,
   });
 
-  if (exitCode !== 0) {
+  if (initExitCode !== 0) {
     s2.stop('Init failed', 1);
     p.log.error(pc.red('npm run init failed. You can try running it manually.'));
   } else {
     s2.stop('Project initialized successfully!');
+
+    const s3 = p.spinner();
+    s3.start('Initializing test data...');
+    const testDataExitCode = await spawnAsync('npm', ['run', 'init:test-data'], {
+      cwd: targetDir,
+    });
+    if (testDataExitCode !== 0) {
+      s3.stop('Test data initialization skipped', 1);
+      p.log.warn(pc.yellow('npm run init:test-data failed. You can try running it manually later.'));
+    } else {
+      s3.stop('Test data initialized successfully!');
+    }
   }
 
   p.outro(

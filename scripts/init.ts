@@ -247,22 +247,7 @@ function buildSsrCabloyBasicStartBatch(): void {
   }
 }
 
-// --- Step F: initTestData ---
-
-function initTestData(): void {
-  // eslint-disable-next-line
-  console.log('[init] Initializing test data via npm run test...');
-  try {
-    exec('npm run test');
-  } catch {
-    // eslint-disable-next-line
-    console.warn(
-      '[init] npm run test failed after init completed; Redis may be unavailable, skipping test data initialization',
-    );
-  }
-}
-
-// --- Step G: cleanupWorkspaceYaml ---
+// --- Step F: cleanupWorkspaceYaml ---
 
 function cleanupWorkspaceYaml(): void {
   const subProjects = ['vona', 'zova'];
@@ -283,7 +268,7 @@ function cleanupWorkspaceYaml(): void {
   }
 }
 
-// --- Step H: init:cabloy-docs ---
+// --- Step G: init:cabloy-docs ---
 
 function initCabloyDocs(): void {
   const pkgPath = resolve(CABLOY_DOCS_DIR, 'package.json');
@@ -306,6 +291,5 @@ initZova();
 initCabloyDocs();
 buildSsrCabloyBasicStartBatch();
 writeVersionMarker();
-initTestData();
 // eslint-disable-next-line
 console.log('[init] Done!');
