@@ -347,6 +347,15 @@ export default defineConfig({
           text: 'Components & UI',
           items: [
             { text: 'Component Guide', link: '/frontend/component-guide' },
+            { text: 'Form Guide', link: '/frontend/form-guide' },
+            {
+              text: 'Zova Form Under the Hood',
+              link: '/frontend/zova-form-under-the-hood',
+            },
+            {
+              text: 'Zova Form Source Reading Map',
+              link: '/frontend/zova-form-source-reading-map',
+            },
             { text: 'Component Props Guide', link: '/frontend/component-props-guide' },
             { text: 'Component v-model Guide', link: '/frontend/component-v-model-guide' },
             { text: 'Generic Component Guide', link: '/frontend/generic-component-guide' },
