@@ -25,6 +25,14 @@ In that situation:
 
 Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
 
+## Current safeguard behavior in this repo
+
+- there is no contract-loop pre-commit gate in the current repo workflow
+- the active safeguard lives in the Claude `PostToolUse` hook configured in `.claude/settings.json`
+- for high-confidence reverse-chain source edits on the Zova side, the hook auto-runs `npm run build:zova:admin` and then `npm run deps:vona`
+- forward-chain detections remain reminder-only, so backend contract changes still require deliberate regeneration and verification
+- consumer-side reverse signals remain reminder-only, so do not assume every reverse-chain case auto-syncs itself
+
 ## Goals
 
 1. detect whether the active repository is Cabloy Basic or Cabloy Start
@@ -203,8 +211,9 @@ Important Cabloy Basic reverse-sync rule:
 - if Vona consumes newly added or changed Zova Admin render/action/metadata, do **not** stop at `build:rest:cabloyBasicAdmin`
 - run `npm run build:zova:admin` from the repo root instead, then run `npm run deps:vona`
 - treat this as a JS-bundle-plus-rest-output handoff, not a rest-types-only refresh
-- for commit-time proof, prefer visible staged metadata under `zova/src/**/.metadata/**`
-- if the real reverse handoff only appears in `.zova-rest`, accept that the gate is conservative: verify the reverse sync flow manually, then use the explicit bypass if needed
+- the current repo safeguard may auto-run those two commands for high-confidence Zova reverse-source edits, but only as a convenience layer on top of the contract-loop model
+- if the change was consumer-side, low-confidence, cross-edition, or happened outside the Claude hook path, run the reverse sync flow deliberately yourself
+- prefer visible proof under `zova/src/**/.metadata/**` when it is available; if the effective handoff only appears in `.zova-rest`, treat the safeguard as conservative reminder/auto-sync assistance rather than strict proof
 
 For Cabloy Start, verify the exact Start-specific flavor names, paths, SSR site baselines, and project assets in the licensed Start repo.
 

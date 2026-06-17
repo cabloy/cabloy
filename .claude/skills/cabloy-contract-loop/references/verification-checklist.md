@@ -29,7 +29,10 @@ After a contract-loop change, verify the branch that actually applies.
 - `deps:vona` completed
 - backend consumers can resolve the refreshed frontend-generated handoff
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available
-- if the real handoff only appears in `.zova-rest`, treat commit-time gate failures as conservative reminders and verify the reverse sync flow manually before using the explicit bypass
+- this repo does not rely on a contract-loop pre-commit gate; the active safeguard is the Claude hook layer
+- if the change was a high-confidence Zova reverse-source edit through the Claude hook path, confirm whether the hook already auto-ran `npm run build:zova:admin` and `npm run deps:vona`
+- if the change was consumer-side, low-confidence, outside the Claude hook path, or in another edition branch, run the reverse sync flow manually instead of assuming it already happened
+- if the real handoff only appears in `.zova-rest`, treat the safeguard as conservative reminder/auto-sync assistance rather than strict proof
 - `npm run tsc:zova`
 - relevant flavor-specific or route-specific checks
 

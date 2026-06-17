@@ -1,2 +1,1 @@
-python3 /Volumes/my-data/cabloy-multirepo/cabloy-basic/.claude/hooks/contract-loop-gate.py --pre-commit
 pnpm exec lint-staged

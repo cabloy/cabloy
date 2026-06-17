@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import json
-import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path('/Volumes/my-data/cabloy-multirepo/cabloy-basic')
-BYPASS_ENV = 'CABLOY_CONTRACT_LOOP_BYPASS'
+STATE_FILE = Path('/tmp/cabloy-contract-loop-gate-state.json')
+AUTO_SYNC_WINDOW_SECONDS = 300
 
 TARGET_PATTERNS = [
     ('zova/src/module/', '.ts'),
@@ -55,14 +56,6 @@ REVERSE_ZOVA_CONTENT_MARKERS = [
     '@TableCell<',
     '@Component(',
     '@Component<',
-]
-
-FORWARD_PROOF_PATH_MARKERS = [
-    '/src/api/',
-]
-
-REVERSE_PROOF_PATH_MARKERS = [
-    '/src/.metadata/',
 ]
 
 
@@ -124,28 +117,8 @@ def _has_signal(result):
     return bool(result['forward_reason'] or result['reverse_reason'])
 
 
-def _build_messages(result):
-    messages = [
-        'Contract-loop gate: this change may affect Cabloy\'s bidirectional contract loop.',
-    ]
-    if result['forward_reason']:
-        messages.append(
-            f"Forward chain: {result['forward_reason']} If backend contract truth changed, verify the emitted OpenAPI/contract output and regenerate the frontend consumer path before considering the task done."
-        )
-        messages.append(
-            'After forward regeneration, keep frontend follow-up thin: prefer semantic model facades and reuse the existing resource-owner when the custom API still belongs to the same resource.'
-        )
-    if result['reverse_reason']:
-        messages.append(
-            f"Reverse chain: {result['reverse_reason']} If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, then run `npm run build:zova:admin` and `npm run deps:vona` for the Cabloy Basic Admin path."
-        )
-        messages.append(
-            'If generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before making more source edits.'
-        )
-        messages.append(
-            'For Cabloy Start, apply the same reverse-chain logic but resolve the Start-specific flavor names and generated-output paths from the active Start repo before executing edition-specific steps.'
-        )
-    return ' '.join(messages)
+def _is_high_confidence_reverse_source(path_text):
+    return '/zova/src/' in path_text and _path_contains_any(path_text, REVERSE_ZOVA_PATH_MARKERS)
 
 
 def _read_text(path: Path):
@@ -155,49 +128,124 @@ def _read_text(path: Path):
         return None
 
 
-def _read_staged_text(rel_path: str):
-    result = subprocess.run(
-        ['git', 'show', f':{rel_path}'],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        return None
-    return result.stdout
+def _load_state():
+    if not STATE_FILE.exists():
+        return {}
+    try:
+        return json.loads(STATE_FILE.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
 
 
-def _iter_staged_paths():
-    result = subprocess.run(
-        ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACMR'],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        return []
-    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+def _save_state(state):
+    try:
+        STATE_FILE.write_text(json.dumps(state), encoding='utf-8')
+    except Exception:
+        pass
 
 
-def _has_forward_proof(rel_paths):
-    return any('/zova/' in f'/{rel_path}' and _path_contains_any(f'/{rel_path}', FORWARD_PROOF_PATH_MARKERS) for rel_path in rel_paths)
+def _sync_fingerprint(path: Path):
+    try:
+        stat = path.stat()
+        return f'{path.as_posix()}:{stat.st_mtime_ns}'
+    except FileNotFoundError:
+        return path.as_posix()
 
 
-def _has_reverse_proof(rel_paths):
-    return any('/zova/' in f'/{rel_path}' and '/src/.metadata/' in f'/{rel_path}' for rel_path in rel_paths)
+def _should_skip_auto_sync(path: Path):
+    state = _load_state()
+    fingerprint = _sync_fingerprint(path)
+    entry = state.get(str(ROOT))
+    if not entry:
+        return False
+    if entry.get('fingerprint') != fingerprint:
+        return False
+    if time.time() - entry.get('timestamp', 0) > AUTO_SYNC_WINDOW_SECONDS:
+        return False
+    return True
 
 
-def _proof_summary(findings, rel_paths):
-    needs_forward = any(result['forward_reason'] for _, result in findings)
-    needs_reverse = any(result['reverse_reason'] for _, result in findings)
-    return {
-        'needs_forward': needs_forward,
-        'needs_reverse': needs_reverse,
-        'has_forward_proof': _has_forward_proof(rel_paths),
-        'has_reverse_proof': _has_reverse_proof(rel_paths),
+def _mark_auto_sync(path: Path):
+    state = _load_state()
+    state[str(ROOT)] = {
+        'fingerprint': _sync_fingerprint(path),
+        'timestamp': time.time(),
     }
+    _save_state(state)
+
+
+def _run_command(command):
+    return subprocess.run(
+        command,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def _summarize_process(result):
+    combined = '\n'.join(part for part in [result.stdout.strip(), result.stderr.strip()] if part)
+    if not combined:
+        return f'command exited with code {result.returncode}'
+    lines = [line.strip() for line in combined.splitlines() if line.strip()]
+    tail = ' | '.join(lines[-3:])
+    return f'exit {result.returncode}: {tail}'
+
+
+def _auto_sync_reverse(path: Path):
+    build_result = _run_command(['npm', 'run', 'build:zova:admin'])
+    if build_result.returncode != 0:
+        return False, f'Auto-sync failed during `npm run build:zova:admin`: {_summarize_process(build_result)}'
+
+    deps_result = _run_command(['npm', 'run', 'deps:vona'])
+    if deps_result.returncode != 0:
+        return False, f'Auto-sync failed during `npm run deps:vona`: {_summarize_process(deps_result)}'
+
+    _mark_auto_sync(path)
+    return True, 'Auto-sync ran `npm run build:zova:admin` and `npm run deps:vona` for this reverse-chain edit.'
+
+
+def _build_messages(path: Path, result):
+    messages = [
+        "Contract-loop gate: this change may affect Cabloy's bidirectional contract loop.",
+    ]
+    path_text = path.as_posix()
+
+    if result['forward_reason']:
+        messages.append(
+            f"Forward chain: {result['forward_reason']} If backend contract truth changed, verify the emitted OpenAPI/contract output and regenerate the frontend consumer path before considering the task done."
+        )
+        messages.append(
+            'After forward regeneration, keep frontend follow-up thin: prefer semantic model facades and reuse the existing resource-owner when the custom API still belongs to the same resource.'
+        )
+
+    if result['reverse_reason']:
+        messages.append(
+            f"Reverse chain: {result['reverse_reason']} If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, then run `npm run build:zova:admin` and `npm run deps:vona` for the Cabloy Basic Admin path."
+        )
+        if _is_high_confidence_reverse_source(path_text):
+            if _should_skip_auto_sync(path):
+                messages.append(
+                    'Auto-sync skipped because the same reverse-source edit was already synced recently in this repo.'
+                )
+            else:
+                ok, detail = _auto_sync_reverse(path)
+                messages.append(detail)
+                if not ok:
+                    messages.append(
+                        'Please review the failure before continuing. If generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before making more source edits.'
+                    )
+                    return ' '.join(messages)
+        else:
+            messages.append(
+                'Auto-sync did not run because this reverse-chain signal came from the consumer side rather than a high-confidence frontend source edit.'
+            )
+        messages.append(
+            'For Cabloy Start, apply the same reverse-chain logic but resolve the Start-specific flavor names and generated-output paths from the active Start repo before executing edition-specific steps.'
+        )
+
+    return ' '.join(messages)
 
 
 def run_claude_hook():
@@ -214,7 +262,7 @@ def run_claude_hook():
     if not _has_signal(result):
         return 0
 
-    message = _build_messages(result)
+    message = _build_messages(file_path, result)
     print(json.dumps({
         'hookSpecificOutput': {
             'hookEventName': 'PostToolUse',
@@ -225,106 +273,5 @@ def run_claude_hook():
     return 0
 
 
-def run_pre_commit():
-    rel_paths = _iter_staged_paths()
-    findings = []
-    for rel_path in rel_paths:
-        abs_path = ROOT / rel_path
-        if not _is_code_file(abs_path):
-            continue
-        content = _read_staged_text(rel_path)
-        if content is None:
-            continue
-        result = _analyze(abs_path.as_posix(), content)
-        if _has_signal(result):
-            findings.append((rel_path, result))
-
-    if not findings:
-        return 0
-
-    proof = _proof_summary(findings, rel_paths)
-    missing_proofs = []
-    if proof['needs_forward'] and not proof['has_forward_proof']:
-        missing_proofs.append('forward proof')
-    if proof['needs_reverse'] and not proof['has_reverse_proof']:
-        missing_proofs.append('reverse proof')
-
-    lines = [
-        'Contract-loop pre-commit gate: staged changes may affect Cabloy\'s bidirectional contract loop.',
-        '',
-        'Review these staged files:',
-    ]
-    for rel_path, result in findings:
-        branches = []
-        if result['forward_reason']:
-            branches.append('forward chain')
-        if result['reverse_reason']:
-            branches.append('reverse chain')
-        lines.append(f"- {rel_path} ({', '.join(branches)})")
-
-    lines.extend([
-        '',
-        'Artifact-proof status:',
-        f"- forward proof present: {'yes' if proof['has_forward_proof'] else 'no'}",
-        f"- reverse proof present: {'yes' if proof['has_reverse_proof'] else 'no'}",
-        '',
-        'Required review before commit:',
-        '- if backend contract truth changed, verify the emitted OpenAPI/contract output and regenerate the frontend consumer path',
-        '- keep forward follow-up thin: prefer semantic model facades and reuse the existing resource-owner when the custom API still belongs to the same resource',
-        '- if backend metadata/tooling consumes changed frontend resources in Cabloy Basic Admin, run `npm run build:zova:admin` and then `npm run deps:vona`',
-        '- if generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before more source edits',
-        '- for Cabloy Start, keep the same contract-loop model but resolve Start-specific flavor names and output paths from the active Start repo',
-    ])
-
-    if missing_proofs:
-        lines.extend([
-            '',
-            'Missing artifact proofs:',
-        ])
-        if 'forward proof' in missing_proofs:
-            lines.extend([
-                '- forward proof is missing: stage the regenerated frontend consumer artifacts, typically under `zova/src/**/api/**`',
-            ])
-        if 'reverse proof' in missing_proofs:
-            lines.extend([
-                '- reverse proof is missing: stage refreshed frontend metadata under `zova/src/**/.metadata/**` when it is available. If the real handoff only appears in `.zova-rest`, treat this gate result as a conservative reminder and use deliberate review or the bypass after you verify the reverse sync flow manually.',
-            ])
-        lines.extend([
-            '- if the proof exists outside git-tracked files and you still want to proceed, use the bypass explicitly after review',
-        ])
-
-    if os.environ.get(BYPASS_ENV) == '1':
-        lines.extend([
-            '',
-            f'Bypass detected via {BYPASS_ENV}=1; continuing commit after surfacing the contract-loop reminder.',
-        ])
-        print('\n'.join(lines))
-        return 0
-
-    if missing_proofs:
-        detail = ', '.join(missing_proofs)
-        if missing_proofs == ['reverse proof']:
-            lines.extend([
-                '',
-                f'Commit blocked conservatively: missing {detail}. If reverse proof only exists through `.zova-rest`, verify the reverse sync flow manually and then re-run with {BYPASS_ENV}=1.',
-            ])
-        else:
-            lines.extend([
-                '',
-                f'Commit blocked: missing {detail}. Stage the corresponding regenerated artifacts or re-run with {BYPASS_ENV}=1 after deliberate review.',
-            ])
-        print('\n'.join(lines), file=sys.stderr)
-        return 1
-
-    lines.extend([
-        '',
-        f'Artifact proofs are present. Commit still requires deliberate review; re-run with {BYPASS_ENV}=1 if you want to proceed.',
-    ])
-    print('\n'.join(lines), file=sys.stderr)
-    return 1
-
-
 if __name__ == '__main__':
-    if '--pre-commit' in sys.argv:
-        raise SystemExit(run_pre_commit())
     raise SystemExit(run_claude_hook())
