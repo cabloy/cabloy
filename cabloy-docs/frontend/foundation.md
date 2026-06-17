@@ -58,8 +58,22 @@ If you want a compact path from public architecture to source-level understandin
 6. [Page Guide](/frontend/page-guide)
 7. [Component Guide](/frontend/component-guide)
 8. [Model Architecture](/frontend/model-architecture)
+9. [Model State Guide](/frontend/model-state-guide)
+10. [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+11. [Using ModelResource in Your Module](/frontend/model-resource-usage-guide)
+12. [Resource Model Best Practices](/frontend/model-resource-best-practices)
+13. [Resource Model Cookbook](/frontend/model-resource-cookbook)
 
 Use this order when you want to understand both the public mental model and the shortest source-reading routes without collapsing Zova back into generic Vue habits.
+
+If your main goal is resource-oriented frontend design, the model-focused subpath is:
+
+1. [Model Architecture](/frontend/model-architecture)
+2. [Model State Guide](/frontend/model-state-guide)
+3. [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+4. [Using ModelResource in Your Module](/frontend/model-resource-usage-guide)
+5. [Resource Model Best Practices](/frontend/model-resource-best-practices)
+6. [Resource Model Cookbook](/frontend/model-resource-cookbook)
 
 ## Why this matters for AI development
 
