@@ -215,6 +215,8 @@ This is useful when one scene needs multiple scaffold shapes for distinct fronte
 
 Representative built-in examples include the `command` scene, which exposes `commandBulk` and `commandRow` variants, and the `tableCell` scene, which exposes a `tableActionRow` variant in module metadata.
 
+For the built-in command scene’s runtime model, helper bases, metadata flow, and source-reading path, see [Command Scene Authoring](/frontend/command-scene-authoring).
+
 ### `metadataCustom`
 
 Use this only when the scene needs additional generated output beyond the standard metadata passes.

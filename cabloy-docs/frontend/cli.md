@@ -81,6 +81,18 @@ A practical rule is:
 - a named variant such as `--boilerplate=commandRow` maps to a metadata key such as `boilerplateCommandRow`
 - supported variants are scene-defined, so do not assume every scene exposes them
 
+The built-in `command` scene is the clearest current example:
+
+```bash
+npm run zova :create:bean command test -- --module=demo-student
+npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandBulk
+npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandRow
+```
+
+Use the default template for the command shape without the bulk/row helper bases, `commandBulk` for resource-oriented bulk commands, and `commandRow` for row-oriented commands that need both `resource` and `id`.
+
+For the command-scene runtime model and source-reading path, see [Command Scene Authoring](/frontend/command-scene-authoring).
+
 For the current cross-stack lookup table, see [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates).
 
 ## Practical workflow rule

@@ -51,6 +51,8 @@ These backend entries come from the current `vonaModule.onions` metadata in `a-a
 
 These frontend entries come from the current `zovaModule.onions` metadata in `a-command` and `a-table`.
 
+For the built-in command scene’s runtime model and helper-base patterns, see [Command Scene Authoring](/frontend/command-scene-authoring).
+
 ## Guidance for AI-assisted development
 
 Do not assume every bean scene supports named variants.

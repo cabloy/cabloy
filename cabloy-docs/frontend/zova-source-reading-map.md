@@ -192,7 +192,39 @@ Use this path when you are asking questions like:
 - built-in model beans show how the architecture is used in nontrivial cases
 - consuming code shows whether the state really belongs in the model or only uses the model result
 
-## 6. Behavior scene and render-time interception
+## 6. Command scene and command-bean invocation
+
+Use this path when you are asking questions like:
+
+- how does `$performCommand(...)` resolve a command bean?
+- when should an action live in a command bean instead of a page/controller method?
+- where do command names, helper bases, and generated command typing come from?
+
+### Read the docs first
+
+- [Command Scene Authoring](/frontend/command-scene-authoring)
+- [IoC and Beans](/frontend/ioc-and-beans)
+- [Frontend CLI](/frontend/cli)
+
+### Then read source in this order
+
+1. `zova/src/suite-vendor/a-zova/modules/a-command/src/lib/command.ts`
+2. `zova/src/suite-vendor/a-zova/modules/a-command/src/monkey.ts`
+3. `zova/src/suite-vendor/a-zova/modules/a-command/src/lib/performCommand.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-command/src/types/command.ts`
+5. one generated downstream metadata file such as `zova/src/suite/cabloy-basic/modules/basic-commands/src/.metadata/index.ts`
+6. representative command beans such as `command.create.tsx`, `command.delete.tsx`, `command.setValue.tsx`, or `command.log.tsx`
+
+### What each file clarifies
+
+- `command.ts` shows the public decorator surface and confirms the `sys` container scope
+- `monkey.ts` shows how `$performCommand(...)` is injected onto bean instances and how default `renderContext` data is synthesized from the host bean
+- `performCommand.ts` shows onion-name to bean resolution, sync-first then async bean loading, option merging, and command execution
+- `types/command.ts` shows the command-scene type contract, including `ICommandRecord`, `IDecoratorCommandOptions`, and `SymbolCommandResult`
+- generated downstream metadata shows the real command names and bean full names exposed by consuming modules
+- representative command beans show when to use the plain, bulk, row, or scene-sensitive command shapes
+
+## 7. Behavior scene and render-time interception
 
 Use this path when you are asking questions like:
 
@@ -219,7 +251,7 @@ Use this path when you are asking questions like:
 - composer/service files show how behavior chains are normalized and executed
 - host dependencies show why host-scoped injection is part of the behavior design
 
-## 7. SSR runtime and hydration handoff
+## 8. SSR runtime and hydration handoff
 
 Use this path when you are asking questions like:
 
@@ -248,7 +280,7 @@ Use this path when you are asking questions like:
 - page/controller/model files show whether the bug is actually page-level logic
 - the Vona side shows whether the problem happens before the Zova runtime is even entered
 
-## 8. Modules, suites, and architectural placement
+## 9. Modules, suites, and architectural placement
 
 Use this path when you are asking questions like:
 
