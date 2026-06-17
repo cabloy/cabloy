@@ -23,6 +23,7 @@ const aiItems = [
   { text: 'Playbook: Backend Module', link: '/ai/playbook-backend-module' },
   { text: 'Playbook: Frontend Page', link: '/ai/playbook-frontend-page' },
   { text: 'Playbook: Contract Regeneration', link: '/ai/playbook-contract-regeneration' },
+  { text: 'Playbook: Module Removal', link: '/ai/playbook-module-removal' },
   { text: 'Playbook: Metadata Refresh', link: '/ai/playbook-metadata-refresh' },
   { text: 'CLI for Agents', link: '/ai/cli-for-agents' },
   { text: 'Rules and Config', link: '/ai/rules-and-config' },

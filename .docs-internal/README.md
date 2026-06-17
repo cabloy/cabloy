@@ -61,6 +61,7 @@ Those concerns should live elsewhere.
 
 - [a-status Module Architecture](./architecture/a-status-module-architecture.md)
 - [Backend Resource Field Update Workflow](./architecture/backend-resource-field-workflow.md)
+- [Module Removal Workflow](./architecture/module-removal-workflow.md)
 - [SSR Memory Leak Investigation Guide](./architecture/ssr-memory-leak-investigation-guide.md)
 - [SSR Leak Experiment Flags Inventory](./architecture/ssr-leak-experiment-flags-inventory.md)
 - [SSR Leak Experiment Cleanup Checklist](./architecture/ssr-leak-experiment-cleanup-checklist.md)

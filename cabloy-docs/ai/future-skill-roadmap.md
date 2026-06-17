@@ -10,18 +10,21 @@ A roadmap helps convert that documented knowledge into a focused set of high-val
 
 ## What already exists
 
-Current root skill:
+Current root skills include:
 
 - `cabloy-workflow`
+- `cabloy-contract-loop`
+- `cabloy-resource-field-update`
+- `cabloy-module-removal`
 
-Its current role is broad workflow selection:
+Their current roles are:
 
-- detect Basic vs Start
-- classify backend/frontend/fullstack/docs work
-- prefer CLI-first behavior
-- suggest verification
+- `cabloy-workflow` → broad workflow selection, edition detection, CLI-first routing, and verification framing
+- `cabloy-contract-loop` → backend/frontend contract regeneration, reverse-chain handling, and drift diagnosis
+- `cabloy-resource-field-update` → existing backend resource-field changes with `fileVersion` and renderer-aware follow-up
+- `cabloy-module-removal` → backend/frontend/fullstack module deletion order, generated-runtime cleanup, and verification
 
-This is a strong foundation skill, but it is intentionally general.
+This is now a stronger foundation skill set, but it still leaves several useful workflow families for future specialization.
 
 ## Recommended next skill families
 

@@ -152,6 +152,13 @@ Typical skill role:
 - likely CLI path: Vona persistence verification plus Zova metadata/build flows only if renderer follow-up is required
 - skill then verifies entity, locale, tests, `fileVersion` logic, and renderer/build/deps follow-up when applicable
 
+### Example: “Remove an existing module cleanly”
+
+- skill decides this is a module-removal workflow rather than scaffolding or contract evolution
+- skill classifies backend-only vs frontend-only vs fullstack removal
+- likely CLI path: root build/deps/typecheck scripts such as `npm run build:zova:admin`, `npm run deps:vona`, `npm run deps:zova`, and `npm run tsc`
+- skill then verifies that source, package references, generated registrations, and stale runtime directories are handled in the correct order
+
 ## Anti-patterns
 
 Avoid these mistakes in skills:

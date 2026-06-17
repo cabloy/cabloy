@@ -75,6 +75,7 @@ Use this path when the task is about implementing or reviewing Cabloy code with 
 - [Playbook: Backend Module](/ai/playbook-backend-module)
 - [Playbook: Frontend Page](/ai/playbook-frontend-page)
 - [Playbook: Contract Regeneration](/ai/playbook-contract-regeneration)
+- [Playbook: Module Removal](/ai/playbook-module-removal)
 - [Playbook: Metadata Refresh](/ai/playbook-metadata-refresh)
 
 ### Verification and roadmap path

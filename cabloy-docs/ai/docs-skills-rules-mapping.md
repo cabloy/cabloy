@@ -143,6 +143,13 @@ Use this quick rule:
 - full explanation → [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - workflow steering → skill and rules can point to the docs and choose the right CLI path
 
+### Example: “How should AI remove an existing module cleanly?”
+
+- public operational explanation → [Playbook: Module Removal](/ai/playbook-module-removal)
+- maintainer rationale and pitfalls → `.docs-internal/architecture/module-removal-workflow.md`
+- avoid putting the full workflow in `CLAUDE.md` because the task needs branching, cleanup order, generated-runtime recovery, and verification
+- procedural decision workflow → `cabloy-module-removal` skill
+
 ### Example: “What `@Api.field(...)` ordering rule should AI preserve when mixing helpers and zod?”
 
 - full explanation → [Entity Guide](/backend/entity-guide) and [DTO Guide](/backend/dto-guide)
