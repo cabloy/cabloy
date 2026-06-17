@@ -56,6 +56,7 @@ Mocking fits naturally with:
 
 - [API Guide](/frontend/api-guide)
 - [Server Data](/frontend/server-data)
+- [Fetch Interceptor Guide](/frontend/fetch-interceptor-guide)
 - [Page Guide](/frontend/page-guide)
 
 A common workflow is:

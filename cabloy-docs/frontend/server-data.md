@@ -27,6 +27,8 @@ These layers define the server-data abstraction ladder:
 
 Use `$fetch` when you need a relatively direct HTTP-oriented access path.
 
+When the transport concern itself needs framework-level handling such as auth headers, response-envelope normalization, SSR short-circuiting, or mock fallback, read [Fetch Interceptor Guide](/frontend/fetch-interceptor-guide) together with this page.
+
 ### `$api`
 
 Use `$api` when you want business-oriented service access rather than scattering request details across pages and components.

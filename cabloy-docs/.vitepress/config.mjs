@@ -353,6 +353,7 @@ export default defineConfig({
           text: 'Data & State',
           items: [
             { text: 'Server Data', link: '/frontend/server-data' },
+            { text: 'Fetch Interceptor Guide', link: '/frontend/fetch-interceptor-guide' },
             { text: 'API Guide', link: '/frontend/api-guide' },
             { text: 'Model Architecture', link: '/frontend/model-architecture' },
             { text: 'Model State Guide', link: '/frontend/model-state-guide' },

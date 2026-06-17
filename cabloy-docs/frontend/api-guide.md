@@ -39,6 +39,8 @@ This shows the intended layering clearly:
 - `$fetch` handles the lower-level request
 - the API service exposes a business-oriented method such as `retrieveMenus()`
 
+If the lower-level request path itself needs transport middleware such as headers, JWT handling, mock fallback, SSR short-circuiting, or response normalization, see [Fetch Interceptor Guide](/frontend/fetch-interceptor-guide).
+
 API is also one of the core module-scope resource categories; see [Module Scope](/frontend/module-scope).
 
 ## Using the API through module scope
