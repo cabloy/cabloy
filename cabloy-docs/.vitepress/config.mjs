@@ -81,6 +81,10 @@ const fullstackGroups = [
       { text: 'Framework Performance', link: '/fullstack/framework-performance' },
       { text: 'Vona + Zova Integration', link: '/fullstack/vona-zova-integration' },
       { text: 'Contract Loop Playbook', link: '/fullstack/contract-loop-playbook' },
+      {
+        text: 'Backend Metadata to Frontend Table Actions',
+        link: '/fullstack/backend-metadata-to-frontend-table-actions',
+      },
       { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
       {
         text: 'Frontend Metadata Back to Backend',
@@ -355,6 +359,17 @@ export default defineConfig({
             {
               text: 'Zova Form Source Reading Map',
               link: '/frontend/zova-form-source-reading-map',
+            },
+            { text: 'Table Guide', link: '/frontend/table-guide' },
+            { text: 'TableCell Authoring Cookbook', link: '/frontend/table-cell-cookbook' },
+            { text: 'Table + Resource CRUD Cookbook', link: '/frontend/table-resource-crud-cookbook' },
+            {
+              text: 'Zova Table Under the Hood',
+              link: '/frontend/zova-table-under-the-hood',
+            },
+            {
+              text: 'Zova Table Source Reading Map',
+              link: '/frontend/zova-table-source-reading-map',
             },
             { text: 'Component Props Guide', link: '/frontend/component-props-guide' },
             { text: 'Component v-model Guide', link: '/frontend/component-v-model-guide' },

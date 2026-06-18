@@ -60,12 +60,17 @@ Use this path when the task is page-oriented, route-oriented, or the first time 
 
 ### Components and UI flow
 
-Use this path when the task is about UI composition, component contracts, form architecture, form internals, form source reading, or theme work:
+Use this path when the task is about UI composition, component contracts, form or table architecture, form or table internals, form or table source reading, or theme work:
 
 - [Component Guide](/frontend/component-guide)
 - [Form Guide](/frontend/form-guide)
 - [Zova Form Under the Hood](/frontend/zova-form-under-the-hood)
 - [Zova Form Source Reading Map](/frontend/zova-form-source-reading-map)
+- [Table Guide](/frontend/table-guide)
+- [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
+- [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
+- [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
+- [Zova Table Source Reading Map](/frontend/zova-table-source-reading-map)
 - [Component Props Guide](/frontend/component-props-guide)
 - [Component v-model Guide](/frontend/component-v-model-guide)
 - [Generic Component Guide](/frontend/generic-component-guide)
