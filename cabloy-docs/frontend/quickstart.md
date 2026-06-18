@@ -127,8 +127,10 @@ This is why route metadata, guards, aliases, and theme/header/menu behavior shou
 Read together with:
 
 - [Page Route Guide](/frontend/page-route-guide)
-- [Navigation Guards Guide](/frontend/navigation-guards-guide)
 - [Route Alias Guide](/frontend/route-alias-guide)
+- [Navigation Guards Guide](/frontend/navigation-guards-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Theme Guide](/frontend/theme-guide)
 
 ## Step 6: reach the first routed page
@@ -150,6 +152,8 @@ Read next:
 - [Frontend CLI](/frontend/cli)
 - [Page Guide](/frontend/page-guide)
 - [Page Route Guide](/frontend/page-route-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 
 ## Step 7: understand menu and CLI ergonomics
 
@@ -173,6 +177,8 @@ Read next:
 - [Frontend Scripts](/frontend/scripts)
 - [Environment and Config Guide](/frontend/environment-config-guide)
 - [Page Route Guide](/frontend/page-route-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Theme Guide](/frontend/theme-guide)
 
 ### I want to understand startup and routing
@@ -180,14 +186,20 @@ Read next:
 - [System Startup Guide](/frontend/system-startup-guide)
 - [App Startup Guide](/frontend/app-startup-guide)
 - [Page Route Guide](/frontend/page-route-guide)
-- [Navigation Guards Guide](/frontend/navigation-guards-guide)
 - [Route Alias Guide](/frontend/route-alias-guide)
+- [Navigation Guards Guide](/frontend/navigation-guards-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
+- [Router Tabs Introduction](/frontend/router-tabs-introduction)
+- [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
 
 ### I want to create my first page
 
 - [Frontend CLI](/frontend/cli)
 - [Page Guide](/frontend/page-guide)
 - [Page Route Guide](/frontend/page-route-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 
 ### I need edition-sensitive guidance
 

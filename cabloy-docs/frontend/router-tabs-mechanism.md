@@ -4,6 +4,8 @@ This guide explains how the router-tabs mechanism works in Zova within the Cablo
 
 For the business meaning of the mechanism, see [Router Tabs Overview](/frontend/router-tabs-overview).
 
+If you came here from [Router View Hosts Guide](/frontend/router-view-hosts-guide), this page is the next layer down: the host guide explains routed-host choice, while this page explains the shared `ModelTabs` semantics behind that host.
+
 ## Why this mechanism exists
 
 The router-tabs mechanism is designed to support a workbench-style frontend navigation model.
