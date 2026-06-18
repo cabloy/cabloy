@@ -51,13 +51,13 @@ export class EntityStudent extends EntityBase {
   @Api.field(
     v.title($locale('Level')),
     v.required(),
-    studentLevelSchema,
     ZovaRender.order(3),
     ZovaRender.field('basic-select:formFieldSelect', {
       items: studentLevelItems,
       placeholder: $locale('Level'),
     }),
     ZovaRender.cell('basic-select:select', { items: studentLevelItems }),
+    studentLevelSchema,
   )
   level: 1 | 2 | 3;
 }

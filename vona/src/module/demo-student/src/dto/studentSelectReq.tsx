@@ -18,14 +18,14 @@ export interface IDtoOptionsStudentSelectReq extends IDecoratorDtoOptions {}
     level: $makeSchema(
       v.title($locale('Level')),
       v.optional(),
-      z.preprocess(value => {
-        if (typeof value === 'string') return Number.parseInt(value);
-        return value;
-      }, studentLevelSchema),
       ZovaRender.field('basic-select:formFieldSelect', {
         items: studentLevelItems,
         placeholder: $locale('Level'),
       }),
+      z.preprocess(value => {
+        if (typeof value === 'string') return Number.parseInt(value);
+        return value;
+      }, studentLevelSchema),
     ),
     createdAt: $makeSchema(
       ZovaRender.field('basic-date:formFieldDateRange'),
@@ -35,4 +35,8 @@ export interface IDtoOptionsStudentSelectReq extends IDecoratorDtoOptions {}
     ),
   },
 })
-export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, ['name', 'level', 'createdAt']) {}
+export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+  'name',
+  'level',
+  'createdAt',
+]) {}

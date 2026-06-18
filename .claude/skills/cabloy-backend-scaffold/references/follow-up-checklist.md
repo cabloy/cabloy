@@ -15,7 +15,7 @@ After generating or extending a backend thread, check which follow-up layers app
 - OpenAPI metadata
 - inferred DTO opportunities
 - frontend contract impact
-- `@Api.field(...)` ordering when explicit zod schema is present: put `z.xxx(...)` last so later helpers do not get ignored
+- `@Api.field(...)` / `$makeSchema(...)` ordering when an explicit zod/custom schema is present: put that schema last because `makeSchemaLikes(...)` applies arguments right-to-left and later helpers can otherwise be ignored
 
 ## Persistence follow-up
 
