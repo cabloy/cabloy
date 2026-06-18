@@ -10,6 +10,8 @@ In the bidirectional [Contract Loop Playbook](/fullstack/contract-loop-playbook)
 
 For the forward contract-bridge direction from backend OpenAPI to frontend consumption, also see [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
 
+If your real question is the full row-action chain from backend metadata to visible frontend table actions, including when forward-generated API consumers and reverse-shared render resources cooperate, also see [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions).
+
 The backend does not only feed the frontend through OpenAPI. The frontend also generates information that can improve backend-side type hints and integration confidence.
 
 This is one of the unusual strengths of the Cabloy monorepo model.

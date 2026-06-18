@@ -24,6 +24,8 @@ That means this page is the forward-chain bridge page, not the backend authoring
 
 If the changed source is actually a frontend-owned resource that backend consumers later depend on, switch to the reverse-chain guide: [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).
 
+If your real question is how one backend-owned row action becomes a visible frontend table action through metadata, page blocks, `tableCell` resources, and optionally generated API/model layers, continue with [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions).
+
 ## Backend side: Vona emits the contract
 
 On the backend side, OpenAPI metadata is driven by:

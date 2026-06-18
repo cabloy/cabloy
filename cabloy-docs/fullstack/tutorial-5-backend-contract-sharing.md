@@ -135,6 +135,7 @@ npm run dev
 
 ## Read more
 
+- [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [OpenAPI Guide](/backend/openapi-guide)
 - [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
