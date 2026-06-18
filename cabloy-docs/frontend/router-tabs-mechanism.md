@@ -6,6 +6,8 @@ For the business meaning of the mechanism, see [Router Tabs Overview](/frontend/
 
 If you came here from [Router View Hosts Guide](/frontend/router-view-hosts-guide), this page is the next layer down: the host guide explains routed-host choice, while this page explains the shared `ModelTabs` semantics behind that host.
 
+If your next question becomes specifically about how a page author should update task-level title, dirty state, or form scene through `$router.setPageMeta(...)`, continue with [Page Meta Guide](/frontend/page-meta-guide).
+
 ## Why this mechanism exists
 
 The router-tabs mechanism is designed to support a workbench-style frontend navigation model.
@@ -289,6 +291,8 @@ Representative page metadata includes:
 - `formMeta`
 
 This metadata shapes the visible state of the level-2 tab.
+
+For authoring-focused guidance on when page code should call `$router.setPageMeta(...)` and how to keep that separate from route meta, see [Page Meta Guide](/frontend/page-meta-guide).
 
 ### `pageTitle`
 

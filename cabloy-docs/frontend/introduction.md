@@ -61,6 +61,7 @@ Use this path when the task is page-oriented, route-oriented, or the first time 
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+- [Page Meta Guide](/frontend/page-meta-guide)
 - [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
 - [Router Tabs Route Meta Cookbook](/frontend/router-tabs-route-meta-cookbook)
 
