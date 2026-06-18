@@ -1,0 +1,95 @@
+import type {
+  DtoStudentCreate,
+  DtoStudentSelectRes,
+  DtoStudentUpdate,
+  EntityStudent,
+} from 'vona-module-demo-student';
+
+import assert from 'node:assert';
+import { describe, it } from 'node:test';
+import { app } from 'vona-mock';
+
+describe('student.test.ts', () => {
+  it('action:student', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      // data
+      const data: DtoStudentCreate = {
+        name: '__Tom__',
+        description: 'This is a test',
+        level: 1,
+      };
+      const dataUpdate: DtoStudentUpdate = {
+        name: '__TomNew__',
+        description: 'This is a test',
+        level: 2,
+      };
+      // login
+      await app.bean.passport.signinMock();
+      // create
+      const studentId = await app.bean.executor.performAction('post', '/demo/student', {
+        body: data,
+      });
+      assert.equal(!!studentId, true);
+      // findMany
+      const selectRes: DtoStudentSelectRes = await app.bean.executor.performAction(
+        'get',
+        '/demo/student',
+      );
+      const studentItem = selectRes.list.find(item => item.name === data.name);
+      assert.equal(!!studentItem, true);
+      assert.equal(studentItem!.level, data.level);
+      // findMany: level filter
+      const selectResByLevel: DtoStudentSelectRes = await app.bean.executor.performAction(
+        'get',
+        '/demo/student',
+        {
+          query: {
+            level: data.level,
+          },
+        },
+      );
+      assert.equal(selectResByLevel.list.some(item => item.name === data.name), true);
+      assert.equal(selectResByLevel.list.every(item => item.level === data.level), true);
+      // update
+      await app.bean.executor.performAction('patch', '/demo/student/:id', {
+        params: { id: studentId },
+        body: dataUpdate,
+      });
+      // findOne
+      let student: EntityStudent = await app.bean.executor.performAction(
+        'get',
+        '/demo/student/:id',
+        { params: { id: studentId } },
+      );
+      assert.equal(student.name, dataUpdate.name);
+      assert.equal(student.level, dataUpdate.level);
+      // delete
+      await app.bean.executor.performAction('delete', '/demo/student/:id', {
+        params: { id: student.id },
+      });
+      // findOne
+      student = await app.bean.executor.performAction('get', '/demo/student/:id', {
+        params: { id: student.id },
+      });
+      assert.equal(student, undefined);
+      // logout
+      await app.bean.passport.signout();
+    });
+  });
+
+  it('action:student:level invalid', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      await assert.rejects(async () => {
+        await app.bean.executor.performAction('post', '/demo/student', {
+          body: {
+            name: '__Tom__',
+            description: 'This is a test',
+            level: 4,
+          },
+        });
+      });
+      await app.bean.passport.signout();
+    });
+  });
+});
