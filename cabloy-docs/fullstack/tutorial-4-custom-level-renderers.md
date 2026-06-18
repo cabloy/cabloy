@@ -2,13 +2,17 @@
 
 <Badge type="info" text="Basic" />
 
-In this tutorial, one prompt lets AI upgrade the `level` field from built-in render resources to custom frontend renderers owned by the `demo-student` module.
+In this tutorial, one prompt lets the user express a simple product need: the `level` field in the Student experience should feel less generic and more like a real training-stage workflow.
 
-This is the **reverse chain** custom-resource handoff branch of the contract loop.
+From that user need, AI can infer that the next step is no longer just relabeling the field. It now needs a more dedicated rendering experience owned by the `demo-student` module.
+
+This tutorial covers the **reverse chain** custom-resource handoff branch of the contract loop.
 
 ## Goal
 
-By the end of this tutorial, you will understand:
+By the end of this tutorial, you will understand how a user-facing request about a more business-specific `level` experience turns into a concrete custom-renderer implementation.
+
+In particular, you will understand:
 
 - when built-in render metadata is enough and when a custom renderer is worth adding
 - how a frontend table cell bean and a frontend form-field component can both serve the same backend field
@@ -19,17 +23,17 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-Please make the level UI more business-specific in the Student list page and form.
+The current level field in the Student list page and form still feels too generic. Please redesign it so it feels like a dedicated training-stage field for a real Student Training Center workflow, with a more recognizable presentation in the list and a more guided experience in the form.
 ```
 
 ## Why this step matters
 
-This is the right follow-up step because built-in render resources are a good starting point, but some business fields eventually need module-specific behavior.
+This is the right follow-up step because built-in render resources are a good starting point, but some fields eventually need a more distinctive user experience to match the business workflow.
 
-The `level` field is a good teaching example because this step deepens the UI in two concrete ways:
+The `level` field is a good teaching example because users often expect two improvements once a training workflow becomes more realistic:
 
-- a custom table cell that renders a more business-specific badge style
-- a custom form field that adds helper text, readonly behavior, or module-specific select styling
+- the list should make each training stage easier to recognize at a glance
+- the form should guide the user more clearly when choosing a training stage
 
 This is where Cabloy’s contract model becomes more practical: the backend field still owns the business contract, while the frontend module progressively deepens the UI behavior behind that contract.
 
@@ -52,15 +56,15 @@ npm run zova :create:component formFieldLevel -- --module=demo-student
 
 Usage notes:
 
-- use `:create:bean` when you need a table-cell render resource under the bean scene
-- use `:create:component` when you need a custom frontend component/controller surface
+- use `:create:bean` when AI determines that the list needs a dedicated table-cell render resource under the bean scene
+- use `:create:component` when AI determines that the form needs a custom frontend component/controller surface
 - generation gives you the structural starting point, but this tutorial still expects manual refinement so the result matches the `demo-student` teaching implementation
 - after frontend resources exist, return to the backend entity and point `ZovaRender.field(...)` and `ZovaRender.cell(...)` at the custom module resources
 - once backend metadata starts consuming those new frontend resources, treat the next step as a reverse fullstack handoff rather than frontend-only cleanup: refresh generated output, rebuild the relevant flavor, and re-sync Vona dependencies
 
 ## Generated or affected files
 
-By the end of this tutorial, your module should provide these teaching anchors:
+To satisfy the user-facing need above, AI will usually converge on a small set of implementation anchors like these:
 
 - custom table cell bean:
   - `zova/src/module/demo-student/src/bean/tableCell.level.tsx`
@@ -71,7 +75,7 @@ By the end of this tutorial, your module should provide these teaching anchors:
 - backend field contract to update:
   - `vona/src/module/demo-student/src/entity/student.tsx`
 
-Representative custom metadata targets are:
+Representative metadata targets after AI makes that implementation decision are:
 
 ```typescript
 ZovaRender.field('demo-student:formFieldLevel', {
@@ -86,18 +90,22 @@ and:
 ZovaRender.cell('demo-student:level', { items: levelItems })
 ```
 
-## What those files mean in the business thread
+This is the point where a user request about “better list presentation” and “better form guidance” starts turning into explicit renderer resources and backend metadata links.
 
-This tutorial makes the split of responsibilities explicit:
+## How those files support the user experience
 
-- `tableCell.level.tsx` owns the custom table-cell rendering behavior for `level`
-- `component/formFieldLevel/controller.tsx` owns the custom form-field behavior for `level`
+These files work together to deliver the richer `level` experience:
+
+- `tableCell.level.tsx` makes the training stage easier to recognize in the list
+- `component/formFieldLevel/controller.tsx` makes the form interaction more guided and business-specific
 - `.metadata/component/formFieldLevel.ts` exposes that component through the module registration surface
 - `entity/student.tsx` remains the backend-owned business contract that chooses which frontend resources should render the field
 
-That means the backend still defines the business field, validation, and metadata entry point, while the frontend module owns the implementation details of the richer UI behavior.
+That means the backend still defines the business field, validation, and metadata entry point, while the frontend module owns the implementation details that make the experience feel more tailored to the Student Training Center workflow.
 
 ## Verification
+
+These checks are the reverse-chain synchronization steps AI must complete so the user-facing renderer change is actually available to backend consumers and the running app.
 
 1. refresh the generated handoff surfaces before checking backend consumers:
 
