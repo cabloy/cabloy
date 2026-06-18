@@ -144,6 +144,8 @@ Use this path when you are asking questions like:
 ### Read the docs first
 
 - [Page Route Guide](/frontend/page-route-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Page Params Guide](/frontend/page-params-guide)
 - [Page Query Guide](/frontend/page-query-guide)
 - [Navigation Guards Guide](/frontend/navigation-guards-guide)
@@ -164,7 +166,58 @@ Use this path when you are asking questions like:
 - route schema sources show typed parsing behavior for params and query
 - `beanControllerPageBase.ts` shows the page-controller refresh hook surface
 
-## 5. Model state, cache-oriented state, and broader data ownership
+### When to continue into routed hosts
+
+If your next question becomes any of these:
+
+- why this route lands in one shell host rather than another
+- where keep-alive participation is decided after route resolution
+- where `tabKey` / `componentKey` are derived for routed pages
+- how the active layout consumes routed-host state
+
+then continue immediately with:
+
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
+- section 5 on this page for the compact source-reading path
+
+## 5. Router-view hosts, routertabs, and routerstack
+
+Use this path when you are asking questions like:
+
+- why does one routed page use an empty host while another behaves like a tabbed workbench?
+- where do `tabKey`, `componentKey`, and keep-alive inclusion actually come from?
+- how do `routerViewTabs` and `routerViewStack` differ at runtime?
+- which layout files are the real consumers of routed-host behavior?
+
+### Read the docs first
+
+- [Page Route Guide](/frontend/page-route-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
+- [Router Tabs Introduction](/frontend/router-tabs-introduction)
+- [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+
+### Then read source in this order
+
+1. `zova/src/suite-vendor/a-zova/modules/a-router/src/lib/routerViewBase.tsx`
+2. `zova/src/suite-vendor/a-zova/modules/a-router/src/component/routerViewEmpty/controller.tsx`
+3. `zova/src/suite-vendor/a-zova/modules/a-routertabs/src/component/routerViewTabs/controller.tsx`
+4. `zova/src/suite-vendor/a-zova/modules/a-routertabs/src/model/tabs.ts`
+5. `zova/src/suite-vendor/a-zova/modules/a-routerstack/src/component/routerViewStack/controller.tsx`
+6. `zova/src/suite-vendor/a-zova/modules/a-routerstack/src/model/stack.ts`
+7. the active layout controller/render pair that consumes the host you care about
+
+### What each file clarifies
+
+- `routerViewBase.tsx` shows the shared host contract for routed-page render, keep-alive, and host callbacks
+- `routerViewEmpty/controller.tsx` shows the minimal routed host without the richer tabs/stack model
+- `routerViewTabs/controller.tsx` shows the controller-facing tabs host entrypoint
+- `model/tabs.ts` shows workspace grouping, tab-item state, page-meta updates, and keep-alive inclusion
+- `routerViewStack/controller.tsx` shows the stack-host entrypoint with a smaller contract than tabs
+- `model/stack.ts` shows the fullPath-based stack identity model and recency-based pruning
+- active layout consumers show how the current shell turns host state into visible Admin or Web behavior
+
+## 6. Model state, cache-oriented state, and broader data ownership
 
 Use this path when you are asking questions like:
 
@@ -192,7 +245,7 @@ Use this path when you are asking questions like:
 - built-in model beans show how the architecture is used in nontrivial cases
 - consuming code shows whether the state really belongs in the model or only uses the model result
 
-## 6. Command scene and command-bean invocation
+## 7. Command scene and command-bean invocation
 
 Use this path when you are asking questions like:
 
@@ -224,7 +277,7 @@ Use this path when you are asking questions like:
 - generated downstream metadata shows the real command names and bean full names exposed by consuming modules
 - representative command beans show when to use the plain, bulk, row, or scene-sensitive command shapes
 
-## 7. Behavior scene and render-time interception
+## 8. Behavior scene and render-time interception
 
 Use this path when you are asking questions like:
 
@@ -251,7 +304,7 @@ Use this path when you are asking questions like:
 - composer/service files show how behavior chains are normalized and executed
 - host dependencies show why host-scoped injection is part of the behavior design
 
-## 8. SSR runtime and hydration handoff
+## 9. SSR runtime and hydration handoff
 
 Use this path when you are asking questions like:
 
@@ -280,7 +333,7 @@ Use this path when you are asking questions like:
 - page/controller/model files show whether the bug is actually page-level logic
 - the Vona side shows whether the problem happens before the Zova runtime is even entered
 
-## 9. Modules, suites, and architectural placement
+## 10. Modules, suites, and architectural placement
 
 Use this path when you are asking questions like:
 

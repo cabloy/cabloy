@@ -57,6 +57,12 @@ Use this path when the task is page-oriented, route-oriented, or the first time 
 - [Page Route Guide](/frontend/page-route-guide)
 - [Route Alias Guide](/frontend/route-alias-guide)
 - [Navigation Guards Guide](/frontend/navigation-guards-guide)
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide)
+- [Router Tabs Introduction](/frontend/router-tabs-introduction)
+- [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+- [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
+- [Router Tabs Route Meta Cookbook](/frontend/router-tabs-route-meta-cookbook)
 
 ### Components and UI flow
 

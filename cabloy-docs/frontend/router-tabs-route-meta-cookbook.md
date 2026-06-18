@@ -2,12 +2,15 @@
 
 This guide provides practical route-meta recipes for the router-tabs mechanism in Zova within the Cabloy monorepo.
 
+If you came here from [Router View Hosts Guide](/frontend/router-view-hosts-guide), [Router Tabs Mechanism](/frontend/router-tabs-mechanism), or [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration), this page is the authoring layer: the earlier pages explain host/runtime behavior, and this page explains how route metadata intentionally drives it.
+
 Read this together with:
 
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
 - [Page Route Guide](/frontend/page-route-guide)
 - [Router Tabs Overview](/frontend/router-tabs-overview)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+- [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
 
 ## Why this cookbook exists
 
@@ -38,6 +41,10 @@ Representative source definition:
 ## Mental model before choosing a recipe
 
 Use this decision split first:
+
+- [Router View Hosts Guide](/frontend/router-view-hosts-guide) explains where host-level routed identity is consumed
+- [Router Tabs Mechanism](/frontend/router-tabs-mechanism) explains how `ModelTabs` turns route data into tab state
+- this page explains how to choose the route-meta inputs that drive that model
 
 - `tabKey` answers: which level-1 workspace should this route belong to?
 - `componentKey` answers: should this route visit reuse an existing page instance or remain separately open?

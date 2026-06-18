@@ -328,9 +328,15 @@ export default defineConfig({
             { text: 'Page Params Guide', link: '/frontend/page-params-guide' },
             { text: 'Zod Guide', link: '/frontend/zod-guide' },
             { text: 'Page Route Guide', link: '/frontend/page-route-guide' },
+            { text: 'Zova Router Under the Hood', link: '/frontend/zova-router-under-the-hood' },
+            { text: 'Router View Hosts Guide', link: '/frontend/router-view-hosts-guide' },
             { text: 'Router Tabs Introduction', link: '/frontend/router-tabs-introduction' },
             { text: 'Router Tabs Overview', link: '/frontend/router-tabs-overview' },
             { text: 'Router Tabs Mechanism', link: '/frontend/router-tabs-mechanism' },
+            {
+              text: 'Router Tabs Layout Integration',
+              link: '/frontend/router-tabs-layout-integration',
+            },
             {
               text: 'Router Tabs Route Meta Cookbook',
               link: '/frontend/router-tabs-route-meta-cookbook',

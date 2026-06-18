@@ -129,6 +129,7 @@ Layout selection, navigation guards, and aliases are closely related but they so
 
 Read together with:
 
+- [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Navigation Guards Guide](/frontend/navigation-guards-guide)
 - [Route Alias Guide](/frontend/route-alias-guide)
 - [Frontend Quickstart](/frontend/quickstart)
