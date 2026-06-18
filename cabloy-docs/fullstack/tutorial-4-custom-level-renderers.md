@@ -23,7 +23,7 @@ In particular, you will understand:
 Give AI a prompt like this:
 
 ```text
-The current level field in the Student list page and form still feels too generic. Please redesign it so it feels like a dedicated training-stage field for a real Student Training Center workflow, with a more recognizable presentation in the list and a more guided experience in the form.
+For demonstration purposes, refactor the display style of the `level` field on the Student list page and form by using custom renderer components.
 ```
 
 ## Why this step matters
@@ -81,13 +81,13 @@ Representative metadata targets after AI makes that implementation decision are:
 ZovaRender.field('demo-student:formFieldLevel', {
   items: levelItems,
   helper: $locale('LevelPlaceholder'),
-})
+});
 ```
 
 and:
 
 ```typescript
-ZovaRender.cell('demo-student:level', { items: levelItems })
+ZovaRender.cell('demo-student:level', { items: levelItems });
 ```
 
 This is the point where a user request about “better list presentation” and “better form guidance” starts turning into explicit renderer resources and backend metadata links.
