@@ -12,6 +12,8 @@ Use this page together with:
 
 - [Form Guide](/frontend/form-guide)
 - [Zova Form Under the Hood](/frontend/zova-form-under-the-hood)
+- [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)
+- [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 - [Behavior Guide](/frontend/behavior-guide)
 - [API Schema Guide](/frontend/api-schema-guide)
@@ -19,6 +21,7 @@ Use this page together with:
 
 > [!TIP]
 > **Zova Form docs path**
+>
 > 1. **[Form Guide](/frontend/form-guide)** — learn the public authoring surface
 > 2. **[Zova Form Under the Hood](/frontend/zova-form-under-the-hood)** — learn how the runtime pieces cooperate
 > 3. **[Zova Form Source Reading Map](/frontend/zova-form-source-reading-map)** — learn which files to read next

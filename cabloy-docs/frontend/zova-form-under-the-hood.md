@@ -5,6 +5,8 @@ This guide explains the source-level runtime path behind Zova Form.
 Use this page together with:
 
 - [Form Guide](/frontend/form-guide)
+- [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)
+- [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 - [Zova Form Source Reading Map](/frontend/zova-form-source-reading-map)
 - [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
 - [Behavior Guide](/frontend/behavior-guide)
@@ -16,6 +18,7 @@ If your next question is not “how does this runtime work?” but “which file
 
 > [!TIP]
 > **Zova Form docs path**
+>
 > 1. **[Form Guide](/frontend/form-guide)** — learn the public authoring surface
 > 2. **[Zova Form Under the Hood](/frontend/zova-form-under-the-hood)** — learn how the runtime pieces cooperate
 > 3. **[Zova Form Source Reading Map](/frontend/zova-form-source-reading-map)** — learn which files to read next

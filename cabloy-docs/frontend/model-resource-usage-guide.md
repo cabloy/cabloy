@@ -8,6 +8,20 @@ For review guardrails and design checks after applying the pattern, continue wit
 
 For implementation templates covering common extension scenarios, continue with [Resource Model Cookbook](/frontend/model-resource-cookbook).
 
+> [!TIP]
+> **Resource docs path**
+>
+> 1. **[Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)** — learn why `ModelResource` is a resource owner
+> 2. **[Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)** — learn how the module runtime pieces cooperate
+> 3. **[Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)** — learn which files to read next
+> 4. **[Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide)** — learn how to reuse the owner in application code
+> 5. **[Resource Model Best Practices](/frontend/model-resource-best-practices)** — learn the review guardrails
+> 6. **[Resource Model Cookbook](/frontend/model-resource-cookbook)** — learn the common implementation shapes
+>
+> **You are here:** step 4.
+> **Previous recommended pages:** [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern), [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood), and [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
+> **Next recommended pages:** [Resource Model Best Practices](/frontend/model-resource-best-practices), then [Resource Model Cookbook](/frontend/model-resource-cookbook).
+
 Use this page when the main question is not only “what does `ModelResource` do?”, but also:
 
 - when should I use it directly?

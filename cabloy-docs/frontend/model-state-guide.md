@@ -6,6 +6,8 @@ Read [Model Architecture](/frontend/model-architecture) first if you want the br
 
 If you specifically want the scalable resource-facade pattern, continue with [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern).
 
+If you want to understand how that owner pattern expands into the whole `rest-resource` module runtime, continue with [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood), then [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
+
 If you want to apply that pattern in your own module with a more uniform two-usage model, continue with [Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide).
 
 ## Why the model-state layer exists
@@ -206,7 +208,7 @@ One of the most important model-state behaviors is automatic key prefixing.
 When a model uses:
 
 ```typescript
-queryKey: ['list']
+queryKey: ['list'];
 ```
 
 that logical key is prefixed internally with model identity, and with selector when selector mode is enabled.
@@ -306,6 +308,8 @@ What this example shows:
 
 This is one of the best examples for understanding how Zova Model scales from simple data queries to reusable domain infrastructure.
 
+If your next question is not only about the model class but about how generic routes, page shells, schema-driven blocks, and downstream CRUD blocks cooperate around that owner, continue with [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood).
+
 #### Why `enableSelector` matters here
 
 This model is not meant to represent only one concrete resource forever.
@@ -321,8 +325,7 @@ At runtime, model query keys are therefore prefixed not only by the bean full na
 That means two consumers can both use logical keys such as:
 
 ```typescript
-['select', '', hashkey(query)]
-['item', id, 'view']
+['select', '', hashkey(query)][('item', id, 'view')];
 ```
 
 without colliding with each other, because the effective cache identity is separated by resource selector.
@@ -363,9 +366,7 @@ It separates three levels of identity:
 Representative shapes are:
 
 ```typescript
-['select', actionPath ?? '', hashkey(query)]
-['item', id]
-['item', id, action]
+['select', actionPath ?? '', hashkey(query)][('item', id)][('item', id, action)];
 ```
 
 This makes the invalidation strategy much clearer:

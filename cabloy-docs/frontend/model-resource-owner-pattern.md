@@ -8,11 +8,28 @@ It uses the current `rest-resource` model as the main source specimen:
 
 Read [Model Architecture](/frontend/model-architecture) and [Model State Guide](/frontend/model-state-guide) first if you want the broader Model runtime and helper surface.
 
+If your next question is how the whole `rest-resource` module works at runtime beyond the model itself, continue with [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood).
+
+If your next question is which files to read next for that runtime, continue with [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
+
 If your next question is how to apply this pattern in your own module, continue with [Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide).
 
 If your next question is how to review or constrain that pattern in a larger codebase, continue with [Resource Model Best Practices and Anti-Patterns](/frontend/model-resource-best-practices).
 
 If your next question is which common extension shapes to implement first, continue with [Resource Model Cookbook](/frontend/model-resource-cookbook).
+
+> [!TIP]
+> **Resource docs path**
+>
+> 1. **[Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)** — learn why `ModelResource` is a resource owner
+> 2. **[Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)** — learn how the module runtime pieces cooperate
+> 3. **[Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)** — learn which files to read next
+> 4. **[Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide)** — learn how to reuse the owner in application code
+> 5. **[Resource Model Best Practices](/frontend/model-resource-best-practices)** — learn the review guardrails
+> 6. **[Resource Model Cookbook](/frontend/model-resource-cookbook)** — learn the common implementation shapes
+>
+> **You are here:** step 1.
+> **Next recommended page:** [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood).
 
 ## Why this page exists
 
@@ -118,8 +135,7 @@ Because Zova Model prefixes query keys by bean identity and selector, the effect
 So logical keys such as:
 
 ```typescript
-['select', '', hashkey(query)]
-['item', id, 'view']
+['select', '', hashkey(query)][('item', id, 'view')];
 ```
 
 can safely exist for many resources without colliding.

@@ -368,7 +368,10 @@ export default defineConfig({
             },
             { text: 'Table Guide', link: '/frontend/table-guide' },
             { text: 'TableCell Authoring Cookbook', link: '/frontend/table-cell-cookbook' },
-            { text: 'Table + Resource CRUD Cookbook', link: '/frontend/table-resource-crud-cookbook' },
+            {
+              text: 'Table + Resource CRUD Cookbook',
+              link: '/frontend/table-resource-crud-cookbook',
+            },
             {
               text: 'Zova Table Under the Hood',
               link: '/frontend/zova-table-under-the-hood',
@@ -392,19 +395,35 @@ export default defineConfig({
             { text: 'Fetch Interceptor Guide', link: '/frontend/fetch-interceptor-guide' },
             { text: 'API Guide', link: '/frontend/api-guide' },
             { text: 'Model Architecture', link: '/frontend/model-architecture' },
-            { text: 'Model State Guide', link: '/frontend/model-state-guide' },
-            { text: 'Model Resource Owner Pattern', link: '/frontend/model-resource-owner-pattern' },
             {
-              text: 'Using ModelResource in Your Module',
-              link: '/frontend/model-resource-usage-guide',
-            },
-            {
-              text: 'Resource Model Best Practices',
-              link: '/frontend/model-resource-best-practices',
-            },
-            {
-              text: 'Resource Model Cookbook',
-              link: '/frontend/model-resource-cookbook',
+              text: 'Resource Models & CRUD',
+              items: [
+                { text: 'Model State Guide', link: '/frontend/model-state-guide' },
+                {
+                  text: 'Model Resource Owner Pattern',
+                  link: '/frontend/model-resource-owner-pattern',
+                },
+                {
+                  text: 'Rest Resource Under the Hood',
+                  link: '/frontend/rest-resource-under-the-hood',
+                },
+                {
+                  text: 'Rest Resource Source Reading Map',
+                  link: '/frontend/rest-resource-source-reading-map',
+                },
+                {
+                  text: 'Using ModelResource in Your Module',
+                  link: '/frontend/model-resource-usage-guide',
+                },
+                {
+                  text: 'Resource Model Best Practices',
+                  link: '/frontend/model-resource-best-practices',
+                },
+                {
+                  text: 'Resource Model Cookbook',
+                  link: '/frontend/model-resource-cookbook',
+                },
+              ],
             },
           ],
         },

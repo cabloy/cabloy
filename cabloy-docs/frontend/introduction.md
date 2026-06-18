@@ -93,6 +93,8 @@ Use this path when the task is about data loading, API contracts, generated SDKs
 - [Model Architecture](/frontend/model-architecture)
 - [Model State Guide](/frontend/model-state-guide)
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+- [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)
+- [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 - [Using ModelResource in Your Module](/frontend/model-resource-usage-guide)
 - [Resource Model Best Practices](/frontend/model-resource-best-practices)
 - [Resource Model Cookbook](/frontend/model-resource-cookbook)

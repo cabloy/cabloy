@@ -14,6 +14,8 @@ Use this page together with:
 - [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
+- [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)
+- [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 - [Bean Scene Authoring](/frontend/bean-scene-authoring)
 - [API Schema Guide](/frontend/api-schema-guide)
@@ -21,6 +23,7 @@ Use this page together with:
 
 > [!TIP]
 > **Zova Table docs path**
+>
 > 1. **[Table Guide](/frontend/table-guide)** — learn the public authoring surface
 > 2. **[Zova Table Under the Hood](/frontend/zova-table-under-the-hood)** — learn how the runtime pieces cooperate
 > 3. **[Zova Table Source Reading Map](/frontend/zova-table-source-reading-map)** — learn which files to read next

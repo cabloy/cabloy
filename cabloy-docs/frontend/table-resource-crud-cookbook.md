@@ -15,6 +15,8 @@ Use this page together with:
 - [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)
+- [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)
+- [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 - [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions)
 - [Tutorial 2: Create Your First CRUD](/fullstack/tutorial-2-first-crud)
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing)
@@ -110,7 +112,7 @@ ZovaRender.block('basic-page:blockPage', {
     ZovaRender.block('basic-page:blockTable'),
     ZovaRender.block('basic-page:blockPager'),
   ],
-})
+});
 ```
 
 That declaration is important because it shows the intended authoring direction clearly:
