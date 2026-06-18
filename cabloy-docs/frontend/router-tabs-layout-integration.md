@@ -9,6 +9,7 @@ Read this page together with:
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+- [Page Meta Guide](/frontend/page-meta-guide)
 - [Router Tabs Admin and Web Comparison](/frontend/router-tabs-admin-web-comparison)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 
@@ -42,6 +43,8 @@ What contributors and AI workflows still often want next is the layout-integrati
 - which parts are shared model semantics and which parts are layout presentation
 
 This page is that bridge.
+
+If your next question is specifically about how page code feeds task-level title, dirty state, or form scene into the visible shell, continue with [Page Meta Guide](/frontend/page-meta-guide).
 
 ## The shortest accurate mental model
 
@@ -161,6 +164,8 @@ Important details:
 - deleting a level-2 item calls `deleteTabItem(...)`
 - page-level icon state is derived from `pageMeta` such as `pageDirty` and `formMeta.formScene`
 - the actual routed content still enters through `<ZRouterViewTabs>`
+
+For the authoring-side write path that produces those `pageMeta` values, see [Page Meta Guide](/frontend/page-meta-guide).
 
 This is the second important source-level fact about layout integration:
 

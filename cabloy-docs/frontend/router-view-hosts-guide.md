@@ -10,6 +10,7 @@ Read this page together with:
 - [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+- [Page Meta Guide](/frontend/page-meta-guide)
 - [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 
@@ -341,6 +342,8 @@ That means:
 A practical reading takeaway is:
 
 - **`a-routerstack` is a host-level cache/stack primitive, not a tabs/workspace mechanism**
+
+If your next question is specifically about how a page author should update task-level title, dirty state, or form scene through `$router.setPageMeta(...)`, continue with [Page Meta Guide](/frontend/page-meta-guide).
 
 ### Current usage boundary in Cabloy Basic
 
