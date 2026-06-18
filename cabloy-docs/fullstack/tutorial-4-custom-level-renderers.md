@@ -23,7 +23,7 @@ In particular, you will understand:
 Give AI a prompt like this:
 
 ```text
-For demonstration purposes, refactor the display style of the `level` field on the Student list page and form by using custom renderer components.
+For demo purposes, use custom renderer components to give the `level` field on the Student list page and form a more distinctive look and feel.
 ```
 
 ## Why this step matters
