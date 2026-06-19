@@ -1,28 +1,14 @@
+import type { TableIdentity } from 'table-identity';
 import type { IResourceTableActionRowOptionsBase } from 'zova-module-a-openapi';
 import type {
   IJsxRenderContextTableCell,
   ITableCellRender,
   NextTableCellRender,
 } from 'zova-module-a-table';
+import type { ModelStudent } from 'zova-module-demo-student';
 
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
-
-import type { ModelStudent } from '../model/student.ts';
-
-function formatSummaryMessage(summary: Awaited<ReturnType<ModelStudent['summary']>>) {
-  if (!summary) return undefined;
-  const details = [
-    summary.summaryText,
-    `Name: ${summary.name}`,
-    `Level: ${summary.levelTitle}`,
-    `Description Length: ${summary.descriptionLength}`,
-  ];
-  if (summary.description) {
-    details.push(`Description: ${summary.description}`);
-  }
-  return details.join('\n');
-}
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {
@@ -41,26 +27,30 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
     renderContext: IJsxRenderContextTableCell,
     _next: NextTableCellRender,
   ) {
+    const { $host, cellContext, ctx } = renderContext;
     return (
       <button
         class={options.class}
         type="button"
-        onClick={async e => {
-          e.preventDefault();
-          e.stopPropagation();
-          const modelStudent = await this._getModelStudent();
-          const summary = await modelStudent.summary(renderContext.cellContext.row.id);
-          await this.$performCommand('basic-commands:alert', {
-            message: formatSummaryMessage(summary) ?? this.scope.locale.SummaryNotFound(),
-          });
+        onClick={async () => {
+          const id = cellContext.row.id as TableIdentity;
+          const modelStudent = (await ctx.bean._getBean(
+            'demo-student.model.student',
+            true,
+          )) as ModelStudent;
+          const querySummary = modelStudent.summary(id);
+          const { data: summary } = await querySummary.refetch();
+          const message = [
+            `ID: ${summary?.id ?? '-'}`,
+            `Name: ${summary?.name ?? '-'}`,
+            `Level: ${summary?.level ?? '-'}`,
+            `Description: ${summary?.description ?? '-'}`,
+          ].join('\n');
+          await $host.$performCommand('basic-commands:alert', { message }, renderContext);
         }}
       >
-        {this.scope.locale.Summary()}
+        Summary
       </button>
     );
-  }
-
-  private async _getModelStudent() {
-    return (await this.bean._getBean('demo-student.model.student', true)) as ModelStudent;
   }
 }
