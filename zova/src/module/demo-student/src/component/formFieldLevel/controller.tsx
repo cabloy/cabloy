@@ -58,7 +58,7 @@ export class ControllerFormFieldLevel extends BeanControllerBase {
               <div class={classes('flex min-h-12 items-center', props.class)}>
                 <span
                   class={classes(
-                    'badge badge-lg font-semibold border-0',
+                    'badge badge-lg font-semibold border-0 px-4 py-3 tracking-wide',
                     this._getBadgeClass(value),
                   )}
                 >
@@ -79,8 +79,10 @@ export class ControllerFormFieldLevel extends BeanControllerBase {
                     key={String(itemValue)}
                     type="button"
                     class={classes(
-                      'btn border-0 shadow-sm',
-                      selected ? this._getButtonClass(itemValue) : 'btn-outline',
+                      'btn btn-sm rounded-full border-0 px-4 font-medium transition-colors',
+                      selected
+                        ? this._getButtonClass(itemValue)
+                        : 'btn-outline text-base-content/70',
                       !$$formField.field.state.meta.isValid && 'btn-error',
                     )}
                     onClick={() => {

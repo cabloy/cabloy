@@ -44,7 +44,7 @@ export class TableCellLevel extends BeanBase implements ITableCellRender {
     return (
       <span
         class={classes(
-          'badge font-semibold border-0 whitespace-nowrap',
+          'badge badge-sm font-medium border-0 whitespace-nowrap px-2',
           this._getBadgeClass(value),
           options.class,
         )}
