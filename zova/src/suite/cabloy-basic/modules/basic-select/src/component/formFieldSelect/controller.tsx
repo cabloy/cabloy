@@ -52,7 +52,7 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
           const className = !propsBucket.needHandleBorder
             ? classes(
                 props.class,
-                'grow w-full h-full min-h-0 border-0 rounded-none bg-transparent px-0 shadow-none outline-none focus:outline-none focus:shadow-none focus:border-0',
+                'grow w-full h-full min-h-0 border-0 rounded-none bg-transparent pl-0 pr-8 py-0 shadow-none outline-none focus:outline-none focus:shadow-none focus:border-0',
               )
             : classes(
                 props.class,
