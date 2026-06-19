@@ -1,20 +1,31 @@
 {
   "name": "zova-module-demo-student",
   "version": "5.0.0",
-  "title": "demo-student",
+  "description": "",
+  "keywords": [
+    "Zova Module"
+  ],
+  "author": "",
+  "files": [
+    "mock",
+    "dist",
+    "src",
+    "icons",
+    "assets",
+    "cli"
+  ],
   "type": "module",
   "exports": {
     ".": {
-      "types": ["./src/index.ts", "./dist/index.d.ts"],
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
       "import": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./*": "./*"
   },
-  "description": "",
-  "keywords": ["Zova Module"],
-  "author": "",
-  "files": ["mock", "dist", "src", "icons", "assets"],
   "scripts": {
     "clean": "rimraf dist tsconfig.build.tsbuildinfo",
     "tsc:publish": "npm run clean && node ../../../packages-cli/cli/src/bin/zova.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
@@ -32,6 +43,11 @@
     "replace": {
       "exports.\\..types": "./dist/index.d.ts"
     },
-    "remove": ["clean-package", "devDependencies", "exports.\\..import"]
-  }
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  },
+  "title": "demo-student"
 }

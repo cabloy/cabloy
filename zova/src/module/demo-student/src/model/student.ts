@@ -19,7 +19,7 @@ export class ModelStudent extends BeanModelBase {
   }
 
   async summary(id: TableIdentity) {
-    return (await this.scope.api.demoStudent.summary(id)) ?? null;
+    return (await this.scope.api.demoStudent.summary({ params: { id } })) ?? null;
   }
 
   deleteForce(id: TableIdentity) {
@@ -27,7 +27,7 @@ export class ModelStudent extends BeanModelBase {
       id,
       action: 'deleteForce',
       mutationFn: async () => {
-        return await this.scope.api.demoStudent.deleteForce(id);
+        await this.scope.api.demoStudent.deleteForce({ params: { id } });
       },
     });
   }
