@@ -7,7 +7,7 @@ export default {
   Mobile: '手机号',
   Name: '名称',
   Operations: '操作',
-  Student: 'Student',
+  Student: '学生',
   Summary: '摘要',
   LevelTitle: '阶段名称',
   DescriptionLength: '描述长度',
