@@ -49,7 +49,8 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
       <ZFormField
         {...this.$props}
         slotDefault={({ propsBucket, props }, $$formField) => {
-          const className = !propsBucket.needHandleBorder
+          const needClearableEmptyOption = !propsBucket.needHandleBorder;
+          const className = needClearableEmptyOption
             ? classes(
                 props.class,
                 'grow w-full h-full min-h-0 border-0 rounded-none bg-transparent pl-0 pr-8 py-0 shadow-none outline-none focus:outline-none focus:shadow-none focus:border-0',
@@ -71,7 +72,16 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
             ...props,
             'class': className,
           };
-          propsNew.items = this._ensureEmptyItemFallback(propsNew.items, propsNew.placeholder);
+          if (needClearableEmptyOption) {
+            propsNew.items = this._ensureEmptyItemFallback(
+              propsNew.items,
+              propsNew.placeholder,
+              true,
+            );
+            propsNew.placeholder = undefined;
+          } else if (!propsNew.placeholder) {
+            propsNew.items = this._ensureEmptyItemFallback(propsNew.items, undefined);
+          }
           return <ZSelect {...propsNew}></ZSelect>;
         }}
       ></ZFormField>
@@ -81,12 +91,15 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
   private _ensureEmptyItemFallback(
     items: any[] | undefined,
     placeholder: unknown,
+    force = false,
   ): any[] | undefined {
-    if (!!placeholder || !items?.length) return items;
+    if (!items?.length) return items;
     const valueKey = String(this.$props.options.itemValue);
     const titleKey = String(this.$props.options.itemTitle);
-    if (items[0]?.[valueKey] === undefined) return items;
-    return [{ [valueKey]: undefined, [titleKey]: '' }, ...items];
+    const emptyValue = '';
+    if (items[0]?.[valueKey] === emptyValue) return items;
+    if (!force && !!placeholder) return items;
+    return [{ [valueKey]: emptyValue, [titleKey]: placeholder ?? '' }, ...items];
   }
 
   private _getValueByItems() {

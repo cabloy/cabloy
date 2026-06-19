@@ -43,12 +43,14 @@ export class ControllerSelect extends BeanControllerBase {
       ...props
     } = this.$props as any;
     const domOptions: VNode[] = [];
+    const modelValueDom = isNil(this.modelValue) ? '' : String(this.modelValue);
     if (items) {
       for (const item of items) {
         const title = item[itemTitle];
         const value = item[itemValue];
+        const valueDom = isNil(value) ? '' : String(value);
         domOptions.push(
-          <option key={value} value={value} selected={String(this.modelValue) === String(value)}>
+          <option key={valueDom} value={valueDom} selected={modelValueDom === valueDom}>
             {title}
           </option>,
         );
@@ -59,8 +61,12 @@ export class ControllerSelect extends BeanControllerBase {
         {...props}
         onChange={(e: Event) => {
           const selectedValue = (e.target as HTMLSelectElement).value;
-          const item = items?.find(item => String(item[itemValue]) === selectedValue);
-          const value = item ? item[itemValue] : undefined;
+          const item = items?.find(item => {
+            const value = item[itemValue];
+            const valueDom = isNil(value) ? '' : String(value);
+            return valueDom === selectedValue;
+          });
+          const value = selectedValue === '' ? undefined : item?.[itemValue];
           this.modelValue = value;
           onChange?.(e);
         }}
