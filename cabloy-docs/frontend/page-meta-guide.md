@@ -4,14 +4,19 @@ This guide explains how page metadata works in Zova within the Cabloy monorepo.
 
 Use this page after [Router View Hosts Guide](/frontend/router-view-hosts-guide) and [Router Tabs Mechanism](/frontend/router-tabs-mechanism) when your next question is no longer “which routed host owns this page?” but “how should the page author update task-level title, dirty state, or form scene in the routed shell?”.
 
+In the current public Cabloy Basic source, Page Meta is mainly a `routerViewTabs` concern rather than a universal routed-host feature.
+
 Read this together with:
 
 - [Page Route Guide](/frontend/page-route-guide)
+- [A-Router Guide](/frontend/a-router-guide)
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
 - [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
 - [Router Tabs Route Meta Cookbook](/frontend/router-tabs-route-meta-cookbook)
 - [Form Guide](/frontend/form-guide)
+- [Permission, formScene, and Action Visibility Guide](/frontend/permission-formscene-action-visibility-guide)
+- [SSR SEO Meta](/frontend/ssr-seo-meta)
 
 ## Why this guide exists
 
@@ -40,6 +45,26 @@ That is why page metadata is not the same thing as route metadata.
 
 - **route meta** shapes routed identity and host behavior before or during route processing
 - **page meta** updates task-level presentation after the page instance is already participating in the routed host
+
+## Source-confirmed runtime path
+
+The highest-value current Basic source path is:
+
+1. `zova/src/suite-vendor/a-zova/modules/a-router/src/types/pageMeta.ts` defines `IPageMeta`
+2. `zova/src/suite-vendor/a-zova/modules/a-router/src/types/routerView.ts` allows routed work items to carry `pageMeta`
+3. `zova/src/suite-vendor/a-zova/modules/a-router/src/bean/bean.router.ts` forwards `$router.setPageMeta(...)` updates to registered router-view hosts
+4. `zova/src/suite-vendor/a-zova/modules/a-router/src/lib/routerViewBase.tsx` provides the default no-op host behavior
+5. `zova/src/suite-vendor/a-zova/modules/a-routertabs/src/component/routerViewTabs/controller.tsx` overrides `setPageMeta(...)` and delegates to `ModelTabs`
+6. `zova/src/suite-vendor/a-zova/modules/a-routertabs/src/model/tabs.ts` stores and merges `pageMeta` on the routed work item
+7. `zova/src/suite/cabloy-basic/modules/basic-pageentry/src/component/blockPageEntry/controller.tsx` shows the clearest current authoring path
+8. `zova/src/suite/a-home/modules/home-layoutadmin/src/component/layoutAdmin/render.tabs.tsx` shows the clearest current visible shell consumer
+
+A compact interpretation is:
+
+- page code emits page meta through `$router.setPageMeta(...)`
+- the router forwards it to the active routed host
+- the tabs host stores it on the routed work item
+- the shell renders title, dirty, and form-scene signals from that stored metadata
 
 ## The public page-meta surface
 
@@ -79,6 +104,14 @@ Typical visible effect:
 
 In the current Basic source, this can affect task-level icon treatment.
 
+A practical way to read it is:
+
+- page/form code derives `formMeta`
+- the routed shell consumes `formMeta`
+- `formScene` is therefore not only a form concern; it also becomes task-level visual state in the current tabs-based shell
+
+If you want the full cross-layer runtime path from `formScene` to `formMeta`, then to `pageMeta`, and finally to visible shell/tab state, continue with [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide).
+
 ## What page meta is not
 
 Keep these boundaries clear.
@@ -105,6 +138,13 @@ Business state still belongs in page/controller/model/service code.
 `pageTitle` is a task-level routed-shell title surface.
 
 It may align with visible shell labels, but contributors should not assume it is automatically identical to browser-level document-title handling unless they verify the current consumer path.
+
+A practical rule is:
+
+- use **page meta** for task-level shell presentation
+- use **SSR/browser metadata** for document title and SEO-oriented head output
+
+For the SSR/browser metadata path, see [SSR SEO Meta](/frontend/ssr-seo-meta).
 
 ### It is not a universal routed-host contract
 

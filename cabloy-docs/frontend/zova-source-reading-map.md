@@ -12,14 +12,15 @@ Use this page together with the architectural guides:
 - [Design Principles](/frontend/design-principles)
 - [IoC and Beans](/frontend/ioc-and-beans)
 - [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [Frontend Source Reading Roadmap](/frontend/frontend-source-reading-roadmap)
 - [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
 
 ## Why this page exists
 
 In a framework-sized codebase, source reading usually becomes slow for one reason:
 
-- you can already find *a* relevant file
-- but you do not yet know the shortest path to the *next* file
+- you can already find _a_ relevant file
+- but you do not yet know the shortest path to the _next_ file
 
 Zova especially benefits from a reading map because several layers cooperate at once:
 
@@ -144,6 +145,7 @@ Use this path when you are asking questions like:
 ### Read the docs first
 
 - [Page Route Guide](/frontend/page-route-guide)
+- [A-Router Guide](/frontend/a-router-guide)
 - [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Page Params Guide](/frontend/page-params-guide)
@@ -195,7 +197,10 @@ Use this path when you are asking questions like:
 - [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Router View Hosts Guide](/frontend/router-view-hosts-guide)
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
+- [Router Tabs Overview](/frontend/router-tabs-overview)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
+- [Router Tabs vs Stack](/frontend/router-tabs-vs-stack)
+- [Router Stack Guide](/frontend/router-stack-guide)
 
 ### Then read source in this order
 
@@ -213,6 +218,9 @@ Use this path when you are asking questions like:
 - `routerViewEmpty/controller.tsx` shows the minimal routed host without the richer tabs/stack model
 - `routerViewTabs/controller.tsx` shows the controller-facing tabs host entrypoint
 - `model/tabs.ts` shows workspace grouping, tab-item state, page-meta updates, and keep-alive inclusion
+
+If your next question becomes specifically about task-level title, dirty state, or form-scene presentation after the routed item is already open, continue with [Page Meta Guide](/frontend/page-meta-guide).
+
 - `routerViewStack/controller.tsx` shows the stack-host entrypoint with a smaller contract than tabs
 - `model/stack.ts` shows the fullPath-based stack identity model and recency-based pruning
 - active layout consumers show how the current shell turns host state into visible Admin or Web behavior
@@ -276,6 +284,39 @@ Use this path when you are asking questions like:
 - `types/command.ts` shows the command-scene type contract, including `ICommandRecord`, `IDecoratorCommandOptions`, and `SymbolCommandResult`
 - generated downstream metadata shows the real command names and bean full names exposed by consuming modules
 - representative command beans show when to use the plain, bulk, row, or scene-sensitive command shapes
+
+## App-shell root host and `a-app`
+
+Use this path when you are asking questions like:
+
+- what is the root app host in Zova?
+- where does the routed tree first enter the app controller path?
+- where do app-wide behaviors wrap the routed content?
+- how should I read `a-app` without confusing it with routes, layouts, or SSR orchestration?
+
+### Read the docs first
+
+- [Zova App Guide](/frontend/zova-app-guide)
+- [Root Behaviors Guide](/frontend/root-behaviors-guide)
+- [App Startup Guide](/frontend/app-startup-guide)
+- [Page Route Guide](/frontend/page-route-guide)
+- [Behavior Guide](/frontend/behavior-guide)
+
+### Then read source in this order
+
+1. `zova/src/suite-vendor/a-zova/modules/a-app/src/.metadata/this.ts`
+2. `zova/src/suite-vendor/a-zova/modules/a-app/src/.metadata/index.ts`
+3. `zova/src/suite-vendor/a-zova/modules/a-app/src/.metadata/component/app.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-app/src/component/app/controller.tsx`
+5. `zova/src/suite-vendor/a-zova/modules/a-app/src/config/config.ts`
+
+### What each file clarifies
+
+- `this.ts` shows the module identity quickly
+- `.metadata/index.ts` shows the generated integration surface for controller, component, config, and scope
+- `.metadata/component/app.ts` shows the thin `ZApp` wrapper that mounts `ControllerApp` through `useController(...)`
+- `controller.tsx` shows app-level meta setup, behavior-holder initialization, and behavior-wrapped `RouterView` render
+- `config.ts` shows the root behavior injection point through `scope.config.behaviors`
 
 ## 8. Behavior scene and render-time interception
 

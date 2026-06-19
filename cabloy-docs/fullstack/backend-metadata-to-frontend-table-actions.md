@@ -23,6 +23,9 @@ Use this page together with:
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing)
 - [Tutorial 5: Backend Contract Sharing](/fullstack/tutorial-5-backend-contract-sharing)
+- [Backend Metadata to Frontend Table Actions Verify Playbook](/fullstack/backend-metadata-to-frontend-table-actions-verify-playbook)
+- [Backend Metadata to Frontend Table Actions Debug Checklist](/fullstack/backend-metadata-to-frontend-table-actions-debug-checklist)
+- [Backend Metadata to Frontend Table Actions Source Reading Map](/fullstack/backend-metadata-to-frontend-table-actions-source-reading-map)
 
 ## Why this page exists
 
@@ -161,7 +164,7 @@ ZovaRender.block('basic-page:blockPage', {
     ZovaRender.block('basic-page:blockTable'),
     ZovaRender.block('basic-page:blockPager'),
   ],
-})
+});
 ```
 
 That means the row-action chain usually sits inside a larger page contract chain:
@@ -285,7 +288,7 @@ The same mental model also appears in bulk or page-level actions.
 Representative example:
 
 ```tsx
-actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')]
+actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')];
 ```
 
 And the corresponding frontend implementation can render a button that performs:

@@ -37,6 +37,19 @@ Start here when you need the core backend mental model first:
 
 This gives the architectural vocabulary for concepts such as bean, scope, suite, module, package, and backend access patterns.
 
+### Source-reading entry
+
+Use these pages when the task is no longer only conceptual and you want the shortest path into current backend source:
+
+- [Backend Source Reading Roadmap](/backend/backend-source-reading-roadmap)
+- [Vona Source Reading Map](/backend/vona-source-reading-map)
+
+A practical split is:
+
+- stay on Introduction / Foundation / CLI when you still need the backend mental model
+- move to the roadmap when you need help choosing the right backend reading cluster
+- move to the source reading map when you already know the topic and want the shortest file-order path
+
 ### Contract and data family
 
 Use this path when the task is about the backend contract loop or ORM-backed backend data design:

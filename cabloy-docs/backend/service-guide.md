@@ -166,3 +166,12 @@ A better default is:
 4. choose deliberately among local scope, cross-module scope, injection, and direct bean access
 
 That keeps backend access patterns aligned with Vona’s actual architecture instead of using one access style everywhere by habit.
+
+## Where to read next
+
+If your next question is how service orchestration hands off to the persistence and contract layers in one real module, continue with:
+
+- [Model Guide](/backend/model-guide)
+- [Entity Guide](/backend/entity-guide)
+- [Vona Source Reading Map](/backend/vona-source-reading-map)
+- [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain)

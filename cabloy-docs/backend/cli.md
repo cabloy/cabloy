@@ -196,3 +196,12 @@ When creating backend code:
 4. only then make minimal follow-up edits
 
 This reduces unnecessary manual scaffolding and keeps the implementation aligned with Vona conventions.
+
+## Where to read next
+
+If your next question is no longer only which command to run, but which backend source files to inspect after the CLI step, continue with:
+
+- [Backend Scripts](/backend/scripts)
+- [Backend Source Reading Roadmap](/backend/backend-source-reading-roadmap)
+- [Vona Source Reading Map](/backend/vona-source-reading-map)
+- [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain)

@@ -77,3 +77,9 @@ Also ask:
 3. is the typed style a better fit than raw string declarations?
 
 That leads to backend changes that are more production-aware and more aligned with Vona’s module metadata model.
+
+## Where to read next
+
+- If you want the broader persistence-side source-reading chooser, continue with [Backend Source Reading Roadmap](/backend/backend-source-reading-roadmap).
+- If you are deciding how indexed fields relate to backend persistence truth, continue with [Entity Guide](/backend/entity-guide).
+- If the index question is part of a persisted-schema change, continue with [Migration and Changes](/backend/migration-and-changes).

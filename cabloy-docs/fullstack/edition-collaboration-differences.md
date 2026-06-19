@@ -60,3 +60,9 @@ This rule prevents a common failure mode:
 - but gives the wrong operational example because it assumes the wrong edition
 
 That is exactly the kind of mistake good fullstack docs should prevent.
+
+## Where to read next
+
+- If you want the shared bidirectional model first, continue with [Contract Loop Playbook](/fullstack/contract-loop-playbook).
+- If your current task is the forward contract bridge, continue with [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
+- If your current task is the reverse metadata/resource bridge, continue with [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).

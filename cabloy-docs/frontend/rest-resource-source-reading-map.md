@@ -139,6 +139,8 @@ All three routes use the same `tabKey(route)` shape:
 
 This means the tab identity is resource-level rather than row-level.
 
+If your next question becomes specifically how the entry route becomes a working page through `basic-pageentry`, continue with [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive).
+
 So these views are grouped under one resource-oriented tab boundary:
 
 - resource list
@@ -146,6 +148,10 @@ So these views are grouped under one resource-oriented tab boundary:
 - view/edit entry
 
 That is a small but important architectural clue.
+
+If your next question is specifically how filter state becomes `query`, then `ModelResource.select(query)`, and finally list/paged data, continue with [Filter to Query to Select Data Flow Guide](/frontend/filter-query-select-data-flow-guide).
+
+If your next question is specifically how the resource owner itself works internally, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
 
 The module is designed around one stable **resource workspace**, not one isolated page per row.
 

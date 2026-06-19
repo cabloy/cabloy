@@ -41,6 +41,7 @@ For the deeper backend perspective, see:
 - [OpenAPI Guide](/backend/openapi-guide)
 - [Validation Guide](/backend/validation-guide)
 - [DTO Infer and Generation](/backend/dto-infer-generation)
+- [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain)
 
 ## Frontend side: Zova consumes the contract
 
@@ -57,6 +58,65 @@ For the deeper frontend perspective, see:
 - [API Guide](/frontend/api-guide)
 - [API Schema Guide](/frontend/api-schema-guide)
 - [SDK Guide](/frontend/sdk-guide)
+
+## Source-to-consumer chain
+
+If you want the shortest accurate mental model, use this forward chain:
+
+1. backend controller signatures define request and response entry surfaces
+2. backend DTO and entity fields shape named and shared contract structure
+3. validation rules and `v` helpers refine the machine-readable contract
+4. Vona emits OpenAPI output from those backend declarations
+5. Zova OpenAPI config decides which generated contract slice belongs to which frontend module
+6. frontend generation produces SDK and rest/schema-related contract output
+7. frontend code consumes the generated contract through:
+   - generated SDK methods
+   - schema-driven helpers
+   - `$sdk` and `$apiSchema`-adjacent runtime surfaces
+   - thin model facades and existing resource-owner consumers when the API belongs to an existing resource
+
+That means this bridge is not only “generate the SDK.”
+
+It is the whole path that moves backend-authored truth into frontend-usable contract material.
+
+## Which page owns which question?
+
+Use this split to avoid reading the wrong layer too deeply.
+
+### Backend authoring semantics
+
+Use these when the real question is how the backend contract is authored:
+
+- [Controller Guide](/backend/controller-guide)
+- [DTO Guide](/backend/dto-guide)
+- [DTO Infer and Generation](/backend/dto-infer-generation)
+- [OpenAPI Guide](/backend/openapi-guide)
+- [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain)
+
+### Forward-chain bridge and regeneration workflow
+
+Use **this page** when the real question is:
+
+- how backend-authored truth crosses the stack boundary
+- which generation steps to run
+- where module ownership and regeneration decisions belong
+- how to keep frontend follow-up thin after regeneration
+
+### Frontend generation and usage setup
+
+Use these when the generated contract has already crossed the boundary and you are configuring or consuming it in Zova:
+
+- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
+- [API Schema Guide](/frontend/api-schema-guide)
+- [SDK Guide](/frontend/sdk-guide)
+
+### Frontend runtime and deeper consumption internals
+
+Use these when the real question is how generated contract material is consumed inside Zova runtime layers:
+
+- [A-OpenAPI Under the Hood](/frontend/a-openapi-under-the-hood)
+- [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive)
+- [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 
 ## Cabloy Basic workflow
 
@@ -100,6 +160,43 @@ A practical regeneration rule is:
 - if `npm run zova :openapi:generate ...` fails because the local Swagger source is unavailable, first start the backend service and confirm `http://localhost:7102/swagger/json?version=V31` is reachable before treating generation as broken
 - if the generated consumer path is already correct, but frontend behavior still looks stale, stop patching generated files and diagnose consumer drift or local dependency drift instead
 
+## `demo-student` as a compact forward-chain specimen
+
+A compact specimen helps make the bridge more concrete.
+
+A practical `demo-student` forward chain looks like this:
+
+1. backend contract truth changes in places such as:
+   - `controller/student.ts`
+   - `entity/student.tsx`
+   - `dto/studentCreate.tsx`
+   - `dto/studentUpdate.tsx`
+   - `dto/studentView.tsx`
+   - `dto/studentSelectReq.tsx`
+2. backend OpenAPI output changes because those controller/DTO/entity/validation surfaces changed
+3. frontend OpenAPI generation refreshes the module-owned consumer slice
+4. flavor-specific rest output is rebuilt when the workflow depends on generated rest output
+5. frontend code consumes the generated result through module-owned SDK/schema surfaces, then keeps follow-up thin with semantic wrappers or existing resource owners
+
+This is the main point of the forward chain:
+
+> backend contract truth moves first, generated handoff moves second, frontend consumers stay thin and downstream.
+
+## Thin frontend follow-up after generation
+
+After the generated contract crosses the boundary, the best frontend move is usually **not** to recreate the contract by hand.
+
+A practical split is:
+
+- use generated SDKs when the module already follows the OpenAPI-generated API-service path
+- use schema-driven helpers when the workflow is contract/schema oriented
+- use thin model facades when the UI needs business semantics over generated APIs
+- reuse the existing resource-owner when the custom API still belongs to the same resource
+
+That last point matters especially for resource-driven pages.
+
+If the endpoint still belongs to an existing business resource, prefer keeping `ModelResource` or the existing resource-owner story as the stable state owner rather than introducing a competing second owner.
+
 ## Cabloy Start workflow
 
 In the sibling private Start repo, the same collaboration idea applies, but the frontend flavor names differ.
@@ -114,6 +211,17 @@ Before documenting or automating this path for Start, confirm:
 1. the `__CABLOY_START__` marker
 2. the Start repo’s `package.json`
 3. the exact frontend flavor names and generated output paths
+
+## Where to read next
+
+- If your next question is still on the backend authoring side, continue with [OpenAPI Guide](/backend/openapi-guide), [Backend Contract Emission Specimen](/backend/backend-contract-emission-specimen), [Backend Contract Emission Output Inspection](/backend/backend-contract-emission-output-inspection), [DTO Guide](/backend/dto-guide), [DTO Infer and Generation](/backend/dto-infer-generation), and [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain).
+- If your next question is about frontend SDK setup and module ownership, continue with [OpenAPI SDK Guide](/frontend/openapi-sdk-guide).
+- If your next question is about what generated contract consumption looks like in one practical frontend path, continue with [Generated Contract Consumption Specimen](/frontend/generated-contract-consumption-specimen), then choose [Generated Contract Consumption: List Branch](/frontend/generated-contract-consumption-list-branch) or [Generated Contract Consumption: Entry Branch](/frontend/generated-contract-consumption-entry-branch) as needed.
+- If your next question becomes one mixed Student row-action thread spanning backend metadata, generated contract follow-up, and frontend action resources, continue with [Backend Metadata to Frontend Table Actions Source Reading Map](/fullstack/backend-metadata-to-frontend-table-actions-source-reading-map).
+- If your next question is about schema-driven frontend consumption, continue with [API Schema Guide](/frontend/api-schema-guide).
+- If your next question is about the lower-level frontend runtime under generated OpenAPI/schema usage, continue with [A-OpenAPI Under the Hood](/frontend/a-openapi-under-the-hood).
+- If your next question is about resource-owner or model-level consumption after regeneration, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive) and [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
+- If the problem is actually about deciding which direction the contract loop is moving, return to [Contract Loop Playbook](/fullstack/contract-loop-playbook).
 
 ## Implementation checks for backend-to-frontend contract changes
 

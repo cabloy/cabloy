@@ -6,6 +6,8 @@ It is the practical follow-up to [Model Resource Owner Pattern](/frontend/model-
 
 For review guardrails and design checks after applying the pattern, continue with [Resource Model Best Practices and Anti-Patterns](/frontend/model-resource-best-practices).
 
+If you need the lower-level generic model runtime beneath this resource-owner usage layer, continue with [Model Runtime Under the Hood](/frontend/a-model-under-the-hood).
+
 For implementation templates covering common extension scenarios, continue with [Resource Model Cookbook](/frontend/model-resource-cookbook).
 
 > [!TIP]

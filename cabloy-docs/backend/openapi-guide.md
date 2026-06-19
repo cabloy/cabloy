@@ -100,6 +100,9 @@ For the downstream bridge and consumption path, also see:
 A practical split is:
 
 - this page explains backend contract authoring and emission
+- [Backend Contract Emission Specimen](/backend/backend-contract-emission-specimen) explains one concrete emitted action thread
+- [Backend Contract Emission Source Reading Map](/backend/backend-contract-emission-source-reading-map) explains the shortest file-order path through the emission inputs
+- [Backend Contract Emission Output Inspection](/backend/backend-contract-emission-output-inspection) explains how to inspect the emitted output surfaces themselves
 - the fullstack page explains the bridge from emitted OpenAPI to generated frontend SDK
 - the frontend page explains how Zova consumes that contract in its own workflows
 

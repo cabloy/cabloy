@@ -166,3 +166,12 @@ When creating or updates entities:
 3. keep validation, OpenAPI, serializer, and entity structure aligned
 4. remember that entities feed DTO, model, and OpenAPI workflows downstream
 5. keep identity and base-field assumptions consistent with the actual backend contract loop
+
+## Where to read next
+
+If your next question is how entity field metadata becomes named transport contracts and emitted backend contract metadata, continue with:
+
+- [DTO Guide](/backend/dto-guide)
+- [Validation Guide](/backend/validation-guide)
+- [OpenAPI Guide](/backend/openapi-guide)
+- [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain)

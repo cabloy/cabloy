@@ -71,6 +71,12 @@ Typical consumers:
 - schema-driven UI
 - custom row or page actions
 
+If your issue becomes one mixed Student row-action chain rather than a pure direction question, first continue with [Backend Metadata to Frontend Table Actions](/fullstack/backend-metadata-to-frontend-table-actions), then [Backend Metadata to Frontend Table Actions Source Reading Map](/fullstack/backend-metadata-to-frontend-table-actions-source-reading-map).
+
+If the family root and source-reading map already match your case and the visible result is still wrong, continue with [Backend Metadata to Frontend Table Actions Debug Checklist](/fullstack/backend-metadata-to-frontend-table-actions-debug-checklist).
+
+If you have already changed that mixed chain and now want to prove it layer by layer rather than diagnose a failure, continue with [Backend Metadata to Frontend Table Actions Verify Playbook](/fullstack/backend-metadata-to-frontend-table-actions-verify-playbook).
+
 ### Reverse chain
 
 Use the reverse chain when frontend-owned metadata or resources changed and backend-side tooling or metadata will consume them.
@@ -116,7 +122,7 @@ Then use the **forward chain**:
 4. keep frontend follow-up thin
 5. verify consumer alignment
 
-See [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
+See [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) for the end-to-end forward-chain bridge from backend-authored contract truth to generated frontend consumers.
 
 ### 2. Did frontend-owned metadata or resource truth change?
 
@@ -135,7 +141,7 @@ Then use the **reverse chain**:
 4. run `npm run deps:vona`
 5. verify backend consumers can see the refreshed handoff
 
-See [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend).
+See [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the end-to-end reverse-chain bridge from frontend-owned truth to backend-visible shared handoff.
 
 ### 3. Do generated artifacts look stale?
 

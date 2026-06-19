@@ -42,6 +42,8 @@ In practice, a model often sits above `$api` and below page rendering:
 
 Read together with [Server Data](/frontend/server-data) when deciding which abstraction layer a feature should use.
 
+If your next question is how the generic lower-level model runtime works beneath these abstractions, continue with [A-Model Under the Hood](/frontend/a-model-under-the-hood).
+
 ## Relationship to TanStack Query
 
 One current-source fact is explicit: Zova Model is built on top of TanStack Query.
@@ -172,7 +174,7 @@ They first prefix it with the model bean identity, and when `enableSelector` is 
 That means a logical user key such as:
 
 ```typescript
-['list']
+['list'];
 ```
 
 becomes model-owned cache identity rather than a globally ambiguous key.

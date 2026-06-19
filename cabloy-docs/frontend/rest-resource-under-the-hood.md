@@ -15,6 +15,16 @@ Use this page after [Model Resource Owner Pattern](/frontend/model-resource-owne
 
 If your next question is not “how does this runtime work?” but “which files should I read next?”, continue with [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
 
+If your next question is specifically how a resource entry route becomes a working entry page through `rest-resource`, `basic-pageentry`, `blockForm`, and `blockToolbarRow`, continue with [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive).
+
+If your next question is specifically how the resource list route becomes a working list page through `basic-page`, `blockFilter`, `blockTable`, `blockPager`, and `ZTable`, continue with [Resource List Page Deep Dive](/frontend/resource-list-page-deep-dive).
+
+If your next question is specifically how filter state becomes `query`, then `ModelResource.select(query)`, and finally list/paged data, continue with [Filter to Query to Select Data Flow Guide](/frontend/filter-query-select-data-flow-guide).
+
+If your next question is specifically how the resource owner works internally, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
+
+If your next question is specifically how the lower-level generic model runtime works beneath that owner, continue with [Model Runtime Under the Hood](/frontend/a-model-under-the-hood).
+
 > [!TIP]
 > **Resource docs path**
 >

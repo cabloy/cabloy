@@ -24,6 +24,8 @@ Use this page together with:
 
 ## What this cookbook is for
 
+If your next question is how the resource list page runtime is assembled under the hood, continue with [Resource List Page Deep Dive](/frontend/resource-list-page-deep-dive). If your next question is why row or bulk actions are visible or hidden, continue with [Table Action Visibility and Permission Flow Guide](/frontend/table-action-visibility-permission-flow-guide).
+
 A Cabloy Basic CRUD list page is usually not authored as:
 
 - one page-local table component

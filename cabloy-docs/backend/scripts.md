@@ -114,3 +114,11 @@ When documenting or automating backend scripts:
 - prefer root scripts for normal contributor workflows
 - drop to `vona/package.json` only when you need backend-specific detail
 - verify commands against current scripts before publishing examples
+
+## Where to read next
+
+If your next question is not only how the monorepo runs backend workflows, but which source surfaces those workflows eventually enter, continue with:
+
+- [Backend CLI](/backend/cli)
+- [Backend Source Reading Roadmap](/backend/backend-source-reading-roadmap)
+- [Vona Source Reading Map](/backend/vona-source-reading-map)

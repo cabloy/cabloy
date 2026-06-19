@@ -22,6 +22,7 @@ Use this page together with:
 
 > [!TIP]
 > **Zova Form docs path**
+>
 > 1. **[Form Guide](/frontend/form-guide)** — learn the public authoring surface
 > 2. **[Zova Form Under the Hood](/frontend/zova-form-under-the-hood)** — learn how the runtime pieces cooperate
 > 3. **[Zova Form Source Reading Map](/frontend/zova-form-source-reading-map)** — learn which files to read next
@@ -30,6 +31,8 @@ Use this page together with:
 > **Next recommended page:** [Zova Form Under the Hood](/frontend/zova-form-under-the-hood).
 
 If your next question is how these public APIs cooperate internally at runtime, continue with [Zova Form Under the Hood](/frontend/zova-form-under-the-hood).
+
+If your next question is how `formScene` becomes `formMeta`, then `pageMeta`, and finally visible shell/tab state, continue with [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide).
 
 ## What you should learn first
 
@@ -101,10 +104,7 @@ The smallest useful Zova form is usually a mixed Student form with `ZForm`, a co
 
 ```tsx
 <ZForm data={this.studentFormData} onSubmitData={data => this.submitStudent(data)}>
-  <ZFormFieldPreset
-    name="name"
-    layout={{ label: 'Student Name:' }}
-  ></ZFormFieldPreset>
+  <ZFormFieldPreset name="name" layout={{ label: 'Student Name:' }}></ZFormFieldPreset>
 
   <ZFormFieldPreset
     name="level"
@@ -277,7 +277,7 @@ Use `onShowError` when you want a centralized user-facing error handler.
 ```tsx
 <ZForm
   onShowError={({ error }) => {
-    window.alert(error.message)
+    window.alert(error.message);
   }}
 ></ZForm>
 ```
@@ -325,19 +325,13 @@ That is the best default when:
 You can also provide validators directly on a field.
 
 ```tsx
-<ZFormFieldPreset
-  name="name"
-  validators={{ onDynamic: z.string().min(3) }}
-></ZFormFieldPreset>
+<ZFormFieldPreset name="name" validators={{ onDynamic: z.string().min(3) }}></ZFormFieldPreset>
 ```
 
 Or, for a custom Student field:
 
 ```tsx
-<ZFormField
-  name="mobile"
-  validators={{ onBlur: z.string().min(6) }}
-></ZFormField>
+<ZFormField name="mobile" validators={{ onBlur: z.string().min(6) }}></ZFormField>
 ```
 
 The common validator hooks are:
@@ -368,7 +362,7 @@ Zova Form also normalizes server validation failures back into the form pipeline
 this.studentFormMeta = {
   formMode: 'edit',
   editMode: 'update',
-}
+};
 ```
 
 A practical way to read it is:
@@ -396,10 +390,7 @@ In practice, Student field rendering can be influenced by:
 ### Use `layout` for label and wrapper concerns
 
 ```tsx
-<ZFormFieldPreset
-  name="level"
-  layout={{ label: 'Student Level:' }}
-></ZFormFieldPreset>
+<ZFormFieldPreset name="level" layout={{ label: 'Student Level:' }}></ZFormFieldPreset>
 ```
 
 Use `layout` for concerns such as:
@@ -593,7 +584,7 @@ Once the Student model side is prepared, the render side can stay thin:
   formProvider={this.studentFormProvider}
   onSubmitData={data => this.submitStudent(data)}
   onShowError={({ error }) => {
-    window.alert(error.message)
+    window.alert(error.message);
   }}
 ></ZForm>
 ```
@@ -638,11 +629,11 @@ Read together with:
 
 Use this table when you are unsure which style to choose.
 
-| Style | Best fit | Strengths | Trade-offs |
-| --- | --- | --- | --- |
-| Schema-driven | resource CRUD pages, contract-first forms, metadata-rich pages | least duplication, easiest to keep aligned with backend truth, fastest way to scale many forms | less suitable when one page has unusual UI structure |
-| Manual | highly custom UI, one-off interaction-heavy forms | maximum render control | easiest way to drift away from contract truth and duplicate field wiring |
-| Mixed | most business pages | keeps standard fields cheap while leaving room for custom rows or custom renderers | requires discipline about which layer should own each customization |
+| Style         | Best fit                                                       | Strengths                                                                                      | Trade-offs                                                               |
+| ------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Schema-driven | resource CRUD pages, contract-first forms, metadata-rich pages | least duplication, easiest to keep aligned with backend truth, fastest way to scale many forms | less suitable when one page has unusual UI structure                     |
+| Manual        | highly custom UI, one-off interaction-heavy forms              | maximum render control                                                                         | easiest way to drift away from contract truth and duplicate field wiring |
+| Mixed         | most business pages                                            | keeps standard fields cheap while leaving room for custom rows or custom renderers             | requires discipline about which layer should own each customization      |
 
 A practical recommendation is:
 

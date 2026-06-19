@@ -18,6 +18,10 @@ Use this page after [Table Guide](/frontend/table-guide) when you want to move f
 
 If your next question is not “how does this runtime work?” but “which files should I read next?”, continue with [Zova Table Source Reading Map](/frontend/zova-table-source-reading-map).
 
+If your next question is specifically why row or bulk actions are visible or hidden in current list pages, continue with [Table Action Visibility and Permission Flow Guide](/frontend/table-action-visibility-permission-flow-guide).
+
+If your next question is specifically about the controller/render micro-pipeline inside `ControllerTable`, continue with [Zova Table Controller Render Supplement](/frontend/zova-table-controller-render-supplement).
+
 > [!TIP]
 > **Zova Table docs path**
 >

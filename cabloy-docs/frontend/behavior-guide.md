@@ -25,7 +25,7 @@ The public decorator is:
 At the source level, the decorator is implemented as:
 
 ```typescript
-createBeanDecorator('behavior', 'new', true, options)
+createBeanDecorator('behavior', 'new', true, options);
 ```
 
 That matters because Behavior is authored as a **fresh-instance bean scene** with decorator options, while the runtime may reuse existing behavior instances across reloads when appropriate.
@@ -41,6 +41,9 @@ Typical use cases include:
 - prop transformation before the final render
 - UI wrappers that should stay composable instead of being copied into many components
 - module-level behavior selection through provider config
+- app-wide wrappers that should participate around the routed tree through the root app host
+
+For the root hosting point used by app-wide behavior composition, see [Zova App Guide](/frontend/zova-app-guide). For the end-to-end app-scope composition path around the routed tree, continue with [Root Behaviors Guide](/frontend/root-behaviors-guide).
 
 Do **not** reach for Behavior first when a plain helper or a normal component is enough.
 
@@ -54,11 +57,11 @@ A practical rule is:
 
 Use these three tools for different kinds of reuse.
 
-| Tool | Best fit | Typical responsibility |
-| --- | --- | --- |
-| Behavior | render-time interception or wrapping | adjust props, intercept refs, wrap a vnode, compose multiple render concerns |
-| Component | standalone UI unit | own a reusable UI contract and render structure directly |
-| Helper | framework-neutral utility | transform data, normalize values, or share logic that does not need bean lifecycle or render composition |
+| Tool      | Best fit                             | Typical responsibility                                                                                   |
+| --------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Behavior  | render-time interception or wrapping | adjust props, intercept refs, wrap a vnode, compose multiple render concerns                             |
+| Component | standalone UI unit                   | own a reusable UI contract and render structure directly                                                 |
+| Helper    | framework-neutral utility            | transform data, normalize values, or share logic that does not need bean lifecycle or render composition |
 
 A practical decision map is:
 
@@ -115,12 +118,12 @@ Use `@Behavior()` to declare a behavior bean.
 Representative shape:
 
 ```typescript
-import { BeanBehaviorBase, Behavior } from 'zova-module-a-behavior'
+import { BeanBehaviorBase, Behavior } from 'zova-module-a-behavior';
 
 @Behavior()
 export class BehaviorFocus extends BeanBehaviorBase {
   protected render(props, next) {
-    return next(props)
+    return next(props);
   }
 }
 ```
@@ -152,7 +155,7 @@ This is one of the main reasons Behavior fits naturally into the Zova bean archi
 Representative shape:
 
 ```typescript
-$UseBehavior('a-behaviors:focus', { always: true })
+$UseBehavior('a-behaviors:focus', { always: true });
 ```
 
 The helper returns one behavior declaration item in object form. Broader normalization into onion items happens later in the runtime composer path.
@@ -164,7 +167,7 @@ The helper returns one behavior declaration item in object form. Broader normali
 Representative shape:
 
 ```typescript
-$UseBehaviorTag('input')
+$UseBehaviorTag('input');
 ```
 
 ### `ZBehavior`
@@ -194,7 +197,7 @@ At the type level, `IBehaviors` accepts these shapes:
 Representative forms:
 
 ```typescript
-'a-behaviors:focus'
+'a-behaviors:focus';
 ```
 
 ```typescript
@@ -202,10 +205,7 @@ Representative forms:
 ```
 
 ```typescript
-[
-  'a-behaviors:focus',
-  { 'home-login:formFieldLayoutLogin': {} },
-]
+['a-behaviors:focus', { 'home-login:formFieldLayoutLogin': {} }];
 ```
 
 At runtime, the composer normalizes these forms into onion items before the render chain is built.
@@ -370,7 +370,7 @@ Behavior metadata generation also exposes shorthand HTML/JSX attributes.
 For example, a behavior such as `a-behaviors:focus` generates an attribute like:
 
 ```tsx
-bs-behaviors-focus
+bs - behaviors - focus;
 ```
 
 The generation rule is defined by the behavior metadata generator and is based on the module name and bean name.

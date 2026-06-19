@@ -2,36 +2,40 @@
 
 This guide explains the source-level runtime path behind Zova Router.
 
-Use this page after [Page Route Guide](/frontend/page-route-guide), [Route Alias Guide](/frontend/route-alias-guide), and [Navigation Guards Guide](/frontend/navigation-guards-guide) when you want to move from the public routing surface to the internal cooperation among route registration, router startup, lazy module loading, alias handling, typed params/query parsing, and router-view hosting.
+Use this page after [Page Route Guide](/frontend/page-route-guide), [A-Router Guide](/frontend/a-router-guide), [Route Alias Guide](/frontend/route-alias-guide), and [Navigation Guards Guide](/frontend/navigation-guards-guide) when you want to move from the public routing surface to the internal cooperation among route registration, router startup, lazy module loading, alias handling, typed params/query parsing, and router-view hosting.
 
 If your next question is specifically about empty/tabs/stack routed hosts, continue with [Router View Hosts Guide](/frontend/router-view-hosts-guide). For compact file-order guidance, continue with [Zova Source Reading Map](/frontend/zova-source-reading-map).
 
 > [!TIP]
 > **Zova Router docs path**
-> 1. **[Page Route Guide](/frontend/page-route-guide)** — learn the public route-record and layout surface
-> 2. **[Route Alias Guide](/frontend/route-alias-guide)** — learn how user-facing aliases fit into modular routing
-> 3. **[Navigation Guards Guide](/frontend/navigation-guards-guide)** — learn where routing policy attaches
-> 4. **[Zova Router Under the Hood](/frontend/zova-router-under-the-hood)** — learn how the runtime pieces cooperate
-> 5. **[Zova Source Reading Map](/frontend/zova-source-reading-map)** — learn which files to read next
 >
-> **You are here:** step 4.
-> **Previous pages:** [Page Route Guide](/frontend/page-route-guide), [Route Alias Guide](/frontend/route-alias-guide), and [Navigation Guards Guide](/frontend/navigation-guards-guide).
+> 1. **[Page Route Guide](/frontend/page-route-guide)** — learn the public route-record and layout surface
+> 2. **[A-Router Guide](/frontend/a-router-guide)** — learn what the `a-router` package owns in the runtime
+> 3. **[Route Alias Guide](/frontend/route-alias-guide)** — learn how user-facing aliases fit into modular routing
+> 4. **[Navigation Guards Guide](/frontend/navigation-guards-guide)** — learn where routing policy attaches
+> 5. **[Zova Router Under the Hood](/frontend/zova-router-under-the-hood)** — learn how the runtime pieces cooperate
+> 6. **[Zova Source Reading Map](/frontend/zova-source-reading-map)** — learn which files to read next
+>
+> **You are here:** step 5.
+> **Previous pages:** [Page Route Guide](/frontend/page-route-guide), [A-Router Guide](/frontend/a-router-guide), [Route Alias Guide](/frontend/route-alias-guide), and [Navigation Guards Guide](/frontend/navigation-guards-guide).
 > **Next recommended pages:** [Router View Hosts Guide](/frontend/router-view-hosts-guide) for routed-host behavior, then [Zova Source Reading Map](/frontend/zova-source-reading-map) for compact source-reading paths.
 
 ## Router ecosystem map
 
 Use this compact map when you want to place this page inside the broader Router documentation set.
 
-| Layer | Main question | Primary page |
-| --- | --- | --- |
-| public routing surface | what does the route record mean? | [Page Route Guide](/frontend/page-route-guide) |
-| route policy | how do aliases and guards change navigation semantics? | [Route Alias Guide](/frontend/route-alias-guide), [Navigation Guards Guide](/frontend/navigation-guards-guide) |
-| core router runtime | how does the route become operational at runtime? | this page |
-| routed host layer | once the route is resolved, which host owns the page instance? | [Router View Hosts Guide](/frontend/router-view-hosts-guide) |
-| tabs workbench meaning | why does the tabs host exist conceptually? | [Router Tabs Introduction](/frontend/router-tabs-introduction), [Router Tabs Overview](/frontend/router-tabs-overview) |
-| tabs model internals | how does the tabs host turn route visits into workspace state? | [Router Tabs Mechanism](/frontend/router-tabs-mechanism) |
-| tabs authoring inputs | how do I produce the intended tabs behavior through route meta? | [Router Tabs Route Meta Cookbook](/frontend/router-tabs-route-meta-cookbook) |
-| compact source paths | which files should I read next? | [Zova Source Reading Map](/frontend/zova-source-reading-map) |
+| Layer                  | Main question                                                             | Primary page                                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| public routing surface | what does the route record mean?                                          | [Page Route Guide](/frontend/page-route-guide)                                                                         |
+| route policy           | how do aliases and guards change navigation semantics?                    | [Route Alias Guide](/frontend/route-alias-guide), [Navigation Guards Guide](/frontend/navigation-guards-guide)         |
+| core router runtime    | how does the route become operational at runtime?                         | this page                                                                                                              |
+| routed host layer      | once the route is resolved, which host owns the page instance?            | [Router View Hosts Guide](/frontend/router-view-hosts-guide)                                                           |
+| tabs vs stack choice   | should this routed host behave like a workbench or a linear routed stack? | [Router Tabs vs Stack](/frontend/router-tabs-vs-stack)                                                                 |
+| stack host meaning     | what does the stack host actually own?                                    | [Router Stack Guide](/frontend/router-stack-guide)                                                                     |
+| tabs workbench meaning | why does the tabs host exist conceptually?                                | [Router Tabs Introduction](/frontend/router-tabs-introduction), [Router Tabs Overview](/frontend/router-tabs-overview) |
+| tabs model internals   | how does the tabs host turn route visits into workspace state?            | [Router Tabs Mechanism](/frontend/router-tabs-mechanism)                                                               |
+| tabs authoring inputs  | how do I produce the intended tabs behavior through route meta?           | [Router Tabs Route Meta Cookbook](/frontend/router-tabs-route-meta-cookbook)                                           |
+| compact source paths   | which files should I read next?                                           | [Zova Source Reading Map](/frontend/zova-source-reading-map)                                                           |
 
 ## Why this page exists
 

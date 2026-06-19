@@ -58,7 +58,8 @@ A practical contract-consumption reading is:
 
 - [OpenAPI Guide](/backend/openapi-guide) explains backend contract emission
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) explains the fullstack contract bridge
-- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide), [API Schema Guide](/frontend/api-schema-guide), and [SDK Guide](/frontend/sdk-guide) explain different frontend consumption layers
+- [OpenAPI SDK Guide](/frontend/openapi-sdk-guide), [Generated Contract Consumption Specimen](/frontend/generated-contract-consumption-specimen), [API Schema Guide](/frontend/api-schema-guide), and [SDK Guide](/frontend/sdk-guide) explain different frontend consumption layers
+- [A-OpenAPI Under the Hood](/frontend/a-openapi-under-the-hood) explains the lower-level runtime behind `$sdk`, bootstrap, permissions, and schema extraction
 
 ## Implementation checks for frontend data-loading changes
 

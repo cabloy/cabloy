@@ -59,3 +59,9 @@ When changing user-facing routes, ask:
 3. is the page params-aware, meaning the name-based alias path is the correct layer?
 
 That helps avoid breaking modular routing semantics.
+
+## Where to read next
+
+- If you want the broader public routing surface first, continue with [Page Route Guide](/frontend/page-route-guide).
+- If the alias decision depends on route metadata or shell behavior, continue with [Page Meta Guide](/frontend/page-meta-guide).
+- If you want the deeper routing runtime after the public surface is clear, descend into [Zova Router Under the Hood](/frontend/zova-router-under-the-hood).

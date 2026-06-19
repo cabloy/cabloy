@@ -114,6 +114,8 @@ That means route metadata chooses the logical layout, while env/config decides w
 
 This is the practical app-shell boundary in Zova: routed pages do not appear alone. They appear inside the resolved layout shell for the current runtime variant.
 
+For the thin root app host that renders the routed tree before layout-specific behavior continues, see [Zova App Guide](/frontend/zova-app-guide).
+
 In the current Basic source, that shell is represented concretely by admin-style, web-style, and empty/minimal layout implementations.
 
 For the broader runtime-selection model behind env and flavor-aware configuration, see [Environment and Config Guide](/frontend/environment-config-guide).
@@ -129,10 +131,13 @@ Layout selection, navigation guards, and aliases are closely related but they so
 
 Read together with:
 
+- [A-Router Guide](/frontend/a-router-guide)
 - [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Navigation Guards Guide](/frontend/navigation-guards-guide)
 - [Route Alias Guide](/frontend/route-alias-guide)
 - [Frontend Quickstart](/frontend/quickstart)
+
+If your next question is no longer about the public route record itself but about the `a-router` package that makes routes operational, continue with [A-Router Guide](/frontend/a-router-guide).
 
 ## Implementation checks for page-routing changes
 

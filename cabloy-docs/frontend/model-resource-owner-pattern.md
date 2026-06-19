@@ -8,6 +8,10 @@ It uses the current `rest-resource` model as the main source specimen:
 
 Read [Model Architecture](/frontend/model-architecture) and [Model State Guide](/frontend/model-state-guide) first if you want the broader Model runtime and helper surface.
 
+If your next question is how `ModelResource` itself works internally at the source level, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
+
+If your next question is how the generic lower-level model runtime works beneath `ModelResource`, continue with [Model Runtime Under the Hood](/frontend/a-model-under-the-hood).
+
 If your next question is how the whole `rest-resource` module works at runtime beyond the model itself, continue with [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood).
 
 If your next question is which files to read next for that runtime, continue with [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).

@@ -14,6 +14,7 @@ Use this page together with:
 - [TableCell Authoring Cookbook](/frontend/table-cell-cookbook)
 - [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood)
+- [Zova Table Controller Render Deep Dive](/frontend/zova-table-controller-render-supplement)
 - [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood)
 - [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
@@ -41,18 +42,11 @@ The `a-table` module sits at the intersection of several Zova concerns at once:
 - bean-scene-based cell rendering
 - resource-page integration through `basic-page`
 
-Because of that, table documentation now has three distinct layers:
+This page exists for one narrow job:
 
 - [Table Guide](/frontend/table-guide) explains how to author tables
 - [Zova Table Under the Hood](/frontend/zova-table-under-the-hood) explains how the runtime pieces cooperate
-- this page explains which files to read first for each source-reading question
-
-Because of that, source reading can become slow for one predictable reason:
-
-- you can find one relevant file such as the table controller
-- but you do not yet know the shortest accurate path to the next runtime layer
-
-This page gives a compact reading order so you can move from public surface to runtime detail without drifting.
+- this page gives the shortest file-order paths for specific table questions
 
 ## How to use this page
 

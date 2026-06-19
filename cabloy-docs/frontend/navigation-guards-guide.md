@@ -66,3 +66,10 @@ When changing auth-sensitive routing behavior, ask:
 4. should redirects happen at the routing-policy layer rather than being hardcoded into page logic?
 
 That produces cleaner and more framework-native navigation behavior.
+
+## Where to read next
+
+- If you want the broader route-record surface first, continue with [Page Route Guide](/frontend/page-route-guide).
+- If the guard decision depends on route metadata or task-level shell state, continue with [Page Meta Guide](/frontend/page-meta-guide).
+- If the guard behavior is really part of a larger SSR decision path, continue with [SSR Architecture Overview](/frontend/ssr-architecture-overview).
+- If you want the deeper routing runtime after the public policy surface is clear, descend into [Zova Router Under the Hood](/frontend/zova-router-under-the-hood).

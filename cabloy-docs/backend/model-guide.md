@@ -279,3 +279,13 @@ When creating backend persistence logic:
 4. choose deliberately among local scope, cross-module scope, and direct bean access
 5. remember that datasource, cache, and model options can change the behavior of the backend contract loop
 6. drop to raw SQL or lower-level query builder logic only when the higher-level model surface is insufficient
+
+## Where to read next
+
+If your next question is how model persistence behavior fits into one complete backend contract thread, continue with:
+
+- [Entity Guide](/backend/entity-guide)
+- [DTO Guide](/backend/dto-guide)
+- [CRUD Workflow](/backend/crud-workflow)
+- [Vona Source Reading Map](/backend/vona-source-reading-map)
+- [Backend Resource/Module Contract Chain](/backend/backend-resource-module-contract-chain)

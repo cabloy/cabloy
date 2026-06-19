@@ -35,6 +35,7 @@ Use this page together with:
 - [OpenAPI SDK Guide](/frontend/openapi-sdk-guide)
 - [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk)
 - [SDK Guide](/frontend/sdk-guide)
+- [A-OpenAPI Under the Hood](/frontend/a-openapi-under-the-hood)
 
 ## Implementation checks for schema-driven UI changes
 

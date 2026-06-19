@@ -2,13 +2,15 @@
 
 This guide explains how router-view hosts work in Zova within the Cabloy monorepo.
 
-Use this page after [Page Route Guide](/frontend/page-route-guide) and [Zova Router Under the Hood](/frontend/zova-router-under-the-hood) when your next question is no longer “how is the route registered?” but “which routed host actually owns the page instance, keep-alive behavior, and workspace model?”.
+Use this page after [Page Route Guide](/frontend/page-route-guide), [A-Router Guide](/frontend/a-router-guide), and [Zova Router Under the Hood](/frontend/zova-router-under-the-hood) when your next question is no longer “how is the route registered?” but “which routed host actually owns the page instance, keep-alive behavior, and workspace model?”.
 
 Read this page together with:
 
 - [Page Route Guide](/frontend/page-route-guide)
 - [Zova Router Under the Hood](/frontend/zova-router-under-the-hood)
 - [Router Tabs Introduction](/frontend/router-tabs-introduction)
+- [Router Tabs vs Stack](/frontend/router-tabs-vs-stack)
+- [Router Stack Guide](/frontend/router-stack-guide)
 - [Router Tabs Mechanism](/frontend/router-tabs-mechanism)
 - [Page Meta Guide](/frontend/page-meta-guide)
 - [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)
@@ -18,17 +20,19 @@ If you reached this page from the routing branch of [Zova Source Reading Map](/f
 
 > [!TIP]
 > **Router ecosystem docs path**
-> 1. **[Page Route Guide](/frontend/page-route-guide)** — learn the public route-record and layout surface
-> 2. **[Zova Router Under the Hood](/frontend/zova-router-under-the-hood)** — learn how the core router runtime cooperates
-> 3. **[Router View Hosts Guide](/frontend/router-view-hosts-guide)** — learn how routed pages are actually hosted
-> 4. **[Router Tabs Introduction](/frontend/router-tabs-introduction)** — learn the workbench meaning of router tabs
-> 5. **[Router Tabs Mechanism](/frontend/router-tabs-mechanism)** — learn the shared tabs model in code
-> 6. **[Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)** — learn how the current Basic layouts turn the shared model into a visible shell
-> 7. **[Zova Source Reading Map](/frontend/zova-source-reading-map)** — learn which files to read next
 >
-> **You are here:** step 3.
-> **Previous pages:** [Page Route Guide](/frontend/page-route-guide) and [Zova Router Under the Hood](/frontend/zova-router-under-the-hood).
-> **Next recommended pages:** [Router Tabs Introduction](/frontend/router-tabs-introduction), [Router Tabs Mechanism](/frontend/router-tabs-mechanism), and [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration).
+> 1. **[Page Route Guide](/frontend/page-route-guide)** — learn the public route-record and layout surface
+> 2. **[A-Router Guide](/frontend/a-router-guide)** — learn what the `a-router` package owns in the runtime
+> 3. **[Zova Router Under the Hood](/frontend/zova-router-under-the-hood)** — learn how the core router runtime cooperates
+> 4. **[Router View Hosts Guide](/frontend/router-view-hosts-guide)** — learn how routed pages are actually hosted
+> 5. **[Router Tabs Overview](/frontend/router-tabs-overview)** — learn the business/workbench meaning of router tabs
+> 6. **[Router Tabs Mechanism](/frontend/router-tabs-mechanism)** — learn the shared tabs model in code
+> 7. **[Router Tabs Layout Integration](/frontend/router-tabs-layout-integration)** — learn how the current Basic layouts turn the shared model into a visible shell
+> 8. **[Zova Source Reading Map](/frontend/zova-source-reading-map)** — learn which files to read next
+>
+> **You are here:** step 4.
+> **Previous pages:** [Page Route Guide](/frontend/page-route-guide), [A-Router Guide](/frontend/a-router-guide), and [Zova Router Under the Hood](/frontend/zova-router-under-the-hood).
+> **Next recommended pages:** [Router Tabs Overview](/frontend/router-tabs-overview), [Router Tabs Mechanism](/frontend/router-tabs-mechanism), [Page Meta Guide](/frontend/page-meta-guide), and [Router Tabs Layout Integration](/frontend/router-tabs-layout-integration).
 
 ## Why this page exists
 
@@ -357,11 +361,11 @@ This is a source-confirmed statement based on the current repo search surface, n
 
 A useful routing-host comparison is:
 
-| Host | Main role | Identity model | Page-meta support | Current Basic consumer shape |
-| --- | --- | --- | --- | --- |
-| `routerViewEmpty` | minimal routed host | no richer host model | no host-level page-meta flow | empty/minimal shell routing |
-| `routerViewTabs` | workbench host | `tabKey` + `componentKey` | yes | Admin and Web layouts |
-| `routerViewStack` | stack-style routed cache host | `fullPath` only | no | framework primitive, no current public Basic layout consumer |
+| Host              | Main role                     | Identity model            | Page-meta support            | Current Basic consumer shape                                 |
+| ----------------- | ----------------------------- | ------------------------- | ---------------------------- | ------------------------------------------------------------ |
+| `routerViewEmpty` | minimal routed host           | no richer host model      | no host-level page-meta flow | empty/minimal shell routing                                  |
+| `routerViewTabs`  | workbench host                | `tabKey` + `componentKey` | yes                          | Admin and Web layouts                                        |
+| `routerViewStack` | stack-style routed cache host | `fullPath` only           | no                           | framework primitive, no current public Basic layout consumer |
 
 ## How to choose the right mental model while reading source
 

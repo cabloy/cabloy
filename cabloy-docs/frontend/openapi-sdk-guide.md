@@ -20,6 +20,10 @@ For the bridge view, also see [Backend OpenAPI to Frontend SDK](/fullstack/opena
 
 For the broader frontend contract-consumption ladder, also see [Server Data](/frontend/server-data), [API Schema Guide](/frontend/api-schema-guide), and [SDK Guide](/frontend/sdk-guide).
 
+If your next question is how the lower-level OpenAPI/schema runtime works under `$sdk`, continue with [A-OpenAPI Under the Hood](/frontend/a-openapi-under-the-hood).
+
+If your next question is how generated contract material becomes schema-driven frontend behavior or resource-owner consumption, continue with [API Schema Guide](/frontend/api-schema-guide) and [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
+
 ## Initialize OpenAPI config
 
 Example: initialize OpenAPI config for module `demo-student`.
@@ -92,6 +96,10 @@ If the backend contract itself changes, first inspect or update the backend cont
 - [DTO Guide](/backend/dto-guide)
 
 Then return to this page for the frontend regeneration step.
+
+If your next question is what that generated contract looks like when it is actually consumed in a practical frontend path, continue with [Generated Contract Consumption Specimen](/frontend/generated-contract-consumption-specimen).
+
+If you then want a proof-oriented or symptom-first companion for the consumer-side path, continue with [Generated Contract Consumption Verify Playbook](/frontend/generated-contract-consumption-verify-playbook) and [Generated Contract Consumption Debug Checklist](/frontend/generated-contract-consumption-debug-checklist).
 
 ## Implementation checks for SDK regeneration decisions
 

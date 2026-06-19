@@ -6,6 +6,8 @@ Read [Model Architecture](/frontend/model-architecture) first if you want the br
 
 If you specifically want the scalable resource-facade pattern, continue with [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern).
 
+If you want the generic lower-level model runtime beneath these helper families, continue with [A-Model Under the Hood](/frontend/a-model-under-the-hood).
+
 If you want to understand how that owner pattern expands into the whole `rest-resource` module runtime, continue with [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood), then [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
 
 If you want to apply that pattern in your own module with a more uniform two-usage model, continue with [Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide).
