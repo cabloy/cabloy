@@ -41,10 +41,10 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
           const querySummary = modelStudent.summary(id);
           const { data: summary } = await querySummary.refetch();
           const message = [
-            `ID: ${summary?.id ?? '-'}`,
-            `Name: ${summary?.name ?? '-'}`,
-            `Level: ${summary?.level ?? '-'}`,
-            `Description: ${summary?.description ?? '-'}`,
+            `${this.scope.locale.Id()}: ${summary?.id ?? '-'}`,
+            `${this.scope.locale.Name()}: ${summary?.name ?? '-'}`,
+            `${this.scope.locale.Level()}: ${summary?.level ?? '-'}`,
+            `${this.scope.locale.Description()}: ${summary?.description ?? '-'}`,
           ].join('\n');
           await $host.$performCommand('basic-commands:alert', { message }, renderContext);
         }}
