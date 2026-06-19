@@ -241,7 +241,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     const promises: Promise<any>[] = renderProviders.map(renderProvider =>
       (async () => {
         if (typeof renderProvider === 'string' && renderProvider.includes('.tableCell.')) {
-          return await this.sys.bean._getBean(renderProvider as any, true);
+          return await this.app.bean._getBean(renderProvider as any, true);
         }
       })(),
     );
@@ -259,7 +259,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     // beanInstance
     let beanInstance: ITableCellRender | undefined;
     if (typeof renderProvider === 'string' && renderProvider.includes('.tableCell.')) {
-      beanInstance = await this.sys.bean._getBean(renderProvider as any, true);
+      beanInstance = await this.app.bean._getBean(renderProvider as any, true);
       const beanOptions = appResource.getBean(renderProvider as any);
       const onionOptions = beanOptions?.options as IDecoratorTableCellOptions | undefined;
       columnProps = deepExtend({}, onionOptions, columnProps);
@@ -300,7 +300,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     // beanInstance
     let beanInstance: ITableCellRender | undefined;
     if (typeof renderProvider === 'string' && renderProvider.includes('.tableCell.')) {
-      beanInstance = this.sys.bean._getBeanSyncOnly(renderProvider as any);
+      beanInstance = this.app.bean._getBeanSyncOnly(renderProvider as any);
       const beanOptions = appResource.getBean(renderProvider as any);
       const onionOptions = beanOptions?.options as IDecoratorTableCellOptions | undefined;
       columnProps = deepExtend({}, onionOptions, columnProps);
