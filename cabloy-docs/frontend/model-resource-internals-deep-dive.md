@@ -13,6 +13,12 @@ Use this page when you want to understand:
 
 ## Why this page exists
 
+This page is the third layer of a small source-reading chain around same-resource model facades:
+
+1. [Model Architecture](/frontend/model-architecture) for the broader role of Zova Model
+2. [Generated Contract Consumption: Entry Branch](/frontend/generated-contract-consumption-entry-branch) for the consumer-side handoff into the owner
+3. this page for the owner internals that make that handoff work
+
 Several existing docs already explain the meaning and usage of the resource owner well:
 
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern) explains the architecture and why the owner boundary exists
@@ -210,6 +216,8 @@ Its job is only to explain the owner internals and their current consumer contra
 
 Use these next steps depending on your question:
 
+- if you want to step back to the broader model role, return to [Model Architecture](/frontend/model-architecture)
+- if you want to step back to the consumer-side handoff, return to [Generated Contract Consumption: Entry Branch](/frontend/generated-contract-consumption-entry-branch)
 - if you want the list-page runtime branch, read [Resource List Page Deep Dive](/frontend/resource-list-page-deep-dive)
 - if you want the entry-page runtime branch, read [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive)
 - if you want the owner-pattern explanation, read [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern)

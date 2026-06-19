@@ -43,6 +43,12 @@ It is the path from generated contract access into resource-owner and entry-page
 
 ## Source-confirmed reading path
 
+This page is the second layer of a small source-reading chain around same-resource model facades:
+
+1. [Model Architecture](/frontend/model-architecture) for the broader role of Zova Model
+2. this page for the consumer-side handoff into the owner
+3. [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive) for the owner internals that make that handoff work
+
 Use this order:
 
 1. `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
@@ -80,7 +86,15 @@ A practical current model specimen is:
 Representative source facts:
 
 - the module model keeps `rest-resource.model.resource` as the stable owner
+- `summary(id)` still goes through `queryItem(...)` rather than bypassing the owner
+- `deleteForce(id)` still goes through `mutationItem(...)` rather than introducing a separate mutation surface
 - custom endpoints still delegate to owner-level helpers rather than replacing the resource-owner story
+
+This is the thin-facade boundary:
+
+- the model does not become a second resource owner
+- same-resource custom actions are exposed as small named model methods
+- entry and form consumers can continue to depend on owner-level surfaces without splitting the resource story
 
 A practical rule is:
 
@@ -93,6 +107,9 @@ This matters because entry pages usually depend on owner-level surfaces such as:
 - `formProvider`
 - `formData`
 - submit helpers
+
+If you want the broader model-layer explanation behind this narrow facade pattern, continue with [Model Architecture](/frontend/model-architecture).
+If you want the deeper owner internals behind `queryItem(...)`, `mutationItem(...)`, and form-derived helpers, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
 
 ## Entry shell consumption
 

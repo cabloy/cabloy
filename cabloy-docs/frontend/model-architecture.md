@@ -75,6 +75,40 @@ At source level, `@Model()` is a bean decorator factory:
 
 That file shows that a model is registered on the `model` onion/scene rather than being a special-case standalone mechanism.
 
+### A practical thin-facade example
+
+This subsection is the first layer of a small source-reading chain around same-resource model facades.
+
+Use the three related pages in this order when your question is specifically about a same-resource custom facade:
+
+1. this page for the broader role of Zova Model
+2. [Generated Contract Consumption: Entry Branch](/frontend/generated-contract-consumption-entry-branch) for the consumer-side handoff into the owner
+3. [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive) for the owner internals that make that handoff work
+
+A current example of a model staying intentionally thin is:
+
+- `zova/src/module/demo-student/src/model/student.ts`
+
+That file is useful for one specific architectural point:
+
+- `ModelResource` remains the stable resource owner
+- the module model adds resource-specific methods such as `summary(id)` and `deleteForce(id)`
+- those methods still delegate to owner-level helpers such as `queryItem(...)` and `mutationItem(...)`
+
+A compact source-reading path for this pattern is:
+
+1. `zova/src/module/demo-student/src/model/student.ts`
+2. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
+3. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx`
+
+This is a good pattern when custom frontend behavior still belongs to the same resource and should continue to participate in resource-owned query, mutation, and form semantics.
+
+For the entry-branch consumer path that uses this owner-preserving pattern, continue with [Generated Contract Consumption: Entry Branch](/frontend/generated-contract-consumption-entry-branch).
+For the deeper owner internals behind `queryItem(...)`, `mutationItem(...)`, and form-derived helpers, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
+
+It is not the whole story of Zova Model.
+It is a narrow example of resource-owner-preserving facade design inside the broader model architecture.
+
 ## The core architectural idea
 
 The most important current-source insight is this:
