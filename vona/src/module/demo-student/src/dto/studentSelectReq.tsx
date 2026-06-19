@@ -20,7 +20,8 @@ export interface IDtoOptionsStudentSelectReq extends IDecoratorDtoOptions {}
       v.optional(),
       ZovaRender.field('basic-select:formFieldSelect', {
         items: studentLevelItems,
-        placeholder: $locale('Level'),
+        placeholder: undefined,
+        // placeholder: $locale('Level'),
       }),
       z.preprocess(value => {
         if (typeof value === 'string') return Number.parseInt(value);
