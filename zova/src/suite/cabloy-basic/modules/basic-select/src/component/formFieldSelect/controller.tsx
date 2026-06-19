@@ -50,7 +50,10 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
         {...this.$props}
         slotDefault={({ propsBucket, props }, $$formField) => {
           const className = !propsBucket.needHandleBorder
-            ? classes(props.class, 'select select-ghost')
+            ? classes(
+                props.class,
+                'grow w-full h-full min-h-0 border-0 rounded-none bg-transparent px-0 shadow-none outline-none focus:outline-none focus:shadow-none focus:border-0',
+              )
             : classes(
                 props.class,
                 'select',
@@ -72,7 +75,10 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
     );
   }
 
-  private _ensureEmptyItemFallback(items: any[] | undefined, placeholder: unknown): any[] | undefined {
+  private _ensureEmptyItemFallback(
+    items: any[] | undefined,
+    placeholder: unknown,
+  ): any[] | undefined {
     if (!!placeholder || !items?.length) return items;
     const valueKey = String(this.$props.options.itemValue);
     const titleKey = String(this.$props.options.itemTitle);

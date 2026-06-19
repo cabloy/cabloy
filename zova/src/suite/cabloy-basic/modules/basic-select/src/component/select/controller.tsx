@@ -28,11 +28,22 @@ export class ControllerSelect extends BeanControllerBase {
   }
 
   protected render() {
+    const {
+      items,
+      itemTitle,
+      itemValue,
+      placeholder,
+      modelValue,
+      controllerRef,
+      onChange,
+      'onUpdate:modelValue': _onUpdateModelValue,
+      ...props
+    } = this.$props as any;
     const domOptions: VNode[] = [];
-    if (this.$props.items) {
-      for (const item of this.$props.items) {
-        const title = item[this.$props.itemTitle];
-        const value = item[this.$props.itemValue];
+    if (items) {
+      for (const item of items) {
+        const title = item[itemTitle];
+        const value = item[itemValue];
         domOptions.push(
           <option key={value} value={value} selected={String(this.modelValue) === String(value)}>
             {title}
@@ -42,18 +53,18 @@ export class ControllerSelect extends BeanControllerBase {
     }
     return (
       <select
+        {...props}
         onChange={(e: Event) => {
           const selectedValue = (e.target as HTMLSelectElement).value;
-          const item = this.$props.items?.find(
-            item => String(item[this.$props.itemValue]) === selectedValue,
-          );
-          const value = item ? item[this.$props.itemValue] : undefined;
+          const item = items?.find(item => String(item[itemValue]) === selectedValue);
+          const value = item ? item[itemValue] : undefined;
           this.modelValue = value;
+          onChange?.(e);
         }}
       >
-        {!!this.$props.placeholder && (
+        {!!placeholder && (
           <option disabled={true} selected={isNil(this.modelValue)}>
-            {this.$props.placeholder}
+            {placeholder}
           </option>
         )}
         {domOptions}
