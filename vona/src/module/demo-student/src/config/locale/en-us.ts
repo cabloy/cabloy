@@ -7,4 +7,8 @@ export default {
   Name: 'Name',
   Operations: 'Operations',
   Student: 'Student',
+  Summary: 'Summary',
+  LevelTitle: 'Level Title',
+  DescriptionLength: 'Description Length',
+  ForceDelete: 'Force Delete',
 };

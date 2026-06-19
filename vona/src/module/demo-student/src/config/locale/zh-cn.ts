@@ -7,4 +7,8 @@ export default {
   Name: '名称',
   Operations: '操作',
   Student: 'Student',
+  Summary: '摘要',
+  LevelTitle: '阶段名称',
+  DescriptionLength: '描述长度',
+  ForceDelete: '强制删除',
 };

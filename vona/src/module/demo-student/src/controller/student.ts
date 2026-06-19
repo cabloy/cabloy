@@ -11,6 +11,7 @@ import type { ModelStudent } from '../model/student.ts';
 import { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
+import { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import { DtoStudentView } from '../dto/studentView.tsx';
 
@@ -49,8 +50,21 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.update(id, student);
   }
 
+  @Web.get('summary/:id')
+  @Api.body(v.optional(), v.object(DtoStudentSummary))
+  async summary(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+  ): Promise<DtoStudentSummary | undefined> {
+    return await this.scope.service.student.summary(id);
+  }
+
   @Web.delete(':id')
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
     return await this.scope.service.student.delete(id);
+  }
+
+  @Web.delete('deleteForce/:id')
+  async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
+    return await this.scope.service.student.deleteForce(id);
   }
 }

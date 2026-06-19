@@ -1,6 +1,7 @@
 import type {
   DtoStudentCreate,
   DtoStudentSelectRes,
+  DtoStudentSummary,
   DtoStudentUpdate,
   EntityStudent,
 } from 'vona-module-demo-student';
@@ -48,8 +49,14 @@ describe('student.test.ts', () => {
           },
         },
       );
-      assert.equal(selectResByLevel.list.some(item => item.name === data.name), true);
-      assert.equal(selectResByLevel.list.every(item => item.level === data.level), true);
+      assert.equal(
+        selectResByLevel.list.some(item => item.name === data.name),
+        true,
+      );
+      assert.equal(
+        selectResByLevel.list.every(item => item.level === data.level),
+        true,
+      );
       // update
       await app.bean.executor.performAction('patch', '/demo/student/:id', {
         params: { id: studentId },
@@ -63,6 +70,17 @@ describe('student.test.ts', () => {
       );
       assert.equal(student.name, dataUpdate.name);
       assert.equal(student.level, dataUpdate.level);
+      // summary
+      const summary: DtoStudentSummary = await app.bean.executor.performAction(
+        'get',
+        '/demo/student/summary/:id',
+        { params: { id: studentId } },
+      );
+      assert.equal(summary.name, dataUpdate.name);
+      assert.equal(summary.level, dataUpdate.level);
+      assert.equal(summary.descriptionLength, dataUpdate.description?.length);
+      assert.equal(typeof summary.levelTitle, 'string');
+      assert.equal(typeof summary.summaryText, 'string');
       // delete
       await app.bean.executor.performAction('delete', '/demo/student/:id', {
         params: { id: student.id },
@@ -72,6 +90,19 @@ describe('student.test.ts', () => {
         params: { id: student.id },
       });
       assert.equal(student, undefined);
+      // create again for force delete
+      const studentIdForce = await app.bean.executor.performAction('post', '/demo/student', {
+        body: data,
+      });
+      await app.bean.executor.performAction('delete', '/demo/student/deleteForce/:id', {
+        params: { id: studentIdForce },
+      });
+      const studentForce = await app.bean
+        .scope('demo-student')
+        .model.student.getById(studentIdForce, {
+          disableDeleted: true,
+        });
+      assert.equal(studentForce, undefined);
       // logout
       await app.bean.passport.signout();
     });
