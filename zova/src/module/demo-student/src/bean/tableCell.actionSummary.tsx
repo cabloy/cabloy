@@ -10,6 +10,20 @@ import { TableCell } from 'zova-module-a-table';
 
 import type { ModelStudent } from '../model/student.ts';
 
+function formatSummaryMessage(summary: Awaited<ReturnType<ModelStudent['summary']>>) {
+  if (!summary) return undefined;
+  const details = [
+    summary.summaryText,
+    `Name: ${summary.name}`,
+    `Level: ${summary.levelTitle}`,
+    `Description Length: ${summary.descriptionLength}`,
+  ];
+  if (summary.description) {
+    details.push(`Description: ${summary.description}`);
+  }
+  return details.join('\n');
+}
+
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableActionRowRecord {
     'demo-student:actionSummary'?: ITableCellOptionsActionSummary;
@@ -35,7 +49,10 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
           e.preventDefault();
           e.stopPropagation();
           const modelStudent = await this._getModelStudent();
-          modelStudent.toggleSummary(renderContext.cellContext.row.id);
+          const summary = await modelStudent.summary(renderContext.cellContext.row.id);
+          await this.$performCommand('basic-commands:alert', {
+            message: formatSummaryMessage(summary) ?? this.scope.locale.SummaryNotFound(),
+          });
         }}
       >
         {this.scope.locale.Summary()}

@@ -28,7 +28,7 @@ export class DtoStudentSelectResItem extends $Dto.get(() => ModelStudent) {
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
-    ZovaRender.cell('demo-student:actionOperationsRow', {
+    ZovaRender.cell('basic-table:actionOperationsRow', {
       actions: [
         ZovaRender.tableActionRow('demo-student:actionSummary', {
           permission: { actionInherit: 'view' },

@@ -76,13 +76,48 @@ declare module 'zova' {
   }
 }
 /** model: end */
+/** api: begin */
+export * from '../api/demoStudent.js';
+
+import 'zova';
+declare module 'zova' {
+
+
+}
+declare module 'zova-module-demo-student' {
+
+        export interface ApiDemoStudent {
+          /** @internal */
+          get scope(): ScopeModuleDemoStudent;
+        }
+
+        export interface ApiDemoStudent {
+          get $beanFullName(): 'demo-student.api.demoStudent';
+          get $onionName(): 'demo-student:demoStudent';
+
+        }
+}
+/** api: end */
+/** api: begin */
+import { ApiDemoStudent } from '../api/demoStudent.js';
+export interface IModuleApi {
+  'demoStudent': ApiDemoStudent;
+}
+/** api: end */
+/** api: begin */
+
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'demo-student.api.demoStudent': ApiDemoStudent;
+  }
+}
+/** api: end */
 /** tableCell: begin */
 export * from '../bean/tableCell.actionDeleteForce.jsx';
-export * from '../bean/tableCell.actionOperationsRow.jsx';
 export * from '../bean/tableCell.actionSummary.jsx';
 export * from '../bean/tableCell.level.jsx';
 import { ITableCellOptionsActionDeleteForce } from '../bean/tableCell.actionDeleteForce.jsx';
-import { ITableCellOptionsActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
 import { ITableCellOptionsActionSummary } from '../bean/tableCell.actionSummary.jsx';
 import { ITableCellOptionsLevel } from '../bean/tableCell.level.jsx';
 import 'zova-module-a-table';
@@ -90,7 +125,6 @@ declare module 'zova-module-a-table' {
 
     export interface ITableCellRecord {
       'demo-student:actionDeleteForce': ITableCellOptionsActionDeleteForce;
-      'demo-student:actionOperationsRow': ITableCellOptionsActionOperationsRow;
       'demo-student:actionSummary': ITableCellOptionsActionSummary;
       'demo-student:level': ITableCellOptionsLevel;
     }
@@ -108,17 +142,6 @@ declare module 'zova-module-demo-student' {
           get $beanFullName(): 'demo-student.tableCell.actionDeleteForce';
           get $onionName(): 'demo-student:actionDeleteForce';
           get $onionOptions(): ITableCellOptionsActionDeleteForce;
-        }
-
-        export interface TableCellActionOperationsRow {
-          /** @internal */
-          get scope(): ScopeModuleDemoStudent;
-        }
-
-        export interface TableCellActionOperationsRow {
-          get $beanFullName(): 'demo-student.tableCell.actionOperationsRow';
-          get $onionName(): 'demo-student:actionOperationsRow';
-          get $onionOptions(): ITableCellOptionsActionOperationsRow;
         }
 
         export interface TableCellActionSummary {
@@ -146,14 +169,12 @@ declare module 'zova-module-demo-student' {
 /** tableCell: end */
 /** tableCell: begin */
 import { TableCellActionDeleteForce } from '../bean/tableCell.actionDeleteForce.jsx';
-import { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
 import { TableCellActionSummary } from '../bean/tableCell.actionSummary.jsx';
 import { TableCellLevel } from '../bean/tableCell.level.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'demo-student.tableCell.actionDeleteForce': TableCellActionDeleteForce;
-    'demo-student.tableCell.actionOperationsRow': TableCellActionOperationsRow;
     'demo-student.tableCell.actionSummary': TableCellActionSummary;
     'demo-student.tableCell.level': TableCellLevel;
   }
@@ -171,6 +192,7 @@ export class ScopeModuleDemoStudent extends BeanScopeBase {}
 
 export interface ScopeModuleDemoStudent {
   util: BeanScopeUtil;
+  api: IModuleApi;
   locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 }
 
