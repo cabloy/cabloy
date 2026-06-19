@@ -64,6 +64,9 @@ export class ControllerFormFieldSelect extends BeanControllerBase {
             'onUpdate:modelValue': (value: any) => {
               $$formField.setValue(value, propsBucket.disableNotifyChanged);
             },
+            'onBlur': () => {
+              $$formField.handleBlur();
+            },
             ...propsBucket.options,
             ...props,
             'class': className,

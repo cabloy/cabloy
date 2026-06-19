@@ -8,6 +8,8 @@ export interface ControllerSelectProps {
   items?: any[] | undefined;
   itemTitle?: string;
   itemValue?: string;
+  onChange?: (e: Event) => void;
+  onBlur?: (e: Event) => void;
 }
 
 export interface ControllerSelectModels {
@@ -36,6 +38,7 @@ export class ControllerSelect extends BeanControllerBase {
       modelValue,
       controllerRef,
       onChange,
+      onBlur,
       'onUpdate:modelValue': _onUpdateModelValue,
       ...props
     } = this.$props as any;
@@ -60,6 +63,9 @@ export class ControllerSelect extends BeanControllerBase {
           const value = item ? item[itemValue] : undefined;
           this.modelValue = value;
           onChange?.(e);
+        }}
+        onBlur={(e: Event) => {
+          onBlur?.(e);
         }}
       >
         {!!placeholder && (
