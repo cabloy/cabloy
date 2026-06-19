@@ -80,9 +80,6 @@ vona/src/suite/cabloy-basic/modules/basic-siteadmin/zovaRest
 vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site
 vona/src/suite/cabloy-basic/modules/basic-siteweb/zovaRest
 
-/vona/src/module/demo-student
-/zova/src/module/demo-student
-
 # --- Additional npm-only exclusions ---
 
 # Documentation source (not needed in user projects)
