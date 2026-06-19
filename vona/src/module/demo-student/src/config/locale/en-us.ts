@@ -4,6 +4,7 @@ export default {
   LevelAdvanced: 'Advanced Workshop',
   LevelBeginner: 'Foundation Track',
   LevelIntermediate: 'Progress Track',
+  Mobile: 'Mobile',
   Name: 'Name',
   Operations: 'Operations',
   Student: 'Student',

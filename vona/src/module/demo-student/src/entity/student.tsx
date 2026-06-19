@@ -49,9 +49,21 @@ export class EntityStudent extends EntityBase {
   description?: string;
 
   @Api.field(
+    v.title($locale('Mobile')),
+    v.required(),
+    v.min(11),
+    v.serializerReplace({
+      patternFrom: /^(\d{3})\d{4}(\d+)$/,
+      patternTo: '$1****$2',
+    }),
+    ZovaRender.order(3),
+  )
+  mobile: string;
+
+  @Api.field(
     v.title($locale('Level')),
     v.required(),
-    ZovaRender.order(3),
+    ZovaRender.order(4),
     ZovaRender.field('demo-student:formFieldLevel', {
       items: studentLevelItems,
       placeholder: $locale('Level'),

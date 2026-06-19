@@ -1159,6 +1159,8 @@ export interface components {
       name: string;
       /** @description Description */
       description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
       /** @description Training Stage */
       level: 1 | 2 | 3;
     };
@@ -1196,6 +1198,8 @@ export interface components {
       name: string;
       /** @description Description */
       description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
       /** @description Training Stage */
       level: 1 | 2 | 3;
       /** @description Operations */
@@ -1229,6 +1233,8 @@ export interface components {
           name: string;
           /** @description Description */
           description?: string | undefined;
+          /** @description Mobile */
+          mobile: string;
           /** @description Training Stage */
           level: 1 | 2 | 3;
         }
@@ -1238,6 +1244,8 @@ export interface components {
       name: string;
       /** @description Description */
       description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
       /** @description Training Stage */
       level: 1 | 2 | 3;
     };
@@ -1246,6 +1254,8 @@ export interface components {
           id: number | string;
           /** @description Name */
           name: string;
+          /** @description Mobile */
+          mobile: string;
           /** @description Training Stage */
           level: number;
           /** @description Level Title */

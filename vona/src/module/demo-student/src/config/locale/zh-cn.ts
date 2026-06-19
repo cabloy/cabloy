@@ -4,6 +4,7 @@ export default {
   LevelAdvanced: '高级研修班',
   LevelBeginner: '基础班',
   LevelIntermediate: '提升班',
+  Mobile: '手机号',
   Name: '名称',
   Operations: '操作',
   Student: 'Student',

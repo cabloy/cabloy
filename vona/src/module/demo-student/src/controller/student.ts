@@ -3,6 +3,7 @@ import type { IQueryParams } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
+import { Core } from 'vona-module-a-core';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
@@ -28,6 +29,7 @@ export class ControllerStudent extends BeanBase {
 
   @Web.get()
   @Api.body(DtoStudentSelectRes)
+  @Core.serializer()
   async select(
     @Arg.filter(DtoStudentSelectReq) params: IQueryParams<ModelStudent>,
   ): Promise<DtoStudentSelectRes> {
@@ -36,6 +38,7 @@ export class ControllerStudent extends BeanBase {
 
   @Web.get(':id')
   @Api.body(v.optional(), v.object(DtoStudentView))
+  @Core.serializer()
   async view(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentView | undefined> {
@@ -52,6 +55,7 @@ export class ControllerStudent extends BeanBase {
 
   @Web.get('summary/:id')
   @Api.body(v.optional(), v.object(DtoStudentSummary))
+  @Core.serializer()
   async summary(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentSummary | undefined> {

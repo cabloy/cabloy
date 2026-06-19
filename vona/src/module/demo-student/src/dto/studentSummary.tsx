@@ -16,6 +16,15 @@ export class DtoStudentSummary {
   @Api.field(v.title($locale('Name')))
   name: string;
 
+  @Api.field(
+    v.title($locale('Mobile')),
+    v.serializerReplace({
+      patternFrom: /^(\d{3})\d{4}(\d+)$/,
+      patternTo: '$1****$2',
+    }),
+  )
+  mobile: string;
+
   @Api.field(v.title($locale('Level')))
   level: 1 | 2 | 3;
 
