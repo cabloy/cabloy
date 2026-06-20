@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.63
+
+### Features
+
+- Add the `basic-app` modal module.
+- Add update functionality.
+
+### Improvements
+
+- Update the force-delete action modal flow.
+- Unify modal command usage.
+- Migrate remaining confirmation dialogs to `basic-app`.
+
 ## 5.1.62
 
 ### Features
