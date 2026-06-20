@@ -33,6 +33,7 @@ Use this page as the main fullstack hub, then choose the path that matches your 
 Start here when you want the shortest route to a working monorepo mental model:
 
 - [Quickstart](/fullstack/quickstart)
+- [Suites and Modules](/fullstack/suites-and-modules)
 - [CLI](/fullstack/cli)
 - [VS Code Extensions](/fullstack/vscode-extensions)
 

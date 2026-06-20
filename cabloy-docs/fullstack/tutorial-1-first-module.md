@@ -52,6 +52,7 @@ Usage notes:
 - use `npm run vona :create:module` for the backend module boundary
 - use `npm run zova :create:module` for the frontend module boundary
 - use an empty `--suite=` when you want an independent module rather than a suite-owned module
+- this tutorial uses the standalone path to keep the first example minimal; for the normal suite-first domain decision path, see [Suites and Modules](/fullstack/suites-and-modules)
 - rerun `npm run dev` after module creation so the local workflow picks up the new modules cleanly
 
 ## Generated or affected files

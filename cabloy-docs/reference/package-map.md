@@ -74,6 +74,7 @@ A practical comparison is:
 
 Use this package map together with:
 
+- [Suites and Modules](/fullstack/suites-and-modules)
 - [Backend Essentials](/backend/backend-essentials)
 - [Backend Foundation](/backend/foundation)
 - [Backend CLI](/backend/cli)

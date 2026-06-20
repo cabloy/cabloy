@@ -160,6 +160,7 @@ This reinforces that modules are not merely folders. They are explicit package, 
 
 Read this together with:
 
+- [Suites and Modules](/fullstack/suites-and-modules) for the cross-stack suite-first decision path in the monorepo
 - [IoC and Beans](/frontend/ioc-and-beans)
 - [Module Scope](/frontend/module-scope)
 - [Frontend Scripts](/frontend/scripts)

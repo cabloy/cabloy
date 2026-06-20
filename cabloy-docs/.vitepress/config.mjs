@@ -38,6 +38,7 @@ const fullstackGroups = [
     items: [
       { text: 'Introduction', link: '/fullstack/introduction' },
       { text: 'Quickstart', link: '/fullstack/quickstart' },
+      { text: 'Suites and Modules', link: '/fullstack/suites-and-modules' },
     ],
   },
   {
