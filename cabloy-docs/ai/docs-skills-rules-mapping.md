@@ -150,6 +150,14 @@ Use this quick rule:
 - avoid putting the full workflow in `CLAUDE.md` because the task needs branching, cleanup order, generated-runtime recovery, and verification
 - procedural decision workflow → `cabloy-module-removal` skill
 
+### Example: “How should AI plan a new business domain name and structure?”
+
+- public naming and suite-first explanation → [Suites and Modules](/fullstack/suites-and-modules)
+- frontend-side naming companion → [Modules and Suites](/frontend/modules-and-suites)
+- keep the durable naming rules in docs instead of duplicating them in repo rules
+- avoid putting the full branching workflow in `CLAUDE.md` because the task needs proposal, validation, confirmation, and CLI handoff
+- procedural decision workflow → `cabloy-domain-planning` skill
+
 ### Example: “What `@Api.field(...)` ordering rule should AI preserve when mixing helpers and zod?”
 
 - full explanation → [Entity Guide](/backend/entity-guide) and [DTO Guide](/backend/dto-guide)

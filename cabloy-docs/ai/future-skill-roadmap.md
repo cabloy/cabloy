@@ -13,6 +13,7 @@ A roadmap helps convert that documented knowledge into a focused set of high-val
 Current root skills include:
 
 - `cabloy-workflow`
+- `cabloy-domain-planning`
 - `cabloy-contract-loop`
 - `cabloy-resource-field-update`
 - `cabloy-module-removal`
@@ -20,6 +21,7 @@ Current root skills include:
 Their current roles are:
 
 - `cabloy-workflow` → broad workflow selection, edition detection, CLI-first routing, and verification framing
+- `cabloy-domain-planning` → suite-first naming proposals, providerId confirmation, module-boundary suggestions, and scaffold handoff for new business domains
 - `cabloy-contract-loop` → backend/frontend contract regeneration, reverse-chain handling, and drift diagnosis
 - `cabloy-resource-field-update` → existing backend resource-field changes with `fileVersion` and renderer-aware follow-up
 - `cabloy-module-removal` → backend/frontend/fullstack module deletion order, generated-runtime cleanup, and verification

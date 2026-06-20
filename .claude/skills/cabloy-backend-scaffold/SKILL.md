@@ -36,6 +36,8 @@ Then classify the request:
 
 Default to backend-first. Only escalate mentally to a broader fullstack workflow when the backend change obviously crosses the contract boundary.
 
+If the user is still deciding a new business-domain boundary or suite/module naming, use the root `cabloy-domain-planning` skill before scaffolding.
+
 If the task is really a broad cross-stack workflow, consider whether the root `cabloy-workflow` skill is the better primary router.
 
 ## Step 2: Start from Vona CLI and repo entrypoints

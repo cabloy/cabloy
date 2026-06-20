@@ -41,6 +41,7 @@ For edition-aware skills, use [Edition Detection for AI Workflows](/ai/edition-d
 Current examples include:
 
 - `cabloy-workflow` for choosing the correct Cabloy work path before implementation
+- `cabloy-domain-planning` for proposing and confirming providerId, suite, and initial module names before scaffolding a new business domain
 - `cabloy-contract-loop` for backend/frontend contract regeneration and drift diagnosis
 - `cabloy-resource-field-update` for updating an existing backend resource field thread
 - `cabloy-module-removal` for removing a backend, frontend, or fullstack module cleanly, including generated-runtime cleanup, stale-residue recovery, and verification
