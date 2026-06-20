@@ -1,5 +1,47 @@
 # Changelog
 
+## 5.1.62
+
+### Features
+
+- Add a domain planning skill.
+- Add a masked mobile field to the student resource.
+- Generate an OpenAPI SDK for `demo-student`.
+- Add student summary and force-delete actions.
+- Customize student level renderers.
+- Add the `demo-student` module with a full student CRUD flow.
+
+### Bug Fixes
+
+- Localize the student menu in `zh-cn`.
+- Override the level filter placeholder correctly.
+- Stabilize empty select value mapping.
+- Polish inline select spacing.
+- Forward select blur handling correctly.
+- Refine borderless styling for filter selects.
+- Place explicit schemas last in `demo-student` metadata.
+
+### Improvements
+
+- Clarify level renderer examples.
+- Clarify the standalone tutorial sandbox.
+- Refresh training-student references.
+- Move `demo-student` into the `a-training` suite.
+- Add a suite-first modularization guide.
+- Clarify the thin model facade reading path.
+- Include `demo-student` in the root npm package.
+- Expand source-reading and contract-loop guides.
+- Clean `demo-student` locale resources.
+- Move `TableCell` beans to app scope.
+- Align the student summary query flow.
+- Simplify the student summary action flow.
+- Refine the student level renderer hierarchy.
+- Add a page meta guide and cross-links.
+- Add a rest-resource runtime documentation set.
+- Refine tutorial 4 AI prompt wording.
+- Expand Zova Router ecosystem guides.
+- Add the Zova Table documentation cluster.
+
 ## 5.1.61
 
 ### Features
