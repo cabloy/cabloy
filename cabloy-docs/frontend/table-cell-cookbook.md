@@ -69,13 +69,13 @@ npm run zova :create:bean --help
 Create a normal table-cell bean:
 
 ```bash
-npm run zova :create:bean tableCell level -- --module=demo-student
+npm run zova :create:bean tableCell level -- --module=training-student
 ```
 
 Create a row-action variant:
 
 ```bash
-npm run zova :create:bean tableCell actionOperationsRow -- --module=demo-student --boilerplate=tableActionRow
+npm run zova :create:bean tableCell actionOperationsRow -- --module=training-student --boilerplate=tableActionRow
 ```
 
 The default scaffold shape is intentionally small:
@@ -83,7 +83,11 @@ The default scaffold shape is intentionally small:
 ```tsx
 @TableCell<ITableCellOptionsLevel>()
 export class TableCellLevel extends BeanBase implements ITableCellRender {
-  render(_options: ITableCellOptionsLevel, _renderContext: IJsxRenderContextTableCell, next: NextTableCellRender) {
+  render(
+    _options: ITableCellOptionsLevel,
+    _renderContext: IJsxRenderContextTableCell,
+    next: NextTableCellRender,
+  ) {
     return next();
   }
 }
@@ -147,7 +151,11 @@ Representative shape:
 ```tsx
 @TableCell<ITableCellOptionsLevel>()
 export class TableCellLevel extends BeanBase implements ITableCellRender {
-  render(_options: ITableCellOptionsLevel, _renderContext: IJsxRenderContextTableCell, next: NextTableCellRender) {
+  render(
+    _options: ITableCellOptionsLevel,
+    _renderContext: IJsxRenderContextTableCell,
+    next: NextTableCellRender,
+  ) {
     return next();
   }
 }
@@ -183,7 +191,11 @@ Representative shape:
 ```tsx
 @TableCell<ITableCellOptionsCurrency>()
 export class TableCellCurrency extends BeanBase implements ITableCellRender {
-  render(options: ITableCellOptionsCurrency, _renderContext: IJsxRenderContextTableCell, next: NextTableCellRender) {
+  render(
+    options: ITableCellOptionsCurrency,
+    _renderContext: IJsxRenderContextTableCell,
+    next: NextTableCellRender,
+  ) {
     const value = currencyFormat(next(), options);
     if (!options.class) return value;
     return <div class={options.class}>{value}</div>;
@@ -218,7 +230,11 @@ Representative shape:
   itemTitle: 'title',
 })
 export class TableCellSelect extends BeanBase implements ITableCellRender {
-  render(options: ITableCellOptionsSelect, _renderContext: IJsxRenderContextTableCell, next: NextTableCellRender) {
+  render(
+    options: ITableCellOptionsSelect,
+    _renderContext: IJsxRenderContextTableCell,
+    next: NextTableCellRender,
+  ) {
     const value = next();
     const item = options.items?.find(
       item => String(item[String(options.itemValue)]) === String(value),
@@ -252,7 +268,11 @@ A command-link pattern looks like this:
   class: 'hover:text-blue-500',
 })
 export class TableCellActionView extends BeanBase implements ITableCellRender {
-  render(options: ITableCellOptionsActionView, renderContext: IJsxRenderContextTableCell, next: NextTableCellRender) {
+  render(
+    options: ITableCellOptionsActionView,
+    renderContext: IJsxRenderContextTableCell,
+    next: NextTableCellRender,
+  ) {
     const { $host } = renderContext;
     const value = next();
     return (
@@ -279,7 +299,11 @@ A command-button pattern looks like this:
   class: 'btn btn-outline btn-error join-item',
 })
 export class TableCellActionDelete extends BeanBase implements ITableCellRender {
-  render(options: ITableCellOptionsActionDelete, renderContext: IJsxRenderContextTableCell, _next: NextTableCellRender) {
+  render(
+    options: ITableCellOptionsActionDelete,
+    renderContext: IJsxRenderContextTableCell,
+    _next: NextTableCellRender,
+  ) {
     const { $host } = renderContext;
     return (
       <button
@@ -332,7 +356,10 @@ Representative runtime shape:
   class: 'join',
 })
 export class TableCellActionOperationsRow extends BeanBase implements ITableCellRender {
-  async checkVisible(options: ITableCellOptionsActionOperationsRow, renderContext: IJsxRenderContextTableColumn): Promise<boolean> {
+  async checkVisible(
+    options: ITableCellOptionsActionOperationsRow,
+    renderContext: IJsxRenderContextTableColumn,
+  ): Promise<boolean> {
     const { $celScope, $host, $$table } = renderContext;
     const permissions = $celScope.permissions;
     const actions = options.actions;
@@ -397,13 +424,13 @@ A typical workflow is:
 Representative CLI command:
 
 ```bash
-npm run zova :create:bean tableCell level -- --module=demo-student
+npm run zova :create:bean tableCell level -- --module=training-student
 ```
 
 Representative backend-facing metadata target:
 
 ```typescript
-ZovaRender.cell('demo-student:level', { items: levelItems })
+ZovaRender.cell('training-student:level', { items: levelItems });
 ```
 
 This is the right fit when:
@@ -516,7 +543,7 @@ When authoring or documenting a custom `tableCell`, verify in this order:
 2. confirm the scene variant still exists before recommending it:
 
    ```bash
-   npm run zova :create:bean tableCell test -- --module=demo-student --boilerplate=tableActionRow
+   npm run zova :create:bean tableCell test -- --module=training-student --boilerplate=tableActionRow
    ```
 
 3. confirm your bean follows the current `ITableCellRender` contract

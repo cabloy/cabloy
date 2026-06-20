@@ -33,7 +33,7 @@ This is why Vona testing should not be reduced to isolated helper-unit testing o
 Example:
 
 ```bash
-npm run vona :create:test student -- --module=demo-student
+npm run vona :create:test student -- --module=training-student
 ```
 
 ## Execute tests
@@ -91,7 +91,7 @@ Locale-sensitive variants and additional request-context helpers are also availa
 Representative pattern:
 
 ```typescript
-const scopeStudent = app.scope('demo-student');
+const scopeStudent = app.scope('training-student');
 ```
 
 This lets tests exercise:
@@ -108,7 +108,7 @@ through the same scoped abstractions used in application code.
 Representative pattern:
 
 ```typescript
-await app.bean.executor.performAction('get', '/demo/student');
+await app.bean.executor.performAction('get', '/training/student');
 ```
 
 This is especially useful because it exercises the controller path more realistically than only unit-testing isolated helper functions.

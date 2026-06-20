@@ -32,10 +32,10 @@ Representative package metadata in the current repo shows the distinction clearl
 
 ### Module package
 
-Example: `vona/src/module/demo-student/package.json`
+Example: `vona/src/suite/a-training/modules/training-student/package.json`
 
-- package name: `vona-module-demo-student`
-- title: `demo-student`
+- package name: `vona-module-training-student`
+- title: `training-student`
 - `vonaModule.dependencies` records module-level framework dependencies
 
 ### Suite package

@@ -18,12 +18,12 @@ A useful contract-loop mental model is:
 
 ## Create a controller
 
-Example: create a controller named `student` in module `demo-student`.
+Example: create a controller named `student` in module `training-student`.
 
 ### CLI command
 
 ```bash
-npm run vona :create:bean controller student -- --module=demo-student
+npm run vona :create:bean controller student -- --module=training-student
 ```
 
 ## Controller definition

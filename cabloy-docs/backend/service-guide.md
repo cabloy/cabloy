@@ -10,10 +10,10 @@ In practice, the service guide is also the most useful page for understanding ba
 
 ## Create a service
 
-Example: create a service named `student` in module `demo-student`.
+Example: create a service named `student` in module `training-student`.
 
 ```bash
-npm run vona :create:bean service student -- --module=demo-student
+npm run vona :create:bean service student -- --module=training-student
 ```
 
 ## Service definition
@@ -58,7 +58,7 @@ class ControllerStudent {
 import type { ServiceStudent } from '../service/student.ts';
 
 class ControllerStudent {
-  @Use('demo-student.service.student')
+  @Use('training-student.service.student')
   serviceStudent: ServiceStudent;
 }
 ```
@@ -84,7 +84,7 @@ class ControllerStudent {
 ```typescript
 class ControllerStudent {
   findOne() {
-    return this.$scope.demoStudent.service.student.findOne();
+    return this.$scope.trainingStudent.service.student.findOne();
   }
 }
 ```
@@ -103,19 +103,19 @@ Direct bean access patterns are also available.
 ### Global container access: `_getBean`
 
 ```typescript
-const serviceStudent = this.bean._getBean('demo-student.service.student');
+const serviceStudent = this.bean._getBean('training-student.service.student');
 ```
 
 ### Request-scoped access
 
 ```typescript
-const serviceStudent = this.ctx.bean._getBean('demo-student.service.student');
+const serviceStudent = this.ctx.bean._getBean('training-student.service.student');
 ```
 
 ### Fresh bean creation: `_newBean`
 
 ```typescript
-const serviceStudent = this.bean._newBean('demo-student.service.student');
+const serviceStudent = this.bean._newBean('training-student.service.student');
 ```
 
 A practical split is:
@@ -127,7 +127,7 @@ A practical split is:
 A practical “when to use which” rule is:
 
 - use `this.scope.service.student` when the dependency belongs to the current module and ordinary business code is enough
-- use `this.$scope.demoStudent.service.student` when the dependency clearly belongs to another module
+- use `this.$scope.trainingStudent.service.student` when the dependency clearly belongs to another module
 - use `this.bean._getBean(...)` when you need explicit app-container access by bean identifier
 - use `this.ctx.bean._getBean(...)` when the workflow should resolve through request-scoped access
 - use `this.bean._newBean(...)` when you need a fresh bean instance instead of the ordinary resolved one
@@ -138,7 +138,7 @@ Services are one bean scene inside the larger backend essentials model.
 
 That means service access should be understood together with:
 
-- bean identifiers such as `demo-student.service.student`
+- bean identifiers such as `training-student.service.student`
 - local module scope vs cross-module scope
 - other scope resource categories such as model and entity
 

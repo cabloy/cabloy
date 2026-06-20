@@ -16,10 +16,10 @@ That is why DTO design should be treated as a framework concern instead of only 
 
 ## Create a DTO
 
-Example: create a DTO named `studentCreate` in module `demo-student`.
+Example: create a DTO named `studentCreate` in module `training-student`.
 
 ```bash
-npm run vona :create:bean dto studentCreate -- --module=demo-student
+npm run vona :create:bean dto studentCreate -- --module=training-student
 ```
 
 ## DTO definition

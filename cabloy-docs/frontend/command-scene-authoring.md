@@ -114,7 +114,12 @@ The default command boilerplate currently generates this shape:
 import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
 import { BeanBase } from 'zova';
-import { Command, type ICommandExecute, type ICommandOptionsBase, type NextCommandExecute } from 'zova-module-a-command';
+import {
+  Command,
+  type ICommandExecute,
+  type ICommandOptionsBase,
+  type NextCommandExecute,
+} from 'zova-module-a-command';
 
 export type TypeCommandExampleResult = unknown;
 
@@ -122,7 +127,11 @@ export interface ICommandOptionsExample extends ICommandOptionsBase<TypeCommandE
 
 @Command<ICommandOptionsExample>()
 export class CommandExample extends BeanBase implements ICommandExecute {
-  execute(_options: ICommandOptionsExample, _renderContext: IJsxRenderContextBase, next: NextCommandExecute) {
+  execute(
+    _options: ICommandOptionsExample,
+    _renderContext: IJsxRenderContextBase,
+    next: NextCommandExecute,
+  ) {
     return next();
   }
 }
@@ -165,7 +174,7 @@ A representative call shape looks like this:
 
 ```typescript
 await this.$performCommand('basic-commands:create', {
-  resource: 'demo-student:student',
+  resource: 'training-student:student',
   replace: false,
 });
 ```
@@ -174,7 +183,7 @@ A row-oriented example looks like this:
 
 ```typescript
 await this.$performCommand('basic-commands:delete', {
-  resource: 'demo-student:student',
+  resource: 'training-student:student',
   id: row.id,
 });
 ```
@@ -345,7 +354,7 @@ npm run zova :create:bean sceneName beanName -- [--module=] [--boilerplate=]
 Use the default template when the command bean does not need `BeanCommandBulkBase` or `BeanCommandRowBase`:
 
 ```bash
-npm run zova :create:bean command test -- --module=demo-student
+npm run zova :create:bean command test -- --module=training-student
 ```
 
 ### `commandBulk` boilerplate
@@ -353,7 +362,7 @@ npm run zova :create:bean command test -- --module=demo-student
 Use the bulk variant when the command should resolve `resource` through `BeanCommandBulkBase`:
 
 ```bash
-npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandBulk
+npm run zova :create:bean command test -- --module=training-student --boilerplate=commandBulk
 ```
 
 ### `commandRow` boilerplate
@@ -361,7 +370,7 @@ npm run zova :create:bean command test -- --module=demo-student --boilerplate=co
 Use the row variant when the command should resolve `resource` and `id` through `BeanCommandRowBase`:
 
 ```bash
-npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandRow
+npm run zova :create:bean command test -- --module=training-student --boilerplate=commandRow
 ```
 
 For the cross-scene lookup table, also see [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates).

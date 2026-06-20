@@ -43,7 +43,7 @@ Start here when the problem looks earlier than either list or entry runtime.
 
 Primary anchors:
 
-- `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
+- `zova/src/suite/a-training/modules/training-student/src/apiSchema/trainingStudent.ts`
 - optional direct schema consumer: `zova/src/suite/a-home/modules/home-passport/src/model/passport.ts`
 
 What to inspect first:
@@ -58,7 +58,7 @@ Start here when the contract surface looks present but consumption still feels w
 
 Primary anchor:
 
-- `zova/src/module/demo-student/src/model/student.ts`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 
 What to inspect:
 

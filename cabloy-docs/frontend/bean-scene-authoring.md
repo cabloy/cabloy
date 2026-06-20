@@ -290,7 +290,7 @@ Keep these two tasks separate.
 Example:
 
 ```bash
-npm run zova :create:bean model menu -- --module=demo-student
+npm run zova :create:bean model menu -- --module=training-student
 ```
 
 This uses an already-defined scene.

@@ -80,8 +80,8 @@ Once that handoff is complete, the frontend can consume generated contract mater
 
 A practical shared reading path is:
 
-1. `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
-2. `zova/src/module/demo-student/src/model/student.ts`
+1. `zova/src/suite/a-training/modules/training-student/src/apiSchema/trainingStudent.ts`
+2. `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 3. optional direct schema/api consumer specimen: `zova/src/suite/a-home/modules/home-passport/src/model/passport.ts`
 
 That short path already shows the shared contract-consumption layers that both list and entry pages depend on:
@@ -100,7 +100,7 @@ A practical split is:
 
 A clear direct schema specimen exists in:
 
-- `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
+- `zova/src/suite/a-training/modules/training-student/src/apiSchema/trainingStudent.ts`
 
 Representative source facts:
 
@@ -125,7 +125,7 @@ When the generated contract still belongs to one business resource, frontend con
 
 A strong public specimen for this pattern exists in:
 
-- `zova/src/module/demo-student/src/model/student.ts`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 
 Representative source facts:
 

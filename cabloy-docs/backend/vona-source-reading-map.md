@@ -97,12 +97,12 @@ Use this path when you are asking questions like:
 
 ### Then read source in this order
 
-1. `vona/src/module/demo-student/src/index.ts`
-2. `vona/src/module/demo-student/src/.metadata/index.ts`
-3. `vona/src/module/demo-student/src/controller/student.ts`
-4. `vona/src/module/demo-student/src/service/student.ts`
-5. `vona/src/module/demo-student/src/model/student.ts`
-6. `vona/src/module/demo-student/src/entity/student.tsx`
+1. `vona/src/suite/a-training/modules/training-student/src/index.ts`
+2. `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
+3. `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+4. `vona/src/suite/a-training/modules/training-student/src/service/student.ts`
+5. `vona/src/suite/a-training/modules/training-student/src/model/student.ts`
+6. `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
 
 ### What each file clarifies
 

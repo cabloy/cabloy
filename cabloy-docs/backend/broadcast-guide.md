@@ -10,10 +10,10 @@ This is important because some business logic is not point-to-point background w
 
 ## Create a broadcast
 
-Example: create a broadcast named `echo` in module `demo-student`.
+Example: create a broadcast named `echo` in module `training-student`.
 
 ```bash
-npm run vona :create:bean broadcast echo -- --module=demo-student
+npm run vona :create:bean broadcast echo -- --module=training-student
 ```
 
 ## Broadcast definition
@@ -78,7 +78,7 @@ Representative pattern:
 ```typescript
 config.onions = {
   broadcast: {
-    'demo-student:echo': {
+    'training-student:echo': {
       instance: true,
       transaction: true,
     },

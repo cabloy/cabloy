@@ -42,10 +42,10 @@ This is one of the reasons backend startup belongs in the backend docs, not in t
 
 ## Create a startup bean
 
-Example: create a startup named `log` in module `demo-student`.
+Example: create a startup named `log` in module `training-student`.
 
 ```bash
-npm run vona :create:bean startup log -- --module=demo-student
+npm run vona :create:bean startup log -- --module=training-student
 ```
 
 Representative shape:
@@ -102,7 +102,7 @@ Representative pattern:
 ```typescript
 config.onions = {
   startup: {
-    'demo-student:log': {
+    'training-student:log': {
       after: false,
       debounce: true,
       instance: false,
@@ -148,7 +148,7 @@ App config can disable a startup explicitly:
 ```typescript
 config.onions = {
   startup: {
-    'demo-student:log': {
+    'training-student:log': {
       enable: false,
     },
   },
@@ -200,7 +200,7 @@ Module monkey files can also receive module-oriented hook callbacks, and the app
 Representative CLI workflow:
 
 ```bash
-npm run vona :init:monkey demo-student
+npm run vona :init:monkey training-student
 ```
 
 ### Startup beans

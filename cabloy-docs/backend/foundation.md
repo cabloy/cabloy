@@ -89,7 +89,7 @@ A practical rule is:
 
 | Access style         | Best for                                                            | Representative shape                                     |
 | -------------------- | ------------------------------------------------------------------- | -------------------------------------------------------- |
-| Dependency injection | explicit wiring in the current class                                | `@Use('demo-student.service.student')`                   |
+| Dependency injection | explicit wiring in the current class                                | `@Use('training-student.service.student')`               |
 | Dependency lookup    | ordinary module-oriented business code                              | `this.scope.service.student`                             |
 | Direct bean access   | container-aware control through the app container or request scope  | `this.bean._getBean(...)`, `this.ctx.bean._getBean(...)` |
 | Fresh bean creation  | workflows that should not reuse the ordinary resolved bean instance | `this.bean._newBean(...)`                                |
@@ -106,7 +106,7 @@ Representative pattern:
 
 ```typescript
 class ControllerStudent {
-  @Use('demo-student.service.student')
+  @Use('training-student.service.student')
   serviceStudent: ServiceStudent;
 }
 ```
@@ -119,7 +119,7 @@ Representative patterns:
 
 ```typescript
 this.scope.service.student.findOne();
-this.$scope.demoStudent.service.student.findOne();
+this.$scope.trainingStudent.service.student.findOne();
 ```
 
 ### Direct bean access
@@ -129,9 +129,9 @@ Direct bean access exposes the container layer more explicitly.
 Representative patterns:
 
 ```typescript
-this.bean._getBean('demo-student.service.student');
-this.ctx.bean._getBean('demo-student.service.student');
-this.bean._newBean('demo-student.service.student');
+this.bean._getBean('training-student.service.student');
+this.ctx.bean._getBean('training-student.service.student');
+this.bean._newBean('training-student.service.student');
 ```
 
 A practical distinction is:
@@ -165,8 +165,8 @@ This matters because naming is not cosmetic. It affects:
 
 A practical naming rule is:
 
-- most scene-based beans use the fully qualified `module.scene.bean` form such as `demo-student.service.student`
-- onion name uses the shorter `module:bean` form such as `demo-student:student`
+- most scene-based beans use the fully qualified `module.scene.bean` form such as `training-student.service.student`
+- onion name uses the shorter `module:bean` form such as `training-student:student`
 - bean scene is the middle grouping layer that turns one module into operational families like `service`, `model`, `entity`, `dto`, or `startup`
 - the built-in global `bean` scene is an intentional exception and uses the plain bean name in the global shorthand surface
 

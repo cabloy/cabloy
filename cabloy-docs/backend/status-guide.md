@@ -27,7 +27,7 @@ A practical mental model is:
 Create a status bean in your module with the shared Vona CLI entrypoint:
 
 ```bash
-npm run vona :create:bean meta status -- --module=demo-student
+npm run vona :create:bean meta status -- --module=training-student
 ```
 
 This follows the same `:create:bean` workflow used by other backend bean scenes and metadata beans.
@@ -112,11 +112,11 @@ The stored payload is:
 
 So a practical storage reading is:
 
-| Field    | Meaning                                 |
-| -------- | --------------------------------------- |
-| `module` | the owning backend module               |
-| `name`   | the status key inside that module       |
-| `value`  | the persisted JSON value for that key   |
+| Field    | Meaning                               |
+| -------- | ------------------------------------- |
+| `module` | the owning backend module             |
+| `name`   | the status key inside that module     |
+| `value`  | the persisted JSON value for that key |
 
 The current migration creates the table with the framework basic fields plus:
 
@@ -134,7 +134,7 @@ That means two different modules can both use a key such as `enable` without col
 
 A practical reading is:
 
-- `demo-student + enable` is one status record
+- `training-student + enable` is one status record
 - `demo-course + enable` is a different status record
 
 This makes Status a natural fit for module-local state.

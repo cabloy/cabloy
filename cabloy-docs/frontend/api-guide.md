@@ -10,10 +10,10 @@ That means frontend code does not need to scatter raw request details everywhere
 
 ## Create an API service
 
-Example: create an API service named `menu` in module `demo-student`.
+Example: create an API service named `menu` in module `training-student`.
 
 ```bash
-npm run zova :create:bean api menu -- --module=demo-student
+npm run zova :create:bean api menu -- --module=training-student
 ```
 
 ## API definition
@@ -63,9 +63,9 @@ Representative pattern:
 
 ```typescript
 @UseScope()
-$$scopeDemoStudent: ScopeModuleDemoStudent;
+$$scopeTrainingStudent: ScopeModuleTrainingStudent;
 
-const menus = await this.$$scopeDemoStudent.api.menu.retrieveMenus();
+const menus = await this.$$scopeTrainingStudent.api.menu.retrieveMenus();
 ```
 
 ## Built-in `$api` access

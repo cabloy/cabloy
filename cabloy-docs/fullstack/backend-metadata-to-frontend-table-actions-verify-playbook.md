@@ -97,9 +97,9 @@ Start with the earliest source of truth that should already be correct.
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
 
 What to prove:
 
@@ -116,8 +116,8 @@ Only do this when the change touches custom action semantics or any backend-owne
 
 Primary anchors:
 
-- `zova/src/module/demo-student/cli/openapi.config.ts`
-- `zova/src/module/demo-student/src/api/demoStudent.ts`
+- `zova/src/suite/a-training/modules/training-student/cli/openapi.config.ts`
+- `zova/src/suite/a-training/modules/training-student/src/api/trainingStudent.ts`
 - any reverse-shared generated output already relevant to the Student row-action path
 
 What to prove:
@@ -134,9 +134,9 @@ Once contract handoff looks correct, prove that the frontend action/resource lay
 
 Primary anchors:
 
-- `zova/src/module/demo-student/src/model/student.ts`
-- `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
-- `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
+- `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionSummary.tsx`
+- `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionDeleteForce.tsx`
 - `zova/src/suite/cabloy-basic/modules/basic-table/src/bean/tableCell.actionOperationsRow.tsx`
 
 What to prove:

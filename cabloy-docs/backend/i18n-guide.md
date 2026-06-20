@@ -20,13 +20,13 @@ Each module can provide its own locale resources.
 Representative initialization workflow:
 
 ```bash
-npm run vona :init:locale demo-student
+npm run vona :init:locale training-student
 ```
 
 Representative files include:
 
-- `src/module/demo-student/src/config/locale/en-us.ts`
-- `src/module/demo-student/src/config/locale/zh-cn.ts`
+- `src/suite/a-training/modules/training-student/src/config/locale/en-us.ts`
+- `src/suite/a-training/modules/training-student/src/config/locale/zh-cn.ts`
 
 This makes localization part of the module model rather than a single global string table.
 
@@ -45,9 +45,9 @@ const message3 = this.scope.locale.StudentName.locale('zh-cn');
 ### Cross-module access
 
 ```typescript
-const message1 = this.$scope.demoStudent.locale.StudentName();
-const message2 = this.$scope.demoStudent.locale.StudentName.locale('en-us');
-const message3 = this.$scope.demoStudent.locale.StudentName.locale('zh-cn');
+const message1 = this.$scope.trainingStudent.locale.StudentName();
+const message2 = this.$scope.trainingStudent.locale.StudentName.locale('en-us');
+const message3 = this.$scope.trainingStudent.locale.StudentName.locale('zh-cn');
 ```
 
 ## Project-level override

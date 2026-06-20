@@ -13,7 +13,7 @@ That is important because query values are part of page behavior, not just incid
 Example: add query support for page `counter`.
 
 ```bash
-npm run zova :refactor:pageQuery counter -- --module=demo-student
+npm run zova :refactor:pageQuery counter -- --module=training-student
 ```
 
 ## Add query schema
@@ -53,7 +53,7 @@ class ControllerPageCounter {
 Representative pattern:
 
 ```typescript
-const url = this.$router.getPagePath('/demo/student/counter', {
+const url = this.$router.getPagePath('/training/student/counter', {
   query: {
     name: 'tom',
     age: 18,

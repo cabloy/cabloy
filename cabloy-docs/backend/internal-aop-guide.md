@@ -28,7 +28,7 @@ It can be used on controller methods, service methods, and other class methods t
 Representative CLI generation pattern:
 
 ```bash
-npm run vona :create:bean aopMethod log -- --module=demo-student
+npm run vona :create:bean aopMethod log -- --module=training-student
 ```
 
 That generator-backed workflow matters because AOP Method beans participate in the same onion metadata system as other Vona extension points.
@@ -51,7 +51,7 @@ class AopMethodLog {
 ### Representative usage
 
 ```typescript
-@Aspect.aopMethod('demo-student:log')
+@Aspect.aopMethod('training-student:log')
 ```
 
 ### Parameter model

@@ -10,10 +10,10 @@ For AI-assisted development, the CLI should be the default starting point whenev
 
 ## Example
 
-Create a `component` named `test` in module `demo-student`:
+Create a `component` named `test` in module `training-student`:
 
 ```bash
-npm run zova :create:component test -- --module=demo-student
+npm run zova :create:component test -- --module=training-student
 ```
 
 ## Command discovery pattern
@@ -84,9 +84,9 @@ A practical rule is:
 The built-in `command` scene is the clearest current example:
 
 ```bash
-npm run zova :create:bean command test -- --module=demo-student
-npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandBulk
-npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandRow
+npm run zova :create:bean command test -- --module=training-student
+npm run zova :create:bean command test -- --module=training-student --boilerplate=commandBulk
+npm run zova :create:bean command test -- --module=training-student --boilerplate=commandRow
 ```
 
 Use the default template for the command shape without the bulk/row helper bases, `commandBulk` for resource-oriented bulk commands, and `commandRow` for row-oriented commands that need both `resource` and `id`.

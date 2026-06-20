@@ -18,10 +18,10 @@ For the practical styling decision map around local `$style`, dedicated style be
 
 ## Create a component
 
-Example: create a component named `card` in module `demo-student`.
+Example: create a component named `card` in module `training-student`.
 
 ```bash
-npm run zova :create:component card -- --module=demo-student
+npm run zova :create:component card -- --module=training-student
 ```
 
 ## Controller definition
@@ -53,7 +53,7 @@ The `Z` prefix is useful because it makes framework components easy to identify 
 Representative usage pattern:
 
 ```typescript
-import { ZCard } from 'zova-module-demo-student';
+import { ZCard } from 'zova-module-training-student';
 
 class RenderPageCounter {
   render() {
@@ -75,8 +75,8 @@ Instead of relying on template refs in the usual Vue style, Zova prefers direct 
 Representative pattern:
 
 ```typescript
-import type { ControllerCard } from 'zova-module-demo-student';
-import { ZCard } from 'zova-module-demo-student';
+import type { ControllerCard } from 'zova-module-training-student';
+import { ZCard } from 'zova-module-training-student';
 
 class RenderPageCounter {
   cardRef: ControllerCard;

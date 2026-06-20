@@ -61,7 +61,7 @@ Use this path when your question is about:
 
 ### Then read source in this order
 
-1. `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
+1. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
 2. `zova/src/suite/cabloy-basic/modules/basic-table/src/bean/tableCell.actionOperationsRow.tsx`
 3. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
 4. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controller.tsx`
@@ -89,13 +89,13 @@ Use this path when your question is about:
 
 ### Then read source in this order
 
-1. `vona/src/module/demo-student/src/controller/student.ts`
-2. `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-3. `zova/src/module/demo-student/cli/openapi.config.ts`
-4. `zova/src/module/demo-student/src/api/demoStudent.ts`
-5. `zova/src/module/demo-student/src/model/student.ts`
-6. `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
-7. `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`
+1. `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+2. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+3. `zova/src/suite/a-training/modules/training-student/cli/openapi.config.ts`
+4. `zova/src/suite/a-training/modules/training-student/src/api/trainingStudent.ts`
+5. `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
+6. `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionSummary.tsx`
+7. `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionDeleteForce.tsx`
 8. optional downstream handoff:
    - `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
    - `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockTable/controller.tsx`
@@ -105,7 +105,7 @@ Use this path when your question is about:
 - `controller/student.ts` shows the backend source truth for custom endpoints such as `summary/:id` and `deleteForce/:id`
 - `studentSelectResItem.tsx` shows the backend row metadata that inserts the custom row actions into the operations column
 - `openapi.config.ts` shows the frontend module ownership rule for generated OpenAPI operations
-- `api/demoStudent.ts` shows the generated typed API surface that the frontend can consume
+- `api/trainingStudent.ts` shows the generated typed API surface that the frontend can consume
 - `model/student.ts` shows the thin semantic facade over the stable resource owner
 - `tableCell.actionSummary.tsx` shows a visible action that stays thin and delegates summary behavior into the model/API path
 - `tableCell.actionDeleteForce.tsx` shows the same pattern for force-delete behavior

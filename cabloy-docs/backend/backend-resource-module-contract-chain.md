@@ -4,7 +4,7 @@ This page is a focused deep dive into one narrow backend question:
 
 > how does one real Vona backend module become a working contract chain from generated metadata through controller, service, model, entity, and DTO layers?
 
-It uses the current `demo-student` module as the specimen.
+It uses the current `training-student` module as the specimen.
 
 Use this page together with:
 
@@ -48,7 +48,7 @@ It is not a replacement for the existing backend guides. It is a specimen page t
 
 ## Shortest accurate mental model
 
-The `demo-student` contract chain is easiest to read like this:
+The `training-student` contract chain is easiest to read like this:
 
 1. `src/index.ts` exposes the module reading entry
 2. `src/.metadata/index.ts` is the generated contract-registration hub
@@ -66,20 +66,20 @@ For this kind of backend source-reading task, the generated metadata file is par
 
 ## Source-confirmed reading path
 
-Read the `demo-student` module in this order:
+Read the `training-student` module in this order:
 
-1. `vona/src/module/demo-student/src/index.ts`
-2. `vona/src/module/demo-student/src/.metadata/index.ts`
-3. `vona/src/module/demo-student/src/controller/student.ts`
-4. `vona/src/module/demo-student/src/service/student.ts`
-5. `vona/src/module/demo-student/src/model/student.ts`
-6. `vona/src/module/demo-student/src/entity/student.tsx`
-7. `vona/src/module/demo-student/src/dto/studentCreate.tsx`
-8. `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
-9. `vona/src/module/demo-student/src/dto/studentView.tsx`
-10. `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
-11. `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-12. `vona/src/module/demo-student/src/dto/studentSelectRes.tsx`
+1. `vona/src/suite/a-training/modules/training-student/src/index.ts`
+2. `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
+3. `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+4. `vona/src/suite/a-training/modules/training-student/src/service/student.ts`
+5. `vona/src/suite/a-training/modules/training-student/src/model/student.ts`
+6. `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+7. `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx`
+8. `vona/src/suite/a-training/modules/training-student/src/dto/studentUpdate.tsx`
+9. `vona/src/suite/a-training/modules/training-student/src/dto/studentView.tsx`
+10. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
+11. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+12. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectRes.tsx`
 
 That order starts from the public module entry, foregrounds the generated registration hub early, then descends through the authored runtime layers and the named DTO artifacts.
 
@@ -87,7 +87,7 @@ That order starts from the public module entry, foregrounds the generated regist
 
 ### 1. `src/index.ts`: the public module entry
 
-`vona/src/module/demo-student/src/index.ts` is intentionally small:
+`vona/src/suite/a-training/modules/training-student/src/index.ts` is intentionally small:
 
 - it re-exports `./.metadata/locales.ts`
 - it re-exports `./.metadata/index.ts`
@@ -105,7 +105,7 @@ For source reading, that means:
 
 This is the key file for understanding the full chain.
 
-`vona/src/module/demo-student/src/.metadata/index.ts` shows, in one generated surface, how the module is registered across several backend layers at once.
+`vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts` shows, in one generated surface, how the module is registered across several backend layers at once.
 
 Representative things it exposes include:
 
@@ -136,7 +136,7 @@ A practical reading takeaway is:
 
 ### 3. `controller/student.ts`: the HTTP and resource-facing entry layer
 
-`vona/src/module/demo-student/src/controller/student.ts` is the HTTP-facing contract surface.
+`vona/src/suite/a-training/modules/training-student/src/controller/student.ts` is the HTTP-facing contract surface.
 
 Representative source facts from this file:
 
@@ -161,7 +161,7 @@ A good reading pattern here is:
 
 ### 4. `service/student.ts`: the orchestration handoff layer
 
-`vona/src/module/demo-student/src/service/student.ts` is intentionally thin.
+`vona/src/suite/a-training/modules/training-student/src/service/student.ts` is intentionally thin.
 
 Representative source facts:
 
@@ -184,7 +184,7 @@ So even though this particular service is small, it is still important for readi
 
 ### 5. `model/student.ts`: the persistence binding
 
-`vona/src/module/demo-student/src/model/student.ts` is also compact.
+`vona/src/suite/a-training/modules/training-student/src/model/student.ts` is also compact.
 
 Representative source fact:
 
@@ -200,11 +200,11 @@ That is why this layer belongs in the contract chain even when the class body is
 
 ### 6. `entity/student.tsx`: the shared field-contract surface
 
-`vona/src/module/demo-student/src/entity/student.tsx` is where field structure, validation-facing metadata, OpenAPI-facing metadata, and UI-related render metadata meet.
+`vona/src/suite/a-training/modules/training-student/src/entity/student.tsx` is where field structure, validation-facing metadata, OpenAPI-facing metadata, and UI-related render metadata meet.
 
 Representative source facts:
 
-- the entity is decorated with `@Entity<IEntityOptionsStudent>('demoStudent', ...)`
+- the entity is decorated with `@Entity<IEntityOptionsStudent>('trainingStudent', ...)`
 - base field metadata is configured in `fields`
 - domain fields such as `name`, `description`, and `level` use `@Api.field(...)`
 - `studentLevelSchema` and `studentLevelItems` define a concrete field-level contract for the `level` field
@@ -227,7 +227,7 @@ A practical reading takeaway is:
 
 The DTO files turn the shared field contract into named request and response artifacts for specific operations.
 
-A useful way to read the `demo-student` DTO family is by operation type.
+A useful way to read the `training-student` DTO family is by operation type.
 
 #### Create / update / view DTOs
 
@@ -257,7 +257,7 @@ For the read/list side, these files are especially important:
 
 Representative source facts:
 
-- it uses `@Dto({ openapi: { filter: { table: 'demoStudent' } }, fields: { ... } })`
+- it uses `@Dto({ openapi: { filter: { table: 'trainingStudent' } }, fields: { ... } })`
 - it extends `$Dto.queryPage(EntityStudent, ['name', 'level', 'createdAt'])`
 - `level` uses a preprocess step so string query input can be normalized before schema validation
 - `createdAt` uses `v.filterTransform('a-web:dateRange')`

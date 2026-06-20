@@ -58,7 +58,7 @@ Vona supports custom serializer transforms through `@SerializerTransform(...)`.
 Representative generation workflow:
 
 ```bash
-npm run vona :create:bean serializerTransform upper -- --module=demo-student
+npm run vona :create:bean serializerTransform upper -- --module=training-student
 ```
 
 Representative pattern:
@@ -88,7 +88,7 @@ Field-level serialization is attached through `@Api.field(...)` metadata helpers
 Representative pattern:
 
 ```typescript
-@Api.field(v.serializerTransform('demo-student:upper'))
+@Api.field(v.serializerTransform('training-student:upper'))
 name: string;
 ```
 

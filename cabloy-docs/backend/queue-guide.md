@@ -10,10 +10,10 @@ This is one of the main bridges between synchronous application code and distrib
 
 ## Create a queue
 
-Example: create a queue named `add` in module `demo-student`.
+Example: create a queue named `add` in module `training-student`.
 
 ```bash
-npm run vona :create:bean queue add -- --module=demo-student
+npm run vona :create:bean queue add -- --module=training-student
 ```
 
 ## Queue definition
@@ -197,7 +197,7 @@ Representative pattern:
 ```typescript
 config.onions = {
   queue: {
-    'demo-student:add': {
+    'training-student:add': {
       concurrency: false,
       transaction: false,
       options: {

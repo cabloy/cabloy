@@ -15,7 +15,7 @@ Vona uses a bean named `meta.index` to configure a module’s field indexes.
 Create it with:
 
 ```bash
-npm run vona :create:bean meta index -- --module=demo-student
+npm run vona :create:bean meta index -- --module=training-student
 ```
 
 Representative shell:
@@ -32,7 +32,7 @@ Representative pattern:
 ```typescript
 @Meta({
   indexes: {
-    demoStudent: 'name',
+    trainingStudent: 'name',
   },
 })
 class MetaIndex {}
@@ -52,7 +52,7 @@ import { $tableColumns } from 'vona-module-a-ormutils';
 
 @Meta({
   indexes: {
-    ...$tableColumns('demoStudent', 'name'),
+    ...$tableColumns('trainingStudent', 'name'),
   },
 })
 class MetaIndex {}

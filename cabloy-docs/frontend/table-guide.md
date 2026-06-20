@@ -23,11 +23,13 @@ Use this page together with:
 
 > [!TIP]
 > **Zova Table docs path**
+>
 > 1. **[Table Guide](/frontend/table-guide)** — learn the public authoring surface
 > 2. **[Zova Table Under the Hood](/frontend/zova-table-under-the-hood)** — learn how the runtime pieces cooperate
 > 3. **[Zova Table Source Reading Map](/frontend/zova-table-source-reading-map)** — learn which files to read next
 >
 > **Companion cookbooks**
+>
 > - **[TableCell Authoring Cookbook](/frontend/table-cell-cookbook)** — concrete custom-cell and row-action patterns
 > - **[Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)** — standard resource-page integration for filter, bulk actions, table, and pager
 >
@@ -52,7 +54,7 @@ That leads to three common authoring surfaces:
 
 To keep the guide concrete, the examples below all use the same teaching resource:
 
-- resource: `demo-student:student`
+- resource: `training-student:student`
 - representative columns: `name`, `level`, `mobile`, and row operations
 - common page shape: resource page with filter, table, and pager blocks
 
@@ -102,10 +104,7 @@ A practical rule is:
 The smallest useful Zova table is usually a direct `ZTable` with row data and a row schema:
 
 ```tsx
-<ZTable
-  data={this.students}
-  schema={this.schemaRow}
-></ZTable>
+<ZTable data={this.students} schema={this.schemaRow}></ZTable>
 ```
 
 That already gives you the default runtime shape:
@@ -154,7 +153,7 @@ For the schema side of that contract, also see [API Schema Guide](/frontend/api-
 A column render is usually chosen through schema metadata such as:
 
 ```typescript
-render: 'basic-text:text'
+render: 'basic-text:text';
 ```
 
 or another `tableCell` resource such as:
@@ -190,13 +189,13 @@ npm run zova :create:bean --help
 Create a normal table-cell bean:
 
 ```bash
-npm run zova :create:bean tableCell level -- --module=demo-student
+npm run zova :create:bean tableCell level -- --module=training-student
 ```
 
 Create a row-actions variant:
 
 ```bash
-npm run zova :create:bean tableCell actionOperationsRow -- --module=demo-student --boilerplate=tableActionRow
+npm run zova :create:bean tableCell actionOperationsRow -- --module=training-student --boilerplate=tableActionRow
 ```
 
 The default generated shape is intentionally small:
@@ -204,7 +203,11 @@ The default generated shape is intentionally small:
 ```tsx
 @TableCell<ITableCellOptionsLevel>()
 export class TableCellLevel extends BeanBase implements ITableCellRender {
-  render(_options: ITableCellOptionsLevel, _renderContext: IJsxRenderContextTableCell, next: NextTableCellRender) {
+  render(
+    _options: ITableCellOptionsLevel,
+    _renderContext: IJsxRenderContextTableCell,
+    next: NextTableCellRender,
+  ) {
     return next();
   }
 }
@@ -231,7 +234,10 @@ A representative pattern is:
   schema={this.schemaRow}
   getColumns={async (next, createColumnRender) => {
     const columns = await next();
-    const operationsRender = await createColumnRender('operations', 'basic-table:actionOperationsRow');
+    const operationsRender = await createColumnRender(
+      'operations',
+      'basic-table:actionOperationsRow',
+    );
     if (operationsRender) {
       columns.push({
         id: 'operations',

@@ -13,7 +13,7 @@ That is important because the framework treats model binding as part of the cont
 Example: add `modelValue` to component `card`.
 
 ```bash
-npm run zova :refactor:componentModel card modelValue -- --module=demo-student
+npm run zova :refactor:componentModel card modelValue -- --module=training-student
 ```
 
 ## Representative generated shape
@@ -83,7 +83,7 @@ class ControllerOther {
 Representative generation command:
 
 ```bash
-npm run zova :refactor:componentModel card title -- --module=demo-student
+npm run zova :refactor:componentModel card title -- --module=training-student
 ```
 
 Representative usage pattern:

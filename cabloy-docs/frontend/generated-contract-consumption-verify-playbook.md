@@ -76,7 +76,7 @@ Start with the smallest shared consumer-side anchors.
 
 Primary anchors:
 
-- `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
+- `zova/src/suite/a-training/modules/training-student/src/apiSchema/trainingStudent.ts`
 - optional direct schema consumer: `zova/src/suite/a-home/modules/home-passport/src/model/passport.ts`
 
 What to prove:
@@ -93,7 +93,7 @@ Once the generated surface is present, prove that the module still consumes it t
 
 Primary anchor:
 
-- `zova/src/module/demo-student/src/model/student.ts`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 
 What to prove:
 

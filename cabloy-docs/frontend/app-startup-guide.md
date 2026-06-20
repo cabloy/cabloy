@@ -68,7 +68,7 @@ A module can provide its own main lifecycle entrypoints.
 Representative creation command:
 
 ```bash
-npm run zova :init:main demo-student
+npm run zova :init:main training-student
 ```
 
 Representative pattern:
@@ -87,7 +87,7 @@ A module can also provide broader app hook behavior through a monkey entry.
 Representative creation command:
 
 ```bash
-npm run zova :init:monkey demo-student
+npm run zova :init:monkey training-student
 ```
 
 Representative pattern:

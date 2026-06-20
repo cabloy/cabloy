@@ -50,8 +50,8 @@ You usually do **not** need to generate a custom bean in this tutorial.
 
 Instead, inspect the current contract surfaces first:
 
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
 
 Usage notes:
 
@@ -63,7 +63,7 @@ Usage notes:
 
 The key backend contract anchor is:
 
-- `vona/src/module/demo-student/src/entity/student.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
 
 By the end of this tutorial, the `level` field should follow a built-in path like this:
 
@@ -84,7 +84,7 @@ level: number;
 
 A related DTO anchor is:
 
-- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
 
 That DTO already shows how filter-side field metadata can also participate in schema-driven UI.
 
@@ -117,7 +117,7 @@ npm run dev
 2. open `http://localhost:7102/admin/`
 3. enter the **Student** list page from the **Student** menu
 4. verify that the `level` field appears with select-style behavior in the relevant schema-driven surfaces
-5. inspect `vona/src/module/demo-student/src/entity/student.tsx` and confirm that the backend field contract now points to built-in frontend render resources instead of page-local hard-coded UI logic
+5. inspect `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx` and confirm that the backend field contract now points to built-in frontend render resources instead of page-local hard-coded UI logic
 
 ## Read more
 

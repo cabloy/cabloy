@@ -45,7 +45,7 @@ This tutorial is mainly a source-inspection and verification capstone.
 Useful commands include:
 
 ```bash
-npm run zova :openapi:generate demo-student
+npm run zova :openapi:generate training-student
 npm run dev
 ```
 
@@ -59,7 +59,7 @@ Usage notes:
 
 The key backend field contract anchor is:
 
-- `vona/src/module/demo-student/src/entity/student.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
 
 By the end of this tutorial, the `mobile` field should show the main capstone pattern:
 
@@ -76,15 +76,15 @@ mobile: string;
 
 The serializer helper lives in:
 
-- `vona/src/module/demo-student/src/lib/studentMobile.ts`
+- `vona/src/suite/a-training/modules/training-student/src/lib/studentMobile.ts`
 
 The summary DTO also participates in the same thread:
 
-- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
 
 The supporting render example remains:
 
-- `vona/src/module/demo-student/src/entity/student.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
   - `ZovaRender.field(...)` for `level`
   - `ZovaRender.cell(...)` for `level`
 
@@ -147,9 +147,9 @@ npm run dev
 4. verify that `level` still shows the expected render-driven behavior
 5. verify that `mobile` follows the validation and serialization policy you defined
 6. inspect these anchors and confirm that the four-use story is concrete rather than abstract:
-   - `vona/src/module/demo-student/src/entity/student.tsx`
-   - `vona/src/module/demo-student/src/lib/studentMobile.ts`
-   - `vona/src/module/demo-student/src/dto/studentSummary.tsx`
+   - `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+   - `vona/src/suite/a-training/modules/training-student/src/lib/studentMobile.ts`
+   - `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
 
 ## Read more
 

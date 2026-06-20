@@ -129,7 +129,7 @@ Representative patterns include:
 
 ```json
 {
-  "name": "zova-module-demo-student",
+  "name": "zova-module-training-student",
   "zovaModule": {
     "dependencies": {
       "a-zova": "5.0.0"

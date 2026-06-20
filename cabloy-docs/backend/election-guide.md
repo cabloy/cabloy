@@ -26,10 +26,10 @@ That makes election a coordination primitive, not just a boolean lock.
 
 ## Create `meta.election`
 
-Example: create `meta.election` in module `demo-student`.
+Example: create `meta.election` in module `training-student`.
 
 ```bash
-npm run vona :create:bean meta election -- --module=demo-student
+npm run vona :create:bean meta election -- --module=training-student
 ```
 
 Representative definition:

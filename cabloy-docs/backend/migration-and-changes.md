@@ -35,7 +35,7 @@ Representative pattern:
 
 ```json
 {
-  "name": "vona-module-demo-student",
+  "name": "vona-module-training-student",
   "vonaModule": {
     "fileVersion": 1
   }
@@ -55,7 +55,7 @@ Vona uses a bean named `meta.version` to organize migration code for a module.
 Create it with:
 
 ```bash
-npm run vona :create:bean meta version -- --module=demo-student
+npm run vona :create:bean meta version -- --module=training-student
 ```
 
 Representative shell:
@@ -96,7 +96,7 @@ Representative pattern:
 export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
   async update(options: IMetaVersionUpdateOptions) {
     if (options.version === 1) {
-      await this.bean.model.createTable('demoStudent', table => {
+      await this.bean.model.createTable('trainingStudent', table => {
         table.basicFields();
         table.string('name', 50);
         table.string('description', 255);

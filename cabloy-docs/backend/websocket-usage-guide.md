@@ -54,7 +54,7 @@ Use the Vona CLI to create a namespace bean shell.
 Example:
 
 ```bash
-npm run vona :create:bean socketNamespace chat -- --module=demo-student
+npm run vona :create:bean socketNamespace chat -- --module=training-student
 ```
 
 The generated shape follows the `a-socket` boilerplate pattern.
@@ -83,8 +83,7 @@ export interface ISocketNamespaceOptionsChatEvents {
   };
 }
 
-export interface ISocketNamespaceOptionsChat
-  extends IDecoratorSocketNamespaceOptions<ISocketNamespaceOptionsChatEvents> {}
+export interface ISocketNamespaceOptionsChat extends IDecoratorSocketNamespaceOptions<ISocketNamespaceOptionsChatEvents> {}
 
 @SocketNamespace<ISocketNamespaceOptionsChat>({
   namespace: '/chat',
@@ -231,14 +230,17 @@ If the behavior belongs to connect or disconnect time, create a `socketConnectio
 Example:
 
 ```bash
-npm run vona :create:bean socketConnection audit -- --module=demo-student
+npm run vona :create:bean socketConnection audit -- --module=training-student
 ```
 
 Representative generated shape:
 
 ```typescript
 import type { Next } from 'vona';
-import type { IDecoratorSocketConnectionOptions, ISocketConnectionExecute } from 'vona-module-a-socket';
+import type {
+  IDecoratorSocketConnectionOptions,
+  ISocketConnectionExecute,
+} from 'vona-module-a-socket';
 import type { WebSocket } from 'ws';
 import { BeanBase } from 'vona';
 import { SocketConnection } from 'vona-module-a-socket';
@@ -273,7 +275,7 @@ If the behavior belongs to inbound socket messages, create a `socketPacket` bean
 Example:
 
 ```bash
-npm run vona :create:bean socketPacket chat -- --module=demo-student
+npm run vona :create:bean socketPacket chat -- --module=training-student
 ```
 
 Representative generated shape:
@@ -289,7 +291,12 @@ export interface ISocketPacketOptionsChat extends IDecoratorSocketPacketOptions 
 
 @SocketPacket<ISocketPacketOptionsChat>()
 export class SocketPacketChat extends BeanBase implements ISocketPacketExecute {
-  async execute(_data: any, _ws: WebSocket, _options: ISocketPacketOptionsChat, next: Next): Promise<void> {
+  async execute(
+    _data: any,
+    _ws: WebSocket,
+    _options: ISocketPacketOptionsChat,
+    next: Next,
+  ): Promise<void> {
     return next();
   }
 }

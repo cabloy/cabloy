@@ -69,8 +69,8 @@ Start with the smallest shared backend anchors.
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/index.ts`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 What to prove:
 
@@ -86,11 +86,11 @@ Only enter this phase when the question is clearly about module wiring.
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/service/student.ts`
-- `vona/src/module/demo-student/src/model/student.ts`
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/*.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/service/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/model/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/*.tsx`
 
 What to prove:
 
@@ -106,9 +106,9 @@ Only enter this phase when the question is clearly about emitted backend contrac
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 - emitted output surface already used in docs:
   - `http://localhost:7102/swagger/json?version=V31`
 

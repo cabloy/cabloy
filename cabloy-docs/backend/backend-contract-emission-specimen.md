@@ -6,7 +6,7 @@ This page is a concrete backend specimen for one narrow question:
 
 It uses one emitted path only:
 
-- `GET /demo/student/summary/:id`
+- `GET /training/student/summary/:id`
 
 Use this page together with:
 
@@ -59,9 +59,9 @@ That is enough to answer the practical question:
 
 Use this order:
 
-1. `vona/src/module/demo-student/src/controller/student.ts`
-2. `vona/src/module/demo-student/src/dto/studentSummary.tsx`
-3. `vona/src/module/demo-student/src/.metadata/index.ts`
+1. `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+2. `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
+3. `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 That order is intentionally small.
 
@@ -71,7 +71,7 @@ It starts at the emitted action contract entry, moves into the DTO response shap
 
 The first source to read is:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
 
 Representative source facts:
 
@@ -96,7 +96,7 @@ A practical reading takeaway is:
 
 The next source to read is:
 
-- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
 
 Representative source facts:
 
@@ -120,12 +120,12 @@ A practical reading takeaway is:
 
 The final source to read is:
 
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 Representative source facts for this specimen:
 
-- the DTO registry includes `demo-student:studentSummary`
-- the generated API path record includes `'/demo/student/summary/:id'`
+- the DTO registry includes `training-student:studentSummary`
+- the generated API path record includes `'/training/student/summary/:id'`
 
 This file is not the emission engine itself, but it is still useful because it confirms that the action and DTO are visible together in the generated module-level surface.
 

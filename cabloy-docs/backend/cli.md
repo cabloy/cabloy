@@ -87,31 +87,31 @@ npm run vona :create:module moduleName -- [--suite=]
 ### Create a service bean
 
 ```bash
-npm run vona :create:bean service student -- --module=demo-student
+npm run vona :create:bean service student -- --module=training-student
 ```
 
 ### Create a model bean
 
 ```bash
-npm run vona :create:bean model student -- --module=demo-student
+npm run vona :create:bean model student -- --module=training-student
 ```
 
 ### Create an entity bean
 
 ```bash
-npm run vona :create:bean entity student -- --module=demo-student
+npm run vona :create:bean entity student -- --module=training-student
 ```
 
 ### Create a DTO bean
 
 ```bash
-npm run vona :create:bean dto studentCreate -- --module=demo-student
+npm run vona :create:bean dto studentCreate -- --module=training-student
 ```
 
 ### Create a startup bean
 
 ```bash
-npm run vona :create:bean startup log -- --module=demo-student
+npm run vona :create:bean startup log -- --module=training-student
 ```
 
 These examples show that the CLI is tightly connected to module boundaries and bean scenes such as service, model, entity, DTO, and startup.
@@ -129,7 +129,7 @@ Some backend bean scenes expose more than one scaffold template.
 In those cases, use `--boilerplate=...` to select a named variant:
 
 ```bash
-npm run vona :create:bean ssrMenu menuTest -- --module=demo-student --boilerplate=web
+npm run vona :create:bean ssrMenu menuTest -- --module=training-student --boilerplate=web
 ```
 
 A practical rule is:
@@ -147,10 +147,10 @@ Not every backend resource is created through bean scenes.
 Representative initializer commands include:
 
 ```bash
-npm run vona :init:constant demo-student
-npm run vona :init:types demo-student
-npm run vona :init:lib demo-student
-npm run vona :init:asset static -- --module=demo-student
+npm run vona :init:constant training-student
+npm run vona :init:types training-student
+npm run vona :init:lib training-student
+npm run vona :init:asset static -- --module=training-student
 ```
 
 A practical distinction is:
@@ -160,7 +160,7 @@ A practical distinction is:
 
 A practical helper-placement rule is:
 
-- if a backend module needs reusable pure helper functions, initialize `src/lib` with `npm run vona :init:lib demo-student`
+- if a backend module needs reusable pure helper functions, initialize `src/lib` with `npm run vona :init:lib training-student`
 - place those shared helpers under `src/lib` and export shared entrypoints from `src/lib/index.ts`
 - if the logic needs container-managed runtime behavior, do not force it into `src/lib`; re-evaluate `src/service` or another bean scene instead
 

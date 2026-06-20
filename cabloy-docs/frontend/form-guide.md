@@ -51,7 +51,7 @@ That leads to four common authoring surfaces:
 
 To keep the guide concrete, the examples below all use the same teaching resource:
 
-- resource: `demo-student:student`
+- resource: `training-student:student`
 - representative fields: `name`, `level`, and `mobile`
 - common scenes: Student create, Student edit, and Student view
 
@@ -421,7 +421,7 @@ Use `options` when the concrete Student field renderer needs its own input optio
 
 ```tsx
 <ZForm
-  formProvider={{ behaviors: { FormFieldLayout: 'demo-student:formFieldLayoutStudent' } }}
+  formProvider={{ behaviors: { FormFieldLayout: 'training-student:formFieldLayoutStudent' } }}
 >
 ```
 
@@ -537,7 +537,7 @@ protected async __init__() {
   this.$$modelResource = await this.bean._getBeanSelector(
     'rest-resource.model.resource',
     true,
-    'demo-student:student',
+    'training-student:student',
   );
 
   this.studentFormMeta = this.$computed(() => {
@@ -566,7 +566,7 @@ async submitStudent(data: TypeFormOnSubmitData<StudentFormData>) {
 
 Read that example as four ownership boundaries:
 
-- `demo-student:student` identifies the business resource
+- `training-student:student` identifies the business resource
 - `ModelResource` owns resource-level Student form schema/data/provider lookup
 - `studentFormMeta` decides whether the Student page is create/edit/view
 - `submitStudent` delegates to the Student mutation policy instead of inventing a page-local submit rule

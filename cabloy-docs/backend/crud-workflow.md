@@ -10,16 +10,16 @@ Instead of creating controller, service, model, entity, DTO, metadata, locale, a
 
 ## Generate a CRUD skeleton
 
-Example: generate a CRUD workflow for `student` in module `demo-student`.
+Example: generate a CRUD workflow for `student` in module `training-student`.
 
 ```bash
-npm run vona :tools:crud student -- --module=demo-student
+npm run vona :tools:crud student -- --module=training-student
 ```
 
 A lighter variant also exists:
 
 ```bash
-npm run vona :tools:crudBasic student -- --module=demo-student
+npm run vona :tools:crudBasic student -- --module=training-student
 ```
 
 This is important because the repo already encodes both the full CRUD thread and a lighter CRUD-basic workflow in the CLI surface.

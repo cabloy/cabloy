@@ -12,10 +12,10 @@ That matters because backend capabilities often need both:
 
 ## Initialize the config skeleton
 
-Example: initialize config for module `demo-student`.
+Example: initialize config for module `training-student`.
 
 ```bash
-npm run vona :init:config demo-student
+npm run vona :init:config training-student
 ```
 
 This gives the module its own config file under the module’s config area.
@@ -53,7 +53,7 @@ Cross-module config access uses the cross-module scope surface.
 Representative pattern:
 
 ```typescript
-console.log(this.$scope.demoStudent.config.title);
+console.log(this.$scope.trainingStudent.config.title);
 ```
 
 A practical distinction is:
@@ -122,7 +122,7 @@ Representative pattern:
 
 ```typescript
 config.modules = {
-  'demo-student': {
+  'training-student': {
     title: 'Hello World!!',
   },
 };

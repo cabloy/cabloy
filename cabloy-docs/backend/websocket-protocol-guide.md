@@ -59,7 +59,7 @@ _:[eventNameOrShortCode, data]
 More precisely, the server sends:
 
 ```typescript
-`${eventPrefix}${JSON.stringify([eventNameInner, data])}`
+`${eventPrefix}${JSON.stringify([eventNameInner, data])}`;
 ```
 
 That means the Web Socket protocol is event-oriented rather than frame-schema-oriented.
@@ -71,7 +71,7 @@ The event prefix comes from module config:
 ```typescript
 return {
   eventPrefix: '_:',
-}
+};
 ```
 
 A practical interpretation is:
@@ -200,7 +200,7 @@ Representative logical payload:
 {
   "i": 1,
   "m": "get",
-  "p": "/demo/student/findOne",
+  "p": "/training/student/findOne",
   "q": { "id": 3 },
   "h": { "x-demo": "1" }
 }
@@ -209,7 +209,7 @@ Representative logical payload:
 Representative wire packet:
 
 ```text
-_:["_b",{"i":1,"m":"get","p":"/demo/student/findOne","q":{"id":3},"h":{"x-demo":"1"}}]
+_:["_b",{"i":1,"m":"get","p":"/training/student/findOne","q":{"id":3},"h":{"x-demo":"1"}}]
 ```
 
 ## `sysReady`

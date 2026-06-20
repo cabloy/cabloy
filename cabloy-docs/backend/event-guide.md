@@ -29,7 +29,7 @@ An event is defined as a typed bean.
 Representative generation workflow:
 
 ```bash
-npm run vona :create:bean event echo -- --module=demo-student
+npm run vona :create:bean event echo -- --module=training-student
 ```
 
 Representative pattern:
@@ -79,13 +79,13 @@ Event listeners attach through `@EventListener({ match: ... })`.
 Representative generation workflow:
 
 ```bash
-npm run vona :create:bean eventListener echo -- --module=demo-student
+npm run vona :create:bean eventListener echo -- --module=training-student
 ```
 
 Representative pattern:
 
 ```typescript
-@EventListener({ match: 'demo-student:echo' })
+@EventListener({ match: 'training-student:echo' })
 export class EventListenerEcho implements IEventExecute<TypeEventData, TypeEventResult> {
   execute(data: TypeEventData, next: NextEventSync<TypeEventData, TypeEventResult>) {
     const dataNew = `${data}!`;
@@ -135,7 +135,7 @@ Vona can inspect the effective event-listener list for a named event.
 Representative pattern:
 
 ```typescript
-this.bean.onion.eventListener.inspectEventListener('demo-student:echo');
+this.bean.onion.eventListener.inspectEventListener('training-student:echo');
 ```
 
 This is useful for debugging event composition and verifying which listeners are active.

@@ -64,7 +64,7 @@ A module can provide system-level main lifecycle entrypoints.
 Representative creation command:
 
 ```bash
-npm run zova :init:mainSys demo-student
+npm run zova :init:mainSys training-student
 ```
 
 Representative pattern:
@@ -84,7 +84,7 @@ A module can also attach richer system lifecycle behavior through monkey-based h
 Representative creation command:
 
 ```bash
-npm run zova :init:monkeySys demo-student
+npm run zova :init:monkeySys training-student
 ```
 
 Representative pattern:

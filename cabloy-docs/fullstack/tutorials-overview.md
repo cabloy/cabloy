@@ -36,7 +36,7 @@ Why these fields?
 
 This keeps the storyline small enough for beginners while still showing Cabloy’s fullstack contract model.
 
-At the beginning of the series, the `demo-student` module does not exist yet. The tutorials build it step by step.
+At the beginning of the series, the `a-training` suite and `training-student` module do not exist yet. The tutorials build them step by step.
 
 ## What you should prepare first
 
@@ -56,7 +56,7 @@ Those pages explain the repo entrypoints and the CLI-first workflow model that t
 
 ## The learning path
 
-### Phase 1: Create the module and CRUD thread
+### Phase 1: Create the suite/module and CRUD thread
 
 - [Tutorial 1: Create Your First Module](/fullstack/tutorial-1-first-module)
 - [Tutorial 2: Create Your First CRUD](/fullstack/tutorial-2-first-crud)

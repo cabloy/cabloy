@@ -46,8 +46,8 @@ Start here when the problem looks earlier than either the module-wiring branch o
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/index.ts`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 What to inspect first:
 
@@ -63,11 +63,11 @@ Only enter this branch when the issue is clearly about how one backend module is
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/service/student.ts`
-- `vona/src/module/demo-student/src/model/student.ts`
-- `vona/src/module/demo-student/src/entity/student.tsx`
-- `vona/src/module/demo-student/src/dto/*.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/service/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/model/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/*.tsx`
 
 Typical failures to classify:
 
@@ -94,9 +94,9 @@ Only enter this branch when the issue is clearly about emitted backend contract 
 
 Primary anchors:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 - emitted output surface already used in docs:
   - `http://localhost:7102/swagger/json?version=V31`
 

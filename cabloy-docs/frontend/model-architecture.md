@@ -87,7 +87,7 @@ Use the three related pages in this order when your question is specifically abo
 
 A current example of a model staying intentionally thin is:
 
-- `zova/src/module/demo-student/src/model/student.ts`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 
 That file is useful for one specific architectural point:
 
@@ -97,7 +97,7 @@ That file is useful for one specific architectural point:
 
 A compact source-reading path for this pattern is:
 
-1. `zova/src/module/demo-student/src/model/student.ts`
+1. `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 2. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts`
 3. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/entry/controller.tsx`
 

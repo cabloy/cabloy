@@ -68,7 +68,7 @@ That larger runtime usually owns:
 
 To keep the guide concrete, the examples below all use the same teaching thread:
 
-- resource: `demo-student:student`
+- resource: `training-student:student`
 - list-page concerns: filter, row actions, create action, pagination
 - metadata sources: backend row DTO and row-action metadata
 
@@ -83,7 +83,7 @@ For a standard CRUD list page, begin with the generated backend thread.
 The first useful entrypoint is still the CRUD generator:
 
 ```bash
-npm run vona :tools:crud student -- --module=demo-student
+npm run vona :tools:crud student -- --module=training-student
 ```
 
 That generated thread already gives you the important contract anchors such as:

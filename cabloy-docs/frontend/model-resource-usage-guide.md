@@ -111,7 +111,7 @@ This is the right option when business semantics appear, but ownership should st
 A representative shape is:
 
 ```typescript
-const StudentResource = 'demo-student:student';
+const StudentResource = 'training-student:student';
 
 @Model()
 export class ModelStudent extends BeanModelBase {
@@ -125,7 +125,7 @@ export class ModelStudent extends BeanModelBase {
       id,
       action: 'summary',
       queryFn: async () => {
-        const res = await this.scope.api.demoStudent.summary({ params: { id } });
+        const res = await this.scope.api.trainingStudent.summary({ params: { id } });
         return res ?? null;
       },
       meta: {
@@ -139,7 +139,7 @@ export class ModelStudent extends BeanModelBase {
       id,
       action: 'deleteForce',
       mutationFn: async () => {
-        await this.scope.api.demoStudent.deleteForce({ params: { id } });
+        await this.scope.api.trainingStudent.deleteForce({ params: { id } });
       },
     });
   }
@@ -200,7 +200,7 @@ summary(id: TableIdentity) {
     id,
     action: 'summary',
     queryFn: async () => {
-      const res = await this.scope.api.demoStudent.summary({ params: { id } });
+      const res = await this.scope.api.trainingStudent.summary({ params: { id } });
       return res ?? null;
     },
   });
@@ -243,7 +243,7 @@ deleteForce(id: TableIdentity) {
     id,
     action: 'deleteForce',
     mutationFn: async () => {
-      await this.scope.api.demoStudent.deleteForce({ params: { id } });
+      await this.scope.api.trainingStudent.deleteForce({ params: { id } });
     },
   });
 }

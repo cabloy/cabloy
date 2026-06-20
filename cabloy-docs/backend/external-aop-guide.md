@@ -13,13 +13,13 @@ External AOP uses `@Aop({ match: ... })` to associate an aspect class with one o
 Representative CLI generation pattern:
 
 ```bash
-npm run vona :create:bean aop log -- --module=demo-student
+npm run vona :create:bean aop log -- --module=training-student
 ```
 
 Representative shape:
 
 ```typescript
-@Aop({ match: 'demo-student.service.test' })
+@Aop({ match: 'training-student.service.test' })
 export class AopLog extends BeanAopBase {}
 ```
 

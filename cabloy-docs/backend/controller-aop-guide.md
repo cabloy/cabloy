@@ -23,9 +23,9 @@ Middleware is used for request-path behavior that wraps execution before and aft
 Representative CLI generation patterns from the legacy workflow include:
 
 ```bash
-npm run vona :create:bean middlewareSystem logger -- --module=demo-student
-npm run vona :create:bean middleware logger -- --module=demo-student --boilerplate=global
-npm run vona :create:bean middleware logger -- --module=demo-student
+npm run vona :create:bean middlewareSystem logger -- --module=training-student
+npm run vona :create:bean middleware logger -- --module=training-student --boilerplate=global
+npm run vona :create:bean middleware logger -- --module=training-student
 ```
 
 These commands all go through the shared `:create:bean` entrypoint, but they target different middleware scopes and boilerplates.
@@ -45,13 +45,13 @@ This is where Vona places concerns such as not-found handling, request override 
 ### Representative local usage
 
 ```typescript
-@Aspect.middleware('demo-student:logger')
+@Aspect.middleware('training-student:logger')
 ```
 
 ### Representative global usage
 
 ```typescript
-@Aspect.middlewareGlobal('demo-student:logger', { prefix: 'elapsed' })
+@Aspect.middlewareGlobal('training-student:logger', { prefix: 'elapsed' })
 ```
 
 ### Representative built-in usage
@@ -85,7 +85,7 @@ Typical jobs include:
 ### Representative local usage
 
 ```typescript
-@Aspect.guard('demo-student:admin')
+@Aspect.guard('training-student:admin')
 ```
 
 ### Representative built-in usage
@@ -120,7 +120,7 @@ Typical jobs include:
 ### Representative local usage
 
 ```typescript
-@Aspect.interceptor('demo-student:logger')
+@Aspect.interceptor('training-student:logger')
 ```
 
 ### Representative built-in usage
@@ -140,7 +140,7 @@ Pipes transform or validate request values before they reach controller logic.
 ### Representative local pipe usage
 
 ```typescript
-@Aspect.pipe('demo-student:number')
+@Aspect.pipe('training-student:number')
 ```
 
 ### Argument pipe pattern
@@ -150,7 +150,7 @@ Argument pipes are usually created from a local pipe:
 ```typescript
 import { createArgumentPipe } from 'vona-module-a-aspect';
 
-export const ArgNumber = createArgumentPipe('demo-student:number');
+export const ArgNumber = createArgumentPipe('training-student:number');
 ```
 
 Used on a controller parameter:
@@ -191,7 +191,7 @@ This is where request-path error customization becomes explicit.
 ### Representative local usage
 
 ```typescript
-@Aspect.filter('demo-student:test')
+@Aspect.filter('training-student:test')
 ```
 
 ### Built-in filter

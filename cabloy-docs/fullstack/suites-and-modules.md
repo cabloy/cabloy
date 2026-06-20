@@ -141,11 +141,11 @@ These can be read as:
 
 For a training-oriented suite, the valid short name is:
 
-- `demo-training`
+- `a-training`
 
 where:
 
-- providerId: `demo`
+- providerId: `a`
 - suiteName: `training`
 
 A practical rule is:
@@ -177,7 +177,7 @@ zova/src/suite/<suite>/modules/<module>/
 ### Example
 
 ```text
-vona/src/suite/demo-training/
+vona/src/suite/a-training/
 ├── modules/
 │  ├── training-student/
 │  ├── training-course/
@@ -186,7 +186,7 @@ vona/src/suite/demo-training/
 ```
 
 ```text
-zova/src/suite/demo-training/
+zova/src/suite/a-training/
 ├── modules/
 │  ├── training-student/
 │  ├── training-course/
@@ -257,11 +257,11 @@ A practical suite-first workflow is:
 For example, for a training domain:
 
 ```bash
-npm run vona :create:suite demo-training
-npm run zova :create:suite demo-training
+npm run vona :create:suite a-training
+npm run zova :create:suite a-training
 
-npm run vona :create:module training-student -- --suite=demo-training
-npm run zova :create:module training-student -- --suite=demo-training
+npm run vona :create:module training-student -- --suite=a-training
+npm run zova :create:module training-student -- --suite=a-training
 ```
 
 Later domain growth can continue with modules such as:

@@ -13,7 +13,7 @@ Zova uses a more unified approach centered on component props, which makes the p
 Example: add props support to component `card`.
 
 ```bash
-npm run zova :refactor:componentProps card -- --module=demo-student
+npm run zova :refactor:componentProps card -- --module=training-student
 ```
 
 ## Define props

@@ -44,8 +44,8 @@ It is the path from generated contract access into resource-owner and list-page 
 
 Use this order:
 
-1. `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
-2. `zova/src/module/demo-student/src/model/student.ts`
+1. `zova/src/suite/a-training/modules/training-student/src/apiSchema/trainingStudent.ts`
+2. `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 3. `zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controller.tsx`
 4. `zova/src/suite/cabloy-basic/modules/basic-page/src/component/blockPage/controller.tsx`
 
@@ -55,7 +55,7 @@ That order starts from the generated schema access surface, moves into the thin 
 
 A practical current source anchor is:
 
-- `zova/src/module/demo-student/src/apiSchema/demoStudent.ts`
+- `zova/src/suite/a-training/modules/training-student/src/apiSchema/trainingStudent.ts`
 
 Representative source facts:
 
@@ -72,7 +72,7 @@ It starts with generated schema access that has already been turned into fronten
 
 A practical current model specimen is:
 
-- `zova/src/module/demo-student/src/model/student.ts`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 
 Representative source facts:
 

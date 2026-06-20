@@ -128,8 +128,8 @@ In the current public monorepo, Basic-specific Zova flavors include:
 Representative frontend-side contract-generation commands include:
 
 ```bash
-npm run zova :openapi:config demo-student
-npm run zova :openapi:generate demo-student
+npm run zova :openapi:config training-student
+npm run zova :openapi:generate training-student
 cd zova && npm run build:rest:cabloyBasicAdmin
 cd zova && npm run build:rest:cabloyBasicWeb
 ```
@@ -160,11 +160,11 @@ A practical regeneration rule is:
 - if `npm run zova :openapi:generate ...` fails because the local Swagger source is unavailable, first start the backend service and confirm `http://localhost:7102/swagger/json?version=V31` is reachable before treating generation as broken
 - if the generated consumer path is already correct, but frontend behavior still looks stale, stop patching generated files and diagnose consumer drift or local dependency drift instead
 
-## `demo-student` as a compact forward-chain specimen
+## `training-student` as a compact forward-chain specimen
 
 A compact specimen helps make the bridge more concrete.
 
-A practical `demo-student` forward chain looks like this:
+A practical `training-student` forward chain looks like this:
 
 1. backend contract truth changes in places such as:
    - `controller/student.ts`

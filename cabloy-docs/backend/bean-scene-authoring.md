@@ -183,7 +183,7 @@ Representative generated output:
 ```typescript
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'demo-student.service.student': ServiceStudent;
+    'training-student.service.student': ServiceStudent;
   }
 }
 ```
@@ -248,8 +248,8 @@ Representative generated service output includes:
 
 ```typescript
 export interface ServiceStudent {
-  get $beanFullName(): 'demo-student.service.student';
-  get $onionName(): 'demo-student:student';
+  get $beanFullName(): 'training-student.service.student';
+  get $onionName(): 'training-student:student';
 }
 ```
 
@@ -272,7 +272,7 @@ Keep these two tasks separate.
 Example:
 
 ```bash
-npm run vona :create:bean service student -- --module=demo-student
+npm run vona :create:bean service student -- --module=training-student
 ```
 
 This uses an already-defined scene.

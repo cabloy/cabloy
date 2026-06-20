@@ -40,11 +40,11 @@ These categories make module resources discoverable and consistently organized.
 Representative CLI entrypoints include:
 
 ```bash
-npm run zova :init:config demo-student
-npm run zova :init:constant demo-student
-npm run zova :init:locale demo-student
-npm run zova :init:error demo-student
-npm run zova :create:bean api test -- --module=demo-student
+npm run zova :init:config training-student
+npm run zova :init:constant training-student
+npm run zova :init:locale training-student
+npm run zova :init:error training-student
+npm run zova :create:bean api test -- --module=training-student
 ```
 
 This matters because scope is not just a read surface. It is the organized destination for resources generated or initialized through the standard Zova workflow.
@@ -119,14 +119,14 @@ Representative pattern:
 
 ```typescript
 @UseScope()
-$$scopeDemoStudent: ScopeModuleDemoStudent;
+$$scopeTrainingStudent: ScopeModuleTrainingStudent;
 ```
 
 A common follow-up access pattern is:
 
 ```typescript
-const res = await this.$$scopeDemoStudent.api.test.echo();
-console.log(this.$$scopeDemoStudent.locale.HelloWorld());
+const res = await this.$$scopeTrainingStudent.api.test.echo();
+console.log(this.$$scopeTrainingStudent.locale.HelloWorld());
 ```
 
 This allows one module to consume another module’s scoped resources explicitly without flattening everything into one shared global namespace.

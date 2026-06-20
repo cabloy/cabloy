@@ -17,10 +17,10 @@ That combination is one of the clearest examples of Zova’s overall design phil
 
 ## Create a page
 
-Example: create a page named `counter` in module `demo-student`.
+Example: create a page named `counter` in module `training-student`.
 
 ```bash
-npm run zova :create:page counter -- --module=demo-student
+npm run zova :create:page counter -- --module=training-student
 ```
 
 ## Route path generation
@@ -29,9 +29,9 @@ Zova automatically derives the page path from the module and page names.
 
 Representative example:
 
-- module: `demo-student`
+- module: `training-student`
 - page: `counter`
-- generated page path: `/demo/student/counter`
+- generated page path: `/training/student/counter`
 
 This matters because the framework already has conventions for route structure. AI should reuse those conventions rather than inventing unrelated paths.
 
@@ -123,7 +123,7 @@ A typical first step is keeping the page controller responsible for state while 
 #### Create the first render bean
 
 ```bash
-npm run zova :refactor:firstRender page/counter -- --module=demo-student
+npm run zova :refactor:firstRender page/counter -- --module=training-student
 ```
 
 Representative render bean shape:
@@ -146,7 +146,7 @@ class RenderPageCounter extends BeanRenderBase {
 #### Create the first style bean
 
 ```bash
-npm run zova :refactor:firstStyle page/counter -- --module=demo-student
+npm run zova :refactor:firstStyle page/counter -- --module=training-student
 ```
 
 Representative style bean shape:
@@ -177,19 +177,19 @@ Representative refactors include:
 #### Create another render bean
 
 ```bash
-npm run zova :refactor:anotherRender page/counter another -- --module=demo-student
+npm run zova :refactor:anotherRender page/counter another -- --module=training-student
 ```
 
 #### Create another style bean
 
 ```bash
-npm run zova :refactor:anotherStyle page/counter another -- --module=demo-student
+npm run zova :refactor:anotherStyle page/counter another -- --module=training-student
 ```
 
 #### Create a service bean for state management
 
 ```bash
-npm run zova :create:bean service page/counter/counter -- --module=demo-student
+npm run zova :create:bean service page/counter/counter -- --module=training-student
 ```
 
 Representative service bean shape:

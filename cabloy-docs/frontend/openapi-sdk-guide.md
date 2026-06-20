@@ -26,10 +26,10 @@ If your next question is how generated contract material becomes schema-driven f
 
 ## Initialize OpenAPI config
 
-Example: initialize OpenAPI config for module `demo-student`.
+Example: initialize OpenAPI config for module `training-student`.
 
 ```bash
-npm run zova :openapi:config demo-student
+npm run zova :openapi:config training-student
 ```
 
 ## Module-level config
@@ -57,10 +57,10 @@ Representative use case:
 
 ## Generate the SDK
 
-Example: generate OpenAPI-based frontend services for module `demo-student`.
+Example: generate OpenAPI-based frontend services for module `training-student`.
 
 ```bash
-npm run zova :openapi:generate demo-student
+npm run zova :openapi:generate training-student
 ```
 
 ## Build the rest-contract output

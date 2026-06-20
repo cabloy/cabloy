@@ -4,7 +4,7 @@
 
 In this tutorial, one prompt lets the user express a simple product need: the `level` field in the Student experience should feel less generic and more like a real training-stage workflow.
 
-From that user need, AI can infer that the next step is no longer just relabeling the field. It now needs a more dedicated rendering experience owned by the `demo-student` module.
+From that user need, AI can infer that the next step is no longer just relabeling the field. It now needs a more dedicated rendering experience owned by the `training-student` module.
 
 This tutorial covers the **reverse chain** custom-resource handoff branch of the contract loop.
 
@@ -50,15 +50,15 @@ npm run zova :create:component --help
 Representative generation commands for this tutorial:
 
 ```bash
-npm run zova :create:bean tableCell level -- --module=demo-student
-npm run zova :create:component formFieldLevel -- --module=demo-student
+npm run zova :create:bean tableCell level -- --module=training-student
+npm run zova :create:component formFieldLevel -- --module=training-student
 ```
 
 Usage notes:
 
 - use `:create:bean` when AI determines that the list needs a dedicated table-cell render resource under the bean scene
 - use `:create:component` when AI determines that the form needs a custom frontend component/controller surface
-- generation gives you the structural starting point, but this tutorial still expects manual refinement so the result matches the `demo-student` teaching implementation
+- generation gives you the structural starting point, but this tutorial still expects manual refinement so the result matches the `training-student` teaching implementation
 - after frontend resources exist, return to the backend entity and point `ZovaRender.field(...)` and `ZovaRender.cell(...)` at the custom module resources
 - once backend metadata starts consuming those new frontend resources, treat the next step as a reverse fullstack handoff rather than frontend-only cleanup: refresh generated output, rebuild the relevant flavor, and re-sync Vona dependencies
 
@@ -67,18 +67,18 @@ Usage notes:
 To satisfy the user-facing need above, AI will usually converge on a small set of implementation anchors like these:
 
 - custom table cell bean:
-  - `zova/src/module/demo-student/src/bean/tableCell.level.tsx`
+  - `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.level.tsx`
 - custom form-field controller:
-  - `zova/src/module/demo-student/src/component/formFieldLevel/controller.tsx`
+  - `zova/src/suite/a-training/modules/training-student/src/component/formFieldLevel/controller.tsx`
 - form-field metadata wrapper:
-  - `zova/src/module/demo-student/src/.metadata/component/formFieldLevel.ts`
+  - `zova/src/suite/a-training/modules/training-student/src/.metadata/component/formFieldLevel.ts`
 - backend field contract to update:
-  - `vona/src/module/demo-student/src/entity/student.tsx`
+  - `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
 
 Representative metadata targets after AI makes that implementation decision are:
 
 ```typescript
-ZovaRender.field('demo-student:formFieldLevel', {
+ZovaRender.field('training-student:formFieldLevel', {
   items: levelItems,
   helper: $locale('LevelPlaceholder'),
 });
@@ -87,7 +87,7 @@ ZovaRender.field('demo-student:formFieldLevel', {
 and:
 
 ```typescript
-ZovaRender.cell('demo-student:level', { items: levelItems });
+ZovaRender.cell('training-student:level', { items: levelItems });
 ```
 
 This is the point where a user request about “better list presentation” and “better form guidance” starts turning into explicit renderer resources and backend metadata links.
@@ -110,7 +110,7 @@ These checks are the reverse-chain synchronization steps AI must complete so the
 1. refresh the generated handoff surfaces before checking backend consumers:
 
 ```bash
-npm run zova :tools:metadata demo-student
+npm run zova :tools:metadata training-student
 npm run build:zova:admin
 npm run deps:vona
 ```
@@ -137,7 +137,7 @@ npm run dev
 3. open `http://localhost:7102/admin/`
 4. enter the **Student** list page and verify that the `level` column now uses the custom table-cell presentation
 5. open a Student create, update, or view form and verify that the `level` field now uses the custom form-field behavior
-6. inspect `vona/src/module/demo-student/src/entity/student.tsx` and confirm that the backend metadata now points to `demo-student:formFieldLevel` and `demo-student:level`
+6. inspect `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx` and confirm that the backend metadata now points to `training-student:formFieldLevel` and `training-student:level`
 
 ## Read more
 

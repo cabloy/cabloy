@@ -145,18 +145,18 @@ A practical rule is:
 - treat metadata generation, flavor build, and `deps:vona` as one reverse-chain handoff
 - do not stop after the frontend source edit alone
 
-## `demo-student` as a compact reverse-chain specimen
+## `training-student` as a compact reverse-chain specimen
 
 A compact specimen helps make the reverse chain concrete without replaying the full tutorials.
 
 A practical example thread looks like this:
 
 1. frontend-owned truth lives in module resources such as:
-   - `zova/src/module/demo-student/src/bean/tableCell.level.tsx`
-   - `zova/src/module/demo-student/src/component/formFieldLevel/controller.tsx`
+   - `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.level.tsx`
+   - `zova/src/suite/a-training/modules/training-student/src/component/formFieldLevel/controller.tsx`
 2. frontend-generated metadata is refreshed and the relevant flavor build output is rebuilt
 3. `npm run deps:vona` refreshes what Vona can see from the frontend side
-4. backend-side metadata such as `vona/src/module/demo-student/src/entity/student.tsx` can safely reference the refreshed frontend resource identities through `ZovaRender.*(...)`
+4. backend-side metadata such as `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx` can safely reference the refreshed frontend resource identities through `ZovaRender.*(...)`
 5. if the generated/shared output already contains the right resource keys but Vona still behaves stale, the next suspect is local dependency drift instead of missing source edits
 
 The key point is simple:

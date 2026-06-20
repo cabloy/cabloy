@@ -13,7 +13,7 @@ This matters in large TypeScript-heavy systems because generic components help k
 Example: convert component `card` into a generic component.
 
 ```bash
-npm run zova :refactor:componentGeneric card -- --module=demo-student
+npm run zova :refactor:componentGeneric card -- --module=training-student
 ```
 
 ## Why the CLI matters here

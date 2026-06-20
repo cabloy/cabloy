@@ -61,13 +61,13 @@ Start here when:
 
 Primary source anchor:
 
-- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
 
 What to confirm:
 
 - the row metadata still uses the intended `ZovaRender.cell(...)` identity
 - nested `ZovaRender.tableActionRow(...)` entries include the expected action names
-- custom actions such as `demo-student:actionSummary` or `demo-student:actionDeleteForce` are still present where expected
+- custom actions such as `training-student:actionSummary` or `training-student:actionDeleteForce` are still present where expected
 
 If this layer is wrong, stop here and fix the metadata truth first.
 
@@ -80,10 +80,10 @@ Only do this when the visible action depends on a changed backend endpoint such 
 
 Primary source anchors:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `zova/src/module/demo-student/cli/openapi.config.ts`
-- `zova/src/module/demo-student/src/api/demoStudent.ts`
-- `zova/src/module/demo-student/src/model/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `zova/src/suite/a-training/modules/training-student/cli/openapi.config.ts`
+- `zova/src/suite/a-training/modules/training-student/src/api/trainingStudent.ts`
+- `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
 
 What to confirm:
 
@@ -105,8 +105,8 @@ Start here when:
 
 Primary source anchors:
 
-- `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
-- `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`
+- `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionSummary.tsx`
+- `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionDeleteForce.tsx`
 - `zova/src/suite/cabloy-basic/modules/basic-table/src/bean/tableCell.actionOperationsRow.tsx`
 
 What to confirm:

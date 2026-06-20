@@ -69,7 +69,7 @@ Typical forward-chain case:
 ### Recommended shape
 
 ```typescript
-const StudentResource = 'demo-student:student';
+const StudentResource = 'training-student:student';
 
 @Model()
 export class ModelStudent extends BeanModelBase {
@@ -83,7 +83,7 @@ export class ModelStudent extends BeanModelBase {
       id,
       action: 'summary',
       queryFn: async () => {
-        const res = await this.scope.api.demoStudent.summary({ params: { id } });
+        const res = await this.scope.api.trainingStudent.summary({ params: { id } });
         return res ?? null;
       },
       meta: {
@@ -97,7 +97,7 @@ export class ModelStudent extends BeanModelBase {
       id,
       action: 'deleteForce',
       mutationFn: async () => {
-        await this.scope.api.demoStudent.deleteForce({ params: { id } });
+        await this.scope.api.trainingStudent.deleteForce({ params: { id } });
       },
     });
   }
@@ -116,7 +116,10 @@ export class ModelStudent extends BeanModelBase {
 A custom cell or command can consume the thin facade and trigger the semantic method:
 
 ```typescript
-const modelStudent = (await ctx.bean._getBean('demo-student.model.student', true)) as ModelStudent;
+const modelStudent = (await ctx.bean._getBean(
+  'training-student.model.student',
+  true,
+)) as ModelStudent;
 const querySummary = modelStudent.summary(id);
 const { data: summary } = await querySummary.refetch();
 ```
@@ -148,7 +151,7 @@ summary(id: TableIdentity) {
     id,
     action: 'summary',
     queryFn: async () => {
-      const res = await this.scope.api.demoStudent.summary({ params: { id } });
+      const res = await this.scope.api.trainingStudent.summary({ params: { id } });
       return res ?? null;
     },
     meta: {
@@ -221,7 +224,7 @@ deleteForce(id: TableIdentity) {
     id,
     action: 'deleteForce',
     mutationFn: async () => {
-      await this.scope.api.demoStudent.deleteForce({ params: { id } });
+      await this.scope.api.trainingStudent.deleteForce({ params: { id } });
     },
   });
 }
@@ -248,7 +251,7 @@ publish(id: TableIdentity) {
     action: 'publish',
     invalidateSelect: false,
     mutationFn: async () => {
-      await this.scope.api.demoStudent.publish({ params: { id } });
+      await this.scope.api.trainingStudent.publish({ params: { id } });
     },
     onSuccess: async () => {
       await this.$$modelResource.$invalidateQueries({ queryKey: ['select'] });
@@ -388,7 +391,7 @@ batchArchive(ids: TableIdentity[]) {
   return this.$$modelResource.$useMutationData<void, TableIdentity[]>({
     mutationKey: ['batchArchive'],
     mutationFn: async ids => {
-      await this.scope.api.demoStudent.batchArchive({ ids });
+      await this.scope.api.trainingStudent.batchArchive({ ids });
     },
     onSuccess: async () => {
       await this.$$modelResource.$invalidateQueries({ queryKey: ['select'] });

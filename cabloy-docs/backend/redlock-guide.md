@@ -10,10 +10,10 @@ Vona provides a Redlock-based distributed lock abstraction so that mutual exclus
 
 ## Create a redlock definition
 
-Example: create redlock metadata in module `demo-student`.
+Example: create redlock metadata in module `training-student`.
 
 ```bash
-npm run vona :create:bean meta redlock -- --module=demo-student
+npm run vona :create:bean meta redlock -- --module=training-student
 ```
 
 ## Lock resource types

@@ -13,10 +13,10 @@ That matters because backend contracts often need errors that are:
 
 ## Initialize the error skeleton
 
-Example: initialize error resources for module `demo-student`.
+Example: initialize error resources for module `training-student`.
 
 ```bash
-npm run vona :init:error demo-student
+npm run vona :init:error training-student
 ```
 
 This gives the module the standard files for defining error codes and their language resources.
@@ -66,7 +66,7 @@ Cross-module error access uses the cross-module scope surface.
 Representative pattern:
 
 ```typescript
-this.$scope.demoStudent.error.ErrorTest.throw();
+this.$scope.trainingStudent.error.ErrorTest.throw();
 ```
 
 A practical distinction is:

@@ -10,10 +10,10 @@ This matters because recurring work is modeled with the same broader distributed
 
 ## Create a schedule
 
-Example: create a schedule named `log` in module `demo-student`.
+Example: create a schedule named `log` in module `training-student`.
 
 ```bash
-npm run vona :create:bean schedule log -- --module=demo-student
+npm run vona :create:bean schedule log -- --module=training-student
 ```
 
 ## Schedule definition

@@ -28,15 +28,15 @@ A practical contributor rule is:
 
 ### Current built-in scenes with variants
 
-| Scene          | Default metadata key | Named variant keys  | Example command                                                                               | Source module          |
-| -------------- | -------------------- | ------------------- | --------------------------------------------------------------------------------------------- | ---------------------- |
-| `filter`       | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean filter log -- --module=demo-student --boilerplate=global`          | `vona-module-a-aspect` |
-| `pipe`         | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean pipe log -- --module=demo-student --boilerplate=global`            | `vona-module-a-aspect` |
-| `interceptor`  | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean interceptor log -- --module=demo-student --boilerplate=global`     | `vona-module-a-aspect` |
-| `guard`        | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean guard auth -- --module=demo-student --boilerplate=global`          | `vona-module-a-aspect` |
-| `middleware`   | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean middleware trace -- --module=demo-student --boilerplate=global`    | `vona-module-a-aspect` |
-| `ssrMenu`      | `boilerplate`        | `boilerplateWeb`    | `npm run vona :create:bean ssrMenu menuTest -- --module=demo-student --boilerplate=web`       | `vona-module-a-ssr`    |
-| `ssrMenuGroup` | `boilerplate`        | `boilerplateWeb`    | `npm run vona :create:bean ssrMenuGroup groupTest -- --module=demo-student --boilerplate=web` | `vona-module-a-ssr`    |
+| Scene          | Default metadata key | Named variant keys  | Example command                                                                                   | Source module          |
+| -------------- | -------------------- | ------------------- | ------------------------------------------------------------------------------------------------- | ---------------------- |
+| `filter`       | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean filter log -- --module=training-student --boilerplate=global`          | `vona-module-a-aspect` |
+| `pipe`         | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean pipe log -- --module=training-student --boilerplate=global`            | `vona-module-a-aspect` |
+| `interceptor`  | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean interceptor log -- --module=training-student --boilerplate=global`     | `vona-module-a-aspect` |
+| `guard`        | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean guard auth -- --module=training-student --boilerplate=global`          | `vona-module-a-aspect` |
+| `middleware`   | `boilerplate`        | `boilerplateGlobal` | `npm run vona :create:bean middleware trace -- --module=training-student --boilerplate=global`    | `vona-module-a-aspect` |
+| `ssrMenu`      | `boilerplate`        | `boilerplateWeb`    | `npm run vona :create:bean ssrMenu menuTest -- --module=training-student --boilerplate=web`       | `vona-module-a-ssr`    |
+| `ssrMenuGroup` | `boilerplate`        | `boilerplateWeb`    | `npm run vona :create:bean ssrMenuGroup groupTest -- --module=training-student --boilerplate=web` | `vona-module-a-ssr`    |
 
 These backend entries come from the current `vonaModule.onions` metadata in `a-aspect` and `a-ssr`.
 
@@ -44,10 +44,10 @@ These backend entries come from the current `vonaModule.onions` metadata in `a-a
 
 ### Current built-in scenes with variants
 
-| Scene       | Default metadata key | Named variant keys                                | Example command pattern                                                                          | Source module           |
-| ----------- | -------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------- |
-| `command`   | `boilerplate`        | `boilerplateCommandBulk`, `boilerplateCommandRow` | `npm run zova :create:bean command test -- --module=demo-student --boilerplate=commandRow`       | `zova-module-a-command` |
-| `tableCell` | `boilerplate`        | `boilerplateTableActionRow`                       | `npm run zova :create:bean tableCell test -- --module=demo-student --boilerplate=tableActionRow` | `zova-module-a-table`   |
+| Scene       | Default metadata key | Named variant keys                                | Example command pattern                                                                              | Source module           |
+| ----------- | -------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
+| `command`   | `boilerplate`        | `boilerplateCommandBulk`, `boilerplateCommandRow` | `npm run zova :create:bean command test -- --module=training-student --boilerplate=commandRow`       | `zova-module-a-command` |
+| `tableCell` | `boilerplate`        | `boilerplateTableActionRow`                       | `npm run zova :create:bean tableCell test -- --module=training-student --boilerplate=tableActionRow` | `zova-module-a-table`   |
 
 These frontend entries come from the current `zovaModule.onions` metadata in `a-command` and `a-table`.
 

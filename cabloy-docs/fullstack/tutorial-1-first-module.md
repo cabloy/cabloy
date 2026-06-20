@@ -17,7 +17,7 @@ By the end of this tutorial, you will understand:
 Give AI a prompt like this:
 
 ```text
-I'm building a Student Training Center project. Please create a demo-student module for both the backend and frontend.
+I'm building a Student Training Center project. Please create an a-training suite and a training-student module for both the backend and frontend.
 ```
 
 ## Why this step matters
@@ -40,20 +40,24 @@ npm run vona :create
 npm run zova :create
 ```
 
-Representative module-generation commands:
+Representative suite/module generation commands:
 
 ```bash
-npm run vona :create:module demo-student -- --suite=
-npm run zova :create:module demo-student -- --suite=
+npm run vona :create:suite a-training
+npm run zova :create:suite a-training
+
+npm run vona :create:module training-student -- --suite=a-training
+npm run zova :create:module training-student -- --suite=a-training
 ```
 
 Usage notes:
 
+- use `npm run vona :create:suite` and `npm run zova :create:suite` first because training is a real business domain
 - use `npm run vona :create:module` for the backend module boundary
 - use `npm run zova :create:module` for the frontend module boundary
-- use an empty `--suite=` when you want an independent module rather than a suite-owned module
-- this tutorial uses the standalone path to keep the first example minimal; for the normal suite-first domain decision path, see [Suites and Modules](/fullstack/suites-and-modules)
-- rerun `npm run dev` after module creation so the local workflow picks up the new modules cleanly
+- use `--suite=a-training` so both module roots land in the suite-owned location
+- this tutorial follows the current suite-first path; for the decision model behind that rule, see [Suites and Modules](/fullstack/suites-and-modules)
+- rerun `npm run dev` after suite/module creation so the local workflow picks up the new modules cleanly
 
 ## Generated or affected files
 
@@ -65,21 +69,24 @@ Typical paths in this repo are:
 - frontend module root without suite placement: `zova/src/module/<module>/`
 - frontend module root with suite placement: `zova/src/suite/<suite>/modules/<module>/`
 
-In this series, the target module roots are:
+In this series, the target suite/module roots are:
 
-- `vona/src/module/demo-student/`
-- `zova/src/module/demo-student/`
+- `vona/src/suite/a-training/`
+- `vona/src/suite/a-training/modules/training-student/`
+- `zova/src/suite/a-training/`
+- `zova/src/suite/a-training/modules/training-student/`
 
 A minimal frontend module usually starts with files like:
 
-- `zova/src/module/demo-student/package.json`
-- `zova/src/module/demo-student/src/index.ts`
-- `zova/src/module/demo-student/src/.metadata/index.ts`
+- `zova/src/suite/a-training/modules/training-student/package.json`
+- `zova/src/suite/a-training/modules/training-student/src/index.ts`
+- `zova/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 ## What those files mean in the business thread
 
 At this stage, the key idea is ownership, not business logic yet.
 
+- the backend suite root is the domain boundary for future training-related modules
 - the backend module root is where the Student resource, entity, DTOs, controller, tests, and backend metadata will live later
 - the frontend module root is where generated OpenAPI output, model helpers, render resources, and frontend metadata will live later
 - the frontend `.metadata` entrypoint is part of how the module exposes its local registration surface
@@ -96,9 +103,11 @@ npm run dev
 
 2. confirm that both module roots now exist
 3. inspect the generated files before editing them
-4. confirm that the generated module roots match the target paths for this series:
-   - `vona/src/module/demo-student/`
-   - `zova/src/module/demo-student/`
+4. confirm that the generated suite/module roots match the target paths for this series:
+   - `vona/src/suite/a-training/`
+   - `vona/src/suite/a-training/modules/training-student/`
+   - `zova/src/suite/a-training/`
+   - `zova/src/suite/a-training/modules/training-student/`
 
 ## Read more
 

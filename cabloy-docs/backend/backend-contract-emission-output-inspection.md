@@ -6,7 +6,7 @@ This page is a practical inspection companion for one narrow backend question:
 
 It uses one concrete emitted thread as the specimen:
 
-- `GET /demo/student/summary/:id`
+- `GET /training/student/summary/:id`
 
 Use this page together with:
 
@@ -69,13 +69,13 @@ That is the most practical raw inspection surface when you want to confirm the e
 
 Keep one small emitted path in mind while inspecting output:
 
-- `GET /demo/student/summary/:id`
+- `GET /training/student/summary/:id`
 
 The authored/backend anchors for that path are:
 
-- `vona/src/module/demo-student/src/controller/student.ts`
-- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 This page is not re-walking those files in depth. It uses them as the comparison baseline for the emitted output.
 
@@ -129,13 +129,13 @@ A practical reading takeaway is:
 
 The generated module surface in:
 
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 should still agree with what you see in emitted output.
 
 The two most useful checks are:
 
-- the DTO registry includes `demo-student:studentSummary`
+- the DTO registry includes `training-student:studentSummary`
 - the generated API path records include the summary route
 
 That gives you a compact consistency triangle:

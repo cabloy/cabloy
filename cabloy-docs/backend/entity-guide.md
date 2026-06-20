@@ -10,10 +10,10 @@ That makes entity design one of the main places where database structure and API
 
 ## Create an entity
 
-Example: create an entity named `student` in module `demo-student`.
+Example: create an entity named `student` in module `training-student`.
 
 ```bash
-npm run vona :create:bean entity student -- --module=demo-student
+npm run vona :create:bean entity student -- --module=training-student
 ```
 
 ## Entity definition
@@ -21,7 +21,7 @@ npm run vona :create:bean entity student -- --module=demo-student
 Representative pattern:
 
 ```typescript
-@Entity<IEntityOptionsStudent>('demoStudent')
+@Entity<IEntityOptionsStudent>('trainingStudent')
 export class EntityStudent extends EntityBase {}
 ```
 

@@ -106,19 +106,19 @@ A practical reading takeaway is:
 
 > the best default is often not “handwritten DTO or no DTO.” It is “named DTO class backed by the right inferred helper.”
 
-## `demo-student` as the decision specimen
+## `training-student` as the decision specimen
 
-The current `demo-student` module is a strong specimen because it shows several different DTO choices in one compact family.
+The current `training-student` module is a strong specimen because it shows several different DTO choices in one compact family.
 
 Relevant source files include:
 
-- `vona/src/module/demo-student/src/dto/studentCreate.tsx`
-- `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
-- `vona/src/module/demo-student/src/dto/studentView.tsx`
-- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
-- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-- `vona/src/module/demo-student/src/dto/studentSelectRes.tsx`
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentUpdate.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentView.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectRes.tsx`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 ### Create and update DTOs
 
@@ -157,7 +157,7 @@ Again, the class keeps a named public identity, while the DTO shape stays close 
 Representative source facts:
 
 - it extends `$Dto.queryPage(EntityStudent, ['name', 'level', 'createdAt'])`
-- it also adds `@Dto({ openapi: { filter: { table: 'demoStudent' } }, fields: { ... } })`
+- it also adds `@Dto({ openapi: { filter: { table: 'trainingStudent' } }, fields: { ... } })`
 - `level` uses preprocess logic so string query input can be normalized before schema validation
 - `createdAt` uses `v.filterTransform('a-web:dateRange')`
 
@@ -254,9 +254,9 @@ For the query side of this topic, also see [ORM Aggregate and Group Guide](/back
 
 When you change or add DTOs, do not think only about the local DTO file.
 
-The current `demo-student` module also makes DTOs visible through generated metadata in:
+The current `training-student` module also makes DTOs visible through generated metadata in:
 
-- `vona/src/module/demo-student/src/.metadata/index.ts`
+- `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 
 The DTO-facing part of that generated registry includes:
 

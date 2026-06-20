@@ -11,7 +11,7 @@ Zova enhances route params handling with typed support so page controllers can w
 Example: add params support for page `counter`.
 
 ```bash
-npm run zova :refactor:pageParams counter -- --module=demo-student
+npm run zova :refactor:pageParams counter -- --module=training-student
 ```
 
 ## Add params schema
@@ -47,7 +47,7 @@ Representative route idea:
 When the route definition changes, regenerate module metadata so the framework’s typed route information stays aligned.
 
 ```bash
-npm run zova :tools:metadata demo-student
+npm run zova :tools:metadata training-student
 ```
 
 For the broader schema model behind `z`, coercion, defaults, and nested structures, see [Zod Guide](/frontend/zod-guide).
@@ -69,7 +69,7 @@ class ControllerPageCounter {
 Representative pattern:
 
 ```typescript
-const url = this.$router.getPagePath('/demo/student/counter/:id?', {
+const url = this.$router.getPagePath('/training/student/counter/:id?', {
   params: {
     id: 1,
   },

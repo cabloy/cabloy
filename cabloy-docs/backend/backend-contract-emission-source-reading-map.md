@@ -62,15 +62,15 @@ It starts from the authored contract surfaces, then stops when the emitted backe
 
 Use this order:
 
-1. `vona/src/module/demo-student/src/controller/student.ts`
-2. `vona/src/module/demo-student/src/dto/studentCreate.tsx`
-3. `vona/src/module/demo-student/src/dto/studentUpdate.tsx`
-4. `vona/src/module/demo-student/src/dto/studentView.tsx`
-5. `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
-6. `vona/src/module/demo-student/src/dto/studentSelectRes.tsx`
-7. `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
-8. `vona/src/module/demo-student/src/entity/student.tsx`
-9. `vona/src/module/demo-student/src/.metadata/index.ts`
+1. `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
+2. `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx`
+3. `vona/src/suite/a-training/modules/training-student/src/dto/studentUpdate.tsx`
+4. `vona/src/suite/a-training/modules/training-student/src/dto/studentView.tsx`
+5. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
+6. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectRes.tsx`
+7. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+8. `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+9. `vona/src/suite/a-training/modules/training-student/src/.metadata/index.ts`
 10. then return to the conceptual emission surface in [OpenAPI Guide](/backend/openapi-guide)
 
 That order starts from the route/action contract surface, descends through the DTO and entity metadata that shape the emitted contract, and then returns to the OpenAPI-specific conceptual layer once the inputs are clear.

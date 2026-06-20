@@ -30,10 +30,10 @@ Current `a-model` source supports a broader state family that includes:
 
 ## Create a model
 
-Example: create a model named `menu` in module `demo-student`.
+Example: create a model named `menu` in module `training-student`.
 
 ```bash
-npm run zova :create:bean model menu -- --module=demo-student
+npm run zova :create:bean model menu -- --module=training-student
 ```
 
 ## Basic model definition
