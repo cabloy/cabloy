@@ -27,6 +27,10 @@ Once the module exists, this is the next useful step because the prompt can driv
 
 That keeps the conversation focused on the generated business thread rather than on repetitive scaffolding details.
 
+> [!NOTE]
+> This tutorial continues the standalone `demo-student` sandbox from Tutorial 1.
+> That sandbox is intentional: it lets you run the full tutorial flow without colliding with the repo's real suite-owned `a-training/training-student` implementation.
+
 ## CLI commands to inspect/use
 
 Inspect the CRUD family first:
@@ -40,13 +44,13 @@ npm run vona :tools:crudBasic --help
 Generate the `student` CRUD thread:
 
 ```bash
-npm run vona :tools:crud student -- --module=training-student
+npm run vona :tools:crud student -- --module=demo-student
 ```
 
 Equivalent Basic-specific entrypoint:
 
 ```bash
-npm run vona :tools:crudBasic student -- --module=training-student
+npm run vona :tools:crudBasic student -- --module=demo-student
 ```
 
 Usage notes:
@@ -59,7 +63,7 @@ Usage notes:
 
 After generation, inspect the resulting backend thread before refining anything.
 
-By the end of this tutorial, your `training-student` backend thread should have a representative shape under `vona/src/suite/a-training/modules/training-student/src/`:
+By the end of this tutorial, your `demo-student` backend thread should have a representative shape under `vona/src/module/demo-student/src/`:
 
 - `controller/student.ts`
 - `service/student.ts`
@@ -75,7 +79,7 @@ By the end of this tutorial, your `training-student` backend thread should have 
 
 There is also a test anchor at:
 
-- `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
+- `vona/src/module/demo-student/test/student.test.ts`
 
 ## What those files mean in the business thread
 
@@ -103,9 +107,9 @@ npm run dev
 3. enter the **Student** list page from the **Student** menu
 4. trigger create, read, update, and delete operations from the page
 5. inspect the generated backend files and confirm that the CRUD layers are present:
-   - `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
-   - `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
-   - `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+   - `vona/src/module/demo-student/src/entity/student.tsx`
+   - `vona/src/module/demo-student/src/controller/student.ts`
+   - `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
 
 ## Read more
 

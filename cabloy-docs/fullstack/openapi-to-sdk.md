@@ -6,6 +6,10 @@ This page is the **forward chain** deep dive for Cabloy’s bidirectional contra
 
 In the bidirectional [Contract Loop Playbook](/fullstack/contract-loop-playbook), this page covers the **forward chain**:
 
+> [!NOTE]
+> The fullstack tutorial series intentionally uses a standalone `demo-student` sandbox so readers can experiment without colliding with the repo's real suite-owned `a-training/training-student` implementation.
+> This guide focuses on the current repo implementation as its forward-chain specimen.
+
 1. Vona emits backend API metadata through Swagger/OpenAPI
 2. Zova consumes that metadata to generate frontend SDKs and schema-aware helpers
 3. frontend pages, models, and services build on those generated contracts instead of re-declaring everything manually

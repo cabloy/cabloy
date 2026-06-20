@@ -9,6 +9,10 @@ The teaching thread in this page is the pair of Student actions:
 - `summary/:id`
 - `deleteForce/:id`
 
+> [!NOTE]
+> This tutorial still runs inside the standalone `demo-student` sandbox from the earlier pages.
+> Use that sandbox for OpenAPI regeneration experiments so you do not interfere with the repo's real suite-owned `a-training/training-student` implementation.
+
 ## Goal
 
 By the end of this tutorial, you will understand:
@@ -43,8 +47,8 @@ Inspect the relevant command surfaces first:
 
 ```bash
 npm run zova :openapi
-npm run zova :openapi:config training-student
-npm run zova :openapi:generate training-student
+npm run zova :openapi:config demo-student
+npm run zova :openapi:generate demo-student
 ```
 
 If your workflow also needs refreshed rest-contract output for Cabloy Basic, the related build commands are:
@@ -66,11 +70,11 @@ Usage notes:
 
 The backend contract anchors are:
 
-- `vona/src/suite/a-training/modules/training-student/src/controller/student.ts`
-- `vona/src/suite/a-training/modules/training-student/src/dto/studentSummary.tsx`
-- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+- `vona/src/module/demo-student/src/controller/student.ts`
+- `vona/src/module/demo-student/src/dto/studentSummary.tsx`
+- `vona/src/module/demo-student/src/dto/studentSelectResItem.tsx`
 
-By the end of this tutorial, your `training-student` controller should expose:
+By the end of this tutorial, your `demo-student` controller should expose:
 
 ```typescript
 @Web.get('summary/:id')
@@ -83,16 +87,16 @@ async deleteForce(...) { ... }
 The frontend contract and consumption anchors are:
 
 - OpenAPI config:
-  - `zova/src/suite/a-training/modules/training-student/cli/openapi.config.ts`
+  - `zova/src/module/demo-student/cli/openapi.config.ts`
 - generated frontend API:
-  - `zova/src/suite/a-training/modules/training-student/src/api/trainingStudent.ts`
+  - `zova/src/module/demo-student/src/api/demoStudent.ts`
 - frontend model wrapper:
-  - `zova/src/suite/a-training/modules/training-student/src/model/student.ts`
+  - `zova/src/module/demo-student/src/model/student.ts`
 - custom row-action cells:
-  - `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionSummary.tsx`
-  - `zova/src/suite/a-training/modules/training-student/src/bean/tableCell.actionDeleteForce.tsx`
+  - `zova/src/module/demo-student/src/bean/tableCell.actionSummary.tsx`
+  - `zova/src/module/demo-student/src/bean/tableCell.actionDeleteForce.tsx`
 
-After regeneration, `src/api/trainingStudent.ts` should contain generated methods such as:
+After regeneration, `src/api/demoStudent.ts` should contain generated methods such as:
 
 - `summary(...)`
 - `deleteForce(...)`
@@ -105,7 +109,7 @@ This tutorial is easiest to understand as one contract chain:
 2. `dto/studentSummary.tsx` defines the response contract for the summary action
 3. `dto/studentSelectResItem.tsx` defines the row-action metadata that exposes those actions in the Student list page
 4. `cli/openapi.config.ts` tells the frontend module which backend operations it owns
-5. `src/api/trainingStudent.ts` is the generated typed API surface created from that backend contract
+5. `src/api/demoStudent.ts` is the generated typed API surface created from that backend contract
 6. `src/model/student.ts` wraps the generated API in a thin frontend semantic facade
 7. the model should reuse the existing resource-owner for server-state ownership when the new API still belongs to the Student resource
 8. `tableCell.actionSummary.tsx` and `tableCell.actionDeleteForce.tsx` turn those model methods into visible row actions
@@ -128,7 +132,7 @@ npm run dev
    - `controller/student.ts`
    - `dto/studentSummary.tsx`
    - `dto/studentSelectResItem.tsx`
-   - `src/api/trainingStudent.ts`
+   - `src/api/demoStudent.ts`
    - `src/model/student.ts`
    - `tableCell.actionSummary.tsx`
    - `tableCell.actionDeleteForce.tsx`

@@ -6,6 +6,10 @@ This page is the **reverse chain** deep dive for Cabloy’s bidirectional contra
 
 The fullstack collaboration loop in Cabloy is not one-way.
 
+> [!NOTE]
+> The fullstack tutorial series intentionally uses a standalone `demo-student` sandbox so readers can experiment without colliding with the repo's real suite-owned `a-training/training-student` implementation.
+> This guide focuses on the current repo implementation as its reverse-chain specimen.
+
 In the bidirectional [Contract Loop Playbook](/fullstack/contract-loop-playbook), this page covers the **reverse chain**:
 
 1. frontend-owned truth changes first

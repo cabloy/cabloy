@@ -6,6 +6,10 @@ In this tutorial, one prompt lets AI show the **reverse chain** of Cabloy’s fu
 
 You start with the simplest path first: reuse the existing built-in rendering resources for the `level` field.
 
+> [!NOTE]
+> This tutorial still uses the standalone `demo-student` sandbox introduced in Tutorial 1.
+> Keep that sandbox separate from the repo's real suite-owned `a-training/training-student` example so you can experiment and compare the two paths side by side.
+
 ## Goal
 
 By the end of this tutorial, you will understand:
@@ -50,8 +54,8 @@ You usually do **not** need to generate a custom bean in this tutorial.
 
 Instead, inspect the current contract surfaces first:
 
-- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
-- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
+- `vona/src/module/demo-student/src/entity/student.tsx`
+- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
 
 Usage notes:
 
@@ -63,7 +67,7 @@ Usage notes:
 
 The key backend contract anchor is:
 
-- `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx`
+- `vona/src/module/demo-student/src/entity/student.tsx`
 
 By the end of this tutorial, the `level` field should follow a built-in path like this:
 
@@ -84,7 +88,7 @@ level: number;
 
 A related DTO anchor is:
 
-- `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectReq.tsx`
+- `vona/src/module/demo-student/src/dto/studentSelectReq.tsx`
 
 That DTO already shows how filter-side field metadata can also participate in schema-driven UI.
 
@@ -117,7 +121,7 @@ npm run dev
 2. open `http://localhost:7102/admin/`
 3. enter the **Student** list page from the **Student** menu
 4. verify that the `level` field appears with select-style behavior in the relevant schema-driven surfaces
-5. inspect `vona/src/suite/a-training/modules/training-student/src/entity/student.tsx` and confirm that the backend field contract now points to built-in frontend render resources instead of page-local hard-coded UI logic
+5. inspect `vona/src/module/demo-student/src/entity/student.tsx` and confirm that the backend field contract now points to built-in frontend render resources instead of page-local hard-coded UI logic
 
 ## Read more
 
