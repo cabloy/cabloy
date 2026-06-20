@@ -1,0 +1,12 @@
+{
+  "name": "vona-suite-a-training",
+  "version": "5.0.0",
+  "description": "",
+  "author": "",
+  "files": [],
+  "type": "module",
+  "dependencies": {
+    "vona-module-training-student": "^5.0.0"
+  },
+  "title": "a-training"
+}

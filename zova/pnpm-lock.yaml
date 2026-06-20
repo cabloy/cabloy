@@ -252,9 +252,6 @@ importers:
       zova-module-demo-basic:
         specifier: workspace:^
         version: link:src/suite/a-demo/modules/demo-basic
-      zova-module-demo-student:
-        specifier: workspace:^
-        version: link:src/module/demo-student
       zova-module-demo-todo:
         specifier: workspace:^
         version: link:src/suite/a-demo/modules/demo-todo
@@ -297,6 +294,9 @@ importers:
       zova-module-rest-resource:
         specifier: workspace:^
         version: link:src/suite-vendor/a-cabloy/modules/rest-resource
+      zova-module-training-student:
+        specifier: workspace:^
+        version: link:src/suite/a-training/modules/training-student
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.18
@@ -901,15 +901,6 @@ importers:
       vite:
         specifier: ^8.0.14
         version: 8.0.16(@types/node@22.19.21)(esbuild@0.27.7)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0)
-
-  src/module/demo-student:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.3
 
   src/suite-vendor/a-cabloy:
     dependencies:
@@ -1531,6 +1522,21 @@ importers:
         version: 6.1.3
 
   src/suite/a-home/modules/home-theme:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-training:
+    dependencies:
+      zova-module-training-student:
+        specifier: ^5.0.0
+        version: link:modules/training-student
+
+  src/suite/a-training/modules/training-student:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

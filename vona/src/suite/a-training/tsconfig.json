@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/training-student/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}
