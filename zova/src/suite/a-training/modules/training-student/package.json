@@ -48,5 +48,10 @@
       "exports.\\..import"
     ]
   },
-  "title": "training-student"
+  "title": "training-student",
+  "zovaModule": {
+    "dependencies": {
+      "basic-app": "5.0.0"
+    }
+  }
 }

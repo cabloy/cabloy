@@ -48,5 +48,10 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-table"
+  "title": "basic-table",
+  "zovaModule": {
+    "dependencies": {
+      "basic-app": "5.0.0"
+    }
+  }
 }

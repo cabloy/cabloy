@@ -34,8 +34,10 @@ export class TableCellActionDeleteForce extends BeanBase implements ITableCellRe
         onClick={async e => {
           e.preventDefault();
           e.stopPropagation();
-          // eslint-disable-next-line no-alert
-          if (!window.confirm(this.scope.locale.ForceDeleteConfirm())) return;
+          const confirmed = await this.$appModal.confirm({
+            text: this.scope.locale.ForceDeleteConfirm(),
+          });
+          if (!confirmed) return;
           const modelStudent = await this._getModelStudent();
           await modelStudent.deleteForce(renderContext.cellContext.row.id).mutateAsync();
         }}
