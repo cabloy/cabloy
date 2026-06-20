@@ -64,10 +64,19 @@ export class EntityStudent extends EntityBase {
     v.title($locale('Level')),
     v.required(),
     ZovaRender.order(4),
+    // Tutorial 3 built-in form renderer example. Keep it commented here for side-by-side comparison.
+    // ZovaRender.field('basic-select:formFieldSelect', {
+    //   items: studentLevelItems,
+    //   placeholder: $locale('Level'),
+    // }),
+    // Tutorial 3 built-in table cell renderer example.
+    // ZovaRender.cell('basic-select:select', { items: studentLevelItems }),
+    // Tutorial 4 custom form renderer example used by the current implementation.
     ZovaRender.field('training-student:formFieldLevel', {
       items: studentLevelItems,
       placeholder: $locale('Level'),
     }),
+    // Tutorial 4 custom table cell renderer example used by the current implementation.
     ZovaRender.cell('training-student:level', { items: studentLevelItems }),
     studentLevelSchema,
   )
