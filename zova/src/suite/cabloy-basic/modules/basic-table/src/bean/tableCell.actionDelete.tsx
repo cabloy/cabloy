@@ -32,7 +32,7 @@ export class TableCellActionDelete extends BeanBase implements ITableCellRender 
         class={options.class}
         type="button"
         onClick={async () => {
-          const confirmed = await this.$appModal.confirm({
+          const confirmed = await $host.$performCommand('basic-commands:confirm', {
             text: this.scope.locale.DeleteConfirm(),
           });
           if (!confirmed) return;

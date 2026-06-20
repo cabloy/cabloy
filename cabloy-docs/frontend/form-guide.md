@@ -276,8 +276,11 @@ Use `onShowError` when you want a centralized user-facing error handler.
 
 ```tsx
 <ZForm
-  onShowError={({ error }) => {
-    window.alert(error.message);
+  onShowError={async ({ error }) => {
+    await this.$performCommand('basic-commands:alert', {
+      type: 'error',
+      text: error.message,
+    });
   }}
 ></ZForm>
 ```
@@ -583,8 +586,11 @@ Once the Student model side is prepared, the render side can stay thin:
   formMeta={this.studentFormMeta}
   formProvider={this.studentFormProvider}
   onSubmitData={data => this.submitStudent(data)}
-  onShowError={({ error }) => {
-    window.alert(error.message);
+  onShowError={async ({ error }) => {
+    await this.$performCommand('basic-commands:alert', {
+      type: 'error',
+      text: error.message,
+    });
   }}
 ></ZForm>
 ```

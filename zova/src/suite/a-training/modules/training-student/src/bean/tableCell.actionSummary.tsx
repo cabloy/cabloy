@@ -46,7 +46,7 @@ export class TableCellActionSummary extends BeanBase implements ITableCellRender
             `${this.scope.locale.Level()}: ${summary?.level ?? '-'}`,
             `${this.scope.locale.Description()}: ${summary?.description ?? '-'}`,
           ].join('\n');
-          await $host.$performCommand('basic-commands:alert', { message }, renderContext);
+          await $host.$performCommand('basic-commands:alert', { text: message }, renderContext);
         }}
       >
         {this.scope.locale.Summary()}

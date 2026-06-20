@@ -1,3 +1,5 @@
+import type { IModalConfirmOptions, IModalDialogOptions } from 'zova-module-basic-app';
+
 import { BeanBase } from 'zova';
 import {
   Command,
@@ -7,22 +9,22 @@ import {
 } from 'zova-module-a-command';
 import { IJsxRenderContextBase } from 'zova-module-a-openapi';
 
-export type TypeCommandConfirmResult = boolean;
+export type TypeCommandConfirmResult = Promise<boolean>;
 
-export interface ICommandOptionsConfirm extends ICommandOptionsBase<TypeCommandConfirmResult> {
-  message: string;
+export interface ICommandOptionsConfirm
+  extends ICommandOptionsBase<TypeCommandConfirmResult>, IModalConfirmOptions {
+  dialogOptions?: IModalDialogOptions;
 }
 
 @Command<ICommandOptionsConfirm>()
 export class CommandConfirm extends BeanBase implements ICommandExecute {
   async execute(
     options: ICommandOptionsConfirm,
-    _renderContext: IJsxRenderContextBase,
+    renderContext: IJsxRenderContextBase,
     next: NextCommandExecute,
   ) {
-    const res = await this.$appModal.confirm({
-      text: options.message,
-    });
+    const { $host } = renderContext;
+    const res = await $host.$appModal.confirm(options, options.dialogOptions);
     return next(res);
   }
 }

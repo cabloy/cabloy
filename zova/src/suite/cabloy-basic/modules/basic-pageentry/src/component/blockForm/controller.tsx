@@ -42,9 +42,11 @@ export class ControllerBlockForm extends BeanControllerBase {
         formProvider={$$pageEntry.formProvider}
         formScope={$$pageEntry.jsxCelScope}
         onSubmitData={data => $$pageEntry.submitData(data)}
-        onShowError={({ error }) => {
-          // eslint-disable-next-line no-alert
-          window.alert(error.message);
+        onShowError={async ({ error }) => {
+          await this.$performCommand('basic-commands:alert', {
+            type: 'error',
+            text: error.message,
+          });
         }}
         onChanged={data => {
           $$pageEntry.setPageMeta(data, true);

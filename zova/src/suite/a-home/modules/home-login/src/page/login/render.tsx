@@ -45,9 +45,11 @@ export class RenderPageLogin extends BeanRenderBase {
         onSubmitData={data => {
           return this.submitLogin(data);
         }}
-        onShowError={({ error }) => {
-          // eslint-disable-next-line no-alert
-          window.alert(error.message);
+        onShowError={async ({ error }) => {
+          await this.$performCommand('basic-commands:alert', {
+            type: 'error',
+            text: error.message,
+          });
         }}
       >
         <ZFormFieldPreset
