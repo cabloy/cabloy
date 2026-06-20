@@ -12,6 +12,16 @@ import { IResourceTableActionRowRecord } from './resource/tableActionRow.js';
 
 export interface ISchemaRenderComponentPresetRecord extends IResourceFormFieldRecord {}
 
+export interface ISchemaObjectExtensionFieldDetail {
+  mode?: 'detail' | string;
+  relation?: string;
+  relationType?: 'hasOne' | 'belongsTo' | 'hasMany' | 'belongsToMany' | string;
+  cardinality?: 'one' | 'many';
+  layout?: 'table' | 'form' | 'cards' | string;
+  scene?: 'get' | 'create' | 'update' | 'mutate' | string;
+  readonly?: boolean;
+}
+
 export interface ISchemaObjectExtensionFieldRest {
   'blocks'?: IResourceRenderBlockOptionsBlock[];
   //
@@ -20,6 +30,7 @@ export interface ISchemaObjectExtensionFieldRest {
   'order'?: number;
   'disableNotifyChanged'?: boolean;
   'readonly'?: boolean;
+  'detail'?: ISchemaObjectExtensionFieldDetail;
   //
   'render'?: TypeFormFieldRenderComponentNormal | TypeTableCellRenderComponentNormal;
   'table'?: Omit<ISchemaObjectExtensionFieldRest, TypeSchemaScene>;

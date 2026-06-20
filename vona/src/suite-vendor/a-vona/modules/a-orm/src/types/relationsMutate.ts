@@ -13,7 +13,7 @@ import type {
   TypeUtilGetRelationOptionsAutoload,
   TypeUtilGetRelationType,
 } from './relations.ts';
-import type { IModelRelationOptionsMetaWrapper } from './relationsDef.ts';
+import type { IModelRelationOptionsMetaWrapper, TypeModelRelationDtoMode } from './relationsDef.ts';
 
 export type TypeModelMutateParamsInclude<MODEL extends BeanModelMeta | undefined> =
   TypeModelMutateParamsIncludeByModelOptions<TypeUtilGetModelOptions<MODEL>>;
@@ -33,6 +33,7 @@ export type TypeModelMutateParamsRelationOptions<Relation> =
   | (IModelRelationOptionsMetaWrapper & {
       include?: TypeModelMutateParamsInclude<TypeUtilGetRelationModel<Relation>>;
       with?: Record<string, unknown>;
+      dto?: TypeModelRelationDtoMode;
     });
 
 export type TypeModelMutateRelationResultMergeInclude<

@@ -25,4 +25,6 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStudentCreate extends $Dto.create(() => ModelStudent) {}
+export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
+  include: { trainingRecords: true },
+}) {}

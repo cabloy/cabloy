@@ -12,12 +12,12 @@ import {
 } from 'vona-module-a-openapiutils';
 import z from 'zod';
 
-import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type { IDtoGetParams, TypeDtoGetResult } from '../../types/dto/dtoGet.ts';
 import type { TypeDtoMutateType } from '../../types/dto/dtoMutate.ts';
 import type { IModelRelationIncludeWrapper } from '../../types/model.ts';
 import type { IDecoratorModelOptions, IModelClassRecord } from '../../types/onion/model.ts';
 import type { IRelationItem } from '../../types/relationsDef.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 
 import {
   getClassEntityFromClassModel,
@@ -115,7 +115,15 @@ function _DtoGet_relation_handle<TRecord extends {}>(
       );
       schema = v.array(v.lazy(schemaLazy));
     }
-    Api.field(v.optional(), schema)(entityClass.prototype, relationName);
+    _DtoGet_relation_field(
+      entityClass,
+      relationName,
+      schema,
+      true,
+      optionsReal?.dto,
+      type,
+      mutateTypeTopLevel,
+    );
   } else {
     const schemaLazy = _DtoGet_relation_handle_schemaLazy(
       modelTarget,
@@ -139,12 +147,37 @@ function _DtoGet_relation_handle<TRecord extends {}>(
         schema = v.array(v.lazy(schemaLazy));
       }
     }
-    if (optional) {
-      Api.field(v.optional(), schema)(entityClass.prototype, relationName);
-    } else {
-      Api.field(schema)(entityClass.prototype, relationName);
-    }
+    _DtoGet_relation_field(
+      entityClass,
+      relationName,
+      schema,
+      optional,
+      optionsReal?.dto,
+      type,
+      mutateTypeTopLevel,
+    );
   }
+}
+
+function _DtoGet_relation_field<TRecord extends {}>(
+  entityClass: Constructable<TRecord>,
+  relationName: string,
+  schema,
+  optional: boolean,
+  dto,
+  relationType: string,
+  mutateTypeTopLevel?: TypeDtoMutateType,
+) {
+  const dtoMode = _DtoGet_relation_dtoMode(dto, mutateTypeTopLevel);
+  const detailSchemaLike = _DtoGet_relation_detailSchemaLike(
+    dtoMode,
+    relationName,
+    relationType,
+    mutateTypeTopLevel,
+  );
+  const fieldSchemas = detailSchemaLike ? [detailSchemaLike, schema] : [schema];
+  const fieldArgs = optional ? [v.optional(), ...fieldSchemas] : fieldSchemas;
+  Api.field(...fieldArgs)(entityClass.prototype, relationName);
 }
 
 function _DtoGet_relation_handle_schemaLazy(
@@ -212,6 +245,40 @@ function _DtoGet_relation_handle_schemaLazy_hashkey(
   return columns || aggrs || groups || mutateTypeTopLevel
     ? hashkey({ columns, aggrs, groups, mutate: mutateTypeTopLevel })
     : 'none';
+}
+
+function _DtoGet_relation_dtoMode(dto, mutateTypeTopLevel?: TypeDtoMutateType) {
+  if (!dto) return;
+  if (typeof dto === 'string') return dto;
+  if (mutateTypeTopLevel) {
+    return dto[mutateTypeTopLevel] ?? dto.mutate ?? dto.default;
+  }
+  return dto.get ?? dto.view ?? dto.default;
+}
+
+function _DtoGet_relation_detailSchemaLike(
+  dtoMode,
+  relationName: string,
+  relationType: string,
+  mutateTypeTopLevel?: TypeDtoMutateType,
+) {
+  if (dtoMode !== 'detail') return;
+  const isMany = relationType === 'hasMany' || relationType === 'belongsToMany';
+  const scene = mutateTypeTopLevel ?? 'get';
+  return v.openapi({
+    rest: {
+      render: 'basic-form:formFieldRelationDetail',
+      detail: {
+        mode: 'detail',
+        relation: relationName,
+        relationType,
+        cardinality: isMany ? 'many' : 'one',
+        layout: isMany ? 'table' : 'form',
+        scene,
+        readonly: !mutateTypeTopLevel,
+      },
+    },
+  });
 }
 
 function _DtoGet_relations_collection<TModel extends BeanModelMeta>(

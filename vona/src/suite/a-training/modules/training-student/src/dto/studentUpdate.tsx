@@ -25,4 +25,6 @@ export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStudentUpdate extends $Dto.update(() => ModelStudent) {}
+export class DtoStudentUpdate extends $Dto.update(() => ModelStudent, {
+  include: { trainingRecords: true },
+}) {}

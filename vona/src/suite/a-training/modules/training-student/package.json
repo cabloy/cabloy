@@ -30,7 +30,9 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore && npm run clean"
   },
-  "dependencies": {},
+  "dependencies": {
+    "vona-module-training-record": "^5.0.0"
+  },
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"

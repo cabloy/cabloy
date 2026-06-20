@@ -6,6 +6,7 @@
   "files": [],
   "type": "module",
   "dependencies": {
+    "zova-module-training-record": "^5.0.0",
     "zova-module-training-student": "^5.0.0"
   },
   "title": "a-training"

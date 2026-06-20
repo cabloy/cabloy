@@ -1,6 +1,4 @@
-import type { IApiActionOptions } from 'zova-module-a-api';
-
-import { Api, BeanApiBase } from 'zova-module-a-api';
+import { Api, BeanApiBase, IApiActionOptions } from 'zova-module-a-api';
 
 import type { components, paths } from './openapi/index.js';
 

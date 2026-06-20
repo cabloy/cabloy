@@ -7,6 +7,16 @@ import type { ILocaleMagic } from 'vona';
 import type { IOpenapiOptions } from 'vona-module-a-openapiutils';
 import type { core, z } from 'zod';
 
+export interface ISchemaObjectExtensionFieldDetail {
+  mode?: 'detail' | string;
+  relation?: string;
+  relationType?: 'hasOne' | 'belongsTo' | 'hasMany' | 'belongsToMany' | string;
+  cardinality?: 'one' | 'many';
+  layout?: 'table' | 'form' | 'cards' | string;
+  scene?: 'get' | 'create' | 'update' | 'mutate' | string;
+  readonly?: boolean;
+}
+
 export interface ISchemaObjectExtensionFieldRestProps {
   //
   fieldSource?: string;
@@ -15,6 +25,7 @@ export interface ISchemaObjectExtensionFieldRestProps {
   disableNotifyChanged?: boolean;
   readonly?: boolean;
   required?: boolean;
+  detail?: ISchemaObjectExtensionFieldDetail;
 }
 
 export interface ISchemaObjectExtensionFieldRest extends ISchemaObjectExtensionFieldRestProps {

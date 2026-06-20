@@ -7,6 +7,7 @@ import type {
   TypeModelAggrRelationResultAggrs,
   TypeUtilGetAggrsFromRelationAndIncludeWrapper,
 } from './relationsAggr.ts';
+import type { TypeModelRelationDtoMode } from './relationsDef.ts';
 import type {
   TypeModelGroupRelationResultGroups,
   TypeUtilGetGroupsFromRelationAndIncludeWrapper,
@@ -68,6 +69,7 @@ export type TypeModelParamsRelationOptions<Relation> =
   | (Omit<TypeUtilGetRelationOptions<Relation>, 'autoload'> & {
       include?: TypeModelParamsInclude<TypeUtilGetRelationModel<Relation>>;
       with?: Record<string, unknown>;
+      dto?: TypeModelRelationDtoMode;
     });
 
 export type TypeUtilGetRelationType<Relation> = Relation extends { type?: infer TYPE }
@@ -129,6 +131,11 @@ export type TypeUtilGetRelationOptionsGroups<Relation> = Relation extends {
   options?: { groups?: infer Groups };
 }
   ? Groups
+  : undefined;
+export type TypeUtilGetRelationOptionsDto<Relation> = Relation extends {
+  options?: { dto?: infer DTO };
+}
+  ? DTO
   : undefined;
 export type TypeUtilGetModelOptions<Model extends BeanModelMeta | undefined> =
   Model extends BeanModelMeta ? Model[TypeSymbolKeyModelOptions] : undefined;

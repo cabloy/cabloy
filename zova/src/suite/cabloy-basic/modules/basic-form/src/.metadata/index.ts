@@ -2,6 +2,7 @@
 /** controller: begin */
 export * from '../component/actionBack/controller.jsx';
 export * from '../component/actionSubmit/controller.jsx';
+export * from '../component/formFieldRelationDetail/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
@@ -18,17 +19,24 @@ declare module 'zova-module-basic-form' {
         export interface ControllerActionSubmit {
           /** @internal */
           get scope(): ScopeModuleBasicForm;
+        }
+
+        export interface ControllerFormFieldRelationDetail {
+          /** @internal */
+          get scope(): ScopeModuleBasicForm;
         } 
 }
 /** controller: end */
 /** controller: begin */
 import { ControllerActionBack } from '../component/actionBack/controller.jsx';
 import { ControllerActionSubmit } from '../component/actionSubmit/controller.jsx';
+import { ControllerFormFieldRelationDetail } from '../component/formFieldRelationDetail/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-form.controller.actionBack': ControllerActionBack;
 'basic-form.controller.actionSubmit': ControllerActionSubmit;
+'basic-form.controller.formFieldRelationDetail': ControllerFormFieldRelationDetail;
   }
 }
 /** controller: end */
@@ -38,19 +46,24 @@ export * from './component/actionBack.js';
 import { ZActionBack } from './component/actionBack.js';
 export * from './component/actionSubmit.js';
 import { ZActionSubmit } from './component/actionSubmit.js';
+export * from './component/formFieldRelationDetail.js';
+import { ZFormFieldRelationDetail } from './component/formFieldRelationDetail.js';
 export const components = {
   'actionBack': ZActionBack,
 'actionSubmit': ZActionSubmit,
+'formFieldRelationDetail': ZFormFieldRelationDetail,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
   'basic-form:actionBack': ControllerActionBack;
 'basic-form:actionSubmit': ControllerActionSubmit;
+'basic-form:formFieldRelationDetail': ControllerFormFieldRelationDetail;
 }
 export interface IZovaComponentRecord {
   'basic-form:actionBack': typeof ZActionBack;
 'basic-form:actionSubmit': typeof ZActionSubmit;
+'basic-form:formFieldRelationDetail': typeof ZFormFieldRelationDetail;
 }
 }
 /** components: end */

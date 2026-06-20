@@ -22,4 +22,6 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStudentView extends $Dto.get(() => ModelStudent) {}
+export class DtoStudentView extends $Dto.get(() => ModelStudent, {
+  include: { trainingRecords: true },
+}) {}

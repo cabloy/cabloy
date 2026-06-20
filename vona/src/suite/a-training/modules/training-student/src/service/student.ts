@@ -1,5 +1,9 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type {
+  IModelMutateRelationIncludeWrapper,
+  IModelRelationIncludeWrapper,
+  IQueryParams,
+} from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
@@ -12,10 +16,18 @@ import type { DtoStudentView } from '../dto/studentView.tsx';
 import type { EntityStudent } from '../entity/student.tsx';
 import type { ModelStudent } from '../model/student.ts';
 
+function studentDetailGetOptions(): IModelRelationIncludeWrapper<ModelStudent> {
+  return { include: { trainingRecords: true } };
+}
+
+function studentDetailMutateOptions(): IModelMutateRelationIncludeWrapper<ModelStudent> {
+  return { include: { trainingRecords: true } };
+}
+
 @Service()
 export class ServiceStudent extends BeanBase {
   async create(student: DtoStudentCreate): Promise<EntityStudent> {
-    return await this.scope.model.student.insert(student);
+    return await this.scope.model.student.insert(student, studentDetailMutateOptions());
   }
 
   async select(params?: IQueryParams<ModelStudent>): Promise<DtoStudentSelectRes> {
@@ -23,11 +35,11 @@ export class ServiceStudent extends BeanBase {
   }
 
   async view(id: TableIdentity): Promise<DtoStudentView | undefined> {
-    return await this.scope.model.student.getById(id);
+    return await this.scope.model.student.getById(id, studentDetailGetOptions());
   }
 
   async update(id: TableIdentity, student: DtoStudentUpdate) {
-    return await this.scope.model.student.updateById(id, student);
+    return await this.scope.model.student.updateById(id, student, studentDetailMutateOptions());
   }
 
   async summary(id: TableIdentity): Promise<DtoStudentSummary | undefined> {

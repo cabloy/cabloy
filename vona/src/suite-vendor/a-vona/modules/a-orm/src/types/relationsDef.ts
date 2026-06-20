@@ -182,6 +182,17 @@ export interface IBuildModelRelationOptionsMany<
   autoload?: AUTOLOAD;
 }
 
+export type TypeModelRelationDtoMode = 'default' | 'detail' | (string & {});
+
+export interface IModelRelationDtoOptions {
+  default?: TypeModelRelationDtoMode;
+  get?: TypeModelRelationDtoMode;
+  view?: TypeModelRelationDtoMode;
+  create?: TypeModelRelationDtoMode;
+  update?: TypeModelRelationDtoMode;
+  mutate?: TypeModelRelationDtoMode;
+}
+
 export interface IModelRelationOptionsMetaBasic {
   client?: TypeModelRelationOptionsMetaClient;
   table?: TypeModelOptionsTable;
@@ -193,6 +204,7 @@ export interface IModelRelationOptionsMeta extends IModelRelationOptionsMetaBasi
 
 export interface IModelRelationOptionsMetaWrapper {
   meta?: IModelRelationOptionsMeta;
+  dto?: TypeModelRelationDtoMode | IModelRelationDtoOptions;
 }
 
 export type TypeModelRelationOptionsMetaClient =
