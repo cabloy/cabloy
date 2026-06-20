@@ -5,6 +5,7 @@ import type {
   NextTableCellRender,
 } from 'zova-module-a-table';
 
+import { TableIdentity } from 'table-identity';
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
@@ -27,27 +28,26 @@ export class TableCellActionDeleteForce extends BeanBase implements ITableCellRe
     renderContext: IJsxRenderContextTableCell,
     _next: NextTableCellRender,
   ) {
+    const { $host, cellContext, ctx } = renderContext;
     return (
       <button
         class={options.class}
         type="button"
-        onClick={async e => {
-          e.preventDefault();
-          e.stopPropagation();
-          const confirmed = await this.$appModal.confirm({
+        onClick={async () => {
+          const confirmed = await $host.$performCommand('basic-commands:confirm', {
             text: this.scope.locale.ForceDeleteConfirm(),
           });
           if (!confirmed) return;
-          const modelStudent = await this._getModelStudent();
-          await modelStudent.deleteForce(renderContext.cellContext.row.id).mutateAsync();
+          const id = cellContext.row.id as TableIdentity;
+          const modelStudent = (await ctx.bean._getBean(
+            'training-student.model.student',
+            true,
+          )) as ModelStudent;
+          await modelStudent.deleteForce(id).mutateAsync();
         }}
       >
         {this.scope.locale.ForceDelete()}
       </button>
     );
-  }
-
-  private async _getModelStudent() {
-    return (await this.bean._getBean('training-student.model.student', true)) as ModelStudent;
   }
 }
