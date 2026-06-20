@@ -15,13 +15,14 @@ export interface ICommandOptionsConfirm extends ICommandOptionsBase<TypeCommandC
 
 @Command<ICommandOptionsConfirm>()
 export class CommandConfirm extends BeanBase implements ICommandExecute {
-  execute(
+  async execute(
     options: ICommandOptionsConfirm,
     _renderContext: IJsxRenderContextBase,
     next: NextCommandExecute,
   ) {
-    // eslint-disable-next-line no-alert
-    const res = window.confirm(options.message);
+    const res = await this.$appModal.confirm({
+      text: options.message,
+    });
     return next(res);
   }
 }

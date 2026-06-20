@@ -18,10 +18,9 @@ export class CommandAlert extends BeanBase implements ICommandExecute {
     _renderContext: IJsxRenderContextBase,
     next: NextCommandExecute,
   ) {
-    setTimeout(() => {
-      // eslint-disable-next-line no-alert
-      window.alert(options.message);
-    }, 0);
+    this.$appModal.alert({
+      text: options.message,
+    });
     return next();
   }
 }

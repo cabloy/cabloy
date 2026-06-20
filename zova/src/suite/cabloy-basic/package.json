@@ -8,6 +8,7 @@
   "type": "module",
   "dependencies": {
     "zova-module-basic-adapter": "^5.0.5",
+    "zova-module-basic-app": "^5.0.0",
     "zova-module-basic-captcha": "^5.0.8",
     "zova-module-basic-commands": "^5.1.15",
     "zova-module-basic-commandssync": "^5.0.5",

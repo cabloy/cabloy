@@ -213,6 +213,9 @@ importers:
       zova-module-basic-adapter:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-adapter
+      zova-module-basic-app:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-app
       zova-module-basic-captcha:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-captcha
@@ -807,7 +810,7 @@ importers:
         specifier: ^5.1.57
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.102
+        specifier: ^5.1.103
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -986,7 +989,7 @@ importers:
         specifier: ^5.1.29
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.31
+        specifier: ^5.1.32
         version: link:modules/a-table
       zova-module-a-zod:
         specifier: ^5.1.30
@@ -1550,6 +1553,9 @@ importers:
       zova-module-basic-adapter:
         specifier: ^5.0.5
         version: link:modules/basic-adapter
+      zova-module-basic-app:
+        specifier: ^5.0.0
+        version: link:modules/basic-app
       zova-module-basic-captcha:
         specifier: ^5.0.8
         version: link:modules/basic-captcha
@@ -1591,6 +1597,15 @@ importers:
         version: link:../../suite-vendor/a-cabloy
 
   src/suite/cabloy-basic/modules/basic-adapter:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/cabloy-basic/modules/basic-app:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

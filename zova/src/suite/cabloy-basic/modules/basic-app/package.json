@@ -1,15 +1,14 @@
 {
-  "name": "zova-module-basic-commands",
-  "version": "5.1.15",
-  "gitHead": "09d901d17140a80ee0764211b441cda72fd94663",
+  "name": "zova-module-basic-app",
+  "version": "5.0.0",
   "description": "",
   "keywords": [
     "Zova Module"
   ],
   "author": "",
   "files": [
-    "dist",
     "mock",
+    "dist",
     "src",
     "icons",
     "assets"
@@ -33,6 +32,7 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore && npm run clean"
   },
+  "dependencies": {},
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"
@@ -48,10 +48,13 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-commands",
+  "title": "basic-app",
   "zovaModule": {
+    "capabilities": {
+      "monkey": true
+    },
     "dependencies": {
-      "basic-app": "5.0.0"
+      "a-zova": "5.0.0"
     }
   }
 }
