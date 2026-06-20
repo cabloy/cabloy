@@ -9,25 +9,19 @@ export type TypeCommandAlertResult = unknown;
 
 export interface ICommandOptionsAlert extends ICommandOptionsBase<TypeCommandAlertResult> {
   message: string;
-  wait?: boolean;
 }
 
-@Command<ICommandOptionsAlert>({ wait: true })
+@Command<ICommandOptionsAlert>()
 export class CommandAlert extends BeanBase implements ICommandExecute {
   execute(
     options: ICommandOptionsAlert,
     _renderContext: IJsxRenderContextBase,
     next: NextCommandExecute,
   ) {
-    if (options.wait) {
+    setTimeout(() => {
       // eslint-disable-next-line no-alert
       window.alert(options.message);
-    } else {
-      setTimeout(() => {
-        // eslint-disable-next-line no-alert
-        window.alert(options.message);
-      }, 0);
-    }
+    }, 0);
     return next();
   }
 }
