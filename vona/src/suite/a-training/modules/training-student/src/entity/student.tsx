@@ -86,6 +86,7 @@ export class EntityStudent extends EntityBase {
   @Api.field(
     v.title($locale('TrainingRecords')),
     ZovaRender.order(5),
+    ZovaRender.field('basic-detail:formFieldDetails'),
     v.optional(),
     v.array(DtoDetailRecordResItem),
   )
