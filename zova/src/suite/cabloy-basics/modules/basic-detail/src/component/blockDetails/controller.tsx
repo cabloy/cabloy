@@ -14,7 +14,7 @@ import { BeanControllerTableBase } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
-    'basic-detail:blockDetails'?: ControllerBlockDetailsProps;
+    'basic-details:blockDetails'?: ControllerBlockDetailsProps;
   }
 }
 

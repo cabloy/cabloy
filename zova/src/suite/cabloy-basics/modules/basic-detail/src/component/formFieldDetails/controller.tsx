@@ -17,7 +17,7 @@ import { ZFormField } from 'zova-module-a-form';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
-    'basic-detail:formFieldDetails'?: IResourceFormFieldDetailsOptions;
+    'basic-details:formFieldDetails'?: IResourceFormFieldDetailsOptions;
   }
 }
 

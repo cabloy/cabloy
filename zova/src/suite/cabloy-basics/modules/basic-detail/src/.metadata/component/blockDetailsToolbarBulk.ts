@@ -14,7 +14,7 @@ type ControllerInnerProps = TypeControllerInnerProps<
   ControllerBlockDetailsToolbarBulkProps,
   keyof typeof ControllerBlockDetailsToolbarBulk.$propsDefault
 >;
-declare module 'zova-module-basic-detail' {
+declare module 'zova-module-basic-details' {
   export interface ControllerBlockDetailsToolbarBulk {
     $props: ControllerInnerProps;
   }
@@ -26,6 +26,6 @@ export const ZBlockDetailsToolbarBulk = defineComponent((_props: ZBlockDetailsTo
 }, prepareComponentOptions(ControllerBlockDetailsToolbarBulk.$componentOptions));
 declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
-    'basic-detail:blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulkProps;
+    'basic-details:blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulkProps;
   }
 }

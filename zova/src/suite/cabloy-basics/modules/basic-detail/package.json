@@ -1,5 +1,5 @@
 {
-  "name": "zova-module-basic-detail",
+  "name": "zova-module-basic-details",
   "version": "5.0.0",
   "description": "",
   "keywords": [
@@ -48,5 +48,5 @@
       "exports.\\..import"
     ]
   },
-  "title": "basic-detail"
+  "title": "basic-details"
 }

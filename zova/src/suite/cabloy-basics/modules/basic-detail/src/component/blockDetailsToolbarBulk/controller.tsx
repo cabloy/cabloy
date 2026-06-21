@@ -11,7 +11,7 @@ import { Controller } from 'zova-module-a-bean';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
-    'basic-detail:blockDetailsToolbarBulk'?: ControllerBlockDetailsToolbarBulkProps;
+    'basic-details:blockDetailsToolbarBulk'?: ControllerBlockDetailsToolbarBulkProps;
   }
 }
 

@@ -14,7 +14,7 @@ type ControllerInnerProps<TData extends {} = {}> = TypeControllerInnerProps<
   ControllerBlockDetailsProps<TData>,
   keyof typeof ControllerBlockDetails.$propsDefault
 >;
-declare module 'zova-module-basic-detail' {
+declare module 'zova-module-basic-details' {
   export interface ControllerBlockDetails<TData extends {} = {}> {
     $props: ControllerInnerProps<TData>;
   }
@@ -29,6 +29,6 @@ export const ZBlockDetails = defineComponent(
 );
 declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
-    'basic-detail:blockDetails': ControllerBlockDetailsProps;
+    'basic-details:blockDetails': ControllerBlockDetailsProps;
   }
 }
