@@ -14,6 +14,7 @@
     "zova-module-basic-commandssync": "^5.0.5",
     "zova-module-basic-currency": "^5.1.15",
     "zova-module-basic-date": "^5.0.6",
+    "zova-module-basic-detail": "^5.0.0",
     "zova-module-basic-form": "^5.0.7",
     "zova-module-basic-input": "^5.0.7",
     "zova-module-basic-page": "^5.0.7",

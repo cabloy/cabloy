@@ -231,6 +231,9 @@ importers:
       zova-module-basic-date:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-date
+      zova-module-basic-detail:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-detail
       zova-module-basic-form:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-form
@@ -1571,6 +1574,9 @@ importers:
       zova-module-basic-date:
         specifier: ^5.0.6
         version: link:modules/basic-date
+      zova-module-basic-detail:
+        specifier: ^5.0.0
+        version: link:modules/basic-detail
       zova-module-basic-form:
         specifier: ^5.0.7
         version: link:modules/basic-form
@@ -1655,6 +1661,15 @@ importers:
         version: 6.1.3
 
   src/suite/cabloy-basic/modules/basic-date:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/cabloy-basic/modules/basic-detail:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
