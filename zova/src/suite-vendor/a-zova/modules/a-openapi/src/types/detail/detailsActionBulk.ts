@@ -1,25 +1,24 @@
-// import { types } from 'typestyle';
-// import { TypeRenderComponentJsx } from 'zova-jsx';
+import { types } from 'typestyle';
+import { TypeRenderComponentJsx } from 'zova-jsx';
 
-// import type { IPermissionHintTableActionBulk } from '../permissions.js';
+import type { IPermissionHintDetailsActionBulk } from '../permissions.js';
 
-// export type IResourceTableActionBulkNameRecord = {
-//   [KEY in keyof IResourceTableActionBulkRecord as KEY extends `${string}:action${infer Name}`
-//     ? Uncapitalize<Name>
-//     : KEY]: IResourceTableActionBulkRecord[KEY];
-// };
+export type IResourceDetailsActionBulkNameRecord = {
+  [KEY in keyof IResourceDetailsActionBulkRecord as KEY extends `${string}:action${infer Name}`
+    ? Uncapitalize<Name>
+    : KEY]: IResourceDetailsActionBulkRecord[KEY];
+};
 
-// export interface IResourceTableActionBulkRecord {}
+export interface IResourceDetailsActionBulkRecord {}
 
-// export interface IResourceTableActionBulkOptionsBase {
-//   class?: any;
-//   style?: types.NestedCSSProperties;
-//   resource?: string;
-//   permission?: IPermissionHintTableActionBulk;
-// }
+export interface IResourceDetailsActionBulkOptionsBase {
+  class?: any;
+  style?: types.NestedCSSProperties;
+  permission?: IPermissionHintDetailsActionBulk;
+}
 
-// export interface IResourceRenderTableActionBulkOptionsAction {
-//   name?: keyof IResourceTableActionBulkNameRecord; // not omit operationsBulk
-//   render?: keyof IResourceTableActionBulkRecord | TypeRenderComponentJsx;
-//   options?: IResourceTableActionBulkOptionsBase;
-// }
+export interface IResourceRenderDetailsActionBulkOptionsAction {
+  name?: keyof IResourceDetailsActionBulkNameRecord; // not omit operationsBulk
+  render?: keyof IResourceDetailsActionBulkRecord | TypeRenderComponentJsx;
+  options?: IResourceDetailsActionBulkOptionsBase;
+}

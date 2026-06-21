@@ -34,3 +34,9 @@ export interface IPermissionHintTableActionBulk {
   actionInherit?: keyof IResourceTableActionBulkNameRecord;
   public?: boolean;
 }
+
+export interface IPermissionHintDetailsActionBulk {
+  // actionInherit?: keyof IResourceDetailsActionBulkNameRecord;
+  // public?: boolean;
+  formScene?: TypeFormScene | TypeFormScene[];
+}

@@ -6,9 +6,11 @@ import { Controller } from 'zova-module-a-bean';
 import {
   IDetailsScope,
   IJsxRenderContextDetails,
+  IPermissionHintDetailsActionBulk,
   IResourceBlockOptionsBase,
   IResourceRenderBlockOptionsBlock,
   ISchemaObjectExtensionField,
+  TypeFormScene,
 } from 'zova-module-a-openapi';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 
@@ -22,6 +24,7 @@ export interface ControllerBlockDetailsProps<
   TData extends {} = {},
 > extends IResourceBlockOptionsBase {
   blocks?: IResourceRenderBlockOptionsBlock[];
+  formScene?: TypeFormScene;
   schemaRow?: ISchemaObjectExtensionField;
   getDetailItems?: () => TData[] | undefined;
   setDetailItems?: (detailItems: TData[]) => void;
@@ -47,8 +50,21 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
     return this.$props.getDetailItems?.() ?? [];
   }
 
+  get formScene() {
+    return this.$props.formScene!;
+  }
+
   get schemaRow() {
     return this.$props.schemaRow!;
+  }
+
+  public checkPermission(permissionHint?: IPermissionHintDetailsActionBulk): boolean {
+    const formScene = this.formScene;
+    const formSceneHint = permissionHint?.formScene;
+    if (!formSceneHint) return true;
+    if (Array.isArray(formSceneHint) && formSceneHint.includes(formScene!)) return true;
+    if (formSceneHint === formScene) return true;
+    return false;
   }
 
   private _prepareJsx() {

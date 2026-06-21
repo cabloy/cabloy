@@ -7,6 +7,7 @@ import type {
 import type {
   IResourceFormFieldOptionsBase,
   ISchemaObjectExtensionField,
+  TypeFormScene,
 } from 'zova-module-a-openapi';
 
 import { VNode } from 'vue';
@@ -68,6 +69,10 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
       schemaName!,
     ).data;
     if (!schemaRow) return;
+    // formScene
+    const formScene: TypeFormScene = propsBucket.readonly
+      ? 'view'
+      : $$formField.formMeta!.formScene!;
     // blocks
     const blocks = schemaRow?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
@@ -76,6 +81,7 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
       const options = deepExtend(
         { key: index },
         {
+          formScene,
           schemaRow,
           getDetailItems: () => {
             return propsBucket.value;

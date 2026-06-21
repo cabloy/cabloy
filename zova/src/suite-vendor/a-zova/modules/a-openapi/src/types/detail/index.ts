@@ -1,2 +1,2 @@
-export * from './detail.js';
+export * from './details.js';
 export * from './detailsActionBulk.js';
