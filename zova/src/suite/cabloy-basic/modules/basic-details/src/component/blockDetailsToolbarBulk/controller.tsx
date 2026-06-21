@@ -45,9 +45,9 @@ export class ControllerBlockDetailsToolbarBulk extends BeanControllerBase {
     if (!actions || actions.length === 0) return;
     const domActions: VNode[] = [];
     actions.forEach((action, index) => {
-      const actionName = action.name;
-      const permissionHint = action.options?.permission;
-      if (!this.$passport.checkPermission(this.permissions, actionName, permissionHint)) return;
+      // const actionName = action.name;
+      // const permissionHint = action.options?.permission;
+      // if (!this.$passport.checkPermission(this.permissions, actionName, permissionHint)) return;
       const options = Object.assign({ key: index }, action.options);
       const domAction = $jsx.render(action.render!, options, $celScope, this.$$renderContext);
       if (!domAction) return;

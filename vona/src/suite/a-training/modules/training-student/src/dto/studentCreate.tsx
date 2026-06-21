@@ -32,7 +32,7 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
     trainingRecords: $makeSchema(
       v.title($locale('TrainingRecords')),
       ZovaRender.order(5),
-      ZovaRender.field('basic-detail:formFieldDetails'),
+      ZovaRender.field('basic-details:formFieldDetails'),
       v.optional(),
       v.array(DtoDetailRecordResItem),
     ),
