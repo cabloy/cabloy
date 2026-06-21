@@ -64,16 +64,19 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
     if (!schemaName) {
       return <div>Should specify the detail schema</div>;
     }
-    const schema: ISchemaObjectExtensionField | undefined = this.$sdk.getSchema(schemaName!).data;
-    if (!schema) return;
+    const schemaRow: ISchemaObjectExtensionField | undefined = this.$sdk.getSchema(
+      schemaName!,
+    ).data;
+    if (!schemaRow) return;
     // blocks
-    const blocks = schema?.rest?.blocks;
+    const blocks = schemaRow?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
     const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = deepExtend(
         { key: index },
         {
+          schemaRow,
           getDetailItems: () => {
             return propsBucket.value;
           },

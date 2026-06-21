@@ -15,12 +15,11 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
   blocks: [
     ZovaRender.block('basic-detail:blockDetails', {
       blocks: [
-        ZovaRender.block('basic-page:blockFilter'),
-        ZovaRender.block('basic-page:blockToolbarBulk', {
-          actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
-        }),
-        ZovaRender.block('basic-page:blockTable'),
-        ZovaRender.block('basic-page:blockPager'),
+        // ZovaRender.block('basic-page:blockToolbarBulk', {
+        //   actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
+        // }),
+        // ZovaRender.block('basic-page:blockTable'),
+        // ZovaRender.block('basic-page:blockPager'),
       ],
     }),
   ],
