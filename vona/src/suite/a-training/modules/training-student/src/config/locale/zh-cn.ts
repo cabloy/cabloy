@@ -12,4 +12,5 @@ export default {
   LevelTitle: '阶段名称',
   DescriptionLength: '描述长度',
   ForceDelete: '强制删除',
+  TrainingRecords: '培训记录',
 };

@@ -12,4 +12,5 @@ export default {
   LevelTitle: 'Level Title',
   DescriptionLength: 'Description Length',
   ForceDelete: 'Force Delete',
+  TrainingRecords: 'Training Records',
 };

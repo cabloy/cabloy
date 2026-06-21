@@ -207,6 +207,7 @@ declare module 'vona-module-training-student' {
 /** meta: end */
 /** dto: begin */
 export * from '../dto/detailRecordMutate.tsx';
+export * from '../dto/detailRecordResItem.tsx';
 export * from '../dto/detailRecordView.tsx';
 export * from '../dto/studentCreate.tsx';
 export * from '../dto/studentSelectReq.tsx';
@@ -216,6 +217,7 @@ export * from '../dto/studentSummary.tsx';
 export * from '../dto/studentUpdate.tsx';
 export * from '../dto/studentView.tsx';
 import type { IDtoOptionsDetailRecordMutate } from '../dto/detailRecordMutate.tsx';
+import type { IDtoOptionsDetailRecordResItem } from '../dto/detailRecordResItem.tsx';
 import type { IDtoOptionsDetailRecordView } from '../dto/detailRecordView.tsx';
 import type { IDtoOptionsStudentCreate } from '../dto/studentCreate.tsx';
 import type { IDtoOptionsStudentSelectReq } from '../dto/studentSelectReq.tsx';
@@ -229,6 +231,7 @@ declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
       'training-student:detailRecordMutate': IDtoOptionsDetailRecordMutate;
+'training-student:detailRecordResItem': IDtoOptionsDetailRecordResItem;
 'training-student:detailRecordView': IDtoOptionsDetailRecordView;
 'training-student:studentCreate': IDtoOptionsStudentCreate;
 'training-student:studentSelectReq': IDtoOptionsStudentSelectReq;
@@ -247,6 +250,7 @@ declare module 'vona-module-training-student' {
 /** dto: end */
 /** dto: begin */
 import type { DtoDetailRecordMutate } from '../dto/detailRecordMutate.tsx';
+import type { DtoDetailRecordResItem } from '../dto/detailRecordResItem.tsx';
 import type { DtoDetailRecordView } from '../dto/detailRecordView.tsx';
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import type { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
@@ -259,6 +263,10 @@ declare module 'vona-module-training-student' {
   
     export interface IDtoOptionsDetailRecordMutate {
       fields?: TypeEntityOptionsFields<DtoDetailRecordMutate, IDtoOptionsDetailRecordMutate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsDetailRecordResItem {
+      fields?: TypeEntityOptionsFields<DtoDetailRecordResItem, IDtoOptionsDetailRecordResItem[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsDetailRecordView {
