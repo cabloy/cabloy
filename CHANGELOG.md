@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.65
+
+### Features
+
+- Update project functionality across multiple areas.
+
 ## 5.1.64
 
 ### Features
