@@ -38,8 +38,11 @@ declare module 'vona-module-training-record' {
     }
 }
 /** entity: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -47,6 +50,7 @@ export class ScopeModuleTrainingRecord extends BeanScopeBase {}
 
 export interface ScopeModuleTrainingRecord {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 }
 
@@ -62,7 +66,9 @@ declare module 'vona' {
   
   
 
-  
+  export interface IBeanScopeLocale {
+    'training-record': (typeof locales)[TypeLocaleBase];
+  }
 
   
 }
