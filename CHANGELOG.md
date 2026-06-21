@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.64
+
+### Features
+
+- Add various updates and feature enhancements across the project.
+
 ## 5.1.63
 
 ### Features
