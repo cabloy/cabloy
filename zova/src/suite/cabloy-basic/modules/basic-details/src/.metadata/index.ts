@@ -2,6 +2,7 @@
 /** controller: begin */
 export * from '../component/actionCreate/controller.jsx';
 export * from '../component/blockDetails/controller.jsx';
+export * from '../component/blockTable/controller.jsx';
 export * from '../component/blockToolbarBulk/controller.jsx';
 export * from '../component/formFieldDetails/controller.jsx';
 
@@ -22,6 +23,11 @@ declare module 'zova-module-basic-details' {
           get scope(): ScopeModuleBasicDetails;
         }
 
+        export interface ControllerBlockTable {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetails;
+        }
+
         export interface ControllerBlockToolbarBulk {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
@@ -36,6 +42,7 @@ declare module 'zova-module-basic-details' {
 /** controller: begin */
 import { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
 import { ControllerBlockDetails } from '../component/blockDetails/controller.jsx';
+import { ControllerBlockTable } from '../component/blockTable/controller.jsx';
 import { ControllerBlockToolbarBulk } from '../component/blockToolbarBulk/controller.jsx';
 import { ControllerFormFieldDetails } from '../component/formFieldDetails/controller.jsx';
 import 'zova';
@@ -43,6 +50,7 @@ declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-details.controller.actionCreate': ControllerActionCreate;
 'basic-details.controller.blockDetails': ControllerBlockDetails;
+'basic-details.controller.blockTable': ControllerBlockTable;
 'basic-details.controller.blockToolbarBulk': ControllerBlockToolbarBulk;
 'basic-details.controller.formFieldDetails': ControllerFormFieldDetails;
   }
@@ -54,6 +62,8 @@ export * from './component/actionCreate.js';
 import { ZActionCreate } from './component/actionCreate.js';
 export * from './component/blockDetails.js';
 import { ZBlockDetails } from './component/blockDetails.js';
+export * from './component/blockTable.js';
+import { ZBlockTable } from './component/blockTable.js';
 export * from './component/blockToolbarBulk.js';
 import { ZBlockToolbarBulk } from './component/blockToolbarBulk.js';
 export * from './component/formFieldDetails.js';
@@ -61,6 +71,7 @@ import { ZFormFieldDetails } from './component/formFieldDetails.js';
 export const components = {
   'actionCreate': ZActionCreate,
 'blockDetails': ZBlockDetails,
+'blockTable': ZBlockTable,
 'blockToolbarBulk': ZBlockToolbarBulk,
 'formFieldDetails': ZFormFieldDetails,
 };
@@ -69,17 +80,54 @@ declare module 'zova' {
 export interface IComponentRecord {
   'basic-details:actionCreate': ControllerActionCreate;
 'basic-details:blockDetails': ControllerBlockDetails;
+'basic-details:blockTable': ControllerBlockTable;
 'basic-details:blockToolbarBulk': ControllerBlockToolbarBulk;
 'basic-details:formFieldDetails': ControllerFormFieldDetails;
 }
 export interface IZovaComponentRecord {
   'basic-details:actionCreate': typeof ZActionCreate;
 'basic-details:blockDetails': typeof ZBlockDetails;
+'basic-details:blockTable': typeof ZBlockTable;
 'basic-details:blockToolbarBulk': typeof ZBlockToolbarBulk;
 'basic-details:formFieldDetails': typeof ZFormFieldDetails;
 }
 }
 /** components: end */
+/** tableCell: begin */
+export * from '../bean/tableCell.actionOperationsRow.jsx';
+import { ITableCellOptionsActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
+import 'zova-module-a-table';
+declare module 'zova-module-a-table' {
+  
+    export interface ITableCellRecord {
+      'basic-details:actionOperationsRow': ITableCellOptionsActionOperationsRow;
+    }
+
+  
+}
+declare module 'zova-module-basic-details' {
+  
+        export interface TableCellActionOperationsRow {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetails;
+        }
+
+        export interface TableCellActionOperationsRow {
+          get $beanFullName(): 'basic-details.tableCell.actionOperationsRow';
+          get $onionName(): 'basic-details:actionOperationsRow';
+          get $onionOptions(): ITableCellOptionsActionOperationsRow;
+        } 
+}
+/** tableCell: end */
+/** tableCell: begin */
+import { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'basic-details.tableCell.actionOperationsRow': TableCellActionOperationsRow;
+  }
+}
+/** tableCell: end */
 /** locale: begin */
 import { locales } from './locales.js';
 /** locale: end */

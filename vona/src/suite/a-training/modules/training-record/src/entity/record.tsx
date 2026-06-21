@@ -31,13 +31,7 @@ export class EntityRecord extends EntityBase {
   @Api.field(v.required(), ZovaRender.visible(false))
   studentId: TableIdentity;
 
-  @Api.field(
-    v.title($locale('Name')),
-    v.required(),
-    v.min(2),
-    ZovaRender.order(1),
-    ZovaRender.cell('basic-table:actionView'),
-  )
+  @Api.field(v.title($locale('Name')), v.required(), v.min(2), ZovaRender.order(1))
   name: string;
 
   @Api.field(v.title($locale('Score')), v.optional(), ZovaRender.order(2))

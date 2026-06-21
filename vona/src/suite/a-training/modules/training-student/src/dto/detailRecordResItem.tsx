@@ -18,8 +18,7 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
         ZovaRender.block('basic-details:blockToolbarBulk', {
           actions: [ZovaRender.detailsActionBulk('basic-details:actionCreate')],
         }),
-        // ZovaRender.block('basic-page:blockTable'),
-        // ZovaRender.block('basic-page:blockPager'),
+        ZovaRender.block('basic-details:blockTable'),
       ],
     }),
   ],
