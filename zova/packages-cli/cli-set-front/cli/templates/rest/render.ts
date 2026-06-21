@@ -3,6 +3,8 @@ import {
   schemaRenderBlockJsx,
   schemaRenderCell,
   schemaRenderCellJsx,
+  schemaRenderDetailsActionBulk,
+  schemaRenderDetailsActionBulkJsx,
   schemaRenderField,
   schemaRenderFieldJsx,
   schemaRenderFormActionRow,
@@ -40,6 +42,8 @@ export const ZovaRender = {
   formActionRowJsx: schemaRenderFormActionRowJsx,
   tableActionBulk: schemaRenderTableActionBulk,
   tableActionBulkJsx: schemaRenderTableActionBulkJsx,
+  detailsActionBulk: schemaRenderDetailsActionBulk,
+  detailsActionBulkJsx: schemaRenderDetailsActionBulkJsx,
   block: schemaRenderBlock,
   blockJsx: schemaRenderBlockJsx,
 };

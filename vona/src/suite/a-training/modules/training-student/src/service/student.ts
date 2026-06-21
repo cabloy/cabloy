@@ -23,7 +23,7 @@ export class ServiceStudent extends BeanBase {
   }
 
   async view(id: TableIdentity): Promise<DtoStudentView | undefined> {
-    return await this.scope.model.student.getById(id);
+    return await this.scope.model.student.getById(id, { include: { trainingRecords: true } });
   }
 
   async update(id: TableIdentity, student: DtoStudentUpdate) {
