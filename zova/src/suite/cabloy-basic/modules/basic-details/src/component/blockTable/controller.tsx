@@ -27,7 +27,7 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
 
   protected render() {
     const { $$details } = this.$$renderContext;
-    const data = [{ id: 1, name: 'yang' }];
+    const data = [{ id: 1, name: 'yang' }] as any;
     return (
       <ZTable<TData>
         class={this.$props.class}
