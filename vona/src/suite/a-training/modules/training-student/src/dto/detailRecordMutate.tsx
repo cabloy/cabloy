@@ -2,14 +2,12 @@ import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
+import { ModelRecord } from 'vona-module-training-record';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
-import { ModelStudent } from '../model/student.ts';
-import { DtoDetailRecordMutate } from './detailRecordMutate.tsx';
+export interface IDtoOptionsDetailRecordMutate extends IDecoratorDtoOptions {}
 
-export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
-
-@Dto<IDtoOptionsStudentUpdate>({
+@Dto<IDtoOptionsDetailRecordMutate>({
   blocks: [
     ZovaRender.block('basic-pageentry:blockPageEntry', {
       blocks: [
@@ -26,6 +24,4 @@ export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStudentUpdate extends $Dto.update(() => ModelStudent, {
-  include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } },
-}) {}
+export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord) {}

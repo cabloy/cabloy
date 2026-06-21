@@ -1,3 +1,5 @@
+import type { Constructable } from 'vona';
+
 import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
 import type {
   IModelRelationIncludeWrapper,
@@ -54,6 +56,7 @@ export interface IBuildModelSelectGeneralParamsBasic<
       ? TColumn | Array<TColumn>
       : TColumn
     : TypeModelColumnsPatch<TRecord, TColumn>;
+  dtoClass?: Constructable<unknown>;
   aggrs?: Aggrs;
   groups?: Groups;
   having?: TypeModelWhere<TRecord, TypeModelSelectGroupParamsColumns<TRecord, Groups, Aggrs>>;

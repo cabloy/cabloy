@@ -5,6 +5,7 @@ import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { ModelStudent } from '../model/student.ts';
+import { DtoDetailRecordMutate } from './detailRecordMutate.tsx';
 
 export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
 
@@ -25,4 +26,6 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoStudentCreate extends $Dto.create(() => ModelStudent) {}
+export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
+  include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } },
+}) {}

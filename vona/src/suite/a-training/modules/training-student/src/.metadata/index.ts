@@ -1,5 +1,5 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
@@ -84,7 +84,11 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-training-student' {
-  
+  export interface IModelOptionsStudent {
+        relations: {
+          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'score'|'description', undefined, undefined, undefined>;
+        };
+      }
   export interface ModelStudent {
       [SymbolKeyEntity]: EntityStudent;
       [SymbolKeyEntityMeta]: EntityStudentMeta;
@@ -202,6 +206,7 @@ declare module 'vona-module-training-student' {
 }
 /** meta: end */
 /** dto: begin */
+export * from '../dto/detailRecordMutate.tsx';
 export * from '../dto/studentCreate.tsx';
 export * from '../dto/studentSelectReq.tsx';
 export * from '../dto/studentSelectRes.tsx';
@@ -209,6 +214,7 @@ export * from '../dto/studentSelectResItem.tsx';
 export * from '../dto/studentSummary.tsx';
 export * from '../dto/studentUpdate.tsx';
 export * from '../dto/studentView.tsx';
+import type { IDtoOptionsDetailRecordMutate } from '../dto/detailRecordMutate.tsx';
 import type { IDtoOptionsStudentCreate } from '../dto/studentCreate.tsx';
 import type { IDtoOptionsStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import type { IDtoOptionsStudentSelectRes } from '../dto/studentSelectRes.tsx';
@@ -220,7 +226,8 @@ import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
-      'training-student:studentCreate': IDtoOptionsStudentCreate;
+      'training-student:detailRecordMutate': IDtoOptionsDetailRecordMutate;
+'training-student:studentCreate': IDtoOptionsStudentCreate;
 'training-student:studentSelectReq': IDtoOptionsStudentSelectReq;
 'training-student:studentSelectRes': IDtoOptionsStudentSelectRes;
 'training-student:studentSelectResItem': IDtoOptionsStudentSelectResItem;
@@ -236,6 +243,7 @@ declare module 'vona-module-training-student' {
 }
 /** dto: end */
 /** dto: begin */
+import type { DtoDetailRecordMutate } from '../dto/detailRecordMutate.tsx';
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import type { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
@@ -245,6 +253,10 @@ import type { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { DtoStudentView } from '../dto/studentView.tsx';
 declare module 'vona-module-training-student' {
   
+    export interface IDtoOptionsDetailRecordMutate {
+      fields?: TypeEntityOptionsFields<DtoDetailRecordMutate, IDtoOptionsDetailRecordMutate[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsStudentCreate {
       fields?: TypeEntityOptionsFields<DtoStudentCreate, IDtoOptionsStudentCreate[TypeSymbolKeyFieldsMore]>;
     }
