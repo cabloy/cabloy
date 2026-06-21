@@ -24,4 +24,6 @@ export interface IDtoOptionsDetailRecordMutate extends IDecoratorDtoOptions {}
     }),
   ],
 })
-export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord) {}
+export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord, {
+  columns: ['id', 'deleted', 'name', 'score', 'description'],
+}) {}
