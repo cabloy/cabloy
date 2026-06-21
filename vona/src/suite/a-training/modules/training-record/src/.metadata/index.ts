@@ -38,6 +38,45 @@ declare module 'vona-module-training-record' {
     }
 }
 /** entity: end */
+/** meta: begin */
+export * from '../bean/meta.index.ts';
+export * from '../bean/meta.version.ts';
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
+import 'vona-module-a-meta';
+declare module 'vona-module-a-meta' {
+  
+    export interface IMetaRecord {
+      'training-record:index': IMetaOptionsIndex;
+'training-record:version': never;
+    }
+
+  
+}
+declare module 'vona-module-training-record' {
+  
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleTrainingRecord;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'training-record.meta.index';
+            get $onionName(): 'training-record:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
+
+        export interface MetaVersion {
+          /** @internal */
+          get scope(): ScopeModuleTrainingRecord;
+        }
+
+          export interface MetaVersion {
+            get $beanFullName(): 'training-record.meta.version';
+            get $onionName(): 'training-record:version';
+            
+          } 
+}
+/** meta: end */
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */
