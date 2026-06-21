@@ -18,6 +18,6 @@ export class ControllerBlockDetails extends BeanControllerBase {
   protected async __init__() {}
 
   protected render() {
-    return null;
+    return <div>block details</div>;
   }
 }

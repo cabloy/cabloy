@@ -13,7 +13,7 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsDetailRecordResItem>({
   blocks: [
-    ZovaRender.block('basic-page:blockPage', {
+    ZovaRender.block('basic-detail:blockDetails', {
       blocks: [
         ZovaRender.block('basic-page:blockFilter'),
         ZovaRender.block('basic-page:blockToolbarBulk', {

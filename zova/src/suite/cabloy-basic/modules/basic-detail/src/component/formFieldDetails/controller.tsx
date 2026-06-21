@@ -48,7 +48,7 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
       <ZFormField
         {...this.$props}
         slotDefault={(formFieldRenderContext, $$formField) => {
-          return this._renderBlocks(formFieldRenderContext, $$formField);
+          return this._renderBlocks(formFieldRenderContext, $$formField) ?? <></>;
         }}
       ></ZFormField>
     );
@@ -61,15 +61,14 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
     const { propsBucket } = formFieldRenderContext;
     // schema
     const schemaName = $$formField.property?.items?.$ref;
-    const schema: ISchemaObjectExtensionField | undefined = schemaName
-      ? this.$sdk.getSchema(schemaName!).data
-      : undefined;
-    if (!schema) {
+    if (!schemaName) {
       return <div>Should specify the detail schema</div>;
     }
+    const schema: ISchemaObjectExtensionField | undefined = this.$sdk.getSchema(schemaName!).data;
+    if (!schema) return;
     // blocks
     const blocks = schema?.rest?.blocks;
-    if (!blocks || blocks.length === 0) return <></>;
+    if (!blocks || blocks.length === 0) return;
     const domBlocks: VNode[] = [];
     blocks.forEach((block, index) => {
       const options = deepExtend(
