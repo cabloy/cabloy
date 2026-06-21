@@ -6,7 +6,6 @@ import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
-import { DtoDetailRecordResItem } from '../dto/detailRecordResItem.tsx';
 
 export const studentLevelSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
@@ -82,13 +81,4 @@ export class EntityStudent extends EntityBase {
     studentLevelSchema,
   )
   level: 1 | 2 | 3;
-
-  @Api.field(
-    v.title($locale('TrainingRecords')),
-    ZovaRender.order(5),
-    ZovaRender.field('basic-detail:formFieldDetails'),
-    v.optional(),
-    v.array(DtoDetailRecordResItem),
-  )
-  trainingRecords?: DtoDetailRecordResItem[];
 }

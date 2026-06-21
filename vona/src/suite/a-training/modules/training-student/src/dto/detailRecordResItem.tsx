@@ -7,6 +7,7 @@ import { ModelRecord } from 'vona-module-training-record';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { DtoDetailRecordBase } from './detailRecordBase.tsx';
 
 export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
 
@@ -25,7 +26,7 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
   ],
 })
 export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
-  columns: ['id', 'name', 'score', 'description'],
+  dtoClass: DtoDetailRecordBase,
 }) {
   @Api.field(
     v.title($locale('Operations')),

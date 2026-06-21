@@ -5,6 +5,8 @@ import { Dto } from 'vona-module-a-web';
 import { ModelRecord } from 'vona-module-training-record';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
+import { DtoDetailRecordBase } from './detailRecordBase.tsx';
+
 export interface IDtoOptionsDetailRecordMutate extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsDetailRecordMutate>({
@@ -25,5 +27,5 @@ export interface IDtoOptionsDetailRecordMutate extends IDecoratorDtoOptions {}
   ],
 })
 export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord, {
-  columns: ['id', 'deleted', 'name', 'score', 'description'],
+  dtoClass: DtoDetailRecordBase,
 }) {}
