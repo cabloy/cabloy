@@ -11,16 +11,16 @@ import { Controller } from 'zova-module-a-bean';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
-    'basic-details:blockDetailsToolbarBulk'?: ControllerBlockDetailsToolbarBulkProps;
+    'basic-details:blockToolbarBulk'?: ControllerBlockToolbarBulkProps;
   }
 }
 
-export interface ControllerBlockDetailsToolbarBulkProps extends IResourceBlockOptionsBase {
+export interface ControllerBlockToolbarBulkProps extends IResourceBlockOptionsBase {
   actions?: IResourceRenderDetailsActionBulkOptionsAction[];
 }
 
 @Controller()
-export class ControllerBlockDetailsToolbarBulk extends BeanControllerBase {
+export class ControllerBlockToolbarBulk extends BeanControllerBase {
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 

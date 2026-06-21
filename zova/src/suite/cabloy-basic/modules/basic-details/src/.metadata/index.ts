@@ -2,7 +2,7 @@
 /** controller: begin */
 export * from '../component/actionCreate/controller.jsx';
 export * from '../component/blockDetails/controller.jsx';
-export * from '../component/blockDetailsToolbarBulk/controller.jsx';
+export * from '../component/blockToolbarBulk/controller.jsx';
 export * from '../component/formFieldDetails/controller.jsx';
 
 import 'zova';
@@ -22,7 +22,7 @@ declare module 'zova-module-basic-details' {
           get scope(): ScopeModuleBasicDetails;
         }
 
-        export interface ControllerBlockDetailsToolbarBulk {
+        export interface ControllerBlockToolbarBulk {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
         }
@@ -36,14 +36,14 @@ declare module 'zova-module-basic-details' {
 /** controller: begin */
 import { ControllerActionCreate } from '../component/actionCreate/controller.jsx';
 import { ControllerBlockDetails } from '../component/blockDetails/controller.jsx';
-import { ControllerBlockDetailsToolbarBulk } from '../component/blockDetailsToolbarBulk/controller.jsx';
+import { ControllerBlockToolbarBulk } from '../component/blockToolbarBulk/controller.jsx';
 import { ControllerFormFieldDetails } from '../component/formFieldDetails/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-details.controller.actionCreate': ControllerActionCreate;
 'basic-details.controller.blockDetails': ControllerBlockDetails;
-'basic-details.controller.blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulk;
+'basic-details.controller.blockToolbarBulk': ControllerBlockToolbarBulk;
 'basic-details.controller.formFieldDetails': ControllerFormFieldDetails;
   }
 }
@@ -54,14 +54,14 @@ export * from './component/actionCreate.js';
 import { ZActionCreate } from './component/actionCreate.js';
 export * from './component/blockDetails.js';
 import { ZBlockDetails } from './component/blockDetails.js';
-export * from './component/blockDetailsToolbarBulk.js';
-import { ZBlockDetailsToolbarBulk } from './component/blockDetailsToolbarBulk.js';
+export * from './component/blockToolbarBulk.js';
+import { ZBlockToolbarBulk } from './component/blockToolbarBulk.js';
 export * from './component/formFieldDetails.js';
 import { ZFormFieldDetails } from './component/formFieldDetails.js';
 export const components = {
   'actionCreate': ZActionCreate,
 'blockDetails': ZBlockDetails,
-'blockDetailsToolbarBulk': ZBlockDetailsToolbarBulk,
+'blockToolbarBulk': ZBlockToolbarBulk,
 'formFieldDetails': ZFormFieldDetails,
 };
 import 'zova';
@@ -69,13 +69,13 @@ declare module 'zova' {
 export interface IComponentRecord {
   'basic-details:actionCreate': ControllerActionCreate;
 'basic-details:blockDetails': ControllerBlockDetails;
-'basic-details:blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulk;
+'basic-details:blockToolbarBulk': ControllerBlockToolbarBulk;
 'basic-details:formFieldDetails': ControllerFormFieldDetails;
 }
 export interface IZovaComponentRecord {
   'basic-details:actionCreate': typeof ZActionCreate;
 'basic-details:blockDetails': typeof ZBlockDetails;
-'basic-details:blockDetailsToolbarBulk': typeof ZBlockDetailsToolbarBulk;
+'basic-details:blockToolbarBulk': typeof ZBlockToolbarBulk;
 'basic-details:formFieldDetails': typeof ZFormFieldDetails;
 }
 }
