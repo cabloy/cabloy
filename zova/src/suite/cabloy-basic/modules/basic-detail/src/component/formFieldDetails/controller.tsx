@@ -1,8 +1,17 @@
 import type { IComponentOptions } from 'zova';
-import type { IFormFieldComponentOptions } from 'zova-module-a-form';
-import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
+import type {
+  ControllerFormField,
+  IFormFieldComponentOptions,
+  IFormFieldRenderContext,
+} from 'zova-module-a-form';
+import type {
+  IResourceFormFieldOptionsBase,
+  ISchemaObjectExtensionField,
+} from 'zova-module-a-openapi';
 
-import { BeanControllerBase } from 'zova';
+import { VNode } from 'vue';
+import { BeanControllerBase, deepExtend } from 'zova';
+import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
 
@@ -23,22 +32,66 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
-  protected async __init__() {}
+  jsxZova: ZovaJsx;
+
+  protected async __init__() {
+    // jsx
+    this._prepareJsx();
+  }
+
+  private _prepareJsx() {
+    this.jsxZova = this.bean._newBeanSimple(ZovaJsx, false);
+  }
 
   protected render() {
     return (
       <ZFormField
         {...this.$props}
-        slotDefault={({ propsBucket }, $$formField) => {
-          console.log($$formField.property);
-          console.log(propsBucket.value);
-          return <div>ssss details</div>;
+        slotDefault={(formFieldRenderContext, $$formField) => {
+          return this._renderBlocks(formFieldRenderContext, $$formField);
         }}
       ></ZFormField>
     );
   }
 
-  // private _renderBlocks() {
-  //   console.log('sssss');
-  // }
+  private _renderBlocks(
+    formFieldRenderContext: IFormFieldRenderContext,
+    $$formField: ControllerFormField,
+  ) {
+    const { propsBucket } = formFieldRenderContext;
+    // schema
+    const schemaName = $$formField.property?.items?.$ref;
+    const schema: ISchemaObjectExtensionField | undefined = schemaName
+      ? this.$sdk.getSchema(schemaName!).data
+      : undefined;
+    if (!schema) {
+      return <div>Should specify the detail schema</div>;
+    }
+    // blocks
+    const blocks = schema?.rest?.blocks;
+    if (!blocks || blocks.length === 0) return <></>;
+    const domBlocks: VNode[] = [];
+    blocks.forEach((block, index) => {
+      const options = deepExtend(
+        { key: index },
+        {
+          getDetailItems: () => {
+            return propsBucket.value;
+          },
+          setDetailItems: (detailItems: any[]) => {
+            $$formField.setValue(detailItems);
+          },
+        },
+        block.options,
+      );
+      const domBlock = this.jsxZova.render(block.render!, options);
+      if (!domBlock) return;
+      if (Array.isArray(domBlock)) {
+        domBlocks.push(...domBlock);
+      } else {
+        domBlocks.push(domBlock);
+      }
+    });
+    return <div>{domBlocks}</div>;
+  }
 }
