@@ -4,6 +4,7 @@ import type {
   IResourceFormFieldRecord,
   IResourceTableCellRecord,
   IResourceTableActionRowRecord,
+  IResourceDetailsActionRowRecord,
   IResourceFormActionRowRecord,
   IResourceTableActionBulkRecord,
   IResourceDetailsActionBulkRecord,
@@ -44,9 +45,9 @@ export function schemaRenderFieldJsx<T extends z.ZodType>(
 }
 
 export function schemaRenderCell<
-  K extends keyof (IResourceTableCellRecord & IResourceTableActionRowRecord),
+  K extends keyof (IResourceTableCellRecord & IResourceTableActionRowRecord & IResourceDetailsActionRowRecord),
   T extends z.ZodType,
->(render: K, options?: (IResourceTableCellRecord & IResourceTableActionRowRecord)[K]) {
+>(render: K, options?: (IResourceTableCellRecord & IResourceTableActionRowRecord & IResourceDetailsActionRowRecord)[K]) {
   return function (schema: T): T {
     const options2 = options !== undefined ? { render, columnProps: options } : { render };
     return _generalSchemaRest(schema, options2, 'table');

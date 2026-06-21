@@ -1,4 +1,7 @@
-import type { IResourceTableActionRowOptionsBase } from 'zova-module-a-openapi';
+import type {
+  IResourceDetailsActionRowOptionsBase,
+  IResourceRenderDetailsActionRowOptionsAction,
+} from 'zova-module-a-openapi';
 import type {
   IJsxRenderContextTableCell,
   ITableCellRender,
@@ -9,12 +12,14 @@ import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
-  export interface IResourceTableActionRowRecord {
+  export interface IResourceDetailsActionRowRecord {
     'basic-details:actionOperationsRow'?: ITableCellOptionsActionOperationsRow;
   }
 }
 
-export interface ITableCellOptionsActionOperationsRow extends IResourceTableActionRowOptionsBase {}
+export interface ITableCellOptionsActionOperationsRow extends IResourceDetailsActionRowOptionsBase {
+  actions?: IResourceRenderDetailsActionRowOptionsAction[];
+}
 
 @TableCell<ITableCellOptionsActionOperationsRow>()
 export class TableCellActionOperationsRow extends BeanBase implements ITableCellRender {
@@ -23,6 +28,7 @@ export class TableCellActionOperationsRow extends BeanBase implements ITableCell
     _renderContext: IJsxRenderContextTableCell,
     next: NextTableCellRender,
   ) {
+    return <div>sssss</div>;
     return next();
   }
 }
