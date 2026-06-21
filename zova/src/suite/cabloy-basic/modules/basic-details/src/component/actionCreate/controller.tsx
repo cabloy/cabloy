@@ -17,7 +17,7 @@ export interface ControllerActionCreateProps extends IResourceDetailsActionBulkO
 
 @Controller()
 export class ControllerActionCreate extends BeanControllerBase {
-  static $propsDefault = {};
+  static $propsDefault = { class: 'btn btn-info join-item' };
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   @Use({ injectionScope: 'host' })
@@ -35,7 +35,7 @@ export class ControllerActionCreate extends BeanControllerBase {
           // await this.$performCommand('basic-commands:create', this.$props, this.$$renderContext);
         }}
       >
-        {this.scope.locale.Create()}
+        {this.scope.locale.AddDetail()}
       </button>
     );
   }

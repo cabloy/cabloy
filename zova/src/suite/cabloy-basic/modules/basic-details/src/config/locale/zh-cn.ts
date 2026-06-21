@@ -1,3 +1,3 @@
 export default {
-  Create: '创建',
+  AddDetail: '新增明细',
 };

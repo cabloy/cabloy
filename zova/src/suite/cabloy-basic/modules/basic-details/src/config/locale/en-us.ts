@@ -1,3 +1,3 @@
 export default {
-  Create: 'Create',
+  AddDetail: 'Add Detail',
 };
