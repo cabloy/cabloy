@@ -392,7 +392,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.4
       zova-cli-set-front:
-        specifier: ^1.2.79
+        specifier: ^1.2.80
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -813,7 +813,7 @@ importers:
         specifier: ^5.1.57
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.104
+        specifier: ^5.1.105
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -968,7 +968,7 @@ importers:
         specifier: ^5.1.27
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.35
+        specifier: ^5.1.36
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.26

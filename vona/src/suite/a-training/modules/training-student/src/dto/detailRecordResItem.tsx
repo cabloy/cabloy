@@ -29,11 +29,11 @@ export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
-    ZovaRender.cell('basic-table:actionOperationsRow', {
-      actions: [
-        ZovaRender.tableActionRow('basic-table:actionUpdate'),
-        ZovaRender.tableActionRow('basic-table:actionDelete'),
-      ],
+    ZovaRender.cell('basic-details:actionOperationsRow', {
+      // actions: [
+      //   ZovaRender.tableActionRow('basic-table:actionUpdate'),
+      //   ZovaRender.tableActionRow('basic-table:actionDelete'),
+      // ],
     }),
   )
   _operationsRow?: unknown;
