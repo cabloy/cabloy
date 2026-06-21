@@ -1,3 +1,5 @@
+import type { Constructable } from 'vona';
+
 import type { BeanModelMeta } from '../../lib/bean.model/bean.model_meta.ts';
 import type { IModelRelationIncludeWrapper } from '../model.ts';
 import type { TypeModelColumns } from '../modelWhere.ts';
@@ -19,6 +21,7 @@ export interface IBuildDtoGetParams<TRecord, Model extends BeanModelMeta>
 
 export interface IBuildDtoGetParamsBasic<TRecord> {
   columns?: TypeModelColumns<TRecord>;
+  dtoClass?: Constructable<unknown>;
 }
 
 export type TypeDtoGetResult<

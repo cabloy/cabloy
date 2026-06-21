@@ -29,11 +29,16 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
     return (
       <ZFormField
         {...this.$props}
-        slotDefault={({ propsBucket }, _$$formField) => {
+        slotDefault={({ propsBucket }, $$formField) => {
+          console.log($$formField.property);
           console.log(propsBucket.value);
           return <div>ssss details</div>;
         }}
       ></ZFormField>
     );
   }
+
+  // private _renderBlocks() {
+  //   console.log('sssss');
+  // }
 }

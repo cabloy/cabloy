@@ -3,7 +3,6 @@ import type { Constructable } from 'vona';
 import { mutate } from 'mutate-on-copy';
 import { $Class } from 'vona';
 
-import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 import type {
   IDtoMutateParams,
   TypeDtoMutateResult,
@@ -13,6 +12,7 @@ import type { TypeModelColumnsStrict } from '../../types/modelWhere.ts';
 import type { IModelClassRecord } from '../../types/onion/model.ts';
 import type { TypeModelOfModelLike, TypeSymbolKeyEntity } from '../../types/relations.ts';
 import type { IRelationItem } from '../../types/relationsDef.ts';
+import type { BeanModelMeta } from '../bean.model/bean.model_meta.ts';
 
 import {
   getClassEntityFromClassModel,
@@ -52,7 +52,7 @@ export function _DtoMutate_raw<
   // model
   const modelClass = prepareClassModel(modelLike);
   // entity
-  let entityClass = getClassEntityFromClassModel(modelClass);
+  let entityClass = params?.dtoClass ?? getClassEntityFromClassModel(modelClass);
   // columns
   let columns = prepareColumns(params?.columns);
   if (columns) {

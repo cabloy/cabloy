@@ -1,5 +1,5 @@
 import type { TableIdentity } from 'table-identity';
-import type { OmitNever, TypeOmitStringUnion } from 'vona';
+import type { Constructable, OmitNever, TypeOmitStringUnion } from 'vona';
 
 import type { BeanModelMeta } from '../../lib/bean.model/bean.model_meta.ts';
 import type { IModelRelationIncludeWrapper } from '../model.ts';
@@ -38,6 +38,7 @@ export interface IBuildDtoMutateParams<TRecord, Model extends BeanModelMeta>
 
 export interface IBuildDtoMutateParamsBasic<TRecord> {
   columns?: TypeModelColumnsStrict<TRecord>;
+  dtoClass?: Constructable<unknown>;
 }
 
 export type TypeDtoMutateResult<

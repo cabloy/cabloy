@@ -1,5 +1,6 @@
 // eslint-disable
 /** controller: begin */
+export * from '../component/blockDetails/controller.jsx';
 export * from '../component/formFieldDetails/controller.jsx';
 
 import 'zova';
@@ -9,6 +10,11 @@ declare module 'zova' {
 }
 declare module 'zova-module-basic-detail' {
   
+        export interface ControllerBlockDetails {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetail;
+        }
+
         export interface ControllerFormFieldDetails {
           /** @internal */
           get scope(): ScopeModuleBasicDetail;
@@ -16,28 +22,35 @@ declare module 'zova-module-basic-detail' {
 }
 /** controller: end */
 /** controller: begin */
+import { ControllerBlockDetails } from '../component/blockDetails/controller.jsx';
 import { ControllerFormFieldDetails } from '../component/formFieldDetails/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'basic-detail.controller.formFieldDetails': ControllerFormFieldDetails;
+    'basic-detail.controller.blockDetails': ControllerBlockDetails;
+'basic-detail.controller.formFieldDetails': ControllerFormFieldDetails;
   }
 }
 /** controller: end */
 
 /** components: begin */
+export * from './component/blockDetails.js';
+import { ZBlockDetails } from './component/blockDetails.js';
 export * from './component/formFieldDetails.js';
 import { ZFormFieldDetails } from './component/formFieldDetails.js';
 export const components = {
-  'formFieldDetails': ZFormFieldDetails,
+  'blockDetails': ZBlockDetails,
+'formFieldDetails': ZFormFieldDetails,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'basic-detail:formFieldDetails': ControllerFormFieldDetails;
+  'basic-detail:blockDetails': ControllerBlockDetails;
+'basic-detail:formFieldDetails': ControllerFormFieldDetails;
 }
 export interface IZovaComponentRecord {
-  'basic-detail:formFieldDetails': typeof ZFormFieldDetails;
+  'basic-detail:blockDetails': typeof ZBlockDetails;
+'basic-detail:formFieldDetails': typeof ZFormFieldDetails;
 }
 }
 /** components: end */
