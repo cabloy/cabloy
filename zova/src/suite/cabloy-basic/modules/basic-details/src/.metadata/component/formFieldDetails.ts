@@ -14,7 +14,7 @@ type ControllerInnerProps = TypeControllerInnerProps<
   ControllerFormFieldDetailsProps,
   keyof typeof ControllerFormFieldDetails.$propsDefault
 >;
-declare module 'zova-module-basic-detail' {
+declare module 'zova-module-basic-details' {
   export interface ControllerFormFieldDetails {
     $props: ControllerInnerProps;
   }
@@ -26,6 +26,6 @@ export const ZFormFieldDetails = defineComponent((_props: ZFormFieldDetailsProps
 }, prepareComponentOptions(ControllerFormFieldDetails.$componentOptions));
 declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
-    'basic-detail:formFieldDetails': ControllerFormFieldDetailsProps;
+    'basic-details:formFieldDetails': ControllerFormFieldDetailsProps;
   }
 }

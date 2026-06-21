@@ -9,21 +9,21 @@ declare module 'zova' {
   
   
 }
-declare module 'zova-module-basic-detail' {
+declare module 'zova-module-basic-details' {
   
         export interface ControllerBlockDetails {
           /** @internal */
-          get scope(): ScopeModuleBasicDetail;
+          get scope(): ScopeModuleBasicDetails;
         }
 
         export interface ControllerBlockDetailsToolbarBulk {
           /** @internal */
-          get scope(): ScopeModuleBasicDetail;
+          get scope(): ScopeModuleBasicDetails;
         }
 
         export interface ControllerFormFieldDetails {
           /** @internal */
-          get scope(): ScopeModuleBasicDetail;
+          get scope(): ScopeModuleBasicDetails;
         } 
 }
 /** controller: end */
@@ -34,9 +34,9 @@ import { ControllerFormFieldDetails } from '../component/formFieldDetails/contro
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'basic-detail.controller.blockDetails': ControllerBlockDetails;
-'basic-detail.controller.blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulk;
-'basic-detail.controller.formFieldDetails': ControllerFormFieldDetails;
+    'basic-details.controller.blockDetails': ControllerBlockDetails;
+'basic-details.controller.blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulk;
+'basic-details.controller.formFieldDetails': ControllerFormFieldDetails;
   }
 }
 /** controller: end */
@@ -56,14 +56,14 @@ export const components = {
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'basic-detail:blockDetails': ControllerBlockDetails;
-'basic-detail:blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulk;
-'basic-detail:formFieldDetails': ControllerFormFieldDetails;
+  'basic-details:blockDetails': ControllerBlockDetails;
+'basic-details:blockDetailsToolbarBulk': ControllerBlockDetailsToolbarBulk;
+'basic-details:formFieldDetails': ControllerFormFieldDetails;
 }
 export interface IZovaComponentRecord {
-  'basic-detail:blockDetails': typeof ZBlockDetails;
-'basic-detail:blockDetailsToolbarBulk': typeof ZBlockDetailsToolbarBulk;
-'basic-detail:formFieldDetails': typeof ZFormFieldDetails;
+  'basic-details:blockDetails': typeof ZBlockDetails;
+'basic-details:blockDetailsToolbarBulk': typeof ZBlockDetailsToolbarBulk;
+'basic-details:formFieldDetails': typeof ZFormFieldDetails;
 }
 }
 /** components: end */
@@ -72,16 +72,16 @@ import { BeanScopeBase, type BeanScopeUtil } from 'zova';
 import { Scope } from 'zova-module-a-bean';
 
 @Scope()
-export class ScopeModuleBasicDetail extends BeanScopeBase {}
+export class ScopeModuleBasicDetails extends BeanScopeBase {}
 
-export interface ScopeModuleBasicDetail {
+export interface ScopeModuleBasicDetails {
   util: BeanScopeUtil;
 }
 
 import 'zova';
 declare module 'zova' {
   export interface IBeanScopeRecord {
-    'basic-detail': ScopeModuleBasicDetail;
+    'basic-details': ScopeModuleBasicDetails;
   }
   
   
