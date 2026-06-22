@@ -237,18 +237,21 @@ export class BehaviorAppModal extends BeanBehaviorBase<
             }
           }}
         ></div>
-        <div class="card bg-base-100 shadow-2xl relative w-full" style={style}>
-          <div class="card-body gap-4">
-            <div class="flex items-start gap-3">
+        <div
+          class="card bg-base-100 shadow-2xl relative w-full max-h-[calc(100vh-2rem)]"
+          style={style}
+        >
+          <div class="card-body flex max-h-full min-h-0 flex-col gap-4">
+            <div class="flex items-start gap-3 shrink-0">
               {!!iconName && (
                 <ZIcon class="text-primary mt-1 shrink-0" name={iconName} width={24}></ZIcon>
               )}
               <div class="flex-1 min-w-0">
                 <h3 class="card-title">{title}</h3>
-                {!!body && <div class="mt-2">{body}</div>}
               </div>
             </div>
-            {!!actions && <div class="card-actions justify-end">{actions}</div>}
+            {!!body && <div class="min-h-0 flex-1 overflow-y-auto">{body}</div>}
+            {!!actions && <div class="card-actions justify-end shrink-0">{actions}</div>}
           </div>
         </div>
       </div>
@@ -265,19 +268,25 @@ export class BehaviorAppModal extends BeanBehaviorBase<
   }
 
   private _prepareDialogOptions(type: ModalType, dialogOptions?: IModalDialogOptions) {
-    const defaults = this.scope.config.model[type].default;
+    const defaults = this.scope.config.model[type].default as IModalDialogOptions;
     return {
       maxWidth: dialogOptions?.maxWidth ?? defaults.maxWidth,
+      maxHeight: dialogOptions?.maxHeight ?? defaults.maxHeight,
       closeOnBackdrop: dialogOptions?.closeOnBackdrop ?? defaults.closeOnBackdrop,
     };
   }
 
   private _dialogStyle(dialogOptions: IModalDialogOptions) {
+    const style = {} as Record<string, string>;
     const maxWidth = dialogOptions.maxWidth;
-    if (!maxWidth) return undefined;
-    return {
-      maxWidth: typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth,
-    };
+    const maxHeight = dialogOptions.maxHeight;
+    if (maxWidth) {
+      style.maxWidth = typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
+    }
+    if (maxHeight) {
+      style.maxHeight = typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight;
+    }
+    return Object.keys(style).length > 0 ? style : undefined;
   }
 
   private _getButtonClass(type: AlertType, primary?: boolean) {
