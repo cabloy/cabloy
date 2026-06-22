@@ -66,6 +66,10 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
     return this.$props.schemaRow!;
   }
 
+  get schemaForm() {
+    return this.$props.schemaForm!;
+  }
+
   private _prepareJsx() {
     const jsxCelEnv = celEnvBase.clone();
     this.jsxZova = this.bean._newBeanSimple(ZovaJsx, false, undefined, jsxCelEnv);

@@ -4,7 +4,7 @@ import type {
   IJsxRenderContextDetails,
   IResourceDetailsActionBulkOptionsBase,
 } from 'zova-module-a-openapi';
-import type { IModalDialogRenderContext } from 'zova-module-basic-app';
+import type { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
 
 import { classes } from 'typestyle';
 import { BeanControllerBase, Use, uuid } from 'zova';
@@ -15,6 +15,7 @@ import {
   TypeFormOnSubmitData,
   ZForm,
 } from 'zova-module-a-form';
+import { IIconRecord } from 'zova-module-a-icon';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionBulkRecord {
@@ -22,7 +23,11 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ControllerActionCreateProps extends IResourceDetailsActionBulkOptionsBase {}
+export interface ControllerActionCreateProps extends IResourceDetailsActionBulkOptionsBase {
+  icon?: keyof IIconRecord;
+  title?: string;
+  dialogOptions?: IModalDialogOptions;
+}
 
 @Controller()
 export class ControllerActionCreate extends BeanControllerBase {
@@ -38,7 +43,7 @@ export class ControllerActionCreate extends BeanControllerBase {
 
   protected async __init__() {
     this.formData = {};
-    this.formMeta = { ...formMetaFromFormScene('create'), formScene: 'create' };
+    this.formMeta = formMetaFromFormScene('create');
   }
 
   protected render() {
@@ -59,13 +64,12 @@ export class ControllerActionCreate extends BeanControllerBase {
     this.formData = {};
     this.$appModal.dialog(
       {
-        title: this.scope.locale.AddDetail(),
+        icon: this.$props.icon,
+        title: this.$props.title ?? this.scope.locale.AddDetail(),
         slotDefault: dialog => this._renderDialogForm(dialog),
         slotActions: dialog => this._renderDialogActions(dialog),
       },
-      {
-        maxWidth: 720,
-      },
+      this.$props.dialogOptions,
     );
   }
 
@@ -76,12 +80,11 @@ export class ControllerActionCreate extends BeanControllerBase {
         controllerRef={ref => {
           this.formRef = ref;
         }}
-        formTag="div"
         data={this.formData}
-        schema={$$details.schemaRow}
+        schema={$$details.schemaForm}
         schemaScene="form-create"
         formMeta={this.formMeta}
-        formScope={Object.assign({ id: null }, $$details.jsxCelScope)}
+        formScope={{ id: null }}
         onSubmitData={data => this._submitData(data, dialog)}
         onShowError={async ({ error }) => {
           await this.$performCommand('basic-commands:alert', {
@@ -115,7 +118,7 @@ export class ControllerActionCreate extends BeanControllerBase {
             await this.formRef?.submit();
           }}
         >
-          {this.scope.locale.AddDetail()}
+          {this.scope.locale.OK()}
         </button>
       </>
     );
