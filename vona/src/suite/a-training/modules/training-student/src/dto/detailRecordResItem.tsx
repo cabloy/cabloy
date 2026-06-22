@@ -16,7 +16,11 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
     ZovaRender.block('basic-details:blockDetails', {
       blocks: [
         ZovaRender.block('basic-details:blockToolbarBulk', {
-          actions: [ZovaRender.detailsActionBulk('basic-details:actionCreate')],
+          actions: [
+            ZovaRender.detailsActionBulk('basic-details:actionCreate', {
+              permission: { formScene: ['create', 'edit'] },
+            }),
+          ],
         }),
         ZovaRender.block('basic-details:blockTable'),
       ],
@@ -31,8 +35,12 @@ export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
     ZovaRender.order(1, 'max'),
     ZovaRender.cell('basic-details:actionOperationsRow', {
       actions: [
-        ZovaRender.tableActionRow('basic-table:actionUpdate'),
-        ZovaRender.tableActionRow('basic-details:actionDelete'),
+        ZovaRender.detailsActionRow('basic-details:actionUpdate', {
+          permission: { formScene: ['create', 'edit'] },
+        }),
+        ZovaRender.detailsActionRow('basic-details:actionDelete', {
+          permission: { formScene: ['create', 'edit'] },
+        }),
       ],
     }),
   )

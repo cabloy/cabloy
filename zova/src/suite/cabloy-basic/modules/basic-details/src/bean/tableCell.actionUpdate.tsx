@@ -9,6 +9,8 @@ import { BeanBase } from 'zova';
 import { ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
 
+import { ICommandOptionsEdit } from './command.edit.jsx';
+
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {
     'basic-details:actionUpdate'?: ITableCellOptionsActionUpdate;
