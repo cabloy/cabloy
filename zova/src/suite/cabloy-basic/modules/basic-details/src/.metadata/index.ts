@@ -97,9 +97,11 @@ export interface IZovaComponentRecord {
 export * from '../bean/tableCell.actionDelete.jsx';
 export * from '../bean/tableCell.actionOperationsRow.jsx';
 export * from '../bean/tableCell.actionUpdate.jsx';
+export * from '../bean/tableCell.lineNumber.jsx';
 import { ITableCellOptionsActionDelete } from '../bean/tableCell.actionDelete.jsx';
 import { ITableCellOptionsActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
 import { ITableCellOptionsActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
+import { ITableCellOptionsLineNumber } from '../bean/tableCell.lineNumber.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
   
@@ -107,6 +109,7 @@ declare module 'zova-module-a-table' {
       'basic-details:actionDelete': ITableCellOptionsActionDelete;
 'basic-details:actionOperationsRow': ITableCellOptionsActionOperationsRow;
 'basic-details:actionUpdate': ITableCellOptionsActionUpdate;
+'basic-details:lineNumber': ITableCellOptionsLineNumber;
     }
 
   
@@ -144,6 +147,17 @@ declare module 'zova-module-basic-details' {
           get $beanFullName(): 'basic-details.tableCell.actionUpdate';
           get $onionName(): 'basic-details:actionUpdate';
           get $onionOptions(): ITableCellOptionsActionUpdate;
+        }
+
+        export interface TableCellLineNumber {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetails;
+        }
+
+        export interface TableCellLineNumber {
+          get $beanFullName(): 'basic-details.tableCell.lineNumber';
+          get $onionName(): 'basic-details:lineNumber';
+          get $onionOptions(): ITableCellOptionsLineNumber;
         } 
 }
 /** tableCell: end */
@@ -151,12 +165,14 @@ declare module 'zova-module-basic-details' {
 import { TableCellActionDelete } from '../bean/tableCell.actionDelete.jsx';
 import { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
 import { TableCellActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
+import { TableCellLineNumber } from '../bean/tableCell.lineNumber.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'basic-details.tableCell.actionDelete': TableCellActionDelete;
 'basic-details.tableCell.actionOperationsRow': TableCellActionOperationsRow;
 'basic-details.tableCell.actionUpdate': TableCellActionUpdate;
+'basic-details.tableCell.lineNumber': TableCellLineNumber;
   }
 }
 /** tableCell: end */
