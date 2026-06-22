@@ -2,6 +2,7 @@ import type { Constructable } from 'vona';
 
 import { mutate } from 'mutate-on-copy';
 import { $Class } from 'vona';
+import { getTargetDecoratorRuleColumns } from 'vona-module-a-openapiutils';
 
 import type {
   IDtoMutateParams,
@@ -55,6 +56,10 @@ export function _DtoMutate_raw<
   let entityClass = params?.dtoClass ?? getClassEntityFromClassModel(modelClass);
   // columns
   let columns = prepareColumns(params?.columns);
+  // if dtoClass and columns empty, use dtoClass fields
+  if (params?.columns === undefined && params?.dtoClass) {
+    columns = getTargetDecoratorRuleColumns(params.dtoClass.prototype) as any;
+  }
   if (columns) {
     if (!topLevel) {
       if (mutateTypeTopLevel === 'create') {

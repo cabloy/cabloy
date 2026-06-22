@@ -3,7 +3,7 @@ import type { TypeDecoratorRules } from 'vona-module-a-openapiutils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { getTargetDecoratorRules } from 'vona-module-a-openapiutils';
+import { $schema, getTargetDecoratorRules } from 'vona-module-a-openapiutils';
 import { $Dto, $relationDynamic } from 'vona-module-a-orm';
 import { ModelPost } from 'vona-module-test-vona';
 
@@ -37,6 +37,24 @@ describe('dtoMutate.test.ts', () => {
       assert.equal(rules.createdAt, undefined);
       assert.equal(rules.updatedAt, undefined);
       assert.equal(rules.posts?.type === 'optional', true);
+      // create: dtoClass without columns should behave like provided columns
+      const DtoPostBase = $Dto.get('test-vona:post', {
+        columns: ['id', 'title'],
+      });
+      const DtoUserCreateCustom = $Dto.create('test-vona:user', {
+        include: {
+          posts: {
+            dtoClass: DtoPostBase,
+          },
+        },
+      });
+      const schema = $schema(DtoUserCreateCustom);
+      const res = await schema.parseAsync({
+        name: 'kevin',
+        posts: [{ id: 1, title: 'post1' }],
+      });
+      assert.equal((res.posts?.[0] as any)?.id, undefined);
+      assert.equal(res.posts?.[0]?.title, 'post1');
       // create: not mutate post(belongsTo)
       const DtoPostCreate = $Dto.create('test-vona:post', {
         include: {
