@@ -352,19 +352,21 @@ export class ServiceRelations extends BeanBase {
         if (entity[relationName] && entity[relationName].length > 0) {
           const entityId = cast(entity).id;
           const idsTo = entity[relationName].map(item => item.id).filter(id => !isNil(id));
-          let idsTarget: TableIdentity[];
+          let idsTargetSet: Set<string>;
           if (idsTo.length === 0) {
-            idsTarget = [];
+            idsTargetSet = new Set();
           } else {
             const itemsTarget = await cast(modelTarget).__select_raw(
               undefined,
               { where: { [key]: entityId, id: idsTo } },
               methodOptionsReal,
             );
-            idsTarget = itemsTarget.map(item => item.id);
+            idsTargetSet = new Set(
+              itemsTarget.map((item: { id: TableIdentity }) => String(item.id)),
+            );
           }
           for (const child of entity[relationName]) {
-            if (!isNil(child.id) && !idsTarget.some(id => this.__sameTableIdentity(id, child.id))) {
+            if (!isNil(child.id) && !idsTargetSet.has(String(child.id))) {
               throw new Error(`invalid id: ${child.id}`);
             }
             children.push(Object.assign({}, child, { [key]: entityId }));
