@@ -11,11 +11,13 @@ import type {
   IResourceBlockRecord,
   TypeFormSchemaScene,
   IResourceRenderTableActionRowOptionsAction,
+  IResourceRenderDetailsActionRowOptionsAction,
   IResourceRenderFormActionRowOptionsAction,
   IResourceRenderTableActionBulkOptionsAction,
   IResourceRenderDetailsActionBulkOptionsAction,
   IResourceRenderBlockOptionsBlock,
   IResourceTableActionRowOptionsBase,
+  IResourceDetailsActionRowOptionsBase,
   IResourceFormActionRowOptionsBase,
   IResourceTableActionBulkOptionsBase,
   IResourceDetailsActionBulkOptionsBase,
@@ -82,6 +84,25 @@ export function schemaRenderTableActionRow<K extends keyof IResourceTableActionR
 export function schemaRenderTableActionRowJsx(
   renderComponentJsx: TypeRenderComponentJsx,
   options?: Pick<IResourceTableActionRowOptionsBase, 'permission'>,
+) {
+  return { render: renderComponentJsx, options };
+}
+
+export function schemaRenderDetailsActionRow<K extends keyof IResourceDetailsActionRowRecord>(
+  render: K,
+  options?: IResourceDetailsActionRowRecord[K],
+): IResourceRenderDetailsActionRowOptionsAction {
+  const pos = render.toString().indexOf(':action');
+  const name =
+    pos > -1
+      ? _toLowerCaseFirstChar(render.toString().substring(pos + ':action'.length))
+      : undefined;
+  return { $$typeof: 'zova-jsx:actionRow', name, render, options };
+}
+
+export function schemaRenderDetailsActionRowJsx(
+  renderComponentJsx: TypeRenderComponentJsx,
+  options?: Pick<IResourceDetailsActionRowOptionsBase, 'permission'>,
 ) {
   return { render: renderComponentJsx, options };
 }

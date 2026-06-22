@@ -30,10 +30,10 @@ export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
     ZovaRender.cell('basic-details:actionOperationsRow', {
-      // actions: [
-      //   ZovaRender.tableActionRow('basic-table:actionUpdate'),
-      //   ZovaRender.tableActionRow('basic-table:actionDelete'),
-      // ],
+      actions: [
+        ZovaRender.tableActionRow('basic-table:actionUpdate'),
+        ZovaRender.tableActionRow('basic-details:actionDelete'),
+      ],
     }),
   )
   _operationsRow?: unknown;

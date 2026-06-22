@@ -40,6 +40,8 @@ export interface ICommandRowOptionsBase<Result = any> extends ICommandOptionsBas
   id?: TableIdentity;
 }
 
+export interface ICommandDetailOptionsBase<Result = any> extends ICommandOptionsBase<Result> {}
+
 declare module 'zova-module-a-bean' {
   export interface SysOnion {
     command: ServiceOnion<IDecoratorCommandOptions, keyof ICommandRecord>;
