@@ -1,6 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { $makeSchema, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
@@ -29,15 +29,17 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
     }),
   ],
   fields: {
-    trainingRecords: $makeSchema(
+    trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
       ZovaRender.order(5),
       ZovaRender.field('basic-details:formFieldDetails'),
       v.optional(),
-      v.array(DtoDetailRecordResItem),
     ),
   },
 })
 export class DtoStudentCreate extends $Dto.create(() => ModelStudent, {
   include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } },
-}) {}
+}) {
+  @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordResItem))
+  _trainingRecords?: DtoDetailRecordResItem[];
+}

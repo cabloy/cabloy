@@ -25,6 +25,7 @@ export interface ControllerBlockDetailsProps<
   blocks?: IResourceRenderBlockOptionsBlock[];
   formMeta?: IFormMeta;
   schemaRow?: ISchemaObjectExtensionField;
+  schemaForm?: ISchemaObjectExtensionField;
   getDetailItems?: () => TData[] | undefined;
   setDetailItems?: (detailItems: TData[]) => void;
 }

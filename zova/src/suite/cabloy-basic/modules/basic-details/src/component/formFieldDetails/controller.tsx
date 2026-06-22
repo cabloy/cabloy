@@ -22,7 +22,9 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface IResourceFormFieldDetailsOptions extends IResourceFormFieldOptionsBase {}
+export interface IResourceFormFieldDetailsOptions extends IResourceFormFieldOptionsBase {
+  // schemaRow?:
+}
 
 export interface ControllerFormFieldDetailsProps extends IFormFieldComponentOptions {
   options?: IResourceFormFieldDetailsOptions;
@@ -60,15 +62,12 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
     $$formField: ControllerFormField,
   ) {
     const { propsBucket } = formFieldRenderContext;
-    // schema
-    const schemaName = $$formField.property?.items?.$ref;
-    if (!schemaName) {
-      return <div>Should specify the detail schema</div>;
-    }
-    const schemaRow: ISchemaObjectExtensionField | undefined = this.$sdk.getSchema(
-      schemaName!,
-    ).data;
+    // schemaRow
+    const schemaRow = this._getSchemaRow($$formField);
     if (!schemaRow) return;
+    // schemaForm
+    const schemaForm = $$formField.property!.items;
+    if (!schemaForm) return;
     // formMeta
     const formScene: TypeFormScene = propsBucket.readonly
       ? 'view'
@@ -84,6 +83,7 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
         {
           formMeta,
           schemaRow,
+          schemaForm,
           getDetailItems: () => {
             return propsBucket.value;
           },
@@ -102,5 +102,16 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
       }
     });
     return <div>{domBlocks}</div>;
+  }
+
+  private _getSchemaRow($$formField: ControllerFormField): ISchemaObjectExtensionField | undefined {
+    const fieldNameAux = `_${$$formField.name}`;
+    const propertyAux = $$formField.$$form.getFieldProperty(fieldNameAux);
+    // schema
+    const schemaName = propertyAux?.items?.$ref;
+    if (!schemaName) {
+      throw new Error(`Should specify the schemaRow of detail by auxiliary Field: ${fieldNameAux}`);
+    }
+    return this.$sdk.getSchema(schemaName!).data;
   }
 }
