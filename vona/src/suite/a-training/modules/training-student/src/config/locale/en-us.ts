@@ -14,5 +14,5 @@ export default {
   ForceDelete: 'Force Delete',
   TrainingRecords: 'Training Records',
   AddTrainingRecord: 'Add Training Record',
-  UpdateTrainingRecord: 'Update Training Record',
+  EditTrainingRecord: 'Edit Training Record',
 };

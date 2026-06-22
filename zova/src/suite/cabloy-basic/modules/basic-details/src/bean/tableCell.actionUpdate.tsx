@@ -47,7 +47,6 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
           const detailItem = cellContext.row.original as Record<string, any>;
           const detailItemId = detailItem.id;
           const detailItemIndex = cellContext.row.index;
-          const formScopeId = detailItemId ?? cellContext.row.id;
           const formData = deepExtend({}, detailItem);
           const formMeta = formMetaFromFormScene('edit');
           let formRef: BeanControllerFormBase | undefined;
@@ -65,7 +64,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
                     schema={$$details.schemaForm}
                     schemaScene="form"
                     formMeta={formMeta as IFormMeta}
-                    formScope={{ id: formScopeId }}
+                    formScope={{ id: detailItemId }}
                     onSubmitData={(data: TypeFormOnSubmitData<Record<string, any>>) => {
                       const detailItemNew = deepExtend({}, detailItem, data.value);
                       if (detailItemId !== undefined && detailItemId !== null) {

@@ -37,7 +37,7 @@ export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
     ZovaRender.cell('basic-details:actionOperationsRow', {
       actions: [
         ZovaRender.detailsActionRow('basic-details:actionUpdate', {
-          dialogOptions: { title: $locale('UpdateTrainingRecord') },
+          dialogOptions: { title: $locale('EditTrainingRecord') },
           permission: { formScene: ['create', 'edit'] },
         }),
         ZovaRender.detailsActionRow('basic-details:actionDelete', {
