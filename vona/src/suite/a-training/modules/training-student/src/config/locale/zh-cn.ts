@@ -14,4 +14,5 @@ export default {
   ForceDelete: '强制删除',
   TrainingRecords: '培训记录',
   AddTrainingRecord: '添加培训记录',
+  UpdateTrainingRecord: '修改培训记录',
 };
