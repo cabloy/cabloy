@@ -24,9 +24,7 @@ declare module 'zova-module-a-openapi' {
 }
 
 export interface ControllerActionCreateProps extends IResourceDetailsActionBulkOptionsBase {
-  icon?: keyof IIconRecord;
-  title?: string;
-  dialogOptions?: IModalDialogOptions;
+  dialogOptions?: IModalDialogOptions & { icon?: keyof IIconRecord; title?: string };
 }
 
 @Controller()
@@ -64,8 +62,8 @@ export class ControllerActionCreate extends BeanControllerBase {
     this.formData = {};
     this.$appModal.dialog(
       {
-        icon: this.$props.icon,
-        title: this.$props.title ?? this.scope.locale.AddDetail(),
+        icon: this.$props.dialogOptions?.icon,
+        title: this.$props.dialogOptions?.title ?? this.scope.locale.AddDetail(),
         slotDefault: dialog => this._renderDialogForm(dialog),
         slotActions: dialog => this._renderDialogActions(dialog),
       },

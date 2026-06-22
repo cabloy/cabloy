@@ -6,10 +6,9 @@ import type {
 } from 'zova-module-a-table';
 
 import { BeanBase } from 'zova';
-import { ZIcon } from 'zova-module-a-icon';
+import { IIconRecord, ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
-
-import { ICommandOptionsEdit } from './command.edit.jsx';
+import { IModalDialogOptions } from 'zova-module-basic-app';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {
@@ -17,7 +16,9 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ITableCellOptionsActionUpdate extends IResourceDetailsActionRowOptionsBase {}
+export interface ITableCellOptionsActionUpdate extends IResourceDetailsActionRowOptionsBase {
+  dialogOptions?: IModalDialogOptions & { icon?: keyof IIconRecord; title?: string };
+}
 
 @TableCell<ITableCellOptionsActionUpdate>({
   class: 'btn btn-outline btn-primary join-item',
@@ -25,20 +26,16 @@ export interface ITableCellOptionsActionUpdate extends IResourceDetailsActionRow
 export class TableCellActionUpdate extends BeanBase implements ITableCellRender {
   render(
     options: ITableCellOptionsActionUpdate,
-    renderContext: IJsxRenderContextTableCell,
+    _renderContext: IJsxRenderContextTableCell,
     _next: NextTableCellRender,
   ) {
-    const { $host } = renderContext;
+    // const { $host } = renderContext;
     return (
       <button
         class={options.class}
         type="button"
         onClick={async () => {
-          await $host.$performCommand(
-            'basic-details:edit',
-            options as Partial<ICommandOptionsEdit>,
-            renderContext,
-          );
+          // edit detail
         }}
       >
         <ZIcon name="::draft" width={24}></ZIcon>
