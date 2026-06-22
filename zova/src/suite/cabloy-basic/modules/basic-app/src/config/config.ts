@@ -34,6 +34,12 @@ export const config = (_sys: ZovaSys) => {
           closeOnBackdrop: true,
         },
       },
+      dialog: {
+        default: {
+          maxWidth: 640,
+          closeOnBackdrop: false,
+        },
+      },
     },
   };
 };

@@ -10,6 +10,8 @@ import {
   IModalAlertOptions,
   IModalConfirmOptionsInner,
   IModalDialogOptions,
+  IModalDialogRenderContext,
+  IModalDialogRenderOptions,
   IModalItem,
   IModalPromptOptionsInner,
   ModalType,
@@ -27,7 +29,7 @@ interface IRenderDialogBaseOptions {
   iconName?: keyof IIconRecord;
   title: string;
   body?: VNode;
-  actions: VNode;
+  actions?: VNode;
   onClose: () => void;
 }
 
@@ -58,7 +60,8 @@ export class BehaviorAppModal extends BeanBehaviorBase<
   private _renderAppModal(modalItem: IModalItem) {
     if (modalItem.type === 'alert') return this._renderAppModalAlert(modalItem);
     if (modalItem.type === 'confirm') return this._renderAppModalConfirm(modalItem);
-    return this._renderAppModalPrompt(modalItem);
+    if (modalItem.type === 'prompt') return this._renderAppModalPrompt(modalItem);
+    return this._renderAppModalDialog(modalItem);
   }
 
   private _renderAppModalAlert(modalItem: IModalItem) {
@@ -196,6 +199,24 @@ export class BehaviorAppModal extends BeanBehaviorBase<
     });
   }
 
+  private _renderAppModalDialog(modalItem: IModalItem) {
+    const options = modalItem.options as IModalDialogRenderOptions | undefined;
+    const dialogOptions = this._prepareDialogOptions(modalItem.type, modalItem.dialogOptions);
+    const dialog = this._createDialogRenderContext(modalItem);
+    const title = options?.title ?? this.sys.env.APP_TITLE ?? '';
+    return this._renderDialogBase({
+      modalItem,
+      dialogOptions,
+      iconName: options?.icon,
+      title,
+      body: options?.slotDefault?.(dialog),
+      actions: options?.slotActions?.(dialog),
+      onClose: () => {
+        this.$appModal.close(modalItem.id);
+      },
+    });
+  }
+
   private _renderDialogBase({
     modalItem,
     dialogOptions,
@@ -227,11 +248,20 @@ export class BehaviorAppModal extends BeanBehaviorBase<
                 {!!body && <div class="mt-2">{body}</div>}
               </div>
             </div>
-            <div class="card-actions justify-end">{actions}</div>
+            {!!actions && <div class="card-actions justify-end">{actions}</div>}
           </div>
         </div>
       </div>
     );
+  }
+
+  private _createDialogRenderContext(modalItem: IModalItem): IModalDialogRenderContext {
+    return {
+      id: modalItem.id,
+      close: () => {
+        this.$appModal.close(modalItem.id);
+      },
+    };
   }
 
   private _prepareDialogOptions(type: ModalType, dialogOptions?: IModalDialogOptions) {

@@ -27,7 +27,6 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
 
   protected render() {
     const { $$details } = this.$$renderContext;
-    const data = [{ id: 1, name: 'yang' }] as any;
     return (
       <ZTable<TData>
         class={this.$props.class}
@@ -35,7 +34,7 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
           this.tableRef = ref;
           $$details.tableRef = ref as unknown as BeanControllerTableBase<{}>;
         }}
-        data={data ?? ($$details.data as unknown as TData[])}
+        data={$$details.data as unknown as TData[]}
         schema={$$details.schemaRow}
         tableScope={$$details.jsxCelScope}
       ></ZTable>

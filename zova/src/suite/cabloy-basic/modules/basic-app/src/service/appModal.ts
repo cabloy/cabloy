@@ -6,6 +6,7 @@ import {
   IModalAlertOptions,
   IModalConfirmOptions,
   IModalDialogOptions,
+  IModalDialogRenderOptions,
   IModalItem,
   IModalPromptOptions,
 } from '../types/appModal.js';
@@ -75,10 +76,26 @@ export class ServiceAppModal extends BeanBase {
     });
   }
 
+  public dialog(options?: IModalDialogRenderOptions, dialogOptions?: IModalDialogOptions) {
+    const id = this.newModalItemId();
+    const modalItem: IModalItem = {
+      id,
+      type: 'dialog',
+      options,
+      dialogOptions,
+    };
+    this.modalItems.push(modalItem);
+    return new AppModalItem(this, modalItem);
+  }
+
   public close(id: number) {
-    const [index] = this.findModalItem(id);
-    if (index === -1) return;
+    const [index, modalItem] = this.findModalItem(id);
+    if (index === -1 || !modalItem) return;
     this.modalItems.splice(index, 1);
+    if (modalItem.type === 'dialog') {
+      const options = modalItem.options as IModalDialogRenderOptions | undefined;
+      options?.onClose?.();
+    }
   }
 
   protected findModalItem(id: number): [number, IModalItem | undefined] {
