@@ -85,11 +85,11 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     this._createTable();
   }
 
-  get schema() {
+  public get schema() {
     return this.$props.schema;
   }
 
-  get data() {
+  public get data() {
     return this.$props.data;
   }
 

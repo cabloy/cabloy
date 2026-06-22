@@ -5,12 +5,11 @@ import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import {
   IDetailsScope,
+  IFormMeta,
   IJsxRenderContextDetails,
-  IPermissionHintDetailsActionBulk,
   IResourceBlockOptionsBase,
   IResourceRenderBlockOptionsBlock,
   ISchemaObjectExtensionField,
-  TypeFormScene,
 } from 'zova-module-a-openapi';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 
@@ -24,7 +23,7 @@ export interface ControllerBlockDetailsProps<
   TData extends {} = {},
 > extends IResourceBlockOptionsBase {
   blocks?: IResourceRenderBlockOptionsBlock[];
-  formScene?: TypeFormScene;
+  formMeta?: IFormMeta;
   schemaRow?: ISchemaObjectExtensionField;
   getDetailItems?: () => TData[] | undefined;
   setDetailItems?: (detailItems: TData[]) => void;
@@ -50,21 +49,16 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
     return this.$props.getDetailItems?.() ?? [];
   }
 
+  get formMeta() {
+    return this.$props.formMeta!;
+  }
+
   get formScene() {
-    return this.$props.formScene!;
+    return this.formMeta.formScene!;
   }
 
   get schemaRow() {
     return this.$props.schemaRow!;
-  }
-
-  public checkPermission(permissionHint?: IPermissionHintDetailsActionBulk): boolean {
-    const formScene = this.formScene;
-    const formSceneHint = permissionHint?.formScene;
-    if (!formSceneHint) return true;
-    if (Array.isArray(formSceneHint) && formSceneHint.includes(formScene!)) return true;
-    if (formSceneHint === formScene) return true;
-    return false;
   }
 
   private _prepareJsx() {
@@ -83,7 +77,9 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
   }
 
   private _prepareJsxCelScope(): IDetailsScope {
-    return {};
+    return {
+      formMeta: this.formMeta,
+    };
   }
 
   protected render() {

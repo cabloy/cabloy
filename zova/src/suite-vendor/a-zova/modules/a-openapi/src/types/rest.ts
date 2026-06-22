@@ -6,6 +6,7 @@ import 'openapi3-ts/oas30';
 import 'openapi3-ts/oas31';
 import { SchemaObject } from 'openapi3-ts/oas31';
 
+import { IResourceDetailsActionRowRecord } from './detail/detailsActionRow.js';
 import { IResourceRenderBlockOptionsBlock } from './resource/block.js';
 import { IResourceFormFieldRecord } from './resource/formField.js';
 import { IResourceTableActionRowRecord } from './resource/tableActionRow.js';
@@ -112,6 +113,7 @@ export type TypeTableCellRenderComponentNormal =
   | TypeRenderComponentPreset;
 export type TypeTableCellRenderComponent =
   | keyof IResourceTableActionRowRecord
+  | keyof IResourceDetailsActionRowRecord
   | TypeRenderComponentJsx;
 export type TypeTableCellRenderComponentProvider = TypeRenderComponentJsx | 'text' | string;
 export type TypeTableBulkRenderComponentProvider =

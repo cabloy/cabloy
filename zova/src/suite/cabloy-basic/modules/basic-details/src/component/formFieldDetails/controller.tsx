@@ -14,7 +14,7 @@ import { VNode } from 'vue';
 import { BeanControllerBase, deepExtend } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormField } from 'zova-module-a-form';
+import { formMetaFromFormScene, ZFormField } from 'zova-module-a-form';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -69,10 +69,11 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
       schemaName!,
     ).data;
     if (!schemaRow) return;
-    // formScene
+    // formMeta
     const formScene: TypeFormScene = propsBucket.readonly
       ? 'view'
       : $$formField.formMeta!.formScene!;
+    const formMeta = formMetaFromFormScene(formScene);
     // blocks
     const blocks = schemaRow?.rest?.blocks;
     if (!blocks || blocks.length === 0) return;
@@ -81,7 +82,7 @@ export class ControllerFormFieldDetails extends BeanControllerBase {
       const options = deepExtend(
         { key: index },
         {
-          formScene,
+          formMeta,
           schemaRow,
           getDetailItems: () => {
             return propsBucket.value;
