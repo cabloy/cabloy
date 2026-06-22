@@ -21,7 +21,7 @@ export interface IJsxRenderContextPageEntry extends IJsxRenderContextBase {
 
 export interface IPageEntryScope {
   resource?: string;
-  id: TableIdentity | null;
+  id?: TableIdentity | null;
   permissions?: TypeOpenapiPermissions;
 }
 

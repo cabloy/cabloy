@@ -31,6 +31,9 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
 export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
   dtoClass: DtoDetailRecordBase,
 }) {
+  @Api.field(v.title('#'), ZovaRender.order(1, 'core'))
+  _lineNumber?: number;
+
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),

@@ -11,6 +11,7 @@ import {
   CellContext,
   createColumnHelper,
   getCoreRowModel,
+  Row,
   TableOptionsWithReactiveData,
 } from '@tanstack/vue-table';
 import { SchemaObject } from 'openapi3-ts/oas31';
@@ -50,6 +51,7 @@ export interface ControllerTableProps<TData extends {} = {}> {
   tableScope?: ITableScope;
   getColumns?: TypeTableGetColumns<TData>;
   slotDefault?: (table: ControllerTable<TData>) => VNode;
+  getRowId?: (originalRow: TData, index: number, parent?: Row<TData>) => string;
 }
 
 @Controller()
@@ -102,7 +104,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     // eslint-disable-next-line
     const self = this;
     const tableOptions: TableOptionsWithReactiveData<TData> = {
-      getRowId: (row: TData) => cast(row).id,
+      getRowId: this.$props.getRowId ?? ((originalRow: TData) => cast(originalRow).id),
       getCoreRowModel: getCoreRowModel(),
       renderFallbackValue: this.scope.config.renderFallbackValue,
       manualPagination: true,

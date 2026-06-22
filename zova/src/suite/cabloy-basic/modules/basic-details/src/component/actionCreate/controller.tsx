@@ -7,7 +7,7 @@ import type {
 import type { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
 
 import { classes } from 'typestyle';
-import { BeanControllerBase, Use, uuid } from 'zova';
+import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import {
   BeanControllerFormBase,
@@ -82,7 +82,6 @@ export class ControllerActionCreate extends BeanControllerBase {
         schema={$$details.schemaForm}
         schemaScene="form-create"
         formMeta={this.formMeta}
-        formScope={{ id: null }}
         onSubmitData={data => this._submitData(data, dialog)}
         onShowError={async ({ error }) => {
           await this.$performCommand('basic-commands:alert', {
@@ -127,7 +126,7 @@ export class ControllerActionCreate extends BeanControllerBase {
     dialog: IModalDialogRenderContext,
   ) {
     const { $$details } = this.$$renderContext;
-    const detailItem = Object.assign({ id: uuid() }, data.value);
+    const detailItem = data.value;
     $$details.data = [...$$details.data, detailItem];
     dialog.close();
   }

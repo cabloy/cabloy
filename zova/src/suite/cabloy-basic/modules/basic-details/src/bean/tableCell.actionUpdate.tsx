@@ -1,4 +1,4 @@
-import type { IFormMeta, IResourceDetailsActionRowOptionsBase } from 'zova-module-a-openapi';
+import type { IResourceDetailsActionRowOptionsBase } from 'zova-module-a-openapi';
 import type {
   IJsxRenderContextTableCell,
   ITableCellRender,
@@ -45,7 +45,6 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
           const $$details = $celScope.$$details;
           if (!$$details) throw new Error('should provide $$details in cell scope');
           const detailItem = cellContext.row.original as Record<string, any>;
-          const detailItemId = detailItem.id;
           const detailItemIndex = cellContext.row.index;
           const formData = deepExtend({}, detailItem);
           const formMeta = formMetaFromFormScene('edit');
@@ -63,17 +62,10 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
                     data={formData}
                     schema={$$details.schemaForm}
                     schemaScene="form"
-                    formMeta={formMeta as IFormMeta}
-                    formScope={{ id: detailItemId }}
+                    formMeta={formMeta}
                     onSubmitData={(data: TypeFormOnSubmitData<Record<string, any>>) => {
                       const detailItemNew = deepExtend({}, detailItem, data.value);
-                      if (detailItemId !== undefined && detailItemId !== null) {
-                        detailItemNew.id = detailItemId;
-                      }
                       $$details.data = $$details.data.map((item, index) => {
-                        if (detailItemId !== undefined && detailItemId !== null) {
-                          return item.id === detailItemId ? detailItemNew : item;
-                        }
                         return index === detailItemIndex ? detailItemNew : item;
                       });
                       dialog.close();
