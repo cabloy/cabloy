@@ -15,7 +15,7 @@ import type { ModelStudent } from '../model/student.ts';
 @Service()
 export class ServiceStudent extends BeanBase {
   async create(student: DtoStudentCreate): Promise<EntityStudent> {
-    return await this.scope.model.student.insert(student);
+    return await this.scope.model.student.insert(student, { include: { trainingRecords: true } });
   }
 
   async select(params?: IQueryParams<ModelStudent>): Promise<DtoStudentSelectRes> {
@@ -27,7 +27,9 @@ export class ServiceStudent extends BeanBase {
   }
 
   async update(id: TableIdentity, student: DtoStudentUpdate) {
-    return await this.scope.model.student.updateById(id, student);
+    return await this.scope.model.student.updateById(id, student, {
+      include: { trainingRecords: true },
+    });
   }
 
   async summary(id: TableIdentity): Promise<DtoStudentSummary | undefined> {
@@ -48,10 +50,13 @@ export class ServiceStudent extends BeanBase {
   }
 
   async delete(id: TableIdentity) {
-    return await this.scope.model.student.deleteById(id);
+    return await this.scope.model.student.deleteById(id, { include: { trainingRecords: true } });
   }
 
   async deleteForce(id: TableIdentity) {
-    return await this.scope.model.student.deleteById(id, { disableDeleted: true });
+    return await this.scope.model.student.deleteById(id, {
+      disableDeleted: true,
+      include: { trainingRecords: true },
+    });
   }
 }
