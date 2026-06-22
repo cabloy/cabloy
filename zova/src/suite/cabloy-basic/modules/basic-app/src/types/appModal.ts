@@ -6,11 +6,18 @@ import type { ServiceAppModal } from '../service/appModal.js';
 export type ModalType = 'alert' | 'confirm' | 'prompt' | 'dialog';
 export type AlertType = 'success' | 'info' | 'warning' | 'error';
 
-export interface IModalDialogOptions {
+export interface IModalBaseOptions {
   maxWidth?: number | string;
   maxHeight?: number | string;
   closeOnBackdrop?: boolean;
+  closeOnEscape?: boolean;
 }
+
+export interface IModalDialogOptions extends IModalBaseOptions {
+  showCloseButton?: boolean;
+}
+
+export interface IModalMessageOptions extends IModalBaseOptions {}
 
 export interface IModalDialogRenderContext {
   id: number;
@@ -61,7 +68,7 @@ export interface IModalItem {
     | IModalConfirmOptionsInner
     | IModalPromptOptionsInner
     | IModalDialogRenderOptions;
-  dialogOptions?: IModalDialogOptions;
+  dialogOptions?: IModalDialogOptions | IModalMessageOptions;
 }
 
 declare module 'zova' {

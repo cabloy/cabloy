@@ -8,6 +8,7 @@ import {
   IModalDialogOptions,
   IModalDialogRenderOptions,
   IModalItem,
+  IModalMessageOptions,
   IModalPromptOptions,
 } from '../types/appModal.js';
 
@@ -22,7 +23,7 @@ export class ServiceAppModal extends BeanBase {
     return ++this.modalItemIdCounter;
   }
 
-  public alert(options?: IModalAlertOptions, dialogOptions?: IModalDialogOptions) {
+  public alert(options?: IModalAlertOptions, dialogOptions?: IModalMessageOptions) {
     const id = this.newModalItemId();
     const modalItem: IModalItem = {
       id,
@@ -36,7 +37,7 @@ export class ServiceAppModal extends BeanBase {
 
   public confirm(
     options?: IModalConfirmOptions,
-    dialogOptions?: IModalDialogOptions,
+    dialogOptions?: IModalMessageOptions,
   ): Promise<boolean> {
     return new Promise(resolve => {
       const id = this.newModalItemId();
@@ -57,7 +58,7 @@ export class ServiceAppModal extends BeanBase {
 
   public prompt(
     options?: IModalPromptOptions,
-    dialogOptions?: IModalDialogOptions,
+    dialogOptions?: IModalMessageOptions,
   ): Promise<string | undefined> {
     return new Promise(resolve => {
       const id = this.newModalItemId();

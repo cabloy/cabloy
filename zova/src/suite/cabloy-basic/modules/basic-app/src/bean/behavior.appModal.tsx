@@ -13,6 +13,7 @@ import {
   IModalDialogRenderContext,
   IModalDialogRenderOptions,
   IModalItem,
+  IModalMessageOptions,
   IModalPromptOptionsInner,
   ModalType,
 } from '../types/appModal.js';
@@ -30,6 +31,7 @@ interface IRenderDialogBaseOptions {
   title: string;
   body?: VNode;
   actions?: VNode;
+  showCloseButton?: boolean;
   onClose: () => void;
 }
 
@@ -39,6 +41,51 @@ export class BehaviorAppModal extends BeanBehaviorBase<
   IBehaviorPropsInputAppModal,
   IBehaviorPropsOutputAppModal
 > {
+  private _windowKeydownHandler?: (event: KeyboardEvent) => void;
+
+  protected async __init__() {
+    if (!process.env.CLIENT) return;
+    this._windowKeydownHandler = event => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      const modalItems = this.$appModal.modalItems;
+      if (modalItems.length === 0) return;
+      const modalItem = modalItems[modalItems.length - 1];
+      if (!modalItem) return;
+      const dialogOptions = this._prepareDialogOptions(modalItem.type, modalItem.dialogOptions);
+      if (!dialogOptions.closeOnEscape) return;
+      event.preventDefault();
+      event.stopPropagation();
+      this._closeModalByEscape(modalItem);
+    };
+    window.addEventListener('keydown', this._windowKeydownHandler);
+  }
+
+  protected __dispose__() {
+    if (this._windowKeydownHandler) {
+      window.removeEventListener('keydown', this._windowKeydownHandler);
+    }
+  }
+
+  private _closeModalByEscape(modalItem: IModalItem) {
+    if (modalItem.type === 'alert') {
+      this.$appModal.close(modalItem.id);
+      return;
+    }
+    if (modalItem.type === 'confirm') {
+      const options = modalItem.options as IModalConfirmOptionsInner | undefined;
+      this.$appModal.close(modalItem.id);
+      options?.onCallback?.(false);
+      return;
+    }
+    if (modalItem.type === 'prompt') {
+      const options = modalItem.options as IModalPromptOptionsInner | undefined;
+      this.$appModal.close(modalItem.id);
+      options?.onCallback?.(undefined);
+      return;
+    }
+    this.$appModal.close(modalItem.id);
+  }
+
   protected render(
     _props: IBehaviorPropsInputAppModal,
     next: NextBehavior<IBehaviorPropsOutputAppModal>,
@@ -88,6 +135,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
           {this.scope.locale.Close()}
         </button>
       ),
+      showCloseButton: dialogOptions.showCloseButton,
       onClose: () => {
         this.$appModal.close(modalItem.id);
       },
@@ -130,6 +178,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
           </button>
         </>
       ),
+      showCloseButton: dialogOptions.showCloseButton,
       onClose: () => {
         this.$appModal.close(modalItem.id);
         options?.onCallback?.(false);
@@ -192,6 +241,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
           </button>
         </>
       ),
+      showCloseButton: dialogOptions.showCloseButton,
       onClose: () => {
         this.$appModal.close(modalItem.id);
         options?.onCallback?.(undefined);
@@ -211,6 +261,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
       title,
       body: options?.slotDefault?.(dialog),
       actions: options?.slotActions?.(dialog),
+      showCloseButton: dialogOptions.showCloseButton,
       onClose: () => {
         this.$appModal.close(modalItem.id);
       },
@@ -224,6 +275,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
     title,
     body,
     actions,
+    showCloseButton,
     onClose,
   }: IRenderDialogBaseOptions) {
     const style = this._dialogStyle(dialogOptions);
@@ -249,6 +301,17 @@ export class BehaviorAppModal extends BeanBehaviorBase<
               <div class="flex-1 min-w-0">
                 <h3 class="card-title">{title}</h3>
               </div>
+              {!!showCloseButton && (
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm btn-circle shrink-0 transition-colors hover:bg-base-300"
+                  onClick={() => {
+                    onClose();
+                  }}
+                >
+                  <ZIcon name="::close" width={18} height={18}></ZIcon>
+                </button>
+              )}
             </div>
             {!!body && <div class="min-h-0 flex-1 overflow-y-auto">{body}</div>}
             {!!actions && <div class="card-actions justify-end shrink-0">{actions}</div>}
@@ -267,12 +330,28 @@ export class BehaviorAppModal extends BeanBehaviorBase<
     };
   }
 
-  private _prepareDialogOptions(type: ModalType, dialogOptions?: IModalDialogOptions) {
-    const defaults = this.scope.config.model[type].default as IModalDialogOptions;
-    return {
+  private _prepareDialogOptions(
+    type: ModalType,
+    dialogOptions?: IModalDialogOptions | IModalMessageOptions,
+  ) {
+    const defaults = this.scope.config.model[type].default as
+      | IModalDialogOptions
+      | IModalMessageOptions;
+    const options = {
       maxWidth: dialogOptions?.maxWidth ?? defaults.maxWidth,
       maxHeight: dialogOptions?.maxHeight ?? defaults.maxHeight,
       closeOnBackdrop: dialogOptions?.closeOnBackdrop ?? defaults.closeOnBackdrop,
+      closeOnEscape: dialogOptions?.closeOnEscape ?? defaults.closeOnEscape,
+      showCloseButton: false,
+    };
+    if (type !== 'dialog') return options;
+    const defaultsDialog = defaults as IModalDialogOptions;
+    return {
+      ...options,
+      showCloseButton:
+        (dialogOptions as IModalDialogOptions | undefined)?.showCloseButton ??
+        defaultsDialog.showCloseButton ??
+        false,
     };
   }
 

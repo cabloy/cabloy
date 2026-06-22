@@ -14,6 +14,8 @@ export const config = (_sys: ZovaSys) => {
         default: {
           maxWidth: 360,
           closeOnBackdrop: true,
+          closeOnEscape: true,
+          showCloseButton: false,
         },
       },
       confirm: {
@@ -23,6 +25,8 @@ export const config = (_sys: ZovaSys) => {
         default: {
           maxWidth: 360,
           closeOnBackdrop: true,
+          closeOnEscape: true,
+          showCloseButton: false,
         },
       },
       prompt: {
@@ -32,6 +36,8 @@ export const config = (_sys: ZovaSys) => {
         default: {
           maxWidth: 360,
           closeOnBackdrop: true,
+          closeOnEscape: true,
+          showCloseButton: false,
         },
       },
       dialog: {
@@ -39,6 +45,8 @@ export const config = (_sys: ZovaSys) => {
           maxWidth: 640,
           maxHeight: 'calc(100vh - 2rem)',
           closeOnBackdrop: false,
+          closeOnEscape: true,
+          showCloseButton: true,
         },
       },
     },
