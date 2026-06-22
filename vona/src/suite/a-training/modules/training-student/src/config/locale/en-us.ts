@@ -13,4 +13,5 @@ export default {
   DescriptionLength: 'Description Length',
   ForceDelete: 'Force Delete',
   TrainingRecords: 'Training Records',
+  AddTrainingRecord: 'Add Training Record',
 };

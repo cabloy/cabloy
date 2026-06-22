@@ -18,6 +18,7 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
         ZovaRender.block('basic-details:blockToolbarBulk', {
           actions: [
             ZovaRender.detailsActionBulk('basic-details:actionCreate', {
+              title: $locale('AddTrainingRecord'),
               permission: { formScene: ['create', 'edit'] },
             }),
           ],

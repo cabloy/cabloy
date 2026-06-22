@@ -13,4 +13,5 @@ export default {
   DescriptionLength: '描述长度',
   ForceDelete: '强制删除',
   TrainingRecords: '培训记录',
+  AddTrainingRecord: '添加培训记录',
 };
