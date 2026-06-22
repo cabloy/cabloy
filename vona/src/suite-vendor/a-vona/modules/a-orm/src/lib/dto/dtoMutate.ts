@@ -55,10 +55,12 @@ export function _DtoMutate_raw<
   // entity
   let entityClass = params?.dtoClass ?? getClassEntityFromClassModel(modelClass);
   // columns
-  let columns = prepareColumns(params?.columns);
-  // if dtoClass and columns empty, use dtoClass fields
-  if (params?.columns === undefined && params?.dtoClass) {
+  let columns;
+  // if dtoClass, use dtoClass fields
+  if (params?.dtoClass) {
     columns = getTargetDecoratorRuleColumns(params.dtoClass.prototype) as any;
+  } else {
+    columns = prepareColumns(params?.columns);
   }
   if (columns) {
     if (!topLevel) {

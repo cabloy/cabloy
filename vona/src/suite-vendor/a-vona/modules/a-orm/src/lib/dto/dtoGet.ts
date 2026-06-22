@@ -55,7 +55,7 @@ function _DtoGet_raw<
   // entity
   let entityClass = params?.dtoClass ?? getClassEntityFromClassModel(modelClass);
   // columns
-  const columns = prepareColumns(params?.columns);
+  const columns = params?.dtoClass ? undefined : prepareColumns(params?.columns);
   // always create a new class, no matter if columns empty: dtoClass keeps own fields
   entityClass = $Class.pick(entityClass, columns as any);
   // relations

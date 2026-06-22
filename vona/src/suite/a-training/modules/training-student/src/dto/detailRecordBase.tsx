@@ -14,5 +14,5 @@ export interface IDtoOptionsDetailRecordBase extends IDecoratorDtoOptions {}
   },
 })
 export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
-  columns: ['id', 'name', 'score', 'description'],
+  columns: ['id', 'deleted', 'name', 'score', 'description'],
 }) {}
