@@ -49,6 +49,10 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
     return this.$props.getDetailItems?.() ?? [];
   }
 
+  set data(detailItems: TData[]) {
+    this.$props.setDetailItems?.(detailItems);
+  }
+
   get formMeta() {
     return this.$props.formMeta!;
   }
@@ -77,8 +81,19 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
   }
 
   private _prepareJsxCelScope(): IDetailsScope {
+    // eslint-disable-next-line
+    const self = this;
+    const $$details = this.$customRef(() => {
+      return {
+        get() {
+          return self;
+        },
+        set(_value) {},
+      };
+    }) as any;
     return {
       formMeta: this.formMeta,
+      $$details,
     };
   }
 

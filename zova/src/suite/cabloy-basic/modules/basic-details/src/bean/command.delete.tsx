@@ -3,7 +3,7 @@ import type {
   ICommandDetailOptionsBase,
   NextCommandExecute,
 } from 'zova-module-a-command';
-import type { IJsxRenderContextBase } from 'zova-module-a-openapi';
+import type { IJsxRenderContextDetails } from 'zova-module-a-openapi';
 
 import { BeanBase } from 'zova';
 import { Command } from 'zova-module-a-command';
@@ -16,10 +16,11 @@ export interface ICommandOptionsDelete extends ICommandDetailOptionsBase<TypeCom
 export class CommandDelete extends BeanBase implements ICommandExecute {
   execute(
     _options: ICommandOptionsDelete,
-    _renderContext: IJsxRenderContextBase,
+    renderContext: IJsxRenderContextDetails,
     next: NextCommandExecute,
   ) {
-    console.log(_options, _renderContext);
+    const { $celScope } = renderContext;
+    console.log(_options, $celScope.$$details!.data);
     return next();
   }
 }
