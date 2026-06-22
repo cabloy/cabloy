@@ -1,4 +1,4 @@
-import type { IResourceTableActionRowOptionsBase } from 'zova-module-a-openapi';
+import type { IResourceDetailsActionRowOptionsBase } from 'zova-module-a-openapi';
 import type {
   IJsxRenderContextTableCell,
   ITableCellRender,
@@ -6,23 +6,41 @@ import type {
 } from 'zova-module-a-table';
 
 import { BeanBase } from 'zova';
+import { ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
 
 declare module 'zova-module-a-openapi' {
-  export interface IResourceTableActionRowRecord {
+  export interface IResourceDetailsActionRowRecord {
     'basic-details:actionUpdate'?: ITableCellOptionsActionUpdate;
   }
 }
 
-export interface ITableCellOptionsActionUpdate extends IResourceTableActionRowOptionsBase {}
+export interface ITableCellOptionsActionUpdate extends IResourceDetailsActionRowOptionsBase {}
 
-@TableCell<ITableCellOptionsActionUpdate>()
+@TableCell<ITableCellOptionsActionUpdate>({
+  class: 'btn btn-outline btn-primary join-item',
+})
 export class TableCellActionUpdate extends BeanBase implements ITableCellRender {
   render(
-    _options: ITableCellOptionsActionUpdate,
-    _renderContext: IJsxRenderContextTableCell,
-    next: NextTableCellRender,
+    options: ITableCellOptionsActionUpdate,
+    renderContext: IJsxRenderContextTableCell,
+    _next: NextTableCellRender,
   ) {
-    return next();
+    const { $host } = renderContext;
+    return (
+      <button
+        class={options.class}
+        type="button"
+        onClick={async () => {
+          await $host.$performCommand(
+            'basic-details:edit',
+            options as Partial<ICommandOptionsEdit>,
+            renderContext,
+          );
+        }}
+      >
+        <ZIcon name="::draft" width={24}></ZIcon>
+      </button>
+    );
   }
 }

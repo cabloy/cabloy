@@ -162,12 +162,15 @@ declare module 'zova' {
 /** tableCell: end */
 /** command: begin */
 export * from '../bean/command.delete.jsx';
+export * from '../bean/command.edit.jsx';
 import { ICommandOptionsDelete } from '../bean/command.delete.jsx';
+import { ICommandOptionsEdit } from '../bean/command.edit.jsx';
 import 'zova-module-a-command';
 declare module 'zova-module-a-command' {
   
     export interface ICommandRecord {
       'basic-details:delete': ICommandOptionsDelete;
+'basic-details:edit': ICommandOptionsEdit;
     }
 
   
@@ -183,15 +186,28 @@ declare module 'zova-module-basic-details' {
           get $beanFullName(): 'basic-details.command.delete';
           get $onionName(): 'basic-details:delete';
           get $onionOptions(): ICommandOptionsDelete;
+        }
+
+        export interface CommandEdit {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetails;
+        }
+
+        export interface CommandEdit {
+          get $beanFullName(): 'basic-details.command.edit';
+          get $onionName(): 'basic-details:edit';
+          get $onionOptions(): ICommandOptionsEdit;
         } 
 }
 /** command: end */
 /** command: begin */
 import { CommandDelete } from '../bean/command.delete.jsx';
+import { CommandEdit } from '../bean/command.edit.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'basic-details.command.delete': CommandDelete;
+'basic-details.command.edit': CommandEdit;
   }
 }
 /** command: end */
