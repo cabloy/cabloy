@@ -8,6 +8,10 @@ declare module 'zova-module-a-openapi' {
   export interface IJsxRenderContextDetails<TData extends {} = {}> {
     $$details: ControllerBlockDetails<TData>;
   }
+
+  export interface IDetailsScope {
+    $$details?: ControllerBlockDetails<any>;
+  }
 }
 
 declare module 'zova-module-a-table' {

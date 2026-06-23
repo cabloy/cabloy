@@ -1,30 +1,9 @@
-import type { BeanBase } from 'zova';
-import type { TypeFormOnSubmitData } from 'zova-module-a-form';
-import type { IIconRecord } from 'zova-module-a-icon';
-import type { TypeFormScene, TypeFormSchemaScene } from 'zova-module-a-openapi';
-import type { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
+import type { IModalDialogRenderContext } from 'zova-module-basic-app';
 
 import { classes } from 'typestyle';
 import { BeanControllerFormBase, formMetaFromFormScene, ZForm } from 'zova-module-a-form';
 
-export interface IDialogFormOptions {
-  $host: Pick<BeanBase, '$appModal' | '$performCommand'>;
-  locale: {
-    Cancel: () => string;
-    OK: () => string;
-  };
-  schema: any;
-  data: Record<string, any>;
-  formScene: TypeFormScene;
-  schemaScene: TypeFormSchemaScene;
-  dialogOptions?: IModalDialogOptions;
-  icon?: keyof IIconRecord;
-  title: string;
-  onSubmitData: (
-    data: TypeFormOnSubmitData<Record<string, any>>,
-    dialog: IModalDialogRenderContext,
-  ) => void | Promise<void>;
-}
+import { IDialogFormOptions } from '../types/dialogForm.js';
 
 export function openDialogForm(options: IDialogFormOptions) {
   const { $host } = options;

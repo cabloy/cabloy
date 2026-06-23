@@ -10,21 +10,7 @@ import { DtoDetailRecordBase } from './detailRecordBase.tsx';
 export interface IDtoOptionsDetailRecordMutate extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsDetailRecordMutate>({
-  blocks: [
-    ZovaRender.block('basic-pageentry:blockPageEntry', {
-      blocks: [
-        ZovaRender.block('basic-pageentry:blockForm'),
-        ZovaRender.block('basic-pageentry:blockToolbarRow', {
-          actions: [
-            ZovaRender.formActionRow('basic-form:actionSubmit', {
-              permission: { actionInherit: 'update', formScene: ['create', 'edit'] },
-            }),
-            ZovaRender.formActionRow('basic-form:actionBack', { permission: { public: true } }),
-          ],
-        }),
-      ],
-    }),
-  ],
+  blocks: [ZovaRender.block('basic-details:blockForm')],
 })
 export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord, {
   dtoClass: DtoDetailRecordBase,
