@@ -1,4 +1,39 @@
 // eslint-disable
+/** service: begin */
+export * from '../service/detail.jsx';
+
+import 'zova-module-a-bean';
+declare module 'zova-module-a-bean' {
+  
+    export interface IServiceRecord {
+      'basic-details:detail': never;
+    }
+
+  
+}
+declare module 'zova-module-basic-details' {
+  
+        export interface ServiceDetail {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetails;
+        }
+
+        export interface ServiceDetail {
+          get $beanFullName(): 'basic-details.service.detail';
+          get $onionName(): 'basic-details:detail';
+          
+        } 
+}
+/** service: end */
+/** service: begin */
+import { ServiceDetail } from '../service/detail.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'basic-details.service.detail': ServiceDetail;
+  }
+}
+/** service: end */
 /** controller: begin */
 export * from '../component/actionCreate/controller.jsx';
 export * from '../component/blockDetails/controller.jsx';

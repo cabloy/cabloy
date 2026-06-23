@@ -1,11 +1,9 @@
-import { BeanBase } from 'zova';
 import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord } from 'zova-module-a-icon';
 import { TypeFormScene, TypeFormSchemaScene } from 'zova-module-a-openapi';
 import { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
 
 export interface IDialogFormOptions {
-  $host: Pick<BeanBase, '$appModal' | '$performCommand'>;
   locale: {
     Cancel: () => string;
     OK: () => string;
@@ -22,5 +20,3 @@ export interface IDialogFormOptions {
     dialog: IModalDialogRenderContext,
   ) => void | Promise<void>;
 }
-
-export interface IDialogFormDetail {}

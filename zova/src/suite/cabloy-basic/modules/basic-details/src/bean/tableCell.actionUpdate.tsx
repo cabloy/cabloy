@@ -11,7 +11,7 @@ import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord, ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
 
-import { openDialogForm } from '../lib/index.js';
+import { ServiceDetail } from '../service/detail.jsx';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {
@@ -32,7 +32,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
     renderContext: IJsxRenderContextTableCell,
     _next: NextTableCellRender,
   ) {
-    const { $host, $celScope, cellContext } = renderContext;
+    const { ctx, $celScope, cellContext } = renderContext;
     return (
       <button
         class={options.class}
@@ -42,8 +42,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
           if (!$$details) throw new Error('should provide $$details in cell scope');
           const detailItem = cellContext.row.original as Record<string, any>;
           const detailItemIndex = cellContext.row.index;
-          openDialogForm({
-            $host: $host,
+          const serverDetail = await ctx.bean._newBean(ServiceDetail, true, {
             locale: this.scope.locale,
             schema: $$details.schemaForm,
             data: deepExtend({}, detailItem),
@@ -63,6 +62,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
               dialog.close();
             },
           });
+          serverDetail.openDialogForm();
         }}
       >
         <ZIcon name="::draft" width={24}></ZIcon>
