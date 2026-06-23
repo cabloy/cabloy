@@ -2,12 +2,9 @@ import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
-import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
-
-export const studentLevelSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
 export const studentLevelItems = [
   { value: 1, title: $locale('LevelBeginner') },
@@ -78,7 +75,6 @@ export class EntityStudent extends EntityBase {
     }),
     // Tutorial 4 custom table cell renderer example used by the current implementation.
     ZovaRender.cell('training-student:level', { items: studentLevelItems }),
-    studentLevelSchema,
   )
-  level: 1 | 2 | 3;
+  level: number;
 }

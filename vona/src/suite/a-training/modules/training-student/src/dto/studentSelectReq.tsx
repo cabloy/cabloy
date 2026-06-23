@@ -7,7 +7,7 @@ import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
-import { EntityStudent, studentLevelItems, studentLevelSchema } from '../entity/student.tsx';
+import { EntityStudent, studentLevelItems } from '../entity/student.tsx';
 
 export interface IDtoOptionsStudentSelectReq extends IDecoratorDtoOptions {}
 
@@ -17,17 +17,14 @@ export interface IDtoOptionsStudentSelectReq extends IDecoratorDtoOptions {}
     name: $makeSchema(v.optional(), z.string()),
     level: $makeSchema(
       v.title($locale('Level')),
-      v.optional(),
       ZovaRender.field('basic-select:formFieldSelect', {
         items: studentLevelItems,
         // Keep placeholder undefined so the filter select gets a real empty option
         // instead of a disabled placeholder, allowing users to clear the filter.
         placeholder: undefined,
       }),
-      z.preprocess(value => {
-        if (typeof value === 'string') return Number.parseInt(value);
-        return value;
-      }, studentLevelSchema),
+      v.optional(),
+      z.number(),
     ),
     createdAt: $makeSchema(
       ZovaRender.field('basic-date:formFieldDateRange'),
