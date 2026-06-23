@@ -195,6 +195,46 @@ And that bulk hint type does not have `formScene`.
 
 This is the clearest public type-level explanation for the current limitation.
 
+## 6A. Details actions have their own scene-aware visibility path
+
+The details-table action path uses a nearby but distinct contract.
+
+Relevant type-level surfaces are:
+
+- `a-openapi/src/types/detail/detailsActionRow.ts`
+- `a-openapi/src/types/detail/detailsActionBulk.ts`
+- `a-openapi/src/types/permissions.ts`
+
+The current source confirms:
+
+- `IResourceDetailsActionRowOptionsBase` uses `permission?: IPermissionHintDetailsActionRow`
+- `IResourceDetailsActionBulkOptionsBase` uses `permission?: IPermissionHintDetailsActionBulk`
+- both details permission-hint types support `formScene`
+
+That means the details action family is scene-aware in a different way from `tableActionBulk`.
+
+A practical current example from backend DTO metadata is:
+
+```tsx
+ZovaRender.detailsActionBulk('basic-details:actionCreate', {
+  permission: { formScene: ['create', 'edit'] },
+});
+```
+
+and:
+
+```tsx
+ZovaRender.detailsActionRow('basic-details:actionDelete', {
+  permission: { formScene: ['create', 'edit'] },
+});
+```
+
+So the correct distinction is:
+
+- `tableActionBulk` does not currently support `formScene`
+- `detailsActionBulk` does support `formScene`
+- `detailsActionRow` also supports `formScene`
+
 ## 7. Why bulk actions are different today
 
 Bulk actions are typed around bulk permission hints, not row/form-scene hints.
@@ -203,9 +243,9 @@ So in current Basic source, you should not claim that bulk actions support scene
 
 This is not only a docs distinction. It is a source-confirmed contract distinction.
 
-## 8. Comparison with table row actions
+## 8. Comparison with table row actions and details actions
 
-A useful comparison file is:
+A useful table-row comparison file is:
 
 ```text
 zova/src/suite/cabloy-basic/modules/basic-table/src/bean/tableCell.actionOperationsRow.tsx
@@ -213,10 +253,25 @@ zova/src/suite/cabloy-basic/modules/basic-table/src/bean/tableCell.actionOperati
 
 This table-row action surface uses permission checks, but it does not add the same local page-entry `formScene` prefilter path as `blockToolbarRow`.
 
-That makes the current entry-page toolbar flow more specific:
+A useful details comparison set is:
 
-- it is tied to entry-page runtime context
-- it is not the universal rule for every action surface in the frontend
+```text
+zova/src/suite/cabloy-basic/modules/basic-details/src/component/blockToolbarBulk/controller.tsx
+zova/src/suite/cabloy-basic/modules/basic-details/src/bean/tableCell.actionOperationsRow.tsx
+zova/src/suite/cabloy-basic/modules/basic-details/src/lib/utils.ts
+```
+
+Those files show that the details action path also performs a scene-prefilter, but the authority is different:
+
+- `blockToolbarRow` reads `$$pageEntry.formMeta.formScene`
+- `basic-details` reads `$$details.formScene` or `$celScope.formMeta.formScene`
+- the shared helper in `basic-details/src/lib/utils.ts` performs the actual `formScene` match
+
+That makes the current frontend split more precise:
+
+- entry-page row/form actions are scene-filtered by page-entry runtime context
+- details bulk and details row actions are scene-filtered by details runtime context
+- the two paths are similar in behavior, but they are not the same runtime surface
 
 ## 9. Boundary with page meta
 
@@ -233,10 +288,17 @@ So for action visibility, the local page-entry context is the authority.
 
 ## 10. Bulk-action limitation
 
-The current public Basic source supports this rule clearly:
+The current public Basic source supports this rule clearly for the table-action family:
 
 - row/form action hints can be scene-aware
-- bulk action hints are not scene-aware today
+- table bulk action hints are not scene-aware today
+
+But the details-action family is different:
+
+- details row action hints can be scene-aware
+- details bulk action hints can also be scene-aware
+
+So do not compress these two families into one blanket rule about “bulk actions”.
 
 If a contributor needs scene-aware bulk visibility, they should first verify whether the type and runtime contracts are being extended, rather than assuming the row-action rule applies automatically.
 

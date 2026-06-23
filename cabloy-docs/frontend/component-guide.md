@@ -24,6 +24,16 @@ Example: create a component named `card` in module `training-student`.
 npm run zova :create:component card -- --module=training-student
 ```
 
+The component generator also supports named boilerplate variants through `--boilerplate=...`.
+
+A practical current example is a detail-page bulk action controller scaffold:
+
+```bash
+npm run zova :create:component actionCreate -- --module=training-student --boilerplate=detailsActionBulk
+```
+
+That variant generates a controller registered in `IResourceDetailsActionBulkRecord` and injects `IJsxRenderContextDetails` from the host details runtime.
+
 ## Controller definition
 
 Representative component controller shape:

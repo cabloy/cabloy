@@ -213,7 +213,7 @@ A practical rule is:
 
 This is useful when one scene needs multiple scaffold shapes for distinct frontend authoring paths.
 
-Representative built-in examples include the `command` scene, which exposes `commandBulk` and `commandRow` variants, and the `tableCell` scene, which exposes a `tableActionRow` variant in module metadata.
+Representative built-in examples include the `command` scene, which exposes `commandBulk`, `commandRow`, and `commandDetailsRow` variants, and the `tableCell` scene, which exposes `tableActionRow` and `detailsActionRow` variants in module metadata.
 
 For the built-in command scene’s runtime model, helper bases, metadata flow, and source-reading path, see [Command Scene Authoring](/frontend/command-scene-authoring).
 

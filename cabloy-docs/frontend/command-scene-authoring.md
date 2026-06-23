@@ -284,7 +284,7 @@ Important pieces:
   - the result-type carrier used in the command option contract
 - `IDecoratorCommandOptions`
   - the base decorator options shape
-- `ICommandOptionsBase`, `ICommandBulkOptionsBase`, `ICommandRowOptionsBase`
+- `ICommandOptionsBase`, `ICommandBulkOptionsBase`, `ICommandRowOptionsBase`, `ICommandDetailsRowOptionsBase`
   - shared option contracts for common command patterns
 - `TypeCommandOptions<K>`
   - typed command reference shape
@@ -336,6 +336,7 @@ The `zovaModule.onions.command` metadata confirms:
 - default `boilerplate`
 - `boilerplateCommandBulk`
 - `boilerplateCommandRow`
+- `boilerplateCommandDetailsRow`
 
 The CLI command shape is currently exposed by:
 
@@ -372,6 +373,16 @@ Use the row variant when the command should resolve `resource` and `id` through 
 ```bash
 npm run zova :create:bean command test -- --module=training-student --boilerplate=commandRow
 ```
+
+### `commandDetailsRow` boilerplate
+
+Use the details-row variant when the command should operate in the details-row action path and type its options through `ICommandDetailsRowOptionsBase`:
+
+```bash
+npm run zova :create:bean command test -- --module=training-student --boilerplate=commandDetailsRow
+```
+
+A representative built-in consumer is `basic-details/src/bean/command.delete.tsx`, which uses the details render context and row information from the current detail table cell.
 
 For the cross-scene lookup table, also see [Bean Scene Boilerplate Variants](/reference/bean-scene-boilerplates).
 

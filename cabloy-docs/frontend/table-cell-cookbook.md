@@ -78,6 +78,14 @@ Create a row-action variant:
 npm run zova :create:bean tableCell actionOperationsRow -- --module=training-student --boilerplate=tableActionRow
 ```
 
+Create a details-row-action variant:
+
+```bash
+npm run zova :create:bean tableCell actionDelete -- --module=training-student --boilerplate=detailsActionRow
+```
+
+Use `tableActionRow` when one table cell should compose several table-row actions together. Use `detailsActionRow` when the render resource belongs to the details-row action contract under `IResourceDetailsActionRowRecord`.
+
 The default scaffold shape is intentionally small:
 
 ```tsx
@@ -351,6 +359,8 @@ This pattern is different from a normal single-action cell because the bean ofte
 - render several child action cells in one wrapper
 
 That is why the `tableActionRow` boilerplate exists.
+
+By contrast, the newer `detailsActionRow` boilerplate is for one detail-row action resource at a time. Its scaffold declaration-merges into `IResourceDetailsActionRowRecord` and types the options through `IResourceDetailsActionRowOptionsBase`, so it fits the details-table action path instead of the standard table-operations composition path.
 
 Representative runtime shape:
 

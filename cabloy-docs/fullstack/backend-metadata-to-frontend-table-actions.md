@@ -300,6 +300,85 @@ This is the same contract idea at a different UI level:
 - backend or shared page metadata chooses the action resource identity
 - frontend runtime resolves that identity to a visible action implementation
 
+## Step 7A: Detail actions follow the same contract idea inside details blocks
+
+The same contract model also appears in resource details tables.
+
+A representative backend DTO shape is:
+
+```tsx
+@Dto({
+  blocks: [
+    ZovaRender.block('basic-details:blockDetails', {
+      blocks: [
+        ZovaRender.block('basic-details:blockToolbarBulk', {
+          actions: [
+            ZovaRender.detailsActionBulk('basic-details:actionCreate', {
+              permission: { formScene: ['create', 'edit'] },
+            }),
+          ],
+        }),
+        ZovaRender.block('basic-details:blockTable'),
+      ],
+    }),
+  ],
+})
+```
+
+And the row-action column inside that detail table can look like this:
+
+```tsx
+@Api.field(
+  v.title($locale('Operations')),
+  ZovaRender.order(1, 'max'),
+  ZovaRender.cell('basic-details:actionOperationsRow', {
+    actions: [
+      ZovaRender.detailsActionRow('basic-details:actionUpdate'),
+      ZovaRender.detailsActionRow('basic-details:actionDelete'),
+    ],
+  }),
+)
+_operationsRow?: unknown;
+```
+
+This shows a practical three-part scaffold relationship:
+
+1. `detailsActionBulk`
+   - creates a detail-level bulk action controller resource
+   - declaration-merges into `IResourceDetailsActionBulkRecord`
+   - is the right fit for actions such as add/create on the whole details block
+2. `detailsActionRow`
+   - creates one detail-row action cell resource
+   - declaration-merges into `IResourceDetailsActionRowRecord`
+   - is the right fit for update/delete style actions attached to one detail row
+3. `commandDetailsRow`
+   - creates the command bean used when a detail-row action should delegate its semantics to the command scene
+   - types options through `ICommandDetailsRowOptionsBase`
+   - is the right fit when the visible detail-row action should call `$performCommand(...)` instead of embedding all behavior directly in the cell bean
+
+A representative built-in flow in `basic-details` is:
+
+- `basic-details:actionCreate`
+  - a component/controller resource for `detailsActionBulk`
+- `basic-details:actionUpdate`
+  - a `tableCell` resource for `detailsActionRow`
+- `basic-details:actionDelete`
+  - a `tableCell` resource for `detailsActionRow`
+- `basic-details:delete`
+  - a command bean that matches the `commandDetailsRow` execution pattern
+
+A practical reading takeaway is:
+
+- **details bulk actions** usually coordinate the whole details block
+- **details row actions** usually own the visible row-level interaction
+- **details row commands** are the reusable semantic layer when one row action should execute through the command scene
+
+So even though the UI surface is a detail table instead of a top-level resource list, the architecture still follows the same rule:
+
+- backend metadata chooses resource identities
+- frontend resources implement the interaction
+- optional command beans keep the action semantics reusable and scene-aware
+
 ## Step 8: Where the forward chain enters for custom actions
 
 So far, everything could still be handled by built-in commands and built-in resources.
@@ -400,6 +479,7 @@ Typical examples:
 - switch one field to `basic-table:actionView`
 - add an operations row using existing update/delete actions
 - add a custom table-cell renderer that backend metadata points to
+- add a details block action chain with `detailsActionBulk` and `detailsActionRow` resources
 
 ### Mostly forward-chain work
 
@@ -458,8 +538,9 @@ If you want the shortest path to a correct table-action implementation, use this
 3. regenerate frontend API consumers when backend contract changes
 4. keep frontend model follow-up thin and semantic
 5. point backend row metadata to the intended built-in or custom table-action resources
-6. verify the resource-page block chain still feeds the right schema into `ZTable`
-7. verify the visible row action in Admin
+6. for details-table work, also align `detailsActionBulk`, `detailsActionRow`, and any `commandDetailsRow` delegation path
+7. verify the resource-page block chain still feeds the right schema into `ZTable`
+8. verify the visible row action in Admin
 
 ## Verification checklist
 

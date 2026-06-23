@@ -58,7 +58,8 @@
         "optionsGlobalInterfaceFrom": "zova-module-a-command",
         "boilerplate": "command/boilerplate",
         "boilerplateCommandBulk": "commandBulk/boilerplate",
-        "boilerplateCommandRow": "commandRow/boilerplate"
+        "boilerplateCommandRow": "commandRow/boilerplate",
+        "boilerplateCommandDetailsRow": "commandDetailsRow/boilerplate"
       }
     },
     "capabilities": {

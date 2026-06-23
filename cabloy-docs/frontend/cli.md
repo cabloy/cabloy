@@ -87,9 +87,20 @@ The built-in `command` scene is the clearest current example:
 npm run zova :create:bean command test -- --module=training-student
 npm run zova :create:bean command test -- --module=training-student --boilerplate=commandBulk
 npm run zova :create:bean command test -- --module=training-student --boilerplate=commandRow
+npm run zova :create:bean command test -- --module=training-student --boilerplate=commandDetailsRow
 ```
 
-Use the default template for the command shape without the bulk/row helper bases, `commandBulk` for resource-oriented bulk commands, and `commandRow` for row-oriented commands that need both `resource` and `id`.
+Use the default template for the command shape without helper bases, `commandBulk` for resource-oriented bulk commands, `commandRow` for table-row commands that need `resource` and `id`, and `commandDetailsRow` for detail-row commands that run against `ICommandDetailsRowOptionsBase`.
+
+The same naming rule also applies to `:create:component`. For example, the built-in component variants now include `detailsActionBulk`, alongside variants such as `formField`, `formActionRow`, `tableActionBulk`, `blockPage`, and `blockPageEntry`.
+
+Representative component example:
+
+```bash
+npm run zova :create:component actionCreate -- --module=training-student --boilerplate=detailsActionBulk
+```
+
+Use `detailsActionBulk` when you need a detail-page bulk action controller scaffold that registers into `IResourceDetailsActionBulkRecord` and receives `IJsxRenderContextDetails` through host injection.
 
 For the command-scene runtime model and source-reading path, see [Command Scene Authoring](/frontend/command-scene-authoring).
 

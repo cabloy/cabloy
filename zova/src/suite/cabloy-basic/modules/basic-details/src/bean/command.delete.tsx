@@ -1,6 +1,6 @@
 import type {
   ICommandExecute,
-  ICommandDetailOptionsBase,
+  ICommandDetailsRowOptionsBase,
   NextCommandExecute,
 } from 'zova-module-a-command';
 import type { IJsxRenderContextBase, IJsxRenderContextDetails } from 'zova-module-a-openapi';
@@ -12,7 +12,7 @@ import { Command } from 'zova-module-a-command';
 
 export type TypeCommandDeleteResult = unknown;
 
-export interface ICommandOptionsDelete extends ICommandDetailOptionsBase<TypeCommandDeleteResult> {}
+export interface ICommandOptionsDelete extends ICommandDetailsRowOptionsBase<TypeCommandDeleteResult> {}
 
 type DetailItem = Record<string, any>;
 

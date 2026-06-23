@@ -44,12 +44,17 @@ These backend entries come from the current `vonaModule.onions` metadata in `a-a
 
 ### Current built-in scenes with variants
 
-| Scene       | Default metadata key | Named variant keys                                | Example command pattern                                                                              | Source module           |
-| ----------- | -------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
-| `command`   | `boilerplate`        | `boilerplateCommandBulk`, `boilerplateCommandRow` | `npm run zova :create:bean command test -- --module=training-student --boilerplate=commandRow`       | `zova-module-a-command` |
-| `tableCell` | `boilerplate`        | `boilerplateTableActionRow`                       | `npm run zova :create:bean tableCell test -- --module=training-student --boilerplate=tableActionRow` | `zova-module-a-table`   |
+| Scene       | Default metadata key | Named variant keys                                                                | Example command pattern                                                                                | Source module           |
+| ----------- | -------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------- |
+| `command`   | `boilerplate`        | `boilerplateCommandBulk`, `boilerplateCommandRow`, `boilerplateCommandDetailsRow` | `npm run zova :create:bean command test -- --module=training-student --boilerplate=commandDetailsRow`  | `zova-module-a-command` |
+| `tableCell` | `boilerplate`        | `boilerplateTableActionRow`, `boilerplateDetailsActionRow`                        | `npm run zova :create:bean tableCell test -- --module=training-student --boilerplate=detailsActionRow` | `zova-module-a-table`   |
 
 These frontend entries come from the current `zovaModule.onions` metadata in `a-command` and `a-table`.
+
+In practical terms:
+
+- `commandDetailsRow` is the built-in command-scene scaffold for detail-row command beans
+- `detailsActionRow` is the built-in `tableCell` scaffold for detail-row action cells under `IResourceDetailsActionRowRecord`
 
 For the built-in command scene’s runtime model and helper-base patterns, see [Command Scene Authoring](/frontend/command-scene-authoring).
 
