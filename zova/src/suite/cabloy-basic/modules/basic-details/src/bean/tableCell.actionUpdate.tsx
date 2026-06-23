@@ -6,16 +6,12 @@ import type {
 } from 'zova-module-a-table';
 import type { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
 
-import { classes } from 'typestyle';
 import { BeanBase, deepExtend } from 'zova';
-import {
-  BeanControllerFormBase,
-  formMetaFromFormScene,
-  TypeFormOnSubmitData,
-  ZForm,
-} from 'zova-module-a-form';
+import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord, ZIcon } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
+
+import { openDialogForm } from '../lib/index.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {
@@ -46,69 +42,27 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
           if (!$$details) throw new Error('should provide $$details in cell scope');
           const detailItem = cellContext.row.original as Record<string, any>;
           const detailItemIndex = cellContext.row.index;
-          const formData = deepExtend({}, detailItem);
-          const formMeta = formMetaFromFormScene('edit');
-          let formRef: BeanControllerFormBase | undefined;
-          $host.$appModal.dialog(
-            {
-              icon: options.dialogOptions?.icon,
-              title: options.dialogOptions?.title ?? this.scope.locale.EditDetail(),
-              slotDefault: (dialog: IModalDialogRenderContext) => {
-                return (
-                  <ZForm
-                    controllerRef={ref => {
-                      formRef = ref;
-                    }}
-                    data={formData}
-                    schema={$$details.schemaForm}
-                    schemaScene="form"
-                    formMeta={formMeta}
-                    onSubmitData={(data: TypeFormOnSubmitData<Record<string, any>>) => {
-                      const detailItemNew = deepExtend({}, detailItem, data.value);
-                      $$details.data = $$details.data.map((item, index) => {
-                        return index === detailItemIndex ? detailItemNew : item;
-                      });
-                      dialog.close();
-                    }}
-                    onShowError={async ({ error }) => {
-                      await $host.$performCommand('basic-commands:alert', {
-                        type: 'error',
-                        text: error.message,
-                      });
-                    }}
-                  ></ZForm>
-                );
-              },
-              slotActions: (dialog: IModalDialogRenderContext) => {
-                const isSubmitting = formRef?.formState.isSubmitting;
-                return (
-                  <>
-                    {isSubmitting && <span class="loading loading-spinner text-primary"></span>}
-                    <button
-                      type="button"
-                      class="btn btn-ghost"
-                      onClick={() => {
-                        dialog.close();
-                      }}
-                    >
-                      {this.scope.locale.Cancel()}
-                    </button>
-                    <button
-                      type="button"
-                      class={classes('btn btn-primary', isSubmitting && 'btn-disabled')}
-                      onClick={async () => {
-                        if (isSubmitting) return;
-                        await formRef?.submit();
-                      }}
-                    >
-                      {this.scope.locale.OK()}
-                    </button>
-                  </>
-                );
-              },
+          openDialogForm({
+            $host: $host,
+            locale: this.scope.locale,
+            schema: $$details.schemaForm,
+            data: deepExtend({}, detailItem),
+            formScene: 'edit',
+            schemaScene: 'form',
+            icon: options.dialogOptions?.icon,
+            title: options.dialogOptions?.title ?? this.scope.locale.EditDetail(),
+            dialogOptions: options.dialogOptions,
+            onSubmitData: (
+              data: TypeFormOnSubmitData<Record<string, any>>,
+              dialog: IModalDialogRenderContext,
+            ) => {
+              const detailItemNew = deepExtend({}, detailItem, data.value);
+              $$details.data = $$details.data.map((item, index) => {
+                return index === detailItemIndex ? detailItemNew : item;
+              });
+              dialog.close();
             },
-            options.dialogOptions,
-          );
+          });
         }}
       >
         <ZIcon name="::draft" width={24}></ZIcon>
