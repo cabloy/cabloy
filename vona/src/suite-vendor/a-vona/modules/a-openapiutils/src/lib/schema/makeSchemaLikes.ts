@@ -103,23 +103,6 @@ export function $schema(classType: any, options?: ISchemaObjectOptions): any {
   } else if (dtoOpenapi) {
     schema = schema.openapi(dtoOpenapi);
   }
-  // // refId
-  // const schemaDynamicRefId = classType[SymbolSchemaDynamicRefId];
-  // if (schemaDynamicRefId) {
-  //   // dynamic
-  //   schema = schema.openapi(schemaDynamicRefId);
-  // } else {
-  //   // static
-  //   const beanOptions = appResource.getBean(classType);
-  //   if (beanOptions) {
-  //     const pipes: SchemaLike | SchemaLike[] = cast(beanOptions.options)?.pipes;
-  //     if (pipes) {
-  //       schema = makeSchemaLikes(pipes, schema) as any;
-  //     }
-  //     const openapi: ISchemaObjectExtensionField = cast(beanOptions.options)?.openapi;
-  //     schema = schema.openapi(beanOptions.beanFullName, openapi);
-  //   }
-  // }
   return schema as any;
 }
 
