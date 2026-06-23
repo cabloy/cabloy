@@ -1,6 +1,5 @@
 import type { IComponentOptions } from 'zova';
 import type {
-  IFormMeta,
   IJsxRenderContextDetails,
   IResourceDetailsActionBulkOptionsBase,
 } from 'zova-module-a-openapi';
@@ -32,17 +31,8 @@ export class ControllerActionCreate extends BeanControllerBase {
   static $propsDefault = { class: 'btn btn-info join-item' };
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
-  formRef: BeanControllerFormBase;
-  formData: Record<string, any>;
-  formMeta: IFormMeta;
-
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextDetails;
-
-  protected async __init__() {
-    this.formData = {};
-    this.formMeta = formMetaFromFormScene('create');
-  }
 
   protected render() {
     return (
@@ -50,84 +40,72 @@ export class ControllerActionCreate extends BeanControllerBase {
         class={this.$props.class}
         type="button"
         onClick={() => {
-          this.onClick();
+          const { $$details } = this.$$renderContext;
+          const formData = {};
+          const formMeta = formMetaFromFormScene('create');
+          let formRef: BeanControllerFormBase | undefined;
+          this.$appModal.dialog(
+            {
+              icon: this.$props.dialogOptions?.icon,
+              title: this.$props.dialogOptions?.title ?? this.scope.locale.AddDetail(),
+              slotDefault: (dialog: IModalDialogRenderContext) => {
+                return (
+                  <ZForm
+                    controllerRef={ref => {
+                      formRef = ref;
+                    }}
+                    data={formData}
+                    schema={$$details.schemaForm}
+                    schemaScene="form-create"
+                    formMeta={formMeta}
+                    onSubmitData={(data: TypeFormOnSubmitData<Record<string, any>>) => {
+                      const detailItem = data.value;
+                      $$details.data = [...$$details.data, detailItem];
+                      dialog.close();
+                    }}
+                    onShowError={async ({ error }) => {
+                      await this.$performCommand('basic-commands:alert', {
+                        type: 'error',
+                        text: error.message,
+                      });
+                    }}
+                  ></ZForm>
+                );
+              },
+              slotActions: (dialog: IModalDialogRenderContext) => {
+                const isSubmitting = formRef?.formState.isSubmitting;
+                return (
+                  <>
+                    {isSubmitting && <span class="loading loading-spinner text-primary"></span>}
+                    <button
+                      type="button"
+                      class="btn btn-ghost"
+                      onClick={() => {
+                        dialog.close();
+                      }}
+                    >
+                      {this.scope.locale.Cancel()}
+                    </button>
+                    <button
+                      type="button"
+                      class={classes('btn btn-primary', isSubmitting && 'btn-disabled')}
+                      onClick={async () => {
+                        if (isSubmitting) return;
+                        await formRef?.submit();
+                      }}
+                    >
+                      {this.scope.locale.OK()}
+                    </button>
+                  </>
+                );
+              },
+            },
+            this.$props.dialogOptions,
+          );
         }}
       >
         {this.scope.locale.AddDetail()}
       </button>
     );
-  }
-
-  private onClick() {
-    this.formData = {};
-    this.$appModal.dialog(
-      {
-        icon: this.$props.dialogOptions?.icon,
-        title: this.$props.dialogOptions?.title ?? this.scope.locale.AddDetail(),
-        slotDefault: dialog => this._renderDialogForm(dialog),
-        slotActions: dialog => this._renderDialogActions(dialog),
-      },
-      this.$props.dialogOptions,
-    );
-  }
-
-  private _renderDialogForm(dialog: IModalDialogRenderContext) {
-    const { $$details } = this.$$renderContext;
-    return (
-      <ZForm
-        controllerRef={ref => {
-          this.formRef = ref;
-        }}
-        data={this.formData}
-        schema={$$details.schemaForm}
-        schemaScene="form-create"
-        formMeta={this.formMeta}
-        onSubmitData={data => this._submitData(data, dialog)}
-        onShowError={async ({ error }) => {
-          await this.$performCommand('basic-commands:alert', {
-            type: 'error',
-            text: error.message,
-          });
-        }}
-      ></ZForm>
-    );
-  }
-
-  private _renderDialogActions(dialog: IModalDialogRenderContext) {
-    const isSubmitting = this.formRef?.formState.isSubmitting;
-    return (
-      <>
-        {isSubmitting && <span class="loading loading-spinner text-primary"></span>}
-        <button
-          type="button"
-          class="btn btn-ghost"
-          onClick={() => {
-            dialog.close();
-          }}
-        >
-          {this.scope.locale.Cancel()}
-        </button>
-        <button
-          type="button"
-          class={classes('btn btn-primary', isSubmitting && 'btn-disabled')}
-          onClick={async () => {
-            if (isSubmitting) return;
-            await this.formRef?.submit();
-          }}
-        >
-          {this.scope.locale.OK()}
-        </button>
-      </>
-    );
-  }
-
-  private _submitData(
-    data: TypeFormOnSubmitData<Record<string, any>>,
-    dialog: IModalDialogRenderContext,
-  ) {
-    const { $$details } = this.$$renderContext;
-    const detailItem = data.value;
-    $$details.data = [...$$details.data, detailItem];
-    dialog.close();
   }
 }
