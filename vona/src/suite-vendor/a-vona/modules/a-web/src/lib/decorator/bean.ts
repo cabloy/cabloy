@@ -11,7 +11,11 @@ import {
   useApp,
 } from 'vona';
 import {
+  getTargetDecoratorDtoOpenapi,
+  getTargetDecoratorDtoPipes,
   mergeDtoFieldsOpenapiMetadata,
+  setTargetDecoratorDtoOpenapi,
+  setTargetDecoratorDtoPipes,
   SymbolControllerResource,
 } from 'vona-module-a-openapiutils';
 import { SymbolOpenApiOptions } from 'vona-module-a-openapiutils';
@@ -85,6 +89,7 @@ export function Dto<T extends IDecoratorDtoOptions<any>>(options?: T): ClassDeco
   return createBeanDecorator('dto', options, false, target => {
     mergeDtoFieldsOpenapiMetadata(target);
     mergeDtoBlocksOpenapiMetadata(target);
+    mergeDtoPipesOpenapiMetadata(target);
   });
 }
 
@@ -111,9 +116,25 @@ export function mergeDtoBlocksOpenapiMetadata(target: Constructable) {
   const beanOptions = appResource.getBean(target);
   const onionOptions = beanOptions?.options as IDecoratorDtoOptions | undefined;
   const blocks = onionOptions?.blocks;
-  if (!blocks) return;
-  // openapi
-  onionOptions.openapi = deepExtend({}, onionOptions.openapi, {
-    rest: { blocks },
-  });
+  if (blocks) {
+    onionOptions.openapi = deepExtend({}, onionOptions.openapi, {
+      rest: { blocks },
+    });
+  }
+  // always
+  getTargetDecoratorDtoOpenapi(target.prototype);
+  if (onionOptions?.openapi) {
+    setTargetDecoratorDtoOpenapi(onionOptions?.openapi, target.prototype);
+  }
+}
+
+export function mergeDtoPipesOpenapiMetadata(target: Constructable) {
+  // beanOptions
+  const beanOptions = appResource.getBean(target);
+  const onionOptions = beanOptions?.options as IDecoratorDtoOptions | undefined;
+  // always
+  getTargetDecoratorDtoPipes(target.prototype);
+  if (onionOptions?.pipes) {
+    setTargetDecoratorDtoPipes(onionOptions?.pipes, target.prototype);
+  }
 }

@@ -6,10 +6,14 @@ import { ZodMetadata } from '@cabloy/zod-openapi';
 import { appMetadata, appResource, cast, deepExtend, registerMappedClassMetadataKey } from 'vona';
 import { z } from 'zod';
 
-import type { TypeDecoratorRules } from '../types/decorator.ts';
+import type { SchemaLike, TypeDecoratorRules } from '../types/decorator.ts';
 
 import { OrderLevelBaseMap } from './const/database.ts';
-import { SymbolDecoratorRule } from './const/decorator.ts';
+import {
+  SymbolDecoratorDtoOpenapi,
+  SymbolDecoratorDtoPipes,
+  SymbolDecoratorRule,
+} from './const/decorator.ts';
 
 export function getTargetDecoratorRules(
   target: object,
@@ -23,6 +27,44 @@ export function getTargetDecoratorRules(
     });
   }
   return appMetadata.getOwnMetadataMap(true, SymbolDecoratorRule, target);
+}
+
+export function getTargetDecoratorDtoOpenapi(
+  target: object,
+  disableRegisterMetadata?: boolean,
+): ISchemaObjectExtensionField | undefined {
+  if (!disableRegisterMetadata) {
+    registerMappedClassMetadataKey(target, SymbolDecoratorDtoOpenapi, {
+      replace: true,
+    });
+  }
+  return appMetadata.getOwnMetadata(SymbolDecoratorDtoOpenapi, target);
+}
+
+export function setTargetDecoratorDtoOpenapi(
+  openapi: ISchemaObjectExtensionField | undefined,
+  target: object,
+) {
+  appMetadata.defineMetadata(SymbolDecoratorDtoOpenapi, openapi, target);
+}
+
+export function getTargetDecoratorDtoPipes(
+  target: object,
+  disableRegisterMetadata?: boolean,
+): SchemaLike | SchemaLike[] | undefined {
+  if (!disableRegisterMetadata) {
+    registerMappedClassMetadataKey(target, SymbolDecoratorDtoPipes, {
+      replace: true,
+    });
+  }
+  return appMetadata.getOwnMetadata(SymbolDecoratorDtoPipes, target);
+}
+
+export function setTargetDecoratorDtoPipes(
+  pipes: SchemaLike | SchemaLike[] | undefined,
+  target: object,
+) {
+  appMetadata.defineMetadata(SymbolDecoratorDtoPipes, pipes, target);
 }
 
 export function getTargetDecoratorRuleColumns(target: object): string[] {

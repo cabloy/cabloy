@@ -81,22 +81,44 @@ export function copyMetadataOfClasses(target: object, sources: object[], transfo
   setMappedClassMetadataKeys(target, metadataKeys);
   //
   for (const metadataKey of Object.getOwnPropertySymbols(metadataKeys)) {
-    const metadataKeyOptions = metadataKeys[metadataKey];
-    const rulesNew = {};
-    for (const source of sources) {
-      const rules = appMetadata.getMetadata(metadataKey, source);
-      if (!rules) continue;
-      if (!transform) {
-        Object.assign(rulesNew, rules);
-      } else {
-        for (const key in rules) {
-          const ruleNew = transform(rules, key, metadataKeyOptions);
-          if (ruleNew !== undefined) {
-            rulesNew[key] = ruleNew;
-          }
+    const metadataKeyOptions: IMappedClassMetadataOptions = metadataKeys[metadataKey];
+    if (metadataKeyOptions.replace) {
+      _copyMetadataOfClassesReplace(metadataKey, target, sources);
+    } else {
+      _copyMetadataOfClassesMap(metadataKey, metadataKeyOptions, target, sources, transform);
+    }
+  }
+}
+
+function _copyMetadataOfClassesReplace(metadataKey: symbol, target: object, sources: object[]) {
+  let valueNew;
+  for (const source of sources) {
+    valueNew = appMetadata.getMetadata(metadataKey, source);
+  }
+  appMetadata.defineMetadata(metadataKey, valueNew, target);
+}
+
+function _copyMetadataOfClassesMap(
+  metadataKey: symbol,
+  metadataKeyOptions: IMappedClassMetadataOptions,
+  target: object,
+  sources: object[],
+  transform?: Function,
+) {
+  const rulesNew = {};
+  for (const source of sources) {
+    const rules = appMetadata.getMetadata(metadataKey, source);
+    if (!rules) continue;
+    if (!transform) {
+      Object.assign(rulesNew, rules);
+    } else {
+      for (const key in rules) {
+        const ruleNew = transform(rules, key, metadataKeyOptions);
+        if (ruleNew !== undefined) {
+          rulesNew[key] = ruleNew;
         }
       }
     }
-    appMetadata.defineMetadata(metadataKey, rulesNew, target);
   }
+  appMetadata.defineMetadata(metadataKey, rulesNew, target);
 }

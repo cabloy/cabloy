@@ -1,5 +1,5 @@
 import type { Constructable } from 'vona';
-import type { ISchemaObjectExtensionField, ISchemaObjectOptions } from 'vona-module-a-openapi';
+import type { ISchemaObjectOptions } from 'vona-module-a-openapi';
 
 import { isClass } from '@cabloy/utils';
 import { appMetadata, appResource, cast } from 'vona';
@@ -8,7 +8,11 @@ import { z } from 'zod';
 import type { SchemaLike, SchemaLikeCreate } from '../../types/decorator.ts';
 
 import { SymbolDecoratorRule } from '../const/decorator.ts';
-import { prepareClassType } from '../utils.ts';
+import {
+  getTargetDecoratorDtoOpenapi,
+  getTargetDecoratorDtoPipes,
+  prepareClassType,
+} from '../utils.ts';
 import { SymbolSchemaDynamicRefId } from './schemaDynamic.ts';
 
 export function $makeSchema<T>(...schemaLikes: SchemaLike<T>[]): z.ZodType<T> {
@@ -82,23 +86,40 @@ export function $schema(classType: any, options?: ISchemaObjectOptions): any {
   }
   // object
   let schema = _createSchemaObject(rules, options);
-  // refId
-  const schemaDynamicRefId = classType[SymbolSchemaDynamicRefId];
-  if (schemaDynamicRefId) {
-    // dynamic
-    schema = schema.openapi(schemaDynamicRefId);
-  } else {
-    // static
-    const beanOptions = appResource.getBean(classType);
-    if (beanOptions) {
-      const pipes: SchemaLike | SchemaLike[] = cast(beanOptions.options)?.pipes;
-      if (pipes) {
-        schema = makeSchemaLikes(pipes, schema) as any;
-      }
-      const openapi: ISchemaObjectExtensionField = cast(beanOptions.options)?.openapi;
-      schema = schema.openapi(beanOptions.beanFullName, openapi);
-    }
+  // dto: pipes
+  const dtoPipes = getTargetDecoratorDtoPipes(classType.prototype, true);
+  if (dtoPipes) {
+    schema = makeSchemaLikes(dtoPipes, schema) as any;
   }
+  // dto: openapi
+  let schemaRefId = classType[SymbolSchemaDynamicRefId];
+  if (!schemaRefId) {
+    const beanOptions = appResource.getBean(classType);
+    schemaRefId = beanOptions?.beanFullName;
+  }
+  const dtoOpenapi = getTargetDecoratorDtoOpenapi(classType.prototype, true);
+  if (schemaRefId) {
+    schema = schema.openapi(schemaRefId, dtoOpenapi);
+  } else if (dtoOpenapi) {
+    schema = schema.openapi(dtoOpenapi);
+  }
+  // // refId
+  // const schemaDynamicRefId = classType[SymbolSchemaDynamicRefId];
+  // if (schemaDynamicRefId) {
+  //   // dynamic
+  //   schema = schema.openapi(schemaDynamicRefId);
+  // } else {
+  //   // static
+  //   const beanOptions = appResource.getBean(classType);
+  //   if (beanOptions) {
+  //     const pipes: SchemaLike | SchemaLike[] = cast(beanOptions.options)?.pipes;
+  //     if (pipes) {
+  //       schema = makeSchemaLikes(pipes, schema) as any;
+  //     }
+  //     const openapi: ISchemaObjectExtensionField = cast(beanOptions.options)?.openapi;
+  //     schema = schema.openapi(beanOptions.beanFullName, openapi);
+  //   }
+  // }
   return schema as any;
 }
 

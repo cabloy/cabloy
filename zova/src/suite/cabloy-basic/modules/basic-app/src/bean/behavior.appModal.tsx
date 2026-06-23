@@ -313,7 +313,7 @@ export class BehaviorAppModal extends BeanBehaviorBase<
                 </button>
               )}
             </div>
-            {!!body && <div class="min-h-0 flex-1 overflow-y-auto">{body}</div>}
+            {!!body && <div class="min-h-0 flex-1 overflow-y-auto p-2">{body}</div>}
             {!!actions && <div class="card-actions justify-end shrink-0">{actions}</div>}
           </div>
         </div>
