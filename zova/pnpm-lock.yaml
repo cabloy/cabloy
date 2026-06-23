@@ -1165,8 +1165,8 @@ importers:
   src/suite-vendor/a-zova/modules/a-openapi:
     dependencies:
       '@cabloy/json-schema-to-zod':
-        specifier: ^2.6.4
-        version: 2.6.4
+        specifier: ^2.6.5
+        version: 2.6.5
       openapi3-ts:
         specifier: ^4.5.0
         version: 4.6.0
@@ -1948,8 +1948,8 @@ packages:
   '@cabloy/extend@3.2.8':
     resolution: {integrity: sha512-BrXYUtlC1kFY33hNxL/hEaS7wW8TsOuu22k0VCEtzg2iw+USkb4BqONth5Uv2pJcIlDMeWx8A8aUIRF3WQ2ckQ==}
 
-  '@cabloy/json-schema-to-zod@2.6.4':
-    resolution: {integrity: sha512-7CcifAN5S+29zqvDTvBB/QQH9vwNno8AVKG/hcZPveaiYWtbQO6e7OeYtbor5KccAZUr5j/SUoNmsXr3DYprFw==}
+  '@cabloy/json-schema-to-zod@2.6.5':
+    resolution: {integrity: sha512-y94YrwsrLw+zrISqqHstEuCDgcnfolO/rElOnSmY5I84rmnj3SW52H1pKhnsaozVAcaOEL6Tt3QWHXQKGCYRLA==}
     hasBin: true
 
   '@cabloy/json5@1.1.9':
@@ -8281,7 +8281,7 @@ snapshots:
 
   '@cabloy/extend@3.2.8': {}
 
-  '@cabloy/json-schema-to-zod@2.6.4': {}
+  '@cabloy/json-schema-to-zod@2.6.5': {}
 
   '@cabloy/json5@1.1.9':
     dependencies:

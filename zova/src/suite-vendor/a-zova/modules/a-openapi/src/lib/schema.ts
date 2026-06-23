@@ -76,13 +76,29 @@ function _normalizeSchema(
   const schemaNew = Object.assign({}, schema, { properties: {} });
   for (const key in schema.properties) {
     let property = schema.properties[key] as SchemaObject | undefined;
-    if (property?.$ref) {
-      property = onGetSchema(property.$ref);
-    }
+    property = _normalizePropertySchema(property, onGetSchema);
     if (!property) continue;
-    schemaNew.properties[key] = _normalizeSchema(property, onGetSchema);
+    // items.$ref
+    if (property.items?.$ref) {
+      const propertyItems = _normalizePropertySchema(property.items as any, onGetSchema);
+      if (!propertyItems) continue;
+      property = { ...property, items: propertyItems };
+    }
+    // _normalizeSchema
+    schemaNew.properties[key] = property;
   }
   return schemaNew;
+}
+
+function _normalizePropertySchema(
+  property: SchemaObject | undefined,
+  onGetSchema: (schemaName: string) => SchemaObject | undefined,
+) {
+  if (property?.$ref) {
+    property = onGetSchema(property.$ref);
+  }
+  if (!property) return;
+  return _normalizeSchema(property, onGetSchema);
 }
 
 export function getSchemaOfRequestBody(
