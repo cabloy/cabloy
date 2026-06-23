@@ -3,7 +3,7 @@ import type {
   IJsxRenderContextDetails,
   IResourceDetailsActionBulkOptionsBase,
 } from 'zova-module-a-openapi';
-import type { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
+import type { AppModalItem, IModalDialogOptions } from 'zova-module-basic-app';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
@@ -49,7 +49,7 @@ export class ControllerActionCreate extends BeanControllerBase {
             dialogOptions: this.$props.dialogOptions,
             onSubmitData: (
               data: TypeFormOnSubmitData<Record<string, any>>,
-              dialog: IModalDialogRenderContext,
+              dialog: AppModalItem,
             ) => {
               const detailItem = data.value;
               $$details.data = [...$$details.data, detailItem];

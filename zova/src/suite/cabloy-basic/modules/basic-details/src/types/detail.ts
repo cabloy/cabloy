@@ -4,8 +4,8 @@ import 'zova-module-a-openapi';
 import type { ServiceDetail } from '../service/detail.jsx';
 
 declare module 'zova-module-a-openapi' {
-  export interface IJsxRenderContextDetail {
-    $$detail: ServiceDetail;
+  export interface IJsxRenderContextDetail<TData extends {} = {}> {
+    $$detail: ServiceDetail<TData>;
   }
 
   export interface IDetailScope {

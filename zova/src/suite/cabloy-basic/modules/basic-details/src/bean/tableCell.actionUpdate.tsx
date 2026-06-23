@@ -4,7 +4,7 @@ import type {
   ITableCellRender,
   NextTableCellRender,
 } from 'zova-module-a-table';
-import type { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
+import type { AppModalItem, IModalDialogOptions } from 'zova-module-basic-app';
 
 import { BeanBase, deepExtend } from 'zova';
 import { TypeFormOnSubmitData } from 'zova-module-a-form';
@@ -53,7 +53,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
             dialogOptions: options.dialogOptions,
             onSubmitData: (
               data: TypeFormOnSubmitData<Record<string, any>>,
-              dialog: IModalDialogRenderContext,
+              dialog: AppModalItem,
             ) => {
               const detailItemNew = deepExtend({}, detailItem, data.value);
               $$details.data = $$details.data.map((item, index) => {

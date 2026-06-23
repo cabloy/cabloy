@@ -1,61 +1,143 @@
+import { celEnvBase } from '@cabloy/utils';
 import { classes } from 'typestyle';
-import { BeanBase } from 'zova';
+import { VNode } from 'vue';
+import { BeanBase, UseScope } from 'zova';
+import { ZovaJsx } from 'zova-jsx';
 import { Service } from 'zova-module-a-bean';
-import { BeanControllerFormBase, formMetaFromFormScene, ZForm } from 'zova-module-a-form';
-import { IFormMeta, TypeFormScene, TypeFormSchemaScene } from 'zova-module-a-openapi';
-import { IModalDialogRenderContext } from 'zova-module-basic-app';
+import {
+  BeanControllerFormBase,
+  formMetaFromFormScene,
+  TypeFormOnSubmitData,
+} from 'zova-module-a-form';
+import {
+  IDetailScope,
+  IFormMeta,
+  IFormProvider,
+  IJsxRenderContextDetail,
+  ISchemaObjectExtensionField,
+  ScopeModuleAOpenapi,
+  TypeFormScene,
+  TypeFormSchemaScene,
+} from 'zova-module-a-openapi';
+import { AppModalItem } from 'zova-module-basic-app';
 
 import { IDialogFormOptions } from '../types/dialogForm.js';
 
 @Service()
-export class ServiceDetail extends BeanBase {
-  private options: IDialogFormOptions;
-  formRef: BeanControllerFormBase | undefined;
-  schema: any;
-  data: Record<string, any>;
+export class ServiceDetail<TData extends {} = {}> extends BeanBase {
+  private options: IDialogFormOptions<TData>;
+  private dialogInstance: AppModalItem | undefined;
+
+  formRef: BeanControllerFormBase<TData> | undefined;
+
   formScene: TypeFormScene;
   schemaScene: TypeFormSchemaScene;
-  formMeta: IFormMeta;
 
-  protected async __init__(options: IDialogFormOptions) {
+  formMeta: IFormMeta;
+  formProvider: IFormProvider;
+  formSchema?: ISchemaObjectExtensionField;
+  formData?: TData;
+
+  jsxZova: ZovaJsx;
+  jsxCelScope: IDetailScope;
+  jsxRenderContext: IJsxRenderContextDetail<TData>;
+
+  @UseScope()
+  $$scopeOpenapi: ScopeModuleAOpenapi;
+
+  protected async __init__(options: IDialogFormOptions<TData>) {
     this.options = options;
-    this.schema = options.schema;
-    this.data = options.data;
     this.formScene = options.formScene;
     this.schemaScene = options.schemaScene;
     this.formMeta = formMetaFromFormScene(this.formScene);
+    this.formProvider = this.$$scopeOpenapi.config.formProvider;
+    this.formSchema = options.schema;
+    this.formData = options.data;
+    // jsx
+    this._prepareJsx();
+  }
+
+  private _prepareJsx() {
+    const jsxCelEnv = celEnvBase.clone();
+    this.jsxZova = this.bean._newBeanSimple(
+      ZovaJsx,
+      false,
+      this.formProvider.components,
+      jsxCelEnv,
+    );
+    this.jsxCelScope = this._prepareJsxCelScope();
+    this.jsxRenderContext = {
+      app: this.app,
+      ctx: this.ctx,
+      $scene: 'detail',
+      $host: this,
+      $celScope: this.jsxCelScope,
+      $jsx: this.jsxZova,
+      $$detail: this,
+    };
+  }
+
+  private _prepareJsxCelScope(): IDetailScope {
+    // eslint-disable-next-line
+    const self = this;
+    const $$detail = this.$customRef(() => {
+      return {
+        get() {
+          return self;
+        },
+        set(_value) {},
+      };
+    }) as any;
+    return {
+      formMeta: this.formMeta,
+      $$detail,
+    };
+  }
+
+  private _renderBlocks() {
+    const blocks = this.formSchema?.rest?.blocks;
+    if (!blocks || blocks.length === 0) return;
+    const domBlocks: VNode[] = [];
+    blocks.forEach((block, index) => {
+      const options = Object.assign({ key: index }, block.options);
+      const domBlock = this.jsxZova.render(
+        block.render!,
+        options,
+        this.jsxCelScope,
+        this.jsxRenderContext,
+      );
+      if (!domBlock) return;
+      if (Array.isArray(domBlock)) {
+        domBlocks.push(...domBlock);
+      } else {
+        domBlocks.push(domBlock);
+      }
+    });
+    return domBlocks;
+  }
+
+  public closeDialog() {
+    if (this.dialogInstance) {
+      this.dialogInstance.close();
+      this.dialogInstance = undefined;
+    }
+  }
+
+  public submitData(data: TypeFormOnSubmitData<TData>) {
+    this.options.onSubmitData(data, this.dialogInstance!);
   }
 
   openDialogForm() {
     const options = this.options;
-    const formMeta = formMetaFromFormScene(options.formScene);
-    let formRef: BeanControllerFormBase | undefined;
-    this.$appModal.dialog(
+    this.dialogInstance = this.$appModal.dialog(
       {
         icon: options.icon,
         title: options.title,
-        slotDefault: (dialog: IModalDialogRenderContext) => {
-          return (
-            <ZForm
-              controllerRef={ref => {
-                formRef = ref;
-              }}
-              data={options.data}
-              schema={options.schema}
-              schemaScene={options.schemaScene}
-              formMeta={formMeta}
-              onSubmitData={data => options.onSubmitData(data, dialog)}
-              onShowError={async ({ error }) => {
-                await this.$performCommand('basic-commands:alert', {
-                  type: 'error',
-                  text: error.message,
-                });
-              }}
-            ></ZForm>
-          );
+        slotDefault: () => {
+          return <>{this._renderBlocks()}</>;
         },
-        slotActions: (dialog: IModalDialogRenderContext) => {
-          const isSubmitting = formRef?.formState.isSubmitting;
+        slotActions: () => {
+          const isSubmitting = this.formRef?.formState.isSubmitting;
           return (
             <>
               {isSubmitting && <span class="loading loading-spinner text-primary"></span>}
@@ -63,7 +145,7 @@ export class ServiceDetail extends BeanBase {
                 type="button"
                 class="btn btn-ghost"
                 onClick={() => {
-                  dialog.close();
+                  this.closeDialog();
                 }}
               >
                 {options.locale.Cancel()}
@@ -73,7 +155,7 @@ export class ServiceDetail extends BeanBase {
                 class={classes('btn btn-primary', isSubmitting && 'btn-disabled')}
                 onClick={async () => {
                   if (isSubmitting) return;
-                  await formRef?.submit();
+                  await this.formRef?.submit();
                 }}
               >
                 {options.locale.OK()}

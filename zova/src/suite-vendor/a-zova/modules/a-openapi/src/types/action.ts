@@ -35,6 +35,7 @@ export interface IJsxRenderSceneRecord {
   formField: never;
   //
   details: never;
+  detail: never;
 }
 
 export interface IPageScope {

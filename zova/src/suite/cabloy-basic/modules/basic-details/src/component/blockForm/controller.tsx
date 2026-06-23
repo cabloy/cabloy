@@ -1,9 +1,9 @@
 import type { IComponentOptions } from 'zova';
-import type { IResourceBlockOptionsBase, IJsxRenderContextPageEntry } from 'zova-module-a-openapi';
+import type { IResourceBlockOptionsBase, IJsxRenderContextDetail } from 'zova-module-a-openapi';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { BeanControllerFormBase } from 'zova-module-a-form';
+import { BeanControllerFormBase, ZForm } from 'zova-module-a-form';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -21,11 +21,33 @@ export class ControllerBlockForm extends BeanControllerBase {
   formRef: BeanControllerFormBase;
 
   @Use({ injectionScope: 'host' })
-  $$renderContext: IJsxRenderContextPageEntry;
+  $$renderContext: IJsxRenderContextDetail;
 
   protected async __init__() {}
 
   protected render() {
-    return null;
+    const { $$detail } = this.$$renderContext;
+    return (
+      <ZForm
+        class={this.$props.class}
+        controllerRef={ref => {
+          this.formRef = ref;
+          $$detail.formRef = ref;
+        }}
+        data={$$detail.formData}
+        schema={$$detail.formSchema}
+        schemaScene={$$detail.schemaScene}
+        formMeta={$$detail.formMeta}
+        formProvider={$$detail.formProvider}
+        formScope={$$detail.jsxCelScope}
+        onSubmitData={data => $$detail.submitData(data)}
+        onShowError={async ({ error }) => {
+          await this.$performCommand('basic-commands:alert', {
+            type: 'error',
+            text: error.message,
+          });
+        }}
+      ></ZForm>
+    );
   }
 }

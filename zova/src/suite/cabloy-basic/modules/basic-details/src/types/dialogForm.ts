@@ -1,22 +1,22 @@
 import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord } from 'zova-module-a-icon';
 import { TypeFormScene, TypeFormSchemaScene } from 'zova-module-a-openapi';
-import { IModalDialogOptions, IModalDialogRenderContext } from 'zova-module-basic-app';
+import { AppModalItem, IModalDialogOptions } from 'zova-module-basic-app';
 
-export interface IDialogFormOptions {
+export interface IDialogFormOptions<TData extends {} = {}> {
   locale: {
     Cancel: () => string;
     OK: () => string;
   };
   schema: any;
-  data: Record<string, any>;
+  data: TData;
   formScene: TypeFormScene;
   schemaScene: TypeFormSchemaScene;
   dialogOptions?: IModalDialogOptions;
   icon?: keyof IIconRecord;
   title: string;
   onSubmitData: (
-    data: TypeFormOnSubmitData<Record<string, any>>,
-    dialog: IModalDialogRenderContext,
+    data: TypeFormOnSubmitData<TData>,
+    dialogInstance: AppModalItem,
   ) => void | Promise<void>;
 }
