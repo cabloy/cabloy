@@ -127,6 +127,7 @@ export class ControllerForm<
   }
 
   public async submit(submitMeta?: TSubmitMeta): Promise<boolean> {
+    if (this.formMeta?.formScene === 'view') return false;
     const [_, error] = await catchError(() => {
       return this.form.handleSubmit(submitMeta as any);
     });
