@@ -139,16 +139,26 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const fileName = this._detailPaths().entity;
     let content = this._readFile(fileName);
     if (content.includes(`${argv.fk}: TableIdentity;`)) return;
+    content = this._patchDetailEntityImport(content);
+    content = this._patchDetailEntityField(content, fileName);
+    await this._saveFile(fileName, content);
+  }
+
+  private _patchDetailEntityImport(content: string) {
     if (!content.includes("import type { TableIdentity } from 'table-identity';")) {
       content = `import type { TableIdentity } from 'table-identity';\n${content}`;
     }
+    return content;
+  }
+
+  private _patchDetailEntityField(content: string, fileName: string) {
+    const { argv } = this.context;
     const marker = `export class Entity${argv.detailResourceNameCapitalize} extends EntityBase {\n`;
     if (!content.includes(marker)) {
       throw new Error(`detail entity is not in the expected shape: ${fileName}`);
     }
     const fieldCode = `  @Api.field(v.required(), ZovaRender.visible(false))\n  ${argv.fk}: TableIdentity;\n\n`;
-    content = content.replace(marker, `${marker}${fieldCode}`);
-    await this._saveFile(fileName, content);
+    return content.replace(marker, `${marker}${fieldCode}`);
   }
 
   private async _patchDetailMetaVersion() {
