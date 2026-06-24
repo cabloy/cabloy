@@ -15,4 +15,5 @@ export default {
   TrainingRecords: '培训记录',
   AddTrainingRecord: '添加培训记录',
   EditTrainingRecord: '编辑培训记录',
+  ViewTrainingRecord: '查看培训记录',
 };

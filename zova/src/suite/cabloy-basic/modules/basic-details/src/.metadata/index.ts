@@ -145,10 +145,12 @@ export interface IZovaComponentRecord {
 export * from '../bean/tableCell.actionDelete.jsx';
 export * from '../bean/tableCell.actionOperationsRow.jsx';
 export * from '../bean/tableCell.actionUpdate.jsx';
+export * from '../bean/tableCell.actionView.jsx';
 export * from '../bean/tableCell.lineNumber.jsx';
 import { ITableCellOptionsActionDelete } from '../bean/tableCell.actionDelete.jsx';
 import { ITableCellOptionsActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
 import { ITableCellOptionsActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
+import { ITableCellOptionsActionView } from '../bean/tableCell.actionView.jsx';
 import { ITableCellOptionsLineNumber } from '../bean/tableCell.lineNumber.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
@@ -157,6 +159,7 @@ declare module 'zova-module-a-table' {
       'basic-details:actionDelete': ITableCellOptionsActionDelete;
 'basic-details:actionOperationsRow': ITableCellOptionsActionOperationsRow;
 'basic-details:actionUpdate': ITableCellOptionsActionUpdate;
+'basic-details:actionView': ITableCellOptionsActionView;
 'basic-details:lineNumber': ITableCellOptionsLineNumber;
     }
 
@@ -197,6 +200,17 @@ declare module 'zova-module-basic-details' {
           get $onionOptions(): ITableCellOptionsActionUpdate;
         }
 
+        export interface TableCellActionView {
+          /** @internal */
+          get scope(): ScopeModuleBasicDetails;
+        }
+
+        export interface TableCellActionView {
+          get $beanFullName(): 'basic-details.tableCell.actionView';
+          get $onionName(): 'basic-details:actionView';
+          get $onionOptions(): ITableCellOptionsActionView;
+        }
+
         export interface TableCellLineNumber {
           /** @internal */
           get scope(): ScopeModuleBasicDetails;
@@ -213,6 +227,7 @@ declare module 'zova-module-basic-details' {
 import { TableCellActionDelete } from '../bean/tableCell.actionDelete.jsx';
 import { TableCellActionOperationsRow } from '../bean/tableCell.actionOperationsRow.jsx';
 import { TableCellActionUpdate } from '../bean/tableCell.actionUpdate.jsx';
+import { TableCellActionView } from '../bean/tableCell.actionView.jsx';
 import { TableCellLineNumber } from '../bean/tableCell.lineNumber.jsx';
 import 'zova';
 declare module 'zova' {
@@ -220,6 +235,7 @@ declare module 'zova' {
     'basic-details.tableCell.actionDelete': TableCellActionDelete;
 'basic-details.tableCell.actionOperationsRow': TableCellActionOperationsRow;
 'basic-details.tableCell.actionUpdate': TableCellActionUpdate;
+'basic-details.tableCell.actionView': TableCellActionView;
 'basic-details.tableCell.lineNumber': TableCellLineNumber;
   }
 }

@@ -4,70 +4,61 @@ import type {
   ITableCellRender,
   NextTableCellRender,
 } from 'zova-module-a-table';
-import type { AppModalItem, IModalDialogOptions } from 'zova-module-basic-app';
 
-import { BeanBase, deepExtend } from 'zova';
-import { TypeFormOnSubmitData } from 'zova-module-a-form';
-import { IIconRecord, ZIcon } from 'zova-module-a-icon';
+import { BeanBase } from 'zova';
+import { IIconRecord } from 'zova-module-a-icon';
 import { TableCell } from 'zova-module-a-table';
+import { IModalDialogOptions } from 'zova-module-basic-app';
 
 import { ServiceDetail } from '../service/detail.jsx';
 import { IDialogFormOptions } from '../types/dialogForm.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionRowRecord {
-    'basic-details:actionUpdate'?: ITableCellOptionsActionUpdate;
+    'basic-details:actionView'?: ITableCellOptionsActionView;
   }
 }
 
-export interface ITableCellOptionsActionUpdate extends IResourceDetailsActionRowOptionsBase {
+export interface ITableCellOptionsActionView extends IResourceDetailsActionRowOptionsBase {
   dialogOptions?: IModalDialogOptions & { icon?: keyof IIconRecord; title?: string };
 }
 
-@TableCell<ITableCellOptionsActionUpdate>({
-  class: 'btn btn-outline btn-primary join-item',
+@TableCell<ITableCellOptionsActionView>({
+  class: 'hover:text-blue-500',
 })
-export class TableCellActionUpdate extends BeanBase implements ITableCellRender {
+export class TableCellActionView extends BeanBase implements ITableCellRender {
   render(
-    options: ITableCellOptionsActionUpdate,
+    options: ITableCellOptionsActionView,
     renderContext: IJsxRenderContextTableCell,
-    _next: NextTableCellRender,
+    next: NextTableCellRender,
   ) {
     const { ctx, $celScope, cellContext } = renderContext;
+    const value = next();
     return (
-      <button
+      <a
         class={options.class}
-        type="button"
-        onClick={async () => {
+        href="#"
+        onClick={async e => {
+          e.preventDefault();
+          e.stopPropagation();
           const $$details = $celScope.$$details;
           if (!$$details) throw new Error('should provide $$details in cell scope');
           const detailItem = cellContext.row.original as Record<string, any>;
-          const detailItemIndex = cellContext.row.index;
           const serverDetail = await ctx.bean._newBean(ServiceDetail, true, {
             locale: this.scope.locale,
             schema: $$details.schemaForm,
-            data: deepExtend({}, detailItem),
-            formScene: 'edit',
-            schemaScene: 'form',
+            data: detailItem,
+            formScene: 'view',
+            schemaScene: 'form-view',
             icon: options.dialogOptions?.icon,
             title: options.dialogOptions?.title ?? this.scope.locale.EditDetail(),
             dialogOptions: options.dialogOptions,
-            onSubmitData: (
-              data: TypeFormOnSubmitData<Record<string, any>>,
-              dialog: AppModalItem,
-            ) => {
-              const detailItemNew = deepExtend({}, detailItem, data.value);
-              $$details.data = $$details.data.map((item, index) => {
-                return index === detailItemIndex ? detailItemNew : item;
-              });
-              dialog.close();
-            },
           } satisfies IDialogFormOptions);
           serverDetail.openDialogForm();
         }}
       >
-        <ZIcon name="::draft" width={24}></ZIcon>
-      </button>
+        {value}
+      </a>
     );
   }
 }

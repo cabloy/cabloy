@@ -11,6 +11,7 @@ import { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { IIconRecord } from 'zova-module-a-icon';
 
 import { ServiceDetail } from '../../service/detail.jsx';
+import { IDialogFormOptions } from '../../types/dialogForm.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceDetailsActionBulkRecord {
@@ -38,7 +39,6 @@ export class ControllerActionCreate extends BeanControllerBase {
         onClick={async () => {
           const { $$details } = this.$$renderContext;
           const serverDetail = await this.bean._newBean(ServiceDetail, true, {
-            $host: this,
             locale: this.scope.locale,
             schema: $$details.schemaForm,
             data: {},
@@ -55,7 +55,7 @@ export class ControllerActionCreate extends BeanControllerBase {
               $$details.data = [...$$details.data, detailItem];
               dialog.close();
             },
-          });
+          } satisfies IDialogFormOptions);
           serverDetail.openDialogForm();
         }}
       >

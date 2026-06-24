@@ -15,7 +15,7 @@ export interface IDialogFormOptions<TData extends {} = {}> {
   dialogOptions?: IModalDialogOptions;
   icon?: keyof IIconRecord;
   title: string;
-  onSubmitData: (
+  onSubmitData?: (
     data: TypeFormOnSubmitData<TData>,
     dialogInstance: AppModalItem,
   ) => void | Promise<void>;

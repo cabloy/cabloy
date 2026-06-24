@@ -124,7 +124,7 @@ export class ServiceDetail<TData extends {} = {}> extends BeanBase {
   }
 
   public submitData(data: TypeFormOnSubmitData<TData>) {
-    this.options.onSubmitData(data, this.dialogInstance!);
+    this.options.onSubmitData?.(data, this.dialogInstance!);
   }
 
   openDialogForm() {
@@ -150,16 +150,18 @@ export class ServiceDetail<TData extends {} = {}> extends BeanBase {
               >
                 {options.locale.Cancel()}
               </button>
-              <button
-                type="button"
-                class={classes('btn btn-primary', isSubmitting && 'btn-disabled')}
-                onClick={async () => {
-                  if (isSubmitting) return;
-                  await this.formRef?.submit();
-                }}
-              >
-                {options.locale.OK()}
-              </button>
+              {this.formScene !== 'view' && (
+                <button
+                  type="button"
+                  class={classes('btn btn-primary', isSubmitting && 'btn-disabled')}
+                  onClick={async () => {
+                    if (isSubmitting) return;
+                    await this.formRef?.submit();
+                  }}
+                >
+                  {options.locale.OK()}
+                </button>
+              )}
             </>
           );
         },

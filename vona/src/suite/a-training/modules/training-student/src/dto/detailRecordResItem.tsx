@@ -1,6 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { ModelRecord } from 'vona-module-training-record';
@@ -27,6 +27,13 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
       ],
     }),
   ],
+  fields: {
+    name: $makeMetadata(
+      ZovaRender.cell('basic-details:actionView', {
+        dialogOptions: { title: $locale('ViewTrainingRecord') },
+      }),
+    ),
+  },
 })
 export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
   dtoClass: DtoDetailRecordBase,
