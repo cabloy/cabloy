@@ -214,29 +214,8 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const fileName = path.join(argv._module.root, 'src/model', `${argv.resourceName}.ts`);
     let content = this._readFile(fileName);
     if (content.includes(`${argv.relationName}: $relation.hasMany(`)) return;
-    if (!content.includes("import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';")) {
-      content = this._replaceStrict(
-        content,
-        "import { BeanModelBase, Model } from 'vona-module-a-orm';",
-        "import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';",
-        fileName,
-      );
-    }
-    if (content.includes('  relations: {\n')) {
-      content = content.replace(
-        '  relations: {\n',
-        `  relations: {\n    ${argv.relationName}: $relation.hasMany('${argv.detailModuleInfo.relativeName}:${argv.detailResourceName}', '${argv.fk}', {\n      columns: ['id', 'name', 'description'],\n    }),\n`,
-      );
-    } else {
-      const marker = `@Model<IModelOptions${argv.resourceNameCapitalize}>({ entity: Entity${argv.resourceNameCapitalize} })`;
-      if (!content.includes(marker)) {
-        throw new Error(`master model is not in the expected shape: ${fileName}`);
-      }
-      content = content.replace(
-        marker,
-        `@Model<IModelOptions${argv.resourceNameCapitalize}>({\n  entity: Entity${argv.resourceNameCapitalize},\n  relations: {\n    ${argv.relationName}: $relation.hasMany('${argv.detailModuleInfo.relativeName}:${argv.detailResourceName}', '${argv.fk}', {\n      columns: ['id', 'name', 'description'],\n    }),\n  },\n})`,
-      );
-    }
+    content = this._patchMasterModelImport(content, fileName);
+    content = this._patchMasterModelRelations(content, fileName);
     await this._saveFile(fileName, content);
   }
 
@@ -245,31 +224,72 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const fileName = path.join(argv._module.root, 'src/service', `${argv.resourceName}.ts`);
     let content = this._readFile(fileName);
     if (content.includes(`include: { ${argv.relationName}: true }`)) return;
-    content = this._replaceStrict(
-      content,
-      `    return await this.scope.model.${argv.resourceName}.insert(${argv.resourceName});`,
-      `    return await this.scope.model.${argv.resourceName}.insert(${argv.resourceName}, { include: { ${argv.relationName}: true } });`,
-      fileName,
-    );
-    content = this._replaceStrict(
-      content,
-      `    return await this.scope.model.${argv.resourceName}.getById(id);`,
-      `    return await this.scope.model.${argv.resourceName}.getById(id, { include: { ${argv.relationName}: true } });`,
-      fileName,
-    );
-    content = this._replaceStrict(
-      content,
-      `    return await this.scope.model.${argv.resourceName}.updateById(id, ${argv.resourceName});`,
-      `    return await this.scope.model.${argv.resourceName}.updateById(id, ${argv.resourceName}, {\n      include: { ${argv.relationName}: true },\n    });`,
-      fileName,
-    );
-    content = this._replaceStrict(
-      content,
-      `    return await this.scope.model.${argv.resourceName}.deleteById(id);`,
-      `    return await this.scope.model.${argv.resourceName}.deleteById(id, { include: { ${argv.relationName}: true } });`,
-      fileName,
-    );
+    for (const [search, replacement] of this._masterServiceIncludeReplacements()) {
+      content = this._replaceStrict(content, search, replacement, fileName);
+    }
     await this._saveFile(fileName, content);
+  }
+
+  private _patchMasterModelImport(content: string, fileName: string) {
+    if (content.includes("import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';")) {
+      return content;
+    }
+    return this._replaceStrict(
+      content,
+      "import { BeanModelBase, Model } from 'vona-module-a-orm';",
+      "import { $relation, BeanModelBase, Model } from 'vona-module-a-orm';",
+      fileName,
+    );
+  }
+
+  private _patchMasterModelRelations(content: string, fileName: string) {
+    const relationsBlockMarker = '  relations: {\n';
+    if (content.includes(relationsBlockMarker)) {
+      return content.replace(
+        relationsBlockMarker,
+        `${relationsBlockMarker}${this._masterModelRelationCode()}`,
+      );
+    }
+    return this._patchMasterModelDecorator(content, fileName);
+  }
+
+  private _patchMasterModelDecorator(content: string, fileName: string) {
+    const { argv } = this.context;
+    const marker = `@Model<IModelOptions${argv.resourceNameCapitalize}>({ entity: Entity${argv.resourceNameCapitalize} })`;
+    if (!content.includes(marker)) {
+      throw new Error(`master model is not in the expected shape: ${fileName}`);
+    }
+    return content.replace(
+      marker,
+      `@Model<IModelOptions${argv.resourceNameCapitalize}>({\n  entity: Entity${argv.resourceNameCapitalize},\n  relations: {\n${this._masterModelRelationCode()}  },\n})`,
+    );
+  }
+
+  private _masterModelRelationCode() {
+    const { argv } = this.context;
+    return `    ${argv.relationName}: $relation.hasMany('${argv.detailModuleInfo.relativeName}:${argv.detailResourceName}', '${argv.fk}', {\n      columns: ['id', 'name', 'description'],\n    }),\n`;
+  }
+
+  private _masterServiceIncludeReplacements() {
+    const { argv } = this.context;
+    return [
+      [
+        `    return await this.scope.model.${argv.resourceName}.insert(${argv.resourceName});`,
+        `    return await this.scope.model.${argv.resourceName}.insert(${argv.resourceName}, { include: { ${argv.relationName}: true } });`,
+      ],
+      [
+        `    return await this.scope.model.${argv.resourceName}.getById(id);`,
+        `    return await this.scope.model.${argv.resourceName}.getById(id, { include: { ${argv.relationName}: true } });`,
+      ],
+      [
+        `    return await this.scope.model.${argv.resourceName}.updateById(id, ${argv.resourceName});`,
+        `    return await this.scope.model.${argv.resourceName}.updateById(id, ${argv.resourceName}, {\n      include: { ${argv.relationName}: true },\n    });`,
+      ],
+      [
+        `    return await this.scope.model.${argv.resourceName}.deleteById(id);`,
+        `    return await this.scope.model.${argv.resourceName}.deleteById(id, { include: { ${argv.relationName}: true } });`,
+      ],
+    ] as const;
   }
 
   private async _patchMasterDto(scene: MasterDtoScene) {
