@@ -351,22 +351,35 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const { argv } = this.context;
     const fileName = path.join(argv._module.root, 'src/config/locale', `${locale}.ts`);
     let content = this._readFile(fileName);
-    const additions = this._masterLocaleAdditions(locale);
-    for (const addition of additions) {
-      const key = addition.split(':')[0];
-      if (content.includes(`${key}:`)) continue;
-      content = content.replace('};\n', `  ${addition},\n};\n`);
-    }
+    content = this._patchLocaleAdditions(content, this._masterLocaleAdditions(locale));
     await this._saveFile(fileName, content);
   }
 
   private async _refreshMetadata() {
     const { argv } = this.context;
-    for (const moduleName of [argv.detailModule, argv.module]) {
+    for (const moduleName of this._metadataModules()) {
       await this.helper.invokeCli([':tools:metadata', moduleName], {
         cwd: argv.projectPath,
       });
     }
+  }
+
+  private _patchLocaleAdditions(content: string, additions: string[]) {
+    for (const addition of additions) {
+      const key = this._localeAdditionKey(addition);
+      if (content.includes(`${key}:`)) continue;
+      content = content.replace('};\n', `  ${addition},\n};\n`);
+    }
+    return content;
+  }
+
+  private _localeAdditionKey(addition: string) {
+    return addition.split(':')[0];
+  }
+
+  private _metadataModules() {
+    const { argv } = this.context;
+    return [argv.detailModule, argv.module] as const;
   }
 
   private async _renderMasterDetailDtoFile(dtoBaseName: string, templateBaseName: string) {
