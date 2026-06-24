@@ -198,22 +198,9 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const { argv } = this.context;
     const dtoDir = path.join(argv._module.root, 'src/dto');
     await this.helper.ensureDir(dtoDir);
-    await this._renderMasterDetailDtoFile(
-      argv.detailDtoBaseName,
-      '<%=argv.detailDtoBaseName%>.tsx_',
-    );
-    await this._renderMasterDetailDtoFile(
-      argv.detailDtoMutateName,
-      '<%=argv.detailDtoMutateName%>.tsx_',
-    );
-    await this._renderMasterDetailDtoFile(
-      argv.detailDtoViewName,
-      '<%=argv.detailDtoViewName%>.tsx_',
-    );
-    await this._renderMasterDetailDtoFile(
-      argv.detailDtoResItemName,
-      '<%=argv.detailDtoResItemName%>.tsx_',
-    );
+    for (const [dtoBaseName, templateBaseName] of this._detailDtoTemplates()) {
+      await this._renderMasterDetailDtoFile(dtoBaseName, templateBaseName);
+    }
   }
 
   private async _patchMasterModule() {
@@ -297,8 +284,9 @@ export class CliToolsMasterDetail extends BeanCliBase {
       content.includes(
         `${argv.detailFieldPrivateName}?: Dto${this._detailDtoResItemCapitalize()}[];`,
       )
-    )
+    ) {
       return;
+    }
 
     const detailDtoClassCapitalize =
       scene === 'View'
@@ -387,8 +375,11 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _refreshMetadata() {
     const { argv } = this.context;
-    await this.helper.invokeCli([':tools:metadata', argv.detailModule], { cwd: argv.projectPath });
-    await this.helper.invokeCli([':tools:metadata', argv.module], { cwd: argv.projectPath });
+    for (const moduleName of [argv.detailModule, argv.module]) {
+      await this.helper.invokeCli([':tools:metadata', moduleName], {
+        cwd: argv.projectPath,
+      });
+    }
   }
 
   private async _renderMasterDetailDtoFile(dtoBaseName: string, templateBaseName: string) {
@@ -441,6 +432,16 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private _detailDtoResItemCapitalize() {
     return this._capitalize(this.context.argv.detailDtoResItemName);
+  }
+
+  private _detailDtoTemplates() {
+    const { argv } = this.context;
+    return [
+      [argv.detailDtoBaseName, '<%=argv.detailDtoBaseName%>.tsx_'],
+      [argv.detailDtoMutateName, '<%=argv.detailDtoMutateName%>.tsx_'],
+      [argv.detailDtoViewName, '<%=argv.detailDtoViewName%>.tsx_'],
+      [argv.detailDtoResItemName, '<%=argv.detailDtoResItemName%>.tsx_'],
+    ] as const;
   }
 
   private _resolveCreatedDetailModuleRoot() {
