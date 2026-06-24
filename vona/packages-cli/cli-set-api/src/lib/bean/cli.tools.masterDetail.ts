@@ -163,28 +163,54 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _patchDetailMetaVersion() {
     const { argv } = this.context;
-    const fileName = this._detailPaths().metaVersion;
-    let content = this._readFile(fileName);
-    if (content.includes(`entity${argv.detailResourceNameCapitalize}.${argv.fk}`)) return;
-    const marker = '        table.basicFields();\n';
-    if (!content.includes(marker)) {
-      throw new Error(`detail meta.version is not in the expected shape: ${fileName}`);
-    }
-    const line = `        table.tableIdentity(entity${argv.detailResourceNameCapitalize}.${argv.fk}).comment(entity${argv.detailResourceNameCapitalize}.$comment.${argv.fk});\n`;
-    content = content.replace(marker, `${marker}${line}`);
-    await this._saveFile(fileName, content);
+    await this._patchFileByMarker({
+      fileName: this._detailPaths().metaVersion,
+      existsNeedle: `entity${argv.detailResourceNameCapitalize}.${argv.fk}`,
+      marker: '        table.basicFields();\n',
+      line: this._detailMetaVersionLine(),
+      shapeName: 'detail meta.version',
+    });
   }
 
   private async _patchDetailMetaIndex() {
     const { argv } = this.context;
-    const fileName = this._detailPaths().metaIndex;
+    await this._patchFileByMarker({
+      fileName: this._detailPaths().metaIndex,
+      existsNeedle: `'${argv.fk}'`,
+      marker: '  indexes: {\n',
+      line: this._detailMetaIndexLine(),
+      shapeName: 'detail meta.index',
+    });
+  }
+
+  private _detailMetaVersionLine() {
+    const { argv } = this.context;
+    return `        table.tableIdentity(entity${argv.detailResourceNameCapitalize}.${argv.fk}).comment(entity${argv.detailResourceNameCapitalize}.$comment.${argv.fk});\n`;
+  }
+
+  private _detailMetaIndexLine() {
+    const { argv } = this.context;
+    return `    ...$tableColumns('${this.helper.combineModuleNameAndResource(argv.detailModuleInfo.relativeName, argv.detailResourceName)}', '${argv.fk}'),\n`;
+  }
+
+  private async _patchFileByMarker({
+    fileName,
+    existsNeedle,
+    marker,
+    line,
+    shapeName,
+  }: {
+    fileName: string;
+    existsNeedle: string;
+    marker: string;
+    line: string;
+    shapeName: string;
+  }) {
     let content = this._readFile(fileName);
-    if (content.includes(`'${argv.fk}'`)) return;
-    const marker = '  indexes: {\n';
+    if (content.includes(existsNeedle)) return;
     if (!content.includes(marker)) {
-      throw new Error(`detail meta.index is not in the expected shape: ${fileName}`);
+      throw new Error(`${shapeName} is not in the expected shape: ${fileName}`);
     }
-    const line = `    ...$tableColumns('${this.helper.combineModuleNameAndResource(argv.detailModuleInfo.relativeName, argv.detailResourceName)}', '${argv.fk}'),\n`;
     content = content.replace(marker, `${marker}${line}`);
     await this._saveFile(fileName, content);
   }
