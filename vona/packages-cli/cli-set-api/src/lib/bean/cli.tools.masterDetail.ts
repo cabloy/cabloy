@@ -216,9 +216,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
   }
 
   private async _renderMasterDetailDtos() {
-    const { argv } = this.context;
-    const dtoDir = path.join(argv._module.root, 'src/dto');
-    await this.helper.ensureDir(dtoDir);
+    await this.helper.ensureDir(this._masterPaths().dtoDir);
     for (const [dtoBaseName, templateBaseName] of this._detailDtoTemplates()) {
       await this._renderMasterDetailDtoFile(dtoBaseName, templateBaseName);
     }
@@ -237,7 +235,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _patchMasterModel() {
     const { argv } = this.context;
-    const fileName = path.join(argv._module.root, 'src/model', `${argv.resourceName}.ts`);
+    const fileName = this._masterPaths().model;
     let content = this._readFile(fileName);
     if (content.includes(`${argv.relationName}: $relation.hasMany(`)) return;
     content = this._patchMasterModelImport(content, fileName);
@@ -247,7 +245,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _patchMasterService() {
     const { argv } = this.context;
-    const fileName = path.join(argv._module.root, 'src/service', `${argv.resourceName}.ts`);
+    const fileName = this._masterPaths().service;
     let content = this._readFile(fileName);
     if (content.includes(`include: { ${argv.relationName}: true }`)) return;
     for (const [search, replacement] of this._masterServiceIncludeReplacements()) {
@@ -348,8 +346,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
   }
 
   private async _patchMasterLocale(locale: LocaleName) {
-    const { argv } = this.context;
-    const fileName = path.join(argv._module.root, 'src/config/locale', `${locale}.ts`);
+    const fileName = path.join(this._masterPaths().localeDir, `${locale}.ts`);
     let content = this._readFile(fileName);
     content = this._patchLocaleAdditions(content, this._masterLocaleAdditions(locale));
     await this._saveFile(fileName, content);
@@ -383,8 +380,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
   }
 
   private async _renderMasterDetailDtoFile(dtoBaseName: string, templateBaseName: string) {
-    const { argv } = this.context;
-    const targetFile = path.join(argv._module.root, 'src/dto', `${dtoBaseName}.tsx`);
+    const targetFile = path.join(this._masterPaths().dtoDir, `${dtoBaseName}.tsx`);
     if (fs.existsSync(targetFile)) return;
     const templateFile = this.template.resolveTemplatePath(
       __ThisSetName__,
@@ -558,6 +554,18 @@ export class CliToolsMasterDetail extends BeanCliBase {
     return {
       hasCoreDetailFiles: fs.existsSync(files.entity) && fs.existsSync(files.model),
       hasStandaloneSurface: this._hasStandaloneDetailSurface(),
+    };
+  }
+
+  private _masterPaths() {
+    const { argv } = this.context;
+    const masterRoot = argv._module.root;
+    return {
+      root: masterRoot,
+      model: path.join(masterRoot, 'src/model', `${argv.resourceName}.ts`),
+      service: path.join(masterRoot, 'src/service', `${argv.resourceName}.ts`),
+      dtoDir: path.join(masterRoot, 'src/dto'),
+      localeDir: path.join(masterRoot, 'src/config/locale'),
     };
   }
 
