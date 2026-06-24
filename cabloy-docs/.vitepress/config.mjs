@@ -132,7 +132,7 @@ const referenceGroups = [
   },
 ];
 
-const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID;
+const GA_MEASUREMENT_ID = 'G-2NYR9RGRL4'; // process.env.GA_MEASUREMENT_ID;
 const gaHead = GA_MEASUREMENT_ID
   ? [
       [
