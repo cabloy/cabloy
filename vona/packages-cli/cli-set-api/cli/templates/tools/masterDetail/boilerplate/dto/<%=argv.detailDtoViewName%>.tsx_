@@ -1,0 +1,17 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+import { Model<%=argv.detailResourceNameCapitalize%> } from '<%=argv.detailPackageName%>';
+import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
+
+import { Dto<%=cli.helper.firstCharToUpperCase(argv.detailDtoBaseName)%> } from './<%=argv.detailDtoBaseName%>.tsx';
+
+export interface IDtoOptions<%=cli.helper.firstCharToUpperCase(argv.detailDtoViewName)%> extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=cli.helper.firstCharToUpperCase(argv.detailDtoViewName)%>>({
+  blocks: [ZovaRender.block('basic-details:blockForm')],
+})
+export class Dto<%=cli.helper.firstCharToUpperCase(argv.detailDtoViewName)%> extends $Dto.get(() => Model<%=argv.detailResourceNameCapitalize%>, {
+  dtoClass: Dto<%=cli.helper.firstCharToUpperCase(argv.detailDtoBaseName)%>,
+}) {}

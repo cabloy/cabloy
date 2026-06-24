@@ -26,6 +26,7 @@ import toolsCrud from './command/tools.crud.ts';
 import toolsCrudBasic from './command/tools.crudBasic.ts';
 import toolsCrudStart from './command/tools.crudStart.ts';
 import toolsDeps from './command/tools.deps.ts';
+import toolsMasterDetail from './command/tools.masterDetail.ts';
 import toolsMetadata from './command/tools.metadata.ts';
 
 export const commands = {
@@ -68,5 +69,6 @@ export const commands = {
     crudBasic: toolsCrudBasic,
     crudStart: toolsCrudStart,
     crud: toolsCrud,
+    masterDetail: toolsMasterDetail,
   },
 };

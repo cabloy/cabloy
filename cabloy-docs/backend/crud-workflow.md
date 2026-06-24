@@ -100,6 +100,37 @@ A practical rule is:
 - refine the generated code when response contracts, DTO behavior, controller metadata, model behavior, or test flow need stronger domain-specific semantics
 - avoid replacing the generated thread wholesale unless the framework shape truly does not fit the use case
 
+## Aggregate detail scaffolding
+
+When the business shape is not a standalone CRUD resource but a master resource that owns a nested detail collection, use the master-detail generator instead of hand-wiring the relation and DTO thread.
+
+Example:
+
+```bash
+npm run vona :tools:masterDetail student -- --module=training-student --detailModule=training-record --detailResourceName=record --relationName=trainingRecords --fk=studentId --detailMode=aggregate
+```
+
+This command is intended to scaffold the aggregate-detail thread that the `training-student` / `training-record` specimen demonstrates:
+
+- master model `hasMany` relation
+- master service `include` lifecycle
+- master-side nested detail DTOs
+- built-in `basic-details` bulk/row actions
+- detail FK persistence and index wiring
+
+### Two supported detail-module modes
+
+Use `--detailMode=aggregate` when the detail module should remain entity/model/meta-only and should not expose its own standalone controller/service resource surface.
+
+Use `--detailMode=standalone` when the detail module should participate in the master aggregate but also keep its own standalone resource surface.
+
+A practical rule is:
+
+- choose `aggregate` when the detail is owned and managed primarily inside the master workflow
+- choose `standalone` when the detail also needs independent resource entry/use cases
+
+The generator should be the default starting point for this pattern, and manual refinement should come afterward.
+
 ## Relationship to DTO inference and OpenAPI
 
 The generated thread is also part of the broader contract-emission path.

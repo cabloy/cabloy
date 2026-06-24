@@ -26,6 +26,7 @@ import { CliToolsCrud } from './bean/cli.tools.crud.ts';
 import { CliToolsCrudBasic } from './bean/cli.tools.crudBasic.ts';
 import { CliToolsCrudStart } from './bean/cli.tools.crudStart.ts';
 import { CliToolsDeps } from './bean/cli.tools.deps.ts';
+import { CliToolsMasterDetail } from './bean/cli.tools.masterDetail.ts';
 import { CliToolsMetadata } from './bean/cli.tools.metadata.ts';
 
 export const beans = {
@@ -58,4 +59,5 @@ export const beans = {
   'tools.crudBasic': CliToolsCrudBasic,
   'tools.crudStart': CliToolsCrudStart,
   'tools.crud': CliToolsCrud,
+  'tools.masterDetail': CliToolsMasterDetail,
 };

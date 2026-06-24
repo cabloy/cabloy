@@ -1,0 +1,18 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { $makeMetadata } from 'vona-module-a-openapiutils';
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+import { Model<%=argv.detailResourceNameCapitalize%> } from '<%=argv.detailPackageName%>';
+import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
+
+export interface IDtoOptions<%=cli.helper.firstCharToUpperCase(argv.detailDtoBaseName)%> extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=cli.helper.firstCharToUpperCase(argv.detailDtoBaseName)%>>({
+  fields: {
+    id: $makeMetadata(ZovaRender.visible(false)),
+  },
+})
+export class Dto<%=cli.helper.firstCharToUpperCase(argv.detailDtoBaseName)%> extends $Dto.get(() => Model<%=argv.detailResourceNameCapitalize%>, {
+  columns: ['id', 'deleted', 'name', 'description'],
+}) {}
