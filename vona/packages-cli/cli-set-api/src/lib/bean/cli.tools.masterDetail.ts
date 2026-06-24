@@ -283,70 +283,28 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const { argv } = this.context;
     const fileName = path.join(argv._module.root, 'src/dto', `${argv.resourceName}${scene}.tsx`);
     let content = this._readFile(fileName);
-    if (
-      content.includes(
-        `${argv.detailFieldPrivateName}?: Dto${this._detailDtoResItemCapitalize()}[];`,
-      )
-    ) {
+    const detailDtoResItemCapitalize = this._detailDtoResItemCapitalize();
+    const detailDtoClassCapitalize = this._detailDtoClassCapitalize(scene);
+
+    if (content.includes(`${argv.detailFieldPrivateName}?: Dto${detailDtoResItemCapitalize}[];`)) {
       return;
     }
 
-    const detailDtoClassCapitalize =
-      scene === 'View'
-        ? this._capitalize(argv.detailDtoViewName)
-        : this._capitalize(argv.detailDtoMutateName);
-
-    if (!content.includes("import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';")) {
-      content = this._replaceStrict(
-        content,
-        "import { $Dto } from 'vona-module-a-orm';",
-        "import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';\nimport { $Dto } from 'vona-module-a-orm';",
-        fileName,
-      );
-    }
-    if (!content.includes("import { $locale } from '../.metadata/locales.ts';")) {
-      content = this._replaceStrict(
-        content,
-        "import { ZovaRender } from 'zova-rest-cabloy-basic-admin';\n",
-        "import { ZovaRender } from 'zova-rest-cabloy-basic-admin';\n\nimport { $locale } from '../.metadata/locales.ts';\n",
-        fileName,
-      );
-    }
-    const importMarker = `import { Model${argv.resourceNameCapitalize} } from '../model/${argv.resourceName}.ts';\n`;
-    if (!content.includes(`import { Dto${detailDtoClassCapitalize} } from './`)) {
-      content = this._replaceStrict(
-        content,
-        importMarker,
-        `${importMarker}import { Dto${detailDtoClassCapitalize} } from './${scene === 'View' ? argv.detailDtoViewName : argv.detailDtoMutateName}.tsx';\nimport { Dto${this._detailDtoResItemCapitalize()} } from './${argv.detailDtoResItemName}.tsx';\n`,
-        fileName,
-      );
-    }
-
-    if (content.includes('  fields: {\n')) {
-      content = content.replace(
-        '  fields: {\n',
-        `  fields: {\n    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('basic-details:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n`,
-      );
-    } else {
-      const decoratorMarker = '  ],\n})';
-      if (!content.includes(decoratorMarker)) {
-        throw new Error(`master dto decorator is not in the expected shape: ${fileName}`);
-      }
-      content = content.replace(
-        decoratorMarker,
-        `  ],\n  fields: {\n    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('basic-details:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n  },\n})`,
-      );
-    }
-
-    const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
-    const classReplaceSource = `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}) {}`;
-    const classReplaceTarget = `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}, {\n  include: { ${argv.relationName}: { dtoClass: Dto${detailDtoClassCapitalize} } },\n}) {\n  @Api.field(ZovaRender.visible(false), v.optional(), v.array(Dto${this._detailDtoResItemCapitalize()}))\n  ${argv.detailFieldPrivateName}?: Dto${this._detailDtoResItemCapitalize()}[];\n}`;
-    if (content.includes(classReplaceSource)) {
-      content = content.replace(classReplaceSource, classReplaceTarget);
-    } else {
-      throw new Error(`master dto class is not in the expected generated shape: ${fileName}`);
-    }
-
+    content = this._patchMasterDtoImports(
+      content,
+      fileName,
+      scene,
+      detailDtoClassCapitalize,
+      detailDtoResItemCapitalize,
+    );
+    content = this._patchMasterDtoFields(content, fileName, scene);
+    content = this._patchMasterDtoClass(
+      content,
+      fileName,
+      scene,
+      detailDtoClassCapitalize,
+      detailDtoResItemCapitalize,
+    );
     await this._saveFile(fileName, content);
   }
 
@@ -354,20 +312,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const { argv } = this.context;
     const fileName = path.join(argv._module.root, 'src/config/locale', `${locale}.ts`);
     let content = this._readFile(fileName);
-    const additions =
-      locale === 'en-us'
-        ? [
-            `${argv.relationNameCapitalize}: '${this._titleize(argv.relationName)}'`,
-            `Add${argv.detailDialogTitleCapitalize}: 'Add ${this._titleize(argv.detailModuleInfo.relativeName)}'`,
-            `Edit${argv.detailDialogTitleCapitalize}: 'Edit ${this._titleize(argv.detailModuleInfo.relativeName)}'`,
-            `View${argv.detailDialogTitleCapitalize}: 'View ${this._titleize(argv.detailModuleInfo.relativeName)}'`,
-          ]
-        : [
-            `${argv.relationNameCapitalize}: '明细'`,
-            `Add${argv.detailDialogTitleCapitalize}: '添加明细'`,
-            `Edit${argv.detailDialogTitleCapitalize}: '编辑明细'`,
-            `View${argv.detailDialogTitleCapitalize}: '查看明细'`,
-          ];
+    const additions = this._masterLocaleAdditions(locale);
     for (const addition of additions) {
       const key = addition.split(':')[0];
       if (content.includes(`${key}:`)) continue;
@@ -396,6 +341,97 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const templateContent = fs.readFileSync(templateFile).toString('utf8');
     const renderedContent = await this.template.renderContent({ content: templateContent });
     await this._saveFile(targetFile, renderedContent);
+  }
+
+  private _patchMasterDtoImports(
+    content: string,
+    fileName: string,
+    scene: MasterDtoScene,
+    detailDtoClassCapitalize: string,
+    detailDtoResItemCapitalize: string,
+  ) {
+    const { argv } = this.context;
+    if (!content.includes("import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';")) {
+      content = this._replaceStrict(
+        content,
+        "import { $Dto } from 'vona-module-a-orm';",
+        "import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';\nimport { $Dto } from 'vona-module-a-orm';",
+        fileName,
+      );
+    }
+    if (!content.includes("import { $locale } from '../.metadata/locales.ts';")) {
+      content = this._replaceStrict(
+        content,
+        "import { ZovaRender } from 'zova-rest-cabloy-basic-admin';\n",
+        "import { ZovaRender } from 'zova-rest-cabloy-basic-admin';\n\nimport { $locale } from '../.metadata/locales.ts';\n",
+        fileName,
+      );
+    }
+    const importMarker = `import { Model${argv.resourceNameCapitalize} } from '../model/${argv.resourceName}.ts';\n`;
+    if (!content.includes(`import { Dto${detailDtoClassCapitalize} } from './`)) {
+      content = this._replaceStrict(
+        content,
+        importMarker,
+        `${importMarker}import { Dto${detailDtoClassCapitalize} } from './${scene === 'View' ? argv.detailDtoViewName : argv.detailDtoMutateName}.tsx';\nimport { Dto${detailDtoResItemCapitalize} } from './${argv.detailDtoResItemName}.tsx';\n`,
+        fileName,
+      );
+    }
+    return content;
+  }
+
+  private _patchMasterDtoFields(content: string, fileName: string, scene: MasterDtoScene) {
+    const { argv } = this.context;
+    const fieldCode = `    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('basic-details:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n`;
+    if (content.includes('  fields: {\n')) {
+      return content.replace('  fields: {\n', `  fields: {\n${fieldCode}`);
+    }
+    const decoratorMarker = '  ],\n})';
+    if (!content.includes(decoratorMarker)) {
+      throw new Error(`master dto decorator is not in the expected shape: ${fileName}`);
+    }
+    return content.replace(decoratorMarker, `  ],\n  fields: {\n${fieldCode}  },\n})`);
+  }
+
+  private _patchMasterDtoClass(
+    content: string,
+    fileName: string,
+    scene: MasterDtoScene,
+    detailDtoClassCapitalize: string,
+    detailDtoResItemCapitalize: string,
+  ) {
+    const { argv } = this.context;
+    const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
+    const classReplaceSource = `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}) {}`;
+    const classReplaceTarget = `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}, {\n  include: { ${argv.relationName}: { dtoClass: Dto${detailDtoClassCapitalize} } },\n}) {\n  @Api.field(ZovaRender.visible(false), v.optional(), v.array(Dto${detailDtoResItemCapitalize}))\n  ${argv.detailFieldPrivateName}?: Dto${detailDtoResItemCapitalize}[];\n}`;
+    if (!content.includes(classReplaceSource)) {
+      throw new Error(`master dto class is not in the expected generated shape: ${fileName}`);
+    }
+    return content.replace(classReplaceSource, classReplaceTarget);
+  }
+
+  private _detailDtoClassCapitalize(scene: MasterDtoScene) {
+    const { argv } = this.context;
+    return scene === 'View'
+      ? this._capitalize(argv.detailDtoViewName)
+      : this._capitalize(argv.detailDtoMutateName);
+  }
+
+  private _masterLocaleAdditions(locale: LocaleName) {
+    const { argv } = this.context;
+    if (locale === 'en-us') {
+      return [
+        `${argv.relationNameCapitalize}: '${this._titleize(argv.relationName)}'`,
+        `Add${argv.detailDialogTitleCapitalize}: 'Add ${this._titleize(argv.detailModuleInfo.relativeName)}'`,
+        `Edit${argv.detailDialogTitleCapitalize}: 'Edit ${this._titleize(argv.detailModuleInfo.relativeName)}'`,
+        `View${argv.detailDialogTitleCapitalize}: 'View ${this._titleize(argv.detailModuleInfo.relativeName)}'`,
+      ];
+    }
+    return [
+      `${argv.relationNameCapitalize}: '明细'`,
+      `Add${argv.detailDialogTitleCapitalize}: '添加明细'`,
+      `Edit${argv.detailDialogTitleCapitalize}: '编辑明细'`,
+      `View${argv.detailDialogTitleCapitalize}: '查看明细'`,
+    ];
   }
 
   private _detailPaths() {
