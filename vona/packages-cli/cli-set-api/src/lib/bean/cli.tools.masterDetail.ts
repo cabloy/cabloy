@@ -7,6 +7,8 @@ import path from 'node:path';
 import { __ThisSetName__ } from '../this.ts';
 
 type DetailMode = 'aggregate' | 'standalone';
+type MasterDtoScene = 'Create' | 'Update' | 'View';
+type LocaleName = 'en-us' | 'zh-cn';
 
 declare module '@cabloy/cli' {
   interface ICommandArgv {
@@ -206,11 +208,12 @@ export class CliToolsMasterDetail extends BeanCliBase {
   private async _patchMasterModule() {
     await this._patchMasterModel();
     await this._patchMasterService();
-    await this._patchMasterDto('Create');
-    await this._patchMasterDto('Update');
-    await this._patchMasterDto('View');
-    await this._patchMasterLocale('en-us');
-    await this._patchMasterLocale('zh-cn');
+    for (const scene of this._masterDtoScenes()) {
+      await this._patchMasterDto(scene);
+    }
+    for (const locale of this._masterLocales()) {
+      await this._patchMasterLocale(locale);
+    }
   }
 
   private async _patchMasterModel() {
@@ -276,7 +279,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
     await this._saveFile(fileName, content);
   }
 
-  private async _patchMasterDto(scene: 'Create' | 'Update' | 'View') {
+  private async _patchMasterDto(scene: MasterDtoScene) {
     const { argv } = this.context;
     const fileName = path.join(argv._module.root, 'src/dto', `${argv.resourceName}${scene}.tsx`);
     let content = this._readFile(fileName);
@@ -347,7 +350,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
     await this._saveFile(fileName, content);
   }
 
-  private async _patchMasterLocale(locale: 'en-us' | 'zh-cn') {
+  private async _patchMasterLocale(locale: LocaleName) {
     const { argv } = this.context;
     const fileName = path.join(argv._module.root, 'src/config/locale', `${locale}.ts`);
     let content = this._readFile(fileName);
@@ -442,6 +445,14 @@ export class CliToolsMasterDetail extends BeanCliBase {
       [argv.detailDtoViewName, '<%=argv.detailDtoViewName%>.tsx_'],
       [argv.detailDtoResItemName, '<%=argv.detailDtoResItemName%>.tsx_'],
     ] as const;
+  }
+
+  private _masterDtoScenes() {
+    return ['Create', 'Update', 'View'] as const satisfies readonly MasterDtoScene[];
+  }
+
+  private _masterLocales() {
+    return ['en-us', 'zh-cn'] as const satisfies readonly LocaleName[];
   }
 
   private _resolveCreatedDetailModuleRoot() {
