@@ -130,12 +130,14 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _patchDetailEntity() {
     const { argv } = this.context;
-    const fileName = this._detailPaths().entity;
-    let content = this._readFile(fileName);
-    if (content.includes(`${argv.fk}: TableIdentity;`)) return;
-    content = this._patchDetailEntityImport(content);
-    content = this._patchDetailEntityField(content, fileName);
-    await this._saveFile(fileName, content);
+    await this._patchFileContent({
+      fileName: this._detailPaths().entity,
+      existsNeedle: `${argv.fk}: TableIdentity;`,
+      patch: (content, fileName) => {
+        content = this._patchDetailEntityImport(content);
+        return this._patchDetailEntityField(content, fileName);
+      },
+    });
   }
 
   private _patchDetailEntityImport(content: string) {
@@ -206,6 +208,21 @@ export class CliToolsMasterDetail extends BeanCliBase {
       throw new Error(`${shapeName} is not in the expected shape: ${fileName}`);
     }
     content = content.replace(marker, `${marker}${line}`);
+    await this._saveFile(fileName, content);
+  }
+
+  private async _patchFileContent({
+    fileName,
+    existsNeedle,
+    patch,
+  }: {
+    fileName: string;
+    existsNeedle: string;
+    patch: (content: string, fileName: string) => string;
+  }) {
+    let content = this._readFile(fileName);
+    if (content.includes(existsNeedle)) return;
+    content = patch(content, fileName);
     await this._saveFile(fileName, content);
   }
 
