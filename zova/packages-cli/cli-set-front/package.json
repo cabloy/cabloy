@@ -1,6 +1,6 @@
 {
   "name": "zova-cli-set-front",
-  "version": "1.2.81",
+  "version": "1.2.82",
   "gitHead": "6f675a8cc46d596142c591c28a40cc4d82fcc6cc",
   "description": "zova cli-set-front",
   "keywords": [
@@ -41,7 +41,7 @@
     "@babel/plugin-proposal-decorators": "^7.29.0",
     "@babel/plugin-transform-class-properties": "^7.28.6",
     "@babel/plugin-transform-typescript": "^7.28.6",
-    "@cabloy/cli": "^3.1.19",
+    "@cabloy/cli": "^3.1.20",
     "@cabloy/extend": "^3.2.8",
     "@cabloy/module-info": "^2.0.0",
     "@cabloy/openapi-typescript": "^7.9.2",
