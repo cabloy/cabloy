@@ -25,12 +25,9 @@ export class CliCreateModule extends BeanCliBase {
     // suite name/info
     const suiteName = argv.suite;
     if (suiteName) {
-      argv.suiteInfo = this.helper.parseSuiteInfo(suiteName);
+      argv.suiteInfo = this.helper.parseSuiteInfoCanonical(suiteName);
       // check if exists
-      argv._suite = this.helper.findSuite(suiteName);
-      if (!argv._suite) {
-        throw new Error(`suite does not exist: ${suiteName}`);
-      }
+      argv._suite = this.helper.findSuiteCanonical(suiteName);
     }
     // nameMeta
     const nameMeta = this.helper.parseNameMeta(argv.name);

@@ -24,7 +24,7 @@ export class CliCreateSuite extends BeanCliBase {
     argv.name = nameMeta.short;
     // suite name/info
     const suiteName = argv.name;
-    argv.suiteInfo = this.helper.parseSuiteInfo(suiteName);
+    argv.suiteInfo = this.helper.parseSuiteInfoCanonical(suiteName);
     // check if exists
     const _suite = this.helper.findSuite(suiteName);
     if (_suite) {

@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { parseModuleInfoCanonical } from '../common/moduleName.ts';
+import { findSuiteCanonical, parseSuiteInfoCanonical } from '../common/suiteName.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -26,12 +27,9 @@ export class CliCreateModule extends BeanCliBase {
     // suite name/info
     const suiteName = argv.suite;
     if (suiteName) {
-      argv.suiteInfo = this.helper.parseSuiteInfo(suiteName);
+      argv.suiteInfo = parseSuiteInfoCanonical(this.helper, suiteName);
       // check if exists
-      argv._suite = this.helper.findSuite(suiteName);
-      if (!argv._suite) {
-        throw new Error(`suite does not exist: ${suiteName}`);
-      }
+      argv._suite = findSuiteCanonical(this.helper, suiteName);
     }
     // nameMeta
     const nameMeta = this.helper.parseNameMeta(argv.name);
