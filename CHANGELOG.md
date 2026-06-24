@@ -1,5 +1,49 @@
 # Changelog
 
+## 5.1.66
+
+### Features
+
+- Add the Vona master-detail scaffold workflow.
+- Add details action boilerplates.
+- Add a details view action.
+- Add dialog-based detail creation.
+- Add a detail edit dialog.
+- Enhance modal close controls.
+- Improve dialog viewport sizing.
+- Improve detail row handling.
+- Support DTO metadata replacement.
+
+### Bug Fixes
+
+- Validate canonical suite names across CLI commands.
+- Validate canonical module names across CLI commands.
+- Validate canonical master-detail module names.
+- Support `dtoClass` fields in DTO mutation.
+- Normalize relation table identity comparisons.
+
+### Improvements
+
+- Remove Zova CLI canonical helper shims.
+- Extract a generic file content patch helper.
+- Unify master-detail patch runners.
+- Extract master path helpers.
+- Extract locale and metadata helper flow.
+- Extract master DTO string builders.
+- Extract detail metadata patch helper.
+- Extract master model and service patch helpers.
+- Extract detail entity patch helpers.
+- Split master-detail detail mode helpers.
+- Extract master-detail DTO patch helpers.
+- Streamline master-detail scene and locale loops.
+- Simplify the master-detail DTO rendering flow.
+- Support detail render context in dialog forms.
+- Move the detail dialog form to the detail service.
+- Extract the details block form component.
+- Extract the details dialog form helper.
+- Align the `actionCreate` dialog style.
+- Use a `Set` for relation identity lookup.
+
 ## 5.1.65
 
 ### Features
