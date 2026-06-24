@@ -7,8 +7,6 @@ import { globbySync } from 'globby';
 import gogocode from 'gogocode';
 import path from 'node:path';
 
-import { findModuleCanonical, parseModuleInfoCanonical } from '../common/moduleName.ts';
-
 declare module '@cabloy/cli' {
   interface ICommandArgv {
     module: string;
@@ -27,8 +25,8 @@ export class CliRefactorRenameComponent extends BeanCliBase {
     await super.execute();
     // module name/info
     const moduleName = argv.module;
-    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
-    const _module = findModuleCanonical(this.helper, moduleName);
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     // componentName

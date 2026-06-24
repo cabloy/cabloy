@@ -7,7 +7,6 @@ import path from 'node:path';
 import { createConfigUtils } from 'zova-vite';
 
 import { __ThisSetName__ } from '../this.ts';
-import { findModuleCanonical, parseModuleInfoCanonical } from './moduleName.ts';
 
 declare module '@cabloy/cli' {
   interface ICommandArgv {
@@ -32,8 +31,8 @@ export class CliCreatePageBase extends BeanCliBase {
     await super.execute();
     // module name/info
     const moduleName = argv.module;
-    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
-    const _module = findModuleCanonical(this.helper, moduleName);
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     // pageName

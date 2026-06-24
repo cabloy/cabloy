@@ -7,7 +7,6 @@ import fse from 'fs-extra';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { findModuleCanonical, parseModuleInfoCanonical } from '../common/moduleName.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -33,8 +32,8 @@ export class CliCreateBean extends BeanCliBase {
     await super.execute();
     // module name/info
     const moduleName = argv.module;
-    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
-    const _module = findModuleCanonical(this.helper, moduleName);
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     // scene name

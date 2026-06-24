@@ -4,7 +4,6 @@ import { toUpperCaseFirstChar } from '@cabloy/word-utils';
 import fse from 'fs-extra';
 import path from 'node:path';
 
-import { findModuleCanonical } from '../common/moduleName.ts';
 import { loadJSONFile, saveJSONFile } from '../common/utils.ts';
 import { generateBeanGenerals } from './toolsMetadata/generateBeanGenerals.ts';
 import {
@@ -63,7 +62,7 @@ export class CliToolsMetadata extends BeanCliBase {
   }
 
   async _generateMetadata(moduleName: string, force: boolean) {
-    const module = findModuleCanonical(this.helper, moduleName);
+    const module = this.helper.findModuleCanonical(moduleName);
     const modulePath = module.root;
     const metaDir = path.join(modulePath, 'src/.metadata');
     const metaIndexFile = path.join(metaDir, 'index.ts');

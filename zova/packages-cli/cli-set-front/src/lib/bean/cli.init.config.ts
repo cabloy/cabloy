@@ -2,7 +2,6 @@ import { BeanCliBase } from '@cabloy/cli';
 import fse from 'fs-extra';
 import path from 'node:path';
 
-import { findModuleCanonical, parseModuleInfoCanonical } from '../common/moduleName.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -17,8 +16,8 @@ export class CliInitConfig extends BeanCliBase {
     // module name/info
     const moduleName = argv._[0];
     if (!moduleName) return;
-    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
-    const _module = findModuleCanonical(this.helper, moduleName);
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     const configFile = path.join(targetDir, 'src/config/config.ts');

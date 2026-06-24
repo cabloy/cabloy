@@ -2,7 +2,6 @@ import { BeanCliBase } from '@cabloy/cli';
 import fse from 'fs-extra';
 import path from 'node:path';
 
-import { findModuleCanonical } from '../common/moduleName.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -36,7 +35,7 @@ export class CliOpenapiConfig extends BeanCliBase {
 
   async _generateModuleConfig(moduleName: string) {
     // check if exists
-    const _module = findModuleCanonical(this.helper, moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     const configFile = path.join(targetDir, 'cli/openapi.config.ts');
