@@ -411,7 +411,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
       content = this._replaceStrict(
         content,
         importMarker,
-        `${importMarker}import { Dto${detailDtoClassCapitalize} } from './${scene === 'View' ? argv.detailDtoViewName : argv.detailDtoMutateName}.tsx';\nimport { Dto${detailDtoResItemCapitalize} } from './${argv.detailDtoResItemName}.tsx';\n`,
+        `${importMarker}${this._masterDtoDetailImports(scene, detailDtoClassCapitalize, detailDtoResItemCapitalize)}`,
         fileName,
       );
     }
@@ -419,8 +419,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
   }
 
   private _patchMasterDtoFields(content: string, fileName: string, scene: MasterDtoScene) {
-    const { argv } = this.context;
-    const fieldCode = `    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('basic-details:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n`;
+    const fieldCode = this._masterDtoFieldCode(scene);
     if (content.includes('  fields: {\n')) {
       return content.replace('  fields: {\n', `  fields: {\n${fieldCode}`);
     }
@@ -438,14 +437,48 @@ export class CliToolsMasterDetail extends BeanCliBase {
     detailDtoClassCapitalize: string,
     detailDtoResItemCapitalize: string,
   ) {
-    const { argv } = this.context;
-    const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
-    const classReplaceSource = `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}) {}`;
-    const classReplaceTarget = `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}, {\n  include: { ${argv.relationName}: { dtoClass: Dto${detailDtoClassCapitalize} } },\n}) {\n  @Api.field(ZovaRender.visible(false), v.optional(), v.array(Dto${detailDtoResItemCapitalize}))\n  ${argv.detailFieldPrivateName}?: Dto${detailDtoResItemCapitalize}[];\n}`;
+    const classReplaceSource = this._masterDtoClassReplaceSource(scene);
     if (!content.includes(classReplaceSource)) {
       throw new Error(`master dto class is not in the expected generated shape: ${fileName}`);
     }
-    return content.replace(classReplaceSource, classReplaceTarget);
+    return content.replace(
+      classReplaceSource,
+      this._masterDtoClassReplaceTarget(
+        scene,
+        detailDtoClassCapitalize,
+        detailDtoResItemCapitalize,
+      ),
+    );
+  }
+
+  private _masterDtoDetailImports(
+    scene: MasterDtoScene,
+    detailDtoClassCapitalize: string,
+    detailDtoResItemCapitalize: string,
+  ) {
+    const { argv } = this.context;
+    return `import { Dto${detailDtoClassCapitalize} } from './${scene === 'View' ? argv.detailDtoViewName : argv.detailDtoMutateName}.tsx';\nimport { Dto${detailDtoResItemCapitalize} } from './${argv.detailDtoResItemName}.tsx';\n`;
+  }
+
+  private _masterDtoFieldCode(scene: MasterDtoScene) {
+    const { argv } = this.context;
+    return `    ${argv.relationName}: $makeMetadata(\n      v.title($locale('${argv.relationNameCapitalize}')),\n      ZovaRender.order(5),\n      ZovaRender.field('basic-details:formFieldDetails'),\n${scene === 'Create' ? '      v.optional(),\n' : ''}    ),\n`;
+  }
+
+  private _masterDtoClassReplaceSource(scene: MasterDtoScene) {
+    const { argv } = this.context;
+    const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
+    return `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}) {}`;
+  }
+
+  private _masterDtoClassReplaceTarget(
+    scene: MasterDtoScene,
+    detailDtoClassCapitalize: string,
+    detailDtoResItemCapitalize: string,
+  ) {
+    const { argv } = this.context;
+    const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
+    return `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}, {\n  include: { ${argv.relationName}: { dtoClass: Dto${detailDtoClassCapitalize} } },\n}) {\n  @Api.field(ZovaRender.visible(false), v.optional(), v.array(Dto${detailDtoResItemCapitalize}))\n  ${argv.detailFieldPrivateName}?: Dto${detailDtoResItemCapitalize}[];\n}`;
   }
 
   private _detailDtoClassCapitalize(scene: MasterDtoScene) {
