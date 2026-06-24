@@ -125,13 +125,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
   }
 
   private async _patchDetailModule() {
-    for (const task of [
-      () => this._patchDetailEntity(),
-      () => this._patchDetailMetaVersion(),
-      () => this._patchDetailMetaIndex(),
-    ]) {
-      await task();
-    }
+    await this._runSequential(this._detailPatchTasks());
   }
 
   private async _patchDetailEntity() {
@@ -223,13 +217,29 @@ export class CliToolsMasterDetail extends BeanCliBase {
   }
 
   private async _patchMasterModule() {
-    await this._patchMasterModel();
-    await this._patchMasterService();
-    for (const scene of this._masterDtoScenes()) {
-      await this._patchMasterDto(scene);
-    }
-    for (const locale of this._masterLocales()) {
-      await this._patchMasterLocale(locale);
+    await this._runSequential(this._masterPatchTasks());
+  }
+
+  private _detailPatchTasks(): Array<() => Promise<void>> {
+    return [
+      () => this._patchDetailEntity(),
+      () => this._patchDetailMetaVersion(),
+      () => this._patchDetailMetaIndex(),
+    ];
+  }
+
+  private _masterPatchTasks(): Array<() => Promise<void>> {
+    return [
+      () => this._patchMasterModel(),
+      () => this._patchMasterService(),
+      ...this._masterDtoScenes().map(scene => () => this._patchMasterDto(scene)),
+      ...this._masterLocales().map(locale => () => this._patchMasterLocale(locale)),
+    ];
+  }
+
+  private async _runSequential(tasks: Array<() => Promise<void>>) {
+    for (const task of tasks) {
+      await task();
     }
   }
 
