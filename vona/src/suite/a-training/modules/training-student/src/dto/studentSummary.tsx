@@ -26,7 +26,7 @@ export class DtoStudentSummary {
   mobile: string;
 
   @Api.field(v.title($locale('Level')))
-  level: 1 | 2 | 3;
+  level: number;
 
   @Api.field(v.title($locale('LevelTitle')))
   levelTitle: string;
