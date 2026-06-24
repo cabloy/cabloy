@@ -19,6 +19,8 @@ import path from 'node:path';
 import { rimraf } from 'rimraf';
 import ts from 'typescript';
 
+import { findModuleCanonical, parseModuleInfoCanonical } from '../common/moduleName.ts';
+
 declare module '@cabloy/cli' {
   interface ICommandArgv {}
 }
@@ -82,8 +84,8 @@ export class CliOpenapiGenerate extends BeanCliBase {
         text: moduleName,
       });
       // generate res
-      const moduleInfo = this.helper.parseModuleInfo(moduleName);
-      const module = this.helper.findModule(moduleName);
+      const moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
+      const module = findModuleCanonical(this.helper, moduleName);
       await this._generateOpenapi(total, openapiTypescript, config, moduleInfo, module, __caches);
     }
   }

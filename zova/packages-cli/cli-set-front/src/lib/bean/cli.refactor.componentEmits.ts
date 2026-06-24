@@ -5,6 +5,7 @@ import { BeanCliBase } from '@cabloy/cli';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { findModuleCanonical, parseModuleInfoCanonical } from '../common/moduleName.ts';
 import { getControllerFileName } from '../common/utils.ts';
 import { __ThisSetName__ } from '../this.ts';
 
@@ -26,12 +27,8 @@ export class CliRefactorComponentEmits extends BeanCliBase {
     await super.execute();
     // module name/info
     const moduleName = argv.module;
-    argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
-    // check if exists
-    const _module = this.helper.findModule(moduleName);
-    if (!_module) {
-      throw new Error(`module does not exist: ${moduleName}`);
-    }
+    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
+    const _module = findModuleCanonical(this.helper, moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     // componentName

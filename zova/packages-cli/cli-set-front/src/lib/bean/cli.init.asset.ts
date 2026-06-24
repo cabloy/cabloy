@@ -4,6 +4,8 @@ import { BeanCliBase } from '@cabloy/cli';
 import fse from 'fs-extra';
 import path from 'node:path';
 
+import { findModuleCanonical, parseModuleInfoCanonical } from '../common/moduleName.ts';
+
 declare module '@cabloy/cli' {
   interface ICommandArgv {
     module: string;
@@ -19,12 +21,8 @@ export class CliInitAsset extends BeanCliBase {
     await super.execute();
     // module name/info
     const moduleName = argv.module;
-    argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
-    // check if exists
-    const _module = this.helper.findModule(moduleName);
-    if (!_module) {
-      throw new Error(`module does not exist: ${moduleName}`);
-    }
+    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
+    const _module = findModuleCanonical(this.helper, moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     // scene

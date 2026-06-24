@@ -16,12 +16,8 @@ export class CliInitError extends BeanCliBase {
     // module name/info
     const moduleName = argv._[0];
     if (!moduleName) return;
-    argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
-    // check if exists
-    const _module = this.helper.findModule(moduleName);
-    if (!_module) {
-      throw new Error(`module does not exist: ${moduleName}`);
-    }
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     const errorFile = path.join(targetDir, 'src/config/errors.ts');

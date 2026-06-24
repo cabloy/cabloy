@@ -19,12 +19,8 @@ export class CliInitAsset extends BeanCliBase {
     await super.execute();
     // module name/info
     const moduleName = argv.module;
-    argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
-    // check if exists
-    const _module = this.helper.findModule(moduleName);
-    if (!_module) {
-      throw new Error(`module does not exist: ${moduleName}`);
-    }
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(moduleName);
+    const _module = this.helper.findModuleCanonical(moduleName);
     // target dir
     const targetDir = await this.helper.ensureDir(_module.root);
     // scene

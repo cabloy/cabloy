@@ -54,8 +54,7 @@ export class CliToolsMetadata extends BeanCliBase {
   }
 
   async _generateMetadata(moduleName: string, force: boolean) {
-    const module = this.helper.findModule(moduleName);
-    if (!module) throw new Error(`module not found: ${moduleName}`);
+    const module = this.helper.findModuleCanonical(moduleName);
     const modulePath = module.root;
     const metaDir = path.join(modulePath, 'src/.metadata');
     const metaIndexFile = path.join(metaDir, 'index.ts');

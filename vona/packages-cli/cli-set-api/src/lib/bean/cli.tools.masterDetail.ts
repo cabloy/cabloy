@@ -57,15 +57,15 @@ export class CliToolsMasterDetail extends BeanCliBase {
     if (argv.detailMode !== 'aggregate' && argv.detailMode !== 'standalone') {
       throw new Error(`mode is not valid: ${argv.detailMode}`);
     }
-    argv.moduleInfo = this._parseCanonicalModuleInfo(argv.module, 'master');
-    const _module = this.helper.findModule(argv.module);
-    if (!_module) {
-      throw new Error(`module does not exist: ${argv.module}`);
-    }
+    argv.moduleInfo = this.helper.parseModuleInfoCanonical(argv.module, 'master module');
+    const _module = this.helper.findModuleCanonical(argv.module, 'master module');
     argv._module = _module;
     argv.resourceNameCapitalize = this.helper.firstCharToUpperCase(argv.resourceName);
 
-    argv.detailModuleInfo = this._parseCanonicalModuleInfo(argv.detailModule, 'detail');
+    argv.detailModuleInfo = this.helper.parseModuleInfoCanonical(
+      argv.detailModule,
+      'detail module',
+    );
     argv._detailModule = this.helper.findModule(argv.detailModule);
     argv.detailResourceNameCapitalize = this.helper.firstCharToUpperCase(argv.detailResourceName);
     argv.relationName = argv.relationName || `${argv.detailResourceName}s`;
@@ -82,16 +82,6 @@ export class CliToolsMasterDetail extends BeanCliBase {
     argv.detailDtoResItemName = `detail${argv.detailResourceNameCapitalize}ResItem`;
     argv.detailFieldPrivateName = `_${argv.relationName}`;
     argv.detailDialogTitleCapitalize = argv.detailModuleCapitalize;
-  }
-
-  private _parseCanonicalModuleInfo(moduleName: string, moduleRole: 'master' | 'detail') {
-    const moduleInfo = this.helper.parseModuleInfo(moduleName);
-    if (moduleInfo.relativeName !== moduleName) {
-      throw new Error(
-        `${moduleRole} module name must use the canonical relative module name: ${moduleInfo.relativeName}. Received: ${moduleName}. Use names like training-student, not package names or extra-suffixed names.`,
-      );
-    }
-    return moduleInfo;
   }
 
   private async _ensureDetailModule() {

@@ -4,6 +4,7 @@ import { BeanCliBase } from '@cabloy/cli';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { parseModuleInfoCanonical } from '../common/moduleName.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -38,7 +39,7 @@ export class CliCreateModule extends BeanCliBase {
     argv.name = nameMeta.short;
     // module name/info
     const moduleName = argv.name;
-    argv.moduleInfo = this.helper.parseModuleInfo(moduleName);
+    argv.moduleInfo = parseModuleInfoCanonical(this.helper, moduleName);
     argv.relativeNameCapitalize = this.helper.stringToCapitalize(argv.moduleInfo.relativeName, '-');
     // check if exists
     const _module = this.helper.findModule(moduleName);

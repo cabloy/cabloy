@@ -149,9 +149,28 @@ export class LocalHelper {
     return moduleInfo;
   }
 
+  parseModuleInfoCanonical(moduleName, moduleRole = 'module') {
+    const moduleInfo = this.parseModuleInfo(moduleName);
+    if (moduleInfo.relativeName !== moduleName) {
+      throw new Error(
+        `${moduleRole} name must use the canonical relative module name: ${moduleInfo.relativeName}. Received: ${moduleName}. Use names like training-student, not package names or extra-suffixed names.`,
+      );
+    }
+    return moduleInfo;
+  }
+
   findModule(moduleName) {
     const moduleInfo = this.parseModuleInfo(moduleName);
     return this.cli.modulesMeta.modules[moduleInfo.relativeName];
+  }
+
+  findModuleCanonical(moduleName, moduleRole = 'module') {
+    const moduleInfo = this.parseModuleInfoCanonical(moduleName, moduleRole);
+    const module = this.cli.modulesMeta.modules[moduleInfo.relativeName];
+    if (!module) {
+      throw new Error(`${moduleRole} does not exist: ${moduleName}`);
+    }
+    return module;
   }
 
   parseSuiteInfo(suiteName) {
