@@ -40,7 +40,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@cabloy/cli": "^3.1.20",
+    "@cabloy/cli": "^3.1.21",
     "@cabloy/process-helper": "^3.1.8",
     "fs-extra": "^11.3.5",
     "semver": "^7.6.2",

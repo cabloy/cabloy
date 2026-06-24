@@ -46,7 +46,7 @@
     "zova-jsx": "^1.1.63"
   },
   "devDependencies": {
-    "@cabloy/cli": "^3.1.20",
+    "@cabloy/cli": "^3.1.21",
     "@types/luxon": "^3.7.1",
     "clean-package": "^2.2.0",
     "fs-extra": "^11.3.5",
