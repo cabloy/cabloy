@@ -109,46 +109,29 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _ensureDetailResourceShape() {
     const { argv } = this.context;
-    const files = this._detailPaths();
-    const hasStandaloneSurface = this._hasStandaloneDetailSurface();
-    const hasCoreDetailFiles = fs.existsSync(files.entity) && fs.existsSync(files.model);
+    const { hasCoreDetailFiles, hasStandaloneSurface } = this._detailModuleShape();
 
     if (!hasCoreDetailFiles) {
-      await this.helper.invokeCli(
-        [
-          ':tools:crudBasic',
-          argv.detailResourceName,
-          `--module=${argv.detailModule}`,
-          '--nometadata',
-        ],
-        { cwd: argv.projectPath },
-      );
+      await this._createDetailCoreResource();
       argv.createdDetailResource = true;
     }
 
     if (argv.detailMode === 'aggregate') {
-      if (hasStandaloneSurface && !argv.createdDetailResource) {
-        throw new Error(
-          `detail module already has a standalone resource surface: ${argv.detailModule}:${argv.detailResourceName}`,
-        );
-      }
-      if (this._hasStandaloneDetailSurface()) {
-        this._removeStandaloneDetailSurface();
-      }
+      this._handleAggregateDetailMode(hasStandaloneSurface);
       return;
     }
 
-    if (!this._hasStandaloneDetailSurface()) {
-      throw new Error(
-        `detail module does not have a standalone resource surface: ${argv.detailModule}:${argv.detailResourceName}`,
-      );
-    }
+    this._handleStandaloneDetailMode();
   }
 
   private async _patchDetailModule() {
-    await this._patchDetailEntity();
-    await this._patchDetailMetaVersion();
-    await this._patchDetailMetaIndex();
+    for (const task of [
+      () => this._patchDetailEntity(),
+      () => this._patchDetailMetaVersion(),
+      () => this._patchDetailMetaIndex(),
+    ]) {
+      await task();
+    }
   }
 
   private async _patchDetailEntity() {
@@ -432,6 +415,48 @@ export class CliToolsMasterDetail extends BeanCliBase {
       `Edit${argv.detailDialogTitleCapitalize}: '编辑明细'`,
       `View${argv.detailDialogTitleCapitalize}: '查看明细'`,
     ];
+  }
+
+  private async _createDetailCoreResource() {
+    const { argv } = this.context;
+    await this.helper.invokeCli(
+      [
+        ':tools:crudBasic',
+        argv.detailResourceName,
+        `--module=${argv.detailModule}`,
+        '--nometadata',
+      ],
+      { cwd: argv.projectPath },
+    );
+  }
+
+  private _handleAggregateDetailMode(hasStandaloneSurface: boolean) {
+    const { argv } = this.context;
+    if (hasStandaloneSurface && !argv.createdDetailResource) {
+      throw new Error(
+        `detail module already has a standalone resource surface: ${argv.detailModule}:${argv.detailResourceName}`,
+      );
+    }
+    if (this._hasStandaloneDetailSurface()) {
+      this._removeStandaloneDetailSurface();
+    }
+  }
+
+  private _handleStandaloneDetailMode() {
+    const { argv } = this.context;
+    if (!this._hasStandaloneDetailSurface()) {
+      throw new Error(
+        `detail module does not have a standalone resource surface: ${argv.detailModule}:${argv.detailResourceName}`,
+      );
+    }
+  }
+
+  private _detailModuleShape() {
+    const files = this._detailPaths();
+    return {
+      hasCoreDetailFiles: fs.existsSync(files.entity) && fs.existsSync(files.model),
+      hasStandaloneSurface: this._hasStandaloneDetailSurface(),
+    };
   }
 
   private _detailPaths() {
