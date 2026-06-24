@@ -118,6 +118,8 @@ This command is intended to scaffold the aggregate-detail thread that the `train
 - built-in `basic-details` bulk/row actions
 - detail FK persistence and index wiring
 
+For `--module` and `--detailModule`, use canonical Vona module relative names such as `training-student` and `training-record`, not package names such as `vona-module-training-student`.
+
 ### Two supported detail-module modes
 
 Use `--detailMode=aggregate` when the detail module should remain entity/model/meta-only and should not expose its own standalone controller/service resource surface.

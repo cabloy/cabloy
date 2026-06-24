@@ -8,11 +8,11 @@ export default {
   },
   options: {
     module: {
-      description: 'master module name',
+      description: 'master module relative name, such as training-student',
       type: 'string',
     },
     detailModule: {
-      description: 'detail module name',
+      description: 'detail module relative name, such as training-record',
       type: 'string',
     },
     detailResourceName: {
@@ -45,12 +45,12 @@ export default {
         },
         module: {
           type: 'input',
-          message: 'master module name',
+          message: 'master module relative name (for example training-student)',
           required: true,
         },
         detailModule: {
           type: 'input',
-          message: 'detail module name',
+          message: 'detail module relative name (for example training-record)',
           required: true,
         },
         detailResourceName: {

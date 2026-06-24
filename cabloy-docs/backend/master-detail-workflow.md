@@ -34,6 +34,18 @@ A practical reading of the arguments is:
 - `--fk=studentId`: detail-side FK field
 - `--detailMode=...`: whether the detail keeps a standalone resource surface
 
+## Module naming rule
+
+For `--module` and `--detailModule`, use the canonical Vona module relative name such as `training-student` or `training-record`.
+
+A practical rule is:
+
+- use the module relative name itself
+- do not pass the package name such as `vona-module-training-student`
+- do not append an extra suffix that changes the canonical module identity
+
+This matters because the CLI resolves modules by their canonical relative names.
+
 ## What the generator scaffolds
 
 The generator is designed to create the aggregate-detail thread, including:
