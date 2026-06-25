@@ -1,7 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
@@ -28,15 +28,32 @@ export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
   },
 })
 export class EntityRecord extends EntityBase {
-  @Api.field(v.required(), v.tableIdentity())
+  @Api.field(
+    v.title($locale('Student')),
+    v.required(),
+    ZovaRender.order(1),
+    ZovaRender.field('basic-resource:formFieldResourcePicker', {
+      resource: $resourceName('training-student:student'),
+    }),
+    ZovaRender.cell('basic-resource:resourcePicker', {
+      resource: $resourceName('training-student:student'),
+    }),
+    v.tableIdentity(),
+  )
   studentId: TableIdentity;
 
-  @Api.field(v.title($locale('Name')), v.required(), v.min(2), ZovaRender.order(1))
+  @Api.field(
+    v.title($locale('Name')),
+    v.required(),
+    v.min(2),
+    ZovaRender.order(2),
+    ZovaRender.cell('basic-table:actionView'),
+  )
   name: string;
 
-  @Api.field(v.title($locale('Score')), v.optional(), ZovaRender.order(2))
+  @Api.field(v.title($locale('Score')), v.optional(), ZovaRender.order(3))
   score?: number;
 
-  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(3))
+  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(4))
   description?: string;
 }

@@ -11,8 +11,8 @@ import type { DtoRecordView } from '../dto/recordView.tsx';
 import type { EntityRecord } from '../entity/record.tsx';
 import type { ModelRecord } from '../model/record.ts';
 
-function getRecordSubjectsInclude(): { trainingRecordSubjects: true } {
-  return { trainingRecordSubjects: true };
+function getRecordSubjectsInclude(): { trainingRecordSubjects: true; student: true } {
+  return { trainingRecordSubjects: true, student: true };
 }
 
 @Service()

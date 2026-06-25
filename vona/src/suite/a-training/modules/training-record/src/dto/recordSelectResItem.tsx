@@ -1,4 +1,3 @@
-import type { TableIdentity } from 'table-identity';
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { Api, v } from 'vona-module-a-openapiutils';
@@ -26,16 +25,6 @@ export interface IDtoOptionsRecordSelectResItem extends IDecoratorDtoOptions {}
   ],
 })
 export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord) {
-  @Api.field(v.title($locale('Student')), ZovaRender.order(1))
-  declare studentId: TableIdentity;
-
-  @Api.field(
-    v.title($locale('Name')),
-    ZovaRender.order(2),
-    ZovaRender.cell('basic-table:actionView'),
-  )
-  declare name: string;
-
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),

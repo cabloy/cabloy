@@ -9,6 +9,12 @@ export interface IModelOptionsRecord extends IDecoratorModelOptions<EntityRecord
 @Model<IModelOptionsRecord>({
   entity: EntityRecord,
   relations: {
+    student: $relation.belongsTo(
+      'training-record:record',
+      'training-student:student',
+      'studentId',
+      { columns: ['id', 'name'] },
+    ),
     trainingRecordSubjects: $relation.hasMany('training-recordsubject:subject', 'recordId', {
       columns: ['id', 'name', 'score', 'description'],
     }),

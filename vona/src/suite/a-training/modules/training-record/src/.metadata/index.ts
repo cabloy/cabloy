@@ -1,5 +1,5 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationHasMany } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationBelongsTo,IModelRelationHasMany } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
@@ -86,7 +86,8 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-training-record' {
   export interface IModelOptionsRecord {
         relations: {
-          trainingRecordSubjects: IModelRelationHasMany<'training-recordsubject:subject', 'recordId', false, 'id'|'name'|'score'|'description', undefined, undefined, undefined>;
+          student: IModelRelationBelongsTo<'training-record:record', 'training-student:student', false, 'id'|'name'>;
+trainingRecordSubjects: IModelRelationHasMany<'training-recordsubject:subject', 'recordId', false, 'id'|'name'|'score'|'description', undefined, undefined, undefined>;
         };
       }
   export interface ModelRecord {
