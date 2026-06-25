@@ -1,7 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
+import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
@@ -41,12 +41,12 @@ export class EntityRecord extends EntityBase {
     v.title($locale('Student')),
     v.required(),
     ZovaRender.order(2),
-    ZovaRender.field('basic-resource:formFieldResourcePicker', {
-      resource: $resourceName('training-student:student'),
-    }),
-    ZovaRender.cell('basic-resource:resourcePicker', {
-      resource: $resourceName('training-student:student'),
-    }),
+    // ZovaRender.field('basic-resource:formFieldResourcePicker', {
+    //   resource: $resourceName('training-student:student'),
+    // }),
+    // ZovaRender.cell('basic-resource:resourcePicker', {
+    //   resource: $resourceName('training-student:student'),
+    // }),
     v.tableIdentity(),
   )
   studentId: TableIdentity;
