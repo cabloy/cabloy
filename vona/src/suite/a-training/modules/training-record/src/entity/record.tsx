@@ -29,9 +29,18 @@ export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
 })
 export class EntityRecord extends EntityBase {
   @Api.field(
+    v.title($locale('Name')),
+    v.required(),
+    v.min(2),
+    ZovaRender.order(1),
+    ZovaRender.cell('basic-table:actionView'),
+  )
+  name: string;
+
+  @Api.field(
     v.title($locale('Student')),
     v.required(),
-    ZovaRender.order(1),
+    ZovaRender.order(2),
     ZovaRender.field('basic-resource:formFieldResourcePicker', {
       resource: $resourceName('training-student:student'),
     }),
@@ -41,15 +50,6 @@ export class EntityRecord extends EntityBase {
     v.tableIdentity(),
   )
   studentId: TableIdentity;
-
-  @Api.field(
-    v.title($locale('Name')),
-    v.required(),
-    v.min(2),
-    ZovaRender.order(2),
-    ZovaRender.cell('basic-table:actionView'),
-  )
-  name: string;
 
   @Api.field(v.title($locale('Score')), v.optional(), ZovaRender.order(3))
   score?: number;

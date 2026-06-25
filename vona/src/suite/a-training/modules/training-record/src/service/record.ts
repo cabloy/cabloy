@@ -24,7 +24,10 @@ export class ServiceRecord extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelRecord>): Promise<DtoRecordSelectRes> {
-    return await this.scope.model.record.selectAndCount(params);
+    return await this.scope.model.record.selectAndCount({
+      ...params,
+      include: { student: true },
+    });
   }
 
   async view(id: TableIdentity): Promise<DtoRecordView | undefined> {
