@@ -123,6 +123,12 @@ If the field is an enum-like numeric or string choice, prefer a constrained sche
 
 - `z.union([z.literal(1), z.literal(2), z.literal(3)])`
 
+Ordering rule:
+
+- when that explicit zod schema is passed into `@Api.field(...)`, put it as the **last argument**
+- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
+- otherwise helpers written after the zod schema may stop taking effect
+
 This keeps the contract explicit and testable.
 
 ### 3. Reuse inferred DTO flow unless source proves otherwise

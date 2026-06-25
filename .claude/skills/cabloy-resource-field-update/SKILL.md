@@ -156,6 +156,12 @@ For enum-like numeric or string values, prefer an explicit constrained schema su
 
 - `z.union([z.literal(1), z.literal(2), z.literal(3)])`
 
+Ordering rule:
+
+- when that explicit zod schema is passed into `@Api.field(...)`, put it as the **last argument**
+- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
+- otherwise helpers written after the zod schema may stop taking effect
+
 Then check whether DTOs are already inferred through patterns such as:
 
 - `$Dto.create(...)`

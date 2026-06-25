@@ -61,7 +61,6 @@ export class EntityStudent extends EntityBase {
   @Api.field(
     v.title($locale('Level')),
     v.required(),
-    z.union([z.literal(1), z.literal(2), z.literal(3)]),
     ZovaRender.order(4),
     // Tutorial 3 built-in form renderer example. Keep it commented here for side-by-side comparison.
     // ZovaRender.field('basic-select:formFieldSelect', {
@@ -77,6 +76,7 @@ export class EntityStudent extends EntityBase {
     }),
     // Tutorial 4 custom table cell renderer example used by the current implementation.
     ZovaRender.cell('training-student:level', { items: studentLevelItems }),
+    z.union([z.literal(1), z.literal(2), z.literal(3)]),
   )
   level: number;
 }
