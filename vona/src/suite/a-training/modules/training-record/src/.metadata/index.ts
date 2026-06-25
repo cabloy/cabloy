@@ -206,7 +206,6 @@ declare module 'vona-module-training-record' {
 }
 /** meta: end */
 /** dto: begin */
-export * from '../dto/recordBase.tsx';
 export * from '../dto/recordCreate.tsx';
 export * from '../dto/recordSelectReq.tsx';
 export * from '../dto/recordSelectRes.tsx';
@@ -217,7 +216,6 @@ export * from '../dto/recordSubjectResItem.tsx';
 export * from '../dto/recordSubjectView.tsx';
 export * from '../dto/recordUpdate.tsx';
 export * from '../dto/recordView.tsx';
-import type { IDtoOptionsRecordBase } from '../dto/recordBase.tsx';
 import type { IDtoOptionsRecordCreate } from '../dto/recordCreate.tsx';
 import type { IDtoOptionsRecordSelectReq } from '../dto/recordSelectReq.tsx';
 import type { IDtoOptionsRecordSelectRes } from '../dto/recordSelectRes.tsx';
@@ -232,8 +230,7 @@ import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
-      'training-record:recordBase': IDtoOptionsRecordBase;
-'training-record:recordCreate': IDtoOptionsRecordCreate;
+      'training-record:recordCreate': IDtoOptionsRecordCreate;
 'training-record:recordSelectReq': IDtoOptionsRecordSelectReq;
 'training-record:recordSelectRes': IDtoOptionsRecordSelectRes;
 'training-record:recordSelectResItem': IDtoOptionsRecordSelectResItem;
@@ -252,7 +249,6 @@ declare module 'vona-module-training-record' {
 }
 /** dto: end */
 /** dto: begin */
-import type { DtoRecordBase } from '../dto/recordBase.tsx';
 import type { DtoRecordCreate } from '../dto/recordCreate.tsx';
 import type { DtoRecordSelectReq } from '../dto/recordSelectReq.tsx';
 import type { DtoRecordSelectRes } from '../dto/recordSelectRes.tsx';
@@ -265,10 +261,6 @@ import type { DtoRecordUpdate } from '../dto/recordUpdate.tsx';
 import type { DtoRecordView } from '../dto/recordView.tsx';
 declare module 'vona-module-training-record' {
   
-    export interface IDtoOptionsRecordBase {
-      fields?: TypeEntityOptionsFields<DtoRecordBase, IDtoOptionsRecordBase[TypeSymbolKeyFieldsMore]>;
-    }
-
     export interface IDtoOptionsRecordCreate {
       fields?: TypeEntityOptionsFields<DtoRecordCreate, IDtoOptionsRecordCreate[TypeSymbolKeyFieldsMore]>;
     }
