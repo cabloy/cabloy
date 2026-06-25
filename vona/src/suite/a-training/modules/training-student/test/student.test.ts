@@ -18,7 +18,7 @@ describe('student.test.ts', () => {
       const maskedMobile = '138****5678';
       const mobileUpdate = '13987654321';
       const maskedMobileUpdate = '139****4321';
-      const data: DtoStudentCreate = {
+      const data = {
         name: '__Tom__',
         description: 'This is a test',
         mobile,
@@ -37,7 +37,7 @@ describe('student.test.ts', () => {
             ],
           },
         ],
-      };
+      } as any as DtoStudentCreate;
       // login
       await app.bean.passport.signinMock();
       // create
@@ -84,7 +84,7 @@ describe('student.test.ts', () => {
       assert.equal(recordSubject?.name, '__Math__');
       assert.equal(recordSubject?.score, 95);
       // update
-      const dataUpdate: DtoStudentUpdate = {
+      const dataUpdate = {
         name: '__TomNew__',
         description: 'This is a test',
         mobile: mobileUpdate,
@@ -110,7 +110,7 @@ describe('student.test.ts', () => {
             ],
           },
         ],
-      };
+      } as any as DtoStudentUpdate;
       await app.bean.executor.performAction('patch', '/training/student/:id', {
         params: { id: studentId },
         body: dataUpdate,

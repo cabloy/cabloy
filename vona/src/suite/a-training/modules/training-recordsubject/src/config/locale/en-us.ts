@@ -4,6 +4,6 @@ export default {
   Operations: 'Operations',
   Score: 'Score',
   Subject: 'Subject',
-  TrainingRecord: 'Training Record',
-  TrainingRecordSubject: 'Training Record Subject',
+  TrainingRecord: 'Student Training Record',
+  TrainingRecordSubject: 'Student Training Record Detail',
 };
