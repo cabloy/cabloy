@@ -1,4 +1,3 @@
-import type { TableIdentity } from 'table-identity';
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
@@ -41,14 +40,6 @@ export interface IDtoOptionsRecordUpdate extends IDecoratorDtoOptions {}
 export class DtoRecordUpdate extends $Dto.update(() => ModelRecord, {
   include: { trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectMutate } },
 }) {
-  @Api.field(
-    v.title($locale('Student')),
-    v.required(),
-    ZovaRender.order(1),
-    ZovaRender.field('basic-input:formFieldInput'),
-  )
-  declare studentId: TableIdentity;
-
   @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordSubjectResItem))
   _trainingRecordSubjects?: DtoDetailRecordSubjectResItem[];
 }
