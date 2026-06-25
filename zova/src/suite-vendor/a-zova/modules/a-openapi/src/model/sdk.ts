@@ -66,6 +66,7 @@ export class ModelSdk extends BeanModelBase {
         }
         return bootstrap ?? null;
       },
+      staleTime: Infinity,
     });
   }
 
@@ -79,6 +80,7 @@ export class ModelSdk extends BeanModelBase {
         )) as TypeOpenapiPermissions;
         return permissions ?? null;
       },
+      staleTime: Infinity,
     });
   }
 
@@ -103,6 +105,7 @@ export class ModelSdk extends BeanModelBase {
         }
         return sdk;
       },
+      staleTime: Infinity,
     }) as TypeOpenapiSchemasSdk;
   }
 
@@ -116,6 +119,7 @@ export class ModelSdk extends BeanModelBase {
         const schema = this.$$sysSdk.getSchema(schemaName);
         return schema ?? null;
       },
+      staleTime: Infinity,
     });
   }
 
