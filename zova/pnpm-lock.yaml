@@ -246,6 +246,9 @@ importers:
       zova-module-basic-pageentry:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-pageentry
+      zova-module-basic-resource:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-basic/modules/basic-resource
       zova-module-basic-select:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-select
@@ -306,7 +309,7 @@ importers:
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.23
-        version: 3.1.23(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.23(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.27
         version: 5.1.30(@typescript-eslint/eslint-plugin@8.62.0(@typescript-eslint/parser@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.62.0(typescript@5.9.3))(@typescript-eslint/utils@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.5.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.71.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.5.0(jiti@2.7.0)))
@@ -381,7 +384,7 @@ importers:
     dependencies:
       '@cabloy/cli':
         specifier: ^3.1.23
-        version: 3.1.23(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.23(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.8
         version: 3.1.8
@@ -415,7 +418,7 @@ importers:
         version: 7.29.7(@babel/core@7.29.7)
       '@cabloy/cli':
         specifier: ^3.1.23
-        version: 3.1.23(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.23(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -1342,7 +1345,7 @@ importers:
     devDependencies:
       '@cabloy/cli':
         specifier: ^3.1.23
-        version: 3.1.23(vue@3.5.38(typescript@5.9.3))
+        version: 3.1.23(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.2
@@ -1589,6 +1592,9 @@ importers:
       zova-module-basic-pageentry:
         specifier: ^5.0.7
         version: link:modules/basic-pageentry
+      zova-module-basic-resource:
+        specifier: ^5.0.0
+        version: link:modules/basic-resource
       zova-module-basic-select:
         specifier: ^5.0.4
         version: link:modules/basic-select
@@ -1706,6 +1712,15 @@ importers:
         version: 6.1.3
 
   src/suite/cabloy-basic/modules/basic-pageentry:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/cabloy-basic/modules/basic-resource:
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -8174,7 +8189,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@cabloy/cli@3.1.23(vue@3.5.38(typescript@5.9.3))':
+  '@cabloy/cli@3.1.23(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.7
       '@cabloy/module-glob': 5.3.13
@@ -8183,7 +8198,7 @@ snapshots:
       '@cabloy/utils': 2.1.22
       '@cabloy/word-utils': link:packages-utils/word-utils
       '@npmcli/config': 10.11.0
-      '@zhennann/common-bin': 4.0.1
+      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
       '@zhennann/ejs': 3.0.1
       boxen: 4.2.0
       chalk: 3.0.0
@@ -10203,7 +10218,7 @@ snapshots:
 
   '@vue/shared@3.5.13': {}
 
-  '@zhennann/common-bin@4.0.1':
+  '@zhennann/common-bin@4.0.1(supports-color@10.2.2)':
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2

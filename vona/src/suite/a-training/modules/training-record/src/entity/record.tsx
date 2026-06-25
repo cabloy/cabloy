@@ -28,7 +28,7 @@ export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
   },
 })
 export class EntityRecord extends EntityBase {
-  @Api.field(v.required(), ZovaRender.visible(false))
+  @Api.field(v.required(), v.tableIdentity())
   studentId: TableIdentity;
 
   @Api.field(v.title($locale('Name')), v.required(), v.min(2), ZovaRender.order(1))

@@ -19,6 +19,7 @@
     "zova-module-basic-input": "^5.0.7",
     "zova-module-basic-page": "^5.0.7",
     "zova-module-basic-pageentry": "^5.0.7",
+    "zova-module-basic-resource": "^5.0.0",
     "zova-module-basic-select": "^5.0.4",
     "zova-module-basic-table": "^5.0.6",
     "zova-module-basic-text": "^5.0.3",
