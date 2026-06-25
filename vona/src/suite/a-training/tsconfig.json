@@ -7,6 +7,9 @@
     },
     {
       "path": "modules/training-record/tsconfig.build.json"
+    },
+    {
+      "path": "modules/training-recordsubject/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

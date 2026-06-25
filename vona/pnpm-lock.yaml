@@ -349,6 +349,9 @@ importers:
       vona-module-training-record:
         specifier: workspace:^
         version: link:src/suite/a-training/modules/training-record
+      vona-module-training-recordsubject:
+        specifier: workspace:^
+        version: link:src/suite/a-training/modules/training-recordsubject
       vona-module-training-student:
         specifier: workspace:^
         version: link:src/suite/a-training/modules/training-student
@@ -2389,11 +2392,23 @@ importers:
       vona-module-training-record:
         specifier: ^5.0.0
         version: link:modules/training-record
+      vona-module-training-recordsubject:
+        specifier: ^5.0.0
+        version: link:modules/training-recordsubject
       vona-module-training-student:
         specifier: ^5.0.0
         version: link:modules/training-student
 
   src/suite/a-training/modules/training-record:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.3
+
+  src/suite/a-training/modules/training-recordsubject:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

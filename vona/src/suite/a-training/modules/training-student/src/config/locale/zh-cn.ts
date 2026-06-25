@@ -16,4 +16,8 @@ export default {
   AddTrainingRecord: '添加培训记录',
   EditTrainingRecord: '编辑培训记录',
   ViewTrainingRecord: '查看培训记录',
+  TrainingRecordSubjects: '培训科目明细',
+  AddTrainingRecordSubject: '添加培训科目明细',
+  EditTrainingRecordSubject: '编辑培训科目明细',
+  ViewTrainingRecordSubject: '查看培训科目明细',
 };

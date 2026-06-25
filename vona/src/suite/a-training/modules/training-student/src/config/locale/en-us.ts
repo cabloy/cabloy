@@ -16,4 +16,8 @@ export default {
   AddTrainingRecord: 'Add Training Record',
   EditTrainingRecord: 'Edit Training Record',
   ViewTrainingRecord: 'View Training Record',
+  TrainingRecordSubjects: 'Training Record Subjects',
+  AddTrainingRecordSubject: 'Add Training Record Subject',
+  EditTrainingRecordSubject: 'Edit Training Record Subject',
+  ViewTrainingRecordSubject: 'View Training Record Subject',
 };

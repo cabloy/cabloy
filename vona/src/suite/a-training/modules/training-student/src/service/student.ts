@@ -12,10 +12,18 @@ import type { DtoStudentView } from '../dto/studentView.tsx';
 import type { EntityStudent } from '../entity/student.tsx';
 import type { ModelStudent } from '../model/student.ts';
 
+function getStudentRecordSubjectsInclude(): {
+  trainingRecords: { include: { trainingRecordSubjects: true } };
+} {
+  return { trainingRecords: { include: { trainingRecordSubjects: true } } };
+}
+
 @Service()
 export class ServiceStudent extends BeanBase {
   async create(student: DtoStudentCreate): Promise<EntityStudent> {
-    return await this.scope.model.student.insert(student, { include: { trainingRecords: true } });
+    return await this.scope.model.student.insert(student, {
+      include: getStudentRecordSubjectsInclude(),
+    });
   }
 
   async select(params?: IQueryParams<ModelStudent>): Promise<DtoStudentSelectRes> {
@@ -23,12 +31,14 @@ export class ServiceStudent extends BeanBase {
   }
 
   async view(id: TableIdentity): Promise<DtoStudentView | undefined> {
-    return await this.scope.model.student.getById(id, { include: { trainingRecords: true } });
+    return await this.scope.model.student.getById(id, {
+      include: getStudentRecordSubjectsInclude(),
+    });
   }
 
   async update(id: TableIdentity, student: DtoStudentUpdate) {
     return await this.scope.model.student.updateById(id, student, {
-      include: { trainingRecords: true },
+      include: getStudentRecordSubjectsInclude(),
     });
   }
 
@@ -50,13 +60,15 @@ export class ServiceStudent extends BeanBase {
   }
 
   async delete(id: TableIdentity) {
-    return await this.scope.model.student.deleteById(id, { include: { trainingRecords: true } });
+    return await this.scope.model.student.deleteById(id, {
+      include: getStudentRecordSubjectsInclude(),
+    });
   }
 
   async deleteForce(id: TableIdentity) {
     return await this.scope.model.student.deleteById(id, {
       disableDeleted: true,
-      include: { trainingRecords: true },
+      include: getStudentRecordSubjectsInclude(),
     });
   }
 }

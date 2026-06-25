@@ -23,12 +23,20 @@ describe('student.test.ts', () => {
         description: 'This is a test',
         mobile,
         level: 1,
-      };
-      const dataUpdate: DtoStudentUpdate = {
-        name: '__TomNew__',
-        description: 'This is a test',
-        mobile: mobileUpdate,
-        level: 2,
+        trainingRecords: [
+          {
+            name: '__Record__',
+            score: 88,
+            description: 'This is a record',
+            trainingRecordSubjects: [
+              {
+                name: '__Math__',
+                score: 95,
+                description: 'Math subject',
+              },
+            ],
+          },
+        ],
       };
       // login
       await app.bean.passport.signinMock();
@@ -64,20 +72,66 @@ describe('student.test.ts', () => {
         selectResByLevel.list.every(item => item.level === data.level),
         true,
       );
+      // findOne and nested create check
+      let student: any = await app.bean.executor.performAction('get', '/training/student/:id', {
+        params: { id: studentId },
+      });
+      const record = student.trainingRecords?.[0];
+      const recordSubject = record?.trainingRecordSubjects?.[0];
+      assert.equal(student.trainingRecords?.length, 1);
+      assert.equal(record?.name, '__Record__');
+      assert.equal(record?.trainingRecordSubjects?.length, 1);
+      assert.equal(recordSubject?.name, '__Math__');
+      assert.equal(recordSubject?.score, 95);
       // update
+      const dataUpdate: DtoStudentUpdate = {
+        name: '__TomNew__',
+        description: 'This is a test',
+        mobile: mobileUpdate,
+        level: 2,
+        trainingRecords: [
+          {
+            id: record.id,
+            name: '__RecordNew__',
+            score: 89,
+            description: 'This is an updated record',
+            trainingRecordSubjects: [
+              {
+                id: recordSubject.id,
+                name: '__MathNew__',
+                score: 96,
+                description: 'Updated math subject',
+              },
+              {
+                name: '__English__',
+                score: 87,
+                description: 'English subject',
+              },
+            ],
+          },
+        ],
+      };
       await app.bean.executor.performAction('patch', '/training/student/:id', {
         params: { id: studentId },
         body: dataUpdate,
       });
-      // findOne
-      let student: EntityStudent = await app.bean.executor.performAction(
-        'get',
-        '/training/student/:id',
-        { params: { id: studentId } },
-      );
+      // findOne after nested update
+      student = await app.bean.executor.performAction('get', '/training/student/:id', {
+        params: { id: studentId },
+      });
+      const updatedRecord = student.trainingRecords?.[0];
+      const [updatedMathSubject, updatedEnglishSubject] =
+        updatedRecord?.trainingRecordSubjects ?? [];
       assert.equal(student.name, dataUpdate.name);
       assert.equal(student.level, dataUpdate.level);
       assert.equal(student.mobile, maskedMobileUpdate);
+      assert.equal(student.trainingRecords?.length, 1);
+      assert.equal(updatedRecord?.name, '__RecordNew__');
+      assert.equal(updatedRecord?.trainingRecordSubjects?.length, 2);
+      assert.equal(updatedMathSubject?.name, '__MathNew__');
+      assert.equal(updatedMathSubject?.score, 96);
+      assert.equal(updatedEnglishSubject?.name, '__English__');
+      assert.equal(updatedEnglishSubject?.score, 87);
       const studentRaw = await app.bean.scope('training-student').model.student.getById(studentId, {
         disableDeleted: true,
       });
@@ -110,7 +164,7 @@ describe('student.test.ts', () => {
       await app.bean.executor.performAction('delete', '/training/student/deleteForce/:id', {
         params: { id: studentIdForce },
       });
-      const studentForce = await app.bean
+      const studentForce: EntityStudent | undefined = await app.bean
         .scope('training-student')
         .model.student.getById(studentIdForce, {
           disableDeleted: true,

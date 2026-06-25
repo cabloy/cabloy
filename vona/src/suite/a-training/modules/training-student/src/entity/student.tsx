@@ -2,6 +2,7 @@ import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
+import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -60,6 +61,7 @@ export class EntityStudent extends EntityBase {
   @Api.field(
     v.title($locale('Level')),
     v.required(),
+    z.union([z.literal(1), z.literal(2), z.literal(3)]),
     ZovaRender.order(4),
     // Tutorial 3 built-in form renderer example. Keep it commented here for side-by-side comparison.
     // ZovaRender.field('basic-select:formFieldSelect', {
