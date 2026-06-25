@@ -99,6 +99,7 @@ export class ServiceRelations extends BeanBase {
     methodOptions?: IModelMethodOptions,
   ) {
     const [relationName, relationReal, includeReal, withReal] = relation;
+    if (relationReal === false) return;
     const { type, modelMiddle, model, keyFrom, keyTo, key, options } = relationReal;
     const modelTarget = this.__getModelTarget(model, options?.meta) as BeanModelCache;
     const optionsReal = Object.assign({}, options, { include: includeReal, with: withReal });
@@ -171,6 +172,7 @@ export class ServiceRelations extends BeanBase {
     methodOptions?: IModelMethodOptions,
   ) {
     const [relationName, relationReal, includeReal, withReal] = relation;
+    if (relationReal === false) return;
     const { type, modelMiddle, model, keyFrom, keyTo, key, options } = relationReal;
     const modelTarget = this.__getModelTarget(model, options?.meta) as BeanModelCache;
     const optionsReal = Object.assign({}, options, { include: includeReal, with: withReal });
@@ -303,6 +305,7 @@ export class ServiceRelations extends BeanBase {
     methodOptions?: IModelMethodOptions,
   ) {
     const [relationName, relationReal, includeReal, withReal] = relation;
+    if (relationReal === false) return entitiesResult;
     const { type, modelMiddle, model, keyFrom, keyTo, key, options } = relationReal;
     const modelTarget = this.__getModelTarget(model, options?.meta) as BeanModelCache;
     const methodOptionsReal = Object.assign({}, methodOptions, {
@@ -452,6 +455,7 @@ export class ServiceRelations extends BeanBase {
     methodOptions?: IModelMethodOptions,
   ) {
     const [_relationName, relationReal, includeReal, withReal] = relation;
+    if (relationReal === false) return;
     const { type, modelMiddle, model, keyFrom, key, options } = relationReal;
     const modelTarget = this.__getModelTarget(model, options?.meta) as BeanModelCache;
     const methodOptionsReal = Object.assign({}, methodOptions, {
@@ -510,6 +514,7 @@ export class ServiceRelations extends BeanBase {
     const refKeys: string[] = [];
     for (const relation of relations) {
       const [_relationName, relationReal] = relation;
+      if (relationReal === false) continue;
       const { type, key } = relationReal;
       if (type === 'belongsTo') {
         if (!columns.includes(key)) {

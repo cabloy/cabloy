@@ -7,15 +7,15 @@ export * from '../entity/subject.tsx';
 import type { IEntityOptionsSubject } from '../entity/subject.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-
+  
     export interface IEntityRecord {
       'training-recordsubject:subject': IEntityOptionsSubject;
     }
 
-
+  
 }
 declare module 'vona-module-training-recordsubject' {
-
+   
 }
 /** entity: end */
 /** entity: begin */
@@ -33,7 +33,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-training-recordsubject' {
-
+  
     export interface IEntityOptionsSubject {
       fields?: TypeEntityOptionsFields<EntitySubject, IEntityOptionsSubject[TypeSymbolKeyFieldsMore]>;
     }
@@ -44,15 +44,15 @@ export * from '../model/subject.ts';
 import type { IModelOptionsSubject } from '../model/subject.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-
+  
     export interface IModelRecord {
       'training-recordsubject:subject': IModelOptionsSubject;
     }
 
-
+  
 }
 declare module 'vona-module-training-recordsubject' {
-
+  
         export interface ModelSubject {
           /** @internal */
           get scope(): ScopeModuleTrainingRecordsubject;
@@ -62,7 +62,7 @@ declare module 'vona-module-training-recordsubject' {
             get $beanFullName(): 'training-recordsubject.model.subject';
             get $onionName(): 'training-recordsubject:subject';
             get $onionOptions(): IModelOptionsSubject;
-          }
+          } 
 }
 /** model: end */
 /** model: begin */
@@ -84,7 +84,7 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-training-recordsubject' {
-
+  
   export interface ModelSubject {
       [SymbolKeyEntity]: EntitySubject;
       [SymbolKeyEntityMeta]: EntitySubjectMeta;
@@ -107,12 +107,12 @@ declare module 'vona-module-training-recordsubject' {
       aggregate<T extends IModelSelectAggrParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
       group<T extends IModelSelectGroupParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntitySubject, T>[]>;
       getById<T extends IModelGetOptions<EntitySubject,ModelSubject>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
-	updateById<T extends IModelUpdateOptions<EntitySubject,ModelSubject>>(id: TableIdentity, data: TypeModelMutateRelationData<EntitySubject,ModelSubject, T>, options?: T): Promise<TypeModelMutateRelationData<EntitySubject,ModelSubject, T>>;
-	deleteById<T extends IModelDeleteOptions<EntitySubject,ModelSubject>>(id: TableIdentity, options?: T): Promise<void>;
-	getByName<T extends IModelGetOptions<EntitySubject,ModelSubject>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
-	getByNameEqI<T extends IModelGetOptions<EntitySubject,ModelSubject>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
-	selectByName<T extends IModelSelectParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T>[]>;
-	selectByNameEqI<T extends IModelSelectParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T>[]>;
+updateById<T extends IModelUpdateOptions<EntitySubject,ModelSubject>>(id: TableIdentity, data: TypeModelMutateRelationData<EntitySubject,ModelSubject, T>, options?: T): Promise<TypeModelMutateRelationData<EntitySubject,ModelSubject, T>>;
+deleteById<T extends IModelDeleteOptions<EntitySubject,ModelSubject>>(id: TableIdentity, options?: T): Promise<void>;
+getByName<T extends IModelGetOptions<EntitySubject,ModelSubject>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
+getByNameEqI<T extends IModelGetOptions<EntitySubject,ModelSubject>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T> | undefined>;
+selectByName<T extends IModelSelectParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T>[]>;
+selectByNameEqI<T extends IModelSelectParams<EntitySubject,ModelSubject,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntitySubject, ModelSubject, T>[]>;
     }
 }
 declare module 'vona-module-a-orm' {
@@ -127,16 +127,16 @@ export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-
+  
     export interface IMetaRecord {
       'training-recordsubject:index': IMetaOptionsIndex;
 'training-recordsubject:version': never;
     }
 
-
+  
 }
 declare module 'vona-module-training-recordsubject' {
-
+  
         export interface MetaIndex {
           /** @internal */
           get scope(): ScopeModuleTrainingRecordsubject;
@@ -156,8 +156,8 @@ declare module 'vona-module-training-recordsubject' {
           export interface MetaVersion {
             get $beanFullName(): 'training-recordsubject.meta.version';
             get $onionName(): 'training-recordsubject:version';
-
-          }
+            
+          } 
 }
 /** meta: end */
 /** locale: begin */
@@ -186,13 +186,13 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     trainingRecordsubject: ScopeModuleTrainingRecordsubject;
   }
-
-
+  
+  
 
   export interface IBeanScopeLocale {
     'training-recordsubject': (typeof locales)[TypeLocaleBase];
   }
 
-
+  
 }
 /** scope: end */

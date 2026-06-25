@@ -97,9 +97,11 @@ export function _DtoMutate_raw<
   }
   if (!topLevel && relation) {
     const [_relationName, relationReal] = relation;
-    const { type, key } = relationReal;
-    if (type === 'hasOne' || type === 'hasMany') {
-      entityClass = $Class.omit(entityClass, key);
+    if (relationReal !== false) {
+      const { type, key } = relationReal;
+      if (type === 'hasOne' || type === 'hasMany') {
+        entityClass = $Class.omit(entityClass, key);
+      }
     }
   }
   // relations

@@ -217,9 +217,9 @@ export * from '../dto/recordSelectResItem.tsx';
 export * from '../dto/recordUpdate.tsx';
 export * from '../dto/recordView.tsx';
 import type { IDtoOptionsDetailRecordSubjectBase } from '../dto/detailRecordSubjectBase.tsx';
-import type { IDtoOptionsRecordSubjectMutate } from '../dto/detailRecordSubjectMutate.tsx';
-import type { IDtoOptionsRecordSubjectResItem } from '../dto/detailRecordSubjectResItem.tsx';
-import type { IDtoOptionsRecordSubjectView } from '../dto/detailRecordSubjectView.tsx';
+import type { IDtoOptionsDetailRecordSubjectMutate } from '../dto/detailRecordSubjectMutate.tsx';
+import type { IDtoOptionsDetailRecordSubjectResItem } from '../dto/detailRecordSubjectResItem.tsx';
+import type { IDtoOptionsDetailRecordSubjectView } from '../dto/detailRecordSubjectView.tsx';
 import type { IDtoOptionsRecordCreate } from '../dto/recordCreate.tsx';
 import type { IDtoOptionsRecordSelectReq } from '../dto/recordSelectReq.tsx';
 import type { IDtoOptionsRecordSelectRes } from '../dto/recordSelectRes.tsx';
@@ -231,9 +231,9 @@ declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
       'training-record:detailRecordSubjectBase': IDtoOptionsDetailRecordSubjectBase;
-'training-record:detailRecordSubjectMutate': IDtoOptionsRecordSubjectMutate;
-'training-record:detailRecordSubjectResItem': IDtoOptionsRecordSubjectResItem;
-'training-record:detailRecordSubjectView': IDtoOptionsRecordSubjectView;
+'training-record:detailRecordSubjectMutate': IDtoOptionsDetailRecordSubjectMutate;
+'training-record:detailRecordSubjectResItem': IDtoOptionsDetailRecordSubjectResItem;
+'training-record:detailRecordSubjectView': IDtoOptionsDetailRecordSubjectView;
 'training-record:recordCreate': IDtoOptionsRecordCreate;
 'training-record:recordSelectReq': IDtoOptionsRecordSelectReq;
 'training-record:recordSelectRes': IDtoOptionsRecordSelectRes;
