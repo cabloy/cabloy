@@ -83,6 +83,10 @@ function _DtoGet_relation_handle<TRecord extends {}>(
   mutateTypeTopLevel?: TypeDtoMutateType,
 ) {
   const [relationName, relationReal, includeReal, withReal, autoload] = relation;
+  if (relationReal === false) {
+    Api.field(schemaRenderVisible(false), v.optional())(entityClass.prototype, relationName);
+    return;
+  }
   const { type, model, options } = relationReal;
   const modelTarget = prepareClassModel(model);
   const optionsReal = Object.assign({}, options, { include: includeReal, with: withReal });

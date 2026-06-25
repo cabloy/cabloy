@@ -37,6 +37,7 @@ export interface IDtoOptionsDetailRecordResItem extends IDecoratorDtoOptions {}
 })
 export class DtoDetailRecordResItem extends $Dto.get(() => ModelRecord, {
   dtoClass: DtoDetailRecordBase,
+  include: { trainingRecordSubjects: false },
 }) {
   @Api.field(v.title('#'), ZovaRender.order(1, 'core'), ZovaRender.cell('basic-details:lineNumber'))
   _lineNumber?: number;

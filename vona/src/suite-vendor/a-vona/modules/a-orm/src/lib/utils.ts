@@ -19,7 +19,7 @@ export function handleRelationsCollection(
       let withReal;
       let autoload;
       if (relationCur === false) {
-        continue;
+        relationReal = false;
       } else if (relationCur === true) {
         relationReal = relationDef;
         autoload = relationDef.options?.autoload;
