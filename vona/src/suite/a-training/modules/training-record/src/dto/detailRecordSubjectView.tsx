@@ -5,13 +5,13 @@ import { Dto } from 'vona-module-a-web';
 import { ModelSubject } from 'vona-module-training-recordsubject';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
-import { DtoRecordSubjectBase } from './recordSubjectBase.tsx';
+import { DtoDetailRecordSubjectBase } from './detailRecordSubjectBase.tsx';
 
-export interface IDtoOptionsRecordSubjectView extends IDecoratorDtoOptions {}
+export interface IDtoOptionsDetailRecordSubjectView extends IDecoratorDtoOptions {}
 
-@Dto<IDtoOptionsRecordSubjectView>({
+@Dto<IDtoOptionsDetailRecordSubjectView>({
   blocks: [ZovaRender.block('basic-details:blockForm')],
 })
-export class DtoRecordSubjectView extends $Dto.get(() => ModelSubject, {
-  dtoClass: DtoRecordSubjectBase,
+export class DtoDetailRecordSubjectView extends $Dto.get(() => ModelSubject, {
+  dtoClass: DtoDetailRecordSubjectBase,
 }) {}

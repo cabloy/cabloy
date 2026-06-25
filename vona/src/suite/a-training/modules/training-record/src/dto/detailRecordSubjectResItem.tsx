@@ -7,11 +7,11 @@ import { ModelSubject } from 'vona-module-training-recordsubject';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
-import { DtoRecordSubjectBase } from './recordSubjectBase.tsx';
+import { DtoDetailRecordSubjectBase } from './detailRecordSubjectBase.tsx';
 
-export interface IDtoOptionsRecordSubjectResItem extends IDecoratorDtoOptions {}
+export interface IDtoOptionsDetailRecordSubjectResItem extends IDecoratorDtoOptions {}
 
-@Dto<IDtoOptionsRecordSubjectResItem>({
+@Dto<IDtoOptionsDetailRecordSubjectResItem>({
   blocks: [
     ZovaRender.block('basic-details:blockDetails', {
       blocks: [
@@ -35,8 +35,8 @@ export interface IDtoOptionsRecordSubjectResItem extends IDecoratorDtoOptions {}
     ),
   },
 })
-export class DtoRecordSubjectResItem extends $Dto.get(() => ModelSubject, {
-  dtoClass: DtoRecordSubjectBase,
+export class DtoDetailRecordSubjectResItem extends $Dto.get(() => ModelSubject, {
+  dtoClass: DtoDetailRecordSubjectBase,
 }) {
   @Api.field(v.title('#'), ZovaRender.order(1, 'core'), ZovaRender.cell('basic-details:lineNumber'))
   _lineNumber?: number;

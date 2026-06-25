@@ -6,13 +6,13 @@ import { Dto } from 'vona-module-a-web';
 import { ModelSubject } from 'vona-module-training-recordsubject';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
-export interface IDtoOptionsRecordSubjectBase extends IDecoratorDtoOptions {}
+export interface IDtoOptionsDetailRecordSubjectBase extends IDecoratorDtoOptions {}
 
-@Dto<IDtoOptionsRecordSubjectBase>({
+@Dto<IDtoOptionsDetailRecordSubjectBase>({
   fields: {
     id: $makeMetadata(ZovaRender.visible(false)),
   },
 })
-export class DtoRecordSubjectBase extends $Dto.get(() => ModelSubject, {
+export class DtoDetailRecordSubjectBase extends $Dto.get(() => ModelSubject, {
   columns: ['id', 'deleted', 'name', 'score', 'description'],
 }) {}
