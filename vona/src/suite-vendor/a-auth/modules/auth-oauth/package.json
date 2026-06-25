@@ -28,7 +28,7 @@
     "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/vona.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",
-    "postpack": "clean-package restore && npm run clean"
+    "postpack": "clean-package restore"
   },
   "dependencies": {
     "passport-github": "^1.1.0"

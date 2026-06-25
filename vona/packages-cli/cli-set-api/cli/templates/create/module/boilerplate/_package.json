@@ -25,7 +25,7 @@
     "tsc:publish": "npm run clean && node <%=argv.suite?'../../../../../':'../../../'%>packages-cli/cli/src/bin/vona.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run tsc:publish",
     "prepack": "clean-package",
-    "postpack": "clean-package restore && npm run clean"
+    "postpack": "clean-package restore"
   },
   "clean-package": {
     "indent": 2,
