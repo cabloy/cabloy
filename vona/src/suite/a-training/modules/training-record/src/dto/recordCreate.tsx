@@ -8,8 +8,8 @@ import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
 import { ModelRecord } from '../model/record.ts';
-import { DtoRecordSubjectMutate } from './recordSubjectMutate.tsx';
-import { DtoRecordSubjectResItem } from './recordSubjectResItem.tsx';
+import { DtoDetailRecordSubjectMutate } from './detailRecordSubjectMutate.tsx';
+import { DtoDetailRecordSubjectResItem } from './detailRecordSubjectResItem.tsx';
 
 export interface IDtoOptionsRecordCreate extends IDecoratorDtoOptions {}
 
@@ -39,7 +39,7 @@ export interface IDtoOptionsRecordCreate extends IDecoratorDtoOptions {}
   },
 })
 export class DtoRecordCreate extends $Dto.create(() => ModelRecord, {
-  include: { trainingRecordSubjects: { dtoClass: DtoRecordSubjectMutate } },
+  include: { trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectMutate } },
 }) {
   @Api.field(
     v.title($locale('Student')),
@@ -49,6 +49,6 @@ export class DtoRecordCreate extends $Dto.create(() => ModelRecord, {
   )
   declare studentId: TableIdentity;
 
-  @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoRecordSubjectResItem))
-  _trainingRecordSubjects?: DtoRecordSubjectResItem[];
+  @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordSubjectResItem))
+  _trainingRecordSubjects?: DtoDetailRecordSubjectResItem[];
 }
