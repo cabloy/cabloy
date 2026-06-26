@@ -428,7 +428,10 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
       return this.getColumnProperty(name);
     });
     celEnv.registerFunction('getValue(string):dyn', name => {
-      return this.zovaJsx.transientObject.getValue(name);
+      return this.zovaJsx.transientObject.getValue(name) ?? null;
+    });
+    celEnv.registerFunction('getValue(string, dyn):dyn', (name, defaultValue) => {
+      return this.zovaJsx.transientObject.getValue(name) ?? defaultValue;
     });
     return celEnv;
   }

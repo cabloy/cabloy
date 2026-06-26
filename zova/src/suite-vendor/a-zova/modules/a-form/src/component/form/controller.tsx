@@ -174,6 +174,9 @@ export class ControllerForm<
     celEnv.registerFunction('getValue(string):dyn', name => {
       return this.form.getFieldValue(name) ?? null;
     });
+    celEnv.registerFunction('getValue(string, dyn):dyn', (name, defaultValue) => {
+      return this.form.getFieldValue(name) ?? defaultValue;
+    });
     celEnv.registerFunction('getProperty(string):dyn', name => {
       return this.getFieldProperty(name) ?? null;
     });

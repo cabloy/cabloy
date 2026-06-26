@@ -12,6 +12,32 @@ import { $locale } from '../.metadata/locales.ts';
 
 export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
 
+const onEffectForAverageScore = (
+  <ZovaEvent>
+    <ZovaCommand
+      name="basic-commandssync:expr"
+      res="subjectCount"
+      options={{
+        expression: cel('int(getValue("subjectCount",0))'),
+      }}
+    ></ZovaCommand>
+    <ZovaCommand
+      name="basic-commandssync:expr"
+      res="totalScore"
+      options={{
+        expression: cel('int(getValue("totalScore",0))'),
+      }}
+    ></ZovaCommand>
+    <ZovaCommand
+      name="basic-commands:setValue"
+      options={{
+        name: 'averageScore',
+        value: cel('subjectCount==0 ? "" : toFixed(double(totalScore) / double(subjectCount), 2)'),
+      }}
+    ></ZovaCommand>
+  </ZovaEvent>
+);
+
 @Entity<IEntityOptionsRecord>('trainingRecord', {
   openapi: { title: $locale('TrainingRecord') },
   fields: {
@@ -54,26 +80,20 @@ export class EntityRecord extends EntityBase {
   )
   studentId: TableIdentity;
 
-  @Api.field(v.title($locale('SubjectCount')), v.optional(), ZovaRender.order(3), z.int())
+  @Api.field(
+    v.title($locale('SubjectCount')),
+    v.optional(),
+    ZovaRender.order(3),
+    ZovaRender.onEffect(onEffectForAverageScore),
+    z.int(),
+  )
   subjectCount?: number;
 
   @Api.field(
     v.title($locale('TotalScore')),
     v.optional(),
     ZovaRender.order(4),
-    ZovaRender.onEffect(
-      <ZovaEvent>
-        <ZovaCommand
-          name="basic-commands:setValue"
-          options={{
-            name: 'averageScore',
-            value: cel(
-              'int(getValue("subjectCount"))==0 ? null : fixed(double(getValue("totalScore")) / double(getValue("subjectCount")), 2)',
-            ),
-          }}
-        ></ZovaCommand>
-      </ZovaEvent>,
-    ),
+    ZovaRender.onEffect(onEffectForAverageScore),
     z.int(),
   )
   totalScore?: number;
