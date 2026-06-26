@@ -249,6 +249,8 @@ Use this path when you are asking questions like:
 
 If your next question becomes how `formScene` becomes `formMeta`, then `pageMeta`, and finally visible shell/tab state, continue with [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide).
 
+If your next question becomes how backend/entity schema metadata attaches field-side effects through `ZovaRender.onEffect(...)` and command chains, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
+
 ## 8. Representative specimens to read before editing the framework
 
 Use this section when you want one small example before reading the framework internals.

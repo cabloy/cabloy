@@ -18,6 +18,8 @@ If your next question is not “how does this runtime work?” but “which file
 
 If your next question is specifically how `formScene` flows into `formMeta`, then `pageMeta`, and finally shell/tab state, continue with [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide).
 
+If your next question is how backend/entity schema metadata attaches live field-side behavior through `ZovaRender.onEffect(...)`, `ZovaEvent`, and command chains, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
+
 > [!TIP]
 > **Zova Form docs path**
 >
@@ -93,6 +95,8 @@ That page shows:
 - preset-based field rendering
 - a provider-level layout behavior override
 - a blank row used for action controls
+
+If you want a business-facing specimen where backend entity metadata attaches live field-side behavior through `ZovaRender.onEffect(...)`, `ZovaEvent`, and command chains, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
 
 The rest of this page explains how those public authoring shapes become real runtime behavior.
 

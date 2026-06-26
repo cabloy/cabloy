@@ -45,6 +45,8 @@ In the shared form/table CEL environment:
 
 That is useful when the backend contract already owns the field metadata and the frontend only needs a thin expression layer for schema-driven display behavior.
 
+If your next question is not only how expressions read schema-driven scope, but how backend-owned field metadata attaches live field-side behavior through `ZovaRender.onEffect(...)`, `ZovaEvent`, and command chains, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
+
 ## Read together with
 
 Use this page together with:

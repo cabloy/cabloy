@@ -34,6 +34,8 @@ If your next question is how these public APIs cooperate internally at runtime, 
 
 If your next question is how `formScene` becomes `formMeta`, then `pageMeta`, and finally visible shell/tab state, continue with [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide).
 
+If your next question is how backend/entity schema metadata drives field-level reactive form behavior such as normalization, derived values, and field-to-field updates, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
+
 ## What you should learn first
 
 If you only remember one idea, remember this one:
@@ -63,6 +65,8 @@ That Student thread is a good specimen because it grows through the same path mo
 4. custom field rendering only where the business UI needs it
 
 So as you read the code samples below, treat them as different stages of the same Student form rather than unrelated fragments.
+
+If your next question is not only how a schema-driven form renders, but how backend/entity field metadata can attach live field-to-field behavior such as normalization and derived-value updates, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
 
 ## Step 1: Choose the right form style
 

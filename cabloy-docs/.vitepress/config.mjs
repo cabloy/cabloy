@@ -423,6 +423,10 @@ export default defineConfig({
               link: '/frontend/form-scene-to-page-meta-guide',
             },
             {
+              text: 'Schema-Driven Field Effects',
+              link: '/frontend/schema-driven-field-effects-guide',
+            },
+            {
               text: 'Permission, formScene, and Action Visibility',
               link: '/frontend/permission-formscene-action-visibility-guide',
             },

@@ -438,6 +438,8 @@ Why it matters:
 
 This is the clearest example that command beans can be scene-sensitive without fitting the resource-row patterns.
 
+If your next question is not only what this command bean does, but how backend field metadata, `ZovaRender.onEffect(...)`, `ZovaEvent`, and command chains cooperate to implement schema-driven form effects, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
+
 ### `basic-commandssync:log`
 
 Read:

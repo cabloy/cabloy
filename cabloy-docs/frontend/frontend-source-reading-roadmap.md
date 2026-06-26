@@ -116,11 +116,13 @@ Start here when your question is about `ZForm`, `formMeta`, page-entry forms, or
 ### Focused deep dives
 
 - [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide)
+- [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide)
 
 ### Best next step
 
 - if the question is “how does form runtime work?” -> read [Zova Form Under the Hood](/frontend/zova-form-under-the-hood)
 - if the question is “how does `formScene` become shell-visible state?” -> read [Form Scene to Page Meta Guide](/frontend/form-scene-to-page-meta-guide)
+- if the question is “how does backend/schema metadata drive field-level reactive behavior?” -> read [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide)
 
 ## Topic cluster: resources and ModelResource
 
