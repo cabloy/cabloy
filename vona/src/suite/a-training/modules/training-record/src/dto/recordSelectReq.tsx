@@ -1,6 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { $makeSchema, v } from 'vona-module-a-openapiutils';
+import { $makeSchema, $resourceName, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
@@ -17,9 +17,9 @@ export interface IDtoOptionsRecordSelectReq extends IDecoratorDtoOptions {}
     name: $makeSchema(v.optional(), z.string()),
     studentId: $makeSchema(
       v.title($locale('Student')),
-      // ZovaRender.field('basic-resource:formFieldResourcePicker', {
-      //   resource: $resourceName('training-student:student'),
-      // }),
+      ZovaRender.field('basic-resource:formFieldResourcePicker', {
+        resource: $resourceName('training-student:student'),
+      }),
       v.optional(),
       z.number(),
     ),

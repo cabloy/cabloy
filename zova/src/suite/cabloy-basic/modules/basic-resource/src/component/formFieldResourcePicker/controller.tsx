@@ -12,7 +12,7 @@ import { ModelResource } from 'zova-module-rest-resource';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
-    'start-resource:formFieldResourcePicker'?: IResourceFormFieldResourcePickerOptions;
+    'basic-resource:formFieldResourcePicker'?: IResourceFormFieldResourcePickerOptions;
   }
 }
 

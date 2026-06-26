@@ -395,7 +395,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.84
+        specifier: ^1.2.87
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -816,7 +816,7 @@ importers:
         specifier: ^5.1.57
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.109
+        specifier: ^5.1.112
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -914,7 +914,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-rest-resource:
-        specifier: ^5.1.37
+        specifier: ^5.1.40
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/rest-resource:
@@ -929,79 +929,79 @@ importers:
   src/suite-vendor/a-zova:
     dependencies:
       zova-module-a-api:
-        specifier: ^5.1.18
+        specifier: ^5.1.21
         version: link:modules/a-api
       zova-module-a-app:
-        specifier: ^5.1.21
+        specifier: ^5.1.24
         version: link:modules/a-app
       zova-module-a-bean:
-        specifier: ^5.1.28
+        specifier: ^5.1.31
         version: link:modules/a-bean
       zova-module-a-behavior:
-        specifier: ^5.1.22
+        specifier: ^5.1.25
         version: link:modules/a-behavior
       zova-module-a-behaviors:
-        specifier: ^5.1.18
+        specifier: ^5.1.21
         version: link:modules/a-behaviors
       zova-module-a-boundary:
-        specifier: ^5.1.18
+        specifier: ^5.1.21
         version: link:modules/a-boundary
       zova-module-a-command:
-        specifier: ^5.1.30
+        specifier: ^5.1.33
         version: link:modules/a-command
       zova-module-a-fetch:
-        specifier: ^5.1.20
+        specifier: ^5.1.23
         version: link:modules/a-fetch
       zova-module-a-form:
-        specifier: ^5.1.36
+        specifier: ^5.1.40
         version: link:modules/a-form
       zova-module-a-icon:
-        specifier: ^5.1.23
+        specifier: ^5.1.26
         version: link:modules/a-icon
       zova-module-a-interceptor:
-        specifier: ^5.1.26
+        specifier: ^5.1.29
         version: link:modules/a-interceptor
       zova-module-a-logger:
-        specifier: ^5.1.23
+        specifier: ^5.1.26
         version: link:modules/a-logger
       zova-module-a-meta:
-        specifier: ^5.1.18
+        specifier: ^5.1.21
         version: link:modules/a-meta
       zova-module-a-model:
-        specifier: ^5.1.27
+        specifier: ^5.1.30
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.37
+        specifier: ^5.1.40
         version: link:modules/a-openapi
       zova-module-a-router:
-        specifier: ^5.1.26
+        specifier: ^5.1.29
         version: link:modules/a-router
       zova-module-a-routerstack:
-        specifier: ^5.1.23
+        specifier: ^5.1.26
         version: link:modules/a-routerstack
       zova-module-a-routertabs:
-        specifier: ^5.1.29
+        specifier: ^5.1.32
         version: link:modules/a-routertabs
       zova-module-a-ssr:
-        specifier: ^5.1.23
+        specifier: ^5.1.26
         version: link:modules/a-ssr
       zova-module-a-ssrhmr:
-        specifier: ^5.1.19
+        specifier: ^5.1.22
         version: link:modules/a-ssrhmr
       zova-module-a-ssrserver:
-        specifier: ^5.1.19
+        specifier: ^5.1.22
         version: link:modules/a-ssrserver
       zova-module-a-style:
-        specifier: ^5.1.29
+        specifier: ^5.1.32
         version: link:modules/a-style
       zova-module-a-table:
-        specifier: ^5.1.33
+        specifier: ^5.1.36
         version: link:modules/a-table
       zova-module-a-zod:
-        specifier: ^5.1.30
+        specifier: ^5.1.33
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.74
+        specifier: ^5.1.77
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
