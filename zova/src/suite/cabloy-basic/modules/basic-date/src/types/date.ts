@@ -1,3 +1,5 @@
+export type TypeDateInputType = 'date' | 'datetime-local' | 'time';
+
 export type TypeDateFormatPreset =
   | 'DATE_SHORT'
   | 'DATE_MED'

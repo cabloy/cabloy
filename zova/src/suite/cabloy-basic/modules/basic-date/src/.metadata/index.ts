@@ -1,5 +1,6 @@
 // eslint-disable
 /** controller: begin */
+export * from '../component/date/controller.jsx';
 export * from '../component/dateRange/controller.jsx';
 export * from '../component/formFieldDate/controller.jsx';
 export * from '../component/formFieldDateRange/controller.jsx';
@@ -11,6 +12,11 @@ declare module 'zova' {
 }
 declare module 'zova-module-basic-date' {
   
+        export interface ControllerDate {
+          /** @internal */
+          get scope(): ScopeModuleBasicDate;
+        }
+
         export interface ControllerDateRange {
           /** @internal */
           get scope(): ScopeModuleBasicDate;
@@ -28,13 +34,15 @@ declare module 'zova-module-basic-date' {
 }
 /** controller: end */
 /** controller: begin */
+import { ControllerDate } from '../component/date/controller.jsx';
 import { ControllerDateRange } from '../component/dateRange/controller.jsx';
 import { ControllerFormFieldDate } from '../component/formFieldDate/controller.jsx';
 import { ControllerFormFieldDateRange } from '../component/formFieldDateRange/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
-    'basic-date.controller.dateRange': ControllerDateRange;
+    'basic-date.controller.date': ControllerDate;
+'basic-date.controller.dateRange': ControllerDateRange;
 'basic-date.controller.formFieldDate': ControllerFormFieldDate;
 'basic-date.controller.formFieldDateRange': ControllerFormFieldDateRange;
   }
@@ -42,6 +50,8 @@ declare module 'zova' {
 /** controller: end */
 
 /** components: begin */
+export * from './component/date.js';
+import { ZDate } from './component/date.js';
 export * from './component/dateRange.js';
 import { ZDateRange } from './component/dateRange.js';
 export * from './component/formFieldDate.js';
@@ -49,19 +59,22 @@ import { ZFormFieldDate } from './component/formFieldDate.js';
 export * from './component/formFieldDateRange.js';
 import { ZFormFieldDateRange } from './component/formFieldDateRange.js';
 export const components = {
-  'dateRange': ZDateRange,
+  'date': ZDate,
+'dateRange': ZDateRange,
 'formFieldDate': ZFormFieldDate,
 'formFieldDateRange': ZFormFieldDateRange,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
-  'basic-date:dateRange': ControllerDateRange;
+  'basic-date:date': ControllerDate;
+'basic-date:dateRange': ControllerDateRange;
 'basic-date:formFieldDate': ControllerFormFieldDate;
 'basic-date:formFieldDateRange': ControllerFormFieldDateRange;
 }
 export interface IZovaComponentRecord {
-  'basic-date:dateRange': typeof ZDateRange;
+  'basic-date:date': typeof ZDate;
+'basic-date:dateRange': typeof ZDateRange;
 'basic-date:formFieldDate': typeof ZFormFieldDate;
 'basic-date:formFieldDateRange': typeof ZFormFieldDateRange;
 }
