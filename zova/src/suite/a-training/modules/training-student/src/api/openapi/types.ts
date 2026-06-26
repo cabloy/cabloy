@@ -95,70 +95,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/training/student': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TrainingStudent_select'];
-    put?: never;
-    post: operations['TrainingStudent_create'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/training/student/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TrainingStudent_view'];
-    put?: never;
-    post?: never;
-    delete: operations['TrainingStudent_delete'];
-    options?: never;
-    head?: never;
-    patch: operations['TrainingStudent_update'];
-    trace?: never;
-  };
-  '/api/training/student/summary/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TrainingStudent_summary'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/training/student/deleteForce/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete: operations['TrainingStudent_deleteForce'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/home/base/menu/{publicPath?}': {
     parameters: {
       query?: never;
@@ -363,6 +299,102 @@ export interface paths {
     put?: never;
     post: operations['HomeUserPassport_createTempAuthToken'];
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/record': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingRecord_select'];
+    put?: never;
+    post: operations['TrainingRecord_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/record/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingRecord_view'];
+    put?: never;
+    post?: never;
+    delete: operations['TrainingRecord_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['TrainingRecord_update'];
+    trace?: never;
+  };
+  '/api/training/student': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingStudent_select'];
+    put?: never;
+    post: operations['TrainingStudent_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingStudent_view'];
+    put?: never;
+    post?: never;
+    delete: operations['TrainingStudent_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['TrainingStudent_update'];
+    trace?: never;
+  };
+  '/api/training/student/summary/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingStudent_summary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/deleteForce/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['TrainingStudent_deleteForce'];
     options?: never;
     head?: never;
     patch?: never;
@@ -1154,120 +1186,6 @@ export interface components {
       token?: unknown;
       payload?: unknown;
     };
-    'training-student.dto.studentCreate': {
-      /** @description Name */
-      name: string;
-      /** @description Description */
-      description?: string | undefined;
-      /** @description Mobile */
-      mobile: string;
-      /** @description Training Stage */
-      level: 1 | 2 | 3;
-    };
-    'training-student.dto.studentSelectRes': {
-      list: components['schemas']['training-student.dto.studentSelectResItem'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'training-student.dto.studentSelectResItem': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /**
-       * @description Deleted
-       * @default false
-       */
-      deleted?: boolean;
-      /**
-       * @description Instance ID
-       * @default 0
-       */
-      iid?: number;
-      /** @description ID */
-      id: number | string;
-      /** @description Name */
-      name: string;
-      /** @description Description */
-      description?: string | undefined;
-      /** @description Mobile */
-      mobile: string;
-      /** @description Training Stage */
-      level: 1 | 2 | 3;
-      /** @description Operations */
-      _operationsRow?: unknown;
-    };
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
-      | {
-          /**
-           * Format: date-time
-           * @description Created At
-           */
-          createdAt: Date;
-          /**
-           * Format: date-time
-           * @description Updated At
-           */
-          updatedAt: Date;
-          /**
-           * @description Deleted
-           * @default false
-           */
-          deleted?: boolean;
-          /**
-           * @description Instance ID
-           * @default 0
-           */
-          iid?: number;
-          /** @description ID */
-          id: number | string;
-          /** @description Name */
-          name: string;
-          /** @description Description */
-          description?: string | undefined;
-          /** @description Mobile */
-          mobile: string;
-          /** @description Training Stage */
-          level: 1 | 2 | 3;
-        }
-      | undefined;
-    'training-student.dto.studentUpdate': {
-      /** @description Name */
-      name: string;
-      /** @description Description */
-      description?: string | undefined;
-      /** @description Mobile */
-      mobile: string;
-      /** @description Training Stage */
-      level: 1 | 2 | 3;
-    };
-    'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
-      | {
-          id: number | string;
-          /** @description Name */
-          name: string;
-          /** @description Mobile */
-          mobile: string;
-          /** @description Training Stage */
-          level: number;
-          /** @description Level Title */
-          levelTitle: string;
-          /** @description Description */
-          description?: string | undefined;
-          /** @description Description Length */
-          descriptionLength: number;
-          /** @description Summary */
-          summaryText: string;
-        }
-      | undefined;
     'a-menu.dto.menus': {
       menus?: components['schemas']['a-menu.dto.menuItem'][] | undefined;
       groups?: components['schemas']['a-menu.dto.menuGroup'][] | undefined;
@@ -1312,7 +1230,6 @@ export interface components {
           roles: components['schemas']['home-user.entity.role'][];
         }
       | undefined;
-    /** @description User */
     'home-user.entity.user': {
       /**
        * Format: date-time
@@ -1365,7 +1282,6 @@ export interface components {
         clientName: string;
       };
     };
-    /** @description Role */
     'home-user.entity.role': {
       /**
        * Format: date-time
@@ -1427,6 +1343,496 @@ export interface components {
       id: string;
       token: string;
     };
+    'training-record.dto.recordCreate': {
+      /** @description Training Record Name */
+      name: string;
+      /** @description Student */
+      studentId: number | string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Student Training Record Details */
+      trainingRecordSubjects?:
+        | {
+            /** @description Subject Name */
+            name: string;
+            /** @description Subject Score */
+            score: number;
+            /** @description Description */
+            description?: string | undefined;
+          }[]
+        | undefined;
+      _trainingRecordSubjects?:
+        | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+        | undefined;
+    };
+    'training-record.dto.detailRecordSubjectResItem': {
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /** @description ID */
+      id: number | string;
+      /** @description Subject Name */
+      name: string;
+      /** @description Subject Score */
+      score: number;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description # */
+      _lineNumber: number;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'training-record.dto.recordSelectRes': {
+      list: components['schemas']['training-record.dto.recordSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'training-record.dto.recordSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Training Record Name */
+      name: string;
+      /** @description Student */
+      studentId: number | string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Training Record Name */
+          name: string;
+          /** @description Student */
+          studentId: number | string;
+          /** @description Subject Count */
+          subjectCount?: number | undefined;
+          /** @description Total Score */
+          totalScore?: number | undefined;
+          /** @description Average Score */
+          averageScore?: number | undefined;
+          /**
+           * Format: date-time
+           * @description Training Time
+           */
+          trainingTime?: Date;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Student Training Record Details */
+          trainingRecordSubjects: {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean;
+            /** @description ID */
+            id: number | string;
+            /** @description Subject Name */
+            name: string;
+            /** @description Subject Score */
+            score: number;
+            /** @description Description */
+            description?: string | undefined;
+          }[];
+          _trainingRecordSubjects?:
+            | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+            | undefined;
+        }
+      | undefined;
+    'training-record.dto.recordUpdate': {
+      /** @description Training Record Name */
+      name: string;
+      /** @description Student */
+      studentId: number | string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Student Training Record Details */
+      trainingRecordSubjects?:
+        | {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean | undefined;
+            /** @description ID */
+            id?: number | string | undefined;
+            /** @description Subject Name */
+            name: string;
+            /** @description Subject Score */
+            score: number;
+            /** @description Description */
+            description?: string | undefined;
+          }[]
+        | undefined;
+      _trainingRecordSubjects?:
+        | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+        | undefined;
+    };
+    'training-student.dto.studentCreate': {
+      /** @description Student Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
+      /** @description Training Stage */
+      level: 1 | 2 | 3;
+      /** @description Student Training Records */
+      trainingRecords?:
+        | {
+            /** @description Training Record Name */
+            name: string;
+            /** @description Subject Count */
+            subjectCount?: number | undefined;
+            /** @description Total Score */
+            totalScore?: number | undefined;
+            /** @description Average Score */
+            averageScore?: number | undefined;
+            /**
+             * Format: date-time
+             * @description Training Time
+             */
+            trainingTime?: Date;
+            /** @description Description */
+            description?: string | undefined;
+            /** @description Student Training Record Details */
+            trainingRecordSubjects?:
+              | {
+                  /**
+                   * @description Deleted
+                   * @default false
+                   */
+                  deleted?: boolean | undefined;
+                  /** @description ID */
+                  id?: number | string | undefined;
+                  /** @description Subject Name */
+                  name: string;
+                  /** @description Subject Score */
+                  score: number;
+                  /** @description Description */
+                  description?: string | undefined;
+                }[]
+              | undefined;
+            _trainingRecordSubjects?:
+              | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+              | undefined;
+          }[]
+        | undefined;
+      _trainingRecords?:
+        | components['schemas']['training-student.dto.detailRecordResItem'][]
+        | undefined;
+    };
+    'training-student.dto.detailRecordResItem': {
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /** @description ID */
+      id: number | string;
+      /** @description Training Record Name */
+      name: string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Student Training Record Details */
+      trainingRecordSubjects?: unknown;
+      /** @description # */
+      _lineNumber: number;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'training-student.dto.studentSelectRes': {
+      list: components['schemas']['training-student.dto.studentSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'training-student.dto.studentSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Student Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
+      /** @description Training Stage */
+      level: 1 | 2 | 3;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Student Name */
+          name: string;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Mobile */
+          mobile: string;
+          /** @description Training Stage */
+          level: 1 | 2 | 3;
+          /** @description Student Training Records */
+          trainingRecords: {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean;
+            /** @description ID */
+            id: number | string;
+            /** @description Training Record Name */
+            name: string;
+            /** @description Subject Count */
+            subjectCount?: number | undefined;
+            /** @description Total Score */
+            totalScore?: number | undefined;
+            /** @description Average Score */
+            averageScore?: number | undefined;
+            /**
+             * Format: date-time
+             * @description Training Time
+             */
+            trainingTime?: Date;
+            /** @description Description */
+            description?: string | undefined;
+            /** @description Student Training Record Details */
+            trainingRecordSubjects: {
+              /**
+               * @description Deleted
+               * @default false
+               */
+              deleted?: boolean;
+              /** @description ID */
+              id: number | string;
+              /** @description Subject Name */
+              name: string;
+              /** @description Subject Score */
+              score: number;
+              /** @description Description */
+              description?: string | undefined;
+            }[];
+            _trainingRecordSubjects?:
+              | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+              | undefined;
+          }[];
+          _trainingRecords?:
+            | components['schemas']['training-student.dto.detailRecordResItem'][]
+            | undefined;
+        }
+      | undefined;
+    'training-student.dto.studentUpdate': {
+      /** @description Student Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
+      /** @description Training Stage */
+      level: 1 | 2 | 3;
+      /** @description Student Training Records */
+      trainingRecords?:
+        | {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean | undefined;
+            /** @description ID */
+            id?: number | string | undefined;
+            /** @description Training Record Name */
+            name: string;
+            /** @description Subject Count */
+            subjectCount?: number | undefined;
+            /** @description Total Score */
+            totalScore?: number | undefined;
+            /** @description Average Score */
+            averageScore?: number | undefined;
+            /**
+             * Format: date-time
+             * @description Training Time
+             */
+            trainingTime?: Date;
+            /** @description Description */
+            description?: string | undefined;
+            /** @description Student Training Record Details */
+            trainingRecordSubjects?:
+              | {
+                  /**
+                   * @description Deleted
+                   * @default false
+                   */
+                  deleted?: boolean | undefined;
+                  /** @description ID */
+                  id?: number | string | undefined;
+                  /** @description Subject Name */
+                  name: string;
+                  /** @description Subject Score */
+                  score: number;
+                  /** @description Description */
+                  description?: string | undefined;
+                }[]
+              | undefined;
+            _trainingRecordSubjects?:
+              | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+              | undefined;
+          }[]
+        | undefined;
+      _trainingRecords?:
+        | components['schemas']['training-student.dto.detailRecordResItem'][]
+        | undefined;
+    };
+    'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          /** @description Student Name */
+          name: string;
+          /** @description Mobile */
+          mobile: string;
+          /** @description Training Stage */
+          level: number;
+          /** @description Level Title */
+          levelTitle: string;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Description Length */
+          descriptionLength: number;
+          /** @description Summary */
+          summaryText: string;
+        }
+      | undefined;
     'a-paypal.entity.paypalRecord': {
       /**
        * Format: date-time
@@ -2143,205 +2549,6 @@ export interface operations {
       };
     };
   };
-  TrainingStudent_select: {
-    parameters: {
-      query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
-        createdAt?: string | undefined;
-        name?: string | undefined;
-        level?: 1 | 2 | 3 | undefined;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['training-student.dto.studentSelectRes'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_create: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['training-student.dto.studentCreate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: number | string;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_view: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_update: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['training-student.dto.studentUpdate'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_summary: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_deleteForce: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
   HomeBaseMenu_retrieveMenus: {
     parameters: {
       query?: never;
@@ -2684,6 +2891,352 @@ export interface operations {
             code: string;
             message: string;
             data: string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        studentId?: number | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-record.dto.recordSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-record.dto.recordCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-record.dto.recordUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        level?: number | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-student.dto.studentSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_summary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_deleteForce: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };

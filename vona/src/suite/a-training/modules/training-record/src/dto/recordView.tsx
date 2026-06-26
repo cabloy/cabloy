@@ -28,7 +28,7 @@ export interface IDtoOptionsRecordView extends IDecoratorDtoOptions {}
   fields: {
     trainingRecordSubjects: $makeMetadata(
       v.title($locale('TrainingRecordSubjects')),
-      ZovaRender.order(5),
+      ZovaRender.order(8),
       ZovaRender.field('basic-details:formFieldDetails'),
       v.optional(),
     ),

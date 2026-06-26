@@ -15,13 +15,22 @@ export interface IDtoOptionsDetailRecordBase extends IDecoratorDtoOptions {}
     id: $makeMetadata(ZovaRender.visible(false)),
     trainingRecordSubjects: $makeMetadata(
       v.title($locale('TrainingRecordSubjects')),
-      ZovaRender.order(4),
+      ZovaRender.order(8),
       ZovaRender.field('basic-details:formFieldDetails'),
       v.optional(),
     ),
   },
 })
 export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
-  columns: ['id', 'deleted', 'name', 'score', 'description'],
+  columns: [
+    'id',
+    'deleted',
+    'name',
+    'subjectCount',
+    'totalScore',
+    'averageScore',
+    'trainingTime',
+    'description',
+  ],
   include: { trainingRecordSubjects: true },
 }) {}

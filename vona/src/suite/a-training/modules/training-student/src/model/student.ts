@@ -10,7 +10,15 @@ export interface IModelOptionsStudent extends IDecoratorModelOptions<EntityStude
   entity: EntityStudent,
   relations: {
     trainingRecords: $relation.hasMany('training-record:record', 'studentId', {
-      columns: ['id', 'name', 'score', 'description'],
+      columns: [
+        'id',
+        'name',
+        'subjectCount',
+        'totalScore',
+        'averageScore',
+        'trainingTime',
+        'description',
+      ],
     }),
   },
 })

@@ -8,30 +8,6 @@ export type ApiSchemaTestVonaEntityProduct = components['schemas']['test-vona.en
 export type ApiSchemaTestVonaEntityProductPartial = Partial<ApiSchemaTestVonaEntityProduct>;
 export type ApiSchemaACaptchaDtoCaptchaData = components['schemas']['a-captcha.dto.captchaData'];
 export type ApiSchemaACaptchaDtoCaptchaDataPartial = Partial<ApiSchemaACaptchaDtoCaptchaData>;
-export type ApiSchemaTrainingStudentDtoStudentCreate =
-  components['schemas']['training-student.dto.studentCreate'];
-export type ApiSchemaTrainingStudentDtoStudentCreatePartial =
-  Partial<ApiSchemaTrainingStudentDtoStudentCreate>;
-export type ApiSchemaTrainingStudentDtoStudentSelectRes =
-  components['schemas']['training-student.dto.studentSelectRes'];
-export type ApiSchemaTrainingStudentDtoStudentSelectResPartial =
-  Partial<ApiSchemaTrainingStudentDtoStudentSelectRes>;
-export type ApiSchemaTrainingStudentDtoStudentSelectResItem =
-  components['schemas']['training-student.dto.studentSelectResItem'];
-export type ApiSchemaTrainingStudentDtoStudentSelectResItemPartial =
-  Partial<ApiSchemaTrainingStudentDtoStudentSelectResItem>;
-export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
-  components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
-  Partial<ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
-export type ApiSchemaTrainingStudentDtoStudentUpdate =
-  components['schemas']['training-student.dto.studentUpdate'];
-export type ApiSchemaTrainingStudentDtoStudentUpdatePartial =
-  Partial<ApiSchemaTrainingStudentDtoStudentUpdate>;
-export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
-  components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
-  Partial<ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
 export type ApiSchemaAMenuDtoMenus = components['schemas']['a-menu.dto.menus'];
 export type ApiSchemaAMenuDtoMenusPartial = Partial<ApiSchemaAMenuDtoMenus>;
 export type ApiSchemaAMenuDtoMenuItem = components['schemas']['a-menu.dto.menuItem'];
@@ -73,6 +49,58 @@ export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c
   components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3'];
 export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3Partial =
   Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3>;
+export type ApiSchemaTrainingRecordDtoRecordCreate =
+  components['schemas']['training-record.dto.recordCreate'];
+export type ApiSchemaTrainingRecordDtoRecordCreatePartial =
+  Partial<ApiSchemaTrainingRecordDtoRecordCreate>;
+export type ApiSchemaTrainingRecordDtoDetailRecordSubjectResItem =
+  components['schemas']['training-record.dto.detailRecordSubjectResItem'];
+export type ApiSchemaTrainingRecordDtoDetailRecordSubjectResItemPartial =
+  Partial<ApiSchemaTrainingRecordDtoDetailRecordSubjectResItem>;
+export type ApiSchemaTrainingRecordDtoRecordSelectRes =
+  components['schemas']['training-record.dto.recordSelectRes'];
+export type ApiSchemaTrainingRecordDtoRecordSelectResPartial =
+  Partial<ApiSchemaTrainingRecordDtoRecordSelectRes>;
+export type ApiSchemaTrainingRecordDtoRecordSelectResItem =
+  components['schemas']['training-record.dto.recordSelectResItem'];
+export type ApiSchemaTrainingRecordDtoRecordSelectResItemPartial =
+  Partial<ApiSchemaTrainingRecordDtoRecordSelectResItem>;
+export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaTrainingRecordDtoRecordUpdate =
+  components['schemas']['training-record.dto.recordUpdate'];
+export type ApiSchemaTrainingRecordDtoRecordUpdatePartial =
+  Partial<ApiSchemaTrainingRecordDtoRecordUpdate>;
+export type ApiSchemaTrainingStudentDtoStudentCreate =
+  components['schemas']['training-student.dto.studentCreate'];
+export type ApiSchemaTrainingStudentDtoStudentCreatePartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentCreate>;
+export type ApiSchemaTrainingStudentDtoDetailRecordResItem =
+  components['schemas']['training-student.dto.detailRecordResItem'];
+export type ApiSchemaTrainingStudentDtoDetailRecordResItemPartial =
+  Partial<ApiSchemaTrainingStudentDtoDetailRecordResItem>;
+export type ApiSchemaTrainingStudentDtoStudentSelectRes =
+  components['schemas']['training-student.dto.studentSelectRes'];
+export type ApiSchemaTrainingStudentDtoStudentSelectResPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentSelectRes>;
+export type ApiSchemaTrainingStudentDtoStudentSelectResItem =
+  components['schemas']['training-student.dto.studentSelectResItem'];
+export type ApiSchemaTrainingStudentDtoStudentSelectResItemPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentSelectResItem>;
+export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaTrainingStudentDtoStudentUpdate =
+  components['schemas']['training-student.dto.studentUpdate'];
+export type ApiSchemaTrainingStudentDtoStudentUpdatePartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentUpdate>;
+export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
 export type ApiSchemaAPaypalEntityPaypalRecord =
   components['schemas']['a-paypal.entity.paypalRecord'];
 export type ApiSchemaAPaypalEntityPaypalRecordPartial = Partial<ApiSchemaAPaypalEntityPaypalRecord>;

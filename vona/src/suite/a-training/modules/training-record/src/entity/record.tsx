@@ -51,9 +51,24 @@ export class EntityRecord extends EntityBase {
   )
   studentId: TableIdentity;
 
-  @Api.field(v.title($locale('Score')), v.optional(), ZovaRender.order(3))
-  score?: number;
+  @Api.field(v.title($locale('SubjectCount')), v.optional(), ZovaRender.order(3))
+  subjectCount?: number;
 
-  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(4))
+  @Api.field(v.title($locale('TotalScore')), v.optional(), ZovaRender.order(4))
+  totalScore?: number;
+
+  @Api.field(v.title($locale('AverageScore')), v.optional(), ZovaRender.order(5))
+  averageScore?: number;
+
+  @Api.field(
+    v.title($locale('TrainingTime')),
+    v.optional(),
+    ZovaRender.order(6),
+    ZovaRender.field('basic-date:formFieldDate'),
+    ZovaRender.cell('basic-date:date'),
+  )
+  trainingTime?: Date;
+
+  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(7))
   description?: string;
 }

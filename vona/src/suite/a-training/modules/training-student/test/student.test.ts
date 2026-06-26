@@ -18,6 +18,8 @@ describe('student.test.ts', () => {
       const maskedMobile = '138****5678';
       const mobileUpdate = '13987654321';
       const maskedMobileUpdate = '139****4321';
+      const trainingTime = new Date('2026-03-10T08:00:00.000Z');
+      const trainingTimeUpdate = new Date('2026-04-18T13:20:00.000Z');
       const data = {
         name: '__Tom__',
         description: 'This is a test',
@@ -26,7 +28,10 @@ describe('student.test.ts', () => {
         trainingRecords: [
           {
             name: '__Record__',
-            score: 88,
+            subjectCount: 1,
+            totalScore: 88,
+            averageScore: 88,
+            trainingTime,
             description: 'This is a record',
             trainingRecordSubjects: [
               {
@@ -80,6 +85,10 @@ describe('student.test.ts', () => {
       const recordSubject = record?.trainingRecordSubjects?.[0];
       assert.equal(student.trainingRecords?.length, 1);
       assert.equal(record?.name, '__Record__');
+      assert.equal(record?.subjectCount, 1);
+      assert.equal(record?.totalScore, 88);
+      assert.equal(record?.averageScore, 88);
+      assert.equal(new Date(record?.trainingTime).toISOString(), trainingTime.toISOString());
       assert.equal(record?.trainingRecordSubjects?.length, 1);
       assert.equal(recordSubject?.name, '__Math__');
       assert.equal(recordSubject?.score, 95);
@@ -93,7 +102,10 @@ describe('student.test.ts', () => {
           {
             id: record.id,
             name: '__RecordNew__',
-            score: 89,
+            subjectCount: 2,
+            totalScore: 183,
+            averageScore: 91.5,
+            trainingTime: trainingTimeUpdate,
             description: 'This is an updated record',
             trainingRecordSubjects: [
               {
@@ -127,6 +139,13 @@ describe('student.test.ts', () => {
       assert.equal(student.mobile, maskedMobileUpdate);
       assert.equal(student.trainingRecords?.length, 1);
       assert.equal(updatedRecord?.name, '__RecordNew__');
+      assert.equal(updatedRecord?.subjectCount, 2);
+      assert.equal(updatedRecord?.totalScore, 183);
+      assert.equal(updatedRecord?.averageScore, 91.5);
+      assert.equal(
+        new Date(updatedRecord?.trainingTime).toISOString(),
+        trainingTimeUpdate.toISOString(),
+      );
       assert.equal(updatedRecord?.trainingRecordSubjects?.length, 2);
       assert.equal(updatedMathSubject?.name, '__MathNew__');
       assert.equal(updatedMathSubject?.score, 96);

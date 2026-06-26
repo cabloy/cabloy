@@ -86,7 +86,7 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-training-student' {
   export interface IModelOptionsStudent {
         relations: {
-          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'score'|'description', undefined, undefined, undefined>;
+          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'description', undefined, undefined, undefined>;
         };
       }
   export interface ModelStudent {
