@@ -132,6 +132,15 @@ describe('record.test.ts', () => {
       );
       assert.equal(studentRecord, undefined);
 
+      await app.bean.executor.performAction('delete', '/training/student/:id', {
+        params: { id: studentId },
+      });
+
+      student = await app.bean.executor.performAction('get', '/training/student/:id', {
+        params: { id: studentId },
+      });
+      assert.equal(student, undefined);
+
       await app.bean.passport.signout();
     });
   });
