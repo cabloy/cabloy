@@ -28,7 +28,6 @@ export class ControllerDate extends BeanControllerBase {
     const { type, onBlur } = this.$props as ControllerDateProps;
     return (
       <input
-        style={{ width: type === 'datetime-local' ? '180px' : '130px' }}
         type={type}
         step={type === 'date' ? undefined : 1}
         value={dateToInputValue(this.modelValue, type)}

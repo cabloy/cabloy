@@ -58,6 +58,10 @@ function __parseString(inst, parse, payload: IParsePayload, _) {
     // ignore upload file
     return payload;
   }
+  if (payload.value && payload.value instanceof Date) {
+    // ignore date
+    return payload;
+  }
   _coerceString(payload);
   return parse(payload, _);
 }

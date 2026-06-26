@@ -2,6 +2,7 @@ import type { IComponentOptions } from 'zova';
 import type { IFormFieldComponentOptions } from 'zova-module-a-form';
 import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
+import { classes } from 'typestyle';
 import { BeanControllerBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
@@ -19,7 +20,7 @@ declare module 'zova-module-a-openapi' {
 export interface IResourceFormFieldDateOptions extends IResourceFormFieldOptionsBase {
   preset?: TypeDateFormatPreset;
   format?: string;
-  type?: TypeDateInputType;
+  inputType?: TypeDateInputType;
 }
 
 export interface ControllerFormFieldDateProps extends IFormFieldComponentOptions {
@@ -36,11 +37,7 @@ export class ControllerFormFieldDate extends BeanControllerBase {
 
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
-  cContainer: string;
-
-  protected async __init__() {
-    this.cContainer = this.$style({ width: 'auto' });
-  }
+  protected async __init__() {}
 
   protected render() {
     if (this.$props.readonly) {
@@ -56,20 +53,31 @@ export class ControllerFormFieldDate extends BeanControllerBase {
     return (
       <ZFormField
         {...this.$props}
-        layout={{ class: this.cContainer }}
-        slotDefault={({ propsBucket }, $$formField) => {
-          return (
-            <ZDate
-              type={this.dateInputType}
-              modelValue={propsBucket.value}
-              onUpdate:modelValue={(value: Date | undefined) => {
-                $$formField.setValue(value, propsBucket.disableNotifyChanged);
-              }}
-              onBlur={() => {
-                $$formField.handleBlur();
-              }}
-            ></ZDate>
-          );
+        slotDefault={({ propsBucket, props }, $$formField) => {
+          const className = !propsBucket.needHandleBorder
+            ? props.class
+            : classes(props.class, 'input', !$$formField.field.state.meta.isValid && 'input-error');
+          const propsNew: Omit<IResourceFormFieldDateOptions, 'style'> = {
+            'type': this.dateInputType,
+            'placeholder': undefined,
+            'modelValue': propsBucket.value,
+            'onUpdate:modelValue': (value: Date | undefined) => {
+              $$formField.setValue(value, propsBucket.disableNotifyChanged);
+            },
+            'onBlur': () => {
+              $$formField.handleBlur();
+            },
+            'onInput': (e: Event) => {
+              $$formField.setValue(
+                (e.target as HTMLInputElement).value,
+                propsBucket.disableNotifyChanged,
+              );
+            },
+            ...propsBucket.options,
+            ...props,
+            'class': className,
+          };
+          return <ZDate {...propsNew}></ZDate>;
         }}
       ></ZFormField>
     );
@@ -80,6 +88,6 @@ export class ControllerFormFieldDate extends BeanControllerBase {
   }
 
   get dateInputType(): TypeDateInputType {
-    return this.dateOptions?.type ?? dateInputTypeFromPreset(this.dateOptions?.preset);
+    return this.dateOptions?.inputType ?? dateInputTypeFromPreset(this.dateOptions?.preset);
   }
 }
