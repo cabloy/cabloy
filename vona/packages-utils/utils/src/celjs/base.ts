@@ -26,6 +26,12 @@ celEnvBase.registerFunction('join(list,string):string', (list, sep) => {
 celEnvBase.registerFunction('string(null):string', value => {
   return String(value);
 });
+celEnvBase.registerFunction('toFixed(double,int):string', (value, precision) => {
+  return _toFixed(value, precision);
+});
+celEnvBase.registerFunction('toFixed(int,int):string', (value, precision) => {
+  return _toFixed(value, precision);
+});
 
 // operator: +
 celEnvBase.registerOperator('string + int', (str, n) => str + String(n));
@@ -82,4 +88,12 @@ function _concat(...args: any[]): any[] {
 function _join(list?: [], sep?: string): string {
   if (!list) return '';
   return list.join(sep);
+}
+
+function _toFixed(value: number | bigint, precision: number | bigint): string {
+  const precisionInt = Number(precision);
+  if (typeof value === 'bigint') {
+    return precisionInt > 0 ? `${value}.${'0'.repeat(precisionInt)}` : String(value);
+  }
+  return value.toFixed(precisionInt);
 }

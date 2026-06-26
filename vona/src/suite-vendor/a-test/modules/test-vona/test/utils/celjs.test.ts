@@ -22,6 +22,11 @@ describe('celjs.test.ts', () => {
       assert.deepEqual(evaluateExpressions(cel('join(concat(1,[2,3],4),"_")')), '1_2_3_4');
       // string
       assert.equal(evaluateExpressions(cel('string(null)')), 'null');
+      assert.equal(evaluateExpressions(cel('toFixed(3.14159,2)')), '3.14');
+      assert.equal(evaluateExpressions(cel('toFixed(3.145,2)')), '3.15');
+      assert.equal(evaluateExpressions(cel('toFixed(3,2)')), '3.00');
+      assert.equal(evaluateExpressions(cel('toFixed(3,0)')), '3');
+      assert.equal(evaluateExpressions(cel('toFixed(-3.14159,2)')), '-3.14');
       // operator: +
       assert.equal(evaluateExpressions(cel('1+"a"')), '1a');
       assert.equal(evaluateExpressions(cel('"a"+1')), 'a1');
