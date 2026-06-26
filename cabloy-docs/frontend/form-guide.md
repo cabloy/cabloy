@@ -308,6 +308,14 @@ Schema-driven rendering is a strong fit when:
 - frontend and backend should stay close to the same Student contract truth
 - you want to reduce duplicated Student field configuration
 
+A practical expression example is a schema-driven field display that formats a numeric value through CEL:
+
+```text
+toFixed(getValue('price'), 2)
+```
+
+In the shared form CEL scope, `getValue(name)` reads the current field value and `toFixed(...)` returns a string with fixed decimal precision.
+
 Read together with [API Schema Guide](/frontend/api-schema-guide).
 
 ## Step 6: Add validation

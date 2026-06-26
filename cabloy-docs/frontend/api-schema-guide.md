@@ -27,6 +27,24 @@ Use `$apiSchema` when the frontend needs to inspect what the backend contract sa
 
 That usually means the problem is shifting from “fetch data” to “use metadata to drive behavior.”
 
+## One practical metadata-driven expression example
+
+When schema-driven form or table rendering uses JSX/CEL evaluation, the runtime can resolve helper functions against the current scope.
+
+For example, frontend CEL expressions can now use `toFixed(value, precision)` to keep a numeric value at the desired precision:
+
+```text
+toFixed(getValue('price'), 2)
+```
+
+In the shared form/table CEL environment:
+
+- `toFixed(...)` returns a string with fixed decimal precision
+- `getValue(name)` reads the current field value or current row value from the active runtime scope
+- `getProperty(name)` reads the current schema property metadata from the active runtime scope
+
+That is useful when the backend contract already owns the field metadata and the frontend only needs a thin expression layer for schema-driven display behavior.
+
 ## Read together with
 
 Use this page together with:

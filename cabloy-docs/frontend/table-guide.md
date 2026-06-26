@@ -146,6 +146,14 @@ and more:
 
 This is why table work often belongs in the broader contract loop when the real source of truth is backend field metadata.
 
+A practical expression example is a schema-driven cell display that formats the current row value through CEL:
+
+```text
+toFixed(getValue('price'), 2)
+```
+
+In the shared table CEL scope, `getValue(name)` reads the current row value and `toFixed(...)` returns a string with fixed decimal precision.
+
 For the schema side of that contract, also see [API Schema Guide](/frontend/api-schema-guide).
 
 ## Step 4: Use built-in or custom `tableCell` render resources
