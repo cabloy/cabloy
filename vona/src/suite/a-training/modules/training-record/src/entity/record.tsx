@@ -1,9 +1,10 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
+import React from 'react';
 import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
-import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
+import { ZovaCommand, ZovaEvent, ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
 
@@ -54,7 +55,19 @@ export class EntityRecord extends EntityBase {
   @Api.field(v.title($locale('SubjectCount')), v.optional(), ZovaRender.order(3))
   subjectCount?: number;
 
-  @Api.field(v.title($locale('TotalScore')), v.optional(), ZovaRender.order(4))
+  @Api.field(
+    v.title($locale('TotalScore')),
+    v.optional(),
+    ZovaRender.order(4),
+    ZovaRender.onEffect(
+      <ZovaEvent>
+        <ZovaCommand
+          name="basic-commands:setValue"
+          options={{ name: 'averageScore', value: 2 }}
+        ></ZovaCommand>
+      </ZovaEvent>,
+    ),
+  )
   totalScore?: number;
 
   @Api.field(v.title($locale('AverageScore')), v.optional(), ZovaRender.order(5))
