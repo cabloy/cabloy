@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.68
+
+### Features
+
+- Reshape training record summary fields.
+- Refine training record and student field titles.
+- Update training subject field metadata.
+- Deliver additional application updates.
+
+### Bug Fixes
+
+- Improve date input handling.
+
+### Improvements
+
+- Update `tableCell.resourcePicker.tsx`.
+
 ## 5.1.67
 
 ### Features
