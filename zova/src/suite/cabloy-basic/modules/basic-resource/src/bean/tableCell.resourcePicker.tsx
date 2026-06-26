@@ -11,7 +11,7 @@ import { ZSelectProps } from 'zova-module-basic-select';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceTableCellRecord {
-    'start-resource:resourcePicker'?: ITableCellOptionsResourcePicker;
+    'basic-resource:resourcePicker'?: ITableCellOptionsResourcePicker;
   }
 }
 
