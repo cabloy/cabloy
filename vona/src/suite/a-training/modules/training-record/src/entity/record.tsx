@@ -64,8 +64,8 @@ export class EntityRecord extends EntityBase {
     v.title($locale('TrainingTime')),
     v.optional(),
     ZovaRender.order(6),
-    ZovaRender.field('basic-date:formFieldDate'),
-    ZovaRender.cell('basic-date:date'),
+    ZovaRender.field('basic-date:formFieldDate', { preset: 'DATE_FULL' }),
+    ZovaRender.cell('basic-date:date', { preset: 'DATE_FULL' }),
   )
   trainingTime?: Date;
 
