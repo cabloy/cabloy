@@ -49,7 +49,7 @@ overrides:
   '@vue/server-renderer': 'npm:@cabloy/vue-server-renderer@^3.5.18'
   '@vue/shared': '3.5.13'
   vue-router: 'npm:@cabloy/vue-router@^4.4.16'
-  zod: 'npm:@cabloy/zod@4.3.6'
+  zod: 'npm:@cabloy/zod@4.3.8'
 
 allowBuilds:
   '@parcel/watcher': true

@@ -15,7 +15,7 @@ overrides:
   '@vue/server-renderer': npm:@cabloy/vue-server-renderer@^3.5.18
   '@vue/shared': 3.5.13
   vue-router: npm:@cabloy/vue-router@^4.4.16
-  zod: npm:@cabloy/zod@4.3.6
+  zod: npm:@cabloy/zod@4.3.8
 
 importers:
 
@@ -127,8 +127,8 @@ importers:
         specifier: npm:@cabloy/vue-router@^4.4.16
         version: '@cabloy/vue-router@4.4.16(vue@3.5.38(typescript@5.9.3))'
       zod:
-        specifier: npm:@cabloy/zod@4.3.6
-        version: '@cabloy/zod@4.3.6'
+        specifier: npm:@cabloy/zod@4.3.8
+        version: '@cabloy/zod@4.3.8'
       zova:
         specifier: workspace:^
         version: link:packages-zova/zova
@@ -898,8 +898,8 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4(vue@3.5.38(typescript@5.9.3))
       zod:
-        specifier: npm:@cabloy/zod@4.3.6
-        version: '@cabloy/zod@4.3.6'
+        specifier: npm:@cabloy/zod@4.3.8
+        version: '@cabloy/zod@4.3.8'
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1300,8 +1300,8 @@ importers:
         specifier: ^2.1.11
         version: 2.1.11
       zod:
-        specifier: npm:@cabloy/zod@4.3.6
-        version: '@cabloy/zod@4.3.6'
+        specifier: npm:@cabloy/zod@4.3.8
+        version: '@cabloy/zod@4.3.8'
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -2098,8 +2098,8 @@ packages:
   '@cabloy/zod-to-openapi@8.1.6':
     resolution: {integrity: sha512-pb9iUQuvi5SCYHevqeNBVZO65LguRDSvkHlJ6gxxOXNYQRcObwbIzxLag9/ZUj3GejAPPUNJgjb0CPaYM5s98Q==}
 
-  '@cabloy/zod@4.3.6':
-    resolution: {integrity: sha512-pbN0IZK6BT6bhRp3wGlUVi4zLF5qCm3wspxpXCtOWB8bpQSqi+VgTMb2NGw/NGhlcD83zSyjudBdObqrI+te7w==}
+  '@cabloy/zod@4.3.8':
+    resolution: {integrity: sha512-3ik9c1F0VJzQy+/YSnY8DhtDcShgDBmdx+B8j+gFcF+qa6xNK7vyMZ+EYRO2GT7BCucQkTEU/aZBmfEJZcg1Kg==}
 
   '@cacheable/memory@2.0.9':
     resolution: {integrity: sha512-HdMx6DoGywB30vacDbBsITbIX4pgFqj1zsrV58jZBUw3klzkNoXhj7qOqAgledhxG7YZI5rBSJg7Zp8/VG0DuA==}
@@ -8465,7 +8465,7 @@ snapshots:
     dependencies:
       openapi3-ts: 4.6.0
 
-  '@cabloy/zod@4.3.6': {}
+  '@cabloy/zod@4.3.8': {}
 
   '@cacheable/memory@2.0.9':
     dependencies:
@@ -9162,7 +9162,7 @@ snapshots:
 
   '@marcbachmann/cel-js@7.6.1': {}
 
-  '@modelcontextprotocol/sdk@1.29.0(@cabloy/zod@4.3.6)':
+  '@modelcontextprotocol/sdk@1.29.0(@cabloy/zod@4.3.8)':
     dependencies:
       '@hono/node-server': 1.19.14(hono@4.12.27)
       ajv: 8.20.0
@@ -9179,8 +9179,8 @@ snapshots:
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
-      zod: '@cabloy/zod@4.3.6'
-      zod-to-json-schema: 3.25.2(@cabloy/zod@4.3.6)
+      zod: '@cabloy/zod@4.3.8'
+      zod-to-json-schema: 3.25.2(@cabloy/zod@4.3.8)
     transitivePeerDependencies:
       - supports-color
 
@@ -13877,7 +13877,7 @@ snapshots:
 
   textlint@15.7.1(supports-color@10.2.2):
     dependencies:
-      '@modelcontextprotocol/sdk': 1.29.0(@cabloy/zod@4.3.6)
+      '@modelcontextprotocol/sdk': 1.29.0(@cabloy/zod@4.3.8)
       '@textlint/ast-node-types': 15.7.1
       '@textlint/ast-traverse': 15.7.1
       '@textlint/config-loader': 15.7.1(supports-color@10.2.2)
@@ -13900,7 +13900,7 @@ snapshots:
       rc-config-loader: 4.1.4
       read-package-up: 11.0.0
       structured-source: 4.0.0
-      zod: '@cabloy/zod@4.3.6'
+      zod: '@cabloy/zod@4.3.8'
     transitivePeerDependencies:
       - '@cfworker/json-schema'
       - supports-color
@@ -14425,9 +14425,9 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-to-json-schema@3.25.2(@cabloy/zod@4.3.6):
+  zod-to-json-schema@3.25.2(@cabloy/zod@4.3.8):
     dependencies:
-      zod: '@cabloy/zod@4.3.6'
+      zod: '@cabloy/zod@4.3.8'
 
   zwitch@1.0.5: {}
 

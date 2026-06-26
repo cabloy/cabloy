@@ -40,7 +40,7 @@ overrides:
   '@vue/runtime-dom': '3.5.36'
   '@vue/server-renderer': '3.5.36'
   '@vue/shared': '3.5.36'
-  zod: 'npm:@cabloy/zod@4.3.6'
+  zod: 'npm:@cabloy/zod@4.3.8'
 
 allowBuilds:
   '@swc/core': true
