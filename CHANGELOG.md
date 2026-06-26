@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.69
+
+### Features
+
+- Add `onEffect` support for form fields.
+- Add update functionality.
+
 ## 5.1.68
 
 ### Features
