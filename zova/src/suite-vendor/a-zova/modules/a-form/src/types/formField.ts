@@ -6,6 +6,7 @@ import type {
   IJsxRenderContextBase,
   IResourceFormFieldLayoutOptions,
   ISchemaRenderComponentPresetRecord,
+  TypeFormFieldOnEffect,
   TypeFormFieldRenderComponent,
   TypeFormFieldRenderComponentProvider,
   TypeRenderComponentPreset,
@@ -61,6 +62,7 @@ export interface IFormFieldOptionsBase<
   readonly?: boolean;
   required?: boolean;
   disableNotifyChanged?: boolean;
+  onEffect?: TypeFormFieldOnEffect;
   validators?: IFormFieldValidatorsOptionsBase;
   // onChange?: (e: Event) => void; // allow set to null, but not provide null type
   // onInput?: (e: Event) => void; // allow set to null, but not provide null type

@@ -69,6 +69,14 @@ export class ControllerFormField<TParentData extends {} = {}> extends BeanContro
         return this._getFieldBehaviors();
       },
     });
+    this.$watch(
+      () => this.$$form.getFieldValue(this.name),
+      (newValue, oldValue) => {
+        if (newValue === oldValue) return;
+        // do something
+        console.log(this.name, newValue);
+      },
+    );
   }
 
   public get form() {

@@ -11,6 +11,8 @@ import { IResourceRenderBlockOptionsBlock } from './resource/block.js';
 import { IResourceFormFieldRecord } from './resource/formField.js';
 import { IResourceTableActionRowRecord } from './resource/tableActionRow.js';
 
+export type TypeFormFieldOnEffect = (value: any) => void;
+
 export interface ISchemaRenderComponentPresetRecord extends IResourceFormFieldRecord {}
 
 export interface ISchemaObjectExtensionFieldRest {
@@ -21,6 +23,7 @@ export interface ISchemaObjectExtensionFieldRest {
   'order'?: number;
   'disableNotifyChanged'?: boolean;
   'readonly'?: boolean;
+  'onEffect'?: TypeFormFieldOnEffect;
   //
   'render'?: TypeFormFieldRenderComponentNormal | TypeTableCellRenderComponentNormal;
   'table'?: Omit<ISchemaObjectExtensionFieldRest, TypeSchemaScene>;

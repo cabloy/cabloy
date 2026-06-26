@@ -1,9 +1,9 @@
 import type z from 'zod';
 
-import { TypeFormSchemaScene } from 'zova-module-a-openapi';
-import { IResourceFormFieldLayoutOptions } from 'zova-module-a-openapi';
-import { TypeSchemaScene } from 'zova-module-a-openapi';
-import { TypeSchemaOrderLevel } from 'zova-module-a-openapi';
+import type { TypeFormSchemaScene, TypeFormFieldOnEffect } from 'zova-module-a-openapi';
+import type { IResourceFormFieldLayoutOptions } from 'zova-module-a-openapi';
+import type { TypeSchemaScene } from 'zova-module-a-openapi';
+import type { TypeSchemaOrderLevel } from 'zova-module-a-openapi';
 
 import { _generalSchemaRest, _order } from './inner.ts';
 
@@ -43,6 +43,16 @@ export function schemaRenderDisableNotifyChanged<T extends z.ZodType>(
 ) {
   return function (schema: T): T {
     const options = { disableNotifyChanged };
+    return _generalSchemaRest(schema, options, scene);
+  };
+}
+
+export function schemaRenderOnEffect<T extends z.ZodType>(
+  onEffect: TypeFormFieldOnEffect,
+  scene?: TypeSchemaScene,
+) {
+  return function (schema: T): T {
+    const options = { onEffect };
     return _generalSchemaRest(schema, options, scene);
   };
 }
