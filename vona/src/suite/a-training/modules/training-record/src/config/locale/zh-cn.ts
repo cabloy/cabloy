@@ -1,10 +1,10 @@
 export default {
   Description: '描述',
-  Name: '名称',
   Operations: '操作',
   Score: '成绩',
   Student: '学生',
   TrainingRecord: '学生培训记录',
+  TrainingRecordName: '培训记录名称',
   AddTrainingRecord: '添加学生培训记录',
   EditTrainingRecord: '编辑学生培训记录',
   ViewTrainingRecord: '查看学生培训记录',

@@ -1,10 +1,10 @@
 export default {
   Description: 'Description',
-  Name: 'Name',
   Operations: 'Operations',
   Score: 'Score',
   Student: 'Student',
   TrainingRecord: 'Student Training Record',
+  TrainingRecordName: 'Training Record Name',
   AddTrainingRecord: 'Add Student Training Record',
   EditTrainingRecord: 'Edit Student Training Record',
   ViewTrainingRecord: 'View Student Training Record',

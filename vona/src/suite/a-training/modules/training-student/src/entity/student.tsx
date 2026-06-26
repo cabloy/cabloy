@@ -35,7 +35,7 @@ export interface IEntityOptionsStudent extends IDecoratorEntityOptions {}
 })
 export class EntityStudent extends EntityBase {
   @Api.field(
-    v.title($locale('Name')),
+    v.title($locale('StudentName')),
     v.required(),
     v.min(2),
     ZovaRender.order(1),

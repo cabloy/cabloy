@@ -13,7 +13,7 @@ export class DtoStudentSummary {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
 
-  @Api.field(v.title($locale('Name')))
+  @Api.field(v.title($locale('StudentName')))
   name: string;
 
   @Api.field(

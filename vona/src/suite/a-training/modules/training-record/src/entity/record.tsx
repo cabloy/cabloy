@@ -29,7 +29,7 @@ export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
 })
 export class EntityRecord extends EntityBase {
   @Api.field(
-    v.title($locale('Name')),
+    v.title($locale('TrainingRecordName')),
     v.required(),
     v.min(2),
     ZovaRender.order(1),
