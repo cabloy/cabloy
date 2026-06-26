@@ -31,11 +31,11 @@ export class EntitySubject extends EntityBase {
   @Api.field(v.required(), ZovaRender.visible(false))
   recordId: TableIdentity;
 
-  @Api.field(v.title($locale('Name')), v.required(), v.min(2), ZovaRender.order(1))
+  @Api.field(v.title($locale('SubjectName')), v.required(), v.min(2), ZovaRender.order(1))
   name: string;
 
-  @Api.field(v.title($locale('Score')), v.optional(), ZovaRender.order(2))
-  score?: number;
+  @Api.field(v.title($locale('SubjectScore')), v.required(), ZovaRender.order(2))
+  score: number;
 
   @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(3))
   description?: string;
