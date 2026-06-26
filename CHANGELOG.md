@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.70
+
+### Features
+
+- Improve CEL numeric formatting for training records.
+- Trigger `onEffect` callbacks for form fields.
+
+### Improvements
+
+- Add examples for CEL numeric formatting to the documentation.
+
 ## 5.1.69
 
 ### Features
