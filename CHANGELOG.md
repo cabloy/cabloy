@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.67
+
+### Features
+
+- Add nested training record subjects.
+- Update application features and workflows.
+
+### Bug Fixes
+
+- Clarify `Api.field` Zod schema ordering.
+
 ## 5.1.66
 
 ### Features
