@@ -313,10 +313,10 @@ setAppName();
 generateEnvProdLocal();
 generateEnvProdDockerLocal();
 cleanupWorkspaceYaml();
-initVona();
 initZova();
-initCabloyDocs();
 buildSsrCabloyBasicStartBatch();
+initVona();
+initCabloyDocs();
 writeVersionMarker();
 // eslint-disable-next-line
 console.log('[init] Done!');
