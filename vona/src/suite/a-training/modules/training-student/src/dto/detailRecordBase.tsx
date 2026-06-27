@@ -3,7 +3,7 @@ import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 import { $makeMetadata, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
-import { ModelRecord } from 'vona-module-training-record';
+import { ModelRecord, onEffectForTrainingRecordSubjects } from 'vona-module-training-record';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -17,6 +17,7 @@ export interface IDtoOptionsDetailRecordBase extends IDecoratorDtoOptions {}
       v.title($locale('TrainingRecordSubjects')),
       ZovaRender.order(8),
       ZovaRender.field('basic-details:formFieldDetails'),
+      ZovaRender.onEffect(onEffectForTrainingRecordSubjects),
       v.optional(),
     ),
   },
