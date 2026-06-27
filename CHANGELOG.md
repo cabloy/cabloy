@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.72
+
+### Features
+
+- Update training record subject effects.
+- Update related functionality.
+
 ## 5.1.71
 
 ### Features
