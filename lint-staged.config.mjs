@@ -1,3 +1,5 @@
+import { basename, isAbsolute, matchesGlob, relative, sep } from 'node:path';
+
 // Must stay in sync with oxfmt.config.ts ignorePatterns
 const OXFMT_IGNORE_PATTERNS = [
   // root original
@@ -40,53 +42,59 @@ const OXFMT_IGNORE_PATTERNS = [
   'zova/packages-cli/cli-set-front/cli/templates',
 ];
 
+function normalizeFilepath(filepath) {
+  const normalized = isAbsolute(filepath) ? relative(process.cwd(), filepath) : filepath;
+  return normalized.split(sep).join('/');
+}
+
+function matchesPathPattern(filepath, pattern) {
+  if (matchesGlob(filepath, pattern)) return true;
+  if (pattern.startsWith('**/')) {
+    const suffix = pattern.slice(3);
+    if (!/[*?]/.test(suffix)) {
+      return (
+        filepath === suffix || filepath.endsWith(`/${suffix}`) || filepath.includes(`/${suffix}/`)
+      );
+    }
+  }
+  if (!/[*?]/.test(pattern)) {
+    return filepath === pattern || filepath.startsWith(`${pattern}/`);
+  }
+  return false;
+}
+
 function isOxfmtIgnored(filepath) {
-  const parts = filepath.split('/');
-  const basename = parts.at(-1);
+  const normalized = normalizeFilepath(filepath);
+  const filename = basename(normalized);
   return OXFMT_IGNORE_PATTERNS.some(pattern => {
-    // basename-only patterns (e.g. *.min.js)
     if (!pattern.includes('/')) {
-      if (matchGlob(basename, pattern)) return true;
+      return matchesGlob(filename, pattern);
     }
-    // **/prefix patterns
-    if (pattern.startsWith('**/')) {
-      const suffix = pattern.slice(3);
-      for (let i = 0; i < parts.length; i++) {
-        if (matchGlob(parts[i], suffix)) return true;
-      }
-    }
-    // **/dir/** patterns
-    if (pattern.startsWith('**/') && pattern.endsWith('/**')) {
-      const dir = pattern.slice(3, -3);
-      if (parts.includes(dir)) return true;
-    }
-    // prefix/path patterns (no **)
-    if (!pattern.startsWith('**') && filepath.includes(pattern)) return true;
-    return false;
+    return matchesPathPattern(normalized, pattern);
   });
 }
 
-function matchGlob(name, pattern) {
-  const re = pattern
-    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*/g, '[^/]*')
-    .replace(/\?/g, '[^/]');
-  return new RegExp(`^${re}$`).test(name);
+function filterIgnored(filenames) {
+  return filenames.filter(filename => !isOxfmtIgnored(filename));
 }
 
-function filterIgnored(filenames) {
-  return filenames.filter(f => !isOxfmtIgnored(f));
+function joinShellArgs(filenames) {
+  return filenames.map(filename => JSON.stringify(filename)).join(' ');
+}
+
+function createOxfmtCommand(filenames) {
+  return `node scripts/run-oxfmt-safe.mjs ${joinShellArgs(filenames)}`;
 }
 
 export default {
   '*.{js,jsx,ts,tsx,vue,mjs,cjs}': filenames => {
     const filtered = filterIgnored(filenames);
     if (filtered.length === 0) return [];
-    return ['npm run lint:fix', `npm run format:fix -- ${filtered.join(' ')}`];
+    return ['npm run lint:fix', createOxfmtCommand(filtered)];
   },
   '*.{json,yaml,yml,md,css,scss,html}': filenames => {
     const filtered = filterIgnored(filenames);
     if (filtered.length === 0) return [];
-    return [`npm run format:fix -- ${filtered.join(' ')}`];
+    return [createOxfmtCommand(filtered)];
   },
 };
