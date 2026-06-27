@@ -176,7 +176,7 @@ export class LocalCommon {
     const bundles = await globby('*', { cwd: targetDir, onlyDirectories: true });
     for (const bundle of bundles) {
       const name = `zova-rest-${bundle}`;
-      devDependencies[name] = `file:./.zova-rest/${bundle}`;
+      devDependencies[name] = 'workspace:^';
     }
   }
 
@@ -203,7 +203,7 @@ export class LocalCommon {
         const isZovaRest = key.includes('zova-rest-');
         const isModule = key.includes('vona-module-') || key.includes('zova-module-');
         const isModuleWorkspace = isModule && version.startsWith('workspace:');
-        if (isZovaRest && version.includes('file:')) continue;
+        if (isZovaRest) continue;
         if (isModuleWorkspace) continue;
         // if (deps[key] && !isModule) continue;
         if (isModule) continue;

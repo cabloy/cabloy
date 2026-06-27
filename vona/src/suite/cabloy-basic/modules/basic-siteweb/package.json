@@ -9,8 +9,7 @@
   "files": [
     "assets",
     "dist",
-    "src",
-    "zovaRest"
+    "src"
   ],
   "type": "module",
   "exports": {

@@ -55,29 +55,16 @@ export class CliToolsDeps extends BeanCliBase {
   }
 
   async _generateZovaRest(projectPath: string) {
-    let needPnpmInstall = false;
     const targetDir = path.join(projectPath, '.zova-rest');
-    for (const module of this.modulesMeta.modulesArray) {
-      const moduleZovaRest = path.join(module.root, 'zovaRest');
-      if (!fse.existsSync(moduleZovaRest)) continue;
-      const bundles = await globby('*', { cwd: moduleZovaRest, onlyDirectories: true });
-      for (const bundle of bundles) {
-        const moduleZovaRestSrc = path.join(moduleZovaRest, bundle);
-        const moduleZovaRestDest = path.join(targetDir, bundle);
-        let needCopy = true;
-        if (fse.existsSync(moduleZovaRestDest)) {
-          const statDest = await fse.stat(path.join(moduleZovaRestDest, 'package.json'));
-          const statSrc = await fse.stat(path.join(moduleZovaRestSrc, 'package.json'));
-          // diff: 5s
-          if (statDest.mtimeMs + 5000 >= statSrc.mtimeMs) {
-            needCopy = false;
-          }
-        }
-        if (!needCopy) continue;
-        await fse.copy(moduleZovaRestSrc, moduleZovaRestDest, { preserveTimestamps: true });
-        needPnpmInstall = true;
-      }
+    if (!fse.existsSync(targetDir)) {
+      throw new Error(
+        'Zova REST workspace .zova-rest not found. Please run `npm run build:zova:admin` or `npm run build:zova:web` first.',
+      );
     }
-    return needPnpmInstall;
+    const bundles = await globby('*', { cwd: targetDir, onlyDirectories: true });
+    if (bundles.length > 0) return false;
+    throw new Error(
+      'No Zova REST bundles found in .zova-rest. Please run `npm run build:zova:admin` or `npm run build:zova:web` first.',
+    );
   }
 }

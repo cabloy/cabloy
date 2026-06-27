@@ -1,4 +1,5 @@
 packages:
+  - '.zova-rest/*'
   - 'packages-cli/*'
   - 'packages-utils/*'
   - 'packages-vona/*'

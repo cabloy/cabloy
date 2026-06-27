@@ -117,7 +117,7 @@ function writeVersionMarker(): void {
 
 function seedVonaZovaRestDependencies(pkgPath: string): void {
   // `package.original.json` intentionally keeps Vona close to a minimal bootstrap state.
-  // During `npm run init`, seed the generated `.zova-rest/*` file dependencies back into
+  // During `npm run init`, seed the generated `.zova-rest/*` workspace dependencies back into
   // `vona/package.json` before the first install so pnpm sees the `zova -> zova-core`
   // dependency chain and applies the workspace patch instead of reporting it as unused.
   const zovaRestDir = resolve(VONA_DIR, '.zova-rest');
@@ -130,7 +130,7 @@ function seedVonaZovaRestDependencies(pkgPath: string): void {
   for (const entry of readdirSync(zovaRestDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const depName = `zova-rest-${entry.name}`;
-    const depValue = `file:./.zova-rest/${entry.name}`;
+    const depValue = 'workspace:^';
     if (pkg.dependencies[depName] === depValue) continue;
     pkg.dependencies[depName] = depValue;
     changed = true;
