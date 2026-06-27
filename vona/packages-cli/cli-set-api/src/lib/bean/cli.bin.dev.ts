@@ -51,6 +51,7 @@ export class CliBinDev extends BeanCliBase {
         cwd: projectPath,
         exec: 'node',
         execArgs: [getImportEsm()],
+        ext: 'ts,tsx,json',
         // execArgs: ['--experimental-transform-types', getImportEsm(), '--trace-deprecation'],
         // signal: 'SIGHUP',
         watch: ['packages-utils', 'packages-vona', './src'],
