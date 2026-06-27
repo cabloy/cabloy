@@ -28,7 +28,7 @@ export const onEffectForTrainingRecordSubjects = (
       options={{
         name: 'totalScore',
         value: cel(
-          'sum(getValue("trainingRecordSubjects",[]).filter(item, get(item, "deleted")!=true).map(item, int(get(item, "score")==null ? 0 : get(item, "score"))))',
+          'sum(getValue("trainingRecordSubjects",[]).filter(item, get(item, "deleted")!=true).map(item, int(get(item, "score", 0))))',
         ),
       }}
     ></ZovaCommand>
