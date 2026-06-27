@@ -31,6 +31,13 @@ The actual conflict came from a smaller boundary:
 
 Once both declaration sets enter the same TypeScript program, merges can fail even though package resolution itself is behaving correctly.
 
+There is also a separate init-time hazard:
+
+- `vona/package.original.json` intentionally keeps a smaller bootstrap dependency set
+- the generated `.zova-rest/*` file dependencies are normally restored by `vona :tools:deps`
+- if `scripts/init.ts` restores `package.original.json` and runs `pnpm install` before those file dependencies are present, pnpm may not see any path to `zova-core`
+- in that state, `patchedDependencies` can fail with `ERR_PNPM_UNUSED_PATCH` even though a normal Vona working tree install would succeed
+
 ## Confirmed conflict shape
 
 The known collisions were between Vona source declarations and installed `zova-core` declarations on three surfaces.
@@ -202,6 +209,14 @@ cd vona && pnpm exec tsc -p tsconfig.json --noEmit
 ```
 
 If the patch was added while debugging `.zova-rest` consumption drift, also confirm the relevant generated package still resolves from Vona as expected.
+
+If the change touches `scripts/init.ts` or `vona/package.original.json`, also run root init:
+
+```bash
+npm run init
+```
+
+That catches the specific bootstrap-only case where `package.original.json` is restored first and the first Vona install must still see enough `.zova-rest` dependencies for the `zova-core` patch to be considered used.
 
 ## Related guidance
 

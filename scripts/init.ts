@@ -115,6 +115,32 @@ function writeVersionMarker(): void {
   console.log(`[init] Marked Cabloy version: ${version}`);
 }
 
+function seedVonaZovaRestDependencies(pkgPath: string): void {
+  // `package.original.json` intentionally keeps Vona close to a minimal bootstrap state.
+  // During `npm run init`, seed the generated `.zova-rest/*` file dependencies back into
+  // `vona/package.json` before the first install so pnpm sees the `zova -> zova-core`
+  // dependency chain and applies the workspace patch instead of reporting it as unused.
+  const zovaRestDir = resolve(VONA_DIR, '.zova-rest');
+  if (!existsSync(zovaRestDir)) return;
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as {
+    dependencies?: Record<string, string>;
+  };
+  pkg.dependencies ??= {};
+  let changed = false;
+  for (const entry of readdirSync(zovaRestDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const depName = `zova-rest-${entry.name}`;
+    const depValue = `file:./.zova-rest/${entry.name}`;
+    if (pkg.dependencies[depName] === depValue) continue;
+    pkg.dependencies[depName] = depValue;
+    changed = true;
+  }
+  if (!changed) return;
+  writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+  // eslint-disable-next-line
+  console.log('[init] Seeded Vona .zova-rest dependencies');
+}
+
 // --- Step 0: Set APP_NAME in .env files ---
 
 function setAppName(): void {
@@ -215,6 +241,7 @@ function initVona(): void {
   const pkgPath = resolve(VONA_DIR, 'package.json');
   // if (!existsSync(pkgPath)) {
   copyFileSync(resolve(VONA_DIR, 'package.original.json'), pkgPath);
+  seedVonaZovaRestDependencies(pkgPath);
   pnpmInstall(VONA_DIR);
   // }
   exec('npm run vona :tools:deps');
