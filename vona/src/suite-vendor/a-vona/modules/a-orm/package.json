@@ -34,7 +34,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "knex": "^3.2.9",
+    "knex": "^3.3.0",
     "table-identity": "workspace:^"
   },
   "devDependencies": {
