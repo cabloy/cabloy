@@ -83,7 +83,7 @@ importers:
         specifier: ^5.10.1
         version: 5.11.1(supports-color@5.5.0)
       knex:
-        specifier: ^3.2.9
+        specifier: ^3.3.0
         version: 3.3.0(better-sqlite3@12.11.1)
       luxon:
         specifier: ^3.7.2
@@ -2179,7 +2179,7 @@ importers:
   src/suite-vendor/a-vona/modules/a-orm:
     dependencies:
       knex:
-        specifier: ^3.2.9
+        specifier: ^3.3.0
         version: 3.3.0(better-sqlite3@12.11.1)
       table-identity:
         specifier: workspace:^
