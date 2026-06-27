@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.1.73
+
+### Features
+
+- Export the training record entity.
+- Update exposed functionality and related behavior.
+
+### Bug Fixes
+
+- Expand the `zova-core` type patch in `vona`.
+- Patch `zova-core` type augmentation in `vona`.
+- Watch `.tsx` file changes correctly in dev `nodemon`.
+
+### Improvements
+
+- Move the average score effect into the shared library.
+- Move the training record subject effect into the shared library.
+- Clarify `dtoClass` usage in DTO inference and master-detail documentation.
+- Add master-detail guidance and skill routing documentation.
+- Update tab rendering behavior.
+
 ## 5.1.72
 
 ### Features
