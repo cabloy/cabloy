@@ -153,7 +153,7 @@ export class LocalCommon {
     }
     _handleDeps('dependencies', deps);
     _handleDeps('devDependencies', depsDev);
-    // zovaRest
+    // zova rest workspace
     await this._generatePackageJson_pkgFromZovaRest(projectPath, pkgOriginal.dependencies);
     // save
     if (

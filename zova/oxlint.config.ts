@@ -49,7 +49,6 @@ export default defineConfig(
       'docker-compose',
       'package.json',
       'scripts',
-      'zovaRest',
       'assets',
       'vite.config.ts.timestamp-*',
       'dist-releases',

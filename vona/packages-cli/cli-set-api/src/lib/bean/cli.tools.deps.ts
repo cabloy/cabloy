@@ -20,7 +20,7 @@ export class CliToolsDeps extends BeanCliBase {
   }
 
   async _generate(projectPath: string) {
-    // generate zovaRest
+    // verify zova rest workspace
     const needPnpmInstall = await this._generateZovaRest(projectPath);
     // generate package.json
     const pnpmInstalled = await this.common._generatePackageJson(projectPath);

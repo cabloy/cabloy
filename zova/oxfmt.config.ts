@@ -15,7 +15,6 @@ export default defineConfig(
       'coverage',
       'docker-compose',
       'scripts',
-      'zovaRest',
       'assets',
       'vite.config.ts.timestamp-*',
       'quasar.config.ts.temporary.*',

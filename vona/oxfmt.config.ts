@@ -14,7 +14,6 @@ export default defineConfig(
       '.assets',
       'coverage',
       'docker-compose',
-      'zovaRest',
       'assets',
       '.app',
       '.claude',

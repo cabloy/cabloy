@@ -48,7 +48,6 @@ export default defineConfig(
       'coverage',
       'docker-compose',
       'package.json',
-      'zovaRest',
       'assets',
       'packages-cli/cli-set-api/cli/templates',
     ],

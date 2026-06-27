@@ -59,7 +59,6 @@ export default defineConfig(
       '**/src-cordova',
       '**/package.json',
       // vona-specific
-      '**/zovaRest',
       'vona/packages-cli/cli-set-api/cli/templates',
       // zova-specific
       'zova/packages-cli/cli-set-front/cli/templates',

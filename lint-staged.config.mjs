@@ -36,7 +36,6 @@ const OXFMT_IGNORE_PATTERNS = [
   '**/src-capacitor',
   '**/src-cordova',
   // vona-specific
-  '**/zovaRest',
   'vona/packages-cli/cli-set-api/cli/templates',
   // zova-specific
   'zova/packages-cli/cli-set-front/cli/templates',
