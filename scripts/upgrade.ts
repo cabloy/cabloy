@@ -36,6 +36,7 @@ const OVERWRITE_DIRS: string[] = [
   'vona/src/module-vendor',
   'vona/scripts',
   'vona/docker-compose-original',
+  'vona/patches',
   // zova
   'zova/packages-zova',
   'zova/packages-cli',
