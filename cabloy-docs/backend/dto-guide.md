@@ -148,7 +148,7 @@ A practical split is:
 - use inferred DTOs when the contract closely follows model structure or query shape
 - wrap inferred DTOs in a named DTO class when reuse or discoverability becomes more important
 
-For the inference side, see [DTO Infer and Generation](/backend/dto-infer-generation).
+Advanced inferred DTO shaping can also stay named and reusable through helper options such as `dtoClass`, especially for relation-aware contracts and nested DTO surfaces. For the inference side, see [DTO Infer and Generation](/backend/dto-infer-generation).
 
 ## Relationship to ORM and controller contracts
 

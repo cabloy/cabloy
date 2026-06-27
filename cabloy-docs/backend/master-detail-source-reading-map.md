@@ -111,6 +111,7 @@ A practical reading of the responsibilities is:
   - emits `detail*` DTO files into the master module `src/dto` folder
 - `_patchMasterDto`
   - patches `Create` / `Update` / `View` DTOs so the parent DTOs consume the sibling nested detail DTOs
+  - emits the current `include: { relationName: { dtoClass: DtoDetail... } }` wiring pattern instead of inlining long relation column lists in every parent DTO
 - `_refreshMetadata`
   - regenerates `.metadata/index.ts` for both modules so the nested detail DTOs appear in generated contract surfaces
 
@@ -134,7 +135,9 @@ What this sequence clarifies:
 
 - `student.ts` shows the `hasMany('training-record:record', 'studentId', ...)` ownership relation
 - `service/student.ts` shows the nested include lifecycle for create/view/update/delete
-- `studentCreate.tsx`, `studentUpdate.tsx`, and `studentView.tsx` show the parent DTOs consuming sibling nested detail DTOs
+- `studentCreate.tsx`, `studentUpdate.tsx`, and `studentView.tsx` show the parent DTOs consuming sibling nested detail DTOs through `dtoClass`-based `include` wiring
+- `detailRecordBase.tsx` shows the reusable detail field surface that the mutate/view/res-item DTO family can build on
+- `detailRecordMutate.tsx` and `detailRecordView.tsx` show that first-level nested detail DTOs can also repeat the same `dtoClass` pattern for deeper nested relations
 - `detailRecord*.tsx` shows the `detail*` naming convention for first-level nested detail DTOs
 - `.metadata/index.ts` confirms those nested detail DTOs are part of the generated contract registry
 - `entity/record.tsx` shows the detail-side FK persistence field that closes the aggregate thread
@@ -158,7 +161,7 @@ What this sequence clarifies:
 
 - `record.ts` shows that `record` is itself a parent through `trainingRecordSubjects: $relation.hasMany(...)`
 - `service/record.ts` shows the include lifecycle for the second-level nested detail collection
-- `recordCreate.tsx`, `recordUpdate.tsx`, and `recordView.tsx` show the immediate parent consuming sibling `detailRecordSubject*` DTOs
+- `recordCreate.tsx`, `recordUpdate.tsx`, and `recordView.tsx` show the immediate parent consuming sibling `detailRecordSubject*` DTOs through the same `dtoClass`-based include pattern
 - `detailRecordSubject*.tsx` proves the recursive `detail*` naming rule
 - `.metadata/index.ts` confirms second-level nested detail DTOs are also exported into generated contract surfaces
 

@@ -108,6 +108,8 @@ This is one of the strongest reasons Cabloy can express CRUD-oriented business f
 
 If the next question becomes specifically about aggregate-owned detail resources, nested-detail recursion, or nested detail DTO naming/placement, continue with [Master-Detail Workflow](/backend/master-detail-workflow).
 
+If the next question becomes how a relation-aware DTO should keep a reusable named field surface instead of only inline relation columns, continue with [DTO Infer and Generation](/backend/dto-infer-generation), especially the `dtoClass` guidance.
+
 ## `belongsToMany`
 
 `belongsToMany` models `n:n` relations through an intermediate model.

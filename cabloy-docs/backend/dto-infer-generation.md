@@ -239,6 +239,44 @@ A practical rule is:
 - keep inference inline when one action needs one contract shape only once
 - wrap the inferred DTO into a named DTO class when the same relation-aware shape becomes part of a reusable public contract
 
+## Use `dtoClass` to shape inferred fields
+
+When inferred DTOs should still follow a reusable named field surface, pass `dtoClass` to the helper options.
+
+This is useful when:
+
+- the inferred DTO should reuse a DTO class instead of exposing the full model field surface
+- a nested relation needs its own mutate/view contract class
+- a master-detail contract should stay relation-aware while the allowed fields remain curated and discoverable by name
+
+A practical rule is:
+
+- use `dtoClass` when the shaping should be reusable and named
+- use `columns` when the narrowing is simple and only needed once
+
+Representative specimen from `training-student`:
+
+```typescript
+export class DtoDetailRecordMutate extends $Dto.mutate(() => ModelRecord, {
+  dtoClass: DtoDetailRecordBase,
+  include: { trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectMutate } },
+}) {}
+```
+
+This pattern keeps model-aware and relation-aware inference, but takes the field truth from the provided DTO classes.
+
+In a master-detail flow, this usually means:
+
+- a base detail DTO such as `DtoDetailRecordBase` defines the reusable field surface for the owned detail
+- a parent contract such as `DtoStudentCreate` or `DtoStudentUpdate` includes the detail through `include: { trainingRecords: { dtoClass: DtoDetailRecordMutate } }`
+- a nested detail can repeat the same rule one level lower, such as `trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectMutate }`
+
+That separation is useful because the parent DTO keeps the aggregate relation wiring, while the detail DTO family owns which detail fields are actually exposed for create, update, or view.
+
+The nested relation case matters because `dtoClass` can also be applied inside `include`, not only at the top level.
+
+The test suite also shows the behavioral difference from a one-off `columns` selection: a relation-level `dtoClass` can act like a reusable named field subset instead of repeating inline column lists.
+
 ## Aggregate and group DTO inference
 
 Summary-oriented ORM queries often benefit from inferred DTOs because the result shape is driven by `aggrs`, `groups`, and relation configuration.

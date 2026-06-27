@@ -209,6 +209,20 @@ A practical recursive rule is:
 
 This placement makes the ownership path obvious at the point where nested editing is actually authored.
 
+## `dtoClass` in master-detail DTO wiring
+
+The nested DTO thread is not only about naming. The current scaffolded pattern also uses `dtoClass` so the parent DTO keeps aggregate relation wiring while the nested detail DTO class defines the reusable field surface.
+
+Representative pattern:
+
+- parent DTOs include nested details through `include: { relationName: { dtoClass: DtoDetail... } }`
+- detail DTO families such as `detailRecordBase`, `detailRecordMutate`, and `detailRecordView` define which detail fields are exposed for each scene
+- nested details can repeat the same `dtoClass` pattern recursively one level lower
+
+That is why master-detail DTOs do not need to inline long relation column lists everywhere. They can reuse named detail DTO classes instead.
+
+For a broader explanation of `dtoClass` as a DTO inference option, also read [DTO Infer and Generation](/backend/dto-infer-generation).
+
 ## Specimen walkthrough
 
 The current specimen maps like this.
