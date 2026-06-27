@@ -12,6 +12,29 @@ import { $locale } from '../.metadata/locales.ts';
 
 export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
 
+export const onEffectForTrainingRecordSubjects = (
+  <ZovaEvent>
+    <ZovaCommand
+      name="basic-commands:setValue"
+      options={{
+        name: 'subjectCount',
+        value: cel(
+          'int(getValue("trainingRecordSubjects",[]).filter(item, get(item, "deleted")!=true).size())',
+        ),
+      }}
+    ></ZovaCommand>
+    <ZovaCommand
+      name="basic-commands:setValue"
+      options={{
+        name: 'totalScore',
+        value: cel(
+          'sum(getValue("trainingRecordSubjects",[]).filter(item, get(item, "deleted")!=true).map(item, int(get(item, "score")==null ? 0 : get(item, "score"))))',
+        ),
+      }}
+    ></ZovaCommand>
+  </ZovaEvent>
+);
+
 const onEffectForAverageScore = (
   <ZovaEvent>
     <ZovaCommand

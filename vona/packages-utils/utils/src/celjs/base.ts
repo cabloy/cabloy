@@ -53,20 +53,20 @@ celEnvBase.registerOperator('bool == null', (b, n) => b === n);
 celEnvBase.registerFunction('get(map,string):dyn', (obj, name) => {
   return getProperty(obj, name) ?? null;
 });
-celEnvBase.registerFunction('get(map,string,string):dyn', (obj, name, sep) => {
-  return getProperty(obj, name, sep) ?? null;
+celEnvBase.registerFunction('get(map,string,dyn):dyn', (obj, name, defaultValue) => {
+  return getProperty(obj, name) ?? defaultValue;
 });
 celEnvBase.registerFunction('get(bool,string):dyn', (_obj, _name) => {
   return null;
 });
-celEnvBase.registerFunction('get(bool,string,string):dyn', (_obj, _name, _sep) => {
-  return null;
+celEnvBase.registerFunction('get(bool,string,dyn):dyn', (_obj, _name, defaultValue) => {
+  return defaultValue;
 });
 celEnvBase.registerFunction('get(null,string):dyn', (_obj, _name) => {
   return null;
 });
-celEnvBase.registerFunction('get(null,string,string):dyn', (_obj, _name, _sep) => {
-  return null;
+celEnvBase.registerFunction('get(null,string,dyn):dyn', (_obj, _name, defaultValue) => {
+  return defaultValue;
 });
 
 celEnvBase.registerFunction('exists(null,string):bool', (obj, name) => {

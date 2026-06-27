@@ -37,8 +37,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@cabloy/utils':
-        specifier: ^2.1.23
-        version: 2.1.23
+        specifier: ^2.1.24
+        version: 2.1.24
       '@cabloy/vue-router':
         specifier: ^4.4.16
         version: 4.4.16(vue@3.5.38(typescript@5.9.3))
@@ -133,7 +133,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.65
+        specifier: ^1.1.66
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -308,8 +308,8 @@ importers:
         version: link:src/suite/a-training/modules/training-student
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.24
-        version: 3.1.24(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))
+        specifier: ^3.1.25
+        version: 3.1.25(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.27
         version: 5.1.30(@typescript-eslint/eslint-plugin@8.62.0(@typescript-eslint/parser@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.62.0(typescript@5.9.3))(@typescript-eslint/utils@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.5.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.71.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.5.0(jiti@2.7.0)))
@@ -1961,9 +1961,6 @@ packages:
   '@bufbuild/protobuf@2.12.1':
     resolution: {integrity: sha512-BvAMfS6LrgZiryOAZ4pBYucu4wG/Ei/9o9DZ9akbREnMLbPJiom2i8b9C8IsKErQoiKqVhrerzt3kOT/RrzLHg==}
 
-  '@cabloy/cli@3.1.24':
-    resolution: {integrity: sha512-1UPQFGxX/677O+7cnSG40XfTMmfVk+Id+1kITaw5Eb5Z20L6LadbQrLb4xQ5AOg5Vhgd4xv93PaC2Xmqx5B0Ag==}
-
   '@cabloy/cli@3.1.25':
     resolution: {integrity: sha512-T5MwXUYBK+T998jpuXB43FCzWgwp6lThgYKuOMfeSIJsopXs4W4od6kDyO2HlE/qtbamI+ss8H78Im/MCqpHyA==}
 
@@ -1994,9 +1991,6 @@ packages:
 
   '@cabloy/localeutil@2.1.8':
     resolution: {integrity: sha512-haHUf245W2hmMrTw4UE23kOLcCPFj3XYWkjVYA643C/qhSGD7/ztMPf0VQL/AvmDnvIsjvKWdt79M4vjgOyD/A==}
-
-  '@cabloy/module-glob@5.3.14':
-    resolution: {integrity: sha512-JOR7KOmPzxSrn+jo3fhLSHsnr2efPCGm+wkZGLsaT12JgnIamgbAS+zNI3LaoJXzB/FUHw9WZ/DaK4DldCCxrg==}
 
   '@cabloy/module-glob@5.3.15':
     resolution: {integrity: sha512-oAEXOcM2/VKC03knfK8XoVOHTweW4E9rNmnGyDRfUYOb9dxEJx3C9PZyUt/1mdL5l13iZDbLw4tE+4d5QYH8Kg==}
@@ -2052,9 +2046,6 @@ packages:
 
   '@cabloy/socket@2.1.9':
     resolution: {integrity: sha512-iuqHddhxlQBg/bftoFPX5iTzELYEkPfm1DLC7YJX+qUvU3rO99EilAmqimpMTVbZNOM4d1Fa2+xgdKoNVDd9cA==}
-
-  '@cabloy/utils@2.1.23':
-    resolution: {integrity: sha512-9aa9EGklQHWqCT1eHMqEDiaCqAQ9QB8HDz0UWDUe+zmLt2eM51ODzWOJoX8NFqZJ8JzmtIRX8wmWoEwwj5r2+A==}
 
   '@cabloy/utils@2.1.24':
     resolution: {integrity: sha512-z3yQBFIB3g3wK3H1LzdsyBpebHVPR3f2DR7Ic8U6EOPv7lNMx7Q3n1MiCOFIO/oRr2QLVmDSXNjekKaLJhy5LA==}
@@ -8198,34 +8189,6 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@cabloy/cli@3.1.24(supports-color@10.2.2)(vue@3.5.38(typescript@5.9.3))':
-    dependencies:
-      '@babel/parser': 7.29.7
-      '@cabloy/module-glob': 5.3.14
-      '@cabloy/module-info': 2.0.0
-      '@cabloy/process-helper': 3.1.8
-      '@cabloy/utils': 2.1.23
-      '@cabloy/word-utils': link:packages-utils/word-utils
-      '@npmcli/config': 10.11.0
-      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
-      '@zhennann/ejs': 3.0.1
-      boxen: 4.2.0
-      chalk: 3.0.0
-      cli-table3: 0.6.5
-      deep-equal: 2.2.3
-      enquirer: 2.4.1
-      fs-extra: 11.3.5
-      globby: 16.2.0
-      gogocode: 1.0.55(vue@3.5.38(typescript@5.9.3))
-      is-type-of: 2.2.0
-      istextorbinary: 3.3.0
-      semver: 7.8.5
-      tmp: 0.2.7
-      urllib: 4.9.0
-    transitivePeerDependencies:
-      - supports-color
-      - vue
-
   '@cabloy/cli@3.1.25(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.7
@@ -8235,7 +8198,7 @@ snapshots:
       '@cabloy/utils': 2.1.24
       '@cabloy/word-utils': link:packages-utils/word-utils
       '@npmcli/config': 10.11.0
-      '@zhennann/common-bin': 4.0.1(supports-color@10.2.2)
+      '@zhennann/common-bin': 4.0.1
       '@zhennann/ejs': 3.0.1
       boxen: 4.2.0
       chalk: 3.0.0
@@ -8305,16 +8268,6 @@ snapshots:
       - vue-eslint-parser
 
   '@cabloy/localeutil@2.1.8': {}
-
-  '@cabloy/module-glob@5.3.14':
-    dependencies:
-      '@cabloy/module-info': 2.0.0
-      '@cabloy/utils': 2.1.23
-      boxen: 4.2.0
-      chalk: 3.0.0
-      fs-extra: 11.3.5
-      globby: 16.2.0
-      semver: 7.8.5
 
   '@cabloy/module-glob@5.3.15':
     dependencies:
@@ -8412,13 +8365,6 @@ snapshots:
       vue: 3.5.38(typescript@5.9.3)
 
   '@cabloy/socket@2.1.9': {}
-
-  '@cabloy/utils@2.1.23':
-    dependencies:
-      '@cabloy/module-info': 2.0.0
-      '@cabloy/word-utils': link:packages-utils/word-utils
-      '@marcbachmann/cel-js': 7.6.1
-      object-hash: 3.0.0
 
   '@cabloy/utils@2.1.24':
     dependencies:
@@ -10272,7 +10218,7 @@ snapshots:
 
   '@vue/shared@3.5.13': {}
 
-  '@zhennann/common-bin@4.0.1(supports-color@10.2.2)':
+  '@zhennann/common-bin@4.0.1':
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
