@@ -122,8 +122,8 @@ export class RenderTabs extends BeanRenderBase {
   public getTabItemIcon(tabItem: IRouteViewRouteItem): keyof IIconRecord | '' {
     const { pageMeta } = tabItem;
     if (pageMeta?.pageDirty) return '::asterisk';
-    if (pageMeta?.formMeta?.formScene === 'create') return '::draft-add';
-    if (pageMeta?.formMeta?.formScene === 'edit') return '::draft-edit';
+    if (pageMeta?.formMeta?.formScene === 'create') return '::add';
+    if (pageMeta?.formMeta?.formScene === 'edit') return '::edit';
     return '';
   }
 
