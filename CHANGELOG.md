@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.71
+
+### Features
+
+- Improve CEL default value handling.
+- Update published functionality.
+
+### Improvements
+
+- Harden ignored-file handling in lint-staged.
+- Normalize `commandssync` metadata formatting.
+- Add a schema-driven field effects guide.
+
 ## 5.1.70
 
 ### Features
