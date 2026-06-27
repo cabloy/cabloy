@@ -1,42 +1,15 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { cel } from '@cabloy/utils';
-import React from 'react';
 import { $makeMetadata, $resourceName, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import z from 'zod';
-import { ZovaCommand, ZovaEvent, ZovaRender } from 'zova-rest-cabloy-basic-admin';
+import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { onEffectForAverageScore } from '../lib/onEffectForAverageScore.tsx';
 
 export interface IEntityOptionsRecord extends IDecoratorEntityOptions {}
-
-const onEffectForAverageScore = (
-  <ZovaEvent>
-    <ZovaCommand
-      name="basic-commandssync:expr"
-      res="subjectCount"
-      options={{
-        expression: cel('int(getValue("subjectCount",0))'),
-      }}
-    ></ZovaCommand>
-    <ZovaCommand
-      name="basic-commandssync:expr"
-      res="totalScore"
-      options={{
-        expression: cel('int(getValue("totalScore",0))'),
-      }}
-    ></ZovaCommand>
-    <ZovaCommand
-      name="basic-commands:setValue"
-      options={{
-        name: 'averageScore',
-        value: cel('subjectCount==0 ? "" : toFixed(double(totalScore) / double(subjectCount), 2)'),
-      }}
-    ></ZovaCommand>
-  </ZovaEvent>
-);
 
 @Entity<IEntityOptionsRecord>('trainingRecord', {
   openapi: { title: $locale('TrainingRecord') },
