@@ -56,6 +56,8 @@ const __dialectDriversAll = [
   'pg',
   'mysql2',
   'better-sqlite3',
+  'mariadb/callback',
+  'mariadb',
   'mysql',
   'oracledb',
   'pg-native',

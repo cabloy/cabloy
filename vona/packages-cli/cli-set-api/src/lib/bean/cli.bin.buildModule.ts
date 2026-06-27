@@ -56,6 +56,8 @@ export class CliBinBuildModule extends BeanCliBase {
     const aliasEntries: aliasImport.Alias[] = [];
     for (const name of [
       'better-sqlite3',
+      'mariadb/callback',
+      'mariadb',
       'mysql',
       'oracledb',
       'pg-native',
