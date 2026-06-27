@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.74
+
+### Features
+
+- Update related functionality and project components.
+
+### Bug Fixes
+
+- Alias MariaDB drivers correctly in the Vona build.
+- Reorder initialization to bootstrap Zova REST before other startup steps.
+- Seed Vona Zova REST dependencies before running the initial install.
+
+### Improvements
+
+- Align Zova REST workspace naming.
+- Streamline the Zova REST workspace flow.
+
 ## 5.1.73
 
 ### Features
