@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.75
+
+### Improvements
+
+- Update `upgrade.ts` to refine upgrade-related behavior.
+
 ## 5.1.74
 
 ### Features
