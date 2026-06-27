@@ -49,3 +49,6 @@ allowBuilds:
   esbuild: true
   msgpackr-extract: true
   vue-demi: true
+
+patchedDependencies:
+  zova-core@5.1.61: patches/zova-core@5.1.61.patch
