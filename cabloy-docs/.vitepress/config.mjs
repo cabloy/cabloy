@@ -266,6 +266,11 @@ export default defineConfig({
             { text: 'ORM Mutation Guide', link: '/backend/orm-mutation-guide' },
             { text: 'ORM Aggregate and Group Guide', link: '/backend/orm-aggregate-group-guide' },
             { text: 'Relations Guide', link: '/backend/relations-guide' },
+            { text: 'Master-Detail Workflow', link: '/backend/master-detail-workflow' },
+            {
+              text: 'Master-Detail Source Reading Map',
+              link: '/backend/master-detail-source-reading-map',
+            },
             { text: 'Transaction Guide', link: '/backend/transaction-guide' },
           ],
         },

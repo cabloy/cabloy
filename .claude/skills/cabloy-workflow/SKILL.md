@@ -1,6 +1,6 @@
 ---
 name: cabloy-workflow
-description: Use this skill first when a Cabloy request is about choosing the right path before implementation: whether the work belongs to Vona backend scaffolding, Zova frontend scaffolding, backend/frontend contract sync, or docs, .docs-internal, CLAUDE.md, commands, or skills; which Cabloy Basic or Cabloy Start assumptions apply; or where Cabloy guidance should live. Trigger on requests that ask to route, classify, choose a workflow, choose an edition-specific path, or decide between docs, rules, and skills. Do not use it once the task is already clearly a backend scaffold, frontend scaffold, or contract-loop job.
+description: This skill should be used when the main Cabloy problem is workflow routing before implementation: deciding between Vona backend scaffolding, Zova frontend scaffolding, contract-loop work, or docs/AI-enablement homes such as cabloy-docs, .docs-internal, CLAUDE.md, commands, or skills, including cases where Cabloy Basic vs Cabloy Start assumptions affect that routing. Trigger on requests to route, classify, choose a workflow, choose an edition-specific path, or decide where Cabloy guidance should live. Do not use it once the task is already clearly a backend scaffold, frontend scaffold, or contract-loop job.
 ---
 
 # Cabloy Workflow
@@ -175,6 +175,8 @@ Use `.claude/skills/` for:
 - edition-aware decision trees
 - CLI-first orchestration paths
 - future bundled references or deterministic helper scripts
+
+When the request is specifically about master-detail or nested-detail aggregate scaffolding, aggregate-owned detail resources, `:tools:masterDetail`, or nested detail DTO naming/placement in a scaffolding context, route to the dedicated `cabloy-master-detail` skill instead of treating it as generic backend scaffolding.
 
 ### Class-placement questions
 

@@ -106,6 +106,8 @@ await this.scope.model.order.update(
 
 This is one of the strongest reasons Cabloy can express CRUD-oriented business flows compactly.
 
+If the next question becomes specifically about aggregate-owned detail resources, nested-detail recursion, or nested detail DTO naming/placement, continue with [Master-Detail Workflow](/backend/master-detail-workflow).
+
 ## `belongsToMany`
 
 `belongsToMany` models `n:n` relations through an intermediate model.

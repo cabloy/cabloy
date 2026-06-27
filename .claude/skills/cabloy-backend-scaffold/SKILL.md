@@ -1,6 +1,6 @@
 ---
 name: cabloy-backend-scaffold
-description: Use this skill whenever the user wants the Vona backend path in this Cabloy repo: scaffold or extend modules, beans, controllers, services, models, entities, DTOs, CRUD resources, migrations, indexes, validation, OpenAPI-facing backend files, or backend tests. Trigger for questions about which npm run vona generator or CRUD command to use and what backend follow-up is required after generation, especially when the user mentions create:bean, CRUD, meta.version, field indexes, DTOs, or tests. Prefer it for backend-first requests, even if they may later require frontend contract regeneration. Do not use it for frontend-first Zova work or stale generated consumer diagnosis.
+description: This skill should be used when the user needs the Vona backend scaffold/extend path in this Cabloy repo, especially to choose the right `npm run vona` generator or CRUD command and the required backend follow-up after generation. Trigger most strongly on backend requests involving modules, beans, controllers, services, models, entities, DTOs, CRUD, meta.version, field indexes, validation, or backend tests. Do not use it for frontend-first Zova work, stale generated consumer diagnosis, workflow-routing questions, or master-detail / nested-detail aggregation workflows that belong in `cabloy-master-detail`.
 ---
 
 # Cabloy Backend Scaffold
@@ -39,6 +39,8 @@ Default to backend-first. Only escalate mentally to a broader fullstack workflow
 If the user is still deciding a new business-domain boundary or suite/module naming, use the root `cabloy-domain-planning` skill before scaffolding.
 
 If the task is really a broad cross-stack workflow, consider whether the root `cabloy-workflow` skill is the better primary router.
+
+If the request is not ordinary standalone backend scaffolding but a parent-owned detail aggregation workflow, such as master-detail, nested-detail, aggregate-only detail, standalone-capable detail, or `:tools:masterDetail`, prefer the dedicated `cabloy-master-detail` skill first.
 
 ## Step 2: Start from Vona CLI and repo entrypoints
 
