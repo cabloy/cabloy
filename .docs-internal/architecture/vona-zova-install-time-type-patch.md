@@ -26,14 +26,18 @@ The actual conflict came from a smaller boundary:
 - Vona imports `zova-rest-cabloy-basic-admin` / `zova-rest-cabloy-basic-web`
 - those generated packages import `zova`
 - `zova` re-exports `zova-core`
-- `zova-core` contributes a global `Error` augmentation
-- Vona also contributes its own global `Error` augmentation
+- `zova-core` contributes several global or shared-surface augmentations
+- Vona contributes its own backend-specific augmentations on some of the same surfaces
 
-Once both declarations enter the same TypeScript program, `interface Error` merges and can fail with incompatible property types.
+Once both declaration sets enter the same TypeScript program, merges can fail even though package resolution itself is behaving correctly.
 
 ## Confirmed conflict shape
 
-The known collision was between:
+The known collisions were between Vona source declarations and installed `zova-core` declarations on three surfaces.
+
+### 1. Global `Error`
+
+Collision between:
 
 - `vona/packages-vona/vona-core/src/lib/bean/resource/error/errorGlobal.ts`
 - installed `zova-core/dist/bean/resource/error/errorGlobal.d.ts`
@@ -43,14 +47,45 @@ The conflicting fields were:
 - `Error.code`
 - `Error.status`
 
-The critical point is not package precedence. The issue is that both packages augment the same global interface inside one TS program.
+### 2. `NodeJS.ProcessEnv`
+
+Collision between:
+
+- `vona/packages-vona/vona-core/src/types/utils/env.ts`
+- installed `zova-core/dist/types/utils/env.d.ts`
+
+The conflicting fields included:
+
+- `NODE_ENV`
+- `META_FLAVOR`
+- `META_MODE`
+
+This produced downstream mode-comparison errors because Zova's frontend-side environment mode types are not the same as Vona's backend-side environment mode types.
+
+### 3. `@cabloy/module-info` module augmentation
+
+Collision between:
+
+- `vona/packages-vona/vona-core/src/types/interface/module.ts`
+- installed `zova-core/dist/types/interface/module.d.ts`
+
+Both sides augment `@cabloy/module-info`, but they attach different `resource`, `Main`, `Monkey`, and monkey-lifecycle expectations.
+
+That mismatch produced follow-on errors involving:
+
+- `IModule.resource`
+- `IModuleMain`
+- monkey lifecycle methods such as `configLoaded`
+- backend code expecting `VonaApplication`-oriented module config types while Zova expects `ZovaSys`
+
+The critical point is still not package precedence. The issue is that both packages augment the same shared interfaces inside one TS program.
 
 ## Current fix boundary
 
 The current repository rule is:
 
 - keep the `zova-rest-* -> zova -> zova-module-*` type chain intact for backend consumers
-- remove only the specific installed `zova-core` global `Error` augmentation from the Vona workspace
+- remove only the specific installed `zova-core` augmentations that collide with Vona's backend declaration surfaces
 
 That boundary is implemented as a pnpm patch in the Vona workspace.
 
@@ -64,17 +99,24 @@ The patch file currently lives at:
 
 - `vona/patches/zova-core@5.1.61.patch`
 
-The patch rewrites the installed declaration file:
+The patch currently rewrites three installed declaration files:
 
 - `zova-core/dist/bean/resource/error/errorGlobal.d.ts`
+- `zova-core/dist/types/utils/env.d.ts`
+- `zova-core/dist/types/interface/module.d.ts`
 
-from a global `Error` augmentation to a no-op module:
+The current behavior is:
+
+- replace `errorGlobal.d.ts` with a no-op module:
 
 ```ts
 export {};
 ```
 
-This keeps the rest of the `zova-core` and `zova-module-*` declaration graph available while removing the one known global collision.
+- remove the `NodeJS.ProcessEnv` global augmentation from `env.d.ts`
+- remove the `declare module '@cabloy/module-info'` augmentation from `module.d.ts`
+
+This keeps the rest of the `zova-core` and `zova-module-*` declaration graph available while removing the known Vona-colliding augmentations.
 
 ## Why the patch lives in `pnpm-workspace.yaml`
 
@@ -94,7 +136,7 @@ If future pnpm behavior changes again, verify the supported config home before a
 This patch is acceptable because it is:
 
 - workspace-scoped to Vona
-- narrowly targeted at one installed declaration file
+- narrowly targeted at a small set of installed declaration files proven to collide with Vona
 - preserving the existing fullstack type-flow instead of replacing it with a facade
 
 It should not be treated as proof that broad manual patching of generated or installed types is the normal workflow.
@@ -106,11 +148,15 @@ The patch key is version-specific.
 If `zova-core` changes version:
 
 1. inspect the installed declaration graph again
-2. confirm whether `dist/bean/resource/error/errorGlobal.d.ts` still exists and still contributes the same global augmentation
+2. confirm whether these files still exist and still contribute the same conflicting augmentations:
+   - `dist/bean/resource/error/errorGlobal.d.ts`
+   - `dist/types/utils/env.d.ts`
+   - `dist/types/interface/module.d.ts`
 3. regenerate or update the patch file for the new version
 4. rerun Vona typecheck
+5. rerun the root `npm run tsc` check, because some conflicts only surface when the full root workflow drives both Zova and Vona checks together
 
-Do not assume a version bump preserves the same patch target path.
+Do not assume a version bump preserves the same patch target paths or the same collision set.
 
 ### 3. Keep the patch as small as possible
 
@@ -132,9 +178,12 @@ When the patch must be refreshed, the representative flow is:
 cd vona
 pnpm patch zova-core@<version>
 # edit dist/bean/resource/error/errorGlobal.d.ts to: export {};
+# remove the NodeJS.ProcessEnv augmentation from dist/types/utils/env.d.ts
+# remove the @cabloy/module-info augmentation from dist/types/interface/module.d.ts
 pnpm patch-commit <edit-dir>
 pnpm install
 pnpm exec tsc -p tsconfig.json --noEmit
+npm run tsc
 ```
 
 After regenerating the patch:
@@ -142,6 +191,7 @@ After regenerating the patch:
 - confirm `vona/pnpm-workspace.yaml` still points at the correct patch file
 - confirm `vona/pnpm-lock.yaml` records the patched dependency
 - confirm Vona typecheck still passes
+- confirm the root `npm run tsc` workflow still passes
 
 ## Verification rule
 

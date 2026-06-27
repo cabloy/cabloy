@@ -16,7 +16,7 @@ overrides:
   zod: npm:@cabloy/zod@4.3.8
 
 patchedDependencies:
-  zova-core@5.1.61: 2859634eb120ca9b53ec4d6c3bb85273e5a34a6f19bd772594ee5adb1c7c788d
+  zova-core@5.1.61: 0f4164c4d2bbb16d671beb5c26759dff37769be0709df941bc7b90b94261ac54
 
 importers:
 
@@ -12951,7 +12951,7 @@ snapshots:
     dependencies:
       zod: '@cabloy/zod@4.3.8'
 
-  zova-core@5.1.61(patch_hash=2859634eb120ca9b53ec4d6c3bb85273e5a34a6f19bd772594ee5adb1c7c788d)(typescript@5.9.3):
+  zova-core@5.1.61(patch_hash=0f4164c4d2bbb16d671beb5c26759dff37769be0709df941bc7b90b94261ac54)(typescript@5.9.3):
     dependencies:
       '@cabloy/compose': link:packages-utils/compose
       '@cabloy/extend': link:packages-utils/extend
@@ -12987,7 +12987,7 @@ snapshots:
       '@cabloy/word-utils': 2.1.14
       typestyle: 2.4.0
       vue: 3.5.39(typescript@5.9.3)
-      zova-core: 5.1.61(patch_hash=2859634eb120ca9b53ec4d6c3bb85273e5a34a6f19bd772594ee5adb1c7c788d)(typescript@5.9.3)
+      zova-core: 5.1.61(patch_hash=0f4164c4d2bbb16d671beb5c26759dff37769be0709df941bc7b90b94261ac54)(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -13204,7 +13204,7 @@ snapshots:
 
   zova@5.1.118(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
     dependencies:
-      zova-core: 5.1.61(patch_hash=2859634eb120ca9b53ec4d6c3bb85273e5a34a6f19bd772594ee5adb1c7c788d)(typescript@5.9.3)
+      zova-core: 5.1.61(patch_hash=0f4164c4d2bbb16d671beb5c26759dff37769be0709df941bc7b90b94261ac54)(typescript@5.9.3)
       zova-suite-a-zova: 5.1.117(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
