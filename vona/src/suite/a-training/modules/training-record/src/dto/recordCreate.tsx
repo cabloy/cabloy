@@ -6,7 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
-import { onEffectForTrainingRecordSubjects } from '../entity/record.tsx';
+import { onEffectForTrainingRecordSubjects } from '../lib/onEffectForTrainingRecordSubjects.tsx';
 import { ModelRecord } from '../model/record.ts';
 import { DtoDetailRecordSubjectMutate } from './detailRecordSubjectMutate.tsx';
 import { DtoDetailRecordSubjectResItem } from './detailRecordSubjectResItem.tsx';
