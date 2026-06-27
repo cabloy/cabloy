@@ -20,6 +20,19 @@ describe('celjs.test.ts', () => {
       // array
       assert.deepEqual(evaluateExpressions(cel('concat(1,[2,3],4)')), [1, 2, 3, 4]);
       assert.deepEqual(evaluateExpressions(cel('join(concat(1,[2,3],4),"_")')), '1_2_3_4');
+      assert.equal(evaluateExpressions(cel('sum([1,2,3])')), 6);
+      assert.equal(evaluateExpressions(cel('sum([1,2,null,3])')), 6);
+      assert.equal(
+        evaluateExpressions(
+          cel(
+            'sum(items.filter(item, get(item, "score")!=null).map(item, int(get(item, "score"))))',
+          ),
+          {
+            items: [{ score: 1 }, { score: '2' }, { other: 3 }, { score: null }],
+          },
+        ),
+        3,
+      );
       // string
       assert.equal(evaluateExpressions(cel('string(null)')), 'null');
       assert.equal(evaluateExpressions(cel('toFixed(3.14159,2)')), '3.14');

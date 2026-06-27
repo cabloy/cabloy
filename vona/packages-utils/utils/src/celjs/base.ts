@@ -21,6 +21,9 @@ celEnvBase.registerFunction('join(list):string', list => {
 celEnvBase.registerFunction('join(list,string):string', (list, sep) => {
   return _join(list, sep);
 });
+celEnvBase.registerFunction('sum(list):int', list => {
+  return _sum(list);
+});
 
 // string
 celEnvBase.registerFunction('string(null):string', value => {
@@ -88,6 +91,14 @@ function _concat(...args: any[]): any[] {
 function _join(list?: [], sep?: string): string {
   if (!list) return '';
   return list.join(sep);
+}
+
+function _sum(list?: []): bigint {
+  if (!list || list.length === 0) return 0n;
+  return list.reduce((acc, item) => {
+    if (item === null || item === undefined) return acc;
+    return acc + BigInt(item as number | string | bigint);
+  }, 0n);
 }
 
 function _toFixed(value: number | bigint, precision: number | bigint): string {
