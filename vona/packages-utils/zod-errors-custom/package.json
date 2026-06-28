@@ -44,7 +44,8 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@cabloy/word-utils": "^2.1.8"
+    "@cabloy/word-utils": "^2.1.8",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
