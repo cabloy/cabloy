@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.86
+
+### Bug Fixes
+
+- Commit rerun lockfile residue before performing a compensation rerun.
+
+### Improvements
+
+- Bump `zova-core` to `v5.1.73`.
+- Refresh the Vona `zova-core` patch for `v5.1.72`.
+
 ## 5.1.85
 
 ### Bug Fixes
