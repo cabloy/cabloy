@@ -55,4 +55,5 @@ allowBuilds:
   '@parcel/watcher': true
   '@zhennann/ejs': true
   esbuild: true
+  micromark: true
   vue-demi: true

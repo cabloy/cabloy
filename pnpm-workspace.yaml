@@ -1,2 +1,3 @@
 allowBuilds:
+  micromark: true
   nx: true
