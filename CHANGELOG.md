@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.83
+
+### Bug Fixes
+
+- Automate refresh of the zova-core compensation graph.
+- Harden zova-core compensation rollback handling.
+
 ## 5.1.81
 
 ### Improvements
