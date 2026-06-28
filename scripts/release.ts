@@ -552,6 +552,18 @@ function rerunPatchReleaseAfterCompensation(noAi?: boolean, dryRun?: boolean): v
   const noAiFlag = noAi ? ' --no-ai' : '';
   // eslint-disable-next-line
   console.log('\n🚀 Running the compensation patch release...');
+  const rerunStageTargets = ['zova/pnpm-lock.yaml'];
+  exec(`git add ${rerunStageTargets.join(' ')}`, dryRun);
+  if (!dryRun) {
+    const staged = execSync(`git diff --cached --name-only -- ${rerunStageTargets.join(' ')}`, {
+      cwd: ROOT_DIR,
+      encoding: 'utf-8',
+    }).trim();
+    if (staged) {
+      exec('git commit -m "chore: refresh zova lockfile after compensation rerun prep"', dryRun);
+      exec('git push', dryRun);
+    }
+  }
   execInherited(`node "${RELEASE_SCRIPT_PATH}" patch --skip-compensation${noAiFlag}`, dryRun);
 }
 
