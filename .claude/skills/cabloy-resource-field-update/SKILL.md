@@ -9,12 +9,12 @@ Use this skill when the user wants to change a field on an existing Vona backend
 
 ## Important recovery note for stale generated consumers
 
-When generated `.zova-rest` output already contains the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local file-dependency installation problem rather than a source-editing problem.
+When the generated `.zova-rest` artifacts already contain the expected new keys or types but Vona still sees stale consumer types, treat that first as a local dependency drift problem rather than a source-editing problem.
 
 In that situation:
 
-1. run the normal sync flow such as `deps:vona`
-2. if the stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
+1. run the normal sync flow, including the relevant Zova build first and then `npm run deps:vona`
+2. if the generated `.zova-rest` artifacts already contain the expected changes but the stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
 
 Keep this recovery rule visible during renderer-aware or contract-loop follow-up work. Do not keep debugging source-level renderer registrations until the local file-package installation state is known to be healthy.
 

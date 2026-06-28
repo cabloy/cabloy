@@ -162,9 +162,9 @@ Then diagnose **generated-output drift**:
 
 Examples:
 
-- generated `.zova-rest` output already contains the new keys or types
-- generated SDK already contains the new method
-- backend or frontend still behaves as if old local file packages are installed
+- the generated `.zova-rest` artifacts already contain the new keys or types
+- the generated SDK already contains the new method
+- backend or frontend still sees stale consumers after the normal sync flow
 
 Then suspect **local dependency drift**:
 

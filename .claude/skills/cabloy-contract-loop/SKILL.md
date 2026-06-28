@@ -11,7 +11,7 @@ Read the public [Contract Loop Playbook](../../../cabloy-docs/fullstack/contract
 
 ## Important recovery note for stale local file consumers
 
-When generated `.zova-rest` output or other generated consumer artifacts already contain the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local dependency drift problem rather than a source-editing problem.
+When the generated `.zova-rest` artifacts or other generated consumer artifacts already contain the expected new keys or types but Vona still sees stale consumer types, treat that first as a local dependency drift problem rather than a source-editing problem.
 
 This includes the reverse fullstack direction where newly added frontend resources such as custom renderers are later consumed by backend metadata.
 

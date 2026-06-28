@@ -89,11 +89,11 @@ Confirm:
 
 If all of these are true:
 
-- generated `.zova-rest` files already contain the new renderer keys
-- `deps:vona` was run
-- Vona still behaves as if old renderer types are installed
+- the generated `.zova-rest` artifacts already contain the new renderer keys
+- `npm run deps:vona` was run after the relevant Zova build
+- Vona still sees stale renderer types
 
-Then suspect a stale or unhealthy local installation state in `vona/node_modules`.
+Then treat it as local dependency drift and suspect a stale or unhealthy local installation state in `vona/node_modules`.
 
 Recovery action:
 

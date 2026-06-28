@@ -234,7 +234,7 @@ function buildMessages(filePath: string, result: AnalysisResult): string {
 
   if (result.reverseReason) {
     messages.push(
-      `Reverse chain: ${result.reverseReason} If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, then run \`npm run build:zova:admin\` and \`npm run deps:vona\` for the Cabloy Basic Admin path.`,
+      `Reverse chain: ${result.reverseReason} If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, run the relevant Zova build first, and then run \`npm run deps:vona\` for the Cabloy Basic path. Use \`npm run build:zova:admin\` for Admin changes, and also run \`npm run build:zova:web\` when the Web flavor is affected.`,
     );
     if (isHighConfidenceReverseSource(filePath)) {
       if (shouldSkipAutoSync(filePath)) {

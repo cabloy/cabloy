@@ -185,7 +185,7 @@ Stay frontend-first, but if the frontend task clearly depends on backend contrac
 - backend OpenAPI output may need refresh or inspection
 - backend DTO/controller response shape may be the real source of truth
 - frontend SDK or schema-driven layers should be regenerated from contract output rather than hand-patched
-- newly added frontend resources that backend metadata will consume may require a reverse handoff through frontend build output and `deps:vona`
+- newly added frontend resources that backend metadata will consume may require a reverse handoff through the relevant Zova build first and then `npm run deps:vona`
 
 Do not turn the skill into a backend workflow. Only surface the reminder when the contract boundary is clearly involved.
 
