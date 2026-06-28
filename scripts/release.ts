@@ -159,8 +159,8 @@ function readLocalZovaCoreVersion(): string {
   return version;
 }
 
-function normalizeVonaPatchedDependency(version: string): void {
-  const patchLine = `  zova-core@${version}: patches/zova-core@${version}.patch`;
+function updateVonaPatchedDependency(version?: string): void {
+  const patchLine = version ? `  zova-core@${version}: patches/zova-core@${version}.patch` : null;
   const lines = readFileSync(VONA_WORKSPACE_PATH, 'utf-8').split('\n');
   const patchedDependenciesIndex = lines.findIndex(line => line.trim() === 'patchedDependencies:');
   if (patchedDependenciesIndex === -1) {
@@ -180,11 +180,17 @@ function normalizeVonaPatchedDependency(version: string): void {
     );
   const newLines = [
     ...lines.slice(0, patchedDependenciesIndex + 1),
-    patchLine,
+    ...(patchLine ? [patchLine] : []),
     ...preservedBlockLines,
     ...lines.slice(blockEndIndex),
   ];
   writeFileSync(VONA_WORKSPACE_PATH, `${newLines.join('\n').replace(/\n+$/, '\n')}\n`);
+}
+
+function ensureFileExists(filePath: string): void {
+  if (!existsSync(filePath)) {
+    writeFileSync(filePath, '');
+  }
 }
 
 function replaceOrThrow(
@@ -222,7 +228,7 @@ function applyKnownZovaCorePatchEdits(editDir: string): void {
   const envContent = readFileSync(envPath, 'utf-8');
   const envNext = replaceOrThrow(
     envContent,
-    /declare global \{\n {4}namespace NodeJS \{\n        interface ProcessEnv \{[\s\S]*?\n        \}\n    \}\n\}\n?/,
+    /declare global \{\n {4}namespace NodeJS \{\n {8}interface ProcessEnv \{[\s\S]*?\n        \}\n    \}\n\}\n?/,
     '',
     'the NodeJS.ProcessEnv augmentation',
   );
@@ -231,7 +237,7 @@ function applyKnownZovaCorePatchEdits(editDir: string): void {
   const moduleContent = readFileSync(modulePath, 'utf-8');
   const moduleNext = replaceOrThrow(
     moduleContent,
-    /declare module '@cabloy\/module-info' \{\n {4}interface IModule \{[\s\S]*?\n    \}\n\}\n?/,
+    /declare module '@cabloy\/module-info' \{\n {4}interface IModule \{[\s\S]*?\n {4}\}\n\}\n?/,
     '',
     'the @cabloy/module-info augmentation',
   );
@@ -275,17 +281,28 @@ function regenerateVonaZovaCorePatch(
   console.log(`\n🩹 Regenerating the Vona zova-core patch for ${targetVersion}...`);
 
   if (dryRun) {
+    // eslint-disable-next-line
+    console.log(
+      '  [dry-run] Temporarily remove the current zova-core patched dependency registration',
+    );
+    exec(`pnpm --dir "${VONA_DIR}" install`, true);
     exec(
       `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
       true,
     );
     // eslint-disable-next-line
     console.log('  [dry-run] Apply the known zova-core declaration-file patch edits');
-    exec(`pnpm --dir "${VONA_DIR}" patch-commit "${editDir}"`, true);
     // eslint-disable-next-line
-    console.log(`  [dry-run] Normalize ${VONA_WORKSPACE_PATH}`);
+    console.log(`  [dry-run] Ensure ${newPatchFilePath} exists before patch-commit`);
+    exec(
+      `pnpm --dir "${VONA_DIR}" patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`,
+      true,
+    );
+    // eslint-disable-next-line
+    console.log(`  [dry-run] Restore ${VONA_WORKSPACE_PATH} to point at ${newPatchFilePath}`);
     // eslint-disable-next-line
     console.log(`  [dry-run] Remove ${oldPatchFilePath} if it still exists`);
+    exec(`pnpm --dir "${VONA_DIR}" install`, true);
     return;
   }
 
@@ -293,20 +310,27 @@ function regenerateVonaZovaCorePatch(
   mkdirSync(dirname(editDir), { recursive: true });
 
   try {
+    updateVonaPatchedDependency();
+    execInherited(`pnpm --dir "${VONA_DIR}" install`);
+
     execInherited(
       `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
     );
     applyKnownZovaCorePatchEdits(editDir);
-    execInherited(`pnpm --dir "${VONA_DIR}" patch-commit "${editDir}"`);
 
-    normalizeVonaPatchedDependency(targetVersion);
+    ensureFileExists(newPatchFilePath);
+    execInherited(
+      `pnpm --dir "${VONA_DIR}" patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`,
+    );
 
+    updateVonaPatchedDependency(targetVersion);
     if (!existsSync(newPatchFilePath)) {
       throw new Error(`Expected regenerated patch file is missing: ${newPatchFilePath}`);
     }
     if (currentPatchedVersion !== targetVersion && existsSync(oldPatchFilePath)) {
       rmSync(oldPatchFilePath);
     }
+    execInherited(`pnpm --dir "${VONA_DIR}" install`);
   } finally {
     rmSync(editDir, { recursive: true, force: true });
   }
@@ -377,12 +401,6 @@ async function postReleaseCompensation(options: ReleaseOptions): Promise<void> {
   if (compareVersions(localZovaCoreVersion, currentPatchedVersion) <= 0) {
     // eslint-disable-next-line
     console.log('zova-core patch already matches the local version. Skipping compensation.');
-    return;
-  }
-
-  if (compareVersions(localZovaCoreVersion, currentPatchedVersion) <= 0) {
-    // eslint-disable-next-line
-    console.log('No newer local zova-core version needs patch compensation. Skipping.');
     return;
   }
 
