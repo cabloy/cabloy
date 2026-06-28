@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.85
+
+### Bug Fixes
+
+- Skip staging for ignored compensation packages.
+
+### Improvements
+
+- Update `zova-core` to v5.1.71.
+- Refresh the Zova lockfile after the v5.1.84 release.
+
 ## 5.1.84
 
 ### Improvements
