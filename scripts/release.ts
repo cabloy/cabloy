@@ -426,7 +426,7 @@ function regenerateVonaZovaCorePatch(
     );
     // eslint-disable-next-line
     console.log('  [dry-run] Apply the known zova-core declaration-file patch edits');
-    execInherited(`pnpm patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`, true, {
+    execInherited(`pnpm patch-commit "${editDir}" --patches-dir patches`, true, {
       cwd: VONA_DIR,
     });
     // eslint-disable-next-line
@@ -466,7 +466,7 @@ function regenerateVonaZovaCorePatch(
       },
     );
     applyKnownZovaCorePatchEdits(editDir);
-    execInherited(`pnpm patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`, false, {
+    execInherited(`pnpm patch-commit "${editDir}" --patches-dir patches`, false, {
       cwd: VONA_DIR,
     });
     validateGeneratedZovaCorePatch(targetVersion);
@@ -487,7 +487,7 @@ function regenerateVonaZovaCorePatch(
       restoreFileSnapshot(snapshot);
     }
     try {
-      execInherited(`pnpm --dir "${VONA_DIR}" install`);
+      execInherited('pnpm install', false, { cwd: VONA_DIR });
     } catch {
       // eslint-disable-next-line
       console.warn(
