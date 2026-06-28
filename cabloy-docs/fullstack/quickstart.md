@@ -26,6 +26,33 @@ npm create cabloy
 
 The generated project already includes `CLAUDE.md` and the `.claude/` workspace assets. This path creates a Cabloy Basic project baseline. Open this project in Claude Code and start coding immediately with project-specific guidance.
 
+### pnpm 11 supply-chain protection note
+
+`pnpm` 11 enables the `minimumReleaseAge` supply-chain protection by default. Newly published packages may be blocked for a short time window before `pnpm` allows installation.
+
+This matters for `npm create cabloy` because the command downloads Cabloy from npm and then automatically runs `npm run init`. If your environment blocks newly published packages during that flow, temporarily set `pnpm_config_minimum_release_age=0` for the current shell session and rerun the command.
+
+#### Windows PowerShell
+
+```powershell
+$env:pnpm_config_minimum_release_age = "0"
+npm create cabloy
+```
+
+#### Windows Command Prompt
+
+```cmd
+set pnpm_config_minimum_release_age=0 && npm create cabloy
+```
+
+#### macOS / Linux
+
+```bash
+pnpm_config_minimum_release_age=0 npm create cabloy
+```
+
+If you already created the project directory and only need to rerun initialization, use the same environment variable with `npm run init`.
+
 ## 3. Start the backend
 
 ```bash
