@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.80
+
+### Bug Fixes
+
+- Harden the `zova-core` release compensation flow.
+
 ## 5.1.79
 
 ### Improvements
