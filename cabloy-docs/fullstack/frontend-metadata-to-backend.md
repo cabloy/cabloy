@@ -125,7 +125,7 @@ For Cabloy Basic, the representative reverse-chain path is:
 
 1. change the frontend-owned truth
 2. regenerate frontend metadata when applicable
-3. build the relevant frontend flavor output so the shared handoff is refreshed
+3. run the relevant Zova build so the shared handoff is refreshed
 4. run `npm run deps:vona`
 5. verify backend-side consumers can now see the refreshed handoff
 
@@ -137,7 +137,7 @@ npm run build:zova:admin
 npm run deps:vona
 ```
 
-If the same resource path must also be available for Web, add:
+If the same resource path must also be available for Web, also run:
 
 ```bash
 npm run build:zova:web
@@ -146,7 +146,8 @@ npm run deps:vona
 
 A practical rule is:
 
-- treat metadata generation, flavor build, and `deps:vona` as one reverse-chain handoff
+- treat metadata generation, the relevant flavor build, and `deps:vona` as one reverse-chain handoff
+- do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output should move together
 - do not stop after the frontend source edit alone
 
 ## `training-student` as a compact reverse-chain specimen
@@ -194,8 +195,8 @@ This is the problem when:
 Typical fix:
 
 1. stop editing source files
-2. run the normal sync flow with `npm run deps:vona`
-3. if needed, rebuild `vona/node_modules` and reinstall dependencies
+2. run the normal sync flow with the relevant Zova build first and then `npm run deps:vona`
+3. if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale types, rebuild `vona/node_modules` and reinstall dependencies
 
 Representative recovery path:
 

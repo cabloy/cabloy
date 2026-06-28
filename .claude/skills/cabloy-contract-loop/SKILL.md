@@ -11,17 +11,19 @@ Read the public [Contract Loop Playbook](../../../cabloy-docs/fullstack/contract
 
 ## Important recovery note for stale local file consumers
 
-When generated `.zova-rest` output or other generated consumer artifacts already contain the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local file-dependency installation problem rather than a source-editing problem.
+When generated `.zova-rest` output or other generated consumer artifacts already contain the expected new keys or types but Vona still behaves as if old consumer types are installed, treat that first as a local dependency drift problem rather than a source-editing problem.
 
 This includes the reverse fullstack direction where newly added frontend resources such as custom renderers are later consumed by backend metadata.
 
 In that situation:
 
 1. run the normal sync or regeneration flow first
-2. if Vona consumes newly added or changed Zova Admin render/action/metadata in Cabloy Basic, run `npm run build:zova:admin` from the repo root before anything else
-3. otherwise, if the change only affects flavor-built REST/type output, rebuild the relevant Zova flavor output first
-4. run `deps:vona`
-5. if stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
+2. run the relevant Zova build from the repo root before `npm run deps:vona`
+   - use `npm run build:zova:admin` for Admin-facing render/action/metadata changes
+   - also run `npm run build:zova:web` when the Web flavor is affected
+3. do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
+4. run `npm run deps:vona`
+5. if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale types, delete `vona/node_modules` and reinstall dependencies
 
 Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
 

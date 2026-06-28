@@ -58,7 +58,14 @@ cd vona && npm run tsc
 cd vona && npm test -- <resource-test>.test.ts
 ```
 
-If web SSR also matters, add the web build and then repeat dependency sync as needed.
+If the same handoff must also be available to Web, also run:
+
+```bash
+npm run build:zova:web
+npm run deps:vona
+```
+
+Do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together.
 
 ## 4. What to verify in the result
 

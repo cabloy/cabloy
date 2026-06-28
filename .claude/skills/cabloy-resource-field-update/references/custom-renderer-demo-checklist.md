@@ -94,9 +94,9 @@ cd vona && npm test -- <resource-test>.test.ts
 
 ## 6. Recovery rule when generated keys still look stale
 
-If the generated `.zova-rest` files already contain the new renderer keys but Vona still behaves as if old types are installed:
+If the generated `.zova-rest` artifacts already contain the new renderer keys but Vona still sees stale types after the normal sync flow:
 
-- suspect a stale or unhealthy `vona/node_modules` installation state
-- after normal `deps:vona`, rebuild `vona/node_modules` and reinstall dependencies if needed
+- treat it as local dependency drift
+- after the relevant Zova build and `npm run deps:vona`, rebuild `vona/node_modules` and reinstall dependencies if needed
 
 This is an installation-state recovery step, not the normal first move.

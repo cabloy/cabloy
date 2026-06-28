@@ -123,8 +123,9 @@ Practical check after generation:
    - module metadata
 2. generated handoff
    - metadata output
-   - flavor build output
+   - the relevant flavor build output
 3. sync surface
+   - run the relevant Zova build first
    - `deps:vona`
 4. consumer layers
    - backend `ZovaRender.*(...)` references

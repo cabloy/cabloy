@@ -126,7 +126,7 @@ npm run build:zova:web
 npm run deps:vona
 ```
 
-If backend-side type consumers still cannot see the new shared renderer types even though generated `.zova-rest` output is already correct, rebuild `vona/node_modules` and reinstall dependencies:
+If backend-side type consumers still cannot see the new shared renderer types even though the generated `.zova-rest` artifacts are already correct after the normal sync flow, treat it as local dependency drift and rebuild `vona/node_modules` and reinstall dependencies:
 
 ```bash
 cd vona && rm -rf node_modules && pnpm install

@@ -73,7 +73,8 @@ Important handoff note for this phase:
 - Tutorial 4 uses the custom resource handoff branch
 - once a frontend resource created in these tutorials is later consumed by backend metadata, do not stop at frontend source edits alone
 - refresh the generated frontend output, run the relevant flavor build, then run `npm run deps:vona`
-- if backend-side shared types still look stale after that normal sync flow, rebuild `vona/node_modules` and reinstall dependencies
+- do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
+- if the generated `.zova-rest` artifacts already contain the expected changes but backend-side shared types still look stale after that normal sync flow, treat it as local dependency drift and rebuild `vona/node_modules` and reinstall dependencies
 
 See [Contract Loop Playbook](/fullstack/contract-loop-playbook) and [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the full reverse-chain explanation.
 

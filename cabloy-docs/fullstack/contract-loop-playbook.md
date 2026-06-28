@@ -272,7 +272,7 @@ and then the relevant build path for the active edition and flavor.
 
 ### Stage 3: Vona sync handoff
 
-After the frontend-generated handoff is ready, re-sync Vona’s local file dependencies.
+After the frontend-generated handoff is ready, run the relevant Zova build first and then re-sync Vona’s local dependency state with `npm run deps:vona`.
 
 For the current **Cabloy Basic Admin** branch, the representative sequence is:
 
@@ -281,7 +281,14 @@ npm run build:zova:admin
 npm run deps:vona
 ```
 
-If the same resource path must also be available to Web, also refresh the Web branch.
+If the same resource path must also be available to Web, also run:
+
+```bash
+npm run build:zova:web
+npm run deps:vona
+```
+
+Do not treat `build:rest:*` alone as sufficient. The SSR bundle and the generated rest output should move together.
 
 For **Cabloy Start**, use the same reverse-chain logic, but resolve the Start-specific flavor names and output paths from the active Start repo before recommending commands.
 
@@ -300,7 +307,7 @@ Typical checks:
 Use this branch only when all of these are already true:
 
 - source truth was edited in the right place
-- generation or build output already contains the intended change
+- the generated `.zova-rest` artifacts or other build output already contain the intended change
 - the normal sync flow already ran
 - consumers still behave stale
 

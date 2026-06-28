@@ -67,14 +67,16 @@ Apply when the user explicitly wants to demonstrate custom renderer development:
 ### If custom frontend renderers were introduced
 
 - `npm run zova :tools:metadata <module-name>`
-- `npm run build:zova:admin`
+- run the relevant Zova build first:
+  - `npm run build:zova:admin` for Admin-facing render/action/metadata changes
+  - also `npm run build:zova:web` when the Web flavor is affected
 - `npm run deps:vona`
 - `cd vona && npm run tsc`
 - `cd vona && npm test -- <resource-test>.test.ts`
 
 ## Common recovery rule
 
-If generated `.zova-rest` output already contains the new renderer keys but Vona still behaves as if old types are installed:
+If the generated `.zova-rest` artifacts already contain the new renderer keys but Vona still sees stale types after the normal sync flow:
 
-- suspect a stale `vona/node_modules` installation state
+- treat it as local dependency drift
 - rebuild `vona/node_modules` and reinstall dependencies if normal `deps:vona` sync did not recover the local file-package installation state

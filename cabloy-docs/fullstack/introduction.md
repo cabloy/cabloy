@@ -103,7 +103,7 @@ Use the playbook to distinguish four cases clearly:
 
 The contract-loop model is shared across Cabloy Basic and Cabloy Start. Detect the edition to choose concrete flavor commands and generated-output paths, not to redefine the workflow model.
 
-When the reverse direction involves newly added frontend resources that backend tooling or backend metadata will consume, treat that as an operational handoff rather than a conceptual one: refresh generated frontend output, run the relevant flavor build, run `npm run deps:vona`, and if Vona still sees stale shared types, rebuild `vona/node_modules` and reinstall dependencies.
+When the reverse direction involves newly added frontend resources that backend tooling or backend metadata will consume, treat that as an operational handoff rather than a conceptual one: refresh generated frontend output, run the relevant flavor build, then run `npm run deps:vona`, and if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale shared types, rebuild `vona/node_modules` and reinstall dependencies.
 
 ## How the fullstack system stays connected
 

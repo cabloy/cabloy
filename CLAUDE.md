@@ -46,9 +46,8 @@ Before inventing a custom implementation path:
 - Treat contract-loop work as one of four branches: forward chain, reverse chain, consumer drift, or local dependency drift.
 - For the forward chain, change backend contract truth first and regenerate frontend consumers rather than hand-patching them.
 - After forward regeneration, keep frontend follow-up thin: prefer semantic model facades and reuse the existing resource-owner when the custom API still belongs to the same resource.
-- For the reverse chain, when Vona consumes newly added or changed Zova Admin render/action/metadata, always run `npm run build:zova:admin` before `npm run deps:vona`. Do not treat `build:rest:cabloyBasicAdmin` alone as sufficient, because the Admin JS bundle and rest output must move together.
-- If generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before making more source edits.
-- For Vona consumption drift after Zova-generated type/rest output changes, if `npm run deps:vona` still leaves stale consumer types, delete `vona/node_modules` and reinstall dependencies before further debugging or hand-patching dependency links.
+- For the reverse chain, always run the relevant Zova build first, then run `npm run deps:vona`: use `npm run build:zova:admin` for Admin changes, and also run `npm run build:zova:web` when the Web flavor is affected. Do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together.
+- If the generated `.zova-rest` artifacts already contain the expected changes but Vona consumers still see stale types after `npm run deps:vona`, treat it as local dependency drift: delete `vona/node_modules` and reinstall dependencies before further debugging or hand-patching dependency links.
 - For Cabloy Start, apply the same reverse-chain logic but resolve the Start-specific flavor names and generated-output paths from the active Start repo before recommending commands.
 - Treat legacy docs as input material, not as unquestioned truth. When docs conflict with source code, prefer current source code.
 - For frontend work, assume Cabloy Basic and Cabloy Start share a frontend engineering layer but may diverge in UI layer, frontend flavors, suite/module availability, SSR site baselines, project assets, and generated outputs.

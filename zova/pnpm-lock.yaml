@@ -74,7 +74,7 @@ importers:
         version: 10.5.1(postcss@8.5.15)
       axios:
         specifier: ^1.16.1
-        version: 1.18.1
+        version: 1.18.1(supports-color@10.2.2)
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -308,8 +308,8 @@ importers:
         version: link:src/suite/a-training/modules/training-student
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.26
-        version: 3.1.26(vue@3.5.38(typescript@5.9.3))
+        specifier: ^3.1.27
+        version: 3.1.27(vue@3.5.38(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.27
         version: 5.1.30(@typescript-eslint/eslint-plugin@8.62.0(@typescript-eslint/parser@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.62.0(typescript@5.9.3))(@typescript-eslint/utils@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.5.0(jiti@2.7.0))(oxfmt@0.45.0)(oxlint@1.71.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.5.0(jiti@2.7.0)))
@@ -383,8 +383,8 @@ importers:
   packages-cli/cli:
     dependencies:
       '@cabloy/cli':
-        specifier: ^3.1.26
-        version: 3.1.26(vue@3.5.38(typescript@5.9.3))
+        specifier: ^3.1.27
+        version: 3.1.27(vue@3.5.38(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.8
         version: 3.1.8
@@ -395,7 +395,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.91
+        specifier: ^1.2.92
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -417,8 +417,8 @@ importers:
         specifier: ^7.28.6
         version: 7.29.7(@babel/core@7.29.7)
       '@cabloy/cli':
-        specifier: ^3.1.26
-        version: 3.1.26(vue@3.5.38(typescript@5.9.3))
+        specifier: ^3.1.27
+        version: 3.1.27(vue@3.5.38(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -816,7 +816,7 @@ importers:
         specifier: ^5.1.61
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.117
+        specifier: ^5.1.118
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1001,7 +1001,7 @@ importers:
         specifier: ^5.1.34
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.81
+        specifier: ^5.1.82
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1075,7 +1075,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.16.1
-        version: 1.18.1
+        version: 1.18.1(supports-color@10.2.2)
     devDependencies:
       clean-package:
         specifier: ^2.2.0
@@ -1344,8 +1344,8 @@ importers:
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.26
-        version: 3.1.26(vue@3.5.38(typescript@5.9.3))
+        specifier: ^3.1.27
+        version: 3.1.27(vue@3.5.38(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.2
@@ -1961,8 +1961,8 @@ packages:
   '@bufbuild/protobuf@2.12.1':
     resolution: {integrity: sha512-BvAMfS6LrgZiryOAZ4pBYucu4wG/Ei/9o9DZ9akbREnMLbPJiom2i8b9C8IsKErQoiKqVhrerzt3kOT/RrzLHg==}
 
-  '@cabloy/cli@3.1.26':
-    resolution: {integrity: sha512-EPE7N3GDbPiimWPO/pdZ06ZWFlZm2gdtgb7mZ5my2Jgakw0Zp9Zt1aDyHx8il/nO6sHzzsESfbHC2/lXXpENTw==}
+  '@cabloy/cli@3.1.27':
+    resolution: {integrity: sha512-KMNKh6AbkxfgWx4+HL5ufDEInVdx11k8mIXLL55LMChA4h0dkwQ4z7CReSr4sDXs0jW2nGxgAdi7xjVzn8yZnw==}
 
   '@cabloy/compose@2.1.8':
     resolution: {integrity: sha512-TdEr9BY54BYoIlTjkrOKkzK8yJWmP07OrRTh4punJMnWzM+oDExQ2EGCGAHXnEHjLWqdhyMGm/ejmxnVgBmraQ==}
@@ -8189,7 +8189,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.12.1': {}
 
-  '@cabloy/cli@3.1.26(vue@3.5.38(typescript@5.9.3))':
+  '@cabloy/cli@3.1.27(vue@3.5.38(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.7
       '@cabloy/module-glob': 5.3.16
@@ -10252,7 +10252,7 @@ snapshots:
 
   acorn@8.17.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
@@ -10364,11 +10364,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.18.1:
+  axios@1.18.1(supports-color@10.2.2):
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -11784,9 +11784,9 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@10.2.2):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@10.2.2)
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
