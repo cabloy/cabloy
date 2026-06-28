@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.1.84
+
+### Improvements
+
+- Publish version 5.1.84.
+- Bump `zova-core` to v5.1.69.
+- Refresh the Vona `zova-core` patch for v5.1.68.
+
 ## 5.1.83
 
 ### Bug Fixes
