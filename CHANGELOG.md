@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.89
+
+### Improvements
+
+- Document the `pnpm` `minimumReleaseAge` workaround.
+
 ## 5.1.88
 
 ### Features
