@@ -1,0 +1,56 @@
+diff --git a/dist/bean/resource/error/errorGlobal.d.ts b/dist/bean/resource/error/errorGlobal.d.ts
+index 73cebe18f3e260c295bdf42a3d1ab9e86fa2de87..cb0ff5c3b541f646105198ee23ac0fc3d805023e 100644
+--- a/dist/bean/resource/error/errorGlobal.d.ts
++++ b/dist/bean/resource/error/errorGlobal.d.ts
+@@ -1,9 +1 @@
+-import type { TypeScopesErrorCodes } from '../../type.ts';
+-declare global {
+-    export interface Error {
+-        code?: TypeScopesErrorCodes | number | undefined;
+-        status?: number | string | undefined;
+-    }
+-}
+ export {};
+-//# sourceMappingURL=errorGlobal.d.ts.map
+\ No newline at end of file
+diff --git a/dist/types/interface/module.d.ts b/dist/types/interface/module.d.ts
+index 838e299407218b7bfac469d42a12d6ab59820380..314deb46c0c40670e9c0bc0c6146024e23b147d7 100644
+--- a/dist/types/interface/module.d.ts
++++ b/dist/types/interface/module.d.ts
+@@ -23,12 +23,6 @@ export interface IModuleResource {
+     components: TypeModuleResourceComponents;
+ }
+ export declare const SymbolInstalled: unique symbol;
+-declare module '@cabloy/module-info' {
+-    interface IModule {
+-        resource: IModuleResource;
+-        info: IModuleInfo;
+-    }
+-}
+ export interface IModuleApp {
+ }
+ //# sourceMappingURL=module.d.ts.map
+diff --git a/dist/types/utils/env.d.ts b/dist/types/utils/env.d.ts
+index 708c0a584dfec65b8c7ad2d049156f900de49928..df2bfa254283a8dce5122d97e931244e9d86e41a 100644
+--- a/dist/types/utils/env.d.ts
++++ b/dist/types/utils/env.d.ts
+@@ -34,19 +34,4 @@ export interface ZovaConfigEnv {
+     MOCK_BUILD: string | undefined;
+     MOCK_BUILD_PORT: string | undefined;
+ }
+-declare global {
+-    namespace NodeJS {
+-        interface ProcessEnv {
+-            NODE_ENV: ZovaMetaMode;
+-            META_FLAVOR: ZovaMetaFlavor;
+-            META_MODE: ZovaMetaMode;
+-            META_APP_MODE: ZovaMetaAppMode;
+-            SSR: boolean;
+-            DEV: boolean;
+-            PROD: boolean;
+-            CLIENT: boolean;
+-            SERVER: boolean;
+-        }
+-    }
+-}
+ //# sourceMappingURL=env.d.ts.map
