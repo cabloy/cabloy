@@ -4,7 +4,7 @@ import type { FunctionAny } from 'vona';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
-import { ServiceTransactionConsistency‌ } from './transactionConsistency‌_.ts';
+import { ServiceTransactionConsistency‌ } from './transactionConsistency_.ts';
 
 @Service()
 export class ServiceTransactionFiber extends BeanBase {

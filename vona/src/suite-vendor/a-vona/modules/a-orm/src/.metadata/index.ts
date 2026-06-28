@@ -67,7 +67,7 @@ export * from '../service/entityResolver_.ts';
 export * from '../service/modelResolver_.ts';
 export * from '../service/relations_.ts';
 export * from '../service/transactionAsyncLocalStorage_.ts';
-export * from '../service/transactionConsistency‌_.ts';
+export * from '../service/transactionConsistency_.ts';
 export * from '../service/transactionFiber_.ts';
 export * from '../service/transactionState_.ts';
 export * from '../service/transaction_.ts';
