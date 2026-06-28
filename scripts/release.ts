@@ -1,6 +1,14 @@
 import minimist from 'minimist';
 import { execSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -12,10 +20,15 @@ const RELEASE_SCRIPT_PATH = fileURLToPath(import.meta.url);
 const ROOT_DIR = resolve(dirname(RELEASE_SCRIPT_PATH), '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const VONA_PACKAGE_JSON_PATH = resolve(VONA_DIR, 'package.json');
+const VONA_PACKAGE_ORIGINAL_JSON_PATH = resolve(VONA_DIR, 'package.original.json');
 const VONA_WORKSPACE_PATH = resolve(VONA_DIR, 'pnpm-workspace.yaml');
 const VONA_LOCKFILE_PATH = resolve(VONA_DIR, 'pnpm-lock.yaml');
 const VONA_PATCHES_DIR = resolve(VONA_DIR, 'patches');
 const VONA_ZOVA_REST_DIR = resolve(VONA_DIR, '.zova-rest');
+const ZOVA_DIR = resolve(ROOT_DIR, 'zova');
+const ZOVA_PACKAGE_JSON_PATH = resolve(ZOVA_DIR, 'package.json');
+const ZOVA_PACKAGE_ORIGINAL_JSON_PATH = resolve(ZOVA_DIR, 'package.original.json');
+const ZOVA_LOCKFILE_PATH = resolve(ZOVA_DIR, 'pnpm-lock.yaml');
 const ZOVA_CORE_PACKAGE_JSON_PATH = resolve(
   ROOT_DIR,
   'zova',
@@ -238,6 +251,26 @@ function seedVonaZovaRestWorkspaceDependencies(): void {
   writeFileSync(VONA_PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
+function refreshZovaDependencyGraph(): void {
+  copyFileSync(ZOVA_PACKAGE_ORIGINAL_JSON_PATH, ZOVA_PACKAGE_JSON_PATH);
+  execInherited('pnpm install', false, { cwd: ZOVA_DIR });
+  execInherited('npm run zova :tools:deps', false, { cwd: ZOVA_DIR });
+  execInherited('npm run build:zova:admin');
+  if (existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'))) {
+    execInherited('npm run build:zova:web');
+  }
+}
+
+function prepareVonaBootstrapManifest(): void {
+  copyFileSync(VONA_PACKAGE_ORIGINAL_JSON_PATH, VONA_PACKAGE_JSON_PATH);
+  seedVonaZovaRestWorkspaceDependencies();
+}
+
+function refreshVonaDependencyGraph(): void {
+  prepareVonaBootstrapManifest();
+  execInherited('npm run deps:vona');
+}
+
 function validateGeneratedZovaCorePatch(version: string): void {
   const patchFilePath = getPatchFilePath(version);
   const patchContent = readFileIfExists(patchFilePath)?.trim();
@@ -310,7 +343,7 @@ function applyKnownZovaCorePatchEdits(editDir: string): void {
   const envContent = readFileSync(envPath, 'utf-8');
   const envNext = replaceOrThrow(
     envContent,
-    /declare global \{\n {4}namespace NodeJS \{\n {8}interface ProcessEnv \{[\s\S]*?\n {8}\}\n    \}\n\}\n?/,
+    /declare global \{\n {4}namespace NodeJS \{\n {8}interface ProcessEnv \{[\s\S]*?\n {8}\}\n {4}\}\n\}\n?/,
     '',
     'the NodeJS.ProcessEnv augmentation',
   );
@@ -364,33 +397,51 @@ function regenerateVonaZovaCorePatch(
 
   if (dryRun) {
     // eslint-disable-next-line
-    console.log('  [dry-run] Seed Vona .zova-rest workspace dependencies if needed');
+    console.log('  [dry-run] Refresh the Zova dependency graph from package.original.json');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Run pnpm install in zova');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Run npm run zova :tools:deps in zova');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Run npm run build:zova:admin');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Run npm run build:zova:web when the active edition requires it');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Refresh the Vona dependency graph from package.original.json');
     // eslint-disable-next-line
     console.log(
       '  [dry-run] Temporarily remove the current zova-core patched dependency registration',
     );
-    exec(`pnpm --dir "${VONA_DIR}" install`, true);
-    exec(
-      `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
+    // eslint-disable-next-line
+    console.log('  [dry-run] Seed Vona .zova-rest workspace dependencies if needed');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Run npm run deps:vona');
+    // eslint-disable-next-line
+    console.log('  [dry-run] Run pnpm install in vona without the old patch registration');
+    execInherited('pnpm install', true, { cwd: VONA_DIR });
+    execInherited(
+      `pnpm patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
       true,
+      { cwd: VONA_DIR },
     );
     // eslint-disable-next-line
     console.log('  [dry-run] Apply the known zova-core declaration-file patch edits');
-    exec(
-      `pnpm --dir "${VONA_DIR}" patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`,
-      true,
-    );
+    execInherited(`pnpm patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`, true, {
+      cwd: VONA_DIR,
+    });
     // eslint-disable-next-line
     console.log(`  [dry-run] Validate ${newPatchFilePath}`);
     // eslint-disable-next-line
     console.log(`  [dry-run] Restore ${VONA_WORKSPACE_PATH} to point at ${newPatchFilePath}`);
     // eslint-disable-next-line
     console.log(`  [dry-run] Remove ${oldPatchFilePath} if it still exists`);
-    exec(`pnpm --dir "${VONA_DIR}" install`, true);
+    execInherited('pnpm install', true, { cwd: VONA_DIR });
     return;
   }
 
   const snapshots = [
+    createFileSnapshot(ZOVA_PACKAGE_JSON_PATH),
+    createFileSnapshot(ZOVA_LOCKFILE_PATH),
     createFileSnapshot(VONA_PACKAGE_JSON_PATH),
     createFileSnapshot(VONA_WORKSPACE_PATH),
     createFileSnapshot(VONA_LOCKFILE_PATH),
@@ -402,24 +453,29 @@ function regenerateVonaZovaCorePatch(
   mkdirSync(dirname(editDir), { recursive: true });
 
   try {
-    seedVonaZovaRestWorkspaceDependencies();
+    refreshZovaDependencyGraph();
     updateVonaPatchedDependency();
-    execInherited(`pnpm --dir "${VONA_DIR}" install`);
+    refreshVonaDependencyGraph();
+    execInherited('pnpm install', false, { cwd: VONA_DIR });
 
     execInherited(
-      `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
+      `pnpm patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
+      false,
+      {
+        cwd: VONA_DIR,
+      },
     );
     applyKnownZovaCorePatchEdits(editDir);
-    execInherited(
-      `pnpm --dir "${VONA_DIR}" patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`,
-    );
+    execInherited(`pnpm patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`, false, {
+      cwd: VONA_DIR,
+    });
     validateGeneratedZovaCorePatch(targetVersion);
 
     updateVonaPatchedDependency(targetVersion);
     if (currentPatchedVersion !== targetVersion && existsSync(oldPatchFilePath)) {
       rmSync(oldPatchFilePath);
     }
-    execInherited(`pnpm --dir "${VONA_DIR}" install`);
+    execInherited('pnpm install', false, { cwd: VONA_DIR });
     if (readCurrentPatchedZovaCoreVersion() !== targetVersion) {
       throw new Error(
         `Vona patchedDependencies entry was not updated to zova-core@${targetVersion}`,
