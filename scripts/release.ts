@@ -1,6 +1,6 @@
 import minimist from 'minimist';
 import { execSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -11,8 +11,11 @@ const COMMIT_CAP = 200;
 const RELEASE_SCRIPT_PATH = fileURLToPath(import.meta.url);
 const ROOT_DIR = resolve(dirname(RELEASE_SCRIPT_PATH), '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
+const VONA_PACKAGE_JSON_PATH = resolve(VONA_DIR, 'package.json');
 const VONA_WORKSPACE_PATH = resolve(VONA_DIR, 'pnpm-workspace.yaml');
+const VONA_LOCKFILE_PATH = resolve(VONA_DIR, 'pnpm-lock.yaml');
 const VONA_PATCHES_DIR = resolve(VONA_DIR, 'patches');
+const VONA_ZOVA_REST_DIR = resolve(VONA_DIR, '.zova-rest');
 const ZOVA_CORE_PACKAGE_JSON_PATH = resolve(
   ROOT_DIR,
   'zova',
@@ -22,10 +25,20 @@ const ZOVA_CORE_PACKAGE_JSON_PATH = resolve(
 );
 const PACKAGE_JSON_PATH = resolve(ROOT_DIR, 'package.json');
 const CHANGELOG_PATH = resolve(ROOT_DIR, 'CHANGELOG.md');
+const ZOVA_CORE_PATCH_TARGETS = [
+  'dist/bean/resource/error/errorGlobal.d.ts',
+  'dist/types/utils/env.d.ts',
+  'dist/types/interface/module.d.ts',
+] as const;
 
 interface ExecOptions {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
+}
+
+interface FileSnapshot {
+  filePath: string;
+  content: string | null;
 }
 
 // --- Utility functions ---
@@ -187,9 +200,78 @@ function updateVonaPatchedDependency(version?: string): void {
   writeFileSync(VONA_WORKSPACE_PATH, `${newLines.join('\n').replace(/\n+$/, '\n')}\n`);
 }
 
-function ensureFileExists(filePath: string): void {
-  if (!existsSync(filePath)) {
-    writeFileSync(filePath, '');
+function readFileIfExists(filePath: string): string | null {
+  return existsSync(filePath) ? readFileSync(filePath, 'utf-8') : null;
+}
+
+function restoreFileSnapshot(snapshot: FileSnapshot): void {
+  if (snapshot.content === null) {
+    rmSync(snapshot.filePath, { force: true });
+    return;
+  }
+  writeFileSync(snapshot.filePath, snapshot.content);
+}
+
+function createFileSnapshot(filePath: string): FileSnapshot {
+  return {
+    filePath,
+    content: readFileIfExists(filePath),
+  };
+}
+
+function seedVonaZovaRestWorkspaceDependencies(): void {
+  if (!existsSync(VONA_ZOVA_REST_DIR)) return;
+  const pkg = readJson(VONA_PACKAGE_JSON_PATH) as {
+    dependencies?: Record<string, string>;
+  };
+  pkg.dependencies ??= {};
+  let changed = false;
+  for (const entry of readdirSync(VONA_ZOVA_REST_DIR, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const depName = `zova-rest-${entry.name}`;
+    const depValue = 'workspace:^';
+    if (pkg.dependencies[depName] === depValue) continue;
+    pkg.dependencies[depName] = depValue;
+    changed = true;
+  }
+  if (!changed) return;
+  writeFileSync(VONA_PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)}\n`);
+}
+
+function validateGeneratedZovaCorePatch(version: string): void {
+  const patchFilePath = getPatchFilePath(version);
+  const patchContent = readFileIfExists(patchFilePath)?.trim();
+  if (!patchContent) {
+    throw new Error(`Generated zova-core patch is missing or empty: ${patchFilePath}`);
+  }
+  if (!patchContent.includes('diff --git')) {
+    throw new Error(`Generated zova-core patch does not contain any diff hunks: ${patchFilePath}`);
+  }
+  for (const patchTarget of ZOVA_CORE_PATCH_TARGETS) {
+    if (!patchContent.includes(`a/${patchTarget}`) || !patchContent.includes(`b/${patchTarget}`)) {
+      throw new Error(`Generated zova-core patch is missing the expected target: ${patchTarget}`);
+    }
+  }
+  if (!patchContent.includes(' export {};')) {
+    throw new Error('Generated zova-core patch is missing the expected errorGlobal export rewrite');
+  }
+  if (!patchContent.includes("-declare module '@cabloy/module-info'")) {
+    throw new Error(
+      'Generated zova-core patch is missing the expected @cabloy/module-info removal',
+    );
+  }
+  if (
+    !patchContent.includes('-declare global {') ||
+    !patchContent.includes('-        interface ProcessEnv {')
+  ) {
+    throw new Error('Generated zova-core patch is missing the expected ProcessEnv removal');
+  }
+}
+
+function ensurePatchedLockfileVersion(version: string): void {
+  const lockfileContent = readFileIfExists(VONA_LOCKFILE_PATH);
+  if (!lockfileContent?.includes(`zova-core@${version}:`)) {
+    throw new Error(`Vona lockfile is missing the patched zova-core@${version} entry`);
   }
 }
 
@@ -228,7 +310,7 @@ function applyKnownZovaCorePatchEdits(editDir: string): void {
   const envContent = readFileSync(envPath, 'utf-8');
   const envNext = replaceOrThrow(
     envContent,
-    /declare global \{\n {4}namespace NodeJS \{\n {8}interface ProcessEnv \{[\s\S]*?\n        \}\n    \}\n\}\n?/,
+    /declare global \{\n {4}namespace NodeJS \{\n {8}interface ProcessEnv \{[\s\S]*?\n {8}\}\n    \}\n\}\n?/,
     '',
     'the NodeJS.ProcessEnv augmentation',
   );
@@ -282,6 +364,8 @@ function regenerateVonaZovaCorePatch(
 
   if (dryRun) {
     // eslint-disable-next-line
+    console.log('  [dry-run] Seed Vona .zova-rest workspace dependencies if needed');
+    // eslint-disable-next-line
     console.log(
       '  [dry-run] Temporarily remove the current zova-core patched dependency registration',
     );
@@ -292,12 +376,12 @@ function regenerateVonaZovaCorePatch(
     );
     // eslint-disable-next-line
     console.log('  [dry-run] Apply the known zova-core declaration-file patch edits');
-    // eslint-disable-next-line
-    console.log(`  [dry-run] Ensure ${newPatchFilePath} exists before patch-commit`);
     exec(
       `pnpm --dir "${VONA_DIR}" patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`,
       true,
     );
+    // eslint-disable-next-line
+    console.log(`  [dry-run] Validate ${newPatchFilePath}`);
     // eslint-disable-next-line
     console.log(`  [dry-run] Restore ${VONA_WORKSPACE_PATH} to point at ${newPatchFilePath}`);
     // eslint-disable-next-line
@@ -306,10 +390,19 @@ function regenerateVonaZovaCorePatch(
     return;
   }
 
+  const snapshots = [
+    createFileSnapshot(VONA_PACKAGE_JSON_PATH),
+    createFileSnapshot(VONA_WORKSPACE_PATH),
+    createFileSnapshot(VONA_LOCKFILE_PATH),
+    createFileSnapshot(oldPatchFilePath),
+    createFileSnapshot(newPatchFilePath),
+  ];
+
   rmSync(editDir, { recursive: true, force: true });
   mkdirSync(dirname(editDir), { recursive: true });
 
   try {
+    seedVonaZovaRestWorkspaceDependencies();
     updateVonaPatchedDependency();
     execInherited(`pnpm --dir "${VONA_DIR}" install`);
 
@@ -317,20 +410,35 @@ function regenerateVonaZovaCorePatch(
       `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
     );
     applyKnownZovaCorePatchEdits(editDir);
-
-    ensureFileExists(newPatchFilePath);
     execInherited(
       `pnpm --dir "${VONA_DIR}" patch-commit "${editDir}" --patches-dir "${VONA_PATCHES_DIR}"`,
     );
+    validateGeneratedZovaCorePatch(targetVersion);
 
     updateVonaPatchedDependency(targetVersion);
-    if (!existsSync(newPatchFilePath)) {
-      throw new Error(`Expected regenerated patch file is missing: ${newPatchFilePath}`);
-    }
     if (currentPatchedVersion !== targetVersion && existsSync(oldPatchFilePath)) {
       rmSync(oldPatchFilePath);
     }
     execInherited(`pnpm --dir "${VONA_DIR}" install`);
+    if (readCurrentPatchedZovaCoreVersion() !== targetVersion) {
+      throw new Error(
+        `Vona patchedDependencies entry was not updated to zova-core@${targetVersion}`,
+      );
+    }
+    ensurePatchedLockfileVersion(targetVersion);
+  } catch (error) {
+    for (const snapshot of snapshots) {
+      restoreFileSnapshot(snapshot);
+    }
+    try {
+      execInherited(`pnpm --dir "${VONA_DIR}" install`);
+    } catch {
+      // eslint-disable-next-line
+      console.warn(
+        'Warning: failed to restore the Vona install state after compensation rollback.',
+      );
+    }
+    throw error;
   } finally {
     rmSync(editDir, { recursive: true, force: true });
   }
@@ -352,10 +460,13 @@ function verifyCompensationPatch(dryRun?: boolean): void {
 function commitCompensationChanges(targetVersion: string, dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n📁 Committing compensation changes...');
-  exec('git add vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches', dryRun);
+  exec(
+    'git add vona/package.json vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches',
+    dryRun,
+  );
   if (!dryRun) {
     const staged = execSync(
-      'git diff --cached --name-only -- vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches',
+      'git diff --cached --name-only -- vona/package.json vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches',
       { cwd: ROOT_DIR, encoding: 'utf-8' },
     ).trim();
     if (!staged) {
