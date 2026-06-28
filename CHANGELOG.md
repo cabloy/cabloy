@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.78
+
+### Improvements
+
+- Add a release compensation flow for `zova-core`.
+- Publish the latest package updates.
+
 ## 5.1.77
 
 ### Improvements
