@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.77
+
+### Improvements
+
+- Update package metadata and lockfile for the 5.1.77 release.
+- Publish version 5.1.77.
+
 ## 5.1.76
 
 ### Improvements
