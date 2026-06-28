@@ -1114,6 +1114,9 @@ importers:
       '@cabloy/word-utils':
         specifier: ^2.1.8
         version: 2.1.14
+      zod:
+        specifier: npm:@cabloy/zod@4.3.8
+        version: '@cabloy/zod@4.3.8'
     devDependencies:
       clean-package:
         specifier: ^2.2.0
