@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.76
+
+### Improvements
+
+- Unify wording around reverse-chain dependency drift.
+- Finish cleanup of reverse-chain documentation wording.
+
 ## 5.1.75
 
 ### Improvements
