@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.88
+
+### Features
+
+- Update functionality.
+
 ## 5.1.87
 
 ### Improvements
