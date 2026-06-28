@@ -516,15 +516,30 @@ function verifyCompensationPatch(dryRun?: boolean): void {
 function commitCompensationChanges(targetVersion: string, dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n📁 Committing compensation changes...');
-  exec(
-    'git add vona/package.json vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches',
-    dryRun,
-  );
+  const stageTargets = ['vona/pnpm-workspace.yaml', 'vona/pnpm-lock.yaml', 'vona/patches'];
+  if (existsSync(VONA_PACKAGE_JSON_PATH)) {
+    let trackedPackageJson = false;
+    try {
+      trackedPackageJson =
+        execSync(`git ls-files --error-unmatch "${VONA_PACKAGE_JSON_PATH}"`, {
+          cwd: ROOT_DIR,
+          stdio: 'pipe',
+        })
+          .toString()
+          .trim() !== '';
+    } catch {
+      trackedPackageJson = false;
+    }
+    if (trackedPackageJson) {
+      stageTargets.unshift('vona/package.json');
+    }
+  }
+  exec(`git add ${stageTargets.join(' ')}`, dryRun);
   if (!dryRun) {
-    const staged = execSync(
-      'git diff --cached --name-only -- vona/package.json vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches',
-      { cwd: ROOT_DIR, encoding: 'utf-8' },
-    ).trim();
+    const staged = execSync(`git diff --cached --name-only -- ${stageTargets.join(' ')}`, {
+      cwd: ROOT_DIR,
+      encoding: 'utf-8',
+    }).trim();
     if (!staged) {
       throw new Error('No compensation changes were staged for commit');
     }
