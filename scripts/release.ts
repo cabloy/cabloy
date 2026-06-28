@@ -1,39 +1,100 @@
 import minimist from 'minimist';
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // --- Constants ---
 const TAG_PREFIX = 'cabloy@';
 const GITHUB_REPO = 'cabloy/cabloy';
-const PACKAGE_JSON_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json');
-const CHANGELOG_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'CHANGELOG.md');
 const COMMIT_CAP = 200;
-// const ZOVA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'zova');
-// const VONA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'vona');
+const RELEASE_SCRIPT_PATH = fileURLToPath(import.meta.url);
+const ROOT_DIR = resolve(dirname(RELEASE_SCRIPT_PATH), '..');
+const VONA_DIR = resolve(ROOT_DIR, 'vona');
+const VONA_WORKSPACE_PATH = resolve(VONA_DIR, 'pnpm-workspace.yaml');
+const VONA_PATCHES_DIR = resolve(VONA_DIR, 'patches');
+const ZOVA_CORE_PACKAGE_JSON_PATH = resolve(
+  ROOT_DIR,
+  'zova',
+  'packages-zova',
+  'zova-core',
+  'package.json',
+);
+const PACKAGE_JSON_PATH = resolve(ROOT_DIR, 'package.json');
+const CHANGELOG_PATH = resolve(ROOT_DIR, 'CHANGELOG.md');
+
+interface ExecOptions {
+  cwd?: string;
+  env?: NodeJS.ProcessEnv;
+}
 
 // --- Utility functions ---
-function exec(cmd: string, dryRun?: boolean): string {
+function exec(cmd: string, dryRun?: boolean, options?: ExecOptions): string {
   if (dryRun) {
     // eslint-disable-next-line
     console.log(`  [dry-run] ${cmd}`);
     return '';
   }
-  return execSync(cmd, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+  return execSync(cmd, {
+    cwd: options?.cwd || ROOT_DIR,
+    env: options?.env ? { ...process.env, ...options.env } : process.env,
+    encoding: 'utf-8',
+    stdio: ['pipe', 'pipe', 'pipe'],
+  }).trim();
+}
+
+function execInherited(cmd: string, dryRun?: boolean, options?: ExecOptions): void {
+  if (dryRun) {
+    // eslint-disable-next-line
+    console.log(`  [dry-run] ${cmd}`);
+    return;
+  }
+  execSync(cmd, {
+    cwd: options?.cwd || ROOT_DIR,
+    env: options?.env ? { ...process.env, ...options.env } : process.env,
+    encoding: 'utf-8',
+    stdio: 'inherit',
+  });
+}
+
+function readJson(filePath: string): Record<string, any> {
+  return JSON.parse(readFileSync(filePath, 'utf-8'));
 }
 
 function readPackageJson(): Record<string, any> {
-  return JSON.parse(readFileSync(PACKAGE_JSON_PATH, 'utf-8'));
+  return readJson(PACKAGE_JSON_PATH);
 }
 
 function writePackageJson(pkg: Record<string, any>): void {
   writeFileSync(PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
+function isValidVersion(version: string): boolean {
+  return /^\d+\.\d+\.\d+$/.test(version);
+}
+
+function parseVersion(version: string): [number, number, number] {
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid version: ${version}`);
+  }
+  const [major, minor, patch] = version.split('.').map(item => Number.parseInt(item, 10));
+  return [major, minor, patch];
+}
+
+function compareVersions(left: string, right: string): number {
+  const leftParts = parseVersion(left);
+  const rightParts = parseVersion(right);
+  for (let i = 0; i < leftParts.length; i++) {
+    if (leftParts[i] > rightParts[i]) return 1;
+    if (leftParts[i] < rightParts[i]) return -1;
+  }
+  return 0;
+}
+
 function getLastTag(): string | null {
   try {
     const result = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, {
+      cwd: ROOT_DIR,
       encoding: 'utf-8',
     }).trim();
     const tags = result.split('\n').filter(Boolean);
@@ -51,7 +112,7 @@ interface CommitInfo {
 function getCommitsSinceTag(tag: string | null): CommitInfo[] {
   const range = tag ? `${tag}..HEAD` : 'HEAD';
   const logCmd = `git log ${range} --pretty=format:"%h|||%s" --no-merges -${COMMIT_CAP}`;
-  const result = execSync(logCmd, { encoding: 'utf-8' }).trim();
+  const result = execSync(logCmd, { cwd: ROOT_DIR, encoding: 'utf-8' }).trim();
   if (!result) return [];
   return result.split('\n').map(line => {
     const [hash, subject] = line.split('|||');
@@ -79,9 +140,107 @@ function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+function getPatchFilePath(version: string): string {
+  return resolve(VONA_PATCHES_DIR, `zova-core@${version}.patch`);
+}
+
+function readCurrentPatchedZovaCoreVersion(): string | null {
+  const content = readFileSync(VONA_WORKSPACE_PATH, 'utf-8');
+  const match = content.match(/^\s*zova-core@(\d+\.\d+\.\d+):\s+patches\/zova-core@\1\.patch\s*$/m);
+  return match?.[1] || null;
+}
+
+function readLocalZovaCoreVersion(): string {
+  const pkg = readJson(ZOVA_CORE_PACKAGE_JSON_PATH);
+  const version = pkg.version?.trim();
+  if (!version || !isValidVersion(version)) {
+    throw new Error(`Invalid zova-core version in ${ZOVA_CORE_PACKAGE_JSON_PATH}`);
+  }
+  return version;
+}
+
+function normalizeVonaPatchedDependency(version: string): void {
+  const patchLine = `  zova-core@${version}: patches/zova-core@${version}.patch`;
+  const lines = readFileSync(VONA_WORKSPACE_PATH, 'utf-8').split('\n');
+  const patchedDependenciesIndex = lines.findIndex(line => line.trim() === 'patchedDependencies:');
+  if (patchedDependenciesIndex === -1) {
+    throw new Error(`Missing patchedDependencies block in ${VONA_WORKSPACE_PATH}`);
+  }
+  let blockEndIndex = patchedDependenciesIndex + 1;
+  while (blockEndIndex < lines.length) {
+    const line = lines[blockEndIndex];
+    if (line && !/^\s/.test(line)) break;
+    blockEndIndex++;
+  }
+  const preservedBlockLines = lines
+    .slice(patchedDependenciesIndex + 1, blockEndIndex)
+    .filter(
+      line =>
+        !/^\s*zova-core@\d+\.\d+\.\d+:\s+patches\/zova-core@\d+\.\d+\.\d+\.patch\s*$/.test(line),
+    );
+  const newLines = [
+    ...lines.slice(0, patchedDependenciesIndex + 1),
+    patchLine,
+    ...preservedBlockLines,
+    ...lines.slice(blockEndIndex),
+  ];
+  writeFileSync(VONA_WORKSPACE_PATH, `${newLines.join('\n').replace(/\n+$/, '\n')}\n`);
+}
+
+function replaceOrThrow(
+  content: string,
+  search: RegExp,
+  replacement: string,
+  description: string,
+): string {
+  const matches = content.match(search);
+  if (!matches || matches.length !== 1) {
+    throw new Error(
+      `Unable to locate ${description} exactly once while regenerating the zova-core patch`,
+    );
+  }
+  return content.replace(search, replacement);
+}
+
+function applyKnownZovaCorePatchEdits(editDir: string): void {
+  const errorGlobalPath = resolve(editDir, 'dist', 'bean', 'resource', 'error', 'errorGlobal.d.ts');
+  const envPath = resolve(editDir, 'dist', 'types', 'utils', 'env.d.ts');
+  const modulePath = resolve(editDir, 'dist', 'types', 'interface', 'module.d.ts');
+
+  for (const filePath of [errorGlobalPath, envPath, modulePath]) {
+    if (!existsSync(filePath)) {
+      throw new Error(`Expected patch target file is missing: ${filePath}`);
+    }
+  }
+
+  const errorGlobalContent = readFileSync(errorGlobalPath, 'utf-8');
+  if (!errorGlobalContent.includes('declare global')) {
+    throw new Error(`Expected global Error augmentation in ${errorGlobalPath}`);
+  }
+  writeFileSync(errorGlobalPath, 'export {};\n');
+
+  const envContent = readFileSync(envPath, 'utf-8');
+  const envNext = replaceOrThrow(
+    envContent,
+    /declare global \{\n {4}namespace NodeJS \{\n        interface ProcessEnv \{[\s\S]*?\n        \}\n    \}\n\}\n?/,
+    '',
+    'the NodeJS.ProcessEnv augmentation',
+  );
+  writeFileSync(envPath, envNext);
+
+  const moduleContent = readFileSync(modulePath, 'utf-8');
+  const moduleNext = replaceOrThrow(
+    moduleContent,
+    /declare module '@cabloy\/module-info' \{\n {4}interface IModule \{[\s\S]*?\n    \}\n\}\n?/,
+    '',
+    'the @cabloy/module-info augmentation',
+  );
+  writeFileSync(modulePath, moduleNext);
+}
+
 // --- Pre-step: Commit pending changes ---
 function commitPendingChanges(dryRun?: boolean): void {
-  const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim();
+  const status = execSync('git status --porcelain', { cwd: ROOT_DIR, encoding: 'utf-8' }).trim();
   if (!status) return;
   // eslint-disable-next-line
   console.log('\n📁 Committing pending changes...');
@@ -94,12 +253,144 @@ function commitPendingChanges(dryRun?: boolean): void {
 function subProjectRelease(bumpType: 'patch' | 'minor' | 'major', dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log(`\n🔧 Running vona/zova release (${bumpType})...`);
+  execInherited(`lerna publish ${bumpType} --yes`, dryRun);
+}
+
+// --- Compensation step: Refresh the zova-core patch ---
+function regenerateVonaZovaCorePatch(
+  currentPatchedVersion: string,
+  targetVersion: string,
+  dryRun?: boolean,
+): void {
+  const editDir = resolve(
+    VONA_DIR,
+    'node_modules',
+    '.release-compensation',
+    `zova-core-${targetVersion}`,
+  );
+  const oldPatchFilePath = getPatchFilePath(currentPatchedVersion);
+  const newPatchFilePath = getPatchFilePath(targetVersion);
+
+  // eslint-disable-next-line
+  console.log(`\n🩹 Regenerating the Vona zova-core patch for ${targetVersion}...`);
+
   if (dryRun) {
+    exec(
+      `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
+      true,
+    );
     // eslint-disable-next-line
-    console.log(`  [dry-run] lerna publish ${bumpType} --yes`);
+    console.log('  [dry-run] Apply the known zova-core declaration-file patch edits');
+    exec(`pnpm --dir "${VONA_DIR}" patch-commit "${editDir}"`, true);
+    // eslint-disable-next-line
+    console.log(`  [dry-run] Normalize ${VONA_WORKSPACE_PATH}`);
+    // eslint-disable-next-line
+    console.log(`  [dry-run] Remove ${oldPatchFilePath} if it still exists`);
     return;
   }
-  execSync(`lerna publish ${bumpType} --yes`, { encoding: 'utf-8', stdio: 'inherit' });
+
+  rmSync(editDir, { recursive: true, force: true });
+  mkdirSync(dirname(editDir), { recursive: true });
+
+  try {
+    execInherited(
+      `pnpm --dir "${VONA_DIR}" patch zova-core@${targetVersion} --edit-dir "${editDir}" --ignore-existing`,
+    );
+    applyKnownZovaCorePatchEdits(editDir);
+    execInherited(`pnpm --dir "${VONA_DIR}" patch-commit "${editDir}"`);
+
+    normalizeVonaPatchedDependency(targetVersion);
+
+    if (!existsSync(newPatchFilePath)) {
+      throw new Error(`Expected regenerated patch file is missing: ${newPatchFilePath}`);
+    }
+    if (currentPatchedVersion !== targetVersion && existsSync(oldPatchFilePath)) {
+      rmSync(oldPatchFilePath);
+    }
+  } finally {
+    rmSync(editDir, { recursive: true, force: true });
+  }
+}
+
+function refreshVonaLockfile(dryRun?: boolean): void {
+  // eslint-disable-next-line
+  console.log('\n📦 Refreshing the Vona lockfile...');
+  execInherited(`pnpm --dir "${VONA_DIR}" install`, dryRun);
+}
+
+function verifyCompensationPatch(dryRun?: boolean): void {
+  // eslint-disable-next-line
+  console.log('\n✅ Verifying the refreshed zova-core patch...');
+  execInherited('pnpm exec tsc -p tsconfig.json --noEmit', dryRun, { cwd: VONA_DIR });
+  execInherited('npm run tsc', dryRun);
+}
+
+function commitCompensationChanges(targetVersion: string, dryRun?: boolean): void {
+  // eslint-disable-next-line
+  console.log('\n📁 Committing compensation changes...');
+  exec('git add vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches', dryRun);
+  if (!dryRun) {
+    const staged = execSync(
+      'git diff --cached --name-only -- vona/pnpm-workspace.yaml vona/pnpm-lock.yaml vona/patches',
+      { cwd: ROOT_DIR, encoding: 'utf-8' },
+    ).trim();
+    if (!staged) {
+      throw new Error('No compensation changes were staged for commit');
+    }
+  }
+  exec(`git commit -m "chore: refresh vona zova-core patch for v${targetVersion}"`, dryRun);
+  exec('git push', dryRun);
+}
+
+function rerunPatchReleaseAfterCompensation(noAi?: boolean, dryRun?: boolean): void {
+  const noAiFlag = noAi ? ' --no-ai' : '';
+  // eslint-disable-next-line
+  console.log('\n🚀 Running the compensation patch release...');
+  execInherited(`node "${RELEASE_SCRIPT_PATH}" patch --skip-compensation${noAiFlag}`, dryRun);
+}
+
+async function postReleaseCompensation(options: ReleaseOptions): Promise<void> {
+  if (
+    options.dryRun ||
+    options.changelogOnly ||
+    options.publishOnly ||
+    options.releaseOnly ||
+    options.skipCompensation
+  ) {
+    return;
+  }
+
+  // eslint-disable-next-line
+  console.log('\n🔍 Checking whether zova-core compensation is needed...');
+
+  const currentPatchedVersion = readCurrentPatchedZovaCoreVersion();
+  if (!currentPatchedVersion) {
+    throw new Error(`Missing zova-core patchedDependencies entry in ${VONA_WORKSPACE_PATH}`);
+  }
+
+  const localZovaCoreVersion = readLocalZovaCoreVersion();
+  // eslint-disable-next-line
+  console.log(`Current Vona zova-core patch target: ${currentPatchedVersion}`);
+  // eslint-disable-next-line
+  console.log(`Local zova-core version: ${localZovaCoreVersion}`);
+
+  if (compareVersions(localZovaCoreVersion, currentPatchedVersion) <= 0) {
+    // eslint-disable-next-line
+    console.log('zova-core patch already matches the local version. Skipping compensation.');
+    return;
+  }
+
+  if (compareVersions(localZovaCoreVersion, currentPatchedVersion) <= 0) {
+    // eslint-disable-next-line
+    console.log('No newer local zova-core version needs patch compensation. Skipping.');
+    return;
+  }
+
+  regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion, options.dryRun);
+  refreshVonaLockfile(options.dryRun);
+  verifyCompensationPatch(options.dryRun);
+  commitCompensationChanges(localZovaCoreVersion, options.dryRun);
+  rerunPatchReleaseAfterCompensation(options.noAi, options.dryRun);
 }
 
 // --- Step 1: Version Bump ---
@@ -115,6 +406,7 @@ async function versionBump(
   if (lastTag) {
     const diffCmd = `git -c diff.renameLimit=10000 diff --name-only ${lastTag}..HEAD`;
     const changedFiles = execSync(diffCmd, {
+      cwd: ROOT_DIR,
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
@@ -211,7 +503,10 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   // After version bump, the current tag (e.g. cabloy@5.1.4) points to HEAD,
   // so we need the tag BEFORE that to get the commit range
   const currentTag = `${TAG_PREFIX}${version}`;
-  const allTags = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, { encoding: 'utf-8' })
+  const allTags = execSync(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`, {
+    cwd: ROOT_DIR,
+    encoding: 'utf-8',
+  })
     .trim()
     .split('\n')
     .filter(Boolean);
@@ -279,7 +574,7 @@ async function npmPublish(dryRun?: boolean): Promise<void> {
     return;
   }
 
-  execSync('npm publish', { encoding: 'utf-8', stdio: 'inherit' });
+  execSync('npm publish', { cwd: ROOT_DIR, encoding: 'utf-8', stdio: 'inherit' });
 }
 
 // --- Step 4: GitHub Release ---
@@ -313,19 +608,20 @@ async function githubRelease(version: string, dryRun?: boolean): Promise<void> {
   }
 
   // Use gh CLI with a temp file for notes to avoid shell escaping issues
-  const tmpFile = resolve(dirname(fileURLToPath(import.meta.url)), '..', '.release-notes.tmp.md');
+  const tmpFile = resolve(ROOT_DIR, '.release-notes.tmp.md');
   writeFileSync(tmpFile, notes);
   try {
     execSync(
       `gh release create ${tag} --repo ${GITHUB_REPO} --title "v${version}" --notes-file "${tmpFile}"`,
       {
+        cwd: ROOT_DIR,
         encoding: 'utf-8',
         stdio: 'inherit',
       },
     );
   } finally {
     if (existsSync(tmpFile)) {
-      execSync(`rm -f "${tmpFile}"`);
+      execSync(`rm -f "${tmpFile}"`, { cwd: ROOT_DIR });
     }
   }
 }
@@ -340,6 +636,7 @@ interface ReleaseOptions {
   skipChangelog?: boolean;
   skipPublish?: boolean;
   skipRelease?: boolean;
+  skipCompensation?: boolean;
   noAi?: boolean;
 }
 
@@ -349,14 +646,18 @@ async function release(options: ReleaseOptions): Promise<void> {
 
   // Pre-flight checks
   try {
-    execSync('git rev-parse --is-inside-work-tree', { encoding: 'utf-8', stdio: 'pipe' });
+    execSync('git rev-parse --is-inside-work-tree', {
+      cwd: ROOT_DIR,
+      encoding: 'utf-8',
+      stdio: 'pipe',
+    });
   } catch {
     // eslint-disable-next-line
     console.error('Error: Not in a git repository');
     process.exit(1);
   }
 
-  const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim();
+  const status = execSync('git status --porcelain', { cwd: ROOT_DIR, encoding: 'utf-8' }).trim();
   if (status && !options.dryRun) {
     // eslint-disable-next-line
     console.error('Error: Working tree is not clean. Commit or stash your changes first.');
@@ -395,6 +696,8 @@ async function release(options: ReleaseOptions): Promise<void> {
     await githubRelease(version, options.dryRun);
   }
 
+  await postReleaseCompensation(options);
+
   // eslint-disable-next-line
   console.log('\n✅ Release complete!');
 }
@@ -409,6 +712,7 @@ const args = minimist(process.argv.slice(2), {
     'skip-changelog',
     'skip-publish',
     'skip-release',
+    'skip-compensation',
     'no-ai',
   ],
   default: {
@@ -419,6 +723,7 @@ const args = minimist(process.argv.slice(2), {
     'skip-changelog': false,
     'skip-publish': false,
     'skip-release': false,
+    'skip-compensation': false,
     'no-ai': false,
   },
 });
@@ -439,6 +744,7 @@ release({
   skipChangelog: args['skip-changelog'],
   skipPublish: args['skip-publish'],
   skipRelease: args['skip-release'],
+  skipCompensation: args['skip-compensation'],
   noAi: args['no-ai'],
 }).catch(err => {
   // eslint-disable-next-line
