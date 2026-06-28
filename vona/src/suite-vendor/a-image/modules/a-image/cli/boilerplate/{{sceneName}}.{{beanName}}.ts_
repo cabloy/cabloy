@@ -1,0 +1,7 @@
+import { BeanBase } from 'vona';
+import { ImageProvider } from 'vona-module-a-image';
+
+@ImageProvider({
+  base: {},
+})
+export class {{properBeanName}} extends BeanBase {}

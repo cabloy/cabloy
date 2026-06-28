@@ -1,0 +1,50 @@
+import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
+
+import { Api, v } from 'vona-module-a-openapiutils';
+import { Entity, EntityBase } from 'vona-module-a-orm';
+
+import type { IImageProviderRecord } from '../types/imageProvider.ts';
+
+export interface IEntityOptionsImage extends IDecoratorEntityOptions {}
+
+@Entity<IEntityOptionsImage>('aImage')
+export class EntityImage extends EntityBase {
+  @Api.field()
+  providerName: keyof IImageProviderRecord;
+
+  @Api.field()
+  clientName: string;
+
+  @Api.field()
+  resourceId: string;
+
+  @Api.field(v.optional())
+  filename?: string;
+
+  @Api.field(v.optional())
+  contentType?: string;
+
+  @Api.field(v.optional())
+  size?: number;
+
+  @Api.field(v.optional())
+  width?: number;
+
+  @Api.field(v.optional())
+  height?: number;
+
+  @Api.field(v.optional())
+  requireSignedURLs?: boolean;
+
+  @Api.field(v.optional())
+  variants?: string[];
+
+  @Api.field(v.optional())
+  meta?: Record<string, any>;
+
+  @Api.field(v.optional())
+  storagePath?: string;
+
+  @Api.field(v.optional())
+  deliveryBaseUrl?: string;
+}
