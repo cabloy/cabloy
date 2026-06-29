@@ -75,6 +75,7 @@ export class EntityStudent extends EntityBase {
         quality: 90,
       },
     }),
+    ZovaRender.cell('basic-image:image'),
   )
   imageUrl?: string;
 

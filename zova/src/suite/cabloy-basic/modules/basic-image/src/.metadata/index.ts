@@ -81,6 +81,41 @@ export interface IZovaComponentRecord {
 }
 }
 /** components: end */
+/** tableCell: begin */
+export * from '../bean/tableCell.image.jsx';
+import { ITableCellOptionsImage } from '../bean/tableCell.image.jsx';
+import 'zova-module-a-table';
+declare module 'zova-module-a-table' {
+
+    export interface ITableCellRecord {
+      'basic-image:image': ITableCellOptionsImage;
+    }
+
+
+}
+declare module 'zova-module-basic-image' {
+
+        export interface TableCellImage {
+          /** @internal */
+          get scope(): ScopeModuleBasicImage;
+        }
+
+        export interface TableCellImage {
+          get $beanFullName(): 'basic-image.tableCell.image';
+          get $onionName(): 'basic-image:image';
+          get $onionOptions(): ITableCellOptionsImage;
+        }
+}
+/** tableCell: end */
+/** tableCell: begin */
+import { TableCellImage } from '../bean/tableCell.image.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'basic-image.tableCell.image': TableCellImage;
+  }
+}
+/** tableCell: end */
 /** locale: begin */
 import { locales } from './locales.js';
 /** locale: end */
