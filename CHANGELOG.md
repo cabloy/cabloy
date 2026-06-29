@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.95
+
+### Improvements
+
+- Refresh the Zova lockfile to prepare for the compensation rerun.
+- Refresh the `vona zova-core` patch for compatibility with `v5.1.75`.
+
 ## 5.1.94
 
 ### Features
