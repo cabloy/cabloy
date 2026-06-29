@@ -24,6 +24,7 @@ Representative examples:
 - `ssr-memory-leak-investigation-guide.md` records the confirmed SSR leak root cause, the formal runtime-core fix, the SSR `ssrRender -> instance.render` fallback bridge used by Zova, and the residual-runtime findings that future memory investigations should reuse
 - `ssr-leak-experiment-flags-inventory.md` records the historical `SSR_LEAK_EXPERIMENT_*` surface and confirms that those investigation flags were ultimately removed from active source
 - `ssr-leak-experiment-cleanup-checklist.md` records the execution order and verification path used to fully remove the old SSR leak investigation flags from source
+- `ssr-route-typing-zova-rest-declaration-visibility.md` records why backend SSR route keys could collapse to `never`, how the generated `zova-rest-*` declaration fix preserves module augmentation visibility, and how the backend consumer path was validated
 
 ## What should go elsewhere
 

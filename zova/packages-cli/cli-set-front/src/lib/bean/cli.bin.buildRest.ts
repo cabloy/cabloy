@@ -53,6 +53,7 @@ interface IBinBuildRestContext {
   srcDir: string;
   outDir: string;
   bundleModules?: string[];
+  moduleNames?: string[];
 }
 
 export class CliBinBuildRest extends BeanCliBase {
@@ -106,14 +107,20 @@ export class CliBinBuildRest extends BeanCliBase {
     // Modules
     const modules: string[] = [];
     const bundleModules: string[] = [];
+    const moduleNames: string[] = [];
     for (const module of modulesMeta.modulesArray) {
-      modules.push(`export * from '${module.info.fullName}';`);
+      const moduleName = module.info.fullName;
+      modules.push(`import '${moduleName}';`);
+      modules.push(`export * from '${moduleName}';`);
       const moduleRoot = module.root.replaceAll('\\', '/');
       if (moduleRoot.includes('/src/module/') || moduleRoot.includes('/src/suite/')) {
-        bundleModules.push(module.info.fullName);
+        bundleModules.push(moduleName);
+      } else {
+        moduleNames.push(moduleName);
       }
     }
     context.bundleModules = bundleModules;
+    context.moduleNames = moduleNames;
     argv.Modules = modules.join('\n');
     // Name/Version
     argv.Name = bundleName;
@@ -149,7 +156,7 @@ export class CliBinBuildRest extends BeanCliBase {
     await fse.writeFile(fileIndex, fileContent);
   }
 
-  async _buildDts({ srcDir, outDir, bundleModules }: IBinBuildRestContext) {
+  async _buildDts({ srcDir, outDir, bundleModules, moduleNames }: IBinBuildRestContext) {
     // entry
     const entry = path.join(srcDir, 'index.ts');
     // build
@@ -176,6 +183,18 @@ export class CliBinBuildRest extends BeanCliBase {
       },
       // minify: true,
     });
+    await this._injectDtsImports(outDir, moduleNames!);
+  }
+
+  async _injectDtsImports(outDir: string, moduleNames: string[]) {
+    const fileIndex = path.join(outDir, 'index.d.mts');
+    let fileContent = (await fse.readFile(fileIndex)).toString();
+    const imports = moduleNames
+      .filter(moduleName => !fileContent.includes(`import "${moduleName}";`))
+      .map(moduleName => `import "${moduleName}";`);
+    if (imports.length === 0) return;
+    fileContent = `${imports.join('\n')}\n${fileContent}`;
+    await fse.writeFile(fileIndex, fileContent);
   }
 
   async _build(buildContext: IBinBuildRestContext) {
@@ -224,7 +243,7 @@ async function _extractDeps(filePath: string): Promise<string[]> {
   const pos = content.indexOf('//#region');
   content = content.substring(0, pos);
   const packageNames = new Set();
-  const re = /import\s+[\s\S]*?\s+from\s+['"]([^'"]+)['"]/g;
+  const re = /import\s+(?:[\s\S]*?\s+from\s+)?['"]([^'"]+)['"]/g;
 
   let match: any;
   while (true) {

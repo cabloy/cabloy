@@ -66,3 +66,4 @@ Those concerns should live elsewhere.
 - [SSR Leak Experiment Flags Inventory](./architecture/ssr-leak-experiment-flags-inventory.md)
 - [SSR Leak Experiment Cleanup Checklist](./architecture/ssr-leak-experiment-cleanup-checklist.md)
 - [Vona/Zova Install-Time Type Patch](./architecture/vona-zova-install-time-type-patch.md)
+- [SSR Route Typing and Zova Rest Declaration Visibility](./architecture/ssr-route-typing-zova-rest-declaration-visibility.md)
