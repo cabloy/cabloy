@@ -1,4 +1,8 @@
-import type { IImageProviderResource, IImageUploadInput } from 'vona-module-a-image';
+import type {
+  IImageProviderClientOptionsBase,
+  IImageProviderResource,
+  IImageUploadInput,
+} from 'vona-module-a-image';
 
 import fse from 'fs-extra';
 import path from 'node:path';
@@ -10,10 +14,7 @@ export interface IImageProviderNativeClientRecord {
   local: never;
 }
 
-export interface IImageProviderNativeClientOptions {
-  deliveryBaseUrl?: string;
-  variants?: Record<string, string>;
-  requireSignedURLs?: boolean;
+export interface IImageProviderNativeClientOptions extends IImageProviderClientOptionsBase {
   subdir?: string;
 }
 

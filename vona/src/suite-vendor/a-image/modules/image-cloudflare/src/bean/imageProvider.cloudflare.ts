@@ -1,6 +1,7 @@
 import type {
   IDecoratorImageProviderOptions,
   IImageDownloadResult,
+  IImageProviderClientOptionsBase,
   IImageProviderExecute,
   IImageProviderResource,
   IImageUploadInput,
@@ -15,12 +16,9 @@ export interface IImageProviderCloudflareClientRecord {
   cloud: never;
 }
 
-export interface IImageProviderCloudflareClientOptions {
+export interface IImageProviderCloudflareClientOptions extends IImageProviderClientOptionsBase {
   accountId?: string;
   apiToken?: string;
-  deliveryBaseUrl?: string;
-  variants?: Record<string, string>;
-  requireSignedURLs?: boolean;
 }
 
 export interface IImageProviderOptionsCloudflare extends IDecoratorImageProviderOptions<

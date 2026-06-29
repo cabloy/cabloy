@@ -15,11 +15,13 @@ export interface IImageProviderClientRecord {
   default: never;
 }
 
-export interface IImageProviderClientOptions {
+export interface IImageProviderClientOptionsBase {
   deliveryBaseUrl?: string;
   variants?: Record<string, string>;
   requireSignedURLs?: boolean;
 }
+
+export interface IImageProviderClientOptions extends IImageProviderClientOptionsBase {}
 
 export type TypeImageProviderClientOptions<T> =
   T extends IDecoratorImageProviderOptions<any, infer O> ? O : never;
