@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.91
+
+### Features
+
+- Update core behavior to support the latest internal feature changes.
+
+### Improvements
+
+- Refine utility helpers for better internal consistency.
+- Improve static middleware handling.
+- Enhance SSR metadata store internals.
+
 ## 5.1.90
 
 ### Features
