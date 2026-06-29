@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.94
+
+### Features
+
+- Update the application with the latest changes.
+
 ## 5.1.93
 
 ### Bug Fixes
