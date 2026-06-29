@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.92
+
+### Bug Fixes
+
+- Preserve SSR route typing visibility.
+
+### Improvements
+
+- Clarify side-effect import module names.
+- Publish the latest package updates.
+
 ## 5.1.91
 
 ### Features
