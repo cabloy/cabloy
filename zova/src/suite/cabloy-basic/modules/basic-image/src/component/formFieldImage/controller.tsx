@@ -207,7 +207,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         <div class="aspect-square overflow-hidden rounded-t-box bg-base-200">
           <img
             class="h-full w-full object-cover"
-            src={item.url}
+            src={this._resolvePreviewUrl(item.url)}
             alt={item.filename ?? `image-${index + 1}`}
           />
         </div>
@@ -221,7 +221,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
             )}
           </div>
           <div class="flex flex-wrap gap-2">
-            <a class="btn btn-sm btn-outline" href={item.url} target="_blank" rel="noreferrer">
+            <a
+              class="btn btn-sm btn-outline"
+              href={this._resolvePreviewUrl(item.url)}
+              target="_blank"
+              rel="noreferrer"
+            >
               {this.scope.locale.PreviewImage()}
             </a>
             {!readonly && (
@@ -632,6 +637,13 @@ export class ControllerFormFieldImage extends BeanControllerBase {
       image.onerror = () => reject(new Error(this.scope.locale.ImageUploadFailed()));
       image.src = src;
     });
+  }
+
+  private _resolvePreviewUrl(url: string) {
+    if (!url || !url.startsWith('/api/')) return url;
+    const baseURL = this.sys.config.api.baseURL;
+    if (!baseURL) return url;
+    return `${baseURL.replace(/\/$/, '')}${url}`;
   }
 
   private _formatBytes(bytes: number) {

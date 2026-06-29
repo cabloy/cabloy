@@ -37,7 +37,7 @@ export class ApiImage extends BeanApiBase {
     return this.$fetch.post<any, ApiImageUploadResponseBody>(
       '/image/upload',
       this.$formData(body),
-      this.$configPrepare(undefined, options, true),
+      this.$configPrepare(this.sys.util.getApiBaseURL(), options, true),
     );
   }
 }
