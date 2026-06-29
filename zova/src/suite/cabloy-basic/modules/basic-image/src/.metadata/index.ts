@@ -1,0 +1,118 @@
+// eslint-disable
+/** api: begin */
+export * from '../api/image.js';
+
+import 'zova';
+declare module 'zova' {
+  
+  
+}
+declare module 'zova-module-basic-image' {
+  
+        export interface ApiImage {
+          /** @internal */
+          get scope(): ScopeModuleBasicImage;
+        }
+
+        export interface ApiImage {
+          get $beanFullName(): 'basic-image.api.image';
+          get $onionName(): 'basic-image:image';
+          
+        } 
+}
+/** api: end */
+/** api: begin */
+import { ApiImage } from '../api/image.js';
+export interface IModuleApi {
+  'image': ApiImage;
+}
+/** api: end */
+/** api: begin */
+
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'basic-image.api.image': ApiImage;
+  }
+}
+/** api: end */
+/** openapi: begin */
+
+/** openapi: end */
+/** controller: begin */
+export * from '../component/formFieldImage/controller.jsx';
+
+import 'zova';
+declare module 'zova' {
+  
+  
+}
+declare module 'zova-module-basic-image' {
+  
+        export interface ControllerFormFieldImage {
+          /** @internal */
+          get scope(): ScopeModuleBasicImage;
+        } 
+}
+/** controller: end */
+/** controller: begin */
+import { ControllerFormFieldImage } from '../component/formFieldImage/controller.jsx';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'basic-image.controller.formFieldImage': ControllerFormFieldImage;
+  }
+}
+/** controller: end */
+
+/** components: begin */
+export * from './component/formFieldImage.js';
+import { ZFormFieldImage } from './component/formFieldImage.js';
+export const components = {
+  'formFieldImage': ZFormFieldImage,
+};
+import 'zova';
+declare module 'zova' {
+export interface IComponentRecord {
+  'basic-image:formFieldImage': ControllerFormFieldImage;
+}
+export interface IZovaComponentRecord {
+  'basic-image:formFieldImage': typeof ZFormFieldImage;
+}
+}
+/** components: end */
+/** locale: begin */
+import { locales } from './locales.js';
+/** locale: end */
+/** scope: begin */
+import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';
+import { Scope } from 'zova-module-a-bean';
+
+@Scope()
+export class ScopeModuleBasicImage extends BeanScopeBase {}
+
+export interface ScopeModuleBasicImage {
+  util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
+api: IModuleApi;
+}
+
+import 'zova';
+declare module 'zova' {
+  export interface IBeanScopeRecord {
+    'basic-image': ScopeModuleBasicImage;
+  }
+  
+  
+
+  export interface IBeanScopeLocale {
+    'basic-image': (typeof locales)[TypeLocaleBase];
+  }
+
+  
+}
+
+export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `basic-image::${K}` {
+  return `basic-image::${key}`;
+}  
+/** scope: end */

@@ -11,7 +11,7 @@ import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
 
 export interface IControllerOptionsImage extends IDecoratorControllerOptions {}
 
-@Controller<IControllerOptionsImage>({ path: 'image', meta: { mode: ['dev', 'test'] } })
+@Controller<IControllerOptionsImage>({ path: 'image' })
 export class ControllerImage extends BeanBase {
   @Web.post('upload')
   @Passport.public()
@@ -19,10 +19,14 @@ export class ControllerImage extends BeanBase {
   @Api.body(DtoImageUploadResponse)
   @Api.contentType('application/json')
   async upload(@Arg.file('image') file: IUploadFile) {
-    return await this.bean.image.upload('image-native:native', {
+    const image = await this.bean.image.upload('image-native:native', {
       file: file.file,
       filename: file.info.filename,
       contentType: file.info.mimeType,
     });
+    return {
+      ...image,
+      url: await this.bean.image.getVariantUrl(image.id),
+    };
   }
 }

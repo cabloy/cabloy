@@ -56,4 +56,7 @@ export class DtoImageUploadResponse {
 
   @Api.field(v.optional())
   uploadedAt?: Date;
+
+  @Api.field(v.optional())
+  url?: string;
 }

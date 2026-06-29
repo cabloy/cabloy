@@ -1,0 +1,18 @@
+export default {
+  AddImage: '继续添加图片',
+  AdjustImage: '请拖拽或缩放裁剪区域，调整图片显示范围。',
+  ApplyCrop: '应用裁剪',
+  CancelCrop: '取消',
+  CropImage: '裁剪图片',
+  ImageTooLarge: '图片大小超过限制：{0}',
+  ImageTooSmall: '图片大小小于限制：{0}',
+  ImageUploadFailed: '图片上传失败',
+  InvalidImageType: '图片类型不受支持',
+  NoImageSelected: '尚未选择图片',
+  PreviewImage: '预览',
+  RemoveImage: '移除',
+  ReplaceImage: '替换图片',
+  SelectImage: '选择图片',
+  TooManyImages: '最多允许上传 {0} 张图片',
+  Uploading: '正在上传...',
+};

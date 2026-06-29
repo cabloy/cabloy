@@ -1,0 +1,18 @@
+export default {
+  AddImage: 'Add Image',
+  AdjustImage: 'Drag or resize the crop area to adjust the image.',
+  ApplyCrop: 'Apply Crop',
+  CancelCrop: 'Cancel',
+  CropImage: 'Crop Image',
+  ImageTooLarge: 'Image size exceeds the limit: {0}',
+  ImageTooSmall: 'Image size is smaller than the limit: {0}',
+  ImageUploadFailed: 'Image upload failed',
+  InvalidImageType: 'Unsupported image type',
+  NoImageSelected: 'No image selected',
+  PreviewImage: 'Preview',
+  RemoveImage: 'Remove',
+  ReplaceImage: 'Replace Image',
+  SelectImage: 'Select Image',
+  TooManyImages: 'You can upload up to {0} images',
+  Uploading: 'Uploading...',
+};

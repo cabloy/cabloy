@@ -8,6 +8,7 @@ export default {
   Operations: '操作',
   Student: '学生',
   StudentName: '学生姓名',
+  StudentImage: '学生图片',
   Summary: '摘要',
   LevelTitle: '阶段名称',
   DescriptionLength: '描述长度',

@@ -31,7 +31,7 @@ export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
   fields: {
     trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
-      ZovaRender.order(5),
+      ZovaRender.order(6),
       ZovaRender.field('basic-details:formFieldDetails'),
     ),
   },
