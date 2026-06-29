@@ -46,7 +46,10 @@
   "vonaModule": {
     "fileVersion": 1,
     "dependencies": {
-      "a-orm": "5.0.0"
+      "a-orm": "5.0.0",
+      "a-upload": "5.0.0",
+      "a-user": "5.0.0",
+      "a-web": "5.0.0"
     },
     "onions": {
       "imageProvider": {

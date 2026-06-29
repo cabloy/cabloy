@@ -1,6 +1,6 @@
 // eslint-disable
 import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
-import type { TypeEntityOptionsFields } from 'vona-module-a-openapi';
+import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/image.ts';
@@ -249,6 +249,74 @@ declare module 'vona-module-a-image' {
 /** meta redlock: begin */
 import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
+/** dto: begin */
+export * from '../dto/imageUploadResponse.ts';
+import type { IDtoOptionsImageUploadResponse } from '../dto/imageUploadResponse.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+  
+    export interface IDtoRecord {
+      'a-image:imageUploadResponse': IDtoOptionsImageUploadResponse;
+    }
+
+  
+}
+declare module 'vona-module-a-image' {
+   
+}
+/** dto: end */
+/** dto: begin */
+import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
+declare module 'vona-module-a-image' {
+  
+    export interface IDtoOptionsImageUploadResponse {
+      fields?: TypeEntityOptionsFields<DtoImageUploadResponse, IDtoOptionsImageUploadResponse[TypeSymbolKeyFieldsMore]>;
+    }
+}
+/** dto: end */
+/** controller: begin */
+export * from '../controller/image.ts';
+import type { IControllerOptionsImage } from '../controller/image.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+  
+    export interface IControllerRecord {
+      'a-image:image': IControllerOptionsImage;
+    }
+
+  
+}
+declare module 'vona-module-a-image' {
+  
+        export interface ControllerImage {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface ControllerImage {
+            get $beanFullName(): 'a-image.controller.image';
+            get $onionName(): 'a-image:image';
+            get $onionOptions(): IControllerOptionsImage;
+          } 
+}
+/** controller: end */
+/** controller: begin */
+// @ts-ignore ignore
+import type { ControllerImage } from '../controller/image.ts';
+declare module 'vona-module-a-image' {
+  
+    export interface IControllerOptionsImage {
+      actions?: TypeControllerOptionsActions<ControllerImage>;
+    }
+}
+declare module 'vona-module-a-web' {
+  export interface IApiPathPostRecord{
+        '/image/upload': undefined;
+    }
+
+}
+
+/** controller: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';

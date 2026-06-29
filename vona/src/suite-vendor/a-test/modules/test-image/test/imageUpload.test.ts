@@ -14,7 +14,7 @@ describe('imageUpload.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const formData = new FormData();
       formData.append('image', new (Blob as any)([tinyPng], { type: 'image/png' }), 'image.png');
-      const url = app.util.getAbsoluteUrlByApiPath($apiPath('/test/image/upload'));
+      const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload', 'a-image'));
       const res = await fetch(url, {
         method: 'POST',
         body: formData,

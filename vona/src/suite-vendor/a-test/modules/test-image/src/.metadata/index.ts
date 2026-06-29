@@ -1,5 +1,4 @@
 // eslint-disable
-import type { TypeControllerOptionsActions } from 'vona-module-a-openapi';
 /** meta: begin */
 export * from '../bean/meta.version.ts';
 
@@ -26,49 +25,6 @@ declare module 'vona-module-test-image' {
           } 
 }
 /** meta: end */
-/** controller: begin */
-export * from '../controller/image.ts';
-import type { IControllerOptionsImage } from '../controller/image.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-  
-    export interface IControllerRecord {
-      'test-image:image': IControllerOptionsImage;
-    }
-
-  
-}
-declare module 'vona-module-test-image' {
-  
-        export interface ControllerImage {
-          /** @internal */
-          get scope(): ScopeModuleTestImage;
-        }
-
-          export interface ControllerImage {
-            get $beanFullName(): 'test-image.controller.image';
-            get $onionName(): 'test-image:image';
-            get $onionOptions(): IControllerOptionsImage;
-          } 
-}
-/** controller: end */
-/** controller: begin */
-// @ts-ignore ignore
-import type { ControllerImage } from '../controller/image.ts';
-declare module 'vona-module-test-image' {
-  
-    export interface IControllerOptionsImage {
-      actions?: TypeControllerOptionsActions<ControllerImage>;
-    }
-}
-declare module 'vona-module-a-web' {
-  export interface IApiPathPostRecord{
-        '/test/image/upload': undefined;
-    }
-
-}
-
-/** controller: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
