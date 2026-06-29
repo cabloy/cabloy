@@ -3,6 +3,7 @@ import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 
+import type { IImageNamedVariants } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 
 export interface IEntityOptionsImage extends IDecoratorEntityOptions {}
@@ -37,7 +38,7 @@ export class EntityImage extends EntityBase {
   requireSignedURLs?: boolean;
 
   @Api.field(v.optional())
-  variants?: string[];
+  variants?: IImageNamedVariants;
 
   @Api.field(v.optional())
   meta?: Record<string, any>;

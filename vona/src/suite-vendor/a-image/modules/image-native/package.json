@@ -29,6 +29,9 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
+  "dependencies": {
+    "sharp": "^0.35.2"
+  },
   "devDependencies": {
     "clean-package": "^2.2.0",
     "rimraf": "^6.1.3"

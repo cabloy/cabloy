@@ -12,6 +12,7 @@ describe('imageProvider.test.ts', () => {
       assert.equal(res.entityImageProvider?.providerName, 'image-native:native');
       assert.equal(res.entityImageProvider?.clientName, 'default');
       assert.equal(!!res.beanFullName, true);
+      assert.deepEqual(res.clientOptions.variants?.original ?? {}, {});
     });
   });
 });

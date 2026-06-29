@@ -4,7 +4,7 @@ export function config(_app: VonaApplication) {
   return {
     imageNative: {
       variants: {
-        original: 'original',
+        original: {},
       },
     },
   };

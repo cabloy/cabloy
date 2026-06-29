@@ -5,6 +5,7 @@ import type {
   IImageProviderExecute,
   IImageProviderResource,
   IImageUploadInput,
+  IImageVariantRequest,
 } from 'vona-module-a-image';
 import type { EntityImage } from 'vona-module-a-image';
 
@@ -70,16 +71,16 @@ export class ImageProviderNative
     _clientOptions: IImageProviderClientOptions,
     _options: IImageProviderOptionsNative,
   ) {
-    await this.scope.service.imageNative.remove(image.storagePath);
+    await this.scope.service.imageNative.remove(image);
   }
 
   async getVariantUrl(
     image: EntityImage,
-    variant: string,
+    request: IImageVariantRequest,
     clientOptions: IImageProviderNativeClientOptions,
     _options: IImageProviderOptionsNative,
   ) {
-    return this.scope.service.imageNative.getVariantUrl(image.resourceId, image.filename, variant, {
+    return await this.scope.service.imageNative.getVariantUrl(image, request, {
       ...clientOptions,
       subdir: clientOptions.subdir ?? 'default',
       deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
@@ -88,21 +89,24 @@ export class ImageProviderNative
 
   async download(
     image: EntityImage,
+    request: IImageVariantRequest,
     clientOptions: IImageProviderNativeClientOptions,
     options: IImageProviderOptionsNative,
   ): Promise<IImageDownloadResult> {
-    const buffer = image.storagePath ? await fse.readFile(image.storagePath) : undefined;
-    if (buffer) {
-      return {
-        kind: 'buffer',
-        buffer,
-        filename: image.filename,
-        contentType: image.contentType,
-      };
+    if (request.variantName === 'original' && !request.transformOptions) {
+      const buffer = image.storagePath ? await fse.readFile(image.storagePath) : undefined;
+      if (buffer) {
+        return {
+          kind: 'buffer',
+          buffer,
+          filename: image.filename,
+          contentType: image.contentType,
+        };
+      }
     }
     return {
       kind: 'url',
-      url: await this.getVariantUrl(image, 'original', clientOptions, options),
+      url: await this.getVariantUrl(image, request, clientOptions, options),
       filename: image.filename,
       contentType: image.contentType,
     };

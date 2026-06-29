@@ -5,10 +5,12 @@ import type {
   IImageProviderExecute,
   IImageProviderResource,
   IImageUploadInput,
+  IImageVariantRequest,
 } from 'vona-module-a-image';
 import type { EntityImage } from 'vona-module-a-image';
 
 import { BeanBase } from 'vona';
+import { resolveImageVariantRequestToTransform } from 'vona-module-a-image';
 import { ImageProvider } from 'vona-module-a-image';
 
 export interface IImageProviderCloudflareClientRecord {
@@ -29,7 +31,7 @@ export interface IImageProviderOptionsCloudflare extends IDecoratorImageProvider
 @ImageProvider<IImageProviderOptionsCloudflare>({
   base: {
     variants: {
-      original: 'original',
+      original: {},
     },
   },
 })
@@ -44,9 +46,6 @@ export class ImageProviderCloudflare
     _options: IImageProviderOptionsCloudflare,
   ): Promise<IImageProviderResource> {
     const resourceId = `cloudflare:${input.filename ?? 'image'}`;
-    const variants = Object.entries(clientOptions.variants ?? { original: 'original' }).map(
-      ([name, value]) => this._buildVariantUrl(resourceId, name, value, clientOptions),
-    );
     return {
       resourceId,
       filename: input.filename,
@@ -54,7 +53,7 @@ export class ImageProviderCloudflare
       size: input.size,
       requireSignedURLs: clientOptions.requireSignedURLs,
       deliveryBaseUrl: clientOptions.deliveryBaseUrl,
-      variants,
+      variants: clientOptions.variants,
       meta: input.meta,
       raw: {
         provider: 'cloudflare',
@@ -90,25 +89,32 @@ export class ImageProviderCloudflare
 
   async getVariantUrl(
     image: EntityImage,
-    variant: string,
+    request: IImageVariantRequest,
     clientOptions: IImageProviderCloudflareClientOptions,
     _options: IImageProviderOptionsCloudflare,
   ) {
-    const variants = clientOptions.variants ?? { original: 'original' };
-    return this._buildVariantUrl(image.resourceId, variant, variants[variant] ?? variant, {
-      ...clientOptions,
-      deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
-    });
+    const variants = image.variants ?? clientOptions.variants;
+    const resolved = resolveImageVariantRequestToTransform(request, 'original', variants);
+    return this._buildVariantUrl(
+      image.resourceId,
+      resolved.variantName,
+      resolved.transformOptions,
+      {
+        ...clientOptions,
+        deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
+      },
+    );
   }
 
   async download(
     image: EntityImage,
+    request: IImageVariantRequest,
     clientOptions: IImageProviderCloudflareClientOptions,
     options: IImageProviderOptionsCloudflare,
   ): Promise<IImageDownloadResult> {
     return {
       kind: 'url',
-      url: await this.getVariantUrl(image, 'original', clientOptions, options),
+      url: await this.getVariantUrl(image, request, clientOptions, options),
       filename: image.filename,
       contentType: image.contentType,
     };
@@ -117,10 +123,21 @@ export class ImageProviderCloudflare
   private _buildVariantUrl(
     resourceId: string,
     variantName: string,
-    variantValue: string,
+    transformOptions: Record<string, any>,
     clientOptions: IImageProviderCloudflareClientOptions,
   ) {
     const base = clientOptions.deliveryBaseUrl ?? 'https://imagedelivery.net/example';
-    return `${base.replace(/\/$/, '')}/${resourceId}/${variantValue || variantName}`;
+    if (variantName !== 'custom') {
+      return `${base.replace(/\/$/, '')}/${resourceId}/${variantName}`;
+    }
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(transformOptions)) {
+      if (value === undefined || value === null) continue;
+      params.set(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+    }
+    const query = params.toString();
+    return query
+      ? `${base.replace(/\/$/, '')}/${resourceId}?${query}`
+      : `${base.replace(/\/$/, '')}/${resourceId}`;
   }
 }

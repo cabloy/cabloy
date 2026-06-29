@@ -9,9 +9,13 @@ import type {
   IImageResource,
   IImageUploadInput,
   IImageUploadOptions,
+  IImageVariantRequest,
+  TypeImageVariantInput,
 } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 import type { IImageProviderExecute } from '../types/imageProvider.ts';
+
+import { resolveImageVariantRequest } from '../types/imageProvider.ts';
 
 @Bean()
 export class BeanImage extends BeanBase {
@@ -70,32 +74,39 @@ export class BeanImage extends BeanBase {
     await this.scope.model.image.deleteById(image.id);
   }
 
-  async getVariantUrl(imageId: TableIdentity, variant: string) {
+  async getVariantUrl(imageId: TableIdentity, request?: TypeImageVariantInput) {
     const image = await this.scope.model.image.getById(imageId);
     if (!image) throw new Error(`not found image: ${imageId}`);
+    const requestNormalized = this._normalizeVariantRequest(request);
     const { beanImageProvider, clientOptions, onionOptions } =
       await this._getProviderContext(image);
     return await beanImageProvider.getVariantUrl(
       image,
-      variant,
+      requestNormalized,
       clientOptions as any,
       onionOptions as any,
     );
   }
 
-  async download(imageId: TableIdentity) {
+  async download(imageId: TableIdentity, request?: TypeImageVariantInput) {
     const image = await this.scope.model.image.getById(imageId);
     if (!image) throw new Error(`not found image: ${imageId}`);
+    const requestNormalized = this._normalizeVariantRequest(request);
     const { beanImageProvider, clientOptions, onionOptions } =
       await this._getProviderContext(image);
     if (beanImageProvider.download) {
-      return await beanImageProvider.download(image, clientOptions as any, onionOptions as any);
+      return await beanImageProvider.download(
+        image,
+        requestNormalized,
+        clientOptions as any,
+        onionOptions as any,
+      );
     }
     return {
       kind: 'url' as const,
       url: await beanImageProvider.getVariantUrl(
         image,
-        this.scope.config.image.defaultVariant,
+        requestNormalized,
         clientOptions as any,
         onionOptions as any,
       ),
@@ -142,5 +153,12 @@ export class BeanImage extends BeanBase {
       raw: imageProviderResource?.raw,
       uploadedAt: image.createdAt,
     };
+  }
+
+  private _normalizeVariantRequest(request?: TypeImageVariantInput): IImageVariantRequest {
+    if (typeof request === 'string') {
+      return { variantName: request };
+    }
+    return resolveImageVariantRequest(request ?? {}, this.scope.config.image.defaultVariant);
   }
 }

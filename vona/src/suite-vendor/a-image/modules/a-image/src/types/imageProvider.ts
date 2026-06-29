@@ -3,7 +3,14 @@ import type { ServiceOnion, TypeOnionOptionsEnableSimple } from 'vona-module-a-o
 
 import type { EntityImage } from '../entity/image.ts';
 import type { EntityImageProvider } from '../entity/imageProvider.ts';
-import type { IImageDownloadResult, IImageProviderResource, IImageUploadInput } from './image.ts';
+import type {
+  IImageDownloadResult,
+  IImageNamedVariants,
+  IImageProviderResource,
+  IImageTransformOptions,
+  IImageUploadInput,
+  IImageVariantRequest,
+} from './image.ts';
 
 export type TypeImageProviderPick = Partial<
   Pick<EntityImageProvider, 'id' | 'providerName' | 'clientName'>
@@ -17,7 +24,7 @@ export interface IImageProviderClientRecord {
 
 export interface IImageProviderClientOptionsBase {
   deliveryBaseUrl?: string;
-  variants?: Record<string, string>;
+  variants?: IImageNamedVariants;
   requireSignedURLs?: boolean;
 }
 
@@ -37,6 +44,11 @@ export interface IDecoratorImageProviderOptions<
   clients?: { [K in keyof R]?: T };
 }
 
+export interface IImageProviderResolvedVariant {
+  variantName: string;
+  transformOptions: IImageTransformOptions;
+}
+
 export interface IImageProviderExecute<
   T extends IImageProviderClientOptions = IImageProviderClientOptions,
   O extends IDecoratorImageProviderOptions = IDecoratorImageProviderOptions,
@@ -48,8 +60,58 @@ export interface IImageProviderExecute<
     options: O,
   ): Promise<IImageProviderResource | undefined>;
   delete(image: EntityImage, clientOptions: T, options: O): Promise<void>;
-  getVariantUrl(image: EntityImage, variant: string, clientOptions: T, options: O): Promise<string>;
-  download?(image: EntityImage, clientOptions: T, options: O): Promise<IImageDownloadResult>;
+  getVariantUrl(
+    image: EntityImage,
+    request: IImageVariantRequest,
+    clientOptions: T,
+    options: O,
+  ): Promise<string>;
+  download?(
+    image: EntityImage,
+    request: IImageVariantRequest,
+    clientOptions: T,
+    options: O,
+  ): Promise<IImageDownloadResult>;
+}
+
+export function resolveImageVariantRequest(
+  request: IImageVariantRequest,
+  defaultVariant: string,
+): IImageVariantRequest {
+  if (request.variantName && request.transformOptions) {
+    throw new Error('variantName and transformOptions are mutually exclusive');
+  }
+  if (request.variantName || request.transformOptions) return request;
+  return { variantName: defaultVariant };
+}
+
+export function resolveImageVariantByName(
+  variants: IImageNamedVariants | undefined,
+  variantName: string,
+): IImageProviderResolvedVariant {
+  if (variantName === 'original') {
+    return { variantName, transformOptions: {} };
+  }
+  const transformOptions = variants?.[variantName];
+  if (!transformOptions) {
+    throw new Error(`Image variant not found: ${variantName}`);
+  }
+  return { variantName, transformOptions };
+}
+
+export function resolveImageVariantRequestToTransform(
+  request: IImageVariantRequest,
+  defaultVariant: string,
+  variants: IImageNamedVariants | undefined,
+): IImageProviderResolvedVariant {
+  const requestResolved = resolveImageVariantRequest(request, defaultVariant);
+  if (requestResolved.variantName) {
+    return resolveImageVariantByName(variants, requestResolved.variantName);
+  }
+  return {
+    variantName: 'custom',
+    transformOptions: requestResolved.transformOptions ?? {},
+  };
 }
 
 declare module 'vona-module-a-onion' {

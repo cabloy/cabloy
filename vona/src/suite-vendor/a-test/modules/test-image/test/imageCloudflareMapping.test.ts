@@ -22,7 +22,14 @@ describe('imageCloudflareMapping.test.ts', () => {
         },
       );
       assert.equal(image.provider, 'image-cloudflare:cloudflare');
-      assert.equal(image.variants?.length! > 0, true);
+      assert.deepEqual(image.variants?.original ?? {}, {});
+      const namedUrl = await app.bean.image.getVariantUrl(image.id, 'original');
+      assert.equal(namedUrl.includes('/cloudflare:cloudflare.txt/original'), true);
+      const customUrl = await app.bean.image.getVariantUrl(image.id, {
+        transformOptions: { width: 320, height: 180, fit: 'cover' },
+      });
+      assert.equal(customUrl.includes('width=320'), true);
+      assert.equal(customUrl.includes('height=180'), true);
       const download = await app.bean.image.download(image.id);
       assert.equal(download.kind, 'url');
       await app.bean.image.delete(image.id);

@@ -2,6 +2,28 @@ import type { TableIdentity } from 'table-identity';
 
 import type { IImageProviderRecord } from './imageProvider.ts';
 
+export interface IImageTransformOptions {
+  width?: number;
+  height?: number;
+  fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad';
+  gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right';
+  background?: string;
+  quality?: number;
+  format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png';
+  dpr?: number;
+  rotate?: number;
+  sharpen?: number;
+}
+
+export type IImageNamedVariants = Record<string, IImageTransformOptions>;
+
+export interface IImageVariantRequest {
+  variantName?: string;
+  transformOptions?: IImageTransformOptions;
+}
+
+export type TypeImageVariantInput = string | IImageVariantRequest | undefined;
+
 export interface IImageUploadInput {
   file: string;
   filename?: string;
@@ -26,7 +48,7 @@ export interface IImageProviderResource {
   width?: number;
   height?: number;
   requireSignedURLs?: boolean;
-  variants?: string[];
+  variants?: IImageNamedVariants;
   meta?: Record<string, any>;
   storagePath?: string;
   deliveryBaseUrl?: string;
