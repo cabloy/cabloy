@@ -259,7 +259,10 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     const currentUrls = this._normalizeValueToUrls(this.currentValue, !!options.multiple);
     const filesToHandle = options.multiple ? files : files.slice(0, 1);
     const maxCount = this._getMaxCount(options);
-    if (currentUrls.length + filesToHandle.length > maxCount) {
+    const nextCountCandidate = options.multiple
+      ? currentUrls.length + filesToHandle.length
+      : filesToHandle.length;
+    if (nextCountCandidate > maxCount) {
       this.errorMessage = this.scope.locale.TooManyImages(maxCount);
       return;
     }
@@ -314,7 +317,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     disableNotifyChanged: boolean | undefined,
     multiple: boolean,
   ) {
-    const nextValue = multiple ? urls : urls[0];
+    const nextValue = multiple ? urls : (urls[0] ?? '');
     this.currentValue = multiple ? urls : nextValue;
     this.$$formField?.setValue(nextValue, disableNotifyChanged);
     this.$$formField?.handleBlur();
