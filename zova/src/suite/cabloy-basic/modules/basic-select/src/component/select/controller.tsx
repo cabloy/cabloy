@@ -39,9 +39,26 @@ export class ControllerSelect extends BeanControllerBase {
       controllerRef,
       onChange,
       onBlur,
+      style,
       'onUpdate:modelValue': _onUpdateModelValue,
       ...props
     } = this.$props as any;
+    const selectBackgroundColor = style?.backgroundColor ?? 'var(--color-base-100)';
+    const selectColor = style?.color ?? 'var(--color-base-content)';
+    const optionStyle = {
+      backgroundColor: selectBackgroundColor,
+      color: selectColor,
+    };
+    const placeholderOptionStyle = {
+      backgroundColor: selectBackgroundColor,
+      color: `color-mix(in oklch, ${selectColor} 60%, transparent)`,
+    };
+    const selectStyle = {
+      ...style,
+      colorScheme: this.$theme.dark ? 'dark' : 'light',
+      backgroundColor: selectBackgroundColor,
+      color: selectColor,
+    };
     const domOptions: VNode[] = [];
     const modelValueDom = isNil(this.modelValue) ? '' : String(this.modelValue);
     if (items) {
@@ -50,7 +67,12 @@ export class ControllerSelect extends BeanControllerBase {
         const value = item[itemValue];
         const valueDom = isNil(value) ? '' : String(value);
         domOptions.push(
-          <option key={valueDom} value={valueDom} selected={modelValueDom === valueDom}>
+          <option
+            key={valueDom}
+            value={valueDom}
+            selected={modelValueDom === valueDom}
+            style={optionStyle}
+          >
             {title}
           </option>,
         );
@@ -59,6 +81,7 @@ export class ControllerSelect extends BeanControllerBase {
     return (
       <select
         {...props}
+        style={selectStyle}
         onChange={(e: Event) => {
           const selectedValue = (e.target as HTMLSelectElement).value;
           const item = items?.find(item => {
@@ -75,7 +98,7 @@ export class ControllerSelect extends BeanControllerBase {
         }}
       >
         {!!placeholder && (
-          <option disabled={true} selected={isNil(this.modelValue)}>
+          <option disabled={true} selected={isNil(this.modelValue)} style={placeholderOptionStyle}>
             {placeholder}
           </option>
         )}
