@@ -19,11 +19,17 @@ export class ControllerImage extends BeanBase {
   @Api.contentType('application/json')
   async upload(@Arg.file('image') file: IUploadFile) {
     await this._validateUploadFile(file);
-    const image = await this.bean.image.upload('image-native:native', {
-      file: file.file,
-      filename: file.info.filename,
-      contentType: file.info.mimeType,
-    });
+    const image = await this.bean.image.upload(
+      this.scope.config.image.defaultProvider,
+      {
+        file: file.file,
+        filename: file.info.filename,
+        contentType: file.info.mimeType,
+      },
+      {
+        clientName: this.scope.config.image.defaultClientName,
+      },
+    );
     return {
       ...image,
       url: await this.bean.image.getVariantUrl(image.id),
