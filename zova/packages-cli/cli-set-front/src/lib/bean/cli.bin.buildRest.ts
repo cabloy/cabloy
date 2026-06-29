@@ -53,7 +53,7 @@ interface IBinBuildRestContext {
   srcDir: string;
   outDir: string;
   bundleModules?: string[];
-  moduleNames?: string[];
+  sideEffectImportModuleNames?: string[];
 }
 
 export class CliBinBuildRest extends BeanCliBase {
@@ -107,7 +107,7 @@ export class CliBinBuildRest extends BeanCliBase {
     // Modules
     const modules: string[] = [];
     const bundleModules: string[] = [];
-    const moduleNames: string[] = [];
+    const sideEffectImportModuleNames: string[] = [];
     for (const module of modulesMeta.modulesArray) {
       const moduleName = module.info.fullName;
       modules.push(`import '${moduleName}';`);
@@ -116,11 +116,11 @@ export class CliBinBuildRest extends BeanCliBase {
       if (moduleRoot.includes('/src/module/') || moduleRoot.includes('/src/suite/')) {
         bundleModules.push(moduleName);
       } else {
-        moduleNames.push(moduleName);
+        sideEffectImportModuleNames.push(moduleName);
       }
     }
     context.bundleModules = bundleModules;
-    context.moduleNames = moduleNames;
+    context.sideEffectImportModuleNames = sideEffectImportModuleNames;
     argv.Modules = modules.join('\n');
     // Name/Version
     argv.Name = bundleName;
@@ -156,7 +156,12 @@ export class CliBinBuildRest extends BeanCliBase {
     await fse.writeFile(fileIndex, fileContent);
   }
 
-  async _buildDts({ srcDir, outDir, bundleModules, moduleNames }: IBinBuildRestContext) {
+  async _buildDts({
+    srcDir,
+    outDir,
+    bundleModules,
+    sideEffectImportModuleNames,
+  }: IBinBuildRestContext) {
     // entry
     const entry = path.join(srcDir, 'index.ts');
     // build
@@ -183,13 +188,13 @@ export class CliBinBuildRest extends BeanCliBase {
       },
       // minify: true,
     });
-    await this._injectDtsImports(outDir, moduleNames!);
+    await this._injectDtsImports(outDir, sideEffectImportModuleNames!);
   }
 
-  async _injectDtsImports(outDir: string, moduleNames: string[]) {
+  async _injectDtsImports(outDir: string, sideEffectImportModuleNames: string[]) {
     const fileIndex = path.join(outDir, 'index.d.mts');
     let fileContent = (await fse.readFile(fileIndex)).toString();
-    const imports = moduleNames
+    const imports = sideEffectImportModuleNames
       .filter(moduleName => !fileContent.includes(`import "${moduleName}";`))
       .map(moduleName => `import "${moduleName}";`);
     if (imports.length === 0) return;
