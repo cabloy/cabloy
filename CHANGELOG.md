@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.93
+
+### Bug Fixes
+
+- Apply theme colors to select options
+
 ## 5.1.92
 
 ### Bug Fixes
