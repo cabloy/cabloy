@@ -44,7 +44,8 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@cabloy/zod-to-openapi": "^8.1.6"
+    "@cabloy/zod-to-openapi": "^8.1.6",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
