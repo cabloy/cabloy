@@ -5,6 +5,9 @@ import type { IIconRecord } from 'zova-module-a-icon';
 import type { TypePagePathSchema } from 'zova-module-a-router';
 import type { CssBase } from 'zova-module-home-theme';
 
+export type { IIconRecord } from 'zova-module-a-icon';
+export type { IPagePathRecord } from 'zova-module-a-router';
+
 declare module 'zova-module-a-router' {
   export interface IPagePathRecord {
     '/': TypePagePathSchema<undefined, undefined>;
