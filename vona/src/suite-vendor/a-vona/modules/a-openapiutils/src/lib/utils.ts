@@ -97,9 +97,9 @@ export function mergeSchemaOpenapiMetadata<T>(
   schemaPrevious: z.ZodType<T> | undefined,
   schemaCurrent: z.ZodType<T>,
 ): z.ZodType<T> {
-  const metadataPrevious = schemaPrevious
-    ? ZodMetadata.getOpenapiMetadata(schemaPrevious)
-    : undefined;
+  if (!schemaPrevious) return schemaCurrent;
+  if (schemaPrevious === schemaCurrent) return schemaCurrent;
+  const metadataPrevious = ZodMetadata.getOpenapiMetadata(schemaPrevious);
   if (isEmptyObject(metadataPrevious)) return schemaCurrent;
   const metadataCurrent = ZodMetadata.getOpenapiMetadata(schemaCurrent);
   return schemaCurrent.openapi(deepExtend({}, metadataPrevious, metadataCurrent));
