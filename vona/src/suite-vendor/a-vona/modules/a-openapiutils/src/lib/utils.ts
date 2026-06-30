@@ -93,6 +93,18 @@ export function mergeDtoFieldsOpenapiMetadata(target: Constructable) {
   }
 }
 
+export function mergeSchemaOpenapiMetadata<T>(
+  schemaPrevious: z.ZodType<T> | undefined,
+  schemaCurrent: z.ZodType<T>,
+): z.ZodType<T> {
+  const metadataPrevious = schemaPrevious
+    ? ZodMetadata.getOpenapiMetadata(schemaPrevious)
+    : undefined;
+  if (isEmptyObject(metadataPrevious)) return schemaCurrent;
+  const metadataCurrent = ZodMetadata.getOpenapiMetadata(schemaCurrent);
+  return schemaCurrent.openapi(deepExtend({}, metadataPrevious, metadataCurrent));
+}
+
 // fieldRule maybe undefined
 export function mergeFieldOpenapiMetadata(
   target: object,
@@ -106,13 +118,7 @@ export function mergeFieldOpenapiMetadata(
   const metadataCurrent = schemaCurrent ? ZodMetadata.getOpenapiMetadata(schemaCurrent) : undefined;
   // merge
   if (Object.prototype.hasOwnProperty.call(fieldRule, 'parseAsync')) {
-    const schema: z.ZodType = fieldRule as any;
-    if (isEmptyObject(metadataCurrent)) {
-      rules[prop] = schema;
-    } else {
-      const metadataCustom = ZodMetadata.getOpenapiMetadata(schema);
-      rules[prop] = schema.openapi(deepExtend({}, metadataCurrent, metadataCustom));
-    }
+    rules[prop] = mergeSchemaOpenapiMetadata(schemaCurrent as any, fieldRule as any) as any;
   } else {
     if (schemaCurrent) {
       if (!isEmptyObject(fieldRule)) {

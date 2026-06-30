@@ -1,11 +1,45 @@
 import type { TypeDecoratorRules } from 'vona-module-a-openapiutils';
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { ZodMetadata } from '@cabloy/zod-openapi';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { $schema, getTargetDecoratorRules } from 'vona-module-a-openapiutils';
+import { $schema, Api, getTargetDecoratorRules, v } from 'vona-module-a-openapiutils';
 import { $Dto, $relationDynamic } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
 import { ModelPost } from 'vona-module-test-vona';
+
+interface IDtoOptionsSchemaLikeChild extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptionsSchemaLikeChild>()
+class DtoSchemaLikeChild {
+  @Api.field(v.min(3))
+  name: string;
+}
+
+interface IDtoOptionsSchemaLikeParent extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptionsSchemaLikeParent>()
+class DtoSchemaLikeParent {
+  @Api.field(
+    v.serializerCustom((_value, data: DtoSchemaLikeParent) => {
+      return data.children;
+    }),
+    v.title('Children'),
+    v.array(DtoSchemaLikeChild),
+  )
+  children: DtoSchemaLikeChild[];
+
+  @Api.field(
+    v.serializerGetter((value: DtoSchemaLikeChild) => {
+      return value;
+    }),
+    v.description('Child'),
+    v.object(DtoSchemaLikeChild),
+  )
+  child: DtoSchemaLikeChild;
+}
 
 describe('dtoMutate.test.ts', () => {
   it('action:dtoMutate', async () => {
@@ -69,6 +103,38 @@ describe('dtoMutate.test.ts', () => {
       assert.equal(rules.postContent?.type === 'optional', true);
       assert.equal(rules.user, undefined);
       assert.equal(rules.id, undefined);
+    });
+  });
+
+  it('action:dtoMutate:preserveOpenapiMetadataAcrossSchemaReplacement', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const rules = getTargetDecoratorRules(DtoSchemaLikeParent.prototype);
+      const metadataChildren = ZodMetadata.getOpenapiMetadata(rules.children!);
+      const metadataChild = ZodMetadata.getOpenapiMetadata(rules.child!);
+      assert.equal(
+        typeof metadataChildren?.serializerTransforms?.['a-serialization:custom']?.custom,
+        'function',
+      );
+      assert.equal(metadataChildren?.title, 'Children');
+      assert.equal(
+        typeof metadataChild?.serializerTransforms?.['a-serialization:getter']?.getter,
+        'function',
+      );
+      assert.equal(metadataChild?.description, 'Child');
+      const schema = $schema(DtoSchemaLikeParent);
+      const res = await schema.parseAsync({
+        children: [{ name: 'kevin' }],
+        child: { name: 'tom' },
+      });
+      assert.equal(res.children[0].name, 'kevin');
+      assert.equal(res.child.name, 'tom');
+      const apiJson = await app.bean.openapi.generateJsonOfClass(DtoSchemaLikeParent);
+      const component = Object.values(apiJson.components.schemas).find(item => {
+        return item.properties?.children && item.properties?.child;
+      });
+      assert.ok(component);
+      assert.equal(component.properties.children.title, 'Children');
+      assert.equal(typeof component.properties.child.$ref, 'string');
     });
   });
 });
