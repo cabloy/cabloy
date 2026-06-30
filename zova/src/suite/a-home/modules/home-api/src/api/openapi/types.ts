@@ -256,22 +256,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/home/user/passport/refreshAuthToken': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_refreshAuthToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/home/user/passport/createPassportJwtFromOauthCode': {
     parameters: {
       query?: never;
@@ -282,6 +266,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/refreshAuthToken': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_refreshAuthToken'];
     delete?: never;
     options?: never;
     head?: never;
@@ -304,14 +304,78 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/test/auth/passport/isAuthenticated': {
+  '/api/training/record': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['TestAuthPassport_isAuthenticated'];
+    get: operations['TrainingRecord_select'];
+    put?: never;
+    post: operations['TrainingRecord_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/record/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingRecord_view'];
+    put?: never;
+    post?: never;
+    delete: operations['TrainingRecord_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['TrainingRecord_update'];
+    trace?: never;
+  };
+  '/api/training/student': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingStudent_select'];
+    put?: never;
+    post: operations['TrainingStudent_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingStudent_view'];
+    put?: never;
+    post?: never;
+    delete: operations['TrainingStudent_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['TrainingStudent_update'];
+    trace?: never;
+  };
+  '/api/training/student/summary/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TrainingStudent_summary'];
     put?: never;
     post?: never;
     delete?: never;
@@ -320,87 +384,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/test/auth/passport/current': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestAuthPassport_current'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/test/rest/product': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestRestProduct_select'];
-    put?: never;
-    post: operations['TestRestProduct_create'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/test/rest/product/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestRestProduct_view'];
-    put?: never;
-    post?: never;
-    delete: operations['TestRestProduct_delete'];
-    options?: never;
-    head?: never;
-    patch: operations['TestRestProduct_update'];
-    trace?: never;
-  };
-  '/api/test/ssr/toolOne/test/{id?}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestSsrToolOne_testGet'];
-    put?: never;
-    post: operations['TestSsrToolOne_test'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/test/ssr/toolTwo/test/{id?}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestSsrToolTwo_test'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/test/captcha/signin': {
+  '/api/training/student/deleteForce/{id}': {
     parameters: {
       query?: never;
       header?: never;
@@ -409,7 +393,39 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['TestCaptcha_signin'];
+    post?: never;
+    delete: operations['TrainingStudent_deleteForce'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_createUploadToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_upload'];
     delete?: never;
     options?: never;
     head?: never;
@@ -464,7 +480,39 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/play': {
+  '/api/test/auth/passport/isAuthenticated': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestAuthPassport_isAuthenticated'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/auth/passport/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestAuthPassport_current'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/captcha/signin': {
     parameters: {
       query?: never;
       header?: never;
@@ -473,7 +521,87 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    post: operations['Play_index'];
+    post: operations['TestCaptcha_signin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/rest/product': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestRestProduct_select'];
+    put?: never;
+    post: operations['TestRestProduct_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/rest/product/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestRestProduct_view'];
+    put?: never;
+    post?: never;
+    delete: operations['TestRestProduct_delete'];
+    options?: never;
+    head?: never;
+    patch: operations['TestRestProduct_update'];
+    trace?: never;
+  };
+  '/api/test/ssr/toolMinimal/test': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestSsrToolMinimal_test'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/ssr/toolOne/test/{id?}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestSsrToolOne_testGet'];
+    put?: never;
+    post: operations['TestSsrToolOne_test'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/ssr/toolTwo/test/{id?}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestSsrToolTwo_test'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -776,6 +904,22 @@ export interface paths {
       cookie?: never;
     };
     get: operations['Onion_echo6'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/vona/onion/echo7': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Onion_echo7'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1089,9 +1233,9 @@ export interface components {
       link?: string | undefined;
       external?: boolean | undefined;
       target?: string | undefined;
-      meta?: components['schemas']['a-menu.dto.menuItemMeta'];
+      meta?: components['schemas']['a-menu.dto.menuItemMeta_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
     };
-    'a-menu.dto.menuItemMeta':
+    'a-menu.dto.menuItemMeta_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           params?: unknown;
           query?: unknown;
@@ -1111,14 +1255,13 @@ export interface components {
       roleNames?: string[] | undefined;
       actions?: unknown;
     };
-    'home-user.dto.passport':
+    'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           user: components['schemas']['home-user.entity.user'];
           auth: components['schemas']['a-auth.dto.auth'];
           roles: components['schemas']['home-user.entity.role'][];
         }
       | undefined;
-    /** @description User */
     'home-user.entity.user': {
       /**
        * Format: date-time
@@ -1171,7 +1314,6 @@ export interface components {
         clientName: string;
       };
     };
-    /** @description Role */
     'home-user.entity.role': {
       /**
        * Format: date-time
@@ -1202,6 +1344,11 @@ export interface components {
       passport: components['schemas']['home-user.dto.passport'];
       jwt: components['schemas']['a-jwt.dto.jwtToken'];
     };
+    'home-user.dto.passport': {
+      user: components['schemas']['home-user.entity.user'];
+      auth: components['schemas']['a-auth.dto.auth'];
+      roles: components['schemas']['home-user.entity.role'][];
+    };
     'a-jwt.dto.jwtToken': {
       accessToken: string;
       refreshToken: string;
@@ -1213,88 +1360,159 @@ export interface components {
       email: string;
       password: string;
       passwordConfirm: string;
-      captcha: components['schemas']['a-captcha.dto.captchaVerify_c3cd80b1eeafe39bfe4433491bb081d68e84797e'];
+      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9'];
     };
-    'a-captcha.dto.captchaVerify_c3cd80b1eeafe39bfe4433491bb081d68e84797e': {
+    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9': {
       id: string;
       token: string;
     };
     'home-user.dto.login': {
       username: string;
       password: string;
-      captcha: components['schemas']['a-captcha.dto.captchaVerify_c3cd80b1eeafe39bfe4433491bb081d68e84797e_3218e7d152830e08f6e764b9e0c3796df929ee2b'];
+      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3'];
     };
-    'a-captcha.dto.captchaVerify_c3cd80b1eeafe39bfe4433491bb081d68e84797e_3218e7d152830e08f6e764b9e0c3796df929ee2b': {
+    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3': {
       id: string;
       token: string;
     };
-    /** @description Create Product */
-    'test-rest.dto.productCreate': {
-      /** @description Name */
+    'training-record.dto.recordCreate': {
+      /** @description Training Record Name */
       name: string;
+      /** @description Student */
+      studentId: number | string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
-      /** @description Price */
-      price: number;
-      /**
-       * @description Quantity
-       * @default 0
-       */
-      quantity?: number;
-      /** @description Amount */
-      amount: number;
-      /** @description Custom */
-      _custom?: unknown;
-      /** @description Test */
-      _test?: unknown;
+      /** @description Student Training Record Details */
+      trainingRecordSubjects?:
+        | {
+            /** @description Subject Name */
+            name: string;
+            /** @description Subject Score */
+            score: number;
+            /** @description Description */
+            description?: string | undefined;
+          }[]
+        | undefined;
+      _trainingRecordSubjects?:
+        | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+        | undefined;
     };
-    'test-rest.dto.productQueryRes': {
-      list: {
-        /**
-         * Format: date-time
-         * @description Created At
-         */
-        createdAt: Date;
-        /**
-         * Format: date-time
-         * @description Updated At
-         */
-        updatedAt: Date;
-        /**
-         * @description Deleted
-         * @default false
-         */
-        deleted?: boolean;
-        /**
-         * @description Instance ID
-         * @default 0
-         */
-        iid?: number;
-        /** @description ID */
-        id: number | string;
-        /** @description Name */
-        name: string;
-        /** @description Description */
-        description?: string | undefined;
-        /** @description Price */
-        price: number;
-        /**
-         * @description Quantity
-         * @default 0
-         */
-        quantity?: number;
-        /** @description Amount */
-        amount: number;
-        /** @description Custom */
-        _custom?: unknown;
-      }[];
+    'training-record.dto.detailRecordSubjectResItem': {
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /** @description ID */
+      id: number | string;
+      /** @description Subject Name */
+      name: string;
+      /** @description Subject Score */
+      score: number;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description # */
+      _lineNumber: number;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'training-record.dto.recordSelectRes': {
+      list: components['schemas']['training-record.dto.recordSelectResItem'][];
       total: string;
       pageCount: number;
       pageSize: number;
       pageNo: number;
     };
-    /** @description Product Info */
-    'test-rest.entity.product':
+    'training-record.dto.recordSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Training Record Name */
+      name: string;
+      /** @description Student */
+      studentId: number | string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
+      /** @description Description */
+      description?: string | undefined;
+      sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'a-image.dto.imageView': {
+      id: number | string;
+      url: string;
+      filename?: string | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      provider: string;
+      clientName: string;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      variants?:
+        | {
+            [key: string]: {
+              width?: number | undefined;
+              height?: number | undefined;
+              /** @enum {string|null} */
+              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+              /** @enum {string|null} */
+              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+              background?: string | undefined;
+              quality?: number | undefined;
+              /** @enum {string|null} */
+              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+              dpr?: number | undefined;
+              rotate?: number | undefined;
+              sharpen?: number | undefined;
+            };
+          }
+        | undefined;
+    };
+    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           /**
            * Format: date-time
@@ -1318,95 +1536,481 @@ export interface components {
           iid?: number;
           /** @description ID */
           id: number | string;
-          /** @description Name */
+          /** @description Training Record Name */
           name: string;
+          /** @description Student */
+          studentId: number | string;
+          /** @description Subject Count */
+          subjectCount?: number | undefined;
+          /** @description Total Score */
+          totalScore?: number | undefined;
+          /** @description Average Score */
+          averageScore?: number | undefined;
+          /**
+           * Format: date-time
+           * @description Training Time
+           */
+          trainingTime?: Date;
+          /** @description Scene Photos */
+          sceneImageIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
-          /** @description Price */
-          price: number;
-          /**
-           * @description Quantity
-           * @default 0
-           */
-          quantity?: number;
-          /** @description Amount */
-          amount: number;
-          /** @description Custom */
-          _custom?: unknown;
+          /** @description Student Training Record Details */
+          trainingRecordSubjects: {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean;
+            /** @description ID */
+            id: number | string;
+            /** @description Subject Name */
+            name: string;
+            /** @description Subject Score */
+            score: number;
+            /** @description Description */
+            description?: string | undefined;
+          }[];
+          sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+          _trainingRecordSubjects?:
+            | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+            | undefined;
         }
       | undefined;
-    /** @description Update Product */
-    'test-rest.dto.productUpdate': {
-      /** @description Name */
+    'training-record.dto.recordUpdate': {
+      /** @description Training Record Name */
+      name: string;
+      /** @description Student */
+      studentId: number | string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Student Training Record Details */
+      trainingRecordSubjects?:
+        | {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean | undefined;
+            /** @description ID */
+            id?: number | string | undefined;
+            /** @description Subject Name */
+            name: string;
+            /** @description Subject Score */
+            score: number;
+            /** @description Description */
+            description?: string | undefined;
+          }[]
+        | undefined;
+      _trainingRecordSubjects?:
+        | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+        | undefined;
+    };
+    'training-student.dto.studentCreate': {
+      /** @description Student Name */
       name: string;
       /** @description Description */
       description?: string | undefined;
-      /** @description Price */
-      price: number;
+      /** @description Mobile */
+      mobile: string;
+      /** @description Student Image */
+      imageId?: number | string | undefined;
+      /** @description Training Stage */
+      level: 1 | 2 | 3;
+      /** @description Student Training Records */
+      trainingRecords?:
+        | {
+            /** @description Training Record Name */
+            name: string;
+            /** @description Subject Count */
+            subjectCount?: number | undefined;
+            /** @description Total Score */
+            totalScore?: number | undefined;
+            /** @description Average Score */
+            averageScore?: number | undefined;
+            /**
+             * Format: date-time
+             * @description Training Time
+             */
+            trainingTime?: Date;
+            /** @description Scene Photos */
+            sceneImageIds?: (number | string)[] | undefined;
+            /** @description Description */
+            description?: string | undefined;
+            /** @description Student Training Record Details */
+            trainingRecordSubjects?:
+              | {
+                  /**
+                   * @description Deleted
+                   * @default false
+                   */
+                  deleted?: boolean | undefined;
+                  /** @description ID */
+                  id?: number | string | undefined;
+                  /** @description Subject Name */
+                  name: string;
+                  /** @description Subject Score */
+                  score: number;
+                  /** @description Description */
+                  description?: string | undefined;
+                }[]
+              | undefined;
+            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            _trainingRecordSubjects?:
+              | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+              | undefined;
+          }[]
+        | undefined;
+      _trainingRecords?:
+        | components['schemas']['training-student.dto.detailRecordResItem'][]
+        | undefined;
+    };
+    'training-student.dto.detailRecordResItem': {
       /**
-       * @description Quantity
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /** @description ID */
+      id: number | string;
+      /** @description Training Record Name */
+      name: string;
+      /** @description Subject Count */
+      subjectCount?: number | undefined;
+      /** @description Total Score */
+      totalScore?: number | undefined;
+      /** @description Average Score */
+      averageScore?: number | undefined;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Student Training Record Details */
+      trainingRecordSubjects?: unknown;
+      sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+      /** @description # */
+      _lineNumber: number;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'training-student.dto.studentSelectRes': {
+      list: components['schemas']['training-student.dto.studentSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'training-student.dto.studentSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
        * @default 0
        */
-      quantity?: number;
-      /** @description Amount */
-      amount: number;
-      /** @description Custom */
-      _custom?: unknown;
-    };
-    'test-ssr.dto.testResult': {
+      iid?: number;
+      /** @description ID */
       id: number | string;
-      /**
-       * @description Name
-       * @default tom
-       */
-      name?: string;
-      married: boolean;
-      details: components['schemas']['test-ssr.dto.testDetail'][];
-      /** @default custom */
-      _custom1?: string | undefined;
-      /** @default custom */
-      _custom2?: string | undefined;
-      /** @default custom */
-      _custom3?: string | undefined;
-      /** @default custom */
-      _custom4?: string | undefined;
-      /** @default custom */
-      _custom5?: string | undefined;
-      _customCopy?: string | undefined;
-      _customCopied?: boolean | undefined;
-    };
-    'test-ssr.dto.testDetail': {
+      /** @description Student Name */
       name: string;
-      price: number;
-      quantity: number;
-      amount: number;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
+      /** @description Student Image */
+      imageId?: number | string | undefined;
+      /** @description Training Stage */
+      level: 1 | 2 | 3;
+      image?: components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+      /** @description Operations */
+      _operationsRow?: unknown;
     };
-    'test-ssr.dto.testBody': {
+    'a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7':
+      | {
+          id: number | string;
+          url: string;
+          filename?: string | undefined;
+          width?: number | undefined;
+          height?: number | undefined;
+          provider: string;
+          clientName: string;
+          /** Format: date-time */
+          uploadedAt?: Date;
+          variants?:
+            | {
+                [key: string]: {
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  /** @enum {string|null} */
+                  fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+                  /** @enum {string|null} */
+                  gravity?:
+                    | 'auto'
+                    | 'center'
+                    | 'top'
+                    | 'bottom'
+                    | 'left'
+                    | 'right'
+                    | null
+                    | undefined;
+                  background?: string | undefined;
+                  quality?: number | undefined;
+                  /** @enum {string|null} */
+                  format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+                  dpr?: number | undefined;
+                  rotate?: number | undefined;
+                  sharpen?: number | undefined;
+                };
+              }
+            | undefined;
+        }
+      | undefined;
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Student Name */
+          name: string;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Mobile */
+          mobile: string;
+          /** @description Student Image */
+          imageId?: number | string | undefined;
+          /** @description Training Stage */
+          level: 1 | 2 | 3;
+          /** @description Student Training Records */
+          trainingRecords: {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean;
+            /** @description ID */
+            id: number | string;
+            /** @description Training Record Name */
+            name: string;
+            /** @description Subject Count */
+            subjectCount?: number | undefined;
+            /** @description Total Score */
+            totalScore?: number | undefined;
+            /** @description Average Score */
+            averageScore?: number | undefined;
+            /**
+             * Format: date-time
+             * @description Training Time
+             */
+            trainingTime?: Date;
+            /** @description Scene Photos */
+            sceneImageIds?: (number | string)[] | undefined;
+            /** @description Description */
+            description?: string | undefined;
+            /** @description Student Training Record Details */
+            trainingRecordSubjects: {
+              /**
+               * @description Deleted
+               * @default false
+               */
+              deleted?: boolean;
+              /** @description ID */
+              id: number | string;
+              /** @description Subject Name */
+              name: string;
+              /** @description Subject Score */
+              score: number;
+              /** @description Description */
+              description?: string | undefined;
+            }[];
+            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            _trainingRecordSubjects?:
+              | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+              | undefined;
+          }[];
+          image?: components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+          _trainingRecords?:
+            | components['schemas']['training-student.dto.detailRecordResItem'][]
+            | undefined;
+        }
+      | undefined;
+    'training-student.dto.studentUpdate': {
+      /** @description Student Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Mobile */
+      mobile: string;
+      /** @description Student Image */
+      imageId?: number | string | undefined;
+      /** @description Training Stage */
+      level: 1 | 2 | 3;
+      /** @description Student Training Records */
+      trainingRecords?:
+        | {
+            /**
+             * @description Deleted
+             * @default false
+             */
+            deleted?: boolean | undefined;
+            /** @description ID */
+            id?: number | string | undefined;
+            /** @description Training Record Name */
+            name: string;
+            /** @description Subject Count */
+            subjectCount?: number | undefined;
+            /** @description Total Score */
+            totalScore?: number | undefined;
+            /** @description Average Score */
+            averageScore?: number | undefined;
+            /**
+             * Format: date-time
+             * @description Training Time
+             */
+            trainingTime?: Date;
+            /** @description Scene Photos */
+            sceneImageIds?: (number | string)[] | undefined;
+            /** @description Description */
+            description?: string | undefined;
+            /** @description Student Training Record Details */
+            trainingRecordSubjects?:
+              | {
+                  /**
+                   * @description Deleted
+                   * @default false
+                   */
+                  deleted?: boolean | undefined;
+                  /** @description ID */
+                  id?: number | string | undefined;
+                  /** @description Subject Name */
+                  name: string;
+                  /** @description Subject Score */
+                  score: number;
+                  /** @description Description */
+                  description?: string | undefined;
+                }[]
+              | undefined;
+            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            _trainingRecordSubjects?:
+              | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
+              | undefined;
+          }[]
+        | undefined;
+      _trainingRecords?:
+        | components['schemas']['training-student.dto.detailRecordResItem'][]
+        | undefined;
+    };
+    'training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          /** @description Student Name */
+          name: string;
+          /** @description Mobile */
+          mobile: string;
+          /** @description Training Stage */
+          level: number;
+          /** @description Level Title */
+          levelTitle: string;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Description Length */
+          descriptionLength: number;
+          /** @description Summary */
+          summaryText: string;
+        }
+      | undefined;
+    'a-image.dto.imageUploadTokenResponse': {
+      token: string;
+      expiresIn: number;
+    };
+    'a-image.dto.imageUploadTokenRequest': {
+      resource: string;
+      field: string;
+      /** @enum {string|null} */
+      formScene?: 'create' | 'edit' | null | undefined;
+      size: number;
+      mimeType: string;
+    };
+    'a-image.dto.imageUploadResponse': {
       id: number | string;
-      /**
-       * @description Name
-       * @default tom
-       */
-      name?: string;
-      married: boolean;
-      details: components['schemas']['test-ssr.dto.testDetail'][];
-      /** @default custom */
-      _custom1?: string | undefined;
-      /** @default custom */
-      _custom2?: string | undefined;
-      /** @default custom */
-      _custom3?: string | undefined;
-      /** @default custom */
-      _custom4?: string | undefined;
-      /** @default custom */
-      _custom5?: string | undefined;
-      _customCopy?: string | undefined;
-      _customCopied?: boolean | undefined;
-    };
-    'test-captcha.dto.signin': {
-      username: string;
-      password: string;
-      captcha?: unknown;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      variants?:
+        | {
+            [key: string]: {
+              width?: number | undefined;
+              height?: number | undefined;
+              /** @enum {string|null} */
+              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+              /** @enum {string|null} */
+              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+              background?: string | undefined;
+              quality?: number | undefined;
+              /** @enum {string|null} */
+              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+              dpr?: number | undefined;
+              rotate?: number | undefined;
+              sharpen?: number | undefined;
+            };
+          }
+        | undefined;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      url?: string | undefined;
     };
     'a-paypal.entity.paypalRecord': {
       /**
@@ -1451,25 +2055,188 @@ export interface components {
       scene: string;
       orderId: number | string;
     };
-    'a-play.dto.play': {
-      args: string[];
-      projectPath: string;
+    'test-captcha.dto.signin': {
+      username: string;
+      password: string;
+      captcha?: unknown;
+    };
+    /** @description Create Product */
+    'test-rest.dto.productCreate': {
+      /** @description Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Price */
+      price: number;
+      /** @description Quantity */
+      quantity: number;
+      /** @description Amount */
+      amount: number;
+      /** @description Custom */
+      _custom?: string | undefined;
+      /** @description Test */
+      _test?: string | undefined;
+    };
+    'test-rest.dto.productSelectRes': {
+      list: components['schemas']['test-rest.dto.productSelectResItem'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'test-rest.dto.productSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Price */
+      price: number;
+      /** @description Quantity */
+      quantity: number;
+      /** @description Amount */
+      amount: number;
+      /** @description Custom */
+      _custom?: string | undefined;
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
+    'test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /**
+           * Format: date-time
+           * @description Created At
+           */
+          createdAt: Date;
+          /**
+           * Format: date-time
+           * @description Updated At
+           */
+          updatedAt: Date;
+          /**
+           * @description Deleted
+           * @default false
+           */
+          deleted?: boolean;
+          /**
+           * @description Instance ID
+           * @default 0
+           */
+          iid?: number;
+          /** @description ID */
+          id: number | string;
+          /** @description Name */
+          name: string;
+          /** @description Description */
+          description?: string | undefined;
+          /** @description Price */
+          price: number;
+          /** @description Quantity */
+          quantity: number;
+          /** @description Amount */
+          amount: number;
+          /** @description Custom */
+          _custom?: string | undefined;
+        }
+      | undefined;
+    /** @description Update Product */
+    'test-rest.dto.productUpdate': {
+      /** @description Name */
+      name: string;
+      /** @description Description */
+      description?: string | undefined;
+      /** @description Price */
+      price: number;
+      /** @description Quantity */
+      quantity: number;
+      /** @description Amount */
+      amount: number;
+      /** @description Custom */
+      _custom?: string | undefined;
+    };
+    'test-ssr.dto.testResult': {
+      id: number | string;
+      /**
+       * @description Name
+       * @default tom
+       */
+      name?: string;
+      married: boolean;
+      details: components['schemas']['test-ssr.dto.testDetail'][];
+      /** @default custom */
+      _custom1?: string | undefined;
+      /** @default custom */
+      _custom2?: string | undefined;
+      /** @default custom */
+      _custom5?: string | undefined;
+      _customCopy?: string | undefined;
+      _customCopied?: boolean | undefined;
+    };
+    'test-ssr.dto.testDetail': {
+      name: string;
+      price: number;
+      quantity: number;
+      amount: number;
+    };
+    'test-ssr.dto.testBody': {
+      id: number | string;
+      /**
+       * @description Name
+       * @default tom
+       */
+      name?: string;
+      married: boolean;
+      details: components['schemas']['test-ssr.dto.testDetail'][];
+      /** @default custom */
+      _custom1?: string | undefined;
+      /** @default custom */
+      _custom2?: string | undefined;
+      /** @default custom */
+      _custom5?: string | undefined;
+      _customCopy?: string | undefined;
+      _customCopied?: boolean | undefined;
     };
     'test-vona.dto.userLazy': {
       name: string;
-      user?: components['schemas']['test-vona.dto.userLazy'];
+      user?: components['schemas']['test-vona.dto.userLazy_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+      roles?: components['schemas']['test-vona.dto.roleLazy'][] | undefined;
+    };
+    'test-vona.dto.userLazy_2d063d28bc7243bed02ebd8bddf1212a93c6305b': {
+      name: string;
+      user?: components['schemas']['test-vona.dto.userLazy_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
       roles?: components['schemas']['test-vona.dto.roleLazy'][] | undefined;
     };
     'test-vona.dto.roleLazy': {
       name: string;
       users?: components['schemas']['test-vona.dto.userLazy'][] | undefined;
     };
-    'test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7': {
+    'test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7_2d063d28bc7243bed02ebd8bddf1212a93c6305b': {
       /** @description ID */
       id: number | string;
       name: string;
     };
-    'test-vona.entity.post_a6ba2076b5b70a3c098374cc82d418bd1ab226c3': {
+    'test-vona.entity.post_a6ba2076b5b70a3c098374cc82d418bd1ab226c3_2d063d28bc7243bed02ebd8bddf1212a93c6305b': {
       count_all?: string | undefined;
       count_title?: string | undefined;
       sum_stars?: string | undefined;
@@ -1569,7 +2336,7 @@ export interface components {
       /** @description Amount */
       amount: number;
     };
-    'test-vona.dto.orderResult': {
+    'test-vona.dto.orderSelectResItem': {
       /**
        * Format: date-time
        * @description Created At
@@ -1600,7 +2367,7 @@ export interface components {
       /** @description Remark */
       remark?: string | undefined;
       userId: number | string;
-      user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+      user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
       products: components['schemas']['test-vona.entity.product_bce173590aaef19772f1ae3a82196493c2633e2e'][];
     };
     'test-vona.entity.product_bce173590aaef19772f1ae3a82196493c2633e2e': {
@@ -1615,41 +2382,8 @@ export interface components {
       /** @description Amount */
       amount: number;
     };
-    'test-vona.dto.orderResultPage': {
-      list: {
-        /**
-         * Format: date-time
-         * @description Created At
-         */
-        createdAt: Date;
-        /**
-         * Format: date-time
-         * @description Updated At
-         */
-        updatedAt: Date;
-        /**
-         * @description Deleted
-         * @default false
-         */
-        deleted?: boolean;
-        /**
-         * @description Instance ID
-         * @default 0
-         */
-        iid?: number;
-        /** @description ID */
-        id: number | string;
-        /**
-         * @description Order No
-         * @default
-         */
-        orderNo?: string;
-        /** @description Remark */
-        remark?: string | undefined;
-        userId: number | string;
-        user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7'];
-        products: components['schemas']['test-vona.entity.product_bce173590aaef19772f1ae3a82196493c2633e2e'][];
-      }[];
+    'test-vona.dto.orderSelectRes': {
+      list: components['schemas']['test-vona.dto.orderSelectResItem'][];
       total: string;
       pageCount: number;
       pageSize: number;
@@ -1668,55 +2402,58 @@ export interface components {
       min_stars?: string | undefined;
       max_stars?: string | undefined;
     };
-    'test-vona.dto.postQueryRes': {
-      list: {
-        /**
-         * Format: date-time
-         * @description Created At
-         */
-        createdAt: Date;
-        /**
-         * Format: date-time
-         * @description Updated At
-         */
-        updatedAt: Date;
-        /**
-         * @description Deleted
-         * @default false
-         */
-        deleted?: boolean;
-        /**
-         * @description Instance ID
-         * @default 0
-         */
-        iid?: number;
-        /** @description ID */
-        id: number | string;
-        /** @description Title */
-        title: string;
-        userId: number | string;
-        stars?: number | undefined;
-        postContent?: {
-          /** @description ID */
-          id: number | string;
-          content: string;
-        };
-        user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7'];
-      }[];
+    'test-vona.dto.postSelectRes': {
+      list: components['schemas']['test-vona.dto.postSelectResItem'][];
       total: string;
       pageCount: number;
       pageSize: number;
       pageNo: number;
     };
+    'test-vona.dto.postSelectResItem': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /**
+       * @description Deleted
+       * @default false
+       */
+      deleted?: boolean;
+      /**
+       * @description Instance ID
+       * @default 0
+       */
+      iid?: number;
+      /** @description ID */
+      id: number | string;
+      /** @description Title */
+      title: string;
+      userId: number | string;
+      stars?: number | undefined;
+      postContent?: {
+        /** @description ID */
+        id: number | string;
+        content: string;
+      };
+      user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+      /** @description Operations */
+      _operationsRow?: unknown;
+    };
     'test-vona.dto.serializerSimple': {
       password: string;
       password2: string;
-      email?: unknown;
+      email: string;
       /** Format: email */
       email2: string;
       /** Format: email */
       email3: string;
-      email4?: unknown;
+      email4: string;
       /** Format: email */
       email5: string;
       /** Format: email */
@@ -1738,17 +2475,17 @@ export interface components {
     };
     'test-vona.dto.serializerLazy': {
       simple: components['schemas']['test-vona.dto.serializerSimple_1c4b95bcfe8fe28a56dbcc7028097cf11836b4fc'];
-      simpleLazy?: components['schemas']['test-vona.dto.serializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_cff0ae112a392da58caf5aa905749f3c4444c4ab'];
+      simpleLazy?: components['schemas']['test-vona.dto.serializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_0544b269faee0bd5cd6c610dee78c5be0d490831'];
     };
     'test-vona.dto.serializerSimple_1c4b95bcfe8fe28a56dbcc7028097cf11836b4fc': {
       password: string;
       password2: string;
-      email?: unknown;
+      email: string;
       /** Format: email */
       email2: string;
       /** Format: email */
       email3: string;
-      email4?: unknown;
+      email4: string;
       /** Format: email */
       email5: string;
       /** Format: email */
@@ -1766,15 +2503,15 @@ export interface components {
      * title
      * @description description
      */
-    'test-vona.dto.serializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_cff0ae112a392da58caf5aa905749f3c4444c4ab': {
+    'test-vona.dto.serializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_0544b269faee0bd5cd6c610dee78c5be0d490831': {
       password: string;
       password2: string;
-      email?: unknown;
+      email: string;
       /** Format: email */
       email2: string;
       /** Format: email */
       email3: string;
-      email4?: unknown;
+      email4: string;
       /** Format: email */
       email5: string;
       /** Format: email */
@@ -2082,7 +2819,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['home-user.dto.passport'];
+            data?: components['schemas']['home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           };
         };
       };
@@ -2255,35 +2992,6 @@ export interface operations {
     };
     authToken: true;
   };
-  HomeUserPassport_refreshAuthToken: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          refreshToken: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-jwt.dto.jwtToken'];
-          };
-        };
-      };
-    };
-  };
   HomeUserPassport_createPassportJwtFromOauthCode: {
     parameters: {
       query?: never;
@@ -2313,6 +3021,35 @@ export interface operations {
       };
     };
   };
+  HomeUserPassport_refreshAuthToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          refreshToken: string;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-jwt.dto.jwtToken'];
+          };
+        };
+      };
+    };
+  };
   HomeUserPassport_createTempAuthToken: {
     parameters: {
       query?: {
@@ -2333,6 +3070,490 @@ export interface operations {
             code: string;
             message: string;
             data: string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        studentId?: number | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-record.dto.recordSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-record.dto.recordCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-record.dto.recordUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_select: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        level?: number | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-student.dto.studentSelectRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_view: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentUpdate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_summary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_deleteForce: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_createUploadToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadTokenRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadTokenResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_upload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          token: string;
+          /** Format: binary */
+          image: Blob;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Paypal_getRecord: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        recordId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-paypal.entity.paypalRecord'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Paypal_captureOrder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        recordId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Paypal_cancelOrder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        recordId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };
@@ -2387,6 +3608,33 @@ export interface operations {
     };
     authToken: true;
   };
+  TestCaptcha_signin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['test-captcha.dto.signin'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
   TestRestProduct_select: {
     parameters: {
       query?: {
@@ -2416,7 +3664,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-rest.dto.productQueryRes'];
+            data: components['schemas']['test-rest.dto.productSelectRes'];
           };
         };
       };
@@ -2470,7 +3718,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['test-rest.entity.product'];
+            data?: components['schemas']['test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
           };
         };
       };
@@ -2532,6 +3780,29 @@ export interface operations {
       };
     };
     authToken: true;
+  };
+  TestSsrToolMinimal_test: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
   };
   TestSsrToolOne_testGet: {
     parameters: {
@@ -2620,139 +3891,6 @@ export interface operations {
       };
     };
   };
-  TestCaptcha_signin: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['test-captcha.dto.signin'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  Paypal_getRecord: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recordId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-paypal.entity.paypalRecord'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Paypal_captureOrder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recordId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Paypal_cancelOrder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recordId: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Play_index: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-play.dto.play'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
   TestVonaDtoTest_getUserLazy: {
     parameters: {
       query?: never;
@@ -2821,7 +3959,7 @@ export interface operations {
               title: string;
               userId: number | string;
               stars?: number | undefined;
-              user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+              user?: components['schemas']['test-vona.entity.user_2c7d642ee581efa300341e343180fbb0ecdc785d_1816ff740d81c738ec055c7038bbd93beb9405a7_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
             };
           };
         };
@@ -2872,7 +4010,7 @@ export interface operations {
               name: string;
               age?: number | undefined;
               scores?: number | undefined;
-              posts?: components['schemas']['test-vona.entity.post_a6ba2076b5b70a3c098374cc82d418bd1ab226c3'];
+              posts?: components['schemas']['test-vona.entity.post_a6ba2076b5b70a3c098374cc82d418bd1ab226c3_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
             };
           };
         };
@@ -3336,6 +4474,32 @@ export interface operations {
     };
     authToken: true;
   };
+  Onion_echo7: {
+    parameters: {
+      query?: {
+        age?: number | undefined;
+        nullableAge?: number | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
   TestVonaOrder_create: {
     parameters: {
       query?: never;
@@ -3422,7 +4586,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-vona.dto.orderResult'][];
+            data: components['schemas']['test-vona.dto.orderSelectResItem'][];
           };
         };
       };
@@ -3458,7 +4622,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-vona.dto.orderResultPage'];
+            data: components['schemas']['test-vona.dto.orderSelectRes'];
           };
         };
       };
@@ -3543,7 +4707,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-vona.dto.postQueryRes'];
+            data: components['schemas']['test-vona.dto.postSelectRes'];
           };
         };
       };
@@ -3579,7 +4743,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-vona.dto.postQueryRes'];
+            data: components['schemas']['test-vona.dto.postSelectRes'];
           };
         };
       };

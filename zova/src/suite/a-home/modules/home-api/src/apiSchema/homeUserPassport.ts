@@ -2,16 +2,16 @@ import { BeanBase } from 'zova';
 import { ApiSchema, IApiSchemaOptions } from 'zova-module-a-api';
 
 import {
-  ApiApiHomeUserPassportassociatePath,
-  ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
-  ApiApiHomeUserPassportcreateTempAuthTokenPath,
   ApiApiHomeUserPassportcurrentPath,
-  ApiApiHomeUserPassportloginOauthPath,
-  ApiApiHomeUserPassportloginPath,
   ApiApiHomeUserPassportlogoutPath,
-  ApiApiHomeUserPassportmigratePath,
-  ApiApiHomeUserPassportrefreshAuthTokenPath,
   ApiApiHomeUserPassportregisterPath,
+  ApiApiHomeUserPassportloginPath,
+  ApiApiHomeUserPassportloginOauthPath,
+  ApiApiHomeUserPassportassociatePath,
+  ApiApiHomeUserPassportmigratePath,
+  ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
+  ApiApiHomeUserPassportrefreshAuthTokenPath,
+  ApiApiHomeUserPassportcreateTempAuthTokenPath,
 } from '../api/homeUserPassport.js';
 
 @ApiSchema()
@@ -44,16 +44,16 @@ export class ApiSchemaHomeUserPassport extends BeanBase {
     return this.$sdk.createApiSchemas(ApiApiHomeUserPassportmigratePath, 'get', options);
   }
 
-  refreshAuthToken(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiHomeUserPassportrefreshAuthTokenPath, 'post', options);
-  }
-
   createPassportJwtFromOauthCode(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(
       ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
       'post',
       options,
     );
+  }
+
+  refreshAuthToken(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiHomeUserPassportrefreshAuthTokenPath, 'post', options);
   }
 
   createTempAuthToken(options?: IApiSchemaOptions) {

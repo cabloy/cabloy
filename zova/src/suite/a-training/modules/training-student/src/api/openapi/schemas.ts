@@ -65,6 +65,8 @@ export type ApiSchemaTrainingRecordDtoRecordSelectResItem =
   components['schemas']['training-record.dto.recordSelectResItem'];
 export type ApiSchemaTrainingRecordDtoRecordSelectResItemPartial =
   Partial<ApiSchemaTrainingRecordDtoRecordSelectResItem>;
+export type ApiSchemaAImageDtoImageView = components['schemas']['a-image.dto.imageView'];
+export type ApiSchemaAImageDtoImageViewPartial = Partial<ApiSchemaAImageDtoImageView>;
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
@@ -89,6 +91,10 @@ export type ApiSchemaTrainingStudentDtoStudentSelectResItem =
   components['schemas']['training-student.dto.studentSelectResItem'];
 export type ApiSchemaTrainingStudentDtoStudentSelectResItemPartial =
   Partial<ApiSchemaTrainingStudentDtoStudentSelectResItem>;
+export type ApiSchemaAImageDtoImageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7 =
+  components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+export type ApiSchemaAImageDtoImageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7Partial =
+  Partial<ApiSchemaAImageDtoImageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7>;
 export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
@@ -101,6 +107,18 @@ export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bdd
   components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
   Partial<ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaAImageDtoImageUploadTokenResponse =
+  components['schemas']['a-image.dto.imageUploadTokenResponse'];
+export type ApiSchemaAImageDtoImageUploadTokenResponsePartial =
+  Partial<ApiSchemaAImageDtoImageUploadTokenResponse>;
+export type ApiSchemaAImageDtoImageUploadTokenRequest =
+  components['schemas']['a-image.dto.imageUploadTokenRequest'];
+export type ApiSchemaAImageDtoImageUploadTokenRequestPartial =
+  Partial<ApiSchemaAImageDtoImageUploadTokenRequest>;
+export type ApiSchemaAImageDtoImageUploadResponse =
+  components['schemas']['a-image.dto.imageUploadResponse'];
+export type ApiSchemaAImageDtoImageUploadResponsePartial =
+  Partial<ApiSchemaAImageDtoImageUploadResponse>;
 export type ApiSchemaAPaypalEntityPaypalRecord =
   components['schemas']['a-paypal.entity.paypalRecord'];
 export type ApiSchemaAPaypalEntityPaypalRecordPartial = Partial<ApiSchemaAPaypalEntityPaypalRecord>;

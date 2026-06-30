@@ -10,6 +10,7 @@ import type {
   IImageUploadInput,
   IImageUploadOptions,
   IImageVariantRequest,
+  IImageView,
   TypeImageVariantInput,
 } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
@@ -113,6 +114,31 @@ export class BeanImage extends BeanBase {
       filename: image.filename,
       contentType: image.contentType,
     };
+  }
+
+  async resolveView(
+    imageId: TableIdentity,
+    request?: TypeImageVariantInput,
+  ): Promise<IImageView | undefined> {
+    const image = await this.get(imageId);
+    if (!image) return;
+    return {
+      id: image.id,
+      url: await this.getVariantUrl(image.id, request),
+      filename: image.filename,
+      width: image.width,
+      height: image.height,
+      provider: image.provider,
+      clientName: image.clientName,
+      uploadedAt: image.uploadedAt,
+      variants: image.variants,
+    };
+  }
+
+  async resolveViews(imageIds: TableIdentity[] | undefined, request?: TypeImageVariantInput) {
+    if (!imageIds?.length) return [];
+    const items = await Promise.all(imageIds.map(imageId => this.resolveView(imageId, request)));
+    return items.filter(item => !!item);
   }
 
   private async _getImageProviderResource(image: EntityImage) {

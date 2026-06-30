@@ -16,6 +16,19 @@ export interface IImageTransformOptions {
   sharpen?: number;
 }
 
+export interface ApiImageUploadTokenRequestBody {
+  resource: string;
+  field: string;
+  formScene?: 'create' | 'edit';
+  size: number;
+  mimeType: string;
+}
+
+export interface ApiImageUploadTokenResponseBody {
+  token: string;
+  expiresIn: number;
+}
+
 export interface ApiImageUploadResponseBody {
   id: TableIdentity;
   provider: string;
@@ -33,7 +46,15 @@ export interface ApiImageUploadResponseBody {
 
 @Api()
 export class ApiImage extends BeanApiBase {
-  upload(body: { image: Blob | File }, options?: IApiActionOptions) {
+  createUploadToken(body: ApiImageUploadTokenRequestBody, options?: IApiActionOptions) {
+    return this.$fetch.post<any, ApiImageUploadTokenResponseBody, ApiImageUploadTokenRequestBody>(
+      '/image/upload-token',
+      body,
+      this.$configPrepare(this.sys.util.getApiBaseURL(), options, true),
+    );
+  }
+
+  upload(body: { token: string; image: Blob | File }, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiImageUploadResponseBody>(
       '/image/upload',
       this.$formData(body),

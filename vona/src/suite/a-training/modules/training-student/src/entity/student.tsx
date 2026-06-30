@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
@@ -67,6 +68,7 @@ export class EntityStudent extends EntityBase {
       maxSize: 2 * 1024 * 1024,
       enableCrop: true,
       cropAspectRatio: 1,
+      relationName: 'image',
       resize: {
         width: 512,
         height: 512,
@@ -75,9 +77,10 @@ export class EntityStudent extends EntityBase {
         quality: 90,
       },
     }),
-    ZovaRender.cell('basic-image:image'),
+    ZovaRender.cell('basic-image:image', { relationName: 'image' }),
+    v.tableIdentity(),
   )
-  imageUrl?: string;
+  imageId?: TableIdentity;
 
   @Api.field(
     v.title($locale('Level')),

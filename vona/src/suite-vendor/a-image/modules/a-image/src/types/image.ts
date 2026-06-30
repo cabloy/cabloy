@@ -62,10 +62,44 @@ export interface IImageResource extends IImageProviderResource {
   uploadedAt?: Date;
 }
 
+export interface IImageView {
+  id: TableIdentity;
+  url: string;
+  filename?: string;
+  width?: number;
+  height?: number;
+  provider: keyof IImageProviderRecord;
+  clientName: string;
+  uploadedAt?: Date;
+  variants?: IImageNamedVariants;
+}
+
 export interface IImageUploadOptions {
   clientName?: string;
   clientOptions?: object;
   meta?: Record<string, any>;
+}
+
+export type TypeImageUploadFormScene = 'create' | 'edit';
+
+export interface IImageUploadPolicyResolved {
+  resource: string;
+  field: string;
+  formScene: TypeImageUploadFormScene;
+  providerName: keyof IImageProviderRecord;
+  clientName: string;
+  maxSize?: number;
+  mimeTypes?: string[];
+  extensions?: string[];
+  multiple?: boolean;
+  fileSize: number;
+  mimeType: string;
+}
+
+export interface IImageUploadTokenPayload extends IImageUploadPolicyResolved {
+  kind: 'imageUpload';
+  expiresIn: number;
+  issuedAt: number;
 }
 
 declare module 'vona' {

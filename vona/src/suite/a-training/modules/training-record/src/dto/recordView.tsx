@@ -1,5 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { DtoImageView } from 'vona-module-a-image';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
@@ -37,6 +38,16 @@ export interface IDtoOptionsRecordView extends IDecoratorDtoOptions {}
 export class DtoRecordView extends $Dto.get(() => ModelRecord, {
   include: { trainingRecordSubjects: { dtoClass: DtoDetailRecordSubjectView } },
 }) {
+  @Api.field(
+    ZovaRender.visible(false),
+    v.optional(),
+    v.serializerCustom(function (_value, data: DtoRecordView) {
+      return this.bean.image.resolveViews(data.sceneImageIds);
+    }),
+    v.array(DtoImageView),
+  )
+  sceneImages?: DtoImageView[];
+
   @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordSubjectResItem))
   _trainingRecordSubjects?: DtoDetailRecordSubjectResItem[];
 }

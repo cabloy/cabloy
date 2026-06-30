@@ -1,5 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { DtoImageView } from 'vona-module-a-image';
 import { Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
@@ -25,6 +26,16 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
   ],
 })
 export class DtoStudentSelectResItem extends $Dto.get(() => ModelStudent) {
+  @Api.field(
+    ZovaRender.visible(false),
+    v.optional(),
+    v.serializerCustom(function (_value, data: DtoStudentSelectResItem) {
+      return data.imageId ? this.bean.image.resolveView(data.imageId) : undefined;
+    }),
+    v.object(DtoImageView),
+  )
+  image?: DtoImageView;
+
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),

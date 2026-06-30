@@ -1,10 +1,12 @@
+import type { TableIdentity } from 'table-identity';
 import type { IComponentOptions } from 'zova';
+import type { IJsxRenderContextFormField } from 'zova-module-a-form';
 import type { ControllerFormField, IFormFieldComponentOptions } from 'zova-module-a-form';
 import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
 import { CircleStencil, Cropper, RectangleStencil } from 'vue-advanced-cropper';
-import { BeanControllerBase, ClientOnly } from 'zova';
+import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
 
@@ -27,6 +29,10 @@ export interface IResourceFormFieldImageResizeOptions {
 }
 
 export interface IResourceFormFieldImageOptions extends IResourceFormFieldOptionsBase {
+  resource?: string;
+  field?: string;
+  relationName?: string;
+  formScene?: 'create' | 'edit';
   multiple?: boolean;
   maxCount?: number;
   accept?: string | string[];
@@ -39,6 +45,15 @@ export interface IResourceFormFieldImageOptions extends IResourceFormFieldOption
   cropAspectRatio?: number;
   cropShape?: 'rect' | 'round';
   resize?: IResourceFormFieldImageResizeOptions;
+  upload?: {
+    providerName?: string;
+    provider?: string;
+    clientName?: string;
+    maxSize?: number;
+    mimeTypes?: string[];
+    extensions?: string[];
+    accept?: string | string[];
+  };
 }
 
 export interface ControllerFormFieldImageProps extends IFormFieldComponentOptions {
@@ -46,7 +61,8 @@ export interface ControllerFormFieldImageProps extends IFormFieldComponentOption
 }
 
 interface IImagePreviewItem {
-  url: string;
+  id: TableIdentity;
+  url?: string;
   filename?: string;
   width?: number;
   height?: number;
@@ -76,10 +92,13 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   fileInputRef?: HTMLInputElement;
   errorMessage?: string;
   isUploading = false;
-  currentValue?: string | string[];
+  currentValue?: TableIdentity | TableIdentity[] | string;
   currentOptions: IResourceFormFieldImageOptions = {};
   $$formField?: ControllerFormField;
   uploadedPreviewMap: Record<string, IImagePreviewItem> = {};
+
+  @Use({ injectionScope: 'host' })
+  $$renderContext: IJsxRenderContextFormField;
 
   protected async __init__() {}
 
@@ -92,7 +111,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         {...this.$props}
         slotDefault={({ propsBucket, props }, $$formField) => {
           this.$$formField = $$formField;
-          this.currentValue = propsBucket.value;
+          this.currentValue = propsBucket.value as any;
           this.currentOptions = propsBucket.options ?? {};
           const items = this._getPreviewItems(propsBucket.value);
           const hasValidationError = !$$formField.field.state.meta.isValid;
@@ -199,21 +218,30 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     readonly: boolean,
     disableNotifyChanged?: boolean,
   ) {
+    const previewUrl = item.url ? this._resolvePreviewUrl(item.url) : undefined;
     return (
       <div
-        key={`${item.url}-${index}`}
+        key={`${item.id}-${index}`}
         class="rounded-box border border-base-300 bg-base-100 shadow-sm"
       >
         <div class="aspect-square overflow-hidden rounded-t-box bg-base-200">
-          <img
-            class="h-full w-full object-cover"
-            src={this._resolvePreviewUrl(item.url)}
-            alt={item.filename ?? `image-${index + 1}`}
-          />
+          {previewUrl ? (
+            <img
+              class="h-full w-full object-cover"
+              src={previewUrl}
+              alt={item.filename ?? `image-${index + 1}`}
+            />
+          ) : (
+            <div class="flex h-full w-full items-center justify-center text-sm text-base-content/50">
+              #{String(item.id)}
+            </div>
+          )}
         </div>
         <div class="space-y-2 p-3">
           <div class="min-h-10 text-sm text-base-content/70">
-            <div class="truncate font-medium text-base-content">{item.filename ?? item.url}</div>
+            <div class="truncate font-medium text-base-content">
+              {item.filename ?? `#${String(item.id)}`}
+            </div>
             {(item.width || item.height) && (
               <div class="text-xs text-base-content/60">
                 {item.width ?? '-'} × {item.height ?? '-'}
@@ -221,20 +249,17 @@ export class ControllerFormFieldImage extends BeanControllerBase {
             )}
           </div>
           <div class="flex flex-wrap gap-2">
-            <a
-              class="btn btn-sm btn-outline"
-              href={this._resolvePreviewUrl(item.url)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {this.scope.locale.PreviewImage()}
-            </a>
+            {previewUrl && (
+              <a class="btn btn-sm btn-outline" href={previewUrl} target="_blank" rel="noreferrer">
+                {this.scope.locale.PreviewImage()}
+              </a>
+            )}
             {!readonly && (
               <button
                 type="button"
                 class="btn btn-sm btn-outline btn-error"
                 onClick={() => {
-                  this._removeItem(item.url, disableNotifyChanged);
+                  this._removeItem(item.id, disableNotifyChanged);
                 }}
               >
                 {this.scope.locale.RemoveImage()}
@@ -261,16 +286,18 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     if (files.length === 0) return;
     this.errorMessage = undefined;
     const options = this.currentOptions ?? {};
-    const currentUrls = this._normalizeValueToUrls(this.currentValue, !!options.multiple);
+    const multiple = !!options.multiple;
+    const currentIds = this._normalizeValueToImageIds(this.currentValue, multiple);
     const filesToHandle = options.multiple ? files : files.slice(0, 1);
     const maxCount = this._getMaxCount(options);
     const nextCountCandidate = options.multiple
-      ? currentUrls.length + filesToHandle.length
+      ? currentIds.length + filesToHandle.length
       : filesToHandle.length;
     if (nextCountCandidate > maxCount) {
       this.errorMessage = this.scope.locale.TooManyImages(maxCount);
       return;
     }
+    const uploadTarget = this._resolveUploadTarget();
     this.isUploading = true;
     try {
       const uploadedItems: IImagePreviewItem[] = [];
@@ -282,24 +309,30 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         }
         const preparedFile = await this._prepareFile(file, options);
         if (!preparedFile) continue;
-        const uploaded = await this.scope.api.image.upload({ image: preparedFile });
-        if (!uploaded?.url) {
-          throw new Error(this.scope.locale.ImageUploadFailed());
-        }
+        const tokenRes = await this.scope.api.image.createUploadToken({
+          ...uploadTarget,
+          size: preparedFile.size,
+          mimeType: preparedFile.type || file.type,
+        });
+        const uploaded = await this.scope.api.image.upload({
+          token: tokenRes.token,
+          image: preparedFile,
+        });
         const item: IImagePreviewItem = {
+          id: uploaded.id,
           url: uploaded.url,
           filename: uploaded.filename,
           width: uploaded.width,
           height: uploaded.height,
         };
-        this.uploadedPreviewMap[item.url] = item;
+        this.uploadedPreviewMap[String(item.id)] = item;
         uploadedItems.push(item);
       }
       if (uploadedItems.length === 0) return;
-      const nextUrls = options.multiple
-        ? [...currentUrls, ...uploadedItems.map(item => item.url)]
-        : [uploadedItems[uploadedItems.length - 1].url];
-      this._setFieldValue(nextUrls, disableNotifyChanged, !!options.multiple);
+      const nextIds = options.multiple
+        ? [...currentIds, ...uploadedItems.map(item => item.id)]
+        : [uploadedItems[uploadedItems.length - 1].id];
+      this._setFieldValue(nextIds, disableNotifyChanged, multiple);
       this.errorMessage = undefined;
     } catch (err: any) {
       this.errorMessage = err?.message ?? this.scope.locale.ImageUploadFailed();
@@ -308,45 +341,112 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     }
   }
 
-  private _removeItem(url: string, disableNotifyChanged?: boolean) {
+  private _resolveUploadTarget() {
+    const resource =
+      this.currentOptions.resource ??
+      (this.$$renderContext.$celScope as any).resource ??
+      (this.$$renderContext.$$form.$props.formScope as any)?.resource;
+    const field = this.currentOptions.field ?? this.$props.name;
+    if (!resource || !field) {
+      throw new Error('should specify image upload resource and field');
+    }
+    return {
+      resource,
+      field,
+      formScene: this._resolveFormScene(),
+    } as const;
+  }
+
+  private _resolveFormScene(): 'create' | 'edit' {
+    if (this.currentOptions.formScene) return this.currentOptions.formScene;
+    const editMode = this.$$renderContext.$$form.formMeta?.editMode;
+    if (editMode === 'update') return 'edit';
+    return 'create';
+  }
+
+  private _removeItem(imageId: TableIdentity, disableNotifyChanged?: boolean) {
     const multiple = !!this.currentOptions?.multiple;
-    const currentUrls = this._normalizeValueToUrls(this.currentValue, multiple);
-    const nextUrls = currentUrls.filter(item => item !== url);
-    delete this.uploadedPreviewMap[url];
-    this._setFieldValue(nextUrls, disableNotifyChanged, multiple);
+    const currentIds = this._normalizeValueToImageIds(this.currentValue, multiple);
+    const nextIds = currentIds.filter(item => String(item) !== String(imageId));
+    delete this.uploadedPreviewMap[String(imageId)];
+    this._setFieldValue(nextIds, disableNotifyChanged, multiple);
     this.errorMessage = undefined;
   }
 
   private _setFieldValue(
-    urls: string[],
+    imageIds: TableIdentity[],
     disableNotifyChanged: boolean | undefined,
     multiple: boolean,
   ) {
-    const nextValue = multiple ? urls : (urls[0] ?? '');
-    this.currentValue = multiple ? urls : nextValue;
+    const nextValue = multiple ? imageIds : (imageIds[0] ?? '');
+    this.currentValue = nextValue as any;
     this.$$formField?.setValue(nextValue, disableNotifyChanged);
     this.$$formField?.handleBlur();
   }
 
   private _getPreviewItems(value: unknown) {
-    const urls = this._normalizeValueToUrls(value, !!this.currentOptions?.multiple);
-    return urls.map(url => this.uploadedPreviewMap[url] ?? { url });
+    const multiple = !!this.currentOptions?.multiple;
+    const imageIds = this._normalizeValueToImageIds(value, multiple);
+    const relationMap = this._getRelationPreviewMap();
+    return imageIds.map(imageId => {
+      const key = String(imageId);
+      return this.uploadedPreviewMap[key] ?? relationMap[key] ?? { id: imageId };
+    });
+  }
+
+  private _getRelationPreviewMap() {
+    const relationName = this._getRelationName();
+    if (!relationName) return {} as Record<string, IImagePreviewItem>;
+    const relationValue = this.$$renderContext.$$form.getFieldValue(relationName as never);
+    const relationItems = Array.isArray(relationValue)
+      ? relationValue
+      : relationValue
+        ? [relationValue]
+        : [];
+    const map: Record<string, IImagePreviewItem> = {};
+    for (const relationItem of relationItems) {
+      if (!relationItem?.id) continue;
+      map[String(relationItem.id)] = {
+        id: relationItem.id,
+        url: relationItem.url,
+        filename: relationItem.filename,
+        width: relationItem.width,
+        height: relationItem.height,
+      };
+    }
+    return map;
+  }
+
+  private _getRelationName() {
+    const relationName = this.currentOptions.relationName;
+    if (relationName) return relationName;
+    const name = this.$props.name;
+    if (!name) return undefined;
+    if (name.endsWith('Ids')) {
+      return `${name.slice(0, -3)}s`;
+    }
+    if (name.endsWith('Id')) {
+      return name.slice(0, -2);
+    }
+    return undefined;
   }
 
   private _normalizeOutputValue(value: unknown) {
-    const urls = this._normalizeValueToUrls(value, !!this.currentOptions?.multiple);
+    const imageIds = this._normalizeValueToImageIds(value, !!this.currentOptions?.multiple);
     return {
-      urls,
-      displayValue: urls.join(', '),
+      imageIds,
+      displayValue: imageIds.map(item => String(item)).join(', '),
     };
   }
 
-  private _normalizeValueToUrls(value: unknown, multiple: boolean) {
+  private _normalizeValueToImageIds(value: unknown, multiple: boolean): TableIdentity[] {
     if (Array.isArray(value)) {
-      return value.filter(item => !!item).map(item => String(item));
+      return value
+        .filter(item => item !== undefined && item !== null && item !== '')
+        .map(item => item as TableIdentity);
     }
-    if (!multiple && value) {
-      return [String(value)];
+    if (!multiple && value !== undefined && value !== null && value !== '') {
+      return [value as TableIdentity];
     }
     return [];
   }

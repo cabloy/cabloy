@@ -83,6 +83,30 @@ export class EntityRecord extends EntityBase {
   )
   trainingTime?: Date;
 
-  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(7))
+  @Api.field(
+    v.title($locale('ScenePhotos')),
+    v.optional(),
+    ZovaRender.order(7),
+    ZovaRender.field('basic-image:formFieldImage', {
+      multiple: true,
+      maxCount: 9,
+      relationName: 'sceneImages',
+      accept: ['image/png', 'image/jpeg', 'image/webp'],
+      maxSize: 2 * 1024 * 1024,
+      enableCrop: false,
+      resize: {
+        width: 1280,
+        height: 1280,
+        fit: 'contain',
+        format: 'jpeg',
+        quality: 90,
+      },
+    }),
+    ZovaRender.cell('basic-image:image', { relationName: 'sceneImages' }),
+    v.array(v.tableIdentity()),
+  )
+  sceneImageIds?: TableIdentity[];
+
+  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(8))
   description?: string;
 }

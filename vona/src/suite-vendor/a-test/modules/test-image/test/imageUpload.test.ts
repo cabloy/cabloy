@@ -36,7 +36,24 @@ describe('imageUpload.test.ts', () => {
   it('action:image:upload api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
+      const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload-token', 'a-image'));
+      const tokenRes = await fetch(tokenUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jwt.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resource: 'training-student:student',
+          field: 'imageId',
+          formScene: 'create',
+          size: tinyPng.length,
+          mimeType: 'image/png',
+        }),
+      });
+      const tokenData = await tokenRes.json();
       const formData = new FormData();
+      formData.append('token', tokenData.data.token);
       formData.append('image', new (Blob as any)([tinyPng], { type: 'image/png' }), 'image.png');
       const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload', 'a-image'));
       const res = await fetch(url, {

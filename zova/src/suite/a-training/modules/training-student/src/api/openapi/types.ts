@@ -400,6 +400,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/image/upload-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_createUploadToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_upload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/paypal/getRecord/{recordId}': {
     parameters: {
       query?: never;
@@ -1359,6 +1391,8 @@ export interface components {
        * @description Training Time
        */
       trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       /** @description Student Training Record Details */
@@ -1440,10 +1474,43 @@ export interface components {
        * @description Training Time
        */
       trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
+      sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
+    };
+    'a-image.dto.imageView': {
+      id: number | string;
+      url: string;
+      filename?: string | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      provider: string;
+      clientName: string;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      variants?:
+        | {
+            [key: string]: {
+              width?: number | undefined;
+              height?: number | undefined;
+              /** @enum {string|null} */
+              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+              /** @enum {string|null} */
+              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+              background?: string | undefined;
+              quality?: number | undefined;
+              /** @enum {string|null} */
+              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+              dpr?: number | undefined;
+              rotate?: number | undefined;
+              sharpen?: number | undefined;
+            };
+          }
+        | undefined;
     };
     'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
@@ -1484,6 +1551,8 @@ export interface components {
            * @description Training Time
            */
           trainingTime?: Date;
+          /** @description Scene Photos */
+          sceneImageIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
           /** @description Student Training Record Details */
@@ -1502,6 +1571,7 @@ export interface components {
             /** @description Description */
             description?: string | undefined;
           }[];
+          sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
           _trainingRecordSubjects?:
             | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
             | undefined;
@@ -1523,6 +1593,8 @@ export interface components {
        * @description Training Time
        */
       trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       /** @description Student Training Record Details */
@@ -1554,6 +1626,8 @@ export interface components {
       description?: string | undefined;
       /** @description Mobile */
       mobile: string;
+      /** @description Student Image */
+      imageId?: number | string | undefined;
       /** @description Training Stage */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
@@ -1572,6 +1646,8 @@ export interface components {
              * @description Training Time
              */
             trainingTime?: Date;
+            /** @description Scene Photos */
+            sceneImageIds?: (number | string)[] | undefined;
             /** @description Description */
             description?: string | undefined;
             /** @description Student Training Record Details */
@@ -1592,6 +1668,7 @@ export interface components {
                   description?: string | undefined;
                 }[]
               | undefined;
+            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
@@ -1622,10 +1699,13 @@ export interface components {
        * @description Training Time
        */
       trainingTime?: Date;
+      /** @description Scene Photos */
+      sceneImageIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       /** @description Student Training Record Details */
       trainingRecordSubjects?: unknown;
+      sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description # */
       _lineNumber: number;
       /** @description Operations */
@@ -1667,11 +1747,54 @@ export interface components {
       description?: string | undefined;
       /** @description Mobile */
       mobile: string;
+      /** @description Student Image */
+      imageId?: number | string | undefined;
       /** @description Training Stage */
       level: 1 | 2 | 3;
+      image?: components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7':
+      | {
+          id: number | string;
+          url: string;
+          filename?: string | undefined;
+          width?: number | undefined;
+          height?: number | undefined;
+          provider: string;
+          clientName: string;
+          /** Format: date-time */
+          uploadedAt?: Date;
+          variants?:
+            | {
+                [key: string]: {
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  /** @enum {string|null} */
+                  fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+                  /** @enum {string|null} */
+                  gravity?:
+                    | 'auto'
+                    | 'center'
+                    | 'top'
+                    | 'bottom'
+                    | 'left'
+                    | 'right'
+                    | null
+                    | undefined;
+                  background?: string | undefined;
+                  quality?: number | undefined;
+                  /** @enum {string|null} */
+                  format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+                  dpr?: number | undefined;
+                  rotate?: number | undefined;
+                  sharpen?: number | undefined;
+                };
+              }
+            | undefined;
+        }
+      | undefined;
     'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           /**
@@ -1702,6 +1825,8 @@ export interface components {
           description?: string | undefined;
           /** @description Mobile */
           mobile: string;
+          /** @description Student Image */
+          imageId?: number | string | undefined;
           /** @description Training Stage */
           level: 1 | 2 | 3;
           /** @description Student Training Records */
@@ -1726,6 +1851,8 @@ export interface components {
              * @description Training Time
              */
             trainingTime?: Date;
+            /** @description Scene Photos */
+            sceneImageIds?: (number | string)[] | undefined;
             /** @description Description */
             description?: string | undefined;
             /** @description Student Training Record Details */
@@ -1744,10 +1871,12 @@ export interface components {
               /** @description Description */
               description?: string | undefined;
             }[];
+            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
           }[];
+          image?: components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
           _trainingRecords?:
             | components['schemas']['training-student.dto.detailRecordResItem'][]
             | undefined;
@@ -1760,6 +1889,8 @@ export interface components {
       description?: string | undefined;
       /** @description Mobile */
       mobile: string;
+      /** @description Student Image */
+      imageId?: number | string | undefined;
       /** @description Training Stage */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
@@ -1785,6 +1916,8 @@ export interface components {
              * @description Training Time
              */
             trainingTime?: Date;
+            /** @description Scene Photos */
+            sceneImageIds?: (number | string)[] | undefined;
             /** @description Description */
             description?: string | undefined;
             /** @description Student Training Record Details */
@@ -1805,6 +1938,7 @@ export interface components {
                   description?: string | undefined;
                 }[]
               | undefined;
+            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
@@ -1833,6 +1967,51 @@ export interface components {
           summaryText: string;
         }
       | undefined;
+    'a-image.dto.imageUploadTokenResponse': {
+      token: string;
+      expiresIn: number;
+    };
+    'a-image.dto.imageUploadTokenRequest': {
+      resource: string;
+      field: string;
+      /** @enum {string|null} */
+      formScene?: 'create' | 'edit' | null | undefined;
+      size: number;
+      mimeType: string;
+    };
+    'a-image.dto.imageUploadResponse': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      variants?:
+        | {
+            [key: string]: {
+              width?: number | undefined;
+              height?: number | undefined;
+              /** @enum {string|null} */
+              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+              /** @enum {string|null} */
+              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+              background?: string | undefined;
+              quality?: number | undefined;
+              /** @enum {string|null} */
+              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+              dpr?: number | undefined;
+              rotate?: number | undefined;
+              sharpen?: number | undefined;
+            };
+          }
+        | undefined;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      url?: string | undefined;
+    };
     'a-paypal.entity.paypalRecord': {
       /**
        * Format: date-time
@@ -3237,6 +3416,66 @@ export interface operations {
             code: string;
             message: string;
             data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_createUploadToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadTokenRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadTokenResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_upload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          token: string;
+          /** Format: binary */
+          image: Blob;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
           };
         };
       };
