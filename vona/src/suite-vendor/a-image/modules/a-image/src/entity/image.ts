@@ -5,6 +5,7 @@ import { Entity, EntityBase } from 'vona-module-a-orm';
 
 import type { IImageNamedVariants } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
+import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 export interface IEntityOptionsImage extends IDecoratorEntityOptions {}
 
@@ -48,4 +49,7 @@ export class EntityImage extends EntityBase {
 
   @Api.field(v.optional())
   deliveryBaseUrl?: string;
+
+  @Api.field(v.optional())
+  imageScene?: keyof IImageSceneRecord | string;
 }

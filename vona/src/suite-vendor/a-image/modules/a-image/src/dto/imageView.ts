@@ -5,6 +5,8 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
+import type { IImageSceneRecord } from '../types/imageScene.ts';
+
 export interface IDtoOptionsImageView extends IDecoratorDtoOptions {}
 
 const ImageTransformOptionsSchema = z.object({
@@ -42,6 +44,9 @@ export class DtoImageView {
 
   @Api.field(z.string())
   clientName: string;
+
+  @Api.field(v.optional())
+  imageScene?: keyof IImageSceneRecord | string;
 
   @Api.field(v.optional())
   uploadedAt?: Date;

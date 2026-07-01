@@ -15,6 +15,7 @@ import type {
 } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 import type { IImageProviderExecute } from '../types/imageProvider.ts';
+import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 import { resolveImageVariantRequest } from '../types/imageProvider.ts';
 
@@ -55,6 +56,7 @@ export class BeanImage extends BeanBase {
       meta: imageProviderResource.meta,
       storagePath: imageProviderResource.storagePath,
       deliveryBaseUrl: imageProviderResource.deliveryBaseUrl,
+      imageScene: options?.imageScene,
     });
     return this._combineImageResource(image, imageProviderResource);
   }
@@ -119,9 +121,13 @@ export class BeanImage extends BeanBase {
   async resolveView(
     imageId: TableIdentity,
     request?: TypeImageVariantInput,
+    imageScene?: keyof IImageSceneRecord | string,
   ): Promise<IImageView | undefined> {
     const image = await this.get(imageId);
     if (!image) return;
+    if (imageScene && image.imageScene !== imageScene) {
+      throw new Error(`image scene mismatch: image=${image.imageScene}, expected=${imageScene}`);
+    }
     return {
       id: image.id,
       url: await this.getVariantUrl(image.id, request),
@@ -130,14 +136,21 @@ export class BeanImage extends BeanBase {
       height: image.height,
       provider: image.provider,
       clientName: image.clientName,
+      imageScene: image.imageScene,
       uploadedAt: image.uploadedAt,
       variants: image.variants,
     };
   }
 
-  async resolveViews(imageIds: TableIdentity[] | undefined, request?: TypeImageVariantInput) {
+  async resolveViews(
+    imageIds: TableIdentity[] | undefined,
+    request?: TypeImageVariantInput,
+    imageScene?: keyof IImageSceneRecord | string,
+  ) {
     if (!imageIds?.length) return [];
-    const items = await Promise.all(imageIds.map(imageId => this.resolveView(imageId, request)));
+    const items = await Promise.all(
+      imageIds.map(imageId => this.resolveView(imageId, request, imageScene)),
+    );
     return items.filter(item => !!item);
   }
 
@@ -165,6 +178,7 @@ export class BeanImage extends BeanBase {
       id: image.id,
       provider: image.providerName,
       clientName: image.clientName,
+      imageScene: image.imageScene,
       resourceId: imageProviderResource?.resourceId ?? image.resourceId,
       filename: imageProviderResource?.filename ?? image.filename,
       contentType: imageProviderResource?.contentType ?? image.contentType,

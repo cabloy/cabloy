@@ -1,6 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 
 import type { IImageProviderRecord } from './imageProvider.ts';
+import type { IImageSceneRecord } from './imageScene.ts';
 
 export interface IImageTransformOptions {
   width?: number;
@@ -59,6 +60,7 @@ export interface IImageResource extends IImageProviderResource {
   id: TableIdentity;
   provider: keyof IImageProviderRecord;
   clientName: string;
+  imageScene?: keyof IImageSceneRecord | string;
   uploadedAt?: Date;
 }
 
@@ -70,6 +72,7 @@ export interface IImageView {
   height?: number;
   provider: keyof IImageProviderRecord;
   clientName: string;
+  imageScene?: keyof IImageSceneRecord | string;
   uploadedAt?: Date;
   variants?: IImageNamedVariants;
 }
@@ -78,16 +81,14 @@ export interface IImageUploadOptions {
   clientName?: string;
   clientOptions?: object;
   meta?: Record<string, any>;
+  imageScene?: keyof IImageSceneRecord | string;
 }
 
-export type TypeImageUploadFormScene = 'create' | 'edit';
-
 export interface IImageUploadPolicyResolved {
-  resource: string;
-  field: string;
-  formScene: TypeImageUploadFormScene;
+  imageScene: keyof IImageSceneRecord | string;
   providerName: keyof IImageProviderRecord;
   clientName: string;
+  meta?: Record<string, any>;
   maxSize?: number;
   mimeTypes?: string[];
   extensions?: string[];

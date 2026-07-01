@@ -1,5 +1,6 @@
 export * from './action.js';
 export * from './captcha.js';
+export * from './image.js';
 export * from './database.js';
 export * from './formMeta.js';
 export * from './formProvider.js';

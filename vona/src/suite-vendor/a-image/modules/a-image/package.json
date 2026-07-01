@@ -56,7 +56,12 @@
         "optionsGlobalInterfaceName": "IDecoratorImageProviderOptions",
         "optionsGlobalInterfaceFrom": "vona-module-a-image",
         "scopeResource": true,
-        "boilerplate": "boilerplate"
+        "boilerplate": "imageProvider/boilerplate"
+      },
+      "imageScene": {
+        "optionsGlobalInterfaceName": "IDecoratorImageSceneOptions",
+        "optionsGlobalInterfaceFrom": "vona-module-a-image",
+        "boilerplate": "imageScene/boilerplate"
       }
     }
   }

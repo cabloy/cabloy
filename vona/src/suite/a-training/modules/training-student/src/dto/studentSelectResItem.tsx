@@ -30,7 +30,9 @@ export class DtoStudentSelectResItem extends $Dto.get(() => ModelStudent) {
     ZovaRender.visible(false),
     v.optional(),
     v.serializerCustom(function (_value, data: DtoStudentSelectResItem) {
-      return data.imageId ? this.bean.image.resolveView(data.imageId) : undefined;
+      return data.imageId
+        ? this.bean.image.resolveView(data.imageId, undefined, 'training-student:studentImage')
+        : undefined;
     }),
     v.object(DtoImageView),
   )

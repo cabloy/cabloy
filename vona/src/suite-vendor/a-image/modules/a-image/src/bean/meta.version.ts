@@ -33,6 +33,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         table.json(entityImage.meta);
         table.text(entityImage.storagePath);
         table.text(entityImage.deliveryBaseUrl);
+        table.string(entityImage.imageScene, 255);
       });
     }
   }

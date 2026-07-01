@@ -17,9 +17,7 @@ export interface IImageTransformOptions {
 }
 
 export interface ApiImageUploadTokenRequestBody {
-  resource: string;
-  field: string;
-  formScene?: 'create' | 'edit';
+  imageScene: string;
   size: number;
   mimeType: string;
 }
@@ -34,6 +32,7 @@ export interface ApiImageUploadResponseBody {
   provider: string;
   clientName: string;
   resourceId: string;
+  imageScene?: string;
   filename?: string;
   contentType?: string;
   size?: number;

@@ -88,6 +88,7 @@ export class EntityRecord extends EntityBase {
     v.optional(),
     ZovaRender.order(7),
     ZovaRender.field('basic-image:formFieldImage', {
+      imageScene: 'training-record:sceneImage',
       multiple: true,
       maxCount: 9,
       relationName: 'sceneImages',

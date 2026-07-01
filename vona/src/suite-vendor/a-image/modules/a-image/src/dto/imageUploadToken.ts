@@ -10,13 +10,7 @@ export interface IDtoOptionsImageUploadTokenResponse extends IDecoratorDtoOption
 @Dto<IDtoOptionsImageUploadTokenRequest>()
 export class DtoImageUploadTokenRequest {
   @Api.field(z.string().min(1))
-  resource: string;
-
-  @Api.field(z.string().min(1))
-  field: string;
-
-  @Api.field(z.enum(['create', 'edit']).optional())
-  formScene?: 'create' | 'edit';
+  imageScene: string;
 
   @Api.field(z.number().int().positive())
   size: number;

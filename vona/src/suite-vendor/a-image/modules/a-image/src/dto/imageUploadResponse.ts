@@ -6,6 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
+import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 export interface IDtoOptionsImageUploadResponse extends IDecoratorDtoOptions {}
 
@@ -53,6 +54,9 @@ export class DtoImageUploadResponse {
 
   @Api.field(v.optional(), z.record(z.string(), ImageTransformOptionsSchema))
   variants?: Record<string, z.infer<typeof ImageTransformOptionsSchema>>;
+
+  @Api.field(v.optional())
+  imageScene?: keyof IImageSceneRecord | string;
 
   @Api.field(v.optional())
   uploadedAt?: Date;

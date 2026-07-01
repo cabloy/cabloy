@@ -2,7 +2,7 @@ import type { TableIdentity } from 'table-identity';
 import type { IComponentOptions } from 'zova';
 import type { IJsxRenderContextFormField } from 'zova-module-a-form';
 import type { ControllerFormField, IFormFieldComponentOptions } from 'zova-module-a-form';
-import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
+import type { IImageSceneRecord, IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
 import { CircleStencil, Cropper, RectangleStencil } from 'vue-advanced-cropper';
@@ -29,10 +29,8 @@ export interface IResourceFormFieldImageResizeOptions {
 }
 
 export interface IResourceFormFieldImageOptions extends IResourceFormFieldOptionsBase {
-  resource?: string;
-  field?: string;
+  imageScene?: keyof IImageSceneRecord | string;
   relationName?: string;
-  formScene?: 'create' | 'edit';
   multiple?: boolean;
   maxCount?: number;
   accept?: string | string[];
@@ -342,26 +340,13 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private _resolveUploadTarget() {
-    const resource =
-      this.currentOptions.resource ??
-      (this.$$renderContext.$celScope as any).resource ??
-      (this.$$renderContext.$$form.$props.formScope as any)?.resource;
-    const field = this.currentOptions.field ?? this.$props.name;
-    if (!resource || !field) {
-      throw new Error('should specify image upload resource and field');
+    const imageScene = this.currentOptions.imageScene;
+    if (!imageScene) {
+      throw new Error('should specify image upload scene');
     }
     return {
-      resource,
-      field,
-      formScene: this._resolveFormScene(),
+      imageScene,
     } as const;
-  }
-
-  private _resolveFormScene(): 'create' | 'edit' {
-    if (this.currentOptions.formScene) return this.currentOptions.formScene;
-    const editMode = this.$$renderContext.$$form.formMeta?.editMode;
-    if (editMode === 'update') return 'edit';
-    return 'create';
   }
 
   private _removeItem(imageId: TableIdentity, disableNotifyChanged?: boolean) {

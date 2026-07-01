@@ -30,7 +30,11 @@ export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord) {
     ZovaRender.visible(false),
     v.optional(),
     v.serializerCustom(function (_value, data: DtoRecordSelectResItem) {
-      return this.bean.image.resolveViews(data.sceneImageIds);
+      return this.bean.image.resolveViews(
+        data.sceneImageIds,
+        undefined,
+        'training-record:sceneImage',
+      );
     }),
     v.array(DtoImageView),
   )

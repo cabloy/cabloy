@@ -42,6 +42,8 @@ export class ControllerImage extends BeanBase {
       },
       {
         clientName: payload.clientName,
+        meta: payload.meta,
+        imageScene: payload.imageScene,
       },
     );
     return {

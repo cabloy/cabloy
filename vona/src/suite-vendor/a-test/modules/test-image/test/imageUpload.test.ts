@@ -44,9 +44,7 @@ describe('imageUpload.test.ts', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          resource: 'training-student:student',
-          field: 'imageId',
-          formScene: 'create',
+          imageScene: 'training-student:studentImage',
           size: tinyPng.length,
           mimeType: 'image/png',
         }),
