@@ -3,6 +3,23 @@ import type { TableIdentity } from 'table-identity';
 import type { IImageProviderClientOptions, IImageProviderRecord } from './imageProvider.ts';
 import type { IImageSceneRecord } from './imageScene.ts';
 
+// Extend this record via declaration merging to register project-specific named variants.
+// Example:
+// declare module 'vona-module-a-image' {
+//   interface IImageVariantNameRecord {
+//     hero: never;
+//   }
+// }
+export interface IImageVariantNameRecord {
+  original: never;
+  thumbnail: never;
+  small: never;
+  medium: never;
+  large: never;
+  cover: never;
+  avatar: never;
+}
+
 export interface IImageTransformOptions {
   width?: number;
   height?: number;
@@ -16,14 +33,25 @@ export interface IImageTransformOptions {
   sharpen?: number;
 }
 
-export type IImageNamedVariants = Record<string, IImageTransformOptions>;
+export type TypeImageVariantName = keyof IImageVariantNameRecord;
 
-export interface IImageVariantRequest {
-  variantName?: string;
+export type IImageNamedVariants = Partial<Record<TypeImageVariantName, IImageTransformOptions>>;
+
+// Request a declaration-merged named variant such as `thumbnail` or a project-specific key.
+export interface IImageVariantRequestByName {
+  variantName?: TypeImageVariantName;
+  transformOptions?: never;
+}
+
+// Request an ad hoc image transform without registering a named variant.
+export interface IImageVariantRequestByTransform {
+  variantName?: never;
   transformOptions?: IImageTransformOptions;
 }
 
-export type TypeImageVariantInput = string | IImageVariantRequest | undefined;
+export type IImageVariantRequest = IImageVariantRequestByName | IImageVariantRequestByTransform;
+
+export type TypeImageVariantInput = TypeImageVariantName | IImageVariantRequest | undefined;
 
 export type TypeImageMeta = Record<string, unknown>;
 

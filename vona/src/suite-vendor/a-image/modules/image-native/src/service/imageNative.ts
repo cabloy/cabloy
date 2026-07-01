@@ -101,7 +101,10 @@ export class ServiceImageNative extends BeanBase {
     image: IImageNativeStoredImage,
     options: IImageProviderNativeClientOptions,
   ) {
-    for (const variantName of Object.keys(image.variants ?? {})) {
+    const variantNames = Object.keys(image.variants ?? {}) as Array<
+      keyof NonNullable<IImageNamedVariants>
+    >;
+    for (const variantName of variantNames) {
       if (variantName === 'original') continue;
       await this._ensureVariantFile(
         image,

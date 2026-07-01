@@ -10,6 +10,7 @@ import type {
   IImageTransformOptions,
   IImageUploadInput,
   IImageVariantRequest,
+  TypeImageVariantName,
 } from './image.ts';
 
 export type TypeImageProviderPick = Partial<
@@ -44,8 +45,12 @@ export interface IDecoratorImageProviderOptions<
   clients?: { [K in keyof R]?: T };
 }
 
+// Provider-internal resolved variant names include both declaration-merged named variants
+// and the internal `custom` sentinel used for ad hoc transform requests.
+export type TypeImageProviderResolvedVariantName = TypeImageVariantName | 'custom';
+
 export interface IImageProviderResolvedVariant {
-  variantName: string;
+  variantName: TypeImageProviderResolvedVariantName;
   transformOptions: IImageTransformOptions;
 }
 
@@ -76,7 +81,7 @@ export interface IImageProviderExecute<
 
 export function resolveImageVariantRequest(
   request: IImageVariantRequest,
-  defaultVariant: string,
+  defaultVariant: TypeImageVariantName,
 ): IImageVariantRequest {
   if (request.variantName && request.transformOptions) {
     throw new Error('variantName and transformOptions are mutually exclusive');
@@ -87,7 +92,7 @@ export function resolveImageVariantRequest(
 
 export function resolveImageVariantByName(
   variants: IImageNamedVariants | undefined,
-  variantName: string,
+  variantName: TypeImageVariantName,
 ): IImageProviderResolvedVariant {
   if (variantName === 'original') {
     return { variantName, transformOptions: {} };
@@ -101,7 +106,7 @@ export function resolveImageVariantByName(
 
 export function resolveImageVariantRequestToTransform(
   request: IImageVariantRequest,
-  defaultVariant: string,
+  defaultVariant: TypeImageVariantName,
   variants: IImageNamedVariants | undefined,
 ): IImageProviderResolvedVariant {
   const requestResolved = resolveImageVariantRequest(request, defaultVariant);

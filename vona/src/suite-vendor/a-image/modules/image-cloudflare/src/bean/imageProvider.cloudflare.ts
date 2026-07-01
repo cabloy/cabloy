@@ -6,6 +6,7 @@ import type {
   IImageProviderResource,
   IImageUploadInput,
   IImageVariantRequest,
+  TypeImageProviderResolvedVariantName,
 } from 'vona-module-a-image';
 import type { EntityImage } from 'vona-module-a-image';
 
@@ -122,7 +123,7 @@ export class ImageProviderCloudflare
 
   private _buildVariantUrl(
     resourceId: string,
-    variantName: string,
+    variantName: TypeImageProviderResolvedVariantName,
     transformOptions: Record<string, any>,
     clientOptions: IImageProviderCloudflareClientOptions,
   ) {

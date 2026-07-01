@@ -5,6 +5,7 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
+import type { IImageNamedVariants } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
@@ -53,7 +54,7 @@ export class DtoImageUploadResponse {
   height?: number;
 
   @Api.field(v.optional(), z.record(z.string(), ImageTransformOptionsSchema))
-  variants?: Record<string, z.infer<typeof ImageTransformOptionsSchema>>;
+  variants?: IImageNamedVariants;
 
   @Api.field(v.optional())
   imageScene?: keyof IImageSceneRecord | string;

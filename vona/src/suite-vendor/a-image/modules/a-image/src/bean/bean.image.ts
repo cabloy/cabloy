@@ -234,6 +234,9 @@ export class BeanImage extends BeanBase {
     if (typeof request === 'string') {
       return { variantName: request };
     }
-    return resolveImageVariantRequest(request ?? {}, this.scope.config.image.defaultVariant);
+    const defaultVariant = this.scope.config.image.defaultVariant as Parameters<
+      typeof resolveImageVariantRequest
+    >[1];
+    return resolveImageVariantRequest(request ?? {}, defaultVariant);
   }
 }
