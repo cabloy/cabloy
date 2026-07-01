@@ -124,7 +124,7 @@ export interface IImageUploadOptions<
 }
 
 export interface IImageUploadPolicyResolved<TMeta extends TypeImageMeta = TypeImageMeta> {
-  imageScene: keyof IImageSceneRecord | string;
+  imageScene: keyof IImageSceneRecord;
   providerName: keyof IImageProviderRecord;
   clientName: string;
   meta?: TMeta;
