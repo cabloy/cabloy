@@ -37,8 +37,45 @@ declare module 'zova' {
 }
 /** api: end */
 /** openapi: begin */
-
+export * from '../api/openapi/index.js';
 /** openapi: end */
+/** apiSchema: begin */
+export * from '../apiSchema/image.js';
+
+import 'zova';
+declare module 'zova' {
+  
+  
+}
+declare module 'zova-module-basic-image' {
+  
+        export interface ApiSchemaImage {
+          /** @internal */
+          get scope(): ScopeModuleBasicImage;
+        }
+
+        export interface ApiSchemaImage {
+          get $beanFullName(): 'basic-image.apiSchema.image';
+          get $onionName(): 'basic-image:image';
+          
+        } 
+}
+/** apiSchema: end */
+/** apiSchema: begin */
+import { ApiSchemaImage } from '../apiSchema/image.js';
+export interface IModuleApiSchema {
+  'image': ApiSchemaImage;
+}
+/** apiSchema: end */
+/** apiSchema: begin */
+
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordGeneral {
+    'basic-image.apiSchema.image': ApiSchemaImage;
+  }
+}
+/** apiSchema: end */
 /** controller: begin */
 export * from '../component/formFieldImage/controller.jsx';
 
@@ -86,15 +123,15 @@ export * from '../bean/tableCell.image.jsx';
 import { ITableCellOptionsImage } from '../bean/tableCell.image.jsx';
 import 'zova-module-a-table';
 declare module 'zova-module-a-table' {
-
+  
     export interface ITableCellRecord {
       'basic-image:image': ITableCellOptionsImage;
     }
 
-
+  
 }
 declare module 'zova-module-basic-image' {
-
+  
         export interface TableCellImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -104,7 +141,7 @@ declare module 'zova-module-basic-image' {
           get $beanFullName(): 'basic-image.tableCell.image';
           get $onionName(): 'basic-image:image';
           get $onionOptions(): ITableCellOptionsImage;
-        }
+        } 
 }
 /** tableCell: end */
 /** tableCell: begin */
@@ -130,6 +167,7 @@ export interface ScopeModuleBasicImage {
   util: BeanScopeUtil;
 locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 api: IModuleApi;
+apiSchema: IModuleApiSchema;
 }
 
 import 'zova';

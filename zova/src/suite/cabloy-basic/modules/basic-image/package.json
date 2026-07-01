@@ -11,7 +11,8 @@
     "dist",
     "src",
     "icons",
-    "assets"
+    "assets",
+    "cli"
   ],
   "type": "module",
   "exports": {
