@@ -1,5 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { $Class } from 'vona';
 import { DtoImageView } from 'vona-module-a-image';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
@@ -47,7 +48,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
         'training-record:sceneImage',
       );
     }),
-    v.array(DtoImageView),
+    v.array($Class.partial(DtoImageView)),
   )
-  sceneImages?: DtoImageView[];
+  sceneImages?: Partial<DtoImageView>[];
 }
