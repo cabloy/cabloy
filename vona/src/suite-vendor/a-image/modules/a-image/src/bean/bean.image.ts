@@ -13,11 +13,21 @@ import type {
   IImageView,
   TypeImageVariantInput,
 } from '../types/image.ts';
-import type { IImageProviderRecord } from '../types/imageProvider.ts';
-import type { IImageProviderExecute } from '../types/imageProvider.ts';
+import type {
+  IDecoratorImageProviderOptions,
+  IImageProviderClientOptions,
+  IImageProviderExecute,
+  IImageProviderRecord,
+} from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 import { resolveImageVariantRequest } from '../types/imageProvider.ts';
+
+interface IImageProviderContext {
+  beanImageProvider: IImageProviderExecute;
+  clientOptions: IImageProviderClientOptions;
+  onionOptions: IDecoratorImageProviderOptions;
+}
 
 @Bean()
 export class BeanImage extends BeanBase {
@@ -27,20 +37,22 @@ export class BeanImage extends BeanBase {
     options?: IImageUploadOptions,
   ): Promise<IImageResource> {
     const clientName = options?.clientName ?? 'default';
-    const { entityImageProvider, disabled, beanFullName, onionOptions, clientOptions } =
-      await this.bean.imageProvider.getClientOptions(
-        {
-          providerName,
-          clientName,
-        },
-        options?.clientOptions as any,
-      );
-    if (!entityImageProvider || disabled) return this.app.throw(403);
-    const beanImageProvider = this.app.bean._getBean<IImageProviderExecute>(beanFullName as any);
+    const providerContext = await this.bean.imageProvider.getClientOptions(
+      {
+        providerName,
+        clientName,
+      },
+      options?.clientOptions,
+    );
+    if (!providerContext.entityImageProvider || providerContext.disabled)
+      return this.app.throw(403);
+    const beanImageProvider = this._getBeanImageProvider(providerContext.beanFullName as string);
+    const clientOptions = this._normalizeClientOptions(providerContext.clientOptions);
+    const onionOptions = this._normalizeOnionOptions(providerContext.onionOptions);
     const imageProviderResource = await beanImageProvider.upload(
       { ...input, meta: options?.meta ?? input.meta },
-      clientOptions as any,
-      onionOptions as any,
+      clientOptions,
+      onionOptions,
     );
     const image = await this.scope.model.image.insert({
       providerName,
@@ -73,7 +85,7 @@ export class BeanImage extends BeanBase {
     if (!image) return;
     const { beanImageProvider, clientOptions, onionOptions } =
       await this._getProviderContext(image);
-    await beanImageProvider.delete(image, clientOptions as any, onionOptions as any);
+    await beanImageProvider.delete(image, clientOptions, onionOptions);
     await this.scope.model.image.deleteById(image.id);
   }
 
@@ -86,8 +98,8 @@ export class BeanImage extends BeanBase {
     return await beanImageProvider.getVariantUrl(
       image,
       requestNormalized,
-      clientOptions as any,
-      onionOptions as any,
+      clientOptions,
+      onionOptions,
     );
   }
 
@@ -101,8 +113,8 @@ export class BeanImage extends BeanBase {
       return await beanImageProvider.download(
         image,
         requestNormalized,
-        clientOptions as any,
-        onionOptions as any,
+        clientOptions,
+        onionOptions,
       );
     }
     return {
@@ -110,8 +122,8 @@ export class BeanImage extends BeanBase {
       url: await beanImageProvider.getVariantUrl(
         image,
         requestNormalized,
-        clientOptions as any,
-        onionOptions as any,
+        clientOptions,
+        onionOptions,
       ),
       filename: image.filename,
       contentType: image.contentType,
@@ -151,23 +163,46 @@ export class BeanImage extends BeanBase {
     const items = await Promise.all(
       imageIds.map(imageId => this.resolveView(imageId, request, imageScene)),
     );
-    return items.filter(item => !!item);
+    return items.filter((item): item is IImageView => !!item);
   }
 
   private async _getImageProviderResource(image: EntityImage) {
     const { beanImageProvider, clientOptions, onionOptions } =
       await this._getProviderContext(image);
-    return await beanImageProvider.get(image, clientOptions as any, onionOptions as any);
+    return await beanImageProvider.get(image, clientOptions, onionOptions);
   }
 
-  private async _getProviderContext(image: EntityImage) {
-    const { beanFullName, onionOptions, clientOptions } =
-      await this.bean.imageProvider.getClientOptions({
-        providerName: image.providerName,
-        clientName: image.clientName,
-      });
-    const beanImageProvider = this.app.bean._getBean<IImageProviderExecute>(beanFullName as any);
-    return { beanImageProvider, onionOptions, clientOptions };
+  private async _getProviderContext(image: EntityImage): Promise<IImageProviderContext> {
+    const providerContext = await this.bean.imageProvider.getClientOptions({
+      providerName: image.providerName,
+      clientName: image.clientName,
+    });
+    if (!providerContext.entityImageProvider) {
+      throw new Error(
+        `Image provider not found: ${String(image.providerName)}.${image.clientName}`,
+      );
+    }
+    return {
+      beanImageProvider: this._getBeanImageProvider(providerContext.beanFullName as string),
+      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+    };
+  }
+
+  private _getBeanImageProvider(beanFullName: string): IImageProviderExecute {
+    return this.app.bean._getBean<IImageProviderExecute>(beanFullName as never);
+  }
+
+  private _normalizeClientOptions(
+    clientOptions: IImageProviderClientOptions | undefined,
+  ): IImageProviderClientOptions {
+    return clientOptions ?? {};
+  }
+
+  private _normalizeOnionOptions(
+    onionOptions: IDecoratorImageProviderOptions | undefined,
+  ): IDecoratorImageProviderOptions {
+    return onionOptions ?? {};
   }
 
   private _combineImageResource(

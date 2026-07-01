@@ -51,7 +51,7 @@ export class ControllerActionCreate extends BeanControllerBase {
               data: TypeFormOnSubmitData<Record<string, any>>,
               dialog: AppModalItem,
             ) => {
-              const detailItem = data.value;
+              const detailItem = serverDetail.buildSubmittedDetailItem(data);
               $$details.data = [...$$details.data, detailItem];
               dialog.close();
             },

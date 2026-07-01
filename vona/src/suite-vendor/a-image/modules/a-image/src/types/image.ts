@@ -1,6 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 
-import type { IImageProviderRecord } from './imageProvider.ts';
+import type { IImageProviderClientOptions, IImageProviderRecord } from './imageProvider.ts';
 import type { IImageSceneRecord } from './imageScene.ts';
 
 export interface IImageTransformOptions {
@@ -25,12 +25,14 @@ export interface IImageVariantRequest {
 
 export type TypeImageVariantInput = string | IImageVariantRequest | undefined;
 
-export interface IImageUploadInput {
+export type TypeImageMeta = Record<string, unknown>;
+
+export interface IImageUploadInput<TMeta extends TypeImageMeta = TypeImageMeta> {
   file: string;
   filename?: string;
   contentType?: string;
   size?: number;
-  meta?: Record<string, any>;
+  meta?: TMeta;
 }
 
 export interface IImageDownloadResult {
@@ -41,7 +43,10 @@ export interface IImageDownloadResult {
   contentType?: string;
 }
 
-export interface IImageProviderResource {
+export interface IImageProviderResource<
+  TMeta extends TypeImageMeta = TypeImageMeta,
+  TRaw = unknown,
+> {
   resourceId: string;
   filename?: string;
   contentType?: string;
@@ -50,13 +55,16 @@ export interface IImageProviderResource {
   height?: number;
   requireSignedURLs?: boolean;
   variants?: IImageNamedVariants;
-  meta?: Record<string, any>;
+  meta?: TMeta;
   storagePath?: string;
   deliveryBaseUrl?: string;
-  raw?: any;
+  raw?: TRaw;
 }
 
-export interface IImageResource extends IImageProviderResource {
+export interface IImageResource<
+  TMeta extends TypeImageMeta = TypeImageMeta,
+  TRaw = unknown,
+> extends IImageProviderResource<TMeta, TRaw> {
   id: TableIdentity;
   provider: keyof IImageProviderRecord;
   clientName: string;
@@ -77,18 +85,21 @@ export interface IImageView {
   variants?: IImageNamedVariants;
 }
 
-export interface IImageUploadOptions {
+export interface IImageUploadOptions<
+  TClientOptions extends IImageProviderClientOptions = IImageProviderClientOptions,
+  TMeta extends TypeImageMeta = TypeImageMeta,
+> {
   clientName?: string;
-  clientOptions?: object;
-  meta?: Record<string, any>;
+  clientOptions?: TClientOptions;
+  meta?: TMeta;
   imageScene?: keyof IImageSceneRecord | string;
 }
 
-export interface IImageUploadPolicyResolved {
+export interface IImageUploadPolicyResolved<TMeta extends TypeImageMeta = TypeImageMeta> {
   imageScene: keyof IImageSceneRecord | string;
   providerName: keyof IImageProviderRecord;
   clientName: string;
-  meta?: Record<string, any>;
+  meta?: TMeta;
   maxSize?: number;
   mimeTypes?: string[];
   extensions?: string[];
@@ -97,7 +108,9 @@ export interface IImageUploadPolicyResolved {
   mimeType: string;
 }
 
-export interface IImageUploadTokenPayload extends IImageUploadPolicyResolved {
+export interface IImageUploadTokenPayload<
+  TMeta extends TypeImageMeta = TypeImageMeta,
+> extends IImageUploadPolicyResolved<TMeta> {
   kind: 'imageUpload';
   expiresIn: number;
   issuedAt: number;

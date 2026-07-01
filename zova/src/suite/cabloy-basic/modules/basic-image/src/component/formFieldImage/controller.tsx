@@ -365,8 +365,23 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   ) {
     const nextValue = multiple ? imageIds : (imageIds[0] ?? '');
     this.currentValue = nextValue as any;
+    this._syncRelationField(imageIds);
     this.$$formField?.setValue(nextValue, disableNotifyChanged);
     this.$$formField?.handleBlur();
+  }
+
+  private _syncRelationField(imageIds: TableIdentity[]) {
+    const relationName = this._getRelationName();
+    if (!relationName) return;
+    const relationMap = this._getRelationPreviewMap();
+    const relationItems = imageIds.map(imageId => {
+      const key = String(imageId);
+      return this.uploadedPreviewMap[key] ?? relationMap[key] ?? { id: imageId };
+    });
+    const relationValue = this.currentOptions?.multiple
+      ? relationItems
+      : (relationItems[0] ?? undefined);
+    this.$$renderContext.$$form.setFieldValue(relationName as never, relationValue, true);
   }
 
   private _getPreviewItems(value: unknown) {
