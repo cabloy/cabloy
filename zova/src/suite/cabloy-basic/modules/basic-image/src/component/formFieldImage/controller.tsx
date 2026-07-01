@@ -10,7 +10,7 @@ import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
 
-import type { IImageTransformOptions } from '../../api/image.js';
+import type { IImageTransformOptions } from '../../types/image.js';
 import 'vue-advanced-cropper/dist/style.css';
 
 declare module 'zova-module-a-openapi' {

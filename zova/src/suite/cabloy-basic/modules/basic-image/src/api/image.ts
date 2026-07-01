@@ -6,10 +6,6 @@ import type { components, paths } from './openapi/index.js';
 
 import { OpenApiBaseURL } from './openapi/index.js';
 
-export type IImageTransformOptions = NonNullable<
-  NonNullable<components['schemas']['a-image.dto.imageUploadResponse']['variants']>[string]
->;
-
 /** Image_createUploadToken */
 export const ApiApiImagecreateUploadTokenPath = '/api/image/upload-token';
 export type ApiApiImagecreateUploadTokenPath = '/api/image/upload-token';
