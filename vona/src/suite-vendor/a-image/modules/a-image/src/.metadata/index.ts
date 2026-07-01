@@ -177,6 +177,7 @@ declare module 'vona-module-a-orm' {
 /** bean: begin */
 export * from '../bean/bean.image.ts';
 export * from '../bean/bean.imageProvider.ts';
+export * from '../bean/bean.imageUploadPolicy.ts';
 
 import 'vona';
 declare module 'vona' {
@@ -193,17 +194,24 @@ declare module 'vona-module-a-image' {
         export interface BeanImageProvider {
           /** @internal */
           get scope(): ScopeModuleAImage;
+        }
+
+        export interface BeanImageUploadPolicy {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
         } 
 }
 /** bean: end */
 /** bean: begin */
 import type { BeanImage } from '../bean/bean.image.ts';
 import type { BeanImageProvider } from '../bean/bean.imageProvider.ts';
+import type { BeanImageUploadPolicy } from '../bean/bean.imageUploadPolicy.ts';
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'image': BeanImage;
     'imageProvider': BeanImageProvider;
+    'imageUploadPolicy': BeanImageUploadPolicy;
   }
 }
 /** bean: end */
@@ -251,12 +259,18 @@ import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
 /** dto: begin */
 export * from '../dto/imageUploadResponse.ts';
+export * from '../dto/imageUploadToken.ts';
+export * from '../dto/imageView.ts';
 import type { IDtoOptionsImageUploadResponse } from '../dto/imageUploadResponse.ts';
+import type { IDtoOptionsImageUploadTokenRequest } from '../dto/imageUploadToken.ts';
+import type { IDtoOptionsImageView } from '../dto/imageView.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
       'a-image:imageUploadResponse': IDtoOptionsImageUploadResponse;
+'a-image:imageUploadToken': IDtoOptionsImageUploadTokenRequest;
+'a-image:imageView': IDtoOptionsImageView;
     }
 
   
@@ -267,10 +281,20 @@ declare module 'vona-module-a-image' {
 /** dto: end */
 /** dto: begin */
 import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
+import type { DtoImageUploadToken } from '../dto/imageUploadToken.ts';
+import type { DtoImageView } from '../dto/imageView.ts';
 declare module 'vona-module-a-image' {
   
     export interface IDtoOptionsImageUploadResponse {
       fields?: TypeEntityOptionsFields<DtoImageUploadResponse, IDtoOptionsImageUploadResponse[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageUploadToken {
+      fields?: TypeEntityOptionsFields<DtoImageUploadToken, IDtoOptionsImageUploadToken[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageView {
+      fields?: TypeEntityOptionsFields<DtoImageView, IDtoOptionsImageView[TypeSymbolKeyFieldsMore]>;
     }
 }
 /** dto: end */
@@ -311,7 +335,8 @@ declare module 'vona-module-a-image' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathPostRecord{
-        '/image/upload': undefined;
+        '/image/upload-token': undefined;
+'/image/upload': undefined;
     }
 
 }

@@ -120,7 +120,7 @@ export interface IImageUploadOptions<
   clientName?: string;
   clientOptions?: TClientOptions;
   meta?: TMeta;
-  imageScene?: keyof IImageSceneRecord | string;
+  imageScene?: keyof IImageSceneRecord;
 }
 
 export interface IImageUploadPolicyResolved<TMeta extends TypeImageMeta = TypeImageMeta> {
@@ -140,8 +140,6 @@ export interface IImageUploadTokenPayload<
   TMeta extends TypeImageMeta = TypeImageMeta,
 > extends IImageUploadPolicyResolved<TMeta> {
   kind: 'imageUpload';
-  expiresIn: number;
-  issuedAt: number;
 }
 
 declare module 'vona' {

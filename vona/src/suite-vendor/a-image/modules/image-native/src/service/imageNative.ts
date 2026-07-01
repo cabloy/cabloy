@@ -1,6 +1,6 @@
 import type {
   IImageNamedVariants,
-  IImageProviderClientOptionsBase,
+  IImageProviderClientOptions,
   IImageProviderResolvedVariant,
   IImageProviderResource,
   IImageTransformOptions,
@@ -21,7 +21,7 @@ export interface IImageProviderNativeClientRecord {
   local: never;
 }
 
-export interface IImageProviderNativeClientOptions extends IImageProviderClientOptionsBase {
+export interface IImageProviderNativeClientOptions extends IImageProviderClientOptions {
   subdir?: string;
 }
 

@@ -2,6 +2,7 @@ import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
+import z from 'zod';
 
 import type { IImageNamedVariants } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
@@ -11,7 +12,7 @@ export interface IEntityOptionsImage extends IDecoratorEntityOptions {}
 
 @Entity<IEntityOptionsImage>('aImage')
 export class EntityImage extends EntityBase {
-  @Api.field()
+  @Api.field(z.string())
   providerName: keyof IImageProviderRecord;
 
   @Api.field()
@@ -50,6 +51,6 @@ export class EntityImage extends EntityBase {
   @Api.field(v.optional())
   deliveryBaseUrl?: string;
 
-  @Api.field(v.optional())
-  imageScene?: keyof IImageSceneRecord | string;
+  @Api.field(v.optional(), z.string())
+  imageScene?: keyof IImageSceneRecord;
 }

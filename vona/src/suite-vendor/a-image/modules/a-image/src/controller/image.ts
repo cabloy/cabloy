@@ -31,7 +31,10 @@ export class ControllerImage extends BeanBase {
   @Api.body(DtoImageUploadResponse)
   @Api.contentType('application/json')
   async upload(@Arg.field('token') token: string, @Arg.file('image') file: IUploadFile) {
-    const payload = await this._getBeanImageUploadPolicy().verifyUploadToken(token);
+    const payload = await this._getBeanImageUploadPolicy().verifyUploadToken(
+      token,
+      this.ctx.route.routePathRaw,
+    );
     await this._validateUploadFile(file, payload);
     const image = await this.bean.image.upload(
       payload.providerName,

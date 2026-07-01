@@ -12,18 +12,25 @@ export interface IImageSceneOptionsUpload {
   multiple?: boolean;
 }
 
+export interface IDecoratorImageSceneOptionsProvider {
+  providerName?: keyof IImageProviderRecord;
+  clientName?: string;
+}
+
+export type TypeDecoratorImageSceneOptionsProvider =
+  | TypeImageSceneOptionsResolver
+  | IDecoratorImageSceneOptionsProvider;
+
 export type TypeImageSceneOptionsResolver = (
   ctx: VonaContext,
-) => Promise<keyof IImageProviderRecord>;
+) => Promise<IDecoratorImageSceneOptionsProvider>;
 
 export type TypeImageSceneOptionsMetaResolver = (
   ctx: VonaContext,
 ) => Promise<Record<string, any> | undefined> | Record<string, any> | undefined;
 
 export interface IDecoratorImageSceneOptions {
-  providerName?: keyof IImageProviderRecord;
-  resolver?: TypeImageSceneOptionsResolver;
-  clientName?: string;
+  provider?: TypeDecoratorImageSceneOptionsProvider;
   upload?: IImageSceneOptionsUpload;
   meta?: Record<string, any> | TypeImageSceneOptionsMetaResolver;
 }

@@ -11,7 +11,6 @@ export function config(_app: VonaApplication) {
       upload: {
         maxSize: 2 * 1024 * 1024,
         mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
-        tokenExpiresIn: 5 * 60,
       },
     },
   };

@@ -2,61 +2,52 @@ import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
 import type { IImageUploadPolicyResolved, IImageUploadTokenPayload } from '../types/image.ts';
-import type { IImageProviderRecord } from '../types/imageProvider.ts';
-import type { IDecoratorImageSceneOptions, IImageSceneRecord } from '../types/imageScene.ts';
-
-const __ApiPathImageUpload = '/api/a-image/image/upload';
+import type {
+  IDecoratorImageSceneOptions,
+  IDecoratorImageSceneOptionsProvider,
+  IImageSceneRecord,
+} from '../types/imageScene.ts';
 
 @Bean()
 export class BeanImageUploadPolicy extends BeanBase {
   async createUploadToken(data: {
-    imageScene: keyof IImageSceneRecord | string;
+    imageScene: keyof IImageSceneRecord;
     size: number;
     mimeType: string;
   }) {
-    const imageConfig = (this.scope as any).config.image as any;
     const payload = await this.resolveUploadPolicy(data);
-    const tokenExpiresIn = imageConfig.upload.tokenExpiresIn;
+    const path = this.scope.util.combineApiPath('image', true, true);
     const token = await this.bean.jwt.createTempAuthToken(
       {
         kind: 'imageUpload',
-        expiresIn: tokenExpiresIn,
-        issuedAt: Date.now(),
         ...payload,
       } as IImageUploadTokenPayload,
       {
-        path: __ApiPathImageUpload,
+        path,
       },
     );
-    return {
-      token,
-      expiresIn: tokenExpiresIn,
-    };
+    return { token };
   }
 
-  async verifyUploadToken(token?: string) {
+  async verifyUploadToken(token: string | undefined, routePathRaw: string) {
     const payload = (await this.bean.jwt.get('access').verify(token, {
-      path: __ApiPathImageUpload,
+      path: routePathRaw,
     })) as IImageUploadTokenPayload | undefined;
     if (!payload || payload.kind !== 'imageUpload') {
-      return this.app.throw(401);
-    }
-    if (Date.now() > payload.issuedAt + payload.expiresIn * 1000) {
       return this.app.throw(401);
     }
     return payload;
   }
 
   async resolveUploadPolicy(data: {
-    imageScene: keyof IImageSceneRecord | string;
+    imageScene: keyof IImageSceneRecord;
     size: number;
     mimeType: string;
   }): Promise<IImageUploadPolicyResolved> {
-    const imageConfig = (this.scope as any).config.image as any;
+    const imageConfig = this.scope.config.image;
     const imageScene = data.imageScene;
     const sceneOptions = this._getSceneOptions(imageScene);
-    const providerName = await this._resolveProviderName(imageScene, sceneOptions);
-    const clientName = sceneOptions.clientName ?? imageConfig.defaultClientName;
+    const { providerName, clientName } = await this._resolveProvider(sceneOptions);
     const { entityImageProvider, disabled } = await this.bean.imageProvider.getClientOptions({
       providerName,
       clientName,
@@ -92,24 +83,22 @@ export class BeanImageUploadPolicy extends BeanBase {
     };
   }
 
-  private _getSceneOptions(
-    imageScene: keyof IImageSceneRecord | string,
-  ): IDecoratorImageSceneOptions {
-    const onionSlice = this.bean.onion.imageScene.getOnionSlice(imageScene as never);
+  private _getSceneOptions(imageScene: keyof IImageSceneRecord): IDecoratorImageSceneOptions {
+    const onionSlice = this.bean.onion.imageScene.getOnionSlice(imageScene);
     if (!onionSlice) throw new Error(`not found image scene: ${imageScene}`);
     return onionSlice.beanOptions.options ?? {};
   }
 
-  private async _resolveProviderName(
-    imageScene: keyof IImageSceneRecord | string,
+  private async _resolveProvider(
     sceneOptions: IDecoratorImageSceneOptions,
-  ): Promise<keyof IImageProviderRecord> {
-    const providerName = sceneOptions.providerName ?? (await sceneOptions.resolver?.(this.ctx));
-    if (providerName) return providerName;
-    const providerDefault = (this.scope as any).config.image
-      .defaultProvider as keyof IImageProviderRecord;
-    if (providerDefault) return providerDefault;
-    throw new Error(`should specify image provider for scene: ${imageScene}`);
+  ): Promise<Required<IDecoratorImageSceneOptionsProvider>> {
+    const provider =
+      typeof sceneOptions.provider === 'function'
+        ? await sceneOptions.provider(this.ctx)
+        : sceneOptions.provider;
+    const providerName = provider?.providerName ?? this.scope.config.image.defaultProvider;
+    const clientName = provider?.clientName ?? this.scope.config.image.defaultClientName;
+    return { providerName, clientName };
   }
 
   private async _resolveSceneMeta(sceneOptions: IDecoratorImageSceneOptions) {

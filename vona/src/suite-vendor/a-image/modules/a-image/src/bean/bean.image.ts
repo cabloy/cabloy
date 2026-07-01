@@ -21,7 +21,7 @@ import type {
 } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
-import { resolveImageVariantRequest } from '../types/imageProvider.ts';
+import { resolveImageVariantRequest } from '../lib/imageVariant.ts';
 
 interface IImageProviderContext {
   beanImageProvider: IImageProviderExecute;
@@ -44,9 +44,12 @@ export class BeanImage extends BeanBase {
       },
       options?.clientOptions,
     );
-    if (!providerContext.entityImageProvider || providerContext.disabled)
+    if (!providerContext.entityImageProvider || providerContext.disabled) {
       return this.app.throw(403);
-    const beanImageProvider = this._getBeanImageProvider(providerContext.beanFullName as string);
+    }
+    const beanImageProvider = this._getBeanImageProvider(
+      providerContext.beanFullName as keyof IImageProviderRecord,
+    );
     const clientOptions = this._normalizeClientOptions(providerContext.clientOptions);
     const onionOptions = this._normalizeOnionOptions(providerContext.onionOptions);
     const imageProviderResource = await beanImageProvider.upload(
@@ -183,13 +186,15 @@ export class BeanImage extends BeanBase {
       );
     }
     return {
-      beanImageProvider: this._getBeanImageProvider(providerContext.beanFullName as string),
+      beanImageProvider: this._getBeanImageProvider(
+        providerContext.beanFullName as keyof IImageProviderRecord,
+      ),
       clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
       onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
     };
   }
 
-  private _getBeanImageProvider(beanFullName: string): IImageProviderExecute {
+  private _getBeanImageProvider(beanFullName: keyof IImageProviderRecord): IImageProviderExecute {
     return this.app.bean._getBean<IImageProviderExecute>(beanFullName as never);
   }
 
