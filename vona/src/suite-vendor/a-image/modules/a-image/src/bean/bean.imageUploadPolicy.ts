@@ -16,12 +16,7 @@ export class BeanImageUploadPolicy extends BeanBase {
     mimeType: string;
   }) {
     const payload = await this.resolveUploadPolicy(data);
-    const path = this.scope.util.combineApiPathControllerAndActionRaw(
-      this.scope.module.info.relativeName,
-      'image',
-      'upload',
-      true,
-    );
+    const path = this.scope.util.combineApiPath('image/upload', false, true);
     const token = await this.bean.jwt.createTempAuthToken(
       {
         kind: 'imageUpload',

@@ -16,7 +16,7 @@ describe('imageUpload.test.ts', () => {
       const [res, err] = await catchError(async () => {
         const formData = new FormData();
         formData.append('image', new (Blob as any)([tinyPng], { type: 'image/png' }), 'image.png');
-        const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload', 'a-image'));
+        const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload'));
         const response = await fetch(url, {
           method: 'POST',
           body: formData,
@@ -36,7 +36,7 @@ describe('imageUpload.test.ts', () => {
   it('action:image:upload api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
-      const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload-token', 'a-image'));
+      const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload-token'));
       const tokenRes = await fetch(tokenUrl, {
         method: 'POST',
         headers: {
@@ -53,7 +53,7 @@ describe('imageUpload.test.ts', () => {
       const formData = new FormData();
       formData.append('token', tokenData.data.token);
       formData.append('image', new (Blob as any)([tinyPng], { type: 'image/png' }), 'image.png');
-      const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload', 'a-image'));
+      const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload'));
       const res = await fetch(url, {
         method: 'POST',
         headers: {
@@ -61,6 +61,7 @@ describe('imageUpload.test.ts', () => {
         },
         body: formData,
       });
+      assert.equal(res.ok, true);
       const data = await res.json();
       assert.equal(data.data.filename, 'image.png');
       assert.equal(data.data.provider, 'image-native:native');
