@@ -1,12 +1,14 @@
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
-import { Api, v } from 'vona-module-a-openapiutils';
+import { $schema, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import z from 'zod';
 
 import type { IImageNamedVariants } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
+
+import { DtoImageTransformOptions } from '../dto/imageTransformOptions.tsx';
 
 export interface IEntityOptionsImage extends IDecoratorEntityOptions {}
 
@@ -39,7 +41,7 @@ export class EntityImage extends EntityBase {
   @Api.field(v.optional())
   requireSignedURLs?: boolean;
 
-  @Api.field(v.optional())
+  @Api.field(v.optional(), z.record(z.string(), $schema(DtoImageTransformOptions)))
   variants?: IImageNamedVariants;
 
   @Api.field(v.optional())
