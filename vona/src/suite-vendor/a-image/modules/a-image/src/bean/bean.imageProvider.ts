@@ -39,17 +39,14 @@ export class BeanImageProvider extends BeanBase {
     const disabled = entityImageProvider.disabled;
     const imageProviderName = entityImageProvider.providerName;
     const clientName = entityImageProvider.clientName ?? 'default';
-    const onionSlice = this.bean.onion.imageProvider.getOnionSliceEnabled(
-      true,
-      imageProviderName as any,
-    );
+    const onionSlice = this.bean.onion.imageProvider.getOnionSliceEnabled(true, imageProviderName);
     if (!onionSlice) throw new Error(`Image provider not found: ${imageProviderName}`);
     const beanFullName = onionSlice.beanOptions.beanFullName;
     const onionOptions = onionSlice.beanOptions.options ?? {};
     const clientOptions: IImageProviderClientOptions = deepExtend(
       clientOptionsDefault ?? {},
       onionOptions?.base,
-      onionOptions?.clients?.[clientName as any],
+      onionOptions?.clients?.[clientName],
       entityImageProvider.clientOptions,
       clientOptionsCustom,
     );

@@ -45,10 +45,7 @@ export class BeanAuthProvider extends BeanBase {
     // clientName
     const clientName = entityAuthProvider.clientName ?? 'default';
     // onionSlice
-    const onionSlice = this.bean.onion.authProvider.getOnionSliceEnabled(
-      true,
-      authProviderName as any,
-    );
+    const onionSlice = this.bean.onion.authProvider.getOnionSliceEnabled(true, authProviderName);
     if (!onionSlice) throw new Error(`Auth provider not found: ${authProviderName}`);
     const beanFullName = onionSlice.beanOptions.beanFullName;
     const onionOptions = onionSlice.beanOptions.options ?? {};
@@ -56,7 +53,7 @@ export class BeanAuthProvider extends BeanBase {
     const clientOptions: IAuthProviderClientOptions = deepExtend(
       clientOptionsDefault ?? {},
       onionOptions?.base,
-      onionOptions?.clients?.[clientName as any],
+      onionOptions?.clients?.[clientName],
       entityAuthProvider.clientOptions,
       clientOptionsCustom,
     );
