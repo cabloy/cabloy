@@ -1,6 +1,6 @@
 import type {
+  EntityImage,
   IImageNamedVariants,
-  IImageProviderClientOptions,
   IImageProviderResolvedVariant,
   IImageProviderResource,
   IImageTransformOptions,
@@ -16,21 +16,12 @@ import { BeanBase, uuidv4 } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { resolveImageVariantRequestToTransform } from 'vona-module-a-image';
 
-export interface IImageProviderNativeClientRecord {
-  default: never;
-  local: never;
-}
+import type { IImageProviderNativeClientOptions } from '../bean/imageProvider.native.ts';
 
-export interface IImageProviderNativeClientOptions extends IImageProviderClientOptions {
-  subdir?: string;
-}
-
-interface IImageNativeStoredImage {
-  resourceId: string;
-  filename?: string;
-  storagePath?: string;
-  variants?: IImageNamedVariants;
-}
+type IImageNativeStoredImage = Pick<
+  EntityImage,
+  'resourceId' | 'filename' | 'storagePath' | 'variants'
+>;
 
 @Service()
 export class ServiceImageNative extends BeanBase {

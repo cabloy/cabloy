@@ -2,6 +2,7 @@ import type {
   IDecoratorImageProviderOptions,
   IImageDownloadResult,
   IImageProviderClientOptions,
+  IImageProviderClientRecord,
   IImageProviderExecute,
   IImageProviderResource,
   IImageUploadInput,
@@ -14,10 +15,7 @@ import { BeanBase } from 'vona';
 import { resolveImageVariantRequestToTransform } from 'vona-module-a-image';
 import { ImageProvider } from 'vona-module-a-image';
 
-export interface IImageProviderCloudflareClientRecord {
-  default: never;
-  cloud: never;
-}
+export interface IImageProviderCloudflareClientRecord extends IImageProviderClientRecord {}
 
 export interface IImageProviderCloudflareClientOptions extends IImageProviderClientOptions {
   accountId?: string;
@@ -36,11 +34,7 @@ export interface IImageProviderOptionsCloudflare extends IDecoratorImageProvider
     },
   },
 })
-export class ImageProviderCloudflare
-  extends BeanBase
-  implements
-    IImageProviderExecute<IImageProviderCloudflareClientOptions, IImageProviderOptionsCloudflare>
-{
+export class ImageProviderCloudflare extends BeanBase implements IImageProviderExecute {
   async upload(
     input: IImageUploadInput,
     clientOptions: IImageProviderCloudflareClientOptions,

@@ -2,6 +2,7 @@ import type {
   IDecoratorImageProviderOptions,
   IImageDownloadResult,
   IImageProviderClientOptions,
+  IImageProviderClientRecord,
   IImageProviderExecute,
   IImageProviderResource,
   IImageUploadInput,
@@ -13,10 +14,11 @@ import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { ImageProvider } from 'vona-module-a-image';
 
-import type {
-  IImageProviderNativeClientOptions,
-  IImageProviderNativeClientRecord,
-} from '../service/imageNative.ts';
+export interface IImageProviderNativeClientRecord extends IImageProviderClientRecord {}
+
+export interface IImageProviderNativeClientOptions extends IImageProviderClientOptions {
+  subdir?: string;
+}
 
 export interface IImageProviderOptionsNative extends IDecoratorImageProviderOptions<
   IImageProviderNativeClientRecord,
@@ -28,10 +30,7 @@ export interface IImageProviderOptionsNative extends IDecoratorImageProviderOpti
     subdir: 'default',
   },
 })
-export class ImageProviderNative
-  extends BeanBase
-  implements IImageProviderExecute<IImageProviderNativeClientOptions, IImageProviderOptionsNative>
-{
+export class ImageProviderNative extends BeanBase implements IImageProviderExecute {
   async upload(
     input: IImageUploadInput,
     clientOptions: IImageProviderNativeClientOptions,
