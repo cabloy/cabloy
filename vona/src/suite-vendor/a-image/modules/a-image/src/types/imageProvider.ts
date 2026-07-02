@@ -4,11 +4,15 @@ import type { ServiceOnion, TypeOnionOptionsEnableSimple } from 'vona-module-a-o
 import type { EntityImage } from '../entity/image.ts';
 import type { EntityImageProvider } from '../entity/imageProvider.ts';
 import type {
+  IImageDeliveryOptions,
+  IImageDirectUploadInput,
   IImageDownloadResult,
   IImageNamedVariants,
+  IImageProviderDirectUploadResource,
   IImageProviderResource,
   IImageTransformOptions,
   IImageUploadInput,
+  IImageUploadUrlInput,
   IImageVariantRequest,
   TypeImageVariantName,
 } from './image.ts';
@@ -26,6 +30,7 @@ export interface IImageProviderClientOptions {
   deliveryBaseUrl?: string;
   variants?: IImageNamedVariants;
   requireSignedURLs?: boolean;
+  signedDeliveryKind?: 'proxy' | 'provider';
 }
 
 export type TypeImageProviderClientOptions<T> =
@@ -56,6 +61,16 @@ export interface IImageProviderExecute<
   O extends IDecoratorImageProviderOptions = IDecoratorImageProviderOptions,
 > {
   upload(input: IImageUploadInput, clientOptions: T, options: O): Promise<IImageProviderResource>;
+  uploadUrl?(
+    input: IImageUploadUrlInput,
+    clientOptions: T,
+    options: O,
+  ): Promise<IImageProviderResource>;
+  createDirectUpload?(
+    input: IImageDirectUploadInput,
+    clientOptions: T,
+    options: O,
+  ): Promise<IImageProviderDirectUploadResource>;
   get(
     image: EntityImage,
     clientOptions: T,
@@ -67,12 +82,14 @@ export interface IImageProviderExecute<
     request: IImageVariantRequest,
     clientOptions: T,
     options: O,
+    deliveryOptions?: IImageDeliveryOptions,
   ): Promise<string>;
   download?(
     image: EntityImage,
     request: IImageVariantRequest,
     clientOptions: T,
     options: O,
+    deliveryOptions?: IImageDeliveryOptions,
   ): Promise<IImageDownloadResult>;
 }
 

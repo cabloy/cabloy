@@ -1,5 +1,6 @@
 import type {
   IDecoratorImageProviderOptions,
+  IImageDeliveryOptions,
   IImageDownloadResult,
   IImageProviderClientOptions,
   IImageProviderClientRecord,
@@ -18,6 +19,8 @@ export interface IImageProviderNativeClientRecord extends IImageProviderClientRe
 
 export interface IImageProviderNativeClientOptions extends IImageProviderClientOptions {
   subdir?: string;
+  signingKey?: string;
+  tokenName?: string;
 }
 
 export interface IImageProviderOptionsNative extends IDecoratorImageProviderOptions<
@@ -28,6 +31,7 @@ export interface IImageProviderOptionsNative extends IDecoratorImageProviderOpti
 @ImageProvider<IImageProviderOptionsNative>({
   base: {
     subdir: 'default',
+    signedDeliveryKind: 'proxy',
   },
 })
 export class ImageProviderNative extends BeanBase implements IImageProviderExecute {
@@ -78,12 +82,18 @@ export class ImageProviderNative extends BeanBase implements IImageProviderExecu
     request: IImageVariantRequest,
     clientOptions: IImageProviderNativeClientOptions,
     _options: IImageProviderOptionsNative,
+    deliveryOptions?: IImageDeliveryOptions,
   ) {
-    return await this.scope.service.imageNative.getVariantUrl(image, request, {
-      ...clientOptions,
-      subdir: clientOptions.subdir ?? 'default',
-      deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
-    });
+    return await this.scope.service.imageNative.getVariantUrl(
+      image,
+      request,
+      {
+        ...clientOptions,
+        subdir: clientOptions.subdir ?? 'default',
+        deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
+      },
+      deliveryOptions,
+    );
   }
 
   async download(
@@ -91,8 +101,14 @@ export class ImageProviderNative extends BeanBase implements IImageProviderExecu
     request: IImageVariantRequest,
     clientOptions: IImageProviderNativeClientOptions,
     options: IImageProviderOptionsNative,
+    deliveryOptions?: IImageDeliveryOptions,
   ): Promise<IImageDownloadResult> {
-    if (request.variantName === 'original' && !request.transformOptions) {
+    if (
+      (deliveryOptions?.responseMode ?? 'auto') !== 'url' &&
+      !deliveryOptions?.signed &&
+      request.variantName === 'original' &&
+      !request.transformOptions
+    ) {
       const buffer = image.storagePath ? await fse.readFile(image.storagePath) : undefined;
       if (buffer) {
         return {
@@ -100,14 +116,16 @@ export class ImageProviderNative extends BeanBase implements IImageProviderExecu
           buffer,
           filename: image.filename,
           contentType: image.contentType,
+          signed: false,
         };
       }
     }
     return {
       kind: 'url',
-      url: await this.getVariantUrl(image, request, clientOptions, options),
+      url: await this.getVariantUrl(image, request, clientOptions, options, deliveryOptions),
       filename: image.filename,
       contentType: image.contentType,
+      signed: !!deliveryOptions?.signed,
     };
   }
 }

@@ -1,11 +1,14 @@
 import type {
   IDecoratorImageProviderOptions,
+  IImageDeliveryOptions,
+  IImageDirectUploadInput,
   IImageDownloadResult,
   IImageProviderClientOptions,
   IImageProviderClientRecord,
   IImageProviderExecute,
   IImageProviderResource,
   IImageUploadInput,
+  IImageUploadUrlInput,
   IImageVariantRequest,
   TypeImageProviderResolvedVariantName,
 } from 'vona-module-a-image';
@@ -20,6 +23,11 @@ export interface IImageProviderCloudflareClientRecord extends IImageProviderClie
 export interface IImageProviderCloudflareClientOptions extends IImageProviderClientOptions {
   accountId?: string;
   apiToken?: string;
+  accountHash?: string;
+  apiBaseUrl?: string;
+  signingKey?: string;
+  flexibleVariants?: boolean;
+  customDomain?: string;
 }
 
 export interface IImageProviderOptionsCloudflare extends IDecoratorImageProviderOptions<
@@ -29,6 +37,7 @@ export interface IImageProviderOptionsCloudflare extends IDecoratorImageProvider
 
 @ImageProvider<IImageProviderOptionsCloudflare>({
   base: {
+    signedDeliveryKind: 'provider',
     variants: {
       original: {},
     },
@@ -40,21 +49,23 @@ export class ImageProviderCloudflare extends BeanBase implements IImageProviderE
     clientOptions: IImageProviderCloudflareClientOptions,
     _options: IImageProviderOptionsCloudflare,
   ): Promise<IImageProviderResource> {
-    const resourceId = `cloudflare:${input.filename ?? 'image'}`;
-    return {
-      resourceId,
-      filename: input.filename,
-      contentType: input.contentType,
-      size: input.size,
-      requireSignedURLs: clientOptions.requireSignedURLs,
-      deliveryBaseUrl: clientOptions.deliveryBaseUrl,
-      variants: clientOptions.variants,
-      meta: input.meta,
-      raw: {
-        provider: 'cloudflare',
-        resourceId,
-      },
-    };
+    return await this.scope.service.imageCloudflare.upload(input, clientOptions);
+  }
+
+  async uploadUrl(
+    input: IImageUploadUrlInput,
+    clientOptions: IImageProviderCloudflareClientOptions,
+    _options: IImageProviderOptionsCloudflare,
+  ) {
+    return await this.scope.service.imageCloudflare.uploadUrl(input, clientOptions);
+  }
+
+  async createDirectUpload(
+    input: IImageDirectUploadInput,
+    clientOptions: IImageProviderCloudflareClientOptions,
+    _options: IImageProviderOptionsCloudflare,
+  ) {
+    return await this.scope.service.imageCloudflare.createDirectUpload(input, clientOptions);
   }
 
   async get(
@@ -70,34 +81,39 @@ export class ImageProviderCloudflare extends BeanBase implements IImageProviderE
       width: image.width,
       height: image.height,
       requireSignedURLs: image.requireSignedURLs ?? clientOptions.requireSignedURLs,
-      variants: image.variants,
+      variants: image.variants ?? clientOptions.variants,
       meta: image.meta,
       deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
     };
   }
 
   async delete(
-    _image: EntityImage,
-    _clientOptions: IImageProviderCloudflareClientOptions,
+    image: EntityImage,
+    clientOptions: IImageProviderCloudflareClientOptions,
     _options: IImageProviderOptionsCloudflare,
-  ) {}
+  ) {
+    await this.scope.service.imageCloudflare.remove(image, clientOptions);
+  }
 
   async getVariantUrl(
     image: EntityImage,
     request: IImageVariantRequest,
     clientOptions: IImageProviderCloudflareClientOptions,
     _options: IImageProviderOptionsCloudflare,
+    deliveryOptions?: IImageDeliveryOptions,
   ) {
     const variants = image.variants ?? clientOptions.variants;
     const resolved = resolveImageVariantRequestToTransform(request, 'original', variants);
     return this._buildVariantUrl(
-      image.resourceId,
+      image,
       resolved.variantName,
       resolved.transformOptions,
       {
         ...clientOptions,
         deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
+        requireSignedURLs: image.requireSignedURLs ?? clientOptions.requireSignedURLs,
       },
+      deliveryOptions,
     );
   }
 
@@ -106,33 +122,34 @@ export class ImageProviderCloudflare extends BeanBase implements IImageProviderE
     request: IImageVariantRequest,
     clientOptions: IImageProviderCloudflareClientOptions,
     options: IImageProviderOptionsCloudflare,
+    deliveryOptions?: IImageDeliveryOptions,
   ): Promise<IImageDownloadResult> {
     return {
       kind: 'url',
-      url: await this.getVariantUrl(image, request, clientOptions, options),
+      url: await this.getVariantUrl(image, request, clientOptions, options, deliveryOptions),
       filename: image.filename,
       contentType: image.contentType,
+      signed: !!(
+        deliveryOptions?.signed ??
+        image.requireSignedURLs ??
+        clientOptions.requireSignedURLs
+      ),
     };
   }
 
   private _buildVariantUrl(
-    resourceId: string,
+    image: EntityImage,
     variantName: TypeImageProviderResolvedVariantName,
     transformOptions: Record<string, any>,
     clientOptions: IImageProviderCloudflareClientOptions,
+    deliveryOptions?: IImageDeliveryOptions,
   ) {
-    const base = clientOptions.deliveryBaseUrl ?? 'https://imagedelivery.net/example';
-    if (variantName !== 'custom') {
-      return `${base.replace(/\/$/, '')}/${resourceId}/${variantName}`;
-    }
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(transformOptions)) {
-      if (value === undefined || value === null) continue;
-      params.set(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
-    }
-    const query = params.toString();
-    return query
-      ? `${base.replace(/\/$/, '')}/${resourceId}?${query}`
-      : `${base.replace(/\/$/, '')}/${resourceId}`;
+    return this.scope.service.imageCloudflare.buildVariantUrl(
+      image,
+      variantName,
+      transformOptions,
+      clientOptions,
+      deliveryOptions,
+    );
   }
 }

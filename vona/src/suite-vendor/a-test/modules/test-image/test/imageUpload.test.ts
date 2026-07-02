@@ -10,6 +10,23 @@ const tinyPng = Buffer.from(
   'base64',
 );
 
+function createCloudflareResponse(result: Record<string, any>) {
+  return new Response(
+    JSON.stringify({
+      success: true,
+      errors: [],
+      messages: [],
+      result,
+    }),
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+}
+
 describe('imageUpload.test.ts', () => {
   it('action:image:upload api requires auth', async () => {
     await app.bean.executor.mockCtx(async () => {
@@ -69,6 +86,107 @@ describe('imageUpload.test.ts', () => {
       assert.equal(typeof data.data.url, 'string');
       assert.equal(data.data.url.length > 0, true);
       await app.bean.passport.signout();
+    });
+  });
+
+  it('action:image:direct-upload and upload-url api', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const jwt = await app.bean.passport.signinMock('admin');
+      const provider = await app.bean.imageProvider.get({
+        providerName: 'image-cloudflare:cloudflare',
+        clientName: 'default',
+      });
+      await app.bean.imageProvider.scope.model.imageProvider.updateById(provider.id, {
+        clientOptions: {
+          accountId: 'account123',
+          apiToken: 'token123',
+          accountHash: 'hash123',
+          signingKey: 'signing-secret',
+        } as any,
+      });
+      const resolveUploadContextRaw = app.bean.imageUploadPolicy.resolveUploadContext.bind(
+        app.bean.imageUploadPolicy,
+      );
+      app.bean.imageUploadPolicy.resolveUploadContext = async data => {
+        const context = await resolveUploadContextRaw(data);
+        return {
+          ...context,
+          providerName: 'image-cloudflare:cloudflare',
+          clientName: 'default',
+        };
+      };
+      const fetchRaw = globalThis.fetch;
+      globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        const method = init?.method ?? 'GET';
+        if (url.includes('/image/direct-upload') || url.includes('/image/upload-url')) {
+          return await fetchRaw(input, init);
+        }
+        if (url.includes('/images/v2/direct_upload') && method === 'POST') {
+          return createCloudflareResponse({
+            id: 'cf-direct-api-1',
+            uploadURL: 'https://upload.imagedelivery.net/hash123/cf-direct-api-1',
+            requireSignedURLs: true,
+            draft: true,
+            variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
+          });
+        }
+        if (url.includes('/images/v1') && method === 'POST') {
+          return createCloudflareResponse({
+            id: 'cf-upload-url-api-1',
+            filename: 'image.png',
+            requireSignedURLs: true,
+            variants: ['https://imagedelivery.net/hash123/cf-upload-url-api-1/public'],
+          });
+        }
+        throw new Error(`unexpected fetch: ${method} ${url}`);
+      };
+      try {
+        const directUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload');
+        const directRes = await fetch(directUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageScene: 'training-student:studentImage',
+            size: tinyPng.length,
+            mimeType: 'image/png',
+            filename: 'direct.png',
+            requireSignedURLs: true,
+          }),
+        });
+        assert.equal(directRes.ok, true);
+        const directData = await directRes.json();
+        assert.equal(directData.data.resourceId, 'cf-direct-api-1');
+        assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
+
+        const uploadUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-url');
+        const uploadUrlRes = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageScene: 'training-student:studentImage',
+            url: 'https://example.com/image.png',
+            size: tinyPng.length,
+            mimeType: 'image/png',
+            filename: 'image.png',
+            requireSignedURLs: true,
+          }),
+        });
+        assert.equal(uploadUrlRes.ok, true);
+        const uploadUrlData = await uploadUrlRes.json();
+        assert.equal(uploadUrlData.data.resourceId, 'cf-upload-url-api-1');
+        assert.equal(uploadUrlData.data.signed, true);
+      } finally {
+        app.bean.imageUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
+        globalThis.fetch = fetchRaw;
+        await app.bean.passport.signout();
+      }
     });
   });
 });

@@ -9,16 +9,16 @@ import type { IEntityOptionsImage } from '../entity/image.ts';
 import type { IEntityOptionsImageProvider } from '../entity/imageProvider.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IEntityRecord {
       'a-image:image': IEntityOptionsImage;
 'a-image:imageProvider': IEntityOptionsImageProvider;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-   
+
 }
 /** entity: end */
 /** entity: begin */
@@ -41,7 +41,7 @@ declare module 'vona-module-a-orm' {
   }
 }
 declare module 'vona-module-a-image' {
-  
+
     export interface IEntityOptionsImage {
       fields?: TypeEntityOptionsFields<EntityImage, IEntityOptionsImage[TypeSymbolKeyFieldsMore]>;
     }
@@ -58,16 +58,16 @@ import type { IModelOptionsImage } from '../model/image.ts';
 import type { IModelOptionsImageProvider } from '../model/imageProvider.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
-  
+
     export interface IModelRecord {
       'a-image:image': IModelOptionsImage;
 'a-image:imageProvider': IModelOptionsImageProvider;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface ModelImage {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -88,7 +88,7 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.model.imageProvider';
             get $onionName(): 'a-image:imageProvider';
             get $onionOptions(): IModelOptionsImageProvider;
-          } 
+          }
 }
 /** model: end */
 /** model: begin */
@@ -113,7 +113,7 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-a-image' {
-  
+
   export interface ModelImage {
       [SymbolKeyEntity]: EntityImage;
       [SymbolKeyEntityMeta]: EntityImageMeta;
@@ -181,11 +181,11 @@ export * from '../bean/bean.imageUploadPolicy.ts';
 
 import 'vona';
 declare module 'vona' {
-  
-  
+
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface BeanImage {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -199,7 +199,7 @@ declare module 'vona-module-a-image' {
         export interface BeanImageUploadPolicy {
           /** @internal */
           get scope(): ScopeModuleAImage;
-        } 
+        }
 }
 /** bean: end */
 /** bean: begin */
@@ -221,16 +221,16 @@ export * from '../bean/meta.version.ts';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
-  
+
     export interface IMetaRecord {
       'a-image:redlock': never;
 'a-image:version': never;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface MetaRedlock {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -239,7 +239,7 @@ declare module 'vona-module-a-image' {
           export interface MetaRedlock {
             get $beanFullName(): 'a-image.meta.redlock';
             get $onionName(): 'a-image:redlock';
-            
+
           }
 
         export interface MetaVersion {
@@ -250,8 +250,8 @@ declare module 'vona-module-a-image' {
           export interface MetaVersion {
             get $beanFullName(): 'a-image.meta.version';
             get $onionName(): 'a-image:version';
-            
-          } 
+
+          }
 }
 /** meta: end */
 /** meta redlock: begin */
@@ -264,16 +264,16 @@ import type { ISerializerTransformOptionsResolveView } from '../bean/serializerT
 import type { ISerializerTransformOptionsResolveViews } from '../bean/serializerTransform.resolveViews.ts';
 import 'vona-module-a-serialization';
 declare module 'vona-module-a-serialization' {
-  
+
     export interface ISerializerTransformRecord {
       'a-image:resolveView': ISerializerTransformOptionsResolveView;
 'a-image:resolveViews': ISerializerTransformOptionsResolveViews;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface SerializerTransformResolveView {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -294,45 +294,73 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.serializerTransform.resolveViews';
             get $onionName(): 'a-image:resolveViews';
             get $onionOptions(): ISerializerTransformOptionsResolveViews;
-          } 
+          }
 }
 /** serializerTransform: end */
 /** dto: begin */
+export * from '../dto/imageDeliveryRequest.ts';
+export * from '../dto/imageDirectUploadRequest.ts';
+export * from '../dto/imageDirectUploadResponse.ts';
 export * from '../dto/imageTransformOptions.tsx';
 export * from '../dto/imageUploadResponse.ts';
 export * from '../dto/imageUploadTokenRequest.ts';
 export * from '../dto/imageUploadTokenResponse.ts';
+export * from '../dto/imageUploadUrlRequest.ts';
 export * from '../dto/imageView.ts';
+import type { IDtoOptionsImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import type { IDtoOptionsImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
+import type { IDtoOptionsImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import type { IDtoOptionsImageTransformOptions } from '../dto/imageTransformOptions.tsx';
 import type { IDtoOptionsImageUploadResponse } from '../dto/imageUploadResponse.ts';
 import type { IDtoOptionsImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
 import type { IDtoOptionsImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
+import type { IDtoOptionsImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 import type { IDtoOptionsImageView } from '../dto/imageView.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IDtoRecord {
-      'a-image:imageTransformOptions': IDtoOptionsImageTransformOptions;
+      'a-image:imageDeliveryRequest': IDtoOptionsImageDeliveryRequest;
+'a-image:imageDirectUploadRequest': IDtoOptionsImageDirectUploadRequest;
+'a-image:imageDirectUploadResponse': IDtoOptionsImageDirectUploadResponse;
+'a-image:imageTransformOptions': IDtoOptionsImageTransformOptions;
 'a-image:imageUploadResponse': IDtoOptionsImageUploadResponse;
 'a-image:imageUploadTokenRequest': IDtoOptionsImageUploadTokenRequest;
 'a-image:imageUploadTokenResponse': IDtoOptionsImageUploadTokenResponse;
+'a-image:imageUploadUrlRequest': IDtoOptionsImageUploadUrlRequest;
 'a-image:imageView': IDtoOptionsImageView;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-   
+
 }
 /** dto: end */
 /** dto: begin */
+import type { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import type { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
+import type { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import type { DtoImageTransformOptions } from '../dto/imageTransformOptions.tsx';
 import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
 import type { DtoImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
 import type { DtoImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
+import type { DtoImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 import type { DtoImageView } from '../dto/imageView.ts';
 declare module 'vona-module-a-image' {
-  
+
+    export interface IDtoOptionsImageDeliveryRequest {
+      fields?: TypeEntityOptionsFields<DtoImageDeliveryRequest, IDtoOptionsImageDeliveryRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageDirectUploadRequest {
+      fields?: TypeEntityOptionsFields<DtoImageDirectUploadRequest, IDtoOptionsImageDirectUploadRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageDirectUploadResponse {
+      fields?: TypeEntityOptionsFields<DtoImageDirectUploadResponse, IDtoOptionsImageDirectUploadResponse[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsImageTransformOptions {
       fields?: TypeEntityOptionsFields<DtoImageTransformOptions, IDtoOptionsImageTransformOptions[TypeSymbolKeyFieldsMore]>;
     }
@@ -349,6 +377,10 @@ declare module 'vona-module-a-image' {
       fields?: TypeEntityOptionsFields<DtoImageUploadTokenResponse, IDtoOptionsImageUploadTokenResponse[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsImageUploadUrlRequest {
+      fields?: TypeEntityOptionsFields<DtoImageUploadUrlRequest, IDtoOptionsImageUploadUrlRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsImageView {
       fields?: TypeEntityOptionsFields<DtoImageView, IDtoOptionsImageView[TypeSymbolKeyFieldsMore]>;
     }
@@ -359,15 +391,15 @@ export * from '../controller/image.ts';
 import type { IControllerOptionsImage } from '../controller/image.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
-  
+
     export interface IControllerRecord {
       'a-image:image': IControllerOptionsImage;
     }
 
-  
+
 }
 declare module 'vona-module-a-image' {
-  
+
         export interface ControllerImage {
           /** @internal */
           get scope(): ScopeModuleAImage;
@@ -377,14 +409,14 @@ declare module 'vona-module-a-image' {
             get $beanFullName(): 'a-image.controller.image';
             get $onionName(): 'a-image:image';
             get $onionOptions(): IControllerOptionsImage;
-          } 
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerImage } from '../controller/image.ts';
 declare module 'vona-module-a-image' {
-  
+
     export interface IControllerOptionsImage {
       actions?: TypeControllerOptionsActions<ControllerImage>;
     }
@@ -393,6 +425,12 @@ declare module 'vona-module-a-web' {
   export interface IApiPathPostRecord{
         '/image/upload-token': undefined;
 '/image/upload': undefined;
+'/image/direct-upload': undefined;
+'/image/upload-url': undefined;
+    }
+
+  export interface IApiPathGetRecord{
+        '/image/delivery/:imageId': undefined;
     }
 
 }
@@ -430,7 +468,7 @@ declare module 'vona' {
   export interface IBeanScopeContainer {
     image: ScopeModuleAImage;
   }
-  
+
   export interface IBeanScopeConfig {
     'a-image': ReturnType<typeof config>;
   }
@@ -439,6 +477,6 @@ declare module 'vona' {
     'a-image': (typeof locales)[TypeLocaleBase];
   }
 
-  
+
 }
 /** scope: end */

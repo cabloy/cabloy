@@ -1,5 +1,6 @@
 import type {
   EntityImage,
+  IImageDeliveryOptions,
   IImageNamedVariants,
   IImageProviderResolvedVariant,
   IImageProviderResource,
@@ -52,7 +53,7 @@ export class ServiceImageNative extends BeanBase {
       height: metadata.height,
       storagePath: targetPath,
       deliveryBaseUrl: options.deliveryBaseUrl,
-      requireSignedURLs: options.requireSignedURLs,
+      requireSignedURLs: input.requireSignedURLs ?? options.requireSignedURLs,
       variants,
     };
   }
@@ -76,6 +77,7 @@ export class ServiceImageNative extends BeanBase {
     image: IImageNativeStoredImage,
     request: IImageVariantRequest,
     options: IImageProviderNativeClientOptions,
+    _deliveryOptions?: IImageDeliveryOptions,
   ) {
     const resolved = resolveImageVariantRequestToTransform(request, 'original', image.variants);
     if (

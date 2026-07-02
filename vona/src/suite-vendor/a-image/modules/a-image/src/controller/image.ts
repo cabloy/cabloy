@@ -4,14 +4,18 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
-import { Api } from 'vona-module-a-openapiutils';
+import { Api, v } from 'vona-module-a-openapiutils';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import type { DtoImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
 import type { IImageUploadTokenPayload } from '../types/image.ts';
 
+import { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
+import { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
 import { DtoImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
+import { DtoImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 
 export interface IControllerOptionsImage extends IDecoratorControllerOptions {}
 
@@ -49,7 +53,75 @@ export class ControllerImage extends BeanBase {
     return {
       ...image,
       url: await this.bean.image.getVariantUrl(image.id),
+      signed: !!image.requireSignedURLs,
     };
+  }
+
+  @Web.post('direct-upload')
+  @Api.body(DtoImageDirectUploadResponse)
+  async createDirectUpload(@Arg.body() data: DtoImageDirectUploadRequest) {
+    const policy = await this.bean.imageUploadPolicy.resolveUploadPolicy({
+      imageScene: data.imageScene,
+      size: data.size,
+      mimeType: data.mimeType,
+    });
+    return await this.bean.image.createDirectUpload(
+      policy.providerName,
+      {
+        filename: data.filename,
+        contentType: data.contentType,
+        expiry: data.expiry,
+        customId: data.customId,
+      },
+      {
+        clientName: policy.clientName,
+        meta: policy.meta,
+        imageScene: policy.imageScene,
+      },
+    );
+  }
+
+  @Web.post('upload-url')
+  @Api.body(DtoImageUploadResponse)
+  async uploadUrl(@Arg.body() data: DtoImageUploadUrlRequest) {
+    const policy = await this.bean.imageUploadPolicy.resolveUploadPolicy({
+      imageScene: data.imageScene,
+      size: data.size,
+      mimeType: data.mimeType,
+    });
+    const image = await this.bean.image.uploadUrl(
+      policy.providerName,
+      {
+        url: data.url,
+        filename: data.filename,
+        contentType: data.contentType,
+      },
+      {
+        clientName: policy.clientName,
+        meta: policy.meta,
+        imageScene: policy.imageScene,
+      },
+    );
+    return {
+      ...image,
+      url: await this.bean.image.getVariantUrl(image.id),
+      signed: !!image.requireSignedURLs,
+    };
+  }
+
+  @Web.get('delivery/:imageId')
+  async delivery(
+    @Arg.param('imageId', v.tableIdentity()) imageId: number,
+    @Arg.query(v.object(DtoImageDeliveryRequest)) query: DtoImageDeliveryRequest,
+  ) {
+    const payload = await this.bean.imageUploadPolicy.verifyDeliveryToken(
+      query.token,
+      this.ctx.route.routePathRaw,
+    );
+    if (String(payload.imageId) !== String(imageId)) {
+      return this.app.throw(401);
+    }
+    this.ctx.redirect(payload.targetUrl);
   }
 
   private async _validateUploadFile(file: IUploadFile, payload: IImageUploadTokenPayload) {

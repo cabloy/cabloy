@@ -1,7 +1,12 @@
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
-import type { IImageUploadPolicyResolved, IImageUploadTokenPayload } from '../types/image.ts';
+import type {
+  IImageDeliveryTokenPayload,
+  IImageUploadContextResolved,
+  IImageUploadPolicyResolved,
+  IImageUploadTokenPayload,
+} from '../types/image.ts';
 import type {
   IDecoratorImageSceneOptions,
   IDecoratorImageSceneOptionsProvider,
@@ -29,6 +34,29 @@ export class BeanImageUploadPolicy extends BeanBase {
     return { token };
   }
 
+  async createDeliveryToken(data: {
+    imageId: number | string;
+    request: IImageDeliveryTokenPayload['request'];
+    targetUrl: string;
+    expiresIn?: number;
+  }) {
+    const path = this.scope.util.combineApiPath(`image/delivery/${data.imageId}`, false, true);
+    const token = await this.bean.jwt.createTempAuthToken(
+      {
+        kind: 'imageDelivery',
+        imageId: data.imageId,
+        request: data.request,
+        targetUrl: data.targetUrl,
+      } as IImageDeliveryTokenPayload,
+      {
+        path,
+        temp: true,
+        expiresIn: data.expiresIn,
+      },
+    );
+    return { token, expiresIn: data.expiresIn };
+  }
+
   async verifyUploadToken(token: string | undefined, routePathRaw: string) {
     const payload = (await this.bean.jwt.get('access').verify(token, {
       path: routePathRaw,
@@ -39,22 +67,48 @@ export class BeanImageUploadPolicy extends BeanBase {
     return payload;
   }
 
+  async verifyDeliveryToken(token: string | undefined, routePathRaw: string) {
+    const payload = (await this.bean.jwt.get('access').verify(token, {
+      path: routePathRaw,
+    })) as IImageDeliveryTokenPayload | undefined;
+    if (!payload || payload.kind !== 'imageDelivery') {
+      return this.app.throw(401);
+    }
+    return payload;
+  }
+
+  async resolveUploadContext(data: {
+    imageScene: keyof IImageSceneRecord;
+  }): Promise<IImageUploadContextResolved> {
+    const imageScene = data.imageScene;
+    const sceneOptions = this._getSceneOptions(imageScene);
+    const { providerName, clientName } = await this._resolveProvider(sceneOptions);
+    return {
+      imageScene,
+      providerName,
+      clientName,
+      meta: await this._resolveSceneMeta(sceneOptions),
+    };
+  }
+
   async resolveUploadPolicy(data: {
     imageScene: keyof IImageSceneRecord;
     size: number;
     mimeType: string;
   }): Promise<IImageUploadPolicyResolved> {
     const imageConfig = this.scope.config.image;
-    const imageScene = data.imageScene;
-    const sceneOptions = this._getSceneOptions(imageScene);
-    const { providerName, clientName } = await this._resolveProvider(sceneOptions);
+    const context = await this.resolveUploadContext({ imageScene: data.imageScene });
     const { entityImageProvider, disabled } = await this.bean.imageProvider.getClientOptions({
-      providerName,
-      clientName,
+      providerName: context.providerName,
+      clientName: context.clientName,
     });
     if (!entityImageProvider || disabled) {
-      return this.app.throw(403, `Image provider unavailable: ${providerName}.${clientName}`);
+      return this.app.throw(
+        403,
+        `Image provider unavailable: ${context.providerName}.${context.clientName}`,
+      );
     }
+    const sceneOptions = this._getSceneOptions(context.imageScene);
     const uploadOptions = {
       ...(imageConfig.upload ?? {}),
       ...(sceneOptions.upload ?? {}),
@@ -70,10 +124,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       return this.app.throw(403, `unsupported image mimeType: ${mimeType}`);
     }
     return {
-      imageScene,
-      providerName,
-      clientName,
-      meta: await this._resolveSceneMeta(sceneOptions),
+      ...context,
       maxSize,
       mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
       extensions: extensions.length > 0 ? extensions : undefined,

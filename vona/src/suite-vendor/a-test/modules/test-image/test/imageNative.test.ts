@@ -49,8 +49,25 @@ describe('imageNative.test.ts', () => {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });
       assert.equal(customUrl, customUrl2);
+
+      const signedUrl = await app.bean.image.getVariantUrl(image.id, 'original', {
+        signed: true,
+        expiresAt: Date.now() + 600_000,
+      });
+      assert.equal(signedUrl.includes('/image/delivery/'), true);
+      assert.equal(signedUrl.includes('token='), true);
+
       const download = await app.bean.image.download(image.id, 'original');
       assert.equal(download.kind, 'buffer');
+
+      const signedDownload = await app.bean.image.download(image.id, 'original', {
+        signed: true,
+        expiresIn: 600,
+      });
+      assert.equal(signedDownload.kind, 'url');
+      assert.equal(signedDownload.signed, true);
+      assert.equal(signedDownload.url?.includes('/image/delivery/'), true);
+
       await app.bean.image.delete(image.id);
       const image3 = await app.bean.image.get(image.id);
       assert.equal(image3, undefined);

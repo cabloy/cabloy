@@ -42,6 +42,9 @@ export class DtoImageUploadResponse {
   @Api.field(v.optional())
   height?: number;
 
+  @Api.field(v.optional())
+  requireSignedURLs?: boolean;
+
   @Api.field(v.optional(), z.record(z.string(), $schema(DtoImageTransformOptions)))
   variants?: IImageNamedVariants;
 
@@ -53,4 +56,7 @@ export class DtoImageUploadResponse {
 
   @Api.field(v.optional())
   url?: string;
+
+  @Api.field(v.optional())
+  signed?: boolean;
 }
