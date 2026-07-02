@@ -393,17 +393,26 @@ export const OpenApiBaseURL = (sys: ZovaSys) => {
     }
     //
     const contentTypes2 = contentTypes.join('\n');
-    const importsType: string[] = [];
-    if (contentSignatures.length > 0) importsType.push('OpenApiBaseURL');
-    if (contentTypes2.includes('components["schemas"]')) importsType.push('type components');
-    if (contentTypes2.includes('paths[')) importsType.push('type paths');
-    const contentImportsType =
-      importsType.length > 0
-        ? `import { ${importsType.join(', ')} } from './openapi/index.js';`
+    const importsOpenapiValue: string[] = [];
+    const importsOpenapiType: string[] = [];
+    if (contentSignatures.length > 0) importsOpenapiValue.push('OpenApiBaseURL');
+    if (contentTypes2.includes('components["schemas"]')) importsOpenapiType.push('components');
+    if (contentTypes2.includes('paths[')) importsOpenapiType.push('paths');
+    const contentImportsOpenapiValue =
+      importsOpenapiValue.length > 0
+        ? `import { ${importsOpenapiValue.join(', ')} } from './openapi/index.js';`
         : '';
+    const contentImportsOpenapiType =
+      importsOpenapiType.length > 0
+        ? `import type { ${importsOpenapiType.join(', ')} } from './openapi/index.js';`
+        : '';
+    const contentImportsOpenapi = [contentImportsOpenapiValue, contentImportsOpenapiType]
+      .filter(item => !!item)
+      .join('\n');
     // apiContent
-    const apiContent = `import { Api, BeanApiBase, IApiActionOptions } from 'zova-module-a-api';
-${contentImportsType}
+    const apiContent = `import { Api, BeanApiBase } from 'zova-module-a-api';
+import type { IApiActionOptions } from 'zova-module-a-api';
+${contentImportsOpenapi}
 
 ${contentTypes2}
 
@@ -441,7 +450,8 @@ export class ApiMeta${apiName} extends BeanBase {
 }
 `;
     const apiSchemaContent = `import { BeanBase } from 'zova';
-import { ApiSchema, IApiSchemaOptions } from 'zova-module-a-api';
+import { ApiSchema } from 'zova-module-a-api';
+import type { IApiSchemaOptions } from 'zova-module-a-api';
 ${contentImportsApiPath}
 
 @ApiSchema()

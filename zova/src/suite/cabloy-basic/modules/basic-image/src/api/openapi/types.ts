@@ -432,6 +432,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/image/direct-upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_createDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_uploadUrl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/delivery/{imageId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Image_delivery'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/paypal/getRecord/{recordId}': {
     parameters: {
       query?: never;
@@ -1495,23 +1543,24 @@ export interface components {
       uploadedAt?: Date;
       variants?:
         | {
-            [key: string]: {
-              width?: number | undefined;
-              height?: number | undefined;
-              /** @enum {string|null} */
-              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-              /** @enum {string|null} */
-              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
-              background?: string | undefined;
-              quality?: number | undefined;
-              /** @enum {string|null} */
-              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-              dpr?: number | undefined;
-              rotate?: number | undefined;
-              sharpen?: number | undefined;
-            };
+            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
           }
         | undefined;
+    };
+    'a-image.dto.imageTransformOptions': {
+      width?: number | undefined;
+      height?: number | undefined;
+      /** @enum {string|null} */
+      fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+      /** @enum {string|null} */
+      gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+      background?: string | undefined;
+      quality?: number | undefined;
+      /** @enum {string|null} */
+      format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+      dpr?: number | undefined;
+      rotate?: number | undefined;
+      sharpen?: number | undefined;
     };
     'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
@@ -1669,7 +1718,25 @@ export interface components {
                   description?: string | undefined;
                 }[]
               | undefined;
-            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            sceneImages?:
+              | {
+                  id?: number | string | undefined;
+                  url?: string | undefined;
+                  filename?: string | undefined;
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  imageScene?: unknown;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  variants?:
+                    | {
+                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                      }
+                    | undefined;
+                }[]
+              | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
@@ -1706,7 +1773,25 @@ export interface components {
       description?: string | undefined;
       /** @description Student Training Record Details */
       trainingRecordSubjects?: unknown;
-      sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+      sceneImages?:
+        | {
+            id?: number | string | undefined;
+            url?: string | undefined;
+            filename?: string | undefined;
+            width?: number | undefined;
+            height?: number | undefined;
+            provider?: string | undefined;
+            clientName?: string | undefined;
+            imageScene?: unknown;
+            /** Format: date-time */
+            uploadedAt?: Date;
+            variants?:
+              | {
+                  [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                }
+              | undefined;
+          }[]
+        | undefined;
       /** @description # */
       _lineNumber: number;
       /** @description Operations */
@@ -1752,11 +1837,11 @@ export interface components {
       imageId?: number | string | undefined;
       /** @description Training Stage */
       level: 1 | 2 | 3;
-      image?: components['schemas']['a-image.dto.imageView_2e62bd76d15c9f7a28319f47bcf0f0899d684f54_2d063d28bc7243bed02ebd8bddf1212a93c6305b_459469cae07415fca675290d8af4333f481c133e_1816ff740d81c738ec055c7038bbd93beb9405a7_c21cd9d468a125a3857af9182efc025a7fa5057c'];
+      image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'a-image.dto.imageView_2e62bd76d15c9f7a28319f47bcf0f0899d684f54_2d063d28bc7243bed02ebd8bddf1212a93c6305b_459469cae07415fca675290d8af4333f481c133e_1816ff740d81c738ec055c7038bbd93beb9405a7_c21cd9d468a125a3857af9182efc025a7fa5057c':
+    'a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6':
       | {
           id: number | string;
           url: string;
@@ -1770,29 +1855,7 @@ export interface components {
           uploadedAt?: Date;
           variants?:
             | {
-                [key: string]: {
-                  width?: number | undefined;
-                  height?: number | undefined;
-                  /** @enum {string|null} */
-                  fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-                  /** @enum {string|null} */
-                  gravity?:
-                    | 'auto'
-                    | 'center'
-                    | 'top'
-                    | 'bottom'
-                    | 'left'
-                    | 'right'
-                    | null
-                    | undefined;
-                  background?: string | undefined;
-                  quality?: number | undefined;
-                  /** @enum {string|null} */
-                  format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-                  dpr?: number | undefined;
-                  rotate?: number | undefined;
-                  sharpen?: number | undefined;
-                };
+                [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
               }
             | undefined;
         }
@@ -1873,12 +1936,30 @@ export interface components {
               /** @description Description */
               description?: string | undefined;
             }[];
-            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            sceneImages?:
+              | {
+                  id?: number | string | undefined;
+                  url?: string | undefined;
+                  filename?: string | undefined;
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  imageScene?: unknown;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  variants?:
+                    | {
+                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                      }
+                    | undefined;
+                }[]
+              | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
           }[];
-          image?: components['schemas']['a-image.dto.imageView_2e62bd76d15c9f7a28319f47bcf0f0899d684f54_2d063d28bc7243bed02ebd8bddf1212a93c6305b_459469cae07415fca675290d8af4333f481c133e_1816ff740d81c738ec055c7038bbd93beb9405a7_c21cd9d468a125a3857af9182efc025a7fa5057c'];
+          image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
           _trainingRecords?:
             | components['schemas']['training-student.dto.detailRecordResItem'][]
             | undefined;
@@ -1940,7 +2021,25 @@ export interface components {
                   description?: string | undefined;
                 }[]
               | undefined;
-            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            sceneImages?:
+              | {
+                  id?: number | string | undefined;
+                  url?: string | undefined;
+                  filename?: string | undefined;
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  imageScene?: unknown;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  variants?:
+                    | {
+                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                      }
+                    | undefined;
+                }[]
+              | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
@@ -1971,12 +2070,13 @@ export interface components {
       | undefined;
     'a-image.dto.imageUploadTokenResponse': {
       token: string;
-      expiresIn: number;
+      expiresIn?: number | undefined;
     };
     'a-image.dto.imageUploadTokenRequest': {
       imageScene: string;
       size: number;
       mimeType: string;
+      expiresIn?: number | undefined;
     };
     'a-image.dto.imageUploadResponse': {
       id: number | string;
@@ -1988,30 +2088,65 @@ export interface components {
       size?: number | undefined;
       width?: number | undefined;
       height?: number | undefined;
+      requireSignedURLs?: boolean | undefined;
       variants?:
         | {
-            [key: string]: {
-              width?: number | undefined;
-              height?: number | undefined;
-              /** @enum {string|null} */
-              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-              /** @enum {string|null} */
-              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
-              background?: string | undefined;
-              quality?: number | undefined;
-              /** @enum {string|null} */
-              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-              dpr?: number | undefined;
-              rotate?: number | undefined;
-              sharpen?: number | undefined;
-            };
+            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
           }
         | undefined;
-      imageScene?: unknown;
+      imageScene?: string | undefined;
       /** Format: date-time */
       uploadedAt?: Date;
       url?: string | undefined;
+      signed?: boolean | undefined;
     };
+    'a-image.dto.imageDirectUploadResponse': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      uploadUrl: string;
+      draft?: boolean | undefined;
+      filename?: string | undefined;
+      imageScene?: string | undefined;
+    };
+    'a-image.dto.imageDirectUploadRequest': {
+      imageScene: string;
+      filename?: string | undefined;
+      size: number;
+      mimeType: string;
+      contentType?: string | undefined;
+      requireSignedURLs?: boolean | undefined;
+      expiry?: string | undefined;
+      customId?: string | undefined;
+    };
+    'a-image.dto.imageUploadUrlRequest': {
+      imageScene: string;
+      /** Format: uri */
+      url: string;
+      size: number;
+      mimeType: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      requireSignedURLs?: boolean | undefined;
+    };
+    'a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          width?: number | undefined;
+          height?: number | undefined;
+          /** @enum {string|null} */
+          fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+          /** @enum {string|null} */
+          gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+          background?: string | undefined;
+          quality?: number | undefined;
+          /** @enum {string|null} */
+          format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+          dpr?: number | undefined;
+          rotate?: number | undefined;
+          sharpen?: number | undefined;
+        }
+      | undefined;
     'a-paypal.entity.paypalRecord': {
       /**
        * Format: date-time
@@ -3476,6 +3611,92 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_createDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageDirectUploadRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageDirectUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_uploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadUrlRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_delivery: {
+    parameters: {
+      query?: {
+        variantName?: string | undefined;
+        transformOptions?: components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+        token?: string | undefined;
+      };
+      header?: never;
+      path: {
+        imageId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };

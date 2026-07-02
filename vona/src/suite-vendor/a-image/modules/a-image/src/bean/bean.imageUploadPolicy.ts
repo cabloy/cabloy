@@ -19,6 +19,7 @@ export class BeanImageUploadPolicy extends BeanBase {
     imageScene: keyof IImageSceneRecord;
     size: number;
     mimeType: string;
+    expiresIn?: number;
   }) {
     const payload = await this.resolveUploadPolicy(data);
     const path = this.scope.util.combineApiPath('image/upload', false, true);
@@ -29,9 +30,10 @@ export class BeanImageUploadPolicy extends BeanBase {
       } as IImageUploadTokenPayload,
       {
         path,
+        expiresIn: data.expiresIn,
       },
     );
-    return { token };
+    return { token, expiresIn: data.expiresIn };
   }
 
   async createDeliveryToken(data: {
@@ -50,7 +52,6 @@ export class BeanImageUploadPolicy extends BeanBase {
       } as IImageDeliveryTokenPayload,
       {
         path,
-        temp: true,
         expiresIn: data.expiresIn,
       },
     );

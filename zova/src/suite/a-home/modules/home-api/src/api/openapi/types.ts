@@ -432,6 +432,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/image/direct-upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_createDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_uploadUrl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/delivery/{imageId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Image_delivery'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/paypal/getRecord/{recordId}': {
     parameters: {
       query?: never;
@@ -1369,9 +1417,9 @@ export interface components {
     'home-user.dto.login': {
       username: string;
       password: string;
-      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3'];
+      captcha: components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661'];
     };
-    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_626802c24df1498cec99aab0854fedf90c9b6dd3': {
+    'a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661': {
       id: string;
       token: string;
     };
@@ -1490,29 +1538,31 @@ export interface components {
       height?: number | undefined;
       provider: string;
       clientName: string;
+      imageScene?: unknown;
       /** Format: date-time */
       uploadedAt?: Date;
       variants?:
         | {
-            [key: string]: {
-              width?: number | undefined;
-              height?: number | undefined;
-              /** @enum {string|null} */
-              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-              /** @enum {string|null} */
-              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
-              background?: string | undefined;
-              quality?: number | undefined;
-              /** @enum {string|null} */
-              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-              dpr?: number | undefined;
-              rotate?: number | undefined;
-              sharpen?: number | undefined;
-            };
+            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
           }
         | undefined;
     };
-    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'a-image.dto.imageTransformOptions': {
+      width?: number | undefined;
+      height?: number | undefined;
+      /** @enum {string|null} */
+      fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+      /** @enum {string|null} */
+      gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+      background?: string | undefined;
+      quality?: number | undefined;
+      /** @enum {string|null} */
+      format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+      dpr?: number | undefined;
+      rotate?: number | undefined;
+      sharpen?: number | undefined;
+    };
+    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
            * Format: date-time
@@ -1668,7 +1718,25 @@ export interface components {
                   description?: string | undefined;
                 }[]
               | undefined;
-            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            sceneImages?:
+              | {
+                  id?: number | string | undefined;
+                  url?: string | undefined;
+                  filename?: string | undefined;
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  imageScene?: unknown;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  variants?:
+                    | {
+                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                      }
+                    | undefined;
+                }[]
+              | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
@@ -1705,7 +1773,25 @@ export interface components {
       description?: string | undefined;
       /** @description Student Training Record Details */
       trainingRecordSubjects?: unknown;
-      sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+      sceneImages?:
+        | {
+            id?: number | string | undefined;
+            url?: string | undefined;
+            filename?: string | undefined;
+            width?: number | undefined;
+            height?: number | undefined;
+            provider?: string | undefined;
+            clientName?: string | undefined;
+            imageScene?: unknown;
+            /** Format: date-time */
+            uploadedAt?: Date;
+            variants?:
+              | {
+                  [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                }
+              | undefined;
+          }[]
+        | undefined;
       /** @description # */
       _lineNumber: number;
       /** @description Operations */
@@ -1751,11 +1837,11 @@ export interface components {
       imageId?: number | string | undefined;
       /** @description Training Stage */
       level: 1 | 2 | 3;
-      image?: components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+      image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7':
+    'a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6':
       | {
           id: number | string;
           url: string;
@@ -1764,38 +1850,17 @@ export interface components {
           height?: number | undefined;
           provider: string;
           clientName: string;
+          imageScene?: unknown;
           /** Format: date-time */
           uploadedAt?: Date;
           variants?:
             | {
-                [key: string]: {
-                  width?: number | undefined;
-                  height?: number | undefined;
-                  /** @enum {string|null} */
-                  fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-                  /** @enum {string|null} */
-                  gravity?:
-                    | 'auto'
-                    | 'center'
-                    | 'top'
-                    | 'bottom'
-                    | 'left'
-                    | 'right'
-                    | null
-                    | undefined;
-                  background?: string | undefined;
-                  quality?: number | undefined;
-                  /** @enum {string|null} */
-                  format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-                  dpr?: number | undefined;
-                  rotate?: number | undefined;
-                  sharpen?: number | undefined;
-                };
+                [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
               }
             | undefined;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
            * Format: date-time
@@ -1871,12 +1936,30 @@ export interface components {
               /** @description Description */
               description?: string | undefined;
             }[];
-            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            sceneImages?:
+              | {
+                  id?: number | string | undefined;
+                  url?: string | undefined;
+                  filename?: string | undefined;
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  imageScene?: unknown;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  variants?:
+                    | {
+                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                      }
+                    | undefined;
+                }[]
+              | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
           }[];
-          image?: components['schemas']['a-image.dto.imageView_67182859f4977e78480f4d449322f040f00aaba3_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7'];
+          image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
           _trainingRecords?:
             | components['schemas']['training-student.dto.detailRecordResItem'][]
             | undefined;
@@ -1938,7 +2021,25 @@ export interface components {
                   description?: string | undefined;
                 }[]
               | undefined;
-            sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+            sceneImages?:
+              | {
+                  id?: number | string | undefined;
+                  url?: string | undefined;
+                  filename?: string | undefined;
+                  width?: number | undefined;
+                  height?: number | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  imageScene?: unknown;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  variants?:
+                    | {
+                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+                      }
+                    | undefined;
+                }[]
+              | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
@@ -1969,15 +2070,13 @@ export interface components {
       | undefined;
     'a-image.dto.imageUploadTokenResponse': {
       token: string;
-      expiresIn: number;
+      expiresIn?: number | undefined;
     };
     'a-image.dto.imageUploadTokenRequest': {
-      resource: string;
-      field: string;
-      /** @enum {string|null} */
-      formScene?: 'create' | 'edit' | null | undefined;
+      imageScene: string;
       size: number;
       mimeType: string;
+      expiresIn?: number | undefined;
     };
     'a-image.dto.imageUploadResponse': {
       id: number | string;
@@ -1989,29 +2088,65 @@ export interface components {
       size?: number | undefined;
       width?: number | undefined;
       height?: number | undefined;
+      requireSignedURLs?: boolean | undefined;
       variants?:
         | {
-            [key: string]: {
-              width?: number | undefined;
-              height?: number | undefined;
-              /** @enum {string|null} */
-              fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-              /** @enum {string|null} */
-              gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
-              background?: string | undefined;
-              quality?: number | undefined;
-              /** @enum {string|null} */
-              format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-              dpr?: number | undefined;
-              rotate?: number | undefined;
-              sharpen?: number | undefined;
-            };
+            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
           }
         | undefined;
+      imageScene?: string | undefined;
       /** Format: date-time */
       uploadedAt?: Date;
       url?: string | undefined;
+      signed?: boolean | undefined;
     };
+    'a-image.dto.imageDirectUploadResponse': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      uploadUrl: string;
+      draft?: boolean | undefined;
+      filename?: string | undefined;
+      imageScene?: string | undefined;
+    };
+    'a-image.dto.imageDirectUploadRequest': {
+      imageScene: string;
+      filename?: string | undefined;
+      size: number;
+      mimeType: string;
+      contentType?: string | undefined;
+      requireSignedURLs?: boolean | undefined;
+      expiry?: string | undefined;
+      customId?: string | undefined;
+    };
+    'a-image.dto.imageUploadUrlRequest': {
+      imageScene: string;
+      /** Format: uri */
+      url: string;
+      size: number;
+      mimeType: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      requireSignedURLs?: boolean | undefined;
+    };
+    'a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          width?: number | undefined;
+          height?: number | undefined;
+          /** @enum {string|null} */
+          fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+          /** @enum {string|null} */
+          gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+          background?: string | undefined;
+          quality?: number | undefined;
+          /** @enum {string|null} */
+          format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+          dpr?: number | undefined;
+          rotate?: number | undefined;
+          sharpen?: number | undefined;
+        }
+      | undefined;
     'a-paypal.entity.paypalRecord': {
       /**
        * Format: date-time
@@ -2122,7 +2257,7 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+    'test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
            * Format: date-time
@@ -3160,7 +3295,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
           };
         };
       };
@@ -3307,7 +3442,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
           };
         };
       };
@@ -3476,6 +3611,92 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_createDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageDirectUploadRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageDirectUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_uploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadUrlRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_delivery: {
+    parameters: {
+      query?: {
+        variantName?: string | undefined;
+        transformOptions?: components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+        token?: string | undefined;
+      };
+      header?: never;
+      path: {
+        imageId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };
@@ -3718,7 +3939,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+            data?: components['schemas']['test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
           };
         };
       };
