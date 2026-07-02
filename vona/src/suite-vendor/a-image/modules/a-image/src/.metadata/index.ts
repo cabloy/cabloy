@@ -362,8 +362,11 @@ declare module 'vona-module-a-web' {
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
 /** config: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -372,6 +375,7 @@ export class ScopeModuleAImage extends BeanScopeBase {}
 export interface ScopeModuleAImage {
   util: BeanScopeUtil;
 config: TypeModuleConfig<typeof config>;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 model: IModuleModel;
 redlock: MetaRedlock;
@@ -391,7 +395,9 @@ declare module 'vona' {
     'a-image': ReturnType<typeof config>;
   }
 
-  
+  export interface IBeanScopeLocale {
+    'a-image': (typeof locales)[TypeLocaleBase];
+  }
 
   
 }
