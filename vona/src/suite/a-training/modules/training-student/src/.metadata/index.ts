@@ -86,7 +86,7 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-training-student' {
   export interface IModelOptionsStudent {
         relations: {
-          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'description', undefined, undefined, undefined>;
+          trainingRecords: IModelRelationHasMany<'training-record:record', 'studentId', false, 'id'|'name'|'subjectCount'|'totalScore'|'averageScore'|'trainingTime'|'sceneImageIds'|'description', undefined, undefined, undefined>;
         };
       }
   export interface ModelStudent {
@@ -397,6 +397,32 @@ declare module 'vona-module-training-student' {
           } 
 }
 /** ssrMenu: end */
+/** imageScene: begin */
+export * from '../bean/imageScene.studentImage.ts';
+
+import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
+declare module 'vona-module-a-image' {
+  
+    export interface IImageSceneRecord {
+      'training-student:studentImage': IDecoratorImageSceneOptions;
+    }
+
+  
+}
+declare module 'vona-module-training-student' {
+  
+        export interface ImageSceneStudentImage {
+          /** @internal */
+          get scope(): ScopeModuleTrainingStudent;
+        }
+
+          export interface ImageSceneStudentImage {
+            get $beanFullName(): 'training-student.imageScene.studentImage';
+            get $onionName(): 'training-student:studentImage';
+            get $onionOptions(): IDecoratorImageSceneOptions;
+          } 
+}
+/** imageScene: end */
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */

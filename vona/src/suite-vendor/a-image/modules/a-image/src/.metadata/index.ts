@@ -257,6 +257,32 @@ declare module 'vona-module-a-image' {
 /** meta redlock: begin */
 import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
+/** serializerTransform: begin */
+export * from '../bean/serializerTransform.resolveView.ts';
+import type { ISerializerTransformOptionsResolveView } from '../bean/serializerTransform.resolveView.ts';
+import 'vona-module-a-serialization';
+declare module 'vona-module-a-serialization' {
+  
+    export interface ISerializerTransformRecord {
+      'a-image:resolveView': ISerializerTransformOptionsResolveView;
+    }
+
+  
+}
+declare module 'vona-module-a-image' {
+  
+        export interface SerializerTransformResolveView {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface SerializerTransformResolveView {
+            get $beanFullName(): 'a-image.serializerTransform.resolveView';
+            get $onionName(): 'a-image:resolveView';
+            get $onionOptions(): ISerializerTransformOptionsResolveView;
+          } 
+}
+/** serializerTransform: end */
 /** dto: begin */
 export * from '../dto/imageTransformOptions.tsx';
 export * from '../dto/imageUploadResponse.ts';
