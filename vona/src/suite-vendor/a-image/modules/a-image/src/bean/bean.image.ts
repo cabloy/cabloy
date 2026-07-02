@@ -134,10 +134,11 @@ export class BeanImage extends BeanBase {
   }
 
   async resolveView(
-    imageId: TableIdentity,
+    imageId?: TableIdentity,
     request?: TypeImageVariantInput,
     imageScene?: keyof IImageSceneRecord,
   ): Promise<IImageView | undefined> {
+    if (!imageId) return;
     const image = await this.get(imageId);
     if (!image) return;
     if (imageScene && image.imageScene !== imageScene) {
@@ -158,11 +159,12 @@ export class BeanImage extends BeanBase {
   }
 
   async resolveViews(
-    imageIds: TableIdentity[] | undefined,
+    imageIds?: TableIdentity[],
     request?: TypeImageVariantInput,
     imageScene?: keyof IImageSceneRecord,
   ) {
-    if (!imageIds?.length) return [];
+    if (!imageIds) return;
+    if (!imageIds.length) return [];
     const items = await Promise.all(
       imageIds.map(imageId => this.resolveView(imageId, request, imageScene)),
     );

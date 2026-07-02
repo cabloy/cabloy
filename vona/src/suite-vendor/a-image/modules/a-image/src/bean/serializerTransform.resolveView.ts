@@ -35,8 +35,10 @@ export class SerializerTransformResolveView
     data: TypeSerializerTransformResolveViewData,
     options: ISerializerTransformOptionsResolveView,
   ): Promise<TypeSerializerTransformResolveViewResult> {
-    return data[options.fieldName]
-      ? await this.bean.image.resolveView(data[options.fieldName], undefined, options.imageScene)
-      : undefined;
+    return await this.bean.image.resolveView(
+      data[options.fieldName],
+      undefined,
+      options.imageScene,
+    );
   }
 }
