@@ -259,17 +259,20 @@ import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
 /** dto: begin */
 export * from '../dto/imageUploadResponse.ts';
-export * from '../dto/imageUploadToken.ts';
+export * from '../dto/imageUploadTokenRequest.ts';
+export * from '../dto/imageUploadTokenResponse.ts';
 export * from '../dto/imageView.ts';
 import type { IDtoOptionsImageUploadResponse } from '../dto/imageUploadResponse.ts';
-import type { IDtoOptionsImageUploadTokenRequest } from '../dto/imageUploadToken.ts';
+import type { IDtoOptionsImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
+import type { IDtoOptionsImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
 import type { IDtoOptionsImageView } from '../dto/imageView.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
   
     export interface IDtoRecord {
       'a-image:imageUploadResponse': IDtoOptionsImageUploadResponse;
-'a-image:imageUploadToken': IDtoOptionsImageUploadTokenRequest;
+'a-image:imageUploadTokenRequest': IDtoOptionsImageUploadTokenRequest;
+'a-image:imageUploadTokenResponse': IDtoOptionsImageUploadTokenResponse;
 'a-image:imageView': IDtoOptionsImageView;
     }
 
@@ -281,7 +284,8 @@ declare module 'vona-module-a-image' {
 /** dto: end */
 /** dto: begin */
 import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
-import type { DtoImageUploadToken } from '../dto/imageUploadToken.ts';
+import type { DtoImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
+import type { DtoImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
 import type { DtoImageView } from '../dto/imageView.ts';
 declare module 'vona-module-a-image' {
   
@@ -289,8 +293,12 @@ declare module 'vona-module-a-image' {
       fields?: TypeEntityOptionsFields<DtoImageUploadResponse, IDtoOptionsImageUploadResponse[TypeSymbolKeyFieldsMore]>;
     }
 
-    export interface IDtoOptionsImageUploadToken {
-      fields?: TypeEntityOptionsFields<DtoImageUploadToken, IDtoOptionsImageUploadToken[TypeSymbolKeyFieldsMore]>;
+    export interface IDtoOptionsImageUploadTokenRequest {
+      fields?: TypeEntityOptionsFields<DtoImageUploadTokenRequest, IDtoOptionsImageUploadTokenRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageUploadTokenResponse {
+      fields?: TypeEntityOptionsFields<DtoImageUploadTokenResponse, IDtoOptionsImageUploadTokenResponse[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsImageView {

@@ -7,7 +7,6 @@ import z from 'zod';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 export interface IDtoOptionsImageUploadTokenRequest extends IDecoratorDtoOptions {}
-export interface IDtoOptionsImageUploadTokenResponse extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsImageUploadTokenRequest>()
 export class DtoImageUploadTokenRequest {
@@ -19,10 +18,4 @@ export class DtoImageUploadTokenRequest {
 
   @Api.field(z.string())
   mimeType: string;
-}
-
-@Dto<IDtoOptionsImageUploadTokenResponse>()
-export class DtoImageUploadTokenResponse {
-  @Api.field(z.string())
-  token: string;
 }

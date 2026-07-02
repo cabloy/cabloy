@@ -7,14 +7,11 @@ import { Core } from 'vona-module-a-core';
 import { Api } from 'vona-module-a-openapiutils';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
+import type { DtoImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
 import type { IImageUploadTokenPayload } from '../types/image.ts';
 
-import { BeanImageUploadPolicy } from '../bean/bean.imageUploadPolicy.ts';
 import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
-import {
-  DtoImageUploadTokenRequest,
-  DtoImageUploadTokenResponse,
-} from '../dto/imageUploadToken.ts';
+import { DtoImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
 
 export interface IControllerOptionsImage extends IDecoratorControllerOptions {}
 
@@ -23,7 +20,7 @@ export class ControllerImage extends BeanBase {
   @Web.post('upload-token')
   @Api.body(DtoImageUploadTokenResponse)
   async createUploadToken(@Arg.body() data: DtoImageUploadTokenRequest) {
-    return await this._getBeanImageUploadPolicy().createUploadToken(data);
+    return await this.bean.imageUploadPolicy.createUploadToken(data);
   }
 
   @Web.post('upload')
@@ -31,7 +28,7 @@ export class ControllerImage extends BeanBase {
   @Api.body(DtoImageUploadResponse)
   @Api.contentType('application/json')
   async upload(@Arg.field('token') token: string, @Arg.file('image') file: IUploadFile) {
-    const payload = await this._getBeanImageUploadPolicy().verifyUploadToken(
+    const payload = await this.bean.imageUploadPolicy.verifyUploadToken(
       token,
       this.ctx.route.routePathRaw,
     );
@@ -53,10 +50,6 @@ export class ControllerImage extends BeanBase {
       ...image,
       url: await this.bean.image.getVariantUrl(image.id),
     };
-  }
-
-  private _getBeanImageUploadPolicy() {
-    return this.bean._getBean(BeanImageUploadPolicy as any) as BeanImageUploadPolicy;
   }
 
   private async _validateUploadFile(file: IUploadFile, payload: IImageUploadTokenPayload) {

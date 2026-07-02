@@ -56,8 +56,8 @@ export class DtoImageUploadResponse {
   @Api.field(v.optional(), z.record(z.string(), ImageTransformOptionsSchema))
   variants?: IImageNamedVariants;
 
-  @Api.field(v.optional())
-  imageScene?: keyof IImageSceneRecord | string;
+  @Api.field(v.optional(), z.string())
+  imageScene?: keyof IImageSceneRecord;
 
   @Api.field(v.optional())
   uploadedAt?: Date;
