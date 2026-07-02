@@ -41,12 +41,9 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
   @Api.field(
     ZovaRender.visible(false),
     v.optional(),
-    v.serializerCustom(function (_value, data: DtoDetailRecordBase) {
-      return this.bean.image.resolveViews(
-        data.sceneImageIds,
-        undefined,
-        'training-record:sceneImage',
-      );
+    v.serializerTransform('a-image:resolveViews', {
+      fieldName: 'sceneImageIds',
+      imageScene: 'training-record:sceneImage',
     }),
     v.array($Class.partial(DtoImageView)),
   )
