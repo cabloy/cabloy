@@ -48,6 +48,9 @@
     "dependencies": {
       "a-image": "5.0.0"
     },
+    "globalDependencies": {
+      "sharp": true
+    },
     "bundle": {
       "replaces": [
         [
