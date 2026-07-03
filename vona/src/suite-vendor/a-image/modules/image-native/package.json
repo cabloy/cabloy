@@ -55,7 +55,7 @@
       "replaces": [
         [
           "sharp = require(`../src/build/Release/sharp-${runtimePlatform}-${version}.node`);",
-          "sharp = globalThis.__app__.utils.requireAddon('sharp');"
+          "sharp = globalThis.__app__.util.requireAddon('sharp');"
         ]
       ]
     }
