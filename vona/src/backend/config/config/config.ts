@@ -149,7 +149,8 @@ export default async function (app: VonaApplication) {
         connection: {
           filename: env.DATABASE_CLIENT_SQLITE3_FILENAME || getSqlite3DatabaseNameDefault(app),
           options: {
-            nativeBinding: app.util.requireAddon('sqlite3'),
+            nativeBinding:
+              process.env.META_MODE === 'prod' ? app.util.requireAddon('sqlite3') : undefined,
           },
         },
       },
