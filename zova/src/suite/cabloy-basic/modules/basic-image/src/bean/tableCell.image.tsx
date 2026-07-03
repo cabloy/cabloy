@@ -7,7 +7,7 @@ import type {
 } from 'zova-module-a-table';
 
 import { classes } from 'typestyle';
-import { reactive } from 'vue';
+import { nextTick, reactive } from 'vue';
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
@@ -60,21 +60,26 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     const item = preview.item;
     const previewUrl = item ? this._resolvePreviewUrl(item.url) : undefined;
     if (!item || !previewUrl) return item?.filename ?? value;
+    const previewTitle = this._getPreviewTitle(renderContext, preview);
     const imageNode = this._renderPreviewImage(options, item, previewUrl);
     const contentNode = this._renderPreviewWithBadge(imageNode, preview.count);
-    return this._renderPreviewTrigger(contentNode, preview);
+    return this._renderPreviewTrigger(contentNode, preview, previewTitle);
   }
 
-  private _renderPreviewTrigger(contentNode: VNode, preview: IImagePreviewSummary): VNode {
+  private _renderPreviewTrigger(
+    contentNode: VNode,
+    preview: IImagePreviewSummary,
+    previewTitle: string,
+  ): VNode {
     return (
       <button
         type="button"
         class="group inline-flex min-w-0 cursor-zoom-in items-center gap-2 rounded-box border-0 bg-transparent p-0 text-left align-middle"
-        title={this._getPreviewTitle(preview)}
+        title={previewTitle}
         onClick={event => {
           event.preventDefault();
           event.stopPropagation();
-          this._openPreviewDialog(preview);
+          this._openPreviewDialog(preview, previewTitle);
         }}
       >
         {contentNode}
@@ -158,7 +163,9 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
           const isNewElement = this.previewDialogBodyRef !== element;
           this.previewDialogBodyRef = element;
           if (isNewElement) {
-            element.focus();
+            nextTick(() => {
+              element.focus();
+            });
           }
         }}
         class="space-y-4 focus:outline-none"
