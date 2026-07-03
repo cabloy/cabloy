@@ -25,6 +25,17 @@ export function resolveImagePreviewUrl(url: string | undefined, baseURL?: string
   return `${baseURL.replace(/\/$/, '')}${url}`;
 }
 
+export function buildImagePreviewTitle(
+  fieldTitle: string | undefined,
+  count: number,
+  fallbackTitle: string | (() => string),
+) {
+  const normalizedTitle =
+    fieldTitle ?? (typeof fallbackTitle === 'function' ? fallbackTitle() : fallbackTitle);
+  if (count <= 1) return normalizedTitle;
+  return `${normalizedTitle}（${count}）`;
+}
+
 export function summarizeImageRelationPreviewValue(value: unknown): {
   count: number;
   item?: IImagePreviewItem;

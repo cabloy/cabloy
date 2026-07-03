@@ -13,6 +13,7 @@ import { TableCell } from 'zova-module-a-table';
 import type { IImagePreviewItem } from '../lib/index.js';
 
 import {
+  buildImagePreviewTitle,
   collectImageRelationPreviewItems,
   collectImageUrlPreviewItems,
   inferImageRelationName,
@@ -142,17 +143,13 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     renderContext: IJsxRenderContextTableCell,
     preview: IImagePreviewSummary,
   ) {
-    const fieldTitle = this._getPreviewFieldTitle(renderContext);
-    if (preview.count <= 1) return fieldTitle;
-    return `${fieldTitle}（${preview.count}）`;
+    return buildImagePreviewTitle(this._getPreviewFieldTitle(renderContext), preview.count, () =>
+      this.scope.locale.PreviewImage(),
+    );
   }
 
   private _getPreviewFieldTitle(renderContext: IJsxRenderContextTableCell) {
-    return (
-      renderContext.$celScope.property?.title ??
-      renderContext.$celScope.name ??
-      this.scope.locale.PreviewImage()
-    );
+    return renderContext.$celScope.property?.title ?? renderContext.$celScope.name;
   }
 
   private _resolvePreviewSummary(

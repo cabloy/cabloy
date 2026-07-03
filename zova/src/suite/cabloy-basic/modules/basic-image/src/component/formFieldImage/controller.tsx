@@ -8,8 +8,9 @@ import { classes } from 'typestyle';
 import { CircleStencil, Cropper, RectangleStencil } from 'vue-advanced-cropper';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
+import { ZFormField } from 'zova-module-a-form';
 import {
+  buildImagePreviewTitle,
   inferImageRelationName,
   openImagePreviewDialog,
   resolveImagePreviewUrl,
@@ -182,20 +183,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private _renderReadonlyPreset() {
-    const value = this._normalizeOutputValue(this.$props.value);
-    if (!value.displayValue) {
-      return (
-        <ZFormFieldPreset
-          {...this.$props}
-          render="basic-input:formFieldInput"
-          options={{ value: this.scope.locale.NoImageSelected() }}
-        ></ZFormFieldPreset>
-      );
-    }
     return (
       <ZFormField
         {...this.$props}
         slotDefault={({ propsBucket, props }) => {
+          this.currentValue = propsBucket.value as any;
+          this.currentOptions = propsBucket.options ?? {};
           const items = this._getPreviewItems(propsBucket.value);
           return <div class={props.class}>{this._renderReadonlyItems(items)}</div>;
         }}
@@ -401,6 +394,9 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     const multiple = !!this.currentOptions?.multiple;
     const imageIds = this._normalizeValueToImageIds(value, multiple);
     const relationMap = this._getRelationPreviewMap();
+    if (imageIds.length === 0) {
+      return Object.values(relationMap);
+    }
     return imageIds.map(imageId => {
       const key = String(imageId);
       return this.uploadedPreviewMap[key] ?? relationMap[key] ?? { id: imageId };
@@ -432,14 +428,6 @@ export class ControllerFormFieldImage extends BeanControllerBase {
 
   private _getRelationName() {
     return inferImageRelationName(this.$props.name, this.currentOptions.relationName);
-  }
-
-  private _normalizeOutputValue(value: unknown) {
-    const imageIds = this._normalizeValueToImageIds(value, !!this.currentOptions?.multiple);
-    return {
-      imageIds,
-      displayValue: imageIds.map(item => String(item)).join(', '),
-    };
   }
 
   private _normalizeValueToImageIds(value: unknown, multiple: boolean): TableIdentity[] {
@@ -760,11 +748,21 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     const initialIndex = previewItems.findIndex(({ index }) => index === currentIndex);
     openImagePreviewDialog({
       appModal: this.$appModal,
-      title: this.scope.locale.PreviewImage(),
+      title: this._getPreviewDialogTitle(previewItems.length),
       items: previewItems.map(({ item }) => item),
       initialIndex: initialIndex === -1 ? 0 : initialIndex,
       baseURL: this.sys.config.api.baseURL,
     });
+  }
+
+  private _getPreviewDialogTitle(count: number) {
+    return buildImagePreviewTitle(
+      this.$$renderContext.$celScope.property?.title ??
+        this.$$renderContext.$celScope.name ??
+        this.$props.name,
+      count,
+      () => this.scope.locale.PreviewImage(),
+    );
   }
 
   private _resolvePreviewUrl(url: string) {
