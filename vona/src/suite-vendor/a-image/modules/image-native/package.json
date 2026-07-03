@@ -47,6 +47,14 @@
   "vonaModule": {
     "dependencies": {
       "a-image": "5.0.0"
+    },
+    "bundle": {
+      "replaces": [
+        [
+          "sharp = require(`../src/build/Release/sharp-${runtimePlatform}-${version}.node`);",
+          "sharp = globalThis.__app__;"
+        ]
+      ]
     }
   }
 }

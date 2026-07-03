@@ -93,7 +93,7 @@ export class CliBinBuild extends BeanCliBase {
     const { env, modulesMeta } = await generateVonaMeta(configMeta, configOptions);
     const outDir = path.join(projectPath, getOutDir());
     await rimraf(outDir);
-    await this._rollup(projectPath, env, outDir);
+    await this._rollup(projectPath, env, modulesMeta, outDir);
     await this._assets(projectPath, modulesMeta, outDir);
     // custom
     await this._custom(projectPath, env, outDir);
@@ -156,7 +156,12 @@ export class CliBinBuild extends BeanCliBase {
     await rimraf(`${assetsPath}/**/.DS_Store`, { glob: true });
   }
 
-  async _rollup(projectPath: string, env: NodeJS.ProcessEnv, outDir: string) {
+  async _rollup(
+    projectPath: string,
+    env: NodeJS.ProcessEnv,
+    modulesMeta: Awaited<ReturnType<typeof glob>>,
+    outDir: string,
+  ) {
     const aliasEntries: aliasImport.Alias[] = [];
     const dialectDrivers = (process.env.BUILD_DIALECT_DRIVERS || '').split(',');
     for (const name of __dialectDriversAll) {
@@ -167,6 +172,14 @@ export class CliBinBuild extends BeanCliBase {
     const sourceMap = process.env.BUILD_SOURCEMAP === 'true';
 
     const replaceValues = generateConfigDefine(env, ['NODE_ENV', 'META_MODE', 'META_FLAVOR']);
+    for (const relativeName in modulesMeta.modules) {
+      const module = modulesMeta.modules[relativeName];
+      const replacesModule = module.package.vonaModule?.bundle?.replaces;
+      if (!replacesModule) continue;
+      for (const replaceModule of replacesModule) {
+        replaceValues[replaceModule[0]] = replaceModule[1];
+      }
+    }
 
     const babelPluginVonaBeanModule = getAbsolutePathOfModule('babel-plugin-vona-bean-module', '');
     const babelPluginTransformTypescriptMetadata = getAbsolutePathOfModule(
