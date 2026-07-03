@@ -34,8 +34,8 @@ importers:
         specifier: ^1.1.24
         version: link:packages-utils/logger
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@cabloy/utils':
         specifier: ^2.1.25
         version: 2.1.25
@@ -426,8 +426,8 @@ importers:
         specifier: ^3.2.8
         version: 3.2.8
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@cabloy/openapi-typescript':
         specifier: ^7.9.2
         version: 7.9.2(typescript@5.9.3)
@@ -523,8 +523,8 @@ importers:
         specifier: ^7.29.0
         version: 7.29.7
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@cabloy/word-utils':
         specifier: ^2.1.14
         version: link:../word-utils
@@ -551,8 +551,8 @@ importers:
         specifier: ^7.29.0
         version: 7.29.7
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
     devDependencies:
       '@types/babel__core':
         specifier: ^7.20.5
@@ -576,8 +576,8 @@ importers:
         specifier: ^7.29.0
         version: 7.29.7
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       html-tags:
         specifier: ^3.3.1
         version: 3.3.1
@@ -607,8 +607,8 @@ importers:
         specifier: ^7.29.0
         version: 7.29.7
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
     devDependencies:
       '@types/babel__core':
         specifier: ^7.20.5
@@ -719,8 +719,8 @@ importers:
         specifier: ^5.3.16
         version: 5.3.16
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@cabloy/vite-plugin-babel':
         specifier: ^1.3.3
         version: 1.3.3(@babel/core@7.29.7)(vite@8.1.0(@types/node@22.20.0)(esbuild@0.25.12)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))
@@ -847,8 +847,8 @@ importers:
         specifier: ^1.1.24
         version: link:../../packages-utils/logger
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@cabloy/utils':
         specifier: ^2.1.25
         version: 2.1.25
@@ -1325,8 +1325,8 @@ importers:
         specifier: ^1.1.9
         version: 1.1.9
       '@cabloy/module-info':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@cabloy/utils':
         specifier: ^2.1.25
         version: 2.1.25
@@ -2014,8 +2014,8 @@ packages:
   '@cabloy/module-glob@5.3.16':
     resolution: {integrity: sha512-+fkKjX01Fgug5i5edHRbcMyLNQSP/atWCnybhfhH/NOgpaw29JxmuUpeNuggmuT4MeDIiPpBE4UKoAGCeKIizQ==}
 
-  '@cabloy/module-info@2.0.0':
-    resolution: {integrity: sha512-ArN0/Ei4LH2LklWB2fy4+DVvli56A0m4mZPnKnQYoXEfkMtXChxbNDm6DZScY57lfTSyx7ZfGTgNVEbxF6VwYg==}
+  '@cabloy/module-info@2.0.1':
+    resolution: {integrity: sha512-viMBTOCXcmFbJAVNumo0Cs/3qHbgNzmaRPvHuA1z0tQm2jEhl/JN+gT8hXfauNbkBQr90Z3AjjYRe3ABBDuUdA==}
 
   '@cabloy/openapi-typescript@7.9.2':
     resolution: {integrity: sha512-ftV2wtrEUkYX6qTwP5DGMox8uMpQ5zjsWIbxCeYCDMstyTTzKDf/SS72wiWF8HqnwrpnMYz6KiC4erRkAv/6BQ==}
@@ -8227,7 +8227,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.7
       '@cabloy/module-glob': 5.3.16
-      '@cabloy/module-info': 2.0.0
+      '@cabloy/module-info': 2.0.1
       '@cabloy/process-helper': 3.1.8
       '@cabloy/utils': 2.1.25
       '@cabloy/word-utils': link:packages-utils/word-utils
@@ -8305,7 +8305,7 @@ snapshots:
 
   '@cabloy/module-glob@5.3.16':
     dependencies:
-      '@cabloy/module-info': 2.0.0
+      '@cabloy/module-info': 2.0.1
       '@cabloy/utils': 2.1.25
       boxen: 4.2.0
       chalk: 3.0.0
@@ -8313,7 +8313,7 @@ snapshots:
       globby: 16.2.0
       semver: 7.8.5
 
-  '@cabloy/module-info@2.0.0': {}
+  '@cabloy/module-info@2.0.1': {}
 
   '@cabloy/openapi-typescript@7.9.2(typescript@5.9.3)':
     dependencies:
@@ -8402,7 +8402,7 @@ snapshots:
 
   '@cabloy/utils@2.1.25':
     dependencies:
-      '@cabloy/module-info': 2.0.0
+      '@cabloy/module-info': 2.0.1
       '@cabloy/word-utils': link:packages-utils/word-utils
       '@marcbachmann/cel-js': 7.6.1
       object-hash: 3.0.0
@@ -13163,7 +13163,7 @@ snapshots:
 
   quasar-app-extension-zova@1.3.1(@cabloy/vue-router@4.4.16(vue@3.5.38(typescript@5.9.3)))(@types/node@22.20.0)(eslint@10.5.0(jiti@2.7.0))(jiti@2.7.0)(quasar@2.20.1)(rolldown@1.1.3)(sass-embedded@1.100.0)(sass@1.101.0)(terser@5.48.0)(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))(yaml@2.9.0):
     dependencies:
-      '@cabloy/module-info': 2.0.0
+      '@cabloy/module-info': 2.0.1
       '@quasar/app-vite': '@cabloy/quasar-app-vite@2.5.10(@cabloy/vue-router@4.4.16(vue@3.5.38(typescript@5.9.3)))(@types/node@22.20.0)(eslint@10.5.0(jiti@2.7.0))(jiti@2.7.0)(quasar@2.20.1)(rolldown@1.1.3)(sass@1.101.0)(terser@5.48.0)(typescript@5.9.3)(vue@3.5.38(typescript@5.9.3))(yaml@2.9.0)'
       chalk: 3.0.0
       esbuild: 0.25.12
