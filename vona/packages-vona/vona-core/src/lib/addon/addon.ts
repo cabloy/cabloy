@@ -1,4 +1,5 @@
 import fse from 'fs-extra';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
 import { resolverSharp } from './sharp.ts';
@@ -42,6 +43,13 @@ export async function copyAddon({
     const fileDest = path.join(outDir, 'addon', addonName, `${platformArch}.node`);
     await fse.copy(addonFile, fileDest);
   }
+}
+
+export function requireAddon(addonName: string) {
+  const platformArch = getPlatformArch();
+  const addonFile = path.join(import.meta.dirname, 'addon', addonName, `${platformArch}.node`);
+  const require = createRequire(import.meta.url);
+  return require(addonFile);
 }
 
 function _resolverAddonFile(

@@ -30,6 +30,7 @@ import type { IBeanSceneRecord } from '../decorator/interface/beanOptions.ts';
 import type { ZodLocaleErrors } from './zod-enhance.ts';
 
 import { cast } from '../../types/index.ts';
+import { requireAddon } from '../addon/addon.ts';
 import { BeanSimple } from '../bean/beanSimple.ts';
 import { zodSetLocaleErrors } from './zod-enhance.ts';
 
@@ -305,6 +306,10 @@ export class AppUtil extends BeanSimple {
 
   setLocaleErrors(localeErrors: ZodLocaleErrors, localeDefault?: string) {
     return zodSetLocaleErrors(this.app, localeErrors, localeDefault);
+  }
+
+  requireAddon(addonName: string) {
+    return requireAddon(addonName);
   }
 }
 
