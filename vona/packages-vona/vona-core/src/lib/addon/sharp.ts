@@ -8,8 +8,10 @@ import { pathToHref } from '../utils/util.ts';
 export function resolverSharp(projectPath: string) {
   // src
   const require = createRequire(pathToHref(path.join(projectPath, '/')));
-  const modulePath = require.resolve(`@img/sharp-${getPlatformArch()}/package`);
-  const moduleDir = path.extname(modulePath) ? path.dirname(modulePath) : modulePath;
+  const sharpPath = require.resolve('sharp');
+  const requireSharp = createRequire(pathToHref(sharpPath));
+  const modulePath = requireSharp.resolve(`@img/sharp-${getPlatformArch()}/sharp.node`);
+  const moduleDir = path.dirname(modulePath);
   const libPath = path.join(moduleDir, 'lib');
   const fileName = fs.readdirSync(libPath).find(item => item.endsWith('.node'));
   if (!fileName) {
