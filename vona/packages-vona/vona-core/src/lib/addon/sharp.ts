@@ -11,8 +11,7 @@ export function resolverSharp(projectPath: string) {
   const sharpPath = require.resolve('sharp');
   const requireSharp = createRequire(pathToHref(sharpPath));
   const modulePath = requireSharp.resolve(`@img/sharp-${getPlatformArch()}/sharp.node`);
-  const moduleDir = path.dirname(modulePath);
-  const libPath = path.join(moduleDir, 'lib');
+  const libPath = path.join(path.dirname(modulePath), 'lib');
   const fileName = fs.readdirSync(libPath).find(item => item.endsWith('.node'));
   if (!fileName) {
     throw new Error(`Sharp native binding not found: ${libPath}`);
