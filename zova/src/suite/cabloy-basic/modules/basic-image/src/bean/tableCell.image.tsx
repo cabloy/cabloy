@@ -1,3 +1,4 @@
+import type { VNode } from 'vue';
 import type { IResourceTableCellOptionsBase } from 'zova-module-a-openapi';
 import type {
   IJsxRenderContextTableCell,
@@ -21,6 +22,16 @@ export interface ITableCellOptionsImage extends IResourceTableCellOptionsBase {
   relationName?: string;
 }
 
+interface IImagePreviewItem {
+  url: string;
+  filename?: string;
+}
+
+interface IImagePreviewSummary {
+  count: number;
+  item?: IImagePreviewItem;
+}
+
 @TableCell<ITableCellOptionsImage>({
   size: 40,
   fit: 'cover',
@@ -31,9 +42,32 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     renderContext: IJsxRenderContextTableCell,
     next: NextTableCellRender,
   ) {
-    const item = this._resolvePreviewItem(options, renderContext, next());
-    const previewUrl = item?.url ? this._resolvePreviewUrl(item.url) : undefined;
-    if (!previewUrl) return item?.filename ?? next();
+    const value = next();
+    const preview = this._resolvePreviewSummary(options, renderContext, value);
+    const item = preview.item;
+    const previewUrl = item ? this._resolvePreviewUrl(item.url) : undefined;
+    if (!previewUrl) return item?.filename ?? value;
+    const imageNode = this._renderPreviewImage(options, item!, previewUrl);
+    return this._renderPreviewWithBadge(imageNode, preview.count);
+  }
+
+  private _renderPreviewWithBadge(imageNode: VNode, count: number): VNode {
+    if (count <= 1) return imageNode;
+    return (
+      <div class="flex items-center gap-2 min-w-0">
+        {imageNode}
+        <span class="badge badge-sm font-medium border-0 whitespace-nowrap px-2 badge-neutral text-neutral-content">
+          +{count - 1}
+        </span>
+      </div>
+    );
+  }
+
+  private _renderPreviewImage(
+    options: ITableCellOptionsImage,
+    item: IImagePreviewItem,
+    previewUrl: string,
+  ): VNode {
     const size = options.size ?? 40;
     const style = {
       ...(options.style as any),
@@ -49,36 +83,43 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
           class="h-full w-full object-cover"
           style={{ objectFit: options.fit ?? 'cover' }}
           src={previewUrl}
-          alt={item?.filename ?? 'image'}
+          alt={item.filename ?? 'image'}
         />
       </div>
     );
   }
 
-  private _resolvePreviewItem(
+  private _resolvePreviewSummary(
     options: ITableCellOptionsImage,
     renderContext: IJsxRenderContextTableCell,
     value: unknown,
-  ) {
-    const relationItem = this._getRelationPreviewItem(options, renderContext);
-    if (relationItem) return relationItem;
-    const url = this._normalizeUrl(value);
-    if (!url) return undefined;
-    return { url };
+  ): IImagePreviewSummary {
+    const relationPreview = this._getRelationPreviewSummary(options, renderContext);
+    if (relationPreview.count) return relationPreview;
+    return this._normalizeUrlPreview(value);
   }
 
-  private _getRelationPreviewItem(
+  private _getRelationPreviewSummary(
     options: ITableCellOptionsImage,
     renderContext: IJsxRenderContextTableCell,
-  ) {
+  ): IImagePreviewSummary {
     const relationName = this._getRelationName(options, renderContext.$celScope.name);
-    if (!relationName) return undefined;
+    if (!relationName) return { count: 0 };
     const relationValue = renderContext.cellContext.row.original[relationName];
-    const relationItem = Array.isArray(relationValue)
-      ? relationValue.find(item => !!item?.url)
-      : relationValue;
-    if (!relationItem?.url) return undefined;
-    return relationItem;
+    if (Array.isArray(relationValue)) return this._summarizeRelationItems(relationValue);
+    if (!relationValue?.url) return { count: 0 };
+    return { count: 1, item: relationValue };
+  }
+
+  private _summarizeRelationItems(relationItems: IImagePreviewItem[]): IImagePreviewSummary {
+    let item: IImagePreviewItem | undefined;
+    let count = 0;
+    for (const relationItem of relationItems) {
+      if (!relationItem?.url) continue;
+      item ??= relationItem;
+      count++;
+    }
+    return { count, item };
   }
 
   private _getRelationName(options: ITableCellOptionsImage, fieldName: string) {
@@ -92,12 +133,18 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     return undefined;
   }
 
-  private _normalizeUrl(value: unknown) {
-    if (Array.isArray(value)) {
-      return value.some(item => !!item) ? String(value.find(item => !!item)) : undefined;
+  private _normalizeUrlPreview(value: unknown): IImagePreviewSummary {
+    if (!Array.isArray(value)) {
+      return value ? { count: 1, item: { url: String(value) } } : { count: 0 };
     }
-    if (!value) return undefined;
-    return String(value);
+    let item: IImagePreviewItem | undefined;
+    let count = 0;
+    for (const valueItem of value) {
+      if (!valueItem) continue;
+      item ??= { url: String(valueItem) };
+      count++;
+    }
+    return { count, item };
   }
 
   private _resolvePreviewUrl(url: string) {

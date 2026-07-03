@@ -538,7 +538,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
               return (
                 <ClientOnly>
                   <div class="space-y-4">
-                    <div class="h-[420px] overflow-hidden rounded-box bg-base-200">
+                    <div class="h-105 overflow-hidden rounded-box bg-base-200">
                       <Cropper
                         ref={ref => {
                           cropperRef = ref as any;
