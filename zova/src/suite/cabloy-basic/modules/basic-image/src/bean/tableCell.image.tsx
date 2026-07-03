@@ -39,11 +39,17 @@ interface IImagePreviewSummary {
   source: IImagePreviewSource;
 }
 
+interface IImagePreviewDialogState {
+  activeIndex: number;
+}
+
 @TableCell<ITableCellOptionsImage>({
   size: 40,
   fit: 'cover',
 })
 export class TableCellImage extends BeanBase implements ITableCellRender {
+  private previewDialogBodyRef: HTMLElement | undefined;
+
   render(
     options: ITableCellOptionsImage,
     renderContext: IJsxRenderContextTableCell,
@@ -120,7 +126,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
   private _openPreviewDialog(preview: IImagePreviewSummary) {
     const items = this._resolveDialogItems(preview);
     if (items.length === 0) return;
-    const dialogState = reactive({
+    const dialogState = reactive<IImagePreviewDialogState>({
       activeIndex: 0,
     });
     this.$appModal.dialog(
@@ -140,12 +146,27 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
 
   private _renderPreviewDialogBody(
     items: IImagePreviewItem[],
-    dialogState: { activeIndex: number },
+    dialogState: IImagePreviewDialogState,
   ): VNode {
     const leadItem = items[dialogState.activeIndex] ?? items[0];
     const leadPreviewUrl = leadItem ? this._resolvePreviewUrl(leadItem.url) : undefined;
     return (
-      <div class="space-y-4">
+      <div
+        ref={ref => {
+          const element = ref as HTMLElement | null;
+          if (!element) return;
+          const isNewElement = this.previewDialogBodyRef !== element;
+          this.previewDialogBodyRef = element;
+          if (isNewElement) {
+            element.focus();
+          }
+        }}
+        class="space-y-4 focus:outline-none"
+        tabindex={0}
+        onKeydown={event => {
+          this._handlePreviewDialogKeydown(event, items, dialogState);
+        }}
+      >
         {leadPreviewUrl && (
           <div class="overflow-hidden rounded-box bg-base-200 p-2">
             <img
@@ -155,8 +176,17 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
             />
           </div>
         )}
-        {!!leadItem?.filename && (
-          <div class="text-sm font-medium text-base-content/70">{leadItem.filename}</div>
+        {(!!leadItem?.filename || items.length > 1) && (
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0 text-sm font-medium text-base-content/70">
+              {!!leadItem?.filename && <div class="truncate">{leadItem.filename}</div>}
+            </div>
+            {items.length > 1 && (
+              <div class="shrink-0 text-sm font-medium text-base-content/60">
+                {this._getPreviewCounterText(items.length, dialogState.activeIndex)}
+              </div>
+            )}
+          </div>
         )}
         {items.length > 1 && (
           <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -178,7 +208,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     item: IImagePreviewItem,
     index: number,
     active: boolean,
-    dialogState: { activeIndex: number },
+    dialogState: IImagePreviewDialogState,
   ): VNode {
     const previewUrl = this._resolvePreviewUrl(item.url);
     return (
@@ -208,6 +238,35 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
         )}
       </button>
     );
+  }
+
+  private _handlePreviewDialogKeydown(
+    event: KeyboardEvent,
+    items: IImagePreviewItem[],
+    dialogState: IImagePreviewDialogState,
+  ) {
+    if (items.length <= 1) return;
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      this._movePreviewDialogSelection(items.length, dialogState, -1);
+      return;
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      this._movePreviewDialogSelection(items.length, dialogState, 1);
+    }
+  }
+
+  private _movePreviewDialogSelection(
+    count: number,
+    dialogState: IImagePreviewDialogState,
+    step: number,
+  ) {
+    dialogState.activeIndex = (dialogState.activeIndex + step + count) % count;
+  }
+
+  private _getPreviewCounterText(count: number, activeIndex: number) {
+    return `${activeIndex + 1} / ${count}`;
   }
 
   private _getPreviewTitle(preview: IImagePreviewSummary) {
