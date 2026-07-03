@@ -38,7 +38,7 @@
   "dependencies": {
     "@babel/core": "^7.29.0",
     "@babel/traverse": "^7.29.0",
-    "@cabloy/module-info": "^2.0.0"
+    "@cabloy/module-info": "^2.0.1"
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.5",

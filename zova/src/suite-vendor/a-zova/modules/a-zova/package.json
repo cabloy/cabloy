@@ -37,7 +37,7 @@
     "@cabloy/compose": "^2.1.8",
     "@cabloy/deps": "^1.1.8",
     "@cabloy/json5": "^1.1.9",
-    "@cabloy/module-info": "^2.0.0",
+    "@cabloy/module-info": "^2.0.1",
     "@cabloy/utils": "^2.1.25",
     "@cabloy/vue-router": "^4.4.16",
     "@cabloy/word-utils": "^2.1.14",

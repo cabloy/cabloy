@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/parser": "^7.29.2",
     "@cabloy/module-glob": "workspace:^",
-    "@cabloy/module-info": "^2.0.0",
+    "@cabloy/module-info": "^2.0.1",
     "@cabloy/process-helper": "workspace:^",
     "@cabloy/utils": "workspace:^",
     "@cabloy/word-utils": "^2.1.8",

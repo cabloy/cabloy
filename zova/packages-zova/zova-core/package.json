@@ -51,7 +51,7 @@
     "@cabloy/json5": "^1.1.9",
     "@cabloy/localeutil": "^2.1.8",
     "@cabloy/logger": "^1.1.24",
-    "@cabloy/module-info": "^2.0.0",
+    "@cabloy/module-info": "^2.0.1",
     "@cabloy/utils": "^2.1.25",
     "@cabloy/vue-compiler-sfc": "^3.5.14",
     "@cabloy/vue-reactivity": "^3.5.16",
