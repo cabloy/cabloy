@@ -20,7 +20,6 @@ import {
   TypeFormSchemaScene,
 } from 'zova-module-a-openapi';
 import { AppModalItem } from 'zova-module-basic-app';
-import { inferImageRelationName } from 'zova-module-basic-image';
 
 import { IDialogFormOptions } from '../types/dialogForm.js';
 
@@ -155,7 +154,19 @@ export class ServiceDetail<TData extends {} = {}> extends BeanBase {
     property: ISchemaObjectExtensionField,
     options?: Record<string, any>,
   ) {
-    return inferImageRelationName(property.key, options?.relationName as string | undefined);
+    return this._inferRelationName(property.key, options?.relationName as string | undefined);
+  }
+
+  private _inferRelationName(fieldName?: string, relationName?: string) {
+    if (relationName) return relationName;
+    if (!fieldName) return undefined;
+    if (fieldName.endsWith('Ids')) {
+      return `${fieldName.slice(0, -3)}s`;
+    }
+    if (fieldName.endsWith('Id')) {
+      return fieldName.slice(0, -2);
+    }
+    return undefined;
   }
 
   private _cloneRelationValue(relationValue: unknown) {
