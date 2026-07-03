@@ -37,6 +37,7 @@ const ZOVA_CORE_PACKAGE_JSON_PATH = resolve(
   'package.json',
 );
 const PACKAGE_JSON_PATH = resolve(ROOT_DIR, 'package.json');
+const CABLOY_VERSION_PATH = resolve(ROOT_DIR, '.cabloy-version');
 const CHANGELOG_PATH = resolve(ROOT_DIR, 'CHANGELOG.md');
 const ZOVA_CORE_PATCH_TARGETS = [
   'dist/bean/resource/error/errorGlobal.d.ts',
@@ -93,6 +94,23 @@ function readPackageJson(): Record<string, any> {
 
 function writePackageJson(pkg: Record<string, any>): void {
   writeFileSync(PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)}\n`);
+}
+
+function readCabloyVersion(): string | null {
+  if (!existsSync(CABLOY_VERSION_PATH)) return null;
+  const version = readFileSync(CABLOY_VERSION_PATH, 'utf-8').trim();
+  if (!version) return null;
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid Cabloy version marker: ${version}`);
+  }
+  return version;
+}
+
+function writeCabloyVersion(version: string): void {
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid Cabloy version: ${version}`);
+  }
+  writeFileSync(CABLOY_VERSION_PATH, `${version}\n`);
 }
 
 function isValidVersion(version: string): boolean {
@@ -612,6 +630,7 @@ async function versionBump(
 ): Promise<string> {
   const pkg = readPackageJson();
   const currentVersion = pkg.version;
+  const currentCabloyVersion = readCabloyVersion();
   const lastTag = getLastTag();
 
   // Check for changes since last tag
@@ -629,6 +648,12 @@ async function versionBump(
     }
   }
 
+  if (currentCabloyVersion && currentCabloyVersion !== currentVersion) {
+    throw new Error(
+      `Version mismatch before release: package.json=${currentVersion}, .cabloy-version=${currentCabloyVersion}`,
+    );
+  }
+
   const newVersion = bumpVersion(currentVersion, bumpType);
   // eslint-disable-next-line
   console.log(`\n📦 Version bump: ${currentVersion} → ${newVersion}`);
@@ -636,10 +661,11 @@ async function versionBump(
   pkg.version = newVersion;
   if (!dryRun) {
     writePackageJson(pkg);
+    writeCabloyVersion(newVersion);
   }
 
   const tag = `${TAG_PREFIX}${newVersion}`;
-  exec('git add package.json', dryRun);
+  exec('git add package.json .cabloy-version', dryRun);
   exec(`git commit -m "chore: release v${newVersion}"`, dryRun);
   exec(`git tag ${tag}`, dryRun);
   exec('git push', dryRun);
