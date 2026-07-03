@@ -48,3 +48,10 @@ function prepareNativeBinding(nativeBinding: string | undefined) {
   if (!nativeBinding || nativeBinding === 'false') return null as unknown as undefined;
   return nativeBinding === 'true' ? 'node/better_sqlite3.node' : nativeBinding;
 }
+
+export function resolverSqlite3(projectPath: string) {
+  // src
+  const require = createRequire(pathToHref(path.join(projectPath, '/')));
+  const modulePath = require.resolve('better-sqlite3/package.json');
+  return path.join(path.dirname(modulePath), 'build/Release/better_sqlite3.node');
+}
