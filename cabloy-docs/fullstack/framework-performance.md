@@ -42,17 +42,17 @@ For the current public explanation of this backend capability, see [Cache Guide]
 
 This is the kind of result Cabloy is designed to support: a framework that stays operationally calm even when the system keeps running for long periods.
 
-One internally generated project was kept running continuously for **2 days**. At one representative PM2 snapshot, the process looked like this:
+One internally generated project was kept running continuously for **21 days**. At one representative PM2 snapshot, the process looked like this:
 
 ```text
 ┌────┬─────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
 │ id │ name            │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
 ├────┼─────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
-│ 0  │ cabloy_***    │ default     │ N/A     │ cluster │ 226947   │ 2D    │ 17   │ online    │ 0%       │ 376.2mb  │ ubuntu   │ disabled │
+│ 0  │ cabloy_***    │ default     │ N/A     │ cluster │ 226947   │ 21D    │ 17   │ online    │ 0%       │ 435.0mb  │ ubuntu   │ disabled │
 └────┴─────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
 ```
 
-For this 2-day continuous run, the observed result was **0 memory leak**.
+For this 21-day continuous run, the observed result was **0 memory leak**.
 
 The value of this example is not that it is a synthetic micro-benchmark. The value is that it reflects a real long-running project process with a clear, inspectable runtime footprint.
 

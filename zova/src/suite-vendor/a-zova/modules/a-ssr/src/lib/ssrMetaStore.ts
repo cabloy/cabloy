@@ -176,11 +176,12 @@ export class CtxSSRMetaStore extends BeanSimple {
         });`;
     const ssr_local_themename = this.sys.config.ssr.cookie
       ? ''
-      : "window.ssr_local_themename=window.ssr_load_local('themename');";
+      : `window.ssr_local_themename=window.ssr_load_local('themename','${this.sys.env.STYLE_DEFAULT_THEME}');`;
     ctx.endingHeadTags += `<script id="ssr-prefers-color-schema-dark">
-        window.ssr_load_local=function(key){
+        window.ssr_load_local=function(key,defaultValue){
           const __ssr_local=localStorage.getItem(key);
-          return __ssr_local?JSON.parse(__ssr_local):undefined;
+          const value=__ssr_local?JSON.parse(__ssr_local):undefined;
+          return value??defaultValue;
         };
         ${ssr_local_themedark}
         ${ssr_local_themename}

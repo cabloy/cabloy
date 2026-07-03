@@ -1,5 +1,53 @@
 # Changelog
 
+## 5.1.95
+
+### Improvements
+
+- Refresh the Zova lockfile to prepare for the compensation rerun.
+- Refresh the `vona zova-core` patch for compatibility with `v5.1.75`.
+
+## 5.1.94
+
+### Features
+
+- Update the application with the latest changes.
+
+## 5.1.93
+
+### Bug Fixes
+
+- Apply theme colors to select options
+
+## 5.1.92
+
+### Bug Fixes
+
+- Preserve SSR route typing visibility.
+
+### Improvements
+
+- Clarify side-effect import module names.
+- Publish the latest package updates.
+
+## 5.1.91
+
+### Features
+
+- Update core behavior to support the latest internal feature changes.
+
+### Improvements
+
+- Refine utility helpers for better internal consistency.
+- Improve static middleware handling.
+- Enhance SSR metadata store internals.
+
+## 5.1.90
+
+### Features
+
+- Update functionality.
+
 ## 5.1.89
 
 ### Improvements

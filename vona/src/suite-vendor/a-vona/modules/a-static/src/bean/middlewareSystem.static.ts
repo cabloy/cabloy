@@ -138,6 +138,7 @@ async function getFullPath(
   filename: string,
   options: IMiddlewareSystemOptionsStatic,
 ): Promise<string | true | undefined> {
+  filename = filename.replaceAll('\\', '/');
   if (process.env.META_MODE === 'dev') {
     ctx[SymbolStaticGetFullPathInner] = () => {
       return _getFullPathInner(ctx, dir, filename, options);
