@@ -9,6 +9,11 @@ import { CircleStencil, Cropper, RectangleStencil } from 'vue-advanced-cropper';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
+import {
+  inferImageRelationName,
+  openImagePreviewDialog,
+  resolveImagePreviewUrl,
+} from 'zova-module-basic-image';
 
 import type { IImageTransformOptions } from '../../types/image.js';
 import 'vue-advanced-cropper/dist/style.css';
@@ -162,6 +167,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
                     return this._renderPreviewCard(
                       item,
                       index,
+                      items,
                       false,
                       propsBucket.disableNotifyChanged,
                     );
@@ -205,7 +211,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     }
     return (
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item, index) => this._renderPreviewCard(item, index, true, false))}
+        {items.map((item, index) => this._renderPreviewCard(item, index, items, true, false))}
       </div>
     );
   }
@@ -213,6 +219,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   private _renderPreviewCard(
     item: IImagePreviewItem,
     index: number,
+    items: IImagePreviewItem[],
     readonly: boolean,
     disableNotifyChanged?: boolean,
   ) {
@@ -248,9 +255,15 @@ export class ControllerFormFieldImage extends BeanControllerBase {
           </div>
           <div class="flex flex-wrap gap-2">
             {previewUrl && (
-              <a class="btn btn-sm btn-outline" href={previewUrl} target="_blank" rel="noreferrer">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline"
+                onClick={() => {
+                  this._openPreviewDialog(items, index);
+                }}
+              >
                 {this.scope.locale.PreviewImage()}
-              </a>
+              </button>
             )}
             {!readonly && (
               <button
@@ -418,17 +431,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private _getRelationName() {
-    const relationName = this.currentOptions.relationName;
-    if (relationName) return relationName;
-    const name = this.$props.name;
-    if (!name) return undefined;
-    if (name.endsWith('Ids')) {
-      return `${name.slice(0, -3)}s`;
-    }
-    if (name.endsWith('Id')) {
-      return name.slice(0, -2);
-    }
-    return undefined;
+    return inferImageRelationName(this.$props.name, this.currentOptions.relationName);
   }
 
   private _normalizeOutputValue(value: unknown) {
@@ -739,11 +742,33 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     });
   }
 
+  private _openPreviewDialog(items: IImagePreviewItem[], currentIndex: number) {
+    const previewItems = items
+      .map((item, index) => ({
+        index,
+        item,
+      }))
+      .filter(({ item }) => !!item.url)
+      .map(({ index, item }) => ({
+        index,
+        item: {
+          url: item.url!,
+          filename: item.filename,
+        },
+      }));
+    if (previewItems.length === 0) return;
+    const initialIndex = previewItems.findIndex(({ index }) => index === currentIndex);
+    openImagePreviewDialog({
+      appModal: this.$appModal,
+      title: this.scope.locale.PreviewImage(),
+      items: previewItems.map(({ item }) => item),
+      initialIndex: initialIndex === -1 ? 0 : initialIndex,
+      baseURL: this.sys.config.api.baseURL,
+    });
+  }
+
   private _resolvePreviewUrl(url: string) {
-    if (!url || !url.startsWith('/api/')) return url;
-    const baseURL = this.sys.config.api.baseURL;
-    if (!baseURL) return url;
-    return `${baseURL.replace(/\/$/, '')}${url}`;
+    return resolveImagePreviewUrl(url, this.sys.config.api.baseURL);
   }
 
   private _formatBytes(bytes: number) {
