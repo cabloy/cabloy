@@ -7,6 +7,7 @@ import type {
 } from 'zova-module-a-table';
 
 import { classes } from 'typestyle';
+import { reactive } from 'vue';
 import { BeanBase } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
@@ -27,10 +28,15 @@ interface IImagePreviewItem {
   filename?: string;
 }
 
+interface IImagePreviewSource {
+  kind: 'relation' | 'url';
+  value: unknown;
+}
+
 interface IImagePreviewSummary {
   count: number;
   item?: IImagePreviewItem;
-  items: IImagePreviewItem[];
+  source: IImagePreviewSource;
 }
 
 @TableCell<ITableCellOptionsImage>({
@@ -112,11 +118,15 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
   }
 
   private _openPreviewDialog(preview: IImagePreviewSummary) {
-    if (preview.items.length === 0) return;
+    const items = this._resolveDialogItems(preview);
+    if (items.length === 0) return;
+    const dialogState = reactive({
+      activeIndex: 0,
+    });
     this.$appModal.dialog(
       {
         title: this._getPreviewTitle(preview),
-        slotDefault: () => this._renderPreviewDialogBody(preview),
+        slotDefault: () => this._renderPreviewDialogBody(items, dialogState),
       },
       {
         maxWidth: 960,
@@ -128,8 +138,11 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     );
   }
 
-  private _renderPreviewDialogBody(preview: IImagePreviewSummary): VNode {
-    const leadItem = preview.item ?? preview.items[0];
+  private _renderPreviewDialogBody(
+    items: IImagePreviewItem[],
+    dialogState: { activeIndex: number },
+  ): VNode {
+    const leadItem = items[dialogState.activeIndex] ?? items[0];
     const leadPreviewUrl = leadItem ? this._resolvePreviewUrl(leadItem.url) : undefined;
     return (
       <div class="space-y-4">
@@ -142,22 +155,50 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
             />
           </div>
         )}
-        {preview.items.length > 1 && (
+        {!!leadItem?.filename && (
+          <div class="text-sm font-medium text-base-content/70">{leadItem.filename}</div>
+        )}
+        {items.length > 1 && (
           <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {preview.items.map((item, index) => this._renderPreviewDialogItem(item, index))}
+            {items.map((item, index) =>
+              this._renderPreviewDialogItem(
+                item,
+                index,
+                index === dialogState.activeIndex,
+                dialogState,
+              ),
+            )}
           </div>
         )}
       </div>
     );
   }
 
-  private _renderPreviewDialogItem(item: IImagePreviewItem, index: number): VNode {
+  private _renderPreviewDialogItem(
+    item: IImagePreviewItem,
+    index: number,
+    active: boolean,
+    dialogState: { activeIndex: number },
+  ): VNode {
     const previewUrl = this._resolvePreviewUrl(item.url);
     return (
-      <div key={`${item.url}-${index}`} class="space-y-2 rounded-box bg-base-200 p-2">
+      <button
+        key={`${item.url}-${index}`}
+        type="button"
+        class={classes(
+          'space-y-2 rounded-box bg-base-200 p-2 text-left transition duration-150',
+          active && 'ring-2 ring-primary shadow-md',
+          !active && 'hover:shadow-sm hover:ring-1 hover:ring-base-300',
+        )}
+        title={item.filename ?? `image-${index + 1}`}
+        onClick={() => {
+          dialogState.activeIndex = index;
+        }}
+      >
         <div class="aspect-square overflow-hidden rounded-box bg-base-100">
           <img
             class="h-full w-full object-cover"
+            loading="lazy"
             src={previewUrl}
             alt={item.filename ?? `image-${index + 1}`}
           />
@@ -165,7 +206,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
         {!!item.filename && (
           <div class="truncate text-sm text-base-content/70">{item.filename}</div>
         )}
-      </div>
+      </button>
     );
   }
 
@@ -194,20 +235,33 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     renderContext: IJsxRenderContextTableCell,
   ): IImagePreviewSummary {
     const relationName = this._getRelationName(options, renderContext.$celScope.name);
-    if (!relationName) return { count: 0, items: [] };
-    const relationValue = renderContext.cellContext.row.original[relationName];
-    if (Array.isArray(relationValue)) return this._summarizeRelationItems(relationValue);
-    if (!relationValue?.url) return { count: 0, items: [] };
-    return { count: 1, item: relationValue, items: [relationValue] };
+    const relationValue = relationName
+      ? renderContext.cellContext.row.original[relationName]
+      : undefined;
+    const { count, item } = this._summarizeRelationValue(relationValue);
+    return {
+      count,
+      item,
+      source: { kind: 'relation', value: relationValue },
+    };
   }
 
-  private _summarizeRelationItems(relationItems: IImagePreviewItem[]): IImagePreviewSummary {
-    const items: IImagePreviewItem[] = [];
-    for (const relationItem of relationItems) {
-      if (!relationItem?.url) continue;
-      items.push(relationItem);
+  private _summarizeRelationValue(relationValue: unknown): {
+    count: number;
+    item?: IImagePreviewItem;
+  } {
+    if (!Array.isArray(relationValue)) {
+      if (!this._isPreviewItem(relationValue)) return { count: 0, item: undefined };
+      return { count: 1, item: relationValue };
     }
-    return { count: items.length, item: items[0], items };
+    let count = 0;
+    let item: IImagePreviewItem | undefined;
+    for (const relationItem of relationValue) {
+      if (!this._isPreviewItem(relationItem)) continue;
+      count += 1;
+      if (!item) item = relationItem;
+    }
+    return { count, item };
   }
 
   private _getRelationName(options: ITableCellOptionsImage, fieldName: string) {
@@ -223,16 +277,70 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
 
   private _normalizeUrlPreview(value: unknown): IImagePreviewSummary {
     if (!Array.isArray(value)) {
-      if (!value) return { count: 0, items: [] };
+      if (!value) {
+        return {
+          count: 0,
+          source: { kind: 'url', value },
+        };
+      }
       const item = { url: String(value) };
-      return { count: 1, item, items: [item] };
+      return {
+        count: 1,
+        item,
+        source: { kind: 'url', value },
+      };
+    }
+    let count = 0;
+    let item: IImagePreviewItem | undefined;
+    for (const valueItem of value) {
+      if (!valueItem) continue;
+      count += 1;
+      if (!item) item = { url: String(valueItem) };
+    }
+    return {
+      count,
+      item,
+      source: { kind: 'url', value },
+    };
+  }
+
+  private _resolveDialogItems(preview: IImagePreviewSummary): IImagePreviewItem[] {
+    if (preview.source.kind === 'relation') {
+      return this._collectRelationItems(preview.source.value);
+    }
+    return this._collectUrlItems(preview.source.value);
+  }
+
+  private _collectRelationItems(value: unknown): IImagePreviewItem[] {
+    if (!Array.isArray(value)) {
+      if (!this._isPreviewItem(value)) return [];
+      return [value];
+    }
+    const items: IImagePreviewItem[] = [];
+    for (const relationItem of value) {
+      if (!this._isPreviewItem(relationItem)) continue;
+      items.push(relationItem);
+    }
+    return items;
+  }
+
+  private _collectUrlItems(value: unknown): IImagePreviewItem[] {
+    if (!Array.isArray(value)) {
+      if (!value) return [];
+      return [{ url: String(value) }];
     }
     const items: IImagePreviewItem[] = [];
     for (const valueItem of value) {
       if (!valueItem) continue;
       items.push({ url: String(valueItem) });
     }
-    return { count: items.length, item: items[0], items };
+    return items;
+  }
+
+  private _isPreviewItem(value: unknown): value is IImagePreviewItem {
+    if (!value || typeof value !== 'object') return false;
+    if (!('url' in value)) return false;
+    return typeof value.url === 'string' && !!value.url;
   }
 
   private _resolvePreviewUrl(url: string) {
