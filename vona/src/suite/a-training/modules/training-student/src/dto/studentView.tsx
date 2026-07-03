@@ -1,5 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { DtoImageView } from 'vona-module-a-image';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
@@ -28,7 +29,7 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
   fields: {
     trainingRecords: $makeMetadata(
       v.title($locale('TrainingRecords')),
-      ZovaRender.order(5),
+      ZovaRender.order(6),
       ZovaRender.field('basic-details:formFieldDetails'),
     ),
   },
@@ -36,6 +37,17 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
 export class DtoStudentView extends $Dto.get(() => ModelStudent, {
   include: { trainingRecords: { dtoClass: DtoDetailRecordView } },
 }) {
+  @Api.field(
+    ZovaRender.visible(false),
+    v.optional(),
+    v.serializerTransform('a-image:resolveView', {
+      fieldName: 'imageId',
+      imageScene: 'training-student:studentImage',
+    }),
+    v.object(DtoImageView),
+  )
+  image?: DtoImageView;
+
   @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordResItem))
   _trainingRecords?: DtoDetailRecordResItem[];
 }

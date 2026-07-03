@@ -8,6 +8,7 @@ export default {
   TrainingRecord: 'Student Training Record',
   TrainingRecordName: 'Training Record Name',
   TrainingTime: 'Training Time',
+  ScenePhotos: 'Scene Photos',
   AddTrainingRecord: 'Add Student Training Record',
   EditTrainingRecord: 'Edit Student Training Record',
   ViewTrainingRecord: 'View Student Training Record',

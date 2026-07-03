@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/a-image/tsconfig.build.json"
+    },
+    {
+      "path": "modules/image-native/tsconfig.build.json"
+    },
+    {
+      "path": "modules/image-cloudflare/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}

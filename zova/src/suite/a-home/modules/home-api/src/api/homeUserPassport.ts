@@ -1,4 +1,6 @@
-import { Api, BeanApiBase, IApiActionOptions } from 'zova-module-a-api';
+import type { IApiActionOptions } from 'zova-module-a-api';
+
+import { Api, BeanApiBase } from 'zova-module-a-api';
 
 import type { components, paths } from './openapi/index.js';
 
@@ -74,17 +76,6 @@ export type ApiApiHomeUserPassportmigrateRequestQuery =
 export type ApiApiHomeUserPassportmigrateResponseBody =
   paths[ApiApiHomeUserPassportmigratePath][ApiApiHomeUserPassportmigrateMethod]['responses']['200']['content']['application/json']['data'];
 
-/** HomeUserPassport_refreshAuthToken */
-export const ApiApiHomeUserPassportrefreshAuthTokenPath =
-  '/api/home/user/passport/refreshAuthToken';
-export type ApiApiHomeUserPassportrefreshAuthTokenPath = '/api/home/user/passport/refreshAuthToken';
-export type ApiApiHomeUserPassportrefreshAuthTokenMethod = 'post';
-export type ApiApiHomeUserPassportrefreshAuthTokenRequestBody = {
-  refreshToken: string;
-};
-export type ApiApiHomeUserPassportrefreshAuthTokenResponseBody =
-  paths[ApiApiHomeUserPassportrefreshAuthTokenPath][ApiApiHomeUserPassportrefreshAuthTokenMethod]['responses']['200']['content']['application/json']['data'];
-
 /** HomeUserPassport_createPassportJwtFromOauthCode */
 export const ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath =
   '/api/home/user/passport/createPassportJwtFromOauthCode';
@@ -96,6 +87,17 @@ export type ApiApiHomeUserPassportcreatePassportJwtFromOauthCodeRequestBody = {
 };
 export type ApiApiHomeUserPassportcreatePassportJwtFromOauthCodeResponseBody =
   paths[ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath][ApiApiHomeUserPassportcreatePassportJwtFromOauthCodeMethod]['responses']['200']['content']['application/json']['data'];
+
+/** HomeUserPassport_refreshAuthToken */
+export const ApiApiHomeUserPassportrefreshAuthTokenPath =
+  '/api/home/user/passport/refreshAuthToken';
+export type ApiApiHomeUserPassportrefreshAuthTokenPath = '/api/home/user/passport/refreshAuthToken';
+export type ApiApiHomeUserPassportrefreshAuthTokenMethod = 'post';
+export type ApiApiHomeUserPassportrefreshAuthTokenRequestBody = {
+  refreshToken: string;
+};
+export type ApiApiHomeUserPassportrefreshAuthTokenResponseBody =
+  paths[ApiApiHomeUserPassportrefreshAuthTokenPath][ApiApiHomeUserPassportrefreshAuthTokenMethod]['responses']['200']['content']['application/json']['data'];
 
 /** HomeUserPassport_createTempAuthToken */
 export const ApiApiHomeUserPassportcreateTempAuthTokenPath =
@@ -177,23 +179,23 @@ export class ApiHomeUserPassport extends BeanApiBase {
     );
   }
 
-  refreshAuthToken(
-    body: ApiApiHomeUserPassportrefreshAuthTokenRequestBody,
-    options?: IApiActionOptions,
-  ) {
-    return this.$fetch.post<any, ApiApiHomeUserPassportrefreshAuthTokenResponseBody>(
-      ApiApiHomeUserPassportrefreshAuthTokenPath,
-      body,
-      this.$configPrepare(OpenApiBaseURL(this.sys), options),
-    );
-  }
-
   createPassportJwtFromOauthCode(
     body: ApiApiHomeUserPassportcreatePassportJwtFromOauthCodeRequestBody,
     options?: IApiActionOptions,
   ) {
     return this.$fetch.post<any, ApiApiHomeUserPassportcreatePassportJwtFromOauthCodeResponseBody>(
       ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options),
+    );
+  }
+
+  refreshAuthToken(
+    body: ApiApiHomeUserPassportrefreshAuthTokenRequestBody,
+    options?: IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiHomeUserPassportrefreshAuthTokenResponseBody>(
+      ApiApiHomeUserPassportrefreshAuthTokenPath,
       body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options),
     );

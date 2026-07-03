@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
@@ -59,9 +60,33 @@ export class EntityStudent extends EntityBase {
   mobile: string;
 
   @Api.field(
+    v.title($locale('StudentImage')),
+    v.optional(),
+    ZovaRender.order(4),
+    ZovaRender.field('basic-image:formFieldImage', {
+      imageScene: 'training-student:studentImage',
+      accept: ['image/png', 'image/jpeg', 'image/webp'],
+      maxSize: 2 * 1024 * 1024,
+      enableCrop: true,
+      cropAspectRatio: 1,
+      relationName: 'image',
+      resize: {
+        width: 512,
+        height: 512,
+        fit: 'cover',
+        format: 'jpeg',
+        quality: 90,
+      },
+    }),
+    ZovaRender.cell('basic-image:image', { relationName: 'image' }),
+    v.tableIdentity(),
+  )
+  imageId?: TableIdentity;
+
+  @Api.field(
     v.title($locale('Level')),
     v.required(),
-    ZovaRender.order(4),
+    ZovaRender.order(5),
     // Tutorial 3 built-in form renderer example. Keep it commented here for side-by-side comparison.
     // ZovaRender.field('basic-select:formFieldSelect', {
     //   items: studentLevelItems,

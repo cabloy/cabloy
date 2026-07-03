@@ -1,7 +1,7 @@
 import { celEnvBase } from '@cabloy/utils';
 import { classes } from 'typestyle';
 import { VNode } from 'vue';
-import { BeanBase, UseScope } from 'zova';
+import { BeanBase, deepExtend, UseScope } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Service } from 'zova-module-a-bean';
 import {
@@ -123,8 +123,60 @@ export class ServiceDetail<TData extends {} = {}> extends BeanBase {
     }
   }
 
+  public buildSubmittedDetailItem(data: TypeFormOnSubmitData<TData>, dataOld?: TData) {
+    const detailItem = deepExtend({}, dataOld ?? {}, data.value) as Record<string, any>;
+    const properties = this.$sdk.loadSchemaProperties(this.formSchema, this.schemaScene);
+    if (!properties || properties.length === 0 || !this.formRef) return detailItem as TData;
+    for (const property of properties) {
+      this._hydrateDetailItemRelation(detailItem, property, data);
+    }
+    return detailItem as TData;
+  }
+
   public submitData(data: TypeFormOnSubmitData<TData>) {
     this.options.onSubmitData?.(data, this.dialogInstance!);
+  }
+
+  private _hydrateDetailItemRelation(
+    detailItem: Record<string, any>,
+    property: ISchemaObjectExtensionField,
+    data: TypeFormOnSubmitData<TData>,
+  ) {
+    const renderProvider = property.rest?.render;
+    if (renderProvider !== 'basic-image:formFieldImage') return;
+    const relationName = this._getRelationNameOfField(property, property.rest);
+    if (!relationName) return;
+    const relationValue = data.formApi.getFieldValue(relationName as never);
+    detailItem[relationName] = this._cloneRelationValue(relationValue);
+  }
+
+  private _getRelationNameOfField(
+    property: ISchemaObjectExtensionField,
+    options?: Record<string, any>,
+  ) {
+    return this._inferRelationName(property.key, options?.relationName as string | undefined);
+  }
+
+  private _inferRelationName(fieldName?: string, relationName?: string) {
+    if (relationName) return relationName;
+    if (!fieldName) return undefined;
+    if (fieldName.endsWith('Ids')) {
+      return `${fieldName.slice(0, -3)}s`;
+    }
+    if (fieldName.endsWith('Id')) {
+      return fieldName.slice(0, -2);
+    }
+    return undefined;
+  }
+
+  private _cloneRelationValue(relationValue: unknown) {
+    if (Array.isArray(relationValue)) {
+      return deepExtend([], relationValue);
+    }
+    if (relationValue && typeof relationValue === 'object') {
+      return deepExtend({}, relationValue as Record<string, any>);
+    }
+    return relationValue;
   }
 
   openDialogForm() {

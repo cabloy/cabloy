@@ -388,6 +388,32 @@ declare module 'vona-module-training-record' {
           } 
 }
 /** ssrMenu: end */
+/** imageScene: begin */
+export * from '../bean/imageScene.sceneImage.ts';
+
+import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
+declare module 'vona-module-a-image' {
+  
+    export interface IImageSceneRecord {
+      'training-record:sceneImage': IDecoratorImageSceneOptions;
+    }
+
+  
+}
+declare module 'vona-module-training-record' {
+  
+        export interface ImageSceneSceneImage {
+          /** @internal */
+          get scope(): ScopeModuleTrainingRecord;
+        }
+
+          export interface ImageSceneSceneImage {
+            get $beanFullName(): 'training-record.imageScene.sceneImage';
+            get $onionName(): 'training-record:sceneImage';
+            get $onionOptions(): IDecoratorImageSceneOptions;
+          } 
+}
+/** imageScene: end */
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */

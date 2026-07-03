@@ -1,0 +1,5 @@
+import { BeanBase } from 'vona';
+import { ImageScene } from 'vona-module-a-image';
+
+@ImageScene()
+export class ImageScene<%=argv.beanNameCapitalize%> extends BeanBase {}

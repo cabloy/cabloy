@@ -44,6 +44,13 @@ export class InterceptorUpload extends BeanBase implements IInterceptorExecute {
       const fields: IUploadField[] = [];
       const files: IUploadFile[] = [];
       const filesCleanup: Function[] = [];
+      const fileWrites: Promise<void>[] = [];
+      let settled = false;
+      const rejectOnce = (err: Error) => {
+        if (settled) return;
+        settled = true;
+        reject(err);
+      };
       // bb
       const bb = Busboy(Object.assign({}, options.busboy, { headers: this.ctx.req.headers }));
       bb.on('file', (name, file, info) => {
@@ -59,7 +66,25 @@ export class InterceptorUpload extends BeanBase implements IInterceptorExecute {
           info,
         });
         // save
-        file.pipe(createWriteStream(fileTemp));
+        const writeStream = createWriteStream(fileTemp);
+        const fileWrite = new Promise<void>((resolveWrite, rejectWrite) => {
+          writeStream.on('finish', () => {
+            resolveWrite();
+          });
+          writeStream.on('error', err => {
+            rejectWrite(err);
+          });
+          file.on('error', err => {
+            rejectWrite(err);
+          });
+        });
+        fileWrites.push(
+          fileWrite.catch(err => {
+            rejectOnce(err as Error);
+            throw err;
+          }),
+        );
+        file.pipe(writeStream);
       });
       bb.on('field', (name, value, info) => {
         fields.push({
@@ -68,20 +93,27 @@ export class InterceptorUpload extends BeanBase implements IInterceptorExecute {
           info,
         });
       });
-      bb.on('close', () => {
-        resolve([fields, files, filesCleanup]);
+      bb.on('close', async () => {
+        try {
+          await Promise.all(fileWrites);
+          if (settled) return;
+          settled = true;
+          resolve([fields, files, filesCleanup]);
+        } catch {
+          // handled by rejectOnce
+        }
       });
       bb.on('error', (err: Error) => {
-        reject(err);
+        rejectOnce(err);
       });
       bb.on('partsLimit', () => {
-        reject(new Error('partsLimit'));
+        rejectOnce(new Error('partsLimit'));
       });
       bb.on('filesLimit', () => {
-        reject(new Error('filesLimit'));
+        rejectOnce(new Error('filesLimit'));
       });
       bb.on('fieldsLimit', () => {
-        reject(new Error('fieldsLimit'));
+        rejectOnce(new Error('fieldsLimit'));
       });
       this.ctx.req.pipe(bb);
     });

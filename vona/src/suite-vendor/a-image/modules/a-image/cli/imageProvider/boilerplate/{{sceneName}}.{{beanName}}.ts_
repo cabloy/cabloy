@@ -1,0 +1,23 @@
+import type {
+  IDecoratorImageProviderOptions,
+  IImageProviderClientOptions,
+  IImageProviderClientRecord,
+  IImageProviderExecute,
+} from 'vona-module-a-image';
+
+import { BeanBase } from 'vona';
+import { ImageProvider } from 'vona-module-a-image';
+
+export interface IImageProvider<%=argv.beanNameCapitalize%>ClientRecord extends IImageProviderClientRecord {}
+
+export interface IImageProvider<%=argv.beanNameCapitalize%>ClientOptions extends IImageProviderClientOptions {}
+
+export interface IImageProviderOptions<%=argv.beanNameCapitalize%> extends IDecoratorImageProviderOptions<
+  IImageProvider<%=argv.beanNameCapitalize%>ClientRecord,
+  IImageProvider<%=argv.beanNameCapitalize%>ClientOptions
+> {}
+
+@ImageProvider<IImageProviderOptionsNative>({
+  base: {},
+})
+export class ImageProvider<%=argv.beanNameCapitalize%> extends BeanBase implements IImageProviderExecute {}

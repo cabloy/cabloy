@@ -56,7 +56,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
               data: TypeFormOnSubmitData<Record<string, any>>,
               dialog: AppModalItem,
             ) => {
-              const detailItemNew = deepExtend({}, detailItem, data.value);
+              const detailItemNew = serverDetail.buildSubmittedDetailItem(data, detailItem);
               $$details.data = $$details.data.map((item, index) => {
                 return index === detailItemIndex ? detailItemNew : item;
               });

@@ -15,7 +15,10 @@ After generating or extending a backend thread, check which follow-up layers app
 - OpenAPI metadata
 - inferred DTO opportunities
 - frontend contract impact
-- `@Api.field(...)` / `$makeSchema(...)` ordering when an explicit zod/custom schema is present: put that schema last because `makeSchemaLikes(...)` applies arguments right-to-left and later helpers can otherwise be ignored
+- `@Api.field(...)` / `$makeSchema(...)` ordering: framework guards now preserve previously attached OpenAPI metadata across schema rebuilds, but structure-shaping schemaLike is still order-sensitive
+- when an explicit zod/custom schema or other structure-defining schemaLike is present, put that structure-defining schemaLike last because `makeSchemaLikes(...)` applies arguments right-to-left and later structure changes can otherwise alter or replace the intended schema
+- treat `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping rather than metadata-only
+- after touching structure-shaping schemaLike, verify the emitted schema/OpenAPI result explicitly
 
 ## Persistence follow-up
 

@@ -21,6 +21,7 @@ export interface IJwtSignOptions {
   path?: string | string[];
   dev?: boolean;
   temp?: boolean;
+  expiresIn?: StringValue | number;
 }
 
 export interface IJwtVerifyOptions {

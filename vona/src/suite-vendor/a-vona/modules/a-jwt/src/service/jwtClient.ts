@@ -79,6 +79,11 @@ export class ServiceJwtClient extends BeanBase {
           expiresIn: this.scope.config.tempAuthToken.signOptions.expiresIn,
         });
       }
+      if (options?.expiresIn !== undefined) {
+        signOptions = Object.assign({}, signOptions, {
+          expiresIn: options.expiresIn,
+        });
+      }
       this._jwtInstance.sign(payload, this._clientOptions.secret!, signOptions, (err, encoded) => {
         if (err) return reject(err);
         resolve(encoded!);

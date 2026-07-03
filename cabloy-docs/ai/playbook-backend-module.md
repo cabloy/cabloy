@@ -68,9 +68,12 @@ Depending on the feature, extend the generated code with the right framework-lev
 
 When refining entity or DTO fields that use `@Api.field(...)`, apply this framework-specific guardrail:
 
-- if you include an explicit zod schema such as `z.number().int().min(1)`, place it as the **last argument**
-- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the zod schema
-- otherwise helpers written after the zod schema may stop taking effect
+- framework-level guarding now preserves previously attached OpenAPI metadata across schema rebuilds, so metadata-only helpers are less order-sensitive than before
+- this only removes **metadata-loss order pitfalls**; it does **not** make all `schemaLike` arguments fully order-independent
+- if you include an explicit zod schema such as `z.number().int().min(1)`, or another structure-shaping schemaLike, place that structure-defining schemaLike as the **last argument**
+- treat helpers such as `v.object(...)`, `v.array(...)`, `v.optional()`, `v.nullable()`, `v.default(...)`, and preprocess/transform wrappers as structure-shaping rather than metadata-only
+- keep helper metadata such as `v.xxx(...)` and `ZovaRender.xxx(...)` before the final structure-defining schemaLike
+- after edits involving structure-shaping schemaLike, verify the emitted schema/OpenAPI result instead of assuming reorder is safe
 
 Relevant docs:
 

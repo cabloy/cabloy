@@ -11,6 +11,7 @@ import { SymbolDecoratorRule } from '../const/decorator.ts';
 import {
   getTargetDecoratorDtoOpenapi,
   getTargetDecoratorDtoPipes,
+  mergeSchemaOpenapiMetadata,
   prepareClassType,
 } from '../utils.ts';
 import { SymbolSchemaDynamicRefId } from './schemaDynamic.ts';
@@ -39,9 +40,10 @@ export function makeSchemaLike<T>(
   schemaPrevious: z.ZodType<T>,
 ): z.ZodType<T> {
   if (!schemaLike) return schemaPrevious;
+  let schemaCurrent: z.ZodType<T>;
   if (Object.prototype.hasOwnProperty.call(schemaLike, 'parseAsync')) {
     // schema
-    return schemaLike as z.ZodType<T>;
+    schemaCurrent = schemaLike as z.ZodType<T>;
   } else if (
     isClass(schemaLike) ||
     ['String', 'Number', 'Boolean', 'Date', 'BigInt', 'Array'].includes(
@@ -49,11 +51,12 @@ export function makeSchemaLike<T>(
     )
   ) {
     // class
-    return $schema(cast<Constructable>(schemaLike)) as z.ZodType<T>;
+    schemaCurrent = $schema(cast<Constructable>(schemaLike)) as z.ZodType<T>;
   } else {
     // function
-    return cast<SchemaLikeCreate>(schemaLike)(schemaPrevious);
+    schemaCurrent = cast<SchemaLikeCreate>(schemaLike)(schemaPrevious);
   }
+  return mergeSchemaOpenapiMetadata(schemaPrevious, schemaCurrent);
 }
 
 export function $schema<T>(schemaLike: z.ZodType<T>): z.ZodType<T>;

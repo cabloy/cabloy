@@ -8,6 +8,7 @@ export default {
   Operations: 'Operations',
   Student: 'Student',
   StudentName: 'Student Name',
+  StudentImage: 'Student Image',
   Summary: 'Summary',
   LevelTitle: 'Level Title',
   DescriptionLength: 'Description Length',
