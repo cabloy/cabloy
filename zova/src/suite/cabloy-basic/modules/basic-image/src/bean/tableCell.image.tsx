@@ -128,7 +128,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     );
   }
 
-  private _openPreviewDialog(preview: IImagePreviewSummary) {
+  private _openPreviewDialog(preview: IImagePreviewSummary, previewTitle: string) {
     const items = this._resolveDialogItems(preview);
     if (items.length === 0) return;
     const dialogState = reactive<IImagePreviewDialogState>({
@@ -136,7 +136,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     });
     this.$appModal.dialog(
       {
-        title: this._getPreviewTitle(preview),
+        title: previewTitle,
         slotDefault: () => this._renderPreviewDialogBody(items, dialogState),
       },
       {
@@ -276,14 +276,21 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     return `${activeIndex + 1} / ${count}`;
   }
 
-  private _getPreviewTitle(preview: IImagePreviewSummary) {
-    const filename = preview.item?.filename;
-    if (preview.count <= 1) {
-      return filename ?? this.scope.locale.PreviewImage();
-    }
-    return filename
-      ? `${filename} (+${preview.count - 1})`
-      : `${this.scope.locale.PreviewImage()} (+${preview.count - 1})`;
+  private _getPreviewTitle(
+    renderContext: IJsxRenderContextTableCell,
+    preview: IImagePreviewSummary,
+  ) {
+    const fieldTitle = this._getPreviewFieldTitle(renderContext);
+    if (preview.count <= 1) return fieldTitle;
+    return `${fieldTitle}（${preview.count}）`;
+  }
+
+  private _getPreviewFieldTitle(renderContext: IJsxRenderContextTableCell) {
+    return (
+      renderContext.$celScope.property?.title ??
+      renderContext.$celScope.name ??
+      this.scope.locale.PreviewImage()
+    );
   }
 
   private _resolvePreviewSummary(
