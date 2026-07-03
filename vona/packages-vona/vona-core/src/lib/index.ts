@@ -4,3 +4,4 @@ export * from './decorator/index.ts';
 export * from './framework/index.ts';
 export * from './mappedClass/index.ts';
 export * from './utils/index.ts';
+export * from './addon/index.ts';

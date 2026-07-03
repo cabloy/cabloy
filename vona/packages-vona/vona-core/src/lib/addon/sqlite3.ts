@@ -5,7 +5,7 @@ import path from 'node:path';
 import type { VonaApplication } from '../core/application.ts';
 
 import { getHomeVonaAppDir } from '../core/config.ts';
-import { pathToHref } from './util.ts';
+import { pathToHref } from '../utils/util.ts';
 
 export function getSqlite3DatabaseNameDefault(app: VonaApplication) {
   const mode = app.meta.env.META_MODE;
