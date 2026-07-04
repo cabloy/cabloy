@@ -37,5 +37,7 @@ jobs:
         working-directory: vona
       - run: npm run build -- --flavor=ci
         working-directory: vona
+      - run: pnpm -C ./dist/ci install
+        working-directory: vona
       - run: npm run play -- --mode=prod --flavor=ci
         working-directory: vona
