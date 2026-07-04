@@ -31,7 +31,7 @@ jobs:
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run build -- --flavor=ci
         working-directory: vona
-      - run: pnpm -C ./dist/normal install
+      - run: pnpm -C ./dist/ci install
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=sqlite3 npm run play -- --mode=prod --flavor=ci
         working-directory: vona
