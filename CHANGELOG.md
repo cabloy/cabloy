@@ -1,5 +1,36 @@
 # Changelog
 
+## 5.1.96
+
+### Features
+
+- Integrate Cloudflare image provider with signed image delivery.
+- Add scene-based image upload flow.
+- Secure image upload token flow and support imageId-based training images.
+- Restore `expiresIn` support for image upload tokens.
+- Add basic-image table cell thumbnails.
+- Add basic-image student field integration.
+- Add the `a-image` upload API contract.
+- Align image variants with transform options.
+- Add the `a-image` suite scaffold and tests.
+
+### Bug Fixes
+
+- Sync nested detail image previews after dialog submission.
+- Preserve OpenAPI metadata across schema rebuilds.
+- Correct basic-image upload and preview URLs.
+- Tighten image upload constraints.
+
+### Improvements
+
+- Strengthen image variant typing.
+- Move basic-image types into `src/types`.
+- Generate the basic-image OpenAPI SDK.
+- Skip redundant OpenAPI metadata merges.
+- Configure the default image upload provider.
+- Extract shared base options for image provider clients.
+- Remove the unused native signed URL helper.
+
 ## 5.1.95
 
 ### Improvements
