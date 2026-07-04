@@ -123,6 +123,23 @@ export class CliBinBuild extends BeanCliBase {
     }
   }
 
+  async _packageJson(_projectPath: string, outDir: string, externals: Record<string, string>) {
+    const dependencies: Record<string, string> = {};
+    for (const name of Object.keys(externals).sort()) {
+      const version = externals[name];
+      if (!version) throw new Error(`external dependency version not found: ${name}`);
+      dependencies[name] = version;
+    }
+    const pkgContent = {
+      type: 'module',
+      dependencies,
+    };
+    await fse.writeFile(
+      path.join(outDir, 'package.json'),
+      `${JSON.stringify(pkgContent, null, 2)}\n`,
+    );
+  }
+
   async _custom(projectPath: string, env: NodeJS.ProcessEnv, outDir: string) {
     // custom
     const jsFile = path.join(projectPath, 'src/backend/cli.ts');
