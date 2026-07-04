@@ -49,15 +49,6 @@ export interface IResourceFormFieldImageOptions extends IResourceFormFieldOption
   cropAspectRatio?: number;
   cropShape?: 'rect' | 'round';
   resize?: IResourceFormFieldImageResizeOptions;
-  upload?: {
-    providerName?: string;
-    provider?: string;
-    clientName?: string;
-    maxSize?: number;
-    mimeTypes?: string[];
-    extensions?: string[];
-    accept?: string | string[];
-  };
 }
 
 export interface ControllerFormFieldImageProps extends IFormFieldComponentOptions {
