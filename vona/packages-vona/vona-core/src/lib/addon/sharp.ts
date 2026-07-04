@@ -26,9 +26,19 @@ export function resolverSharpLibvips(projectPath: string) {
   const requireSharp = createRequire(pathToHref(sharpPath));
   const modulePath = requireSharp.resolve(`@img/sharp-libvips-${getPlatformArch()}/package`);
   const libPath = path.join(path.dirname(modulePath), 'lib');
-  const fileName = fs.readdirSync(libPath).find(item => item.endsWith('.dylib'));
+  const fileName = fs.readdirSync(libPath).find(_matchSharpLibvipsFileName);
   if (!fileName) {
     throw new Error(`Sharp libvips native binding not found: ${libPath}`);
   }
   return path.join(libPath, fileName);
+}
+
+function _matchSharpLibvipsFileName(fileName: string) {
+  if (process.platform === 'darwin') {
+    return fileName.endsWith('.dylib');
+  }
+  if (process.platform === 'win32') {
+    return /\.dll$/i.test(fileName);
+  }
+  return /\.so(?:\..+)?$/.test(fileName);
 }
