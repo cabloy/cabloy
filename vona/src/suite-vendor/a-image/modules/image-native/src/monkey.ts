@@ -9,6 +9,8 @@ const __Version = '8.18.3';
 const __MapTargetNames = {
   'linux-x64': `libvips-cpp.so.${__Version}`,
   'darwin-arm64': `libvips-cpp.${__Version}.dylib`,
+  'darwin-x64': `libvips-cpp.${__Version}.dylib`,
+  'win32-x64': 'libvips-42.dll',
 };
 
 export class Monkey extends BeanSimple implements IMonkeyAppStart {
