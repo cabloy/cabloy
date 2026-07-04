@@ -58,6 +58,9 @@
     "bundle": {
       "externals": [
         "better-sqlite3"
+      ],
+      "allowBuilds": [
+        "better-sqlite3"
       ]
     }
   }

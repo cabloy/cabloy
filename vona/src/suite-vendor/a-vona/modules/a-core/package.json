@@ -36,7 +36,7 @@
     "@babel/traverse": "^7.29.0",
     "@cabloy/deps": "workspace:^",
     "@cabloy/json5": "workspace:^",
-    "@cabloy/module-info": "^2.0.2",
+    "@cabloy/module-info": "^2.0.3",
     "@cabloy/type-fest": "^5.3.1",
     "@cabloy/utils": "workspace:^",
     "@cabloy/word-utils": "^2.1.8",

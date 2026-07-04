@@ -35,8 +35,8 @@ importers:
         specifier: workspace:^
         version: link:packages-utils/json5
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/socket':
         specifier: workspace:^
         version: link:packages-utils/socket
@@ -621,8 +621,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages-utils/module-glob
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/process-helper':
         specifier: workspace:^
         version: link:../../packages-utils/process-helper
@@ -743,8 +743,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages-utils/module-glob
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/utils':
         specifier: workspace:^
         version: link:../../packages-utils/utils
@@ -849,8 +849,8 @@ importers:
         specifier: ^7.29.0
         version: 7.29.7
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/word-utils':
         specifier: ^2.1.8
         version: 2.1.14
@@ -1022,8 +1022,8 @@ importers:
   packages-utils/module-glob:
     dependencies:
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/utils':
         specifier: workspace:^
         version: link:../utils
@@ -1053,8 +1053,8 @@ importers:
   packages-utils/module-info-pro:
     dependencies:
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       stack-utils:
         specifier: ^2.0.6
         version: 2.0.6
@@ -1105,8 +1105,8 @@ importers:
   packages-utils/utils:
     dependencies:
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/word-utils':
         specifier: ^2.1.8
         version: 2.1.14
@@ -1209,8 +1209,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages-utils/localeutil
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/module-info-pro':
         specifier: workspace:^
         version: link:../../packages-utils/module-info-pro
@@ -1291,8 +1291,8 @@ importers:
   packages-vona/vona-mock:
     dependencies:
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/module-info-pro':
         specifier: workspace:^
         version: link:../../packages-utils/module-info-pro
@@ -1893,8 +1893,8 @@ importers:
         specifier: workspace:^
         version: link:../../../../../packages-utils/json5
       '@cabloy/module-info':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.3
+        version: 2.0.3
       '@cabloy/type-fest':
         specifier: ^5.3.1
         version: 5.3.1
@@ -2875,8 +2875,8 @@ packages:
   '@cabloy/logger@1.1.24':
     resolution: {integrity: sha512-29Zs0Xc5SZKEemwq6D9oxKfau2BH9W1/giICXeaYB4g3VdgfbvrJbYKS95dXc7KH4FKtMj67aicsMQa6q6yclg==}
 
-  '@cabloy/module-info@2.0.2':
-    resolution: {integrity: sha512-IdGapT3De6rf+p8xlo9xDqzjGw0NGPxqvfMRgm6BPtrqL7uJJmO0pJJ+diikT9olOcheeB1fLmcF9IDKdyyDtg==}
+  '@cabloy/module-info@2.0.3':
+    resolution: {integrity: sha512-nFWTFUU64H6ENITdD0hB2zJ9yoWYfpHz/EjBEt8fAY3WM6d+6k1ZhARYE/bv9envRi5owNxUP12kIZ67s8NXGQ==}
 
   '@cabloy/paypal-server-sdk@2.2.0':
     resolution: {integrity: sha512-c3FG/Zmra8dg2Q1V/DvI47o81jHLYRon9zEX3XiURnRzVbUKisqckozVcivkr2rWJRkiStZ9FtIApnH7Cj7JWQ==}
@@ -8171,7 +8171,7 @@ snapshots:
       '@cabloy/localeutil': link:packages-utils/localeutil
       fecha: 4.2.3
 
-  '@cabloy/module-info@2.0.2': {}
+  '@cabloy/module-info@2.0.3': {}
 
   '@cabloy/paypal-server-sdk@2.2.0(supports-color@5.5.0)':
     dependencies:
@@ -13456,7 +13456,7 @@ snapshots:
       '@cabloy/json5': link:packages-utils/json5
       '@cabloy/localeutil': link:packages-utils/localeutil
       '@cabloy/logger': 1.1.24
-      '@cabloy/module-info': 2.0.2
+      '@cabloy/module-info': 2.0.3
       '@cabloy/utils': link:packages-utils/utils
       '@cabloy/vue-compiler-sfc': 3.5.14
       '@cabloy/vue-reactivity': 3.5.16
@@ -13591,7 +13591,7 @@ snapshots:
       '@cabloy/compose': link:packages-utils/compose
       '@cabloy/deps': link:packages-utils/deps
       '@cabloy/json5': link:packages-utils/json5
-      '@cabloy/module-info': 2.0.2
+      '@cabloy/module-info': 2.0.3
       '@cabloy/utils': link:packages-utils/utils
       '@cabloy/vue-router': 4.4.16(vue@3.5.39(typescript@5.9.3))
       '@cabloy/word-utils': 2.1.14

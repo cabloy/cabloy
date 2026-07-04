@@ -38,7 +38,7 @@
   "dependencies": {
     "@babel/core": "^7.29.0",
     "@babel/traverse": "^7.29.0",
-    "@cabloy/module-info": "^2.0.2",
+    "@cabloy/module-info": "^2.0.3",
     "html-tags": "^3.3.1",
     "svg-tags": "^1.0.0"
   },

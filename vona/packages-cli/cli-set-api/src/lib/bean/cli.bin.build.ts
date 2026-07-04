@@ -93,8 +93,8 @@ export class CliBinBuild extends BeanCliBase {
     const { env, modulesMeta } = await generateVonaMeta(configMeta, configOptions);
     const outDir = path.join(projectPath, getOutDir());
     await rimraf(outDir);
-    const { externals } = await this._rollup(projectPath, env, modulesMeta, outDir);
-    await this._packageJson(projectPath, outDir, externals);
+    const { externals, allowBuilds } = await this._rollup(projectPath, env, modulesMeta, outDir);
+    await this._packageJson(projectPath, outDir, externals, allowBuilds);
     await this._assets(projectPath, modulesMeta, outDir);
     // custom
     await this._custom(projectPath, env, outDir);
@@ -123,7 +123,13 @@ export class CliBinBuild extends BeanCliBase {
     }
   }
 
-  async _packageJson(_projectPath: string, outDir: string, externals: Record<string, string>) {
+  async _packageJson(
+    _projectPath: string,
+    outDir: string,
+    externals: Record<string, string>,
+    allowBuilds: Record<string, boolean>,
+  ) {
+    // package.json
     const dependencies: Record<string, string> = {};
     for (const name of Object.keys(externals).sort()) {
       const version = externals[name];
@@ -138,6 +144,14 @@ export class CliBinBuild extends BeanCliBase {
       path.join(outDir, 'package.json'),
       `${JSON.stringify(pkgContent, null, 2)}\n`,
     );
+    // pnpm-workspace.yaml
+    const nativeBuildDepsAllowList = Object.keys(allowBuilds);
+    const content = [
+      'allowBuilds:',
+      ...nativeBuildDepsAllowList.map(name => `  ${name}: true`),
+      '',
+    ].join('\n');
+    await fse.writeFile(path.join(outDir, 'pnpm-workspace.yaml'), content);
   }
 
   async _custom(projectPath: string, env: NodeJS.ProcessEnv, outDir: string) {
@@ -206,6 +220,16 @@ export class CliBinBuild extends BeanCliBase {
       if (!externalsModule) continue;
       for (const external of externalsModule) {
         externals[external] = module.package.dependencies[external];
+      }
+    }
+
+    const allowBuilds: Record<string, true> = {};
+    for (const relativeName in modulesMeta.modules) {
+      const module = modulesMeta.modules[relativeName];
+      const allowBuildsModule = module.package.vonaModule?.bundle?.allowBuilds;
+      if (!allowBuildsModule) continue;
+      for (const allowBuild of allowBuildsModule) {
+        allowBuilds[allowBuild] = true;
       }
     }
 
@@ -319,6 +343,6 @@ export class CliBinBuild extends BeanCliBase {
       }
     }
 
-    return { externals };
+    return { externals, allowBuilds };
   }
 }
