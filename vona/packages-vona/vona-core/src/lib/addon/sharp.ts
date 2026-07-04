@@ -28,6 +28,8 @@ export function resolverSharpLibvips(projectPath: string) {
   const libPath = path.join(path.dirname(modulePath), 'lib');
   const fileName = fs.readdirSync(libPath).find(_matchSharpLibvipsFileName);
   if (!fileName) {
+    // eslint-disable-next-line
+    console.log(fs.readdirSync(libPath));
     throw new Error(`Sharp libvips native binding not found: ${libPath}`);
   }
   return path.join(libPath, fileName);
