@@ -93,7 +93,7 @@ export class CliBinBuild extends BeanCliBase {
     const { env, modulesMeta } = await generateVonaMeta(configMeta, configOptions);
     const outDir = path.join(projectPath, getOutDir());
     await rimraf(outDir);
-    await this._rollup(projectPath, env, modulesMeta, outDir);
+    const { externals } = await this._rollup(projectPath, env, modulesMeta, outDir);
     await this._assets(projectPath, modulesMeta, outDir);
     // custom
     await this._custom(projectPath, env, outDir);
@@ -181,7 +181,15 @@ export class CliBinBuild extends BeanCliBase {
       }
     }
 
-    const externals: string[] = [];
+    const externals: Record<string, string> = {};
+    for (const relativeName in modulesMeta.modules) {
+      const module = modulesMeta.modules[relativeName];
+      const externalsModule = module.package.vonaModule?.bundle?.externals;
+      if (!externalsModule) continue;
+      for (const external of externalsModule) {
+        externals[external] = module.package.dependencies[external];
+      }
+    }
 
     const babelPluginVonaBeanModule = getAbsolutePathOfModule('babel-plugin-vona-bean-module', '');
     const babelPluginTransformTypescriptMetadata = getAbsolutePathOfModule(
@@ -250,7 +258,7 @@ export class CliBinBuild extends BeanCliBase {
     const inputOptions: RollupOptions = {
       input: path.join(projectPath, '.vona/bootstrap.ts'),
       plugins,
-      external: externals,
+      external: Object.keys(externals),
       onLog: (level: LogLevel, log: RollupLog, defaultHandler: LogOrStringHandler) => {
         if (
           log.code === 'CIRCULAR_DEPENDENCY' &&
@@ -292,5 +300,7 @@ export class CliBinBuild extends BeanCliBase {
         await bundle.close();
       }
     }
+
+    return { externals };
   }
 }
