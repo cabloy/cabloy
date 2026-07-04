@@ -54,6 +54,11 @@
     "dependencies": {},
     "globalDependencies": {
       "better-sqlite3": true
+    },
+    "bundle": {
+      "externals": [
+        "better-sqlite3"
+      ]
     }
   }
 }

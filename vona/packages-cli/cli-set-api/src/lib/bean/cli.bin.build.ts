@@ -181,6 +181,8 @@ export class CliBinBuild extends BeanCliBase {
       }
     }
 
+    const externals: string[] = [];
+
     const babelPluginVonaBeanModule = getAbsolutePathOfModule('babel-plugin-vona-bean-module', '');
     const babelPluginTransformTypescriptMetadata = getAbsolutePathOfModule(
       'babel-plugin-transform-typescript-metadata',
@@ -248,6 +250,7 @@ export class CliBinBuild extends BeanCliBase {
     const inputOptions: RollupOptions = {
       input: path.join(projectPath, '.vona/bootstrap.ts'),
       plugins,
+      external: externals,
       onLog: (level: LogLevel, log: RollupLog, defaultHandler: LogOrStringHandler) => {
         if (
           log.code === 'CIRCULAR_DEPENDENCY' &&

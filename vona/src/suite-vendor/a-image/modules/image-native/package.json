@@ -52,11 +52,8 @@
       "sharp": true
     },
     "bundle": {
-      "replaces": [
-        [
-          "sharp = require(`../src/build/Release/sharp-${runtimePlatform}-${version}.node`);",
-          "globalThis.__app__.__prepareSharpLibvips(); sharp = globalThis.__app__.util.requireAddon('sharp');"
-        ]
+      "externals": [
+        "sharp"
       ]
     },
     "capabilities": {
