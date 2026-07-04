@@ -1,3 +1,4 @@
+import type { SharpConstructor } from 'sharp';
 import type {
   EntityImage,
   IImageDeliveryOptions,
@@ -12,7 +13,6 @@ import type {
 import fse from 'fs-extra';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
-import sharp from 'sharp';
 import { BeanBase, uuidv4 } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { resolveImageVariantRequestToTransform } from 'vona-module-a-image';
@@ -26,6 +26,15 @@ type IImageNativeStoredImage = Pick<
 
 @Service()
 export class ServiceImageNative extends BeanBase {
+  private _sharpInstance: SharpConstructor;
+
+  private async getSharp() {
+    if (!this._sharpInstance) {
+      this._sharpInstance = (await import('sharp')).default;
+    }
+    return this._sharpInstance;
+  }
+
   async upload(
     input: IImageUploadInput,
     options: IImageProviderNativeClientOptions,
@@ -39,6 +48,7 @@ export class ServiceImageNative extends BeanBase {
     const targetName = `${resourceId}${ext}`;
     const targetPath = path.join(publicPath, targetName);
     await fse.copy(input.file, targetPath);
+    const sharp = await this.getSharp();
     const metadata = await sharp(targetPath).metadata();
     const stat = await fse.stat(targetPath);
     const variants = options.variants ?? this.scope.config.imageNative.variants;
@@ -132,6 +142,7 @@ export class ServiceImageNative extends BeanBase {
       await fse.copy(sourcePath, targetPath, { overwrite: true });
       return;
     }
+    const sharp = await this.getSharp();
     let pipeline = sharp(sourcePath, { failOn: 'none' });
     const width =
       transformOptions.width && transformOptions.dpr
