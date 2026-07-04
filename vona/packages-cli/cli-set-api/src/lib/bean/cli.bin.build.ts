@@ -94,6 +94,7 @@ export class CliBinBuild extends BeanCliBase {
     const outDir = path.join(projectPath, getOutDir());
     await rimraf(outDir);
     const { externals } = await this._rollup(projectPath, env, modulesMeta, outDir);
+    await this._packageJson(projectPath, outDir, externals);
     await this._assets(projectPath, modulesMeta, outDir);
     // custom
     await this._custom(projectPath, env, outDir);
