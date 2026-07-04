@@ -1,10 +1,14 @@
 FROM node:24
 
+RUN corepack enable && corepack prepare pnpm@11.5.2 --activate
+
 RUN mkdir -p /opt/node/app/dist
 WORKDIR /opt/node/app
 
+COPY ./dist/docker /opt/node/app/dist/docker
 COPY ./scripts /opt/node/app/scripts
 
+RUN pnpm -C ./dist/docker install
 RUN chmod +x /opt/node/app/scripts/*.sh
 
 # start

@@ -10,7 +10,6 @@ services:
     ports:
       - '7202:7102'
     volumes:
-      - ./output/dist/docker:/opt/node/app/dist/docker
       - ./output/app/.vona:/root/.vona
     command: [./scripts/wait-for-it.sh, 'pg:5432', 'redis:6379', -s, --, ./scripts/app-init.sh]
 
