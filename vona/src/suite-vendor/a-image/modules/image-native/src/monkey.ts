@@ -21,7 +21,6 @@ export class Monkey extends BeanSimple implements IMonkeyAppStart {
       const addonFileSrc = resolveAddon('sharpLibvips');
       const addonDirDest = path.join(
         import.meta.dirname,
-        'addon',
         `node_modules/@img/sharp-libvips-${platformArch}/lib`,
       );
       const addonFileDest = path.join(addonDirDest, __MapTargetNames[platformArch]);

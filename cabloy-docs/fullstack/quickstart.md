@@ -90,7 +90,7 @@ Both Cabloy Basic and Cabloy Start support the same Docker Compose command flow.
 
 ```bash
 npm run build:docker
-cd docker-compose
+cd vona/docker-compose
 sudo COMPOSE_BAKE=true docker-compose build
 sudo docker-compose up
 ```
