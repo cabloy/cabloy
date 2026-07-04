@@ -12,7 +12,7 @@ export interface ISsrMenuOptionsAdmin extends IDecoratorSsrMenuOptions<ISsrSiteO
     title: 'Admin',
     order: $order(1),
     icon: undefined,
-    link: 'http://localhost:7102/admin' as any,
+    link: '/admin' as any,
     external: true,
     target: '_self',
   },
