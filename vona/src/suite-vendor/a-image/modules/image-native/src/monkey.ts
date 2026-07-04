@@ -4,16 +4,24 @@ import fse from 'fs-extra';
 import path from 'node:path';
 import { BeanSimple, cast, getPlatformArch, resolveAddon } from 'vona';
 
+const __Version = '8.18.3';
+
+const __MapTargetNames = {
+  'linux-x64': `libvips-cpp.so.${__Version}`,
+  'darwin-arm64': `libvips-cpp.${__Version}.dylib`,
+};
+
 export class Monkey extends BeanSimple implements IMonkeyAppStart {
   async appStart() {
-    cast(this.app).__prepareSharpLibvips = (targetName: string) => {
+    cast(this.app).__prepareSharpLibvips = () => {
+      const platformArch = getPlatformArch();
       const addonFileSrc = resolveAddon('sharpLibvips');
       const addonDirDest = path.join(
         import.meta.dirname,
         'addon',
-        `node_modules/@img/sharp-libvips-${getPlatformArch()}/lib`,
+        `node_modules/@img/sharp-libvips-${platformArch}/lib`,
       );
-      const addonFileDest = path.join(addonDirDest, targetName);
+      const addonFileDest = path.join(addonDirDest, __MapTargetNames[platformArch]);
       if (!fse.existsSync(addonFileDest)) {
         fse.ensureDirSync(addonDirDest);
         fse.copyFileSync(addonFileSrc, addonFileDest);

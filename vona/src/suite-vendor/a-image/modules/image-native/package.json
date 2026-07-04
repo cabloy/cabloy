@@ -55,7 +55,7 @@
       "replaces": [
         [
           "sharp = require(`../src/build/Release/sharp-${runtimePlatform}-${version}.node`);",
-          "sharp = globalThis.__app__.__prepareSharpLibvips('libvips-cpp.8.18.3.dylib');globalThis.__app__.util.requireAddon('sharp');"
+          "globalThis.__app__.__prepareSharpLibvips(); sharp = globalThis.__app__.util.requireAddon('sharp');"
         ]
       ]
     },
