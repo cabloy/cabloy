@@ -76,6 +76,9 @@ export interface IModuleImageProvider {
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
 /** config: end */
+/** monkey: begin */
+export * from '../monkey.ts';
+/** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
 import { Scope } from 'vona-module-a-bean';

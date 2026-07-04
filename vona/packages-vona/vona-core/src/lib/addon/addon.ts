@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
-import { resolverSharp } from './sharp.ts';
+import { resolverSharp, resolverSharpLibvips } from './sharp.ts';
 import { resolverSqlite3 } from './sqlite3.ts';
 
 export type TypeCopyAddonOptionsResolver = (addonName: string, projectPath: string) => string;
@@ -27,7 +27,7 @@ export async function copyAddon({
   outDir,
   env,
 }: ICopyAddonOptions) {
-  const envName = `BUILD_ADDON_${addonName}`;
+  const envName = `BUILD_ADDON_${addonName}`.toUpperCase();
   const envValue = env[envName];
   if (envValue === 'false') return;
   // manual
@@ -37,6 +37,9 @@ export async function copyAddon({
     await fse.copy(addonDirSrc, addonDirDest);
   }
   // auto
+  const envAutoName = `BUILD_ADDON_AUTO_${addonName}`.toUpperCase();
+  const envAutoValue = env[envAutoName];
+  if (envAutoValue === 'false') return;
   const platformArch = getPlatformArch();
   const addonFile = _resolverAddonFile(addonName, projectPath, resolver);
   if (addonFile) {
@@ -46,10 +49,15 @@ export async function copyAddon({
 }
 
 export function requireAddon(addonName: string) {
-  const platformArch = getPlatformArch();
-  const addonFile = path.join(import.meta.dirname, 'addon', addonName, `${platformArch}.node`);
+  const addonFile = resolveAddon(addonName);
   const require = createRequire(import.meta.url);
   return require(addonFile);
+}
+
+export function resolveAddon(addonName: string) {
+  const platformArch = getPlatformArch();
+  const addonFile = path.join(import.meta.dirname, 'addon', addonName, `${platformArch}.node`);
+  return addonFile;
 }
 
 function _resolverAddonFile(
@@ -63,5 +71,7 @@ function _resolverAddonFile(
     return resolverSqlite3(projectPath);
   } else if (addonName === 'sharp') {
     return resolverSharp(projectPath);
+  } else if (addonName === 'sharpLibvips') {
+    return resolverSharpLibvips(projectPath);
   }
 }

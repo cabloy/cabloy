@@ -7,4 +7,5 @@ export async function afterBuild(options: ICliBuildCustomOptions) {
   // await copySqlite3NativeBinding(projectPath, outDir, env);
   await copyAddon({ addonName: 'sqlite3', projectPath, outDir, env });
   await copyAddon({ addonName: 'sharp', projectPath, outDir, env });
+  await copyAddon({ addonName: 'sharpLibvips', projectPath, outDir, env });
 }
