@@ -39,7 +39,7 @@
     "@cabloy/extend": "workspace:^",
     "@cabloy/json5": "workspace:^",
     "@cabloy/localeutil": "workspace:^",
-    "@cabloy/module-info": "^2.0.1",
+    "@cabloy/module-info": "^2.0.2",
     "@cabloy/module-info-pro": "workspace:^",
     "@cabloy/type-fest": "^5.3.1",
     "@cabloy/utils": "workspace:^",
