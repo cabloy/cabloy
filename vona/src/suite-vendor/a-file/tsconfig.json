@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/a-file/tsconfig.build.json"
+    },
+    {
+      "path": "modules/file-cloudflare/tsconfig.build.json"
+    },
+    {
+      "path": "modules/file-native/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}

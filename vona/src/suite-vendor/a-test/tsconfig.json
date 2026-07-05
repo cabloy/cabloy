@@ -22,6 +22,9 @@
     },
     {
       "path": "modules/test-image/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-file/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]
