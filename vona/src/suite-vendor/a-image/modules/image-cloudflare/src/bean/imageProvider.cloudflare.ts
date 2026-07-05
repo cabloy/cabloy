@@ -68,6 +68,14 @@ export class ImageProviderCloudflare extends BeanBase implements IImageProviderE
     return await this.scope.service.imageCloudflare.createDirectUpload(input, clientOptions);
   }
 
+  async finalizeDirectUpload(
+    image: EntityImage,
+    clientOptions: IImageProviderCloudflareClientOptions,
+    _options: IImageProviderOptionsCloudflare,
+  ) {
+    return await this.scope.service.imageCloudflare.finalizeDirectUpload(image, clientOptions);
+  }
+
   async get(
     image: EntityImage,
     clientOptions: IImageProviderCloudflareClientOptions,

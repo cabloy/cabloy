@@ -5,7 +5,7 @@ import { $schema, Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
-import type { IImageNamedVariants } from '../types/image.ts';
+import type { IImageNamedVariants, TypeImageStatus } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
@@ -50,6 +50,15 @@ export class DtoImageUploadResponse {
 
   @Api.field(v.optional(), z.string())
   imageScene?: keyof IImageSceneRecord;
+
+  @Api.field(v.optional(), z.string())
+  status?: TypeImageStatus;
+
+  @Api.field(v.optional())
+  draftExpiresAt?: Date;
+
+  @Api.field(v.optional())
+  finalizedAt?: Date;
 
   @Api.field(v.optional())
   uploadedAt?: Date;

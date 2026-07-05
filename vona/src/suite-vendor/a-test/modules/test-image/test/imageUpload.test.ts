@@ -131,6 +131,15 @@ describe('imageUpload.test.ts', () => {
             variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
           });
         }
+        if (url.includes('/images/v1/cf-direct-api-1') && method === 'GET') {
+          return createCloudflareResponse({
+            id: 'cf-direct-api-1',
+            filename: 'direct.png',
+            draft: false,
+            requireSignedURLs: true,
+            variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
+          });
+        }
         if (url.includes('/images/v1') && method === 'POST') {
           return createCloudflareResponse({
             id: 'cf-upload-url-api-1',
@@ -162,6 +171,33 @@ describe('imageUpload.test.ts', () => {
         assert.equal(directData.data.resourceId, 'cf-direct-api-1');
         assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
         assert.equal(directData.data.requireSignedURLs, true);
+        assert.equal(directData.data.status, 'draft');
+        assert.equal(!!directData.data.draftExpiresAt, true);
+
+        const finalizeUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload/finalize');
+        const finalizeRes = await fetch(finalizeUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageId: directData.data.id,
+          }),
+        });
+        assert.equal(finalizeRes.ok, true);
+        const finalizeData = await finalizeRes.json();
+        assert.equal(finalizeData.data.resourceId, 'cf-direct-api-1');
+        assert.equal(finalizeData.data.status, 'ready');
+        assert.equal(
+          finalizeData.data.url.startsWith(
+            'https://imagedelivery.net/hash123/cf-direct-api-1/public',
+          ),
+          true,
+        );
+        assert.equal(finalizeData.data.url.includes('sig='), true);
+        assert.equal(finalizeData.data.signed, true);
+        assert.equal(!!finalizeData.data.finalizedAt, true);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-url');
         const uploadUrlRes = await fetch(uploadUrl, {

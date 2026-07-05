@@ -257,6 +257,32 @@ declare module 'vona-module-a-image' {
 /** meta redlock: begin */
 import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
+/** schedule: begin */
+export * from '../bean/schedule.imageDraftPrune.ts';
+
+import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
+declare module 'vona-module-a-schedule' {
+
+    export interface IScheduleRecord {
+      'a-image:imageDraftPrune': IDecoratorScheduleOptions;
+    }
+
+
+}
+declare module 'vona-module-a-image' {
+
+        export interface ScheduleImageDraftPrune {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface ScheduleImageDraftPrune {
+            get $beanFullName(): 'a-image.schedule.imageDraftPrune';
+            get $onionName(): 'a-image:imageDraftPrune';
+            get $onionOptions(): IDecoratorScheduleOptions;
+          }
+}
+/** schedule: end */
 /** serializerTransform: begin */
 export * from '../bean/serializerTransform.resolveView.ts';
 export * from '../bean/serializerTransform.resolveViews.ts';
@@ -299,6 +325,8 @@ declare module 'vona-module-a-image' {
 /** serializerTransform: end */
 /** dto: begin */
 export * from '../dto/imageDeliveryRequest.ts';
+export * from '../dto/imageDirectUploadFinalizeRequest.ts';
+export * from '../dto/imageDirectUploadFinalizeResponse.ts';
 export * from '../dto/imageDirectUploadRequest.ts';
 export * from '../dto/imageDirectUploadResponse.ts';
 export * from '../dto/imageTransformOptions.tsx';
@@ -308,6 +336,8 @@ export * from '../dto/imageUploadTokenResponse.ts';
 export * from '../dto/imageUploadUrlRequest.ts';
 export * from '../dto/imageView.ts';
 import type { IDtoOptionsImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import type { IDtoOptionsImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFinalizeRequest.ts';
+import type { IDtoOptionsImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import type { IDtoOptionsImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import type { IDtoOptionsImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import type { IDtoOptionsImageTransformOptions } from '../dto/imageTransformOptions.tsx';
@@ -321,6 +351,8 @@ declare module 'vona-module-a-web' {
 
     export interface IDtoRecord {
       'a-image:imageDeliveryRequest': IDtoOptionsImageDeliveryRequest;
+'a-image:imageDirectUploadFinalizeRequest': IDtoOptionsImageDirectUploadFinalizeRequest;
+'a-image:imageDirectUploadFinalizeResponse': IDtoOptionsImageDirectUploadFinalizeResponse;
 'a-image:imageDirectUploadRequest': IDtoOptionsImageDirectUploadRequest;
 'a-image:imageDirectUploadResponse': IDtoOptionsImageDirectUploadResponse;
 'a-image:imageTransformOptions': IDtoOptionsImageTransformOptions;
@@ -339,6 +371,8 @@ declare module 'vona-module-a-image' {
 /** dto: end */
 /** dto: begin */
 import type { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import type { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFinalizeRequest.ts';
+import type { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import type { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import type { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import type { DtoImageTransformOptions } from '../dto/imageTransformOptions.tsx';
@@ -351,6 +385,14 @@ declare module 'vona-module-a-image' {
 
     export interface IDtoOptionsImageDeliveryRequest {
       fields?: TypeEntityOptionsFields<DtoImageDeliveryRequest, IDtoOptionsImageDeliveryRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageDirectUploadFinalizeRequest {
+      fields?: TypeEntityOptionsFields<DtoImageDirectUploadFinalizeRequest, IDtoOptionsImageDirectUploadFinalizeRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageDirectUploadFinalizeResponse {
+      fields?: TypeEntityOptionsFields<DtoImageDirectUploadFinalizeResponse, IDtoOptionsImageDirectUploadFinalizeResponse[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsImageDirectUploadRequest {
@@ -426,10 +468,10 @@ declare module 'vona-module-a-web' {
         '/image/upload-token': undefined;
 '/image/upload': undefined;
 '/image/direct-upload': undefined;
+'/image/direct-upload/finalize': undefined;
 '/image/upload-url': undefined;
     }
-
-  export interface IApiPathGetRecord{
+export interface IApiPathGetRecord{
         '/image/delivery/:imageId': undefined;
     }
 

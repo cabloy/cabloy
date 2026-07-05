@@ -7,6 +7,8 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFinalizeRequest.ts';
+import { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
@@ -84,6 +86,17 @@ export class ControllerImage extends BeanBase {
         imageScene: policy.imageScene,
       },
     );
+  }
+
+  @Web.post('direct-upload/finalize')
+  @Api.body(DtoImageDirectUploadFinalizeResponse)
+  async finalizeDirectUpload(@Arg.body() data: DtoImageDirectUploadFinalizeRequest) {
+    const image = await this.bean.image.finalizeDirectUpload(data.imageId);
+    return {
+      ...image,
+      url: await this.bean.image.getVariantUrl(image.id),
+      signed: !!image.requireSignedURLs,
+    };
   }
 
   @Web.post('upload-url')

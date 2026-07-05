@@ -38,6 +38,12 @@ interface ICloudflareImageResult {
   draft?: boolean;
 }
 
+interface ICloudflareImageDetailsResult extends ICloudflareImageResult {
+  meta?: {
+    filename?: string;
+  };
+}
+
 interface ICloudflareClientOptionsNormalized extends IImageProviderCloudflareClientOptions {
   accountId: string;
   apiToken: string;
@@ -128,6 +134,26 @@ export class ServiceImageCloudflare extends BeanBase {
       uploadUrl: result.uploadURL,
       draft: true,
     };
+  }
+
+  async finalizeDirectUpload(
+    image: Pick<EntityImage, 'resourceId' | 'filename' | 'meta' | 'requireSignedURLs'>,
+    options: IImageProviderCloudflareClientOptions,
+  ): Promise<IImageProviderResource | undefined> {
+    const normalized = this._normalizeClientOptions(options);
+    const result = await this._request<ICloudflareImageDetailsResult>(
+      normalized,
+      `/images/v1/${encodeURIComponent(image.resourceId)}`,
+      {
+        method: 'GET',
+      },
+    );
+    if (result.draft) return undefined;
+    return this._mapImageResource(result, normalized, {
+      filename: result.filename ?? result.meta?.filename ?? image.filename,
+      meta: image.meta,
+      requireSignedURLs: image.requireSignedURLs,
+    });
   }
 
   async remove(

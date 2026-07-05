@@ -71,6 +71,11 @@ export interface IImageProviderExecute<
     clientOptions: T,
     options: O,
   ): Promise<IImageProviderDirectUploadResource>;
+  finalizeDirectUpload?(
+    image: EntityImage,
+    clientOptions: T,
+    options: O,
+  ): Promise<IImageProviderResource | undefined>;
   get(
     image: EntityImage,
     clientOptions: T,

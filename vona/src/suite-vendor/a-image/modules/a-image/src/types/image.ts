@@ -39,6 +39,8 @@ export type IImageNamedVariants = Partial<Record<TypeImageVariantName, IImageTra
 
 export type TypeImageDeliveryExpiry = Date | string | number;
 
+export type TypeImageStatus = 'draft' | 'ready' | 'expired' | 'failed';
+
 export interface IImageDeliveryOptions {
   signed?: boolean;
   expiresIn?: number;
@@ -142,6 +144,9 @@ export interface IImageResource<
   provider: keyof IImageProviderRecord;
   clientName: string;
   imageScene?: keyof IImageSceneRecord | string;
+  status?: TypeImageStatus;
+  draftExpiresAt?: Date;
+  finalizedAt?: Date;
   uploadedAt?: Date;
 }
 
@@ -153,6 +158,11 @@ export interface IImageDirectUploadResult<
   draft?: boolean;
 }
 
+export interface IImageFinalizeDirectUploadResult<
+  TMeta extends TypeImageMeta = TypeImageMeta,
+  TRaw = unknown,
+> extends IImageResource<TMeta, TRaw> {}
+
 export interface IImageView {
   id: TableIdentity;
   url: string;
@@ -162,6 +172,9 @@ export interface IImageView {
   provider: keyof IImageProviderRecord;
   clientName: string;
   imageScene?: keyof IImageSceneRecord | string;
+  status?: TypeImageStatus;
+  draftExpiresAt?: Date;
+  finalizedAt?: Date;
   uploadedAt?: Date;
   variants?: IImageNamedVariants;
   signed?: boolean;

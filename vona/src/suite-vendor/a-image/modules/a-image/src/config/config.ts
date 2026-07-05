@@ -12,6 +12,9 @@ export function config(_app: VonaApplication) {
         maxSize: 2 * 1024 * 1024,
         mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
       },
+      directUpload: {
+        draftExpiresIn: 30 * 60 * 1000,
+      },
     },
   };
 }
