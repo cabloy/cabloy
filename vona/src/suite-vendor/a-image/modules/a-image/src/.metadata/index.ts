@@ -216,20 +216,34 @@ declare module 'vona' {
 }
 /** bean: end */
 /** meta: begin */
+export * from '../bean/meta.index.ts';
 export * from '../bean/meta.redlock.ts';
 export * from '../bean/meta.version.ts';
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
 
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
 
     export interface IMetaRecord {
-      'a-image:redlock': never;
+      'a-image:index': IMetaOptionsIndex;
+'a-image:redlock': never;
 'a-image:version': never;
     }
 
 
 }
 declare module 'vona-module-a-image' {
+
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'a-image.meta.index';
+            get $onionName(): 'a-image:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
 
         export interface MetaRedlock {
           /** @internal */
@@ -254,6 +268,9 @@ declare module 'vona-module-a-image' {
           }
 }
 /** meta: end */
+/** meta index: begin */
+import type { MetaIndex } from '../bean/meta.index.ts';
+/** meta index: end */
 /** meta redlock: begin */
 import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */

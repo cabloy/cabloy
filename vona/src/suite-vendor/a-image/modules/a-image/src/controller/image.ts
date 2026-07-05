@@ -56,11 +56,7 @@ export class ControllerImage extends BeanBase {
         imageScene: payload.imageScene,
       },
     );
-    return {
-      ...image,
-      url: await this.bean.image.getVariantUrl(image.id),
-      signed: !!image.requireSignedURLs,
-    };
+    return await this.bean.image.createImageActionResponse(image);
   }
 
   @Web.post('direct-upload')
@@ -92,11 +88,7 @@ export class ControllerImage extends BeanBase {
   @Api.body(DtoImageDirectUploadFinalizeResponse)
   async finalizeDirectUpload(@Arg.body() data: DtoImageDirectUploadFinalizeRequest) {
     const image = await this.bean.image.finalizeDirectUpload(data.imageId);
-    return {
-      ...image,
-      url: await this.bean.image.getVariantUrl(image.id),
-      signed: !!image.requireSignedURLs,
-    };
+    return await this.bean.image.createImageActionResponse(image);
   }
 
   @Web.post('upload-url')
@@ -121,11 +113,7 @@ export class ControllerImage extends BeanBase {
         imageScene: policy.imageScene,
       },
     );
-    return {
-      ...image,
-      url: await this.bean.image.getVariantUrl(image.id),
-      signed: !!image.requireSignedURLs,
-    };
+    return await this.bean.image.createImageActionResponse(image);
   }
 
   @Web.get('delivery/:imageId')

@@ -36,7 +36,7 @@ interface IImageProviderContext {
 }
 
 interface IImageDeliveryContext {
-  image: EntityImage;
+  image: EntityImage | IImageResource;
   requestNormalized: IImageVariantRequest;
   deliveryOptionsResolved: IImageDeliveryOptions;
   providerContext: IImageProviderContext;
@@ -174,7 +174,13 @@ export class BeanImage extends BeanBase {
           finalizedAt,
         }),
       );
-      return this._combineImageResource(imageUpdated, imageProviderResource);
+      return this._combineImageResource(
+        {
+          ...image,
+          ...imageUpdated,
+        },
+        imageProviderResource,
+      );
     });
   }
 
@@ -215,16 +221,7 @@ export class BeanImage extends BeanBase {
     deliveryOptions?: IImageDeliveryOptions,
   ) {
     const context = await this._getDeliveryContext(imageId, request, deliveryOptions);
-    if (this._shouldUseProxySignedDelivery(context)) {
-      return await this._createSignedDeliveryUrl(context);
-    }
-    return await context.providerContext.beanImageProvider.getVariantUrl(
-      context.image,
-      context.requestNormalized,
-      context.providerContext.clientOptions,
-      context.providerContext.onionOptions,
-      context.deliveryOptionsResolved,
-    );
+    return await this._getVariantUrlByContext(context);
   }
 
   async download(
@@ -275,19 +272,13 @@ export class BeanImage extends BeanBase {
     if (!imageId) return;
     const image = await this.get(imageId);
     if (!image) return;
-    this._assertImageReady(image);
     if (imageScene && image.imageScene !== imageScene) {
       throw new Error(`image scene mismatch: image=${image.imageScene}, expected=${imageScene}`);
     }
-    const requestNormalized = this._normalizeVariantRequest(request);
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(
-      image,
-      requestNormalized,
-      deliveryOptions,
-    );
+    const context = await this._createDeliveryContext(image, request, deliveryOptions);
     return {
       id: image.id,
-      url: await this.getVariantUrl(image.id, requestNormalized, deliveryOptionsResolved),
+      url: await this._getVariantUrlByContext(context),
       filename: image.filename,
       width: image.width,
       height: image.height,
@@ -299,7 +290,7 @@ export class BeanImage extends BeanBase {
       finalizedAt: image.finalizedAt,
       uploadedAt: image.uploadedAt,
       variants: image.variants,
-      signed: !!deliveryOptionsResolved.signed,
+      signed: !!context.deliveryOptionsResolved.signed,
     };
   }
 
@@ -323,15 +314,18 @@ export class BeanImage extends BeanBase {
     return await beanImageProvider.get(image, clientOptions, onionOptions);
   }
 
-  private async _getProviderContext(image: EntityImage): Promise<IImageProviderContext> {
+  private async _getProviderContext(
+    image:
+      | Pick<EntityImage, 'providerName' | 'clientName'>
+      | Pick<IImageResource, 'provider' | 'clientName'>,
+  ): Promise<IImageProviderContext> {
+    const providerName = 'providerName' in image ? image.providerName : image.provider;
     const providerContext = await this.bean.imageProvider.getClientOptions({
-      providerName: image.providerName,
+      providerName,
       clientName: image.clientName,
     });
     if (!providerContext.entityImageProvider) {
-      throw new Error(
-        `Image provider not found: ${String(image.providerName)}.${image.clientName}`,
-      );
+      throw new Error(`Image provider not found: ${String(providerName)}.${image.clientName}`);
     }
     return {
       beanImageProvider: this._getBeanImageProvider(
@@ -383,6 +377,19 @@ export class BeanImage extends BeanBase {
     return onionOptions ?? {};
   }
 
+  async createImageActionResponse(
+    image: IImageResource,
+    request?: TypeImageVariantInput,
+    deliveryOptions?: IImageDeliveryOptions,
+  ) {
+    const context = await this._createDeliveryContext(image, request, deliveryOptions);
+    return {
+      ...image,
+      url: await this._getVariantUrlByContext(context),
+      signed: !!context.deliveryOptionsResolved.signed,
+    };
+  }
+
   private _resolveDirectUploadDraftExpiresAt(expiry?: IImageDirectUploadInput['expiry']) {
     return (
       this._normalizeDate(expiry) ??
@@ -406,6 +413,14 @@ export class BeanImage extends BeanBase {
   ): Promise<IImageDeliveryContext> {
     const image = await this.scope.model.image.getById(imageId);
     if (!image) throw new Error(`not found image: ${imageId}`);
+    return await this._createDeliveryContext(image, request, deliveryOptions);
+  }
+
+  private async _createDeliveryContext(
+    image: EntityImage | IImageResource,
+    request?: TypeImageVariantInput,
+    deliveryOptions?: IImageDeliveryOptions,
+  ): Promise<IImageDeliveryContext> {
     this._assertImageReady(image);
     const requestNormalized = this._normalizeVariantRequest(request);
     const deliveryOptionsResolved = this._mergeDeliveryOptions(
@@ -420,6 +435,20 @@ export class BeanImage extends BeanBase {
       deliveryOptionsResolved,
       providerContext,
     };
+  }
+
+  private async _getVariantUrlByContext(context: IImageDeliveryContext) {
+    const providerImage = this._getProviderImage(context.image);
+    if (this._shouldUseProxySignedDelivery(context)) {
+      return await this._createSignedDeliveryUrl(context, providerImage);
+    }
+    return await context.providerContext.beanImageProvider.getVariantUrl(
+      providerImage,
+      context.requestNormalized,
+      context.providerContext.clientOptions,
+      context.providerContext.onionOptions,
+      context.deliveryOptionsResolved,
+    );
   }
 
   private _shouldUseProxySignedDelivery(context: IImageDeliveryContext) {
@@ -468,9 +497,12 @@ export class BeanImage extends BeanBase {
     };
   }
 
-  private async _createSignedDeliveryUrl(context: IImageDeliveryContext) {
+  private async _createSignedDeliveryUrl(
+    context: IImageDeliveryContext,
+    providerImage: EntityImage = this._getProviderImage(context.image),
+  ) {
     const targetUrl = await context.providerContext.beanImageProvider.getVariantUrl(
-      context.image,
+      providerImage,
       context.requestNormalized,
       context.providerContext.clientOptions,
       context.providerContext.onionOptions,
@@ -494,6 +526,14 @@ export class BeanImage extends BeanBase {
     const url = new URL(routeUrl);
     url.searchParams.set('token', tokenPayload.token);
     return url.toString();
+  }
+
+  private _getProviderImage(image: EntityImage | IImageResource): EntityImage {
+    if ('providerName' in image) return image;
+    return {
+      ...image,
+      providerName: image.provider,
+    } as EntityImage;
   }
 
   private _buildImagePersistData(
