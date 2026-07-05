@@ -33,6 +33,9 @@ export class DtoImageDirectUploadResponse {
   @Api.field(v.optional())
   filename?: string;
 
+  @Api.field(v.optional())
+  requireSignedURLs?: boolean;
+
   @Api.field(v.optional(), z.string())
   imageScene?: keyof IImageSceneRecord;
 }

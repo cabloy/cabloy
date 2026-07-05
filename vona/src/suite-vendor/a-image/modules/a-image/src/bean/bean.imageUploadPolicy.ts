@@ -1,3 +1,4 @@
+import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
@@ -12,6 +13,8 @@ import type {
   IDecoratorImageSceneOptionsProvider,
   IImageSceneRecord,
 } from '../types/imageScene.ts';
+
+import { getImageExtension, matchesImageMimeType } from '../lib/imageUploadValidation.ts';
 
 @Bean()
 export class BeanImageUploadPolicy extends BeanBase {
@@ -121,7 +124,7 @@ export class BeanImageUploadPolicy extends BeanBase {
     if (maxSize && data.size > maxSize) {
       return this.app.throw(403, `image too large: maxSize=${maxSize}`);
     }
-    if (mimeTypes.length > 0 && !this._matchesMimeType(mimeType, mimeTypes)) {
+    if (mimeTypes.length > 0 && !matchesImageMimeType(mimeType, mimeTypes)) {
       return this.app.throw(403, `unsupported image mimeType: ${mimeType}`);
     }
     return {
@@ -133,6 +136,35 @@ export class BeanImageUploadPolicy extends BeanBase {
       fileSize: data.size,
       mimeType,
     };
+  }
+
+  async validateUploadFile(
+    file: {
+      file: string;
+      filename?: string;
+      mimeType: string;
+    },
+    payload: IImageUploadTokenPayload,
+  ) {
+    const stat = await fse.stat(file.file);
+    const fileSize = Number(stat.size);
+    if (fileSize !== payload.fileSize) {
+      return this.app.throw(403, `image size mismatch: size=${fileSize}`);
+    }
+    if (payload.maxSize && fileSize > payload.maxSize) {
+      return this.app.throw(403, `image too large: maxSize=${payload.maxSize}`);
+    }
+    const mimeType = file.mimeType.toLowerCase();
+    if (mimeType !== payload.mimeType) {
+      return this.app.throw(403, `image mimeType mismatch: mimeType=${mimeType}`);
+    }
+    if (payload.mimeTypes?.length && !matchesImageMimeType(mimeType, payload.mimeTypes)) {
+      return this.app.throw(403, `unsupported image mimeType: ${mimeType}`);
+    }
+    const extension = getImageExtension(file.filename);
+    if (payload.extensions?.length && extension && !payload.extensions.includes(extension)) {
+      return this.app.throw(403, `unsupported image extension: ${extension}`);
+    }
   }
 
   private _getSceneOptions(imageScene: keyof IImageSceneRecord): IDecoratorImageSceneOptions {
@@ -160,15 +192,5 @@ export class BeanImageUploadPolicy extends BeanBase {
       return await meta(this.ctx);
     }
     return meta;
-  }
-
-  private _matchesMimeType(mimeType: string, mimeTypes: string[]) {
-    return mimeTypes.some(item => {
-      if (item === mimeType) return true;
-      if (item.endsWith('/*')) {
-        return mimeType.startsWith(`${item.slice(0, -1)}`);
-      }
-      return false;
-    });
   }
 }

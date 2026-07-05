@@ -161,6 +161,7 @@ describe('imageUpload.test.ts', () => {
         const directData = await directRes.json();
         assert.equal(directData.data.resourceId, 'cf-direct-api-1');
         assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
+        assert.equal(directData.data.requireSignedURLs, true);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-url');
         const uploadUrlRes = await fetch(uploadUrl, {
@@ -181,6 +182,7 @@ describe('imageUpload.test.ts', () => {
         assert.equal(uploadUrlRes.ok, true);
         const uploadUrlData = await uploadUrlRes.json();
         assert.equal(uploadUrlData.data.resourceId, 'cf-upload-url-api-1');
+        assert.equal(uploadUrlData.data.requireSignedURLs, true);
         assert.equal(uploadUrlData.data.signed, true);
       } finally {
         app.bean.imageUploadPolicy.resolveUploadContext = resolveUploadContextRaw;

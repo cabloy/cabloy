@@ -37,10 +37,16 @@ describe('imageNative.test.ts', () => {
       assert.deepEqual(image.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
       const image2 = await app.bean.image.get(image.id);
       assert.equal(image2?.resourceId, image.resourceId);
+      const thumbnailPath = path.join(
+        path.dirname(image.storagePath!),
+        `${image.resourceId}__thumbnail${path.extname(image.storagePath!)}`,
+      );
+      assert.equal(await fse.pathExists(thumbnailPath), false);
       const originalUrl = await app.bean.image.getVariantUrl(image.id, 'original');
       assert.equal(originalUrl.includes('/api/static/'), true);
       const namedUrl = await app.bean.image.getVariantUrl(image.id, 'thumbnail');
       assert.equal(namedUrl.includes('__thumbnail'), true);
+      assert.equal(await fse.pathExists(thumbnailPath), true);
       const customUrl = await app.bean.image.getVariantUrl(image.id, {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });

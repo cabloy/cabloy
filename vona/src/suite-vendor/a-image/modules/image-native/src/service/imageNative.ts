@@ -2,7 +2,6 @@ import type { SharpConstructor } from 'sharp';
 import type {
   EntityImage,
   IImageDeliveryOptions,
-  IImageNamedVariants,
   IImageProviderResolvedVariant,
   IImageProviderResource,
   IImageTransformOptions,
@@ -52,10 +51,6 @@ export class ServiceImageNative extends BeanBase {
     const metadata = await sharp(targetPath).metadata();
     const stat = await fse.stat(targetPath);
     const variants = options.variants ?? this.scope.config.imageNative.variants;
-    await this._generateNamedVariants(
-      { resourceId, filename: input.filename, storagePath: targetPath, variants },
-      options,
-    );
     return {
       resourceId,
       size: Number(stat.size),
@@ -98,24 +93,6 @@ export class ServiceImageNative extends BeanBase {
     }
     const targetPath = await this._ensureVariantFile(image, resolved);
     return await this._buildUrl(targetPath, options.deliveryBaseUrl);
-  }
-
-  private async _generateNamedVariants(
-    image: IImageNativeStoredImage,
-    options: IImageProviderNativeClientOptions,
-  ) {
-    const variantNames = Object.keys(image.variants ?? {}) as Array<
-      keyof NonNullable<IImageNamedVariants>
-    >;
-    for (const variantName of variantNames) {
-      if (variantName === 'original') continue;
-      await this._ensureVariantFile(
-        image,
-        resolveImageVariantRequestToTransform({ variantName }, 'original', image.variants),
-      );
-    }
-    if (!image.variants?.original) return;
-    await this.getVariantUrl(image, { variantName: 'original' }, options);
   }
 
   private async _ensureVariantFile(

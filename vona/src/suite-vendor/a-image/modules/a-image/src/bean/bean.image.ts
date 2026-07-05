@@ -35,6 +35,13 @@ interface IImageProviderContext {
   onionOptions: IDecoratorImageProviderOptions;
 }
 
+interface IImageDeliveryContext {
+  image: EntityImage;
+  requestNormalized: IImageVariantRequest;
+  deliveryOptionsResolved: IImageDeliveryOptions;
+  providerContext: IImageProviderContext;
+}
+
 @Bean()
 export class BeanImage extends BeanBase {
   async upload<N extends keyof IImageProviderRecord>(
@@ -136,32 +143,16 @@ export class BeanImage extends BeanBase {
     request?: TypeImageVariantInput,
     deliveryOptions?: IImageDeliveryOptions,
   ) {
-    const image = await this.scope.model.image.getById(imageId);
-    if (!image) throw new Error(`not found image: ${imageId}`);
-    const requestNormalized = this._normalizeVariantRequest(request);
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(
-      image,
-      requestNormalized,
-      deliveryOptions,
-    );
-    const { beanImageProvider, clientOptions, onionOptions } =
-      await this._getProviderContext(image);
-    if (
-      deliveryOptionsResolved.signed &&
-      (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    ) {
-      return await this._createSignedDeliveryUrl(
-        image.id,
-        requestNormalized,
-        deliveryOptionsResolved,
-      );
+    const context = await this._getDeliveryContext(imageId, request, deliveryOptions);
+    if (this._shouldUseProxySignedDelivery(context)) {
+      return await this._createSignedDeliveryUrl(context);
     }
-    return await beanImageProvider.getVariantUrl(
-      image,
-      requestNormalized,
-      clientOptions,
-      onionOptions,
-      deliveryOptionsResolved,
+    return await context.providerContext.beanImageProvider.getVariantUrl(
+      context.image,
+      context.requestNormalized,
+      context.providerContext.clientOptions,
+      context.providerContext.onionOptions,
+      context.deliveryOptionsResolved,
     );
   }
 
@@ -170,53 +161,37 @@ export class BeanImage extends BeanBase {
     request?: TypeImageVariantInput,
     deliveryOptions?: IImageDeliveryOptions,
   ) {
-    const image = await this.scope.model.image.getById(imageId);
-    if (!image) throw new Error(`not found image: ${imageId}`);
-    const requestNormalized = this._normalizeVariantRequest(request);
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(
-      image,
-      requestNormalized,
-      deliveryOptions,
-    );
-    const { beanImageProvider, clientOptions, onionOptions } =
-      await this._getProviderContext(image);
-    if (
-      deliveryOptionsResolved.signed &&
-      (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    ) {
+    const context = await this._getDeliveryContext(imageId, request, deliveryOptions);
+    if (this._shouldUseProxySignedDelivery(context)) {
       return {
         kind: 'url' as const,
-        url: await this._createSignedDeliveryUrl(
-          image.id,
-          requestNormalized,
-          deliveryOptionsResolved,
-        ),
-        filename: image.filename,
-        contentType: image.contentType,
+        url: await this._createSignedDeliveryUrl(context),
+        filename: context.image.filename,
+        contentType: context.image.contentType,
         signed: true,
       };
     }
-    if (beanImageProvider.download) {
-      return await beanImageProvider.download(
-        image,
-        requestNormalized,
-        clientOptions,
-        onionOptions,
-        deliveryOptionsResolved,
+    if (context.providerContext.beanImageProvider.download) {
+      return await context.providerContext.beanImageProvider.download(
+        context.image,
+        context.requestNormalized,
+        context.providerContext.clientOptions,
+        context.providerContext.onionOptions,
+        context.deliveryOptionsResolved,
       );
     }
     return {
       kind: 'url' as const,
-      url: await beanImageProvider.getVariantUrl(
-        image,
-        requestNormalized,
-        clientOptions,
-        onionOptions,
-        deliveryOptionsResolved,
+      url: await context.providerContext.beanImageProvider.getVariantUrl(
+        context.image,
+        context.requestNormalized,
+        context.providerContext.clientOptions,
+        context.providerContext.onionOptions,
+        context.deliveryOptionsResolved,
       ),
-      filename: image.filename,
-      contentType: image.contentType,
-      signed: !!deliveryOptionsResolved.signed,
+      filename: context.image.filename,
+      contentType: context.image.contentType,
+      signed: !!context.deliveryOptionsResolved.signed,
     };
   }
 
@@ -333,6 +308,35 @@ export class BeanImage extends BeanBase {
     return onionOptions ?? {};
   }
 
+  private async _getDeliveryContext(
+    imageId: TableIdentity,
+    request?: TypeImageVariantInput,
+    deliveryOptions?: IImageDeliveryOptions,
+  ): Promise<IImageDeliveryContext> {
+    const image = await this.scope.model.image.getById(imageId);
+    if (!image) throw new Error(`not found image: ${imageId}`);
+    const requestNormalized = this._normalizeVariantRequest(request);
+    const deliveryOptionsResolved = this._mergeDeliveryOptions(
+      image,
+      requestNormalized,
+      deliveryOptions,
+    );
+    const providerContext = await this._getProviderContext(image);
+    return {
+      image,
+      requestNormalized,
+      deliveryOptionsResolved,
+      providerContext,
+    };
+  }
+
+  private _shouldUseProxySignedDelivery(context: IImageDeliveryContext) {
+    return (
+      context.deliveryOptionsResolved.signed &&
+      (context.providerContext.clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
+    );
+  }
+
   private _normalizeVariantRequest(request?: TypeImageVariantInput): IImageVariantRequest {
     if (typeof request === 'string') {
       return { variantName: request };
@@ -360,31 +364,27 @@ export class BeanImage extends BeanBase {
     };
   }
 
-  private async _createSignedDeliveryUrl(
-    imageId: TableIdentity,
-    request: IImageVariantRequest,
-    deliveryOptions: IImageDeliveryOptions,
-  ) {
-    const image = await this.scope.model.image.getById(imageId);
-    if (!image) throw new Error(`not found image: ${imageId}`);
-    const { beanImageProvider, clientOptions, onionOptions } =
-      await this._getProviderContext(image);
-    const targetUrl = await beanImageProvider.getVariantUrl(
-      image,
-      request,
-      clientOptions,
-      onionOptions,
+  private async _createSignedDeliveryUrl(context: IImageDeliveryContext) {
+    const targetUrl = await context.providerContext.beanImageProvider.getVariantUrl(
+      context.image,
+      context.requestNormalized,
+      context.providerContext.clientOptions,
+      context.providerContext.onionOptions,
       {
         signed: false,
         responseMode: 'url',
       },
     );
-    const routePath = this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true);
+    const routePath = this.scope.util.combineApiPath(
+      `image/delivery/${context.image.id}`,
+      false,
+      true,
+    );
     const tokenPayload = await this.bean.imageUploadPolicy.createDeliveryToken({
-      imageId,
-      request,
+      imageId: context.image.id,
+      request: context.requestNormalized,
       targetUrl,
-      expiresIn: deliveryOptions.expiresIn,
+      expiresIn: context.deliveryOptionsResolved.expiresIn,
     });
     const routeUrl = this.app.util.getAbsoluteUrlByApiPath(routePath);
     const url = new URL(routeUrl);
