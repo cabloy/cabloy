@@ -11,7 +11,5 @@ export type TypeEntityMeta<T, N = string> = Required<{
 export const SymbolKeyFieldsMore = Symbol('$fieldsMore');
 export type TypeSymbolKeyFieldsMore = typeof SymbolKeyFieldsMore;
 
-export type TypeEntityStudentMetaSimple<T> = Omit<T, '$table' | '$comment' | '$default'>;
-export type TypeEntityStudentMetaSimpleColumns<T> = PickString<
-  keyof TypeEntityStudentMetaSimple<T>
->;
+export type TypeEntityMetaFields<T> = Omit<T, '$table' | '$comment' | '$default'>;
+export type TypeEntityMetaFieldKeys<T> = PickString<keyof TypeEntityMetaFields<T>>;

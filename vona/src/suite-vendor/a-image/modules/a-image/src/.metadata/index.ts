@@ -269,7 +269,6 @@ declare module 'vona-module-a-image' {
 }
 /** meta: end */
 /** meta index: begin */
-import type { MetaIndex } from '../bean/meta.index.ts';
 /** meta index: end */
 /** meta redlock: begin */
 import type { MetaRedlock } from '../bean/meta.redlock.ts';

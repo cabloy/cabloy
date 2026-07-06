@@ -51,13 +51,22 @@ export type TypeImageProviderOptionsByName<N extends keyof IImageProviderRecord>
   IImageProviderRecord[N];
 
 export type TypeImageProviderClientOptionsByName<N extends keyof IImageProviderRecord> =
-  TypeImageProviderClientOptions<TypeImageProviderOptionsByName<N>>;
+  TypeImageProviderOptionsByName<N> extends IDecoratorImageProviderOptions<any, any>
+    ? TypeImageProviderClientOptions<TypeImageProviderOptionsByName<N>>
+    : never;
 
 export type TypeImageProviderClientNameByName<N extends keyof IImageProviderRecord> =
-  TypeImageProviderClientName<TypeImageProviderOptionsByName<N>>;
+  TypeImageProviderOptionsByName<N> extends IDecoratorImageProviderOptions<any, any>
+    ? TypeImageProviderClientName<TypeImageProviderOptionsByName<N>>
+    : never;
 
 export type TypeImageProviderExecuteByName<N extends keyof IImageProviderRecord> =
-  IImageProviderExecute<TypeImageProviderClientOptionsByName<N>, TypeImageProviderOptionsByName<N>>;
+  TypeImageProviderOptionsByName<N> extends IDecoratorImageProviderOptions<any, any>
+    ? IImageProviderExecute<
+        TypeImageProviderClientOptionsByName<N>,
+        TypeImageProviderOptionsByName<N>
+      >
+    : never;
 
 // Provider-internal resolved variant names include both declaration-merged named variants
 // and the internal `custom` sentinel used for ad hoc transform requests.

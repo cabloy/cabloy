@@ -170,7 +170,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       filename?: string;
       mimeType: string;
     },
-    payload: IImageUploadTokenPayload,
+    payload: IImageUploadPolicyResolved,
   ) {
     const stat = await fse.stat(file.file);
     const fileSize = Number(stat.size);
