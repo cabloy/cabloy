@@ -333,6 +333,10 @@ export default defineConfig({
               link: '/frontend/reading-zova-for-vue-developers',
             },
             {
+              text: 'State Architecture for Vue Developers',
+              link: '/frontend/state-architecture-for-vue-developers',
+            },
+            {
               text: 'Zova vs Vue 3 Comparison',
               link: '/frontend/zova-vs-vue3-comparison',
             },
