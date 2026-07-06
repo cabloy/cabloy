@@ -471,9 +471,6 @@ export class BeanImage extends BeanBase {
     if (image.status === 'expired') {
       return this.app.throw(403, `image draft expired: ${image.id}`);
     }
-    if (image.status === 'failed') {
-      return this.app.throw(403, `image draft failed: ${image.id}`);
-    }
   }
 
   private _normalizeVariantRequest(request?: TypeImageVariantInput): IImageVariantRequest {

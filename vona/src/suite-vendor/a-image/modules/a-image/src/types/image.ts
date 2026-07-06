@@ -39,7 +39,7 @@ export type IImageNamedVariants = Partial<Record<TypeImageVariantName, IImageTra
 
 export type TypeImageDeliveryExpiry = Date | string | number;
 
-export type TypeImageStatus = 'draft' | 'ready' | 'expired' | 'failed';
+export type TypeImageStatus = 'draft' | 'ready' | 'expired';
 
 export interface IImageDeliveryOptions {
   signed?: boolean;
