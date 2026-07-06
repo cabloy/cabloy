@@ -1,13 +1,10 @@
 import type { IUploadFile } from 'vona-module-a-upload';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
-import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Arg, Controller, Web } from 'vona-module-a-web';
-
-import type { IFileUploadTokenPayload } from '../types/file.ts';
 
 import { DtoFileDirectUploadRequest } from '../dto/fileDirectUploadRequest.ts';
 import { DtoFileDirectUploadResponse } from '../dto/fileDirectUploadResponse.ts';
@@ -36,7 +33,14 @@ export class ControllerFile extends BeanBase {
       token,
       this.ctx.route.routePathRaw,
     );
-    await this._validateUploadFile(file, payload);
+    await this.bean.fileUploadPolicy.validateUploadFile(
+      {
+        file: file.file,
+        filename: file.info.filename,
+        mimeType: file.info.mimeType,
+      },
+      payload,
+    );
     const uploadedFile = await this.bean.file.upload(
       payload.providerName,
       {
@@ -157,44 +161,5 @@ export class ControllerFile extends BeanBase {
       this.ctx.attachment(result.filename);
     }
     this.ctx.body = result.buffer;
-  }
-
-  private async _validateUploadFile(file: IUploadFile, payload: IFileUploadTokenPayload) {
-    const stat = await fse.stat(file.file);
-    const fileSize = Number(stat.size);
-    if (fileSize !== payload.fileSize) {
-      return this.app.throw(403, `file size mismatch: size=${fileSize}`);
-    }
-    if (payload.maxSize && fileSize > payload.maxSize) {
-      return this.app.throw(403, `file too large: maxSize=${payload.maxSize}`);
-    }
-    const mimeType = file.info.mimeType.toLowerCase();
-    if (mimeType !== payload.mimeType) {
-      return this.app.throw(403, `file mimeType mismatch: mimeType=${mimeType}`);
-    }
-    if (payload.mimeTypes?.length && !this._matchesMimeType(mimeType, payload.mimeTypes)) {
-      return this.app.throw(403, `unsupported file mimeType: ${mimeType}`);
-    }
-    const extension = this._getExtension(file.info.filename);
-    if (payload.extensions?.length && extension && !payload.extensions.includes(extension)) {
-      return this.app.throw(403, `unsupported file extension: ${extension}`);
-    }
-  }
-
-  private _matchesMimeType(mimeType: string, mimeTypes: string[]) {
-    return mimeTypes.some(item => {
-      if (item === mimeType) return true;
-      if (item.endsWith('/*')) {
-        return mimeType.startsWith(`${item.slice(0, -1)}`);
-      }
-      return false;
-    });
-  }
-
-  private _getExtension(filename?: string) {
-    if (!filename) return '';
-    const index = filename.lastIndexOf('.');
-    if (index === -1) return '';
-    return filename.slice(index).toLowerCase();
   }
 }

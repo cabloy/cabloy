@@ -17,16 +17,16 @@ import type {
   IFileUploadUrlInput,
 } from '../types/file.ts';
 import type {
-  IDecoratorFileProviderOptions,
-  IFileProviderClientOptions,
-  IFileProviderExecute,
   IFileProviderRecord,
+  TypeFileProviderClientOptionsByName,
+  TypeFileProviderExecuteByName,
+  TypeFileProviderOptionsByName,
 } from '../types/fileProvider.ts';
 
-interface IFileProviderContext {
-  beanFileProvider: IFileProviderExecute;
-  clientOptions: IFileProviderClientOptions;
-  onionOptions: IDecoratorFileProviderOptions;
+interface IFileProviderContext<N extends keyof IFileProviderRecord = keyof IFileProviderRecord> {
+  beanFileProvider: TypeFileProviderExecuteByName<N>;
+  clientOptions: TypeFileProviderClientOptionsByName<N>;
+  onionOptions: TypeFileProviderOptionsByName<N>;
 }
 
 @Bean()
@@ -34,7 +34,7 @@ export class BeanFile extends BeanBase {
   async upload<N extends keyof IFileProviderRecord>(
     providerName: N,
     input: IFileUploadInput,
-    options?: IFileUploadOptions,
+    options?: IFileUploadOptions<TypeFileProviderClientOptionsByName<N>>,
   ): Promise<IFileResource> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     const fileProviderResource = await providerContext.beanFileProvider.upload(
@@ -57,7 +57,7 @@ export class BeanFile extends BeanBase {
   async uploadUrl<N extends keyof IFileProviderRecord>(
     providerName: N,
     input: IFileUploadUrlInput,
-    options?: IFileUploadOptions,
+    options?: IFileUploadOptions<TypeFileProviderClientOptionsByName<N>>,
   ): Promise<IFileResource> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanFileProvider.uploadUrl) {
@@ -83,7 +83,7 @@ export class BeanFile extends BeanBase {
   async createDirectUpload<N extends keyof IFileProviderRecord>(
     providerName: N,
     input: IFileDirectUploadInput,
-    options?: IFileUploadOptions,
+    options?: IFileUploadOptions<TypeFileProviderClientOptionsByName<N>>,
   ): Promise<IFileDirectUploadResult> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanFileProvider.createDirectUpload) {
@@ -108,7 +108,6 @@ export class BeanFile extends BeanBase {
       uploadUrl: fileProviderResource.uploadUrl,
       headers: fileProviderResource.headers,
       method: fileProviderResource.method,
-      draft: fileProviderResource.draft,
     };
   }
 
@@ -190,7 +189,9 @@ export class BeanFile extends BeanBase {
     return await beanFileProvider.get(file, clientOptions, onionOptions);
   }
 
-  private async _getProviderContext(file: EntityFile): Promise<IFileProviderContext> {
+  private async _getProviderContext<N extends keyof IFileProviderRecord>(
+    file: EntityFile & { providerName: N },
+  ): Promise<IFileProviderContext<N>> {
     const providerContext = await this.bean.fileProvider.getClientOptions({
       providerName: file.providerName,
       clientName: file.clientName,
@@ -199,18 +200,16 @@ export class BeanFile extends BeanBase {
       throw new Error(`File provider not found: ${String(file.providerName)}.${file.clientName}`);
     }
     return {
-      beanFileProvider: this._getBeanFileProvider(
-        providerContext.beanFullName as keyof IFileProviderRecord,
-      ),
-      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
-      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+      beanFileProvider: this._getBeanFileProvider(file.providerName, providerContext.beanFullName),
+      clientOptions: this._normalizeOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOptions(providerContext.onionOptions),
     };
   }
 
   private async _getProviderContextByInput<N extends keyof IFileProviderRecord>(
     providerName: N,
-    options?: IFileUploadOptions,
-  ) {
+    options?: IFileUploadOptions<TypeFileProviderClientOptionsByName<N>>,
+  ): Promise<IFileProviderContext<N> & { clientName: string }> {
     const clientName = options?.clientName ?? 'default';
     const providerContext = await this.bean.fileProvider.getClientOptions(
       {
@@ -224,28 +223,21 @@ export class BeanFile extends BeanBase {
     }
     return {
       clientName,
-      beanFileProvider: this._getBeanFileProvider(
-        providerContext.beanFullName as keyof IFileProviderRecord,
-      ),
-      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
-      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+      beanFileProvider: this._getBeanFileProvider(providerName, providerContext.beanFullName),
+      clientOptions: this._normalizeOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOptions(providerContext.onionOptions),
     };
   }
 
-  private _getBeanFileProvider(beanFullName: keyof IFileProviderRecord): IFileProviderExecute {
-    return this.app.bean._getBean<IFileProviderExecute>(beanFullName as never);
+  private _getBeanFileProvider<N extends keyof IFileProviderRecord>(
+    _providerName: N,
+    beanFullName: string,
+  ): TypeFileProviderExecuteByName<N> {
+    return this.app.bean._getBean<TypeFileProviderExecuteByName<N>>(beanFullName as never);
   }
 
-  private _normalizeClientOptions(
-    clientOptions: IFileProviderClientOptions | undefined,
-  ): IFileProviderClientOptions {
-    return clientOptions ?? {};
-  }
-
-  private _normalizeOnionOptions(
-    onionOptions: IDecoratorFileProviderOptions | undefined,
-  ): IDecoratorFileProviderOptions {
-    return onionOptions ?? {};
+  private _normalizeOptions<T extends object>(options: T | undefined): T {
+    return (options ?? {}) as T;
   }
 
   private _mergeDeliveryOptions(

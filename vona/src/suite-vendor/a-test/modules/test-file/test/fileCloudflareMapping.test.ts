@@ -57,6 +57,21 @@ describe('fileCloudflareMapping.test.ts', () => {
       assert.equal(directUpload.bucket, 'bucket-a');
       assert.equal(typeof directUpload.uploadUrl, 'string');
       assert.equal(directUpload.uploadUrl.includes('X-Amz-Algorithm='), true);
+
+      const beanDirectUpload = await app.bean.file.createDirectUpload(
+        'file-cloudflare:cloudflare',
+        {
+          filename: 'hello.txt',
+          contentType: 'text/plain',
+          public: false,
+        },
+        {
+          clientName: 'default',
+        },
+      );
+      assert.equal(beanDirectUpload.method, 'PUT');
+      assert.equal(typeof beanDirectUpload.uploadUrl, 'string');
+      assert.equal('draft' in beanDirectUpload, false);
     });
   });
 });

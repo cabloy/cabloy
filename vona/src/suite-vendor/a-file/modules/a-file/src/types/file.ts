@@ -82,7 +82,6 @@ export interface IFileProviderDirectUploadResource<
   uploadUrl: string;
   headers?: Record<string, string>;
   method?: 'PUT' | 'POST';
-  draft?: boolean;
 }
 
 export interface IFileResource<
@@ -103,7 +102,6 @@ export interface IFileDirectUploadResult<
   uploadUrl: string;
   headers?: Record<string, string>;
   method?: 'PUT' | 'POST';
-  draft?: boolean;
 }
 
 export interface IFileUploadOptions<

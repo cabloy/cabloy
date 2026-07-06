@@ -123,7 +123,6 @@ export class ServiceFileCloudflare extends BeanBase {
       uploadUrl,
       method: 'PUT',
       headers: input.contentType ? { 'content-type': input.contentType } : undefined,
-      draft: true,
     };
   }
 

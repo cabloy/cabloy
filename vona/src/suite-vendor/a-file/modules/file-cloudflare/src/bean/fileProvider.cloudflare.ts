@@ -37,7 +37,11 @@ export interface IFileProviderOptionsCloudflare extends IDecoratorFileProviderOp
     region: 'auto',
   },
 })
-export class FileProviderCloudflare extends BeanBase implements IFileProviderExecute {
+export class FileProviderCloudflare
+  extends BeanBase
+  implements
+    IFileProviderExecute<IFileProviderCloudflareClientOptions, IFileProviderOptionsCloudflare>
+{
   async upload(
     input: IFileUploadInput,
     clientOptions: IFileProviderCloudflareClientOptions,

@@ -32,7 +32,10 @@ export interface IFileProviderOptionsNative extends IDecoratorFileProviderOption
     public: false,
   },
 })
-export class FileProviderNative extends BeanBase implements IFileProviderExecute {
+export class FileProviderNative
+  extends BeanBase
+  implements IFileProviderExecute<IFileProviderNativeClientOptions, IFileProviderOptionsNative>
+{
   async upload(
     input: IFileUploadInput,
     clientOptions: IFileProviderNativeClientOptions,
@@ -69,7 +72,7 @@ export class FileProviderNative extends BeanBase implements IFileProviderExecute
 
   async delete(
     file: EntityFile,
-    _clientOptions: IFileProviderClientOptions,
+    _clientOptions: IFileProviderNativeClientOptions,
     _options: IFileProviderOptionsNative,
   ) {
     await this.scope.service.fileNative.remove(file);

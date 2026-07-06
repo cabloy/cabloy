@@ -1,8 +1,11 @@
-import type { IFileUploadContextResolved } from 'vona-module-a-file';
+import type { IFileUploadContextResolved, IFileUploadTokenPayload } from 'vona-module-a-file';
 
 import { catchError } from '@cabloy/utils';
+import fse from 'fs-extra';
 import assert from 'node:assert';
 import { Blob } from 'node:buffer';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { $apiPath } from 'vona-module-a-openapiutils';
@@ -90,6 +93,50 @@ describe('fileUpload.test.ts', () => {
       } finally {
         app.bean.fileUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
         await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('action:file:upload policy validate upload file', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const filePath = path.join(os.tmpdir(), 'test-file-upload-policy.txt');
+      await fse.writeFile(filePath, textFile);
+      const payload: IFileUploadTokenPayload = {
+        kind: 'fileUpload',
+        fileScene: 'test-file:publicFile',
+        providerName: 'file-native:native',
+        clientName: 'default',
+        public: true,
+        fileSize: textFile.length,
+        mimeType: 'text/plain',
+        mimeTypes: ['text/*'],
+        extensions: ['.txt'],
+      };
+      try {
+        await app.bean.fileUploadPolicy.validateUploadFile(
+          {
+            file: filePath,
+            filename: 'upload.txt',
+            mimeType: 'text/plain',
+          },
+          payload,
+        );
+
+        const [res, err] = await catchError(() =>
+          app.bean.fileUploadPolicy.validateUploadFile(
+            {
+              file: filePath,
+              filename: 'upload.bin',
+              mimeType: 'text/plain',
+            },
+            payload,
+          ),
+        );
+        assert.equal(res, undefined);
+        assert.equal(err?.code, 403);
+        assert.equal(err?.message.includes('unsupported file extension'), true);
+      } finally {
+        await fse.remove(filePath);
       }
     });
   });

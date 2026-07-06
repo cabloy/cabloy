@@ -35,15 +35,33 @@ export type TypeFileProviderClientOptions<T> =
   T extends IDecoratorFileProviderOptions<any, infer O> ? O : never;
 
 export type TypeFileProviderClientName<T> =
-  T extends IDecoratorFileProviderOptions<infer R, any> ? keyof R : never;
+  T extends IDecoratorFileProviderOptions<infer R, any> ? keyof R & string : never;
 
 export interface IDecoratorFileProviderOptions<
   R extends IFileProviderClientRecord = IFileProviderClientRecord,
   T extends IFileProviderClientOptions = IFileProviderClientOptions,
 > extends TypeOnionOptionsEnableSimple {
   base?: T;
-  clients?: { [K in keyof R]?: T };
+  clients?: { [K in keyof R]?: R[K] extends undefined ? T : R[K] };
 }
+
+export type TypeFileProviderOptionsByName<N extends keyof IFileProviderRecord> =
+  IFileProviderRecord[N];
+
+export type TypeFileProviderClientOptionsByName<N extends keyof IFileProviderRecord> =
+  TypeFileProviderOptionsByName<N> extends IDecoratorFileProviderOptions<any, any>
+    ? TypeFileProviderClientOptions<TypeFileProviderOptionsByName<N>>
+    : never;
+
+export type TypeFileProviderClientNameByName<N extends keyof IFileProviderRecord> =
+  TypeFileProviderOptionsByName<N> extends IDecoratorFileProviderOptions<any, any>
+    ? TypeFileProviderClientName<TypeFileProviderOptionsByName<N>>
+    : never;
+
+export type TypeFileProviderExecuteByName<N extends keyof IFileProviderRecord> =
+  TypeFileProviderOptionsByName<N> extends IDecoratorFileProviderOptions<any, any>
+    ? IFileProviderExecute<TypeFileProviderClientOptionsByName<N>, TypeFileProviderOptionsByName<N>>
+    : never;
 
 export interface IFileProviderExecute<
   T extends IFileProviderClientOptions = IFileProviderClientOptions,

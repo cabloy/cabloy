@@ -1,3 +1,4 @@
+import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
@@ -12,6 +13,8 @@ import type {
   IDecoratorFileSceneOptionsProvider,
   IFileSceneRecord,
 } from '../types/fileScene.ts';
+
+import { getFileExtension, matchesFileMimeType } from '../lib/fileUploadValidation.ts';
 
 @Bean()
 export class BeanFileUploadPolicy extends BeanBase {
@@ -71,6 +74,35 @@ export class BeanFileUploadPolicy extends BeanBase {
     return payload;
   }
 
+  async validateUploadFile(
+    file: {
+      file: string;
+      filename?: string;
+      mimeType: string;
+    },
+    payload: IFileUploadTokenPayload,
+  ) {
+    const stat = await fse.stat(file.file);
+    const fileSize = Number(stat.size);
+    if (fileSize !== payload.fileSize) {
+      return this.app.throw(403, `file size mismatch: size=${fileSize}`);
+    }
+    if (payload.maxSize && fileSize > payload.maxSize) {
+      return this.app.throw(403, `file too large: maxSize=${payload.maxSize}`);
+    }
+    const mimeType = file.mimeType.toLowerCase();
+    if (mimeType !== payload.mimeType) {
+      return this.app.throw(403, `file mimeType mismatch: mimeType=${mimeType}`);
+    }
+    if (payload.mimeTypes?.length && !matchesFileMimeType(mimeType, payload.mimeTypes)) {
+      return this.app.throw(403, `unsupported file mimeType: ${mimeType}`);
+    }
+    const extension = getFileExtension(file.filename);
+    if (payload.extensions?.length && extension && !payload.extensions.includes(extension)) {
+      return this.app.throw(403, `unsupported file extension: ${extension}`);
+    }
+  }
+
   async resolveUploadContext(data: {
     fileScene: keyof IFileSceneRecord;
   }): Promise<IFileUploadContextResolved> {
@@ -112,7 +144,7 @@ export class BeanFileUploadPolicy extends BeanBase {
     if (maxSize && data.size > maxSize) {
       return this.app.throw(403, `file too large: maxSize=${maxSize}`);
     }
-    if (mimeTypes.length > 0 && !this._matchesMimeType(mimeType, mimeTypes)) {
+    if (mimeTypes.length > 0 && !matchesFileMimeType(mimeType, mimeTypes)) {
       return this.app.throw(403, `unsupported file mimeType: ${mimeType}`);
     }
     return {
@@ -160,15 +192,5 @@ export class BeanFileUploadPolicy extends BeanBase {
     return (
       sceneOptions.upload?.public ?? clientOptions?.public ?? this.scope.config.file.public ?? false
     );
-  }
-
-  private _matchesMimeType(mimeType: string, mimeTypes: string[]) {
-    return mimeTypes.some(item => {
-      if (item === mimeType) return true;
-      if (item.endsWith('/*')) {
-        return mimeType.startsWith(`${item.slice(0, -1)}`);
-      }
-      return false;
-    });
   }
 }

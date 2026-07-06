@@ -34,9 +34,6 @@ export class DtoFileDirectUploadResponse {
   method?: 'PUT' | 'POST';
 
   @Api.field(v.optional())
-  draft?: boolean;
-
-  @Api.field(v.optional())
   filename?: string;
 
   @Api.field(v.optional(), z.string())
