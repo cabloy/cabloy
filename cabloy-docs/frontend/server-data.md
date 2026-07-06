@@ -45,6 +45,8 @@ Use OpenAPI SDK generation when you want backend-generated API contracts to driv
 
 Use schema-driven layers when metadata itself needs to participate in higher-level frontend behavior such as validation or automatic rendering.
 
+If your main question is not only which data-access layer to choose, but how data ownership, sharing boundaries, persistence, and SSR semantics fit together in large Vue systems, read [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers) together with this page.
+
 ## Why this matters for Cabloy
 
 This abstraction ladder is one of the key links between Zova and Vona.

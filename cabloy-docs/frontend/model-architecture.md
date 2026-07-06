@@ -42,6 +42,8 @@ In practice, a model often sits above `$api` and below page rendering:
 
 Read together with [Server Data](/frontend/server-data) when deciding which abstraction layer a feature should use.
 
+If you want the larger docs-style overview of how ownership, scope, persistence, cache semantics, and SSR behavior connect in big Vue applications, read [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers) before diving deeper into model internals.
+
 If your next question is how the generic lower-level model runtime works beneath these abstractions, continue with [A-Model Under the Hood](/frontend/a-model-under-the-hood).
 
 ## Relationship to TanStack Query

@@ -29,14 +29,14 @@ That is why Zova code often reads more like controller-oriented application code
 
 ## Quick translation table
 
-| If you usually think in Vue terms | Read Zova like this instead |
-| --- | --- |
-| `setup()` is the main wiring point | `__init__` and bean lifecycle are major wiring points |
-| `ref` / `reactive` are the visible state hosts | controller and bean instances are the visible state hosts |
-| `computed()` creates local derived refs | `$computed()` usually creates instance-level derived state |
-| `useRoute()` pulls route state into the component | page controllers expose `$route`, `$params`, and `$query` as part of the controller surface |
-| `provide/inject`, composables, props, and stores are separate sharing tools | bean scopes and IoC are used to unify more sharing patterns under one model |
-| template or component render is the obvious center | controller-oriented architecture is the center; render can stay in the controller or move into render beans |
+| If you usually think in Vue terms                                           | Read Zova like this instead                                                                                 |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `setup()` is the main wiring point                                          | `__init__` and bean lifecycle are major wiring points                                                       |
+| `ref` / `reactive` are the visible state hosts                              | controller and bean instances are the visible state hosts                                                   |
+| `computed()` creates local derived refs                                     | `$computed()` usually creates instance-level derived state                                                  |
+| `useRoute()` pulls route state into the component                           | page controllers expose `$route`, `$params`, and `$query` as part of the controller surface                 |
+| `provide/inject`, composables, props, and stores are separate sharing tools | bean scopes and IoC are used to unify more sharing patterns under one model                                 |
+| template or component render is the obvious center                          | controller-oriented architecture is the center; render can stay in the controller or move into render beans |
 
 ## Start from the right assumptions
 
@@ -225,6 +225,8 @@ Use this order when:
 - you already know Vue
 - you want to read Zova source code accurately
 - you want to avoid rewriting framework-specific code back toward generic Vue habits
+
+If your main question is specifically about large-project state organization rather than source-reading posture first, continue next with [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers).
 
 ## Common mistakes to avoid
 

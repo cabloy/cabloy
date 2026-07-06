@@ -26,7 +26,7 @@ In many Vue 3 codebases, developers combine local reactive state, composables, `
 
 The most important SSR distinction is between `app-global` and `system-level`: app-global behavior can be tied to an individual app instance or request, while system-level behavior is not request-scoped and can outlive individual SSR requests. For more on that lifecycle boundary, see [System Startup Guide](/frontend/system-startup-guide).
 
-The point is not that Vue patterns are wrong. The point is that Zova can keep more of these sharing cases inside one bean-and-container architecture instead of switching between unrelated mechanisms. If you want the broader architectural comparison, read [Zova vs Vue 3 Comparison](/frontend/zova-vs-vue3-comparison).
+The point is not that Vue patterns are wrong. The point is that Zova can keep more of these sharing cases inside one bean-and-container architecture instead of switching between unrelated mechanisms. If you want the broader architectural comparison, read [Zova vs Vue 3 Comparison](/frontend/zova-vs-vue3-comparison). If your main question is how ownership, scope, persistence, cache semantics, and SSR behavior fit together as one large-project state system, continue with [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers).
 
 A compact mental model looks like this:
 

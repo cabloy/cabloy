@@ -8,6 +8,8 @@ It uses the current `rest-resource` model as the main source specimen:
 
 Read [Model Architecture](/frontend/model-architecture) and [Model State Guide](/frontend/model-state-guide) first if you want the broader Model runtime and helper surface.
 
+If you want the larger docs-style overview of how ownership, scope, unified model state, and resource boundaries fit together in large Vue systems, read [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers) first.
+
 If your next question is how `ModelResource` itself works internally at the source level, continue with [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive).
 
 If your next question is how the generic lower-level model runtime works beneath `ModelResource`, continue with [Model Runtime Under the Hood](/frontend/a-model-under-the-hood).

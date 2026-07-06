@@ -167,6 +167,8 @@ The legacy system-start docs used route registration as the clearest example bou
 
 That distinction is especially important in SSR-capable systems, where app lifecycles can repeat while system-level route and config wiring should not.
 
+If your main question is how this `app` versus `sys` lifecycle split participates in the broader state architecture of a large Vue application, read [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers) together with [IoC and Beans](/frontend/ioc-and-beans).
+
 A practical reading sequence is:
 
 1. [Environment and Config Guide](/frontend/environment-config-guide)

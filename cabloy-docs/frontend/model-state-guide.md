@@ -4,6 +4,8 @@ This guide explains how to author and consume model-managed state in Zova within
 
 Read [Model Architecture](/frontend/model-architecture) first if you want the broader architectural role of Model.
 
+If your main question is how Model fits into the larger ownership/scope/persistence picture for big Vue applications, read [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers) before going deeper into helper families.
+
 If you specifically want the scalable resource-facade pattern, continue with [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern).
 
 If you want the generic lower-level model runtime beneath these helper families, continue with [A-Model Under the Hood](/frontend/a-model-under-the-hood).

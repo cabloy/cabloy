@@ -12,6 +12,7 @@ The goal is to explain two things clearly:
 Use this page together with:
 
 - [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers)
 - [Zova Reactivity Under the Hood](/frontend/zova-reactivity-under-the-hood)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 
@@ -40,16 +41,16 @@ The big difference is the **business-facing programming model**.
 
 ## Side-by-side comparison table
 
-| Dimension | Zova | Vue 3 default mental model |
-| --- | --- | --- |
-| Reactive host | controller or bean instance | local `ref` / `reactive` values inside `setup()` |
-| Derived state | `$computed()` often assigned to instance fields | `computed()` usually assigned to local variables |
-| Main wiring surface | `__init__` and bean lifecycle | `setup()` and composition hooks |
-| Route state access | page-controller surface such as `$route`, `$params`, `$query` | composables such as `useRoute()` |
-| Sharing model | IoC containers and bean scopes unify more sharing patterns | composables, props/emits, `provide/inject`, and store layers often coexist |
-| Render organization | controller-oriented; render can stay in controller or move to render beans | component-oriented; template/render/setup stay the obvious center |
-| Growth path | split into controller, render, style, service, model, or other beans | split into composables, child components, and store or helper layers |
-| Architectural emphasis | explicit object roles, scope ownership, and runtime-managed surfaces | flexible local composition with more developer-managed assembly |
+| Dimension              | Zova                                                                       | Vue 3 default mental model                                                 |
+| ---------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Reactive host          | controller or bean instance                                                | local `ref` / `reactive` values inside `setup()`                           |
+| Derived state          | `$computed()` often assigned to instance fields                            | `computed()` usually assigned to local variables                           |
+| Main wiring surface    | `__init__` and bean lifecycle                                              | `setup()` and composition hooks                                            |
+| Route state access     | page-controller surface such as `$route`, `$params`, `$query`              | composables such as `useRoute()`                                           |
+| Sharing model          | IoC containers and bean scopes unify more sharing patterns                 | composables, props/emits, `provide/inject`, and store layers often coexist |
+| Render organization    | controller-oriented; render can stay in controller or move to render beans | component-oriented; template/render/setup stay the obvious center          |
+| Growth path            | split into controller, render, style, service, model, or other beans       | split into composables, child components, and store or helper layers       |
+| Architectural emphasis | explicit object roles, scope ownership, and runtime-managed surfaces       | flexible local composition with more developer-managed assembly            |
 
 ## 1. Reactive host
 

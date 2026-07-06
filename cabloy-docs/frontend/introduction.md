@@ -41,6 +41,7 @@ Recommended starting set:
 - [Quickstart](/frontend/quickstart)
 - [Foundation](/frontend/foundation)
 - [Reading Zova for Vue Developers](/frontend/reading-zova-for-vue-developers)
+- [State Architecture for Vue Developers](/frontend/state-architecture-for-vue-developers)
 - [Frontend Source Reading Roadmap](/frontend/frontend-source-reading-roadmap)
 - [Zova Source Reading Map](/frontend/zova-source-reading-map)
 - [IoC and Beans](/frontend/ioc-and-beans)
