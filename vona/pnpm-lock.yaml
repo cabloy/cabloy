@@ -107,7 +107,7 @@ importers:
         specifier: ^0.35.2
         version: 0.35.2
       table-identity:
-        specifier: workspace:^
+        specifier: ^1.1.7
         version: link:packages-utils/table-identity
       typestyle:
         specifier: ^2.4.0
@@ -1184,16 +1184,16 @@ importers:
   packages-vona/vona:
     dependencies:
       vona-core:
-        specifier: workspace:^
+        specifier: ^5.1.31
         version: link:../vona-core
       vona-suite-a-auth:
-        specifier: workspace:^
+        specifier: ^5.1.21
         version: link:../../src/suite-vendor/a-auth
       vona-suite-a-captcha:
-        specifier: workspace:^
+        specifier: ^5.1.17
         version: link:../../src/suite-vendor/a-captcha
       vona-suite-a-vona:
-        specifier: workspace:^
+        specifier: ^5.1.62
         version: link:../../src/suite-vendor/a-vona
     devDependencies:
       clean-package:
@@ -1382,16 +1382,16 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       vona-module-a-cabloy:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-cabloy
       vona-module-a-socket:
-        specifier: workspace:^
+        specifier: ^5.1.14
         version: link:modules/a-socket
       vona-module-a-ssr:
-        specifier: workspace:^
+        specifier: ^5.1.22
         version: link:modules/a-ssr
       vona-module-a-ssrhmr:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-ssrhmr
 
   src/suite-vendor/a-cabloy/modules/a-cabloy:
@@ -1446,7 +1446,7 @@ importers:
         specifier: ^1.18.1
         version: 1.18.1
       vona-module-a-socket:
-        specifier: workspace:^
+        specifier: ^5.1.14
         version: link:../a-socket
     devDependencies:
       '@types/http-proxy':
@@ -1517,13 +1517,13 @@ importers:
   src/suite-vendor/a-file:
     dependencies:
       vona-module-a-file:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:modules/a-file
       vona-module-file-cloudflare:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:modules/file-cloudflare
       vona-module-file-native:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:modules/file-native
 
   src/suite-vendor/a-file/modules/a-file:
@@ -1563,13 +1563,13 @@ importers:
   src/suite-vendor/a-image:
     dependencies:
       vona-module-a-image:
-        specifier: workspace:^
+        specifier: ^5.0.2
         version: link:modules/a-image
       vona-module-image-cloudflare:
-        specifier: workspace:^
+        specifier: ^5.0.2
         version: link:modules/image-cloudflare
       vona-module-image-native:
-        specifier: workspace:^
+        specifier: ^5.0.2
         version: link:modules/image-native
 
   src/suite-vendor/a-image/modules/a-image:
@@ -1625,7 +1625,7 @@ importers:
   src/suite-vendor/a-test:
     dependencies:
       vona-module-test-file:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:modules/test-file
 
   src/suite-vendor/a-test/modules/test-auth:
@@ -1707,163 +1707,163 @@ importers:
   src/suite-vendor/a-vona:
     dependencies:
       vona-module-a-aspect:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-aspect
       vona-module-a-aspectutils:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-aspectutils
       vona-module-a-bean:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-bean
       vona-module-a-beanmutate:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-beanmutate
       vona-module-a-body:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-body
       vona-module-a-broadcast:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-broadcast
       vona-module-a-cache:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-cache
       vona-module-a-caching:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-caching
       vona-module-a-core:
-        specifier: workspace:^
+        specifier: ^5.1.42
         version: link:modules/a-core
       vona-module-a-election:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-election
       vona-module-a-error:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-error
       vona-module-a-event:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-event
       vona-module-a-executor:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-executor
       vona-module-a-hmr:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-hmr
       vona-module-a-hmrbase:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-hmrbase
       vona-module-a-index:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-index
       vona-module-a-instance:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-instance
       vona-module-a-jwt:
-        specifier: workspace:^
+        specifier: ^5.1.15
         version: link:modules/a-jwt
       vona-module-a-locale:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-locale
       vona-module-a-logger:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-logger
       vona-module-a-mail:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-mail
       vona-module-a-mailconfirm:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-mailconfirm
       vona-module-a-menu:
-        specifier: workspace:^
+        specifier: ^5.1.13
         version: link:modules/a-menu
       vona-module-a-meta:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-meta
       vona-module-a-onion:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-onion
       vona-module-a-openapi:
-        specifier: workspace:^
+        specifier: ^5.1.20
         version: link:modules/a-openapi
       vona-module-a-openapischema:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-openapischema
       vona-module-a-openapiutils:
-        specifier: workspace:^
+        specifier: ^5.1.19
         version: link:modules/a-openapiutils
       vona-module-a-orm:
-        specifier: workspace:^
+        specifier: ^5.1.21
         version: link:modules/a-orm
       vona-module-a-ormdialect:
-        specifier: workspace:^
+        specifier: ^5.1.16
         version: link:modules/a-ormdialect
       vona-module-a-ormutils:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-ormutils
       vona-module-a-permission:
-        specifier: workspace:^
+        specifier: ^5.1.13
         version: link:modules/a-permission
       vona-module-a-play:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-play
       vona-module-a-printtip:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-printtip
       vona-module-a-queue:
-        specifier: workspace:^
+        specifier: ^5.1.13
         version: link:modules/a-queue
       vona-module-a-redis:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-redis
       vona-module-a-redlock:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-redlock
       vona-module-a-runtime:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-runtime
       vona-module-a-schedule:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-schedule
       vona-module-a-security:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-security
       vona-module-a-serialization:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-serialization
       vona-module-a-startup:
-        specifier: workspace:^
+        specifier: ^5.1.13
         version: link:modules/a-startup
       vona-module-a-static:
-        specifier: workspace:^
+        specifier: ^5.1.14
         version: link:modules/a-static
       vona-module-a-summer:
-        specifier: workspace:^
+        specifier: ^5.1.13
         version: link:modules/a-summer
       vona-module-a-swagger:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-swagger
       vona-module-a-upload:
-        specifier: workspace:^
+        specifier: ^5.1.13
         version: link:modules/a-upload
       vona-module-a-user:
-        specifier: workspace:^
+        specifier: ^5.1.17
         version: link:modules/a-user
       vona-module-a-validation:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-validation
       vona-module-a-version:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-version
       vona-module-a-vona:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-vona
       vona-module-a-web:
-        specifier: workspace:^
+        specifier: ^5.1.19
         version: link:modules/a-web
       vona-module-a-worker:
-        specifier: workspace:^
+        specifier: ^5.1.12
         version: link:modules/a-worker
       vona-module-a-zod:
-        specifier: workspace:^
+        specifier: ^5.1.11
         version: link:modules/a-zod
 
   src/suite-vendor/a-vona/modules/a-aspect:
@@ -2330,7 +2330,7 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0(better-sqlite3@12.11.1)
       table-identity:
-        specifier: workspace:^
+        specifier: ^1.1.7
         version: link:../../../../../packages-utils/table-identity
     devDependencies:
       clean-package:
