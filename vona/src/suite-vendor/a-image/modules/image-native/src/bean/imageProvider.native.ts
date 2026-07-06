@@ -1,6 +1,7 @@
 import type {
   IDecoratorImageProviderOptions,
   IImageDeliveryOptions,
+  IImageDirectUploadInput,
   IImageDownloadResult,
   IImageProviderClientOptions,
   IImageProviderClientRecord,
@@ -47,6 +48,22 @@ export class ImageProviderNative extends BeanBase implements IImageProviderExecu
       contentType: input.contentType,
       meta: input.meta,
     };
+  }
+
+  async createDirectUpload(
+    input: IImageDirectUploadInput,
+    clientOptions: IImageProviderNativeClientOptions,
+    _options: IImageProviderOptionsNative,
+  ) {
+    return await this.scope.service.imageNative.createDirectUpload(input, clientOptions);
+  }
+
+  async finalizeDirectUpload(
+    image: EntityImage,
+    clientOptions: IImageProviderNativeClientOptions,
+    _options: IImageProviderOptionsNative,
+  ) {
+    return await this.scope.service.imageNative.finalizeDirectUpload(image, clientOptions);
   }
 
   async get(

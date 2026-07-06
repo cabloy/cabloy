@@ -89,6 +89,66 @@ describe('imageUpload.test.ts', () => {
     });
   });
 
+  it('action:image:native direct-upload api', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const jwt = await app.bean.passport.signinMock('admin');
+      try {
+        const directUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload');
+        const directRes = await fetch(directUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageScene: 'training-student:studentImage',
+            size: tinyPng.length,
+            mimeType: 'image/png',
+            filename: 'direct-native.png',
+          }),
+        });
+        assert.equal(directRes.ok, true);
+        const directData = await directRes.json();
+        assert.equal(directData.data.provider, 'image-native:native');
+        assert.equal(directData.data.status, 'draft');
+        assert.equal(directData.data.uploadUrl.includes('/image-native/direct-upload/'), true);
+
+        const uploadForm = new FormData();
+        uploadForm.append(
+          'image',
+          new (Blob as any)([tinyPng], { type: 'image/png' }),
+          'direct-native.png',
+        );
+        const uploadRes = await fetch(directData.data.uploadUrl, {
+          method: 'POST',
+          body: uploadForm,
+        });
+        assert.equal(uploadRes.ok, true);
+
+        const finalizeUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload/finalize');
+        const finalizeRes = await fetch(finalizeUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageId: directData.data.id,
+          }),
+        });
+        assert.equal(finalizeRes.ok, true);
+        const finalizeData = await finalizeRes.json();
+        assert.equal(finalizeData.data.provider, 'image-native:native');
+        assert.equal(finalizeData.data.status, 'ready');
+        assert.equal(finalizeData.data.url.includes('/api/static/'), true);
+        assert.equal(finalizeData.data.signed, false);
+        assert.equal(!!finalizeData.data.finalizedAt, true);
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('action:image:direct-upload and upload-url api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
