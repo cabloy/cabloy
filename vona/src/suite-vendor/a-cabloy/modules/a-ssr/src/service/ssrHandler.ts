@@ -72,6 +72,6 @@ export class ServiceSsrHandler extends BeanBase {
     const siteName = diagnostics?.siteName ?? String(this._siteOptions.publicPath || 'unknown');
     const buildCommand = diagnostics?.buildCommand;
     const commandHint = buildCommand ? ` Run "${buildCommand}" at the repository root.` : '';
-    return `The bundlePath of ssr site ${siteName} does not exist: ${this._siteAssetDir}. Missing SSR bundle.${commandHint}`;
+    return `Missing SSR bundle for site ${siteName}: ${this._siteAssetDir}.${commandHint}`;
   }
 }
