@@ -107,7 +107,7 @@ importers:
         specifier: ^0.35.2
         version: 0.35.2
       table-identity:
-        specifier: ^1.1.7
+        specifier: workspace:^
         version: link:packages-utils/table-identity
       typestyle:
         specifier: ^2.4.0
