@@ -1,3 +1,4 @@
+import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
 import assert from 'node:assert';
 import os from 'node:os';
@@ -68,6 +69,49 @@ describe('fileNative.test.ts', () => {
       assert.equal(deletedFile, undefined);
       assert.equal(deletedPrivate, undefined);
       await fse.remove(filePath);
+    });
+  });
+
+  it('action:file:native unsupported upload-url and direct-upload', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const [uploadUrlRes, uploadUrlErr] = await catchError(() =>
+        app.bean.file.uploadUrl(
+          'file-native:native',
+          {
+            url: 'https://example.com/file.txt',
+            filename: 'file.txt',
+            contentType: 'text/plain',
+            public: true,
+          },
+          {
+            clientName: 'default',
+          },
+        ),
+      );
+      assert.equal(uploadUrlRes, undefined);
+      assert.equal(
+        uploadUrlErr?.message,
+        'File provider does not support uploadUrl: file-native:native',
+      );
+
+      const [directUploadRes, directUploadErr] = await catchError(() =>
+        app.bean.file.createDirectUpload(
+          'file-native:native',
+          {
+            filename: 'file.txt',
+            contentType: 'text/plain',
+            public: true,
+          },
+          {
+            clientName: 'default',
+          },
+        ),
+      );
+      assert.equal(directUploadRes, undefined);
+      assert.equal(
+        directUploadErr?.message,
+        'File provider does not support createDirectUpload: file-native:native',
+      );
     });
   });
 });

@@ -4,6 +4,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import { DtoFileDirectUploadRequest } from '../dto/fileDirectUploadRequest.ts';
@@ -123,6 +124,7 @@ export class ControllerFile extends BeanBase {
   }
 
   @Web.get('download/:fileId')
+  @Passport.public()
   async download(
     @Arg.param('fileId', v.tableIdentity()) fileId: number,
     @Arg.query(v.object(DtoFileDownloadRequest)) query: DtoFileDownloadRequest,
@@ -132,7 +134,7 @@ export class ControllerFile extends BeanBase {
     if (!file.public) {
       const payload = await this.bean.fileUploadPolicy.verifyDownloadToken(
         query.token,
-        this.ctx.route.routePathRaw,
+        this.scope.util.combineApiPath(`file/download/${fileId}`, false, true),
       );
       if (String(payload.fileId) !== String(fileId)) {
         return this.app.throw(401);

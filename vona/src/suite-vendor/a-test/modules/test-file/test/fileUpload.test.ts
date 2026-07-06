@@ -199,6 +199,55 @@ describe('fileUpload.test.ts', () => {
     });
   });
 
+  it('action:file:download api private token behavior', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const filePath = path.join(os.tmpdir(), 'test-file-download-route.txt');
+      await fse.writeFile(filePath, textFile);
+      try {
+        const privateFile = await app.bean.file.upload(
+          'file-native:native',
+          {
+            file: filePath,
+            filename: 'private-download.txt',
+            contentType: 'text/plain',
+            public: false,
+          },
+          {
+            clientName: 'default',
+            fileScene: 'test-file:privateFile',
+          },
+        );
+
+        const privateUrl = app.util.getAbsoluteUrlByApiPath(
+          $apiPath(`/file/download/${privateFile.id}`),
+        );
+        const privateUnauthorizedRes = await fetch(privateUrl);
+        assert.equal(privateUnauthorizedRes.status, 401);
+
+        const downloadToken = await app.bean.fileUploadPolicy.createDownloadToken({
+          fileId: privateFile.id,
+        });
+        const privateAuthorizedRes = await fetch(
+          `${privateUrl}?token=${encodeURIComponent(downloadToken.token)}`,
+        );
+        assert.equal(privateAuthorizedRes.ok, true);
+        assert.equal(
+          privateAuthorizedRes.headers.get('content-type')?.includes('text/plain'),
+          true,
+        );
+        assert.equal(await privateAuthorizedRes.text(), textFile.toString());
+
+        const missingUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/file/download/999999999'));
+        const missingRes = await fetch(missingUrl);
+        assert.equal(missingRes.status, 404);
+
+        await app.bean.file.delete(privateFile.id);
+      } finally {
+        await fse.remove(filePath);
+      }
+    });
+  });
+
   it('action:file:upload policy validate upload file', async () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-upload-policy.txt');
