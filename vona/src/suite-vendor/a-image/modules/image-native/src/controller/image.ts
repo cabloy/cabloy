@@ -39,7 +39,7 @@ export class ControllerImage extends BeanBase {
     }
     const stat = await fse.stat(file.file);
     const policy = await this.bean.imageUploadPolicy.resolveUploadPolicy({
-      imageScene: image.imageScene,
+      imageScene: image.imageScene as never,
       size: Number(stat.size),
       mimeType: file.info.mimeType,
     });
