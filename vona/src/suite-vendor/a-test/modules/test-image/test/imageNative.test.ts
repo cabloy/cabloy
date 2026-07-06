@@ -64,6 +64,11 @@ describe('imageNative.test.ts', () => {
       });
       assert.equal(signedUrl.includes('/image/delivery/'), true);
       assert.equal(signedUrl.includes('token='), true);
+      const signedUnauthorizedRes = await fetch(signedUrl.split('?')[0]);
+      assert.equal(signedUnauthorizedRes.status, 401);
+      const signedAuthorizedRes = await fetch(signedUrl);
+      assert.equal(signedAuthorizedRes.ok, true);
+      assert.equal(signedAuthorizedRes.headers.get('content-type')?.includes('image/png'), true);
 
       const view = await app.bean.image.resolveView(image.id, 'thumbnail');
       assert.equal(view?.id, image.id);

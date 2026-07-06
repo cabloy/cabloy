@@ -4,6 +4,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
@@ -117,13 +118,14 @@ export class ControllerImage extends BeanBase {
   }
 
   @Web.get('delivery/:imageId')
+  @Passport.public()
   async delivery(
     @Arg.param('imageId', v.tableIdentity()) imageId: number,
     @Arg.query(v.object(DtoImageDeliveryRequest)) query: DtoImageDeliveryRequest,
   ) {
     const payload = await this.bean.imageUploadPolicy.verifyDeliveryToken(
       query.token,
-      this.ctx.route.routePathRaw,
+      this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true),
     );
     if (String(payload.imageId) !== String(imageId)) {
       return this.app.throw(401);
