@@ -22,5 +22,9 @@ export interface ISsrSiteOptionsWeb extends IDecoratorSsrSiteOptions<
 @SsrSite<ISsrSiteOptionsWeb>({
   publicPath: '',
   bundlePath: 'ssr-cabloyBasicWeb-5.0.0',
+  diagnostics: {
+    siteName: 'web',
+    buildCommand: 'npm run build:zova:web',
+  },
 })
 export class SsrSiteWeb extends BeanSsrSiteBase<ISsrSiteOptionsWeb> {}

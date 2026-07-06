@@ -51,8 +51,9 @@ export class ServiceSsrHandler extends BeanBase {
   private async _prepareHandler() {
     // handler
     const fileHandler = path.join(this._siteAssetDir, 'handler.js');
-    if (!fse.existsSync(fileHandler))
-      throw new Error(`The bundlePath of ssr site not exists: ${this._siteAssetDir}`);
+    if (!fse.existsSync(fileHandler)) {
+      throw new Error(this._createMissingBundleMessage());
+    }
     // import
     const fileUrl = `${pathToHref(fileHandler)}?${this._handlerNonce}`;
     const handlerInstance = await import(fileUrl);
@@ -64,5 +65,13 @@ export class ServiceSsrHandler extends BeanBase {
     await ssrHandler.ensureReady(this._handlerNonce);
     // ok
     return ssrHandler;
+  }
+
+  private _createMissingBundleMessage() {
+    const diagnostics = this._siteOptions.diagnostics;
+    const siteName = diagnostics?.siteName ?? String(this._siteOptions.publicPath || 'unknown');
+    const buildCommand = diagnostics?.buildCommand;
+    const commandHint = buildCommand ? ` Run "${buildCommand}" at the repository root.` : '';
+    return `The bundlePath of ssr site ${siteName} does not exist: ${this._siteAssetDir}. Missing SSR bundle.${commandHint}`;
   }
 }
