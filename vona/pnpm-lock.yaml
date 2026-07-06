@@ -1517,13 +1517,13 @@ importers:
   src/suite-vendor/a-file:
     dependencies:
       vona-module-a-file:
-        specifier: ^5.0.1
+        specifier: ^5.0.3
         version: link:modules/a-file
       vona-module-file-cloudflare:
-        specifier: ^5.0.1
+        specifier: ^5.0.3
         version: link:modules/file-cloudflare
       vona-module-file-native:
-        specifier: ^5.0.1
+        specifier: ^5.0.3
         version: link:modules/file-native
 
   src/suite-vendor/a-file/modules/a-file:
@@ -1625,7 +1625,7 @@ importers:
   src/suite-vendor/a-test:
     dependencies:
       vona-module-test-file:
-        specifier: ^5.0.1
+        specifier: ^5.0.3
         version: link:modules/test-file
 
   src/suite-vendor/a-test/modules/test-auth:
