@@ -2,7 +2,12 @@ import { BeanBase, deepExtend } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
 import type { EntityImageProvider } from '../entity/imageProvider.ts';
-import type { IImageProviderClientOptions, TypeImageProviderPick } from '../types/imageProvider.ts';
+import type {
+  IImageProviderRecord,
+  TypeImageProviderClientOptionsByName,
+  TypeImageProviderOptionsByName,
+  TypeImageProviderPick,
+} from '../types/imageProvider.ts';
 
 @Bean()
 export class BeanImageProvider extends BeanBase {
@@ -29,27 +34,29 @@ export class BeanImageProvider extends BeanBase {
     return await this.scope.model.imageProvider.insert(dataNew);
   }
 
-  async getClientOptions<T extends IImageProviderClientOptions>(
-    data: TypeImageProviderPick,
-    clientOptionsCustom?: T,
-    clientOptionsDefault?: T,
+  async getClientOptions<N extends keyof IImageProviderRecord>(
+    data: TypeImageProviderPick & { providerName: N },
+    clientOptionsCustom?: TypeImageProviderClientOptionsByName<N>,
+    clientOptionsDefault?: TypeImageProviderClientOptionsByName<N>,
   ) {
     const entityImageProvider = await this.bean.imageProvider.get(data);
     if (!entityImageProvider) return { entityImageProvider: undefined };
     const disabled = entityImageProvider.disabled;
-    const imageProviderName = entityImageProvider.providerName;
+    const imageProviderName = entityImageProvider.providerName as N;
     const clientName = entityImageProvider.clientName ?? 'default';
     const onionSlice = this.bean.onion.imageProvider.getOnionSliceEnabled(true, imageProviderName);
     if (!onionSlice) throw new Error(`Image provider not found: ${imageProviderName}`);
-    const beanFullName = onionSlice.beanOptions.beanFullName;
-    const onionOptions = onionSlice.beanOptions.options ?? {};
-    const clientOptions: IImageProviderClientOptions = deepExtend(
-      clientOptionsDefault ?? {},
-      onionOptions?.base,
-      onionOptions?.clients?.[clientName],
-      entityImageProvider.clientOptions,
+    const beanFullName = onionSlice.beanOptions.beanFullName as N;
+    const onionOptions =
+      (onionSlice.beanOptions.options as TypeImageProviderOptionsByName<N> | undefined) ??
+      ({} as TypeImageProviderOptionsByName<N>);
+    const clientOptions = deepExtend(
+      (clientOptionsDefault ?? {}) as TypeImageProviderClientOptionsByName<N>,
+      onionOptions.base,
+      onionOptions.clients?.[clientName as keyof typeof onionOptions.clients],
+      entityImageProvider.clientOptions as TypeImageProviderClientOptionsByName<N> | undefined,
       clientOptionsCustom,
-    );
+    ) as TypeImageProviderClientOptionsByName<N>;
     return { entityImageProvider, disabled, beanFullName, onionOptions, clientOptions };
   }
 }

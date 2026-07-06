@@ -35,7 +35,10 @@ export interface IImageProviderOptionsNative extends IDecoratorImageProviderOpti
     signedDeliveryKind: 'proxy',
   },
 })
-export class ImageProviderNative extends BeanBase implements IImageProviderExecute {
+export class ImageProviderNative
+  extends BeanBase
+  implements IImageProviderExecute<IImageProviderNativeClientOptions, IImageProviderOptionsNative>
+{
   async upload(
     input: IImageUploadInput,
     clientOptions: IImageProviderNativeClientOptions,

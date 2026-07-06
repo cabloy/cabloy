@@ -43,7 +43,11 @@ export interface IImageProviderOptionsCloudflare extends IDecoratorImageProvider
     },
   },
 })
-export class ImageProviderCloudflare extends BeanBase implements IImageProviderExecute {
+export class ImageProviderCloudflare
+  extends BeanBase
+  implements
+    IImageProviderExecute<IImageProviderCloudflareClientOptions, IImageProviderOptionsCloudflare>
+{
   async upload(
     input: IImageUploadInput,
     clientOptions: IImageProviderCloudflareClientOptions,

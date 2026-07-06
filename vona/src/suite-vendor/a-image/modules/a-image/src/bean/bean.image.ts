@@ -20,19 +20,19 @@ import type {
   TypeImageVariantInput,
 } from '../types/image.ts';
 import type {
-  IDecoratorImageProviderOptions,
-  IImageProviderClientOptions,
-  IImageProviderExecute,
   IImageProviderRecord,
+  TypeImageProviderClientOptionsByName,
+  TypeImageProviderExecuteByName,
+  TypeImageProviderOptionsByName,
 } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 import { resolveImageVariantRequest } from '../lib/imageVariant.ts';
 
-interface IImageProviderContext {
-  beanImageProvider: IImageProviderExecute;
-  clientOptions: IImageProviderClientOptions;
-  onionOptions: IDecoratorImageProviderOptions;
+interface IImageProviderContext<N extends keyof IImageProviderRecord = keyof IImageProviderRecord> {
+  beanImageProvider: TypeImageProviderExecuteByName<N>;
+  clientOptions: TypeImageProviderClientOptionsByName<N>;
+  onionOptions: TypeImageProviderOptionsByName<N>;
 }
 
 interface IImageDeliveryContext {
@@ -328,18 +328,16 @@ export class BeanImage extends BeanBase {
       throw new Error(`Image provider not found: ${String(providerName)}.${image.clientName}`);
     }
     return {
-      beanImageProvider: this._getBeanImageProvider(
-        providerContext.beanFullName as keyof IImageProviderRecord,
-      ),
-      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
-      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+      beanImageProvider: this._getBeanImageProvider(providerName, providerContext.beanFullName),
+      clientOptions: this._normalizeOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOptions(providerContext.onionOptions),
     };
   }
 
   private async _getProviderContextByInput<N extends keyof IImageProviderRecord>(
     providerName: N,
-    options?: IImageUploadOptions,
-  ) {
+    options?: IImageUploadOptions<TypeImageProviderClientOptionsByName<N>>,
+  ): Promise<IImageProviderContext<N> & { clientName: string }> {
     const clientName = options?.clientName ?? 'default';
     const providerContext = await this.bean.imageProvider.getClientOptions(
       {
@@ -353,28 +351,21 @@ export class BeanImage extends BeanBase {
     }
     return {
       clientName,
-      beanImageProvider: this._getBeanImageProvider(
-        providerContext.beanFullName as keyof IImageProviderRecord,
-      ),
-      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
-      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+      beanImageProvider: this._getBeanImageProvider(providerName, providerContext.beanFullName),
+      clientOptions: this._normalizeOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOptions(providerContext.onionOptions),
     };
   }
 
-  private _getBeanImageProvider(beanFullName: keyof IImageProviderRecord): IImageProviderExecute {
-    return this.app.bean._getBean<IImageProviderExecute>(beanFullName as never);
+  private _getBeanImageProvider<N extends keyof IImageProviderRecord>(
+    _providerName: N,
+    beanFullName: string,
+  ): TypeImageProviderExecuteByName<N> {
+    return this.app.bean._getBean<TypeImageProviderExecuteByName<N>>(beanFullName as never);
   }
 
-  private _normalizeClientOptions(
-    clientOptions: IImageProviderClientOptions | undefined,
-  ): IImageProviderClientOptions {
-    return clientOptions ?? {};
-  }
-
-  private _normalizeOnionOptions(
-    onionOptions: IDecoratorImageProviderOptions | undefined,
-  ): IDecoratorImageProviderOptions {
-    return onionOptions ?? {};
+  private _normalizeOptions<T extends object>(options: T | undefined): T {
+    return (options ?? {}) as T;
   }
 
   async createImageActionResponse(
