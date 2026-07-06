@@ -271,19 +271,24 @@ This flow reuses the normal Vona upload model from [Upload Guide](/backend/uploa
 
 ## Direct upload
 
-`POST /image/direct-upload` is for providers that can create an upload target without proxying the image through the app server.
+`POST /image/direct-upload` is for providers that can create an upload target without proxying the entire lifecycle through the shared `POST /image/upload` endpoint.
 
-The flow is:
+The shared flow is:
 
 1. resolve the image scene and upload policy
 2. call `app.bean.image.createDirectUpload(...)`
 3. let the provider create the direct-upload resource
-4. persist the image record
+4. persist the draft image record
 5. return provider information plus `uploadUrl`
+6. upload bytes to the returned `uploadUrl`
+7. finalize through `POST /image/direct-upload/finalize`
 
-The built-in Cloudflare provider supports this flow.
+The built-in providers currently support this flow in two different ways:
 
-The native provider does not implement `createDirectUpload`.
+- `image-cloudflare:cloudflare` returns a provider-hosted upload target
+- `image-native:native` returns an app-local upload target under `/image-native/direct-upload/:resourceId`, stores the uploaded bytes as a draft file, and promotes that draft into the final native storage path during finalize
+
+That provider difference is exactly why the shared API keeps direct upload split into create-upload-target and finalize steps.
 
 ## Upload by URL
 
@@ -343,10 +348,12 @@ Practical behavior to know:
 
 - it defaults to proxy-signed delivery
 - it can return local static URLs under `/api/static/...`
+- it supports direct upload through an app-local upload target plus shared finalize
 - named variants produce stable variant files such as `__thumbnail`
 - ad hoc transforms produce stable hashed files such as `__t_<hash>`
 - repeated requests for the same custom transform reuse the same cached transformed output
 - when downloading the unsigned original variant, it can return a buffer instead of a URL
+- it still does not implement `uploadUrl(...)` for provider-side remote URL ingestion
 
 These behaviors are demonstrated directly in the native image tests.
 
@@ -513,7 +520,7 @@ The current repo already contains strong executable examples under:
 The most useful tests are:
 
 - `imageUpload.test.ts` for upload-token, upload, direct-upload, and upload-url request flows
-- `imageNative.test.ts` for local upload, variant URLs, signed delivery, and delete behavior
+- `imageNative.test.ts` for local upload, native direct-upload/finalize, variant URLs, signed delivery, and delete behavior
 - `imageCloudflareMapping.test.ts` for Cloudflare mapping, custom transforms, signed delivery, direct upload, and upload-by-URL behavior
 
 When the source and a prose explanation seem to disagree, prefer the current source and tests.
