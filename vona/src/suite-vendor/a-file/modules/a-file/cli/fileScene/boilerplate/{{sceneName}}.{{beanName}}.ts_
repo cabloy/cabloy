@@ -1,0 +1,5 @@
+import { BeanBase } from 'vona';
+import { FileScene } from 'vona-module-a-file';
+
+@FileScene()
+export class FileScene<%=argv.beanNameCapitalize%> extends BeanBase {}
