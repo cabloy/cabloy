@@ -17,6 +17,7 @@ Representative examples:
 - `a-status-module-architecture.md` records the Vona-side `a-status` module boundary, shared-table storage model, module-scoped ownership invariant, `get` / `set` call path, Redlock-protected first-write flow, cache-fresh recheck rule, and refactor safety rules
 - `backend-resource-field-workflow.md` records the preferred AI-assisted workflow for adding or refining fields on existing Vona backend resources, including fileVersion decisions, migration safety, shared renderer reuse, locale updates, and verification
 - `a-image-cloudflare-signed-delivery-architecture.md` records the shared `a-image` signed-delivery model, `image-native` vs `image-cloudflare` boundaries, upload-policy invariants, and contract-loop verification expectations for image provider work
+- `a-image-refactor-checklist.md` records the recommended execution order for the next `a-image` cleanup pass, including delivery semantic separation, direct-upload lifecycle completion, provider typing cleanup, and the locked decision that `image-native` stays lazy-only
 - `resource-custom-api-state-ownership.md` records the preferred Zova state-ownership pattern for resource-bound custom APIs, including `ModelResource` as the single owner, row-grouped cache keys, thin semantic facade models, and invalidation rules
 - `class-placement-a-b1-b2.md` records the durable rule for placing backend base classes in `src/lib`, `src/service`, or the global bean shorthand surface
 - `router-tabs-design-boundaries.md` records the design intent, workspace-vs-instance identity split, anchor-item role, layout boundary, cache boundary, and refactor safety rules for the router-tabs workbench mechanism
@@ -26,6 +27,7 @@ Representative examples:
 - `ssr-leak-experiment-flags-inventory.md` records the historical `SSR_LEAK_EXPERIMENT_*` surface and confirms that those investigation flags were ultimately removed from active source
 - `ssr-leak-experiment-cleanup-checklist.md` records the execution order and verification path used to fully remove the old SSR leak investigation flags from source
 - `ssr-route-typing-zova-rest-declaration-visibility.md` records why backend SSR route keys could collapse to `never`, how the generated `zova-rest-*` declaration fix preserves module augmentation visibility, and how the backend consumer path was validated
+- `anonymous-token-route-pattern.md` records the invariants for temporary-token anonymous HTTP routes, including the need for `@Passport.public()`, exact sign/verify path matching, and HTTP-level verification of signed URLs
 
 ## What should go elsewhere
 

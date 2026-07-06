@@ -8,10 +8,10 @@ import type {
   IImageDeliveryOptions,
   IImageDirectUploadInput,
   IImageDirectUploadResult,
+  IImageFinalizeDirectUploadResult,
   IImageProviderDirectUploadResource,
   IImageProviderResource,
   IImageResource,
-  IImageUploadContextResolved,
   IImageUploadInput,
   IImageUploadOptions,
   IImageUploadUrlInput,
@@ -20,19 +20,34 @@ import type {
   TypeImageVariantInput,
 } from '../types/image.ts';
 import type {
-  IDecoratorImageProviderOptions,
-  IImageProviderClientOptions,
-  IImageProviderExecute,
   IImageProviderRecord,
+  TypeImageProviderClientOptionsByName,
+  TypeImageProviderExecuteByName,
+  TypeImageProviderOptionsByName,
 } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 import { resolveImageVariantRequest } from '../lib/imageVariant.ts';
 
-interface IImageProviderContext {
-  beanImageProvider: IImageProviderExecute;
-  clientOptions: IImageProviderClientOptions;
-  onionOptions: IDecoratorImageProviderOptions;
+interface IImageProviderContext<N extends keyof IImageProviderRecord = keyof IImageProviderRecord> {
+  beanImageProvider: TypeImageProviderExecuteByName<N>;
+  clientOptions: TypeImageProviderClientOptionsByName<N>;
+  onionOptions: TypeImageProviderOptionsByName<N>;
+}
+
+interface IImageDeliveryContext {
+  image: EntityImage | IImageResource;
+  providerImage: EntityImage;
+  requestNormalized: IImageVariantRequest;
+  deliveryOptionsResolved: IImageDeliveryOptions;
+  providerContext: IImageProviderContext;
+}
+
+interface IInsertImageContext {
+  imageScene?: keyof IImageSceneRecord;
+  status?: EntityImage['status'];
+  draftExpiresAt?: Date;
+  finalizedAt?: Date;
 }
 
 @Bean()
@@ -40,7 +55,7 @@ export class BeanImage extends BeanBase {
   async upload<N extends keyof IImageProviderRecord>(
     providerName: N,
     input: IImageUploadInput,
-    options?: IImageUploadOptions,
+    options?: IImageUploadOptions<TypeImageProviderClientOptionsByName<N>>,
   ): Promise<IImageResource> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     const imageProviderResource = await providerContext.beanImageProvider.upload(
@@ -54,6 +69,7 @@ export class BeanImage extends BeanBase {
       imageProviderResource,
       {
         imageScene: options?.imageScene,
+        status: 'ready',
       },
     );
     return this._combineImageResource(image, imageProviderResource);
@@ -62,7 +78,7 @@ export class BeanImage extends BeanBase {
   async uploadUrl<N extends keyof IImageProviderRecord>(
     providerName: N,
     input: IImageUploadUrlInput,
-    options?: IImageUploadOptions,
+    options?: IImageUploadOptions<TypeImageProviderClientOptionsByName<N>>,
   ): Promise<IImageResource> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanImageProvider.uploadUrl) {
@@ -79,6 +95,7 @@ export class BeanImage extends BeanBase {
       imageProviderResource,
       {
         imageScene: options?.imageScene,
+        status: 'ready',
       },
     );
     return this._combineImageResource(image, imageProviderResource);
@@ -87,7 +104,7 @@ export class BeanImage extends BeanBase {
   async createDirectUpload<N extends keyof IImageProviderRecord>(
     providerName: N,
     input: IImageDirectUploadInput,
-    options?: IImageUploadOptions,
+    options?: IImageUploadOptions<TypeImageProviderClientOptionsByName<N>>,
   ): Promise<IImageDirectUploadResult> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanImageProvider.createDirectUpload) {
@@ -100,19 +117,72 @@ export class BeanImage extends BeanBase {
       providerContext.clientOptions,
       providerContext.onionOptions,
     );
+    const isDraft = imageProviderResource.draft ?? true;
+    const draftExpiresAt = isDraft
+      ? this._resolveDirectUploadDraftExpiresAt(input.expiry)
+      : undefined;
     const image = await this._insertImage(
       providerName,
       providerContext.clientName,
       imageProviderResource,
       {
         imageScene: options?.imageScene,
+        status: isDraft ? 'draft' : 'ready',
+        draftExpiresAt,
       },
     );
     return {
       ...this._combineImageResource(image, imageProviderResource),
       uploadUrl: imageProviderResource.uploadUrl,
-      draft: imageProviderResource.draft,
+      draft: imageProviderResource.draft ?? true,
     };
+  }
+
+  async finalizeDirectUpload(imageId: TableIdentity): Promise<IImageFinalizeDirectUploadResult> {
+    return await this.scope.redlock.lock(`image.directUpload.${imageId}`, async () => {
+      const image = await this.scope.model.image.getById(imageId);
+      if (!image) throw new Error(`not found image: ${imageId}`);
+      if (image.status !== 'draft') {
+        return this.app.throw(403, `image is not draft: ${imageId}`);
+      }
+      const draftExpiresAt = this._normalizeDate(image.draftExpiresAt);
+      if (draftExpiresAt && draftExpiresAt.getTime() < Date.now()) {
+        await this.scope.model.image.updateById(image.id, {
+          status: 'expired',
+        });
+        return this.app.throw(403, `image draft expired: ${imageId}`);
+      }
+      const providerContext = await this._getProviderContext(image);
+      if (!providerContext.beanImageProvider.finalizeDirectUpload) {
+        throw new Error(
+          `Image provider does not support finalizeDirectUpload: ${String(image.providerName)}`,
+        );
+      }
+      const imageProviderResource = await providerContext.beanImageProvider.finalizeDirectUpload(
+        image,
+        providerContext.clientOptions,
+        providerContext.onionOptions,
+      );
+      if (!imageProviderResource) {
+        return this.app.throw(403, `image direct upload not ready: ${imageId}`);
+      }
+      const finalizedAt = new Date();
+      const imageUpdated = await this.scope.model.image.updateById(
+        image.id,
+        this._buildImagePersistData(imageProviderResource, {
+          status: 'ready',
+          draftExpiresAt,
+          finalizedAt,
+        }),
+      );
+      return this._combineImageResource(
+        {
+          ...image,
+          ...imageUpdated,
+        },
+        imageProviderResource,
+      );
+    });
   }
 
   async get(imageId: TableIdentity): Promise<IImageResource | undefined> {
@@ -120,6 +190,21 @@ export class BeanImage extends BeanBase {
     if (!image) return;
     const imageProviderResource = await this._getImageProviderResource(image);
     return this._combineImageResource(image, imageProviderResource);
+  }
+
+  async expireDraftImage(imageId: TableIdentity) {
+    return await this.scope.redlock.lock(`image.directUpload.${imageId}`, async () => {
+      const image = await this.scope.model.image.getById(imageId);
+      if (!image || image.status !== 'draft') return;
+      const draftExpiresAt = this._normalizeDate(image.draftExpiresAt);
+      if (!draftExpiresAt || draftExpiresAt.getTime() >= Date.now()) return;
+      const { beanImageProvider, clientOptions, onionOptions } =
+        await this._getProviderContext(image);
+      await beanImageProvider.delete(image, clientOptions, onionOptions);
+      await this.scope.model.image.updateById(image.id, {
+        status: 'expired',
+      });
+    });
   }
 
   async delete(imageId: TableIdentity) {
@@ -136,33 +221,8 @@ export class BeanImage extends BeanBase {
     request?: TypeImageVariantInput,
     deliveryOptions?: IImageDeliveryOptions,
   ) {
-    const image = await this.scope.model.image.getById(imageId);
-    if (!image) throw new Error(`not found image: ${imageId}`);
-    const requestNormalized = this._normalizeVariantRequest(request);
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(
-      image,
-      requestNormalized,
-      deliveryOptions,
-    );
-    const { beanImageProvider, clientOptions, onionOptions } =
-      await this._getProviderContext(image);
-    if (
-      deliveryOptionsResolved.signed &&
-      (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    ) {
-      return await this._createSignedDeliveryUrl(
-        image.id,
-        requestNormalized,
-        deliveryOptionsResolved,
-      );
-    }
-    return await beanImageProvider.getVariantUrl(
-      image,
-      requestNormalized,
-      clientOptions,
-      onionOptions,
-      deliveryOptionsResolved,
-    );
+    const context = await this._getDeliveryContext(imageId, request, deliveryOptions);
+    return await this._getVariantUrlByContext(context);
   }
 
   async download(
@@ -170,53 +230,37 @@ export class BeanImage extends BeanBase {
     request?: TypeImageVariantInput,
     deliveryOptions?: IImageDeliveryOptions,
   ) {
-    const image = await this.scope.model.image.getById(imageId);
-    if (!image) throw new Error(`not found image: ${imageId}`);
-    const requestNormalized = this._normalizeVariantRequest(request);
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(
-      image,
-      requestNormalized,
-      deliveryOptions,
-    );
-    const { beanImageProvider, clientOptions, onionOptions } =
-      await this._getProviderContext(image);
-    if (
-      deliveryOptionsResolved.signed &&
-      (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    ) {
+    const context = await this._getDeliveryContext(imageId, request, deliveryOptions);
+    if (this._shouldUseProxySignedDelivery(context)) {
       return {
         kind: 'url' as const,
-        url: await this._createSignedDeliveryUrl(
-          image.id,
-          requestNormalized,
-          deliveryOptionsResolved,
-        ),
-        filename: image.filename,
-        contentType: image.contentType,
+        url: await this._createSignedDeliveryUrl(context),
+        filename: context.image.filename,
+        contentType: context.image.contentType,
         signed: true,
       };
     }
-    if (beanImageProvider.download) {
-      return await beanImageProvider.download(
-        image,
-        requestNormalized,
-        clientOptions,
-        onionOptions,
-        deliveryOptionsResolved,
+    if (context.providerContext.beanImageProvider.download) {
+      return await context.providerContext.beanImageProvider.download(
+        context.providerImage,
+        context.requestNormalized,
+        context.providerContext.clientOptions,
+        context.providerContext.onionOptions,
+        context.deliveryOptionsResolved,
       );
     }
     return {
       kind: 'url' as const,
-      url: await beanImageProvider.getVariantUrl(
-        image,
-        requestNormalized,
-        clientOptions,
-        onionOptions,
-        deliveryOptionsResolved,
+      url: await context.providerContext.beanImageProvider.getVariantUrl(
+        context.providerImage,
+        context.requestNormalized,
+        context.providerContext.clientOptions,
+        context.providerContext.onionOptions,
+        context.deliveryOptionsResolved,
       ),
-      filename: image.filename,
-      contentType: image.contentType,
-      signed: !!deliveryOptionsResolved.signed,
+      filename: context.image.filename,
+      contentType: context.image.contentType,
+      signed: !!context.deliveryOptionsResolved.signed,
     };
   }
 
@@ -227,30 +271,9 @@ export class BeanImage extends BeanBase {
     deliveryOptions?: IImageDeliveryOptions,
   ): Promise<IImageView | undefined> {
     if (!imageId) return;
-    const image = await this.get(imageId);
-    if (!image) return;
-    if (imageScene && image.imageScene !== imageScene) {
-      throw new Error(`image scene mismatch: image=${image.imageScene}, expected=${imageScene}`);
-    }
-    const requestNormalized = this._normalizeVariantRequest(request);
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(
-      image,
-      requestNormalized,
-      deliveryOptions,
-    );
-    return {
-      id: image.id,
-      url: await this.getVariantUrl(image.id, requestNormalized, deliveryOptionsResolved),
-      filename: image.filename,
-      width: image.width,
-      height: image.height,
-      provider: image.provider,
-      clientName: image.clientName,
-      imageScene: image.imageScene,
-      uploadedAt: image.uploadedAt,
-      variants: image.variants,
-      signed: !!deliveryOptionsResolved.signed,
-    };
+    const prepared = await this._prepareImageView(imageId, request, imageScene, deliveryOptions);
+    if (!prepared) return;
+    return await this._createImageView(prepared.image, prepared.context);
   }
 
   async resolveViews(
@@ -273,29 +296,45 @@ export class BeanImage extends BeanBase {
     return await beanImageProvider.get(image, clientOptions, onionOptions);
   }
 
-  private async _getProviderContext(image: EntityImage): Promise<IImageProviderContext> {
+  private async _prepareImageView(
+    imageId: TableIdentity,
+    request?: TypeImageVariantInput,
+    imageScene?: keyof IImageSceneRecord,
+    deliveryOptions?: IImageDeliveryOptions,
+  ) {
+    const image = await this.get(imageId);
+    if (!image) return;
+    if (imageScene && image.imageScene !== imageScene) {
+      throw new Error(`image scene mismatch: image=${image.imageScene}, expected=${imageScene}`);
+    }
+    const context = await this._createDeliveryContext(image, request, deliveryOptions);
+    return { image, context };
+  }
+
+  private async _getProviderContext(
+    image:
+      | Pick<EntityImage, 'providerName' | 'clientName'>
+      | Pick<IImageResource, 'provider' | 'clientName'>,
+  ): Promise<IImageProviderContext> {
+    const providerName = 'providerName' in image ? image.providerName : image.provider;
     const providerContext = await this.bean.imageProvider.getClientOptions({
-      providerName: image.providerName,
+      providerName,
       clientName: image.clientName,
     });
     if (!providerContext.entityImageProvider) {
-      throw new Error(
-        `Image provider not found: ${String(image.providerName)}.${image.clientName}`,
-      );
+      throw new Error(`Image provider not found: ${String(providerName)}.${image.clientName}`);
     }
     return {
-      beanImageProvider: this._getBeanImageProvider(
-        providerContext.beanFullName as keyof IImageProviderRecord,
-      ),
-      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
-      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+      beanImageProvider: this._getBeanImageProvider(providerName, providerContext.beanFullName),
+      clientOptions: this._normalizeOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOptions(providerContext.onionOptions),
     };
   }
 
   private async _getProviderContextByInput<N extends keyof IImageProviderRecord>(
     providerName: N,
-    options?: IImageUploadOptions,
-  ) {
+    options?: IImageUploadOptions<TypeImageProviderClientOptionsByName<N>>,
+  ): Promise<IImageProviderContext<N> & { clientName: string }> {
     const clientName = options?.clientName ?? 'default';
     const providerContext = await this.bean.imageProvider.getClientOptions(
       {
@@ -309,28 +348,131 @@ export class BeanImage extends BeanBase {
     }
     return {
       clientName,
-      beanImageProvider: this._getBeanImageProvider(
-        providerContext.beanFullName as keyof IImageProviderRecord,
-      ),
-      clientOptions: this._normalizeClientOptions(providerContext.clientOptions),
-      onionOptions: this._normalizeOnionOptions(providerContext.onionOptions),
+      beanImageProvider: this._getBeanImageProvider(providerName, providerContext.beanFullName),
+      clientOptions: this._normalizeOptions(providerContext.clientOptions),
+      onionOptions: this._normalizeOptions(providerContext.onionOptions),
     };
   }
 
-  private _getBeanImageProvider(beanFullName: keyof IImageProviderRecord): IImageProviderExecute {
-    return this.app.bean._getBean<IImageProviderExecute>(beanFullName as never);
+  private _getBeanImageProvider<N extends keyof IImageProviderRecord>(
+    _providerName: N,
+    beanFullName: string,
+  ): TypeImageProviderExecuteByName<N> {
+    return this.app.bean._getBean<TypeImageProviderExecuteByName<N>>(beanFullName as never);
   }
 
-  private _normalizeClientOptions(
-    clientOptions: IImageProviderClientOptions | undefined,
-  ): IImageProviderClientOptions {
-    return clientOptions ?? {};
+  private _normalizeOptions<T extends object>(options: T | undefined): T {
+    return (options ?? {}) as T;
   }
 
-  private _normalizeOnionOptions(
-    onionOptions: IDecoratorImageProviderOptions | undefined,
-  ): IDecoratorImageProviderOptions {
-    return onionOptions ?? {};
+  async createImageActionResponse(
+    image: IImageResource,
+    request?: TypeImageVariantInput,
+    deliveryOptions?: IImageDeliveryOptions,
+  ) {
+    const context = await this._createDeliveryContext(image, request, deliveryOptions);
+    return {
+      ...image,
+      url: await this._getVariantUrlByContext(context),
+      signed: !!context.deliveryOptionsResolved.signed,
+    };
+  }
+
+  private _resolveDirectUploadDraftExpiresAt(expiry?: IImageDirectUploadInput['expiry']) {
+    return (
+      this._normalizeDate(expiry) ??
+      new Date(Date.now() + this.scope.config.image.directUpload.draftExpiresIn)
+    );
+  }
+
+  private _normalizeDate(value: unknown) {
+    if (!value) return undefined;
+    if (value instanceof Date) {
+      return Number.isNaN(value.getTime()) ? undefined : value;
+    }
+    const date = new Date(value as string | number);
+    return Number.isNaN(date.getTime()) ? undefined : date;
+  }
+
+  private async _getDeliveryContext(
+    imageId: TableIdentity,
+    request?: TypeImageVariantInput,
+    deliveryOptions?: IImageDeliveryOptions,
+  ): Promise<IImageDeliveryContext> {
+    const image = await this.scope.model.image.getById(imageId);
+    if (!image) throw new Error(`not found image: ${imageId}`);
+    return await this._createDeliveryContext(image, request, deliveryOptions);
+  }
+
+  private async _createDeliveryContext(
+    image: EntityImage | IImageResource,
+    request?: TypeImageVariantInput,
+    deliveryOptions?: IImageDeliveryOptions,
+  ): Promise<IImageDeliveryContext> {
+    this._assertImageReady(image);
+    const providerImage = this._getProviderImage(image);
+    const requestNormalized = this._normalizeVariantRequest(request);
+    const deliveryOptionsResolved = this._mergeDeliveryOptions(
+      image,
+      requestNormalized,
+      deliveryOptions,
+    );
+    const providerContext = await this._getProviderContext(image);
+    return {
+      image,
+      providerImage,
+      requestNormalized,
+      deliveryOptionsResolved,
+      providerContext,
+    };
+  }
+
+  private async _getVariantUrlByContext(context: IImageDeliveryContext) {
+    if (this._shouldUseProxySignedDelivery(context)) {
+      return await this._createSignedDeliveryUrl(context);
+    }
+    return await context.providerContext.beanImageProvider.getVariantUrl(
+      context.providerImage,
+      context.requestNormalized,
+      context.providerContext.clientOptions,
+      context.providerContext.onionOptions,
+      context.deliveryOptionsResolved,
+    );
+  }
+
+  private async _createImageView(image: IImageResource, context: IImageDeliveryContext) {
+    return {
+      id: image.id,
+      url: await this._getVariantUrlByContext(context),
+      filename: image.filename,
+      width: image.width,
+      height: image.height,
+      provider: image.provider,
+      clientName: image.clientName,
+      imageScene: image.imageScene,
+      status: image.status,
+      draftExpiresAt: image.draftExpiresAt,
+      finalizedAt: image.finalizedAt,
+      uploadedAt: image.uploadedAt,
+      variants: image.variants,
+      signed: !!context.deliveryOptionsResolved.signed,
+    } satisfies IImageView;
+  }
+
+  private _shouldUseProxySignedDelivery(context: IImageDeliveryContext) {
+    return (
+      context.deliveryOptionsResolved.signed &&
+      (context.providerContext.clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
+    );
+  }
+
+  private _assertImageReady(image: Pick<EntityImage, 'id' | 'status'>) {
+    if (image.status === 'draft') {
+      return this.app.throw(403, `image draft not ready: ${image.id}`);
+    }
+    if (image.status === 'expired') {
+      return this.app.throw(403, `image draft expired: ${image.id}`);
+    }
   }
 
   private _normalizeVariantRequest(request?: TypeImageVariantInput): IImageVariantRequest {
@@ -360,31 +502,27 @@ export class BeanImage extends BeanBase {
     };
   }
 
-  private async _createSignedDeliveryUrl(
-    imageId: TableIdentity,
-    request: IImageVariantRequest,
-    deliveryOptions: IImageDeliveryOptions,
-  ) {
-    const image = await this.scope.model.image.getById(imageId);
-    if (!image) throw new Error(`not found image: ${imageId}`);
-    const { beanImageProvider, clientOptions, onionOptions } =
-      await this._getProviderContext(image);
-    const targetUrl = await beanImageProvider.getVariantUrl(
-      image,
-      request,
-      clientOptions,
-      onionOptions,
+  private async _createSignedDeliveryUrl(context: IImageDeliveryContext) {
+    const targetUrl = await context.providerContext.beanImageProvider.getVariantUrl(
+      context.providerImage,
+      context.requestNormalized,
+      context.providerContext.clientOptions,
+      context.providerContext.onionOptions,
       {
         signed: false,
         responseMode: 'url',
       },
     );
-    const routePath = this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true);
+    const routePath = this.scope.util.combineApiPath(
+      `image/delivery/${context.image.id}`,
+      false,
+      true,
+    );
     const tokenPayload = await this.bean.imageUploadPolicy.createDeliveryToken({
-      imageId,
-      request,
+      imageId: context.image.id,
+      request: context.requestNormalized,
       targetUrl,
-      expiresIn: deliveryOptions.expiresIn,
+      expiresIn: context.deliveryOptionsResolved.expiresIn,
     });
     const routeUrl = this.app.util.getAbsoluteUrlByApiPath(routePath);
     const url = new URL(routeUrl);
@@ -392,15 +530,42 @@ export class BeanImage extends BeanBase {
     return url.toString();
   }
 
-  private async _insertImage(
-    providerName: keyof IImageProviderRecord,
-    clientName: string,
+  private _getProviderImage(image: EntityImage | IImageResource): EntityImage {
+    if ('providerName' in image) return image;
+    return {
+      id: image.id,
+      providerName: image.provider,
+      clientName: image.clientName,
+      resourceId: image.resourceId,
+      filename: image.filename,
+      contentType: image.contentType,
+      size: image.size,
+      width: image.width,
+      height: image.height,
+      requireSignedURLs: image.requireSignedURLs,
+      variants: image.variants,
+      meta: image.meta,
+      storagePath: image.storagePath,
+      deliveryBaseUrl: image.deliveryBaseUrl,
+      imageScene:
+        typeof image.imageScene === 'string'
+          ? (image.imageScene as keyof IImageSceneRecord)
+          : undefined,
+      status: image.status,
+      draftExpiresAt: image.draftExpiresAt,
+      finalizedAt: image.finalizedAt,
+      createdAt: image.uploadedAt ?? new Date(0),
+      updatedAt: image.uploadedAt ?? new Date(0),
+      deleted: false,
+      iid: 0,
+    } satisfies EntityImage;
+  }
+
+  private _buildImagePersistData(
     imageProviderResource: IImageProviderResource | IImageProviderDirectUploadResource,
-    context?: Partial<IImageUploadContextResolved>,
+    context?: IInsertImageContext,
   ) {
-    return await this.scope.model.image.insert({
-      providerName,
-      clientName,
+    return {
       resourceId: imageProviderResource.resourceId,
       filename: imageProviderResource.filename,
       contentType: imageProviderResource.contentType,
@@ -413,6 +578,22 @@ export class BeanImage extends BeanBase {
       storagePath: imageProviderResource.storagePath,
       deliveryBaseUrl: imageProviderResource.deliveryBaseUrl,
       imageScene: context?.imageScene,
+      status: context?.status,
+      draftExpiresAt: context?.draftExpiresAt,
+      finalizedAt: context?.finalizedAt,
+    };
+  }
+
+  private async _insertImage(
+    providerName: keyof IImageProviderRecord,
+    clientName: string,
+    imageProviderResource: IImageProviderResource | IImageProviderDirectUploadResource,
+    context?: IInsertImageContext,
+  ) {
+    return await this.scope.model.image.insert({
+      providerName,
+      clientName,
+      ...this._buildImagePersistData(imageProviderResource, context),
     });
   }
 
@@ -425,6 +606,9 @@ export class BeanImage extends BeanBase {
       provider: image.providerName,
       clientName: image.clientName,
       imageScene: image.imageScene,
+      status: image.status,
+      draftExpiresAt: image.status === 'draft' ? image.draftExpiresAt : undefined,
+      finalizedAt: image.finalizedAt,
       resourceId: imageProviderResource?.resourceId ?? image.resourceId,
       filename: imageProviderResource?.filename ?? image.filename,
       contentType: imageProviderResource?.contentType ?? image.contentType,

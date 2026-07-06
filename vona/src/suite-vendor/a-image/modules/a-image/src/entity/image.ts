@@ -4,7 +4,7 @@ import { $schema, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import z from 'zod';
 
-import type { IImageNamedVariants } from '../types/image.ts';
+import type { IImageNamedVariants, TypeImageStatus } from '../types/image.ts';
 import type { IImageProviderRecord } from '../types/imageProvider.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
@@ -55,4 +55,13 @@ export class EntityImage extends EntityBase {
 
   @Api.field(v.optional(), z.string())
   imageScene?: keyof IImageSceneRecord;
+
+  @Api.field(v.optional(), z.string())
+  status?: TypeImageStatus;
+
+  @Api.field(v.optional())
+  draftExpiresAt?: Date;
+
+  @Api.field(v.optional())
+  finalizedAt?: Date;
 }

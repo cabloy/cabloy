@@ -4,7 +4,7 @@ import type {
   IDecoratorEntityOptions,
   ITableRecord,
   TypeEntityMeta,
-  TypeEntityStudentMetaSimpleColumns,
+  TypeEntityMetaFieldKeys,
 } from 'vona-module-a-orm';
 
 import { isClass } from '@cabloy/utils';
@@ -14,6 +14,9 @@ import {
   getTargetDecoratorRuleColumnsMap,
   getTargetDecoratorRules,
 } from 'vona-module-a-openapiutils';
+
+export type TypeEntityMetaCompositeFieldKeys<T> =
+  `${TypeEntityMetaFieldKeys<T>}+${TypeEntityMetaFieldKeys<T>}`;
 
 export function $column<T>(key: keyof T): keyof T {
   return key;
@@ -53,8 +56,9 @@ export function $columnsAll<T, TableName extends boolean, Meta extends boolean>(
 export function $tableColumns<K extends keyof ITableRecord>(
   tableName: K,
   key?:
-    | TypeEntityStudentMetaSimpleColumns<ITableRecord[K]>
-    | TypeEntityStudentMetaSimpleColumns<ITableRecord[K]>[]
+    | TypeEntityMetaFieldKeys<ITableRecord[K]>
+    | TypeEntityMetaCompositeFieldKeys<ITableRecord[K]>
+    | TypeEntityMetaFieldKeys<ITableRecord[K]>[]
     | undefined,
 ) {
   return { [tableName]: key };

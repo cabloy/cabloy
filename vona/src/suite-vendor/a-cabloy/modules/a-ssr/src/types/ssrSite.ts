@@ -50,6 +50,11 @@ export interface ISsrSitePublicPathRecord {}
 
 export interface ISsrSiteRecord {}
 
+export interface ISsrSiteDiagnosticsOptions {
+  siteName?: string;
+  buildCommand?: string;
+}
+
 export type TypeMergePagesAndPagesData<Pages extends {} = {}, PagesData extends {} = {}> = {
   // @ts-ignore: ignore
   [K in keyof Pages]: Pages[K] & { data?: PagesData[K] };
@@ -65,6 +70,7 @@ export interface IDecoratorSsrSiteOptions<
     IOnionOptionsMatch<TypeOnionOptionsMatchRule<keyof IInstanceRecord>> {
   publicPath: keyof ISsrSitePublicPathRecord;
   bundlePath: string;
+  diagnostics?: ISsrSiteDiagnosticsOptions;
   envServer?: ZovaConfigEnv;
   envClient?: ZovaConfigEnv;
   apiType: 'performAction' | 'api' | 'dev';

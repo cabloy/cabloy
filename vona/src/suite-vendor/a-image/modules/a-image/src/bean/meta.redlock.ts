@@ -1,7 +1,7 @@
 import { Meta } from 'vona-module-a-meta';
 import { BeanRedlockBase } from 'vona-module-a-redlock';
 
-export type TypeRedlockLockResource = never;
+export type TypeRedlockLockResource = `image.directUpload.${string}`;
 export type TypeRedlockLockIsolateResource = 'imageProvider.register';
 
 @Meta()

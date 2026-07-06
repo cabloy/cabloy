@@ -1,0 +1,23 @@
+import type {
+  IDecoratorFileProviderOptions,
+  IFileProviderClientOptions,
+  IFileProviderClientRecord,
+  IFileProviderExecute,
+} from 'vona-module-a-file';
+
+import { BeanBase } from 'vona';
+import { FileProvider } from 'vona-module-a-file';
+
+export interface IFileProvider<%=argv.beanNameCapitalize%>ClientRecord extends IFileProviderClientRecord {}
+
+export interface IFileProvider<%=argv.beanNameCapitalize%>ClientOptions extends IFileProviderClientOptions {}
+
+export interface IFileProviderOptions<%=argv.beanNameCapitalize%> extends IDecoratorFileProviderOptions<
+  IFileProvider<%=argv.beanNameCapitalize%>ClientRecord,
+  IFileProvider<%=argv.beanNameCapitalize%>ClientOptions
+> {}
+
+@FileProvider<IFileProviderOptions<%=argv.beanNameCapitalize%>>({
+  base: {},
+})
+export class FileProvider<%=argv.beanNameCapitalize%> extends BeanBase implements IFileProviderExecute {}

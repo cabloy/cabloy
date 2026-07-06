@@ -89,6 +89,66 @@ describe('imageUpload.test.ts', () => {
     });
   });
 
+  it('action:image:native direct-upload api', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const jwt = await app.bean.passport.signinMock('admin');
+      try {
+        const directUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload');
+        const directRes = await fetch(directUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageScene: 'training-student:studentImage',
+            size: tinyPng.length,
+            mimeType: 'image/png',
+            filename: 'direct-native.png',
+          }),
+        });
+        assert.equal(directRes.ok, true);
+        const directData = await directRes.json();
+        assert.equal(directData.data.provider, 'image-native:native');
+        assert.equal(directData.data.status, 'draft');
+        assert.equal(directData.data.uploadUrl.includes('/image-native/direct-upload/'), true);
+
+        const uploadForm = new FormData();
+        uploadForm.append(
+          'image',
+          new (Blob as any)([tinyPng], { type: 'image/png' }),
+          'direct-native.png',
+        );
+        const uploadRes = await fetch(directData.data.uploadUrl, {
+          method: 'POST',
+          body: uploadForm,
+        });
+        assert.equal(uploadRes.ok, true);
+
+        const finalizeUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload/finalize');
+        const finalizeRes = await fetch(finalizeUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageId: directData.data.id,
+          }),
+        });
+        assert.equal(finalizeRes.ok, true);
+        const finalizeData = await finalizeRes.json();
+        assert.equal(finalizeData.data.provider, 'image-native:native');
+        assert.equal(finalizeData.data.status, 'ready');
+        assert.equal(finalizeData.data.url.includes('/api/static/'), true);
+        assert.equal(finalizeData.data.signed, false);
+        assert.equal(!!finalizeData.data.finalizedAt, true);
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('action:image:direct-upload and upload-url api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
@@ -131,6 +191,15 @@ describe('imageUpload.test.ts', () => {
             variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
           });
         }
+        if (url.includes('/images/v1/cf-direct-api-1') && method === 'GET') {
+          return createCloudflareResponse({
+            id: 'cf-direct-api-1',
+            filename: 'direct.png',
+            draft: false,
+            requireSignedURLs: true,
+            variants: ['https://imagedelivery.net/hash123/cf-direct-api-1/public'],
+          });
+        }
         if (url.includes('/images/v1') && method === 'POST') {
           return createCloudflareResponse({
             id: 'cf-upload-url-api-1',
@@ -161,6 +230,34 @@ describe('imageUpload.test.ts', () => {
         const directData = await directRes.json();
         assert.equal(directData.data.resourceId, 'cf-direct-api-1');
         assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
+        assert.equal(directData.data.requireSignedURLs, true);
+        assert.equal(directData.data.status, 'draft');
+        assert.equal(!!directData.data.draftExpiresAt, true);
+
+        const finalizeUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload/finalize');
+        const finalizeRes = await fetch(finalizeUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageId: directData.data.id,
+          }),
+        });
+        assert.equal(finalizeRes.ok, true);
+        const finalizeData = await finalizeRes.json();
+        assert.equal(finalizeData.data.resourceId, 'cf-direct-api-1');
+        assert.equal(finalizeData.data.status, 'ready');
+        assert.equal(
+          finalizeData.data.url.startsWith(
+            'https://imagedelivery.net/hash123/cf-direct-api-1/public',
+          ),
+          true,
+        );
+        assert.equal(finalizeData.data.url.includes('sig='), true);
+        assert.equal(finalizeData.data.signed, true);
+        assert.equal(!!finalizeData.data.finalizedAt, true);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-url');
         const uploadUrlRes = await fetch(uploadUrl, {
@@ -181,6 +278,7 @@ describe('imageUpload.test.ts', () => {
         assert.equal(uploadUrlRes.ok, true);
         const uploadUrlData = await uploadUrlRes.json();
         assert.equal(uploadUrlData.data.resourceId, 'cf-upload-url-api-1');
+        assert.equal(uploadUrlData.data.requireSignedURLs, true);
         assert.equal(uploadUrlData.data.signed, true);
       } finally {
         app.bean.imageUploadPolicy.resolveUploadContext = resolveUploadContextRaw;

@@ -1,15 +1,15 @@
 import type { IUploadFile } from 'vona-module-a-upload';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
-import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
-import type { IImageUploadTokenPayload } from '../types/image.ts';
-
 import { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
+import { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFinalizeRequest.ts';
+import { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
@@ -36,7 +36,14 @@ export class ControllerImage extends BeanBase {
       token,
       this.ctx.route.routePathRaw,
     );
-    await this._validateUploadFile(file, payload);
+    await this.bean.imageUploadPolicy.validateUploadFile(
+      {
+        file: file.file,
+        filename: file.info.filename,
+        mimeType: file.info.mimeType,
+      },
+      payload,
+    );
     const image = await this.bean.image.upload(
       payload.providerName,
       {
@@ -50,11 +57,7 @@ export class ControllerImage extends BeanBase {
         imageScene: payload.imageScene,
       },
     );
-    return {
-      ...image,
-      url: await this.bean.image.getVariantUrl(image.id),
-      signed: !!image.requireSignedURLs,
-    };
+    return await this.bean.image.createImageActionResponse(image);
   }
 
   @Web.post('direct-upload')
@@ -70,6 +73,7 @@ export class ControllerImage extends BeanBase {
       {
         filename: data.filename,
         contentType: data.contentType,
+        requireSignedURLs: data.requireSignedURLs,
         expiry: data.expiry,
         customId: data.customId,
       },
@@ -79,6 +83,13 @@ export class ControllerImage extends BeanBase {
         imageScene: policy.imageScene,
       },
     );
+  }
+
+  @Web.post('direct-upload/finalize')
+  @Api.body(DtoImageDirectUploadFinalizeResponse)
+  async finalizeDirectUpload(@Arg.body() data: DtoImageDirectUploadFinalizeRequest) {
+    const image = await this.bean.image.finalizeDirectUpload(data.imageId);
+    return await this.bean.image.createImageActionResponse(image);
   }
 
   @Web.post('upload-url')
@@ -95,6 +106,7 @@ export class ControllerImage extends BeanBase {
         url: data.url,
         filename: data.filename,
         contentType: data.contentType,
+        requireSignedURLs: data.requireSignedURLs,
       },
       {
         clientName: policy.clientName,
@@ -102,64 +114,22 @@ export class ControllerImage extends BeanBase {
         imageScene: policy.imageScene,
       },
     );
-    return {
-      ...image,
-      url: await this.bean.image.getVariantUrl(image.id),
-      signed: !!image.requireSignedURLs,
-    };
+    return await this.bean.image.createImageActionResponse(image);
   }
 
   @Web.get('delivery/:imageId')
+  @Passport.public()
   async delivery(
     @Arg.param('imageId', v.tableIdentity()) imageId: number,
     @Arg.query(v.object(DtoImageDeliveryRequest)) query: DtoImageDeliveryRequest,
   ) {
     const payload = await this.bean.imageUploadPolicy.verifyDeliveryToken(
       query.token,
-      this.ctx.route.routePathRaw,
+      this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true),
     );
     if (String(payload.imageId) !== String(imageId)) {
       return this.app.throw(401);
     }
     this.ctx.redirect(payload.targetUrl);
-  }
-
-  private async _validateUploadFile(file: IUploadFile, payload: IImageUploadTokenPayload) {
-    const stat = await fse.stat(file.file);
-    const fileSize = Number(stat.size);
-    if (fileSize !== payload.fileSize) {
-      return this.app.throw(403, `image size mismatch: size=${fileSize}`);
-    }
-    if (payload.maxSize && fileSize > payload.maxSize) {
-      return this.app.throw(403, `image too large: maxSize=${payload.maxSize}`);
-    }
-    const mimeType = file.info.mimeType.toLowerCase();
-    if (mimeType !== payload.mimeType) {
-      return this.app.throw(403, `image mimeType mismatch: mimeType=${mimeType}`);
-    }
-    if (payload.mimeTypes?.length && !this._matchesMimeType(mimeType, payload.mimeTypes)) {
-      return this.app.throw(403, `unsupported image mimeType: ${mimeType}`);
-    }
-    const extension = this._getExtension(file.info.filename);
-    if (payload.extensions?.length && extension && !payload.extensions.includes(extension)) {
-      return this.app.throw(403, `unsupported image extension: ${extension}`);
-    }
-  }
-
-  private _matchesMimeType(mimeType: string, mimeTypes: string[]) {
-    return mimeTypes.some(item => {
-      if (item === mimeType) return true;
-      if (item.endsWith('/*')) {
-        return mimeType.startsWith(`${item.slice(0, -1)}`);
-      }
-      return false;
-    });
-  }
-
-  private _getExtension(filename?: string) {
-    if (!filename) return '';
-    const index = filename.lastIndexOf('.');
-    if (index === -1) return '';
-    return filename.slice(index).toLowerCase();
   }
 }

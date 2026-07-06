@@ -43,7 +43,11 @@ export interface IImageProviderOptionsCloudflare extends IDecoratorImageProvider
     },
   },
 })
-export class ImageProviderCloudflare extends BeanBase implements IImageProviderExecute {
+export class ImageProviderCloudflare
+  extends BeanBase
+  implements
+    IImageProviderExecute<IImageProviderCloudflareClientOptions, IImageProviderOptionsCloudflare>
+{
   async upload(
     input: IImageUploadInput,
     clientOptions: IImageProviderCloudflareClientOptions,
@@ -66,6 +70,14 @@ export class ImageProviderCloudflare extends BeanBase implements IImageProviderE
     _options: IImageProviderOptionsCloudflare,
   ) {
     return await this.scope.service.imageCloudflare.createDirectUpload(input, clientOptions);
+  }
+
+  async finalizeDirectUpload(
+    image: EntityImage,
+    clientOptions: IImageProviderCloudflareClientOptions,
+    _options: IImageProviderOptionsCloudflare,
+  ) {
+    return await this.scope.service.imageCloudflare.finalizeDirectUpload(image, clientOptions);
   }
 
   async get(
