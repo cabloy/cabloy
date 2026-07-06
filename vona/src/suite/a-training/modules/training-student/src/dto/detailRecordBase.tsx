@@ -5,7 +5,12 @@ import { DtoImageView } from 'vona-module-a-image';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
-import { ModelRecord, onEffectForTrainingRecordSubjects } from 'vona-module-training-record';
+import {
+  DtoRecordDossierFileView,
+  ModelRecord,
+  onEffectForTrainingRecordSubjects,
+  resolveDossierFiles,
+} from 'vona-module-training-record';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -34,6 +39,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
     'averageScore',
     'trainingTime',
     'sceneImageIds',
+    'dossierFileIds',
     'description',
   ],
   include: { trainingRecordSubjects: true },
@@ -48,4 +54,15 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
     v.array($Class.partial(DtoImageView)),
   )
   sceneImages?: Partial<DtoImageView>[];
+
+  @Api.field(
+    v.title($locale('DossierFiles')),
+    ZovaRender.visible(false),
+    v.optional(),
+    v.serializerTransform('a-serialization:custom', {
+      custom: resolveDossierFiles,
+    }),
+    v.array(DtoRecordDossierFileView),
+  )
+  dossierFiles?: DtoRecordDossierFileView[];
 }

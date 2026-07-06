@@ -9,6 +9,7 @@ export default {
   Student: '学生',
   StudentName: '学生姓名',
   StudentImage: '学生图片',
+  DossierFiles: '培训档案附件',
   Summary: '摘要',
   LevelTitle: '阶段名称',
   DescriptionLength: '描述长度',

@@ -7,7 +7,9 @@ import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
+import { resolveDossierFiles } from '../lib/resolveDossierFiles.ts';
 import { ModelRecord } from '../model/record.ts';
+import { DtoRecordDossierFileView } from './recordDossierFileView.ts';
 
 export interface IDtoOptionsRecordSelectResItem extends IDecoratorDtoOptions {}
 
@@ -36,6 +38,17 @@ export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord) {
     v.array(DtoImageView),
   )
   sceneImages?: DtoImageView[];
+
+  @Api.field(
+    v.title($locale('DossierFiles')),
+    ZovaRender.visible(false),
+    v.optional(),
+    v.serializerTransform('a-serialization:custom', {
+      custom: resolveDossierFiles,
+    }),
+    v.array(DtoRecordDossierFileView),
+  )
+  dossierFiles?: DtoRecordDossierFileView[];
 
   @Api.field(
     v.title($locale('Operations')),

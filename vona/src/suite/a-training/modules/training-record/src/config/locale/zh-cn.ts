@@ -9,6 +9,7 @@ export default {
   TrainingRecordName: '培训记录名称',
   TrainingTime: '培训时间',
   ScenePhotos: '现场照片',
+  DossierFiles: '培训档案附件',
   AddTrainingRecord: '添加学生培训记录',
   EditTrainingRecord: '编辑学生培训记录',
   ViewTrainingRecord: '查看学生培训记录',

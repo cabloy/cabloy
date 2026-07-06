@@ -108,6 +108,15 @@ export class EntityRecord extends EntityBase {
   )
   sceneImageIds?: TableIdentity[];
 
-  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(8))
+  @Api.field(
+    v.title($locale('DossierFiles')),
+    v.optional(),
+    ZovaRender.visible(false),
+    ZovaRender.order(8),
+    v.array(v.tableIdentity()),
+  )
+  dossierFileIds?: TableIdentity[];
+
+  @Api.field(v.title($locale('Description')), v.optional(), ZovaRender.order(9))
   description?: string;
 }

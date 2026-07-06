@@ -18,6 +18,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         table.decimal(entityRecord.averageScore, 8, 2).comment(entityRecord.$comment.averageScore);
         table.dateTime(entityRecord.trainingTime).comment(entityRecord.$comment.trainingTime);
         table.json(entityRecord.sceneImageIds).comment(entityRecord.$comment.sceneImageIds);
+        table.json(entityRecord.dossierFileIds).comment(entityRecord.$comment.dossierFileIds);
         table.string(entityRecord.description, 255).comment(entityRecord.$comment.description);
       });
     }

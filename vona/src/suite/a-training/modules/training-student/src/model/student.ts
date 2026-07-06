@@ -18,6 +18,7 @@ export interface IModelOptionsStudent extends IDecoratorModelOptions<EntityStude
         'averageScore',
         'trainingTime',
         'sceneImageIds',
+        'dossierFileIds',
         'description',
       ],
     }),

@@ -9,6 +9,7 @@ export default {
   Student: 'Student',
   StudentName: 'Student Name',
   StudentImage: 'Student Image',
+  DossierFiles: 'Dossier Files',
   Summary: 'Summary',
   LevelTitle: 'Level Title',
   DescriptionLength: 'Description Length',
