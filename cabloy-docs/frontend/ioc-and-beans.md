@@ -8,14 +8,45 @@ That matters because state sharing, resource access, lifecycle behavior, and cro
 
 ## The four state-sharing scopes
 
-A key Zova idea is that several common sharing scopes can be handled through one IoC-centered model:
+A key Zova idea is that several common sharing scopes can be handled through one IoC-centered model.
+
+In many Vue 3 codebases, developers combine local reactive state, composables, `provide/inject`, and store layers depending on where sharing must happen. Zova asks a different first question: which bean owns this state or behavior, and which container scope should own that bean?
 
 - component-internal
 - between-components
 - app-global
 - system-level
 
-This replaces the need to switch constantly between unrelated mechanisms for each sharing scope.
+| Sharing scope      | Common Vue 3 pattern                                       | Zova implementation shape                                                          |
+| ------------------ | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| component-internal | local component state or component-local composables       | `ctx`-scoped controller or bean ownership                                          |
+| between-components | props/emits, parent-owned composables, or `provide/inject` | hierarchical injection through the same IoC model, often with `host` or `skipSelf` |
+| app-global         | app-level stores or app-wide provided state                | `app` container beans shared at app or request scope                               |
+| system-level       | module-level singletons or long-lived imported state       | `sys` container beans and system-level startup/lifecycle                           |
+
+The most important SSR distinction is between `app-global` and `system-level`: app-global behavior can be tied to an individual app instance or request, while system-level behavior is not request-scoped and can outlive individual SSR requests. For more on that lifecycle boundary, see [System Startup Guide](/frontend/system-startup-guide).
+
+The point is not that Vue patterns are wrong. The point is that Zova can keep more of these sharing cases inside one bean-and-container architecture instead of switching between unrelated mechanisms. If you want the broader architectural comparison, read [Zova vs Vue 3 Comparison](/frontend/zova-vs-vue3-comparison).
+
+A compact mental model looks like this:
+
+```typescript
+class ControllerPage {
+  @Use()
+  $$localCounterState: CounterState;
+
+  @Use({ injectionScope: 'host' })
+  $$hostCounterState: CounterState;
+
+  @Use({ injectionScope: 'app' })
+  $$appCounterState: CounterState;
+
+  @Use({ injectionScope: 'sys' })
+  $$sysCounterState: CounterState;
+}
+```
+
+This top-level example is intentionally compact. The injection, hierarchical lookup, and scope sections below explain these patterns in more detail.
 
 ## The three container types
 
@@ -104,7 +135,7 @@ In practice, Zova can still preserve the ergonomic class-based development exper
 
 ### Hierarchical injection patterns
 
-Hierarchical injection replaces many cases where a generic Vue app would fall back to `provide/inject`.
+Hierarchical injection replaces many common cases where a generic Vue app would fall back to `provide/inject`.
 
 Representative child lookup pattern:
 
