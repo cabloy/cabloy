@@ -400,6 +400,9 @@ importers:
       zova-rest-cabloy-basic-admin:
         specifier: workspace:^
         version: link:.zova-rest/cabloy-basic-admin
+      zova-rest-cabloy-basic-web:
+        specifier: workspace:^
+        version: link:.zova-rest/cabloy-basic-web
     devDependencies:
       '@cabloy/cli':
         specifier: workspace:^
