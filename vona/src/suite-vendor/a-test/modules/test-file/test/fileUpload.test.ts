@@ -97,6 +97,108 @@ describe('fileUpload.test.ts', () => {
     });
   });
 
+  it('action:file:direct-upload and upload-url api', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const jwt = await app.bean.passport.signinMock('admin');
+      const provider = await app.bean.fileProvider.get({
+        providerName: 'file-cloudflare:cloudflare',
+        clientName: 'default',
+      });
+      await app.bean.fileProvider.scope.model.fileProvider.updateById(provider.id, {
+        clientOptions: {
+          endpoint: 'https://account123.r2.cloudflarestorage.com',
+          accessKeyId: 'access-key',
+          secretAccessKey: 'secret-key',
+          bucket: 'bucket-a',
+          deliveryBaseUrl: 'https://cdn.example.com/files',
+          public: false,
+        } as any,
+      });
+      const fileCloudflare = app.bean._getBean('file-cloudflare.service.fileCloudflare' as never);
+      const uploadRaw = fileCloudflare.upload.bind(fileCloudflare);
+      const fetchRaw = globalThis.fetch;
+      fileCloudflare.upload = async (input: any) => {
+        return {
+          resourceId: 'cf-upload-url-api-1',
+          bucket: 'bucket-a',
+          objectKey: 'folder/upload-url.txt',
+          filename: input.filename,
+          contentType: input.contentType,
+          size: input.size ?? textFile.length,
+          etag: 'etag123',
+          deliveryBaseUrl: 'https://cdn.example.com/files',
+          public: input.public ?? false,
+          meta: input.meta,
+        };
+      };
+      globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes('/file/direct-upload') || url.includes('/file/upload-url')) {
+          return await fetchRaw(input, init);
+        }
+        if (url === 'https://example.com/upload-url.txt') {
+          return new Response('hello upload-url', {
+            status: 200,
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+          });
+        }
+        return await fetchRaw(input, init);
+      };
+      try {
+        const directUrl = app.util.getAbsoluteUrlByApiPath('/file/direct-upload');
+        const directRes = await fetch(directUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileScene: 'test-file:cloudflareFile',
+            size: textFile.length,
+            mimeType: 'text/plain',
+            filename: 'direct.txt',
+            contentType: 'text/plain',
+          }),
+        });
+        assert.equal(directRes.ok, true);
+        const directData = await directRes.json();
+        assert.equal(directData.data.provider, 'file-cloudflare:cloudflare');
+        assert.equal(directData.data.method, 'PUT');
+        assert.equal(typeof directData.data.uploadUrl, 'string');
+        assert.equal('draft' in directData.data, false);
+
+        const uploadUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-url');
+        const uploadUrlRes = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileScene: 'test-file:cloudflareFile',
+            size: textFile.length,
+            mimeType: 'text/plain',
+            url: 'https://example.com/upload-url.txt',
+            filename: 'upload-url.txt',
+            contentType: 'text/plain',
+          }),
+        });
+        assert.equal(uploadUrlRes.ok, true);
+        const uploadUrlData = await uploadUrlRes.json();
+        assert.equal(uploadUrlData.data.provider, 'file-cloudflare:cloudflare');
+        assert.equal(uploadUrlData.data.filename, 'upload-url.txt');
+        assert.equal(uploadUrlData.data.signed, true);
+        assert.equal(uploadUrlData.data.url.includes('X-Amz-Algorithm='), true);
+      } finally {
+        globalThis.fetch = fetchRaw;
+        fileCloudflare.upload = uploadRaw;
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('action:file:upload policy validate upload file', async () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-upload-policy.txt');
