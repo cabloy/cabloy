@@ -117,6 +117,19 @@ describe('imageCloudflareMapping.test.ts', () => {
         );
         assert.equal(signedUrl.includes('&sig='), true);
 
+        const view = await app.bean.image.resolveView(image.id, 'original', undefined, {
+          signed: true,
+          expiresIn: 600,
+        });
+        assert.equal(view?.id, image.id);
+        assert.equal(
+          view?.url.startsWith('https://imagedelivery.net/hash123/cf-upload-1/public?exp='),
+          true,
+        );
+        assert.equal(view?.url.includes('&sig='), true);
+        assert.equal(view?.signed, true);
+        assert.equal(view?.provider, 'image-cloudflare:cloudflare');
+
         const download = await app.bean.image.download(image.id, 'original', {
           signed: true,
           expiresIn: 600,

@@ -65,6 +65,38 @@ describe('imageNative.test.ts', () => {
       assert.equal(signedUrl.includes('/image/delivery/'), true);
       assert.equal(signedUrl.includes('token='), true);
 
+      const view = await app.bean.image.resolveView(image.id, 'thumbnail');
+      assert.equal(view?.id, image.id);
+      assert.equal(view?.url.includes('__thumbnail'), true);
+      assert.equal(view?.provider, 'image-native:native');
+      assert.equal(view?.clientName, 'default');
+      assert.equal(view?.signed, false);
+      assert.deepEqual(view?.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
+
+      const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
+        signed: true,
+        expiresIn: 600,
+      });
+      assert.equal(signedView?.url.includes('/image/delivery/'), true);
+      assert.equal(signedView?.url.includes('token='), true);
+      assert.equal(signedView?.signed, true);
+
+      const [viewSceneMismatch, viewSceneMismatchErr] = await catchError(() =>
+        app.bean.image.resolveView(image.id, 'original', 'training-student:studentImage'),
+      );
+      assert.equal(viewSceneMismatch, undefined);
+      assert.equal(viewSceneMismatchErr?.message.includes('image scene mismatch'), true);
+
+      const resolvedUndefined = await app.bean.image.resolveView(undefined, 'original');
+      assert.equal(resolvedUndefined, undefined);
+      const resolvedViewsUndefined = await app.bean.image.resolveViews(undefined, 'original');
+      assert.equal(resolvedViewsUndefined, undefined);
+      const resolvedViewsEmpty = await app.bean.image.resolveViews([], 'original');
+      assert.deepEqual(resolvedViewsEmpty, []);
+      const resolvedViews = await app.bean.image.resolveViews([image.id, 999999], 'original');
+      assert.equal(resolvedViews?.length, 1);
+      assert.equal(resolvedViews?.[0].id, image.id);
+
       const download = await app.bean.image.download(image.id, 'original');
       assert.equal(download.kind, 'buffer');
 

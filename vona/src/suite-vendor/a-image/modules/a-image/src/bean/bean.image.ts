@@ -270,28 +270,9 @@ export class BeanImage extends BeanBase {
     deliveryOptions?: IImageDeliveryOptions,
   ): Promise<IImageView | undefined> {
     if (!imageId) return;
-    const image = await this.get(imageId);
-    if (!image) return;
-    if (imageScene && image.imageScene !== imageScene) {
-      throw new Error(`image scene mismatch: image=${image.imageScene}, expected=${imageScene}`);
-    }
-    const context = await this._createDeliveryContext(image, request, deliveryOptions);
-    return {
-      id: image.id,
-      url: await this._getVariantUrlByContext(context),
-      filename: image.filename,
-      width: image.width,
-      height: image.height,
-      provider: image.provider,
-      clientName: image.clientName,
-      imageScene: image.imageScene,
-      status: image.status,
-      draftExpiresAt: image.draftExpiresAt,
-      finalizedAt: image.finalizedAt,
-      uploadedAt: image.uploadedAt,
-      variants: image.variants,
-      signed: !!context.deliveryOptionsResolved.signed,
-    };
+    const prepared = await this._prepareImageView(imageId, request, imageScene, deliveryOptions);
+    if (!prepared) return;
+    return await this._createImageView(prepared.image, prepared.context);
   }
 
   async resolveViews(
@@ -312,6 +293,21 @@ export class BeanImage extends BeanBase {
     const { beanImageProvider, clientOptions, onionOptions } =
       await this._getProviderContext(image);
     return await beanImageProvider.get(image, clientOptions, onionOptions);
+  }
+
+  private async _prepareImageView(
+    imageId: TableIdentity,
+    request?: TypeImageVariantInput,
+    imageScene?: keyof IImageSceneRecord,
+    deliveryOptions?: IImageDeliveryOptions,
+  ) {
+    const image = await this.get(imageId);
+    if (!image) return;
+    if (imageScene && image.imageScene !== imageScene) {
+      throw new Error(`image scene mismatch: image=${image.imageScene}, expected=${imageScene}`);
+    }
+    const context = await this._createDeliveryContext(image, request, deliveryOptions);
+    return { image, context };
   }
 
   private async _getProviderContext(
@@ -440,6 +436,25 @@ export class BeanImage extends BeanBase {
       context.providerContext.onionOptions,
       context.deliveryOptionsResolved,
     );
+  }
+
+  private async _createImageView(image: IImageResource, context: IImageDeliveryContext) {
+    return {
+      id: image.id,
+      url: await this._getVariantUrlByContext(context),
+      filename: image.filename,
+      width: image.width,
+      height: image.height,
+      provider: image.provider,
+      clientName: image.clientName,
+      imageScene: image.imageScene,
+      status: image.status,
+      draftExpiresAt: image.draftExpiresAt,
+      finalizedAt: image.finalizedAt,
+      uploadedAt: image.uploadedAt,
+      variants: image.variants,
+      signed: !!context.deliveryOptionsResolved.signed,
+    } satisfies IImageView;
   }
 
   private _shouldUseProxySignedDelivery(context: IImageDeliveryContext) {
