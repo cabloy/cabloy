@@ -1,5 +1,32 @@
 # Changelog
 
+## 5.1.98
+
+### Features
+
+- Add `a-file` support.
+- Add CLI templates for `a-file`.
+- Add draft finalize flow for `a-image` direct uploads.
+- Add native direct-upload finalize flow.
+- Update the package with the latest feature enhancements.
+
+### Bug Fixes
+
+- Repair `a-image` type safety.
+- Support image delivery tokens.
+- Support private file download tokens.
+
+### Improvements
+
+- Clarify SSR bundle build hints.
+- Tighten SSR bundle error wording.
+- Simplify `a-file` upload and direct-upload contracts.
+- Simplify `a-image` upload flows and native variants.
+- Simplify the `a-image` resolve-view flow.
+- Tighten `a-image` provider option typing.
+- Remove the unused `a-image` failed status.
+- Optimize `a-image` draft pruning and response URL resolution.
+
 ## 5.1.97
 
 ### Improvements
