@@ -143,7 +143,12 @@ export class ServiceDetail<TData extends {} = {}> extends BeanBase {
     data: TypeFormOnSubmitData<TData>,
   ) {
     const renderProvider = property.rest?.render;
-    if (renderProvider !== 'basic-image:formFieldImage') return;
+    if (
+      renderProvider !== 'basic-image:formFieldImage' &&
+      renderProvider !== 'basic-file:formFieldFile'
+    ) {
+      return;
+    }
     const relationName = this._getRelationNameOfField(property, property.rest);
     if (!relationName) return;
     const relationValue = data.formApi.getFieldValue(relationName as never);

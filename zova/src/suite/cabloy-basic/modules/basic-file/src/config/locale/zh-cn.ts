@@ -1,0 +1,15 @@
+export default {
+  AddFile: '继续添加文件',
+  DownloadFile: '下载',
+  FileTooLarge: '文件大小超过限制：{0}',
+  FileTooSmall: '文件大小小于限制：{0}',
+  FileUploadFailed: '文件上传失败',
+  InvalidFileType: '文件类型不受支持',
+  NoFileSelected: '尚未选择文件',
+  RemoveFile: '移除',
+  ReplaceFile: '替换文件',
+  SelectFile: '选择文件',
+  TooManyFiles: '最多允许上传 {0} 个文件',
+  UploadedAt: '上传时间',
+  Uploading: '正在上传...',
+};

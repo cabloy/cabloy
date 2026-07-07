@@ -1,0 +1,15 @@
+export default {
+  AddFile: 'Add File',
+  DownloadFile: 'Download',
+  FileTooLarge: 'File size exceeds the limit: {0}',
+  FileTooSmall: 'File size is smaller than the limit: {0}',
+  FileUploadFailed: 'File upload failed',
+  InvalidFileType: 'Unsupported file type',
+  NoFileSelected: 'No file selected',
+  RemoveFile: 'Remove',
+  ReplaceFile: 'Replace File',
+  SelectFile: 'Select File',
+  TooManyFiles: 'You can upload up to {0} files',
+  UploadedAt: 'Uploaded At',
+  Uploading: 'Uploading...',
+};

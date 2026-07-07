@@ -111,8 +111,25 @@ export class EntityRecord extends EntityBase {
   @Api.field(
     v.title($locale('DossierFiles')),
     v.optional(),
-    ZovaRender.visible(false),
     ZovaRender.order(8),
+    ZovaRender.field('basic-file:formFieldFile', {
+      fileScene: 'training-record:dossierFile',
+      multiple: true,
+      relationName: 'dossierFiles',
+      accept: ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.txt'],
+      mimeTypes: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/zip',
+        'application/x-zip-compressed',
+        'text/plain',
+      ],
+      maxSize: 20 * 1024 * 1024,
+    }),
+    ZovaRender.cell('basic-file:file', { relationName: 'dossierFiles' }),
     v.array(v.tableIdentity()),
   )
   dossierFileIds?: TableIdentity[];
