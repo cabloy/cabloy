@@ -52,7 +52,11 @@ export class InterceptorUpload extends BeanBase implements IInterceptorExecute {
         reject(err);
       };
       // bb
-      const bb = Busboy(Object.assign({}, options.busboy, { headers: this.ctx.req.headers }));
+      const bb = Busboy(
+        Object.assign({ defParamCharset: 'utf8' }, options.busboy, {
+          headers: this.ctx.req.headers,
+        }),
+      );
       bb.on('file', (name, file, info) => {
         // temp
         const fileTempObj = tmp.fileSync({

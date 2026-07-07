@@ -11,6 +11,7 @@ import { app } from 'vona-mock';
 import { $apiPath } from 'vona-module-a-openapiutils';
 
 const textFile = Buffer.from('hello upload');
+const uploadFilenameChinese = '更新地址.txt';
 
 describe('fileUpload.test.ts', () => {
   it('action:file:upload api requires auth', async () => {
@@ -56,40 +57,45 @@ describe('fileUpload.test.ts', () => {
       };
       try {
         const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/file/upload-token'));
-        const tokenRes = await fetch(tokenUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${jwt.accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            fileScene: 'test-file:publicFile',
-            size: textFile.length,
-            mimeType: 'text/plain',
-          }),
-        });
-        const tokenData = await tokenRes.json();
-        const formData = new FormData();
-        formData.append('token', tokenData.data.token);
-        formData.append(
-          'file',
-          new (Blob as any)([textFile], { type: 'text/plain' }),
-          'upload.txt',
-        );
-        const url = app.util.getAbsoluteUrlByApiPath($apiPath('/file/upload'));
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${jwt.accessToken}`,
-          },
-          body: formData,
-        });
-        assert.equal(res.ok, true);
-        const data = await res.json();
-        assert.equal(data.data.filename, 'upload.txt');
-        assert.equal(data.data.provider, 'file-native:native');
-        assert.equal(typeof data.data.url, 'string');
-        assert.equal(data.data.signed, false);
+        const createToken = async () => {
+          const tokenRes = await fetch(tokenUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${jwt.accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              fileScene: 'test-file:publicFile',
+              size: textFile.length,
+              mimeType: 'text/plain',
+            }),
+          });
+          return await tokenRes.json();
+        };
+        const uploadFile = async (filename: string) => {
+          const tokenData = await createToken();
+          const formData = new FormData();
+          formData.append('token', tokenData.data.token);
+          formData.append('file', new (Blob as any)([textFile], { type: 'text/plain' }), filename);
+          const url = app.util.getAbsoluteUrlByApiPath($apiPath('/file/upload'));
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${jwt.accessToken}`,
+            },
+            body: formData,
+          });
+          assert.equal(res.ok, true);
+          return await res.json();
+        };
+
+        for (const filename of ['upload.txt', uploadFilenameChinese]) {
+          const data = await uploadFile(filename);
+          assert.equal(data.data.filename, filename);
+          assert.equal(data.data.provider, 'file-native:native');
+          assert.equal(typeof data.data.url, 'string');
+          assert.equal(data.data.signed, false);
+        }
       } finally {
         app.bean.fileUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
         await app.bean.passport.signout();

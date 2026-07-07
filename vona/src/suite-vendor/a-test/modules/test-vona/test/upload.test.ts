@@ -4,6 +4,9 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { $apiPath } from 'vona-module-a-openapiutils';
 
+const uploadFilenameChinese = '更新地址.txt';
+const uploadFilenameAccent = 'café.txt';
+
 describe('upload.test.ts', () => {
   it('action:upload:fields', async () => {
     await app.bean.executor.mockCtx(async () => {
@@ -23,20 +26,26 @@ describe('upload.test.ts', () => {
   });
   it('action:upload:file', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const formData = new FormData();
-      formData.append('name', 'zhennann');
-      formData.append('welcome', new (Blob as any)(['hello world!']), 'file-test.txt');
-      const url = app.util.getAbsoluteUrlByApiPath($apiPath('/test/vona/upload/file'));
-      const res = await fetch(url, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
-      assert.equal(data.data.fields.find(item => item.name === 'name')?.value, 'zhennann');
-      assert.equal(
-        data.data.files.find(item => item.name === 'welcome')?.info.filename,
-        'file-test.txt',
-      );
+      const uploadFile = async (filename: string) => {
+        const formData = new FormData();
+        formData.append('name', 'zhennann');
+        formData.append('welcome', new (Blob as any)(['hello world!']), filename);
+        const url = app.util.getAbsoluteUrlByApiPath($apiPath('/test/vona/upload/file'));
+        const res = await fetch(url, {
+          method: 'POST',
+          body: formData,
+        });
+        return await res.json();
+      };
+
+      for (const filename of ['file-test.txt', uploadFilenameChinese, uploadFilenameAccent]) {
+        const data = await uploadFile(filename);
+        assert.equal(data.data.fields.find(item => item.name === 'name')?.value, 'zhennann');
+        assert.equal(
+          data.data.files.find(item => item.name === 'welcome')?.info.filename,
+          filename,
+        );
+      }
     });
   });
   it('action:upload:files', async () => {
