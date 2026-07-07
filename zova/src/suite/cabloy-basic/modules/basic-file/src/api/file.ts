@@ -2,6 +2,19 @@ import type { IApiActionOptions } from 'zova-module-a-api';
 
 import { Api, BeanApiBase } from 'zova-module-a-api';
 
+export interface ApiApiFilegetUploadPolicyRequestBody {
+  fileScene: string;
+}
+
+export interface ApiApiFilegetUploadPolicyResponseBody {
+  fileScene: string;
+  maxSize?: number;
+  mimeTypes?: string[];
+  extensions?: string[];
+  multiple?: boolean;
+  public?: boolean;
+}
+
 export interface ApiApiFilecreateUploadTokenRequestBody {
   fileScene: string;
   size: number;
@@ -39,6 +52,14 @@ export interface ApiApiFileuploadResponseBody {
 
 @Api()
 export class ApiFile extends BeanApiBase {
+  getUploadPolicy(body: ApiApiFilegetUploadPolicyRequestBody, options?: IApiActionOptions) {
+    return this.$fetch.post<any, ApiApiFilegetUploadPolicyResponseBody>(
+      '/api/file/upload-policy',
+      body,
+      this.$configPrepare(undefined, options, true),
+    );
+  }
+
   createUploadToken(body: ApiApiFilecreateUploadTokenRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiFilecreateUploadTokenResponseBody>(
       '/api/file/upload-token',

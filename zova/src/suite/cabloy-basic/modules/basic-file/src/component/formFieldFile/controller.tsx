@@ -42,6 +42,15 @@ export interface ControllerFormFieldFileProps extends IFormFieldComponentOptions
   options?: IResourceFormFieldFileOptions;
 }
 
+interface IResolvedFileUploadPolicy {
+  fileScene: string;
+  maxSize?: number;
+  mimeTypes?: string[];
+  extensions?: string[];
+  multiple?: boolean;
+  public?: boolean;
+}
+
 @Controller()
 export class ControllerFormFieldFile extends BeanControllerBase {
   static $propsDefault = {
@@ -59,6 +68,8 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   currentOptions: IResourceFormFieldFileOptions = {};
   $$formField?: ControllerFormField;
   uploadedPreviewMap: Record<string, IFilePreviewItem> = {};
+  uploadPolicyMap: Record<string, IResolvedFileUploadPolicy | undefined> = {};
+  loadingPolicyMap: Record<string, boolean | undefined> = {};
 
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextFormField;
@@ -80,6 +91,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           const propsClass = (props as { class?: string }).class;
           this.currentValue = fieldValue as any;
           this.currentOptions = fieldOptions;
+          void this._ensureUploadPolicy(fieldOptions);
           const items = this._getPreviewItems(fieldValue);
           const hasValidationError = !$$formField.field.state.meta.isValid;
           const cardClass = classes(
@@ -96,7 +108,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
                 class="hidden"
                 type="file"
                 accept={this._getAcceptAttr(fieldOptions)}
-                multiple={!!fieldOptions.multiple}
+                multiple={this._getEffectiveMultiple(fieldOptions)}
                 onChange={event => {
                   void this._handleFileChange(event, disableNotifyChanged);
                 }}
@@ -105,8 +117,10 @@ export class ControllerFormFieldFile extends BeanControllerBase {
                 <button
                   type="button"
                   class={classes('btn btn-primary', this.isUploading && 'btn-disabled')}
-                  onClick={() => {
+                  onClick={async () => {
                     if (this.isUploading) return;
+                    await this._ensureUploadPolicy(fieldOptions);
+                    this._applyInputPolicy(fieldOptions);
                     this.fileInputRef?.click();
                   }}
                 >
@@ -229,10 +243,45 @@ export class ControllerFormFieldFile extends BeanControllerBase {
 
   private _getUploadButtonText(itemCount: number) {
     const options = this.currentOptions ?? {};
-    if (options.multiple) {
+    if (this._getEffectiveMultiple(options)) {
       return itemCount > 0 ? this._scope.locale.AddFile() : this._scope.locale.SelectFile();
     }
     return itemCount > 0 ? this._scope.locale.ReplaceFile() : this._scope.locale.SelectFile();
+  }
+
+  private async _ensureUploadPolicy(options: IResourceFormFieldFileOptions) {
+    const fileScene = options.fileScene;
+    if (!fileScene) return undefined;
+    const cacheKey = String(fileScene);
+    const cachedPolicy = this.uploadPolicyMap[cacheKey];
+    if (cachedPolicy) return cachedPolicy;
+    if (this.loadingPolicyMap[cacheKey]) return undefined;
+    this.loadingPolicyMap[cacheKey] = true;
+    try {
+      const policy = await this._scope.api.file.getUploadPolicy({ fileScene });
+      this.uploadPolicyMap[cacheKey] = policy;
+      return policy;
+    } catch {
+      return undefined;
+    } finally {
+      delete this.loadingPolicyMap[cacheKey];
+    }
+  }
+
+  private _getCachedUploadPolicy(options?: IResourceFormFieldFileOptions) {
+    const fileScene = options?.fileScene;
+    if (!fileScene) return undefined;
+    return this.uploadPolicyMap[String(fileScene)];
+  }
+
+  private _getEffectiveMultiple(options?: IResourceFormFieldFileOptions) {
+    return !!(options?.multiple ?? this._getCachedUploadPolicy(options)?.multiple);
+  }
+
+  private _applyInputPolicy(options?: IResourceFormFieldFileOptions) {
+    if (!this.fileInputRef) return;
+    this.fileInputRef.accept = this._getAcceptAttr(options) ?? '';
+    this.fileInputRef.multiple = this._getEffectiveMultiple(options);
   }
 
   private async _handleFileChange(event: Event, disableNotifyChanged?: boolean) {
@@ -242,11 +291,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     if (files.length === 0) return;
     this.errorMessage = undefined;
     const options = this.currentOptions ?? {};
-    const multiple = !!options.multiple;
+    await this._ensureUploadPolicy(options);
+    const multiple = this._getEffectiveMultiple(options);
     const currentIds = this._normalizeValueToFileIds(this.currentValue, multiple);
-    const filesToHandle = options.multiple ? files : files.slice(0, 1);
+    const filesToHandle = multiple ? files : files.slice(0, 1);
     const maxCount = this._getMaxCount(options);
-    const nextCountCandidate = options.multiple
+    const nextCountCandidate = multiple
       ? currentIds.length + filesToHandle.length
       : filesToHandle.length;
     if (nextCountCandidate > maxCount) {
@@ -286,7 +336,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
         uploadedItems.push(item);
       }
       if (uploadedItems.length === 0) return;
-      const nextIds = options.multiple
+      const nextIds = multiple
         ? [...currentIds, ...uploadedItems.map(item => item.id)]
         : [uploadedItems[uploadedItems.length - 1].id];
       this._setFieldValue(nextIds, disableNotifyChanged, multiple);
@@ -408,7 +458,11 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     if (!options) return undefined;
     if (typeof options.accept === 'string') return options.accept;
     if (options.accept?.length) return options.accept.join(',');
-    const parts = [...(options.mimeTypes ?? []), ...(options.extensions ?? [])];
+    const policy = this._getCachedUploadPolicy(options);
+    const parts = [
+      ...(options.mimeTypes ?? policy?.mimeTypes ?? []),
+      ...(options.extensions ?? policy?.extensions ?? []),
+    ];
     return parts.length > 0 ? parts.join(',') : undefined;
   }
 
@@ -417,8 +471,9 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     if (acceptTokens.length > 0 && !this._matchesAccept(file, acceptTokens)) {
       return this._scope.locale.InvalidFileType();
     }
-    if (typeof options.maxSize === 'number' && file.size > options.maxSize) {
-      return this._scope.locale.FileTooLarge(formatFileSize(options.maxSize));
+    const maxSize = options.maxSize ?? this._getCachedUploadPolicy(options)?.maxSize;
+    if (typeof maxSize === 'number' && file.size > maxSize) {
+      return this._scope.locale.FileTooLarge(formatFileSize(maxSize));
     }
     if (typeof options.minSize === 'number' && file.size < options.minSize) {
       return this._scope.locale.FileTooSmall(formatFileSize(options.minSize));
@@ -432,7 +487,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
         ? options.accept
         : options.accept.split(',')
       : [];
-    return [...accept, ...(options.mimeTypes ?? []), ...(options.extensions ?? [])]
+    const policy = this._getCachedUploadPolicy(options);
+    return [
+      ...accept,
+      ...(options.mimeTypes ?? policy?.mimeTypes ?? []),
+      ...(options.extensions ?? policy?.extensions ?? []),
+    ]
       .map(item => item.trim().toLowerCase())
       .filter(item => !!item);
   }

@@ -10,6 +10,8 @@ import { Arg, Controller, Web } from 'vona-module-a-web';
 import { DtoFileDirectUploadRequest } from '../dto/fileDirectUploadRequest.ts';
 import { DtoFileDirectUploadResponse } from '../dto/fileDirectUploadResponse.ts';
 import { DtoFileDownloadRequest } from '../dto/fileDownloadRequest.ts';
+import { DtoFileUploadPolicyRequest } from '../dto/fileUploadPolicyRequest.ts';
+import { DtoFileUploadPolicyResponse } from '../dto/fileUploadPolicyResponse.ts';
 import { DtoFileUploadResponse } from '../dto/fileUploadResponse.ts';
 import { DtoFileUploadTokenRequest } from '../dto/fileUploadTokenRequest.ts';
 import { DtoFileUploadTokenResponse } from '../dto/fileUploadTokenResponse.ts';
@@ -19,6 +21,12 @@ export interface IControllerOptionsFile extends IDecoratorControllerOptions {}
 
 @Controller<IControllerOptionsFile>({ path: 'file' })
 export class ControllerFile extends BeanBase {
+  @Web.post('upload-policy')
+  @Api.body(DtoFileUploadPolicyResponse)
+  async getUploadPolicy(@Arg.body() data: DtoFileUploadPolicyRequest) {
+    return await this.bean.fileUploadPolicy.resolveSceneUploadPolicy(data);
+  }
+
   @Web.post('upload-token')
   @Api.body(DtoFileUploadTokenResponse)
   async createUploadToken(@Arg.body() data: DtoFileUploadTokenRequest) {
