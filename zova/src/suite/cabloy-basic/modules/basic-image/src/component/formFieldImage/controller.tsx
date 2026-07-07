@@ -121,6 +121,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
           this.currentOptions = propsBucket.options ?? {};
           const uploadPolicyState = this._getUploadPolicyState(this.currentOptions);
           const items = this._getPreviewItems(propsBucket.value, uploadPolicyState.multiple);
+          const maxCount = this._getMaxCount(this.currentOptions);
           const hasValidationError = !$$formField.field.state.meta.isValid;
           const cardClass = classes(
             'rounded-box border border-base-300 bg-base-100 p-4',
@@ -142,21 +143,23 @@ export class ControllerFormFieldImage extends BeanControllerBase {
                 }}
               />
               <div class="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  disabled={this.isUploading || uploadPolicyState.pending}
-                  class={classes(
-                    'btn btn-primary',
-                    (this.isUploading || uploadPolicyState.pending) && 'btn-disabled',
-                  )}
-                  onClick={() => {
-                    if (this.isUploading || uploadPolicyState.pending) return;
-                    this._applyInputPolicy(uploadPolicyState);
-                    this.fileInputRef?.click();
-                  }}
-                >
-                  {this._getUploadButtonText(items.length, uploadPolicyState.multiple)}
-                </button>
+                {items.length < maxCount && (
+                  <button
+                    type="button"
+                    disabled={this.isUploading || uploadPolicyState.pending}
+                    class={classes(
+                      'btn btn-primary',
+                      (this.isUploading || uploadPolicyState.pending) && 'btn-disabled',
+                    )}
+                    onClick={() => {
+                      if (this.isUploading || uploadPolicyState.pending) return;
+                      this._applyInputPolicy(uploadPolicyState);
+                      this.fileInputRef?.click();
+                    }}
+                  >
+                    {this._getUploadButtonText(items.length, uploadPolicyState.multiple)}
+                  </button>
+                )}
                 {this.isUploading && (
                   <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
                     <span class="loading loading-spinner loading-sm text-primary"></span>
