@@ -98,13 +98,39 @@ A controller renders as though the interaction is ready, but clicking the button
 
 That is a sign that a query-state concern may have been pushed too far into imperative interaction code.
 
-## Practical rule 3: `disableSuspenseOnInit: true` means “do not block initial render”, not “do not query”
+## Practical rule 3: `disableSuspenseOnInit: true` disables the init-time `query.suspense()` kick, not the query itself
+
+This point needs precise wording.
+
+Current model runtime shows that `$useStateData(...)` creates the query wrapper first, then, only on first creation, optionally calls `query.suspense()`:
+
+```ts
+if (!this[SymbolUseQueries][queryHash]) {
+  const useQuery = this.$useQuery(options, queryClient);
+  this[SymbolUseQueries][queryHash] = useQuery;
+  if (!options.meta?.disableSuspenseOnInit) {
+    useQuery.suspense();
+  }
+}
+```
+
+Two details matter:
+
+- the query is already created either way
+- the runtime does **not** use `await` there
+
+So `disableSuspenseOnInit: true` does **not** mean “block vs do not block render” in a strict synchronous sense.
+
+It more precisely means:
+
+- with default behavior, the first consumer of that query immediately kicks one init-time `query.suspense()` call
+- with `disableSuspenseOnInit: true`, that automatic init-time kick is skipped
 
 This option is often a good fit when you want:
 
-- render to stay responsive
 - query state to exist immediately
 - persistence/restore/refetch behavior to remain normal
+- no automatic init-time `query.suspense()` kick on first creation
 
 Representative pattern:
 
@@ -131,10 +157,26 @@ It does not mean:
 - no request should run
 - no persisted value should be restored
 - no refetch should happen later
+- interaction can never explicitly wait for query readiness
 
 That distinction matters a lot.
 
-## Practical rule 4: be cautious with `enabled: false` and `staleTime: Infinity`
+## Practical rule 4: distinguish three different semantics
+
+A useful review habit is to keep these three behaviors separate.
+
+| Case                                                            | What happens                                                                       | What it does **not** mean                                                          | Best fit                                                                                                                         |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Default `$useStateData(...)`                                    | On first query creation, runtime immediately calls `query.suspense()` once         | It does **not** synchronously `await` readiness in that call site                  | Data where “first consumer should eagerly kick one refresh/update semantic” is a good default                                    |
+| `$useStateData(..., { meta: { disableSuspenseOnInit: true } })` | Query still exists, but the automatic init-time `query.suspense()` kick is skipped | It does **not** disable the query, persistence, restore, or later refetch behavior | Data that is relatively stable inside the current frontend process and does not need an automatic first-consumer kick every time |
+| `await query.suspense()`                                        | Current logic sequence explicitly waits until the query is ready                   | It is **not** merely a hint or passive kickoff                                     | Interaction or orchestration boundaries where later logic must not continue until the value is ready                             |
+
+Two practical consequences follow from this table:
+
+1. multiple synchronous `query.suspense()` calls can still deduplicate at the query runtime level
+2. only explicit `await query.suspense()` introduces a true sequencing guarantee for the current logic path
+
+## Practical rule 5: be cautious with `enabled: false` and `staleTime: Infinity`
 
 These options are useful, but they are easy to over-apply.
 
@@ -162,7 +204,7 @@ Be cautious when the underlying backend configuration may change.
 
 If backend scene config can change, letting the query participate in normal freshness/refetch rules is usually healthier than freezing it forever.
 
-## Practical rule 5: removing a manual `ensure...()` helper does not mean interaction can never wait
+## Practical rule 6: removing a manual `ensure...()` helper does not mean interaction can never wait
 
 A common over-correction is:
 
@@ -178,7 +220,7 @@ The better middle ground is:
 
 That is very different from rebuilding a second fetch lifecycle.
 
-## Practical rule 6: derive render-time state once per render when possible
+## Practical rule 7: derive render-time state once per render when possible
 
 Even when the query object is reused, a controller can still become noisy if it repeatedly derives the same values in several helper calls.
 
@@ -208,7 +250,7 @@ The controller repeatedly:
 
 That is often a sign that local render-time derivation should be consolidated.
 
-## Practical rule 7: design query keys so the ownership boundary is obvious
+## Practical rule 8: design query keys so the ownership boundary is obvious
 
 Prefer keys that make the domain explicit.
 
@@ -265,7 +307,33 @@ A healthier split is:
 
 This creates a much cleaner division of responsibilities.
 
-## Real example: upload policy refactor
+## Representative examples
+
+### Example A: resource entry pages usually prefer the default init-time kick
+
+A good counterexample to overusing `disableSuspenseOnInit: true` is the resource entry-page branch.
+
+Useful reading pages are:
+
+- [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive)
+- [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive)
+
+In that branch, the practical expectation is often:
+
+- opening a row page may show an already-known value first
+- but entering that page should still eagerly kick one update semantic for the item-level state
+- the page benefits from the default “first consumer kicks `query.suspense()` once” behavior
+
+This makes entry pages a good mental model for queries where the default init-time kick is healthy:
+
+- the query is a real page-state dependency
+- the first consumer should actively nudge freshness
+- you usually do not want every caller to remember to add that kickoff manually
+
+This is not about synchronous blocking.
+It is about preserving the default eager-init semantic when the first consumer of that page state appears.
+
+### Example B: upload policy prefers `disableSuspenseOnInit: true`
 
 Representative files in the Cabloy Basic frontend:
 
@@ -278,12 +346,22 @@ Representative files in the Cabloy Basic frontend:
 
 - `getUploadPolicy(...)` stays in the model
 - the query is created as formal state instead of a one-off click helper
-- `disableSuspenseOnInit: true` avoids blocking initial render
+- `disableSuspenseOnInit: true` skips the automatic init-time `query.suspense()` kick while preserving the query as formal state
 - render derives `acceptAttr`, `multiple`, and `pending`
 - interaction reuses that state
 - interaction may still `await query.suspense()` on the already-created query if an edge timing window requires it
 
-This is a good specimen because it shows both the architectural rule and the practical timing guard.
+Why this is a good fit:
+
+- upload policy is a real query-backed state
+- it is relatively stable within the current frontend process
+- every first consumer does not need to auto-kick one eager init-time refresh semantic
+- the strict-ready moment is the interaction boundary, not every initial render consumer
+
+Taken together, Example A and Example B show the most important design contrast on this page:
+
+- entry-page item state is a good example of why the default init-time kick can be valuable
+- upload policy is a good example of why a stable state may still be a formal query while skipping that init-time kick
 
 ## Checklist before you use `$useStateData(...)`
 
