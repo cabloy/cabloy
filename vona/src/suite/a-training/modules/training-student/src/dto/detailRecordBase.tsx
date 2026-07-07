@@ -62,7 +62,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
     v.serializerTransform('a-serialization:custom', {
       custom: resolveDossierFiles,
     }),
-    v.array(DtoRecordDossierFileView),
+    v.array($Class.partial(DtoRecordDossierFileView)),
   )
-  dossierFiles?: DtoRecordDossierFileView[];
+  dossierFiles?: Partial<DtoRecordDossierFileView>[];
 }
