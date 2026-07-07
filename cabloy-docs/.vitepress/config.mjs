@@ -486,6 +486,10 @@ export default defineConfig({
               items: [
                 { text: 'Model State Guide', link: '/frontend/model-state-guide' },
                 {
+                  text: '`$useStateData` Best Practices',
+                  link: '/frontend/use-state-data-best-practices',
+                },
+                {
                   text: 'Model Resource Owner Pattern',
                   link: '/frontend/model-resource-owner-pattern',
                 },

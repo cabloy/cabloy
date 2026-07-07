@@ -10,6 +10,8 @@ If you specifically want the scalable resource-facade pattern, continue with [Mo
 
 If you want the generic lower-level model runtime beneath these helper families, continue with [A-Model Under the Hood](/frontend/a-model-under-the-hood).
 
+If your main question is how to design and review `$useStateData(...)` usage itself, continue with [`$useStateData` Best Practices](/frontend/use-state-data-best-practices).
+
 If you want to understand how that owner pattern expands into the whole `rest-resource` module runtime, continue with [Rest Resource Under the Hood](/frontend/rest-resource-under-the-hood), then [Rest Resource Source Reading Map](/frontend/rest-resource-source-reading-map).
 
 If you want to apply that pattern in your own module with a more uniform two-usage model, continue with [Using `ModelResource` in Your Module](/frontend/model-resource-usage-guide).
