@@ -18,6 +18,7 @@ import {
   inferFileRelationName,
   resolveFileDownloadUrl,
 } from '../../lib/index.js';
+import { ModelFile } from '../../model/file.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceFormFieldRecord {
@@ -42,15 +43,6 @@ export interface ControllerFormFieldFileProps extends IFormFieldComponentOptions
   options?: IResourceFormFieldFileOptions;
 }
 
-interface IResolvedFileUploadPolicy {
-  fileScene: string;
-  maxSize?: number;
-  mimeTypes?: string[];
-  extensions?: string[];
-  multiple?: boolean;
-  public?: boolean;
-}
-
 @Controller()
 export class ControllerFormFieldFile extends BeanControllerBase {
   static $propsDefault = {
@@ -68,8 +60,9 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   currentOptions: IResourceFormFieldFileOptions = {};
   $$formField?: ControllerFormField;
   uploadedPreviewMap: Record<string, IFilePreviewItem> = {};
-  uploadPolicyMap: Record<string, IResolvedFileUploadPolicy | undefined> = {};
-  loadingPolicyMap: Record<string, boolean | undefined> = {};
+
+  @Use()
+  $$modelFile: ModelFile;
 
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextFormField;
@@ -91,7 +84,6 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           const propsClass = (props as { class?: string }).class;
           this.currentValue = fieldValue as any;
           this.currentOptions = fieldOptions;
-          void this._ensureUploadPolicy(fieldOptions);
           const items = this._getPreviewItems(fieldValue);
           const hasValidationError = !$$formField.field.state.meta.isValid;
           const cardClass = classes(
@@ -250,28 +242,11 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   }
 
   private async _ensureUploadPolicy(options: IResourceFormFieldFileOptions) {
-    const fileScene = options.fileScene;
-    if (!fileScene) return undefined;
-    const cacheKey = String(fileScene);
-    const cachedPolicy = this.uploadPolicyMap[cacheKey];
-    if (cachedPolicy) return cachedPolicy;
-    if (this.loadingPolicyMap[cacheKey]) return undefined;
-    this.loadingPolicyMap[cacheKey] = true;
-    try {
-      const policy = await this._scope.api.file.getUploadPolicy({ fileScene });
-      this.uploadPolicyMap[cacheKey] = policy;
-      return policy;
-    } catch {
-      return undefined;
-    } finally {
-      delete this.loadingPolicyMap[cacheKey];
-    }
+    return await this.$$modelFile.ensureUploadPolicy(options.fileScene);
   }
 
   private _getCachedUploadPolicy(options?: IResourceFormFieldFileOptions) {
-    const fileScene = options?.fileScene;
-    if (!fileScene) return undefined;
-    return this.uploadPolicyMap[String(fileScene)];
+    return this.$$modelFile.getUploadPolicy(options?.fileScene)?.data;
   }
 
   private _getEffectiveMultiple(options?: IResourceFormFieldFileOptions) {
@@ -359,7 +334,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   }
 
   private _removeItem(fileId: TableIdentity, disableNotifyChanged?: boolean) {
-    const multiple = !!this.currentOptions?.multiple;
+    const multiple = this._getEffectiveMultiple(this.currentOptions);
     const currentIds = this._normalizeValueToFileIds(this.currentValue, multiple);
     const nextIds = currentIds.filter(item => String(item) !== String(fileId));
     delete this.uploadedPreviewMap[String(fileId)];
@@ -374,12 +349,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   ) {
     const nextValue = multiple ? fileIds : (fileIds[0] ?? '');
     this.currentValue = nextValue as any;
-    this._syncRelationField(fileIds);
+    this._syncRelationField(fileIds, multiple);
     this.$$formField?.setValue(nextValue, disableNotifyChanged);
     this.$$formField?.handleBlur();
   }
 
-  private _syncRelationField(fileIds: TableIdentity[]) {
+  private _syncRelationField(fileIds: TableIdentity[], multiple: boolean) {
     const relationName = this._getRelationName();
     if (!relationName) return;
     const relationMap = this._getRelationPreviewMap();
@@ -387,14 +362,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
       const key = String(fileId);
       return this.uploadedPreviewMap[key] ?? relationMap[key] ?? { id: fileId };
     });
-    const relationValue = this.currentOptions?.multiple
-      ? relationItems
-      : (relationItems[0] ?? undefined);
+    const relationValue = multiple ? relationItems : (relationItems[0] ?? undefined);
     this.$$renderContext.$$form.setFieldValue(relationName as never, relationValue, true);
   }
 
   private _getPreviewItems(value: unknown) {
-    const multiple = !!this.currentOptions?.multiple;
+    const multiple = this._getEffectiveMultiple(this.currentOptions);
     const fileIds = this._normalizeValueToFileIds(value, multiple);
     const relationMap = this._getRelationPreviewMap();
     if (fileIds.length === 0) {
@@ -450,7 +423,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   }
 
   private _getMaxCount(options: IResourceFormFieldFileOptions) {
-    if (!options.multiple) return 1;
+    if (!this._getEffectiveMultiple(options)) return 1;
     return Math.max(options.maxCount ?? 1, 1);
   }
 
