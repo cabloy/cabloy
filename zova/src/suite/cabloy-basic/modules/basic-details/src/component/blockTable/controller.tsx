@@ -15,7 +15,10 @@ export interface ControllerBlockTableProps extends IResourceBlockOptionsBase {}
 
 @Controller()
 export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerBase {
-  static $propsDefault = {};
+  static $propsDefault = {
+    class: 'overflow-x-auto rounded-box border border-base-content/15 bg-base-100',
+  };
+
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   tableRef: BeanControllerTableBase<TData>;
@@ -31,19 +34,20 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
       item => (item as Record<string, any>).deleted !== true,
     );
     return (
-      <ZTable<TData>
-        class={this.$props.class}
-        controllerRef={ref => {
-          this.tableRef = ref;
-          $$details.tableRef = ref as unknown as BeanControllerTableBase<{}>;
-        }}
-        data={data}
-        schema={$$details.schemaRow}
-        tableScope={$$details.jsxCelScope}
-        getRowId={(_originalRow: TData, index: number) => {
-          return String(index);
-        }}
-      ></ZTable>
+      <div class={this.$props.class}>
+        <ZTable<TData>
+          controllerRef={ref => {
+            this.tableRef = ref;
+            $$details.tableRef = ref as unknown as BeanControllerTableBase<{}>;
+          }}
+          data={data}
+          schema={$$details.schemaRow}
+          tableScope={$$details.jsxCelScope}
+          getRowId={(_originalRow: TData, index: number) => {
+            return String(index);
+          }}
+        ></ZTable>
+      </div>
     );
   }
 }
