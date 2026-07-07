@@ -55,11 +55,13 @@
       "fileProvider": {
         "optionsGlobalInterfaceName": "IDecoratorFileProviderOptions",
         "optionsGlobalInterfaceFrom": "vona-module-a-file",
-        "scopeResource": true
+        "scopeResource": true,
+        "boilerplate": "fileProvider/boilerplate"
       },
       "fileScene": {
         "optionsGlobalInterfaceName": "IDecoratorFileSceneOptions",
-        "optionsGlobalInterfaceFrom": "vona-module-a-file"
+        "optionsGlobalInterfaceFrom": "vona-module-a-file",
+        "boilerplate": "fileScene/boilerplate"
       }
     }
   }
