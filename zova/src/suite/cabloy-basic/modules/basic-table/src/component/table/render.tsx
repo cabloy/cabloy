@@ -9,6 +9,9 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
     return (
       <ZTable
         {...this.$props}
+        controllerRef={ref => {
+          this.$props?.tableRef?.(ref);
+        }}
         slotDefault={$$table => {
           return this._renderTable($$table);
         }}

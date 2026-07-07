@@ -3,7 +3,8 @@ import type { IJsxRenderContextPage, IResourceBlockOptionsBase } from 'zova-modu
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { BeanControllerTableBase, ZTable } from 'zova-module-a-table';
+import { BeanControllerTableBase } from 'zova-module-a-table';
+import { ZTable } from 'zova-module-basic-table';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -37,7 +38,7 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
     return (
       <div class={this.$props.class}>
         <ZTable<TData>
-          controllerRef={ref => {
+          tableRef={ref => {
             this.tableRef = ref;
             $$page.tableRef = ref as unknown as BeanControllerTableBase<{}>;
           }}
