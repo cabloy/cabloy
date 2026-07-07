@@ -84,6 +84,8 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           const propsClass = (props as { class?: string }).class;
           this.currentValue = fieldValue as any;
           this.currentOptions = fieldOptions;
+          this._getUploadPolicyQuery(fieldOptions);
+          const uploadPolicyPending = this._isUploadPolicyPending(fieldOptions);
           const items = this._getPreviewItems(fieldValue);
           const hasValidationError = !$$formField.field.state.meta.isValid;
           const cardClass = classes(
@@ -108,10 +110,13 @@ export class ControllerFormFieldFile extends BeanControllerBase {
               <div class="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  class={classes('btn btn-primary', this.isUploading && 'btn-disabled')}
-                  onClick={async () => {
-                    if (this.isUploading) return;
-                    await this._ensureUploadPolicy(fieldOptions);
+                  disabled={this.isUploading || uploadPolicyPending}
+                  class={classes(
+                    'btn btn-primary',
+                    (this.isUploading || uploadPolicyPending) && 'btn-disabled',
+                  )}
+                  onClick={() => {
+                    if (this.isUploading || uploadPolicyPending) return;
                     this._applyInputPolicy(fieldOptions);
                     this.fileInputRef?.click();
                   }}
@@ -241,12 +246,25 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     return itemCount > 0 ? this._scope.locale.ReplaceFile() : this._scope.locale.SelectFile();
   }
 
-  private async _ensureUploadPolicy(options: IResourceFormFieldFileOptions) {
-    return await this.$$modelFile.ensureUploadPolicy(options.fileScene);
+  private _getUploadPolicyQuery(options?: IResourceFormFieldFileOptions) {
+    return this.$$modelFile.getUploadPolicy(options?.fileScene);
+  }
+
+  private _isUploadPolicyPending(options?: IResourceFormFieldFileOptions) {
+    const query = this._getUploadPolicyQuery(options);
+    if (!query) return false;
+    return query.data === undefined && !!(query.isPending || query.isFetching);
   }
 
   private _getCachedUploadPolicy(options?: IResourceFormFieldFileOptions) {
-    return this.$$modelFile.getUploadPolicy(options?.fileScene)?.data;
+    return this._getUploadPolicyQuery(options)?.data;
+  }
+
+  private async _waitForUploadPolicy(options?: IResourceFormFieldFileOptions) {
+    const query = this._getUploadPolicyQuery(options);
+    if (!query || query.data !== undefined) return query?.data;
+    await query.suspense();
+    return query.data;
   }
 
   private _getEffectiveMultiple(options?: IResourceFormFieldFileOptions) {
@@ -266,21 +284,21 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     if (files.length === 0) return;
     this.errorMessage = undefined;
     const options = this.currentOptions ?? {};
-    await this._ensureUploadPolicy(options);
-    const multiple = this._getEffectiveMultiple(options);
-    const currentIds = this._normalizeValueToFileIds(this.currentValue, multiple);
-    const filesToHandle = multiple ? files : files.slice(0, 1);
-    const maxCount = this._getMaxCount(options);
-    const nextCountCandidate = multiple
-      ? currentIds.length + filesToHandle.length
-      : filesToHandle.length;
-    if (nextCountCandidate > maxCount) {
-      this.errorMessage = this._scope.locale.TooManyFiles(maxCount);
-      return;
-    }
     const uploadTarget = this._resolveUploadTarget();
     this.isUploading = true;
     try {
+      await this._waitForUploadPolicy(options);
+      const multiple = this._getEffectiveMultiple(options);
+      const currentIds = this._normalizeValueToFileIds(this.currentValue, multiple);
+      const filesToHandle = multiple ? files : files.slice(0, 1);
+      const maxCount = this._getMaxCount(options);
+      const nextCountCandidate = multiple
+        ? currentIds.length + filesToHandle.length
+        : filesToHandle.length;
+      if (nextCountCandidate > maxCount) {
+        this.errorMessage = this._scope.locale.TooManyFiles(maxCount);
+        return;
+      }
       const uploadedItems: IFilePreviewItem[] = [];
       for (const file of filesToHandle) {
         const validationMessage = this._validateFile(file, options);

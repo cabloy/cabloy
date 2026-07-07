@@ -113,6 +113,8 @@ export class ControllerFormFieldImage extends BeanControllerBase {
           this.$$formField = $$formField;
           this.currentValue = propsBucket.value as any;
           this.currentOptions = propsBucket.options ?? {};
+          this._getUploadPolicyQuery(this.currentOptions);
+          const uploadPolicyPending = this._isUploadPolicyPending(this.currentOptions);
           const items = this._getPreviewItems(propsBucket.value);
           const hasValidationError = !$$formField.field.state.meta.isValid;
           const cardClass = classes(
@@ -137,10 +139,13 @@ export class ControllerFormFieldImage extends BeanControllerBase {
               <div class="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  class={classes('btn btn-primary', this.isUploading && 'btn-disabled')}
-                  onClick={async () => {
-                    if (this.isUploading) return;
-                    await this._ensureUploadPolicy(this.currentOptions);
+                  disabled={this.isUploading || uploadPolicyPending}
+                  class={classes(
+                    'btn btn-primary',
+                    (this.isUploading || uploadPolicyPending) && 'btn-disabled',
+                  )}
+                  onClick={() => {
+                    if (this.isUploading || uploadPolicyPending) return;
                     this._applyInputPolicy(this.currentOptions);
                     this.fileInputRef?.click();
                   }}
@@ -281,12 +286,25 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     return itemCount > 0 ? this.scope.locale.ReplaceImage() : this.scope.locale.SelectImage();
   }
 
-  private async _ensureUploadPolicy(options?: IResourceFormFieldImageOptions) {
-    return await this.$$modelImage.ensureUploadPolicy(options?.imageScene as string | undefined);
+  private _getUploadPolicyQuery(options?: IResourceFormFieldImageOptions) {
+    return this.$$modelImage.getUploadPolicy(options?.imageScene as string | undefined);
+  }
+
+  private _isUploadPolicyPending(options?: IResourceFormFieldImageOptions) {
+    const query = this._getUploadPolicyQuery(options);
+    if (!query) return false;
+    return query.data === undefined && !!(query.isPending || query.isFetching);
   }
 
   private _getCachedUploadPolicy(options?: IResourceFormFieldImageOptions) {
-    return this.$$modelImage.getUploadPolicy(options?.imageScene as string | undefined)?.data;
+    return this._getUploadPolicyQuery(options)?.data;
+  }
+
+  private async _waitForUploadPolicy(options?: IResourceFormFieldImageOptions) {
+    const query = this._getUploadPolicyQuery(options);
+    if (!query || query.data !== undefined) return query?.data;
+    await query.suspense();
+    return query.data;
   }
 
   private _getEffectiveMultiple(options?: IResourceFormFieldImageOptions) {
@@ -306,21 +324,21 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     if (files.length === 0) return;
     this.errorMessage = undefined;
     const options = this.currentOptions ?? {};
-    await this._ensureUploadPolicy(options);
-    const multiple = this._getEffectiveMultiple(options);
-    const currentIds = this._normalizeValueToImageIds(this.currentValue, multiple);
-    const filesToHandle = multiple ? files : files.slice(0, 1);
-    const maxCount = this._getMaxCount(options);
-    const nextCountCandidate = multiple
-      ? currentIds.length + filesToHandle.length
-      : filesToHandle.length;
-    if (nextCountCandidate > maxCount) {
-      this.errorMessage = this.scope.locale.TooManyImages(maxCount);
-      return;
-    }
     const uploadTarget = this._resolveUploadTarget();
     this.isUploading = true;
     try {
+      await this._waitForUploadPolicy(options);
+      const multiple = this._getEffectiveMultiple(options);
+      const currentIds = this._normalizeValueToImageIds(this.currentValue, multiple);
+      const filesToHandle = multiple ? files : files.slice(0, 1);
+      const maxCount = this._getMaxCount(options);
+      const nextCountCandidate = multiple
+        ? currentIds.length + filesToHandle.length
+        : filesToHandle.length;
+      if (nextCountCandidate > maxCount) {
+        this.errorMessage = this.scope.locale.TooManyImages(maxCount);
+        return;
+      }
       const uploadedItems: IImagePreviewItem[] = [];
       for (const file of filesToHandle) {
         const validationMessage = this._validateFile(file, options);
