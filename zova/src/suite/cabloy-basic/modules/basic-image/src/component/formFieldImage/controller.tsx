@@ -17,6 +17,8 @@ import {
 } from 'zova-module-basic-image';
 
 import type { IImageTransformOptions } from '../../types/image.js';
+
+import { ModelImage } from '../../model/image.js';
 import 'vue-advanced-cropper/dist/style.css';
 
 declare module 'zova-module-a-openapi' {
@@ -67,7 +69,6 @@ interface IImagePreviewItem {
 export class ControllerFormFieldImage extends BeanControllerBase {
   static $propsDefault = {
     options: {
-      accept: ['image/png', 'image/jpeg', 'image/webp'],
       maxCount: 1,
       enableCrop: true,
       cropAspectRatio: 1,
@@ -90,6 +91,10 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   currentValue?: TableIdentity | TableIdentity[] | string;
   currentOptions: IResourceFormFieldImageOptions = {};
   $$formField?: ControllerFormField;
+
+  @Use()
+  $$modelImage: ModelImage;
+
   uploadedPreviewMap: Record<string, IImagePreviewItem> = {};
 
   @Use({ injectionScope: 'host' })
@@ -124,7 +129,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
                 class="hidden"
                 type="file"
                 accept={this._getAcceptAttr(propsBucket.options)}
-                multiple={!!propsBucket.options?.multiple}
+                multiple={this._getEffectiveMultiple(propsBucket.options)}
                 onChange={event => {
                   void this._handleFileChange(event, propsBucket.disableNotifyChanged);
                 }}
@@ -133,8 +138,10 @@ export class ControllerFormFieldImage extends BeanControllerBase {
                 <button
                   type="button"
                   class={classes('btn btn-primary', this.isUploading && 'btn-disabled')}
-                  onClick={() => {
+                  onClick={async () => {
                     if (this.isUploading) return;
+                    await this._ensureUploadPolicy(this.currentOptions);
+                    this._applyInputPolicy(this.currentOptions);
                     this.fileInputRef?.click();
                   }}
                 >
@@ -268,10 +275,28 @@ export class ControllerFormFieldImage extends BeanControllerBase {
 
   private _getUploadButtonText(itemCount: number) {
     const options = this.currentOptions ?? {};
-    if (options.multiple) {
+    if (this._getEffectiveMultiple(options)) {
       return itemCount > 0 ? this.scope.locale.AddImage() : this.scope.locale.SelectImage();
     }
     return itemCount > 0 ? this.scope.locale.ReplaceImage() : this.scope.locale.SelectImage();
+  }
+
+  private async _ensureUploadPolicy(options?: IResourceFormFieldImageOptions) {
+    return await this.$$modelImage.ensureUploadPolicy(options?.imageScene as string | undefined);
+  }
+
+  private _getCachedUploadPolicy(options?: IResourceFormFieldImageOptions) {
+    return this.$$modelImage.getUploadPolicy(options?.imageScene as string | undefined)?.data;
+  }
+
+  private _getEffectiveMultiple(options?: IResourceFormFieldImageOptions) {
+    return !!(options?.multiple ?? this._getCachedUploadPolicy(options)?.multiple);
+  }
+
+  private _applyInputPolicy(options?: IResourceFormFieldImageOptions) {
+    if (!this.fileInputRef) return;
+    this.fileInputRef.accept = this._getAcceptAttr(options);
+    this.fileInputRef.multiple = this._getEffectiveMultiple(options);
   }
 
   private async _handleFileChange(event: Event, disableNotifyChanged?: boolean) {
@@ -281,11 +306,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     if (files.length === 0) return;
     this.errorMessage = undefined;
     const options = this.currentOptions ?? {};
-    const multiple = !!options.multiple;
+    await this._ensureUploadPolicy(options);
+    const multiple = this._getEffectiveMultiple(options);
     const currentIds = this._normalizeValueToImageIds(this.currentValue, multiple);
-    const filesToHandle = options.multiple ? files : files.slice(0, 1);
+    const filesToHandle = multiple ? files : files.slice(0, 1);
     const maxCount = this._getMaxCount(options);
-    const nextCountCandidate = options.multiple
+    const nextCountCandidate = multiple
       ? currentIds.length + filesToHandle.length
       : filesToHandle.length;
     if (nextCountCandidate > maxCount) {
@@ -324,7 +350,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         uploadedItems.push(item);
       }
       if (uploadedItems.length === 0) return;
-      const nextIds = options.multiple
+      const nextIds = multiple
         ? [...currentIds, ...uploadedItems.map(item => item.id)]
         : [uploadedItems[uploadedItems.length - 1].id];
       this._setFieldValue(nextIds, disableNotifyChanged, multiple);
@@ -347,7 +373,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private _removeItem(imageId: TableIdentity, disableNotifyChanged?: boolean) {
-    const multiple = !!this.currentOptions?.multiple;
+    const multiple = this._getEffectiveMultiple(this.currentOptions);
     const currentIds = this._normalizeValueToImageIds(this.currentValue, multiple);
     const nextIds = currentIds.filter(item => String(item) !== String(imageId));
     delete this.uploadedPreviewMap[String(imageId)];
@@ -362,12 +388,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   ) {
     const nextValue = multiple ? imageIds : (imageIds[0] ?? '');
     this.currentValue = nextValue as any;
-    this._syncRelationField(imageIds);
+    this._syncRelationField(imageIds, multiple);
     this.$$formField?.setValue(nextValue, disableNotifyChanged);
     this.$$formField?.handleBlur();
   }
 
-  private _syncRelationField(imageIds: TableIdentity[]) {
+  private _syncRelationField(imageIds: TableIdentity[], multiple: boolean) {
     const relationName = this._getRelationName();
     if (!relationName) return;
     const relationMap = this._getRelationPreviewMap();
@@ -375,14 +401,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
       const key = String(imageId);
       return this.uploadedPreviewMap[key] ?? relationMap[key] ?? { id: imageId };
     });
-    const relationValue = this.currentOptions?.multiple
-      ? relationItems
-      : (relationItems[0] ?? undefined);
+    const relationValue = multiple ? relationItems : (relationItems[0] ?? undefined);
     this.$$renderContext.$$form.setFieldValue(relationName as never, relationValue, true);
   }
 
   private _getPreviewItems(value: unknown) {
-    const multiple = !!this.currentOptions?.multiple;
+    const multiple = this._getEffectiveMultiple(this.currentOptions);
     const imageIds = this._normalizeValueToImageIds(value, multiple);
     const relationMap = this._getRelationPreviewMap();
     if (imageIds.length === 0) {
@@ -434,7 +458,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private _getMaxCount(options: IResourceFormFieldImageOptions) {
-    if (!options.multiple) return 1;
+    if (!this._getEffectiveMultiple(options)) return 1;
     return Math.max(options.maxCount ?? 1, 1);
   }
 
@@ -442,7 +466,11 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     if (!options) return 'image/*';
     if (typeof options.accept === 'string') return options.accept;
     if (options.accept?.length) return options.accept.join(',');
-    const parts = [...(options.mimeTypes ?? []), ...(options.extensions ?? [])];
+    const policy = this._getCachedUploadPolicy(options);
+    const parts = [
+      ...(options.mimeTypes ?? policy?.mimeTypes ?? []),
+      ...(options.extensions ?? policy?.extensions ?? []),
+    ];
     return parts.length > 0 ? parts.join(',') : 'image/*';
   }
 
@@ -451,8 +479,9 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     if (acceptTokens.length > 0 && !this._matchesAccept(file, acceptTokens)) {
       return this.scope.locale.InvalidImageType();
     }
-    if (options.maxSize && file.size > options.maxSize) {
-      return this.scope.locale.ImageTooLarge(this._formatBytes(options.maxSize));
+    const maxSize = options.maxSize ?? this._getCachedUploadPolicy(options)?.maxSize;
+    if (typeof maxSize === 'number' && file.size > maxSize) {
+      return this.scope.locale.ImageTooLarge(this._formatBytes(maxSize));
     }
     if (options.minSize && file.size < options.minSize) {
       return this.scope.locale.ImageTooSmall(this._formatBytes(options.minSize));
@@ -466,7 +495,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         ? options.accept
         : options.accept.split(',')
       : [];
-    return [...accept, ...(options.mimeTypes ?? []), ...(options.extensions ?? [])]
+    const policy = this._getCachedUploadPolicy(options);
+    return [
+      ...accept,
+      ...(options.mimeTypes ?? policy?.mimeTypes ?? []),
+      ...(options.extensions ?? policy?.extensions ?? []),
+    ]
       .map(item => item.trim().toLowerCase())
       .filter(item => !!item);
   }

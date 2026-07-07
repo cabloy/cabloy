@@ -12,6 +12,8 @@ import { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFin
 import { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
+import { DtoImageUploadPolicyRequest } from '../dto/imageUploadPolicyRequest.ts';
+import { DtoImageUploadPolicyResponse } from '../dto/imageUploadPolicyResponse.ts';
 import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
 import { DtoImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
 import { DtoImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
@@ -21,6 +23,12 @@ export interface IControllerOptionsImage extends IDecoratorControllerOptions {}
 
 @Controller<IControllerOptionsImage>({ path: 'image' })
 export class ControllerImage extends BeanBase {
+  @Web.post('upload-policy')
+  @Api.body(DtoImageUploadPolicyResponse)
+  async getUploadPolicy(@Arg.body() data: DtoImageUploadPolicyRequest) {
+    return await this.bean.imageUploadPolicy.resolveSceneUploadPolicy(data);
+  }
+
   @Web.post('upload-token')
   @Api.body(DtoImageUploadTokenResponse)
   async createUploadToken(@Arg.body() data: DtoImageUploadTokenRequest) {

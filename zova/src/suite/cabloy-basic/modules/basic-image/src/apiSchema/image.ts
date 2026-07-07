@@ -4,15 +4,21 @@ import { BeanBase } from 'zova';
 import { ApiSchema } from 'zova-module-a-api';
 
 import {
+  ApiApiImagegetUploadPolicyPath,
   ApiApiImagecreateUploadTokenPath,
   ApiApiImageuploadPath,
   ApiApiImagecreateDirectUploadPath,
+  ApiApiImagefinalizeDirectUploadPath,
   ApiApiImageuploadUrlPath,
   ApiApiImagedeliveryPath,
 } from '../api/image.js';
 
 @ApiSchema()
 export class ApiSchemaImage extends BeanBase {
+  getUploadPolicy(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiImagegetUploadPolicyPath, 'post', options);
+  }
+
   createUploadToken(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiImagecreateUploadTokenPath, 'post', options);
   }
@@ -23,6 +29,10 @@ export class ApiSchemaImage extends BeanBase {
 
   createDirectUpload(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiImagecreateDirectUploadPath, 'post', options);
+  }
+
+  finalizeDirectUpload(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiImagefinalizeDirectUploadPath, 'post', options);
   }
 
   uploadUrl(options?: IApiSchemaOptions) {

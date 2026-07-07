@@ -6,6 +6,15 @@ import type { components, paths } from './openapi/index.js';
 
 import { OpenApiBaseURL } from './openapi/index.js';
 
+/** Image_getUploadPolicy */
+export const ApiApiImagegetUploadPolicyPath = '/api/image/upload-policy';
+export type ApiApiImagegetUploadPolicyPath = '/api/image/upload-policy';
+export type ApiApiImagegetUploadPolicyMethod = 'post';
+export type ApiApiImagegetUploadPolicyRequestBody =
+  components['schemas']['a-image.dto.imageUploadPolicyRequest'];
+export type ApiApiImagegetUploadPolicyResponseBody =
+  paths[ApiApiImagegetUploadPolicyPath][ApiApiImagegetUploadPolicyMethod]['responses']['200']['content']['application/json']['data'];
+
 /** Image_createUploadToken */
 export const ApiApiImagecreateUploadTokenPath = '/api/image/upload-token';
 export type ApiApiImagecreateUploadTokenPath = '/api/image/upload-token';
@@ -36,6 +45,15 @@ export type ApiApiImagecreateDirectUploadRequestBody =
 export type ApiApiImagecreateDirectUploadResponseBody =
   paths[ApiApiImagecreateDirectUploadPath][ApiApiImagecreateDirectUploadMethod]['responses']['200']['content']['application/json']['data'];
 
+/** Image_finalizeDirectUpload */
+export const ApiApiImagefinalizeDirectUploadPath = '/api/image/direct-upload/finalize';
+export type ApiApiImagefinalizeDirectUploadPath = '/api/image/direct-upload/finalize';
+export type ApiApiImagefinalizeDirectUploadMethod = 'post';
+export type ApiApiImagefinalizeDirectUploadRequestBody =
+  components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
+export type ApiApiImagefinalizeDirectUploadResponseBody =
+  paths[ApiApiImagefinalizeDirectUploadPath][ApiApiImagefinalizeDirectUploadMethod]['responses']['200']['content']['application/json']['data'];
+
 /** Image_uploadUrl */
 export const ApiApiImageuploadUrlPath = '/api/image/upload-url';
 export type ApiApiImageuploadUrlPath = '/api/image/upload-url';
@@ -58,6 +76,14 @@ export type ApiApiImagedeliveryResponseBody =
 
 @Api()
 export class ApiImage extends BeanApiBase {
+  getUploadPolicy(body: ApiApiImagegetUploadPolicyRequestBody, options?: IApiActionOptions) {
+    return this.$fetch.post<any, ApiApiImagegetUploadPolicyResponseBody>(
+      ApiApiImagegetUploadPolicyPath,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
   createUploadToken(body: ApiApiImagecreateUploadTokenRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiImagecreateUploadTokenResponseBody>(
       ApiApiImagecreateUploadTokenPath,
@@ -82,6 +108,17 @@ export class ApiImage extends BeanApiBase {
     );
   }
 
+  finalizeDirectUpload(
+    body: ApiApiImagefinalizeDirectUploadRequestBody,
+    options?: IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiImagefinalizeDirectUploadResponseBody>(
+      ApiApiImagefinalizeDirectUploadPath,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
   uploadUrl(body: ApiApiImageuploadUrlRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiImageuploadUrlResponseBody>(
       ApiApiImageuploadUrlPath,
@@ -98,7 +135,7 @@ export class ApiImage extends BeanApiBase {
   ) {
     return this.$fetch.get<any, ApiApiImagedeliveryResponseBody>(
       this.$pathTranslate(ApiApiImagedeliveryPath, options.params),
-      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+      this.$configPrepare(OpenApiBaseURL(this.sys), options),
     );
   }
 }

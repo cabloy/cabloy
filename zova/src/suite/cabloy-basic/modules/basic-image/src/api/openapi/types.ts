@@ -400,6 +400,118 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/file/upload-policy': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['File_getUploadPolicy'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/file/upload-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['File_createUploadToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/file/upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['File_upload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/file/direct-upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['File_createDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/file/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['File_uploadUrl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/file/download/{fileId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['File_download'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload-policy': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_getUploadPolicy'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/image/upload-token': {
     parameters: {
       query?: never;
@@ -448,6 +560,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/image/direct-upload/finalize': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_finalizeDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/image/upload-url': {
     parameters: {
       query?: never;
@@ -474,6 +602,22 @@ export interface paths {
     get: operations['Image_delivery'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/native/image-native/direct-upload/{resourceId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ImageNativeImage_directUpload'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1441,6 +1585,8 @@ export interface components {
       trainingTime?: Date;
       /** @description Scene Photos */
       sceneImageIds?: (number | string)[] | undefined;
+      /** @description Dossier Files */
+      dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       /** @description Student Training Record Details */
@@ -1524,9 +1670,15 @@ export interface components {
       trainingTime?: Date;
       /** @description Scene Photos */
       sceneImageIds?: (number | string)[] | undefined;
+      /** @description Dossier Files */
+      dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+      /** @description Dossier Files */
+      dossierFiles?:
+        | components['schemas']['training-record.dto.recordDossierFileView'][]
+        | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -1539,6 +1691,11 @@ export interface components {
       provider: string;
       clientName: string;
       imageScene?: unknown;
+      status?: string | undefined;
+      /** Format: date-time */
+      draftExpiresAt?: Date;
+      /** Format: date-time */
+      finalizedAt?: Date;
       /** Format: date-time */
       uploadedAt?: Date;
       variants?:
@@ -1561,6 +1718,26 @@ export interface components {
       dpr?: number | undefined;
       rotate?: number | undefined;
       sharpen?: number | undefined;
+    };
+    'training-record.dto.recordDossierFileView': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      fileScene?: string | undefined;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      public?: boolean | undefined;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      meta?:
+        | {
+            [key: string]: unknown;
+          }
+        | undefined;
+      downloadUrl: string;
+      /** @default true */
+      signed?: boolean;
     };
     'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
@@ -1603,6 +1780,8 @@ export interface components {
           trainingTime?: Date;
           /** @description Scene Photos */
           sceneImageIds?: (number | string)[] | undefined;
+          /** @description Dossier Files */
+          dossierFileIds?: (number | string)[] | undefined;
           /** @description Description */
           description?: string | undefined;
           /** @description Student Training Record Details */
@@ -1622,6 +1801,10 @@ export interface components {
             description?: string | undefined;
           }[];
           sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
+          /** @description Dossier Files */
+          dossierFiles?:
+            | components['schemas']['training-record.dto.recordDossierFileView'][]
+            | undefined;
           _trainingRecordSubjects?:
             | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
             | undefined;
@@ -1645,6 +1828,8 @@ export interface components {
       trainingTime?: Date;
       /** @description Scene Photos */
       sceneImageIds?: (number | string)[] | undefined;
+      /** @description Dossier Files */
+      dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       /** @description Student Training Record Details */
@@ -1698,6 +1883,8 @@ export interface components {
             trainingTime?: Date;
             /** @description Scene Photos */
             sceneImageIds?: (number | string)[] | undefined;
+            /** @description Dossier Files */
+            dossierFileIds?: (number | string)[] | undefined;
             /** @description Description */
             description?: string | undefined;
             /** @description Student Training Record Details */
@@ -1728,6 +1915,11 @@ export interface components {
                   provider?: string | undefined;
                   clientName?: string | undefined;
                   imageScene?: unknown;
+                  status?: string | undefined;
+                  /** Format: date-time */
+                  draftExpiresAt?: Date;
+                  /** Format: date-time */
+                  finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
                   variants?:
@@ -1736,6 +1928,10 @@ export interface components {
                       }
                     | undefined;
                 }[]
+              | undefined;
+            /** @description Dossier Files */
+            dossierFiles?:
+              | components['schemas']['training-record.dto.recordDossierFileView'][]
               | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
@@ -1769,6 +1965,8 @@ export interface components {
       trainingTime?: Date;
       /** @description Scene Photos */
       sceneImageIds?: (number | string)[] | undefined;
+      /** @description Dossier Files */
+      dossierFileIds?: (number | string)[] | undefined;
       /** @description Description */
       description?: string | undefined;
       /** @description Student Training Record Details */
@@ -1783,6 +1981,11 @@ export interface components {
             provider?: string | undefined;
             clientName?: string | undefined;
             imageScene?: unknown;
+            status?: string | undefined;
+            /** Format: date-time */
+            draftExpiresAt?: Date;
+            /** Format: date-time */
+            finalizedAt?: Date;
             /** Format: date-time */
             uploadedAt?: Date;
             variants?:
@@ -1791,6 +1994,10 @@ export interface components {
                 }
               | undefined;
           }[]
+        | undefined;
+      /** @description Dossier Files */
+      dossierFiles?:
+        | components['schemas']['training-record.dto.recordDossierFileView'][]
         | undefined;
       /** @description # */
       _lineNumber: number;
@@ -1851,6 +2058,11 @@ export interface components {
           provider: string;
           clientName: string;
           imageScene?: unknown;
+          status?: string | undefined;
+          /** Format: date-time */
+          draftExpiresAt?: Date;
+          /** Format: date-time */
+          finalizedAt?: Date;
           /** Format: date-time */
           uploadedAt?: Date;
           variants?:
@@ -1918,6 +2130,8 @@ export interface components {
             trainingTime?: Date;
             /** @description Scene Photos */
             sceneImageIds?: (number | string)[] | undefined;
+            /** @description Dossier Files */
+            dossierFileIds?: (number | string)[] | undefined;
             /** @description Description */
             description?: string | undefined;
             /** @description Student Training Record Details */
@@ -1946,6 +2160,11 @@ export interface components {
                   provider?: string | undefined;
                   clientName?: string | undefined;
                   imageScene?: unknown;
+                  status?: string | undefined;
+                  /** Format: date-time */
+                  draftExpiresAt?: Date;
+                  /** Format: date-time */
+                  finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
                   variants?:
@@ -1954,6 +2173,10 @@ export interface components {
                       }
                     | undefined;
                 }[]
+              | undefined;
+            /** @description Dossier Files */
+            dossierFiles?:
+              | components['schemas']['training-record.dto.recordDossierFileView'][]
               | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
@@ -2001,6 +2224,8 @@ export interface components {
             trainingTime?: Date;
             /** @description Scene Photos */
             sceneImageIds?: (number | string)[] | undefined;
+            /** @description Dossier Files */
+            dossierFileIds?: (number | string)[] | undefined;
             /** @description Description */
             description?: string | undefined;
             /** @description Student Training Record Details */
@@ -2031,6 +2256,11 @@ export interface components {
                   provider?: string | undefined;
                   clientName?: string | undefined;
                   imageScene?: unknown;
+                  status?: string | undefined;
+                  /** Format: date-time */
+                  draftExpiresAt?: Date;
+                  /** Format: date-time */
+                  finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
                   variants?:
@@ -2039,6 +2269,10 @@ export interface components {
                       }
                     | undefined;
                 }[]
+              | undefined;
+            /** @description Dossier Files */
+            dossierFiles?:
+              | components['schemas']['training-record.dto.recordDossierFileView'][]
               | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
@@ -2068,6 +2302,90 @@ export interface components {
           summaryText: string;
         }
       | undefined;
+    'a-file.dto.fileUploadPolicyResponse': {
+      fileScene: string;
+      maxSize?: number | undefined;
+      mimeTypes?: string[] | undefined;
+      extensions?: string[] | undefined;
+      multiple?: boolean | undefined;
+      public?: boolean | undefined;
+    };
+    'a-file.dto.fileUploadPolicyRequest': {
+      fileScene: string;
+    };
+    'a-file.dto.fileUploadTokenResponse': {
+      token: string;
+      expiresIn?: number | undefined;
+    };
+    'a-file.dto.fileUploadTokenRequest': {
+      fileScene: string;
+      size: number;
+      mimeType: string;
+      expiresIn?: number | undefined;
+    };
+    'a-file.dto.fileUploadResponse': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      bucket?: string | undefined;
+      objectKey?: string | undefined;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      etag?: string | undefined;
+      public?: boolean | undefined;
+      fileScene?: string | undefined;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      url?: string | undefined;
+      signed?: boolean | undefined;
+    };
+    'a-file.dto.fileDirectUploadResponse': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      uploadUrl: string;
+      headers?:
+        | {
+            [key: string]: string;
+          }
+        | undefined;
+      /** @enum {string|null} */
+      method?: 'PUT' | 'POST' | null | undefined;
+      filename?: string | undefined;
+      fileScene?: string | undefined;
+    };
+    'a-file.dto.fileDirectUploadRequest': {
+      fileScene: string;
+      filename?: string | undefined;
+      size: number;
+      mimeType: string;
+      contentType?: string | undefined;
+      objectKey?: string | undefined;
+      expiry?: string | undefined;
+    };
+    'a-file.dto.fileUploadUrlRequest': {
+      fileScene: string;
+      /** Format: uri */
+      url: string;
+      size: number;
+      mimeType: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      objectKey?: string | undefined;
+    };
+    'a-image.dto.imageUploadPolicyResponse': {
+      imageScene: string;
+      maxSize?: number | undefined;
+      mimeTypes?: string[] | undefined;
+      extensions?: string[] | undefined;
+      multiple?: boolean | undefined;
+    };
+    'a-image.dto.imageUploadPolicyRequest': {
+      imageScene: string;
+    };
     'a-image.dto.imageUploadTokenResponse': {
       token: string;
       expiresIn?: number | undefined;
@@ -2095,6 +2413,11 @@ export interface components {
           }
         | undefined;
       imageScene?: string | undefined;
+      status?: string | undefined;
+      /** Format: date-time */
+      draftExpiresAt?: Date;
+      /** Format: date-time */
+      finalizedAt?: Date;
       /** Format: date-time */
       uploadedAt?: Date;
       url?: string | undefined;
@@ -2108,6 +2431,10 @@ export interface components {
       uploadUrl: string;
       draft?: boolean | undefined;
       filename?: string | undefined;
+      requireSignedURLs?: boolean | undefined;
+      status?: string | undefined;
+      /** Format: date-time */
+      draftExpiresAt?: Date;
       imageScene?: string | undefined;
     };
     'a-image.dto.imageDirectUploadRequest': {
@@ -2119,6 +2446,36 @@ export interface components {
       requireSignedURLs?: boolean | undefined;
       expiry?: string | undefined;
       customId?: string | undefined;
+    };
+    'a-image.dto.imageDirectUploadFinalizeResponse': {
+      id: number | string;
+      provider: string;
+      clientName: string;
+      resourceId: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      requireSignedURLs?: boolean | undefined;
+      variants?:
+        | {
+            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
+          }
+        | undefined;
+      imageScene?: string | undefined;
+      status?: string | undefined;
+      /** Format: date-time */
+      draftExpiresAt?: Date;
+      /** Format: date-time */
+      finalizedAt?: Date;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      url?: string | undefined;
+      signed?: boolean | undefined;
+    };
+    'a-image.dto.imageDirectUploadFinalizeRequest': {
+      imageId: number | string;
     };
     'a-image.dto.imageUploadUrlRequest': {
       imageScene: string;
@@ -3557,6 +3914,205 @@ export interface operations {
     };
     authToken: true;
   };
+  File_getUploadPolicy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-file.dto.fileUploadPolicyRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-file.dto.fileUploadPolicyResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  File_createUploadToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-file.dto.fileUploadTokenRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-file.dto.fileUploadTokenResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  File_upload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          token: string;
+          /** Format: binary */
+          file: Blob;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-file.dto.fileUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  File_createDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-file.dto.fileDirectUploadRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-file.dto.fileDirectUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  File_uploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-file.dto.fileUploadUrlRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-file.dto.fileUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  File_download: {
+    parameters: {
+      query?: {
+        token?: string | undefined;
+      };
+      header?: never;
+      path: {
+        fileId: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  Image_getUploadPolicy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadPolicyRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadPolicyResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   Image_createUploadToken: {
     parameters: {
       query?: never;
@@ -3645,6 +4201,34 @@ export interface operations {
     };
     authToken: true;
   };
+  Image_finalizeDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageDirectUploadFinalizeResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   Image_uploadUrl: {
     parameters: {
       query?: never;
@@ -3701,7 +4285,36 @@ export interface operations {
         };
       };
     };
-    authToken: true;
+  };
+  ImageNativeImage_directUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /** Format: binary */
+          image: Blob;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
   };
   Paypal_getRecord: {
     parameters: {

@@ -65,8 +65,6 @@ export class EntityStudent extends EntityBase {
     ZovaRender.order(4),
     ZovaRender.field('basic-image:formFieldImage', {
       imageScene: 'training-student:studentImage',
-      accept: ['image/png', 'image/jpeg', 'image/webp'],
-      maxSize: 2 * 1024 * 1024,
       enableCrop: true,
       cropAspectRatio: 1,
       relationName: 'image',

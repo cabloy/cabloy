@@ -121,6 +121,33 @@ export class BeanImageUploadPolicy extends BeanBase {
     };
   }
 
+  async resolveSceneUploadPolicy(data: { imageScene: keyof IImageSceneRecord }) {
+    const imageConfig = this.scope.config.image;
+    const imageScene = data.imageScene;
+    const sceneOptions = this._getSceneOptions(imageScene);
+    const { providerName, clientName } = await this._resolveProvider(sceneOptions);
+    const { entityImageProvider, disabled } = await this.bean.imageProvider.getClientOptions({
+      providerName,
+      clientName,
+    });
+    if (!entityImageProvider || disabled) {
+      return this.app.throw(403, `Image provider unavailable: ${providerName}.${clientName}`);
+    }
+    const uploadOptions = {
+      ...(imageConfig.upload ?? {}),
+      ...(sceneOptions.upload ?? {}),
+    };
+    const mimeTypes = [...(uploadOptions.mimeTypes ?? [])];
+    const extensions = [...(uploadOptions.extensions ?? [])];
+    return {
+      imageScene,
+      maxSize: uploadOptions.maxSize,
+      mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
+      extensions: extensions.length > 0 ? extensions : undefined,
+      multiple: uploadOptions.multiple,
+    };
+  }
+
   async resolveUploadPolicy(data: {
     imageScene: keyof IImageSceneRecord;
     size: number;
