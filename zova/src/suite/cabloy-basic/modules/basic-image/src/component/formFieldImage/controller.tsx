@@ -57,6 +57,12 @@ export interface ControllerFormFieldImageProps extends IFormFieldComponentOption
   options?: IResourceFormFieldImageOptions;
 }
 
+interface IUploadPolicyState {
+  acceptAttr: string;
+  multiple: boolean;
+  pending: boolean;
+}
+
 interface IImagePreviewItem {
   id: TableIdentity;
   url?: string;
@@ -113,9 +119,8 @@ export class ControllerFormFieldImage extends BeanControllerBase {
           this.$$formField = $$formField;
           this.currentValue = propsBucket.value as any;
           this.currentOptions = propsBucket.options ?? {};
-          this._getUploadPolicyQuery(this.currentOptions);
-          const uploadPolicyPending = this._isUploadPolicyPending(this.currentOptions);
-          const items = this._getPreviewItems(propsBucket.value);
+          const uploadPolicyState = this._getUploadPolicyState(this.currentOptions);
+          const items = this._getPreviewItems(propsBucket.value, uploadPolicyState.multiple);
           const hasValidationError = !$$formField.field.state.meta.isValid;
           const cardClass = classes(
             'rounded-box border border-base-300 bg-base-100 p-4',
@@ -130,8 +135,8 @@ export class ControllerFormFieldImage extends BeanControllerBase {
                 }}
                 class="hidden"
                 type="file"
-                accept={this._getAcceptAttr(propsBucket.options)}
-                multiple={this._getEffectiveMultiple(propsBucket.options)}
+                accept={uploadPolicyState.acceptAttr}
+                multiple={uploadPolicyState.multiple}
                 onChange={event => {
                   void this._handleFileChange(event, propsBucket.disableNotifyChanged);
                 }}
@@ -139,18 +144,18 @@ export class ControllerFormFieldImage extends BeanControllerBase {
               <div class="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  disabled={this.isUploading || uploadPolicyPending}
+                  disabled={this.isUploading || uploadPolicyState.pending}
                   class={classes(
                     'btn btn-primary',
-                    (this.isUploading || uploadPolicyPending) && 'btn-disabled',
+                    (this.isUploading || uploadPolicyState.pending) && 'btn-disabled',
                   )}
                   onClick={() => {
-                    if (this.isUploading || uploadPolicyPending) return;
-                    this._applyInputPolicy(this.currentOptions);
+                    if (this.isUploading || uploadPolicyState.pending) return;
+                    this._applyInputPolicy(uploadPolicyState);
                     this.fileInputRef?.click();
                   }}
                 >
-                  {this._getUploadButtonText(items.length)}
+                  {this._getUploadButtonText(items.length, uploadPolicyState.multiple)}
                 </button>
                 {this.isUploading && (
                   <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
@@ -278,9 +283,11 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     );
   }
 
-  private _getUploadButtonText(itemCount: number) {
-    const options = this.currentOptions ?? {};
-    if (this._getEffectiveMultiple(options)) {
+  private _getUploadButtonText(
+    itemCount: number,
+    multiple = this._getEffectiveMultiple(this.currentOptions),
+  ) {
+    if (multiple) {
       return itemCount > 0 ? this.scope.locale.AddImage() : this.scope.locale.SelectImage();
     }
     return itemCount > 0 ? this.scope.locale.ReplaceImage() : this.scope.locale.SelectImage();
@@ -290,10 +297,14 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     return this.$$modelImage.getUploadPolicy(options?.imageScene as string | undefined);
   }
 
-  private _isUploadPolicyPending(options?: IResourceFormFieldImageOptions) {
+  private _getUploadPolicyState(options?: IResourceFormFieldImageOptions): IUploadPolicyState {
     const query = this._getUploadPolicyQuery(options);
-    if (!query) return false;
-    return query.data === undefined && !!(query.isPending || query.isFetching);
+    const policy = query?.data;
+    return {
+      acceptAttr: this._getAcceptAttr(options, policy),
+      multiple: this._getEffectiveMultiple(options, policy),
+      pending: query ? query.data === undefined && !!(query.isPending || query.isFetching) : false,
+    };
   }
 
   private _getCachedUploadPolicy(options?: IResourceFormFieldImageOptions) {
@@ -307,14 +318,17 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     return query.data;
   }
 
-  private _getEffectiveMultiple(options?: IResourceFormFieldImageOptions) {
-    return !!(options?.multiple ?? this._getCachedUploadPolicy(options)?.multiple);
+  private _getEffectiveMultiple(
+    options?: IResourceFormFieldImageOptions,
+    policy = this._getCachedUploadPolicy(options),
+  ) {
+    return !!(options?.multiple ?? policy?.multiple);
   }
 
-  private _applyInputPolicy(options?: IResourceFormFieldImageOptions) {
+  private _applyInputPolicy(uploadPolicyState: IUploadPolicyState) {
     if (!this.fileInputRef) return;
-    this.fileInputRef.accept = this._getAcceptAttr(options);
-    this.fileInputRef.multiple = this._getEffectiveMultiple(options);
+    this.fileInputRef.accept = uploadPolicyState.acceptAttr;
+    this.fileInputRef.multiple = uploadPolicyState.multiple;
   }
 
   private async _handleFileChange(event: Event, disableNotifyChanged?: boolean) {
@@ -423,8 +437,10 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     this.$$renderContext.$$form.setFieldValue(relationName as never, relationValue, true);
   }
 
-  private _getPreviewItems(value: unknown) {
-    const multiple = this._getEffectiveMultiple(this.currentOptions);
+  private _getPreviewItems(
+    value: unknown,
+    multiple = this._getEffectiveMultiple(this.currentOptions),
+  ) {
     const imageIds = this._normalizeValueToImageIds(value, multiple);
     const relationMap = this._getRelationPreviewMap();
     if (imageIds.length === 0) {
@@ -480,11 +496,13 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     return Math.max(options.maxCount ?? 1, 1);
   }
 
-  private _getAcceptAttr(options?: IResourceFormFieldImageOptions) {
+  private _getAcceptAttr(
+    options?: IResourceFormFieldImageOptions,
+    policy = this._getCachedUploadPolicy(options),
+  ) {
     if (!options) return 'image/*';
     if (typeof options.accept === 'string') return options.accept;
     if (options.accept?.length) return options.accept.join(',');
-    const policy = this._getCachedUploadPolicy(options);
     const parts = [
       ...(options.mimeTypes ?? policy?.mimeTypes ?? []),
       ...(options.extensions ?? policy?.extensions ?? []),
