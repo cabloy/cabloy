@@ -19,42 +19,40 @@ export class RenderTable<TData extends {} = {}> extends BeanRenderBase {
   public _renderTable($$table: ControllerTable<TData>) {
     const table = $$table.table;
     return (
-      <div class="overflow-x-auto">
-        <table class="table">
-          <thead>
-            <tr>
-              {table.getFlatHeaders().map(header => {
-                return (
-                  <th key={header.id}>
-                    <FlexRender
-                      render={header.column.columnDef.header}
-                      props={header.getContext()}
-                    ></FlexRender>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map(row => {
+      <table class="table">
+        <thead>
+          <tr>
+            {table.getFlatHeaders().map(header => {
               return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => {
-                    return (
-                      <td key={cell.id}>
-                        <FlexRender
-                          render={cell.column.columnDef.cell}
-                          props={cell.getContext()}
-                        ></FlexRender>
-                      </td>
-                    );
-                  })}
-                </tr>
+                <th key={header.id}>
+                  <FlexRender
+                    render={header.column.columnDef.header}
+                    props={header.getContext()}
+                  ></FlexRender>
+                </th>
               );
             })}
-          </tbody>
-        </table>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map(row => {
+            return (
+              <tr key={row.id}>
+                {row.getVisibleCells().map(cell => {
+                  return (
+                    <td key={cell.id}>
+                      <FlexRender
+                        render={cell.column.columnDef.cell}
+                        props={cell.getContext()}
+                      ></FlexRender>
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     );
   }
 }
