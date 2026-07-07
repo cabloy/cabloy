@@ -89,7 +89,7 @@ export class EntityRecord extends EntityBase {
     ZovaRender.order(7),
     ZovaRender.field('basic-image:formFieldImage', {
       imageScene: 'training-record:sceneImage',
-      maxCount: 9,
+      maxCount: 3,
       relationName: 'sceneImages',
       enableCrop: false,
       resize: {
@@ -112,6 +112,7 @@ export class EntityRecord extends EntityBase {
     ZovaRender.field('basic-file:formFieldFile', {
       fileScene: 'training-record:dossierFile',
       relationName: 'dossierFiles',
+      maxCount: 3,
     }),
     ZovaRender.cell('basic-file:file', { relationName: 'dossierFiles' }),
     v.array(v.tableIdentity()),
