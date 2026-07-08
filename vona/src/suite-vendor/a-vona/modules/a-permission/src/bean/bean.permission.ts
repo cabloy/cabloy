@@ -28,10 +28,14 @@ type TGuardMeta = Record<string, unknown>;
 @Bean()
 export class BeanPermission extends BeanBase {
   public async clearAllCaches(): Promise<void> {
-    const cachePermission = this.bean.summer.cache(
-      beanFullNameFromOnionName('a-permission:permission', 'summerCache'),
+    const cachePermissionUser = this.bean.summer.cache(
+      beanFullNameFromOnionName('a-permission:permissionUser', 'summerCache'),
     );
-    await cachePermission.clear();
+    const cachePermissionActionByRoles = this.bean.summer.cache(
+      beanFullNameFromOnionName('a-permission:permissionActionByRoles', 'summerCache'),
+    );
+    await cachePermissionUser.clear();
+    await cachePermissionActionByRoles.clear();
   }
 
   protected retrievePermissionsCacheKey(info: ICachingActionKeyInfo): string {
@@ -46,7 +50,10 @@ export class BeanPermission extends BeanBase {
     return `action:${resource}:${actionKey}:roles:${roleIdsKey}`;
   }
 
-  @Caching.get({ cacheName: 'a-permission:permission', cacheKeyFn: 'retrievePermissionsCacheKey' })
+  @Caching.get({
+    cacheName: 'a-permission:permissionUser',
+    cacheKeyFn: 'retrievePermissionsCacheKey',
+  })
   async retrievePermissions(resource: keyof IResourceRecord): Promise<IOpenapiPermissions> {
     return await this.scope.event.retrievePermissions.emit({ resource }, async () => {
       return await this.retrievePermissionsDefault(resource);
@@ -85,7 +92,7 @@ export class BeanPermission extends BeanBase {
   }
 
   @Caching.get({
-    cacheName: 'a-permission:permission',
+    cacheName: 'a-permission:permissionActionByRoles',
     cacheKeyFn: 'retrievePermissionActionCacheKey',
   })
   protected async retrievePermissionActionByRoles(

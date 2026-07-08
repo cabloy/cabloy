@@ -19,7 +19,7 @@ declare module 'vona-module-a-permission' {
 /** bean: end */
 /** bean: begin */
 import type { BeanPermission } from '../bean/bean.permission.ts';
-import 'vona';  
+import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGlobal {
     'permission': BeanPermission;
@@ -64,35 +64,50 @@ declare module 'vona-module-a-event' {
 }
 /** event: end */
 /** summerCache: begin */
-export * from '../bean/summerCache.permission.ts';
+export * from '../bean/summerCache.permissionActionByRoles.ts';
+export * from '../bean/summerCache.permissionUser.ts';
 
 import { type IDecoratorSummerCacheOptions } from 'vona-module-a-summer';
 declare module 'vona-module-a-summer' {
   
     export interface ISummerCacheRecord {
-      'a-permission:permission': IDecoratorSummerCacheOptions;
+      'a-permission:permissionActionByRoles': IDecoratorSummerCacheOptions;
+'a-permission:permissionUser': IDecoratorSummerCacheOptions;
     }
 
   
 }
 declare module 'vona-module-a-permission' {
   
-        export interface SummerCachePermission {
+        export interface SummerCachePermissionActionByRoles {
           /** @internal */
           get scope(): ScopeModuleAPermission;
         }
 
-          export interface SummerCachePermission {
-            get $beanFullName(): 'a-permission.summerCache.permission';
-            get $onionName(): 'a-permission:permission';
+          export interface SummerCachePermissionActionByRoles {
+            get $beanFullName(): 'a-permission.summerCache.permissionActionByRoles';
+            get $onionName(): 'a-permission:permissionActionByRoles';
+            get $onionOptions(): IDecoratorSummerCacheOptions;
+          }
+
+        export interface SummerCachePermissionUser {
+          /** @internal */
+          get scope(): ScopeModuleAPermission;
+        }
+
+          export interface SummerCachePermissionUser {
+            get $beanFullName(): 'a-permission.summerCache.permissionUser';
+            get $onionName(): 'a-permission:permissionUser';
             get $onionOptions(): IDecoratorSummerCacheOptions;
           } 
 }
 /** summerCache: end */
 /** summerCache: begin */
-import type { SummerCachePermission } from '../bean/summerCache.permission.ts';
+import type { SummerCachePermissionActionByRoles } from '../bean/summerCache.permissionActionByRoles.ts';
+import type { SummerCachePermissionUser } from '../bean/summerCache.permissionUser.ts';
 export interface IModuleSummerCache {
-  'permission': SummerCachePermission;
+  'permissionActionByRoles': SummerCachePermissionActionByRoles;
+'permissionUser': SummerCachePermissionUser;
 }
 /** summerCache: end */
 /** dto: begin */
