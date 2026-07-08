@@ -62,6 +62,13 @@ The resource-level method still assembles:
 
 but it delegates each action to a reusable action-level path.
 
+The cache boundary is also now explicit in two layers:
+
+- a user-scoped outer permission cache
+- a role-scoped action permission cache
+
+These use separate cache names and separate summerCache beans so capacity, TTL, and clearing strategy can be tuned independently.
+
 ### 3. Keep `public` / `activated` as a fast precheck
 
 Before running the guard chain, default permission lookup still performs a fast precheck for:
@@ -172,6 +179,7 @@ Rejected because:
 - default permission lookup is closer to real runtime authorization
 - permission logic is simpler and less duplicated
 - action-level caching better matches the new evaluation unit
+- user-scoped and role-scoped permission caches can now be tuned independently
 - built-in permission semantics are more role-centered
 
 ### Trade-off
