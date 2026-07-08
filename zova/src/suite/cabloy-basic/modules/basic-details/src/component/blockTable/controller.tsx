@@ -39,7 +39,7 @@ export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerB
         <ZTable<TData>
           tableRef={ref => {
             this.tableRef = ref;
-            $$details.tableRef = ref as unknown as BeanControllerTableBase<{}>;
+            $$details.setTableRef(ref as unknown as BeanControllerTableBase<{}>);
           }}
           data={data}
           schema={$$details.schemaRow}

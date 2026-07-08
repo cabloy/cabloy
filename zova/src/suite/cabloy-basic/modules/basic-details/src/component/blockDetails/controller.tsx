@@ -35,7 +35,7 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
-  tableRef: BeanControllerTableBase<TData>;
+  tableRef: BeanControllerTableBase<TData> | undefined;
 
   jsxZova: ZovaJsx;
   jsxCelScope: IDetailsScope;
@@ -68,6 +68,10 @@ export class ControllerBlockDetails<TData extends {} = {}> extends BeanControlle
 
   get schemaForm() {
     return this.$props.schemaForm!;
+  }
+
+  public async setTableRef(tableRef: BeanControllerTableBase<TData> | undefined) {
+    this.tableRef = tableRef;
   }
 
   private _prepareJsx() {

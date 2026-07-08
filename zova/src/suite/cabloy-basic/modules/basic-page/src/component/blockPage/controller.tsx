@@ -38,7 +38,9 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
-  tableRef: BeanControllerTableBase<TData>;
+  tableRef: BeanControllerTableBase<TData> | undefined;
+  private _tableMetaRefreshPending = false;
+  private _tableMetaRefreshTask: Promise<void> | undefined;
 
   jsxZova: ZovaJsx;
   jsxCelScope: IPageScope;
@@ -74,7 +76,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       () => this.permissions,
       async (newValue, oldValue) => {
         if (deepEqual(newValue, oldValue)) return;
-        await this.tableRef?.refreshMeta();
+        await this._requestTableMetaRefresh();
       },
     );
   }
@@ -121,6 +123,44 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
 
   onFilter(data: any) {
     this.queryFilterData = data;
+  }
+
+  public setTableRef(tableRef: BeanControllerTableBase<TData> | undefined) {
+    this.tableRef = tableRef;
+    if (!tableRef || !this._tableMetaRefreshPending) return;
+    this._scheduleTableMetaRefresh();
+  }
+
+  private _scheduleTableMetaRefresh() {
+    void this._flushTableMetaRefresh().catch(err => {
+      this.$errorHandler(err, 'ControllerBlockPage.setTableRef');
+    });
+  }
+
+  private async _requestTableMetaRefresh() {
+    this._tableMetaRefreshPending = true;
+    await this._flushTableMetaRefresh();
+  }
+
+  private async _flushTableMetaRefresh() {
+    if (this._tableMetaRefreshTask) return await this._tableMetaRefreshTask;
+    const task = (async () => {
+      while (this._tableMetaRefreshPending) {
+        const tableRef = this.tableRef;
+        if (!tableRef) return;
+        this._tableMetaRefreshPending = false;
+        await tableRef.refreshMeta();
+      }
+    })();
+    this._tableMetaRefreshTask = task;
+    try {
+      await task;
+    } finally {
+      this._tableMetaRefreshTask = undefined;
+      if (this._tableMetaRefreshPending && this.tableRef) {
+        this._scheduleTableMetaRefresh();
+      }
+    }
   }
 
   private _prepareJsx() {
