@@ -9,6 +9,7 @@ import { classes } from 'typestyle';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
+import { $QueryAutoLoad } from 'zova-module-a-model';
 
 import type { IFilePreviewItem } from '../../types/file.js';
 
@@ -277,10 +278,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   }
 
   private async _waitForUploadPolicy(options?: IResourceFormFieldFileOptions) {
-    const query = this._getUploadPolicyQuery(options);
-    if (!query || query.data !== undefined) return query?.data;
-    await query.suspense();
-    return query.data;
+    await $QueryAutoLoad(() => this._getUploadPolicyQuery(options));
   }
 
   private _getEffectiveMultiple(
