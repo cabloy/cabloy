@@ -66,16 +66,29 @@ export class BeanPermission extends BeanBase {
     );
     const permissionsActions: IOpenapiPermissionModeActionActions = {};
     for (const route of actionRoutes) {
-      permissionsActions[route.action] = await this._getPermissionOfAction(resource, route);
+      permissionsActions[route.action] = await this.retrievePermissionAction(
+        resource,
+        route.action,
+      );
     }
     return { actions: permissionsActions };
+  }
+
+  public async retrievePermissionAction(
+    resource: keyof IResourceRecord,
+    actionKey: string,
+  ): Promise<boolean> {
+    const route = this._getControllerActionRoute(resource, actionKey);
+    if (!route?.route?.meta) return false;
+    if (!this._matchPassportMeta(route.route.meta)) return false;
+    return await this.retrievePermissionActionByRoles(resource, actionKey);
   }
 
   @Caching.get({
     cacheName: 'a-permission:permission',
     cacheKeyFn: 'retrievePermissionActionCacheKey',
   })
-  protected async retrievePermissionAction(
+  protected async retrievePermissionActionByRoles(
     resource: keyof IResourceRecord,
     actionKey: string,
   ): Promise<boolean> {
@@ -103,15 +116,6 @@ export class BeanPermission extends BeanBase {
     actionKey: string,
   ): ContextRoute | undefined {
     return this._getControllerRoutes(resource).find(route => route.action === actionKey);
-  }
-
-  private async _getPermissionOfAction(
-    resource: keyof IResourceRecord,
-    route: ContextRoute,
-  ): Promise<boolean> {
-    if (!route.route?.meta) return false;
-    if (!this._matchPassportMeta(route.route.meta)) return false;
-    return await this.retrievePermissionAction(resource, route.action);
   }
 
   private _extractCurrentRoleIdsSorted(): string[] {
