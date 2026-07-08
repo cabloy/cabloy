@@ -60,8 +60,7 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
     const hasDownloadableItem = downloadItems.some(item => !!item.downloadUrl);
     if (!hasDownloadableItem) return contentNode;
 
-    const placeholder = this._resolveSelectPlaceholder(summaryLabel, relationItems.length);
-    return this._renderDownloadSelect(renderContext, downloadItems, contentNode, placeholder);
+    return this._renderDownloadSelect(renderContext, downloadItems, contentNode);
   }
 
   private _renderSummaryContent(label: unknown, count: number) {
@@ -99,9 +98,9 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
     renderContext: IJsxRenderContextTableCell,
     items: ITableCellFileDownloadItem[],
     contentNode: unknown,
-    placeholder: string,
   ) {
     const fieldTitle = renderContext.$celScope.property?.title ?? renderContext.$celScope.name;
+    const placeholder = this.scope.locale.DownloadFile();
     return (
       <span class="relative inline-flex min-w-0 max-w-full items-center">
         <span class="inline-flex min-w-0 max-w-full items-center">{contentNode}</span>
@@ -152,10 +151,6 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
     return (
       (item.filename ?? this._stringifyFallbackValue(fallbackValue)) || this._formatFileId(item)
     );
-  }
-
-  private _resolveSelectPlaceholder(label: string, count: number): string {
-    return `${label} +${count - 1}`;
   }
 
   private _formatFileLabel(item: IFilePreviewItem): string {
