@@ -70,3 +70,4 @@ Those concerns should live elsewhere.
 - [Vona/Zova Install-Time Type Patch](./architecture/vona-zova-install-time-type-patch.md)
 - [SSR Route Typing and Zova Rest Declaration Visibility](./architecture/ssr-route-typing-zova-rest-declaration-visibility.md)
 - [Anonymous Token Route Pattern](./architecture/anonymous-token-route-pattern.md)
+- [AI Enablement Architecture](./architecture/ai-enablement.md)

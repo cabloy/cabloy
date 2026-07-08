@@ -50,6 +50,7 @@ const OVERWRITE_DIRS: string[] = [
 const MERGE_DIRS: string[] = [
   // Claude project assets
   '.claude/commands',
+  '.claude/hooks',
   '.claude/skills',
   // Vona Claude project assets
   'vona/.claude/commands',
@@ -67,6 +68,7 @@ const BLACKLIST_DIRS: string[] = [
 const WHITELIST_FILES: string[] = [
   // root
   'CLAUDE.md',
+  '.claude/settings.json',
   'tsconfig.json',
   'tsconfig.base.json',
   'tsconfig.base.esm.json',

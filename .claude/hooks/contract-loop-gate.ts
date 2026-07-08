@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, statSync, writeFileSync, existsSync } from 'node:fs';
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { spawnSync, type SpawnSyncReturns } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
@@ -19,6 +19,19 @@ interface AnalysisResult {
 interface SyncStateEntry {
   fingerprint: string;
   timestamp: number;
+}
+
+interface CommandPlan {
+  args: string[];
+  display: string;
+}
+
+interface EditionConfig {
+  id: 'basic' | 'start';
+  label: string;
+  reverseVonaContentMarkers: readonly string[];
+  reverseAutoSyncCommands: readonly CommandPlan[];
+  reverseWebBuildCommand: string;
 }
 
 type SyncState = Record<string, SyncStateEntry>;
@@ -45,8 +58,7 @@ const FORWARD_PATH_MARKERS = ['/controller/', '/dto/', '/entity/'];
 
 const FORWARD_CONTENT_MARKERS = ['@Web.', '@Api.field', '@Api.body', 'v.openapi(', '@Dto<'];
 
-const REVERSE_VONA_CONTENT_MARKERS = [
-  'zova-rest-cabloy-basic-admin',
+const SHARED_REVERSE_VONA_CONTENT_MARKERS = [
   'ZovaRender.',
   'tableActionRow(',
   'tableActionBulk(',
@@ -64,6 +76,35 @@ const REVERSE_ZOVA_CONTENT_MARKERS = [
   '@Component<',
 ];
 
+const REVERSE_AUTO_SYNC_COMMANDS: readonly CommandPlan[] = [
+  { args: ['run', 'build:zova:admin'], display: 'npm run build:zova:admin' },
+  { args: ['run', 'deps:vona'], display: 'npm run deps:vona' },
+];
+
+const EDITION_CONFIGS: Record<'basic' | 'start', EditionConfig> = {
+  basic: {
+    id: 'basic',
+    label: 'Cabloy Basic',
+    reverseVonaContentMarkers: ['zova-rest-cabloy-basic-admin'],
+    reverseAutoSyncCommands: REVERSE_AUTO_SYNC_COMMANDS,
+    reverseWebBuildCommand: 'npm run build:zova:web',
+  },
+  start: {
+    id: 'start',
+    label: 'Cabloy Start',
+    reverseVonaContentMarkers: ['zova-rest-cabloy-start-admin'],
+    reverseAutoSyncCommands: REVERSE_AUTO_SYNC_COMMANDS,
+    reverseWebBuildCommand: 'npm run build:zova:web',
+  },
+};
+
+const ACTIVE_EDITION = resolveEdition();
+const FALLBACK_REVERSE_VONA_CONTENT_MARKERS = [
+  ...SHARED_REVERSE_VONA_CONTENT_MARKERS,
+  ...EDITION_CONFIGS.basic.reverseVonaContentMarkers,
+  ...EDITION_CONFIGS.start.reverseVonaContentMarkers,
+];
+
 function toPosixPath(value: string): string {
   return value.split(path.sep).join('/');
 }
@@ -76,6 +117,21 @@ function normalizePath(value?: string): string | null {
   } catch {
     return null;
   }
+}
+
+function resolveEdition(): EditionConfig | null {
+  if (existsSync(path.resolve(ROOT, '__CABLOY_BASIC__'))) {
+    return EDITION_CONFIGS.basic;
+  }
+  if (existsSync(path.resolve(ROOT, '__CABLOY_START__'))) {
+    return EDITION_CONFIGS.start;
+  }
+  return null;
+}
+
+function getReverseVonaContentMarkers(edition: EditionConfig | null): readonly string[] {
+  if (!edition) return FALLBACK_REVERSE_VONA_CONTENT_MARKERS;
+  return [...SHARED_REVERSE_VONA_CONTENT_MARKERS, ...edition.reverseVonaContentMarkers];
 }
 
 function isCodeFile(filePath: string): boolean {
@@ -98,8 +154,12 @@ function detectForward(filePath: string, content: string): string | null {
   return null;
 }
 
-function detectReverse(filePath: string, content: string): string | null {
-  if (filePath.includes('/vona/src/') && containsAny(content, REVERSE_VONA_CONTENT_MARKERS)) {
+function detectReverse(
+  filePath: string,
+  content: string,
+  reverseVonaContentMarkers: readonly string[],
+): string | null {
+  if (filePath.includes('/vona/src/') && containsAny(content, reverseVonaContentMarkers)) {
     return 'Vona code is consuming frontend metadata or render resources.';
   }
   if (
@@ -112,10 +172,10 @@ function detectReverse(filePath: string, content: string): string | null {
   return null;
 }
 
-function analyze(filePath: string, content: string): AnalysisResult {
+function analyze(filePath: string, content: string, edition: EditionConfig | null): AnalysisResult {
   return {
     forwardReason: detectForward(filePath, content),
-    reverseReason: detectReverse(filePath, content),
+    reverseReason: detectReverse(filePath, content, getReverseVonaContentMarkers(edition)),
   };
 }
 
@@ -205,22 +265,38 @@ function summarizeProcess(result: SpawnSyncReturns<string>): string {
   return `exit ${exitCode}: ${tail}`;
 }
 
-function autoSyncReverse(filePath: string): readonly [boolean, string] {
-  const buildResult = runNpm(['run', 'build:zova:admin']);
-  if (buildResult.status !== 0) {
-    return [false, `Auto-sync failed during \`npm run build:zova:admin\`: ${summarizeProcess(buildResult)}`];
+function autoSyncReverse(filePath: string, edition: EditionConfig | null): readonly [boolean, string] {
+  if (!edition) {
+    return [
+      false,
+      'Auto-sync did not run because the active Cabloy edition marker could not be resolved for this repo.',
+    ];
   }
 
-  const depsResult = runNpm(['run', 'deps:vona']);
-  if (depsResult.status !== 0) {
-    return [false, `Auto-sync failed during \`npm run deps:vona\`: ${summarizeProcess(depsResult)}`];
+  for (const command of edition.reverseAutoSyncCommands) {
+    const result = runNpm(command.args);
+    if (result.status !== 0) {
+      return [false, `Auto-sync failed during \`${command.display}\`: ${summarizeProcess(result)}`];
+    }
   }
 
   markAutoSync(filePath);
-  return [true, 'Auto-sync ran `npm run build:zova:admin` and `npm run deps:vona` for this reverse-chain edit.'];
+  const commands = edition.reverseAutoSyncCommands.map(command => `\`${command.display}\``).join(' and ');
+  return [true, `Auto-sync ran ${commands} for this ${edition.label} reverse-chain edit.`];
 }
 
-function buildMessages(filePath: string, result: AnalysisResult): string {
+function buildReverseGuidance(edition: EditionConfig | null): string {
+  if (!edition) {
+    return 'If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, resolve the active Cabloy edition marker before choosing the relevant Zova build and generated-output path, and then run `npm run deps:vona`.';
+  }
+
+  const autoSyncCommands = edition.reverseAutoSyncCommands
+    .map(command => `\`${command.display}\``)
+    .join(', then ');
+  return `If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, run ${autoSyncCommands}, and also run \`${edition.reverseWebBuildCommand}\` when the Web flavor is affected in this ${edition.label} repo.`;
+}
+
+function buildMessages(filePath: string, result: AnalysisResult, edition: EditionConfig | null): string {
   const messages = ["Contract-loop gate: this change may affect Cabloy's bidirectional contract loop."];
 
   if (result.forwardReason) {
@@ -233,14 +309,12 @@ function buildMessages(filePath: string, result: AnalysisResult): string {
   }
 
   if (result.reverseReason) {
-    messages.push(
-      `Reverse chain: ${result.reverseReason} If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, run the relevant Zova build first, and then run \`npm run deps:vona\` for the Cabloy Basic path. Use \`npm run build:zova:admin\` for Admin changes, and also run \`npm run build:zova:web\` when the Web flavor is affected.`,
-    );
+    messages.push(`Reverse chain: ${result.reverseReason} ${buildReverseGuidance(edition)}`);
     if (isHighConfidenceReverseSource(filePath)) {
       if (shouldSkipAutoSync(filePath)) {
         messages.push('Auto-sync skipped because the same reverse-source edit was already synced recently in this repo.');
       } else {
-        const [ok, detail] = autoSyncReverse(filePath);
+        const [ok, detail] = autoSyncReverse(filePath, edition);
         messages.push(detail);
         if (!ok) {
           messages.push(
@@ -254,9 +328,6 @@ function buildMessages(filePath: string, result: AnalysisResult): string {
         'Auto-sync did not run because this reverse-chain signal came from the consumer side rather than a high-confidence frontend source edit.',
       );
     }
-    messages.push(
-      'For Cabloy Start, apply the same reverse-chain logic but resolve the Start-specific flavor names and generated-output paths from the active Start repo before executing edition-specific steps.',
-    );
   }
 
   return messages.join(' ');
@@ -277,10 +348,10 @@ function runClaudeHook(): number {
   const content = readText(filePath);
   if (content === null) return 0;
 
-  const result = analyze(filePath, content);
+  const result = analyze(filePath, content, ACTIVE_EDITION);
   if (!hasSignal(result)) return 0;
 
-  const message = buildMessages(filePath, result);
+  const message = buildMessages(filePath, result, ACTIVE_EDITION);
   console.log(
     JSON.stringify({
       hookSpecificOutput: {
