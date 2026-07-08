@@ -22,7 +22,7 @@ interface SyncStateEntry {
 }
 
 interface CommandPlan {
-  args: string[];
+  args: readonly string[];
   display: string;
 }
 
@@ -33,6 +33,12 @@ interface EditionConfig {
   reverseAutoSyncCommands: readonly CommandPlan[];
   reverseWebBuildCommand: string;
 }
+
+type ReverseSyncOutcome =
+  | { kind: 'not-applicable'; message: string }
+  | { kind: 'skipped'; message: string }
+  | { kind: 'success'; message: string }
+  | { kind: 'failure'; message: string };
 
 type SyncState = Record<string, SyncStateEntry>;
 
@@ -62,8 +68,6 @@ const SHARED_REVERSE_VONA_CONTENT_MARKERS = [
   'ZovaRender.',
   'tableActionRow(',
   'tableActionBulk(',
-  'ZovaRender.field(',
-  'ZovaRender.cell(',
 ];
 
 const REVERSE_ZOVA_PATH_MARKERS = ['/src/bean/', '/src/component/', '/src/.metadata/'];
@@ -240,9 +244,9 @@ function markAutoSync(filePath: string): void {
   saveState(state);
 }
 
-function runNpm(args: string[]): SpawnSyncReturns<string> {
+function runNpm(args: readonly string[]): SpawnSyncReturns<string> {
   const command = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-  return spawnSync(command, args, {
+  return spawnSync(command, [...args], {
     cwd: ROOT,
     encoding: 'utf8',
   });
@@ -265,24 +269,23 @@ function summarizeProcess(result: SpawnSyncReturns<string>): string {
   return `exit ${exitCode}: ${tail}`;
 }
 
-function autoSyncReverse(filePath: string, edition: EditionConfig | null): readonly [boolean, string] {
-  if (!edition) {
-    return [
-      false,
-      'Auto-sync did not run because the active Cabloy edition marker could not be resolved for this repo.',
-    ];
-  }
-
+function autoSyncReverse(filePath: string, edition: EditionConfig): ReverseSyncOutcome {
   for (const command of edition.reverseAutoSyncCommands) {
     const result = runNpm(command.args);
     if (result.status !== 0) {
-      return [false, `Auto-sync failed during \`${command.display}\`: ${summarizeProcess(result)}`];
+      return {
+        kind: 'failure',
+        message: `Auto-sync failed during \`${command.display}\`: ${summarizeProcess(result)}`,
+      };
     }
   }
 
   markAutoSync(filePath);
   const commands = edition.reverseAutoSyncCommands.map(command => `\`${command.display}\``).join(' and ');
-  return [true, `Auto-sync ran ${commands} for this ${edition.label} reverse-chain edit.`];
+  return {
+    kind: 'success',
+    message: `Auto-sync ran ${commands} for this ${edition.label} reverse-chain edit.`,
+  };
 }
 
 function buildReverseGuidance(edition: EditionConfig | null): string {
@@ -296,7 +299,49 @@ function buildReverseGuidance(edition: EditionConfig | null): string {
   return `If backend tooling or backend metadata will consume this handoff, refresh generated metadata when applicable, run ${autoSyncCommands}, and also run \`${edition.reverseWebBuildCommand}\` when the Web flavor is affected in this ${edition.label} repo.`;
 }
 
-function buildMessages(filePath: string, result: AnalysisResult, edition: EditionConfig | null): string {
+function resolveReverseSyncOutcome(
+  filePath: string,
+  result: AnalysisResult,
+  edition: EditionConfig | null,
+): ReverseSyncOutcome {
+  if (!result.reverseReason) {
+    return {
+      kind: 'not-applicable',
+      message: '',
+    };
+  }
+
+  if (!isHighConfidenceReverseSource(filePath)) {
+    return {
+      kind: 'not-applicable',
+      message:
+        'Auto-sync did not run because this reverse-chain signal came from the consumer side rather than a high-confidence frontend source edit.',
+    };
+  }
+
+  if (shouldSkipAutoSync(filePath)) {
+    return {
+      kind: 'skipped',
+      message: 'Auto-sync skipped because the same reverse-source edit was already synced recently in this repo.',
+    };
+  }
+
+  if (!edition) {
+    return {
+      kind: 'not-applicable',
+      message:
+        'Auto-sync did not run because the active Cabloy edition marker could not be resolved for this repo.',
+    };
+  }
+
+  return autoSyncReverse(filePath, edition);
+}
+
+function buildMessages(
+  result: AnalysisResult,
+  edition: EditionConfig | null,
+  reverseSyncOutcome: ReverseSyncOutcome,
+): string {
   const messages = ["Contract-loop gate: this change may affect Cabloy's bidirectional contract loop."];
 
   if (result.forwardReason) {
@@ -310,22 +355,12 @@ function buildMessages(filePath: string, result: AnalysisResult, edition: Editio
 
   if (result.reverseReason) {
     messages.push(`Reverse chain: ${result.reverseReason} ${buildReverseGuidance(edition)}`);
-    if (isHighConfidenceReverseSource(filePath)) {
-      if (shouldSkipAutoSync(filePath)) {
-        messages.push('Auto-sync skipped because the same reverse-source edit was already synced recently in this repo.');
-      } else {
-        const [ok, detail] = autoSyncReverse(filePath, edition);
-        messages.push(detail);
-        if (!ok) {
-          messages.push(
-            'Please review the failure before continuing. If generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before making more source edits.',
-          );
-          return messages.join(' ');
-        }
-      }
-    } else {
+    if (reverseSyncOutcome.message) {
+      messages.push(reverseSyncOutcome.message);
+    }
+    if (reverseSyncOutcome.kind === 'failure') {
       messages.push(
-        'Auto-sync did not run because this reverse-chain signal came from the consumer side rather than a high-confidence frontend source edit.',
+        'Please review the failure before continuing. If generated artifacts already contain the expected changes but consumers still behave stale, suspect local dependency drift before making more source edits.',
       );
     }
   }
@@ -351,7 +386,8 @@ function runClaudeHook(): number {
   const result = analyze(filePath, content, ACTIVE_EDITION);
   if (!hasSignal(result)) return 0;
 
-  const message = buildMessages(filePath, result, ACTIVE_EDITION);
+  const reverseSyncOutcome = resolveReverseSyncOutcome(filePath, result, ACTIVE_EDITION);
+  const message = buildMessages(result, ACTIVE_EDITION, reverseSyncOutcome);
   console.log(
     JSON.stringify({
       hookSpecificOutput: {
