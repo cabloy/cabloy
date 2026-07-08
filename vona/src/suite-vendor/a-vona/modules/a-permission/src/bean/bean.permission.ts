@@ -4,23 +4,19 @@ import type {
   IOpenapiPermissions,
   IResourceRecord,
 } from 'vona-module-a-openapi';
-import type { IGuardOptionsPassport, IGuardOptionsRoleName } from 'vona-module-a-user';
-import type { ContextRouteMetadata, IRecordResourceNameToRoutePathItem } from 'vona-module-a-web';
+import type { IGuardOptionsPassport } from 'vona-module-a-user';
+import type { ContextRoute, IRecordResourceNameToRoutePathItem } from 'vona-module-a-web';
 
-import { appMetadata, appResource, BeanBase, beanFullNameFromOnionName } from 'vona';
+import { appResource, BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import { Caching } from 'vona-module-a-caching';
-import { SymbolUseOnionOptionsRouteReal } from 'vona-module-a-onion';
-import { recordResourceNameToRoutePath } from 'vona-module-a-web';
+import {
+  composeGuards,
+  getCacheControllerRoutes,
+  recordResourceNameToRoutePath,
+} from 'vona-module-a-web';
 
 const BeanFullNameGuardPassport = beanFullNameFromOnionName('a-user:passport', 'guard');
-const BeanFullNameGuardRoleName = beanFullNameFromOnionName('a-user:roleName', 'guard');
-const BeanFullNameGuardUserName = beanFullNameFromOnionName('a-user:userName', 'guard');
-const BeanFullNamesGuardSupported = new Set<string>([
-  BeanFullNameGuardPassport,
-  BeanFullNameGuardRoleName,
-  BeanFullNameGuardUserName,
-]);
 const GuardOptionsPassportDefault: IGuardOptionsPassport = {
   public: false,
   activated: true,
@@ -44,8 +40,10 @@ export class BeanPermission extends BeanBase {
     return `user:${resource}_${userId}`;
   }
 
-  protected retrievePermissionsDefaultCacheKey(info: ICachingActionKeyInfo): string {
-    return `default:${this._buildPermissionProfileKey(info.args[0] as never)}`;
+  protected retrievePermissionActionCacheKey(info: ICachingActionKeyInfo): string {
+    const [resource, actionKey] = info.args as [keyof IResourceRecord, string];
+    const roleIdsKey = this._extractCurrentRoleIdsSorted().join(',') || 'none';
+    return `action:${resource}:${actionKey}:roles:${roleIdsKey}`;
   }
 
   @Caching.get({ cacheName: 'a-permission:permission', cacheKeyFn: 'retrievePermissionsCacheKey' })
@@ -55,10 +53,6 @@ export class BeanPermission extends BeanBase {
     });
   }
 
-  @Caching.get({
-    cacheName: 'a-permission:permission',
-    cacheKeyFn: 'retrievePermissionsDefaultCacheKey',
-  })
   protected async retrievePermissionsDefault(
     resource: keyof IResourceRecord,
   ): Promise<IOpenapiPermissions> {
@@ -66,67 +60,68 @@ export class BeanPermission extends BeanBase {
   }
 
   async getPermissionsDefault(resource: keyof IResourceRecord): Promise<IOpenapiPermissions> {
-    const routePathInfo: IRecordResourceNameToRoutePathItem =
-      recordResourceNameToRoutePath[resource];
-    if (!routePathInfo) throw new Error(`not found routePath of resource: ${resource}`);
-    const controller = routePathInfo.controller;
-    if (!appResource.getBean(controller)) throw new Error('invalid controller');
-    const descs = Object.getOwnPropertyDescriptors(controller.prototype);
     const actionsIgnore = this.scope.config.permission.actionsIgnore;
-    const actionKeys = Object.keys(descs).filter(
-      actionKey => actionKey !== 'constructor' && !actionsIgnore.includes(actionKey),
+    const actionRoutes = this._getControllerRoutes(resource).filter(
+      route => !actionsIgnore.includes(route.action),
     );
     const permissionsActions: IOpenapiPermissionModeActionActions = {};
-    for (const actionKey of actionKeys) {
-      const desc = descs[actionKey];
-      if (!desc.value || typeof desc.value !== 'function') continue;
-      const routeReal: ContextRouteMetadata | undefined = appMetadata.getMetadata(
-        SymbolUseOnionOptionsRouteReal,
-        controller.prototype,
-        actionKey,
-      );
-      permissionsActions[actionKey] = this._getPermissionOfActionByMetadata(routeReal);
+    for (const route of actionRoutes) {
+      permissionsActions[route.action] = await this._getPermissionOfAction(resource, route);
     }
     return { actions: permissionsActions };
   }
 
-  private _buildPermissionProfileKey(resource: keyof IResourceRecord): string {
-    if (!this.bean.passport.isAuthenticated) return `${resource}__anon`;
-    const activated = this.bean.passport.isActivated ? 1 : 0;
-    const roleNames = this._extractCurrentRoleNames();
-    return `${resource}__auth__act:${activated}__roles:${roleNames.join(',')}`;
+  @Caching.get({
+    cacheName: 'a-permission:permission',
+    cacheKeyFn: 'retrievePermissionActionCacheKey',
+  })
+  protected async retrievePermissionAction(
+    resource: keyof IResourceRecord,
+    actionKey: string,
+  ): Promise<boolean> {
+    const route = this._getControllerActionRoute(resource, actionKey);
+    if (!route?.route?.meta) return false;
+    return await this._evaluatePermissionAction(route);
   }
 
-  private _extractCurrentRoleNames(): string[] {
-    const roleNames = this.bean.passport.currentRoles?.map(item => item.name) ?? [];
-    return Array.from(new Set(roleNames)).sort();
+  private _getRoutePathInfo(resource: keyof IResourceRecord): IRecordResourceNameToRoutePathItem {
+    const routePathInfo = recordResourceNameToRoutePath[resource];
+    if (!routePathInfo) throw new Error(`not found routePath of resource: ${resource}`);
+    return routePathInfo;
   }
 
-  private _getPermissionOfActionByMetadata(routeReal: ContextRouteMetadata | undefined): boolean {
-    if (!routeReal?.meta) return false;
-    return this._evaluatePassportGuardsStatically(routeReal.meta);
+  private _getControllerRoutes(resource: keyof IResourceRecord): ContextRoute[] {
+    const routePathInfo = this._getRoutePathInfo(resource);
+    const controller = routePathInfo.controller;
+    const beanOptions = appResource.getBean(controller);
+    if (!beanOptions) throw new Error('invalid controller');
+    return getCacheControllerRoutes(this.app)[beanOptions.beanFullName] ?? [];
   }
 
-  private _evaluatePassportGuardsStatically(meta: TGuardMeta): boolean {
-    if (this._hasUnknownGuard(meta)) return false;
-    if (this._hasDynamicUserNameGuard(meta)) return false;
+  private _getControllerActionRoute(
+    resource: keyof IResourceRecord,
+    actionKey: string,
+  ): ContextRoute | undefined {
+    return this._getControllerRoutes(resource).find(route => route.action === actionKey);
+  }
+
+  private async _getPermissionOfAction(
+    resource: keyof IResourceRecord,
+    route: ContextRoute,
+  ): Promise<boolean> {
+    if (!route.route?.meta) return false;
+    if (!this._matchPassportMeta(route.route.meta)) return false;
+    return await this.retrievePermissionAction(resource, route.action);
+  }
+
+  private _extractCurrentRoleIdsSorted(): string[] {
+    const roleIds = this.bean.passport.currentRoles?.map(item => String(item.id)) ?? [];
+    return Array.from(new Set(roleIds)).sort();
+  }
+
+  private _matchPassportMeta(meta: TGuardMeta): boolean {
     const passportOptions = this._getPassportOptions(meta);
-    if (!this._matchPassportOptions(passportOptions)) return false;
-    const roleNameOptions = meta[BeanFullNameGuardRoleName] as
-      | Partial<IGuardOptionsRoleName>
-      | undefined;
-    if (!this._matchRoleNameOptions(roleNameOptions)) return false;
-    return true;
-  }
-
-  private _hasUnknownGuard(meta: TGuardMeta): boolean {
-    return Object.keys(meta).some(
-      key => key.includes('.guard.') && !BeanFullNamesGuardSupported.has(key),
-    );
-  }
-
-  private _hasDynamicUserNameGuard(meta: TGuardMeta): boolean {
-    return BeanFullNameGuardUserName in meta;
+    return this._matchPassportOptions(passportOptions);
   }
 
   private _getPassportOptions(meta: TGuardMeta): IGuardOptionsPassport {
@@ -147,13 +142,21 @@ export class BeanPermission extends BeanBase {
     return true;
   }
 
-  private _matchRoleNameOptions(options: Partial<IGuardOptionsRoleName> | undefined): boolean {
-    if (!options) return true;
-    if (!options.name) return false;
-    if (options.passWhenMatched === false) return false;
-    if (options.rejectWhenDismatched === false) return false;
-    const roleNamesCurrent = this._extractCurrentRoleNames();
-    const roleNamesRequired = Array.isArray(options.name) ? options.name : [options.name];
-    return roleNamesCurrent.some(roleName => roleNamesRequired.includes(roleName as any));
+  private async _evaluatePermissionAction(route: ContextRoute): Promise<boolean> {
+    const ctx = this.ctx as any;
+    const routePrevious = ctx.route;
+    const innerAccessPrevious = ctx.innerAccess;
+    try {
+      ctx.route = route;
+      ctx.innerAccess = false;
+      const result = await composeGuards(this.app, route)(this.ctx);
+      return result !== false;
+    } catch (err: any) {
+      if ([401, 403].includes(err?.code)) return false;
+      throw err;
+    } finally {
+      ctx.route = routePrevious;
+      ctx.innerAccess = innerAccessPrevious;
+    }
   }
 }

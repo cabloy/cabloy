@@ -2,10 +2,8 @@
 /** guard: begin */
 export * from '../bean/guard.passport.ts';
 export * from '../bean/guard.roleName.ts';
-export * from '../bean/guard.userName.ts';
 import type { IGuardOptionsPassport } from '../bean/guard.passport.ts';
 import type { IGuardOptionsRoleName } from '../bean/guard.roleName.ts';
-import type { IGuardOptionsUserName } from '../bean/guard.userName.ts';
 import 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
   
@@ -16,7 +14,6 @@ declare module 'vona-module-a-aspect' {
   
 export interface IGuardRecordLocal {
   'a-user:roleName': IGuardOptionsRoleName;
-'a-user:userName': IGuardOptionsUserName;
 }
 
 }
@@ -44,16 +41,6 @@ declare module 'vona-module-a-user' {
             get $onionOptions(): IGuardOptionsRoleName;
           }
 
-        export interface GuardUserName {
-          /** @internal */
-          get scope(): ScopeModuleAUser;
-        }
-
-          export interface GuardUserName {
-            get $beanFullName(): 'a-user.guard.userName';
-            get $onionName(): 'a-user:userName';
-            get $onionOptions(): IGuardOptionsUserName;
-          } 
 }
 /** guard: end */
 /** bean: begin */

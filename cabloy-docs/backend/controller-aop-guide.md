@@ -93,7 +93,6 @@ Typical jobs include:
 ```typescript
 @Passport.public()
 @Passport.activated(false)
-@Passport.userName({ name: 'admin' })
 @Passport.roleName({ name: 'admin' })
 @Passport.admin()
 ```

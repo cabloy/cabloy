@@ -2077,10 +2077,11 @@ declare module 'vona-module-a-web' {
 '/test/vona/dtoTest/getUserStatsGroup': undefined;
 '/test/vona/dtoTest/getCategoryTree': undefined;
 '/test/vona/dtoTest/getCategoryTree2': undefined;
-'/test/vona/guardPassport/testUserName': undefined;
-'/test/vona/guardPassport/testUserNameFail': undefined;
 '/test/vona/guardPassport/testRoleName': undefined;
 '/test/vona/guardPassport/testRoleNameFail': undefined;
+'/test/vona/guardPassport/testRoleNameControllerShouldNotExecute': undefined;
+'/test/vona/guardPassport/testPublic': undefined;
+'/test/vona/guardPassport/testActivatedFalse': undefined;
 '/': undefined;
 '/test/vona/onion/echo3/:userId': undefined;
 '/test/vona/onion/echo5': undefined;

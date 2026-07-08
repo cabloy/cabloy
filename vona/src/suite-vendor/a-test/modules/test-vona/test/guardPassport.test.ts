@@ -6,30 +6,6 @@ import { app } from 'vona-mock';
 const ResourceGuardPassport = 'test-vona:guardPassport';
 
 describe('guardPassport.test.ts', () => {
-  it('action:guardPassport:userName', async () => {
-    await app.bean.executor.mockCtx(async () => {
-      await app.bean.passport.signinMock();
-      const res = await app.bean.executor.performAction(
-        'get',
-        '/test/vona/guardPassport/testUserName',
-        {
-          innerAccess: false,
-        },
-      );
-      assert.equal(res, undefined);
-      const [_, err] = await catchError(() => {
-        return app.bean.executor.performAction('get', '/test/vona/guardPassport/testUserNameFail', {
-          innerAccess: false,
-        });
-      });
-      assert.equal(err?.code, 403);
-      const permissions = await app.bean.permission.getPermissionsDefault(ResourceGuardPassport);
-      assert.equal(permissions?.actions?.testUserName, false);
-      assert.equal(permissions?.actions?.testUserNameFail, false);
-      await app.bean.passport.signout();
-    });
-  });
-
   it('action:guardPassport:roleName', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();
@@ -50,22 +26,61 @@ describe('guardPassport.test.ts', () => {
       const permissions = await app.bean.permission.getPermissionsDefault(ResourceGuardPassport);
       assert.equal(permissions?.actions?.testRoleName, true);
       assert.equal(permissions?.actions?.testRoleNameFail, false);
+      assert.equal(permissions?.actions?.testRoleNameControllerShouldNotExecute, true);
       await app.bean.passport.signout();
     });
   });
 
-  it('action:guardPassport:cacheKeyByRoleProfile', async () => {
+  it('action:guardPassport:public', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const cacheKeyAnonymous = (app.bean.permission as any).retrievePermissionsDefaultCacheKey({
-        args: [ResourceGuardPassport],
+      const permissions = await app.bean.permission.getPermissionsDefault(ResourceGuardPassport);
+      assert.equal(permissions?.actions?.testPublic, true);
+    });
+  });
+
+  it('action:guardPassport:activatedFalse', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const user = await app.bean.user.findOneByName('admin');
+      assert.ok(user);
+      try {
+        await app.bean.user.updateById(user.id, { activated: false });
+        await app.bean.passport.signinMock('admin');
+        const res = await app.bean.executor.performAction(
+          'get',
+          '/test/vona/guardPassport/testActivatedFalse',
+          {
+            innerAccess: false,
+          },
+        );
+        assert.equal(res, undefined);
+        const permissions = await app.bean.permission.getPermissionsDefault(ResourceGuardPassport);
+        assert.equal(permissions?.actions?.testActivatedFalse, true);
+        assert.equal(permissions?.actions?.testRoleName, false);
+      } finally {
+        await app.bean.passport.signout();
+        await app.bean.user.updateById(user.id, { activated: true });
+      }
+    });
+  });
+
+  it('action:guardPassport:cacheKeyByRoleIds', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const cacheKeyAnonymous = (app.bean.permission as any).retrievePermissionActionCacheKey({
+        args: [ResourceGuardPassport, 'testRoleName'],
       });
-      assert.equal(cacheKeyAnonymous, 'default:test-vona:guardPassport__anon');
+      assert.equal(cacheKeyAnonymous, 'action:test-vona:guardPassport:testRoleName:roles:none');
 
       await app.bean.passport.signinMock('admin');
-      const cacheKeyAdmin = (app.bean.permission as any).retrievePermissionsDefaultCacheKey({
-        args: [ResourceGuardPassport],
+      assert.ok(app.bean.passport.current);
+      app.bean.passport.current!.roles = [
+        { id: '2', name: 'role2' },
+        { id: '1', name: 'role1' },
+        { id: '2', name: 'role2' },
+      ] as any;
+      const cacheKeyAdmin = (app.bean.permission as any).retrievePermissionActionCacheKey({
+        args: [ResourceGuardPassport, 'testRoleName'],
       });
-      assert.equal(cacheKeyAdmin, 'default:test-vona:guardPassport__auth__act:1__roles:admin');
+      assert.equal(cacheKeyAdmin, 'action:test-vona:guardPassport:testRoleName:roles:1,2');
       await app.bean.passport.signout();
     });
   });
