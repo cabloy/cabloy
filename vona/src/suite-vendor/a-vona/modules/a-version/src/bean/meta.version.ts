@@ -1,16 +1,10 @@
-import type {
-  IMetaVersionInit,
-  IMetaVersionInitOptions,
-  IMetaVersionUpdate,
-  IMetaVersionUpdateOptions,
-} from 'vona-module-a-version';
+import type { IMetaVersionUpdate, IMetaVersionUpdateOptions } from 'vona-module-a-version';
 
-import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Meta } from 'vona-module-a-meta';
 
 @Meta()
-export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVersionInit {
+export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
   async update(options: IMetaVersionUpdateOptions) {
     if (options.version === 1) {
       const entity = this.scope.entity.versionInit;
@@ -27,21 +21,5 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         table.text(entity2.viewSql);
       });
     }
-  }
-
-  async init(options: IMetaVersionInitOptions): Promise<void> {
-    if (options.version === 1) {
-      // remove publicDir
-      await this._removePublicDir();
-    }
-  }
-
-  async _removePublicDir() {
-    // only for test/dev env
-    if (this.app.meta.isProd) return;
-    // path
-    const publicPath = await this.app.util.getPublicPathPhysical();
-    // remove
-    await fse.remove(publicPath);
   }
 }

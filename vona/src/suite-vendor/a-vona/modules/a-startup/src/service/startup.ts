@@ -3,8 +3,7 @@ import type { IOnionSlice } from 'vona-module-a-onion';
 
 import { isNil } from '@cabloy/utils';
 import fse from 'fs-extra';
-import path from 'node:path';
-import { BeanBase, cast } from 'vona';
+import { BeanBase, cast, getRuntimePathPhysicalRoot } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type {
@@ -176,6 +175,8 @@ export class ServiceStartup extends BeanBase {
     // redis
     await this.$scope.redis.service.redis.clearAllData();
     // .app/public
-    await fse.remove(path.join(this.app.config.server.publicDir, '1'));
+    await fse.remove(this.app.config.server.publicDir);
+    // .app/runtime
+    await fse.remove(getRuntimePathPhysicalRoot(this.app));
   }
 }
