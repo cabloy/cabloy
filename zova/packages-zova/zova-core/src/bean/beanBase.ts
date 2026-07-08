@@ -28,22 +28,18 @@ import type { AppEvent } from '../core/component/event.ts';
 import type { ILoggerChildRecord, ILoggerClientRecord } from '../core/logger/types.ts';
 import type { FunctionAsync } from '../decorator/type/functionable.ts';
 import type { MapSources, MaybeUndefined } from '../vueExtra/watch.ts';
-import type {
-  IErrorHandlerEventResult,
-  IModuleLocaleText,
-  IZovaComponentRecord,
-} from './resource/index.ts';
+import type { IErrorHandlerEventResult, IZovaComponentRecord } from './resource/index.ts';
 
 import { cast } from '../types/utils/cast.ts';
 import { BeanBaseSimple, SymbolModuleBelong } from './beanBaseSimple.ts';
 import { SymbolErrorInstanceInfo } from './resource/index.ts';
 
-const SymbolText = Symbol('SymbolText');
+// const SymbolText = Symbol('SymbolText');
 const SymbolLogger = Symbol('SymbolLogger');
 const SymbolLoggerChildren = Symbol('SymbolLoggerChildren');
 
 export class BeanBase extends BeanBaseSimple {
-  private [SymbolText]: IModuleLocaleText;
+  // private [SymbolText]: IModuleLocaleText;
   private [SymbolLogger]: Record<keyof ILoggerClientRecord, Logger> = {} as any;
   private [SymbolLoggerChildren]: Record<keyof ILoggerClientRecord, Record<string, Logger>> =
     {} as any;
@@ -55,12 +51,12 @@ export class BeanBase extends BeanBaseSimple {
     return this.ctx.meta.el;
   }
 
-  protected get $text(): IModuleLocaleText {
-    if (!this[SymbolText]) {
-      this[SymbolText] = this.app.meta.locale.createLocaleText(this[SymbolModuleBelong]);
-    }
-    return this[SymbolText];
-  }
+  // protected get $text(): IModuleLocaleText {
+  //   if (!this[SymbolText]) {
+  //     this[SymbolText] = this.app.meta.locale.createLocaleText(this[SymbolModuleBelong]);
+  //   }
+  //   return this[SymbolText];
+  // }
 
   protected get $logger() {
     return this.$loggerClient('default');
