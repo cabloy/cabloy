@@ -6,7 +6,7 @@ import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
 import type { ScopeModuleBasicFile } from 'zova-module-basic-file';
 
 import { classes } from 'typestyle';
-import { BeanControllerBase, Use } from 'zova';
+import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
 
@@ -101,18 +101,20 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           );
           return (
             <div class={cardClass}>
-              <input
-                ref={ref => {
-                  this.fileInputRef = ref as HTMLInputElement;
-                }}
-                class="hidden"
-                type="file"
-                accept={uploadPolicyState.acceptAttr}
-                multiple={uploadPolicyState.multiple}
-                onChange={event => {
-                  void this._handleFileChange(event, disableNotifyChanged);
-                }}
-              />
+              <ClientOnly>
+                <input
+                  ref={ref => {
+                    this.fileInputRef = ref as HTMLInputElement;
+                  }}
+                  class="hidden"
+                  type="file"
+                  accept={uploadPolicyState.acceptAttr}
+                  multiple={uploadPolicyState.multiple}
+                  onChange={event => {
+                    void this._handleFileChange(event, disableNotifyChanged);
+                  }}
+                />
+              </ClientOnly>
               <div class="flex flex-wrap items-center gap-3">
                 {items.length < maxCount && (
                   <button

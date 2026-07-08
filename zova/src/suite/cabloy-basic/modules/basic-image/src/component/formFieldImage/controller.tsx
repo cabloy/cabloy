@@ -130,18 +130,20 @@ export class ControllerFormFieldImage extends BeanControllerBase {
           );
           return (
             <div class={cardClass}>
-              <input
-                ref={ref => {
-                  this.fileInputRef = ref as HTMLInputElement;
-                }}
-                class="hidden"
-                type="file"
-                accept={uploadPolicyState.acceptAttr}
-                multiple={uploadPolicyState.multiple}
-                onChange={event => {
-                  void this._handleFileChange(event, propsBucket.disableNotifyChanged);
-                }}
-              />
+              <ClientOnly>
+                <input
+                  ref={ref => {
+                    this.fileInputRef = ref as HTMLInputElement;
+                  }}
+                  class="hidden"
+                  type="file"
+                  accept={uploadPolicyState.acceptAttr}
+                  multiple={uploadPolicyState.multiple}
+                  onChange={event => {
+                    void this._handleFileChange(event, propsBucket.disableNotifyChanged);
+                  }}
+                />
+              </ClientOnly>
               <div class="flex flex-wrap items-center gap-3">
                 {items.length < maxCount && (
                   <button
