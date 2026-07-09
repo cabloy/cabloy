@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.1.99
+
+### Features
+
+- Add dossier files to training records.
+- Derive dossier file policy from the file scene.
+
+### Improvements
+
+- Rename and standardize `QueryAutoLoad` helpers.
+- Use `QueryAutoLoad` for upload policy handling.
+- Simplify the contract loop hook.
+- Share Claude assets across editions.
+- Split permission cache beans for clearer responsibility.
+- Clarify permission action method names.
+- Align default permission guard evaluation.
+- Reuse derived upload policy state.
+- Streamline upload policy queries.
+- Derive image policy from the image scene.
+- Generate the file SDK and move policy state into the model.
+
 ## 5.1.98
 
 ### Features
