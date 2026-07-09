@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.101
+
+### Features
+
+- Add update functionality.
+- Add update enhancements.
+
 ## 5.1.100
 
 ### Improvements
