@@ -58,6 +58,7 @@ export class ControllerImage extends BeanBase {
         file: file.file,
         filename: file.info.filename,
         contentType: file.info.mimeType,
+        requireSignedURLs: payload.requireSignedURLs,
       },
       {
         clientName: payload.clientName,
@@ -81,7 +82,7 @@ export class ControllerImage extends BeanBase {
       {
         filename: data.filename,
         contentType: data.contentType,
-        requireSignedURLs: data.requireSignedURLs,
+        requireSignedURLs: policy.requireSignedURLs,
         expiry: data.expiry,
         customId: data.customId,
       },
@@ -114,7 +115,7 @@ export class ControllerImage extends BeanBase {
         url: data.url,
         filename: data.filename,
         contentType: data.contentType,
-        requireSignedURLs: data.requireSignedURLs,
+        requireSignedURLs: policy.requireSignedURLs,
       },
       {
         clientName: policy.clientName,

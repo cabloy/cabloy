@@ -232,6 +232,22 @@ describe('imageUpload.test.ts', () => {
         throw new Error(`unexpected fetch: ${method} ${url}`);
       };
       try {
+        const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-policy');
+        const uploadPolicyRes = await fetch(uploadPolicyUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageScene: 'training-record:sceneImage',
+          }),
+        });
+        assert.equal(uploadPolicyRes.ok, true);
+        const uploadPolicyData = await uploadPolicyRes.json();
+        assert.equal(uploadPolicyData.data.imageScene, 'training-record:sceneImage');
+        assert.equal(uploadPolicyData.data.requireSignedURLs, true);
+
         const directUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload');
         const directRes = await fetch(directUrl, {
           method: 'POST',
@@ -240,11 +256,10 @@ describe('imageUpload.test.ts', () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            imageScene: 'training-student:studentImage',
+            imageScene: 'training-record:sceneImage',
             size: tinyPng.length,
             mimeType: 'image/png',
             filename: 'direct.png',
-            requireSignedURLs: true,
           }),
         });
         assert.equal(directRes.ok, true);
@@ -288,12 +303,11 @@ describe('imageUpload.test.ts', () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            imageScene: 'training-student:studentImage',
+            imageScene: 'training-record:sceneImage',
             url: 'https://example.com/image.png',
             size: tinyPng.length,
             mimeType: 'image/png',
             filename: 'image.png',
-            requireSignedURLs: true,
           }),
         });
         assert.equal(uploadUrlRes.ok, true);

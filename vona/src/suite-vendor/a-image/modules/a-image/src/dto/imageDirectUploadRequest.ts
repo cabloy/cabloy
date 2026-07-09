@@ -26,9 +26,6 @@ export class DtoImageDirectUploadRequest {
   contentType?: string;
 
   @Api.field(v.optional())
-  requireSignedURLs?: boolean;
-
-  @Api.field(v.optional())
   expiry?: string;
 
   @Api.field(v.optional())

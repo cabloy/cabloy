@@ -142,11 +142,13 @@ describe('imageCloudflareMapping.test.ts', () => {
           'image-cloudflare:cloudflare',
           {
             filename: 'direct.txt',
-            requireSignedURLs: true,
             customId: 'custom/direct-path',
           },
           {
             clientName: 'default',
+            clientOptions: {
+              requireSignedURLs: true,
+            },
           },
         );
         assert.equal(directUpload.resourceId, 'cf-direct-1');
@@ -204,10 +206,12 @@ describe('imageCloudflareMapping.test.ts', () => {
           {
             url: 'https://example.com/cloudflare.txt',
             filename: 'cloudflare-from-url.txt',
-            requireSignedURLs: true,
           },
           {
             clientName: 'default',
+            clientOptions: {
+              requireSignedURLs: true,
+            },
           },
         );
         assert.equal(uploadedByUrl.resourceId.startsWith('cf-upload-'), true);

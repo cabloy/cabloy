@@ -2470,6 +2470,7 @@ export interface components {
       mimeTypes?: string[] | undefined;
       extensions?: string[] | undefined;
       multiple?: boolean | undefined;
+      requireSignedURLs?: boolean | undefined;
     };
     'a-image.dto.imageUploadPolicyRequest': {
       imageScene: string;
@@ -2531,7 +2532,6 @@ export interface components {
       size: number;
       mimeType: string;
       contentType?: string | undefined;
-      requireSignedURLs?: boolean | undefined;
       expiry?: string | undefined;
       customId?: string | undefined;
     };
@@ -2573,7 +2573,6 @@ export interface components {
       mimeType: string;
       filename?: string | undefined;
       contentType?: string | undefined;
-      requireSignedURLs?: boolean | undefined;
     };
     'a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {

@@ -32,6 +32,7 @@ export type TypeImageSceneOptionsMetaResolver = (
 export interface IDecoratorImageSceneOptions {
   provider?: TypeDecoratorImageSceneOptionsProvider;
   upload?: IImageSceneOptionsUpload;
+  requireSignedURLs?: boolean;
   meta?: Record<string, any> | TypeImageSceneOptionsMetaResolver;
 }
 

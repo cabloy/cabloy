@@ -27,7 +27,4 @@ export class DtoImageUploadUrlRequest {
 
   @Api.field(v.optional())
   contentType?: string;
-
-  @Api.field(v.optional())
-  requireSignedURLs?: boolean;
 }

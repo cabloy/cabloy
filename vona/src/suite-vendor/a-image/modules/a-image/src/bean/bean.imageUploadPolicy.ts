@@ -117,6 +117,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       imageScene,
       providerName,
       clientName,
+      requireSignedURLs: sceneOptions.requireSignedURLs,
       meta: await this._resolveSceneMeta(sceneOptions),
     };
   }
@@ -145,6 +146,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
       extensions: extensions.length > 0 ? extensions : undefined,
       multiple: uploadOptions.multiple,
+      requireSignedURLs: sceneOptions.requireSignedURLs,
     };
   }
 

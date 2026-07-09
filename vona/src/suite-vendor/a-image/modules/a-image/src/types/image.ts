@@ -98,6 +98,7 @@ export interface IImageUploadContextResolved<TMeta extends TypeImageMeta = TypeI
   imageScene: keyof IImageSceneRecord;
   providerName: keyof IImageProviderRecord;
   clientName: string;
+  requireSignedURLs?: boolean;
   meta?: TMeta;
 }
 
