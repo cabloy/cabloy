@@ -33,7 +33,7 @@ type IImageNativeDraftImage = Pick<
   | 'contentType'
   | 'meta'
   | 'imageScene'
-  | 'requireSignedURLs'
+  | 'public'
   | 'storagePath'
   | 'deliveryBaseUrl'
   | 'variants'
@@ -63,7 +63,7 @@ export class ServiceImageNative extends BeanBase {
       filename: input.filename,
       contentType: input.contentType,
       meta: input.meta,
-      requireSignedURLs: input.requireSignedURLs ?? options.requireSignedURLs,
+      public: input.public ?? options.public,
       variants: options.variants ?? this.scope.config.imageNative.variants,
       deliveryBaseUrl: options.deliveryBaseUrl,
     });
@@ -96,7 +96,7 @@ export class ServiceImageNative extends BeanBase {
       filename: input.filename,
       contentType: input.contentType,
       meta: input.meta,
-      requireSignedURLs: input.requireSignedURLs ?? options.requireSignedURLs,
+      public: input.public ?? options.public,
       variants: options.variants ?? this.scope.config.imageNative.variants,
       deliveryBaseUrl: options.deliveryBaseUrl,
       storagePath,
@@ -127,7 +127,7 @@ export class ServiceImageNative extends BeanBase {
       filename: image.filename,
       contentType: image.contentType,
       meta: image.meta,
-      requireSignedURLs: image.requireSignedURLs ?? options.requireSignedURLs,
+      public: image.public ?? options.public,
       variants: image.variants ?? options.variants ?? this.scope.config.imageNative.variants,
       deliveryBaseUrl: image.deliveryBaseUrl ?? options.deliveryBaseUrl,
     });
@@ -174,7 +174,7 @@ export class ServiceImageNative extends BeanBase {
       filename?: string;
       contentType?: string;
       meta?: Record<string, unknown>;
-      requireSignedURLs?: boolean;
+      public?: boolean;
       variants?: EntityImage['variants'];
       deliveryBaseUrl?: string;
     },
@@ -189,7 +189,7 @@ export class ServiceImageNative extends BeanBase {
       size: Number(stat.size),
       width: metadata.width,
       height: metadata.height,
-      requireSignedURLs: data.requireSignedURLs,
+      public: data.public,
       variants: data.variants,
       meta: data.meta,
       storagePath: targetPath,

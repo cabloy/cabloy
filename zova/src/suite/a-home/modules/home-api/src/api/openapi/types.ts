@@ -1712,6 +1712,7 @@ export interface components {
       finalizedAt?: Date;
       /** Format: date-time */
       uploadedAt?: Date;
+      public?: boolean | undefined;
       variants?:
         | {
             [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -1934,6 +1935,7 @@ export interface components {
                   finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
+                  public?: boolean | undefined;
                   variants?:
                     | {
                         [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -2019,6 +2021,7 @@ export interface components {
             finalizedAt?: Date;
             /** Format: date-time */
             uploadedAt?: Date;
+            public?: boolean | undefined;
             variants?:
               | {
                   [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -2115,6 +2118,7 @@ export interface components {
           finalizedAt?: Date;
           /** Format: date-time */
           uploadedAt?: Date;
+          public?: boolean | undefined;
           variants?:
             | {
                 [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -2217,6 +2221,7 @@ export interface components {
                   finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
+                  public?: boolean | undefined;
                   variants?:
                     | {
                         [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -2332,6 +2337,7 @@ export interface components {
                   finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
+                  public?: boolean | undefined;
                   variants?:
                     | {
                         [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -2443,6 +2449,7 @@ export interface components {
       /** @enum {string|null} */
       method?: 'PUT' | 'POST' | null | undefined;
       filename?: string | undefined;
+      public?: boolean | undefined;
       fileScene?: string | undefined;
     };
     'a-file.dto.fileDirectUploadRequest': {
@@ -2470,7 +2477,7 @@ export interface components {
       mimeTypes?: string[] | undefined;
       extensions?: string[] | undefined;
       multiple?: boolean | undefined;
-      requireSignedURLs?: boolean | undefined;
+      public?: boolean | undefined;
     };
     'a-image.dto.imageUploadPolicyRequest': {
       imageScene: string;
@@ -2495,7 +2502,7 @@ export interface components {
       size?: number | undefined;
       width?: number | undefined;
       height?: number | undefined;
-      requireSignedURLs?: boolean | undefined;
+      public?: boolean | undefined;
       variants?:
         | {
             [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
@@ -2520,7 +2527,7 @@ export interface components {
       uploadUrl: string;
       draft?: boolean | undefined;
       filename?: string | undefined;
-      requireSignedURLs?: boolean | undefined;
+      public?: boolean | undefined;
       status?: string | undefined;
       /** Format: date-time */
       draftExpiresAt?: Date;
@@ -2545,7 +2552,7 @@ export interface components {
       size?: number | undefined;
       width?: number | undefined;
       height?: number | undefined;
-      requireSignedURLs?: boolean | undefined;
+      public?: boolean | undefined;
       variants?:
         | {
             [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];

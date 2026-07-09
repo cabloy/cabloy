@@ -50,6 +50,9 @@ export class DtoImageView {
   @Api.field(v.optional())
   uploadedAt?: Date;
 
+  @Api.field(v.optional())
+  public?: boolean;
+
   @Api.field(v.optional(), z.record(z.string(), $schema(DtoImageTransformOptions)))
   variants?: IImageNamedVariants;
 }

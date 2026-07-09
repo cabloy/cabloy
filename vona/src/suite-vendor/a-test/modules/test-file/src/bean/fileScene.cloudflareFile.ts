@@ -6,10 +6,10 @@ import { FileScene } from 'vona-module-a-file';
     providerName: 'file-cloudflare:cloudflare',
     clientName: 'default',
   },
+  public: false,
   upload: {
     maxSize: 2 * 1024 * 1024,
     mimeTypes: ['text/plain'],
-    public: false,
   },
 })
 export class FileSceneCloudflareFile extends BeanBase {}

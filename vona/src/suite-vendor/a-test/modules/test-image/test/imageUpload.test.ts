@@ -200,7 +200,11 @@ describe('imageUpload.test.ts', () => {
       globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
         const url = String(input);
         const method = init?.method ?? 'GET';
-        if (url.includes('/image/direct-upload') || url.includes('/image/upload-url')) {
+        if (
+          url.includes('/image/upload-policy') ||
+          url.includes('/image/direct-upload') ||
+          url.includes('/image/upload-url')
+        ) {
           return await fetchRaw(input, init);
         }
         if (url.includes('/images/v2/direct_upload') && method === 'POST') {
@@ -246,7 +250,7 @@ describe('imageUpload.test.ts', () => {
         assert.equal(uploadPolicyRes.ok, true);
         const uploadPolicyData = await uploadPolicyRes.json();
         assert.equal(uploadPolicyData.data.imageScene, 'training-record:sceneImage');
-        assert.equal(uploadPolicyData.data.requireSignedURLs, true);
+        assert.equal(uploadPolicyData.data.public, false);
 
         const directUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload');
         const directRes = await fetch(directUrl, {
@@ -266,7 +270,7 @@ describe('imageUpload.test.ts', () => {
         const directData = await directRes.json();
         assert.equal(directData.data.resourceId, 'cf-direct-api-1');
         assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
-        assert.equal(directData.data.requireSignedURLs, true);
+        assert.equal(directData.data.public, false);
         assert.equal(directData.data.status, 'draft');
         assert.equal(!!directData.data.draftExpiresAt, true);
 
@@ -313,7 +317,7 @@ describe('imageUpload.test.ts', () => {
         assert.equal(uploadUrlRes.ok, true);
         const uploadUrlData = await uploadUrlRes.json();
         assert.equal(uploadUrlData.data.resourceId, 'cf-upload-url-api-1');
-        assert.equal(uploadUrlData.data.requireSignedURLs, true);
+        assert.equal(uploadUrlData.data.public, false);
         assert.equal(uploadUrlData.data.signed, true);
       } finally {
         app.bean.imageUploadPolicy.resolveUploadContext = resolveUploadContextRaw;

@@ -37,6 +37,7 @@ export interface IImageProviderOptionsCloudflare extends IDecoratorImageProvider
 
 @ImageProvider<IImageProviderOptionsCloudflare>({
   base: {
+    public: true,
     signedDeliveryKind: 'provider',
     variants: {
       original: {},
@@ -92,7 +93,7 @@ export class ImageProviderCloudflare
       size: image.size,
       width: image.width,
       height: image.height,
-      requireSignedURLs: image.requireSignedURLs ?? clientOptions.requireSignedURLs,
+      public: image.public ?? clientOptions.public,
       variants: image.variants ?? clientOptions.variants,
       meta: image.meta,
       deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
@@ -123,7 +124,7 @@ export class ImageProviderCloudflare
       {
         ...clientOptions,
         deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
-        requireSignedURLs: image.requireSignedURLs ?? clientOptions.requireSignedURLs,
+        public: image.public ?? clientOptions.public,
       },
       deliveryOptions,
     );
@@ -141,11 +142,7 @@ export class ImageProviderCloudflare
       url: await this.getVariantUrl(image, request, clientOptions, options, deliveryOptions),
       filename: image.filename,
       contentType: image.contentType,
-      signed: !!(
-        deliveryOptions?.signed ??
-        image.requireSignedURLs ??
-        clientOptions.requireSignedURLs
-      ),
+      signed: !!(deliveryOptions?.signed ?? !(image.public ?? clientOptions.public ?? true)),
     };
   }
 

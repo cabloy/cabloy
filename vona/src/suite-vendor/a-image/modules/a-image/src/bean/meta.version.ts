@@ -28,7 +28,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         table.integer(entityImage.size);
         table.integer(entityImage.width);
         table.integer(entityImage.height);
-        table.boolean(entityImage.requireSignedURLs).defaultTo(false);
+        table.boolean(entityImage.public).defaultTo(true);
         table.json(entityImage.variants);
         table.json(entityImage.meta);
         table.text(entityImage.storagePath);

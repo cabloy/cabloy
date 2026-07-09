@@ -26,5 +26,5 @@ export class DtoImageUploadPolicyResponse {
   multiple?: boolean;
 
   @Api.field(v.optional(), z.boolean())
-  requireSignedURLs?: boolean;
+  public?: boolean;
 }

@@ -32,6 +32,7 @@ export interface IImageProviderOptionsNative extends IDecoratorImageProviderOpti
 @ImageProvider<IImageProviderOptionsNative>({
   base: {
     subdir: 'default',
+    public: true,
     signedDeliveryKind: 'proxy',
   },
 })
@@ -81,7 +82,7 @@ export class ImageProviderNative
       size: image.size,
       width: image.width,
       height: image.height,
-      requireSignedURLs: image.requireSignedURLs,
+      public: image.public ?? clientOptions.public,
       variants: image.variants,
       meta: image.meta,
       storagePath: image.storagePath,

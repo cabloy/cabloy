@@ -173,6 +173,7 @@ describe('fileUpload.test.ts', () => {
         assert.equal(directData.data.provider, 'file-cloudflare:cloudflare');
         assert.equal(directData.data.method, 'PUT');
         assert.equal(typeof directData.data.uploadUrl, 'string');
+        assert.equal(directData.data.public, false);
         assert.equal('draft' in directData.data, false);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-url');

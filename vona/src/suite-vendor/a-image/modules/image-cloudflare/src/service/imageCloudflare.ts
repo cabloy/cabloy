@@ -32,6 +32,7 @@ interface ICloudflareImageResult {
   id: string;
   filename?: string;
   uploaded?: string;
+  // Cloudflare upstream field; app-level contract should use `public`.
   requireSignedURLs?: boolean;
   variants?: string[];
   metadata?: Record<string, unknown>;
@@ -63,7 +64,7 @@ export class ServiceImageCloudflare extends BeanBase {
     const filename = input.filename ?? path.basename(input.file);
     form.append('file', new Blob([buffer], { type: input.contentType }), filename);
     this._appendUploadFields(form, {
-      requireSignedURLs: input.requireSignedURLs,
+      requireSignedURLs: input.public === undefined ? undefined : !input.public,
       metadata: input.meta,
     });
     const result = await this._request<ICloudflareImageResult>(normalized, '/images/v1', {
@@ -76,7 +77,7 @@ export class ServiceImageCloudflare extends BeanBase {
       contentType: input.contentType,
       size: input.size ?? Number(stat.size),
       meta: input.meta,
-      requireSignedURLs: input.requireSignedURLs,
+      public: input.public,
     });
   }
 
@@ -88,7 +89,7 @@ export class ServiceImageCloudflare extends BeanBase {
     const form = new FormData();
     form.append('url', input.url);
     this._appendUploadFields(form, {
-      requireSignedURLs: input.requireSignedURLs,
+      requireSignedURLs: input.public === undefined ? undefined : !input.public,
       metadata: input.meta,
     });
     const result = await this._request<ICloudflareImageResult>(normalized, '/images/v1', {
@@ -99,7 +100,7 @@ export class ServiceImageCloudflare extends BeanBase {
       filename: input.filename ?? result.filename,
       contentType: input.contentType,
       meta: input.meta,
-      requireSignedURLs: input.requireSignedURLs,
+      public: input.public,
     });
   }
 
@@ -110,7 +111,7 @@ export class ServiceImageCloudflare extends BeanBase {
     const normalized = this._normalizeClientOptions(options);
     const form = new FormData();
     this._appendUploadFields(form, {
-      requireSignedURLs: input.requireSignedURLs,
+      requireSignedURLs: input.public === undefined ? undefined : !input.public,
       metadata: input.meta,
       expiry: input.expiry,
       id: input.customId,
@@ -127,7 +128,7 @@ export class ServiceImageCloudflare extends BeanBase {
       filename: input.filename,
       contentType: input.contentType,
       meta: input.meta,
-      requireSignedURLs: input.requireSignedURLs,
+      public: input.public,
     });
     return {
       ...resource,
@@ -137,7 +138,7 @@ export class ServiceImageCloudflare extends BeanBase {
   }
 
   async finalizeDirectUpload(
-    image: Pick<EntityImage, 'resourceId' | 'filename' | 'meta' | 'requireSignedURLs'>,
+    image: Pick<EntityImage, 'resourceId' | 'filename' | 'meta' | 'public'>,
     options: IImageProviderCloudflareClientOptions,
   ): Promise<IImageProviderResource | undefined> {
     const normalized = this._normalizeClientOptions(options);
@@ -152,7 +153,7 @@ export class ServiceImageCloudflare extends BeanBase {
     return this._mapImageResource(result, normalized, {
       filename: result.filename ?? result.meta?.filename ?? image.filename,
       meta: image.meta,
-      requireSignedURLs: image.requireSignedURLs,
+      public: image.public,
     });
   }
 
@@ -173,7 +174,7 @@ export class ServiceImageCloudflare extends BeanBase {
   }
 
   buildVariantUrl(
-    image: Pick<EntityImage, 'resourceId' | 'deliveryBaseUrl' | 'requireSignedURLs'>,
+    image: Pick<EntityImage, 'resourceId' | 'deliveryBaseUrl' | 'public'>,
     variantName: string | 'custom',
     transformOptions: Record<string, any>,
     options: IImageProviderCloudflareClientOptions,
@@ -184,7 +185,7 @@ export class ServiceImageCloudflare extends BeanBase {
       accountHash: normalized.accountHash,
       deliveryBaseUrl: image.deliveryBaseUrl ?? normalized.deliveryBaseUrl,
       signingKey: normalized.signingKey,
-      signed: deliveryOptions?.signed ?? image.requireSignedURLs ?? normalized.requireSignedURLs,
+      signed: deliveryOptions?.signed ?? !(image.public ?? normalized.public ?? true),
       expiresAt: deliveryOptions?.expiresAt,
       expiresIn: deliveryOptions?.expiresIn,
     });
@@ -277,7 +278,7 @@ export class ServiceImageCloudflare extends BeanBase {
       contentType?: string;
       size?: number;
       meta?: Record<string, unknown>;
-      requireSignedURLs?: boolean;
+      public?: boolean;
     },
   ): IImageProviderResource {
     const deliveryBaseUrl =
@@ -288,8 +289,9 @@ export class ServiceImageCloudflare extends BeanBase {
       filename: data.filename ?? result.filename,
       contentType: data.contentType,
       size: data.size,
-      requireSignedURLs:
-        data.requireSignedURLs ?? result.requireSignedURLs ?? options.requireSignedURLs,
+      public:
+        data.public ??
+        (result.requireSignedURLs !== undefined ? !result.requireSignedURLs : options.public),
       variants: options.variants,
       meta: data.meta,
       deliveryBaseUrl,

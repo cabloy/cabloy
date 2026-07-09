@@ -217,8 +217,6 @@ export class BeanFileUploadPolicy extends BeanBase {
     clientOptions: { public?: boolean } | undefined,
     sceneOptions: IDecoratorFileSceneOptions,
   ) {
-    return (
-      sceneOptions.upload?.public ?? clientOptions?.public ?? this.scope.config.file.public ?? false
-    );
+    return sceneOptions.public ?? clientOptions?.public ?? this.scope.config.file.public ?? false;
   }
 }

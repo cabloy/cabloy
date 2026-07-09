@@ -36,7 +36,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           return createCloudflareResponse({
             id: 'cf-direct-1',
             uploadURL: 'https://upload.imagedelivery.net/hash123/cf-direct-1',
-            requireSignedURLs: true,
+            public: false,
             draft: true,
             variants: ['https://imagedelivery.net/hash123/cf-direct-1/public'],
           });
@@ -46,7 +46,7 @@ describe('imageCloudflareMapping.test.ts', () => {
             id: 'cf-direct-1',
             filename: 'direct.txt',
             draft: false,
-            requireSignedURLs: true,
+            public: false,
             variants: ['https://imagedelivery.net/hash123/cf-direct-1/public'],
           });
         }
@@ -147,7 +147,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           {
             clientName: 'default',
             clientOptions: {
-              requireSignedURLs: true,
+              public: false,
             },
           },
         );
@@ -158,7 +158,7 @@ describe('imageCloudflareMapping.test.ts', () => {
         );
         assert.equal(directUpload.draft, true);
         assert.equal(directUpload.status, 'draft');
-        assert.equal(directUpload.requireSignedURLs, true);
+        assert.equal(directUpload.public, false);
         assert.equal(directUpload.draftExpiresAt instanceof Date, true);
 
         const [draftUrl, draftErr] = await catchError(() =>
@@ -177,7 +177,7 @@ describe('imageCloudflareMapping.test.ts', () => {
               id: 'cf-direct-1',
               filename: 'direct.txt',
               draft: true,
-              requireSignedURLs: true,
+              public: false,
               variants: ['https://imagedelivery.net/hash123/cf-direct-1/public'],
             });
           }
@@ -210,7 +210,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           {
             clientName: 'default',
             clientOptions: {
-              requireSignedURLs: true,
+              public: false,
             },
           },
         );

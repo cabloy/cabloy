@@ -35,7 +35,7 @@ export class DtoImageDirectUploadResponse {
   filename?: string;
 
   @Api.field(v.optional())
-  requireSignedURLs?: boolean;
+  public?: boolean;
 
   @Api.field(v.optional(), z.string())
   status?: TypeImageStatus;

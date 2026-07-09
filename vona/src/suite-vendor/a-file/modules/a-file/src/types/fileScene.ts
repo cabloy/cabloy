@@ -10,7 +10,6 @@ export interface IFileSceneOptionsUpload {
   mimeTypes?: string[];
   extensions?: string[];
   multiple?: boolean;
-  public?: boolean;
 }
 
 export interface IDecoratorFileSceneOptionsProvider {
@@ -33,6 +32,7 @@ export type TypeFileSceneOptionsMetaResolver = (
 export interface IDecoratorFileSceneOptions {
   provider?: TypeDecoratorFileSceneOptionsProvider;
   upload?: IFileSceneOptionsUpload;
+  public?: boolean;
   meta?: Record<string, any> | TypeFileSceneOptionsMetaResolver;
 }
 

@@ -36,6 +36,9 @@ export class DtoFileDirectUploadResponse {
   @Api.field(v.optional())
   filename?: string;
 
+  @Api.field(v.optional())
+  public?: boolean;
+
   @Api.field(v.optional(), z.string())
   fileScene?: keyof IFileSceneRecord;
 }

@@ -29,7 +29,7 @@ export interface IImageProviderClientRecord {
 export interface IImageProviderClientOptions {
   deliveryBaseUrl?: string;
   variants?: IImageNamedVariants;
-  requireSignedURLs?: boolean;
+  public?: boolean;
   signedDeliveryKind?: 'proxy' | 'provider';
 }
 

@@ -73,7 +73,7 @@ export interface IImageUploadInput<TMeta extends TypeImageMeta = TypeImageMeta> 
   filename?: string;
   contentType?: string;
   size?: number;
-  requireSignedURLs?: boolean;
+  public?: boolean;
   meta?: TMeta;
 }
 
@@ -81,14 +81,14 @@ export interface IImageUploadUrlInput<TMeta extends TypeImageMeta = TypeImageMet
   url: string;
   filename?: string;
   contentType?: string;
-  requireSignedURLs?: boolean;
+  public?: boolean;
   meta?: TMeta;
 }
 
 export interface IImageDirectUploadInput<TMeta extends TypeImageMeta = TypeImageMeta> {
   filename?: string;
   contentType?: string;
-  requireSignedURLs?: boolean;
+  public?: boolean;
   meta?: TMeta;
   expiry?: TypeImageDeliveryExpiry;
   customId?: string;
@@ -98,7 +98,7 @@ export interface IImageUploadContextResolved<TMeta extends TypeImageMeta = TypeI
   imageScene: keyof IImageSceneRecord;
   providerName: keyof IImageProviderRecord;
   clientName: string;
-  requireSignedURLs?: boolean;
+  public?: boolean;
   meta?: TMeta;
 }
 
@@ -121,7 +121,7 @@ export interface IImageProviderResource<
   size?: number;
   width?: number;
   height?: number;
-  requireSignedURLs?: boolean;
+  public?: boolean;
   variants?: IImageNamedVariants;
   meta?: TMeta;
   storagePath?: string;
@@ -177,6 +177,7 @@ export interface IImageView {
   draftExpiresAt?: Date;
   finalizedAt?: Date;
   uploadedAt?: Date;
+  public?: boolean;
   variants?: IImageNamedVariants;
   signed?: boolean;
 }

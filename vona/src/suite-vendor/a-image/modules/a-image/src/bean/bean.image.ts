@@ -454,6 +454,7 @@ export class BeanImage extends BeanBase {
       draftExpiresAt: image.draftExpiresAt,
       finalizedAt: image.finalizedAt,
       uploadedAt: image.uploadedAt,
+      public: image.public,
       variants: image.variants,
       signed: !!context.deliveryOptionsResolved.signed,
     } satisfies IImageView;
@@ -486,11 +487,11 @@ export class BeanImage extends BeanBase {
   }
 
   private _mergeDeliveryOptions(
-    image: Pick<IImageResource, 'requireSignedURLs'>,
+    image: Pick<IImageResource, 'public'>,
     request: IImageVariantRequest,
     deliveryOptions?: IImageDeliveryOptions,
   ): IImageDeliveryOptions {
-    const signed = deliveryOptions?.signed ?? request.signed ?? image.requireSignedURLs ?? false;
+    const signed = deliveryOptions?.signed ?? request.signed ?? !image.public;
     const expiresIn = deliveryOptions?.expiresIn ?? request.expiresIn;
     const expiresAt = deliveryOptions?.expiresAt ?? request.expiresAt;
     const responseMode = deliveryOptions?.responseMode ?? request.responseMode;
@@ -542,7 +543,7 @@ export class BeanImage extends BeanBase {
       size: image.size,
       width: image.width,
       height: image.height,
-      requireSignedURLs: image.requireSignedURLs,
+      public: image.public,
       variants: image.variants,
       meta: image.meta,
       storagePath: image.storagePath,
@@ -572,7 +573,7 @@ export class BeanImage extends BeanBase {
       size: imageProviderResource.size,
       width: imageProviderResource.width,
       height: imageProviderResource.height,
-      requireSignedURLs: imageProviderResource.requireSignedURLs,
+      public: imageProviderResource.public,
       variants: imageProviderResource.variants,
       meta: imageProviderResource.meta,
       storagePath: imageProviderResource.storagePath,
@@ -615,7 +616,7 @@ export class BeanImage extends BeanBase {
       size: imageProviderResource?.size ?? image.size,
       width: imageProviderResource?.width ?? image.width,
       height: imageProviderResource?.height ?? image.height,
-      requireSignedURLs: imageProviderResource?.requireSignedURLs ?? image.requireSignedURLs,
+      public: imageProviderResource?.public ?? image.public,
       variants: imageProviderResource?.variants ?? image.variants,
       meta: imageProviderResource?.meta ?? image.meta,
       storagePath: imageProviderResource?.storagePath ?? image.storagePath,

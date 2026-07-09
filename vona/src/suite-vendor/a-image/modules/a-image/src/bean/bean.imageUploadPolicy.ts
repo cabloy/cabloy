@@ -113,11 +113,15 @@ export class BeanImageUploadPolicy extends BeanBase {
     const imageScene = data.imageScene;
     const sceneOptions = this._getSceneOptions(imageScene);
     const { providerName, clientName } = await this._resolveProvider(sceneOptions);
+    const { clientOptions } = await this.bean.imageProvider.getClientOptions({
+      providerName,
+      clientName,
+    });
     return {
       imageScene,
       providerName,
       clientName,
-      requireSignedURLs: sceneOptions.requireSignedURLs,
+      public: this._resolvePublic(clientOptions, sceneOptions),
       meta: await this._resolveSceneMeta(sceneOptions),
     };
   }
@@ -127,7 +131,11 @@ export class BeanImageUploadPolicy extends BeanBase {
     const imageScene = data.imageScene;
     const sceneOptions = this._getSceneOptions(imageScene);
     const { providerName, clientName } = await this._resolveProvider(sceneOptions);
-    const { entityImageProvider, disabled } = await this.bean.imageProvider.getClientOptions({
+    const {
+      entityImageProvider,
+      disabled,
+      clientOptions: _clientOptions,
+    } = await this.bean.imageProvider.getClientOptions({
       providerName,
       clientName,
     });
@@ -146,7 +154,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
       extensions: extensions.length > 0 ? extensions : undefined,
       multiple: uploadOptions.multiple,
-      requireSignedURLs: sceneOptions.requireSignedURLs,
+      public: this._resolvePublic(_clientOptions, sceneOptions),
     };
   }
 
@@ -247,5 +255,12 @@ export class BeanImageUploadPolicy extends BeanBase {
       return await meta(this.ctx);
     }
     return meta;
+  }
+
+  private _resolvePublic(
+    clientOptions: { public?: boolean } | undefined,
+    sceneOptions: IDecoratorImageSceneOptions,
+  ) {
+    return sceneOptions.public ?? clientOptions?.public ?? this.scope.config.image.public ?? false;
   }
 }

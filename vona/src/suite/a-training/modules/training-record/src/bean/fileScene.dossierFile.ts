@@ -2,6 +2,7 @@ import { BeanBase } from 'vona';
 import { FileScene } from 'vona-module-a-file';
 
 @FileScene({
+  public: false,
   upload: {
     maxSize: 20 * 1024 * 1024,
     mimeTypes: [
@@ -16,7 +17,6 @@ import { FileScene } from 'vona-module-a-file';
     ],
     extensions: ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.txt'],
     multiple: true,
-    public: false,
   },
 })
 export class FileSceneDossierFile extends BeanBase {}

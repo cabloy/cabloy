@@ -39,7 +39,7 @@ export class EntityImage extends EntityBase {
   height?: number;
 
   @Api.field(v.optional())
-  requireSignedURLs?: boolean;
+  public?: boolean;
 
   @Api.field(v.optional(), z.record(z.string(), $schema(DtoImageTransformOptions)))
   variants?: IImageNamedVariants;
