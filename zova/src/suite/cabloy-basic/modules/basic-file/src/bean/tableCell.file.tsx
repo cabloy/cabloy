@@ -101,11 +101,27 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
   ) {
     const fieldTitle = renderContext.$celScope.property?.title ?? renderContext.$celScope.name;
     const placeholder = this.scope.locale.DownloadFile();
+    const selectBackgroundColor = 'var(--color-base-100)';
+    const selectColor = 'var(--color-base-content)';
+    const optionStyle = {
+      backgroundColor: selectBackgroundColor,
+      color: selectColor,
+    };
+    const placeholderOptionStyle = {
+      backgroundColor: selectBackgroundColor,
+      color: `color-mix(in oklch, ${selectColor} 60%, transparent)`,
+    };
+    const selectStyle = {
+      colorScheme: this.$theme.dark ? 'dark' : 'light',
+      backgroundColor: selectBackgroundColor,
+      color: selectColor,
+    };
     return (
       <span class="relative inline-flex min-w-0 max-w-full items-center">
         <span class="inline-flex min-w-0 max-w-full items-center">{contentNode}</span>
         <select
           class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+          style={selectStyle}
           aria-label={fieldTitle}
           title={placeholder}
           onClick={event => {
@@ -125,9 +141,16 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
             this._openDownloadUrl(selectedItem.downloadUrl);
           }}
         >
-          <option value="">{placeholder}</option>
+          <option value="" style={placeholderOptionStyle}>
+            {placeholder}
+          </option>
           {items.map(item => (
-            <option key={item.key} value={item.key} disabled={!item.downloadUrl}>
+            <option
+              key={item.key}
+              value={item.key}
+              disabled={!item.downloadUrl}
+              style={optionStyle}
+            >
               {item.label}
             </option>
           ))}

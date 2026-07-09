@@ -347,15 +347,16 @@ Representative files in the Cabloy Basic frontend:
 - `getUploadPolicy(...)` stays in the model
 - the query is created as formal state instead of a one-off click helper
 - `disableSuspenseOnInit: true` skips the automatic init-time `query.suspense()` kick while preserving the query as formal state
-- render derives `acceptAttr`, `multiple`, and `pending`
-- interaction reuses that state
+- upload policy still uses normal async freshness semantics here because the model method does not set `staleTime: Infinity`
+- render establishes and derives `acceptAttr`, `multiple`, and `pending` from that query-backed state
+- interaction reuses that same state
 - interaction may still `await query.suspense()` on the already-created query if an edge timing window requires it
 
 Why this is a good fit:
 
 - upload policy is a real query-backed state
-- it is relatively stable within the current frontend process
-- every first consumer does not need to auto-kick one eager init-time refresh semantic
+- it is stable enough that every first consumer does not need to auto-kick one eager init-time refresh semantic
+- it should still keep normal async freshness behavior rather than being frozen through `staleTime: Infinity`
 - the strict-ready moment is the interaction boundary, not every initial render consumer
 
 Taken together, Example A and Example B show the most important design contrast on this page:
