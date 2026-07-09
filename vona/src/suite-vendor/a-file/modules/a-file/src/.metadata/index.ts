@@ -258,42 +258,42 @@ declare module 'vona-module-a-file' {
 import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
 /** serializerTransform: begin */
-export * from '../bean/serializerTransform.resolveFile.ts';
-export * from '../bean/serializerTransform.resolveFiles.ts';
-import type { ISerializerTransformOptionsResolveFile } from '../bean/serializerTransform.resolveFile.ts';
-import type { ISerializerTransformOptionsResolveFiles } from '../bean/serializerTransform.resolveFiles.ts';
+export * from '../bean/serializerTransform.resolveView.ts';
+export * from '../bean/serializerTransform.resolveViews.ts';
+import type { ISerializerTransformOptionsResolveView } from '../bean/serializerTransform.resolveView.ts';
+import type { ISerializerTransformOptionsResolveViews } from '../bean/serializerTransform.resolveViews.ts';
 import 'vona-module-a-serialization';
 declare module 'vona-module-a-serialization' {
 
     export interface ISerializerTransformRecord {
-      'a-file:resolveFile': ISerializerTransformOptionsResolveFile;
-'a-file:resolveFiles': ISerializerTransformOptionsResolveFiles;
+      'a-file:resolveView': ISerializerTransformOptionsResolveView;
+'a-file:resolveViews': ISerializerTransformOptionsResolveViews;
     }
 
 
 }
 declare module 'vona-module-a-file' {
 
-        export interface SerializerTransformResolveFile {
+        export interface SerializerTransformResolveView {
           /** @internal */
           get scope(): ScopeModuleAFile;
         }
 
-          export interface SerializerTransformResolveFile {
-            get $beanFullName(): 'a-file.serializerTransform.resolveFile';
-            get $onionName(): 'a-file:resolveFile';
-            get $onionOptions(): ISerializerTransformOptionsResolveFile;
+          export interface SerializerTransformResolveView {
+            get $beanFullName(): 'a-file.serializerTransform.resolveView';
+            get $onionName(): 'a-file:resolveView';
+            get $onionOptions(): ISerializerTransformOptionsResolveView;
           }
 
-        export interface SerializerTransformResolveFiles {
+        export interface SerializerTransformResolveViews {
           /** @internal */
           get scope(): ScopeModuleAFile;
         }
 
-          export interface SerializerTransformResolveFiles {
-            get $beanFullName(): 'a-file.serializerTransform.resolveFiles';
-            get $onionName(): 'a-file:resolveFiles';
-            get $onionOptions(): ISerializerTransformOptionsResolveFiles;
+          export interface SerializerTransformResolveViews {
+            get $beanFullName(): 'a-file.serializerTransform.resolveViews';
+            get $onionName(): 'a-file:resolveViews';
+            get $onionOptions(): ISerializerTransformOptionsResolveViews;
           }
 }
 /** serializerTransform: end */

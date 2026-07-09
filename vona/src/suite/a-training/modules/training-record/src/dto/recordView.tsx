@@ -54,7 +54,7 @@ export class DtoRecordView extends $Dto.get(() => ModelRecord, {
     v.title($locale('DossierFiles')),
     ZovaRender.visible(false),
     v.optional(),
-    v.serializerTransform('a-file:resolveFiles', {
+    v.serializerTransform('a-file:resolveViews', {
       fieldName: 'dossierFileIds',
       fileScene: 'training-record:dossierFile',
     }),

@@ -186,7 +186,7 @@ export class BeanFile extends BeanBase {
     };
   }
 
-  async resolveFile(
+  async resolveView(
     fileId?: TableIdentity,
     fileScene?: keyof IFileSceneRecord,
     deliveryOptions?: IFileDeliveryOptions,
@@ -214,7 +214,7 @@ export class BeanFile extends BeanBase {
     } satisfies IFileView;
   }
 
-  async resolveFiles(
+  async resolveViews(
     fileIds?: TableIdentity[],
     fileScene?: keyof IFileSceneRecord,
     deliveryOptions?: IFileDeliveryOptions,
@@ -222,7 +222,7 @@ export class BeanFile extends BeanBase {
     if (!fileIds) return;
     if (!fileIds.length) return [];
     const items = await Promise.all(
-      fileIds.map(fileId => this.resolveFile(fileId, fileScene, deliveryOptions)),
+      fileIds.map(fileId => this.resolveView(fileId, fileScene, deliveryOptions)),
     );
     return items.filter((item): item is IFileView => !!item);
   }
