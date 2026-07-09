@@ -47,6 +47,14 @@ const OVERWRITE_DIRS: string[] = [
   'zova/scripts',
 ];
 
+const OVERWRITE_DIRS_CABLOY_BASIC: string[] = [
+  'vona/src/suite/cabloy-basic',
+  'vona/src/suite/a-training',
+  'zova/src/suite/cabloy-basic',
+  'zova/src/suite/a-training',
+  'zova/src/suite/a-devui',
+];
+
 const MERGE_DIRS: string[] = [
   // Claude project assets
   '.claude/commands',
@@ -242,8 +250,12 @@ async function downloadAndExtract(tarballUrl: string): Promise<void> {
 // --- Step 3: Selective overwrite ---
 
 function selectiveOverwrite(dryRun?: boolean): void {
+  const overwriteDirs = existsSync(resolve(ROOT_DIR, '__CABLOY_BASIC__'))
+    ? [...OVERWRITE_DIRS, ...OVERWRITE_DIRS_CABLOY_BASIC]
+    : OVERWRITE_DIRS;
+
   // Overwrite directories
-  for (const dir of OVERWRITE_DIRS) {
+  for (const dir of overwriteDirs) {
     const src = resolve(TEMP_DIR, dir);
     const dest = resolve(ROOT_DIR, dir);
     if (!existsSync(src)) continue;
