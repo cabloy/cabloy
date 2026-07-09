@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.102
+
+### Features
+
+- Keep the upgrade dry-run plan for the current version.
+- Extend Cabloy Basic upgrade overwrite suites.
+
 ## 5.1.101
 
 ### Features
