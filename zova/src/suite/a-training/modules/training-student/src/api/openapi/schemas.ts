@@ -71,6 +71,8 @@ export type ApiSchemaAImageDtoImageTransformOptions =
   components['schemas']['a-image.dto.imageTransformOptions'];
 export type ApiSchemaAImageDtoImageTransformOptionsPartial =
   Partial<ApiSchemaAImageDtoImageTransformOptions>;
+export type ApiSchemaAFileDtoFileView = components['schemas']['a-file.dto.fileView'];
+export type ApiSchemaAFileDtoFileViewPartial = Partial<ApiSchemaAFileDtoFileView>;
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -111,6 +113,46 @@ export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bdd
   components['schemas']['training-student.dto.studentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
   Partial<ApiSchemaTrainingStudentDtoStudentSummary_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaAFileDtoFileUploadPolicyResponse =
+  components['schemas']['a-file.dto.fileUploadPolicyResponse'];
+export type ApiSchemaAFileDtoFileUploadPolicyResponsePartial =
+  Partial<ApiSchemaAFileDtoFileUploadPolicyResponse>;
+export type ApiSchemaAFileDtoFileUploadPolicyRequest =
+  components['schemas']['a-file.dto.fileUploadPolicyRequest'];
+export type ApiSchemaAFileDtoFileUploadPolicyRequestPartial =
+  Partial<ApiSchemaAFileDtoFileUploadPolicyRequest>;
+export type ApiSchemaAFileDtoFileUploadTokenResponse =
+  components['schemas']['a-file.dto.fileUploadTokenResponse'];
+export type ApiSchemaAFileDtoFileUploadTokenResponsePartial =
+  Partial<ApiSchemaAFileDtoFileUploadTokenResponse>;
+export type ApiSchemaAFileDtoFileUploadTokenRequest =
+  components['schemas']['a-file.dto.fileUploadTokenRequest'];
+export type ApiSchemaAFileDtoFileUploadTokenRequestPartial =
+  Partial<ApiSchemaAFileDtoFileUploadTokenRequest>;
+export type ApiSchemaAFileDtoFileUploadResponse =
+  components['schemas']['a-file.dto.fileUploadResponse'];
+export type ApiSchemaAFileDtoFileUploadResponsePartial =
+  Partial<ApiSchemaAFileDtoFileUploadResponse>;
+export type ApiSchemaAFileDtoFileDirectUploadResponse =
+  components['schemas']['a-file.dto.fileDirectUploadResponse'];
+export type ApiSchemaAFileDtoFileDirectUploadResponsePartial =
+  Partial<ApiSchemaAFileDtoFileDirectUploadResponse>;
+export type ApiSchemaAFileDtoFileDirectUploadRequest =
+  components['schemas']['a-file.dto.fileDirectUploadRequest'];
+export type ApiSchemaAFileDtoFileDirectUploadRequestPartial =
+  Partial<ApiSchemaAFileDtoFileDirectUploadRequest>;
+export type ApiSchemaAFileDtoFileUploadUrlRequest =
+  components['schemas']['a-file.dto.fileUploadUrlRequest'];
+export type ApiSchemaAFileDtoFileUploadUrlRequestPartial =
+  Partial<ApiSchemaAFileDtoFileUploadUrlRequest>;
+export type ApiSchemaAImageDtoImageUploadPolicyResponse =
+  components['schemas']['a-image.dto.imageUploadPolicyResponse'];
+export type ApiSchemaAImageDtoImageUploadPolicyResponsePartial =
+  Partial<ApiSchemaAImageDtoImageUploadPolicyResponse>;
+export type ApiSchemaAImageDtoImageUploadPolicyRequest =
+  components['schemas']['a-image.dto.imageUploadPolicyRequest'];
+export type ApiSchemaAImageDtoImageUploadPolicyRequestPartial =
+  Partial<ApiSchemaAImageDtoImageUploadPolicyRequest>;
 export type ApiSchemaAImageDtoImageUploadTokenResponse =
   components['schemas']['a-image.dto.imageUploadTokenResponse'];
 export type ApiSchemaAImageDtoImageUploadTokenResponsePartial =
@@ -131,6 +173,14 @@ export type ApiSchemaAImageDtoImageDirectUploadRequest =
   components['schemas']['a-image.dto.imageDirectUploadRequest'];
 export type ApiSchemaAImageDtoImageDirectUploadRequestPartial =
   Partial<ApiSchemaAImageDtoImageDirectUploadRequest>;
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeResponse =
+  components['schemas']['a-image.dto.imageDirectUploadFinalizeResponse'];
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeResponsePartial =
+  Partial<ApiSchemaAImageDtoImageDirectUploadFinalizeResponse>;
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeRequest =
+  components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
+export type ApiSchemaAImageDtoImageDirectUploadFinalizeRequestPartial =
+  Partial<ApiSchemaAImageDtoImageDirectUploadFinalizeRequest>;
 export type ApiSchemaAImageDtoImageUploadUrlRequest =
   components['schemas']['a-image.dto.imageUploadUrlRequest'];
 export type ApiSchemaAImageDtoImageUploadUrlRequestPartial =

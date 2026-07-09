@@ -104,6 +104,21 @@ export interface IFileDirectUploadResult<
   method?: 'PUT' | 'POST';
 }
 
+export interface IFileView<TMeta extends TypeFileMeta = TypeFileMeta> {
+  id: TableIdentity;
+  provider: keyof IFileProviderRecord;
+  clientName: string;
+  fileScene?: keyof IFileSceneRecord | string;
+  filename?: string;
+  contentType?: string;
+  size?: number;
+  public?: boolean;
+  uploadedAt?: Date;
+  meta?: TMeta;
+  downloadUrl: string;
+  signed?: boolean;
+}
+
 export interface IFileUploadOptions<
   TClientOptions extends IFileProviderClientOptions = IFileProviderClientOptions,
   TMeta extends TypeFileMeta = TypeFileMeta,

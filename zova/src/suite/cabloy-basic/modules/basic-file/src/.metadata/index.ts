@@ -4,21 +4,25 @@ export * from '../model/file.js';
 import { IModelOptionsFile } from '../model/file.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  export interface IModelRecord {
-    'basic-file:file': IModelOptionsFile;
-  }
+  
+    export interface IModelRecord {
+      'basic-file:file': IModelOptionsFile;
+    }
+
+  
 }
 declare module 'zova-module-basic-file' {
-  export interface ModelFile {
-    /** @internal */
-    get scope(): ScopeModuleBasicFile;
-  }
+  
+        export interface ModelFile {
+          /** @internal */
+          get scope(): ScopeModuleBasicFile;
+        }
 
-  export interface ModelFile {
-    get $beanFullName(): 'basic-file.model.file';
-    get $onionName(): 'basic-file:file';
-    get $onionOptions(): IModelOptionsFile;
-  }
+        export interface ModelFile {
+          get $beanFullName(): 'basic-file.model.file';
+          get $onionName(): 'basic-file:file';
+          get $onionOptions(): IModelOptionsFile;
+        } 
 }
 /** model: end */
 /** model: begin */

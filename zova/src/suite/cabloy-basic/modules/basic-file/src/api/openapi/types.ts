@@ -496,6 +496,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/image/upload-policy': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_getUploadPolicy'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/image/upload-token': {
     parameters: {
       query?: never;
@@ -912,38 +928,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/test/vona/guardPassport/testUserName': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestVonaGuardPassport_testUserName'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/test/vona/guardPassport/testUserNameFail': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['TestVonaGuardPassport_testUserNameFail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/test/vona/guardPassport/testRoleName': {
     parameters: {
       query?: never;
@@ -968,6 +952,54 @@ export interface paths {
       cookie?: never;
     };
     get: operations['TestVonaGuardPassport_testRoleNameFail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/vona/guardPassport/testRoleNameControllerShouldNotExecute': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestVonaGuardPassport_testRoleNameControllerShouldNotExecute'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/vona/guardPassport/testPublic': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestVonaGuardPassport_testPublic'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/vona/guardPassport/testActivatedFalse': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestVonaGuardPassport_testActivatedFalse'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1660,9 +1692,7 @@ export interface components {
       description?: string | undefined;
       sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
       /** @description Dossier Files */
-      dossierFiles?:
-        | components['schemas']['training-record.dto.recordDossierFileView'][]
-        | undefined;
+      dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
       /** @description Operations */
       _operationsRow?: unknown;
     };
@@ -1703,7 +1733,7 @@ export interface components {
       rotate?: number | undefined;
       sharpen?: number | undefined;
     };
-    'training-record.dto.recordDossierFileView': {
+    'a-file.dto.fileView': {
       id: number | string;
       provider: string;
       clientName: string;
@@ -1786,9 +1816,7 @@ export interface components {
           }[];
           sceneImages?: components['schemas']['a-image.dto.imageView'][] | undefined;
           /** @description Dossier Files */
-          dossierFiles?:
-            | components['schemas']['training-record.dto.recordDossierFileView'][]
-            | undefined;
+          dossierFiles?: components['schemas']['a-file.dto.fileView'][] | undefined;
           _trainingRecordSubjects?:
             | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
             | undefined;
@@ -1915,7 +1943,26 @@ export interface components {
               | undefined;
             /** @description Dossier Files */
             dossierFiles?:
-              | components['schemas']['training-record.dto.recordDossierFileView'][]
+              | {
+                  id?: number | string | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  fileScene?: string | undefined;
+                  filename?: string | undefined;
+                  contentType?: string | undefined;
+                  size?: number | undefined;
+                  public?: boolean | undefined;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  meta?:
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | undefined;
+                  downloadUrl?: string | undefined;
+                  /** @default true */
+                  signed?: boolean | undefined;
+                }[]
               | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
@@ -1981,7 +2028,26 @@ export interface components {
         | undefined;
       /** @description Dossier Files */
       dossierFiles?:
-        | components['schemas']['training-record.dto.recordDossierFileView'][]
+        | {
+            id?: number | string | undefined;
+            provider?: string | undefined;
+            clientName?: string | undefined;
+            fileScene?: string | undefined;
+            filename?: string | undefined;
+            contentType?: string | undefined;
+            size?: number | undefined;
+            public?: boolean | undefined;
+            /** Format: date-time */
+            uploadedAt?: Date;
+            meta?:
+              | {
+                  [key: string]: unknown;
+                }
+              | undefined;
+            downloadUrl?: string | undefined;
+            /** @default true */
+            signed?: boolean | undefined;
+          }[]
         | undefined;
       /** @description # */
       _lineNumber: number;
@@ -2160,7 +2226,26 @@ export interface components {
               | undefined;
             /** @description Dossier Files */
             dossierFiles?:
-              | components['schemas']['training-record.dto.recordDossierFileView'][]
+              | {
+                  id?: number | string | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  fileScene?: string | undefined;
+                  filename?: string | undefined;
+                  contentType?: string | undefined;
+                  size?: number | undefined;
+                  public?: boolean | undefined;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  meta?:
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | undefined;
+                  downloadUrl?: string | undefined;
+                  /** @default true */
+                  signed?: boolean | undefined;
+                }[]
               | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
@@ -2256,7 +2341,26 @@ export interface components {
               | undefined;
             /** @description Dossier Files */
             dossierFiles?:
-              | components['schemas']['training-record.dto.recordDossierFileView'][]
+              | {
+                  id?: number | string | undefined;
+                  provider?: string | undefined;
+                  clientName?: string | undefined;
+                  fileScene?: string | undefined;
+                  filename?: string | undefined;
+                  contentType?: string | undefined;
+                  size?: number | undefined;
+                  public?: boolean | undefined;
+                  /** Format: date-time */
+                  uploadedAt?: Date;
+                  meta?:
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | undefined;
+                  downloadUrl?: string | undefined;
+                  /** @default true */
+                  signed?: boolean | undefined;
+                }[]
               | undefined;
             _trainingRecordSubjects?:
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
@@ -2359,6 +2463,16 @@ export interface components {
       filename?: string | undefined;
       contentType?: string | undefined;
       objectKey?: string | undefined;
+    };
+    'a-image.dto.imageUploadPolicyResponse': {
+      imageScene: string;
+      maxSize?: number | undefined;
+      mimeTypes?: string[] | undefined;
+      extensions?: string[] | undefined;
+      multiple?: boolean | undefined;
+    };
+    'a-image.dto.imageUploadPolicyRequest': {
+      imageScene: string;
     };
     'a-image.dto.imageUploadTokenResponse': {
       token: string;
@@ -4059,6 +4173,34 @@ export interface operations {
       };
     };
   };
+  Image_getUploadPolicy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadPolicyRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadPolicyResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   Image_createUploadToken: {
     parameters: {
       query?: never;
@@ -4960,54 +5102,6 @@ export interface operations {
     };
     authToken: true;
   };
-  TestVonaGuardPassport_testUserName: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TestVonaGuardPassport_testUserNameFail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
   TestVonaGuardPassport_testRoleName: {
     parameters: {
       query?: never;
@@ -5033,6 +5127,77 @@ export interface operations {
     authToken: true;
   };
   TestVonaGuardPassport_testRoleNameFail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TestVonaGuardPassport_testRoleNameControllerShouldNotExecute: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TestVonaGuardPassport_testPublic: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  TestVonaGuardPassport_testActivatedFalse: {
     parameters: {
       query?: never;
       header?: never;

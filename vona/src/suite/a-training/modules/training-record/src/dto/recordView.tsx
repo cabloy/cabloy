@@ -1,5 +1,6 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
+import { DtoFileView } from 'vona-module-a-file';
 import { DtoImageView } from 'vona-module-a-image';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
@@ -7,11 +8,9 @@ import { Dto } from 'vona-module-a-web';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
-import { resolveDossierFiles } from '../lib/resolveDossierFiles.ts';
 import { ModelRecord } from '../model/record.ts';
 import { DtoDetailRecordSubjectResItem } from './detailRecordSubjectResItem.tsx';
 import { DtoDetailRecordSubjectView } from './detailRecordSubjectView.tsx';
-import { DtoRecordDossierFileView } from './recordDossierFileView.ts';
 
 export interface IDtoOptionsRecordView extends IDecoratorDtoOptions {}
 
@@ -55,12 +54,13 @@ export class DtoRecordView extends $Dto.get(() => ModelRecord, {
     v.title($locale('DossierFiles')),
     ZovaRender.visible(false),
     v.optional(),
-    v.serializerTransform('a-serialization:custom', {
-      custom: resolveDossierFiles,
+    v.serializerTransform('a-file:resolveFiles', {
+      fieldName: 'dossierFileIds',
+      fileScene: 'training-record:dossierFile',
     }),
-    v.array(DtoRecordDossierFileView),
+    v.array(DtoFileView),
   )
-  dossierFiles?: DtoRecordDossierFileView[];
+  dossierFiles?: DtoFileView[];
 
   @Api.field(ZovaRender.visible(false), v.optional(), v.array(DtoDetailRecordSubjectResItem))
   _trainingRecordSubjects?: DtoDetailRecordSubjectResItem[];

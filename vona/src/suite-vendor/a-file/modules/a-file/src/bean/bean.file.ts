@@ -15,6 +15,7 @@ import type {
   IFileUploadInput,
   IFileUploadOptions,
   IFileUploadUrlInput,
+  IFileView,
 } from '../types/file.ts';
 import type {
   IFileProviderRecord,
@@ -22,6 +23,7 @@ import type {
   TypeFileProviderExecuteByName,
   TypeFileProviderOptionsByName,
 } from '../types/fileProvider.ts';
+import type { IFileSceneRecord } from '../types/fileScene.ts';
 
 interface IFileProviderContext<N extends keyof IFileProviderRecord = keyof IFileProviderRecord> {
   beanFileProvider: TypeFileProviderExecuteByName<N>;
@@ -182,6 +184,47 @@ export class BeanFile extends BeanBase {
       contentType: file.contentType,
       signed: !!deliveryOptionsResolved.signed,
     };
+  }
+
+  async resolveFile(
+    fileId?: TableIdentity,
+    fileScene?: keyof IFileSceneRecord,
+    deliveryOptions?: IFileDeliveryOptions,
+  ): Promise<IFileView | undefined> {
+    if (!fileId) return;
+    const file = await this.get(fileId);
+    if (!file) return;
+    if (fileScene && file.fileScene !== fileScene) {
+      throw new Error(`file scene mismatch: file=${file.fileScene}, expected=${fileScene}`);
+    }
+    const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
+    return {
+      id: file.id,
+      provider: file.provider,
+      clientName: file.clientName,
+      fileScene: file.fileScene,
+      filename: file.filename,
+      contentType: file.contentType,
+      size: file.size,
+      public: file.public,
+      uploadedAt: file.uploadedAt,
+      meta: file.meta,
+      downloadUrl: await this.getDownloadUrl(file.id, deliveryOptions),
+      signed: !!deliveryOptionsResolved.signed,
+    } satisfies IFileView;
+  }
+
+  async resolveFiles(
+    fileIds?: TableIdentity[],
+    fileScene?: keyof IFileSceneRecord,
+    deliveryOptions?: IFileDeliveryOptions,
+  ) {
+    if (!fileIds) return;
+    if (!fileIds.length) return [];
+    const items = await Promise.all(
+      fileIds.map(fileId => this.resolveFile(fileId, fileScene, deliveryOptions)),
+    );
+    return items.filter((item): item is IFileView => !!item);
   }
 
   private async _getFileProviderResource(file: EntityFile) {

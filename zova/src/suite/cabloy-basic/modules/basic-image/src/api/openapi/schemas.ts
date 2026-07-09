@@ -71,10 +71,8 @@ export type ApiSchemaAImageDtoImageTransformOptions =
   components['schemas']['a-image.dto.imageTransformOptions'];
 export type ApiSchemaAImageDtoImageTransformOptionsPartial =
   Partial<ApiSchemaAImageDtoImageTransformOptions>;
-export type ApiSchemaTrainingRecordDtoRecordDossierFileView =
-  components['schemas']['training-record.dto.recordDossierFileView'];
-export type ApiSchemaTrainingRecordDtoRecordDossierFileViewPartial =
-  Partial<ApiSchemaTrainingRecordDtoRecordDossierFileView>;
+export type ApiSchemaAFileDtoFileView = components['schemas']['a-file.dto.fileView'];
+export type ApiSchemaAFileDtoFileViewPartial = Partial<ApiSchemaAFileDtoFileView>;
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =

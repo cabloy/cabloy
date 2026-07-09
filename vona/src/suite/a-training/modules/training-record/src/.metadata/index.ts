@@ -388,20 +388,46 @@ declare module 'vona-module-training-record' {
           } 
 }
 /** ssrMenu: end */
+/** fileScene: begin */
+export * from '../bean/fileScene.dossierFile.ts';
+
+import { type IDecoratorFileSceneOptions } from 'vona-module-a-file';
+declare module 'vona-module-a-file' {
+
+    export interface IFileSceneRecord {
+      'training-record:dossierFile': IDecoratorFileSceneOptions;
+    }
+
+
+}
+declare module 'vona-module-training-record' {
+
+        export interface FileSceneDossierFile {
+          /** @internal */
+          get scope(): ScopeModuleTrainingRecord;
+        }
+
+          export interface FileSceneDossierFile {
+            get $beanFullName(): 'training-record.fileScene.dossierFile';
+            get $onionName(): 'training-record:dossierFile';
+            get $onionOptions(): IDecoratorFileSceneOptions;
+          }
+}
+/** fileScene: end */
 /** imageScene: begin */
 export * from '../bean/imageScene.sceneImage.ts';
 
 import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
 declare module 'vona-module-a-image' {
-  
+
     export interface IImageSceneRecord {
       'training-record:sceneImage': IDecoratorImageSceneOptions;
     }
 
-  
+
 }
 declare module 'vona-module-training-record' {
-  
+
         export interface ImageSceneSceneImage {
           /** @internal */
           get scope(): ScopeModuleTrainingRecord;
@@ -411,7 +437,7 @@ declare module 'vona-module-training-record' {
             get $beanFullName(): 'training-record.imageScene.sceneImage';
             get $onionName(): 'training-record:sceneImage';
             get $onionOptions(): IDecoratorImageSceneOptions;
-          } 
+          }
 }
 /** imageScene: end */
 /** locale: begin */

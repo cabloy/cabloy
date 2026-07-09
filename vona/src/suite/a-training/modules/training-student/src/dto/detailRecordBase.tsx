@@ -1,16 +1,12 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { $Class } from 'vona';
+import { DtoFileView } from 'vona-module-a-file';
 import { DtoImageView } from 'vona-module-a-image';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
-import {
-  DtoRecordDossierFileView,
-  ModelRecord,
-  onEffectForTrainingRecordSubjects,
-  resolveDossierFiles,
-} from 'vona-module-training-record';
+import { ModelRecord, onEffectForTrainingRecordSubjects } from 'vona-module-training-record';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
@@ -59,10 +55,11 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
     v.title($locale('DossierFiles')),
     ZovaRender.visible(false),
     v.optional(),
-    v.serializerTransform('a-serialization:custom', {
-      custom: resolveDossierFiles,
+    v.serializerTransform('a-file:resolveFiles', {
+      fieldName: 'dossierFileIds',
+      fileScene: 'training-record:dossierFile',
     }),
-    v.array($Class.partial(DtoRecordDossierFileView)),
+    v.array($Class.partial(DtoFileView)),
   )
-  dossierFiles?: Partial<DtoRecordDossierFileView>[];
+  dossierFiles?: Partial<DtoFileView>[];
 }

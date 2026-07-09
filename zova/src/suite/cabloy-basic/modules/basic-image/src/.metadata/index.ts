@@ -4,21 +4,25 @@ export * from '../model/image.js';
 import { IModelOptionsImage } from '../model/image.js';
 import 'zova-module-a-model';
 declare module 'zova-module-a-model' {
-  export interface IModelRecord {
-    'basic-image:image': IModelOptionsImage;
-  }
+  
+    export interface IModelRecord {
+      'basic-image:image': IModelOptionsImage;
+    }
+
+  
 }
 declare module 'zova-module-basic-image' {
-  export interface ModelImage {
-    /** @internal */
-    get scope(): ScopeModuleBasicImage;
-  }
+  
+        export interface ModelImage {
+          /** @internal */
+          get scope(): ScopeModuleBasicImage;
+        }
 
-  export interface ModelImage {
-    get $beanFullName(): 'basic-image.model.image';
-    get $onionName(): 'basic-image:image';
-    get $onionOptions(): IModelOptionsImage;
-  }
+        export interface ModelImage {
+          get $beanFullName(): 'basic-image.model.image';
+          get $onionName(): 'basic-image:image';
+          get $onionOptions(): IModelOptionsImage;
+        } 
 }
 /** model: end */
 /** model: begin */
