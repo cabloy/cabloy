@@ -7,7 +7,7 @@ import {
   ControllerForm,
   TypeFormOnSubmitData,
 } from 'zova-module-a-form';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { IFormMeta } from 'zova-module-a-openapi';
 import { ApiSchemaTestSsrDtoTestBodyPartial } from 'zova-module-home-api';
 
@@ -36,7 +36,7 @@ export class ControllerPageToolOne extends BeanControllerPageFormBase {
 
   protected async __init__() {
     const apiSchemas = this.$apiSchema.testSsrToolOne.test();
-    const querySdk = await $QueryAutoLoad(() => apiSchemas.sdk);
+    const querySdk = await $QueryEnsureLoaded(() => apiSchemas.sdk);
     this.schemaUpdate = this.$computed(() => {
       const schema = apiSchemas.requestBody;
       // eslint-disable-next-line

@@ -12,7 +12,7 @@ import { BeanControllerPageBase, deepExtend, Use, usePrepareArg } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { formMetaFromFormScene } from 'zova-module-a-form';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
 import type { ModelResource } from '../../model/resource.js';
@@ -63,7 +63,7 @@ export class ControllerPageEntry extends BeanControllerPageBase {
     // jsx
     this._prepareJsx();
     // load schema
-    await $QueryAutoLoad(() => this.$$modelResource.getFormApiSchemas(this.formMeta)?.sdk);
+    await $QueryEnsureLoaded(() => this.$$modelResource.getFormApiSchemas(this.formMeta)?.sdk);
   }
 
   private _prepareJsx() {

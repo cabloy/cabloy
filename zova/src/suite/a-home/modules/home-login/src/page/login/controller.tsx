@@ -1,7 +1,7 @@
 import { BeanControllerPageBase } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { TypeFormOnSubmitData } from 'zova-module-a-form';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ApiApiHomeUserPassportloginRequestBody } from 'zova-module-home-api';
 
 @Controller()
@@ -20,7 +20,7 @@ export class ControllerPageLogin extends BeanControllerPageBase {
       this.user.username = 'admin';
       this.user.password = '123456';
     }
-    await $QueryAutoLoad(() => this.$passport.apiSchemasLogin.sdk);
+    await $QueryEnsureLoaded(() => this.$passport.apiSchemasLogin.sdk);
   }
 
   get schema() {

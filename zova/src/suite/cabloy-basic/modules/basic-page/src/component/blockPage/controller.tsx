@@ -14,7 +14,7 @@ import { VNode } from 'vue';
 import { BeanControllerBase, deepEqual } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
-import { $QueriesAutoLoad } from 'zova-module-a-model';
+import { $QueriesEnsureLoaded } from 'zova-module-a-model';
 import { BeanControllerTableBase } from 'zova-module-a-table';
 import { ModelResource } from 'zova-module-rest-resource';
 
@@ -67,7 +67,7 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
       return Object.assign({}, this.queryFilterData, this.queryPaged);
     });
     // load schema/data
-    await $QueriesAutoLoad(
+    await $QueriesEnsureLoaded(
       () => this.$$modelResource.apiSchemasSelect.sdk,
       () => this.queryData,
     );

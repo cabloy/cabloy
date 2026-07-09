@@ -162,7 +162,7 @@ protected async __init__(resource: string) {
 And `_bootstrap()` uses:
 
 ```typescript
-const queryBootstrap = await $QueryAutoLoad(() => this.$sdk.getBootstrap(this.resource));
+const queryBootstrap = await $QueryEnsureLoaded(() => this.$sdk.getBootstrap(this.resource));
 ```
 
 Then it resolves:

@@ -13,7 +13,7 @@ import { hashkey, isNil } from '@cabloy/utils';
 import { SchemaObject } from 'openapi3-ts/oas31';
 import { UseScope } from 'zova';
 import { formSceneFromFormMeta } from 'zova-module-a-form';
-import { $QueryAutoLoad, BeanModelBase, Model } from 'zova-module-a-model';
+import { $QueryEnsureLoaded, BeanModelBase, Model } from 'zova-module-a-model';
 import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-openapi';
 
 export interface IModelOptionsResource extends IDecoratorModelOptions {}
@@ -147,7 +147,9 @@ export class ModelResource<
     });
   }
 
-  mutationItem<TData = void, TVariables = void>(options: IModelResourceMutationItemOptions<TData, TVariables>) {
+  mutationItem<TData = void, TVariables = void>(
+    options: IModelResourceMutationItemOptions<TData, TVariables>,
+  ) {
     const { id, action, mutationFn, onSuccess, invalidateSelect = true } = options;
     if (isNil(id)) throw new Error('row id cannot empty');
     return this.$useMutationData<TData, TVariables>({
@@ -264,7 +266,7 @@ export class ModelResource<
   }
 
   private async _bootstrap() {
-    const queryBootstrap = await $QueryAutoLoad(() => this.$sdk.getBootstrap(this.resource));
+    const queryBootstrap = await $QueryEnsureLoaded(() => this.$sdk.getBootstrap(this.resource));
     if (!queryBootstrap?.data) {
       throw new Error(`not found sdk of resource: ${this.resource}`);
     }

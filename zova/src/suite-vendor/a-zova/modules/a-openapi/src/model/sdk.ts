@@ -3,7 +3,12 @@ import { SchemaObject } from 'openapi3-ts/oas31';
 import z from 'zod';
 import { cast, ILocaleRecord, TypeEventOff, Use, usePrepareArg } from 'zova';
 import { IApiSchemaOptions } from 'zova-module-a-api';
-import { $QueryAutoLoad, BeanModelBase, IDecoratorModelOptions, Model } from 'zova-module-a-model';
+import {
+  $QueryEnsureLoaded,
+  BeanModelBase,
+  IDecoratorModelOptions,
+  Model,
+} from 'zova-module-a-model';
 
 import { SysSdk } from '../bean/sys.sdk.js';
 import {
@@ -60,7 +65,7 @@ export class ModelSdk extends BeanModelBase {
         const bootstrap = await this.$$sysSdk.loadBootstrap(this.$fetch, resource);
         if (!bootstrap) throw new Error('load bootstrap error');
         if (process.env.SERVER) {
-          await $QueryAutoLoad(() => this.getPermissions(resource));
+          await $QueryEnsureLoaded(() => this.getPermissions(resource));
         } else {
           await this.$refetchQueries({ queryKey: ['permissions', resource] });
         }
@@ -98,7 +103,7 @@ export class ModelSdk extends BeanModelBase {
         if (!sdk) throw new Error('load sdk error');
         for (const schemaName of sdk.schemas) {
           if (process.env.SERVER) {
-            await $QueryAutoLoad(() => this.getSchema(schemaName));
+            await $QueryEnsureLoaded(() => this.getSchema(schemaName));
           } else {
             await this.$refetchQueries({ queryKey: ['schema', schemaName] });
           }

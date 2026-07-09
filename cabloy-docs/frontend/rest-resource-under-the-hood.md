@@ -98,7 +98,7 @@ Route record
                  └─ page-controller shell
                       ├─ resolves current resource / id / formScene
                       ├─ resolves selector-backed ModelResource
-                      ├─ autoloads top-level API schema surface
+                      ├─ ensures top-level API schema surface is loaded
                       └─ reads schemaRow.rest.blocks or formSchema.rest.blocks
                                │
                                ▼
@@ -255,7 +255,7 @@ zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controlle
 The main jobs of `ControllerPageResource` are:
 
 1. resolve the selector-backed model from `this.$params.resource`
-2. autoload the select API schema through `this.$$modelResource.apiSchemasSelect.sdk`
+2. ensure the select API schema is loaded through `this.$$modelResource.apiSchemasSelect.sdk`
 3. read `this.schemaRow?.rest?.blocks`
 4. render those blocks through `ZovaJsx`
 
@@ -291,7 +291,7 @@ The main jobs of `ControllerPageEntry` are:
 - derive `formMeta`
 - expose `formProvider` from the model
 - expose `formSchema` from the model
-- autoload the form API schemas
+- ensure the form API schemas are loaded
 - read `formSchema?.rest?.blocks`
 - render those blocks through `ZovaJsx`
 
@@ -366,7 +366,7 @@ That means one generic model class can serve many resources safely, because the 
 Inside initialization, `_bootstrap()` calls:
 
 ```typescript
-$QueryAutoLoad(() => this.$sdk.getBootstrap(this.resource));
+$QueryEnsureLoaded(() => this.$sdk.getBootstrap(this.resource));
 ```
 
 and then resolves:

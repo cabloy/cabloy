@@ -94,7 +94,7 @@ The clearest current list shell is:
 Representative source facts:
 
 - the page resolves `$$modelResource` from the route resource
-- `__init__()` autoloads `this.$$modelResource.apiSchemasSelect.sdk`
+- `__init__()` ensures `this.$$modelResource.apiSchemasSelect.sdk` is loaded
 - render reads `schemaRow?.rest?.blocks`
 
 This is the list-shell boundary:

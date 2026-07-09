@@ -117,7 +117,7 @@ Primary anchors:
 What to prove:
 
 - the list route shell resolves the expected `resource`
-- `apiSchemasSelect.sdk` still autoloads where expected
+- `apiSchemasSelect.sdk` is still ensured loaded where expected
 - `schemaRow`, `schemaFilter`, and list data flow are still exposed correctly
 - `basic-page:blockPage` still becomes the deeper list runtime owner
 

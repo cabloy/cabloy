@@ -9,7 +9,7 @@ import { CircleStencil, Cropper, RectangleStencil } from 'vue-advanced-cropper';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField } from 'zova-module-a-form';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import {
   buildImagePreviewTitle,
   inferImageRelationName,
@@ -318,7 +318,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private async _waitForUploadPolicy(options?: IResourceFormFieldImageOptions) {
-    await $QueryAutoLoad(() => this._getUploadPolicyQuery(options));
+    await $QueryEnsureLoaded(() => this._getUploadPolicyQuery(options));
   }
 
   private _getEffectiveMultiple(

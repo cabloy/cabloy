@@ -6,7 +6,7 @@ import { classes } from 'typestyle';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZSelect, ZSelectProps } from 'zova-module-basic-select';
 import { ModelResource } from 'zova-module-rest-resource';
 
@@ -52,7 +52,7 @@ export class ControllerFormFieldResourcePicker extends BeanControllerBase {
       this.resource,
     );
     // load data
-    await $QueryAutoLoad(() => this.queryData);
+    await $QueryEnsureLoaded(() => this.queryData);
   }
 
   get resource() {

@@ -121,7 +121,7 @@ Representative source facts:
 
 - the page resolves `$$modelResource` from the route resource
 - it derives `formMeta` from `formScene`
-- it autoloads `this.$$modelResource.getFormApiSchemas(this.formMeta)?.sdk`
+- it ensures `this.$$modelResource.getFormApiSchemas(this.formMeta)?.sdk` is loaded
 - it derives `formSchema` from `this.$$modelResource.getFormSchema(this.formMeta)`
 
 This is the entry-shell boundary:

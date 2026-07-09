@@ -2,7 +2,7 @@ import { RouterLink } from '@cabloy/vue-router';
 import { withModifiers } from 'vue';
 import { BeanControllerPageBase, Use, uuid } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
 import type { ApiTodoEntity } from '../../api/todo.js';
@@ -18,7 +18,7 @@ export class ControllerPageTodo extends BeanControllerPageBase {
   currentTodoId?: string;
 
   protected async __init__() {
-    await $QueryAutoLoad(() => this.queryTodos);
+    await $QueryEnsureLoaded(() => this.queryTodos);
   }
 
   get queryTodos() {

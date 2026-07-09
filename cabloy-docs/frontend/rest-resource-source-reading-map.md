@@ -207,7 +207,7 @@ Read:
 This controller does three main things:
 
 1. resolves the selector-backed `ModelResource` instance from `this.$params.resource`
-2. autoloads `apiSchemasSelect.sdk`
+2. ensures `apiSchemasSelect.sdk` is loaded
 3. reads `schemaRow?.rest?.blocks` and renders those blocks through `ZovaJsx`
 
 The key point is what it does **not** do.
@@ -239,7 +239,7 @@ It mainly owns:
 - `formMeta` derivation
 - `formProvider` lookup from `ModelResource`
 - `formSchema` lookup from `ModelResource`
-- autoload of the form API schemas
+- ensuring the form API schemas are loaded
 - block rendering from `formSchema?.rest?.blocks`
 
 Again, the most important insight is what it does **not** fully own.

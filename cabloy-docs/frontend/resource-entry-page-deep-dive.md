@@ -110,7 +110,7 @@ Its main jobs are:
 - derive `formMeta`
 - resolve `formProvider`
 - resolve `formSchema`
-- autoload form API schemas
+- ensure form API schemas are loaded
 - render `formSchema?.rest?.blocks`
 
 This is the first key architectural boundary:
@@ -154,7 +154,7 @@ Its main jobs are:
 - derive `formMeta` and `schemaScene`
 - derive `formProvider`, `formSchema`, and `formData`
 - prepare the shared JSX render context
-- autoload view/query data
+- ensure view/query data is loaded
 - own submit flow through `submitData(...)`
 - update page meta through `setPageMeta(...)`
 - expose `$$pageEntry` into the render context for downstream blocks

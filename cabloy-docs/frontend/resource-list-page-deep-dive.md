@@ -102,7 +102,7 @@ zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/page/resource/controlle
 Its main jobs are:
 
 - resolve the current selector-backed `ModelResource`
-- autoload select API schemas
+- ensure select API schemas are loaded
 - read `schemaRow?.rest?.blocks`
 - render those blocks through `ZovaJsx`
 

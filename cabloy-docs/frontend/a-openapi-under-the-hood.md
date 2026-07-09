@@ -131,7 +131,7 @@ The source confirms that:
 
 - bootstrap data is loaded first
 - permissions are then loaded through `getPermissions(resource)`
-- on the server, permissions are autoloaded as part of the bootstrap path
+- on the server, permissions are ensured loaded as part of the bootstrap path
 - on the client, permission queries are refetched when needed
 
 That means bootstrap and permissions are part of the same lower-level OpenAPI/runtime ladder, not unrelated utilities.

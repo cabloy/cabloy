@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { BeanControllerPageBase, deepExtend, Use, usePrepareArg } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZPage } from 'zova-module-home-base';
 
 import type { ModelResource } from '../../model/resource.js';
@@ -29,7 +29,7 @@ export class ControllerPageResource extends BeanControllerPageBase {
     // jsx
     this._prepareJsx();
     // load schema/data
-    await $QueryAutoLoad(() => this.$$modelResource.apiSchemasSelect.sdk);
+    await $QueryEnsureLoaded(() => this.$$modelResource.apiSchemasSelect.sdk);
   }
 
   private _prepareJsx() {

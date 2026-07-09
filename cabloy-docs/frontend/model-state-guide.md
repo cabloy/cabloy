@@ -348,7 +348,7 @@ A plain CRUD helper usually forwards requests.
 
 It owns several resource-level concerns together:
 
-- bootstrap of resource metadata through `$QueryAutoLoad(...)`
+- bootstrap of resource metadata through `$QueryEnsureLoaded(...)`
 - resolution of the final `resourceApi`
 - permissions lookup
 - OpenAPI schema access for view/create/update/select

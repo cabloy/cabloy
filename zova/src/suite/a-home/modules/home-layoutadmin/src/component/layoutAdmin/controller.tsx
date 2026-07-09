@@ -2,7 +2,7 @@ import type { ModelTabs, ModelTabsOptions } from 'zova-module-a-routertabs';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { $QueryAutoLoad } from 'zova-module-a-model';
+import { $QueryEnsureLoaded } from 'zova-module-a-model';
 import { IServiceSsrLayoutOptions, ServiceLocale, ServiceSsrLayout } from 'zova-module-home-base';
 
 import { ModelLayout } from '../../model/layout.js';
@@ -67,7 +67,7 @@ export class ControllerLayoutAdmin extends BeanControllerBase {
       await this.$passport.ensurePassport();
     }
     // menu
-    await $QueryAutoLoad(() => this.$$modelMenu.retrieveMenus());
+    await $QueryEnsureLoaded(() => this.$$modelMenu.retrieveMenus());
     // tabs
     await this._initTabs();
   }

@@ -22,7 +22,7 @@ import {
   formMetaFromFormScene,
   TypeFormOnSubmitData,
 } from 'zova-module-a-form';
-import { $QueriesAutoLoad } from 'zova-module-a-model';
+import { $QueriesEnsureLoaded } from 'zova-module-a-model';
 import { ModelResource } from 'zova-module-rest-resource';
 
 declare module 'zova-module-a-openapi' {
@@ -81,7 +81,7 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
     // jsx
     this._prepareJsx();
     // load schema/data
-    await $QueriesAutoLoad(
+    await $QueriesEnsureLoaded(
       () => this.$$modelResource.getFormApiSchemas(this.formMeta)?.sdk,
       () => this.queryData,
     );

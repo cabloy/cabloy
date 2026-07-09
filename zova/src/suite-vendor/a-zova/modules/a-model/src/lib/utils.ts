@@ -1,18 +1,18 @@
 import type { DataQuery } from '../types/query.js';
 
-export type TypeQueryAutoLoadFn<T> = () => DataQuery<T> | undefined;
+export type TypeQueryEnsureLoadedFn<T> = () => DataQuery<T> | undefined;
 
-export async function $QueryAutoLoad<T = any>(fn: TypeQueryAutoLoadFn<T>) {
-  return _QueryAutoLoadInner<T>(fn);
+export async function $QueryEnsureLoaded<T = any>(fn: TypeQueryEnsureLoadedFn<T>) {
+  return _QueryEnsureLoadedInner<T>(fn);
 }
 
-export async function $QueriesAutoLoad<T1 = any, T2 = any, T3 = any, T4 = any, T5 = any>(
-  fn1?: TypeQueryAutoLoadFn<T1>,
-  fn2?: TypeQueryAutoLoadFn<T2>,
-  fn3?: TypeQueryAutoLoadFn<T3>,
-  fn4?: TypeQueryAutoLoadFn<T4>,
-  fn5?: TypeQueryAutoLoadFn<T5>,
-  ...fns: TypeQueryAutoLoadFn<any>[]
+export async function $QueriesEnsureLoaded<T1 = any, T2 = any, T3 = any, T4 = any, T5 = any>(
+  fn1?: TypeQueryEnsureLoadedFn<T1>,
+  fn2?: TypeQueryEnsureLoadedFn<T2>,
+  fn3?: TypeQueryEnsureLoadedFn<T3>,
+  fn4?: TypeQueryEnsureLoadedFn<T4>,
+  fn5?: TypeQueryEnsureLoadedFn<T5>,
+  ...fns: TypeQueryEnsureLoadedFn<any>[]
 ): Promise<
   [
     DataQuery<T1> | undefined,
@@ -24,19 +24,19 @@ export async function $QueriesAutoLoad<T1 = any, T2 = any, T3 = any, T4 = any, T
   ]
 > {
   let promises: any[] = [
-    _QueryAutoLoadInner<T1>(fn1),
-    _QueryAutoLoadInner<T2>(fn2),
-    _QueryAutoLoadInner<T3>(fn3),
-    _QueryAutoLoadInner<T4>(fn4),
-    _QueryAutoLoadInner<T5>(fn5),
+    _QueryEnsureLoadedInner<T1>(fn1),
+    _QueryEnsureLoadedInner<T2>(fn2),
+    _QueryEnsureLoadedInner<T3>(fn3),
+    _QueryEnsureLoadedInner<T4>(fn4),
+    _QueryEnsureLoadedInner<T5>(fn5),
   ];
   if (fns.length > 0) {
-    promises = promises.concat(fns.map(fn => _QueryAutoLoadInner(fn)));
+    promises = promises.concat(fns.map(fn => _QueryEnsureLoadedInner(fn)));
   }
   return (await Promise.all(promises)) as any;
 }
 
-async function _QueryAutoLoadInner<T = any>(fn?: TypeQueryAutoLoadFn<T>) {
+async function _QueryEnsureLoadedInner<T = any>(fn?: TypeQueryEnsureLoadedFn<T>) {
   if (!fn) return;
   const query = fn();
   if (query && query.data === undefined) {
