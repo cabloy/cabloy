@@ -41,6 +41,7 @@ vona/.zova-rest
 **/.temp-dynamic-*
 **/quasar.config.*.temporary.compiled*
 zova/.zova
+zova/.zova-rest
 zova/.quasar
 
 **/src-cordova/node_modules
