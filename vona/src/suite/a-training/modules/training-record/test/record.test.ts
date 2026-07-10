@@ -43,10 +43,6 @@ describe('record.test.ts', () => {
             filename: 'attendance.txt',
             contentType: 'text/plain',
             public: false,
-            meta: {
-              category: 'attendanceSheet',
-              source: 'upload',
-            },
           },
           {
             clientName: 'default',
@@ -103,7 +99,8 @@ describe('record.test.ts', () => {
         assert.equal(String(recordDossierFile?.id), String(dossierFileAttendance.id));
         assert.equal(recordDossierFile?.filename, 'attendance.txt');
         assert.equal(recordDossierFile?.signed, true);
-        assert.equal(recordDossierFile?.meta?.category, 'attendanceSheet');
+        assert.equal('meta' in (recordDossierFile ?? {}), false);
+        assert.equal('fileScene' in (recordDossierFile ?? {}), false);
         assert.equal(record.trainingRecordSubjects?.length, 1);
         assert.equal(recordSubject?.name, '__Math__');
         assert.equal(recordSubject?.score, 95);
@@ -129,10 +126,6 @@ describe('record.test.ts', () => {
             filename: 'assessment.txt',
             contentType: 'text/plain',
             public: false,
-            meta: {
-              category: 'assessmentReport',
-              source: 'upload',
-            },
           },
           {
             clientName: 'default',
