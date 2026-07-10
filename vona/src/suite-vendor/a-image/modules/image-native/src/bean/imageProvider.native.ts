@@ -12,7 +12,6 @@ import type {
 } from 'vona-module-a-image';
 import type { EntityImage } from 'vona-module-a-image';
 
-import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { ImageProvider } from 'vona-module-a-image';
 
@@ -32,7 +31,7 @@ export interface IImageProviderOptionsNative extends IDecoratorImageProviderOpti
 @ImageProvider<IImageProviderOptionsNative>({
   base: {
     subdir: 'default',
-    public: true,
+    public: false,
     signedDeliveryKind: 'proxy',
   },
 })
@@ -112,6 +111,7 @@ export class ImageProviderNative
         ...clientOptions,
         subdir: clientOptions.subdir ?? 'default',
         deliveryBaseUrl: image.deliveryBaseUrl ?? clientOptions.deliveryBaseUrl,
+        public: image.public ?? clientOptions.public,
       },
       deliveryOptions,
     );
@@ -124,19 +124,14 @@ export class ImageProviderNative
     options: IImageProviderOptionsNative,
     deliveryOptions?: IImageDeliveryOptions,
   ): Promise<IImageDownloadResult> {
-    if (
-      (deliveryOptions?.responseMode ?? 'auto') !== 'url' &&
-      !deliveryOptions?.signed &&
-      request.variantName === 'original' &&
-      !request.transformOptions
-    ) {
-      const buffer = image.storagePath ? await fse.readFile(image.storagePath) : undefined;
-      if (buffer) {
+    if ((deliveryOptions?.responseMode ?? 'auto') !== 'url' && !deliveryOptions?.signed) {
+      const result = await this.scope.service.imageNative.downloadBuffer(image, request);
+      if (result) {
         return {
           kind: 'buffer',
-          buffer,
-          filename: image.filename,
-          contentType: image.contentType,
+          buffer: result.buffer,
+          filename: result.filename,
+          contentType: result.contentType,
           signed: false,
         };
       }

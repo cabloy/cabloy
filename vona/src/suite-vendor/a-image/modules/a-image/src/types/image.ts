@@ -179,7 +179,7 @@ export interface IImageView {
   uploadedAt?: Date;
   public?: boolean;
   variants?: IImageNamedVariants;
-  signed?: boolean;
+  signed: boolean;
 }
 
 export interface IImageUploadOptions<
@@ -218,7 +218,6 @@ export interface IImageDeliveryTokenPayload {
   kind: 'imageDelivery';
   imageId: TableIdentity;
   request: IImageVariantRequest;
-  targetUrl: string;
 }
 
 declare module 'vona' {

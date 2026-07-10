@@ -15,7 +15,7 @@ import type { IUploadFile } from 'vona-module-a-upload';
 import fse from 'fs-extra';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
-import { BeanBase, uuidv4 } from 'vona';
+import { BeanBase, getRuntimePathPhysicalRoot, uuidv4 } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { resolveImageVariantRequestToTransform } from 'vona-module-a-image';
 
@@ -23,7 +23,7 @@ import type { IImageProviderNativeClientOptions } from '../bean/imageProvider.na
 
 type IImageNativeStoredImage = Pick<
   EntityImage,
-  'resourceId' | 'filename' | 'storagePath' | 'variants'
+  'id' | 'resourceId' | 'filename' | 'contentType' | 'public' | 'storagePath' | 'variants'
 >;
 
 type IImageNativeDraftImage = Pick<
@@ -56,14 +56,22 @@ export class ServiceImageNative extends BeanBase {
     options: IImageProviderNativeClientOptions,
   ): Promise<IImageProviderResource> {
     const resourceId = uuidv4();
-    const targetPath = await this._getFinalPath(resourceId, input.filename, options, input.file);
+    const isPublic = input.public ?? options.public;
+    const targetPath = await this._getFinalPath(
+      resourceId,
+      input.filename,
+      isPublic,
+      options,
+      input.file,
+    );
+    await fse.ensureDir(path.dirname(targetPath));
     await fse.copy(input.file, targetPath);
     return await this._buildStoredResource(targetPath, {
       resourceId,
       filename: input.filename,
       contentType: input.contentType,
       meta: input.meta,
-      public: input.public ?? options.public,
+      public: isPublic,
       variants: options.variants ?? this.scope.config.imageNative.variants,
       deliveryBaseUrl: options.deliveryBaseUrl,
     });
@@ -74,7 +82,8 @@ export class ServiceImageNative extends BeanBase {
     options: IImageProviderNativeClientOptions,
   ): Promise<IImageProviderDirectUploadResource> {
     const resourceId = this._sanitizeResourceId(input.customId) ?? uuidv4();
-    const storagePath = await this._getFinalPath(resourceId, input.filename, options);
+    const isPublic = input.public ?? options.public;
+    const storagePath = await this._getFinalPath(resourceId, input.filename, isPublic, options);
     const routePath = this.scope.util.combineApiPath(
       `image-native/direct-upload/${encodeURIComponent(resourceId)}`,
       false,
@@ -96,7 +105,7 @@ export class ServiceImageNative extends BeanBase {
       filename: input.filename,
       contentType: input.contentType,
       meta: input.meta,
-      public: input.public ?? options.public,
+      public: isPublic,
       variants: options.variants ?? this.scope.config.imageNative.variants,
       deliveryBaseUrl: options.deliveryBaseUrl,
       storagePath,
@@ -116,8 +125,10 @@ export class ServiceImageNative extends BeanBase {
     image: IImageNativeDraftImage,
     options: IImageProviderNativeClientOptions,
   ): Promise<IImageProviderResource | undefined> {
+    const isPublic = image.public ?? options.public;
     const storagePath =
-      image.storagePath ?? (await this._getFinalPath(image.resourceId, image.filename, options));
+      image.storagePath ??
+      (await this._getFinalPath(image.resourceId, image.filename, isPublic, options));
     const draftPath = this._getDraftPath(storagePath, image.resourceId);
     if (!(await fse.pathExists(draftPath))) return undefined;
     await fse.ensureDir(path.dirname(storagePath));
@@ -127,7 +138,7 @@ export class ServiceImageNative extends BeanBase {
       filename: image.filename,
       contentType: image.contentType,
       meta: image.meta,
-      public: image.public ?? options.public,
+      public: isPublic,
       variants: image.variants ?? options.variants ?? this.scope.config.imageNative.variants,
       deliveryBaseUrl: image.deliveryBaseUrl ?? options.deliveryBaseUrl,
     });
@@ -156,6 +167,11 @@ export class ServiceImageNative extends BeanBase {
     options: IImageProviderNativeClientOptions,
     _deliveryOptions?: IImageDeliveryOptions,
   ) {
+    if (!(image.public ?? options.public)) {
+      throw new Error(
+        `Private image-native variant URL requires signed delivery: ${image.resourceId}`,
+      );
+    }
     const resolved = resolveImageVariantRequestToTransform(request, 'original', image.variants);
     if (
       resolved.variantName === 'original' &&
@@ -165,6 +181,34 @@ export class ServiceImageNative extends BeanBase {
     }
     const targetPath = await this._ensureVariantFile(image, resolved);
     return await this._buildUrl(targetPath, options.deliveryBaseUrl);
+  }
+
+  async downloadBuffer(
+    image: IImageNativeStoredImage,
+    request: IImageVariantRequest,
+  ): Promise<{
+    buffer: Buffer;
+    filename?: string;
+    contentType?: string;
+  } | null> {
+    if (!image.storagePath) {
+      throw new Error(`Image storage path missing: ${image.resourceId}`);
+    }
+    const resolved = resolveImageVariantRequestToTransform(request, 'original', image.variants);
+    const targetPath =
+      resolved.variantName === 'original' && this._isOriginalTransform(resolved.transformOptions)
+        ? image.storagePath
+        : await this._ensureVariantFile(image, resolved);
+    if (!(await fse.pathExists(targetPath))) return null;
+    return {
+      buffer: await fse.readFile(targetPath),
+      filename: image.filename,
+      contentType: this._resolveContentType(
+        targetPath,
+        image.contentType,
+        resolved.transformOptions,
+      ),
+    };
   }
 
   private async _buildStoredResource(
@@ -200,15 +244,34 @@ export class ServiceImageNative extends BeanBase {
   private async _getFinalPath(
     resourceId: string,
     filename: string | undefined,
+    isPublic: boolean | undefined,
     options: IImageProviderNativeClientOptions,
     filePath?: string,
   ) {
-    const publicPath = await this.app.util.getPublicPathPhysical(
-      path.join('image-native', options.subdir ?? 'default'),
-      true,
-    );
+    const basePath = await this._getBasePath(isPublic, options);
     const ext = this._getOriginalExt(filename, filePath ?? resourceId);
-    return path.join(publicPath, `${resourceId}${ext}`);
+    return path.join(basePath, `${resourceId}${ext}`);
+  }
+
+  private async _getBasePath(
+    isPublic: boolean | undefined,
+    options: IImageProviderNativeClientOptions,
+  ) {
+    if (isPublic) {
+      return await this.app.util.getPublicPathPhysical(
+        path.join('image-native', options.subdir ?? 'default'),
+        true,
+      );
+    }
+    const runtimeRoot = getRuntimePathPhysicalRoot(this.app);
+    const basePath = path.join(
+      runtimeRoot,
+      this.ctx.instance.id.toString(),
+      'image-native',
+      options.subdir ?? 'default',
+    );
+    await fse.ensureDir(basePath);
+    return basePath;
   }
 
   private _getDraftPath(storagePath: string | undefined, resourceId: string) {
@@ -308,8 +371,15 @@ export class ServiceImageNative extends BeanBase {
 
   private async _getVariantStaticPath(targetPath: string) {
     const publicRoot = await this.app.util.getPublicPathPhysical(undefined, true);
-    const relativePath = path.relative(publicRoot, targetPath).split(path.sep).join(path.posix.sep);
-    return path.posix.join('public', this.ctx.instance.id.toString(), relativePath);
+    const relativePath = path.relative(publicRoot, targetPath);
+    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+      throw new Error(`Image target path is not publicly accessible: ${targetPath}`);
+    }
+    return path.posix.join(
+      'public',
+      this.ctx.instance.id.toString(),
+      relativePath.split(path.sep).join(path.posix.sep),
+    );
   }
 
   private async _getVariantAbsolutePath(
@@ -346,6 +416,24 @@ export class ServiceImageNative extends BeanBase {
   private _normalizeFormat(format: IImageTransformOptions['format']) {
     if (!format || format === 'auto') return undefined;
     return format === 'jpeg' ? 'jpeg' : format;
+  }
+
+  private _resolveContentType(
+    targetPath: string,
+    contentType: string | undefined,
+    transformOptions: IImageTransformOptions,
+  ) {
+    const format = this._normalizeFormat(transformOptions.format);
+    if (format === 'jpeg') return 'image/jpeg';
+    if (format === 'png') return 'image/png';
+    if (format === 'webp') return 'image/webp';
+    if (format === 'avif') return 'image/avif';
+    const ext = path.extname(targetPath).toLowerCase();
+    if (ext === '.jpg' || ext === '.jpeg') return 'image/jpeg';
+    if (ext === '.png') return 'image/png';
+    if (ext === '.webp') return 'image/webp';
+    if (ext === '.avif') return 'image/avif';
+    return contentType;
   }
 
   private _buildTransformCacheKey(transformOptions: IImageTransformOptions) {

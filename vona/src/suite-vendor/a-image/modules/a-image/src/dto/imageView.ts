@@ -55,4 +55,7 @@ export class DtoImageView {
 
   @Api.field(v.optional(), z.record(z.string(), $schema(DtoImageTransformOptions)))
   variants?: IImageNamedVariants;
+
+  @Api.field(v.default(true))
+  signed: boolean;
 }

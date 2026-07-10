@@ -7,6 +7,8 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
+import type { TypeImageVariantInput } from '../types/image.ts';
+
 import { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
 import { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFinalizeRequest.ts';
 import { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
@@ -132,13 +134,38 @@ export class ControllerImage extends BeanBase {
     @Arg.param('imageId', v.tableIdentity()) imageId: number,
     @Arg.query(v.object(DtoImageDeliveryRequest)) query: DtoImageDeliveryRequest,
   ) {
-    const payload = await this.bean.imageUploadPolicy.verifyDeliveryToken(
-      query.token,
-      this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true),
-    );
-    if (String(payload.imageId) !== String(imageId)) {
-      return this.app.throw(401);
+    const image = await this.bean.image.get(imageId);
+    if (!image) return this.app.throw(404);
+    let request: TypeImageVariantInput = query.token
+      ? undefined
+      : {
+          variantName: query.variantName as any,
+          transformOptions: query.transformOptions as any,
+        };
+    if (query.token || !image.public) {
+      const payload = await this.bean.imageUploadPolicy.verifyDeliveryToken(
+        query.token,
+        this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true),
+      );
+      if (String(payload.imageId) !== String(imageId)) {
+        return this.app.throw(401);
+      }
+      request = payload.request;
     }
-    this.ctx.redirect(payload.targetUrl);
+    const result = await this.bean.image.download(imageId, request, {
+      signed: false,
+      responseMode: 'buffer',
+    });
+    if (result.kind === 'url') {
+      if (!result.url) {
+        throw new Error(`image delivery url missing: ${imageId}`);
+      }
+      this.ctx.redirect(result.url);
+      return;
+    }
+    if (result.contentType) {
+      this.ctx.type = result.contentType;
+    }
+    this.ctx.body = result.buffer;
   }
 }

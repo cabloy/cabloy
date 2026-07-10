@@ -504,16 +504,6 @@ export class BeanImage extends BeanBase {
   }
 
   private async _createSignedDeliveryUrl(context: IImageDeliveryContext) {
-    const targetUrl = await context.providerContext.beanImageProvider.getVariantUrl(
-      context.providerImage,
-      context.requestNormalized,
-      context.providerContext.clientOptions,
-      context.providerContext.onionOptions,
-      {
-        signed: false,
-        responseMode: 'url',
-      },
-    );
     const routePath = this.scope.util.combineApiPath(
       `image/delivery/${context.image.id}`,
       false,
@@ -522,7 +512,6 @@ export class BeanImage extends BeanBase {
     const tokenPayload = await this.bean.imageUploadPolicy.createDeliveryToken({
       imageId: context.image.id,
       request: context.requestNormalized,
-      targetUrl,
       expiresIn: context.deliveryOptionsResolved.expiresIn,
     });
     const routeUrl = this.app.util.getAbsoluteUrlByApiPath(routePath);

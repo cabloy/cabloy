@@ -58,7 +58,6 @@ export class BeanImageUploadPolicy extends BeanBase {
   async createDeliveryToken(data: {
     imageId: number | string;
     request: IImageDeliveryTokenPayload['request'];
-    targetUrl: string;
     expiresIn?: number;
   }) {
     const path = this.scope.util.combineApiPath(`image/delivery/${data.imageId}`, false, true);
@@ -67,7 +66,6 @@ export class BeanImageUploadPolicy extends BeanBase {
         kind: 'imageDelivery',
         imageId: data.imageId,
         request: data.request,
-        targetUrl: data.targetUrl,
       } as IImageDeliveryTokenPayload,
       {
         path,

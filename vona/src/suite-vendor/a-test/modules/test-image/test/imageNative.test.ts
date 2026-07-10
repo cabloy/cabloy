@@ -13,7 +13,7 @@ const tinyPng = Buffer.from(
 );
 
 describe('imageNative.test.ts', () => {
-  it('action:image:native upload/get/delete', async () => {
+  it('action:image:native private upload/get/delete', async () => {
     await app.bean.executor.mockCtx(async () => {
       const file = path.join(os.tmpdir(), 'test-image-native.png');
       await fse.writeFile(file, tinyPng);
@@ -36,7 +36,9 @@ describe('imageNative.test.ts', () => {
       );
       assert.equal(image.provider, 'image-native:native');
       assert.equal(image.filename, 'hello.png');
+      assert.equal(image.public, false);
       assert.deepEqual(image.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
+      assert.equal(image.storagePath?.includes(`${path.sep}public${path.sep}`), false);
       const image2 = await app.bean.image.get(image.id);
       assert.equal(image2?.resourceId, image.resourceId);
       const thumbnailPath = path.join(
@@ -44,38 +46,40 @@ describe('imageNative.test.ts', () => {
         `${image.resourceId}__thumbnail${path.extname(image.storagePath!)}`,
       );
       assert.equal(await fse.pathExists(thumbnailPath), false);
+
       const originalUrl = await app.bean.image.getVariantUrl(image.id, 'original');
-      assert.equal(originalUrl.includes('/api/static/'), true);
+      assert.equal(originalUrl.includes('/image/delivery/'), true);
+      assert.equal(originalUrl.includes('token='), true);
       const namedUrl = await app.bean.image.getVariantUrl(image.id, 'thumbnail');
-      assert.equal(namedUrl.includes('__thumbnail'), true);
+      assert.equal(namedUrl.includes('/image/delivery/'), true);
+      assert.equal(namedUrl.includes('token='), true);
+      assert.equal(await fse.pathExists(thumbnailPath), false);
+
+      const signedUnauthorizedRes = await fetch(namedUrl.split('?')[0]);
+      assert.equal(signedUnauthorizedRes.status, 401);
+      const signedAuthorizedRes = await fetch(namedUrl);
+      assert.equal(signedAuthorizedRes.ok, true);
+      assert.equal(signedAuthorizedRes.headers.get('content-type')?.includes('image/png'), true);
       assert.equal(await fse.pathExists(thumbnailPath), true);
+
       const customUrl = await app.bean.image.getVariantUrl(image.id, {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });
-      assert.equal(customUrl.includes('__t_'), true);
+      assert.equal(customUrl.includes('/image/delivery/'), true);
       const customUrl2 = await app.bean.image.getVariantUrl(image.id, {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });
-      assert.equal(customUrl, customUrl2);
-
-      const signedUrl = await app.bean.image.getVariantUrl(image.id, 'original', {
-        signed: true,
-        expiresAt: Date.now() + 600_000,
-      });
-      assert.equal(signedUrl.includes('/image/delivery/'), true);
-      assert.equal(signedUrl.includes('token='), true);
-      const signedUnauthorizedRes = await fetch(signedUrl.split('?')[0]);
-      assert.equal(signedUnauthorizedRes.status, 401);
-      const signedAuthorizedRes = await fetch(signedUrl);
-      assert.equal(signedAuthorizedRes.ok, true);
-      assert.equal(signedAuthorizedRes.headers.get('content-type')?.includes('image/png'), true);
+      assert.equal(customUrl2.includes('/image/delivery/'), true);
+      const customRes = await fetch(customUrl);
+      assert.equal(customRes.ok, true);
+      assert.equal(customRes.headers.get('content-type')?.includes('image/png'), true);
 
       const view = await app.bean.image.resolveView(image.id, 'thumbnail');
       assert.equal(view?.id, image.id);
-      assert.equal(view?.url.includes('__thumbnail'), true);
+      assert.equal(view?.url.includes('/image/delivery/'), true);
       assert.equal(view?.provider, 'image-native:native');
       assert.equal(view?.clientName, 'default');
-      assert.equal(view?.signed, false);
+      assert.equal(view?.signed, true);
       assert.deepEqual(view?.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
 
       const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
@@ -103,15 +107,17 @@ describe('imageNative.test.ts', () => {
       assert.equal(resolvedViews?.[0].id, image.id);
 
       const download = await app.bean.image.download(image.id, 'original');
-      assert.equal(download.kind, 'buffer');
+      assert.equal(download.kind, 'url');
+      assert.equal(download.signed, true);
+      assert.equal(download.url?.includes('/image/delivery/'), true);
 
-      const signedDownload = await app.bean.image.download(image.id, 'original', {
-        signed: true,
-        expiresIn: 600,
+      const bufferedVariant = await app.bean.image.download(image.id, 'thumbnail', {
+        signed: false,
+        responseMode: 'buffer',
       });
-      assert.equal(signedDownload.kind, 'url');
-      assert.equal(signedDownload.signed, true);
-      assert.equal(signedDownload.url?.includes('/image/delivery/'), true);
+      assert.equal(bufferedVariant.kind, 'buffer');
+      assert.equal(bufferedVariant.contentType, 'image/png');
+      assert.equal((bufferedVariant.buffer?.length ?? 0) > 0, true);
 
       await app.bean.image.delete(image.id);
       const image3 = await app.bean.image.get(image.id);
@@ -127,6 +133,7 @@ describe('imageNative.test.ts', () => {
         {
           filename: 'direct-native.png',
           contentType: 'image/png',
+          public: true,
         },
         {
           clientName: 'default',
@@ -142,6 +149,7 @@ describe('imageNative.test.ts', () => {
       assert.equal(direct.provider, 'image-native:native');
       assert.equal(direct.status, 'draft');
       assert.equal(direct.uploadUrl.includes('/image-native/direct-upload/'), true);
+      assert.equal(direct.public, true);
 
       const [finalizeBeforeUpload, finalizeBeforeUploadErr] = await catchError(() =>
         app.bean.image.finalizeDirectUpload(direct.id),
@@ -167,6 +175,8 @@ describe('imageNative.test.ts', () => {
       assert.equal(finalized.width, 1);
       assert.equal(finalized.height, 1);
       assert.equal(!!finalized.storagePath, true);
+      assert.equal(finalized.public, true);
+      assert.equal(finalized.storagePath?.includes(`${path.sep}public${path.sep}`), true);
 
       const originalUrl = await app.bean.image.getVariantUrl(finalized.id, 'original');
       assert.equal(originalUrl.includes('/api/static/'), true);
