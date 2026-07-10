@@ -5,9 +5,10 @@ import { Bean } from 'vona-module-a-bean';
 
 import type { EntityImage } from '../entity/image.ts';
 import type {
+  IImageActionResponse,
   IImageDeliveryOptions,
   IImageDirectUploadInput,
-  IImageDirectUploadResult,
+  IImageDirectUploadResponse,
   IImageFinalizeDirectUploadResult,
   IImageProviderDirectUploadResource,
   IImageProviderResource,
@@ -105,7 +106,7 @@ export class BeanImage extends BeanBase {
     providerName: N,
     input: IImageDirectUploadInput,
     options?: IImageUploadOptions<TypeImageProviderClientOptionsByName<N>>,
-  ): Promise<IImageDirectUploadResult> {
+  ): Promise<IImageDirectUploadResponse> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanImageProvider.createDirectUpload) {
       return this.app.throw(
@@ -133,10 +134,13 @@ export class BeanImage extends BeanBase {
       },
     );
     return {
-      ...this._combineImageResource(image, imageProviderResource),
+      id: image.id,
+      provider: image.providerName,
+      resourceId: imageProviderResource.resourceId,
       uploadUrl: imageProviderResource.uploadUrl,
-      draft: imageProviderResource.draft ?? true,
-    };
+      filename: imageProviderResource.filename,
+      public: imageProviderResource.public ?? image.public,
+    } satisfies IImageDirectUploadResponse;
   }
 
   async finalizeDirectUpload(imageId: TableIdentity): Promise<IImageFinalizeDirectUploadResult> {
@@ -371,13 +375,22 @@ export class BeanImage extends BeanBase {
     image: IImageResource,
     request?: TypeImageVariantInput,
     deliveryOptions?: IImageDeliveryOptions,
-  ) {
+  ): Promise<IImageActionResponse> {
     const context = await this._createDeliveryContext(image, request, deliveryOptions);
     return {
-      ...image,
+      id: image.id,
+      provider: image.provider,
+      resourceId: image.resourceId,
+      filename: image.filename,
+      contentType: image.contentType,
+      size: image.size,
+      width: image.width,
+      height: image.height,
+      public: image.public,
+      uploadedAt: image.uploadedAt,
       url: await this._getVariantUrlByContext(context),
       signed: !!context.deliveryOptionsResolved.signed,
-    };
+    } satisfies IImageActionResponse;
   }
 
   private _resolveDirectUploadDraftExpiresAt(expiry?: IImageDirectUploadInput['expiry']) {
@@ -450,14 +463,8 @@ export class BeanImage extends BeanBase {
       width: image.width,
       height: image.height,
       provider: image.provider,
-      clientName: image.clientName,
-      imageScene: image.imageScene,
-      status: image.status,
-      draftExpiresAt: image.draftExpiresAt,
-      finalizedAt: image.finalizedAt,
       uploadedAt: image.uploadedAt,
       public: image.public,
-      variants: image.variants,
       signed: !!context.deliveryOptionsResolved.signed,
     } satisfies IImageView;
   }

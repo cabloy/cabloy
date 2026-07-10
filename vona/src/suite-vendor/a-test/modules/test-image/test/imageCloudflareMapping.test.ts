@@ -129,6 +129,12 @@ describe('imageCloudflareMapping.test.ts', () => {
         assert.equal(view?.url.includes('&sig='), true);
         assert.equal(view?.signed, true);
         assert.equal(view?.provider, 'image-cloudflare:cloudflare');
+        assert.equal('clientName' in (view ?? {}), false);
+        assert.equal('variants' in (view ?? {}), false);
+        assert.equal('imageScene' in (view ?? {}), false);
+        assert.equal('status' in (view ?? {}), false);
+        assert.equal('draftExpiresAt' in (view ?? {}), false);
+        assert.equal('finalizedAt' in (view ?? {}), false);
 
         const download = await app.bean.image.download(image.id, 'original', {
           signed: true,
@@ -156,10 +162,10 @@ describe('imageCloudflareMapping.test.ts', () => {
           directUpload.uploadUrl,
           'https://upload.imagedelivery.net/hash123/cf-direct-1',
         );
-        assert.equal(directUpload.draft, true);
-        assert.equal(directUpload.status, 'draft');
         assert.equal(directUpload.public, false);
-        assert.equal(directUpload.draftExpiresAt instanceof Date, true);
+        assert.equal('draft' in directUpload, false);
+        assert.equal('status' in directUpload, false);
+        assert.equal('draftExpiresAt' in directUpload, false);
 
         const [draftUrl, draftErr] = await catchError(() =>
           app.bean.image.getVariantUrl(directUpload.id, 'original'),
@@ -191,8 +197,8 @@ describe('imageCloudflareMapping.test.ts', () => {
         globalThis.fetch = finalizeBeforeReadyRaw;
 
         const finalizedDirectUpload = await app.bean.image.finalizeDirectUpload(directUpload.id);
-        assert.equal(finalizedDirectUpload.status, 'ready');
         assert.equal(finalizedDirectUpload.filename, 'direct.txt');
+        assert.equal(finalizedDirectUpload.status, 'ready');
         assert.equal(finalizedDirectUpload.finalizedAt instanceof Date, true);
         const finalizedDirectUrl = await app.bean.image.getVariantUrl(directUpload.id, 'original');
         assert.equal(

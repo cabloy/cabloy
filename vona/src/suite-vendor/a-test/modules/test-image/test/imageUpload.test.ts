@@ -92,9 +92,14 @@ describe('imageUpload.test.ts', () => {
           const data = await uploadImage(filename);
           assert.equal(data.data.filename, filename);
           assert.equal(data.data.provider, 'image-native:native');
-          assert.deepEqual(data.data.variants.original, {});
           assert.equal(typeof data.data.url, 'string');
           assert.equal(data.data.url.length > 0, true);
+          assert.equal('variants' in data.data, false);
+          assert.equal('clientName' in data.data, false);
+          assert.equal('imageScene' in data.data, false);
+          assert.equal('status' in data.data, false);
+          assert.equal('draftExpiresAt' in data.data, false);
+          assert.equal('finalizedAt' in data.data, false);
         }
       } finally {
         await app.bean.passport.signout();
@@ -234,8 +239,11 @@ describe('imageUpload.test.ts', () => {
         assert.equal(directData.data.resourceId, 'cf-direct-api-1');
         assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
         assert.equal(directData.data.public, false);
-        assert.equal(directData.data.status, 'draft');
-        assert.equal(!!directData.data.draftExpiresAt, true);
+        assert.equal('clientName' in directData.data, false);
+        assert.equal('draft' in directData.data, false);
+        assert.equal('imageScene' in directData.data, false);
+        assert.equal('status' in directData.data, false);
+        assert.equal('draftExpiresAt' in directData.data, false);
 
         const finalizeUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload/finalize');
         const finalizeRes = await fetch(finalizeUrl, {
@@ -251,7 +259,6 @@ describe('imageUpload.test.ts', () => {
         assert.equal(finalizeRes.ok, true);
         const finalizeData = await finalizeRes.json();
         assert.equal(finalizeData.data.resourceId, 'cf-direct-api-1');
-        assert.equal(finalizeData.data.status, 'ready');
         assert.equal(
           finalizeData.data.url.startsWith(
             'https://imagedelivery.net/hash123/cf-direct-api-1/public',
@@ -260,7 +267,12 @@ describe('imageUpload.test.ts', () => {
         );
         assert.equal(finalizeData.data.url.includes('sig='), true);
         assert.equal(finalizeData.data.signed, true);
-        assert.equal(!!finalizeData.data.finalizedAt, true);
+        assert.equal('clientName' in finalizeData.data, false);
+        assert.equal('variants' in finalizeData.data, false);
+        assert.equal('imageScene' in finalizeData.data, false);
+        assert.equal('status' in finalizeData.data, false);
+        assert.equal('draftExpiresAt' in finalizeData.data, false);
+        assert.equal('finalizedAt' in finalizeData.data, false);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-url');
         const uploadUrlRes = await fetch(uploadUrl, {
@@ -282,6 +294,12 @@ describe('imageUpload.test.ts', () => {
         assert.equal(uploadUrlData.data.resourceId, 'cf-upload-url-api-1');
         assert.equal(uploadUrlData.data.public, false);
         assert.equal(uploadUrlData.data.signed, true);
+        assert.equal('clientName' in uploadUrlData.data, false);
+        assert.equal('variants' in uploadUrlData.data, false);
+        assert.equal('imageScene' in uploadUrlData.data, false);
+        assert.equal('status' in uploadUrlData.data, false);
+        assert.equal('draftExpiresAt' in uploadUrlData.data, false);
+        assert.equal('finalizedAt' in uploadUrlData.data, false);
       } finally {
         app.bean.imageUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
         globalThis.fetch = fetchRaw;

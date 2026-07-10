@@ -1687,36 +1687,11 @@ export interface components {
       width?: number | undefined;
       height?: number | undefined;
       provider: string;
-      clientName: string;
-      imageScene?: unknown;
-      status?: string | undefined;
-      /** Format: date-time */
-      draftExpiresAt?: Date;
-      /** Format: date-time */
-      finalizedAt?: Date;
       /** Format: date-time */
       uploadedAt?: Date;
       public?: boolean | undefined;
-      variants?:
-        | {
-            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-          }
-        | undefined;
-    };
-    'a-image.dto.imageTransformOptions': {
-      width?: number | undefined;
-      height?: number | undefined;
-      /** @enum {string|null} */
-      fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-      /** @enum {string|null} */
-      gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
-      background?: string | undefined;
-      quality?: number | undefined;
-      /** @enum {string|null} */
-      format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-      dpr?: number | undefined;
-      rotate?: number | undefined;
-      sharpen?: number | undefined;
+      /** @default true */
+      signed?: boolean;
     };
     'a-file.dto.fileView': {
       id: number | string;
@@ -1910,21 +1885,11 @@ export interface components {
                   width?: number | undefined;
                   height?: number | undefined;
                   provider?: string | undefined;
-                  clientName?: string | undefined;
-                  imageScene?: unknown;
-                  status?: string | undefined;
-                  /** Format: date-time */
-                  draftExpiresAt?: Date;
-                  /** Format: date-time */
-                  finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
                   public?: boolean | undefined;
-                  variants?:
-                    | {
-                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-                      }
-                    | undefined;
+                  /** @default true */
+                  signed?: boolean | undefined;
                 }[]
               | undefined;
             /** @description Dossier Files */
@@ -1996,21 +1961,11 @@ export interface components {
             width?: number | undefined;
             height?: number | undefined;
             provider?: string | undefined;
-            clientName?: string | undefined;
-            imageScene?: unknown;
-            status?: string | undefined;
-            /** Format: date-time */
-            draftExpiresAt?: Date;
-            /** Format: date-time */
-            finalizedAt?: Date;
             /** Format: date-time */
             uploadedAt?: Date;
             public?: boolean | undefined;
-            variants?:
-              | {
-                  [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-                }
-              | undefined;
+            /** @default true */
+            signed?: boolean | undefined;
           }[]
         | undefined;
       /** @description Dossier Files */
@@ -2093,21 +2048,11 @@ export interface components {
           width?: number | undefined;
           height?: number | undefined;
           provider: string;
-          clientName: string;
-          imageScene?: unknown;
-          status?: string | undefined;
-          /** Format: date-time */
-          draftExpiresAt?: Date;
-          /** Format: date-time */
-          finalizedAt?: Date;
           /** Format: date-time */
           uploadedAt?: Date;
           public?: boolean | undefined;
-          variants?:
-            | {
-                [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-              }
-            | undefined;
+          /** @default true */
+          signed?: boolean;
         }
       | undefined;
     'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
@@ -2196,21 +2141,11 @@ export interface components {
                   width?: number | undefined;
                   height?: number | undefined;
                   provider?: string | undefined;
-                  clientName?: string | undefined;
-                  imageScene?: unknown;
-                  status?: string | undefined;
-                  /** Format: date-time */
-                  draftExpiresAt?: Date;
-                  /** Format: date-time */
-                  finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
                   public?: boolean | undefined;
-                  variants?:
-                    | {
-                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-                      }
-                    | undefined;
+                  /** @default true */
+                  signed?: boolean | undefined;
                 }[]
               | undefined;
             /** @description Dossier Files */
@@ -2312,21 +2247,11 @@ export interface components {
                   width?: number | undefined;
                   height?: number | undefined;
                   provider?: string | undefined;
-                  clientName?: string | undefined;
-                  imageScene?: unknown;
-                  status?: string | undefined;
-                  /** Format: date-time */
-                  draftExpiresAt?: Date;
-                  /** Format: date-time */
-                  finalizedAt?: Date;
                   /** Format: date-time */
                   uploadedAt?: Date;
                   public?: boolean | undefined;
-                  variants?:
-                    | {
-                        [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-                      }
-                    | undefined;
+                  /** @default true */
+                  signed?: boolean | undefined;
                 }[]
               | undefined;
             /** @description Dossier Files */
@@ -2479,7 +2404,6 @@ export interface components {
     'a-image.dto.imageUploadResponse': {
       id: number | string;
       provider: string;
-      clientName: string;
       resourceId: string;
       filename?: string | undefined;
       contentType?: string | undefined;
@@ -2487,17 +2411,6 @@ export interface components {
       width?: number | undefined;
       height?: number | undefined;
       public?: boolean | undefined;
-      variants?:
-        | {
-            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-          }
-        | undefined;
-      imageScene?: string | undefined;
-      status?: string | undefined;
-      /** Format: date-time */
-      draftExpiresAt?: Date;
-      /** Format: date-time */
-      finalizedAt?: Date;
       /** Format: date-time */
       uploadedAt?: Date;
       url?: string | undefined;
@@ -2506,16 +2419,10 @@ export interface components {
     'a-image.dto.imageDirectUploadResponse': {
       id: number | string;
       provider: string;
-      clientName: string;
       resourceId: string;
       uploadUrl: string;
-      draft?: boolean | undefined;
       filename?: string | undefined;
       public?: boolean | undefined;
-      status?: string | undefined;
-      /** Format: date-time */
-      draftExpiresAt?: Date;
-      imageScene?: string | undefined;
     };
     'a-image.dto.imageDirectUploadRequest': {
       imageScene: string;
@@ -2529,7 +2436,6 @@ export interface components {
     'a-image.dto.imageDirectUploadFinalizeResponse': {
       id: number | string;
       provider: string;
-      clientName: string;
       resourceId: string;
       filename?: string | undefined;
       contentType?: string | undefined;
@@ -2537,17 +2443,6 @@ export interface components {
       width?: number | undefined;
       height?: number | undefined;
       public?: boolean | undefined;
-      variants?:
-        | {
-            [key: string]: components['schemas']['a-image.dto.imageTransformOptions'];
-          }
-        | undefined;
-      imageScene?: string | undefined;
-      status?: string | undefined;
-      /** Format: date-time */
-      draftExpiresAt?: Date;
-      /** Format: date-time */
-      finalizedAt?: Date;
       /** Format: date-time */
       uploadedAt?: Date;
       url?: string | undefined;

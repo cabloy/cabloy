@@ -39,11 +39,11 @@ export * from '../api/image.js';
 
 import 'zova';
 declare module 'zova' {
-
-
+  
+  
 }
 declare module 'zova-module-basic-image' {
-
+  
         export interface ApiImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -52,8 +52,8 @@ declare module 'zova-module-basic-image' {
         export interface ApiImage {
           get $beanFullName(): 'basic-image.api.image';
           get $onionName(): 'basic-image:image';
-
-        }
+          
+        } 
 }
 /** api: end */
 /** api: begin */
@@ -79,11 +79,11 @@ export * from '../apiSchema/image.js';
 
 import 'zova';
 declare module 'zova' {
-
-
+  
+  
 }
 declare module 'zova-module-basic-image' {
-
+  
         export interface ApiSchemaImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -92,8 +92,8 @@ declare module 'zova-module-basic-image' {
         export interface ApiSchemaImage {
           get $beanFullName(): 'basic-image.apiSchema.image';
           get $onionName(): 'basic-image:image';
-
-        }
+          
+        } 
 }
 /** apiSchema: end */
 /** apiSchema: begin */

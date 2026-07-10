@@ -77,9 +77,9 @@ describe('imageNative.test.ts', () => {
       assert.equal(view?.id, image.id);
       assert.equal(view?.url.includes('/image/delivery/'), true);
       assert.equal(view?.provider, 'image-native:native');
-      assert.equal(view?.clientName, 'default');
       assert.equal(view?.signed, true);
-      assert.deepEqual(view?.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
+      assert.equal('clientName' in (view ?? {}), false);
+      assert.equal('variants' in (view ?? {}), false);
 
       const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
         signed: true,

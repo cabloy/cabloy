@@ -164,6 +164,30 @@ export interface IImageFinalizeDirectUploadResult<
   TRaw = unknown,
 > extends IImageResource<TMeta, TRaw> {}
 
+export interface IImageActionResponse {
+  id: TableIdentity;
+  provider: keyof IImageProviderRecord;
+  resourceId: string;
+  filename?: string;
+  contentType?: string;
+  size?: number;
+  width?: number;
+  height?: number;
+  public?: boolean;
+  uploadedAt?: Date;
+  url: string;
+  signed: boolean;
+}
+
+export interface IImageDirectUploadResponse {
+  id: TableIdentity;
+  provider: keyof IImageProviderRecord;
+  resourceId: string;
+  uploadUrl: string;
+  filename?: string;
+  public?: boolean;
+}
+
 export interface IImageView {
   id: TableIdentity;
   url: string;
@@ -171,14 +195,8 @@ export interface IImageView {
   width?: number;
   height?: number;
   provider: keyof IImageProviderRecord;
-  clientName: string;
-  imageScene?: keyof IImageSceneRecord | string;
-  status?: TypeImageStatus;
-  draftExpiresAt?: Date;
-  finalizedAt?: Date;
   uploadedAt?: Date;
   public?: boolean;
-  variants?: IImageNamedVariants;
   signed: boolean;
 }
 

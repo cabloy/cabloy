@@ -67,10 +67,6 @@ export type ApiSchemaTrainingRecordDtoRecordSelectResItemPartial =
   Partial<ApiSchemaTrainingRecordDtoRecordSelectResItem>;
 export type ApiSchemaAImageDtoImageView = components['schemas']['a-image.dto.imageView'];
 export type ApiSchemaAImageDtoImageViewPartial = Partial<ApiSchemaAImageDtoImageView>;
-export type ApiSchemaAImageDtoImageTransformOptions =
-  components['schemas']['a-image.dto.imageTransformOptions'];
-export type ApiSchemaAImageDtoImageTransformOptionsPartial =
-  Partial<ApiSchemaAImageDtoImageTransformOptions>;
 export type ApiSchemaAFileDtoFileView = components['schemas']['a-file.dto.fileView'];
 export type ApiSchemaAFileDtoFileViewPartial = Partial<ApiSchemaAFileDtoFileView>;
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
