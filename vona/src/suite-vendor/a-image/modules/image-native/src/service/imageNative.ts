@@ -393,8 +393,8 @@ export class ServiceImageNative extends BeanBase {
       const variantName = this._sanitizeVariantName(resolved.variantName);
       return path.join(dir, `${image.resourceId}__${variantName}${ext}`);
     }
-    const cacheKey = this._buildTransformCacheKey(resolved.transformOptions);
-    return path.join(dir, `${image.resourceId}__t_${cacheKey}${ext}`);
+    const transformKey = this._buildTransformKey(resolved.transformOptions);
+    return path.join(dir, `${image.resourceId}__t_${transformKey}${ext}`);
   }
 
   private _getVariantExt(
@@ -436,7 +436,7 @@ export class ServiceImageNative extends BeanBase {
     return contentType;
   }
 
-  private _buildTransformCacheKey(transformOptions: IImageTransformOptions) {
+  private _buildTransformKey(transformOptions: IImageTransformOptions) {
     const stable = this._stableStringify(transformOptions);
     return createHash('sha1').update(stable).digest('hex').slice(0, 12);
   }
