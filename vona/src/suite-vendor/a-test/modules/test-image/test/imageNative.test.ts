@@ -1,7 +1,6 @@
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
 import assert from 'node:assert';
-import { Blob } from 'node:buffer';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
@@ -123,69 +122,6 @@ describe('imageNative.test.ts', () => {
       const image3 = await app.bean.image.get(image.id);
       assert.equal(image3, undefined);
       await fse.remove(file);
-    });
-  });
-
-  it('action:image:native direct upload/finalize', async () => {
-    await app.bean.executor.mockCtx(async () => {
-      const direct = await app.bean.image.createDirectUpload(
-        'image-native:native',
-        {
-          filename: 'direct-native.png',
-          contentType: 'image/png',
-          public: true,
-        },
-        {
-          clientName: 'default',
-          imageScene: 'training-student:studentImage',
-          clientOptions: {
-            variants: {
-              original: {},
-              thumbnail: { width: 64, height: 64, fit: 'cover' },
-            },
-          },
-        },
-      );
-      assert.equal(direct.provider, 'image-native:native');
-      assert.equal(direct.status, 'draft');
-      assert.equal(direct.uploadUrl.includes('/image-native/direct-upload/'), true);
-      assert.equal(direct.public, true);
-
-      const [finalizeBeforeUpload, finalizeBeforeUploadErr] = await catchError(() =>
-        app.bean.image.finalizeDirectUpload(direct.id),
-      );
-      assert.equal(finalizeBeforeUpload, undefined);
-      assert.equal(finalizeBeforeUploadErr?.code, 403);
-
-      const uploadForm = new FormData();
-      uploadForm.append(
-        'image',
-        new (Blob as any)([tinyPng], { type: 'image/png' }),
-        'direct-native.png',
-      );
-      const uploadRes = await fetch(direct.uploadUrl, {
-        method: 'POST',
-        body: uploadForm,
-      });
-      assert.equal(uploadRes.ok, true);
-
-      const finalized = await app.bean.image.finalizeDirectUpload(direct.id);
-      assert.equal(finalized.status, 'ready');
-      assert.equal(!!finalized.finalizedAt, true);
-      assert.equal(finalized.width, 1);
-      assert.equal(finalized.height, 1);
-      assert.equal(!!finalized.storagePath, true);
-      assert.equal(finalized.public, true);
-      assert.equal(finalized.storagePath?.includes(`${path.sep}public${path.sep}`), true);
-
-      const originalUrl = await app.bean.image.getVariantUrl(finalized.id, 'original');
-      assert.equal(originalUrl.includes('/api/static/'), true);
-      const thumbnailUrl = await app.bean.image.getVariantUrl(finalized.id, 'thumbnail');
-      assert.equal(thumbnailUrl.includes('__thumbnail'), true);
-
-      await app.bean.image.delete(finalized.id);
-      const imageDeleted = await app.bean.image.get(finalized.id);
-      assert.equal(imageDeleted, undefined);
     });
   });
 });

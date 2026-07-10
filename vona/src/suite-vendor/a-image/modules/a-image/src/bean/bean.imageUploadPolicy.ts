@@ -4,7 +4,6 @@ import { Bean } from 'vona-module-a-bean';
 
 import type {
   IImageDeliveryTokenPayload,
-  IImageDirectUploadTokenPayload,
   IImageUploadContextResolved,
   IImageUploadPolicyResolved,
   IImageUploadTokenPayload,
@@ -40,21 +39,6 @@ export class BeanImageUploadPolicy extends BeanBase {
     return { token, expiresIn: data.expiresIn };
   }
 
-  async createDirectUploadToken(data: { resourceId: string; path: string; expiresIn?: number }) {
-    const path = data.path;
-    const token = await this.bean.jwt.createTempAuthToken(
-      {
-        kind: 'imageDirectUpload',
-        resourceId: data.resourceId,
-      } as IImageDirectUploadTokenPayload,
-      {
-        path,
-        expiresIn: data.expiresIn,
-      },
-    );
-    return { token, expiresIn: data.expiresIn };
-  }
-
   async createDeliveryToken(data: {
     imageId: number | string;
     request: IImageDeliveryTokenPayload['request'];
@@ -80,16 +64,6 @@ export class BeanImageUploadPolicy extends BeanBase {
       path: routePathRaw,
     })) as IImageUploadTokenPayload | undefined;
     if (!payload || payload.kind !== 'imageUpload') {
-      return this.app.throw(401);
-    }
-    return payload;
-  }
-
-  async verifyDirectUploadToken(token: string | undefined, routePathRaw: string) {
-    const payload = (await this.bean.jwt.get('access').verify(token, {
-      path: routePathRaw,
-    })) as IImageDirectUploadTokenPayload | undefined;
-    if (!payload || payload.kind !== 'imageDirectUpload') {
       return this.app.throw(401);
     }
     return payload;

@@ -209,11 +209,6 @@ export interface IImageUploadTokenPayload<
   kind: 'imageUpload';
 }
 
-export interface IImageDirectUploadTokenPayload {
-  kind: 'imageDirectUpload';
-  resourceId: string;
-}
-
 export interface IImageDeliveryTokenPayload {
   kind: 'imageDelivery';
   imageId: TableIdentity;

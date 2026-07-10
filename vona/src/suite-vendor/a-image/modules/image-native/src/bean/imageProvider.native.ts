@@ -1,7 +1,6 @@
 import type {
   IDecoratorImageProviderOptions,
   IImageDeliveryOptions,
-  IImageDirectUploadInput,
   IImageDownloadResult,
   IImageProviderClientOptions,
   IImageProviderClientRecord,
@@ -19,8 +18,6 @@ export interface IImageProviderNativeClientRecord extends IImageProviderClientRe
 
 export interface IImageProviderNativeClientOptions extends IImageProviderClientOptions {
   subdir?: string;
-  signingKey?: string;
-  tokenName?: string;
 }
 
 export interface IImageProviderOptionsNative extends IDecoratorImageProviderOptions<
@@ -51,22 +48,6 @@ export class ImageProviderNative
       contentType: input.contentType,
       meta: input.meta,
     };
-  }
-
-  async createDirectUpload(
-    input: IImageDirectUploadInput,
-    clientOptions: IImageProviderNativeClientOptions,
-    _options: IImageProviderOptionsNative,
-  ) {
-    return await this.scope.service.imageNative.createDirectUpload(input, clientOptions);
-  }
-
-  async finalizeDirectUpload(
-    image: EntityImage,
-    clientOptions: IImageProviderNativeClientOptions,
-    _options: IImageProviderOptionsNative,
-  ) {
-    return await this.scope.service.imageNative.finalizeDirectUpload(image, clientOptions);
   }
 
   async get(

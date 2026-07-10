@@ -83,7 +83,7 @@ export class ControllerImage extends BeanBase {
       policy.providerName,
       {
         filename: data.filename,
-        contentType: data.contentType,
+        contentType: data.contentType ?? data.mimeType,
         public: policy.public,
         expiry: data.expiry,
         customId: data.customId,

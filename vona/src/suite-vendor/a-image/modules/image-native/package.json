@@ -46,11 +46,7 @@
   "title": "image-native",
   "vonaModule": {
     "dependencies": {
-      "a-core": "5.0.0",
-      "a-image": "5.0.0",
-      "a-upload": "5.0.0",
-      "a-user": "5.0.0",
-      "a-web": "5.0.0"
+      "a-image": "5.0.0"
     },
     "globalDependencies": {
       "sharp": true

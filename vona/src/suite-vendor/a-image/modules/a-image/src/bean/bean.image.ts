@@ -108,7 +108,8 @@ export class BeanImage extends BeanBase {
   ): Promise<IImageDirectUploadResult> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanImageProvider.createDirectUpload) {
-      throw new Error(
+      return this.app.throw(
+        403,
         `Image provider does not support createDirectUpload: ${String(providerName)}`,
       );
     }
@@ -154,7 +155,8 @@ export class BeanImage extends BeanBase {
       }
       const providerContext = await this._getProviderContext(image);
       if (!providerContext.beanImageProvider.finalizeDirectUpload) {
-        throw new Error(
+        return this.app.throw(
+          403,
           `Image provider does not support finalizeDirectUpload: ${String(image.providerName)}`,
         );
       }

@@ -36,15 +36,14 @@ declare module 'zova' {
 /** model: end */
 /** api: begin */
 export * from '../api/image.js';
-export * from '../api/imageNativeImage.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface ApiImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -53,27 +52,14 @@ declare module 'zova-module-basic-image' {
         export interface ApiImage {
           get $beanFullName(): 'basic-image.api.image';
           get $onionName(): 'basic-image:image';
-          
-        }
 
-        export interface ApiImageNativeImage {
-          /** @internal */
-          get scope(): ScopeModuleBasicImage;
         }
-
-        export interface ApiImageNativeImage {
-          get $beanFullName(): 'basic-image.api.imageNativeImage';
-          get $onionName(): 'basic-image:imageNativeImage';
-          
-        } 
 }
 /** api: end */
 /** api: begin */
 import { ApiImage } from '../api/image.js';
-import { ApiImageNativeImage } from '../api/imageNativeImage.js';
 export interface IModuleApi {
   'image': ApiImage;
-'imageNativeImage': ApiImageNativeImage;
 }
 /** api: end */
 /** api: begin */
@@ -82,7 +68,6 @@ import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'basic-image.api.image': ApiImage;
-'basic-image.api.imageNativeImage': ApiImageNativeImage;
   }
 }
 /** api: end */
@@ -91,15 +76,14 @@ export * from '../api/openapi/index.js';
 /** openapi: end */
 /** apiSchema: begin */
 export * from '../apiSchema/image.js';
-export * from '../apiSchema/imageNativeImage.js';
 
 import 'zova';
 declare module 'zova' {
-  
-  
+
+
 }
 declare module 'zova-module-basic-image' {
-  
+
         export interface ApiSchemaImage {
           /** @internal */
           get scope(): ScopeModuleBasicImage;
@@ -108,27 +92,14 @@ declare module 'zova-module-basic-image' {
         export interface ApiSchemaImage {
           get $beanFullName(): 'basic-image.apiSchema.image';
           get $onionName(): 'basic-image:image';
-          
-        }
 
-        export interface ApiSchemaImageNativeImage {
-          /** @internal */
-          get scope(): ScopeModuleBasicImage;
         }
-
-        export interface ApiSchemaImageNativeImage {
-          get $beanFullName(): 'basic-image.apiSchema.imageNativeImage';
-          get $onionName(): 'basic-image:imageNativeImage';
-          
-        } 
 }
 /** apiSchema: end */
 /** apiSchema: begin */
 import { ApiSchemaImage } from '../apiSchema/image.js';
-import { ApiSchemaImageNativeImage } from '../apiSchema/imageNativeImage.js';
 export interface IModuleApiSchema {
   'image': ApiSchemaImage;
-'imageNativeImage': ApiSchemaImageNativeImage;
 }
 /** apiSchema: end */
 /** apiSchema: begin */
@@ -137,7 +108,6 @@ import 'zova';
 declare module 'zova' {
   export interface IBeanRecordGeneral {
     'basic-image.apiSchema.image': ApiSchemaImage;
-'basic-image.apiSchema.imageNativeImage': ApiSchemaImageNativeImage;
   }
 }
 /** apiSchema: end */

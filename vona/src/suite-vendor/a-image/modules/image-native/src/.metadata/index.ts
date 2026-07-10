@@ -1,5 +1,4 @@
 // eslint-disable
-import type { TypeControllerOptionsActions } from 'vona-module-a-openapi';
 /** service: begin */
 export * from '../service/imageNative.ts';
 
@@ -73,42 +72,6 @@ export interface IModuleImageProvider {
   'native': ImageProviderNative;
 }
 /** imageProvider: end */
-/** controller: begin */
-export * from '../controller/image.ts';
-import type { IControllerOptionsImage } from '../controller/image.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-  export interface IControllerRecord {
-    'image-native:image': IControllerOptionsImage;
-  }
-}
-declare module 'vona-module-image-native' {
-  export interface ControllerImage {
-    /** @internal */
-    get scope(): ScopeModuleImageNative;
-  }
-
-  export interface ControllerImage {
-    get $beanFullName(): 'image-native.controller.image';
-    get $onionName(): 'image-native:image';
-    get $onionOptions(): IControllerOptionsImage;
-  }
-}
-/** controller: end */
-/** controller: begin */
-// @ts-ignore ignore
-import type { ControllerImage } from '../controller/image.ts';
-declare module 'vona-module-image-native' {
-  export interface IControllerOptionsImage {
-    actions?: TypeControllerOptionsActions<ControllerImage>;
-  }
-}
-declare module 'vona-module-a-web' {
-  export interface IApiPathPostRecord {
-    '/image-native/direct-upload/:resourceId': undefined;
-  }
-}
-/** controller: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';

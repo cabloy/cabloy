@@ -283,10 +283,9 @@ The shared flow is:
 6. upload bytes to the returned `uploadUrl`
 7. finalize through `POST /image/direct-upload/finalize`
 
-The built-in providers currently support this flow in two different ways:
+The built-in Cloudflare provider supports this flow by returning a provider-hosted upload target.
 
-- `image-cloudflare:cloudflare` returns a provider-hosted upload target
-- `image-native:native` returns an app-local upload target under `/image-native/direct-upload/:resourceId`, stores the uploaded bytes as a draft file, and promotes that draft into the final native storage path during finalize
+The native provider does not support direct upload and should use the standard `/image/upload-token` + `/image/upload` flow instead.
 
 That provider difference is exactly why the shared API keeps direct upload split into create-upload-target and finalize steps.
 
@@ -348,7 +347,7 @@ Practical behavior to know:
 
 - it defaults to proxy-signed delivery
 - it can return local static URLs under `/api/static/...`
-- it supports direct upload through an app-local upload target plus shared finalize
+- it does not support direct upload and should use the standard upload-token + upload flow
 - named variants produce stable variant files such as `__thumbnail`
 - ad hoc transforms produce stable hashed files such as `__t_<hash>`
 - repeated requests for the same custom transform reuse the same cached transformed output
@@ -508,8 +507,9 @@ A practical provider checklist is:
 
 1. implement the required methods
 2. decide whether to support `uploadUrl`, `createDirectUpload`, and `download`
-3. define sensible base options in the decorator
-4. verify variant URL behavior, signed delivery behavior, and delete behavior
+3. only implement `createDirectUpload` when the provider can hand the client a real external upload target instead of routing bytes back through the local app
+4. define sensible base options in the decorator
+5. verify variant URL behavior, signed delivery behavior, and delete behavior
 
 ## Test-backed reading map
 
@@ -519,8 +519,8 @@ The current repo already contains strong executable examples under:
 
 The most useful tests are:
 
-- `imageUpload.test.ts` for upload-token, upload, direct-upload, and upload-url request flows
-- `imageNative.test.ts` for local upload, native direct-upload/finalize, variant URLs, signed delivery, and delete behavior
+- `imageUpload.test.ts` for upload-token, upload, native direct-upload rejection, Cloudflare direct-upload, and upload-url request flows
+- `imageNative.test.ts` for local upload, variant URLs, signed delivery, and delete behavior
 - `imageCloudflareMapping.test.ts` for Cloudflare mapping, custom transforms, signed delivery, direct upload, and upload-by-URL behavior
 
 When the source and a prose explanation seem to disagree, prefer the current source and tests.
