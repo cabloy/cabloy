@@ -13,6 +13,18 @@ import { $apiPath } from 'vona-module-a-openapiutils';
 const textFile = Buffer.from('hello upload');
 const uploadFilenameChinese = '更新地址.txt';
 
+function assertInternalFieldsAbsent(data: Record<string, unknown>) {
+  assert.equal('clientName' in data, false);
+  assert.equal('fileScene' in data, false);
+  assert.equal('bucket' in data, false);
+  assert.equal('objectKey' in data, false);
+  assert.equal('etag' in data, false);
+  assert.equal('meta' in data, false);
+  assert.equal('storagePath' in data, false);
+  assert.equal('deliveryBaseUrl' in data, false);
+  assert.equal('raw' in data, false);
+}
+
 describe('fileUpload.test.ts', () => {
   it('action:file:upload api requires auth', async () => {
     await app.bean.executor.mockCtx(async () => {
@@ -95,6 +107,7 @@ describe('fileUpload.test.ts', () => {
           assert.equal(data.data.provider, 'file-native:native');
           assert.equal(typeof data.data.url, 'string');
           assert.equal(data.data.signed, false);
+          assertInternalFieldsAbsent(data.data);
         }
       } finally {
         app.bean.fileUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
@@ -175,6 +188,7 @@ describe('fileUpload.test.ts', () => {
         assert.equal(typeof directData.data.uploadUrl, 'string');
         assert.equal(directData.data.public, false);
         assert.equal('draft' in directData.data, false);
+        assertInternalFieldsAbsent(directData.data);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-url');
         const uploadUrlRes = await fetch(uploadUrl, {
@@ -198,6 +212,7 @@ describe('fileUpload.test.ts', () => {
         assert.equal(uploadUrlData.data.filename, 'upload-url.txt');
         assert.equal(uploadUrlData.data.signed, true);
         assert.equal(uploadUrlData.data.url.includes('X-Amz-Algorithm='), true);
+        assertInternalFieldsAbsent(uploadUrlData.data);
       } finally {
         globalThis.fetch = fetchRaw;
         fileCloudflare.upload = uploadRaw;

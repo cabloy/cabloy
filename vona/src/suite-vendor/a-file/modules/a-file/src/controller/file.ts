@@ -65,11 +65,7 @@ export class ControllerFile extends BeanBase {
         fileScene: payload.fileScene,
       },
     );
-    return {
-      ...uploadedFile,
-      url: await this.bean.file.getDownloadUrl(uploadedFile.id),
-      signed: !uploadedFile.public,
-    };
+    return await this.bean.file.createFileActionResponse(uploadedFile);
   }
 
   @Web.post('direct-upload')
@@ -124,11 +120,7 @@ export class ControllerFile extends BeanBase {
         fileScene: policy.fileScene,
       },
     );
-    return {
-      ...uploadedFile,
-      url: await this.bean.file.getDownloadUrl(uploadedFile.id),
-      signed: !uploadedFile.public,
-    };
+    return await this.bean.file.createFileActionResponse(uploadedFile);
   }
 
   @Web.get('download/:fileId')

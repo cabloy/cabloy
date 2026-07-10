@@ -5,9 +5,10 @@ import { Bean } from 'vona-module-a-bean';
 
 import type { EntityFile } from '../entity/file.ts';
 import type {
+  IFileActionResponse,
   IFileDeliveryOptions,
   IFileDirectUploadInput,
-  IFileDirectUploadResult,
+  IFileDirectUploadResponse,
   IFileProviderDirectUploadResource,
   IFileProviderResource,
   IFileResource,
@@ -86,7 +87,7 @@ export class BeanFile extends BeanBase {
     providerName: N,
     input: IFileDirectUploadInput,
     options?: IFileUploadOptions<TypeFileProviderClientOptionsByName<N>>,
-  ): Promise<IFileDirectUploadResult> {
+  ): Promise<IFileDirectUploadResponse> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanFileProvider.createDirectUpload) {
       throw new Error(`File provider does not support createDirectUpload: ${String(providerName)}`);
@@ -105,12 +106,7 @@ export class BeanFile extends BeanBase {
         public: options?.public ?? input.public,
       },
     );
-    return {
-      ...this._combineFileResource(file, fileProviderResource),
-      uploadUrl: fileProviderResource.uploadUrl,
-      headers: fileProviderResource.headers,
-      method: fileProviderResource.method,
-    };
+    return this._createDirectUploadResponse(file, fileProviderResource);
   }
 
   async get(fileId: TableIdentity): Promise<IFileResource | undefined> {
@@ -197,21 +193,7 @@ export class BeanFile extends BeanBase {
     if (fileScene && file.fileScene !== fileScene) {
       throw new Error(`file scene mismatch: file=${file.fileScene}, expected=${fileScene}`);
     }
-    const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
-    return {
-      id: file.id,
-      provider: file.provider,
-      clientName: file.clientName,
-      fileScene: file.fileScene,
-      filename: file.filename,
-      contentType: file.contentType,
-      size: file.size,
-      public: file.public,
-      uploadedAt: file.uploadedAt,
-      meta: file.meta,
-      downloadUrl: await this.getDownloadUrl(file.id, deliveryOptions),
-      signed: !!deliveryOptionsResolved.signed,
-    } satisfies IFileView;
+    return await this._createFileView(file, deliveryOptions);
   }
 
   async resolveViews(
@@ -225,6 +207,25 @@ export class BeanFile extends BeanBase {
       fileIds.map(fileId => this.resolveView(fileId, fileScene, deliveryOptions)),
     );
     return items.filter((item): item is IFileView => !!item);
+  }
+
+  async createFileActionResponse(
+    file: IFileResource,
+    deliveryOptions?: IFileDeliveryOptions,
+  ): Promise<IFileActionResponse> {
+    const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
+    return {
+      id: file.id,
+      provider: file.provider,
+      resourceId: file.resourceId,
+      filename: file.filename,
+      contentType: file.contentType,
+      size: file.size,
+      public: file.public,
+      uploadedAt: file.uploadedAt,
+      url: await this.getDownloadUrl(file.id, deliveryOptions),
+      signed: !!deliveryOptionsResolved.signed,
+    } satisfies IFileActionResponse;
   }
 
   private async _getFileProviderResource(file: EntityFile) {
@@ -312,6 +313,37 @@ export class BeanFile extends BeanBase {
     const url = new URL(routeUrl);
     url.searchParams.set('token', tokenPayload.token);
     return url.toString();
+  }
+
+  private async _createFileView(file: IFileResource, deliveryOptions?: IFileDeliveryOptions) {
+    const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
+    return {
+      id: file.id,
+      provider: file.provider,
+      filename: file.filename,
+      contentType: file.contentType,
+      size: file.size,
+      public: file.public,
+      uploadedAt: file.uploadedAt,
+      downloadUrl: await this.getDownloadUrl(file.id, deliveryOptions),
+      signed: !!deliveryOptionsResolved.signed,
+    } satisfies IFileView;
+  }
+
+  private _createDirectUploadResponse(
+    file: EntityFile,
+    fileProviderResource: IFileProviderDirectUploadResource,
+  ) {
+    return {
+      id: file.id,
+      provider: file.providerName,
+      resourceId: fileProviderResource.resourceId,
+      uploadUrl: fileProviderResource.uploadUrl,
+      headers: fileProviderResource.headers,
+      method: fileProviderResource.method,
+      filename: fileProviderResource.filename,
+      public: fileProviderResource.public ?? file.public,
+    } satisfies IFileDirectUploadResponse;
   }
 
   private async _insertFile(

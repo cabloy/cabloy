@@ -6,7 +6,6 @@ import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
 import type { IFileProviderRecord } from '../types/fileProvider.ts';
-import type { IFileSceneRecord } from '../types/fileScene.ts';
 
 export interface IDtoOptionsFileDirectUploadResponse extends IDecoratorDtoOptions {}
 
@@ -17,9 +16,6 @@ export class DtoFileDirectUploadResponse {
 
   @Api.field(z.string())
   provider: keyof IFileProviderRecord;
-
-  @Api.field()
-  clientName: string;
 
   @Api.field()
   resourceId: string;
@@ -38,7 +34,4 @@ export class DtoFileDirectUploadResponse {
 
   @Api.field(v.optional())
   public?: boolean;
-
-  @Api.field(v.optional(), z.string())
-  fileScene?: keyof IFileSceneRecord;
 }

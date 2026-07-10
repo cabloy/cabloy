@@ -104,17 +104,38 @@ export interface IFileDirectUploadResult<
   method?: 'PUT' | 'POST';
 }
 
-export interface IFileView<TMeta extends TypeFileMeta = TypeFileMeta> {
+export interface IFileActionResponse {
   id: TableIdentity;
   provider: keyof IFileProviderRecord;
-  clientName: string;
-  fileScene?: keyof IFileSceneRecord | string;
+  resourceId: string;
   filename?: string;
   contentType?: string;
   size?: number;
   public?: boolean;
   uploadedAt?: Date;
-  meta?: TMeta;
+  url: string;
+  signed: boolean;
+}
+
+export interface IFileDirectUploadResponse {
+  id: TableIdentity;
+  provider: keyof IFileProviderRecord;
+  resourceId: string;
+  uploadUrl: string;
+  headers?: Record<string, string>;
+  method?: 'PUT' | 'POST';
+  filename?: string;
+  public?: boolean;
+}
+
+export interface IFileView {
+  id: TableIdentity;
+  provider: keyof IFileProviderRecord;
+  filename?: string;
+  contentType?: string;
+  size?: number;
+  public?: boolean;
+  uploadedAt?: Date;
   downloadUrl: string;
   signed?: boolean;
 }

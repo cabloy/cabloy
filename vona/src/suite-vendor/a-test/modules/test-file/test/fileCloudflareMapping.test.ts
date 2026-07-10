@@ -71,7 +71,31 @@ describe('fileCloudflareMapping.test.ts', () => {
       );
       assert.equal(beanDirectUpload.method, 'PUT');
       assert.equal(typeof beanDirectUpload.uploadUrl, 'string');
-      assert.equal('draft' in beanDirectUpload, false);
+      assert.equal('clientName' in beanDirectUpload, false);
+      assert.equal('fileScene' in beanDirectUpload, false);
+      assert.equal('bucket' in beanDirectUpload, false);
+      assert.equal('objectKey' in beanDirectUpload, false);
+      assert.equal('etag' in beanDirectUpload, false);
+      assert.equal('meta' in beanDirectUpload, false);
+      assert.equal('storagePath' in beanDirectUpload, false);
+      assert.equal('deliveryBaseUrl' in beanDirectUpload, false);
+      assert.equal('raw' in beanDirectUpload, false);
+
+      const view = beanDirectUpload?.id
+        ? await app.bean.file.resolveView(beanDirectUpload.id, undefined, {
+            signed: true,
+            expiresIn: 600,
+          })
+        : undefined;
+      if (view) {
+        assert.equal(view.id, beanDirectUpload.id);
+        assert.equal(view.provider, 'file-cloudflare:cloudflare');
+        assert.equal(view.downloadUrl.includes('X-Amz-Algorithm='), true);
+        assert.equal(view.signed, true);
+        assert.equal('clientName' in view, false);
+        assert.equal('fileScene' in view, false);
+        assert.equal('meta' in view, false);
+      }
     });
   });
 });

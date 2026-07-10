@@ -6,7 +6,6 @@ import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
 import type { IFileProviderRecord } from '../types/fileProvider.ts';
-import type { IFileSceneRecord } from '../types/fileScene.ts';
 
 export interface IDtoOptionsFileView extends IDecoratorDtoOptions {}
 
@@ -17,12 +16,6 @@ export class DtoFileView {
 
   @Api.field(z.string())
   provider: keyof IFileProviderRecord;
-
-  @Api.field(z.string())
-  clientName: string;
-
-  @Api.field(v.optional(), z.string())
-  fileScene?: keyof IFileSceneRecord | string;
 
   @Api.field(v.optional())
   filename?: string;
@@ -38,9 +31,6 @@ export class DtoFileView {
 
   @Api.field(v.optional())
   uploadedAt?: Date;
-
-  @Api.field(v.optional(), z.record(z.string(), z.unknown()))
-  meta?: Record<string, unknown>;
 
   @Api.field(z.string())
   downloadUrl: string;

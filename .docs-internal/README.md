@@ -63,6 +63,8 @@ Those concerns should live elsewhere.
 - [Backend Resource Field Update Workflow](./architecture/backend-resource-field-workflow.md)
 - [a-image Cloudflare Integration and Signed Delivery Architecture](./architecture/a-image-cloudflare-signed-delivery-architecture.md)
 - [a-image Refactor Checklist](./architecture/a-image-refactor-checklist.md)
+- [a-image Public Contract Follow-up Checklist](./architecture/a-image-public-contract-followup-checklist.md)
+- [Resource Public Contract Exposure](./architecture/resource-public-contract-exposure.md)
 - [Module Removal Workflow](./architecture/module-removal-workflow.md)
 - [SSR Memory Leak Investigation Guide](./architecture/ssr-memory-leak-investigation-guide.md)
 - [SSR Leak Experiment Flags Inventory](./architecture/ssr-leak-experiment-flags-inventory.md)

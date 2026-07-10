@@ -1696,19 +1696,12 @@ export interface components {
     'a-file.dto.fileView': {
       id: number | string;
       provider: string;
-      clientName: string;
-      fileScene?: string | undefined;
       filename?: string | undefined;
       contentType?: string | undefined;
       size?: number | undefined;
       public?: boolean | undefined;
       /** Format: date-time */
       uploadedAt?: Date;
-      meta?:
-        | {
-            [key: string]: unknown;
-          }
-        | undefined;
       downloadUrl: string;
       /** @default true */
       signed?: boolean;
@@ -1897,19 +1890,12 @@ export interface components {
               | {
                   id?: number | string | undefined;
                   provider?: string | undefined;
-                  clientName?: string | undefined;
-                  fileScene?: string | undefined;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
                   public?: boolean | undefined;
                   /** Format: date-time */
                   uploadedAt?: Date;
-                  meta?:
-                    | {
-                        [key: string]: unknown;
-                      }
-                    | undefined;
                   downloadUrl?: string | undefined;
                   /** @default true */
                   signed?: boolean | undefined;
@@ -1973,19 +1959,12 @@ export interface components {
         | {
             id?: number | string | undefined;
             provider?: string | undefined;
-            clientName?: string | undefined;
-            fileScene?: string | undefined;
             filename?: string | undefined;
             contentType?: string | undefined;
             size?: number | undefined;
             public?: boolean | undefined;
             /** Format: date-time */
             uploadedAt?: Date;
-            meta?:
-              | {
-                  [key: string]: unknown;
-                }
-              | undefined;
             downloadUrl?: string | undefined;
             /** @default true */
             signed?: boolean | undefined;
@@ -2153,19 +2132,12 @@ export interface components {
               | {
                   id?: number | string | undefined;
                   provider?: string | undefined;
-                  clientName?: string | undefined;
-                  fileScene?: string | undefined;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
                   public?: boolean | undefined;
                   /** Format: date-time */
                   uploadedAt?: Date;
-                  meta?:
-                    | {
-                        [key: string]: unknown;
-                      }
-                    | undefined;
                   downloadUrl?: string | undefined;
                   /** @default true */
                   signed?: boolean | undefined;
@@ -2259,19 +2231,12 @@ export interface components {
               | {
                   id?: number | string | undefined;
                   provider?: string | undefined;
-                  clientName?: string | undefined;
-                  fileScene?: string | undefined;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
                   public?: boolean | undefined;
                   /** Format: date-time */
                   uploadedAt?: Date;
-                  meta?:
-                    | {
-                        [key: string]: unknown;
-                      }
-                    | undefined;
                   downloadUrl?: string | undefined;
                   /** @default true */
                   signed?: boolean | undefined;
@@ -2329,16 +2294,11 @@ export interface components {
     'a-file.dto.fileUploadResponse': {
       id: number | string;
       provider: string;
-      clientName: string;
       resourceId: string;
-      bucket?: string | undefined;
-      objectKey?: string | undefined;
       filename?: string | undefined;
       contentType?: string | undefined;
       size?: number | undefined;
-      etag?: string | undefined;
       public?: boolean | undefined;
-      fileScene?: string | undefined;
       /** Format: date-time */
       uploadedAt?: Date;
       url?: string | undefined;
@@ -2347,7 +2307,6 @@ export interface components {
     'a-file.dto.fileDirectUploadResponse': {
       id: number | string;
       provider: string;
-      clientName: string;
       resourceId: string;
       uploadUrl: string;
       headers?:
@@ -2359,7 +2318,6 @@ export interface components {
       method?: 'PUT' | 'POST' | null | undefined;
       filename?: string | undefined;
       public?: boolean | undefined;
-      fileScene?: string | undefined;
     };
     'a-file.dto.fileDirectUploadRequest': {
       fileScene: string;

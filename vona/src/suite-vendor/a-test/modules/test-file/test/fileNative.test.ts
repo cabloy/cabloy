@@ -6,6 +6,12 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
+function assertViewInternalFieldsAbsent(view: Record<string, unknown>) {
+  assert.equal('clientName' in view, false);
+  assert.equal('fileScene' in view, false);
+  assert.equal('meta' in view, false);
+}
+
 describe('fileNative.test.ts', () => {
   it('action:file:native upload/get/download/delete', async () => {
     await app.bean.executor.mockCtx(async () => {
@@ -35,6 +41,13 @@ describe('fileNative.test.ts', () => {
       const publicUrl = await app.bean.file.getDownloadUrl(file.id);
       assert.equal(publicUrl.includes('/api/static/'), true);
 
+      const view = await app.bean.file.resolveView(file.id);
+      assert.equal(view?.id, file.id);
+      assert.equal(view?.provider, 'file-native:native');
+      assert.equal(view?.downloadUrl.includes('/api/static/'), true);
+      assert.equal(view?.signed, false);
+      assertViewInternalFieldsAbsent(view ?? {});
+
       const privateFile = await app.bean.file.upload(
         'file-native:native',
         {
@@ -50,6 +63,12 @@ describe('fileNative.test.ts', () => {
       const privateUrl = await app.bean.file.getDownloadUrl(privateFile.id);
       assert.equal(privateUrl.includes('/file/download/'), true);
       assert.equal(privateUrl.includes('token='), true);
+
+      const privateView = await app.bean.file.resolveView(privateFile.id);
+      assert.equal(privateView?.id, privateFile.id);
+      assert.equal(privateView?.downloadUrl.includes('/file/download/'), true);
+      assert.equal(privateView?.signed, true);
+      assertViewInternalFieldsAbsent(privateView ?? {});
 
       const publicDownload = await app.bean.file.download(file.id);
       assert.equal(publicDownload.kind, 'buffer');
