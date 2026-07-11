@@ -1,5 +1,7 @@
 import type { VonaApplication } from 'vona';
 
+import { $protocolKey } from 'vona';
+
 import type { ConfigJwt } from '../types/jwt.ts';
 
 export function config(app: VonaApplication) {
@@ -15,7 +17,7 @@ export function config(app: VonaApplication) {
         header: '',
         headerAuth: 'authorization',
         headerAuthScheme: 'bearer',
-        query: 'auth_token',
+        query: $protocolKey('x-vona-passport-code'),
       },
     },
     tempAuthToken: {
