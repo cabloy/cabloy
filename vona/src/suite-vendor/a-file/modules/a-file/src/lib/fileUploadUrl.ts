@@ -305,21 +305,22 @@ function isPublicIpv6(address: string) {
   return true;
 }
 
-function parseIpv6(value: string) {
-  const [head, tail] = value.split('::');
-  if (value.split('::').length > 2) return undefined;
+function parseIpv6(value: string): bigint | undefined {
+  const parts = value.split('::');
+  if (parts.length > 2) return undefined;
+  const [head, tail] = parts;
   const left = head ? head.split(':') : [];
   const right = tail ? tail.split(':') : [];
   if ((tail === undefined && left.length !== 8) || left.length + right.length > 8) {
     return undefined;
   }
-  const groups = [
+  const groups: string[] = [
     ...left,
     ...Array.from({ length: 8 - left.length - right.length }).fill('0'),
     ...right,
   ];
   if (groups.some(group => !/^[0-9a-f]{1,4}$/.test(group))) return undefined;
-  return groups.reduce((result, group) => (result << 16n) + BigInt(`0x${group}`), 0n);
+  return groups.reduce<bigint>((result, group) => (result << 16n) + BigInt(`0x${group}`), 0n);
 }
 
 function inIpv6Range(value: bigint, prefix: bigint, bits: number) {
