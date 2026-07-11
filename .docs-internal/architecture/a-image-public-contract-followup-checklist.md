@@ -201,7 +201,7 @@ Representative files:
 
 Checklist:
 
-- [ ] verify whether embedded image views really need all three fields
+- [ ] verify whether embedded image views need the remaining `public` field
 - [ ] decide whether preview-focused consumers only need `id`, `url`, `filename`, `width`, `height`, and `signed`
 
 ## Checklist D: frontend direct-upload adoption work
@@ -223,6 +223,18 @@ The frontend does not branch on provider identity or receive provider/client/res
 Representative frontend area:
 
 - `zova/src/suite/cabloy-basic/modules/basic-image/src/component/formFieldImage/controller.tsx`
+
+### D2. Verify the browser/provider boundary with a real Cloudflare Images account
+
+Status: **deferred: external account required**
+
+The source, contract, focused backend tests, generated consumer, and Admin/Web builds verify the implementation shape. A real browser smoke test remains necessary when a Cloudflare Images account is available:
+
+- [ ] confirm the provider upload URL permits the browser CORS request
+- [ ] confirm the provider accepts the multipart `file` field
+- [ ] confirm create → provider upload → finalize timing, including a not-ready finalize response
+- [ ] confirm crop/resize, multi-image ordering, and native tokened-upload regression
+- [ ] confirm provider-upload or finalize failure leaves the field value and resolved relation preview unchanged
 
 ## Checklist E: future verification reminders
 
@@ -251,9 +263,10 @@ Before changing `a-image` again, ask these questions in order:
 
 - [ ] am I changing only public DTO / View / OpenAPI, or also internal persistence/resource shapes?
 - [ ] am I accidentally exposing provider/client/scene/lifecycle details again?
-- [ ] should the same rule also be applied to `a-file` for consistency?
-- [ ] is this work reopening the still-missing frontend Cloudflare direct-upload completion path?
+- [ ] does the change preserve the aligned `a-file` / `a-image` public-contract rule?
+- [ ] does direct upload still write the field value only after finalization succeeds?
 - [ ] if backend contract truth changed, did I complete the contract loop and verify the generated frontend consumers?
+- [ ] if Cloudflare browser access is available, did I run the deferred D2 smoke test?
 
 ## Summary
 
@@ -261,11 +274,10 @@ The recent shrink pass solved the **first public-contract problem**:
 
 - too many internal lifecycle/provider fields were reaching DTO / View / OpenAPI and generated consumers
 
-It did **not** yet solve these broader questions:
+The current work intentionally leaves these follow-ups open:
 
 - how far internal `a-image` models should also be narrowed
-- whether `a-file` should follow the same public-contract rules
-- whether the remaining public fields should be shrunk again later
-- whether Cabloy Basic should provide a first-class frontend Cloudflare direct-upload completion flow
+- whether the remaining public fields (`contentType`, `size`, and `public`) should be shrunk after a real-consumer audit
+- the deferred real-browser Cloudflare verification in D2
 
 Treat this note as the standing checklist for those follow-up questions.
