@@ -365,15 +365,12 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         }
         const preparedFile = await this._prepareFile(file, options);
         if (!preparedFile) continue;
-        const tokenRes = await this.scope.api.image.createUploadToken({
-          ...uploadTarget,
-          size: preparedFile.size,
-          mimeType: preparedFile.type || file.type,
-        });
-        const uploaded = await this.scope.api.image.upload({
-          token: tokenRes.token,
-          image: preparedFile,
-        });
+        const uploaded = await this._uploadPreparedFile(
+          preparedFile,
+          file,
+          uploadTarget,
+          !!this._getCachedUploadPolicy(options)?.directUpload,
+        );
         const item: IImagePreviewItem = {
           id: uploaded.id,
           url: uploaded.url,
@@ -395,6 +392,45 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     } finally {
       this.isUploading = false;
     }
+  }
+
+  private async _uploadPreparedFile(
+    preparedFile: File,
+    sourceFile: File,
+    uploadTarget: { imageScene: string },
+    directUpload: boolean,
+  ) {
+    const mimeType = preparedFile.type || sourceFile.type;
+    if (!directUpload) {
+      const tokenRes = await this.scope.api.image.createUploadToken({
+        ...uploadTarget,
+        size: preparedFile.size,
+        mimeType,
+      });
+      return await this.scope.api.image.upload({
+        token: tokenRes.token,
+        image: preparedFile,
+      });
+    }
+
+    const directUploadRes = await this.scope.api.image.createDirectUpload({
+      ...uploadTarget,
+      filename: preparedFile.name,
+      size: preparedFile.size,
+      mimeType,
+    });
+    const formData = new FormData();
+    formData.append('file', preparedFile);
+    const providerRes = await fetch(directUploadRes.uploadUrl, {
+      method: 'POST',
+      body: formData,
+    });
+    if (!providerRes.ok) {
+      throw new Error(`image direct upload failed: ${providerRes.status}`);
+    }
+    return await this.scope.api.image.finalizeDirectUpload({
+      imageId: directUploadRes.id,
+    });
   }
 
   private _resolveUploadTarget() {

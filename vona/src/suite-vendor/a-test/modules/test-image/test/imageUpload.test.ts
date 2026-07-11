@@ -55,6 +55,23 @@ describe('imageUpload.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
       try {
+        const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-policy');
+        const uploadPolicyRes = await fetch(uploadPolicyUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageScene: 'training-student:studentImage',
+          }),
+        });
+        assert.equal(uploadPolicyRes.ok, true);
+        const uploadPolicyData = await uploadPolicyRes.json();
+        assert.equal(uploadPolicyData.data.directUpload, false);
+        assert.equal('provider' in uploadPolicyData.data, false);
+        assert.equal('clientName' in uploadPolicyData.data, false);
+
         const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload-token'));
         const createToken = async () => {
           const tokenRes = await fetch(tokenUrl, {
@@ -206,21 +223,35 @@ describe('imageUpload.test.ts', () => {
         throw new Error(`unexpected fetch: ${method} ${url}`);
       };
       try {
-        const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-policy');
-        const uploadPolicyRes = await fetch(uploadPolicyUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${jwt.accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            imageScene: 'training-record:sceneImage',
-          }),
+        const resolveProviderRaw = (app.bean.imageUploadPolicy as any)._resolveProvider.bind(
+          app.bean.imageUploadPolicy,
+        );
+        (app.bean.imageUploadPolicy as any)._resolveProvider = async () => ({
+          providerName: 'image-cloudflare:cloudflare',
+          clientName: 'default',
         });
-        assert.equal(uploadPolicyRes.ok, true);
-        const uploadPolicyData = await uploadPolicyRes.json();
-        assert.equal(uploadPolicyData.data.imageScene, 'training-record:sceneImage');
-        assert.equal(uploadPolicyData.data.public, false);
+        try {
+          const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/image/upload-policy');
+          const uploadPolicyRes = await fetch(uploadPolicyUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${jwt.accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              imageScene: 'training-record:sceneImage',
+            }),
+          });
+          assert.equal(uploadPolicyRes.ok, true);
+          const uploadPolicyData = await uploadPolicyRes.json();
+          assert.equal(uploadPolicyData.data.imageScene, 'training-record:sceneImage');
+          assert.equal(uploadPolicyData.data.public, false);
+          assert.equal(uploadPolicyData.data.directUpload, true);
+          assert.equal('provider' in uploadPolicyData.data, false);
+          assert.equal('clientName' in uploadPolicyData.data, false);
+        } finally {
+          (app.bean.imageUploadPolicy as any)._resolveProvider = resolveProviderRaw;
+        }
 
         const directUrl = app.util.getAbsoluteUrlByApiPath('/image/direct-upload');
         const directRes = await fetch(directUrl, {

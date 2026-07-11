@@ -2318,6 +2318,7 @@ export interface components {
       extensions?: string[] | undefined;
       multiple?: boolean | undefined;
       public?: boolean | undefined;
+      directUpload?: boolean | undefined;
     };
     'a-image.dto.imageUploadPolicyRequest': {
       imageScene: string;

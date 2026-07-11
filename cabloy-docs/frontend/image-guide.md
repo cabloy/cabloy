@@ -7,7 +7,7 @@ Zova image is not only a file input. It is a frontend image layer built around:
 - the built-in form-field renderer `basic-image:formFieldImage`
 - the built-in table-cell renderer `basic-image:image`
 - resolved relation fields such as `image` and `sceneImages`
-- upload-token based upload through the generated image API
+- policy-selected ordinary or provider-hosted direct upload through the generated image API
 - optional crop and resize behavior in the browser
 - shared preview dialogs for form and table usage
 
@@ -58,7 +58,7 @@ Use this as the standard image field renderer for forms.
 It supports:
 
 - single-image and multi-image fields
-- upload-token based upload
+- policy-selected ordinary or direct upload
 - frontend file validation
 - optional crop
 - optional resize and re-encode before upload
@@ -316,12 +316,15 @@ The built-in form field follows a consistent frontend flow.
 2. the frontend validates the file type and size
 3. if enabled, the crop dialog opens
 4. if configured, the browser resizes and re-encodes the image
-5. the frontend calls `scope.api.image.createUploadToken(...)`
-6. the frontend uploads multipart data with `token` and `image`
-7. the stored field value is updated to the uploaded image ID or image ID array
-8. the resolved relation field is synchronized so the form can preview the uploaded image immediately
+5. the frontend reads the server-provided upload-policy capability
+6. ordinary scenes call `scope.api.image.createUploadToken(...)` and upload multipart data with `token` and `image`
+7. direct-capable scenes call `scope.api.image.createDirectUpload(...)`, upload multipart data to the returned provider URL without Cabloy credentials, then call `scope.api.image.finalizeDirectUpload(...)`
+8. the stored field value is updated from the ordinary upload response or the finalized direct-upload response
+9. the resolved relation field is synchronized so the form can preview the completed image immediately
 
-That last step is easy to miss, but it is one of the most important behaviors in the current implementation.
+The frontend does not select a provider by name. Vona resolves the scene and publishes only whether direct upload is available. A direct-upload draft ID is not written to the form until finalization succeeds.
+
+That finalization boundary is easy to miss, but it is one of the most important behaviors in the current implementation.
 
 The field value stores IDs.
 

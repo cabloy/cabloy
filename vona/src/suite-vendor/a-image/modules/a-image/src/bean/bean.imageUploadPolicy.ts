@@ -8,6 +8,7 @@ import type {
   IImageUploadPolicyResolved,
   IImageUploadTokenPayload,
 } from '../types/image.ts';
+import type { IImageProviderExecute } from '../types/imageProvider.ts';
 import type {
   IDecoratorImageSceneOptions,
   IDecoratorImageSceneOptionsProvider,
@@ -106,6 +107,7 @@ export class BeanImageUploadPolicy extends BeanBase {
     const {
       entityImageProvider,
       disabled,
+      beanFullName,
       clientOptions: _clientOptions,
     } = await this.bean.imageProvider.getClientOptions({
       providerName,
@@ -114,6 +116,10 @@ export class BeanImageUploadPolicy extends BeanBase {
     if (!entityImageProvider || disabled) {
       return this.app.throw(403, `Image provider unavailable: ${providerName}.${clientName}`);
     }
+    const imageProvider = this.app.bean._getBean<IImageProviderExecute>(beanFullName as never);
+    const directUpload =
+      typeof imageProvider.createDirectUpload === 'function' &&
+      typeof imageProvider.finalizeDirectUpload === 'function';
     const uploadOptions = {
       ...(imageConfig.upload ?? {}),
       ...(sceneOptions.upload ?? {}),
@@ -127,6 +133,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       extensions: extensions.length > 0 ? extensions : undefined,
       multiple: uploadOptions.multiple,
       public: this._resolvePublic(_clientOptions, sceneOptions),
+      directUpload,
     };
   }
 

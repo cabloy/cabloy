@@ -279,9 +279,9 @@ The shared flow is:
 2. call `app.bean.image.createDirectUpload(...)`
 3. let the provider create the direct-upload resource
 4. persist the draft image record
-5. return provider information plus `uploadUrl`
+5. return the public direct-upload session: Cabloy image `id`, provider-hosted `uploadUrl`, and optional presentation fields
 6. upload bytes to the returned `uploadUrl`
-7. finalize through `POST /image/direct-upload/finalize`
+7. finalize through `POST /image/direct-upload/finalize` using the Cabloy image `id`; the finalized response has the normal public image action shape
 
 The built-in Cloudflare provider supports this flow by returning a provider-hosted upload target.
 

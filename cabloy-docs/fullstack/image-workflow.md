@@ -291,10 +291,19 @@ The form-side resource is responsible for:
 - selecting files
 - performing frontend validation
 - optionally cropping and resizing in the browser
-- requesting an upload token
-- uploading multipart data
-- binding the stored image ID field
+- selecting the policy-supported ordinary or direct upload transport
+- binding the finalized stored image ID field
+- synchronizing the relation preview only after upload completion
 - synchronizing the resolved relation field for immediate UI refresh
+
+### Upload transport selection
+
+The form field waits for the backend image-scene upload policy and selects one of two server-authorized paths:
+
+- ordinary scenes create an upload token and submit the image to Cabloy multipart upload;
+- direct-capable scenes create a direct-upload session, send the image to the returned provider URL without Cabloy credentials, and finalize using the returned Cabloy image ID.
+
+The browser does not branch on provider identity. In both paths, it updates the stored ID field and resolved relation preview only after it has a completed image response; a direct-upload draft is never used as the form value.
 
 ### `basic-image:image`
 

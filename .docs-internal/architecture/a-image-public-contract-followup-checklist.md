@@ -33,6 +33,9 @@ The recent public-contract pass removed these fields from public `a-image` DTO /
 - `draftExpiresAt`
 - `finalizedAt`
 - `draft` on direct-upload create response
+- `provider`
+- `resourceId`
+- `uploadedAt`
 
 The refactor also moved enforcement to the runtime response builders so actual HTTP JSON is narrowed, not only the documented DTO surface.
 
@@ -142,45 +145,21 @@ That note now records the shared rule for:
 - why runtime response builders must enforce the same narrow shape as the documented contract
 - why public-contract shrink should stay separate from persistence/versioning work
 
-Follow-through still required:
+Follow-through:
 
 - apply the new rule consistently in future contract-loop work involving resource DTOs
-- use `a-file` as the next concrete convergence target
 
 ### B2. Align `a-file` and `a-image` public contract philosophy
 
-Status: **still open**
+Status: **addressed for the current public field set**
 
-Observation:
-
-- `a-image` now exposes a slimmer public surface than before
-- `a-file` may still expose fields that deserve the same scrutiny, such as `clientName`, `fileScene`, or `meta`
-
-Representative files for future comparison:
-
-- `vona/src/suite-vendor/a-file/modules/a-file/src/types/file.ts`
-- `vona/src/suite-vendor/a-file/modules/a-file/src/dto/fileView.ts`
-- `vona/src/suite-vendor/a-file/modules/a-file/src/bean/bean.file.ts`
-
-Checklist:
-
-- [ ] run the same public-contract review against `a-file`
-- [ ] decide whether `a-file` should converge toward the same exposure standard as `a-image`
-- [ ] document any intentional divergences instead of leaving them implicit
+Both modules now keep provider routing and provider-storage identifiers internal. Their public DTO/View/OpenAPI responses are enforced by explicit runtime builders. The intentional remaining difference is that `a-file.uploadedAt` stays public because the standard Basic file field displays it; `a-image.uploadedAt` is absent because it is unused and ambiguous for a direct-upload lifecycle.
 
 ### B3. Document why the public contract was shrunk
 
-Status: **still open**
+Status: **addressed**
 
-Observation:
-
-- source code and generated consumers now reflect the smaller contract
-- but the architectural reason for the shrink is not yet explained in a durable internal note or user-facing trimmed explanation
-
-Checklist:
-
-- [ ] add a short rationale note in the appropriate internal doc when the next `a-image` design update happens
-- [ ] if user-facing docs mention response contracts, keep that explanation trimmed and avoid exposing internal rationale unnecessarily
+The durable architecture rationale is recorded in `.docs-internal/architecture/resource-public-contract-exposure.md`. Public docs describe only the stable consumer-facing workflow and do not expose internal provider or lifecycle implementation details.
 
 ## Checklist C: second-round contraction candidates
 
@@ -192,12 +171,9 @@ Status: **candidate for later review**
 
 Current public action responses still keep fields such as:
 
-- `provider`
-- `resourceId`
 - `contentType`
 - `size`
 - `public`
-- `uploadedAt`
 
 Representative files:
 
@@ -216,9 +192,7 @@ Status: **candidate for later review**
 
 Current public image view still keeps:
 
-- `provider`
 - `public`
-- `uploadedAt`
 
 Representative files:
 
@@ -230,45 +204,25 @@ Checklist:
 - [ ] verify whether embedded image views really need all three fields
 - [ ] decide whether preview-focused consumers only need `id`, `url`, `filename`, `width`, `height`, and `signed`
 
-### C3. Re-evaluate whether `resourceId` should remain public
+## Checklist D: frontend direct-upload adoption work
 
-Status: **candidate for later review**
+### D1. Standard image field direct-upload completion path
 
-Observation:
+Status: **implemented**
 
-- `resourceId` may still be useful for some tooling or integration scenarios
-- but it is also a provider/resource-facing identifier rather than a pure UI-facing field
+`basic-image:formFieldImage` now selects transport from the server-provided semantic `directUpload` upload-policy capability:
 
-Checklist:
+1. ordinary scenes retain `createUploadToken` → multipart `upload`
+2. direct-capable scenes use `createDirectUpload`
+3. the browser uploads bytes to the returned provider URL
+4. the browser calls `finalizeDirectUpload` with the Cabloy image ID
+5. only the finalized response updates the stored field and resolved relation preview
 
-- [ ] identify real consumers of `resourceId`
-- [ ] decide whether it belongs in the stable public contract or in a more privileged/admin/debug surface only
-
-## Checklist D: still-missing end-to-end frontend adoption work
-
-### D1. Cloudflare direct-upload still lacks a proven frontend completion path
-
-Status: **still open**
-
-Observation:
-
-- backend capability remains available for provider-hosted direct upload
-- contract shrink updated backend + generated consumers
-- but there is still no established frontend flow that clearly performs:
-  1. create direct-upload session
-  2. upload bytes to the provider
-  3. call finalize
-  4. write back the finalized image relation/value
+The frontend does not branch on provider identity or receive provider/client/resource identifiers. Failed provider transfers and not-ready finalization leave form state unchanged; the existing draft-expiry lifecycle handles abandoned backend drafts.
 
 Representative frontend area:
 
 - `zova/src/suite/cabloy-basic/modules/basic-image/src/component/formFieldImage/controller.tsx`
-
-Checklist:
-
-- [ ] decide whether Cabloy Basic should officially ship a Cloudflare direct-upload frontend path
-- [ ] if yes, implement and verify the full client flow
-- [ ] if no, document that the capability is backend-ready but not yet wired into the standard frontend image field
 
 ## Checklist E: future verification reminders
 
