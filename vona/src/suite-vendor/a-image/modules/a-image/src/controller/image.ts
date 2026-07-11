@@ -171,9 +171,8 @@ export class ControllerImage extends BeanBase {
       }
       request = payload.request;
     }
-    const result = await this.bean.image.download(imageId, request, {
-      signed: false,
-      responseMode: 'buffer',
+    const result = await this.bean.image.downloadForDelivery(imageId, request, {
+      protected: !image.public,
     });
     if (result.kind === 'url') {
       if (!result.url) {

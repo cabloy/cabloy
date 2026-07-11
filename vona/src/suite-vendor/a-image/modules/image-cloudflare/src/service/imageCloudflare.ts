@@ -1,7 +1,7 @@
 import type {
   EntityImage,
-  IImageDeliveryOptions,
   IImageDirectUploadInput,
+  IImageProviderDeliveryOptions,
   IImageProviderDirectUploadResource,
   IImageProviderResource,
   IImageUploadInput,
@@ -178,14 +178,14 @@ export class ServiceImageCloudflare extends BeanBase {
     variantName: string | 'custom',
     transformOptions: Record<string, any>,
     options: IImageProviderCloudflareClientOptions,
-    deliveryOptions?: IImageDeliveryOptions,
+    deliveryOptions?: IImageProviderDeliveryOptions,
   ) {
     const normalized = this._normalizeClientOptions(options);
     return buildCloudflareImageUrl(image.resourceId, variantName as any, transformOptions, {
       accountHash: normalized.accountHash,
       deliveryBaseUrl: image.deliveryBaseUrl ?? normalized.deliveryBaseUrl,
       signingKey: normalized.signingKey,
-      signed: deliveryOptions?.signed ?? !(image.public ?? normalized.public ?? true),
+      signed: deliveryOptions?.protected ?? !(image.public ?? normalized.public ?? true),
       expiresIn: deliveryOptions?.expiresIn,
     });
   }

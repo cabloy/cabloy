@@ -353,7 +353,7 @@ If no images are available, it shows a lightweight empty-state message instead o
 
 ### Private Admin delivery
 
-For a private Admin relation resolved with `deliveryOptions.audience: 'currentUser'`, the client obtains a short-lived passport code after hydration and appends it only to the Cabloy image delivery URL. The code is held in the passport model's in-memory, route-scoped cache and is never written into the resolved relation, SSR HTML, or dehydrated state. The backend still verifies the resource-bound delivery token and the issuing user, so another authenticated user cannot reuse a copied URL.
+For a private Admin relation resolved with `deliveryOptions.audience: true`, the client obtains a short-lived passport code after hydration and appends it only to the Cabloy image delivery URL. The code is held in the passport model's in-memory, route-scoped cache and is never written into the resolved relation, SSR HTML, or dehydrated state. The backend still verifies the resource-bound delivery token and the issuing user, so another authenticated user cannot reuse a copied URL.
 
 User-bound delivery forces the Cabloy proxy path. A provider redirect after Cabloy authorization can still expose a separate short-lived provider URL; use a streaming proxy when that remaining provider-link window is unacceptable.
 

@@ -144,10 +144,7 @@ describe('fileCloudflareMapping.test.ts', () => {
         assert.equal(finalizedDirectUpload.status, 'ready');
         assert.equal(finalizedDirectUpload.finalizedAt instanceof Date, true);
 
-        const view = await app.bean.file.resolveView(beanDirectUpload.id, undefined, {
-          signed: true,
-          expiresIn: 600,
-        });
+        const view = await app.bean.file.resolveView(beanDirectUpload.id);
         assert.ok(view);
         assert.equal(view.id, beanDirectUpload.id);
         assert.equal(typeof view.uploadedAt, 'object');

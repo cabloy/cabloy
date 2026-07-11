@@ -1,7 +1,7 @@
 import type { SharpConstructor } from 'sharp';
 import type {
   EntityImage,
-  IImageDeliveryOptions,
+  IImageProviderDeliveryOptions,
   IImageProviderResolvedVariant,
   IImageProviderResource,
   IImageTransformOptions,
@@ -79,7 +79,7 @@ export class ServiceImageNative extends BeanBase {
     image: IImageNativeStoredImage,
     request: IImageVariantRequest,
     options: IImageProviderNativeClientOptions,
-    _deliveryOptions?: IImageDeliveryOptions,
+    _deliveryOptions?: IImageProviderDeliveryOptions,
   ) {
     if (!(image.public ?? options.public)) {
       throw new Error(

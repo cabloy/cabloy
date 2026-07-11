@@ -1,7 +1,7 @@
 import type {
   IDecoratorImageProviderOptions,
-  IImageDeliveryOptions,
   IImageDownloadResult,
+  IImageProviderDeliveryOptions,
   IImageProviderClientOptions,
   IImageProviderClientRecord,
   IImageProviderExecute,
@@ -83,7 +83,7 @@ export class ImageProviderNative
     request: IImageVariantRequest,
     clientOptions: IImageProviderNativeClientOptions,
     _options: IImageProviderOptionsNative,
-    deliveryOptions?: IImageDeliveryOptions,
+    deliveryOptions?: IImageProviderDeliveryOptions,
   ) {
     return await this.scope.service.imageNative.getVariantUrl(
       image,
@@ -103,9 +103,9 @@ export class ImageProviderNative
     request: IImageVariantRequest,
     clientOptions: IImageProviderNativeClientOptions,
     options: IImageProviderOptionsNative,
-    deliveryOptions?: IImageDeliveryOptions,
+    deliveryOptions?: IImageProviderDeliveryOptions,
   ): Promise<IImageDownloadResult> {
-    if ((deliveryOptions?.responseMode ?? 'auto') !== 'url' && !deliveryOptions?.signed) {
+    if ((deliveryOptions?.responseMode ?? 'auto') !== 'url') {
       const result = await this.scope.service.imageNative.downloadBuffer(image, request);
       if (result) {
         return {
@@ -122,7 +122,7 @@ export class ImageProviderNative
       url: await this.getVariantUrl(image, request, clientOptions, options, deliveryOptions),
       filename: image.filename,
       contentType: image.contentType,
-      signed: !!deliveryOptions?.signed,
+      signed: !!deliveryOptions?.protected,
     };
   }
 }

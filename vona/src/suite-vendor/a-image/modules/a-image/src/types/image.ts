@@ -42,10 +42,14 @@ export type TypeImageDirectUploadExpiry = Date | string | number;
 export type TypeImageStatus = 'draft' | 'ready' | 'expired';
 
 export interface IImageDeliveryOptions {
-  signed?: boolean;
   expiresIn?: number;
-  audience?: 'currentUser';
-  deliveryKind?: 'auto' | 'proxy' | 'provider';
+  audience?: boolean;
+  responseMode?: 'auto' | 'buffer' | 'url';
+}
+
+export interface IImageProviderDeliveryOptions {
+  protected: boolean;
+  expiresIn?: number;
   responseMode?: 'auto' | 'buffer' | 'url';
 }
 

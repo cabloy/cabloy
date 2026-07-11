@@ -1,7 +1,7 @@
 import type {
   IDecoratorImageProviderOptions,
-  IImageDeliveryOptions,
   IImageDirectUploadInput,
+  IImageProviderDeliveryOptions,
   IImageDownloadResult,
   IImageProviderClientOptions,
   IImageProviderClientRecord,
@@ -113,7 +113,7 @@ export class ImageProviderCloudflare
     request: IImageVariantRequest,
     clientOptions: IImageProviderCloudflareClientOptions,
     _options: IImageProviderOptionsCloudflare,
-    deliveryOptions?: IImageDeliveryOptions,
+    deliveryOptions?: IImageProviderDeliveryOptions,
   ) {
     const variants = image.variants ?? clientOptions.variants;
     const resolved = resolveImageVariantRequestToTransform(request, 'original', variants);
@@ -135,14 +135,14 @@ export class ImageProviderCloudflare
     request: IImageVariantRequest,
     clientOptions: IImageProviderCloudflareClientOptions,
     options: IImageProviderOptionsCloudflare,
-    deliveryOptions?: IImageDeliveryOptions,
+    deliveryOptions?: IImageProviderDeliveryOptions,
   ): Promise<IImageDownloadResult> {
     return {
       kind: 'url',
       url: await this.getVariantUrl(image, request, clientOptions, options, deliveryOptions),
       filename: image.filename,
       contentType: image.contentType,
-      signed: !!(deliveryOptions?.signed ?? !(image.public ?? clientOptions.public ?? true)),
+      signed: !!deliveryOptions?.protected,
     };
   }
 
@@ -151,7 +151,7 @@ export class ImageProviderCloudflare
     variantName: TypeImageProviderResolvedVariantName,
     transformOptions: Record<string, any>,
     clientOptions: IImageProviderCloudflareClientOptions,
-    deliveryOptions?: IImageDeliveryOptions,
+    deliveryOptions?: IImageProviderDeliveryOptions,
   ) {
     return this.scope.service.imageCloudflare.buildVariantUrl(
       image,

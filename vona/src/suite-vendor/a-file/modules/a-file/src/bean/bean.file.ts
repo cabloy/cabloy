@@ -9,6 +9,7 @@ import type {
   IFileDeliveryOptions,
   IFileDirectUploadInput,
   IFileDirectUploadResponse,
+  IFileProviderDeliveryOptions,
   IFileProviderDirectUploadResource,
   IFileProviderResource,
   IFileResource,
@@ -37,6 +38,10 @@ interface IInsertFileContext {
   status?: EntityFile['status'];
   draftExpiresAt?: Date;
   finalizedAt?: Date;
+}
+
+interface IFileDeliveryOptionsResolved extends IFileProviderDeliveryOptions {
+  audience: boolean;
 }
 
 @Bean()
@@ -231,26 +236,24 @@ export class BeanFile extends BeanBase {
         signed: true,
       };
     }
-    if (beanFileProvider.download) {
-      return await beanFileProvider.download(
-        file,
-        clientOptions,
-        onionOptions,
-        deliveryOptionsResolved,
-      );
-    }
-    return {
-      kind: 'url' as const,
-      url: await beanFileProvider.getDownloadUrl(
-        file,
-        clientOptions,
-        onionOptions,
-        deliveryOptionsResolved,
-      ),
-      filename: file.filename,
-      contentType: file.contentType,
-      signed: !!deliveryOptionsResolved.signed,
-    };
+    return await this._downloadFromProvider(
+      file,
+      beanFileProvider,
+      clientOptions,
+      onionOptions,
+      deliveryOptionsResolved,
+    );
+  }
+
+  async downloadForDelivery(fileId: TableIdentity, options?: { protected?: boolean }) {
+    const file = await this.scope.model.file.getById(fileId);
+    if (!file) throw new Error(`not found file: ${fileId}`);
+    this._assertFileReady(file);
+    const { beanFileProvider, clientOptions, onionOptions } = await this._getProviderContext(file);
+    return await this._downloadFromProvider(file, beanFileProvider, clientOptions, onionOptions, {
+      protected: options?.protected ?? !file.public,
+      responseMode: 'buffer',
+    });
   }
 
   async resolveView(
@@ -295,7 +298,7 @@ export class BeanFile extends BeanBase {
       public: file.public,
       uploadedAt: file.uploadedAt,
       url: await this.getDownloadUrl(file.id, deliveryOptions),
-      signed: !!deliveryOptionsResolved.signed,
+      signed: deliveryOptionsResolved.protected,
     } satisfies IFileActionResponse;
   }
 
@@ -355,42 +358,58 @@ export class BeanFile extends BeanBase {
     return (options ?? {}) as T;
   }
 
+  private async _downloadFromProvider(
+    file: EntityFile,
+    beanFileProvider: TypeFileProviderExecuteByName<keyof IFileProviderRecord>,
+    clientOptions: TypeFileProviderClientOptionsByName<keyof IFileProviderRecord>,
+    onionOptions: TypeFileProviderOptionsByName<keyof IFileProviderRecord>,
+    deliveryOptions: IFileProviderDeliveryOptions,
+  ) {
+    if (beanFileProvider.download) {
+      return await beanFileProvider.download(file, clientOptions, onionOptions, deliveryOptions);
+    }
+    return {
+      kind: 'url' as const,
+      url: await beanFileProvider.getDownloadUrl(
+        file,
+        clientOptions,
+        onionOptions,
+        deliveryOptions,
+      ),
+      filename: file.filename,
+      contentType: file.contentType,
+      signed: deliveryOptions.protected,
+    };
+  }
+
   private _mergeDeliveryOptions(
     file: Pick<IFileResource, 'public'>,
     deliveryOptions?: IFileDeliveryOptions,
-  ): IFileDeliveryOptions {
-    const audience = deliveryOptions?.audience;
-    if (audience && deliveryOptions?.deliveryKind === 'provider') {
-      throw new Error('user-bound delivery requires proxy delivery');
-    }
-    const signed = audience ? true : (deliveryOptions?.signed ?? !file.public);
-    const expiresIn =
-      deliveryOptions?.expiresIn ??
-      (audience ? this.scope.config.file.delivery.audienceExpiresIn : undefined);
-    const deliveryKind = audience ? 'proxy' : (deliveryOptions?.deliveryKind ?? 'auto');
-    const responseMode = deliveryOptions?.responseMode;
+  ): IFileDeliveryOptionsResolved {
+    const audience = deliveryOptions?.audience ?? false;
     return {
-      signed,
-      expiresIn,
+      protected: audience || !file.public,
+      expiresIn:
+        deliveryOptions?.expiresIn ??
+        (audience ? this.scope.config.file.delivery.audienceExpiresIn : undefined),
       audience,
-      deliveryKind,
-      responseMode,
+      responseMode: deliveryOptions?.responseMode,
     };
   }
 
   private _shouldUseProxySignedDelivery(
-    deliveryOptions: IFileDeliveryOptions,
+    deliveryOptions: IFileDeliveryOptionsResolved,
     clientOptions: TypeFileProviderClientOptionsByName<keyof IFileProviderRecord>,
   ) {
-    if (!deliveryOptions.signed) return false;
-    if (deliveryOptions.deliveryKind === 'proxy') return true;
-    if (deliveryOptions.deliveryKind === 'provider') return false;
-    return (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy';
+    return (
+      deliveryOptions.protected &&
+      (deliveryOptions.audience || (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy')
+    );
   }
 
   private async _createSignedDownloadUrl(
     fileId: TableIdentity,
-    deliveryOptions: IFileDeliveryOptions,
+    deliveryOptions: IFileDeliveryOptionsResolved,
   ) {
     const routePath = this.scope.util.combineApiPath(`file/download/${fileId}`, false, true);
     const audienceUserId = this._resolveAudienceUserId(deliveryOptions);
@@ -405,8 +424,8 @@ export class BeanFile extends BeanBase {
     return url.toString();
   }
 
-  private _resolveAudienceUserId(deliveryOptions: IFileDeliveryOptions) {
-    if (deliveryOptions.audience !== 'currentUser') return;
+  private _resolveAudienceUserId(deliveryOptions: IFileDeliveryOptionsResolved) {
+    if (!deliveryOptions.audience) return;
     const user = this.bean.passport.currentUser;
     if (!user || user.anonymous) return this.app.throw(401);
     return user.id;
@@ -422,7 +441,7 @@ export class BeanFile extends BeanBase {
       public: file.public,
       uploadedAt: file.uploadedAt,
       downloadUrl: await this.getDownloadUrl(file.id, deliveryOptions),
-      signed: !!deliveryOptionsResolved.signed,
+      signed: deliveryOptionsResolved.protected,
     } satisfies IFileView;
   }
 

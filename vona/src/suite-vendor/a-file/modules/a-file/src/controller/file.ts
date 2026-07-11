@@ -164,15 +164,9 @@ export class ControllerFile extends BeanBase {
         if (String(user.id) !== String(payload.audienceUserId)) return this.app.throw(403);
       }
     }
-    const result = await this.bean.file.download(
-      fileId,
-      file.public
-        ? undefined
-        : {
-            signed: false,
-            responseMode: 'buffer',
-          },
-    );
+    const result = await this.bean.file.downloadForDelivery(fileId, {
+      protected: !file.public,
+    });
     if (result.kind === 'url') {
       if (!result.url) {
         throw new Error(`file download url missing: ${fileId}`);

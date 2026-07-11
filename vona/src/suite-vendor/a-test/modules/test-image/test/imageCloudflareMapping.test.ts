@@ -107,27 +107,10 @@ describe('imageCloudflareMapping.test.ts', () => {
           'https://imagedelivery.net/hash123/cf-upload-1/w=320,h=180,fit=cover',
         );
 
-        const signedUrl = await app.bean.image.getVariantUrl(image.id, 'original', {
-          signed: true,
-          expiresIn: 600,
-        });
-        assert.equal(
-          signedUrl.startsWith('https://imagedelivery.net/hash123/cf-upload-1/public?exp='),
-          true,
-        );
-        assert.equal(signedUrl.includes('&sig='), true);
-
-        const view = await app.bean.image.resolveView(image.id, 'original', undefined, {
-          signed: true,
-          expiresIn: 600,
-        });
+        const view = await app.bean.image.resolveView(image.id, 'original');
         assert.equal(view?.id, image.id);
-        assert.equal(
-          view?.url.startsWith('https://imagedelivery.net/hash123/cf-upload-1/public?exp='),
-          true,
-        );
-        assert.equal(view?.url.includes('&sig='), true);
-        assert.equal(view?.signed, true);
+        assert.equal(view?.url, 'https://imagedelivery.net/hash123/cf-upload-1/public');
+        assert.equal(view?.signed, false);
         assert.equal('provider' in (view ?? {}), false);
         assert.equal('resourceId' in (view ?? {}), false);
         assert.equal('uploadedAt' in (view ?? {}), false);
@@ -138,13 +121,10 @@ describe('imageCloudflareMapping.test.ts', () => {
         assert.equal('draftExpiresAt' in (view ?? {}), false);
         assert.equal('finalizedAt' in (view ?? {}), false);
 
-        const download = await app.bean.image.download(image.id, 'original', {
-          signed: true,
-          expiresIn: 600,
-        });
+        const download = await app.bean.image.download(image.id, 'original');
         assert.equal(download.kind, 'url');
-        assert.equal(download.signed, true);
-        assert.equal(download.url?.includes('sig='), true);
+        assert.equal(download.signed, false);
+        assert.equal(download.url?.includes('sig='), false);
 
         const directUpload = await app.bean.image.createDirectUpload(
           'image-cloudflare:cloudflare',
@@ -209,7 +189,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           finalizedDirectUrl.startsWith('https://imagedelivery.net/hash123/cf-direct-1/public'),
           true,
         );
-        assert.equal(finalizedDirectUrl.includes('sig='), true);
+        assert.equal(finalizedDirectUrl.includes('sig='), false);
 
         const uploadedByUrl = await app.bean.image.uploadUrl(
           'image-cloudflare:cloudflare',

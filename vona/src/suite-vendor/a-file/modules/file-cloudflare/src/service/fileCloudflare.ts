@@ -1,7 +1,7 @@
 import type {
   EntityFile,
-  IFileDeliveryOptions,
   IFileDirectUploadInput,
+  IFileProviderDeliveryOptions,
   IFileProviderDirectUploadResource,
   IFileProviderResource,
   IFileUploadInput,
@@ -177,7 +177,7 @@ export class ServiceFileCloudflare extends BeanBase {
   async getDownloadUrl(
     file: Pick<EntityFile, 'bucket' | 'objectKey' | 'deliveryBaseUrl' | 'public'>,
     options: IFileProviderCloudflareClientOptions,
-    deliveryOptions?: IFileDeliveryOptions,
+    deliveryOptions?: IFileProviderDeliveryOptions,
   ) {
     const normalized = this._normalizeClientOptions(options);
     const bucket = file.bucket ?? normalized.bucket;

@@ -63,7 +63,7 @@ describe('imageNative.test.ts', () => {
 
       await app.bean.passport.signinMock();
       const audienceView = await app.bean.image.resolveView(image.id, 'thumbnail', undefined, {
-        audience: 'currentUser',
+        audience: true,
       });
       const passportCode = await app.bean.passport.createTempAuthToken({
         path: '/api/image/delivery',
@@ -100,7 +100,6 @@ describe('imageNative.test.ts', () => {
       assert.equal('variants' in (view ?? {}), false);
 
       const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
-        signed: true,
         expiresIn: 600,
       });
       assert.equal(signedView?.url.includes('/image/delivery/'), true);
@@ -128,10 +127,7 @@ describe('imageNative.test.ts', () => {
       assert.equal(download.signed, true);
       assert.equal(download.url?.includes('/image/delivery/'), true);
 
-      const bufferedVariant = await app.bean.image.download(image.id, 'thumbnail', {
-        signed: false,
-        responseMode: 'buffer',
-      });
+      const bufferedVariant = await app.bean.image.downloadForDelivery(image.id, 'thumbnail');
       assert.equal(bufferedVariant.kind, 'buffer');
       assert.equal(bufferedVariant.contentType, 'image/png');
       assert.equal((bufferedVariant.buffer?.length ?? 0) > 0, true);

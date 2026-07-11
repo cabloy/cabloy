@@ -1,12 +1,12 @@
 import type {
-  IImageDeliveryOptions,
+  IImageProviderDeliveryOptions,
   IImageTransformOptions,
   TypeImageVariantName,
 } from 'vona-module-a-image';
 
 import { createHmac } from 'node:crypto';
 
-export interface ICloudflareImageUrlOptions extends IImageDeliveryOptions {
+export interface ICloudflareImageUrlOptions extends IImageProviderDeliveryOptions {
   accountHash?: string;
   deliveryBaseUrl?: string;
   signingKey?: string;
@@ -25,7 +25,7 @@ export function buildCloudflareImageUrl(
       ? buildCloudflareTransformPath(transformOptions)
       : normalizeCloudflareVariantName(variantName);
   const url = new URL(`${baseUrl}/${resourcePath}/${variantPath}`);
-  if (options.signed) {
+  if (options.protected) {
     signCloudflareImageUrl(url, options);
   }
   return url.toString();
@@ -94,7 +94,7 @@ export function signCloudflareImageUrl(url: URL, options: ICloudflareImageUrlOpt
   url.searchParams.set('sig', sig);
 }
 
-function resolveExpiryTimestamp(options: IImageDeliveryOptions) {
+function resolveExpiryTimestamp(options: IImageProviderDeliveryOptions) {
   const expiresIn = options.expiresIn ?? 60 * 10;
   return Math.floor(Date.now() / 1000) + expiresIn;
 }

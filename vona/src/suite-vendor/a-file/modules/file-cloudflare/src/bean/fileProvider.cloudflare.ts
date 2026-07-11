@@ -1,8 +1,8 @@
 import type {
   EntityFile,
   IDecoratorFileProviderOptions,
-  IFileDeliveryOptions,
   IFileDirectUploadInput,
+  IFileProviderDeliveryOptions,
   IFileDownloadResult,
   IFileProviderClientOptions,
   IFileProviderClientRecord,
@@ -105,7 +105,7 @@ export class FileProviderCloudflare
     file: EntityFile,
     clientOptions: IFileProviderCloudflareClientOptions,
     _options: IFileProviderOptionsCloudflare,
-    deliveryOptions?: IFileDeliveryOptions,
+    deliveryOptions?: IFileProviderDeliveryOptions,
   ) {
     return await this.scope.service.fileCloudflare.getDownloadUrl(
       file,
@@ -118,14 +118,14 @@ export class FileProviderCloudflare
     file: EntityFile,
     clientOptions: IFileProviderCloudflareClientOptions,
     options: IFileProviderOptionsCloudflare,
-    deliveryOptions?: IFileDeliveryOptions,
+    deliveryOptions?: IFileProviderDeliveryOptions,
   ): Promise<IFileDownloadResult> {
     return {
       kind: 'url',
       url: await this.getDownloadUrl(file, clientOptions, options, deliveryOptions),
       filename: file.filename,
       contentType: file.contentType,
-      signed: !!(deliveryOptions?.signed ?? !(file.public ?? clientOptions.public)),
+      signed: !!deliveryOptions?.protected,
     };
   }
 }

@@ -60,17 +60,16 @@ The public `a-image` surface was extended in these directions:
 
 Important shared concepts:
 
-- `signed`
 - `expiresIn`
-- `expiresAt`
+- `audience?: boolean`
 - `responseMode`
 
-These live in `IImageDeliveryOptions` and can now influence both:
+These live in `IImageDeliveryOptions` and can influence both:
 
 - `bean.image.getVariantUrl(...)`
 - `bean.image.download(...)`
 
-This lets callers ask for a signed delivery URL without needing to know whether the provider is native, Cloudflare, or something else.
+Protection is derived by the shared layer from resource visibility. `audience: true` binds the delivery token to the current user and forces Cabloy proxy delivery. Callers do not choose signing or proxy/provider strategy; provider client configuration decides the strategy for other private resources.
 
 ### Shared provider contract expansion
 
@@ -117,9 +116,9 @@ Current default:
 
 Behavior:
 
-- `bean.image.getVariantUrl(..., { signed: true })` returns a temporary `/image/delivery/:imageId?token=...` URL
-- the backend validates that token before redirecting to the real underlying asset URL
-- the real target URL is stored inside the signed delivery token payload so the proxy route does not have to recompute it after verification
+- private native images return a temporary `/image/delivery/:imageId?token=...` URL
+- the backend validates that token before retrieving the provider result
+- user-bound delivery (`audience: true`) uses the same proxy route regardless of provider configuration
 
 Invariant:
 
@@ -136,8 +135,8 @@ Current default:
 
 Behavior:
 
-- `bean.image.getVariantUrl(..., { signed: true })` returns the provider-native signed URL
-- `download(...)` returns a signed URL when delivery is signed
+- private Cloudflare images return a provider-native signed URL
+- `download(...)` returns a provider-native signed URL for private resources
 
 Invariant:
 

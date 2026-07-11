@@ -8,10 +8,14 @@ export type TypeFileDirectUploadExpiry = Date | string | number;
 export type TypeFileStatus = 'draft' | 'ready' | 'expired';
 
 export interface IFileDeliveryOptions {
-  signed?: boolean;
   expiresIn?: number;
-  audience?: 'currentUser';
-  deliveryKind?: 'auto' | 'proxy' | 'provider';
+  audience?: boolean;
+  responseMode?: 'auto' | 'buffer' | 'url';
+}
+
+export interface IFileProviderDeliveryOptions {
+  protected: boolean;
+  expiresIn?: number;
   responseMode?: 'auto' | 'buffer' | 'url';
 }
 

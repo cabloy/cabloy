@@ -1,8 +1,8 @@
 import type {
   EntityFile,
   IDecoratorFileProviderOptions,
-  IFileDeliveryOptions,
   IFileDownloadResult,
+  IFileProviderDeliveryOptions,
   IFileProviderClientOptions,
   IFileProviderClientRecord,
   IFileProviderExecute,
@@ -82,7 +82,7 @@ export class FileProviderNative
     file: EntityFile,
     clientOptions: IFileProviderNativeClientOptions,
     _options: IFileProviderOptionsNative,
-    deliveryOptions?: IFileDeliveryOptions,
+    deliveryOptions?: IFileProviderDeliveryOptions,
   ) {
     return await this.scope.service.fileNative.getDownloadUrl(
       file,
@@ -100,9 +100,9 @@ export class FileProviderNative
     file: EntityFile,
     clientOptions: IFileProviderNativeClientOptions,
     options: IFileProviderOptionsNative,
-    deliveryOptions?: IFileDeliveryOptions,
+    deliveryOptions?: IFileProviderDeliveryOptions,
   ): Promise<IFileDownloadResult> {
-    if ((deliveryOptions?.responseMode ?? 'auto') !== 'url' && !deliveryOptions?.signed) {
+    if ((deliveryOptions?.responseMode ?? 'auto') !== 'url') {
       const buffer = file.storagePath ? await fse.readFile(file.storagePath) : undefined;
       if (buffer) {
         return {
@@ -119,7 +119,7 @@ export class FileProviderNative
       url: await this.getDownloadUrl(file, clientOptions, options, deliveryOptions),
       filename: file.filename,
       contentType: file.contentType,
-      signed: !!deliveryOptions?.signed,
+      signed: !!deliveryOptions?.protected,
     };
   }
 }

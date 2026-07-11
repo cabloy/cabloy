@@ -88,10 +88,7 @@ describe('fileNative.test.ts', () => {
         assert.equal(publicDownload.kind, 'buffer');
         assert.equal(publicDownload.buffer?.toString(), 'hello file-native');
 
-        const privateDownload = await app.bean.file.download(privateFile.id, {
-          signed: false,
-          responseMode: 'buffer',
-        });
+        const privateDownload = await app.bean.file.downloadForDelivery(privateFile.id);
         assert.equal(privateDownload.kind, 'buffer');
         assert.equal(privateDownload.buffer?.toString(), 'hello file-native');
 
