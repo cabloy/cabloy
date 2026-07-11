@@ -463,10 +463,11 @@ export class BeanImage extends BeanBase {
   }
 
   private _shouldUseProxySignedDelivery(context: IImageDeliveryContext) {
-    return (
-      context.deliveryOptionsResolved.signed &&
-      (context.providerContext.clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    );
+    const { deliveryOptionsResolved, providerContext } = context;
+    if (!deliveryOptionsResolved.signed) return false;
+    if (deliveryOptionsResolved.deliveryKind === 'proxy') return true;
+    if (deliveryOptionsResolved.deliveryKind === 'provider') return false;
+    return (providerContext.clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy';
   }
 
   private _assertImageReady(image: Pick<EntityImage, 'id' | 'status'>) {
@@ -493,14 +494,23 @@ export class BeanImage extends BeanBase {
     request: IImageVariantRequest,
     deliveryOptions?: IImageDeliveryOptions,
   ): IImageDeliveryOptions {
-    const signed = deliveryOptions?.signed ?? request.signed ?? !image.public;
-    const expiresIn = deliveryOptions?.expiresIn ?? request.expiresIn;
-    const expiresAt = deliveryOptions?.expiresAt ?? request.expiresAt;
+    const audience = deliveryOptions?.audience ?? request.audience;
+    const requestedDeliveryKind = deliveryOptions?.deliveryKind ?? request.deliveryKind;
+    if (audience && requestedDeliveryKind === 'provider') {
+      throw new Error('user-bound delivery requires proxy delivery');
+    }
+    const signed = audience ? true : (deliveryOptions?.signed ?? request.signed ?? !image.public);
+    const expiresIn =
+      deliveryOptions?.expiresIn ??
+      request.expiresIn ??
+      (audience ? this.scope.config.image.delivery.audienceExpiresIn : undefined);
+    const deliveryKind = audience ? 'proxy' : (requestedDeliveryKind ?? 'auto');
     const responseMode = deliveryOptions?.responseMode ?? request.responseMode;
     return {
       signed,
       expiresIn,
-      expiresAt,
+      audience,
+      deliveryKind,
       responseMode,
     };
   }
@@ -511,15 +521,24 @@ export class BeanImage extends BeanBase {
       false,
       true,
     );
+    const audienceUserId = this._resolveAudienceUserId(context.deliveryOptionsResolved);
     const tokenPayload = await this.bean.imageUploadPolicy.createDeliveryToken({
       imageId: context.image.id,
       request: context.requestNormalized,
       expiresIn: context.deliveryOptionsResolved.expiresIn,
+      audienceUserId,
     });
     const routeUrl = this.app.util.getAbsoluteUrlByApiPath(routePath);
     const url = new URL(routeUrl);
     url.searchParams.set('token', tokenPayload.token);
     return url.toString();
+  }
+
+  private _resolveAudienceUserId(deliveryOptions: IImageDeliveryOptions) {
+    if (deliveryOptions.audience !== 'currentUser') return;
+    const user = this.bean.passport.currentUser;
+    if (!user || user.anonymous) return this.app.throw(401);
+    return user.id;
   }
 
   private _getProviderImage(image: EntityImage | IImageResource): EntityImage {

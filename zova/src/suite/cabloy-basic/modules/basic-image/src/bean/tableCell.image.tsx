@@ -122,19 +122,26 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
         <img
           class="h-full w-full object-cover"
           style={{ objectFit: options.fit ?? 'cover' }}
-          src={previewUrl}
           alt={item.filename ?? 'image'}
+          ref={element => {
+            if (element) this._loadPreviewUrl(element as HTMLImageElement, previewUrl);
+          }}
         />
       </div>
     );
   }
 
-  private _openPreviewDialog(preview: IImagePreviewSummary, previewTitle: string) {
-    const items = this._resolveDialogItems(preview);
+  private async _openPreviewDialog(preview: IImagePreviewSummary, previewTitle: string) {
+    const items = await Promise.all(
+      this._resolveDialogItems(preview).map(async item => ({
+        ...item,
+        url: await this.$passport.resolveMediaPassportCodeUrl(this._resolvePreviewUrl(item.url)),
+      })),
+    );
     openImagePreviewDialog({
       appModal: this.$appModal,
       title: previewTitle,
-      items,
+      items: items.filter(item => !!item.url).map(item => ({ ...item, url: item.url! })),
       baseURL: this.sys.config.api.baseURL,
     });
   }
@@ -192,6 +199,11 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
       return collectImageRelationPreviewItems(preview.source.value);
     }
     return collectImageUrlPreviewItems(preview.source.value);
+  }
+
+  private async _loadPreviewUrl(element: HTMLImageElement, previewUrl: string) {
+    const url = await this.$passport.resolveMediaPassportCodeUrl(previewUrl);
+    if (url) element.src = url;
   }
 
   private _resolvePreviewUrl(url: string) {

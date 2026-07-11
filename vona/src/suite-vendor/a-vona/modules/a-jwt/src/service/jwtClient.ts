@@ -10,6 +10,7 @@ import type {
   IJwtSignOptions,
   IJwtVerifyOptions,
   IPayloadData,
+  TypeJwtPathMatch,
 } from '../types/jwt.ts';
 
 @Service()
@@ -45,6 +46,10 @@ export class ServiceJwtClient extends BeanBase {
     return this.scope.config.field.payload.path;
   }
 
+  private get fieldPathMatch() {
+    return this.scope.config.field.payload.pathMatch;
+  }
+
   private get fieldData() {
     return this.scope.config.field.payload.data;
   }
@@ -67,7 +72,12 @@ export class ServiceJwtClient extends BeanBase {
         [this.fieldClient]: this._clientName,
         [this.fieldData]: payloadData,
       };
-      if (options?.path) payload[this.fieldPath] = options.path;
+      if (options?.path) {
+        payload[this.fieldPath] = options.path;
+        if (options.pathMatch === 'prefix') {
+          payload[this.fieldPathMatch] = options.pathMatch;
+        }
+      }
       let signOptions = this._clientOptions.signOptions;
       if (options?.dev) {
         signOptions = Object.assign({}, signOptions, {
@@ -123,8 +133,15 @@ export class ServiceJwtClient extends BeanBase {
           // check field client
           if (payload[this.fieldClient] !== this._clientName) return this.app.throw(401);
           // check field path
-          if (!this._checkVerifyPath(payload[this.fieldPath], options?.path))
+          if (
+            !this._checkVerifyPath(
+              payload[this.fieldPath],
+              payload[this.fieldPathMatch],
+              options?.path,
+            )
+          ) {
             return this.app.throw(401);
+          }
           // passed
           resolve(payload[this.fieldData]);
         },
@@ -132,10 +149,28 @@ export class ServiceJwtClient extends BeanBase {
     });
   }
 
-  _checkVerifyPath(pathTarget: string | string[] | undefined, pathReal: string | undefined) {
+  _checkVerifyPath(
+    pathTarget: string | string[] | undefined,
+    pathMatchClaim: unknown,
+    pathReal: string | undefined,
+  ) {
     if (!pathTarget) return true;
     const path = pathReal ?? String(this.ctx.route.routePathRaw);
-    if (Array.isArray(pathTarget) && !pathTarget.includes(path)) return false;
-    return pathTarget === path;
+    const pathMatch = pathMatchClaim ?? 'exact';
+    if (pathMatch !== 'exact' && pathMatch !== 'prefix') return false;
+    const targets = Array.isArray(pathTarget) ? pathTarget : [pathTarget];
+    return (
+      targets.every(target => typeof target === 'string') &&
+      targets.some(target => {
+        return this._matchesPath(target, path, pathMatch);
+      })
+    );
+  }
+
+  private _matchesPath(target: string, path: string, pathMatch: TypeJwtPathMatch) {
+    if (pathMatch === 'exact') return target === path;
+    const prefix = target.endsWith('/') && target !== '/' ? target.slice(0, -1) : target;
+    if (!prefix || prefix === '/') return false;
+    return path === prefix || path.startsWith(`${prefix}/`);
   }
 }

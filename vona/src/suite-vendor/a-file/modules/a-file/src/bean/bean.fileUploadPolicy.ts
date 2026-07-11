@@ -18,12 +18,17 @@ import { getFileExtension, matchesFileMimeType } from '../lib/fileUploadValidati
 
 @Bean()
 export class BeanFileUploadPolicy extends BeanBase {
-  async createDownloadToken(data: { fileId: number | string; expiresIn?: number }) {
+  async createDownloadToken(data: {
+    fileId: number | string;
+    expiresIn?: number;
+    audienceUserId?: IFileDownloadTokenPayload['audienceUserId'];
+  }) {
     const path = this.scope.util.combineApiPath(`file/download/${data.fileId}`, false, true);
     const token = await this.bean.jwt.createTempAuthToken(
       {
         kind: 'fileDownload',
         fileId: data.fileId,
+        audienceUserId: data.audienceUserId,
       } as IFileDownloadTokenPayload,
       {
         path,

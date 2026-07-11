@@ -9,6 +9,7 @@ import type {
 
 import { combineQueries, isNil } from '@cabloy/utils';
 import { SchemaObject } from 'openapi3-ts/oas31';
+import { $protocolKey } from 'zova';
 import { BeanModelBase, Model } from 'zova-module-a-model';
 import {
   IPermissionHintGeneral,
@@ -27,6 +28,8 @@ export class ModelPassport extends BeanModelBase {
   accessToken?: string;
   expireTime?: number;
   schemaLogin?: SchemaObject;
+  private _mediaPassportCodes = new Map<string, { token: string; expiresAt: number }>();
+  private _mediaPassportCodePromises = new Map<string, Promise<string | undefined>>();
 
   protected async __init__() {
     this.schemaLogin = this.$computed(() => {
@@ -79,6 +82,57 @@ export class ModelPassport extends BeanModelBase {
         this.afterLogin(data);
       },
     });
+  }
+
+  async resolveMediaPassportCodeUrl(url: string | undefined): Promise<string | undefined> {
+    if (!url || !process.env.CLIENT || !this.isAuthenticated) return url;
+    const apiBaseUrl = new URL(
+      this.sys.config.api.baseURL ?? globalThis.location.href,
+      globalThis.location.href,
+    );
+    const parsedUrl = new URL(url, apiBaseUrl);
+    if (parsedUrl.origin !== apiBaseUrl.origin) return url;
+    const passportCodeKey = $protocolKey('x-vona-passport-code');
+    if (parsedUrl.searchParams.has(passportCodeKey)) return url;
+    const scope = this._resolveMediaPassportCodeScope(parsedUrl.pathname);
+    if (!scope) return url;
+    const code = await this._getMediaPassportCode(scope);
+    if (!code) return url;
+    parsedUrl.searchParams.set(passportCodeKey, code);
+    return parsedUrl.toString();
+  }
+
+  private _resolveMediaPassportCodeScope(pathname: string) {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    const scopes = [`${apiPrefix}/file/download`, `${apiPrefix}/image/delivery`];
+    return scopes.find(scope => pathname === scope || pathname.startsWith(`${scope}/`));
+  }
+
+  private async _getMediaPassportCode(scope: string) {
+    const userId = this.user?.id;
+    if (!userId) return;
+    const key = `${String(userId)}:${scope}`;
+    const cached = this._mediaPassportCodes.get(key);
+    if (cached && cached.expiresAt > Date.now() + 30 * 1000) return cached.token;
+    let pending = this._mediaPassportCodePromises.get(key);
+    if (!pending) {
+      pending = this.$api.homeUserPassport
+        .createTempAuthToken(undefined, {
+          query: { path: scope, pathMatch: 'prefix' },
+        })
+        .then(result => {
+          this._mediaPassportCodes.set(key, {
+            token: result.token,
+            expiresAt: Date.now() + result.expiresIn * 1000,
+          });
+          return result.token;
+        })
+        .finally(() => {
+          this._mediaPassportCodePromises.delete(key);
+        });
+      this._mediaPassportCodePromises.set(key, pending);
+    }
+    return await pending;
   }
 
   getOauthLoginUrl(module: string, providerName: string, clientName?: string): string {
@@ -180,8 +234,14 @@ export class ModelPassport extends BeanModelBase {
   }
 
   private _setPassportJwt(data?: ApiApiHomeUserPassportloginResponseBody) {
+    this._clearMediaPassportCodes();
     this._setPassport(data?.passport);
     this._setJwt(data?.jwt);
+  }
+
+  private _clearMediaPassportCodes() {
+    this._mediaPassportCodes.clear();
+    this._mediaPassportCodePromises.clear();
   }
 
   private _setPassport(passport?: ApiApiHomeUserPassportloginResponseBody['passport']) {

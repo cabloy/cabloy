@@ -14,6 +14,9 @@ export function config(_app: VonaApplication) {
       directUpload: {
         draftExpiresIn: 30 * 60 * 1000,
       },
+      delivery: {
+        audienceExpiresIn: 8 * 60 * 60,
+      },
     },
   };
 }

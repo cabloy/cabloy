@@ -7,6 +7,7 @@ import { BeanBase } from 'vona';
 import { SerializerTransform } from 'vona-module-a-serialization';
 
 import type { DtoImageView } from '../dto/imageView.ts';
+import type { IImageDeliveryOptions } from '../types/image.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
 export type TypeSerializerTransformResolveViewsValue = unknown;
@@ -18,6 +19,7 @@ export type TypeSerializerTransformResolveViewsResult = DtoImageView[] | undefin
 export interface ISerializerTransformOptionsResolveViews extends IDecoratorSerializerTransformOptions {
   fieldName: string;
   imageScene?: keyof IImageSceneRecord;
+  deliveryOptions?: IImageDeliveryOptions;
 }
 
 @SerializerTransform<ISerializerTransformOptionsResolveViews>()
@@ -39,6 +41,7 @@ export class SerializerTransformResolveViews
       data[options.fieldName],
       undefined,
       options.imageScene,
+      options.deliveryOptions,
     );
   }
 }

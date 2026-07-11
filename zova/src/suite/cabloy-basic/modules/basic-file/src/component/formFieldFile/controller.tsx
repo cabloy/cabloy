@@ -214,7 +214,15 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           </div>
           <div class="flex flex-wrap gap-2">
             {downloadUrl && (
-              <a class="btn btn-sm btn-outline" href={downloadUrl} target="_blank" rel="noreferrer">
+              <a
+                class="btn btn-sm btn-outline"
+                href={downloadUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={event => {
+                  this._openDownloadUrl(event, downloadUrl);
+                }}
+              >
                 {this.scope.locale.DownloadFile()}
               </a>
             )}
@@ -531,6 +539,13 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     const index = filename.lastIndexOf('.');
     if (index === -1) return '';
     return filename.slice(index).toLowerCase();
+  }
+
+  private async _openDownloadUrl(event: MouseEvent, downloadUrl: string) {
+    if (!process.env.CLIENT) return;
+    event.preventDefault();
+    const url = await this.$passport.resolveMediaPassportCodeUrl(downloadUrl);
+    if (url) globalThis.open?.(url, '_blank', 'noopener,noreferrer');
   }
 
   private _resolveDownloadUrl(url: string) {

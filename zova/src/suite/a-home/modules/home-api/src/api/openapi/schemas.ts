@@ -49,6 +49,9 @@ export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c
   components['schemas']['a-captcha.dto.captchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661'];
 export type ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661Partial =
   Partial<ApiSchemaACaptchaDtoCaptchaVerify_67c39cad0735f2460ecc6bef838440b07c4dcfa9_f73253d699f0fd90b98fded80a123a0a180dbca2_144c29cc01b745c0021a6682766a475fe639fb8f_626802c24df1498cec99aab0854fedf90c9b6dd3_9aa4df25b9311e645e1c9dfbe6b7ece6398da661>;
+export type ApiSchemaHomeUserDtoTempAuthToken =
+  components['schemas']['home-user.dto.tempAuthToken'];
+export type ApiSchemaHomeUserDtoTempAuthTokenPartial = Partial<ApiSchemaHomeUserDtoTempAuthToken>;
 export type ApiSchemaTrainingRecordDtoRecordCreate =
   components['schemas']['training-record.dto.recordCreate'];
 export type ApiSchemaTrainingRecordDtoRecordCreatePartial =
@@ -117,14 +120,6 @@ export type ApiSchemaAFileDtoFileUploadPolicyRequest =
   components['schemas']['a-file.dto.fileUploadPolicyRequest'];
 export type ApiSchemaAFileDtoFileUploadPolicyRequestPartial =
   Partial<ApiSchemaAFileDtoFileUploadPolicyRequest>;
-export type ApiSchemaAFileDtoFileUploadTokenResponse =
-  components['schemas']['a-file.dto.fileUploadTokenResponse'];
-export type ApiSchemaAFileDtoFileUploadTokenResponsePartial =
-  Partial<ApiSchemaAFileDtoFileUploadTokenResponse>;
-export type ApiSchemaAFileDtoFileUploadTokenRequest =
-  components['schemas']['a-file.dto.fileUploadTokenRequest'];
-export type ApiSchemaAFileDtoFileUploadTokenRequestPartial =
-  Partial<ApiSchemaAFileDtoFileUploadTokenRequest>;
 export type ApiSchemaAFileDtoFileUploadResponse =
   components['schemas']['a-file.dto.fileUploadResponse'];
 export type ApiSchemaAFileDtoFileUploadResponsePartial =
@@ -137,6 +132,14 @@ export type ApiSchemaAFileDtoFileDirectUploadRequest =
   components['schemas']['a-file.dto.fileDirectUploadRequest'];
 export type ApiSchemaAFileDtoFileDirectUploadRequestPartial =
   Partial<ApiSchemaAFileDtoFileDirectUploadRequest>;
+export type ApiSchemaAFileDtoFileDirectUploadFinalizeResponse =
+  components['schemas']['a-file.dto.fileDirectUploadFinalizeResponse'];
+export type ApiSchemaAFileDtoFileDirectUploadFinalizeResponsePartial =
+  Partial<ApiSchemaAFileDtoFileDirectUploadFinalizeResponse>;
+export type ApiSchemaAFileDtoFileDirectUploadFinalizeRequest =
+  components['schemas']['a-file.dto.fileDirectUploadFinalizeRequest'];
+export type ApiSchemaAFileDtoFileDirectUploadFinalizeRequestPartial =
+  Partial<ApiSchemaAFileDtoFileDirectUploadFinalizeRequest>;
 export type ApiSchemaAFileDtoFileUploadUrlRequest =
   components['schemas']['a-file.dto.fileUploadUrlRequest'];
 export type ApiSchemaAFileDtoFileUploadUrlRequestPartial =

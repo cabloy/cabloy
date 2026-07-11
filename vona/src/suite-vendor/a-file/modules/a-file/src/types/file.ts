@@ -4,13 +4,14 @@ import type { IFileProviderClientOptions, IFileProviderRecord } from './fileProv
 import type { IFileSceneRecord } from './fileScene.ts';
 
 export type TypeFileMeta = Record<string, unknown>;
-export type TypeFileDeliveryExpiry = Date | string | number;
+export type TypeFileDirectUploadExpiry = Date | string | number;
 export type TypeFileStatus = 'draft' | 'ready' | 'expired';
 
 export interface IFileDeliveryOptions {
   signed?: boolean;
   expiresIn?: number;
-  expiresAt?: TypeFileDeliveryExpiry;
+  audience?: 'currentUser';
+  deliveryKind?: 'auto' | 'proxy' | 'provider';
   responseMode?: 'auto' | 'buffer' | 'url';
 }
 
@@ -42,7 +43,7 @@ export interface IFileDirectUploadInput<TMeta extends TypeFileMeta = TypeFileMet
   objectKey?: string;
   public?: boolean;
   meta?: TMeta;
-  expiry?: TypeFileDeliveryExpiry;
+  expiry?: TypeFileDirectUploadExpiry;
 }
 
 export interface IFileUploadContextResolved<TMeta extends TypeFileMeta = TypeFileMeta> {
@@ -170,6 +171,7 @@ export interface IFileUploadPolicyResolved<
 export interface IFileDownloadTokenPayload {
   kind: 'fileDownload';
   fileId: TableIdentity;
+  audienceUserId?: TableIdentity;
 }
 
 declare module 'vona' {

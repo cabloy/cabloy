@@ -95,18 +95,6 @@ export function signCloudflareImageUrl(url: URL, options: ICloudflareImageUrlOpt
 }
 
 function resolveExpiryTimestamp(options: IImageDeliveryOptions) {
-  if (options.expiresAt !== undefined) {
-    const value =
-      options.expiresAt instanceof Date
-        ? options.expiresAt.getTime()
-        : typeof options.expiresAt === 'string'
-          ? new Date(options.expiresAt).getTime()
-          : Number(options.expiresAt);
-    if (!Number.isFinite(value)) {
-      throw new TypeError(`Invalid expiresAt for signed delivery: ${String(options.expiresAt)}`);
-    }
-    return Math.floor(value / 1000);
-  }
   const expiresIn = options.expiresIn ?? 60 * 10;
   return Math.floor(Date.now() / 1000) + expiresIn;
 }

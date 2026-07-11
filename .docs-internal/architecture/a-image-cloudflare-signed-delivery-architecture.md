@@ -259,41 +259,23 @@ Future work should preserve this invariant unless a new explicit trusted-admin o
 
 ## Proxy delivery token invariant
 
-The proxy delivery path uses a temporary JWT-backed token.
-
-Current payload includes:
+The proxy delivery path uses a temporary JWT-backed token. Its current image payload includes:
 
 - `imageId`
-- `request`
-- `targetUrl`
+- normalized `request`
+- optional `audienceUserId`
 
-Why `targetUrl` is included:
+The controller verifies the route-bound token, image ID, and normalized request before it asks the provider for the underlying content. It does not contain a `targetUrl` claim. A provider can return a buffer or a URL; the controller streams the buffer or redirects to that provider URL.
 
-- if the proxy route re-derives the provider URL after verification, it can accidentally expose a stable unsigned target URL or recompute a different URL than the one originally authorized
-- persisting the target URL in the delivery token keeps the authorization step and the delivery target tightly coupled
+`audienceUserId` is used only by the explicit Admin user-bound delivery mode. The browser supplies a second, short-lived passport-code JWT on the Cabloy URL. The normal passport guard restores the current user, and delivery compares that user to `audienceUserId`. The proxy route is therefore required for audience-bound Cloudflare delivery.
 
-Required invariant:
+A redirect still exposes a short-lived provider URL after Cabloy authorization. A provider that requires strict identity enforcement for the complete content request must return/stream bytes through Cabloy instead of redirecting.
 
-- the verified proxy route should redirect only to the token-authorized `targetUrl`
-- it should not recompute a fresh provider URL for signed proxy flow
+## Delivery expiry
 
-## Absolute vs relative signed expiry
+The shared delivery surface accepts `expiresIn` only. The same relative TTL is forwarded to proxy JWT signing and provider-native signing so callers do not need to reconcile server, provider, and client clocks.
 
-The shared delivery surface accepts both:
-
-- `expiresIn`
-- `expiresAt`
-
-Why both exist:
-
-- provider-native signing often wants a concrete expiry timestamp or duration
-- callers may already hold an absolute expiry target
-- proxy and provider delivery paths must remain semantically aligned
-
-Required invariant:
-
-- proxy-signed flow must not silently ignore `expiresAt`
-- provider-signed flow and proxy-signed flow should honor the same request intent even if their implementation layers differ
+This does not change direct-upload draft or provider-upload expiry: those inputs remain absolute `expiry` values because they describe an upload deadline rather than a delivery credential.
 
 ## New backend API surface
 

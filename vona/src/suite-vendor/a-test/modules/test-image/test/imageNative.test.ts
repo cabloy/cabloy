@@ -61,6 +61,22 @@ describe('imageNative.test.ts', () => {
       assert.equal(signedAuthorizedRes.headers.get('content-type')?.includes('image/png'), true);
       assert.equal(await fse.pathExists(thumbnailPath), true);
 
+      await app.bean.passport.signinMock();
+      const audienceView = await app.bean.image.resolveView(image.id, 'thumbnail', undefined, {
+        audience: 'currentUser',
+      });
+      const passportCode = await app.bean.passport.createTempAuthToken({
+        path: '/api/image/delivery',
+        pathMatch: 'prefix',
+      });
+      const audienceUrl = new URL(audienceView!.url);
+      audienceUrl.searchParams.set('x-vona-passport-code', passportCode);
+      const audienceAuthorizedRes = await fetch(audienceUrl);
+      assert.equal(audienceAuthorizedRes.ok, true);
+      await app.bean.passport.signout();
+      const audienceUnauthorizedRes = await fetch(audienceView!.url);
+      assert.equal(audienceUnauthorizedRes.status, 401);
+
       const customUrl = await app.bean.image.getVariantUrl(image.id, {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });

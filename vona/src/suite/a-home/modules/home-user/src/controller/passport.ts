@@ -1,5 +1,5 @@
 import type { DtoAuth, IAuthenticateOptions, IAuthProviderRecord } from 'vona-module-a-auth';
-import type { IJwtToken } from 'vona-module-a-jwt';
+import type { IJwtToken, TypeJwtPathMatch } from 'vona-module-a-jwt';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -17,6 +17,7 @@ import { DtoLogin } from '../dto/login.ts';
 import { DtoPassport } from '../dto/passport.ts';
 import { DtoPassportJwt } from '../dto/passportJwt.ts';
 import { DtoRegister } from '../dto/register.ts';
+import { DtoTempAuthToken } from '../dto/tempAuthToken.ts';
 
 export interface IControllerOptionsPassport extends IDecoratorControllerOptions {}
 
@@ -127,9 +128,26 @@ export class ControllerPassport extends BeanBase {
   }
 
   @Web.post('createTempAuthToken')
-  @Api.body(z.string())
-  async createTempAuthToken(@Arg.query('path', v.optional()) path?: string): Promise<string> {
-    return await this.bean.passport.createTempAuthToken({ path });
+  @Api.body(v.object(DtoTempAuthToken))
+  async createTempAuthToken(
+    @Arg.query('path', v.optional()) path?: string,
+    @Arg.query('pathMatch', z.enum(['exact', 'prefix']).optional()) pathMatch?: TypeJwtPathMatch,
+  ): Promise<DtoTempAuthToken> {
+    if (pathMatch === 'prefix') this._assertTempAuthTokenPrefixPath(path);
+    const expiresIn = this.app.scope('a-jwt').config.tempAuthToken.signOptions.expiresIn;
+    if (typeof expiresIn !== 'number') {
+      throw new TypeError('tempAuthToken.expiresIn must be configured in seconds');
+    }
+    const token = await this.bean.passport.createTempAuthToken({ path, pathMatch, expiresIn });
+    return { token, expiresIn };
+  }
+
+  private _assertTempAuthTokenPrefixPath(path?: string) {
+    const allowedPaths = [
+      this.app.scope('a-file').util.combineApiPath('file/download', false, true),
+      this.app.scope('a-image').util.combineApiPath('image/delivery', false, true),
+    ];
+    if (!path || !allowedPaths.includes(path)) return this.app.throw(403);
   }
 
   private _combineDtoPassportJwt(jwt?: IJwtToken): DtoPassportJwt {

@@ -20,6 +20,39 @@ describe('jwt.test.ts', () => {
       // verify
       const payloadDataVerified2 = await app.bean.jwt.get('access').verify(token);
       assert.deepEqual(payloadData, payloadDataVerified2);
+      // path binding
+      const client = app.bean.jwt.get('access');
+      const exactToken = await client.sign(payloadData, { path: '/api/file/download/1' });
+      assert.deepEqual(
+        await client.verify(exactToken, { path: '/api/file/download/1' }),
+        payloadData,
+      );
+      const [_, exactError] = await catchError(() => {
+        return client.verify(exactToken, { path: '/api/file/download/2' });
+      });
+      assert.equal(exactError?.code, 401);
+
+      const arrayToken = await client.sign(payloadData, {
+        path: ['/api/file/download/1', '/api/file/download/2'],
+      });
+      assert.deepEqual(
+        await client.verify(arrayToken, { path: '/api/file/download/2' }),
+        payloadData,
+      );
+
+      const prefixToken = await client.sign(payloadData, {
+        path: '/api/image/delivery',
+        pathMatch: 'prefix',
+      });
+      assert.deepEqual(
+        await client.verify(prefixToken, { path: '/api/image/delivery/1' }),
+        payloadData,
+      );
+      const [__, prefixError] = await catchError(() => {
+        return client.verify(prefixToken, { path: '/api/image/delivery-evil/1' });
+      });
+      assert.equal(prefixError?.code, 401);
+
       // create jwt token
       const jwtToken = await app.bean.jwt.create(payloadData);
       assert.equal(!!jwtToken.accessToken, true);

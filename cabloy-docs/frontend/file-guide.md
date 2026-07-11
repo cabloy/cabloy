@@ -126,9 +126,11 @@ Do not describe the form-state boundary as a storage rollback guarantee.
 
 ## Delivery and SSR
 
-Render the resolved `downloadUrl`; never derive a provider URL from an ID, bucket, or storage key. `basic-file` prefixes a relative `/api/...` URL with configured `api.baseURL`; absolute CDN and provider-signed URLs pass through unchanged. Signed URLs can expire while a page remains open, and the field does not refresh them automatically.
+Render the resolved `downloadUrl`; never derive a provider URL from an ID, bucket, or storage key. `basic-file` prefixes a relative `/api/...` URL with configured `api.baseURL`; absolute CDN and provider-signed URLs pass through unchanged.
 
-The hidden native file input is inside `ClientOnly`. Existing relation cards and download anchors can render during SSR, but file selection and direct provider transfer are browser-only. Policy lookup itself is model-owned rather than wrapped in `ClientOnly`, while the selection boundary waits for strict policy readiness.
+For a private Admin relation that the backend resolves with `deliveryOptions.audience: 'currentUser'`, the browser adds a short-lived, path-scoped passport code only when the user opens a download. The code is model-owned, shared by the current user for the file-download route family, and is not written back into the DTO URL. The delivery URL also remains resource-bound, so the code cannot authorize a different file. SSR never requests or serializes this passport code.
+
+The hidden native file input is inside `ClientOnly`. Existing relation cards and raw download anchors can render during SSR, but file selection, direct provider transfer, and user-bound download URL decoration are browser-only. Policy lookup itself is model-owned rather than wrapped in `ClientOnly`, while the selection boundary waits for strict policy readiness.
 
 ## File UI remains file-specific
 

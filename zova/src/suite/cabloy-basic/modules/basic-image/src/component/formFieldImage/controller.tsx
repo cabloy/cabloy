@@ -240,8 +240,10 @@ export class ControllerFormFieldImage extends BeanControllerBase {
           {previewUrl ? (
             <img
               class="h-full w-full object-cover"
-              src={previewUrl}
               alt={item.filename ?? `image-${index + 1}`}
+              ref={element => {
+                if (element) this._loadPreviewUrl(element as HTMLImageElement, previewUrl);
+              }}
             />
           ) : (
             <div class="flex h-full w-full items-center justify-center text-sm text-base-content/50">
@@ -825,26 +827,28 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     });
   }
 
-  private _openPreviewDialog(items: IImagePreviewItem[], currentIndex: number) {
-    const previewItems = items
-      .map((item, index) => ({
-        index,
-        item,
-      }))
-      .filter(({ item }) => !!item.url)
-      .map(({ index, item }) => ({
-        index,
-        item: {
-          url: item.url!,
-          filename: item.filename,
-        },
-      }));
-    if (previewItems.length === 0) return;
-    const initialIndex = previewItems.findIndex(({ index }) => index === currentIndex);
+  private async _openPreviewDialog(items: IImagePreviewItem[], currentIndex: number) {
+    const previewItems = await Promise.all(
+      items
+        .map((item, index) => ({ index, item }))
+        .filter(({ item }) => !!item.url)
+        .map(async ({ index, item }) => ({
+          index,
+          item: {
+            url: await this.$passport.resolveMediaPassportCodeUrl(
+              this._resolvePreviewUrl(item.url!),
+            ),
+            filename: item.filename,
+          },
+        })),
+    );
+    const resolvedItems = previewItems.filter(item => !!item.item.url);
+    if (resolvedItems.length === 0) return;
+    const initialIndex = resolvedItems.findIndex(({ index }) => index === currentIndex);
     openImagePreviewDialog({
       appModal: this.$appModal,
-      title: this._getPreviewDialogTitle(previewItems.length),
-      items: previewItems.map(({ item }) => item),
+      title: this._getPreviewDialogTitle(resolvedItems.length),
+      items: resolvedItems.map(({ item }) => ({ ...item, url: item.url! })),
       initialIndex: initialIndex === -1 ? 0 : initialIndex,
       baseURL: this.sys.config.api.baseURL,
     });
@@ -858,6 +862,11 @@ export class ControllerFormFieldImage extends BeanControllerBase {
       count,
       () => this.scope.locale.PreviewImage(),
     );
+  }
+
+  private async _loadPreviewUrl(element: HTMLImageElement, previewUrl: string) {
+    const url = await this.$passport.resolveMediaPassportCodeUrl(previewUrl);
+    if (url) element.src = url;
   }
 
   private _resolvePreviewUrl(url: string) {

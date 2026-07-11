@@ -37,14 +37,15 @@ export type TypeImageVariantName = keyof IImageVariantNameRecord;
 
 export type IImageNamedVariants = Partial<Record<TypeImageVariantName, IImageTransformOptions>>;
 
-export type TypeImageDeliveryExpiry = Date | string | number;
+export type TypeImageDirectUploadExpiry = Date | string | number;
 
 export type TypeImageStatus = 'draft' | 'ready' | 'expired';
 
 export interface IImageDeliveryOptions {
   signed?: boolean;
   expiresIn?: number;
-  expiresAt?: TypeImageDeliveryExpiry;
+  audience?: 'currentUser';
+  deliveryKind?: 'auto' | 'proxy' | 'provider';
   responseMode?: 'auto' | 'buffer' | 'url';
 }
 
@@ -90,7 +91,7 @@ export interface IImageDirectUploadInput<TMeta extends TypeImageMeta = TypeImage
   contentType?: string;
   public?: boolean;
   meta?: TMeta;
-  expiry?: TypeImageDeliveryExpiry;
+  expiry?: TypeImageDirectUploadExpiry;
   customId?: string;
 }
 
@@ -218,6 +219,7 @@ export interface IImageDeliveryTokenPayload {
   kind: 'imageDelivery';
   imageId: TableIdentity;
   request: IImageVariantRequest;
+  audienceUserId?: TableIdentity;
 }
 
 declare module 'vona' {

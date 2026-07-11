@@ -86,7 +86,9 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
         target="_blank"
         rel="noreferrer"
         onClick={event => {
+          event.preventDefault();
           event.stopPropagation();
+          this._openDownloadUrl(downloadUrl);
         }}
       >
         {contentNode}
@@ -192,13 +194,16 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
     return '';
   }
 
-  private _openDownloadUrl(downloadUrl: string) {
+  private async _openDownloadUrl(downloadUrl: string) {
+    if (!process.env.CLIENT) return;
+    const url = await this.$passport.resolveMediaPassportCodeUrl(downloadUrl);
+    if (!url) return;
     const anchor = globalThis.document?.createElement('a');
     if (!anchor) {
-      globalThis.open?.(downloadUrl, '_blank');
+      globalThis.open?.(url, '_blank');
       return;
     }
-    anchor.href = downloadUrl;
+    anchor.href = url;
     anchor.target = '_blank';
     anchor.rel = 'noreferrer';
     anchor.click();

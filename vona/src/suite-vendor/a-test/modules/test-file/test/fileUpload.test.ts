@@ -269,6 +269,25 @@ describe('fileUpload.test.ts', () => {
         );
         assert.equal(await privateAuthorizedRes.text(), textFile.toString());
 
+        await app.bean.passport.signinMock();
+        const audienceToken = await app.bean.fileUploadPolicy.createDownloadToken({
+          fileId: privateFile.id,
+          audienceUserId: app.bean.passport.currentUser!.id,
+        });
+        const passportCode = await app.bean.passport.createTempAuthToken({
+          path: '/api/file/download',
+          pathMatch: 'prefix',
+        });
+        const audienceUrl = `${privateUrl}?token=${encodeURIComponent(audienceToken.token)}&x-vona-passport-code=${encodeURIComponent(passportCode)}`;
+        const audienceAuthorizedRes = await fetch(audienceUrl);
+        assert.equal(audienceAuthorizedRes.ok, true);
+        await app.bean.passport.signout();
+
+        const audienceUnauthorizedRes = await fetch(
+          `${privateUrl}?token=${encodeURIComponent(audienceToken.token)}`,
+        );
+        assert.equal(audienceUnauthorizedRes.status, 401);
+
         const missingUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/file/download/999999999'));
         const missingRes = await fetch(missingUrl);
         assert.equal(missingRes.status, 404);

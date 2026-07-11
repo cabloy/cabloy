@@ -17,8 +17,11 @@ export interface IJwtClientRecord {
   code: never;
 }
 
+export type TypeJwtPathMatch = 'exact' | 'prefix';
+
 export interface IJwtSignOptions {
   path?: string | string[];
+  pathMatch?: TypeJwtPathMatch;
   dev?: boolean;
   temp?: boolean;
   expiresIn?: StringValue | number;
@@ -39,6 +42,7 @@ export interface ConfigJwt {
     payload: {
       client: string;
       path: string;
+      pathMatch: string;
       data: string;
     };
     extract: {

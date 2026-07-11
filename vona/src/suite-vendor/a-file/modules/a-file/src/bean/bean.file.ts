@@ -205,10 +205,7 @@ export class BeanFile extends BeanBase {
     this._assertFileReady(file);
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     const { beanFileProvider, clientOptions, onionOptions } = await this._getProviderContext(file);
-    if (
-      deliveryOptionsResolved.signed &&
-      (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    ) {
+    if (this._shouldUseProxySignedDelivery(deliveryOptionsResolved, clientOptions)) {
       return await this._createSignedDownloadUrl(file.id, deliveryOptionsResolved);
     }
     return await beanFileProvider.getDownloadUrl(
@@ -225,10 +222,7 @@ export class BeanFile extends BeanBase {
     this._assertFileReady(file);
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     const { beanFileProvider, clientOptions, onionOptions } = await this._getProviderContext(file);
-    if (
-      deliveryOptionsResolved.signed &&
-      (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy'
-    ) {
+    if (this._shouldUseProxySignedDelivery(deliveryOptionsResolved, clientOptions)) {
       return {
         kind: 'url' as const,
         url: await this._createSignedDownloadUrl(file.id, deliveryOptionsResolved),
@@ -365,16 +359,33 @@ export class BeanFile extends BeanBase {
     file: Pick<IFileResource, 'public'>,
     deliveryOptions?: IFileDeliveryOptions,
   ): IFileDeliveryOptions {
-    const signed = deliveryOptions?.signed ?? !file.public;
-    const expiresIn = deliveryOptions?.expiresIn;
-    const expiresAt = deliveryOptions?.expiresAt;
+    const audience = deliveryOptions?.audience;
+    if (audience && deliveryOptions?.deliveryKind === 'provider') {
+      throw new Error('user-bound delivery requires proxy delivery');
+    }
+    const signed = audience ? true : (deliveryOptions?.signed ?? !file.public);
+    const expiresIn =
+      deliveryOptions?.expiresIn ??
+      (audience ? this.scope.config.file.delivery.audienceExpiresIn : undefined);
+    const deliveryKind = audience ? 'proxy' : (deliveryOptions?.deliveryKind ?? 'auto');
     const responseMode = deliveryOptions?.responseMode;
     return {
       signed,
       expiresIn,
-      expiresAt,
+      audience,
+      deliveryKind,
       responseMode,
     };
+  }
+
+  private _shouldUseProxySignedDelivery(
+    deliveryOptions: IFileDeliveryOptions,
+    clientOptions: TypeFileProviderClientOptionsByName<keyof IFileProviderRecord>,
+  ) {
+    if (!deliveryOptions.signed) return false;
+    if (deliveryOptions.deliveryKind === 'proxy') return true;
+    if (deliveryOptions.deliveryKind === 'provider') return false;
+    return (clientOptions.signedDeliveryKind ?? 'proxy') === 'proxy';
   }
 
   private async _createSignedDownloadUrl(
@@ -382,14 +393,23 @@ export class BeanFile extends BeanBase {
     deliveryOptions: IFileDeliveryOptions,
   ) {
     const routePath = this.scope.util.combineApiPath(`file/download/${fileId}`, false, true);
+    const audienceUserId = this._resolveAudienceUserId(deliveryOptions);
     const tokenPayload = await this.bean.fileUploadPolicy.createDownloadToken({
       fileId,
       expiresIn: deliveryOptions.expiresIn,
+      audienceUserId,
     });
     const routeUrl = this.app.util.getAbsoluteUrlByApiPath(routePath);
     const url = new URL(routeUrl);
     url.searchParams.set('token', tokenPayload.token);
     return url.toString();
+  }
+
+  private _resolveAudienceUserId(deliveryOptions: IFileDeliveryOptions) {
+    if (deliveryOptions.audience !== 'currentUser') return;
+    const user = this.bean.passport.currentUser;
+    if (!user || user.anonymous) return this.app.throw(401);
+    return user.id;
   }
 
   private async _createFileView(file: IFileResource, deliveryOptions?: IFileDeliveryOptions) {

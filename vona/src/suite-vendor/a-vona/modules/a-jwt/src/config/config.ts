@@ -11,6 +11,7 @@ export function config(app: VonaApplication) {
       payload: {
         client: 'client',
         path: 'path',
+        pathMatch: 'pathMatch',
         data: 'data',
       },
       extract: {

@@ -416,22 +416,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/file/upload-token': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['File_createUploadToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/file/upload': {
     parameters: {
       query?: never;
@@ -458,6 +442,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['File_createDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/file/direct-upload/finalize': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['File_finalizeDirectUpload'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1567,6 +1567,10 @@ export interface components {
       id: string;
       token: string;
     };
+    'home-user.dto.tempAuthToken': {
+      token: string;
+      expiresIn: number;
+    };
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
       name: string;
@@ -2254,19 +2258,10 @@ export interface components {
       extensions?: string[] | undefined;
       multiple?: boolean | undefined;
       public?: boolean | undefined;
+      directUpload: boolean;
     };
     'a-file.dto.fileUploadPolicyRequest': {
       fileScene: string;
-    };
-    'a-file.dto.fileUploadTokenResponse': {
-      token: string;
-      expiresIn?: number | undefined;
-    };
-    'a-file.dto.fileUploadTokenRequest': {
-      fileScene: string;
-      size: number;
-      mimeType: string;
-      expiresIn?: number | undefined;
     };
     'a-file.dto.fileUploadResponse': {
       id: number | string;
@@ -2298,8 +2293,21 @@ export interface components {
       size: number;
       mimeType: string;
       contentType?: string | undefined;
-      objectKey?: string | undefined;
       expiry?: string | undefined;
+    };
+    'a-file.dto.fileDirectUploadFinalizeResponse': {
+      id: number | string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      public?: boolean | undefined;
+      /** Format: date-time */
+      uploadedAt?: Date;
+      url?: string | undefined;
+      signed?: boolean | undefined;
+    };
+    'a-file.dto.fileDirectUploadFinalizeRequest': {
+      fileId: number | string;
     };
     'a-file.dto.fileUploadUrlRequest': {
       fileScene: string;
@@ -3431,6 +3439,7 @@ export interface operations {
     parameters: {
       query?: {
         path?: string | undefined;
+        pathMatch?: 'exact' | 'prefix' | null | undefined;
       };
       header?: never;
       path?: never;
@@ -3446,7 +3455,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: string;
+            data: components['schemas']['home-user.dto.tempAuthToken'];
           };
         };
       };
@@ -3827,34 +3836,6 @@ export interface operations {
     };
     authToken: true;
   };
-  File_createUploadToken: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-file.dto.fileUploadTokenRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-file.dto.fileUploadTokenResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
   File_upload: {
     parameters: {
       query?: never;
@@ -3865,7 +3846,7 @@ export interface operations {
     requestBody: {
       content: {
         'multipart/form-data': {
-          token: string;
+          fileScene: string;
           /** Format: binary */
           file: Blob;
         };
@@ -3909,6 +3890,34 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-file.dto.fileDirectUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  File_finalizeDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-file.dto.fileDirectUploadFinalizeRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-file.dto.fileDirectUploadFinalizeResponse'];
           };
         };
       };

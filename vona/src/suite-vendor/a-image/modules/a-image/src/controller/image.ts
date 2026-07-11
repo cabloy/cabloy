@@ -158,6 +158,17 @@ export class ControllerImage extends BeanBase {
       if (String(payload.imageId) !== String(imageId)) {
         return this.app.throw(401);
       }
+      if (payload.audienceUserId !== undefined) {
+        const auth = await this.bean.passport.checkAuthToken(
+          this.bean.jwt.extractAuthTokenFromAllWays(),
+          undefined,
+          { path: this.ctx.path },
+        );
+        if (!auth) return this.app.throw(401);
+        const user = auth.passport.user;
+        if (!user || user.anonymous) return this.app.throw(401);
+        if (String(user.id) !== String(payload.audienceUserId)) return this.app.throw(403);
+      }
       request = payload.request;
     }
     const result = await this.bean.image.download(imageId, request, {
