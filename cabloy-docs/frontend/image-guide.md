@@ -121,9 +121,9 @@ v.serializerTransform('a-image:resolveView', {
 A practical rule is:
 
 - frontend validation, crop, and resize improve UX
-- backend image scenes and backend upload-token verification remain the true policy boundary
+- backend image scenes and authenticated multipart validation remain the true policy boundary
 
-For the backend side of that contract, read [Backend Image Guide](/backend/image-guide), especially the sections on image scenes, upload-token flow, and DTO-side image view resolution.
+For the backend side of that contract, read [Backend Image Guide](/backend/image-guide), especially the sections on image scenes, authenticated multipart upload, and DTO-side image view resolution.
 
 ## One running example through this guide: Student image
 
@@ -317,7 +317,7 @@ The built-in form field follows a consistent frontend flow.
 3. if enabled, the crop dialog opens
 4. if configured, the browser resizes and re-encodes the image
 5. the frontend reads the server-provided upload-policy capability
-6. ordinary scenes call `scope.api.image.createUploadToken(...)` and upload multipart data with `token` and `image`
+6. ordinary scenes call `scope.api.image.upload(...)` with multipart `imageScene` and `image`
 7. direct-capable scenes call `scope.api.image.createDirectUpload(...)`, upload multipart data to the returned provider URL without Cabloy credentials, then call `scope.api.image.finalizeDirectUpload(...)`
 8. the stored field value is updated from the ordinary upload response or the finalized direct-upload response
 9. the resolved relation field is synchronized so the form can preview the completed image immediately

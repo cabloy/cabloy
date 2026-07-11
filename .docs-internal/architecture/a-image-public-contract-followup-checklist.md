@@ -111,7 +111,6 @@ Status: **not included**
 
 The following route split remains intentionally unchanged:
 
-- `/image/upload-token`
 - `/image/upload`
 - `/image/direct-upload`
 - `/image/direct-upload/finalize`
@@ -120,8 +119,8 @@ The following route split remains intentionally unchanged:
 Reason:
 
 - earlier analysis concluded that Cloudflare direct-upload should not be collapsed into `/image/upload-url`
-- `/image/upload-token` and `/image/upload-url` serve different flows and should not be merged blindly
-- native still keeps the ordinary tokened upload flow
+- `/image/upload` and `/image/upload-url` serve different flows and should not be merged blindly
+- native uses the ordinary authenticated multipart upload flow
 
 Follow-up question:
 
@@ -212,7 +211,7 @@ Status: **implemented**
 
 `basic-image:formFieldImage` now selects transport from the server-provided semantic `directUpload` upload-policy capability:
 
-1. ordinary scenes retain `createUploadToken` → multipart `upload`
+1. ordinary scenes use authenticated multipart `upload(imageScene, image)`
 2. direct-capable scenes use `createDirectUpload`
 3. the browser uploads bytes to the returned provider URL
 4. the browser calls `finalizeDirectUpload` with the Cabloy image ID
@@ -233,7 +232,7 @@ The source, contract, focused backend tests, generated consumer, and Admin/Web b
 - [ ] confirm the provider upload URL permits the browser CORS request
 - [ ] confirm the provider accepts the multipart `file` field
 - [ ] confirm create → provider upload → finalize timing, including a not-ready finalize response
-- [ ] confirm crop/resize, multi-image ordering, and native tokened-upload regression
+- [ ] confirm crop/resize, multi-image ordering, and native authenticated-upload regression
 - [ ] confirm provider-upload or finalize failure leaves the field value and resolved relation preview unchanged
 
 ## Checklist E: future verification reminders

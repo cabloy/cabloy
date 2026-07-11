@@ -15,21 +15,12 @@ export type ApiApiImagegetUploadPolicyRequestBody =
 export type ApiApiImagegetUploadPolicyResponseBody =
   paths[ApiApiImagegetUploadPolicyPath][ApiApiImagegetUploadPolicyMethod]['responses']['200']['content']['application/json']['data'];
 
-/** Image_createUploadToken */
-export const ApiApiImagecreateUploadTokenPath = '/api/image/upload-token';
-export type ApiApiImagecreateUploadTokenPath = '/api/image/upload-token';
-export type ApiApiImagecreateUploadTokenMethod = 'post';
-export type ApiApiImagecreateUploadTokenRequestBody =
-  components['schemas']['a-image.dto.imageUploadTokenRequest'];
-export type ApiApiImagecreateUploadTokenResponseBody =
-  paths[ApiApiImagecreateUploadTokenPath][ApiApiImagecreateUploadTokenMethod]['responses']['200']['content']['application/json']['data'];
-
 /** Image_upload */
 export const ApiApiImageuploadPath = '/api/image/upload';
 export type ApiApiImageuploadPath = '/api/image/upload';
 export type ApiApiImageuploadMethod = 'post';
 export type ApiApiImageuploadRequestBody = {
-  token: string;
+  imageScene: string;
   /** Format: binary */
   image: Blob;
 };
@@ -79,14 +70,6 @@ export class ApiImage extends BeanApiBase {
   getUploadPolicy(body: ApiApiImagegetUploadPolicyRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiImagegetUploadPolicyResponseBody>(
       ApiApiImagegetUploadPolicyPath,
-      body,
-      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
-    );
-  }
-
-  createUploadToken(body: ApiApiImagecreateUploadTokenRequestBody, options?: IApiActionOptions) {
-    return this.$fetch.post<any, ApiApiImagecreateUploadTokenResponseBody>(
-      ApiApiImagecreateUploadTokenPath,
       body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );

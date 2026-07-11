@@ -82,7 +82,7 @@ Tasks:
 Acceptance checks:
 
 - validation rules are not duplicated in multiple high-level flows
-- upload-token, direct-upload, and upload-url remain aligned on the same rule set
+- ordinary multipart upload, direct-upload, and upload-url remain aligned on the same rule set
 - existing behavior stays unchanged for current passing tests
 
 ### 1.2 Tighten provider option typing

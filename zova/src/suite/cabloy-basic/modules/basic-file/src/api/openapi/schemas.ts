@@ -149,14 +149,6 @@ export type ApiSchemaAImageDtoImageUploadPolicyRequest =
   components['schemas']['a-image.dto.imageUploadPolicyRequest'];
 export type ApiSchemaAImageDtoImageUploadPolicyRequestPartial =
   Partial<ApiSchemaAImageDtoImageUploadPolicyRequest>;
-export type ApiSchemaAImageDtoImageUploadTokenResponse =
-  components['schemas']['a-image.dto.imageUploadTokenResponse'];
-export type ApiSchemaAImageDtoImageUploadTokenResponsePartial =
-  Partial<ApiSchemaAImageDtoImageUploadTokenResponse>;
-export type ApiSchemaAImageDtoImageUploadTokenRequest =
-  components['schemas']['a-image.dto.imageUploadTokenRequest'];
-export type ApiSchemaAImageDtoImageUploadTokenRequestPartial =
-  Partial<ApiSchemaAImageDtoImageUploadTokenRequest>;
 export type ApiSchemaAImageDtoImageUploadResponse =
   components['schemas']['a-image.dto.imageUploadResponse'];
 export type ApiSchemaAImageDtoImageUploadResponsePartial =

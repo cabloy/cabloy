@@ -6,7 +6,6 @@ import type {
   IImageDeliveryTokenPayload,
   IImageUploadContextResolved,
   IImageUploadPolicyResolved,
-  IImageUploadTokenPayload,
 } from '../types/image.ts';
 import type { IImageProviderExecute } from '../types/imageProvider.ts';
 import type {
@@ -19,27 +18,6 @@ import { getImageExtension, matchesImageMimeType } from '../lib/imageUploadValid
 
 @Bean()
 export class BeanImageUploadPolicy extends BeanBase {
-  async createUploadToken(data: {
-    imageScene: keyof IImageSceneRecord;
-    size: number;
-    mimeType: string;
-    expiresIn?: number;
-  }) {
-    const payload = await this.resolveUploadPolicy(data);
-    const path = this.scope.util.combineApiPath('image/upload', false, true);
-    const token = await this.bean.jwt.createTempAuthToken(
-      {
-        kind: 'imageUpload',
-        ...payload,
-      } as IImageUploadTokenPayload,
-      {
-        path,
-        expiresIn: data.expiresIn,
-      },
-    );
-    return { token, expiresIn: data.expiresIn };
-  }
-
   async createDeliveryToken(data: {
     imageId: number | string;
     request: IImageDeliveryTokenPayload['request'];
@@ -58,16 +36,6 @@ export class BeanImageUploadPolicy extends BeanBase {
       },
     );
     return { token, expiresIn: data.expiresIn };
-  }
-
-  async verifyUploadToken(token: string | undefined, routePathRaw: string) {
-    const payload = (await this.bean.jwt.get('access').verify(token, {
-      path: routePathRaw,
-    })) as IImageUploadTokenPayload | undefined;
-    if (!payload || payload.kind !== 'imageUpload') {
-      return this.app.throw(401);
-    }
-    return payload;
   }
 
   async verifyDeliveryToken(token: string | undefined, routePathRaw: string) {
@@ -190,16 +158,10 @@ export class BeanImageUploadPolicy extends BeanBase {
   ) {
     const stat = await fse.stat(file.file);
     const fileSize = Number(stat.size);
-    if (fileSize !== payload.fileSize) {
-      return this.app.throw(403, `image size mismatch: size=${fileSize}`);
-    }
     if (payload.maxSize && fileSize > payload.maxSize) {
       return this.app.throw(403, `image too large: maxSize=${payload.maxSize}`);
     }
     const mimeType = file.mimeType.toLowerCase();
-    if (mimeType !== payload.mimeType) {
-      return this.app.throw(403, `image mimeType mismatch: mimeType=${mimeType}`);
-    }
     if (payload.mimeTypes?.length && !matchesImageMimeType(mimeType, payload.mimeTypes)) {
       return this.app.throw(403, `unsupported image mimeType: ${mimeType}`);
     }

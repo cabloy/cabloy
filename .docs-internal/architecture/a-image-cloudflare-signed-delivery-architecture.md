@@ -189,9 +189,9 @@ This follows the repo preference that storage/provider mechanics with clear runt
 
 ## Upload policy invariant
 
-### The old protected path
+### Ordinary authenticated path
 
-The original `upload-token -> upload` flow enforced scene-level upload policy before the actual upload happened.
+The ordinary authenticated multipart upload resolves scene-level upload policy from `imageScene` and the received file's actual metadata.
 
 That policy includes constraints such as:
 
@@ -221,7 +221,7 @@ Current rule:
 - `upload-url` must call `resolveUploadPolicy(...)`
 - request DTOs must include `size` and `mimeType` so those policy checks are possible before creating the provider action
 
-This keeps the advanced flows consistent with the original upload-token path.
+This keeps advanced flows consistent with the ordinary authenticated multipart path.
 
 ## Privacy downgrade invariant
 
@@ -278,11 +278,10 @@ Required invariant:
 
 ## New backend API surface
 
-The image controller now exposes additional routes beyond the original upload token flow.
+The image controller exposes ordinary authenticated upload alongside direct and URL upload routes.
 
 Representative routes:
 
-- `POST /image/upload-token`
 - `POST /image/upload`
 - `POST /image/direct-upload`
 - `POST /image/upload-url`
@@ -350,7 +349,7 @@ Verify that Cloudflare covers:
 
 Verify controller-facing paths for:
 
-- upload-token flow
+- ordinary authenticated multipart upload
 - direct-upload
 - upload-url
 - route auth behavior

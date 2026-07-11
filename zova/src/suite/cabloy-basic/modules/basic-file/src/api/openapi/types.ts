@@ -512,22 +512,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/image/upload-token': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Image_createUploadToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/image/upload': {
     parameters: {
       query?: never;
@@ -1322,6 +1306,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['TestVonaUpload_file'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/test/vona/upload/strict': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TestVonaUpload_strict'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2318,19 +2318,10 @@ export interface components {
       extensions?: string[] | undefined;
       multiple?: boolean | undefined;
       public?: boolean | undefined;
+      directUpload?: boolean | undefined;
     };
     'a-image.dto.imageUploadPolicyRequest': {
       imageScene: string;
-    };
-    'a-image.dto.imageUploadTokenResponse': {
-      token: string;
-      expiresIn?: number | undefined;
-    };
-    'a-image.dto.imageUploadTokenRequest': {
-      imageScene: string;
-      size: number;
-      mimeType: string;
-      expiresIn?: number | undefined;
     };
     'a-image.dto.imageUploadResponse': {
       id: number | string;
@@ -4007,34 +3998,6 @@ export interface operations {
     };
     authToken: true;
   };
-  Image_createUploadToken: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-image.dto.imageUploadTokenRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-image.dto.imageUploadTokenResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
   Image_upload: {
     parameters: {
       query?: never;
@@ -4045,7 +4008,7 @@ export interface operations {
     requestBody: {
       content: {
         'multipart/form-data': {
-          token: string;
+          imageScene: string;
           /** Format: binary */
           image: Blob;
         };
@@ -5597,6 +5560,37 @@ export interface operations {
         'multipart/form-data': {
           /** @default zhennann */
           name?: string;
+          /** Format: binary */
+          welcome: Blob;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  TestVonaUpload_strict: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          name: string;
           /** Format: binary */
           welcome: Blob;
         };

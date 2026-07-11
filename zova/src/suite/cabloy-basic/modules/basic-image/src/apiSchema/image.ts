@@ -5,7 +5,6 @@ import { ApiSchema } from 'zova-module-a-api';
 
 import {
   ApiApiImagegetUploadPolicyPath,
-  ApiApiImagecreateUploadTokenPath,
   ApiApiImageuploadPath,
   ApiApiImagecreateDirectUploadPath,
   ApiApiImagefinalizeDirectUploadPath,
@@ -17,10 +16,6 @@ import {
 export class ApiSchemaImage extends BeanBase {
   getUploadPolicy(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiImagegetUploadPolicyPath, 'post', options);
-  }
-
-  createUploadToken(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiImagecreateUploadTokenPath, 'post', options);
   }
 
   upload(options?: IApiSchemaOptions) {

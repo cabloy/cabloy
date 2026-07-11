@@ -400,19 +400,14 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     uploadTarget: { imageScene: string },
     directUpload: boolean,
   ) {
-    const mimeType = preparedFile.type || sourceFile.type;
     if (!directUpload) {
-      const tokenRes = await this.scope.api.image.createUploadToken({
-        ...uploadTarget,
-        size: preparedFile.size,
-        mimeType,
-      });
       return await this.scope.api.image.upload({
-        token: tokenRes.token,
+        ...uploadTarget,
         image: preparedFile,
       });
     }
 
+    const mimeType = preparedFile.type || sourceFile.type;
     const directUploadRes = await this.scope.api.image.createDirectUpload({
       ...uploadTarget,
       filename: preparedFile.name,

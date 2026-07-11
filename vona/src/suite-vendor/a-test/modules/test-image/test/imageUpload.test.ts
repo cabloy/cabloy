@@ -33,6 +33,7 @@ describe('imageUpload.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const [res, err] = await catchError(async () => {
         const formData = new FormData();
+        formData.append('imageScene', 'training-student:studentImage');
         formData.append('image', new (Blob as any)([tinyPng], { type: 'image/png' }), 'image.png');
         const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload'));
         const response = await fetch(url, {
@@ -72,26 +73,9 @@ describe('imageUpload.test.ts', () => {
         assert.equal('provider' in uploadPolicyData.data, false);
         assert.equal('clientName' in uploadPolicyData.data, false);
 
-        const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload-token'));
-        const createToken = async () => {
-          const tokenRes = await fetch(tokenUrl, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${jwt.accessToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              imageScene: 'training-student:studentImage',
-              size: tinyPng.length,
-              mimeType: 'image/png',
-            }),
-          });
-          return await tokenRes.json();
-        };
         const uploadImage = async (filename: string) => {
-          const tokenData = await createToken();
           const formData = new FormData();
-          formData.append('token', tokenData.data.token);
+          formData.append('imageScene', 'training-student:studentImage');
           formData.append('image', new (Blob as any)([tinyPng], { type: 'image/png' }), filename);
           const url = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload'));
           const res = await fetch(url, {
@@ -120,6 +104,48 @@ describe('imageUpload.test.ts', () => {
           assert.equal('draftExpiresAt' in data.data, false);
           assert.equal('finalizedAt' in data.data, false);
         }
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('action:image:upload api validates multipart shape', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const jwt = await app.bean.passport.signinMock('admin');
+      try {
+        const uploadUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/image/upload'));
+        const upload = async (formData: FormData) => {
+          return await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${jwt.accessToken}`,
+            },
+            body: formData,
+          });
+        };
+
+        const missingScene = new FormData();
+        missingScene.append(
+          'image',
+          new (Blob as any)([tinyPng], { type: 'image/png' }),
+          'image.png',
+        );
+        assert.equal((await upload(missingScene)).status, 422);
+
+        const missingImage = new FormData();
+        missingImage.append('imageScene', 'training-student:studentImage');
+        assert.equal((await upload(missingImage)).status, 422);
+
+        const extraField = new FormData();
+        extraField.append('imageScene', 'training-student:studentImage');
+        extraField.append('extra', 'extra');
+        extraField.append(
+          'image',
+          new (Blob as any)([tinyPng], { type: 'image/png' }),
+          'image.png',
+        );
+        assert.equal((await upload(extraField)).status, 413);
       } finally {
         await app.bean.passport.signout();
       }

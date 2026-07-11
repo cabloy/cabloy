@@ -220,7 +220,6 @@ export * from '../bean/meta.index.ts';
 export * from '../bean/meta.redlock.ts';
 export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
-
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
 
@@ -268,8 +267,6 @@ declare module 'vona-module-a-image' {
           }
 }
 /** meta: end */
-/** meta index: begin */
-/** meta index: end */
 /** meta redlock: begin */
 import type { MetaRedlock } from '../bean/meta.redlock.ts';
 /** meta redlock: end */
@@ -346,9 +343,9 @@ export * from '../dto/imageDirectUploadFinalizeResponse.ts';
 export * from '../dto/imageDirectUploadRequest.ts';
 export * from '../dto/imageDirectUploadResponse.ts';
 export * from '../dto/imageTransformOptions.tsx';
+export * from '../dto/imageUploadPolicyRequest.ts';
+export * from '../dto/imageUploadPolicyResponse.ts';
 export * from '../dto/imageUploadResponse.ts';
-export * from '../dto/imageUploadTokenRequest.ts';
-export * from '../dto/imageUploadTokenResponse.ts';
 export * from '../dto/imageUploadUrlRequest.ts';
 export * from '../dto/imageView.ts';
 import type { IDtoOptionsImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
@@ -357,9 +354,9 @@ import type { IDtoOptionsImageDirectUploadFinalizeResponse } from '../dto/imageD
 import type { IDtoOptionsImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import type { IDtoOptionsImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import type { IDtoOptionsImageTransformOptions } from '../dto/imageTransformOptions.tsx';
+import type { IDtoOptionsImageUploadPolicyRequest } from '../dto/imageUploadPolicyRequest.ts';
+import type { IDtoOptionsImageUploadPolicyResponse } from '../dto/imageUploadPolicyResponse.ts';
 import type { IDtoOptionsImageUploadResponse } from '../dto/imageUploadResponse.ts';
-import type { IDtoOptionsImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
-import type { IDtoOptionsImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
 import type { IDtoOptionsImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 import type { IDtoOptionsImageView } from '../dto/imageView.ts';
 import 'vona-module-a-web';
@@ -372,9 +369,9 @@ declare module 'vona-module-a-web' {
 'a-image:imageDirectUploadRequest': IDtoOptionsImageDirectUploadRequest;
 'a-image:imageDirectUploadResponse': IDtoOptionsImageDirectUploadResponse;
 'a-image:imageTransformOptions': IDtoOptionsImageTransformOptions;
+'a-image:imageUploadPolicyRequest': IDtoOptionsImageUploadPolicyRequest;
+'a-image:imageUploadPolicyResponse': IDtoOptionsImageUploadPolicyResponse;
 'a-image:imageUploadResponse': IDtoOptionsImageUploadResponse;
-'a-image:imageUploadTokenRequest': IDtoOptionsImageUploadTokenRequest;
-'a-image:imageUploadTokenResponse': IDtoOptionsImageUploadTokenResponse;
 'a-image:imageUploadUrlRequest': IDtoOptionsImageUploadUrlRequest;
 'a-image:imageView': IDtoOptionsImageView;
     }
@@ -392,9 +389,9 @@ import type { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUpl
 import type { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import type { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
 import type { DtoImageTransformOptions } from '../dto/imageTransformOptions.tsx';
+import type { DtoImageUploadPolicyRequest } from '../dto/imageUploadPolicyRequest.ts';
+import type { DtoImageUploadPolicyResponse } from '../dto/imageUploadPolicyResponse.ts';
 import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
-import type { DtoImageUploadTokenRequest } from '../dto/imageUploadTokenRequest.ts';
-import type { DtoImageUploadTokenResponse } from '../dto/imageUploadTokenResponse.ts';
 import type { DtoImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 import type { DtoImageView } from '../dto/imageView.ts';
 declare module 'vona-module-a-image' {
@@ -423,16 +420,16 @@ declare module 'vona-module-a-image' {
       fields?: TypeEntityOptionsFields<DtoImageTransformOptions, IDtoOptionsImageTransformOptions[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsImageUploadPolicyRequest {
+      fields?: TypeEntityOptionsFields<DtoImageUploadPolicyRequest, IDtoOptionsImageUploadPolicyRequest[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageUploadPolicyResponse {
+      fields?: TypeEntityOptionsFields<DtoImageUploadPolicyResponse, IDtoOptionsImageUploadPolicyResponse[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsImageUploadResponse {
       fields?: TypeEntityOptionsFields<DtoImageUploadResponse, IDtoOptionsImageUploadResponse[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsImageUploadTokenRequest {
-      fields?: TypeEntityOptionsFields<DtoImageUploadTokenRequest, IDtoOptionsImageUploadTokenRequest[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsImageUploadTokenResponse {
-      fields?: TypeEntityOptionsFields<DtoImageUploadTokenResponse, IDtoOptionsImageUploadTokenResponse[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsImageUploadUrlRequest {
@@ -481,7 +478,7 @@ declare module 'vona-module-a-image' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathPostRecord{
-        '/image/upload-token': undefined;
+        '/image/upload-policy': undefined;
 '/image/upload': undefined;
 '/image/direct-upload': undefined;
 '/image/direct-upload/finalize': undefined;

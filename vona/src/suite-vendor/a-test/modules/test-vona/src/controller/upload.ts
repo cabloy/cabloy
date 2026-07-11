@@ -42,6 +42,24 @@ export class ControllerUpload extends BeanBase {
     return this.ctx[SymbolUploadValue];
   }
 
+  @Web.post('strict')
+  @Passport.public()
+  @Core.fileUpload({
+    busboy: {
+      limits: {
+        fieldSize: 8,
+        fileSize: 8,
+        fields: 1,
+        files: 1,
+        parts: 3,
+      },
+    },
+  })
+  @Api.contentType('application/json')
+  strict(@Arg.field('name') name: string, @Arg.file('welcome') file: IUploadFile) {
+    return { name, filename: file.info.filename };
+  }
+
   @Web.post('files')
   @Passport.public()
   @Core.fileUpload()

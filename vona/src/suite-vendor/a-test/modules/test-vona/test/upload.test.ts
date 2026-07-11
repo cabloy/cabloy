@@ -48,6 +48,45 @@ describe('upload.test.ts', () => {
       }
     });
   });
+  it('action:upload:strict', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const upload = async (formData: FormData) => {
+        const url = app.util.getAbsoluteUrlByApiPath($apiPath('/test/vona/upload/strict'));
+        return await fetch(url, {
+          method: 'POST',
+          body: formData,
+        });
+      };
+
+      const formDataValid = new FormData();
+      formDataValid.append('name', 'valid');
+      formDataValid.append('welcome', new (Blob as any)(['1234567']), 'valid.txt');
+      assert.equal((await upload(formDataValid)).ok, true);
+
+      const formDataFields = new FormData();
+      formDataFields.append('name', 'valid');
+      formDataFields.append('extra', 'extra');
+      formDataFields.append('welcome', new (Blob as any)(['1234567']), 'valid.txt');
+      assert.equal((await upload(formDataFields)).status, 413);
+
+      const formDataFiles = new FormData();
+      formDataFiles.append('name', 'valid');
+      formDataFiles.append('welcome', new (Blob as any)(['1234567']), 'valid.txt');
+      formDataFiles.append('welcome', new (Blob as any)(['1234567']), 'extra.txt');
+      assert.equal((await upload(formDataFiles)).status, 413);
+
+      const formDataFieldSize = new FormData();
+      formDataFieldSize.append('name', '12345679');
+      formDataFieldSize.append('welcome', new (Blob as any)(['1234567']), 'valid.txt');
+      assert.equal((await upload(formDataFieldSize)).status, 413);
+
+      const formDataFileSize = new FormData();
+      formDataFileSize.append('name', 'valid');
+      formDataFileSize.append('welcome', new (Blob as any)(['12345679']), 'large.txt');
+      assert.equal((await upload(formDataFileSize)).status, 413);
+    });
+  });
+
   it('action:upload:files', async () => {
     await app.bean.executor.mockCtx(async () => {
       const formData = new FormData();

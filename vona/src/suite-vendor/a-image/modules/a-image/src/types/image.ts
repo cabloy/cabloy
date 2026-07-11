@@ -214,12 +214,6 @@ export interface IImageUploadPolicyResolved<
   mimeType: string;
 }
 
-export interface IImageUploadTokenPayload<
-  TMeta extends TypeImageMeta = TypeImageMeta,
-> extends IImageUploadPolicyResolved<TMeta> {
-  kind: 'imageUpload';
-}
-
 export interface IImageDeliveryTokenPayload {
   kind: 'imageDelivery';
   imageId: TableIdentity;
