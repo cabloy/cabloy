@@ -76,8 +76,10 @@ describe('imageNative.test.ts', () => {
       const view = await app.bean.image.resolveView(image.id, 'thumbnail');
       assert.equal(view?.id, image.id);
       assert.equal(view?.url.includes('/image/delivery/'), true);
-      assert.equal(view?.provider, 'image-native:native');
       assert.equal(view?.signed, true);
+      assert.equal('provider' in (view ?? {}), false);
+      assert.equal('resourceId' in (view ?? {}), false);
+      assert.equal('uploadedAt' in (view ?? {}), false);
       assert.equal('clientName' in (view ?? {}), false);
       assert.equal('variants' in (view ?? {}), false);
 

@@ -71,6 +71,8 @@ describe('fileCloudflareMapping.test.ts', () => {
       );
       assert.equal(beanDirectUpload.method, 'PUT');
       assert.equal(typeof beanDirectUpload.uploadUrl, 'string');
+      assert.equal('provider' in beanDirectUpload, false);
+      assert.equal('resourceId' in beanDirectUpload, false);
       assert.equal('clientName' in beanDirectUpload, false);
       assert.equal('fileScene' in beanDirectUpload, false);
       assert.equal('bucket' in beanDirectUpload, false);
@@ -89,9 +91,11 @@ describe('fileCloudflareMapping.test.ts', () => {
         : undefined;
       if (view) {
         assert.equal(view.id, beanDirectUpload.id);
-        assert.equal(view.provider, 'file-cloudflare:cloudflare');
+        assert.equal(typeof view.uploadedAt, 'object');
         assert.equal(view.downloadUrl.includes('X-Amz-Algorithm='), true);
         assert.equal(view.signed, true);
+        assert.equal('provider' in view, false);
+        assert.equal('resourceId' in view, false);
         assert.equal('clientName' in view, false);
         assert.equal('fileScene' in view, false);
         assert.equal('meta' in view, false);

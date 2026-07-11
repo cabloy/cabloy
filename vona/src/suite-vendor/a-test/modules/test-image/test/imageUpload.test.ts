@@ -91,9 +91,11 @@ describe('imageUpload.test.ts', () => {
         for (const filename of ['image.png', uploadImageFilenameChinese]) {
           const data = await uploadImage(filename);
           assert.equal(data.data.filename, filename);
-          assert.equal(data.data.provider, 'image-native:native');
           assert.equal(typeof data.data.url, 'string');
           assert.equal(data.data.url.length > 0, true);
+          assert.equal('provider' in data.data, false);
+          assert.equal('resourceId' in data.data, false);
+          assert.equal('uploadedAt' in data.data, false);
           assert.equal('variants' in data.data, false);
           assert.equal('clientName' in data.data, false);
           assert.equal('imageScene' in data.data, false);
@@ -236,9 +238,11 @@ describe('imageUpload.test.ts', () => {
         });
         assert.equal(directRes.ok, true);
         const directData = await directRes.json();
-        assert.equal(directData.data.resourceId, 'cf-direct-api-1');
         assert.equal(directData.data.uploadUrl.includes('upload.imagedelivery.net'), true);
         assert.equal(directData.data.public, false);
+        assert.equal('provider' in directData.data, false);
+        assert.equal('resourceId' in directData.data, false);
+        assert.equal('uploadedAt' in directData.data, false);
         assert.equal('clientName' in directData.data, false);
         assert.equal('draft' in directData.data, false);
         assert.equal('imageScene' in directData.data, false);
@@ -258,7 +262,6 @@ describe('imageUpload.test.ts', () => {
         });
         assert.equal(finalizeRes.ok, true);
         const finalizeData = await finalizeRes.json();
-        assert.equal(finalizeData.data.resourceId, 'cf-direct-api-1');
         assert.equal(
           finalizeData.data.url.startsWith(
             'https://imagedelivery.net/hash123/cf-direct-api-1/public',
@@ -267,6 +270,9 @@ describe('imageUpload.test.ts', () => {
         );
         assert.equal(finalizeData.data.url.includes('sig='), true);
         assert.equal(finalizeData.data.signed, true);
+        assert.equal('provider' in finalizeData.data, false);
+        assert.equal('resourceId' in finalizeData.data, false);
+        assert.equal('uploadedAt' in finalizeData.data, false);
         assert.equal('clientName' in finalizeData.data, false);
         assert.equal('variants' in finalizeData.data, false);
         assert.equal('imageScene' in finalizeData.data, false);
@@ -291,9 +297,11 @@ describe('imageUpload.test.ts', () => {
         });
         assert.equal(uploadUrlRes.ok, true);
         const uploadUrlData = await uploadUrlRes.json();
-        assert.equal(uploadUrlData.data.resourceId, 'cf-upload-url-api-1');
         assert.equal(uploadUrlData.data.public, false);
         assert.equal(uploadUrlData.data.signed, true);
+        assert.equal('provider' in uploadUrlData.data, false);
+        assert.equal('resourceId' in uploadUrlData.data, false);
+        assert.equal('uploadedAt' in uploadUrlData.data, false);
         assert.equal('clientName' in uploadUrlData.data, false);
         assert.equal('variants' in uploadUrlData.data, false);
         assert.equal('imageScene' in uploadUrlData.data, false);

@@ -135,8 +135,6 @@ export class BeanImage extends BeanBase {
     );
     return {
       id: image.id,
-      provider: image.providerName,
-      resourceId: imageProviderResource.resourceId,
       uploadUrl: imageProviderResource.uploadUrl,
       filename: imageProviderResource.filename,
       public: imageProviderResource.public ?? image.public,
@@ -379,15 +377,12 @@ export class BeanImage extends BeanBase {
     const context = await this._createDeliveryContext(image, request, deliveryOptions);
     return {
       id: image.id,
-      provider: image.provider,
-      resourceId: image.resourceId,
       filename: image.filename,
       contentType: image.contentType,
       size: image.size,
       width: image.width,
       height: image.height,
       public: image.public,
-      uploadedAt: image.uploadedAt,
       url: await this._getVariantUrlByContext(context),
       signed: !!context.deliveryOptionsResolved.signed,
     } satisfies IImageActionResponse;
@@ -462,8 +457,6 @@ export class BeanImage extends BeanBase {
       filename: image.filename,
       width: image.width,
       height: image.height,
-      provider: image.provider,
-      uploadedAt: image.uploadedAt,
       public: image.public,
       signed: !!context.deliveryOptionsResolved.signed,
     } satisfies IImageView;

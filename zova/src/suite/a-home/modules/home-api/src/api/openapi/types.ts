@@ -1686,16 +1686,12 @@ export interface components {
       filename?: string | undefined;
       width?: number | undefined;
       height?: number | undefined;
-      provider: string;
-      /** Format: date-time */
-      uploadedAt?: Date;
       public?: boolean | undefined;
       /** @default true */
       signed?: boolean;
     };
     'a-file.dto.fileView': {
       id: number | string;
-      provider: string;
       filename?: string | undefined;
       contentType?: string | undefined;
       size?: number | undefined;
@@ -1877,9 +1873,6 @@ export interface components {
                   filename?: string | undefined;
                   width?: number | undefined;
                   height?: number | undefined;
-                  provider?: string | undefined;
-                  /** Format: date-time */
-                  uploadedAt?: Date;
                   public?: boolean | undefined;
                   /** @default true */
                   signed?: boolean | undefined;
@@ -1889,7 +1882,6 @@ export interface components {
             dossierFiles?:
               | {
                   id?: number | string | undefined;
-                  provider?: string | undefined;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
@@ -1946,9 +1938,6 @@ export interface components {
             filename?: string | undefined;
             width?: number | undefined;
             height?: number | undefined;
-            provider?: string | undefined;
-            /** Format: date-time */
-            uploadedAt?: Date;
             public?: boolean | undefined;
             /** @default true */
             signed?: boolean | undefined;
@@ -1958,7 +1947,6 @@ export interface components {
       dossierFiles?:
         | {
             id?: number | string | undefined;
-            provider?: string | undefined;
             filename?: string | undefined;
             contentType?: string | undefined;
             size?: number | undefined;
@@ -2026,9 +2014,6 @@ export interface components {
           filename?: string | undefined;
           width?: number | undefined;
           height?: number | undefined;
-          provider: string;
-          /** Format: date-time */
-          uploadedAt?: Date;
           public?: boolean | undefined;
           /** @default true */
           signed?: boolean;
@@ -2119,9 +2104,6 @@ export interface components {
                   filename?: string | undefined;
                   width?: number | undefined;
                   height?: number | undefined;
-                  provider?: string | undefined;
-                  /** Format: date-time */
-                  uploadedAt?: Date;
                   public?: boolean | undefined;
                   /** @default true */
                   signed?: boolean | undefined;
@@ -2131,7 +2113,6 @@ export interface components {
             dossierFiles?:
               | {
                   id?: number | string | undefined;
-                  provider?: string | undefined;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
@@ -2218,9 +2199,6 @@ export interface components {
                   filename?: string | undefined;
                   width?: number | undefined;
                   height?: number | undefined;
-                  provider?: string | undefined;
-                  /** Format: date-time */
-                  uploadedAt?: Date;
                   public?: boolean | undefined;
                   /** @default true */
                   signed?: boolean | undefined;
@@ -2230,7 +2208,6 @@ export interface components {
             dossierFiles?:
               | {
                   id?: number | string | undefined;
-                  provider?: string | undefined;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
@@ -2293,8 +2270,6 @@ export interface components {
     };
     'a-file.dto.fileUploadResponse': {
       id: number | string;
-      provider: string;
-      resourceId: string;
       filename?: string | undefined;
       contentType?: string | undefined;
       size?: number | undefined;
@@ -2306,8 +2281,6 @@ export interface components {
     };
     'a-file.dto.fileDirectUploadResponse': {
       id: number | string;
-      provider: string;
-      resourceId: string;
       uploadUrl: string;
       headers?:
         | {
@@ -2361,23 +2334,17 @@ export interface components {
     };
     'a-image.dto.imageUploadResponse': {
       id: number | string;
-      provider: string;
-      resourceId: string;
       filename?: string | undefined;
       contentType?: string | undefined;
       size?: number | undefined;
       width?: number | undefined;
       height?: number | undefined;
       public?: boolean | undefined;
-      /** Format: date-time */
-      uploadedAt?: Date;
       url?: string | undefined;
       signed?: boolean | undefined;
     };
     'a-image.dto.imageDirectUploadResponse': {
       id: number | string;
-      provider: string;
-      resourceId: string;
       uploadUrl: string;
       filename?: string | undefined;
       public?: boolean | undefined;
@@ -2393,16 +2360,12 @@ export interface components {
     };
     'a-image.dto.imageDirectUploadFinalizeResponse': {
       id: number | string;
-      provider: string;
-      resourceId: string;
       filename?: string | undefined;
       contentType?: string | undefined;
       size?: number | undefined;
       width?: number | undefined;
       height?: number | undefined;
       public?: boolean | undefined;
-      /** Format: date-time */
-      uploadedAt?: Date;
       url?: string | undefined;
       signed?: boolean | undefined;
     };

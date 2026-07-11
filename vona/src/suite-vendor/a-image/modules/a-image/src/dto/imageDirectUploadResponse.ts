@@ -3,9 +3,6 @@ import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
-import z from 'zod';
-
-import type { IImageProviderRecord } from '../types/imageProvider.ts';
 
 export interface IDtoOptionsImageDirectUploadResponse extends IDecoratorDtoOptions {}
 
@@ -13,12 +10,6 @@ export interface IDtoOptionsImageDirectUploadResponse extends IDecoratorDtoOptio
 export class DtoImageDirectUploadResponse {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
-
-  @Api.field(z.string())
-  provider: keyof IImageProviderRecord;
-
-  @Api.field()
-  resourceId: string;
 
   @Api.field()
   uploadUrl: string;

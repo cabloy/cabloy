@@ -14,6 +14,8 @@ const textFile = Buffer.from('hello upload');
 const uploadFilenameChinese = '更新地址.txt';
 
 function assertInternalFieldsAbsent(data: Record<string, unknown>) {
+  assert.equal('provider' in data, false);
+  assert.equal('resourceId' in data, false);
   assert.equal('clientName' in data, false);
   assert.equal('fileScene' in data, false);
   assert.equal('bucket' in data, false);
@@ -104,7 +106,7 @@ describe('fileUpload.test.ts', () => {
         for (const filename of ['upload.txt', uploadFilenameChinese]) {
           const data = await uploadFile(filename);
           assert.equal(data.data.filename, filename);
-          assert.equal(data.data.provider, 'file-native:native');
+          assert.equal(data.data.uploadedAt instanceof Date, true);
           assert.equal(typeof data.data.url, 'string');
           assert.equal(data.data.signed, false);
           assertInternalFieldsAbsent(data.data);
@@ -183,7 +185,6 @@ describe('fileUpload.test.ts', () => {
         });
         assert.equal(directRes.ok, true);
         const directData = await directRes.json();
-        assert.equal(directData.data.provider, 'file-cloudflare:cloudflare');
         assert.equal(directData.data.method, 'PUT');
         assert.equal(typeof directData.data.uploadUrl, 'string');
         assert.equal(directData.data.public, false);
@@ -208,8 +209,8 @@ describe('fileUpload.test.ts', () => {
         });
         assert.equal(uploadUrlRes.ok, true);
         const uploadUrlData = await uploadUrlRes.json();
-        assert.equal(uploadUrlData.data.provider, 'file-cloudflare:cloudflare');
         assert.equal(uploadUrlData.data.filename, 'upload-url.txt');
+        assert.equal(uploadUrlData.data.uploadedAt instanceof Date, true);
         assert.equal(uploadUrlData.data.signed, true);
         assert.equal(uploadUrlData.data.url.includes('X-Amz-Algorithm='), true);
         assertInternalFieldsAbsent(uploadUrlData.data);

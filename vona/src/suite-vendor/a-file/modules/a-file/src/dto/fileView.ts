@@ -5,17 +5,12 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 
-import type { IFileProviderRecord } from '../types/fileProvider.ts';
-
 export interface IDtoOptionsFileView extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsFileView>()
 export class DtoFileView {
   @Api.field(v.tableIdentity())
   id: TableIdentity;
-
-  @Api.field(z.string())
-  provider: keyof IFileProviderRecord;
 
   @Api.field(v.optional())
   filename?: string;

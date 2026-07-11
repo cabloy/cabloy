@@ -128,7 +128,9 @@ describe('imageCloudflareMapping.test.ts', () => {
         );
         assert.equal(view?.url.includes('&sig='), true);
         assert.equal(view?.signed, true);
-        assert.equal(view?.provider, 'image-cloudflare:cloudflare');
+        assert.equal('provider' in (view ?? {}), false);
+        assert.equal('resourceId' in (view ?? {}), false);
+        assert.equal('uploadedAt' in (view ?? {}), false);
         assert.equal('clientName' in (view ?? {}), false);
         assert.equal('variants' in (view ?? {}), false);
         assert.equal('imageScene' in (view ?? {}), false);
@@ -157,7 +159,9 @@ describe('imageCloudflareMapping.test.ts', () => {
             },
           },
         );
-        assert.equal(directUpload.resourceId, 'cf-direct-1');
+        assert.equal('provider' in directUpload, false);
+        assert.equal('resourceId' in directUpload, false);
+        assert.equal('uploadedAt' in directUpload, false);
         assert.equal(
           directUpload.uploadUrl,
           'https://upload.imagedelivery.net/hash123/cf-direct-1',

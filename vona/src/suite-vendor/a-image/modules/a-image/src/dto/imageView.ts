@@ -24,12 +24,6 @@ export class DtoImageView {
   @Api.field(v.optional())
   height?: number;
 
-  @Api.field(z.string())
-  provider: string;
-
-  @Api.field(v.optional())
-  uploadedAt?: Date;
-
   @Api.field(v.optional())
   public?: boolean;
 

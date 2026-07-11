@@ -106,8 +106,6 @@ export interface IFileDirectUploadResult<
 
 export interface IFileActionResponse {
   id: TableIdentity;
-  provider: keyof IFileProviderRecord;
-  resourceId: string;
   filename?: string;
   contentType?: string;
   size?: number;
@@ -119,8 +117,6 @@ export interface IFileActionResponse {
 
 export interface IFileDirectUploadResponse {
   id: TableIdentity;
-  provider: keyof IFileProviderRecord;
-  resourceId: string;
   uploadUrl: string;
   headers?: Record<string, string>;
   method?: 'PUT' | 'POST';
@@ -130,7 +126,6 @@ export interface IFileDirectUploadResponse {
 
 export interface IFileView {
   id: TableIdentity;
-  provider: keyof IFileProviderRecord;
   filename?: string;
   contentType?: string;
   size?: number;

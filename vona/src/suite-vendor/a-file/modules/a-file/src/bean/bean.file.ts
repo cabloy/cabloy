@@ -216,8 +216,6 @@ export class BeanFile extends BeanBase {
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     return {
       id: file.id,
-      provider: file.provider,
-      resourceId: file.resourceId,
       filename: file.filename,
       contentType: file.contentType,
       size: file.size,
@@ -319,7 +317,6 @@ export class BeanFile extends BeanBase {
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     return {
       id: file.id,
-      provider: file.provider,
       filename: file.filename,
       contentType: file.contentType,
       size: file.size,
@@ -336,8 +333,6 @@ export class BeanFile extends BeanBase {
   ) {
     return {
       id: file.id,
-      provider: file.providerName,
-      resourceId: fileProviderResource.resourceId,
       uploadUrl: fileProviderResource.uploadUrl,
       headers: fileProviderResource.headers,
       method: fileProviderResource.method,

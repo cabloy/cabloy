@@ -7,6 +7,8 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 function assertViewInternalFieldsAbsent(view: Record<string, unknown>) {
+  assert.equal('provider' in view, false);
+  assert.equal('resourceId' in view, false);
   assert.equal('clientName' in view, false);
   assert.equal('fileScene' in view, false);
   assert.equal('meta' in view, false);
@@ -43,7 +45,7 @@ describe('fileNative.test.ts', () => {
 
       const view = await app.bean.file.resolveView(file.id);
       assert.equal(view?.id, file.id);
-      assert.equal(view?.provider, 'file-native:native');
+      assert.equal(typeof view?.uploadedAt, 'object');
       assert.equal(view?.downloadUrl.includes('/api/static/'), true);
       assert.equal(view?.signed, false);
       assertViewInternalFieldsAbsent(view ?? {});
@@ -66,6 +68,7 @@ describe('fileNative.test.ts', () => {
 
       const privateView = await app.bean.file.resolveView(privateFile.id);
       assert.equal(privateView?.id, privateFile.id);
+      assert.equal(typeof privateView?.uploadedAt, 'object');
       assert.equal(privateView?.downloadUrl.includes('/file/download/'), true);
       assert.equal(privateView?.signed, true);
       assertViewInternalFieldsAbsent(privateView ?? {});
