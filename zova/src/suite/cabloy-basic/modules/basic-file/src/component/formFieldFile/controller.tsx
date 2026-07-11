@@ -1,5 +1,5 @@
 import type { TableIdentity } from 'table-identity';
-import type { IComponentOptions, TypeControllerInnerProps } from 'zova';
+import type { IComponentOptions } from 'zova';
 import type { IJsxRenderContextFormField } from 'zova-module-a-form';
 import type { ControllerFormField, IFormFieldComponentOptions } from 'zova-module-a-form';
 import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
@@ -76,12 +76,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   protected async __init__() {}
 
   protected render() {
-    if (this._props.readonly) {
+    if (this.$props.readonly) {
       return this._renderReadonlyPreset();
     }
     return (
       <ZFormField
-        {...this._props}
+        {...this.$props}
         slotDefault={({ propsBucket, props }, $$formField) => {
           this.$$formField = $$formField;
           const fieldOptions = (propsBucket.options ?? {}) as IResourceFormFieldFileOptions;
@@ -160,17 +160,10 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     );
   }
 
-  private get _props() {
-    return this.$props as TypeControllerInnerProps<
-      ControllerFormFieldFileProps,
-      keyof typeof ControllerFormFieldFile.$propsDefault
-    >;
-  }
-
   private _renderReadonlyPreset() {
     return (
       <ZFormField
-        {...this._props}
+        {...this.$props}
         slotDefault={({ propsBucket, props }) => {
           const fieldOptions = (propsBucket.options ?? {}) as IResourceFormFieldFileOptions;
           const fieldValue = propsBucket.value as unknown;
@@ -437,7 +430,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   }
 
   private _getRelationName() {
-    return inferFileRelationName(this._props.name, this.currentOptions.relationName);
+    return inferFileRelationName(this.$props.name, this.currentOptions.relationName);
   }
 
   private _normalizeValueToFileIds(value: unknown, multiple: boolean): TableIdentity[] {
