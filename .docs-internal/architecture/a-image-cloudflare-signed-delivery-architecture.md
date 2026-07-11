@@ -165,6 +165,25 @@ Instead:
 
 This preserves the local-provider behavior while still giving the framework one signed-delivery request model.
 
+## Deferred native remote URL import boundary
+
+Status: **deferred: security design and implementation required**
+
+Native remote URL import is an accepted future capability, but `image-native` does not currently implement `uploadUrl(...)`. Its current contract accepts an already-local uploaded file and copies it into native storage. By contrast, `image-cloudflare` submits the requested remote URL to Cloudflare Images, so Cloudflare—not Cabloy—performs the remote retrieval.
+
+Do not implement native URL import as a simple `fetch(url) → temporary file → native upload` path. That would create a server-side fetch boundary for attacker-controlled URLs without the protections needed to prevent SSRF, resource exhaustion, and incomplete-storage residue.
+
+Before this capability is reopened, its design must define and verify all of the following:
+
+- allowed scheme, hostname, port, proxy, DNS-resolution, and IP-address rules, including rejection of loopback, private, link-local, multicast, unspecified, and reserved IPv4/IPv6 destinations
+- bounded redirects with fresh DNS/IP safety validation for every redirect target
+- actual streamed-byte limits derived from the resolved scene policy, with safe transfer abort and cleanup when the limit is exceeded
+- connection, response, idle/read, and total-transfer deadlines with cancellation behavior
+- server-side content, decoded-image, and scene-policy validation; caller-declared filename, MIME type, extension, and size are hints rather than trusted proof
+- deterministic cleanup of temporary downloads, partially stored native originals or variants, and any image records created before a failure
+
+When implementation is approved, shared `a-image` orchestration must continue to own scene policy and resource persistence. `image-native` must own only the native retrieval staging and native-storage cleanup required by that approved design. Reopening requires the security design, focused negative-path tests, and cleanup semantics to be agreed before provider code changes. The standing implementation gates are tracked in [D3 of the a-image public-contract follow-up checklist](./a-image-public-contract-followup-checklist.md#d3-design-and-implement-native-remote-url-import).
+
 ## Cloudflare provider boundary
 
 `image-cloudflare` is now a real provider instead of a mapping stub.

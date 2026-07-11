@@ -203,7 +203,7 @@ Checklist:
 - [ ] verify whether embedded image views need the remaining `public` field
 - [ ] decide whether preview-focused consumers only need `id`, `url`, `filename`, `width`, `height`, and `signed`
 
-## Checklist D: frontend direct-upload adoption work
+## Checklist D: deferred implementation and verification work
 
 ### D1. Standard image field direct-upload completion path
 
@@ -234,6 +234,23 @@ The source, contract, focused backend tests, generated consumer, and Admin/Web b
 - [ ] confirm create → provider upload → finalize timing, including a not-ready finalize response
 - [ ] confirm crop/resize, multi-image ordering, and native authenticated-upload regression
 - [ ] confirm provider-upload or finalize failure leaves the field value and resolved relation preview unchanged
+
+### D3. Design and implement native remote URL import
+
+Status: **deferred: security design and implementation required**
+
+Native remote URL import is an accepted future capability, not a current feature. `image-native` still lacks `uploadUrl(...)`; `image-cloudflare` delegates remote URL ingestion to Cloudflare Images. This documentation pass does not change the current source, public contract, tests, or user-facing documentation.
+
+Before adding Native support, complete the security and lifecycle design recorded in [the deferred native remote URL import boundary](./a-image-cloudflare-signed-delivery-architecture.md#deferred-native-remote-url-import-boundary):
+
+- [ ] define the SSRF policy, including permitted schemes, proxy behavior, DNS/IP validation, protected IPv4/IPv6 ranges, and port rules
+- [ ] cap redirect traversal and revalidate every redirect target before connecting
+- [ ] enforce scene-derived actual streamed-byte limits and safely abort and clean up over-limit transfers
+- [ ] define and test connection, response, idle/read, and total-transfer timeouts with cancellation behavior
+- [ ] validate downloaded bytes, decoded image data, and resolved scene policy server-side rather than trusting request metadata
+- [ ] define deterministic cleanup for temporary downloads, partial native originals or variants, and persisted image records
+- [ ] add focused SSRF, redirect, limit, timeout, malformed-content, policy, and cleanup failure-path coverage
+- [ ] only then add the Native provider capability and revisit shared `/image/upload-url` behavior
 
 ## Checklist E: future verification reminders
 
@@ -266,6 +283,7 @@ Before changing `a-image` again, ask these questions in order:
 - [ ] does direct upload still write the field value only after finalization succeeds?
 - [ ] if backend contract truth changed, did I complete the contract loop and verify the generated frontend consumers?
 - [ ] if Cloudflare browser access is available, did I run the deferred D2 smoke test?
+- [ ] am I reopening the explicitly deferred Native remote URL import, and have all D3 security gates been designed before changing provider code?
 
 ## Summary
 
@@ -278,5 +296,6 @@ The current work intentionally leaves these follow-ups open:
 - how far internal `a-image` models should also be narrowed
 - whether the remaining public fields (`contentType`, `size`, and `public`) should be shrunk after a real-consumer audit
 - the deferred real-browser Cloudflare verification in D2
+- the deferred security design and implementation gates for Native remote URL import in D3
 
 Treat this note as the standing checklist for those follow-up questions.
