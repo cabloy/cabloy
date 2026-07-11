@@ -15,21 +15,12 @@ export type ApiApiFilegetUploadPolicyRequestBody =
 export type ApiApiFilegetUploadPolicyResponseBody =
   paths[ApiApiFilegetUploadPolicyPath][ApiApiFilegetUploadPolicyMethod]['responses']['200']['content']['application/json']['data'];
 
-/** File_createUploadToken */
-export const ApiApiFilecreateUploadTokenPath = '/api/file/upload-token';
-export type ApiApiFilecreateUploadTokenPath = '/api/file/upload-token';
-export type ApiApiFilecreateUploadTokenMethod = 'post';
-export type ApiApiFilecreateUploadTokenRequestBody =
-  components['schemas']['a-file.dto.fileUploadTokenRequest'];
-export type ApiApiFilecreateUploadTokenResponseBody =
-  paths[ApiApiFilecreateUploadTokenPath][ApiApiFilecreateUploadTokenMethod]['responses']['200']['content']['application/json']['data'];
-
 /** File_upload */
 export const ApiApiFileuploadPath = '/api/file/upload';
 export type ApiApiFileuploadPath = '/api/file/upload';
 export type ApiApiFileuploadMethod = 'post';
 export type ApiApiFileuploadRequestBody = {
-  token: string;
+  fileScene: string;
   /** Format: binary */
   file: Blob;
 };
@@ -44,6 +35,15 @@ export type ApiApiFilecreateDirectUploadRequestBody =
   components['schemas']['a-file.dto.fileDirectUploadRequest'];
 export type ApiApiFilecreateDirectUploadResponseBody =
   paths[ApiApiFilecreateDirectUploadPath][ApiApiFilecreateDirectUploadMethod]['responses']['200']['content']['application/json']['data'];
+
+/** File_finalizeDirectUpload */
+export const ApiApiFilefinalizeDirectUploadPath = '/api/file/direct-upload/finalize';
+export type ApiApiFilefinalizeDirectUploadPath = '/api/file/direct-upload/finalize';
+export type ApiApiFilefinalizeDirectUploadMethod = 'post';
+export type ApiApiFilefinalizeDirectUploadRequestBody =
+  components['schemas']['a-file.dto.fileDirectUploadFinalizeRequest'];
+export type ApiApiFilefinalizeDirectUploadResponseBody =
+  paths[ApiApiFilefinalizeDirectUploadPath][ApiApiFilefinalizeDirectUploadMethod]['responses']['200']['content']['application/json']['data'];
 
 /** File_uploadUrl */
 export const ApiApiFileuploadUrlPath = '/api/file/upload-url';
@@ -75,14 +75,6 @@ export class ApiFile extends BeanApiBase {
     );
   }
 
-  createUploadToken(body: ApiApiFilecreateUploadTokenRequestBody, options?: IApiActionOptions) {
-    return this.$fetch.post<any, ApiApiFilecreateUploadTokenResponseBody>(
-      ApiApiFilecreateUploadTokenPath,
-      body,
-      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
-    );
-  }
-
   upload(body: ApiApiFileuploadRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiFileuploadResponseBody>(
       ApiApiFileuploadPath,
@@ -94,6 +86,17 @@ export class ApiFile extends BeanApiBase {
   createDirectUpload(body: ApiApiFilecreateDirectUploadRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiFilecreateDirectUploadResponseBody>(
       ApiApiFilecreateDirectUploadPath,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  finalizeDirectUpload(
+    body: ApiApiFilefinalizeDirectUploadRequestBody,
+    options?: IApiActionOptions,
+  ) {
+    return this.$fetch.post<any, ApiApiFilefinalizeDirectUploadResponseBody>(
+      ApiApiFilefinalizeDirectUploadPath,
       body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );

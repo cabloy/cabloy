@@ -32,6 +32,9 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
         table.text(entityFile.storagePath);
         table.text(entityFile.deliveryBaseUrl);
         table.string(entityFile.fileScene, 255);
+        table.string(entityFile.status, 16).defaultTo('ready');
+        table.dateTime(entityFile.draftExpiresAt);
+        table.dateTime(entityFile.finalizedAt);
       });
     }
   }

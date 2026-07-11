@@ -12,7 +12,6 @@ import type {
   IFileProviderDirectUploadResource,
   IFileProviderResource,
   IFileResource,
-  IFileUploadContextResolved,
   IFileUploadInput,
   IFileUploadOptions,
   IFileUploadUrlInput,
@@ -30,6 +29,14 @@ interface IFileProviderContext<N extends keyof IFileProviderRecord = keyof IFile
   beanFileProvider: TypeFileProviderExecuteByName<N>;
   clientOptions: TypeFileProviderClientOptionsByName<N>;
   onionOptions: TypeFileProviderOptionsByName<N>;
+}
+
+interface IInsertFileContext {
+  fileScene?: keyof IFileSceneRecord;
+  public?: boolean;
+  status?: EntityFile['status'];
+  draftExpiresAt?: Date;
+  finalizedAt?: Date;
 }
 
 @Bean()
@@ -52,6 +59,7 @@ export class BeanFile extends BeanBase {
       {
         fileScene: options?.fileScene,
         public: options?.public ?? input.public,
+        status: 'ready',
       },
     );
     return this._combineFileResource(file, fileProviderResource);
@@ -64,7 +72,10 @@ export class BeanFile extends BeanBase {
   ): Promise<IFileResource> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
     if (!providerContext.beanFileProvider.uploadUrl) {
-      throw new Error(`File provider does not support uploadUrl: ${String(providerName)}`);
+      return this.app.throw(
+        403,
+        `File provider does not support uploadUrl: ${String(providerName)}`,
+      );
     }
     const fileProviderResource = await providerContext.beanFileProvider.uploadUrl(
       { ...input, public: options?.public ?? input.public, meta: options?.meta ?? input.meta },
@@ -78,6 +89,7 @@ export class BeanFile extends BeanBase {
       {
         fileScene: options?.fileScene,
         public: options?.public ?? input.public,
+        status: 'ready',
       },
     );
     return this._combineFileResource(file, fileProviderResource);
@@ -89,8 +101,14 @@ export class BeanFile extends BeanBase {
     options?: IFileUploadOptions<TypeFileProviderClientOptionsByName<N>>,
   ): Promise<IFileDirectUploadResponse> {
     const providerContext = await this._getProviderContextByInput(providerName, options);
-    if (!providerContext.beanFileProvider.createDirectUpload) {
-      throw new Error(`File provider does not support createDirectUpload: ${String(providerName)}`);
+    if (
+      !providerContext.beanFileProvider.createDirectUpload ||
+      !providerContext.beanFileProvider.finalizeDirectUpload
+    ) {
+      return this.app.throw(
+        403,
+        `File provider does not support createDirectUpload: ${String(providerName)}`,
+      );
     }
     const fileProviderResource = await providerContext.beanFileProvider.createDirectUpload(
       { ...input, public: options?.public ?? input.public, meta: options?.meta ?? input.meta },
@@ -104,9 +122,53 @@ export class BeanFile extends BeanBase {
       {
         fileScene: options?.fileScene,
         public: options?.public ?? input.public,
+        status: 'draft',
+        draftExpiresAt: this._resolveDirectUploadDraftExpiresAt(input.expiry),
       },
     );
     return this._createDirectUploadResponse(file, fileProviderResource);
+  }
+
+  async finalizeDirectUpload(fileId: TableIdentity): Promise<IFileResource> {
+    return await this.scope.redlock.lock(`file.directUpload.${fileId}`, async () => {
+      const file = await this.scope.model.file.getById(fileId);
+      if (!file) throw new Error(`not found file: ${fileId}`);
+      if (file.status !== 'draft') {
+        return this.app.throw(403, `file is not draft: ${fileId}`);
+      }
+      const draftExpiresAt = this._normalizeDate(file.draftExpiresAt);
+      if (draftExpiresAt && draftExpiresAt.getTime() < Date.now()) {
+        await this.scope.model.file.updateById(file.id, { status: 'expired' });
+        return this.app.throw(403, `file draft expired: ${fileId}`);
+      }
+      const providerContext = await this._getProviderContext(file);
+      if (!providerContext.beanFileProvider.finalizeDirectUpload) {
+        return this.app.throw(
+          403,
+          `File provider does not support finalizeDirectUpload: ${String(file.providerName)}`,
+        );
+      }
+      const fileProviderResource = await providerContext.beanFileProvider.finalizeDirectUpload(
+        file,
+        providerContext.clientOptions,
+        providerContext.onionOptions,
+      );
+      if (!fileProviderResource) {
+        return this.app.throw(403, `file direct upload not ready: ${fileId}`);
+      }
+      const finalizedAt = new Date();
+      const fileUpdated = await this.scope.model.file.updateById(
+        file.id,
+        this._buildFilePersistData(fileProviderResource, {
+          fileScene: file.fileScene,
+          public: file.public,
+          status: 'ready',
+          draftExpiresAt,
+          finalizedAt,
+        }),
+      );
+      return this._combineFileResource({ ...file, ...fileUpdated }, fileProviderResource);
+    });
   }
 
   async get(fileId: TableIdentity): Promise<IFileResource | undefined> {
@@ -114,6 +176,19 @@ export class BeanFile extends BeanBase {
     if (!file) return;
     const fileProviderResource = await this._getFileProviderResource(file);
     return this._combineFileResource(file, fileProviderResource);
+  }
+
+  async expireDraftFile(fileId: TableIdentity) {
+    return await this.scope.redlock.lock(`file.directUpload.${fileId}`, async () => {
+      const file = await this.scope.model.file.getById(fileId);
+      if (!file || file.status !== 'draft') return;
+      const draftExpiresAt = this._normalizeDate(file.draftExpiresAt);
+      if (!draftExpiresAt || draftExpiresAt.getTime() >= Date.now()) return;
+      const { beanFileProvider, clientOptions, onionOptions } =
+        await this._getProviderContext(file);
+      await beanFileProvider.delete(file, clientOptions, onionOptions);
+      await this.scope.model.file.updateById(file.id, { status: 'expired' });
+    });
   }
 
   async delete(fileId: TableIdentity) {
@@ -127,6 +202,7 @@ export class BeanFile extends BeanBase {
   async getDownloadUrl(fileId: TableIdentity, deliveryOptions?: IFileDeliveryOptions) {
     const file = await this.scope.model.file.getById(fileId);
     if (!file) throw new Error(`not found file: ${fileId}`);
+    this._assertFileReady(file);
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     const { beanFileProvider, clientOptions, onionOptions } = await this._getProviderContext(file);
     if (
@@ -146,6 +222,7 @@ export class BeanFile extends BeanBase {
   async download(fileId: TableIdentity, deliveryOptions?: IFileDeliveryOptions) {
     const file = await this.scope.model.file.getById(fileId);
     if (!file) throw new Error(`not found file: ${fileId}`);
+    this._assertFileReady(file);
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     const { beanFileProvider, clientOptions, onionOptions } = await this._getProviderContext(file);
     if (
@@ -190,6 +267,7 @@ export class BeanFile extends BeanBase {
     if (!fileId) return;
     const file = await this.get(fileId);
     if (!file) return;
+    this._assertFileReady(file);
     if (fileScene && file.fileScene !== fileScene) {
       throw new Error(`file scene mismatch: file=${file.fileScene}, expected=${fileScene}`);
     }
@@ -213,6 +291,7 @@ export class BeanFile extends BeanBase {
     file: IFileResource,
     deliveryOptions?: IFileDeliveryOptions,
   ): Promise<IFileActionResponse> {
+    this._assertFileReady(file);
     const deliveryOptionsResolved = this._mergeDeliveryOptions(file, deliveryOptions);
     return {
       id: file.id,
@@ -341,15 +420,36 @@ export class BeanFile extends BeanBase {
     } satisfies IFileDirectUploadResponse;
   }
 
-  private async _insertFile(
-    providerName: keyof IFileProviderRecord,
-    clientName: string,
+  private _resolveDirectUploadDraftExpiresAt(expiry?: IFileDirectUploadInput['expiry']) {
+    return (
+      this._normalizeDate(expiry) ??
+      new Date(Date.now() + this.scope.config.file.directUpload.draftExpiresIn)
+    );
+  }
+
+  private _normalizeDate(value: unknown) {
+    if (!value) return undefined;
+    if (value instanceof Date) {
+      return Number.isNaN(value.getTime()) ? undefined : value;
+    }
+    const date = new Date(value as string | number);
+    return Number.isNaN(date.getTime()) ? undefined : date;
+  }
+
+  private _assertFileReady(file: Pick<IFileResource, 'id' | 'status'>) {
+    if (file.status === 'draft') {
+      return this.app.throw(403, `file draft not ready: ${file.id}`);
+    }
+    if (file.status === 'expired') {
+      return this.app.throw(403, `file draft expired: ${file.id}`);
+    }
+  }
+
+  private _buildFilePersistData(
     fileProviderResource: IFileProviderResource | IFileProviderDirectUploadResource,
-    context?: Partial<IFileUploadContextResolved>,
+    context?: IInsertFileContext,
   ) {
-    return await this.scope.model.file.insert({
-      providerName,
-      clientName,
+    return {
       resourceId: fileProviderResource.resourceId,
       bucket: fileProviderResource.bucket,
       objectKey: fileProviderResource.objectKey,
@@ -362,6 +462,22 @@ export class BeanFile extends BeanBase {
       storagePath: fileProviderResource.storagePath,
       deliveryBaseUrl: fileProviderResource.deliveryBaseUrl,
       fileScene: context?.fileScene,
+      status: context?.status,
+      draftExpiresAt: context?.draftExpiresAt,
+      finalizedAt: context?.finalizedAt,
+    };
+  }
+
+  private async _insertFile(
+    providerName: keyof IFileProviderRecord,
+    clientName: string,
+    fileProviderResource: IFileProviderResource | IFileProviderDirectUploadResource,
+    context?: IInsertFileContext,
+  ) {
+    return await this.scope.model.file.insert({
+      providerName,
+      clientName,
+      ...this._buildFilePersistData(fileProviderResource, context),
     });
   }
 
@@ -374,6 +490,9 @@ export class BeanFile extends BeanBase {
       provider: file.providerName,
       clientName: file.clientName,
       fileScene: file.fileScene,
+      status: file.status,
+      draftExpiresAt: file.status === 'draft' ? file.draftExpiresAt : undefined,
+      finalizedAt: file.finalizedAt,
       resourceId: fileProviderResource?.resourceId ?? file.resourceId,
       bucket: fileProviderResource?.bucket ?? file.bucket,
       objectKey: fileProviderResource?.objectKey ?? file.objectKey,

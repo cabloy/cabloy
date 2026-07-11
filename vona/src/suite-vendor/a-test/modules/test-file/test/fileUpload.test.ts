@@ -1,4 +1,4 @@
-import type { IFileUploadContextResolved, IFileUploadTokenPayload } from 'vona-module-a-file';
+import type { IFileUploadPolicyResolved } from 'vona-module-a-file';
 
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
@@ -25,6 +25,10 @@ function assertInternalFieldsAbsent(data: Record<string, unknown>) {
   assert.equal('storagePath' in data, false);
   assert.equal('deliveryBaseUrl' in data, false);
   assert.equal('raw' in data, false);
+  assert.equal('draft' in data, false);
+  assert.equal('status' in data, false);
+  assert.equal('draftExpiresAt' in data, false);
+  assert.equal('finalizedAt' in data, false);
 }
 
 describe('fileUpload.test.ts', () => {
@@ -32,6 +36,7 @@ describe('fileUpload.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const [res, err] = await catchError(async () => {
         const formData = new FormData();
+        formData.append('fileScene', 'test-file:publicFile');
         formData.append(
           'file',
           new (Blob as any)([textFile], { type: 'text/plain' }),
@@ -57,39 +62,27 @@ describe('fileUpload.test.ts', () => {
   it('action:file:upload api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
-      const resolveUploadContextRaw = app.bean.fileUploadPolicy.resolveUploadContext.bind(
-        app.bean.fileUploadPolicy,
-      );
-      app.bean.fileUploadPolicy.resolveUploadContext = async data => {
-        const context = await resolveUploadContextRaw(data);
-        return {
-          ...context,
-          providerName: 'file-native:native',
-          clientName: 'default',
-          public: true,
-        } as IFileUploadContextResolved;
-      };
       try {
-        const tokenUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/file/upload-token'));
-        const createToken = async () => {
-          const tokenRes = await fetch(tokenUrl, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${jwt.accessToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              fileScene: 'test-file:publicFile',
-              size: textFile.length,
-              mimeType: 'text/plain',
-            }),
-          });
-          return await tokenRes.json();
-        };
+        const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-policy');
+        const uploadPolicyRes = await fetch(uploadPolicyUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileScene: 'test-file:publicFile',
+          }),
+        });
+        assert.equal(uploadPolicyRes.ok, true);
+        const uploadPolicyData = await uploadPolicyRes.json();
+        assert.equal(uploadPolicyData.data.directUpload, false);
+        assert.equal('provider' in uploadPolicyData.data, false);
+        assert.equal('clientName' in uploadPolicyData.data, false);
+
         const uploadFile = async (filename: string) => {
-          const tokenData = await createToken();
           const formData = new FormData();
-          formData.append('token', tokenData.data.token);
+          formData.append('fileScene', 'test-file:publicFile');
           formData.append('file', new (Blob as any)([textFile], { type: 'text/plain' }), filename);
           const url = app.util.getAbsoluteUrlByApiPath($apiPath('/file/upload'));
           const res = await fetch(url, {
@@ -112,7 +105,6 @@ describe('fileUpload.test.ts', () => {
           assertInternalFieldsAbsent(data.data);
         }
       } finally {
-        app.bean.fileUploadPolicy.resolveUploadContext = resolveUploadContextRaw;
         await app.bean.passport.signout();
       }
     });
@@ -137,7 +129,7 @@ describe('fileUpload.test.ts', () => {
       });
       const fileCloudflare = app.bean._getBean('file-cloudflare.service.fileCloudflare' as never);
       const uploadRaw = fileCloudflare.upload.bind(fileCloudflare);
-      const fetchRaw = globalThis.fetch;
+      const downloadFileUploadUrlRaw = (fileCloudflare as any).uploadUrl.bind(fileCloudflare);
       fileCloudflare.upload = async (input: any) => {
         return {
           resourceId: 'cf-upload-url-api-1',
@@ -152,22 +144,40 @@ describe('fileUpload.test.ts', () => {
           meta: input.meta,
         };
       };
-      globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-        const url = String(input);
-        if (url.includes('/file/direct-upload') || url.includes('/file/upload-url')) {
-          return await fetchRaw(input, init);
-        }
-        if (url === 'https://example.com/upload-url.txt') {
-          return new Response('hello upload-url', {
-            status: 200,
-            headers: {
-              'Content-Type': 'text/plain',
-            },
-          });
-        }
-        return await fetchRaw(input, init);
+      fileCloudflare.uploadUrl = async (input: any) => {
+        assert.equal(input.url, 'https://example.com/upload-url.txt');
+        assert.equal(input.policy.fileScene, 'test-file:cloudflareFile');
+        return {
+          resourceId: 'cf-upload-url-api-1',
+          bucket: 'bucket-a',
+          objectKey: 'folder/upload-url.txt',
+          filename: 'upload-url.txt',
+          contentType: 'text/plain',
+          size: textFile.length,
+          etag: 'etag123',
+          deliveryBaseUrl: 'https://cdn.example.com/files',
+          public: false,
+          meta: input.meta,
+        };
       };
       try {
+        const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-policy');
+        const uploadPolicyRes = await fetch(uploadPolicyUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${jwt.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileScene: 'test-file:cloudflareFile',
+          }),
+        });
+        assert.equal(uploadPolicyRes.ok, true);
+        const uploadPolicyData = await uploadPolicyRes.json();
+        assert.equal(uploadPolicyData.data.directUpload, true);
+        assert.equal('provider' in uploadPolicyData.data, false);
+        assert.equal('clientName' in uploadPolicyData.data, false);
+
         const directUrl = app.util.getAbsoluteUrlByApiPath('/file/direct-upload');
         const directRes = await fetch(directUrl, {
           method: 'POST',
@@ -188,7 +198,6 @@ describe('fileUpload.test.ts', () => {
         assert.equal(directData.data.method, 'PUT');
         assert.equal(typeof directData.data.uploadUrl, 'string');
         assert.equal(directData.data.public, false);
-        assert.equal('draft' in directData.data, false);
         assertInternalFieldsAbsent(directData.data);
 
         const uploadUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-url');
@@ -215,8 +224,8 @@ describe('fileUpload.test.ts', () => {
         assert.equal(uploadUrlData.data.url.includes('X-Amz-Algorithm='), true);
         assertInternalFieldsAbsent(uploadUrlData.data);
       } finally {
-        globalThis.fetch = fetchRaw;
         fileCloudflare.upload = uploadRaw;
+        fileCloudflare.uploadUrl = downloadFileUploadUrlRaw;
         await app.bean.passport.signout();
       }
     });
@@ -275,8 +284,7 @@ describe('fileUpload.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-upload-policy.txt');
       await fse.writeFile(filePath, textFile);
-      const payload: IFileUploadTokenPayload = {
-        kind: 'fileUpload',
+      const payload: IFileUploadPolicyResolved = {
         fileScene: 'test-file:publicFile',
         providerName: 'file-native:native',
         clientName: 'default',

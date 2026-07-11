@@ -4,6 +4,7 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import z from 'zod';
 
+import type { TypeFileStatus } from '../types/file.ts';
 import type { IFileProviderRecord } from '../types/fileProvider.ts';
 import type { IFileSceneRecord } from '../types/fileScene.ts';
 
@@ -52,4 +53,13 @@ export class EntityFile extends EntityBase {
 
   @Api.field(v.optional(), z.string())
   fileScene?: keyof IFileSceneRecord;
+
+  @Api.field(z.enum(['draft', 'ready', 'expired']))
+  status: TypeFileStatus;
+
+  @Api.field(v.optional(), z.date())
+  draftExpiresAt?: Date;
+
+  @Api.field(v.optional(), z.date())
+  finalizedAt?: Date;
 }

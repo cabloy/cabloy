@@ -309,15 +309,11 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           this.errorMessage = validationMessage;
           continue;
         }
-        const tokenRes = await this.scope.api.file.createUploadToken({
-          ...uploadTarget,
-          size: file.size,
-          mimeType: file.type || 'application/octet-stream',
-        });
-        const uploaded = await this.scope.api.file.upload({
-          token: tokenRes.token,
+        const uploaded = await this._uploadFile(
+          uploadTarget.fileScene,
           file,
-        });
+          this._getCachedUploadPolicy(options)?.directUpload ?? false,
+        );
         const item: IFilePreviewItem = {
           id: uploaded.id as TableIdentity,
           filename: uploaded.filename,
@@ -342,6 +338,29 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     } finally {
       this.isUploading = false;
     }
+  }
+
+  private async _uploadFile(fileScene: string, file: File, directUpload: boolean) {
+    if (!directUpload) {
+      return await this.scope.api.file.upload({ fileScene, file });
+    }
+    const directUploadResponse = await this.scope.api.file.createDirectUpload({
+      fileScene,
+      filename: file.name,
+      size: file.size,
+      mimeType: file.type || 'application/octet-stream',
+    });
+    const providerResponse = await fetch(directUploadResponse.uploadUrl, {
+      method: directUploadResponse.method ?? 'PUT',
+      headers: directUploadResponse.headers,
+      body: file,
+    });
+    if (!providerResponse.ok) {
+      throw new Error(`file direct upload failed: ${providerResponse.status}`);
+    }
+    return await this.scope.api.file.finalizeDirectUpload({
+      fileId: directUploadResponse.id,
+    });
   }
 
   private _resolveUploadTarget() {

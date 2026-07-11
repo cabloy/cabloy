@@ -26,8 +26,5 @@ export class DtoFileDirectUploadRequest {
   contentType?: string;
 
   @Api.field(v.optional())
-  objectKey?: string;
-
-  @Api.field(v.optional())
   expiry?: string;
 }

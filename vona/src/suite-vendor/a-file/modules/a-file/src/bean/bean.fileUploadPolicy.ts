@@ -6,8 +6,8 @@ import type {
   IFileDownloadTokenPayload,
   IFileUploadContextResolved,
   IFileUploadPolicyResolved,
-  IFileUploadTokenPayload,
 } from '../types/file.ts';
+import type { IFileProviderExecute } from '../types/fileProvider.ts';
 import type {
   IDecoratorFileSceneOptions,
   IDecoratorFileSceneOptionsProvider,
@@ -18,27 +18,6 @@ import { getFileExtension, matchesFileMimeType } from '../lib/fileUploadValidati
 
 @Bean()
 export class BeanFileUploadPolicy extends BeanBase {
-  async createUploadToken(data: {
-    fileScene: keyof IFileSceneRecord;
-    size: number;
-    mimeType: string;
-    expiresIn?: number;
-  }) {
-    const payload = await this.resolveUploadPolicy(data);
-    const path = this.scope.util.combineApiPath('file/upload', false, true);
-    const token = await this.bean.jwt.createTempAuthToken(
-      {
-        kind: 'fileUpload',
-        ...payload,
-      } as IFileUploadTokenPayload,
-      {
-        path,
-        expiresIn: data.expiresIn,
-      },
-    );
-    return { token, expiresIn: data.expiresIn };
-  }
-
   async createDownloadToken(data: { fileId: number | string; expiresIn?: number }) {
     const path = this.scope.util.combineApiPath(`file/download/${data.fileId}`, false, true);
     const token = await this.bean.jwt.createTempAuthToken(
@@ -52,16 +31,6 @@ export class BeanFileUploadPolicy extends BeanBase {
       },
     );
     return { token, expiresIn: data.expiresIn };
-  }
-
-  async verifyUploadToken(token: string | undefined, routePathRaw: string) {
-    const payload = (await this.bean.jwt.get('access').verify(token, {
-      path: routePathRaw,
-    })) as IFileUploadTokenPayload | undefined;
-    if (!payload || payload.kind !== 'fileUpload') {
-      return this.app.throw(401);
-    }
-    return payload;
   }
 
   async verifyDownloadToken(token: string | undefined, routePathRaw: string) {
@@ -80,26 +49,20 @@ export class BeanFileUploadPolicy extends BeanBase {
       filename?: string;
       mimeType: string;
     },
-    payload: IFileUploadTokenPayload,
+    policy: IFileUploadPolicyResolved,
   ) {
     const stat = await fse.stat(file.file);
     const fileSize = Number(stat.size);
-    if (fileSize !== payload.fileSize) {
-      return this.app.throw(403, `file size mismatch: size=${fileSize}`);
-    }
-    if (payload.maxSize && fileSize > payload.maxSize) {
-      return this.app.throw(403, `file too large: maxSize=${payload.maxSize}`);
+    if (policy.maxSize && fileSize > policy.maxSize) {
+      return this.app.throw(403, `file too large: maxSize=${policy.maxSize}`);
     }
     const mimeType = file.mimeType.toLowerCase();
-    if (mimeType !== payload.mimeType) {
-      return this.app.throw(403, `file mimeType mismatch: mimeType=${mimeType}`);
-    }
-    if (payload.mimeTypes?.length && !matchesFileMimeType(mimeType, payload.mimeTypes)) {
+    if (policy.mimeTypes?.length && !matchesFileMimeType(mimeType, policy.mimeTypes)) {
       return this.app.throw(403, `unsupported file mimeType: ${mimeType}`);
     }
     const extension = getFileExtension(file.filename);
-    if (payload.extensions?.length && extension && !payload.extensions.includes(extension)) {
-      return this.app.throw(403, `unsupported file extension: ${extension}`);
+    if (policy.extensions?.length && (!extension || !policy.extensions.includes(extension))) {
+      return this.app.throw(403, `unsupported file extension: ${extension ?? '(none)'}`);
     }
   }
 
@@ -130,13 +93,19 @@ export class BeanFileUploadPolicy extends BeanBase {
     const fileScene = data.fileScene;
     const sceneOptions = this._getSceneOptions(fileScene);
     const { providerName, clientName } = await this._resolveProvider(sceneOptions);
-    const providerContext = await this.bean.fileProvider.getClientOptions({
+    const {
+      entityFileProvider,
+      disabled,
+      beanFullName,
+      clientOptions: providerClientOptions,
+    } = await this.bean.fileProvider.getClientOptions({
       providerName,
       clientName,
     });
-    if (!providerContext.entityFileProvider || providerContext.disabled) {
+    if (!entityFileProvider || disabled) {
       return this.app.throw(403, `File provider unavailable: ${providerName}.${clientName}`);
     }
+    const fileProvider = this.app.bean._getBean<IFileProviderExecute>(beanFullName as never);
     const uploadOptions = {
       ...(fileConfig.upload ?? {}),
       ...(sceneOptions.upload ?? {}),
@@ -149,7 +118,31 @@ export class BeanFileUploadPolicy extends BeanBase {
       mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
       extensions: extensions.length > 0 ? extensions : undefined,
       multiple: uploadOptions.multiple,
-      public: this._resolvePublic(providerContext.clientOptions, sceneOptions),
+      public: this._resolvePublic(providerClientOptions, sceneOptions),
+      directUpload:
+        typeof fileProvider.createDirectUpload === 'function' &&
+        typeof fileProvider.finalizeDirectUpload === 'function',
+    };
+  }
+
+  async resolveUploadUrlPolicy(data: {
+    fileScene: keyof IFileSceneRecord;
+  }): Promise<Omit<IFileUploadPolicyResolved, 'fileSize' | 'mimeType'>> {
+    const fileConfig = this.scope.config.file;
+    const context = await this.resolveUploadContext({ fileScene: data.fileScene });
+    const sceneOptions = this._getSceneOptions(context.fileScene);
+    const uploadOptions = {
+      ...(fileConfig.upload ?? {}),
+      ...(sceneOptions.upload ?? {}),
+    };
+    const mimeTypes = [...(uploadOptions.mimeTypes ?? [])];
+    const extensions = [...(uploadOptions.extensions ?? [])];
+    return {
+      ...context,
+      maxSize: uploadOptions.maxSize,
+      mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
+      extensions: extensions.length > 0 ? extensions : undefined,
+      multiple: uploadOptions.multiple,
     };
   }
 
@@ -158,29 +151,16 @@ export class BeanFileUploadPolicy extends BeanBase {
     size: number;
     mimeType: string;
   }): Promise<IFileUploadPolicyResolved> {
-    const fileConfig = this.scope.config.file;
-    const context = await this.resolveUploadContext({ fileScene: data.fileScene });
-    const sceneOptions = this._getSceneOptions(context.fileScene);
-    const uploadOptions = {
-      ...(fileConfig.upload ?? {}),
-      ...(sceneOptions.upload ?? {}),
-    };
-    const maxSize = uploadOptions.maxSize;
-    const mimeTypes = [...(uploadOptions.mimeTypes ?? [])];
-    const extensions = [...(uploadOptions.extensions ?? [])];
+    const policy = await this.resolveUploadUrlPolicy({ fileScene: data.fileScene });
     const mimeType = data.mimeType.toLowerCase();
-    if (maxSize && data.size > maxSize) {
-      return this.app.throw(403, `file too large: maxSize=${maxSize}`);
+    if (policy.maxSize && data.size > policy.maxSize) {
+      return this.app.throw(403, `file too large: maxSize=${policy.maxSize}`);
     }
-    if (mimeTypes.length > 0 && !matchesFileMimeType(mimeType, mimeTypes)) {
+    if (policy.mimeTypes?.length && !matchesFileMimeType(mimeType, policy.mimeTypes)) {
       return this.app.throw(403, `unsupported file mimeType: ${mimeType}`);
     }
     return {
-      ...context,
-      maxSize,
-      mimeTypes: mimeTypes.length > 0 ? mimeTypes : undefined,
-      extensions: extensions.length > 0 ? extensions : undefined,
-      multiple: uploadOptions.multiple,
+      ...policy,
       fileSize: data.size,
       mimeType,
     };

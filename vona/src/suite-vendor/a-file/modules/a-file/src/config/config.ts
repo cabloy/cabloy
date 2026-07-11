@@ -11,6 +11,9 @@ export function config(_app: VonaApplication) {
       upload: {
         maxSize: 20 * 1024 * 1024,
       },
+      directUpload: {
+        draftExpiresIn: 30 * 60 * 1000,
+      },
     },
   };
 }

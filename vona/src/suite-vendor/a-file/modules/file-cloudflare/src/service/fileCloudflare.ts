@@ -20,6 +20,7 @@ import fse from 'fs-extra';
 import path from 'node:path';
 import { BeanBase, uuidv4 } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { downloadFileUploadUrl } from 'vona-module-a-file';
 
 import type { IFileProviderCloudflareClientOptions } from '../bean/fileProvider.cloudflare.ts';
 
@@ -67,32 +68,28 @@ export class ServiceFileCloudflare extends BeanBase {
     input: IFileUploadUrlInput,
     options: IFileProviderCloudflareClientOptions,
   ): Promise<IFileProviderResource> {
-    const response = await fetch(input.url);
-    if (!response.ok) {
-      throw new Error(`Remote file fetch failed: ${response.status}`);
+    if (!input.policy) {
+      throw new Error('Resolved file upload policy is required for remote URL ingestion');
     }
-    const tempDir = await this.app.util.getPublicPathPhysical('.temp-file-cloudflare', true);
-    const tempFile = path.join(
-      tempDir,
-      `${uuidv4()}${path.extname(input.filename ?? new URL(input.url).pathname)}`,
-    );
-    const arrayBuffer = await response.arrayBuffer();
-    await fse.writeFile(tempFile, Buffer.from(arrayBuffer));
+    const downloaded = await downloadFileUploadUrl({
+      url: input.url,
+      filename: input.filename,
+      policy: input.policy,
+    });
     try {
       return await this.upload(
         {
-          file: tempFile,
-          filename: input.filename ?? path.basename(new URL(input.url).pathname),
-          contentType: input.contentType ?? response.headers.get('content-type') ?? undefined,
-          size: input.size,
-          objectKey: input.objectKey,
+          file: downloaded.file,
+          filename: downloaded.filename,
+          contentType: downloaded.contentType,
+          size: downloaded.size,
           public: input.public,
           meta: input.meta,
         },
         options,
       );
     } finally {
-      await fse.remove(tempFile);
+      await downloaded.cleanup();
     }
   }
 
@@ -123,6 +120,43 @@ export class ServiceFileCloudflare extends BeanBase {
       uploadUrl,
       method: 'PUT',
       headers: input.contentType ? { 'content-type': input.contentType } : undefined,
+    };
+  }
+
+  async finalizeDirectUpload(
+    file: EntityFile,
+    options: IFileProviderCloudflareClientOptions,
+  ): Promise<IFileProviderResource | undefined> {
+    let metadata;
+    try {
+      metadata = await this.getMetadata(file, options);
+    } catch (error: any) {
+      if (error?.$metadata?.httpStatusCode === 404 || error?.name === 'NotFound') return undefined;
+      throw error;
+    }
+    if (!metadata?.ContentLength) return undefined;
+    const size = Number(metadata.ContentLength);
+    if (file.size !== undefined && size !== file.size) {
+      throw new Error(`direct upload size mismatch: expected=${file.size}, actual=${size}`);
+    }
+    const contentType = metadata.ContentType?.toLowerCase();
+    if (file.contentType && contentType !== file.contentType.toLowerCase()) {
+      throw new Error(
+        `direct upload content type mismatch: expected=${file.contentType}, actual=${contentType}`,
+      );
+    }
+    return {
+      resourceId: file.resourceId,
+      bucket: file.bucket,
+      objectKey: file.objectKey,
+      filename: file.filename,
+      contentType: metadata.ContentType ?? file.contentType,
+      size,
+      etag: this._normalizeEtag(metadata.ETag),
+      public: file.public,
+      meta: file.meta,
+      deliveryBaseUrl: file.deliveryBaseUrl,
+      raw: metadata,
     };
   }
 

@@ -5,6 +5,7 @@ import type { IFileSceneRecord } from './fileScene.ts';
 
 export type TypeFileMeta = Record<string, unknown>;
 export type TypeFileDeliveryExpiry = Date | string | number;
+export type TypeFileStatus = 'draft' | 'ready' | 'expired';
 
 export interface IFileDeliveryOptions {
   signed?: boolean;
@@ -25,6 +26,7 @@ export interface IFileUploadInput<TMeta extends TypeFileMeta = TypeFileMeta> {
 
 export interface IFileUploadUrlInput<TMeta extends TypeFileMeta = TypeFileMeta> {
   url: string;
+  policy?: IFileUploadUrlPolicyResolved;
   filename?: string;
   contentType?: string;
   size?: number;
@@ -92,6 +94,9 @@ export interface IFileResource<
   provider: keyof IFileProviderRecord;
   clientName: string;
   fileScene?: keyof IFileSceneRecord | string;
+  status?: TypeFileStatus;
+  draftExpiresAt?: Date;
+  finalizedAt?: Date;
   uploadedAt?: Date;
 }
 
@@ -146,21 +151,20 @@ export interface IFileUploadOptions<
   fileScene?: keyof IFileSceneRecord;
 }
 
-export interface IFileUploadPolicyResolved<
+export interface IFileUploadUrlPolicyResolved<
   TMeta extends TypeFileMeta = TypeFileMeta,
 > extends IFileUploadContextResolved<TMeta> {
   maxSize?: number;
   mimeTypes?: string[];
   extensions?: string[];
   multiple?: boolean;
-  fileSize: number;
-  mimeType: string;
 }
 
-export interface IFileUploadTokenPayload<
+export interface IFileUploadPolicyResolved<
   TMeta extends TypeFileMeta = TypeFileMeta,
-> extends IFileUploadPolicyResolved<TMeta> {
-  kind: 'fileUpload';
+> extends IFileUploadUrlPolicyResolved<TMeta> {
+  fileSize: number;
+  mimeType: string;
 }
 
 export interface IFileDownloadTokenPayload {

@@ -66,6 +66,14 @@ export class FileProviderCloudflare
     return await this.scope.service.fileCloudflare.createDirectUpload(input, clientOptions);
   }
 
+  async finalizeDirectUpload(
+    file: EntityFile,
+    clientOptions: IFileProviderCloudflareClientOptions,
+    _options: IFileProviderOptionsCloudflare,
+  ) {
+    return await this.scope.service.fileCloudflare.finalizeDirectUpload(file, clientOptions);
+  }
+
   async get(
     file: EntityFile,
     clientOptions: IFileProviderCloudflareClientOptions,

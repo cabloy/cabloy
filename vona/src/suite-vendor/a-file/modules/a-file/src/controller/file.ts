@@ -1,20 +1,24 @@
 import type { IUploadFile } from 'vona-module-a-upload';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
+import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
+import z from 'zod';
 
+import type { IFileSceneRecord } from '../types/fileScene.ts';
+
+import { DtoFileDirectUploadFinalizeRequest } from '../dto/fileDirectUploadFinalizeRequest.ts';
+import { DtoFileDirectUploadFinalizeResponse } from '../dto/fileDirectUploadFinalizeResponse.ts';
 import { DtoFileDirectUploadRequest } from '../dto/fileDirectUploadRequest.ts';
 import { DtoFileDirectUploadResponse } from '../dto/fileDirectUploadResponse.ts';
 import { DtoFileDownloadRequest } from '../dto/fileDownloadRequest.ts';
 import { DtoFileUploadPolicyRequest } from '../dto/fileUploadPolicyRequest.ts';
 import { DtoFileUploadPolicyResponse } from '../dto/fileUploadPolicyResponse.ts';
 import { DtoFileUploadResponse } from '../dto/fileUploadResponse.ts';
-import { DtoFileUploadTokenRequest } from '../dto/fileUploadTokenRequest.ts';
-import { DtoFileUploadTokenResponse } from '../dto/fileUploadTokenResponse.ts';
 import { DtoFileUploadUrlRequest } from '../dto/fileUploadUrlRequest.ts';
 
 export interface IControllerOptionsFile extends IDecoratorControllerOptions {}
@@ -27,42 +31,49 @@ export class ControllerFile extends BeanBase {
     return await this.bean.fileUploadPolicy.resolveSceneUploadPolicy(data);
   }
 
-  @Web.post('upload-token')
-  @Api.body(DtoFileUploadTokenResponse)
-  async createUploadToken(@Arg.body() data: DtoFileUploadTokenRequest) {
-    return await this.bean.fileUploadPolicy.createUploadToken(data);
-  }
-
   @Web.post('upload')
-  @Core.fileUpload()
+  @Core.fileUpload({
+    busboy: {
+      limits: {
+        fields: 1,
+        files: 1,
+        parts: 3,
+      },
+    },
+  })
   @Api.body(DtoFileUploadResponse)
   @Api.contentType('application/json')
-  async upload(@Arg.field('token') token: string, @Arg.file('file') file: IUploadFile) {
-    const payload = await this.bean.fileUploadPolicy.verifyUploadToken(
-      token,
-      this.ctx.route.routePathRaw,
-    );
+  async upload(
+    @Arg.field('fileScene', v.required(), z.string()) fileScene: keyof IFileSceneRecord,
+    @Arg.file('file', v.required()) file: IUploadFile,
+  ) {
+    const stat = await fse.stat(file.file);
+    const policy = await this.bean.fileUploadPolicy.resolveUploadPolicy({
+      fileScene,
+      size: Number(stat.size),
+      mimeType: file.info.mimeType,
+    });
     await this.bean.fileUploadPolicy.validateUploadFile(
       {
         file: file.file,
         filename: file.info.filename,
         mimeType: file.info.mimeType,
       },
-      payload,
+      policy,
     );
     const uploadedFile = await this.bean.file.upload(
-      payload.providerName,
+      policy.providerName,
       {
         file: file.file,
         filename: file.info.filename,
-        contentType: file.info.mimeType,
-        public: payload.public,
+        contentType: policy.mimeType,
+        public: policy.public,
       },
       {
-        clientName: payload.clientName,
-        meta: payload.meta,
-        public: payload.public,
-        fileScene: payload.fileScene,
+        clientName: policy.clientName,
+        meta: policy.meta,
+        public: policy.public,
+        fileScene: policy.fileScene,
       },
     );
     return await this.bean.file.createFileActionResponse(uploadedFile);
@@ -80,9 +91,8 @@ export class ControllerFile extends BeanBase {
       policy.providerName,
       {
         filename: data.filename,
-        contentType: data.contentType,
-        size: data.size,
-        objectKey: data.objectKey,
+        contentType: policy.mimeType,
+        size: policy.fileSize,
         public: policy.public,
         expiry: data.expiry,
       },
@@ -95,22 +105,25 @@ export class ControllerFile extends BeanBase {
     );
   }
 
+  @Web.post('direct-upload/finalize')
+  @Api.body(DtoFileDirectUploadFinalizeResponse)
+  async finalizeDirectUpload(@Arg.body() data: DtoFileDirectUploadFinalizeRequest) {
+    const file = await this.bean.file.finalizeDirectUpload(data.fileId);
+    return await this.bean.file.createFileActionResponse(file);
+  }
+
   @Web.post('upload-url')
   @Api.body(DtoFileUploadResponse)
   async uploadUrl(@Arg.body() data: DtoFileUploadUrlRequest) {
-    const policy = await this.bean.fileUploadPolicy.resolveUploadPolicy({
+    const policy = await this.bean.fileUploadPolicy.resolveUploadUrlPolicy({
       fileScene: data.fileScene,
-      size: data.size,
-      mimeType: data.mimeType,
     });
     const uploadedFile = await this.bean.file.uploadUrl(
       policy.providerName,
       {
         url: data.url,
+        policy,
         filename: data.filename,
-        contentType: data.contentType,
-        size: data.size,
-        objectKey: data.objectKey,
         public: policy.public,
       },
       {

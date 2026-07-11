@@ -99,6 +99,7 @@ const fullstackGroups = [
         link: '/fullstack/backend-metadata-to-frontend-table-actions-source-reading-map',
       },
       { text: 'Fullstack Image Workflow', link: '/fullstack/image-workflow' },
+      { text: 'Fullstack File Workflow', link: '/fullstack/file-workflow' },
       { text: 'Backend OpenAPI to Frontend SDK', link: '/fullstack/openapi-to-sdk' },
       {
         text: 'Frontend Metadata Back to Backend',
@@ -233,6 +234,7 @@ export default defineConfig({
             { text: 'Logger Guide', link: '/backend/logger-guide' },
             { text: 'Upload Guide', link: '/backend/upload-guide' },
             { text: 'Image Guide', link: '/backend/image-guide' },
+            { text: 'File Guide', link: '/backend/file-guide' },
             { text: 'Mail Guide', link: '/backend/mail-guide' },
             { text: 'Serialization Guide', link: '/backend/serialization-guide' },
           ],
@@ -422,6 +424,7 @@ export default defineConfig({
             { text: 'Component Guide', link: '/frontend/component-guide' },
             { text: 'Form Guide', link: '/frontend/form-guide' },
             { text: 'Image Guide', link: '/frontend/image-guide' },
+            { text: 'File Guide', link: '/frontend/file-guide' },
             {
               text: 'Zova Form Under the Hood',
               link: '/frontend/zova-form-under-the-hood',

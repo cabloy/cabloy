@@ -5,9 +5,9 @@ import { ApiSchema } from 'zova-module-a-api';
 
 import {
   ApiApiFilegetUploadPolicyPath,
-  ApiApiFilecreateUploadTokenPath,
   ApiApiFileuploadPath,
   ApiApiFilecreateDirectUploadPath,
+  ApiApiFilefinalizeDirectUploadPath,
   ApiApiFileuploadUrlPath,
   ApiApiFiledownloadPath,
 } from '../api/file.js';
@@ -18,16 +18,16 @@ export class ApiSchemaFile extends BeanBase {
     return this.$sdk.createApiSchemas(ApiApiFilegetUploadPolicyPath, 'post', options);
   }
 
-  createUploadToken(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiFilecreateUploadTokenPath, 'post', options);
-  }
-
   upload(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiFileuploadPath, 'post', options);
   }
 
   createDirectUpload(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiFilecreateDirectUploadPath, 'post', options);
+  }
+
+  finalizeDirectUpload(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiFilefinalizeDirectUploadPath, 'post', options);
   }
 
   uploadUrl(options?: IApiSchemaOptions) {

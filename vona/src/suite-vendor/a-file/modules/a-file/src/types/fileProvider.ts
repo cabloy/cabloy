@@ -78,6 +78,11 @@ export interface IFileProviderExecute<
     clientOptions: T,
     options: O,
   ): Promise<IFileProviderDirectUploadResource>;
+  finalizeDirectUpload?(
+    file: EntityFile,
+    clientOptions: T,
+    options: O,
+  ): Promise<IFileProviderResource | undefined>;
   get(file: EntityFile, clientOptions: T, options: O): Promise<IFileProviderResource | undefined>;
   delete(file: EntityFile, clientOptions: T, options: O): Promise<void>;
   getDownloadUrl(

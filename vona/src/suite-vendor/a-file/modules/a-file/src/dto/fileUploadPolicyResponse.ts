@@ -27,4 +27,7 @@ export class DtoFileUploadPolicyResponse {
 
   @Api.field(v.optional(), z.boolean())
   public?: boolean;
+
+  @Api.field(z.boolean())
+  directUpload: boolean;
 }
