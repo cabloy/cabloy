@@ -1,19 +1,27 @@
 # Fullstack File Workflow
 
-This page follows a Cabloy Basic file field from Vona contract truth to Zova interaction.
+This page follows a Cabloy Basic file field from Vona contract truth to Zova interaction. It is the forward contract loop for `a-file` and `basic-file`.
 
-Use it with [Backend File Guide](/backend/file-guide), [Frontend File Guide](/frontend/file-guide), and [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
+> Read this with [Backend File Guide](/backend/file-guide), [Frontend File Guide](/frontend/file-guide), and [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk).
 
-## One field, two consumer surfaces
+## One business field, two consumer surfaces
 
-A file field normally carries:
-
-- persisted scalar or array ID values, such as `dossierFileIds`;
-- a DTO-resolved display relation, such as `dossierFiles?: DtoFileView[]`.
-
-The relation is a consumer projection, not a replacement persistence shape. It provides completed-file metadata and `downloadUrl`.
+A file-backed business field persists IDs, while a DTO relation carries completed-file presentation data. The training-record module is the reference pattern:
 
 ```ts
+// Vona scene: one trusted business capability
+@FileScene({
+  public: false,
+  upload: {
+    maxSize: 20 * 1024 * 1024,
+    mimeTypes: ['application/pdf', 'application/zip', 'text/plain'],
+    extensions: ['.pdf', '.zip', '.txt'],
+    multiple: true,
+  },
+})
+export class FileSceneDossierFile extends BeanBase {}
+
+// Entity: persist only IDs and attach Zova resource renderers
 @Api.field(
   ZovaRender.field('basic-file:formFieldFile', {
     fileScene: 'training-record:dossierFile',
@@ -25,6 +33,7 @@ The relation is a consumer projection, not a replacement persistence shape. It p
 )
 dossierFileIds?: TableIdentity[];
 
+// Consumer DTO: resolve completed display/delivery data
 @Api.field(
   v.optional(),
   v.serializerTransform('a-file:resolveViews', {
@@ -36,70 +45,91 @@ dossierFileIds?: TableIdentity[];
 dossierFiles?: DtoFileView[];
 ```
 
-## Three ingestion paths
+Keep the persisted field, resolved relation, `relationName`, and scene name aligned. `DtoFileView` is a consumer projection; it does not replace ID persistence. The serializer verifies the optional scene while resolving IDs, preventing a relation from silently consuming a file from another business capability.
+
+## Three ingestion paths and readiness
 
 ### 1. Ordinary local upload
 
 ```text
 Zova field
-→ POST /file/upload(fileScene, file)
-→ Vona validates actual multipart file and resolves scene/provider
+→ authenticated POST /file/upload(fileScene, file)
+→ Vona validates received multipart file and resolves scene/provider
 → provider storage
 → ready action response
-→ IDs and relation update
+→ ID field and relation update
 ```
 
-This is the portable Native-compatible default. It is one authenticated multipart request; no file upload token participates.
+The backend owns validation and storage. The response is ready immediately after backend storage; this is the portable Native-compatible path and needs no file upload token.
 
 ### 2. Remote HTTPS URL import
 
 ```text
-authorized API call
+authorized server/API consumer
 → POST /file/upload-url
 → provider capability check
-→ secure HTTPS remote fetch and actual policy validation
+→ secure HTTPS remote-fetch boundary
 → provider storage
 → ready action response
 ```
 
-Native is unsupported. R2 import runs through the backend security boundary, including redirect/DNS/IP checks, streamed limits, timeouts, actual metadata validation, and temporary-file cleanup. A UI must not add its own unrestricted remote fetch.
+Remote import is not built into the browser field. It is a server/provider operation: the selected provider validates remote URL safety and actual content before storage. Native does not support this path; Cloudflare R2 does. A browser must not implement its own unrestricted remote fetch.
 
 ### 3. Third-party direct upload
 
 ```text
-Zova policy directUpload
+policy.directUpload
 → POST /file/direct-upload
-→ Cabloy draft + R2 raw PUT target
-→ browser sends raw File to R2
+→ Cabloy draft + raw-body provider target
+→ browser transfers raw File without Cabloy credentials
 → POST /file/direct-upload/finalize
-→ HeadObject verification + ready state
-→ IDs and relation update
+→ provider metadata verification + ready state
+→ ID field and relation update
 ```
 
-A direct target is not a completed file. The form field retains its previous value while creation, provider transfer, or finalization fails. Only the finalized response becomes a stored business ID and resolved relation. Expired drafts are pruned asynchronously.
+A direct target is draft-only, not a completed file. Finalization is the only promotion to `ready`; drafts cannot resolve views, be downloaded, or enter business IDs/relations. The frontend uses returned method/headers for raw file transfer and stores only the finalized response.
 
-## Contract-loop order
+## Forward contract loop
 
-This workflow is a forward contract chain:
+When a File contract changes, work from backend truth toward generated consumers:
 
-1. change Vona controller, DTO, policy, provider, and serializer truth first;
-2. regenerate Vona metadata and inspect Swagger/OpenAPI;
-3. regenerate Zova OpenAPI consumers instead of hand-editing generated API files;
-4. keep the hand-authored Zova follow-up inside `ModelFile` and `ControllerFormFieldFile`;
-5. build Admin and Web outputs, then refresh Vona dependencies when the generated frontend handoff changes.
+1. define or update the Vona `@FileScene`, persisted ID field, controller/DTO policy, and `a-file:resolveView(s)` relation;
+2. regenerate Vona metadata and inspect the emitted Swagger/OpenAPI contract;
+3. regenerate the filtered `basic-file` OpenAPI consumer;
+4. keep hand-authored Zova behavior in `ModelFile`, `ControllerFormFieldFile`, and `TableCellFile` thin and policy-driven;
+5. build the affected Admin and Web flavors, then run `npm run deps:vona` for the reverse dependency handoff.
 
-The backend remains the authority for scene policy, selected provider, visibility, storage location, actual file validation, direct readiness, and signed delivery. The frontend owns interaction and writes state only from a completed result.
+Generated contract outputs include:
 
-## Delivery
+```text
+zova/.../basic-file/src/api/file.ts
+zova/.../basic-file/src/apiSchema/file.ts
+zova/.../basic-file/src/api/openapi/types.ts
+zova/.../basic-file/src/api/openapi/schemas.ts
+```
 
-Use the DTO-resolved `downloadUrl`; do not derive URLs from IDs. A private view can resolve to a Cabloy proxy token URL or an R2 signed URL. Cabloy can attach a filename only when it streams bytes; a provider redirect follows provider/browser disposition behavior.
+Do not hand-edit these generated files. `ModelFile`, the form-field controller, the table cell, and Vona render metadata are hand-authored extension points.
+
+## Cross-layer invariants
+
+| Layer             | Owns                                                                                                     | Must not own                                                       |
+| ----------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Vona `a-file`     | scene policy, provider/client selection, actual validation, lifecycle, storage, visibility, and delivery | browser-controlled provider or storage choices                     |
+| DTO serializer    | safe `DtoFileView` projection and scene matching                                                         | persistence replacement or storage metadata disclosure             |
+| Zova `basic-file` | picker UX, local UX checks, policy-driven transport, ID/relation synchronization                         | provider selection, storage URL construction, or draft persistence |
+| Provider transfer | raw body transfer for a direct target                                                                    | Cabloy session credential forwarding                               |
+
+The frontend reads `downloadUrl` from a resolved view; it never constructs delivery URLs from IDs, buckets, or object keys. Upload-policy capability is semantic (`directUpload`), so frontend code never branches on provider identity.
 
 ## Verification checklist
 
-1. ordinary multipart sends exactly `fileScene` and `file`;
-2. direct policy selection does not reveal provider identity;
-3. a direct draft cannot resolve a view or download URL;
-4. form state changes only after finalization;
-5. private/public completed delivery still works;
-6. generated File API includes policy capability and finalization;
-7. Admin and Web builds plus dependency handoff are refreshed after generated changes.
+For a File contract or workflow change, verify:
+
+1. the scene policy and persisted ID field match the intended business capability;
+2. create/view/list DTO schemas expose the matching `DtoFileView` relation and serializer transform;
+3. Swagger/OpenAPI contains the expected policy, multipart, direct-finalize, and URL-import actions;
+4. regenerated `basic-file` API/schema output is used rather than hand-patched;
+5. Native reports no direct/URL-import capability while the configured Cloudflare R2 scene advertises direct upload only when creation and finalization are both available;
+6. a draft cannot resolve a view or download URL, and the form updates only after finalization;
+7. private/public delivery still uses resolved URLs without leaking provider/storage data;
+8. run the affected Admin and Web builds and then `npm run deps:vona` after a generated frontend handoff.
