@@ -3,7 +3,6 @@ import type { IComponentOptions, TypeControllerInnerProps } from 'zova';
 import type { IJsxRenderContextFormField } from 'zova-module-a-form';
 import type { ControllerFormField, IFormFieldComponentOptions } from 'zova-module-a-form';
 import type { IResourceFormFieldOptionsBase } from 'zova-module-a-openapi';
-import type { ScopeModuleBasicFile } from 'zova-module-basic-file';
 
 import { classes } from 'typestyle';
 import { BeanControllerBase, ClientOnly, Use } from 'zova';
@@ -137,12 +136,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
                 {this.isUploading && (
                   <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
                     <span class="loading loading-spinner loading-sm text-primary"></span>
-                    {this._scope.locale.Uploading()}
+                    {this.scope.locale.Uploading()}
                   </span>
                 )}
                 {!items.length && !this.isUploading && (
                   <span class="text-sm text-base-content/60">
-                    {fieldOptions.placeholder ?? this._scope.locale.NoFileSelected()}
+                    {fieldOptions.placeholder ?? this.scope.locale.NoFileSelected()}
                   </span>
                 )}
               </div>
@@ -168,10 +167,6 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     >;
   }
 
-  private get _scope() {
-    return this.scope as unknown as ScopeModuleBasicFile;
-  }
-
   private _renderReadonlyPreset() {
     return (
       <ZFormField
@@ -191,9 +186,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
 
   private _renderReadonlyItems(items: IFilePreviewItem[]) {
     if (!items.length) {
-      return (
-        <span class="text-sm text-base-content/60">{this._scope.locale.NoFileSelected()}</span>
-      );
+      return <span class="text-sm text-base-content/60">{this.scope.locale.NoFileSelected()}</span>;
     }
     return (
       <div class="space-y-3">
@@ -223,13 +216,13 @@ export class ControllerFormFieldFile extends BeanControllerBase {
               {item.contentType ?? '-'} · {formatFileSize(item.size)}
             </div>
             <div class="text-xs text-base-content/60">
-              {this._scope.locale.UploadedAt()}: {formatFileDate(item.uploadedAt)}
+              {this.scope.locale.UploadedAt()}: {formatFileDate(item.uploadedAt)}
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
             {downloadUrl && (
               <a class="btn btn-sm btn-outline" href={downloadUrl} target="_blank" rel="noreferrer">
-                {this._scope.locale.DownloadFile()}
+                {this.scope.locale.DownloadFile()}
               </a>
             )}
             {!readonly && (
@@ -240,7 +233,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
                   this._removeItem(item.id, disableNotifyChanged);
                 }}
               >
-                {this._scope.locale.RemoveFile()}
+                {this.scope.locale.RemoveFile()}
               </button>
             )}
           </div>
@@ -254,9 +247,9 @@ export class ControllerFormFieldFile extends BeanControllerBase {
     multiple = this._getEffectiveMultiple(this.currentOptions),
   ) {
     if (multiple) {
-      return itemCount > 0 ? this._scope.locale.AddFile() : this._scope.locale.SelectFile();
+      return itemCount > 0 ? this.scope.locale.AddFile() : this.scope.locale.SelectFile();
     }
-    return itemCount > 0 ? this._scope.locale.ReplaceFile() : this._scope.locale.SelectFile();
+    return itemCount > 0 ? this.scope.locale.ReplaceFile() : this.scope.locale.SelectFile();
   }
 
   private _getUploadPolicyQuery(options?: IResourceFormFieldFileOptions) {
@@ -313,7 +306,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
         ? currentIds.length + filesToHandle.length
         : filesToHandle.length;
       if (nextCountCandidate > maxCount) {
-        this.errorMessage = this._scope.locale.TooManyFiles(maxCount);
+        this.errorMessage = this.scope.locale.TooManyFiles(maxCount);
         return;
       }
       const uploadedItems: IFilePreviewItem[] = [];
@@ -323,12 +316,12 @@ export class ControllerFormFieldFile extends BeanControllerBase {
           this.errorMessage = validationMessage;
           continue;
         }
-        const tokenRes = await this._scope.api.file.createUploadToken({
+        const tokenRes = await this.scope.api.file.createUploadToken({
           ...uploadTarget,
           size: file.size,
           mimeType: file.type || 'application/octet-stream',
         });
-        const uploaded = await this._scope.api.file.upload({
+        const uploaded = await this.scope.api.file.upload({
           token: tokenRes.token,
           file,
         });
@@ -352,7 +345,7 @@ export class ControllerFormFieldFile extends BeanControllerBase {
       this._setFieldValue(nextIds, disableNotifyChanged, multiple);
       this.errorMessage = undefined;
     } catch (err: any) {
-      this.errorMessage = err?.message ?? this._scope.locale.FileUploadFailed();
+      this.errorMessage = err?.message ?? this.scope.locale.FileUploadFailed();
     } finally {
       this.isUploading = false;
     }
@@ -481,14 +474,14 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   private _validateFile(file: File, options: IResourceFormFieldFileOptions) {
     const acceptTokens = this._collectAcceptTokens(options);
     if (acceptTokens.length > 0 && !this._matchesAccept(file, acceptTokens)) {
-      return this._scope.locale.InvalidFileType();
+      return this.scope.locale.InvalidFileType();
     }
     const maxSize = options.maxSize ?? this._getCachedUploadPolicy(options)?.maxSize;
     if (typeof maxSize === 'number' && file.size > maxSize) {
-      return this._scope.locale.FileTooLarge(formatFileSize(maxSize));
+      return this.scope.locale.FileTooLarge(formatFileSize(maxSize));
     }
     if (typeof options.minSize === 'number' && file.size < options.minSize) {
-      return this._scope.locale.FileTooSmall(formatFileSize(options.minSize));
+      return this.scope.locale.FileTooSmall(formatFileSize(options.minSize));
     }
     return undefined;
   }
