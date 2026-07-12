@@ -501,8 +501,8 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.132
-        version: 5.1.132(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.1.133
+        version: 5.1.133(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.77
         version: 1.1.77(typescript@5.9.3)
@@ -528,8 +528,8 @@ importers:
         specifier: ^5.1.29
         version: 5.1.29
       zova-module-a-model:
-        specifier: ^5.1.31
-        version: 5.1.31(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.1.32
+        version: 5.1.32(vue@3.5.39(typescript@5.9.3))
       zova-module-a-openapi:
         specifier: ^5.1.43
         version: 5.1.43
@@ -573,8 +573,8 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.132
-        version: 5.1.132(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.1.133
+        version: 5.1.133(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.77
         version: 1.1.77(typescript@5.9.3)
@@ -600,8 +600,8 @@ importers:
         specifier: ^5.1.29
         version: 5.1.29
       zova-module-a-model:
-        specifier: ^5.1.31
-        version: 5.1.31(vue@3.5.39(typescript@5.9.3))
+        specifier: ^5.1.32
+        version: 5.1.32(vue@3.5.39(typescript@5.9.3))
       zova-module-a-openapi:
         specifier: ^5.1.43
         version: 5.1.43
@@ -1517,13 +1517,13 @@ importers:
   src/suite-vendor/a-file:
     dependencies:
       vona-module-a-file:
-        specifier: ^5.0.4
+        specifier: ^5.0.5
         version: link:modules/a-file
       vona-module-file-cloudflare:
-        specifier: ^5.0.3
+        specifier: ^5.0.4
         version: link:modules/file-cloudflare
       vona-module-file-native:
-        specifier: ^5.0.3
+        specifier: ^5.0.4
         version: link:modules/file-native
 
   src/suite-vendor/a-file/modules/a-file:
@@ -1625,7 +1625,7 @@ importers:
   src/suite-vendor/a-test:
     dependencies:
       vona-module-test-file:
-        specifier: ^5.0.4
+        specifier: ^5.0.5
         version: link:modules/test-file
 
   src/suite-vendor/a-test/modules/test-auth:
@@ -7993,8 +7993,8 @@ packages:
   zova-module-a-meta@5.1.21:
     resolution: {integrity: sha512-7vsLOMw1UQEZ+8qbBaiz9t4n3N7AU1jxpaiSIIky7hBvKO9nuHq+e7FONpj9poa8WeHkYoflBg/8imKBy/IlNw==}
 
-  zova-module-a-model@5.1.31:
-    resolution: {integrity: sha512-/6MV5xSklEkain5t0vsZ37ImyIihutCu7ymytq5RFG0QbeKtbSAI/IB6TS2mfkjLkiy97SmDJbuiLGso7Cg/Gw==}
+  zova-module-a-model@5.1.32:
+    resolution: {integrity: sha512-uzOXp2JlIOaBFy4pe5HyM846A2IK3zA2J8y8Je0i4EvioM36eiBhE61F8q0K59ojh3QZuinrxH6m9DIVL2EvVw==}
 
   zova-module-a-openapi@5.1.43:
     resolution: {integrity: sha512-xJKvSPl1AZnH7EpgEd9a3u3IEpJfnou19DKre/7TL1KdiTdfNThLrmmkdP1UNYlUHUgCczcGUwZDdMiE9gdxwA==}
@@ -8032,11 +8032,11 @@ packages:
   zova-module-rest-resource@5.1.41:
     resolution: {integrity: sha512-7Y8rLmHdw0pynlWqsyHPWuCWFLwr/0HsNvfef64cPw91LRujf/7OlulVWqH8ZoFNioZZUpfumB+t/+mICoYfFg==}
 
-  zova-suite-a-zova@5.1.131:
-    resolution: {integrity: sha512-NRPt3ahLwHg+rLuA2VXRbEmrg/bTdgwdQmU9C8nj9R0+E1f0ehbbsUWJFQFN6hJNco5+rDDSDfBlvejf4z6L1w==}
+  zova-suite-a-zova@5.1.132:
+    resolution: {integrity: sha512-bHyim0stshLyjEvehW8cUL0Bf/pR/sU43Dpada2g2ieGH1p34EzyLeaWimhId++sO9H3xErVX6aQXe0Xf6pELA==}
 
-  zova@5.1.132:
-    resolution: {integrity: sha512-lQK1VRnwthDx0qayS7kdElyfAmvPEhlt6sk/2jK5mTbqojsjuDNkrEa9Ck2Q78fag800U6pDwV83o6CRbSUTeA==}
+  zova@5.1.133:
+    resolution: {integrity: sha512-1tM0u0EU69/RvXmlxhVIrEY4ADVhQsEIr8UAcQ1U+Mjm3QwLJ7y7fDAQWsW7ChjEXHGrCU62fdc0tPvJ5CGntg==}
 
   zwitch@1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
@@ -13935,7 +13935,7 @@ snapshots:
 
   zova-module-a-meta@5.1.21: {}
 
-  zova-module-a-model@5.1.31(vue@3.5.39(typescript@5.9.3)):
+  zova-module-a-model@5.1.32(vue@3.5.39(typescript@5.9.3)):
     dependencies:
       '@tanstack/query-core': 5.101.2
       '@tanstack/query-persist-client-core': 5.101.2
@@ -14010,7 +14010,7 @@ snapshots:
 
   zova-module-rest-resource@5.1.41: {}
 
-  zova-suite-a-zova@5.1.131(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+  zova-suite-a-zova@5.1.132(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
     dependencies:
       zova-module-a-api: 5.1.21
       zova-module-a-app: 5.1.24
@@ -14025,7 +14025,7 @@ snapshots:
       zova-module-a-interceptor: 5.1.29
       zova-module-a-logger: 5.1.26
       zova-module-a-meta: 5.1.21
-      zova-module-a-model: 5.1.31(vue@3.5.39(typescript@5.9.3))
+      zova-module-a-model: 5.1.32(vue@3.5.39(typescript@5.9.3))
       zova-module-a-openapi: 5.1.43
       zova-module-a-router: 5.1.29
       zova-module-a-routerstack: 5.1.26
@@ -14044,10 +14044,10 @@ snapshots:
       - typescript
       - vue
 
-  zova@5.1.132(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
+  zova@5.1.133(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3)):
     dependencies:
       zova-core: 5.1.77(patch_hash=0f4164c4d2bbb16d671beb5c26759dff37769be0709df941bc7b90b94261ac54)(typescript@5.9.3)
-      zova-suite-a-zova: 5.1.131(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
+      zova-suite-a-zova: 5.1.132(typescript@5.9.3)(vue@3.5.39(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - debug

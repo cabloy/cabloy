@@ -304,12 +304,12 @@ So a superficial first-load outcome is not enough to treat the options as interc
 
 ### Scenario table
 
-| Scenario                                                                                        | `staleTime: Infinity`        | `disableSuspenseOnInit: true`                                    | Recommended use                                           |
-| ----------------------------------------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
-| Local-state wrappers such as `$useStateMem`, `$useStateLocal`, `$useStateCookie`, `$useStateDb` | Appropriate                  | Usually not the main concern                                     | Keep `staleTime: Infinity`                                |
-| OpenAPI structural metadata such as `getBootstrap`, `getPermissions`, `getSdk`, `getSchema`     | Appropriate                  | Usually not the main concern                                     | Keep `staleTime: Infinity`                                |
-| Business runtime support queries such as upload policy                                          | Usually not the first choice | Appropriate when the goal is to skip the init-time suspense kick | Prefer `disableSuspenseOnInit: true`                      |
-| Explicit interaction-time waiting                                                               | Not the right tool           | Not the right tool by itself                                     | Use `await query.suspense()` or `$QueryEnsureLoaded(...)` |
+| Scenario                                                                                                | `staleTime: Infinity`        | `disableSuspenseOnInit: true`                                    | Recommended use                                           |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
+| Local-state wrappers such as `$useStateMem`, `$useStateLocal`, `$useStateCookie`, `$useStateLocalAsync` | Appropriate                  | Usually not the main concern                                     | Keep `staleTime: Infinity`                                |
+| OpenAPI structural metadata such as `getBootstrap`, `getPermissions`, `getSdk`, `getSchema`             | Appropriate                  | Usually not the main concern                                     | Keep `staleTime: Infinity`                                |
+| Business runtime support queries such as upload policy                                                  | Usually not the first choice | Appropriate when the goal is to skip the init-time suspense kick | Prefer `disableSuspenseOnInit: true`                      |
+| Explicit interaction-time waiting                                                                       | Not the right tool           | Not the right tool by itself                                     | Use `await query.suspense()` or `$QueryEnsureLoaded(...)` |
 
 ### Recommended selection rule
 

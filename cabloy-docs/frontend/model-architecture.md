@@ -129,7 +129,7 @@ The `a-model` source exposes five main state families through `BeanModelBase` he
 - `mem` → in-memory state through `$useStateMem(...)`
 - `local` → local-storage state through `$useStateLocal(...)`
 - `cookie` → cookie-backed state through `$useStateCookie(...)`
-- `db` → async persisted state through `$useStateDb(...)`
+- `db` → async persisted state through `$useStateLocalAsync(...)`
 
 This is why Zova Model is better understood as a **unified model-state layer** rather than only a remote-data wrapper.
 

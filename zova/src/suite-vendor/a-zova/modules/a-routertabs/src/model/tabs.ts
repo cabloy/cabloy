@@ -63,7 +63,7 @@ export class ModelTabs extends BeanModelBase {
     };
     this.tabKeyCurrent = this.$useStateMem(queryOptionsTabKeyCurrent);
     // if (this.tabsOptions.cache) {
-    //   this.tabKeyCurrent = this.$useStateDb(queryOptionsTabKeyCurrent);
+    //   this.tabKeyCurrent = this.$useStateLocalAsync(queryOptionsTabKeyCurrent);
     // } else {
     //   this.tabKeyCurrent = this.$useStateMem(queryOptionsTabKeyCurrent);
     // }
@@ -75,14 +75,14 @@ export class ModelTabs extends BeanModelBase {
       },
     };
     if (this.tabsOptions.cache) {
-      this.tabs = this.$useStateDb(queryOptionsTabs);
+      this.tabs = this.$useStateLocalAsync(queryOptionsTabs);
     } else {
       this.tabs = this.$useStateMem(queryOptionsTabs);
     }
     // load cache
     if (this.tabsOptions.cache) {
-      // await this.$loadStateDb(this.tabKeyCurrent);
-      await this.$loadStateDb(this.tabs);
+      // await this.$ensureStateLocalAsync(this.tabKeyCurrent);
+      await this.$ensureStateLocalAsync(this.tabs);
     }
     // reset pageDirty
     this._resetAllPageDirty();

@@ -80,7 +80,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
   $useState(stateType: StateType, options, queryClient) {
     switch (stateType) {
       case 'db':
-        return this.$useStateDb(options, queryClient);
+        return this.$useStateLocalAsync(options, queryClient);
       case 'local':
         return this.$useStateLocal(options, queryClient);
       case 'cookie':

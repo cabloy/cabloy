@@ -28,11 +28,11 @@ export class BeanModelUseState extends BeanModelUseQuery {
   private [SymbolUseQueries]: Record<string, unknown> = {};
   private [SymbolUseComputeds]: Record<string, unknown> = {};
 
-  async $loadStateDb<T>(dbData: T): Promise<T> {
-    return await dbData;
+  async $ensureStateLocalAsync<T>(state: T): Promise<T> {
+    return await state;
   }
 
-  $useStateDb<
+  $useStateLocalAsync<
     TQueryFnData = unknown,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -41,7 +41,7 @@ export class BeanModelUseState extends BeanModelUseQuery {
     options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
   ): TData;
-  $useStateDb<
+  $useStateLocalAsync<
     TQueryFnData = unknown,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -50,7 +50,7 @@ export class BeanModelUseState extends BeanModelUseQuery {
     options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
   ): TData;
-  $useStateDb<
+  $useStateLocalAsync<
     TQueryFnData = unknown,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -59,7 +59,7 @@ export class BeanModelUseState extends BeanModelUseQuery {
     options: UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     queryClient?: QueryClient,
   ): TData;
-  $useStateDb(options, queryClient) {
+  $useStateLocalAsync(options, queryClient) {
     options = deepExtend(
       {
         meta: {

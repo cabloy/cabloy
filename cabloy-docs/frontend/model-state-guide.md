@@ -92,26 +92,26 @@ The current source organizes model state around these helper families. They shar
 
 Choose a helper by the state surface, persistence, restore, and SSR behavior it needs, not only by whether its value should survive a reload.
 
-| Helper                   | Use it when                                                                      | Caller-facing surface                                                     | Persistence and restore                                                        |
-| ------------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `$useStateData(...)`     | The model owns remote or query-style async state and consumers need query status | Full query wrapper, including `data`, `error`, and readiness/status state | Normal query lifecycle; may participate in query hydration subject to metadata |
-| `$useStateMem(...)`      | The model owns state that should stay only in the current frontend process       | Assignable state value                                                    | No persistence                                                                 |
-| `$useStateLocal(...)`    | The model owns a small browser value that should restore synchronously           | Assignable state value                                                    | Synchronous `localStorage` restore                                             |
-| `$useStateCookie(...)`   | The state needs cookie persistence or request-aware handling                     | Assignable state value                                                    | Synchronous cookie restore                                                     |
-| `$useStateDb(...)`       | The model owns longer-lived browser state whose restore may be asynchronous      | Assignable state value                                                    | Asynchronous `localforage` restore                                             |
-| `$useStateComputed(...)` | The model exposes derived state                                                  | Computed value                                                            | No query fetch or persistence                                                  |
+| Helper                     | Use it when                                                                       | Caller-facing surface                                                     | Persistence and restore                                                        |
+| -------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `$useStateData(...)`       | The model owns remote or query-style async state and consumers need query status  | Full query wrapper, including `data`, `error`, and readiness/status state | Normal query lifecycle; may participate in query hydration subject to metadata |
+| `$useStateMem(...)`        | The model owns state that should stay only in the current frontend process        | Assignable state value                                                    | No persistence                                                                 |
+| `$useStateLocal(...)`      | The model owns a small browser value that should restore synchronously            | Assignable state value                                                    | Synchronous `localStorage` restore                                             |
+| `$useStateCookie(...)`     | The state needs cookie persistence or request-aware handling                      | Assignable state value                                                    | Synchronous cookie restore                                                     |
+| `$useStateLocalAsync(...)` | The model owns longer-lived browser-local state whose restore may be asynchronous | Assignable state value                                                    | Asynchronous `localforage` restore                                             |
+| `$useStateComputed(...)`   | The model exposes derived state                                                   | Computed value                                                            | No query fetch or persistence                                                  |
 
-### Data, local, and db behavior
+### Data, local, and async-local behavior
 
-`$useStateData(...)`, `$useStateLocal(...)`, and `$useStateDb(...)` use the same model-owned cache foundation, but they are not interchangeable.
+`$useStateData(...)`, `$useStateLocal(...)`, and `$useStateLocalAsync(...)` use the same model-owned cache foundation, but they are not interchangeable.
 
-| Concern              | `$useStateData(...)`                                      | `$useStateLocal(...)`                                         | `$useStateDb(...)`                                                                           |
-| -------------------- | --------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Return surface       | A memoized query wrapper                                  | An assignable state value                                     | An assignable state value                                                                    |
-| Source or storage    | `queryFn`, query cache, and query configuration           | `localStorage`                                                | `localforage`                                                                                |
-| Initial availability | Follows the query lifecycle                               | Restores synchronously, then falls back to `meta.defaultData` | Restores asynchronously, then falls back to `meta.defaultData`                               |
-| Intended write flow  | Mutation, cache update, and invalidation policy           | Replace or assign the model field                             | Replace or assign the model field                                                            |
-| SSR behavior         | Can follow ordinary query dehydration and hydration rules | Browser storage is unavailable on the server                  | Browser storage is unavailable on the server and db state explicitly opts out of dehydration |
+| Concern              | `$useStateData(...)`                                      | `$useStateLocal(...)`                                         | `$useStateLocalAsync(...)`                                                                            |
+| -------------------- | --------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Return surface       | A memoized query wrapper                                  | An assignable state value                                     | An assignable state value                                                                             |
+| Source or storage    | `queryFn`, query cache, and query configuration           | `localStorage`                                                | `localforage`                                                                                         |
+| Initial availability | Follows the query lifecycle                               | Restores synchronously, then falls back to `meta.defaultData` | Restores asynchronously, then falls back to `meta.defaultData`                                        |
+| Intended write flow  | Mutation, cache update, and invalidation policy           | Replace or assign the model field                             | Replace or assign the model field                                                                     |
+| SSR behavior         | Can follow ordinary query dehydration and hydration rules | Browser storage is unavailable on the server                  | Browser storage is unavailable on the server and async-local state explicitly opts out of dehydration |
 
 Use the detailed [`$useStateData` Best Practices](/frontend/use-state-data-best-practices) guide for render-versus-interaction placement, `disableSuspenseOnInit`, freshness utilities, and explicit readiness boundaries.
 
@@ -222,9 +222,9 @@ Current-source characteristics:
 
 This is particularly relevant for state that must participate in request-aware or SSR-adjacent flows.
 
-## 6. `$useStateDb(...)`
+## 6. `$useStateLocalAsync(...)`
 
-Use this when the model state should persist asynchronously in db-style client storage.
+Use this when the model state should persist asynchronously in browser-local storage backed by `localforage`.
 
 Current-source characteristics:
 
@@ -236,29 +236,29 @@ Current-source characteristics:
 
 This is useful for larger persisted client state that should outlive a page session without being stored in cookies or plain local storage.
 
-### Initialize and restore db-backed state
+### Initialize and ensure async-local state
 
-Assign the state property before awaiting it. When later initialization depends on the restored value, establish an explicit restore boundary with `$loadStateDb(...)`:
+Assign the state property before awaiting it. When later initialization depends on the restored value, establish an explicit restore boundary with `$ensureStateLocalAsync(...)`. It waits for the pending initial restore to settle; it does not force another load and does not guarantee a defined result:
 
 ```typescript
 protected async __init__() {
-  this.tabs = this.$useStateDb({
+  this.tabs = this.$useStateLocalAsync({
     queryKey: ['tabs'],
     meta: {
       defaultData: [],
     },
   });
 
-  await this.$loadStateDb(this.tabs);
+  await this.$ensureStateLocalAsync(this.tabs);
 
   // Continue only after persisted tabs, or the fallback default, is available.
   this.initializeTabs();
 }
 ```
 
-`meta.defaultData` is a fallback: it initializes the state only when no persisted value is restored. The router-tabs model follows this assign-then-await sequence before it continues with route initialization.
+`meta.defaultData` is a fallback: it initializes the state only when no persisted value is restored. If neither provides a value, the ensured result can still be `undefined`. The router-tabs model follows this assign-then-ensure sequence before it continues with route initialization.
 
-Persisted local and db state should be updated by replacing or assigning the model field so its custom-ref setter can update query state and persist the new value:
+Persisted local and async-local state should be updated by replacing or assigning the model field so its custom-ref setter can update query state and persist the new value:
 
 ```typescript
 this.tabs = nextTabs;
@@ -346,7 +346,7 @@ This file shows:
 
 - `@Model({ enableSelector: true, ... })`
 - richer model initialization in `__init__`
-- mixed use of `$useStateMem(...)` and `$useStateDb(...)`
+- mixed use of `$useStateMem(...)` and `$useStateLocalAsync(...)`
 - model-owned tab state with cache and persistence decisions
 
 ### SSR-sensitive auth model
