@@ -136,12 +136,10 @@ export class ControllerImage extends BeanBase {
     return await this.bean.image.createImageActionResponse(image);
   }
 
-  @Web.get('delivery/:imageId')
+  @Web.get('delivery')
   @Passport.public()
-  async delivery(
-    @Arg.param('imageId', v.tableIdentity()) imageId: number,
-    @Arg.query(v.object(DtoImageDeliveryRequest)) query: DtoImageDeliveryRequest,
-  ) {
+  async delivery(@Arg.query(v.object(DtoImageDeliveryRequest)) query: DtoImageDeliveryRequest) {
+    const { imageId } = query;
     const image = await this.bean.image.get(imageId);
     if (!image) return this.app.throw(404);
     let request: TypeImageVariantInput = query.token
@@ -153,7 +151,7 @@ export class ControllerImage extends BeanBase {
     if (query.token || !image.public) {
       const payload = await this.bean.imageUploadPolicy.verifyDeliveryToken(
         query.token,
-        this.scope.util.combineApiPath(`image/delivery/${imageId}`, false, true),
+        this.scope.util.combineApiPath('image/delivery', false, true),
       );
       if (String(payload.imageId) !== String(imageId)) {
         return this.app.throw(401);

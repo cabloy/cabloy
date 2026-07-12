@@ -132,7 +132,7 @@ The serializer also checks the optional `fileScene`. A relation with the wrong s
 
 ## Delivery and trusted backend APIs
 
-Files are private by default. Private delivery can be either a temporary Cabloy proxy URL or a provider-signed R2 URL. `GET /file/download/:fileId` is route-public so a signed link can be opened, but proxy delivery still requires a temporary token bound to both the route and file ID.
+Files are private by default. Private delivery can be either a temporary Cabloy proxy URL or a provider-signed R2 URL. `GET /file/download?fileId=...` is route-public so a signed link can be opened. Proxy delivery still requires a temporary token bound to the delivery endpoint and a signed payload whose file ID must match the request query.
 
 When Cabloy streams bytes it can set an attachment filename. When Cabloy redirects to a provider URL, download-versus-inline behavior is controlled by that provider response and the browser.
 

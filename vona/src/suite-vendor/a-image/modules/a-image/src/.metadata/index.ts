@@ -485,7 +485,7 @@ declare module 'vona-module-a-web' {
 '/image/upload-url': undefined;
     }
 export interface IApiPathGetRecord{
-        '/image/delivery/:imageId': undefined;
+        '/image/delivery': undefined;
     }
 
 }

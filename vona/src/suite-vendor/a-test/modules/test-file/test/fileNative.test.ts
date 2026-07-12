@@ -74,13 +74,17 @@ describe('fileNative.test.ts', () => {
           },
         );
         const privateUrl = await app.bean.file.getDownloadUrl(privateFile.id);
-        assert.equal(privateUrl.includes('/file/download/'), true);
-        assert.equal(privateUrl.includes('token='), true);
+        const privateUrlParsed = new URL(privateUrl);
+        assert.equal(privateUrlParsed.pathname.endsWith('/file/download'), true);
+        assert.equal(privateUrlParsed.searchParams.get('fileId'), String(privateFile.id));
+        assert.equal(privateUrlParsed.searchParams.has('token'), true);
 
         const privateView = await app.bean.file.resolveView(privateFile.id);
         assert.equal(privateView?.id, privateFile.id);
         assert.equal(typeof privateView?.uploadedAt, 'object');
-        assert.equal(privateView?.downloadUrl.includes('/file/download/'), true);
+        const privateViewUrlParsed = new URL(privateView!.downloadUrl);
+        assert.equal(privateViewUrlParsed.pathname.endsWith('/file/download'), true);
+        assert.equal(privateViewUrlParsed.searchParams.get('fileId'), String(privateFile.id));
         assert.equal(privateView?.signed, true);
         assertViewInternalFieldsAbsent(privateView ?? {});
 

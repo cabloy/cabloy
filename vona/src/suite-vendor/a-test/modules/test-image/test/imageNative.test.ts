@@ -47,14 +47,20 @@ describe('imageNative.test.ts', () => {
       assert.equal(await fse.pathExists(thumbnailPath), false);
 
       const originalUrl = await app.bean.image.getVariantUrl(image.id, 'original');
-      assert.equal(originalUrl.includes('/image/delivery/'), true);
-      assert.equal(originalUrl.includes('token='), true);
+      const originalUrlParsed = new URL(originalUrl);
+      assert.equal(originalUrlParsed.pathname.endsWith('/image/delivery'), true);
+      assert.equal(originalUrlParsed.searchParams.get('imageId'), String(image.id));
+      assert.equal(originalUrlParsed.searchParams.has('token'), true);
       const namedUrl = await app.bean.image.getVariantUrl(image.id, 'thumbnail');
-      assert.equal(namedUrl.includes('/image/delivery/'), true);
-      assert.equal(namedUrl.includes('token='), true);
+      const namedUrlParsed = new URL(namedUrl);
+      assert.equal(namedUrlParsed.pathname.endsWith('/image/delivery'), true);
+      assert.equal(namedUrlParsed.searchParams.get('imageId'), String(image.id));
+      assert.equal(namedUrlParsed.searchParams.has('token'), true);
       assert.equal(await fse.pathExists(thumbnailPath), false);
 
-      const signedUnauthorizedRes = await fetch(namedUrl.split('?')[0]);
+      const signedUnauthorizedUrl = new URL(namedUrl);
+      signedUnauthorizedUrl.searchParams.delete('token');
+      const signedUnauthorizedRes = await fetch(signedUnauthorizedUrl);
       assert.equal(signedUnauthorizedRes.status, 401);
       const signedAuthorizedRes = await fetch(namedUrl);
       assert.equal(signedAuthorizedRes.ok, true);
@@ -67,7 +73,6 @@ describe('imageNative.test.ts', () => {
       });
       const passportCode = await app.bean.passport.createTempAuthToken({
         path: '/api/image/delivery',
-        pathMatch: 'prefix',
       });
       const audienceUrl = new URL(audienceView!.url);
       audienceUrl.searchParams.set('x-vona-passport-code', passportCode);
@@ -80,18 +85,18 @@ describe('imageNative.test.ts', () => {
       const customUrl = await app.bean.image.getVariantUrl(image.id, {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });
-      assert.equal(customUrl.includes('/image/delivery/'), true);
+      assert.equal(customUrl.includes('/image/delivery?'), true);
       const customUrl2 = await app.bean.image.getVariantUrl(image.id, {
         transformOptions: { width: 32, height: 32, fit: 'cover' },
       });
-      assert.equal(customUrl2.includes('/image/delivery/'), true);
+      assert.equal(customUrl2.includes('/image/delivery?'), true);
       const customRes = await fetch(customUrl);
       assert.equal(customRes.ok, true);
       assert.equal(customRes.headers.get('content-type')?.includes('image/png'), true);
 
       const view = await app.bean.image.resolveView(image.id, 'thumbnail');
       assert.equal(view?.id, image.id);
-      assert.equal(view?.url.includes('/image/delivery/'), true);
+      assert.equal(view?.url.includes('/image/delivery?'), true);
       assert.equal(view?.signed, true);
       assert.equal('provider' in (view ?? {}), false);
       assert.equal('resourceId' in (view ?? {}), false);
@@ -102,7 +107,7 @@ describe('imageNative.test.ts', () => {
       const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
         expiresIn: 600,
       });
-      assert.equal(signedView?.url.includes('/image/delivery/'), true);
+      assert.equal(signedView?.url.includes('/image/delivery?'), true);
       assert.equal(signedView?.url.includes('token='), true);
       assert.equal(signedView?.signed, true);
 
@@ -125,7 +130,7 @@ describe('imageNative.test.ts', () => {
       const download = await app.bean.image.download(image.id, 'original');
       assert.equal(download.kind, 'url');
       assert.equal(download.signed, true);
-      assert.equal(download.url?.includes('/image/delivery/'), true);
+      assert.equal(download.url?.includes('/image/delivery?'), true);
 
       const bufferedVariant = await app.bean.image.downloadForDelivery(image.id, 'thumbnail');
       assert.equal(bufferedVariant.kind, 'buffer');

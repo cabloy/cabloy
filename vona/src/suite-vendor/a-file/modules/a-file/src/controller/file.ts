@@ -136,18 +136,16 @@ export class ControllerFile extends BeanBase {
     return await this.bean.file.createFileActionResponse(uploadedFile);
   }
 
-  @Web.get('download/:fileId')
+  @Web.get('download')
   @Passport.public()
-  async download(
-    @Arg.param('fileId', v.tableIdentity()) fileId: number,
-    @Arg.query(v.object(DtoFileDownloadRequest)) query: DtoFileDownloadRequest,
-  ) {
+  async download(@Arg.query(v.object(DtoFileDownloadRequest)) query: DtoFileDownloadRequest) {
+    const { fileId } = query;
     const file = await this.bean.file.get(fileId);
     if (!file) return this.app.throw(404);
     if (!file.public) {
       const payload = await this.bean.fileUploadPolicy.verifyDownloadToken(
         query.token,
-        this.scope.util.combineApiPath(`file/download/${fileId}`, false, true),
+        this.scope.util.combineApiPath('file/download', false, true),
       );
       if (String(payload.fileId) !== String(fileId)) {
         return this.app.throw(401);

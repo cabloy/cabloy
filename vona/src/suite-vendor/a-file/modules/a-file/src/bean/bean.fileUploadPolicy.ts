@@ -23,7 +23,7 @@ export class BeanFileUploadPolicy extends BeanBase {
     expiresIn?: number;
     audienceUserId?: IFileDownloadTokenPayload['audienceUserId'];
   }) {
-    const path = this.scope.util.combineApiPath(`file/download/${data.fileId}`, false, true);
+    const path = this.scope.util.combineApiPath('file/download', false, true);
     const token = await this.bean.jwt.createTempAuthToken(
       {
         kind: 'fileDownload',

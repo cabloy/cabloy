@@ -170,7 +170,7 @@ If neither is provided, Vona falls back to the configured default variant, which
 
 Vona supports signed delivery in two forms:
 
-- **proxy-signed delivery**: Vona creates a temporary delivery token and redirects through `/image/delivery/:imageId`
+- **proxy-signed delivery**: Vona creates a temporary delivery token and redirects through `/image/delivery?imageId=...`
 - **provider-signed delivery**: the provider generates the final signed URL directly
 
 The built-in defaults differ:
@@ -309,12 +309,12 @@ The native provider does not implement `uploadUrl`.
 
 When delivery is signed and the provider uses proxy delivery, `BeanImage.getVariantUrl(...)` creates a temporary delivery token and returns a local delivery URL such as:
 
-- `/image/delivery/:imageId?token=...`
+- `/image/delivery?imageId=...&token=...`
 
 The delivery controller then:
 
-1. verifies the delivery token against the request path
-2. confirms the token image ID matches the request image ID
+1. verifies the delivery token against the fixed delivery endpoint path
+2. confirms the token image ID matches the request `imageId` query value
 3. redirects to the final target URL
 
 This is why native signed delivery behaves differently from Cloudflare signed delivery.

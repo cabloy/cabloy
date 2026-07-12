@@ -480,7 +480,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/file/download/{fileId}': {
+  '/api/file/download': {
     parameters: {
       query?: never;
       header?: never;
@@ -576,7 +576,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/image/delivery/{imageId}': {
+  '/api/image/delivery': {
     parameters: {
       query?: never;
       header?: never;
@@ -3949,13 +3949,12 @@ export interface operations {
   };
   File_download: {
     parameters: {
-      query?: {
+      query: {
+        fileId: number | string;
         token?: string | undefined;
       };
       header?: never;
-      path: {
-        fileId: number | string;
-      };
+      path?: never;
       cookie?: never;
     };
     requestBody?: never;
@@ -4120,15 +4119,14 @@ export interface operations {
   };
   Image_delivery: {
     parameters: {
-      query?: {
+      query: {
+        imageId: number | string;
         variantName?: string | undefined;
         transformOptions?: components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
         token?: string | undefined;
       };
       header?: never;
-      path: {
-        imageId: number | string;
-      };
+      path?: never;
       cookie?: never;
     };
     requestBody?: never;

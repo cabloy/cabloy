@@ -55,11 +55,9 @@ export type ApiApiFileuploadUrlResponseBody =
   paths[ApiApiFileuploadUrlPath][ApiApiFileuploadUrlMethod]['responses']['200']['content']['application/json']['data'];
 
 /** File_download */
-export const ApiApiFiledownloadPath = '/api/file/download/{fileId}';
-export type ApiApiFiledownloadPath = '/api/file/download/{fileId}';
+export const ApiApiFiledownloadPath = '/api/file/download';
+export type ApiApiFiledownloadPath = '/api/file/download';
 export type ApiApiFiledownloadMethod = 'get';
-export type ApiApiFiledownloadRequestParams =
-  paths[ApiApiFiledownloadPath][ApiApiFiledownloadMethod]['parameters']['path'];
 export type ApiApiFiledownloadRequestQuery =
   paths[ApiApiFiledownloadPath][ApiApiFiledownloadMethod]['parameters']['query'];
 export type ApiApiFiledownloadResponseBody =
@@ -112,12 +110,11 @@ export class ApiFile extends BeanApiBase {
 
   download(
     options: {
-      params: ApiApiFiledownloadRequestParams;
-      query?: ApiApiFiledownloadRequestQuery;
+      query: ApiApiFiledownloadRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.get<any, ApiApiFiledownloadResponseBody>(
-      this.$pathTranslate(ApiApiFiledownloadPath, options.params),
+      ApiApiFiledownloadPath,
       this.$configPrepare(OpenApiBaseURL(this.sys), options),
     );
   }

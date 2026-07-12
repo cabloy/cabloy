@@ -250,24 +250,41 @@ describe('fileUpload.test.ts', () => {
           },
         );
 
-        const privateUrl = app.util.getAbsoluteUrlByApiPath(
-          $apiPath(`/file/download/${privateFile.id}`),
+        const otherPrivateFile = await app.bean.file.upload(
+          'file-native:native',
+          {
+            file: filePath,
+            filename: 'other-private-download.txt',
+            contentType: 'text/plain',
+            public: false,
+          },
+          {
+            clientName: 'default',
+            fileScene: 'test-file:privateFile',
+          },
         );
+
+        const privateUrl = new URL(app.util.getAbsoluteUrlByApiPath($apiPath('/file/download')));
+        privateUrl.searchParams.set('fileId', String(privateFile.id));
         const privateUnauthorizedRes = await fetch(privateUrl);
         assert.equal(privateUnauthorizedRes.status, 401);
 
         const downloadToken = await app.bean.fileUploadPolicy.createDownloadToken({
           fileId: privateFile.id,
         });
-        const privateAuthorizedRes = await fetch(
-          `${privateUrl}?token=${encodeURIComponent(downloadToken.token)}`,
-        );
+        privateUrl.searchParams.set('token', downloadToken.token);
+        const privateAuthorizedRes = await fetch(privateUrl);
         assert.equal(privateAuthorizedRes.ok, true);
         assert.equal(
           privateAuthorizedRes.headers.get('content-type')?.includes('text/plain'),
           true,
         );
         assert.equal(await privateAuthorizedRes.text(), textFile.toString());
+
+        const alteredUrl = new URL(privateUrl);
+        alteredUrl.searchParams.set('fileId', String(otherPrivateFile.id));
+        const alteredRes = await fetch(alteredUrl);
+        assert.equal(alteredRes.status, 401);
 
         await app.bean.passport.signinMock();
         const audienceToken = await app.bean.fileUploadPolicy.createDownloadToken({
@@ -276,23 +293,26 @@ describe('fileUpload.test.ts', () => {
         });
         const passportCode = await app.bean.passport.createTempAuthToken({
           path: '/api/file/download',
-          pathMatch: 'prefix',
         });
-        const audienceUrl = `${privateUrl}?token=${encodeURIComponent(audienceToken.token)}&x-vona-passport-code=${encodeURIComponent(passportCode)}`;
+        const audienceUrl = new URL(privateUrl);
+        audienceUrl.searchParams.set('token', audienceToken.token);
+        audienceUrl.searchParams.set('x-vona-passport-code', passportCode);
         const audienceAuthorizedRes = await fetch(audienceUrl);
         assert.equal(audienceAuthorizedRes.ok, true);
         await app.bean.passport.signout();
 
-        const audienceUnauthorizedRes = await fetch(
-          `${privateUrl}?token=${encodeURIComponent(audienceToken.token)}`,
-        );
+        const audienceUnauthorizedUrl = new URL(privateUrl);
+        audienceUnauthorizedUrl.searchParams.set('token', audienceToken.token);
+        const audienceUnauthorizedRes = await fetch(audienceUnauthorizedUrl);
         assert.equal(audienceUnauthorizedRes.status, 401);
 
-        const missingUrl = app.util.getAbsoluteUrlByApiPath($apiPath('/file/download/999999999'));
+        const missingUrl = new URL(app.util.getAbsoluteUrlByApiPath($apiPath('/file/download')));
+        missingUrl.searchParams.set('fileId', '999999999');
         const missingRes = await fetch(missingUrl);
         assert.equal(missingRes.status, 404);
 
         await app.bean.file.delete(privateFile.id);
+        await app.bean.file.delete(otherPrivateFile.id);
       } finally {
         await fse.remove(filePath);
       }

@@ -865,7 +865,6 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
     return this.$passport.getFreshTempAuthToken({
       path: `${apiPrefix}/image/delivery`,
-      pathMatch: 'prefix',
       staleTime: 30 * 1000,
     });
   }
@@ -874,7 +873,6 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
     return await this.$passport.ensureFreshTempAuthToken({
       path: `${apiPrefix}/image/delivery`,
-      pathMatch: 'prefix',
       staleTime: 30 * 1000,
     });
   }

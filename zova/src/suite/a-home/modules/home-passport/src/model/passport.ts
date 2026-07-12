@@ -81,13 +81,13 @@ export class ModelPassport extends BeanModelBase {
     });
   }
 
-  getTempAuthToken(options: { path?: string; pathMatch?: 'exact' | 'prefix'; staleTime: number }) {
+  getTempAuthToken(options: { path?: string; staleTime: number }) {
     if (!process.env.CLIENT || !this.isAuthenticated) return;
     return this.$useStateData({
-      queryKey: ['tempAuthToken', options.path, options.pathMatch, options.staleTime],
+      queryKey: ['tempAuthToken', options.path, options.staleTime],
       queryFn: async () => {
         return await this.$api.homeUserPassport.createTempAuthToken(undefined, {
-          query: { path: options.path, pathMatch: options.pathMatch },
+          query: { path: options.path },
         });
       },
       staleTime: options.staleTime,
@@ -99,11 +99,7 @@ export class ModelPassport extends BeanModelBase {
     });
   }
 
-  getFreshTempAuthToken(options: {
-    path?: string;
-    pathMatch?: 'exact' | 'prefix';
-    staleTime: number;
-  }): string | undefined {
+  getFreshTempAuthToken(options: { path?: string; staleTime: number }): string | undefined {
     return $QueryGetFresh(
       () => this.getTempAuthToken(options),
       query => this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime),
@@ -112,7 +108,6 @@ export class ModelPassport extends BeanModelBase {
 
   async ensureFreshTempAuthToken(options: {
     path?: string;
-    pathMatch?: 'exact' | 'prefix';
     staleTime: number;
   }): Promise<string | undefined> {
     return await $QueryEnsureFresh(

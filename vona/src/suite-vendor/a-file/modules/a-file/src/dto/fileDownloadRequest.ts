@@ -7,6 +7,9 @@ export interface IDtoOptionsFileDownloadRequest extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsFileDownloadRequest>()
 export class DtoFileDownloadRequest {
+  @Api.field(v.tableIdentity())
+  fileId: number | string;
+
   @Api.field(v.optional())
   token?: string;
 }

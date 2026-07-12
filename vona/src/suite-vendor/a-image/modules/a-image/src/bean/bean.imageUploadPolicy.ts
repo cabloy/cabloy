@@ -24,7 +24,7 @@ export class BeanImageUploadPolicy extends BeanBase {
     expiresIn?: number;
     audienceUserId?: IImageDeliveryTokenPayload['audienceUserId'];
   }) {
-    const path = this.scope.util.combineApiPath(`image/delivery/${data.imageId}`, false, true);
+    const path = this.scope.util.combineApiPath('image/delivery', false, true);
     const token = await this.bean.jwt.createTempAuthToken(
       {
         kind: 'imageDelivery',

@@ -1,5 +1,5 @@
 import type { DtoAuth, IAuthenticateOptions, IAuthProviderRecord } from 'vona-module-a-auth';
-import type { IJwtToken, TypeJwtPathMatch } from 'vona-module-a-jwt';
+import type { IJwtToken } from 'vona-module-a-jwt';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -128,20 +128,8 @@ export class ControllerPassport extends BeanBase {
 
   @Web.post('createTempAuthToken')
   @Api.body(z.string())
-  async createTempAuthToken(
-    @Arg.query('path', v.optional()) path?: string,
-    @Arg.query('pathMatch', z.enum(['exact', 'prefix']).optional()) pathMatch?: TypeJwtPathMatch,
-  ): Promise<string> {
-    if (pathMatch === 'prefix') this._assertTempAuthTokenPrefixPath(path);
-    return await this.bean.passport.createTempAuthToken({ path, pathMatch });
-  }
-
-  private _assertTempAuthTokenPrefixPath(path?: string) {
-    const allowedPaths = [
-      this.app.scope('a-file').util.combineApiPath('file/download', false, true),
-      this.app.scope('a-image').util.combineApiPath('image/delivery', false, true),
-    ];
-    if (!path || !allowedPaths.includes(path)) return this.app.throw(403);
+  async createTempAuthToken(@Arg.query('path', v.optional()) path?: string): Promise<string> {
+    return await this.bean.passport.createTempAuthToken({ path });
   }
 
   private _combineDtoPassportJwt(jwt?: IJwtToken): DtoPassportJwt {

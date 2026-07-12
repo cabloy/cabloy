@@ -493,7 +493,7 @@ declare module 'vona-module-a-web' {
 '/file/upload-url': undefined;
     }
 export interface IApiPathGetRecord{
-        '/file/download/:fileId': undefined;
+        '/file/download': undefined;
     }
 
 }

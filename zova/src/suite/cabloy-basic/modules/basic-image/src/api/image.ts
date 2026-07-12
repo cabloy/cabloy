@@ -55,11 +55,9 @@ export type ApiApiImageuploadUrlResponseBody =
   paths[ApiApiImageuploadUrlPath][ApiApiImageuploadUrlMethod]['responses']['200']['content']['application/json']['data'];
 
 /** Image_delivery */
-export const ApiApiImagedeliveryPath = '/api/image/delivery/{imageId}';
-export type ApiApiImagedeliveryPath = '/api/image/delivery/{imageId}';
+export const ApiApiImagedeliveryPath = '/api/image/delivery';
+export type ApiApiImagedeliveryPath = '/api/image/delivery';
 export type ApiApiImagedeliveryMethod = 'get';
-export type ApiApiImagedeliveryRequestParams =
-  paths[ApiApiImagedeliveryPath][ApiApiImagedeliveryMethod]['parameters']['path'];
 export type ApiApiImagedeliveryRequestQuery =
   paths[ApiApiImagedeliveryPath][ApiApiImagedeliveryMethod]['parameters']['query'];
 export type ApiApiImagedeliveryResponseBody =
@@ -112,12 +110,11 @@ export class ApiImage extends BeanApiBase {
 
   delivery(
     options: {
-      params: ApiApiImagedeliveryRequestParams;
-      query?: ApiApiImagedeliveryRequestQuery;
+      query: ApiApiImagedeliveryRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.get<any, ApiApiImagedeliveryResponseBody>(
-      this.$pathTranslate(ApiApiImagedeliveryPath, options.params),
+      ApiApiImagedeliveryPath,
       this.$configPrepare(OpenApiBaseURL(this.sys), options),
     );
   }

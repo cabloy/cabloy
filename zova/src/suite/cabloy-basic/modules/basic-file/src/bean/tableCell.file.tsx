@@ -214,7 +214,6 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
     return await this.$passport.ensureFreshTempAuthToken({
       path: `${apiPrefix}/file/download`,
-      pathMatch: 'prefix',
       staleTime: 30 * 1000,
     });
   }

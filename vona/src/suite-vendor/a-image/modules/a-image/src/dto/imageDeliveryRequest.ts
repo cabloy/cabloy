@@ -9,6 +9,9 @@ export interface IDtoOptionsImageDeliveryRequest extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsImageDeliveryRequest>()
 export class DtoImageDeliveryRequest {
+  @Api.field(v.tableIdentity())
+  imageId: number | string;
+
   @Api.field(v.optional())
   variantName?: string;
 

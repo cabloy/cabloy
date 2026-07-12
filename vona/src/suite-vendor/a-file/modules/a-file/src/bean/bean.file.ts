@@ -411,7 +411,7 @@ export class BeanFile extends BeanBase {
     fileId: TableIdentity,
     deliveryOptions: IFileDeliveryOptionsResolved,
   ) {
-    const routePath = this.scope.util.combineApiPath(`file/download/${fileId}`, false, true);
+    const routePath = this.scope.util.combineApiPath('file/download', false, true);
     const audienceUserId = this._resolveAudienceUserId(deliveryOptions);
     const tokenPayload = await this.bean.fileUploadPolicy.createDownloadToken({
       fileId,
@@ -420,6 +420,7 @@ export class BeanFile extends BeanBase {
     });
     const routeUrl = this.app.util.getAbsoluteUrlByApiPath(routePath);
     const url = new URL(routeUrl);
+    url.searchParams.set('fileId', String(fileId));
     url.searchParams.set('token', tokenPayload.token);
     return url.toString();
   }
