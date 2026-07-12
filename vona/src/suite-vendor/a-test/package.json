@@ -1,12 +1,12 @@
 {
   "name": "vona-suite-a-test",
-  "version": "5.0.22",
+  "version": "5.0.23",
   "description": "",
   "author": "",
   "files": [],
   "type": "module",
   "dependencies": {
-    "vona-module-test-file": "^5.0.4"
+    "vona-module-test-file": "^5.0.5"
   },
   "title": "a-test"
 }
