@@ -316,7 +316,7 @@ function parseIpv6(value: string): bigint | undefined {
   }
   const groups: string[] = [
     ...left,
-    ...Array.from({ length: 8 - left.length - right.length }).fill('0'),
+    ...Array.from<string>({ length: 8 - left.length - right.length }).fill('0'),
     ...right,
   ];
   if (groups.some(group => !/^[0-9a-f]{1,4}$/.test(group))) return undefined;

@@ -185,7 +185,7 @@ export class ServiceImageCloudflare extends BeanBase {
       accountHash: normalized.accountHash,
       deliveryBaseUrl: image.deliveryBaseUrl ?? normalized.deliveryBaseUrl,
       signingKey: normalized.signingKey,
-      signed: deliveryOptions?.protected ?? !(image.public ?? normalized.public ?? true),
+      protected: deliveryOptions?.protected ?? !(image.public ?? normalized.public ?? true),
       expiresIn: deliveryOptions?.expiresIn,
     });
   }
