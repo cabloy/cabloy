@@ -31,7 +31,16 @@ export class ControllerPageTodo {
 1. a model bean encapsulates the data access path
 2. the controller injects the model
 3. `__init__` prepares the data on the server
-4. model-based SSR support synchronizes that data to the client and completes hydration automatically
+4. successful eligible Query Cache state is captured in the SSR handoff
+5. client SSR pre-hydration restores that cache before the client model consumes it
+
+## What hydration reuses
+
+The initial SSR handoff reuses model Query Cache data, not only `$useStateData(...)` results. A successful eligible `$useStateMem(...)` value can also transfer from the server to the initial client runtime even though it has no browser persistence backend.
+
+Client reuse requires the model call to resolve to the same effective query key: Zova prefixes the logical key with Model identity and, for selector-enabled models, selector identity. State marked with `meta.ssr.dehydrate: false` is excluded. This handoff does not make memory state durable across a later browser reload, and it does not guarantee that every client query avoids fetching.
+
+For helper selection, read [Model State Guide](/frontend/model-state-guide). For the dehydration filter and QueryClient lifecycle, read [A-Model Under the Hood](/frontend/a-model-under-the-hood).
 
 ## Implementation checks for SSR data-loading changes
 

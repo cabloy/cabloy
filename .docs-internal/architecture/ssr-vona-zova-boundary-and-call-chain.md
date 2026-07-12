@@ -293,6 +293,17 @@ This is the layer that turns a raw server render into a hydration-aware app life
 
 It also disposes server contexts and closes the app when final render-time injection is complete.
 
+#### a-model deferred Query Cache handoff
+
+- `zova/src/suite-vendor/a-zova/modules/a-model/src/service/storage.ts`
+- `zova/src/suite-vendor/a-zova/modules/a-model/src/config/config.ts`
+
+After server rendering, `ServiceStorage` dehydrates the request QueryClient into `ssrContext.stateDefer.query`, then clears that server QueryClient. `CtxSSRMetaStore` serializes the deferred state through `window.__INITIAL_STATE_DEFER__`; during client SSR pre-hydration, `ServiceStorage` hydrates the client QueryClient from the same query snapshot.
+
+The current default policy first excludes `meta.ssr.dehydrate === false`, then excludes sync-persisted queries, and otherwise delegates to TanStack Query's successful-query dehydration predicate. `$useStateMem(...)` sets `persister: false`, so a successful memory-state entry remains eligible for this transfer. This is not browser persistence and does not make the state survive a later unrelated reload. Mutations are not included in this snapshot.
+
+This is a Zova Model/SSR-runtime cache handoff, not a Vona-owned business-state store.
+
 #### Client-side hydration bootstrap
 
 - `zova/src/suite-vendor/a-zova/modules/a-ssr/src/bean/sys.ssrState.ts`

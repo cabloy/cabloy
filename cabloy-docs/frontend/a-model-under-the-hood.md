@@ -85,9 +85,21 @@ Its main jobs are:
 - create the shared `QueryClient`
 - create the `QueryCache`
 - install the Vue Query plugin into the app
-- on the server, dehydrate query state after render
-- on the client, hydrate query state during SSR pre-hydration
-- clear the query client after server rendering completes
+- on the server, dehydrate eligible query state after render into `stateDefer.query`
+- on the client, hydrate that snapshot during SSR pre-hydration
+- clear the server query client after the snapshot has been created
+
+The server-to-client handoff is therefore:
+
+```text
+server QueryClient
+  → dehydrate after render
+  → stateDefer.query
+  → deferred SSR bootstrap state
+  → client QueryClient hydrate during SSR pre-hydration
+```
+
+This is an initial SSR handoff, not browser persistence. The server cache is request-scoped for this flow and is cleared after its snapshot is taken.
 
 This is the second important lower-level rule:
 
@@ -200,6 +212,10 @@ A practical reading rule is:
 - different state families differ in persistence/storage and SSR behavior
 - but they still participate in one model runtime vocabulary and query-key system
 
+`$useStateMem(...)` makes the two policy axes especially clear. It returns an assignable custom-ref surface that reads and writes through the Model Query Cache, while setting `persister: false` so no browser storage adapter is used. No persistence backend does not imply no SSR transfer: a successful eligible memory query can still be included in the shared Query Cache snapshot.
+
+A hydrated entry is reusable only when the later call resolves to the same effective key. The runtime prefixes each logical key with Model identity and, for selector-enabled Models, selector identity.
+
 ## Persister storage selection and restore/save/remove behavior
 
 The persister layer lives in:
@@ -243,7 +259,13 @@ This file confirms default behavior such as:
 - persistence max-age defaults
 - dehydration rules for sync persister-backed queries
 
-This is the place to check when the runtime feels surprising even though your page/model code looks correct.
+The current dehydration decision is ordered:
+
+1. `meta.ssr.dehydrate === false` explicitly excludes a query.
+2. A sync persister-backed query is excluded.
+3. Remaining queries use TanStack Query's current default dehydration predicate, which accepts successful queries.
+
+This is why `$useStateMem(...)` can participate in the initial SSR transfer despite `persister: false`, while `$useStateLocalAsync(...)` opts out explicitly. This is the place to check when the runtime feels surprising even though your page/model code looks correct.
 
 ## What this page does not re-explain
 
