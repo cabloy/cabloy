@@ -1,6 +1,34 @@
 import type { DataQuery } from '../types/query.js';
 
-export type TypeQueryEnsureLoadedFn<T> = () => DataQuery<T> | undefined;
+export type TypeQueryEnsureLoadedFn<TData, TError = Error | null> = () =>
+  | DataQuery<TData, TError>
+  | undefined;
+
+export type TypeQueryIsStaleFn<TData, TError = Error | null> = (
+  query: DataQuery<TData, TError>,
+) => boolean;
+
+export function $QueryGetFresh<TData = any, TError = Error | null>(
+  fn: TypeQueryEnsureLoadedFn<TData, TError>,
+  isStale: TypeQueryIsStaleFn<TData, TError>,
+): TData | undefined {
+  const query = fn();
+  if (!query) return;
+  if (!isStale(query)) return query.data;
+  void query.suspense().catch(() => undefined);
+}
+
+export async function $QueryEnsureFresh<TData = any, TError = Error | null>(
+  fn: TypeQueryEnsureLoadedFn<TData, TError>,
+  isStale: TypeQueryIsStaleFn<TData, TError>,
+): Promise<TData | undefined> {
+  const query = fn();
+  if (!query) return;
+  if (!isStale(query)) return query.data;
+  const result = await query.suspense();
+  if (result.error) throw result.error;
+  return result.data;
+}
 
 export async function $QueryEnsureLoaded<T = any>(fn: TypeQueryEnsureLoadedFn<T>) {
   return _QueryEnsureLoadedInner<T>(fn);

@@ -108,8 +108,8 @@ export interface QueryMetaPersister {
   refetchOnRestore?: boolean | 'always';
 }
 
-export type DataQuery<TData> = UnwrapNestedRefs<
-  ReturnType<typeof useQuery<TData | undefined, Error | null>>
+export type DataQuery<TData, TError = Error | null> = UnwrapNestedRefs<
+  ReturnType<typeof useQuery<TData | undefined, TError>>
 >;
 
 export type DataMutation<TData = unknown, TVariables = void, TContext = unknown> = UnwrapNestedRefs<

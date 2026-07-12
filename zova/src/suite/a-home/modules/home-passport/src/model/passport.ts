@@ -9,7 +9,7 @@ import type {
 
 import { combineQueries, isNil } from '@cabloy/utils';
 import { SchemaObject } from 'openapi3-ts/oas31';
-import { BeanModelBase, Model } from 'zova-module-a-model';
+import { $QueryEnsureFresh, $QueryGetFresh, BeanModelBase, Model } from 'zova-module-a-model';
 import {
   IPermissionHintGeneral,
   IResourceFormActionRowNameRecord,
@@ -104,13 +104,10 @@ export class ModelPassport extends BeanModelBase {
     pathMatch?: 'exact' | 'prefix';
     staleTime: number;
   }): string | undefined {
-    const query = this.getTempAuthToken(options);
-    if (!query) return;
-    if (this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime)) {
-      void query.suspense();
-      return;
-    }
-    return query.data;
+    return $QueryGetFresh(
+      () => this.getTempAuthToken(options),
+      query => this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime),
+    );
   }
 
   async ensureFreshTempAuthToken(options: {
@@ -118,14 +115,10 @@ export class ModelPassport extends BeanModelBase {
     pathMatch?: 'exact' | 'prefix';
     staleTime: number;
   }): Promise<string | undefined> {
-    const query = this.getTempAuthToken(options);
-    if (!query) return;
-    if (!this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime)) {
-      return query.data;
-    }
-    const result = await query.suspense();
-    if (result.error) throw result.error;
-    return result.data;
+    return await $QueryEnsureFresh(
+      () => this.getTempAuthToken(options),
+      query => this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime),
+    );
   }
 
   getOauthLoginUrl(module: string, providerName: string, clientName?: string): string {
