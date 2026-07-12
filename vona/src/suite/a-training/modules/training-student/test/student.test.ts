@@ -87,7 +87,7 @@ describe('student.test.ts', () => {
       assert.equal(record?.name, '__Record__');
       assert.equal(record?.subjectCount, 1);
       assert.equal(record?.totalScore, 88);
-      assert.equal(record?.averageScore, 88);
+      assert.equal(Number(record?.averageScore), 88);
       assert.equal(new Date(record?.trainingTime).toISOString(), trainingTime.toISOString());
       assert.equal(record?.trainingRecordSubjects?.length, 1);
       assert.equal(recordSubject?.name, '__Math__');
@@ -141,7 +141,7 @@ describe('student.test.ts', () => {
       assert.equal(updatedRecord?.name, '__RecordNew__');
       assert.equal(updatedRecord?.subjectCount, 2);
       assert.equal(updatedRecord?.totalScore, 183);
-      assert.equal(updatedRecord?.averageScore, 91.5);
+      assert.equal(Number(updatedRecord?.averageScore), 91.5);
       assert.equal(
         new Date(updatedRecord?.trainingTime).toISOString(),
         trainingTimeUpdate.toISOString(),

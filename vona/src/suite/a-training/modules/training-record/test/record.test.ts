@@ -92,7 +92,7 @@ describe('record.test.ts', () => {
         assert.equal(String(record.studentId), String(studentId));
         assert.equal(record.subjectCount, recordData.subjectCount);
         assert.equal(record.totalScore, recordData.totalScore);
-        assert.equal(record.averageScore, recordData.averageScore);
+        assert.equal(Number(record.averageScore), recordData.averageScore);
         assert.equal(new Date(record.trainingTime).toISOString(), trainingTime.toISOString());
         assert.equal(record.dossierFileIds?.length, 1);
         assert.equal(record.dossierFiles?.length, 1);
@@ -104,7 +104,12 @@ describe('record.test.ts', () => {
         assert.equal(record.trainingRecordSubjects?.length, 1);
         assert.equal(recordSubject?.name, '__Math__');
         assert.equal(recordSubject?.score, 95);
-        const downloadResponse = await fetch(recordDossierFile.downloadUrl);
+        const passportCode = await app.bean.passport.createTempAuthToken({
+          path: '/api/file/download',
+        });
+        const downloadUrl = new URL(recordDossierFile.downloadUrl);
+        downloadUrl.searchParams.set('x-vona-passport-code', passportCode);
+        const downloadResponse = await fetch(downloadUrl);
         assert.equal(downloadResponse.ok, true);
         assert.equal(await downloadResponse.text(), dossierTextAttendance.toString());
 
@@ -167,7 +172,7 @@ describe('record.test.ts', () => {
         assert.equal(record.name, dataUpdate.name);
         assert.equal(record.subjectCount, dataUpdate.subjectCount);
         assert.equal(record.totalScore, dataUpdate.totalScore);
-        assert.equal(record.averageScore, dataUpdate.averageScore);
+        assert.equal(Number(record.averageScore), dataUpdate.averageScore);
         assert.equal(new Date(record.trainingTime).toISOString(), trainingTimeUpdate.toISOString());
         assert.equal(record.dossierFileIds?.length, 2);
         assert.equal(record.dossierFiles?.length, 2);

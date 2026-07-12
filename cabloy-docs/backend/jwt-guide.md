@@ -180,6 +180,27 @@ const accessToken = await this.bean.jwt.createTempAuthToken({ userId: '1' });
 
 This is useful when a token should remain valid only briefly, for example for URL-bound handoff flows.
 
+### Design rule: bind temporary auth to one exact endpoint
+
+A temporary auth token can optionally bind to one exact API pathname. Keep that binding strict: do not introduce prefix or wildcard path matching merely because a browser-facing endpoint has a resource ID in its route path.
+
+When one temporary passport token must authorize several resource URLs in the same delivery capability, define a fixed endpoint path and move the resource identity to a validated query parameter:
+
+```text
+GET /api/file/download?fileId=123
+GET /api/image/delivery?imageId=456
+```
+
+The temporary passport token can then bind exactly to `/api/file/download` or `/api/image/delivery`. It authorizes the caller at the delivery-endpoint level, not at the individual-resource level.
+
+Resource authorization must remain separate and explicit. A signed delivery token should carry the file/image ID, and the controller must compare that signed ID with the validated `fileId` or `imageId` query value. For image transformations, continue taking authorization-relevant variant options from the signed payload rather than from mutable query input.
+
+This separation keeps the token primitive generic and auditable:
+
+- exact pathname binding scopes the temporary passport token to one endpoint
+- signed payload claims scope the delivery token to its resource, audience, and any protected representation options
+- query parameters carry request identity without expanding temporary-token path authority
+
 ## Verification
 
 JWT verification can happen directly through a client:

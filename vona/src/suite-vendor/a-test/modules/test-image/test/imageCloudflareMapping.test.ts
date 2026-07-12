@@ -189,7 +189,7 @@ describe('imageCloudflareMapping.test.ts', () => {
           finalizedDirectUrl.startsWith('https://imagedelivery.net/hash123/cf-direct-1/public'),
           true,
         );
-        assert.equal(finalizedDirectUrl.includes('sig='), false);
+        assert.equal(finalizedDirectUrl.includes('sig='), true);
 
         const uploadedByUrl = await app.bean.image.uploadUrl(
           'image-cloudflare:cloudflare',
