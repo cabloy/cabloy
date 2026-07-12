@@ -1,5 +1,34 @@
 # Changelog
 
+## 5.1.103
+
+### Features
+
+- Add a direct image upload flow for the frontend.
+- Add user-bound media delivery to restrict training media access to authorized users.
+- Unify file and image visibility semantics across delivery flows.
+- Move image signed URL policy configuration to scenes.
+- Add shared serializer transforms for file responses.
+- Align private delivery semantics for native images.
+
+### Bug Fixes
+
+- Defer image rendering to the client.
+- Refresh stale media authorization tokens.
+- Resolve media URL type errors.
+- Bind training media delivery to the requesting user.
+- Restore file upload type validation.
+
+### Improvements
+
+- Use exact media delivery paths.
+- Add fresh query helpers for retrieving current data.
+- Simplify media delivery options and resolver view naming.
+- Align the file upload lifecycle and simplify image upload handling.
+- Reduce exposed public fields and contract surface for files and images.
+- Clarify image transform key naming.
+- Remove native image direct-upload support.
+
 ## 5.1.102
 
 ### Features
