@@ -1,3 +1,5 @@
+import { $protocolKey } from 'zova';
+
 import type { IFilePreviewItem } from '../types/file.js';
 
 export function inferFileRelationName(fieldName?: string, relationName?: string) {
@@ -12,10 +14,26 @@ export function inferFileRelationName(fieldName?: string, relationName?: string)
   return undefined;
 }
 
-export function resolveFileDownloadUrl(url: string | undefined, baseURL?: string) {
-  if (!url || !url.startsWith('/api/')) return url;
-  if (!baseURL) return url;
-  return `${baseURL.replace(/\/$/, '')}${url}`;
+export function resolveFileDownloadUrl(
+  url: string | undefined,
+  baseURL?: string,
+  passportCode?: string,
+) {
+  if (!url) return url;
+  const resolvedUrl =
+    url.startsWith('/api/') && baseURL ? `${baseURL.replace(/\/$/, '')}${url}` : url;
+  if (!passportCode) return resolvedUrl;
+  const apiBaseUrl = new URL(baseURL ?? 'http://localhost', 'http://localhost');
+  const parsedUrl = new URL(resolvedUrl, apiBaseUrl);
+  if (parsedUrl.origin !== apiBaseUrl.origin || !parsedUrl.pathname.startsWith('/api/')) {
+    return resolvedUrl;
+  }
+  const passportCodeKey = $protocolKey('x-vona-passport-code');
+  if (!parsedUrl.searchParams.has(passportCodeKey)) {
+    parsedUrl.searchParams.set(passportCodeKey, passportCode);
+  }
+  if (!baseURL) return `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+  return parsedUrl.toString();
 }
 
 export function summarizeFileRelationPreviewValue(value: unknown): {

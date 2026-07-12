@@ -828,20 +828,17 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private async _openPreviewDialog(items: IImagePreviewItem[], currentIndex: number) {
-    const previewItems = await Promise.all(
-      items
-        .map((item, index) => ({ index, item }))
-        .filter(({ item }) => !!item.url)
-        .map(async ({ index, item }) => ({
-          index,
-          item: {
-            url: await this.$passport.resolveMediaPassportCodeUrl(
-              this._resolvePreviewUrl(item.url!),
-            ),
-            filename: item.filename,
-          },
-        })),
-    );
+    const passportCode = await this._getDeliveryPassportCode();
+    const previewItems = items
+      .map((item, index) => ({ index, item }))
+      .filter(({ item }) => !!item.url)
+      .map(({ index, item }) => ({
+        index,
+        item: {
+          url: this._resolvePreviewUrl(item.url!, passportCode),
+          filename: item.filename,
+        },
+      }));
     const resolvedItems = previewItems.filter(item => !!item.item.url);
     if (resolvedItems.length === 0) return;
     const initialIndex = resolvedItems.findIndex(({ index }) => index === currentIndex);
@@ -865,12 +862,22 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private async _loadPreviewUrl(element: HTMLImageElement, previewUrl: string) {
-    const url = await this.$passport.resolveMediaPassportCodeUrl(previewUrl);
+    const passportCode = await this._getDeliveryPassportCode();
+    const url = this._resolvePreviewUrl(previewUrl, passportCode);
     if (url) element.src = url;
   }
 
-  private _resolvePreviewUrl(url: string) {
-    return resolveImagePreviewUrl(url, this.sys.config.api.baseURL);
+  private _getDeliveryPassportCode() {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    return this.$passport.getTempAuthToken({
+      path: `${apiPrefix}/image/delivery`,
+      pathMatch: 'prefix',
+      staleTime: 30 * 1000,
+    });
+  }
+
+  private _resolvePreviewUrl(url: string, passportCode?: string) {
+    return resolveImagePreviewUrl(url, this.sys.config.api.baseURL, passportCode);
   }
 
   private _formatBytes(bytes: number) {

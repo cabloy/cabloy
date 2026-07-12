@@ -132,12 +132,11 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
   }
 
   private async _openPreviewDialog(preview: IImagePreviewSummary, previewTitle: string) {
-    const items = await Promise.all(
-      this._resolveDialogItems(preview).map(async item => ({
-        ...item,
-        url: await this.$passport.resolveMediaPassportCodeUrl(this._resolvePreviewUrl(item.url)),
-      })),
-    );
+    const passportCode = await this._getDeliveryPassportCode();
+    const items = this._resolveDialogItems(preview).map(item => ({
+      ...item,
+      url: this._resolvePreviewUrl(item.url, passportCode),
+    }));
     openImagePreviewDialog({
       appModal: this.$appModal,
       title: previewTitle,
@@ -202,11 +201,21 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
   }
 
   private async _loadPreviewUrl(element: HTMLImageElement, previewUrl: string) {
-    const url = await this.$passport.resolveMediaPassportCodeUrl(previewUrl);
+    const passportCode = await this._getDeliveryPassportCode();
+    const url = this._resolvePreviewUrl(previewUrl, passportCode);
     if (url) element.src = url;
   }
 
-  private _resolvePreviewUrl(url: string) {
-    return resolveImagePreviewUrl(url, this.sys.config.api.baseURL);
+  private _getDeliveryPassportCode() {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    return this.$passport.getTempAuthToken({
+      path: `${apiPrefix}/image/delivery`,
+      pathMatch: 'prefix',
+      staleTime: 30 * 1000,
+    });
+  }
+
+  private _resolvePreviewUrl(url: string, passportCode?: string) {
+    return resolveImagePreviewUrl(url, this.sys.config.api.baseURL, passportCode);
   }
 }

@@ -1,3 +1,5 @@
+import { $protocolKey } from 'zova';
+
 export interface IImagePreviewItemBase {
   url?: string;
   filename?: string;
@@ -19,10 +21,26 @@ export function inferImageRelationName(fieldName?: string, relationName?: string
   return undefined;
 }
 
-export function resolveImagePreviewUrl(url: string | undefined, baseURL?: string) {
-  if (!url || !url.startsWith('/api/')) return url;
-  if (!baseURL) return url;
-  return `${baseURL.replace(/\/$/, '')}${url}`;
+export function resolveImagePreviewUrl(
+  url: string | undefined,
+  baseURL?: string,
+  passportCode?: string,
+) {
+  if (!url) return url;
+  const resolvedUrl =
+    url.startsWith('/api/') && baseURL ? `${baseURL.replace(/\/$/, '')}${url}` : url;
+  if (!passportCode) return resolvedUrl;
+  const apiBaseUrl = new URL(baseURL ?? 'http://localhost', 'http://localhost');
+  const parsedUrl = new URL(resolvedUrl, apiBaseUrl);
+  if (parsedUrl.origin !== apiBaseUrl.origin || !parsedUrl.pathname.startsWith('/api/')) {
+    return resolvedUrl;
+  }
+  const passportCodeKey = $protocolKey('x-vona-passport-code');
+  if (!parsedUrl.searchParams.has(passportCodeKey)) {
+    parsedUrl.searchParams.set(passportCodeKey, passportCode);
+  }
+  if (!baseURL) return `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+  return parsedUrl.toString();
 }
 
 export function buildImagePreviewTitle(

@@ -544,11 +544,21 @@ export class ControllerFormFieldFile extends BeanControllerBase {
   private async _openDownloadUrl(event: MouseEvent, downloadUrl: string) {
     if (!process.env.CLIENT) return;
     event.preventDefault();
-    const url = await this.$passport.resolveMediaPassportCodeUrl(downloadUrl);
+    const passportCode = await this._getDownloadPassportCode();
+    const url = this._resolveDownloadUrl(downloadUrl, passportCode);
     if (url) globalThis.open?.(url, '_blank', 'noopener,noreferrer');
   }
 
-  private _resolveDownloadUrl(url: string) {
-    return resolveFileDownloadUrl(url, this.sys.config.api.baseURL);
+  private _getDownloadPassportCode() {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    return this.$passport.getTempAuthToken({
+      path: `${apiPrefix}/file/download`,
+      pathMatch: 'prefix',
+      staleTime: 30 * 1000,
+    });
+  }
+
+  private _resolveDownloadUrl(url: string, passportCode?: string) {
+    return resolveFileDownloadUrl(url, this.sys.config.api.baseURL, passportCode);
   }
 }

@@ -1567,10 +1567,6 @@ export interface components {
       id: string;
       token: string;
     };
-    'home-user.dto.tempAuthToken': {
-      token: string;
-      expiresIn: number;
-    };
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
       name: string;
@@ -3455,7 +3451,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['home-user.dto.tempAuthToken'];
+            data: string;
           };
         };
       };

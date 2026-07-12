@@ -196,7 +196,8 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
 
   private async _openDownloadUrl(downloadUrl: string) {
     if (!process.env.CLIENT) return;
-    const url = await this.$passport.resolveMediaPassportCodeUrl(downloadUrl);
+    const passportCode = await this._getDownloadPassportCode();
+    const url = this._resolveDownloadUrl(downloadUrl, passportCode);
     if (!url) return;
     const anchor = globalThis.document?.createElement('a');
     if (!anchor) {
@@ -209,7 +210,20 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
     anchor.click();
   }
 
-  private _resolveDownloadUrl(item: IFilePreviewItem): string | undefined {
-    return resolveFileDownloadUrl(item.downloadUrl, this.sys.config.api.baseURL);
+  private _getDownloadPassportCode() {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    return this.$passport.getTempAuthToken({
+      path: `${apiPrefix}/file/download`,
+      pathMatch: 'prefix',
+      staleTime: 30 * 1000,
+    });
+  }
+
+  private _resolveDownloadUrl(
+    item: IFilePreviewItem | string,
+    passportCode?: string,
+  ): string | undefined {
+    const url = typeof item === 'string' ? item : item.downloadUrl;
+    return resolveFileDownloadUrl(url, this.sys.config.api.baseURL, passportCode);
   }
 }

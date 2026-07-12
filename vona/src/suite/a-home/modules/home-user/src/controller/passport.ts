@@ -17,7 +17,6 @@ import { DtoLogin } from '../dto/login.ts';
 import { DtoPassport } from '../dto/passport.ts';
 import { DtoPassportJwt } from '../dto/passportJwt.ts';
 import { DtoRegister } from '../dto/register.ts';
-import { DtoTempAuthToken } from '../dto/tempAuthToken.ts';
 
 export interface IControllerOptionsPassport extends IDecoratorControllerOptions {}
 
@@ -128,18 +127,13 @@ export class ControllerPassport extends BeanBase {
   }
 
   @Web.post('createTempAuthToken')
-  @Api.body(v.object(DtoTempAuthToken))
+  @Api.body(z.string())
   async createTempAuthToken(
     @Arg.query('path', v.optional()) path?: string,
     @Arg.query('pathMatch', z.enum(['exact', 'prefix']).optional()) pathMatch?: TypeJwtPathMatch,
-  ): Promise<DtoTempAuthToken> {
+  ): Promise<string> {
     if (pathMatch === 'prefix') this._assertTempAuthTokenPrefixPath(path);
-    const expiresIn = this.app.scope('a-jwt').config.tempAuthToken.signOptions.expiresIn;
-    if (typeof expiresIn !== 'number') {
-      throw new TypeError('tempAuthToken.expiresIn must be configured in seconds');
-    }
-    const token = await this.bean.passport.createTempAuthToken({ path, pathMatch, expiresIn });
-    return { token, expiresIn };
+    return await this.bean.passport.createTempAuthToken({ path, pathMatch });
   }
 
   private _assertTempAuthTokenPrefixPath(path?: string) {
