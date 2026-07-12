@@ -84,7 +84,7 @@ export class ModelPassport extends BeanModelBase {
   getTempAuthToken(options: { path?: string; staleTime: number }) {
     if (!process.env.CLIENT || !this.isAuthenticated) return;
     return this.$useStateData({
-      queryKey: ['tempAuthToken', options.path, options.staleTime],
+      queryKey: ['tempAuthToken', options.path],
       queryFn: async () => {
         return await this.$api.homeUserPassport.createTempAuthToken(undefined, {
           query: { path: options.path },
