@@ -105,7 +105,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     item: IImagePreviewItem,
     previewUrl: string,
   ): VNode {
-    const passportCode = this._getDeliveryPassportCode()?.data;
+    const passportCode = this._getDeliveryPassportCode();
     const src = passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : '';
     const size = options.size ?? 40;
     const style = {
@@ -202,7 +202,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
 
   private _getDeliveryPassportCode() {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
-    return this.$passport.getTempAuthToken({
+    return this.$passport.getFreshTempAuthToken({
       path: `${apiPrefix}/image/delivery`,
       pathMatch: 'prefix',
       staleTime: 30 * 1000,
@@ -211,7 +211,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
 
   private async _ensureDeliveryPassportCode() {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
-    return await this.$passport.ensureTempAuthToken({
+    return await this.$passport.ensureFreshTempAuthToken({
       path: `${apiPrefix}/image/delivery`,
       pathMatch: 'prefix',
       staleTime: 30 * 1000,

@@ -99,16 +99,30 @@ export class ModelPassport extends BeanModelBase {
     });
   }
 
-  async ensureTempAuthToken(options: {
+  getFreshTempAuthToken(options: {
+    path?: string;
+    pathMatch?: 'exact' | 'prefix';
+    staleTime: number;
+  }): string | undefined {
+    const query = this.getTempAuthToken(options);
+    if (!query) return;
+    if (this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime)) {
+      void query.suspense();
+      return;
+    }
+    return query.data;
+  }
+
+  async ensureFreshTempAuthToken(options: {
     path?: string;
     pathMatch?: 'exact' | 'prefix';
     staleTime: number;
   }): Promise<string | undefined> {
     const query = this.getTempAuthToken(options);
     if (!query) return;
-    const expired =
-      query.data === undefined || query.dataUpdatedAt + options.staleTime <= Date.now();
-    if (!expired) return query.data;
+    if (!this._isTempAuthTokenExpired(query.data, query.dataUpdatedAt, options.staleTime)) {
+      return query.data;
+    }
     const result = await query.suspense();
     if (result.error) throw result.error;
     return result.data;
@@ -191,6 +205,14 @@ export class ModelPassport extends BeanModelBase {
       this._setLocaleTz();
     }
     return this.passport;
+  }
+
+  private _isTempAuthTokenExpired(
+    token: string | undefined,
+    dataUpdatedAt: number,
+    staleTime: number,
+  ) {
+    return token === undefined || dataUpdatedAt + staleTime <= Date.now();
   }
 
   private _setLocaleTz() {

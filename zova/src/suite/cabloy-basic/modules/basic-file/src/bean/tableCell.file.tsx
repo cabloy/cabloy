@@ -212,7 +212,7 @@ export class TableCellFile extends BeanBase implements ITableCellRender {
 
   private async _getDownloadPassportCode() {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
-    return await this.$passport.ensureTempAuthToken({
+    return await this.$passport.ensureFreshTempAuthToken({
       path: `${apiPrefix}/file/download`,
       pathMatch: 'prefix',
       staleTime: 30 * 1000,
