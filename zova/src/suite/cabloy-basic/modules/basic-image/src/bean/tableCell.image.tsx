@@ -7,7 +7,7 @@ import type {
 } from 'zova-module-a-table';
 
 import { classes } from 'typestyle';
-import { BeanBase } from 'zova';
+import { BeanBase, ClientOnly } from 'zova';
 import { TableCell } from 'zova-module-a-table';
 
 import type { IImagePreviewItem } from '../lib/index.js';
@@ -106,7 +106,7 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     previewUrl: string,
   ): VNode {
     const passportCode = this._getDeliveryPassportCode();
-    const src = passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : '';
+    const src = passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : undefined;
     const size = options.size ?? 40;
     const style = {
       ...(options.style as any),
@@ -121,12 +121,16 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
         )}
         style={style}
       >
-        <img
-          class="h-full w-full object-cover"
-          style={{ objectFit: options.fit ?? 'cover' }}
-          alt={item.filename ?? 'image'}
-          src={src}
-        />
+        <ClientOnly>
+          {src && (
+            <img
+              class="h-full w-full object-cover"
+              style={{ objectFit: options.fit ?? 'cover' }}
+              alt={item.filename ?? 'image'}
+              src={src}
+            />
+          )}
+        </ClientOnly>
       </div>
     );
   }

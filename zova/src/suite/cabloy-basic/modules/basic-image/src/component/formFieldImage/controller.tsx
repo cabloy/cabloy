@@ -240,13 +240,15 @@ export class ControllerFormFieldImage extends BeanControllerBase {
         class="rounded-box border border-base-300 bg-base-100 shadow-sm"
       >
         <div class="aspect-square overflow-hidden rounded-t-box bg-base-200">
-          {src && (
-            <img
-              class="h-full w-full object-cover"
-              alt={item.filename ?? `image-${index + 1}`}
-              src={src}
-            />
-          )}
+          <ClientOnly>
+            {src && (
+              <img
+                class="h-full w-full object-cover"
+                alt={item.filename ?? `image-${index + 1}`}
+                src={src}
+              />
+            )}
+          </ClientOnly>
         </div>
         <div class="space-y-2 p-3">
           <div class="min-h-10 text-sm text-base-content/70">
