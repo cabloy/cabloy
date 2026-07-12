@@ -1,11 +1,20 @@
 import type { IModule } from '@cabloy/module-info';
-import type { BeanBase, BeanContainer, IMonkeyBeanInit, IMonkeyModule } from 'zova';
+import type {
+  BeanBase,
+  BeanContainer,
+  IMonkeyAppInitialize,
+  IMonkeyBeanInit,
+  IMonkeyModule,
+} from 'zova';
 
 import { BeanSimple } from 'zova';
 
 import type { ModelPassport } from './model/passport.js';
 
-export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit {
+export class Monkey
+  extends BeanSimple
+  implements IMonkeyAppInitialize, IMonkeyModule, IMonkeyBeanInit
+{
   private _moduleSelf: IModule;
   private $$modelPassport: ModelPassport;
 
@@ -14,11 +23,16 @@ export class Monkey extends BeanSimple implements IMonkeyModule, IMonkeyBeanInit
     this._moduleSelf = moduleSelf;
   }
 
-  async getModelPassport() {
+  private async getModelPassport() {
     if (!this.$$modelPassport) {
       this.$$modelPassport = await this.bean._getBean('home-passport.model.passport', true);
     }
     return this.$$modelPassport;
+  }
+
+  async appInitialize() {
+    const modelPassport = await this.getModelPassport();
+    await modelPassport.appInitialize();
   }
 
   async moduleLoading(_module: IModule) {}

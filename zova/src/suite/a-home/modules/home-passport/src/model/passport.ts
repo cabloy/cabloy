@@ -28,7 +28,9 @@ export class ModelPassport extends BeanModelBase {
   expireTime?: number;
   schemaLogin?: SchemaObject;
 
-  protected async __init__() {
+  protected async __init__() {}
+
+  async appInitialize() {
     this.schemaLogin = this.$computed(() => {
       return this.apiSchemasLogin.requestBody;
     });

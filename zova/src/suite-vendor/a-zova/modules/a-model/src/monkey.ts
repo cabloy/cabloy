@@ -1,5 +1,11 @@
 import type { IModule } from '@cabloy/module-info';
-import type { BeanBase, BeanContainer, IMonkeyAppInitialize, IMonkeyBeanInit } from 'zova';
+import type {
+  BeanBase,
+  BeanContainer,
+  IMonkeyAppInitialize,
+  IMonkeyBeanInit,
+  IMonkeyModule,
+} from 'zova';
 
 import { useQueryClient } from '@tanstack/vue-query';
 import { markRaw } from 'vue';
@@ -7,7 +13,10 @@ import { BeanSimple } from 'zova';
 
 import { ServiceStorage } from './service/storage.js';
 
-export class Monkey extends BeanSimple implements IMonkeyAppInitialize, IMonkeyBeanInit {
+export class Monkey
+  extends BeanSimple
+  implements IMonkeyAppInitialize, IMonkeyModule, IMonkeyBeanInit
+{
   private _moduleSelf: IModule;
   private _storage: ServiceStorage;
 
