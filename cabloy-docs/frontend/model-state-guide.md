@@ -112,6 +112,18 @@ findAll() {
 }
 ```
 
+### Query readiness utilities: loaded versus fresh
+
+These utilities consume an existing model-owned `$useStateData(...)` query. They do not create another state category or a second fetch lifecycle:
+
+- `$QueryEnsureLoaded(...)` is an availability utility. It waits only when the query has no `data`, then returns the query wrapper.
+- `$QueryGetFresh(...)` is a non-blocking freshness read. It returns data only when a model-supplied `isStale(query)` predicate accepts the cached value; otherwise it starts refresh work and returns `undefined` for the current render.
+- `$QueryEnsureFresh(...)` is an awaited freshness gate. It waits for stale data to refresh, returns the result, and propagates query errors.
+
+The freshness predicate belongs to the domain owner. For example, `ModelPassport` considers a temporary token stale when it is absent or when its `dataUpdatedAt` falls outside the model's short reuse window.
+
+For render-versus-interaction placement guidance, see [`$useStateData` Best Practices](/frontend/use-state-data-best-practices).
+
 ## 2. `$useMutationData(...)`
 
 Use this for model-owned mutation state.
