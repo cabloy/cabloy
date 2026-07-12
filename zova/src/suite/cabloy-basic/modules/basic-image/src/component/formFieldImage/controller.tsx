@@ -232,23 +232,20 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   ) {
     const previewUrl = item.url ? this._resolvePreviewUrl(item.url) : undefined;
     const passportCode = this._getDeliveryPassportCode();
-    const src = previewUrl && passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : '';
+    const src =
+      previewUrl && passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : undefined;
     return (
       <div
         key={`${item.id}-${index}`}
         class="rounded-box border border-base-300 bg-base-100 shadow-sm"
       >
         <div class="aspect-square overflow-hidden rounded-t-box bg-base-200">
-          {previewUrl ? (
+          {src && (
             <img
               class="h-full w-full object-cover"
               alt={item.filename ?? `image-${index + 1}`}
               src={src}
             />
-          ) : (
-            <div class="flex h-full w-full items-center justify-center text-sm text-base-content/50">
-              #{String(item.id)}
-            </div>
           )}
         </div>
         <div class="space-y-2 p-3">
