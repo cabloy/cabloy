@@ -111,19 +111,19 @@ export class ControllerPassport extends BeanBase {
     return this._combineDtoPassportJwt(jwt);
   }
 
+  @Web.post('refreshAuthToken')
+  @Passport.public()
+  @Api.body(v.object(DtoJwtToken))
+  async refreshAuthToken(@Arg.body('refreshToken') refreshToken: string): Promise<DtoJwtToken> {
+    return await this.bean.passport.refreshAuthToken(refreshToken);
+  }
+
   @Web.post('createPassportJwtFromOauthCode')
   @Passport.public()
   @Api.body(v.object(DtoPassportJwt))
   async createPassportJwtFromOauthCode(@Arg.body('code') code: string): Promise<DtoPassportJwt> {
     const jwt = await this.bean.passport.createAuthTokenFromOauthCode(code);
     return this._combineDtoPassportJwt(jwt);
-  }
-
-  @Web.post('refreshAuthToken')
-  @Passport.public()
-  @Api.body(v.object(DtoJwtToken))
-  async refreshAuthToken(@Arg.body('refreshToken') refreshToken: string): Promise<DtoJwtToken> {
-    return await this.bean.passport.refreshAuthToken(refreshToken);
   }
 
   @Web.post('createTempAuthToken')
