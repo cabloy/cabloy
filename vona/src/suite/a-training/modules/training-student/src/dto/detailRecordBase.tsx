@@ -46,6 +46,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
     v.serializerTransform('a-image:resolveViews', {
       fieldName: 'sceneImageIds',
       imageScene: 'training-record:sceneImage',
+      deliveryOptions: { audience: true },
     }),
     v.array($Class.partial(DtoImageView)),
   )
@@ -58,6 +59,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
     v.serializerTransform('a-file:resolveViews', {
       fieldName: 'dossierFileIds',
       fileScene: 'training-record:dossierFile',
+      deliveryOptions: { audience: true },
     }),
     v.array($Class.partial(DtoFileView)),
   )

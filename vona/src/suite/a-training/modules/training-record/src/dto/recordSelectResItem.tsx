@@ -33,6 +33,7 @@ export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord) {
     v.serializerTransform('a-image:resolveViews', {
       fieldName: 'sceneImageIds',
       imageScene: 'training-record:sceneImage',
+      deliveryOptions: { audience: true },
     }),
     v.array(DtoImageView),
   )
@@ -45,6 +46,7 @@ export class DtoRecordSelectResItem extends $Dto.get(() => ModelRecord) {
     v.serializerTransform('a-file:resolveViews', {
       fieldName: 'dossierFileIds',
       fileScene: 'training-record:dossierFile',
+      deliveryOptions: { audience: true },
     }),
     v.array(DtoFileView),
   )
