@@ -63,7 +63,7 @@ export type QueryMetaPersisterCookieType =
   | 'string'
   | undefined;
 
-export type StateType = 'db' | 'local' | 'cookie' | 'mem' | 'data';
+export type StateType = 'localAsync' | 'local' | 'cookie' | 'mem' | 'data';
 
 export type StaleTime = number;
 export type StaleTimeFunction<

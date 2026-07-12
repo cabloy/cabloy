@@ -23,7 +23,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    stateType: 'db' | 'local' | 'cookie' | 'mem',
+    stateType: 'localAsync' | 'local' | 'cookie' | 'mem',
     options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
   ): TData;
@@ -33,7 +33,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    stateType: 'db' | 'local' | 'cookie' | 'mem',
+    stateType: 'localAsync' | 'local' | 'cookie' | 'mem',
     options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     queryClient?: QueryClient,
   ): TData;
@@ -43,7 +43,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    stateType: 'db' | 'local' | 'cookie' | 'mem',
+    stateType: 'localAsync' | 'local' | 'cookie' | 'mem',
     options: UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     queryClient?: QueryClient,
   ): TData;
@@ -79,7 +79,7 @@ export class BeanModelUseStateGeneral extends BeanModelUseState {
   ): UnwrapNestedRefs<UseQueryReturnType<TData, TError>>;
   $useState(stateType: StateType, options, queryClient) {
     switch (stateType) {
-      case 'db':
+      case 'localAsync':
         return this.$useStateLocalAsync(options, queryClient);
       case 'local':
         return this.$useStateLocal(options, queryClient);
