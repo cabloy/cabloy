@@ -15,7 +15,7 @@ export function $QueryGetFresh<TData = any, TError = Error | null>(
   const query = fn();
   if (!query) return;
   if (!isStale(query)) return query.data;
-  void query.suspense().catch(() => undefined);
+  void query.suspense();
 }
 
 export async function $QueryEnsureFresh<TData = any, TError = Error | null>(
