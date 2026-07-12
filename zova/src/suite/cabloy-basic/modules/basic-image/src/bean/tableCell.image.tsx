@@ -105,6 +105,8 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     item: IImagePreviewItem,
     previewUrl: string,
   ): VNode {
+    const passportCode = this._getDeliveryPassportCode()?.data;
+    const src = passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : '';
     const size = options.size ?? 40;
     const style = {
       ...(options.style as any),
@@ -123,16 +125,14 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
           class="h-full w-full object-cover"
           style={{ objectFit: options.fit ?? 'cover' }}
           alt={item.filename ?? 'image'}
-          ref={element => {
-            if (element) this._loadPreviewUrl(element as HTMLImageElement, previewUrl);
-          }}
+          src={src}
         />
       </div>
     );
   }
 
   private async _openPreviewDialog(preview: IImagePreviewSummary, previewTitle: string) {
-    const passportCode = await this._getDeliveryPassportCode();
+    const passportCode = await this._ensureDeliveryPassportCode();
     const items = this._resolveDialogItems(preview).map(item => ({
       ...item,
       url: this._resolvePreviewUrl(item.url, passportCode),
@@ -200,15 +200,18 @@ export class TableCellImage extends BeanBase implements ITableCellRender {
     return collectImageUrlPreviewItems(preview.source.value);
   }
 
-  private async _loadPreviewUrl(element: HTMLImageElement, previewUrl: string) {
-    const passportCode = await this._getDeliveryPassportCode();
-    const url = this._resolvePreviewUrl(previewUrl, passportCode);
-    if (url) element.src = url;
-  }
-
   private _getDeliveryPassportCode() {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
     return this.$passport.getTempAuthToken({
+      path: `${apiPrefix}/image/delivery`,
+      pathMatch: 'prefix',
+      staleTime: 30 * 1000,
+    });
+  }
+
+  private async _ensureDeliveryPassportCode() {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    return await this.$passport.ensureTempAuthToken({
       path: `${apiPrefix}/image/delivery`,
       pathMatch: 'prefix',
       staleTime: 30 * 1000,

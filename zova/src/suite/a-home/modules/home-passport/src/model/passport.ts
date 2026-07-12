@@ -81,13 +81,9 @@ export class ModelPassport extends BeanModelBase {
     });
   }
 
-  async getTempAuthToken(options: {
-    path?: string;
-    pathMatch?: 'exact' | 'prefix';
-    staleTime: number;
-  }): Promise<string | undefined> {
+  getTempAuthToken(options: { path?: string; pathMatch?: 'exact' | 'prefix'; staleTime: number }) {
     if (!process.env.CLIENT || !this.isAuthenticated) return;
-    const query = this.$useStateData({
+    return this.$useStateData({
       queryKey: ['tempAuthToken', options.path, options.pathMatch, options.staleTime],
       queryFn: async () => {
         return await this.$api.homeUserPassport.createTempAuthToken(undefined, {
@@ -95,17 +91,25 @@ export class ModelPassport extends BeanModelBase {
         });
       },
       staleTime: options.staleTime,
-      enabled: false,
       meta: {
         disableSuspenseOnInit: true,
         persister: false,
         ssr: { dehydrate: false },
       },
     });
-    if (query.data !== undefined && query.dataUpdatedAt + options.staleTime > Date.now()) {
-      return query.data;
-    }
-    const result = await query.refetch();
+  }
+
+  async ensureTempAuthToken(options: {
+    path?: string;
+    pathMatch?: 'exact' | 'prefix';
+    staleTime: number;
+  }): Promise<string | undefined> {
+    const query = this.getTempAuthToken(options);
+    if (!query) return;
+    const expired =
+      query.data === undefined || query.dataUpdatedAt + options.staleTime <= Date.now();
+    if (!expired) return query.data;
+    const result = await query.suspense();
     if (result.error) throw result.error;
     return result.data;
   }

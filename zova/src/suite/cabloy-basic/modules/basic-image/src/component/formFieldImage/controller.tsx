@@ -231,6 +231,8 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     disableNotifyChanged?: boolean,
   ) {
     const previewUrl = item.url ? this._resolvePreviewUrl(item.url) : undefined;
+    const passportCode = this._getDeliveryPassportCode()?.data;
+    const src = previewUrl && passportCode ? this._resolvePreviewUrl(previewUrl, passportCode) : '';
     return (
       <div
         key={`${item.id}-${index}`}
@@ -241,9 +243,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
             <img
               class="h-full w-full object-cover"
               alt={item.filename ?? `image-${index + 1}`}
-              ref={element => {
-                if (element) this._loadPreviewUrl(element as HTMLImageElement, previewUrl);
-              }}
+              src={src}
             />
           ) : (
             <div class="flex h-full w-full items-center justify-center text-sm text-base-content/50">
@@ -828,7 +828,7 @@ export class ControllerFormFieldImage extends BeanControllerBase {
   }
 
   private async _openPreviewDialog(items: IImagePreviewItem[], currentIndex: number) {
-    const passportCode = await this._getDeliveryPassportCode();
+    const passportCode = await this._ensureDeliveryPassportCode();
     const previewItems = items
       .map((item, index) => ({ index, item }))
       .filter(({ item }) => !!item.url)
@@ -861,15 +861,18 @@ export class ControllerFormFieldImage extends BeanControllerBase {
     );
   }
 
-  private async _loadPreviewUrl(element: HTMLImageElement, previewUrl: string) {
-    const passportCode = await this._getDeliveryPassportCode();
-    const url = this._resolvePreviewUrl(previewUrl, passportCode);
-    if (url) element.src = url;
-  }
-
   private _getDeliveryPassportCode() {
     const apiPrefix = this.sys.config.api.prefix ?? '/api';
     return this.$passport.getTempAuthToken({
+      path: `${apiPrefix}/image/delivery`,
+      pathMatch: 'prefix',
+      staleTime: 30 * 1000,
+    });
+  }
+
+  private async _ensureDeliveryPassportCode() {
+    const apiPrefix = this.sys.config.api.prefix ?? '/api';
+    return await this.$passport.ensureTempAuthToken({
       path: `${apiPrefix}/image/delivery`,
       pathMatch: 'prefix',
       staleTime: 30 * 1000,
