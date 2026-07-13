@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.1.104
+
+### Features
+
+- Add update capabilities.
+
+### Bug Fixes
+
+- Initialize the passport model during application startup.
+
+### Improvements
+
+- Rename the generic async state type.
+- Rename async local state APIs.
+- Document the passport SSR state bridge.
+- Clarify memory state SSR transfer behavior.
+- Clarify how to select model state helpers.
+
 ## 5.1.103
 
 ### Features
