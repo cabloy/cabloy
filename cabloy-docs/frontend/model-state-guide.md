@@ -214,7 +214,30 @@ This transfer has limits:
 - it does not make the value survive a later browser reload without a new SSR handoff
 - it does not make an empty or unsuccessful cache entry transfer automatically
 
-The router-tabs Model uses memory state for current navigation keys and for tabs when tab caching is disabled. The passport Model uses memory state on the server where browser `localStorage` is unavailable. The page-data Model uses memory slots keyed by page path. Read [SSR Init Data](/frontend/ssr-init-data) for the page-side flow, or [A-Model Under the Hood](/frontend/a-model-under-the-hood) for the Query Cache and dehydration mechanics.
+The router-tabs Model uses memory state for current navigation keys and for tabs when tab caching is disabled. The page-data Model uses memory slots keyed by page path. Read [SSR Init Data](/frontend/ssr-init-data) for the page-side flow, or [A-Model Under the Hood](/frontend/a-model-under-the-hood) for the Query Cache and dehydration mechanics.
+
+### SSR/CSR bridge: `ModelPassport`
+
+`ModelPassport` shows that the state helper selected on the server and the one selected on the client do not have to be the same. Its application initialization creates the same logical state differently by environment:
+
+```typescript
+this.passport = process.env.CLIENT
+  ? this.$useStateLocal({ queryKey: ['passport'] })
+  : this.$useStateMem({ queryKey: ['passport'] });
+```
+
+On the SSR server, authenticated work can assign the current passport to the memory-backed Query Cache entry. If that entry is successful and eligible, it is dehydrated with the server QueryClient. During client SSR pre-hydration, the snapshot restores the entry before the client Model consumes it.
+
+The client then creates a `$useStateLocal(...)` wrapper for the same effective key. Its read order is Query Cache first, then `localStorage`, then `meta.defaultData`. The hydrated server passport therefore wins on the initial client read; synchronous local-storage restoration is a fallback only when the transferred cache entry is absent.
+
+This gives authentication state two complementary properties:
+
+- SSR uses the request-confirmed passport to keep the initial HTML and client hydration consistent.
+- CSR-only entry and later browser sessions can restore the client-local passport value from `localStorage`.
+
+The server `$useStateMem(...)` entry is the entry that is dehydrated. The client `$useStateLocal(...)` call is a new client-side wrapper that reuses hydrated cache because its effective key matches. Matching requires the same Model, the same selector when selector mode is enabled, and the same logical `queryKey`; the short logical key alone is not global identity.
+
+Reading the hydrated value does not save it back to `localStorage`. A later assignment through the client local-state wrapper updates Query Cache and writes the local-storage record. This is an initial SSR cache handoff plus client persistence fallback, not automatic persistence of the SSR snapshot.
 
 ## 4. `$useStateLocal(...)`
 
@@ -336,7 +359,7 @@ Current-source behaviors to remember:
 - `$useStateMem(...)` has no browser persister but can participate in that initial SSR handoff unless excluded by metadata
 - mutations are not dehydrated
 - `$useStateLocalAsync(...)` explicitly opts out of dehydration
-- sync local and cookie persister-backed state is excluded by the default dehydration policy
+- server-side sync local and cookie persister-backed Query Cache entries are excluded by the default dehydration policy; this does not prevent a client `$useStateLocal(...)` or `$useStateCookie(...)` wrapper from reusing a hydrated entry that the server created with a different eligible helper
 - server cannot use local-storage or async-local persistence backends; cookie state is special because cookie access can still exist through the app cookie surface
 
 Practical implication:

@@ -40,7 +40,9 @@ The initial SSR handoff reuses model Query Cache data, not only `$useStateData(.
 
 Client reuse requires the model call to resolve to the same effective query key: Zova prefixes the logical key with Model identity and, for selector-enabled models, selector identity. State marked with `meta.ssr.dehydrate: false` is excluded. This handoff does not make memory state durable across a later browser reload, and it does not guarantee that every client query avoids fetching.
 
-For helper selection, read [Model State Guide](/frontend/model-state-guide). For the dehydration filter and QueryClient lifecycle, read [A-Model Under the Hood](/frontend/a-model-under-the-hood).
+`ModelPassport` is a concrete SSR/CSR bridge: the server creates `passport` with `$useStateMem({ queryKey: ['passport'] })`, while the client creates `$useStateLocal({ queryKey: ['passport'] })`. The successful eligible server memory entry is what SSR transfers. Because the client local-state wrapper reads Query Cache before `localStorage`, the hydrated passport supplies the initial client value when the effective key matches. If no transferred entry exists, `$useStateLocal(...)` can instead restore its browser-local value. Hydration alone does not save the transferred value to `localStorage`; later client-side assignments do.
+
+For helper selection and the complete passport flow, read [Model State Guide](/frontend/model-state-guide). For the dehydration filter and QueryClient lifecycle, read [A-Model Under the Hood](/frontend/a-model-under-the-hood).
 
 ## Implementation checks for SSR data-loading changes
 
