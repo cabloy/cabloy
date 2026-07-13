@@ -56,6 +56,8 @@ Those concerns should live elsewhere.
 - [ADR 0002: Guard-Based Default API Permission Projection](./decisions/0002-guard-permission-projection.md)
 - [ADR 0003: Stop SSR Leak Fixes at the Runtime-Core Boundary](./decisions/0003-stop-ssr-leak-fixes-at-runtime-core-boundary.md)
 - [ADR 0004: Preserve Fullstack SSR and Bidirectional Type-Flow Principles](./decisions/0004-fullstack-ssr-and-bidirectional-type-flow.md)
+- [ADR 0005: Current-Passport Guard Evaluation for Default API Permissions](./decisions/0005-current-passport-guard-permission-evaluation.md)
+- [ADR 0006: SSR Site Access and Role Model](./decisions/0006-ssr-site-access-and-role-model.md)
 
 ### Architecture notes
 
