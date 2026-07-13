@@ -160,7 +160,18 @@ This router guard is the authoritative page-navigation gate for SSR document ren
 - `apiType: 'dev'` proxy behavior is not protected by a frontend router guard; and
 - Vona API/resource guards remain the authoritative server-side protection for data and actions.
 
-The current Web flavor may disable server-cookie passport resolution during SSR. In that mode, route admission that requires authentication is completed after browser hydration unless that flavor deliberately enables the required server passport state. This is an SSR rendering behavior choice, not a reason to trust client-provided Site identity.
+### Router-guard behavior with `SSR_COOKIE`
+
+The same router-guard policy operates differently depending on whether the active Zova flavor enables server-cookie passport resolution:
+
+| Flavor strategy | Router-guard timing for `requiresAuth` routes | SSR output |
+| --- | --- | --- |
+| `SSR_COOKIE=true` | The server can call `ensurePassport()`, evaluate `SITE_ID`, and complete login or `403` decisions during SSR initial navigation. | The route may render personalized, authenticated content after Site admission. |
+| `SSR_COOKIE=false` | The server must render without a cookie-derived passport. The browser completes `ensurePassport()` and Site-policy evaluation after hydration. | SSR must remain anonymous and must not contain private user data; authenticated data loads after browser admission. |
+
+`SSR_COOKIE=false` does not disable SSR. It selects anonymous SSR. A protected Web route can still render a generic shell or loading state on the server and then obtain Passport state and private data in the browser. The browser-side `SITE_ID` check is a route-experience boundary; Vona API/resource guards remain the non-bypassable authorization boundary for private data and mutations.
+
+A flavor must not assume that calling `ensurePassport()` guarantees a complete SSR passport. The router guard must retain the existing server-cookie condition and use the same route policy after hydration. `SITE_ID` remains runtime context only and is never accepted by Vona as client-provided authorization evidence.
 
 ### 8. Keep API permissions and route admission separate
 
