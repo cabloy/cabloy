@@ -52,6 +52,7 @@ declare module 'zova' {
     $gotoPage(pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoHome(options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoLogin(returnTo?: string, cause?: string): TypeGotoPageResult;
+    $gotoAccessDenied(): TypeGotoPageResult;
     $gotoReturnTo(returnTo?: string): TypeGotoPageResult;
     $getReturnTo(returnTo?: string): string;
     $getCurrentPagePath(): string | undefined;

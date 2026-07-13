@@ -11,8 +11,8 @@ import {
   ApiApiHomeUserPassportloginOauthPath,
   ApiApiHomeUserPassportassociatePath,
   ApiApiHomeUserPassportmigratePath,
-  ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
   ApiApiHomeUserPassportrefreshAuthTokenPath,
+  ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
   ApiApiHomeUserPassportcreateTempAuthTokenPath,
 } from '../api/homeUserPassport.js';
 
@@ -46,16 +46,16 @@ export class ApiSchemaHomeUserPassport extends BeanBase {
     return this.$sdk.createApiSchemas(ApiApiHomeUserPassportmigratePath, 'get', options);
   }
 
+  refreshAuthToken(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiHomeUserPassportrefreshAuthTokenPath, 'post', options);
+  }
+
   createPassportJwtFromOauthCode(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(
       ApiApiHomeUserPassportcreatePassportJwtFromOauthCodePath,
       'post',
       options,
     );
-  }
-
-  refreshAuthToken(options?: IApiSchemaOptions) {
-    return this.$sdk.createApiSchemas(ApiApiHomeUserPassportrefreshAuthTokenPath, 'post', options);
   }
 
   createTempAuthToken(options?: IApiSchemaOptions) {

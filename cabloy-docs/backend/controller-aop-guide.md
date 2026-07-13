@@ -93,8 +93,8 @@ Typical jobs include:
 ```typescript
 @Passport.public()
 @Passport.activated(false)
-@Passport.roleName({ name: 'admin' })
-@Passport.admin()
+@Passport.roleName({ name: 'systemAdmin' })
+@Passport.systemAdmin()
 ```
 
 These shorthands still map back to the generic aspect model.

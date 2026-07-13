@@ -1,5 +1,3 @@
-import type { EntityRole } from 'vona-module-home-user';
-
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
@@ -10,8 +8,8 @@ import type { EntityUser } from '../entity/user.ts';
 export interface ITestData {
   userTom: EntityUser;
   userJimmy: EntityUser;
-  roleFamily: EntityRole;
-  roleFriend: EntityRole;
+  roleFamily: import('../entity/role.ts').EntityRole;
+  roleFriend: import('../entity/role.ts').EntityRole;
   postApple: EntityPost;
   postPear: EntityPost;
   postContentApple: EntityPostContent;

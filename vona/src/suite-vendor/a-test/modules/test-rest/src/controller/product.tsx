@@ -25,7 +25,7 @@ export interface IControllerOptionsProduct extends IDecoratorControllerOptions {
 export class ControllerProduct extends BeanBase {
   @Web.post()
   @Api.body(v.tableIdentity())
-  @Passport.roleName({ name: 'admin' })
+  @Passport.roleName({ name: 'systemAdmin' })
   async create(@Arg.body() product: DtoProductCreate): Promise<TableIdentity> {
     return (await this.scope.service.product.create(product)).id;
   }

@@ -68,10 +68,8 @@ export class ServiceSsrHandler extends BeanBase {
   }
 
   private _createMissingBundleMessage() {
-    const diagnostics = this._siteOptions.diagnostics;
-    const siteName = diagnostics?.siteName ?? String(this._siteOptions.publicPath || 'unknown');
-    const buildCommand = diagnostics?.buildCommand;
+    const buildCommand = this._siteOptions.diagnostics?.buildCommand;
     const commandHint = buildCommand ? ` Run "${buildCommand}" at the repository root.` : '';
-    return `Missing SSR bundle for site ${siteName}: ${this._siteAssetDir}.${commandHint}`;
+    return `Missing SSR bundle for site ${this._siteOptions.siteId}: ${this._siteAssetDir}.${commandHint}`;
   }
 }

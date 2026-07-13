@@ -17,10 +17,11 @@ export class EventListenerActivate
     next: NextEvent<TypeEventData, TypeEventResult>,
   ): Promise<TypeEventResult> {
     const user = data as IUser;
-    if (user.name === 'admin' && !this.scope.config.disableRoleAdmin) {
-      // role: admin
-      const roleAdmin = await this.scope.model.role.get({ name: 'admin' });
-      await this.bean.role.addUserId(roleAdmin!.id, user.id);
+    const roleRegisteredUser = await this.scope.model.role.get({ name: 'registeredUser' });
+    await this.bean.role.addUserId(roleRegisteredUser!.id, user.id);
+    if (user.name === 'admin' && !this.scope.config.disableBootstrapSystemAdmin) {
+      const roleSystemAdmin = await this.scope.model.role.get({ name: 'systemAdmin' });
+      await this.bean.role.addUserId(roleSystemAdmin!.id, user.id);
     }
     // next
     return next();

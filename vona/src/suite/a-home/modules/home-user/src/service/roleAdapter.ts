@@ -20,10 +20,16 @@ export class ServiceRoleAdapter extends BeanBase implements IRoleAdapter {
   }
 
   async addUserId(id: TableIdentity, userId: TableIdentity): Promise<TableIdentity> {
-    const res = await this.scope.model.roleUser.insert({
-      userId,
-      roleId: id,
-    });
-    return res.id;
+    let roleUser = await this.scope.model.roleUser.get({ userId, roleId: id });
+    if (!roleUser) {
+      try {
+        roleUser = await this.scope.model.roleUser.insert({ userId, roleId: id });
+      } catch (err: any) {
+        if (!['ER_DUP_ENTRY', 'SQLITE_CONSTRAINT_UNIQUE', '23505'].includes(err.code)) throw err;
+        roleUser = await this.scope.model.roleUser.get({ userId, roleId: id });
+        if (!roleUser) throw err;
+      }
+    }
+    return roleUser.id;
   }
 }

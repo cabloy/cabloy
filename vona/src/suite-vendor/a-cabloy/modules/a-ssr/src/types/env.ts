@@ -4,6 +4,7 @@ export interface ZovaConfigEnv {
   META_FLAVOR: ZovaMetaFlavor;
   META_MODE: ZovaMetaMode;
   META_APP_MODE: ZovaMetaAppMode;
+  SITE_ID: string;
   APP_ROUTER_MODE: 'hash' | 'history' | 'abstract' | undefined;
   APP_ROUTER_BASE: string | undefined;
   APP_PUBLIC_PATH: string | undefined;

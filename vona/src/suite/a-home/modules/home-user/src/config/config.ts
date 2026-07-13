@@ -5,7 +5,7 @@ export function config(_app: VonaApplication) {
     passwordDefault: {
       admin: '123456',
     },
-    disableRoleAdmin: false,
+    disableBootstrapSystemAdmin: false,
     disableUserAdmin: false,
   };
 }

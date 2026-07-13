@@ -15,22 +15,25 @@ function RoleName(options?: Partial<IGuardOptionsRoleName>): ClassDecorator & Me
   return Aspect.guard('a-user:roleName', options);
 }
 
-function Admin(
+function SystemAdmin(
   options?: Partial<Omit<IGuardOptionsRoleName, 'name'>>,
 ): ClassDecorator & MethodDecorator {
-  return Aspect.guard('a-user:roleName', Object.assign({}, options, { name: 'admin' as const }));
+  return Aspect.guard(
+    'a-user:roleName',
+    Object.assign({}, options, { name: 'systemAdmin' as const }),
+  );
 }
 
 export interface IDecoratorGroupPassport {
   public: typeof Public;
   activated: typeof Activated;
   roleName: typeof RoleName;
-  admin: typeof Admin;
+  systemAdmin: typeof SystemAdmin;
 }
 
 export const Passport: IDecoratorGroupPassport = {
   public: Public,
   activated: Activated,
   roleName: RoleName,
-  admin: Admin,
+  systemAdmin: SystemAdmin,
 } as unknown as IDecoratorGroupPassport;

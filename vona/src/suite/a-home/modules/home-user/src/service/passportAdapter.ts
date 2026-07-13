@@ -7,9 +7,9 @@ import type { IPayloadDataOfPassport } from '../types/jwt.ts';
 
 @Service()
 export class ServicePassportAdapter extends BeanBase implements IPassportAdapter {
-  async isAdmin(passport: IPassport | undefined): Promise<boolean> {
+  async isSystemAdmin(passport: IPassport | undefined): Promise<boolean> {
     if (!passport) return false;
-    if (passport.roles?.some(role => role.name === 'admin')) return true;
+    if (passport.roles?.some(role => role.name === 'systemAdmin')) return true;
     return false;
   }
 

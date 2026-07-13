@@ -3,6 +3,7 @@ import type { IRole } from 'vona-module-a-user';
 
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
+import z from 'zod';
 
 import { $locale } from '../.metadata/locales.ts';
 
@@ -12,4 +13,7 @@ export interface IEntityOptionsRole extends IDecoratorEntityOptions {}
 export class EntityRole extends EntityBase implements IRole {
   @Api.field(v.title($locale('RoleName')))
   name: string;
+
+  @Api.field(v.array(z.string()))
+  siteIds: string[];
 }

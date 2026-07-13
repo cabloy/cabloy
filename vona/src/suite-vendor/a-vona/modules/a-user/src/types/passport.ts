@@ -11,7 +11,7 @@ export interface IPassport {
 }
 
 export interface IPassportAdapter {
-  isAdmin(passport: IPassport | undefined): Promise<boolean>;
+  isSystemAdmin(passport: IPassport | undefined): Promise<boolean>;
   setCurrent(passport: IPassport | undefined): Promise<IPassport | undefined>;
   serialize(passport: IPassport): Promise<IPayloadData>;
   deserialize(payloadData: IPayloadData): Promise<IPassport | undefined>;

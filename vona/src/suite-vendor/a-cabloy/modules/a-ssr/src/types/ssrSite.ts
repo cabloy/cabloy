@@ -39,6 +39,11 @@ export interface ISsrHandlerRenderOptionsInner extends ISsrHandlerRenderOptionsB
   state?: SSRContextState;
 }
 
+export interface ISsrHandlerRenderResult {
+  html: string;
+  responseStatus?: number;
+}
+
 export interface SSRContextState {
   envClient?: ZovaConfigEnv;
   pagePathFull?: string;
@@ -46,12 +51,13 @@ export interface SSRContextState {
   pageData?: unknown;
 }
 
+export interface ISsrSiteIdRecord {}
+
 export interface ISsrSitePublicPathRecord {}
 
 export interface ISsrSiteRecord {}
 
 export interface ISsrSiteDiagnosticsOptions {
-  siteName?: string;
   buildCommand?: string;
 }
 
@@ -68,7 +74,9 @@ export interface IDecoratorSsrSiteOptions<
   extends
     IOnionOptionsEnable,
     IOnionOptionsMatch<TypeOnionOptionsMatchRule<keyof IInstanceRecord>> {
+  siteId: keyof ISsrSiteIdRecord;
   publicPath: keyof ISsrSitePublicPathRecord;
+  requiresAuth: boolean;
   bundlePath: string;
   diagnostics?: ISsrSiteDiagnosticsOptions;
   envServer?: ZovaConfigEnv;

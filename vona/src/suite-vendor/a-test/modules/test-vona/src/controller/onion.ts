@@ -96,7 +96,7 @@ export class ControllerOnion extends BeanBase {
   }
 
   @Web.get('echo6')
-  @Passport.admin()
+  @Passport.systemAdmin()
   echo6() {
     return this.bean.passport.isAuthenticated;
   }
@@ -110,7 +110,11 @@ export class ControllerOnion extends BeanBase {
     return {
       age: age === undefined ? 'undefined' : age === null ? 'null' : String(age),
       nullableAge:
-        nullableAge === undefined ? 'undefined' : nullableAge === null ? 'null' : String(nullableAge),
+        nullableAge === undefined
+          ? 'undefined'
+          : nullableAge === null
+            ? 'null'
+            : String(nullableAge),
     };
   }
 }

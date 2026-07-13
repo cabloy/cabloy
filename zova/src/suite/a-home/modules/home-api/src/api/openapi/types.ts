@@ -256,22 +256,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/home/user/passport/createPassportJwtFromOauthCode': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/home/user/passport/refreshAuthToken': {
     parameters: {
       query?: never;
@@ -282,6 +266,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['HomeUserPassport_refreshAuthToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/createPassportJwtFromOauthCode': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1531,6 +1531,7 @@ export interface components {
       id: number | string;
       /** @description Role Name */
       name: string;
+      siteIds: string[];
     };
     'home-user.dto.passportJwt': {
       passport: components['schemas']['home-user.dto.passport'];
@@ -3373,35 +3374,6 @@ export interface operations {
     };
     authToken: true;
   };
-  HomeUserPassport_createPassportJwtFromOauthCode: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          code: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-  };
   HomeUserPassport_refreshAuthToken: {
     parameters: {
       query?: never;
@@ -3426,6 +3398,35 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-jwt.dto.jwtToken'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_createPassportJwtFromOauthCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          code: string;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
           };
         };
       };

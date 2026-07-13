@@ -6,6 +6,7 @@ export interface ZovaConfigEnv {
   META_FLAVOR: ZovaMetaFlavor;
   META_MODE: ZovaMetaMode;
   META_APP_MODE: ZovaMetaAppMode;
+  SITE_ID: string;
   APP_NAME: string | undefined;
   APP_TITLE: string | undefined;
   APP_DESCRIPTION: string | undefined;

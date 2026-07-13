@@ -14,26 +14,29 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
 
   protected onRouterGuards(router: BeanRouter) {
     router.beforeEach(async to => {
-      if (
-        !this.sys.config.ssr.cookieDisabledOnServer &&
-        to.meta.requiresAuth !== false &&
-        !this.$passport.isAuthenticated
-      ) {
-        const [_res, err] = await catchError(() => {
-          return this.$passport.ensurePassport();
-        });
-        if (err) {
-          this.$errorHandler(err, 'onRouterGuards');
-          return false;
+      if (to.meta.requiresAuth === false) return;
+      if (this.sys.config.ssr.cookieDisabledOnServer) return;
+      const [_res, err] = await catchError(() => {
+        return this.$passport.ensurePassport();
+      });
+      if (err) {
+        this.$errorHandler(err, 'onRouterGuards');
+        return false;
+      }
+      if (!this.$passport.isAuthenticated) {
+        try {
+          this.app.$gotoLogin(to.fullPath);
+        } catch (err: any) {
+          this.$errorHandler(err);
         }
-        if (!this.$passport.isAuthenticated) {
-          try {
-            this.app.$gotoLogin(to.fullPath);
-          } catch (err: any) {
-            this.$errorHandler(err);
-          }
-          return false;
-        }
+        return false;
+      }
+      const siteId = this.sys.env.SITE_ID;
+      const siteAdmitted =
+        !!siteId && !!this.$passport.roles?.some(role => role.siteIds.includes(siteId));
+      if (!siteAdmitted) {
+        await this.app.$gotoAccessDenied();
+        return false;
       }
     });
     router.beforeResolve(async to => {

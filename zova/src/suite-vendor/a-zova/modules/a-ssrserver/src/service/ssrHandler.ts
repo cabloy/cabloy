@@ -9,7 +9,11 @@ import { Service } from 'zova-module-a-bean';
 import { SysRouter } from 'zova-module-a-router';
 import { ScopeModuleASsr } from 'zova-module-a-ssr';
 
-import { ISsrHandlerRenderOptionsInner, TypeEventResolvePathResult } from '../types/ssr.js';
+import {
+  ISsrHandlerRenderOptionsInner,
+  ISsrHandlerRenderResult,
+  TypeEventResolvePathResult,
+} from '../types/ssr.js';
 
 const jsRE = /\.js$/;
 const cssRE = /\.css$/;
@@ -118,11 +122,16 @@ export class ServiceSsrHandler extends BeanBase {
       const html = renderTemplate(ssrContext);
 
       // transferCache
-      await this._renderTransferCache(options, route);
+      if (!cast(ssrContext).responseStatus) {
+        await this._renderTransferCache(options, route);
+      }
 
       // todo: ssg
 
-      return html;
+      return {
+        html,
+        responseStatus: cast(ssrContext).responseStatus,
+      } as ISsrHandlerRenderResult;
     } finally {
       const context = cast(ssrContext);
       if (!onRenderedFlushed) {

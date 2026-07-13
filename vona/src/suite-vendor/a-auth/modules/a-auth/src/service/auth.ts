@@ -60,7 +60,7 @@ export class ServiceAuth extends BeanBase {
     state?: IAuthenticateStrategyState,
   ): Promise<IPassport> {
     // event: issuePassport
-    return await this.scope.event.issuePassport.emit(
+    const passport = await this.scope.event.issuePassport.emit(
       { profileUser, entityAuthProvider, clientOptions, state },
       async ({ profileUser, entityAuthProvider, clientOptions, state }) => {
         return await this._issuePassportInner(
@@ -71,6 +71,10 @@ export class ServiceAuth extends BeanBase {
         );
       },
     );
+    if (passport.user) {
+      passport.roles = await this.bean.role.findAllByUserId(passport.user.id);
+    }
+    return passport;
   }
 
   private async _issuePassportInner(

@@ -11,7 +11,7 @@ export interface IControllerOptionsGuardPassport extends IDecoratorControllerOpt
 @Resource()
 export class ControllerGuardPassport extends BeanBase {
   @Web.get('testRoleName')
-  @Passport.roleName({ name: 'admin' })
+  @Passport.roleName({ name: 'systemAdmin' })
   testRoleName() {}
 
   @Web.get('testRoleNameFail')
@@ -19,7 +19,7 @@ export class ControllerGuardPassport extends BeanBase {
   testRoleNameFail() {}
 
   @Web.get('testRoleNameControllerShouldNotExecute')
-  @Passport.roleName({ name: 'admin' })
+  @Passport.roleName({ name: 'systemAdmin' })
   testRoleNameControllerShouldNotExecute() {
     throw new Error('controller should not execute while retrieving default permissions');
   }

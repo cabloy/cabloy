@@ -6,6 +6,11 @@ import 'zova';
 
 export type TypeEventResolvePathResult = string | true | undefined;
 
+export interface ISsrHandlerRenderResult {
+  html: string;
+  responseStatus?: number;
+}
+
 export interface ISsrHandlerRenderOptionsInner {
   req: http.IncomingMessage;
   res: http.ServerResponse<http.IncomingMessage>;

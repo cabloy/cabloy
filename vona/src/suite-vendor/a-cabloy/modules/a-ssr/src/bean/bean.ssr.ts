@@ -57,6 +57,14 @@ export class BeanSsr extends BeanBase {
     });
     if (!site) return;
     const siteOptions = site.beanOptions.options as IDecoratorSsrSiteOptions;
+    if (
+      siteOptions.requiresAuth &&
+      !this.bean.passport.currentRoles?.some(role =>
+        role.siteIds.includes(siteOptions.siteId as string),
+      )
+    ) {
+      return this.app.throw(403);
+    }
     // retrieveMenus
     const siteInstance = this.bean._getBean<BeanSsrSiteBase>(site.beanOptions.beanFullName as any);
     // event

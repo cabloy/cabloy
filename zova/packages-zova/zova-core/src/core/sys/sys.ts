@@ -132,6 +132,9 @@ export class ZovaSys {
   private _prepareEnv(env: NodeJS.ProcessEnv, envRuntime?: Partial<ZovaConfigEnv>): ZovaConfigEnv {
     const env2 = this._prepareEnv_Runtime(env, envRuntime);
     const env3 = this._prepareEnv_Client(env2 as any);
+    if (!env3.SITE_ID?.trim()) {
+      throw new Error(`Should specify SITE_ID for Zova flavor: ${env3.META_FLAVOR}`);
+    }
     return env3;
   }
 

@@ -1,7 +1,8 @@
 import type { TableIdentity } from 'table-identity';
 
 export interface IRoleNameRecord {
-  admin: never;
+  registeredUser: never;
+  systemAdmin: never;
 }
 
 export interface IRoleIdRecord {}
@@ -9,6 +10,7 @@ export interface IRoleIdRecord {}
 export interface IRole {
   id: TableIdentity;
   name: string;
+  siteIds: string[];
 }
 
 export interface IRoleAdapter {
