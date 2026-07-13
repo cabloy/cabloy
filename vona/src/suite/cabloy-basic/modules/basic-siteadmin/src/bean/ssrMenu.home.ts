@@ -16,6 +16,7 @@ export interface ISsrMenuOptionsHome extends IDecoratorSsrMenuOptions<ISsrSiteOp
     order: $order(1, 'core'),
     icon: '::home',
     link: '/',
+    roles: ['systemAdmin'],
   },
   site: ['basic-siteadmin:admin'],
 })

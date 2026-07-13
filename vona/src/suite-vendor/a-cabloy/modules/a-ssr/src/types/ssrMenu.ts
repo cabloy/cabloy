@@ -1,6 +1,7 @@
 import type { ILocaleRecord, OmitNever } from 'vona';
-import type { IMenuItem } from 'vona-module-a-menu';
+import type { IMenuGroup, IMenuItem } from 'vona-module-a-menu';
 import type { IOnionOptionsEnable, ServiceOnion } from 'vona-module-a-onion';
+import type { IRoleNameRecord } from 'vona-module-a-user';
 
 import type { ISsrMenuGroupRecord } from './ssrMenuGroup.ts';
 import type { IDecoratorSsrSiteOptions, ISsrSiteRecord } from './ssrSite.ts';
@@ -12,6 +13,14 @@ export interface ISsrMenuItem<Pages extends {} = {}, Icons extends {} = {}> exte
   'name' | 'group'
 > {
   group?: keyof ISsrMenuGroupRecord | (keyof ISsrMenuGroupRecord)[];
+  roles?: (keyof IRoleNameRecord)[];
+}
+
+export type ISsrMenuItemPrepared = IMenuItem<any, any> & Pick<ISsrMenuItem<any, any>, 'roles'>;
+
+export interface ISsrMenusPrepared {
+  menus?: ISsrMenuItemPrepared[];
+  groups?: IMenuGroup[];
 }
 
 // should not set default generic = IDecoratorSsrSiteOptions

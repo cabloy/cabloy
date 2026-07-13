@@ -76,7 +76,6 @@ export interface IDecoratorSsrSiteOptions<
     IOnionOptionsMatch<TypeOnionOptionsMatchRule<keyof IInstanceRecord>> {
   siteId: keyof ISsrSiteIdRecord;
   publicPath: keyof ISsrSitePublicPathRecord;
-  requiresAuth: boolean;
   bundlePath: string;
   diagnostics?: ISsrSiteDiagnosticsOptions;
   envServer?: ZovaConfigEnv;

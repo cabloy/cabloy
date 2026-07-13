@@ -22,6 +22,7 @@ export interface ISsrMenuOptionsRecord extends IDecoratorSsrMenuOptions<ISsrSite
         },
       },
       group: 'basic-siteadmin:management',
+      roles: ['systemAdmin'],
     },
   },
   site: ['basic-siteadmin:admin'],

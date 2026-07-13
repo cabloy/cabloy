@@ -1,7 +1,7 @@
 import type { ZovaMetaMode } from '@cabloy/module-info';
 import type { IParamsAndQuery } from '@cabloy/utils';
 import type { ILocaleRecord } from 'vona';
-import type { IMenuGroup, IMenuItem } from 'vona-module-a-menu';
+import type { IMenuGroup } from 'vona-module-a-menu';
 import type { IOnionSlice } from 'vona-module-a-onion';
 import type { TypeEventResolvePathData, TypeEventResolvePathResult } from 'vona-module-a-static';
 
@@ -16,8 +16,13 @@ import { BeanBase, cast, deepExtend, SymbolModuleName } from 'vona';
 import { checkErrorJwtExpiredAndThrow } from 'vona-module-a-jwt';
 
 import type { TypeEventRetrieveMenusResult } from '../bean/event.retrieveMenus.ts';
+import type { TypeEventRetrieveMenusSiteResult } from '../bean/event.retrieveMenusSite.ts';
 import type { ZovaConfigEnv } from '../types/env.ts';
-import type { IDecoratorSsrMenuOptions, ISsrMenuRecord } from '../types/ssrMenu.ts';
+import type {
+  IDecoratorSsrMenuOptions,
+  ISsrMenuItemPrepared,
+  ISsrMenuRecord,
+} from '../types/ssrMenu.ts';
 import type { ISsrMenuGroupRecord } from '../types/ssrMenuGroup.ts';
 import type {
   IDecoratorSsrSiteOptions,
@@ -142,7 +147,15 @@ export class BeanSsrSiteBase<
   }
 
   async retrieveMenus(): Promise<TypeEventRetrieveMenusResult | undefined> {
-    return await this._getMenusCache(this.ctx.locale);
+    const menusPrepared = await this._getMenusCache(this.ctx.locale);
+    if (!menusPrepared) return;
+    const menus = menusPrepared.menus
+      ?.filter(menu => !menu.roles?.length || this.bean.passport.checkRoleName(menu.roles))
+      .map(menu => {
+        const { roles: _roles, ...menuPublic } = menu;
+        return menuPublic;
+      });
+    return { menus, groups: menusPrepared.groups };
   }
 
   public get siteOptions() {
@@ -262,9 +275,11 @@ export class BeanSsrSiteBase<
     };
   }
 
-  private async _getMenusCache(locale: keyof ILocaleRecord): Promise<TypeEventRetrieveMenusResult> {
+  private async _getMenusCache(
+    locale: keyof ILocaleRecord,
+  ): Promise<TypeEventRetrieveMenusSiteResult | undefined> {
     if (!this.app.meta[SymbolCacheMenus]) this.app.meta[SymbolCacheMenus] = {};
-    const cacheMenus: Record<keyof ILocaleRecord, TypeEventRetrieveMenusResult> =
+    const cacheMenus: Record<keyof ILocaleRecord, TypeEventRetrieveMenusSiteResult> =
       this.app.meta[SymbolCacheMenus];
     const beanFullName = this.$beanFullName;
     const instanceName = this.ctx.instanceName;
@@ -277,7 +292,9 @@ export class BeanSsrSiteBase<
     return cacheMenus[beanFullName][cacheKey];
   }
 
-  private async _prepareMenus(locale: keyof ILocaleRecord): Promise<TypeEventRetrieveMenusResult> {
+  private async _prepareMenus(
+    locale: keyof ILocaleRecord,
+  ): Promise<TypeEventRetrieveMenusSiteResult | undefined> {
     return await this.$scope.ssr.event.retrieveMenusSite.emit(
       { ssrSite: this, locale },
       async () => {
@@ -296,7 +313,7 @@ export class BeanSsrSiteBase<
   private _prepareMenusOrGroups<T extends keyof ISsrMenuRecord>(
     locale: keyof ILocaleRecord,
     ssrMenus: IOnionSlice<ISsrMenuRecord, T, unknown>[],
-  ): IMenuItem[];
+  ): ISsrMenuItemPrepared[];
   private _prepareMenusOrGroups<T extends keyof ISsrMenuGroupRecord>(
     locale: keyof ILocaleRecord,
     ssrMenus: IOnionSlice<ISsrMenuGroupRecord, T, unknown>[],
@@ -307,7 +324,7 @@ export class BeanSsrSiteBase<
   ) {
     const siteOnionName = this.$onionName;
     // menus
-    const menus: IMenuItem<keyof SsrSiteOptions['pages']>[] = [];
+    const menus: ISsrMenuItemPrepared[] = [];
     for (const ssrMenu of ssrMenus) {
       const siteMenuOptions = ssrMenu.beanOptions
         .options as IDecoratorSsrMenuOptions<IDecoratorSsrSiteOptions>;

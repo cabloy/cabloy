@@ -53,9 +53,9 @@ Every `@SsrSite(...)` declaration must expose a non-empty, unique, stable `siteI
 Initial values are:
 
 | SSR Site | `siteId` | `publicPath` |
-| --- | --- | --- |
-| Web | `web` | `''` |
-| Admin | `admin` | `admin` |
+| -------- | -------- | ------------ |
+| Web      | `web`    | `''`         |
+| Admin    | `admin`  | `admin`      |
 
 `siteId` is the authorization identifier. It is not a display name, URL path, bundle name, or bean/onion name.
 
@@ -71,18 +71,18 @@ The existing Site dispatch mechanism continues to use `publicPath`, and typed pr
 
 `SITE_ID` is the Zova runtime context for the current Site. It is not an authorization assertion received from the browser.
 
-| Runtime mode | `SITE_ID` source | Authority |
-| --- | --- | --- |
-| Vona SSR | The selected `@SsrSite.siteId`, automatically merged into `envServer` and `envClient` | The Vona SSR Site declaration is authoritative. |
-| Browser after SSR hydration | The Vona-provided `envClient.SITE_ID` serialized in the SSR state | It must equal the selected Vona Site `siteId`. |
-| Standalone SPA / SPA development | The active Zova flavor environment file | The flavor supplies the Site context because no Vona Site exists in this execution mode. |
+| Runtime mode                     | `SITE_ID` source                                                                      | Authority                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Vona SSR                         | The selected `@SsrSite.siteId`, automatically merged into `envServer` and `envClient` | The Vona SSR Site declaration is authoritative.                                          |
+| Browser after SSR hydration      | The Vona-provided `envClient.SITE_ID` serialized in the SSR state                     | It must equal the selected Vona Site `siteId`.                                           |
+| Standalone SPA / SPA development | The active Zova flavor environment file                                               | The flavor supplies the Site context because no Vona Site exists in this execution mode. |
 
 The initial flavor mapping is explicit:
 
-| Zova flavor | `SITE_ID` |
-| --- | --- |
-| `cabloyBasicWeb` | `web` |
-| `cabloyBasicAdmin` | `admin` |
+| Zova flavor        | `SITE_ID` |
+| ------------------ | --------- |
+| `cabloyBasicWeb`   | `web`     |
+| `cabloyBasicAdmin` | `admin`   |
 
 Do not derive `SITE_ID` from `META_FLAVOR` by string convention. Flavor is a build identity and `siteId` is an authorization-domain identity; their current mapping must remain explicit so either can evolve independently.
 
@@ -100,10 +100,10 @@ Because `envClient` is observable and mutable in the browser, `SITE_ID` is suita
 
 The clean initial schema seeds these two roles:
 
-| Role name | Initial `siteIds` | Meaning |
-| --- | --- | --- |
-| `registeredUser` | `['web']` | Basic role for an activated registered account. It does not itself grant unrestricted business capabilities. |
-| `systemAdmin` | `['web', 'admin']` | Explicit system-administration role for the initially available Sites. |
+| Role name        | Initial `siteIds`  | Meaning                                                                                                      |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `registeredUser` | `['web']`          | Basic role for an activated registered account. It does not itself grant unrestricted business capabilities. |
+| `systemAdmin`    | `['web', 'admin']` | Explicit system-administration role for the initially available Sites.                                       |
 
 `systemAdmin` does not bypass Site policy. A future Site is unavailable to it until its ID is deliberately added to the role policy.
 
@@ -144,13 +144,13 @@ This makes anonymous access a route-level decision available to every Site. Logi
 
 The resulting route-access contract is:
 
-| Route state | Required behavior |
-| --- | --- |
-| `requiresAuth: false` | Allow anonymously in every Site. |
-| Requires authentication, no valid passport | Redirect to the current Site login page. |
-| Requires authentication, authenticated passport lacks `SITE_ID` | Render the current Site access-denied page with HTTP status `403`. |
-| Requires authentication, a role contains `SITE_ID` | Allow navigation. |
-| Expired or invalid token | Preserve the existing expired-token behavior; otherwise follow the unauthenticated path. |
+| Route state                                                     | Required behavior                                                                        |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `requiresAuth: false`                                           | Allow anonymously in every Site.                                                         |
+| Requires authentication, no valid passport                      | Redirect to the current Site login page.                                                 |
+| Requires authentication, authenticated passport lacks `SITE_ID` | Render the current Site access-denied page with HTTP status `403`.                       |
+| Requires authentication, a role contains `SITE_ID`              | Allow navigation.                                                                        |
+| Expired or invalid token                                        | Preserve the existing expired-token behavior; otherwise follow the unauthenticated path. |
 
 The redirect and access-denied mechanisms must be SSR-aware. Returning `false` from a router guard only aborts navigation; it is not itself an HTTP response contract. Existing `$gotoLogin()`/SSR redirect behavior remains the model for unauthenticated requests. The new access-denied helper must produce a renderable `403` response without re-entering its own protected-route check.
 
@@ -164,9 +164,9 @@ This router guard is the authoritative page-navigation gate for SSR document ren
 
 The same router-guard policy operates differently depending on whether the active Zova flavor enables server-cookie passport resolution:
 
-| Flavor strategy | Router-guard timing for `requiresAuth` routes | SSR output |
-| --- | --- | --- |
-| `SSR_COOKIE=true` | The server can call `ensurePassport()`, evaluate `SITE_ID`, and complete login or `403` decisions during SSR initial navigation. | The route may render personalized, authenticated content after Site admission. |
+| Flavor strategy    | Router-guard timing for `requiresAuth` routes                                                                                                  | SSR output                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `SSR_COOKIE=true`  | The server can call `ensurePassport()`, evaluate `SITE_ID`, and complete login or `403` decisions during SSR initial navigation.               | The route may render personalized, authenticated content after Site admission.                                      |
 | `SSR_COOKIE=false` | The server must render without a cookie-derived passport. The browser completes `ensurePassport()` and Site-policy evaluation after hydration. | SSR must remain anonymous and must not contain private user data; authenticated data loads after browser admission. |
 
 `SSR_COOKIE=false` does not disable SSR. It selects anonymous SSR. A protected Web route can still render a generic shell or loading state on the server and then obtain Passport state and private data in the browser. The browser-side `SITE_ID` check is a route-experience boundary; Vona API/resource guards remain the non-bypassable authorization boundary for private data and mutations.
@@ -184,13 +184,19 @@ Consequences:
 - `a-permission` remains a resource/action permission facility and is not made the route gate; and
 - Site policy does not enter the existing action-permission cache model.
 
-### 9. Preserve structural cache boundaries
+### 9. Filter static menu visibility outside structural caches
 
 Enabled SSR Sites remain a structural cache keyed by instance and host. Site lists must not become per-user cache entries.
 
-The current SSR menu cache remains safe only while its contents are role-invariant. The first delivery must ensure protected menu API endpoints have their own Vona authorization guards; it does not add role-filtered menu content to the locale-only SSR menu cache.
+`ISsrMenuItem.roles` is server-only static navigation policy. Missing or empty `roles` allows anonymous visibility; nonempty arrays allow a menu item when the current Passport has any matching role name. `siteId` and Zova router guards remain the authenticated-route Site-admission boundary; menu visibility does not authorize a route, API, or resource action.
 
-If future work introduces role-aware menu entries, it must first add a stable authorization fingerprint to the cache key and define invalidation for role-policy mutations.
+The SSR menu cache stores prepared Site/locale declarations, including the private static role policy. `BeanSsrSiteBase.retrieveMenus()` projects a new filtered public result for each request and strips `roles` before the menu API response. It must never mutate the structural cache or expose policy metadata through the menu DTO. Static menu HMR invalidates the prepared cache; current role membership is evaluated for every retrieval.
+
+#### Keep frontend menu queries resource-keyed
+
+The Zova menu query key remains scoped to the menu operation, Site/public path, and locale. It must not include a username, authenticated flag, role names or IDs, or an authorization fingerprint merely because Vona returns a Passport-filtered projection.
+
+Normal authentication transitions own freshness: `ModelPassport.afterLogin()` stores Passport/JWT state before navigation enters the destination layout, whose ordinary `$useStateData(...)` lifecycle refreshes stale menu data under the new request context. Logout leaves protected UI and then clears query data. A role or Site/menu-policy mutation during an otherwise continuing authenticated session is different: its mutation owner must refresh authoritative Passport state when needed and explicitly invalidate or refetch the affected menu and permission queries. This synchronization requirement does not change menu query identity.
 
 ## Why This Decision Was Chosen
 
@@ -302,12 +308,13 @@ Modify `zova/src/suite/a-home/modules/home-base/src/service/routerGuards.ts`, Pa
 6. Preserve expired-token behavior and make login/error/denied routes loop-free.
 7. Apply the same logic during SSR initial navigation and browser SPA navigation; do not attempt to use it as an asset, dev-proxy, or API guard.
 
-### 6. Align API/menu authorization and caches
+### 6. Filter menu visibility independently of Site admission
 
-1. Ensure protected menu API endpoints have their own Vona authorization guards rather than trusting frontend route admission.
-2. Keep menu content role-invariant and retain the current structural/locale cache model in this delivery.
-3. Verify denied callers cannot retrieve Admin menu data through its API.
-4. Defer role-aware menu filtering until its cache identity and role-policy invalidation model are designed.
+1. Keep `BeanSsr.retrieveMenus()` resolving the Site by `publicPath`, but do not use `siteId` or a Site-level menu gate to authorize retrieval.
+2. Add server-only `ISsrMenuItem.roles` declarations: omitted or empty values are anonymous-visible; nonempty values use any-match Passport role-name filtering.
+3. Cache prepared Site/locale menu declarations structurally, then project and return a new request-local filtered result without mutating the cache.
+4. Strip `roles` from every returned menu item. Do not add the policy field to menu DTOs, OpenAPI, or generated frontend clients.
+5. Keep Zova route admission and Vona controller/resource guards as the actual authorization boundaries; menu visibility only controls navigation disclosure.
 
 ### 7. Test, build, and verify end to end
 
@@ -328,7 +335,7 @@ Add focused test coverage for:
 - SSR initial navigation and browser SPA navigation enforcing the same rule;
 - expired-token behavior;
 - independence of existing API route guards; and
-- protected Admin menu API non-disclosure.
+- static menu role filtering, anonymous visibility, response policy stripping, and alternating-role cache isolation.
 
 After focused tests, run the required shared checks. `meta.version.ts` changes require test database reinitialization through `npm run test`.
 
@@ -360,7 +367,7 @@ Perform browser-level verification in production SSR and `apiType: 'dev'` mode. 
 - This is an intentional breaking change: existing roles and databases are unsupported.
 - Protected routes require explicit authentication and denial behavior during Zova navigation.
 - Future role-management UI/API work must include cache invalidation and audit policy; it is not part of this delivery.
-- Menu personalization is deferred until it can be implemented with an authorization-aware cache contract.
+- Static menu policy controls navigation disclosure only; a future dynamic policy system must keep the prepared-cache and request-projection boundary explicit.
 
 ## Guidance for Future Work
 
@@ -370,7 +377,7 @@ Perform browser-level verification in production SSR and `apiType: 'dev'` mode. 
 4. Do not turn protected-route Site admission into a substitute for controller/API guards.
 5. Use `requiresAuth: false` to mark anonymous routes in every Site; keep it separate from authenticated route and resource access.
 6. Treat `SITE_ID` as frontend runtime context only; Vona never accepts it as authorization evidence from a client.
-7. Do not add role-specific data to structural Site/menu caches without an authorization fingerprint and invalidation path.
+7. Keep role policy in the prepared structural menu cache only when every public result is projected and filtered per request; never cache or mutate a caller-specific visible menu set.
 8. Keep direct role membership explicit; do not introduce implicit role inheritance without a separate design decision.
 
 ## Related Records

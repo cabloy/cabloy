@@ -325,6 +325,29 @@ Readable keys improve:
 - tracing cache behavior
 - future refactors when similar query families grow
 
+## Practical rule 9: key stable resource inputs, not ambient caller identity
+
+A `$useStateData(...)` query key identifies the stable variant of a resource. Include inputs that change that variant, such as an operation or resource identifier, filters, pagination, Site/public path, or locale.
+
+Do not append the current username, authenticated flag, Passport role names or IDs, or another authorization fingerprint merely because the server evaluates the current Passport while producing the response. Those values are ambient request context, not automatically part of the frontend resource identity.
+
+Normal authentication transitions already provide lifecycle boundaries: login stores the new Passport before navigating into the destination model, and that model's ordinary query lifecycle refreshes stale data under the new request context. Logout clears query data after leaving protected UI.
+
+Use explicit invalidation or refetch when authorization policy changes during an otherwise continuing authenticated session, such as an administrator changing role membership, Site policy, or menu policy. Refresh authoritative Passport state when necessary, then synchronize the affected stable resource key; do not turn a policy fingerprint into the key by default.
+
+For example, the menu resource is keyed by its stable Site/public path and locale:
+
+```ts
+queryKey: ['retrieveMenus', publicPath, locale];
+```
+
+Do not key it by the current roles:
+
+```ts
+// Avoid: roles are ambient request policy, not menu resource identity.
+queryKey: ['retrieveMenus', publicPath, locale, roleNames];
+```
+
 ## Anti-pattern: command-first controller state
 
 A common anti-pattern looks like this:

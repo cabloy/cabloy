@@ -55,6 +55,36 @@ This makes menu retrieval part of the broader backend contract surface.
 
 In the current repo implementation, the out-of-the-box menu controller is public and delegates directly to `this.scope.service.menu.retrieveMenus(publicPath)`.
 
+## Static menu visibility
+
+`@SsrMenu(...)` items can declare static role visibility without changing the public menu DTO:
+
+```typescript
+@SsrMenu({
+  item: {
+    title: $locale('Operations'),
+    link: 'presetResource',
+    roles: ['systemAdmin'],
+  },
+  site: 'basic-siteadmin:admin',
+})
+```
+
+- Omit `roles`, or use `roles: []`, to make an item visible to anonymous and authenticated callers.
+- A nonempty `roles` array is visible when the current Passport has at least one matching role name.
+- `roles` is server-only declaration metadata. It is filtered out before the API response and is not part of `IMenuItem`, OpenAPI, or generated frontend clients.
+- This controls navigation disclosure only. It never grants access to a page, controller action, API, or resource; those boundaries retain their own route and Passport/permission guards.
+
+SSR Site menu definitions are cached structurally by Site and locale. The framework keeps static role policy in that prepared cache, then creates a filtered response for each request without mutating the cached definition.
+
+### Frontend query lifecycle
+
+Passport filtering does not add user or role identity to the frontend menu query key. The menu resource remains keyed by stable inputs: Site/public path and locale.
+
+On login, `ModelPassport.afterLogin()` stores the Passport/JWT before returning to the destination layout. The layout's ordinary `$useStateData(...)` lifecycle refreshes stale menu data using the newly authenticated request context. On logout, the Passport model navigates to login and then clears query data.
+
+A dynamic role or menu-policy change while the user remains signed in is different: the mutation owner must explicitly refresh authoritative Passport state when needed and invalidate or refetch the affected menu query. This is UI freshness behavior only; route, controller, API, and resource authorization remain enforced independently by their existing guards.
+
 ## Relationship to frontend integration
 
 Menu retrieval is especially relevant in SSR-sensitive frontend flows.

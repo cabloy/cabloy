@@ -10,9 +10,25 @@ export interface ISsrMenuOptionsProduct extends IDecoratorSsrMenuOptions<ISsrSit
 
 @SsrMenu<ISsrMenuOptionsProduct>({
   items: {
+    // public: {
+    //   title: $locale('Product'),
+    // },
+    // publicEmptyRoles: {
+    //   title: $locale('Product'),
+    //   roles: [],
+    // },
+    // registeredUser: {
+    //   title: $locale('Product'),
+    //   roles: ['registeredUser'],
+    // },
+    // multipleRoles: {
+    //   title: $locale('Product'),
+    //   roles: ['registeredUser', 'systemAdmin'],
+    // },
     product: {
       title: $locale('Product'),
       group: 'basic-siteadmin:management',
+      roles: ['systemAdmin'],
       link: 'presetResource',
       meta: {
         params: {

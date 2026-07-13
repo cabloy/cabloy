@@ -336,6 +336,8 @@ that logical key is prefixed internally with model identity, and with selector w
 
 That means model code can use short business-facing keys while still getting namespace isolation.
 
+Automatic model namespacing does not make every varying runtime value part of the logical key. Logical keys still describe stable resource inputs. Do not add a user or role fingerprint solely because a backend response is evaluated through the current Passport; use the normal authentication lifecycle for login/logout and explicitly invalidate or refetch affected stable keys for an in-session policy change. See [use-state-data-best-practices.md](./use-state-data-best-practices.md) for the full rule.
+
 ## Persistence and restore behavior
 
 Current source treats persistence as part of the model-state runtime.

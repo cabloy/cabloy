@@ -338,7 +338,10 @@ The site base:
 - expands single-item or multi-item definitions
 - localizes title/description through `app.meta.text.locale(...)`
 - normalizes preset menu links through `ServiceSsr.prepareMenuLink(...)`
-- caches the final menu/group set by site bean, instance, host, and locale
+- caches prepared menu/group declarations by site bean, instance, host, and locale
+- applies server-only `ISsrMenuItem.roles` visibility while projecting a new public menu result for each request
+
+`roles` is static navigation metadata: omitted or empty arrays are anonymous-visible, while nonempty arrays require any matching current Passport role name. Prepared cache entries retain this private metadata; the request projection filters items and strips `roles` before returning `IMenus`. It must not mutate the cached declarations. Groups remain structural and frontend tree construction omits groups with no visible children.
 
 This means menu ownership is distributed across onion definitions, while final assembly stays in the site runtime.
 

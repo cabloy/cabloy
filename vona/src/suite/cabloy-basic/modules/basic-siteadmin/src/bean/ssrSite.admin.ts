@@ -26,7 +26,6 @@ export interface ISsrSiteOptionsAdmin extends IDecoratorSsrSiteOptions<
 @SsrSite<ISsrSiteOptionsAdmin>({
   siteId: 'admin',
   publicPath: 'admin',
-  requiresAuth: true,
   bundlePath: 'ssr-cabloyBasicAdmin-5.0.0',
   diagnostics: {
     buildCommand: 'npm run build:zova:admin',

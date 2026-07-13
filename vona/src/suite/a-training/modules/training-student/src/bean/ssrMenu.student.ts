@@ -22,6 +22,7 @@ export interface ISsrMenuOptionsStudent extends IDecoratorSsrMenuOptions<ISsrSit
         },
       },
       group: 'basic-siteadmin:management',
+      roles: ['systemAdmin'],
     },
   },
   site: ['basic-siteadmin:admin'],
