@@ -27,6 +27,7 @@ declare module 'vona' {
 }
 /** bean: end */
 /** event: begin */
+export * from '../bean/event.retrievePermissionAction.ts';
 export * from '../bean/event.retrievePermissions.ts';
 
 import 'vona';
@@ -36,6 +37,17 @@ declare module 'vona' {
 }
 declare module 'vona-module-a-permission' {
   
+        export interface EventRetrievePermissionAction {
+          /** @internal */
+          get scope(): ScopeModuleAPermission;
+        }
+
+          export interface EventRetrievePermissionAction {
+            get $beanFullName(): 'a-permission.event.retrievePermissionAction';
+            get $onionName(): 'a-permission:retrievePermissionAction';
+            
+          }
+
         export interface EventRetrievePermissions {
           /** @internal */
           get scope(): ScopeModuleAPermission;
@@ -49,17 +61,21 @@ declare module 'vona-module-a-permission' {
 }
 /** event: end */
 /** event: begin */
+import type { EventRetrievePermissionAction } from '../bean/event.retrievePermissionAction.ts';
 import type { EventRetrievePermissions } from '../bean/event.retrievePermissions.ts';
 export interface IModuleEvent {
-  'retrievePermissions': EventRetrievePermissions;
+  'retrievePermissionAction': EventRetrievePermissionAction;
+'retrievePermissions': EventRetrievePermissions;
 }
 /** event: end */
 /** event: begin */
+import type { TypeEventRetrievePermissionActionData, TypeEventRetrievePermissionActionResult } from '../bean/event.retrievePermissionAction.ts';
 import type { TypeEventRetrievePermissionsData, TypeEventRetrievePermissionsResult } from '../bean/event.retrievePermissions.ts';
 import type { EventOn } from 'vona-module-a-event'; 
 declare module 'vona-module-a-event' {
   export interface IEventRecord {
-    'a-permission:retrievePermissions': EventOn<TypeEventRetrievePermissionsData, TypeEventRetrievePermissionsResult>;
+    'a-permission:retrievePermissionAction': EventOn<TypeEventRetrievePermissionActionData, TypeEventRetrievePermissionActionResult>;
+'a-permission:retrievePermissions': EventOn<TypeEventRetrievePermissionsData, TypeEventRetrievePermissionsResult>;
   }
 }
 /** event: end */

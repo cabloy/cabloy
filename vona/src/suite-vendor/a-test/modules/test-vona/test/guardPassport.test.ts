@@ -63,6 +63,41 @@ describe('guardPassport.test.ts', () => {
     });
   });
 
+  it('action:guardPassport:retrievePermissionActionEvent', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      let invoked = 0;
+      const off = app.bean.event.on('a-permission:retrievePermissionAction', async (data, next) => {
+        invoked++;
+        if (data.actionKey === 'testRoleNameFail') return true;
+        return await next();
+      });
+      try {
+        const permissionAnonymous = await app.bean.permission.retrievePermissionAction(
+          ResourceGuardPassport,
+          'testRoleName',
+        );
+        assert.equal(permissionAnonymous, false);
+        assert.equal(invoked, 0);
+
+        await app.bean.passport.signinMock();
+        const permissionDefault = await app.bean.permission.retrievePermissionAction(
+          ResourceGuardPassport,
+          'testRoleName',
+        );
+        const permissionCustom = await app.bean.permission.retrievePermissionAction(
+          ResourceGuardPassport,
+          'testRoleNameFail',
+        );
+        assert.equal(permissionDefault, true);
+        assert.equal(permissionCustom, true);
+        assert.equal(invoked, 2);
+      } finally {
+        off();
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('action:guardPassport:cacheKeyByRoleIds', async () => {
     await app.bean.executor.mockCtx(async () => {
       const cacheKeyAnonymous = (app.bean.permission as any).retrievePermissionActionCacheKey({

@@ -88,7 +88,12 @@ export class BeanPermission extends BeanBase {
     const route = this._getControllerActionRoute(resource, actionKey);
     if (!route?.route?.meta) return false;
     if (!this._matchPassportMeta(route.route.meta)) return false;
-    return await this.retrievePermissionActionByRoles(resource, actionKey);
+    return await this.scope.event.retrievePermissionAction.emit(
+      { resource, actionKey },
+      async () => {
+        return await this.retrievePermissionActionByRoles(resource, actionKey);
+      },
+    );
   }
 
   @Caching.get({
