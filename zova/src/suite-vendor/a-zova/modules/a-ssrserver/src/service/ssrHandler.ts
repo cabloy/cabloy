@@ -55,7 +55,7 @@ export class ServiceSsrHandler extends BeanBase {
     return undefined;
   }
 
-  public async render(options: ISsrHandlerRenderOptionsInner) {
+  public async render(options: ISsrHandlerRenderOptionsInner): Promise<true | string | undefined> {
     // resolve route
     const pagePathFull =
       options.state?.pagePathFull ?? this.sys.util.getPagePathFromAbsoluteUrl(options.req.url!);
