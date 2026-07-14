@@ -199,6 +199,14 @@ When adding or changing built-in guards, keep these rules in mind:
 3. user-state gates such as `public` / `activated` should stay explicit and easy to reason about
 4. do not reintroduce identity-based built-in permission shortcuts unless the cache and evaluation model are deliberately redesigned for them
 
+### CRUD generator authorization policy
+
+Generated CRUD controllers apply `@Passport.systemAdmin()` to each standard CRUD action. The guard remains action-level instead of class-level so future custom actions can deliberately inherit the global authenticated-and-activated baseline or define a different local role/domain policy.
+
+An action without a local Passport guard is intentionally baseline-only, not public. Public access must use `@Passport.public()`, and extra role or business restrictions must use an explicit local guard. Because permission retrieval evaluates the real guard chain, the resource action permissions reflect these choices.
+
+Generated SSR menu roles remain navigation-disclosure metadata only. They must not be treated as authorization; controller/resource guards are the authoritative boundary.
+
 ## Related records
 
 - `.docs-internal/decisions/0002-guard-permission-projection.md`

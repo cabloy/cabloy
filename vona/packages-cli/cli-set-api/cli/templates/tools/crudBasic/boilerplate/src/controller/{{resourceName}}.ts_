@@ -4,6 +4,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
@@ -21,28 +22,33 @@ export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDec
 export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Web.post()
   @Api.body(v.tableIdentity())
+  @Passport.systemAdmin()
   async create(@Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<TableIdentity> {
     return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
   }
 
   @Web.get()
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
+  @Passport.systemAdmin()
   async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
     return await this.scope.service.<%=argv.resourceName%>.select(params);
   }
 
   @Web.get(':id')
   @Api.body(v.optional(), v.object(Dto<%=argv.resourceNameCapitalize%>View))
+  @Passport.systemAdmin()
   async view(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
     return await this.scope.service.<%=argv.resourceName%>.view(id);
   }
 
   @Web.patch(':id')
+  @Passport.systemAdmin()
   async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update) {
     return await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
   @Web.delete(':id')
+  @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
     return await this.scope.service.<%=argv.resourceName%>.delete(id);
   }

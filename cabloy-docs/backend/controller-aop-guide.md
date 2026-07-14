@@ -99,6 +99,18 @@ Typical jobs include:
 
 These shorthands still map back to the generic aspect model.
 
+### Passport inheritance and action policy
+
+The global Passport guard is the baseline for controller actions: without a local Passport decorator, an action requires an authenticated and activated user. It is not public.
+
+Use a local Passport or domain guard when an action needs a policy beyond that baseline:
+
+- use `@Passport.public()` only when anonymous access is intentional
+- use `@Passport.systemAdmin()`, `@Passport.roleName(...)`, or a domain-specific guard when access needs additional restriction
+- leave an action without a local Passport guard when authenticated-and-activated access is intentionally sufficient
+
+The CRUD generator applies `@Passport.systemAdmin()` to each generated CRUD action rather than to the controller class. This keeps the administrative default explicit while allowing a future custom action to deliberately inherit the baseline or define its own policy.
+
 For the underlying auth, passport, and user-access model, see [Auth Guide](/backend/auth-guide) and [User Access Guide](/backend/user-access-guide).
 
 ## Interceptor

@@ -43,6 +43,14 @@ The generator creates a connected set of files, typically including:
 
 This is exactly why this generator should be the default starting point. It gives a consistent starting shape across the backend thread.
 
+### Generated authorization default
+
+The standard generated CRUD actions (`create`, `select`, `view`, `update`, and `delete`) each use `@Passport.systemAdmin()`. This is an explicit administrative whitelist for the generated Admin resource API, matching the generated SSR menu's `systemAdmin` visibility policy.
+
+The guard is attached to individual actions rather than the controller class. When you add a custom action later, no local Passport guard intentionally means the global authenticated-and-activated baseline applies; it does not mean the action is public. Use `@Passport.public()` to intentionally allow anonymous access, or add a role/domain guard when an action needs stronger restriction.
+
+SSR menu roles control navigation disclosure only. They never authorize a controller action, API, or resource; keep the action guard as the server-side authorization boundary. See [Controller AOP Guide](/backend/controller-aop-guide) and [Menu Guide](/backend/menu-guide).
+
 A practical generated-output checklist usually includes:
 
 - controller

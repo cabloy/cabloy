@@ -194,6 +194,27 @@ describe('student.test.ts', () => {
     });
   });
 
+  it('action:student:systemAdmin', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      try {
+        app.bean.passport.current!.roles = [];
+        const actions = ['create', 'select', 'view', 'update', 'summary', 'delete', 'deleteForce'];
+        const permissions = await Promise.all(
+          actions.map(action =>
+            app.bean.permission.retrievePermissionAction('training-student:student', action),
+          ),
+        );
+        assert.deepEqual(
+          permissions,
+          actions.map(() => false),
+        );
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('action:student:level invalid', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();

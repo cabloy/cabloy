@@ -143,6 +143,7 @@ Representative source facts from this file:
 - the class is decorated with `@Controller<IControllerOptionsStudent>('student')`
 - the class is also decorated with `@Resource()`
 - CRUD actions are declared with `@Web.post()`, `@Web.get()`, `@Web.get(':id')`, `@Web.patch(':id')`, and `@Web.delete(':id')`
+- the standard CRUD actions and the `summary` / `deleteForce` management actions explicitly use `@Passport.systemAdmin()`
 - request shapes use `@Arg.body(...)`, `@Arg.param(...)`, and `@Arg.filter(...)`
 - actions delegate to `this.scope.service.student`
 

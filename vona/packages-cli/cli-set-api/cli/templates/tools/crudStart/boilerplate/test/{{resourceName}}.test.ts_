@@ -15,7 +15,24 @@ describe('<%=argv.resourceName%>.test.ts', () => {
         name: '__TomNew__',
         description: 'This is a test',
       };
-      // login
+      // role-less authenticated users cannot access generated admin actions
+      await app.bean.passport.signinMock();
+      try {
+        app.bean.passport.current!.roles = [];
+        const actions = ['create', 'select', 'view', 'update', 'delete'];
+        const permissions = await Promise.all(
+          actions.map(action =>
+            app.bean.permission.retrievePermissionAction(
+              '<%=argv.moduleInfo.relativeName%>:<%=argv.resourceName%>',
+              action,
+            ),
+          ),
+        );
+        assert.deepEqual(permissions, actions.map(() => false));
+      } finally {
+        await app.bean.passport.signout();
+      }
+      // login as system admin
       await app.bean.passport.signinMock();
       // create
       const <%=argv.resourceName%>Id = await app.bean.executor.performAction('post', '<%=argv.moduleActionPathRaw%>', { body: data });

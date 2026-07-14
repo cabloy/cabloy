@@ -95,6 +95,9 @@ As you inspect the generated files, pay attention to the division of responsibil
 
 This is the backend contract thread that later tutorials will extend with `level`, `mobile`, render metadata, OpenAPI output, and row actions.
 
+> [!NOTE]
+> The generated Admin CRUD actions explicitly require the `systemAdmin` role. If this resource should serve another audience, adjust the relevant controller action guards as well as any SSR menu visibility; changing the menu alone does not authorize an API.
+
 ## Verification
 
 1. make sure the local dev workflow is running:

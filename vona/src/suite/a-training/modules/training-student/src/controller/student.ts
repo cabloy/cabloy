@@ -5,6 +5,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import type { ModelStudent } from '../model/student.ts';
@@ -23,6 +24,7 @@ export interface IControllerOptionsStudent extends IDecoratorControllerOptions {
 export class ControllerStudent extends BeanBase {
   @Web.post()
   @Api.body(v.tableIdentity())
+  @Passport.systemAdmin()
   async create(@Arg.body() student: DtoStudentCreate): Promise<TableIdentity> {
     return (await this.scope.service.student.create(student)).id;
   }
@@ -30,6 +32,7 @@ export class ControllerStudent extends BeanBase {
   @Web.get()
   @Api.body(DtoStudentSelectRes)
   @Core.serializer()
+  @Passport.systemAdmin()
   async select(
     @Arg.filter(DtoStudentSelectReq) params: IQueryParams<ModelStudent>,
   ): Promise<DtoStudentSelectRes> {
@@ -39,6 +42,7 @@ export class ControllerStudent extends BeanBase {
   @Web.get(':id')
   @Api.body(v.optional(), v.object(DtoStudentView))
   @Core.serializer()
+  @Passport.systemAdmin()
   async view(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentView | undefined> {
@@ -46,6 +50,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Web.patch(':id')
+  @Passport.systemAdmin()
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() student: DtoStudentUpdate,
@@ -56,6 +61,7 @@ export class ControllerStudent extends BeanBase {
   @Web.get('summary/:id')
   @Api.body(v.optional(), v.object(DtoStudentSummary))
   @Core.serializer()
+  @Passport.systemAdmin()
   async summary(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoStudentSummary | undefined> {
@@ -63,11 +69,13 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Web.delete(':id')
+  @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
     return await this.scope.service.student.delete(id);
   }
 
   @Web.delete('deleteForce/:id')
+  @Passport.systemAdmin()
   async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
     return await this.scope.service.student.deleteForce(id);
   }

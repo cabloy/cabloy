@@ -5,6 +5,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
 import type { ModelRecord } from '../model/record.ts';
@@ -22,6 +23,7 @@ export interface IControllerOptionsRecord extends IDecoratorControllerOptions {}
 export class ControllerRecord extends BeanBase {
   @Web.post()
   @Api.body(v.tableIdentity())
+  @Passport.systemAdmin()
   async create(@Arg.body() record: DtoRecordCreate): Promise<TableIdentity> {
     return (await this.scope.service.record.create(record)).id;
   }
@@ -29,6 +31,7 @@ export class ControllerRecord extends BeanBase {
   @Web.get()
   @Api.body(DtoRecordSelectRes)
   @Core.serializer()
+  @Passport.systemAdmin()
   async select(
     @Arg.filter(DtoRecordSelectReq) params: IQueryParams<ModelRecord>,
   ): Promise<DtoRecordSelectRes> {
@@ -38,6 +41,7 @@ export class ControllerRecord extends BeanBase {
   @Web.get(':id')
   @Api.body(v.optional(), v.object(DtoRecordView))
   @Core.serializer()
+  @Passport.systemAdmin()
   async view(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoRecordView | undefined> {
@@ -45,6 +49,7 @@ export class ControllerRecord extends BeanBase {
   }
 
   @Web.patch(':id')
+  @Passport.systemAdmin()
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() record: DtoRecordUpdate,
@@ -53,6 +58,7 @@ export class ControllerRecord extends BeanBase {
   }
 
   @Web.delete(':id')
+  @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
     return await this.scope.service.record.delete(id);
   }

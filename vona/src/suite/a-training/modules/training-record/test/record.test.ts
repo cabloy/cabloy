@@ -243,4 +243,25 @@ describe('record.test.ts', () => {
       }
     });
   });
+
+  it('action:record:systemAdmin', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      try {
+        app.bean.passport.current!.roles = [];
+        const actions = ['create', 'select', 'view', 'update', 'delete'];
+        const permissions = await Promise.all(
+          actions.map(action =>
+            app.bean.permission.retrievePermissionAction('training-record:record', action),
+          ),
+        );
+        assert.deepEqual(
+          permissions,
+          actions.map(() => false),
+        );
+      } finally {
+        await app.bean.passport.signout();
+      }
+    });
+  });
 });
