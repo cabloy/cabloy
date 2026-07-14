@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.105
+
+### Features
+
+- Filter SSR menus based on user roles.
+- Add SSR site access policies.
+- Add an event for retrieving action permissions.
+- Update `monkeySys.ts` functionality.
+
 ## 5.1.104
 
 ### Features
