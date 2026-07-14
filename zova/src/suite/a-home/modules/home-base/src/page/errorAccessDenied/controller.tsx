@@ -31,7 +31,7 @@ export class ControllerPageErrorAccessDenied extends BeanControllerPageBase {
               this.app.$gotoHome();
             }}
           >
-            Go Home
+            {this.scope.locale.GoHome()}
           </button>
         </div>
       </div>
