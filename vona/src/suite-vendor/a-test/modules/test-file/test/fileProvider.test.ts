@@ -21,25 +21,32 @@ describe('fileProvider.test.ts', () => {
         providerName: 'file-cloudflare:cloudflare',
         clientName: 'default',
       });
-      const cloudflareClientOptions: IFileProviderCloudflareClientOptions = {
-        endpoint: 'https://account123.r2.cloudflarestorage.com',
-        accessKeyId: 'access-key',
-        secretAccessKey: 'secret-key',
-        bucket: 'bucket-a',
-        deliveryBaseUrl: 'https://cdn.example.com/files',
-        public: true,
-      };
-      await app.bean.fileProvider.scope.model.fileProvider.updateById(cloudflare.id, {
-        clientOptions: cloudflareClientOptions,
-      });
-      const cloudflareRes = await app.bean.fileProvider.getClientOptions({
-        providerName: 'file-cloudflare:cloudflare',
-        clientName: 'default',
-      });
-      assert.equal(cloudflareRes.clientOptions?.signedDeliveryKind, 'provider');
-      assert.equal(cloudflareRes.clientOptions?.bucket, 'bucket-a');
-      assert.equal(cloudflareRes.clientOptions?.deliveryBaseUrl, 'https://cdn.example.com/files');
-      assert.equal(cloudflareRes.clientOptions?.public, true);
+      const clientOptionsRaw = cloudflare.clientOptions;
+      try {
+        const cloudflareClientOptions: IFileProviderCloudflareClientOptions = {
+          endpoint: 'https://account123.r2.cloudflarestorage.com',
+          accessKeyId: 'access-key',
+          secretAccessKey: 'secret-key',
+          bucket: 'bucket-a',
+          deliveryBaseUrl: 'https://cdn.example.com/files',
+          public: true,
+        };
+        await app.bean.fileProvider.scope.model.fileProvider.updateById(cloudflare.id, {
+          clientOptions: cloudflareClientOptions,
+        });
+        const cloudflareRes = await app.bean.fileProvider.getClientOptions({
+          providerName: 'file-cloudflare:cloudflare',
+          clientName: 'default',
+        });
+        assert.equal(cloudflareRes.clientOptions?.signedDeliveryKind, 'provider');
+        assert.equal(cloudflareRes.clientOptions?.bucket, 'bucket-a');
+        assert.equal(cloudflareRes.clientOptions?.deliveryBaseUrl, 'https://cdn.example.com/files');
+        assert.equal(cloudflareRes.clientOptions?.public, true);
+      } finally {
+        await app.bean.fileProvider.scope.model.fileProvider.updateById(cloudflare.id, {
+          clientOptions: clientOptionsRaw ?? null,
+        });
+      }
     });
   });
 });

@@ -28,6 +28,8 @@ describe('fileNative.test.ts', () => {
   it('action:file:native upload/get/download/delete', async () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-native.txt');
+      let fileId: number | undefined;
+      let privateFileId: number | undefined;
       await fse.writeFile(filePath, 'hello file-native');
       try {
         const file = await app.bean.file.upload(
@@ -42,6 +44,7 @@ describe('fileNative.test.ts', () => {
             clientName: 'default',
           },
         );
+        fileId = file.id;
         assert.equal(file.provider, 'file-native:native');
         assert.equal(file.filename, 'hello.txt');
         assert.equal(file.public, true);
@@ -73,6 +76,7 @@ describe('fileNative.test.ts', () => {
             clientName: 'default',
           },
         );
+        privateFileId = privateFile.id;
         const privateUrl = await app.bean.file.getDownloadUrl(privateFile.id);
         const privateUrlParsed = new URL(privateUrl);
         assert.equal(privateUrlParsed.pathname.endsWith('/file/download'), true);
@@ -103,6 +107,8 @@ describe('fileNative.test.ts', () => {
         assert.equal(deletedFile, undefined);
         assert.equal(deletedPrivate, undefined);
       } finally {
+        if (fileId) await app.bean.file.delete(fileId);
+        if (privateFileId) await app.bean.file.delete(privateFileId);
         await fse.remove(filePath);
       }
     });

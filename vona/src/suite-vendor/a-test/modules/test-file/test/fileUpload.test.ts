@@ -62,6 +62,7 @@ describe('fileUpload.test.ts', () => {
   it('action:file:upload api', async () => {
     await app.bean.executor.mockCtx(async () => {
       const jwt = await app.bean.passport.signinMock('admin');
+      const fileIds: number[] = [];
       try {
         const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-policy');
         const uploadPolicyRes = await fetch(uploadPolicyUrl, {
@@ -98,6 +99,7 @@ describe('fileUpload.test.ts', () => {
 
         for (const filename of ['upload.txt', uploadFilenameChinese]) {
           const data = await uploadFile(filename);
+          fileIds.push(data.data.id);
           assert.equal(data.data.filename, filename);
           assert.equal(data.data.uploadedAt instanceof Date, true);
           assert.equal(typeof data.data.url, 'string');
@@ -105,6 +107,9 @@ describe('fileUpload.test.ts', () => {
           assertInternalFieldsAbsent(data.data);
         }
       } finally {
+        for (const fileId of fileIds) {
+          await app.bean.file.delete(fileId);
+        }
         await app.bean.passport.signout();
       }
     });
@@ -117,50 +122,52 @@ describe('fileUpload.test.ts', () => {
         providerName: 'file-cloudflare:cloudflare',
         clientName: 'default',
       });
-      await app.bean.fileProvider.scope.model.fileProvider.updateById(provider.id, {
-        clientOptions: {
-          endpoint: 'https://account123.r2.cloudflarestorage.com',
-          accessKeyId: 'access-key',
-          secretAccessKey: 'secret-key',
-          bucket: 'bucket-a',
-          deliveryBaseUrl: 'https://cdn.example.com/files',
-          public: false,
-        } as any,
-      });
+      const clientOptionsRaw = provider.clientOptions;
+      const fileIds: number[] = [];
       const fileCloudflare = app.bean._getBean('file-cloudflare.service.fileCloudflare' as never);
-      const uploadRaw = fileCloudflare.upload.bind(fileCloudflare);
-      const downloadFileUploadUrlRaw = (fileCloudflare as any).uploadUrl.bind(fileCloudflare);
-      fileCloudflare.upload = async (input: any) => {
-        return {
-          resourceId: 'cf-upload-url-api-1',
-          bucket: 'bucket-a',
-          objectKey: 'folder/upload-url.txt',
-          filename: input.filename,
-          contentType: input.contentType,
-          size: input.size ?? textFile.length,
-          etag: 'etag123',
-          deliveryBaseUrl: 'https://cdn.example.com/files',
-          public: input.public ?? false,
-          meta: input.meta,
-        };
-      };
-      fileCloudflare.uploadUrl = async (input: any) => {
-        assert.equal(input.url, 'https://example.com/upload-url.txt');
-        assert.equal(input.policy.fileScene, 'test-file:cloudflareFile');
-        return {
-          resourceId: 'cf-upload-url-api-1',
-          bucket: 'bucket-a',
-          objectKey: 'folder/upload-url.txt',
-          filename: 'upload-url.txt',
-          contentType: 'text/plain',
-          size: textFile.length,
-          etag: 'etag123',
-          deliveryBaseUrl: 'https://cdn.example.com/files',
-          public: false,
-          meta: input.meta,
-        };
-      };
+      const uploadRaw = fileCloudflare.upload;
+      const uploadUrlRaw = fileCloudflare.uploadUrl;
       try {
+        await app.bean.fileProvider.scope.model.fileProvider.updateById(provider.id, {
+          clientOptions: {
+            endpoint: 'https://account123.r2.cloudflarestorage.com',
+            accessKeyId: 'access-key',
+            secretAccessKey: 'secret-key',
+            bucket: 'bucket-a',
+            deliveryBaseUrl: 'https://cdn.example.com/files',
+            public: false,
+          } as any,
+        });
+        fileCloudflare.upload = async (input: any) => {
+          return {
+            resourceId: 'cf-upload-url-api-1',
+            bucket: 'bucket-a',
+            objectKey: 'folder/upload-url.txt',
+            filename: input.filename,
+            contentType: input.contentType,
+            size: input.size ?? textFile.length,
+            etag: 'etag123',
+            deliveryBaseUrl: 'https://cdn.example.com/files',
+            public: input.public ?? false,
+            meta: input.meta,
+          };
+        };
+        fileCloudflare.uploadUrl = async (input: any) => {
+          assert.equal(input.url, 'https://example.com/upload-url.txt');
+          assert.equal(input.policy.fileScene, 'test-file:cloudflareFile');
+          return {
+            resourceId: 'cf-upload-url-api-1',
+            bucket: 'bucket-a',
+            objectKey: 'folder/upload-url.txt',
+            filename: 'upload-url.txt',
+            contentType: 'text/plain',
+            size: textFile.length,
+            etag: 'etag123',
+            deliveryBaseUrl: 'https://cdn.example.com/files',
+            public: false,
+            meta: input.meta,
+          };
+        };
         const uploadPolicyUrl = app.util.getAbsoluteUrlByApiPath('/file/upload-policy');
         const uploadPolicyRes = await fetch(uploadPolicyUrl, {
           method: 'POST',
@@ -195,6 +202,7 @@ describe('fileUpload.test.ts', () => {
         });
         assert.equal(directRes.ok, true);
         const directData = await directRes.json();
+        fileIds.push(directData.data.id);
         assert.equal(directData.data.method, 'PUT');
         assert.equal(typeof directData.data.uploadUrl, 'string');
         assert.equal(directData.data.public, false);
@@ -218,14 +226,21 @@ describe('fileUpload.test.ts', () => {
         });
         assert.equal(uploadUrlRes.ok, true);
         const uploadUrlData = await uploadUrlRes.json();
+        fileIds.push(uploadUrlData.data.id);
         assert.equal(uploadUrlData.data.filename, 'upload-url.txt');
         assert.equal(uploadUrlData.data.uploadedAt instanceof Date, true);
         assert.equal(uploadUrlData.data.signed, true);
         assert.equal(uploadUrlData.data.url.includes('X-Amz-Algorithm='), true);
         assertInternalFieldsAbsent(uploadUrlData.data);
       } finally {
+        for (const fileId of fileIds) {
+          await app.bean.file.scope.model.file.deleteById(fileId);
+        }
         fileCloudflare.upload = uploadRaw;
-        fileCloudflare.uploadUrl = downloadFileUploadUrlRaw;
+        fileCloudflare.uploadUrl = uploadUrlRaw;
+        await app.bean.fileProvider.scope.model.fileProvider.updateById(provider.id, {
+          clientOptions: clientOptionsRaw ?? null,
+        });
         await app.bean.passport.signout();
       }
     });
@@ -234,6 +249,8 @@ describe('fileUpload.test.ts', () => {
   it('action:file:download api private token behavior', async () => {
     await app.bean.executor.mockCtx(async () => {
       const filePath = path.join(os.tmpdir(), 'test-file-download-route.txt');
+      let privateFileId: number | undefined;
+      let otherPrivateFileId: number | undefined;
       await fse.writeFile(filePath, textFile);
       try {
         const privateFile = await app.bean.file.upload(
@@ -264,6 +281,8 @@ describe('fileUpload.test.ts', () => {
           },
         );
 
+        privateFileId = privateFile.id;
+        otherPrivateFileId = otherPrivateFile.id;
         const privateUrl = new URL(app.util.getAbsoluteUrlByApiPath($apiPath('/file/download')));
         privateUrl.searchParams.set('fileId', String(privateFile.id));
         const privateUnauthorizedRes = await fetch(privateUrl);
@@ -314,6 +333,9 @@ describe('fileUpload.test.ts', () => {
         await app.bean.file.delete(privateFile.id);
         await app.bean.file.delete(otherPrivateFile.id);
       } finally {
+        if (privateFileId) await app.bean.file.delete(privateFileId);
+        if (otherPrivateFileId) await app.bean.file.delete(otherPrivateFileId);
+        await app.bean.passport.signout();
         await fse.remove(filePath);
       }
     });
