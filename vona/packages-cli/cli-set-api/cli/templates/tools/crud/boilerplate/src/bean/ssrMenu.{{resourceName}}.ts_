@@ -20,6 +20,7 @@ export interface ISsrMenuOptions<%=argv.resourceNameCapitalize%> extends IDecora
         },
       },
       group: '<%=argv.ssrSiteGroupName%>',
+      roles: ['systemAdmin'],
     },
   },
   site: ['<%=argv.ssrSiteOnionName%>'],
