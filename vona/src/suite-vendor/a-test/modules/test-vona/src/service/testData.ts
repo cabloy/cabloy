@@ -3,13 +3,14 @@ import { Service } from 'vona-module-a-bean';
 
 import type { EntityPost } from '../entity/post.ts';
 import type { EntityPostContent } from '../entity/postContent.ts';
+import type { EntityRole } from '../entity/role.ts';
 import type { EntityUser } from '../entity/user.ts';
 
 export interface ITestData {
   userTom: EntityUser;
   userJimmy: EntityUser;
-  roleFamily: import('../entity/role.ts').EntityRole;
-  roleFriend: import('../entity/role.ts').EntityRole;
+  roleFamily: EntityRole;
+  roleFriend: EntityRole;
   postApple: EntityPost;
   postPear: EntityPost;
   postContentApple: EntityPostContent;

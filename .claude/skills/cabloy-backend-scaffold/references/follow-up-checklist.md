@@ -24,7 +24,7 @@ After generating or extending a backend thread, check which follow-up layers app
 
 - migration/version changes
 - `meta.version`
-- field indexes
+- field indexes; in shared-database multitenancy, preserve ordinary lookup indexes and enforce business uniqueness in tenant-aware business logic rather than with `table.unique(...)`
 - relations
 - datasource choice
 - cache behavior

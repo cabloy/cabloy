@@ -19,7 +19,6 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         table.basicFields();
         table.string(entityRole.name, 255).comment(entityRole.$comment.name);
         table.json(entityRole.siteIds).comment(entityRole.$comment.siteIds);
-        table.unique([entityRole.name]);
       });
       // homeUser
       const entityUser = this.scope.entity.user;
@@ -43,7 +42,6 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         table.basicFields();
         table.tableIdentity('userId');
         table.tableIdentity('roleId');
-        table.unique(['userId', 'roleId']);
       });
     }
   }

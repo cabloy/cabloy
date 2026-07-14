@@ -17,7 +17,6 @@ import { checkErrorJwtExpiredAndThrow } from 'vona-module-a-jwt';
 
 import type { TypeEventRetrieveMenusResult } from '../bean/event.retrieveMenus.ts';
 import type { TypeEventRetrieveMenusSiteResult } from '../bean/event.retrieveMenusSite.ts';
-import type { ZovaConfigEnv } from '../types/env.ts';
 import type {
   IDecoratorSsrMenuOptions,
   ISsrMenuItemPrepared,
@@ -168,7 +167,6 @@ export class BeanSsrSiteBase<
       this._siteOptions = deepExtend(
         {
           envServer: {
-            SITE_ID: onionOptions.siteId as string,
             SSR_API_BASE_URL: baseUrl,
             SSR_PROD_PROTOCOL: this.app.util.protocol,
             SSR_PROD_HOST: this.app.util.host,
@@ -176,7 +174,6 @@ export class BeanSsrSiteBase<
             META_MODE,
           },
           envClient: {
-            SITE_ID: onionOptions.siteId as string,
             API_BASE_URL: baseUrl,
             SSR_PROD_PROTOCOL: this.app.util.protocol,
             SSR_PROD_HOST: this.app.util.host,
@@ -186,11 +183,15 @@ export class BeanSsrSiteBase<
         },
         this.$scope.ssr.config.site.default,
         onionOptions,
+        {
+          envServer: {
+            SITE_ID: onionOptions.siteId,
+          },
+          envClient: {
+            SITE_ID: onionOptions.siteId,
+          },
+        },
       );
-      const envServer = (this._siteOptions.envServer ??= {} as ZovaConfigEnv);
-      const envClient = (this._siteOptions.envClient ??= {} as ZovaConfigEnv);
-      envServer.SITE_ID = this._siteOptions.siteId as string;
-      envClient.SITE_ID = this._siteOptions.siteId as string;
     }
     return this._siteOptions;
   }

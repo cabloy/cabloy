@@ -66,6 +66,14 @@ Field indexes can also be configured through app config.
 
 That means index behavior participates in the broader configuration system rather than being locked into one metadata file only.
 
+## Shared-database multitenancy and business uniqueness
+
+Ordinary indexes in `meta.index` improve lookup and query performance. They do not define a business uniqueness rule.
+
+In shared-database multitenancy, do not use `table.unique(...)` for tenant-scoped business uniqueness. A database-wide unique constraint can reject the same business value when it belongs to a different tenant.
+
+Keep the ordinary indexes needed by the access pattern, and enforce the tenant-scoped uniqueness rule in tenant-aware business logic.
+
 ## Implementation checks for persistence changes
 
 When changing persistence design, do not stop at entity fields and model methods.
@@ -74,7 +82,8 @@ Also ask:
 
 1. does this access pattern need an index?
 2. should the index belong in `meta.index`?
-3. is the typed style a better fit than raw string declarations?
+3. does a business key need tenant-scoped uniqueness, to be enforced in tenant-aware business logic rather than with `table.unique(...)`?
+4. is the typed style a better fit than raw string declarations?
 
 That leads to backend changes that are more production-aware and more aligned with Vona’s module metadata model.
 
