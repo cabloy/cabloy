@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.106
+
+### Improvements
+
+- Refresh the Zova lockfile and update the Vona Zova Core patch.
+
 ## 5.1.105
 
 ### Features
