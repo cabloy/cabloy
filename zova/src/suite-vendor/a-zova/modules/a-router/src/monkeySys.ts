@@ -85,8 +85,12 @@ export class MonkeySys
       return app.$gotoPage(pagePath, { ...options, params: undefined });
     };
     app.$gotoLogin = (returnTo?: string, cause?: string) => {
-      if (!returnTo && cast(app.meta.$router.currentRoute)?.path === app.sys.env.ROUTER_PAGE_LOGIN)
+      if (
+        !returnTo &&
+        cast(app.meta.$router.currentRoute)?.path === app.sys.env.ROUTER_PAGE_LOGIN
+      ) {
         return;
+      }
       const query: any = {};
       if (cause) {
         query.cause = cause;
