@@ -33,7 +33,7 @@ export class ServiceSsrHandler extends BeanBase {
     return await ssrHandler.resolvePath(filename);
   }
 
-  public async render(options: ISsrHandlerRenderOptionsInner) {
+  public async render(options: ISsrHandlerRenderOptionsInner): Promise<true | string | undefined> {
     const ssrHandler = await this.ensureReady();
     return await ssrHandler.render(options);
   }
