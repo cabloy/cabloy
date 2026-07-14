@@ -27,7 +27,6 @@ import type {
   IDecoratorSsrSiteOptions,
   ISsrHandlerRenderOptions,
   ISsrHandlerRenderOptionsInner,
-  ISsrHandlerRenderResult,
   ISsrSitePerformActionOptions,
   TypeSsrSitePerformAction,
 } from '../types/ssrSite.ts';
@@ -133,13 +132,12 @@ export class BeanSsrSiteBase<
       },
     };
     // ssr render
-    const renderResult = await this.ssrHandler.render(optionsInner);
-    if (!renderResult) return;
-    if (renderResult === true) return true;
-    const { html, responseStatus } = renderResult as ISsrHandlerRenderResult;
+    const html = await this.ssrHandler.render(optionsInner);
+    if (!html) return;
+    if (html === true) return true;
     // output
     if (renderOptions?.returnHtml) return html;
-    res.statusCode = responseStatus ?? 200;
+    res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
     res.end(html);
     return true;

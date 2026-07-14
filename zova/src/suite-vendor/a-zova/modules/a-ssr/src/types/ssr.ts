@@ -18,7 +18,6 @@ export interface SSRContext {
   pagePath?: string;
   pageData?: any;
   performAction?: TypeSsrSitePerformAction;
-  responseStatus?: number;
   /** The global "nonce" attribute to use */
   nonce?: string;
   /**

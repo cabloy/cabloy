@@ -131,14 +131,6 @@ export class CtxSSR extends BeanSimple {
     this.context._meta.renderError = err;
   }
 
-  get responseStatus() {
-    return this.context.responseStatus;
-  }
-
-  set responseStatus(value: number | undefined) {
-    this.context.responseStatus = value;
-  }
-
   getPerformAction(baseURL?: string): TypeSsrSitePerformAction | undefined {
     if (process.env.SERVER && baseURL === this.sys.env.SSR_API_BASE_URL)
       return this.context.performAction;

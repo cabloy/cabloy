@@ -39,11 +39,6 @@ export interface ISsrHandlerRenderOptionsInner extends ISsrHandlerRenderOptionsB
   state?: SSRContextState;
 }
 
-export interface ISsrHandlerRenderResult {
-  html: string;
-  responseStatus?: number;
-}
-
 export interface SSRContextState {
   envClient?: ZovaConfigEnv;
   pagePathFull?: string;

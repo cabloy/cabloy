@@ -37,7 +37,11 @@ export class ServiceRouterGuards extends BeanRouterGuardsBase {
       const siteAdmitted =
         !!siteId && !!this.$passport.roles?.some(role => role.siteIds.includes(siteId));
       if (!siteAdmitted) {
-        await this.app.$gotoAccessDenied();
+        try {
+          this.app.$gotoAccessDenied();
+        } catch (err: any) {
+          this.$errorHandler(err);
+        }
         return false;
       }
     });

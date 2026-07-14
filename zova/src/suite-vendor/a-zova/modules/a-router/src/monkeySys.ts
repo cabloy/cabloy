@@ -101,10 +101,7 @@ export class MonkeySys
     app.$gotoAccessDenied = () => {
       const pagePath = '/home/base/errorAccessDenied';
       if (cast(app.meta.$router.currentRoute)?.path === pagePath) return;
-      if (process.env.SERVER) {
-        app.ctx.meta.$ssr.responseStatus = 403;
-      }
-      return app.meta.$router.replace(pagePath);
+      return app.$gotoPage(pagePath, { replace: true });
     };
     app.$gotoReturnTo = (returnTo?: string) => {
       const pagePath = app.$getReturnTo(returnTo);
