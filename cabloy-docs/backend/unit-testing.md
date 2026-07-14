@@ -121,13 +121,19 @@ A practical rule is:
 A representative contract-verification pattern is:
 
 ```typescript
-await app.bean.executor.performAction('patch', '/test/rest/product/:id', {
+const updateRes = await app.bean.executor.performAction('patch', '/test/rest/product/:id', {
   params: { id: productId },
   body: dataUpdate,
 });
+assert.equal(updateRes, null);
+
+const deleteRes = await app.bean.executor.performAction('delete', '/test/rest/product/:id', {
+  params: { id: productId },
+});
+assert.equal(deleteRes, null);
 ```
 
-This is a good default because the same test can exercise params, body, route wiring, validation, and response behavior together.
+For standard resource command mutations, these assertions verify the controller-facing no-payload contract. Follow them with a query/read-back assertion to verify the persisted update or deletion. The same test then exercises params, body, route wiring, validation, response behavior, and persistence effects together.
 
 ## Authentication simulation
 

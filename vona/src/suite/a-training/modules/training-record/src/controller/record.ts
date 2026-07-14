@@ -53,13 +53,13 @@ export class ControllerRecord extends BeanBase {
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() record: DtoRecordUpdate,
-  ) {
-    return await this.scope.service.record.update(id, record);
+  ): Promise<void> {
+    await this.scope.service.record.update(id, record);
   }
 
   @Web.delete(':id')
   @Passport.systemAdmin()
-  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
-    return await this.scope.service.record.delete(id);
+  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
+    await this.scope.service.record.delete(id);
   }
 }

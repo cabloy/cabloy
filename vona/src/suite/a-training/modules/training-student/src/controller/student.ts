@@ -54,8 +54,8 @@ export class ControllerStudent extends BeanBase {
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() student: DtoStudentUpdate,
-  ) {
-    return await this.scope.service.student.update(id, student);
+  ): Promise<void> {
+    await this.scope.service.student.update(id, student);
   }
 
   @Web.get('summary/:id')
@@ -70,13 +70,13 @@ export class ControllerStudent extends BeanBase {
 
   @Web.delete(':id')
   @Passport.systemAdmin()
-  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
-    return await this.scope.service.student.delete(id);
+  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
+    await this.scope.service.student.delete(id);
   }
 
   @Web.delete('deleteForce/:id')
   @Passport.systemAdmin()
-  async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
-    return await this.scope.service.student.deleteForce(id);
+  async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
+    await this.scope.service.student.deleteForce(id);
   }
 }

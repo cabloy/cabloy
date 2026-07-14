@@ -148,11 +148,11 @@ Representative pattern:
 
 ```typescript
 @Web.patch('updateUser/:id')
-updateUser(
+async updateUser(
   @Arg.param('id') id: TableIdentity,
   @Arg.body(v.object(DtoUserUpdate)) user: DtoUserUpdate,
-) {
-  return this.scope.model.user.update(user, { where: { id } });
+): Promise<void> {
+  await this.scope.service.user.update(id, user);
 }
 ```
 
@@ -207,6 +207,43 @@ A practical rule is:
 
 - use return-type inference when the contract is obvious and simple
 - use explicit `@Api.body(...)` when the response shape needs more control or the inference boundary becomes unclear
+
+## Resource mutation response contract
+
+Standard resource `update` and `delete` actions are command-style actions. Their public contract is successful completion, not an implicit persistence-model payload.
+
+Representative pattern:
+
+```typescript
+@Web.patch(':id')
+@Passport.systemAdmin()
+async update(
+  @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+  @Arg.body() student: DtoStudentUpdate,
+): Promise<void> {
+  await this.scope.service.student.update(id, student);
+}
+```
+
+Use `await` without `return` at the controller boundary. A service or model may still return mutation data for internal orchestration, but that data is not automatically a stable public representation of the resource.
+
+For a standard JSON action, Vona maps this no-result controller completion to its normal HTTP `200` success wrapper:
+
+```typescript
+{
+  code: 0,
+  message: 'success',
+  data: null,
+}
+```
+
+This is Vona's default resource-mutation convention. It does not use HTTP `204 No Content`, so consumers can keep one uniform success-envelope protocol.
+
+### When a mutation should return data
+
+Return data only when it is an intentional consumer-facing contract, such as an updated response DTO, a version token, or a job handle. Declare that shape explicitly with `@Api.body(...)`; add `@Core.serializer()` when the response depends on serializer transforms, exclusions, getters, or replacements. Do not forward raw ORM or service mutation results merely because the delegated method returns a value.
+
+`create` and read actions commonly expose an identity or DTO and therefore use their own explicit response contracts. For generated resource defaults, see [CRUD Workflow](/backend/crud-workflow#generated-mutation-response-default). For action-level verification, see [Unit Testing](/backend/unit-testing#testing-controllers-through-actions). When a declared response shape changes, follow the [Backend OpenAPI to Frontend SDK](/fullstack/openapi-to-sdk) contract loop.
 
 ## Response wrapper behavior
 

@@ -38,10 +38,11 @@ describe('product.test.ts', () => {
       );
       assert.equal(queryRes.list.findIndex(item => item.name === data.name) > -1, true);
       // update
-      await app.bean.executor.performAction('patch', '/test/rest/product/:id', {
+      const updateRes = await app.bean.executor.performAction('patch', '/test/rest/product/:id', {
         params: { id: productId },
         body: dataUpdate,
       });
+      assert.equal(updateRes, null);
       // findOne
       let product: EntityProduct = await app.bean.executor.performAction(
         'get',
@@ -50,9 +51,10 @@ describe('product.test.ts', () => {
       );
       assert.equal(product.name, dataUpdate.name);
       // delete
-      await app.bean.executor.performAction('delete', '/test/rest/product/:id', {
+      const deleteRes = await app.bean.executor.performAction('delete', '/test/rest/product/:id', {
         params: { id: product.id },
       });
+      assert.equal(deleteRes, null);
       // findOne
       product = await app.bean.executor.performAction('get', '/test/rest/product/:id', {
         params: { id: product.id },

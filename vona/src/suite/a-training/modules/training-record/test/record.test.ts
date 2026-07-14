@@ -160,10 +160,11 @@ describe('record.test.ts', () => {
             },
           ],
         } as any as DtoRecordUpdate;
-        await app.bean.executor.performAction('patch', '/training/record/:id', {
+        const updateRes = await app.bean.executor.performAction('patch', '/training/record/:id', {
           params: { id: recordId },
           body: dataUpdate,
         });
+        assert.equal(updateRes, null);
 
         record = await app.bean.executor.performAction('get', '/training/record/:id', {
           params: { id: recordId },
@@ -200,9 +201,10 @@ describe('record.test.ts', () => {
         assert.equal(studentRecord?.dossierFiles?.length, 2);
         assert.equal(studentRecord?.trainingRecordSubjects?.length, 2);
 
-        await app.bean.executor.performAction('delete', '/training/record/:id', {
+        const deleteRes = await app.bean.executor.performAction('delete', '/training/record/:id', {
           params: { id: recordId },
         });
+        assert.equal(deleteRes, null);
 
         record = await app.bean.executor.performAction('get', '/training/record/:id', {
           params: { id: recordId },

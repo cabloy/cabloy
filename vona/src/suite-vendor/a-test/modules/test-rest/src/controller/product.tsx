@@ -53,12 +53,12 @@ export class ControllerProduct extends BeanBase {
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() product: DtoProductUpdate,
-  ) {
-    return await this.scope.service.product.update(id, product);
+  ): Promise<void> {
+    await this.scope.service.product.update(id, product);
   }
 
   @Web.delete(':id')
-  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
-    return await this.scope.service.product.delete(id);
+  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
+    await this.scope.service.product.delete(id);
   }
 }

@@ -123,10 +123,11 @@ describe('student.test.ts', () => {
           },
         ],
       } as any as DtoStudentUpdate;
-      await app.bean.executor.performAction('patch', '/training/student/:id', {
+      const updateRes = await app.bean.executor.performAction('patch', '/training/student/:id', {
         params: { id: studentId },
         body: dataUpdate,
       });
+      assert.equal(updateRes, null);
       // findOne after nested update
       student = await app.bean.executor.performAction('get', '/training/student/:id', {
         params: { id: studentId },
@@ -168,9 +169,10 @@ describe('student.test.ts', () => {
       assert.equal(typeof summary.levelTitle, 'string');
       assert.equal(typeof summary.summaryText, 'string');
       // delete
-      await app.bean.executor.performAction('delete', '/training/student/:id', {
+      const deleteRes = await app.bean.executor.performAction('delete', '/training/student/:id', {
         params: { id: student.id },
       });
+      assert.equal(deleteRes, null);
       // findOne
       student = await app.bean.executor.performAction('get', '/training/student/:id', {
         params: { id: student.id },
@@ -180,9 +182,14 @@ describe('student.test.ts', () => {
       const studentIdForce = await app.bean.executor.performAction('post', '/training/student', {
         body: data,
       });
-      await app.bean.executor.performAction('delete', '/training/student/deleteForce/:id', {
-        params: { id: studentIdForce },
-      });
+      const deleteForceRes = await app.bean.executor.performAction(
+        'delete',
+        '/training/student/deleteForce/:id',
+        {
+          params: { id: studentIdForce },
+        },
+      );
+      assert.equal(deleteForceRes, null);
       const studentForce: EntityStudent | undefined = await app.bean
         .scope('training-student')
         .model.student.getById(studentIdForce, {

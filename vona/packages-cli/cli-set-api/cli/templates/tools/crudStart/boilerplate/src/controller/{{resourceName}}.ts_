@@ -43,13 +43,13 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
 
   @Web.patch(':id')
   @Passport.systemAdmin()
-  async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update) {
-    return await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
+  async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update): Promise<void> {
+    await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
   @Web.delete(':id')
   @Passport.systemAdmin()
-  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity) {
-    return await this.scope.service.<%=argv.resourceName%>.delete(id);
+  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
+    await this.scope.service.<%=argv.resourceName%>.delete(id);
   }
 }
