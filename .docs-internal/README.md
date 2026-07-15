@@ -70,6 +70,7 @@ Those concerns should live elsewhere.
 - [Resource Public Contract Exposure](./architecture/resource-public-contract-exposure.md)
 - [Module Removal Workflow](./architecture/module-removal-workflow.md)
 - [SSR Memory Leak Investigation Guide](./architecture/ssr-memory-leak-investigation-guide.md)
+- [SSR `retrieveMenus` Role-Aware Cache Evaluation](./architecture/ssr-retrieve-menus-role-aware-cache-evaluation.md)
 - [SSR Leak Experiment Flags Inventory](./architecture/ssr-leak-experiment-flags-inventory.md)
 - [SSR Leak Experiment Cleanup Checklist](./architecture/ssr-leak-experiment-cleanup-checklist.md)
 - [Vona/Zova Install-Time Type Patch](./architecture/vona-zova-install-time-type-patch.md)
