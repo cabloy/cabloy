@@ -52,7 +52,6 @@ cd vona && npm run build
 cd vona && npm run build:docker
 cd vona && npm run start
 cd vona && npm run start:one
-cd vona && npm run start:docker
 ```
 
 In the current repo, those scripts map naturally to:
@@ -83,8 +82,9 @@ cd vona && npm run play
 cd vona && npm run build
 cd vona && npm run build:docker
 cd vona && npm run start
-cd vona && npm run start:docker
 ```
+
+`build:docker` produces Docker-oriented output. Run that output through the Docker Compose workflow rather than a direct Vona `start:docker` command.
 
 These scripts show that the same `prod` mode can still branch into different output/runtime shapes through flavor.
 

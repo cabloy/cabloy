@@ -52,13 +52,14 @@ From the root repository:
 npm run start
 ```
 
-Vona also supports single-process and docker-oriented start modes inside its own package:
+Vona also supports its normal and single-process start modes inside its own package:
 
 ```bash
 cd vona && npm run start
 cd vona && npm run start:one
-cd vona && npm run start:docker
 ```
+
+For Docker output, use the Docker Compose workflow after `npm run build:docker`; Docker does not use a direct Vona start command.
 
 ## Test and typecheck
 

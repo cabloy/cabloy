@@ -84,6 +84,24 @@ A practical fallback rule is:
 
 - subdomain-based instance resolution only becomes relevant if custom getter, query-field, and header-field resolution did not already determine the instance name
 
+## Subdomain mapping and the default instance
+
+`SERVER_SUBDOMAINOFFSET` controls how many labels at the right side of a hostname are treated as the base domain. Its default value is `2`, which fits a two-label base domain such as `cabloy.test` or `example.com`.
+
+With that default, Vona derives the instance name from the remaining labels:
+
+| Hostname              | Derived instance name |
+| --------------------- | --------------------- |
+| `cabloy.test`         | `''`                  |
+| `acme.cabloy.test`    | `acme`                |
+| `eu.acme.cabloy.test` | `acme.eu`             |
+
+The last example is intentionally `acme.eu`: Koa reverses the remaining hostname labels before Vona joins `ctx.subdomains` with `.`.
+
+The empty name `''` is the configured default instance. It is not an implicit fallback for every hostname: it can be disabled or removed. Each non-empty subdomain-derived name, including a deeper name such as `acme.eu`, must refer to an explicitly configured and enabled instance. Requests for an unknown, disabled, or deleted instance do not fall back to the default instance.
+
+If the public base domain uses a different label shape, set an explicit `SERVER_SUBDOMAINOFFSET` override that matches that domain before relying on subdomain instance resolution.
+
 ## Instance edge cases to remember
 
 A few current-runtime edge cases are worth remembering:

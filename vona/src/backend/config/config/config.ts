@@ -49,7 +49,7 @@ export default async function (app: VonaApplication) {
 
   // server
   const publicDir = env.SERVER_PUBLICDIR || getPublicPathPhysicalRoot(app);
-  const subdomainOffset = Number.parseInt(env.SERVER_SUBDOMAINOFFSET || '1');
+  const subdomainOffset = Number.parseInt(env.SERVER_SUBDOMAINOFFSET || '2');
   const workers = Number.parseInt(env.SERVER_WORKERS!);
   config.server = {
     keys: (env.SERVER_KEYS || '').split(','),

@@ -17,8 +17,28 @@ Representative variables include:
 - `SSR_BODYREADYOBSERVER`
 - `SSR_API_BASE_URL`
 - `SSR_PROD_PORT`
+- `SSR_TRANSFERCACHE`
+- `SSR_TRANSFERCACHE_EXPIRES`
 
 These affect areas such as cookie-driven SSR behavior, theme defaults, body-load observation, server-side API targeting, and SSR production port behavior.
+
+## SSR response cache control
+
+`SSR_TRANSFERCACHE` and `SSR_TRANSFERCACHE_EXPIRES` control the `Cache-Control` response header that Zova adds after an SSR page is rendered.
+
+- `SSR_TRANSFERCACHE=false` disables this header path.
+- Any other value enables it in the current configuration normalization.
+- `SSR_TRANSFERCACHE_EXPIRES=0` emits `Cache-Control: no-cache, no-store, must-revalidate`.
+- A positive number of seconds or an `ms`-style duration such as `10m` emits `Cache-Control: public, max-age=<seconds>`.
+
+Cabloy Basic uses different flavor defaults:
+
+| Flavor | Settings                                                  | SSR response header                   |
+| ------ | --------------------------------------------------------- | ------------------------------------- |
+| Web    | `SSR_TRANSFERCACHE=true`, `SSR_TRANSFERCACHE_EXPIRES=10m` | `public, max-age=600`                 |
+| Admin  | `SSR_TRANSFERCACHE=true`, `SSR_TRANSFERCACHE_EXPIRES=0`   | `no-cache, no-store, must-revalidate` |
+
+A route can override the flavor default through its SSR route metadata. For Cloudflare cache-rule alignment that preserves these origin headers, see [Docker + Cloudflare Deployment](/fullstack/deploy-cloudflare-docker).
 
 ## Theme implications of `SSR_COOKIE`
 
