@@ -1,8 +1,10 @@
 # Docker + Cloudflare Deployment
 
-<Badge type="info" text="Basic" />
+<Badge type="tip" text="Common" />
 
-This guide deploys Cabloy Basic in two stages: first run the fullstack application on a cloud server with Docker Compose, then put Cloudflare orange-cloud proxying in front of that origin. It covers the Vona-integrated Zova Web and Admin SSR runtime.
+This guide deploys Cabloy Basic or Cabloy Start in two stages: first run the fullstack application on a cloud server with Docker Compose, then put Cloudflare orange-cloud proxying in front of that origin. It covers the Vona-integrated Zova Web and Admin SSR runtime shared by both editions.
+
+Run all commands from the repository for the edition you are using. This guide documents the shared deployment contract; verify edition-specific flavor names, SSR site baselines, project assets, and repository details in the active edition source.
 
 Cloudflare Pages and Cloudflare Workers are not supported deployment targets in this guide.
 
@@ -20,7 +22,7 @@ The Docker Compose origin is the application deployment. Cloudflare provides DNS
 
 ## Stage 1: deploy the Docker origin
 
-On the cloud server, clone and initialize Cabloy Basic, then build and start the Docker flavor:
+On the cloud server, clone and initialize the repository for your edition, then build and start its Docker flavor:
 
 ```bash
 npm run init
@@ -32,7 +34,7 @@ sudo docker-compose up -d
 
 The Compose stack contains the application, Nginx, PostgreSQL, and Redis. Treat database passwords, persistent volumes, backups, firewall rules, operating-system updates, and server hardening as production operator responsibilities.
 
-`vona/docker-compose/` is a generated and ignored deployment directory. Its tracked source template is `vona/docker-compose-original/`. Initialization copies that template only when the generated directory does not already exist, so upgrading the repository does not automatically update an existing generated Nginx configuration. Reconcile or regenerate that local deployment configuration deliberately.
+In the repository for the edition you are using, `vona/docker-compose/` is the generated and ignored deployment directory, while `vona/docker-compose-original/` is the tracked source template. Initialization copies the template only when the generated directory does not already exist, so upgrading the repository does not automatically update an existing generated Nginx configuration. Reconcile or regenerate that local deployment configuration deliberately, and verify the current template in your edition repository.
 
 ## Local preflight with `cabloy.test`
 
@@ -67,7 +69,7 @@ Visitor <-> Cloudflare edge
 Cloudflare <-> origin Nginx
 ```
 
-The shipped Docker Nginx template listens on port 80 only. Before enabling Cloudflare **Full (strict)**, provide a separately managed TLS-capable origin layer and a valid certificate that matches the origin hostname. For example, this can be an Nginx or ingress configuration managed by the deployment environment.
+The shared Docker origin baseline listens on port 80 only. Verify the current Nginx template in your edition repository. Before enabling Cloudflare **Full (strict)**, provide a separately managed TLS-capable origin layer and a valid certificate that matches the origin hostname. For example, this can be an Nginx or ingress configuration managed by the deployment environment.
 
 Use Cloudflare **Full (strict)** for the production connection to the origin. Do not use Flexible mode: it leaves the Cloudflare-to-origin connection unencrypted and can produce incorrect scheme and security behavior. Enabling the orange cloud alone does not add HTTPS to the origin.
 
@@ -109,16 +111,18 @@ For current Cache Rule settings, see [Cache Rules settings](https://developers.c
 
 ## SSR cache contract
 
-Zova SSR writes the cache contract during rendering through `SSR_TRANSFERCACHE` and `SSR_TRANSFERCACHE_EXPIRES`.
+Zova SSR writes the cache contract during rendering through `SSR_TRANSFERCACHE` and `SSR_TRANSFERCACHE_EXPIRES`. The current public Cabloy Basic baseline uses these defaults:
 
 | Flavor | Default settings                                          | SSR response header                                  | Cloudflare result with this rule                                |
 | ------ | --------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
 | Web    | `SSR_TRANSFERCACHE=true`, `SSR_TRANSFERCACHE_EXPIRES=10m` | `Cache-Control: public, max-age=600`                 | Eligible to cache for ten minutes, subject to Cloudflare policy |
 | Admin  | `SSR_TRANSFERCACHE=true`, `SSR_TRANSFERCACHE_EXPIRES=0`   | `Cache-Control: no-cache, no-store, must-revalidate` | Not stored                                                      |
 
+For Cabloy Start, verify the effective Web and Admin values in the licensed Start repository before creating the Cloudflare rule. The rule design remains the same: preserve and follow the origin `Cache-Control` response instead of replacing it.
+
 A route can override the flavor default through SSR route metadata. The Cloudflare rule follows the response contract; it does not replace it.
 
-For the environment-variable details, see [SSR Environment Variables](/frontend/ssr-env).
+For the public Basic environment-variable details, see [SSR Environment Variables](/frontend/ssr-env).
 
 ## Deployment checks
 
@@ -127,6 +131,6 @@ After the origin is running, verify the following before relying on Cloudflare t
 1. The base hostname returns the expected default instance.
 2. Each configured subdomain resolves to its expected enabled instance.
 3. Nginx forwards the browser hostname instead of the literal value `localhost`.
-4. Web SSR returns `Cache-Control: public, max-age=600`.
-5. Admin SSR returns `Cache-Control: no-cache, no-store, must-revalidate`.
-6. After Cloudflare proxying is enabled, a Web request can be cached at the edge while an Admin request is not stored.
+4. Web SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `public, max-age=600`.
+5. Admin SSR returns the `Cache-Control` header expected from the active edition and flavor configuration. In the current Basic baseline, it is `no-cache, no-store, must-revalidate`.
+6. After Cloudflare proxying is enabled, responses intended to be public-cacheable can be cached at the edge while responses marked `no-store` are not stored.
