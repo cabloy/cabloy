@@ -53,7 +53,7 @@ SSR menu roles control navigation disclosure only. They never authorize a contro
 
 ### Generated mutation response default
 
-Generated resource `update` and `delete` actions are command-style actions. Their controllers return `Promise<void>` and await the service call without forwarding its result. A successful action therefore uses Vona's normal HTTP `200` success wrapper with `data: null`.
+Generated resource `update` and `delete` actions are command-style actions. Their controllers use `Promise<void>`, await the service call without forwarding its result, and declare `@Api.body(z.null())` so OpenAPI and generated SDKs describe the normal HTTP `200` success wrapper accurately as `data: null`.
 
 This controller-facing default does not require the service or model mutation method to return `void`. Those lower layers may retain mutation data for internal orchestration. See [Controller Guide](/backend/controller-guide#resource-mutation-response-contract) when a mutation deliberately needs a consumer-facing response payload.
 

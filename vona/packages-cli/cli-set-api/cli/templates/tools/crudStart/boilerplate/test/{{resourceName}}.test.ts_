@@ -41,15 +41,17 @@ describe('<%=argv.resourceName%>.test.ts', () => {
       const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>');
       assert.equal(selectRes.list.findIndex(item => item.name === data.name) > -1, true);
       // update
-      await app.bean.executor.performAction('patch', '<%=argv.moduleActionPathRaw%>/:id', {
+      const updateRes = await app.bean.executor.performAction('patch', '<%=argv.moduleActionPathRaw%>/:id', {
         params: { id: <%=argv.resourceName%>Id },
         body: dataUpdate,
       });
+      assert.equal(updateRes, null);
       // findOne
       let <%=argv.resourceName%>: Entity<%=argv.resourceNameCapitalize%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>Id } });
       assert.equal(<%=argv.resourceName%>.name, dataUpdate.name);
       // delete
-      await app.bean.executor.performAction('delete', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
+      const deleteRes = await app.bean.executor.performAction('delete', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
+      assert.equal(deleteRes, null);
       // findOne
       <%=argv.resourceName%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
       assert.equal(<%=argv.resourceName%>, undefined);

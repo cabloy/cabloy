@@ -7,6 +7,7 @@ import { Core } from 'vona-module-a-core';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
+import { z } from 'zod';
 
 import type { ModelStudent } from '../model/student.ts';
 
@@ -50,6 +51,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Web.patch(':id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
@@ -69,12 +71,14 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Web.delete(':id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.student.delete(id);
   }
 
   @Web.delete('deleteForce/:id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.student.deleteForce(id);

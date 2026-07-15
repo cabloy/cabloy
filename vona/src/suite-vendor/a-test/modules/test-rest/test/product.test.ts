@@ -64,4 +64,28 @@ describe('product.test.ts', () => {
       await app.bean.passport.signout();
     });
   });
+
+  it('openapi:product mutations return null', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const controller = app.bean.onion.controller
+        .getOnionsEnabledCached()
+        .find(item => item.beanOptions.beanFullName === 'test-rest.controller.product')
+        ?.beanOptions.beanClass;
+      if (!controller) throw new Error('test-rest.controller.product not found');
+
+      for (const action of ['update', 'delete']) {
+        const doc = await app.bean.openapi.generateJsonOfControllerAction(
+          controller,
+          action,
+          'V31',
+        );
+        const path = doc.paths?.['/api/test/rest/product/{id}'];
+        const responseSchema = path?.[action === 'update' ? 'patch' : 'delete']?.responses?.['200']
+          ?.content?.['application/json']?.schema as any;
+        assert.ok(responseSchema);
+        assert.deepEqual(responseSchema.required, ['code', 'message', 'data']);
+        assert.equal(responseSchema.properties.data.type, 'null');
+      }
+    });
+  });
 });

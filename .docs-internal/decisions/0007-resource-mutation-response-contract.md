@@ -101,11 +101,13 @@ Rejected as a default. It adds read cost and cache semantics where callers often
 ### Trade-offs
 
 - A client that needs canonical post-mutation state must use a subsequent read or a purpose-built response DTO action.
-- The default OpenAPI reflection path cannot recover the `void` generic argument from `Promise<void>` at runtime. Without an explicit no-payload schema convention, generated OpenAPI can still describe the response data as `unknown` even though runtime `data` is `null`.
+- The default OpenAPI reflection path cannot recover the `void` generic argument from `Promise<void>` at runtime. Command-style resource controllers and CRUD templates therefore declare `@Api.body(z.null())` explicitly. Vona's normal response wrapper emits `data: { type: 'null' }`, and regenerated Zova SDK contracts expose `data: null` rather than `unknown`.
 
-## Follow-up
+## Implementation note
 
-Introduce a reusable OpenAPI/body-response declaration for command-style JSON success, so generated OpenAPI and SDK types represent the actual `data: null` contract instead of falling back to an unknown asynchronous return schema. This must preserve the existing controller-to-frontend contract loop: change the backend contract source, regenerate affected frontend consumers, build the appropriate Zova output, and refresh Vona dependencies.
+`@Api.body(z.null())` is metadata for OpenAPI generation and, when enabled, schema-guided serialization. It does not validate response values at runtime, change the body responder, alter HTTP status handling, or constrain service/model methods. The controller's `Promise<void>` signature and `await`-without-`return` body remain the enforcement point that prevents accidental mutation-result exposure.
+
+This contract change follows the forward controller-to-frontend loop: change backend contract source first, regenerate affected frontend consumers, and build the appropriate Zova outputs. No Vona dependency refresh is required because this is not a reverse frontend-to-backend handoff.
 
 ## Related Records
 

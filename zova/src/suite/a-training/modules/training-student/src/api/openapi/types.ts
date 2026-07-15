@@ -256,22 +256,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/home/user/passport/createPassportJwtFromOauthCode': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/home/user/passport/refreshAuthToken': {
     parameters: {
       query?: never;
@@ -282,6 +266,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['HomeUserPassport_refreshAuthToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/home/user/passport/createPassportJwtFromOauthCode': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HomeUserPassport_createPassportJwtFromOauthCode'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1420,7 +1420,7 @@ export interface components {
       description?: string | undefined;
       icon?: string | undefined;
       order?: number | undefined;
-      group?: string | string[] | undefined;
+      group?: string | string[] | null;
       separator?: boolean | undefined;
       link?: string | undefined;
       external?: boolean | undefined;
@@ -1439,7 +1439,7 @@ export interface components {
       description?: string | undefined;
       icon?: string | undefined;
       order?: number | undefined;
-      group?: string | string[] | undefined;
+      group?: string | string[] | null;
       collapsed?: boolean | undefined;
     };
     'a-permission.dto.permissions': {
@@ -1531,6 +1531,7 @@ export interface components {
       id: number | string;
       /** @description Role Name */
       name: string;
+      siteIds: string[];
     };
     'home-user.dto.passportJwt': {
       passport: components['schemas']['home-user.dto.passport'];
@@ -1802,7 +1803,7 @@ export interface components {
              */
             deleted?: boolean | undefined;
             /** @description ID */
-            id?: number | string | undefined;
+            id?: number | string | null;
             /** @description Subject Name */
             name: string;
             /** @description Subject Score */
@@ -1823,7 +1824,7 @@ export interface components {
       /** @description Mobile */
       mobile: string;
       /** @description Student Image */
-      imageId?: number | string | undefined;
+      imageId?: number | string | null;
       /** @description Training Stage */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
@@ -1857,7 +1858,7 @@ export interface components {
                    */
                   deleted?: boolean | undefined;
                   /** @description ID */
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   /** @description Subject Name */
                   name: string;
                   /** @description Subject Score */
@@ -1868,7 +1869,7 @@ export interface components {
               | undefined;
             sceneImages?:
               | {
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   url?: string | undefined;
                   filename?: string | undefined;
                   width?: number | undefined;
@@ -1881,7 +1882,7 @@ export interface components {
             /** @description Dossier Files */
             dossierFiles?:
               | {
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
@@ -1933,7 +1934,7 @@ export interface components {
       trainingRecordSubjects?: unknown;
       sceneImages?:
         | {
-            id?: number | string | undefined;
+            id?: number | string | null;
             url?: string | undefined;
             filename?: string | undefined;
             width?: number | undefined;
@@ -1946,7 +1947,7 @@ export interface components {
       /** @description Dossier Files */
       dossierFiles?:
         | {
-            id?: number | string | undefined;
+            id?: number | string | null;
             filename?: string | undefined;
             contentType?: string | undefined;
             size?: number | undefined;
@@ -2000,7 +2001,7 @@ export interface components {
       /** @description Mobile */
       mobile: string;
       /** @description Student Image */
-      imageId?: number | string | undefined;
+      imageId?: number | string | null;
       /** @description Training Stage */
       level: 1 | 2 | 3;
       image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
@@ -2050,7 +2051,7 @@ export interface components {
           /** @description Mobile */
           mobile: string;
           /** @description Student Image */
-          imageId?: number | string | undefined;
+          imageId?: number | string | null;
           /** @description Training Stage */
           level: 1 | 2 | 3;
           /** @description Student Training Records */
@@ -2099,7 +2100,7 @@ export interface components {
             }[];
             sceneImages?:
               | {
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   url?: string | undefined;
                   filename?: string | undefined;
                   width?: number | undefined;
@@ -2112,7 +2113,7 @@ export interface components {
             /** @description Dossier Files */
             dossierFiles?:
               | {
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
@@ -2142,7 +2143,7 @@ export interface components {
       /** @description Mobile */
       mobile: string;
       /** @description Student Image */
-      imageId?: number | string | undefined;
+      imageId?: number | string | null;
       /** @description Training Stage */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
@@ -2154,7 +2155,7 @@ export interface components {
              */
             deleted?: boolean | undefined;
             /** @description ID */
-            id?: number | string | undefined;
+            id?: number | string | null;
             /** @description Training Record Name */
             name: string;
             /** @description Subject Count */
@@ -2183,7 +2184,7 @@ export interface components {
                    */
                   deleted?: boolean | undefined;
                   /** @description ID */
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   /** @description Subject Name */
                   name: string;
                   /** @description Subject Score */
@@ -2194,7 +2195,7 @@ export interface components {
               | undefined;
             sceneImages?:
               | {
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   url?: string | undefined;
                   filename?: string | undefined;
                   width?: number | undefined;
@@ -2207,7 +2208,7 @@ export interface components {
             /** @description Dossier Files */
             dossierFiles?:
               | {
-                  id?: number | string | undefined;
+                  id?: number | string | null;
                   filename?: string | undefined;
                   contentType?: string | undefined;
                   size?: number | undefined;
@@ -2641,7 +2642,7 @@ export interface components {
              */
             deleted?: boolean | undefined;
             /** @description ID */
-            id?: number | string | undefined;
+            id?: number | string | null;
             /** @description Title */
             title: string;
           }[]
@@ -2707,7 +2708,7 @@ export interface components {
        */
       deleted?: boolean | undefined;
       /** @description ID */
-      id?: number | string | undefined;
+      id?: number | string | null;
       /** @description Name */
       name: string;
       /** @description Price */
@@ -3373,35 +3374,6 @@ export interface operations {
     };
     authToken: true;
   };
-  HomeUserPassport_createPassportJwtFromOauthCode: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          code: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['home-user.dto.passportJwt'];
-          };
-        };
-      };
-    };
-  };
   HomeUserPassport_refreshAuthToken: {
     parameters: {
       query?: never;
@@ -3426,6 +3398,35 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['a-jwt.dto.jwtToken'];
+          };
+        };
+      };
+    };
+  };
+  HomeUserPassport_createPassportJwtFromOauthCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          code: string;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['home-user.dto.passportJwt'];
           };
         };
       };
@@ -3466,7 +3467,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;
@@ -3567,7 +3568,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -3597,7 +3598,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -3613,7 +3614,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;
@@ -3714,7 +3715,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -3744,7 +3745,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -3796,7 +3797,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -4307,7 +4308,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;
@@ -4407,7 +4408,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -4437,7 +4438,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: null;
           };
         };
       };
@@ -4474,7 +4475,7 @@ export interface operations {
       };
       header?: never;
       path: {
-        id: ((number | undefined) | (string | undefined) | (undefined | undefined)) | undefined;
+        id: ((number | undefined) | (string | undefined) | (null | undefined)) | undefined;
       };
       cookie?: never;
     };
@@ -4502,7 +4503,7 @@ export interface operations {
       };
       header?: never;
       path: {
-        id: ((number | undefined) | (string | undefined) | (undefined | undefined)) | undefined;
+        id: ((number | undefined) | (string | undefined) | (null | undefined)) | undefined;
       };
       cookie?: never;
     };
@@ -4534,7 +4535,7 @@ export interface operations {
       };
       header?: never;
       path: {
-        id: ((number | undefined) | (string | undefined) | (undefined | undefined)) | undefined;
+        id: ((number | undefined) | (string | undefined) | (null | undefined)) | undefined;
       };
       cookie?: never;
     };
@@ -5253,7 +5254,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         orderNo?: string | undefined;
         remark?: string | undefined;
         userName?: string | undefined;
@@ -5288,7 +5289,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         pageNo?: number;
         orderNo?: string | undefined;
         remark?: string | undefined;
@@ -5372,7 +5373,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;
@@ -5408,7 +5409,7 @@ export interface operations {
               [key: string]: unknown;
             }
           | undefined;
-        orders?: string | string[][] | undefined;
+        orders?: string | string[][] | null;
         pageNo?: number;
         pageSize?: number;
         createdAt?: string | undefined;

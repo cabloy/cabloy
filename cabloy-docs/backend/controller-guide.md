@@ -215,7 +215,10 @@ Standard resource `update` and `delete` actions are command-style actions. Their
 Representative pattern:
 
 ```typescript
+import { z } from 'zod';
+
 @Web.patch(':id')
+@Api.body(z.null())
 @Passport.systemAdmin()
 async update(
   @Arg.param('id', v.tableIdentity()) id: TableIdentity,
@@ -226,6 +229,8 @@ async update(
 ```
 
 Use `await` without `return` at the controller boundary. A service or model may still return mutation data for internal orchestration, but that data is not automatically a stable public representation of the resource.
+
+`Promise<void>` expresses the controller's command semantics, while `@Api.body(z.null())` explicitly supplies the response schema that runtime reflection cannot recover from `Promise<void>`. It makes the existing no-payload response visible to emitted OpenAPI and generated SDK consumers.
 
 For a standard JSON action, Vona maps this no-result controller completion to its normal HTTP `200` success wrapper:
 

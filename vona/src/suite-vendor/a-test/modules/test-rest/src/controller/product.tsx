@@ -8,6 +8,7 @@ import { Api, Resource, v } from 'vona-module-a-openapiutils';
 import { Ssr } from 'vona-module-a-ssr';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
+import { z } from 'zod';
 
 import type { ModelProduct } from '../model/product.ts';
 
@@ -50,6 +51,7 @@ export class ControllerProduct extends BeanBase {
   }
 
   @Web.patch(':id')
+  @Api.body(z.null())
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() product: DtoProductUpdate,
@@ -58,6 +60,7 @@ export class ControllerProduct extends BeanBase {
   }
 
   @Web.delete(':id')
+  @Api.body(z.null())
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.product.delete(id);
   }

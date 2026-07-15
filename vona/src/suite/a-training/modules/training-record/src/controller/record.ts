@@ -7,6 +7,7 @@ import { Core } from 'vona-module-a-core';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
+import { z } from 'zod';
 
 import type { ModelRecord } from '../model/record.ts';
 
@@ -49,6 +50,7 @@ export class ControllerRecord extends BeanBase {
   }
 
   @Web.patch(':id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
@@ -58,6 +60,7 @@ export class ControllerRecord extends BeanBase {
   }
 
   @Web.delete(':id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.record.delete(id);

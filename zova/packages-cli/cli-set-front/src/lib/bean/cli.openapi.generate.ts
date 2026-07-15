@@ -589,7 +589,7 @@ function _checkOperationIdEnabled(moduleConfig: ZovaOpenapiConfigModule, selecto
  */
 const BLOB = ts.factory.createTypeReferenceNode(ts.factory.createIdentifier('Blob')); // `Blob`
 const DATE = ts.factory.createTypeReferenceNode(ts.factory.createIdentifier('Date')); // `Date`
-// const NULL = ts.factory.createLiteralTypeNode(ts.factory.createNull()); // `null`
+const NULL = ts.factory.createLiteralTypeNode(ts.factory.createNull()); // `null`
 const UNDEFINED = ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword);
 
 function _patchOpenapiTSOptions(options?: OpenAPITSOptions) {
@@ -605,6 +605,10 @@ function _patchOpenapiTSOptions(options?: OpenAPITSOptions) {
         if (transformCustom) {
           const res = transformCustom(schemaObject, options);
           if (res !== undefined) return res;
+        }
+        // null
+        if (schemaObject.type === 'null') {
+          return NULL;
         }
         // multipart
         if (schemaObject.format === 'binary') {

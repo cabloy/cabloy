@@ -68,6 +68,7 @@ For the deeper frontend perspective, see:
 If you want the shortest accurate mental model, use this forward chain:
 
 1. backend controller signatures define request and response entry surfaces
+   - command-style mutations that complete with Vona's wrapped `data: null` must declare `@Api.body(z.null())`; `Promise<void>` alone cannot preserve that generic type through runtime reflection
 2. backend DTO and entity fields shape named and shared contract structure
 3. validation rules and `v` helpers refine the machine-readable contract
 4. Vona emits OpenAPI output from those backend declarations

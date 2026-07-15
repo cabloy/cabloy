@@ -4,6 +4,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { z } from 'zod';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
@@ -42,12 +43,14 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Web.patch(':id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
   @Web.delete(':id')
+  @Api.body(z.null())
   @Passport.systemAdmin()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.<%=argv.resourceName%>.delete(id);

@@ -133,7 +133,7 @@ const deleteRes = await app.bean.executor.performAction('delete', '/test/rest/pr
 assert.equal(deleteRes, null);
 ```
 
-For standard resource command mutations, these assertions verify the controller-facing no-payload contract. Follow them with a query/read-back assertion to verify the persisted update or deletion. The same test then exercises params, body, route wiring, validation, response behavior, and persistence effects together.
+For standard resource command mutations, these assertions verify the controller-facing no-payload runtime contract. Follow them with a query/read-back assertion to verify the persisted update or deletion. When the API is generated for frontend consumers, add a focused OpenAPI structural assertion that its wrapped response schema declares `data: null`; this verifies SDK-contract fidelity separately from responder behavior. The same test then exercises params, body, route wiring, validation, response behavior, and persistence effects together.
 
 ## Authentication simulation
 
