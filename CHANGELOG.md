@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.108
+
+### Features
+
+- Improve Docker domain deployment support.
+
+### Improvements
+
+- Clarify shared deployment guidance.
+
 ## 5.1.107
 
 ### Features
