@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.107
+
+### Features
+
+- Localize persisted home roles.
+- Define response contracts for resource mutations, including null responses.
+- Secure generated CRUD actions.
+
+### Improvements
+
+- Clarify built-in role configuration.
+
 ## 5.1.106
 
 ### Improvements
