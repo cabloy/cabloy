@@ -4,6 +4,8 @@ export default {
   PasswordResetEmailExpired: '重置密码链接已经过期',
   Role: '角色',
   RoleName: '角色名',
+  RoleTitle: '角色标题',
+  RoleLocales: '角色本地化文本',
   User: '用户',
   UserName: '用户名',
   UserAvatar: '头像',

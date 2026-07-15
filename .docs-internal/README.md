@@ -59,6 +59,7 @@ Those concerns should live elsewhere.
 - [ADR 0005: Current-Passport Guard Evaluation for Default API Permissions](./decisions/0005-current-passport-guard-permission-evaluation.md)
 - [ADR 0006: SSR Site Access and Role Model](./decisions/0006-ssr-site-access-and-role-model.md)
 - [ADR 0007: Resource Mutation Response Contract](./decisions/0007-resource-mutation-response-contract.md)
+- [ADR 0008: Role Localization Seed and Display Contract](./decisions/0008-role-localization-seed-and-display-contract.md)
 
 ### Architecture notes
 

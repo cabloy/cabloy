@@ -1531,6 +1531,12 @@ export interface components {
       id: number | string;
       /** @description Role Name */
       name: string;
+      /** @description Role Title */
+      title: string;
+      /** @description Role Locales */
+      locales: {
+        [key: string]: string;
+      };
       siteIds: string[];
     };
     'home-user.dto.passportJwt': {

@@ -18,6 +18,8 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
         table.comment(entityRole.$comment.$table);
         table.basicFields();
         table.string(entityRole.name, 255).comment(entityRole.$comment.name);
+        table.string(entityRole.title, 255).comment(entityRole.$comment.title);
+        table.json(entityRole.locales).comment(entityRole.$comment.locales);
         table.json(entityRole.siteIds).comment(entityRole.$comment.siteIds);
       });
       // homeUser
@@ -49,14 +51,14 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
   async init(options: IMetaVersionInitOptions) {
     if (options.version === 1) {
       // roles
-      await this.scope.model.role.insert({
-        name: 'registeredUser',
-        siteIds: ['web'],
-      });
-      await this.scope.model.role.insert({
-        name: 'systemAdmin',
-        siteIds: ['web', 'admin'],
-      });
+      for (const [name, role] of Object.entries(this.scope.config.roles)) {
+        await this.scope.model.role.insert({
+          name,
+          title: role.title,
+          locales: role.locales ?? {},
+          siteIds: role.siteIds,
+        });
+      }
       // user: admin
       if (!this.scope.config.disableUserAdmin) {
         await this.bean.auth.authenticate('auth-simple:simple', {

@@ -4,6 +4,8 @@ export default {
   PasswordResetEmailExpired: 'This password reset link has expired',
   Role: 'Role',
   RoleName: 'Role Name',
+  RoleTitle: 'Role Title',
+  RoleLocales: 'Role Locales',
   User: 'User',
   UserName: 'User Name',
   UserAvatar: 'Avatar',

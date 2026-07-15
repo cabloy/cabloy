@@ -1,4 +1,5 @@
 import type { TableIdentity } from 'table-identity';
+import type { ILocaleRecord } from 'vona';
 
 export interface IRoleNameRecord {
   registeredUser: never;
@@ -10,6 +11,8 @@ export interface IRoleIdRecord {}
 export interface IRole {
   id: TableIdentity;
   name: string;
+  title: string;
+  locales: Partial<Record<keyof ILocaleRecord, string>>;
   siteIds: string[];
 }
 

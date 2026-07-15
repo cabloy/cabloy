@@ -1,3 +1,4 @@
+import type { ILocaleRecord } from 'vona';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 import type { IRole } from 'vona-module-a-user';
 
@@ -13,6 +14,12 @@ export interface IEntityOptionsRole extends IDecoratorEntityOptions {}
 export class EntityRole extends EntityBase implements IRole {
   @Api.field(v.title($locale('RoleName')))
   name: string;
+
+  @Api.field(v.title($locale('RoleTitle')))
+  title: string;
+
+  @Api.field(v.title($locale('RoleLocales')), z.record(z.string(), z.string()))
+  locales: Partial<Record<keyof ILocaleRecord, string>>;
 
   @Api.field(v.array(z.string()))
   siteIds: string[];

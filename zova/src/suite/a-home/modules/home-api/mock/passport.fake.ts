@@ -235,8 +235,25 @@ const __sdkSchemaPassportLogin = {
               type: 'string',
               title: '角色名',
             },
+            title: {
+              type: 'string',
+              title: '角色标题',
+            },
+            locales: {
+              type: 'object',
+              additionalProperties: {
+                type: 'string',
+              },
+              title: '角色本地化文本',
+            },
+            siteIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
           },
-          required: ['createdAt', 'updatedAt', 'id', 'name'],
+          required: ['createdAt', 'updatedAt', 'id', 'name', 'title', 'locales', 'siteIds'],
           title: '角色',
         },
         'a-jwt.dto.jwtToken': {
@@ -393,6 +410,22 @@ export default defineFakeRoute([
             auth: {
               id: 1,
             },
+            roles: [
+              {
+                id: 1,
+                name: 'registeredUser',
+                title: 'Registered User',
+                locales: { 'zh-cn': '注册用户' },
+                siteIds: ['web'],
+              },
+              {
+                id: 2,
+                name: 'systemAdmin',
+                title: 'System Administrator',
+                locales: { 'zh-cn': '系统管理员' },
+                siteIds: ['web', 'admin'],
+              },
+            ],
           },
           jwt: {
             accessToken: `accessToken-${user.name}`,
@@ -423,6 +456,22 @@ export default defineFakeRoute([
           auth: {
             id: 1,
           },
+          roles: [
+            {
+              id: 1,
+              name: 'registeredUser',
+              title: 'Registered User',
+              locales: { 'zh-cn': '注册用户' },
+              siteIds: ['web'],
+            },
+            {
+              id: 2,
+              name: 'systemAdmin',
+              title: 'System Administrator',
+              locales: { 'zh-cn': '系统管理员' },
+              siteIds: ['web', 'admin'],
+            },
+          ],
         },
       };
     },

@@ -144,7 +144,7 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-home-user' {
   export interface IModelOptionsUser {
         relations: {
-          roles: IModelRelationBelongsToMany<ModelRoleUser, ModelRole, false, undefined,undefined,undefined,undefined>;
+          roles: IModelRelationBelongsToMany<'home-user:roleUser', 'home-user:role', false, undefined,undefined,undefined,undefined>;
         };
       }
   export interface ModelRole {
@@ -511,8 +511,8 @@ export interface IApiPathPostRecord{
         '/home/user/passport/logout': undefined;
 '/home/user/passport/register': undefined;
 '/home/user/passport/login': undefined;
-'/home/user/passport/createPassportJwtFromOauthCode': undefined;
 '/home/user/passport/refreshAuthToken': undefined;
+'/home/user/passport/createPassportJwtFromOauthCode': undefined;
 '/home/user/passport/createTempAuthToken': undefined;
     }
 

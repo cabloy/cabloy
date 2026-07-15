@@ -1,5 +1,10 @@
 import type { VonaApplication } from 'vona';
 
+import { builtinRoles } from './roles.ts';
+
+export { builtinRoles } from './roles.ts';
+export type { IRoleConfig } from './roles.ts';
+
 export function config(_app: VonaApplication) {
   return {
     passwordDefault: {
@@ -7,5 +12,6 @@ export function config(_app: VonaApplication) {
     },
     disableBootstrapSystemAdmin: false,
     disableUserAdmin: false,
+    roles: builtinRoles,
   };
 }
