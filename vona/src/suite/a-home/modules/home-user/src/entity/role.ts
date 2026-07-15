@@ -18,8 +18,8 @@ export class EntityRole extends EntityBase implements IRole {
   @Api.field(v.title($locale('RoleTitle')))
   title: string;
 
-  @Api.field(v.title($locale('RoleLocales')), z.record(z.string(), z.string()))
-  locales: Partial<Record<keyof ILocaleRecord, string>>;
+  @Api.field(v.title($locale('RoleLocales')), v.optional(), z.record(z.string(), z.string()))
+  locales?: Partial<Record<keyof ILocaleRecord, string>>;
 
   @Api.field(v.array(z.string()))
   siteIds: string[];

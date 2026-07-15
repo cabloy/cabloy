@@ -12,6 +12,6 @@ export function config(_app: VonaApplication) {
     },
     disableBootstrapSystemAdmin: false,
     disableUserAdmin: false,
-    roles: builtinRoles,
+    builtinRoles,
   };
 }

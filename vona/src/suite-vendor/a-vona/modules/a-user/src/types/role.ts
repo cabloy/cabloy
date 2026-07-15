@@ -12,7 +12,7 @@ export interface IRole {
   id: TableIdentity;
   name: string;
   title: string;
-  locales: Partial<Record<keyof ILocaleRecord, string>>;
+  locales?: Partial<Record<keyof ILocaleRecord, string>>;
   siteIds: string[];
 }
 

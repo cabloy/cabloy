@@ -253,7 +253,7 @@ const __sdkSchemaPassportLogin = {
               },
             },
           },
-          required: ['createdAt', 'updatedAt', 'id', 'name', 'title', 'locales', 'siteIds'],
+          required: ['createdAt', 'updatedAt', 'id', 'name', 'title', 'siteIds'],
           title: '角色',
         },
         'a-jwt.dto.jwtToken': {

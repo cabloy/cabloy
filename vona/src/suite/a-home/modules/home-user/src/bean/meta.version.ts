@@ -51,7 +51,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
   async init(options: IMetaVersionInitOptions) {
     if (options.version === 1) {
       // roles
-      for (const [name, role] of Object.entries(this.scope.config.roles)) {
+      for (const [name, role] of Object.entries(this.scope.config.builtinRoles)) {
         await this.scope.model.role.insert({
           name,
           title: role.title,

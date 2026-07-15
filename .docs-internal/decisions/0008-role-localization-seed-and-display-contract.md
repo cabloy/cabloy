@@ -18,7 +18,7 @@ Every role persists these independent values:
 
 - `name`: stable, locale-neutral authorization code;
 - `title`: required display title in the configured system default locale;
-- `locales`: JSON map of non-default locale overrides; and
+- `locales`: optional JSON map of non-default locale overrides; and
 - `siteIds`: authorization policy data.
 
 `title` is not duplicated in `locales`. A consumer that needs a display label selects:
@@ -31,10 +31,10 @@ Database title values are final text, not compiled `$locale(...)` resource keys.
 
 ### Configure built-in roles as a keyed module map
 
-`home-user/src/config/roles.ts` exports the default built-in roles. `home-user` module configuration exposes them through `roles`, keyed by the stable role name:
+`home-user/src/config/roles.ts` exports the default built-in roles. `home-user` module configuration exposes them through `builtinRoles`, keyed by the stable role name:
 
 ```ts
-roles: {
+builtinRoles: {
   registeredUser: {
     title: 'Registered User',
     locales: { 'zh-cn': '注册用户' },
@@ -43,13 +43,13 @@ roles: {
 }
 ```
 
-Module configuration uses its existing deep-merge behavior. A deployment may add a role key or override individual fields below an existing role key through `config.modules['home-user'].roles`. The object key is always persisted as the role `name`.
+Module configuration uses its existing deep-merge behavior. A deployment may add a role key or override individual fields below an existing role key through `config.modules['home-user'].builtinRoles`. The object key is always persisted as the role `name`.
 
 ### Preserve the clean version-1 installation boundary
 
 The `homeRole` schema and seed insertion remain in `meta.version.ts` version 1. `vonaModule.fileVersion` remains `1` intentionally. Existing installations with the earlier schema are not supported by this change; no migration, backfill, legacy read fallback, or compatibility alias is provided.
 
-Authorization continues to use only `name`, `id`, and `siteIds`. Localized titles must not be passed to role guards, menu `roles` policies, or system-administrator checks.
+Authorization continues to use only `name`, `id`, and `siteIds`. Localized titles must not be passed to role guards, menu role policies, or system-administrator checks.
 
 ### Propagate role fields through the normal forward contract loop
 
