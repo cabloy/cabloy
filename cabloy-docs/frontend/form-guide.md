@@ -413,7 +413,9 @@ Use `layout` for concerns such as:
 - label text
 - icon prefix/suffix
 - field wrapper presentation
-- row-level layout intent
+- one field's row-level presentation intent
+
+`layout` is a field-level surface. When the requirement is to arrange multiple schema fields into responsive sections, groups, or tabs, use DTO-driven `formLayout` with `basic-form:blockFormLayout`; see [Form Layout Guide](/frontend/form-layout-guide).
 
 ### Use `options` for renderer-specific input props
 

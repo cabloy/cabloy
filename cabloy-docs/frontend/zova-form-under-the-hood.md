@@ -410,6 +410,19 @@ zova/src/suite-vendor/a-zova/modules/a-form/src/component/formField/render.tsx
 
 That means automatic schema-driven rendering is not happening magically in the wrapper component. It is happening in the render bean.
 
+### Structural Form Layout boundary
+
+When `ZForm` receives a nonempty block list, the render bean delegates body rendering to those blocks instead of iterating schema fields directly. For Cabloy Basic structural forms, `basic-form:blockFormLayout` resolves `formLayout` against the form's current schema properties and calls `$$form.renderField(...)` for each surviving layout field.
+
+This keeps ownership separate:
+
+- the form controller owns schema properties, field state, validation, and field rendering
+- the shared form-layout resolver normalizes field placement metadata
+- the Basic layout block renders sections, groups, grids, and tabs
+- field-layout behaviors still own each field wrapper and its visible validation message
+
+Read [Form Layout Guide](/frontend/form-layout-guide) for the DTO authoring grammar, resolver behavior, and Basic-specific responsive/tab behavior.
+
 ### Field render path
 
 `RenderFormField` does two important jobs:

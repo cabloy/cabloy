@@ -187,6 +187,8 @@ Instead, it consumes `$$pageEntry` from the host render context and passes the c
 
 This is the clearest source-confirmed proof that `blockForm` is a bridge, not the main owner of entry-page orchestration.
 
+A resource DTO can provide a nested `basic-form:blockFormLayout` block here to arrange the schema fields into sections, groups, or tabs. That block only owns structural placement; read [Form Layout Guide](/frontend/form-layout-guide) for the DTO grammar and keep this page focused on the entry runtime handoff.
+
 ### 7. `blockToolbarRow` renders the action row
 
 The action row lives in:

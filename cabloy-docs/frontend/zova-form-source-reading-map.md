@@ -218,7 +218,39 @@ Use this path when you are asking questions like:
 - `home-login/render.tsx` shows a page-level `formProvider` override for layout behavior
 - `formField/render.tsx` shows how the behavior-wrapped render path leads to the final vnode
 
-## 7. Resource-driven CRUD page integration
+## 7. DTO-driven structural Form Layout
+
+Use this path when you are asking questions like:
+
+- where does `formLayout` come from in a resource DTO?
+- how are fields, sections, groups, and tabs normalized before rendering?
+- why are omitted visible fields appended or duplicate fields removed?
+- where does Cabloy Basic render responsive grids and tab error badges?
+
+### Read the docs first
+
+- [Form Layout Guide](/frontend/form-layout-guide)
+- [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
+- [Resource Entry Page Deep Dive](/frontend/resource-entry-page-deep-dive)
+
+### Then read source in this order
+
+1. `vona/src/suite/a-training/modules/training-student/src/dto/studentCreate.tsx`
+2. `vona/src/suite/a-training/modules/training-student/src/dto/studentSelectResItem.tsx`
+3. `zova/src/suite-vendor/a-zova/modules/a-openapi/src/types/resource/formLayout.ts`
+4. `zova/src/suite-vendor/a-zova/modules/a-form/src/lib/formLayout.ts`
+5. `zova/src/suite/cabloy-basic/modules/basic-form/src/component/blockFormLayout/controller.tsx`
+6. `vona/src/suite/a-training/modules/training-student/test/student.test.ts`
+
+### What each file clarifies
+
+- the Student DTOs show the entry and filter block composition that supplies layout metadata
+- the OpenAPI type contract defines the legal node grammar and responsive values
+- the resolver reconciles metadata with visible schema fields, generated IDs, and diagnostics
+- the Basic block controller renders sections, groups, tabs, and field spans while delegating widgets to `$$form.renderField(...)`
+- the Student test verifies emitted metadata nesting, columns, spans, and optional IDs; it is not a browser rendering test
+
+## 8. Resource-driven CRUD page integration
 
 Use this path when you are asking questions like:
 
@@ -251,7 +283,7 @@ If your next question becomes how `formScene` becomes `formMeta`, then `pageMeta
 
 If your next question becomes how backend/entity schema metadata attaches field-side effects through `ZovaRender.onEffect(...)` and command chains, continue with [Schema-Driven Field Effects Guide](/frontend/schema-driven-field-effects-guide).
 
-## 8. Representative specimens to read before editing the framework
+## 9. Representative specimens to read before editing the framework
 
 Use this section when you want one small example before reading the framework internals.
 
@@ -267,7 +299,7 @@ Use this section when you want one small example before reading the framework in
 - `home-login` shows a real page using presets, blank rows, and provider-level layout override
 - together they give you the public authoring shape before you descend into the form runtime
 
-## 9. A compact reading strategy
+## 10. A compact reading strategy
 
 When in doubt, use this order:
 
@@ -280,7 +312,7 @@ When in doubt, use this order:
 
 That order usually gets you to the answer faster than starting from the deepest runtime files first.
 
-## 10. Final takeaway
+## 11. Final takeaway
 
 The fastest way to read Zova Form accurately is not to memorize every file in `a-form`.
 
