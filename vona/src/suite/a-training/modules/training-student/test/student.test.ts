@@ -14,8 +14,8 @@ describe('student.test.ts', () => {
     await app.bean.executor.mockCtx(async () => {
       for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate]) {
         const apiJson = await app.bean.openapi.generateJsonOfClass(DtoClass);
-        const component = Object.values(apiJson.components.schemas).find(item => {
-          return item.properties?.trainingRecords;
+        const component = Object.values(apiJson.components!.schemas as any).find(item => {
+          return (item as any).properties?.trainingRecords;
         });
         const blocks = (component as any)?.rest?.blocks;
         const formLayout =
