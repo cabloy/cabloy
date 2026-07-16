@@ -1,7 +1,4 @@
-import type { VNode } from 'vue';
 import type { IFormLayoutResponsiveColumns } from 'zova-module-a-openapi';
-
-import type { ControllerForm } from '../component/form/controller.jsx';
 
 export interface IResolvedFormLayout {
   children: IResolvedFormLayoutNode[];
@@ -59,13 +56,4 @@ export type IResolvedFormLayoutNode =
 export interface IFormLayoutDiagnostic {
   type: 'duplicateField' | 'unknownField' | 'duplicateId';
   value: string;
-}
-
-export interface IFormLayoutRenderContext<TFormData extends {} = {}, TSubmitMeta = never> {
-  form: ControllerForm<TFormData, TSubmitMeta>;
-  plan: IResolvedFormLayout;
-  renderField: (name: string) => VNode | VNode[] | undefined;
-  getActiveTab: (tabsId: string) => string | undefined;
-  activateTab: (tabsId: string, tabId: string) => void;
-  hasErrors: (node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) => boolean;
 }

@@ -1,7 +1,6 @@
 import type { IComponentOptions } from 'zova';
 import type {
-  ControllerForm,
-  IFormLayoutRenderContext,
+  IJsxRenderContextForm,
   IResolvedFormLayoutField,
   IResolvedFormLayoutGroup,
   IResolvedFormLayoutNode,
@@ -18,22 +17,18 @@ export interface ControllerFormLayoutProps {}
 
 @Controller()
 export class ControllerFormLayout extends BeanControllerBase {
-  @Use({ injectionScope: 'host' })
-  $$form: ControllerForm;
-
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
+  @Use({ injectionScope: 'host' })
+  $$renderContext: IJsxRenderContextForm;
+
   protected async __init__() {}
 
-  get renderContext(): IFormLayoutRenderContext | undefined {
-    return this.$$form.getFormLayoutRenderContext();
-  }
-
   protected render() {
-    const renderContext = this.renderContext;
-    if (!renderContext) return;
-    return <>{renderContext.plan.children.map(node => this._renderNode(node))}</>;
+    const { $$form } = this.$$renderContext;
+    const plan = $$form.formLayoutPlan!;
+    return <>{plan.children.map(node => this._renderNode(node))}</>;
   }
 
   private _renderNode(node: IResolvedFormLayoutNode) {
@@ -50,8 +45,9 @@ export class ControllerFormLayout extends BeanControllerBase {
   }
 
   private _renderField(node: IResolvedFormLayoutField) {
+    const { $$form } = this.$$renderContext;
     const span = this._gridClasses('col-span', node.span);
-    return <div class={span}>{this.renderContext!.renderField(node.name)}</div>;
+    return <div class={span}>{$$form.renderField(node.name)}</div>;
   }
 
   private _renderGroup(node: IResolvedFormLayoutGroup) {
@@ -76,14 +72,14 @@ export class ControllerFormLayout extends BeanControllerBase {
   }
 
   private _renderTabs(node: IResolvedFormLayoutTabs) {
-    const renderContext = this.renderContext!;
-    const activeTabId = renderContext.getActiveTab(node.id) ?? node.children[0]?.id;
+    const { $$form } = this.$$renderContext;
+    const activeTabId = $$form.getActiveTab(node.id) ?? node.children[0]?.id;
     return (
       <div class="mb-6">
         <div role="tablist" class="tabs tabs-lifted">
           {node.children.map(tab => {
             const active = tab.id === activeTabId;
-            const invalid = renderContext.hasErrors(tab);
+            const invalid = $$form.hasErrors(tab);
             return (
               <button
                 id={`${node.id}-${tab.id}-tab`}
@@ -92,7 +88,7 @@ export class ControllerFormLayout extends BeanControllerBase {
                 class={classes('tab', active && 'tab-active', invalid && 'text-error')}
                 aria-selected={active}
                 aria-controls={`${node.id}-${tab.id}-panel`}
-                onClick={() => renderContext.activateTab(node.id, tab.id)}
+                onClick={() => $$form.setActiveTab(node.id, tab.id)}
               >
                 {tab.title}
                 {invalid && <span class="ml-1">*</span>}

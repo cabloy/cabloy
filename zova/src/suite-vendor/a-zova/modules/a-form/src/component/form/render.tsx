@@ -36,8 +36,9 @@ export class RenderForm extends BeanRenderBase {
   private _renderFormLayout() {
     const render = this.formProvider.components?.FormLayout;
     if (!render || !this.formLayoutPlan) return this._renderSchema();
-    const celScope = this.getFieldScope('' as never);
-    return this.zovaJsx.render(render, {}, celScope, this.getFormJsxRenderContext());
+    const celScope = this.getFormScope();
+    const jsxRenderContext = this.getFormJsxRenderContext(celScope);
+    return this.zovaJsx.render(render, {}, celScope, jsxRenderContext);
   }
 
   private _renderBodyInner() {

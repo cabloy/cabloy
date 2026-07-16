@@ -31,7 +31,7 @@ export interface IJsxRenderSceneRecord {
   // table: never;
   tableColumn: never;
   tableCell: never;
-  // form: never;
+  form: never;
   formField: never;
   //
   details: never;

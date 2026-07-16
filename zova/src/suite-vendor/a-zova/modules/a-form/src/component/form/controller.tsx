@@ -32,7 +32,6 @@ import {
 } from 'zova-module-a-openapi';
 
 import type {
-  IFormLayoutRenderContext,
   IResolvedFormLayout,
   IResolvedFormLayoutNode,
   IResolvedFormLayoutTab,
@@ -161,21 +160,16 @@ export class ControllerForm<
     return this.$props.formMeta;
   }
 
-  public getFormLayoutRenderContext():
-    | IFormLayoutRenderContext<TFormData, TSubmitMeta>
-    | undefined {
-    const plan = this.formLayoutPlan;
-    if (!plan) return;
-    return {
-      form: this,
-      plan,
-      renderField: name => this.renderField(name as DeepKeys<TFormData>),
-      getActiveTab: tabsId => this.formLayoutActiveTabs[tabsId],
-      activateTab: (tabsId, tabId) => {
-        this.formLayoutActiveTabs[tabsId] = tabId;
-      },
-      hasErrors: node => this._hasFormLayoutErrors(node),
-    };
+  public getActiveTab(tabsId) {
+    return this.formLayoutActiveTabs[tabsId];
+  }
+
+  public setActiveTab(tabsId, tabId) {
+    this.formLayoutActiveTabs[tabsId] = tabId;
+  }
+
+  public hasErrors(node) {
+    return this._hasFormLayoutErrors(node);
   }
 
   public activateFormLayoutErrorTab() {
@@ -243,6 +237,12 @@ export class ControllerForm<
     });
   }
 
+  public getFormScope(scopeExtra?: {}): IFormScope {
+    return objectAssignReactive({}, this.$props.formScope, {
+      ...scopeExtra,
+    });
+  }
+
   public getFieldJsxRenderContext(
     $$formField: ControllerFormField<TFormData> | undefined,
     celScope: IFormFieldScope<TFormData>,
@@ -259,13 +259,15 @@ export class ControllerForm<
     };
   }
 
-  public getFormJsxRenderContext(): IJsxRenderContextForm<TFormData, TSubmitMeta> {
+  public getFormJsxRenderContext(
+    celScope: IFormScope,
+  ): IJsxRenderContextForm<TFormData, TSubmitMeta> {
     return {
       app: this.app,
       ctx: this.ctx,
-      $scene: 'formField',
+      $scene: 'form',
       $host: this,
-      $celScope: this.getFieldScope('' as DeepKeys<TFormData>),
+      $celScope: celScope,
       $jsx: this.zovaJsx,
       $$form: this,
     };
