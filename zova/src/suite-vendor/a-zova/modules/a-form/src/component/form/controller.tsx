@@ -92,7 +92,6 @@ export class ControllerForm<
   properties: ISchemaObjectExtensionField[] | undefined;
   zovaJsx: ZovaJsx;
   fieldCelEnv: typeof celEnvBase;
-  formLayoutActiveTabs: Record<string, string | undefined> = {};
 
   @UseScope()
   $$scopeOpenapi: ScopeModuleAOpenapi;
@@ -147,14 +146,6 @@ export class ControllerForm<
 
   public get formMeta() {
     return this.$props.formMeta;
-  }
-
-  public getActiveTab(tabsId) {
-    return this.formLayoutActiveTabs[tabsId];
-  }
-
-  public setActiveTab(tabsId, tabId) {
-    this.formLayoutActiveTabs[tabsId] = tabId;
   }
 
   public hasErrors(node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) {

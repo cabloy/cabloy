@@ -32,6 +32,7 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   private formLayoutPlan: IResolvedFormLayout | undefined;
+  private formLayoutActiveTabs: Record<string, string | undefined> = {};
 
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextForm;
@@ -89,9 +90,17 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
     );
   }
 
+  private getActiveTab(tabsId: string) {
+    return this.formLayoutActiveTabs[tabsId];
+  }
+
+  private setActiveTab(tabsId: string, tabId: string) {
+    this.formLayoutActiveTabs[tabsId] = tabId;
+  }
+
   private _renderTabs(node: IResolvedFormLayoutTabs) {
     const { $$form } = this.$$renderContext;
-    const activeTabId = $$form.getActiveTab(node.id) ?? node.children[0]?.id;
+    const activeTabId = this.getActiveTab(node.id) ?? node.children[0]?.id;
     return (
       <div class="mb-6">
         <div role="tablist" class="tabs tabs-lifted">
@@ -107,7 +116,7 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
                 class={classes('tab', active && 'tab-active')}
                 aria-selected={active}
                 aria-controls={`${node.id}-${tab.id}-panel`}
-                onClick={() => $$form.setActiveTab(node.id, tab.id)}
+                onClick={() => this.setActiveTab(node.id, tab.id)}
               >
                 {tab.title}
                 {invalid && <span class="badge badge-error badge-sm ml-1">{errorFieldCount}</span>}
