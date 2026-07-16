@@ -4,12 +4,16 @@ import type {
   IJsxRenderContextPage,
   IResourceBlockOptionsBase,
   IResourceFormFieldLayoutOptions,
+  IResourceRenderBlockOptionsBlock,
 } from 'zova-module-a-openapi';
 
 import { isNilOrEmptyString } from '@cabloy/utils';
-import { BeanControllerBase, Use } from 'zova';
+import { VNode } from 'vue';
+import { BeanControllerBase, objectAssignReactive, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
-import { TypeFormOnSubmitData, ZForm } from 'zova-module-a-form';
+import { ControllerForm, TypeFormOnSubmitData, ZForm } from 'zova-module-a-form';
+
+import { IPageFilterScope } from '../../types/page.js';
 
 declare module 'zova-module-a-openapi' {
   export interface IResourceBlockRecord {
@@ -17,22 +21,29 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ControllerBlockFilterProps extends IResourceBlockOptionsBase {}
+export interface ControllerBlockFilterProps extends IResourceBlockOptionsBase {
+  blocks?: IResourceRenderBlockOptionsBlock[];
+  formFieldLayout?: IResourceFormFieldLayoutOptions;
+}
 
 @Controller()
 export class ControllerBlockFilter extends BeanControllerBase {
-  static $propsDefault = {};
+  static $propsDefault = {
+    formFieldLayout: { inline: true },
+  };
+
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
 
   formMeta: IFormMeta;
-  formFieldLayout: IResourceFormFieldLayoutOptions;
+  formRef: ControllerForm | undefined;
+  formScope: IPageFilterScope;
 
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextPage;
 
   protected async __init__() {
     this.formMeta = { formMode: 'edit' };
-    this.formFieldLayout = { inline: true };
+    this.formScope = this._prepareFormScope();
   }
 
   get schemaFilter() {
@@ -46,6 +57,16 @@ export class ControllerBlockFilter extends BeanControllerBase {
 
   resetData(data: any) {
     this._onFilter(data);
+  }
+
+  public submitFilter() {
+    return this.formRef?.submit() ?? Promise.resolve(false);
+  }
+
+  public resetFilter() {
+    if (!this.formRef) return;
+    const data = this.formRef.reset();
+    this.resetData(data);
   }
 
   _onFilter(dataOld: any) {
@@ -62,40 +83,49 @@ export class ControllerBlockFilter extends BeanControllerBase {
 
   protected render() {
     const { $$page } = this.$$renderContext;
+    const blocks = this.$props.blocks;
+    const hasBlocks = !!blocks && blocks.length > 0;
+    const formFieldLayout = this.$props.formFieldLayout;
     return (
       <ZForm
         class={this.$props.class}
-        inline={true}
+        controllerRef={ref => {
+          this.formRef = ref;
+        }}
         data={$$page.queryFilterData}
         schema={this.schemaFilter}
         schemaScene="filter"
         formMeta={this.formMeta}
-        formFieldLayout={this.formFieldLayout}
+        formFieldLayout={formFieldLayout}
+        blocks={blocks}
+        formScope={this.formScope}
         onSubmitData={data => this.submitData(data as never)}
-        slotFooter={$$form => {
-          return (
-            <>
-              <button
-                class="btn btn-primary"
-                onClick={() => {
-                  $$form.submit();
-                }}
-              >
-                {this.scope.locale.Search()}
-              </button>
-              <button
-                class="btn btn-warning"
-                onClick={() => {
-                  const data = $$form.reset();
-                  this.resetData(data);
-                }}
-              >
-                {this.scope.locale.Reset()}
-              </button>
-            </>
-          );
-        }}
+        slotFooter={hasBlocks ? undefined : $$form => this._renderActions($$form)}
       ></ZForm>
     );
+  }
+
+  private _prepareFormScope(): IPageFilterScope {
+    // eslint-disable-next-line
+    const self = this;
+    const $$filter = this.$customRef(() => {
+      return {
+        get() {
+          return self;
+        },
+        set(_value) {},
+      };
+    }) as any;
+    return objectAssignReactive({}, this.$$renderContext.$$page.jsxCelScope, { $$filter });
+  }
+
+  private _renderActions($$form: ControllerForm): VNode {
+    const jsxRenderContext = $$form.getFormJsxRenderContext(this.formScope);
+    return $$form.zovaJsx.render(
+      'basic-page:blockFilterActions',
+      {},
+      this.formScope,
+      jsxRenderContext,
+    ) as VNode;
   }
 }

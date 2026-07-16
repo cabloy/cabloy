@@ -7,7 +7,12 @@ import type {
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { DtoStudentCreate, DtoStudentUpdate, DtoStudentView } from 'vona-module-training-student';
+import {
+  DtoStudentCreate,
+  DtoStudentSelectResItem,
+  DtoStudentUpdate,
+  DtoStudentView,
+} from 'vona-module-training-student';
 
 describe('student.test.ts', () => {
   it('action:student:formLayoutMetadata', async () => {
@@ -38,6 +43,29 @@ describe('student.test.ts', () => {
           ['trainingRecords'],
         );
       }
+    });
+  });
+
+  it('action:student:filterFormLayoutMetadata', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const apiJson = await app.bean.openapi.generateJsonOfClass(DtoStudentSelectResItem);
+      const component = Object.values(apiJson.components!.schemas as any).find(item => {
+        return (item as any).properties?._operationsRow;
+      });
+      const filterBlock = (component as any)?.rest?.blocks?.[0]?.options?.blocks?.[0];
+      assert.equal(filterBlock?.render, 'basic-page:blockFilter');
+      assert.equal(filterBlock?.options?.formFieldLayout?.inline, false);
+      assert.deepEqual(
+        filterBlock?.options?.blocks?.map(item => item.render),
+        ['basic-form:blockFormLayout', 'basic-page:blockFilterActions'],
+      );
+      const formLayout = filterBlock?.options?.blocks?.[0]?.options?.formLayout;
+      assert.deepEqual(formLayout?.children[0]?.columns, { default: 1, md: 2 });
+      assert.deepEqual(
+        formLayout?.children[0]?.children.map(item => item.name),
+        ['name', 'level', 'createdAt'],
+      );
+      assert.deepEqual(formLayout?.children[0]?.children[2]?.span, { default: 1, md: 2 });
     });
   });
 

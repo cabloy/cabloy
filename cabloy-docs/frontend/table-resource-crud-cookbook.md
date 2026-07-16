@@ -162,8 +162,8 @@ This block uses `ZForm` with:
 
 - `schema={$$page.schemaFilter}`
 - `schemaScene="filter"`
-- inline layout
 - page-owned filter data
+- field-level `formFieldLayout.inline: true` by default
 
 Its job is not to duplicate the list query logic.
 
@@ -177,6 +177,38 @@ A practical rule is:
 
 - if you need to refine which filter fields exist, start from backend filter-side metadata and schema
 - if you need to refine how filter submission affects the list, inspect `blockFilter` and `blockPage.onFilter(...)`
+
+### Use blocks for a structural filter layout
+
+A bare `basic-page:blockFilter` keeps the default schema field rendering and adds Search/Reset controls automatically. For a structured filter, compose the existing form layout block with the filter-specific action block:
+
+```tsx
+ZovaRender.block('basic-page:blockFilter', {
+  formFieldLayout: { inline: false },
+  blocks: [
+    ZovaRender.block('basic-form:blockFormLayout', {
+      formLayout: {
+        children: [
+          {
+            type: 'section',
+            columns: { default: 1, md: 2 },
+            children: [
+              { type: 'field', name: 'name' },
+              { type: 'field', name: 'level' },
+              { type: 'field', name: 'createdAt', span: { default: 1, md: 2 } },
+            ],
+          },
+        ],
+      },
+    }),
+    ZovaRender.block('basic-page:blockFilterActions'),
+  ],
+});
+```
+
+`basic-form:blockFormLayout` only places schema fields. `basic-page:blockFilterActions` owns Search/Reset placement and invokes the filter command surface supplied through the form scope, so it preserves filter normalization and page-query behavior. A nonempty `blocks` list replaces the automatic body and footer; include the action block explicitly to make the filter operable.
+
+`ZForm.inline` is no longer a form API. Use `formFieldLayout.inline` for field-level compact layout, or use blocks plus `basic-form:blockFormLayout` for structural layout.
 
 ## Step 5: Let `blockToolbarBulk` own bulk-action display
 

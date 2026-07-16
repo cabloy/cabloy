@@ -1,6 +1,7 @@
 // eslint-disable
 /** controller: begin */
 export * from '../component/blockFilter/controller.jsx';
+export * from '../component/blockFilterActions/controller.jsx';
 export * from '../component/blockPage/controller.jsx';
 export * from '../component/blockPager/controller.jsx';
 export * from '../component/blockTable/controller.jsx';
@@ -14,6 +15,11 @@ declare module 'zova' {
 declare module 'zova-module-basic-page' {
   
         export interface ControllerBlockFilter {
+          /** @internal */
+          get scope(): ScopeModuleBasicPage;
+        }
+
+        export interface ControllerBlockFilterActions {
           /** @internal */
           get scope(): ScopeModuleBasicPage;
         }
@@ -41,6 +47,7 @@ declare module 'zova-module-basic-page' {
 /** controller: end */
 /** controller: begin */
 import { ControllerBlockFilter } from '../component/blockFilter/controller.jsx';
+import { ControllerBlockFilterActions } from '../component/blockFilterActions/controller.jsx';
 import { ControllerBlockPage } from '../component/blockPage/controller.jsx';
 import { ControllerBlockPager } from '../component/blockPager/controller.jsx';
 import { ControllerBlockTable } from '../component/blockTable/controller.jsx';
@@ -49,6 +56,7 @@ import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-page.controller.blockFilter': ControllerBlockFilter;
+'basic-page.controller.blockFilterActions': ControllerBlockFilterActions;
 'basic-page.controller.blockPage': ControllerBlockPage;
 'basic-page.controller.blockPager': ControllerBlockPager;
 'basic-page.controller.blockTable': ControllerBlockTable;
@@ -60,6 +68,8 @@ declare module 'zova' {
 /** components: begin */
 export * from './component/blockFilter.js';
 import { ZBlockFilter } from './component/blockFilter.js';
+export * from './component/blockFilterActions.js';
+import { ZBlockFilterActions } from './component/blockFilterActions.js';
 export * from './component/blockPage.js';
 import { ZBlockPage } from './component/blockPage.js';
 export * from './component/blockPager.js';
@@ -70,6 +80,7 @@ export * from './component/blockToolbarBulk.js';
 import { ZBlockToolbarBulk } from './component/blockToolbarBulk.js';
 export const components = {
   'blockFilter': ZBlockFilter,
+'blockFilterActions': ZBlockFilterActions,
 'blockPage': ZBlockPage,
 'blockPager': ZBlockPager,
 'blockTable': ZBlockTable,
@@ -79,6 +90,7 @@ import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
   'basic-page:blockFilter': ControllerBlockFilter;
+'basic-page:blockFilterActions': ControllerBlockFilterActions;
 'basic-page:blockPage': ControllerBlockPage;
 'basic-page:blockPager': ControllerBlockPager;
 'basic-page:blockTable': ControllerBlockTable;
@@ -86,6 +98,7 @@ export interface IComponentRecord {
 }
 export interface IZovaComponentRecord {
   'basic-page:blockFilter': typeof ZBlockFilter;
+'basic-page:blockFilterActions': typeof ZBlockFilterActions;
 'basic-page:blockPage': typeof ZBlockPage;
 'basic-page:blockPager': typeof ZBlockPager;
 'basic-page:blockTable': typeof ZBlockTable;

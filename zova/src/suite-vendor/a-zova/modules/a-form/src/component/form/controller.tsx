@@ -53,7 +53,6 @@ import { ControllerFormField } from '../formField/controller.jsx';
 
 export interface ControllerFormProps<TFormData extends {} = {}, TSubmitMeta = never> {
   formTag?: string;
-  inline?: boolean;
   data?: TFormData;
   schema?: SchemaObject;
   schemaScene?: TypeFormSchemaScene;

@@ -69,9 +69,6 @@ export class RenderForm extends BeanRenderBase {
   private _renderProps() {
     const FormTag = this.$props.formTag;
     const props: any = {};
-    if (this.$props.inline) {
-      props.class = 'inline';
-    }
     if (FormTag === 'form') {
       props.onSubmit = (e: SubmitEvent) => {
         if (this.$props.onFormSubmit) {

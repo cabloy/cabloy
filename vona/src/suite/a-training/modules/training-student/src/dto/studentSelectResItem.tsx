@@ -15,7 +15,27 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
   blocks: [
     ZovaRender.block('basic-page:blockPage', {
       blocks: [
-        ZovaRender.block('basic-page:blockFilter'),
+        ZovaRender.block('basic-page:blockFilter', {
+          formFieldLayout: { inline: false },
+          blocks: [
+            ZovaRender.block('basic-form:blockFormLayout', {
+              formLayout: {
+                children: [
+                  {
+                    type: 'section',
+                    columns: { default: 1, md: 2 },
+                    children: [
+                      { type: 'field', name: 'name' },
+                      { type: 'field', name: 'level' },
+                      { type: 'field', name: 'createdAt', span: { default: 1, md: 2 } },
+                    ],
+                  },
+                ],
+              },
+            }),
+            ZovaRender.block('basic-page:blockFilterActions'),
+          ],
+        }),
         ZovaRender.block('basic-page:blockToolbarBulk', {
           actions: [ZovaRender.tableActionBulk('basic-table:actionCreate')],
         }),
