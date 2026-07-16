@@ -16,7 +16,7 @@ export interface IDtoOptionsStudentSelectResItem extends IDecoratorDtoOptions {}
     ZovaRender.block('basic-page:blockPage', {
       blocks: [
         ZovaRender.block('basic-page:blockFilter', {
-          formFieldLayout: { inline: true },
+          formFieldLayout: { inline: false },
           blocks: [
             ZovaRender.block('basic-form:blockFormLayout', {
               formLayout: {
