@@ -193,7 +193,7 @@ export class CtxSSR extends BeanSimple {
           : stringifyStyle(normalizeStyle(clientValue));
         el.setAttribute(key, expected as string);
       }
-    } else if (['id', 'name', 'for', 'd'].includes(key)) {
+    } else if (['id', 'name', 'for', 'd', 'aria-labelledby', 'aria-controls'].includes(key)) {
       ignore = true;
       if (clientValue !== undefined) {
         expected = String(clientValue);
