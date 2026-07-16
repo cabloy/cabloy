@@ -17,7 +17,53 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions {}
   blocks: [
     ZovaRender.block('basic-pageentry:blockPageEntry', {
       blocks: [
-        ZovaRender.block('basic-pageentry:blockForm'),
+        ZovaRender.block('basic-pageentry:blockForm', {
+          blocks: [
+            ZovaRender.block('basic-form:blockFormLayout', {
+              formLayout: {
+                children: [
+                  {
+                    type: 'tabs',
+                    children: [
+                      {
+                        type: 'tab',
+                        title: $locale('BasicInformation'),
+                        children: [
+                          {
+                            type: 'group',
+                            title: $locale('StudentProfile'),
+                            children: [
+                              {
+                                type: 'section',
+                                columns: { default: 1, md: 2 },
+                                children: [
+                                  { type: 'field', name: 'name' },
+                                  { type: 'field', name: 'mobile' },
+                                  { type: 'field', name: 'imageId' },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        type: 'tab',
+                        title: $locale('TrainingRecords'),
+                        children: [
+                          { type: 'field', name: 'level' },
+                          {
+                            type: 'section',
+                            children: [{ type: 'field', name: 'trainingRecords' }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            }),
+          ],
+        }),
         ZovaRender.block('basic-pageentry:blockToolbarRow', {
           actions: [
             ZovaRender.formActionRow('basic-form:actionBack', { permission: { public: true } }),

@@ -7,12 +7,12 @@ import type {
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { DtoStudentCreate, DtoStudentUpdate } from 'vona-module-training-student';
+import { DtoStudentCreate, DtoStudentUpdate, DtoStudentView } from 'vona-module-training-student';
 
 describe('student.test.ts', () => {
   it('action:student:formLayoutMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
-      for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate]) {
+      for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate, DtoStudentView]) {
         const apiJson = await app.bean.openapi.generateJsonOfClass(DtoClass);
         const component = Object.values(apiJson.components!.schemas as any).find(item => {
           return (item as any).properties?.trainingRecords;
@@ -21,10 +21,22 @@ describe('student.test.ts', () => {
         const formLayout =
           blocks?.[0]?.options?.blocks?.[0]?.options?.blocks?.[0]?.options?.formLayout;
         const tabs = formLayout?.children[0];
+        const profileSection = tabs?.children[0]?.children[0]?.children[0];
+        const trainingRecordsSection = tabs?.children[1]?.children[1];
         assert.equal(tabs?.type, 'tabs');
         assert.equal(tabs?.id, undefined);
         assert.equal(tabs?.children[1]?.type, 'tab');
         assert.equal(tabs?.children[1]?.id, undefined);
+        assert.deepEqual(profileSection?.columns, { default: 1, md: 2 });
+        assert.deepEqual(
+          profileSection?.children.map(item => item.name),
+          ['name', 'mobile', 'imageId'],
+        );
+        assert.equal(tabs?.children[1]?.children[0]?.name, 'level');
+        assert.deepEqual(
+          trainingRecordsSection?.children.map(item => item.name),
+          ['trainingRecords'],
+        );
       }
     });
   });
