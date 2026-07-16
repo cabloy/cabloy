@@ -17,53 +17,57 @@ export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
     ZovaRender.block('basic-pageentry:blockPageEntry', {
       blocks: [
         ZovaRender.block('basic-pageentry:blockForm', {
-          formLayout: ZovaRender.formLayout({
-            children: [
-              {
-                type: 'tabs',
-                id: 'student-tabs',
+          blocks: [
+            ZovaRender.block('basic-form:blockFormLayout', {
+              formLayout: {
                 children: [
                   {
-                    type: 'tab',
-                    id: 'basic',
-                    title: $locale('BasicInformation'),
+                    type: 'tabs',
+                    id: 'student-tabs',
                     children: [
                       {
-                        type: 'group',
-                        id: 'student-profile',
-                        title: $locale('StudentProfile'),
+                        type: 'tab',
+                        id: 'basic',
+                        title: $locale('BasicInformation'),
+                        children: [
+                          {
+                            type: 'group',
+                            id: 'student-profile',
+                            title: $locale('StudentProfile'),
+                            children: [
+                              {
+                                type: 'section',
+                                id: 'student-core',
+                                columns: { default: 1, md: 2 },
+                                children: [
+                                  { type: 'field', name: 'name' },
+                                  { type: 'field', name: 'mobile' },
+                                  { type: 'field', name: 'imageId' },
+                                  { type: 'field', name: 'level' },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        type: 'tab',
+                        id: 'training-records',
+                        title: $locale('TrainingRecords'),
                         children: [
                           {
                             type: 'section',
-                            id: 'student-core',
-                            columns: { default: 1, md: 2 },
-                            children: [
-                              { type: 'field', name: 'name' },
-                              { type: 'field', name: 'mobile' },
-                              { type: 'field', name: 'imageId' },
-                              { type: 'field', name: 'level' },
-                            ],
+                            id: 'training-records-section',
+                            children: [{ type: 'field', name: 'trainingRecords' }],
                           },
                         ],
                       },
                     ],
                   },
-                  {
-                    type: 'tab',
-                    id: 'training-records',
-                    title: $locale('TrainingRecords'),
-                    children: [
-                      {
-                        type: 'section',
-                        id: 'training-records-section',
-                        children: [{ type: 'field', name: 'trainingRecords' }],
-                      },
-                    ],
-                  },
                 ],
               },
-            ],
-          }),
+            }),
+          ],
         }),
         ZovaRender.block('basic-pageentry:blockToolbarRow', {
           actions: [
