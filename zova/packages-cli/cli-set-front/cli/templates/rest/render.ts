@@ -19,7 +19,6 @@ import {
 import {
   schemaRenderDisableNotifyChanged,
   schemaRenderFieldSource,
-  schemaRenderFormLayout,
   schemaRenderLayout,
   schemaRenderOnEffect,
   schemaRenderOrder,
@@ -29,7 +28,6 @@ import {
 
 export const ZovaRender = {
   // render
-  formLayout: schemaRenderFormLayout,
   layout: schemaRenderLayout,
   visible: schemaRenderVisible,
   readonly: schemaRenderReadonly,

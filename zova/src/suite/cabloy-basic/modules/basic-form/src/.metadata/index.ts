@@ -2,7 +2,7 @@
 /** controller: begin */
 export * from '../component/actionBack/controller.jsx';
 export * from '../component/actionSubmit/controller.jsx';
-export * from '../component/formLayout/controller.jsx';
+export * from '../component/blockFormLayout/controller.jsx';
 
 import 'zova';
 declare module 'zova' {
@@ -21,7 +21,7 @@ declare module 'zova-module-basic-form' {
           get scope(): ScopeModuleBasicForm;
         }
 
-        export interface ControllerFormLayout {
+        export interface ControllerBlockFormLayout {
           /** @internal */
           get scope(): ScopeModuleBasicForm;
         } 
@@ -30,13 +30,13 @@ declare module 'zova-module-basic-form' {
 /** controller: begin */
 import { ControllerActionBack } from '../component/actionBack/controller.jsx';
 import { ControllerActionSubmit } from '../component/actionSubmit/controller.jsx';
-import { ControllerFormLayout } from '../component/formLayout/controller.jsx';
+import { ControllerBlockFormLayout } from '../component/blockFormLayout/controller.jsx';
 import 'zova';
 declare module 'zova' {
   export interface IBeanRecordLocal {
     'basic-form.controller.actionBack': ControllerActionBack;
 'basic-form.controller.actionSubmit': ControllerActionSubmit;
-'basic-form.controller.formLayout': ControllerFormLayout;
+'basic-form.controller.blockFormLayout': ControllerBlockFormLayout;
   }
 }
 /** controller: end */
@@ -46,24 +46,24 @@ export * from './component/actionBack.js';
 import { ZActionBack } from './component/actionBack.js';
 export * from './component/actionSubmit.js';
 import { ZActionSubmit } from './component/actionSubmit.js';
-export * from './component/formLayout.js';
-import { ZFormLayout } from './component/formLayout.js';
+export * from './component/blockFormLayout.js';
+import { ZBlockFormLayout } from './component/blockFormLayout.js';
 export const components = {
   'actionBack': ZActionBack,
 'actionSubmit': ZActionSubmit,
-'formLayout': ZFormLayout,
+'blockFormLayout': ZBlockFormLayout,
 };
 import 'zova';
 declare module 'zova' {
 export interface IComponentRecord {
   'basic-form:actionBack': ControllerActionBack;
 'basic-form:actionSubmit': ControllerActionSubmit;
-'basic-form:formLayout': ControllerFormLayout;
+'basic-form:blockFormLayout': ControllerBlockFormLayout;
 }
 export interface IZovaComponentRecord {
   'basic-form:actionBack': typeof ZActionBack;
 'basic-form:actionSubmit': typeof ZActionSubmit;
-'basic-form:formLayout': typeof ZFormLayout;
+'basic-form:blockFormLayout': typeof ZBlockFormLayout;
 }
 }
 /** components: end */

@@ -1,6 +1,7 @@
 import type { IComponentOptions } from 'zova';
 import type {
   IJsxRenderContextForm,
+  IResolvedFormLayout,
   IResolvedFormLayoutField,
   IResolvedFormLayoutGroup,
   IResolvedFormLayoutNode,
@@ -8,26 +9,43 @@ import type {
   IResolvedFormLayoutTab,
   IResolvedFormLayoutTabs,
 } from 'zova-module-a-form';
+import type { IFormLayout, IResourceBlockOptionsBase } from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
+import { resolveFormLayout } from 'zova-module-a-form';
 
-export interface ControllerFormLayoutProps {}
+declare module 'zova-module-a-openapi' {
+  export interface IResourceBlockRecord {
+    'basic-form:blockFormLayout'?: ControllerBlockFormLayoutProps;
+  }
+}
+
+export interface ControllerBlockFormLayoutProps extends IResourceBlockOptionsBase {
+  formLayout: IFormLayout;
+}
 
 @Controller()
-export class ControllerFormLayout extends BeanControllerBase {
+export class ControllerBlockFormLayout extends BeanControllerBase {
   static $propsDefault = {};
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
+
+  private formLayoutPlan: IResolvedFormLayout | undefined;
 
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextForm;
 
-  protected async __init__() {}
+  protected async __init__() {
+    this.formLayoutPlan = this.$computed(() => {
+      const { $$form } = this.$$renderContext;
+      const formLayout = this.$props.formLayout;
+      return resolveFormLayout(formLayout, $$form.properties);
+    });
+  }
 
   protected render() {
-    const { $$form } = this.$$renderContext;
-    const plan = $$form.formLayoutPlan!;
+    const plan = this.formLayoutPlan!;
     return <>{plan.children.map(node => this._renderNode(node))}</>;
   }
 

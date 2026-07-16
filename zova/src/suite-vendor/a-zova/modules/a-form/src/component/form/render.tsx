@@ -33,12 +33,25 @@ export class RenderForm extends BeanRenderBase {
     return children;
   }
 
-  private _renderFormLayout() {
-    const render = this.formProvider.components?.FormLayout;
-    if (!render || !this.formLayoutPlan) return this._renderSchema();
+  private _renderFromBlocks() {
+    const blocks = this.$props.blocks;
+    if (!blocks || blocks.length === 0) {
+      return this._renderSchema();
+    }
     const celScope = this.getFormScope();
     const jsxRenderContext = this.getFormJsxRenderContext(celScope);
-    return this.zovaJsx.render(render, {}, celScope, jsxRenderContext);
+    const domBlocks: VNode[] = [];
+    blocks.forEach((block, index) => {
+      const options = Object.assign({ key: index }, block.options);
+      const domBlock = this.zovaJsx.render(block.render!, options, celScope, jsxRenderContext);
+      if (!domBlock) return;
+      if (Array.isArray(domBlock)) {
+        domBlocks.push(...domBlock);
+      } else {
+        domBlocks.push(domBlock);
+      }
+    });
+    return domBlocks;
   }
 
   private _renderBodyInner() {
@@ -47,7 +60,7 @@ export class RenderForm extends BeanRenderBase {
       this.$slotDefault(this)
     ) : (
       <>
-        {this.formLayoutPlan ? this._renderFormLayout() : this._renderSchema()}
+        {this.$props.blocks ? this._renderFromBlocks() : this._renderSchema()}
         {FormTag === 'form' && <button type="submit" style={{ display: 'none' }}></button>}
       </>
     );
