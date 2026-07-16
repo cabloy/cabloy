@@ -1,6 +1,8 @@
 export default {
   Description: '描述',
   Level: '培训阶段',
+  BasicInformation: '基本信息',
+  StudentProfile: '学生资料',
   LevelAdvanced: '高级研修班',
   LevelBeginner: '基础班',
   LevelIntermediate: '提升班',

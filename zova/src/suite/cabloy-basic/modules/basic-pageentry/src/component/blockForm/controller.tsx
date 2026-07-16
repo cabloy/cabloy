@@ -1,5 +1,9 @@
 import type { IComponentOptions } from 'zova';
-import type { IJsxRenderContextPageEntry, IResourceBlockOptionsBase } from 'zova-module-a-openapi';
+import type {
+  IFormLayout,
+  IJsxRenderContextPageEntry,
+  IResourceBlockOptionsBase,
+} from 'zova-module-a-openapi';
 
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
@@ -11,7 +15,9 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ControllerBlockFormProps extends IResourceBlockOptionsBase {}
+export interface ControllerBlockFormProps extends IResourceBlockOptionsBase {
+  formLayout?: IFormLayout;
+}
 
 @Controller()
 export class ControllerBlockForm extends BeanControllerBase {
@@ -40,6 +46,7 @@ export class ControllerBlockForm extends BeanControllerBase {
         schemaScene={$$pageEntry.schemaScene}
         formMeta={$$pageEntry.formMeta}
         formProvider={$$pageEntry.formProvider}
+        formLayout={this.$props.formLayout}
         formScope={$$pageEntry.jsxCelScope}
         onSubmitData={data => $$pageEntry.submitData(data)}
         onShowError={async ({ error }) => {

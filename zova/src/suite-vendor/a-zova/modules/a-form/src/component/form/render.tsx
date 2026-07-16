@@ -33,13 +33,20 @@ export class RenderForm extends BeanRenderBase {
     return children;
   }
 
+  private _renderFormLayout() {
+    const render = this.formProvider.components?.FormLayout;
+    if (!render || !this.formLayoutPlan) return this._renderSchema();
+    const celScope = this.getFieldScope('' as never);
+    return this.zovaJsx.render(render, {}, celScope, this.getFormJsxRenderContext());
+  }
+
   private _renderBodyInner() {
     const FormTag = this.$props.formTag;
     return this.$slotDefault ? (
       this.$slotDefault(this)
     ) : (
       <>
-        {this._renderSchema()}
+        {this.formLayoutPlan ? this._renderFormLayout() : this._renderSchema()}
         {FormTag === 'form' && <button type="submit" style={{ display: 'none' }}></button>}
       </>
     );

@@ -1,6 +1,8 @@
 export default {
   Description: 'Description',
   Level: 'Training Stage',
+  BasicInformation: 'Basic Information',
+  StudentProfile: 'Student Profile',
   LevelAdvanced: 'Advanced Workshop',
   LevelBeginner: 'Foundation Track',
   LevelIntermediate: 'Progress Track',

@@ -1,0 +1,137 @@
+import type { IComponentOptions } from 'zova';
+import type {
+  ControllerForm,
+  IFormLayoutRenderContext,
+  IResolvedFormLayoutField,
+  IResolvedFormLayoutGroup,
+  IResolvedFormLayoutNode,
+  IResolvedFormLayoutSection,
+  IResolvedFormLayoutTab,
+  IResolvedFormLayoutTabs,
+} from 'zova-module-a-form';
+
+import { classes } from 'typestyle';
+import { BeanControllerBase, Use } from 'zova';
+import { Controller } from 'zova-module-a-bean';
+
+export interface ControllerFormLayoutProps {}
+
+@Controller()
+export class ControllerFormLayout extends BeanControllerBase {
+  @Use({ injectionScope: 'host' })
+  $$form: ControllerForm;
+
+  static $propsDefault = {};
+  static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };
+
+  protected async __init__() {}
+
+  get renderContext(): IFormLayoutRenderContext | undefined {
+    return this.$$form.getFormLayoutRenderContext();
+  }
+
+  protected render() {
+    const renderContext = this.renderContext;
+    if (!renderContext) return;
+    return <>{renderContext.plan.children.map(node => this._renderNode(node))}</>;
+  }
+
+  private _renderNode(node: IResolvedFormLayoutNode) {
+    switch (node.type) {
+      case 'field':
+        return this._renderField(node);
+      case 'group':
+        return this._renderGroup(node);
+      case 'section':
+        return this._renderSection(node);
+      case 'tabs':
+        return this._renderTabs(node);
+    }
+  }
+
+  private _renderField(node: IResolvedFormLayoutField) {
+    const span = this._gridClasses('col-span', node.span);
+    return <div class={span}>{this.renderContext!.renderField(node.name)}</div>;
+  }
+
+  private _renderGroup(node: IResolvedFormLayoutGroup) {
+    return (
+      <fieldset class="fieldset mb-6 rounded-box border border-base-300 p-4">
+        {!!node.title && <legend class="fieldset-legend">{node.title}</legend>}
+        {!!node.description && <p class="mb-4 text-sm text-base-content/70">{node.description}</p>}
+        {node.children.map(child => this._renderNode(child))}
+      </fieldset>
+    );
+  }
+
+  private _renderSection(node: IResolvedFormLayoutSection) {
+    const className = classes('mb-6 grid gap-4', this._gridClasses('grid-cols', node.columns));
+    return (
+      <section>
+        {!!node.title && <h3 class="mb-1 text-lg font-semibold">{node.title}</h3>}
+        {!!node.description && <p class="mb-4 text-sm text-base-content/70">{node.description}</p>}
+        <div class={className}>{node.children.map(child => this._renderField(child))}</div>
+      </section>
+    );
+  }
+
+  private _renderTabs(node: IResolvedFormLayoutTabs) {
+    const renderContext = this.renderContext!;
+    const activeTabId = renderContext.getActiveTab(node.id) ?? node.children[0]?.id;
+    return (
+      <div class="mb-6">
+        <div role="tablist" class="tabs tabs-lifted">
+          {node.children.map(tab => {
+            const active = tab.id === activeTabId;
+            const invalid = renderContext.hasErrors(tab);
+            return (
+              <button
+                id={`${node.id}-${tab.id}-tab`}
+                role="tab"
+                type="button"
+                class={classes('tab', active && 'tab-active', invalid && 'text-error')}
+                aria-selected={active}
+                aria-controls={`${node.id}-${tab.id}-panel`}
+                onClick={() => renderContext.activateTab(node.id, tab.id)}
+              >
+                {tab.title}
+                {invalid && <span class="ml-1">*</span>}
+              </button>
+            );
+          })}
+        </div>
+        {node.children.map(tab => this._renderTabPanel(node, tab, tab.id === activeTabId))}
+      </div>
+    );
+  }
+
+  private _renderTabPanel(
+    node: IResolvedFormLayoutTabs,
+    tab: IResolvedFormLayoutTab,
+    active: boolean,
+  ) {
+    return (
+      <div
+        id={`${node.id}-${tab.id}-panel`}
+        role="tabpanel"
+        aria-labelledby={`${node.id}-${tab.id}-tab`}
+        hidden={!active}
+        class="rounded-box border border-base-300 bg-base-100 p-4"
+      >
+        {tab.children.map(child => this._renderNode(child))}
+      </div>
+    );
+  }
+
+  private _gridClasses(
+    prefix: 'grid-cols' | 'col-span',
+    columns?: { default?: number; md?: number; lg?: number },
+  ) {
+    const classes: string[] = [];
+    const valueDefault = columns?.default ?? (prefix === 'grid-cols' ? 1 : undefined);
+    if (valueDefault) classes.push(`${prefix}-${valueDefault}`);
+    if (columns?.md) classes.push(`md:${prefix}-${columns.md}`);
+    if (columns?.lg) classes.push(`lg:${prefix}-${columns.lg}`);
+    return classes.join(' ');
+  }
+}

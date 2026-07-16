@@ -1,16 +1,30 @@
 import type {
-  DtoStudentCreate,
   DtoStudentSelectRes,
   DtoStudentSummary,
-  DtoStudentUpdate,
   EntityStudent,
 } from 'vona-module-training-student';
 
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { DtoStudentCreate, DtoStudentUpdate } from 'vona-module-training-student';
 
 describe('student.test.ts', () => {
+  it('action:student:formLayoutMetadata', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate]) {
+        const apiJson = await app.bean.openapi.generateJsonOfClass(DtoClass);
+        const component = Object.values(apiJson.components.schemas).find(item => {
+          return item.properties?.trainingRecords;
+        });
+        const blocks = (component as any)?.rest?.blocks;
+        const formLayout = blocks?.[0]?.options?.blocks?.[0]?.options?.formLayout;
+        assert.equal(formLayout?.children[0]?.type, 'tabs');
+        assert.equal(formLayout?.children[0]?.children[1]?.id, 'training-records');
+      }
+    });
+  });
+
   it('action:student', async () => {
     await app.bean.executor.mockCtx(async () => {
       // data

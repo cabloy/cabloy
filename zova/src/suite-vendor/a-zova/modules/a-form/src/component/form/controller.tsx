@@ -19,6 +19,7 @@ import { cast, deepEqual, deepExtend, objectAssignReactive, UseScope } from 'zov
 import { isJsxComponent, ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import {
+  IFormLayout,
   IFormMeta,
   IFormProvider,
   IResourceFormFieldLayoutOptions,
@@ -30,7 +31,15 @@ import {
   TypeFormSchemaScene,
 } from 'zova-module-a-openapi';
 
+import type {
+  IFormLayoutRenderContext,
+  IResolvedFormLayout,
+  IResolvedFormLayoutNode,
+  IResolvedFormLayoutTab,
+} from '../../types/formLayout.js';
+
 import { BeanControllerFormBase } from '../../lib/beanControllerFormBase.js';
+import { resolveFormLayout } from '../../lib/formLayout.js';
 import {
   IFormScope,
   RevalidateLogicProps,
@@ -43,6 +52,7 @@ import {
   IFormFieldOptions,
   IFormFieldRenderContextPropsBucket,
   IFormFieldScope,
+  IJsxRenderContextForm,
   IJsxRenderContextFormField,
 } from '../../types/formField.js';
 import { ControllerFormField } from '../formField/controller.jsx';
@@ -60,6 +70,7 @@ export interface ControllerFormProps<TFormData extends {} = {}, TSubmitMeta = ne
   formProvider?: IFormProvider;
   formScope?: IFormScope;
   formFieldLayout?: IResourceFormFieldLayoutOptions;
+  formLayout?: IFormLayout;
   onFormSubmit?: (e: SubmitEvent, form: ControllerForm<TFormData, TSubmitMeta>) => any;
   onSubmitInvalid?: TypeFormOnSubmitInvalid<TFormData, TSubmitMeta>;
   onSubmitData?: TypeFormOnSubmit<TFormData, TSubmitMeta>;
@@ -87,6 +98,8 @@ export class ControllerForm<
   properties: ISchemaObjectExtensionField[] | undefined;
   zovaJsx: ZovaJsx;
   fieldCelEnv: typeof celEnvBase;
+  formLayoutPlan: IResolvedFormLayout | undefined;
+  formLayoutActiveTabs: Record<string, string | undefined> = {};
 
   @UseScope()
   $$scopeOpenapi: ScopeModuleAOpenapi;
@@ -109,6 +122,11 @@ export class ControllerForm<
     });
     this.properties = this.$computed(() => {
       return this.$sdk.loadSchemaProperties(this.schema, this.$props.schemaScene);
+    });
+    this.formLayoutPlan = this.$computed(() => {
+      const formLayout = this.$props.formLayout;
+      if (!formLayout) return;
+      return resolveFormLayout(formLayout, this.properties);
     });
     this.fieldCelEnv = this._getFieldCelEnv();
     this.zovaJsx = this.bean._newBeanSimple(
@@ -141,6 +159,36 @@ export class ControllerForm<
 
   public get formMeta() {
     return this.$props.formMeta;
+  }
+
+  public getFormLayoutRenderContext():
+    | IFormLayoutRenderContext<TFormData, TSubmitMeta>
+    | undefined {
+    const plan = this.formLayoutPlan;
+    if (!plan) return;
+    return {
+      form: this,
+      plan,
+      renderField: name => this.renderField(name as DeepKeys<TFormData>),
+      getActiveTab: tabsId => this.formLayoutActiveTabs[tabsId],
+      activateTab: (tabsId, tabId) => {
+        this.formLayoutActiveTabs[tabsId] = tabId;
+      },
+      hasErrors: node => this._hasFormLayoutErrors(node),
+    };
+  }
+
+  public activateFormLayoutErrorTab() {
+    const plan = this.formLayoutPlan;
+    if (!plan) return;
+    for (const property of this.properties ?? []) {
+      const name = property.key;
+      if (!name || !this.form.getFieldMeta(name)?.errors?.length) continue;
+      for (const tab of plan.fieldTabPaths[name] ?? []) {
+        this.formLayoutActiveTabs[tab.tabsId] = tab.tabId;
+      }
+      return;
+    }
   }
 
   public getFieldValue<K extends DeepKeys<TFormData>>(name: K) {
@@ -207,6 +255,18 @@ export class ControllerForm<
       $celScope: celScope,
       $jsx: this.zovaJsx,
       $$formField,
+      $$form: this,
+    };
+  }
+
+  public getFormJsxRenderContext(): IJsxRenderContextForm<TFormData, TSubmitMeta> {
+    return {
+      app: this.app,
+      ctx: this.ctx,
+      $scene: 'formField',
+      $host: this,
+      $celScope: this.getFieldScope('' as DeepKeys<TFormData>),
+      $jsx: this.zovaJsx,
       $$form: this,
     };
   }
@@ -310,6 +370,7 @@ export class ControllerForm<
           ? revalidateLogic(this.$props.validateOnDynamicLogic)
           : undefined,
       onSubmitInvalid: data => {
+        this.activateFormLayoutErrorTab();
         this.$props.onSubmitInvalid?.(data, this);
       },
       onSubmit: async data => {
@@ -373,6 +434,13 @@ export class ControllerForm<
 
   public isComponentFormField(renderProvider?: TypeFormFieldRenderComponentProvider) {
     return typeof renderProvider === 'string' && renderProvider.includes(':formField');
+  }
+
+  private _hasFormLayoutErrors(node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) {
+    if (node.type === 'field') {
+      return !!this.form.getFieldMeta(node.name)?.errors?.length;
+    }
+    return node.children.some(child => this._hasFormLayoutErrors(child));
   }
 
   private _handleError422(error: Error, cause: ValidationCause = 'submit') {
@@ -440,6 +508,7 @@ export class ControllerForm<
 
     if (formError || fieldErrors) {
       hasErrored = true;
+      this.activateFormLayoutErrorTab();
     }
 
     /**

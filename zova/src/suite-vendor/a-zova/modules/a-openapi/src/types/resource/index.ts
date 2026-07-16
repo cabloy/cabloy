@@ -2,6 +2,7 @@ export * from './block.js';
 export * from './formActionRow.js';
 export * from './formField.js';
 export * from './formFieldLayout.js';
+export * from './formLayout.js';
 export * from './tableAction.js';
 export * from './tableActionBulk.js';
 export * from './tableActionRow.js';

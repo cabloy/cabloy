@@ -1,0 +1,149 @@
+import type {
+  IFormLayout,
+  IFormLayoutField,
+  IFormLayoutNode,
+  IFormLayoutTab,
+  IFormLayoutTabs,
+  ISchemaObjectExtensionField,
+} from 'zova-module-a-openapi';
+
+import type {
+  IFormLayoutDiagnostic,
+  IResolvedFormLayout,
+  IResolvedFormLayoutField,
+  IResolvedFormLayoutGroup,
+  IResolvedFormLayoutNode,
+  IResolvedFormLayoutSection,
+  IResolvedFormLayoutTab,
+  IResolvedFormLayoutTabs,
+} from '../types/formLayout.js';
+
+export function resolveFormLayout(
+  layout: IFormLayout,
+  properties: ISchemaObjectExtensionField[] | undefined,
+): IResolvedFormLayout {
+  const propertyNames = new Set(
+    properties
+      ?.filter(item => item.rest?.visible !== false)
+      .map(item => item.key)
+      .filter(Boolean) as string[],
+  );
+  const fieldNames = new Set<string>();
+  const nodeIds = new Set<string>();
+  const diagnostics: IFormLayoutDiagnostic[] = [];
+  const fieldTabPaths: IResolvedFormLayout['fieldTabPaths'] = {};
+  const children = layout.children
+    .map(node =>
+      resolveNode(node, [], propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    )
+    .filter(Boolean) as IResolvedFormLayoutNode[];
+  for (const property of properties ?? []) {
+    const name = property.key;
+    if (!name || !propertyNames.has(name) || fieldNames.has(name)) continue;
+    fieldNames.add(name);
+    children.push({ type: 'field', name });
+  }
+  return { children, fieldTabPaths, diagnostics };
+}
+
+function resolveNode(
+  node: IFormLayoutNode,
+  tabPath: IResolvedFormLayout['fieldTabPaths'][string],
+  propertyNames: Set<string>,
+  fieldNames: Set<string>,
+  nodeIds: Set<string>,
+  diagnostics: IFormLayoutDiagnostic[],
+  fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
+): IResolvedFormLayoutNode | undefined {
+  if (node.type === 'field') {
+    return resolveField(node, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths);
+  }
+  if (node.type === 'tabs') {
+    return resolveTabs(node, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths);
+  }
+  if (!registerId(node.id, nodeIds, diagnostics)) return;
+  if (node.type === 'section') {
+    const children = node.children
+      .map(item =>
+        resolveField(item, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths),
+      )
+      .filter(Boolean) as IResolvedFormLayoutField[];
+    return children.length ? { ...node, children } : undefined;
+  }
+  const children = node.children
+    .map(item =>
+      resolveNode(item, tabPath, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    )
+    .filter(Boolean) as Array<
+    IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
+  >;
+  return children.length ? { ...node, children } : undefined;
+}
+
+function resolveTabs(
+  node: IFormLayoutTabs,
+  propertyNames: Set<string>,
+  fieldNames: Set<string>,
+  nodeIds: Set<string>,
+  diagnostics: IFormLayoutDiagnostic[],
+  fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
+): IResolvedFormLayoutTabs | undefined {
+  if (!registerId(node.id, nodeIds, diagnostics)) return;
+  const children = node.children
+    .map(tab =>
+      resolveTab(tab, node.id, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    )
+    .filter(Boolean) as IResolvedFormLayoutTab[];
+  return children.length ? { ...node, children } : undefined;
+}
+
+function resolveTab(
+  node: IFormLayoutTab,
+  tabsId: string,
+  propertyNames: Set<string>,
+  fieldNames: Set<string>,
+  nodeIds: Set<string>,
+  diagnostics: IFormLayoutDiagnostic[],
+  fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
+): IResolvedFormLayoutTab | undefined {
+  if (!registerId(node.id, nodeIds, diagnostics)) return;
+  const tabPath = [{ tabsId, tabId: node.id }];
+  const children = node.children
+    .map(item =>
+      resolveNode(item, tabPath, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    )
+    .filter(Boolean) as Array<
+    IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
+  >;
+  return children.length ? { ...node, children } : undefined;
+}
+
+function resolveField(
+  node: IFormLayoutField,
+  tabPath: IResolvedFormLayout['fieldTabPaths'][string],
+  propertyNames: Set<string>,
+  fieldNames: Set<string>,
+  diagnostics: IFormLayoutDiagnostic[],
+  fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
+): IResolvedFormLayoutField | undefined {
+  if (!propertyNames.has(node.name)) {
+    diagnostics.push({ type: 'unknownField', value: node.name });
+    return;
+  }
+  if (fieldNames.has(node.name)) {
+    diagnostics.push({ type: 'duplicateField', value: node.name });
+    return;
+  }
+  fieldNames.add(node.name);
+  fieldTabPaths[node.name] = tabPath;
+  return node;
+}
+
+function registerId(id: string, ids: Set<string>, diagnostics: IFormLayoutDiagnostic[]) {
+  if (!ids.has(id)) {
+    ids.add(id);
+    return true;
+  }
+  diagnostics.push({ type: 'duplicateId', value: id });
+  return false;
+}

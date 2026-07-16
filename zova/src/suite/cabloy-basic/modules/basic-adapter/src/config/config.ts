@@ -10,6 +10,7 @@ export const config = (_sys: ZovaSys) => {
     },
     components: {
       Input: 'basic-input:formFieldInput',
+      FormLayout: 'basic-form:formLayout',
     },
   };
   return {

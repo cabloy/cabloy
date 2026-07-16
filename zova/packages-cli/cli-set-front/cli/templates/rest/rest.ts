@@ -1,11 +1,15 @@
 import type z from 'zod';
 
 import type { TypeFormSchemaScene, TypeFormFieldOnEffect } from 'zova-module-a-openapi';
-import type { IResourceFormFieldLayoutOptions } from 'zova-module-a-openapi';
+import type { IFormLayout, IResourceFormFieldLayoutOptions } from 'zova-module-a-openapi';
 import type { TypeSchemaScene } from 'zova-module-a-openapi';
 import type { TypeSchemaOrderLevel } from 'zova-module-a-openapi';
 
 import { _generalSchemaRest, _order } from './inner.ts';
+
+export function schemaRenderFormLayout(layout: IFormLayout): IFormLayout {
+  return layout;
+}
 
 export function schemaRenderLayout<T extends z.ZodType>(
   layoutOptions: IResourceFormFieldLayoutOptions,

@@ -139,7 +139,10 @@ export interface IJsxRenderContextFormField<
   $$form: ControllerForm<TParentData, TSubmitMeta>;
 }
 
-export interface IJsxRenderContextForm<TParentData extends {} = {}> extends IJsxRenderContextBase {
+export interface IJsxRenderContextForm<
+  TParentData extends {} = {},
+  TSubmitMeta = never,
+> extends IJsxRenderContextBase {
   $celScope: IFormFieldScope<TParentData>;
-  $$form: ControllerForm<TParentData>;
+  $$form: ControllerForm<TParentData, TSubmitMeta>;
 }

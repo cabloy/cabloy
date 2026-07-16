@@ -6,6 +6,7 @@ import {
 
 export interface IFormProviderComponents {
   Input?: TypeComponentRecordSelectorKeys<'formField'>;
+  FormLayout?: TypeComponentRecordSelectorKeys<'formLayout'>;
 }
 
 export interface IFormProviderBehaviors {
