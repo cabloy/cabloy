@@ -16,6 +16,7 @@ Representative examples:
 
 - `a-status-module-architecture.md` records the Vona-side `a-status` module boundary, shared-table storage model, module-scoped ownership invariant, `get` / `set` call path, Redlock-protected first-write flow, cache-fresh recheck rule, and refactor safety rules
 - `backend-resource-field-workflow.md` records the preferred AI-assisted workflow for adding or refining fields on existing Vona backend resources, including fileVersion decisions, migration safety, shared renderer reuse, locale updates, and verification
+- `dto-render-field-name-typing.md` records why DTO-local field-name identity helpers are avoided and the framework-level typing boundary required for complete render-layout constraints
 - `a-image-cloudflare-signed-delivery-architecture.md` records the shared `a-image` signed-delivery model, `image-native` vs `image-cloudflare` boundaries, upload-policy invariants, and contract-loop verification expectations for image provider work
 - `a-image-refactor-checklist.md` records the recommended execution order for the next `a-image` cleanup pass, including delivery semantic separation, direct-upload lifecycle completion, provider typing cleanup, and the locked decision that `image-native` stays lazy-only
 - `a-image-public-contract-followup-checklist.md` records the still-open follow-up items after the `a-image` public-contract shrink pass, including intentionally deferred areas, second-round contraction candidates, `a-file` alignment questions, and the missing frontend Cloudflare direct-upload completion path
