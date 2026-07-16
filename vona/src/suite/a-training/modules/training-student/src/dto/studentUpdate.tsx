@@ -43,7 +43,6 @@ export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
                                   { type: 'field', name: 'name' },
                                   { type: 'field', name: 'mobile' },
                                   { type: 'field', name: 'imageId' },
-                                  { type: 'field', name: 'level' },
                                 ],
                               },
                             ],
@@ -55,6 +54,7 @@ export interface IDtoOptionsStudentUpdate extends IDecoratorDtoOptions {}
                         id: 'training-records',
                         title: $locale('TrainingRecords'),
                         children: [
+                          { type: 'field', name: 'level' },
                           {
                             type: 'section',
                             id: 'training-records-section',

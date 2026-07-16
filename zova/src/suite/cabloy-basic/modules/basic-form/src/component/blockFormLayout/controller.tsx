@@ -97,19 +97,20 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
         <div role="tablist" class="tabs tabs-lifted">
           {node.children.map(tab => {
             const active = tab.id === activeTabId;
-            const invalid = $$form.hasErrors(tab);
+            const errorFieldCount = $$form.getErrorFieldCount(tab);
+            const invalid = errorFieldCount > 0;
             return (
               <button
                 id={`${node.id}-${tab.id}-tab`}
                 role="tab"
                 type="button"
-                class={classes('tab', active && 'tab-active', invalid && 'text-error')}
+                class={classes('tab', active && 'tab-active')}
                 aria-selected={active}
                 aria-controls={`${node.id}-${tab.id}-panel`}
                 onClick={() => $$form.setActiveTab(node.id, tab.id)}
               >
                 {tab.title}
-                {invalid && <span class="ml-1">*</span>}
+                {invalid && <span class="badge badge-error badge-sm ml-1">{errorFieldCount}</span>}
               </button>
             );
           })}

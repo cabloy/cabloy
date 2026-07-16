@@ -157,22 +157,12 @@ export class ControllerForm<
     this.formLayoutActiveTabs[tabsId] = tabId;
   }
 
-  public hasErrors(node) {
-    return this._hasFormLayoutErrors(node);
+  public hasErrors(node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) {
+    return this.getErrorFieldCount(node) > 0;
   }
 
-  public activateFormLayoutErrorTab() {
-    // todo
-    // const plan = this.formLayoutPlan;
-    // if (!plan) return;
-    // for (const property of this.properties ?? []) {
-    //   const name = property.key;
-    //   if (!name || !this.form.getFieldMeta(name)?.errors?.length) continue;
-    //   for (const tab of plan.fieldTabPaths[name] ?? []) {
-    //     this.formLayoutActiveTabs[tab.tabsId] = tab.tabId;
-    //   }
-    //   return;
-    // }
+  public getErrorFieldCount(node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) {
+    return this._getFormLayoutErrorFieldCount(node);
   }
 
   public getFieldValue<K extends DeepKeys<TFormData>>(name: K) {
@@ -362,7 +352,6 @@ export class ControllerForm<
           ? revalidateLogic(this.$props.validateOnDynamicLogic)
           : undefined,
       onSubmitInvalid: data => {
-        this.activateFormLayoutErrorTab();
         this.$props.onSubmitInvalid?.(data, this);
       },
       onSubmit: async data => {
@@ -428,11 +417,13 @@ export class ControllerForm<
     return typeof renderProvider === 'string' && renderProvider.includes(':formField');
   }
 
-  private _hasFormLayoutErrors(node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) {
+  private _getFormLayoutErrorFieldCount(node: IResolvedFormLayoutNode | IResolvedFormLayoutTab) {
     if (node.type === 'field') {
-      return !!this.form.getFieldMeta(node.name)?.errors?.length;
+      return this.formState.fieldMeta[node.name]?.errors?.length ? 1 : 0;
     }
-    return node.children.some(child => this._hasFormLayoutErrors(child));
+    return node.children.reduce((count, child) => {
+      return count + this._getFormLayoutErrorFieldCount(child);
+    }, 0);
   }
 
   private _handleError422(error: Error, cause: ValidationCause = 'submit') {
@@ -500,7 +491,6 @@ export class ControllerForm<
 
     if (formError || fieldErrors) {
       hasErrored = true;
-      this.activateFormLayoutErrorTab();
     }
 
     /**
