@@ -7,10 +7,10 @@ import {
   getBy,
   isGlobalFormValidationError,
   revalidateLogic,
-  useStore,
   ValidationCause,
   ValidationError,
 } from '@tanstack/vue-form';
+import { useSelector } from '@tanstack/vue-store';
 import { SchemaObject } from 'openapi3-ts/oas31';
 import { VNode } from 'vue';
 import { z } from 'zod';
@@ -99,7 +99,7 @@ export class ControllerForm<
   protected async __init__() {
     this.bean._setBean('$$form', this);
     this.form = this._createForm();
-    this.formState = useStore(this.form.store, state => state) as any;
+    this.formState = useSelector(this.form.store, state => state) as any;
     this.formProvider = this.$computed(() => {
       const formProvider = this.$$scopeOpenapi.config.formProvider;
       return this.$props.formProvider

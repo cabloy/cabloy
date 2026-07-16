@@ -34,7 +34,8 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@tanstack/vue-form": "^1.32.0"
+    "@tanstack/vue-form": "^1.32.0",
+    "@tanstack/vue-store": "^0.11.0"
   },
   "devDependencies": {
     "clean-package": "^2.2.0",
@@ -54,7 +55,8 @@
   "title": "a-form",
   "zovaModule": {
     "globalDependencies": {
-      "@tanstack/vue-form": true
+      "@tanstack/vue-form": true,
+      "@tanstack/vue-store": true
     },
     "bundle": {
       "vendors": [
