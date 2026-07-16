@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.109
+
+### Features
+
+- Add DTO-driven form layouts.
+- Add configurable filter form layouts.
+- Add a student view form layout.
+- Display form error counts on layout tabs.
+- Allow form layout IDs to be optional.
+
+### Improvements
+
+- Upgrade TanStack Vue Form.
+- Replace the deprecated TanStack Form store hook.
+- Localize form layout tab state.
+- Clarify DTO render field typing boundaries in the documentation.
+
 ## 5.1.108
 
 ### Features
