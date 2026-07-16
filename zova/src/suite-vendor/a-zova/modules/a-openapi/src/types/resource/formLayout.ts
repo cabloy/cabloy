@@ -18,7 +18,7 @@ export interface IFormLayoutField {
 
 export interface IFormLayoutGroup {
   type: 'group';
-  id: string;
+  id?: string;
   title?: string;
   description?: string;
   children: Array<IFormLayoutField | IFormLayoutGroup | IFormLayoutSection>;
@@ -26,7 +26,7 @@ export interface IFormLayoutGroup {
 
 export interface IFormLayoutSection {
   type: 'section';
-  id: string;
+  id?: string;
   title?: string;
   description?: string;
   columns?: IFormLayoutResponsiveColumns;
@@ -35,13 +35,13 @@ export interface IFormLayoutSection {
 
 export interface IFormLayoutTabs {
   type: 'tabs';
-  id: string;
+  id?: string;
   children: IFormLayoutTab[];
 }
 
 export interface IFormLayoutTab {
   type: 'tab';
-  id: string;
+  id?: string;
   title: string;
   children: Array<IFormLayoutField | IFormLayoutGroup | IFormLayoutSection>;
 }

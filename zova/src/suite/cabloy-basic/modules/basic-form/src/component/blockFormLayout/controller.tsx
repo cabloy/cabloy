@@ -12,6 +12,7 @@ import type {
 import type { IFormLayout, IResourceBlockOptionsBase } from 'zova-module-a-openapi';
 
 import { classes } from 'typestyle';
+import { useId } from 'vue';
 import { BeanControllerBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { resolveFormLayout } from 'zova-module-a-form';
@@ -33,11 +34,13 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
 
   private formLayoutPlan: IResolvedFormLayout | undefined;
   private formLayoutActiveTabs: Record<string, string | undefined> = {};
+  private formLayoutDomIdPrefix: string;
 
   @Use({ injectionScope: 'host' })
   $$renderContext: IJsxRenderContextForm;
 
   protected async __init__() {
+    this.formLayoutDomIdPrefix = `basic-form-layout-${useId()}`;
     this.formLayoutPlan = this.$computed(() => {
       const { $$form } = this.$$renderContext;
       const formLayout = this.$props.formLayout;
@@ -90,8 +93,12 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
     );
   }
 
-  private getActiveTab(tabsId: string) {
-    return this.formLayoutActiveTabs[tabsId];
+  private getActiveTabId(node: IResolvedFormLayoutTabs) {
+    const activeTabId = this.formLayoutActiveTabs[node.id];
+    if (node.children.some(tab => tab.id === activeTabId)) return activeTabId;
+    const fallbackTabId = node.children[0]?.id;
+    this.formLayoutActiveTabs[node.id] = fallbackTabId;
+    return fallbackTabId;
   }
 
   private setActiveTab(tabsId: string, tabId: string) {
@@ -100,7 +107,8 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
 
   private _renderTabs(node: IResolvedFormLayoutTabs) {
     const { $$form } = this.$$renderContext;
-    const activeTabId = this.getActiveTab(node.id) ?? node.children[0]?.id;
+    const activeTabId = this.getActiveTabId(node);
+    const domIdBase = `${this.formLayoutDomIdPrefix}-${node.id}`;
     return (
       <div class="mb-6">
         <div role="tablist" class="tabs tabs-lifted">
@@ -110,12 +118,12 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
             const invalid = errorFieldCount > 0;
             return (
               <button
-                id={`${node.id}-${tab.id}-tab`}
+                id={`${domIdBase}-${tab.id}-tab`}
                 role="tab"
                 type="button"
                 class={classes('tab', active && 'tab-active')}
                 aria-selected={active}
-                aria-controls={`${node.id}-${tab.id}-panel`}
+                aria-controls={`${domIdBase}-${tab.id}-panel`}
                 onClick={() => this.setActiveTab(node.id, tab.id)}
               >
                 {tab.title}
@@ -124,21 +132,17 @@ export class ControllerBlockFormLayout extends BeanControllerBase {
             );
           })}
         </div>
-        {node.children.map(tab => this._renderTabPanel(node, tab, tab.id === activeTabId))}
+        {node.children.map(tab => this._renderTabPanel(domIdBase, tab, tab.id === activeTabId))}
       </div>
     );
   }
 
-  private _renderTabPanel(
-    node: IResolvedFormLayoutTabs,
-    tab: IResolvedFormLayoutTab,
-    active: boolean,
-  ) {
+  private _renderTabPanel(domIdBase: string, tab: IResolvedFormLayoutTab, active: boolean) {
     return (
       <div
-        id={`${node.id}-${tab.id}-panel`}
+        id={`${domIdBase}-${tab.id}-panel`}
         role="tabpanel"
-        aria-labelledby={`${node.id}-${tab.id}-tab`}
+        aria-labelledby={`${domIdBase}-${tab.id}-tab`}
         hidden={!active}
         class="rounded-box border border-base-300 bg-base-100 p-4"
       >

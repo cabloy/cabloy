@@ -23,21 +23,17 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
                 children: [
                   {
                     type: 'tabs',
-                    id: 'student-tabs',
                     children: [
                       {
                         type: 'tab',
-                        id: 'basic',
                         title: $locale('BasicInformation'),
                         children: [
                           {
                             type: 'group',
-                            id: 'student-profile',
                             title: $locale('StudentProfile'),
                             children: [
                               {
                                 type: 'section',
-                                id: 'student-core',
                                 columns: { default: 1, md: 2 },
                                 children: [
                                   { type: 'field', name: 'name' },
@@ -51,13 +47,11 @@ export interface IDtoOptionsStudentCreate extends IDecoratorDtoOptions {}
                       },
                       {
                         type: 'tab',
-                        id: 'training-records',
                         title: $locale('TrainingRecords'),
                         children: [
                           { type: 'field', name: 'level' },
                           {
                             type: 'section',
-                            id: 'training-records-section',
                             children: [{ type: 'field', name: 'trainingRecords' }],
                           },
                         ],

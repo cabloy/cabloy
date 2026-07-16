@@ -20,8 +20,11 @@ describe('student.test.ts', () => {
         const blocks = (component as any)?.rest?.blocks;
         const formLayout =
           blocks?.[0]?.options?.blocks?.[0]?.options?.blocks?.[0]?.options?.formLayout;
-        assert.equal(formLayout?.children[0]?.type, 'tabs');
-        assert.equal(formLayout?.children[0]?.children[1]?.id, 'training-records');
+        const tabs = formLayout?.children[0];
+        assert.equal(tabs?.type, 'tabs');
+        assert.equal(tabs?.id, undefined);
+        assert.equal(tabs?.children[1]?.type, 'tab');
+        assert.equal(tabs?.children[1]?.id, undefined);
       }
     });
   });

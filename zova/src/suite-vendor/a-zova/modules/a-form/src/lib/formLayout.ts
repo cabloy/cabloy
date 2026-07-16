@@ -33,8 +33,17 @@ export function resolveFormLayout(
   const diagnostics: IFormLayoutDiagnostic[] = [];
   const fieldTabPaths: IResolvedFormLayout['fieldTabPaths'] = {};
   const children = layout.children
-    .map(node =>
-      resolveNode(node, [], propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    .map((node, index) =>
+      resolveNode(
+        node,
+        [index],
+        [],
+        propertyNames,
+        fieldNames,
+        nodeIds,
+        diagnostics,
+        fieldTabPaths,
+      ),
     )
     .filter(Boolean) as IResolvedFormLayoutNode[];
   for (const property of properties ?? []) {
@@ -48,6 +57,7 @@ export function resolveFormLayout(
 
 function resolveNode(
   node: IFormLayoutNode,
+  indexPath: number[],
   tabPath: IResolvedFormLayout['fieldTabPaths'][string],
   propertyNames: Set<string>,
   fieldNames: Set<string>,
@@ -59,46 +69,76 @@ function resolveNode(
     return resolveField(node, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths);
   }
   if (node.type === 'tabs') {
-    return resolveTabs(node, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths);
+    return resolveTabs(
+      node,
+      indexPath,
+      propertyNames,
+      fieldNames,
+      nodeIds,
+      diagnostics,
+      fieldTabPaths,
+    );
   }
-  if (!registerId(node.id, nodeIds, diagnostics)) return;
+  const id = resolveId(node, indexPath);
+  if (!registerId(id, nodeIds, diagnostics)) return;
   if (node.type === 'section') {
     const children = node.children
       .map(item =>
         resolveField(item, tabPath, propertyNames, fieldNames, diagnostics, fieldTabPaths),
       )
       .filter(Boolean) as IResolvedFormLayoutField[];
-    return children.length ? { ...node, children } : undefined;
+    return children.length ? { ...node, id, children } : undefined;
   }
   const children = node.children
-    .map(item =>
-      resolveNode(item, tabPath, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    .map((item, index) =>
+      resolveNode(
+        item,
+        [...indexPath, index],
+        tabPath,
+        propertyNames,
+        fieldNames,
+        nodeIds,
+        diagnostics,
+        fieldTabPaths,
+      ),
     )
     .filter(Boolean) as Array<
     IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
   >;
-  return children.length ? { ...node, children } : undefined;
+  return children.length ? { ...node, id, children } : undefined;
 }
 
 function resolveTabs(
   node: IFormLayoutTabs,
+  indexPath: number[],
   propertyNames: Set<string>,
   fieldNames: Set<string>,
   nodeIds: Set<string>,
   diagnostics: IFormLayoutDiagnostic[],
   fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
 ): IResolvedFormLayoutTabs | undefined {
-  if (!registerId(node.id, nodeIds, diagnostics)) return;
+  const id = resolveId(node, indexPath);
+  if (!registerId(id, nodeIds, diagnostics)) return;
   const children = node.children
-    .map(tab =>
-      resolveTab(tab, node.id, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    .map((tab, index) =>
+      resolveTab(
+        tab,
+        [...indexPath, index],
+        id,
+        propertyNames,
+        fieldNames,
+        nodeIds,
+        diagnostics,
+        fieldTabPaths,
+      ),
     )
     .filter(Boolean) as IResolvedFormLayoutTab[];
-  return children.length ? { ...node, children } : undefined;
+  return children.length ? { ...node, id, children } : undefined;
 }
 
 function resolveTab(
   node: IFormLayoutTab,
+  indexPath: number[],
   tabsId: string,
   propertyNames: Set<string>,
   fieldNames: Set<string>,
@@ -106,16 +146,26 @@ function resolveTab(
   diagnostics: IFormLayoutDiagnostic[],
   fieldTabPaths: IResolvedFormLayout['fieldTabPaths'],
 ): IResolvedFormLayoutTab | undefined {
-  if (!registerId(node.id, nodeIds, diagnostics)) return;
-  const tabPath = [{ tabsId, tabId: node.id }];
+  const id = resolveId(node, indexPath);
+  if (!registerId(id, nodeIds, diagnostics)) return;
+  const tabPath = [{ tabsId, tabId: id }];
   const children = node.children
-    .map(item =>
-      resolveNode(item, tabPath, propertyNames, fieldNames, nodeIds, diagnostics, fieldTabPaths),
+    .map((item, index) =>
+      resolveNode(
+        item,
+        [...indexPath, index],
+        tabPath,
+        propertyNames,
+        fieldNames,
+        nodeIds,
+        diagnostics,
+        fieldTabPaths,
+      ),
     )
     .filter(Boolean) as Array<
     IResolvedFormLayoutField | IResolvedFormLayoutGroup | IResolvedFormLayoutSection
   >;
-  return children.length ? { ...node, children } : undefined;
+  return children.length ? { ...node, id, children } : undefined;
 }
 
 function resolveField(
@@ -137,6 +187,10 @@ function resolveField(
   fieldNames.add(node.name);
   fieldTabPaths[node.name] = tabPath;
   return node;
+}
+
+function resolveId(node: { type: string; id?: string }, indexPath: number[]) {
+  return node.id || `${node.type}-${indexPath.join('-')}`;
 }
 
 function registerId(id: string, ids: Set<string>, diagnostics: IFormLayoutDiagnostic[]) {
