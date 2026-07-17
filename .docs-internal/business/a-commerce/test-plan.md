@@ -129,7 +129,7 @@ SSR, hydration, route admission, and Vona API authorization are separate evidenc
 
 Customer-site verification must inspect actual anonymous HTML and subsequent hydrated behavior. It must prove that private customer data is absent before the authenticated client query resolves. Operator-site verification must prove that an unauthorized person cannot obtain access merely by knowing a route or menu path, and direct API calls remain independently protected.
 
-Phase 20 commits a Playwright browser acceptance suite under `e2e/a-commerce/`. Install Chromium once with `npx playwright install chromium`; then run the Commerce customer and operator smoke commands against their matching SSR development server or a target supplied through `COMMERCE_E2E_BASE_URL`.
+Phase 20 commits a Playwright browser acceptance suite under `e2e/a-commerce/`. Install Chromium once with `npx playwright install chromium`; after Commerce SSR/REST artifacts are current, the clean default path is `npm run test:e2e:commerce:dev`. It runs `npm run db:reset`, starts one Vona development worker, and runs both browser smoke scenarios through `http://127.0.0.1:7102`. The reset recreates Vona's managed test database and clears the local Vona Redis namespace. Set `COMMERCE_E2E_BASE_URL` to test an externally managed target without Playwright resetting, starting, or stopping Vona.
 
 ## Commands
 
@@ -155,18 +155,19 @@ npm run format
 # Focus a future module-local test after the suite and test file exist
 npm run vona :bin:test -- commerce-trade/test/checkoutReservation.test.ts --flavor=normal
 
-# Build paired Commerce SSR and REST artifacts
+# Refresh paired Commerce SSR and REST artifacts when frontend or contract output changed
 npm run build:zova:commerce
 npm run build:zova:commerce-admin
 npm run deps:vona
-npm run deps:zova
 
-# Run the committed Playwright smoke checks against matching SSR development servers
-npm run dev:zova:commerce
-npm run test:e2e:commerce
+# Clean development-Vona browser acceptance: reset database and local Redis,
+# start one Vona development worker, then run both smoke scenarios
+npm run test:e2e:commerce:dev
 
-npm run dev:zova:commerce-admin
-COMMERCE_E2E_BASE_URL=http://127.0.0.1:9001 npm run test:e2e:commerce-admin
+# Focused checks against an externally managed Vona target;
+# the caller owns its database and cache cleanliness
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce-admin
 ```
 
 For release contention evidence, run the relevant Commerce transaction scenarios on PostgreSQL in addition to the fast default database suite. Existing CI provides the multi-database pattern; Commerce test cases must be added to it when the modules exist.

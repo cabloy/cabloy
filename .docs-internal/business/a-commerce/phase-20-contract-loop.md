@@ -45,11 +45,27 @@ Phase 20 retains build and browser evidence for:
 - `ATP-SSR-01`: anonymous `/commerce` HTML contains no cart, address, order, coupon, or payment data before hydration;
 - `ATP-SSR-02`: `/commerce-admin` is independent from `/commerce`; future operator routes and APIs must independently enforce tenant-scoped authorization.
 
-Run the committed Playwright checks against a running Vona application:
+Build both paired Commerce SSR/REST artifacts whenever Commerce frontend or generated contract output changes:
 
 ```bash
-npm run test:e2e:commerce
-npm run test:e2e:commerce-admin
+npm run build:zova:commerce
+npm run build:zova:commerce-admin
+npm run deps:vona
 ```
 
-Set `COMMERCE_E2E_BASE_URL` when the target is not the Commerce SSR development server at `http://127.0.0.1:9000`.
+Then run the clean development-Vona browser acceptance gate:
+
+```bash
+npm run test:e2e:commerce:dev
+```
+
+The wrapper runs `npm run db:reset`, which recreates Vona's managed test database and clears the local Vona Redis namespace. Playwright then starts one `npm run dev:one` Vona worker and exercises both `/commerce` and `/commerce-admin` through `http://127.0.0.1:7102`. This validates Vona site selection and in-process SSR using the already-built Commerce site assets without rebuilding Vona for every browser run.
+
+For a separately managed Vona instance, use a focused command with `COMMERCE_E2E_BASE_URL`. These commands do not reset the target or manage its process, so the caller owns data and cache cleanliness:
+
+```bash
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce
+COMMERCE_E2E_BASE_URL=http://127.0.0.1:7102 npm run test:e2e:commerce-admin
+```
+
+Do not use the Zova development-server port `9000` for these checks. The acceptance target is Vona's SSR site dispatch at `7102`; changing only `COMMERCE_E2E_BASE_URL` does not rebind a Zova development server to another port.

@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
-const baseURL = process.env.COMMERCE_E2E_BASE_URL || 'http://127.0.0.1:9000';
+const externalBaseURL = process.env.COMMERCE_E2E_BASE_URL;
+const baseURL = externalBaseURL || 'http://127.0.0.1:7102';
 
 export default defineConfig({
   testDir: './e2e/a-commerce',
@@ -12,4 +13,18 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
   },
+  webServer: externalBaseURL
+    ? undefined
+    : {
+        command: 'node scripts/startE2eCommerceVona.ts',
+        url: `${baseURL}/commerce`,
+        timeout: 180_000,
+        reuseExistingServer: false,
+        stdout: 'pipe',
+        stderr: 'pipe',
+        gracefulShutdown: {
+          signal: 'SIGINT',
+          timeout: 10_000,
+        },
+      },
 });
